@@ -112,7 +112,7 @@ public class TokenElementType extends LeafElementType implements LookupItemBuild
         if (isIterationSeparator()) {
             if (getParent() instanceof IterationElementType) {
                 IterationElementType iterationElementType = (IterationElementType) getParent();
-                return iterationElementType.iteratedElementType.getLookupCache().getFirstRequiredLeafs();
+                return iterationElementType.getIteratedElementType().getLookupCache().getFirstRequiredLeafs();
             } else if (getParent() instanceof QualifiedIdentifierElementType){
                 return super.getNextRequiredLeafs(pathNode, context);
             }

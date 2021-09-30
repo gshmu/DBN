@@ -47,7 +47,7 @@ public class PSQLLanguageAnnotator implements Annotator {
                     if (psiElement instanceof BasePsiElement) {
                         BasePsiElement basePsiElement = (BasePsiElement) psiElement;
 
-                        ElementType elementType = basePsiElement.elementType;
+                        ElementType elementType = basePsiElement.getElementType();
                         if (elementType.is(ElementTypeAttribute.OBJECT_SPECIFICATION) || elementType.is(ElementTypeAttribute.OBJECT_DECLARATION)) {
                             annotateSpecDeclarationNavigable(basePsiElement, holder);
                         }
@@ -65,7 +65,7 @@ public class PSQLLanguageAnnotator implements Annotator {
                         } else if (basePsiElement instanceof NamedPsiElement) {
                             NamedPsiElement namedPsiElement = (NamedPsiElement) basePsiElement;
                             if (namedPsiElement.hasErrors()) {
-                                holder.createErrorAnnotation(namedPsiElement, "Invalid " + namedPsiElement.elementType.getDescription());
+                                holder.createErrorAnnotation(namedPsiElement, "Invalid " + namedPsiElement.getElementType().getDescription());
                             }
                         }
 
@@ -81,7 +81,7 @@ public class PSQLLanguageAnnotator implements Annotator {
     }
 
     private static void annotateToken(@NotNull TokenPsiElement tokenPsiElement, AnnotationHolder holder) {
-        TokenTypeCategory flavor = tokenPsiElement.elementType.getFlavor();
+        TokenTypeCategory flavor = tokenPsiElement.getElementType().getFlavor();
         if (flavor != null) {
             Annotation annotation = holder.createInfoAnnotation(tokenPsiElement, null);
             switch (flavor) {
@@ -155,7 +155,7 @@ public class PSQLLanguageAnnotator implements Annotator {
         if (subjectPsiElement instanceof IdentifierPsiElement) {
             IdentifierPsiElement identifierPsiElement = (IdentifierPsiElement) subjectPsiElement;
             DBObjectType objectType = identifierPsiElement.getObjectType();
-            ElementType elementType = basePsiElement.elementType;
+            ElementType elementType = basePsiElement.getElementType();
 
             if (identifierPsiElement.isObject() && objectType.getGenericType() == DBObjectType.METHOD) {
 

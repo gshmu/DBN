@@ -130,8 +130,8 @@ public class FormattingBlock implements Block {
             if (psiElement instanceof BasePsiElement) {
                 BasePsiElement basePsiElement = (BasePsiElement) psiElement;
                 BasePsiElement parentPsiElement = getParentPsiElement(basePsiElement);
-                if (parentPsiElement != null && parentPsiElement.elementType instanceof WrapperElementType) {
-                    WrapperElementType wrapperElementType = (WrapperElementType) parentPsiElement.elementType;
+                if (parentPsiElement != null && parentPsiElement.getElementType() instanceof WrapperElementType) {
+                    WrapperElementType wrapperElementType = (WrapperElementType) parentPsiElement.getElementType();
                     SharedTokenTypeBundle sharedTokenTypes = parentPsiElement.getLanguage().getSharedTokenTypes();
                     if (wrapperElementType.getBeginTokenElement().getTokenType() == sharedTokenTypes.getChrLeftParenthesis()) {
                         //FormattingBlock parentStatementBlock = getParentBlock(this, ElementTypeAttribute.STATEMENT);
@@ -302,7 +302,7 @@ public class FormattingBlock implements Block {
             PsiElement psiElement = block.parentBlock.getPsiElement();
             if (psiElement instanceof BasePsiElement) {
                 BasePsiElement basePsiElement = (BasePsiElement) psiElement;
-                if (basePsiElement.elementType.is(typeAttribute)) {
+                if (basePsiElement.getElementType().is(typeAttribute)) {
                     return block.parentBlock;
                 }
                 return getParentBlock(block.parentBlock, typeAttribute);
@@ -315,7 +315,7 @@ public class FormattingBlock implements Block {
     private static ElementType getParentElementType(PsiElement psiElement) {
         BasePsiElement parentPsiElement = getParentPsiElement(psiElement);
         if (parentPsiElement != null) {
-            return parentPsiElement.elementType;
+            return parentPsiElement.getElementType();
         }
         return null;
     }

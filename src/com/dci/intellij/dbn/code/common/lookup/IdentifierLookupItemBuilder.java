@@ -5,7 +5,7 @@ import com.dci.intellij.dbn.language.common.element.util.IdentifierType;
 import com.dci.intellij.dbn.language.common.psi.IdentifierPsiElement;
 import com.dci.intellij.dbn.object.type.DBObjectType;
 
-import javax.swing.*;
+import javax.swing.Icon;
 
 public class IdentifierLookupItemBuilder extends LookupItemBuilder {
     private IdentifierPsiElement identifierPsiElement;
@@ -15,8 +15,8 @@ public class IdentifierLookupItemBuilder extends LookupItemBuilder {
 
     @Override
     public String getTextHint() {
-        IdentifierType identifierType = identifierPsiElement.elementType.getIdentifierType();
-        DBObjectType objectType = identifierPsiElement.elementType.getObjectType();
+        IdentifierType identifierType = identifierPsiElement.getElementType().getIdentifierType();
+        DBObjectType objectType = identifierPsiElement.getElementType().getObjectType();
         String objectTypeName = objectType == DBObjectType.ANY ? "object" : objectType.getName();
         String identifierTypeName =
                 identifierType == IdentifierType.ALIAS  ? " alias" :

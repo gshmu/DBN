@@ -67,13 +67,21 @@ import javax.swing.Icon;
 import java.util.Set;
 
 public abstract class BasePsiElement<T extends ElementTypeBase> extends ASTDelegatePsiElement implements ItemPresentation, FormattingProviderPsiElement {
-    public T elementType;
+    private T elementType;
     private DBVirtualObject underlyingObject;
     private FormattingAttributes formattingAttributes;
 
     public final ASTNode node;
 
     private final Latent<BasePsiElement> enclosingScopePsiElement = Latent.weak(() -> findEnclosingScopePsiElement());
+
+    public T getElementType() {
+        return elementType;
+    }
+
+    public void setElementType(T elementType) {
+        this.elementType = elementType;
+    }
 
     public enum MatchType {
         STRONG,
@@ -622,7 +630,7 @@ public abstract class BasePsiElement<T extends ElementTypeBase> extends ASTDeleg
         while (element != null && !(element instanceof PsiFile)) {
             if (element instanceof NamedPsiElement) {
                 NamedPsiElement namedPsiElement = (NamedPsiElement) element;
-                if (namedPsiElement.elementType.is(ElementTypeAttribute.ROOT)) {
+                if (namedPsiElement.getElementType().is(ElementTypeAttribute.ROOT)) {
                     return namedPsiElement;
                 }
             }

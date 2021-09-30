@@ -121,7 +121,7 @@ public class MethodParameterInfoHandler implements ParameterInfoHandler<BasePsiE
         if (handlerPsiElement != null) {
             BasePsiElement iterationPsiElement = handlerPsiElement.findFirstPsiElement(IterationElementType.class);
             if (iterationPsiElement != null) {
-                IterationElementType iterationElementType = (IterationElementType) iterationPsiElement.elementType;
+                IterationElementType iterationElementType = (IterationElementType) iterationPsiElement.getElementType();
                 PsiElement paramPsiElement = iterationPsiElement.getFirstChild();
                 int paramIndex = -1;
                 BasePsiElement iteratedPsiElement = null;
@@ -135,7 +135,7 @@ public class MethodParameterInfoHandler implements ParameterInfoHandler<BasePsiE
                             }
                         }
                     }
-                    if (elementType == iterationElementType.iteratedElementType) {
+                    if (elementType == iterationElementType.getIteratedElementType()) {
                         iteratedPsiElement = (BasePsiElement) paramPsiElement;
                         paramIndex++;
                     }
@@ -170,12 +170,12 @@ public class MethodParameterInfoHandler implements ParameterInfoHandler<BasePsiE
                     }
                 }
 
-                IterationElementType iterationElementType = (IterationElementType) iterationPsiElement.elementType;
+                IterationElementType iterationElementType = (IterationElementType) iterationPsiElement.getElementType();
                 int index = 0;
                 PsiElement paramPsiElement = iterationPsiElement.getFirstChild();
                 while (paramPsiElement != null) {
                     ElementType elementType = PsiUtil.getElementType(paramPsiElement);
-                    if (elementType == iterationElementType.iteratedElementType) {
+                    if (elementType == iterationElementType.getIteratedElementType()) {
                         if (paramPsiElement == parameter) {
                             context.setCurrentParameter(index);
                             return;

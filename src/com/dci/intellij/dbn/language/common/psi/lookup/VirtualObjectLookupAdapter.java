@@ -14,13 +14,13 @@ public class VirtualObjectLookupAdapter extends PsiLookupAdapter {
 
     @Override
     public boolean accepts(BasePsiElement element) {
-        DBObjectType virtualObjectType = element.elementType.getVirtualObjectType();
+        DBObjectType virtualObjectType = element.getElementType().getVirtualObjectType();
         return parentObjectType == null || virtualObjectType == null || !parentObjectType.matches(virtualObjectType);
     }
 
     @Override
     public boolean matches(BasePsiElement basePsiElement) {
-        DBObjectType virtualObjectType = basePsiElement.elementType.getVirtualObjectType();
+        DBObjectType virtualObjectType = basePsiElement.getElementType().getVirtualObjectType();
         return virtualObjectType != null && virtualObjectType.matches(objectType);
     }
 

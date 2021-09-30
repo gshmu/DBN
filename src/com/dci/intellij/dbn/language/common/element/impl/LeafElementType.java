@@ -95,9 +95,9 @@ public abstract class LeafElementType extends ElementTypeBase {
                 }
             } else if (elementType instanceof IterationElementType) {
                 IterationElementType iterationElementType = (IterationElementType) elementType;
-                TokenElementType[] separatorTokens = iterationElementType.separatorTokens;
+                TokenElementType[] separatorTokens = iterationElementType.getSeparatorTokens();
                 if (separatorTokens == null) {
-                    ElementTypeLookupCache lookupCache = iterationElementType.iteratedElementType.getLookupCache();
+                    ElementTypeLookupCache lookupCache = iterationElementType.getIteratedElementType().getLookupCache();
                     lookupCache.collectFirstPossibleLeafs(context.reset(), possibleLeafs);
                 } else {
                     possibleLeafs.addAll(Arrays.asList(separatorTokens));
@@ -175,9 +175,9 @@ public abstract class LeafElementType extends ElementTypeBase {
                 }
             } else if (elementType instanceof IterationElementType) {
                 IterationElementType iterationElementType = (IterationElementType) elementType;
-                TokenElementType[] separatorTokens = iterationElementType.separatorTokens;
+                TokenElementType[] separatorTokens = iterationElementType.getSeparatorTokens();
                 if (separatorTokens == null) {
-                    ElementTypeLookupCache lookupCache = iterationElementType.iteratedElementType.getLookupCache();
+                    ElementTypeLookupCache lookupCache = iterationElementType.getIteratedElementType().getLookupCache();
                     if (required ?
                             lookupCache.isFirstRequiredToken(tokenType) :
                             lookupCache.isFirstPossibleToken(tokenType)) {
@@ -221,7 +221,7 @@ public abstract class LeafElementType extends ElementTypeBase {
                 }
             } else if (elementType instanceof IterationElementType) {
                 IterationElementType iteration = (IterationElementType) elementType;
-                TokenElementType[] separatorTokens = iteration.separatorTokens;
+                TokenElementType[] separatorTokens = iteration.getSeparatorTokens();
                 Collections.addAll(requiredLeafs, separatorTokens);
             }
             if (pathNode != null) {

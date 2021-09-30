@@ -31,8 +31,8 @@ public class IterationElementTypeParser extends ElementTypeParser<IterationEleme
         logBegin(builder, optional, depth);
         ParsePathNode node = stepIn(parentNode, context);
 
-        ElementType iteratedElementType = elementType.iteratedElementType;
-        TokenElementType[] separatorTokens = elementType.separatorTokens;
+        ElementType iteratedElementType = elementType.getIteratedElementType();
+        TokenElementType[] separatorTokens = elementType.getSeparatorTokens();
 
         int iterations = 0;
         int matchedTokens = 0;
@@ -129,8 +129,8 @@ public class IterationElementTypeParser extends ElementTypeParser<IterationEleme
         ParserBuilder builder = context.builder;
 
         PsiBuilder.Marker marker = builder.mark(null);
-        ElementTypeBase iteratedElementType = elementType.iteratedElementType;
-        TokenElementType[] separatorTokens = elementType.separatorTokens;
+        ElementTypeBase iteratedElementType = elementType.getIteratedElementType();
+        TokenElementType[] separatorTokens = elementType.getSeparatorTokens();
 
         if (!lenient) {
             Set<TokenType> expectedTokens = iteratedElementType.getLookupCache().collectFirstPossibleTokens(context.reset());

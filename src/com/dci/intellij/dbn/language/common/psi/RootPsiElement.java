@@ -7,7 +7,7 @@ import com.intellij.openapi.editor.colors.TextAttributesKey;
 import com.intellij.psi.PsiElement;
 import org.jetbrains.annotations.Nullable;
 
-import javax.swing.*;
+import javax.swing.Icon;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -52,7 +52,7 @@ public class RootPsiElement extends NamedPsiElement implements ExecutableBundleP
      *********************************************************/
     @Override
     public String getPresentableText() {
-        return elementType.getDescription();
+        return getElementType().getDescription();
     }
 
     @Override

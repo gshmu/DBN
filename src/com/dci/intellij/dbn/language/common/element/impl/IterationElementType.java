@@ -22,8 +22,8 @@ import java.util.StringTokenizer;
 @Getter
 public class IterationElementType extends ElementTypeBase {
 
-    public ElementTypeBase iteratedElementType;
-    public TokenElementType[] separatorTokens;
+    private ElementTypeBase iteratedElementType;
+    private TokenElementType[] separatorTokens;
     private int[] elementsCountVariants;
     private int minIterations;
 
@@ -148,5 +148,9 @@ public class IterationElementType extends ElementTypeBase {
 
     public boolean isFollowedBySeparator() {
         return followedBySeparator.get();
+    }
+
+    public void setIteratedElementType(ElementTypeBase iteratedElementType) {
+        this.iteratedElementType = iteratedElementType;
     }
 }

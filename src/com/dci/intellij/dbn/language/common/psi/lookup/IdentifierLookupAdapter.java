@@ -70,7 +70,7 @@ public class IdentifierLookupAdapter extends PsiLookupAdapter {
     }
 
     private boolean matchesType(IdentifierPsiElement identifierPsiElement) {
-        return identifierType == null ||identifierType == identifierPsiElement.elementType.getIdentifierType();
+        return identifierType == null ||identifierType == identifierPsiElement.getElementType().getIdentifierType();
     }
 
     public boolean matchesObjectType(IdentifierPsiElement identifierPsiElement) {
@@ -84,7 +84,7 @@ public class IdentifierLookupAdapter extends PsiLookupAdapter {
 
     private boolean matchesCategory(IdentifierPsiElement identifierPsiElement) {
         if (identifierCategory == null) return true;
-        IdentifierElementType elementType = identifierPsiElement.elementType;
+        IdentifierElementType elementType = identifierPsiElement.getElementType();
         IdentifierCategory category = elementType.getIdentifierCategory();
         switch (identifierCategory) {
             case ALL: return true;
@@ -95,12 +95,12 @@ public class IdentifierLookupAdapter extends PsiLookupAdapter {
     }
 
     private boolean matchesAttribute(IdentifierPsiElement identifierPsiElement) {
-        return attribute == null || identifierPsiElement.elementType.is(attribute);
+        return attribute == null || identifierPsiElement.getElementType().is(attribute);
     }
 
     @Override
     public boolean accepts(BasePsiElement element) {
-        ElementType elementType = element.elementType;
+        ElementType elementType = element.getElementType();
         if (elementType instanceof TokenElementType) {
             TokenElementType tokenElementType = (TokenElementType) elementType;
             return tokenElementType.isIdentifier();
