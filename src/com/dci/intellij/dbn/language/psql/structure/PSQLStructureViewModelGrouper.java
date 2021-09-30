@@ -38,7 +38,7 @@ public class PSQLStructureViewModelGrouper implements Grouper {
                         PSQLStructureViewElement element = (PSQLStructureViewElement) treeElement;
                         if (element.getValue() instanceof BasePsiElement) {
                             BasePsiElement basePsiElement = (BasePsiElement) element.getValue();
-                            if (!basePsiElement.elementType.is(ElementTypeAttribute.ROOT)) {
+                            if (!basePsiElement.getElementType().is(ElementTypeAttribute.ROOT)) {
                                 BasePsiElement subjectPsiElement = basePsiElement.findFirstPsiElement(ElementTypeAttribute.SUBJECT);
                                 if (subjectPsiElement instanceof IdentifierPsiElement) {
                                     IdentifierPsiElement identifierPsiElement = (IdentifierPsiElement) subjectPsiElement;

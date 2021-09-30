@@ -20,7 +20,7 @@ public class DBLanguageElementSignatureProvider implements ElementSignatureProvi
             String offsets = textRange.getStartOffset() + "#" + textRange.getEndOffset();
             if (psiElement instanceof BasePsiElement) {
                 BasePsiElement basePsiElement = (BasePsiElement) psiElement;
-                return basePsiElement.elementType.getId() + "#" + offsets;
+                return basePsiElement.getElementType().getId() + "#" + offsets;
             }
 
             if (psiElement instanceof PsiComment) {
@@ -63,7 +63,7 @@ public class DBLanguageElementSignatureProvider implements ElementSignatureProvi
                     }
                     if (psiElement instanceof BasePsiElement) {
                         BasePsiElement basePsiElement = (BasePsiElement) psiElement;
-                        if (basePsiElement.elementType.getId().equals(id) &&
+                        if (basePsiElement.getElementType().getId().equals(id) &&
                                 elementStartOffset == startOffset &&
                                 elementEndOffset == endOffset) {
                             return basePsiElement;

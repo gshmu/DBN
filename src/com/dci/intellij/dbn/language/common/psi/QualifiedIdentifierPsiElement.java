@@ -47,7 +47,7 @@ public class QualifiedIdentifierPsiElement extends SequencePsiElement<QualifiedI
         while (child != null) {
             if (child instanceof IdentifierPsiElement) {
                 IdentifierPsiElement identifierPsiElement = (IdentifierPsiElement) child;
-                if (identifierPsiElement.elementType == identifierElementType) {
+                if (identifierPsiElement.getElementType() == identifierElementType) {
                     return index;
                 } else {
                     index++;
@@ -78,7 +78,7 @@ public class QualifiedIdentifierPsiElement extends SequencePsiElement<QualifiedI
 
     private List<QualifiedIdentifierVariant> buildParseVariants() {
         List<QualifiedIdentifierVariant> parseVariants = new ArrayList<>();
-        for (LeafElementType[] elementTypes : elementType.getVariants()) {
+        for (LeafElementType[] elementTypes : getElementType().getVariants()) {
 
             ParseResultType resultType = ParseResultType.FULL_MATCH;
             for (int i=0; i< elementTypes.length; i++) {
@@ -90,7 +90,7 @@ public class QualifiedIdentifierPsiElement extends SequencePsiElement<QualifiedI
                     break;
                 }
 
-                LeafElementType leafElementType = (LeafElementType) leaf.elementType;
+                LeafElementType leafElementType = (LeafElementType) leaf.getElementType();
                 if (!(leafElementType.isIdentifier() && elementTypes[i].isIdentifier() || leafElementType.isSameAs(elementTypes[i]))) {
                     resultType = i==0 ? ParseResultType.NO_MATCH : ParseResultType.PARTIAL_MATCH;
                     break;
@@ -156,7 +156,7 @@ public class QualifiedIdentifierPsiElement extends SequencePsiElement<QualifiedI
         while (child != null) {
             if (child instanceof LeafPsiElement) {
                 LeafPsiElement leafPsiElement = (LeafPsiElement) child;
-                if (leafPsiElement.elementType != elementType.getSeparatorToken() ) {
+                if (leafPsiElement.getElementType() != getElementType().getSeparatorToken() ) {
                     count++;
                 }
             }

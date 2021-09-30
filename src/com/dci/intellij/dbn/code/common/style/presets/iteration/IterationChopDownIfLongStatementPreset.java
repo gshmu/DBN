@@ -20,8 +20,8 @@ public class IterationChopDownIfLongStatementPreset extends IterationAbstractPre
     public Wrap getWrap(BasePsiElement psiElement, CodeStyleSettings settings) {
         BasePsiElement parentPsiElement = getParentPsiElement(psiElement);
         if (parentPsiElement != null) {
-            IterationElementType iterationElementType = (IterationElementType) parentPsiElement.elementType;
-            ElementType elementType = psiElement.elementType;
+            IterationElementType iterationElementType = (IterationElementType) parentPsiElement.getElementType();
+            ElementType elementType = psiElement.getElementType();
 
             NamedPsiElement namedPsiElement = (NamedPsiElement) parentPsiElement.findEnclosingPsiElement(ElementTypeAttribute.EXECUTABLE);
             if (namedPsiElement != null) {
@@ -37,8 +37,8 @@ public class IterationChopDownIfLongStatementPreset extends IterationAbstractPre
     public Spacing getSpacing(BasePsiElement psiElement, CodeStyleSettings settings) {
         BasePsiElement parentPsiElement = getParentPsiElement(psiElement);
         if (parentPsiElement != null) {
-            IterationElementType iterationElementType = (IterationElementType) parentPsiElement.elementType;
-            ElementType elementType = psiElement.elementType;
+            IterationElementType iterationElementType = (IterationElementType) parentPsiElement.getElementType();
+            ElementType elementType = psiElement.getElementType();
 
             NamedPsiElement namedPsiElement = (NamedPsiElement) parentPsiElement.findEnclosingPsiElement(ElementTypeAttribute.EXECUTABLE);
             if (namedPsiElement != null) {

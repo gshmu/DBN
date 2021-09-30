@@ -109,11 +109,16 @@ public class TokenPsiElement extends LeafPsiElement<TokenElementType> {
     }
 
     public TokenType getTokenType() {
-        return elementType.getTokenType();
+        return getElementType().getTokenType();
     }
 
     @Override
     public boolean isCharacterToken() {
         return getTokenType().isCharacter();
+    }
+
+    @Override
+    public boolean isToken(TokenType tokenType) {
+        return getTokenType() == tokenType;
     }
 }

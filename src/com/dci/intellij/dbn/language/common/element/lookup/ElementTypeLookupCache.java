@@ -66,7 +66,7 @@ public abstract class ElementTypeLookupCache<T extends ElementTypeBase>/* implem
                 }
             } else if (parentElementType instanceof IterationElementType) {
                 IterationElementType iteration = (IterationElementType) parentElementType;
-                TokenElementType[] separatorTokens = iteration.separatorTokens;
+                TokenElementType[] separatorTokens = iteration.getSeparatorTokens();
                 if (separatorTokens != null) {
                     for (TokenElementType separatorToken : separatorTokens) {
                         nextPossibleTokens.add(separatorToken.getTokenType());

@@ -124,8 +124,8 @@ public class SequencePsiElement<T extends ElementTypeBase> extends BasePsiElemen
     @Override
     public void collectVirtualObjectPsiElements(DBObjectType objectType, Consumer<BasePsiElement> consumer) {
         //if (getElementType().getLookupCache().containsVirtualObject(objectType)) {
-            if (elementType.isVirtualObject()) {
-                DBObjectType virtualObjectType = elementType.getVirtualObjectType();
+            if (getElementType().isVirtualObject()) {
+                DBObjectType virtualObjectType = getElementType().getVirtualObjectType();
                 if (objectType == virtualObjectType) {
                     consumer.consume(this);
                 }
@@ -149,7 +149,7 @@ public class SequencePsiElement<T extends ElementTypeBase> extends BasePsiElemen
                 SequencePsiElement bundlePsiElement = (SequencePsiElement) child;
                 if (bundlePsiElement instanceof NamedPsiElement) {
                     NamedPsiElement namedPsiElement = (NamedPsiElement) bundlePsiElement;
-                    if (namedPsiElement.elementType.getId().equals(id)) {
+                    if (namedPsiElement.getElementType().getId().equals(id)) {
                         return namedPsiElement;
                     }
                 }
@@ -166,7 +166,7 @@ public class SequencePsiElement<T extends ElementTypeBase> extends BasePsiElemen
 
     @Override
     public BasePsiElement findFirstPsiElement(ElementTypeAttribute attribute) {
-        if (elementType.is(attribute)) {
+        if (getElementType().is(attribute)) {
             return this;
         }
 
@@ -186,7 +186,7 @@ public class SequencePsiElement<T extends ElementTypeBase> extends BasePsiElemen
 
     @Override
     public BasePsiElement findFirstPsiElement(Class<? extends ElementType> clazz) {
-        if (clazz.isAssignableFrom(elementType.getClass())) {
+        if (clazz.isAssignableFrom(getElementType().getClass())) {
             return this;
         }
 
@@ -219,7 +219,7 @@ public class SequencePsiElement<T extends ElementTypeBase> extends BasePsiElemen
 
     @Override
     public BasePsiElement findPsiElementBySubject(ElementTypeAttribute attribute, CharSequence subjectName, DBObjectType subjectType) {
-        if (elementType.is(attribute)) {
+        if (getElementType().is(attribute)) {
             BasePsiElement subjectPsiElement = findFirstPsiElement(ElementTypeAttribute.SUBJECT);
             if (subjectPsiElement instanceof IdentifierPsiElement) {
                 IdentifierPsiElement identifierPsiElement = (IdentifierPsiElement) subjectPsiElement;
@@ -245,7 +245,7 @@ public class SequencePsiElement<T extends ElementTypeBase> extends BasePsiElemen
 
     @Override
     public BasePsiElement findPsiElementByAttribute(ElementTypeAttribute attribute) {
-        if (elementType.is(attribute)) {
+        if (getElementType().is(attribute)) {
             return this;
         }
         PsiElement child = getFirstChild();
@@ -342,23 +342,23 @@ public class SequencePsiElement<T extends ElementTypeBase> extends BasePsiElemen
     }
 
     public boolean isSequence(){
-        return elementType instanceof SequenceElementType;
+        return getElementType() instanceof SequenceElementType;
     }
 
     public boolean isBlock(){
-        return elementType instanceof BlockElementType;
+        return getElementType() instanceof BlockElementType;
     }
 
     public boolean isIteration(){
-        return elementType instanceof IterationElementType;
+        return getElementType() instanceof IterationElementType;
     }
 
     public boolean isOneOf() {
-        return elementType instanceof OneOfElementType;
+        return getElementType() instanceof OneOfElementType;
     }
 
     public boolean isNamedSequence() {
-        return elementType instanceof NamedElementType;
+        return getElementType() instanceof NamedElementType;
     }
 
     public boolean isFirstChild(PsiElement psiElement){

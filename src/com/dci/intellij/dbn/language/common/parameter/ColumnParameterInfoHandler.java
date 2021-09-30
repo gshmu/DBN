@@ -64,7 +64,7 @@ public class ColumnParameterInfoHandler implements ParameterInfoHandler<BasePsiE
             int offset = context.getOffset();
             BasePsiElement iterationPsiElement = handlerPsiElement.findFirstPsiElement(IterationElementType.class);
             if (iterationPsiElement != null) {
-                IterationElementType iterationElementType = (IterationElementType) iterationPsiElement.elementType;
+                IterationElementType iterationElementType = (IterationElementType) iterationPsiElement.getElementType();
                 PsiElement paramPsiElement = iterationPsiElement.getFirstChild();
                 BasePsiElement iteratedPsiElement = null;
                 while (paramPsiElement != null) {
@@ -77,7 +77,7 @@ public class ColumnParameterInfoHandler implements ParameterInfoHandler<BasePsiE
                             }
                         }
                     }
-                    if (elementType == iterationElementType.iteratedElementType) {
+                    if (elementType == iterationElementType.getIteratedElementType()) {
                         iteratedPsiElement = (BasePsiElement) paramPsiElement;
                     }
 
@@ -138,7 +138,7 @@ public class ColumnParameterInfoHandler implements ParameterInfoHandler<BasePsiE
         if (handlerPsiElement != null) {
             BasePsiElement iterationPsiElement = handlerPsiElement.findFirstPsiElement(IterationElementType.class);
             if (iterationPsiElement != null) {
-                IterationElementType iterationElementType = (IterationElementType) iterationPsiElement.elementType;
+                IterationElementType iterationElementType = (IterationElementType) iterationPsiElement.getElementType();
                 PsiElement paramPsiElement = iterationPsiElement.getFirstChild();
                 int paramIndex = -1;
                 BasePsiElement iteratedPsiElement = null;
@@ -173,12 +173,12 @@ public class ColumnParameterInfoHandler implements ParameterInfoHandler<BasePsiE
     public void updateParameterInfo(@NotNull BasePsiElement parameter, @NotNull UpdateParameterInfoContext context) {
         BasePsiElement wrappedPsiElement = getWrappedPsiElement(context);
         if (wrappedPsiElement != null) {
-            IterationElementType iterationElementType = (IterationElementType) wrappedPsiElement.elementType;
+            IterationElementType iterationElementType = (IterationElementType) wrappedPsiElement.getElementType();
             int index = 0;
             PsiElement paramPsiElement = wrappedPsiElement.getFirstChild();
             while (paramPsiElement != null) {
                 ElementType elementType = PsiUtil.getElementType(paramPsiElement);
-                if (elementType == iterationElementType.iteratedElementType) {
+                if (elementType == iterationElementType.getIteratedElementType()) {
                     if (paramPsiElement == parameter) {
                         context.setCurrentParameter(index);
                         return;
@@ -230,12 +230,12 @@ public class ColumnParameterInfoHandler implements ParameterInfoHandler<BasePsiE
             int currentIndex = context.getCurrentParameterIndex();
             BasePsiElement iterationPsiElement = handlerPsiElement.findFirstPsiElement(IterationElementType.class);
             if (iterationPsiElement != null && iterationPsiElement.isValid()) {
-                IterationElementType iterationElementType = (IterationElementType) iterationPsiElement.elementType;
+                IterationElementType iterationElementType = (IterationElementType) iterationPsiElement.getElementType();
                 PsiElement child = iterationPsiElement.getFirstChild();
                 while (child != null) {
                     if (child instanceof BasePsiElement) {
                         BasePsiElement basePsiElement = (BasePsiElement) child;
-                        if (basePsiElement.elementType  == iterationElementType.iteratedElementType) {
+                        if (basePsiElement.getElementType() == iterationElementType.getIteratedElementType()) {
                             boolean highlight = index == currentIndex || (index == 0 && currentIndex == -1);
                             if (highlight) {
                                 highlightStartOffset = text.length();

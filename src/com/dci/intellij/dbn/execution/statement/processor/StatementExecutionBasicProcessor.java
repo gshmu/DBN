@@ -70,7 +70,7 @@ import com.intellij.psi.PsiElement;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import javax.swing.*;
+import javax.swing.Icon;
 import java.sql.SQLException;
 import java.util.concurrent.TimeUnit;
 
@@ -816,7 +816,7 @@ public class StatementExecutionBasicProcessor extends StatefulDisposable.Base im
                 PsiElement parent = subjectPsiElement.getParent();
                 if (parent instanceof QualifiedIdentifierPsiElement) {
                     QualifiedIdentifierPsiElement qualifiedIdentifierPsiElement = (QualifiedIdentifierPsiElement) parent;
-                    DBObject parentObject = qualifiedIdentifierPsiElement.lookupParentObjectFor(subjectPsiElement.elementType);
+                    DBObject parentObject = qualifiedIdentifierPsiElement.lookupParentObjectFor(subjectPsiElement.getElementType());
                     if (parentObject instanceof DBSchema) {
                         return (DBSchema) parentObject;
                     }

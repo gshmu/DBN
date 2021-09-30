@@ -58,7 +58,7 @@ public class ExecVariablePsiElement extends LeafPsiElement<ExecVariableElementTy
      *********************************************************/
     @Override
     public String getPresentableText() {
-        return elementType.getTokenType().getValue();
+        return getElementType().getTokenType().getValue();
     }
 
     @Override
