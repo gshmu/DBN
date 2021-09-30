@@ -5,7 +5,7 @@ import com.dci.intellij.dbn.common.util.TimeUtil;
 public abstract class IntervalLoader<T> {
     private T value;
     private long checkTimestamp;
-    private long checkInterval;
+    private final long checkInterval;
 
     public IntervalLoader(long checkInterval) {
         this.checkInterval = checkInterval;

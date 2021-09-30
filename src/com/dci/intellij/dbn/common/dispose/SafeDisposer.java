@@ -1,7 +1,6 @@
 package com.dci.intellij.dbn.common.dispose;
 
 import com.dci.intellij.dbn.common.latent.Latent;
-import com.dci.intellij.dbn.common.latent.MapLatent;
 import com.dci.intellij.dbn.common.list.FilteredList;
 import com.dci.intellij.dbn.common.options.Configuration;
 import com.dci.intellij.dbn.common.thread.Background;
@@ -205,9 +204,6 @@ public final class SafeDisposer {
                             clearMap(map);
                         } else if (fieldValue instanceof Latent){
                             Latent latent = (Latent) fieldValue;
-                            latent.reset();
-                        } else if (fieldValue instanceof MapLatent){
-                            MapLatent latent = (MapLatent) fieldValue;
                             latent.reset();
                         } else {
                             int modifiers = field.getModifiers();

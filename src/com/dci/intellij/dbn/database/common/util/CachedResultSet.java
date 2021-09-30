@@ -2,7 +2,6 @@ package com.dci.intellij.dbn.database.common.util;
 
 import com.dci.intellij.dbn.common.data.Data;
 import com.dci.intellij.dbn.common.dispose.StatefulDisposable;
-import com.dci.intellij.dbn.common.latent.MapLatent;
 import com.dci.intellij.dbn.connection.ResourceUtil;
 import com.dci.intellij.dbn.connection.ResultSetUtil;
 import lombok.extern.slf4j.Slf4j;
@@ -14,6 +13,8 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
 
 import static com.dci.intellij.dbn.common.util.CommonUtil.nvl;
@@ -37,46 +38,9 @@ public class CachedResultSet extends StatefulDisposable.Base implements ResultSe
         }
     };
 
-    private final MapLatent<Condition, CachedResultSet> filtered = MapLatent.create(condition -> {
-        if (rows.isEmpty()) {
-            return this;
-        } else {
-            List<CachedResultSetRow> filteredRows = new ArrayList<>();
-            for (CachedResultSetRow element : rows) {
-                try {
-                    if (condition.evaluate(element)) {
-                        filteredRows.add(element);
-                    }
-                } catch (SQLException e) {
-                    log.error("Failed to filter cached result set", e);
-                }
-            }
-            return new CachedResultSet(filteredRows, columnNames);
-        }
-    });
+    private final Map<Condition, CachedResultSet> filtered = new ConcurrentHashMap<>();
 
-    private final MapLatent<Columns, CachedResultSet> grouped = MapLatent.create(columns -> {
-        if (rows.isEmpty()) {
-            return this;
-        } else {
-            List<CachedResultSetRow> groupedRows = new ArrayList<>();
-            try {
-
-                for (CachedResultSetRow row : rows) {
-                    CachedResultSetRow matchingRow = find(groupedRows, row, columns);
-                    if (matchingRow == null) {
-                        groupedRows.add(row.clone(columns));
-                    } else {
-                        // TODO ignore or pivot the rest of columns?
-                    }
-                }
-            } catch (Throwable e) {
-                log.error("Failed to group cached result set", e);
-            }
-
-            return new CachedResultSet(groupedRows, columnNames);
-        }
-    });
+    private final Map<Columns, CachedResultSet> grouped = new ConcurrentHashMap<>();
 
     private CachedResultSet(@Nullable ResultSet source, @Nullable ResultSetCondition condition) throws SQLException {
         if (source instanceof CachedResultSet) {
@@ -167,7 +131,26 @@ public class CachedResultSet extends StatefulDisposable.Base implements ResultSe
      *                          Utilities                         *
      **************************************************************/
     public CachedResultSet where(@NotNull Condition whereCondition) {
-        return filtered.get(whereCondition);
+        return filtered.computeIfAbsent(whereCondition, condition -> createFilteredSet(condition));
+    }
+
+    @NotNull
+    private CachedResultSet createFilteredSet(Condition condition) {
+        if (rows.isEmpty()) {
+            return this;
+        } else {
+            List<CachedResultSetRow> filteredRows = new ArrayList<>();
+            for (CachedResultSetRow element : rows) {
+                try {
+                    if (condition.evaluate(element)) {
+                        filteredRows.add(element);
+                    }
+                } catch (SQLException e) {
+                    log.error("Failed to filter cached result set", e);
+                }
+            }
+            return new CachedResultSet(filteredRows, columnNames);
+        }
     }
 
     public CachedResultSet filter(@NotNull Condition whereCondition) throws SQLException {
@@ -306,11 +289,37 @@ public class CachedResultSet extends StatefulDisposable.Base implements ResultSe
 
     public CachedResultSet groupBy(@NotNull Columns groupByClause) throws SQLException {
         if (rows.isEmpty()) {
-            return this ;
+            return this;
         } else {
-            return grouped.get(groupByClause);
+            return grouped.computeIfAbsent(groupByClause, clause -> createGroupBySet(clause));
         }
     }
+
+    @NotNull
+    private CachedResultSet createGroupBySet(Columns columns) {
+        if (rows.isEmpty()) {
+            return this;
+        } else {
+            List<CachedResultSetRow> groupedRows = new ArrayList<>();
+            try {
+
+                for (CachedResultSetRow row : rows) {
+                    CachedResultSetRow matchingRow = find(groupedRows, row, columns);
+                    if (matchingRow == null) {
+                        groupedRows.add(row.clone(columns));
+                    } else {
+                        // TODO ignore or pivot the rest of columns?
+                    }
+                }
+            } catch (Throwable e) {
+                log.error("Failed to group cached result set", e);
+            }
+
+            return new CachedResultSet(groupedRows, columnNames);
+        }
+    }
+
+
 
     private static CachedResultSetRow find(List<CachedResultSetRow> list, CachedResultSetRow match, Columns columns) {
         for (int i = 0; i < list.size(); i++) {

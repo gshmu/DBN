@@ -17,10 +17,9 @@ import java.util.concurrent.ConcurrentLinkedQueue;
 import static com.dci.intellij.dbn.execution.ExecutionStatus.*;
 
 public final class StatementExecutionQueue extends StatefulDisposable.Base {
-
-    private final ProjectRef project;
     private final Queue<StatementExecutionProcessor> processors = new ConcurrentLinkedQueue<>();
-    private boolean executing = false;
+    private final ProjectRef project;
+    private volatile boolean executing = false;
 
     public StatementExecutionQueue(ConnectionHandler connectionHandler) {
         super(connectionHandler);
@@ -32,7 +31,7 @@ public final class StatementExecutionQueue extends StatefulDisposable.Base {
         executionContext.set(CANCELLED, false);
         if (!this.processors.contains(processor)) {
             executionContext.set(QUEUED, true);
-            this.processors.add(processor);
+            this.processors.offer(processor);
             execute();
         }
     }

@@ -310,11 +310,11 @@ public final class ResourceUtil {
             try {
                 connection.setReadOnly(readonly);
             } catch (SQLException e) {
-            sentWarningNotification(
-                    NotificationGroup.CONNECTION,
-                    "Failed to initialize readonly status for",
-                    connection,
-                    e);
+                sentWarningNotification(
+                        NotificationGroup.CONNECTION,
+                        "Failed to initialize readonly status for",
+                        connection,
+                        e);
             }
         }
     }

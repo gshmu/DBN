@@ -1,6 +1,5 @@
 package com.dci.intellij.dbn.data.export;
 
-import com.dci.intellij.dbn.common.latent.MapLatent;
 import com.dci.intellij.dbn.common.util.StringUtil;
 import com.dci.intellij.dbn.data.grid.ui.table.sortable.SortableTable;
 import com.dci.intellij.dbn.data.model.ColumnInfo;
@@ -10,21 +9,16 @@ import com.dci.intellij.dbn.data.type.DBNativeDataType;
 import com.dci.intellij.dbn.data.type.GenericDataType;
 import com.google.common.base.CaseFormat;
 import com.intellij.openapi.project.Project;
+import org.jetbrains.annotations.Nullable;
+
+import java.util.HashMap;
+import java.util.Map;
 
 public class SortableTableExportModel implements DataExportModel{
     private final boolean selection;
     private final SortableTable<? extends SortableDataModel> table;
 
-    private final MapLatent<String, String> columnFriendlyNames = MapLatent.create(key -> {
-        if (StringUtil.isNotEmpty(key)) {
-            key = key.trim().toUpperCase();
-            if (key.matches("[A-Z][A-Z0-9_]*")) {
-                key = key.replaceAll("_", " _");
-                return CaseFormat.UPPER_UNDERSCORE.to(CaseFormat.UPPER_CAMEL, key);
-            }
-        }
-        return key;
-    });
+    private final Map<String, String> columnFriendlyNames = new HashMap<>();
 
     int[] selectedRows;
     int[] selectedColumns;
@@ -80,8 +74,21 @@ public class SortableTableExportModel implements DataExportModel{
     @Override
     public String getColumnFriendlyName(int columnIndex) {
         String columnName = getColumnName(columnIndex);
-        return columnFriendlyNames.get(columnName);
+        return columnFriendlyNames.computeIfAbsent(columnName, key -> produceColumnFriendlyName(key));
     }
+
+    @Nullable
+    private String produceColumnFriendlyName(String key) {
+        if (StringUtil.isNotEmpty(key)) {
+            key = key.trim().toUpperCase();
+            if (key.matches("[A-Z][A-Z0-9_]*")) {
+                key = key.replaceAll("_", " _");
+                return CaseFormat.UPPER_UNDERSCORE.to(CaseFormat.UPPER_CAMEL, key);
+            }
+        }
+        return key;
+    }
+
 
     @Override
     public GenericDataType getGenericDataType(int columnIndex) {

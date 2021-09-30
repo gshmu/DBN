@@ -218,12 +218,7 @@ public abstract class DBLanguageTokenTypeBundle {
     }
 
     private boolean isRegisteredToken(Map<String, Set<String>> tokenSetIds, String tokenId) {
-        for (Set<String> tokenIds : tokenSetIds.values()) {
-            if (tokenIds.contains(tokenId)) {
-                return true;
-            }
-        }
-        return false;
+        return tokenSetIds.values().stream().anyMatch(tokenIds -> tokenIds.contains(tokenId));
     }
 
     public SimpleTokenType getTokenType(String id) {

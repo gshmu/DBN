@@ -10,7 +10,6 @@ import com.dci.intellij.dbn.common.dispose.StatefulDisposable;
 import com.dci.intellij.dbn.common.environment.EnvironmentType;
 import com.dci.intellij.dbn.common.filter.Filter;
 import com.dci.intellij.dbn.common.latent.Latent;
-import com.dci.intellij.dbn.common.latent.MapLatent;
 import com.dci.intellij.dbn.common.notification.NotificationGroup;
 import com.dci.intellij.dbn.common.notification.NotificationSupport;
 import com.dci.intellij.dbn.common.thread.Synchronized;
@@ -51,6 +50,8 @@ import javax.swing.Icon;
 import java.sql.SQLException;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 @Slf4j
 public class ConnectionHandlerImpl extends StatefulDisposable.Base implements ConnectionHandler, NotificationSupport {
@@ -81,15 +82,13 @@ public class ConnectionHandlerImpl extends StatefulDisposable.Base implements Co
                 return new AuthenticationInfo(databaseSettings, true);
             });
 
-    private final MapLatent<SessionId, StatementExecutionQueue> executionQueues =
-            MapLatent.create(key -> new StatementExecutionQueue(ConnectionHandlerImpl.this));
-
     private final Latent<DBConnectionPsiDirectory> psiDirectory =
             Latent.basic(() -> new DBConnectionPsiDirectory(this));
 
     private final Latent<DBObjectBundle> objectBundle =
             Latent.basic(() -> new DBObjectBundleImpl(this, getConnectionBundle()));
 
+    private final Map<SessionId, StatementExecutionQueue> executionQueues = new ConcurrentHashMap<>();
 
     ConnectionHandlerImpl(ConnectionBundle connectionBundle, ConnectionSettings connectionSettings) {
         this.connectionBundle = WeakRef.of(connectionBundle);
@@ -235,7 +234,7 @@ public class ConnectionHandlerImpl extends StatefulDisposable.Base implements Co
     @Override
     @NotNull
     public StatementExecutionQueue getExecutionQueue(SessionId sessionId) {
-        return executionQueues.get(sessionId);
+        return executionQueues.computeIfAbsent(sessionId, key -> new StatementExecutionQueue(this));
     }
 
     @Override
