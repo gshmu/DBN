@@ -4,6 +4,7 @@ import com.dci.intellij.dbn.common.content.DynamicContent;
 import com.dci.intellij.dbn.common.content.DynamicContentStatus;
 import com.dci.intellij.dbn.common.content.loader.DynamicContentResultSetLoader;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
+import com.dci.intellij.dbn.connection.PooledConnection;
 import com.dci.intellij.dbn.connection.ResourceUtil;
 import com.dci.intellij.dbn.connection.jdbc.DBNConnection;
 import com.dci.intellij.dbn.database.DatabaseDDLInterface;
@@ -163,13 +164,10 @@ public abstract class DBSchemaObjectImpl<M extends DBObjectMetadata> extends DBO
     @Override
     public void executeUpdateDDL(DBContentType contentType, String oldCode, String newCode) throws SQLException {
         ConnectionHandler connectionHandler = getConnectionHandler();
-        DBNConnection connection = connectionHandler.getPoolConnection(getSchemaIdentifier(), true);
-        try {
+        PooledConnection.run(false, connectionHandler, getSchemaIdentifier(), connection -> {
             DatabaseDDLInterface ddlInterface = connectionHandler.getInterfaceProvider().getDdlInterface();
             ddlInterface.updateObject(getName(), getObjectType().getName(), oldCode,  newCode, connection);
-        } finally {
-            connectionHandler.freePoolConnection(connection);
-        }
+        });
     }
 
     /*********************************************************

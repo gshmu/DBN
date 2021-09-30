@@ -373,7 +373,6 @@ public class StatementExecutionBasicProcessor extends StatefulDisposable.Base im
     public void postExecute() {
         ExecutionContext context = getExecutionContext();
         if (context.isNot(PROMPTED)) {
-
             DBNConnection connection = context.getConnection();
             if (connection != null && connection.isPoolConnection()) {
                 ResourceUtil.cancel(context.getStatement());
