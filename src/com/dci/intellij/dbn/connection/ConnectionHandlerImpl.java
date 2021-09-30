@@ -512,7 +512,8 @@ public class ConnectionHandlerImpl extends StatefulDisposable.Base implements Co
     @Override
     public void freePoolConnection(DBNConnection connection) {
         if (!isDisposed()) {
-            getConnectionPool().releaseConnection(connection);
+            ConnectionPool connectionPool = getConnectionPool();
+            connectionPool.releaseConnection(connection);
         }
     }
 

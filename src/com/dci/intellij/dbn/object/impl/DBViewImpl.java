@@ -3,7 +3,7 @@ package com.dci.intellij.dbn.object.impl;
 import com.dci.intellij.dbn.browser.DatabaseBrowserUtils;
 import com.dci.intellij.dbn.browser.model.BrowserTreeNode;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
-import com.dci.intellij.dbn.connection.jdbc.DBNConnection;
+import com.dci.intellij.dbn.connection.PooledConnection;
 import com.dci.intellij.dbn.database.DatabaseDDLInterface;
 import com.dci.intellij.dbn.database.DatabaseInterface;
 import com.dci.intellij.dbn.database.common.metadata.def.DBViewMetadata;
@@ -96,15 +96,10 @@ public class DBViewImpl extends DBDatasetImpl<DBViewMetadata> implements DBView 
         ConnectionHandler connectionHandler = getConnectionHandler();
         DatabaseInterface.run(
                 connectionHandler,
-                (provider) -> {
-                    DBNConnection connection = connectionHandler.getPoolConnection(getSchemaIdentifier(), false);
-                    try {
-                        DatabaseDDLInterface ddlInterface = provider.getDdlInterface();
-                        ddlInterface.updateView(getName(), newCode, connection);
-                    } finally {
-                        connectionHandler.freePoolConnection(connection);
-                    }
-                });
+                provider -> PooledConnection.run(false, connectionHandler, getSchemaIdentifier(), connection -> {
+                    DatabaseDDLInterface ddlInterface = provider.getDdlInterface();
+                    ddlInterface.updateView(getName(), newCode, connection);
+                }));
     }
 
     @Override

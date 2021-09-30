@@ -3,8 +3,8 @@ package com.dci.intellij.dbn.object.impl;
 import com.dci.intellij.dbn.browser.ui.HtmlToolTipBuilder;
 import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
+import com.dci.intellij.dbn.connection.PooledConnection;
 import com.dci.intellij.dbn.connection.SchemaId;
-import com.dci.intellij.dbn.connection.jdbc.DBNConnection;
 import com.dci.intellij.dbn.database.DatabaseDDLInterface;
 import com.dci.intellij.dbn.database.common.metadata.def.DBTriggerMetadata;
 import com.dci.intellij.dbn.editor.DBContentType;
@@ -19,7 +19,7 @@ import com.dci.intellij.dbn.object.type.DBTriggerType;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import javax.swing.*;
+import javax.swing.Icon;
 import java.sql.SQLException;
 
 public class DBDatasetTriggerImpl extends DBTriggerImpl implements DBDatasetTrigger {
@@ -97,13 +97,16 @@ public class DBDatasetTriggerImpl extends DBTriggerImpl implements DBDatasetTrig
     public void executeUpdateDDL(DBContentType contentType, String oldCode, String newCode) throws SQLException {
         ConnectionHandler connectionHandler = getConnectionHandler();
         DBSchema schema = getSchema();
-        DBNConnection connection = connectionHandler.getPoolConnection(SchemaId.from(schema), false);
-        try {
+        PooledConnection.run(false, connectionHandler, SchemaId.from(schema), connection -> {
             DatabaseDDLInterface ddlInterface = connectionHandler.getInterfaceProvider().getDdlInterface();
             DBDataset dataset = getDataset();
-            ddlInterface.updateTrigger(dataset.getSchema().getName(), dataset.getName(), getName(), oldCode, newCode, connection);
-        } finally {
-            connectionHandler.freePoolConnection(connection);
-        }
+            ddlInterface.updateTrigger(
+                    dataset.getSchema().getName(),
+                    dataset.getName(),
+                    getName(),
+                    oldCode,
+                    newCode,
+                    connection);
+        });
     }
 }
