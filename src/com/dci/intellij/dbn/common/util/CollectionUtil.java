@@ -14,6 +14,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.function.Consumer;
@@ -207,7 +208,7 @@ public class CollectionUtil {
             for (int i=0; i < where.size(); i++ ) {
                 String string = where.get(i);
                 if (ignoreCase && StringUtil.equalsIgnoreCase(string, what) ||
-                        (!ignoreCase && StringUtil.equals(string, what))) {
+                        (!ignoreCase && Objects.equals(string, what))) {
                     return i;
                 }
             }
