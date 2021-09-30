@@ -21,8 +21,8 @@ import java.util.function.Supplier;
 import static com.dci.intellij.dbn.environment.Environment.DATABASE_RESOURCE_DEBUG_MODE;
 
 @Slf4j
-public class ResourceUtil {
-    ResourceUtil() {}
+public final class ResourceUtil {
+    private ResourceUtil() {}
 
     public static boolean isClosed(ResultSet resultSet) throws SQLException {
         try {
