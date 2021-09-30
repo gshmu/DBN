@@ -42,6 +42,7 @@ public abstract class DBNResource<T> extends ResourceStatusHolder implements Res
                     Boolean.TRUE) {
                 @Override
                 protected void changeInner(boolean value) throws SQLException {
+                    closeable.set(ResourceStatus.VALID, false);
                     closeable.closeInner();
                 }
 

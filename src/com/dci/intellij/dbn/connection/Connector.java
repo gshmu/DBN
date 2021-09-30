@@ -101,7 +101,7 @@ class Connector {
             }
 
             // DRIVER
-            Driver driver = ResourceUtil.resolveDriver(databaseSettings);
+            Driver driver = ConnectionUtil.resolveDriver(databaseSettings);
             if (driver == null) {
                 throw new SQLException("Could not resolve driver class.");
             }
@@ -161,9 +161,9 @@ class Connector {
             }
 
             DatabaseMetaData metaData = connection.getMetaData();
-            databaseType = ResourceUtil.getDatabaseType(metaData);
+            databaseType = ConnectionUtil.getDatabaseType(metaData);
             databaseSettings.setResolvedDatabaseType(databaseType);
-            databaseSettings.setDatabaseVersion(ResourceUtil.getDatabaseVersion(metaData));
+            databaseSettings.setDatabaseVersion(ConnectionUtil.getDatabaseVersion(metaData));
             databaseSettings.setConnectivityStatus(ConnectivityStatus.VALID);
             DBNConnection conn = DBNConnection.wrap(
                     project,
@@ -177,7 +177,7 @@ class Connector {
             return conn;
 
         } catch (Throwable e) {
-            DatabaseType databaseType = ResourceUtil.getDatabaseType(databaseSettings.getDriver());
+            DatabaseType databaseType = ConnectionUtil.getDatabaseType(databaseSettings.getDriver());
             databaseSettings.setResolvedDatabaseType(databaseType);
             databaseSettings.setConnectivityStatus(ConnectivityStatus.INVALID);
             if (connectionStatus != null) {

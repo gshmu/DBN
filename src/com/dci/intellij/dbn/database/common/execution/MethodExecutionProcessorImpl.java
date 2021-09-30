@@ -141,11 +141,7 @@ public abstract class MethodExecutionProcessorImpl implements MethodExecutionPro
             }
 
             if (options.is(ExecutionOption.COMMIT_AFTER_EXECUTION)) {
-                ResourceUtil.commit(connection);
-            } else {
-                if (targetSessionId == SessionId.POOL) {
-                    ResourceUtil.rollback(connection);
-                }
+                ResourceUtil.commitSilently(connection);
             }
 
             if (connection.isDebugConnection()) {
