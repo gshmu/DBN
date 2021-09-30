@@ -23,9 +23,13 @@ import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiFile;
 import org.jetbrains.annotations.NotNull;
 
-import javax.swing.*;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JTextField;
 import javax.swing.border.LineBorder;
-import java.awt.*;
+import java.awt.BorderLayout;
+import java.util.Objects;
 
 public class DatasetCustomFilterForm extends ConfigurationEditorForm<DatasetCustomFilter> {
     private JPanel mainPanel;
@@ -120,7 +124,7 @@ public class DatasetCustomFilterForm extends ConfigurationEditorForm<DatasetCust
     public void applyFormChanges() throws ConfigurationException {
         DatasetCustomFilter filter = getConfiguration();
         String condition = document.getText().substring(conditionStartOffset);
-        if (condition.equals(COMMENT))
+        if (Objects.equals(condition, COMMENT))
             filter.setCondition(""); else
             filter.setCondition(condition);
         filter.setName(nameTextField.getText());

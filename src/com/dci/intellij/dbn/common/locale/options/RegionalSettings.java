@@ -18,6 +18,7 @@ import org.jdom.Element;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Locale;
+import java.util.Objects;
 
 import static com.dci.intellij.dbn.common.options.setting.SettingsSupport.*;
 
@@ -80,12 +81,12 @@ public class RegionalSettings extends BasicProjectConfiguration<GeneralProjectSe
     @Override
     public void readConfiguration(Element element) {
         String localeString = getString(element, "locale", Locale.getDefault().toString());
-        boolean useSystemLocale = localeString.equals("SYSTEM_DEFAULT");
+        boolean useSystemLocale = Objects.equals(localeString, "SYSTEM_DEFAULT");
         if (useSystemLocale) {
              this.locale = Locale.getDefault();
         } else {
             for (Locale locale : Locale.getAvailableLocales()) {
-                if (locale.toString().equals(localeString)) {
+                if (Objects.equals(locale.toString(), localeString)) {
                     this.locale = locale;
                     break;
                 }

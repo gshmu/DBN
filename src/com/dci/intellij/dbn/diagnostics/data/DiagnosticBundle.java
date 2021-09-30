@@ -6,6 +6,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 @Getter
 public final class DiagnosticBundle {
@@ -38,7 +39,7 @@ public final class DiagnosticBundle {
 
     @Nullable
     private DiagnosticEntry find(String identifier) {
-        return entries.stream().filter(entry -> entry.getIdentifier().equals(identifier)).findFirst().orElseGet(() -> null);
+        return entries.stream().filter(entry -> Objects.equals(entry.getIdentifier(), identifier)).findFirst().orElseGet(() -> null);
     }
 
     public int size() {

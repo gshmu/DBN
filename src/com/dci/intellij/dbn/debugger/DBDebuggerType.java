@@ -3,6 +3,8 @@ package com.dci.intellij.dbn.debugger;
 import com.dci.intellij.dbn.common.ui.Presentable;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.Objects;
+
 public enum DBDebuggerType implements Presentable {
     JDBC("Classic (over JDBC)"),
     JDWP("JDWP (over TCP)"),
@@ -44,7 +46,7 @@ public enum DBDebuggerType implements Presentable {
 
     public static DBDebuggerType get(String name) {
         for (DBDebuggerType debuggerType : DBDebuggerType.values()) {
-            if (debuggerType.name.equals(name) || debuggerType.name().equals(name)) {
+            if (Objects.equals(debuggerType.name, name) || Objects.equals(debuggerType.name(), name)) {
                 return debuggerType;
             }
         }

@@ -8,7 +8,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class DBObjectSelectionHistory implements Disposable{
-    private List<DBObjectRef> history = new ArrayList<DBObjectRef>();
+    private final List<DBObjectRef> history = new ArrayList<>();
     private int offset;
 
     public void add(DBObject object) {

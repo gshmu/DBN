@@ -7,6 +7,7 @@ import java.awt.datatransfer.DataFlavor;
 import java.awt.datatransfer.Transferable;
 import java.awt.datatransfer.UnsupportedFlavorException;
 import java.io.IOException;
+import java.util.Objects;
 
 public class ClipboardUtil {
 
@@ -41,9 +42,9 @@ public class ClipboardUtil {
         public boolean isDataFlavorSupported(DataFlavor flavor) {
             String mimeType = flavor.getMimeType();
             return
-                    "text/xml".equals(mimeType) ||
-                    "text/rtf".equals(mimeType) ||
-                    "text/plain".equals(mimeType);
+                    Objects.equals(mimeType, "text/xml") ||
+                    Objects.equals(mimeType, "text/rtf") ||
+                    Objects.equals(mimeType, "text/plain");
         }
 
         @Override

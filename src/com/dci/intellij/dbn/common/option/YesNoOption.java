@@ -2,6 +2,8 @@ package com.dci.intellij.dbn.common.option;
 
 import org.jetbrains.annotations.NotNull;
 
+import java.util.Objects;
+
 public enum YesNoOption implements InteractiveOption {
     YES("Yes", true),
     NO("No", true);
@@ -33,7 +35,7 @@ public enum YesNoOption implements InteractiveOption {
 
     public static YesNoOption get(String name) {
         for (YesNoOption option : YesNoOption.values()) {
-            if (option.name.equals(name) || option.name().equals(name)) {
+            if (Objects.equals(option.name, name) || Objects.equals(option.name(), name)) {
                 return option;
             }
         }

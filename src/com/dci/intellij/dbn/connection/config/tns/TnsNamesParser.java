@@ -10,6 +10,7 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -23,7 +24,7 @@ public class TnsNamesParser {
                 @Override
                 public boolean value(VirtualFile virtualFile) {
                     String extension = virtualFile.getExtension();
-                    return extension != null && extension.equals("ora");
+                    return Objects.equals(extension, "ora");
                 }
             });
 

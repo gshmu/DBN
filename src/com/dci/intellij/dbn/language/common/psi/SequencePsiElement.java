@@ -18,6 +18,8 @@ import com.intellij.util.Consumer;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.Objects;
+
 public class SequencePsiElement<T extends ElementTypeBase> extends BasePsiElement<T> {
     public SequencePsiElement(ASTNode astNode, T elementType) {
         super(astNode, elementType);
@@ -149,7 +151,7 @@ public class SequencePsiElement<T extends ElementTypeBase> extends BasePsiElemen
                 SequencePsiElement bundlePsiElement = (SequencePsiElement) child;
                 if (bundlePsiElement instanceof NamedPsiElement) {
                     NamedPsiElement namedPsiElement = (NamedPsiElement) bundlePsiElement;
-                    if (namedPsiElement.getElementType().getId().equals(id)) {
+                    if (Objects.equals(namedPsiElement.getElementType().getId(), id)) {
                         return namedPsiElement;
                     }
                 }

@@ -15,6 +15,7 @@ import com.dci.intellij.dbn.database.common.util.CachedResultSetRow;
 import java.sql.DatabaseMetaData;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.Objects;
 
 import static com.dci.intellij.dbn.database.DatabaseInterface.cached;
 import static com.dci.intellij.dbn.database.generic.GenericMetadataTranslators.resolve;
@@ -248,7 +249,7 @@ public interface GenericMetadataLoaders {
                         return new String[]{ownerName, null};
                     } else {
                         CachedResultSet schemasRs = loadSchemasRaw(connection);
-                        CachedResultSetRow schemaRow = schemasRs.first(row -> ownerName.equals(row.get("TABLE_SCHEM")));
+                        CachedResultSetRow schemaRow = schemasRs.first(row -> Objects.equals(ownerName, row.get("TABLE_SCHEM")));
                         String catalogName = schemaRow == null ? null : (String) schemaRow.get("TABLE_CATALOG");
                         return new String[]{catalogName, ownerName};
                     }
@@ -284,7 +285,7 @@ public interface GenericMetadataLoaders {
                 return true;
             } else {
                 CachedResultSet catalogsRs = loadCatalogsRaw(connection);
-                return catalogsRs.exists(row -> catalog.equals(row.get("TABLE_CAT")));
+                return catalogsRs.exists(row -> Objects.equals(catalog, row.get("TABLE_CAT")));
             }
         }
     }

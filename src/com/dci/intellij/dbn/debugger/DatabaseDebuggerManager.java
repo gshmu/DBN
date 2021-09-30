@@ -15,7 +15,15 @@ import com.dci.intellij.dbn.database.DatabaseFeature;
 import com.dci.intellij.dbn.database.DatabaseInterface;
 import com.dci.intellij.dbn.database.common.debug.DebuggerVersionInfo;
 import com.dci.intellij.dbn.debugger.common.breakpoint.DBBreakpointUpdaterFileEditorListener;
-import com.dci.intellij.dbn.debugger.common.config.*;
+import com.dci.intellij.dbn.debugger.common.config.DBMethodRunConfig;
+import com.dci.intellij.dbn.debugger.common.config.DBMethodRunConfigFactory;
+import com.dci.intellij.dbn.debugger.common.config.DBMethodRunConfigType;
+import com.dci.intellij.dbn.debugger.common.config.DBRunConfig;
+import com.dci.intellij.dbn.debugger.common.config.DBRunConfigCategory;
+import com.dci.intellij.dbn.debugger.common.config.DBRunConfigFactory;
+import com.dci.intellij.dbn.debugger.common.config.DBRunConfigType;
+import com.dci.intellij.dbn.debugger.common.config.DBStatementRunConfig;
+import com.dci.intellij.dbn.debugger.common.config.DBStatementRunConfigType;
 import com.dci.intellij.dbn.debugger.common.process.DBProgramRunner;
 import com.dci.intellij.dbn.debugger.jdbc.process.DBMethodJdbcRunner;
 import com.dci.intellij.dbn.debugger.jdbc.process.DBStatementJdbcRunner;
@@ -26,7 +34,11 @@ import com.dci.intellij.dbn.editor.code.SourceCodeManager;
 import com.dci.intellij.dbn.execution.method.MethodExecutionInput;
 import com.dci.intellij.dbn.execution.method.MethodExecutionManager;
 import com.dci.intellij.dbn.execution.statement.processor.StatementExecutionProcessor;
-import com.dci.intellij.dbn.object.*;
+import com.dci.intellij.dbn.object.DBMethod;
+import com.dci.intellij.dbn.object.DBProgram;
+import com.dci.intellij.dbn.object.DBSchema;
+import com.dci.intellij.dbn.object.DBSystemPrivilege;
+import com.dci.intellij.dbn.object.DBUser;
 import com.dci.intellij.dbn.object.common.DBObject;
 import com.dci.intellij.dbn.object.common.DBObjectBundle;
 import com.dci.intellij.dbn.object.common.DBSchemaObject;
@@ -65,6 +77,7 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Objects;
 import java.util.Set;
 
 import static com.dci.intellij.dbn.common.message.MessageCallback.conditional;
@@ -142,12 +155,7 @@ public class DatabaseDebuggerManager extends AbstractProjectComponent implements
     }
 
     private static boolean nameExists(List<RunnerAndConfigurationSettings> configurationSettings, String name) {
-        for (RunnerAndConfigurationSettings configurationSetting : configurationSettings) {
-            if (configurationSetting.getName().equals(name)) {
-                return true;
-            }
-        }
-        return false;
+        return configurationSettings.stream().anyMatch(configurationSetting -> Objects.equals(configurationSetting.getName(), name));
     }
 
     public static boolean isDebugConsole(VirtualFile virtualFile) {

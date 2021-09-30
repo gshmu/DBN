@@ -29,6 +29,8 @@ import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.Objects;
+
 @State(
     name = DBLCodeStyleManager.COMPONENT_NAME,
     storages = @Storage(DatabaseNavigator.STORAGE_FILE)
@@ -97,7 +99,7 @@ public class DBLCodeStyleManager extends AbstractProjectComponent implements Per
                             String text = child.getText();
                             String newText = caseOption.format(text);
 
-                            if (newText != null && !newText.equals(text))
+                            if (newText != null && !Objects.equals(newText, text))
                                 document.replaceString(textRange.getStartOffset(), textRange.getEndOffset(), newText);
 
                         }

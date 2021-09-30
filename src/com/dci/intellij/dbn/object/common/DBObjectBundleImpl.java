@@ -107,6 +107,7 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -340,7 +341,7 @@ public class DBObjectBundleImpl extends BrowserTreeNodeBase implements DBObjectB
     public DBNativeDataType getNativeDataType(String name) {
         String upperCaseName = name.toUpperCase();
         for (DBNativeDataType dataType : getNativeDataTypes()) {
-            if (upperCaseName.equals(dataType.getName())) {
+            if (Objects.equals(upperCaseName, dataType.getName())) {
                 return dataType;
             }
         }

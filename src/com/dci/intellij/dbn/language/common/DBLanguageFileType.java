@@ -12,6 +12,8 @@ import com.intellij.openapi.vfs.VirtualFile;
 import lombok.Getter;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.Objects;
+
 @Getter
 public abstract class DBLanguageFileType extends LanguageFileType implements FileTypeIdentifiableByVirtualFile {
     protected String extension;
@@ -30,7 +32,7 @@ public abstract class DBLanguageFileType extends LanguageFileType implements Fil
     }
 
     public void setExtension(String extension) {
-        if (!this.extension.equals(extension)) {
+        if (!Objects.equals(this.extension, extension)) {
             FileTypeManager fileTypeManager = FileTypeManager.getInstance();
             fileTypeManager.removeAssociatedExtension(this, this.extension);
             this.extension = extension;

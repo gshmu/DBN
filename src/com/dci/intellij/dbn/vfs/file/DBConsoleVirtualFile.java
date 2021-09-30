@@ -31,7 +31,7 @@ import com.intellij.util.LocalTimeCounter;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import javax.swing.*;
+import javax.swing.Icon;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -39,6 +39,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.nio.charset.Charset;
 import java.util.List;
+import java.util.Objects;
 
 public class DBConsoleVirtualFile extends DBObjectVirtualFile<DBConsole> implements DocumentListener, DBParseableVirtualFile, Comparable<DBConsoleVirtualFile> {
     private long modificationTimestamp = LocalTimeCounter.currentTime();
@@ -151,7 +152,7 @@ public class DBConsoleVirtualFile extends DBObjectVirtualFile<DBConsole> impleme
         return false;
     }
 
-    public boolean isDefault() {return name.equals(getConnectionHandler().getName());}
+    public boolean isDefault() {return Objects.equals(name, getConnectionHandler().getName());}
 
     @Override
     public VirtualFile getParent() {

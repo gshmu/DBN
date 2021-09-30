@@ -15,8 +15,9 @@ import com.intellij.util.ui.UIUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import javax.swing.*;
-import java.awt.*;
+import javax.swing.UIManager;
+import java.awt.Color;
+import java.util.Objects;
 
 import static com.dci.intellij.dbn.common.util.CommonUtil.nvlf;
 
@@ -92,7 +93,7 @@ public interface Colors {
             ApplicationEvents.subscribe(null, EditorColorsManager.TOPIC, scheme -> COLORS.reset());
 
             UIManager.addPropertyChangeListener(evt -> {
-                if ("lookAndFeel".equals(evt.getPropertyName())) {
+                if (Objects.equals(evt.getPropertyName(), "lookAndFeel")) {
                     COLORS.reset();
                 }
             });
@@ -112,7 +113,7 @@ public interface Colors {
         ApplicationEvents.subscribe(parentDisposable, EditorColorsManager.TOPIC, scheme -> runnable.run());
 
         UIManager.addPropertyChangeListener(evt -> {
-            if ("lookAndFeel".equals(evt.getPropertyName())) {
+            if (Objects.equals(evt.getPropertyName(), "lookAndFeel")) {
                 Safe.run(runnable);
             }
         });

@@ -2,6 +2,7 @@ package com.dci.intellij.dbn.language.common.element.util;
 
 import com.dci.intellij.dbn.common.property.PropertyHolderImpl;
 
+import java.util.Objects;
 import java.util.StringTokenizer;
 
 public class ElementTypeAttributeHolder extends PropertyHolderImpl<ElementTypeAttribute>{
@@ -17,7 +18,7 @@ public class ElementTypeAttributeHolder extends PropertyHolderImpl<ElementTypeAt
             String attributeName = tokenizer.nextToken().trim();
             boolean found = false;
             for (ElementTypeAttribute attribute : ElementTypeAttribute.values()) {
-                if (attribute.getName().equals(attributeName)) {
+                if (Objects.equals(attribute.getName(), attributeName)) {
                     set(attribute, true);
                     found = true;
                     break;

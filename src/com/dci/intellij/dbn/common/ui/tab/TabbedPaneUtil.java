@@ -2,9 +2,11 @@ package com.dci.intellij.dbn.common.ui.tab;
 
 import com.intellij.ui.tabs.TabInfo;
 
-import javax.swing.*;
+import javax.swing.Icon;
+import javax.swing.JTabbedPane;
 import javax.swing.plaf.TabbedPaneUI;
-import java.awt.*;
+import java.awt.Component;
+import java.util.Objects;
 
 public class TabbedPaneUtil {
     public static void setSelectComponentTab(Component component) {
@@ -54,7 +56,7 @@ public class TabbedPaneUtil {
     public static void selectTab(TabbedPane tabbedPane, String tabName) {
         if (tabName != null) {
             for (TabInfo tabInfo : tabbedPane.getTabs()) {
-                if (tabInfo.getText().equals(tabName)) {
+                if (Objects.equals(tabInfo.getText(), tabName)) {
                     tabbedPane.select(tabInfo, false);
                     return;
                 }

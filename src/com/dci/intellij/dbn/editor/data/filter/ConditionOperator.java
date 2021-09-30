@@ -4,6 +4,7 @@ import com.dci.intellij.dbn.common.ui.Presentable;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Date;
+import java.util.Objects;
 
 public enum ConditionOperator implements Presentable {
     EQUAL("=", false),
@@ -118,7 +119,7 @@ public enum ConditionOperator implements Presentable {
 
     public static ConditionOperator get(String text) {
         for (ConditionOperator operator : ConditionOperator.values()) {
-            if (operator.text.equals(text)) return operator;
+            if (Objects.equals(operator.text, text)) return operator;
         }
 
         return null;

@@ -2,6 +2,8 @@ package com.dci.intellij.dbn.language.common;
 
 import lombok.Getter;
 
+import java.util.Objects;
+
 @Getter
 public enum TokenTypeCategory {
     UNKNOWN("unknown"),
@@ -29,7 +31,7 @@ public enum TokenTypeCategory {
 
     public static TokenTypeCategory getCategory(String categoryName) {
         for (TokenTypeCategory identifier : TokenTypeCategory.values()) {
-            if (identifier.name.equals(categoryName)) return identifier;
+            if (Objects.equals(identifier.name, categoryName)) return identifier;
         }
         return UNKNOWN;
     }

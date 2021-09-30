@@ -46,7 +46,7 @@ public class DBDataTypeMetadataImpl extends DBObjectMetadataBase implements DBDa
     }
 
     public boolean isSet() throws SQLException {
-        return "Y".equals(getString(prefix + "IS_SET"));
+        return isYesFlag(prefix + "IS_SET");
     }
 
     public DBDataTypeMetadataImpl collection() {

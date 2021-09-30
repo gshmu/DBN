@@ -11,6 +11,7 @@ import lombok.Setter;
 import org.jdom.Element;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.Objects;
 import java.util.UUID;
 
 import static com.dci.intellij.dbn.common.options.setting.SettingsSupport.booleanAttribute;
@@ -67,8 +68,8 @@ public abstract class DatasetFilterImpl extends BasicConfiguration<DatasetFilter
         if (this == obj) return true;
         if (obj instanceof DatasetFilter) {
             DatasetFilter remote = (DatasetFilter) obj;
-            return remote.getFilterGroup().equals(filterGroup) &&
-                   remote.getId().equals(id);
+            return Objects.equals(remote.getFilterGroup(), filterGroup) &&
+                   Objects.equals(remote.getId(), id);
         }
         return false;
     }

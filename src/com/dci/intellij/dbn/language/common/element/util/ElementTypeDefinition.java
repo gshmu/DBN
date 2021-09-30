@@ -1,5 +1,10 @@
 package com.dci.intellij.dbn.language.common.element.util;
 
+import lombok.Getter;
+
+import java.util.Objects;
+
+@Getter
 public enum ElementTypeDefinition {
 
     SEQUENCE("sequence"),
@@ -22,14 +27,10 @@ public enum ElementTypeDefinition {
         this.name = name;
     }
 
-    private String name;
-
-    public String getName() {
-        return name;
-    }
+    private final String name;
 
     public boolean is(String name) {
-        return this.name.equals(name);
+        return Objects.equals(this.name, name);
     }
 }
 

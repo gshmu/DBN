@@ -21,7 +21,7 @@ public class StatementExecutionVariable extends VariableValueProvider implements
     private GenericDataType dataType;
     private String name;
     private int offset;
-    private MostRecentStack<String> valueHistory = new MostRecentStack<String>();
+    private MostRecentStack<String> valueHistory = new MostRecentStack<>();
     private VariableValueProvider previewValueProvider;
     private boolean useNull;
 
@@ -36,7 +36,7 @@ public class StatementExecutionVariable extends VariableValueProvider implements
     }
 
     public StatementExecutionVariable(ExecVariablePsiElement variablePsiElement) {
-        this.name = variablePsiElement.getText();
+        this.name = variablePsiElement.getText().intern();
         this.offset = variablePsiElement.getTextOffset();
     }
 

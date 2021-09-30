@@ -26,7 +26,10 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.Set;
+
+import static com.dci.intellij.dbn.common.options.setting.SettingsSupport.stringAttribute;
 
 public class TokenElementType extends LeafElementType implements LookupItemBuilderProvider {
     public static final String SEPARATOR = "SEPARATOR";
@@ -39,13 +42,13 @@ public class TokenElementType extends LeafElementType implements LookupItemBuild
 
     public TokenElementType(ElementTypeBundle bundle, ElementTypeBase parent, String id, Element def) throws ElementTypeDefinitionException {
         super(bundle, parent, id, def);
-        String typeId = def.getAttributeValue("type-id");
-        text = def.getAttributeValue("text");
+        String typeId = stringAttribute(def, "type-id");
+        text = stringAttribute(def, "text");
         TokenType tokenType = bundle.getTokenTypeBundle().getTokenType(typeId);
         setTokenType(tokenType);
         setDefaultFormatting(tokenType.getFormatting());
 
-        String flavorName = def.getAttributeValue("flavor");
+        String flavorName = stringAttribute(def, "flavor");
         if (StringUtil.isNotEmpty(flavorName)) {
             flavor = TokenTypeCategory.getCategory(flavorName);
         }
@@ -121,7 +124,7 @@ public class TokenElementType extends LeafElementType implements LookupItemBuild
     }
 
     public boolean isIterationSeparator() {
-        return getId().equals(SEPARATOR);
+        return Objects.equals(getId(), SEPARATOR);
     }
 
     @Override

@@ -5,6 +5,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.sql.Driver;
 import java.util.List;
+import java.util.Objects;
 
 public class DriverOption implements Presentable {
     private Driver driver;
@@ -25,7 +26,7 @@ public class DriverOption implements Presentable {
 
     public static DriverOption get(List<DriverOption> driverOptions, String name) {
         for (DriverOption driverOption : driverOptions) {
-            if (driverOption.getName().equals(name)) {
+            if (Objects.equals(driverOption.getName(), name)) {
                 return driverOption;
             }
         }

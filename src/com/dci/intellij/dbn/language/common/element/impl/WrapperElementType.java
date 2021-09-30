@@ -15,6 +15,8 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 
+import static com.dci.intellij.dbn.common.options.setting.SettingsSupport.stringAttribute;
+
 public class WrapperElementType extends ElementTypeBase {
     private WrappingDefinition wrappingDefinition;
     private ElementTypeBase wrappedElement;
@@ -28,13 +30,13 @@ public class WrapperElementType extends ElementTypeBase {
     protected void loadDefinition(Element def) throws ElementTypeDefinitionException {
         super.loadDefinition(def);
         ElementTypeBundle bundle = getElementBundle();
-        String templateId = def.getAttributeValue("template");
+        String templateId = stringAttribute(def, "template");
 
         TokenElementType beginTokenElement;
         TokenElementType endTokenElement;
         if (StringUtil.isEmpty(templateId)) {
-            String startTokenId = def.getAttributeValue("begin-token");
-            String endTokenId = def.getAttributeValue("end-token");
+            String startTokenId = stringAttribute(def, "begin-token");
+            String endTokenId = stringAttribute(def, "end-token");
 
             beginTokenElement = new TokenElementType(bundle, this, startTokenId, "begin-token");
             endTokenElement = new TokenElementType(bundle, this, endTokenId, "end-token");

@@ -17,6 +17,7 @@ import org.jetbrains.annotations.Nullable;
 
 import javax.swing.Icon;
 import java.awt.Color;
+import java.util.Objects;
 
 import static com.dci.intellij.dbn.common.options.setting.SettingsSupport.*;
 
@@ -59,7 +60,7 @@ public class EnvironmentType implements Cloneable<EnvironmentType>, PersistentCo
 
     public static EnvironmentType forName(String name) {
         for (EnvironmentType environmentType : DEFAULT_ENVIRONMENT_TYPES){
-            if (environmentType.name.equals(name)) {
+            if (Objects.equals(environmentType.name, name)) {
                 return environmentType;
             }
         }

@@ -5,6 +5,7 @@ import com.dci.intellij.dbn.database.sqlite.adapter.SqliteMetadataResultSetRow;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.Objects;
 
 import static com.dci.intellij.dbn.database.sqlite.adapter.SqliteRawMetaData.RawForeignKeyInfo;
 import static com.dci.intellij.dbn.database.sqlite.adapter.SqliteRawMetaData.RawTableInfo;
@@ -82,25 +83,25 @@ public abstract class SqliteColumnsResultSet extends SqliteDatasetInfoResultSetS
     public String getString(String columnLabel) throws SQLException {
         Column element = current();
             return
-                columnLabel.equals("DATASET_NAME") ? element.datasetName :
-                columnLabel.equals("COLUMN_NAME") ? element.columnName :
-                columnLabel.equals("DATA_TYPE_NAME") ? element.dataTypeName :
-                columnLabel.equals("IS_FOREIGN_KEY") ? toFlag(element.foreignKey) :
-                columnLabel.equals("IS_UNIQUE_KEY") ? toFlag(element.uniqueKey) :
-                columnLabel.equals("IS_HIDDEN") ? "N" :
-                columnLabel.equals("IS_SET") ? "N" :
-                columnLabel.equals("IS_NULLABLE") ? toFlag(element.nullable) :
-                columnLabel.equals("IS_PRIMARY_KEY") ? toFlag(element.primaryKey) : null;
+                Objects.equals(columnLabel, "DATASET_NAME") ? element.datasetName :
+                Objects.equals(columnLabel, "COLUMN_NAME") ? element.columnName :
+                Objects.equals(columnLabel, "DATA_TYPE_NAME") ? element.dataTypeName :
+                Objects.equals(columnLabel, "IS_FOREIGN_KEY") ? toFlag(element.foreignKey) :
+                Objects.equals(columnLabel, "IS_UNIQUE_KEY") ? toFlag(element.uniqueKey) :
+                Objects.equals(columnLabel, "IS_HIDDEN") ? "N" :
+                Objects.equals(columnLabel, "IS_SET") ? "N" :
+                Objects.equals(columnLabel, "IS_NULLABLE") ? toFlag(element.nullable) :
+                Objects.equals(columnLabel, "IS_PRIMARY_KEY") ? toFlag(element.primaryKey) : null;
     }
 
     @Override
     public short getShort(String columnLabel) throws SQLException {
         Column element = current();
         return(short) (
-                columnLabel.equals("POSITION") ? element.position :
-                columnLabel.equals("DATA_LENGTH") ? element.dataLength :
-                columnLabel.equals("DATA_PRECISION") ? element.dataPrecision :
-                columnLabel.equals("DATA_SCALE") ? element.dataScale : 0);
+                Objects.equals(columnLabel, "POSITION") ? element.position :
+                Objects.equals(columnLabel, "DATA_LENGTH") ? element.dataLength :
+                Objects.equals(columnLabel, "DATA_PRECISION") ? element.dataPrecision :
+                Objects.equals(columnLabel, "DATA_SCALE") ? element.dataScale : 0);
     }
 
 
@@ -108,10 +109,10 @@ public abstract class SqliteColumnsResultSet extends SqliteDatasetInfoResultSetS
     public int getInt(String columnLabel) throws SQLException {
         Column element = current();
         return
-            columnLabel.equals("POSITION") ? element.position :
-            columnLabel.equals("DATA_LENGTH") ? element.dataLength :
-            columnLabel.equals("DATA_PRECISION") ? element.dataPrecision :
-            columnLabel.equals("DATA_SCALE") ? element.dataScale : 0;
+            Objects.equals(columnLabel, "POSITION") ? element.position :
+            Objects.equals(columnLabel, "DATA_LENGTH") ? element.dataLength :
+            Objects.equals(columnLabel, "DATA_PRECISION") ? element.dataPrecision :
+            Objects.equals(columnLabel, "DATA_SCALE") ? element.dataScale : 0;
     }
 
     @Override

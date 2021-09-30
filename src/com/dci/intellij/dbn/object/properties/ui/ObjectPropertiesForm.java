@@ -25,6 +25,7 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
+import java.util.Objects;
 import java.util.concurrent.atomic.AtomicReference;
 
 public class ObjectPropertiesForm extends DBNFormImpl {
@@ -82,7 +83,7 @@ public class ObjectPropertiesForm extends DBNFormImpl {
 
     public void setObject(@NotNull DBObject object) {
         DBObject localObject = getObject();
-        if (!object.equals(localObject)) {
+        if (!Objects.equals(object, localObject)) {
             this.object = DBObjectRef.of(object);
             Project project = object.getProject();
             Progress.background(project, "Rendering object properties", refreshHandle, progress -> {

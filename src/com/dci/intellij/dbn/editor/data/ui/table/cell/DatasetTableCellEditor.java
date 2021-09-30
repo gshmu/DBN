@@ -20,11 +20,13 @@
  import com.intellij.util.ui.UIUtil;
  import org.jetbrains.annotations.NotNull;
 
- import javax.swing.*;
+ import javax.swing.JTextField;
  import javax.swing.border.Border;
  import javax.swing.border.LineBorder;
  import javax.swing.text.Document;
- import java.awt.*;
+ import java.awt.Cursor;
+ import java.awt.MouseInfo;
+ import java.awt.Point;
  import java.awt.event.KeyEvent;
  import java.awt.event.KeyListener;
  import java.awt.event.MouseAdapter;
@@ -32,6 +34,7 @@
  import java.awt.event.MouseListener;
  import java.awt.event.MouseMotionAdapter;
  import java.awt.event.MouseMotionListener;
+ import java.util.Objects;
 
  public class DatasetTableCellEditor extends AbstractDatasetTableCellEditor implements KeyListener{
     private static final Border ERROR_BORDER = new LineBorder(JBColor.RED, 1);
@@ -116,7 +119,7 @@
                 checkDisposed();
                 // select all only if the text didn't change
                 if (settings.getGeneralSettings().getSelectContentOnCellEdit().value()) {
-                    if (originalText.equals(textField.getText())) {
+                    if (Objects.equals(originalText, textField.getText())) {
                         textField.grabFocus();
                         textField.selectAll();
                     }

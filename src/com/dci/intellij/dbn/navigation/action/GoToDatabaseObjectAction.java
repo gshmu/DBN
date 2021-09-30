@@ -39,6 +39,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 public class GoToDatabaseObjectAction extends GotoActionBase implements DumbAware {
     private ConnectionId latestConnectionId;
@@ -92,7 +93,7 @@ public class GoToDatabaseObjectAction extends GotoActionBase implements DumbAwar
                                 } else if (preselect instanceof SelectSchemaAction) {
                                     SelectSchemaAction selectSchemaAction = (SelectSchemaAction) preselect;
                                     DBSchema object = selectSchemaAction.getTarget();
-                                    return object != null && latestSchemaName.equals(object.getName());
+                                    return object != null && Objects.equals(latestSchemaName, object.getName());
                                 }
                                 return false;
                             });
@@ -221,8 +222,8 @@ public class GoToDatabaseObjectAction extends GotoActionBase implements DumbAwar
         if (predefinedText == null) {
             if (isValidPredefinedText(clipboardText)) {
                 if (StringUtil.isNotEmpty(latestUsedText) &&
-                        clipboardText.equals(latestClipboardText) &&
-                        !latestUsedText.equals(clipboardText)) {
+                        Objects.equals(clipboardText, latestClipboardText) &&
+                        !Objects.equals(latestUsedText, clipboardText)) {
 
                     predefinedText = latestUsedText;
                 } else {

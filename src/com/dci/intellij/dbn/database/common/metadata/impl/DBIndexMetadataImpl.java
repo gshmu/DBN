@@ -21,11 +21,11 @@ public class DBIndexMetadataImpl extends DBObjectMetadataBase implements DBIndex
     }
 
     public boolean isUnique() throws SQLException {
-        return getString("IS_UNIQUE").equals("Y");
+        return isYesFlag("IS_UNIQUE");
     }
 
     public boolean isValid() throws SQLException {
-        return getString("IS_VALID").equals("Y");
+        return isYesFlag("IS_VALID");
     }
 
 }

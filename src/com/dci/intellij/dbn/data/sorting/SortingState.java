@@ -10,6 +10,7 @@ import org.jdom.Element;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 import static com.dci.intellij.dbn.common.options.setting.SettingsSupport.integerAttribute;
 import static com.dci.intellij.dbn.common.options.setting.SettingsSupport.stringAttribute;
@@ -67,12 +68,11 @@ public class SortingState implements PersistentStateElement, Cloneable<SortingSt
     }
 
     private SortingInstruction getInstruction(String columnName) {
-        for (SortingInstruction instruction : sortingInstructions) {
-            if (instruction.getColumnName().equals(columnName)) {
-                return instruction;
-            }
-        }
-        return null;
+        return sortingInstructions
+                .stream()
+                .filter(instruction -> Objects.equals(instruction.getColumnName(), columnName))
+                .findFirst()
+                .orElse(null);
     }
 
     public void clear() {

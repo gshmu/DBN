@@ -15,6 +15,7 @@ import lombok.Setter;
 import org.jdom.Element;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.Objects;
 import java.util.Set;
 
 @Getter
@@ -99,7 +100,7 @@ public class CodeCompletionFilterSettings
     @Override
     public boolean acceptsObject(DBSchema schema, DBSchema currentSchema, DBObjectType objectType) {
         boolean isPublic = schema.isPublicSchema();
-        boolean isCurrent = schema.equals(currentSchema);
+        boolean isCurrent = Objects.equals(schema, currentSchema);
         return
             (isPublic && acceptsPublicSchemaObject(objectType)) ||
             (isCurrent && acceptsCurrentSchemaObject(objectType)) ||

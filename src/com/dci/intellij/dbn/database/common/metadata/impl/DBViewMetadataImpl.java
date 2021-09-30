@@ -25,6 +25,6 @@ public class DBViewMetadataImpl extends DBObjectMetadataBase implements DBViewMe
     }
 
     public boolean isSystemView() throws SQLException {
-        return getString("IS_SYSTEM_VIEW").equals("Y");
+        return isYesFlag("IS_SYSTEM_VIEW");
     }
 }

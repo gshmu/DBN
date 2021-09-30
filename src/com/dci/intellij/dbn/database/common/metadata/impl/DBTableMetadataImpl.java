@@ -17,7 +17,7 @@ public class DBTableMetadataImpl extends DBObjectMetadataBase implements DBTable
     }
 
     public boolean isTemporary() throws SQLException {
-        return getString("IS_TEMPORARY").equals("Y");
+        return isYesFlag("IS_TEMPORARY");
     }
 
 }

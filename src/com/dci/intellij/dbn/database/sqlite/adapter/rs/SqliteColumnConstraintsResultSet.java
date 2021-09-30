@@ -6,10 +6,9 @@ import com.dci.intellij.dbn.database.sqlite.adapter.SqliteMetadataResultSetRow;
 import java.sql.SQLException;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
-import static com.dci.intellij.dbn.database.sqlite.adapter.rs.SqliteConstraintInfoResultSetStub.SqliteConstraintsLoader.ConstraintColumnInfo;
-import static com.dci.intellij.dbn.database.sqlite.adapter.rs.SqliteConstraintInfoResultSetStub.SqliteConstraintsLoader.ConstraintType;
-import static com.dci.intellij.dbn.database.sqlite.adapter.rs.SqliteConstraintInfoResultSetStub.SqliteConstraintsLoader.getConstraintName;
+import static com.dci.intellij.dbn.database.sqlite.adapter.rs.SqliteConstraintInfoResultSetStub.SqliteConstraintsLoader.*;
 
 /**
  * COLUMN_NAME
@@ -72,21 +71,21 @@ public abstract class SqliteColumnConstraintsResultSet extends SqliteConstraintI
     @Override
     public String getString(String columnLabel) throws SQLException {
         ConstraintColumn element = current();
-        return columnLabel.equals("CONSTRAINT_NAME") ? element.constraintName :
-               columnLabel.equals("COLUMN_NAME") ? element.columnName :
-               columnLabel.equals("DATASET_NAME") ? element.datasetName : null;
+        return Objects.equals(columnLabel, "CONSTRAINT_NAME") ? element.constraintName :
+               Objects.equals(columnLabel, "COLUMN_NAME") ? element.columnName :
+               Objects.equals(columnLabel, "DATASET_NAME") ? element.datasetName : null;
     }
 
     @Override
     public short getShort(String columnLabel) throws SQLException {
         ConstraintColumn element = current();
-        return (short) (columnLabel.equals("POSITION") ? element.position : 0);
+        return (short) (Objects.equals(columnLabel, "POSITION") ? element.position : 0);
     }
 
     @Override
     public int getInt(String columnLabel) throws SQLException {
         ConstraintColumn element = current();
-        return columnLabel.equals("POSITION") ? element.position : 0;
+        return Objects.equals(columnLabel, "POSITION") ? element.position : 0;
     }
 
     static class ConstraintColumn implements SqliteMetadataResultSetRow<ConstraintColumn> {

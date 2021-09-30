@@ -10,6 +10,7 @@ import com.intellij.psi.PsiFile;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.Objects;
 import java.util.StringTokenizer;
 
 public class DBLanguageElementSignatureProvider implements ElementSignatureProvider {
@@ -50,7 +51,7 @@ public class DBLanguageElementSignatureProvider implements ElementSignatureProvi
 
                 PsiElement psiElement = psifile.findElementAt(startOffset);
                 if (psiElement instanceof PsiComment) {
-                    if (id.equals("comment") && endOffset == startOffset + psiElement.getTextLength()) {
+                    if (Objects.equals(id, "comment") && endOffset == startOffset + psiElement.getTextLength()) {
                         return psiElement;
                     }
                 }
@@ -63,7 +64,7 @@ public class DBLanguageElementSignatureProvider implements ElementSignatureProvi
                     }
                     if (psiElement instanceof BasePsiElement) {
                         BasePsiElement basePsiElement = (BasePsiElement) psiElement;
-                        if (basePsiElement.getElementType().getId().equals(id) &&
+                        if (Objects.equals(basePsiElement.getElementType().getId(), id) &&
                                 elementStartOffset == startOffset &&
                                 elementEndOffset == endOffset) {
                             return basePsiElement;

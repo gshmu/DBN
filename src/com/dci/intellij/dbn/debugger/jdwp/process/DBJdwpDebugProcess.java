@@ -62,6 +62,7 @@ import org.jetbrains.annotations.Nullable;
 import java.net.Inet4Address;
 import java.sql.SQLException;
 import java.util.List;
+import java.util.Objects;
 
 import static com.dci.intellij.dbn.debugger.common.process.DBDebugProcessStatus.*;
 
@@ -369,7 +370,7 @@ public abstract class DBJdwpDebugProcess<T extends ExecutionInput>
                 sourceUrl = location.sourcePath();
                 DBJdwpSourcePath sourcePath = DBJdwpSourcePath.from(sourceUrl);
                 String programType = sourcePath.getProgramType();
-                if (!programType.equals("Block")) {
+                if (!Objects.equals(programType, "Block")) {
                     String schemaName = sourcePath.getProgramOwner();
                     String programName = sourcePath.getProgramName();
                     DBSchema schema = getConnectionHandler().getObjectBundle().getSchema(schemaName);
@@ -377,7 +378,7 @@ public abstract class DBJdwpDebugProcess<T extends ExecutionInput>
                         DBProgram program = schema.getProgram(programName);
                         if (program != null) {
                             DBEditableObjectVirtualFile editableVirtualFile = program.getEditableVirtualFile();
-                            DBContentType contentType = "PackageBody".equals(programType) ? DBContentType.CODE_BODY : DBContentType.CODE_SPEC;
+                            DBContentType contentType = Objects.equals(programType, "PackageBody") ? DBContentType.CODE_BODY : DBContentType.CODE_SPEC;
                             return editableVirtualFile.getContentFile(contentType);
                         } else {
                             DBMethod method = schema.getMethod(programName, (short) 0);

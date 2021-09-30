@@ -14,9 +14,13 @@ import com.intellij.ui.JBColor;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import javax.swing.*;
+import javax.swing.JComponent;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JTextField;
 import javax.swing.event.DocumentEvent;
-import java.awt.*;
+import java.awt.BorderLayout;
+import java.util.Objects;
 import java.util.Set;
 
 public class CreateRenameConsoleForm extends DBNFormImpl{
@@ -73,7 +77,7 @@ public class CreateRenameConsoleForm extends DBNFormImpl{
 
 
                 errorLabel.setVisible(errorText != null);
-                parent.getOKAction().setEnabled(errorText == null && (console == null || !console.getName().equals(text)));
+                parent.getOKAction().setEnabled(errorText == null && (console == null || !Objects.equals(console.getName(), text)));
                 if (errorText != null) {
                     errorLabel.setText(errorText);
                 }

@@ -2,6 +2,8 @@ package com.dci.intellij.dbn.common.cache;
 
 import org.jetbrains.annotations.NotNull;
 
+import java.util.Objects;
+
 public class CacheKey<T> {
     private String key;
 
@@ -15,8 +17,7 @@ public class CacheKey<T> {
         if (o == null || getClass() != o.getClass()) return false;
 
         CacheKey<?> cacheKey = (CacheKey<?>) o;
-
-        return key.equals(cacheKey.key);
+        return Objects.equals(key, cacheKey.key);
 
     }
 

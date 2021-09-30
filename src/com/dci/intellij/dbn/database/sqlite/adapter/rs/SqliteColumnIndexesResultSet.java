@@ -6,6 +6,7 @@ import com.dci.intellij.dbn.database.sqlite.adapter.SqliteMetadataResultSetRow;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.Objects;
 
 import static com.dci.intellij.dbn.database.sqlite.adapter.SqliteRawMetaData.RawIndexDetailInfo;
 import static com.dci.intellij.dbn.database.sqlite.adapter.SqliteRawMetaData.RawIndexInfo;
@@ -66,21 +67,21 @@ public abstract class SqliteColumnIndexesResultSet extends SqliteDatasetInfoResu
     @Override
     public String getString(String columnLabel) throws SQLException {
         IndexColumn element = current();
-        return columnLabel.equals("INDEX_NAME") ? element.indexName :
-               columnLabel.equals("COLUMN_NAME") ? element.columnName :
-               columnLabel.equals("TABLE_NAME") ? element.tableName : null;
+        return Objects.equals(columnLabel, "INDEX_NAME") ? element.indexName :
+               Objects.equals(columnLabel, "COLUMN_NAME") ? element.columnName :
+               Objects.equals(columnLabel, "TABLE_NAME") ? element.tableName : null;
     }
 
     @Override
     public short getShort(String columnLabel) throws SQLException {
         IndexColumn element = current();
-        return (short) (columnLabel.equals("POSITION") ? element.position : 0);
+        return (short) (Objects.equals(columnLabel, "POSITION") ? element.position : 0);
     }
 
     @Override
     public int getInt(String columnLabel) throws SQLException {
         IndexColumn element = current();
-        return columnLabel.equals("POSITION") ? element.position : 0;
+        return Objects.equals(columnLabel, "POSITION") ? element.position : 0;
     }
 
     public static class IndexColumn implements SqliteMetadataResultSetRow<IndexColumn> {

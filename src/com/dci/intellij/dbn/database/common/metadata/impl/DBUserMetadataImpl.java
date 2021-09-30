@@ -17,10 +17,10 @@ public class DBUserMetadataImpl extends DBObjectMetadataBase implements DBUserMe
     }
 
     public boolean isExpired() throws SQLException {
-        return getString("IS_EXPIRED").equals("Y");
+        return isYesFlag("IS_EXPIRED");
     }
 
     public boolean isLocked() throws SQLException {
-        return getString("IS_LOCKED").equals("Y");
+        return isYesFlag("IS_LOCKED");
     }
 }

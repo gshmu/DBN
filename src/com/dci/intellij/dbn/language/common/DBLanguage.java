@@ -13,6 +13,8 @@ import com.intellij.psi.tree.IFileElementType;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.Objects;
+
 public abstract class DBLanguage<D extends DBLanguageDialect> extends Language implements DBFileElementTypeProvider {
 
     private final Latent<D[]> languageDialects = Latent.basic(() -> createLanguageDialects());
@@ -54,7 +56,7 @@ public abstract class DBLanguage<D extends DBLanguageDialect> extends Language i
 
     public D getLanguageDialect(DBLanguageDialectIdentifier id) {
         for (D languageDialect: getAvailableLanguageDialects()) {
-            if (languageDialect.getID().equals(id.getValue())) {
+            if (Objects.equals(languageDialect.getID(), id.getValue())) {
                 return languageDialect;
             }
         }

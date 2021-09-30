@@ -31,8 +31,11 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import javax.swing.Icon;
+import java.util.Objects;
 import java.util.Set;
 import java.util.StringTokenizer;
+
+import static com.dci.intellij.dbn.common.options.setting.SettingsSupport.stringAttribute;
 
 @Slf4j
 @Getter
@@ -74,9 +77,9 @@ public abstract class ElementTypeBase extends IElementType implements ElementTyp
     ElementTypeBase(@NotNull ElementTypeBundle bundle, ElementTypeBase parent, String id, @NotNull Element def) throws ElementTypeDefinitionException {
         super(id, bundle.getLanguageDialect(), false);
         idx = TokenType.INDEXER.incrementAndGet();
-        String defId = def.getAttributeValue("id");
+        String defId = stringAttribute(def, "id");
         this.hashCode = id.hashCode();
-        if (!id.equals(defId)) {
+        if (!Objects.equals(id, defId)) {
             defId = id;
             def.setAttribute("id", defId);
             bundle.markIndexesDirty();
@@ -84,7 +87,7 @@ public abstract class ElementTypeBase extends IElementType implements ElementTyp
         this.id = defId.intern();
         this.bundle = bundle;
         this.parent = parent;
-        if (StringUtil.isNotEmpty(def.getAttributeValue("exit")) && !(parent instanceof SequenceElementType)) {
+        if (StringUtil.isNotEmpty(stringAttribute(def,"exit")) && !(parent instanceof SequenceElementType)) {
             log.warn('[' + getLanguageDialect().getID() + "] Invalid element attribute 'exit'. (id=" + this.id + "). Attribute is only allowed for direct child of sequence element");
         }
         loadDefinition(def);
@@ -132,12 +135,12 @@ public abstract class ElementTypeBase extends IElementType implements ElementTyp
     }
 
     protected void loadDefinition(Element def) throws ElementTypeDefinitionException {
-        String attributesString = def.getAttributeValue("attributes");
+        String attributesString = stringAttribute(def, "attributes");
         if (StringUtil.isNotEmptyOrSpaces(attributesString)) {
             attributes =  new ElementTypeAttributeHolder(attributesString);
         }
 
-        String objectTypeName = def.getAttributeValue("virtual-object");
+        String objectTypeName = stringAttribute(def, "virtual-object");
         if (objectTypeName != null) {
             virtualObjectType = ElementTypeBundle.resolveObjectType(objectTypeName);
         }
@@ -146,10 +149,10 @@ public abstract class ElementTypeBase extends IElementType implements ElementTyp
             setDefaultFormatting(STATEMENT_FORMATTING);
         }
 
-        String iconKey = def.getAttributeValue("icon");
+        String iconKey = stringAttribute(def, "icon");
         if (iconKey != null)  icon = Icons.getIcon(iconKey);
 
-        String branchDef = def.getAttributeValue("branch");
+        String branchDef = stringAttribute(def, "branch");
         if (branchDef != null) {
             branch = new Branch(branchDef);
         }
@@ -158,12 +161,12 @@ public abstract class ElementTypeBase extends IElementType implements ElementTyp
     }
 
     private void loadWrappingAttributes(Element def) {
-        String templateId = def.getAttributeValue("wrapping-template");
+        String templateId = stringAttribute(def, "wrapping-template");
         TokenElementType beginTokenElement = null;
         TokenElementType endTokenElement = null;
         if (StringUtil.isEmpty(templateId)) {
-            String beginTokenId = def.getAttributeValue("wrapping-begin-token");
-            String endTokenId = def.getAttributeValue("wrapping-end-token");
+            String beginTokenId = stringAttribute(def, "wrapping-begin-token");
+            String endTokenId = stringAttribute(def, "wrapping-end-token");
 
             if (StringUtil.isNotEmpty(beginTokenId) && StringUtil.isNotEmpty(endTokenId)) {
                 beginTokenElement = new TokenElementType(bundle, this, beginTokenId, id);
@@ -255,10 +258,10 @@ public abstract class ElementTypeBase extends IElementType implements ElementTyp
     }
 
     protected boolean getBooleanAttribute(Element element, String attributeName) {
-        String attributeValue = element.getAttributeValue(attributeName);
+        String attributeValue = stringAttribute(element, attributeName);
         if (StringUtil.isNotEmpty(attributeValue)) {
-            if (attributeValue.equals("true")) return true;
-            if (attributeValue.equals("false")) return false;
+            if (Objects.equals(attributeValue, "true")) return true;
+            if (Objects.equals(attributeValue, "false")) return false;
             log.warn('[' + getLanguageDialect().getID() + "] Invalid element boolean attribute '" + attributeName + "' (id=" + this.id + "). Expected 'true' or 'false'");
         }
         return false;

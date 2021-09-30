@@ -4,11 +4,15 @@ import com.dci.intellij.dbn.common.ui.GUIUtil;
 import com.dci.intellij.dbn.common.ui.table.DBNTableGutter;
 import org.jetbrains.annotations.NotNull;
 
-import javax.swing.*;
+import javax.swing.ListCellRenderer;
+import javax.swing.ListSelectionModel;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.table.TableCellEditor;
-import java.awt.*;
+import java.awt.Component;
+import java.awt.Font;
+import java.awt.Rectangle;
 import java.awt.event.FocusEvent;
+import java.util.Objects;
 
 public class BasicTableGutter<T extends BasicTable> extends DBNTableGutter<T> {
     public BasicTableGutter(@NotNull T table) {
@@ -30,7 +34,7 @@ public class BasicTableGutter<T extends BasicTable> extends DBNTableGutter<T> {
                     Component component = (Component) cellRenderer;
                     component.setFont(font);
                 }
-            } else if (e.getPropertyName().equals("rowHeight")) {
+            } else if (Objects.equals(e.getPropertyName(), "rowHeight")) {
                 setFixedCellHeight(table.getRowHeight());
             }
         });

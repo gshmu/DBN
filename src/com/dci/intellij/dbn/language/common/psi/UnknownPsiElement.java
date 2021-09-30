@@ -40,7 +40,6 @@ public class UnknownPsiElement extends BasePsiElement<ElementTypeBase> {
 
     @Override public BasePsiElement findFirstLeafPsiElement() {return null;}
     @Override public BasePsiElement findPsiElementByAttribute(ElementTypeAttribute attribute) {return null;}
-
     @Override public BasePsiElement findPsiElementBySubject(ElementTypeAttribute attribute, CharSequence subjectName, DBObjectType subjectType) {return null;}
 
     @Override public boolean hasErrors() {
