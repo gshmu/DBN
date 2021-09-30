@@ -99,15 +99,6 @@ public final class ConnectionPool extends StatefulDisposable.Base implements Not
         return dedicatedConnections.get(sessionId);
     }
 
-    private static DBNConnection verify(DBNConnection connection) {
-        if (connection != null) {
-            if (!connection.isActive() && !connection.isReserved() && !connection.isValid()){
-                return null;
-            }
-        }
-        return connection;
-    }
-
     @NotNull
     DBNConnection ensureSessionConnection(SessionId sessionId) throws SQLException {
         return ensureConnection(sessionId);
@@ -140,7 +131,7 @@ public final class ConnectionPool extends StatefulDisposable.Base implements Not
                     try {
                         ResourceUtil.close(connection);
 
-                        connection = ResourceUtil.connect(connectionHandler, sessionId);
+                        connection = ConnectionUtil.connect(connectionHandler, sessionId);
                         dedicatedConnections.put(sessionId, connection);
                         sendInfoNotification(
                                 NotificationGroup.SESSION,
@@ -247,7 +238,7 @@ public final class ConnectionPool extends StatefulDisposable.Base implements Not
         ConnectionHandlerStatusHolder connectionStatus = connectionHandler.getConnectionStatus();
         String connectionName = connectionHandler.getName();
         log.debug("[DBN] Attempt to create new pool connection for '" + connectionName + "'");
-        DBNConnection connection = ResourceUtil.connect(connectionHandler, SessionId.POOL);
+        DBNConnection connection = ConnectionUtil.connect(connectionHandler, SessionId.POOL);
 
         ResourceUtil.setAutoCommit(connection, true);
         ResourceUtil.setReadonly(connectionHandler, connection, true);
