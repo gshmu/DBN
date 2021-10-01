@@ -3,7 +3,6 @@ package com.dci.intellij.dbn.common.notification;
 import com.dci.intellij.dbn.common.Constants;
 import com.dci.intellij.dbn.common.project.ProjectSupplier;
 import com.intellij.notification.Notification;
-import com.intellij.notification.NotificationListener;
 import com.intellij.notification.NotificationType;
 import com.intellij.notification.Notifications;
 import com.intellij.openapi.project.Project;
@@ -44,7 +43,7 @@ public interface NotificationSupport extends ProjectSupplier {
 
     static void sendNotification(Project project, NotificationType type, NotificationGroup group, String message, Object... args) {
         if (project != null && !project.isDisposed()) {
-            NotificationListener listener = new NotificationListener.UrlOpeningListener(true);
+            //NotificationListener listener = new NotificationListener.UrlOpeningListener(true);
 
             args = args == null ? null : Arrays.stream(args).map(o -> {
                 if (o instanceof Exception) {
@@ -56,7 +55,11 @@ public interface NotificationSupport extends ProjectSupplier {
             }).toArray();
 
             message = MessageFormat.format(message, args);
-            Notification notification = new Notification("Database Navigator", Constants.DBN_TITLE_PREFIX + group.getTitle(), message, type, listener);
+            Notification notification = new Notification(
+                    "DBNavigator.NotificationGroup",
+                    Constants.DBN_TITLE_NOTIFICATION_SUFFIX + "[" + group + "]",
+                    message,
+                    type);
             notification.setImportant(false);
             Notifications.Bus.notify(notification, project);
         }

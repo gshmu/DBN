@@ -61,7 +61,7 @@ public class ConfirmationOptionHandler implements DialogWrapper.DoNotAskOption, 
         if (confirm) {
             int optionIndex = Messages.showDialog(
                     MessageFormat.format(message, messageArgs),
-                    Constants.DBN_TITLE_PREFIX + title,
+                    Constants.DBN_TITLE_DIALOG_SUFFIX + title,
                     new String[]{"Yes", "No"}, 0, Icons.DIALOG_QUESTION, this);
             return optionIndex == 0;
         }

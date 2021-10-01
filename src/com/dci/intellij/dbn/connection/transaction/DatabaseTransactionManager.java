@@ -52,7 +52,7 @@ public class DatabaseTransactionManager extends AbstractProjectComponent impleme
     public void rollback(ConnectionHandler connectionHandler, @NotNull DBNConnection connection) {
         DatabaseSession session = connectionHandler.getSessionBundle().getSession(connection.getSessionId());
         MessageUtil.showQuestionDialog(getProject(),
-                "Commit Session",
+                "Rollback Session",
                 "Are you sure you want to rollback the session \"" + session.getName() + "\" for connection\"" + connectionHandler.getName() + "\"" ,
                 MessageUtil.OPTIONS_YES_NO, 0,
                 (option) -> conditional(option == 0,
@@ -67,8 +67,8 @@ public class DatabaseTransactionManager extends AbstractProjectComponent impleme
     public void commit(ConnectionHandler connectionHandler, @NotNull DBNConnection connection) {
         DatabaseSession session = connectionHandler.getSessionBundle().getSession(connection.getSessionId());
         MessageUtil.showQuestionDialog(ensureProject(),
-                "Rollback Session",
-                "Are you sure you want to rollback the session \"" + session.getName() + "\" for connection\"" + connectionHandler.getName() + "\"" ,
+                "Commit Session",
+                "Are you sure you want to commit the session \"" + session.getName() + "\" for connection\"" + connectionHandler.getName() + "\"" ,
                 MessageUtil.OPTIONS_YES_NO, 0,
                 (option) -> conditional(option == 0,
                         () -> execute(

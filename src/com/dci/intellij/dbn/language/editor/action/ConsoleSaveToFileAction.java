@@ -36,7 +36,7 @@ public class ConsoleSaveToFileAction extends DumbAwareProjectAction {
             final DBConsoleVirtualFile consoleVirtualFile = (DBConsoleVirtualFile) virtualFile;
 
             FileSaverDescriptor fileSaverDescriptor = new FileSaverDescriptor(
-                    Constants.DBN_TITLE_PREFIX + "Save Console to File",
+                    Constants.DBN_TITLE_DIALOG_SUFFIX + "Save Console to File",
                     "Save content of the console \"" + consoleVirtualFile.getName() + "\" to file", "sql");
 
             FileSaverDialog fileSaverDialog = FileChooserFactory.getInstance().createSaveFileDialog(fileSaverDescriptor, project);
