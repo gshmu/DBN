@@ -9,16 +9,17 @@ import com.dci.intellij.dbn.object.common.DBObjectPsiFacade;
 import com.dci.intellij.dbn.object.type.DBObjectType;
 import com.dci.intellij.dbn.vfs.DBConsoleType;
 import com.dci.intellij.dbn.vfs.file.DBConsoleVirtualFile;
+import lombok.Getter;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import javax.swing.*;
+import javax.swing.Icon;
 import java.sql.SQLException;
 
+@Getter
 public class DBConsoleImpl extends DBObjectImpl<DBObjectMetadata> implements DBConsole {
-    private DBConsoleVirtualFile virtualFile;
+    private final DBConsoleVirtualFile virtualFile;
     private final DBConsoleType consoleType;
-    private DBObjectPsiFacade psiFacade = new DBObjectPsiFacade();
 
     public DBConsoleImpl(@NotNull ConnectionHandler connectionHandler, String name, DBConsoleType consoleType) {
         super(connectionHandler, DBObjectType.CONSOLE, name);
@@ -51,17 +52,6 @@ public class DBConsoleImpl extends DBObjectImpl<DBObjectMetadata> implements DBC
     @Override
     public DBObjectPsiFacade getPsiFacade() {
         return super.getPsiFacade();
-    }
-
-    @NotNull
-    @Override
-    public DBConsoleVirtualFile getVirtualFile() {
-        return virtualFile;
-    }
-
-    @Override
-    public DBConsoleType getConsoleType() {
-        return consoleType;
     }
 
     @Override
