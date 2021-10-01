@@ -1,7 +1,6 @@
 package com.dci.intellij.dbn.common.pool;
 
 
-import com.dci.intellij.dbn.common.dispose.AlreadyDisposedException;
 import com.dci.intellij.dbn.common.dispose.SafeDisposer;
 import com.dci.intellij.dbn.common.dispose.StatefulDisposable;
 import com.dci.intellij.dbn.common.lookup.Visitor;
@@ -17,7 +16,7 @@ public abstract class ObjectPool<T extends Disposable> extends StatefulDisposabl
     private final List<T> objects = new CopyOnWriteArrayList<>();
     private final BlockingQueue<T> available = new LinkedBlockingQueue<>();
 
-    public final T acquire(long timeout, TimeUnit timeUnit) {
+    public final T acquire(long timeout, TimeUnit timeUnit) throws InterruptedException {
         checkDisposed();
 
         T object = available.poll();
@@ -27,11 +26,7 @@ public abstract class ObjectPool<T extends Disposable> extends StatefulDisposabl
                 return object;
             }
         }
-        try {
-            return available.poll(timeout, timeUnit);
-        } catch (InterruptedException e) {
-            throw AlreadyDisposedException.INSTANCE;
-        }
+        return available.poll(timeout, timeUnit);
     }
 
     private T initialise() {

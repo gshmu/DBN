@@ -5,9 +5,12 @@ import com.dci.intellij.dbn.common.notification.NotificationSupport;
 import com.dci.intellij.dbn.common.routine.ThrowableRunnable;
 import com.dci.intellij.dbn.common.util.Unsafe;
 import com.dci.intellij.dbn.connection.jdbc.DBNConnection;
+import com.dci.intellij.dbn.connection.jdbc.DBNResource;
 import com.dci.intellij.dbn.connection.jdbc.DBNStatement;
+import com.dci.intellij.dbn.connection.jdbc.ResourceStatus;
 import com.dci.intellij.dbn.database.DatabaseFeature;
 import lombok.extern.slf4j.Slf4j;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.sql.ResultSet;
@@ -36,22 +39,42 @@ public final class ResourceUtil {
     public static void cancel(DBNStatement statement) {
         if (statement != null) {
             try {
-                loggedResourceAccess(
-                    () -> statement.cancel(),
-                    () -> "[DBN] Cancelling " + statement,
-                    () -> "[DBN] Done cancelling " + statement,
-                    () -> "[DBN] Failed to cancel " + statement);
+                invokeResourceAction(
+                        statement,
+                        ResourceStatus.CANCELLING,
+                        () -> statement.cancel(),
+                        () -> "[DBN] Cancelling " + statement,
+                        () -> "[DBN] Done cancelling " + statement,
+                        () -> "[DBN] Failed to cancel " + statement);
             } catch (Throwable ignore) {
             } finally {
-                close(statement);
+                close((DBNResource) statement);
             }
         }
     }
 
     public static <T extends AutoCloseable> void close(T resource) {
         if (resource != null) {
+            if (resource instanceof DBNResource) {
+                close((DBNResource) resource);
+            } else {
+                try {
+                    invokeResourceAction(
+                            () -> resource.close(),
+                            () -> "[DBN] Closing " + resource,
+                            () -> "[DBN] Done closing " + resource,
+                            () -> "[DBN] Failed to close " + resource);
+                } catch (Throwable ignore) {}
+            }
+        }
+    }
+
+    private static <T extends DBNResource> void close(T resource) {
+        if (resource != null) {
             try {
-                loggedResourceAccess(
+                invokeResourceAction(
+                        resource,
+                        ResourceStatus.CLOSING,
                         () -> resource.close(),
                         () -> "[DBN] Closing " + resource,
                         () -> "[DBN] Done closing " + resource,
@@ -73,7 +96,9 @@ public final class ResourceUtil {
     public static void commit(DBNConnection connection) throws SQLException {
         try {
             if (connection != null) {
-                loggedResourceAccess(
+                invokeResourceAction(
+                        connection,
+                        ResourceStatus.COMMITTING,
                         () -> connection.commit(),
                         () -> "[DBN] Committing " + connection,
                         () -> "[DBN] Done committing " + connection,
@@ -97,7 +122,9 @@ public final class ResourceUtil {
     public static void rollback(DBNConnection connection) throws SQLException {
         try {
             if (connection != null && !connection.isClosed() && !connection.getAutoCommit()) {
-                loggedResourceAccess(
+                invokeResourceAction(
+                        connection,
+                        ResourceStatus.ROLLING_BACK,
                         () -> connection.rollback(),
                         () -> "[DBN] Rolling-back " + connection,
                         () -> "[DBN] Done rolling-back " + connection,
@@ -122,7 +149,9 @@ public final class ResourceUtil {
         try {
             if (connection != null && savepoint != null && !connection.isClosed() && !connection.getAutoCommit()) {
                 String savepointId = getSavepointIdentifier(savepoint);
-                loggedResourceAccess(
+                invokeResourceAction(
+                        connection,
+                        ResourceStatus.ROLLING_BACK_SAVEPOINT,
                         () -> connection.rollback(savepoint),
                         () -> "[DBN] Rolling-back savepoint '" + savepointId + "' on " + connection,
                         () -> "[DBN] Done rolling-back savepoint '" + savepointId + "' on " + connection,
@@ -143,7 +172,9 @@ public final class ResourceUtil {
         try {
             if (connection != null && !connection.isClosed() && !connection.getAutoCommit()) {
                 AtomicReference<Savepoint> savepoint = new AtomicReference<>();
-                loggedResourceAccess(
+                invokeResourceAction(
+                        connection,
+                        ResourceStatus.CREATING_SAVEPOINT,
                         () -> savepoint.set(connection.setSavepoint()),
                         () -> "[DBN] Creating savepoint on " + connection,
                         () -> "[DBN] Done creating savepoint on " + connection,
@@ -165,7 +196,9 @@ public final class ResourceUtil {
         try {
             if (connection != null && savepoint != null && !connection.isClosed() && !connection.getAutoCommit()) {
                 String savepointId = getSavepointIdentifier(savepoint);
-                loggedResourceAccess(
+                invokeResourceAction(
+                        connection,
+                        ResourceStatus.RELEASING_SAVEPOINT,
                         () -> connection.releaseSavepoint(savepoint),
                         () -> "[DBN] Releasing savepoint '" + savepointId + "' on " + connection,
                         () -> "[DBN] Done releasing savepoint '" + savepointId + "' on " + connection,
@@ -185,7 +218,9 @@ public final class ResourceUtil {
         boolean readonlySupported = DatabaseFeature.READONLY_CONNECTIVITY.isSupported(connectionHandler);
         if (readonlySupported) {
             try {
-                loggedResourceAccess(
+                invokeResourceAction(
+                        connection,
+                        ResourceStatus.CHANGING_READONLY_STATUS,
                         () -> connection.setReadOnly(readonly),
                         () -> "[DBN] Applying status READ_ONLY=" + readonly + " on " + connection,
                         () -> "[DBN] Done applying status READ_ONLY=" + readonly + " on " + connection,
@@ -204,8 +239,9 @@ public final class ResourceUtil {
     public static void setAutoCommit(DBNConnection connection, boolean autoCommit) {
         try {
             if (connection != null && !connection.isClosed()) {
-                loggedResourceAccess(
-                        () -> connection.setReadOnly(autoCommit),
+                invokeResourceAction(
+                        connection,
+                        ResourceStatus.CHANGING_AUTOCOMMIT_STATUS, () -> connection.setReadOnly(autoCommit),
                         () -> "[DBN] Applying status AUTO_COMMIT=" + autoCommit + " on " + connection,
                         () -> "[DBN] Done applying status AUTO_COMMIT=" + autoCommit + " on " + connection,
                         () -> "[DBN] Failed to apply status AUTO_COMMIT=" + autoCommit + " on " + connection);
@@ -237,16 +273,32 @@ public final class ResourceUtil {
         }
     }
 
-    private static <E extends Throwable> void loggedResourceAccess(
-            ThrowableRunnable<E> runnable,
-            Supplier<String> startMessage,
-            Supplier<String> successMessage,
-            Supplier<String> errorMessage) throws E{
+    private static <E extends Throwable> void invokeResourceAction(
+            @NotNull DBNResource<?> targetResource,
+            @NotNull ResourceStatus transientStatus,
+            @NotNull ThrowableRunnable<E> action,
+            @NotNull Supplier<String> startMessage,
+            @NotNull Supplier<String> successMessage,
+            @NotNull Supplier<String> errorMessage) throws E{
+
+        try {
+            targetResource.set(transientStatus, true);
+            invokeResourceAction(action, startMessage, successMessage, errorMessage);
+        } finally {
+            targetResource.set(transientStatus, false);
+        }
+    }
+
+    private static <E extends Throwable> void invokeResourceAction(
+            @NotNull ThrowableRunnable<E> action,
+            @NotNull Supplier<String> startMessage,
+            @NotNull Supplier<String> successMessage,
+            @NotNull Supplier<String> errorMessage) throws E{
 
         long start = System.currentTimeMillis();
         if (DATABASE_RESOURCE_DEBUG_MODE) log.info(startMessage.get() + "...");
         try {
-            runnable.run();
+            action.run();
             if (DATABASE_RESOURCE_DEBUG_MODE) log.info(successMessage.get() + " - " + (System.currentTimeMillis() - start) + "ms");
         } catch (Throwable t) {
             log.warn(errorMessage.get() + " Cause: " + t.getMessage());

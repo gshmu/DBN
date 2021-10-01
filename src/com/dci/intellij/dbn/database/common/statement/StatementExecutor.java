@@ -3,12 +3,18 @@ package com.dci.intellij.dbn.database.common.statement;
 import com.dci.intellij.dbn.common.thread.ThreadPool;
 import com.dci.intellij.dbn.connection.ResourceUtil;
 import com.dci.intellij.dbn.diagnostics.data.DiagnosticBundle;
-import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 
 import java.sql.SQLException;
 import java.sql.SQLTimeoutException;
 import java.sql.Statement;
-import java.util.concurrent.*;
+import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Future;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
 
 public final class StatementExecutor {
     private StatementExecutor() {}
@@ -56,7 +62,8 @@ public final class StatementExecutor {
         return new Context(diagnostics, identifier, timeout);
     }
 
-    @Data
+    @Getter
+    @Setter
     public static final class Context {
         private Statement statement;
         private final DiagnosticBundle diagnostics;

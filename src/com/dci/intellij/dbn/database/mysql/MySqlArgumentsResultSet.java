@@ -14,7 +14,7 @@ import java.util.List;
 import java.util.Objects;
 
 public class MySqlArgumentsResultSet extends StatefulDisposable.Base implements ResultSetStub {
-    private class Argument {
+    private static class Argument {
         String name;
         String programName;
         String methodName;
@@ -30,7 +30,7 @@ public class MySqlArgumentsResultSet extends StatefulDisposable.Base implements 
         Integer dataPrecision;
         Integer dataScale;
     }
-    private Iterator<Argument> arguments;
+    private final Iterator<Argument> arguments;
     private Argument currentArgument;
 
     MySqlArgumentsResultSet(ResultSet resultSet) throws SQLException {

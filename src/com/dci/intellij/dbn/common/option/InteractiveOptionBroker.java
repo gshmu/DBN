@@ -94,7 +94,7 @@ public class InteractiveOptionBroker<T extends InteractiveOption> implements Dia
 
                 int optionIndex = Messages.showDialog(
                         MessageFormat.format(message, messageArgs),
-                        Constants.DBN_TITLE_PREFIX + title,
+                        Constants.DBN_TITLE_DIALOG_SUFFIX + title,
                         toStringOptions(options), lastUsedOptionIndex, Icons.DIALOG_QUESTION, this);
 
                 option = getOption(optionIndex);
