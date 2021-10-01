@@ -21,6 +21,7 @@ import com.dci.intellij.dbn.object.common.DBObject;
 import com.dci.intellij.dbn.object.common.DBSchemaObject;
 import com.dci.intellij.dbn.object.lookup.DBObjectRef;
 import com.dci.intellij.dbn.vfs.file.DBEditableObjectVirtualFile;
+import com.dci.intellij.dbn.vfs.file.DBObjectVirtualFile;
 import com.dci.intellij.dbn.vfs.file.DBSourceCodeVirtualFile;
 import com.intellij.openapi.components.PersistentStateComponent;
 import com.intellij.openapi.components.State;
@@ -39,11 +40,11 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 import static com.dci.intellij.dbn.common.util.CommonUtil.list;
 import static com.dci.intellij.dbn.vfs.VirtualFileStatus.MODIFIED;
@@ -55,7 +56,7 @@ import static com.dci.intellij.dbn.vfs.VirtualFileStatus.MODIFIED;
 public class DatabaseFileManager extends AbstractProjectComponent implements PersistentStateComponent<Element> {
     public static final String COMPONENT_NAME = "DBNavigator.Project.DatabaseFileManager";
 
-    private final Set<DBEditableObjectVirtualFile> openFiles = ContainerUtil.newConcurrentSet();
+    private final Set<DBObjectVirtualFile> openFiles = ContainerUtil.newConcurrentSet();
     private Map<ConnectionId, List<DBObjectRef<DBSchemaObject>>> pendingOpenFiles = new HashMap<>();
     private boolean projectInitialized = false;
     private final String sessionId;
@@ -100,13 +101,7 @@ public class DatabaseFileManager extends AbstractProjectComponent implements Per
     }
 
     public boolean isFileOpened(@NotNull DBObject object) {
-        for (DBEditableObjectVirtualFile openFile : openFiles) {
-            if (openFile.getObjectRef().is(object)) {
-                return true;
-            }
-        }
-
-        return false;
+        return openFiles.stream().anyMatch(file -> file.getObjectRef().is(object));
     }
 
     /***************************************
@@ -126,16 +121,8 @@ public class DatabaseFileManager extends AbstractProjectComponent implements Per
     };
 
     private void closeFiles(ConnectionId connectionId) {
-        Set<DBEditableObjectVirtualFile> filesToClose = new HashSet<>();
-        for (DBEditableObjectVirtualFile openFile : openFiles) {
-            if (openFile.getConnectionId() == connectionId) {
-                filesToClose.add(openFile);
-            }
-        }
-
-        for (DBEditableObjectVirtualFile virtualFile : filesToClose) {
-            closeFile(virtualFile);
-        }
+        List<DBObjectVirtualFile> filesToClose = openFiles.stream().filter(file -> file.getConnectionId() == connectionId).collect(Collectors.toList());
+        filesToClose.forEach(file -> closeFile(file));
     }
 
     public void closeFile(DBSchemaObject object) {
@@ -215,16 +202,16 @@ public class DatabaseFileManager extends AbstractProjectComponent implements Per
     private final FileEditorManagerListener fileEditorManagerListener  =new FileEditorManagerListener() {
         @Override
         public void fileOpened(@NotNull FileEditorManager source, @NotNull VirtualFile file) {
-            if (file instanceof DBEditableObjectVirtualFile) {
-                DBEditableObjectVirtualFile databaseFile = (DBEditableObjectVirtualFile) file;
+            if (file instanceof DBObjectVirtualFile) {
+                DBObjectVirtualFile databaseFile = (DBObjectVirtualFile) file;
                 openFiles.add(databaseFile);
             }
         }
 
         @Override
         public void fileClosed(@NotNull FileEditorManager source, @NotNull VirtualFile file) {
-            if (file instanceof DBEditableObjectVirtualFile) {
-                DBEditableObjectVirtualFile databaseFile = (DBEditableObjectVirtualFile) file;
+            if (file instanceof DBObjectVirtualFile) {
+                DBObjectVirtualFile databaseFile = (DBObjectVirtualFile) file;
                 openFiles.remove(databaseFile);
             }
         }
@@ -257,7 +244,7 @@ public class DatabaseFileManager extends AbstractProjectComponent implements Per
         Element stateElement = new Element("state");
         Element openFilesElement = new Element("open-files");
         stateElement.addContent(openFilesElement);
-        for (DBEditableObjectVirtualFile openFile : openFiles) {
+        for (DBObjectVirtualFile openFile : openFiles) {
             DBObjectRef<DBSchemaObject> objectRef = openFile.getObjectRef();
             Element fileElement = new Element("object");
             objectRef.writeState(fileElement);
