@@ -16,7 +16,7 @@ import com.intellij.psi.PsiFile;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import static com.dci.intellij.dbn.common.util.CommonUtil.nvl;
+import static com.dci.intellij.dbn.common.util.CommonUtil.nvln;
 
 public abstract class AbstractMethodExecutionIntentionAction extends GenericIntentionAction implements HighPriorityAction {
     private DBObjectRef<DBMethod> lastChecked;
@@ -62,7 +62,7 @@ public abstract class AbstractMethodExecutionIntentionAction extends GenericInte
                             }
                         }
 
-                        methodPsiElement = nvl(methodPsiElement, () -> METHOD_LOOKUP_ADAPTER.findInParentScopeOf(psiElement));
+                        methodPsiElement = nvln(methodPsiElement, () -> METHOD_LOOKUP_ADAPTER.findInParentScopeOf(psiElement));
                         if (methodPsiElement instanceof IdentifierPsiElement) {
                             IdentifierPsiElement identifierPsiElement = (IdentifierPsiElement) methodPsiElement;
                             DBObject object = identifierPsiElement.getUnderlyingObject();

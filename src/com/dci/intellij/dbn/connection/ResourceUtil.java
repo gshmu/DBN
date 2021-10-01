@@ -18,6 +18,7 @@ import java.util.Collection;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Supplier;
 
+import static com.dci.intellij.dbn.common.util.CommonUtil.nvl;
 import static com.dci.intellij.dbn.environment.Environment.DATABASE_RESOURCE_DEBUG_MODE;
 
 @Slf4j
@@ -213,7 +214,6 @@ public final class ResourceUtil {
             }
         } catch (SQLRecoverableException ignore) {
         } catch (Exception e) {
-            log.warn("Unable to set auto-commit to " + autoCommit +". Maybe your database does not support transactions...", e);
             sentWarningNotification(
                     NotificationGroup.CONNECTION,
                     "Failed to change auto-commit status for",
@@ -223,16 +223,18 @@ public final class ResourceUtil {
     }
 
     private static void sentWarningNotification(NotificationGroup title, String message, DBNConnection connection, Exception e) {
-        String name = connection.getName();
-        SessionId sessionId = connection.getSessionId();
-        String errorMessage = e.getMessage();
-        String notificationMessage = message + " connection \"" + name + " (" + sessionId + ")\": " + errorMessage;
+        String error = nvl(e.getMessage(), e.getClass().getName());
+        if (connection.shouldNotify(error)) {
+            String name = connection.getName();
+            SessionId sessionId = connection.getSessionId();
+            String errorMessage = e.getMessage();
+            String notificationMessage = message + " connection \"" + name + " (" + sessionId + ")\": " + errorMessage;
 
-        NotificationSupport.sendWarningNotification(
-                connection.getProject(),
-                title,
-                notificationMessage);
-
+            NotificationSupport.sendWarningNotification(
+                    connection.getProject(),
+                    title,
+                    notificationMessage);
+        }
     }
 
     private static <E extends Throwable> void loggedResourceAccess(
@@ -247,7 +249,7 @@ public final class ResourceUtil {
             runnable.run();
             if (DATABASE_RESOURCE_DEBUG_MODE) log.info(successMessage.get() + " - " + (System.currentTimeMillis() - start) + "ms");
         } catch (Throwable t) {
-            log.warn(errorMessage.get() + "Cause: " + t.getMessage());
+            log.warn(errorMessage.get() + " Cause: " + t.getMessage());
             throw t;
         }
     }

@@ -8,14 +8,11 @@ import lombok.Data;
 import java.sql.SQLException;
 import java.sql.SQLTimeoutException;
 import java.sql.Statement;
-import java.util.concurrent.Callable;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Future;
-import java.util.concurrent.TimeUnit;
-import java.util.concurrent.TimeoutException;
+import java.util.concurrent.*;
 
 public final class StatementExecutor {
+    private StatementExecutor() {}
+
     public static <T> T execute(Context context, Callable<T> callable) throws SQLException {
         long start = System.currentTimeMillis();
         String identifier = context.getIdentifier();

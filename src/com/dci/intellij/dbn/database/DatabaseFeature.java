@@ -4,8 +4,10 @@ import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.ConnectionProvider;
 import com.dci.intellij.dbn.object.common.DBObject;
+import lombok.Getter;
 import org.jetbrains.annotations.Nullable;
 
+@Getter
 public enum DatabaseFeature {
     OBJECT_REPLACING("Replacing existing objects via DDL"),
     OBJECT_DEPENDENCIES("Object dependencies"),
@@ -31,14 +33,10 @@ public enum DatabaseFeature {
     READONLY_CONNECTIVITY("Readonly connectivity"),
     ;
 
-    private String description;
+    private final String description;
 
     DatabaseFeature(String description) {
         this.description = description;
-    }
-
-    public String getDescription() {
-        return description;
     }
 
     public boolean isSupported(@Nullable ConnectionProvider connectionProvider) {
@@ -48,7 +46,6 @@ public enum DatabaseFeature {
     public boolean isSupported(@Nullable DBObject object) {
         return Failsafe.check(object) && isSupported(object.getConnectionHandler());
     }
-
 
     public boolean isSupported(@Nullable ConnectionHandler connectionHandler) {
         if (Failsafe.check(connectionHandler)) {
