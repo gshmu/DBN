@@ -4,6 +4,7 @@ import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.common.environment.EnvironmentType;
 import com.dci.intellij.dbn.common.event.ProjectEvents;
 import com.dci.intellij.dbn.common.options.ConfigurationHandle;
+import com.dci.intellij.dbn.common.options.SettingsChangeNotifier;
 import com.dci.intellij.dbn.common.options.ui.CompositeConfigurationEditorForm;
 import com.dci.intellij.dbn.common.thread.Dispatch;
 import com.dci.intellij.dbn.common.ui.DBNHeaderForm;
@@ -22,6 +23,7 @@ import com.dci.intellij.dbn.connection.config.ConnectionDetailSettings;
 import com.dci.intellij.dbn.connection.config.ConnectionFilterSettings;
 import com.dci.intellij.dbn.connection.config.ConnectionPropertiesSettings;
 import com.dci.intellij.dbn.connection.config.ConnectionSettings;
+import com.dci.intellij.dbn.connection.config.ConnectionSettingsListener;
 import com.dci.intellij.dbn.connection.config.ConnectionSshTunnelSettings;
 import com.dci.intellij.dbn.connection.config.ConnectionSslSettings;
 import com.intellij.openapi.options.ConfigurationException;
@@ -198,7 +200,7 @@ public class ConnectionSettingsForm extends CompositeConfigurationEditorForm<Con
 
             }
 
-            protected void refreshConnectionList(ConnectionSettings configuration) {
+            private void refreshConnectionList(ConnectionSettings configuration) {
                 ConnectionBundleSettings bundleSettings = configuration.getParent();
                 ConnectionBundleSettingsForm bundleSettingsEditor = bundleSettings.getSettingsEditor();
                 if (bundleSettingsEditor != null) {
@@ -259,6 +261,15 @@ public class ConnectionSettingsForm extends CompositeConfigurationEditorForm<Con
 
     @Override
     public void applyFormChanges(ConnectionSettings configuration) throws ConfigurationException {
+        boolean settingsChanged = configuration.isActive() != activeCheckBox.isSelected();
         configuration.setActive(activeCheckBox.isSelected());
+
+        SettingsChangeNotifier.register(() -> {
+            if (settingsChanged) {
+                ProjectEvents.notify(getProject(),
+                        ConnectionSettingsListener.TOPIC,
+                        (listener) -> listener.connectionChanged(configuration.getConnectionId()));
+            }
+        });
     }
 }

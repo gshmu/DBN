@@ -11,7 +11,7 @@ import com.intellij.openapi.editor.event.DocumentListener;
 import com.intellij.openapi.project.Project;
 import org.jetbrains.annotations.NotNull;
 
-import javax.swing.*;
+import javax.swing.Action;
 
 public class TextEditorDialog extends DBNDialog<TextEditorForm> {
     private final TextEditorAdapter textEditorAdapter;
@@ -66,7 +66,7 @@ public class TextEditorDialog extends DBNDialog<TextEditorForm> {
         super.doOKAction();
     }
 
-    private DocumentListener documentListener = new DocumentListener() {
+    private final DocumentListener documentListener = new DocumentListener() {
         @Override
         public void documentChanged(@NotNull DocumentEvent event) {
             getCancelAction().putValue(Action.NAME, "Cancel");
