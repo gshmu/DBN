@@ -8,6 +8,7 @@ import com.dci.intellij.dbn.data.export.DataExportFormat;
 import com.dci.intellij.dbn.data.export.DataExportInstructions;
 import com.dci.intellij.dbn.data.export.DataExportModel;
 import com.intellij.openapi.project.Project;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.poi.hssf.usermodel.HSSFFont;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.Cell;
@@ -15,6 +16,7 @@ import org.apache.poi.ss.usermodel.CellStyle;
 import org.apache.poi.ss.usermodel.CreationHelper;
 import org.apache.poi.ss.usermodel.DataFormat;
 import org.apache.poi.ss.usermodel.Font;
+import org.apache.poi.ss.usermodel.IndexedColors;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
@@ -22,9 +24,9 @@ import org.apache.poi.xssf.streaming.SXSSFWorkbook;
 
 import java.io.File;
 import java.io.FileOutputStream;
-import java.io.IOException;
 import java.util.Date;
 
+@Slf4j
 public class ExcelDataExportProcessor extends DataExportProcessor{
 
     @Override
@@ -72,10 +74,12 @@ public class ExcelDataExportProcessor extends DataExportProcessor{
                     CellStyle cellStyle = workbook.createCellStyle();
                     Font tableHeadingFont = workbook.createFont();
                     tableHeadingFont.setBoldweight(HSSFFont.BOLDWEIGHT_BOLD);
+                    cellStyle.setFillBackgroundColor(IndexedColors.GREY_25_PERCENT.getIndex());
                     cellStyle.setFont(tableHeadingFont);
                     cell.setCellStyle(cellStyle);
                 }
             }
+            sheet.createFreezePane(0, 1);
 
             Formatter formatter = getFormatter(connectionHandler.getProject());
             CellStyleCache cellStyleCache = new CellStyleCache(workbook, model.getProject());
@@ -120,7 +124,8 @@ public class ExcelDataExportProcessor extends DataExportProcessor{
                 workbook.write(fileOutputStream);
                 fileOutputStream.flush();
                 fileOutputStream.close();
-            } catch (IOException e) {
+            } catch (Throwable e) {
+                log.warn("Failed to export data", e);
                 throw new DataExportException(
                         "Could not write file " + file.getPath() +".\n" +
                                 "Reason: " + e.getMessage());
@@ -139,8 +144,8 @@ public class ExcelDataExportProcessor extends DataExportProcessor{
     }
 
     private class CellStyleCache {
-        private Workbook workbook;
-        private Formatter formatter;
+        private final Workbook workbook;
+        private final Formatter formatter;
 
         private CellStyle dateStyle;
         private CellStyle datetimeStyle;
