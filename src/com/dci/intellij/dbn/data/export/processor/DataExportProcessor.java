@@ -17,7 +17,11 @@ import com.intellij.openapi.project.Project;
 
 import java.awt.datatransfer.StringSelection;
 import java.awt.datatransfer.Transferable;
-import java.io.*;
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.OutputStreamWriter;
 import java.nio.charset.Charset;
 import java.sql.SQLException;
 import java.util.Calendar;
@@ -45,6 +49,7 @@ public abstract class DataExportProcessor {
             String fileName = adjustFileName(instructions.getFileName());
             instructions.setFileName(fileName);
             performExport(model, instructions, connectionHandler);
+        } catch (ProcessCanceledException ignore) {
         } catch (DataExportException e) {
             throw e;
         } catch (Exception e) {

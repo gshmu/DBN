@@ -8,6 +8,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -43,9 +44,11 @@ public abstract class DynamicContentLoaderImpl<
             @NotNull DynamicContentLoader loader) {
 
         parentContentType = CommonUtil.nvl(parentContentType, NULL);
-        Map<DynamicContentType, DynamicContentLoader> childLoaders = LOADERS.computeIfAbsent(parentContentType, k -> new ConcurrentHashMap<>());
-        DynamicContentLoader contentLoader = childLoaders.replace(contentType, loader);
-        if (contentLoader != loader){
+        Map<DynamicContentType, DynamicContentLoader> childLoaders = LOADERS.computeIfAbsent(parentContentType, k -> new HashMap<>());
+        DynamicContentLoader contentLoader = childLoaders.get(contentType);
+        if (contentLoader == null) {
+            childLoaders.put(contentType, loader);
+        } else if (contentLoader != loader){
             log.error("Duplicate content loader registration for parentContentType={} and contentType={}", parentContentType, contentType);
         }
     }
