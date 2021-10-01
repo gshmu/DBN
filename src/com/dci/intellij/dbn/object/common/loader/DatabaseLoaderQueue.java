@@ -9,13 +9,13 @@ import lombok.Getter;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.LinkedList;
 import java.util.Queue;
-import java.util.concurrent.LinkedBlockingQueue;
 
 @Getter
 public class DatabaseLoaderQueue extends Task.Modal implements Disposable {
     private boolean active = true;
-    private final Queue<Runnable> queue = new LinkedBlockingQueue<>();
+    private final Queue<Runnable> queue = new LinkedList<>();
 
     public DatabaseLoaderQueue(@Nullable Project project) {
         super(project, Constants.DBN_TITLE_DIALOG_SUFFIX + "Loading data dictionary", false);
