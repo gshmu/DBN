@@ -15,20 +15,20 @@ import java.util.Objects;
 
 public class MySqlArgumentsResultSet extends StatefulDisposable.Base implements ResultSetStub {
     private static class Argument {
-        String name;
-        String programName;
-        String methodName;
-        String methodType;
-        short overload;
-        short position;
-        short sequence;
-        String inOut = "IN";
-        String dataTypeOwner;
-        String dataTypePackage;
-        String dataTypeName;
-        int dataLength;
-        Integer dataPrecision;
-        Integer dataScale;
+        private String name;
+        private String programName;
+        private String methodName;
+        private String methodType;
+        private short overload;
+        private short position;
+        private short sequence;
+        private String inOut = "IN";
+        private String dataTypeOwner;
+        private String dataTypePackage;
+        private String dataTypeName;
+        private int dataLength;
+        private Integer dataPrecision;
+        private Integer dataScale;
     }
     private final Iterator<Argument> arguments;
     private Argument currentArgument;
