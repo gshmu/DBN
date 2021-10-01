@@ -134,16 +134,6 @@ public abstract class DBVirtualFileImpl extends VirtualFile implements DBVirtual
         throw DatabaseFileSystem.READONLY_FILE_SYSTEM;
     }
 
-    @Override
-    public final int hashCode() {
-        return id;
-    }
-
-    @Override
-    public final boolean equals(Object obj) {
-        return this == obj || (obj instanceof DBVirtualFileImpl && hashCode() == obj.hashCode());
-    }
-
     @NotNull
     private String createPath() {
         return DatabaseFileSystem.createPath(this);
