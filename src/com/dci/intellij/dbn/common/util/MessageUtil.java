@@ -12,7 +12,7 @@ import com.intellij.openapi.ui.DialogWrapper;
 import com.intellij.openapi.ui.Messages;
 import org.jetbrains.annotations.Nullable;
 
-import javax.swing.*;
+import javax.swing.Icon;
 
 public class MessageUtil {
 
@@ -102,7 +102,7 @@ public class MessageUtil {
             @Nullable DialogWrapper.DoNotAskOption doNotAskOption) {
 
         Dispatch.run(() -> {
-            int option = Messages.showDialog(project, message, Constants.DBN_TITLE_PREFIX + title, options, defaultOptionIndex, icon, doNotAskOption);
+            int option = Messages.showDialog(project, message, Constants.DBN_TITLE_DIALOG_SUFFIX + title, options, defaultOptionIndex, icon, doNotAskOption);
             if (callback != null) {
                 callback.run(option);
             }

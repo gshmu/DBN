@@ -5,34 +5,34 @@ import com.intellij.openapi.Disposable;
 import com.intellij.openapi.progress.ProgressIndicator;
 import com.intellij.openapi.progress.Task;
 import com.intellij.openapi.project.Project;
+import lombok.Getter;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.Queue;
+import java.util.concurrent.LinkedBlockingQueue;
 
+@Getter
 public class DatabaseLoaderQueue extends Task.Modal implements Disposable {
-    private boolean isActive = true;
-    private List<Runnable> queue = new ArrayList<Runnable>();
+    private boolean active = true;
+    private final Queue<Runnable> queue = new LinkedBlockingQueue<>();
 
-    public DatabaseLoaderQueue(@org.jetbrains.annotations.Nullable Project project) {
-        super(project, Constants.DBN_TITLE_PREFIX + "Loading data dictionary", false);
+    public DatabaseLoaderQueue(@Nullable Project project) {
+        super(project, Constants.DBN_TITLE_DIALOG_SUFFIX + "Loading data dictionary", false);
     }
 
     public void queue(Runnable task) {
-        queue.add(task);
+        queue.offer(task);
     }
 
     @Override
     public void run(@NotNull ProgressIndicator indicator) {
-        while (queue.size() > 0) {
-            Runnable task = queue.remove(0);
+        Runnable task = queue.poll();
+        while (task != null) {
             task.run();
+            task = queue.poll();
         }
-        isActive = false;
-    }
-
-    public boolean isActive() {
-        return isActive;
+        active = false;
     }
 
     @Override

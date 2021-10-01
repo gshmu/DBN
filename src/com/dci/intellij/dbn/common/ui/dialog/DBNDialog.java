@@ -12,7 +12,9 @@ import com.intellij.openapi.ui.DialogWrapper;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import javax.swing.*;
+import javax.swing.Action;
+import javax.swing.JCheckBox;
+import javax.swing.JComponent;
 
 public abstract class DBNDialog<F extends DBNForm> extends DialogWrapper implements DBNComponent {
     private F form;
@@ -23,7 +25,7 @@ public abstract class DBNDialog<F extends DBNForm> extends DialogWrapper impleme
     protected DBNDialog(Project project, String title, boolean canBeParent) {
         super(project, canBeParent);
         this.project = ProjectRef.of(project);
-        setTitle(Constants.DBN_TITLE_PREFIX + title);
+        setTitle(Constants.DBN_TITLE_DIALOG_SUFFIX + title);
         getHelpAction().setEnabled(false);
     }
 
