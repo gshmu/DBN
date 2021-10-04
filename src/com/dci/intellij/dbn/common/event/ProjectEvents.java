@@ -18,17 +18,19 @@ import org.jetbrains.annotations.Nullable;
 import java.util.Arrays;
 
 
-public interface ProjectEvents {
-    static <T> void subscribe(@NotNull Project project, @Nullable Disposable parentDisposable, Topic<T> topic, T handler) {
+public final class ProjectEvents {
+    private ProjectEvents() {}
+
+    public static <T> void subscribe(@NotNull Project project, @Nullable Disposable parentDisposable, Topic<T> topic, T handler) {
         MessageBus messageBus = project.getMessageBus();
         MessageBusConnection connection = parentDisposable == null ?
                 messageBus.connect() :
-                messageBus.connect(parentDisposable);
+                messageBus.connect(Failsafe.nd(parentDisposable));
 
         connection.subscribe(topic, handler);
     }
 
-    static <T> void subscribe(Topic<T> topic, T handler) {
+    public static <T> void subscribe(Topic<T> topic, T handler) {
         Project[] openProjects = ProjectManager.getInstance().getOpenProjects();
         Arrays.stream(openProjects).forEach(project -> subscribe(project, null, topic, handler));
 
@@ -39,7 +41,7 @@ public interface ProjectEvents {
 
     }
 
-    static <T> void notify(@Nullable Project project, Topic<T> topic, ParametricRunnable.Basic<T> callback) {
+    public static <T> void notify(@Nullable Project project, Topic<T> topic, ParametricRunnable.Basic<T> callback) {
         if (Failsafe.check(project) && project != Failsafe.DUMMY_PROJECT) {
             try {
                 MessageBus messageBus = Failsafe.nd(project).getMessageBus();
