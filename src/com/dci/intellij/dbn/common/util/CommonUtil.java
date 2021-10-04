@@ -1,6 +1,7 @@
 package com.dci.intellij.dbn.common.util;
 
 import com.dci.intellij.dbn.common.routine.ThrowableCallable;
+import lombok.extern.slf4j.Slf4j;
 import org.jdom.Document;
 import org.jdom.adapters.XML4JDOMAdapter;
 import org.jdom.input.DOMBuilder;
@@ -16,6 +17,7 @@ import java.math.RoundingMode;
 import java.util.Objects;
 import java.util.function.Supplier;
 
+@Slf4j
 public final class CommonUtil {
     private CommonUtil() {}
 
@@ -117,7 +119,7 @@ public final class CommonUtil {
         try {
             return new DOMBuilder().build(new XML4JDOMAdapter().getDocument(inputStream, false));
         } catch (Exception e) {
-            //log.warn(e);
+            log.error("Failed to read xml document", e);
         }
         return null;
     }
