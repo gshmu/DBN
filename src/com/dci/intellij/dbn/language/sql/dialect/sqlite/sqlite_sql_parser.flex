@@ -64,6 +64,17 @@ VARIABLE = ":"{wso}({IDENTIFIER}|{INTEGER})
 {NUMBER}      { return tt.getSharedTokenTypes().getNumber(); }
 {STRING}      { return tt.getSharedTokenTypes().getString(); }
 
+"="{wso}"=" {return tt.getOperatorTokenType(0);}
+"|"{wso}"|" {return tt.getOperatorTokenType(1);}
+"<"{wso}"=" {return tt.getOperatorTokenType(2);}
+">"{wso}"=" {return tt.getOperatorTokenType(3);}
+"<"{wso}">" {return tt.getOperatorTokenType(4);}
+"!"{wso}"=" {return tt.getOperatorTokenType(5);}
+":"{wso}"=" {return tt.getOperatorTokenType(6);}
+"="{wso}">" {return tt.getOperatorTokenType(7);}
+".."        {return tt.getOperatorTokenType(8);}
+"::"        {return tt.getOperatorTokenType(9);}
+
 "("{wso}"+"{wso}")"  {return tt.getTokenType("CT_OUTER_JOIN");}
 
 "@" {return tt.getCharacterTokenType(0);}

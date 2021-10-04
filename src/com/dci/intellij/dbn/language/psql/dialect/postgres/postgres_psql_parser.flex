@@ -59,10 +59,18 @@ NUMBER = {INTEGER}?"."{digit}+(("e"{sign}?{digit}+)|(("f"|"d"){ws}))?
 {NUMBER}      { return tt.getSharedTokenTypes().getNumber(); }
 {STRING}      { return tt.getSharedTokenTypes().getString(); }
 
-"||" {return tt.getOperatorTokenType(0);}
-":=" {return tt.getOperatorTokenType(1);}
-".." {return tt.getOperatorTokenType(2);}
-"::" {return tt.getOperatorTokenType(3);}
+"="{wso}"=" {return tt.getOperatorTokenType(0);}
+"|"{wso}"|" {return tt.getOperatorTokenType(1);}
+"<"{wso}"=" {return tt.getOperatorTokenType(2);}
+">"{wso}"=" {return tt.getOperatorTokenType(3);}
+"<"{wso}">" {return tt.getOperatorTokenType(4);}
+"!"{wso}"=" {return tt.getOperatorTokenType(5);}
+":"{wso}"=" {return tt.getOperatorTokenType(6);}
+"="{wso}">" {return tt.getOperatorTokenType(7);}
+".."        {return tt.getOperatorTokenType(8);}
+"::"        {return tt.getOperatorTokenType(9);}
+
+
 
 "@" {return tt.getCharacterTokenType(0);}
 ":" {return tt.getCharacterTokenType(1);}
