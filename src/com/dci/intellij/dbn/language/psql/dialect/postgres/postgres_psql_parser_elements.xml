@@ -294,10 +294,7 @@
                         </one-of>
                     </sequence>
                     <sequence id="000000139">
-                        <one-of id="000000140">
-                            <element ref-id="equality_operator" />
-                            <element ref-id="greater_less_operator" />
-                        </one-of>
+                        <element ref-id="comparison_operator" />
                         <one-of id="000000141">
                             <wrapper id="000000142" template="PARENTHESES">
                                 <element ref-id="subquery" />
@@ -375,33 +372,16 @@
     </element-def>
 
     <!-- ========= OPERATORS ========= -->
-    <element-def description="EQUALITY operator" id="equality_operator">
-        <one-of id="000000200">
-            <sequence id="000000201">
-                <token id="000000202" optional="true" type-id="CHR_EXCLAMATION" />
-                <token exit="true" id="000000203" type-id="CHR_EQUAL" />
-            </sequence>
-            <sequence id="000000204">
-                <token id="000000205" type-id="CHR_LESS" />
-                <token exit="true" id="000000206" type-id="CHR_GREATER" />
-            </sequence>
+    <element-def description="COMPARISON operator" id="comparison_operator">
+        <one-of>
+            <token type-id="CHR_EQUAL"/>
+            <token type-id="CHR_LESS"/>
+            <token type-id="CHR_GREATER"/>
+            <token type-id="OPR_NOT_EQUAL"/>
+            <token type-id="OPR_LESS_GREATER"/>
+            <token type-id="OPR_LESS_EQUAL"/>
+            <token type-id="OPR_GREATER_EQUAL"/>
         </one-of>
-    </element-def>
-    <element-def description="GREATER/LESS operator" id="greater_less_operator">
-        <one-of id="000000207">
-            <sequence id="000000208">
-                <token id="000000209" type-id="CHR_GREATER" />
-                <token id="000000210" optional="true" type-id="CHR_EQUAL" />
-            </sequence>
-            <sequence id="000000211">
-                <token id="000000212" type-id="CHR_LESS" />
-                <token id="000000213" optional="true" type-id="CHR_EQUAL" />
-            </sequence>
-        </one-of>
-    </element-def>
-    <element-def description="CONCATENATION operator" id="concatenation_operator">
-        <token id="000000214" type-id="CHR_VERTICAL_BAR" />
-        <token id="000000215" type-id="CHR_VERTICAL_BAR" />
     </element-def>
 
     <!-- ========= MISCELLANEOUS ========= -->

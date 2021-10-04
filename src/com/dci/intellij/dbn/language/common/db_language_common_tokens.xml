@@ -5,36 +5,43 @@
         <token id="WHITE_SPACE" type="whitespace"/>
 
         <!-- CHARACTERS -->
-        <token index="0" id="CHR_AT" value="@" type="character"/>
-        <token index="1" id="CHR_COLON" value=":" type="character"/>
-        <token index="2" id="CHR_COMMA" value="," type="character" formatting-spacing-before="NO_SPACE" formatting-spacing-after="ONE_SPACE"/>
-        <token index="3" id="CHR_DOT" value="." type="character" formatting-spacing-before="NO_SPACE" formatting-spacing-after="NO_SPACE"/>
-        <token index="4" id="CHR_EQUAL" value="=" type="character" formatting-spacing-before="ONE_SPACE" formatting-spacing-after="ONE_SPACE"/>
-        <token index="5" id="CHR_EXCLAMATION" value="!" type="character" formatting-spacing-before="ONE_SPACE" formatting-spacing-after="ONE_SPACE"/>
-        <token index="6" id="CHR_GREATER" value=" " type="character"/>
-        <token index="7" id="CHR_HASH" value="#" type="character"/>
-        <token index="8" id="CHR_LEFT_BRACKET" value="[" type="character" formatting-spacing-after="NO_SPACE"/>
-        <token index="9" id="CHR_LEFT_CURLY_BRACKET" value="{" type="character" formatting-spacing-after="NO_SPACE"/>
-        <token index="10" id="CHR_LEFT_PARENTHESIS" value="(" type="character"  formatting-spacing-after="NO_SPACE"/>
-        <token index="11" id="CHR_LESS" value=" " type="character"/>
-        <token index="12" id="CHR_MINUS" value="-" type="character"/>
-        <token index="13" id="CHR_PERCENT" value="%" type="character"/>
-        <token index="14" id="CHR_PLUS" value="+" type="character"/>
-        <token index="15" id="CHR_RIGHT_BRACKET" value="]" type="character" formatting-spacing-before="NO_SPACE"/>
-        <token index="16" id="CHR_RIGHT_CURLY_BRACKET" value="}" type="character" formatting-spacing-before="NO_SPACE"/>
-        <token index="17" id="CHR_RIGHT_PARENTHESIS" value=")" type="character" formatting-spacing-before="NO_SPACE"/>
-        <token index="18" id="CHR_SEMICOLON" value=";" type="character" formatting-spacing-before="NO_SPACE"/>
-        <token index="19" id="CHR_SLASH" value="/" type="character" formatting-wrap="ALWAYS" formatting-indend="ABSOLUTE_NONE"/>
-        <token index="20" id="CHR_STAR" value="*" type="character"/>
-        <token index="21" id="CHR_VERTICAL_BAR" value="|" type="character"/>
-        <token index="22" id="CHR_AND" value="&amp;" type="character"/>
-        <token index="23" id="CHR_TILDE" value="~" type="character"/>
+        <token type="character" index="0"  id="CHR_AT"                  value="@"/>
+        <token type="character" index="1"  id="CHR_COLON"               value=":"/>
+        <token type="character" index="2"  id="CHR_COMMA"               value="," formatting-spacing-before="NO_SPACE" formatting-spacing-after="ONE_SPACE"/>
+        <token type="character" index="3"  id="CHR_DOT"                 value="." formatting-spacing-before="NO_SPACE" formatting-spacing-after="NO_SPACE"/>
+        <token type="character" index="4"  id="CHR_EQUAL"               value="=" formatting-spacing-before="ONE_SPACE" formatting-spacing-after="ONE_SPACE"/>
+        <token type="character" index="5"  id="CHR_EXCLAMATION"         value="!" formatting-spacing-before="ONE_SPACE" formatting-spacing-after="ONE_SPACE"/>
+        <token type="character" index="6"  id="CHR_GREATER"             value="&#62;" />
+        <token type="character" index="7"  id="CHR_HASH"                value="#"/>
+        <token type="character" index="8"  id="CHR_LEFT_BRACKET"        value="[" formatting-spacing-after="NO_SPACE"/>
+        <token type="character" index="9"  id="CHR_LEFT_CURLY_BRACKET"  value="{" formatting-spacing-after="NO_SPACE"/>
+        <token type="character" index="10" id="CHR_LEFT_PARENTHESIS"    value="(" formatting-spacing-after="NO_SPACE"/>
+        <token type="character" index="11" id="CHR_LESS"                value="&#60;" />
+        <token type="character" index="12" id="CHR_MINUS"               value="-"/>
+        <token type="character" index="13" id="CHR_PERCENT"             value="%"/>
+        <token type="character" index="14" id="CHR_PLUS"                value="+"/>
+        <token type="character" index="15" id="CHR_RIGHT_BRACKET"       value="]" formatting-spacing-before="NO_SPACE"/>
+        <token type="character" index="16" id="CHR_RIGHT_CURLY_BRACKET" value="}" formatting-spacing-before="NO_SPACE"/>
+        <token type="character" index="17" id="CHR_RIGHT_PARENTHESIS"   value=")" formatting-spacing-before="NO_SPACE"/>
+        <token type="character" index="18" id="CHR_SEMICOLON"           value=";" formatting-spacing-before="NO_SPACE"/>
+        <token type="character" index="19" id="CHR_SLASH"               value="/" formatting-wrap="ALWAYS" formatting-indend="ABSOLUTE_NONE"/>
+        <token type="character" index="20" id="CHR_STAR"                value="*"/>
+        <token type="character" index="21" id="CHR_VERTICAL_BAR"        value="|"/>
+        <token type="character" index="22" id="CHR_AND"                 value="&#38;"/>
+        <token type="character" index="23" id="CHR_TILDE"               value="~"/>
 
 
-        <token index="0" id="OPR_CONCATENATION" value="||" type="operator" formatting-spacing-before="ONE_SPACE" formatting-spacing-after="ONE_SPACE"/>
-        <token index="1" id="OPR_ASSIGNMENT" value=":=" type="operator" formatting-spacing-before="ONE_SPACE" formatting-spacing-after="ONE_SPACE"/>
-        <token index="2" id="OPR_RANGE_DOTS" value=".." type="operator" formatting-spacing-before="ONE_SPACE" formatting-spacing-after="ONE_SPACE"/>
-        <token index="3" id="OPR_CAST_PREFIX" value="::" type="operator" formatting-spacing-before="NO_SPACE" formatting-spacing-after="NO_SPACE"/>
+        <token type="operator" index="0" id="OPR_EQUAL_EQUAL"   value="=="         formatting-spacing-before="ONE_SPACE" formatting-spacing-after="ONE_SPACE"/>
+        <token type="operator" index="1" id="OPR_CONCATENATION" value="||"         formatting-spacing-before="ONE_SPACE" formatting-spacing-after="ONE_SPACE"/>
+        <token type="operator" index="2" id="OPR_LESS_EQUAL"    value="&#60;="     formatting-spacing-before="ONE_SPACE" formatting-spacing-after="ONE_SPACE"/>
+        <token type="operator" index="3" id="OPR_GREATER_EQUAL" value="&#62;="     formatting-spacing-before="ONE_SPACE" formatting-spacing-after="ONE_SPACE"/>
+        <token type="operator" index="4" id="OPR_LESS_GREATER"  value="&#60;&#62;" formatting-spacing-before="ONE_SPACE" formatting-spacing-after="ONE_SPACE"/>
+        <token type="operator" index="5" id="OPR_NOT_EQUAL"     value="!="         formatting-spacing-before="ONE_SPACE" formatting-spacing-after="ONE_SPACE"/>
+        <token type="operator" index="6" id="OPR_ASSIGNMENT"    value=":="         formatting-spacing-before="ONE_SPACE" formatting-spacing-after="ONE_SPACE"/>
+        <token type="operator" index="7" id="OPR_EQUAL_GREATER" value="=&#62;"     formatting-spacing-before="ONE_SPACE" formatting-spacing-after="ONE_SPACE"/>
+        <token type="operator" index="8" id="OPR_RANGE_DOTS"    value=".."         formatting-spacing-before="ONE_SPACE" formatting-spacing-after="ONE_SPACE"/>
+        <token type="operator" index="9" id="OPR_CAST_PREFIX"   value="::"         formatting-spacing-before="NO_SPACE" formatting-spacing-after="NO_SPACE"/>
+
 
 
         <token id="LINE_COMMENT" type="comment"/>
