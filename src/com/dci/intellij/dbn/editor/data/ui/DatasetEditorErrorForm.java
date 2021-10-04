@@ -1,6 +1,7 @@
 package com.dci.intellij.dbn.editor.data.ui;
 
 import com.dci.intellij.dbn.common.Icons;
+import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.common.thread.Dispatch;
 import com.dci.intellij.dbn.common.ui.DBNFormImpl;
 import com.dci.intellij.dbn.common.ui.listener.PopupCloseListener;
@@ -17,10 +18,14 @@ import com.intellij.openapi.util.Disposer;
 import com.intellij.ui.JBColor;
 import org.jetbrains.annotations.NotNull;
 
-import javax.swing.*;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JTextArea;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
-import java.awt.*;
+import java.awt.Color;
+import java.awt.Point;
+import java.awt.Rectangle;
 
 public class DatasetEditorErrorForm extends DBNFormImpl implements ChangeListener {
     public static final Color BACKGROUND_COLOR = new JBColor(
@@ -36,7 +41,7 @@ public class DatasetEditorErrorForm extends DBNFormImpl implements ChangeListene
     public DatasetEditorErrorForm(@NotNull DatasetEditorModelCell cell) {
         super(null, cell.getProject());
         this.cell = WeakRef.of(cell);
-        DatasetEditorError error = cell.getError();
+        DatasetEditorError error = Failsafe.nd(cell.getError());
         error.addChangeListener(this);
         errorIconLabel.setIcon(Icons.EXEC_MESSAGES_ERROR);
         errorIconLabel.setText("");
