@@ -886,41 +886,42 @@
                     </one-of>
                 </iteration>
                 <token id="000000437" type-id="KW_END" />
-                <token id="000000438" type-id="CHR_SEMICOLON" />
+                <object-ref id="000000438" optional="true" local="true" type="TYPE" />
+                <token id="000000439" type-id="CHR_SEMICOLON" />
             </sequence>
         </one-of>
     </element-def>
     <element-def description="Subprogram declaration in type" id="subprog_decl_in_type">
-        <one-of id="000000439">
+        <one-of id="000000440">
             <element ref-id="proc_decl_in_type" />
             <element ref-id="func_decl_in_type" />
             <element ref-id="constructor_declaration" />
         </one-of>
     </element-def>
     <element-def description="MAP ORDER FUNC declaration" id="map_order_func_declaration">
-        <one-of id="000000440" optional="true">
-            <token id="000000441" type-id="KW_MAP" />
-            <token id="000000442" type-id="KW_ORDER" />
+        <one-of id="000000441" optional="true">
+            <token id="000000442" type-id="KW_MAP" />
+            <token id="000000443" type-id="KW_ORDER" />
         </one-of>
-        <token id="000000443" type-id="KW_MEMBER" />
-        <one-of id="000000444">
+        <token id="000000444" type-id="KW_MEMBER" />
+        <one-of id="000000445">
             <element ref-id="func_decl_in_type" />
             <element ref-id="proc_decl_in_type" />
         </one-of>
     </element-def>
     <element-def attributes="OBJECT_SPECIFICATION, STRUCTURE, FOLDABLE_BLOCK, SCOPE_DEMARCATION" description="PROCEDURE declaration in type" id="proc_decl_in_type">
-        <token id="000000445" type-id="KW_PROCEDURE" />
-        <object-def attributes="SUBJECT" id="000000446" original-name="name" type="PROCEDURE" />
+        <token id="000000446" type-id="KW_PROCEDURE" />
+        <object-def attributes="SUBJECT" id="000000447" original-name="name" type="PROCEDURE" />
         <element optional="true" ref-id="parameter_declarations" />
-        <sequence id="000000447">
-            <one-of id="000000448">
-                <token id="000000449" type-id="KW_IS" />
-                <token id="000000450" type-id="KW_AS" />
+        <sequence id="000000448">
+            <one-of id="000000449">
+                <token id="000000450" type-id="KW_IS" />
+                <token id="000000451" type-id="KW_AS" />
             </one-of>
             <element optional="true" ref-id="pragma_declaration" />
-            <one-of id="000000451">
+            <one-of id="000000452">
                 <element ref-id="call_spec" />
-                <sequence id="000000452">
+                <sequence id="000000453">
                     <element optional="true" ref-id="declare_section" />
                     <element ref-id="body" />
                 </sequence>
@@ -928,20 +929,20 @@
         </sequence>
     </element-def>
     <element-def attributes="OBJECT_SPECIFICATION, STRUCTURE, FOLDABLE_BLOCK, SCOPE_DEMARCATION" description="FUNCTION declaration in type" id="func_decl_in_type">
-        <token id="000000453" type-id="KW_FUNCTION" />
-        <object-def attributes="SUBJECT" id="000000454" original-name="name" type="FUNCTION" />
+        <token id="000000454" type-id="KW_FUNCTION" />
+        <object-def attributes="SUBJECT" id="000000455" original-name="name" type="FUNCTION" />
         <element optional="true" ref-id="parameter_declarations" />
-        <token id="000000455" type-id="KW_RETURN" />
+        <token id="000000456" type-id="KW_RETURN" />
         <element original-name="datatype" ref-id="data_type" />
-        <sequence id="000000456">
-            <one-of id="000000457">
-                <token id="000000458" type-id="KW_IS" />
-                <token id="000000459" type-id="KW_AS" />
+        <sequence id="000000457">
+            <one-of id="000000458">
+                <token id="000000459" type-id="KW_IS" />
+                <token id="000000460" type-id="KW_AS" />
             </one-of>
             <element optional="true" ref-id="pragma_declaration" />
-            <one-of id="000000460">
+            <one-of id="000000461">
                 <element ref-id="call_spec" />
-                <sequence id="000000461">
+                <sequence id="000000462">
                     <element optional="true" ref-id="declare_section" />
                     <element ref-id="body" />
                 </sequence>
@@ -949,49 +950,42 @@
         </sequence>
     </element-def>
     <element-def attributes="STRUCTURE, FOLDABLE_BLOCK, SCOPE_DEMARCATION" description="CONSTRUCTOR declaration" id="constructor_declaration">
-        <token id="000000462" optional="true" type-id="KW_FINAL" />
-        <token id="000000463" optional="true" type-id="KW_INSTANTIABLE" />
-        <token id="000000464" type-id="KW_CONSTRUCTOR" />
-        <token id="000000465" type-id="KW_FUNCTION" />
-        <object-ref id="000000466" type="TYPE" />
-        <wrapper id="000000467" optional="true" template="PARENTHESES">
-            <sequence id="000000468">
-                <sequence id="000000469" optional="true">
-                    <token id="000000470" type-id="KW_SELF" />
-                    <token id="000000471" type-id="KW_IN" />
-                    <token id="000000472" type-id="KW_OUT" />
+        <token id="000000463" optional="true" type-id="KW_FINAL" />
+        <token id="000000464" optional="true" type-id="KW_INSTANTIABLE" />
+        <token id="000000465" type-id="KW_CONSTRUCTOR" />
+        <token id="000000466" type-id="KW_FUNCTION" />
+        <object-ref id="000000467" type="TYPE" />
+        <wrapper id="000000468" optional="true" template="PARENTHESES">
+            <sequence id="000000469">
+                <sequence id="000000470" optional="true">
+                    <token id="000000471" type-id="KW_SELF" />
+                    <token id="000000472" type-id="KW_IN" />
+                    <token id="000000473" type-id="KW_OUT" />
                     <element original-name="datatype" ref-id="data_type" />
-                    <token id="000000473" type-id="CHR_COMMA" />
+                    <token id="000000474" type-id="CHR_COMMA" />
                 </sequence>
-                <iteration id="000000474" separator="CHR_COMMA">
+                <iteration id="000000475" separator="CHR_COMMA">
                     <element ref-id="in_out_parameter_declaration" />
                 </iteration>
             </sequence>
         </wrapper>
-        <token id="000000475" type-id="KW_RETURN" />
-        <token id="000000476" type-id="KW_SELF" />
-        <token id="000000477" type-id="KW_AS" />
-        <token id="000000478" type-id="KW_RESULT" />
-        <one-of id="000000479">
-            <token id="000000480" type-id="KW_IS" />
-            <token id="000000481" type-id="KW_AS" />
+        <token id="000000476" type-id="KW_RETURN" />
+        <token id="000000477" type-id="KW_SELF" />
+        <token id="000000478" type-id="KW_AS" />
+        <token id="000000479" type-id="KW_RESULT" />
+        <one-of id="000000480">
+            <token id="000000481" type-id="KW_IS" />
+            <token id="000000482" type-id="KW_AS" />
         </one-of>
-        <one-of id="000000482">
+        <one-of id="000000483">
             <element ref-id="call_spec" />
-            <sequence id="000000483">
+            <sequence id="000000484">
                 <element optional="true" ref-id="declare_section" />
                 <element ref-id="body" />
             </sequence>
         </one-of>
     </element-def>
     <element-def description="DECLARE section" id="declare_section">
-        <one-of id="000000484">
-            <element ref-id="type_definition" />
-            <element ref-id="cursor_declaration" />
-            <element ref-id="item_declaration" />
-            <element ref-id="function_declaration" />
-            <element ref-id="procedure_declaration" />
-        </one-of>
         <iteration id="000000485">
             <one-of id="000000486">
                 <element ref-id="type_definition" />
@@ -1024,8 +1018,8 @@
         </sequence>
         <token id="000000493" type-id="KW_END" />
         <one-of id="000000494" optional="true" original-name="name">
-            <object-ref id="000000495" type="FUNCTION" />
-            <object-ref id="000000496" type="PROCEDURE" />
+            <object-ref id="000000495" local="true" type="FUNCTION" />
+            <object-ref id="000000496" local="true" type="PROCEDURE" />
         </one-of>
         <token id="000000497" type-id="CHR_SEMICOLON" />
     </element-def>
@@ -1121,7 +1115,7 @@
             <element ref-id="timing_point_section" />
         </iteration>
         <token id="000000550" type-id="KW_END" />
-        <object-ref id="000000551" optional="true" type="TRIGGER" />
+        <object-ref id="000000551" optional="true" local="true" type="TRIGGER" />
         <token id="000000552" type-id="CHR_SEMICOLON" />
     </element-def>
     <element-def description="TIMING POINT section" id="timing_point_section">
@@ -3859,7 +3853,7 @@
                 <element ref-id="expression" />
             </iteration>
         </wrapper>
-        <iteration optional="true" id="000001902">
+        <iteration id="000001902" optional="true">
             <sequence id="000001903">
                 <token id="000001904" type-id="CHR_DOT" />
                 <one-of id="000001905">
