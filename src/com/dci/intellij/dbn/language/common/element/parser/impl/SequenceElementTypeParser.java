@@ -46,8 +46,8 @@ public class SequenceElementTypeParser<ET extends SequenceElementType> extends E
                 // is end of document
                 if (tokenType == null || tokenType.isChameleon()) {
                     ParseResultType resultType =
-                            child.optional &&(child.isLast() || child.isOptionalFromHere()) ? ParseResultType.FULL_MATCH :
-                            !child.isFirst() && !elementType.isExitIndex(index) ? ParseResultType.PARTIAL_MATCH : ParseResultType.NO_MATCH;
+                            child.optional && (child.isLast() || child.isOptionalFromHere()) ? ParseResultType.FULL_MATCH :
+                            !child.isFirst() && elementType.isExitIndex(index) ? ParseResultType.NO_MATCH : ParseResultType.PARTIAL_MATCH;
                     return stepOut(node, context, depth, resultType, matchedTokens);
                 }
 
@@ -71,7 +71,7 @@ public class SequenceElementTypeParser<ET extends SequenceElementType> extends E
                     if (result.isNoMatch() && !child.optional) {
                         boolean isWeakMatch = matches < 2 && matchedTokens < 3 && index > 1 && ignoreFirstMatch();
 
-                        if (child.isFirst()|| elementType.isExitIndex(index) || isWeakMatch || matches == 0) {
+                        if (child.isFirst() || elementType.isExitIndex(index) || isWeakMatch || matches == 0) {
                             //if (isFirst(i) || isExitIndex(i)) {
                             return stepOut(node, context, depth, ParseResultType.NO_MATCH, matchedTokens);
                         }
