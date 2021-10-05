@@ -2,7 +2,7 @@
     <name>Database Navigator</name>
     <id>DBN</id>
     <!--3050 -->
-    <version>3.2.4951.0</version>
+    <version>3.2.5102.0</version>
     <category>Database</category>
     <depends>com.intellij.modules.platform</depends>
     <depends>com.intellij.modules.lang</depends>
@@ -31,10 +31,10 @@
     ]]></description>
     <change-notes><![CDATA[
         <ul>
-            <li><b>3.2.4951</b>
+            <li><b>3.2.5102</b>
             <ul>
                 <li>Oracle SQL and PLSQL language syntax updates
-                <li>Bug fixes and performance optimisations
+                <li>Bug fixes and performance improvements
             </ul>
             <li><b>3.2.4501</b>
             <ul>
