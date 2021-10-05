@@ -9110,7 +9110,7 @@
                     <token id="000004974" type-id="DT_CLOB" />
                 </one-of>
                 <token id="000004975" optional="true" type-id="KW_PRETTY" />
-                <token id="000004976" optional="true" type-id="KW_ASCII" />
+                <token id="000004976" optional="true" type-id="FN_ASCII" flavor="keyword"/>
             </sequence>
         </one-of>
     </element-def>
