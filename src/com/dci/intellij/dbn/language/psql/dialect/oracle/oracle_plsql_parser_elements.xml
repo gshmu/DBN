@@ -5443,7 +5443,7 @@
                     <token id="000002777" type-id="DT_CLOB" />
                 </one-of>
                 <token id="000002778" optional="true" type-id="KW_PRETTY" />
-                <token id="000002779" optional="true" type-id="KW_ASCII" />
+                <token id="000002779" optional="true" type-id="FN_ASCII" flavor="keyword"/>
             </sequence>
         </one-of>
     </element-def>
