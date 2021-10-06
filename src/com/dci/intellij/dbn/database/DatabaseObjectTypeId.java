@@ -78,6 +78,8 @@ public enum DatabaseObjectTypeId {
     JAVA_LIB,
     PARAMETER,
     LABEL,
+    CONSTANT,
+    VARIABLE,
     SAVEPOINT,
     EXCEPTION,
     WINDOW,
