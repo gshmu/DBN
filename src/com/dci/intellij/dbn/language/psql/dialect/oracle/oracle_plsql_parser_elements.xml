@@ -3818,7 +3818,7 @@
     </element-def>
 
     <element-def description="Expression" id="expression">
-        <iteration id="000001886" separator="OPR_CONCATENATION, OPR_NOT_EQUAL, OPR_LESS_GREATER, OPR_LESS_EQUAL, OPR_GREATER_EQUAL, CHR_STAR, CHR_SLASH, CHR_PLUS, CHR_MINUS, CHR_GREATER, CHR_LESS, CHR_EQUAL" wrapping-template="PARENTHESES">
+        <iteration id="000001886" separator="OPR_CONCATENATION, OPR_NOT_EQUAL, OPR_LESS_GREATER, OPR_LESS_EQUAL, OPR_GREATER_EQUAL, CHR_STAR, CHR_SLASH, CHR_PLUS, CHR_MINUS, CHR_GREATER, CHR_LESS, CHR_EQUAL, KW_AND, KW_OR" wrapping-template="PARENTHESES">
             <sequence id="000001887" wrapping-template="PARENTHESES">
                 <one-of id="000001888" optional="true">
                     <token id="000001889" type-id="CHR_PLUS" />
@@ -6189,7 +6189,7 @@
                             </one-of>
                             <token exit="true" id="000003204" type-id="OPR_EQUAL_GREATER" />
                         </sequence>
-                        <element ref-id="expression" />
+                        <element ref-id="boolean_expression" />
                     </sequence>
                 </iteration>
             </wrapper>
