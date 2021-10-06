@@ -518,7 +518,7 @@
         <sequence id="000000239" optional="true">
             <token id="000000240" type-id="KW_WHEN" />
             <wrapper id="000000241" template="PARENTHESES">
-                <element ref-id="condition" />
+                <element ref-id="boolean_expression" />
             </wrapper>
         </sequence>
         <element ref-id="trigger_body" />
@@ -1594,7 +1594,7 @@
                     <token id="000000821" type-id="OPR_ASSIGNMENT" />
                     <token id="000000822" type-id="KW_DEFAULT" />
                 </one-of>
-                <element original-name="expression" ref-id="condition" />
+                <element original-name="expression" ref-id="boolean_expression" />
             </sequence>
             <sequence id="000000823" original-name="">
                 <element original-name="datatype" ref-id="data_type" />
@@ -2120,7 +2120,7 @@
         <one-of id="000001052" sortable="true">
             <sequence id="000001053">
                 <token id="000001054" type-id="KW_ON" />
-                <element ref-id="condition" />
+                <element ref-id="boolean_expression" />
             </sequence>
             <sequence id="000001055">
                 <token id="000001056" type-id="KW_USING" />
@@ -2141,7 +2141,7 @@
         <one-of id="000001061" optional="true" sortable="true">
             <sequence id="000001062">
                 <token id="000001063" type-id="KW_ON" />
-                <element ref-id="condition" />
+                <element ref-id="boolean_expression" />
             </sequence>
             <sequence id="000001064">
                 <token id="000001065" type-id="KW_USING" />
@@ -2204,7 +2204,7 @@
     <element-def attributes="CLAUSE" description="WHERE clause" id="where_clause">
         <token id="000001094" type-id="KW_WHERE" />
         <block formatting-indent="NORMAL" id="000001095">
-            <element ref-id="condition" />
+            <element ref-id="boolean_expression" />
         </block>
     </element-def>
     <element-def description="Hierarchical query clause" id="hierarchical_query_clause">
@@ -2222,18 +2222,18 @@
     <element-def description="START WITH clause" id="start_with_clause">
         <token id="000001099" type-id="KW_START" />
         <token id="000001100" type-id="KW_WITH" />
-        <element ref-id="condition" />
+        <element ref-id="boolean_expression" />
     </element-def>
     <element-def description="CONNECT BY clause" id="connect_by_clause">
         <token id="000001101" type-id="KW_CONNECT" />
         <token id="000001102" type-id="KW_BY" />
         <token id="000001103" optional="true" type-id="KW_NOCYCLE" />
-        <element ref-id="condition" />
+        <element ref-id="boolean_expression" />
     </element-def>
 
     <element-def attributes="CLAUSE" description="HAVING clause" id="having_clause">
         <token id="000001104" type-id="KW_HAVING" />
-        <element ref-id="condition" />
+        <element ref-id="boolean_expression" />
     </element-def>
     <element-def attributes="CLAUSE" description="GROUP BY clause" formatting-indent="NORMAL" id="group_by_clause">
         <token id="000001105" type-id="KW_GROUP" />
@@ -2388,7 +2388,7 @@
             <sequence id="000001176" optional="true">
                 <token id="000001177" type-id="KW_UNTIL" />
                 <wrapper id="000001178" template="PARENTHESES">
-                    <element ref-id="condition" />
+                    <element ref-id="boolean_expression" />
                 </wrapper>
             </sequence>
         </sequence>
@@ -2413,8 +2413,7 @@
             <one-of id="000001187" sortable="true">
                 <iteration id="000001188" separator="CHR_COMMA">
                     <one-of id="000001189" sortable="true">
-                        <element ref-id="condition" />
-                        <element ref-id="expression" />
+                        <element ref-id="boolean_expression" />
                         <element ref-id="single_column_for_loop" />
                     </one-of>
                 </iteration>
@@ -3379,7 +3378,7 @@
         <alias-def id="000001660" optional="true" original-name="t_alias" type="DATASET" />
         <token id="000001661" type-id="KW_ON" />
         <wrapper id="000001662" template="PARENTHESES">
-            <element ref-id="condition" />
+            <element ref-id="boolean_expression" />
         </wrapper>
     </element-def>
     <element-def attributes="CLAUSE" description="MERGE UPDATE clause" id="merge_update_clause">
@@ -3435,9 +3434,7 @@
         <wrapper id="000001691" template="PARENTHESES">
             <one-of id="000001692">
                 <token id="000001693" type-id="KW_DEFAULT" />
-                <iteration id="000001694" separator="CHR_COMMA">
-                    <element ref-id="expression" />
-                </iteration>
+                <element ref-id="expression_list"/>
             </one-of>
         </wrapper>
         <element optional="true" ref-id="where_clause" />
@@ -3505,9 +3502,7 @@
                 <one-of id="000001726">
                     <wrapper attributes="COLUMN_PARAMETER_HANDLER" id="000001727" template="PARENTHESES">
                         <one-of id="000001728">
-                            <iteration id="000001729" separator="CHR_COMMA">
-                                <element original-name="sql_expression" ref-id="expression" />
-                            </iteration>
+                            <element ref-id="expression_list" original-name="sql_expression"/>
                             <element ref-id="subquery" />
                         </one-of>
                     </wrapper>
@@ -3635,7 +3630,7 @@
         <sequence id="000001798" optional="true">
             <token id="000001799" type-id="KW_WHERE" />
             <one-of id="000001800">
-                <element original-name="search_condition" ref-id="condition" />
+                <element original-name="search_condition" ref-id="boolean_expression" />
                 <sequence id="000001801">
                     <token id="000001802" type-id="KW_CURRENT" />
                     <token id="000001803" type-id="KW_OF" />
@@ -3795,7 +3790,7 @@
     <!-- ========= EXPRESSIONS ========= -->
     <element-def description="Expression list" id="expression_list">
         <iteration id="000001879" separator="CHR_COMMA" wrapping-template="PARENTHESES">
-            <element ref-id="expression" />
+            <element ref-id="boolean_expression" />
         </iteration>
     </element-def>
     <element-def description="Wrapped expression list" id="wrapped_expression_list">
@@ -3803,9 +3798,12 @@
             <element optional="true" ref-id="expression_list" />
         </wrapper>
     </element-def>
+    <element-def description="Boolean expression" id="boolean_expression">
+        <element ref-id="condition" />
+    </element-def>
 
     <element-def description="Expression" id="expression">
-        <iteration id="000001881" separator="OPR_CONCATENATION, OPR_NOT_EQUAL, OPR_LESS_GREATER, OPR_LESS_EQUAL, OPR_GREATER_EQUAL, CHR_STAR, CHR_SLASH, CHR_PLUS, CHR_MINUS, CHR_GREATER, CHR_LESS, CHR_EQUAL, KW_AND, KW_OR" wrapping-template="PARENTHESES">
+        <iteration id="000001881" separator="OPR_CONCATENATION, OPR_NOT_EQUAL, OPR_LESS_GREATER, OPR_LESS_EQUAL, OPR_GREATER_EQUAL, CHR_STAR, CHR_SLASH, CHR_PLUS, CHR_MINUS, CHR_GREATER, CHR_LESS, CHR_EQUAL" wrapping-template="PARENTHESES">
             <sequence id="000001882" wrapping-template="PARENTHESES">
                 <one-of id="000001883" optional="true">
                     <token id="000001884" type-id="CHR_PLUS" />
@@ -3872,9 +3870,6 @@
                 </one-of>
             </sequence>
         </one-of>
-    </element-def>
-    <element-def description="Boolean expression" id="boolean_expression">
-        <element ref-id="condition" />
     </element-def>
     <element-def description="Array element expression" id="array_element_expression">
         <variable-ref id="000001910" type="PACKAGE_TYPE" />
@@ -4793,7 +4788,7 @@
             <sequence id="000002431">
                 <token id="000002432" type-id="FN_LNNVL" />
                 <wrapper id="000002433" template="PARENTHESES">
-                    <element ref-id="condition" />
+                    <element ref-id="boolean_expression" />
                 </wrapper>
             </sequence>
             <sequence id="000002434">

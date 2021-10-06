@@ -7121,9 +7121,7 @@
             <token id="000003902" type-id="KW_ROLLUP" />
             <token id="000003903" type-id="KW_CUBE" />
         </one-of>
-        <wrapper id="000003904" template="PARENTHESES">
-            <element ref-id="grouping_expression_list" />
-        </wrapper>
+        <element ref-id="wrapped_expression_list" original-name="grouping_expression_list"/>
     </element-def>
     <element-def description="GROUPING SETS clause" id="grouping_sets_clause">
         <token flavor="keyword" id="000003905" type-id="FN_GROUPING" />
@@ -7132,15 +7130,10 @@
             <iteration id="000003908" separator="CHR_COMMA">
                 <one-of id="000003909" sortable="true">
                     <element ref-id="rollup_cube_clause" />
-                    <element ref-id="grouping_expression_list" />
+                    <element ref-id="wrapped_expression_list" original-name="grouping_expression_list"/>
                 </one-of>
             </iteration>
         </wrapper>
-    </element-def>
-    <element-def description="Grouping expression list" id="grouping_expression_list">
-        <iteration id="000003910" separator="CHR_COMMA">
-            <element ref-id="expression_list" />
-        </iteration>
     </element-def>
     <element-def attributes="CLAUSE" description="MODEL clause" id="model_clause">
         <token id="000003911" type-id="KW_MODEL" />
@@ -7414,11 +7407,19 @@
     <!-- ========= EXPRESSION ========= -->
     <element-def description="Expression list" id="expression_list">
         <iteration id="000004052" separator="CHR_COMMA" wrapping-template="PARENTHESES">
-            <element ref-id="expression" />
+            <element ref-id="boolean_expression" />
         </iteration>
     </element-def>
+    <element-def description="Wrapped expression list" id="wrapped_expression_list">
+        <wrapper id="000001880" template="PARENTHESES">
+            <element optional="true" ref-id="expression_list" />
+        </wrapper>
+    </element-def>
+    <element-def description="Boolean expression" id="boolean_expression" custom="true">
+        <element ref-id="condition"/>
+    </element-def>
     <element-def description="Expression" id="expression">
-        <iteration id="000004053" separator="OPR_CONCATENATION, OPR_NOT_EQUAL, OPR_LESS_GREATER, OPR_LESS_EQUAL, OPR_GREATER_EQUAL, CHR_STAR, CHR_SLASH, CHR_PLUS, CHR_MINUS, CHR_GREATER, CHR_LESS, CHR_EQUAL, KW_AND, KW_OR" wrapping-template="PARENTHESES">
+        <iteration id="000004053" separator="OPR_CONCATENATION, OPR_NOT_EQUAL, OPR_LESS_GREATER, OPR_LESS_EQUAL, OPR_GREATER_EQUAL, CHR_STAR, CHR_SLASH, CHR_PLUS, CHR_MINUS, CHR_GREATER" wrapping-template="PARENTHESES">
             <sequence id="000004054" wrapping-template="PARENTHESES">
                 <one-of id="000004055" optional="true">
                     <token id="000004056" type-id="CHR_PLUS" />
@@ -10064,7 +10065,7 @@
                         </one-of>
                         <token exit="true" id="000005503" type-id="OPR_EQUAL_GREATER" />
                     </sequence>
-                    <element ref-id="expression" />
+                    <element ref-id="boolean_expression" />
                 </sequence>
             </iteration>
         </wrapper>
