@@ -8257,7 +8257,7 @@
             <sequence id="000004486">
                 <token id="000004487" type-id="FN_REGEXP_SUBSTR" />
                 <wrapper id="000004488" template="PARENTHESES">
-                    <iteration elements-count="2-5" id="000004489" separator="CHR_COMMA">
+                    <iteration elements-count="2-6" id="000004489" separator="CHR_COMMA">
                         <element ref-id="expression" />
                     </iteration>
                 </wrapper>
