@@ -269,6 +269,7 @@ public class ConnectionBundleSettingsForm extends ConfigurationEditorForm<Connec
 
             CopyPasteManager copyPasteManager = CopyPasteManager.getInstance();
             copyPasteManager.setContents(new StringSelection(xmlString));
+            MessageUtil.showInfoDialog(getProject(), "Config Export", "Configuration for selected connections exported to clipboard.");
         } catch (Exception ex) {
             log.error("Could not copy database configuration to clipboard", ex);
         }
