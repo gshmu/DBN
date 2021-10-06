@@ -210,11 +210,11 @@ public abstract class DynamicContentImpl<T extends DynamicContentElement>
                 set(LOADING, false);
                 updateChangeSignature();
             }
-            CollectionUtil.forEach(elements,
-                    (element) -> {
-                        checkDisposed();
-                        element.refresh();
-                    });
+
+            elements.forEach(e -> {
+                checkDisposed();
+                e.refresh();
+            });
         }
     }
 
@@ -237,11 +237,10 @@ public abstract class DynamicContentImpl<T extends DynamicContentElement>
                 markDirty();
                 dependencyAdapter.refreshSources();
                 if (!is(INTERNAL)){
-                    CollectionUtil.forEach(elements,
-                            (element) -> {
-                                checkDisposed();
-                                element.refresh();
-                            });
+                    elements.forEach(e -> {
+                        checkDisposed();
+                        e.refresh();
+                    });
                 }
             } finally {
                 set(REFRESHING, false);

@@ -4,7 +4,6 @@ import com.dci.intellij.dbn.browser.model.BrowserTreeNode;
 import com.dci.intellij.dbn.common.dispose.StatefulDisposable;
 import com.dci.intellij.dbn.common.routine.AsyncTaskExecutor;
 import com.dci.intellij.dbn.common.thread.ThreadPool;
-import com.dci.intellij.dbn.common.util.CollectionUtil;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.ConnectionManager;
 import com.dci.intellij.dbn.connection.VirtualConnectionHandler;
@@ -73,14 +72,13 @@ class DBObjectLookupScanner extends StatefulDisposable.Base implements DBObjectL
         if (selectedConnection == null || selectedConnection instanceof VirtualConnectionHandler) {
             ConnectionManager connectionManager = ConnectionManager.getInstance(model.getProject());
             List<ConnectionHandler> connectionHandlers = connectionManager.getConnectionHandlers();
-            CollectionUtil.forEach(
-                    connectionHandlers,
-                    (connectionHandler -> {
+            connectionHandlers.forEach(
+                    connectionHandler -> {
                         model.checkCancelled();
 
                         DBObjectListContainer objectListContainer = connectionHandler.getObjectBundle().getObjectListContainer();
                         objectListContainer.visitLists(this, true);
-                    }));
+                    });
         } else {
             DBObjectListContainer objectListContainer =
                     selectedSchema == null ?
