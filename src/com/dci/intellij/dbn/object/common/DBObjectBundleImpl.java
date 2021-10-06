@@ -471,9 +471,7 @@ public class DBObjectBundleImpl extends BrowserTreeNodeBase implements DBObjectB
 
     @Override
     public void refreshTreeChildren(@NotNull DBObjectType... objectTypes) {
-        CollectionUtil.forEach(
-                visibleTreeChildren,
-                treeNode -> treeNode.refreshTreeChildren(objectTypes));
+        visibleTreeChildren.forEach(treeNode -> treeNode.refreshTreeChildren(objectTypes));
     }
 
     @Override
@@ -483,9 +481,7 @@ public class DBObjectBundleImpl extends BrowserTreeNodeBase implements DBObjectB
             buildTreeChildren();
         }
 
-        CollectionUtil.forEach(
-                visibleTreeChildren,
-                treeNode -> treeNode.rebuildTreeChildren());
+        visibleTreeChildren.forEach(treeNode -> treeNode.rebuildTreeChildren());
     }
 
     @Override

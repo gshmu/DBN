@@ -77,7 +77,8 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 
-import static com.dci.intellij.dbn.common.util.CollectionUtil.*;
+import static com.dci.intellij.dbn.common.util.CollectionUtil.compact;
+import static com.dci.intellij.dbn.common.util.CollectionUtil.filter;
 
 public abstract class DBObjectImpl<M extends DBObjectMetadata> extends BrowserTreeNodeBase implements DBObject, ToolTipProvider {
 
@@ -747,9 +748,7 @@ public abstract class DBObjectImpl<M extends DBObjectMetadata> extends BrowserTr
 
     @Override
     public void refreshTreeChildren(@NotNull DBObjectType... objectTypes) {
-        forEach(
-                visibleTreeChildren,
-                treeNode -> treeNode.refreshTreeChildren(objectTypes));
+        visibleTreeChildren.forEach(treeNode -> treeNode.refreshTreeChildren(objectTypes));
     }
 
     @Override
@@ -759,9 +758,8 @@ public abstract class DBObjectImpl<M extends DBObjectMetadata> extends BrowserTr
         if (visibleTreeChildren != null && DatabaseBrowserUtils.treeVisibilityChanged(getAllPossibleTreeChildren(), visibleTreeChildren, filter)) {
             buildTreeChildren();
         }
-        forEach(
-                visibleTreeChildren,
-                treeNode -> treeNode.rebuildTreeChildren());
+
+        visibleTreeChildren.forEach(treeNode -> treeNode.rebuildTreeChildren());
     }
 
     @NotNull
