@@ -1736,6 +1736,7 @@
         <element optional="true" ref-id="union_intersect_minus_clause" />
         <element optional="true" ref-id="order_by_clause" />
         <element optional="true" ref-id="row_limiting_clause" />
+        <element optional="true" ref-id="for_update_clause" />
     </element-def>
     <element-def description="Subquery factoring clause" id="subquery_factoring_clause">
         <token id="000000885" type-id="KW_WITH" />
