@@ -8940,7 +8940,7 @@
                 <iteration id="000004900" separator="CHR_COMMA">
                     <sequence id="000004901">
                         <token id="000004902" optional="true" type-id="KW_KEY" />
-                        <token id="000004903" original-name="string" type-id="STRING" />
+                        <element ref-id="expression" original-name="key_expr"/>
                         <token id="000004904" optional="true" type-id="KW_VALUE" />
                         <element original-name="expr" ref-id="expression" />
                         <element optional="true" ref-id="format_json_clause" />
@@ -8955,7 +8955,7 @@
         <wrapper id="000004906" template="PARENTHESES">
             <sequence id="000004907">
                 <token id="000004908" optional="true" type-id="KW_KEY" />
-                <token id="000004909" original-name="string" type-id="STRING" />
+                <element ref-id="expression" original-name="key_expr"/>
                 <token id="000004910" optional="true" type-id="KW_VALUE" />
                 <element original-name="expr" ref-id="expression" />
                 <element optional="true" ref-id="format_json_clause" />
