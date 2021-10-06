@@ -98,8 +98,12 @@ public enum DBObjectType implements DynamicContentType<DBObjectType> {
     PARAMETER(DatabaseObjectTypeId.PARAMETER, "parameter", "parameters", null, null, null, false),
     EXCEPTION(DatabaseObjectTypeId.EXCEPTION, "exception", "exceptions", null, null, null, false),
     SAVEPOINT(DatabaseObjectTypeId.SAVEPOINT, "savepoint", "savepoints", null, null, null, false),
-    LABEL(DatabaseObjectTypeId.LABEL, "label", "labels", null, null, null, false),
     WINDOW(DatabaseObjectTypeId.WINDOW, "window", "windows", null, null, null, false),
+
+    LABEL(DatabaseObjectTypeId.LABEL, "label", "labels", null, null, null, false),
+    CONSTANT(DatabaseObjectTypeId.CONSTANT, "constant", "constants", null, null, null, false),
+    VARIABLE(DatabaseObjectTypeId.VARIABLE, "variable", "variables", null, Icons.DBO_VARIABLE, null, false),
+
 
     CONSOLE(DatabaseObjectTypeId.CONSOLE, "console", "consoles", Icons.DBO_CONSOLE, null, Icons.DBO_CONSOLES, false),
     UNKNOWN(DatabaseObjectTypeId.UNKNOWN, "unknown", null, null, null, null, true),
