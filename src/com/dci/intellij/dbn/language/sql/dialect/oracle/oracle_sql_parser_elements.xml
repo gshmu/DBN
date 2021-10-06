@@ -7419,7 +7419,7 @@
         <element ref-id="condition" />
     </element-def>
     <element-def description="Expression" id="expression">
-        <iteration id="000004052" separator="OPR_CONCATENATION, OPR_NOT_EQUAL, OPR_LESS_GREATER, OPR_LESS_EQUAL, OPR_GREATER_EQUAL, CHR_STAR, CHR_SLASH, CHR_PLUS, CHR_MINUS, CHR_GREATER" wrapping-template="PARENTHESES">
+        <iteration id="000004052" separator="OPR_CONCATENATION, OPR_NOT_EQUAL, OPR_LESS_GREATER, OPR_LESS_EQUAL, OPR_GREATER_EQUAL, CHR_STAR, CHR_SLASH, CHR_PLUS, CHR_MINUS, CHR_GREATER, CHR_LESS, CHR_EQUAL" wrapping-template="PARENTHESES">
             <sequence id="000004053" wrapping-template="PARENTHESES">
                 <one-of id="000004054" optional="true">
                     <token id="000004055" type-id="CHR_PLUS" />
@@ -8062,6 +8062,7 @@
             <element ref-id="json_objectagg_function" />
             <element ref-id="json_array_function" />
             <element ref-id="json_arrayagg_function" />
+            <element ref-id="json_query_function" />
             <element ref-id="xml_function" />
         </one-of>
     </element-def>
