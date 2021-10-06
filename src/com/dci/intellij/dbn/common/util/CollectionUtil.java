@@ -17,7 +17,6 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 import java.util.concurrent.CopyOnWriteArrayList;
-import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
@@ -119,22 +118,6 @@ public class CollectionUtil {
         return elements;
     }
 
-    public static <T> void forEach(@Nullable Iterable<T> iterable, @NotNull Consumer<? super T> action) {
-        if (iterable != null) {
-            if (iterable instanceof List) {
-                // indexed loop is supposed to be fastest
-                List<T> list = (List<T>) iterable;
-                for (int i = 0; i < list.size(); i++) {
-                    T element = list.get(i);
-                    action.accept(element);
-                }
-
-            } else {
-                iterable.forEach(action);
-            }
-        }
-    }
-
     @NotNull
     @Contract(value = " -> new", pure = true)
     public static <T> List<T> createConcurrentList() {
@@ -152,8 +135,7 @@ public class CollectionUtil {
         } else {
             // implicitly wrapping
             List<T> filteredList = ensure ? new ArrayList<>() : null;
-            for (int i = 0; i < list.size(); i++) {
-                T element = list.get(i);
+            for (T element : list) {
                 if (filter.accepts(element)) {
                     if (filteredList == null) {
                         filteredList = new ArrayList<>();
@@ -178,9 +160,7 @@ public class CollectionUtil {
 
     public static <T> void first(@Nullable List<T> list, Predicate<? super T> predicate, ParametricRunnable.Basic<T> callback) {
         if (list != null && !list.isEmpty()) {
-            // indexed loop is supposed to be fastest
-            for (int i=0; i<list.size(); i++) {
-                T element = list.get(i);
+            for (T element : list) {
                 if (predicate.test(element)) {
                     callback.run(element);
                     return;
@@ -191,13 +171,7 @@ public class CollectionUtil {
 
     public static <T> T first(List<T> list, Predicate<? super T> predicate) {
         if (list != null && !list.isEmpty()) {
-            // indexed loop is supposed to be fastest
-            for (int i=0; i<list.size(); i++) {
-                T element = list.get(i);
-                if (predicate.test(element)) {
-                    return element;
-                }
-            }
+            return list.stream().filter(predicate).findFirst().orElse(null);
         }
         return null;
     }

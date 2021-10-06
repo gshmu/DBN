@@ -2,7 +2,6 @@ package com.dci.intellij.dbn.object.common;
 
 import com.dci.intellij.dbn.common.dispose.StatefulDisposable;
 import com.dci.intellij.dbn.common.load.ProgressMonitor;
-import com.dci.intellij.dbn.common.util.CollectionUtil;
 import com.dci.intellij.dbn.object.common.list.DBObjectList;
 import com.dci.intellij.dbn.object.common.list.DBObjectListContainer;
 import com.dci.intellij.dbn.object.common.list.DBObjectListVisitor;
@@ -19,7 +18,7 @@ public class DBObjectRecursiveLoaderVisitor extends StatefulDisposable.Base impl
     public void visit(DBObjectList<?> objectList) {
         if (!objectList.getDependencyAdapter().isSubContent()) {
             List<DBObject> objects = (List<DBObject>) objectList.getObjects();
-            CollectionUtil.forEach(objects, object -> {
+            objects.forEach(object -> {
                 ProgressMonitor.checkCancelled();
                 checkDisposed();
 
