@@ -10176,13 +10176,30 @@
     </element-def>
 
     <!-- CUSTOM -->
+    <element-def custom="true" description="Chained references list" id="chained_references_list">
+        <iteration id="000005583" separator="CHR_COMMA">
+            <element ref-id="chained_references" />
+        </iteration>
+    </element-def>
+    <element-def custom="true" description="Chained reference" id="chained_references">
+        <iteration id="000005584" separator="CHR_DOT">
+            <one-of id="000005585">
+                <token id="000005586" type-id="KW_COUNT" />
+                <sequence id="000005587">
+                    <variable-ref attributes="SUBJECT" id="000005588" type="ANY" />
+                    <element optional="true" ref-id="wrapped_expression_list" />
+                </sequence>
+            </one-of>
+        </iteration>
+    </element-def>
+
     <element-def description="Unknown identifier" id="custom_undefined">
-        <token id="000005583" type-id="IDENTIFIER" />
+        <token id="000005589" type-id="IDENTIFIER" />
     </element-def>
     <element-def description="Statement end" formatting-spacing-before="NO_SPACE" id="end" truncate-on-execution="true">
-        <one-of id="000005584">
-            <token id="000005585" type-id="CHR_SEMICOLON" />
-            <token id="000005586" type-id="CHR_SLASH" />
+        <one-of id="000005590">
+            <token id="000005591" type-id="CHR_SEMICOLON" />
+            <token id="000005592" type-id="CHR_SLASH" />
         </one-of>
     </element-def>
 </element-defs>
