@@ -4209,6 +4209,7 @@
             <element ref-id="json_objectagg_function" />
             <element ref-id="json_array_function" />
             <element ref-id="json_arrayagg_function" />
+            <element ref-id="json_query_function" />
             <element ref-id="xml_function" />
         </one-of>
     </element-def>
