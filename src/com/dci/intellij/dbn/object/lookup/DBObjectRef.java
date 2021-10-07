@@ -26,7 +26,6 @@ import org.jetbrains.annotations.Nullable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
-import java.util.StringTokenizer;
 
 import static com.dci.intellij.dbn.common.options.setting.SettingsSupport.connectionIdAttribute;
 import static com.dci.intellij.dbn.common.options.setting.SettingsSupport.stringAttribute;
@@ -117,68 +116,32 @@ public class DBObjectRef<T extends DBObject> implements Comparable, Reference<T>
     }
 
     public void deserialize(ConnectionId connectionId, String objectIdentifier) {
-        if (objectIdentifier.contains("]")) {
-            deserializeOld(connectionId, objectIdentifier);
-        } else {
-            String[] tokens = objectIdentifier.split(PS);
-
-            DBObjectRef<?> objectRef = null;
-            DBObjectType objectType = null;
-            for (int i=0; i<tokens.length; i++) {
-                String token = tokens[i];
-                if (objectType == null) {
-                    if (i == tokens.length -1) {
-                        // last optional "overload" numeric token
-                        this.overload = Short.parseShort(token);
-                    } else {
-                        objectType = DBObjectType.forListName(token, objectRef == null ? null : objectRef.objectType);
-                    }
-                } else {
-                    if (i < tokens.length - 2) {
-                        objectRef = objectRef == null ?
-                                new DBObjectRef<>(connectionId, objectType, token) :
-                                new DBObjectRef<>(objectRef, objectType, token);
-                    } else {
-                        this.parent = objectRef;
-                        this.objectType = objectType;
-                        this.objectName = token.intern();
-                    }
-                    objectType = null;
-                }
-            }
-        }
-    }
-
-    @Deprecated
-    private void deserializeOld(ConnectionId connectionId, String objectIdentifier) {
-        int typeEndIndex = objectIdentifier.indexOf("]");
-        StringTokenizer objectTypes = new StringTokenizer(objectIdentifier.substring(1, typeEndIndex), PS);
-
-        int objectStartIndex = typeEndIndex + 2;
-        int objectEndIndex = objectIdentifier.lastIndexOf("]");
-
-        StringTokenizer objectNames = new StringTokenizer(objectIdentifier.substring(objectStartIndex, objectEndIndex), PS);
+        String[] tokens = objectIdentifier.split(PS);
 
         DBObjectRef<?> objectRef = null;
-        while (objectTypes.hasMoreTokens()) {
-            String objectTypeName = objectTypes.nextToken();
-            String objectName = objectNames.nextToken();
-            DBObjectType objectType = DBObjectType.get(objectTypeName);
-            if (objectTypes.hasMoreTokens()) {
-                objectRef = objectRef == null ?
-                        new DBObjectRef<>(connectionId, objectType, objectName) :
-                        new DBObjectRef<>(objectRef, objectType, objectName);
-            } else {
-                if (objectNames.hasMoreTokens()) {
-                    String overloadToken = objectNames.nextToken();
-                    this.overload = Short.parseShort(overloadToken);
+        DBObjectType objectType = null;
+        for (int i=0; i<tokens.length; i++) {
+            String token = tokens[i];
+            if (objectType == null) {
+                if (i == tokens.length -1) {
+                    // last optional "overload" numeric token
+                    this.overload = Short.parseShort(token);
+                } else {
+                    objectType = DBObjectType.forListName(token, objectRef == null ? null : objectRef.objectType);
                 }
-                this.parent = objectRef;
-                this.objectType = objectType;
-                this.objectName = objectName.intern();
+            } else {
+                if (i < tokens.length - 2) {
+                    objectRef = objectRef == null ?
+                            new DBObjectRef<>(connectionId, objectType, token) :
+                            new DBObjectRef<>(objectRef, objectType, token);
+                } else {
+                    this.parent = objectRef;
+                    this.objectType = objectType;
+                    this.objectName = token.intern();
+                }
+                objectType = null;
             }
         }
-
     }
 
     @Override
@@ -274,12 +237,6 @@ public class DBObjectRef<T extends DBObject> implements Comparable, Reference<T>
         return parent == null ? connectionId : parent.getConnectionId();
     }
 
-/*
-    public DBObjectRef getParent() {
-        return parent;
-    }
-*/
-
     public boolean is(@NotNull DBObject object) {
         return Objects.equals(object.getRef(), this);
     }
@@ -344,7 +301,7 @@ public class DBObjectRef<T extends DBObject> implements Comparable, Reference<T>
         return load(project);
     }
 
-    protected final T load(Project project) {
+    private T load(Project project) {
         T object = getObject();
         if (object == null) {
             clearReference();
@@ -422,37 +379,6 @@ public class DBObjectRef<T extends DBObject> implements Comparable, Reference<T>
         return resolveConnectionHandler();
     }
 
-    @Override
-    public int compareTo(@NotNull Object o) {
-        if (o instanceof DBObjectRef) {
-            DBObjectRef<?> that = (DBObjectRef<?>) o;
-            int result = this.getConnectionId().id().compareTo(that.getConnectionId().id());
-            if (result != 0) return result;
-
-            if (this.parent != null && that.parent != null) {
-                if (Objects.equals(this.parent, that.parent)) {
-                    result = this.objectType.compareTo(that.objectType);
-                    if (result != 0) return result;
-
-                    int nameCompare = this.objectName.compareTo(that.objectName);
-                    return nameCompare == 0 ? this.overload - that.overload : nameCompare;
-                } else {
-                    return this.parent.compareTo(that.parent);
-                }
-            } else if(this.parent == null && that.parent == null) {
-                result = this.objectType.compareTo(that.objectType);
-                if (result != 0) return result;
-
-                return this.objectName.compareTo(that.objectName);
-            } else if (this.parent == null) {
-                return -1;
-            } else if (that.parent == null) {
-                return 1;
-            }
-        }
-        return 0;
-    }
-
     protected DBSchema getSchema() {
         return (DBSchema) getParentObject(DBObjectType.SCHEMA);
     }
@@ -462,11 +388,21 @@ public class DBObjectRef<T extends DBObject> implements Comparable, Reference<T>
         return schemaRef == null ? null : schemaRef.objectName;
     }
 
-/*
-    public int getOverload() {
-        return overload;
+    public String getFileName() {
+        if (overload == 0) {
+            return objectName;
+        } else {
+            return objectName + PS + overload;
+        }
     }
-*/
+
+    public boolean isOfType(DBObjectType objectType) {
+        return this.objectType.matches(objectType);
+    }
+
+    public boolean isLoaded() {
+        return (parent == null || parent.isLoaded()) && reference != null;
+    }
 
     @Override
     public boolean equals(Object o) {
@@ -510,11 +446,6 @@ public class DBObjectRef<T extends DBObject> implements Comparable, Reference<T>
     }
 
     @Override
-    public String toString() {
-        return objectName;
-    }
-
-    @Override
     public int hashCode() {
         if (hashCode == -1) {
             hashCode = (getConnectionId() + PS + serialize()).hashCode();
@@ -522,32 +453,40 @@ public class DBObjectRef<T extends DBObject> implements Comparable, Reference<T>
         return hashCode;
     }
 
-    /*
-        public String getObjectName() {
-            return objectName;
+    @Override
+    public int compareTo(@NotNull Object o) {
+        if (o instanceof DBObjectRef) {
+            DBObjectRef<?> that = (DBObjectRef<?>) o;
+            int result = this.getConnectionId().id().compareTo(that.getConnectionId().id());
+            if (result != 0) return result;
+
+            if (this.parent != null && that.parent != null) {
+                if (Objects.equals(this.parent, that.parent)) {
+                    result = this.objectType.compareTo(that.objectType);
+                    if (result != 0) return result;
+
+                    int nameCompare = this.objectName.compareTo(that.objectName);
+                    return nameCompare == 0 ? this.overload - that.overload : nameCompare;
+                } else {
+                    return this.parent.compareTo(that.parent);
+                }
+            } else if(this.parent == null && that.parent == null) {
+                result = this.objectType.compareTo(that.objectType);
+                if (result != 0) return result;
+
+                return this.objectName.compareTo(that.objectName);
+            } else if (this.parent == null) {
+                return -1;
+            } else if (that.parent == null) {
+                return 1;
+            }
         }
-
-    */
-    public String getFileName() {
-        if (overload == 0) {
-            return objectName;
-        } else {
-            return objectName + PS + overload;
-        }
+        return 0;
     }
 
-/*
-    @NotNull
-    public DBObjectType getObjectType() {
-        return objectType;
-    }
-*/
-
-    public boolean isOfType(DBObjectType objectType) {
-        return this.objectType.matches(objectType);
+    @Override
+    public String toString() {
+        return objectName;
     }
 
-    public boolean isLoaded() {
-        return (parent == null || parent.isLoaded()) && reference != null;
-    }
 }

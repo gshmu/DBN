@@ -15,7 +15,6 @@ import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.Objects;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Supplier;
 
@@ -28,11 +27,12 @@ public class SimpleTokenType extends IElementType implements TokenType {
     private String id;
     private String value;
     private String description;
-    private boolean isSuppressibleReservedWord;
+    private boolean suppressibleReservedWord;
     private TokenTypeCategory category;
     private DBObjectType objectType;
     private int lookupIndex;
-    private int hashCode;
+    private final int hashCode;
+
     private FormattingDefinition formatting;
     private TokenPairTemplate tokenPairTemplate;
     private static final AtomicInteger REGISTERED_COUNT = new AtomicInteger();
@@ -40,6 +40,7 @@ public class SimpleTokenType extends IElementType implements TokenType {
 
     public SimpleTokenType(@NotNull @NonNls String debugName, @Nullable Language language) {
         super(debugName, language, false);
+        this.hashCode = System.identityHashCode(this);
     }
 
 /*    public SimpleTokenType(SimpleTokenType source, Language language) {
@@ -73,8 +74,8 @@ public class SimpleTokenType extends IElementType implements TokenType {
 
         String type = stringAttribute(element, "type");
         category = TokenTypeCategory.getCategory(type);
-        isSuppressibleReservedWord = isReservedWord() && !booleanAttribute(element, "reserved", false);
-        hashCode = (language.getDisplayName() + id).hashCode();
+        suppressibleReservedWord = isReservedWord() && !booleanAttribute(element, "reserved", false);
+        hashCode = System.identityHashCode(this);
 
         String objectType = stringAttribute(element, "objectType");
         if (StringUtil.isNotEmpty(objectType)) {
@@ -107,7 +108,7 @@ public class SimpleTokenType extends IElementType implements TokenType {
 
     @Override
     public boolean isSuppressibleReservedWord() {
-        return isReservedWord() && isSuppressibleReservedWord;
+        return isReservedWord() && suppressibleReservedWord;
     }
 
     @Override
@@ -205,13 +206,7 @@ public class SimpleTokenType extends IElementType implements TokenType {
 
     @Override
     public boolean equals(Object obj) {
-        if (this == obj) return true;
-        if (obj instanceof SimpleTokenType) {
-            SimpleTokenType simpleTokenType = (SimpleTokenType) obj;
-            return simpleTokenType.getLanguage().equals(getLanguage()) &&
-                    Objects.equals(simpleTokenType.id, id);
-        }
-        return false;
+        return this == obj;
     }
 
     @Override
