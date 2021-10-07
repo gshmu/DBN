@@ -66,9 +66,9 @@ public abstract class ElementTypeBase extends IElementType implements ElementTyp
 
     ElementTypeBase(@NotNull ElementTypeBundle bundle, ElementTypeBase parent, String id, @Nullable String description) {
         super(id, bundle.getLanguageDialect(), false);
-        idx = TokenType.INDEXER.incrementAndGet();
+        this.idx = TokenType.INDEXER.incrementAndGet();
         this.id = id.intern();
-        this.hashCode = id.hashCode();
+        this.hashCode = System.identityHashCode(this);
         this.description = description;
         this.bundle = bundle;
         this.parent = parent;
@@ -76,9 +76,9 @@ public abstract class ElementTypeBase extends IElementType implements ElementTyp
 
     ElementTypeBase(@NotNull ElementTypeBundle bundle, ElementTypeBase parent, String id, @NotNull Element def) throws ElementTypeDefinitionException {
         super(id, bundle.getLanguageDialect(), false);
-        idx = TokenType.INDEXER.incrementAndGet();
+        this.idx = TokenType.INDEXER.incrementAndGet();
         String defId = stringAttribute(def, "id");
-        this.hashCode = id.hashCode();
+        this.hashCode = System.identityHashCode(this);
         if (!Objects.equals(id, defId)) {
             defId = id;
             def.setAttribute("id", defId);

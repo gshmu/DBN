@@ -15,6 +15,7 @@ import javax.swing.Icon;
 @EqualsAndHashCode(callSuper = false)
 public class StatementGutterRenderer extends GutterIconRenderer {
     private final StatementGutterAction action;
+
     public StatementGutterRenderer(ExecutablePsiElement executablePsiElement) {
         this.action = new StatementGutterAction(executablePsiElement);
     }

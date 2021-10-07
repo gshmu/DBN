@@ -37,6 +37,7 @@ public abstract class DBLanguageDialect extends Language implements DBFileElemen
     protected abstract DBLanguageSyntaxHighlighter createSyntaxHighlighter() ;
     protected abstract DBLanguageParserDefinition createParserDefinition();
     protected abstract IFileElementType createFileElementType();
+
     public ChameleonElementType getChameleonTokenType(DBLanguageDialectIdentifier dialectIdentifier) {
         throw new IllegalArgumentException("Language " + getID() + " does not support chameleons of type " + dialectIdentifier.getValue() );
     }
