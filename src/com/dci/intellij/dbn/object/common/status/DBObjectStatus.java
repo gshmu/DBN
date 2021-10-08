@@ -10,12 +10,18 @@ public enum DBObjectStatus implements Property {
     DEBUG(true, true),
     COMPILING(false, false);
 
+    private final Computed computed = new Computed(this);
     private final boolean propagable;
     private final boolean defaultValue;
 
     DBObjectStatus(boolean propagable, boolean defaultValue) {
         this.propagable = propagable;
         this.defaultValue = defaultValue;
+    }
+
+    @Override
+    public Computed computedOrdinal() {
+        return computed;
     }
 
     public boolean isPropagable() {

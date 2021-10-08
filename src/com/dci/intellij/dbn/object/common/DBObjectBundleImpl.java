@@ -112,6 +112,7 @@ import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
 
+import static com.dci.intellij.dbn.browser.DatabaseBrowserUtils.treeVisibilityChanged;
 import static com.dci.intellij.dbn.object.type.DBObjectRelationType.*;
 import static com.dci.intellij.dbn.object.type.DBObjectType.*;
 
@@ -471,17 +472,20 @@ public class DBObjectBundleImpl extends BrowserTreeNodeBase implements DBObjectB
 
     @Override
     public void refreshTreeChildren(@NotNull DBObjectType... objectTypes) {
-        visibleTreeChildren.forEach(treeNode -> treeNode.refreshTreeChildren(objectTypes));
+        if (visibleTreeChildren != null) {
+            visibleTreeChildren.forEach(treeNode -> treeNode.refreshTreeChildren(objectTypes));
+        }
     }
 
     @Override
     public void rebuildTreeChildren() {
-        Filter<BrowserTreeNode> filter = getConnectionHandler().getObjectTypeFilter();
-        if (visibleTreeChildren != null && DatabaseBrowserUtils.treeVisibilityChanged(allPossibleTreeChildren, visibleTreeChildren, filter)) {
-            buildTreeChildren();
+        if (visibleTreeChildren != null) {
+            Filter<BrowserTreeNode> filter = getConnectionHandler().getObjectTypeFilter();
+            if (treeVisibilityChanged(allPossibleTreeChildren, visibleTreeChildren, filter)) {
+                buildTreeChildren();
+            }
+            visibleTreeChildren.forEach(treeNode -> treeNode.rebuildTreeChildren());
         }
-
-        visibleTreeChildren.forEach(treeNode -> treeNode.rebuildTreeChildren());
     }
 
     @Override

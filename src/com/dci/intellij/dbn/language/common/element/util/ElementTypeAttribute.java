@@ -38,6 +38,7 @@ public enum ElementTypeAttribute implements Property{
     SCHEMA_CHANGE("SCHEMA_CHANGE", "Schema change clause"),
     ;
 
+    private final Computed computed = new Computed(this);
     private final String name;
     private final String description;
     private final boolean specific;
@@ -50,6 +51,11 @@ public enum ElementTypeAttribute implements Property{
         this.name = name;
         this.description = description;
         this.specific = specific;
+    }
+
+    @Override
+    public Computed computedOrdinal() {
+        return computed;
     }
 
     public String getName() {

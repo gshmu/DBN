@@ -1,7 +1,6 @@
 package com.dci.intellij.dbn.object.common;
 
 import com.dci.intellij.dbn.browser.DatabaseBrowserManager;
-import com.dci.intellij.dbn.browser.DatabaseBrowserUtils;
 import com.dci.intellij.dbn.browser.model.BrowserTreeEventListener;
 import com.dci.intellij.dbn.browser.model.BrowserTreeNode;
 import com.dci.intellij.dbn.browser.model.BrowserTreeNodeBase;
@@ -77,6 +76,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 
+import static com.dci.intellij.dbn.browser.DatabaseBrowserUtils.treeVisibilityChanged;
 import static com.dci.intellij.dbn.common.util.CollectionUtil.compact;
 import static com.dci.intellij.dbn.common.util.CollectionUtil.filter;
 
@@ -748,18 +748,25 @@ public abstract class DBObjectImpl<M extends DBObjectMetadata> extends BrowserTr
 
     @Override
     public void refreshTreeChildren(@NotNull DBObjectType... objectTypes) {
-        visibleTreeChildren.forEach(treeNode -> treeNode.refreshTreeChildren(objectTypes));
+        if (visibleTreeChildren != null) {
+            visibleTreeChildren.forEach(treeNode -> treeNode.refreshTreeChildren(objectTypes));
+        }
+
     }
 
     @Override
     public void rebuildTreeChildren() {
-        ConnectionHandler connectionHandler = getConnectionHandler();
-        Filter<BrowserTreeNode> filter = connectionHandler.getObjectTypeFilter();
-        if (visibleTreeChildren != null && DatabaseBrowserUtils.treeVisibilityChanged(getAllPossibleTreeChildren(), visibleTreeChildren, filter)) {
-            buildTreeChildren();
+        if (visibleTreeChildren != null) {
+            ConnectionHandler connectionHandler = getConnectionHandler();
+            Filter<BrowserTreeNode> filter = connectionHandler.getObjectTypeFilter();
+
+            if (treeVisibilityChanged(getAllPossibleTreeChildren(), visibleTreeChildren, filter)) {
+                buildTreeChildren();
+            }
+            visibleTreeChildren.forEach(treeNode -> treeNode.rebuildTreeChildren());
         }
 
-        visibleTreeChildren.forEach(treeNode -> treeNode.rebuildTreeChildren());
+
     }
 
     @NotNull

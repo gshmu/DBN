@@ -1,5 +1,6 @@
 package com.dci.intellij.dbn.language.common;
 
+import com.dci.intellij.dbn.common.util.CollectionUtil;
 import com.dci.intellij.dbn.common.util.StringUtil;
 import com.intellij.lang.Language;
 import com.intellij.openapi.diagnostic.Logger;
@@ -8,9 +9,9 @@ import com.intellij.psi.tree.TokenSet;
 import gnu.trove.THashMap;
 import org.jdom.Document;
 import org.jdom.Element;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -94,61 +95,36 @@ public abstract class DBLanguageTokenTypeBundle {
                 case OPERATOR: operatorList.add(tokenType); break;
             }
         }
-        keywords = new SimpleTokenType[keywordList.size()];
-        keywordsMap = new THashMap<>();
-        for (SimpleTokenType keyword : keywordList) {
-            keywords[keyword.getLookupIndex()] = keyword;
-            keywordsMap.put(keyword.getValue(), keyword);
-        }
+        keywordsMap =   createTokenMap(keywordList);
+        functionsMap =  createTokenMap(functionList);
+        parametersMap = createTokenMap(parameterList);
+        dataTypesMap =  createTokenMap(dataTypeList);
+        exceptionsMap = createTokenMap(exceptionList);
+        objectsMap =    createTokenMap(objectsList);
+        charactersMap = createTokenMap(characterList);
+        operatorsMap =  createTokenMap(operatorList);
 
-        functions = new SimpleTokenType[functionList.size()];
-        functionsMap = new THashMap<>();
-        for (SimpleTokenType function : functionList) {
-            functions[function.getLookupIndex()] = function;
-            functionsMap.put(function.getValue(), function);
-        }
+        keywords =   createTokenArray(keywordList);
+        functions =  createTokenArray(functionList);
+        parameters = createTokenArray(parameterList);
+        dataTypes =  createTokenArray(dataTypeList);
+        exceptions = createTokenArray(exceptionList);
+        objects =    createTokenArray(objectsList);
+        characters = createTokenArray(characterList);
+        operators =  createTokenArray(operatorList);
+    }
 
-        parameters = new SimpleTokenType[parameterList.size()];
-        parametersMap = new THashMap<>();
-        for (SimpleTokenType parameter : parameterList) {
-            parameters[parameter.getLookupIndex()] = parameter;
-            parametersMap.put(parameter.getValue(), parameter);
-        }
+    private static SimpleTokenType[] createTokenArray(List<SimpleTokenType> tokenList) {
+        SimpleTokenType[] tokenArray = new SimpleTokenType[tokenList.size()];
+        tokenList.forEach(token -> tokenArray[token.getLookupIndex()] = token);
+        return tokenArray;
+    }
 
-        dataTypes = new SimpleTokenType[dataTypeList.size()];
-        dataTypesMap = new THashMap<>();
-        for (SimpleTokenType dataType : dataTypeList) {
-            dataTypes[dataType.getLookupIndex()] = dataType;
-            dataTypesMap.put(dataType.getValue(), dataType);
-        }
-
-        exceptions = new SimpleTokenType[exceptionList.size()];
-        exceptionsMap = new THashMap<>();
-        for (SimpleTokenType exception : exceptionList) {
-            exceptions[exception.getLookupIndex()] = exception;
-            exceptionsMap.put(exception.getValue(), exception);
-        }
-
-        objects = new SimpleTokenType[objectsList.size()];
-        objectsMap = new THashMap<>();
-        for (SimpleTokenType object : objectsList) {
-            objects[object.getLookupIndex()] = object;
-            objectsMap.put(object.getValue(), object);
-        }
-
-        characters = new SimpleTokenType[characterList.size()];
-        charactersMap = new THashMap<>();
-        for (SimpleTokenType character : characterList) {
-            characters[character.getLookupIndex()] = character;
-            charactersMap.put(character.getValue(), character);
-        }
-
-        operators = new SimpleTokenType[characterList.size()];
-        operatorsMap = new THashMap<>();
-        for (SimpleTokenType operator : operatorList) {
-            operators[operator.getLookupIndex()] = operator;
-            operatorsMap.put(operator.getValue(), operator);
-        }
+    @NotNull
+    private static Map<String, SimpleTokenType> createTokenMap(List<SimpleTokenType> tokenList) {
+        Map<String, SimpleTokenType> map = new THashMap<>(tokenList.size());
+        tokenList.forEach(token -> map.put(token.getValue(), token));
+        return CollectionUtil.compact(map);
     }
 
     public SimpleTokenType getKeywordTokenType(int index) {
@@ -170,6 +146,7 @@ public abstract class DBLanguageTokenTypeBundle {
     public SimpleTokenType getExceptionTokenType(int index) {
         return exceptions[index];
     }
+
     public SimpleTokenType getObjectTokenType(int index) {
         return objects[index];
     }
@@ -183,7 +160,7 @@ public abstract class DBLanguageTokenTypeBundle {
     }
 
     private Map<String, Set<String>> parseTokenSets(Element tokenSetDefs) {
-        Map<String, Set<String>> tokenSetDef = new HashMap<>();
+        Map<String, Set<String>> tokenSetDef = new THashMap<>();
         for (Element o : tokenSetDefs.getChildren()) {
             String tokenSetId = stringAttribute(o, "id");
             Set<String> tokenIds = new HashSet<>();
@@ -230,6 +207,7 @@ public abstract class DBLanguageTokenTypeBundle {
     }
 
     public boolean isReservedWord(String text) {
+        text = text.toLowerCase();
         return
             isKeyword(text) ||
             isFunction(text) ||
@@ -258,13 +236,13 @@ public abstract class DBLanguageTokenTypeBundle {
     public boolean isException(String text) {
         return isTokenType(text, exceptionsMap);
     }
+
     public boolean isObject(String text) {
         return isTokenType(text, objectsMap);
     }
 
-
     private static boolean isTokenType(String text, Map<String, SimpleTokenType> tokenTypesMap) {
-        return tokenTypesMap.containsKey(text.toLowerCase());
+        return tokenTypesMap.containsKey(text) || tokenTypesMap.containsKey(text.toLowerCase());
     }
 }
 

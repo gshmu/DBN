@@ -13,10 +13,16 @@ public enum ThreadProperty implements Property{
     MODAL      (false)
 
 ;
-    boolean propagatable;
+    private final Computed computed = new Computed(this);
+    private final boolean propagatable;
 
     ThreadProperty(boolean propagatable) {
         this.propagatable = propagatable;
+    }
+
+    @Override
+    public Computed computedOrdinal() {
+        return computed;
     }
 
     public boolean propagatable() {

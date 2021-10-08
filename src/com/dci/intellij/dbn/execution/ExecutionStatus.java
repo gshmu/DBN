@@ -7,4 +7,11 @@ public enum ExecutionStatus implements Property {
     PROMPTED,
     EXECUTING,
     CANCELLED;
+
+    private final Computed computed = new Computed(this);
+
+    @Override
+    public Computed computedOrdinal() {
+        return computed;
+    }
 }

@@ -2,8 +2,10 @@ package com.dci.intellij.dbn.common.property;
 
 import org.jetbrains.annotations.Nullable;
 
+import java.util.concurrent.atomic.AtomicLong;
+
 public abstract class PropertyHolderImpl<T extends Property> implements PropertyHolder<T> {
-    private long computed = 0L;
+    private AtomicLong computed = new AtomicLong();
 
     @SafeVarargs
     public PropertyHolderImpl(T ... properties) {
@@ -33,45 +35,56 @@ public abstract class PropertyHolderImpl<T extends Property> implements Property
     }
 
     public final boolean is(T property) {
-        return (computed & (1L << property.ordinal())) != 0;
+        return (computed.get() & property.computedOne()) != 0;
+    }
+
+
+    private void change(T property, boolean value) {
+        this.computed.set(value ?
+                this.computed.get() | property.computedOne() :
+                this.computed.get() & property.computedZero());
     }
 
     private boolean set(T property) {
-        long computed = this.computed;
-        PropertyGroup group = property.group();
-        if (group != null) {
-            for (T prop : properties()) {
-                if (is(prop)) {
-                    this.computed |= (1L << prop.ordinal());
-                    break;
+        if (isNot(property)) {
+            PropertyGroup group = property.group();
+            if (group != null) {
+                for (T prop : properties()) {
+                    if (is(prop)) {
+                        change(prop, false);
+                        break;
+                    }
                 }
             }
-        }
 
-        this.computed |= (1L << property.ordinal());
-        return computed != this.computed;
+            change(property, true);
+            return true;
+        }
+        return false;
     }
 
     private boolean unset(T property) {
-        long computed = this.computed;
-        this.computed &= ~(1L << property.ordinal());
+        if (is(property)) {
+            change(property, false);
 
-        PropertyGroup group = property.group();
-        if (group != null) {
-            // set implicit property
-            for (T prop : properties()) {
-                if (prop.group() == group && prop.implicit() && prop != property) {
-                    this.computed &= ~(1L << prop.ordinal());
-                    break;
+            PropertyGroup group = property.group();
+            if (group != null) {
+                // set implicit property
+                for (T prop : properties()) {
+                    if (prop.group() == group && prop.implicit() && prop != property && !is(prop)) {
+                        change(prop, true);
+                        break;
+                    }
                 }
             }
-        }
 
-        return computed != this.computed;
+            return true;
+        }
+        return false;
     }
 
     public void reset() {
-        computed = 0;
+        computed.set(0);
         for (T property : properties()) {
             if (property.implicit()) {
                 set(property);
@@ -80,11 +93,11 @@ public abstract class PropertyHolderImpl<T extends Property> implements Property
     }
 
     public long computed() {
-        return computed;
+        return computed.get();
     }
 
     public void computed(long computed) {
-        this.computed = computed;
+        this.computed.set(computed);
     }
 
     public void merge(@Nullable PropertyHolder<T> source) {

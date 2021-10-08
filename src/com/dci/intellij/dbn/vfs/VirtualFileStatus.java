@@ -14,6 +14,7 @@ public enum VirtualFileStatus implements Property{
     SAVING,
     REFRESHING;
 
+    private final Computed computed = new Computed(this);
     private final boolean implicit;
     private final PropertyGroup group;
 
@@ -24,6 +25,11 @@ public enum VirtualFileStatus implements Property{
 
     VirtualFileStatus() {
         this(null, false);
+    }
+
+    @Override
+    public Computed computedOrdinal() {
+        return computed;
     }
 
     @Override

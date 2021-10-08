@@ -16,7 +16,7 @@ public abstract class UnderlyingObjectResolver {
         SurroundingVirtualObjectResolver.getInstance();
     }
 
-    private String id;
+    private final String id;
 
     public UnderlyingObjectResolver(String id) {
         this.id = id;

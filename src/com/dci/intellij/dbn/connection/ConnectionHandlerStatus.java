@@ -9,4 +9,11 @@ public enum ConnectionHandlerStatus implements Property {
     ACTIVE,
     VALID,
     BUSY;
+
+    private final Computed computed = new Computed(this);
+
+    @Override
+    public Computed computedOrdinal() {
+        return computed;
+    }
 }

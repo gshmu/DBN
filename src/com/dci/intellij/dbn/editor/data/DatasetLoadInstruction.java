@@ -7,4 +7,11 @@ public enum DatasetLoadInstruction implements Property {
     PRESERVE_CHANGES,
     DELIBERATE_ACTION,
     REBUILD;
+
+    private final Computed computed = new Computed(this);
+
+    @Override
+    public Computed computedOrdinal() {
+        return computed;
+    }
 }
