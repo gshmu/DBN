@@ -7,13 +7,13 @@ import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.language.common.DBLanguagePsiFile;
 import com.dci.intellij.dbn.language.common.element.ElementType;
 import com.dci.intellij.dbn.language.common.element.ElementTypeBundle;
+import com.dci.intellij.dbn.language.common.element.cache.ElementLookupContext;
+import com.dci.intellij.dbn.language.common.element.cache.ElementTypeLookupCache;
 import com.dci.intellij.dbn.language.common.element.impl.ElementTypeBase;
 import com.dci.intellij.dbn.language.common.element.impl.IdentifierElementType;
 import com.dci.intellij.dbn.language.common.element.impl.LeafElementType;
 import com.dci.intellij.dbn.language.common.element.impl.QualifiedIdentifierVariant;
 import com.dci.intellij.dbn.language.common.element.impl.TokenElementType;
-import com.dci.intellij.dbn.language.common.element.lookup.ElementLookupContext;
-import com.dci.intellij.dbn.language.common.element.lookup.ElementTypeLookupCache;
 import com.dci.intellij.dbn.language.common.element.parser.Branch;
 import com.dci.intellij.dbn.language.common.element.path.ASTPathNode;
 import com.dci.intellij.dbn.language.common.element.path.PathNode;
@@ -102,7 +102,7 @@ public class CodeCompletionProvider extends CompletionProvider<CompletionParamet
         ElementTypeBundle elementTypeBundle = file.getElementTypeBundle();
         ElementTypeLookupCache lookupCache = elementTypeBundle.getRootElementType().getLookupCache();
         ElementLookupContext lookupContext = new ElementLookupContext(context.getDatabaseVersion());
-        Set<LeafElementType> firstPossibleLeafs = lookupCache.collectFirstPossibleLeafs(lookupContext);
+        Set<LeafElementType> firstPossibleLeafs = lookupCache.captureFirstPossibleLeafs(lookupContext);
 
         for (LeafElementType firstPossibleLeaf : firstPossibleLeafs) {
             if (firstPossibleLeaf instanceof TokenElementType) {

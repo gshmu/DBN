@@ -1,4 +1,4 @@
-package com.dci.intellij.dbn.language.common.element.lookup;
+package com.dci.intellij.dbn.language.common.element.cache;
 
 import com.dci.intellij.dbn.language.common.TokenType;
 import com.dci.intellij.dbn.language.common.element.ElementType;
@@ -73,14 +73,14 @@ public class SequenceElementTypeLookupCache<T extends SequenceElementType> exten
     }
 
     @Override
-    public Set<LeafElementType> collectFirstPossibleLeafs(ElementLookupContext context, Set<LeafElementType> bucket) {
-        bucket = super.collectFirstPossibleLeafs(context, bucket);
+    public Set<LeafElementType> captureFirstPossibleLeafs(ElementLookupContext context, Set<LeafElementType> bucket) {
+        bucket = super.captureFirstPossibleLeafs(context, bucket);
         bucket = initBucket(bucket);
 
         ElementTypeRef child = this.elementType.getFirstChild();
         while (child != null) {
             if (context.check(child)) {
-                child.elementType.getLookupCache().collectFirstPossibleLeafs(context, bucket);
+                child.elementType.getLookupCache().captureFirstPossibleLeafs(context, bucket);
             }
             if (!child.optional) break;
             child = child.getNext();
@@ -89,14 +89,14 @@ public class SequenceElementTypeLookupCache<T extends SequenceElementType> exten
     }
 
     @Override
-    public Set<TokenType> collectFirstPossibleTokens(ElementLookupContext context, Set<TokenType> bucket) {
-        bucket = super.collectFirstPossibleTokens(context, bucket);
+    public Set<TokenType> captureFirstPossibleTokens(ElementLookupContext context, Set<TokenType> bucket) {
+        bucket = super.captureFirstPossibleTokens(context, bucket);
         bucket = initBucket(bucket);
 
         ElementTypeRef child = this.elementType.getFirstChild();
         while (child != null) {
             if (context.check(child)) {
-                child.elementType.getLookupCache().collectFirstPossibleTokens(context, bucket);
+                child.elementType.getLookupCache().captureFirstPossibleTokens(context, bucket);
             }
             if (!child.optional) break;
             child = child.getNext();

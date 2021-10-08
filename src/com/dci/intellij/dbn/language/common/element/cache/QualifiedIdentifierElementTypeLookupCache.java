@@ -1,4 +1,4 @@
-package com.dci.intellij.dbn.language.common.element.lookup;
+package com.dci.intellij.dbn.language.common.element.cache;
 
 import com.dci.intellij.dbn.language.common.TokenType;
 import com.dci.intellij.dbn.language.common.element.impl.ElementTypeBase;
@@ -38,7 +38,7 @@ public class QualifiedIdentifierElementTypeLookupCache extends ElementTypeLookup
     }
 
     @Override
-    public Set<LeafElementType> collectFirstPossibleLeafs(ElementLookupContext context, @Nullable Set<LeafElementType> bucket) {
+    public Set<LeafElementType> captureFirstPossibleLeafs(ElementLookupContext context, @Nullable Set<LeafElementType> bucket) {
         bucket = initBucket(bucket);
         for (LeafElementType[] elementTypes : elementType.getVariants()) {
             // variants already consider optional leafs
@@ -49,7 +49,7 @@ public class QualifiedIdentifierElementTypeLookupCache extends ElementTypeLookup
     }
 
     @Override
-    public Set<TokenType> collectFirstPossibleTokens(ElementLookupContext context, @Nullable Set<TokenType> bucket) {
+    public Set<TokenType> captureFirstPossibleTokens(ElementLookupContext context, @Nullable Set<TokenType> bucket) {
         bucket = initBucket(bucket);
         for (LeafElementType[] elementTypes : elementType.getVariants()) {
             // variants already consider optional leafs

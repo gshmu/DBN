@@ -2,9 +2,9 @@ package com.dci.intellij.dbn.language.common;
 
 import com.dci.intellij.dbn.language.common.element.ElementType;
 import com.dci.intellij.dbn.language.common.element.ElementTypeBundle;
+import com.dci.intellij.dbn.language.common.element.cache.ElementTypeLookupCache;
 import com.dci.intellij.dbn.language.common.element.impl.LeafElementType;
 import com.dci.intellij.dbn.language.common.element.impl.WrappingDefinition;
-import com.dci.intellij.dbn.language.common.element.lookup.ElementTypeLookupCache;
 import com.dci.intellij.dbn.language.common.element.parser.Branch;
 import com.dci.intellij.dbn.language.common.element.parser.ElementTypeParser;
 import com.dci.intellij.dbn.language.common.element.path.BasicPathNode;
@@ -28,6 +28,8 @@ public class ChameleonTokenType extends SimpleTokenType implements ElementType {
         super(injectedLanguage.getID() + " block", hostLanguage);
         this.injectedLanguage = injectedLanguage;
     }
+
+
 
     @NotNull
     @Override

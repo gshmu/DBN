@@ -3,6 +3,7 @@ package com.dci.intellij.dbn.code.common.completion;
 import com.dci.intellij.dbn.code.common.lookup.CodeCompletionLookupItem;
 import com.dci.intellij.dbn.language.common.SimpleTokenType;
 import com.dci.intellij.dbn.language.common.TokenType;
+import com.dci.intellij.dbn.language.common.element.cache.ElementTypeLookupCache;
 import com.dci.intellij.dbn.language.common.element.impl.TokenElementType;
 import com.dci.intellij.dbn.language.common.psi.IdentifierPsiElement;
 import com.dci.intellij.dbn.language.common.psi.LeafPsiElement;
@@ -16,8 +17,6 @@ import com.intellij.openapi.editor.Editor;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiWhiteSpace;
-
-import java.util.Set;
 
 public class BasicInsertHandler implements InsertHandler<CodeCompletionLookupItem> {
     public static final BasicInsertHandler INSTANCE = new BasicInsertHandler();
@@ -38,8 +37,8 @@ public class BasicInsertHandler implements InsertHandler<CodeCompletionLookupIte
 
                 if (tokenType.isFunction()) {
                     SimpleTokenType leftParenthesis = tokenElementType.getLanguage().getSharedTokenTypes().getChrLeftParenthesis();
-                    Set nextPossibleTokens = tokenElementType.getLookupCache().getNextPossibleTokens();
-                    if (nextPossibleTokens.contains(leftParenthesis)) {
+                    ElementTypeLookupCache lookupCache = tokenElementType.getLookupCache();
+                    if (lookupCache.isNextPossibleToken(leftParenthesis)) {
                         addParenthesis(insertionContext);
                         shiftCaret(insertionContext, 1);
                     } else {

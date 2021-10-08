@@ -1,4 +1,4 @@
-package com.dci.intellij.dbn.language.common.element.lookup;
+package com.dci.intellij.dbn.language.common.element.cache;
 
 import com.dci.intellij.dbn.language.common.TokenType;
 import com.dci.intellij.dbn.language.common.element.impl.TokenElementType;
@@ -31,7 +31,7 @@ public class TokenElementTypeLookupCache extends LeafElementTypeLookupCache<Toke
     }
 
     @Override
-    public void collectFirstPossibleTokens(Set<TokenType> bucket) {
+    public void captureFirstPossibleTokens(Set<TokenType> bucket) {
         bucket.add(getTokenType());
     }
 

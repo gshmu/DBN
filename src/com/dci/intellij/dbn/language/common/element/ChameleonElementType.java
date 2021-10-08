@@ -5,9 +5,9 @@ import com.dci.intellij.dbn.language.common.DBLanguage;
 import com.dci.intellij.dbn.language.common.DBLanguageDialect;
 import com.dci.intellij.dbn.language.common.TokenType;
 import com.dci.intellij.dbn.language.common.TokenTypeCategory;
+import com.dci.intellij.dbn.language.common.element.cache.ElementTypeLookupCache;
 import com.dci.intellij.dbn.language.common.element.impl.LeafElementType;
 import com.dci.intellij.dbn.language.common.element.impl.WrappingDefinition;
-import com.dci.intellij.dbn.language.common.element.lookup.ElementTypeLookupCache;
 import com.dci.intellij.dbn.language.common.element.parser.Branch;
 import com.dci.intellij.dbn.language.common.element.parser.ElementTypeParser;
 import com.dci.intellij.dbn.language.common.element.path.BasicPathNode;
@@ -27,17 +27,18 @@ import org.jetbrains.annotations.Nullable;
 import javax.swing.Icon;
 
 public class ChameleonElementType extends ILazyParseableElementType implements ElementType, TokenType {
-    private final int uniqueIndex;
+    private final int index;
     private final DBLanguageDialect parentLanguage;
     public ChameleonElementType(DBLanguageDialect language,DBLanguageDialect parentLanguage) {
         super("chameleon (" + language.getDisplayName() + ")", language, false);
         this.parentLanguage = parentLanguage;
-        uniqueIndex = INDEXER.incrementAndGet();
+        index = INDEXER.incrementAndGet();
+        INDEX.put(index, this);
     }
 
     @Override
     public int index() {
-        return uniqueIndex;
+        return index;
     }
 
     @NotNull

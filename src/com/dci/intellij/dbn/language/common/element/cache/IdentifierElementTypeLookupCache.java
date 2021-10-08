@@ -1,10 +1,9 @@
-package com.dci.intellij.dbn.language.common.element.lookup;
+package com.dci.intellij.dbn.language.common.element.cache;
 
 import com.dci.intellij.dbn.language.common.SharedTokenTypeBundle;
 import com.dci.intellij.dbn.language.common.TokenType;
 import com.dci.intellij.dbn.language.common.element.impl.IdentifierElementType;
 
-import java.util.HashSet;
 import java.util.Set;
 
 public class IdentifierElementTypeLookupCache extends LeafElementTypeLookupCache<IdentifierElementType>{
@@ -26,12 +25,7 @@ public class IdentifierElementTypeLookupCache extends LeafElementTypeLookupCache
     @Override
     public Set<TokenType> getFirstPossibleTokens() {
         SharedTokenTypeBundle sharedTokenTypes = getSharedTokenTypes();
-        TokenType identifier = sharedTokenTypes.getIdentifier();
-        TokenType quotedIdentifier = sharedTokenTypes.getQuotedIdentifier();
-        Set<TokenType> tokenTypes = new HashSet<>(2);
-        tokenTypes.add(identifier);
-        tokenTypes.add(quotedIdentifier);
-        return tokenTypes;
+        return sharedTokenTypes.getIdentifierTokens();
     }
 
     @Override
@@ -45,7 +39,7 @@ public class IdentifierElementTypeLookupCache extends LeafElementTypeLookupCache
     }
 
     @Override
-    public void collectFirstPossibleTokens(Set<TokenType> bucket) {
+    public void captureFirstPossibleTokens(Set<TokenType> bucket) {
         SharedTokenTypeBundle sharedTokenTypes = getSharedTokenTypes();
         bucket.add(sharedTokenTypes.getIdentifier());
         bucket.add(sharedTokenTypes.getQuotedIdentifier());

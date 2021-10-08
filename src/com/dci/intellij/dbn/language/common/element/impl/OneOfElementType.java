@@ -2,7 +2,7 @@ package com.dci.intellij.dbn.language.common.element.impl;
 
 import com.dci.intellij.dbn.common.util.CommonUtil;
 import com.dci.intellij.dbn.language.common.element.ElementTypeBundle;
-import com.dci.intellij.dbn.language.common.element.lookup.OneOfElementTypeLookupCache;
+import com.dci.intellij.dbn.language.common.element.cache.OneOfElementTypeLookupCache;
 import com.dci.intellij.dbn.language.common.element.parser.BranchCheck;
 import com.dci.intellij.dbn.language.common.element.parser.impl.OneOfElementTypeParser;
 import com.dci.intellij.dbn.language.common.element.util.ElementTypeDefinitionException;
@@ -19,8 +19,8 @@ import java.util.Set;
 
 import static com.dci.intellij.dbn.common.options.setting.SettingsSupport.stringAttribute;
 
-public class OneOfElementType extends ElementTypeBase {
-    protected final ElementTypeRef[] children;
+public final class OneOfElementType extends ElementTypeBase {
+    private final ElementTypeRef[] children;
     private final boolean sortable;
     private boolean sorted;
 
