@@ -9,9 +9,9 @@ import com.dci.intellij.dbn.language.common.TokenTypeCategory;
 import com.dci.intellij.dbn.language.common.element.ElementType;
 import com.dci.intellij.dbn.language.common.element.ElementTypeBundle;
 import com.dci.intellij.dbn.language.common.element.TokenElementTypeChain;
-import com.dci.intellij.dbn.language.common.element.lookup.ElementLookupContext;
-import com.dci.intellij.dbn.language.common.element.lookup.ElementTypeLookupCache;
-import com.dci.intellij.dbn.language.common.element.lookup.TokenElementTypeLookupCache;
+import com.dci.intellij.dbn.language.common.element.cache.ElementLookupContext;
+import com.dci.intellij.dbn.language.common.element.cache.ElementTypeLookupCache;
+import com.dci.intellij.dbn.language.common.element.cache.TokenElementTypeLookupCache;
 import com.dci.intellij.dbn.language.common.element.parser.ParserContext;
 import com.dci.intellij.dbn.language.common.element.parser.impl.TokenElementTypeParser;
 import com.dci.intellij.dbn.language.common.element.path.BasicPathNode;
@@ -31,7 +31,7 @@ import java.util.Set;
 
 import static com.dci.intellij.dbn.common.options.setting.SettingsSupport.stringAttribute;
 
-public class TokenElementType extends LeafElementType implements LookupItemBuilderProvider {
+public final class TokenElementType extends LeafElementType implements LookupItemBuilderProvider {
     public static final String SEPARATOR = "SEPARATOR";
 
 
@@ -94,7 +94,7 @@ public class TokenElementType extends LeafElementType implements LookupItemBuild
             if (parent instanceof IterationElementType) {
                 IterationElementType iterationElementType = (IterationElementType) parent;
                 ElementTypeLookupCache lookupCache = iterationElementType.getIteratedElementType().getLookupCache();
-                return lookupCache.collectFirstPossibleLeafs(context.reset());
+                return lookupCache.captureFirstPossibleLeafs(context.reset());
             } else if (parent instanceof QualifiedIdentifierElementType){
                 return super.getNextPossibleLeafs(pathNode, context);
             }
@@ -103,7 +103,7 @@ public class TokenElementType extends LeafElementType implements LookupItemBuild
             WrapperElementType wrapperElementType = (WrapperElementType) parent;
             if (this.equals(wrapperElementType.getBeginTokenElement())) {
                 ElementTypeLookupCache lookupCache = wrapperElementType.getWrappedElement().getLookupCache();
-                return lookupCache.collectFirstPossibleLeafs(context.reset());
+                return lookupCache.captureFirstPossibleLeafs(context.reset());
             }
         }
 

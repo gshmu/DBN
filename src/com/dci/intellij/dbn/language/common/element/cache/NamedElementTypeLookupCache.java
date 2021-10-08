@@ -1,4 +1,4 @@
-package com.dci.intellij.dbn.language.common.element.lookup;
+package com.dci.intellij.dbn.language.common.element.cache;
 
 import com.dci.intellij.dbn.language.common.TokenType;
 import com.dci.intellij.dbn.language.common.element.impl.ElementTypeBase;
@@ -25,19 +25,19 @@ public class NamedElementTypeLookupCache extends SequenceElementTypeLookupCache<
     }
 
     @Override
-    public Set<LeafElementType> collectFirstPossibleLeafs(ElementLookupContext context, Set<LeafElementType> bucket) {
+    public Set<LeafElementType> captureFirstPossibleLeafs(ElementLookupContext context, Set<LeafElementType> bucket) {
         if (!context.isScanned(elementType)) {
             context.markScanned(elementType);
-            return super.collectFirstPossibleLeafs(context, bucket);
+            return super.captureFirstPossibleLeafs(context, bucket);
         }
         return bucket;
     }
 
     @Override
-    public Set<TokenType> collectFirstPossibleTokens(ElementLookupContext context, Set<TokenType> bucket) {
+    public Set<TokenType> captureFirstPossibleTokens(ElementLookupContext context, Set<TokenType> bucket) {
         if (!context.isScanned(elementType)) {
             context.markScanned(elementType);
-            return super.collectFirstPossibleTokens(context, bucket);
+            return super.captureFirstPossibleTokens(context, bucket);
         }
         return bucket;
     }

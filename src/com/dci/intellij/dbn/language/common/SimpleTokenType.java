@@ -43,24 +43,10 @@ public class SimpleTokenType extends IElementType implements TokenType {
         this.hashCode = System.identityHashCode(this);
     }
 
-/*    public SimpleTokenType(SimpleTokenType source, Language language) {
-        super(source.toString(), language);
-        idx = INDEXER.incrementAndGet();
-        this.id = source.id;
-        this.value = source.getValue();
-        this.description = source.description;
-        isSuppressibleReservedWord = source.isSuppressibleReservedWord();
-        this.category = source.category;
-        this.objectType = source.objectType;
-        this.lookupIndex = source.lookupIndex;
-
-        formatting = FormattingDefinitionFactory.cloneDefinition(source.getFormatting());
-        tokenPairTemplate = TokenPairTemplate.get(id);
-    }*/
-
     public SimpleTokenType(Element element, Language language, boolean register) {
         super(stringAttribute(element, "id"), language, register);
         idx = INDEXER.incrementAndGet();
+        INDEX.put(idx, this);
         id = stringAttribute(element, "id");
         value = stringAttribute(element, "value");
         description = stringAttribute(element, "description");

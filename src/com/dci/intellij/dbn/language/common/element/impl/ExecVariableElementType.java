@@ -1,7 +1,7 @@
 package com.dci.intellij.dbn.language.common.element.impl;
 
 import com.dci.intellij.dbn.language.common.element.ElementTypeBundle;
-import com.dci.intellij.dbn.language.common.element.lookup.ExecVariableElementTypeLookupCache;
+import com.dci.intellij.dbn.language.common.element.cache.ExecVariableElementTypeLookupCache;
 import com.dci.intellij.dbn.language.common.element.parser.impl.ExecVariableElementTypeParser;
 import com.dci.intellij.dbn.language.common.element.util.ElementTypeDefinitionException;
 import com.dci.intellij.dbn.language.common.psi.ExecVariablePsiElement;

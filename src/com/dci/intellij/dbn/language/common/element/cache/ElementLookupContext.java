@@ -1,4 +1,4 @@
-package com.dci.intellij.dbn.language.common.element.lookup;
+package com.dci.intellij.dbn.language.common.element.cache;
 
 import com.dci.intellij.dbn.language.common.element.ElementType;
 import com.dci.intellij.dbn.language.common.element.impl.ElementTypeRef;

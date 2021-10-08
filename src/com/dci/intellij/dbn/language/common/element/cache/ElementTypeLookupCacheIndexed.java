@@ -1,4 +1,4 @@
-package com.dci.intellij.dbn.language.common.element.lookup;
+package com.dci.intellij.dbn.language.common.element.cache;
 
 import com.dci.intellij.dbn.common.index.IndexContainer;
 import com.dci.intellij.dbn.language.common.SharedTokenTypeBundle;
@@ -7,7 +7,6 @@ import com.dci.intellij.dbn.language.common.element.impl.ElementTypeBase;
 import com.dci.intellij.dbn.language.common.element.impl.IdentifierElementType;
 import com.dci.intellij.dbn.language.common.element.impl.LeafElementType;
 import com.dci.intellij.dbn.language.common.element.impl.WrappingDefinition;
-import gnu.trove.THashSet;
 
 import java.util.Set;
 
@@ -15,37 +14,29 @@ import static com.dci.intellij.dbn.common.util.CollectionUtil.compact;
 
 public abstract class ElementTypeLookupCacheIndexed<T extends ElementTypeBase> extends ElementTypeLookupCache<T> {
 
-    private IndexContainer<LeafElementType> allPossibleLeafs;
-    Set<LeafElementType> firstPossibleLeafs;
-    Set<LeafElementType> firstRequiredLeafs;
+    private final IndexContainer<LeafElementType> allPossibleLeafs = new IndexContainer<>();
+    protected final IndexContainer<LeafElementType> firstPossibleLeafs = new IndexContainer<>();
+    protected final IndexContainer<LeafElementType> firstRequiredLeafs = new IndexContainer<>();
 
-    private IndexContainer<TokenType> allPossibleTokens;
-    private Set<TokenType> firstPossibleTokens;
-    private Set<TokenType> firstRequiredTokens;
+    private final IndexContainer<TokenType> allPossibleTokens = new IndexContainer<>();
+    private final IndexContainer<TokenType> firstPossibleTokens = new IndexContainer<>();
+    private final IndexContainer<TokenType> firstRequiredTokens = new IndexContainer<>();
     private Boolean startsWithIdentifier;
 
     ElementTypeLookupCacheIndexed(T elementType) {
         super(elementType);
-        if (!elementType.isLeaf()) {
-            allPossibleLeafs = new IndexContainer<>();
-            firstPossibleLeafs = new THashSet<>();
-            firstRequiredLeafs = new THashSet<>();
-            allPossibleTokens = new IndexContainer<>();
-            firstPossibleTokens = new THashSet<>();
-            firstRequiredTokens = new THashSet<>();
-        }
+        assert !elementType.isLeaf();
     }
 
-    @Override
-    public void cleanup() {
-        super.cleanup();
+    public void initialise() {
+        super.initialise();
         compact(allPossibleLeafs);
-        firstPossibleLeafs = compact(firstPossibleLeafs);
-        firstRequiredLeafs = compact(firstRequiredLeafs);
+        compact(firstPossibleLeafs);
+        compact(firstRequiredLeafs);
 
         compact(allPossibleTokens);
-        firstPossibleTokens = compact(firstPossibleTokens);
-        firstRequiredTokens = compact(firstRequiredTokens);
+        compact(firstPossibleTokens);
+        compact(firstRequiredTokens);
     }
 
     @Override
@@ -60,38 +51,46 @@ public abstract class ElementTypeLookupCacheIndexed<T extends ElementTypeBase> e
 
     @Override
     public boolean containsToken(TokenType tokenType) {
-        return allPossibleTokens != null && allPossibleTokens.contains(tokenType);
+        return allPossibleTokens.contains(tokenType);
     }
 
     @Override
     public boolean containsLeaf(LeafElementType elementType) {
-        return allPossibleLeafs != null && allPossibleLeafs.contains(elementType);
-    }
-
-    @Override
-    public Set<TokenType> getFirstRequiredTokens() {
-        return firstRequiredTokens;
+        return allPossibleLeafs.contains(elementType);
     }
 
     @Override
     public Set<TokenType> getFirstPossibleTokens() {
-        return firstPossibleTokens;
+        return firstPossibleTokens.elements(index -> TokenType.forIndex(index));
     }
 
     @Override
-    public Set<LeafElementType> getFirstRequiredLeafs() {
-        return firstRequiredLeafs;
+    public Set<TokenType> getFirstRequiredTokens() {
+        return firstRequiredTokens.elements(index -> TokenType.forIndex(index));
     }
+
     @Override
     public Set<LeafElementType> getFirstPossibleLeafs() {
-        return firstPossibleLeafs;
+        return firstPossibleLeafs.elements(index -> LeafElementType.forIndex(index));
+    }
+    @Override
+    public Set<LeafElementType> getFirstRequiredLeafs() {
+        return firstRequiredLeafs.elements(index -> LeafElementType.forIndex(index));
     }
 
-
+    @Override
+    public boolean isFirstPossibleLeaf(LeafElementType elementType) {
+        return firstPossibleLeafs.contains(elementType);
+    }
 
     @Override
-    public boolean couldStartWithLeaf(LeafElementType leafElementType) {
-        return firstPossibleLeafs.contains(leafElementType);
+    public boolean isFirstRequiredLeaf(LeafElementType elementType) {
+        return firstRequiredLeafs.contains(elementType);
+    }
+
+    @Override
+    public boolean couldStartWithLeaf(LeafElementType elementType) {
+        return firstPossibleLeafs.contains(elementType);
     }
 
     @Override
@@ -100,8 +99,8 @@ public abstract class ElementTypeLookupCacheIndexed<T extends ElementTypeBase> e
     }
 
     @Override
-    public boolean shouldStartWithLeaf(LeafElementType leafElementType) {
-        return firstRequiredLeafs.contains(leafElementType);
+    public boolean shouldStartWithLeaf(LeafElementType elementType) {
+        return firstRequiredLeafs.contains(elementType);
     }
 
     @Override
@@ -114,26 +113,26 @@ public abstract class ElementTypeLookupCacheIndexed<T extends ElementTypeBase> e
         ElementTypeLookupCache lookupCache = leaf.getLookupCache();
         if (initAsFirstPossibleLeaf) {
             firstPossibleLeafs.add(leaf);
-            lookupCache.collectFirstPossibleTokens(firstPossibleTokens);
+            lookupCache.captureFirstPossibleTokens(firstPossibleTokens);
         }
 
         // register first required leafs
         if (initAsFirstRequiredLeaf) {
             firstRequiredLeafs.add(leaf);
-            lookupCache.collectFirstPossibleTokens(firstRequiredTokens);
+            lookupCache.captureFirstPossibleTokens(firstRequiredTokens);
         }
 
         if (initAllElements) {
             // register all possible leafs
-            allPossibleLeafs.put(leaf);
+            allPossibleLeafs.add(leaf);
 
             // register all possible tokens
             if (leaf instanceof IdentifierElementType) {
                 SharedTokenTypeBundle sharedTokenTypes = getSharedTokenTypes();
-                allPossibleTokens.put(sharedTokenTypes.getIdentifier());
-                allPossibleTokens.put(sharedTokenTypes.getQuotedIdentifier());
+                allPossibleTokens.add(sharedTokenTypes.getIdentifier());
+                allPossibleTokens.add(sharedTokenTypes.getQuotedIdentifier());
             } else {
-                allPossibleTokens.put(leaf.getTokenType());
+                allPossibleTokens.add(leaf.getTokenType());
             }
         }
 

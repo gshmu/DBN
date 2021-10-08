@@ -14,10 +14,10 @@ import com.dci.intellij.dbn.language.common.element.parser.ParserBuilder;
 import com.dci.intellij.dbn.language.common.element.parser.ParserContext;
 import com.dci.intellij.dbn.language.common.element.path.ParsePathNode;
 import com.dci.intellij.dbn.language.common.element.util.ParseBuilderErrorHandler;
-import gnu.trove.THashSet;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 
@@ -52,8 +52,7 @@ public class QualifiedIdentifierElementTypeParser extends ElementTypeParser<Qual
 
             if (matchedTokens > 0) {
                 if (variant.isIncomplete()) {
-                    Set<TokenType> expected = new THashSet<>();
-                    expected.add(separatorToken.getTokenType());
+                    Set<TokenType> expected = Collections.singleton(separatorToken.getTokenType());
                     ParseBuilderErrorHandler.updateBuilderError(expected, context);
                     return stepOut(node, context, depth, ParseResultType.PARTIAL_MATCH, matchedTokens);
                 } else {

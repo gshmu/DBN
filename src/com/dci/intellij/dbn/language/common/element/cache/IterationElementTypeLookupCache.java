@@ -1,4 +1,4 @@
-package com.dci.intellij.dbn.language.common.element.lookup;
+package com.dci.intellij.dbn.language.common.element.cache;
 
 import com.dci.intellij.dbn.language.common.TokenType;
 import com.dci.intellij.dbn.language.common.element.impl.ElementTypeBase;
@@ -68,13 +68,13 @@ public class IterationElementTypeLookupCache extends ElementTypeLookupCache<Iter
     }
 
     @Override
-    public boolean couldStartWithLeaf(LeafElementType leafElementType) {
-        return elementType.isWrappingBegin(leafElementType) || getIteratedElementLookupCache().couldStartWithLeaf(leafElementType);
+    public boolean couldStartWithLeaf(LeafElementType elementType) {
+        return this.elementType.isWrappingBegin(elementType) || getIteratedElementLookupCache().couldStartWithLeaf(elementType);
     }
 
     @Override
-    public boolean shouldStartWithLeaf(LeafElementType leafElementType) {
-        return getIteratedElementLookupCache().shouldStartWithLeaf(leafElementType);
+    public boolean shouldStartWithLeaf(LeafElementType elementType) {
+        return getIteratedElementLookupCache().shouldStartWithLeaf(elementType);
     }
 
 
@@ -101,6 +101,22 @@ public class IterationElementTypeLookupCache extends ElementTypeLookupCache<Iter
     }
 
     @Override
+    public boolean isFirstPossibleLeaf(LeafElementType elementType) {
+        WrappingDefinition wrapping = this.elementType.getWrapping();
+        if (wrapping != null) {
+            if (wrapping.getBeginElementType() == elementType) {
+                return true;
+            }
+        }
+        return getIteratedElementLookupCache().isFirstPossibleLeaf(elementType);
+    }
+
+    @Override
+    public boolean isFirstRequiredLeaf(LeafElementType elementType) {
+        return false;
+    }
+
+    @Override
     public boolean startsWithIdentifier() {
         return getIteratedElementLookupCache().startsWithIdentifier();
     }
@@ -116,15 +132,15 @@ public class IterationElementTypeLookupCache extends ElementTypeLookupCache<Iter
     }
 
     @Override
-    public Set<LeafElementType> collectFirstPossibleLeafs(ElementLookupContext context, @Nullable Set<LeafElementType> bucket) {
-        bucket = super.collectFirstPossibleLeafs(context, bucket);
-        return getIteratedElementLookupCache().collectFirstPossibleLeafs(context, bucket);
+    public Set<LeafElementType> captureFirstPossibleLeafs(ElementLookupContext context, @Nullable Set<LeafElementType> bucket) {
+        bucket = super.captureFirstPossibleLeafs(context, bucket);
+        return getIteratedElementLookupCache().captureFirstPossibleLeafs(context, bucket);
     }
 
     @Override
-    public Set<TokenType> collectFirstPossibleTokens(ElementLookupContext context, @Nullable Set<TokenType> bucket) {
-        bucket = super.collectFirstPossibleTokens(context, bucket);
-        return getIteratedElementLookupCache().collectFirstPossibleTokens(context, bucket);
+    public Set<TokenType> captureFirstPossibleTokens(ElementLookupContext context, @Nullable Set<TokenType> bucket) {
+        bucket = super.captureFirstPossibleTokens(context, bucket);
+        return getIteratedElementLookupCache().captureFirstPossibleTokens(context, bucket);
     }
 
     private ElementTypeLookupCache getIteratedElementLookupCache() {

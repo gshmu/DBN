@@ -1,6 +1,7 @@
 package com.dci.intellij.dbn.language.common.element.parser;
 
 import com.dci.intellij.dbn.code.common.completion.CodeCompletionContributor;
+import com.dci.intellij.dbn.common.util.CommonUtil;
 import com.dci.intellij.dbn.environment.Environment;
 import com.dci.intellij.dbn.language.common.ParseException;
 import com.dci.intellij.dbn.language.common.SharedTokenTypeBundle;
@@ -49,15 +50,16 @@ public abstract class ElementTypeParser<T extends ElementTypeBase> {
         return node;
     }
 
-    protected ParseResult stepOut(ParsePathNode node, ParserContext context, int depth, ParseResultType resultType, int matchedTokens) {
+    public ParseResult stepOut(ParsePathNode node, ParserContext context, int depth, ParseResultType resultType, int matchedTokens) {
         return stepOut(null, node, context, depth, resultType, matchedTokens);
     }
 
-    protected ParseResult stepOut(PsiBuilder.Marker marker, ParsePathNode node, ParserContext context, int depth, ParseResultType resultType, int matchedTokens) {
+    public ParseResult stepOut(PsiBuilder.Marker marker, ParsePathNode node, ParserContext context, int depth, ParseResultType resultType, int matchedTokens) {
         try {
             marker = marker == null ? node == null ? null : node.getElementMarker() : marker;
             if (resultType == ParseResultType.PARTIAL_MATCH) {
-                Set<TokenType> nextPossibleTokens = elementType.getLookupCache().getNextPossibleTokens();
+                ElementTypeBase offsetPsiElement = CommonUtil.nvl(context.lastResolvedLeaf, elementType);
+                Set<TokenType> nextPossibleTokens = offsetPsiElement.getLookupCache().getNextPossibleTokens();
                 ParseBuilderErrorHandler.updateBuilderError(nextPossibleTokens, context);
             }
             ParserBuilder builder = context.builder;

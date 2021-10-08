@@ -1,7 +1,7 @@
 package com.dci.intellij.dbn.language.common.element.impl;
 
 import com.dci.intellij.dbn.language.common.element.ElementTypeBundle;
-import com.dci.intellij.dbn.language.common.element.lookup.QualifiedIdentifierElementTypeLookupCache;
+import com.dci.intellij.dbn.language.common.element.cache.QualifiedIdentifierElementTypeLookupCache;
 import com.dci.intellij.dbn.language.common.element.parser.impl.QualifiedIdentifierElementTypeParser;
 import com.dci.intellij.dbn.language.common.element.util.ElementTypeDefinitionException;
 import com.dci.intellij.dbn.language.common.psi.QualifiedIdentifierPsiElement;
@@ -18,7 +18,7 @@ import java.util.Set;
 
 import static com.dci.intellij.dbn.common.options.setting.SettingsSupport.stringAttribute;
 
-public class QualifiedIdentifierElementType extends ElementTypeBase {
+public final class QualifiedIdentifierElementType extends ElementTypeBase {
     private final TokenElementType separatorToken;
     private final List<LeafElementType[]> variants = new ArrayList<>();
     private final Set<DBObjectType> objectTypeCache = EnumSet.noneOf(DBObjectType.class);

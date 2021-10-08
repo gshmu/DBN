@@ -10,6 +10,7 @@ import com.dci.intellij.dbn.language.common.element.impl.WrappingDefinition;
 import com.dci.intellij.dbn.language.common.element.path.ParsePathNode;
 import com.intellij.lang.ASTNode;
 import com.intellij.lang.PsiBuilder;
+import com.intellij.lang.PsiBuilder.Marker;
 import com.intellij.psi.tree.IElementType;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -117,15 +118,15 @@ public class ParserBuilder {
         builder.setDebugMode(debugMode);
     }
 
-    public PsiBuilder.Marker mark(@Nullable ParsePathNode node){
-        PsiBuilder.Marker marker = builder.mark();
+    public Marker mark(@Nullable ParsePathNode node){
+        Marker marker = builder.mark();
         if (node != null) {
             WrappingDefinition wrapping = node.elementType.getWrapping();
             if (wrapping != null) {
                 TokenElementType beginElementType = wrapping.getBeginElementType();
                 TokenType beginTokenType = beginElementType.getTokenType();
                 while(builder.getTokenType() == beginTokenType) {
-                    PsiBuilder.Marker beginTokenMarker = builder.mark();
+                    Marker beginTokenMarker = builder.mark();
                     advanceLexer(node, false);
                     beginTokenMarker.done(beginElementType);
                 }
@@ -134,7 +135,12 @@ public class ParserBuilder {
         return marker;
     }
 
-    public void markerRollbackTo(PsiBuilder.Marker marker, @Nullable ParsePathNode node) {
+    public void markError(String message) {
+        Marker errorMaker = builder.mark();
+        errorMaker.error(message);
+    }
+
+    public void markerRollbackTo(Marker marker, @Nullable ParsePathNode node) {
         if (marker != null) {
             marker.rollbackTo();
             for (TokenPairRangeMonitor tokenPairRangeMonitor : tokenPairRangeMonitors.values()) {
@@ -144,11 +150,11 @@ public class ParserBuilder {
         }
     }
 
-    public void markerDone(PsiBuilder.Marker marker, ElementType elementType) {
+    public void markerDone(Marker marker, ElementType elementType) {
         markerDone(marker, elementType, null);
     }
 
-    public void markerDone(PsiBuilder.Marker marker, ElementType elementType, @Nullable ParsePathNode node) {
+    public void markerDone(Marker marker, ElementType elementType, @Nullable ParsePathNode node) {
         if (marker != null) {
             if (node != null) {
                 WrappingDefinition wrapping = node.elementType.getWrapping();
@@ -156,7 +162,7 @@ public class ParserBuilder {
                     TokenElementType endElementType = wrapping.getEndElementType();
                     TokenType endTokenType = endElementType.getTokenType();
                     while (builder.getTokenType() == endTokenType && !isExplicitRange(endTokenType)) {
-                        PsiBuilder.Marker endTokenMarker = builder.mark();
+                        Marker endTokenMarker = builder.mark();
                         advanceLexer(node, false);
                         endTokenMarker.done(endElementType);
                     }
@@ -166,7 +172,7 @@ public class ParserBuilder {
         }
     }
 
-    public void markerDrop(PsiBuilder.Marker marker) {
+    public void markerDrop(Marker marker) {
         if (marker != null) {
             marker.drop();
         }

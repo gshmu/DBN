@@ -1,7 +1,8 @@
 package com.dci.intellij.dbn.language.common.element.impl;
 
 import com.dci.intellij.dbn.language.common.element.ElementTypeBundle;
-import com.dci.intellij.dbn.language.common.element.lookup.BasicElementTypeLookupCache;
+import com.dci.intellij.dbn.language.common.element.cache.BasicElementTypeLookupCache;
+import com.dci.intellij.dbn.language.common.element.cache.ElementTypeLookupCache;
 import com.dci.intellij.dbn.language.common.element.parser.impl.BasicElementTypeParser;
 import com.dci.intellij.dbn.language.common.psi.UnknownPsiElement;
 import com.intellij.lang.ASTNode;
@@ -10,15 +11,12 @@ import org.jetbrains.annotations.NotNull;
 
 public class BasicElementType extends ElementTypeBase {
 
-    private BasicElementType(ElementTypeBundle bundle, String id, String description) {
+    protected BasicElementType(ElementTypeBundle bundle, String id, String description) {
         super(bundle, null, id, description);
-    }
-    public BasicElementType(ElementTypeBundle bundle) {
-        this(bundle, "UNKNOWN", "Unidentified element type.");
     }
 
     @Override
-    public BasicElementTypeLookupCache createLookupCache() {
+    public ElementTypeLookupCache createLookupCache() {
         return new BasicElementTypeLookupCache(this);
     }
 

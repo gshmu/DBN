@@ -1,4 +1,4 @@
-package com.dci.intellij.dbn.language.common.element.lookup;
+package com.dci.intellij.dbn.language.common.element.cache;
 
 import com.dci.intellij.dbn.language.common.SharedTokenTypeBundle;
 import com.dci.intellij.dbn.language.common.TokenType;
@@ -33,7 +33,7 @@ public class ExecVariableElementTypeLookupCache extends LeafElementTypeLookupCac
     }
 
     @Override
-    public void collectFirstPossibleTokens(Set<TokenType> bucket) {
+    public void captureFirstPossibleTokens(Set<TokenType> bucket) {
         bucket.add(getSharedTokenTypes().getVariable());
     }
 
