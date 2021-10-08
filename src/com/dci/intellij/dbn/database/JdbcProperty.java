@@ -28,10 +28,16 @@ public enum JdbcProperty implements Property {
 
     private final String description;
     private final boolean feature;
+    private final Computed computed = new Computed(this);
 
     JdbcProperty(String description, boolean feature) {
         this.description = description;
         this.feature = feature;
+    }
+
+    @Override
+    public Computed computedOrdinal() {
+        return computed;
     }
 
     public String getDescription() {

@@ -50,4 +50,11 @@ public enum DBObjectProperty implements Property {
     // other
     TREE_LOADED // belongs to DBObjectStatus (here for optimization reasons)
     ;
+
+    private final Computed computed = new Computed(this);
+
+    @Override
+    public Computed computedOrdinal() {
+        return computed;
+    }
 }

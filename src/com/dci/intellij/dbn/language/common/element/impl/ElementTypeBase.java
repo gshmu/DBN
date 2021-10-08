@@ -93,6 +93,11 @@ public abstract class ElementTypeBase extends IElementType implements ElementTyp
         loadDefinition(def);
     }
 
+    @Override
+    public int index() {
+        return idx;
+    }
+
     Set<BranchCheck> parseBranchChecks(String definitions) {
         Set<BranchCheck> branches = null;
         if (definitions != null) {

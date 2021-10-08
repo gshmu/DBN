@@ -14,4 +14,11 @@ public enum RecordStatus implements Property {
     DIRTY,
     DISPOSED,
     ;
+
+    private final Computed computed = new Computed(this);
+
+    @Override
+    public Computed computedOrdinal() {
+        return computed;
+    }
 }

@@ -8,4 +8,11 @@ public enum NavigationInstruction implements Property{
     SCROLL,
     SELECT,
     RESET;
+
+    private final Computed computed = new Computed(this);
+
+    @Override
+    public Computed computedOrdinal() {
+        return computed;
+    }
 }

@@ -6,4 +6,11 @@ public enum DatasetEditorStatus implements Property {
     CONNECTED,
     LOADING,
     LOADED;
+
+    private final Computed computed = new Computed(this);
+
+    @Override
+    public Computed computedOrdinal() {
+        return computed;
+    }
 }

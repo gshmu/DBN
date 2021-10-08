@@ -211,9 +211,9 @@ public abstract class DynamicContentImpl<T extends DynamicContentElement>
                 updateChangeSignature();
             }
 
-            elements.forEach(e -> {
+            elements.forEach(element -> {
                 checkDisposed();
-                e.refresh();
+                element.refresh();
             });
         }
     }
@@ -282,7 +282,7 @@ public abstract class DynamicContentImpl<T extends DynamicContentElement>
             set(LOADED, true);
 
             // refresh inner elements
-            if (force) elements.forEach(t -> t.refresh());
+            if (force) elements.forEach(element -> element.refresh());
 
         } catch (ProcessCanceledException e) {
             throw e;

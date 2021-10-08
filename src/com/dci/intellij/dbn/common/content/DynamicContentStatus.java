@@ -17,4 +17,11 @@ public enum DynamicContentStatus implements Property {
     REFRESHING,
     LOADING,
     LOADING_IN_BACKGROUND;
+
+    private final Computed computed = new Computed(this);
+
+    @Override
+    public Computed computedOrdinal() {
+        return computed;
+    }
 }

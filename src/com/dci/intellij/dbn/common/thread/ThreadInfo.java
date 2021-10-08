@@ -14,7 +14,7 @@ public class ThreadInfo extends PropertyHolderImpl<ThreadProperty> {
     public void merge(@Nullable PropertyHolder<ThreadProperty> source) {
         if (source != null) {
             for (ThreadProperty property : properties()) {
-                if (property.propagatable && source.is(property)) {
+                if (property.propagatable() && source.is(property)) {
                     set(property, true);
                 }
             }

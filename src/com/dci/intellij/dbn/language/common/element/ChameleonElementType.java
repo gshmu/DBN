@@ -24,7 +24,7 @@ import com.intellij.psi.tree.ILazyParseableElementType;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import javax.swing.*;
+import javax.swing.Icon;
 
 public class ChameleonElementType extends ILazyParseableElementType implements ElementType, TokenType {
     private final int uniqueIndex;
@@ -36,7 +36,7 @@ public class ChameleonElementType extends ILazyParseableElementType implements E
     }
 
     @Override
-    public int getIdx() {
+    public int index() {
         return uniqueIndex;
     }
 
