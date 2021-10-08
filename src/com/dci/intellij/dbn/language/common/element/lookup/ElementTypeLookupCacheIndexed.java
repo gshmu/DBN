@@ -1,6 +1,6 @@
 package com.dci.intellij.dbn.language.common.element.lookup;
 
-import com.dci.intellij.dbn.common.index.IndexedContainer;
+import com.dci.intellij.dbn.common.index.IndexContainer;
 import com.dci.intellij.dbn.language.common.SharedTokenTypeBundle;
 import com.dci.intellij.dbn.language.common.TokenType;
 import com.dci.intellij.dbn.language.common.element.impl.ElementTypeBase;
@@ -15,11 +15,11 @@ import static com.dci.intellij.dbn.common.util.CollectionUtil.compact;
 
 public abstract class ElementTypeLookupCacheIndexed<T extends ElementTypeBase> extends ElementTypeLookupCache<T> {
 
-    private IndexedContainer<LeafElementType> allPossibleLeafs;
+    private IndexContainer<LeafElementType> allPossibleLeafs;
     Set<LeafElementType> firstPossibleLeafs;
     Set<LeafElementType> firstRequiredLeafs;
 
-    private IndexedContainer<TokenType> allPossibleTokens;
+    private IndexContainer<TokenType> allPossibleTokens;
     private Set<TokenType> firstPossibleTokens;
     private Set<TokenType> firstRequiredTokens;
     private Boolean startsWithIdentifier;
@@ -27,10 +27,10 @@ public abstract class ElementTypeLookupCacheIndexed<T extends ElementTypeBase> e
     ElementTypeLookupCacheIndexed(T elementType) {
         super(elementType);
         if (!elementType.isLeaf()) {
-            allPossibleLeafs = new IndexedContainer<>();
+            allPossibleLeafs = new IndexContainer<>();
             firstPossibleLeafs = new THashSet<>();
             firstRequiredLeafs = new THashSet<>();
-            allPossibleTokens = new IndexedContainer<>();
+            allPossibleTokens = new IndexContainer<>();
             firstPossibleTokens = new THashSet<>();
             firstRequiredTokens = new THashSet<>();
         }

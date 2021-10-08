@@ -14,5 +14,11 @@ public class ConnectionSelectorOptions extends PropertyHolderImpl<ConnectionSele
         SHOW_VIRTUAL_CONNECTIONS,
         SHOW_CREATE_CONNECTION,
         PROMPT_SCHEMA_SELECTION;
-    }
+
+        private final Computed computed = new Computed(this);
+
+        @Override
+        public Computed computedOrdinal() {
+            return computed;
+        }    }
 }

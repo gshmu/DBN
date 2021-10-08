@@ -12,4 +12,11 @@ public enum DBDebugProcessStatus implements Property{
     PROCESS_TERMINATED,
     PROCESS_STOPPED_NORMALLY,
     DEBUGGER_STOPPING;
+
+    private final Computed computed = new Computed(this);
+
+    @Override
+    public Computed computedOrdinal() {
+        return computed;
+    }
 }

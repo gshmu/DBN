@@ -44,12 +44,18 @@ public enum ResourceStatus implements Property {
     RESOLVING_TRANSACTION(true);
 
     private final boolean transitory;
+    private final Computed computed = new Computed(this);
 
     ResourceStatus() {
         this(false);
-
     }
+
     ResourceStatus(boolean transitory) {
         this.transitory = transitory;
+    }
+
+    @Override
+    public Computed computedOrdinal() {
+        return computed;
     }
 }

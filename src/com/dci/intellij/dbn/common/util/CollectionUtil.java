@@ -109,10 +109,9 @@ public class CollectionUtil {
                 K key = elements.keySet().stream().findFirst().orElse(null);
                 V value = elements.get(key);
                 return cast(Collections.singletonMap(key, value));
-            }
-            else if (elements instanceof THashMap) {
-                THashMap hashMap = (THashMap) elements;
-                hashMap.trimToSize();
+            } else if (elements instanceof THashMap) {
+                THashMap map = (THashMap) elements;
+                map.compact();
             }
         }
         return elements;

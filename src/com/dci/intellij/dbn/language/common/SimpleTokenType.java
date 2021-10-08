@@ -87,6 +87,11 @@ public class SimpleTokenType extends IElementType implements TokenType {
     }
 
     @Override
+    public int index() {
+        return idx;
+    }
+
+    @Override
     public void setDefaultFormatting(FormattingDefinition defaultFormatting) {
         formatting = FormattingDefinitionFactory.mergeDefinitions(formatting, defaultFormatting);
     }

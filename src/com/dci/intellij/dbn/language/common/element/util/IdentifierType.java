@@ -4,5 +4,15 @@ public enum IdentifierType {
     OBJECT,
     ALIAS,
     VARIABLE,
-    UNKNOWN
+    UNKNOWN;
+
+    private final String lowerCaseName;
+
+    IdentifierType() {
+        this.lowerCaseName = name().toLowerCase();
+    }
+
+    public String lowerCaseName() {
+        return lowerCaseName;
+    }
 }

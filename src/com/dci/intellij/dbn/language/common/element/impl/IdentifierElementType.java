@@ -142,7 +142,7 @@ public class IdentifierElementType extends LeafElementType {
     }
 
     public String getQualifiedObjectTypeName() {
-        return getObjectTypeName() + " " + identifierType.name().toLowerCase();
+        return getObjectTypeName() + " " + identifierType.lowerCaseName();
 
     }
 
