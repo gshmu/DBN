@@ -4,8 +4,8 @@ import com.dci.intellij.dbn.language.common.TokenType;
 import com.dci.intellij.dbn.language.common.element.ChameleonElementType;
 import com.dci.intellij.dbn.language.common.element.ElementType;
 import com.dci.intellij.dbn.language.common.element.ElementTypeBundle;
-import com.dci.intellij.dbn.language.common.element.lookup.ElementLookupContext;
-import com.dci.intellij.dbn.language.common.element.lookup.ElementTypeLookupCache;
+import com.dci.intellij.dbn.language.common.element.cache.ElementLookupContext;
+import com.dci.intellij.dbn.language.common.element.cache.ElementTypeLookupCache;
 import com.dci.intellij.dbn.language.common.element.parser.ParserContext;
 import com.dci.intellij.dbn.language.common.element.path.BasicPathNode;
 import com.dci.intellij.dbn.language.common.element.path.ParsePathNode;
@@ -14,6 +14,7 @@ import com.dci.intellij.dbn.language.common.element.util.ElementTypeAttribute;
 import com.dci.intellij.dbn.language.common.element.util.ElementTypeDefinitionException;
 import com.intellij.lang.ASTNode;
 import com.intellij.psi.PsiWhiteSpace;
+import gnu.trove.THashMap;
 import gnu.trove.THashSet;
 import lombok.Getter;
 import lombok.Setter;
@@ -22,11 +23,18 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.Map;
 import java.util.Set;
 
 @Getter
 @Setter
 public abstract class LeafElementType extends ElementTypeBase {
+    private static final Map<Integer, LeafElementType> INDEX = new THashMap<>();
+
+    public static LeafElementType forIndex(int index) {
+        return INDEX.get(index);
+    }
+
     private TokenType tokenType;
     private boolean optional;
 
@@ -82,7 +90,7 @@ public abstract class LeafElementType extends ElementTypeBase {
                     ElementTypeRef child = sequenceElementType.getChild(position);
                     while (child != null) {
                         if (context.check(child)) {
-                            child.getLookupCache().collectFirstPossibleLeafs(context.reset(), possibleLeafs);
+                            child.getLookupCache().captureFirstPossibleLeafs(context.reset(), possibleLeafs);
                             if (!child.optional) {
                                 pathNode = null;
                                 break;
@@ -98,7 +106,7 @@ public abstract class LeafElementType extends ElementTypeBase {
                 TokenElementType[] separatorTokens = iterationElementType.getSeparatorTokens();
                 if (separatorTokens == null) {
                     ElementTypeLookupCache lookupCache = iterationElementType.getIteratedElementType().getLookupCache();
-                    lookupCache.collectFirstPossibleLeafs(context.reset(), possibleLeafs);
+                    lookupCache.captureFirstPossibleLeafs(context.reset(), possibleLeafs);
                 } else {
                     possibleLeafs.addAll(Arrays.asList(separatorTokens));
                 }

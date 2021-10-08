@@ -1,7 +1,7 @@
 package com.dci.intellij.dbn.language.common.element.impl;
 
 import com.dci.intellij.dbn.language.common.element.ElementTypeBundle;
-import com.dci.intellij.dbn.language.common.element.lookup.NamedElementTypeLookupCache;
+import com.dci.intellij.dbn.language.common.element.cache.NamedElementTypeLookupCache;
 import com.dci.intellij.dbn.language.common.element.parser.impl.NamedElementTypeParser;
 import com.dci.intellij.dbn.language.common.element.util.ElementTypeAttribute;
 import com.dci.intellij.dbn.language.common.element.util.ElementTypeDefinitionException;
@@ -18,7 +18,7 @@ import org.jetbrains.annotations.NotNull;
 import java.util.Set;
 
 @Getter
-public class NamedElementType extends SequenceElementType {
+public final class NamedElementType extends SequenceElementType {
     private final Set<ElementTypeBase> parents;
     private boolean definitionLoaded;
     private boolean truncateOnExecution;

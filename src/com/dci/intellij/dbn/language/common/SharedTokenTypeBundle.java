@@ -2,7 +2,10 @@ package com.dci.intellij.dbn.language.common;
 
 import com.dci.intellij.dbn.common.util.CommonUtil;
 import com.intellij.psi.tree.TokenSet;
+import gnu.trove.THashSet;
 import lombok.Getter;
+
+import java.util.Set;
 
 @Getter
 public class SharedTokenTypeBundle extends DBLanguageTokenTypeBundle {
@@ -27,6 +30,8 @@ public class SharedTokenTypeBundle extends DBLanguageTokenTypeBundle {
     private final TokenSet commentTokens;
     private final TokenSet stringTokens;
 
+    private final Set<TokenType> identifierTokens;
+
     public SharedTokenTypeBundle(DBLanguage language) {
         super(language, CommonUtil.loadXmlFile(SharedTokenTypeBundle.class, "db_language_common_tokens.xml"));
         whiteSpace = getTokenType("WHITE_SPACE");
@@ -50,6 +55,9 @@ public class SharedTokenTypeBundle extends DBLanguageTokenTypeBundle {
         commentTokens = getTokenSet("COMMENTS");
         stringTokens = getTokenSet("STRINGS");
 
+        identifierTokens = new THashSet<>(2);
+        identifierTokens.add(identifier);
+        identifierTokens.add(quotedIdentifier);
     }
 
 
@@ -59,5 +67,9 @@ public class SharedTokenTypeBundle extends DBLanguageTokenTypeBundle {
 
     public boolean isVariable(TokenType tokenType) {
         return tokenType == variable;
+    }
+
+    public Set<TokenType> getIdentifierTokens() {
+        return identifierTokens;
     }
 }

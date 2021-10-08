@@ -48,6 +48,7 @@ public class SequenceElementTypeParser<ET extends SequenceElementType> extends E
                     ParseResultType resultType =
                             child.optional && (child.isLast() || child.isOptionalFromHere()) ? ParseResultType.FULL_MATCH :
                             !child.isFirst() && elementType.isExitIndex(index) ? ParseResultType.NO_MATCH : ParseResultType.PARTIAL_MATCH;
+
                     return stepOut(node, context, depth, resultType, matchedTokens);
                 }
 

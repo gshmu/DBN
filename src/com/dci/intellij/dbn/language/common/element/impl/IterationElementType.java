@@ -4,7 +4,8 @@ import com.dci.intellij.dbn.code.common.style.formatting.FormattingDefinition;
 import com.dci.intellij.dbn.common.latent.Latent;
 import com.dci.intellij.dbn.language.common.TokenType;
 import com.dci.intellij.dbn.language.common.element.ElementTypeBundle;
-import com.dci.intellij.dbn.language.common.element.lookup.IterationElementTypeLookupCache;
+import com.dci.intellij.dbn.language.common.element.cache.ElementTypeLookupCache;
+import com.dci.intellij.dbn.language.common.element.cache.IterationElementTypeLookupCache;
 import com.dci.intellij.dbn.language.common.element.parser.impl.IterationElementTypeParser;
 import com.dci.intellij.dbn.language.common.element.util.ElementTypeDefinitionException;
 import com.dci.intellij.dbn.language.common.psi.SequencePsiElement;
@@ -16,13 +17,12 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
 import java.util.StringTokenizer;
 
 import static com.dci.intellij.dbn.common.options.setting.SettingsSupport.stringAttribute;
 
 @Getter
-public class IterationElementType extends ElementTypeBase {
+public final class IterationElementType extends ElementTypeBase {
 
     private ElementTypeBase iteratedElementType;
     private TokenElementType[] separatorTokens;
@@ -31,9 +31,9 @@ public class IterationElementType extends ElementTypeBase {
 
     private final Latent<Boolean> followedBySeparator = Latent.basic(() -> {
         if (separatorTokens != null) {
-            Set<TokenType> nextPossibleTokens = createLookupCache().getNextPossibleTokens();
+            ElementTypeLookupCache lookupCache = getLookupCache();
             for (TokenElementType separatorToken : separatorTokens) {
-                if (nextPossibleTokens.contains(separatorToken.getTokenType())) {
+                if (lookupCache.isNextPossibleToken(separatorToken.getTokenType())) {
                     return true;
                 }
             }

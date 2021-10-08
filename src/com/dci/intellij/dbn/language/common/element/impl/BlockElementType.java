@@ -2,7 +2,7 @@ package com.dci.intellij.dbn.language.common.element.impl;
 
 import com.dci.intellij.dbn.common.options.setting.SettingsSupport;
 import com.dci.intellij.dbn.language.common.element.ElementTypeBundle;
-import com.dci.intellij.dbn.language.common.element.lookup.BlockElementTypeLookupCache;
+import com.dci.intellij.dbn.language.common.element.cache.BlockElementTypeLookupCache;
 import com.dci.intellij.dbn.language.common.element.parser.impl.BlockElementTypeParser;
 import com.dci.intellij.dbn.language.common.element.util.ElementTypeDefinitionException;
 import com.dci.intellij.dbn.language.common.psi.BlockPsiElement;
@@ -15,7 +15,7 @@ import org.jetbrains.annotations.NotNull;
 import java.util.Objects;
 
 @Getter
-public class BlockElementType extends SequenceElementType {
+public final class BlockElementType extends SequenceElementType {
     public static final int INDENT_NONE = 0;
     public static final int INDENT_NORMAL = 1;
 

@@ -57,8 +57,10 @@ public class CollectionUtil {
         return elements;
     }
 
-    public static void compact(Compactable compactable) {
-        if (compactable != null) compactable.compact();
+    public static <T extends Compactable> void compact(@Nullable T compactable) {
+        if (compactable != null) {
+            compactable.compact();
+        }
     }
 
 

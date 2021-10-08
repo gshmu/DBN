@@ -4,9 +4,9 @@ import com.dci.intellij.dbn.common.util.CommonUtil;
 import com.dci.intellij.dbn.language.common.TokenType;
 import com.dci.intellij.dbn.language.common.element.ElementType;
 import com.dci.intellij.dbn.language.common.element.ElementTypeBundle;
-import com.dci.intellij.dbn.language.common.element.lookup.ElementLookupContext;
-import com.dci.intellij.dbn.language.common.element.lookup.ElementTypeLookupCache;
-import com.dci.intellij.dbn.language.common.element.lookup.SequenceElementTypeLookupCache;
+import com.dci.intellij.dbn.language.common.element.cache.ElementLookupContext;
+import com.dci.intellij.dbn.language.common.element.cache.ElementTypeLookupCache;
+import com.dci.intellij.dbn.language.common.element.cache.SequenceElementTypeLookupCache;
 import com.dci.intellij.dbn.language.common.element.parser.BranchCheck;
 import com.dci.intellij.dbn.language.common.element.parser.impl.SequenceElementTypeParser;
 import com.dci.intellij.dbn.language.common.element.util.ElementTypeDefinitionException;
@@ -120,13 +120,13 @@ public class SequenceElementType extends ElementTypeBase {
             Set<TokenType> tokenTypes = new THashSet<>();
             for (int i=index; i< children.length; i++) {
                 ElementTypeLookupCache lookupCache = children[i].getLookupCache();
-                lookupCache.collectFirstPossibleTokens(context.reset(), tokenTypes);
+                lookupCache.captureFirstPossibleTokens(context.reset(), tokenTypes);
                 if (!children[i].optional) break;
             }
             return tokenTypes;
         } else {
             ElementTypeLookupCache lookupCache = children[index].getLookupCache();
-            return lookupCache.collectFirstPossibleTokens(context.reset());
+            return lookupCache.captureFirstPossibleTokens(context.reset());
         }
     }
 

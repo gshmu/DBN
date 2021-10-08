@@ -16,6 +16,7 @@ import com.dci.intellij.dbn.language.common.element.impl.OneOfElementType;
 import com.dci.intellij.dbn.language.common.element.impl.QualifiedIdentifierElementType;
 import com.dci.intellij.dbn.language.common.element.impl.SequenceElementType;
 import com.dci.intellij.dbn.language.common.element.impl.TokenElementType;
+import com.dci.intellij.dbn.language.common.element.impl.UnknownElementType;
 import com.dci.intellij.dbn.language.common.element.impl.WrapperElementType;
 import com.dci.intellij.dbn.language.common.element.impl.WrappingDefinition;
 import com.dci.intellij.dbn.language.common.element.util.ElementTypeAttribute;
@@ -113,7 +114,7 @@ public class ElementTypeBundle {
 
             Background.run(() -> {
                 for (ElementType allElementType : builder.allElementTypes) {
-                    allElementType.getLookupCache().cleanup();
+                    allElementType.getLookupCache().initialise();
                 }
                 builder = null;
             });
@@ -274,7 +275,7 @@ public class ElementTypeBundle {
 
     public BasicElementType getUnknownElementType() {
         if (unknownElementType == null) {
-            unknownElementType = new BasicElementType(this);
+            unknownElementType = new UnknownElementType(this);
         }
         return unknownElementType;
     }

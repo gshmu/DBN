@@ -3,7 +3,7 @@ package com.dci.intellij.dbn.language.common.element.impl;
 import com.dci.intellij.dbn.code.common.style.formatting.FormattingDefinition;
 import com.dci.intellij.dbn.code.common.style.formatting.SpacingDefinition;
 import com.dci.intellij.dbn.language.common.element.ElementTypeBundle;
-import com.dci.intellij.dbn.language.common.element.lookup.IdentifierElementTypeLookupCache;
+import com.dci.intellij.dbn.language.common.element.cache.IdentifierElementTypeLookupCache;
 import com.dci.intellij.dbn.language.common.element.parser.impl.IdentifierElementTypeParser;
 import com.dci.intellij.dbn.language.common.element.util.ElementTypeAttribute;
 import com.dci.intellij.dbn.language.common.element.util.ElementTypeDefinition;
@@ -23,7 +23,7 @@ import org.jetbrains.annotations.NotNull;
 import static com.dci.intellij.dbn.common.options.setting.SettingsSupport.stringAttribute;
 
 @Getter
-public class IdentifierElementType extends LeafElementType {
+public final class IdentifierElementType extends LeafElementType {
     public static final FormattingDefinition FORMATTING = new FormattingDefinition(null, null, SpacingDefinition.ONE_SPACE, null);
 
     private IdentifierType identifierType;

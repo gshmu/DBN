@@ -4,7 +4,7 @@ import com.dci.intellij.dbn.code.common.style.formatting.FormattingDefinition;
 import com.dci.intellij.dbn.common.util.StringUtil;
 import com.dci.intellij.dbn.language.common.element.ElementTypeBundle;
 import com.dci.intellij.dbn.language.common.element.TokenPairTemplate;
-import com.dci.intellij.dbn.language.common.element.lookup.WrapperElementTypeLookupCache;
+import com.dci.intellij.dbn.language.common.element.cache.WrapperElementTypeLookupCache;
 import com.dci.intellij.dbn.language.common.element.parser.impl.WrapperElementTypeParser;
 import com.dci.intellij.dbn.language.common.element.util.ElementTypeDefinitionException;
 import com.dci.intellij.dbn.language.common.psi.SequencePsiElement;
@@ -17,7 +17,7 @@ import java.util.List;
 
 import static com.dci.intellij.dbn.common.options.setting.SettingsSupport.stringAttribute;
 
-public class WrapperElementType extends ElementTypeBase {
+public final class WrapperElementType extends ElementTypeBase {
     private WrappingDefinition wrappingDefinition;
     private ElementTypeBase wrappedElement;
     public boolean wrappedElementOptional;

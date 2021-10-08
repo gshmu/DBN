@@ -1,4 +1,4 @@
-package com.dci.intellij.dbn.language.common.element.lookup;
+package com.dci.intellij.dbn.language.common.element.cache;
 
 import com.dci.intellij.dbn.language.common.TokenType;
 import com.dci.intellij.dbn.language.common.element.impl.ElementTypeBase;
@@ -15,13 +15,13 @@ public abstract class LeafElementTypeLookupCache<T extends LeafElementType> exte
 
     @Override
     @Deprecated
-    public boolean couldStartWithLeaf(LeafElementType leafElementType) {
-        return elementType == leafElementType;
+    public boolean couldStartWithLeaf(LeafElementType elementType) {
+        return this.elementType == elementType;
     }
 
     @Override
-    public boolean shouldStartWithLeaf(LeafElementType leafElementType) {
-        return elementType == leafElementType;
+    public boolean shouldStartWithLeaf(LeafElementType elementType) {
+        return this.elementType == elementType;
     }
 
     @Override
@@ -35,6 +35,16 @@ public abstract class LeafElementTypeLookupCache<T extends LeafElementType> exte
     }
 
     @Override
+    public boolean isFirstPossibleLeaf(LeafElementType elementType) {
+        return this.elementType == elementType;
+    }
+
+    @Override
+    public boolean isFirstRequiredLeaf(LeafElementType elementType) {
+        return isFirstPossibleLeaf(elementType);
+    }
+
+    @Override
     public Set<TokenType> getFirstRequiredTokens() {
         return getFirstPossibleTokens();
     }
@@ -45,16 +55,16 @@ public abstract class LeafElementTypeLookupCache<T extends LeafElementType> exte
     }
 
     @Override
-    public Set<LeafElementType> collectFirstPossibleLeafs(ElementLookupContext context, @Nullable Set<LeafElementType> bucket) {
+    public Set<LeafElementType> captureFirstPossibleLeafs(ElementLookupContext context, @Nullable Set<LeafElementType> bucket) {
         bucket = initBucket(bucket);
         bucket.add(elementType);
         return bucket;
     }
 
     @Override
-    public Set<TokenType> collectFirstPossibleTokens(ElementLookupContext context, @Nullable Set<TokenType> bucket) {
+    public Set<TokenType> captureFirstPossibleTokens(ElementLookupContext context, @Nullable Set<TokenType> bucket) {
         bucket = initBucket(bucket);
-        collectFirstPossibleTokens(bucket);
+        captureFirstPossibleTokens(bucket);
         return bucket;
     }
 
