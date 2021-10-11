@@ -13,8 +13,6 @@ public class ParseBuilderErrorHandler {
         if (expectedTokens != null) {
             int offset = context.builder.getCurrentOffset();
             if (ParseBuilderErrorWatcher.show(offset, context.timestamp)) {
-                context.builder.error("Invalid or incomplete statement");
-
                 expectedTokenError(1, context.builder, TokenTypeCategory.CHARACTER, expectedTokens);
                 expectedTokenError(2, context.builder, TokenTypeCategory.OPERATOR, expectedTokens);
                 expectedTokenError(3, context.builder, TokenTypeCategory.KEYWORD, expectedTokens);
@@ -59,8 +57,6 @@ public class ParseBuilderErrorHandler {
     }
 
     private static void expectedTokenError(int index, ParserBuilder builder, TokenTypeCategory category, Set<TokenType> expectedTokens) {
-        boolean charOperator = category == TokenTypeCategory.CHARACTER || category == TokenTypeCategory.OPERATOR;
-        String delimiter = charOperator ? " " : ", ";
         Set<TokenType> tokenTypes = expectedTokens
                 .stream()
                 .filter(tokenType -> tokenType.getCategory() == category)
@@ -75,26 +71,23 @@ public class ParseBuilderErrorHandler {
                 }
                 case CHARACTER:
                 case OPERATOR: {
-                    message = category.getName() + ": " + tokenTypes
+                    message = category.getName() + " (e.g. " + tokenTypes
                             .stream()
-                            .map(tokenType -> tokenType.getValue())
+                            .map(tokenType -> tokenType.getId().substring(4).replace("_", " "))
                             .distinct()
                             .sorted()
-                            .collect(Collectors.joining(" "));
+                            .collect(Collectors.joining(", ")) + ")";
                     break;
                 }
                 default: {
-                    message = category.getName() + ": " +
+                    message = category.getName() + " (e.g. " +
                             tokenTypes
                                     .stream()
                                     .map(tokenType -> tokenType.getValue().toUpperCase())
                                     .distinct()
                                     .limit(20)
                                     .sorted()
-                                    .collect(Collectors.joining(" "));
-                    if (tokenTypes.size() > 20) {
-                        message = message + "...";
-                    }
+                                    .collect(Collectors.joining(", ")) + "...)";
                 }
             }
             builder.markError(message);
