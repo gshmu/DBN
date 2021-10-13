@@ -10271,26 +10271,33 @@
     <element-def custom="true" description="Chained reference" id="chained_references">
         <iteration id="000005615" separator="CHR_DOT">
             <one-of id="000005616">
-                <token id="000005617" type-id="FN_COUNT" />
-                <sequence id="000005618">
-                    <variable-ref attributes="SUBJECT" id="000005619" type="ANY" />
+                <element ref-id="numeric_index_suffix" />
+                <sequence id="000005617">
+                    <variable-ref attributes="SUBJECT" id="000005618" type="ANY" />
                     <element optional="true" ref-id="wrapped_expression_list" />
                 </sequence>
             </one-of>
         </iteration>
     </element-def>
+    <element-def custom="true" description="Numeric index suffix" id="numeric_index_suffix">
+        <one-of id="000005619">
+            <token id="000005620" type-id="KW_FIRST" />
+            <token id="000005621" type-id="KW_LAST" />
+            <token flavor="keyword" id="000005622" type-id="FN_COUNT" />
+        </one-of>
+    </element-def>
     <element-def custom="true" description="DBLINK qualifier" id="dblink_qualifier">
-        <token id="000005620" type-id="CHR_AT" />
-        <object-ref id="000005621" type="DBLINK" />
+        <token id="000005623" type-id="CHR_AT" />
+        <object-ref id="000005624" type="DBLINK" />
     </element-def>
 
     <element-def description="Unknown identifier" id="custom_undefined">
-        <token id="000005622" type-id="IDENTIFIER" />
+        <token id="000005625" type-id="IDENTIFIER" />
     </element-def>
     <element-def description="Statement end" formatting-spacing-before="NO_SPACE" id="end" truncate-on-execution="true">
-        <one-of id="000005623">
-            <token id="000005624" type-id="CHR_SEMICOLON" />
-            <token id="000005625" type-id="CHR_SLASH" />
+        <one-of id="000005626">
+            <token id="000005627" type-id="CHR_SEMICOLON" />
+            <token id="000005628" type-id="CHR_SLASH" />
         </one-of>
     </element-def>
 </element-defs>
