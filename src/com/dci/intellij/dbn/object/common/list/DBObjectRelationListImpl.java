@@ -73,7 +73,7 @@ public class DBObjectRelationListImpl<T extends DBObjectRelation> extends Dynami
 
     @Override
     public List<DBObjectRelation> getRelationBySourceName(String sourceName) {
-        List<DBObjectRelation> objectRelations = new ArrayList<DBObjectRelation>();
+        List<DBObjectRelation> objectRelations = new ArrayList<>();
         for (DBObjectRelation objectRelation : getAllElements()) {
             if (Objects.equals(objectRelation.getSourceObject().getName(), sourceName)) {
                 objectRelations.add(objectRelation);
@@ -84,7 +84,7 @@ public class DBObjectRelationListImpl<T extends DBObjectRelation> extends Dynami
 
     @Override
     public List<DBObjectRelation> getRelationByTargetName(String targetName) {
-        List<DBObjectRelation> objectRelations = new ArrayList<DBObjectRelation>();
+        List<DBObjectRelation> objectRelations = new ArrayList<>();
         for (DBObjectRelation objectRelation : getAllElements()) {
             if (Objects.equals(objectRelation.getTargetObject().getName(), targetName)) {
                 objectRelations.add(objectRelation);
