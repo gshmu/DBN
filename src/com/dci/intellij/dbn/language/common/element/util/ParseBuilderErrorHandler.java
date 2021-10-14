@@ -1,10 +1,13 @@
 package com.dci.intellij.dbn.language.common.element.util;
 
+import com.dci.intellij.dbn.common.util.StringUtil;
 import com.dci.intellij.dbn.language.common.TokenType;
 import com.dci.intellij.dbn.language.common.TokenTypeCategory;
 import com.dci.intellij.dbn.language.common.element.parser.ParserBuilder;
 import com.dci.intellij.dbn.language.common.element.parser.ParserContext;
 
+import java.util.Arrays;
+import java.util.HashSet;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -13,15 +16,14 @@ public class ParseBuilderErrorHandler {
         if (expectedTokens != null) {
             int offset = context.builder.getCurrentOffset();
             if (ParseBuilderErrorWatcher.show(offset, context.timestamp)) {
-                expectedTokenError(1, context.builder, TokenTypeCategory.CHARACTER, expectedTokens);
-                expectedTokenError(2, context.builder, TokenTypeCategory.OPERATOR, expectedTokens);
-                expectedTokenError(3, context.builder, TokenTypeCategory.KEYWORD, expectedTokens);
-                expectedTokenError(4, context.builder, TokenTypeCategory.FUNCTION, expectedTokens);
-                expectedTokenError(5, context.builder, TokenTypeCategory.DATATYPE, expectedTokens);
-                expectedTokenError(6, context.builder, TokenTypeCategory.IDENTIFIER, expectedTokens);
+                //expectedTokenError(1, context.builder, TokenTypeCategory.CHARACTER, expectedTokens);
+                //expectedTokenError(2, context.builder, TokenTypeCategory.OPERATOR, expectedTokens);
+                //expectedTokenError(3, context.builder, TokenTypeCategory.KEYWORD, expectedTokens);
+                //expectedTokenError(4, context.builder, TokenTypeCategory.FUNCTION, expectedTokens);
+                //expectedTokenError(5, context.builder, TokenTypeCategory.DATATYPE, expectedTokens);
+                //expectedTokenError(6, context.builder, TokenTypeCategory.IDENTIFIER, expectedTokens);
 
-/*
-                Set<String> tokenDescriptions = new THashSet<>(expectedTokens.size());
+                Set<String> tokenDescriptions = new HashSet<>(expectedTokens.size());
                 for (TokenType tokenType : expectedTokens) {
                     if (tokenType.isFunction()) {
                         tokenDescriptions.add("function");
@@ -51,7 +53,6 @@ public class ParseBuilderErrorHandler {
                 context.builder.markError("Invalid or incomplete statement");
 
                 context.builder.error(buffer.toString());
-*/
             }
         }
     }
