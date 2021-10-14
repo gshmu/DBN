@@ -6522,18 +6522,18 @@
                     <element ref-id="dblink_qualifier" />
                     <element ref-id="partition_extension_clause" />
                 </one-of>
-                <token id="000003639" type-id="KW_IN" />
-                <element ref-id="lock_mode" />
-                <token id="000003640" type-id="KW_MODE" />
-                <one-of id="000003641" optional="true">
-                    <token id="000003642" type-id="KW_NOWAIT" />
-                    <sequence id="000003643">
-                        <token id="000003644" type-id="KW_WAIT" />
-                        <token id="000003645" type-id="INTEGER" />
-                    </sequence>
-                </one-of>
             </sequence>
         </iteration>
+        <token id="000003639" type-id="KW_IN"/>
+        <element ref-id="lock_mode"/>
+        <token id="000003640" type-id="KW_MODE"/>
+        <one-of id="000003641" optional="true">
+            <token id="000003642" type-id="KW_NOWAIT"/>
+            <sequence id="000003643">
+                <token id="000003644" type-id="KW_WAIT"/>
+                <token id="000003645" type-id="INTEGER"/>
+            </sequence>
+        </one-of>
     </element-def>
     <element-def description="LOCK mode" id="lock_mode">
         <one-of id="000003646">
