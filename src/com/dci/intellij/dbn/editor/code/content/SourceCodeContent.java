@@ -2,37 +2,32 @@ package com.dci.intellij.dbn.editor.code.content;
 
 import com.dci.intellij.dbn.common.load.ProgressMonitor;
 import com.dci.intellij.dbn.common.util.CommonUtil;
+import com.dci.intellij.dbn.common.util.StringUtil;
 import com.intellij.diff.comparison.ByWord;
 import com.intellij.diff.comparison.ComparisonPolicy;
 import com.intellij.openapi.progress.ProgressIndicator;
-import org.jetbrains.annotations.NotNull;
+import lombok.Getter;
+import lombok.Setter;
 
 import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.Objects;
 
 import static com.dci.intellij.dbn.editor.code.content.GuardedBlockMarker.END_OFFSET_IDENTIFIER;
 import static com.dci.intellij.dbn.editor.code.content.GuardedBlockMarker.START_OFFSET_IDENTIFIER;
 
+@Getter
+@Setter
 public class SourceCodeContent{
     private static final String EMPTY_CONTENT = "";
-    protected CharSequence text = EMPTY_CONTENT;
     private final SourceCodeOffsets offsets = new SourceCodeOffsets();
+    protected CharSequence text = EMPTY_CONTENT;
 
     public SourceCodeContent() {
     }
 
     public SourceCodeContent(CharSequence text) {
-        this.text = text;
-    }
-
-    public CharSequence getText() {
-        return text;
-    }
-
-    public void setText(CharSequence text) {
         this.text = text;
     }
 
@@ -56,7 +51,7 @@ public class SourceCodeContent{
             } catch (Exception ignore) {
             }
         }
-        return Objects.equals(text, content.text);
+        return StringUtil.equals(text, content.text);
     }
 
     public long length() {
@@ -66,11 +61,6 @@ public class SourceCodeContent{
     @Override
     public String toString() {
         return text.toString();
-    }
-
-    @NotNull
-    public SourceCodeOffsets getOffsets() {
-        return offsets;
     }
 
     public void importContent(String content) {
@@ -96,8 +86,8 @@ public class SourceCodeContent{
 
     public String exportContent() {
         StringBuilder builder = new StringBuilder(text);
-        List<GuardedBlockMarker> ranges = new ArrayList<GuardedBlockMarker>(offsets.getGuardedBlocks().getRanges());
-        Collections.sort(ranges, Collections.reverseOrder());
+        List<GuardedBlockMarker> ranges = new ArrayList<>(offsets.getGuardedBlocks().getRanges());
+        ranges.sort(Collections.reverseOrder());
         for (GuardedBlockMarker range : ranges) {
             builder.insert(range.getEndOffset(), END_OFFSET_IDENTIFIER);
             builder.insert(range.getStartOffset(), START_OFFSET_IDENTIFIER);
