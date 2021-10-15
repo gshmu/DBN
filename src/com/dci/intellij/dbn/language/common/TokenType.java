@@ -1,22 +1,21 @@
 package com.dci.intellij.dbn.language.common;
 
 import com.dci.intellij.dbn.code.common.style.formatting.FormattingDefinition;
+import com.dci.intellij.dbn.common.index.IndexRegistry;
 import com.dci.intellij.dbn.common.index.Indexable;
 import com.dci.intellij.dbn.language.common.element.TokenPairTemplate;
 import com.dci.intellij.dbn.object.type.DBObjectType;
-import gnu.trove.THashMap;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
 
 public interface TokenType extends Indexable {
     AtomicInteger INDEXER = new AtomicInteger();
-    Map<Integer, TokenType> INDEX = new THashMap<>();
+    IndexRegistry<TokenType> REGISTRY = new IndexRegistry<>();
 
     static TokenType forIndex(int index) {
-        return INDEX.get(index);
+        return REGISTRY.get(index);
     }
 
     default TokenType resolve(int index) {
