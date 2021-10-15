@@ -94,7 +94,7 @@ public class ElementTypeRef extends Chained<ElementTypeRef> {
         return true;
     }
 
-    public ElementTypeLookupCache getLookupCache() {
+    public ElementTypeLookupCache<?> getLookupCache() {
         return elementType.getLookupCache();
     }
 
