@@ -54,7 +54,7 @@ public abstract class ElementTypeBase<T extends ElementTypeBase<T>> extends IEle
     private Branch branch;
     private FormattingDefinition formatting;
 
-    private final ElementTypeLookupCache lookupCache = createLookupCache();
+    private final ElementTypeLookupCache<?> lookupCache = createLookupCache();
     private final ElementTypeParser parser = createParser();
     private final ElementTypeBundle bundle;
     private final ElementTypeBase parent;
@@ -131,7 +131,7 @@ public abstract class ElementTypeBase<T extends ElementTypeBase<T>> extends IEle
         return wrapping != null && wrapping.getEndElementType().getTokenType() == tokenType;
     }
 
-    protected abstract ElementTypeLookupCache createLookupCache();
+    protected abstract ElementTypeLookupCache<?> createLookupCache();
 
     @NotNull
     protected abstract ElementTypeParser createParser();

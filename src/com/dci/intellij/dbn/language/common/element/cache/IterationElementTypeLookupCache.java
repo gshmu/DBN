@@ -143,7 +143,7 @@ public class IterationElementTypeLookupCache extends ElementTypeLookupCache<Iter
         return getIteratedElementLookupCache().captureFirstPossibleTokens(context, bucket);
     }
 
-    private ElementTypeLookupCache getIteratedElementLookupCache() {
+    private ElementTypeLookupCache<?> getIteratedElementLookupCache() {
         return getIteratedElementType().getLookupCache();
     }
 

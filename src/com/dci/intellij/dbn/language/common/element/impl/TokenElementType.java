@@ -93,7 +93,7 @@ public final class TokenElementType extends LeafElementType implements LookupIte
         if (isIterationSeparator()) {
             if (parent instanceof IterationElementType) {
                 IterationElementType iterationElementType = (IterationElementType) parent;
-                ElementTypeLookupCache lookupCache = iterationElementType.getIteratedElementType().getLookupCache();
+                ElementTypeLookupCache<?> lookupCache = iterationElementType.getIteratedElementType().getLookupCache();
                 return lookupCache.captureFirstPossibleLeafs(context.reset());
             } else if (parent instanceof QualifiedIdentifierElementType){
                 return super.getNextPossibleLeafs(pathNode, context);
@@ -102,7 +102,7 @@ public final class TokenElementType extends LeafElementType implements LookupIte
         if (parent instanceof WrapperElementType) {
             WrapperElementType wrapperElementType = (WrapperElementType) parent;
             if (this.equals(wrapperElementType.getBeginTokenElement())) {
-                ElementTypeLookupCache lookupCache = wrapperElementType.getWrappedElement().getLookupCache();
+                ElementTypeLookupCache<?> lookupCache = wrapperElementType.getWrappedElement().getLookupCache();
                 return lookupCache.captureFirstPossibleLeafs(context.reset());
             }
         }

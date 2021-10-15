@@ -100,7 +100,7 @@ public class CodeCompletionProvider extends CompletionProvider<CompletionParamet
         DBLanguagePsiFile file = context.getFile();
 
         ElementTypeBundle elementTypeBundle = file.getElementTypeBundle();
-        ElementTypeLookupCache lookupCache = elementTypeBundle.getRootElementType().getLookupCache();
+        ElementTypeLookupCache<?> lookupCache = elementTypeBundle.getRootElementType().getLookupCache();
         ElementLookupContext lookupContext = new ElementLookupContext(context.getDatabaseVersion());
         Set<LeafElementType> firstPossibleLeafs = lookupCache.captureFirstPossibleLeafs(lookupContext);
 

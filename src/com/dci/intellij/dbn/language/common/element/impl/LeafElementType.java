@@ -106,7 +106,7 @@ public abstract class LeafElementType extends ElementTypeBase<LeafElementType> {
                 IterationElementType iterationElementType = (IterationElementType) elementType;
                 TokenElementType[] separatorTokens = iterationElementType.getSeparatorTokens();
                 if (separatorTokens == null) {
-                    ElementTypeLookupCache lookupCache = iterationElementType.getIteratedElementType().getLookupCache();
+                    ElementTypeLookupCache<?> lookupCache = iterationElementType.getIteratedElementType().getLookupCache();
                     lookupCache.captureFirstPossibleLeafs(context.reset(), possibleLeafs);
                 } else {
                     possibleLeafs.addAll(Arrays.asList(separatorTokens));
@@ -119,7 +119,7 @@ public abstract class LeafElementType extends ElementTypeBase<LeafElementType> {
             } else if (elementType instanceof ChameleonElementType) {
                 ChameleonElementType chameleonElementType = (ChameleonElementType) elementType;
                 ElementTypeBundle elementTypeBundle = chameleonElementType.getParentLanguage().getParserDefinition().getParser().getElementTypes();;
-                ElementTypeLookupCache lookupCache = elementTypeBundle.getRootElementType().getLookupCache();
+                ElementTypeLookupCache<?> lookupCache = elementTypeBundle.getRootElementType().getLookupCache();
                 possibleLeafs.addAll(lookupCache.getFirstPossibleLeafs());
             }
             if (pathNode != null) {
@@ -186,7 +186,7 @@ public abstract class LeafElementType extends ElementTypeBase<LeafElementType> {
                 IterationElementType iterationElementType = (IterationElementType) elementType;
                 TokenElementType[] separatorTokens = iterationElementType.getSeparatorTokens();
                 if (separatorTokens == null) {
-                    ElementTypeLookupCache lookupCache = iterationElementType.getIteratedElementType().getLookupCache();
+                    ElementTypeLookupCache<?> lookupCache = iterationElementType.getIteratedElementType().getLookupCache();
                     if (required ?
                             lookupCache.isFirstRequiredToken(tokenType) :
                             lookupCache.isFirstPossibleToken(tokenType)) {
@@ -221,7 +221,7 @@ public abstract class LeafElementType extends ElementTypeBase<LeafElementType> {
                 ElementTypeRef child = sequenceElementType.getChild(position + 1);
                 while (child != null) {
                     if (!child.optional) {
-                        ElementTypeLookupCache lookupCache = child.getLookupCache();
+                        ElementTypeLookupCache<?> lookupCache = child.getLookupCache();
                         requiredLeafs.addAll(lookupCache.getFirstRequiredLeafs());
                         pathNode = null;
                         break;
