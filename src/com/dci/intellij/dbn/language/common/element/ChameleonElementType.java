@@ -33,7 +33,7 @@ public class ChameleonElementType extends ILazyParseableElementType implements E
         super("chameleon (" + language.getDisplayName() + ")", language, false);
         this.parentLanguage = parentLanguage;
         index = INDEXER.incrementAndGet();
-        INDEX.put(index, this);
+        REGISTRY.add(this);
     }
 
     @Override
