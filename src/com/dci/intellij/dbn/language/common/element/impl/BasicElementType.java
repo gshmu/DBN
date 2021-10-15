@@ -16,7 +16,7 @@ public class BasicElementType extends ElementTypeBase {
     }
 
     @Override
-    public ElementTypeLookupCache createLookupCache() {
+    public ElementTypeLookupCache<?> createLookupCache() {
         return new BasicElementTypeLookupCache(this);
     }
 

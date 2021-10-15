@@ -110,7 +110,7 @@ public abstract class ElementTypeLookupCacheIndexed<T extends ElementTypeBase> e
         boolean initAsFirstRequiredLeaf = initAsFirstRequiredLeaf(leaf, source);
 
         // register first possible leafs
-        ElementTypeLookupCache lookupCache = leaf.getLookupCache();
+        ElementTypeLookupCache<?> lookupCache = leaf.getLookupCache();
         if (initAsFirstPossibleLeaf) {
             firstPossibleLeafs.add(leaf);
             lookupCache.captureFirstPossibleTokens(firstPossibleTokens);
@@ -164,11 +164,6 @@ public abstract class ElementTypeLookupCacheIndexed<T extends ElementTypeBase> e
 
     boolean isWrapperBeginLeaf(LeafElementType leaf) {
         WrappingDefinition wrapping = elementType.getWrapping();
-        if (wrapping != null) {
-            if (wrapping.getBeginElementType() == leaf) {
-                return true;
-            }
-        }
-        return false;
+        return wrapping != null && wrapping.getBeginElementType() == leaf;
     }
 }

@@ -24,14 +24,14 @@ import static com.dci.intellij.dbn.common.options.setting.SettingsSupport.string
 @Getter
 public final class IterationElementType extends ElementTypeBase {
 
-    private ElementTypeBase iteratedElementType;
+    private ElementTypeBase<?> iteratedElementType;
     private TokenElementType[] separatorTokens;
     private int[] elementsCountVariants;
     private int minIterations;
 
     private final Latent<Boolean> followedBySeparator = Latent.basic(() -> {
         if (separatorTokens != null) {
-            ElementTypeLookupCache lookupCache = getLookupCache();
+            ElementTypeLookupCache<?> lookupCache = getLookupCache();
             for (TokenElementType separatorToken : separatorTokens) {
                 if (lookupCache.isNextPossibleToken(separatorToken.getTokenType())) {
                     return true;
