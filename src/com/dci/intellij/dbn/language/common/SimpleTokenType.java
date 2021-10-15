@@ -22,7 +22,7 @@ import static com.dci.intellij.dbn.common.options.setting.SettingsSupport.*;
 
 @Slf4j
 @Getter
-public class SimpleTokenType extends IElementType implements TokenType {
+public class SimpleTokenType<T extends SimpleTokenType<T>> extends IElementType implements TokenType {
     private int idx;
     private String id;
     private String value;
@@ -46,7 +46,7 @@ public class SimpleTokenType extends IElementType implements TokenType {
     public SimpleTokenType(Element element, Language language, boolean register) {
         super(stringAttribute(element, "id"), language, register);
         idx = INDEXER.incrementAndGet();
-        INDEX.put(idx, this);
+        REGISTRY.add(this);
         id = stringAttribute(element, "id");
         value = stringAttribute(element, "value");
         description = stringAttribute(element, "description");

@@ -20,7 +20,7 @@ import org.jetbrains.annotations.Nullable;
 import javax.swing.Icon;
 
 @Getter
-public class ChameleonTokenType extends SimpleTokenType implements ElementType {
+public class ChameleonTokenType extends SimpleTokenType<ChameleonTokenType> implements ElementType {
 
     private final DBLanguageDialect injectedLanguage;
 
@@ -28,8 +28,6 @@ public class ChameleonTokenType extends SimpleTokenType implements ElementType {
         super(injectedLanguage.getID() + " block", hostLanguage);
         this.injectedLanguage = injectedLanguage;
     }
-
-
 
     @NotNull
     @Override

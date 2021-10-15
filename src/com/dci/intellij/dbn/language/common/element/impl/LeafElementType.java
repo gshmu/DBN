@@ -1,5 +1,6 @@
 package com.dci.intellij.dbn.language.common.element.impl;
 
+import com.dci.intellij.dbn.common.index.IndexRegistry;
 import com.dci.intellij.dbn.language.common.TokenType;
 import com.dci.intellij.dbn.language.common.element.ChameleonElementType;
 import com.dci.intellij.dbn.language.common.element.ElementType;
@@ -14,7 +15,6 @@ import com.dci.intellij.dbn.language.common.element.util.ElementTypeAttribute;
 import com.dci.intellij.dbn.language.common.element.util.ElementTypeDefinitionException;
 import com.intellij.lang.ASTNode;
 import com.intellij.psi.PsiWhiteSpace;
-import gnu.trove.THashMap;
 import gnu.trove.THashSet;
 import lombok.Getter;
 import lombok.Setter;
@@ -23,16 +23,15 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.Arrays;
 import java.util.Collections;
-import java.util.Map;
 import java.util.Set;
 
 @Getter
 @Setter
-public abstract class LeafElementType extends ElementTypeBase {
-    private static final Map<Integer, LeafElementType> INDEX = new THashMap<>();
+public abstract class LeafElementType extends ElementTypeBase<LeafElementType> {
+    private static final IndexRegistry<LeafElementType> REGISTRY = new IndexRegistry<>();
 
     public static LeafElementType forIndex(int index) {
-        return INDEX.get(index);
+        return REGISTRY.get(index);
     }
 
     private TokenType tokenType;
@@ -40,10 +39,12 @@ public abstract class LeafElementType extends ElementTypeBase {
 
     LeafElementType(ElementTypeBundle bundle, ElementTypeBase parent, String id, Element def) throws ElementTypeDefinitionException {
         super(bundle, parent, id, def);
+        REGISTRY.add(this);
     }
 
     LeafElementType(ElementTypeBundle bundle, ElementTypeBase parent, String id, String description) {
         super(bundle, parent, id, description);
+        REGISTRY.add(this);
     }
 
     public void registerLeaf() {
