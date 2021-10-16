@@ -217,14 +217,19 @@ public class BasicTable<T extends BasicDataModel<?, ?>> extends DBNTableWithGutt
     public void updateBackground(boolean readonly) {
         Dispatch.run(() -> {
             JBViewport viewport = UIUtil.getParentOfType(JBViewport.class, this);
-            if (viewport != null) {
-                DataGridTextAttributes attributes = cellRenderer.getAttributes();
-                Color background = readonly ?
-                        attributes.getLoadingData(false).getBgColor() :
-                        attributes.getPlainData(false, false).getBgColor();
-                viewport.setBackground(background);
+            DataGridTextAttributes attributes = cellRenderer.getAttributes();
+            Color background = readonly ?
+                    attributes.getLoadingData(false).getBgColor() :
+                    attributes.getPlainData(false, false).getBgColor();
 
+            if (viewport != null) {
+                viewport.setBackground(background);
                 GUIUtil.repaint(viewport);
+            }
+            JTableHeader tableHeader = getTableHeader();
+            if (tableHeader != null) {
+                tableHeader.setBackground(background);
+                GUIUtil.repaint(tableHeader);
             }
         });
 

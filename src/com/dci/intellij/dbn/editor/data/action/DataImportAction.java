@@ -30,10 +30,13 @@ public class DataImportAction extends AbstractDataEditorAction {
             EnvironmentManager environmentManager = EnvironmentManager.getInstance(project);
             boolean isEnvironmentReadonlyData = environmentManager.isReadonly(datasetEditor.getDataset(), DBContentType.DATA);
             presentation.setVisible(!isEnvironmentReadonlyData && !datasetEditor.isReadonlyData());
+/*
             boolean enabled =
                     datasetEditor.getConnectionHandler().isConnected() &&
                     !datasetEditor.isReadonly() &&
                     !datasetEditor.isInserting();
+*/
+            boolean enabled = false;
             presentation.setEnabled(enabled);
         } else {
             presentation.setEnabled(false);

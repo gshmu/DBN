@@ -11,13 +11,7 @@ import com.dci.intellij.dbn.common.thread.Background;
 import com.dci.intellij.dbn.common.thread.Dispatch;
 import com.dci.intellij.dbn.common.ui.GUIUtil;
 import com.dci.intellij.dbn.common.util.MessageUtil;
-import com.dci.intellij.dbn.connection.ConnectionAction;
-import com.dci.intellij.dbn.connection.ConnectionHandler;
-import com.dci.intellij.dbn.connection.ConnectionHandlerRef;
-import com.dci.intellij.dbn.connection.ConnectionProvider;
-import com.dci.intellij.dbn.connection.ConnectionStatusListener;
-import com.dci.intellij.dbn.connection.SchemaId;
-import com.dci.intellij.dbn.connection.SessionId;
+import com.dci.intellij.dbn.connection.*;
 import com.dci.intellij.dbn.connection.jdbc.DBNConnection;
 import com.dci.intellij.dbn.connection.mapping.FileConnectionMappingProvider;
 import com.dci.intellij.dbn.connection.session.DatabaseSession;
@@ -50,11 +44,7 @@ import com.intellij.openapi.actionSystem.DataContext;
 import com.intellij.openapi.actionSystem.DataProvider;
 import com.intellij.openapi.actionSystem.PlatformDataKeys;
 import com.intellij.openapi.editor.Editor;
-import com.intellij.openapi.fileEditor.FileEditor;
-import com.intellij.openapi.fileEditor.FileEditorLocation;
-import com.intellij.openapi.fileEditor.FileEditorManager;
-import com.intellij.openapi.fileEditor.FileEditorState;
-import com.intellij.openapi.fileEditor.FileEditorStateLevel;
+import com.intellij.openapi.fileEditor.*;
 import com.intellij.openapi.progress.ProcessCanceledException;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
@@ -63,7 +53,7 @@ import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import javax.swing.JComponent;
+import javax.swing.*;
 import java.beans.PropertyChangeListener;
 import java.sql.SQLException;
 import java.util.List;
@@ -552,12 +542,14 @@ public class DatasetEditor extends DisposableUserDataHolderBase implements
                 Dispatch.run(() -> {
                     DatasetEditorTable editorTable = getEditorTable();
                     if (connected) {
-                        // TODO is reload really needed on reconnection (performance issue identified)
-                        //editorTable.updateBackground(false);
-                        //loadData(CON_STATUS_CHANGE_LOAD_INSTRUCTIONS);
+                        editorTable.updateBackground(false);
+                        GUIUtil.repaint(editorTable);
+                        if (!isReadonlyData()) {
+                            loadData(CON_STATUS_CHANGE_LOAD_INSTRUCTIONS);
+                        }
                     } else {
-                        editorTable.updateBackground(true);
                         editorTable.cancelEditing();
+                        editorTable.updateBackground(true);
                         GUIUtil.repaint(editorTable);
                     }
                 });
