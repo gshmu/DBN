@@ -8,10 +8,14 @@ import com.dci.intellij.dbn.connection.jdbc.DBNConnection;
 import com.dci.intellij.dbn.connection.jdbc.IncrementalStatusAdapter;
 import com.dci.intellij.dbn.connection.jdbc.LatentResourceStatus;
 import com.intellij.openapi.project.Project;
+import lombok.Getter;
+import lombok.Setter;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 
+@Getter
+@Setter
 public class ConnectionHandlerStatusHolder extends PropertyHolderImpl<ConnectionHandlerStatus> {
     private final ConnectionHandlerRef  connectionHandlerRef;
 
@@ -154,22 +158,6 @@ public class ConnectionHandlerStatusHolder extends PropertyHolderImpl<Connection
         return connectionException == null ? null : connectionException.getMessage();
     }
 
-    public Throwable getConnectionException() {
-        return connectionException;
-    }
-
-    public void setConnectionException(Throwable connectionException) {
-        this.connectionException = connectionException;
-    }
-
-    public AuthenticationError getAuthenticationError() {
-        return authenticationError;
-    }
-
-    public void setAuthenticationError(AuthenticationError authenticationError) {
-        this.authenticationError = authenticationError;
-    }
-
     public boolean isBusy() {
         return busy.check();
     }
@@ -194,9 +182,6 @@ public class ConnectionHandlerStatusHolder extends PropertyHolderImpl<Connection
         return connected;
     }
 
-    public IncrementalStatusAdapter<ConnectionHandlerStatusHolder, ConnectionHandlerStatus> getLoading() {
-        return loading;
-    }
 
     private abstract class LatentConnectionStatus extends LatentResourceStatus<ConnectionHandlerStatus> {
         LatentConnectionStatus(ConnectionHandlerStatus status, boolean initialValue, long interval) {

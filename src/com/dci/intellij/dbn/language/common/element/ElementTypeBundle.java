@@ -24,7 +24,6 @@ import com.dci.intellij.dbn.language.common.element.util.ElementTypeDefinition;
 import com.dci.intellij.dbn.language.common.element.util.ElementTypeDefinitionException;
 import com.dci.intellij.dbn.object.type.DBObjectType;
 import com.intellij.openapi.ide.CopyPasteManager;
-import gnu.trove.THashMap;
 import gnu.trove.THashSet;
 import lombok.extern.slf4j.Slf4j;
 import org.jdom.Document;
@@ -36,6 +35,7 @@ import java.awt.datatransfer.StringSelection;
 import java.io.StringWriter;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 
 import static com.dci.intellij.dbn.common.options.setting.SettingsSupport.stringAttribute;
 
@@ -49,7 +49,7 @@ public class ElementTypeBundle {
     private int idCursor;
 
     private transient Builder builder = new Builder();
-    private final Map<String, NamedElementType> namedElementTypes = new THashMap<>();
+    private final Map<String, NamedElementType> namedElementTypes = new ConcurrentHashMap<>();
 
 
     private static class Builder {
@@ -244,18 +244,12 @@ public class ElementTypeBundle {
     }*/
 
     private NamedElementType getNamedElementType(String id, ElementTypeBase parent) {
-        NamedElementType elementType = namedElementTypes.get(id);
-        if (elementType == null) {
-            synchronized (this) {
-                elementType = namedElementTypes.get(id);
-                if (elementType == null) {
-                    elementType = new NamedElementType(this, id);
-                    namedElementTypes.put(id, elementType);
-                    builder.allElementTypes.add(elementType);
-                    log.debug("Created named element type '" + id + '\'');
-                }
-            }
-        }
+        NamedElementType elementType = namedElementTypes.computeIfAbsent(id, k -> {
+            NamedElementType namedElementType = new NamedElementType(this, k);
+            builder.allElementTypes.add(namedElementType);
+            log.debug("Created named element type '" + id + '\'');
+            return namedElementType;
+        });
 
         if (parent != null) elementType.addParent(parent);
         return elementType;

@@ -10,11 +10,11 @@ import org.jetbrains.annotations.NotNull;
 
 public abstract class LatentResourceStatus<T extends Property> {
     private final long interval;
+    private volatile boolean checking;
     private long lastCheck;
-    private boolean checking;
     private boolean dirty;
     private final T status;
-    private WeakRef<PropertyHolder<T>> resource;
+    private final WeakRef<PropertyHolder<T>> resource;
 
     protected LatentResourceStatus(PropertyHolder<T> resource, T status, boolean initialValue, long interval){
         resource.set(status, initialValue);
