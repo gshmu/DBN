@@ -5,7 +5,12 @@ import lombok.extern.slf4j.Slf4j;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Map;
-import java.util.concurrent.*;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.SynchronousQueue;
+import java.util.concurrent.ThreadFactory;
+import java.util.concurrent.ThreadPoolExecutor;
+import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 
 @Slf4j
@@ -32,11 +37,9 @@ public final class ThreadPool {
             Thread thread = new Thread(() -> {
                     try {
                         runnable.run();
-                    } catch (StackOverflowError e) {
-                        log.error("Failed to execute task", e);
                     } catch (ProcessCanceledException ignore) {
                     } catch (Throwable t) {
-                        log.warn(name + " - Execution failed: " + t.getMessage());
+                        log.error(name + " - Execution failed: " + t.getMessage(), t);
                     }
                 }, name);
             thread.setPriority(Thread.MIN_PRIORITY);
