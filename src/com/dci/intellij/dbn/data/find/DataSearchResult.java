@@ -84,7 +84,7 @@ public class DataSearchResult implements Disposable {
         int index = previous == null ? 0 : matches.indexOf(previous) + 1;
         for (int i = index; i< matches.size(); i++) {
             DataSearchResultMatch match = matches.get(i);
-            if (match != null && match.getCell().equals(cell)) {
+            if (match != null && match.getCell() == cell) {
                 return match;
 
             } else if (previous != null) {
@@ -105,8 +105,8 @@ public class DataSearchResult implements Disposable {
         int fromColumnIndex = 0;
         
         if (selectedMatch != null) {
-            fromRowIndex = selectedMatch.getCell().getRow().getIndex();
-            fromColumnIndex = selectedMatch.getCell().getIndex();
+            fromRowIndex = selectedMatch.getRowIndex();
+            fromColumnIndex = selectedMatch.getColumnIndex();
             switch (scrollPolicy) {
                 case VERTICAL: fromRowIndex++; break;
                 case HORIZONTAL: fromColumnIndex++; break;
@@ -122,8 +122,8 @@ public class DataSearchResult implements Disposable {
         int fromColumnIndex = 999999;
 
         if (selectedMatch != null) {
-            fromRowIndex = selectedMatch.getCell().getRow().getIndex();
-            fromColumnIndex = selectedMatch.getCell().getIndex();
+            fromRowIndex = selectedMatch.getRowIndex();
+            fromColumnIndex = selectedMatch.getColumnIndex();
             switch (scrollPolicy) {
                 case VERTICAL: fromRowIndex--; break;
                 case HORIZONTAL: fromColumnIndex--; break;
@@ -136,8 +136,8 @@ public class DataSearchResult implements Disposable {
     private DataSearchResultMatch getNext(int fromRowIndex, int fromColumnIndex, DataSearchResultScrollPolicy scrollPolicy) {
         if (matches.size() > 0) {
             for (DataSearchResultMatch match : matches) {
-                int rowIndex = match.getCell().getRow().getIndex();
-                int columnIndex = match.getCell().getIndex();
+                int rowIndex = match.getRowIndex();
+                int columnIndex = match.getColumnIndex();
 
                 switch (scrollPolicy) {
                     case HORIZONTAL: {
@@ -167,8 +167,8 @@ public class DataSearchResult implements Disposable {
     private DataSearchResultMatch getPrevious(int fromRowIndex, int fromColumnIndex, DataSearchResultScrollPolicy scrollPolicy) {
         if (matches.size() > 0) {
             for (DataSearchResultMatch match : ReversedList.get(matches)) {
-                int rowIndex = match.getCell().getRow().getIndex();
-                int columnIndex = match.getCell().getIndex();
+                int rowIndex = match.getRowIndex();
+                int columnIndex = match.getColumnIndex();
                 switch (scrollPolicy) {
                     case HORIZONTAL: {
                         if (rowIndex < fromRowIndex || (rowIndex == fromRowIndex && columnIndex <= fromColumnIndex)) {

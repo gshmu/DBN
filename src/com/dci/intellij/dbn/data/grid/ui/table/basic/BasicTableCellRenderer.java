@@ -17,7 +17,7 @@ import com.dci.intellij.dbn.data.value.LargeObjectValue;
 import com.intellij.ui.SimpleTextAttributes;
 
 import javax.swing.border.Border;
-import java.awt.*;
+import java.awt.Color;
 import java.util.Iterator;
 
 
@@ -96,7 +96,7 @@ public class BasicTableCellRenderer extends DBNColoredTableCellRenderer {
                  }
 
                  int valueLength = formattedUserValue.length();
-                 int lastOffset = Math.max(0, valueLength);
+                 int lastOffset = valueLength;
                  while (matches.hasNext()) {
                      DataSearchResultMatch match = matches.next();
                      if (match.getStartOffset() > lastEndOffset) {
