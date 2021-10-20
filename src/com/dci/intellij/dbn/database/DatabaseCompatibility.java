@@ -5,13 +5,13 @@ import com.dci.intellij.dbn.common.util.TransientId;
 
 import java.sql.DatabaseMetaData;
 import java.sql.SQLException;
-import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 public class DatabaseCompatibility extends PropertyHolderImpl<JdbcProperty> {
 
     private String identifierQuote;
-    private final Map<TransientId, DatabaseActivityTrace> activityTraces = new HashMap<>();
+    private final Map<TransientId, DatabaseActivityTrace> activityTraces = new ConcurrentHashMap<>();
 
     private DatabaseCompatibility() {}
 
@@ -39,17 +39,7 @@ public class DatabaseCompatibility extends PropertyHolderImpl<JdbcProperty> {
     };
 
     public DatabaseActivityTrace getActivityTrace(TransientId operationId) {
-        DatabaseActivityTrace trace = activityTraces.get(operationId);
-        if (trace == null) {
-            synchronized (this) {
-                trace = activityTraces.get(operationId);
-                if (trace == null) {
-                    trace = new DatabaseActivityTrace();
-                    activityTraces.put(operationId, trace);
-                }
-            }
-        }
-        return trace;
+        return activityTraces.computeIfAbsent(operationId, id -> new DatabaseActivityTrace());
     }
 
     public String getIdentifierQuote() {
