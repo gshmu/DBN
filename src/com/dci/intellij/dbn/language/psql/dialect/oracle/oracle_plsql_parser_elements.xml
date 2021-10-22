@@ -1035,6 +1035,7 @@
         <iteration id="000000517">
             <one-of id="000000518">
                 <element ref-id="type_declaration" />
+                <element ref-id="subtype_definition" />
                 <element ref-id="cursor_declaration" />
                 <element ref-id="item_declaration" />
                 <element ref-id="function_declaration" />
