@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class MergeContent {
-    private List<SourceCodeDiffContent> contents = new ArrayList<SourceCodeDiffContent>();
+    private final List<SourceCodeDiffContent> contents = new ArrayList<>();
 
     public MergeContent(SourceCodeDiffContent leftContent, SourceCodeDiffContent targetContent, SourceCodeDiffContent rightContent) {
         contents.add(leftContent);
