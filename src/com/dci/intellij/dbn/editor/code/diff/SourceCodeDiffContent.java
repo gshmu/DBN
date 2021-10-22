@@ -1,8 +1,11 @@
 package com.dci.intellij.dbn.editor.code.diff;
 
+import lombok.Getter;
+
+@Getter
 public class SourceCodeDiffContent {
-    private String title;
-    private byte[] byteContent;
+    private final String title;
+    private final byte[] byteContent;
 
     public SourceCodeDiffContent(String title, CharSequence content) {
         this.title = title;

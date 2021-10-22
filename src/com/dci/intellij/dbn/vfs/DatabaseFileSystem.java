@@ -13,12 +13,7 @@ import com.dci.intellij.dbn.common.thread.Read;
 import com.dci.intellij.dbn.common.util.EditorUtil;
 import com.dci.intellij.dbn.common.util.MessageUtil;
 import com.dci.intellij.dbn.common.util.Safe;
-import com.dci.intellij.dbn.connection.ConnectionAction;
-import com.dci.intellij.dbn.connection.ConnectionCache;
-import com.dci.intellij.dbn.connection.ConnectionHandler;
-import com.dci.intellij.dbn.connection.ConnectionId;
-import com.dci.intellij.dbn.connection.ConnectionManager;
-import com.dci.intellij.dbn.connection.GenericDatabaseElement;
+import com.dci.intellij.dbn.connection.*;
 import com.dci.intellij.dbn.connection.config.ConnectionDetailSettings;
 import com.dci.intellij.dbn.database.DatabaseFeature;
 import com.dci.intellij.dbn.ddl.DDLFileAttachmentManager;
@@ -38,16 +33,7 @@ import com.dci.intellij.dbn.object.common.DBSchemaObject;
 import com.dci.intellij.dbn.object.common.list.DBObjectList;
 import com.dci.intellij.dbn.object.common.property.DBObjectProperty;
 import com.dci.intellij.dbn.object.lookup.DBObjectRef;
-import com.dci.intellij.dbn.vfs.file.DBConnectionVirtualFile;
-import com.dci.intellij.dbn.vfs.file.DBConsoleVirtualFile;
-import com.dci.intellij.dbn.vfs.file.DBContentVirtualFile;
-import com.dci.intellij.dbn.vfs.file.DBDatasetFilterVirtualFile;
-import com.dci.intellij.dbn.vfs.file.DBEditableObjectVirtualFile;
-import com.dci.intellij.dbn.vfs.file.DBFileOpenHandle;
-import com.dci.intellij.dbn.vfs.file.DBObjectListVirtualFile;
-import com.dci.intellij.dbn.vfs.file.DBObjectVirtualFile;
-import com.dci.intellij.dbn.vfs.file.DBSessionBrowserVirtualFile;
-import com.dci.intellij.dbn.vfs.file.DBSessionStatementVirtualFile;
+import com.dci.intellij.dbn.vfs.file.*;
 import com.intellij.openapi.components.NamedComponent;
 import com.intellij.openapi.fileEditor.FileEditor;
 import com.intellij.openapi.fileEditor.FileEditorManager;
@@ -85,7 +71,8 @@ public class DatabaseFileSystem extends VirtualFileSystem implements /*NonPhysic
         CONSOLES("consoles", "consoles"),
         SESSION_BROWSERS("session_browsers", "session browsers"),
         SESSION_STATEMENTS("session_statements", "session statements"),
-        DATASET_FILTERS("dataset_filters", "dataset filters");
+        DATASET_FILTERS("dataset_filters", "dataset filters"),
+        LOOSE_CONTENTS("loose_contents", "loose contents");
 
         private final String urlToken;
         private final String presentableUrlToken;
@@ -324,18 +311,23 @@ public class DatabaseFileSystem extends VirtualFileSystem implements /*NonPhysic
 
             if (virtualFile instanceof DBDatasetFilterVirtualFile) {
                 DBDatasetFilterVirtualFile file = (DBDatasetFilterVirtualFile) virtualFile;
-                return connectionId + PS + DATASET_FILTERS + file.getDataset().getRef().serialize();
+                return connectionId + PS + DATASET_FILTERS + PS + file.getDataset().getRef().serialize();
             }
 
             if (virtualFile instanceof DBSessionBrowserVirtualFile) {
                 DBSessionBrowserVirtualFile file = (DBSessionBrowserVirtualFile) virtualFile;
-                return connectionId + PS + SESSION_BROWSERS + file.getName();
+                return connectionId + PS + SESSION_BROWSERS + PS + file.getName();
 
             }
 
             if (virtualFile instanceof DBSessionStatementVirtualFile) {
                 DBSessionStatementVirtualFile file = (DBSessionStatementVirtualFile) virtualFile;
-                return connectionId + PS + SESSION_STATEMENTS + file.getName();
+                return connectionId + PS + SESSION_STATEMENTS + PS + file.getName();
+            }
+
+            if (virtualFile instanceof DBLooseContentVirtualFile) {
+                DBLooseContentVirtualFile file = (DBLooseContentVirtualFile) virtualFile;
+                return connectionId + PS + LOOSE_CONTENTS + PS + file.getObject().getRef().serialize();
             }
 
             throw new IllegalArgumentException("File of type " + virtualFile.getClass() + " is not supported");

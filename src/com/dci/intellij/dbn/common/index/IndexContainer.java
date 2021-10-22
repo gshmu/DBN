@@ -5,6 +5,7 @@ import com.dci.intellij.dbn.common.util.Compactable;
 import gnu.trove.TIntHashSet;
 import gnu.trove.TIntIterator;
 
+import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
@@ -14,8 +15,12 @@ public class IndexContainer<T extends Indexable> implements Compactable {
     private final TIntHashSet INDEX = new TIntHashSet();
     private final ReadWriteMonitor monitor = new ReadWriteMonitor();
 
-    public void add(T indexable) {
-        monitor.write(() -> INDEX.add(indexable.index()));
+    public void add(T element) {
+        monitor.write(() -> INDEX.add(element.index()));
+    }
+
+    public void addAll(Collection<T> elements) {
+        monitor.write(() -> elements.forEach(element -> INDEX.add(element.index())));
     }
 
     public boolean isEmpty() {
@@ -45,9 +50,5 @@ public class IndexContainer<T extends Indexable> implements Compactable {
     @Override
     public void compact() {
         monitor.write(() -> INDEX.trimToSize());;
-    }
-
-    public void addAll(Set<T> elements) {
-        monitor.write(() -> elements.forEach(element -> add(element)));
     }
 }
