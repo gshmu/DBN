@@ -856,7 +856,6 @@ CT_SIZE_CLAUSE = {INTEGER}{wso}("k"|"m"|"g"|"t"|"p"|"e"){ws}
 
 
 
-
 "abs" {return tt.getFunctionTokenType(0);}
 "acos" {return tt.getFunctionTokenType(1);}
 "add_months" {return tt.getFunctionTokenType(2);}
@@ -1070,31 +1069,33 @@ CT_SIZE_CLAUSE = {INTEGER}{wso}("k"|"m"|"g"|"t"|"p"|"e"){ws}
 "updatexml" {return tt.getFunctionTokenType(210);}
 "upper" {return tt.getFunctionTokenType(211);}
 "userenv" {return tt.getFunctionTokenType(212);}
-"var_pop" {return tt.getFunctionTokenType(213);}
-"var_samp" {return tt.getFunctionTokenType(214);}
-"variance" {return tt.getFunctionTokenType(215);}
-"vsize" {return tt.getFunctionTokenType(216);}
-"width_bucket" {return tt.getFunctionTokenType(217);}
-"xmlagg" {return tt.getFunctionTokenType(218);}
-"xmlattributes" {return tt.getFunctionTokenType(219);}
-"xmlcast" {return tt.getFunctionTokenType(220);}
-"xmlcdata" {return tt.getFunctionTokenType(221);}
-"xmlcolattval" {return tt.getFunctionTokenType(222);}
-"xmlcomment" {return tt.getFunctionTokenType(223);}
-"xmlconcat" {return tt.getFunctionTokenType(224);}
-"xmldiff" {return tt.getFunctionTokenType(225);}
-"xmlelement" {return tt.getFunctionTokenType(226);}
-"xmlforest" {return tt.getFunctionTokenType(227);}
-"xmlisvalid" {return tt.getFunctionTokenType(228);}
-"xmlparse" {return tt.getFunctionTokenType(229);}
-"xmlpatch" {return tt.getFunctionTokenType(230);}
-"xmlpi" {return tt.getFunctionTokenType(231);}
-"xmlquery" {return tt.getFunctionTokenType(232);}
-"xmlroot" {return tt.getFunctionTokenType(233);}
-"xmlsequence" {return tt.getFunctionTokenType(234);}
-"xmlserialize" {return tt.getFunctionTokenType(235);}
-"xmltable" {return tt.getFunctionTokenType(236);}
-"xmltransform" {return tt.getFunctionTokenType(237);}
+"validate_conversion" {return tt.getFunctionTokenType(213);}
+"var_pop" {return tt.getFunctionTokenType(214);}
+"var_samp" {return tt.getFunctionTokenType(215);}
+"variance" {return tt.getFunctionTokenType(216);}
+"vsize" {return tt.getFunctionTokenType(217);}
+"width_bucket" {return tt.getFunctionTokenType(218);}
+"xmlagg" {return tt.getFunctionTokenType(219);}
+"xmlattributes" {return tt.getFunctionTokenType(220);}
+"xmlcast" {return tt.getFunctionTokenType(221);}
+"xmlcdata" {return tt.getFunctionTokenType(222);}
+"xmlcolattval" {return tt.getFunctionTokenType(223);}
+"xmlcomment" {return tt.getFunctionTokenType(224);}
+"xmlconcat" {return tt.getFunctionTokenType(225);}
+"xmldiff" {return tt.getFunctionTokenType(226);}
+"xmlelement" {return tt.getFunctionTokenType(227);}
+"xmlforest" {return tt.getFunctionTokenType(228);}
+"xmlisvalid" {return tt.getFunctionTokenType(229);}
+"xmlparse" {return tt.getFunctionTokenType(230);}
+"xmlpatch" {return tt.getFunctionTokenType(231);}
+"xmlpi" {return tt.getFunctionTokenType(232);}
+"xmlquery" {return tt.getFunctionTokenType(233);}
+"xmlroot" {return tt.getFunctionTokenType(234);}
+"xmlsequence" {return tt.getFunctionTokenType(235);}
+"xmlserialize" {return tt.getFunctionTokenType(236);}
+"xmltable" {return tt.getFunctionTokenType(237);}
+"xmltransform" {return tt.getFunctionTokenType(238);}
+
 
 
 
