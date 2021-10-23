@@ -1,26 +1,28 @@
 package com.dci.intellij.dbn.language.common;
 
+import com.dci.intellij.dbn.common.index.IndexRegistry;
 import com.dci.intellij.dbn.common.util.CollectionUtil;
+import com.dci.intellij.dbn.common.util.Measured;
 import com.dci.intellij.dbn.common.util.StringUtil;
 import com.intellij.lang.Language;
-import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.psi.tree.IElementType;
 import com.intellij.psi.tree.TokenSet;
 import gnu.trove.THashMap;
+import lombok.extern.slf4j.Slf4j;
 import org.jdom.Document;
 import org.jdom.Element;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import static com.dci.intellij.dbn.common.options.setting.SettingsSupport.stringAttribute;
 
-public abstract class DBLanguageTokenTypeBundle {
-    protected final Logger log = Logger.getInstance(getClass().getName());
+@Slf4j
+public abstract class TokenTypeBundleBase {
+    private final IndexRegistry<TokenType> REGISTRY = new IndexRegistry<>();
+    protected final AtomicInteger INDEXER = new AtomicInteger();
+
     private final Language language;
     private SimpleTokenType[] keywords;
     private SimpleTokenType[] functions;
@@ -46,7 +48,7 @@ public abstract class DBLanguageTokenTypeBundle {
         return tokenTypes;
     }
 
-    public DBLanguageTokenTypeBundle(Language language, Document document) {
+    public TokenTypeBundleBase(Language language, Document document) {
         this.language = language;
         loadDefinition(language, document);
     }
@@ -55,18 +57,40 @@ public abstract class DBLanguageTokenTypeBundle {
         return language;
     }
 
-    protected void loadDefinition(Language language, Document document) {
+    protected void initIndex(int index) {
+        INDEXER.set(index);
+    }
+
+    protected int size() {
+        return REGISTRY.size();
+    }
+
+    protected int nextIndex() {
+        return INDEXER.incrementAndGet();
+    }
+
+    protected void registerToken(TokenType tokenType) {
+        REGISTRY.add(tokenType);
+    }
+
+    public TokenType getTokenType(int index) {
+        return REGISTRY.get(index);
+    }
+
+    private void loadDefinition(Language language, Document document) {
         try {
             Element root = document.getRootElement();
             Element tokensElement = root.getChild("tokens");
             Element tokenSetsElement = root.getChild("token-sets");
-            
-            Map<String, Set<String>> tokenSetIds = parseTokenSets(tokenSetsElement);
-            createTokens(tokensElement, language, tokenSetIds);
-            createTokenSets(tokenSetIds);
+
+            Measured.run("building token-type bundle for " + language.getID(), () -> {
+                Map<String, Set<String>> tokenSetIds = parseTokenSets(tokenSetsElement);
+                createTokens(tokensElement, language, tokenSetIds);
+                createTokenSets(tokenSetIds);
+            });
 
         } catch (Exception e) {
-            e.printStackTrace();
+            log.error("[DBN] Failed to build token-type bundle for " + language.getID(), e);
         }
     }
 
@@ -81,7 +105,8 @@ public abstract class DBLanguageTokenTypeBundle {
         List<SimpleTokenType> operatorList = new ArrayList<>();
         for (Element o : tokenDefs.getChildren()) {
             String tokenTypeId = stringAttribute(o, "id");
-            SimpleTokenType tokenType = new SimpleTokenType(o, language, isRegisteredToken(tokenSetIds, tokenTypeId));
+            boolean registered = isRegisteredToken(tokenSetIds, tokenTypeId);
+            SimpleTokenType tokenType = new SimpleTokenType(o, language, this, registered);
             log.debug("Creating token type '" + tokenType.getId() + "'");
             tokenTypes.put(tokenType.getId(), tokenType);
             switch(tokenType.getCategory()) {

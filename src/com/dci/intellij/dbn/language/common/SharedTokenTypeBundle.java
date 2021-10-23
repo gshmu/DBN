@@ -8,7 +8,7 @@ import lombok.Getter;
 import java.util.Set;
 
 @Getter
-public class SharedTokenTypeBundle extends DBLanguageTokenTypeBundle {
+public class SharedTokenTypeBundle extends TokenTypeBundleBase {
     private final SimpleTokenType whiteSpace;
     private final SimpleTokenType identifier;
     private final SimpleTokenType quotedIdentifier;
