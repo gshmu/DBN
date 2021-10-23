@@ -30,11 +30,10 @@ import org.jdom.Element;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import javax.swing.Icon;
+import javax.swing.*;
 import java.util.Objects;
 import java.util.Set;
 import java.util.StringTokenizer;
-import java.util.concurrent.atomic.AtomicInteger;
 
 import static com.dci.intellij.dbn.common.options.setting.SettingsSupport.stringAttribute;
 
@@ -42,7 +41,6 @@ import static com.dci.intellij.dbn.common.options.setting.SettingsSupport.string
 @Getter
 @Setter
 public abstract class ElementTypeBase<T extends ElementTypeBase<T>> extends IElementType implements ElementType {
-    private static final AtomicInteger INDEXER = new AtomicInteger();
     private static final FormattingDefinition STATEMENT_FORMATTING = new FormattingDefinition(null, IndentDefinition.NORMAL, SpacingDefinition.MIN_LINE_BREAK, null);
 
     private final int idx;
@@ -68,7 +66,7 @@ public abstract class ElementTypeBase<T extends ElementTypeBase<T>> extends IEle
 
     ElementTypeBase(@NotNull ElementTypeBundle bundle, ElementTypeBase parent, String id, @Nullable String description) {
         super(id, bundle.getLanguageDialect(), false);
-        this.idx = INDEXER.incrementAndGet();
+        this.idx = bundle.nextIndex();
         this.id = id.intern();
         this.hashCode = System.identityHashCode(this);
         this.description = description;
@@ -78,13 +76,13 @@ public abstract class ElementTypeBase<T extends ElementTypeBase<T>> extends IEle
 
     ElementTypeBase(@NotNull ElementTypeBundle bundle, ElementTypeBase parent, String id, @NotNull Element def) throws ElementTypeDefinitionException {
         super(id, bundle.getLanguageDialect(), false);
-        this.idx = INDEXER.incrementAndGet();
+        this.idx = bundle.nextIndex();
         String defId = stringAttribute(def, "id");
         this.hashCode = System.identityHashCode(this);
         if (!Objects.equals(id, defId)) {
             defId = id;
             def.setAttribute("id", defId);
-            bundle.markIndexesDirty();
+            bundle.markIdsDirty();
         }
         this.id = defId.intern();
         this.bundle = bundle;

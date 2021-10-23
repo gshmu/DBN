@@ -1,26 +1,13 @@
 package com.dci.intellij.dbn.language.common;
 
 import com.dci.intellij.dbn.code.common.style.formatting.FormattingDefinition;
-import com.dci.intellij.dbn.common.index.IndexRegistry;
 import com.dci.intellij.dbn.common.index.Indexable;
 import com.dci.intellij.dbn.language.common.element.TokenPairTemplate;
 import com.dci.intellij.dbn.object.type.DBObjectType;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.concurrent.atomic.AtomicInteger;
-
 public interface TokenType extends Indexable {
-    AtomicInteger INDEXER = new AtomicInteger();
-    IndexRegistry<TokenType> REGISTRY = new IndexRegistry<>();
-
-    static TokenType forIndex(int index) {
-        return REGISTRY.get(index);
-    }
-
-    default TokenType resolve(int index) {
-        return forIndex(index);
-    }
 
     String getId();
 
@@ -64,6 +51,8 @@ public interface TokenType extends Indexable {
 
     @NotNull
     TokenTypeCategory getCategory();
+
+    TokenTypeBundleBase getBundle();
 
     @Nullable
     DBObjectType getObjectType();

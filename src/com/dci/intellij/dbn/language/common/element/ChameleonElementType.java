@@ -1,10 +1,7 @@
 package com.dci.intellij.dbn.language.common.element;
 
 import com.dci.intellij.dbn.code.common.style.formatting.FormattingDefinition;
-import com.dci.intellij.dbn.language.common.DBLanguage;
-import com.dci.intellij.dbn.language.common.DBLanguageDialect;
-import com.dci.intellij.dbn.language.common.TokenType;
-import com.dci.intellij.dbn.language.common.TokenTypeCategory;
+import com.dci.intellij.dbn.language.common.*;
 import com.dci.intellij.dbn.language.common.element.cache.ElementTypeLookupCache;
 import com.dci.intellij.dbn.language.common.element.impl.LeafElementType;
 import com.dci.intellij.dbn.language.common.element.impl.WrappingDefinition;
@@ -24,21 +21,23 @@ import com.intellij.psi.tree.ILazyParseableElementType;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import javax.swing.Icon;
+import javax.swing.*;
 
 public class ChameleonElementType extends ILazyParseableElementType implements ElementType, TokenType {
-    private final int index;
     private final DBLanguageDialect parentLanguage;
     public ChameleonElementType(DBLanguageDialect language,DBLanguageDialect parentLanguage) {
         super("chameleon (" + language.getDisplayName() + ")", language, false);
         this.parentLanguage = parentLanguage;
-        index = INDEXER.incrementAndGet();
-        REGISTRY.add(this);
     }
 
     @Override
     public int index() {
-        return index;
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public TokenTypeBundleBase getBundle() {
+        throw new UnsupportedOperationException();
     }
 
     @NotNull

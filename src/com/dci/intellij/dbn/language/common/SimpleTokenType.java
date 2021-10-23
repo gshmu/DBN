@@ -33,6 +33,7 @@ public class SimpleTokenType<T extends SimpleTokenType<T>> extends IElementType 
     private int lookupIndex;
     private final int hashCode;
 
+    private TokenTypeBundleBase bundle;
     private FormattingDefinition formatting;
     private TokenPairTemplate tokenPairTemplate;
     private static final AtomicInteger REGISTERED_COUNT = new AtomicInteger();
@@ -43,33 +44,34 @@ public class SimpleTokenType<T extends SimpleTokenType<T>> extends IElementType 
         this.hashCode = System.identityHashCode(this);
     }
 
-    public SimpleTokenType(Element element, Language language, boolean register) {
+    public SimpleTokenType(Element element, Language language, TokenTypeBundleBase bundle, boolean register) {
         super(stringAttribute(element, "id"), language, register);
-        idx = INDEXER.incrementAndGet();
-        REGISTRY.add(this);
-        id = stringAttribute(element, "id");
-        value = stringAttribute(element, "value");
-        description = stringAttribute(element, "description");
+        this.bundle = bundle;
+        this.idx = bundle.nextIndex();
+        this.bundle.registerToken(this);
+        this.id = stringAttribute(element, "id");
+        this.value = stringAttribute(element, "value");
+        this.description = stringAttribute(element, "description");
 
         if (register) {
             int count = REGISTERED_COUNT.incrementAndGet();
             log.info("Registering element " + id + " for language " + language.getID() + " (" + count + ")");
         }
 
-        lookupIndex = integerAttribute(element, "index", lookupIndex);
+        this.lookupIndex = integerAttribute(element, "index", lookupIndex);
 
         String type = stringAttribute(element, "type");
-        category = TokenTypeCategory.getCategory(type);
-        suppressibleReservedWord = isReservedWord() && !booleanAttribute(element, "reserved", false);
-        hashCode = System.identityHashCode(this);
+        this.category = TokenTypeCategory.getCategory(type);
+        this.suppressibleReservedWord = isReservedWord() && !booleanAttribute(element, "reserved", false);
+        this.hashCode = System.identityHashCode(this);
 
         String objectType = stringAttribute(element, "objectType");
         if (StringUtil.isNotEmpty(objectType)) {
             this.objectType = DBObjectType.get(objectType);
         }
 
-        formatting = FormattingDefinitionFactory.loadDefinition(element);
-        tokenPairTemplate = TokenPairTemplate.get(id);
+        this.formatting = FormattingDefinitionFactory.loadDefinition(element);
+        this.tokenPairTemplate = TokenPairTemplate.get(id);
     }
 
     @Override

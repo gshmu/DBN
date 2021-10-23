@@ -6,6 +6,7 @@ import com.dci.intellij.dbn.common.util.CollectionUtil;
 import com.dci.intellij.dbn.language.common.DBLanguage;
 import com.dci.intellij.dbn.language.common.SharedTokenTypeBundle;
 import com.dci.intellij.dbn.language.common.TokenType;
+import com.dci.intellij.dbn.language.common.TokenTypeBundle;
 import com.dci.intellij.dbn.language.common.element.impl.ElementTypeBase;
 import com.dci.intellij.dbn.language.common.element.impl.LeafElementType;
 import com.dci.intellij.dbn.language.common.element.impl.WrappingDefinition;
@@ -38,9 +39,10 @@ public abstract class ElementTypeLookupCache<T extends ElementTypeBase>/* implem
      */
     public Set<TokenType> getNextPossibleTokens() {
         IndexContainer<TokenType> nextPossibleTokens = this.nextPossibleTokens.get();
+        TokenTypeBundle tokenTypes = elementType.getLanguageDialect().getParserTokenTypes();
         return nextPossibleTokens == null ?
                 Collections.emptySet() :
-                nextPossibleTokens.elements(index -> TokenType.forIndex(index));
+                nextPossibleTokens.elements(index -> tokenTypes.getTokenType(index));
     }
 
     public boolean isNextPossibleToken(TokenType tokenType) {
