@@ -1,24 +1,11 @@
 package com.dci.intellij.dbn.language.common.element;
 
 import com.dci.intellij.dbn.common.thread.Background;
+import com.dci.intellij.dbn.common.util.Measured;
 import com.dci.intellij.dbn.language.common.DBLanguage;
 import com.dci.intellij.dbn.language.common.DBLanguageDialect;
 import com.dci.intellij.dbn.language.common.TokenTypeBundle;
-import com.dci.intellij.dbn.language.common.element.impl.BasicElementType;
-import com.dci.intellij.dbn.language.common.element.impl.BlockElementType;
-import com.dci.intellij.dbn.language.common.element.impl.ElementTypeBase;
-import com.dci.intellij.dbn.language.common.element.impl.ExecVariableElementType;
-import com.dci.intellij.dbn.language.common.element.impl.IdentifierElementType;
-import com.dci.intellij.dbn.language.common.element.impl.IterationElementType;
-import com.dci.intellij.dbn.language.common.element.impl.LeafElementType;
-import com.dci.intellij.dbn.language.common.element.impl.NamedElementType;
-import com.dci.intellij.dbn.language.common.element.impl.OneOfElementType;
-import com.dci.intellij.dbn.language.common.element.impl.QualifiedIdentifierElementType;
-import com.dci.intellij.dbn.language.common.element.impl.SequenceElementType;
-import com.dci.intellij.dbn.language.common.element.impl.TokenElementType;
-import com.dci.intellij.dbn.language.common.element.impl.UnknownElementType;
-import com.dci.intellij.dbn.language.common.element.impl.WrapperElementType;
-import com.dci.intellij.dbn.language.common.element.impl.WrappingDefinition;
+import com.dci.intellij.dbn.language.common.element.impl.*;
 import com.dci.intellij.dbn.language.common.element.util.ElementTypeAttribute;
 import com.dci.intellij.dbn.language.common.element.util.ElementTypeDefinition;
 import com.dci.intellij.dbn.language.common.element.util.ElementTypeDefinitionException;
@@ -36,17 +23,20 @@ import java.io.StringWriter;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import static com.dci.intellij.dbn.common.options.setting.SettingsSupport.stringAttribute;
 
 @Slf4j
 public class ElementTypeBundle {
+    private final AtomicInteger INDEXER = new AtomicInteger();
     private final TokenTypeBundle tokenTypeBundle;
     private BasicElementType unknownElementType;
     private NamedElementType rootElementType;
 
     private final DBLanguageDialect languageDialect;
-    private int idCursor;
+    private final AtomicInteger idCursor = new AtomicInteger();
+    private final boolean idsDirty = false;
 
     private transient Builder builder = new Builder();
     private final Map<String, NamedElementType> namedElementTypes = new ConcurrentHashMap<>();
@@ -58,13 +48,17 @@ public class ElementTypeBundle {
         private final Set<ElementType> wrappedElementTypes = new THashSet<>();
         //private Set<OneOfElementType> oneOfElementTypes = new THashSet<OneOfElementType>();
         private final Set<ElementType> allElementTypes = new THashSet<>();
-        private boolean rewriteIndexes;
+        private boolean rewriteIds;
     }
 
 
     public ElementTypeBundle(DBLanguageDialect languageDialect, TokenTypeBundle tokenTypeBundle, final Document elementTypesDef) {
         this.languageDialect = languageDialect;
         this.tokenTypeBundle = tokenTypeBundle;
+        Measured.run("building element-type bundle for " + languageDialect.getID(), () -> build(elementTypesDef));
+    }
+
+    private void build(Document elementTypesDef) {
         try {
             Element root = elementTypesDef.getRootElement();
             for (Element child : root.getChildren()) {
@@ -100,7 +94,7 @@ public class ElementTypeBundle {
                 wrapping.getEndElementType().registerLeaf();
             }
 
-            if (builder.rewriteIndexes) {
+            if (builder.rewriteIds) {
                 StringWriter stringWriter = new StringWriter();
                 new XMLOutputter().output(elementTypesDef, stringWriter);
 
@@ -112,25 +106,28 @@ public class ElementTypeBundle {
             } else {
             }
 
-            Background.run(() -> {
-                for (ElementType allElementType : builder.allElementTypes) {
-                    allElementType.getLookupCache().initialise();
-                }
-                builder = null;
-            });
+            Set<ElementType> allElementTypes = builder.allElementTypes;
+            builder = null;
+            Background.run(() -> Measured.run(
+                    "initialising element-type lookup cache for " + this.languageDialect.getID(),
+                    () -> allElementTypes.forEach(elementType -> elementType.getLookupCache().initialise())));
 
             //warnAmbiguousBranches();
         } catch (Exception e) {
-            e.printStackTrace();
+            log.error("[DBN] Failed to build element-type bundle for " + languageDialect.getID(), e);
         }
+    }
+
+    public int nextIndex() {
+        return INDEXER.incrementAndGet();
     }
 
     public TokenTypeBundle getTokenTypeBundle() {
         return tokenTypeBundle;
     }
 
-    public void markIndexesDirty() {
-        builder.rewriteIndexes = true;
+    public void markIdsDirty() {
+        builder.rewriteIds = true;
     }
 
     private void createNamedElementType(Element def) throws ElementTypeDefinitionException {
@@ -275,7 +272,7 @@ public class ElementTypeBundle {
     }
 
     private String createId() {
-        String id = Integer.toString(idCursor++);
+        String id = Integer.toString(idCursor.getAndIncrement());
         StringBuilder buffer = new StringBuilder();
         while (buffer.length() + id.length() < 9) {
             buffer.append('0');

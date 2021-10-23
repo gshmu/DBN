@@ -3,6 +3,7 @@ package com.dci.intellij.dbn.language.common.element.cache;
 import com.dci.intellij.dbn.common.index.IndexContainer;
 import com.dci.intellij.dbn.language.common.SharedTokenTypeBundle;
 import com.dci.intellij.dbn.language.common.TokenType;
+import com.dci.intellij.dbn.language.common.TokenTypeBundle;
 import com.dci.intellij.dbn.language.common.element.impl.ElementTypeBase;
 import com.dci.intellij.dbn.language.common.element.impl.IdentifierElementType;
 import com.dci.intellij.dbn.language.common.element.impl.LeafElementType;
@@ -61,12 +62,14 @@ public abstract class ElementTypeLookupCacheIndexed<T extends ElementTypeBase> e
 
     @Override
     public Set<TokenType> getFirstPossibleTokens() {
-        return firstPossibleTokens.elements(index -> TokenType.forIndex(index));
+        TokenTypeBundle tokenTypes = elementType.getLanguageDialect().getParserTokenTypes();
+        return firstPossibleTokens.elements(index -> tokenTypes.getTokenType(index));
     }
 
     @Override
     public Set<TokenType> getFirstRequiredTokens() {
-        return firstRequiredTokens.elements(index -> TokenType.forIndex(index));
+        TokenTypeBundle tokenTypes = elementType.getLanguageDialect().getParserTokenTypes();
+        return firstRequiredTokens.elements(index -> tokenTypes.getTokenType(index));
     }
 
     @Override

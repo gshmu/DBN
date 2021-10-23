@@ -4,16 +4,21 @@ import com.dci.intellij.dbn.language.common.element.ChameleonElementType;
 import com.intellij.psi.tree.TokenSet;
 import org.jdom.Document;
 
-public class TokenTypeBundle extends DBLanguageTokenTypeBundle {
+public class TokenTypeBundle extends TokenTypeBundleBase {
     private final DBLanguage language;
 
     public TokenTypeBundle(DBLanguageDialect languageDialect, Document document) {
         super(languageDialect, document);
         language = languageDialect.getBaseLanguage();
+        initIndex(getSharedTokenTypes().size());
     }
 
-    protected void loadDefinition(DBLanguageDialect languageDialect, Document document) {
-        super.loadDefinition(languageDialect, document);
+    public TokenType getTokenType(int index) {
+        TokenType tokenType = super.getTokenType(index);
+        if (tokenType == null ){
+            return getSharedTokenTypes().getTokenType(index);
+        }
+        return tokenType;
     }
 
     public SharedTokenTypeBundle getSharedTokenTypes() {
