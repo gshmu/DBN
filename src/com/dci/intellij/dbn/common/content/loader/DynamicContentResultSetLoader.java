@@ -21,12 +21,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.SQLFeatureNotSupportedException;
-import java.sql.SQLNonTransientConnectionException;
-import java.sql.SQLTimeoutException;
-import java.sql.SQLTransientConnectionException;
+import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -102,12 +97,12 @@ public abstract class DynamicContentResultSetLoader<
                             M metadata = DBObjectMetadataFactory.INSTANCE.create(contentType, resultSet);
 
                             boolean addDelay = Environment.DATABASE_LAGGING_MODE;
-                            if (addDelay) Thread.sleep(500);
+                            if (addDelay) Thread.sleep(2000);
                             LoaderCache loaderCache = new LoaderCache();
                             int count = 0;
 
                             while (resultSet != null && resultSet.next()) {
-                                if (addDelay) Thread.sleep(10);
+                                if (addDelay) Thread.sleep(100);
                                 dynamicContent.checkDisposed();
 
                                 T element = null;
