@@ -2,13 +2,10 @@ package com.dci.intellij.dbn.diagnostics.ui;
 
 import com.dci.intellij.dbn.common.ui.DBNFormImpl;
 import com.dci.intellij.dbn.common.ui.DBNHeaderForm;
-import com.dci.intellij.dbn.common.ui.GUIUtil;
 import com.dci.intellij.dbn.common.ui.table.DBNTable;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
-import com.dci.intellij.dbn.connection.ConnectionHandlerRef;
 import com.dci.intellij.dbn.diagnostics.ui.model.ConnectivityDiagnosticsTableModel;
 import com.dci.intellij.dbn.diagnostics.ui.model.MetadataDiagnosticsTableModel;
-import com.intellij.ui.GuiUtils;
 import com.intellij.ui.components.JBScrollPane;
 import org.jetbrains.annotations.NotNull;
 
@@ -23,17 +20,13 @@ public class DiagnosticsMonitorDetailsForm extends DBNFormImpl {
     private JPanel headerPanel;
     private JBScrollPane metadataDiagnosticsScrollPane;
     private JBScrollPane connectivityDiagnosticsScrollPane;
-
-    private final ConnectionHandlerRef connectionHandler;
+    private JTabbedPane diagnosticsTabbedPane;
 
     public DiagnosticsMonitorDetailsForm(@NotNull DiagnosticsMonitorForm parent, ConnectionHandler connectionHandler) {
         super(parent);
-        this.connectionHandler = connectionHandler.getRef();
-        GuiUtils.replaceJSplitPaneWithIDEASplitter(mainPanel);
 
         DBNHeaderForm headerForm = new DBNHeaderForm(this, connectionHandler);
         headerPanel.add(headerForm.getComponent(), BorderLayout.CENTER);
-
 
         MetadataDiagnosticsTableModel metadataDiagnosticsTableModel = new MetadataDiagnosticsTableModel(connectionHandler);
         metadataDiagnosticsTable = new DiagnosticsTable<>(this, metadataDiagnosticsTableModel);
@@ -45,7 +38,16 @@ public class DiagnosticsMonitorDetailsForm extends DBNFormImpl {
         connectivityDiagnosticsScrollPane.setViewportView(connectivityDiagnosticsTable);
         connectivityDiagnosticsScrollPane.getViewport().setBackground(connectivityDiagnosticsTable.getBackground());
 
-        GUIUtil.updateSplitterProportion(mainPanel, 0.5F);
+        diagnosticsTabbedPane.addChangeListener(e -> {
+            JTabbedPane tabbedPane = (JTabbedPane) e.getSource();
+            int selectedIndex = tabbedPane.getSelectedIndex();
+            DiagnosticsMonitorForm parent1 = parent();
+            parent1.setTabSelectionIndex(selectedIndex);
+        });
+   }
+
+   protected void selectTab(int tabIndex) {
+        diagnosticsTabbedPane.setSelectedIndex(tabIndex);
    }
 
     @Override

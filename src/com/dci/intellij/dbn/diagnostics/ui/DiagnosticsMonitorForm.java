@@ -24,6 +24,7 @@ public class DiagnosticsMonitorForm extends DBNFormImpl {
     private JPanel actionsPanel;
     private JPanel detailsPanel;
     private JList<ConnectionHandler> connectionsList;
+    private int tabSelectionIndex;
 
     private final Map<ConnectionId, DiagnosticsMonitorDetailsForm> resourceMonitorForms = DisposableContainer.map(this);
 
@@ -49,7 +50,6 @@ public class DiagnosticsMonitorForm extends DBNFormImpl {
         connectionsList.setSelectedIndex(0);
     }
 
-
     private void showDetailsForm(ConnectionHandler connectionHandler) {
         detailsPanel.removeAll();
         if (connectionHandler != null) {
@@ -60,9 +60,14 @@ public class DiagnosticsMonitorForm extends DBNFormImpl {
                 resourceMonitorForms.put(connectionId, detailForm);
             }
             detailsPanel.add(detailForm.getComponent(), BorderLayout.CENTER);
+            detailForm.selectTab(tabSelectionIndex);
         }
 
         GUIUtil.repaint(detailsPanel);
+    }
+
+    public void setTabSelectionIndex(int tabSelectionIndex) {
+        this.tabSelectionIndex = tabSelectionIndex;
     }
 
     private static class ConnectionListCellRenderer extends ColoredListCellRenderer<ConnectionHandler> {
