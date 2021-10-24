@@ -9,6 +9,8 @@ import com.dci.intellij.dbn.connection.info.ConnectionInfo;
 import com.dci.intellij.dbn.connection.jdbc.DBNConnection;
 import com.dci.intellij.dbn.database.DatabaseInterface;
 import com.dci.intellij.dbn.database.DatabaseMessageParserInterface;
+import com.dci.intellij.dbn.diagnostics.DiagnosticsManager;
+import com.dci.intellij.dbn.diagnostics.data.DiagnosticBundle;
 import com.dci.intellij.dbn.driver.DatabaseDriverManager;
 import com.dci.intellij.dbn.driver.DriverSource;
 import org.jetbrains.annotations.NotNull;
@@ -18,6 +20,7 @@ import java.io.File;
 import java.sql.DatabaseMetaData;
 import java.sql.Driver;
 import java.sql.SQLException;
+import java.sql.SQLTimeoutException;
 
 public class ConnectionUtil {
     private ConnectionUtil() {}
@@ -27,6 +30,10 @@ public class ConnectionUtil {
         ConnectionHandlerStatusHolder connectionStatus = connectionHandler.getConnectionStatus();
         ConnectionSettings connectionSettings = connectionHandler.getSettings();
         ConnectionPropertiesSettings propertiesSettings = connectionSettings.getPropertiesSettings();
+
+        DiagnosticsManager diagnosticsManager = DiagnosticsManager.getInstance(connectionHandler.getProject());
+        DiagnosticBundle diagnostics = diagnosticsManager.getConnectivityDiagnostics(connectionHandler.getConnectionId());
+
 
         // do not retry connection on authentication error unless
         // credentials changed (account can be locked on several invalid trials)
@@ -40,6 +47,7 @@ public class ConnectionUtil {
         return DatabaseInterface.call(
                 connectionHandler,
                 (interfaceProvider) -> {
+                    long start = System.currentTimeMillis();
                     try {
                         DatabaseAttachmentHandler attachmentHandler = interfaceProvider.getCompatibilityInterface().getDatabaseAttachmentHandler();
                         DBNConnection connection = connect(
@@ -53,8 +61,13 @@ public class ConnectionUtil {
                         connectionHandler.setConnectionInfo(connectionInfo);
                         connectionStatus.setAuthenticationError(null);
                         connectionHandler.getCompatibility().read(connection.getMetaData());
+                        diagnostics.log(sessionId.id(), false, false, millisSince(start));
                         return connection;
+                    } catch (SQLTimeoutException e) {
+                        diagnostics.log(sessionId.id(), false, true, millisSince(start));
+                        throw e;
                     } catch (SQLException e) {
+                        diagnostics.log(sessionId.id(), true, false, millisSince(start));
                         DatabaseMessageParserInterface messageParserInterface = interfaceProvider.getMessageParserInterface();
                         if (messageParserInterface.isAuthenticationException(e)){
                             authenticationInfo.setPassword(null);
@@ -63,6 +76,10 @@ public class ConnectionUtil {
                         throw e;
                     }
                 });
+    }
+
+    private static long millisSince(long start) {
+        return System.currentTimeMillis() - start;
     }
 
     @NotNull

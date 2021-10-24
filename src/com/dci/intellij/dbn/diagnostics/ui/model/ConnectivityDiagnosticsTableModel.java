@@ -13,7 +13,7 @@ public class ConnectivityDiagnosticsTableModel extends DiagnosticsTableModel {
     private final ConnectionHandlerRef connectionHandler;
 
     private static final String[] COLUMN_NAMES = new String[] {
-            "Session Type",
+            "Session",
             "Attempts",
             "Failures",
             "Timeouts",
