@@ -5,12 +5,7 @@ import com.dci.intellij.dbn.common.routine.ThrowableRunnable;
 import com.dci.intellij.dbn.common.util.CommonUtil;
 import lombok.extern.slf4j.Slf4j;
 
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Future;
-import java.util.concurrent.RejectedExecutionException;
-import java.util.concurrent.TimeUnit;
-import java.util.concurrent.TimeoutException;
+import java.util.concurrent.*;
 
 @Slf4j
 public final class Timeout {
@@ -34,24 +29,21 @@ public final class Timeout {
 
                         }
                     });
-            try {
-                return future.get(seconds, TimeUnit.SECONDS);
-            } catch (TimeoutException | InterruptedException e) {
-                future.cancel(true);
-                return defaultValue;
-            }
-        } catch (ExecutionException | RejectedExecutionException e) {
+
+            return waitFor(future, seconds, TimeUnit.SECONDS);
+        } catch (TimeoutException | InterruptedException | RejectedExecutionException ignore) {
+        } catch (ExecutionException e) {
             Throwable exception = CommonUtil.nvl(e.getCause(), e);
             log.warn("Timeout operation failed. Returning default " + defaultValue, exception);
-            return defaultValue;
         }
+        return defaultValue;
     }
 
     public static void run(long seconds, boolean daemon, ThrowableRunnable<Throwable> runnable) {
         try {
             ThreadInfo invoker = ThreadMonitor.current();
             ExecutorService executorService = ThreadPool.timeoutExecutor(daemon);
-            Future future = executorService.submit(
+            Future<?> future = executorService.submit(
                     () -> {
                         try {
                             ThreadMonitor.run(
@@ -62,15 +54,21 @@ public final class Timeout {
                             log.error("Timeout operation failed.", e);
                         }
                     });
-            try {
-                future.get(seconds, TimeUnit.SECONDS);
-            } catch (TimeoutException | InterruptedException e) {
-                future.cancel(true);
-            }
+            waitFor(future, seconds, TimeUnit.SECONDS);
 
-        } catch (ExecutionException | RejectedExecutionException e) {
+        } catch (TimeoutException | InterruptedException | RejectedExecutionException ignore) {
+        } catch (ExecutionException e) {
             Throwable exception = CommonUtil.nvl(e.getCause(), e);
             log.warn("Timeout operation failed.", exception);
+        }
+    }
+
+    public static <T> T waitFor(Future<T> future, long time, TimeUnit timeUnit) throws InterruptedException, TimeoutException, ExecutionException {
+        try {
+            return future.get(time, timeUnit);
+        } catch (TimeoutException | InterruptedException e) {
+            future.cancel(true);
+            throw e;
         }
     }
 

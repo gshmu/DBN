@@ -8,20 +8,7 @@ import java.io.InputStream;
 import java.io.Reader;
 import java.math.BigDecimal;
 import java.net.URL;
-import java.sql.Array;
-import java.sql.Blob;
-import java.sql.Clob;
-import java.sql.Date;
-import java.sql.NClob;
-import java.sql.Ref;
-import java.sql.ResultSet;
-import java.sql.ResultSetMetaData;
-import java.sql.RowId;
-import java.sql.SQLException;
-import java.sql.SQLWarning;
-import java.sql.SQLXML;
-import java.sql.Time;
-import java.sql.Timestamp;
+import java.sql.*;
 import java.util.Calendar;
 import java.util.Map;
 
@@ -58,10 +45,21 @@ public class DBNResultSet extends DBNResource<ResultSet> implements ResultSet, C
         } finally {
             if (this.statement != null) {
                 DBNStatement statement = this.statement.get();
-                if (statement != null && !statement.isCached()) {
-                    statement.close();
+                if (statement != null) {
+                    if (statement.isCached()) {
+                        statement.park();
+                    } else {
+                        statement.close();
+                    }
                 }
             }
+        }
+    }
+
+    public void release() {
+        DBNConnection connection = this.connection.get();
+        if (connection != null) {
+            connection.release(this);
         }
     }
 

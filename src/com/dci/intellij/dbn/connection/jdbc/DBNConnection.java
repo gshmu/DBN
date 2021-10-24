@@ -4,16 +4,7 @@ import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.common.event.ProjectEvents;
 import com.dci.intellij.dbn.common.project.ProjectRef;
 import com.dci.intellij.dbn.common.util.TimeUtil;
-import com.dci.intellij.dbn.connection.ConnectionCache;
-import com.dci.intellij.dbn.connection.ConnectionHandler;
-import com.dci.intellij.dbn.connection.ConnectionHandlerStatusHolder;
-import com.dci.intellij.dbn.connection.ConnectionId;
-import com.dci.intellij.dbn.connection.ConnectionProperties;
-import com.dci.intellij.dbn.connection.ConnectionStatusListener;
-import com.dci.intellij.dbn.connection.ConnectionType;
-import com.dci.intellij.dbn.connection.ResourceUtil;
-import com.dci.intellij.dbn.connection.SchemaId;
-import com.dci.intellij.dbn.connection.SessionId;
+import com.dci.intellij.dbn.connection.*;
 import com.dci.intellij.dbn.connection.transaction.PendingTransactionBundle;
 import com.intellij.openapi.progress.ProcessCanceledException;
 import com.intellij.openapi.project.Project;
@@ -23,13 +14,8 @@ import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import org.jetbrains.annotations.NotNull;
 
-import java.sql.CallableStatement;
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.SQLException;
-import java.sql.Statement;
+import java.sql.*;
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -53,7 +39,8 @@ public class DBNConnection extends DBNConnectionBase {
     private PendingTransactionBundle dataChanges;
     private SchemaId currentSchema;
 
-    private final Set<DBNStatement> activeStatements = new HashSet<>();
+    private final Set<DBNStatement> activeStatements = ConcurrentHashMap.newKeySet();
+    private final Set<DBNResultSet> activeCursors = ConcurrentHashMap.newKeySet();
     private final Map<String, DBNPreparedStatement> cachedStatements = new ConcurrentHashMap<>();
 
     private final IncrementalResourceStatusAdapter<DBNConnection> active =
@@ -156,8 +143,13 @@ public class DBNConnection extends DBNConnectionBase {
         return statement;
     }
 
-    protected void release(DBNStatement statement) {
+    protected void park(DBNStatement statement) {
         activeStatements.remove(statement);
+        updateLastAccess();
+    }
+
+    protected void release(DBNStatement statement) {
+        park(statement);
         if (statement.isCached() && statement instanceof DBNPreparedStatement) {
             DBNPreparedStatement preparedStatement = (DBNPreparedStatement) statement;
             cachedStatements.values().removeIf(v -> v == preparedStatement);
@@ -166,8 +158,21 @@ public class DBNConnection extends DBNConnectionBase {
         updateLastAccess();
     }
 
-    public int getActiveStatementsCount() {
+    protected void release(DBNResultSet resultSet) {
+        activeCursors.remove(resultSet);
+        updateLastAccess();
+    }
+
+    public int getActiveStatementCount() {
         return activeStatements.size();
+    }
+
+    public int getCachedStatementCount() {
+        return cachedStatements.size();
+    }
+
+    public int getActiveCursorCount() {
+        return activeCursors.size();
     }
 
     @Override

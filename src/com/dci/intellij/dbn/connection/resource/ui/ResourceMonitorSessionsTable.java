@@ -51,7 +51,11 @@ class ResourceMonitorSessionsTable extends DBNTable<ResourceMonitorSessionsTable
                     append(connectionPoolSize + " / " + connectionPool.getPeakPoolSize(), textAttributes);
                 } else if (column == 4) {
                     List<DBNConnection> connections = connectionPool.getConnections(ConnectionType.POOL);
-                    int totalCursorsCount = connections.stream().mapToInt(connection -> connection.getActiveStatementsCount()).sum();
+                    int totalCursorsCount = connections.stream().mapToInt(connection -> connection.getActiveCursorCount()).sum();
+                    append(Integer.toString(totalCursorsCount), textAttributes);
+                } else if (column == 5) {
+                    List<DBNConnection> connections = connectionPool.getConnections(ConnectionType.POOL);
+                    int totalCursorsCount = connections.stream().mapToInt(connection -> connection.getCachedStatementCount()).sum();
                     append(Integer.toString(totalCursorsCount), textAttributes);
                 }
             } else {
@@ -67,7 +71,9 @@ class ResourceMonitorSessionsTable extends DBNTable<ResourceMonitorSessionsTable
                 } else if (column == 2) {
                     append(connection == null ? "" : DateFormatUtil.formatPrettyDateTime(connection.getLastAccess()), textAttributes);
                 } else if (column == 4) {
-                    append(connection == null ? "" : Integer.toString(connection.getActiveStatementsCount()), textAttributes);
+                    append(connection == null ? "" : Integer.toString(connection.getActiveCursorCount()), textAttributes);
+                } else if (column == 5) {
+
                 }
             }
             setBorder(Borders.TEXT_FIELD_BORDER);

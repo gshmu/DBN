@@ -67,6 +67,13 @@ public class DBNStatement<T extends Statement> extends DBNResource<T> implements
         }
     }
 
+    public void park() {
+        DBNConnection connection = this.connection.get();
+        if (connection != null) {
+            connection.park(this);
+        }
+    }
+
     protected DBNResultSet wrap(ResultSet original) {
         if (original == null) {
             resultSet = null;
