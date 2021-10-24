@@ -1,6 +1,7 @@
 package com.dci.intellij.dbn.database.common.statement;
 
 import com.dci.intellij.dbn.common.thread.ThreadPool;
+import com.dci.intellij.dbn.common.thread.Timeout;
 import com.dci.intellij.dbn.connection.ResourceUtil;
 import com.dci.intellij.dbn.diagnostics.data.DiagnosticBundle;
 import lombok.Getter;
@@ -9,12 +10,7 @@ import lombok.Setter;
 import java.sql.SQLException;
 import java.sql.SQLTimeoutException;
 import java.sql.Statement;
-import java.util.concurrent.Callable;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Future;
-import java.util.concurrent.TimeUnit;
-import java.util.concurrent.TimeoutException;
+import java.util.concurrent.*;
 
 public final class StatementExecutor {
     private StatementExecutor() {}
@@ -27,12 +23,12 @@ public final class StatementExecutor {
         try {
             ExecutorService executorService = ThreadPool.databaseInterfaceExecutor();
             Future<T> future = executorService.submit(callable);
-            T result = future.get(timeout, TimeUnit.SECONDS);
+            T result = Timeout.waitFor(future, timeout, TimeUnit.SECONDS);
 
             diagnostics.log(identifier, false, false, millisSince(start));
             return result;
 
-        } catch (InterruptedException | TimeoutException e) {
+        } catch (TimeoutException | InterruptedException | RejectedExecutionException e) {
             diagnostics.log(identifier, false, true, millisSince(start));
             ResourceUtil.close(context.getStatement());
             throw new SQLTimeoutException("Operation timed out (timeout = " + timeout + "s)", e);

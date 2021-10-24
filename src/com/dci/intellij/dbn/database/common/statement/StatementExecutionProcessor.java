@@ -19,11 +19,7 @@ import org.jdom.Element;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.sql.CallableStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.SQLFeatureNotSupportedException;
-import java.sql.Statement;
+import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.StringTokenizer;
@@ -172,8 +168,13 @@ public class StatementExecutionProcessor {
                             throw exception;
                         } finally {
                             activityTrace.release();
-                            if (resultSet == null && statement != null && !statement.isCached()) {
-                                ResourceUtil.close(statement);
+                            if (resultSet == null && statement != null) {
+                                if (statement.isCached()) {
+                                    statement.park();
+                                } else {
+                                    ResourceUtil.close(statement);
+                                }
+
                             }
                         }
                     });
