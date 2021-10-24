@@ -12,8 +12,8 @@ import java.awt.event.ActionEvent;
 import java.util.List;
 
 public class DetachDDLFileDialog extends DBNDialog<SelectDDLFileForm> {
-    private List<VirtualFile> virtualFiles;
-    private DBObjectRef<DBSchemaObject> objectRef;
+    private final List<VirtualFile> virtualFiles;
+    private final DBObjectRef<DBSchemaObject> objectRef;
     public DetachDDLFileDialog(@NotNull List<VirtualFile> virtualFiles, @NotNull DBSchemaObject object) {
         super(object.getProject(), "Detach DDL files", true);
         this.virtualFiles = virtualFiles;
