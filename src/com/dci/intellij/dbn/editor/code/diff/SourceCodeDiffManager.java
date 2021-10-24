@@ -23,6 +23,7 @@ import com.intellij.diff.requests.SimpleDiffRequest;
 import com.intellij.openapi.components.PersistentStateComponent;
 import com.intellij.openapi.components.State;
 import com.intellij.openapi.components.Storage;
+import com.intellij.openapi.fileTypes.FileType;
 import com.intellij.openapi.project.Project;
 import org.jdom.Element;
 import org.jetbrains.annotations.NotNull;
@@ -102,12 +103,13 @@ public class SourceCodeDiffManager extends AbstractProjectComponent implements P
 
 
     public void openDiffWindow(@NotNull DBSourceCodeVirtualFile sourceCodeFile, String referenceText, String referenceTitle, String windowTitle) {
-        DBLooseContentVirtualFile counterContent = new DBLooseContentVirtualFile(sourceCodeFile.getObject(), referenceText);
+        DBSchemaObject object = sourceCodeFile.getObject();
+        FileType fileType = sourceCodeFile.getFileType();
+        DBLooseContentVirtualFile counterContent = new DBLooseContentVirtualFile(object, referenceText, fileType);
         Project project = getProject();
         DiffContent originalContent = new SourceCodeFileContent(project, sourceCodeFile);
         DiffContent changedContent = new SourceCodeFileContent(project, counterContent);
 
-        DBSchemaObject object = sourceCodeFile.getObject();
         String title =
                 object.getSchema().getName() + "." +
                         object.getName() + " " +

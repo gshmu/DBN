@@ -6,7 +6,6 @@ import com.dci.intellij.dbn.connection.ConnectionId;
 import com.dci.intellij.dbn.connection.SchemaId;
 import com.dci.intellij.dbn.connection.session.DatabaseSession;
 import com.dci.intellij.dbn.language.common.DBLanguageDialect;
-import com.dci.intellij.dbn.language.sql.SQLFileType;
 import com.dci.intellij.dbn.object.common.DBObject;
 import com.dci.intellij.dbn.object.common.DBSchemaObject;
 import com.dci.intellij.dbn.object.lookup.DBObjectRef;
@@ -29,11 +28,13 @@ public class DBLooseContentVirtualFile extends DBVirtualFileImpl implements DBPa
     private final DBObjectRef<DBSchemaObject> object;
     private long modificationTimestamp = LocalTimeCounter.currentTime();
     private CharSequence content = "";
+    private final FileType fileType;
 
-    public DBLooseContentVirtualFile(DBSchemaObject object, String content) {
+    public DBLooseContentVirtualFile(DBSchemaObject object, String content, FileType fileType) {
         super(object.getProject());
         this.object = DBObjectRef.of(object);
         this.content = content;
+        this.fileType = fileType;
         name = object.getName();
         ConnectionHandler connectionHandler = Failsafe.nn(getConnectionHandler());
         setCharset(connectionHandler.getSettings().getDetailSettings().getCharset());
@@ -103,7 +104,7 @@ public class DBLooseContentVirtualFile extends DBVirtualFileImpl implements DBPa
     @NotNull
     @Override
     public FileType getFileType() {
-        return SQLFileType.INSTANCE;
+        return fileType;
     }
 
     @Override
