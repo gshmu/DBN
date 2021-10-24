@@ -48,15 +48,10 @@ import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import javax.swing.JList;
-import javax.swing.ListSelectionModel;
+import javax.swing.*;
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import static com.dci.intellij.dbn.common.message.MessageCallback.conditional;
 import static com.dci.intellij.dbn.common.options.setting.SettingsSupport.stringAttribute;
@@ -445,7 +440,7 @@ public class DDLFileAttachmentManager extends AbstractProjectComponent implement
      *               VirtualFileListener            *
      ************************************************/
 
-    private VirtualFileListener virtualFileListener = new VirtualFileListener() {
+    private final VirtualFileListener virtualFileListener = new VirtualFileListener() {
         @Override
         public void fileDeleted(@NotNull VirtualFileEvent event) {
             DBObjectRef<DBSchemaObject> objectRef = mappings.get(event.getFile().getUrl());

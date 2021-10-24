@@ -6,9 +6,7 @@ import com.intellij.openapi.fileTypes.FileTypeManager;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.roots.ProjectRootManager;
-import com.intellij.openapi.vfs.LocalFileSystem;
-import com.intellij.openapi.vfs.StandardFileSystems;
-import com.intellij.openapi.vfs.VirtualFile;
+import com.intellij.openapi.vfs.*;
 import com.intellij.testFramework.LightVirtualFile;
 import com.intellij.util.io.ReadOnlyAttributeUtil;
 import org.jetbrains.annotations.NotNull;
@@ -17,8 +15,8 @@ import org.jetbrains.annotations.Nullable;
 import javax.swing.*;
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashMap;
+import java.util.Map;
 
 public class VirtualFileUtil {
 
@@ -75,26 +73,11 @@ public class VirtualFileUtil {
     }
 
     public static VirtualFile[] lookupFilesForName(VirtualFile[] roots, String name) {
-        List<VirtualFile> bucket = new ArrayList<VirtualFile>();
+        FileCollector collector = new FileCollector(name);
         for (VirtualFile root: roots) {
-            collectFilesForName(root, name, bucket);
+            VfsUtilCore.visitChildrenRecursively(root, collector);
         }
-        return bucket.toArray(new VirtualFile[0]);
-    }
-
-    private static void collectFilesForName(VirtualFile root, String name, List<VirtualFile> bucket) {
-        for (VirtualFile virtualFile: root.getChildren()) {
-            boolean fileIgnored = FileTypeManager.getInstance().isFileIgnored(virtualFile.getName());
-            if (!fileIgnored) {
-                if (virtualFile.isDirectory() ) {
-                    collectFilesForName(virtualFile, name, bucket);
-                } else {
-                    if (StringUtil.equalsIgnoreCase(virtualFile.getName(), name)) {
-                        bucket.add(virtualFile);
-                    }
-                }
-            }
-        }
+        return collector.files();
     }
 
     public static String ensureFilePath(String fileUrlOrPath) {
@@ -118,6 +101,36 @@ public class VirtualFileUtil {
             return lightVirtualFile.getOriginalFile();
         }
         return null;
+    }
+
+
+    private static class FileCollector extends VirtualFileVisitor {
+        private static final FileTypeManager fileTypeManager = FileTypeManager.getInstance();
+        private final Map<String, VirtualFile> bucket = new HashMap<>();
+        private final String name;
+
+        public FileCollector(String name) {
+            this.name = name;
+        }
+
+        public boolean visitFile(@NotNull VirtualFile file) {
+            boolean fileIgnored = fileTypeManager.isFileIgnored(file.getName());
+            if (!fileIgnored) {
+                if (file.isDirectory() ) {
+                    return true;
+                } else {
+                    if (StringUtil.equalsIgnoreCase(file.getName(), name)) {
+                        bucket.put(file.getPath(), file);
+                    }
+                    return false;
+                }
+            }
+            return false;
+        }
+
+        public VirtualFile[] files() {
+            return bucket.values().toArray(new VirtualFile[0]);
+        }
     }
 
 }
