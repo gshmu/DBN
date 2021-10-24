@@ -33,6 +33,7 @@
         <ul>
             <li><b>3.2.5713</b>
             <ul>
+                <li>Support for latest IDE EAP versions
                 <li>Oracle SQL and PLSQL language syntax updates
                 <li>Bug fixes and performance improvements
             </ul>
