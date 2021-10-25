@@ -1,7 +1,7 @@
 package com.dci.intellij.dbn.connection.action;
 
 import com.dci.intellij.dbn.connection.ConnectionHandler;
-import com.dci.intellij.dbn.environment.Environment;
+import com.dci.intellij.dbn.diagnostics.Diagnostics;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.actionSystem.Presentation;
 import com.intellij.openapi.project.Project;
@@ -20,6 +20,6 @@ public class DevTestConnectionAction extends AbstractConnectionAction{
 
     @Override
     protected void update(@NotNull AnActionEvent e, @NotNull Presentation presentation, @NotNull Project project, @Nullable ConnectionHandler connectionHandler) {
-        presentation.setVisible(Environment.DEVELOPER_MODE);
+        presentation.setVisible(Diagnostics.isDeveloperMode());
     }
 }

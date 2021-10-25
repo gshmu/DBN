@@ -5,7 +5,12 @@ import com.dci.intellij.dbn.common.routine.ThrowableRunnable;
 import com.dci.intellij.dbn.common.util.CommonUtil;
 import lombok.extern.slf4j.Slf4j;
 
-import java.util.concurrent.*;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Future;
+import java.util.concurrent.RejectedExecutionException;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
 
 @Slf4j
 public final class Timeout {
@@ -31,7 +36,9 @@ public final class Timeout {
                     });
 
             return waitFor(future, seconds, TimeUnit.SECONDS);
-        } catch (TimeoutException | InterruptedException | RejectedExecutionException ignore) {
+        } catch (TimeoutException | InterruptedException | RejectedExecutionException e) {
+            String message = CommonUtil.nvl(e.getMessage(), e.getClass().getName());
+            log.warn("Operation timed out. Returning default " + defaultValue + ". Cause: " + message);
         } catch (ExecutionException e) {
             Throwable exception = CommonUtil.nvl(e.getCause(), e);
             log.warn("Timeout operation failed. Returning default " + defaultValue, exception);
@@ -56,7 +63,9 @@ public final class Timeout {
                     });
             waitFor(future, seconds, TimeUnit.SECONDS);
 
-        } catch (TimeoutException | InterruptedException | RejectedExecutionException ignore) {
+        } catch (TimeoutException | InterruptedException | RejectedExecutionException e) {
+            String message = CommonUtil.nvl(e.getMessage(), e.getClass().getName());
+            log.warn("Operation timed out. Cause: " + message);
         } catch (ExecutionException e) {
             Throwable exception = CommonUtil.nvl(e.getCause(), e);
             log.warn("Timeout operation failed.", exception);

@@ -2,7 +2,6 @@ package com.dci.intellij.dbn.language.common.element.parser;
 
 import com.dci.intellij.dbn.code.common.completion.CodeCompletionContributor;
 import com.dci.intellij.dbn.common.util.CommonUtil;
-import com.dci.intellij.dbn.environment.Environment;
 import com.dci.intellij.dbn.language.common.ParseException;
 import com.dci.intellij.dbn.language.common.SharedTokenTypeBundle;
 import com.dci.intellij.dbn.language.common.SimpleTokenType;
@@ -20,6 +19,8 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.Set;
 
+import static com.dci.intellij.dbn.diagnostics.Diagnostics.isLanguageParserDebug;
+
 public abstract class ElementTypeParser<T extends ElementTypeBase> {
     public final T elementType;
 
@@ -32,13 +33,13 @@ public abstract class ElementTypeParser<T extends ElementTypeBase> {
     }
 
     public void logBegin(ParserBuilder builder, boolean optional, int depth) {
-        if (Environment.PARSER_DEBUG_MODE) {
+        if (isLanguageParserDebug()) {
             ElementTypeLogger.logBegin(elementType, builder, optional, depth);
         }
     }
 
     public void logEnd(ParseResultType resultType, int depth) {
-        if (Environment.PARSER_DEBUG_MODE) {
+        if (isLanguageParserDebug()) {
             ElementTypeLogger.logEnd(elementType, resultType, depth);
         }
     }

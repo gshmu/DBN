@@ -86,7 +86,7 @@ public class DDLFileExtensionSettingsForm extends ConfigurationEditorForm<DDLFil
         List<String> allExtensions = new ArrayList<String>();
         for (String fieldName : extensionTextFields.keySet()) {
             JTextField extensionTextField = extensionTextFields.get(fieldName);
-            String extensionsText = ConfigurationEditorUtil.validateStringInputValue(extensionTextField, fieldName, false);
+            String extensionsText = ConfigurationEditorUtil.validateStringValue(extensionTextField, fieldName, false);
             List<String> extensions = StringUtil.tokenize(extensionsText, ",");
             for (String extension : extensions) {
                 if (allExtensions.contains(extension)) {

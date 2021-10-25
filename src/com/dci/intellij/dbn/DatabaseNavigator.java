@@ -1,7 +1,7 @@
 package com.dci.intellij.dbn;
 
 import com.dci.intellij.dbn.common.component.ApplicationComponent;
-import com.dci.intellij.dbn.environment.Environment;
+import com.dci.intellij.dbn.diagnostics.Diagnostics;
 import com.dci.intellij.dbn.execution.ExecutionManager;
 import com.intellij.notification.NotificationDisplayType;
 import com.intellij.notification.NotificationGroup;
@@ -71,22 +71,18 @@ public class DatabaseNavigator implements ApplicationComponent, PersistentStateC
     @Override
     public Element getState() {
         Element element = new Element("state");
-        setBoolean(element, "developer-mode", Environment.DEVELOPER_MODE);
-        setBoolean(element, "parser-debug-mode", Environment.PARSER_DEBUG_MODE);
-        setBoolean(element, "database-access-debug-mode", Environment.DATABASE_ACCESS_DEBUG_MODE);
-        setBoolean(element, "database-resource-debug-mode", Environment.DATABASE_RESOURCE_DEBUG_MODE);
-        setBoolean(element, "database-lagging-mode", Environment.DATABASE_LAGGING_MODE);
+        Diagnostics.getDebugMode().writeState(element);
+        Diagnostics.getDatabaseLag().writeState(element);
+        setBoolean(element, "developer-mode", Diagnostics.isDeveloperMode());
         setBoolean(element, "show-plugin-conflict-dialog", showPluginConflictDialog);
         return element;
     }
 
     @Override
     public void loadState(@NotNull Element element) {
-        Environment.DEVELOPER_MODE = getBoolean(element, "developer-mode", false);
-        Environment.PARSER_DEBUG_MODE = getBoolean(element, "parser-debug-mode", false);
-        Environment.DATABASE_ACCESS_DEBUG_MODE = getBoolean(element, "database-access-debug-mode", false);
-        Environment.DATABASE_RESOURCE_DEBUG_MODE = getBoolean(element, "database-resource-debug-mode", false);
-        Environment.DATABASE_LAGGING_MODE = getBoolean(element, "database-lagging-mode", false);
+        Diagnostics.getDebugMode().readState(element);
+        Diagnostics.getDatabaseLag().readState(element);
+        Diagnostics.setDeveloperMode(getBoolean(element, "developer-mode", false));
         showPluginConflictDialog = getBoolean(element, "show-plugin-conflict-dialog", true);
     }
 

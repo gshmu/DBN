@@ -14,18 +14,25 @@ import com.dci.intellij.dbn.database.DatabaseInterface;
 import com.dci.intellij.dbn.database.DatabaseMessageParserInterface;
 import com.dci.intellij.dbn.database.common.metadata.DBObjectMetadata;
 import com.dci.intellij.dbn.database.common.metadata.DBObjectMetadataFactory;
-import com.dci.intellij.dbn.environment.Environment;
+import com.dci.intellij.dbn.diagnostics.Diagnostics;
 import com.dci.intellij.dbn.object.common.DBObject;
 import com.intellij.openapi.progress.ProcessCanceledException;
 import lombok.extern.slf4j.Slf4j;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.sql.*;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.SQLFeatureNotSupportedException;
+import java.sql.SQLNonTransientConnectionException;
+import java.sql.SQLTimeoutException;
+import java.sql.SQLTransientConnectionException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.UUID;
+
+import static com.dci.intellij.dbn.diagnostics.Diagnostics.isDatabaseAccessDebug;
 
 @Slf4j
 public abstract class DynamicContentResultSetLoader<
@@ -55,7 +62,7 @@ public abstract class DynamicContentResultSetLoader<
     }
 
     private DebugInfo preLoadContent(DynamicContent<T> dynamicContent) {
-        if (Environment.DATABASE_ACCESS_DEBUG_MODE) {
+        if (isDatabaseAccessDebug()) {
             DebugInfo debugInfo = new DebugInfo();
             log.info(
                     "[DBN] Loading " + dynamicContent.getContentDescription() +
@@ -96,13 +103,12 @@ public abstract class DynamicContentResultSetLoader<
                             DynamicContentType<?> contentType = dynamicContent.getContentType();
                             M metadata = DBObjectMetadataFactory.INSTANCE.create(contentType, resultSet);
 
-                            boolean addDelay = Environment.DATABASE_LAGGING_MODE;
-                            if (addDelay) Thread.sleep(2000);
+                            Diagnostics.simulateDatabaseLag(Diagnostics.getQueryingLag());
                             LoaderCache loaderCache = new LoaderCache();
                             int count = 0;
 
                             while (resultSet != null && resultSet.next()) {
-                                if (addDelay) Thread.sleep(100);
+                                Diagnostics.simulateDatabaseLag(Diagnostics.getFetchingLag());
                                 dynamicContent.checkDisposed();
 
                                 T element = null;
@@ -139,7 +145,7 @@ public abstract class DynamicContentResultSetLoader<
 
                         postLoadContent(dynamicContent, debugInfo);
 
-                    } catch (InterruptedException | ProcessCanceledException e) {
+                    } catch (ProcessCanceledException e) {
                         throw new SQLTimeoutException(e);
 
                     } catch (SQLTimeoutException |

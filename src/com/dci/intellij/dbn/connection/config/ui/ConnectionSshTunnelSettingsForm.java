@@ -10,12 +10,15 @@ import com.intellij.openapi.ui.TextFieldWithBrowseButton;
 import com.intellij.util.ui.UIUtil;
 import org.jetbrains.annotations.NotNull;
 
-import javax.swing.*;
+import javax.swing.JCheckBox;
+import javax.swing.JComboBox;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JPasswordField;
+import javax.swing.JTextField;
 import java.awt.event.ActionListener;
 
-import static com.dci.intellij.dbn.common.ui.ComboBoxUtil.getSelection;
-import static com.dci.intellij.dbn.common.ui.ComboBoxUtil.initComboBox;
-import static com.dci.intellij.dbn.common.ui.ComboBoxUtil.setSelection;
+import static com.dci.intellij.dbn.common.ui.ComboBoxUtil.*;
 import static com.dci.intellij.dbn.common.ui.GUIUtil.updateBorderTitleForeground;
 
 public class ConnectionSshTunnelSettingsForm extends ConfigurationEditorForm<ConnectionSshTunnelSettings> {
@@ -105,14 +108,14 @@ public class ConnectionSshTunnelSettingsForm extends ConfigurationEditorForm<Con
     public void applyFormChanges(ConnectionSshTunnelSettings configuration) throws ConfigurationException {
         boolean enabled = activeCheckBox.isSelected();
         configuration.setActive(enabled);
-        configuration.setHost(ConfigurationEditorUtil.validateStringInputValue(hostTextField, "Host", enabled));
-        ConfigurationEditorUtil.validateIntegerInputValue(portTextField, "Port", enabled, 0, 999999, null);
+        configuration.setHost(ConfigurationEditorUtil.validateStringValue(hostTextField, "Host", enabled));
+        ConfigurationEditorUtil.validateIntegerValue(portTextField, "Port", enabled, 0, 999999, null);
         configuration.setPort(portTextField.getText());
         configuration.setUser(userTextField.getText());
         SshAuthType authType = getSelection(authTypeComboBox);
 
         boolean isKeyPair = authType == SshAuthType.KEY_PAIR;
-        ConfigurationEditorUtil.validateStringInputValue(keyFileField.getTextField(), "Key file", enabled && isKeyPair);
+        ConfigurationEditorUtil.validateStringValue(keyFileField.getTextField(), "Key file", enabled && isKeyPair);
         //ConfigurationEditorUtil.validateStringInputValue(keyPassphraseField, "Key passphrase", enabled && isKeyPair);
 
         configuration.setAuthType(authType);

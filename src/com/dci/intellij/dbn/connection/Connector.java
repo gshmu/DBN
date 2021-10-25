@@ -13,6 +13,7 @@ import com.dci.intellij.dbn.connection.jdbc.DBNConnection;
 import com.dci.intellij.dbn.connection.ssh.SshTunnelConnector;
 import com.dci.intellij.dbn.connection.ssh.SshTunnelManager;
 import com.dci.intellij.dbn.connection.ssl.SslConnectionManager;
+import com.dci.intellij.dbn.diagnostics.Diagnostics;
 import com.intellij.openapi.project.Project;
 import org.jetbrains.annotations.Nullable;
 
@@ -132,6 +133,7 @@ class Connector {
                     connectionUrl = databaseSettings.getConnectionUrl(localHost, localPort);
                 }
             }
+            Diagnostics.simulateDatabaseLag(Diagnostics.getConnectivityLag());
 
             Connection connection = driver.connect(connectionUrl, properties);
             if (connection == null) {
