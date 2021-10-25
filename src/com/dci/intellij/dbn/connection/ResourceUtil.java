@@ -22,7 +22,7 @@ import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Supplier;
 
 import static com.dci.intellij.dbn.common.util.CommonUtil.nvl;
-import static com.dci.intellij.dbn.environment.Environment.DATABASE_RESOURCE_DEBUG_MODE;
+import static com.dci.intellij.dbn.diagnostics.Diagnostics.isDatabaseResourceDebug;
 
 @Slf4j
 public final class ResourceUtil {
@@ -296,10 +296,10 @@ public final class ResourceUtil {
             @NotNull Supplier<String> errorMessage) throws E{
 
         long start = System.currentTimeMillis();
-        if (DATABASE_RESOURCE_DEBUG_MODE) log.info(startMessage.get() + "...");
+        if (isDatabaseResourceDebug()) log.info(startMessage.get() + "...");
         try {
             action.run();
-            if (DATABASE_RESOURCE_DEBUG_MODE) log.info(successMessage.get() + " - " + (System.currentTimeMillis() - start) + "ms");
+            if (isDatabaseResourceDebug()) log.info(successMessage.get() + " - " + (System.currentTimeMillis() - start) + "ms");
         } catch (Throwable t) {
             log.warn(errorMessage.get() + " Cause: " + t.getMessage());
             throw t;

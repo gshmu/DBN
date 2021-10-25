@@ -6,7 +6,9 @@ import com.dci.intellij.dbn.execution.statement.options.StatementExecutionSettin
 import com.intellij.openapi.options.ConfigurationException;
 import org.jetbrains.annotations.NotNull;
 
-import javax.swing.*;
+import javax.swing.JCheckBox;
+import javax.swing.JPanel;
+import javax.swing.JTextField;
 
 import static com.dci.intellij.dbn.common.ui.GUIUtil.updateBorderTitleForeground;
 
@@ -34,9 +36,9 @@ public class StatementExecutionSettingsForm extends ConfigurationEditorForm<Stat
     @Override
     public void applyFormChanges() throws ConfigurationException {
         StatementExecutionSettings configuration = getConfiguration();
-        configuration.setResultSetFetchBlockSize(ConfigurationEditorUtil.validateIntegerInputValue(fetchBlockSizeTextField, "Fetch block size", true, 1, 10000, null));
-        int executionTimeout = ConfigurationEditorUtil.validateIntegerInputValue(executionTimeoutTextField, "Execution timeout", true, 0, 6000, "\nUse value 0 for no timeout");
-        int debugExecutionTimeout = ConfigurationEditorUtil.validateIntegerInputValue(debugExecutionTimeoutTextField, "Debug execution timeout", true, 0, 6000, "\nUse value 0 for no timeout");
+        configuration.setResultSetFetchBlockSize(ConfigurationEditorUtil.validateIntegerValue(fetchBlockSizeTextField, "Fetch block size", true, 1, 10000, null));
+        int executionTimeout = ConfigurationEditorUtil.validateIntegerValue(executionTimeoutTextField, "Execution timeout", true, 0, 6000, "\nUse value 0 for no timeout");
+        int debugExecutionTimeout = ConfigurationEditorUtil.validateIntegerValue(debugExecutionTimeoutTextField, "Debug execution timeout", true, 0, 6000, "\nUse value 0 for no timeout");
 
         configuration.setFocusResult(focusResultCheckBox.isSelected());
         configuration.setPromptExecution(promptExecutionCheckBox.isSelected());

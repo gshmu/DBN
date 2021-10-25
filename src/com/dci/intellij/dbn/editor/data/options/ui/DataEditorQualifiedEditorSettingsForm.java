@@ -6,9 +6,11 @@ import com.dci.intellij.dbn.editor.data.options.DataEditorQualifiedEditorSetting
 import com.intellij.openapi.options.ConfigurationException;
 import org.jetbrains.annotations.NotNull;
 
-import javax.swing.*;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JTextField;
 
-import static com.dci.intellij.dbn.common.options.ui.ConfigurationEditorUtil.validateIntegerInputValue;
+import static com.dci.intellij.dbn.common.options.ui.ConfigurationEditorUtil.validateIntegerValue;
 import static com.dci.intellij.dbn.common.ui.GUIUtil.updateBorderTitleForeground;
 
 public class DataEditorQualifiedEditorSettingsForm extends ConfigurationEditorForm<DataEditorQualifiedEditorSettings> {
@@ -31,7 +33,7 @@ public class DataEditorQualifiedEditorSettingsForm extends ConfigurationEditorFo
     public void applyFormChanges() throws ConfigurationException {
         DataEditorQualifiedEditorSettings settings = getConfiguration();
         checkBoxList.applyChanges();
-        settings.setTextLengthThreshold(validateIntegerInputValue(
+        settings.setTextLengthThreshold(validateIntegerValue(
                 textLengthThresholdTextField,
                 "Text Length Threshold", true, 0, 999999999, null));
     }

@@ -7,11 +7,12 @@ import com.dci.intellij.dbn.data.grid.options.NullSortingOption;
 import com.intellij.openapi.options.ConfigurationException;
 import org.jetbrains.annotations.NotNull;
 
-import javax.swing.*;
+import javax.swing.JCheckBox;
+import javax.swing.JComboBox;
+import javax.swing.JPanel;
+import javax.swing.JTextField;
 
-import static com.dci.intellij.dbn.common.ui.ComboBoxUtil.getSelection;
-import static com.dci.intellij.dbn.common.ui.ComboBoxUtil.initComboBox;
-import static com.dci.intellij.dbn.common.ui.ComboBoxUtil.setSelection;
+import static com.dci.intellij.dbn.common.ui.ComboBoxUtil.*;
 import static com.dci.intellij.dbn.common.ui.GUIUtil.updateBorderTitleForeground;
 
 public class DataGridSortingSettingsForm extends ConfigurationEditorForm<DataGridSortingSettings> {
@@ -40,7 +41,7 @@ public class DataGridSortingSettingsForm extends ConfigurationEditorForm<DataGri
     public void applyFormChanges() throws ConfigurationException {
         DataGridSortingSettings settings = getConfiguration();
         settings.setNullsFirst(getSelection(nullsPositionComboBox) == NullSortingOption.FIRST);
-        int maxSortingColumns = ConfigurationEditorUtil.validateIntegerInputValue(maxSortingColumnsTextField, "Max sorting columns", true, 0, 100, "Use value 0 for unlimited number of sorting columns");
+        int maxSortingColumns = ConfigurationEditorUtil.validateIntegerValue(maxSortingColumnsTextField, "Max sorting columns", true, 0, 100, "Use value 0 for unlimited number of sorting columns");
         settings.setMaxSortingColumns(maxSortingColumns);
     }
 

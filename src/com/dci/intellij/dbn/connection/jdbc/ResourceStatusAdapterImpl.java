@@ -4,7 +4,6 @@ import com.dci.intellij.dbn.common.thread.ThreadMonitor;
 import com.dci.intellij.dbn.common.thread.Timeout;
 import com.dci.intellij.dbn.common.util.ExceptionUtil;
 import com.dci.intellij.dbn.common.util.TimeUtil;
-import com.dci.intellij.dbn.environment.Environment;
 import com.dci.intellij.dbn.language.common.WeakRef;
 import lombok.extern.slf4j.Slf4j;
 import org.jetbrains.annotations.NotNull;
@@ -16,6 +15,8 @@ import java.util.concurrent.atomic.AtomicReference;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReadWriteLock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
+
+import static com.dci.intellij.dbn.diagnostics.Diagnostics.isDatabaseResourceDebug;
 
 @Slf4j
 public abstract class ResourceStatusAdapterImpl<T extends Resource> implements ResourceStatusAdapter<T> {
@@ -187,7 +188,7 @@ public abstract class ResourceStatusAdapterImpl<T extends Resource> implements R
 
         SQLException exception = Timeout.call(10, null, daemon, () -> {
             try {
-                if (Environment.DATABASE_RESOURCE_DEBUG_MODE)
+                if (isDatabaseResourceDebug())
                     log.info("[DBN] Applying status " +  subject + " = " + value + " for " + resource);
 
                 changeInner(value);
@@ -199,7 +200,7 @@ public abstract class ResourceStatusAdapterImpl<T extends Resource> implements R
             } finally {
                 set(changing, false);
 
-                if (Environment.DATABASE_RESOURCE_DEBUG_MODE)
+                if (isDatabaseResourceDebug())
                     log.info("[DBN] Done applying status " + subject + " = "  + value +  " for " + resource);
             }
             return null;

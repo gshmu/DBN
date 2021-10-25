@@ -12,7 +12,10 @@ import com.intellij.openapi.options.ConfigurationException;
 import com.intellij.openapi.project.Project;
 import org.jetbrains.annotations.NotNull;
 
-import javax.swing.*;
+import javax.swing.JCheckBox;
+import javax.swing.JComboBox;
+import javax.swing.JPanel;
+import javax.swing.JTextField;
 
 import static com.dci.intellij.dbn.common.ui.ComboBoxUtil.*;
 import static com.dci.intellij.dbn.common.ui.GUIUtil.updateBorderTitleForeground;
@@ -45,7 +48,7 @@ public class DatabaseBrowserGeneralSettingsForm extends ConfigurationEditorForm<
     @Override
     public void applyFormChanges() throws ConfigurationException {
         DatabaseBrowserGeneralSettings configuration = getConfiguration();
-        ConfigurationEditorUtil.validateIntegerInputValue(navigationHistorySizeTextField, "Navigation history size", true, 0, 1000, "");
+        ConfigurationEditorUtil.validateIntegerValue(navigationHistorySizeTextField, "Navigation history size", true, 0, 1000, "");
 
         final boolean repaintTree = configuration.isModified();
         

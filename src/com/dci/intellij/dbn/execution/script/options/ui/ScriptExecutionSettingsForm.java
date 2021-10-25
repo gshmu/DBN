@@ -18,8 +18,10 @@ import com.intellij.ui.ToolbarDecorator;
 import com.intellij.ui.awt.RelativePoint;
 import org.jetbrains.annotations.NotNull;
 
-import javax.swing.*;
-import java.awt.*;
+import javax.swing.JPanel;
+import javax.swing.JTextField;
+import java.awt.BorderLayout;
+import java.awt.Dimension;
 
 import static com.dci.intellij.dbn.common.ui.GUIUtil.updateBorderTitleForeground;
 
@@ -99,7 +101,7 @@ public class ScriptExecutionSettingsForm extends ConfigurationEditorForm<ScriptE
     @Override
     public void applyFormChanges() throws ConfigurationException {
         ScriptExecutionSettings configuration = getConfiguration();
-        int executionTimeout = ConfigurationEditorUtil.validateIntegerInputValue(executionTimeoutTextField, "Execution timeout", true, 0, 6000, "\nUse value 0 for no timeout");
+        int executionTimeout = ConfigurationEditorUtil.validateIntegerValue(executionTimeoutTextField, "Execution timeout", true, 0, 6000, "\nUse value 0 for no timeout");
         CmdLineInterfacesTableModel model = cmdLineInterfacesTable.getModel();
         model.validate();
         CmdLineInterfaceBundle executorBundle = model.getBundle();

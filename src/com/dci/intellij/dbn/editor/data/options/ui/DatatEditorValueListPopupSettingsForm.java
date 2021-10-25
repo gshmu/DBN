@@ -5,9 +5,11 @@ import com.dci.intellij.dbn.editor.data.options.DataEditorValueListPopupSettings
 import com.intellij.openapi.options.ConfigurationException;
 import org.jetbrains.annotations.NotNull;
 
-import javax.swing.*;
+import javax.swing.JCheckBox;
+import javax.swing.JPanel;
+import javax.swing.JTextField;
 
-import static com.dci.intellij.dbn.common.options.ui.ConfigurationEditorUtil.validateIntegerInputValue;
+import static com.dci.intellij.dbn.common.options.ui.ConfigurationEditorUtil.validateIntegerValue;
 import static com.dci.intellij.dbn.common.ui.GUIUtil.updateBorderTitleForeground;
 
 public class DatatEditorValueListPopupSettingsForm extends ConfigurationEditorForm<DataEditorValueListPopupSettings> {
@@ -33,8 +35,8 @@ public class DatatEditorValueListPopupSettingsForm extends ConfigurationEditorFo
     public void applyFormChanges() throws ConfigurationException {
         DataEditorValueListPopupSettings settings = getConfiguration();
         settings.setShowPopupButton(showPopupButtonCheckBox.isSelected());
-        settings.setElementCountThreshold(validateIntegerInputValue(elementCountThresholdTextBox, "Element count threshold", true, 0, 10000, null));
-        settings.setDataLengthThreshold(validateIntegerInputValue(dataLengthThresholdTextBox, "Data length threshold", true, 0, 1000, null));
+        settings.setElementCountThreshold(validateIntegerValue(elementCountThresholdTextBox, "Element count threshold", true, 0, 10000, null));
+        settings.setDataLengthThreshold(validateIntegerValue(dataLengthThresholdTextBox, "Data length threshold", true, 0, 1000, null));
     }
 
     @Override

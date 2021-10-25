@@ -11,8 +11,8 @@ import com.dci.intellij.dbn.language.sql.dialect.SQLLanguageDialect;
 import org.jetbrains.annotations.Nullable;
 
 public abstract class DatabaseInterfaceProviderImpl implements DatabaseInterfaceProvider {
-    private SQLLanguageDialect sqlLanguageDialect;
-    private PSQLLanguageDialect psqlLanguageDialect;
+    private final SQLLanguageDialect sqlLanguageDialect;
+    private final PSQLLanguageDialect psqlLanguageDialect;
 
     protected DatabaseInterfaceProviderImpl(SQLLanguageDialect sqlLanguageDialect, @Nullable PSQLLanguageDialect psqlLanguageDialect) {
         this.sqlLanguageDialect = sqlLanguageDialect;

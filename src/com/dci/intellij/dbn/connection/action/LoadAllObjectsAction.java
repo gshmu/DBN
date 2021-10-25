@@ -3,7 +3,7 @@ package com.dci.intellij.dbn.connection.action;
 import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.common.thread.Progress;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
-import com.dci.intellij.dbn.environment.Environment;
+import com.dci.intellij.dbn.diagnostics.Diagnostics;
 import com.dci.intellij.dbn.object.common.DBObjectRecursiveLoaderVisitor;
 import com.dci.intellij.dbn.object.common.list.DBObjectListContainer;
 import com.intellij.openapi.actionSystem.AnActionEvent;
@@ -30,6 +30,6 @@ public class LoadAllObjectsAction extends AbstractConnectionAction {
 
     @Override
     protected void update(@NotNull AnActionEvent e, @NotNull Presentation presentation, @NotNull Project project, @Nullable ConnectionHandler connectionHandler) {
-        presentation.setVisible(Environment.DEVELOPER_MODE);
+        presentation.setVisible(Diagnostics.isDeveloperMode());
     }
 }

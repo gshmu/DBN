@@ -6,6 +6,7 @@ import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.connection.ConnectionId;
 import com.dci.intellij.dbn.diagnostics.data.DiagnosticBundle;
 import com.dci.intellij.dbn.diagnostics.data.DiagnosticType;
+import com.dci.intellij.dbn.diagnostics.options.ui.DiagnosticSettingsDialog;
 import com.dci.intellij.dbn.diagnostics.ui.DiagnosticsMonitorDialog;
 import com.intellij.openapi.components.PersistentStateComponent;
 import com.intellij.openapi.components.State;
@@ -52,10 +53,14 @@ public class DiagnosticsManager extends AbstractProjectComponent implements Pers
     }
 
     public void openDiagnosticsMonitorDialog() {
-        DiagnosticsMonitorDialog diagnosticsMonitorDialog = new DiagnosticsMonitorDialog(getProject());
-        diagnosticsMonitorDialog.show();
+        DiagnosticsMonitorDialog monitorDialog = new DiagnosticsMonitorDialog(getProject());
+        monitorDialog.show();
     }
 
+    public void openDiagnosticsSettingsDialog() {
+        DiagnosticSettingsDialog settingsDialog = new DiagnosticSettingsDialog(getProject());
+        settingsDialog.show();
+    }
 
     @Override
     @NonNls

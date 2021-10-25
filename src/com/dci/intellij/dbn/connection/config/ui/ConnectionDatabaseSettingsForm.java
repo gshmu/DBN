@@ -322,7 +322,7 @@ public class ConnectionDatabaseSettingsForm extends ConfigurationEditorForm<Conn
 
     @Override
     public void applyFormChanges() throws ConfigurationException {
-        ConfigurationEditorUtil.validateStringInputValue(nameTextField, "Name", true);
+        ConfigurationEditorUtil.validateStringValue(nameTextField, "Name", true);
         ConnectionDatabaseSettings configuration = getConfiguration();
 
         TextFieldWithBrowseButton driverLibraryTextField = driverSettingsForm.getDriverLibraryTextField();

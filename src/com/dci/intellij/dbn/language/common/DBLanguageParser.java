@@ -1,7 +1,6 @@
 package com.dci.intellij.dbn.language.common;
 
 import com.dci.intellij.dbn.common.util.CommonUtil;
-import com.dci.intellij.dbn.environment.Environment;
 import com.dci.intellij.dbn.language.common.element.ElementTypeBundle;
 import com.dci.intellij.dbn.language.common.element.impl.NamedElementType;
 import com.dci.intellij.dbn.language.common.element.parser.ParserBuilder;
@@ -14,6 +13,8 @@ import com.intellij.psi.tree.IElementType;
 import lombok.Getter;
 import org.jdom.Document;
 import org.jetbrains.annotations.NotNull;
+
+import static com.dci.intellij.dbn.diagnostics.Diagnostics.isLanguageParserDebug;
 
 @Getter
 public abstract class DBLanguageParser implements PsiParser {
@@ -45,7 +46,7 @@ public abstract class DBLanguageParser implements PsiParser {
         ParserContext context = new ParserContext(psiBuilder, languageDialect, databaseVersion);
         ParserBuilder builder = context.builder;
         if (parseRootId == null ) parseRootId = defaultParseRootId;
-        builder.setDebugMode(Environment.PARSER_DEBUG_MODE);
+        builder.setDebugMode(isLanguageParserDebug());
         PsiBuilder.Marker marker = builder.mark(null);
         NamedElementType root =  elementTypes.getNamedElementType(parseRootId);
         if (root == null) {

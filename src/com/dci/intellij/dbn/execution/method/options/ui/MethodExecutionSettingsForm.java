@@ -6,7 +6,8 @@ import com.dci.intellij.dbn.execution.method.options.MethodExecutionSettings;
 import com.intellij.openapi.options.ConfigurationException;
 import org.jetbrains.annotations.NotNull;
 
-import javax.swing.*;
+import javax.swing.JPanel;
+import javax.swing.JTextField;
 
 import static com.dci.intellij.dbn.common.ui.GUIUtil.updateBorderTitleForeground;
 
@@ -33,9 +34,9 @@ public class MethodExecutionSettingsForm extends ConfigurationEditorForm<MethodE
     @Override
     public void applyFormChanges() throws ConfigurationException {
         MethodExecutionSettings configuration = getConfiguration();
-        int executionTimeout = ConfigurationEditorUtil.validateIntegerInputValue(executionTimeoutTextField, "Execution timeout", true, 0, 6000, "\nUse value 0 for no timeout");
-        int debugExecutionTimeout = ConfigurationEditorUtil.validateIntegerInputValue(debugExecutionTimeoutTextField, "Debug execution timeout", true, 0, 6000, "\nUse value 0 for no timeout");
-        int parameterHistorySize = ConfigurationEditorUtil.validateIntegerInputValue(parameterHistorySizeTextField, "Parameter history size", true, 0, 3000, null);
+        int executionTimeout = ConfigurationEditorUtil.validateIntegerValue(executionTimeoutTextField, "Execution timeout", true, 0, 6000, "\nUse value 0 for no timeout");
+        int debugExecutionTimeout = ConfigurationEditorUtil.validateIntegerValue(debugExecutionTimeoutTextField, "Debug execution timeout", true, 0, 6000, "\nUse value 0 for no timeout");
+        int parameterHistorySize = ConfigurationEditorUtil.validateIntegerValue(parameterHistorySizeTextField, "Parameter history size", true, 0, 3000, null);
         configuration.setParameterHistorySize(parameterHistorySize);
 
         configuration.setExecutionTimeout(executionTimeout);

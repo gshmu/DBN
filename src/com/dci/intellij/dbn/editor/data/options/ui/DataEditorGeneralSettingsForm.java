@@ -6,7 +6,9 @@ import com.dci.intellij.dbn.editor.data.options.DataEditorGeneralSettings;
 import com.intellij.openapi.options.ConfigurationException;
 import org.jetbrains.annotations.NotNull;
 
-import javax.swing.*;
+import javax.swing.JCheckBox;
+import javax.swing.JPanel;
+import javax.swing.JTextField;
 
 import static com.dci.intellij.dbn.common.ui.GUIUtil.updateBorderTitleForeground;
 
@@ -35,8 +37,8 @@ public class DataEditorGeneralSettingsForm extends ConfigurationEditorForm<DataE
 
     @Override
     public void applyFormChanges() throws ConfigurationException {
-        ConfigurationEditorUtil.validateIntegerInputValue(fetchBlockSizeTextField, "Fetch block size", true, 1, 10000, null);
-        ConfigurationEditorUtil.validateIntegerInputValue(fetchTimeoutTextField, "Fetch timeout", true, 0, 300, "\nUse value 0 for no timeout");
+        ConfigurationEditorUtil.validateIntegerValue(fetchBlockSizeTextField, "Fetch block size", true, 1, 10000, null);
+        ConfigurationEditorUtil.validateIntegerValue(fetchTimeoutTextField, "Fetch timeout", true, 0, 300, "\nUse value 0 for no timeout");
 
         DataEditorGeneralSettings settings = getConfiguration();
         settings.getFetchBlockSize().to(fetchBlockSizeTextField);
