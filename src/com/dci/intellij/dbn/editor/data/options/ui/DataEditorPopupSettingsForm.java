@@ -5,10 +5,12 @@ import com.dci.intellij.dbn.editor.data.options.DataEditorPopupSettings;
 import com.intellij.openapi.options.ConfigurationException;
 import org.jetbrains.annotations.NotNull;
 
-import javax.swing.*;
+import javax.swing.JCheckBox;
+import javax.swing.JPanel;
+import javax.swing.JTextField;
 import java.awt.event.ActionListener;
 
-import static com.dci.intellij.dbn.common.options.ui.ConfigurationEditorUtil.validateIntegerInputValue;
+import static com.dci.intellij.dbn.common.options.ui.ConfigurationEditorUtil.validateIntegerValue;
 import static com.dci.intellij.dbn.common.ui.GUIUtil.updateBorderTitleForeground;
 
 public class DataEditorPopupSettingsForm extends ConfigurationEditorForm<DataEditorPopupSettings> {
@@ -56,8 +58,8 @@ public class DataEditorPopupSettingsForm extends ConfigurationEditorForm<DataEdi
         settings.setActive(activeCheckBox.isSelected());
         settings.setActiveIfEmpty(activeIfEmptyCheckBox.isSelected());
         if (settings.isActive()) {
-            settings.setDataLengthThreshold(validateIntegerInputValue(lengthThresholdTextField, "Length threshold", true, 0, 999999999, null));
-            settings.setDelay(validateIntegerInputValue(delayTextField, "Delay", true, 10, 2000, null));
+            settings.setDataLengthThreshold(validateIntegerValue(lengthThresholdTextField, "Length threshold", true, 0, 999999999, null));
+            settings.setDelay(validateIntegerValue(delayTextField, "Delay", true, 10, 2000, null));
         }
     }
 

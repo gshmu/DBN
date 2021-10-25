@@ -5,10 +5,10 @@ import com.intellij.openapi.options.ConfigurationException;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import javax.swing.*;
+import javax.swing.JTextField;
 
 public class ConfigurationEditorUtil {
-    public static int validateIntegerInputValue(@NotNull JTextField inputField, @NotNull String name, boolean required, int min, int max, @Nullable String hint) throws ConfigurationException {
+    public static int validateIntegerValue(@NotNull JTextField inputField, @NotNull String name, boolean required, int min, int max, @Nullable String hint) throws ConfigurationException {
         try {
 
             String value = inputField.getText();
@@ -34,7 +34,7 @@ public class ConfigurationEditorUtil {
         }
     }
 
-    public static String validateStringInputValue(@NotNull JTextField inputField, @NotNull String name, boolean required) throws ConfigurationException {
+    public static String validateStringValue(@NotNull JTextField inputField, @NotNull String name, boolean required) throws ConfigurationException {
         String value = inputField.getText().trim();
         if (required && value.length() == 0) {
             String message = "Input value for \"" + name + "\" must be specified";

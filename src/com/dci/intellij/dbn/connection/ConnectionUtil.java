@@ -118,7 +118,7 @@ public class ConnectionUtil {
         }
 
         if (connection == null) {
-            throw new SQLException("Could not connect to database. Communication timeout");
+            throw new SQLTimeoutException("Could not connect to database. Communication timeout");
         }
 
         return connection;

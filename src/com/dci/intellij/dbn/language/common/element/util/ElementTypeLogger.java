@@ -1,6 +1,5 @@
 package com.dci.intellij.dbn.language.common.element.util;
 
-import com.dci.intellij.dbn.environment.Environment;
 import com.dci.intellij.dbn.language.common.element.ElementType;
 import com.dci.intellij.dbn.language.common.element.impl.IdentifierElementType;
 import com.dci.intellij.dbn.language.common.element.impl.IterationElementType;
@@ -12,12 +11,14 @@ import com.dci.intellij.dbn.language.common.element.impl.TokenElementType;
 import com.dci.intellij.dbn.language.common.element.parser.ParseResultType;
 import com.dci.intellij.dbn.language.common.element.parser.ParserBuilder;
 
+import static com.dci.intellij.dbn.diagnostics.Diagnostics.isLanguageParserDebug;
+
 public class ElementTypeLogger {
     private ElementTypeLogger() {}
 
     public static void logBegin(ElementType elementType, ParserBuilder builder, boolean optional, int depth) {
         // GTK enable disable debug
-        if (Environment.PARSER_DEBUG_MODE) {
+        if (isLanguageParserDebug()) {
             StringBuilder buffer = new StringBuilder();
             for (int i = 0; i < depth; i++) buffer.append('\t');
             buffer.append('"').append(elementType.getId()).append("\" [");
@@ -32,7 +33,7 @@ public class ElementTypeLogger {
     }
 
     public static void logEnd(ElementType elementType, ParseResultType resultType, int depth) {
-        if (Environment.PARSER_DEBUG_MODE) {
+        if (isLanguageParserDebug()) {
             StringBuilder buffer = new StringBuilder();
             if (!elementType.isLeaf()) {
                 for (int i = 0; i < depth; i++) buffer.append('\t');

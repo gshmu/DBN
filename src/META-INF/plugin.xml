@@ -291,16 +291,13 @@
             </action>
             <action class="com.dci.intellij.dbn.menu.action.ResourceMonitorOpenAction" text="Resource Monitor" id="DBNavigator.Actions.MainMenu.ResourceMonitor"/>
             <action class="com.dci.intellij.dbn.menu.action.PendingTransactionsOpenAction" text="Open Transactions" id="DBNavigator.Actions.MainMenu.PendingTransactions"/>
-            <separator/>
-            <group id="DBNavigator.ActionGroup.Development" text="Development" popup="true">
-                <action id="DBNavigator.Actions.MainMenu.ParserDebugMode" class="com.dci.intellij.dbn.menu.action.developer.ParserDebugToggleAction" text="Enable Parser Debug Mode"/>
-                <action id="DBNavigator.Actions.MainMenu.DatabaseAccessDebugMode" class="com.dci.intellij.dbn.menu.action.developer.DatabaseAccessDebugToggleAction" text="Enable Database Access Debug Mode"/>
-                <action id="DBNavigator.Actions.MainMenu.DatabaseResourceDebugMode" class="com.dci.intellij.dbn.menu.action.developer.DatabaseResourceDebugToggleAction" text="Enable Database Resources Debug Mode"/>
-                <action id="DBNavigator.Actions.MainMenu.DevelopmentSlowDatabase" class="com.dci.intellij.dbn.menu.action.developer.SimulateSlowDatabaseAction" text="Enable Lagging Database Simulation"/>
+            <group id="DBNavigator.ActionGroup.Diagnostics" text="Diagnostics" popup="true">
+                <action id="DBNavigator.Actions.MainMenu.DiagnosticsMonitor" class="com.dci.intellij.dbn.menu.action.DiagnosticsMonitorOpenAction" text="Diagnostics Monitor..."/>
+                <action id="DBNavigator.Actions.MainMenu.ReloadMetadataDefinitions" class="com.dci.intellij.dbn.menu.action.MetaDataDefinitionReloadAction" text="Reload Metadata Definitions"/>
                 <separator/>
-                <action id="DBNavigator.Actions.MainMenu.DevelopmentReset" class="com.dci.intellij.dbn.menu.action.MetaDataDefinitionReloadAction" text="Reload Metadata Definitions"/>
-                <action  id="DBNavigator.Actions.MainMenu.DiagnosticsMonitor" class="com.dci.intellij.dbn.menu.action.DiagnosticsMonitorOpenAction" text="Diagnostics Monitor..."/>
+                <action id="DBNavigator.Actions.MainMenu.Options" class="com.dci.intellij.dbn.menu.action.DiagnosticsSettingsOpenAction" text="Settings.."/>
             </group>
+            <separator/>
             <group id="DBNavigator.ActionGroup.ImportExportSettings" text="Default Settings" popup="true">
                 <action id="DBNavigator.Actions.MainMenu.OpenDefaultSettings" class="com.dci.intellij.dbn.menu.action.ProjectDefaultSettingsOpenAction" text="Open Default Settings..."/>
                 <action id="DBNavigator.Actions.MainMenu.LoadDefaultSettings" class="com.dci.intellij.dbn.menu.action.ProjectDefaultSettingsImportAction" text="Import Settings..."/>

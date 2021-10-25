@@ -1,7 +1,7 @@
 package com.dci.intellij.dbn.menu.action;
 
 import com.dci.intellij.dbn.connection.DatabaseInterfaceProviderFactory;
-import com.dci.intellij.dbn.environment.Environment;
+import com.dci.intellij.dbn.diagnostics.Diagnostics;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.actionSystem.Presentation;
 import com.intellij.openapi.project.DumbAwareAction;
@@ -17,7 +17,7 @@ public class MetaDataDefinitionReloadAction extends DumbAwareAction {
     @Override
     public void update(AnActionEvent e) {
         Presentation presentation = e.getPresentation();
-        presentation.setVisible(Environment.DEVELOPER_MODE);
+        presentation.setVisible(Diagnostics.isDeveloperMode());
     }
 
 }

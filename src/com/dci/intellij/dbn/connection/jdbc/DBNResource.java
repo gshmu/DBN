@@ -3,7 +3,6 @@ package com.dci.intellij.dbn.connection.jdbc;
 import com.dci.intellij.dbn.common.util.StringUtil;
 import com.dci.intellij.dbn.common.util.TimeUtil;
 import com.dci.intellij.dbn.common.util.Traceable;
-import com.dci.intellij.dbn.environment.Environment;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 
@@ -11,6 +10,8 @@ import java.sql.SQLException;
 import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
+
+import static com.dci.intellij.dbn.diagnostics.Diagnostics.isDatabaseResourceDebug;
 
 @Getter
 @Slf4j
@@ -79,7 +80,7 @@ public abstract class DBNResource<T> extends ResourceStatusHolder implements Res
             };
         }
 
-        if (Environment.DATABASE_RESOURCE_DEBUG_MODE) log.info("[DBN] Created " + this);
+        if (isDatabaseResourceDebug()) log.info("[DBN] Created " + this);
     }
 
     @Override
