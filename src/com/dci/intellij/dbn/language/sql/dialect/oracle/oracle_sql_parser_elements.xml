@@ -8347,22 +8347,25 @@
                 <one-of id="000004540">
                     <token id="000004541" type-id="FN_LAST_DAY" />
                     <token id="000004542" type-id="FN_SYS_EXTRACT_UTC" />
-                    <token id="000004543" type-id="FN_TO_YMINTERVAL" />
                 </one-of>
                 <wrapper id="000004544" template="PARENTHESES">
                     <element ref-id="expression" />
                 </wrapper>
             </sequence>
-            <sequence id="000004545">
-                <one-of id="000004546">
-                    <token id="000004547" type-id="FN_TO_CHAR" />
-                    <token id="000004548" type-id="FN_TO_TIMESTAMP" />
-                    <token id="000004549" type-id="FN_TO_TIMESTAMP_TZ" />
+            <sequence id="000002321">
+                <one-of id="000002322">
+                    <token id="000002324" type-id="FN_TO_TIMESTAMP" />
+                    <token id="000002325" type-id="FN_TO_TIMESTAMP_TZ" />
+                    <token id="000002374" type-id="FN_TO_DATE" />
+                    <token id="000002376" type-id="FN_TO_DSINTERVAL" />
+                    <token id="000002319" type-id="FN_TO_YMINTERVAL" />
                 </one-of>
-                <wrapper id="000004550" template="PARENTHESES">
-                    <iteration elements-count="1-3" id="000004551" separator="CHR_COMMA">
+                <wrapper id="000002326" template="PARENTHESES">
+                    <sequence>
                         <element ref-id="expression" />
-                    </iteration>
+                        <element ref-id="default_on_conversion_error" optional="true"/>
+                        <element ref-id="fmt_nlsparam" optional="true"/>
+                    </sequence>
                 </wrapper>
             </sequence>
             <sequence id="000004552">
@@ -8423,32 +8426,36 @@
                     <element optional="true" ref-id="expression" />
                 </wrapper>
             </sequence>
+            <sequence id="000002321">
+                <one-of id="000002322">
+                    <token id="000002372" type-id="FN_TO_BINARY_DOUBLE" />
+                    <token id="000002373" type-id="FN_TO_BINARY_FLOAT" />
+                    <token id="000002376" type-id="FN_TO_NUMBER" />
+                </one-of>
+                <wrapper id="000002326" template="PARENTHESES">
+                    <sequence>
+                        <element ref-id="expression" />
+                        <element ref-id="default_on_conversion_error" optional="true"/>
+                        <element ref-id="fmt_nlsparam" optional="true"/>
+                    </sequence>
+                </wrapper>
+            </sequence>
+            <sequence>
+                <one-of>
+                    <token id="000002375" type-id="FN_TO_NCHAR" />
+                    <token id="000002323" type-id="FN_TO_CHAR" />
+                </one-of>
+                <wrapper id="000002326" template="PARENTHESES">
+                    <sequence>
+                        <element ref-id="expression" />
+                        <element ref-id="fmt_nlsparam" optional="true"/>
+                    </sequence>
+                </wrapper>
+            </sequence>
             <sequence id="000004590">
                 <token id="000004591" type-id="FN_BIN_TO_NUM" />
                 <wrapper id="000004592" template="PARENTHESES">
                     <iteration id="000004593" separator="CHR_COMMA">
-                        <element ref-id="expression" />
-                    </iteration>
-                </wrapper>
-            </sequence>
-            <sequence id="000004594">
-                <token id="000004595" type-id="FN_TO_DSINTERVAL" />
-                <wrapper id="000004596" template="PARENTHESES">
-                    <iteration elements-count="1-2" id="000004597" separator="CHR_COMMA">
-                        <element ref-id="expression" />
-                    </iteration>
-                </wrapper>
-            </sequence>
-            <sequence id="000004598">
-                <one-of id="000004599">
-                    <token id="000004600" type-id="FN_TO_BINARY_DOUBLE" />
-                    <token id="000004601" type-id="FN_TO_BINARY_FLOAT" />
-                    <token id="000004602" type-id="FN_TO_DATE" />
-                    <token id="000004603" type-id="FN_TO_NCHAR" />
-                    <token id="000004604" type-id="FN_TO_NUMBER" />
-                </one-of>
-                <wrapper id="000004605" template="PARENTHESES">
-                    <iteration elements-count="1-3" id="000004606" separator="CHR_COMMA">
                         <element ref-id="expression" />
                     </iteration>
                 </wrapper>
@@ -8477,13 +8484,13 @@
                 <wrapper id="000004619" template="PARENTHESES">
                     <sequence id="000004620">
                         <one-of id="000004621">
-                            <element ref-id="expression" />
                             <sequence id="000004622">
                                 <token id="000004623" type-id="KW_MULTISET" />
                                 <wrapper id="000004624" template="PARENTHESES">
                                     <element ref-id="subquery" />
                                 </wrapper>
                             </sequence>
+                            <element ref-id="expression" />
                         </one-of>
                         <token id="000004625" type-id="KW_AS" />
                         <one-of id="000004626" original-name="type_name">
@@ -10303,6 +10310,23 @@
             <token id="000005632" type-id="KW_LAST" />
             <token flavor="keyword" id="000005633" type-id="FN_COUNT" />
         </one-of>
+    </element-def>
+    <element-def custom="true" description="DEFAULT ON CONVERSION ERROR" id="default_on_conversion_error">
+        <token type-id="KW_DEFAULT"/>
+        <element ref-id="expression"/>
+        <token type-id="KW_ON"/>
+        <token type-id="KW_CONVERSION"/>
+        <token type-id="KW_ERROR"/>
+    </element-def>
+    <element-def custom="true" description="FMT NLSPARAM" id="fmt_nlsparam">
+        <sequence id="000002513">
+            <token type-id="CHR_COMMA" id="000002514" />
+            <token original-name="fmt" type-id="STRING" id="000002515" />
+            <sequence optional="true" id="000002516">
+                <token type-id="CHR_COMMA" id="000002517" />
+                <token original-name="nlsparam" type-id="STRING" id="000002518" />
+            </sequence>
+        </sequence>
     </element-def>
     <element-def custom="true" description="DBLINK qualifier" id="dblink_qualifier">
         <token id="000005634" type-id="CHR_AT" />
