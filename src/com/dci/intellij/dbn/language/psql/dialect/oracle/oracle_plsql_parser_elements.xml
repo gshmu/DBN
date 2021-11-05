@@ -6588,37 +6588,37 @@
         </one-of>
     </element-def>
     <element-def custom="true" description="DEFAULT ON CONVERSION ERROR" id="default_on_conversion_error">
-        <token type-id="KW_DEFAULT" id="000003432" />
+        <token id="000003432" type-id="KW_DEFAULT" />
         <element ref-id="expression" />
-        <token type-id="KW_ON" id="000003433" />
-        <token type-id="KW_CONVERSION" id="000003434" />
-        <token type-id="KW_ERROR" id="000003435" />
+        <token id="000003433" type-id="KW_ON" />
+        <token id="000003434" type-id="KW_CONVERSION" />
+        <token id="000003435" type-id="KW_ERROR" />
     </element-def>
     <element-def custom="true" description="FMT NLSPARAM" id="fmt_nlsparam">
         <sequence id="000003436">
             <token id="000003437" type-id="CHR_COMMA" />
-            <token id="000003438" original-name="fmt" type-id="STRING" />
-            <sequence id="000003439" optional="true">
-                <token id="000003440" type-id="CHR_COMMA" />
-                <token id="000003441" original-name="nlsparam" type-id="STRING" />
+            <element original-name="fmt" ref-id="expression" />
+            <sequence id="000003438" optional="true">
+                <token id="000003439" type-id="CHR_COMMA" />
+                <element original-name="nlsparam" ref-id="expression" />
             </sequence>
         </sequence>
     </element-def>
 
     <element-def description="Unknown identifier" id="custom_undefined">
-        <token id="000003442" type-id="IDENTIFIER" />
+        <token id="000003440" type-id="IDENTIFIER" />
     </element-def>
     <element-def description="Number" id="number">
-        <one-of id="000003443" optional="true">
-            <token id="000003444" type-id="CHR_MINUS" />
-            <token id="000003445" type-id="CHR_PLUS" />
+        <one-of id="000003441" optional="true">
+            <token id="000003442" type-id="CHR_MINUS" />
+            <token id="000003443" type-id="CHR_PLUS" />
         </one-of>
-        <one-of id="000003446">
-            <token id="000003447" type-id="NUMBER" />
-            <token id="000003448" type-id="INTEGER" />
+        <one-of id="000003444">
+            <token id="000003445" type-id="NUMBER" />
+            <token id="000003446" type-id="INTEGER" />
         </one-of>
     </element-def>
     <element-def description="Statement end" formatting-spacing-before="NO_SPACE" id="end" truncate-on-execution="true">
-        <token id="000003449" type-id="CHR_SLASH" />
+        <token id="000003447" type-id="CHR_SLASH" />
     </element-def>
 </element-defs>
