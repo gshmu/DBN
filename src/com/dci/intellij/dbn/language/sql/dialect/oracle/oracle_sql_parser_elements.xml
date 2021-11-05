@@ -10312,34 +10312,34 @@
         </one-of>
     </element-def>
     <element-def custom="true" description="DEFAULT ON CONVERSION ERROR" id="default_on_conversion_error">
-        <token type-id="KW_DEFAULT" id="000005635" />
+        <token id="000005635" type-id="KW_DEFAULT" />
         <element ref-id="expression" />
-        <token type-id="KW_ON" id="000005636" />
-        <token type-id="KW_CONVERSION" id="000005637" />
-        <token type-id="KW_ERROR" id="000005638" />
+        <token id="000005636" type-id="KW_ON" />
+        <token id="000005637" type-id="KW_CONVERSION" />
+        <token id="000005638" type-id="KW_ERROR" />
     </element-def>
     <element-def custom="true" description="FMT NLSPARAM" id="fmt_nlsparam">
         <sequence id="000005639">
             <token id="000005640" type-id="CHR_COMMA" />
-            <token id="000005641" original-name="fmt" type-id="STRING" />
-            <sequence id="000005642" optional="true">
-                <token id="000005643" type-id="CHR_COMMA" />
-                <token id="000005644" original-name="nlsparam" type-id="STRING" />
+            <element original-name="fmt" ref-id="expression" />
+            <sequence id="000005641" optional="true">
+                <token id="000005642" type-id="CHR_COMMA" />
+                <element original-name="nlsparam" ref-id="expression" />
             </sequence>
         </sequence>
     </element-def>
     <element-def custom="true" description="DBLINK qualifier" id="dblink_qualifier">
-        <token id="000005645" type-id="CHR_AT" />
-        <object-ref id="000005646" type="DBLINK" />
+        <token id="000005643" type-id="CHR_AT" />
+        <object-ref id="000005644" type="DBLINK" />
     </element-def>
 
     <element-def description="Unknown identifier" id="custom_undefined">
-        <token id="000005647" type-id="IDENTIFIER" />
+        <token id="000005645" type-id="IDENTIFIER" />
     </element-def>
     <element-def description="Statement end" formatting-spacing-before="NO_SPACE" id="end" truncate-on-execution="true">
-        <one-of id="000005648">
-            <token id="000005649" type-id="CHR_SEMICOLON" />
-            <token id="000005650" type-id="CHR_SLASH" />
+        <one-of id="000005646">
+            <token id="000005647" type-id="CHR_SEMICOLON" />
+            <token id="000005648" type-id="CHR_SLASH" />
         </one-of>
     </element-def>
 </element-defs>
