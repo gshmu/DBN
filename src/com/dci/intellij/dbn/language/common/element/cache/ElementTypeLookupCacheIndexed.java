@@ -74,11 +74,11 @@ public abstract class ElementTypeLookupCacheIndexed<T extends ElementTypeBase> e
 
     @Override
     public Set<LeafElementType> getFirstPossibleLeafs() {
-        return firstPossibleLeafs.elements(index -> LeafElementType.forIndex(index));
+        return firstPossibleLeafs.elements(index -> getElementTypeBundle().getElement(index));
     }
     @Override
     public Set<LeafElementType> getFirstRequiredLeafs() {
-        return firstRequiredLeafs.elements(index -> LeafElementType.forIndex(index));
+        return firstRequiredLeafs.elements(index -> getElementTypeBundle().getElement(index));
     }
 
     @Override

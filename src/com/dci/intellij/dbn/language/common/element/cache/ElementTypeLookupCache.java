@@ -7,6 +7,7 @@ import com.dci.intellij.dbn.language.common.DBLanguage;
 import com.dci.intellij.dbn.language.common.SharedTokenTypeBundle;
 import com.dci.intellij.dbn.language.common.TokenType;
 import com.dci.intellij.dbn.language.common.TokenTypeBundle;
+import com.dci.intellij.dbn.language.common.element.ElementTypeBundle;
 import com.dci.intellij.dbn.language.common.element.impl.ElementTypeBase;
 import com.dci.intellij.dbn.language.common.element.impl.LeafElementType;
 import com.dci.intellij.dbn.language.common.element.impl.WrappingDefinition;
@@ -57,6 +58,10 @@ public abstract class ElementTypeLookupCache<T extends ElementTypeBase>/* implem
 
     protected DBLanguage getLanguage() {
         return elementType.getLanguage();
+    }
+
+    protected ElementTypeBundle getElementTypeBundle() {
+        return elementType.getElementBundle();
     }
 
     protected SharedTokenTypeBundle getSharedTokenTypes() {

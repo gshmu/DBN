@@ -1,5 +1,6 @@
 package com.dci.intellij.dbn.language.common.element;
 
+import com.dci.intellij.dbn.common.index.IndexRegistry;
 import com.dci.intellij.dbn.common.thread.Background;
 import com.dci.intellij.dbn.common.util.Measured;
 import com.dci.intellij.dbn.language.common.DBLanguage;
@@ -29,14 +30,15 @@ import static com.dci.intellij.dbn.common.options.setting.SettingsSupport.string
 
 @Slf4j
 public class ElementTypeBundle {
-    private final AtomicInteger INDEXER = new AtomicInteger();
+    private final AtomicInteger leafIndexer = new AtomicInteger();
+    private final IndexRegistry<LeafElementType> leafRegistry = new IndexRegistry<>();
+
     private final TokenTypeBundle tokenTypeBundle;
     private BasicElementType unknownElementType;
     private NamedElementType rootElementType;
 
     private final DBLanguageDialect languageDialect;
     private final AtomicInteger idCursor = new AtomicInteger();
-    private final boolean idsDirty = false;
 
     private transient Builder builder = new Builder();
     private final Map<String, NamedElementType> namedElementTypes = new ConcurrentHashMap<>();
@@ -49,6 +51,14 @@ public class ElementTypeBundle {
         //private Set<OneOfElementType> oneOfElementTypes = new THashSet<OneOfElementType>();
         private final Set<ElementType> allElementTypes = new THashSet<>();
         private boolean rewriteIds;
+    }
+
+    public void registerElement(LeafElementType tokenType) {
+        leafRegistry.add(tokenType);
+    }
+
+    public LeafElementType getElement(int index) {
+        return leafRegistry.get(index);
     }
 
 
@@ -119,7 +129,7 @@ public class ElementTypeBundle {
     }
 
     public int nextIndex() {
-        return INDEXER.incrementAndGet();
+        return leafIndexer.incrementAndGet();
     }
 
     public TokenTypeBundle getTokenTypeBundle() {
