@@ -162,7 +162,7 @@ public abstract class ResourceStatusAdapterImpl<T extends Resource> implements R
             } catch (SQLException e) {
                 exception.set(e);
                 return terminalStatus == null ? value() : terminalStatus;
-            } catch (AbstractMethodError e) {
+            } catch (AbstractMethodError | NoSuchMethodError e) {
                 // not implemented (??) TODO suggest using built in drivers
                 log.warn("Functionality not supported by jdbc driver", e);
                 return value();
