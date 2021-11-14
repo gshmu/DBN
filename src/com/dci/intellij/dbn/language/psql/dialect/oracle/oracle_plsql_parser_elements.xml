@@ -2267,6 +2267,10 @@
                         <object-ref id="000001119" local="true" optional="true" type="DATASET" />
                         <object-ref id="000001120" type="COLUMN" />
                     </variant>
+                    <variant>
+                        <alias-ref id="000001117" local="true" optional="true" type="DATASET" />
+                        <object-ref id="000001118" type="COLUMN" />
+                    </variant>
                 </qualified-identifier>
             </iteration>
         </sequence>
