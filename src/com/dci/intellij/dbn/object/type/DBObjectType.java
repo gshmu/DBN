@@ -9,16 +9,8 @@ import com.dci.intellij.dbn.editor.DBContentType;
 import lombok.Getter;
 import org.jetbrains.annotations.Nullable;
 
-import javax.swing.Icon;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.EnumMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Set;
-import java.util.StringTokenizer;
+import javax.swing.*;
+import java.util.*;
 
 @Getter
 public enum DBObjectType implements DynamicContentType<DBObjectType> {
@@ -98,6 +90,7 @@ public enum DBObjectType implements DynamicContentType<DBObjectType> {
     PARAMETER(DatabaseObjectTypeId.PARAMETER, "parameter", "parameters", null, null, null, false),
     EXCEPTION(DatabaseObjectTypeId.EXCEPTION, "exception", "exceptions", null, null, null, false),
     SAVEPOINT(DatabaseObjectTypeId.SAVEPOINT, "savepoint", "savepoints", null, null, null, false),
+    LANGUAGE(DatabaseObjectTypeId.LANGUAGE, "language", "languages", null, null, null, false),
     WINDOW(DatabaseObjectTypeId.WINDOW, "window", "windows", null, null, null, false),
 
     LABEL(DatabaseObjectTypeId.LABEL, "label", "labels", null, null, null, false),

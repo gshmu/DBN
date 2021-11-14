@@ -3,6 +3,7 @@ package com.dci.intellij.dbn.common.compatibility;
 import com.dci.intellij.dbn.common.project.ProjectRef;
 import com.intellij.openapi.Disposable;
 import com.intellij.openapi.fileEditor.FileEditor;
+import com.intellij.openapi.fileEditor.impl.NonProjectFileWritingAccessExtension;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.ui.EditorNotifications;
@@ -11,7 +12,7 @@ import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
 
-public abstract class LegacyEditorNotificationsProvider<T extends JComponent> extends EditorNotifications.Provider<T> implements Disposable {
+public abstract class LegacyEditorNotificationsProvider<T extends JComponent> extends EditorNotifications.Provider<T> implements NonProjectFileWritingAccessExtension, Disposable {
     private final ProjectRef project;
 
     public LegacyEditorNotificationsProvider() {

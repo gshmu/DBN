@@ -70,6 +70,7 @@ public enum DatabaseObjectTypeId {
     VARRAY_TYPE,
     VIEW,
 
+
     XMLTYPE,
     CURSOR,
     RECORD,
@@ -82,6 +83,7 @@ public enum DatabaseObjectTypeId {
     VARIABLE,
     SAVEPOINT,
     EXCEPTION,
+    LANGUAGE,
     WINDOW,
 
     CONSOLE,
