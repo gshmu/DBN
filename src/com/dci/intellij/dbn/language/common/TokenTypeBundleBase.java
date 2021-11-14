@@ -20,8 +20,8 @@ import static com.dci.intellij.dbn.common.options.setting.SettingsSupport.string
 
 @Slf4j
 public abstract class TokenTypeBundleBase {
-    private final IndexRegistry<TokenType> REGISTRY = new IndexRegistry<>();
-    protected final AtomicInteger INDEXER = new AtomicInteger();
+    private final AtomicInteger tokenIndexer = new AtomicInteger();
+    private final IndexRegistry<TokenType> tokenRegistry = new IndexRegistry<>();
 
     private final Language language;
     private SimpleTokenType[] keywords;
@@ -58,23 +58,23 @@ public abstract class TokenTypeBundleBase {
     }
 
     protected void initIndex(int index) {
-        INDEXER.set(index);
+        tokenIndexer.set(index);
     }
 
     protected int size() {
-        return REGISTRY.size();
+        return tokenRegistry.size();
     }
 
     protected int nextIndex() {
-        return INDEXER.incrementAndGet();
+        return tokenIndexer.incrementAndGet();
     }
 
     protected void registerToken(TokenType tokenType) {
-        REGISTRY.add(tokenType);
+        tokenRegistry.add(tokenType);
     }
 
     public TokenType getTokenType(int index) {
-        return REGISTRY.get(index);
+        return tokenRegistry.get(index);
     }
 
     private void loadDefinition(Language language, Document document) {

@@ -43,8 +43,6 @@ import static com.dci.intellij.dbn.common.options.setting.SettingsSupport.string
 public abstract class ElementTypeBase<T extends ElementTypeBase<T>> extends IElementType implements ElementType {
     private static final FormattingDefinition STATEMENT_FORMATTING = new FormattingDefinition(null, IndentDefinition.NORMAL, SpacingDefinition.MIN_LINE_BREAK, null);
 
-    private final int idx;
-
     private final String id;
     private final int hashCode;
     private String description;
@@ -66,7 +64,6 @@ public abstract class ElementTypeBase<T extends ElementTypeBase<T>> extends IEle
 
     ElementTypeBase(@NotNull ElementTypeBundle bundle, ElementTypeBase parent, String id, @Nullable String description) {
         super(id, bundle.getLanguageDialect(), false);
-        this.idx = bundle.nextIndex();
         this.id = id.intern();
         this.hashCode = System.identityHashCode(this);
         this.description = description;
@@ -76,7 +73,6 @@ public abstract class ElementTypeBase<T extends ElementTypeBase<T>> extends IEle
 
     ElementTypeBase(@NotNull ElementTypeBundle bundle, ElementTypeBase parent, String id, @NotNull Element def) throws ElementTypeDefinitionException {
         super(id, bundle.getLanguageDialect(), false);
-        this.idx = bundle.nextIndex();
         String defId = stringAttribute(def, "id");
         this.hashCode = System.identityHashCode(this);
         if (!Objects.equals(id, defId)) {
@@ -91,11 +87,6 @@ public abstract class ElementTypeBase<T extends ElementTypeBase<T>> extends IEle
             log.warn('[' + getLanguageDialect().getID() + "] Invalid element attribute 'exit'. (id=" + this.id + "). Attribute is only allowed for direct child of sequence element");
         }
         loadDefinition(def);
-    }
-
-    @Override
-    public int index() {
-        return idx;
     }
 
     Set<BranchCheck> parseBranchChecks(String definitions) {

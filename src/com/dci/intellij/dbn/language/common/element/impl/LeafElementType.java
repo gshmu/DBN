@@ -1,6 +1,6 @@
 package com.dci.intellij.dbn.language.common.element.impl;
 
-import com.dci.intellij.dbn.common.index.IndexRegistry;
+import com.dci.intellij.dbn.common.index.Indexable;
 import com.dci.intellij.dbn.language.common.TokenType;
 import com.dci.intellij.dbn.language.common.element.ChameleonElementType;
 import com.dci.intellij.dbn.language.common.element.ElementType;
@@ -27,24 +27,26 @@ import java.util.Set;
 
 @Getter
 @Setter
-public abstract class LeafElementType extends ElementTypeBase<LeafElementType> {
-    private static final IndexRegistry<LeafElementType> REGISTRY = new IndexRegistry<>();
-
-    public static LeafElementType forIndex(int index) {
-        return REGISTRY.get(index);
-    }
-
+public abstract class LeafElementType extends ElementTypeBase<LeafElementType> implements Indexable {
     private TokenType tokenType;
     private boolean optional;
+    private int idx;
 
     LeafElementType(ElementTypeBundle bundle, ElementTypeBase parent, String id, Element def) throws ElementTypeDefinitionException {
         super(bundle, parent, id, def);
-        REGISTRY.add(this);
+        idx = bundle.nextIndex();
+        bundle.registerElement(this);
     }
 
     LeafElementType(ElementTypeBundle bundle, ElementTypeBase parent, String id, String description) {
         super(bundle, parent, id, description);
-        REGISTRY.add(this);
+        idx = bundle.nextIndex();
+        bundle.registerElement(this);
+    }
+
+    @Override
+    public int index() {
+        return idx;
     }
 
     public void registerLeaf() {
