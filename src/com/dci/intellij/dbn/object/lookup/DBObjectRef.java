@@ -5,11 +5,7 @@ import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.common.state.PersistentStateElement;
 import com.dci.intellij.dbn.common.thread.Timeout;
 import com.dci.intellij.dbn.common.util.StringUtil;
-import com.dci.intellij.dbn.connection.ConnectionCache;
-import com.dci.intellij.dbn.connection.ConnectionHandler;
-import com.dci.intellij.dbn.connection.ConnectionId;
-import com.dci.intellij.dbn.connection.ConnectionManager;
-import com.dci.intellij.dbn.connection.ConnectionProvider;
+import com.dci.intellij.dbn.connection.*;
 import com.dci.intellij.dbn.language.common.WeakRef;
 import com.dci.intellij.dbn.object.DBSchema;
 import com.dci.intellij.dbn.object.common.DBObject;
@@ -19,6 +15,7 @@ import com.dci.intellij.dbn.object.type.DBObjectType;
 import com.intellij.openapi.project.Project;
 import lombok.Getter;
 import lombok.Setter;
+import lombok.extern.slf4j.Slf4j;
 import org.jdom.Element;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -31,6 +28,7 @@ import static com.dci.intellij.dbn.common.options.setting.SettingsSupport.connec
 import static com.dci.intellij.dbn.common.options.setting.SettingsSupport.stringAttribute;
 import static com.dci.intellij.dbn.vfs.DatabaseFileSystem.PS;
 
+@Slf4j
 @Getter
 @Setter
 public class DBObjectRef<T extends DBObject> implements Comparable, Reference<T>, PersistentStateElement, ConnectionProvider {
@@ -99,9 +97,13 @@ public class DBObjectRef<T extends DBObject> implements Comparable, Reference<T>
     public static <T extends DBObject> DBObjectRef<T> from(Element element) {
         String objectRefDefinition = stringAttribute(element, "object-ref");
         if (StringUtil.isNotEmpty(objectRefDefinition)) {
-            DBObjectRef<T> objectRef = new DBObjectRef<>();
-            objectRef.readState(element);
-            return objectRef;
+            try {
+                DBObjectRef<T> objectRef = new DBObjectRef<>();
+                objectRef.readState(element);
+                return objectRef;
+            } catch (Exception e) {
+                log.error("Failed to deserialize object-ref: {}", objectRefDefinition, e);
+            }
         }
         return null;
     }
