@@ -1,6 +1,6 @@
 package com.dci.intellij.dbn.data.grid.ui.table.basic;
 
-import com.dci.intellij.dbn.common.util.Safe;
+import com.dci.intellij.dbn.common.thread.Dispatch;
 import com.dci.intellij.dbn.data.grid.options.DataGridSettings;
 import com.intellij.ide.IdeTooltip;
 import com.intellij.ide.IdeTooltipManager;
@@ -9,8 +9,9 @@ import com.intellij.ui.components.JBScrollPane;
 import com.intellij.util.Alarm;
 import com.intellij.util.ui.UIUtil;
 
-import javax.swing.*;
-import java.awt.*;
+import javax.swing.JLabel;
+import java.awt.Component;
+import java.awt.Font;
 import java.awt.event.MouseWheelEvent;
 
 public class BasicTableScrollPane extends JBScrollPane{
@@ -34,7 +35,7 @@ public class BasicTableScrollPane extends JBScrollPane{
                     float defaultSize = UIUtil.getLabelFont().getSize();
                     int percentage = (int) (size / defaultSize * 100);
 
-                    Safe.queueRequest(resizeAlarm, 10, true, () -> {
+                    Dispatch.alarmRequest(resizeAlarm, 10, true, () -> {
                         IdeTooltip tooltip = new IdeTooltip(this, e.getPoint(), new JLabel(percentage + "%"));
                         tooltip.setFont(UIUtil.getLabelFont().deriveFont((float) 16));
                         IdeTooltipManager.getInstance().show(tooltip, true);
