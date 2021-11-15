@@ -6,8 +6,8 @@ import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.common.event.ProjectEvents;
 import com.dci.intellij.dbn.common.notification.NotificationGroup;
 import com.dci.intellij.dbn.common.notification.NotificationSupport;
+import com.dci.intellij.dbn.common.thread.Dispatch;
 import com.dci.intellij.dbn.common.thread.Write;
-import com.dci.intellij.dbn.common.util.Safe;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.database.DatabaseDDLInterface;
 import com.dci.intellij.dbn.ddl.options.DDLFileExtensionSettings;
@@ -55,10 +55,10 @@ public class DDLFileManager extends AbstractProjectComponent implements Persiste
         startupManager.registerPostStartupActivity((DumbAwareRunnable) () -> registerExtensions(getExtensionSettings()));
     }
 
-    private final Alarm extensionRegisterer = new Alarm(DDLFileManager.this);
+    private final Alarm extensionRegisterer = Dispatch.alarm(DDLFileManager.this);
 
     public void registerExtensions(DDLFileExtensionSettings settings) {
-        Safe.queueRequest(extensionRegisterer, 0, false, () ->
+        Dispatch.alarmRequest(extensionRegisterer, 0, false, () ->
                 Write.run(getProject(), () -> {
                     FileTypeManager fileTypeManager = FileTypeManager.getInstance();
                     List<DDLFileType> ddlFileTypeList = settings.getFileTypes();

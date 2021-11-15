@@ -13,7 +13,6 @@ import com.dci.intellij.dbn.common.ui.table.DBNTableHeaderRenderer;
 import com.dci.intellij.dbn.common.ui.table.DBNTableWithGutter;
 import com.dci.intellij.dbn.common.ui.table.TableSelectionRestorer;
 import com.dci.intellij.dbn.common.util.MathResult;
-import com.dci.intellij.dbn.common.util.Safe;
 import com.dci.intellij.dbn.data.grid.color.DataGridTextAttributes;
 import com.dci.intellij.dbn.data.grid.options.DataGridSettings;
 import com.dci.intellij.dbn.data.model.DataModelCell;
@@ -42,7 +41,12 @@ import javax.swing.event.TableModelEvent;
 import javax.swing.table.JTableHeader;
 import javax.swing.table.TableCellRenderer;
 import javax.swing.table.TableColumn;
-import java.awt.*;
+import java.awt.Color;
+import java.awt.Component;
+import java.awt.Font;
+import java.awt.MouseInfo;
+import java.awt.Point;
+import java.awt.Rectangle;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseMotionAdapter;
 import java.math.BigDecimal;
@@ -131,11 +135,11 @@ public class BasicTable<T extends BasicDataModel<?, ?>> extends DBNTableWithGutt
         });
 
         addMouseMotionListener(new MouseMotionAdapter() {
-            private final Alarm runner = new Alarm(BasicTable.this);
+            private final Alarm runner = Dispatch.alarm(BasicTable.this);
             @Override
             public void mouseMoved(MouseEvent e) {
                 if (selectionMath != null && isCellSelected(e.getPoint())) {
-                    Safe.queueRequest(runner, 100, true, () -> showSelectionTooltip());
+                    Dispatch.alarmRequest(runner, 100, true, () -> showSelectionTooltip());
                 }
             }
         });

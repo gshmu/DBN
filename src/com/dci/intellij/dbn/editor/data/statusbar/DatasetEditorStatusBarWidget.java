@@ -5,6 +5,7 @@ import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.common.compatibility.CompatibilityUtil;
 import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.common.event.ProjectEvents;
+import com.dci.intellij.dbn.common.thread.Dispatch;
 import com.dci.intellij.dbn.common.ui.GUIUtil;
 import com.dci.intellij.dbn.common.util.MathResult;
 import com.dci.intellij.dbn.common.util.Safe;
@@ -22,15 +23,17 @@ import com.intellij.util.Alarm;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import javax.swing.*;
-import java.awt.*;
+import javax.swing.JComponent;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import java.awt.BorderLayout;
 
 public class DatasetEditorStatusBarWidget extends AbstractProjectComponent implements CustomStatusBarWidget, FileEditorManagerListener {
     private static final String WIDGET_ID = DatasetEditorStatusBarWidget.class.getName();
     public static final String COMPONENT_NAME = "DBNavigator.Project.DatasetEditorStatusBarWidget";
 
     private final JLabel textLabel;
-    private final Alarm updateAlarm = new Alarm(this);
+    private final Alarm updateAlarm = Dispatch.alarm(this);
     private final JPanel component = new JPanel(new BorderLayout());
 
     DatasetEditorStatusBarWidget(@NotNull Project project) {
@@ -90,7 +93,7 @@ public class DatasetEditorStatusBarWidget extends AbstractProjectComponent imple
     }
 
     public void update() {
-        Safe.queueRequest(updateAlarm, 100, true, () -> {
+        Dispatch.alarmRequest(updateAlarm, 100, true, () -> {
             DatasetEditorTable editorTable = getEditorTable();
             MathResult mathResult = Safe.call(editorTable, table -> table.getSelectionMath());
 
