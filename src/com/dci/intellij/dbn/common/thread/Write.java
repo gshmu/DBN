@@ -8,8 +8,10 @@ import com.intellij.openapi.project.Project;
 
 import static com.dci.intellij.dbn.common.dispose.Failsafe.nd;
 
-public interface Write {
-    static void run(Runnable runnable) {
+public final class Write {
+    private Write() {}
+
+    public static void run(Runnable runnable) {
         Dispatch.run(() -> {
             Application application = ApplicationManager.getApplication();
             application.runWriteAction(
@@ -21,7 +23,7 @@ public interface Write {
         });
     }
 
-    static void run(Project project, Runnable runnable) {
+    public static void run(Project project, Runnable runnable) {
         Dispatch.run(() -> {
             WriteCommandAction.writeCommandAction(nd(project)).run(() -> {
                 try {
