@@ -1,5 +1,6 @@
 package com.dci.intellij.dbn.options.ui;
 
+import com.dci.intellij.dbn.common.thread.Dispatch;
 import com.dci.intellij.dbn.common.ui.dialog.DBNDialog;
 import com.dci.intellij.dbn.common.util.MessageUtil;
 import com.dci.intellij.dbn.connection.ConnectionId;
@@ -14,7 +15,9 @@ import com.intellij.util.Alarm;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import javax.swing.*;
+import javax.swing.AbstractAction;
+import javax.swing.Action;
+import javax.swing.JButton;
 import java.awt.event.ActionEvent;
 
 public class ProjectSettingsDialog extends DBNDialog<ProjectSettingsForm> {
@@ -100,7 +103,7 @@ public class ProjectSettingsDialog extends DBNDialog<ProjectSettingsForm> {
     }
 
     private class ApplyAction extends AbstractAction {
-        private final Alarm alarm = new Alarm(ProjectSettingsDialog.this);
+        private final Alarm alarm = Dispatch.alarm(ProjectSettingsDialog.this);
         private final Runnable reloader = new Runnable() {
             @Override
             public void run() {
