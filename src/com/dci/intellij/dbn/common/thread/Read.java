@@ -6,12 +6,14 @@ import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.progress.ProcessCanceledException;
 import com.intellij.openapi.util.Computable;
 
-public interface Read {
-    static <T> T call(ThrowableCallable<T, RuntimeException> callable) {
+public final class Read {
+    private Read() {}
+
+    public static <T> T call(ThrowableCallable<T, RuntimeException> callable) {
         return call(callable, null);
     }
 
-    static <T> T call(ThrowableCallable<T, RuntimeException> callable, T defaultValue) {
+    public static <T> T call(ThrowableCallable<T, RuntimeException> callable, T defaultValue) {
         return getApplication().runReadAction((Computable<T>) () -> {
             try {
                 return callable.call();
@@ -21,7 +23,7 @@ public interface Read {
         });
     }
 
-    static <T> T conditional(ThrowableCallable<T, RuntimeException> callable) {
+    public static <T> T conditional(ThrowableCallable<T, RuntimeException> callable) {
         if (getApplication().isReadAccessAllowed()) {
             return callable.call();
         } else {
@@ -30,7 +32,7 @@ public interface Read {
     }
 
 
-    static <T> T conditional(ThrowableCallable<T, RuntimeException> callable, T defaultValue) {
+    public static <T> T conditional(ThrowableCallable<T, RuntimeException> callable, T defaultValue) {
         if (getApplication().isReadAccessAllowed()) {
             try {
                 return callable.call();
@@ -42,7 +44,7 @@ public interface Read {
         }
     }
 
-    static void run(Runnable runnable) {
+    public static void run(Runnable runnable) {
         Application application = getApplication();
         application.runReadAction(() -> {
             try {
@@ -52,7 +54,7 @@ public interface Read {
     }
 
 
-    static Application getApplication() {
+    private static Application getApplication() {
         return ApplicationManager.getApplication();
     }
 }

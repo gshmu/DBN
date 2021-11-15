@@ -175,10 +175,10 @@ public class DatasetEditorTable extends ResultSetTable<DatasetEditorModel> {
     }
 
     public void performUpdate(Runnable runnable) {
+        DatasetEditorModel model = getModel();
+        model.set(UPDATING, true);
         Background.run(() -> {
-            DatasetEditorModel model = getModel();
             try {
-                model.set(UPDATING, true);
                 runnable.run();
             } finally {
                 model.set(UPDATING, false);
@@ -380,9 +380,10 @@ public class DatasetEditorTable extends ResultSetTable<DatasetEditorModel> {
 
     @Override
     public void sort() {
-        if (!isLoading()) {
+        DatasetEditorModel model = getModel();
+        if (!isLoading() && !model.is(UPDATING)) {
             super.sort();
-            if (!getModel().isResultSetExhausted()) {
+            if (!model.isResultSetExhausted()) {
                 getDatasetEditor().loadData(SORT_LOAD_INSTRUCTIONS);
             }
             resizeAndRepaint();
@@ -392,15 +393,17 @@ public class DatasetEditorTable extends ResultSetTable<DatasetEditorModel> {
     @Override
     public boolean sort(int columnIndex, SortDirection sortDirection, boolean keepExisting) {
         int modelColumnIndex = convertColumnIndexToModel(columnIndex);
-        ColumnInfo columnInfo = getModel().getColumnInfo(modelColumnIndex);
+        DatasetEditorModel model = getModel();
+        ColumnInfo columnInfo = model.getColumnInfo(modelColumnIndex);
         if (columnInfo.isSortable()) {
-            if (!isLoading() && super.sort(columnIndex, sortDirection, keepExisting)) {
-                if (!getModel().isResultSetExhausted()) {
+            if (!isLoading() && !model.is(UPDATING)) {
+                boolean sorted = super.sort(columnIndex, sortDirection, keepExisting);
+
+                if (sorted && !model.isResultSetExhausted()) {
                     getDatasetEditor().loadData(SORT_LOAD_INSTRUCTIONS);
                 }
-                return true;
+                return sorted;
             }
-            return false;
         }
         return false;
     }
