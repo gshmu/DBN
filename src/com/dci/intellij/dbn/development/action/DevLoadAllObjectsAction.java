@@ -1,8 +1,9 @@
-package com.dci.intellij.dbn.connection.action;
+package com.dci.intellij.dbn.development.action;
 
 import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.common.thread.Progress;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
+import com.dci.intellij.dbn.connection.action.AbstractConnectionAction;
 import com.dci.intellij.dbn.diagnostics.Diagnostics;
 import com.dci.intellij.dbn.object.common.DBObjectRecursiveLoaderVisitor;
 import com.dci.intellij.dbn.object.common.list.DBObjectListContainer;
@@ -12,8 +13,8 @@ import com.intellij.openapi.project.Project;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-public class LoadAllObjectsAction extends AbstractConnectionAction {
-    LoadAllObjectsAction(ConnectionHandler connectionHandler) {
+public class DevLoadAllObjectsAction extends AbstractConnectionAction {
+    public DevLoadAllObjectsAction(ConnectionHandler connectionHandler) {
         super("Load All Objects", null, Icons.DATA_EDITOR_RELOAD_DATA, connectionHandler);
     }
 

@@ -268,12 +268,14 @@ public abstract class DBNTable<T extends DBNTableModel> extends JTable implement
                 }
             }
 
-            if (preferredWidth > MAX_COLUMN_WIDTH) {
-                preferredWidth = MAX_COLUMN_WIDTH;
+            int maxColumnWidth = getMaxColumnWidth();
+            if (preferredWidth > maxColumnWidth) {
+                preferredWidth = maxColumnWidth;
             }
 
-            if (preferredWidth < MIN_COLUMN_WIDTH) {
-                preferredWidth = MIN_COLUMN_WIDTH;
+            int minColumnWidth = getMinColumnWidth();
+            if (preferredWidth < minColumnWidth) {
+                preferredWidth = minColumnWidth;
             }
 
             preferredWidth = preferredWidth + span;
@@ -282,6 +284,14 @@ public abstract class DBNTable<T extends DBNTableModel> extends JTable implement
                 column.setPreferredWidth(preferredWidth);
             }
         }
+    }
+
+    protected int getMinColumnWidth() {
+        return MIN_COLUMN_WIDTH;
+    }
+
+    protected int getMaxColumnWidth() {
+        return MAX_COLUMN_WIDTH;
     }
 
     public void selectCell(int rowIndex, int columnIndex) {
