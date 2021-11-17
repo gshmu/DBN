@@ -1,22 +1,21 @@
-package com.dci.intellij.dbn.common.util;
+package com.dci.intellij.dbn.common.file.util;
 
 import com.dci.intellij.dbn.vfs.DBVirtualFileImpl;
 import com.dci.intellij.dbn.vfs.DatabaseFileSystem;
-import com.intellij.openapi.fileTypes.FileTypeManager;
-import com.intellij.openapi.module.Module;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.roots.ProjectRootManager;
-import com.intellij.openapi.vfs.*;
+import com.intellij.openapi.vfs.LocalFileSystem;
+import com.intellij.openapi.vfs.StandardFileSystems;
+import com.intellij.openapi.vfs.VfsUtilCore;
+import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.testFramework.LightVirtualFile;
 import com.intellij.util.io.ReadOnlyAttributeUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import javax.swing.*;
+import javax.swing.Icon;
 import java.io.File;
 import java.io.IOException;
-import java.util.HashMap;
-import java.util.Map;
 
 public class VirtualFileUtil {
 
@@ -38,7 +37,7 @@ public class VirtualFileUtil {
 
     public static boolean isVirtualFileSystem(@NotNull VirtualFile file) {
         return !isDatabaseFileSystem(file) && !isLocalFileSystem(file);
-    }    
+    }
 
     public static VirtualFile ioFileToVirtualFile(File file) {
         return LocalFileSystem.getInstance().findFileByIoFile(file);
@@ -61,23 +60,31 @@ public class VirtualFileUtil {
     }
 
     public static VirtualFile[] lookupFilesForName(Project project, String name) {
-        ProjectRootManager rootManager = ProjectRootManager.getInstance(project);
-        VirtualFile[] contentRoots = rootManager.getContentRoots();
-        return lookupFilesForName(contentRoots, name);
-    }
-
-    public static VirtualFile[] lookupFilesForName(Module module, String name) {
-        ProjectRootManager rootManager = ProjectRootManager.getInstance(module.getProject());
-        VirtualFile[] contentRoots = rootManager.getContentRoots();
+        VirtualFile[] contentRoots = getContentRoots(project);
         return lookupFilesForName(contentRoots, name);
     }
 
     public static VirtualFile[] lookupFilesForName(VirtualFile[] roots, String name) {
-        FileCollector collector = new FileCollector(name);
-        for (VirtualFile root: roots) {
+        FileCollector collector = new FileCollector(FileCollectorType.NAME, name);
+        return collectFiles(roots, collector);
+    }
+
+    public static VirtualFile[] lookupFilesForExtensions(Project project, String ... extensions) {
+        FileCollector collector = new FileCollector(FileCollectorType.EXTENSION, extensions);
+        return collectFiles(getContentRoots(project), collector);
+    }
+
+    private static VirtualFile[] collectFiles(VirtualFile[] roots, FileCollector collector) {
+        for (VirtualFile root : roots) {
             VfsUtilCore.visitChildrenRecursively(root, collector);
         }
         return collector.files();
+    }
+
+    @NotNull
+    private static VirtualFile[] getContentRoots(Project project) {
+        ProjectRootManager rootManager = ProjectRootManager.getInstance(project);
+        return rootManager.getContentRoots();
     }
 
     public static String ensureFilePath(String fileUrlOrPath) {
@@ -103,35 +110,6 @@ public class VirtualFileUtil {
         return null;
     }
 
-
-    private static class FileCollector extends VirtualFileVisitor {
-        private static final FileTypeManager fileTypeManager = FileTypeManager.getInstance();
-        private final Map<String, VirtualFile> bucket = new HashMap<>();
-        private final String name;
-
-        public FileCollector(String name) {
-            this.name = name;
-        }
-
-        public boolean visitFile(@NotNull VirtualFile file) {
-            boolean fileIgnored = fileTypeManager.isFileIgnored(file.getName());
-            if (!fileIgnored) {
-                if (file.isDirectory() ) {
-                    return true;
-                } else {
-                    if (StringUtil.equalsIgnoreCase(file.getName(), name)) {
-                        bucket.put(file.getPath(), file);
-                    }
-                    return false;
-                }
-            }
-            return false;
-        }
-
-        public VirtualFile[] files() {
-            return bucket.values().toArray(new VirtualFile[0]);
-        }
-    }
 
 }
 

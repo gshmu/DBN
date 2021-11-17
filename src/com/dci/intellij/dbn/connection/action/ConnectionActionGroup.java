@@ -7,6 +7,8 @@ import com.dci.intellij.dbn.connection.transaction.action.DatabaseLoggingToggleA
 import com.dci.intellij.dbn.connection.transaction.action.PendingTransactionsOpenAction;
 import com.dci.intellij.dbn.connection.transaction.action.TransactionCommitAction;
 import com.dci.intellij.dbn.connection.transaction.action.TransactionRollbackAction;
+import com.dci.intellij.dbn.development.action.DevLoadAllObjectsAction;
+import com.dci.intellij.dbn.development.action.DevTestConnectionAction;
 import com.intellij.openapi.actionSystem.DefaultActionGroup;
 
 public class ConnectionActionGroup extends DefaultActionGroup {
@@ -25,7 +27,7 @@ public class ConnectionActionGroup extends DefaultActionGroup {
         add(new DatabaseConnectAction(connectionHandler));
         add(new DatabaseDisconnectAction(connectionHandler));
         add(new DatabaseConnectivityTestAction(connectionHandler));
-        add(new LoadAllObjectsAction(connectionHandler));
+        add(new DevLoadAllObjectsAction(connectionHandler));
         add(new DevTestConnectionAction(connectionHandler));
         addSeparator();
         add(new DatabaseInformationOpenAction(connectionHandler));

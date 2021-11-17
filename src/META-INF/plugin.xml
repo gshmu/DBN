@@ -198,6 +198,7 @@
     <project-components>
         <!--<component><implementation-class>com.dci.intellij.dbn.options.GlobalProjectSettings</implementation-class></component>-->
         <component><implementation-class>com.dci.intellij.dbn.diagnostics.DiagnosticsManager</implementation-class></component>
+        <component><implementation-class>com.dci.intellij.dbn.diagnostics.ParserDiagnosticsManager</implementation-class></component>
         <component><implementation-class>com.dci.intellij.dbn.browser.DatabaseBrowserManager</implementation-class></component>
         <component><implementation-class>com.dci.intellij.dbn.common.environment.EnvironmentManager</implementation-class></component>
         <component><implementation-class>com.dci.intellij.dbn.connection.ConnectionManager</implementation-class></component>
@@ -294,6 +295,8 @@
             <group id="DBNavigator.ActionGroup.Diagnostics" text="Diagnostics" popup="true">
                 <action id="DBNavigator.Actions.MainMenu.DiagnosticsMonitor" class="com.dci.intellij.dbn.menu.action.DiagnosticsMonitorOpenAction" text="Diagnostics Monitor..."/>
                 <action id="DBNavigator.Actions.MainMenu.ReloadMetadataDefinitions" class="com.dci.intellij.dbn.menu.action.MetaDataDefinitionReloadAction" text="Reload Metadata Definitions"/>
+                <action id="DBNavigator.Actions.MainMenu.RunParserDiagnostics" class="com.dci.intellij.dbn.diagnostics.action.RunParserDiagnosticsAction" text="Run Parser Diagnostics"/>
+                <action id="DBNavigator.Actions.MainMenu.OpenParserDiagnostics" class="com.dci.intellij.dbn.diagnostics.action.OpenParserDiagnosticsAction" text="Open Parser Diagnostics"/>
                 <separator/>
                 <action id="DBNavigator.Actions.MainMenu.Options" class="com.dci.intellij.dbn.menu.action.DiagnosticsSettingsOpenAction" text="Settings.."/>
             </group>
