@@ -4019,7 +4019,9 @@
     </element-def>
     <element-def description="Array element expression" id="array_element_expression">
         <variable-ref id="000001974" type="PACKAGE_TYPE" />
-        <element optional="true" ref-id="wrapped_expression_list" />
+        <wrapper id="000001975" template="PARENTHESES">
+            <element ref-id="expression" />
+        </wrapper>
         <token exit="true" id="000001975" type-id="CHR_DOT" />
         <one-of id="000001976">
             <token id="000001977" type-id="KW_EXISTS" />

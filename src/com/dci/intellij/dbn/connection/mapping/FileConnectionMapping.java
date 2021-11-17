@@ -1,7 +1,7 @@
 package com.dci.intellij.dbn.connection.mapping;
 
+import com.dci.intellij.dbn.common.file.util.VirtualFileUtil;
 import com.dci.intellij.dbn.common.state.PersistentStateElement;
-import com.dci.intellij.dbn.common.util.VirtualFileUtil;
 import com.dci.intellij.dbn.connection.ConnectionId;
 import com.dci.intellij.dbn.connection.SchemaId;
 import com.dci.intellij.dbn.connection.SessionId;
