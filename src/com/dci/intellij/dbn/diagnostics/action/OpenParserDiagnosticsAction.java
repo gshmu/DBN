@@ -11,7 +11,7 @@ import org.jetbrains.annotations.NotNull;
 @Slf4j
 public class OpenParserDiagnosticsAction extends DumbAwareProjectAction {
     public OpenParserDiagnosticsAction() {
-        super("Open Parser Diagnostics");
+        super("Parser Diagnostics...");
     }
 
     @Override

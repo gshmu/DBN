@@ -27,7 +27,6 @@ import com.intellij.openapi.actionSystem.Presentation;
 import com.intellij.openapi.actionSystem.ToggleAction;
 import com.intellij.openapi.project.Project;
 import com.intellij.ui.GuiUtils;
-import com.intellij.ui.JBSplitter;
 import org.jetbrains.annotations.NotNull;
 
 import javax.swing.JPanel;
@@ -60,8 +59,7 @@ public class MethodExecutionHistoryForm extends DBNFormImpl {
         actionsPanel.add(actionToolbar.getComponent());
         mainPanel.setBorder(Borders.BOTTOM_LINE_BORDER);
         GuiUtils.replaceJSplitPaneWithIDEASplitter(contentPanel);
-        JBSplitter splitter = (JBSplitter) contentPanel.getComponent(0);
-        splitter.setProportion((float) 0.32);
+        GUIUtil.updateSplitterProportion(mainPanel, (float) 0.32);
 
         MethodExecutionHistory executionHistory = getExecutionHistory();
         if (selectedExecutionInput != null &&

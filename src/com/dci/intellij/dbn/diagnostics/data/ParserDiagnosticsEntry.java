@@ -3,15 +3,10 @@ package com.dci.intellij.dbn.diagnostics.data;
 import lombok.Getter;
 import org.jetbrains.annotations.NotNull;
 
+import static com.dci.intellij.dbn.diagnostics.data.ParserDiagnosticsUtil.computeStateTransition;
+
 @Getter
 public class ParserDiagnosticsEntry implements Comparable<ParserDiagnosticsEntry>{
-    public enum StateTransition {
-        UNCHANGED,
-        IMPROVED,
-        DEGRADED,
-        BROKEN,
-        FIXED,
-    }
 
     private final String filePath;
     private final int oldErrorCount;
@@ -24,23 +19,7 @@ public class ParserDiagnosticsEntry implements Comparable<ParserDiagnosticsEntry
     }
 
     public StateTransition getStateTransition() {
-        if (newErrorCount == 0) {
-            return StateTransition.FIXED;
-        }
-
-        if (oldErrorCount == 0) {
-            return StateTransition.BROKEN;
-        }
-
-        if (newErrorCount > oldErrorCount) {
-            return StateTransition.DEGRADED;
-        }
-
-        if (newErrorCount < oldErrorCount) {
-            return StateTransition.IMPROVED;
-        }
-
-        return StateTransition.UNCHANGED;
+        return computeStateTransition(oldErrorCount, newErrorCount);
     }
 
     @Override

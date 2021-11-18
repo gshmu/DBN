@@ -7,7 +7,6 @@ import com.dci.intellij.dbn.common.file.util.VirtualFileUtil;
 import com.dci.intellij.dbn.common.thread.Dispatch;
 import com.dci.intellij.dbn.common.thread.Progress;
 import com.dci.intellij.dbn.common.thread.Read;
-import com.dci.intellij.dbn.common.util.MessageUtil;
 import com.dci.intellij.dbn.diagnostics.data.ParserDiagnosticsResult;
 import com.dci.intellij.dbn.diagnostics.ui.ParserDiagnosticsDialog;
 import com.dci.intellij.dbn.language.common.DBLanguagePsiFile;
@@ -48,52 +47,47 @@ public class ParserDiagnosticsManager extends AbstractProjectComponent implement
         return Failsafe.getComponent(project, ParserDiagnosticsManager.class);
     }
 
-    public void runParserDiagnostics() {
-        Progress.prompt(getProject(), "Running Parser Diagnostics", true, progress -> {
-            ParserDiagnosticsResult result = runParserDiagnostics(progress);
-            openParserDiagnostics(result);
-        });
-    }
-
     @NotNull
     public ParserDiagnosticsResult runParserDiagnostics(ProgressIndicator progress) {
         VirtualFile[] files = VirtualFileUtil.lookupFilesForExtensions(getProject(), "sql", "pkg");
-        ParserDiagnosticsResult result = new ParserDiagnosticsResult();
+        ParserDiagnosticsResult result = new ParserDiagnosticsResult(getProject());
 
         for (VirtualFile file : files) {
+            Progress.check(progress);
             String filePath = file.getPath();
             progress.setText2(filePath);
 
             DBLanguagePsiFile psiFile = ensureFileParsed(file);
+            Progress.check(progress);
             if (psiFile == null) {
                 result.addEntry(filePath, 1);
             } else {
-                int errorCount = Read.call(() -> psiFile.countErrors());
-                if (errorCount > 0) {
+                Integer errorCount = Read.call(() -> psiFile.countErrors());
+                if (errorCount != null && errorCount > 0) {
                     result.addEntry(filePath, errorCount);
                 }
             }
         }
+        resultHistory.add(0, result);
+        indexResults();
         return result;
     }
 
     public void openParserDiagnostics(@Nullable ParserDiagnosticsResult result) {
-        if (result == null ) {
-            result = getLatestResult();
-        }
+        Dispatch.runConditional(() -> {
+            Project project = getProject();
+            ParserDiagnosticsResult selection = result;
+            if (selection == null ) {
+                selection = getLatestResult();
+            }
 
-        if (result == null) {
-            MessageUtil.showInfoDialog(getProject(), "No parser diagnostics", "No parser diagnostics captured so far");
-        } else {
-            ParserDiagnosticsResult diagnosticsResult = result;
-            Dispatch.run(() -> {
-                ParserDiagnosticsDialog dialog = new ParserDiagnosticsDialog(getProject());
-                dialog.initResult(diagnosticsResult);
-                Dispatch.run(() -> dialog.show());
-            });
-        }
+            ParserDiagnosticsDialog dialog = new ParserDiagnosticsDialog(project);
+            dialog.selectResult(selection);
+            dialog.show();
+        });
     }
 
+    @Nullable
     public ParserDiagnosticsResult getLatestResult() {
         if (resultHistory.isEmpty()) {
             return null;
@@ -101,6 +95,7 @@ public class ParserDiagnosticsManager extends AbstractProjectComponent implement
         return resultHistory.get(0);
     }
 
+    @Nullable
     public ParserDiagnosticsResult getPreviousResult(ParserDiagnosticsResult result) {
         int index = resultHistory.indexOf(result);
         if (index == -1) {
@@ -113,15 +108,26 @@ public class ParserDiagnosticsManager extends AbstractProjectComponent implement
         return resultHistory.get(index + 1);
     }
 
-    public void saveResult(ParserDiagnosticsResult result) {
-        resultHistory.add(0, result);
+    public boolean hasDraftResults() {
+        return resultHistory.stream().anyMatch(result -> result.isDraft());
+    }
+
+    public void saveResult(@NotNull ParserDiagnosticsResult result) {
         result.markSaved();
     }
 
-    public void deleteResult(ParserDiagnosticsResult selectedResult) {
+    public void deleteResult(@NotNull ParserDiagnosticsResult selectedResult) {
         resultHistory.remove(selectedResult);
+        indexResults();
     }
 
+    public void indexResults() {
+        int size = resultHistory.size();
+        for (int i = 0; i < size; i++) {
+            ParserDiagnosticsResult result = resultHistory.get(i);
+            result.setIndex(size - i);
+        }
+    }
 
     private DBLanguagePsiFile ensureFileParsed(VirtualFile file) {
         PsiFile psiFile = Read.call(() -> PsiUtil.getPsiFile(getProject(), file));
@@ -145,9 +151,11 @@ public class ParserDiagnosticsManager extends AbstractProjectComponent implement
         Element historyElement = new Element("diagnostics-history");
         element.addContent(historyElement);
         for (ParserDiagnosticsResult capturedResult : resultHistory) {
-            Element resultElement = new Element("result");
-            historyElement.addContent(resultElement);
-            capturedResult.writeState(resultElement);
+            if (!capturedResult.isDraft()) {
+                Element resultElement = new Element("result");
+                historyElement.addContent(resultElement);
+                capturedResult.writeState(resultElement);
+            }
         }
         return element;
     }
@@ -159,10 +167,11 @@ public class ParserDiagnosticsManager extends AbstractProjectComponent implement
         if (historyElement != null) {
             List<Element> resultElements = historyElement.getChildren("result");
             for (Element resultElement : resultElements) {
-                ParserDiagnosticsResult result = new ParserDiagnosticsResult(resultElement);
+                ParserDiagnosticsResult result = new ParserDiagnosticsResult(getProject(), resultElement);
                 resultHistory.add(result);
             }
         }
+        indexResults();
     }
 
     @Override

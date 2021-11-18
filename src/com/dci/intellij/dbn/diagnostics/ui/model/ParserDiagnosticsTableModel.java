@@ -1,58 +1,73 @@
 package com.dci.intellij.dbn.diagnostics.ui.model;
 
-import com.dci.intellij.dbn.diagnostics.DiagnosticsManager;
-import com.dci.intellij.dbn.diagnostics.data.DiagnosticBundle;
+import com.dci.intellij.dbn.common.ui.table.DBNReadonlyTableModel;
 import com.dci.intellij.dbn.diagnostics.data.DiagnosticEntry;
-import com.dci.intellij.dbn.diagnostics.ui.DiagnosticsTableModel;
-import com.intellij.openapi.project.Project;
+import com.dci.intellij.dbn.diagnostics.data.ParserDiagnosticsDeltaResult;
+import com.dci.intellij.dbn.diagnostics.data.ParserDiagnosticsEntry;
+import com.intellij.openapi.Disposable;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
-public class ParserDiagnosticsTableModel extends DiagnosticsTableModel {
-    private static final String[] COLUMN_NAMES = new String[] {
-            "Identifier",
-            "Invocations",
-            "Average Execution Time (ms)",
-            "Total Execution Time (ms)"};
+public class ParserDiagnosticsTableModel implements DBNReadonlyTableModel<ParserDiagnosticsEntry>, Disposable {
+    public static final ParserDiagnosticsTableModel EMPTY = new ParserDiagnosticsTableModel(null);
 
-    public ParserDiagnosticsTableModel(Project project) {
-        super(project);
+    private final ParserDiagnosticsDeltaResult deltaResult;
+
+    public ParserDiagnosticsTableModel(@Nullable ParserDiagnosticsDeltaResult deltaResult) {
+        this.deltaResult = deltaResult;
     }
 
     @NotNull
-    @Override
     protected String[] getColumnNames() {
-        return COLUMN_NAMES;
-    }
-
-    @NotNull
-    @Override
-    protected DiagnosticBundle resolveDiagnostics() {
-        DiagnosticsManager diagnosticsManager = DiagnosticsManager.getInstance(getProject());
-        return diagnosticsManager.getFileParserDiagnostics();
+        return new String[] {"File", "Previous Error Count", "Error Count", "Transition"};
     }
 
     @Override
-    public Object getValue(DiagnosticEntry entry, int column) {
+    public final int getRowCount() {
+        return deltaResult == null ? 0 : deltaResult.getEntries().size();
+    }
+
+    @Override
+    public final int getColumnCount() {
+        return getColumnNames().length;
+    }
+
+    @Override
+    public final String getColumnName(int columnIndex) {
+        return getColumnNames()[columnIndex];
+    }
+
+    @Override
+    public final Class<?> getColumnClass(int columnIndex) {
+        return DiagnosticEntry.class;
+    }
+
+    @Override
+    public final Object getValueAt(int rowIndex, int columnIndex) {
+        return deltaResult == null ? null : deltaResult.getEntries().get(rowIndex);
+    }
+
+    @Override
+    public Object getValue(ParserDiagnosticsEntry row, int column) {
         switch (column) {
-            case 0: return entry.getIdentifier();
-            case 1: return entry.getInvocationCount();
-            case 2: return entry.getAverageExecutionTime();
-            case 3: return entry.getTotalExecutionTime();
+            case 0: return row.getFilePath();
+            case 1: return row.getOldErrorCount();
+            case 2: return row.getNewErrorCount();
+            case 3: return row.getStateTransition();
+            default: return "";
         }
-        return "";
     }
 
     @Override
-    public String getPresentableValue(DiagnosticEntry entry, int column) {
+    public String getPresentableValue(ParserDiagnosticsEntry row, int column) {
         switch (column) {
-            case 0: return entry.getIdentifier();
-            case 1: return Long.toString(entry.getInvocationCount());
-            case 2: return Long.toString(entry.getAverageExecutionTime());
-            case 3: return Long.toString(entry.getTotalExecutionTime());
+            case 0: return row.getFilePath();
+            case 1: return Integer.toString(row.getOldErrorCount());
+            case 2: return Integer.toString(row.getNewErrorCount());
+            case 3: return row.getStateTransition().name();
+            default: return "";
         }
-        return "";
     }
-
 
     @Override
     public void dispose() {

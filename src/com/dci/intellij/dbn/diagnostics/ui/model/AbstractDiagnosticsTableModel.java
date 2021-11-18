@@ -1,4 +1,4 @@
-package com.dci.intellij.dbn.diagnostics.ui;
+package com.dci.intellij.dbn.diagnostics.ui.model;
 
 import com.dci.intellij.dbn.common.latent.Latent;
 import com.dci.intellij.dbn.common.project.ProjectRef;
@@ -9,11 +9,11 @@ import com.intellij.openapi.Disposable;
 import com.intellij.openapi.project.Project;
 import org.jetbrains.annotations.NotNull;
 
-public abstract class DiagnosticsTableModel implements DBNReadonlyTableModel<DiagnosticEntry>, Disposable {
+public abstract class AbstractDiagnosticsTableModel implements DBNReadonlyTableModel<DiagnosticEntry>, Disposable {
     private final ProjectRef project;
     private final Latent<DiagnosticBundle> diagnostics = Latent.basic(() -> resolveDiagnostics());
 
-    public DiagnosticsTableModel(Project project) {
+    public AbstractDiagnosticsTableModel(Project project) {
         this.project = ProjectRef.of(project);
     }
 

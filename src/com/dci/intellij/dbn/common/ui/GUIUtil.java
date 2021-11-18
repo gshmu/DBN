@@ -42,19 +42,17 @@ public class GUIUtil{
     public static final Font BOLD_FONT = new Font(REGULAR_FONT.getName(), Font.BOLD, REGULAR_FONT.getSize());
 
     public static void updateSplitterProportion(JComponent root, float proportion) {
-        Dispatch.runConditional(() -> {
-            if (root instanceof Splitter) {
-                Splitter splitter = (Splitter) root;
-                splitter.setProportion(proportion);
-            } else {
-                Component[] components = root.getComponents();
-                for (Component component : components) {
-                    if (component instanceof JComponent) {
-                        updateSplitterProportion((JComponent) component, proportion);
-                    }
+        if (root instanceof Splitter) {
+            Splitter splitter = (Splitter) root;
+            splitter.setProportion(proportion);
+        } else {
+            Component[] components = root.getComponents();
+            for (Component component : components) {
+                if (component instanceof JComponent) {
+                    updateSplitterProportion((JComponent) component, proportion);
                 }
             }
-        });
+        };
     }
 
     public static void stopTableCellEditing(final JComponent root) {
