@@ -24,6 +24,10 @@ public final class Diagnostics {
         }
     }
 
+    public static boolean isDialogSizingReset() {
+        return developerMode && debugMode.dialogSizingReset;
+    }
+
     public static boolean isLanguageParserDebug() {
         return developerMode && debugMode.languageParser;
     }
@@ -101,6 +105,8 @@ public final class Diagnostics {
         private boolean databaseAccess = false;
         private boolean databaseResource = false;
 
+        private boolean dialogSizingReset = false;
+
         @Override
         public void readState(Element element) {
             Element debugMode = element.getChild("debug-mode");
@@ -108,6 +114,8 @@ public final class Diagnostics {
                 languageParser = booleanAttribute(debugMode, "language-parser", languageParser);
                 databaseAccess = booleanAttribute(debugMode, "database-access", databaseAccess);
                 databaseResource = booleanAttribute(debugMode, "database-resource", databaseResource);
+
+                dialogSizingReset = booleanAttribute(debugMode, "dialog-sizing-reset", dialogSizingReset);
             }
         }
 
@@ -119,6 +127,7 @@ public final class Diagnostics {
             setBooleanAttribute(debugMode, "database-access", databaseAccess);
             setBooleanAttribute(debugMode, "database-resource", databaseResource);
 
+            setBooleanAttribute(debugMode, "dialog-sizing-reset", dialogSizingReset);
         }
     }
 

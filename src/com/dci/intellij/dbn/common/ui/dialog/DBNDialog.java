@@ -6,6 +6,7 @@ import com.dci.intellij.dbn.common.dispose.SafeDisposer;
 import com.dci.intellij.dbn.common.project.ProjectRef;
 import com.dci.intellij.dbn.common.ui.DBNForm;
 import com.dci.intellij.dbn.common.ui.component.DBNComponent;
+import com.dci.intellij.dbn.diagnostics.Diagnostics;
 import com.intellij.openapi.Disposable;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.DialogWrapper;
@@ -64,8 +65,7 @@ public abstract class DBNDialog<F extends DBNForm> extends DialogWrapper impleme
 
     @Override
     protected String getDimensionServiceKey() {
-        return null;
-        //return "DBNavigator." + getClass().getSimpleName();
+        return Diagnostics.isDialogSizingReset() ? null : "DBNavigator." + getClass().getSimpleName();
     }
 
     @Override
