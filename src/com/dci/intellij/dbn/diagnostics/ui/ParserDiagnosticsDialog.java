@@ -6,6 +6,7 @@ import com.dci.intellij.dbn.diagnostics.ParserDiagnosticsManager;
 import com.dci.intellij.dbn.diagnostics.data.ParserDiagnosticsResult;
 import com.intellij.openapi.project.Project;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import javax.swing.AbstractAction;
 import javax.swing.Action;
@@ -27,11 +28,6 @@ public class ParserDiagnosticsDialog extends DBNDialog<ParserDiagnosticsForm> {
         init();
     }
 
-    public void initResult(@NotNull ParserDiagnosticsResult current) {
-        getForm().initResult(current);
-        runDiagnosticsAction.setEnabled(!current.isSaved());
-    }
-
     @NotNull
     @Override
     protected ParserDiagnosticsForm createForm() {
@@ -50,10 +46,15 @@ public class ParserDiagnosticsDialog extends DBNDialog<ParserDiagnosticsForm> {
         };
     }
 
-    public void updateButtons() {
+    protected void updateButtons() {
         ParserDiagnosticsResult selectedResult = getForm().selectedResult();
-        saveResultAction.setEnabled(selectedResult != null && !selectedResult.isSaved());
-        deleteResultAction.setEnabled(selectedResult != null && selectedResult.isSaved());
+        saveResultAction.setEnabled(selectedResult != null && selectedResult.isDraft());
+        deleteResultAction.setEnabled(selectedResult != null && !selectedResult.isDraft());
+        runDiagnosticsAction.setEnabled(!manager.hasDraftResults());
+    }
+
+    public void selectResult(@Nullable ParserDiagnosticsResult result) {
+        getForm().selectResult(result);
     }
 
     private class SaveResultAction extends AbstractAction {
@@ -65,7 +66,7 @@ public class ParserDiagnosticsDialog extends DBNDialog<ParserDiagnosticsForm> {
         public void actionPerformed(ActionEvent e) {
             ParserDiagnosticsResult selectedResult = getForm().selectedResult();
             if (selectedResult != null) {
-                manager.saveResult(selectedResult);
+                selectedResult.markSaved();
                 updateButtons();
             }
         }
@@ -80,7 +81,7 @@ public class ParserDiagnosticsDialog extends DBNDialog<ParserDiagnosticsForm> {
         public void actionPerformed(ActionEvent e) {
             ParserDiagnosticsForm form = getForm();
             ParserDiagnosticsResult selectedResult = form.selectedResult();
-            if (selectedResult != null && selectedResult.isSaved()) {
+            if (selectedResult != null && !selectedResult.isDraft()) {
                 manager.deleteResult(selectedResult);
                 form.refreshResults();
                 updateButtons();
@@ -100,7 +101,8 @@ public class ParserDiagnosticsDialog extends DBNDialog<ParserDiagnosticsForm> {
             if (selectedResult != null) {
                 Progress.modal(getProject(), "Running Parser Diagnostics", true, progress -> {
                     ParserDiagnosticsResult result = manager.runParserDiagnostics(progress);
-                    form.addResult(result);
+                    form.refreshResults();
+                    form.selectResult(result);
                     updateButtons();
                 });
 

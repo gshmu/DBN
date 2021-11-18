@@ -1,8 +1,12 @@
 package com.dci.intellij.dbn.diagnostics.data;
 
 
+import com.dci.intellij.dbn.common.locale.Formatter;
+import com.dci.intellij.dbn.common.locale.options.RegionalSettings;
 import com.dci.intellij.dbn.common.options.setting.SettingsSupport;
+import com.dci.intellij.dbn.common.project.ProjectRef;
 import com.dci.intellij.dbn.common.state.PersistentStateElement;
+import com.intellij.openapi.project.Project;
 import lombok.Getter;
 import org.jdom.Element;
 import org.jetbrains.annotations.NotNull;
@@ -21,36 +25,31 @@ import static com.dci.intellij.dbn.common.util.CommonUtil.nvl;
 @Getter
 public class ParserDiagnosticsResult implements PersistentStateElement<ParserDiagnosticsResult>, Comparable<ParserDiagnosticsResult> {
 
-    private String id = UUID.randomUUID().toString();
-    private boolean saved;
-    private Timestamp timestamp = new Timestamp(System.currentTimeMillis());
     private final Map<String, Integer> entries = new TreeMap<>();
+    private final ProjectRef project;
 
-    public ParserDiagnosticsResult() {}
+    private String id = UUID.randomUUID().toString();
+    private Timestamp timestamp = new Timestamp(System.currentTimeMillis());
+    private int index;
+    private boolean draft = true;
+    private int errorCount;
 
-    public ParserDiagnosticsResult(Element element) {
+    public ParserDiagnosticsResult(@NotNull Project project) {
+        this.project = ProjectRef.of(project);
+    }
+
+    public ParserDiagnosticsResult(@NotNull Project project, Element element) {
+        this(project);
         readState(element);
     }
 
     public ParserDiagnosticsDeltaResult delta(@Nullable ParserDiagnosticsResult previous) {
-        ParserDiagnosticsDeltaResult deltaResult = new ParserDiagnosticsDeltaResult();
-
-        this.entries.keySet().forEach(file ->
-                deltaResult.addEntry(file,
-                        this.getErrorCount(file),
-                        previous == null ?
-                                this.getErrorCount(file) :
-                                previous.getErrorCount(file)));
-
-        if (previous != null) {
-            previous.getFiles().stream().filter(file -> !this.isPresent(file)).forEach(file ->
-                    deltaResult.addEntry(file, 0,previous.getErrorCount(file)));
-        }
-        return deltaResult;
+        return new ParserDiagnosticsDeltaResult(previous, this);
     }
 
     public void addEntry(String file, int errorCount) {
         entries.put(file, errorCount);
+        this.errorCount += errorCount;
     }
 
     public Set<String> getFiles() {
@@ -66,20 +65,34 @@ public class ParserDiagnosticsResult implements PersistentStateElement<ParserDia
     }
 
     public void markSaved() {
-        this.saved = true;
+        this.draft = false;
+    }
+
+    public void setIndex(int index) {
+        this.index = index;
+    }
+
+    @NotNull
+    public Project getProject() {
+        return project.ensure();
+    }
+
+    public String getName() {
+        Formatter formatter = RegionalSettings.getInstance(getProject()).getBaseFormatter();
+        return "Result " + index + " (" + formatter.formatDateTime(timestamp) + (draft ? " - draft" : "") + ")";
     }
 
     @Override
     public void readState(Element element) {
         if (element != null) {
             id = element.getAttributeValue("id");
-            saved = true;
+            draft = false;
             timestamp = Timestamp.valueOf(element.getAttributeValue("timestamp"));
             List<Element> children = element.getChildren();
             for (Element child : children) {
-                String file = child.getAttributeValue("file");
-                int count = SettingsSupport.integerAttribute(child, "error-count", 0);
-                entries.put(file, count);
+                String filePath = child.getAttributeValue("path");
+                int errorCount = SettingsSupport.integerAttribute(child, "error-count", 0);
+                addEntry(filePath, errorCount);
             }
         }
     }
@@ -88,12 +101,12 @@ public class ParserDiagnosticsResult implements PersistentStateElement<ParserDia
     public void writeState(Element element) {
         element.setAttribute("id", id);
         element.setAttribute("timestamp", timestamp.toString());
-        for (String file : entries.keySet()) {
-            Integer count = entries.get(file);
+        for (String filePath : entries.keySet()) {
+            Integer errorCount = entries.get(filePath);
 
-            Element child = new Element("files");
-            child.setAttribute("file", file);
-            SettingsSupport.setIntegerAttribute(child, "error-count", count);
+            Element child = new Element("file");
+            child.setAttribute("path", filePath);
+            SettingsSupport.setIntegerAttribute(child, "error-count", errorCount);
             element.addContent(child);
 
         }

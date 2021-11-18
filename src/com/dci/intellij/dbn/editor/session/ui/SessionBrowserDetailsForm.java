@@ -2,6 +2,7 @@ package com.dci.intellij.dbn.editor.session.ui;
 
 import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.common.ui.DBNFormImpl;
+import com.dci.intellij.dbn.common.ui.GUIUtil;
 import com.dci.intellij.dbn.common.ui.component.DBNComponent;
 import com.dci.intellij.dbn.common.ui.tab.TabbedPane;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
@@ -12,15 +13,14 @@ import com.dci.intellij.dbn.editor.session.details.SessionDetailsTableModel;
 import com.dci.intellij.dbn.editor.session.model.SessionBrowserModelRow;
 import com.dci.intellij.dbn.language.common.WeakRef;
 import com.intellij.ui.GuiUtils;
-import com.intellij.ui.JBSplitter;
 import com.intellij.ui.components.JBScrollPane;
 import com.intellij.ui.tabs.TabInfo;
 import com.intellij.ui.tabs.TabsListener;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import javax.swing.*;
-import java.awt.*;
+import javax.swing.JPanel;
+import java.awt.BorderLayout;
 
 public class SessionBrowserDetailsForm extends DBNFormImpl{
     private JPanel mainPanel;
@@ -40,8 +40,7 @@ public class SessionBrowserDetailsForm extends DBNFormImpl{
         sessionDetailsTablePane.setViewportView(sessionDetailsTable);
         sessionDetailsTablePane.getViewport().setBackground(sessionDetailsTable.getBackground());
         GuiUtils.replaceJSplitPaneWithIDEASplitter(mainPanel);
-        JBSplitter splitter = (JBSplitter) mainPanel.getComponent(0);
-        splitter.setProportion((float) 0.3);
+        GUIUtil.updateSplitterProportion(mainPanel, (float) 0.3);
 
         detailsTabbedPane = new TabbedPane(this);
         sessionDetailsTabsPanel.add(detailsTabbedPane, BorderLayout.CENTER);

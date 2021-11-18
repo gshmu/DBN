@@ -5,12 +5,12 @@ import com.dci.intellij.dbn.execution.script.CmdLineInterface;
 import com.intellij.openapi.project.Project;
 import org.jetbrains.annotations.NotNull;
 
-import javax.swing.*;
+import javax.swing.Action;
 import java.util.Set;
 
 public class CmdLineInterfaceInputDialog extends DBNDialog<CmdLineInterfaceInputForm> {
-    private CmdLineInterface cmdLineInterface;
-    private Set<String> usedNames;
+    private final CmdLineInterface cmdLineInterface;
+    private final Set<String> usedNames;
 
     public CmdLineInterfaceInputDialog(Project project, @NotNull CmdLineInterface cmdLineInterface, @NotNull Set<String> usedNames) {
         super(project, "Add command-line interface", true);

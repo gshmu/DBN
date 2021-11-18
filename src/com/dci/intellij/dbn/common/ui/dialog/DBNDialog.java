@@ -64,7 +64,8 @@ public abstract class DBNDialog<F extends DBNForm> extends DialogWrapper impleme
 
     @Override
     protected String getDimensionServiceKey() {
-        return "DBNavigator." + getClass().getSimpleName();
+        return null;
+        //return "DBNavigator." + getClass().getSimpleName();
     }
 
     @Override

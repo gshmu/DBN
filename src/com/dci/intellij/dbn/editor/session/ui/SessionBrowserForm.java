@@ -22,15 +22,18 @@ import com.dci.intellij.dbn.language.common.WeakRef;
 import com.intellij.ide.DataManager;
 import com.intellij.openapi.actionSystem.ActionToolbar;
 import com.intellij.ui.GuiUtils;
-import com.intellij.ui.JBSplitter;
 import com.intellij.util.text.DateFormatUtil;
 import com.intellij.util.ui.AsyncProcessIcon;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import javax.swing.*;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JTextField;
+import javax.swing.ScrollPaneConstants;
 import javax.swing.table.TableCellEditor;
-import java.awt.*;
+import java.awt.BorderLayout;
 import java.sql.SQLException;
 
 public class SessionBrowserForm extends DBNFormImpl implements SearchableDataComponent {
@@ -68,8 +71,7 @@ public class SessionBrowserForm extends DBNFormImpl implements SearchableDataCom
 
             loadTimestampLabel.setForeground(Colors.HINT_COLOR);
             GuiUtils.replaceJSplitPaneWithIDEASplitter(editorPanel);
-            JBSplitter splitter = (JBSplitter) editorPanel.getComponent(0);
-            splitter.setProportion((float) 0.6);
+            GUIUtil.updateSplitterProportion(editorPanel, (float) 0.6);
 
             refreshLoadTimestamp();
 
