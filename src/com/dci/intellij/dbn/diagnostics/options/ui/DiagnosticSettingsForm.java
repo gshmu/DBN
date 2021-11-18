@@ -27,6 +27,7 @@ public class DiagnosticSettingsForm extends DBNFormImpl {
     private JTextField connectivityLagTextField;
     private JTextField queryingLagTextField;
     private JTextField fetchingLagTextField;
+    private JCheckBox dialogSizingCheckbox;
     private JLabel developerInfoLabel;
 
     public DiagnosticSettingsForm(@Nullable Disposable parent) {
@@ -39,6 +40,7 @@ public class DiagnosticSettingsForm extends DBNFormImpl {
         languageParserCheckBox.setSelected(debugMode.isLanguageParser());
         databaseAccessCheckBox.setSelected(debugMode.isDatabaseAccess());
         databaseResourcesCheckBox.setSelected(debugMode.isDatabaseResource());
+        dialogSizingCheckbox.setSelected(debugMode.isDialogSizingReset());
 
         Diagnostics.DatabaseLag databaseLag = Diagnostics.getDatabaseLag();
         databaseLaggingCheckBox.setSelected(databaseLag.isEnabled());
