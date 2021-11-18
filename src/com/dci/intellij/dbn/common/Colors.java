@@ -21,44 +21,50 @@ import java.util.Objects;
 
 import static com.dci.intellij.dbn.common.util.CommonUtil.nvlf;
 
-public interface Colors {
-    Color LIGHT_BLUE = new JBColor(new Color(235, 244, 254), new Color(0x2D3548));
-    Color BUTTON_BORDER_COLOR = new JBColor(new Color(0x8C8C8C), new Color(0x606060));
-    Color COMPONENT_BORDER_COLOR = new JBColor(new Color(0x8C8C8C), new Color(0x656565));
-    Color HINT_COLOR = new JBColor(new Color(-12029286), new Color(-10058060));
+public final class Colors {
+    private Colors() {}
 
-    Latent<ColorsImpl> COLORS = Latent.basic(() -> new ColorsImpl());
+    public static Color LIGHT_BLUE = new JBColor(new Color(235, 244, 254), new Color(0x2D3548));
+    public static Color BUTTON_BORDER_COLOR = new JBColor(new Color(0x8C8C8C), new Color(0x606060));
+    public static Color COMPONENT_BORDER_COLOR = new JBColor(new Color(0x8C8C8C), new Color(0x656565));
+    public static Color HINT_COLOR = new JBColor(new Color(-12029286), new Color(-10058060));
 
-    static Color tableHeaderBorderColor() {
+    public static Color FAILURE_COLOR = new JBColor(new Color(0xFF0000), new Color(0xBC3F3C));
+    public static Color SUCCESS_COLOR = new JBColor(new Color(0x009600), new Color(0x629755));
+
+
+    public static Latent<ColorsImpl> COLORS = Latent.basic(() -> new ColorsImpl());
+
+    public static Color tableHeaderBorderColor() {
         return get().tableHeaderBorderColor;
     }
 
-    static Color tableGridColor() {
+    public static Color tableGridColor() {
         return get().tableGridColor;
     }
 
-    static Color tableCaretRowColor() {
+    public static Color tableCaretRowColor() {
         return get().tableCaretRowColor;
     }
 
-    static Color tableSelectionBackgroundColor(boolean focused) {
+    public static Color tableSelectionBackgroundColor(boolean focused) {
         return focused ?
                 get().tableSelectionBackgroundColorFocused :
                 get().tableSelectionBackgroundColor;
     }
 
-    static Color tableSelectionForegroundColor(boolean focused) {
+    public static Color tableSelectionForegroundColor(boolean focused) {
         return focused ?
                 get().tableSelectionForegroundColorFocused :
                 get().tableSelectionForegroundColor;
     }
 
-    static Color tableLineNumberColor() {
+    public static Color tableLineNumberColor() {
         return get().tableLineNumberColor;
     }
 
 
-    class ColorsImpl implements Colors {
+    private static class ColorsImpl {
         private final Color tableHeaderBorderColor = adjust(UIUtil.getPanelBackground(), -0.07);
         private final Color tableGridColor = adjust(UIUtil.getTableBackground(), -0.09);
 
@@ -100,16 +106,16 @@ public interface Colors {
         }
     }
 
-    static ColorsImpl get() {
+    private static ColorsImpl get() {
         return COLORS.get();
     }
 
     @NotNull
-    static EditorColorsScheme getGlobalScheme() {
+    public static EditorColorsScheme getGlobalScheme() {
         return EditorColorsManager.getInstance().getGlobalScheme();
     }
 
-    static void subscribe(@Nullable Disposable parentDisposable,  Runnable runnable) {
+    public static void subscribe(@Nullable Disposable parentDisposable,  Runnable runnable) {
         ApplicationEvents.subscribe(parentDisposable, EditorColorsManager.TOPIC, scheme -> runnable.run());
 
         UIManager.addPropertyChangeListener(evt -> {
@@ -119,7 +125,7 @@ public interface Colors {
         });
     }
 
-    static Color adjust(Color color, double shift) {
+    public static Color adjust(Color color, double shift) {
         if (GUIUtil.isDarkLookAndFeel()) {
             shift = -shift;
         }
@@ -128,7 +134,7 @@ public interface Colors {
     }
 
     @NotNull
-    static Color adjustRaw(Color color, double shift) {
+    private static Color adjustRaw(Color color, double shift) {
         int red = (int) Math.round(Math.min(255, color.getRed() + 255 * shift));
         int green = (int) Math.round(Math.min(255, color.getGreen() + 255 * shift));
         int blue = (int) Math.round(Math.min(255, color.getBlue() + 255 * shift));

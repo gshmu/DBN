@@ -7,6 +7,8 @@ import com.dci.intellij.dbn.common.ui.table.DBNTable;
 import com.dci.intellij.dbn.common.ui.table.DBNTableTransferHandler;
 import com.dci.intellij.dbn.diagnostics.data.DiagnosticEntry;
 import com.dci.intellij.dbn.diagnostics.data.ParserDiagnosticsEntry;
+import com.dci.intellij.dbn.diagnostics.data.StateTransition;
+import com.dci.intellij.dbn.diagnostics.ui.model.ParserDiagnosticsTableModel;
 import com.intellij.ui.SimpleTextAttributes;
 import org.jetbrains.annotations.NotNull;
 
@@ -37,12 +39,21 @@ public class ParserDiagnosticsTable extends DBNTable<ParserDiagnosticsTableModel
         initTableSorter();
     }
 
-    private class CellRenderer extends DBNColoredTableCellRenderer {
+    private static class CellRenderer extends DBNColoredTableCellRenderer {
         @Override
         protected void customizeCellRenderer(DBNTable table, Object value, boolean selected, boolean hasFocus, int row, int column) {
             ParserDiagnosticsEntry entry = (ParserDiagnosticsEntry) value;
-            Object columnValue = getModel().getPresentableValue(entry, column);
-            append(columnValue.toString(), SimpleTextAttributes.REGULAR_ATTRIBUTES);
+            ParserDiagnosticsTableModel model = (ParserDiagnosticsTableModel) table.getModel();
+            Object columnValue = model.getValue(entry, column);
+
+            SimpleTextAttributes textAttributes = SimpleTextAttributes.REGULAR_ATTRIBUTES;
+            if (columnValue instanceof StateTransition) {
+                StateTransition stateTransition = (StateTransition) columnValue;
+                textAttributes = stateTransition.getTextAttributes();
+            }
+
+            String presentableValue = model.getPresentableValue(entry, column);
+            append(presentableValue, textAttributes);
             setBorder(Borders.TEXT_FIELD_BORDER);
         }
     }

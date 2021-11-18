@@ -21,8 +21,9 @@ import com.intellij.ui.JBColor;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import javax.swing.*;
-import java.awt.*;
+import javax.swing.JLabel;
+import java.awt.BorderLayout;
+import java.awt.Color;
 
 import static com.dci.intellij.dbn.common.util.CommonUtil.nvl;
 
@@ -30,8 +31,6 @@ public class AutoCommitLabel extends DBNPanelImpl implements Disposable {
     private interface Colors {
         Color DISCONNECTED = new JBColor(new Color(0x454545), new Color(0x808080));
         Color CONNECTED = new JBColor(new Color(0x454545), new Color(0x808080));
-        Color AUTO_COMMIT_ON = new JBColor(new Color(0xFF0000), new Color(0xBC3F3C));
-        Color AUTO_COMMIT_OFF = new JBColor(new Color(0x009600), new Color(0x629755));
     }
     private ConnectionHandlerRef connectionHandler;
     private WeakRef<VirtualFile> virtualFile;
@@ -93,8 +92,8 @@ public class AutoCommitLabel extends DBNPanelImpl implements Disposable {
                 connectionLabel.setFont(disconnected ? GUIUtil.REGULAR_FONT : GUIUtil.BOLD_FONT);
 
                 autoCommitLabel.setForeground(autoCommit ?
-                        Colors.AUTO_COMMIT_ON :
-                        Colors.AUTO_COMMIT_OFF);
+                        com.dci.intellij.dbn.common.Colors.FAILURE_COLOR :
+                        com.dci.intellij.dbn.common.Colors.SUCCESS_COLOR);
                 autoCommitLabel.setText(autoCommit ? "Auto-Commit ON" : "Auto-Commit OFF");
                 autoCommitLabel.setToolTipText(
                         autoCommit ?

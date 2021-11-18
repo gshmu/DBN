@@ -4,8 +4,10 @@ import com.dci.intellij.dbn.common.ui.DBNFormImpl;
 import com.dci.intellij.dbn.common.ui.table.DBNTable;
 import com.dci.intellij.dbn.diagnostics.data.ParserDiagnosticsDeltaResult;
 import com.dci.intellij.dbn.diagnostics.data.ParserDiagnosticsResult;
+import com.dci.intellij.dbn.diagnostics.ui.model.ParserDiagnosticsTableModel;
 import com.intellij.ui.components.JBScrollPane;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import javax.swing.JComponent;
 import javax.swing.JPanel;
@@ -15,27 +17,24 @@ public class ParserDiagnosticsDetailsForm extends DBNFormImpl {
     private JPanel headerPanel;
     private JBScrollPane diagnosticsTableScrollPane;
 
-    private DBNTable<ParserDiagnosticsTableModel> diagnosticsTable;
+    private final DBNTable<ParserDiagnosticsTableModel> diagnosticsTable;
 
     public ParserDiagnosticsDetailsForm(@NotNull ParserDiagnosticsForm parent) {
         super(parent);
+
+        diagnosticsTable = new ParserDiagnosticsTable(this, ParserDiagnosticsTableModel.EMPTY);
+        diagnosticsTable.accommodateColumnsSize();
+        diagnosticsTableScrollPane.setViewportView(diagnosticsTable);
+        diagnosticsTableScrollPane.getViewport().setBackground(diagnosticsTable.getBackground());
     }
 
 
-    public void renderDeltaResult(ParserDiagnosticsResult previous, ParserDiagnosticsResult current) {
+    public ParserDiagnosticsDeltaResult renderDeltaResult(@Nullable ParserDiagnosticsResult previous, @NotNull ParserDiagnosticsResult current) {
         ParserDiagnosticsDeltaResult deltaResult = current.delta(previous);
         ParserDiagnosticsTableModel tableModel = new ParserDiagnosticsTableModel(deltaResult);
-
-        if (diagnosticsTable == null) {
-            diagnosticsTable = new ParserDiagnosticsTable(this, tableModel);
-            diagnosticsTable.accommodateColumnsSize();
-            diagnosticsTableScrollPane.setViewportView(diagnosticsTable);
-            diagnosticsTableScrollPane.getViewport().setBackground(diagnosticsTable.getBackground());
-        } else {
-            diagnosticsTable.setModel(tableModel);
-            diagnosticsTable.accommodateColumnsSize();
-        }
-
+        diagnosticsTable.setModel(tableModel);
+        diagnosticsTable.accommodateColumnsSize();
+        return deltaResult;
     }
 
 

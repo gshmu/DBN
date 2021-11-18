@@ -5,11 +5,10 @@ import com.dci.intellij.dbn.connection.ConnectionHandlerRef;
 import com.dci.intellij.dbn.diagnostics.DiagnosticsManager;
 import com.dci.intellij.dbn.diagnostics.data.DiagnosticBundle;
 import com.dci.intellij.dbn.diagnostics.data.DiagnosticEntry;
-import com.dci.intellij.dbn.diagnostics.ui.DiagnosticsTableModel;
 import com.intellij.openapi.project.Project;
 import org.jetbrains.annotations.NotNull;
 
-public class MetadataDiagnosticsTableModel extends DiagnosticsTableModel {
+public class MetadataDiagnosticsTableModel extends AbstractDiagnosticsTableModel {
     private final ConnectionHandlerRef connectionHandler;
 
     private static final String[] COLUMN_NAMES = new String[] {

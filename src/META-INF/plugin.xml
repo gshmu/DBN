@@ -293,10 +293,9 @@
             <action class="com.dci.intellij.dbn.menu.action.ResourceMonitorOpenAction" text="Resource Monitor" id="DBNavigator.Actions.MainMenu.ResourceMonitor"/>
             <action class="com.dci.intellij.dbn.menu.action.PendingTransactionsOpenAction" text="Open Transactions" id="DBNavigator.Actions.MainMenu.PendingTransactions"/>
             <group id="DBNavigator.ActionGroup.Diagnostics" text="Diagnostics" popup="true">
-                <action id="DBNavigator.Actions.MainMenu.DiagnosticsMonitor" class="com.dci.intellij.dbn.menu.action.DiagnosticsMonitorOpenAction" text="Diagnostics Monitor..."/>
+                <action id="DBNavigator.Actions.MainMenu.ParserDiagnostics" class="com.dci.intellij.dbn.diagnostics.action.OpenParserDiagnosticsAction" text="Parser Diagnostics..."/>
+                <action id="DBNavigator.Actions.MainMenu.DiagnosticsMonitor" class="com.dci.intellij.dbn.menu.action.DiagnosticsMonitorOpenAction" text="Connection Diagnostics..."/>
                 <action id="DBNavigator.Actions.MainMenu.ReloadMetadataDefinitions" class="com.dci.intellij.dbn.menu.action.MetaDataDefinitionReloadAction" text="Reload Metadata Definitions"/>
-                <action id="DBNavigator.Actions.MainMenu.RunParserDiagnostics" class="com.dci.intellij.dbn.diagnostics.action.RunParserDiagnosticsAction" text="Run Parser Diagnostics"/>
-                <action id="DBNavigator.Actions.MainMenu.OpenParserDiagnostics" class="com.dci.intellij.dbn.diagnostics.action.OpenParserDiagnosticsAction" text="Open Parser Diagnostics"/>
                 <separator/>
                 <action id="DBNavigator.Actions.MainMenu.Options" class="com.dci.intellij.dbn.menu.action.DiagnosticsSettingsOpenAction" text="Settings.."/>
             </group>
