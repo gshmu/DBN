@@ -1,6 +1,6 @@
 package com.dci.intellij.dbn.diagnostics.options.ui;
 
-import com.dci.intellij.dbn.common.message.MessageType;
+import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.common.ui.DBNFormImpl;
 import com.dci.intellij.dbn.common.ui.DBNHintForm;
 import com.dci.intellij.dbn.diagnostics.Diagnostics;
@@ -10,6 +10,7 @@ import org.jetbrains.annotations.Nullable;
 
 import javax.swing.JCheckBox;
 import javax.swing.JComponent;
+import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 import java.awt.event.ActionEvent;
@@ -30,6 +31,9 @@ public class DiagnosticSettingsForm extends DBNFormImpl {
     private JCheckBox dialogSizingCheckbox;
     private JCheckBox bulkActionsCheckbox;
     private JPanel hintPanel;
+    private JLabel acknowledgementLabel;
+
+    private final DBNHintForm disclaimerForm;
 
     public DiagnosticSettingsForm(@Nullable Disposable parent) {
         super(parent);
@@ -39,8 +43,8 @@ public class DiagnosticSettingsForm extends DBNFormImpl {
                 "Features like \"Slow Database Simulations\" or excessive \"Debug Logging\" are meant for diagnostic activities only " +
                 "and are significantly degrading the performance of your development environment.\n\n" +
                 "Please disable developer mode unless explicitly instructed to use it and properly guided throughout the process by DBN plugin developers.";
-        DBNHintForm hintForm = new DBNHintForm(this, hintText, MessageType.WARNING, true);
-        hintPanel.add(hintForm.getComponent());
+        disclaimerForm = new DBNHintForm(this, hintText, null, true);
+        hintPanel.add(disclaimerForm.getComponent());
 
         Diagnostics.DebugLogging debugLogging = Diagnostics.getDebugLogging();
         languageParserCheckBox.setSelected(debugLogging.isLanguageParser());
@@ -76,6 +80,10 @@ public class DiagnosticSettingsForm extends DBNFormImpl {
         connectivityLagTextField.setEnabled(databaseLaggingEnabled);
         queryingLagTextField.setEnabled(databaseLaggingEnabled);
         fetchingLagTextField.setEnabled(databaseLaggingEnabled);
+
+        acknowledgementLabel.setText(developerMode ? "Please acknowledge and consent with below..." : "");
+        acknowledgementLabel.setIcon(developerMode ? Icons.COMMON_WARNING : null);
+        disclaimerForm.setHighlighted(developerMode);
     }
 
 
