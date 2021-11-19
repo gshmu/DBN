@@ -43,6 +43,9 @@ import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.openapi.vfs.VirtualFileEvent;
 import com.intellij.openapi.vfs.VirtualFileListener;
 import com.intellij.openapi.vfs.VirtualFileManager;
+import com.intellij.openapi.vfs.newvfs.BulkFileListener;
+import com.intellij.openapi.vfs.newvfs.events.VFileDeleteEvent;
+import com.intellij.openapi.vfs.newvfs.events.VFileEvent;
 import org.jdom.Element;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
@@ -74,7 +77,8 @@ public class DDLFileAttachmentManager extends AbstractProjectComponent implement
     private DDLFileAttachmentManager(@NotNull Project project) {
         super(project);
 
-        VirtualFileManager.getInstance().addVirtualFileListener(virtualFileListener);
+        //VirtualFileManager.getInstance().addVirtualFileListener(virtualFileListener);
+        ProjectEvents.subscribe(project, this, VirtualFileManager.VFS_CHANGES, bulkFileListener);
         ProjectEvents.subscribe(project, this, SourceCodeManagerListener.TOPIC, sourceCodeManagerListener);
     }
 
@@ -444,18 +448,36 @@ public class DDLFileAttachmentManager extends AbstractProjectComponent implement
     /************************************************
      *               VirtualFileListener            *
      ************************************************/
-
+    @Deprecated // TODO cleanup
     private final VirtualFileListener virtualFileListener = new VirtualFileListener() {
         @Override
         public void fileDeleted(@NotNull VirtualFileEvent event) {
-            DBObjectRef<DBSchemaObject> objectRef = mappings.get(event.getFile().getUrl());
-            DBSchemaObject object = DBObjectRef.get(objectRef);
-            if (object != null) {
-                detachDDLFile(event.getFile());
-                DatabaseFileSystem.getInstance().reopenEditor(object);
+            processFileDeletedEvent(event.getFile());
+        }
+    };
+
+    private final BulkFileListener bulkFileListener = new BulkFileListener() {
+        @Override
+        public void after(@NotNull List<? extends VFileEvent> events) {
+            for (VFileEvent event : events) {
+                if (event instanceof VFileDeleteEvent) {
+                    VirtualFile file = event.getFile();
+                    if (file != null) {
+                        processFileDeletedEvent(file);
+                    }
+                }
             }
         }
     };
+
+    private void processFileDeletedEvent(@NotNull VirtualFile file) {
+        DBObjectRef<DBSchemaObject> objectRef = mappings.get(file.getUrl());
+        DBSchemaObject object = DBObjectRef.get(objectRef);
+        if (object != null) {
+            detachDDLFile(file);
+            DatabaseFileSystem.getInstance().reopenEditor(object);
+        }
+    }
 
     /*********************************************
      *            PersistentStateComponent       *
