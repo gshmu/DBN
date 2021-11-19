@@ -7,6 +7,7 @@ import com.dci.intellij.dbn.common.file.util.VirtualFileUtil;
 import com.dci.intellij.dbn.common.thread.Dispatch;
 import com.dci.intellij.dbn.common.thread.Progress;
 import com.dci.intellij.dbn.common.thread.Read;
+import com.dci.intellij.dbn.diagnostics.data.ParserDiagnosticsFilter;
 import com.dci.intellij.dbn.diagnostics.data.ParserDiagnosticsResult;
 import com.dci.intellij.dbn.diagnostics.ui.ParserDiagnosticsDialog;
 import com.dci.intellij.dbn.language.common.DBLanguagePsiFile;
@@ -38,6 +39,7 @@ public class ParserDiagnosticsManager extends AbstractProjectComponent implement
     public static final String COMPONENT_NAME = "DBNavigator.Project.ParserDiagnosticsManager";
 
     private final List<ParserDiagnosticsResult> resultHistory = new ArrayList<>();
+    private ParserDiagnosticsFilter resultFilter = ParserDiagnosticsFilter.EMPTY;
 
     private ParserDiagnosticsManager(@NotNull Project project) {
         super(project);
@@ -121,7 +123,11 @@ public class ParserDiagnosticsManager extends AbstractProjectComponent implement
         indexResults();
     }
 
-    public void indexResults() {
+    public void setResultFilter(ParserDiagnosticsFilter filter) {
+        this.resultFilter = filter;
+    }
+
+    private void indexResults() {
         int size = resultHistory.size();
         for (int i = 0; i < size; i++) {
             ParserDiagnosticsResult result = resultHistory.get(i);

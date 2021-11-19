@@ -8,27 +8,35 @@ import java.awt.Color;
 
 @Getter
 public enum StateTransition {
-    UNCHANGED(SimpleTextAttributes.GRAY_ATTRIBUTES.getFgColor(), false),
+    UNCHANGED(Category.NEUTRAL),
+    IMPROVED(Category.GOOD),
+    FIXED(Category.GOOD),
+    DEGRADED(Category.BAD),
+    BROKEN(Category.BAD);
 
-    IMPROVED(Colors.SUCCESS_COLOR, true),
-    FIXED(Colors.SUCCESS_COLOR, true),
+    private final Category category;
 
-    DEGRADED(Colors.FAILURE_COLOR, true),
-    BROKEN(Colors.FAILURE_COLOR, true);
-
-    private final Color color;
-    private final boolean bold;
-    private final SimpleTextAttributes textAttributes;
-
-    StateTransition(Color color, boolean bold) {
-        this.color = color;
-        this.bold = bold;
-        textAttributes = new SimpleTextAttributes(bold ?
-                SimpleTextAttributes.STYLE_BOLD :
-                SimpleTextAttributes.STYLE_PLAIN, color);
+    StateTransition(Category category) {
+        this.category = category;
     }
 
-    public SimpleTextAttributes getTextAttributes() {
-        return textAttributes;
+    @Getter
+    public enum Category {
+        NEUTRAL(SimpleTextAttributes.GRAY_ATTRIBUTES.getFgColor(), false),
+        GOOD(Colors.SUCCESS_COLOR, true),
+        BAD(Colors.FAILURE_COLOR, true);
+
+        private final Color color;
+        private final boolean bold;
+        private final SimpleTextAttributes textAttributes;
+
+        Category(Color color, boolean bold) {
+            this.color = color;
+            this.bold = bold;
+
+            textAttributes = new SimpleTextAttributes(bold ?
+                    SimpleTextAttributes.STYLE_BOLD :
+                    SimpleTextAttributes.STYLE_PLAIN, color);
+        }
     }
 }

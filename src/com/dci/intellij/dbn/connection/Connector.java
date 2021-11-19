@@ -133,7 +133,7 @@ class Connector {
                     connectionUrl = databaseSettings.getConnectionUrl(localHost, localPort);
                 }
             }
-            Diagnostics.simulateDatabaseLag(Diagnostics.getConnectivityLag());
+            Diagnostics.introduceDatabaseLag(Diagnostics.getConnectivityLag());
 
             Connection connection = driver.connect(connectionUrl, properties);
             if (connection == null) {
