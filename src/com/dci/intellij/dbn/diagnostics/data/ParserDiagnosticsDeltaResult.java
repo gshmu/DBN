@@ -1,11 +1,11 @@
 package com.dci.intellij.dbn.diagnostics.data;
 
 
+import com.dci.intellij.dbn.common.list.FilteredList;
 import lombok.Getter;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import static com.dci.intellij.dbn.diagnostics.data.ParserDiagnosticsUtil.computeStateTransition;
@@ -13,7 +13,9 @@ import static com.dci.intellij.dbn.diagnostics.data.ParserDiagnosticsUtil.comput
 
 @Getter
 public class ParserDiagnosticsDeltaResult {
-    private final List<ParserDiagnosticsEntry> entries = new ArrayList<>();
+    private ParserDiagnosticsFilter filter = ParserDiagnosticsFilter.EMPTY;
+    private final List<ParserDiagnosticsEntry> entries = FilteredList.stateful(filter);
+
     private final ParserDiagnosticsResult previous;
     private final ParserDiagnosticsResult current;
 
@@ -32,6 +34,10 @@ public class ParserDiagnosticsDeltaResult {
         }
     }
 
+    public void setFilter(ParserDiagnosticsFilter filter) {
+        this.filter = filter;
+    }
+
     private void addEntry(String file, int oldErrorCount, int newErrorCount) {
         ParserDiagnosticsEntry diagnosticsCapture = new ParserDiagnosticsEntry(file, oldErrorCount, newErrorCount);
         entries.add(diagnosticsCapture);
@@ -45,7 +51,7 @@ public class ParserDiagnosticsDeltaResult {
         }
     }
 
-    public StateTransition getStateTransition() {
+    public StateTransition getFilter() {
         int oldErrorCount = previous == null ? current.getErrorCount() : previous.getErrorCount();
         int newErrorCount = current.getErrorCount();
 

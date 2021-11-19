@@ -8,13 +8,14 @@ import com.dci.intellij.dbn.object.common.DBSchemaObject;
 import com.dci.intellij.dbn.object.lookup.DBObjectRef;
 import org.jetbrains.annotations.NotNull;
 
-import javax.swing.*;
+import javax.swing.AbstractAction;
+import javax.swing.Action;
 import java.awt.event.ActionEvent;
 import java.util.List;
 
 public class CompileDebugDependenciesDialog extends DBNDialog<CompileDebugDependenciesForm> {
-    private DBRunConfig runConfiguration;
-    private List<DBSchemaObject> compileList;
+    private final DBRunConfig runConfiguration;
+    private final List<DBSchemaObject> compileList;
     private WeakRef<DBObjectRef<DBSchemaObject>[]> selection; // TODO dialog result - Disposable.nullify(...)
 
     public CompileDebugDependenciesDialog(DBRunConfig runConfiguration, List<DBSchemaObject> compileList) {

@@ -71,7 +71,7 @@ public class DatabaseNavigator implements ApplicationComponent, PersistentStateC
     @Override
     public Element getState() {
         Element element = new Element("state");
-        Diagnostics.getDebugMode().writeState(element);
+        Diagnostics.getDebugLogging().writeState(element);
         Diagnostics.getDatabaseLag().writeState(element);
         setBoolean(element, "developer-mode", Diagnostics.isDeveloperMode());
         setBoolean(element, "show-plugin-conflict-dialog", showPluginConflictDialog);
@@ -80,7 +80,7 @@ public class DatabaseNavigator implements ApplicationComponent, PersistentStateC
 
     @Override
     public void loadState(@NotNull Element element) {
-        Diagnostics.getDebugMode().readState(element);
+        Diagnostics.getDebugLogging().readState(element);
         Diagnostics.getDatabaseLag().readState(element);
         Diagnostics.setDeveloperMode(getBoolean(element, "developer-mode", false));
         showPluginConflictDialog = getBoolean(element, "show-plugin-conflict-dialog", true);

@@ -49,7 +49,7 @@ public class ParserDiagnosticsTable extends DBNTable<ParserDiagnosticsTableModel
             SimpleTextAttributes textAttributes = SimpleTextAttributes.REGULAR_ATTRIBUTES;
             if (columnValue instanceof StateTransition) {
                 StateTransition stateTransition = (StateTransition) columnValue;
-                textAttributes = stateTransition.getTextAttributes();
+                textAttributes = stateTransition.getCategory().getTextAttributes();
             }
 
             String presentableValue = model.getPresentableValue(entry, column);

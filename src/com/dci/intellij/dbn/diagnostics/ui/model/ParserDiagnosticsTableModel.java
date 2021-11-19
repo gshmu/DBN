@@ -4,22 +4,38 @@ import com.dci.intellij.dbn.common.ui.table.DBNReadonlyTableModel;
 import com.dci.intellij.dbn.diagnostics.data.DiagnosticEntry;
 import com.dci.intellij.dbn.diagnostics.data.ParserDiagnosticsDeltaResult;
 import com.dci.intellij.dbn.diagnostics.data.ParserDiagnosticsEntry;
+import com.dci.intellij.dbn.diagnostics.data.ParserDiagnosticsFilter;
 import com.intellij.openapi.Disposable;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 public class ParserDiagnosticsTableModel implements DBNReadonlyTableModel<ParserDiagnosticsEntry>, Disposable {
-    public static final ParserDiagnosticsTableModel EMPTY = new ParserDiagnosticsTableModel(null);
+    public static final ParserDiagnosticsTableModel EMPTY = new ParserDiagnosticsTableModel(null, null);
+    public static final String[] INITIAL_COLUMNS = {"File", "Error Count"};
+    public static final String[] DELTA_COLUMNS = {"File", "Previous Error Count", "Error Count", "Transition"};
 
     private final ParserDiagnosticsDeltaResult deltaResult;
 
-    public ParserDiagnosticsTableModel(@Nullable ParserDiagnosticsDeltaResult deltaResult) {
+    public ParserDiagnosticsTableModel(@Nullable ParserDiagnosticsDeltaResult deltaResult, @Nullable ParserDiagnosticsFilter filter) {
         this.deltaResult = deltaResult;
+        if (this.deltaResult != null) {
+            this.deltaResult.setFilter(filter);
+        }
+    }
+
+    public ParserDiagnosticsDeltaResult getResult() {
+        return deltaResult;
     }
 
     @NotNull
     protected String[] getColumnNames() {
-        return new String[] {"File", "Previous Error Count", "Error Count", "Transition"};
+        return isInitial() ?
+                INITIAL_COLUMNS :
+                DELTA_COLUMNS;
+    }
+
+    private boolean isInitial() {
+        return deltaResult == null || deltaResult.getPrevious() == null;
     }
 
     @Override
@@ -49,24 +65,38 @@ public class ParserDiagnosticsTableModel implements DBNReadonlyTableModel<Parser
 
     @Override
     public Object getValue(ParserDiagnosticsEntry row, int column) {
-        switch (column) {
-            case 0: return row.getFilePath();
-            case 1: return row.getOldErrorCount();
-            case 2: return row.getNewErrorCount();
-            case 3: return row.getStateTransition();
-            default: return "";
+        if (isInitial()) {
+            switch (column) {
+                case 0: return row.getFilePath();
+                case 1: return row.getNewErrorCount();
+            }
+        } else {
+            switch (column) {
+                case 0: return row.getFilePath();
+                case 1: return row.getOldErrorCount();
+                case 2: return row.getNewErrorCount();
+                case 3: return row.getStateTransition();
+            }
         }
+        return "";
     }
 
     @Override
     public String getPresentableValue(ParserDiagnosticsEntry row, int column) {
-        switch (column) {
-            case 0: return row.getFilePath();
-            case 1: return Integer.toString(row.getOldErrorCount());
-            case 2: return Integer.toString(row.getNewErrorCount());
-            case 3: return row.getStateTransition().name();
-            default: return "";
+        if (isInitial()) {
+            switch (column) {
+                case 0: return row.getFilePath();
+                case 1: return Integer.toString(row.getNewErrorCount());
+            }
+        } else {
+            switch (column) {
+                case 0: return row.getFilePath();
+                case 1: return Integer.toString(row.getOldErrorCount());
+                case 2: return Integer.toString(row.getNewErrorCount());
+                case 3: return row.getStateTransition().name();
+            }
         }
+        return "";
     }
 
     @Override

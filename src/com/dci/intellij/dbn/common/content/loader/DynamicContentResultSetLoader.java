@@ -103,12 +103,12 @@ public abstract class DynamicContentResultSetLoader<
                             DynamicContentType<?> contentType = dynamicContent.getContentType();
                             M metadata = DBObjectMetadataFactory.INSTANCE.create(contentType, resultSet);
 
-                            Diagnostics.simulateDatabaseLag(Diagnostics.getQueryingLag());
+                            Diagnostics.introduceDatabaseLag(Diagnostics.getQueryingLag());
                             LoaderCache loaderCache = new LoaderCache();
                             int count = 0;
 
                             while (resultSet != null && resultSet.next()) {
-                                Diagnostics.simulateDatabaseLag(Diagnostics.getFetchingLag());
+                                Diagnostics.introduceDatabaseLag(Diagnostics.getFetchingLag());
                                 dynamicContent.checkDisposed();
 
                                 T element = null;

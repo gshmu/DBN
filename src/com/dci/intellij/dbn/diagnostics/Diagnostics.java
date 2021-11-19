@@ -10,34 +10,39 @@ import static com.dci.intellij.dbn.common.options.setting.SettingsSupport.*;
 
 public final class Diagnostics {
     private static boolean developerMode = false;
-    private static final DebugMode debugMode = new DebugMode();
+    private static final DebugLogging debugLogging = new DebugLogging();
     private static final DatabaseLag databaseLag = new DatabaseLag();
+    private static final Miscellaneous miscellaneous = new Miscellaneous();
 
 
     public static void updateDeveloperMode(boolean state) {
         developerMode = state;
         if (!state) {
-            debugMode.languageParser = false;
-            debugMode.databaseAccess = false;
-            debugMode.databaseResource = false;
+            debugLogging.languageParser = false;
+            debugLogging.databaseAccess = false;
+            debugLogging.databaseResource = false;
             databaseLag.enabled = false;
         }
     }
 
     public static boolean isDialogSizingReset() {
-        return developerMode && debugMode.dialogSizingReset;
+        return developerMode && miscellaneous.dialogSizingReset;
+    }
+
+    public static boolean isBulkActionsEnabled() {
+        return developerMode && miscellaneous.bulkActionsEnabled;
     }
 
     public static boolean isLanguageParserDebug() {
-        return developerMode && debugMode.languageParser;
+        return developerMode && debugLogging.languageParser;
     }
 
     public static boolean isDatabaseAccessDebug() {
-        return developerMode && debugMode.databaseAccess;
+        return developerMode && debugLogging.databaseAccess;
     }
 
     public static boolean isDatabaseResourceDebug() {
-        return developerMode && debugMode.databaseResource;
+        return developerMode && debugLogging.databaseResource;
     }
 
     public static int getConnectivityLag() {
@@ -60,12 +65,16 @@ public final class Diagnostics {
         Diagnostics.developerMode = developerMode;
     }
 
-    public static DebugMode getDebugMode() {
-        return debugMode;
+    public static DebugLogging getDebugLogging() {
+        return debugLogging;
     }
 
     public static DatabaseLag getDatabaseLag() {
         return databaseLag;
+    }
+
+    public static Miscellaneous getMiscellaneous() {
+        return miscellaneous;
     }
 
 
@@ -100,39 +109,57 @@ public final class Diagnostics {
 
     @Getter
     @Setter
-    public static final class DebugMode implements PersistentStateElement{
+    public static final class DebugLogging implements PersistentStateElement{
         private boolean languageParser = false;
         private boolean databaseAccess = false;
         private boolean databaseResource = false;
 
-        private boolean dialogSizingReset = false;
-
         @Override
         public void readState(Element element) {
-            Element debugMode = element.getChild("debug-mode");
+            Element debugMode = element.getChild("debug-logging");
             if (debugMode != null) {
                 languageParser = booleanAttribute(debugMode, "language-parser", languageParser);
                 databaseAccess = booleanAttribute(debugMode, "database-access", databaseAccess);
                 databaseResource = booleanAttribute(debugMode, "database-resource", databaseResource);
-
-                dialogSizingReset = booleanAttribute(debugMode, "dialog-sizing-reset", dialogSizingReset);
             }
         }
 
         @Override
         public void writeState(Element element) {
-            Element debugMode = new Element("debug-mode");
+            Element debugMode = new Element("debug-logging");
             element.addContent(debugMode);
             setBooleanAttribute(debugMode, "language-parser", languageParser);
             setBooleanAttribute(debugMode, "database-access", databaseAccess);
             setBooleanAttribute(debugMode, "database-resource", databaseResource);
+        }
+    }
 
+    @Getter
+    @Setter
+    public static final class Miscellaneous implements PersistentStateElement{
+        private boolean dialogSizingReset = false;
+        private boolean bulkActionsEnabled = false;
+
+        @Override
+        public void readState(Element element) {
+            Element debugMode = element.getChild("miscellaneous");
+            if (debugMode != null) {
+                dialogSizingReset = booleanAttribute(debugMode, "dialog-sizing-reset", dialogSizingReset);
+                bulkActionsEnabled = booleanAttribute(debugMode, "bulk-actions-enabled", bulkActionsEnabled);
+            }
+        }
+
+        @Override
+        public void writeState(Element element) {
+            Element debugMode = new Element("miscellaneous");
+            element.addContent(debugMode);
             setBooleanAttribute(debugMode, "dialog-sizing-reset", dialogSizingReset);
+            setBooleanAttribute(debugMode, "bulk-actions-enabled", bulkActionsEnabled);
         }
     }
 
 
-    public static void simulateDatabaseLag(int millis) {
+    public static void introduceDatabaseLag(int millis) {
         if (Diagnostics.developerMode && Diagnostics.databaseLag.enabled) {
             Unsafe.silent(() -> Thread.sleep(millis));
         }
