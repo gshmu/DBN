@@ -9,16 +9,22 @@ import com.intellij.util.ui.JBUI;
 import com.intellij.util.ui.UIUtil;
 import org.jetbrains.annotations.NotNull;
 
-import javax.swing.*;
-import java.awt.*;
+import javax.swing.Icon;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JTextPane;
+import java.awt.Color;
 
 public class DBNHintForm extends DBNFormImpl {
     private JPanel mainPanel;
     private JLabel hintLabel;
     private JTextPane hintTextPane;
 
+    private boolean boxed;
+
     public DBNHintForm(DBNForm parent, String hintText, MessageType messageType, boolean boxed) {
         super(parent);
+        this.boxed = boxed;
         hintLabel.setText("");
         if (messageType != null) {
             Icon icon = Icons.COMMON_INFO;
@@ -33,7 +39,7 @@ public class DBNHintForm extends DBNFormImpl {
             hintLabel.setVisible(false);
         }
 
-        Color background = boxed ? Colors.adjust(UIUtil.getPanelBackground(), 0.01) : UIUtil.getPanelBackground();
+        Color background = getBackground();
 
         mainPanel.setBackground(background);
         hintTextPane.setBackground(background);
@@ -46,7 +52,17 @@ public class DBNHintForm extends DBNFormImpl {
             GridLayoutManager gridLayoutManager = (GridLayoutManager) mainPanel.getLayout();
             gridLayoutManager.setMargin(JBUI.emptyInsets());
         }
+    }
 
+    @NotNull
+    private Color getBackground() {
+        return boxed ? Colors.adjust(UIUtil.getPanelBackground(), 0.03) : UIUtil.getPanelBackground();
+    }
+
+    public void setHighlighted(boolean highlighted) {
+        Color background = highlighted ? UIUtil.getTextFieldBackground() : getBackground();
+        mainPanel.setBackground(background);
+        hintTextPane.setBackground(background);
     }
 
     @NotNull
