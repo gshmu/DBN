@@ -4,30 +4,23 @@ import com.dci.intellij.dbn.common.ui.Borders;
 import com.dci.intellij.dbn.common.ui.DBNFormImpl;
 import com.dci.intellij.dbn.common.ui.GUIUtil;
 import com.dci.intellij.dbn.diagnostics.ParserDiagnosticsManager;
-import com.dci.intellij.dbn.diagnostics.data.ParserDiagnosticsDeltaResult;
 import com.dci.intellij.dbn.diagnostics.data.ParserDiagnosticsResult;
-import com.dci.intellij.dbn.diagnostics.data.StateTransition;
 import com.intellij.ui.ColoredListCellRenderer;
 import com.intellij.ui.GuiUtils;
 import com.intellij.ui.SimpleTextAttributes;
-import com.intellij.util.ui.UIUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import javax.swing.DefaultListModel;
-import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.JPanel;
 import java.awt.BorderLayout;
-import java.awt.Font;
 import java.util.List;
 
 public class ParserDiagnosticsForm extends DBNFormImpl {
     private JPanel mainPanel;
     private JPanel detailsPanel;
     private JList<ParserDiagnosticsResult> resultsList;
-    private JLabel detailsLabel;
-    private JLabel stateTransitionLabel;
 
     private final ParserDiagnosticsDetailsForm detailsForm;
     private final ParserDiagnosticsManager manager;
@@ -42,22 +35,12 @@ public class ParserDiagnosticsForm extends DBNFormImpl {
 
         detailsForm = new ParserDiagnosticsDetailsForm(this);
         detailsPanel.add(detailsForm.getComponent(), BorderLayout.CENTER);
-        detailsLabel.setText("No result selected");
-        stateTransitionLabel.setText("");
 
         resultsList.addListSelectionListener(e -> {
             ParserDiagnosticsResult current = resultsList.getSelectedValue();
             if (current != null) {
                 ParserDiagnosticsResult previous = manager.getPreviousResult(current);
-                ParserDiagnosticsDeltaResult deltaResult = detailsForm.renderDeltaResult(previous, current);
-                detailsLabel.setText(deltaResult.getName());
-
-                StateTransition stateTransition = deltaResult.getStateTransition();
-                stateTransitionLabel.setText(stateTransition.toString());
-                stateTransitionLabel.setForeground(stateTransition.getColor());
-                stateTransitionLabel.setFont(stateTransition.isBold() ?
-                        UIUtil.getLabelFont().deriveFont(Font.BOLD) :
-                        UIUtil.getLabelFont());
+                detailsForm.renderResult(previous, current);
                 dialog.updateButtons();
             }
         });
@@ -74,10 +57,6 @@ public class ParserDiagnosticsForm extends DBNFormImpl {
         }
 
         resultsList.setModel(model);
-    }
-
-    private DefaultListModel<ParserDiagnosticsResult> getResultsModel() {
-        return (DefaultListModel<ParserDiagnosticsResult>) resultsList.getModel();
     }
 
     @Nullable

@@ -1,4 +1,4 @@
-package com.dci.intellij.dbn.development.action;
+package com.dci.intellij.dbn.diagnostics.action;
 
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.action.AbstractConnectionAction;
@@ -9,8 +9,8 @@ import com.intellij.openapi.project.Project;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-public class DevTestConnectionAction extends AbstractConnectionAction {
-    public DevTestConnectionAction(@NotNull ConnectionHandler connectionHandler) {
+public class MiscellaneousConnectionAction extends AbstractConnectionAction {
+    public MiscellaneousConnectionAction(@NotNull ConnectionHandler connectionHandler) {
         super("Dev Test", connectionHandler);
     }
 
@@ -21,6 +21,6 @@ public class DevTestConnectionAction extends AbstractConnectionAction {
 
     @Override
     protected void update(@NotNull AnActionEvent e, @NotNull Presentation presentation, @NotNull Project project, @Nullable ConnectionHandler connectionHandler) {
-        presentation.setVisible(Diagnostics.isDeveloperMode());
+        presentation.setVisible(Diagnostics.isBulkActionsEnabled());
     }
 }

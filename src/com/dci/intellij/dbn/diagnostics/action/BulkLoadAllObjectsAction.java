@@ -1,4 +1,4 @@
-package com.dci.intellij.dbn.development.action;
+package com.dci.intellij.dbn.diagnostics.action;
 
 import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.common.thread.Progress;
@@ -13,8 +13,8 @@ import com.intellij.openapi.project.Project;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-public class DevLoadAllObjectsAction extends AbstractConnectionAction {
-    public DevLoadAllObjectsAction(ConnectionHandler connectionHandler) {
+public class BulkLoadAllObjectsAction extends AbstractConnectionAction {
+    public BulkLoadAllObjectsAction(ConnectionHandler connectionHandler) {
         super("Load All Objects", null, Icons.DATA_EDITOR_RELOAD_DATA, connectionHandler);
     }
 
@@ -31,6 +31,6 @@ public class DevLoadAllObjectsAction extends AbstractConnectionAction {
 
     @Override
     protected void update(@NotNull AnActionEvent e, @NotNull Presentation presentation, @NotNull Project project, @Nullable ConnectionHandler connectionHandler) {
-        presentation.setVisible(Diagnostics.isDeveloperMode());
+        presentation.setVisible(Diagnostics.isBulkActionsEnabled());
     }
 }

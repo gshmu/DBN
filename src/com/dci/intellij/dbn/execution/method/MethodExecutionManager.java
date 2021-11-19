@@ -131,7 +131,7 @@ public class MethodExecutionManager extends AbstractProjectComponent implements 
             @Nullable ParametricRunnable<MethodExecutionInput, RuntimeException> callback) {
 
         Project project = getProject();
-        Progress.prompt(project, "Loading method execution history", true,
+        Progress.modal(project, "Loading method execution history", true,
                 (progress) -> {
                     MethodExecutionInput selectedInput = CommonUtil.nvln(selection, executionHistory.getLastSelection());
                     if (selectedInput != null) {

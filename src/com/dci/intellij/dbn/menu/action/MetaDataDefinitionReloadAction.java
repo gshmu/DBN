@@ -17,7 +17,7 @@ public class MetaDataDefinitionReloadAction extends DumbAwareAction {
     @Override
     public void update(AnActionEvent e) {
         Presentation presentation = e.getPresentation();
-        presentation.setVisible(Diagnostics.isDeveloperMode());
+        presentation.setVisible(Diagnostics.isBulkActionsEnabled());
     }
 
 }
