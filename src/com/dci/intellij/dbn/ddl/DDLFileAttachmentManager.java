@@ -460,9 +460,9 @@ public class DDLFileAttachmentManager extends AbstractProjectComponent implement
         @Override
         public void after(@NotNull List<? extends VFileEvent> events) {
             for (VFileEvent event : events) {
-                if (event instanceof VFileDeleteEvent) {
-                    VirtualFile file = event.getFile();
-                    if (file != null) {
+                VirtualFile file = event.getFile();
+                if (file != null) {
+                    if (event instanceof VFileDeleteEvent) {
                         processFileDeletedEvent(file);
                     }
                 }

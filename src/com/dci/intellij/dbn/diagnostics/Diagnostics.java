@@ -14,17 +14,6 @@ public final class Diagnostics {
     private static final DatabaseLag databaseLag = new DatabaseLag();
     private static final Miscellaneous miscellaneous = new Miscellaneous();
 
-
-    public static void updateDeveloperMode(boolean state) {
-        developerMode = state;
-        if (!state) {
-            debugLogging.languageParser = false;
-            debugLogging.databaseAccess = false;
-            debugLogging.databaseResource = false;
-            databaseLag.enabled = false;
-        }
-    }
-
     public static boolean isDialogSizingReset() {
         return developerMode && miscellaneous.dialogSizingReset;
     }
@@ -142,19 +131,19 @@ public final class Diagnostics {
 
         @Override
         public void readState(Element element) {
-            Element debugMode = element.getChild("miscellaneous");
-            if (debugMode != null) {
-                dialogSizingReset = booleanAttribute(debugMode, "dialog-sizing-reset", dialogSizingReset);
-                bulkActionsEnabled = booleanAttribute(debugMode, "bulk-actions-enabled", bulkActionsEnabled);
+            Element miscellaneous = element.getChild("miscellaneous");
+            if (miscellaneous != null) {
+                dialogSizingReset = booleanAttribute(miscellaneous, "dialog-sizing-reset", dialogSizingReset);
+                bulkActionsEnabled = booleanAttribute(miscellaneous, "bulk-actions-enabled", bulkActionsEnabled);
             }
         }
 
         @Override
         public void writeState(Element element) {
-            Element debugMode = new Element("miscellaneous");
-            element.addContent(debugMode);
-            setBooleanAttribute(debugMode, "dialog-sizing-reset", dialogSizingReset);
-            setBooleanAttribute(debugMode, "bulk-actions-enabled", bulkActionsEnabled);
+            Element miscellaneous = new Element("miscellaneous");
+            element.addContent(miscellaneous);
+            setBooleanAttribute(miscellaneous, "dialog-sizing-reset", dialogSizingReset);
+            setBooleanAttribute(miscellaneous, "bulk-actions-enabled", bulkActionsEnabled);
         }
     }
 
