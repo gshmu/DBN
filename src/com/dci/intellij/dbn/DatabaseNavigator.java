@@ -2,9 +2,6 @@ package com.dci.intellij.dbn;
 
 import com.dci.intellij.dbn.common.component.ApplicationComponent;
 import com.dci.intellij.dbn.diagnostics.Diagnostics;
-import com.dci.intellij.dbn.execution.ExecutionManager;
-import com.intellij.notification.NotificationDisplayType;
-import com.intellij.notification.NotificationGroup;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.components.PersistentStateComponent;
 import com.intellij.openapi.components.State;
@@ -42,7 +39,7 @@ public class DatabaseNavigator implements ApplicationComponent, PersistentStateC
     private boolean showPluginConflictDialog;
 
     public DatabaseNavigator() {
-        new NotificationGroup("Database Navigator", NotificationDisplayType.TOOL_WINDOW, true, ExecutionManager.TOOL_WINDOW_ID);
+        //new NotificationGroup("Database Navigator", NotificationDisplayType.TOOL_WINDOW, true, ExecutionManager.TOOL_WINDOW_ID);
     }
 
 /*
@@ -73,6 +70,7 @@ public class DatabaseNavigator implements ApplicationComponent, PersistentStateC
         Element element = new Element("state");
         Diagnostics.getDebugLogging().writeState(element);
         Diagnostics.getDatabaseLag().writeState(element);
+        Diagnostics.getMiscellaneous().writeState(element);
         setBoolean(element, "developer-mode", Diagnostics.isDeveloperMode());
         setBoolean(element, "show-plugin-conflict-dialog", showPluginConflictDialog);
         return element;
@@ -82,6 +80,7 @@ public class DatabaseNavigator implements ApplicationComponent, PersistentStateC
     public void loadState(@NotNull Element element) {
         Diagnostics.getDebugLogging().readState(element);
         Diagnostics.getDatabaseLag().readState(element);
+        Diagnostics.getMiscellaneous().readState(element);
         Diagnostics.setDeveloperMode(getBoolean(element, "developer-mode", false));
         showPluginConflictDialog = getBoolean(element, "show-plugin-conflict-dialog", true);
     }
