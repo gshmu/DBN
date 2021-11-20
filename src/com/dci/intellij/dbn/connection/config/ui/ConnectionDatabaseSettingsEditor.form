@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <form xmlns="http://www.intellij.com/uidesigner/form/" version="1" bind-to-class="com.dci.intellij.dbn.connection.config.ui.ConnectionDatabaseSettingsForm">
-  <grid id="27dc6" binding="mainPanel" layout-manager="GridLayoutManager" row-count="2" column-count="1" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
+  <grid id="27dc6" binding="mainPanel" layout-manager="GridLayoutManager" row-count="1" column-count="1" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
     <margin top="12" left="4" bottom="4" right="4"/>
     <constraints>
-      <xy x="20" y="20" width="610" height="492"/>
+      <xy x="20" y="20" width="610" height="522"/>
     </constraints>
     <properties/>
     <border type="none"/>
@@ -11,7 +11,7 @@
       <grid id="23aca" layout-manager="GridLayoutManager" row-count="11" column-count="5" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
         <margin top="8" left="8" bottom="8" right="8"/>
         <constraints>
-          <grid row="1" column="0" row-span="1" col-span="1" vsize-policy="4" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
+          <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="4" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
         </constraints>
         <properties/>
         <border type="none"/>
@@ -45,7 +45,7 @@
               </grid>
             </constraints>
             <properties>
-              <margin top="2" left="5" bottom="2" right="5"/>
+              <margin top="2" left="6" bottom="2" right="6"/>
             </properties>
           </component>
           <component id="1de94" class="javax.swing.JTextField" binding="descriptionTextField">
@@ -55,7 +55,7 @@
               </grid>
             </constraints>
             <properties>
-              <margin top="2" left="5" bottom="2" right="5"/>
+              <margin top="2" left="6" bottom="2" right="6"/>
             </properties>
           </component>
           <vspacer id="ebba6">
@@ -142,7 +142,7 @@
                   </grid>
                 </constraints>
                 <properties>
-                  <margin top="2" left="5" bottom="2" right="5"/>
+                  <margin top="2" left="6" bottom="2" right="6"/>
                 </properties>
               </component>
               <component id="c6bf9" class="javax.swing.JLabel">
@@ -168,7 +168,7 @@
                   </grid>
                 </constraints>
                 <properties>
-                  <margin top="2" left="5" bottom="2" right="5"/>
+                  <margin top="2" left="6" bottom="2" right="6"/>
                 </properties>
               </component>
               <hspacer id="bfb69">
