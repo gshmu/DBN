@@ -8,16 +8,22 @@ import com.intellij.openapi.wm.ToolWindow;
 import com.intellij.openapi.wm.ToolWindowFactory;
 import com.intellij.ui.content.Content;
 import com.intellij.ui.content.ContentFactory;
-import com.intellij.ui.content.ContentFactoryImpl;
+import com.intellij.ui.content.ContentManager;
 import org.jetbrains.annotations.NotNull;
 
 public class DatabaseBrowserToolWindowFactory implements ToolWindowFactory, DumbAware{
     @Override
     public void createToolWindowContent(@NotNull Project project, @NotNull ToolWindow toolWindow) {
-        BrowserToolWindowForm toolWindowForm = DatabaseBrowserManager.getInstance(project).getToolWindowForm();
-        ContentFactory contentFactory = new ContentFactoryImpl();
+        DatabaseBrowserManager browserManager = DatabaseBrowserManager.getInstance(project);
+        BrowserToolWindowForm toolWindowForm = browserManager.getToolWindowForm();
+
+        ContentManager contentManager = toolWindow.getContentManager();
+        ContentFactory contentFactory = contentManager.getFactory();
         Content content = contentFactory.createContent(toolWindowForm.getComponent(), null, true);
-        toolWindow.getContentManager().addContent(content);
+
+        toolWindow.setTitle("DB Browser");
+        toolWindow.setStripeTitle("DB Browser");
         toolWindow.setIcon(Icons.WINDOW_DATABASE_BROWSER);
+        contentManager.addContent(content);
     }
 }
