@@ -12,8 +12,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Reader;
-import java.math.BigDecimal;
-import java.math.RoundingMode;
 import java.util.Objects;
 import java.util.function.Supplier;
 
@@ -66,8 +64,7 @@ public final class CommonUtil {
     }
 
     public static double getProgressPercentage(int is, int should) {
-        BigDecimal fraction = new BigDecimal(is).divide(new BigDecimal(should), 6, RoundingMode.HALF_UP);
-        return fraction.doubleValue();
+        return ((double) is) / should;
     }
 
     @NotNull

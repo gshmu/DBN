@@ -68,12 +68,14 @@ public class ParserDiagnosticsTable extends DBNTable<ParserDiagnosticsTableModel
         public void mouseClicked(MouseEvent e) {
             if (e.getButton() == MouseEvent.BUTTON1 && e.getClickCount() == 2) {
                 int selectedRow = getSelectedRow();
-                ParserDiagnosticsEntry entry = (ParserDiagnosticsEntry) getModel().getValueAt(selectedRow, 0);
-                if (entry != null) {
-                    FileEditorManager fileEditorManager = FileEditorManager.getInstance(getProject());
-                    VirtualFile virtualFile = entry.getFile();
-                    if (virtualFile != null) {
-                        fileEditorManager.openFile(virtualFile, true);
+                if (selectedRow > -1) {
+                    ParserDiagnosticsEntry entry = (ParserDiagnosticsEntry) getValueAt(selectedRow, 0);
+                    if (entry != null) {
+                        FileEditorManager fileEditorManager = FileEditorManager.getInstance(getProject());
+                        VirtualFile virtualFile = entry.getFile();
+                        if (virtualFile != null) {
+                            fileEditorManager.openFile(virtualFile, true);
+                        }
                     }
                 }
             }

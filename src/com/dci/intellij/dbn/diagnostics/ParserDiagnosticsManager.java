@@ -7,6 +7,7 @@ import com.dci.intellij.dbn.common.file.util.VirtualFileUtil;
 import com.dci.intellij.dbn.common.thread.Dispatch;
 import com.dci.intellij.dbn.common.thread.Progress;
 import com.dci.intellij.dbn.common.thread.Read;
+import com.dci.intellij.dbn.common.util.CommonUtil;
 import com.dci.intellij.dbn.diagnostics.data.DiagnosticCategory;
 import com.dci.intellij.dbn.diagnostics.data.ParserDiagnosticsFilter;
 import com.dci.intellij.dbn.diagnostics.data.ParserDiagnosticsResult;
@@ -55,10 +56,12 @@ public class ParserDiagnosticsManager extends AbstractProjectComponent implement
         VirtualFile[] files = VirtualFileUtil.lookupFilesForExtensions(getProject(), "sql", "pkg");
         ParserDiagnosticsResult result = new ParserDiagnosticsResult(getProject());
 
-        for (VirtualFile file : files) {
+        for (int i = 0, filesLength = files.length; i < filesLength; i++) {
+            VirtualFile file = files[i];
             Progress.check(progress);
             String filePath = file.getPath();
             progress.setText2(filePath);
+            progress.setFraction(CommonUtil.getProgressPercentage(i, files.length));
 
             DBLanguagePsiFile psiFile = ensureFileParsed(file);
             Progress.check(progress);

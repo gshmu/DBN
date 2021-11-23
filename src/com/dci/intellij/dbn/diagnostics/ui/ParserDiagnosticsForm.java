@@ -39,10 +39,8 @@ public class ParserDiagnosticsForm extends DBNFormImpl {
 
         resultsList.addListSelectionListener(e -> {
             ParserDiagnosticsResult current = resultsList.getSelectedValue();
-            if (current != null) {
-                ParserDiagnosticsResult previous = manager.getPreviousResult(current);
-                detailsForm.renderResult(previous, current);
-            }
+            ParserDiagnosticsResult previous = manager.getPreviousResult(current);
+            detailsForm.renderResult(previous, current);
         });
 
         resultsList.setCellRenderer(new ResultListCellRenderer());
@@ -66,9 +64,7 @@ public class ParserDiagnosticsForm extends DBNFormImpl {
     }
 
     public void selectResult(@Nullable ParserDiagnosticsResult result) {
-        if (result != null) {
-            resultsList.setSelectedValue(result, true);
-        }
+        resultsList.setSelectedValue(result, true);
     }
 
     private static class ResultListCellRenderer extends ColoredListCellRenderer<ParserDiagnosticsResult> {
