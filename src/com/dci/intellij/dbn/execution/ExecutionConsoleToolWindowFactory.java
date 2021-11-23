@@ -18,8 +18,15 @@ public class ExecutionConsoleToolWindowFactory implements ToolWindowFactory, Dum
         Content content = contentFactory.createContent(executionConsoleForm.getComponent(), null, true);
         toolWindow.getContentManager().addContent(content);
 */
+        toolWindow.setTitle("DB Execution Console");
+        toolWindow.setStripeTitle("DB Execution Console");
         toolWindow.setIcon(Icons.WINDOW_EXECUTION_CONSOLE);
         toolWindow.setToHideOnEmptyContent(true);
         toolWindow.setAvailable(false, null);
+    }
+
+    @Override
+    public boolean shouldBeAvailable(@NotNull Project project) {
+        return false;
     }
 }
