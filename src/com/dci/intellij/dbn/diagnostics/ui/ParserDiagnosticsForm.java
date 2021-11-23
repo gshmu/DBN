@@ -1,5 +1,6 @@
 package com.dci.intellij.dbn.diagnostics.ui;
 
+import com.dci.intellij.dbn.common.action.DataKeys;
 import com.dci.intellij.dbn.common.ui.Borders;
 import com.dci.intellij.dbn.common.ui.DBNFormImpl;
 import com.dci.intellij.dbn.common.ui.GUIUtil;
@@ -25,8 +26,8 @@ public class ParserDiagnosticsForm extends DBNFormImpl {
     private final ParserDiagnosticsDetailsForm detailsForm;
     private final ParserDiagnosticsManager manager;
 
-    public ParserDiagnosticsForm(@NotNull ParserDiagnosticsDialog dialog) {
-        super(dialog);
+    public ParserDiagnosticsForm(@NotNull ParserDiagnosticsToolWindowForm toolWindowForm) {
+        super(toolWindowForm);
         manager = ParserDiagnosticsManager.getInstance(ensureProject());
         GuiUtils.replaceJSplitPaneWithIDEASplitter(mainPanel);
         GUIUtil.updateSplitterProportion(mainPanel, (float) 0.2);
@@ -41,12 +42,13 @@ public class ParserDiagnosticsForm extends DBNFormImpl {
             if (current != null) {
                 ParserDiagnosticsResult previous = manager.getPreviousResult(current);
                 detailsForm.renderResult(previous, current);
-                dialog.updateButtons();
+                toolWindowForm.updateButtons();
             }
         });
 
         resultsList.setCellRenderer(new ResultListCellRenderer());
         refreshResults();
+        selectResult(manager.getLatestResult());
     }
 
     public void refreshResults() {
@@ -60,7 +62,7 @@ public class ParserDiagnosticsForm extends DBNFormImpl {
     }
 
     @Nullable
-    public ParserDiagnosticsResult selectedResult() {
+    public ParserDiagnosticsResult getSelectedResult() {
         return resultsList.getSelectedValue();
     }
 
@@ -77,6 +79,14 @@ public class ParserDiagnosticsForm extends DBNFormImpl {
         }
     }
 
+    @Nullable
+    @Override
+    public Object getData(@NotNull String dataId) {
+        if (DataKeys.PARSER_DIAGNOSTICS_FORM.is(dataId)) {
+            return this;
+        }
+        return super.getData(dataId);
+    }
 
     @NotNull
     @Override

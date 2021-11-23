@@ -7,9 +7,10 @@ import com.dci.intellij.dbn.common.file.util.VirtualFileUtil;
 import com.dci.intellij.dbn.common.thread.Dispatch;
 import com.dci.intellij.dbn.common.thread.Progress;
 import com.dci.intellij.dbn.common.thread.Read;
+import com.dci.intellij.dbn.diagnostics.data.DiagnosticCategory;
 import com.dci.intellij.dbn.diagnostics.data.ParserDiagnosticsFilter;
 import com.dci.intellij.dbn.diagnostics.data.ParserDiagnosticsResult;
-import com.dci.intellij.dbn.diagnostics.ui.ParserDiagnosticsDialog;
+import com.dci.intellij.dbn.diagnostics.ui.ParserDiagnosticsToolWindowForm;
 import com.dci.intellij.dbn.language.common.DBLanguagePsiFile;
 import com.dci.intellij.dbn.language.common.psi.PsiUtil;
 import com.intellij.openapi.components.PersistentStateComponent;
@@ -83,11 +84,24 @@ public class ParserDiagnosticsManager extends AbstractProjectComponent implement
                 selection = getLatestResult();
             }
 
-            ParserDiagnosticsDialog dialog = new ParserDiagnosticsDialog(project);
-            dialog.selectResult(selection);
-            dialog.show();
+
+
+            //ParserDiagnosticsDialog dialog = new ParserDiagnosticsDialog(project);
+            //dialog.selectResult(selection);
+            //dialog.show();
+            showDiagnosticsConsole();
         });
     }
+
+    private synchronized void showDiagnosticsConsole() {
+        DiagnosticsManager diagnosticsManager = DiagnosticsManager.getInstance(getProject());
+        diagnosticsManager.showDiagnosticsConsole(DiagnosticCategory.PARSER, () -> {
+            ParserDiagnosticsToolWindowForm form = new ParserDiagnosticsToolWindowForm(this, getProject());
+            return form.getComponent();
+        });
+    }
+
+
 
     @Nullable
     public ParserDiagnosticsResult getLatestResult() {
