@@ -5,6 +5,7 @@ import com.dci.intellij.dbn.common.AbstractProjectComponent;
 import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.connection.ConnectionId;
 import com.dci.intellij.dbn.diagnostics.data.DiagnosticBundle;
+import com.dci.intellij.dbn.diagnostics.data.DiagnosticCategory;
 import com.dci.intellij.dbn.diagnostics.data.DiagnosticType;
 import com.dci.intellij.dbn.diagnostics.options.ui.DiagnosticSettingsDialog;
 import com.dci.intellij.dbn.diagnostics.ui.DiagnosticsMonitorDialog;
@@ -12,11 +13,20 @@ import com.intellij.openapi.components.PersistentStateComponent;
 import com.intellij.openapi.components.State;
 import com.intellij.openapi.components.Storage;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.util.Key;
+import com.intellij.openapi.wm.ToolWindow;
+import com.intellij.openapi.wm.ToolWindowManager;
+import com.intellij.ui.content.Content;
+import com.intellij.ui.content.ContentFactory;
+import com.intellij.ui.content.ContentManager;
+import com.intellij.util.Producer;
 import org.jdom.Element;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import javax.swing.JComponent;
+import java.util.Arrays;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -27,11 +37,11 @@ import java.util.concurrent.ConcurrentHashMap;
 public class DiagnosticsManager extends AbstractProjectComponent implements PersistentStateComponent<Element> {
     public static final String COMPONENT_NAME = "DBNavigator.Project.DiagnosticsManager";
     public static final String TOOL_WINDOW_ID = "DBNavigator.ToolWindow.DatabaseDiagnostics";
+    private static final Key<DiagnosticCategory> CONTENT_TYPE_KEY = Key.create("CONTENT_TYPE");
 
 
     private final Map<ConnectionId, DiagnosticBundle> metadataInterfaceDiagnostics = new ConcurrentHashMap<>();
     private final Map<ConnectionId, DiagnosticBundle> connectivityDiagnostics = new ConcurrentHashMap<>();
-    private final DiagnosticBundle fileParserDiagnostics = new DiagnosticBundle(DiagnosticType.FILE_PARSER);
 
     public static DiagnosticsManager getInstance(@NotNull Project project) {
         return Failsafe.getComponent(project, DiagnosticsManager.class);
@@ -51,10 +61,6 @@ public class DiagnosticsManager extends AbstractProjectComponent implements Pers
                 computeIfAbsent(connectionId, connId -> new DiagnosticBundle(DiagnosticType.DATABASE_CONNECTIVITY));
     }
 
-    public DiagnosticBundle getFileParserDiagnostics() {
-        return fileParserDiagnostics;
-    }
-
     public void openDiagnosticsMonitorDialog() {
         DiagnosticsMonitorDialog monitorDialog = new DiagnosticsMonitorDialog(getProject());
         monitorDialog.show();
@@ -63,6 +69,41 @@ public class DiagnosticsManager extends AbstractProjectComponent implements Pers
     public void openDiagnosticsSettingsDialog() {
         DiagnosticSettingsDialog settingsDialog = new DiagnosticSettingsDialog(getProject());
         settingsDialog.show();
+    }
+
+    public void showDiagnosticsConsole(DiagnosticCategory category, Producer<JComponent> componentProducer) {
+        ToolWindow toolWindow = getDiagnosticsToolWindow();
+        ContentManager contentManager = toolWindow.getContentManager();
+        Content[] contents = contentManager.getContents();
+        if (Arrays.stream(contents).noneMatch(content -> category == content.getUserData(CONTENT_TYPE_KEY))) {
+            ContentFactory contentFactory = contentManager.getFactory();
+            Content content = contentFactory.createContent(componentProducer.produce(), category.getName(), true);
+            content.putUserData(CONTENT_TYPE_KEY, category);
+            contentManager.addContent(content);
+        }
+        toolWindow.setAvailable(true, null);
+        toolWindow.show(null);
+    }
+
+    public void closeDiagnosticsConsole(DiagnosticCategory category) {
+        ToolWindow toolWindow = getDiagnosticsToolWindow();
+        ContentManager contentManager = toolWindow.getContentManager();
+        Content[] contents = contentManager.getContents();
+        for (Content content : contents) {
+            if (content.getUserData(CONTENT_TYPE_KEY) == category) {
+                contentManager.removeContent(content, true);
+            }
+        }
+
+        if (contentManager.getContents().length == 0) {
+            toolWindow.setAvailable(false, null);
+        }
+    }
+
+    public ToolWindow getDiagnosticsToolWindow() {
+        Project project = getProject();
+        ToolWindowManager toolWindowManager = ToolWindowManager.getInstance(project);
+        return toolWindowManager.getToolWindow(TOOL_WINDOW_ID);
     }
 
     @Override

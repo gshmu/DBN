@@ -83,7 +83,7 @@ public class ExecutionManager extends AbstractProjectComponent implements Persis
         return toolWindowManager.getToolWindow(TOOL_WINDOW_ID);
     }
 
-    private synchronized ToolWindow initExecutionConsole() {
+    private ToolWindow initExecutionConsole() {
         ToolWindow toolWindow = getExecutionConsoleWindow();
         ContentManager contentManager = toolWindow.getContentManager();
 

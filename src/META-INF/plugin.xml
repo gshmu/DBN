@@ -427,6 +427,12 @@
             <action id="DBNavigator.Actions.DatabaseLogOutput.KillProcess" class="com.dci.intellij.dbn.execution.logging.action.DatabaseLogOutputKillAction" text="Database Log Output - Kill Process" icon="/img/action/KillProcess.png"/>
             <action id="DBNavigator.Actions.DatabaseLogOutput.Settings" class="com.dci.intellij.dbn.execution.logging.action.DatabaseLogOutputSettingsAction" text="Database Log Output - Settings"/>
         </group>
+        <group id="DBNavigator.ActionGroup.ParserDiagnostics">
+            <action id="DBNavigator.Actions.ParserDiagnostics.Close" class="com.dci.intellij.dbn.diagnostics.action.ParserDiagnosticsCloseAction" text="Parser Diagnostics - Close" icon="/img/action/Close.png"/>
+            <action id="DBNavigator.Actions.ParserDiagnostics.Run" class="com.dci.intellij.dbn.diagnostics.action.ParserDiagnosticsRunAction" text="Parser Diagnostics - Run" icon="/img/action/Execute.png"/>
+            <action id="DBNavigator.Actions.ParserDiagnostics.Save" class="com.dci.intellij.dbn.diagnostics.action.ParserDiagnosticsSaveAction" text="Parser Diagnostics - Run" icon="/img/action/Save.png"/>
+            <action id="DBNavigator.Actions.ParserDiagnostics.Delete" class="com.dci.intellij.dbn.diagnostics.action.ParserDiagnosticsDeleteAction" text="Parser Diagnostics - Run" icon="/img/action/Delete.png"/>
+        </group>
         <group id="DBNavigator.ActionGroup.Browser.ObjectProperties" text="Browser Object Properties">
             <action id="DBNavigator.Actions.Browser.HideObjectProperties" class="com.dci.intellij.dbn.browser.action.ObjectPropertiesHideAction" text="Hide Properties"/>
         </group>

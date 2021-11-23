@@ -1,6 +1,7 @@
 package com.dci.intellij.dbn.common.action;
 
 import com.dci.intellij.dbn.connection.config.ui.ConnectionBundleSettingsForm;
+import com.dci.intellij.dbn.diagnostics.ui.ParserDiagnosticsForm;
 import com.dci.intellij.dbn.editor.data.DatasetEditor;
 import com.dci.intellij.dbn.editor.session.SessionBrowser;
 import com.dci.intellij.dbn.execution.explain.result.ExplainPlanResult;
@@ -21,4 +22,5 @@ public interface DataKeys {
     DataKey<DBArgument> METHOD_EXECUTION_ARGUMENT = DataKey.create("DBNavigator.MethodExecutionArgument");
     DataKey<ExplainPlanResult> EXPLAIN_PLAN_RESULT = DataKey.create("DBNavigator.ExplainPlanResult");
     DataKey<DatabaseLoggingResult> DATABASE_LOG_OUTPUT = DataKey.create("DBNavigator.DatabaseLogOutput");
+    DataKey<ParserDiagnosticsForm> PARSER_DIAGNOSTICS_FORM = DataKey.create("DBNavigator.ParserDiagnosticsForm");
 }
