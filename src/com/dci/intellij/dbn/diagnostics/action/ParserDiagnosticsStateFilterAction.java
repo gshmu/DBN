@@ -3,7 +3,7 @@ package com.dci.intellij.dbn.diagnostics.action;
 import com.dci.intellij.dbn.common.ui.DBNComboBoxAction;
 import com.dci.intellij.dbn.diagnostics.data.ParserDiagnosticsFilter;
 import com.dci.intellij.dbn.diagnostics.data.StateTransition;
-import com.dci.intellij.dbn.diagnostics.ui.ParserDiagnosticsDetailsForm;
+import com.dci.intellij.dbn.diagnostics.ui.ParserDiagnosticsForm;
 import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.actionSystem.DefaultActionGroup;
@@ -14,9 +14,9 @@ import org.jetbrains.annotations.NotNull;
 import javax.swing.JComponent;
 
 public class ParserDiagnosticsStateFilterAction extends DBNComboBoxAction implements DumbAware {
-    private final ParserDiagnosticsDetailsForm form;
+    private final ParserDiagnosticsForm form;
 
-    public ParserDiagnosticsStateFilterAction(ParserDiagnosticsDetailsForm form) {
+    public ParserDiagnosticsStateFilterAction(ParserDiagnosticsForm form) {
         this.form = form;
     }
 

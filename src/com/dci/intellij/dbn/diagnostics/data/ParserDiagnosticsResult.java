@@ -79,7 +79,7 @@ public class ParserDiagnosticsResult implements PersistentStateElement<ParserDia
 
     public String getName() {
         Formatter formatter = RegionalSettings.getInstance(getProject()).getBaseFormatter();
-        return "Result " + index + " (" + formatter.formatDateTime(timestamp) + (draft ? " - draft" : "") + ")";
+        return "Result " + index + " (" + formatter.formatDateTime(timestamp) + ")" + (draft ? " - draft" : "") + "";
     }
 
     @Override
