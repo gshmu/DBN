@@ -42,7 +42,6 @@ public class ParserDiagnosticsForm extends DBNFormImpl {
             if (current != null) {
                 ParserDiagnosticsResult previous = manager.getPreviousResult(current);
                 detailsForm.renderResult(previous, current);
-                toolWindowForm.updateButtons();
             }
         });
 
