@@ -33,7 +33,7 @@ public class ParserDiagnosticsDeleteAction extends AbstractParserDiagnosticsActi
     protected void update(@NotNull AnActionEvent e, @NotNull Presentation presentation, @NotNull Project project, @Nullable ParserDiagnosticsForm form) {
         if (form != null) {
             ParserDiagnosticsResult result = form.getSelectedResult();
-            presentation.setEnabled(result != null && !result.isDraft());
+            presentation.setEnabled(result != null);
         } else {
             presentation.setEnabled(false);
         }
