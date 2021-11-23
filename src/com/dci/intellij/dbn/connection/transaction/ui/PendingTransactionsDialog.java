@@ -13,7 +13,8 @@ import com.dci.intellij.dbn.connection.transaction.TransactionListener;
 import com.intellij.openapi.project.Project;
 import org.jetbrains.annotations.NotNull;
 
-import javax.swing.*;
+import javax.swing.AbstractAction;
+import javax.swing.Action;
 import java.awt.event.ActionEvent;
 import java.util.ArrayList;
 import java.util.List;
@@ -28,6 +29,7 @@ public class PendingTransactionsDialog extends DBNDialog<PendingTransactionsForm
         this.additionalOperation = additionalOperation;
         setModal(false);
         setResizable(true);
+        setDefaultSize(800, 600);
         init();
         ProjectEvents.subscribe(project, this, TransactionListener.TOPIC, transactionListener);
     }

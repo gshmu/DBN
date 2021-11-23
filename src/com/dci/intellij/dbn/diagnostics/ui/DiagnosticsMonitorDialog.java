@@ -4,7 +4,7 @@ import com.dci.intellij.dbn.common.ui.dialog.DBNDialog;
 import com.intellij.openapi.project.Project;
 import org.jetbrains.annotations.NotNull;
 
-import javax.swing.*;
+import javax.swing.Action;
 
 public class DiagnosticsMonitorDialog extends DBNDialog<DiagnosticsMonitorForm> {
 
@@ -13,6 +13,7 @@ public class DiagnosticsMonitorDialog extends DBNDialog<DiagnosticsMonitorForm> 
         setModal(false);
         setResizable(true);
         setCancelButtonText("Close");
+        setDefaultSize(1000, 600);
         init();
     }
 

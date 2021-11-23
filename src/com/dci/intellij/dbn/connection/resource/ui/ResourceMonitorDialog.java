@@ -5,7 +5,7 @@ import com.dci.intellij.dbn.connection.transaction.DatabaseTransactionManager;
 import com.intellij.openapi.project.Project;
 import org.jetbrains.annotations.NotNull;
 
-import javax.swing.*;
+import javax.swing.Action;
 
 public class ResourceMonitorDialog extends DBNDialog<ResourceMonitorForm> {
 
@@ -14,6 +14,7 @@ public class ResourceMonitorDialog extends DBNDialog<ResourceMonitorForm> {
         setModal(false);
         setResizable(true);
         setCancelButtonText("Close");
+        setDefaultSize(1000, 600);
         init();
     }
 

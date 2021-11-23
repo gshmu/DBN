@@ -33,6 +33,7 @@ public class ProjectSettingsDialog extends DBNDialog<ProjectSettingsForm> {
         ProjectSettings projectSettings = ProjectSettingsManager.getSettings(project);
         this.projectSettings = projectSettings.clone();
         this.projectSettings.createCustomComponent();
+        setDefaultSize(1100, 700);
         init();
     }
 

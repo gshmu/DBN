@@ -56,7 +56,7 @@ public class DBNHintForm extends DBNFormImpl {
 
     @NotNull
     private Color getBackground() {
-        return boxed ? Colors.adjust(UIUtil.getPanelBackground(), 0.03) : UIUtil.getPanelBackground();
+        return boxed ? Colors.adjust(UIUtil.getPanelBackground(), 0.01) : UIUtil.getPanelBackground();
     }
 
     public void setHighlighted(boolean highlighted) {

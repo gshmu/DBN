@@ -7,7 +7,8 @@ import com.dci.intellij.dbn.object.lookup.DBObjectRef;
 import com.intellij.openapi.vfs.VirtualFile;
 import org.jetbrains.annotations.NotNull;
 
-import javax.swing.*;
+import javax.swing.AbstractAction;
+import javax.swing.Action;
 import java.awt.event.ActionEvent;
 import java.util.List;
 
@@ -19,6 +20,7 @@ public class DetachDDLFileDialog extends DBNDialog<SelectDDLFileForm> {
         this.virtualFiles = virtualFiles;
         this.objectRef = object.getRef();
         getOKAction().putValue(Action.NAME, "Detach selected");
+        setDefaultSize(700, 400);
         init();
     }
 
@@ -27,7 +29,7 @@ public class DetachDDLFileDialog extends DBNDialog<SelectDDLFileForm> {
     protected SelectDDLFileForm createForm() {
         DBSchemaObject object = objectRef.ensure();
         String hint =
-                "Following DDL files are currently attached the selected " + object.getTypeName() + ". " +
+                "Following DDL files are currently attached the " + object.getQualifiedNameWithType() + ".\n" +
                 "Select the files to detach from this object.";
         return new SelectDDLFileForm(this, object, virtualFiles, hint, false);
     }

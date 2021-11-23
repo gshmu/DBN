@@ -9,7 +9,8 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
 import org.jetbrains.annotations.NotNull;
 
-import javax.swing.*;
+import javax.swing.AbstractAction;
+import javax.swing.Action;
 import java.awt.event.ActionEvent;
 import java.util.List;
 
@@ -24,6 +25,7 @@ public class AttachDDLFileDialog extends DBNDialog<SelectDDLFileForm> {
         this.objectRef = DBObjectRef.of(object);
         this.showLookupOption = showLookupOption;
         getOKAction().putValue(Action.NAME, "Attach selected");
+        setDefaultSize(700, 400);
         init();
     }
 
@@ -33,8 +35,8 @@ public class AttachDDLFileDialog extends DBNDialog<SelectDDLFileForm> {
         DBSchemaObject object = getObject();
         String typeName = object.getTypeName();
         String hint =
-                "Following DDL files were found matching the name of the selected " + typeName + ". " +
-                        "Select the files to attach to this object.\n" +
+                "Following DDL files were found matching the name of the " + object.getQualifiedName() + ".\n" +
+                        "Select the files to attach to this object.\n\n" +
                         "NOTE: Attached DDL files will become readonly and their content will change automatically when the " + typeName + " is edited.";
         return new SelectDDLFileForm(this, object, virtualFiles, hint, showLookupOption);
     }

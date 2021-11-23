@@ -11,7 +11,8 @@ import com.intellij.openapi.project.Project;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import javax.swing.*;
+import javax.swing.AbstractAction;
+import javax.swing.Action;
 import java.awt.event.ActionEvent;
 
 public class MethodExecutionHistoryDialog extends DBNDialog<MethodExecutionHistoryForm> {
@@ -36,6 +37,7 @@ public class MethodExecutionHistoryDialog extends DBNDialog<MethodExecutionHisto
         this.debug = debug;
         setModal(true);
         setResizable(true);
+        setDefaultSize(1200, 800);
         init();
 
         updateMainButtons(executionInput);
