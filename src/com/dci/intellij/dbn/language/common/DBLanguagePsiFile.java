@@ -66,8 +66,8 @@ import org.jetbrains.annotations.Nullable;
 
 import javax.swing.Icon;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Set;
-import java.util.concurrent.atomic.AtomicInteger;
 
 public abstract class DBLanguagePsiFile extends PsiFileImpl implements FileConnectionMappingProvider, PresentableConnectionProvider, StatefulDisposable {
     private final Language language;
@@ -438,18 +438,21 @@ public abstract class DBLanguagePsiFile extends PsiFileImpl implements FileConne
     }
 
     public int countErrors() {
-        AtomicInteger errorCount = new AtomicInteger(0);
+        List<PsiErrorElement> errors = new ArrayList<>();
         PsiElementVisitor visitor = new PsiRecursiveElementVisitor() {
             @Override
             public void visitElement(@NotNull PsiElement element) {
                 if (element instanceof PsiErrorElement) {
-                    errorCount.incrementAndGet();
+                    if (errors.stream().noneMatch(error -> error.getTextOffset() == element.getTextOffset())) {
+                        errors.add((PsiErrorElement) element);
+                    }
+
                 }
                 super.visitElement(element);
 
             }
         };;
         visitor.visitFile(this);
-        return errorCount.get();
+        return errors.size();
     }
 }
