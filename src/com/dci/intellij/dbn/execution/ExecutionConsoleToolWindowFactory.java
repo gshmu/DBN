@@ -23,6 +23,7 @@ public class ExecutionConsoleToolWindowFactory implements ToolWindowFactory, Dum
         toolWindow.setIcon(Icons.WINDOW_EXECUTION_CONSOLE);
         toolWindow.setToHideOnEmptyContent(true);
         toolWindow.setAvailable(false, null);
+        toolWindow.setAutoHide(true);
     }
 
     @Override
