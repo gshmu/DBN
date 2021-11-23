@@ -9,11 +9,15 @@ import com.dci.intellij.dbn.diagnostics.data.DiagnosticEntry;
 import com.dci.intellij.dbn.diagnostics.data.ParserDiagnosticsEntry;
 import com.dci.intellij.dbn.diagnostics.data.StateTransition;
 import com.dci.intellij.dbn.diagnostics.ui.model.ParserDiagnosticsTableModel;
+import com.intellij.openapi.fileEditor.FileEditorManager;
+import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.ui.SimpleTextAttributes;
 import org.jetbrains.annotations.NotNull;
 
 import javax.swing.ListSelectionModel;
 import javax.swing.table.TableModel;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 
 public class ParserDiagnosticsTable extends DBNTable<ParserDiagnosticsTableModel> {
 
@@ -26,6 +30,7 @@ public class ParserDiagnosticsTable extends DBNTable<ParserDiagnosticsTableModel
         setCellSelectionEnabled(true);
         adjustRowHeight(2);
         accommodateColumnsSize();
+        addMouseListener(new MouseListener());
     }
 
     @Override
@@ -55,6 +60,23 @@ public class ParserDiagnosticsTable extends DBNTable<ParserDiagnosticsTableModel
             String presentableValue = model.getPresentableValue(entry, column);
             append(presentableValue, textAttributes);
             setBorder(Borders.TEXT_FIELD_BORDER);
+        }
+    }
+
+    public class MouseListener extends MouseAdapter {
+        @Override
+        public void mouseClicked(MouseEvent e) {
+            if (e.getButton() == MouseEvent.BUTTON1 && e.getClickCount() == 2) {
+                int selectedRow = getSelectedRow();
+                ParserDiagnosticsEntry entry = (ParserDiagnosticsEntry) getModel().getValueAt(selectedRow, 0);
+                if (entry != null) {
+                    FileEditorManager fileEditorManager = FileEditorManager.getInstance(getProject());
+                    VirtualFile virtualFile = entry.getFile();
+                    if (virtualFile != null) {
+                        fileEditorManager.openFile(virtualFile, true);
+                    }
+                }
+            }
         }
     }
 }

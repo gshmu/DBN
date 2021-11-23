@@ -26,6 +26,9 @@ import java.util.concurrent.ConcurrentHashMap;
 )
 public class DiagnosticsManager extends AbstractProjectComponent implements PersistentStateComponent<Element> {
     public static final String COMPONENT_NAME = "DBNavigator.Project.DiagnosticsManager";
+    public static final String TOOL_WINDOW_ID = "DBNavigator.ToolWindow.DatabaseDiagnostics";
+
+
     private final Map<ConnectionId, DiagnosticBundle> metadataInterfaceDiagnostics = new ConcurrentHashMap<>();
     private final Map<ConnectionId, DiagnosticBundle> connectivityDiagnostics = new ConcurrentHashMap<>();
     private final DiagnosticBundle fileParserDiagnostics = new DiagnosticBundle(DiagnosticType.FILE_PARSER);

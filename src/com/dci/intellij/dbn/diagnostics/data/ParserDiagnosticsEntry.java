@@ -1,7 +1,12 @@
 package com.dci.intellij.dbn.diagnostics.data;
 
+import com.intellij.openapi.vfs.LocalFileSystem;
+import com.intellij.openapi.vfs.VirtualFile;
 import lombok.Getter;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
+import java.io.File;
 
 import static com.dci.intellij.dbn.diagnostics.data.ParserDiagnosticsUtil.computeStateTransition;
 
@@ -16,6 +21,12 @@ public class ParserDiagnosticsEntry implements Comparable<ParserDiagnosticsEntry
         this.filePath = filePath;
         this.oldErrorCount = oldErrorCount;
         this.newErrorCount = newErrorCount;
+    }
+
+    @Nullable
+    public VirtualFile getFile() {
+        LocalFileSystem localFileSystem = LocalFileSystem.getInstance();
+        return localFileSystem.findFileByIoFile(new File(filePath));
     }
 
     public StateTransition getStateTransition() {

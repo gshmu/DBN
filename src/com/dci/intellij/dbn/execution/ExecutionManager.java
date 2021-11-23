@@ -27,7 +27,6 @@ import com.intellij.openapi.wm.ToolWindow;
 import com.intellij.openapi.wm.ToolWindowManager;
 import com.intellij.ui.content.Content;
 import com.intellij.ui.content.ContentFactory;
-import com.intellij.ui.content.ContentFactoryImpl;
 import com.intellij.ui.content.ContentManager;
 import lombok.Getter;
 import lombok.Setter;
@@ -50,8 +49,8 @@ public class ExecutionManager extends AbstractProjectComponent implements Persis
     private @Getter @Setter boolean retainStickyNames = false;
 
     public static final String COMPONENT_NAME = "DBNavigator.Project.ExecutionManager";
+    public static final String TOOL_WINDOW_ID = "DBNavigator.ToolWindow.DatabaseExecutionConsole";
 
-    public static final String TOOL_WINDOW_ID = "DB Execution Console";
     private final Latent<ExecutionConsoleForm> executionConsoleForm =
             Latent.basic(() -> {
                 ExecutionConsoleForm form = new ExecutionConsoleForm(this, getProject());
@@ -84,20 +83,16 @@ public class ExecutionManager extends AbstractProjectComponent implements Persis
         return toolWindowManager.getToolWindow(TOOL_WINDOW_ID);
     }
 
-    private ToolWindow initExecutionConsole() {
+    private synchronized ToolWindow initExecutionConsole() {
         ToolWindow toolWindow = getExecutionConsoleWindow();
-
         ContentManager contentManager = toolWindow.getContentManager();
+
         if (contentManager.getContents().length == 0) {
-            synchronized (this) {
-                if (contentManager.getContents().length == 0) {
-                    ExecutionConsoleForm executionConsoleForm = getExecutionConsoleForm();
-                    ContentFactory contentFactory = new ContentFactoryImpl();
-                    Content content = contentFactory.createContent(executionConsoleForm.getComponent(), null, true);
-                    contentManager.addContent(content);
-                    toolWindow.setAvailable(true, null);
-                }
-            }
+            ExecutionConsoleForm executionConsoleForm = getExecutionConsoleForm();
+            ContentFactory contentFactory = contentManager.getFactory();
+            Content content = contentFactory.createContent(executionConsoleForm.getComponent(), null, true);
+            contentManager.addContent(content);
+            toolWindow.setAvailable(true, null);
         }
         return toolWindow;
     }
