@@ -71,7 +71,9 @@ public class DiagnosticsManager extends AbstractProjectComponent implements Pers
         settingsDialog.show();
     }
 
-    public void showDiagnosticsConsole(DiagnosticCategory category, Producer<JComponent> componentProducer) {
+    public ToolWindow showDiagnosticsConsole(
+            @NotNull DiagnosticCategory category,
+            Producer<JComponent> componentProducer) {
         ToolWindow toolWindow = getDiagnosticsToolWindow();
         ContentManager contentManager = toolWindow.getContentManager();
         Content[] contents = contentManager.getContents();
@@ -83,6 +85,7 @@ public class DiagnosticsManager extends AbstractProjectComponent implements Pers
         }
         toolWindow.setAvailable(true, null);
         toolWindow.show(null);
+        return toolWindow;
     }
 
     public void closeDiagnosticsConsole(DiagnosticCategory category) {
