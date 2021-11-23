@@ -1,6 +1,7 @@
 package com.dci.intellij.dbn.diagnostics.action;
 
 import com.dci.intellij.dbn.common.Icons;
+import com.dci.intellij.dbn.common.thread.Dispatch;
 import com.dci.intellij.dbn.common.thread.Progress;
 import com.dci.intellij.dbn.diagnostics.ParserDiagnosticsManager;
 import com.dci.intellij.dbn.diagnostics.data.ParserDiagnosticsResult;
@@ -18,16 +19,16 @@ public class ParserDiagnosticsRunAction extends AbstractParserDiagnosticsAction 
 
     @Override
     protected void actionPerformed(@NotNull AnActionEvent e, @NotNull Project project, @NotNull ParserDiagnosticsForm form) {
-        Progress.modal(project, "Running Parser Diagnostics", true, progress -> {
+        Progress.prompt(project, "Running Parser Diagnostics", true, progress -> {
             ParserDiagnosticsManager manager = getManager(project);
             ParserDiagnosticsResult result = manager.runParserDiagnostics(progress);
-            form.refreshResults();
-            form.selectResult(result);
+            Dispatch.run(() -> manager.openParserDiagnostics(result));
         });
     }
 
     @Override
     protected void update(@NotNull AnActionEvent e, @NotNull Presentation presentation, @NotNull Project project, @Nullable ParserDiagnosticsForm form) {
-        presentation.setEnabled(!getManager(project).hasDraftResults());
+        ParserDiagnosticsManager manager = getManager(project);
+        presentation.setEnabled(!manager.isRunning() && !manager.hasDraftResults());
     }
 }

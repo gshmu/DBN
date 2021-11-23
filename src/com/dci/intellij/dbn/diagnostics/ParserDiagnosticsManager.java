@@ -4,14 +4,13 @@ import com.dci.intellij.dbn.DatabaseNavigator;
 import com.dci.intellij.dbn.common.AbstractProjectComponent;
 import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.common.file.util.VirtualFileUtil;
-import com.dci.intellij.dbn.common.thread.Dispatch;
 import com.dci.intellij.dbn.common.thread.Progress;
 import com.dci.intellij.dbn.common.thread.Read;
 import com.dci.intellij.dbn.common.util.CommonUtil;
 import com.dci.intellij.dbn.diagnostics.data.DiagnosticCategory;
 import com.dci.intellij.dbn.diagnostics.data.ParserDiagnosticsFilter;
 import com.dci.intellij.dbn.diagnostics.data.ParserDiagnosticsResult;
-import com.dci.intellij.dbn.diagnostics.ui.ParserDiagnosticsToolWindowForm;
+import com.dci.intellij.dbn.diagnostics.ui.ParserDiagnosticsForm;
 import com.dci.intellij.dbn.language.common.DBLanguagePsiFile;
 import com.dci.intellij.dbn.language.common.psi.PsiUtil;
 import com.intellij.openapi.components.PersistentStateComponent;
@@ -20,6 +19,7 @@ import com.intellij.openapi.components.Storage;
 import com.intellij.openapi.progress.ProgressIndicator;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
+import com.intellij.openapi.wm.ToolWindow;
 import com.intellij.psi.PsiFile;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
@@ -42,6 +42,7 @@ public class ParserDiagnosticsManager extends AbstractProjectComponent implement
 
     private final List<ParserDiagnosticsResult> resultHistory = new ArrayList<>();
     private ParserDiagnosticsFilter resultFilter = ParserDiagnosticsFilter.EMPTY;
+    private boolean running;
 
     private ParserDiagnosticsManager(@NotNull Project project) {
         super(project);
@@ -53,55 +54,44 @@ public class ParserDiagnosticsManager extends AbstractProjectComponent implement
 
     @NotNull
     public ParserDiagnosticsResult runParserDiagnostics(ProgressIndicator progress) {
-        VirtualFile[] files = VirtualFileUtil.lookupFilesForExtensions(getProject(), "sql", "pkg");
-        ParserDiagnosticsResult result = new ParserDiagnosticsResult(getProject());
+        try {
+            running = true;
+            VirtualFile[] files = VirtualFileUtil.lookupFilesForExtensions(getProject(), "sql", "pkg");
+            ParserDiagnosticsResult result = new ParserDiagnosticsResult(getProject());
 
-        for (int i = 0, filesLength = files.length; i < filesLength; i++) {
-            VirtualFile file = files[i];
-            Progress.check(progress);
-            String filePath = file.getPath();
-            progress.setText2(filePath);
-            progress.setFraction(CommonUtil.getProgressPercentage(i, files.length));
+            for (int i = 0, filesLength = files.length; i < filesLength; i++) {
+                VirtualFile file = files[i];
+                Progress.check(progress);
+                String filePath = file.getPath();
+                progress.setText2(filePath);
+                progress.setFraction(CommonUtil.getProgressPercentage(i, files.length));
 
-            DBLanguagePsiFile psiFile = ensureFileParsed(file);
-            Progress.check(progress);
-            if (psiFile == null) {
-                result.addEntry(filePath, 1);
-            } else {
-                Integer errorCount = Read.call(() -> psiFile.countErrors());
-                if (errorCount != null && errorCount > 0) {
-                    result.addEntry(filePath, errorCount);
+                DBLanguagePsiFile psiFile = ensureFileParsed(file);
+                Progress.check(progress);
+                if (psiFile == null) {
+                    result.addEntry(filePath, 1);
+                } else {
+                    Integer errorCount = Read.call(() -> psiFile.countErrors());
+                    if (errorCount != null && errorCount > 0) {
+                        result.addEntry(filePath, errorCount);
+                    }
                 }
             }
+            resultHistory.add(0, result);
+            indexResults();
+            return result;
+        } finally {
+            running = false;
         }
-        resultHistory.add(0, result);
-        indexResults();
-        return result;
     }
 
     public void openParserDiagnostics(@Nullable ParserDiagnosticsResult result) {
-        Dispatch.runConditional(() -> {
-            Project project = getProject();
-            ParserDiagnosticsResult selection = result;
-            if (selection == null ) {
-                selection = getLatestResult();
-            }
-
-
-
-            //ParserDiagnosticsDialog dialog = new ParserDiagnosticsDialog(project);
-            //dialog.selectResult(selection);
-            //dialog.show();
-            showDiagnosticsConsole();
-        });
-    }
-
-    private synchronized void showDiagnosticsConsole() {
         DiagnosticsManager diagnosticsManager = DiagnosticsManager.getInstance(getProject());
-        diagnosticsManager.showDiagnosticsConsole(DiagnosticCategory.PARSER, () -> {
-            ParserDiagnosticsToolWindowForm form = new ParserDiagnosticsToolWindowForm(this, getProject());
+        ToolWindow toolWindow = diagnosticsManager.showDiagnosticsConsole(DiagnosticCategory.PARSER, () -> {
+            ParserDiagnosticsForm form = new ParserDiagnosticsForm(getProject());
             return form.getComponent();
         });
+        toolWindow.getComponent();
     }
 
 

@@ -15,7 +15,6 @@ public class DiagnosticsToolWindowFactory implements ToolWindowFactory, DumbAwar
         toolWindow.setIcon(Icons.WINDOW_DATABASE_DIAGNOSTICS);
         toolWindow.setToHideOnEmptyContent(true);
         toolWindow.setAvailable(false, null);
-        toolWindow.setAutoHide(true);
     }
 
     @Override
