@@ -51,15 +51,15 @@ public class ParserDiagnosticsDetailsForm extends DBNFormImpl {
         actionsPanel.add(actionToolbar.getComponent(), BorderLayout.WEST);
     }
 
-    public void renderResult(@Nullable ParserDiagnosticsResult previous, @NotNull ParserDiagnosticsResult current) {
-        ParserDiagnosticsDeltaResult deltaResult = current.delta(previous);
+    public void renderResult(@Nullable ParserDiagnosticsResult previous, @Nullable ParserDiagnosticsResult current) {
+        ParserDiagnosticsDeltaResult deltaResult = current == null ? null : current.delta(previous);
         ParserDiagnosticsTableModel tableModel = new ParserDiagnosticsTableModel(deltaResult, manager.getResultFilter());
         diagnosticsTable.setModel(tableModel);
         diagnosticsTable.accommodateColumnsSize();
 
-        detailsLabel.setText(deltaResult.getName());
+        detailsLabel.setText(deltaResult == null ? "" : deltaResult.getName());
 
-        StateTransition stateTransition = deltaResult.getFilter();
+        StateTransition stateTransition = deltaResult == null ? StateTransition.UNCHANGED : deltaResult.getFilter();
         StateTransition.Category category = stateTransition.getCategory();
         stateTransitionLabel.setText(previous == null ? "INITIAL" : stateTransition.name());
         stateTransitionLabel.setForeground(category.getColor());
