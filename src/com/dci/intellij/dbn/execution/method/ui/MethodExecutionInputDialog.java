@@ -6,12 +6,13 @@ import com.dci.intellij.dbn.debugger.DBDebuggerType;
 import com.dci.intellij.dbn.execution.method.MethodExecutionInput;
 import org.jetbrains.annotations.NotNull;
 
-import javax.swing.*;
+import javax.swing.AbstractAction;
+import javax.swing.Action;
 import java.awt.event.ActionEvent;
 
 public class MethodExecutionInputDialog extends DBNDialog<MethodExecutionInputForm> {
-    private MethodExecutionInput executionInput;
-    private DBDebuggerType debuggerType;
+    private final MethodExecutionInput executionInput;
+    private final DBDebuggerType debuggerType;
 
     public MethodExecutionInputDialog(@NotNull MethodExecutionInput executionInput, @NotNull DBDebuggerType debuggerType) {
         super(executionInput.getProject(), (debuggerType.isDebug() ? "Debug" : "Execute") + " method", true);
@@ -19,6 +20,7 @@ public class MethodExecutionInputDialog extends DBNDialog<MethodExecutionInputFo
         this.debuggerType = debuggerType;
         setModal(true);
         setResizable(true);
+        setDefaultSize(800, 600);
         init();
     }
 

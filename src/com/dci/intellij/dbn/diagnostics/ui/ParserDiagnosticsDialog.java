@@ -25,7 +25,9 @@ public class ParserDiagnosticsDialog extends DBNDialog<ParserDiagnosticsForm> {
         setModal(false);
         setResizable(true);
         setCancelButtonText("Close");
+        setDefaultSize(1200, 800);
         init();
+        updateButtons();
     }
 
     @NotNull
@@ -97,16 +99,12 @@ public class ParserDiagnosticsDialog extends DBNDialog<ParserDiagnosticsForm> {
         @Override
         public void actionPerformed(ActionEvent e) {
             ParserDiagnosticsForm form = getForm();
-            ParserDiagnosticsResult selectedResult = form.selectedResult();
-            if (selectedResult != null) {
-                Progress.modal(getProject(), "Running Parser Diagnostics", true, progress -> {
-                    ParserDiagnosticsResult result = manager.runParserDiagnostics(progress);
-                    form.refreshResults();
-                    form.selectResult(result);
-                    updateButtons();
-                });
-
-            }
+            Progress.modal(getProject(), "Running Parser Diagnostics", true, progress -> {
+                ParserDiagnosticsResult result = manager.runParserDiagnostics(progress);
+                form.refreshResults();
+                form.selectResult(result);
+                updateButtons();
+            });
         }
     }
 
