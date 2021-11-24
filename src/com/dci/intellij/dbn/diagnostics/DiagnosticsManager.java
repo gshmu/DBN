@@ -36,7 +36,7 @@ import java.util.concurrent.ConcurrentHashMap;
 )
 public class DiagnosticsManager extends AbstractProjectComponent implements PersistentStateComponent<Element> {
     public static final String COMPONENT_NAME = "DBNavigator.Project.DiagnosticsManager";
-    public static final String TOOL_WINDOW_ID = "DBNavigator.ToolWindow.DatabaseDiagnostics";
+    public static final String TOOL_WINDOW_ID = "DB Diagnostics";
     private static final Key<DiagnosticCategory> CONTENT_CATEGORY_KEY = Key.create("CONTENT_TYPE");
     private static final Key<DBNForm> CONTENT_FORM_KEY = Key.create("CONTENT_FORM");
 
