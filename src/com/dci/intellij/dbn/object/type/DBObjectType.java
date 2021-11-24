@@ -9,8 +9,16 @@ import com.dci.intellij.dbn.editor.DBContentType;
 import lombok.Getter;
 import org.jetbrains.annotations.Nullable;
 
-import javax.swing.*;
-import java.util.*;
+import javax.swing.Icon;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.EnumMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Set;
+import java.util.StringTokenizer;
 
 @Getter
 public enum DBObjectType implements DynamicContentType<DBObjectType> {
@@ -454,7 +462,7 @@ public enum DBObjectType implements DynamicContentType<DBObjectType> {
             return forListName(name, null);
         }
 
-        throw new IllegalArgumentException("No ObjectType found for actions name '" + name + "'");
+        throw new IllegalArgumentException("No ObjectType found for name '" + name + "'");
     }
 
     /*************************************************************************
