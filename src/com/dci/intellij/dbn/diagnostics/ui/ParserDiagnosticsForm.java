@@ -24,12 +24,8 @@ import lombok.Getter;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import javax.swing.DefaultListModel;
-import javax.swing.JLabel;
-import javax.swing.JList;
-import javax.swing.JPanel;
-import java.awt.BorderLayout;
-import java.awt.Font;
+import javax.swing.*;
+import java.awt.*;
 import java.util.List;
 
 public class ParserDiagnosticsForm extends DBNFormImpl {
@@ -125,6 +121,12 @@ public class ParserDiagnosticsForm extends DBNFormImpl {
     }
 
     public void selectResult(@Nullable ParserDiagnosticsResult result) {
+        if (result != null) {
+            DefaultListModel<ParserDiagnosticsResult>  model = (DefaultListModel<ParserDiagnosticsResult>) resultsList.getModel();
+            if (!model.contains(result)) {
+                refreshResults();
+            }
+        }
         resultsList.setSelectedValue(result, true);
     }
 

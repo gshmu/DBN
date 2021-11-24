@@ -20,6 +20,6 @@ public class ExecutionConsoleToolWindowFactory implements ToolWindowFactory, Dum
 
     @Override
     public boolean shouldBeAvailable(@NotNull Project project) {
-        return true;
+        return false;
     }
 }

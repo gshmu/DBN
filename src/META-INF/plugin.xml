@@ -2,7 +2,7 @@
     <name>Database Navigator</name>
     <id>DBN</id>
     <!--3050 -->
-    <version>3.2.5802.0</version>
+    <version>3.2.6411.0</version>
     <category>Database</category>
     <depends>com.intellij.modules.platform</depends>
     <depends>com.intellij.modules.lang</depends>
@@ -31,6 +31,12 @@
     ]]></description>
     <change-notes><![CDATA[
         <ul>
+            <li><b>3.2.6411</b>
+            <ul>
+                <li>Parser and connection diagnostics / hidden developer actions
+                <li>Oracle SQL and PLSQL language syntax updates
+                <li>Bug fixes
+            </ul>
             <li><b>3.2.5802</b>
             <ul>
                 <li>Support for latest IDE EAP versions
@@ -292,6 +298,14 @@
             </action>
             <action class="com.dci.intellij.dbn.menu.action.ResourceMonitorOpenAction" text="Resource Monitor" id="DBNavigator.Actions.MainMenu.ResourceMonitor"/>
             <action class="com.dci.intellij.dbn.menu.action.PendingTransactionsOpenAction" text="Open Transactions" id="DBNavigator.Actions.MainMenu.PendingTransactions"/>
+            <separator/>
+            <action id="DBNavigator.Actions.MainMenu.OpenSettings" class="com.dci.intellij.dbn.menu.action.ProjectSettingsOpenAction" text="Settings"/>
+            <group id="DBNavigator.ActionGroup.ImportExportSettings" text="Default Settings" popup="true">
+                <action id="DBNavigator.Actions.MainMenu.OpenDefaultSettings" class="com.dci.intellij.dbn.menu.action.ProjectDefaultSettingsOpenAction" text="Open Default Settings..."/>
+                <action id="DBNavigator.Actions.MainMenu.LoadDefaultSettings" class="com.dci.intellij.dbn.menu.action.ProjectDefaultSettingsImportAction" text="Import Settings..."/>
+                <action id="DBNavigator.Actions.MainMenu.SaveDefaultSettings" class="com.dci.intellij.dbn.menu.action.ProjectSettingsExportAction" text="Export Settings..."/>
+            </group>
+            <separator/>
             <group id="DBNavigator.ActionGroup.Diagnostics" text="Diagnostics" popup="true">
                 <action id="DBNavigator.Actions.MainMenu.ParserDiagnostics" class="com.dci.intellij.dbn.diagnostics.action.OpenParserDiagnosticsAction" text="Parser Diagnostics..."/>
                 <action id="DBNavigator.Actions.MainMenu.DiagnosticsMonitor" class="com.dci.intellij.dbn.menu.action.DiagnosticsMonitorOpenAction" text="Connection Diagnostics..."/>
@@ -299,13 +313,6 @@
                 <separator/>
                 <action id="DBNavigator.Actions.MainMenu.Options" class="com.dci.intellij.dbn.menu.action.DiagnosticsSettingsOpenAction" text="Settings.."/>
             </group>
-            <separator/>
-            <group id="DBNavigator.ActionGroup.ImportExportSettings" text="Default Settings" popup="true">
-                <action id="DBNavigator.Actions.MainMenu.OpenDefaultSettings" class="com.dci.intellij.dbn.menu.action.ProjectDefaultSettingsOpenAction" text="Open Default Settings..."/>
-                <action id="DBNavigator.Actions.MainMenu.LoadDefaultSettings" class="com.dci.intellij.dbn.menu.action.ProjectDefaultSettingsImportAction" text="Import Settings..."/>
-                <action id="DBNavigator.Actions.MainMenu.SaveDefaultSettings" class="com.dci.intellij.dbn.menu.action.ProjectSettingsExportAction" text="Export Settings..."/>
-            </group>
-            <action id="DBNavigator.Actions.MainMenu.OpenSettings" class="com.dci.intellij.dbn.menu.action.ProjectSettingsOpenAction" text="Settings"/>
             <action id="DBNavigator.Actions.MainMenu.OpenAbout" class="com.dci.intellij.dbn.menu.action.AboutPageOpenAction" text="About"/>
             <add-to-group anchor="before" group-id="MainMenu" relative-to-action="HelpMenu"/>
         </group>
