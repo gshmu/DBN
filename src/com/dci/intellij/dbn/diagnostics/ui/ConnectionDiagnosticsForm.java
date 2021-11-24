@@ -8,28 +8,30 @@ import com.dci.intellij.dbn.connection.ConnectionBundle;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.ConnectionId;
 import com.dci.intellij.dbn.connection.ConnectionManager;
+import com.intellij.openapi.project.Project;
 import com.intellij.ui.ColoredListCellRenderer;
 import com.intellij.ui.GuiUtils;
 import com.intellij.ui.SimpleTextAttributes;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
-import javax.swing.*;
-import java.awt.*;
+import javax.swing.DefaultListModel;
+import javax.swing.JList;
+import javax.swing.JPanel;
+import java.awt.BorderLayout;
 import java.util.List;
 import java.util.Map;
 
-public class DiagnosticsMonitorForm extends DBNFormImpl {
+public class ConnectionDiagnosticsForm extends DBNFormImpl {
     private JPanel mainPanel;
     private JPanel actionsPanel;
     private JPanel detailsPanel;
     private JList<ConnectionHandler> connectionsList;
     private int tabSelectionIndex;
 
-    private final Map<ConnectionId, DiagnosticsMonitorDetailsForm> resourceMonitorForms = DisposableContainer.map(this);
+    private final Map<ConnectionId, ConnectionDiagnosticsDetailsForm> resourceMonitorForms = DisposableContainer.map(this);
 
-    public DiagnosticsMonitorForm(@Nullable DiagnosticsMonitorDialog parent) {
-        super(parent);
+    public ConnectionDiagnosticsForm(@NotNull Project project) {
+        super(null, project);
         GuiUtils.replaceJSplitPaneWithIDEASplitter(mainPanel);
         mainPanel.setBorder(Borders.BOTTOM_LINE_BORDER);
 
@@ -54,9 +56,9 @@ public class DiagnosticsMonitorForm extends DBNFormImpl {
         detailsPanel.removeAll();
         if (connectionHandler != null) {
             ConnectionId connectionId = connectionHandler.getConnectionId();
-            DiagnosticsMonitorDetailsForm detailForm = resourceMonitorForms.get(connectionId);
+            ConnectionDiagnosticsDetailsForm detailForm = resourceMonitorForms.get(connectionId);
             if (detailForm == null) {
-                detailForm = new DiagnosticsMonitorDetailsForm(this, connectionHandler);
+                detailForm = new ConnectionDiagnosticsDetailsForm(this, connectionHandler);
                 resourceMonitorForms.put(connectionId, detailForm);
             }
             detailsPanel.add(detailForm.getComponent(), BorderLayout.CENTER);

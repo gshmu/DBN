@@ -90,7 +90,9 @@ public class ParserDiagnosticsManager extends AbstractProjectComponent implement
         ParserDiagnosticsForm form = diagnosticsManager.showDiagnosticsConsole(
                 DiagnosticCategory.PARSER,
                 () -> new ParserDiagnosticsForm(project));
-        form.selectResult(result);
+
+        ParserDiagnosticsResult selectedResult = form.getSelectedResult();
+        form.selectResult(CommonUtil.nvln(result, selectedResult));
     }
 
 
