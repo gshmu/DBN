@@ -3,13 +3,14 @@ package com.dci.intellij.dbn.diagnostics;
 import com.dci.intellij.dbn.DatabaseNavigator;
 import com.dci.intellij.dbn.common.AbstractProjectComponent;
 import com.dci.intellij.dbn.common.dispose.Failsafe;
+import com.dci.intellij.dbn.common.dispose.SafeDisposer;
 import com.dci.intellij.dbn.common.ui.DBNForm;
 import com.dci.intellij.dbn.connection.ConnectionId;
 import com.dci.intellij.dbn.diagnostics.data.DiagnosticBundle;
 import com.dci.intellij.dbn.diagnostics.data.DiagnosticCategory;
 import com.dci.intellij.dbn.diagnostics.data.DiagnosticType;
 import com.dci.intellij.dbn.diagnostics.options.ui.DiagnosticSettingsDialog;
-import com.dci.intellij.dbn.diagnostics.ui.DiagnosticsMonitorDialog;
+import com.dci.intellij.dbn.diagnostics.ui.ConnectionDiagnosticsForm;
 import com.intellij.openapi.components.PersistentStateComponent;
 import com.intellij.openapi.components.State;
 import com.intellij.openapi.components.Storage;
@@ -61,14 +62,13 @@ public class DiagnosticsManager extends AbstractProjectComponent implements Pers
                 computeIfAbsent(connectionId, connId -> new DiagnosticBundle(DiagnosticType.DATABASE_CONNECTIVITY));
     }
 
-    public void openDiagnosticsMonitorDialog() {
-        DiagnosticsMonitorDialog monitorDialog = new DiagnosticsMonitorDialog(getProject());
-        monitorDialog.show();
-    }
-
-    public void openDiagnosticsSettingsDialog() {
+    public void openDiagnosticsSettings() {
         DiagnosticSettingsDialog settingsDialog = new DiagnosticSettingsDialog(getProject());
         settingsDialog.show();
+    }
+
+    public void showConnectionDiagnostics() {
+        showDiagnosticsConsole(DiagnosticCategory.CONNECTION, () -> new ConnectionDiagnosticsForm(getProject()));
     }
 
     @NotNull
@@ -78,29 +78,50 @@ public class DiagnosticsManager extends AbstractProjectComponent implements Pers
 
         T form = getDiagnosticsForm(category);
         ToolWindow toolWindow = getDiagnosticsToolWindow();
+        ContentManager contentManager = toolWindow.getContentManager();
+
         if (form == null) {
             form = componentProducer.produce();
 
-            ContentManager contentManager = toolWindow.getContentManager();
             ContentFactory contentFactory = contentManager.getFactory();
             Content content = contentFactory.createContent(form.getComponent(), category.getName(), false);
             content.putUserData(CONTENT_CATEGORY_KEY, category);
             content.putUserData(CONTENT_FORM_KEY, form);
+            content.setCloseable(true);
+            content.setPinnable(true);
             contentManager.addContent(content);
+            SafeDisposer.register(content, form);
         }
+
+        Content content = getDiagnosticsContent(category);
+        if (content != null) {
+            contentManager.setSelectedContent(content);
+        }
+
         toolWindow.setAvailable(true, null);
         toolWindow.show(null);
+
         return form;
+
     }
 
     @Nullable
-    public <T extends DBNForm> T getDiagnosticsForm(@NotNull DiagnosticCategory category) {
+    private  <T extends DBNForm> T getDiagnosticsForm(@NotNull DiagnosticCategory category) {
+        Content content = getDiagnosticsContent(category);
+        if (content != null) {
+            return (T) content.getUserData(CONTENT_FORM_KEY);
+        }
+        return null;
+    }
+
+    @Nullable
+    private  Content getDiagnosticsContent(@NotNull DiagnosticCategory category) {
         ToolWindow toolWindow = getDiagnosticsToolWindow();
         ContentManager contentManager = toolWindow.getContentManager();
         Content[] contents = contentManager.getContents();
         for (Content content : contents) {
             if (content.getUserData(CONTENT_CATEGORY_KEY) == category) {
-                return (T) content.getUserData(CONTENT_FORM_KEY);
+                return content;
             }
         }
         return null;

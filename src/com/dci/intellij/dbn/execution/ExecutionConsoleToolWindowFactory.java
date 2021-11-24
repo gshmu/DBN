@@ -14,11 +14,12 @@ public class ExecutionConsoleToolWindowFactory implements ToolWindowFactory, Dum
         toolWindow.setStripeTitle("DB Execution Console");
         toolWindow.setIcon(Icons.WINDOW_EXECUTION_CONSOLE);
         toolWindow.setToHideOnEmptyContent(true);
+        toolWindow.setAutoHide(false);
         toolWindow.setAvailable(false, null);
     }
 
     @Override
     public boolean shouldBeAvailable(@NotNull Project project) {
-        return false;
+        return true;
     }
 }

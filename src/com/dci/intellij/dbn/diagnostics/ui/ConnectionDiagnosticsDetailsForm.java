@@ -9,10 +9,12 @@ import com.dci.intellij.dbn.diagnostics.ui.model.MetadataDiagnosticsTableModel;
 import com.intellij.ui.components.JBScrollPane;
 import org.jetbrains.annotations.NotNull;
 
-import javax.swing.*;
-import java.awt.*;
+import javax.swing.JComponent;
+import javax.swing.JPanel;
+import javax.swing.JTabbedPane;
+import java.awt.BorderLayout;
 
-public class DiagnosticsMonitorDetailsForm extends DBNFormImpl {
+public class ConnectionDiagnosticsDetailsForm extends DBNFormImpl {
     private final DBNTable<MetadataDiagnosticsTableModel> metadataDiagnosticsTable;
     private final DBNTable<ConnectivityDiagnosticsTableModel> connectivityDiagnosticsTable;
 
@@ -22,7 +24,7 @@ public class DiagnosticsMonitorDetailsForm extends DBNFormImpl {
     private JBScrollPane connectivityDiagnosticsScrollPane;
     private JTabbedPane diagnosticsTabbedPane;
 
-    public DiagnosticsMonitorDetailsForm(@NotNull DiagnosticsMonitorForm parent, ConnectionHandler connectionHandler) {
+    public ConnectionDiagnosticsDetailsForm(@NotNull ConnectionDiagnosticsForm parent, ConnectionHandler connectionHandler) {
         super(parent);
 
         DBNHeaderForm headerForm = new DBNHeaderForm(this, connectionHandler);
@@ -41,7 +43,7 @@ public class DiagnosticsMonitorDetailsForm extends DBNFormImpl {
         diagnosticsTabbedPane.addChangeListener(e -> {
             JTabbedPane tabbedPane = (JTabbedPane) e.getSource();
             int selectedIndex = tabbedPane.getSelectedIndex();
-            DiagnosticsMonitorForm parent1 = parent();
+            ConnectionDiagnosticsForm parent1 = parent();
             parent1.setTabSelectionIndex(selectedIndex);
         });
    }

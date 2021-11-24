@@ -14,6 +14,7 @@ public class DiagnosticsToolWindowFactory implements ToolWindowFactory, DumbAwar
         toolWindow.setStripeTitle("DB Diagnostics");
         toolWindow.setIcon(Icons.WINDOW_DATABASE_DIAGNOSTICS);
         toolWindow.setToHideOnEmptyContent(true);
+        toolWindow.setAutoHide(false);
         toolWindow.setAvailable(false, null);
     }
 

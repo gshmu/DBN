@@ -11,7 +11,7 @@ public class DiagnosticsMonitorOpenAction extends DumbAwareProjectAction {
     @Override
     protected void actionPerformed(@NotNull AnActionEvent e, @NotNull Project project) {
         DiagnosticsManager diagnosticsManager = DiagnosticsManager.getInstance(project);
-        diagnosticsManager.openDiagnosticsMonitorDialog();
+        diagnosticsManager.showConnectionDiagnostics();
     }
 
     @Override
