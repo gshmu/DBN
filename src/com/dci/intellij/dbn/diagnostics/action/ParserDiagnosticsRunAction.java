@@ -29,6 +29,8 @@ public class ParserDiagnosticsRunAction extends AbstractParserDiagnosticsAction 
     @Override
     protected void update(@NotNull AnActionEvent e, @NotNull Presentation presentation, @NotNull Project project, @Nullable ParserDiagnosticsForm form) {
         ParserDiagnosticsManager manager = getManager(project);
+
+        presentation.setText("Run Diagnostics");
         presentation.setEnabled(!manager.isRunning() && !manager.hasDraftResults());
     }
 }

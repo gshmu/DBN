@@ -28,6 +28,7 @@ public class ParserDiagnosticsSaveAction extends AbstractParserDiagnosticsAction
 
     @Override
     protected void update(@NotNull AnActionEvent e, @NotNull Presentation presentation, @NotNull Project project, @Nullable ParserDiagnosticsForm form) {
+        presentation.setText("Save Result");
         if (form != null) {
             ParserDiagnosticsResult result = form.getSelectedResult();
             presentation.setEnabled(result != null && result.isDraft());

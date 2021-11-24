@@ -19,7 +19,6 @@ import com.intellij.openapi.components.Storage;
 import com.intellij.openapi.progress.ProgressIndicator;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
-import com.intellij.openapi.wm.ToolWindow;
 import com.intellij.psi.PsiFile;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
@@ -86,14 +85,13 @@ public class ParserDiagnosticsManager extends AbstractProjectComponent implement
     }
 
     public void openParserDiagnostics(@Nullable ParserDiagnosticsResult result) {
-        DiagnosticsManager diagnosticsManager = DiagnosticsManager.getInstance(getProject());
-        ToolWindow toolWindow = diagnosticsManager.showDiagnosticsConsole(DiagnosticCategory.PARSER, () -> {
-            ParserDiagnosticsForm form = new ParserDiagnosticsForm(getProject());
-            return form.getComponent();
-        });
-        toolWindow.getComponent();
+        Project project = getProject();
+        DiagnosticsManager diagnosticsManager = DiagnosticsManager.getInstance(project);
+        ParserDiagnosticsForm form = diagnosticsManager.showDiagnosticsConsole(
+                DiagnosticCategory.PARSER,
+                () -> new ParserDiagnosticsForm(project));
+        form.selectResult(result);
     }
-
 
 
     @Nullable
