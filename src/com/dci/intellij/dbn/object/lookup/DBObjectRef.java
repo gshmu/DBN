@@ -5,7 +5,11 @@ import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.common.state.PersistentStateElement;
 import com.dci.intellij.dbn.common.thread.Timeout;
 import com.dci.intellij.dbn.common.util.StringUtil;
-import com.dci.intellij.dbn.connection.*;
+import com.dci.intellij.dbn.connection.ConnectionCache;
+import com.dci.intellij.dbn.connection.ConnectionHandler;
+import com.dci.intellij.dbn.connection.ConnectionId;
+import com.dci.intellij.dbn.connection.ConnectionManager;
+import com.dci.intellij.dbn.connection.ConnectionProvider;
 import com.dci.intellij.dbn.language.common.WeakRef;
 import com.dci.intellij.dbn.object.DBSchema;
 import com.dci.intellij.dbn.object.common.DBObject;
@@ -95,14 +99,14 @@ public class DBObjectRef<T extends DBObject> implements Comparable, Reference<T>
     }
 
     public static <T extends DBObject> DBObjectRef<T> from(Element element) {
-        String objectRefDefinition = stringAttribute(element, "object-ref");
-        if (StringUtil.isNotEmpty(objectRefDefinition)) {
+        String objectIdentifier = stringAttribute(element, "object-ref");
+        if (StringUtil.isNotEmpty(objectIdentifier)) {
             try {
                 DBObjectRef<T> objectRef = new DBObjectRef<>();
                 objectRef.readState(element);
                 return objectRef;
-            } catch (Exception e) {
-                log.error("Failed to deserialize object-ref: {}", objectRefDefinition, e);
+            } catch (Exception ignore) {
+                // deserialization exception already logged
             }
         }
         return null;
@@ -118,31 +122,36 @@ public class DBObjectRef<T extends DBObject> implements Comparable, Reference<T>
     }
 
     public void deserialize(ConnectionId connectionId, String objectIdentifier) {
-        String[] tokens = objectIdentifier.split(PS);
+        try {
+            String[] tokens = objectIdentifier.split(PS);
 
-        DBObjectRef<?> objectRef = null;
-        DBObjectType objectType = null;
-        for (int i=0; i<tokens.length; i++) {
-            String token = tokens[i];
-            if (objectType == null) {
-                if (i == tokens.length -1) {
-                    // last optional "overload" numeric token
-                    this.overload = Short.parseShort(token);
+            DBObjectRef<?> objectRef = null;
+            DBObjectType objectType = null;
+            for (int i=0; i<tokens.length; i++) {
+                String token = tokens[i];
+                if (objectType == null) {
+                    if (i == tokens.length -1) {
+                        // last optional "overload" numeric token
+                        this.overload = Short.parseShort(token);
+                    } else {
+                        objectType = DBObjectType.forListName(token, objectRef == null ? null : objectRef.objectType);
+                    }
                 } else {
-                    objectType = DBObjectType.forListName(token, objectRef == null ? null : objectRef.objectType);
+                    if (i < tokens.length - 2) {
+                        objectRef = objectRef == null ?
+                                new DBObjectRef<>(connectionId, objectType, token) :
+                                new DBObjectRef<>(objectRef, objectType, token);
+                    } else {
+                        this.parent = objectRef;
+                        this.objectType = objectType;
+                        this.objectName = token.intern();
+                    }
+                    objectType = null;
                 }
-            } else {
-                if (i < tokens.length - 2) {
-                    objectRef = objectRef == null ?
-                            new DBObjectRef<>(connectionId, objectType, token) :
-                            new DBObjectRef<>(objectRef, objectType, token);
-                } else {
-                    this.parent = objectRef;
-                    this.objectType = objectType;
-                    this.objectName = token.intern();
-                }
-                objectType = null;
             }
+        } catch (Exception e) {
+            log.error("Failed to deserialize object {}" + objectIdentifier, e);
+            throw e;
         }
     }
 
