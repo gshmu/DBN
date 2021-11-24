@@ -18,11 +18,7 @@ import com.dci.intellij.dbn.common.latent.Latent;
 import com.dci.intellij.dbn.common.options.setting.BooleanSetting;
 import com.dci.intellij.dbn.common.thread.Dispatch;
 import com.dci.intellij.dbn.common.thread.Progress;
-import com.dci.intellij.dbn.connection.ConnectionBundle;
-import com.dci.intellij.dbn.connection.ConnectionHandler;
-import com.dci.intellij.dbn.connection.ConnectionId;
-import com.dci.intellij.dbn.connection.ConnectionManager;
-import com.dci.intellij.dbn.connection.SchemaId;
+import com.dci.intellij.dbn.connection.*;
 import com.dci.intellij.dbn.connection.config.ConnectionDetailSettings;
 import com.dci.intellij.dbn.object.DBSchema;
 import com.dci.intellij.dbn.object.common.DBObject;
@@ -65,7 +61,7 @@ import static com.dci.intellij.dbn.common.options.setting.SettingsSupport.string
 )
 public class DatabaseBrowserManager extends AbstractProjectComponent implements PersistentStateComponent<Element> {
     public static final String COMPONENT_NAME = "DBNavigator.Project.DatabaseBrowserManager";
-    public static final String TOOL_WINDOW_ID = "DBNavigator.ToolWindow.DatabaseBrowser";
+    public static final String TOOL_WINDOW_ID = "DB Browser";
 
     private final BooleanSetting autoscrollFromEditor = new BooleanSetting("autoscroll-from-editor", true);
     private final BooleanSetting autoscrollToEditor   = new BooleanSetting("autoscroll-to-editor", false);

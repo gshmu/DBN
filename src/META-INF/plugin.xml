@@ -485,9 +485,9 @@
 
         <projectConfigurable provider="com.dci.intellij.dbn.options.ProjectSettingsProvider" bundle="com.dci.intellij.dbn.common.DBNBundle" groupId="tools" dynamic="true" id="DBNavigator.Settings"/>
 
-        <toolWindow id="DBNavigator.ToolWindow.DatabaseBrowser" icon="/img/window/DatabaseBrowser.png" anchor="left" factoryClass="com.dci.intellij.dbn.browser.DatabaseBrowserToolWindowFactory"/>
-        <toolWindow id="DBNavigator.ToolWindow.DatabaseDiagnostics" icon="/img/window/DatabaseDiagnostics.png" anchor="bottom" factoryClass="com.dci.intellij.dbn.diagnostics.DiagnosticsToolWindowFactory" />
-        <toolWindow id="DBNavigator.ToolWindow.DatabaseExecutionConsole" icon="/img/window/ExecutionConsole.png" anchor="bottom" factoryClass="com.dci.intellij.dbn.execution.ExecutionConsoleToolWindowFactory" />
+        <toolWindow id="DB Browser" icon="/img/window/DatabaseBrowser.png" anchor="left" factoryClass="com.dci.intellij.dbn.browser.DatabaseBrowserToolWindowFactory"/>
+        <toolWindow id="DB Diagnostics" icon="/img/window/DatabaseDiagnostics.png" anchor="bottom" factoryClass="com.dci.intellij.dbn.diagnostics.DiagnosticsToolWindowFactory" />
+        <toolWindow id="DB Execution Console" icon="/img/window/ExecutionConsole.png" anchor="bottom" factoryClass="com.dci.intellij.dbn.execution.ExecutionConsoleToolWindowFactory" />
 
         <fileType name="DBN-SQL" language="DBN-SQL" implementationClass="com.dci.intellij.dbn.language.sql.SQLFileType" fieldName="INSTANCE" extensions="sql;vw"/>
         <fileType name="DBN-PSQL" language="DBN-PSQL" implementationClass="com.dci.intellij.dbn.language.psql.PSQLFileType" fieldName="INSTANCE" extensions="psql;plsql;trg;prc;fnc;pkg;pks;pkb;tpe;tps;tpb"/>
