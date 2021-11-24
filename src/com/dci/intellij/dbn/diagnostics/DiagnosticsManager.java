@@ -3,6 +3,7 @@ package com.dci.intellij.dbn.diagnostics;
 import com.dci.intellij.dbn.DatabaseNavigator;
 import com.dci.intellij.dbn.common.AbstractProjectComponent;
 import com.dci.intellij.dbn.common.dispose.Failsafe;
+import com.dci.intellij.dbn.common.ui.DBNForm;
 import com.dci.intellij.dbn.connection.ConnectionId;
 import com.dci.intellij.dbn.diagnostics.data.DiagnosticBundle;
 import com.dci.intellij.dbn.diagnostics.data.DiagnosticCategory;
@@ -25,8 +26,6 @@ import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import javax.swing.JComponent;
-import java.util.Arrays;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -37,7 +36,8 @@ import java.util.concurrent.ConcurrentHashMap;
 public class DiagnosticsManager extends AbstractProjectComponent implements PersistentStateComponent<Element> {
     public static final String COMPONENT_NAME = "DBNavigator.Project.DiagnosticsManager";
     public static final String TOOL_WINDOW_ID = "DBNavigator.ToolWindow.DatabaseDiagnostics";
-    private static final Key<DiagnosticCategory> CONTENT_TYPE_KEY = Key.create("CONTENT_TYPE");
+    private static final Key<DiagnosticCategory> CONTENT_CATEGORY_KEY = Key.create("CONTENT_TYPE");
+    private static final Key<DBNForm> CONTENT_FORM_KEY = Key.create("CONTENT_FORM");
 
 
     private final Map<ConnectionId, DiagnosticBundle> metadataInterfaceDiagnostics = new ConcurrentHashMap<>();
@@ -71,29 +71,48 @@ public class DiagnosticsManager extends AbstractProjectComponent implements Pers
         settingsDialog.show();
     }
 
-    public ToolWindow showDiagnosticsConsole(
+    @NotNull
+    public <T extends DBNForm> T showDiagnosticsConsole(
             @NotNull DiagnosticCategory category,
-            Producer<JComponent> componentProducer) {
+            @NotNull Producer<T> componentProducer) {
+
+        T form = getDiagnosticsForm(category);
         ToolWindow toolWindow = getDiagnosticsToolWindow();
-        ContentManager contentManager = toolWindow.getContentManager();
-        Content[] contents = contentManager.getContents();
-        if (Arrays.stream(contents).noneMatch(content -> category == content.getUserData(CONTENT_TYPE_KEY))) {
+        if (form == null) {
+            form = componentProducer.produce();
+
+            ContentManager contentManager = toolWindow.getContentManager();
             ContentFactory contentFactory = contentManager.getFactory();
-            Content content = contentFactory.createContent(componentProducer.produce(), category.getName(), true);
-            content.putUserData(CONTENT_TYPE_KEY, category);
+            Content content = contentFactory.createContent(form.getComponent(), category.getName(), false);
+            content.putUserData(CONTENT_CATEGORY_KEY, category);
+            content.putUserData(CONTENT_FORM_KEY, form);
             contentManager.addContent(content);
         }
         toolWindow.setAvailable(true, null);
         toolWindow.show(null);
-        return toolWindow;
+        return form;
     }
+
+    @Nullable
+    public <T extends DBNForm> T getDiagnosticsForm(@NotNull DiagnosticCategory category) {
+        ToolWindow toolWindow = getDiagnosticsToolWindow();
+        ContentManager contentManager = toolWindow.getContentManager();
+        Content[] contents = contentManager.getContents();
+        for (Content content : contents) {
+            if (content.getUserData(CONTENT_CATEGORY_KEY) == category) {
+                return (T) content.getUserData(CONTENT_FORM_KEY);
+            }
+        }
+        return null;
+    }
+
 
     public void closeDiagnosticsConsole(DiagnosticCategory category) {
         ToolWindow toolWindow = getDiagnosticsToolWindow();
         ContentManager contentManager = toolWindow.getContentManager();
         Content[] contents = contentManager.getContents();
         for (Content content : contents) {
-            if (content.getUserData(CONTENT_TYPE_KEY) == category) {
+            if (content.getUserData(CONTENT_CATEGORY_KEY) == category) {
                 contentManager.removeContent(content, true);
             }
         }

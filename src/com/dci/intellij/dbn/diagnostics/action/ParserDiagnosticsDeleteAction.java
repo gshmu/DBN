@@ -13,7 +13,7 @@ import org.jetbrains.annotations.Nullable;
 
 public class ParserDiagnosticsDeleteAction extends AbstractParserDiagnosticsAction {
     public ParserDiagnosticsDeleteAction() {
-        super("Run Diagnostics", Icons.ACTION_DELETE);
+        super("Delete Result", Icons.ACTION_DELETE);
     }
 
     @Override
@@ -40,6 +40,7 @@ public class ParserDiagnosticsDeleteAction extends AbstractParserDiagnosticsActi
 
     @Override
     protected void update(@NotNull AnActionEvent e, @NotNull Presentation presentation, @NotNull Project project, @Nullable ParserDiagnosticsForm form) {
+        presentation.setText("Delete Result");
         if (form != null) {
             ParserDiagnosticsResult result = form.getSelectedResult();
             presentation.setEnabled(result != null);

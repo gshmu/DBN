@@ -88,11 +88,11 @@ public class ParserDiagnosticsForm extends DBNFormImpl {
         diagnosticsTable.setModel(tableModel);
         diagnosticsTable.accommodateColumnsSize();
 
-        detailsLabel.setText(deltaResult == null ? "" : deltaResult.getName());
+        detailsLabel.setText(deltaResult == null ? "No result selected" : deltaResult.getName());
 
         StateTransition stateTransition = deltaResult == null ? StateTransition.UNCHANGED : deltaResult.getFilter();
         StateTransition.Category category = stateTransition.getCategory();
-        stateTransitionLabel.setText(previous == null ? "INITIAL" : stateTransition.name());
+        stateTransitionLabel.setText(previous == null ? current == null ? "" : "INITIAL" : stateTransition.name());
         stateTransitionLabel.setForeground(category.getColor());
         stateTransitionLabel.setFont(category.isBold() ?
                 UIUtil.getLabelFont().deriveFont(Font.BOLD) :
