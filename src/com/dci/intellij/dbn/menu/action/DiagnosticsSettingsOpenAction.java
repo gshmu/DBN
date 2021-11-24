@@ -11,7 +11,7 @@ public class DiagnosticsSettingsOpenAction extends ProjectAction implements Dumb
     @Override
     public void actionPerformed(@NotNull AnActionEvent e, @NotNull Project project) {
         DiagnosticsManager diagnosticsManager = DiagnosticsManager.getInstance(project);
-        diagnosticsManager.openDiagnosticsSettingsDialog();
+        diagnosticsManager.openDiagnosticsSettings();
 
     }
 
