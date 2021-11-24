@@ -6,6 +6,7 @@ import com.dci.intellij.dbn.common.options.setting.SettingsSupport;
 import com.dci.intellij.dbn.common.project.ProjectRef;
 import com.dci.intellij.dbn.common.state.PersistentStateElement;
 import com.dci.intellij.dbn.common.util.CollectionUtil;
+import com.dci.intellij.dbn.common.util.Unsafe;
 import com.dci.intellij.dbn.connection.ConnectionId;
 import com.dci.intellij.dbn.execution.method.MethodExecutionInput;
 import com.dci.intellij.dbn.object.DBFunction;
@@ -156,17 +157,19 @@ public class MethodExecutionHistory implements PersistentStateElement, Disposabl
 
             Element executionInputsElement = historyElement.getChild("execution-inputs");
             for (Element child : executionInputsElement.getChildren()) {
-                MethodExecutionInput executionInput = new MethodExecutionInput(getProject());
-                executionInput.readConfiguration(child);
-                if (getExecutionInput(executionInput.getMethodRef(), false) == null) {
-                    executionInputs.add(executionInput);
-                }
+                Unsafe.silent(() -> {
+                    MethodExecutionInput executionInput = new MethodExecutionInput(getProject());
+                    executionInput.readConfiguration(child);
+                    if (getExecutionInput(executionInput.getMethodRef(), false) == null) {
+                        executionInputs.add(executionInput);
+                    }
+                });
             }
             Collections.sort(executionInputs);
 
             Element selectionElement = historyElement.getChild("selection");
             if (selectionElement != null) {
-                selection = new DBObjectRef<DBMethod>();
+                selection = new DBObjectRef<>();
                 selection.readState(selectionElement);
             }
         }
