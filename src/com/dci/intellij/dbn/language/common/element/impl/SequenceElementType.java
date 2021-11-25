@@ -1,6 +1,7 @@
 package com.dci.intellij.dbn.language.common.element.impl;
 
 import com.dci.intellij.dbn.common.util.CommonUtil;
+import com.dci.intellij.dbn.common.util.StringUtil;
 import com.dci.intellij.dbn.language.common.TokenType;
 import com.dci.intellij.dbn.language.common.element.ElementType;
 import com.dci.intellij.dbn.language.common.element.ElementTypeBundle;
@@ -9,7 +10,6 @@ import com.dci.intellij.dbn.language.common.element.cache.ElementTypeLookupCache
 import com.dci.intellij.dbn.language.common.element.cache.SequenceElementTypeLookupCache;
 import com.dci.intellij.dbn.language.common.element.parser.BranchCheck;
 import com.dci.intellij.dbn.language.common.element.parser.impl.SequenceElementTypeParser;
-import com.dci.intellij.dbn.language.common.element.util.ElementTypeDefinition;
 import com.dci.intellij.dbn.language.common.element.util.ElementTypeDefinitionException;
 import com.dci.intellij.dbn.language.common.psi.SequencePsiElement;
 import com.intellij.lang.ASTNode;
@@ -26,6 +26,7 @@ import static com.dci.intellij.dbn.common.options.setting.SettingsSupport.string
 public class SequenceElementType extends ElementTypeBase {
     protected ElementTypeRef[] children;
     private int exitIndex;
+    private boolean basic;
 
     public ElementTypeRef[] getChildren() {
         return children;
@@ -59,10 +60,11 @@ public class SequenceElementType extends ElementTypeBase {
     @Override
     protected void loadDefinition(Element def) throws ElementTypeDefinitionException {
         super.loadDefinition(def);
-        if (ElementTypeDefinition.TOKEN_SEQUENCE.is(def.getName())) {
+        String tokenIds = stringAttribute(def, "tokens");
+        if (StringUtil.isNotEmptyOrSpaces(tokenIds)) {
+            basic = true;
             String id = getId();
-
-            String[] tokens = stringAttribute(def, "tokens").split(",");
+            String[] tokens = tokenIds.split(",");
             children = new ElementTypeRef[tokens.length];
             for (int i=0; i<tokens.length; i++) {
                 String tokenTypeId = tokens[i].trim();
@@ -202,5 +204,14 @@ public class SequenceElementType extends ElementTypeBase {
 
     public int indexOf(ElementType elementType) {
         return indexOf(elementType, 0);
+    }
+
+    @Override
+    public void collectLeafElements(Set bucket) {
+        if (basic) {
+            for (ElementTypeRef child : children) {
+                bucket.add(child.elementType);
+            }
+        }
     }
 }

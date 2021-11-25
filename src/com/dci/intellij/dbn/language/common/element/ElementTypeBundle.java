@@ -185,24 +185,18 @@ public class ElementTypeBundle {
         ElementTypeBase result;
         if (ElementTypeDefinition.SEQUENCE.is(type)){
             result = new SequenceElementType(this, parent, createId(), def);
-            log.debug("Created sequence element definition");
 
         } else if (ElementTypeDefinition.BLOCK.is(type)) {
             result = new BlockElementType(this, parent, createId(), def);
-            log.debug("Created iteration element definition");
 
         } else if (ElementTypeDefinition.ITERATION.is(type)) {
             result = new IterationElementType(this, parent, createId(), def);
-            log.debug("Created iteration element definition");
 
         } else if (ElementTypeDefinition.ONE_OF.is(type)) {
             result = new OneOfElementType(this, parent, createId(), def);
-            //builder.oneOfElementTypes.add((OneOfElementType) result);
-            log.debug("Created one-of element definition");
 
         } else if (ElementTypeDefinition.QUALIFIED_IDENTIFIER.is(type)) {
             result =  new QualifiedIdentifierElementType(this, parent, createId(), def);
-            log.debug("Created qualified identifier element definition");
 
         } else if (ElementTypeDefinition.WRAPPER.is(type)) {
             result = new WrapperElementType(this, parent, createId(), def);
@@ -215,12 +209,6 @@ public class ElementTypeBundle {
 
         } else if (ElementTypeDefinition.TOKEN.is(type)) {
             result = new TokenElementType(this, parent, createId(), def);
-
-        } else if (ElementTypeDefinition.TOKEN_CHOICE.is(type)) {
-            result = new OneOfElementType(this, parent, createId(), def);
-
-        } else if (ElementTypeDefinition.TOKEN_SEQUENCE.is(type)) {
-            result = new SequenceElementType(this, parent, createId(), def);
 
         } else if (
                 ElementTypeDefinition.OBJECT_DEF.is(type) ||
@@ -237,10 +225,8 @@ public class ElementTypeBundle {
         }  else {
             throw new ElementTypeDefinitionException("Could not resolve element definition '" + type + '\'');
         }
-        if (result instanceof LeafElementType) {
-            builder.leafElementTypes.add((LeafElementType) result);
-        }
 
+        result.collectLeafElements(builder.leafElementTypes);
         builder.allElementTypes.add(result);
 
         WrappingDefinition wrapping = result.getWrapping();

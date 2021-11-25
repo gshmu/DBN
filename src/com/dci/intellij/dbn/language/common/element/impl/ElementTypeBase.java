@@ -30,7 +30,7 @@ import org.jdom.Element;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import javax.swing.*;
+import javax.swing.Icon;
 import java.util.Objects;
 import java.util.Set;
 import java.util.StringTokenizer;
@@ -266,5 +266,9 @@ public abstract class ElementTypeBase<T extends ElementTypeBase<T>> extends IEle
     @Override
     public TokenType getTokenType() {
         return null;
+    }
+
+    public void collectLeafElements(Set<LeafElementType> bucket) {
+
     }
 }
