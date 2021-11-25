@@ -5,6 +5,7 @@ import com.dci.intellij.dbn.language.common.element.ElementTypeBundle;
 import com.dci.intellij.dbn.language.common.element.cache.OneOfElementTypeLookupCache;
 import com.dci.intellij.dbn.language.common.element.parser.BranchCheck;
 import com.dci.intellij.dbn.language.common.element.parser.impl.OneOfElementTypeParser;
+import com.dci.intellij.dbn.language.common.element.util.ElementTypeDefinition;
 import com.dci.intellij.dbn.language.common.element.util.ElementTypeDefinitionException;
 import com.dci.intellij.dbn.language.common.psi.SequencePsiElement;
 import com.intellij.lang.ASTNode;
@@ -26,23 +27,36 @@ public final class OneOfElementType extends ElementTypeBase {
 
     public OneOfElementType(ElementTypeBundle bundle, ElementTypeBase parent, String id, Element def) throws ElementTypeDefinitionException {
         super(bundle, parent, id, def);
-        List<Element> children = def.getChildren();
+        if (ElementTypeDefinition.TOKEN_CHOICE.is(def.getName())) {
+            String[] tokens = stringAttribute(def, "tokens").split(",");
+            children = new ElementTypeRef[tokens.length];
+            for (int i=0; i<tokens.length; i++) {
+                String tokenTypeId = tokens[i].trim();
+                ElementTypeRef previous = i == 0 ? null : children[i-1];
 
-        this.children = new ElementTypeRef[children.size()];
+                TokenElementType tokenElementType = new TokenElementType(bundle, this, tokenTypeId, id);
+                children[i] = new ElementTypeRef(previous, this, tokenElementType, false, 0, null);
+            }
+            sortable = false;
+        } else {
+            List<Element> children = def.getChildren();
 
-        ElementTypeRef previous = null;
-        for (int i=0; i<children.size(); i++) {
-            Element child = children.get(i);
-            String type = child.getName();
-            ElementTypeBase elementType = bundle.resolveElementDefinition(child, type, this);
-            double version = Double.parseDouble(CommonUtil.nvl(stringAttribute(child, "version"), "0"));
-            Set<BranchCheck> branchChecks = parseBranchChecks(stringAttribute(child, "branch-check"));
+            this.children = new ElementTypeRef[children.size()];
 
-            this.children[i] = new ElementTypeRef(previous, this, elementType, false, version, branchChecks);
-            previous = this.children[i];
+            ElementTypeRef previous = null;
+            for (int i=0; i<children.size(); i++) {
+                Element child = children.get(i);
+                String type = child.getName();
+                ElementTypeBase elementType = bundle.resolveElementDefinition(child, type, this);
+                double version = Double.parseDouble(CommonUtil.nvl(stringAttribute(child, "version"), "0"));
+                Set<BranchCheck> branchChecks = parseBranchChecks(stringAttribute(child, "branch-check"));
 
+                this.children[i] = new ElementTypeRef(previous, this, elementType, false, version, branchChecks);
+                previous = this.children[i];
+
+            }
+            sortable = getBooleanAttribute(def, "sortable");
         }
-        sortable = getBooleanAttribute(def, "sortable");
     }
 
     @Override
