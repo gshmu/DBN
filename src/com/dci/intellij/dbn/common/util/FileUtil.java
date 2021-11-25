@@ -2,7 +2,7 @@ package com.dci.intellij.dbn.common.util;
 
 import com.dci.intellij.dbn.vfs.DatabaseFileSystem;
 import com.intellij.ide.plugins.IdeaPluginDescriptor;
-import com.intellij.ide.plugins.PluginManager;
+import com.intellij.ide.plugins.PluginManagerCore;
 import com.intellij.openapi.extensions.PluginId;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.LocalFileSystem;
@@ -97,7 +97,7 @@ public final class FileUtil {
     }
 
     public static File getPluginDeploymentRoot() {
-        IdeaPluginDescriptor pluginDescriptor = PluginManager.getPlugin(PluginId.getId("DBN"));
+        IdeaPluginDescriptor pluginDescriptor = PluginManagerCore.getPlugin(PluginId.getId("DBN"));
         return Objects.requireNonNull(pluginDescriptor).getPath();
     }
 }

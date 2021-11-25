@@ -4,6 +4,7 @@ import com.dci.intellij.dbn.DatabaseNavigator;
 import com.dci.intellij.dbn.common.AbstractProjectComponent;
 import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.common.event.ProjectEvents;
+import com.dci.intellij.dbn.common.file.util.FileSearchRequest;
 import com.dci.intellij.dbn.common.file.util.VirtualFileUtil;
 import com.dci.intellij.dbn.common.thread.Write;
 import com.dci.intellij.dbn.common.ui.ListUtil;
@@ -222,8 +223,9 @@ public class DDLFileAttachmentManager extends AbstractProjectComponent implement
         List<DDLFileType> ddlFileTypes = getDdlFileTypes(objectRef);
         for (DDLFileType ddlFileType : ddlFileTypes) {
             for (String extension : ddlFileType.getExtensions()) {
-                String fileName = objectRef.getFileName().toLowerCase() + '.' + extension;
-                VirtualFile[] files = VirtualFileUtil.lookupFilesForName(project, fileName);
+                String fileName = objectRef.getFileName() + '.' + extension;
+                FileSearchRequest searchRequest = FileSearchRequest.forNames(fileName);
+                VirtualFile[] files = VirtualFileUtil.findFiles(project, searchRequest);
                 fileList.addAll(Arrays.asList(files));
             }
         }

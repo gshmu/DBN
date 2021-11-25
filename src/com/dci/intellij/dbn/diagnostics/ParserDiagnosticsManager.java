@@ -3,6 +3,7 @@ package com.dci.intellij.dbn.diagnostics;
 import com.dci.intellij.dbn.DatabaseNavigator;
 import com.dci.intellij.dbn.common.AbstractProjectComponent;
 import com.dci.intellij.dbn.common.dispose.Failsafe;
+import com.dci.intellij.dbn.common.file.util.FileSearchRequest;
 import com.dci.intellij.dbn.common.file.util.VirtualFileUtil;
 import com.dci.intellij.dbn.common.thread.Progress;
 import com.dci.intellij.dbn.common.thread.Read;
@@ -55,7 +56,8 @@ public class ParserDiagnosticsManager extends AbstractProjectComponent implement
     public ParserDiagnosticsResult runParserDiagnostics(ProgressIndicator progress) {
         try {
             running = true;
-            VirtualFile[] files = VirtualFileUtil.lookupFilesForExtensions(getProject(), "sql", "pkg");
+            FileSearchRequest searchRequest = FileSearchRequest.forExtensions("sql", "pkg");
+            VirtualFile[] files = VirtualFileUtil.findFiles(getProject(), searchRequest);
             ParserDiagnosticsResult result = new ParserDiagnosticsResult(getProject());
 
             for (int i = 0, filesLength = files.length; i < filesLength; i++) {
