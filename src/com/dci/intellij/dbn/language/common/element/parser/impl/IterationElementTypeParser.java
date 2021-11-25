@@ -4,7 +4,6 @@ import com.dci.intellij.dbn.language.common.ParseException;
 import com.dci.intellij.dbn.language.common.TokenType;
 import com.dci.intellij.dbn.language.common.element.ElementType;
 import com.dci.intellij.dbn.language.common.element.impl.BasicElementType;
-import com.dci.intellij.dbn.language.common.element.impl.ElementTypeBase;
 import com.dci.intellij.dbn.language.common.element.impl.IterationElementType;
 import com.dci.intellij.dbn.language.common.element.impl.SequenceElementType;
 import com.dci.intellij.dbn.language.common.element.impl.TokenElementType;
@@ -129,7 +128,7 @@ public class IterationElementTypeParser extends ElementTypeParser<IterationEleme
         ParserBuilder builder = context.builder;
 
         PsiBuilder.Marker marker = builder.mark(null);
-        ElementTypeBase iteratedElementType = elementType.getIteratedElementType();
+        ElementType iteratedElementType = elementType.getIteratedElementType();
         TokenElementType[] separatorTokens = elementType.getSeparatorTokens();
 
         if (!lenient) {
