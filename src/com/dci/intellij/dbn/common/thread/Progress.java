@@ -64,7 +64,7 @@ public final class Progress {
     public static void prompt(Project project, String title, boolean cancellable, ProgressRunnable runnable) {
         if (Failsafe.check(project)) {
             ThreadInfo invoker = ThreadMonitor.current();
-            start(new Task.Backgroundable(Failsafe.nd(project), title, cancellable, PerformInBackgroundOption.DEAF) {
+            start(new Task.ConditionalModal(Failsafe.nd(project), title, cancellable, PerformInBackgroundOption.DEAF) {
                 @Override
                 public void run(@NotNull ProgressIndicator indicator) {
                     ThreadMonitor.run(
