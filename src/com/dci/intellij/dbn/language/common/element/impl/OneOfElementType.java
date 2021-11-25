@@ -19,6 +19,7 @@ import java.util.List;
 import java.util.Set;
 
 import static com.dci.intellij.dbn.common.options.setting.SettingsSupport.stringAttribute;
+import static com.dci.intellij.dbn.common.util.Unsafe.cast;
 
 public final class OneOfElementType extends ElementTypeBase {
     private ElementTypeRef[] children;
@@ -93,7 +94,7 @@ public final class OneOfElementType extends ElementTypeBase {
 
     @Override
     public PsiElement createPsiElement(ASTNode astNode) {
-        return new SequencePsiElement(astNode, this);
+        return new SequencePsiElement<>(astNode, this);
     }
 
     public void sort() {
@@ -118,11 +119,11 @@ public final class OneOfElementType extends ElementTypeBase {
     }
 
     @Override
-    public void collectLeafElements(Set bucket) {
+    public void collectLeafElements(Set<LeafElementType> bucket) {
         super.collectLeafElements(bucket);
         if (basic) {
             for (ElementTypeRef child : children) {
-                bucket.add(child.elementType);
+                bucket.add(cast(child.elementType));
             }
         }
     }
