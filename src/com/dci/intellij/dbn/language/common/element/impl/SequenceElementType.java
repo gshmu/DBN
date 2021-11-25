@@ -208,6 +208,7 @@ public class SequenceElementType extends ElementTypeBase {
 
     @Override
     public void collectLeafElements(Set bucket) {
+        super.collectLeafElements(bucket);
         if (basic) {
             for (ElementTypeRef child : children) {
                 bucket.add(child.elementType);

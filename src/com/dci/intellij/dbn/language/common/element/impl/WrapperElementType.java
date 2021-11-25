@@ -14,6 +14,7 @@ import org.jdom.Element;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
+import java.util.Set;
 
 import static com.dci.intellij.dbn.common.options.setting.SettingsSupport.stringAttribute;
 
@@ -118,14 +119,16 @@ public final class WrapperElementType extends ElementTypeBase {
     }
     @Override
     public PsiElement createPsiElement(ASTNode astNode) {
-        return new SequencePsiElement(astNode, this);
+        return new SequencePsiElement<>(astNode, this);
     }
 
     public ElementTypeBase getWrappedElement() {
         return wrappedElement;
     }
 
-    public void setWrappedElement(ElementTypeBase wrappedElement) {
-        this.wrappedElement = wrappedElement;
+    @Override
+    public void collectLeafElements(Set bucket) {
+        bucket.add(getBeginTokenElement());
+        bucket.add(getEndTokenElement());
     }
 }

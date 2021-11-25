@@ -20,7 +20,6 @@ import com.dci.intellij.dbn.language.common.element.impl.SequenceElementType;
 import com.dci.intellij.dbn.language.common.element.impl.TokenElementType;
 import com.dci.intellij.dbn.language.common.element.impl.UnknownElementType;
 import com.dci.intellij.dbn.language.common.element.impl.WrapperElementType;
-import com.dci.intellij.dbn.language.common.element.impl.WrappingDefinition;
 import com.dci.intellij.dbn.language.common.element.util.ElementTypeAttribute;
 import com.dci.intellij.dbn.language.common.element.util.ElementTypeDefinition;
 import com.dci.intellij.dbn.language.common.element.util.ElementTypeDefinitionException;
@@ -60,9 +59,6 @@ public class ElementTypeBundle {
 
     private static class Builder {
         private final Set<LeafElementType> leafElementTypes = new THashSet<>();
-        private final Set<WrapperElementType> wrapperElementTypes = new THashSet<>();
-        private final Set<ElementType> wrappedElementTypes = new THashSet<>();
-        //private Set<OneOfElementType> oneOfElementTypes = new THashSet<OneOfElementType>();
         private final Set<ElementType> allElementTypes = new THashSet<>();
         private boolean rewriteIds;
     }
@@ -105,17 +101,6 @@ public class ElementTypeBundle {
 
             for (LeafElementType leafElementType: builder.leafElementTypes) {
                 leafElementType.registerLeaf();
-            }
-
-            for (WrapperElementType wrapperElementType : builder.wrapperElementTypes) {
-                wrapperElementType.getBeginTokenElement().registerLeaf();
-                wrapperElementType.getEndTokenElement().registerLeaf();
-            }
-
-            for (ElementType wrappedElementType : builder.wrappedElementTypes) {
-                WrappingDefinition wrapping = wrappedElementType.getWrapping();
-                wrapping.getBeginElementType().registerLeaf();
-                wrapping.getEndElementType().registerLeaf();
             }
 
             if (builder.rewriteIds) {
@@ -200,8 +185,6 @@ public class ElementTypeBundle {
 
         } else if (ElementTypeDefinition.WRAPPER.is(type)) {
             result = new WrapperElementType(this, parent, createId(), def);
-            builder.wrapperElementTypes.add((WrapperElementType) result);
-            log.debug("Created wrapper element definition");
 
         } else if (ElementTypeDefinition.ELEMENT.is(type)) {
             String id = determineMandatoryAttribute(def, "ref-id", "Invalid reference to element.");
@@ -228,11 +211,6 @@ public class ElementTypeBundle {
 
         result.collectLeafElements(builder.leafElementTypes);
         builder.allElementTypes.add(result);
-
-        WrappingDefinition wrapping = result.getWrapping();
-        if (wrapping != null) {
-            builder.wrappedElementTypes.add(result);
-        }
         return result;
     }
 

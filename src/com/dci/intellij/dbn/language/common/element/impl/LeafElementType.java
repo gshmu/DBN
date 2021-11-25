@@ -13,8 +13,6 @@ import com.dci.intellij.dbn.language.common.element.path.ParsePathNode;
 import com.dci.intellij.dbn.language.common.element.path.PathNode;
 import com.dci.intellij.dbn.language.common.element.util.ElementTypeAttribute;
 import com.dci.intellij.dbn.language.common.element.util.ElementTypeDefinitionException;
-import com.intellij.lang.ASTNode;
-import com.intellij.psi.PsiWhiteSpace;
 import gnu.trove.THashSet;
 import lombok.Getter;
 import lombok.Setter;
@@ -243,35 +241,9 @@ public abstract class LeafElementType extends ElementTypeBase<LeafElementType> i
         return requiredLeafs;
     }
 
-
-    /**
-     * Returns the index of the corresponding ElementType in it's parent
-     * Only applicable if the given astNode is corresponding to an ElementType within a SequenceElementType
-     * For all the other cases it returns 0.
-     */
-    private static int getElementTypeIndex(ASTNode astNode){
-        ASTNode parentAstNode = astNode.getTreeParent();
-        if (parentAstNode.getElementType() instanceof SequenceElementType) {
-            SequenceElementType sequenceElementType = (SequenceElementType) parentAstNode.getElementType();
-            int index = 0;
-            ASTNode child = parentAstNode.getFirstChildNode();
-            while (child != null) {
-                if (astNode == child) {
-                    break;
-                }
-                index++;
-                child = child.getTreeNext();
-                if (child instanceof PsiWhiteSpace){
-                    child = child.getTreeNext();
-                }
-            }
-            return sequenceElementType.indexOf((ElementType) astNode.getElementType(), index);
-        }
-        return 0;
-    }
-
     @Override
     public void collectLeafElements(Set<LeafElementType> bucket) {
+        super.collectLeafElements(bucket);
         bucket.add(this);
     }
 }
