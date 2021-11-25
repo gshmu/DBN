@@ -59,32 +59,14 @@ public class VirtualFileUtil {
         }
     }
 
-    public static VirtualFile[] lookupFilesForName(Project project, String name) {
-        VirtualFile[] contentRoots = getContentRoots(project);
-        return lookupFilesForName(contentRoots, name);
-    }
-
-    public static VirtualFile[] lookupFilesForName(VirtualFile[] roots, String name) {
-        FileCollector collector = new FileCollector(FileCollectorType.NAME, name);
-        return collectFiles(roots, collector);
-    }
-
-    public static VirtualFile[] lookupFilesForExtensions(Project project, String ... extensions) {
-        FileCollector collector = new FileCollector(FileCollectorType.EXTENSION, extensions);
-        return collectFiles(getContentRoots(project), collector);
-    }
-
-    private static VirtualFile[] collectFiles(VirtualFile[] roots, FileCollector collector) {
-        for (VirtualFile root : roots) {
-            VfsUtilCore.visitChildrenRecursively(root, collector);
+    public static VirtualFile[] findFiles(Project project, FileSearchRequest request) {
+        FileCollector collector = FileCollector.create(request);
+        ProjectRootManager projectRootManager = ProjectRootManager.getInstance(project);
+        VirtualFile[] contentRoots = projectRootManager.getContentRoots();
+        for (VirtualFile contentRoot : contentRoots) {
+            VfsUtilCore.visitChildrenRecursively(contentRoot, collector);
         }
         return collector.files();
-    }
-
-    @NotNull
-    private static VirtualFile[] getContentRoots(Project project) {
-        ProjectRootManager rootManager = ProjectRootManager.getInstance(project);
-        return rootManager.getContentRoots();
     }
 
     public static String ensureFilePath(String fileUrlOrPath) {
