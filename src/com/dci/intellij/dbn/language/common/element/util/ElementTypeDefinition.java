@@ -12,8 +12,6 @@ public enum ElementTypeDefinition {
     QUALIFIED_IDENTIFIER("qualified-identifier"),
     ONE_OF("one-of"),
     TOKEN("token"),
-    TOKEN_SEQUENCE("token-sequence"),
-    TOKEN_CHOICE("token-choice"),
     ELEMENT("element"),
     WRAPPER("wrapper"),
     OBJECT_DEF("object-def"),

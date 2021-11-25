@@ -20,6 +20,7 @@ public class ParserDiagnosticsRunAction extends AbstractParserDiagnosticsAction 
     @Override
     protected void actionPerformed(@NotNull AnActionEvent e, @NotNull Project project, @NotNull ParserDiagnosticsForm form) {
         Progress.modal(project, "Running Parser Diagnostics", true, progress -> {
+            progress.setIndeterminate(false);
             ParserDiagnosticsManager manager = getManager(project);
             ParserDiagnosticsResult result = manager.runParserDiagnostics(progress);
             Dispatch.run(() -> manager.openParserDiagnostics(result));
