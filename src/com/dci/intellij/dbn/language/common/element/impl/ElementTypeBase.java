@@ -40,7 +40,7 @@ import static com.dci.intellij.dbn.common.options.setting.SettingsSupport.string
 @Slf4j
 @Getter
 @Setter
-public abstract class ElementTypeBase<T extends ElementTypeBase<T>> extends IElementType implements ElementType {
+public abstract class ElementTypeBase extends IElementType implements ElementType {
     private static final FormattingDefinition STATEMENT_FORMATTING = new FormattingDefinition(null, IndentDefinition.NORMAL, SpacingDefinition.MIN_LINE_BREAK, null);
 
     private final String id;

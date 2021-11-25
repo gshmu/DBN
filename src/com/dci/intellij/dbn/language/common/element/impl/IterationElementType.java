@@ -3,6 +3,7 @@ package com.dci.intellij.dbn.language.common.element.impl;
 import com.dci.intellij.dbn.code.common.style.formatting.FormattingDefinition;
 import com.dci.intellij.dbn.common.latent.Latent;
 import com.dci.intellij.dbn.language.common.TokenType;
+import com.dci.intellij.dbn.language.common.element.ElementType;
 import com.dci.intellij.dbn.language.common.element.ElementTypeBundle;
 import com.dci.intellij.dbn.language.common.element.cache.ElementTypeLookupCache;
 import com.dci.intellij.dbn.language.common.element.cache.IterationElementTypeLookupCache;
@@ -24,7 +25,7 @@ import static com.dci.intellij.dbn.common.options.setting.SettingsSupport.string
 @Getter
 public final class IterationElementType extends ElementTypeBase {
 
-    private ElementTypeBase<?> iteratedElementType;
+    private ElementType iteratedElementType;
     private TokenElementType[] separatorTokens;
     private int[] elementsCountVariants;
     private int minIterations;
@@ -150,9 +151,5 @@ public final class IterationElementType extends ElementTypeBase {
 
     public boolean isFollowedBySeparator() {
         return followedBySeparator.get();
-    }
-
-    public void setIteratedElementType(ElementTypeBase iteratedElementType) {
-        this.iteratedElementType = iteratedElementType;
     }
 }

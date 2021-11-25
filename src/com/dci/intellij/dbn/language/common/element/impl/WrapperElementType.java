@@ -127,7 +127,7 @@ public final class WrapperElementType extends ElementTypeBase {
     }
 
     @Override
-    public void collectLeafElements(Set bucket) {
+    public void collectLeafElements(Set<LeafElementType> bucket) {
         bucket.add(getBeginTokenElement());
         bucket.add(getEndTokenElement());
     }
