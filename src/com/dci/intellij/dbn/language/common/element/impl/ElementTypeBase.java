@@ -269,6 +269,9 @@ public abstract class ElementTypeBase<T extends ElementTypeBase<T>> extends IEle
     }
 
     public void collectLeafElements(Set<LeafElementType> bucket) {
-
+        if (wrapping != null) {
+            bucket.add(wrapping.getBeginElementType());
+            bucket.add(wrapping.getEndElementType());
+        }
     }
 }
