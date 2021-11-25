@@ -25,7 +25,7 @@ import java.util.Set;
 
 @Getter
 @Setter
-public abstract class LeafElementType extends ElementTypeBase<LeafElementType> implements Indexable {
+public abstract class LeafElementType extends ElementTypeBase implements Indexable {
     private TokenType tokenType;
     private boolean optional;
     private int idx;
