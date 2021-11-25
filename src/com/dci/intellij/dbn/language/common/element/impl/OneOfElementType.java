@@ -21,13 +21,21 @@ import java.util.Set;
 import static com.dci.intellij.dbn.common.options.setting.SettingsSupport.stringAttribute;
 
 public final class OneOfElementType extends ElementTypeBase {
-    private final ElementTypeRef[] children;
-    private final boolean sortable;
+    private ElementTypeRef[] children;
+    private boolean sortable;
     private boolean sorted;
 
     public OneOfElementType(ElementTypeBundle bundle, ElementTypeBase parent, String id, Element def) throws ElementTypeDefinitionException {
         super(bundle, parent, id, def);
+    }
+
+    @Override
+    protected void loadDefinition(Element def) throws ElementTypeDefinitionException {
+        super.loadDefinition(def);
+        ElementTypeBundle bundle = getBundle();
         if (ElementTypeDefinition.TOKEN_CHOICE.is(def.getName())) {
+            String id = getId();
+
             String[] tokens = stringAttribute(def, "tokens").split(",");
             children = new ElementTypeRef[tokens.length];
             for (int i=0; i<tokens.length; i++) {
@@ -40,7 +48,6 @@ public final class OneOfElementType extends ElementTypeBase {
             sortable = false;
         } else {
             List<Element> children = def.getChildren();
-
             this.children = new ElementTypeRef[children.size()];
 
             ElementTypeRef previous = null;

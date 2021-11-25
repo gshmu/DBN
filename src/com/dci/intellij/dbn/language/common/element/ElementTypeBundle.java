@@ -219,6 +219,9 @@ public class ElementTypeBundle {
         } else if (ElementTypeDefinition.TOKEN_CHOICE.is(type)) {
             result = new OneOfElementType(this, parent, createId(), def);
 
+        } else if (ElementTypeDefinition.TOKEN_SEQUENCE.is(type)) {
+            result = new SequenceElementType(this, parent, createId(), def);
+
         } else if (
                 ElementTypeDefinition.OBJECT_DEF.is(type) ||
                 ElementTypeDefinition.OBJECT_REF.is(type) ||
