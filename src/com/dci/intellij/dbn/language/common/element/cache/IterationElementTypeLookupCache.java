@@ -1,7 +1,7 @@
 package com.dci.intellij.dbn.language.common.element.cache;
 
 import com.dci.intellij.dbn.language.common.TokenType;
-import com.dci.intellij.dbn.language.common.element.impl.ElementTypeBase;
+import com.dci.intellij.dbn.language.common.element.ElementType;
 import com.dci.intellij.dbn.language.common.element.impl.IterationElementType;
 import com.dci.intellij.dbn.language.common.element.impl.LeafElementType;
 import com.dci.intellij.dbn.language.common.element.impl.TokenElementType;
@@ -14,24 +14,6 @@ public class IterationElementTypeLookupCache extends ElementTypeLookupCache<Iter
     public IterationElementTypeLookupCache(IterationElementType elementType) {
         super(elementType);
     }
-
-/*
-    @Override
-    boolean initAsFirstPossibleLeaf(LeafElementType leaf, ElementType source) {
-        boolean notInitialized = !firstPossibleLeafs.contains(leaf);
-        ElementType iteratedElementType = getElementType().getIteratedElementType();
-        return notInitialized && (isWrapperBeginLeaf(leaf) || (source == iteratedElementType && iteratedElementType.getLookupCache().couldStartWithLeaf(leaf)));
-
-    }
-
-
-    @Override
-    boolean initAsFirstRequiredLeaf(LeafElementType leaf, ElementType source) {
-        ElementType iteratedElementType = getElementType().getIteratedElementType();
-        boolean notInitialized = !firstRequiredLeafs.contains(leaf);
-        return notInitialized && source == iteratedElementType && iteratedElementType.getLookupCache().shouldStartWithLeaf(leaf);
-    }
-*/
 
     @Override
     public boolean containsToken(TokenType tokenType) {
@@ -147,7 +129,7 @@ public class IterationElementTypeLookupCache extends ElementTypeLookupCache<Iter
         return getIteratedElementType().getLookupCache();
     }
 
-    private ElementTypeBase getIteratedElementType() {
+    private ElementType getIteratedElementType() {
         return elementType.getIteratedElementType();
     }
 }
