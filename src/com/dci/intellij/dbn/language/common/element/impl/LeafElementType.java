@@ -269,4 +269,9 @@ public abstract class LeafElementType extends ElementTypeBase<LeafElementType> i
         }
         return 0;
     }
+
+    @Override
+    public void collectLeafElements(Set<LeafElementType> bucket) {
+        bucket.add(this);
+    }
 }

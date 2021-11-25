@@ -1,11 +1,11 @@
 package com.dci.intellij.dbn.language.common.element.impl;
 
 import com.dci.intellij.dbn.common.util.CommonUtil;
+import com.dci.intellij.dbn.common.util.StringUtil;
 import com.dci.intellij.dbn.language.common.element.ElementTypeBundle;
 import com.dci.intellij.dbn.language.common.element.cache.OneOfElementTypeLookupCache;
 import com.dci.intellij.dbn.language.common.element.parser.BranchCheck;
 import com.dci.intellij.dbn.language.common.element.parser.impl.OneOfElementTypeParser;
-import com.dci.intellij.dbn.language.common.element.util.ElementTypeDefinition;
 import com.dci.intellij.dbn.language.common.element.util.ElementTypeDefinitionException;
 import com.dci.intellij.dbn.language.common.psi.SequencePsiElement;
 import com.intellij.lang.ASTNode;
@@ -24,6 +24,7 @@ public final class OneOfElementType extends ElementTypeBase {
     private ElementTypeRef[] children;
     private boolean sortable;
     private boolean sorted;
+    private boolean basic;
 
     public OneOfElementType(ElementTypeBundle bundle, ElementTypeBase parent, String id, Element def) throws ElementTypeDefinitionException {
         super(bundle, parent, id, def);
@@ -33,10 +34,12 @@ public final class OneOfElementType extends ElementTypeBase {
     protected void loadDefinition(Element def) throws ElementTypeDefinitionException {
         super.loadDefinition(def);
         ElementTypeBundle bundle = getBundle();
-        if (ElementTypeDefinition.TOKEN_CHOICE.is(def.getName())) {
+        String tokenIds = stringAttribute(def, "tokens");
+        if (StringUtil.isNotEmptyOrSpaces(tokenIds)) {
+            basic = true;
             String id = getId();
 
-            String[] tokens = stringAttribute(def, "tokens").split(",");
+            String[] tokens = tokenIds.split(",");
             children = new ElementTypeRef[tokens.length];
             for (int i=0; i<tokens.length; i++) {
                 String tokenTypeId = tokens[i].trim();
@@ -112,5 +115,14 @@ public final class OneOfElementType extends ElementTypeBase {
 
     public ElementTypeRef getFirstChild() {
         return children[0];
+    }
+
+    @Override
+    public void collectLeafElements(Set bucket) {
+        if (basic) {
+            for (ElementTypeRef child : children) {
+                bucket.add(child.elementType);
+            }
+        }
     }
 }
