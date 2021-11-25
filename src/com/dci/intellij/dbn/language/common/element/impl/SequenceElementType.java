@@ -9,6 +9,7 @@ import com.dci.intellij.dbn.language.common.element.cache.ElementTypeLookupCache
 import com.dci.intellij.dbn.language.common.element.cache.SequenceElementTypeLookupCache;
 import com.dci.intellij.dbn.language.common.element.parser.BranchCheck;
 import com.dci.intellij.dbn.language.common.element.parser.impl.SequenceElementTypeParser;
+import com.dci.intellij.dbn.language.common.element.util.ElementTypeDefinition;
 import com.dci.intellij.dbn.language.common.element.util.ElementTypeDefinitionException;
 import com.dci.intellij.dbn.language.common.psi.SequencePsiElement;
 import com.intellij.lang.ASTNode;
@@ -58,22 +59,36 @@ public class SequenceElementType extends ElementTypeBase {
     @Override
     protected void loadDefinition(Element def) throws ElementTypeDefinitionException {
         super.loadDefinition(def);
-        List<Element> children = def.getChildren();
-        this.children = new ElementTypeRef[children.size()];
+        if (ElementTypeDefinition.TOKEN_SEQUENCE.is(def.getName())) {
+            String id = getId();
 
-        ElementTypeRef previous = null;
-        for (int i = 0; i < children.size(); i++) {
-            Element child = children.get(i);
-            String type = child.getName();
-            ElementTypeBase elementType = getElementBundle().resolveElementDefinition(child, type, this);
-            boolean optional = getBooleanAttribute(child, "optional");
-            double version = Double.parseDouble(CommonUtil.nvl(stringAttribute(child, "version"), "0"));
+            String[] tokens = stringAttribute(def, "tokens").split(",");
+            children = new ElementTypeRef[tokens.length];
+            for (int i=0; i<tokens.length; i++) {
+                String tokenTypeId = tokens[i].trim();
+                ElementTypeRef previous = i == 0 ? null : children[i-1];
 
-            Set<BranchCheck> branchChecks = parseBranchChecks(stringAttribute(child, "branch-check"));
-            this.children[i] = new ElementTypeRef(previous, this, elementType, optional, version, branchChecks);
-            previous = this.children[i];
+                TokenElementType tokenElementType = new TokenElementType(getBundle(), this, tokenTypeId, id);
+                children[i] = new ElementTypeRef(previous, this, tokenElementType, false, 0, null);
+            }
+        } else {
+            List<Element> children = def.getChildren();
+            this.children = new ElementTypeRef[children.size()];
 
-            if (stringAttribute(child, "exit") != null) exitIndex = i;
+            ElementTypeRef previous = null;
+            for (int i = 0; i < children.size(); i++) {
+                Element child = children.get(i);
+                String type = child.getName();
+                ElementTypeBase elementType = getElementBundle().resolveElementDefinition(child, type, this);
+                boolean optional = getBooleanAttribute(child, "optional");
+                double version = Double.parseDouble(CommonUtil.nvl(stringAttribute(child, "version"), "0"));
+
+                Set<BranchCheck> branchChecks = parseBranchChecks(stringAttribute(child, "branch-check"));
+                this.children[i] = new ElementTypeRef(previous, this, elementType, optional, version, branchChecks);
+                previous = this.children[i];
+
+                if (stringAttribute(child, "exit") != null) exitIndex = i;
+            }
         }
     }
 
