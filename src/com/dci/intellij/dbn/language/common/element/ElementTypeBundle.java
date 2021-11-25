@@ -6,7 +6,21 @@ import com.dci.intellij.dbn.common.util.Measured;
 import com.dci.intellij.dbn.language.common.DBLanguage;
 import com.dci.intellij.dbn.language.common.DBLanguageDialect;
 import com.dci.intellij.dbn.language.common.TokenTypeBundle;
-import com.dci.intellij.dbn.language.common.element.impl.*;
+import com.dci.intellij.dbn.language.common.element.impl.BasicElementType;
+import com.dci.intellij.dbn.language.common.element.impl.BlockElementType;
+import com.dci.intellij.dbn.language.common.element.impl.ElementTypeBase;
+import com.dci.intellij.dbn.language.common.element.impl.ExecVariableElementType;
+import com.dci.intellij.dbn.language.common.element.impl.IdentifierElementType;
+import com.dci.intellij.dbn.language.common.element.impl.IterationElementType;
+import com.dci.intellij.dbn.language.common.element.impl.LeafElementType;
+import com.dci.intellij.dbn.language.common.element.impl.NamedElementType;
+import com.dci.intellij.dbn.language.common.element.impl.OneOfElementType;
+import com.dci.intellij.dbn.language.common.element.impl.QualifiedIdentifierElementType;
+import com.dci.intellij.dbn.language.common.element.impl.SequenceElementType;
+import com.dci.intellij.dbn.language.common.element.impl.TokenElementType;
+import com.dci.intellij.dbn.language.common.element.impl.UnknownElementType;
+import com.dci.intellij.dbn.language.common.element.impl.WrapperElementType;
+import com.dci.intellij.dbn.language.common.element.impl.WrappingDefinition;
 import com.dci.intellij.dbn.language.common.element.util.ElementTypeAttribute;
 import com.dci.intellij.dbn.language.common.element.util.ElementTypeDefinition;
 import com.dci.intellij.dbn.language.common.element.util.ElementTypeDefinitionException;
@@ -201,6 +215,9 @@ public class ElementTypeBundle {
 
         } else if (ElementTypeDefinition.TOKEN.is(type)) {
             result = new TokenElementType(this, parent, createId(), def);
+
+        } else if (ElementTypeDefinition.TOKEN_CHOICE.is(type)) {
+            result = new OneOfElementType(this, parent, createId(), def);
 
         } else if (
                 ElementTypeDefinition.OBJECT_DEF.is(type) ||

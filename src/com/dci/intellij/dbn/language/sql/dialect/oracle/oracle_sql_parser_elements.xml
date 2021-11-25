@@ -4456,8 +4456,219 @@
                     <object-def id="000002588" type="TYPE" />
                 </variant>
             </qualified-identifier>
+            <wrapper optional="true" template="PARENTHESES">
+                <iteration separator="CHR_COMMA">
+                    <one-of>
+                        <element ref-id="scoped_table_ref_constraint"/>
+                        <sequence>
+                            <alias-ref id="000001200" original-name="column_alias" type="COLUMN" />
+                            <sequence optional="true">
+                                <token type-id="KW_ENCRYPT"></token>
+                                <element optional="true" ref-id="encryption_spec" />
+                            </sequence>
+                        </sequence>
+                    </one-of>
+                </iteration>
+            </wrapper>
+            <sequence optional="true">
+                <token type-id="KW_DEFAULT"/>
+                <token type-id="KW_COLLATION"/>
+                <object-ref type="COLLATION" id="000002568" />
+            </sequence>
+            <one-of>
+                <sequence>
+                    <token type-id="KW_ON"/>
+                    <token type-id="KW_PREBUILT"/>
+                    <token type-id="KW_TABLE"/>
+                    <sequence optional="true">
+                        <token-choice tokens="KW_WITH, KW_WITHOUT"/>
+                        <token type-id="KW_REDUCED"/>
+                        <token type-id="KW_PRECISION"/>
+                    </sequence>
+                </sequence>
+                <sequence>
+                    <element ref-id="physical_properties" optional="true"/>
+                    <element ref-id="materialized_view_props" optional="true"/>
+                </sequence>
+            </one-of>
+            <sequence optional="true">
+                <token type-id="KW_USING"/>
+                <one-of>
+                    <sequence>
+                        <token type-id="KW_INDEX"/>
+                        <iteration optional="true">
+                            <one-of>
+                                <element ref-id="physical_attributes_clause"/>
+                                <sequence>
+                                    <token type-id="KW_TABLESPACE"/>
+                                    <object-ref type="TABLESPACE"/>
+                                </sequence>
+                            </one-of>
+                        </iteration>
+                    </sequence>
+                    <sequence>
+                        <token type-id="KW_NO"/>
+                        <token type-id="KW_INDEX"/>
+                    </sequence>
+                </one-of>
+            </sequence>
+            <element ref-id="create_mv_refresh" optional="true"/>
+            <element ref-id="evaluation_edition_clause" optional="true"/>
+            <sequence optional="true">
+                <token-choice tokens="KW_ENABLE, KW_DISABLE"/>
+                <token type-id="KW_ON"/>
+                <token type-id="KW_QUERY"/>
+                <token type-id="KW_COMPUTATION"/>
+            </sequence>
+            <element ref-id="query_rewrite_clause" optional="true"/>
+            <token type-id="KW_AS"/>
+            <element ref-id="subquery"/>
             <!-- TODO materialized view-->
         </sequence>
+    </element-def>
+    <element-def attributes="CLAUSE" description="EVALUATION EDITION clause" id="evaluation_edition_clause">
+        <token type-id="KW_EVALUATE"/>
+        <token type-id="KW_USING"/>
+        <one-of>
+            <sequence>
+                <token type-id="KW_CURRENT"/>
+                <token type-id="KW_EDITION"/>
+            </sequence>
+            <sequence>
+                <token type-id="KW_NULL"/>
+                <token type-id="KW_EDITION"/>
+            </sequence>
+            <sequence>
+                <token type-id="KW_EDITION"/>
+                <object-ref type="EDITION"/>
+            </sequence>
+        </one-of>
+    </element-def>
+    <element-def attributes="CLAUSE" description="MVIEW props clause" id="materialized_view_props">
+        <element ref-id="column_properties" optional="true"/>
+        <element ref-id="table_partitioning_clauses" optional="true"/>
+        <token-choice tokens="KW_CACHE, KW_NOCACHE"/>
+        <element ref-id="parallel_clause" optional="true"/>
+        <element ref-id="build_clause" optional="true"/>
+    </element-def>
+    <element-def attributes="CLAUSE" description="BUILD clause" id="build_clause">
+        <token type-id="KW_BUILD"/>
+        <token-choice tokens="KW_IMMEDIATE, KW_DEFERRED"/>
+    </element-def>
+    <element-def attributes="CLAUSE" description="MVIEW REFRESH clause" id="create_mv_refresh">
+        <one-of>
+            <sequence>
+                <token type-id="KW_REFRESH"/>
+                <iteration>
+                    <one-of>
+                        <token type-id="KW_FAST"/>
+                        <token type-id="KW_COMPLETE"/>
+                        <token type-id="KW_FORCE"/>
+                        <sequence>
+                            <token type-id="KW_ON"/>
+                            <token-choice tokens="KW_DEMAND, KW_COMMIT, KW_STATEMENT"/>
+                        </sequence>
+                        <sequence>
+                            <one-of>
+                                <token type-id="KW_NEXT"/>
+                                <sequence>
+                                    <token type-id="KW_START"/>
+                                    <token type-id="KW_WITH"/>
+                                </sequence>
+                            </one-of>
+                            <element ref-id="expression" original-name="date"/>
+                        </sequence>
+                        <sequence>
+                            <token type-id="KW_WITH"/>
+                            <one-of>
+                                <token type-id="DT_ROWID"/>
+                                <sequence>
+                                    <token type-id="KW_PRIMARY"/>
+                                    <token type-id="KW_KEY"/>
+                                </sequence>
+                            </one-of>
+                        </sequence>
+                        <sequence>
+                            <token type-id="KW_USING"/>
+                            <one-of>
+                                <sequence>
+                                    <token-choice tokens="KW_ENFORCED, KW_TRUSTED"/>
+                                    <token type-id="KW_CONSTRAINTS"/>
+                                </sequence>
+                                <iteration>
+                                    <one-of>
+                                        <sequence>
+                                            <token type-id="KW_DEFAULT"/>
+                                            <token-choice optional="true" tokens="KW_MASTER, KW_LOCAL"/>
+                                            <token type-id="KW_ROLLBACK"/>
+                                            <token type-id="KW_SEGMENT"/>
+                                        </sequence>
+                                        <sequence>
+                                            <token-choice optional="true" tokens="KW_MASTER, KW_LOCAL"/>
+                                            <token type-id="KW_ROLLBACK"/>
+                                            <token type-id="KW_SEGMENT"/>
+                                            <object-ref type="ROLLBACK_SEGMENT"/>
+                                        </sequence>
+                                        <sequence>
+                                            <token-choice tokens="KW_ENFORCED, KW_TRUSTED"/>
+                                            <token type-id="KW_CONSTRAINTS"/>
+                                        </sequence>
+                                    </one-of>
+                                </iteration>
+                            </one-of>
+                        </sequence>
+                    </one-of>
+                </iteration>
+            </sequence>
+            <sequence>
+                <token type-id="KW_NEVER"/>
+                <token type-id="KW_REFRESH"/>
+            </sequence>
+        </one-of>
+    </element-def>
+    <element-def attributes="CLAUSE" description="QUERY REWRITE clause" id="query_rewrite_clause">
+        <token-choice tokens="KW_ENABLE, KW_DISABLE"/>
+        <token type-id="KW_QUERY"/>
+        <token type-id="KW_REWRITE"/>
+        <element ref-id="unusable_editions_clause" optional="true"/>
+    </element-def>
+    <element-def attributes="CLAUSE" description="UNUSABLE EDITIONS clause" id="unusable_editions_clause">
+        <token type-id="KW_UNUSABLE"/>
+        <iteration>
+            <one-of>
+                <sequence>
+                    <token type-id="KW_BEFORE"/>
+                    <one-of>
+                        <sequence>
+                            <token type-id="KW_CURRENT"/>
+                            <token type-id="KW_EDITION"/>
+                        </sequence>
+                        <sequence>
+                            <token type-id="KW_EDITION"/>
+                            <object-ref type="EDITION"/>
+                        </sequence>
+                    </one-of>
+                </sequence>
+                <sequence>
+                    <token type-id="KW_BEGINNING"/>
+                    <token type-id="KW_WITH"/>
+                    <one-of>
+                        <sequence>
+                            <token type-id="KW_CURRENT"/>
+                            <token type-id="KW_EDITION"/>
+                        </sequence>
+                        <sequence>
+                            <token type-id="KW_EDITION"/>
+                            <object-ref type="EDITION"/>
+                        </sequence>
+                        <sequence>
+                            <token type-id="KW_NULL"/>
+                            <token type-id="KW_EDITION"/>
+                        </sequence>
+                    </one-of>
+                </sequence>
+            </one-of>
+        </iteration>
     </element-def>
     <element-def attributes="CLAUSE" description="OBJECT VIEW clause" id="object_view_clause">
         <qualified-identifier id="000002589" separator="CHR_DOT">
