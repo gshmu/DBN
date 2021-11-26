@@ -14,15 +14,15 @@ public class ParseResult{
         this.matchedTokens = matchedTokens;
     }
 
-    public static ParseResult createFullMatchResult(int matchedTokens) {
+    public static ParseResult fullMatch(int matchedTokens) {
         return new ParseResult(ParseResultType.FULL_MATCH, matchedTokens);
     }
 
-    public static ParseResult createPartialMatchResult(int matchedTokens) {
+    public static ParseResult partialMatch(int matchedTokens) {
         return new ParseResult(ParseResultType.PARTIAL_MATCH, matchedTokens);
     }
 
-    public static ParseResult createNoMatchResult() {
+    public static ParseResult noMatch() {
         return NO_MATCH;
     }
 

@@ -12,11 +12,11 @@ import org.jetbrains.annotations.NotNull;
 
 public class TokenPairRangeMonitor {
     private int stackSize = 0;
-    private Stack<TokenPairRangeMarker> markersStack = new Stack<TokenPairRangeMarker>();
-    private PsiBuilder builder;
+    private final Stack<TokenPairRangeMarker> markersStack = new Stack<>();
+    private final PsiBuilder builder;
 
-    private SimpleTokenType beginTokenType;
-    private SimpleTokenType endTokenType;
+    private final SimpleTokenType beginTokenType;
+    private final SimpleTokenType endTokenType;
 
 
     public TokenPairRangeMonitor(PsiBuilder builder, DBLanguageDialect languageDialect, TokenPairTemplate template) {

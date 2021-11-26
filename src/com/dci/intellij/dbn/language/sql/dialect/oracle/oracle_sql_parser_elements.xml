@@ -3335,7 +3335,7 @@
         <one-of id="000002013">
             <sequence id="000002014">
                 <token id="000002015" type-id="KW_ADD" />
-                <iteration id="000002016" separator="CHR_COMMA">
+                <iteration id="000002016" separator="CHR_COMMA" exit="true">
                     <sequence id="000002017">
                         <token id="000002018" type-id="KW_SUPPLEMENTAL" />
                         <token id="000002019" type-id="KW_LOG" />
@@ -3349,7 +3349,7 @@
             </sequence>
             <sequence id="000002021">
                 <token id="000002022" type-id="KW_DROP" />
-                <iteration id="000002023" separator="CHR_COMMA">
+                <iteration id="000002023" separator="CHR_COMMA" exit="true">
                     <sequence id="000002024">
                         <token id="000002025" type-id="KW_SUPPLEMENTAL" />
                         <token id="000002026" type-id="KW_LOG" />

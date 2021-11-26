@@ -53,7 +53,7 @@ public class SequenceElementTypeParser<ET extends SequenceElementType> extends E
                 }
 
                 if (context.check(child)) {
-                    ParseResult result = ParseResult.createNoMatchResult();
+                    ParseResult result = ParseResult.noMatch();
                     // current token can still be part of the iterated element.
                     //if (elementTypes[i].containsToken(tokenType)) {
                     if (shouldParseElement(child.elementType, node, context)) {
