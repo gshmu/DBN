@@ -75,7 +75,7 @@ public abstract class ElementTypeParser<T extends ElementTypeBase> {
 
             logEnd(resultType, depth);
             if (resultType == ParseResultType.NO_MATCH) {
-                return ParseResult.createNoMatchResult();
+                return ParseResult.noMatch();
             } else {
                 Branch branch = this.elementType.getBranch();
                 if (node != null && branch != null) {
@@ -86,7 +86,7 @@ public abstract class ElementTypeParser<T extends ElementTypeBase> {
                     context.lastResolvedLeaf = (LeafElementType) elementType;
                 }
 
-                return ParseResult.createFullMatchResult(matchedTokens);
+                return ParseResult.fullMatch(matchedTokens);
             }
         } finally {
             if (node != null) {

@@ -56,18 +56,20 @@ public class IterationElementTypeParser extends ElementTypeParser<IterationEleme
                         if (elementType.isFollowedBySeparator()) {
                             partialMatchMarker = builder.mark(null);
                         }
+
+                        ParseResult sepResult = ParseResult.noMatch();
                         for (TokenElementType separatorToken : separatorTokens) {
-                            result = separatorToken.getParser().parse(node, false, depth + 1, context);
-                            matchedTokens = matchedTokens + result.getMatchedTokens();
-                            if (result.isMatch()) break;
+                            sepResult = separatorToken.getParser().parse(node, false, depth + 1, context);
+                            matchedTokens = matchedTokens + sepResult.getMatchedTokens();
+                            if (sepResult.isMatch()) break;
                         }
 
-                        if (result.isNoMatch()) {
+                        if (sepResult.isNoMatch()) {
                             // if NO_MATCH, no additional separator found, hence then iteration should exit with MATCH
                             ParseResultType resultType =
                                     matchesMinIterations(iterations) ?
                                             matchesIterations(iterations) ?
-                                                    ParseResultType.FULL_MATCH :
+                                                    result.getType() :
                                                     ParseResultType.PARTIAL_MATCH :
                                             ParseResultType.NO_MATCH;
 
