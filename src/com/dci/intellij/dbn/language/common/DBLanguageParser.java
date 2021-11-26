@@ -14,8 +14,6 @@ import lombok.Getter;
 import org.jdom.Document;
 import org.jetbrains.annotations.NotNull;
 
-import static com.dci.intellij.dbn.diagnostics.Diagnostics.isLanguageParserDebug;
-
 @Getter
 public abstract class DBLanguageParser implements PsiParser {
     private final DBLanguageDialect languageDialect;
@@ -44,9 +42,8 @@ public abstract class DBLanguageParser implements PsiParser {
     @NotNull
     public ASTNode parse(IElementType rootElementType, PsiBuilder psiBuilder, String parseRootId, double databaseVersion) {
         ParserContext context = new ParserContext(psiBuilder, languageDialect, databaseVersion);
-        ParserBuilder builder = context.builder;
+        ParserBuilder builder = context.getBuilder();
         if (parseRootId == null ) parseRootId = defaultParseRootId;
-        builder.setDebugMode(isLanguageParserDebug());
         PsiBuilder.Marker marker = builder.mark(null);
         NamedElementType root =  elementTypes.getNamedElementType(parseRootId);
         if (root == null) {
@@ -59,7 +56,7 @@ public abstract class DBLanguageParser implements PsiParser {
         try {
             while (!builder.eof()) {
                 int currentOffset =  builder.getCurrentOffset();
-                root.getParser().parse(rootParseNode, true, 0, context);
+                root.getParser().parse(rootParseNode, context);
                 if (currentOffset == builder.getCurrentOffset()) {
                     TokenType tokenType = builder.getTokenType();
                     /*if (tokenType.isChameleon()) {

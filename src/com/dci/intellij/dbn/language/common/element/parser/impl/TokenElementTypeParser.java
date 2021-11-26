@@ -20,9 +20,8 @@ public class TokenElementTypeParser extends ElementTypeParser<TokenElementType> 
     }
 
     @Override
-    public ParseResult parse(@NotNull ParsePathNode parentNode, boolean optional, int depth, ParserContext context) {
-        ParserBuilder builder = context.builder;
-        logBegin(builder, optional, depth);
+    public ParseResult parse(@NotNull ParsePathNode parentNode, ParserContext context) {
+        ParserBuilder builder = context.getBuilder();
 
         TokenType tokenType = builder.getTokenType();
         if (tokenType == elementType.getTokenType() || isDummyToken(builder.getTokenText())) {
@@ -31,7 +30,7 @@ public class TokenElementTypeParser extends ElementTypeParser<TokenElementType> 
             if (StringUtil.isNotEmpty(text) && StringUtil.equalsIgnoreCase(builder.getTokenText(), text)) {
                 PsiBuilder.Marker marker = builder.mark(null);
                 builder.advanceLexer(parentNode);
-                return stepOut(marker, null, context, depth, ParseResultType.FULL_MATCH, 1);
+                return stepOut(marker, null, context, ParseResultType.FULL_MATCH, 1);
             }
 
             SharedTokenTypeBundle sharedTokenTypes = getElementBundle().getTokenTypeBundle().getSharedTokenTypes();
@@ -42,20 +41,20 @@ public class TokenElementTypeParser extends ElementTypeParser<TokenElementType> 
                 TokenType nextTokenType = builder.lookAhead(1);
                 if (nextTokenType == dot && !elementType.isNextPossibleToken(dot, parentNode, context)) {
                     context.setWavedTokenType(tokenType);
-                    return stepOut(null, null, context, depth, ParseResultType.NO_MATCH, 0);
+                    return stepOut(null, null, context, ParseResultType.NO_MATCH, 0);
                 }
                 if (tokenType.isFunction() && elementType.getFlavor() == null) {
                     if (nextTokenType != leftParenthesis && elementType.isNextRequiredToken(leftParenthesis, parentNode, context)) {
                         context.setWavedTokenType(tokenType);
-                        return stepOut(null, null, context, depth, ParseResultType.NO_MATCH, 0);
+                        return stepOut(null, null, context, ParseResultType.NO_MATCH, 0);
                     }
                 }
             }
 
             PsiBuilder.Marker marker = builder.mark(null);
             builder.advanceLexer(parentNode);
-            return stepOut(marker, null, context, depth, ParseResultType.FULL_MATCH, 1);
+            return stepOut(marker, null, context, ParseResultType.FULL_MATCH, 1);
         }
-        return stepOut(null, null, context, depth, ParseResultType.NO_MATCH, 0);
+        return stepOut(null, null, context, ParseResultType.NO_MATCH, 0);
     }
 }
