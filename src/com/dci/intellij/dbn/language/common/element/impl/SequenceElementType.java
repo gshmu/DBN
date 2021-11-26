@@ -94,7 +94,7 @@ public class SequenceElementType extends ElementTypeBase {
             }
         }
 
-        if (children.length == 1 && !(this instanceof NamedElementType)) {
+        if (children.length == 1 && !(this instanceof NamedElementType) && !(this instanceof BlockElementType)) {
             // TODO log and / or cleanup
             System.out.print("");
         }

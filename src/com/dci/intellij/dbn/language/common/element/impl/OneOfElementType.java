@@ -68,6 +68,11 @@ public final class OneOfElementType extends ElementTypeBase {
             }
             sortable = getBooleanAttribute(def, "sortable");
         }
+
+        if (children == null || children.length == 0) {
+            // TODO assert at least 2 children
+            throw new ElementTypeDefinitionException("[" + getLanguageDialect().getID() + "] Invalid one-of definition (id=" + getId() + "). Element should contain at least 2 elements.");
+        }
     }
 
     @Override
