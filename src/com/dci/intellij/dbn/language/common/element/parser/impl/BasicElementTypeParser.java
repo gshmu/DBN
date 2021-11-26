@@ -14,6 +14,6 @@ public class BasicElementTypeParser extends ElementTypeParser<BasicElementType> 
 
     @Override
     public ParseResult parse(@NotNull ParsePathNode parentNode, boolean optional, int depth, ParserContext context) {
-        return ParseResult.createNoMatchResult();
+        return ParseResult.noMatch();
     }
 }

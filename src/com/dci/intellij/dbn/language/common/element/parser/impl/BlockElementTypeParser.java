@@ -26,7 +26,7 @@ public class BlockElementTypeParser extends SequenceElementTypeParser<BlockEleme
             builder.markerDone(marker, elementType);
         }
         return result.getType() == ParseResultType.NO_MATCH ?
-                ParseResult.createNoMatchResult() :
-                ParseResult.createFullMatchResult(result.getMatchedTokens());
+                ParseResult.noMatch() :
+                ParseResult.fullMatch(result.getMatchedTokens());
     }
 }
