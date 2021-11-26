@@ -20,13 +20,13 @@ public class BlockElementTypeParser extends SequenceElementTypeParser<BlockEleme
         ParserBuilder builder = context.builder;
         PsiBuilder.Marker marker = builder.mark(null);
         ParseResult result = super.parse(parentNode, optional, depth, context);
-        if (result.type == ParseResultType.NO_MATCH) {
+        if (result.getType() == ParseResultType.NO_MATCH) {
             builder.markerDrop(marker);
         } else {
             builder.markerDone(marker, elementType);
         }
-        return result.type == ParseResultType.NO_MATCH ?
+        return result.getType() == ParseResultType.NO_MATCH ?
                 ParseResult.createNoMatchResult() :
-                ParseResult.createFullMatchResult(result.matchedTokens);
+                ParseResult.createFullMatchResult(result.getMatchedTokens());
     }
 }

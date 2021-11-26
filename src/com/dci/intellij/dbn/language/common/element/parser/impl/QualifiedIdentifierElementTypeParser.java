@@ -41,11 +41,11 @@ public class QualifiedIdentifierElementTypeParser extends ElementTypeParser<Qual
 
             for (LeafElementType elementType : elementTypes) {
                 ParseResult result = elementType.getParser().parse(node, true, depth + 1, context);
-                if (result.isNoMatch()) break;  else matchedTokens = matchedTokens + result.matchedTokens;
+                if (result.isNoMatch()) break;  else matchedTokens = matchedTokens + result.getMatchedTokens();
 
                 if (elementType != elementTypes[elementTypes.length -1])  {
                     result = separatorToken.getParser().parse(node, true, depth + 1, context);
-                    if (result.isNoMatch()) break; else matchedTokens = matchedTokens + result.matchedTokens;
+                    if (result.isNoMatch()) break; else matchedTokens = matchedTokens + result.getMatchedTokens();
                 }
                 node.incrementIndex(builder.getCurrentOffset());
             }
