@@ -93,6 +93,11 @@ public class SequenceElementType extends ElementTypeBase {
                 if (stringAttribute(child, "exit") != null) exitIndex = i;
             }
         }
+
+        if (children.length == 1 && !(this instanceof NamedElementType)) {
+            // TODO log and / or cleanup
+            System.out.print("");
+        }
     }
 
     @Override
