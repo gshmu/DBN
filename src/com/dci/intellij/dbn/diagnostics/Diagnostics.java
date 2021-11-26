@@ -22,10 +22,6 @@ public final class Diagnostics {
         return developerMode && miscellaneous.bulkActionsEnabled;
     }
 
-    public static boolean isLanguageParserDebug() {
-        return developerMode && debugLogging.languageParser;
-    }
-
     public static boolean isDatabaseAccessDebug() {
         return developerMode && debugLogging.databaseAccess;
     }
@@ -99,7 +95,6 @@ public final class Diagnostics {
     @Getter
     @Setter
     public static final class DebugLogging implements PersistentStateElement{
-        private boolean languageParser = false;
         private boolean databaseAccess = false;
         private boolean databaseResource = false;
 
@@ -107,7 +102,6 @@ public final class Diagnostics {
         public void readState(Element element) {
             Element debugMode = element.getChild("debug-logging");
             if (debugMode != null) {
-                languageParser = booleanAttribute(debugMode, "language-parser", languageParser);
                 databaseAccess = booleanAttribute(debugMode, "database-access", databaseAccess);
                 databaseResource = booleanAttribute(debugMode, "database-resource", databaseResource);
             }
@@ -117,7 +111,6 @@ public final class Diagnostics {
         public void writeState(Element element) {
             Element debugMode = new Element("debug-logging");
             element.addContent(debugMode);
-            setBooleanAttribute(debugMode, "language-parser", languageParser);
             setBooleanAttribute(debugMode, "database-access", databaseAccess);
             setBooleanAttribute(debugMode, "database-resource", databaseResource);
         }

@@ -5,11 +5,15 @@ import com.dci.intellij.dbn.language.common.TokenType;
 import com.dci.intellij.dbn.language.common.element.cache.ElementLookupContext;
 import com.dci.intellij.dbn.language.common.element.impl.LeafElementType;
 import com.intellij.lang.PsiBuilder;
+import lombok.Getter;
+import lombok.Setter;
 
+@Getter
+@Setter
 public class ParserContext extends ElementLookupContext {
-    public final long timestamp = System.currentTimeMillis();
-    public final ParserBuilder builder;
-    public transient LeafElementType lastResolvedLeaf;
+    private final long timestamp = System.currentTimeMillis();
+    private final ParserBuilder builder;
+    private transient LeafElementType lastResolvedLeaf;
     private TokenType wavedTokenType;
     private int wavedTokenTypeOffset;
 

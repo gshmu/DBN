@@ -11,15 +11,12 @@ import com.dci.intellij.dbn.language.common.element.impl.BlockElementType;
 import com.dci.intellij.dbn.language.common.element.impl.ElementTypeBase;
 import com.dci.intellij.dbn.language.common.element.impl.LeafElementType;
 import com.dci.intellij.dbn.language.common.element.path.ParsePathNode;
-import com.dci.intellij.dbn.language.common.element.util.ElementTypeLogger;
 import com.dci.intellij.dbn.language.common.element.util.ElementTypeUtil;
 import com.dci.intellij.dbn.language.common.element.util.ParseBuilderErrorHandler;
-import com.intellij.lang.PsiBuilder;
+import com.intellij.lang.PsiBuilder.Marker;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Set;
-
-import static com.dci.intellij.dbn.diagnostics.Diagnostics.isLanguageParserDebug;
 
 public abstract class ElementTypeParser<T extends ElementTypeBase> {
     public final T elementType;
@@ -32,38 +29,27 @@ public abstract class ElementTypeParser<T extends ElementTypeBase> {
         return tokenText != null && tokenText.contains(CodeCompletionContributor.DUMMY_TOKEN);
     }
 
-    public void logBegin(ParserBuilder builder, boolean optional, int depth) {
-        if (isLanguageParserDebug()) {
-            ElementTypeLogger.logBegin(elementType, builder, optional, depth);
-        }
-    }
-
-    public void logEnd(ParseResultType resultType, int depth) {
-        if (isLanguageParserDebug()) {
-            ElementTypeLogger.logEnd(elementType, resultType, depth);
-        }
-    }
-    public ParsePathNode stepIn(ParsePathNode parentParseNode, ParserContext context) {
-        ParserBuilder builder = context.builder;
-        ParsePathNode node = new ParsePathNode(elementType, parentParseNode, builder.getCurrentOffset(), 0);
-        PsiBuilder.Marker marker = builder.mark(node);
+    public ParsePathNode stepIn(ParsePathNode parentNode, ParserContext context) {
+        ParserBuilder builder = context.getBuilder();
+        ParsePathNode node = new ParsePathNode(elementType, parentNode, builder.getCurrentOffset(), 0);
+        Marker marker = builder.mark(node);
         node.setElementMarker(marker);
         return node;
     }
 
-    public ParseResult stepOut(ParsePathNode node, ParserContext context, int depth, ParseResultType resultType, int matchedTokens) {
-        return stepOut(null, node, context, depth, resultType, matchedTokens);
+    public ParseResult stepOut(ParsePathNode node, ParserContext context, ParseResultType resultType, int matchedTokens) {
+        return stepOut(null, node, context, resultType, matchedTokens);
     }
 
-    public ParseResult stepOut(PsiBuilder.Marker marker, ParsePathNode node, ParserContext context, int depth, ParseResultType resultType, int matchedTokens) {
+    public ParseResult stepOut(Marker marker, ParsePathNode node, ParserContext context, ParseResultType resultType, int matchedTokens) {
         try {
             marker = marker == null ? node == null ? null : node.getElementMarker() : marker;
             if (resultType == ParseResultType.PARTIAL_MATCH) {
-                ElementTypeBase offsetPsiElement = CommonUtil.nvl(context.lastResolvedLeaf, elementType);
+                ElementTypeBase offsetPsiElement = CommonUtil.nvl(context.getLastResolvedLeaf(), elementType);
                 Set<TokenType> nextPossibleTokens = offsetPsiElement.getLookupCache().getNextPossibleTokens();
                 ParseBuilderErrorHandler.updateBuilderError(nextPossibleTokens, context);
             }
-            ParserBuilder builder = context.builder;
+            ParserBuilder builder = context.getBuilder();
             if (resultType == ParseResultType.NO_MATCH) {
                 builder.markerRollbackTo(marker, node);
             } else {
@@ -73,7 +59,6 @@ public abstract class ElementTypeParser<T extends ElementTypeBase> {
             }
 
 
-            logEnd(resultType, depth);
             if (resultType == ParseResultType.NO_MATCH) {
                 return ParseResult.noMatch();
             } else {
@@ -83,7 +68,7 @@ public abstract class ElementTypeParser<T extends ElementTypeBase> {
                     context.addBranchMarker(node, branch);
                 }
                 if (elementType instanceof LeafElementType) {
-                    context.lastResolvedLeaf = (LeafElementType) elementType;
+                    context.setLastResolvedLeaf((LeafElementType) elementType);
                 }
 
                 return ParseResult.fullMatch(matchedTokens);
@@ -106,7 +91,7 @@ public abstract class ElementTypeParser<T extends ElementTypeBase> {
             SharedTokenTypeBundle sharedTokenTypes = getElementBundle().getTokenTypeBundle().getSharedTokenTypes();
             SimpleTokenType dot = sharedTokenTypes.getChrDot();
             SimpleTokenType leftParenthesis = sharedTokenTypes.getChrLeftParenthesis();
-            ParserBuilder builder = context.builder;
+            ParserBuilder builder = context.getBuilder();
             if (builder.lookBack(1) == dot || builder.lookAhead(1) == dot) {
                 return true;
             }
@@ -120,12 +105,12 @@ public abstract class ElementTypeParser<T extends ElementTypeBase> {
 
             ElementTypeBase namedElementType = ElementTypeUtil.getEnclosingNamedElementType(node);
             if (namedElementType != null && namedElementType.getLookupCache().containsToken(tokenType)) {
-                LeafElementType lastResolvedLeaf = context.lastResolvedLeaf;
+                LeafElementType lastResolvedLeaf = context.getLastResolvedLeaf();
                 return lastResolvedLeaf != null && !lastResolvedLeaf.isNextPossibleToken(tokenType, node, context);
             }
 
-            if (context.lastResolvedLeaf != null) {
-                if (context.lastResolvedLeaf.isNextPossibleToken(tokenType, node, context)) {
+            if (context.getLastResolvedLeaf() != null) {
+                if (context.getLastResolvedLeaf().isNextPossibleToken(tokenType, node, context)) {
                     return false;
                 }
             }
@@ -139,7 +124,7 @@ public abstract class ElementTypeParser<T extends ElementTypeBase> {
     }
 
     protected boolean shouldParseElement(ElementTypeBase elementType, ParsePathNode node, ParserContext context) {
-        ParserBuilder builder = context.builder;
+        ParserBuilder builder = context.getBuilder();
         TokenType tokenType = builder.getTokenType();
 
         return
@@ -157,5 +142,5 @@ public abstract class ElementTypeParser<T extends ElementTypeBase> {
         return elementType.getLanguage().getSharedTokenTypes();
     }
 
-    public abstract ParseResult parse(@NotNull ParsePathNode parentNode, boolean optional, int depth, ParserContext context) throws ParseException;
+    public abstract ParseResult parse(@NotNull ParsePathNode parentNode, ParserContext context) throws ParseException;
 }

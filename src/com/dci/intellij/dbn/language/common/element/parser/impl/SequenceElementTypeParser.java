@@ -27,9 +27,8 @@ public class SequenceElementTypeParser<ET extends SequenceElementType> extends E
     }
 
     @Override
-    public ParseResult parse(@NotNull ParsePathNode parentNode, boolean optional, int depth, ParserContext context) throws ParseException {
-        ParserBuilder builder = context.builder;
-        logBegin(builder, optional, depth);
+    public ParseResult parse(@NotNull ParsePathNode parentNode, ParserContext context) throws ParseException {
+        ParserBuilder builder = context.getBuilder();
         ParsePathNode node = stepIn(parentNode, context);
 
         int matches = 0;
@@ -49,7 +48,7 @@ public class SequenceElementTypeParser<ET extends SequenceElementType> extends E
                             child.optional && (child.isLast() || child.isOptionalFromHere()) ? ParseResultType.FULL_MATCH :
                             !child.isFirst() && elementType.isExitIndex(index) ? ParseResultType.NO_MATCH : ParseResultType.PARTIAL_MATCH;
 
-                    return stepOut(node, context, depth, resultType, matchedTokens);
+                    return stepOut(node, context, resultType, matchedTokens);
                 }
 
                 if (context.check(child)) {
@@ -59,7 +58,7 @@ public class SequenceElementTypeParser<ET extends SequenceElementType> extends E
                     if (shouldParseElement(child.elementType, node, context)) {
 
                         //node = node.createVariant(builder.getCurrentOffset(), i);
-                        result = child.getParser().parse(node, child.optional, depth + 1, context);
+                        result = child.getParser().parse(node, context);
 
                         if (result.isMatch()) {
                             matchedTokens = matchedTokens + result.getMatchedTokens();
@@ -74,14 +73,14 @@ public class SequenceElementTypeParser<ET extends SequenceElementType> extends E
 
                         if (child.isFirst() || elementType.isExitIndex(index) || isWeakMatch || matches == 0) {
                             //if (isFirst(i) || isExitIndex(i)) {
-                            return stepOut(node, context, depth, ParseResultType.NO_MATCH, matchedTokens);
+                            return stepOut(node, context, ParseResultType.NO_MATCH, matchedTokens);
                         }
 
                         index = advanceLexerToNextLandmark(node, context);
 
                         if (index <= 0) {
                             // no landmarks found or landmark in parent found
-                            return stepOut(node, context, depth, ParseResultType.PARTIAL_MATCH, matchedTokens);
+                            return stepOut(node, context, ParseResultType.PARTIAL_MATCH, matchedTokens);
                         } else {
                             // local landmarks found
 
@@ -97,13 +96,13 @@ public class SequenceElementTypeParser<ET extends SequenceElementType> extends E
                 if (child.isLast()) {
                     //matches == 0 reaches this stage only if all sequence elements are optional
                     ParseResultType resultType = matches == 0 ? ParseResultType.NO_MATCH : ParseResultType.FULL_MATCH;
-                    return stepOut(node, context, depth, resultType, matchedTokens);
+                    return stepOut(node, context, resultType, matchedTokens);
                 }
                 node.incrementIndex(builder.getCurrentOffset());
             }
         }
 
-        return stepOut(node, context, depth, ParseResultType.NO_MATCH, matchedTokens);
+        return stepOut(node, context, ParseResultType.NO_MATCH, matchedTokens);
     }
 
     private boolean ignoreFirstMatch() {
@@ -117,7 +116,7 @@ public class SequenceElementTypeParser<ET extends SequenceElementType> extends E
 
     private int advanceLexerToNextLandmark(ParsePathNode node, ParserContext context) {
         int siblingPosition = node.getCursorPosition();
-        ParserBuilder builder = context.builder;
+        ParserBuilder builder = context.getBuilder();
         PsiBuilder.Marker marker = builder.mark(null);
         Set<TokenType> possibleTokens = elementType.getFirstPossibleTokensFromIndex(context, siblingPosition);
         ParseBuilderErrorHandler.updateBuilderError(possibleTokens, context);

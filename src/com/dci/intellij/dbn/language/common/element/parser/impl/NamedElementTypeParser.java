@@ -14,12 +14,12 @@ public class NamedElementTypeParser extends SequenceElementTypeParser<NamedEleme
     }
 
     @Override
-    public ParseResult parse(@NotNull ParsePathNode parentNode, boolean optional, int depth, ParserContext context) throws ParseException {
-        ParserBuilder builder = context.builder;
+    public ParseResult parse(@NotNull ParsePathNode parentNode, ParserContext context) throws ParseException {
+        ParserBuilder builder = context.getBuilder();
         if (isRecursive(parentNode, builder.getCurrentOffset(), 2)) {
             return ParseResult.noMatch();
         }
-        return super.parse(parentNode, optional, depth, context);
+        return super.parse(parentNode, context);
     }
 
     protected boolean isRecursive(ParsePathNode parseNode, int builderOffset, int iterations){
