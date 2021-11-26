@@ -6,7 +6,7 @@ import lombok.Setter;
 @Getter
 @Setter
 public class Chained<T extends Chained<T>> {
-    private final T previous;
+    private T previous;
     private T next;
     private int index = -1;
 

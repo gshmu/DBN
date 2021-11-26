@@ -44,7 +44,7 @@ public class IterationElementTypeParser extends ElementTypeParser<IterationEleme
             // check first iteration element
             if (result.isMatch()) {
                 if (node.isRecursive(node.getStartOffset())) {
-                    ParseResultType resultType = matchesMinIterations(iterations) ? ParseResultType.FULL_MATCH : ParseResultType.NO_MATCH;
+                    ParseResultType resultType = matchesMinIterations(iterations) ? result.getType() : ParseResultType.NO_MATCH;
                     return stepOut(node, context, depth, resultType, matchedTokens);
                 }
                 while (true) {
@@ -58,7 +58,7 @@ public class IterationElementTypeParser extends ElementTypeParser<IterationEleme
                         }
                         for (TokenElementType separatorToken : separatorTokens) {
                             result = separatorToken.getParser().parse(node, false, depth + 1, context);
-                            matchedTokens = matchedTokens + result.matchedTokens;
+                            matchedTokens = matchedTokens + result.getMatchedTokens();
                             if (result.isMatch()) break;
                         }
 
@@ -66,10 +66,10 @@ public class IterationElementTypeParser extends ElementTypeParser<IterationEleme
                             // if NO_MATCH, no additional separator found, hence then iteration should exit with MATCH
                             ParseResultType resultType =
                                     matchesMinIterations(iterations) ?
-                                        matchesIterations(iterations) ?
-                                            ParseResultType.FULL_MATCH :
-                                            ParseResultType.PARTIAL_MATCH :
-                                    ParseResultType.NO_MATCH;
+                                            matchesIterations(iterations) ?
+                                                    ParseResultType.FULL_MATCH :
+                                                    ParseResultType.PARTIAL_MATCH :
+                                            ParseResultType.NO_MATCH;
 
                             builder.markerDrop(partialMatchMarker);
                             return stepOut(node, context, depth, resultType, matchedTokens);
@@ -113,7 +113,7 @@ public class IterationElementTypeParser extends ElementTypeParser<IterationEleme
                         }
                     } else {
                         builder.markerDrop(partialMatchMarker);
-                        matchedTokens = matchedTokens + result.matchedTokens;
+                        matchedTokens = matchedTokens + result.getMatchedTokens();
                     }
                 }
             }

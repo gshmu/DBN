@@ -41,13 +41,15 @@ public final class OneOfElementType extends ElementTypeBase {
             String id = getId();
 
             String[] tokens = tokenIds.split(",");
-            children = new ElementTypeRef[tokens.length];
+            this.children = new ElementTypeRef[tokens.length];
+
+            ElementTypeRef previous = null;
             for (int i=0; i<tokens.length; i++) {
                 String tokenTypeId = tokens[i].trim();
-                ElementTypeRef previous = i == 0 ? null : children[i-1];
 
                 TokenElementType tokenElementType = new TokenElementType(bundle, this, tokenTypeId, id);
                 children[i] = new ElementTypeRef(previous, this, tokenElementType, false, 0, null);
+                previous = this.children[i];
             }
             sortable = false;
         } else {
@@ -106,6 +108,19 @@ public final class OneOfElementType extends ElementTypeBase {
         if (sortable && !sorted) {
             sorted = true;
             Arrays.sort(children, ONE_OF_COMPARATOR);
+            relink();
+        }
+    }
+
+    private void relink() {
+        ElementTypeRef previous = null;
+        for (ElementTypeRef child : children) {
+            child.setPrevious(previous);
+            child.setNext(null);
+            if (previous != null) {
+                previous.setNext(child);
+            }
+            previous = child;
         }
     }
 
