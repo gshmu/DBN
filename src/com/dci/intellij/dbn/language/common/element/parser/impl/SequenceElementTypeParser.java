@@ -7,7 +7,11 @@ import com.dci.intellij.dbn.language.common.element.impl.ElementTypeRef;
 import com.dci.intellij.dbn.language.common.element.impl.IdentifierElementType;
 import com.dci.intellij.dbn.language.common.element.impl.IterationElementType;
 import com.dci.intellij.dbn.language.common.element.impl.SequenceElementType;
-import com.dci.intellij.dbn.language.common.element.parser.*;
+import com.dci.intellij.dbn.language.common.element.parser.ElementTypeParser;
+import com.dci.intellij.dbn.language.common.element.parser.ParseResult;
+import com.dci.intellij.dbn.language.common.element.parser.ParseResultType;
+import com.dci.intellij.dbn.language.common.element.parser.ParserBuilder;
+import com.dci.intellij.dbn.language.common.element.parser.ParserContext;
 import com.dci.intellij.dbn.language.common.element.path.BasicPathNode;
 import com.dci.intellij.dbn.language.common.element.path.ParsePathNode;
 import com.dci.intellij.dbn.language.common.element.util.ElementTypeAttribute;
@@ -58,7 +62,7 @@ public class SequenceElementTypeParser<ET extends SequenceElementType> extends E
                         result = child.getParser().parse(node, child.optional, depth + 1, context);
 
                         if (result.isMatch()) {
-                            matchedTokens = matchedTokens + result.matchedTokens;
+                            matchedTokens = matchedTokens + result.getMatchedTokens();
                             tokenType = builder.getTokenType();
                             matches++;
                         }
