@@ -18,9 +18,8 @@ public class OneOfElementTypeParser extends ElementTypeParser<OneOfElementType> 
     }
 
     @Override
-    public ParseResult parse(@NotNull ParsePathNode parentNode, boolean optional, int depth, ParserContext context) throws ParseException {
-        ParserBuilder builder = context.builder;
-        logBegin(builder, optional, depth);
+    public ParseResult parse(@NotNull ParsePathNode parentNode, ParserContext context) throws ParseException {
+        ParserBuilder builder = context.getBuilder();
         ParsePathNode node = stepIn(parentNode, context);
 
         elementType.sort();
@@ -32,12 +31,12 @@ public class OneOfElementTypeParser extends ElementTypeParser<OneOfElementType> 
             //Pair<ElementTypeRef, ParseResult> bestResult = null;
             while (child != null) {
                 if (context.check(child) && shouldParseElement(child.elementType, node, context)) {
-                    ParseResult result = child.getParser().parse(node, true, depth + 1, context);
+                    ParseResult result = child.getParser().parse(node, context);
 
                     //if (result.isFullMatch()) {
                     if (result.isMatch()) {
                         //marker.drop();
-                        return stepOut(node, context, depth, result.getType(), result.getMatchedTokens());
+                        return stepOut(node, context, result.getType(), result.getMatchedTokens());
                     } /*else if (result.isPartialMatch()) {
                         if (bestResult == null || result.isBetterThan(bestResult.second())) {
                             bestResult = Pair.of(child, result);
@@ -57,12 +56,8 @@ public class OneOfElementTypeParser extends ElementTypeParser<OneOfElementType> 
             }
 */
 
-            if (!optional) {
-                //updateBuilderError(builder, this);
-            }
-
         }
-        return stepOut(node, context, depth, ParseResultType.NO_MATCH, 0);
+        return stepOut(node, context, ParseResultType.NO_MATCH, 0);
     }
 
 }

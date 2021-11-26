@@ -23,9 +23,8 @@ public class WrapperElementTypeParser extends ElementTypeParser<WrapperElementTy
     }
 
     @Override
-    public ParseResult parse(@NotNull ParsePathNode parentNode, boolean optional, int depth, ParserContext context) throws ParseException {
-        ParserBuilder builder = context.builder;
-        logBegin(builder, optional, depth);
+    public ParseResult parse(@NotNull ParsePathNode parentNode, ParserContext context) throws ParseException {
+        ParserBuilder builder = context.getBuilder();
         ParsePathNode node = stepIn(parentNode, context);
 
         ElementTypeBase wrappedElement = elementType.getWrappedElement();
@@ -35,7 +34,7 @@ public class WrapperElementTypeParser extends ElementTypeParser<WrapperElementTy
         int matchedTokens = 0;
 
         // parse begin token
-        ParseResult beginTokenResult = beginTokenElement.getParser().parse(node, optional, depth + 1, context);
+        ParseResult beginTokenResult = beginTokenElement.getParser().parse(node, context);
 
         TokenType beginTokenType = beginTokenElement.getTokenType();
         TokenType endTokenType = endTokenElement.getTokenType();
@@ -47,14 +46,14 @@ public class WrapperElementTypeParser extends ElementTypeParser<WrapperElementTy
             boolean initialExplicitRange = builder.isExplicitRange(beginTokenType);
             builder.setExplicitRange(beginTokenType, true);
 
-            ParseResult wrappedResult = wrappedElement.getParser().parse(node, false, depth -1, context);
+            ParseResult wrappedResult = wrappedElement.getParser().parse(node, context);
             matchedTokens = matchedTokens + wrappedResult.getMatchedTokens();
 
             ParseResultType wrappedResultType = wrappedResult.getType();
             if (wrappedResultType == ParseResultType.NO_MATCH  && !elementType.wrappedElementOptional) {
                 if (!isStrong && builder.getTokenType() != endTokenType) {
                     builder.setExplicitRange(beginTokenType, initialExplicitRange);
-                    return stepOut(node, context, depth, ParseResultType.NO_MATCH, matchedTokens);
+                    return stepOut(node, context, ParseResultType.NO_MATCH, matchedTokens);
                 } else {
                     Set<TokenType> possibleTokens = wrappedElement.getLookupCache().getFirstPossibleTokens();
                     ParseBuilderErrorHandler.updateBuilderError(possibleTokens, context);
@@ -63,17 +62,17 @@ public class WrapperElementTypeParser extends ElementTypeParser<WrapperElementTy
             }
 
             // check the end element => exit with partial match if not available
-            ParseResult endTokenResult = endTokenElement.getParser().parse(node, false, depth - 1, context);
+            ParseResult endTokenResult = endTokenElement.getParser().parse(node, context);
             if (endTokenResult.isMatch()) {
                 matchedTokens++;
-                return stepOut(node, context, depth, ParseResultType.FULL_MATCH, matchedTokens);
+                return stepOut(node, context, ParseResultType.FULL_MATCH, matchedTokens);
             } else {
                 builder.setExplicitRange(beginTokenType, initialExplicitRange);
-                return stepOut(node, context, depth, ParseResultType.PARTIAL_MATCH, matchedTokens);
+                return stepOut(node, context, ParseResultType.PARTIAL_MATCH, matchedTokens);
             }
         }
 
-        return stepOut(node, context, depth, ParseResultType.NO_MATCH, matchedTokens);
+        return stepOut(node, context, ParseResultType.NO_MATCH, matchedTokens);
     }
 
     private static boolean isParentWrapping(ParsePathNode node, TokenType tokenType) {

@@ -25,7 +25,7 @@ public class ParserBuilder {
 
     public ParserBuilder(PsiBuilder builder, DBLanguageDialect languageDialect) {
         this.builder = builder;
-        builder.setDebugMode(true);
+        this.builder.setDebugMode(false);
         tokenPairRangeMonitors = languageDialect.createTokenPairRangeMonitors(builder);
     }
 
@@ -112,10 +112,6 @@ public class ParserBuilder {
             tokenPairRangeMonitor.cleanup(true);
         }
         return builder.getTreeBuilt();
-    }
-
-    public void setDebugMode(boolean debugMode) {
-        builder.setDebugMode(debugMode);
     }
 
     public Marker mark(@Nullable ParsePathNode node){

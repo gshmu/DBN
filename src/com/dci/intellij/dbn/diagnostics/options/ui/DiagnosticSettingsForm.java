@@ -20,7 +20,6 @@ import static com.dci.intellij.dbn.common.options.ui.ConfigurationEditorUtil.val
 public class DiagnosticSettingsForm extends DBNFormImpl {
     private JPanel mainPanel;
     private JCheckBox developerModeCheckBox;
-    private JCheckBox languageParserCheckBox;
     private JCheckBox databaseResourcesCheckBox;
     private JCheckBox databaseAccessCheckBox;
 
@@ -47,7 +46,6 @@ public class DiagnosticSettingsForm extends DBNFormImpl {
         hintPanel.add(disclaimerForm.getComponent());
 
         Diagnostics.DebugLogging debugLogging = Diagnostics.getDebugLogging();
-        languageParserCheckBox.setSelected(debugLogging.isLanguageParser());
         databaseAccessCheckBox.setSelected(debugLogging.isDatabaseAccess());
         databaseResourcesCheckBox.setSelected(debugLogging.isDatabaseResource());
 
@@ -69,7 +67,6 @@ public class DiagnosticSettingsForm extends DBNFormImpl {
 
     private void updateFields(ActionEvent e) {
         boolean developerMode = developerModeCheckBox.isSelected();
-        languageParserCheckBox.setEnabled(developerMode);
         databaseAccessCheckBox.setEnabled(developerMode);
         databaseResourcesCheckBox.setEnabled(developerMode);
         databaseLaggingCheckBox.setEnabled(developerMode);
@@ -91,7 +88,6 @@ public class DiagnosticSettingsForm extends DBNFormImpl {
     public void applyFormChanges() throws ConfigurationException {
         Diagnostics.setDeveloperMode(developerModeCheckBox.isSelected());
         Diagnostics.DebugLogging debugLogging = Diagnostics.getDebugLogging();
-        debugLogging.setLanguageParser(languageParserCheckBox.isSelected());
         debugLogging.setDatabaseAccess(databaseAccessCheckBox.isSelected());
         debugLogging.setDatabaseResource(databaseResourcesCheckBox.isSelected());
 
