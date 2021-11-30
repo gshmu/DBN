@@ -14,9 +14,10 @@ import com.dci.intellij.dbn.language.common.psi.ExecutablePsiElement;
 import com.dci.intellij.dbn.language.common.psi.IdentifierPsiElement;
 import com.dci.intellij.dbn.language.common.psi.NamedPsiElement;
 import com.dci.intellij.dbn.language.common.psi.TokenPsiElement;
-import com.intellij.lang.annotation.Annotation;
+import com.intellij.lang.annotation.AnnotationBuilder;
 import com.intellij.lang.annotation.AnnotationHolder;
 import com.intellij.lang.annotation.Annotator;
+import com.intellij.lang.annotation.HighlightSeverity;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiElement;
 import org.jetbrains.annotations.NotNull;
@@ -50,7 +51,8 @@ public class SQLLanguageAnnotator implements Annotator {
                     if (psiElement instanceof NamedPsiElement) {
                         NamedPsiElement namedPsiElement = (NamedPsiElement) psiElement;
                         if (namedPsiElement.hasErrors()) {
-                            holder.createErrorAnnotation(namedPsiElement, "Invalid " + namedPsiElement.getElementType().getDescription());
+                            String message = "Invalid " + namedPsiElement.getElementType().getDescription();
+                            holder.newAnnotation(HighlightSeverity.ERROR, message).create();
                         }
                     }
                 });
@@ -59,20 +61,22 @@ public class SQLLanguageAnnotator implements Annotator {
     private static void annotateToken(@NotNull TokenPsiElement tokenPsiElement, AnnotationHolder holder) {
         TokenTypeCategory flavor = tokenPsiElement.getElementType().getFlavor();
         if (flavor != null) {
-            Annotation annotation = holder.createInfoAnnotation(tokenPsiElement, null);
+            AnnotationBuilder builder = holder.newSilentAnnotation(HighlightSeverity.INFORMATION);
             switch (flavor) {
-                case DATATYPE: annotation.setTextAttributes(SQLTextAttributesKeys.DATA_TYPE); break;
-                case FUNCTION: annotation.setTextAttributes(SQLTextAttributesKeys.FUNCTION); break;
-                case KEYWORD: annotation.setTextAttributes(SQLTextAttributesKeys.KEYWORD); break;
-                case IDENTIFIER: annotation.setTextAttributes(SQLTextAttributesKeys.IDENTIFIER); break;
+                case DATATYPE: builder = builder.textAttributes(SQLTextAttributesKeys.DATA_TYPE); break;
+                case FUNCTION: builder = builder.textAttributes(SQLTextAttributesKeys.FUNCTION); break;
+                case KEYWORD: builder = builder.textAttributes(SQLTextAttributesKeys.KEYWORD); break;
+                case IDENTIFIER: builder = builder.textAttributes(SQLTextAttributesKeys.IDENTIFIER); break;
             }
+            builder.create();
         }
     }
 
     private void annotateIdentifier(@NotNull IdentifierPsiElement identifierPsiElement, final AnnotationHolder holder) {
         if (identifierPsiElement.getLanguageDialect().isReservedWord(identifierPsiElement.getText())) {
-            Annotation annotation = holder.createInfoAnnotation(identifierPsiElement, null);
-            annotation.setTextAttributes(SQLTextAttributesKeys.IDENTIFIER);
+            holder.newSilentAnnotation(HighlightSeverity.INFORMATION)
+                    .textAttributes(SQLTextAttributesKeys.IDENTIFIER)
+                    .create();
         }
         if (identifierPsiElement.isObject()) {
             annotateObject(identifierPsiElement, holder);
@@ -85,11 +89,13 @@ public class SQLLanguageAnnotator implements Annotator {
 
     private static void annotateAliasRef(@NotNull IdentifierPsiElement aliasReference, AnnotationHolder holder) {
         if (aliasReference.resolve() == null &&  aliasReference.getResolveAttempts() > 3) {
-            Annotation annotation = holder.createWarningAnnotation(aliasReference, "Unknown identifier");
-            annotation.setTextAttributes(SQLTextAttributesKeys.UNKNOWN_IDENTIFIER);
+            holder.newAnnotation(HighlightSeverity.WARNING, "Unknown identifier")
+                    .textAttributes(SQLTextAttributesKeys.UNKNOWN_IDENTIFIER)
+                    .create();
         } else {
-            Annotation annotation = holder.createInfoAnnotation(aliasReference, null);
-            annotation.setTextAttributes(SQLTextAttributesKeys.ALIAS);
+            holder.newSilentAnnotation(HighlightSeverity.INFORMATION)
+                    .textAttributes(SQLTextAttributesKeys.ALIAS)
+                    .create();
         }
     }
 
@@ -100,8 +106,10 @@ public class SQLLanguageAnnotator implements Annotator {
         if (aliasDefinitions.size() > 1) {
             holder.createWarningAnnotation(aliasDefinition, "Duplicate alias definition: " + aliasDefinition.getUnquotedText());
         }*/
-        Annotation annotation = holder.createInfoAnnotation(aliasDefinition, null);
-        annotation.setTextAttributes(SQLTextAttributesKeys.ALIAS);
+
+        holder.newSilentAnnotation(HighlightSeverity.INFORMATION)
+                .textAttributes(SQLTextAttributesKeys.ALIAS)
+                .create();
     }
 
     private static void annotateObject(@NotNull IdentifierPsiElement objectReference, AnnotationHolder holder) {
@@ -109,9 +117,9 @@ public class SQLLanguageAnnotator implements Annotator {
             PsiElement reference = objectReference.resolve();
             if (reference == null && objectReference.getResolveAttempts() > 3 && checkConnection(objectReference)) {
                 if (!objectReference.getLanguageDialect().getParserTokenTypes().isFunction(objectReference.getText())) {
-                    Annotation annotation = holder.createWarningAnnotation(objectReference.node,
-                            "Unknown identifier");
-                    annotation.setTextAttributes(SQLTextAttributesKeys.UNKNOWN_IDENTIFIER);
+                    holder.newAnnotation(HighlightSeverity.WARNING, "Unknown identifier")
+                            .textAttributes(SQLTextAttributesKeys.UNKNOWN_IDENTIFIER)
+                            .create();
                 }
             }
         }
@@ -133,8 +141,9 @@ public class SQLLanguageAnnotator implements Annotator {
             DBLanguagePsiFile psiFile = executablePsiElement.getFile();
             VirtualFile virtualFile = psiFile.getVirtualFile();
             if (!DatabaseDebuggerManager.isDebugConsole(virtualFile)) {
-                Annotation annotation = holder.createInfoAnnotation(executablePsiElement, null);
-                annotation.setGutterIconRenderer(new StatementGutterRenderer(executablePsiElement));
+                holder.newSilentAnnotation(HighlightSeverity.INFORMATION)
+                        .gutterIconRenderer(new StatementGutterRenderer(executablePsiElement))
+                        .create();
             }
         }
     }
