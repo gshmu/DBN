@@ -1,0 +1,15 @@
+package com.dci.intellij.dbn.common.util;
+
+import org.jetbrains.annotations.Nullable;
+
+import java.util.Collection;
+
+@FunctionalInterface
+public interface Consumer<T> extends java.util.function.Consumer<T> {
+
+    default void acceptAll(@Nullable Collection<? extends T> collection) {
+        if (collection != null) {
+            collection.forEach(e -> accept(e));
+        }
+    }
+}

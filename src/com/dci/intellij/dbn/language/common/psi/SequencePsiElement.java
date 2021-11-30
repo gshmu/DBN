@@ -14,11 +14,11 @@ import com.dci.intellij.dbn.language.common.psi.lookup.PsiLookupAdapter;
 import com.dci.intellij.dbn.object.type.DBObjectType;
 import com.intellij.lang.ASTNode;
 import com.intellij.psi.PsiElement;
-import com.intellij.util.Consumer;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Objects;
+import java.util.function.Consumer;
 
 public class SequencePsiElement<T extends ElementTypeBase> extends BasePsiElement<T> {
     public SequencePsiElement(ASTNode astNode, T elementType) {
@@ -79,7 +79,7 @@ public class SequencePsiElement<T extends ElementTypeBase> extends BasePsiElemen
             @NotNull Consumer<BasePsiElement> consumer) {
 
         if (lookupAdapter.matches(this)) {
-            consumer.consume(this);
+            consumer.accept(this);
 
         }
         PsiElement child = getFirstChild();
@@ -129,7 +129,7 @@ public class SequencePsiElement<T extends ElementTypeBase> extends BasePsiElemen
             if (getElementType().isVirtualObject()) {
                 DBObjectType virtualObjectType = getElementType().getVirtualObjectType();
                 if (objectType == virtualObjectType) {
-                    consumer.consume(this);
+                    consumer.accept(this);
                 }
             }
             PsiElement child = getFirstChild();

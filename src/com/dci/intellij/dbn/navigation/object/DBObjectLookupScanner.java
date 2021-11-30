@@ -57,7 +57,7 @@ class DBObjectLookupScanner extends StatefulDisposable.Base implements DBObjectL
             checkDisposed();
 
             if (lookupEnabled) {
-                model.getData().consume(object);
+                model.getData().accept(object);
             }
 
             DBObjectListContainer childObjects = object.getChildObjects();

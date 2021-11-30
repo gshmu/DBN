@@ -1,13 +1,13 @@
 package com.dci.intellij.dbn.language.common.psi.lookup;
 
 import com.dci.intellij.dbn.language.common.psi.BasePsiElement;
-import com.intellij.util.Consumer;
 import lombok.Getter;
 import lombok.Setter;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.concurrent.atomic.AtomicReference;
+import java.util.function.Consumer;
 
 @Getter
 @Setter

@@ -24,9 +24,9 @@ import org.jdom.Element;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 import static com.dci.intellij.dbn.common.options.setting.SettingsSupport.connectionIdAttribute;
 import static com.dci.intellij.dbn.common.options.setting.SettingsSupport.stringAttribute;
@@ -268,28 +268,19 @@ public class DBObjectRef<T extends DBObject> implements Comparable, Reference<T>
         return Failsafe.nn(object);
     }
 
-    public static List<DBObject> get(List<DBObjectRef> objectRefs) {
-        List<DBObject> objects = new ArrayList<>(objectRefs.size());
-        for (DBObjectRef<?> objectRef : objectRefs) {
-            objects.add(get(objectRef));
-        }
-        return objects;
+    @NotNull
+    public static <T extends DBObject> List<T> get(@NotNull List<DBObjectRef<T>> objectRefs) {
+        return objectRefs.stream().map(ref -> get(ref)).collect(Collectors.toList());
     }
 
-    public static List<DBObject> ensure(List<DBObjectRef> objectRefs) {
-        List<DBObject> objects = new ArrayList<>(objectRefs.size());
-        for (DBObjectRef objectRef : objectRefs) {
-            objects.add(ensure(objectRef));
-        }
-        return objects;
+    @NotNull
+    public static <T extends DBObject> List<T> ensure(@NotNull List<DBObjectRef<T>> objectRefs) {
+        return objectRefs.stream().map(ref -> ensure(ref)).collect(Collectors.toList());
     }
 
-    public static List<DBObjectRef> from(List<DBObject> objects) {
-        List<DBObjectRef> objectRefs = new ArrayList<>(objects.size());
-        for (DBObject object : objects) {
-            objectRefs.add(of(object));
-        }
-        return objectRefs;
+    @NotNull
+    public static <T extends DBObject> List<DBObjectRef<T>> from(@NotNull List<T> objects) {
+        return objects.stream().map(obj -> of(obj)).collect(Collectors.toList());
     }
 
     @Override

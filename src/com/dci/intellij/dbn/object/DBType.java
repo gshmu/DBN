@@ -5,7 +5,7 @@ import com.dci.intellij.dbn.data.type.DBNativeDataType;
 
 import java.util.List;
 
-public interface DBType<P extends DBTypeProcedure, F extends DBTypeFunction> extends DBProgram<P, F> {
+public interface DBType extends DBProgram<DBTypeProcedure, DBTypeFunction> {
     List<DBTypeAttribute> getAttributes();
     DBType getSuperType();
     DBDataType getCollectionElementType();

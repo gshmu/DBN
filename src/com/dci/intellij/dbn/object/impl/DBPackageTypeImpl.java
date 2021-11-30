@@ -17,7 +17,7 @@ import com.dci.intellij.dbn.object.type.DBObjectType;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import javax.swing.*;
+import javax.swing.Icon;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.List;
@@ -81,7 +81,7 @@ public class DBPackageTypeImpl extends DBTypeImpl implements DBPackageType {
     static {
         new DynamicContentResultSetLoader<DBTypeAttribute, DBTypeAttributeMetadata>(PACKAGE_TYPE, TYPE_ATTRIBUTE, true, true) {
             @Override
-            public ResultSet createResultSet(DynamicContent dynamicContent, DBNConnection connection) throws SQLException {
+            public ResultSet createResultSet(DynamicContent<DBTypeAttribute> dynamicContent, DBNConnection connection) throws SQLException {
                 DatabaseMetadataInterface metadataInterface = dynamicContent.getMetadataInterface();
                 DBPackageType type = (DBPackageType) dynamicContent.getParentElement();
                 return metadataInterface.loadProgramTypeAttributes(

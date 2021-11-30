@@ -18,12 +18,12 @@ import com.intellij.lang.ASTNode;
 import com.intellij.openapi.util.TextRange;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiReference;
-import com.intellij.util.Consumer;
 import com.intellij.util.IncorrectOperationException;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Set;
+import java.util.function.Consumer;
 
 public abstract class LeafPsiElement<T extends LeafElementType> extends BasePsiElement<T> implements PsiReference {
 
@@ -148,7 +148,7 @@ public abstract class LeafPsiElement<T extends LeafElementType> extends BasePsiE
 
     private static void collectObject(Consumer<DBObject> objects, DBObject object) {
         if (Failsafe.check(object)) {
-            objects.consume(object);
+            objects.accept(object);
         }
     }
 

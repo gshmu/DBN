@@ -35,12 +35,12 @@ import com.intellij.navigation.ItemPresentation;
 import com.intellij.openapi.editor.colors.TextAttributesKey;
 import com.intellij.openapi.progress.ProcessCanceledException;
 import com.intellij.psi.PsiElement;
-import com.intellij.util.Consumer;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import javax.swing.Icon;
 import java.util.Set;
+import java.util.function.Consumer;
 
 import static com.dci.intellij.dbn.common.util.CommonUtil.nvl;
 
@@ -141,7 +141,7 @@ public abstract class IdentifierPsiElement extends LeafPsiElement<IdentifierElem
             IdentifierLookupAdapter identifierLookupAdapter = (IdentifierLookupAdapter) lookupAdapter;
             if (identifierLookupAdapter.matchesName(this)) {
                 if (lookupAdapter.matches(this)) {
-                    consumer.consume(this);
+                    consumer.accept(this);
                 }
             }
         }
@@ -150,7 +150,7 @@ public abstract class IdentifierPsiElement extends LeafPsiElement<IdentifierElem
     @Override
     public void collectSubjectPsiElements(@NotNull Consumer<IdentifierPsiElement> consumer) {
         if (getElementType().is(ElementTypeAttribute.SUBJECT)) {
-            consumer.consume(this);
+            consumer.accept(this);
         }
     }
 
@@ -611,7 +611,7 @@ public abstract class IdentifierPsiElement extends LeafPsiElement<IdentifierElem
                         (QualifiedIdentifierPsiElement) basePsiElement.findEnclosingPsiElement(QualifiedIdentifierPsiElement.class);
 
                 if (qualifiedIdentifierPsiElement != null && qualifiedIdentifierPsiElement.getElementsCount() > 1) {
-                    consumer.consume(qualifiedIdentifierPsiElement);
+                    consumer.accept(qualifiedIdentifierPsiElement);
                 }
             });
         }

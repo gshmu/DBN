@@ -1,28 +1,32 @@
 package com.dci.intellij.dbn.object.common.list;
 
 import com.dci.intellij.dbn.object.common.DBObject;
+import com.dci.intellij.dbn.object.lookup.DBObjectRef;
 
 import java.util.List;
 
-public class DBObjectNavigationListImpl<T extends DBObject> implements DBObjectNavigationList {
-
-    private String name;
-    private T object;
-    private List<T> objects;
+public class DBObjectNavigationListImpl<T extends DBObject> implements DBObjectNavigationList<T> {
+    private final String name;
+    private final DBObjectRef<T> object;
+    private final List<DBObjectRef<T>> objects;
     private ObjectListProvider<T> objectsProvider;
 
     public DBObjectNavigationListImpl(String name, T object) {
         this.name = name;
-        this.object = object;
+        this.object = DBObjectRef.of(object);
+        this.objects = null;
     }
 
     public DBObjectNavigationListImpl(String name, List<T> objects) {
         this.name = name;
-        this.objects = objects;
+        this.object = null;
+        this.objects = DBObjectRef.from(objects);
     }
 
     public DBObjectNavigationListImpl(String name, ObjectListProvider<T> objectsProvider) {
         this.name = name;
+        this.object = null;
+        this.objects = null;
         this.objectsProvider = objectsProvider;
     }
 
@@ -33,12 +37,12 @@ public class DBObjectNavigationListImpl<T extends DBObject> implements DBObjectN
 
     @Override
     public T getObject() {
-        return object;
+        return DBObjectRef.get(object);
     }
 
     @Override
     public List<T> getObjects() {
-        return objects;
+        return objects == null ? null : DBObjectRef.get(objects);
     }
 
     @Override

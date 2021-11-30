@@ -181,7 +181,7 @@ public abstract class DBDebugStackFrame<P extends DBDebugProcess, V extends DBDe
                         IdentifierPsiElement identifierPsiElement = (IdentifierPsiElement) basePsiElement;
                         identifierPsiElement.findQualifiedUsages(qualifiedUsage -> {
                             String childVariableName = objectCaseOption.format(qualifiedUsage.getText());
-                            childVariableNames.consume(childVariableName);
+                            childVariableNames.accept(childVariableName);
                         });
                     }
 
