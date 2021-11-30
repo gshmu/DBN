@@ -91,7 +91,7 @@ public abstract class DBSchemaObjectImpl<M extends DBObjectMetadata> extends DBO
 
     @Override
     protected List<DBObjectNavigationList> createNavigationLists() {
-        return new ArrayList<>();
+        return Collections.emptyList();
     }
 
     @Override
@@ -106,7 +106,7 @@ public abstract class DBSchemaObjectImpl<M extends DBObjectMetadata> extends DBO
 
     @Override
     @NotNull
-    public DBObjectVirtualFile getVirtualFile() {
+    public DBObjectVirtualFile<?> getVirtualFile() {
         if (getObjectType().isSchemaObject()) {
             DatabaseFileSystem databaseFileSystem = DatabaseFileSystem.getInstance();
             return databaseFileSystem.findOrCreateDatabaseFile(getProject(), getRef());
@@ -176,7 +176,7 @@ public abstract class DBSchemaObjectImpl<M extends DBObjectMetadata> extends DBO
     static {
         new DynamicContentResultSetLoader<DBObject, DBObjectDependencyMetadata>(null, INCOMING_DEPENDENCY, true, false) {
             @Override
-            public ResultSet createResultSet(DynamicContent dynamicContent, DBNConnection connection) throws SQLException {
+            public ResultSet createResultSet(DynamicContent<DBObject> dynamicContent, DBNConnection connection) throws SQLException {
                 DatabaseMetadataInterface metadataInterface = dynamicContent.getMetadataInterface();
                 DBSchemaObject schemaObject = (DBSchemaObject) dynamicContent.getParentElement();
                 return metadataInterface.loadReferencedObjects(schemaObject.getSchema().getName(), schemaObject.getName(), connection);
@@ -206,7 +206,7 @@ public abstract class DBSchemaObjectImpl<M extends DBObjectMetadata> extends DBO
 
         new DynamicContentResultSetLoader<DBObject, DBObjectDependencyMetadata>(null, OUTGOING_DEPENDENCY, true, false) {
             @Override
-            public ResultSet createResultSet(DynamicContent dynamicContent, DBNConnection connection) throws SQLException {
+            public ResultSet createResultSet(DynamicContent<DBObject> dynamicContent, DBNConnection connection) throws SQLException {
                 DatabaseMetadataInterface metadataInterface = dynamicContent.getMetadataInterface();
                 DBSchemaObject schemaObject = (DBSchemaObject) dynamicContent.getParentElement();
                 return metadataInterface.loadReferencingObjects(schemaObject.getSchema().getName(), schemaObject.getName(), connection);

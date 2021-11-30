@@ -21,12 +21,12 @@ import java.util.TreeSet;
 
 public class SelectStatementGenerator extends StatementGenerator {
     private final AliasBundle aliases = new AliasBundle();
-    private final List<DBObjectRef> objects;
+    private final List<DBObjectRef<DBObject>> objects;
     private final boolean enforceAliasUsage;
 
     public SelectStatementGenerator(DBDataset dataset) {
         objects = new ArrayList<>();
-        objects.add(dataset.getRef());
+        objects.add(DBObjectRef.of(dataset));
         enforceAliasUsage = false;
     }
 

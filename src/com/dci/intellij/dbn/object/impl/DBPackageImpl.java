@@ -28,7 +28,7 @@ import com.dci.intellij.dbn.object.type.DBObjectType;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import javax.swing.*;
+import javax.swing.Icon;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.List;
@@ -37,7 +37,7 @@ import static com.dci.intellij.dbn.object.type.DBObjectType.*;
 
 public class DBPackageImpl
         extends DBProgramImpl<DBPackageMetadata, DBPackageProcedure, DBPackageFunction>
-        implements DBPackage<DBPackageProcedure, DBPackageFunction> {
+        implements DBPackage {
 
     protected DBObjectList<DBPackageType> types;
     DBPackageImpl(DBSchema schema, DBPackageMetadata metadata) throws SQLException {

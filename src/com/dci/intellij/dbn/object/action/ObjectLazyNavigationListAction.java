@@ -1,5 +1,6 @@
 package com.dci.intellij.dbn.object.action;
 
+import com.dci.intellij.dbn.common.util.CommonUtil;
 import com.dci.intellij.dbn.object.common.DBObject;
 import com.dci.intellij.dbn.object.common.list.DBObjectNavigationList;
 import com.dci.intellij.dbn.object.lookup.DBObjectRef;
@@ -8,20 +9,20 @@ import com.intellij.openapi.actionSystem.AnAction;
 import java.util.List;
 
 public class ObjectLazyNavigationListAction extends ObjectListShowAction {
-    private DBObjectNavigationList navigationList;
-    private DBObjectRef<DBObject> parentObjectRef;
+    private final DBObjectRef<DBObject> parentObject;
+    private final DBObjectNavigationList<?> navigationList;
 
     public ObjectLazyNavigationListAction(DBObject parentObject, DBObjectNavigationList navigationList) {
         super(navigationList.getName() + "...", parentObject);
+        this.parentObject = DBObjectRef.of(parentObject);
         this.navigationList = navigationList;
-        this.parentObjectRef = DBObjectRef.of(parentObject);
     }
 
     @Override
     public List<? extends DBObject> getObjectList() {
-        List<DBObject> objects = navigationList.getObjects();
-        if (objects == null) objects = navigationList.getObjectsProvider().getObjects();
-        return objects;
+        return CommonUtil.resolve(
+                () -> navigationList.getObjects(),
+                () -> navigationList.getObjectsProvider().getObjects());
     }
 
     @Override
@@ -66,7 +67,7 @@ public class ObjectLazyNavigationListAction extends ObjectListShowAction {
 
     @Override
     protected AnAction createObjectAction(DBObject object) {
-        DBObject sourceObject = DBObjectRef.ensure(parentObjectRef);
+        DBObject sourceObject = DBObjectRef.ensure(parentObject);
         return new NavigateToObjectAction(sourceObject, object);
     }
 }

@@ -27,7 +27,7 @@ public interface DBSchemaObject extends DBObject {
 
     @Override
     @NotNull
-    DBObjectVirtualFile getVirtualFile();
+    DBObjectVirtualFile<?> getVirtualFile();
 
     DBEditableObjectVirtualFile getEditableVirtualFile();
 

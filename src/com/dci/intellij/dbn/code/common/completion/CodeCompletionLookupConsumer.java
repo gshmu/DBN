@@ -34,7 +34,7 @@ public class CodeCompletionLookupConsumer implements CancellableConsumer<Object>
     }
 
     @Override
-    public void consume(Object object) {
+    public void accept(Object object) {
         try {
             if (object instanceof Object[]) {
                 consumeArray((Object[]) object);
@@ -104,7 +104,7 @@ public class CodeCompletionLookupConsumer implements CancellableConsumer<Object>
         if (array != null && array.length > 0) {
             Arrays.stream(array).forEach(element -> {
                 checkCancelled();
-                consume(element);
+                accept(element);
             });
         }
     }
@@ -114,7 +114,7 @@ public class CodeCompletionLookupConsumer implements CancellableConsumer<Object>
         if (objects != null && !objects.isEmpty()) {
             objects.forEach(element -> {
                 checkCancelled();
-                consume(element);
+                accept(element);
             });
         }
     }

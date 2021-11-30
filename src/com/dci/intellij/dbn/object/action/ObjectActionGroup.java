@@ -88,7 +88,7 @@ public class ObjectActionGroup extends DefaultActionGroup implements DumbAware {
         if (navigationLists != null && navigationLists.size() > 0) {
             if (object.isNot(REFERENCEABLE)) addSeparator();
             //add(new DbsGoToActionGroup(linkLists));
-            for (DBObjectNavigationList navigationList : navigationLists) {
+            for (DBObjectNavigationList<?> navigationList : navigationLists) {
                 DBObject parentObject = object.getParentObject();
                 if (navigationList.isLazy()) {
                     add(new ObjectLazyNavigationListAction(parentObject, navigationList));

@@ -59,12 +59,12 @@ import com.intellij.psi.PsiWhiteSpace;
 import com.intellij.psi.impl.source.tree.SharedImplUtil;
 import com.intellij.psi.search.LocalSearchScope;
 import com.intellij.psi.search.SearchScope;
-import com.intellij.util.Consumer;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import javax.swing.Icon;
 import java.util.Set;
+import java.util.function.Consumer;
 
 public abstract class BasePsiElement<T extends ElementTypeBase> extends ASTDelegatePsiElement implements ItemPresentation, FormattingProviderPsiElement {
     private T elementType;
@@ -441,7 +441,7 @@ public abstract class BasePsiElement<T extends ElementTypeBase> extends ASTDeleg
                 PsiElement reference = identifierPsiElement.resolve();
                 if (reference instanceof DBObjectPsiElement) {
                     DBObjectPsiElement objectPsiElement = (DBObjectPsiElement) reference;
-                    consumer.consume(objectPsiElement.ensureObject());
+                    consumer.accept(objectPsiElement.ensureObject());
                 }
             }
         });
@@ -460,7 +460,7 @@ public abstract class BasePsiElement<T extends ElementTypeBase> extends ASTDeleg
         if (elementType.isVirtualObject()) {
             DBObjectType virtualObjectType = elementType.getVirtualObjectType();
             if (objectType == virtualObjectType) {
-                consumer.consume(this);
+                consumer.accept(this);
             }
         }
     }

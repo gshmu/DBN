@@ -151,7 +151,7 @@ public abstract class DBDatasetImpl<M extends DBObjectMetadata> extends DBSchema
 
                     @Override
                     public DBColumn createElement(DynamicContent<DBColumn> content, DBColumnMetadata metadata, LoaderCache cache) throws SQLException {
-                        DBDatasetImpl dataset = (DBDatasetImpl) content.getParentElement();
+                        DBDataset dataset = (DBDataset) content.getParentElement();
                         return new DBColumnImpl(dataset, metadata);
                     }
                 };
@@ -180,7 +180,7 @@ public abstract class DBDatasetImpl<M extends DBObjectMetadata> extends DBSchema
 
                     @Override
                     public DBConstraint createElement(DynamicContent<DBConstraint> content, DBConstraintMetadata metadata, LoaderCache cache) throws SQLException {
-                        DBDatasetImpl dataset = (DBDatasetImpl) content.getParentElement();
+                        DBDataset dataset = (DBDataset) content.getParentElement();
                         return new DBConstraintImpl(dataset, metadata);
                     }
                 };
@@ -230,7 +230,7 @@ public abstract class DBDatasetImpl<M extends DBObjectMetadata> extends DBSchema
                 return new DynamicContentResultSetLoader<DBIndex, DBIndexMetadata>(DATASET, INDEX, false, true) {
 
                     @Override
-                    public ResultSet createResultSet(DynamicContent dynamicContent, DBNConnection connection) throws SQLException {
+                    public ResultSet createResultSet(DynamicContent<DBIndex> dynamicContent, DBNConnection connection) throws SQLException {
                         DatabaseMetadataInterface metadataInterface = dynamicContent.getMetadataInterface();
                         DBDataset dataset = (DBDataset) dynamicContent.getParentElement();
                         return metadataInterface.loadIndexes(dataset.getSchema().getName(), dataset.getName(), connection);
@@ -259,7 +259,7 @@ public abstract class DBDatasetImpl<M extends DBObjectMetadata> extends DBSchema
                 return new DynamicContentResultSetLoader<DBIndexColumnRelation, DBIndexColumnMetadata>(DATASET, INDEX_COLUMN, false, false) {
 
                     @Override
-                    public ResultSet createResultSet(DynamicContent dynamicContent, DBNConnection connection) throws SQLException {
+                    public ResultSet createResultSet(DynamicContent<DBIndexColumnRelation> dynamicContent, DBNConnection connection) throws SQLException {
                         DatabaseMetadataInterface metadataInterface = dynamicContent.getMetadataInterface();
                         DBDataset dataset = (DBDataset) dynamicContent.getParentElement();
                         return metadataInterface.loadIndexRelations(dataset.getSchema().getName(), dataset.getName(), connection);

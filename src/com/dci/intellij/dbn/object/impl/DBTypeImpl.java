@@ -40,21 +40,18 @@ import com.dci.intellij.dbn.object.type.DBObjectType;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import javax.swing.*;
+import javax.swing.Icon;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import static com.dci.intellij.dbn.object.type.DBObjectType.TYPE;
-import static com.dci.intellij.dbn.object.type.DBObjectType.TYPE_ATTRIBUTE;
-import static com.dci.intellij.dbn.object.type.DBObjectType.TYPE_FUNCTION;
-import static com.dci.intellij.dbn.object.type.DBObjectType.TYPE_PROCEDURE;
+import static com.dci.intellij.dbn.object.type.DBObjectType.*;
 
 public class DBTypeImpl
         extends DBProgramImpl<DBTypeMetadata, DBTypeProcedure, DBTypeFunction>
-        implements DBType<DBTypeProcedure, DBTypeFunction> {
+        implements DBType {
 
     private static final List<DBTypeAttribute> EMPTY_ATTRIBUTE_LIST = Collections.unmodifiableList(new ArrayList<>(0));
 

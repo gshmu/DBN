@@ -2,6 +2,7 @@ package com.dci.intellij.dbn.code.common.completion;
 
 import com.dci.intellij.dbn.code.common.completion.options.filter.CodeCompletionFilterSettings;
 import com.dci.intellij.dbn.common.dispose.Failsafe;
+import com.dci.intellij.dbn.common.util.Consumer;
 import com.dci.intellij.dbn.common.util.NamingUtil;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.language.common.DBLanguagePsiFile;
@@ -42,7 +43,6 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.impl.source.tree.FileElement;
 import com.intellij.psi.tree.IElementType;
-import com.intellij.util.Consumer;
 import com.intellij.util.ProcessingContext;
 import org.jetbrains.annotations.NotNull;
 
@@ -107,7 +107,7 @@ public class CodeCompletionProvider extends CompletionProvider<CompletionParamet
         for (LeafElementType firstPossibleLeaf : firstPossibleLeafs) {
             if (firstPossibleLeaf instanceof TokenElementType) {
                 TokenElementType tokenElementType = (TokenElementType) firstPossibleLeaf;
-                consumer.consume(tokenElementType);
+                consumer.accept(tokenElementType);
             }
         }
     }
@@ -183,7 +183,7 @@ public class CodeCompletionProvider extends CompletionProvider<CompletionParamet
             completionCandidates.stream().filter(elementType -> elementType instanceof TokenElementType).forEach(elementType -> {
                 TokenElementType tokenElementType = (TokenElementType) elementType;
                 //consumer.setAddParenthesis(addParenthesis && tokenType.isFunction());
-                consumer.consume(tokenElementType);
+                consumer.accept(tokenElementType);
             });
         });
     }
@@ -220,7 +220,7 @@ public class CodeCompletionProvider extends CompletionProvider<CompletionParamet
         });
     }
 
-    private static void collectObjectElements(LeafPsiElement element, CodeCompletionLookupConsumer consumer, IdentifierElementType identifierElementType, DBObjectType objectType) {
+    private static void collectObjectElements(LeafPsiElement<?> element, CodeCompletionLookupConsumer consumer, IdentifierElementType identifierElementType, DBObjectType objectType) {
         CodeCompletionContext context = consumer.getContext();
         CodeCompletionFilterSettings filterSettings = context.getCodeCompletionFilterSettings();
         PsiLookupAdapter lookupAdapter = LookupAdapterCache.OBJECT_DEFINITION.get(objectType);
@@ -230,27 +230,27 @@ public class CodeCompletionProvider extends CompletionProvider<CompletionParamet
                 PsiElement referencedPsiElement = identifierPsiElement.resolve();
                 if (referencedPsiElement instanceof DBObjectPsiElement) {
                     DBObjectPsiElement objectPsiElement = (DBObjectPsiElement) referencedPsiElement;
-                    consumer.consume(objectPsiElement);
+                    consumer.accept(objectPsiElement);
                 } else {
-                    consumer.consume(identifierPsiElement);
+                    consumer.accept(identifierPsiElement);
                 }
             }
         });
 
-        BasePsiElement scope = element.getEnclosingScopePsiElement();
+        BasePsiElement<?> scope = element.getEnclosingScopePsiElement();
         if (scope != null) {
             collectObjectMatchingScope(consumer, identifierElementType, filterSettings, scope, context);
         }
     }
 
-    private static void collectAliasElements(LeafPsiElement scopeElement, CodeCompletionLookupConsumer consumer, DBObjectType objectType) {
+    private static void collectAliasElements(LeafPsiElement<?> scopeElement, CodeCompletionLookupConsumer consumer, DBObjectType objectType) {
         PsiLookupAdapter lookupAdapter = LookupAdapterCache.ALIAS_DEFINITION.get(objectType);
-        lookupAdapter.collectInParentScopeOf(scopeElement, psiElement -> consumer.consume(psiElement));
+        lookupAdapter.collectInParentScopeOf(scopeElement, psiElement -> consumer.accept(psiElement));
     }
 
-    private static void collectVariableElements(LeafPsiElement scopeElement, CodeCompletionLookupConsumer consumer, DBObjectType objectType) {
+    private static void collectVariableElements(LeafPsiElement<?> scopeElement, CodeCompletionLookupConsumer consumer, DBObjectType objectType) {
         PsiLookupAdapter lookupAdapter = LookupAdapterCache.VARIABLE_DEFINITION.get(objectType);
-        lookupAdapter.collectInParentScopeOf(scopeElement, psiElement -> consumer.consume(psiElement));
+        lookupAdapter.collectInParentScopeOf(scopeElement, psiElement -> consumer.accept(psiElement));
     }
 
     private static void collectChildObjects(CodeCompletionLookupConsumer consumer, DBObject object, DBObjectType objectType) {
@@ -299,13 +299,13 @@ public class CodeCompletionProvider extends CompletionProvider<CompletionParamet
                         }
                     }
                 }
-                consumer.consume(aliasNames);
+                consumer.accept(aliasNames);
             }
         }
     }
 
     private static void collectObjectMatchingScope(
-            Consumer consumer,
+            Consumer<? super DBObject> consumer,
             IdentifierElementType identifierElementType,
             ObjectTypeFilter filter,
             @NotNull  BasePsiElement sourceScope,

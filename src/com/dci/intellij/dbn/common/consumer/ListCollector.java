@@ -1,7 +1,7 @@
 package com.dci.intellij.dbn.common.consumer;
 
 import com.dci.intellij.dbn.common.util.CommonUtil;
-import com.intellij.util.Consumer;
+import com.dci.intellij.dbn.common.util.Consumer;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -19,16 +19,16 @@ public class ListCollector<T> implements Consumer<T> {
     public static <T> ListCollector<T> unique() {
         return new ListCollector<T>() {
             @Override
-            public void consume(T element) {
+            public void accept(T element) {
                 if (!elements().contains(element)) {
-                    super.consume(element);
+                    super.accept(element);
                 }
             }
         };
     }
 
     @Override
-    public void consume(T element) {
+    public void accept(T element) {
         if (elements == null) {
             elements = createList();
         }
