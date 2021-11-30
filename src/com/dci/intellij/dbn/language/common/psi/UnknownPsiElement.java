@@ -7,11 +7,11 @@ import com.dci.intellij.dbn.language.common.element.util.ElementTypeAttribute;
 import com.dci.intellij.dbn.language.common.psi.lookup.PsiLookupAdapter;
 import com.dci.intellij.dbn.object.type.DBObjectType;
 import com.intellij.lang.ASTNode;
-import com.intellij.util.Consumer;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Objects;
+import java.util.function.Consumer;
 
 public class UnknownPsiElement extends BasePsiElement<ElementTypeBase> {
     public UnknownPsiElement(ASTNode astNode, ElementTypeBase elementType) {

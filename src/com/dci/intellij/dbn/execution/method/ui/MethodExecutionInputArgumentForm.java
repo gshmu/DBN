@@ -60,7 +60,7 @@ public class MethodExecutionInputArgumentForm extends DBNFormImpl {
 
         argumentTypeLabel.setForeground(UIUtil.getInactiveTextColor());
 
-        DBType<?, ?> declaredType = dataType.getDeclaredType();
+        DBType declaredType = dataType.getDeclaredType();
 
         if (dataType.isNative()) {
             argumentTypeLabel.setText(dataType.getQualifiedName());

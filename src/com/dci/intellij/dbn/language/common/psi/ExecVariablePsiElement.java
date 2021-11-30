@@ -8,11 +8,11 @@ import com.dci.intellij.dbn.object.type.DBObjectType;
 import com.intellij.lang.ASTNode;
 import com.intellij.openapi.editor.colors.TextAttributesKey;
 import com.intellij.psi.PsiElement;
-import com.intellij.util.Consumer;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import javax.swing.Icon;
+import java.util.function.Consumer;
 
 public class ExecVariablePsiElement extends LeafPsiElement<ExecVariableElementType> {
     public ExecVariablePsiElement(ASTNode astNode, ExecVariableElementType elementType) {
@@ -28,7 +28,7 @@ public class ExecVariablePsiElement extends LeafPsiElement<ExecVariableElementTy
 
 
     @Override
-    public void collectExecVariablePsiElements(@NotNull Consumer<ExecVariablePsiElement> consumer) { consumer.consume(this);}
+    public void collectExecVariablePsiElements(@NotNull Consumer<ExecVariablePsiElement> consumer) { consumer.accept(this);}
 
     @Override
     public void collectSubjectPsiElements(@NotNull Consumer<IdentifierPsiElement> consumer) {}

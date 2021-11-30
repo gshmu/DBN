@@ -7,6 +7,7 @@ import com.dci.intellij.dbn.common.content.DynamicContentElement;
 import com.dci.intellij.dbn.common.content.DynamicContentType;
 import com.dci.intellij.dbn.common.environment.EnvironmentTypeProvider;
 import com.dci.intellij.dbn.common.property.PropertyHolder;
+import com.dci.intellij.dbn.common.util.Consumer;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.PresentableConnectionProvider;
 import com.dci.intellij.dbn.connection.SchemaId;
@@ -25,11 +26,10 @@ import com.dci.intellij.dbn.object.lookup.DBObjectRef;
 import com.dci.intellij.dbn.object.properties.PresentableProperty;
 import com.dci.intellij.dbn.object.type.DBObjectType;
 import com.dci.intellij.dbn.vfs.file.DBObjectVirtualFile;
-import com.intellij.util.Consumer;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import javax.swing.*;
+import javax.swing.Icon;
 import java.sql.SQLException;
 import java.util.List;
 
@@ -41,6 +41,10 @@ public interface DBObject extends
         Referenceable,
         EnvironmentTypeProvider,
         PresentableConnectionProvider {
+
+    @Override
+    @NotNull
+    String getName();
 
     @NotNull
     DBObjectType getObjectType();

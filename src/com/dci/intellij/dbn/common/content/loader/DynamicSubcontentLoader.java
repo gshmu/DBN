@@ -44,7 +44,7 @@ public abstract class DynamicSubcontentLoader<
     public void loadContent(DynamicContent<T> dynamicContent, boolean force) throws SQLException {
         SubcontentDependencyAdapter dependencyAdapter = (SubcontentDependencyAdapter) dynamicContent.getDependencyAdapter();
 
-        DynamicContent sourceContent = dependencyAdapter.getSourceContent();
+        DynamicContent<?> sourceContent = dependencyAdapter.getSourceContent();
         DynamicContentLoader<T, M> alternativeLoader = getAlternativeLoader();
 
         if (alternativeLoader != null && useAlternativeLoader(dependencyAdapter)) {

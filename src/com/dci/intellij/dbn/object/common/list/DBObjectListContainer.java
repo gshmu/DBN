@@ -27,17 +27,17 @@ import java.util.Set;
 import static com.dci.intellij.dbn.common.dispose.Failsafe.check;
 
 public class DBObjectListContainer implements StatefulDisposable {
-    private static final DBObjectList[] DISPOSED_CONTENT = new DBObjectList[0];
+    private static final DBObjectList<?>[] DISPOSED_CONTENT = new DBObjectList[0];
 
     private GenericDatabaseElement owner;
-    private DBObjectList[] elements;
+    private DBObjectList<?>[] elements;
 
     public DBObjectListContainer(@NotNull GenericDatabaseElement owner) {
         this.owner = owner;
     }
 
     @Nullable
-    public DBObjectList[] getElements() {
+    public DBObjectList<?>[] getElements() {
         return elements;
     }
 
@@ -45,8 +45,7 @@ public class DBObjectListContainer implements StatefulDisposable {
         if (elements != null) {
             Safe.run(() -> {
                 checkDisposed(visitor);
-                for (int i = 0; i < elements.length; i++) {
-                    DBObjectList<?> objectList = elements[i];
+                for (DBObjectList<?> objectList : elements) {
                     if (check(objectList) && (visitInternal || !objectList.isInternal())) {
                         checkDisposed(visitor);
                         ProgressMonitor.checkCancelled();
@@ -65,21 +64,20 @@ public class DBObjectListContainer implements StatefulDisposable {
 
     @NotNull
     public <T extends DBObject> List<T> getObjects(DBObjectType objectType, boolean internal) {
-        DBObjectList objectList = internal ?
+        DBObjectList<?> objectList = internal ?
                 getInternalObjectList(objectType) :
                 getObjectList(objectType);
         if (objectList == null) {
             return java.util.Collections.emptyList();
         } else {
-            return objectList.getObjects();
+            return (List<T>) objectList.getObjects();
         }
     }
 
     @Nullable
     private <T extends DBObject> DBObjectList<T> findObjectList(DBObjectType objectType) {
         if (elements != null) {
-            for (int i = 0; i < elements.length; i++) {
-                DBObjectList<?> objectList = elements[i];
+            for (DBObjectList<?> objectList : elements) {
                 if (objectList.getObjectType() == objectType) {
                     return (DBObjectList<T>) objectList;
                 }
@@ -152,7 +150,7 @@ public class DBObjectListContainer implements StatefulDisposable {
 
     public DBObject getObject(String name, short overload) {
         if (elements != null) {
-            for (DBObjectList objectList : elements) {
+            for (DBObjectList<?> objectList : elements) {
                 DBObject object = objectList.getObject(name, overload);
                 if (object != null) {
                     return object;
@@ -165,7 +163,7 @@ public class DBObjectListContainer implements StatefulDisposable {
     @Nullable
     public DBObject getObjectForParentType(DBObjectType parentObjectType, String name, short overload, boolean lookupInternal) {
         if (elements != null) {
-            for (DBObjectList objectList : elements) {
+            for (DBObjectList<?> objectList : elements) {
                 if ((!objectList.isInternal() || lookupInternal) && check(objectList)) {
                     DBObjectType objectType = objectList.getObjectType();
                     if (objectType.getParents().contains(parentObjectType)) {
@@ -190,7 +188,7 @@ public class DBObjectListContainer implements StatefulDisposable {
 
     public DBObject getObjectNoLoad(String name, short overload) {
         if (elements != null) {
-            for (DBObjectList objectList : elements) {
+            for (DBObjectList<?> objectList : elements) {
                 if (check(objectList) && objectList.isLoaded() && !objectList.isDirty()) {
                     DBObject object = objectList.getObject(name, overload);
                     if (object != null) {
@@ -233,7 +231,7 @@ public class DBObjectListContainer implements StatefulDisposable {
     public <T extends DBObject> DBObjectList<T>  createObjectList(
             @NotNull DBObjectType objectType,
             @NotNull BrowserTreeNode treeParent,
-            DBObjectList[] sourceContents,
+            DBObjectList<?>[] sourceContents,
             DynamicContentStatus... statuses) {
         if (isSupported(objectType)) {
             ContentDependencyAdapter dependencyAdapter = new MultipleContentDependencyAdapter(sourceContents);
@@ -247,7 +245,7 @@ public class DBObjectListContainer implements StatefulDisposable {
             @NotNull DBObjectType objectType,
             @NotNull BrowserTreeNode treeParent,
             GenericDatabaseElement sourceContentHolder,
-            DynamicContentType sourceContentType,
+            DynamicContentType<?> sourceContentType,
             DynamicContentStatus... statuses) {
         if (isSupported(objectType)) {
             if (sourceContentHolder != null && sourceContentHolder.getDynamicContent(sourceContentType) != null) {
@@ -286,7 +284,7 @@ public class DBObjectListContainer implements StatefulDisposable {
             @NotNull BrowserTreeNode treeParent,
             ContentDependencyAdapter dependencyAdapter,
             DynamicContentStatus... statuses) {
-        DBObjectList<T> objectList = new DBObjectListImpl<T>(objectType, treeParent, dependencyAdapter, statuses);
+        DBObjectList<T> objectList = new DBObjectListImpl<>(objectType, treeParent, dependencyAdapter, statuses);
         addObjectList(objectList);
 
         return objectList;
@@ -305,7 +303,7 @@ public class DBObjectListContainer implements StatefulDisposable {
 
     public void reload() {
         if (elements != null)  {
-            for (DBObjectList objectList : elements) {
+            for (DBObjectList<?> objectList : elements) {
                 objectList.reload();
                 checkDisposed();
             }
@@ -314,7 +312,7 @@ public class DBObjectListContainer implements StatefulDisposable {
 
     public void refresh() {
         if (elements != null)  {
-            for (DBObjectList objectList : elements) {
+            for (DBObjectList<?> objectList : elements) {
                 if (check(objectList)) {
                     objectList.refresh();
                     checkDisposed();
@@ -325,7 +323,7 @@ public class DBObjectListContainer implements StatefulDisposable {
 
     public void load() {
         if (elements != null)  {
-            for (DBObjectList objectList : elements) {
+            for (DBObjectList<?> objectList : elements) {
                 if (!objectList.isInternal()) {
                     objectList.ensure();
                 }
@@ -335,7 +333,7 @@ public class DBObjectListContainer implements StatefulDisposable {
     }
 
     public void loadObjectList(DBObjectType objectType) {
-        DBObjectList objectList = getObjectList(objectType);
+        DBObjectList<?> objectList = getObjectList(objectType);
         if (objectList == null) objectList = getInternalObjectList(objectType);
         if (objectList != null) {
             objectList.getElements();
@@ -350,7 +348,7 @@ public class DBObjectListContainer implements StatefulDisposable {
     @Override
     public void dispose() {
         if (!isDisposed()) {
-            DBObjectList[] elements = this.elements;
+            DBObjectList<?>[] elements = this.elements;
             this.elements = DISPOSED_CONTENT;
             this.owner = null;
 

@@ -8,11 +8,11 @@ import com.dci.intellij.dbn.object.common.DBObject;
 import com.dci.intellij.dbn.object.filter.quick.ObjectQuickFilter;
 import com.dci.intellij.dbn.object.type.DBObjectType;
 import com.intellij.psi.PsiDirectory;
-import com.intellij.util.Consumer;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
+import java.util.function.Consumer;
 
 public interface DBObjectList<T extends DBObject> extends BrowserTreeNode, DynamicContent<T>, Comparable<DBObjectList>, ConnectionProvider {
     @Override

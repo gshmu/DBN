@@ -22,6 +22,7 @@ import com.dci.intellij.dbn.common.filter.Filter;
 import com.dci.intellij.dbn.common.thread.Background;
 import com.dci.intellij.dbn.common.ui.tree.TreeEventType;
 import com.dci.intellij.dbn.common.util.CommonUtil;
+import com.dci.intellij.dbn.common.util.Consumer;
 import com.dci.intellij.dbn.common.util.Safe;
 import com.dci.intellij.dbn.common.util.StringUtil;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
@@ -64,7 +65,6 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vcs.FileStatus;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiInvalidElementAccessException;
-import com.intellij.util.Consumer;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -485,7 +485,7 @@ public abstract class DBObjectImpl<M extends DBObjectMetadata> extends BrowserTr
                     }
                 }
             } else {
-                DBObjectList objectList = childObjects.getObjectList(objectType);
+                DBObjectList<?> objectList = childObjects.getObjectList(objectType);
                 if (objectList == null) {
                     objectList = childObjects.getInternalObjectList(objectType);
                 }
@@ -528,7 +528,7 @@ public abstract class DBObjectImpl<M extends DBObjectMetadata> extends BrowserTr
 
     @Override
     @NotNull
-    public DBObjectVirtualFile getVirtualFile() {
+    public DBObjectVirtualFile<?> getVirtualFile() {
         DBObjectBundle objectBundle = Failsafe.nn(getObjectBundle());
         return objectBundle.getObjectVirtualFile(getRef());
     }
