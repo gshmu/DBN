@@ -23,7 +23,7 @@ import static com.dci.intellij.dbn.common.util.CommonUtil.nvl;
 
 
 @Getter
-public class ParserDiagnosticsResult implements PersistentStateElement<ParserDiagnosticsResult>, Comparable<ParserDiagnosticsResult> {
+public class ParserDiagnosticsResult implements PersistentStateElement, Comparable<ParserDiagnosticsResult> {
 
     private final Map<String, Integer> entries = new TreeMap<>();
     private final ProjectRef project;

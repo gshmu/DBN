@@ -69,6 +69,7 @@ public class PSQLLanguageAnnotator implements Annotator {
                                 String message = "Invalid " + namedPsiElement.getElementType().getDescription();
                                 holder.newAnnotation(HighlightSeverity.ERROR, message)
                                         .range(basePsiElement)
+                                        .needsUpdateOnTyping(true)
                                         .create();
                             }
                         }

@@ -11,7 +11,7 @@ import java.nio.charset.Charset;
 import static com.dci.intellij.dbn.common.options.setting.SettingsSupport.*;
 
 @Data
-public class DataExportInstructions implements PersistentStateElement, Cloneable {
+public class DataExportInstructions implements PersistentStateElement, Cloneable<DataExportInstructions> {
     private boolean createHeader = true;
     private boolean friendlyHeaders = false;
     private boolean quoteValuesContainingSeparator = true;
