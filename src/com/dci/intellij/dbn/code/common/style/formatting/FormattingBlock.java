@@ -39,9 +39,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class FormattingBlock implements Block {
-    private PsiElementRef psiElementRef;
-    private CodeStyleSettings codeStyleSettings;
-    private CodeStyleCustomSettings codeStyleCustomSettings;
+    private final PsiElementRef psiElementRef;
+    private final CodeStyleSettings codeStyleSettings;
+    private final CodeStyleCustomSettings codeStyleCustomSettings;
     private static final List<Block> EMPTY_LIST = new ArrayList<>(0);
     private List<Block> childBlocks;
     private FormattingBlock parentBlock;

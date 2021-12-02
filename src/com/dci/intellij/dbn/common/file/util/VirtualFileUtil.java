@@ -8,6 +8,8 @@ import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.StandardFileSystems;
 import com.intellij.openapi.vfs.VfsUtilCore;
 import com.intellij.openapi.vfs.VirtualFile;
+import com.intellij.openapi.vfs.newvfs.events.VFileEvent;
+import com.intellij.openapi.vfs.newvfs.events.VFilePropertyChangeEvent;
 import com.intellij.testFramework.LightVirtualFile;
 import com.intellij.util.io.ReadOnlyAttributeUtil;
 import org.jetbrains.annotations.NotNull;
@@ -16,6 +18,8 @@ import org.jetbrains.annotations.Nullable;
 import javax.swing.Icon;
 import java.io.File;
 import java.io.IOException;
+import java.util.Collections;
+import java.util.List;
 
 public class VirtualFileUtil {
 
@@ -90,6 +94,14 @@ public class VirtualFileUtil {
             return lightVirtualFile.getOriginalFile();
         }
         return null;
+    }
+
+    public static List<VFileEvent> createFileRenameEvents(
+            @NotNull VirtualFile virtualFile,
+            @NotNull String oldName,
+            @NotNull String newName) {
+        VFilePropertyChangeEvent fileEvent = new VFilePropertyChangeEvent(null, virtualFile, VirtualFile.PROP_NAME, oldName, newName, false);
+        return Collections.singletonList(fileEvent);
     }
 
 

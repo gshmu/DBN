@@ -11,11 +11,11 @@ import com.intellij.openapi.actionSystem.AnActionEvent;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import javax.swing.*;
+import javax.swing.Icon;
 
 public abstract class NavigationAction extends AnAction {
-    private PsiElementRef<BasePsiElement> navigationElement;
-    private DBObjectRef<DBObject> parentObjectRef;
+    private final PsiElementRef<BasePsiElement> navigationElement;
+    private final DBObjectRef<DBObject> parentObjectRef;
 
     NavigationAction(String text, Icon icon, @Nullable DBObject parentObject, @NotNull BasePsiElement navigationElement) {
         super(text, null, icon);

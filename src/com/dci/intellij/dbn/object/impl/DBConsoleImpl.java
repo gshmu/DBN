@@ -57,5 +57,6 @@ public class DBConsoleImpl extends DBObjectImpl<DBObjectMetadata> implements DBC
     @Override
     public void setName(String newName) {
         getRef().setObjectName(newName);
+        virtualFile.setName(newName);
     }
 }
