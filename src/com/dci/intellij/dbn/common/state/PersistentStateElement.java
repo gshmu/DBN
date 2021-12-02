@@ -3,7 +3,7 @@ package com.dci.intellij.dbn.common.state;
 
 import org.jdom.Element;
 
-public interface PersistentStateElement<T extends PersistentStateElement> {
+public interface PersistentStateElement {
     void readState(Element element);
     void writeState(Element element);
 
