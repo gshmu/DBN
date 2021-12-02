@@ -1,6 +1,6 @@
 package com.dci.intellij.dbn.language.common.element.impl;
 
-import com.dci.intellij.dbn.common.Chained;
+import com.dci.intellij.dbn.common.Linked;
 import com.dci.intellij.dbn.language.common.element.cache.ElementTypeLookupCache;
 import com.dci.intellij.dbn.language.common.element.parser.Branch;
 import com.dci.intellij.dbn.language.common.element.parser.BranchCheck;
@@ -8,7 +8,7 @@ import com.dci.intellij.dbn.language.common.element.parser.ElementTypeParser;
 
 import java.util.Set;
 
-public class ElementTypeRef extends Chained<ElementTypeRef> {
+public class ElementTypeRef extends Linked<ElementTypeRef> {
     public final ElementTypeBase parentElementType;
     public final ElementTypeBase elementType;
     public final boolean optional;
@@ -98,7 +98,7 @@ public class ElementTypeRef extends Chained<ElementTypeRef> {
         return elementType.getLookupCache();
     }
 
-    public ElementTypeParser getParser() {
+    public ElementTypeParser<?> getParser() {
         return elementType.getParser();
     }
 

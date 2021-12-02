@@ -3,6 +3,7 @@ package com.dci.intellij.dbn.language.common;
 
 import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.intellij.psi.PsiElement;
+import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -11,7 +12,8 @@ public class PsiElementRef<T extends PsiElement> extends WeakRef<T>{
         super(psiElement);
     }
 
-    public static <T extends PsiElement> PsiElementRef<T> from(T psiElement) {
+    @Contract("null -> null;!null -> !null;")
+    public static <T extends PsiElement> PsiElementRef<T> from(@Nullable T psiElement) {
         return psiElement == null ? null : new PsiElementRef<T>(psiElement);
     }
 

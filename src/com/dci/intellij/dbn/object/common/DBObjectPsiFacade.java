@@ -13,7 +13,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 public final class DBObjectPsiFacade {
-    private DBObjectRef objectRef;
+    private DBObjectRef<?> objectRef;
     private PsiElementRef<PsiElement> psiElementRef;
 
     private final Latent<PsiFile> psiFile = Latent.basic(() -> new DBObjectPsiFile(objectRef));
@@ -27,7 +27,7 @@ public final class DBObjectPsiFacade {
         psiElementRef = PsiElementRef.from(psiElement);
     }
 
-    public DBObjectPsiFacade(DBObjectRef objectRef) {
+    public DBObjectPsiFacade(DBObjectRef<?> objectRef) {
         this.objectRef = objectRef;
     }
 
