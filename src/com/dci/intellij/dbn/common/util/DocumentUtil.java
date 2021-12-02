@@ -109,7 +109,7 @@ public class DocumentUtil {
 
     @Nullable
     public static Document getDocument(@NotNull PsiFile file) {
-        return Read.call(() -> {
+        return Read.conditional(() -> {
             if (file.isValid()) {
                 Project project = file.getProject();
                 PsiDocumentManager documentManager = PsiDocumentManager.getInstance(project);
@@ -181,7 +181,7 @@ public class DocumentUtil {
 
     @Nullable
     public static Document getDocument(@NotNull VirtualFile virtualFile) {
-        return Read.call(() -> {
+        return Read.conditional(() -> {
             FileDocumentManager fileDocumentManager = FileDocumentManager.getInstance();
             return fileDocumentManager.getDocument(virtualFile);
         });

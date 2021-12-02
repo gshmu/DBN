@@ -4,6 +4,7 @@ import com.dci.intellij.dbn.DatabaseNavigator;
 import com.dci.intellij.dbn.common.AbstractProjectComponent;
 import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.common.event.ProjectEvents;
+import com.dci.intellij.dbn.common.file.util.VirtualFileUtil;
 import com.dci.intellij.dbn.common.thread.Dispatch;
 import com.dci.intellij.dbn.common.util.CommonUtil;
 import com.dci.intellij.dbn.common.util.MessageUtil;
@@ -27,6 +28,7 @@ import com.intellij.openapi.components.State;
 import com.intellij.openapi.components.Storage;
 import com.intellij.openapi.fileEditor.FileEditorManager;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.vfs.newvfs.events.VFileEvent;
 import org.jdom.CDATA;
 import org.jdom.Element;
 import org.jetbrains.annotations.NonNls;
@@ -34,6 +36,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
+import java.util.Objects;
 
 import static com.dci.intellij.dbn.common.message.MessageCallback.conditional;
 import static com.dci.intellij.dbn.common.options.setting.SettingsSupport.*;
@@ -95,12 +98,17 @@ public class DatabaseConsoleManager extends AbstractProjectComponent implements 
     }
 
     public void renameConsole(@NotNull DBConsole console, String newName) {
-        ConnectionHandler connectionHandler = console.getConnectionHandler();
-        DatabaseConsoleBundle consoleBundle = connectionHandler.getConsoleBundle();
-
         String oldName = console.getName();
-        consoleBundle.renameConsole(oldName, newName);
-        reloadConsoles(connectionHandler);
+        if (!Objects.equals(oldName, newName)) {
+            ConnectionHandler connectionHandler = console.getConnectionHandler();
+            DatabaseConsoleBundle consoleBundle = connectionHandler.getConsoleBundle();
+
+            DBConsoleVirtualFile virtualFile = console.getVirtualFile();
+            VFileEvent fileEvent = VirtualFileUtil.createFileRenameEvents(virtualFile, oldName, newName);
+            VirtualFileUtil.notifiedFileChange(fileEvent, () -> consoleBundle.renameConsole(oldName, newName));
+
+            reloadConsoles(connectionHandler);
+        }
     }
 
     public void deleteConsole(DBConsole console) {

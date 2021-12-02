@@ -1,5 +1,7 @@
 package com.dci.intellij.dbn.common.file.util;
 
+import com.dci.intellij.dbn.common.event.ApplicationEvents;
+import com.dci.intellij.dbn.common.thread.Write;
 import com.dci.intellij.dbn.vfs.DBVirtualFileImpl;
 import com.dci.intellij.dbn.vfs.DatabaseFileSystem;
 import com.intellij.openapi.project.Project;
@@ -8,6 +10,8 @@ import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.StandardFileSystems;
 import com.intellij.openapi.vfs.VfsUtilCore;
 import com.intellij.openapi.vfs.VirtualFile;
+import com.intellij.openapi.vfs.VirtualFileManager;
+import com.intellij.openapi.vfs.newvfs.BulkFileListener;
 import com.intellij.openapi.vfs.newvfs.events.VFileEvent;
 import com.intellij.openapi.vfs.newvfs.events.VFilePropertyChangeEvent;
 import com.intellij.testFramework.LightVirtualFile;
@@ -96,12 +100,22 @@ public class VirtualFileUtil {
         return null;
     }
 
-    public static List<VFileEvent> createFileRenameEvents(
+    public static VFileEvent createFileRenameEvents(
             @NotNull VirtualFile virtualFile,
             @NotNull String oldName,
             @NotNull String newName) {
-        VFilePropertyChangeEvent fileEvent = new VFilePropertyChangeEvent(null, virtualFile, VirtualFile.PROP_NAME, oldName, newName, false);
-        return Collections.singletonList(fileEvent);
+        return new VFilePropertyChangeEvent(null, virtualFile, VirtualFile.PROP_NAME, oldName, newName, false);
+    }
+
+    public static void notifiedFileChange(VFileEvent event, Runnable changeAction) {
+        BulkFileListener publisher = ApplicationEvents.publisher(VirtualFileManager.VFS_CHANGES);
+        List<VFileEvent> events = Collections.singletonList(event);
+        Write.run(() -> {
+            publisher.before(events);
+            changeAction.run();
+            publisher.after(events);
+        });
+
     }
 
 
