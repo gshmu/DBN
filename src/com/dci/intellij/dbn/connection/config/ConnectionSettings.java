@@ -20,7 +20,7 @@ import static com.dci.intellij.dbn.common.options.setting.SettingsSupport.connec
 @Setter
 @EqualsAndHashCode(callSuper = false)
 public class ConnectionSettings extends CompositeProjectConfiguration<ConnectionBundleSettings, ConnectionSettingsForm>
-        implements ConnectionRef, ConnectionIdProvider, Cloneable {
+        implements ConnectionRef, ConnectionIdProvider, Cloneable<ConnectionSettings> {
 
     private ConnectionId connectionId;
     private boolean active = true;

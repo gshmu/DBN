@@ -94,11 +94,12 @@ public class DatabaseConsoleManager extends AbstractProjectComponent implements 
         reloadConsoles(connectionHandler);
     }
 
-    public void renameConsole(DBConsole console, String newName) {
+    public void renameConsole(@NotNull DBConsole console, String newName) {
         ConnectionHandler connectionHandler = console.getConnectionHandler();
-        String oldName = console.getName();
-        connectionHandler.getConsoleBundle().renameConsole(oldName, newName);
+        DatabaseConsoleBundle consoleBundle = connectionHandler.getConsoleBundle();
 
+        String oldName = console.getName();
+        consoleBundle.renameConsole(oldName, newName);
         reloadConsoles(connectionHandler);
     }
 
@@ -122,7 +123,7 @@ public class DatabaseConsoleManager extends AbstractProjectComponent implements 
     }
 
     private void reloadConsoles(@NotNull ConnectionHandler connectionHandler) {
-        DBObjectList objectList = connectionHandler.getObjectBundle().getObjectListContainer().getObjectList(DBObjectType.CONSOLE);
+        DBObjectList<?> objectList = connectionHandler.getObjectBundle().getObjectListContainer().getObjectList(DBObjectType.CONSOLE);
         Safe.run(objectList, target -> target.markDirty());
     }
 

@@ -5,12 +5,12 @@ import lombok.Setter;
 
 @Getter
 @Setter
-public class Chained<T extends Chained<T>> {
+public class Linked<T extends Linked<T>> {
     private T previous;
     private T next;
     private int index = -1;
 
-    public Chained(T previous) {
+    public Linked(T previous) {
         this.previous = previous;
         if (previous != null) {
             previous.setNext((T) this);
