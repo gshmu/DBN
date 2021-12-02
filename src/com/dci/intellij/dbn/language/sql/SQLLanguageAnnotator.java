@@ -52,7 +52,7 @@ public class SQLLanguageAnnotator implements Annotator {
                         NamedPsiElement namedPsiElement = (NamedPsiElement) psiElement;
                         if (namedPsiElement.hasErrors()) {
                             String message = "Invalid " + namedPsiElement.getElementType().getDescription();
-                            holder.newAnnotation(HighlightSeverity.ERROR, message).create();
+                            holder.newAnnotation(HighlightSeverity.ERROR, message).needsUpdateOnTyping(true).create();
                         }
                     }
                 });

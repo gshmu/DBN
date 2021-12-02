@@ -35,7 +35,7 @@ import static com.dci.intellij.dbn.vfs.DatabaseFileSystem.PS;
 @Slf4j
 @Getter
 @Setter
-public class DBObjectRef<T extends DBObject> implements Comparable, Reference<T>, PersistentStateElement, ConnectionProvider {
+public class DBObjectRef<T extends DBObject> implements Comparable<DBObjectRef<?>>, Reference<T>, PersistentStateElement, ConnectionProvider {
     private short overload;
     private DBObjectRef<?> parent;
     private DBObjectType objectType;
@@ -121,7 +121,7 @@ public class DBObjectRef<T extends DBObject> implements Comparable, Reference<T>
         }
     }
 
-    public void deserialize(ConnectionId connectionId, String objectIdentifier) {
+    private void deserialize(ConnectionId connectionId, String objectIdentifier) {
         try {
             String[] tokens = objectIdentifier.split(PS);
 
@@ -150,7 +150,7 @@ public class DBObjectRef<T extends DBObject> implements Comparable, Reference<T>
                 }
             }
         } catch (Exception e) {
-            log.error("Failed to deserialize object {}" + objectIdentifier, e);
+            log.error("Failed to deserialize object {}", objectIdentifier, e);
             throw e;
         }
     }
@@ -456,32 +456,29 @@ public class DBObjectRef<T extends DBObject> implements Comparable, Reference<T>
     }
 
     @Override
-    public int compareTo(@NotNull Object o) {
-        if (o instanceof DBObjectRef) {
-            DBObjectRef<?> that = (DBObjectRef<?>) o;
-            int result = this.getConnectionId().id().compareTo(that.getConnectionId().id());
-            if (result != 0) return result;
+    public int compareTo(@NotNull DBObjectRef<?> that) {
+        int result = this.getConnectionId().id().compareTo(that.getConnectionId().id());
+        if (result != 0) return result;
 
-            if (this.parent != null && that.parent != null) {
-                if (Objects.equals(this.parent, that.parent)) {
-                    result = this.objectType.compareTo(that.objectType);
-                    if (result != 0) return result;
-
-                    int nameCompare = this.objectName.compareTo(that.objectName);
-                    return nameCompare == 0 ? this.overload - that.overload : nameCompare;
-                } else {
-                    return this.parent.compareTo(that.parent);
-                }
-            } else if(this.parent == null && that.parent == null) {
+        if (this.parent != null && that.parent != null) {
+            if (Objects.equals(this.parent, that.parent)) {
                 result = this.objectType.compareTo(that.objectType);
                 if (result != 0) return result;
 
-                return this.objectName.compareTo(that.objectName);
-            } else if (this.parent == null) {
-                return -1;
-            } else if (that.parent == null) {
-                return 1;
+                int nameCompare = this.objectName.compareTo(that.objectName);
+                return nameCompare == 0 ? this.overload - that.overload : nameCompare;
+            } else {
+                return this.parent.compareTo(that.parent);
             }
+        } else if(this.parent == null && that.parent == null) {
+            result = this.objectType.compareTo(that.objectType);
+            if (result != 0) return result;
+
+            return this.objectName.compareTo(that.objectName);
+        } else if (this.parent == null) {
+            return -1;
+        } else if (that.parent == null) {
+            return 1;
         }
         return 0;
     }
