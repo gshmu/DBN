@@ -28,7 +28,7 @@ import com.intellij.psi.PsiElement;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import javax.swing.*;
+import javax.swing.Icon;
 
 import static com.dci.intellij.dbn.execution.ExecutionStatus.EXECUTING;
 import static com.dci.intellij.dbn.execution.ExecutionStatus.QUEUED;
@@ -56,7 +56,7 @@ public class StatementGutterAction extends AnAction {
 
     @Nullable
     private ExecutablePsiElement getExecutablePsiElement() {
-        return Read.call(() -> {
+        return Read.conditional(() -> {
             DBLanguagePsiFile psiFile = getPsiFile();
             if (psiFile != null) {
                 PsiElement elementAtOffset = psiFile.findElementAt(elementOffset);

@@ -3,9 +3,6 @@ package com.dci.intellij.dbn.vfs.file;
 import com.dci.intellij.dbn.code.common.style.DBLCodeStyleManager;
 import com.dci.intellij.dbn.code.common.style.options.CodeStyleCaseSettings;
 import com.dci.intellij.dbn.common.Icons;
-import com.dci.intellij.dbn.common.event.ApplicationEvents;
-import com.dci.intellij.dbn.common.file.util.VirtualFileUtil;
-import com.dci.intellij.dbn.common.thread.Write;
 import com.dci.intellij.dbn.common.util.StringUtil;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.SchemaId;
@@ -30,9 +27,6 @@ import com.intellij.openapi.editor.ex.DocumentEx;
 import com.intellij.openapi.fileTypes.FileType;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
-import com.intellij.openapi.vfs.VirtualFileManager;
-import com.intellij.openapi.vfs.newvfs.BulkFileListener;
-import com.intellij.openapi.vfs.newvfs.events.VFileEvent;
 import com.intellij.psi.PsiFile;
 import com.intellij.util.LocalTimeCounter;
 import org.jetbrains.annotations.NotNull;
@@ -86,17 +80,9 @@ public class DBConsoleVirtualFile extends DBObjectVirtualFile<DBConsole> impleme
     }
 
     public void setName(String name) {
-        if (!Objects.equals(this.name, name)) {
-            List<VFileEvent> fileEvents = VirtualFileUtil.createFileRenameEvents(this, this.name, name);
-            BulkFileListener publisher = ApplicationEvents.publisher(VirtualFileManager.VFS_CHANGES);
-            Write.run(() -> {
-                publisher.before(fileEvents);
-                this.name = name;
-                this.path = null;
-                this.url = null;
-                publisher.after(fileEvents);
-            });
-        }
+        this.name = name;
+        this.path = null;
+        this.url = null;
    }
 
     @NotNull

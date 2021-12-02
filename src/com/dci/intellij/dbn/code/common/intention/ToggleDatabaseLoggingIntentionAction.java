@@ -18,7 +18,7 @@ import com.intellij.psi.PsiFile;
 import com.intellij.util.IncorrectOperationException;
 import org.jetbrains.annotations.NotNull;
 
-import javax.swing.*;
+import javax.swing.Icon;
 
 public class ToggleDatabaseLoggingIntentionAction extends GenericIntentionAction implements LowPriorityAction {
     private PsiFileRef<?> lastChecked;
@@ -52,7 +52,7 @@ public class ToggleDatabaseLoggingIntentionAction extends GenericIntentionAction
 
 
     ConnectionHandler getLastCheckedConnection() {
-        PsiFile psiFile = Read.call(() -> PsiFileRef.from(lastChecked));
+        PsiFile psiFile = Read.conditional(() -> PsiFileRef.from(lastChecked));
         if (psiFile != null) {
             ConnectionHandler connectionHandler = getConnectionHandler(psiFile);
             if (supportsLogging(connectionHandler)) {
