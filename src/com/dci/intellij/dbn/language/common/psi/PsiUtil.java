@@ -318,7 +318,7 @@ public class PsiUtil {
 
     @Nullable
     public static PsiFile getPsiFile(@NotNull Project project, @NotNull VirtualFile virtualFile) {
-        return Read.call(() -> {
+        return Read.conditional(() -> {
             if (virtualFile.isValid() && Failsafe.check(project)) {
                 PsiManager psiManager = PsiManager.getInstance(project);
                 return psiManager.findFile(virtualFile);

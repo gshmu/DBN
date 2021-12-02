@@ -102,7 +102,9 @@ public class DatabaseConsoleBundle extends StatefulDisposable.Base {
     }
 
     void renameConsole(String oldName, String newName) {
-        DBConsole console = ensureConsole(oldName);
-        console.setName(newName);
+        if (!Objects.equals(oldName, newName)) {
+            DBConsole console = ensureConsole(oldName);
+            console.setName(newName);
+        }
     }
 }
