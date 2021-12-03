@@ -5,7 +5,6 @@ import com.dci.intellij.dbn.common.Constants;
 import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.common.options.PersistentConfiguration;
 import com.dci.intellij.dbn.common.options.setting.SettingsSupport;
-import com.intellij.openapi.ui.DialogWrapper;
 import com.intellij.openapi.ui.Messages;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
@@ -18,7 +17,7 @@ import java.text.MessageFormat;
 @Getter
 @Setter
 @EqualsAndHashCode
-public class ConfirmationOptionHandler implements DialogWrapper.DoNotAskOption, PersistentConfiguration{
+public class ConfirmationOptionHandler implements DoNotAskOption, PersistentConfiguration{
     private final String configName;
     private final String title;
     private final String message;
