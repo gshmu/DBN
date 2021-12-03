@@ -8,7 +8,7 @@ import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.project.Project;
 import org.jetbrains.annotations.NotNull;
 
-import static com.dci.intellij.dbn.common.message.MessageCallback.conditional;
+import static com.dci.intellij.dbn.common.message.MessageCallback.when;
 
 public class DatabaseLogOutputCloseAction extends AbstractDatabaseLoggingAction {
     public DatabaseLogOutputCloseAction() {
@@ -23,8 +23,7 @@ public class DatabaseLogOutputCloseAction extends AbstractDatabaseLoggingAction 
                     "Process active",
                     "The process is still active. Closing the log output will interrupt the process. \nAre you sure you want to close the console?",
                     MessageUtil.OPTIONS_YES_NO, 0,
-                    (option) -> conditional(option == 0,
-                            () -> closeConsole(loggingResult, project)));
+                    option -> when(option == 0, () -> closeConsole(loggingResult, project)));
         } else {
             closeConsole(loggingResult, project);
         }

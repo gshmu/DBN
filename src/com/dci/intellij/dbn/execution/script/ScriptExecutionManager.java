@@ -61,7 +61,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicReference;
 
-import static com.dci.intellij.dbn.common.message.MessageCallback.conditional;
+import static com.dci.intellij.dbn.common.message.MessageCallback.when;
 import static com.dci.intellij.dbn.common.options.setting.SettingsSupport.*;
 import static com.dci.intellij.dbn.execution.ExecutionStatus.EXECUTING;
 
@@ -236,8 +236,7 @@ public class ScriptExecutionManager extends AbstractProjectComponent implements 
                             "Script execution timeout",
                             "The script execution has timed out",
                             new String[]{"Retry", "Cancel"}, 0,
-                            (option) -> conditional(option == 0,
-                                    () -> executeScript(sourceFile)));
+                            option -> when(option == 0, () -> executeScript(sourceFile)));
 
                 }
 
@@ -247,8 +246,7 @@ public class ScriptExecutionManager extends AbstractProjectComponent implements 
                             "Script execution error",
                             "Error executing SQL script \"" + sourceFile.getPath() + "\". \nDetails: " + e.getMessage(),
                             new String[]{"Retry", "Cancel"}, 0,
-                            (option) -> conditional(option == 0,
-                                    () -> executeScript(sourceFile)));
+                            option -> when(option == 0, () -> executeScript(sourceFile)));
                 }
             }.start();
         } catch (ProcessCanceledException e) {

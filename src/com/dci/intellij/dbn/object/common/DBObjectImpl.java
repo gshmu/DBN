@@ -679,8 +679,7 @@ public abstract class DBObjectImpl<M extends DBObjectMetadata> extends BrowserTr
             }
         } else {
             DBObjectBundle objectBundle = getObjectBundle();
-            DBObjectListContainer objectListContainer = objectBundle.getObjectListContainer();
-            DBObjectList parentObjectList = objectListContainer.getObjectList(objectType);
+            DBObjectList<?> parentObjectList = objectBundle.getObjectList(objectType);
             return Failsafe.nn(parentObjectList);
         }
         throw AlreadyDisposedException.INSTANCE;

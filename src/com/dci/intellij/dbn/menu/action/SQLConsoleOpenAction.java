@@ -29,7 +29,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
-import static com.dci.intellij.dbn.common.message.MessageCallback.conditional;
+import static com.dci.intellij.dbn.common.message.MessageCallback.when;
 
 public class SQLConsoleOpenAction extends DumbAwareProjectAction {
     public SQLConsoleOpenAction() {
@@ -81,11 +81,10 @@ public class SQLConsoleOpenAction extends DumbAwareProjectAction {
                 MessageUtil.showInfoDialog(
                         project, "No connections available.", "No database connections found. Please setup a connection first",
                         new String[]{"Setup Connection", "Cancel"}, 0,
-                        (option) -> conditional(option == 0,
-                                () -> {
-                                    ProjectSettingsManager settingsManager = ProjectSettingsManager.getInstance(project);
-                                    settingsManager.openProjectSettings(ConfigId.CONNECTIONS);
-                                }));
+                        option -> when(option == 0, () -> {
+                            ProjectSettingsManager settingsManager = ProjectSettingsManager.getInstance(project);
+                            settingsManager.openProjectSettings(ConfigId.CONNECTIONS);
+                        }));
             }
 
         }

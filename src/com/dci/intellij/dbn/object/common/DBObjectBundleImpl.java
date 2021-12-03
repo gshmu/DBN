@@ -738,8 +738,14 @@ public class DBObjectBundleImpl extends BrowserTreeNodeBase implements DBObjectB
     }
 
     @Override
+    @NotNull
     public DBObjectListContainer getObjectListContainer() {
         return Failsafe.nn(objectLists);
+    }
+
+    @Override
+    public <T extends DBObject> DBObjectList<T> getObjectList(DBObjectType objectType) {
+        return getObjectListContainer().getObjectList(objectType);
     }
 
     @Override
@@ -763,6 +769,7 @@ public class DBObjectBundleImpl extends BrowserTreeNodeBase implements DBObjectB
     @Nullable
     public DynamicContent<?> getDynamicContent(DynamicContentType<?> dynamicContentType) {
         if(dynamicContentType instanceof DBObjectType) {
+            DBObjectListContainer objectLists = getObjectListContainer();
             DBObjectType objectType = (DBObjectType) dynamicContentType;
             DynamicContent<?> dynamicContent = objectLists.getObjectList(objectType);
             if (dynamicContent == null) dynamicContent = objectLists.getInternalObjectList(objectType);

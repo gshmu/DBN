@@ -77,7 +77,7 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 import static com.dci.intellij.dbn.common.action.UserDataKeys.*;
-import static com.dci.intellij.dbn.common.message.MessageCallback.conditional;
+import static com.dci.intellij.dbn.common.message.MessageCallback.when;
 import static com.dci.intellij.dbn.common.util.MessageUtil.options;
 import static com.dci.intellij.dbn.common.util.MessageUtil.showWarningDialog;
 import static com.dci.intellij.dbn.connection.ConnectionSelectorOptions.Option.*;
@@ -483,8 +483,8 @@ public class FileConnectionMappingManager extends AbstractProjectComponent imple
                 showWarningDialog(project,
                         "No valid connection", message,
                         options("Select Connection", "Cancel"), 0,
-                        (option) -> conditional(option == 0,
-                                () -> promptConnectionSelector(file, dataContext, options, callback)));
+                        option -> when(option == 0, () ->
+                                promptConnectionSelector(file, dataContext, options, callback)));
 
             } else if (file.getSchemaId() == null) {
                 String message =

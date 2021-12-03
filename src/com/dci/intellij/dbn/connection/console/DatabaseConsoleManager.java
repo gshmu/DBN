@@ -4,7 +4,6 @@ import com.dci.intellij.dbn.DatabaseNavigator;
 import com.dci.intellij.dbn.common.AbstractProjectComponent;
 import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.common.event.ProjectEvents;
-import com.dci.intellij.dbn.common.file.util.VirtualFileUtil;
 import com.dci.intellij.dbn.common.thread.Dispatch;
 import com.dci.intellij.dbn.common.util.CommonUtil;
 import com.dci.intellij.dbn.common.util.MessageUtil;
@@ -18,6 +17,7 @@ import com.dci.intellij.dbn.connection.session.DatabaseSession;
 import com.dci.intellij.dbn.connection.session.DatabaseSessionBundle;
 import com.dci.intellij.dbn.connection.session.SessionManagerListener;
 import com.dci.intellij.dbn.object.DBConsole;
+import com.dci.intellij.dbn.object.common.DBObjectBundle;
 import com.dci.intellij.dbn.object.common.list.DBObjectList;
 import com.dci.intellij.dbn.object.type.DBObjectType;
 import com.dci.intellij.dbn.vfs.DBConsoleType;
@@ -38,7 +38,8 @@ import org.jetbrains.annotations.Nullable;
 import java.util.List;
 import java.util.Objects;
 
-import static com.dci.intellij.dbn.common.message.MessageCallback.conditional;
+import static com.dci.intellij.dbn.common.file.util.VirtualFileUtil.*;
+import static com.dci.intellij.dbn.common.message.MessageCallback.when;
 import static com.dci.intellij.dbn.common.options.setting.SettingsSupport.*;
 
 @State(
@@ -104,8 +105,8 @@ public class DatabaseConsoleManager extends AbstractProjectComponent implements 
             DatabaseConsoleBundle consoleBundle = connectionHandler.getConsoleBundle();
 
             DBConsoleVirtualFile virtualFile = console.getVirtualFile();
-            VFileEvent fileEvent = VirtualFileUtil.createFileRenameEvents(virtualFile, oldName, newName);
-            VirtualFileUtil.notifiedFileChange(fileEvent, () -> consoleBundle.renameConsole(oldName, newName));
+            VFileEvent renameEvent = createFileRenameEvent(virtualFile, oldName, newName);
+            notifiedFileChange(renameEvent, () -> consoleBundle.renameConsole(oldName, newName));
 
             reloadConsoles(connectionHandler);
         }
@@ -119,19 +120,26 @@ public class DatabaseConsoleManager extends AbstractProjectComponent implements 
                 "You will loose the information contained in this console.\n" +
                         "Are you sure you want to delete the console?",
                 MessageUtil.OPTIONS_YES_NO, 0,
-                (option) -> conditional(option == 0,
-                        () -> {
-                            DatabaseFileManager.getInstance(project).closeFile(console.getVirtualFile());
-                            ConnectionHandler connectionHandler = console.getConnectionHandler();
-                            String fileName = console.getName();
-                            connectionHandler.getConsoleBundle().removeConsole(fileName);
-                            reloadConsoles(connectionHandler);
-                        }));
+                option -> when(option == 0, () -> {
+                    ConnectionHandler connectionHandler = console.getConnectionHandler();
+                    DatabaseConsoleBundle consoleBundle = connectionHandler.getConsoleBundle();
+
+                    DBConsoleVirtualFile virtualFile = console.getVirtualFile();
+
+                    DatabaseFileManager fileManager = DatabaseFileManager.getInstance(project);
+                    fileManager.closeFile(virtualFile);
+
+                    VFileEvent deleteEvent = createFileDeleteEvent(virtualFile);
+                    notifiedFileChange(deleteEvent, () -> consoleBundle.removeConsole(console));
+
+                    reloadConsoles(connectionHandler);
+                }));
 
     }
 
     private void reloadConsoles(@NotNull ConnectionHandler connectionHandler) {
-        DBObjectList<?> objectList = connectionHandler.getObjectBundle().getObjectListContainer().getObjectList(DBObjectType.CONSOLE);
+        DBObjectBundle objectBundle = connectionHandler.getObjectBundle();
+        DBObjectList<?> objectList = objectBundle.getObjectList(DBObjectType.CONSOLE);
         Safe.run(objectList, target -> target.markDirty());
     }
 

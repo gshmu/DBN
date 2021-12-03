@@ -12,6 +12,7 @@ import com.intellij.openapi.vfs.VfsUtilCore;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.openapi.vfs.VirtualFileManager;
 import com.intellij.openapi.vfs.newvfs.BulkFileListener;
+import com.intellij.openapi.vfs.newvfs.events.VFileDeleteEvent;
 import com.intellij.openapi.vfs.newvfs.events.VFileEvent;
 import com.intellij.openapi.vfs.newvfs.events.VFilePropertyChangeEvent;
 import com.intellij.testFramework.LightVirtualFile;
@@ -100,11 +101,15 @@ public class VirtualFileUtil {
         return null;
     }
 
-    public static VFileEvent createFileRenameEvents(
+    public static VFileEvent createFileRenameEvent(
             @NotNull VirtualFile virtualFile,
             @NotNull String oldName,
             @NotNull String newName) {
         return new VFilePropertyChangeEvent(null, virtualFile, VirtualFile.PROP_NAME, oldName, newName, false);
+    }
+
+    public static VFileEvent createFileDeleteEvent(@NotNull VirtualFile virtualFile) {
+        return new VFileDeleteEvent(null, virtualFile, false);
     }
 
     public static void notifiedFileChange(VFileEvent event, Runnable changeAction) {

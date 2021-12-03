@@ -11,7 +11,7 @@ import com.intellij.openapi.project.Project;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import static com.dci.intellij.dbn.common.message.MessageCallback.conditional;
+import static com.dci.intellij.dbn.common.message.MessageCallback.when;
 
 public class DatabaseLogOutputKillAction extends AbstractDatabaseLoggingAction implements ComponentBase {
     public DatabaseLogOutputKillAction() {
@@ -27,8 +27,7 @@ public class DatabaseLogOutputKillAction extends AbstractDatabaseLoggingAction i
                     "Kill process",
                     "This will interrupt the script execution process. \nAre you sure you want to continue?",
                     MessageUtil.OPTIONS_YES_NO, 0,
-                    (option) -> conditional(option == 0,
-                            () -> context.stop()));
+                    option -> when(option == 0, () -> context.stop()));
 
         } else {
             context.stop();

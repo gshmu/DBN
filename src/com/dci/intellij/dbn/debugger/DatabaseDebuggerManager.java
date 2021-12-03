@@ -80,7 +80,7 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Set;
 
-import static com.dci.intellij.dbn.common.message.MessageCallback.conditional;
+import static com.dci.intellij.dbn.common.message.MessageCallback.when;
 import static com.dci.intellij.dbn.common.util.CommonUtil.list;
 
 @State(
@@ -332,8 +332,7 @@ public class DatabaseDebuggerManager extends AbstractProjectComponent implements
                                             applicationInfo.getFullVersion() + "\".\n" +
                                             "Do you want to use classic debugger over JDBC instead?",
                                     new String[]{"Use " + DBDebuggerType.JDBC.getName(), "Cancel"}, 0,
-                                    (option) -> conditional(option == 0,
-                                            () -> debuggerStarter.run(debuggerType)));
+                                    option -> when(option == 0, () -> debuggerStarter.run(debuggerType)));
                         }
                     }
                 });

@@ -5,7 +5,7 @@ import org.jetbrains.annotations.Nullable;
 
 public interface MessageCallback extends ParametricRunnable<Integer, RuntimeException> {
 
-    static void conditional(boolean condition, @Nullable Runnable runnable) {
+    static void when(boolean condition, @Nullable Runnable runnable) {
         if (condition && runnable != null) {
             runnable.run();
         }
