@@ -5,10 +5,10 @@ import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.common.message.Message;
 import com.dci.intellij.dbn.common.message.MessageBundle;
 import com.dci.intellij.dbn.common.message.MessageCallback;
+import com.dci.intellij.dbn.common.option.DoNotAskOption;
 import com.dci.intellij.dbn.common.thread.Dispatch;
 import com.intellij.openapi.progress.ProcessCanceledException;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.ui.DialogWrapper;
 import com.intellij.openapi.ui.Messages;
 import org.jetbrains.annotations.Nullable;
 
@@ -70,7 +70,7 @@ public class MessageUtil {
         showQuestionDialog(project, title, message, options, defaultOptionIndex, callback, null);
     }
 
-    public static void showQuestionDialog(@Nullable Project project, String title, String message, String[] options, int defaultOptionIndex, MessageCallback callback, @Nullable DialogWrapper.DoNotAskOption doNotAskOption) {
+    public static void showQuestionDialog(@Nullable Project project, String title, String message, String[] options, int defaultOptionIndex, MessageCallback callback, @Nullable DoNotAskOption doNotAskOption) {
         showDialog(project, message, title, options, defaultOptionIndex, Icons.DIALOG_QUESTION, callback, doNotAskOption);
     }
 
@@ -99,7 +99,7 @@ public class MessageUtil {
             int defaultOptionIndex,
             @Nullable Icon icon,
             @Nullable MessageCallback callback,
-            @Nullable DialogWrapper.DoNotAskOption doNotAskOption) {
+            @Nullable DoNotAskOption doNotAskOption) {
 
         Dispatch.run(() -> {
             int option = Messages.showDialog(project, message, Constants.DBN_TITLE_DIALOG_SUFFIX + title, options, defaultOptionIndex, icon, doNotAskOption);

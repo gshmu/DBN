@@ -8,7 +8,6 @@ import com.dci.intellij.dbn.common.options.setting.SettingsSupport;
 import com.dci.intellij.dbn.common.routine.ParametricRunnable;
 import com.dci.intellij.dbn.common.thread.Dispatch;
 import com.dci.intellij.dbn.common.util.CommonUtil;
-import com.intellij.openapi.ui.DialogWrapper;
 import com.intellij.openapi.ui.Messages;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
@@ -23,7 +22,7 @@ import java.util.List;
 @Getter
 @Setter
 @EqualsAndHashCode
-public class InteractiveOptionBroker<T extends InteractiveOption> implements DialogWrapper.DoNotAskOption, PersistentConfiguration{
+public class InteractiveOptionBroker<T extends InteractiveOption> implements DoNotAskOption, PersistentConfiguration{
     private final String configName;
     private final String title;
     private final String message;
