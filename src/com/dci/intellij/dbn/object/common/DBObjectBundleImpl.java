@@ -146,7 +146,7 @@ public class DBObjectBundleImpl extends BrowserTreeNodeBase implements DBObjectB
     private final PsiFile fakeObjectFile;
 
     public DBObjectBundleImpl(ConnectionHandler connectionHandler, BrowserTreeNode treeParent) {
-        this.connectionHandler = ConnectionHandlerRef.from(connectionHandler);
+        this.connectionHandler = ConnectionHandlerRef.of(connectionHandler);
         this.treeParent = treeParent;
         configSignature = connectionHandler.getSettings().getDatabaseSettings().getSignature();
 

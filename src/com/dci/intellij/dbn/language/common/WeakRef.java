@@ -3,6 +3,7 @@ package com.dci.intellij.dbn.language.common;
 
 import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.common.util.Safe;
+import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -13,12 +14,12 @@ public class WeakRef<T> extends WeakReference<T> {
         super(referent);
     }
 
-    @Nullable
+    @Contract("null -> null;!null -> !null;")
     public static <T> WeakRef<T> of(@Nullable T element) {
         return element == null ? null : new WeakRef<T>(element);
     }
 
-    @Nullable
+    @Contract("null -> null;!null -> !null;")
     public static <T> T get(@Nullable WeakRef<T> ref) {
         return ref == null ? null : ref.get();
     }

@@ -96,7 +96,7 @@ public class SQLConsoleOpenAction extends DumbAwareProjectAction {
 
         private SelectConnectionAction(ConnectionHandler connectionHandler) {
             super(connectionHandler.getName(), null, connectionHandler.getIcon());
-            this.connectionHandlerRef = ConnectionHandlerRef.from(connectionHandler);
+            this.connectionHandlerRef = ConnectionHandlerRef.of(connectionHandler);
             setPopup(true);
         }
 /*
@@ -133,7 +133,7 @@ public class SQLConsoleOpenAction extends DumbAwareProjectAction {
 
         SelectConsoleAction(ConnectionHandler connectionHandler, DBConsoleType consoleType) {
             super("New " + consoleType.getName() + "...");
-            this.connectionHandlerRef = ConnectionHandlerRef.from(connectionHandler);
+            this.connectionHandlerRef = ConnectionHandlerRef.of(connectionHandler);
             this.consoleType = consoleType;
         }
 

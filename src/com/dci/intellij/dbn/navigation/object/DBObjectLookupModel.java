@@ -43,7 +43,7 @@ public class DBObjectLookupModel extends StatefulDisposable.Base implements Choo
 
     public DBObjectLookupModel(@NotNull Project project, @Nullable ConnectionHandler selectedConnection, DBSchema selectedSchema) {
         this.project = ProjectRef.of(project);
-        this.selectedConnection = ConnectionHandlerRef.from(selectedConnection);
+        this.selectedConnection = ConnectionHandlerRef.of(selectedConnection);
         this.selectedSchema = DBObjectRef.of(selectedSchema);
         settings = ProjectSettingsManager.getSettings(project).getNavigationSettings().getObjectsLookupSettings();
     }

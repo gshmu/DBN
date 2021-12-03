@@ -73,7 +73,7 @@ public abstract class ExecutionInput extends StatefulDisposable.Base implements 
     }
 
     public final void setTargetConnection(@Nullable ConnectionHandler connectionHandler) {
-        this.targetConnectionRef = ConnectionHandlerRef.from(connectionHandler);
+        this.targetConnectionRef = ConnectionHandlerRef.of(connectionHandler);
     }
 
     @NotNull

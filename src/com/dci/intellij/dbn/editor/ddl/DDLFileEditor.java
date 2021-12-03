@@ -5,7 +5,7 @@ import com.dci.intellij.dbn.editor.EditorProviderId;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
 
-public class DDLFileEditor extends BasicTextEditorImpl {
+public class DDLFileEditor extends BasicTextEditorImpl<VirtualFile> {
     DDLFileEditor(Project project, VirtualFile virtualFile, EditorProviderId editorProviderId) {
         super(project, virtualFile, virtualFile.getName(), editorProviderId);
     }
