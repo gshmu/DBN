@@ -46,16 +46,15 @@ public class Failsafe {
     public static boolean check(Object object) {
         if (object == null) {
             return false;
+            
         } else if (object instanceof StatefulDisposable) {
             StatefulDisposable disposable = (StatefulDisposable) object;
-            if (disposable.isDisposed()) {
-                return false;
-            }
+            return !disposable.isDisposed();
+
         } else if (object instanceof Project) {
             Project project = (Project) object;
-            if (project.isDisposed()) {
-                return false;
-            }
+            return !project.isDisposed();
+
         }
         return true;
     }

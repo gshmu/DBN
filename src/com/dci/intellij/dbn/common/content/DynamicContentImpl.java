@@ -29,6 +29,7 @@ import java.util.Collections;
 import java.util.List;
 
 import static com.dci.intellij.dbn.common.content.DynamicContentStatus.*;
+import static com.dci.intellij.dbn.common.util.Unsafe.cast;
 
 @Slf4j
 public abstract class DynamicContentImpl<T extends DynamicContentElement>
@@ -36,16 +37,16 @@ public abstract class DynamicContentImpl<T extends DynamicContentElement>
         implements DynamicContent<T>,
                    NotificationSupport {
 
-    protected static final List EMPTY_CONTENT = Collections.unmodifiableList(Collections.emptyList());
-    protected static final List EMPTY_DISPOSED_CONTENT = Collections.unmodifiableList(Collections.emptyList());
-    protected static final List EMPTY_UNTOUCHED_CONTENT = Collections.unmodifiableList(Collections.emptyList());
+    protected static final List<?> EMPTY_CONTENT = Collections.unmodifiableList(Collections.emptyList());
+    protected static final List<?> EMPTY_DISPOSED_CONTENT = Collections.unmodifiableList(Collections.emptyList());
+    protected static final List<?> EMPTY_UNTOUCHED_CONTENT = Collections.unmodifiableList(Collections.emptyList());
 
     private short changeSignature = 0;
 
     private GenericDatabaseElement parent;
     private ContentDependencyAdapter dependencyAdapter;
 
-    protected List<T> elements = EMPTY_UNTOUCHED_CONTENT;
+    protected List<T> elements = cast(EMPTY_UNTOUCHED_CONTENT);
 
     protected DynamicContentImpl(
             @NotNull GenericDatabaseElement parent,
@@ -289,7 +290,7 @@ public abstract class DynamicContentImpl<T extends DynamicContentElement>
 
         } catch (SQLFeatureNotSupportedException e) {
             // unsupported feature: log in notification area
-            elements = EMPTY_CONTENT;
+            elements = cast(EMPTY_CONTENT);
             set(LOADED, true);
             set(ERROR, true);
             sendWarningNotification(
@@ -299,13 +300,13 @@ public abstract class DynamicContentImpl<T extends DynamicContentElement>
 
         } catch (SQLException e) {
             // connectivity / timeout exceptions: mark content dirty (no logging)
-            elements = EMPTY_CONTENT;
+            elements = cast(EMPTY_CONTENT);
             set(DIRTY, true);
 
         } catch (Throwable e) {
             // any other exception: log error
             log.error("Failed to load content", e);
-            elements = EMPTY_CONTENT;
+            elements = cast(EMPTY_CONTENT);
             set(DIRTY, true);
         }
 
@@ -332,11 +333,11 @@ public abstract class DynamicContentImpl<T extends DynamicContentElement>
     private void replaceElements(List<T> elements) {
         List<T> oldElements = this.elements;
         if (isDisposed() || elements == null || elements.size() == 0) {
-            elements = EMPTY_CONTENT;
+            elements = cast(EMPTY_CONTENT);
         } else {
             sortElements(elements);
         }
-        this.elements = FilteredList.stateless(getFilter(), elements);
+        this.elements = FilteredList.stateful(getFilter(), elements);
         compact();
         if (oldElements.size() != 0 || elements.size() != 0 ){
             notifyChangeListeners();
@@ -407,7 +408,7 @@ public abstract class DynamicContentImpl<T extends DynamicContentElement>
     @Override
     @Nullable
     public List<T> getElements(String name) {
-        return CollectionUtil.filter(getAllElements(), false, false, (element) -> StringUtil.equalsIgnoreCase(element.getName(), name));
+        return CollectionUtil.filter(getAllElements(), false, false, element -> StringUtil.equalsIgnoreCase(element.getName(), name));
     }
 
     @Override
@@ -426,7 +427,7 @@ public abstract class DynamicContentImpl<T extends DynamicContentElement>
             if (!dependencyAdapter.isSubContent()) {
                 SafeDisposer.dispose(elements, false, false);
             }
-            elements = EMPTY_DISPOSED_CONTENT;
+            elements = cast(EMPTY_DISPOSED_CONTENT);
         }
         dependencyAdapter.dispose();
         dependencyAdapter = VoidContentDependencyAdapter.INSTANCE;

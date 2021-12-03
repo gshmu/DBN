@@ -76,4 +76,9 @@ public abstract class NameFilterCondition implements PersistentStateElement {
         setEnumAttribute(element, "operator", operator);
         element.setAttribute("pattern", pattern);
     }
+
+    @Override
+    public String toString() {
+        return "NAME " + operator + "'" + pattern + "'";
+    }
 }

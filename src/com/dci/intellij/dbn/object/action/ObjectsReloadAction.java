@@ -9,9 +9,9 @@ import org.jetbrains.annotations.NotNull;
 
 public class ObjectsReloadAction extends DumbAwareAction {
 
-    private DBObjectList objectList;
+    private final DBObjectList<?> objectList;
 
-    ObjectsReloadAction(DBObjectList objectList) {
+    ObjectsReloadAction(DBObjectList<?> objectList) {
         super((objectList.isLoaded() ? "Reload " : "Load ") + objectList.getName());
         this.objectList = objectList;
     }
@@ -22,8 +22,8 @@ public class ObjectsReloadAction extends DumbAwareAction {
         boolean loaded = objectList.isLoaded();
 
         ConnectionAction.invoke(loaded ? "reloading the " + listName : "loading the " + listName, true, objectList,
-                (action) -> Progress.prompt(objectList.getProject(), "Reloading " + objectList.getObjectType().getListName(), true,
-                        (progress) -> {
+                action -> Progress.background(objectList.getProject(), "Reloading " + objectList.getObjectType().getListName(), true,
+                        progress -> {
                             objectList.getConnectionHandler().getMetaDataCache().reset();
                             objectList.reload();
                         }));

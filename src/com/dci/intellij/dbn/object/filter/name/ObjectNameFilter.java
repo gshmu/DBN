@@ -14,9 +14,7 @@ import static com.dci.intellij.dbn.common.options.setting.SettingsSupport.string
 @EqualsAndHashCode(callSuper = true)
 public class ObjectNameFilter extends CompoundFilterCondition {
     private DBObjectType objectType;
-
-    @EqualsAndHashCode.Exclude
-    private final ObjectNameFilterSettings settings;
+    private final transient ObjectNameFilterSettings settings;
 
     public ObjectNameFilter(ObjectNameFilterSettings settings) {
         this.settings = settings;
