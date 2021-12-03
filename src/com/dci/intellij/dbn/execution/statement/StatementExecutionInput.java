@@ -75,7 +75,7 @@ public class StatementExecutionInput extends LocalExecutionInput {
         SchemaId currentSchema = executionProcessor.getTargetSchema();
         DatabaseSession targetSession = executionProcessor.getTargetSession();
 
-        this.targetConnectionRef = ConnectionHandlerRef.from(connectionHandler);
+        this.targetConnectionRef = ConnectionHandlerRef.of(connectionHandler);
         this.targetSchemaId = currentSchema;
         this.setTargetSession(targetSession);
         this.originalStatementText = originalStatementText;
@@ -187,7 +187,7 @@ public class StatementExecutionInput extends LocalExecutionInput {
     }
 
     public void setConnectionHandler(ConnectionHandler connectionHandler) {
-        this.targetConnectionRef = ConnectionHandlerRef.from(connectionHandler);
+        this.targetConnectionRef = ConnectionHandlerRef.of(connectionHandler);
         if (DatabaseFeature.DATABASE_LOGGING.isSupported(connectionHandler)) {
             getOptions().set(ExecutionOption.ENABLE_LOGGING, connectionHandler.isLoggingEnabled());
         }

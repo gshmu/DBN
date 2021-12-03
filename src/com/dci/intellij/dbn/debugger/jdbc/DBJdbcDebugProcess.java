@@ -79,7 +79,7 @@ public abstract class DBJdbcDebugProcess<T extends ExecutionInput> extends XDebu
     public DBJdbcDebugProcess(@NotNull XDebugSession session, ConnectionHandler connectionHandler) {
         super(session);
         console = new DBDebugConsoleLogger(session);
-        this.connectionHandlerRef = ConnectionHandlerRef.from(connectionHandler);
+        this.connectionHandlerRef = ConnectionHandlerRef.of(connectionHandler);
         Project project = session.getProject();
         DatabaseDebuggerManager.getInstance(project).registerDebugSession(connectionHandler);
 

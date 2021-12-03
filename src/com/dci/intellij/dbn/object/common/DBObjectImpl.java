@@ -102,18 +102,18 @@ public abstract class DBObjectImpl<M extends DBObjectMetadata> extends BrowserTr
     };
 
     protected DBObjectImpl(@NotNull DBObject parentObject, M metadata) throws SQLException {
-        this.connectionHandler = ConnectionHandlerRef.from(parentObject.getConnectionHandler());
+        this.connectionHandler = ConnectionHandlerRef.of(parentObject.getConnectionHandler());
         this.parentObjectRef = DBObjectRef.of(parentObject);
         init(metadata);
     }
 
     protected DBObjectImpl(@NotNull ConnectionHandler connectionHandler, M metadata) throws SQLException {
-        this.connectionHandler = ConnectionHandlerRef.from(connectionHandler);
+        this.connectionHandler = ConnectionHandlerRef.of(connectionHandler);
         init(metadata);
     }
 
     protected DBObjectImpl(@Nullable ConnectionHandler connectionHandler, DBObjectType objectType, String name) {
-        this.connectionHandler = ConnectionHandlerRef.from(connectionHandler);
+        this.connectionHandler = ConnectionHandlerRef.of(connectionHandler);
         objectRef = new DBObjectRef<>(this, objectType, name);
     }
 

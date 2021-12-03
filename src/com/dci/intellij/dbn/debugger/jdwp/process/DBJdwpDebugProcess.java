@@ -84,7 +84,7 @@ public abstract class DBJdwpDebugProcess<T extends ExecutionInput>
     protected DBJdwpDebugProcess(@NotNull final XDebugSession session, DebuggerSession debuggerSession, ConnectionHandler connectionHandler, int tcpPort) {
         super(session, debuggerSession);
         console = new DBDebugConsoleLogger(session);
-        this.connectionHandlerRef = ConnectionHandlerRef.from(connectionHandler);
+        this.connectionHandlerRef = ConnectionHandlerRef.of(connectionHandler);
         Project project = session.getProject();
         DatabaseDebuggerManager debuggerManager = DatabaseDebuggerManager.getInstance(project);
         debuggerManager.registerDebugSession(connectionHandler);

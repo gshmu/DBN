@@ -9,19 +9,19 @@ import com.intellij.openapi.project.Project;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import javax.swing.*;
+import javax.swing.Action;
 
 public class ConnectionAuthenticationDialog extends DBNDialog<ConnectionAuthenticationForm> {
     private boolean rememberCredentials;
-    private WeakRef<AuthenticationInfo> authenticationInfo; // TODO dialog result - Disposable.nullify(...)
-    private ConnectionHandlerRef connectionHandlerRef;
+    private final WeakRef<AuthenticationInfo> authenticationInfo; // TODO dialog result - Disposable.nullify(...)
+    private final ConnectionHandlerRef connectionHandler;
 
     public ConnectionAuthenticationDialog(Project project, @Nullable ConnectionHandler connectionHandler, @NotNull AuthenticationInfo authenticationInfo) {
         super(project, "Enter password", true);
         this.authenticationInfo = WeakRef.of(authenticationInfo);
         setModal(true);
         setResizable(false);
-        connectionHandlerRef = ConnectionHandlerRef.from(connectionHandler);
+        this.connectionHandler = ConnectionHandlerRef.of(connectionHandler);
         Action okAction = getOKAction();
         okAction.putValue(Action.NAME, "Connect");
         okAction.setEnabled(false);
@@ -62,7 +62,7 @@ public class ConnectionAuthenticationDialog extends DBNDialog<ConnectionAuthenti
     @NotNull
     @Override
     protected ConnectionAuthenticationForm createForm() {
-        ConnectionHandler connectionHandler = ConnectionHandlerRef.get(connectionHandlerRef);
+        ConnectionHandler connectionHandler = ConnectionHandlerRef.get(this.connectionHandler);
         return new ConnectionAuthenticationForm(this, connectionHandler);
     }
 

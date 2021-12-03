@@ -8,7 +8,7 @@ public abstract class DBDebugProcessStarter extends XDebugProcessStarter {
     private ConnectionHandlerRef connectionHandlerRef;
 
     public DBDebugProcessStarter(ConnectionHandler connectionHandler) {
-        connectionHandlerRef = ConnectionHandlerRef.from(connectionHandler);
+        connectionHandlerRef = ConnectionHandlerRef.of(connectionHandler);
     }
 
     public ConnectionHandler getConnectionHandler() {
