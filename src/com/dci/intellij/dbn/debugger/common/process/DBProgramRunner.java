@@ -12,7 +12,11 @@ import com.dci.intellij.dbn.debugger.common.config.DBRunConfig;
 import com.dci.intellij.dbn.debugger.common.config.ui.CompileDebugDependenciesDialog;
 import com.dci.intellij.dbn.editor.DBContentType;
 import com.dci.intellij.dbn.execution.ExecutionInput;
-import com.dci.intellij.dbn.execution.compiler.*;
+import com.dci.intellij.dbn.execution.compiler.CompileManagerListener;
+import com.dci.intellij.dbn.execution.compiler.CompileType;
+import com.dci.intellij.dbn.execution.compiler.CompilerAction;
+import com.dci.intellij.dbn.execution.compiler.CompilerActionSource;
+import com.dci.intellij.dbn.execution.compiler.DatabaseCompilerManager;
 import com.dci.intellij.dbn.object.DBMethod;
 import com.dci.intellij.dbn.object.common.DBSchemaObject;
 import com.dci.intellij.dbn.object.lookup.DBObjectRef;
@@ -38,7 +42,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 
-import static com.dci.intellij.dbn.common.message.MessageCallback.conditional;
+import static com.dci.intellij.dbn.common.message.MessageCallback.when;
 import static com.dci.intellij.dbn.common.util.MessageUtil.options;
 import static com.dci.intellij.dbn.common.util.MessageUtil.showWarningDialog;
 
@@ -107,14 +111,14 @@ public abstract class DBProgramRunner<T extends ExecutionInput> extends GenericP
                 showWarningDialog(
                         project, "Insufficient privileges", buffer.toString(),
                         options("Continue anyway", "Cancel"), 0,
-                        (option) -> conditional(option == 0,
-                                () -> performInitialize(
+                        option -> when(option == 0, () ->
+                                performInitialization(
                                         connectionHandler,
                                         executionInput,
                                         environment,
                                         callback)));
             } else {
-                performInitialize(
+                performInitialization(
                         connectionHandler,
                         executionInput,
                         environment,
@@ -123,7 +127,7 @@ public abstract class DBProgramRunner<T extends ExecutionInput> extends GenericP
         }
     }
 
-    private void performInitialize(
+    private void performInitialization(
             @NotNull ConnectionHandler connectionHandler,
             @NotNull T executionInput,
             @NotNull ExecutionEnvironment environment,

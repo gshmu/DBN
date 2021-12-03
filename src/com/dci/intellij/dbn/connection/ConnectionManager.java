@@ -58,7 +58,7 @@ import java.util.TimerTask;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
-import static com.dci.intellij.dbn.common.message.MessageCallback.conditional;
+import static com.dci.intellij.dbn.common.message.MessageCallback.when;
 import static com.dci.intellij.dbn.common.util.CollectionUtil.isLast;
 import static com.dci.intellij.dbn.common.util.CommonUtil.list;
 import static com.dci.intellij.dbn.common.util.MessageUtil.*;
@@ -202,11 +202,11 @@ public class ConnectionManager extends AbstractProjectComponent implements Persi
                                 showMessageDialog));
             } else {
                 promptDatabaseInitDialog(databaseSettings,
-                        (option) -> conditional(option == 0,
-                                () -> ensureAuthenticationProvided(databaseSettings,
-                                        (authenticationInfo) -> attemptConfigConnection(
+                        option -> when(option == 0, () ->
+                                ensureAuthenticationProvided(databaseSettings,
+                                        authInfo -> attemptConfigConnection(
                                                 connectionSettings,
-                                                authenticationInfo,
+                                                authInfo,
                                                 showMessageDialog))));
             }
 

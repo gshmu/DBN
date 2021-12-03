@@ -34,7 +34,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
 
-import static com.dci.intellij.dbn.common.message.MessageCallback.conditional;
+import static com.dci.intellij.dbn.common.message.MessageCallback.when;
 import static com.dci.intellij.dbn.common.util.CollectionUtil.isLast;
 import static com.dci.intellij.dbn.common.util.CommonUtil.list;
 import static com.dci.intellij.dbn.connection.transaction.TransactionAction.*;
@@ -55,9 +55,8 @@ public class DatabaseTransactionManager extends AbstractProjectComponent impleme
                 "Rollback Session",
                 "Are you sure you want to rollback the session \"" + session.getName() + "\" for connection\"" + connectionHandler.getName() + "\"" ,
                 MessageUtil.OPTIONS_YES_NO, 0,
-                (option) -> conditional(option == 0,
-                        () -> execute(
-                                connectionHandler,
+                option -> when(option == 0, () ->
+                        execute(connectionHandler,
                                 connection,
                                 actions(ROLLBACK),
                                 false,
@@ -70,9 +69,8 @@ public class DatabaseTransactionManager extends AbstractProjectComponent impleme
                 "Commit Session",
                 "Are you sure you want to commit the session \"" + session.getName() + "\" for connection\"" + connectionHandler.getName() + "\"" ,
                 MessageUtil.OPTIONS_YES_NO, 0,
-                (option) -> conditional(option == 0,
-                        () -> execute(
-                                connectionHandler,
+                option -> when(option == 0, () ->
+                        execute(connectionHandler,
                                 connection,
                                 actions(COMMIT),
                                 false,

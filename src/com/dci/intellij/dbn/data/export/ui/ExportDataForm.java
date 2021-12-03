@@ -34,7 +34,7 @@ import java.awt.event.ActionListener;
 import java.io.File;
 import java.nio.charset.Charset;
 
-import static com.dci.intellij.dbn.common.message.MessageCallback.conditional;
+import static com.dci.intellij.dbn.common.message.MessageCallback.when;
 import static com.dci.intellij.dbn.common.ui.ComboBoxUtil.*;
 import static com.dci.intellij.dbn.common.ui.GUIUtil.updateBorderTitleForeground;
 import static com.dci.intellij.dbn.data.export.processor.DataExportFeature.*;
@@ -246,7 +246,7 @@ public class ExportDataForm extends DBNFormImpl {
                 MessageUtil.showQuestionDialog(project, "File exists",
                         "File " + file.getPath() + " already exists. Overwrite?",
                         MessageUtil.OPTIONS_YES_NO, 0,
-                        (option) -> conditional(option == 0, callback));
+                        option -> when(option == 0, callback));
 
                 return;
             }

@@ -12,7 +12,7 @@ import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
 public final class DBFileOpenHandle<T extends DBObject> {
-    private static final Set<DBObjectRef> REGISTRY = ConcurrentHashMap.newKeySet();
+    private static final Set<DBObjectRef<?>> REGISTRY = ConcurrentHashMap.newKeySet();
 
     private final DBObjectRef<T> object;
     private EditorProviderId editorProviderId;
@@ -23,21 +23,21 @@ public final class DBFileOpenHandle<T extends DBObject> {
         this.object = DBObjectRef.of(object);
     }
 
-    public static <T extends DBObject> DBFileOpenHandle create(@NotNull T object) {
+    public static <T extends DBObject> DBFileOpenHandle<?> create(@NotNull T object) {
         return new DBFileOpenHandle<>(object);
     }
 
-    public DBFileOpenHandle withBrowserInstructions(@NotNull NavigationInstructions browserInstructions) {
+    public DBFileOpenHandle<?> withBrowserInstructions(@NotNull NavigationInstructions browserInstructions) {
         this.browserInstructions = browserInstructions;
         return this;
     }
 
-    public DBFileOpenHandle withEditorInstructions(@NotNull NavigationInstructions editorInstructions) {
+    public DBFileOpenHandle<?> withEditorInstructions(@NotNull NavigationInstructions editorInstructions) {
         this.editorInstructions = editorInstructions;
         return this;
     }
 
-    public DBFileOpenHandle withEditorProviderId(EditorProviderId editorProviderId) {
+    public DBFileOpenHandle<?> withEditorProviderId(EditorProviderId editorProviderId) {
         this.editorProviderId = editorProviderId;
         return this;
     }

@@ -11,6 +11,8 @@ import com.intellij.openapi.project.Project;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import static com.dci.intellij.dbn.common.message.MessageCallback.when;
+
 public class ParserDiagnosticsDeleteAction extends AbstractParserDiagnosticsAction {
     public ParserDiagnosticsDeleteAction() {
         super("Delete Result", Icons.ACTION_DELETE);
@@ -24,15 +26,13 @@ public class ParserDiagnosticsDeleteAction extends AbstractParserDiagnosticsActi
                     "Delete diagnostics result",
                     "Are you sure you want to delete the diagnostic result " + result.getName(),
                     MessageUtil.OPTIONS_YES_NO, 0,
-                    option -> {
-                        if (option == 0) {
-                            ParserDiagnosticsManager manager = getManager(project);
-                            manager.deleteResult(result);
-                            ParserDiagnosticsResult latestResult = manager.getLatestResult();
-                            form.refreshResults();
-                            form.selectResult(latestResult);
-                        }
-                    });
+                    option -> when(option == 0, () -> {
+                        ParserDiagnosticsManager manager = getManager(project);
+                        manager.deleteResult(result);
+                        ParserDiagnosticsResult latestResult = manager.getLatestResult();
+                        form.refreshResults();
+                        form.selectResult(latestResult);
+                    }));
         }
 
 
