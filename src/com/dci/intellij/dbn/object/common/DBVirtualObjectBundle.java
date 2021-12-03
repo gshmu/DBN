@@ -20,6 +20,7 @@ import com.dci.intellij.dbn.object.DBRole;
 import com.dci.intellij.dbn.object.DBSchema;
 import com.dci.intellij.dbn.object.DBSystemPrivilege;
 import com.dci.intellij.dbn.object.DBUser;
+import com.dci.intellij.dbn.object.common.list.DBObjectList;
 import com.dci.intellij.dbn.object.common.list.DBObjectListContainer;
 import com.dci.intellij.dbn.object.lookup.DBObjectRef;
 import com.dci.intellij.dbn.object.type.DBObjectType;
@@ -181,6 +182,11 @@ public class DBVirtualObjectBundle extends BrowserTreeNodeBase implements DBObje
 
     @Override
     public DBObjectListContainer getObjectListContainer() {
+        return null;
+    }
+
+    @Override
+    public <T extends DBObject> DBObjectList<T> getObjectList(DBObjectType objectType) {
         return null;
     }
 

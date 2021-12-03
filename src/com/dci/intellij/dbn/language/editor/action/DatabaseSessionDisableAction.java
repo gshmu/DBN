@@ -11,7 +11,7 @@ import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.project.Project;
 import org.jetbrains.annotations.NotNull;
 
-import static com.dci.intellij.dbn.common.message.MessageCallback.conditional;
+import static com.dci.intellij.dbn.common.message.MessageCallback.when;
 
 public class DatabaseSessionDisableAction extends DumbAwareProjectAction {
     private ConnectionHandlerRef connectionHandlerRef;
@@ -32,11 +32,10 @@ public class DatabaseSessionDisableAction extends DumbAwareProjectAction {
                     "Are you sure you want to disable the session support for connection \"" + connectionHandler.getName() + "\"\n(you can re-enable at any time in connection details settings)",
                     MessageUtil.OPTIONS_YES_NO,
                     0,
-                    (option) -> conditional(option == 0,
-                            () -> {
-                                ConnectionDetailSettings detailSettings = connectionHandler.getSettings().getDetailSettings();
-                                detailSettings.setEnableSessionManagement(false);
-                            }));
+                    option -> when(option == 0, () -> {
+                        ConnectionDetailSettings detailSettings = connectionHandler.getSettings().getDetailSettings();
+                        detailSettings.setEnableSessionManagement(false);
+                    }));
         }
     }
 }

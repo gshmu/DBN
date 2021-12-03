@@ -13,7 +13,12 @@ import com.dci.intellij.dbn.common.thread.Read;
 import com.dci.intellij.dbn.common.util.EditorUtil;
 import com.dci.intellij.dbn.common.util.MessageUtil;
 import com.dci.intellij.dbn.common.util.Safe;
-import com.dci.intellij.dbn.connection.*;
+import com.dci.intellij.dbn.connection.ConnectionAction;
+import com.dci.intellij.dbn.connection.ConnectionCache;
+import com.dci.intellij.dbn.connection.ConnectionHandler;
+import com.dci.intellij.dbn.connection.ConnectionId;
+import com.dci.intellij.dbn.connection.ConnectionManager;
+import com.dci.intellij.dbn.connection.GenericDatabaseElement;
 import com.dci.intellij.dbn.connection.config.ConnectionDetailSettings;
 import com.dci.intellij.dbn.database.DatabaseFeature;
 import com.dci.intellij.dbn.ddl.DDLFileAttachmentManager;
@@ -33,7 +38,17 @@ import com.dci.intellij.dbn.object.common.DBSchemaObject;
 import com.dci.intellij.dbn.object.common.list.DBObjectList;
 import com.dci.intellij.dbn.object.common.property.DBObjectProperty;
 import com.dci.intellij.dbn.object.lookup.DBObjectRef;
-import com.dci.intellij.dbn.vfs.file.*;
+import com.dci.intellij.dbn.vfs.file.DBConnectionVirtualFile;
+import com.dci.intellij.dbn.vfs.file.DBConsoleVirtualFile;
+import com.dci.intellij.dbn.vfs.file.DBContentVirtualFile;
+import com.dci.intellij.dbn.vfs.file.DBDatasetFilterVirtualFile;
+import com.dci.intellij.dbn.vfs.file.DBEditableObjectVirtualFile;
+import com.dci.intellij.dbn.vfs.file.DBFileOpenHandle;
+import com.dci.intellij.dbn.vfs.file.DBLooseContentVirtualFile;
+import com.dci.intellij.dbn.vfs.file.DBObjectListVirtualFile;
+import com.dci.intellij.dbn.vfs.file.DBObjectVirtualFile;
+import com.dci.intellij.dbn.vfs.file.DBSessionBrowserVirtualFile;
+import com.dci.intellij.dbn.vfs.file.DBSessionStatementVirtualFile;
 import com.intellij.openapi.components.NamedComponent;
 import com.intellij.openapi.fileEditor.FileEditor;
 import com.intellij.openapi.fileEditor.FileEditorManager;
@@ -56,7 +71,7 @@ import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 
-import static com.dci.intellij.dbn.common.message.MessageCallback.conditional;
+import static com.dci.intellij.dbn.common.message.MessageCallback.when;
 import static com.dci.intellij.dbn.common.navigation.NavigationInstruction.*;
 import static com.dci.intellij.dbn.vfs.DatabaseFileSystem.FilePathType.*;
 
@@ -98,7 +113,7 @@ public class DatabaseFileSystem extends VirtualFileSystem implements /*NonPhysic
 
     static final IOException READONLY_FILE_SYSTEM = new IOException("Operation not supported");
 
-    private final Map<DBObjectRef, DBEditableObjectVirtualFile> filesCache = new ConcurrentHashMap<>();
+    private final Map<DBObjectRef<?>, DBEditableObjectVirtualFile> filesCache = new ConcurrentHashMap<>();
 
     public DatabaseFileSystem() {
         ProjectUtil.projectClosed(project -> clearCachedFiles(project));
@@ -240,17 +255,17 @@ public class DatabaseFileSystem extends VirtualFileSystem implements /*NonPhysic
 
     @Nullable
     public DBEditableObjectVirtualFile findDatabaseFile(DBSchemaObject object) {
-        DBObjectRef objectRef = object.getRef();
+        DBObjectRef<?> objectRef = object.getRef();
         return filesCache.get(objectRef);
     }
 
     @NotNull
-    public DBEditableObjectVirtualFile findOrCreateDatabaseFile(@NotNull Project project, @NotNull DBObjectRef objectRef) {
+    public DBEditableObjectVirtualFile findOrCreateDatabaseFile(@NotNull Project project, @NotNull DBObjectRef<?> objectRef) {
         DBEditableObjectVirtualFile databaseFile = filesCache.get(objectRef);
         if (!Failsafe.check(databaseFile)){
             databaseFile = filesCache.get(objectRef);
             if (!Failsafe.check(databaseFile)){
-                databaseFile = Read.call(() -> new DBEditableObjectVirtualFile(project, objectRef));
+                databaseFile = Read.conditional(() -> new DBEditableObjectVirtualFile(project, objectRef));
                 filesCache.put(objectRef, databaseFile);
             }
         }
@@ -282,28 +297,28 @@ public class DatabaseFileSystem extends VirtualFileSystem implements /*NonPhysic
             }
 
             if (virtualFile instanceof DBObjectVirtualFile) {
-                DBObjectVirtualFile file = (DBObjectVirtualFile) virtualFile;
-                DBObjectRef objectRef = file.getObjectRef();
+                DBObjectVirtualFile<?> file = (DBObjectVirtualFile<?>) virtualFile;
+                DBObjectRef<?> objectRef = file.getObjectRef();
                 return objectRef.getConnectionId() + PS + OBJECTS + objectRef.serialize();
 
             }
 
             if (virtualFile instanceof DBContentVirtualFile) {
                 DBContentVirtualFile file = (DBContentVirtualFile) virtualFile;
-                DBObjectRef objectRef = file.getObject().getRef();
+                DBObjectRef<?> objectRef = file.getObject().getRef();
                 DBContentType contentType = file.getContentType();
                 return objectRef.getConnectionId() + PS + OBJECT_CONTENTS + contentType.name() + PS + objectRef.serialize();
             }
 
             if (virtualFile instanceof DBObjectListVirtualFile) {
-                DBObjectListVirtualFile file = (DBObjectListVirtualFile) virtualFile;
-                DBObjectList objectList = file.getObjectList();
+                DBObjectListVirtualFile<?> file = (DBObjectListVirtualFile<?>) virtualFile;
+                DBObjectList<?> objectList = file.getObjectList();
                 GenericDatabaseElement parentElement = objectList.getParentElement();
                 String listName = objectList.getObjectType().getListName();
                 String connectionPath = connectionId.id();
                 if (parentElement instanceof DBObject) {
                     DBObject object = (DBObject) parentElement;
-                    DBObjectRef objectRef = object.getRef();
+                    DBObjectRef<?> objectRef = object.getRef();
                     return connectionPath + PS + objectRef.serialize() + PS + listName;
                 } else {
                     return connectionPath + PS + listName; }
@@ -332,7 +347,7 @@ public class DatabaseFileSystem extends VirtualFileSystem implements /*NonPhysic
 
             throw new IllegalArgumentException("File of type " + virtualFile.getClass() + " is not supported");
         } catch (ProcessCanceledException e) {
-            return "DISPOSED\""+ UUID.randomUUID().toString();
+            return "DISPOSED/"+ UUID.randomUUID();
         }
     }
 
@@ -366,12 +381,8 @@ public class DatabaseFileSystem extends VirtualFileSystem implements /*NonPhysic
 
     }
 
-    public void forceRefreshFiles(boolean b, @NotNull VirtualFile... virtualFiles) {
-
-    }
-
     @Override
-    protected void deleteFile(Object o, @NotNull VirtualFile virtualFile) throws IOException {}
+    protected void deleteFile(Object o, @NotNull VirtualFile virtualFile) {}
 
     @Override
     protected void moveFile(Object o, @NotNull VirtualFile virtualFile, @NotNull VirtualFile virtualFile1) throws IOException {
@@ -434,7 +445,7 @@ public class DatabaseFileSystem extends VirtualFileSystem implements /*NonPhysic
 
     public void openEditor(@NotNull DBObject object, @Nullable EditorProviderId editorProviderId, boolean scrollBrowser, boolean focusEditor) {
         if (isEditable(object) && !DBFileOpenHandle.isFileOpening(object)) {
-            DBFileOpenHandle handle = DBFileOpenHandle.create(object).
+            DBFileOpenHandle<?> handle = DBFileOpenHandle.create(object).
                     withEditorProviderId(editorProviderId).
                     withEditorInstructions(NavigationInstructions.create().with(OPEN).with(SCROLL).with(FOCUS, focusEditor)).
                     withBrowserInstructions(NavigationInstructions.create().with(SCROLL, scrollBrowser));
@@ -482,7 +493,7 @@ public class DatabaseFileSystem extends VirtualFileSystem implements /*NonPhysic
 
         EditorProviderId editorProviderId = handle.getEditorProviderId();
 
-        DBObjectRef objectRef = object.getRef();
+        DBObjectRef<?> objectRef = object.getRef();
         Project project = object.getProject();
 
         DBEditableObjectVirtualFile databaseFile = findOrCreateDatabaseFile(project, objectRef);
@@ -505,7 +516,7 @@ public class DatabaseFileSystem extends VirtualFileSystem implements /*NonPhysic
         });
     }
 
-    private void openChildObject(DBFileOpenHandle handle) {
+    private void openChildObject(DBFileOpenHandle<?> handle) {
         DBObject object = handle.getObject();
         EditorProviderId editorProviderId = handle.getEditorProviderId();
 
@@ -540,7 +551,7 @@ public class DatabaseFileSystem extends VirtualFileSystem implements /*NonPhysic
         });
     }
 
-    private static void invokeFileOpen(DBFileOpenHandle handle, Runnable opener) {
+    private static void invokeFileOpen(DBFileOpenHandle<?> handle, Runnable opener) {
         if (ProgressMonitor.isCancelled()) {
             handle.release();
         } else {
@@ -582,7 +593,7 @@ public class DatabaseFileSystem extends VirtualFileSystem implements /*NonPhysic
                 List<VirtualFile> attachedDDLFiles = databaseFile.getAttachedDDLFiles();
                 if (attachedDDLFiles == null || attachedDDLFiles.isEmpty()) {
                     DDLFileAttachmentManager fileAttachmentManager = DDLFileAttachmentManager.getInstance(project);
-                    DBObjectRef<DBSchemaObject> objectRef = object.getRef();
+                    DBObjectRef<DBSchemaObject> objectRef = DBObjectRef.of(object);
                     List<VirtualFile> virtualFiles = fileAttachmentManager.lookupDetachedDDLFiles(objectRef);
                     if (virtualFiles.size() > 0) {
                         int exitCode = fileAttachmentManager.showFileAttachDialog(object, virtualFiles, true);
@@ -592,7 +603,7 @@ public class DatabaseFileSystem extends VirtualFileSystem implements /*NonPhysic
                                 project, "No DDL file found",
                                 "Could not find any DDL file for " + object.getQualifiedNameWithType() + ". Do you want to create one? \n" +
                                         "(You can disable this check in \"DDL File\" options)", MessageUtil.OPTIONS_YES_NO, 0,
-                                (option) -> conditional(option == 0, () -> fileAttachmentManager.createDDLFile(objectRef)));
+                                option -> when(option == 0, () -> fileAttachmentManager.createDDLFile(objectRef)));
 
                     }
                 }
@@ -621,9 +632,9 @@ public class DatabaseFileSystem extends VirtualFileSystem implements /*NonPhysic
     }
 
     void clearCachedFiles(Project project) {
-        Iterator<DBObjectRef> objectRefs = filesCache.keySet().iterator();
+        Iterator<DBObjectRef<?>> objectRefs = filesCache.keySet().iterator();
         while (objectRefs.hasNext()) {
-            DBObjectRef objectRef = objectRefs.next();
+            DBObjectRef<?> objectRef = objectRefs.next();
             DBEditableObjectVirtualFile file = filesCache.get(objectRef);
             if (file.getProject() == project) {
                 objectRefs.remove();

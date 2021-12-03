@@ -43,7 +43,7 @@ import java.sql.SQLException;
 import java.util.List;
 import java.util.Map;
 
-import static com.dci.intellij.dbn.common.message.MessageCallback.conditional;
+import static com.dci.intellij.dbn.common.message.MessageCallback.when;
 import static com.dci.intellij.dbn.execution.ExecutionStatus.CANCELLED;
 import static com.dci.intellij.dbn.execution.ExecutionStatus.EXECUTING;
 
@@ -197,8 +197,8 @@ public class MethodExecutionManager extends AbstractProjectComponent implements 
                                         "Method execution error",
                                         "Error executing " + method.getQualifiedNameWithType() + ".\n" + e.getMessage().trim(),
                                         new String[]{"Try Again", "Cancel"}, 0,
-                                        (option) -> conditional(option == 0,
-                                                () -> startMethodExecution(executionInput, DBDebuggerType.NONE)));
+                                        option -> when(option == 0, () ->
+                                                startMethodExecution(executionInput, DBDebuggerType.NONE)));
                             }
                         }
                     });

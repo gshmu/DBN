@@ -62,7 +62,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import static com.dci.intellij.dbn.common.message.MessageCallback.conditional;
+import static com.dci.intellij.dbn.common.message.MessageCallback.when;
 import static com.dci.intellij.dbn.common.options.setting.SettingsSupport.stringAttribute;
 import static com.dci.intellij.dbn.common.util.MessageUtil.options;
 
@@ -351,8 +351,7 @@ public class DDLFileAttachmentManager extends AbstractProjectComponent implement
                 MessageUtil.showInfoDialog(getProject(),
                         "No DDL files found",
                         message.toString(), options, 0,
-                        (option) -> conditional(option == 0,
-                                () -> createDDLFile(objectRef)));
+                        option -> when(option == 0, () -> createDDLFile(objectRef)));
             } else {
                 DBSchemaObject object = objectRef.ensure();
                 int exitCode = showFileAttachDialog(object, virtualFiles, false);
@@ -371,7 +370,7 @@ public class DDLFileAttachmentManager extends AbstractProjectComponent implement
                 "No DDL file type is configured for database " + objectRef.getObjectType().getListName() +
                         ".\nPlease check the DDL file association in Project Settings > DB Navigator > DDL File Settings.",
                 options("Open Settings...", "Cancel"), 0,
-                (option) -> conditional(option == 0, () -> {
+                option -> when(option == 0, () -> {
                     ProjectSettingsManager settingsManager = ProjectSettingsManager.getInstance(getProject());
                     settingsManager.openProjectSettings(ConfigId.DDL_FILES);
                 }));

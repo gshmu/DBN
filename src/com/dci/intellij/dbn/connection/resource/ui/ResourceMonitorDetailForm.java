@@ -28,11 +28,14 @@ import com.intellij.ui.components.JBScrollPane;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import javax.swing.*;
-import java.awt.*;
+import javax.swing.JButton;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import java.awt.BorderLayout;
+import java.awt.Dimension;
 import java.awt.event.ActionListener;
 
-import static com.dci.intellij.dbn.common.message.MessageCallback.conditional;
+import static com.dci.intellij.dbn.common.message.MessageCallback.when;
 import static com.dci.intellij.dbn.connection.transaction.TransactionAction.actions;
 
 
@@ -125,19 +128,18 @@ public class ResourceMonitorDetailForm extends DBNFormImpl {
                         "Disconnect Session",
                         "Are you sure you want to disconnect the session \"" + session.getName() + "\" for connection\"" + connectionHandler.getName() + "\"" ,
                         MessageUtil.OPTIONS_YES_NO, 0,
-                        (option) -> conditional(option == 0,
-                                () -> {
-                                    DBNConnection connection = getSelectedConnection();
-                                    if (connection != null) {
-                                        DatabaseTransactionManager transactionManager = getTransactionManager();
-                                        transactionManager.execute(
-                                                connectionHandler,
-                                                connection,
-                                                actions(TransactionAction.DISCONNECT),
-                                                false,
-                                                null);
-                                    }
-                                }));
+                        option -> when(option == 0, () -> {
+                            DBNConnection connection = getSelectedConnection();
+                            if (connection != null) {
+                                DatabaseTransactionManager transactionManager = getTransactionManager();
+                                transactionManager.execute(
+                                        connectionHandler,
+                                        connection,
+                                        actions(TransactionAction.DISCONNECT),
+                                        false,
+                                        null);
+                            }
+                        }));
             }
         }
 
@@ -158,12 +160,11 @@ public class ResourceMonitorDetailForm extends DBNFormImpl {
                         "Delete Session",
                         "Are you sure you want to delete the session \"" + session.getName() + "\" for connection\"" + getConnectionHandler().getName() + "\"" ,
                         MessageUtil.OPTIONS_YES_NO, 0,
-                        (option) -> conditional(option == 0,
-                                () -> {
-                                    Project project = ensureProject();
-                                    DatabaseSessionManager sessionManager = DatabaseSessionManager.getInstance(project);
-                                    sessionManager.deleteSession(session);
-                                }));
+                        option -> when(option == 0, () -> {
+                            Project project = ensureProject();
+                            DatabaseSessionManager sessionManager = DatabaseSessionManager.getInstance(project);
+                            sessionManager.deleteSession(session);
+                        }));
             }
         }
 

@@ -18,7 +18,11 @@ import com.dci.intellij.dbn.common.latent.Latent;
 import com.dci.intellij.dbn.common.options.setting.BooleanSetting;
 import com.dci.intellij.dbn.common.thread.Dispatch;
 import com.dci.intellij.dbn.common.thread.Progress;
-import com.dci.intellij.dbn.connection.*;
+import com.dci.intellij.dbn.connection.ConnectionBundle;
+import com.dci.intellij.dbn.connection.ConnectionHandler;
+import com.dci.intellij.dbn.connection.ConnectionId;
+import com.dci.intellij.dbn.connection.ConnectionManager;
+import com.dci.intellij.dbn.connection.SchemaId;
 import com.dci.intellij.dbn.connection.config.ConnectionDetailSettings;
 import com.dci.intellij.dbn.object.DBSchema;
 import com.dci.intellij.dbn.object.common.DBObject;
@@ -357,7 +361,7 @@ public class DatabaseBrowserManager extends AbstractProjectComponent implements 
 
                 boolean addConnectionElement = false;
                 DBObjectBundle objectBundle = connectionHandler.getObjectBundle();
-                DBObjectList schemas = objectBundle.getObjectListContainer().getObjectList(DBObjectType.SCHEMA);
+                DBObjectList<?> schemas = objectBundle.getObjectList(DBObjectType.SCHEMA);
                 if (schemas != null && schemas.isLoaded()) {
                     for (DBSchema schema : objectBundle.getSchemas()) {
                         List<DBObjectType> objectTypes = new ArrayList<>();
