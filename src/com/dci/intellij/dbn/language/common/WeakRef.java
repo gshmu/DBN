@@ -19,7 +19,7 @@ public class WeakRef<T> extends WeakReference<T> {
         return element == null ? null : new WeakRef<T>(element);
     }
 
-    @Contract("null -> null;!null -> !null;")
+    @Nullable
     public static <T> T get(@Nullable WeakRef<T> ref) {
         return ref == null ? null : ref.get();
     }
@@ -49,7 +49,7 @@ public class WeakRef<T> extends WeakReference<T> {
     @Override
     public boolean equals(Object obj) {
         if (obj instanceof WeakRef) {
-            WeakRef that = (WeakRef) obj;
+            WeakRef<?> that = (WeakRef<?>) obj;
             return Safe.equal(this, that, ref -> ref.get());
         }
         return false;

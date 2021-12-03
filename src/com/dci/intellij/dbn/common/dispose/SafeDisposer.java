@@ -97,7 +97,7 @@ public final class SafeDisposer {
 
     public static void dispose(@Nullable Collection<?> collection, boolean registered, boolean background) {
         if (collection != null) {
-            if (background && !ThreadMonitor.isBackgroundProcess()) {
+            if (background/* && !ThreadMonitor.isBackgroundProcess()*/) {
                 Background.run(() -> dispose(collection, registered, false));
             } else {
                 Collection<?> disposeCollection;

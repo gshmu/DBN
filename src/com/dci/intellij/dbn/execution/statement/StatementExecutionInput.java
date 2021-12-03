@@ -42,7 +42,7 @@ public class StatementExecutionInput extends LocalExecutionInput {
         ConnectionHandler connectionHandler = getConnectionHandler();
         SchemaId currentSchema = getTargetSchemaId();
         if (connectionHandler != null) {
-            return Read.call(() -> {
+            return Read.conditional(() -> {
                 DBLanguagePsiFile psiFile = Failsafe.nn(executionProcessor.getPsiFile());
                 DBLanguageDialect languageDialect = psiFile.getLanguageDialect();
                 DBLanguagePsiFile previewFile = DBLanguagePsiFile.createFromText(
