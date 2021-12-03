@@ -137,7 +137,7 @@ public class GoToDatabaseObjectAction extends GotoActionBase implements DumbAwar
 
         private SelectConnectionAction(ConnectionHandler connectionHandler) {
             super();
-            this.connectionHandler = ConnectionHandlerRef.from(connectionHandler);
+            this.connectionHandler = ConnectionHandlerRef.of(connectionHandler);
             Presentation presentation = getTemplatePresentation();
             presentation.setText(connectionHandler.getName(), false);
             presentation.setIcon(connectionHandler.getIcon());

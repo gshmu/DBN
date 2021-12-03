@@ -5,6 +5,7 @@ import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.language.common.WeakRef;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
+import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -16,7 +17,7 @@ public class ConnectionHandlerRef implements Reference<ConnectionHandler> {
     @EqualsAndHashCode.Exclude
     private WeakRef<ConnectionHandler> reference;
 
-    public ConnectionHandlerRef(ConnectionHandler connectionHandler) {
+    public ConnectionHandlerRef(@Nullable ConnectionHandler connectionHandler) {
         reference = WeakRef.of(connectionHandler);
         connectionId = connectionHandler == null ? null : connectionHandler.getConnectionId();
     }
@@ -41,14 +42,14 @@ public class ConnectionHandlerRef implements Reference<ConnectionHandler> {
         return connectionHandler;
     }
 
-    @Nullable
-    public static ConnectionHandlerRef from(@Nullable ConnectionHandler connectionHandler) {
+    @Contract("null -> null;!null -> !null;")
+    public static ConnectionHandlerRef of(@Nullable ConnectionHandler connectionHandler) {
         return connectionHandler == null ? null : connectionHandler.getRef();
     }
 
-    @Nullable
+    @Contract("null -> null;!null -> !null;")
     public static ConnectionHandler get(@Nullable ConnectionHandlerRef connectionHandlerRef) {
-        return connectionHandlerRef == null ? null :connectionHandlerRef.get();
+        return connectionHandlerRef == null ? null : connectionHandlerRef.get();
     }
 
     @NotNull

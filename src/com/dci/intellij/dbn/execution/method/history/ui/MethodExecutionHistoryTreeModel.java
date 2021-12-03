@@ -68,7 +68,7 @@ public abstract class MethodExecutionHistoryTreeModel extends DefaultTreeModel i
         ConnectionHandlerRef connectionHandler;
         ConnectionTreeNode(MethodExecutionHistoryTreeNode parent, MethodExecutionInput executionInput) {
             super(parent, MethodExecutionHistoryTreeNode.Type.CONNECTION, null);
-            this.connectionHandler = ConnectionHandlerRef.from(executionInput.getConnectionHandler());
+            this.connectionHandler = ConnectionHandlerRef.of(executionInput.getConnectionHandler());
         }
 
         ConnectionHandler getConnectionHandler() {

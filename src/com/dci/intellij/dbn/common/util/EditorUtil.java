@@ -45,8 +45,12 @@ import com.intellij.util.ui.UIUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import javax.swing.*;
-import java.awt.*;
+import javax.swing.Icon;
+import javax.swing.JComponent;
+import java.awt.Color;
+import java.awt.Component;
+import java.awt.Dimension;
+import java.awt.Font;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -208,7 +212,7 @@ public class EditorUtil {
         return null;
 
     }
-    public static void setEditorReadonly(SourceCodeEditor sourceCodeEditor, final boolean readonly) {
+    public static void setEditorReadonly(SourceCodeEditor sourceCodeEditor, boolean readonly) {
         EditorImpl editor = (EditorImpl) sourceCodeEditor.getEditor();
         editor.setViewer(readonly);
         EditorColorsScheme scheme = editor.getColorsScheme();
@@ -221,7 +225,7 @@ public class EditorUtil {
         });
     }
 
-    public static void setEditorsReadonly(DBContentVirtualFile contentFile, final boolean readonly) {
+    public static void setEditorsReadonly(DBContentVirtualFile contentFile, boolean readonly) {
         Project project = Failsafe.nn(contentFile.getProject());
 
         if (contentFile instanceof DBSourceCodeVirtualFile) {

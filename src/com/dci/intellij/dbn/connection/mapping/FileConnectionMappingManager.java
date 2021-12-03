@@ -111,7 +111,7 @@ public class FileConnectionMappingManager extends AbstractProjectComponent imple
 
 
     public boolean setConnectionHandler(VirtualFile virtualFile, ConnectionHandler connectionHandler) {
-        ConnectionHandlerRef connectionHandlerRef = ConnectionHandlerRef.from(connectionHandler);
+        ConnectionHandlerRef connectionHandlerRef = ConnectionHandlerRef.of(connectionHandler);
 
         if (virtualFile instanceof LightVirtualFile) {
             virtualFile.putUserData(CONNECTION_HANDLER, connectionHandlerRef);
@@ -253,7 +253,7 @@ public class FileConnectionMappingManager extends AbstractProjectComponent imple
                             ConnectionBundle connectionBundle = connectionManager.getConnectionBundle();
                             connectionHandler = connectionBundle.getVirtualConnection(mapping.getConnectionId());
                         }
-                        connectionHandlerRef = ConnectionHandlerRef.from(connectionHandler);
+                        connectionHandlerRef = ConnectionHandlerRef.of(connectionHandler);
 
                         virtualFile.putUserData(CONNECTION_HANDLER, connectionHandlerRef);
 

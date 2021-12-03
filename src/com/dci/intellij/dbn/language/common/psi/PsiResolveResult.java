@@ -33,7 +33,7 @@ public class PsiResolveResult extends PropertyHolderImpl<PsiResolveStatus>{
     private int resolveAttempts = 0;
 
     PsiResolveResult(IdentifierPsiElement element) {
-        this.connectionHandler = ConnectionHandlerRef.from(element.getConnectionHandler());
+        this.connectionHandler = ConnectionHandlerRef.of(element.getConnectionHandler());
         this.element = PsiElementRef.from(element);
         set(PsiResolveStatus.NEW, true);
     }
@@ -55,7 +55,7 @@ public class PsiResolveResult extends PropertyHolderImpl<PsiResolveStatus>{
         set(CONNECTION_ACTIVE, connectionHandler != null && !connectionHandler.isVirtual() && connectionHandler.canConnect());
         this.referencedElement = null;
         this.parent = null;
-        this.connectionHandler = ConnectionHandlerRef.from(connectionHandler);
+        this.connectionHandler = ConnectionHandlerRef.of(connectionHandler);
         this.databaseSchema = DBObjectRef.of(psiElement.getDatabaseSchema());
         BasePsiElement enclosingScopePsiElement = psiElement.getEnclosingScopePsiElement();
         this.scopeTextLength = enclosingScopePsiElement == null ? 0 : enclosingScopePsiElement.getTextLength();
