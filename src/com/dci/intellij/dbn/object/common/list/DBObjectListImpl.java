@@ -13,6 +13,7 @@ import com.dci.intellij.dbn.common.content.loader.DynamicContentLoader;
 import com.dci.intellij.dbn.common.content.loader.DynamicContentLoaderImpl;
 import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.common.event.ProjectEvents;
+import com.dci.intellij.dbn.common.filter.CompoundFilter;
 import com.dci.intellij.dbn.common.filter.Filter;
 import com.dci.intellij.dbn.common.ui.tree.TreeEventType;
 import com.dci.intellij.dbn.common.util.StringUtil;
@@ -23,6 +24,7 @@ import com.dci.intellij.dbn.database.common.metadata.DBObjectMetadata;
 import com.dci.intellij.dbn.navigation.psi.DBObjectListPsiDirectory;
 import com.dci.intellij.dbn.object.DBSchema;
 import com.dci.intellij.dbn.object.common.DBObject;
+import com.dci.intellij.dbn.object.common.DBObjectBundle;
 import com.dci.intellij.dbn.object.common.DBVirtualObject;
 import com.dci.intellij.dbn.object.common.sorting.DBObjectComparator;
 import com.dci.intellij.dbn.object.filter.quick.ObjectQuickFilter;
@@ -32,12 +34,15 @@ import com.intellij.navigation.ItemPresentation;
 import com.intellij.openapi.progress.ProcessCanceledException;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiDirectory;
+import lombok.Getter;
+import lombok.Setter;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import javax.swing.Icon;
 import javax.swing.tree.TreeNode;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Enumeration;
 import java.util.List;
@@ -47,7 +52,7 @@ import static com.dci.intellij.dbn.common.content.DynamicContentStatus.INTERNAL;
 
 public class DBObjectListImpl<T extends DBObject> extends DynamicContentImpl<T> implements DBObjectList<T> {
     private final DBObjectType objectType;
-    private InternalFilter filter;
+    private final DBObjectListFilter filter = new DBObjectListFilter();
     private PsiDirectory psiDirectory;
 
     DBObjectListImpl(
@@ -57,9 +62,9 @@ public class DBObjectListImpl<T extends DBObject> extends DynamicContentImpl<T> 
             DynamicContentStatus... statuses) {
         super(treeParent, dependencyAdapter, statuses);
         this.objectType = objectType;
-        if (treeParent instanceof DBSchema && !isInternal()) {
+        if ((treeParent instanceof DBSchema || treeParent instanceof DBObjectBundle) && !isInternal()) {
             ObjectQuickFilterManager quickFilterManager = ObjectQuickFilterManager.getInstance(getProject());
-            quickFilterManager.applyCachedFilter(this);
+            quickFilterManager.restoreQuickFilter(this);
         }
         //DBObjectListLoaderRegistry.register(treeParent, objectType, loader);
     }
@@ -95,51 +100,38 @@ public class DBObjectListImpl<T extends DBObject> extends DynamicContentImpl<T> 
         return objectList == null ? null : objectList.getObject(name, overload);
     }
 
-    @Override
-    public boolean isFiltered() {
-        return getFilter() != null;
-    }
-
     @Nullable
     @Override
     public Filter<T> getFilter() {
-        if (filter == null) {
-            return getConfigFilter();
-        } else {
-            return filter;
-        }
+        return filter;
     }
 
     @Override
-    public void setQuickFilter(ObjectQuickFilter quickFilter) {
-        if (quickFilter == null) {
-            filter = null;
-        } else {
-            filter = new InternalFilter(quickFilter);
-        }
+    public void setQuickFilter(ObjectQuickFilter<T> quickFilter) {
+        filter.setQuickFilter(quickFilter);
     }
 
     @Nullable
     @Override
-    public ObjectQuickFilter getQuickFilter() {
-        return filter == null ? null : filter.quickFilter;
-
+    public ObjectQuickFilter<T> getQuickFilter() {
+        return filter.quickFilter;
     }
 
-    private class InternalFilter implements Filter<T> {
-        private final ObjectQuickFilter quickFilter;
+    @Getter
+    @Setter
+    private class DBObjectListFilter extends CompoundFilter<T> {
+        private ObjectQuickFilter<T> quickFilter;
 
-        InternalFilter(ObjectQuickFilter quickFilter) {
-            this.quickFilter = quickFilter;
+        @NotNull
+        @Override
+        public List<Filter<T>> getFilters() {
+            return Arrays.asList(
+                    quickFilter,
+                    getConfigFilter());
         }
 
-        @Override
-        public boolean accepts(T object) {
-            if (quickFilter.accepts(object)) {
-                Filter<T> filter = getConfigFilter();
-                return filter == null || filter.accepts(object);
-            }
-            return false;
+        public boolean isEmpty() {
+            return quickFilter == null && getConfigFilter() == null;
         }
     }
 
@@ -149,7 +141,7 @@ public class DBObjectListImpl<T extends DBObject> extends DynamicContentImpl<T> 
         ConnectionHandler connectionHandler = getConnectionHandler();
         if (Failsafe.check(connectionHandler) && !connectionHandler.isVirtual()) {
             ConnectionFilterSettings filterSettings = connectionHandler.getSettings().getFilterSettings();
-            return (Filter<T>) filterSettings.getNameFilter(objectType);
+            return filterSettings.getNameFilter(objectType);
         }
         return null;
     }

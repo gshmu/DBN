@@ -4,6 +4,7 @@ import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.common.dispose.DisposableContainer;
 import com.dci.intellij.dbn.common.filter.Filter;
 import com.dci.intellij.dbn.common.ui.Borders;
+import com.dci.intellij.dbn.common.ui.DBNComboBox;
 import com.dci.intellij.dbn.common.ui.DBNFormImpl;
 import com.dci.intellij.dbn.common.ui.DBNHeaderForm;
 import com.dci.intellij.dbn.common.ui.DBNHintForm;
@@ -15,6 +16,7 @@ import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.GenericDatabaseElement;
 import com.dci.intellij.dbn.object.DBSchema;
 import com.dci.intellij.dbn.object.common.list.DBObjectList;
+import com.dci.intellij.dbn.object.filter.ConditionJoinType;
 import com.dci.intellij.dbn.object.filter.ConditionOperator;
 import com.dci.intellij.dbn.object.filter.quick.ObjectQuickFilter;
 import com.dci.intellij.dbn.object.filter.quick.ObjectQuickFilterCondition;
@@ -24,9 +26,12 @@ import com.intellij.util.PlatformIcons;
 import com.intellij.util.ui.JBUI;
 import org.jetbrains.annotations.NotNull;
 
-import javax.swing.*;
+import javax.swing.BoxLayout;
+import javax.swing.Icon;
+import javax.swing.JPanel;
 import javax.swing.border.CompoundBorder;
-import java.awt.*;
+import java.awt.BorderLayout;
+import java.awt.Color;
 import java.util.Arrays;
 import java.util.List;
 
@@ -36,41 +41,48 @@ public class ObjectQuickFilterForm extends DBNFormImpl {
     private JPanel conditionsPanel;
     private JPanel actionsPanel;
     private JPanel hintPanel;
+    private DBNComboBox<ConditionJoinType> joinTypeComboBox;
+    private JPanel joinTypePanel;
 
     private final List<ObjectQuickFilterConditionForm> conditionForms = DisposableContainer.list(this);
     private final DBObjectList<?> objectList;
-    private ObjectQuickFilter filter;
+    private ObjectQuickFilter<?> filter;
 
     ObjectQuickFilterForm(@NotNull ObjectQuickFilterDialog parent, DBObjectList<?> objectList) {
         super(parent);
         this.objectList = objectList;
-        conditionsPanel.setLayout(new BoxLayout(conditionsPanel, BoxLayout.Y_AXIS));
-        filter = objectList.getQuickFilter();
-        if (filter == null) {
-            filter = new ObjectQuickFilter(objectList.getObjectType());
+
+        addHeader(objectList);
+        this.conditionsPanel.setLayout(new BoxLayout(conditionsPanel, BoxLayout.Y_AXIS));
+        conditionsPanel.setBorder(new CompoundBorder(Borders.BOTTOM_LINE_BORDER, JBUI.Borders.emptyBottom(4)));
+        this.filter = objectList.getQuickFilter();
+        if (this.filter == null) {
+            this.filter = new ObjectQuickFilter<>(objectList.getObjectType());
         } else {
-            filter = filter.clone();
-        }
-        List<ObjectQuickFilterCondition> conditions = filter.getConditions();
-        if (conditions.size() > 0) {
-            for (ObjectQuickFilterCondition condition : conditions) {
-                addConditionPanel(condition);
-            }
-        } else {
-/*            ObjectQuickFilterManager quickFilterManager = ObjectQuickFilterManager.getInstance(getProject());
-            ObjectQuickFilterCondition condition = filter.addNewCondition(quickFilterManager.getLastUsedOperator());
-            addConditionPanel(condition);*/
+            this.filter = this.filter.clone();
         }
 
-        Filter<?> filter = objectList.getConfigFilter();
-        if (filter != null) {
-            String hintText = "NOTE: This actions is filtered according to connection \"Filter\" settings. Any additional condition will narrow down the already filtered actions." ;
+        Filter<?> configFilter = objectList.getConfigFilter();
+        if (configFilter != null) {
+            String hintText = "NOTE: This list is already filtered according to connection \"Filter\" settings. Any additional condition will narrow down the already filtered list." ;
             DBNHintForm hintForm = new DBNHintForm(this, hintText, null, true);
             hintPanel.add(hintForm.getComponent());
         }
 
+        List<ObjectQuickFilterCondition> conditions = this.filter.getConditions();
+        conditions.forEach(condition -> addConditionPanel(condition));
+
         actionsPanel.add(new NewFilterSelector(this.filter), BorderLayout.CENTER);
 
+        joinTypeComboBox.setValues(ConditionJoinType.values());
+        joinTypeComboBox.setSelectedValue(this.filter.getJoinType());
+        joinTypeComboBox.addListener((oldValue, newValue) -> {
+            this.filter.setJoinType(newValue);
+        });
+
+    }
+
+    private void addHeader(DBObjectList<?> objectList) {
         Icon headerIcon = Icons.DATASET_FILTER;
         ConnectionHandler connectionHandler = objectList.getConnectionHandler();
         GenericDatabaseElement parentElement = objectList.getParentElement();
@@ -82,21 +94,11 @@ public class ObjectQuickFilterForm extends DBNFormImpl {
         headerPanel.add(headerForm.getComponent(), BorderLayout.CENTER);
     }
 
-    void updateJoinTypeComponents() {
-        for (ObjectQuickFilterConditionForm conditionForm : conditionForms) {
-            conditionForm.updateJoinTypeComponent();
-        }
-    }
-
     private void addConditionPanel(ObjectQuickFilterCondition condition) {
         ObjectQuickFilterConditionForm conditionForm = new ObjectQuickFilterConditionForm(this, condition);
         conditionsPanel.add(conditionForm.getComponent());
-        conditionsPanel.setBorder(new CompoundBorder(Borders.BOTTOM_LINE_BORDER, JBUI.Borders.emptyBottom(4)));
-        GUIUtil.repaint(conditionsPanel);
-
         conditionForms.add(conditionForm);
-        updateJoinTypeComponents();
-
+        joinTypeComboBox.setEnabled(conditionForms.size() > 1);
     }
 
     void removeConditionPanel(ObjectQuickFilterCondition condition) {
@@ -108,10 +110,8 @@ public class ObjectQuickFilterForm extends DBNFormImpl {
                 break;
             }
         }
-        int conditionsCount = filter.getConditions().size();
-        conditionsPanel.setBorder(conditionsCount > 0 ? new CompoundBorder(Borders.BOTTOM_LINE_BORDER, JBUI.Borders.emptyBottom(4)) : null);
-        GUIUtil.repaint(conditionsPanel);
-        updateJoinTypeComponents();
+        joinTypeComboBox.setEnabled(conditionForms.size() > 1);
+        GUIUtil.repaint(mainPanel);
     }
 
     private class NewFilterSelector extends ValueSelector<ConditionOperator> {
@@ -120,7 +120,7 @@ public class ObjectQuickFilterForm extends DBNFormImpl {
             return super.getOptionDisplayName(value);
         }
 
-        NewFilterSelector(final ObjectQuickFilter filter) {
+        NewFilterSelector(final ObjectQuickFilter<?> filter) {
             super(PlatformIcons.ADD_ICON, "Add Name Condition", null, ValueSelectorOption.HIDE_DESCRIPTION);
             addListener((oldValue, newValue) -> {
                 Project project = ensureProject();
@@ -128,6 +128,7 @@ public class ObjectQuickFilterForm extends DBNFormImpl {
                 quickFilterManager.setLastUsedOperator(newValue);
                 ObjectQuickFilterCondition condition = filter.addNewCondition(newValue);
                 addConditionPanel(condition);
+                GUIUtil.repaint(mainPanel);
             });
 
         }
@@ -138,7 +139,7 @@ public class ObjectQuickFilterForm extends DBNFormImpl {
         }
     }
 
-    public ObjectQuickFilter getFilter() {
+    public ObjectQuickFilter<?> getFilter() {
         return filter;
     }
 

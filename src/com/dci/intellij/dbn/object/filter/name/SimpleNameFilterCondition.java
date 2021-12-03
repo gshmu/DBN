@@ -4,6 +4,7 @@ import com.dci.intellij.dbn.object.common.DBObject;
 import com.dci.intellij.dbn.object.filter.ConditionOperator;
 import com.dci.intellij.dbn.object.filter.NameFilterCondition;
 import com.dci.intellij.dbn.object.type.DBObjectType;
+import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
 import org.jdom.Element;
@@ -12,8 +13,9 @@ import static com.dci.intellij.dbn.common.options.setting.SettingsSupport.enumAt
 
 @Getter
 @Setter
+@EqualsAndHashCode(callSuper = true)
 public class SimpleNameFilterCondition extends NameFilterCondition implements FilterCondition {
-    private CompoundFilterCondition parent;
+    private transient CompoundFilterCondition parent;
 
     public SimpleNameFilterCondition() {}
 

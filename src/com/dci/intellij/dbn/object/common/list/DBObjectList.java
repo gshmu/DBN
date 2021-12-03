@@ -24,17 +24,15 @@ public interface DBObjectList<T extends DBObject> extends BrowserTreeNode, Dynam
 
     void addObject(T object);
 
-    boolean isFiltered();
-
     boolean isInternal();
 
     @Nullable
     Filter<T> getConfigFilter();
 
     @Nullable
-    ObjectQuickFilter getQuickFilter();
+    ObjectQuickFilter<T> getQuickFilter();
 
-    void setQuickFilter(@Nullable ObjectQuickFilter quickFilter);
+    void setQuickFilter(@Nullable ObjectQuickFilter<T> quickFilter);
 
     List<T> getObjects();
 

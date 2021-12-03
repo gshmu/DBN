@@ -8,12 +8,18 @@ import com.dci.intellij.dbn.object.common.DBObject;
 import com.dci.intellij.dbn.object.filter.ConditionJoinType;
 import com.dci.intellij.dbn.object.filter.ConditionOperator;
 import com.dci.intellij.dbn.object.type.DBObjectType;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.Setter;
 import org.jdom.Element;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class ObjectQuickFilter implements Filter<DBObject>, Cloneable<ObjectQuickFilter>, PersistentStateElement {
+@Getter
+@Setter
+@EqualsAndHashCode
+public class ObjectQuickFilter<T extends DBObject> implements Filter<T>, Cloneable<ObjectQuickFilter<T>>, PersistentStateElement {
     private final DBObjectType objectType;
     private final List<ObjectQuickFilterCondition> conditions = new ArrayList<>();
     private ConditionJoinType joinType = ConditionJoinType.AND;
@@ -27,13 +33,10 @@ public class ObjectQuickFilter implements Filter<DBObject>, Cloneable<ObjectQuic
         this.objectType = objectType;
     }
 
-    public DBObjectType getObjectType() {
-        return objectType;
-    }
-
     public ObjectQuickFilterCondition addNewCondition(ConditionOperator operator) {
         return addCondition(operator, "", true);
     }
+
     public ObjectQuickFilterCondition addCondition(ConditionOperator operator, String pattern, boolean active) {
         ObjectQuickFilterCondition condition = new ObjectQuickFilterCondition(this, operator, pattern, active);
         conditions.add(condition);
@@ -42,18 +45,6 @@ public class ObjectQuickFilter implements Filter<DBObject>, Cloneable<ObjectQuic
 
     public void removeCondition(ObjectQuickFilterCondition condition) {
         conditions.remove(condition);
-    }
-
-    public List<ObjectQuickFilterCondition> getConditions() {
-        return conditions;
-    }
-
-    public ConditionJoinType getJoinType() {
-        return joinType;
-    }
-
-    public void setJoinType(ConditionJoinType joinType) {
-        this.joinType = joinType;
     }
 
     public boolean isEmpty() {
@@ -79,8 +70,8 @@ public class ObjectQuickFilter implements Filter<DBObject>, Cloneable<ObjectQuic
     }
 
     @Override
-    public ObjectQuickFilter clone() {
-        ObjectQuickFilter filterClone = new ObjectQuickFilter(objectType, joinType);
+    public ObjectQuickFilter<T> clone() {
+        ObjectQuickFilter<T> filterClone = new ObjectQuickFilter<>(objectType, joinType);
         for (ObjectQuickFilterCondition condition : conditions) {
             filterClone.addCondition(
                     condition.getOperator(),

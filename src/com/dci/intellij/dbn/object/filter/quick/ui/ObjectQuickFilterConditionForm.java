@@ -5,7 +5,6 @@ import com.dci.intellij.dbn.common.ui.ComboBoxSelectionKeyListener;
 import com.dci.intellij.dbn.common.ui.DBNComboBox;
 import com.dci.intellij.dbn.common.ui.DBNFormImpl;
 import com.dci.intellij.dbn.common.util.ActionUtil;
-import com.dci.intellij.dbn.object.filter.ConditionJoinType;
 import com.dci.intellij.dbn.object.filter.ConditionOperator;
 import com.dci.intellij.dbn.object.filter.quick.ObjectQuickFilter;
 import com.dci.intellij.dbn.object.filter.quick.ObjectQuickFilterCondition;
@@ -18,9 +17,12 @@ import com.intellij.openapi.project.Project;
 import com.intellij.ui.DocumentAdapter;
 import org.jetbrains.annotations.NotNull;
 
-import javax.swing.*;
+import javax.swing.JComponent;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JTextField;
 import javax.swing.event.DocumentEvent;
-import java.awt.*;
+import java.awt.BorderLayout;
 
 public class ObjectQuickFilterConditionForm extends DBNFormImpl {
     private JPanel mainPanel;
@@ -28,23 +30,13 @@ public class ObjectQuickFilterConditionForm extends DBNFormImpl {
     private JLabel objectNameLabel;
     private JTextField patternTextField;
     private DBNComboBox<ConditionOperator> operatorComboBox;
-    private DBNComboBox<ConditionJoinType> joinTypeComboBox;
 
     private final ObjectQuickFilterCondition condition;
 
     ObjectQuickFilterConditionForm(@NotNull ObjectQuickFilterForm parent, @NotNull final ObjectQuickFilterCondition condition) {
         super(parent);
         this.condition = condition;
-
-        final ObjectQuickFilter filter = condition.getFilter();
-        joinTypeComboBox.setValues(ConditionJoinType.values());
-        joinTypeComboBox.addListener((oldValue, newValue) -> {
-            if (condition.index() == 0) {
-                filter.setJoinType(newValue);
-                parent.updateJoinTypeComponents();
-            }
-        });
-
+        ObjectQuickFilter<?> filter = condition.getFilter();
 
         DBObjectType objectType = filter.getObjectType();
         objectNameLabel.setIcon(objectType.getIcon());
@@ -79,13 +71,6 @@ public class ObjectQuickFilterConditionForm extends DBNFormImpl {
     @NotNull
     public ObjectQuickFilterForm getParentForm() {
         return ensureParent();
-    }
-
-    void updateJoinTypeComponent() {
-        joinTypeComboBox.setSelectedValue(condition.getFilter().getJoinType());
-        int conditionsCount = condition.getFilter().getConditions().size();
-        joinTypeComboBox.setEnabled(conditionsCount > 1 && condition.index() == 0);
-        joinTypeComboBox.setVisible(conditionsCount > 1 && condition.index() < conditionsCount - 1);
     }
 
     @Override

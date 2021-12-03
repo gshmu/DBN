@@ -16,16 +16,16 @@ import static com.dci.intellij.dbn.common.options.setting.SettingsSupport.setBoo
 @Setter
 @EqualsAndHashCode(callSuper = true)
 public class ObjectQuickFilterCondition extends NameFilterCondition implements PersistentStateElement {
-    private ObjectQuickFilter filter;
+    private transient ObjectQuickFilter<?> filter;
     private boolean active = true;
 
-    public ObjectQuickFilterCondition(ObjectQuickFilter filter, ConditionOperator operator, String pattern, boolean active) {
+    public ObjectQuickFilterCondition(ObjectQuickFilter<?> filter, ConditionOperator operator, String pattern, boolean active) {
         super(operator, pattern);
         this.filter = filter;
         this.active = active;
     }
 
-    public ObjectQuickFilterCondition(ObjectQuickFilter filter) {
+    public ObjectQuickFilterCondition(ObjectQuickFilter<?> filter) {
         this.filter = filter;
     }
 
@@ -48,5 +48,4 @@ public class ObjectQuickFilterCondition extends NameFilterCondition implements P
         super.writeState(element);
         setBooleanAttribute(element, "active", active);
     }
-
 }

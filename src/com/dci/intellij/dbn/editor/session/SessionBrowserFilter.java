@@ -10,6 +10,8 @@ import lombok.Setter;
 
 import java.util.Objects;
 
+import static com.dci.intellij.dbn.editor.session.SessionBrowserFilterType.*;
+
 @Getter
 @Setter
 @EqualsAndHashCode
@@ -44,9 +46,9 @@ public class SessionBrowserFilter implements Filter<SessionBrowserModelRow>, Clo
     }
 
     public boolean isEmpty() {
-        return StringUtil.isEmpty(getFilterValue(SessionBrowserFilterType.USER)) &&
-                StringUtil.isEmpty(getFilterValue(SessionBrowserFilterType.HOST)) &&
-                StringUtil.isEmpty(getFilterValue(SessionBrowserFilterType.STATUS));
+        return StringUtil.isEmpty(getFilterValue(USER)) &&
+                StringUtil.isEmpty(getFilterValue(HOST)) &&
+                StringUtil.isEmpty(getFilterValue(STATUS));
     }
 
     public String getFilterValue(SessionBrowserFilterType filterType) {
