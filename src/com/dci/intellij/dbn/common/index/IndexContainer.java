@@ -45,6 +45,8 @@ public class IndexContainer<T extends Indexable> implements Compactable {
     }
 
     public void addAll(Collection<T> elements) {
-        elements.forEach(element -> INDEX.add(element.index()));
+        for (T element : elements) {
+            INDEX.add(element.index());
+        }
     }
 }

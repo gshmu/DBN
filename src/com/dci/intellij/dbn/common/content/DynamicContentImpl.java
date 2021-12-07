@@ -213,10 +213,10 @@ public abstract class DynamicContentImpl<T extends DynamicContentElement>
                 updateChangeSignature();
             }
 
-            elements.forEach(element -> {
+            for (T element : elements) {
                 checkDisposed();
                 element.refresh();
-            });
+            }
         }
     }
 
@@ -239,10 +239,10 @@ public abstract class DynamicContentImpl<T extends DynamicContentElement>
                 markDirty();
                 dependencyAdapter.refreshSources();
                 if (!is(INTERNAL)){
-                    elements.forEach(e -> {
+                    for (T e : elements) {
                         checkDisposed();
                         e.refresh();
-                    });
+                    }
                 }
             } finally {
                 set(REFRESHING, false);
@@ -284,7 +284,11 @@ public abstract class DynamicContentImpl<T extends DynamicContentElement>
             set(LOADED, true);
 
             // refresh inner elements
-            if (force) elements.forEach(element -> element.refresh());
+            if (force) {
+                for (T element : elements) {
+                    element.refresh();
+                }
+            }
 
         } catch (ProcessCanceledException e) {
             throw e;
@@ -395,8 +399,7 @@ public abstract class DynamicContentImpl<T extends DynamicContentElement>
     public T getElement(String name, short overload) {
         if (name != null) {
             List<T> elements = getAllElements();
-            return CollectionUtil.first(elements,
-                    (element) -> matchElement(element, name, overload));
+            return CollectionUtil.first(elements, element -> matchElement(element, name, overload));
         }
         return null;
     }

@@ -114,10 +114,12 @@ public class DDLFileManager extends AbstractProjectComponent implements Persiste
 
     @NotNull
     List<DDLFileType> getDDLFileTypes(DBObjectType objectType) {
-        Collection<DDLFileTypeId> ddlFileTypeIds = objectType.getDdlFileTypeIds();
-        if (ddlFileTypeIds != null) {
+        Collection<DDLFileTypeId> typeIds = objectType.getDdlFileTypeIds();
+        if (typeIds != null) {
             List<DDLFileType> ddlFileTypes = new ArrayList<>();
-            ddlFileTypeIds.forEach(ddlFileTypeId -> ddlFileTypes.add(getDDLFileType(ddlFileTypeId)));
+            for (DDLFileTypeId typeId : typeIds) {
+                ddlFileTypes.add(getDDLFileType(typeId));
+            }
             return ddlFileTypes;
         }
         return Collections.emptyList();

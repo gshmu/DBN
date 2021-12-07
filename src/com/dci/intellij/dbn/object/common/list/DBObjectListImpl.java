@@ -142,7 +142,9 @@ public class DBObjectListImpl<T extends DBObject> extends DynamicContentImpl<T> 
 
     @Override
     public void collectObjects(Consumer<? super DBObject> consumer) {
-        getAllElements().forEach(object -> consumer.accept(object));
+        for (T object : getAllElements()) {
+            consumer.accept(object);
+        }
     }
 
     @Override

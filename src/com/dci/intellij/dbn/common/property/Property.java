@@ -56,6 +56,7 @@ public interface Property {
                 int shift = p.ordinal() + 1;
                 this.zero = ~(1 << shift);
                 this.one = 1 << shift;
+                assert shift < 32;
             }
         }
     }

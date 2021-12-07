@@ -22,7 +22,6 @@ import com.intellij.openapi.progress.ProcessCanceledException;
 import lombok.Getter;
 import lombok.Setter;
 
-import java.util.Arrays;
 import java.util.Collection;
 
 public class CodeCompletionLookupConsumer implements CancellableConsumer<Object> {
@@ -102,20 +101,20 @@ public class CodeCompletionLookupConsumer implements CancellableConsumer<Object>
     private void consumeArray(Object[] array) {
         checkCancelled();
         if (array != null && array.length > 0) {
-            Arrays.stream(array).forEach(element -> {
+            for (Object element : array) {
                 checkCancelled();
                 accept(element);
-            });
+            }
         }
     }
 
     private void consumeCollection(Collection<Object> objects) {
         checkCancelled();
         if (objects != null && !objects.isEmpty()) {
-            objects.forEach(element -> {
+            for (Object element : objects) {
                 checkCancelled();
                 accept(element);
-            });
+            }
         }
     }
 

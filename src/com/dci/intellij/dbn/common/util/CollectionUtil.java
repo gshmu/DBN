@@ -2,7 +2,6 @@ package com.dci.intellij.dbn.common.util;
 
 import com.dci.intellij.dbn.common.filter.Filter;
 import com.dci.intellij.dbn.common.list.FilteredList;
-import com.dci.intellij.dbn.common.routine.ParametricRunnable;
 import gnu.trove.THashMap;
 import gnu.trove.THashSet;
 import org.jetbrains.annotations.Contract;
@@ -159,20 +158,13 @@ public class CollectionUtil {
         return list.stream().map(mapper).collect(Collectors.toList());
     }
 
-    public static <T> void first(@Nullable List<T> list, Predicate<? super T> predicate, ParametricRunnable.Basic<T> callback) {
+    public static <T> T first(List<T> list, Predicate<? super T> predicate) {
         if (list != null && !list.isEmpty()) {
             for (T element : list) {
                 if (predicate.test(element)) {
-                    callback.run(element);
-                    return;
+                    return element;
                 }
             }
-        }
-    }
-
-    public static <T> T first(List<T> list, Predicate<? super T> predicate) {
-        if (list != null && !list.isEmpty()) {
-            return list.stream().filter(predicate).findFirst().orElse(null);
         }
         return null;
     }

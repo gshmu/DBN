@@ -44,9 +44,11 @@ public final class AsyncTaskExecutor {
                     timeUnit);
 
 
-            futures.stream().
-                    filter(future -> !future.isDone()).
-                    forEach(future -> future.cancel(true));
+            for (Future<Object> future : futures) {
+                if (!future.isDone()) {
+                    future.cancel(true);
+                }
+            }
         });
         finished = true;
     }

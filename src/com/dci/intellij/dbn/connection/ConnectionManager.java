@@ -456,7 +456,9 @@ public class ConnectionManager extends AbstractProjectComponent implements Persi
         public void run() {
             try {
                 List<ConnectionHandler> connectionHandlers = getConnectionHandlers();
-                connectionHandlers.forEach(connectionHandler -> resolveIdleStatus(connectionHandler));
+                for (ConnectionHandler connectionHandler : connectionHandlers) {
+                    resolveIdleStatus(connectionHandler);
+                }
             } catch (Exception e){
                 log.error("Failed to release idle connections", e);
             }
@@ -468,26 +470,25 @@ public class ConnectionManager extends AbstractProjectComponent implements Persi
 
                 Failsafe.nd(connectionHandler);
                 DatabaseTransactionManager transactionManager = DatabaseTransactionManager.getInstance(getProject());
-                List<DBNConnection> activeConnections = connectionHandler.getConnections(ConnectionType.MAIN, ConnectionType.SESSION);
+                List<DBNConnection> connections = connectionHandler.getConnections(ConnectionType.MAIN, ConnectionType.SESSION);
 
-                activeConnections.
-                        stream().
-                        filter(connection -> connection.isIdle() && connection.isNot(ResourceStatus.RESOLVING_TRANSACTION)).
-                        forEach(connection -> {
-                            int idleMinutes = connection.getIdleMinutes();
-                            int idleMinutesToDisconnect = connectionHandler.getSettings().getDetailSettings().getIdleTimeToDisconnect();
-                            if (idleMinutes > idleMinutesToDisconnect) {
-                                if (connection.hasDataChanges()) {
-                                    connection.set(ResourceStatus.RESOLVING_TRANSACTION, true);
-                                    Dispatch.run(() -> {
-                                        IdleConnectionDialog idleConnectionDialog = new IdleConnectionDialog(connectionHandler, connection);
-                                        idleConnectionDialog.show();
-                                    });
-                                } else {
-                                    transactionManager.execute(connectionHandler, connection, actions, false, null);
-                                }
+                for (DBNConnection connection : connections) {
+                    if (connection.isIdle() && connection.isNot(ResourceStatus.RESOLVING_TRANSACTION)) {
+                        int idleMinutes = connection.getIdleMinutes();
+                        int idleMinutesToDisconnect = connectionHandler.getSettings().getDetailSettings().getIdleTimeToDisconnect();
+                        if (idleMinutes > idleMinutesToDisconnect) {
+                            if (connection.hasDataChanges()) {
+                                connection.set(ResourceStatus.RESOLVING_TRANSACTION, true);
+                                Dispatch.run(() -> {
+                                    IdleConnectionDialog idleConnectionDialog = new IdleConnectionDialog(connectionHandler, connection);
+                                    idleConnectionDialog.show();
+                                });
+                            } else {
+                                transactionManager.execute(connectionHandler, connection, actions, false, null);
                             }
-                        });
+                        }
+                    }
+                }
             } catch (ProcessCanceledException ignore) {}
         }
     }
@@ -508,10 +509,10 @@ public class ConnectionManager extends AbstractProjectComponent implements Persi
                 methodExecutionManager.cleanupExecutionHistory(connectionIds);
 
                 Background.run(() -> {
-                    connectionHandlers.forEach(connectionHandler -> {
+                    for (ConnectionHandler connectionHandler : connectionHandlers) {
                         connectionHandler.getConnectionPool().closeConnections();
                         Disposer.dispose(connectionHandler);
-                    });
+                    }
                 });
             });
         }
