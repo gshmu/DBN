@@ -2,10 +2,8 @@ package com.dci.intellij.dbn.common.property;
 
 import org.jetbrains.annotations.Nullable;
 
-import java.util.concurrent.atomic.AtomicLong;
-
 public abstract class PropertyHolderImpl<T extends Property> implements PropertyHolder<T> {
-    private AtomicLong computed = new AtomicLong();
+    private volatile long computed = 0;
 
     @SafeVarargs
     public PropertyHolderImpl(T ... properties) {
@@ -24,7 +22,7 @@ public abstract class PropertyHolderImpl<T extends Property> implements Property
     protected abstract T[] properties();
 
     protected void replace(PropertyHolderImpl<T> source) {
-        this.computed = source.computed;
+        this.computed = source.computed();
     }
 
     @Override
@@ -35,14 +33,14 @@ public abstract class PropertyHolderImpl<T extends Property> implements Property
     }
 
     public final boolean is(T property) {
-        return (computed.get() & property.computedOne()) != 0;
+        return (computed & property.computedOne()) != 0;
     }
 
 
     private void change(T property, boolean value) {
-        this.computed.set(value ?
-                this.computed.get() | property.computedOne() :
-                this.computed.get() & property.computedZero());
+        this.computed = value ?
+                this.computed | property.computedOne() :
+                this.computed & property.computedZero();
     }
 
     private boolean set(T property) {
@@ -84,7 +82,7 @@ public abstract class PropertyHolderImpl<T extends Property> implements Property
     }
 
     public void reset() {
-        computed.set(0);
+        computed = 0;
         for (T property : properties()) {
             if (property.implicit()) {
                 set(property);
@@ -93,11 +91,11 @@ public abstract class PropertyHolderImpl<T extends Property> implements Property
     }
 
     public long computed() {
-        return computed.get();
+        return computed;
     }
 
     public void computed(long computed) {
-        this.computed.set(computed);
+        this.computed = computed;
     }
 
     public void merge(@Nullable PropertyHolder<T> source) {

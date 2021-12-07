@@ -30,7 +30,7 @@ public class ObjectQuickFilterCondition extends NameFilterCondition implements P
     }
 
     public boolean accepts(DBObject object) {
-        return !active || accepts(object.getName());
+        return accepts(object.getName());
     }
 
     public int index() {

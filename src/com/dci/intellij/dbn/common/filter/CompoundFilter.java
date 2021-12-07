@@ -1,11 +1,25 @@
 package com.dci.intellij.dbn.common.filter;
 
-import org.jetbrains.annotations.NotNull;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
 
+import java.util.Arrays;
 import java.util.List;
-import java.util.Objects;
 
-public abstract class CompoundFilter<T> implements Filter<T>{
+@Getter
+@EqualsAndHashCode
+public class CompoundFilter<T> implements Filter<T>{
+    private final List<Filter<T>> filters;
+
+    private CompoundFilter(List<Filter<T>> filters) {
+        this.filters = filters;
+    }
+
+    @SafeVarargs
+    @SuppressWarnings("varargs")
+    public static <T> Filter<T> of(Filter<T> ... filters) {
+        return new CompoundFilter<T>(Arrays.asList(filters));
+    }
 
     @Override
     public final boolean accepts(T object) {
@@ -18,17 +32,4 @@ public abstract class CompoundFilter<T> implements Filter<T>{
 
         return true;
     }
-
-    @Override
-    public final int getSignature() {
-        return Objects.hash(getFilters());
-    }
-
-    @Override
-    public boolean isEmpty() {
-        return getFilters().isEmpty();
-    }
-
-    @NotNull
-    public abstract List<Filter<T>> getFilters();
 }

@@ -76,6 +76,7 @@ public class ObjectQuickFilterForm extends DBNFormImpl {
 
         joinTypeComboBox.setValues(ConditionJoinType.values());
         joinTypeComboBox.setSelectedValue(this.filter.getJoinType());
+        joinTypeComboBox.setEnabled(conditionForms.size() > 1);
         joinTypeComboBox.addListener((oldValue, newValue) -> {
             this.filter.setJoinType(newValue);
         });
@@ -88,7 +89,7 @@ public class ObjectQuickFilterForm extends DBNFormImpl {
         GenericDatabaseElement parentElement = objectList.getParentElement();
         String headerText = "[" + connectionHandler.getName() + "] " +
                 (parentElement instanceof DBSchema ? (parentElement.getName() + " - ") : "") +
-                NamingUtil.capitalizeWords(objectList.getObjectType().getListName()) + " filter";
+                NamingUtil.capitalizeWords(objectList.getObjectType().getName()) + " filters";
         Color headerBackground = connectionHandler.getEnvironmentType().getColor();
         DBNHeaderForm headerForm = new DBNHeaderForm(this, headerText, headerIcon, headerBackground);
         headerPanel.add(headerForm.getComponent(), BorderLayout.CENTER);

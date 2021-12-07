@@ -5,6 +5,7 @@ import com.dci.intellij.dbn.common.content.dependency.VoidContentDependencyAdapt
 import com.dci.intellij.dbn.common.content.loader.DynamicContentLoader;
 import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.common.dispose.SafeDisposer;
+import com.dci.intellij.dbn.common.filter.FilterDelegate;
 import com.dci.intellij.dbn.common.list.FilteredList;
 import com.dci.intellij.dbn.common.notification.NotificationGroup;
 import com.dci.intellij.dbn.common.notification.NotificationSupport;
@@ -337,7 +338,7 @@ public abstract class DynamicContentImpl<T extends DynamicContentElement>
         } else {
             sortElements(elements);
         }
-        this.elements = FilteredList.stateful(getFilter(), elements);
+        this.elements = FilteredList.stateful((FilterDelegate<T>) () -> getFilter(), elements);
         compact();
         if (oldElements.size() != 0 || elements.size() != 0 ){
             notifyChangeListeners();

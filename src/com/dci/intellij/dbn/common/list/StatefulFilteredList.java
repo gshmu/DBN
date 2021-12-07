@@ -18,7 +18,7 @@ import java.util.stream.Collectors;
 final class StatefulFilteredList<T> extends FilteredListBase<T> {
     private final Latent<List<T>> inner = Latent.mutable(
             () -> filterSignature(),
-            () -> filter.isEmpty() ? null : base.stream().filter(t -> filter.accepts(t)).collect(Collectors.toList()));
+            () -> filter == null  || filter.isEmpty() ? null : base.stream().filter(t -> filter.accepts(t)).collect(Collectors.toList()));
 
 
     StatefulFilteredList(Filter<T> filter, List<T> base) {

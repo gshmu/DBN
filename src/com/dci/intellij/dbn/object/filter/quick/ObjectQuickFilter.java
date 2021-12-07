@@ -48,7 +48,7 @@ public class ObjectQuickFilter<T extends DBObject> implements Filter<T>, Cloneab
     }
 
     public boolean isEmpty() {
-        return conditions.isEmpty();
+        return conditions.isEmpty() || conditions.stream().noneMatch(condition -> condition.isActive());
     }
 
     @Override
@@ -56,12 +56,12 @@ public class ObjectQuickFilter<T extends DBObject> implements Filter<T>, Cloneab
         if (conditions.size() > 0) {
             if (joinType == ConditionJoinType.AND) {
                 for (ObjectQuickFilterCondition condition : conditions) {
-                    if (!condition.accepts(object)) return false;
+                    if (condition.isActive() && !condition.accepts(object)) return false;
                 }
                 return true;
             } else if (joinType == ConditionJoinType.OR) {
                 for (ObjectQuickFilterCondition condition : conditions) {
-                    if (condition.accepts(object)) return true;
+                    if (condition.isActive() && condition.accepts(object)) return true;
                 }
                 return false;
             }
