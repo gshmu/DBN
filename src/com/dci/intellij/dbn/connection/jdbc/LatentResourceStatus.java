@@ -8,7 +8,7 @@ import com.dci.intellij.dbn.common.util.TimeUtil;
 import com.dci.intellij.dbn.language.common.WeakRef;
 import org.jetbrains.annotations.NotNull;
 
-public abstract class LatentResourceStatus<T extends Property> {
+public abstract class LatentResourceStatus<T extends Property.IntBase> {
     private final long interval;
     private volatile boolean checking;
     private long lastCheck;

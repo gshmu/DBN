@@ -7,7 +7,7 @@ import com.dci.intellij.dbn.connection.ConnectionProvider;
 import com.dci.intellij.dbn.object.common.DBObject;
 import org.jetbrains.annotations.Nullable;
 
-public enum JdbcProperty implements Property {
+public enum JdbcProperty implements Property.IntBase {
     MD_CATALOGS("Catalogs", true),
     MD_SCHEMAS("Schemas", true),
     MD_TABLES("Tables", true),

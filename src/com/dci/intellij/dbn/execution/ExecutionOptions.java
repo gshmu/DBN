@@ -1,15 +1,16 @@
 package com.dci.intellij.dbn.execution;
 
-import com.dci.intellij.dbn.common.property.PropertyHolderImpl;
 
-public class ExecutionOptions extends PropertyHolderImpl<ExecutionOption> {
+import com.dci.intellij.dbn.common.property.PropertyHolderBase;
+
+public class ExecutionOptions extends PropertyHolderBase.IntStore<ExecutionOption> {
     public ExecutionOptions(ExecutionOption... properties) {
         super(properties);
     }
 
     public static ExecutionOptions clone(ExecutionOptions source) {
         ExecutionOptions options = new ExecutionOptions();
-        options.computed(source.computed());
+        options.replace(source);
         return options;
     }
 

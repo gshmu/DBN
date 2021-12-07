@@ -1,6 +1,6 @@
 package com.dci.intellij.dbn.object.common.status;
 
-import com.dci.intellij.dbn.common.property.PropertyHolderImpl;
+import com.dci.intellij.dbn.common.property.PropertyHolderBase;
 import com.dci.intellij.dbn.editor.DBContentType;
 import lombok.Getter;
 import org.jetbrains.annotations.Nullable;
@@ -104,7 +104,7 @@ public class DBObjectStatusHolder {
     }
 
     @Getter
-    private static class Entry extends PropertyHolderImpl<DBObjectStatus>{
+    private static class Entry extends PropertyHolderBase.IntStore<DBObjectStatus> {
         private final DBContentType contentType;
 
         @Override

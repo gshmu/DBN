@@ -2,7 +2,7 @@ package com.dci.intellij.dbn.object.common.status;
 
 import com.dci.intellij.dbn.common.property.Property;
 
-public enum DBObjectStatus implements Property {
+public enum DBObjectStatus implements Property.IntBase {
     PRESENT(false, true),
     ENABLED(true, true),
     EDITABLE(false, false),

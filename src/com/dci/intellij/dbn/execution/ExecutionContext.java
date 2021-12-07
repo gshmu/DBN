@@ -1,7 +1,7 @@
 package com.dci.intellij.dbn.execution;
 
 import com.dci.intellij.dbn.common.property.PropertyHolder;
-import com.dci.intellij.dbn.common.property.PropertyHolderImpl;
+import com.dci.intellij.dbn.common.property.PropertyHolderBase;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.SchemaId;
 import com.dci.intellij.dbn.connection.jdbc.DBNConnection;
@@ -15,7 +15,7 @@ import static com.dci.intellij.dbn.execution.ExecutionStatus.*;
 
 @Getter
 @Setter
-public abstract class ExecutionContext extends PropertyHolderImpl<ExecutionStatus> implements PropertyHolder<ExecutionStatus> {
+public abstract class ExecutionContext extends PropertyHolderBase.IntStore<ExecutionStatus> implements PropertyHolder<ExecutionStatus> {
     private transient int timeout;
     private transient boolean logging = false;
     private transient long executionTimestamp;

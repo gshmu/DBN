@@ -1,8 +1,8 @@
 package com.dci.intellij.dbn.editor.data;
 
-import com.dci.intellij.dbn.common.property.PropertyHolderImpl;
+import com.dci.intellij.dbn.common.property.PropertyHolderBase;
 
-public class DatasetEditorStatusHolder extends PropertyHolderImpl<DatasetEditorStatus> {
+public class DatasetEditorStatusHolder extends PropertyHolderBase.IntStore<DatasetEditorStatus> {
     @Override
     protected DatasetEditorStatus[] properties() {
         return DatasetEditorStatus.values();

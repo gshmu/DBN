@@ -2,7 +2,7 @@ package com.dci.intellij.dbn.data.model.basic;
 
 import com.dci.intellij.dbn.common.dispose.SafeDisposer;
 import com.dci.intellij.dbn.common.locale.Formatter;
-import com.dci.intellij.dbn.common.property.PropertyHolderImpl;
+import com.dci.intellij.dbn.common.property.PropertyHolderBase;
 import com.dci.intellij.dbn.data.editor.text.TextContentType;
 import com.dci.intellij.dbn.data.model.ColumnInfo;
 import com.dci.intellij.dbn.data.model.DataModelCell;
@@ -19,7 +19,7 @@ import org.jetbrains.annotations.NotNull;
 public class BasicDataModelCell<
         R extends BasicDataModelRow<M, ? extends BasicDataModelCell<R, M>>,
         M extends BasicDataModel<R, ? extends BasicDataModelCell<R, M>>>
-        extends PropertyHolderImpl<RecordStatus>
+        extends PropertyHolderBase.IntStore<RecordStatus>
         implements DataModelCell<R, M> {
 
     protected WeakRef<R> row;

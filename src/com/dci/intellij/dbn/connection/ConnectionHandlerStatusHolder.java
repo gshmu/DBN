@@ -2,7 +2,7 @@ package com.dci.intellij.dbn.connection;
 
 import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.common.event.ProjectEvents;
-import com.dci.intellij.dbn.common.property.PropertyHolderImpl;
+import com.dci.intellij.dbn.common.property.PropertyHolderBase;
 import com.dci.intellij.dbn.common.util.TimeUtil;
 import com.dci.intellij.dbn.connection.jdbc.DBNConnection;
 import com.dci.intellij.dbn.connection.jdbc.IncrementalStatusAdapter;
@@ -16,7 +16,7 @@ import java.util.List;
 
 @Getter
 @Setter
-public class ConnectionHandlerStatusHolder extends PropertyHolderImpl<ConnectionHandlerStatus> {
+public class ConnectionHandlerStatusHolder extends PropertyHolderBase.IntStore<ConnectionHandlerStatus> {
     private final ConnectionHandlerRef  connectionHandlerRef;
 
     private AuthenticationError authenticationError;
@@ -166,24 +166,7 @@ public class ConnectionHandlerStatusHolder extends PropertyHolderImpl<Connection
         return active.check();
     }
 
-    public LatentResourceStatus getActive() {
-        return active;
-    }
-
-    public LatentResourceStatus getBusy() {
-        return busy;
-    }
-
-    public LatentResourceStatus getValid() {
-        return valid;
-    }
-
-    public LatentResourceStatus getConnected() {
-        return connected;
-    }
-
-
-    private abstract class LatentConnectionStatus extends LatentResourceStatus<ConnectionHandlerStatus> {
+    public abstract class LatentConnectionStatus extends LatentResourceStatus<ConnectionHandlerStatus> {
         LatentConnectionStatus(ConnectionHandlerStatus status, boolean initialValue, long interval) {
             super(ConnectionHandlerStatusHolder.this, status, initialValue, interval);
         }

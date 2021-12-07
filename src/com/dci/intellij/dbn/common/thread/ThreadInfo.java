@@ -1,10 +1,10 @@
 package com.dci.intellij.dbn.common.thread;
 
 import com.dci.intellij.dbn.common.property.PropertyHolder;
-import com.dci.intellij.dbn.common.property.PropertyHolderImpl;
+import com.dci.intellij.dbn.common.property.PropertyHolderBase;
 import org.jetbrains.annotations.Nullable;
 
-public class ThreadInfo extends PropertyHolderImpl<ThreadProperty> {
+public class ThreadInfo extends PropertyHolderBase.IntStore<ThreadProperty> {
     @Override
     protected ThreadProperty[] properties() {
         return ThreadProperty.values();

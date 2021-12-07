@@ -9,8 +9,17 @@ public interface PropertyHolder<T extends Property> {
         return !is(status);
     };
 
-    static <T extends Property> PropertyHolder<T> create(Class<T> type) {
-        return new PropertyHolderImpl<T>() {
+    static <T extends Property.LongBase> PropertyHolder<T> longBase(Class<T> type) {
+        return new PropertyHolderBase.LongStore<T>() {
+            @Override
+            protected T[] properties() {
+                return type.getEnumConstants();
+            }
+        };
+    }
+
+    static <T extends Property.IntBase> PropertyHolder<T> integerBase(Class<T> type) {
+        return new PropertyHolderBase.IntStore<T>() {
             @Override
             protected T[] properties() {
                 return type.getEnumConstants();
