@@ -11,6 +11,7 @@ import com.dci.intellij.dbn.common.option.InteractiveOptionBroker;
 import com.dci.intellij.dbn.common.thread.Dispatch;
 import com.dci.intellij.dbn.common.thread.Progress;
 import com.dci.intellij.dbn.common.thread.Read;
+import com.dci.intellij.dbn.common.util.Lists;
 import com.dci.intellij.dbn.common.util.Messages;
 import com.dci.intellij.dbn.common.util.TimeUtil;
 import com.dci.intellij.dbn.connection.ConnectionAction;
@@ -215,7 +216,7 @@ public class SessionBrowserManager extends AbstractProjectComponent implements P
                                             Messages.showInfoDialog(project, "Info", sessionIds.size() + " sessions " + disconnectedAction + ".");
                                         } else {
                                             StringBuilder message = new StringBuilder();
-                                            boolean success = errors.values().stream().allMatch(error -> messageParserInterface.isSuccessException(error));
+                                            boolean success = Lists.allMatch(errors.values(), error -> messageParserInterface.isSuccessException(error));
                                             if (success) {
                                                 message.append(sessionIds.size());
                                                 message.append(" sessions ");

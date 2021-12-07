@@ -149,7 +149,7 @@ public class ObjectDependencyTreeNode extends StatefulDisposable.Base implements
 
     @Override
     public void disposeInner() {
-        SafeDisposer.dispose(dependencies, false, false);
+        SafeDisposer.dispose(dependencies, true, false);
         nullify();
     }
 }

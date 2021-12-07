@@ -201,7 +201,7 @@ public class MethodExecutionHistory implements PersistentStateElement, Disposabl
 
     @Override
     public void dispose() {
-        SafeDisposer.dispose(executionInputs, false, false);
+        SafeDisposer.dispose(executionInputs, true, false);
     }
 
 

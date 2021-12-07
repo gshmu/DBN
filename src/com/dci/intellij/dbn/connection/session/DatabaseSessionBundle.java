@@ -4,7 +4,6 @@ import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.common.dispose.SafeDisposer;
 import com.dci.intellij.dbn.common.dispose.StatefulDisposable;
 import com.dci.intellij.dbn.common.util.CollectionUtil;
-import com.dci.intellij.dbn.common.util.Lists;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.ConnectionHandlerRef;
 import com.dci.intellij.dbn.connection.ConnectionType;
@@ -20,7 +19,9 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
 import java.util.Set;
-import java.util.stream.Collectors;
+
+import static com.dci.intellij.dbn.common.util.Lists.filtered;
+import static com.dci.intellij.dbn.common.util.Lists.first;
 
 public class DatabaseSessionBundle extends StatefulDisposable.Base implements Disposable{
     private final ConnectionHandlerRef connectionHandler;
@@ -50,10 +51,9 @@ public class DatabaseSessionBundle extends StatefulDisposable.Base implements Di
     }
 
     public List<DatabaseSession> getSessions(ConnectionType ... connectionTypes) {
-        return this.sessions.stream().
-                filter(session -> session.getConnectionType().matches(connectionTypes)).
-                sorted(Comparator.comparingInt(session -> session.getConnectionType().getPriority())).
-                collect(Collectors.toList());
+        List<DatabaseSession> sessions = filtered(this.sessions, session -> session.getConnectionType().matches(connectionTypes));
+        sessions.sort(Comparator.comparingInt(session -> session.getConnectionType().getPriority()));
+        return sessions;
     }
 
     public Set<String> getSessionNames() {
@@ -88,7 +88,7 @@ public class DatabaseSessionBundle extends StatefulDisposable.Base implements Di
 
     @Nullable
     public DatabaseSession getSession(String name) {
-        return Lists.first(sessions, session -> Objects.equals(session.getName(), name));
+        return first(sessions, session -> Objects.equals(session.getName(), name));
     }
 
     @NotNull
@@ -128,7 +128,7 @@ public class DatabaseSessionBundle extends StatefulDisposable.Base implements Di
 
     @Override
     public void disposeInner() {
-        SafeDisposer.dispose(sessions, false, false);
+        SafeDisposer.dispose(sessions, true, false);
         mainSession = null;
         debugSession = null;
         debuggerSession = null;

@@ -8,6 +8,7 @@ import com.dci.intellij.dbn.common.file.util.VirtualFileUtil;
 import com.dci.intellij.dbn.common.thread.Progress;
 import com.dci.intellij.dbn.common.thread.Read;
 import com.dci.intellij.dbn.common.util.Commons;
+import com.dci.intellij.dbn.common.util.Lists;
 import com.dci.intellij.dbn.diagnostics.data.DiagnosticCategory;
 import com.dci.intellij.dbn.diagnostics.data.ParserDiagnosticsFilter;
 import com.dci.intellij.dbn.diagnostics.data.ParserDiagnosticsResult;
@@ -120,7 +121,7 @@ public class ParserDiagnosticsManager extends AbstractProjectComponent implement
     }
 
     public boolean hasDraftResults() {
-        return resultHistory.stream().anyMatch(result -> result.isDraft());
+        return Lists.anyMatch(resultHistory, result -> result.isDraft());
     }
 
     public void saveResult(@NotNull ParserDiagnosticsResult result) {

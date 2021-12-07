@@ -18,7 +18,7 @@ public class DatasetFilterUtil {
     public static void addOrderByClause(DBDataset dataset, StringBuilder buffer, SortingState sortingState) {
         DataGridSettings dataGridSettings = DataGridSettings.getInstance(dataset.getProject());
         boolean nullsFirst = dataGridSettings.getSortingSettings().isNullsFirst();
-        List<SortingInstruction> sortingInstructions = sortingState.getSortingInstructions();
+        List<SortingInstruction> sortingInstructions = sortingState.getInstructions();
         if (sortingInstructions.size() > 0) {
             buffer.append(" order by ");
             boolean instructionAdded = false;

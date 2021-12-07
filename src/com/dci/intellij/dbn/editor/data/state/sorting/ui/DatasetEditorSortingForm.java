@@ -45,7 +45,7 @@ public class DatasetEditorSortingForm extends DBNFormImpl{
         BoxLayout sortingInstructionsPanelLayout = new BoxLayout(sortingInstructionsPanel, BoxLayout.Y_AXIS);
         sortingInstructionsPanel.setLayout(sortingInstructionsPanelLayout);
 
-        for (SortingInstruction sortingInstruction : sortingState.getSortingInstructions()) {
+        for (SortingInstruction sortingInstruction : sortingState.getInstructions()) {
             DBColumn column = sortingInstruction.getColumn(dataset);
             if (column != null) {
                 DatasetSortingColumnForm sortingInstructionForm = new DatasetSortingColumnForm(this, sortingInstruction.clone());

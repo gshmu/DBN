@@ -712,7 +712,7 @@ public abstract class DBObjectImpl<M extends DBObjectMetadata> extends BrowserTr
         ConnectionHandler connectionHandler = getConnectionHandler();
         Filter<BrowserTreeNode> objectTypeFilter = connectionHandler.getObjectTypeFilter();
 
-        List<BrowserTreeNode> treeChildren = filter(getAllPossibleTreeChildren(), false, true, objectTypeFilter);
+        List<BrowserTreeNode> treeChildren = filter(getAllPossibleTreeChildren(), objectTypeFilter);
         treeChildren = Commons.nvl(treeChildren, Collections.emptyList());
 
         for (BrowserTreeNode objectList : treeChildren) {
