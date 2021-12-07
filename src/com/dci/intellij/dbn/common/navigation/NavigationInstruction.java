@@ -2,7 +2,7 @@ package com.dci.intellij.dbn.common.navigation;
 
 import com.dci.intellij.dbn.common.property.Property;
 
-public enum NavigationInstruction implements Property{
+public enum NavigationInstruction implements Property.IntBase {
     OPEN,
     FOCUS,
     SCROLL,

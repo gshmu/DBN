@@ -3,7 +3,7 @@ package com.dci.intellij.dbn.vfs;
 import com.dci.intellij.dbn.common.property.Property;
 import com.dci.intellij.dbn.common.property.PropertyGroup;
 
-public enum VirtualFileStatus implements Property{
+public enum VirtualFileStatus implements Property.IntBase {
     LATEST(Group.CODE, true),
     MERGED(Group.CODE, false),
     OUTDATED(Group.CODE, false),

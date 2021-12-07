@@ -1,11 +1,11 @@
 package com.dci.intellij.dbn.language.common.element.util;
 
-import com.dci.intellij.dbn.common.property.PropertyHolderImpl;
+import com.dci.intellij.dbn.common.property.PropertyHolderBase;
 
 import java.util.Objects;
 import java.util.StringTokenizer;
 
-public class ElementTypeAttributeHolder extends PropertyHolderImpl<ElementTypeAttribute>{
+public class ElementTypeAttributeHolder extends PropertyHolderBase.LongStore<ElementTypeAttribute> {
 
     @Override
     protected ElementTypeAttribute[] properties() {

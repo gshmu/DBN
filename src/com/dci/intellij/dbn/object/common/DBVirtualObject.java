@@ -4,7 +4,7 @@ import com.dci.intellij.dbn.code.common.lookup.LookupItemBuilder;
 import com.dci.intellij.dbn.code.common.lookup.ObjectLookupItemBuilder;
 import com.dci.intellij.dbn.common.content.DynamicContentStatus;
 import com.dci.intellij.dbn.common.dispose.Failsafe;
-import com.dci.intellij.dbn.common.property.BasicProperty;
+import com.dci.intellij.dbn.common.latent.Latent;
 import com.dci.intellij.dbn.common.thread.Read;
 import com.dci.intellij.dbn.common.util.DocumentUtil;
 import com.dci.intellij.dbn.common.util.StringUtil;
@@ -80,29 +80,26 @@ public class DBVirtualObject extends DBObjectImpl implements PsiReference {
     private final DBObjectPsiFacade psiFacade;
     private final Map<String, ObjectLookupItemBuilder> lookupItemBuilder = new ConcurrentHashMap<>();
 
-    private final BasicProperty<Boolean> valid = new BasicProperty<Boolean>(true) {
-        @Override
-        protected Boolean load() {
-            return Read.conditional(() -> {
-                BasePsiElement underlyingPsiElement = getUnderlyingPsiElement();
-                if (underlyingPsiElement != null && underlyingPsiElement.isValid()) {
-                    DBObjectType objectType = getObjectType();
-                    if (objectType == DBObjectType.DATASET) {
-                        return true;
-                    }
-                    BasePsiElement relevantPsiElement = getRelevantPsiElement();
-                    if (StringUtil.equalsIgnoreCase(getName(), relevantPsiElement.getText())) {
-                        if (relevantPsiElement instanceof IdentifierPsiElement) {
-                            IdentifierPsiElement identifierPsiElement = (IdentifierPsiElement) relevantPsiElement;
-                            return identifierPsiElement.getObjectType() == objectType;
-                        }
-                        return true;
-                    }
+    private final Latent<Boolean> valid = Latent.basic(() -> {
+        return Read.conditional(() -> {
+            BasePsiElement<?> underlyingPsiElement = getUnderlyingPsiElement();
+            if (underlyingPsiElement != null && underlyingPsiElement.isValid()) {
+                DBObjectType objectType = getObjectType();
+                if (objectType == DBObjectType.DATASET) {
+                    return true;
                 }
-                return false;
-            }, false);
-        }
-    };
+                BasePsiElement<?> relevantPsiElement = getRelevantPsiElement();
+                if (StringUtil.equalsIgnoreCase(getName(), relevantPsiElement.getText())) {
+                    if (relevantPsiElement instanceof IdentifierPsiElement) {
+                        IdentifierPsiElement identifierPsiElement = (IdentifierPsiElement) relevantPsiElement;
+                        return identifierPsiElement.getObjectType() == objectType;
+                    }
+                    return true;
+                }
+            }
+            return false;
+        }, false);
+    });
 
     public DBVirtualObject(@NotNull DBObjectType objectType, @NotNull BasePsiElement psiElement) {
         super(psiElement.getConnectionHandler(), objectType, psiElement.getText());
@@ -380,13 +377,13 @@ public class DBVirtualObject extends DBObjectImpl implements PsiReference {
     }
 
     @Nullable
-    public BasePsiElement getUnderlyingPsiElement() {
-        return (BasePsiElement) getPsiFacade().getPsiElement();
+    public BasePsiElement<?> getUnderlyingPsiElement() {
+        return (BasePsiElement<?>) getPsiFacade().getPsiElement();
     }
 
     @NotNull
-    private BasePsiElement getRelevantPsiElement() {
-        BasePsiElement basePsiElement = PsiElementRef.get(relevantPsiElement);
+    private BasePsiElement<?> getRelevantPsiElement() {
+        BasePsiElement<?> basePsiElement = PsiElementRef.get(relevantPsiElement);
         return Failsafe.nn(basePsiElement);
     }
 

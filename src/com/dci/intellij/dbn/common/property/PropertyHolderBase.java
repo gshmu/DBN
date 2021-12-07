@@ -2,11 +2,13 @@ package com.dci.intellij.dbn.common.property;
 
 import org.jetbrains.annotations.Nullable;
 
-public abstract class PropertyHolderImpl<T extends Property> implements PropertyHolder<T> {
-    private volatile long computed = 0;
+public abstract class PropertyHolderBase<T extends Property> implements PropertyHolder<T> {
+    protected abstract T[] properties();
+    protected abstract void change(T property, boolean value);
+
 
     @SafeVarargs
-    public PropertyHolderImpl(T ... properties) {
+    protected PropertyHolderBase(T ... properties) {
         for (T property : properties()) {
             if (property.implicit()) {
                 set(property);
@@ -19,12 +21,6 @@ public abstract class PropertyHolderImpl<T extends Property> implements Property
         }
     }
 
-    protected abstract T[] properties();
-
-    protected void replace(PropertyHolderImpl<T> source) {
-        this.computed = source.computed();
-    }
-
     @Override
     public boolean set(T property, boolean value) {
         return value ?
@@ -32,18 +28,7 @@ public abstract class PropertyHolderImpl<T extends Property> implements Property
                 unset(property);
     }
 
-    public final boolean is(T property) {
-        return (computed & property.computedOne()) != 0;
-    }
-
-
-    private void change(T property, boolean value) {
-        this.computed = value ?
-                this.computed | property.computedOne() :
-                this.computed & property.computedZero();
-    }
-
-    private boolean set(T property) {
+    protected final boolean set(T property) {
         if (isNot(property)) {
             PropertyGroup group = property.group();
             if (group != null) {
@@ -61,7 +46,7 @@ public abstract class PropertyHolderImpl<T extends Property> implements Property
         return false;
     }
 
-    private boolean unset(T property) {
+    protected boolean unset(T property) {
         if (is(property)) {
             change(property, false);
 
@@ -82,20 +67,11 @@ public abstract class PropertyHolderImpl<T extends Property> implements Property
     }
 
     public void reset() {
-        computed = 0;
         for (T property : properties()) {
             if (property.implicit()) {
                 set(property);
             }
         }
-    }
-
-    public long computed() {
-        return computed;
-    }
-
-    public void computed(long computed) {
-        this.computed = computed;
     }
 
     public void merge(@Nullable PropertyHolder<T> source) {
@@ -118,7 +94,6 @@ public abstract class PropertyHolderImpl<T extends Property> implements Property
         }
     }
 
-
     @Override
     public String toString() {
         StringBuilder builder = new StringBuilder();
@@ -131,5 +106,62 @@ public abstract class PropertyHolderImpl<T extends Property> implements Property
             }
         }
         return builder.toString();
+    }
+
+    public abstract static class IntStore<T extends Property.IntBase> extends PropertyHolderBase<T> {
+        private volatile int computed = 0;
+
+        @SafeVarargs
+        public IntStore(T ... properties) {
+            super(properties);
+        }
+
+        protected void replace(IntStore<T> source) {
+            this.computed = source.computed;
+        }
+
+        public final boolean is(T property) {
+            return (computed & property.computedOne()) != 0;
+        }
+
+        protected void change(T property, boolean value) {
+            this.computed = value ?
+                    this.computed | property.computedOne() :
+                    this.computed & property.computedZero();
+        }
+
+        public void reset() {
+            computed = 0;
+            super.reset();
+        }
+    }
+
+    public abstract static class LongStore<T extends Property.LongBase> extends PropertyHolderBase<T> {
+        private volatile long computed = 0;
+
+        @SafeVarargs
+        public LongStore(T ... properties) {
+            super(properties);
+        }
+
+        protected void replace(LongStore<T> source) {
+            this.computed = source.computed;
+        }
+
+        public final boolean is(T property) {
+            return (computed & property.computedOne()) != 0;
+        }
+
+
+        protected void change(T property, boolean value) {
+            this.computed = value ?
+                    this.computed | property.computedOne() :
+                    this.computed & property.computedZero();
+        }
+
+        public void reset() {
+            computed = 0;
+            super.reset();
+        }
     }
 }

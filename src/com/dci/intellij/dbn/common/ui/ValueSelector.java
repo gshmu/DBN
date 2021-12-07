@@ -20,10 +20,16 @@ import com.intellij.util.ui.UIUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import javax.swing.*;
+import javax.swing.Icon;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.SwingConstants;
 import javax.swing.border.Border;
 import javax.swing.border.CompoundBorder;
-import java.awt.*;
+import java.awt.BorderLayout;
+import java.awt.Cursor;
+import java.awt.Dimension;
+import java.awt.Graphics;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
@@ -35,7 +41,7 @@ import java.util.Set;
 
 public abstract class ValueSelector<T extends Presentable> extends JPanel{
     private final Set<ValueSelectorListener<T>> listeners = new HashSet<>();
-    private final PropertyHolder<ValueSelectorOption> options = PropertyHolder.create(ValueSelectorOption.class);
+    private final PropertyHolder<ValueSelectorOption> options = PropertyHolder.integerBase(ValueSelectorOption.class);
 
     private final JLabel label;
     private final JPanel innerPanel;
@@ -216,7 +222,7 @@ public abstract class ValueSelector<T extends Presentable> extends JPanel{
     }
 
     public class SelectValueAction extends DumbAwareAction {
-        private T value;
+        private final T value;
 
         SelectValueAction(T value) {
             super(getOptionDisplayName(value), null, options.is(ValueSelectorOption.HIDE_ICON) ? null : value.getIcon());

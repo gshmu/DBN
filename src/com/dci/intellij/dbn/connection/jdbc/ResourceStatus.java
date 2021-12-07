@@ -4,7 +4,7 @@ import com.dci.intellij.dbn.common.property.Property;
 import lombok.Getter;
 
 @Getter
-public enum ResourceStatus implements Property {
+public enum ResourceStatus implements Property.IntBase {
     // shared
     CLOSED,
     CLOSED_CHECKING(true),

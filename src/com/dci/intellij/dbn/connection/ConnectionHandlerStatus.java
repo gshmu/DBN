@@ -2,7 +2,7 @@ package com.dci.intellij.dbn.connection;
 
 import com.dci.intellij.dbn.common.property.Property;
 
-public enum ConnectionHandlerStatus implements Property {
+public enum ConnectionHandlerStatus implements Property.IntBase {
     CONNECTED,
     CLEANING,
     LOADING,

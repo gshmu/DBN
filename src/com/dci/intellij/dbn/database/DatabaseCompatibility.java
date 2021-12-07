@@ -1,6 +1,6 @@
 package com.dci.intellij.dbn.database;
 
-import com.dci.intellij.dbn.common.property.PropertyHolderImpl;
+import com.dci.intellij.dbn.common.property.PropertyHolderBase;
 import com.dci.intellij.dbn.common.util.TransientId;
 
 import java.sql.DatabaseMetaData;
@@ -8,7 +8,7 @@ import java.sql.SQLException;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
-public class DatabaseCompatibility extends PropertyHolderImpl<JdbcProperty> {
+public class DatabaseCompatibility extends PropertyHolderBase.IntStore<JdbcProperty> {
 
     private String identifierQuote;
     private final Map<TransientId, DatabaseActivityTrace> activityTraces = new ConcurrentHashMap<>();
