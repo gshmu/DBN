@@ -1,6 +1,6 @@
 package com.dci.intellij.dbn.common.consumer;
 
-import com.dci.intellij.dbn.common.util.CommonUtil;
+import com.dci.intellij.dbn.common.util.Commons;
 
 import java.util.Collections;
 import java.util.HashSet;
@@ -30,7 +30,7 @@ public class SetCollector<T> implements Consumer<T> {
     }
 
     public Set<T> elements() {
-        return CommonUtil.nvl(elements, Collections.emptySet());
+        return Commons.nvl(elements, Collections.emptySet());
     }
 
     public boolean isEmpty() {

@@ -1,7 +1,7 @@
 package com.dci.intellij.dbn.language.common.element.impl;
 
-import com.dci.intellij.dbn.common.util.CommonUtil;
-import com.dci.intellij.dbn.common.util.StringUtil;
+import com.dci.intellij.dbn.common.util.Commons;
+import com.dci.intellij.dbn.common.util.Strings;
 import com.dci.intellij.dbn.language.common.TokenType;
 import com.dci.intellij.dbn.language.common.element.ElementType;
 import com.dci.intellij.dbn.language.common.element.ElementTypeBundle;
@@ -62,7 +62,7 @@ public class SequenceElementType extends ElementTypeBase {
     protected void loadDefinition(Element def) throws ElementTypeDefinitionException {
         super.loadDefinition(def);
         String tokenIds = stringAttribute(def, "tokens");
-        if (StringUtil.isNotEmptyOrSpaces(tokenIds)) {
+        if (Strings.isNotEmptyOrSpaces(tokenIds)) {
             basic = true;
             String id = getId();
             String[] tokens = tokenIds.split(",");
@@ -84,7 +84,7 @@ public class SequenceElementType extends ElementTypeBase {
                 String type = child.getName();
                 ElementTypeBase elementType = getElementBundle().resolveElementDefinition(child, type, this);
                 boolean optional = getBooleanAttribute(child, "optional");
-                double version = Double.parseDouble(CommonUtil.nvl(stringAttribute(child, "version"), "0"));
+                double version = Double.parseDouble(Commons.nvl(stringAttribute(child, "version"), "0"));
 
                 Set<BranchCheck> branchChecks = parseBranchChecks(stringAttribute(child, "branch-check"));
                 this.children[i] = new ElementTypeRef(previous, this, elementType, optional, version, branchChecks);

@@ -3,7 +3,7 @@ package com.dci.intellij.dbn.code.common.lookup;
 import com.dci.intellij.dbn.code.common.completion.BasicInsertHandler;
 import com.dci.intellij.dbn.code.common.completion.CodeCompletionContext;
 import com.dci.intellij.dbn.code.common.completion.options.sorting.CodeCompletionSortingSettings;
-import com.dci.intellij.dbn.common.util.NamingUtil;
+import com.dci.intellij.dbn.common.util.Naming;
 import com.intellij.codeInsight.completion.InsertHandler;
 import com.intellij.codeInsight.lookup.LookupItem;
 import org.jetbrains.annotations.NotNull;
@@ -14,12 +14,12 @@ import java.util.Objects;
 
 public class CodeCompletionLookupItem extends LookupItem {
     public CodeCompletionLookupItem(LookupItemBuilder lookupItemBuilder, @NotNull String text, CodeCompletionContext completionContext) {
-        super(lookupItemBuilder, NamingUtil.unquote(text));
+        super(lookupItemBuilder, Naming.unquote(text));
         setIcon(lookupItemBuilder.getIcon());
         if (lookupItemBuilder.isBold()) setBold();
         setAttribute(LookupItem.TYPE_TEXT_ATTR, lookupItemBuilder.getTextHint());
         addLookupStrings(text.toUpperCase(), text.toLowerCase());
-        setPresentableText(NamingUtil.unquote(text));
+        setPresentableText(Naming.unquote(text));
         CodeCompletionSortingSettings sortingSettings = completionContext.getCodeCompletionSettings().getSortingSettings();
         if (sortingSettings.isEnabled()) {
             setPriority(sortingSettings.getSortingIndexFor(lookupItemBuilder));
@@ -38,7 +38,7 @@ public class CodeCompletionLookupItem extends LookupItem {
         setIcon(icon);
         if (bold) setBold();
         setAttribute(LookupItem.TYPE_TEXT_ATTR, description);
-        setPresentableText(NamingUtil.unquote(text));
+        setPresentableText(Naming.unquote(text));
         setInsertHandler(BasicInsertHandler.INSTANCE);
     }
 

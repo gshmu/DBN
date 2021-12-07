@@ -1,7 +1,7 @@
 package com.dci.intellij.dbn.object.filter.name;
 
 import com.dci.intellij.dbn.common.filter.Filter;
-import com.dci.intellij.dbn.common.util.StringUtil;
+import com.dci.intellij.dbn.common.util.Strings;
 import com.dci.intellij.dbn.object.common.DBObject;
 import com.dci.intellij.dbn.object.filter.ConditionJoinType;
 import com.dci.intellij.dbn.object.filter.ConditionOperator;
@@ -180,7 +180,7 @@ public class CompoundFilterCondition implements Filter<DBObject>, FilterConditio
     @Override
     public void readConfiguration(Element element) {
         String joinTypeString = stringAttribute(element,"join-type");
-        joinType = StringUtil.isEmptyOrSpaces(joinTypeString) ? ConditionJoinType.AND : ConditionJoinType.valueOf(joinTypeString);
+        joinType = Strings.isEmptyOrSpaces(joinTypeString) ? ConditionJoinType.AND : ConditionJoinType.valueOf(joinTypeString);
         for (Element child : element.getChildren()) {
             FilterCondition condition =
                     Objects.equals(child.getName(), "simple-condition") ? new SimpleNameFilterCondition() :

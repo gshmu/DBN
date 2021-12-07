@@ -3,8 +3,8 @@ package com.dci.intellij.dbn.connection.config;
 import com.dci.intellij.dbn.common.database.AuthenticationInfo;
 import com.dci.intellij.dbn.common.database.DatabaseInfo;
 import com.dci.intellij.dbn.common.options.BasicConfiguration;
-import com.dci.intellij.dbn.common.util.FileUtil;
-import com.dci.intellij.dbn.common.util.StringUtil;
+import com.dci.intellij.dbn.common.util.Files;
+import com.dci.intellij.dbn.common.util.Strings;
 import com.dci.intellij.dbn.connection.AuthenticationType;
 import com.dci.intellij.dbn.connection.ConnectionId;
 import com.dci.intellij.dbn.connection.ConnectivityStatus;
@@ -117,7 +117,7 @@ public class ConnectionDatabaseSettings extends BasicConfiguration<ConnectionSet
         if (databaseInfo.getUrlType() == DatabaseUrlType.FILE) {
             // only for file based databases
             String file = databaseInfo.getMainFile();
-            return StringUtil.isNotEmpty(file) && new File(file).exists();
+            return Strings.isNotEmpty(file) && new File(file).exists();
         }
         return true;
     }
@@ -165,7 +165,7 @@ public class ConnectionDatabaseSettings extends BasicConfiguration<ConnectionSet
 //        }
 
         String connectionUrl = getConnectionUrl();
-        if (StringUtil.isEmpty(connectionUrl)) {
+        if (Strings.isEmpty(connectionUrl)) {
             errors.add(configType == ConnectionConfigType.BASIC ?
                     "Database information not provided (host, port, database)" :
                     "Database connection url not provided");
@@ -176,11 +176,11 @@ public class ConnectionDatabaseSettings extends BasicConfiguration<ConnectionSet
         }
 
         if (getDriverSource() == DriverSource.EXTERNAL) {
-            if (StringUtil.isEmpty(getDriverLibrary())) {
+            if (Strings.isEmpty(getDriverLibrary())) {
                 errors.add("JDBC driver library not provided");
             } else {
                 String driver = getDriver();
-                if (StringUtil.isEmpty(driver)) {
+                if (Strings.isEmpty(driver)) {
                     errors.add("JDBC driver not provided");
                 } else {
                     DatabaseType driverDatabaseType = DatabaseType.resolve(driver);
@@ -260,7 +260,7 @@ public class ConnectionDatabaseSettings extends BasicConfiguration<ConnectionSet
                 databaseInfo.setDatabase(urlPattern.resolveDatabase(url));
 
                 String file = urlPattern.resolveFile(url);
-                if (StringUtil.isNotEmptyOrSpaces(file)) {
+                if (Strings.isNotEmptyOrSpaces(file)) {
                     databaseInfo.setMainFile(file);
                 }
 
@@ -268,7 +268,7 @@ public class ConnectionDatabaseSettings extends BasicConfiguration<ConnectionSet
         }
 
         driverSource  = getEnum(element, "driver-source", driverSource);
-        driverLibrary = FileUtil.convertToAbsolutePath(getProject(), getString(element, "driver-library", driverLibrary));
+        driverLibrary = Files.convertToAbsolutePath(getProject(), getString(element, "driver-library", driverLibrary));
         driver        = getString(element, "driver", driver);
 
         authenticationInfo.readConfiguration(element);
@@ -289,7 +289,7 @@ public class ConnectionDatabaseSettings extends BasicConfiguration<ConnectionSet
     @Override
     public void writeConfiguration(Element element) {
         String driverLibrary = ConnectionBundleSettings.IS_IMPORT_EXPORT_ACTION.get() ?
-                FileUtil.convertToRelativePath(getProject(), this.driverLibrary) :
+                Files.convertToRelativePath(getProject(), this.driverLibrary) :
                 this.driverLibrary;
 
         setString(element, "name", nvl(name));

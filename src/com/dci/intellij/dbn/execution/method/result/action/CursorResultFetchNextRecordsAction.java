@@ -3,7 +3,7 @@ package com.dci.intellij.dbn.execution.method.result.action;
 import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.common.thread.Progress;
-import com.dci.intellij.dbn.common.util.MessageUtil;
+import com.dci.intellij.dbn.common.util.Messages;
 import com.dci.intellij.dbn.data.grid.ui.table.resultSet.ResultSetTable;
 import com.dci.intellij.dbn.data.model.resultSet.ResultSetDataModel;
 import com.dci.intellij.dbn.execution.common.options.ExecutionEngineSettings;
@@ -35,7 +35,7 @@ public class CursorResultFetchNextRecordsAction extends MethodExecutionCursorRes
                             }
 
                         } catch (SQLException ex) {
-                            MessageUtil.showErrorDialog(project, "Could not perform operation.", ex);
+                            Messages.showErrorDialog(project, "Could not perform operation.", ex);
                         }
 
                     });

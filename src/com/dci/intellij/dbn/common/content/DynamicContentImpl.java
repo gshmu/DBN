@@ -13,9 +13,10 @@ import com.dci.intellij.dbn.common.property.DisposablePropertyHolder;
 import com.dci.intellij.dbn.common.thread.Progress;
 import com.dci.intellij.dbn.common.thread.ThreadMonitor;
 import com.dci.intellij.dbn.common.thread.ThreadProperty;
-import com.dci.intellij.dbn.common.util.CollectionUtil;
+import com.dci.intellij.dbn.common.util.Compactables;
+import com.dci.intellij.dbn.common.util.Lists;
 import com.dci.intellij.dbn.common.util.Numbers;
-import com.dci.intellij.dbn.common.util.StringUtil;
+import com.dci.intellij.dbn.common.util.Strings;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.ConnectionId;
 import com.dci.intellij.dbn.connection.GenericDatabaseElement;
@@ -66,7 +67,7 @@ public abstract class DynamicContentImpl<T extends DynamicContentElement>
     @Override
     public void compact() {
          if (elements != EMPTY_CONTENT && elements != EMPTY_UNTOUCHED_CONTENT) {
-             elements = CollectionUtil.compact(elements);
+             elements = Compactables.compact(elements);
          }
     }
 
@@ -399,20 +400,20 @@ public abstract class DynamicContentImpl<T extends DynamicContentElement>
     public T getElement(String name, short overload) {
         if (name != null) {
             List<T> elements = getAllElements();
-            return CollectionUtil.first(elements, element -> matchElement(element, name, overload));
+            return Lists.first(elements, element -> matchElement(element, name, overload));
         }
         return null;
     }
 
     private boolean matchElement(T element, String name, short overload) {
         return (overload == 0 || overload == element.getOverload()) &&
-                StringUtil.equalsIgnoreCase(element.getName(), name);
+                Strings.equalsIgnoreCase(element.getName(), name);
     }
 
     @Override
     @Nullable
     public List<T> getElements(String name) {
-        return CollectionUtil.filter(getAllElements(), false, false, element -> StringUtil.equalsIgnoreCase(element.getName(), name));
+        return Lists.filter(getAllElements(), false, false, element -> Strings.equalsIgnoreCase(element.getName(), name));
     }
 
     @Override

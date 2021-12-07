@@ -2,7 +2,7 @@ package com.dci.intellij.dbn.connection.config.tns.ui;
 
 import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.common.ui.DBNFormImpl;
-import com.dci.intellij.dbn.common.util.StringUtil;
+import com.dci.intellij.dbn.common.util.Strings;
 import com.dci.intellij.dbn.connection.config.tns.TnsName;
 import com.dci.intellij.dbn.connection.config.tns.TnsNamesParser;
 import com.intellij.openapi.ui.TextFieldWithBrowseButton;
@@ -11,7 +11,8 @@ import com.intellij.ui.components.JBScrollPane;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import javax.swing.*;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
 import javax.swing.event.DocumentEvent;
 import java.io.File;
 import java.util.ArrayList;
@@ -69,7 +70,7 @@ public class TnsNamesImportForm extends DBNFormImpl{
     private void updateTnsNamesTable() {
         try {
             String fileName = tnsNamesFileTextField.getTextField().getText();
-            if (StringUtil.isNotEmpty(fileName)) {
+            if (Strings.isNotEmpty(fileName)) {
                 List<TnsName> tnsNames = TnsNamesParser.parse(new File(fileName));
                 tnsNamesTable.setModel(new TnsNamesTableModel(tnsNames));
                 tnsNamesTable.accommodateColumnsSize();
@@ -81,7 +82,7 @@ public class TnsNamesImportForm extends DBNFormImpl{
 
             errorLabel.setVisible(true);
             String message = ex.getMessage();
-            message = StringUtil.isEmpty(message) ? "File may be corrupt or not a valid tnsnames.ora file." : message;
+            message = Strings.isEmpty(message) ? "File may be corrupt or not a valid tnsnames.ora file." : message;
             errorLabel.setText("Error reading file: " + message);
         }
     }

@@ -4,7 +4,7 @@ import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.common.action.DumbAwareProjectAction;
 import com.dci.intellij.dbn.common.action.Lookup;
 import com.dci.intellij.dbn.common.dispose.Failsafe;
-import com.dci.intellij.dbn.common.util.EditorUtil;
+import com.dci.intellij.dbn.common.util.Editors;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.database.DatabaseFeature;
 import com.dci.intellij.dbn.debugger.DatabaseDebuggerManager;
@@ -28,7 +28,7 @@ public class ExplainPlanEditorAction extends DumbAwareProjectAction {
     protected void actionPerformed(@NotNull AnActionEvent e, @NotNull Project project) {
         Editor editor = Lookup.getEditor(e);
         if (Failsafe.check(editor)) {
-            FileEditor fileEditor = EditorUtil.getFileEditor(editor);
+            FileEditor fileEditor = Editors.getFileEditor(editor);
             ExecutablePsiElement executable = PsiUtil.lookupExecutableAtCaret(editor, true);
             if (fileEditor != null && executable != null && executable.is(ElementTypeAttribute.DATA_MANIPULATION)) {
                 ExplainPlanManager explainPlanManager = ExplainPlanManager.getInstance(project);

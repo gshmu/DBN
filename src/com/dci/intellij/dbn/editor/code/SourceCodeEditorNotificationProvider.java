@@ -4,7 +4,7 @@ import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.common.editor.EditorNotificationProvider;
 import com.dci.intellij.dbn.common.environment.options.listener.EnvironmentManagerListener;
 import com.dci.intellij.dbn.common.event.ProjectEvents;
-import com.dci.intellij.dbn.common.util.StringUtil;
+import com.dci.intellij.dbn.common.util.Strings;
 import com.dci.intellij.dbn.editor.code.diff.MergeAction;
 import com.dci.intellij.dbn.editor.code.diff.SourceCodeDifManagerListener;
 import com.dci.intellij.dbn.editor.code.ui.SourceCodeEditorNotificationPanel;
@@ -117,7 +117,7 @@ public class SourceCodeEditorNotificationProvider extends EditorNotificationProv
                 SourceCodeEditor sourceCodeEditor = (SourceCodeEditor) fileEditor;
                 DBSourceCodeVirtualFile sourceCodeFile = sourceCodeEditor.getVirtualFile();
                 String sourceLoadError = sourceCodeFile.getSourceLoadError();
-                if (StringUtil.isNotEmpty(sourceLoadError)) {
+                if (Strings.isNotEmpty(sourceLoadError)) {
                     notificationPanel = new SourceCodeLoadErrorNotificationPanel(editableObject, sourceLoadError);
 
                 } else if (sourceCodeFile.isChangedInDatabase(false)) {

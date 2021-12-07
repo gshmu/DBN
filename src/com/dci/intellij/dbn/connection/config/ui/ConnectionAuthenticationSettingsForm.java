@@ -2,16 +2,18 @@ package com.dci.intellij.dbn.connection.config.ui;
 
 import com.dci.intellij.dbn.common.database.AuthenticationInfo;
 import com.dci.intellij.dbn.common.ui.DBNFormImpl;
-import com.dci.intellij.dbn.common.util.StringUtil;
+import com.dci.intellij.dbn.common.util.Strings;
 import com.dci.intellij.dbn.connection.AuthenticationType;
 import org.jetbrains.annotations.NotNull;
 
-import javax.swing.*;
+import javax.swing.JComboBox;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JPasswordField;
+import javax.swing.JTextField;
 import java.awt.event.ActionListener;
 
-import static com.dci.intellij.dbn.common.ui.ComboBoxUtil.getSelection;
-import static com.dci.intellij.dbn.common.ui.ComboBoxUtil.initComboBox;
-import static com.dci.intellij.dbn.common.ui.ComboBoxUtil.setSelection;
+import static com.dci.intellij.dbn.common.ui.ComboBoxUtil.*;
 
 public class ConnectionAuthenticationSettingsForm extends DBNFormImpl {
     private JComboBox<AuthenticationType> authTypeComboBox;
@@ -50,8 +52,8 @@ public class ConnectionAuthenticationSettingsForm extends DBNFormImpl {
 
         String user = userTextField.getText();
         String password = new String(passwordField.getPassword());
-        if (StringUtil.isNotEmpty(user)) cachedUser = user;
-        if (StringUtil.isNotEmpty(password)) cachedPassword = password;
+        if (Strings.isNotEmpty(user)) cachedUser = user;
+        if (Strings.isNotEmpty(password)) cachedPassword = password;
 
 
         userTextField.setText(showUser ? cachedUser : "");
@@ -71,8 +73,8 @@ public class ConnectionAuthenticationSettingsForm extends DBNFormImpl {
     public void resetFormChanges(AuthenticationInfo authenticationInfo) {
         String user = authenticationInfo.getUser();
         String password = authenticationInfo.getPassword();
-        if (StringUtil.isNotEmpty(user)) cachedUser = user;
-        if (StringUtil.isNotEmpty(password)) cachedPassword = password;
+        if (Strings.isNotEmpty(user)) cachedUser = user;
+        if (Strings.isNotEmpty(password)) cachedPassword = password;
 
         userTextField.setText(authenticationInfo.getUser());
         passwordField.setText(authenticationInfo.getPassword());

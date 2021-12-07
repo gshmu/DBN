@@ -3,7 +3,7 @@ package com.dci.intellij.dbn.editor.data.action;
 import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.common.environment.EnvironmentManager;
-import com.dci.intellij.dbn.common.util.MessageUtil;
+import com.dci.intellij.dbn.common.util.Messages;
 import com.dci.intellij.dbn.editor.DBContentType;
 import com.dci.intellij.dbn.editor.data.DatasetEditor;
 import com.intellij.openapi.actionSystem.AnActionEvent;
@@ -20,7 +20,7 @@ public class DataImportAction extends AbstractDataEditorAction {
 
     @Override
     protected void actionPerformed(@NotNull AnActionEvent e, @NotNull Project project, @NotNull DatasetEditor datasetEditor) {
-        MessageUtil.showInfoDialog(project, "Not implemented", "Data import is not implemented yet.");
+        Messages.showInfoDialog(project, "Not implemented", "Data import is not implemented yet.");
     }
 
     @Override

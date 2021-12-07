@@ -3,7 +3,7 @@ package com.dci.intellij.dbn.editor.data.filter.ui;
 import com.dci.intellij.dbn.common.dispose.DisposableContainer;
 import com.dci.intellij.dbn.common.options.ui.ConfigurationEditorForm;
 import com.dci.intellij.dbn.common.ui.DBNHeaderForm;
-import com.dci.intellij.dbn.common.util.ActionUtil;
+import com.dci.intellij.dbn.common.util.Actions;
 import com.dci.intellij.dbn.editor.data.filter.DatasetFilter;
 import com.dci.intellij.dbn.editor.data.filter.DatasetFilterGroup;
 import com.dci.intellij.dbn.editor.data.filter.DatasetFilterImpl;
@@ -21,10 +21,13 @@ import com.intellij.ui.GuiUtils;
 import com.intellij.util.ui.UIUtil;
 import org.jetbrains.annotations.NotNull;
 
-import javax.swing.*;
+import javax.swing.JComponent;
+import javax.swing.JList;
+import javax.swing.JPanel;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
-import java.awt.*;
+import java.awt.BorderLayout;
+import java.awt.CardLayout;
 import java.util.List;
 import java.util.Map;
 
@@ -48,7 +51,7 @@ public class DatasetFilterForm extends ConfigurationEditorForm<DatasetFilterGrou
         headerPanel.add(headerForm.getComponent(), BorderLayout.CENTER);
 
         DatasetFilterList filters = getFilterList();
-        ActionToolbar actionToolbar = ActionUtil.createActionToolbar(
+        ActionToolbar actionToolbar = Actions.createActionToolbar(
                 actionsPanel,
                 "DBNavigator.DataEditor.FiltersList", true,
                 new CreateFilterAction(filters),

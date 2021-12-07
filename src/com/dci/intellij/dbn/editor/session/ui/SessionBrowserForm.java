@@ -7,8 +7,8 @@ import com.dci.intellij.dbn.common.thread.Dispatch;
 import com.dci.intellij.dbn.common.ui.DBNFormImpl;
 import com.dci.intellij.dbn.common.ui.GUIUtil;
 import com.dci.intellij.dbn.common.ui.table.DBNTableHeaderRenderer;
-import com.dci.intellij.dbn.common.util.ActionUtil;
-import com.dci.intellij.dbn.common.util.MessageUtil;
+import com.dci.intellij.dbn.common.util.Actions;
+import com.dci.intellij.dbn.common.util.Messages;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.data.find.DataSearchComponent;
 import com.dci.intellij.dbn.data.find.SearchableDataComponent;
@@ -79,7 +79,7 @@ public class SessionBrowserForm extends DBNFormImpl implements SearchableDataCom
             panel.setBorder(DBNTableHeaderRenderer.BORDER_LBR.get());
             editorTableScrollPane.setCorner(ScrollPaneConstants.UPPER_LEFT_CORNER, panel);
 
-            ActionToolbar actionToolbar = ActionUtil.createActionToolbar(actionsPanel,"", true, "DBNavigator.ActionGroup.SessionBrowser");
+            ActionToolbar actionToolbar = Actions.createActionToolbar(actionsPanel,"", true, "DBNavigator.ActionGroup.SessionBrowser");
 
             actionsPanel.add(actionToolbar.getComponent(), BorderLayout.WEST);
             loadingIconPanel.add(new AsyncProcessIcon("Loading"), BorderLayout.CENTER);
@@ -87,7 +87,7 @@ public class SessionBrowserForm extends DBNFormImpl implements SearchableDataCom
 
             DataManager.registerDataProvider(actionsPanel, this);
         } catch (SQLException e) {
-            MessageUtil.showErrorDialog(
+            Messages.showErrorDialog(
                     sessionBrowser.getProject(),
                     "Error",
                     "Error opening session browser for connection " + getConnectionHandler().getName(), e);

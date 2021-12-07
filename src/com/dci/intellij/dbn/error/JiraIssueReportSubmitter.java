@@ -1,6 +1,6 @@
 package com.dci.intellij.dbn.error;
 
-import com.dci.intellij.dbn.common.util.CommonUtil;
+import com.dci.intellij.dbn.common.util.Commons;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.intellij.openapi.diagnostic.IdeaLoggingEvent;
@@ -64,7 +64,7 @@ public class JiraIssueReportSubmitter extends IssueReportSubmitter {
                 return new JiraTicketResponse(null, "Received empty response from server");
             } else {
                 InputStream in = httpResponse.getEntity().getContent();
-                String responseString = CommonUtil.readInputStream(in);
+                String responseString = Commons.readInputStream(in);
                 return new JiraTicketResponse(responseString, null);
             }
         } catch (Exception e) {

@@ -4,7 +4,7 @@ import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.common.action.DataKeys;
 import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.common.dispose.SafeDisposer;
-import com.dci.intellij.dbn.common.util.CommonUtil;
+import com.dci.intellij.dbn.common.util.Commons;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.ConnectionHandlerRef;
 import com.dci.intellij.dbn.connection.ConnectionId;
@@ -23,7 +23,7 @@ import lombok.Getter;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import javax.swing.*;
+import javax.swing.Icon;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Date;
@@ -70,7 +70,7 @@ public class ExplainPlanResult extends ExecutionResultBase<ExplainPlanResultForm
         this.connectionHandler = connectionHandler.getRef();
         this.currentSchema = psiFile.getSchemaId();
         this.virtualFile = psiFile.getVirtualFile();
-        this.resultName = CommonUtil.nvl(executablePsiElement.createSubjectList(), "Explain Plan");
+        this.resultName = Commons.nvl(executablePsiElement.createSubjectList(), "Explain Plan");
         this.errorMessage = errorMessage;
         this.statementText = executablePsiElement.getText();
     }

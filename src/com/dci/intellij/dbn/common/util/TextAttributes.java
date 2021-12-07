@@ -4,16 +4,16 @@ import com.intellij.openapi.editor.HighlighterColors;
 import com.intellij.openapi.editor.colors.ColorKey;
 import com.intellij.openapi.editor.colors.EditorColorsManager;
 import com.intellij.openapi.editor.colors.TextAttributesKey;
-import com.intellij.openapi.editor.markup.TextAttributes;
 import com.intellij.ui.SimpleTextAttributes;
 
-import java.awt.*;
+import java.awt.Color;
 
-public class TextAttributesUtil {
-    
+public class TextAttributes {
+    private TextAttributes() {}
+
     public static SimpleTextAttributes getSimpleTextAttributes(TextAttributesKey textAttributesKey) {
         EditorColorsManager colorManager = EditorColorsManager.getInstance();
-        TextAttributes textAttributes = colorManager.getGlobalScheme().getAttributes(textAttributesKey);
+        com.intellij.openapi.editor.markup.TextAttributes textAttributes = colorManager.getGlobalScheme().getAttributes(textAttributesKey);
         if (textAttributes == null) {
             textAttributes = HighlighterColors.TEXT.getDefaultAttributes();
         }

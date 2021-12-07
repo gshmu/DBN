@@ -2,7 +2,7 @@ package com.dci.intellij.dbn.execution.explain.result;
 
 import com.dci.intellij.dbn.common.dispose.SafeDisposer;
 import com.dci.intellij.dbn.common.dispose.StatefulDisposable;
-import com.dci.intellij.dbn.common.util.StringUtil;
+import com.dci.intellij.dbn.common.util.Strings;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.object.lookup.DBObjectRef;
 import com.dci.intellij.dbn.object.type.DBObjectType;
@@ -60,7 +60,7 @@ public class ExplainPlanEntry extends StatefulDisposable.Base {
         String objectOwner = resultSet.getString("OBJECT_OWNER");
         String objectName = resultSet.getString("OBJECT_NAME");
         String objectTypeName = resultSet.getString("OBJECT_TYPE");
-        if (StringUtil.isNotEmpty(objectOwner) && StringUtil.isNotEmpty(objectName) && StringUtil.isNotEmpty(objectTypeName)) {
+        if (Strings.isNotEmpty(objectOwner) && Strings.isNotEmpty(objectName) && Strings.isNotEmpty(objectTypeName)) {
             DBObjectType objectType = DBObjectType.ANY;
             if (objectTypeName.startsWith("TABLE")) {
                 objectType = DBObjectType.TABLE;

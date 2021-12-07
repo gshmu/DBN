@@ -3,7 +3,7 @@ package com.dci.intellij.dbn.execution.script.ui;
 import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.common.ui.DBNFormImpl;
 import com.dci.intellij.dbn.common.ui.DBNHintForm;
-import com.dci.intellij.dbn.common.util.StringUtil;
+import com.dci.intellij.dbn.common.util.Strings;
 import com.dci.intellij.dbn.connection.DatabaseType;
 import com.dci.intellij.dbn.execution.script.CmdLineInterface;
 import com.intellij.ui.DocumentAdapter;
@@ -11,9 +11,12 @@ import com.intellij.util.ui.UIUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import javax.swing.*;
+import javax.swing.JComponent;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JTextField;
 import javax.swing.event.DocumentEvent;
-import java.awt.*;
+import java.awt.BorderLayout;
 import java.util.Set;
 
 public class CmdLineInterfaceInputForm extends DBNFormImpl{
@@ -75,7 +78,7 @@ public class CmdLineInterfaceInputForm extends DBNFormImpl{
         nameInUseLabel.setVisible(isNameUsed);
 
         CmdLineInterfaceInputDialog parentComponent = getParentDialog();
-        parentComponent.setActionEnabled(!isNameUsed && StringUtil.isNotEmpty(nameTextField.getText()));
+        parentComponent.setActionEnabled(!isNameUsed && Strings.isNotEmpty(nameTextField.getText()));
     }
 
     @NotNull

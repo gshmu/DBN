@@ -3,7 +3,7 @@ package com.dci.intellij.dbn.ddl.options.ui;
 import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.common.options.ui.ConfigurationEditorForm;
 import com.dci.intellij.dbn.common.options.ui.ConfigurationEditorUtil;
-import com.dci.intellij.dbn.common.util.StringUtil;
+import com.dci.intellij.dbn.common.util.Strings;
 import com.dci.intellij.dbn.ddl.DDLFileManager;
 import com.dci.intellij.dbn.ddl.DDLFileType;
 import com.dci.intellij.dbn.ddl.DDLFileTypeId;
@@ -87,7 +87,7 @@ public class DDLFileExtensionSettingsForm extends ConfigurationEditorForm<DDLFil
         for (String fieldName : extensionTextFields.keySet()) {
             JTextField extensionTextField = extensionTextFields.get(fieldName);
             String extensionsText = ConfigurationEditorUtil.validateStringValue(extensionTextField, fieldName, false);
-            List<String> extensions = StringUtil.tokenize(extensionsText, ",");
+            List<String> extensions = Strings.tokenize(extensionsText, ",");
             for (String extension : extensions) {
                 if (allExtensions.contains(extension)) {
                     throw new ConfigurationException("Duplicate value for extension \"" + extension + "\" found.");

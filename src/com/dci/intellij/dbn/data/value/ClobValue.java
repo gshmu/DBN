@@ -1,6 +1,6 @@
 package com.dci.intellij.dbn.data.value;
 
-import com.dci.intellij.dbn.common.util.StringUtil;
+import com.dci.intellij.dbn.common.util.Strings;
 import com.dci.intellij.dbn.data.type.GenericDataType;
 import lombok.extern.slf4j.Slf4j;
 import org.jetbrains.annotations.Nullable;
@@ -27,7 +27,7 @@ public class ClobValue extends LargeObjectValue {
     }
 
     private Clob createSerialClob(String charset) throws SQLException {
-        if (StringUtil.isNotEmpty(charset)) {
+        if (Strings.isNotEmpty(charset)) {
             return new SerialClob(charset.toCharArray());
         }
         return null;
@@ -76,7 +76,7 @@ public class ClobValue extends LargeObjectValue {
     public void write(Connection connection, ResultSet resultSet, int columnIndex, @Nullable String value) throws SQLException {
         try {
             int columnType = resultSet.getMetaData().getColumnType(columnIndex);
-            if (StringUtil.isEmpty(value)) {
+            if (Strings.isEmpty(value)) {
                 clob = null;
             } else {
                 clob = columnType == Types.NCLOB ?
@@ -89,7 +89,7 @@ public class ClobValue extends LargeObjectValue {
                 resultSet.updateNClob(columnIndex, (NClob) clob); else
                 resultSet.updateClob(columnIndex, clob);
         } catch (SQLFeatureNotSupportedException e) {
-            if (StringUtil.isEmpty(value)) {
+            if (Strings.isEmpty(value)) {
                 clob = null;
             } else {
                 clob = createSerialClob(value);

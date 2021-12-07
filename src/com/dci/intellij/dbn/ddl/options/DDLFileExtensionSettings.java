@@ -1,7 +1,7 @@
 package com.dci.intellij.dbn.ddl.options;
 
 import com.dci.intellij.dbn.common.options.BasicProjectConfiguration;
-import com.dci.intellij.dbn.common.util.StringUtil;
+import com.dci.intellij.dbn.common.util.Strings;
 import com.dci.intellij.dbn.ddl.DDLFileType;
 import com.dci.intellij.dbn.ddl.DDLFileTypeId;
 import com.dci.intellij.dbn.ddl.options.ui.DDLFileExtensionSettingsForm;
@@ -84,7 +84,7 @@ public class DDLFileExtensionSettings extends BasicProjectConfiguration<DDLFileS
             String extensions = child.getAttributeValue("extensions");
 
             DDLFileType fileType = getFileType(fileTypeId);
-            fileType.setExtensions(StringUtil.tokenize(extensions, ","));
+            fileType.setExtensions(Strings.tokenize(extensions, ","));
         }
     }
 
@@ -93,7 +93,7 @@ public class DDLFileExtensionSettings extends BasicProjectConfiguration<DDLFileS
         for (DDLFileType fileType : fileTypes) {
             Element fileTypeElement = new Element("mapping");
             setEnumAttribute(fileTypeElement, "file-type-id", fileType.getId());
-            String extensions = StringUtil.concatenate(fileType.getExtensions(), ",");
+            String extensions = Strings.concatenate(fileType.getExtensions(), ",");
             fileTypeElement.setAttribute("extensions", extensions);
             element.addContent(fileTypeElement);
         }

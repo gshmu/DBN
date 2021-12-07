@@ -1,6 +1,6 @@
 package com.dci.intellij.dbn.language.common;
 
-import com.dci.intellij.dbn.common.util.CommonUtil;
+import com.dci.intellij.dbn.common.util.Commons;
 import com.dci.intellij.dbn.language.common.element.ElementTypeBundle;
 import com.dci.intellij.dbn.language.common.element.impl.NamedElementType;
 import com.dci.intellij.dbn.language.common.element.parser.ParserBuilder;
@@ -23,8 +23,8 @@ public abstract class DBLanguageParser implements PsiParser {
 
     public DBLanguageParser(DBLanguageDialect languageDialect, String tokenTypesFile, String elementTypesFile, String defaultParseRootId) {
         this.languageDialect = languageDialect;
-        this.tokenTypes = new TokenTypeBundle(languageDialect, CommonUtil.loadXmlFile(getResourceLookupClass(), tokenTypesFile));
-        Document document = CommonUtil.loadXmlFile(getResourceLookupClass(), elementTypesFile);
+        this.tokenTypes = new TokenTypeBundle(languageDialect, Commons.loadXmlFile(getResourceLookupClass(), tokenTypesFile));
+        Document document = Commons.loadXmlFile(getResourceLookupClass(), elementTypesFile);
         this.elementTypes = new ElementTypeBundle(languageDialect, tokenTypes, document);
         this.defaultParseRootId = defaultParseRootId;
     }

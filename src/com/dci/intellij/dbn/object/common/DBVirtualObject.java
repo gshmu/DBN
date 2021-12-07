@@ -6,8 +6,8 @@ import com.dci.intellij.dbn.common.content.DynamicContentStatus;
 import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.common.latent.Latent;
 import com.dci.intellij.dbn.common.thread.Read;
-import com.dci.intellij.dbn.common.util.DocumentUtil;
-import com.dci.intellij.dbn.common.util.StringUtil;
+import com.dci.intellij.dbn.common.util.Documents;
+import com.dci.intellij.dbn.common.util.Strings;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.ConnectionId;
 import com.dci.intellij.dbn.connection.ConnectionManager;
@@ -89,7 +89,7 @@ public class DBVirtualObject extends DBObjectImpl implements PsiReference {
                     return true;
                 }
                 BasePsiElement<?> relevantPsiElement = getRelevantPsiElement();
-                if (StringUtil.equalsIgnoreCase(getName(), relevantPsiElement.getText())) {
+                if (Strings.equalsIgnoreCase(getName(), relevantPsiElement.getText())) {
                     if (relevantPsiElement instanceof IdentifierPsiElement) {
                         IdentifierPsiElement identifierPsiElement = (IdentifierPsiElement) relevantPsiElement;
                         return identifierPsiElement.getObjectType() == objectType;
@@ -332,7 +332,7 @@ public class DBVirtualObject extends DBObjectImpl implements PsiReference {
             VirtualFile virtualFile = containingFile.getVirtualFile();
             BasePsiElement relevantPsiElement = getRelevantPsiElement();
             if(virtualFile instanceof DBContentVirtualFile) {
-                Document document = DocumentUtil.getDocument(containingFile);
+                Document document = Documents.getDocument(containingFile);
                 if (document != null) {
                     Editor[] editors =  EditorFactory.getInstance().getEditors(document);
                     OpenFileDescriptor descriptor = (OpenFileDescriptor) EditSourceUtil.getDescriptor(relevantPsiElement);

@@ -1,7 +1,7 @@
 package com.dci.intellij.dbn.language.common.element.util;
 
 import com.dci.intellij.dbn.common.index.IndexContainer;
-import com.dci.intellij.dbn.common.util.CommonUtil;
+import com.dci.intellij.dbn.common.util.Commons;
 import com.dci.intellij.dbn.language.common.TokenType;
 import com.dci.intellij.dbn.language.common.element.ElementType;
 import com.dci.intellij.dbn.language.common.element.cache.ElementTypeLookupCache;
@@ -100,6 +100,6 @@ public final class NextTokenResolver {
     }
 
     private void ensureBucket() {
-        bucket = CommonUtil.nvl(bucket, () -> new IndexContainer<>());
+        bucket = Commons.nvl(bucket, () -> new IndexContainer<>());
     }
 }

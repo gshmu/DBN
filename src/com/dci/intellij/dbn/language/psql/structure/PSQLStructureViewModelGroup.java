@@ -1,6 +1,6 @@
 package com.dci.intellij.dbn.language.psql.structure;
 
-import com.dci.intellij.dbn.common.util.NamingUtil;
+import com.dci.intellij.dbn.common.util.Naming;
 import com.dci.intellij.dbn.object.type.DBObjectType;
 import com.intellij.ide.util.treeView.smartTree.Group;
 import com.intellij.ide.util.treeView.smartTree.TreeElement;
@@ -10,8 +10,8 @@ import com.intellij.openapi.editor.markup.TextAttributes;
 import com.intellij.ui.JBColor;
 import org.jetbrains.annotations.NotNull;
 
-import javax.swing.*;
-import java.awt.*;
+import javax.swing.Icon;
+import java.awt.Font;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -50,7 +50,7 @@ public class PSQLStructureViewModelGroup implements Group {
     private ItemPresentation itemPresentation = new ItemPresentation(){
         @Override
         public String getPresentableText() {
-            return NamingUtil.capitalize(objectType.getListName());
+            return Naming.capitalize(objectType.getListName());
         }
 
         @Override

@@ -3,7 +3,7 @@ package com.dci.intellij.dbn.common.editor;
 import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.common.thread.Read;
 import com.dci.intellij.dbn.common.thread.Write;
-import com.dci.intellij.dbn.common.util.DocumentUtil;
+import com.dci.intellij.dbn.common.util.Documents;
 import com.intellij.codeInsight.folding.CodeFoldingManager;
 import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.editor.Editor;
@@ -49,7 +49,7 @@ public class BasicTextEditorState implements FileEditorState {
         Element foldingElement = sourceElement.getChild("folding");
         if (foldingElement != null) {
             Read.run(() -> {
-                Document document = DocumentUtil.getDocument(virtualFile);
+                Document document = Documents.getDocument(virtualFile);
                 CodeFoldingManager instance = CodeFoldingManager.getInstance(project);
                 if (document != null) {
                     CodeFoldingState foldingState = instance.readFoldingState(foldingElement, document);

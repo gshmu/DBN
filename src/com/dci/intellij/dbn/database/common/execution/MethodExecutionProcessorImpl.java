@@ -3,7 +3,7 @@ package com.dci.intellij.dbn.database.common.execution;
 import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.common.locale.Formatter;
 import com.dci.intellij.dbn.common.thread.CancellableDatabaseCall;
-import com.dci.intellij.dbn.common.util.StringUtil;
+import com.dci.intellij.dbn.common.util.Strings;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.ResourceUtil;
 import com.dci.intellij.dbn.connection.SchemaId;
@@ -194,7 +194,7 @@ public abstract class MethodExecutionProcessorImpl implements MethodExecutionPro
     protected void setParameterValue(PreparedStatement preparedStatement, int parameterIndex, DBDataType dataType, String stringValue) throws SQLException {
         try {
             Object value = null;
-            if (StringUtil.isNotEmptyOrSpaces(stringValue))  {
+            if (Strings.isNotEmptyOrSpaces(stringValue))  {
                 Formatter formatter = Formatter.getInstance(getProject());
                 value = formatter.parseObject(dataType.getTypeClass(), stringValue);
                 value = dataType.getNativeDataType().getDefinition().convert(value);

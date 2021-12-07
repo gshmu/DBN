@@ -1,6 +1,6 @@
 package com.dci.intellij.dbn.object.action;
 
-import com.dci.intellij.dbn.common.util.MessageUtil;
+import com.dci.intellij.dbn.common.util.Messages;
 import com.dci.intellij.dbn.object.common.DBObject;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.project.Project;
@@ -17,6 +17,6 @@ public class ObjectPropertiesAction<T extends DBObject> extends AnObjectAction<T
             @NotNull Project project,
             @NotNull DBObject object) {
 
-        MessageUtil.showInfoDialog(project, "Not implemented!", "This feature is not implemented yet.");
+        Messages.showInfoDialog(project, "Not implemented!", "This feature is not implemented yet.");
     }
 }

@@ -2,7 +2,7 @@ package com.dci.intellij.dbn.connection.jdbc;
 
 import com.dci.intellij.dbn.common.thread.ThreadMonitor;
 import com.dci.intellij.dbn.common.thread.Timeout;
-import com.dci.intellij.dbn.common.util.ExceptionUtil;
+import com.dci.intellij.dbn.common.util.Exceptions;
 import com.dci.intellij.dbn.common.util.TimeUtil;
 import com.dci.intellij.dbn.language.common.WeakRef;
 import lombok.extern.slf4j.Slf4j;
@@ -196,7 +196,7 @@ public abstract class ResourceStatusAdapterImpl<T extends Resource> implements R
             } catch (Throwable e) {
                 log.warn("[DBN] Failed to apply status " + subject + " = " + value + " for " + resource + ": " + e.getMessage());
                 fail();
-                return ExceptionUtil.toSqlException(e);
+                return Exceptions.toSqlException(e);
             } finally {
                 set(changing, false);
 

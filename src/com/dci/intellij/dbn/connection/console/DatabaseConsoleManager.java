@@ -5,10 +5,10 @@ import com.dci.intellij.dbn.common.AbstractProjectComponent;
 import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.common.event.ProjectEvents;
 import com.dci.intellij.dbn.common.thread.Dispatch;
-import com.dci.intellij.dbn.common.util.CommonUtil;
-import com.dci.intellij.dbn.common.util.MessageUtil;
+import com.dci.intellij.dbn.common.util.Commons;
+import com.dci.intellij.dbn.common.util.Messages;
 import com.dci.intellij.dbn.common.util.Safe;
-import com.dci.intellij.dbn.common.util.StringUtil;
+import com.dci.intellij.dbn.common.util.Strings;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.ConnectionId;
 import com.dci.intellij.dbn.connection.ConnectionManager;
@@ -114,12 +114,12 @@ public class DatabaseConsoleManager extends AbstractProjectComponent implements 
 
     public void deleteConsole(DBConsole console) {
         Project project = getProject();
-        MessageUtil.showQuestionDialog(
+        Messages.showQuestionDialog(
                 project,
                 "Delete console",
                 "You will loose the information contained in this console.\n" +
                         "Are you sure you want to delete the console?",
-                MessageUtil.OPTIONS_YES_NO, 0,
+                Messages.OPTIONS_YES_NO, 0,
                 option -> when(option == 0, () -> {
                     ConnectionHandler connectionHandler = console.getConnectionHandler();
                     DatabaseConsoleBundle consoleBundle = connectionHandler.getConsoleBundle();
@@ -184,13 +184,13 @@ public class DatabaseConsoleManager extends AbstractProjectComponent implements 
                 Element consoleElement = new Element("console");
                 connectionElement.addContent(consoleElement);
 
-                DatabaseSession databaseSession = CommonUtil.nvl(
+                DatabaseSession databaseSession = Commons.nvl(
                         virtualFile.getDatabaseSession(),
                         connectionHandler.getSessionBundle().getMainSession());
 
                 consoleElement.setAttribute("name", console.getName());
                 consoleElement.setAttribute("type", console.getConsoleType().name());
-                consoleElement.setAttribute("schema", CommonUtil.nvl(virtualFile.getDatabaseSchemaName(), ""));
+                consoleElement.setAttribute("schema", Commons.nvl(virtualFile.getDatabaseSchemaName(), ""));
                 consoleElement.setAttribute("session", databaseSession.getName());
                 consoleElement.addContent(new CDATA(virtualFile.getContent().exportContent()));
             }
@@ -216,7 +216,7 @@ public class DatabaseConsoleManager extends AbstractProjectComponent implements 
                     // session
                     String session = stringAttribute(consoleElement, "session");
                     DatabaseSessionBundle sessionBundle = connectionHandler.getSessionBundle();
-                    DatabaseSession databaseSession = StringUtil.isEmpty(session) ?
+                    DatabaseSession databaseSession = Strings.isEmpty(session) ?
                             sessionBundle.getMainSession() :
                             sessionBundle.getSession(session);
 

@@ -1,7 +1,7 @@
 package com.dci.intellij.dbn.language.common.element.impl;
 
 import com.dci.intellij.dbn.code.common.style.formatting.FormattingDefinition;
-import com.dci.intellij.dbn.common.util.StringUtil;
+import com.dci.intellij.dbn.common.util.Strings;
 import com.dci.intellij.dbn.language.common.element.ElementTypeBundle;
 import com.dci.intellij.dbn.language.common.element.TokenPairTemplate;
 import com.dci.intellij.dbn.language.common.element.cache.WrapperElementTypeLookupCache;
@@ -35,7 +35,7 @@ public final class WrapperElementType extends ElementTypeBase {
 
         TokenElementType beginTokenElement;
         TokenElementType endTokenElement;
-        if (StringUtil.isEmpty(templateId)) {
+        if (Strings.isEmpty(templateId)) {
             String startTokenId = stringAttribute(def, "begin-token");
             String endTokenId = stringAttribute(def, "end-token");
 

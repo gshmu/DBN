@@ -1,7 +1,7 @@
 package com.dci.intellij.dbn.common.list;
 
 import com.dci.intellij.dbn.common.filter.Filter;
-import com.dci.intellij.dbn.common.util.CollectionUtil;
+import com.dci.intellij.dbn.common.util.Compactables;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
@@ -298,6 +298,6 @@ public final class StatelessFilteredList<T> extends FilteredListBase<T> {
 
     @Override
     public void trimToSize() {
-        base = CollectionUtil.compact(base);
+        base = Compactables.compact(base);
     }
 }

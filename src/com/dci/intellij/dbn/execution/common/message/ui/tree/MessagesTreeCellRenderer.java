@@ -4,7 +4,7 @@ import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.common.dispose.StatefulDisposable;
 import com.dci.intellij.dbn.common.file.util.VirtualFileUtil;
 import com.dci.intellij.dbn.common.message.MessageType;
-import com.dci.intellij.dbn.common.util.CommonUtil;
+import com.dci.intellij.dbn.common.util.Commons;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.execution.common.message.ui.tree.node.CompilerMessageNode;
 import com.dci.intellij.dbn.execution.common.message.ui.tree.node.CompilerMessagesNode;
@@ -179,7 +179,7 @@ public class MessagesTreeCellRenderer extends ColoredTreeCellRenderer {
             setIcon(icon);
             setBackground(selected ?
                     UIUtil.getTreeSelectionBackground(isFocused()) :
-                    CommonUtil.nvl(background, tree.getBackground()));
+                    Commons.nvl(background, tree.getBackground()));
 
         } catch (ProcessCanceledException ignore) {}
     }

@@ -7,10 +7,10 @@ import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.common.thread.Background;
 import com.dci.intellij.dbn.common.ui.DBNFormImpl;
 import com.dci.intellij.dbn.common.ui.component.DBNComponent;
-import com.dci.intellij.dbn.common.util.ActionUtil;
-import com.dci.intellij.dbn.common.util.DocumentUtil;
-import com.dci.intellij.dbn.common.util.EditorUtil;
-import com.dci.intellij.dbn.common.util.StringUtil;
+import com.dci.intellij.dbn.common.util.Actions;
+import com.dci.intellij.dbn.common.util.Documents;
+import com.dci.intellij.dbn.common.util.Editors;
+import com.dci.intellij.dbn.common.util.Strings;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.SchemaId;
 import com.dci.intellij.dbn.editor.session.SessionBrowser;
@@ -64,7 +64,7 @@ public class SessionBrowserCurrentSqlPanel extends DBNFormImpl {
         this.sessionBrowser = WeakRef.of(sessionBrowser);
         createStatementViewer();
 
-        ActionToolbar actionToolbar = ActionUtil.createActionToolbar(actionsPanel, "", true, new RefreshAction(), new WrapUnwrapContentAction());
+        ActionToolbar actionToolbar = Actions.createActionToolbar(actionsPanel, "", true, new RefreshAction(), new WrapUnwrapContentAction());
         actionsPanel.add(actionToolbar.getComponent(),BorderLayout.WEST);
 
     }
@@ -81,7 +81,7 @@ public class SessionBrowserCurrentSqlPanel extends DBNFormImpl {
     }
 
     private void setPreviewText(String text) {
-        DocumentUtil.setText(document, text);
+        Documents.setText(document, text);
     }
 
     private void setSchemaId(SchemaId schemaId) {
@@ -109,7 +109,7 @@ public class SessionBrowserCurrentSqlPanel extends DBNFormImpl {
                 Background.run(refreshHandle, () -> {
                     ConnectionHandler connectionHandler = getConnectionHandler();
                     DBSchema schema = null;
-                    if (StringUtil.isNotEmpty(schemaName)) {
+                    if (Strings.isNotEmpty(schemaName)) {
                         schema = connectionHandler.getObjectBundle().getSchema(schemaName);
                     }
 
@@ -153,7 +153,7 @@ public class SessionBrowserCurrentSqlPanel extends DBNFormImpl {
         DatabaseFileViewProvider viewProvider = new DatabaseFileViewProvider(project, virtualFile, true);
         DBLanguagePsiFile psiFile = (DBLanguagePsiFile) virtualFile.initializePsiFile(viewProvider, SQLLanguage.INSTANCE);
         this.psiFile = PsiFileRef.of(psiFile);
-        document = DocumentUtil.getDocument(psiFile);
+        document = Documents.getDocument(psiFile);
 
 
         viewer = (EditorEx) EditorFactory.getInstance().createViewer(document, project);
@@ -225,7 +225,7 @@ public class SessionBrowserCurrentSqlPanel extends DBNFormImpl {
 
     @Override
     protected void disposeInner() {
-        EditorUtil.releaseEditor(viewer);
+        Editors.releaseEditor(viewer);
         virtualFile = null;
         super.disposeInner();
     }

@@ -3,8 +3,8 @@ package com.dci.intellij.dbn.common.environment;
 import com.dci.intellij.dbn.common.options.PersistentConfiguration;
 import com.dci.intellij.dbn.common.ui.Presentable;
 import com.dci.intellij.dbn.common.util.Cloneable;
-import com.dci.intellij.dbn.common.util.CommonUtil;
-import com.dci.intellij.dbn.common.util.StringUtil;
+import com.dci.intellij.dbn.common.util.Commons;
+import com.dci.intellij.dbn.common.util.Strings;
 import com.intellij.ui.JBColor;
 import com.intellij.util.ui.ColorIcon;
 import com.intellij.util.ui.UIUtil;
@@ -88,7 +88,7 @@ public class EnvironmentType implements Cloneable<EnvironmentType>, PersistentCo
     @Override
     @NotNull
     public String getName() {
-        return CommonUtil.nvl(name, "");
+        return Commons.nvl(name, "");
     }
 
     @Nullable
@@ -107,10 +107,10 @@ public class EnvironmentType implements Cloneable<EnvironmentType>, PersistentCo
 
         if (color == null) {
             if (isDarkScheme && darkColor != null) {
-                Color regularColor = CommonUtil.nvl(this.regularColor, DEFAULT_REGULAR_COLOR);
+                Color regularColor = Commons.nvl(this.regularColor, DEFAULT_REGULAR_COLOR);
                 color = new JBColor(regularColor, darkColor);
             } else if (!isDarkScheme && regularColor != null) {
-                Color darkColor = CommonUtil.nvl(this.darkColor, DEFAULT_DARK_COLOR);
+                Color darkColor = Commons.nvl(this.darkColor, DEFAULT_DARK_COLOR);
                 this.color = new JBColor(regularColor, darkColor);
             }
         }
@@ -143,13 +143,13 @@ public class EnvironmentType implements Cloneable<EnvironmentType>, PersistentCo
         description = stringAttribute(element, "description");
 
         String value = stringAttribute(element, "color");
-        if (StringUtil.isNotEmpty(value)) {
+        if (Strings.isNotEmpty(value)) {
             int index = value.indexOf('/');
             if (index > -1) {
                 String regularRgb = value.substring(0, index);
                 String darkRgb = value.substring(index + 1);
-                regularColor = StringUtil.isEmpty(regularRgb) ? null : new Color(Integer.parseInt(regularRgb));
-                darkColor = StringUtil.isEmpty(darkRgb) ? null : new Color(Integer.parseInt(darkRgb));
+                regularColor = Strings.isEmpty(regularRgb) ? null : new Color(Integer.parseInt(regularRgb));
+                darkColor = Strings.isEmpty(darkRgb) ? null : new Color(Integer.parseInt(darkRgb));
             }
         }
 
@@ -167,7 +167,7 @@ public class EnvironmentType implements Cloneable<EnvironmentType>, PersistentCo
     public void writeConfiguration(Element element) {
         element.setAttribute("id", id.id());
         element.setAttribute("name", name);
-        element.setAttribute("description", CommonUtil.nvl(description, ""));
+        element.setAttribute("description", Commons.nvl(description, ""));
         element.setAttribute("color",
                 (regularColor != null ? regularColor.getRGB() : "") + "/" +
                 (darkColor != null ? darkColor.getRGB() : ""));

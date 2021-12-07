@@ -10,8 +10,8 @@ import com.dci.intellij.dbn.common.routine.ProgressRunnable;
 import com.dci.intellij.dbn.common.thread.Dispatch;
 import com.dci.intellij.dbn.common.thread.Progress;
 import com.dci.intellij.dbn.common.thread.Read;
-import com.dci.intellij.dbn.common.util.EditorUtil;
-import com.dci.intellij.dbn.common.util.MessageUtil;
+import com.dci.intellij.dbn.common.util.Editors;
+import com.dci.intellij.dbn.common.util.Messages;
 import com.dci.intellij.dbn.common.util.Safe;
 import com.dci.intellij.dbn.connection.ConnectionAction;
 import com.dci.intellij.dbn.connection.ConnectionCache;
@@ -510,7 +510,7 @@ public class DatabaseFileSystem extends VirtualFileSystem implements /*NonPhysic
                     NavigationInstructions instructions = NavigationInstructions.create().
                             with(SCROLL).
                             with(FOCUS, focusEditor);
-                    EditorUtil.selectEditor(project, null, databaseFile, editorProviderId, instructions);
+                    Editors.selectEditor(project, null, databaseFile, editorProviderId, instructions);
                 }
             }
         });
@@ -541,7 +541,7 @@ public class DatabaseFileSystem extends VirtualFileSystem implements /*NonPhysic
                                     with(SCROLL).
                                     with(FOCUS, focusEditor);
 
-                            EditorUtil.selectEditor(project, fileEditor, databaseFile, editorProviderId, instructions);
+                            Editors.selectEditor(project, fileEditor, databaseFile, editorProviderId, instructions);
                             sourceCodeEditor.navigateTo(object);
                             break;
                         }
@@ -599,10 +599,10 @@ public class DatabaseFileSystem extends VirtualFileSystem implements /*NonPhysic
                         int exitCode = fileAttachmentManager.showFileAttachDialog(object, virtualFiles, true);
                         return exitCode != DialogWrapper.CANCEL_EXIT_CODE;
                     } else if (ddlFileSettings.isCreateDDLFilesEnabled()) {
-                        MessageUtil.showQuestionDialog(
+                        Messages.showQuestionDialog(
                                 project, "No DDL file found",
                                 "Could not find any DDL file for " + object.getQualifiedNameWithType() + ". Do you want to create one? \n" +
-                                        "(You can disable this check in \"DDL File\" options)", MessageUtil.OPTIONS_YES_NO, 0,
+                                        "(You can disable this check in \"DDL File\" options)", Messages.OPTIONS_YES_NO, 0,
                                 option -> when(option == 0, () -> fileAttachmentManager.createDDLFile(objectRef)));
 
                     }

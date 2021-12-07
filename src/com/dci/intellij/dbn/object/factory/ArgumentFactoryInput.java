@@ -1,6 +1,6 @@
 package com.dci.intellij.dbn.object.factory;
 
-import com.dci.intellij.dbn.common.util.StringUtil;
+import com.dci.intellij.dbn.common.util.Strings;
 import com.dci.intellij.dbn.object.type.DBObjectType;
 import lombok.Getter;
 
@@ -26,7 +26,7 @@ public class ArgumentFactoryInput extends ObjectFactoryInput{
         if (getObjectName().length() == 0) {
             errors.add("argument name is not specified at index " + getIndex());
 
-        } else if (!StringUtil.isWord(getObjectName())) {
+        } else if (!Strings.isWord(getObjectName())) {
             errors.add("invalid argument name specified at index " + getIndex() + ": \"" + getObjectName() + "\"");
         }
 

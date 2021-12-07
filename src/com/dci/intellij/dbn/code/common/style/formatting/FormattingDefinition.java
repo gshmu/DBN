@@ -1,6 +1,6 @@
 package com.dci.intellij.dbn.code.common.style.formatting;
 
-import com.dci.intellij.dbn.common.util.CommonUtil;
+import com.dci.intellij.dbn.common.util.Commons;
 import com.intellij.formatting.Indent;
 import com.intellij.formatting.Spacing;
 import com.intellij.formatting.Wrap;
@@ -44,10 +44,10 @@ public class FormattingDefinition {
     }
 
     public void merge(FormattingDefinition defaults) {
-        wrap = CommonUtil.nvln(wrap, defaults.wrap);
-        indent = CommonUtil.nvln(indent, defaults.indent);
-        spacingBefore = CommonUtil.nvln(spacingBefore, defaults.spacingBefore);
-        spacingAfter = CommonUtil.nvln(spacingAfter, defaults.spacingAfter);
+        wrap = Commons.nvln(wrap, defaults.wrap);
+        indent = Commons.nvln(indent, defaults.indent);
+        spacingBefore = Commons.nvln(spacingBefore, defaults.spacingBefore);
+        spacingAfter = Commons.nvln(spacingAfter, defaults.spacingAfter);
     }
     
     public FormattingAttributes getAttributes() {

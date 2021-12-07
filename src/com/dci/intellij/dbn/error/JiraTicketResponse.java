@@ -1,6 +1,6 @@
 package com.dci.intellij.dbn.error;
 
-import com.dci.intellij.dbn.common.util.StringUtil;
+import com.dci.intellij.dbn.common.util.Strings;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonElement;
@@ -15,7 +15,7 @@ class JiraTicketResponse implements TicketResponse{
 
 
     JiraTicketResponse(@Nullable String responseString, @Nullable String errorMessage) {
-        if (StringUtil.isNotEmpty(responseString)) {
+        if (Strings.isNotEmpty(responseString)) {
             Gson gson = GSON_BUILDER.create();
             this.response = gson.fromJson(responseString, JsonObject.class);
         }

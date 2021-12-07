@@ -1,7 +1,7 @@
 package com.dci.intellij.dbn.common.options.setting;
 
 import com.dci.intellij.dbn.common.options.PersistentConfiguration;
-import com.dci.intellij.dbn.common.util.StringUtil;
+import com.dci.intellij.dbn.common.util.Strings;
 import com.intellij.openapi.options.ConfigurationException;
 import org.jdom.Element;
 
@@ -24,7 +24,7 @@ public class StringSetting extends Setting<String, JTextComponent> implements Pe
 
     @Override
     public boolean to(JTextComponent component) throws ConfigurationException {
-        return setValue(StringUtil.trim(component.getText()));
+        return setValue(Strings.trim(component.getText()));
     }
 
     @Override

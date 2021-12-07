@@ -1,7 +1,7 @@
 package com.dci.intellij.dbn.editor.data.state.column;
 
 import com.dci.intellij.dbn.common.state.PersistentStateElement;
-import com.dci.intellij.dbn.common.util.StringUtil;
+import com.dci.intellij.dbn.common.util.Strings;
 import com.dci.intellij.dbn.object.DBColumn;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
@@ -29,7 +29,7 @@ public class DatasetColumnState implements Comparable<DatasetColumnState>, Persi
     }
 
     public void init(DBColumn column) {
-        if (StringUtil.isEmpty(name)) {
+        if (Strings.isEmpty(name)) {
             // not initialized yet
             name = column.getName();
             position = (short) (column.getPosition() -1);

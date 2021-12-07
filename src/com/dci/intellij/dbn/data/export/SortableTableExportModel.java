@@ -1,6 +1,6 @@
 package com.dci.intellij.dbn.data.export;
 
-import com.dci.intellij.dbn.common.util.StringUtil;
+import com.dci.intellij.dbn.common.util.Strings;
 import com.dci.intellij.dbn.data.grid.ui.table.sortable.SortableTable;
 import com.dci.intellij.dbn.data.model.ColumnInfo;
 import com.dci.intellij.dbn.data.model.sortable.SortableDataModel;
@@ -79,7 +79,7 @@ public class SortableTableExportModel implements DataExportModel{
 
     @Nullable
     private String produceColumnFriendlyName(String key) {
-        if (StringUtil.isNotEmpty(key)) {
+        if (Strings.isNotEmpty(key)) {
             key = key.trim().toUpperCase();
             if (key.matches("[A-Z][A-Z0-9_]*")) {
                 key = key.replaceAll("_", " _");

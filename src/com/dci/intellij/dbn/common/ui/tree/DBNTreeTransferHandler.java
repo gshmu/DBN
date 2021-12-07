@@ -1,9 +1,11 @@
 package com.dci.intellij.dbn.common.ui.tree;
 
-import com.dci.intellij.dbn.common.util.StringUtil;
+import com.dci.intellij.dbn.common.util.Strings;
 import com.intellij.openapi.ide.CopyPasteManager;
 
-import javax.swing.*;
+import javax.swing.JComponent;
+import javax.swing.JTree;
+import javax.swing.TransferHandler;
 import javax.swing.tree.TreePath;
 import java.awt.datatransfer.Clipboard;
 import java.awt.datatransfer.StringSelection;
@@ -26,7 +28,7 @@ public class DBNTreeTransferHandler extends TransferHandler {
             builder.delete(builder.length() - 1, builder.length());
 
             String contentString = builder.toString().trim();
-            if (StringUtil.isNotEmpty(contentString)) {
+            if (Strings.isNotEmpty(contentString)) {
                 StringSelection contents = new StringSelection(contentString);
                 //clip.setContents(contents, null);
 

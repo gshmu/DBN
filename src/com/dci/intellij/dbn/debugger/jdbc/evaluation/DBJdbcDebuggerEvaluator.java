@@ -1,7 +1,7 @@
 package com.dci.intellij.dbn.debugger.jdbc.evaluation;
 
-import com.dci.intellij.dbn.common.util.CommonUtil;
-import com.dci.intellij.dbn.common.util.StringUtil;
+import com.dci.intellij.dbn.common.util.Commons;
+import com.dci.intellij.dbn.common.util.Strings;
 import com.dci.intellij.dbn.database.common.debug.VariableInfo;
 import com.dci.intellij.dbn.debugger.common.evaluation.DBDebuggerEvaluator;
 import com.dci.intellij.dbn.debugger.common.frame.DBDebugValue;
@@ -38,7 +38,7 @@ public class DBJdbcDebuggerEvaluator extends DBDebuggerEvaluator<DBJdbcDebugStac
             if (value == null) {
                 value = childVariableNames != null ? "" : "null";
             } else {
-                if (!StringUtil.isNumber(value)) {
+                if (!Strings.isNumber(value)) {
                     value = '\'' + value + '\'';
                 }
             }
@@ -60,7 +60,7 @@ public class DBJdbcDebuggerEvaluator extends DBDebuggerEvaluator<DBJdbcDebugStac
             node.setPresentation(
                     debugValue.getIcon(),
                     debugValue.getType(),
-                    CommonUtil.nvl(debugValue.getValue(), "null"),
+                    Commons.nvl(debugValue.getValue(), "null"),
                     childVariableNames != null);
         }
     }

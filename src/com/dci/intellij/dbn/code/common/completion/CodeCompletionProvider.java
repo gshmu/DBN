@@ -3,7 +3,7 @@ package com.dci.intellij.dbn.code.common.completion;
 import com.dci.intellij.dbn.code.common.completion.options.filter.CodeCompletionFilterSettings;
 import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.common.util.Consumer;
-import com.dci.intellij.dbn.common.util.NamingUtil;
+import com.dci.intellij.dbn.common.util.Naming;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.language.common.DBLanguagePsiFile;
 import com.dci.intellij.dbn.language.common.element.ElementType;
@@ -291,7 +291,7 @@ public class CodeCompletionProvider extends CompletionProvider<CompletionParamet
         if (aliasedObject != null && aliasedObject.isObject()) {
             CharSequence unquotedText = aliasedObject.getUnquotedText();
             if (unquotedText.length() > 0) {
-                String[] aliasNames = NamingUtil.createAliasNames(unquotedText);
+                String[] aliasNames = Naming.createAliasNames(unquotedText);
 
                 BasePsiElement scope = aliasElement.getEnclosingScopePsiElement();
 
@@ -301,7 +301,7 @@ public class CodeCompletionProvider extends CompletionProvider<CompletionParamet
                         boolean isExisting = scope != null && lookupAdapter.findInScope(scope) != null;
                         boolean isKeyword = aliasElement.getLanguageDialect().isReservedWord(aliasNames[i]);
                         if (isKeyword || isExisting) {
-                            aliasNames[i] = NamingUtil.getNextNumberedName(aliasNames[i], false);
+                            aliasNames[i] = Naming.getNextNumberedName(aliasNames[i], false);
                         } else {
                             break;
                         }

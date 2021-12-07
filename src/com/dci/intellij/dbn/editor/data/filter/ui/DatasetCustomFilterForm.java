@@ -4,9 +4,9 @@ import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.common.compatibility.CompatibilityUtil;
 import com.dci.intellij.dbn.common.options.ui.ConfigurationEditorForm;
 import com.dci.intellij.dbn.common.ui.GUIUtil;
-import com.dci.intellij.dbn.common.util.DocumentUtil;
-import com.dci.intellij.dbn.common.util.EditorUtil;
-import com.dci.intellij.dbn.common.util.StringUtil;
+import com.dci.intellij.dbn.common.util.Documents;
+import com.dci.intellij.dbn.common.util.Editors;
+import com.dci.intellij.dbn.common.util.Strings;
 import com.dci.intellij.dbn.editor.data.filter.DatasetCustomFilter;
 import com.dci.intellij.dbn.language.sql.SQLLanguage;
 import com.dci.intellij.dbn.object.DBDataset;
@@ -56,14 +56,14 @@ public class DatasetCustomFilterForm extends ConfigurationEditorForm<DatasetCust
         conditionStartOffset = selectStatement.length();
 
         String condition = filter.getCondition();
-        boolean isValidCondition = StringUtil.isNotEmptyOrSpaces(condition);
+        boolean isValidCondition = Strings.isNotEmptyOrSpaces(condition);
         selectStatement.append(isValidCondition ? condition : COMMENT);
 
         DBDatasetFilterVirtualFile filterFile = new DBDatasetFilterVirtualFile(dataset, selectStatement.toString());
         DatabaseFileViewProvider viewProvider = new DatabaseFileViewProvider(project, filterFile, true);
         PsiFile selectStatementFile = filterFile.initializePsiFile(viewProvider, SQLLanguage.INSTANCE);
 
-        document = DocumentUtil.getDocument(selectStatementFile);
+        document = Documents.getDocument(selectStatementFile);
         document.createGuardedBlock(0, conditionStartOffset);
         editor = (EditorEx) EditorFactory.getInstance().createEditor(document, project);
         editor.setEmbeddedIntoDialogWrapper(true);
@@ -137,7 +137,7 @@ public class DatasetCustomFilterForm extends ConfigurationEditorForm<DatasetCust
 
     @Override
     public void disposeInner() {
-        EditorUtil.releaseEditor(editor);
+        Editors.releaseEditor(editor);
         editor = null;
         document = null;
         super.disposeInner();

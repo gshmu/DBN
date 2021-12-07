@@ -6,7 +6,7 @@ import com.dci.intellij.dbn.common.latent.Latent;
 import com.dci.intellij.dbn.common.ui.DBNFormImpl;
 import com.dci.intellij.dbn.common.ui.GUIUtil;
 import com.dci.intellij.dbn.common.ui.table.DBNTableHeaderRenderer;
-import com.dci.intellij.dbn.common.util.ActionUtil;
+import com.dci.intellij.dbn.common.util.Actions;
 import com.dci.intellij.dbn.data.find.DataSearchComponent;
 import com.dci.intellij.dbn.data.find.SearchableDataComponent;
 import com.dci.intellij.dbn.data.grid.ui.table.basic.BasicTableScrollPane;
@@ -22,8 +22,12 @@ import com.intellij.ui.IdeBorderFactory;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import javax.swing.*;
-import java.awt.*;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JTextField;
+import javax.swing.ScrollPaneConstants;
+import java.awt.BorderLayout;
+import java.awt.Dimension;
 
 public class MethodExecutionCursorResultForm extends DBNFormImpl implements SearchableDataComponent {
     private JPanel actionsPanel;
@@ -62,7 +66,7 @@ public class MethodExecutionCursorResultForm extends DBNFormImpl implements Sear
         panel.setBorder(DBNTableHeaderRenderer.BORDER_LBR.get());
         resultScrollPane.setCorner(ScrollPaneConstants.UPPER_LEFT_CORNER, panel);
 
-        ActionToolbar actionToolbar = ActionUtil.createActionToolbar(actionsPanel, "", true, "DBNavigator.ActionGroup.MethodExecutionCursorResult");
+        ActionToolbar actionToolbar = Actions.createActionToolbar(actionsPanel, "", true, "DBNavigator.ActionGroup.MethodExecutionCursorResult");
         actionsPanel.add(actionToolbar.getComponent());
         DataManager.registerDataProvider(actionToolbar.getComponent(), this);
     }

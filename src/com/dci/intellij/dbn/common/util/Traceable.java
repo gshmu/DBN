@@ -7,7 +7,7 @@ public class Traceable {
     public Traceable() {
         Traceable traceable = LOCAL.get();
         Throwable trace = traceable == null ? new Throwable() : new Throwable(traceable.trace);
-        this.trace = InternalApiUtil.getThrowableIntern(trace);
+        this.trace = InternalApi.getThrowableIntern(trace);
     }
 
     public Throwable getTrace() {

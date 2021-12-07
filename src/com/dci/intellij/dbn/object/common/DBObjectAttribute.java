@@ -1,13 +1,13 @@
 package com.dci.intellij.dbn.object.common;
 
-import com.dci.intellij.dbn.common.util.NamingUtil;
+import com.dci.intellij.dbn.common.util.Naming;
 
 public class DBObjectAttribute {
     private String name;
     private String friendlyName;
     public DBObjectAttribute(String name) {
         this.name = name;
-        this.friendlyName = NamingUtil.createFriendlyName(name);
+        this.friendlyName = Naming.createFriendlyName(name);
     }
 
     public String getName() {

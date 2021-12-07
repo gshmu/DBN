@@ -1,6 +1,6 @@
 package com.dci.intellij.dbn.execution.statement;
 
-import com.dci.intellij.dbn.common.util.CommonUtil;
+import com.dci.intellij.dbn.common.util.Commons;
 import com.dci.intellij.dbn.execution.statement.action.StatementGutterAction;
 import com.dci.intellij.dbn.language.common.psi.ExecutablePsiElement;
 import com.intellij.codeInsight.daemon.impl.ShowIntentionsPass;
@@ -35,7 +35,7 @@ public class StatementGutterRenderer extends GutterIconRenderer {
     @Nullable
     public AnAction getClickAction() {
         // TODO workaround for Idea 15 bug (showing gutter actions as intentions)
-        return CommonUtil.isCalledThrough(ShowIntentionsPass.class) ? null : action;
+        return Commons.isCalledThrough(ShowIntentionsPass.class) ? null : action;
     }
 
     @Override

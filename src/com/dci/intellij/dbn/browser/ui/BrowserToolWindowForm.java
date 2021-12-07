@@ -10,7 +10,7 @@ import com.dci.intellij.dbn.common.dispose.SafeDisposer;
 import com.dci.intellij.dbn.common.event.ProjectEvents;
 import com.dci.intellij.dbn.common.ui.DBNFormImpl;
 import com.dci.intellij.dbn.common.ui.GUIUtil;
-import com.dci.intellij.dbn.common.util.ActionUtil;
+import com.dci.intellij.dbn.common.util.Actions;
 import com.dci.intellij.dbn.connection.ConnectionId;
 import com.dci.intellij.dbn.connection.config.ConnectionSettingsListener;
 import com.dci.intellij.dbn.object.common.DBObject;
@@ -24,8 +24,8 @@ import lombok.Setter;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import javax.swing.*;
-import java.awt.*;
+import javax.swing.JPanel;
+import java.awt.BorderLayout;
 
 public class BrowserToolWindowForm extends DBNFormImpl {
     private JPanel mainPanel;
@@ -45,7 +45,7 @@ public class BrowserToolWindowForm extends DBNFormImpl {
 
         rebuild();
 
-        ActionToolbar actionToolbar = ActionUtil.createActionToolbar(
+        ActionToolbar actionToolbar = Actions.createActionToolbar(
                 actionsPanel,
                 "",
                 true,

@@ -2,7 +2,7 @@ package com.dci.intellij.dbn.common.editor;
 
 import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.common.thread.Dispatch;
-import com.dci.intellij.dbn.common.util.EditorUtil;
+import com.dci.intellij.dbn.common.util.Editors;
 import com.dci.intellij.dbn.editor.EditorProviderId;
 import com.dci.intellij.dbn.vfs.file.DBEditableObjectVirtualFile;
 import com.intellij.openapi.components.NamedComponent;
@@ -14,7 +14,7 @@ import com.intellij.openapi.vfs.VirtualFile;
 import org.jdom.Element;
 import org.jetbrains.annotations.NotNull;
 
-import javax.swing.*;
+import javax.swing.Icon;
 
 public abstract class BasicTextEditorProvider implements FileEditorProvider, NamedComponent, DumbAware {
     @Override
@@ -41,7 +41,7 @@ public abstract class BasicTextEditorProvider implements FileEditorProvider, Nam
     protected void updateTabIcon(final DBEditableObjectVirtualFile databaseFile, final BasicTextEditor textEditor, final Icon icon) {
         Dispatch.run(() -> {
             Project project = Failsafe.nn(databaseFile.getProject());
-            EditorUtil.setEditorIcon(project, databaseFile, textEditor, icon);
+            Editors.setEditorIcon(project, databaseFile, textEditor, icon);
         });
     }
 

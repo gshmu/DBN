@@ -11,7 +11,7 @@ import com.dci.intellij.dbn.common.list.FilteredList;
 import com.dci.intellij.dbn.common.project.ProjectRef;
 import com.dci.intellij.dbn.common.thread.Dispatch;
 import com.dci.intellij.dbn.common.thread.Progress;
-import com.dci.intellij.dbn.common.util.DocumentUtil;
+import com.dci.intellij.dbn.common.util.Documents;
 import com.dci.intellij.dbn.connection.ConnectionAction;
 import com.dci.intellij.dbn.connection.ConnectionBundle;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
@@ -78,8 +78,8 @@ import java.util.concurrent.ConcurrentHashMap;
 
 import static com.dci.intellij.dbn.common.action.UserDataKeys.*;
 import static com.dci.intellij.dbn.common.message.MessageCallback.when;
-import static com.dci.intellij.dbn.common.util.MessageUtil.options;
-import static com.dci.intellij.dbn.common.util.MessageUtil.showWarningDialog;
+import static com.dci.intellij.dbn.common.util.Messages.options;
+import static com.dci.intellij.dbn.common.util.Messages.showWarningDialog;
 import static com.dci.intellij.dbn.connection.ConnectionSelectorOptions.Option.*;
 
 @State(
@@ -404,7 +404,7 @@ public class FileConnectionMappingManager extends AbstractProjectComponent imple
         if (isConnectionSelectable(virtualFile)) {
             boolean changed = setConnectionHandler(virtualFile, connectionHandler);
             if (changed) {
-                DocumentUtil.touchDocument(editor, true);
+                Documents.touchDocument(editor, true);
 
                 ProjectEvents.notify(getProject(),
                         FileConnectionMappingListener.TOPIC,
@@ -419,7 +419,7 @@ public class FileConnectionMappingManager extends AbstractProjectComponent imple
         if (isSchemaSelectable(virtualFile)) {
             boolean changed = setDatabaseSchema(virtualFile, schema);
             if (changed) {
-                DocumentUtil.touchDocument(editor, false);
+                Documents.touchDocument(editor, false);
 
                 ProjectEvents.notify(getProject(),
                         FileConnectionMappingListener.TOPIC,

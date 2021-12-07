@@ -1,6 +1,6 @@
 package com.dci.intellij.dbn.database.sqlite.adapter.rs;
 
-import com.dci.intellij.dbn.common.util.StringUtil;
+import com.dci.intellij.dbn.common.util.Strings;
 import com.dci.intellij.dbn.database.common.util.WrappedResultSet;
 
 import java.sql.ResultSet;
@@ -30,15 +30,15 @@ public class SqliteTriggersResultSet extends WrappedResultSet {
                 String definition = sourceCode.substring(start, end);
                 if (isType) {
                     return
-                        StringUtil.containsIgnoreCase(definition, "before") ? "BEFORE" :
-                        StringUtil.containsIgnoreCase(definition, "after") ? "AFTER" :
-                        StringUtil.containsIgnoreCase(definition, "instead") ? "INSTEAD OF" : "";
+                        Strings.containsIgnoreCase(definition, "before") ? "BEFORE" :
+                        Strings.containsIgnoreCase(definition, "after") ? "AFTER" :
+                        Strings.containsIgnoreCase(definition, "instead") ? "INSTEAD OF" : "";
                 }
                 if (isEvent) {
                     return
-                        StringUtil.containsIgnoreCase(definition, "delete") ? "DELETE" :
-                        StringUtil.containsIgnoreCase(definition, "insert") ? "INSERT" :
-                        StringUtil.containsIgnoreCase(definition, "update") ? "UPDATE" : "";
+                        Strings.containsIgnoreCase(definition, "delete") ? "DELETE" :
+                        Strings.containsIgnoreCase(definition, "insert") ? "INSERT" :
+                        Strings.containsIgnoreCase(definition, "update") ? "UPDATE" : "";
 
                 }
             }

@@ -1,7 +1,7 @@
 package com.dci.intellij.dbn.execution.method.ui;
 
 import com.dci.intellij.dbn.common.ui.DBNFormImpl;
-import com.dci.intellij.dbn.common.util.CommonUtil;
+import com.dci.intellij.dbn.common.util.Commons;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.data.editor.text.TextContentType;
 import com.dci.intellij.dbn.data.editor.ui.ListPopupValuesProvider;
@@ -172,10 +172,10 @@ public class MethodExecutionInputTypeAttributeForm extends DBNFormImpl {
         if (argument != null && typeAttribute != null) {
             MethodExecutionInput executionInput = getExecutionInput();
             if (userValueHolder != null ) {
-                String value = CommonUtil.nullIfEmpty(userValueHolder.getUserValue());
+                String value = Commons.nullIfEmpty(userValueHolder.getUserValue());
                 executionInput.setInputValue(argument, typeAttribute, value);
             } else {
-                String value = CommonUtil.nullIfEmpty(inputTextField == null ? null : inputTextField.getText());
+                String value = Commons.nullIfEmpty(inputTextField == null ? null : inputTextField.getText());
                 executionInput.setInputValue(argument, typeAttribute, value);
             }
         }

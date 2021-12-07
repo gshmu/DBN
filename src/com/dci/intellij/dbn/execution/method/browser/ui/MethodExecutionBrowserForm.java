@@ -5,7 +5,7 @@ import com.dci.intellij.dbn.common.thread.Progress;
 import com.dci.intellij.dbn.common.ui.DBNFormImpl;
 import com.dci.intellij.dbn.common.ui.GUIUtil;
 import com.dci.intellij.dbn.common.ui.tree.DBNTree;
-import com.dci.intellij.dbn.common.util.ActionUtil;
+import com.dci.intellij.dbn.common.util.Actions;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.execution.method.MethodExecutionManager;
 import com.dci.intellij.dbn.execution.method.browser.MethodBrowserSettings;
@@ -22,11 +22,11 @@ import com.dci.intellij.dbn.object.type.DBObjectType;
 import com.intellij.openapi.actionSystem.ActionToolbar;
 import org.jetbrains.annotations.NotNull;
 
-import javax.swing.*;
+import javax.swing.JPanel;
 import javax.swing.event.TreeSelectionListener;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.TreePath;
-import java.awt.*;
+import java.awt.BorderLayout;
 
 public class MethodExecutionBrowserForm extends DBNFormImpl {
 
@@ -36,10 +36,10 @@ public class MethodExecutionBrowserForm extends DBNFormImpl {
 
     MethodExecutionBrowserForm(MethodExecutionBrowserDialog parent, ObjectTreeModel model, boolean debug) {
         super(parent);
-        ActionToolbar actionToolbar = ActionUtil.createActionToolbar(actionsPanel,"", true,
+        ActionToolbar actionToolbar = Actions.createActionToolbar(actionsPanel,"", true,
                 new ConnectionSelectDropdownAction(this, debug),
                 new SchemaSelectDropdownAction(this),
-                ActionUtil.SEPARATOR,
+                Actions.SEPARATOR,
                 new ObjectTypeToggleAction(this, DBObjectType.PROCEDURE),
                 new ObjectTypeToggleAction(this, DBObjectType.FUNCTION));
         actionsPanel.add(actionToolbar.getComponent(), BorderLayout.CENTER);

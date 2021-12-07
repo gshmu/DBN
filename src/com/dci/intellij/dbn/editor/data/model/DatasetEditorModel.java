@@ -6,8 +6,8 @@ import com.dci.intellij.dbn.common.dispose.SafeDisposer;
 import com.dci.intellij.dbn.common.environment.EnvironmentManager;
 import com.dci.intellij.dbn.common.thread.CancellableDatabaseCall;
 import com.dci.intellij.dbn.common.thread.Progress;
-import com.dci.intellij.dbn.common.util.CommonUtil;
-import com.dci.intellij.dbn.common.util.MessageUtil;
+import com.dci.intellij.dbn.common.util.Commons;
+import com.dci.intellij.dbn.common.util.Messages;
 import com.dci.intellij.dbn.common.util.Safe;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.ConnectionProperties;
@@ -360,7 +360,7 @@ public class DatasetEditorModel
                 (progress) -> {
                     progress.setIndeterminate(false);
                     for (int index : rowIndexes) {
-                        progress.setFraction(CommonUtil.getProgressPercentage(index, rowIndexes.length));
+                        progress.setFraction(Commons.getProgressPercentage(index, rowIndexes.length));
                         DatasetEditorModelRow row = getRowAtIndex(index);
                         if (progress.isCanceled()) break;
 
@@ -401,7 +401,7 @@ public class DatasetEditorModel
             connection.notifyDataChanges(dataset.getVirtualFile());
         } catch (SQLException e) {
             set(INSERTING, false);
-            MessageUtil.showErrorDialog(getProject(), "Could not insert record for " + dataset.getQualifiedNameWithType() + ".", e);
+            Messages.showErrorDialog(getProject(), "Could not insert record for " + dataset.getQualifiedNameWithType() + ".", e);
         }
     }
 
@@ -428,7 +428,7 @@ public class DatasetEditorModel
             connection.notifyDataChanges(dataset.getVirtualFile());
         } catch (SQLException e) {
             set(INSERTING, false);
-            MessageUtil.showErrorDialog(getProject(), "Could not duplicate record in " + dataset.getQualifiedNameWithType() + ".", e);
+            Messages.showErrorDialog(getProject(), "Could not duplicate record in " + dataset.getQualifiedNameWithType() + ".", e);
         }
     }
 

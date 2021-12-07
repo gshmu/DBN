@@ -6,7 +6,7 @@ import com.dci.intellij.dbn.common.ui.table.DBNEditableTable;
 import com.dci.intellij.dbn.common.ui.table.DBNEditableTableModel;
 import com.dci.intellij.dbn.common.ui.table.DBNTableGutter;
 import com.dci.intellij.dbn.common.ui.table.IndexTableGutter;
-import com.dci.intellij.dbn.common.util.StringUtil;
+import com.dci.intellij.dbn.common.util.Strings;
 import org.jetbrains.annotations.NotNull;
 
 import javax.swing.JTextField;
@@ -92,7 +92,7 @@ public class EditableStringList extends DBNEditableTable<EditableStringList.Edit
                             (String) model.getValueAt(selectedRow, 0) :
                             ((JTextField) source).getText();
 
-                    if (StringUtil.isEmpty(value)) {
+                    if (Strings.isEmpty(value)) {
                         e.consume();
                         removeRow();
                     }

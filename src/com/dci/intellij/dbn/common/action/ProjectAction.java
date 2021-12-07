@@ -1,7 +1,7 @@
 package com.dci.intellij.dbn.common.action;
 
 import com.dci.intellij.dbn.common.dispose.Failsafe;
-import com.dci.intellij.dbn.common.util.CommonUtil;
+import com.dci.intellij.dbn.common.util.Commons;
 import com.dci.intellij.dbn.common.util.Safe;
 import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.AnActionEvent;
@@ -10,7 +10,7 @@ import com.intellij.openapi.project.Project;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import javax.swing.*;
+import javax.swing.Icon;
 
 public abstract class ProjectAction extends AnAction {
 
@@ -28,7 +28,7 @@ public abstract class ProjectAction extends AnAction {
     @Override
     public final void actionPerformed(@NotNull AnActionEvent e) {
         try {
-            Project project = CommonUtil.nvln(
+            Project project = Commons.nvln(
                     getProject(),
                     () -> Lookup.getProject(e));
             if (Failsafe.check(project)) {

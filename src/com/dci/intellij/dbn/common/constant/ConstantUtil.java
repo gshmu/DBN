@@ -1,6 +1,6 @@
 package com.dci.intellij.dbn.common.constant;
 
-import com.dci.intellij.dbn.common.util.StringUtil;
+import com.dci.intellij.dbn.common.util.Strings;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -57,7 +57,7 @@ public abstract class ConstantUtil {
 
     public static <T extends Constant> T get(T[] constants, String id, boolean throwException) {
         T constant = get(constants, id);
-        if (!StringUtil.isEmpty(id) && constant == null && throwException) {
+        if (!Strings.isEmpty(id) && constant == null && throwException) {
             String className = constants[0].getClass().getSimpleName();
             throw new IllegalArgumentException("Invalid " + className + ": '" + id + "'.");
         }
@@ -70,7 +70,7 @@ public abstract class ConstantUtil {
     }
 
     public static <T extends Constant> T get(T[] constants, String id) {
-        if (StringUtil.isNotEmpty(id)){
+        if (Strings.isNotEmpty(id)){
             for (T constant : constants) {
                 if (Objects.equals(constant.id(), id)) {
                     return constant;
@@ -87,7 +87,7 @@ public abstract class ConstantUtil {
     public static <T extends Constant> List<T> fromCsv(Class<T> clazz, String csvIds) {
         List<T> constants = new ArrayList<T>();
 
-        if (StringUtil.isNotEmpty(csvIds)) {
+        if (Strings.isNotEmpty(csvIds)) {
             String[] ids = csvIds.split(",");
             boolean isPseudoConstant = PseudoConstant.class.isAssignableFrom(clazz);
 

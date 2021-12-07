@@ -1,6 +1,6 @@
 package com.dci.intellij.dbn.common.file.util;
 
-import com.dci.intellij.dbn.common.util.StringUtil;
+import com.dci.intellij.dbn.common.util.Strings;
 import com.intellij.openapi.vfs.VirtualFile;
 
 import java.util.Arrays;
@@ -30,11 +30,11 @@ public class FileSearchRequest {
 
     public boolean matches(VirtualFile file) {
         if (names != null) {
-            return Arrays.stream(names).anyMatch(name -> StringUtil.equalsIgnoreCase(file.getName(), name));
+            return Arrays.stream(names).anyMatch(name -> Strings.equalsIgnoreCase(file.getName(), name));
         } else if (patterns != null) {
             throw new UnsupportedOperationException("Not supported"); // TODO implement
         } else if (extensions != null) {
-            return Arrays.stream(extensions).anyMatch(extension -> StringUtil.equalsIgnoreCase(file.getExtension(), extension));
+            return Arrays.stream(extensions).anyMatch(extension -> Strings.equalsIgnoreCase(file.getExtension(), extension));
         }
         return false;
     }

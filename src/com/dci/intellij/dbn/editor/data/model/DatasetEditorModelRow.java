@@ -3,7 +3,7 @@ package com.dci.intellij.dbn.editor.data.model;
 import com.dci.intellij.dbn.common.notification.NotificationGroup;
 import com.dci.intellij.dbn.common.notification.NotificationSupport;
 import com.dci.intellij.dbn.common.property.PropertyHolder;
-import com.dci.intellij.dbn.common.util.StringUtil;
+import com.dci.intellij.dbn.common.util.Strings;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.data.model.ColumnInfo;
 import com.dci.intellij.dbn.data.model.DataModelCell;
@@ -193,7 +193,7 @@ public class DatasetEditorModelRow
             if (userValue != null) {
                 if (userValue instanceof String) {
                     String stringUserValue = (String) userValue;
-                    if (StringUtil.isNotEmpty(stringUserValue)) {
+                    if (Strings.isNotEmpty(stringUserValue)) {
                         return false;
                     }
                 } else {

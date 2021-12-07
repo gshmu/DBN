@@ -2,7 +2,7 @@ package com.dci.intellij.dbn.editor.code.ui;
 
 import com.dci.intellij.dbn.common.environment.EnvironmentManager;
 import com.dci.intellij.dbn.common.message.MessageType;
-import com.dci.intellij.dbn.common.util.MessageUtil;
+import com.dci.intellij.dbn.common.util.Messages;
 import com.dci.intellij.dbn.editor.DBContentType;
 import com.dci.intellij.dbn.editor.code.SourceCodeEditor;
 import com.dci.intellij.dbn.object.common.DBSchemaObject;
@@ -25,7 +25,7 @@ public class SourceCodeReadonlyNotificationPanel extends SourceCodeEditorNotific
         if (isReadonly(sourceCodeEditor)) {
             setText("Readonly code - This editor is readonly to prevent accidental code changes in \"" + environmentName + "\" environments (check environment settings)");
             createActionLabel("Edit Mode", () ->
-                    MessageUtil.showQuestionDialog(project,
+                    Messages.showQuestionDialog(project,
                             "Enable edit-mode",
                             "Are you sure you want to enable editing for " + schemaObject.getQualifiedNameWithType(),
                             new String[]{"Yes", "Cancel"}, 0,

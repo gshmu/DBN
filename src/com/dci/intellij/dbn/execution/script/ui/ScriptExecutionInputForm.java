@@ -7,7 +7,7 @@ import com.dci.intellij.dbn.common.ui.DBNHeaderForm;
 import com.dci.intellij.dbn.common.ui.DBNHintForm;
 import com.dci.intellij.dbn.common.ui.PresentableFactory;
 import com.dci.intellij.dbn.common.ui.ValueSelectorOption;
-import com.dci.intellij.dbn.common.util.CommonUtil;
+import com.dci.intellij.dbn.common.util.Commons;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.ConnectionManager;
 import com.dci.intellij.dbn.connection.DatabaseType;
@@ -23,8 +23,11 @@ import com.intellij.openapi.vfs.VirtualFile;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import javax.swing.*;
-import java.awt.*;
+import javax.swing.Icon;
+import javax.swing.JCheckBox;
+import javax.swing.JComponent;
+import javax.swing.JPanel;
+import java.awt.BorderLayout;
 import java.util.List;
 
 public class ScriptExecutionInputForm extends DBNFormImpl{
@@ -123,7 +126,7 @@ public class ScriptExecutionInputForm extends DBNFormImpl{
         SchemaId schema = executionInput.getSchema();
         CmdLineInterface cmdLineInterface;
         if (connectionHandler != null && !connectionHandler.isVirtual()) {
-            schema = CommonUtil.nvln(schema, connectionHandler.getDefaultSchema());
+            schema = Commons.nvln(schema, connectionHandler.getDefaultSchema());
             connectionComboBox.setSelectedValue(connectionHandler);
             schemaComboBox.setValues(connectionHandler.getSchemaIds());
             schemaComboBox.setSelectedValue(schema);

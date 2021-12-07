@@ -6,7 +6,7 @@ import com.dci.intellij.dbn.common.environment.EnvironmentType;
 import com.dci.intellij.dbn.common.ui.Borders;
 import com.dci.intellij.dbn.common.ui.DBNFormImpl;
 import com.dci.intellij.dbn.common.ui.DBNHeaderForm;
-import com.dci.intellij.dbn.common.util.StringUtil;
+import com.dci.intellij.dbn.common.util.Strings;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.DatabaseType;
 import com.dci.intellij.dbn.connection.DatabaseUrlType;
@@ -16,8 +16,13 @@ import com.dci.intellij.dbn.driver.DriverSource;
 import com.intellij.util.ui.UIUtil;
 import org.jetbrains.annotations.NotNull;
 
-import javax.swing.*;
-import java.awt.*;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JTextField;
+import java.awt.BorderLayout;
+import java.awt.Cursor;
+import java.awt.Dimension;
+import java.awt.FontMetrics;
 import java.sql.Connection;
 import java.sql.SQLException;
 
@@ -138,7 +143,7 @@ public class ConnectionInfoForm extends DBNFormImpl{
         initValueField(setupNameLabel, setupNameTextField, connectionHandler.getName());
 
         String description = connectionHandler.getDescription();
-        initValueField(setupDescriptionLabel, setupDescriptionTextField, description, !StringUtil.isEmpty(description));
+        initValueField(setupDescriptionLabel, setupDescriptionTextField, description, !Strings.isEmpty(description));
 
         ConnectionDatabaseSettings databaseSettings = connectionHandler.getSettings().getDatabaseSettings();
         String driverLibrary = databaseSettings.getDriverLibrary();
@@ -177,7 +182,7 @@ public class ConnectionInfoForm extends DBNFormImpl{
 
     @NotNull
     private String getPresentableText(String value) {
-        return StringUtil.isEmpty(value) ? "-" : value;
+        return Strings.isEmpty(value) ? "-" : value;
     }
 
     @NotNull

@@ -2,7 +2,7 @@ package com.dci.intellij.dbn.editor.data.action;
 
 import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.common.action.GroupPopupAction;
-import com.dci.intellij.dbn.common.util.ActionUtil;
+import com.dci.intellij.dbn.common.util.Actions;
 import com.dci.intellij.dbn.options.ConfigId;
 import com.dci.intellij.dbn.options.action.ProjectSettingsOpenAction;
 import com.intellij.openapi.actionSystem.AnAction;
@@ -17,7 +17,7 @@ public class DatasetEditorOptionsAction extends GroupPopupAction {
         return new AnAction[]{
                 new DataSortingOpenAction(),
                 new ColumnSetupOpenAction(),
-                ActionUtil.SEPARATOR,
+                Actions.SEPARATOR,
                 new ProjectSettingsOpenAction(ConfigId.DATA_EDITOR, false)
         };
     }

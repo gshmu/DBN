@@ -2,7 +2,7 @@ package com.dci.intellij.dbn.database.generic;
 
 import com.dci.intellij.dbn.common.latent.Latent;
 import com.dci.intellij.dbn.common.routine.ThrowableCallable;
-import com.dci.intellij.dbn.common.util.StringUtil;
+import com.dci.intellij.dbn.common.util.Strings;
 import com.dci.intellij.dbn.database.common.util.CachedResultSet;
 import com.dci.intellij.dbn.database.common.util.CachedResultSetRow;
 import com.dci.intellij.dbn.database.common.util.WrappedCachedResultSet;
@@ -84,7 +84,7 @@ public class GenericMetadataTranslators {
                 case "TABLE_NAME": return inner.getString("TABLE_NAME"); // redundant (for clarity)
                 case "IS_TEMPORARY":
                     String tableType = inner.getString("TABLE_TYPE");
-                    boolean temporary = tableType != null && StringUtil.containsIgnoreCase(tableType, "TEMPORARY");
+                    boolean temporary = tableType != null && Strings.containsIgnoreCase(tableType, "TEMPORARY");
                     return literalBoolean(temporary);
 
                 default: return null;
@@ -110,8 +110,8 @@ public class GenericMetadataTranslators {
                 case "IS_SYSTEM_VIEW": {
                     String tableType = inner.getString("TABLE_TYPE");
                     boolean systemView = tableType != null &&
-                            StringUtil.containsIgnoreCase(tableType, "SYSTEM") &&
-                            StringUtil.containsIgnoreCase(tableType, "VIEW");
+                            Strings.containsIgnoreCase(tableType, "SYSTEM") &&
+                            Strings.containsIgnoreCase(tableType, "VIEW");
                     return literalBoolean(systemView);
                 }
 
@@ -619,7 +619,7 @@ public class GenericMetadataTranslators {
     }
 
     static String emptyToNull(String string) {
-        return StringUtil.isEmpty(string) ? null : string.trim();
+        return Strings.isEmpty(string) ? null : string.trim();
     }
 
     static String literalBoolean(boolean bool) {

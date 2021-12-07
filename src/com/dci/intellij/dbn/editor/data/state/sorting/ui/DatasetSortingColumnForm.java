@@ -6,8 +6,8 @@ import com.dci.intellij.dbn.common.ui.DBNFormImpl;
 import com.dci.intellij.dbn.common.ui.ValueSelector;
 import com.dci.intellij.dbn.common.ui.ValueSelectorListener;
 import com.dci.intellij.dbn.common.ui.ValueSelectorOption;
-import com.dci.intellij.dbn.common.util.ActionUtil;
-import com.dci.intellij.dbn.common.util.StringUtil;
+import com.dci.intellij.dbn.common.util.Actions;
+import com.dci.intellij.dbn.common.util.Strings;
 import com.dci.intellij.dbn.data.sorting.SortingInstruction;
 import com.dci.intellij.dbn.editor.data.state.sorting.action.ChangeSortingDirectionAction;
 import com.dci.intellij.dbn.editor.data.state.sorting.action.DeleteSortingCriteriaAction;
@@ -46,7 +46,7 @@ public class DatasetSortingColumnForm extends DBNFormImpl {
         dataTypeLabel.setText(column.getDataType().getQualifiedName());
         dataTypeLabel.setForeground(UIUtil.getInactiveTextColor());
 
-        ActionToolbar actionToolbar = ActionUtil.createActionToolbar(
+        ActionToolbar actionToolbar = Actions.createActionToolbar(
                 actionsPanel,
                 "DBNavigator.DataEditor.Sorting.Instruction", true,
                 new ChangeSortingDirectionAction(this),
@@ -84,7 +84,7 @@ public class DatasetSortingColumnForm extends DBNFormImpl {
             List<DatasetSortingColumnForm> sortingInstructionForms = getParentForm().getSortingInstructionForms();
             for (DatasetSortingColumnForm sortingColumnForm : sortingInstructionForms) {
                 String columnName = sortingColumnForm.getSortingInstruction().getColumnName();
-                if (StringUtil.equalsIgnoreCase(columnName, value.getName())) {
+                if (Strings.equalsIgnoreCase(columnName, value.getName())) {
                     return false;
                 }
             }

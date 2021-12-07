@@ -3,7 +3,7 @@ package com.dci.intellij.dbn.browser.action;
 import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.common.action.DataKeys;
 import com.dci.intellij.dbn.common.action.GroupPopupAction;
-import com.dci.intellij.dbn.common.util.ActionUtil;
+import com.dci.intellij.dbn.common.util.Actions;
 import com.dci.intellij.dbn.connection.DatabaseType;
 import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.AnActionEvent;
@@ -13,7 +13,7 @@ import com.intellij.openapi.project.Project;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import javax.swing.*;
+import javax.swing.Icon;
 
 public class ConnectionCreateDropdownAction extends GroupPopupAction {
     private final AnAction[] actions = new AnAction[] {
@@ -22,7 +22,7 @@ public class ConnectionCreateDropdownAction extends GroupPopupAction {
             new ConnectionCreateAction(DatabaseType.POSTGRES),
             new ConnectionCreateAction(DatabaseType.SQLITE),
             new ConnectionCreateAction(null),
-            ActionUtil.SEPARATOR,
+            Actions.SEPARATOR,
             new TnsNamesImportAction()
     };
 

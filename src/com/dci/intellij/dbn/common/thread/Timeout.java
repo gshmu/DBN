@@ -2,7 +2,7 @@ package com.dci.intellij.dbn.common.thread;
 
 import com.dci.intellij.dbn.common.routine.ThrowableCallable;
 import com.dci.intellij.dbn.common.routine.ThrowableRunnable;
-import com.dci.intellij.dbn.common.util.CommonUtil;
+import com.dci.intellij.dbn.common.util.Commons;
 import lombok.extern.slf4j.Slf4j;
 
 import java.util.concurrent.ExecutionException;
@@ -37,10 +37,10 @@ public final class Timeout {
 
             return waitFor(future, seconds, TimeUnit.SECONDS);
         } catch (TimeoutException | InterruptedException | RejectedExecutionException e) {
-            String message = CommonUtil.nvl(e.getMessage(), e.getClass().getName());
+            String message = Commons.nvl(e.getMessage(), e.getClass().getName());
             log.warn("Operation timed out. Returning default " + defaultValue + ". Cause: " + message);
         } catch (ExecutionException e) {
-            Throwable exception = CommonUtil.nvl(e.getCause(), e);
+            Throwable exception = Commons.nvl(e.getCause(), e);
             log.warn("Timeout operation failed. Returning default " + defaultValue, exception);
         }
         return defaultValue;
@@ -64,10 +64,10 @@ public final class Timeout {
             waitFor(future, seconds, TimeUnit.SECONDS);
 
         } catch (TimeoutException | InterruptedException | RejectedExecutionException e) {
-            String message = CommonUtil.nvl(e.getMessage(), e.getClass().getName());
+            String message = Commons.nvl(e.getMessage(), e.getClass().getName());
             log.warn("Operation timed out. Cause: " + message);
         } catch (ExecutionException e) {
-            Throwable exception = CommonUtil.nvl(e.getCause(), e);
+            Throwable exception = Commons.nvl(e.getCause(), e);
             log.warn("Timeout operation failed.", exception);
         }
     }

@@ -1,6 +1,6 @@
 package com.dci.intellij.dbn.connection;
 
-import com.dci.intellij.dbn.common.util.EnumerationUtil;
+import com.dci.intellij.dbn.common.util.Enumerations;
 import lombok.Getter;
 
 public enum ConnectionType{
@@ -21,7 +21,7 @@ public enum ConnectionType{
     }
 
     public boolean isOneOf(ConnectionType... connectionTypes){
-        return EnumerationUtil.isOneOf(this, connectionTypes);
+        return Enumerations.isOneOf(this, connectionTypes);
     }
 
     public boolean matches(ConnectionType... connectionTypes){

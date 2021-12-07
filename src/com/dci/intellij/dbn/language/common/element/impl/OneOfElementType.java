@@ -1,7 +1,7 @@
 package com.dci.intellij.dbn.language.common.element.impl;
 
-import com.dci.intellij.dbn.common.util.CommonUtil;
-import com.dci.intellij.dbn.common.util.StringUtil;
+import com.dci.intellij.dbn.common.util.Commons;
+import com.dci.intellij.dbn.common.util.Strings;
 import com.dci.intellij.dbn.language.common.element.ElementTypeBundle;
 import com.dci.intellij.dbn.language.common.element.cache.OneOfElementTypeLookupCache;
 import com.dci.intellij.dbn.language.common.element.parser.BranchCheck;
@@ -36,7 +36,7 @@ public final class OneOfElementType extends ElementTypeBase {
         super.loadDefinition(def);
         ElementTypeBundle bundle = getBundle();
         String tokenIds = stringAttribute(def, "tokens");
-        if (StringUtil.isNotEmptyOrSpaces(tokenIds)) {
+        if (Strings.isNotEmptyOrSpaces(tokenIds)) {
             basic = true;
             String id = getId();
 
@@ -61,7 +61,7 @@ public final class OneOfElementType extends ElementTypeBase {
                 Element child = children.get(i);
                 String type = child.getName();
                 ElementTypeBase elementType = bundle.resolveElementDefinition(child, type, this);
-                double version = Double.parseDouble(CommonUtil.nvl(stringAttribute(child, "version"), "0"));
+                double version = Double.parseDouble(Commons.nvl(stringAttribute(child, "version"), "0"));
                 Set<BranchCheck> branchChecks = parseBranchChecks(stringAttribute(child, "branch-check"));
 
                 this.children[i] = new ElementTypeRef(previous, this, elementType, false, version, branchChecks);

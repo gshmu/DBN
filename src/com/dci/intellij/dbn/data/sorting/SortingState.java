@@ -2,7 +2,7 @@ package com.dci.intellij.dbn.data.sorting;
 
 import com.dci.intellij.dbn.common.state.PersistentStateElement;
 import com.dci.intellij.dbn.common.util.Cloneable;
-import com.dci.intellij.dbn.common.util.StringUtil;
+import com.dci.intellij.dbn.common.util.Strings;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
@@ -95,7 +95,7 @@ public class SortingState implements PersistentStateElement, Cloneable<SortingSt
 
     public SortingInstruction getSortingInstruction(String columnName) {
         for (SortingInstruction sortingInstruction :  sortingInstructions) {
-            if (StringUtil.equalsIgnoreCase(sortingInstruction.getColumnName(), columnName)) {
+            if (Strings.equalsIgnoreCase(sortingInstruction.getColumnName(), columnName)) {
                 return sortingInstruction;
             }
         }

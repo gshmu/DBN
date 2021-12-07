@@ -1,6 +1,6 @@
 package com.dci.intellij.dbn.database.sqlite.adapter.rs;
 
-import com.dci.intellij.dbn.common.util.StringUtil;
+import com.dci.intellij.dbn.common.util.Strings;
 import com.dci.intellij.dbn.connection.jdbc.DBNConnection;
 import com.dci.intellij.dbn.database.sqlite.adapter.SqliteMetadataResultSetRow;
 
@@ -35,7 +35,7 @@ public abstract class SqliteColumnIndexesResultSet extends SqliteDatasetInfoResu
             RawIndexDetailInfo indexDetailInfo = getIndexDetailInfo(indexName);
             for (RawIndexDetailInfo.Row detailRow : indexDetailInfo.getRows()) {
                 String columnName = detailRow.getName();
-                if (StringUtil.isNotEmpty(columnName)) {
+                if (Strings.isNotEmpty(columnName)) {
                     IndexColumn indexColumn = new IndexColumn();
                     indexColumn.tableName = tableName;
                     indexColumn.indexName = indexName;

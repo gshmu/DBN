@@ -13,8 +13,8 @@ import com.dci.intellij.dbn.common.ui.DBNFormImpl;
 import com.dci.intellij.dbn.common.ui.GUIUtil;
 import com.dci.intellij.dbn.common.ui.listener.MouseClickedListener;
 import com.dci.intellij.dbn.common.ui.tab.TabbedPane;
-import com.dci.intellij.dbn.common.util.DocumentUtil;
-import com.dci.intellij.dbn.common.util.StringUtil;
+import com.dci.intellij.dbn.common.util.Documents;
+import com.dci.intellij.dbn.common.util.Strings;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.ConnectionId;
 import com.dci.intellij.dbn.execution.ExecutionManager;
@@ -367,7 +367,7 @@ public class ExecutionConsoleForm extends DBNFormImpl{
      *********************************************************/
     public void displayLogOutput(LogOutputContext context, LogOutput output) {
         TabbedPane resultTabs = getResultTabs();
-        boolean emptyOutput = StringUtil.isEmptyOrSpaces(output.getText());
+        boolean emptyOutput = Strings.isEmptyOrSpaces(output.getText());
         VirtualFile sourceFile = context.getSourceFile();
         ConnectionHandler connectionHandler = context.getConnectionHandler();
         boolean selectTab = sourceFile != null;
@@ -478,7 +478,7 @@ public class ExecutionConsoleForm extends DBNFormImpl{
                         }
 
                         resultTabs.removeTab(tabInfo);
-                        DocumentUtil.refreshEditorAnnotations(file);
+                        Documents.refreshEditorAnnotations(file);
                     }
                 } finally {
                     if (getTabCount() == 0) {

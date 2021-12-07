@@ -9,7 +9,7 @@ import com.dci.intellij.dbn.common.content.loader.DynamicContentResultSetLoader;
 import com.dci.intellij.dbn.common.event.ProjectEvents;
 import com.dci.intellij.dbn.common.load.ProgressMonitor;
 import com.dci.intellij.dbn.common.ui.tree.TreeEventType;
-import com.dci.intellij.dbn.common.util.StringUtil;
+import com.dci.intellij.dbn.common.util.Strings;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.ResourceUtil;
 import com.dci.intellij.dbn.connection.SchemaId;
@@ -95,7 +95,7 @@ public class DBSchemaImpl extends DBObjectImpl<DBSchemaMetadata> implements DBSc
         set(PUBLIC_SCHEMA, metadata.isPublic());
         set(SYSTEM_SCHEMA, metadata.isSystem());
         set(EMPTY_SCHEMA, metadata.isEmpty());
-        set(USER_SCHEMA, StringUtil.equalsIgnoreCase(name, getConnectionHandler().getUserName()));
+        set(USER_SCHEMA, Strings.equalsIgnoreCase(name, getConnectionHandler().getUserName()));
         return name;
     }
 

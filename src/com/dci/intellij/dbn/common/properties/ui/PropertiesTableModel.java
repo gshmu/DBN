@@ -2,9 +2,9 @@ package com.dci.intellij.dbn.common.properties.ui;
 
 import com.dci.intellij.dbn.common.properties.KeyValueProperty;
 import com.dci.intellij.dbn.common.ui.table.DBNEditableTableModel;
-import com.dci.intellij.dbn.common.util.CommonUtil;
+import com.dci.intellij.dbn.common.util.Commons;
 import com.dci.intellij.dbn.common.util.Safe;
-import com.dci.intellij.dbn.common.util.StringUtil;
+import com.dci.intellij.dbn.common.util.Strings;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -30,8 +30,8 @@ public class PropertiesTableModel extends DBNEditableTableModel {
 
         for (KeyValueProperty property : properties) {
             String key = property.getKey();
-            if (!StringUtil.isEmptyOrSpaces(key)) {
-                String value = CommonUtil.nvl(property.getValue(), "");
+            if (!Strings.isEmptyOrSpaces(key)) {
+                String value = Commons.nvl(property.getValue(), "");
                 propertiesMap.put(key, value);
             }
         }

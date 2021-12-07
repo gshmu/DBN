@@ -4,6 +4,7 @@ import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.common.dispose.SafeDisposer;
 import com.dci.intellij.dbn.common.dispose.StatefulDisposable;
 import com.dci.intellij.dbn.common.util.CollectionUtil;
+import com.dci.intellij.dbn.common.util.Lists;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.ConnectionHandlerRef;
 import com.dci.intellij.dbn.connection.ConnectionType;
@@ -87,7 +88,7 @@ public class DatabaseSessionBundle extends StatefulDisposable.Base implements Di
 
     @Nullable
     public DatabaseSession getSession(String name) {
-        return sessions.stream().filter(session -> Objects.equals(session.getName(), name)).findFirst().orElse(null);
+        return Lists.first(sessions, session -> Objects.equals(session.getName(), name));
     }
 
     @NotNull

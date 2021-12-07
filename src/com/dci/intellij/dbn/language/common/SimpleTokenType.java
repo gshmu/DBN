@@ -2,7 +2,7 @@ package com.dci.intellij.dbn.language.common;
 
 import com.dci.intellij.dbn.code.common.style.formatting.FormattingDefinition;
 import com.dci.intellij.dbn.code.common.style.formatting.FormattingDefinitionFactory;
-import com.dci.intellij.dbn.common.util.StringUtil;
+import com.dci.intellij.dbn.common.util.Strings;
 import com.dci.intellij.dbn.language.common.element.TokenPairTemplate;
 import com.dci.intellij.dbn.object.type.DBObjectType;
 import com.intellij.lang.Language;
@@ -66,7 +66,7 @@ public class SimpleTokenType<T extends SimpleTokenType<T>> extends IElementType 
         this.hashCode = System.identityHashCode(this);
 
         String objectType = stringAttribute(element, "objectType");
-        if (StringUtil.isNotEmpty(objectType)) {
+        if (Strings.isNotEmpty(objectType)) {
             this.objectType = DBObjectType.get(objectType);
         }
 

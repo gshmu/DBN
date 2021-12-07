@@ -35,11 +35,12 @@ public abstract class CodeStyleFormattingSettings extends BasicConfiguration<Cod
     }
 
     private CodeStyleFormattingOption getCodeStyleCaseOption(String name) {
-        return options.
-                stream().
-                filter(option -> Objects.equals(option.getName(), name)).
-                findFirst().
-                orElse(null);
+        for (CodeStyleFormattingOption option : options) {
+            if (Objects.equals(option.getName(), name)) {
+                return option;
+            }
+        }
+        return null;
     }
 
     /*********************************************************

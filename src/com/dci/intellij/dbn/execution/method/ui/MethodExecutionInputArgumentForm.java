@@ -2,7 +2,7 @@ package com.dci.intellij.dbn.execution.method.ui;
 
 import com.dci.intellij.dbn.common.dispose.DisposableContainer;
 import com.dci.intellij.dbn.common.ui.DBNFormImpl;
-import com.dci.intellij.dbn.common.util.CommonUtil;
+import com.dci.intellij.dbn.common.util.Commons;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.data.editor.text.TextContentType;
 import com.dci.intellij.dbn.data.editor.ui.ListPopupValuesProvider;
@@ -200,7 +200,7 @@ public class MethodExecutionInputArgumentForm extends DBNFormImpl {
                 String value = userValueHolder.getUserValue();
                 executionInput.setInputValue(argument, value);
             } else {
-                String value = CommonUtil.nullIfEmpty(inputTextField == null ? null : inputTextField.getText());
+                String value = Commons.nullIfEmpty(inputTextField == null ? null : inputTextField.getText());
                 executionInput.setInputValue(argument, value);
             }
         }

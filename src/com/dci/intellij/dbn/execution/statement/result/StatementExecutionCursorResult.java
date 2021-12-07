@@ -3,7 +3,7 @@ package com.dci.intellij.dbn.execution.statement.result;
 import com.dci.intellij.dbn.common.action.DataKeys;
 import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.common.thread.Progress;
-import com.dci.intellij.dbn.common.util.MessageUtil;
+import com.dci.intellij.dbn.common.util.Messages;
 import com.dci.intellij.dbn.connection.ConnectionAction;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.SchemaId;
@@ -87,7 +87,7 @@ public class StatementExecutionCursorResult extends StatementExecutionBasicResul
                                         loadResultSet(resultSet);
                                     }
                                 } catch (final SQLException e) {
-                                    MessageUtil.showErrorDialog(getProject(), "Could not perform reload operation.", e);
+                                    Messages.showErrorDialog(getProject(), "Could not perform reload operation.", e);
                                 }
                             } finally {
                                 calculateExecDuration();
@@ -137,7 +137,7 @@ public class StatementExecutionCursorResult extends StatementExecutionBasicResul
                             }
 
                         } catch (SQLException e) {
-                            MessageUtil.showErrorDialog(project, "Could not perform operation.", e);
+                            Messages.showErrorDialog(project, "Could not perform operation.", e);
                         } finally {
                             resultForm.highlightLoading(false);
                         }

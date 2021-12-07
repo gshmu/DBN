@@ -3,7 +3,7 @@ package com.dci.intellij.dbn.editor.data.ui.table.renderer;
 import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.common.ui.Borders;
 import com.dci.intellij.dbn.common.ui.table.DBNTable;
-import com.dci.intellij.dbn.common.util.CommonUtil;
+import com.dci.intellij.dbn.common.util.Commons;
 import com.dci.intellij.dbn.data.grid.color.BasicTableTextAttributes;
 import com.dci.intellij.dbn.data.grid.ui.table.basic.BasicTableCellRenderer;
 import com.dci.intellij.dbn.editor.data.model.DatasetEditorColumnInfo;
@@ -13,7 +13,7 @@ import com.dci.intellij.dbn.editor.data.ui.table.DatasetEditorTable;
 import com.intellij.ui.SimpleTextAttributes;
 
 import javax.swing.border.Border;
-import java.awt.*;
+import java.awt.Color;
 
 import static com.dci.intellij.dbn.editor.data.model.RecordStatus.*;
 
@@ -62,8 +62,8 @@ public class DatasetEditorTableCellRenderer extends BasicTableCellRenderer {
                 }
             }
 
-            Color background = CommonUtil.nvl(textAttributes.getBgColor(), table.getBackground());
-            Color foreground = CommonUtil.nvl(textAttributes.getFgColor(), table.getForeground());
+            Color background = Commons.nvl(textAttributes.getBgColor(), table.getBackground());
+            Color foreground = Commons.nvl(textAttributes.getFgColor(), table.getForeground());
 
 
             Border border = Borders.getLineBorder(background);
@@ -76,7 +76,7 @@ public class DatasetEditorTableCellRenderer extends BasicTableCellRenderer {
                 textAttributes = textAttributes.derive(errorData.getStyle(), foreground, background, null);
             } else if (isTrackingColumn && !isSelected) {
                 SimpleTextAttributes trackingDataAttr = attributes.getTrackingData(isModified, isCaretRow);
-                foreground = CommonUtil.nvl(trackingDataAttr.getFgColor(), foreground);
+                foreground = Commons.nvl(trackingDataAttr.getFgColor(), foreground);
                 textAttributes = textAttributes.derive(textAttributes.getStyle(), foreground, background, null);
             }
 

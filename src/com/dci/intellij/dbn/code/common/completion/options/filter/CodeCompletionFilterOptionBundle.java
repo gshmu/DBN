@@ -45,13 +45,12 @@ public class CodeCompletionFilterOptionBundle implements CheckedTreeNodeProvider
     }
 
     private CodeCompletionFilterOption findOption(CodeCompletionFilterOption option) {
-        return options.
-                stream().
-                filter(o ->
-                        o.getObjectType() == option.getObjectType() &&
-                        o.getTokenTypeCategory() == option.getTokenTypeCategory()).
-                findFirst().
-                orElse(null);
+        for (CodeCompletionFilterOption o : options) {
+            if (o.getObjectType() == option.getObjectType() && o.getTokenTypeCategory() == option.getTokenTypeCategory()) {
+                return o;
+            }
+        }
+        return null;
     }
 
     @Override

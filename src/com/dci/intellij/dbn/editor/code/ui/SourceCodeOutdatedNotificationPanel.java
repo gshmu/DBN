@@ -1,7 +1,7 @@
 package com.dci.intellij.dbn.editor.code.ui;
 
 import com.dci.intellij.dbn.common.message.MessageType;
-import com.dci.intellij.dbn.common.util.MessageUtil;
+import com.dci.intellij.dbn.common.util.Messages;
 import com.dci.intellij.dbn.database.DatabaseFeature;
 import com.dci.intellij.dbn.editor.code.SourceCodeEditor;
 import com.dci.intellij.dbn.editor.code.SourceCodeManager;
@@ -55,7 +55,7 @@ public class SourceCodeOutdatedNotificationPanel extends SourceCodeEditorNotific
                             String databaseContent = sourceCodeContent.getText().toString();
                             diffManager.openCodeMergeDialog(databaseContent, sourceCodeFile, sourceCodeEditor, MergeAction.MERGE);
                         }catch (Exception e) {
-                            MessageUtil.showErrorDialog(project, "Could not load sources from database.", e);
+                            Messages.showErrorDialog(project, "Could not load sources from database.", e);
 
                         }
                     }

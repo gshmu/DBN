@@ -1,6 +1,6 @@
 package com.dci.intellij.dbn.common.constant;
 
-import com.dci.intellij.dbn.common.util.StringUtil;
+import com.dci.intellij.dbn.common.util.Strings;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 
@@ -54,7 +54,7 @@ public abstract class PseudoConstant<T extends PseudoConstant<T>> implements Con
 
     protected static <T extends PseudoConstant<T>> T get(Class<T> clazz, String id) {
         T constant = null;
-        if (StringUtil.isNotEmpty(id)) {
+        if (Strings.isNotEmpty(id)) {
             id = id.trim();
             Set<T> queue = (Set<T>) INTERNAL.get();
             Map<String, T> registry = getRegistry(clazz);
@@ -86,11 +86,11 @@ public abstract class PseudoConstant<T extends PseudoConstant<T>> implements Con
 
     protected static <T extends PseudoConstant<T>> T[] list(Class<T> clazz, String commaSeparatedIds) {
         List<T> constants = new ArrayList<T>();
-        if (StringUtil.isNotEmpty(commaSeparatedIds)) {
+        if (Strings.isNotEmpty(commaSeparatedIds)) {
             String[] ids = commaSeparatedIds.split(",");
 
             for (String id : ids) {
-                if (StringUtil.isNotEmpty(id)) {
+                if (Strings.isNotEmpty(id)) {
                     T constant = get(clazz, id.trim());
                     constants.add(constant);
                 }

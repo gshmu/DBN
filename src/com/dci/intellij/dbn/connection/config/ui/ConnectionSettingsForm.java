@@ -11,7 +11,7 @@ import com.dci.intellij.dbn.common.ui.DBNHeaderForm;
 import com.dci.intellij.dbn.common.ui.GUIUtil;
 import com.dci.intellij.dbn.common.ui.tab.TabbedPane;
 import com.dci.intellij.dbn.common.ui.tab.TabbedPaneUtil;
-import com.dci.intellij.dbn.common.util.MessageUtil;
+import com.dci.intellij.dbn.common.util.Messages;
 import com.dci.intellij.dbn.connection.ConnectionId;
 import com.dci.intellij.dbn.connection.ConnectionManager;
 import com.dci.intellij.dbn.connection.ConnectivityStatus;
@@ -189,7 +189,7 @@ public class ConnectionSettingsForm extends CompositeConfigurationEditorForm<Con
 
                             refreshConnectionList(configuration);
                         } catch (ConfigurationException e1) {
-                            MessageUtil.showErrorDialog(project, "Configuration error", e1.getMessage());
+                            Messages.showErrorDialog(project, "Configuration error", e1.getMessage());
                         }
                     }
                 }

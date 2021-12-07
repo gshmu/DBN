@@ -1,5 +1,6 @@
 package com.dci.intellij.dbn.object.impl;
 
+import com.dci.intellij.dbn.common.util.Lists;
 import com.dci.intellij.dbn.database.common.metadata.def.DBProgramMetadata;
 import com.dci.intellij.dbn.editor.DBContentType;
 import com.dci.intellij.dbn.object.DBFunction;
@@ -82,22 +83,16 @@ public abstract class DBProgramImpl<M extends DBProgramMetadata, P extends DBPro
 
     @Override
     public F getFunction(String name, short overload) {
-        return functions
-                .getObjects()
-                .stream()
-                .filter(function -> Objects.equals(function.getName(), name) && function.getOverload() == overload)
-                .findFirst()
-                .orElse(null);
+        return Lists.first(functions.getObjects(), function ->
+                Objects.equals(function.getName(), name) &&
+                        function.getOverload() == overload);
     }
 
     @Override
     public P getProcedure(String name, short overload) {
-        return procedures
-                .getObjects()
-                .stream()
-                .filter(procedure -> Objects.equals(procedure.getName(), name) && procedure.getOverload() == overload)
-                .findFirst()
-                .orElse(null);
+        return Lists.first(procedures.getObjects(), procedure ->
+                Objects.equals(procedure.getName(), name) &&
+                        procedure.getOverload() == overload);
     }
 
     @Override

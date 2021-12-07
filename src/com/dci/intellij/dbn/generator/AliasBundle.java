@@ -1,6 +1,6 @@
 package com.dci.intellij.dbn.generator;
 
-import com.dci.intellij.dbn.common.util.NamingUtil;
+import com.dci.intellij.dbn.common.util.Naming;
 import com.dci.intellij.dbn.object.common.DBObject;
 import com.dci.intellij.dbn.object.lookup.DBObjectRef;
 
@@ -15,7 +15,7 @@ public class AliasBundle {
         DBObjectRef objectRef = object.getRef();
         String alias = aliases.get(objectRef);
         if (alias == null) {
-            alias = NamingUtil.createAliasName(object.getName());
+            alias = Naming.createAliasName(object.getName());
             alias = getNextAvailable(alias);
             aliases.put(objectRef, alias);
         }
@@ -25,7 +25,7 @@ public class AliasBundle {
     private String getNextAvailable(String alias) {
         for (String availableAlias : aliases.values()) {
             if (Objects.equals(alias, availableAlias)) {
-                alias = NamingUtil.getNextNumberedName(alias, false);
+                alias = Naming.getNextNumberedName(alias, false);
             }
         }
         return alias;

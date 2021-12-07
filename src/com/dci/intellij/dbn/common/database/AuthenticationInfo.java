@@ -4,7 +4,7 @@ import com.dci.intellij.dbn.common.options.BasicConfiguration;
 import com.dci.intellij.dbn.common.options.ui.ConfigurationEditorForm;
 import com.dci.intellij.dbn.common.util.Cloneable;
 import com.dci.intellij.dbn.common.util.Safe;
-import com.dci.intellij.dbn.common.util.StringUtil;
+import com.dci.intellij.dbn.common.util.Strings;
 import com.dci.intellij.dbn.common.util.TimeUtil;
 import com.dci.intellij.dbn.connection.AuthenticationType;
 import com.dci.intellij.dbn.connection.ConnectionId;
@@ -44,14 +44,14 @@ public class AuthenticationInfo extends BasicConfiguration<ConnectionDatabaseSet
     }
 
     public void setPassword(String password) {
-        this.password = StringUtil.isEmpty(password) ? null : password;
+        this.password = Strings.isEmpty(password) ? null : password;
     }
 
     public boolean isProvided() {
         switch (type) {
             case NONE: return true;
-            case USER: return StringUtil.isNotEmpty(user);
-            case USER_PASSWORD: return StringUtil.isNotEmpty(user) && StringUtil.isNotEmpty(password);
+            case USER: return Strings.isNotEmpty(user);
+            case USER_PASSWORD: return Strings.isNotEmpty(user) && Strings.isNotEmpty(password);
             case OS_CREDENTIALS: return true;
         }
         return true;
@@ -78,13 +78,13 @@ public class AuthenticationInfo extends BasicConfiguration<ConnectionDatabaseSet
         }
 
         // old storage fallback - TODO cleanup
-        if (StringUtil.isEmpty(password)) {
+        if (Strings.isEmpty(password)) {
             password = PasswordUtil.decodePassword(getString(element, TEMP_PWD_ATTRIBUTE, password));
-            if (StringUtil.isEmpty(password)) {
+            if (Strings.isEmpty(password)) {
                 password = PasswordUtil.decodePassword(getString(element, OLD_PWD_ATTRIBUTE, password));
             }
 
-            if (StringUtil.isNotEmpty(this.password) && DatabaseCredentialManager.USE) {
+            if (Strings.isNotEmpty(this.password) && DatabaseCredentialManager.USE) {
                 credentialManager.setPassword(getConnectionId(), user, this.password);
             }
         }
@@ -141,7 +141,7 @@ public class AuthenticationInfo extends BasicConfiguration<ConnectionDatabaseSet
                 if (userNameChanged) {
                     credentialManager.removePassword(connectionId, oldUserName);
                 }
-                if (StringUtil.isNotEmpty(newUserName) && StringUtil.isNotEmpty(newPassword)) {
+                if (Strings.isNotEmpty(newUserName) && Strings.isNotEmpty(newPassword)) {
                     credentialManager.setPassword(connectionId, newUserName, newPassword);
                 }
             }

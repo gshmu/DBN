@@ -11,7 +11,7 @@ import com.dci.intellij.dbn.common.ui.DBNHintForm;
 import com.dci.intellij.dbn.common.ui.GUIUtil;
 import com.dci.intellij.dbn.common.ui.ValueSelector;
 import com.dci.intellij.dbn.common.ui.ValueSelectorOption;
-import com.dci.intellij.dbn.common.util.NamingUtil;
+import com.dci.intellij.dbn.common.util.Naming;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.GenericDatabaseElement;
 import com.dci.intellij.dbn.object.DBSchema;
@@ -91,7 +91,7 @@ public class ObjectQuickFilterForm extends DBNFormImpl {
         GenericDatabaseElement parentElement = objectList.getParentElement();
         String headerText = "[" + connectionHandler.getName() + "] " +
                 (parentElement instanceof DBSchema ? (parentElement.getName() + " - ") : "") +
-                NamingUtil.capitalizeWords(objectList.getObjectType().getName()) + " filters";
+                Naming.capitalizeWords(objectList.getObjectType().getName()) + " filters";
         Color headerBackground = connectionHandler.getEnvironmentType().getColor();
         DBNHeaderForm headerForm = new DBNHeaderForm(this, headerText, headerIcon, headerBackground);
         headerPanel.add(headerForm.getComponent(), BorderLayout.CENTER);

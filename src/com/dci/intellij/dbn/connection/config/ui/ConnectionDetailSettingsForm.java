@@ -12,7 +12,7 @@ import com.dci.intellij.dbn.common.options.SettingsChangeNotifier;
 import com.dci.intellij.dbn.common.options.ui.ConfigurationEditorForm;
 import com.dci.intellij.dbn.common.options.ui.ConfigurationEditorUtil;
 import com.dci.intellij.dbn.common.ui.DBNHintForm;
-import com.dci.intellij.dbn.common.util.CommonUtil;
+import com.dci.intellij.dbn.common.util.Commons;
 import com.dci.intellij.dbn.connection.ConnectionHandlerStatusListener;
 import com.dci.intellij.dbn.connection.config.ConnectionDetailSettings;
 import com.dci.intellij.dbn.options.general.GeneralProjectSettings;
@@ -126,7 +126,7 @@ public class ConnectionDetailSettingsForm extends ConfigurationEditorForm<Connec
     public void applyFormChanges() throws ConfigurationException {
         final ConnectionDetailSettings configuration = getConfiguration();
 
-        EnvironmentType newEnvironmentType = CommonUtil.nvl(getSelection(environmentTypesComboBox), EnvironmentType.DEFAULT);
+        EnvironmentType newEnvironmentType = Commons.nvl(getSelection(environmentTypesComboBox), EnvironmentType.DEFAULT);
         final EnvironmentTypeId newEnvironmentTypeId = newEnvironmentType.getId();
 
         Charset charset = configuration.getCharset();

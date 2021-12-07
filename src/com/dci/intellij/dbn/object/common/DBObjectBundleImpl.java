@@ -26,9 +26,9 @@ import com.dci.intellij.dbn.common.thread.Background;
 import com.dci.intellij.dbn.common.thread.Progress;
 import com.dci.intellij.dbn.common.thread.Read;
 import com.dci.intellij.dbn.common.ui.tree.TreeEventType;
-import com.dci.intellij.dbn.common.util.CollectionUtil;
-import com.dci.intellij.dbn.common.util.CommonUtil;
+import com.dci.intellij.dbn.common.util.Commons;
 import com.dci.intellij.dbn.common.util.Consumer;
+import com.dci.intellij.dbn.common.util.Lists;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.ConnectionHandlerRef;
 import com.dci.intellij.dbn.connection.ConnectionId;
@@ -110,9 +110,9 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.stream.Collectors;
 
 import static com.dci.intellij.dbn.browser.DatabaseBrowserUtils.treeVisibilityChanged;
+import static com.dci.intellij.dbn.common.util.CollectionUtil.createConcurrentList;
 import static com.dci.intellij.dbn.object.type.DBObjectRelationType.*;
 import static com.dci.intellij.dbn.object.type.DBObjectType.*;
 
@@ -132,7 +132,7 @@ public class DBObjectBundleImpl extends BrowserTreeNodeBase implements DBObjectB
     private final DBObjectList<DBCharset> charsets;
 
     private final Latent<List<DBNativeDataType>> nativeDataTypes = Latent.basic(() -> computeNativeDataTypes());
-    private final List<DBDataType> cachedDataTypes = CollectionUtil.createConcurrentList();
+    private final List<DBDataType> cachedDataTypes = createConcurrentList();
 
     private final DBObjectListContainer objectLists;
     private final DBObjectRelationListContainer objectRelationLists;
@@ -281,7 +281,7 @@ public class DBObjectBundleImpl extends BrowserTreeNodeBase implements DBObjectB
 
     @Override
     public List<SchemaId> getSchemaIds() {
-        return getSchemas().stream().map(schema -> SchemaId.get(schema.getName())).collect(Collectors.toList());
+        return Lists.convert(getSchemas(), schema -> SchemaId.get(schema.getName()));
     }
 
     @Override
@@ -446,8 +446,8 @@ public class DBObjectBundleImpl extends BrowserTreeNodeBase implements DBObjectB
         ConnectionHandler connectionHandler = getConnectionHandler();
         Filter<BrowserTreeNode> objectTypeFilter = connectionHandler.getObjectTypeFilter();
 
-        List<BrowserTreeNode> treeChildren = CollectionUtil.filter(allPossibleTreeChildren, false, true, objectTypeFilter);
-        treeChildren = CommonUtil.nvl(treeChildren, Collections.emptyList());
+        List<BrowserTreeNode> treeChildren = Lists.filter(allPossibleTreeChildren, false, true, objectTypeFilter);
+        treeChildren = Commons.nvl(treeChildren, Collections.emptyList());
 
         for (BrowserTreeNode objectList : treeChildren) {
             Progress.background(
@@ -580,7 +580,7 @@ public class DBObjectBundleImpl extends BrowserTreeNodeBase implements DBObjectB
     @NotNull
     @Override
     public String getName() {
-        return CommonUtil.nvl(getPresentableText(), "Object Bundle");
+        return Commons.nvl(getPresentableText(), "Object Bundle");
     }
 
     @Override
@@ -727,7 +727,7 @@ public class DBObjectBundleImpl extends BrowserTreeNodeBase implements DBObjectB
                                 DBSchema schema = schemas.get(i);
                                 if (size > 3) {
                                     progress.setIndeterminate(false);
-                                    progress.setFraction(CommonUtil.getProgressPercentage(i, size));
+                                    progress.setFraction(Commons.getProgressPercentage(i, size));
                                 }
                                 progress.setText("Updating object status in schema " + schema.getName() + "... ");
                                 schema.refreshObjectsStatus();

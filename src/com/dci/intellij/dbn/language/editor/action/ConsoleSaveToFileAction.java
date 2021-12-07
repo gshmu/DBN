@@ -5,8 +5,8 @@ import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.common.action.DumbAwareProjectAction;
 import com.dci.intellij.dbn.common.action.Lookup;
 import com.dci.intellij.dbn.common.thread.Write;
-import com.dci.intellij.dbn.common.util.DocumentUtil;
-import com.dci.intellij.dbn.common.util.MessageUtil;
+import com.dci.intellij.dbn.common.util.Documents;
+import com.dci.intellij.dbn.common.util.Messages;
 import com.dci.intellij.dbn.connection.mapping.FileConnectionMappingManager;
 import com.dci.intellij.dbn.debugger.DatabaseDebuggerManager;
 import com.dci.intellij.dbn.vfs.file.DBConsoleVirtualFile;
@@ -40,7 +40,7 @@ public class ConsoleSaveToFileAction extends DumbAwareProjectAction {
                     "Save content of the console \"" + consoleVirtualFile.getName() + "\" to file", "sql");
 
             FileSaverDialog fileSaverDialog = FileChooserFactory.getInstance().createSaveFileDialog(fileSaverDescriptor, project);
-            Document document = DocumentUtil.getDocument(virtualFile);
+            Document document = Documents.getDocument(virtualFile);
             VirtualFileWrapper virtualFileWrapper = fileSaverDialog.save((VirtualFile) null, consoleVirtualFile.getName());
             if (document != null && virtualFileWrapper != null) {
                 Write.run(() -> {
@@ -57,7 +57,7 @@ public class ConsoleSaveToFileAction extends DumbAwareProjectAction {
                             fileEditorManager.openFile(newVirtualFile, true);
                         }
                     } catch (IOException e1) {
-                        MessageUtil.showErrorDialog(project, "Error saving to file", "Could not save console content to file \"" + virtualFileWrapper.getFile().getName() + "\"", e1);
+                        Messages.showErrorDialog(project, "Error saving to file", "Could not save console content to file \"" + virtualFileWrapper.getFile().getName() + "\"", e1);
                     }
 
                 });

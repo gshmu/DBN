@@ -8,7 +8,7 @@ import com.dci.intellij.dbn.common.thread.Dispatch;
 import com.dci.intellij.dbn.common.ui.GUIUtil;
 import com.dci.intellij.dbn.common.ui.component.DBNComponent;
 import com.dci.intellij.dbn.common.ui.tree.DBNTree;
-import com.dci.intellij.dbn.common.util.ActionUtil;
+import com.dci.intellij.dbn.common.util.Actions;
 import com.dci.intellij.dbn.common.util.Safe;
 import com.dci.intellij.dbn.common.util.TimeUtil;
 import com.dci.intellij.dbn.object.common.DBObject;
@@ -81,7 +81,7 @@ public class ObjectDependencyTree extends DBNTree{
                                 if (schemaObject.is(DBObjectProperty.EDITABLE)) {
                                     actionGroup.add(new EditObjectAction((DBSchemaObject) object));
                                 }
-                                ActionPopupMenu actionPopupMenu = ActionUtil.createActionPopupMenu(ObjectDependencyTree.this, "", actionGroup);
+                                ActionPopupMenu actionPopupMenu = Actions.createActionPopupMenu(ObjectDependencyTree.this, "", actionGroup);
                                 JPopupMenu popupMenu = actionPopupMenu.getComponent();
                                 Dispatch.run(() -> {
                                     if (isShowing()) {

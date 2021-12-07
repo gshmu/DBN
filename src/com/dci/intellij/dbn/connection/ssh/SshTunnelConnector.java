@@ -1,6 +1,6 @@
 package com.dci.intellij.dbn.connection.ssh;
 
-import com.dci.intellij.dbn.common.util.CommonUtil;
+import com.dci.intellij.dbn.common.util.Commons;
 import com.jcraft.jsch.JSch;
 import com.jcraft.jsch.JSchException;
 import com.jcraft.jsch.Session;
@@ -60,7 +60,7 @@ public class SshTunnelConnector {
         session = jsch.getSession(proxyUser, proxyHost, proxyPort);
 
         if(authType == SshAuthType.KEY_PAIR) {
-            jsch.addIdentity(keyFile, CommonUtil.nvl(keyPassphrase, ""));;
+            jsch.addIdentity(keyFile, Commons.nvl(keyPassphrase, ""));;
         } else {
             session.setPassword(proxyPassword);
         }

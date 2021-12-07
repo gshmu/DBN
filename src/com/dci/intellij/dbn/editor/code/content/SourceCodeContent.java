@@ -1,8 +1,8 @@
 package com.dci.intellij.dbn.editor.code.content;
 
 import com.dci.intellij.dbn.common.load.ProgressMonitor;
-import com.dci.intellij.dbn.common.util.CommonUtil;
-import com.dci.intellij.dbn.common.util.StringUtil;
+import com.dci.intellij.dbn.common.util.Commons;
+import com.dci.intellij.dbn.common.util.Strings;
 import com.intellij.diff.comparison.ByWord;
 import com.intellij.diff.comparison.ComparisonPolicy;
 import com.intellij.openapi.progress.ProgressIndicator;
@@ -51,7 +51,7 @@ public class SourceCodeContent{
             } catch (Exception ignore) {
             }
         }
-        return StringUtil.equals(text, content.text);
+        return Strings.equals(text, content.text);
     }
 
     public long length() {
@@ -65,7 +65,7 @@ public class SourceCodeContent{
 
     public void importContent(String content) {
         offsets.getGuardedBlocks().reset();
-        StringBuilder builder = new StringBuilder(CommonUtil.nvl(content, ""));
+        StringBuilder builder = new StringBuilder(Commons.nvl(content, ""));
         int startIndex = builder.indexOf(START_OFFSET_IDENTIFIER);
 
 

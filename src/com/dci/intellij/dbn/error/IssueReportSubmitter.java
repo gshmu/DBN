@@ -5,7 +5,7 @@ import com.dci.intellij.dbn.common.notification.NotificationGroup;
 import com.dci.intellij.dbn.common.notification.NotificationSupport;
 import com.dci.intellij.dbn.common.thread.Progress;
 import com.dci.intellij.dbn.common.util.Context;
-import com.dci.intellij.dbn.common.util.StringUtil;
+import com.dci.intellij.dbn.common.util.Strings;
 import com.dci.intellij.dbn.connection.ConnectionManager;
 import com.dci.intellij.dbn.connection.info.ConnectionInfo;
 import com.intellij.diagnostic.AbstractMessage;
@@ -36,7 +36,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.function.Consumer;
 
-import static com.dci.intellij.dbn.common.util.CommonUtil.nvl;
+import static com.dci.intellij.dbn.common.util.Commons.nvl;
 import static com.intellij.openapi.diagnostic.SubmittedReportInfo.SubmissionStatus.FAILED;
 import static com.intellij.openapi.diagnostic.SubmittedReportInfo.SubmissionStatus.NEW_ISSUE;
 
@@ -103,14 +103,14 @@ abstract class IssueReportSubmitter extends ErrorReportSubmitter {
         addEnvInfo(description, "Driver Version", driverString == null ? "NA" : driverString);
         addEnvInfo(description, "Last Action Id", nvl(IdeaLogger.ourLastActionId, "NA"));
 
-        if (StringUtil.isNotEmpty(additionalInfo)) {
+        if (Strings.isNotEmpty(additionalInfo)) {
             description.append(getMarkupElement(MarkupElement.PANEL, "User Message"));
             description.append(additionalInfo);
             description.append(getMarkupElement(MarkupElement.PANEL));
         }
 
         String exceptionMessage = event.getMessage();
-        if (StringUtil.isNotEmpty(exceptionMessage) && !"null".equals(exceptionMessage)) {
+        if (Strings.isNotEmpty(exceptionMessage) && !"null".equals(exceptionMessage)) {
             description.append("\n\n");
             exceptionMessage = exceptionMessage.replace("{", "\\{").replace("}", "\\}").replace("[", "\\[").replace("]", "\\]");
             description.append(exceptionMessage);
@@ -165,7 +165,7 @@ abstract class IssueReportSubmitter extends ErrorReportSubmitter {
                     }
 
                     String errorMessage = result.getErrorMessage();
-                    if (StringUtil.isEmpty(errorMessage)) {
+                    if (Strings.isEmpty(errorMessage)) {
                         log.info("Error report submitted, response: " + result);
 
                         String ticketId = result.getTicketId();

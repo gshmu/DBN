@@ -6,8 +6,8 @@ import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.common.environment.EnvironmentType;
 import com.dci.intellij.dbn.common.ui.DBNFormImpl;
 import com.dci.intellij.dbn.common.ui.DBNHeaderForm;
-import com.dci.intellij.dbn.common.util.DocumentUtil;
-import com.dci.intellij.dbn.common.util.EditorUtil;
+import com.dci.intellij.dbn.common.util.Documents;
+import com.dci.intellij.dbn.common.util.Editors;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.SchemaId;
 import com.dci.intellij.dbn.execution.statement.processor.StatementExecutionProcessor;
@@ -27,9 +27,13 @@ import com.intellij.ui.GuiUtils;
 import com.intellij.ui.JBColor;
 import org.jetbrains.annotations.NotNull;
 
-import javax.swing.*;
+import javax.swing.Icon;
+import javax.swing.JComponent;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JTextPane;
 import javax.swing.border.LineBorder;
-import java.awt.*;
+import java.awt.BorderLayout;
 
 public class PendingTransactionDialogForm extends DBNFormImpl {
     private JPanel mainPanel;
@@ -100,7 +104,7 @@ public class PendingTransactionDialogForm extends DBNFormImpl {
                 currentSchema);
 
         if (selectStatementFile != null) {
-            Document previewDocument = DocumentUtil.getDocument(selectStatementFile);
+            Document previewDocument = Documents.getDocument(selectStatementFile);
 
             viewer = (EditorEx) EditorFactory.getInstance().createViewer(previewDocument, project);
             viewer.setEmbeddedIntoDialogWrapper(true);
@@ -129,7 +133,7 @@ public class PendingTransactionDialogForm extends DBNFormImpl {
 
     @Override
     public void disposeInner() {
-        EditorUtil.releaseEditor(viewer);
+        Editors.releaseEditor(viewer);
         viewer = null;
 
         super.disposeInner();

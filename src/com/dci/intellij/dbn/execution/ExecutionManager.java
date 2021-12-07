@@ -6,7 +6,7 @@ import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.common.latent.Latent;
 import com.dci.intellij.dbn.common.navigation.NavigationInstructions;
 import com.dci.intellij.dbn.common.thread.Dispatch;
-import com.dci.intellij.dbn.common.util.StringUtil;
+import com.dci.intellij.dbn.common.util.Strings;
 import com.dci.intellij.dbn.connection.ConnectionId;
 import com.dci.intellij.dbn.execution.common.options.ExecutionEngineSettings;
 import com.dci.intellij.dbn.execution.common.result.ui.ExecutionResultForm;
@@ -142,7 +142,7 @@ public class ExecutionManager extends AbstractProjectComponent implements Persis
                                 executionResult.getExecutionContext().getExecutionTimestamp(),
                                 " - Statement execution started", false));
 
-                if (StringUtil.isNotEmptyOrSpaces(loggingOutput)) {
+                if (Strings.isNotEmptyOrSpaces(loggingOutput)) {
                     executionConsoleForm.displayLogOutput(context,
                             LogOutput.createStdOutput(loggingOutput));
                 }

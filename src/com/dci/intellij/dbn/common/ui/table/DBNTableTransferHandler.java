@@ -3,11 +3,12 @@ package com.dci.intellij.dbn.common.ui.table;
 import com.intellij.openapi.ide.CopyPasteManager;
 import org.jdesktop.swingx.plaf.basic.core.BasicTransferable;
 
-import javax.swing.*;
+import javax.swing.JComponent;
+import javax.swing.TransferHandler;
 import java.awt.datatransfer.Clipboard;
 import java.awt.datatransfer.Transferable;
 
-import static com.dci.intellij.dbn.common.util.CommonUtil.nvl;
+import static com.dci.intellij.dbn.common.util.Commons.nvl;
 
 public class DBNTableTransferHandler extends TransferHandler {
     public static final DBNTableTransferHandler INSTANCE = new DBNTableTransferHandler();

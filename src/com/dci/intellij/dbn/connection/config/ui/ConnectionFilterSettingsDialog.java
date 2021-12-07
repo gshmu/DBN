@@ -5,7 +5,7 @@ import com.dci.intellij.dbn.common.ui.DBNContentWithHeaderForm;
 import com.dci.intellij.dbn.common.ui.DBNForm;
 import com.dci.intellij.dbn.common.ui.DBNHeaderForm;
 import com.dci.intellij.dbn.common.ui.dialog.DBNDialog;
-import com.dci.intellij.dbn.common.util.MessageUtil;
+import com.dci.intellij.dbn.common.util.Messages;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.ConnectionHandlerRef;
 import com.dci.intellij.dbn.connection.config.ConnectionFilterSettings;
@@ -68,7 +68,7 @@ public class ConnectionFilterSettingsDialog extends DBNDialog<DBNContentWithHead
             ConfigurationHandle.notifyChanges();
             super.doOKAction();
         } catch (ConfigurationException e) {
-            MessageUtil.showErrorDialog(getProject(), "Configuration error", e.getMessage());
+            Messages.showErrorDialog(getProject(), "Configuration error", e.getMessage());
         }
 
     }

@@ -1,8 +1,8 @@
 package com.dci.intellij.dbn.database.common.statement;
 
-import com.dci.intellij.dbn.common.util.CollectionUtil;
-import com.dci.intellij.dbn.common.util.CommonUtil;
-import com.dci.intellij.dbn.common.util.StringUtil;
+import com.dci.intellij.dbn.common.util.Commons;
+import com.dci.intellij.dbn.common.util.Compactables;
+import com.dci.intellij.dbn.common.util.Strings;
 import com.dci.intellij.dbn.connection.ResourceUtil;
 import com.dci.intellij.dbn.connection.jdbc.DBNConnection;
 import com.dci.intellij.dbn.connection.jdbc.DBNPreparedStatement;
@@ -50,7 +50,7 @@ public class StatementExecutionProcessor {
         this.query = booleanAttribute(element, "is-query", false);
         this.prepared = booleanAttribute(element, "is-prepared-statement", false);
         String customTimeout = element.getAttributeValue("timeout");
-        if (StringUtil.isNotEmpty(customTimeout)) {
+        if (Strings.isNotEmpty(customTimeout)) {
             timeout = Integer.parseInt(customTimeout);
         }
 
@@ -64,7 +64,7 @@ public class StatementExecutionProcessor {
                 readStatements(statementText, prefixes);
             }
         }
-        statementDefinitions = CollectionUtil.compact(statementDefinitions);
+        statementDefinitions = Compactables.compact(statementDefinitions);
     }
 
     private void readStatements(String statementText, String prefixes) {
@@ -183,7 +183,7 @@ public class StatementExecutionProcessor {
                         }
                     });
         } else {
-            throw CommonUtil.nvl(
+            throw Commons.nvl(
                     activityTrace.getException(),
                     () -> new SQLException("Too many failed attempts of executing query '" + id + "'."));
         }

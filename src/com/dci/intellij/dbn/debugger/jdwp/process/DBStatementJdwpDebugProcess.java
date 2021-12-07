@@ -1,6 +1,6 @@
 package com.dci.intellij.dbn.debugger.jdwp.process;
 
-import com.dci.intellij.dbn.common.util.CommonUtil;
+import com.dci.intellij.dbn.common.util.Commons;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.debugger.jdwp.DBJdwpSourcePath;
 import com.dci.intellij.dbn.execution.ExecutionTarget;
@@ -49,7 +49,7 @@ public class DBStatementJdwpDebugProcess extends DBJdwpDebugProcess<StatementExe
                     }
                 }
             } catch (Exception e) {
-                getConsole().warning("Error evaluating suspend position '" + sourceUrl + "': " + CommonUtil.nvl(e.getMessage(), e.getClass().getSimpleName()));
+                getConsole().warning("Error evaluating suspend position '" + sourceUrl + "': " + Commons.nvl(e.getMessage(), e.getClass().getSimpleName()));
             }
         }
 

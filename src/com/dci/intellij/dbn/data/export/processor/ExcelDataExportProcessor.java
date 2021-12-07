@@ -1,7 +1,7 @@
 package com.dci.intellij.dbn.data.export.processor;
 
 import com.dci.intellij.dbn.common.locale.Formatter;
-import com.dci.intellij.dbn.common.util.StringUtil;
+import com.dci.intellij.dbn.common.util.Strings;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.data.export.DataExportException;
 import com.dci.intellij.dbn.data.export.DataExportFormat;
@@ -60,7 +60,7 @@ public class ExcelDataExportProcessor extends DataExportProcessor{
         Workbook workbook = createWorkbook();
         try {
             String sheetName = model.getTableName();
-            Sheet sheet = StringUtil.isEmpty(sheetName) ? workbook.createSheet() : workbook.createSheet(sheetName);
+            Sheet sheet = Strings.isEmpty(sheetName) ? workbook.createSheet() : workbook.createSheet(sheetName);
 
             if (instructions.isCreateHeader()) {
                 Row headerRow = sheet.createRow(0);

@@ -4,7 +4,7 @@ import com.dci.intellij.dbn.browser.DatabaseBrowserUtils;
 import com.dci.intellij.dbn.browser.model.BrowserTreeNode;
 import com.dci.intellij.dbn.browser.ui.HtmlToolTipBuilder;
 import com.dci.intellij.dbn.common.Icons;
-import com.dci.intellij.dbn.common.util.StringUtil;
+import com.dci.intellij.dbn.common.util.Strings;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.database.DatabaseCompatibilityInterface;
 import com.dci.intellij.dbn.database.common.metadata.def.DBUserMetadata;
@@ -56,7 +56,7 @@ public class DBUserImpl extends DBObjectImpl<DBUserMetadata> implements DBUser {
         String name = metadata.getUserName();
         set(DBObjectProperty.EXPIRED, metadata.isExpired());
         set(DBObjectProperty.LOCKED, metadata.isLocked());
-        set(SESSION_USER, StringUtil.equalsIgnoreCase(name, getConnectionHandler().getUserName()));
+        set(SESSION_USER, Strings.equalsIgnoreCase(name, getConnectionHandler().getUserName()));
         return name;
     }
 

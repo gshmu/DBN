@@ -8,7 +8,7 @@ import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.common.environment.EnvironmentManager;
 import com.dci.intellij.dbn.common.environment.options.listener.EnvironmentManagerListener;
 import com.dci.intellij.dbn.common.event.ProjectEvents;
-import com.dci.intellij.dbn.common.util.EditorUtil;
+import com.dci.intellij.dbn.common.util.Editors;
 import com.dci.intellij.dbn.editor.code.SourceCodeEditor;
 import com.dci.intellij.dbn.editor.code.SourceCodeManagerAdapter;
 import com.dci.intellij.dbn.editor.code.SourceCodeManagerListener;
@@ -66,7 +66,7 @@ public class EditorStateManager extends AbstractProjectComponent implements Pers
             Project project = getProject();
             EnvironmentManager environmentManager = EnvironmentManager.getInstance(project);
             boolean readonly = environmentManager.isReadonly(sourceCodeFile);
-            EditorUtil.setEditorsReadonly(sourceCodeFile, readonly);
+            Editors.setEditorsReadonly(sourceCodeFile, readonly);
         }
     };
 
@@ -83,7 +83,7 @@ public class EditorStateManager extends AbstractProjectComponent implements Pers
                         List<DBContentVirtualFile> contentFiles = editableDatabaseFile.getContentFiles();
                         for (DBContentVirtualFile contentFile : contentFiles) {
                             boolean readonly = environmentManager.isReadonly(contentFile);
-                            EditorUtil.setEditorsReadonly(contentFile, readonly);
+                            Editors.setEditorsReadonly(contentFile, readonly);
                         }
                     }
                 }

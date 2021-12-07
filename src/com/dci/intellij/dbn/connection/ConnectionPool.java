@@ -6,7 +6,7 @@ import com.dci.intellij.dbn.common.notification.NotificationGroup;
 import com.dci.intellij.dbn.common.notification.NotificationSupport;
 import com.dci.intellij.dbn.common.thread.ThreadMonitor;
 import com.dci.intellij.dbn.common.util.CollectionUtil;
-import com.dci.intellij.dbn.common.util.CommonUtil;
+import com.dci.intellij.dbn.common.util.Commons;
 import com.dci.intellij.dbn.common.util.TimeUtil;
 import com.dci.intellij.dbn.connection.config.ConnectionDetailSettings;
 import com.dci.intellij.dbn.connection.jdbc.DBNConnection;
@@ -54,7 +54,7 @@ public final class ConnectionPool extends StatefulDisposable.Base implements Not
 
                 return lastAccessTimestamp;
             } else {
-                return CommonUtil.nvl(getValue(), 0L);
+                return Commons.nvl(getValue(), 0L);
             }
         }
     };

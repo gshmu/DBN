@@ -1,6 +1,6 @@
 package com.dci.intellij.dbn.database.postgres;
 
-import com.dci.intellij.dbn.common.util.StringUtil;
+import com.dci.intellij.dbn.common.util.Strings;
 import com.dci.intellij.dbn.database.DatabaseMessageParserInterface;
 import com.dci.intellij.dbn.database.DatabaseObjectIdentifier;
 import lombok.extern.slf4j.Slf4j;
@@ -27,13 +27,13 @@ public class PostgresMessageParserInterface implements DatabaseMessageParserInte
     @Override
     public boolean isModelException(SQLException e) {
         String sqlState = getSqlState(e);
-        return StringUtil.isOneOfIgnoreCase(sqlState, "3D000", "3F000", "42P01", "42703", "42704");
+        return Strings.isOneOfIgnoreCase(sqlState, "3D000", "3F000", "42P01", "42703", "42704");
     }
 
     @Override
     public boolean isAuthenticationException(SQLException e) {
         String sqlState = getSqlState(e);
-        return StringUtil.isOneOfIgnoreCase(sqlState, "28P01");
+        return Strings.isOneOfIgnoreCase(sqlState, "28P01");
     }
 
     private static String getSqlState(SQLException e) {

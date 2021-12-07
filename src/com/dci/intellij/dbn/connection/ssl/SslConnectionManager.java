@@ -1,7 +1,7 @@
 package com.dci.intellij.dbn.connection.ssl;
 
 import com.dci.intellij.dbn.common.component.ApplicationComponent;
-import com.dci.intellij.dbn.common.util.StringUtil;
+import com.dci.intellij.dbn.common.util.Strings;
 import com.dci.intellij.dbn.connection.config.ConnectionSettings;
 import com.dci.intellij.dbn.connection.config.ConnectionSslSettings;
 import com.intellij.openapi.application.ApplicationManager;
@@ -25,9 +25,9 @@ public class SslConnectionManager implements ApplicationComponent {
             String clientCertificateFilePath = sslSettings.getClientCertificateFile();
             String clientKeyFilePath = sslSettings.getClientKeyFile();
 
-            File certificateAuthorityFile = StringUtil.isEmpty(certificateAuthorityFilePath) ? null : new File(certificateAuthorityFilePath);
-            File clientCertificateFile = StringUtil.isEmpty(clientCertificateFilePath) ? null : new File(clientCertificateFilePath);
-            File clientKeyFile = StringUtil.isEmpty(clientKeyFilePath) ? null : new File(clientKeyFilePath);
+            File certificateAuthorityFile = Strings.isEmpty(certificateAuthorityFilePath) ? null : new File(certificateAuthorityFilePath);
+            File clientCertificateFile = Strings.isEmpty(clientCertificateFilePath) ? null : new File(clientCertificateFilePath);
+            File clientKeyFile = Strings.isEmpty(clientKeyFilePath) ? null : new File(clientKeyFilePath);
 
             String key = createKey(certificateAuthorityFile, clientCertificateFile, clientKeyFile);
             SslConnection connector = sslConnectors.get(key);

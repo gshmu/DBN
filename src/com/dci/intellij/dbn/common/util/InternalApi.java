@@ -8,9 +8,9 @@ import org.jetbrains.annotations.NotNull;
 /**
  * Internal API utilities - find alternatives
  */
-public class InternalApiUtil {
+public class InternalApi {
     public static boolean isApplicationExitInProgress() {
-        return CommonUtil.isCalledThrough(ApplicationImpl.class, "exit");
+        return Commons.isCalledThrough(ApplicationImpl.class, "exit");
         //return ApplicationManagerEx.getApplicationEx().isDisposeInProgress();
         //return ApplicationManagerEx.getApplicationEx().isExitInProgress();
     }

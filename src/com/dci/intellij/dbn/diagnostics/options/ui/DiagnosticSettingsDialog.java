@@ -1,7 +1,7 @@
 package com.dci.intellij.dbn.diagnostics.options.ui;
 
 import com.dci.intellij.dbn.common.ui.dialog.DBNDialog;
-import com.dci.intellij.dbn.common.util.MessageUtil;
+import com.dci.intellij.dbn.common.util.Messages;
 import com.intellij.openapi.options.ConfigurationException;
 import com.intellij.openapi.project.Project;
 import org.jetbrains.annotations.NotNull;
@@ -41,7 +41,7 @@ public class DiagnosticSettingsDialog extends DBNDialog<DiagnosticSettingsForm> 
             settingsForm.applyFormChanges();
             super.doOKAction();
         } catch (ConfigurationException e) {
-            MessageUtil.showErrorDialog(getProject(), "Invalid Configuration", e.getMessage());
+            Messages.showErrorDialog(getProject(), "Invalid Configuration", e.getMessage());
         }
 
     }

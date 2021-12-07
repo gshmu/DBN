@@ -11,7 +11,7 @@ import com.dci.intellij.dbn.common.filter.Filter;
 import com.dci.intellij.dbn.common.list.FilteredList;
 import com.dci.intellij.dbn.common.options.SettingsChangeNotifier;
 import com.dci.intellij.dbn.common.project.ProjectRef;
-import com.dci.intellij.dbn.common.util.CommonUtil;
+import com.dci.intellij.dbn.common.util.Commons;
 import com.dci.intellij.dbn.connection.config.ConnectionBundleSettings;
 import com.dci.intellij.dbn.connection.config.ConnectionSettings;
 import com.dci.intellij.dbn.connection.config.ConnectionSettingsListener;
@@ -23,7 +23,7 @@ import com.intellij.openapi.util.Disposer;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import javax.swing.*;
+import javax.swing.Icon;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -222,7 +222,7 @@ public class ConnectionBundle extends BrowserTreeNodeBase implements BrowserTree
     @NotNull
     @Override
     public String getName() {
-        return CommonUtil.nvl(getPresentableText(), "Connection Bundle");
+        return Commons.nvl(getPresentableText(), "Connection Bundle");
     }
 
     @Override

@@ -2,7 +2,7 @@ package com.dci.intellij.dbn.execution.script.options.ui;
 
 import com.dci.intellij.dbn.common.ui.table.DBNColoredTableCellRenderer;
 import com.dci.intellij.dbn.common.ui.table.DBNTable;
-import com.dci.intellij.dbn.common.util.StringUtil;
+import com.dci.intellij.dbn.common.util.Strings;
 import com.dci.intellij.dbn.connection.DatabaseType;
 import com.intellij.ui.SimpleTextAttributes;
 
@@ -15,7 +15,7 @@ public class CmdLineInterfacesTableCellRenderer extends DBNColoredTableCellRende
             append(databaseType.getName());
         } if (value instanceof String) {
             String stringValue = (String) value;
-            if (StringUtil.isNotEmpty(stringValue)) {
+            if (Strings.isNotEmpty(stringValue)) {
                 append(stringValue, SimpleTextAttributes.REGULAR_ATTRIBUTES);
             }
         }

@@ -1,6 +1,6 @@
 package com.dci.intellij.dbn.database.generic;
 
-import com.dci.intellij.dbn.common.util.StringUtil;
+import com.dci.intellij.dbn.common.util.Strings;
 import com.dci.intellij.dbn.database.DatabaseCompatibilityInterface;
 import com.dci.intellij.dbn.database.DatabaseFeature;
 import com.dci.intellij.dbn.database.DatabaseInterfaceProvider;
@@ -59,7 +59,7 @@ public class GenericCompatibilityInterface extends DatabaseCompatibilityInterfac
 
     @Override
     public SessionStatus getSessionStatus(String statusName) {
-        return StringUtil.isEmpty(statusName) ? SessionStatus.INACTIVE : SessionStatus.ACTIVE;
+        return Strings.isEmpty(statusName) ? SessionStatus.INACTIVE : SessionStatus.ACTIVE;
     }
 
     @Override

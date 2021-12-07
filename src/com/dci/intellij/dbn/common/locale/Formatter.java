@@ -3,7 +3,7 @@ package com.dci.intellij.dbn.common.locale;
 import com.dci.intellij.dbn.common.locale.options.RegionalSettings;
 import com.dci.intellij.dbn.common.sign.Signed;
 import com.dci.intellij.dbn.common.util.Cloneable;
-import com.dci.intellij.dbn.common.util.StringUtil;
+import com.dci.intellij.dbn.common.util.Strings;
 import com.dci.intellij.dbn.data.value.ValueAdapter;
 import com.intellij.openapi.project.Project;
 import lombok.EqualsAndHashCode;
@@ -71,9 +71,9 @@ public class Formatter implements Cloneable, Signed {
 
     public Formatter(int signature, @NotNull Locale locale, String dateFormatPattern, String timeFormatPattern, String numberFormatPattern) {
         this.signature = signature;
-        if (StringUtil.isEmptyOrSpaces(dateFormatPattern)) throw new IllegalArgumentException("Date format pattern empty.");
-        if (StringUtil.isEmptyOrSpaces(timeFormatPattern)) throw new IllegalArgumentException("Time format pattern empty.");
-        if (StringUtil.isEmptyOrSpaces(numberFormatPattern)) throw new IllegalArgumentException("Number format pattern empty.");
+        if (Strings.isEmptyOrSpaces(dateFormatPattern)) throw new IllegalArgumentException("Date format pattern empty.");
+        if (Strings.isEmptyOrSpaces(timeFormatPattern)) throw new IllegalArgumentException("Time format pattern empty.");
+        if (Strings.isEmptyOrSpaces(numberFormatPattern)) throw new IllegalArgumentException("Number format pattern empty.");
         this.dateFormatPattern = dateFormatPattern;
         this.timeFormatPattern = timeFormatPattern;
         this.datetimeFormatPattern = dateFormatPattern + ' ' + timeFormatPattern;

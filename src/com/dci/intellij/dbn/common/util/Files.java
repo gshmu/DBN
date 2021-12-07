@@ -13,8 +13,8 @@ import java.io.File;
 import java.util.Arrays;
 import java.util.Objects;
 
-public final class FileUtil {
-    private FileUtil() {}
+public final class Files {
+    private Files() {}
 
     public static File createFileByRelativePath(@NotNull final File absoluteBase, @NotNull final String relativeTail) {
         // assert absoluteBase.isAbsolute() && absoluteBase.isDirectory(); : assertion seem to be too costly
@@ -37,7 +37,7 @@ public final class FileUtil {
     }
 
     public static String convertToRelativePath(Project project, String path) {
-        if (!StringUtil.isEmptyOrSpaces(path)) {
+        if (!Strings.isEmptyOrSpaces(path)) {
             VirtualFile baseDir = project.getBaseDir();
             if (baseDir != null) {
                 File projectDir = new File(baseDir.getPath());
@@ -53,14 +53,14 @@ public final class FileUtil {
     }
 
     public static String convertToAbsolutePath(Project project, String path) {
-        if (!StringUtil.isEmptyOrSpaces(path)) {
+        if (!Strings.isEmptyOrSpaces(path)) {
             VirtualFile baseDir = project.getBaseDir();
             if (baseDir != null) {
                 File projectDir = new File(baseDir.getPath());
                 if (new File(path).isAbsolute()) {
                     return path;
                 } else {
-                    File file = FileUtil.createFileByRelativePath(projectDir, path);
+                    File file = Files.createFileByRelativePath(projectDir, path);
                     return file == null ? null : file.getPath();
                 }
             }
@@ -86,7 +86,7 @@ public final class FileUtil {
     }
 
     public static File findFileRecursively(File directory, String fileName) {
-        File[] files = CommonUtil.nvl(directory.listFiles(), new File[0]);
+        File[] files = Commons.nvl(directory.listFiles(), new File[0]);
         return Arrays.stream(files).
                 filter(f -> !f.isDirectory() && Objects.equals(f.getName(), fileName)).
                 findFirst().

@@ -8,8 +8,8 @@ import com.dci.intellij.dbn.common.editor.BasicTextEditor;
 import com.dci.intellij.dbn.common.latent.Latent;
 import com.dci.intellij.dbn.common.navigation.NavigationInstructions;
 import com.dci.intellij.dbn.common.thread.Read;
-import com.dci.intellij.dbn.common.util.EditorUtil;
-import com.dci.intellij.dbn.common.util.StringUtil;
+import com.dci.intellij.dbn.common.util.Editors;
+import com.dci.intellij.dbn.common.util.Strings;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.SchemaId;
 import com.dci.intellij.dbn.database.DatabaseCompatibilityInterface;
@@ -130,7 +130,7 @@ public abstract class BasePsiElement<T extends ElementTypeBase> extends ASTDeleg
     }
 
     public boolean containsLineBreaks() {
-        return StringUtil.containsLineBreak(node.getChars());
+        return Strings.containsLineBreak(node.getChars());
     }
 
     @Override
@@ -359,22 +359,22 @@ public abstract class BasePsiElement<T extends ElementTypeBase> extends ASTDeleg
                         if (!editorManager.isFileOpen(databaseFile)) {
                             editorManager.openFile(databaseFile, requestFocus);
                         }
-                        BasicTextEditor textEditor = EditorUtil.getTextEditor((DBSourceCodeVirtualFile) virtualFile);
+                        BasicTextEditor textEditor = Editors.getTextEditor((DBSourceCodeVirtualFile) virtualFile);
                         if (textEditor != null) {
                             Editor editor = textEditor.getEditor();
                             descriptor.navigateIn(editor);
-                            if (requestFocus) EditorUtil.focusEditor(editor);
+                            if (requestFocus) Editors.focusEditor(editor);
                         }
                         return;
                     }
 
                     if (virtualFile instanceof DBConsoleVirtualFile) {
                         DBConsoleVirtualFile consoleVirtualFile = (DBConsoleVirtualFile) virtualFile;
-                        BasicTextEditor textEditor = EditorUtil.getTextEditor(consoleVirtualFile);
+                        BasicTextEditor textEditor = Editors.getTextEditor(consoleVirtualFile);
                         if (textEditor != null) {
                             Editor editor = textEditor.getEditor();
                             descriptor.navigateIn(editor);
-                            if (requestFocus) EditorUtil.focusEditor(editor);
+                            if (requestFocus) Editors.focusEditor(editor);
                         }
                         return;
                     }
@@ -386,7 +386,7 @@ public abstract class BasePsiElement<T extends ElementTypeBase> extends ASTDeleg
                         EditorEx viewer = editorForm.getDetailsForm().getCurrentSqlPanel().getViewer();
                         if (viewer != null) {
                             descriptor.navigateIn(viewer);
-                            if (requestFocus) EditorUtil.focusEditor(viewer);
+                            if (requestFocus) Editors.focusEditor(viewer);
                         }
                         return;
                     }
@@ -398,7 +398,7 @@ public abstract class BasePsiElement<T extends ElementTypeBase> extends ASTDeleg
                             if (textEditor.getVirtualFile().equals(virtualFile)) {
                                 Editor editor = textEditor.getEditor();
                                 descriptor.navigateIn(editor);
-                                if (requestFocus) EditorUtil.focusEditor(editor);
+                                if (requestFocus) Editors.focusEditor(editor);
                                 return;
                             }
 
@@ -414,10 +414,10 @@ public abstract class BasePsiElement<T extends ElementTypeBase> extends ASTDeleg
     public void navigateInEditor(@NotNull FileEditor fileEditor, NavigationInstructions instructions) {
         OpenFileDescriptor descriptor = (OpenFileDescriptor) EditSourceUtil.getDescriptor(this);
         if (descriptor != null) {
-            Editor editor = EditorUtil.getEditor(fileEditor);
+            Editor editor = Editors.getEditor(fileEditor);
             if (editor != null) {
                 if (instructions.isScroll()) descriptor.navigateIn(editor);
-                if (instructions.isFocus()) EditorUtil.focusEditor(editor);
+                if (instructions.isFocus()) Editors.focusEditor(editor);
                 //TODO instruction.isOpen();
             }
         }

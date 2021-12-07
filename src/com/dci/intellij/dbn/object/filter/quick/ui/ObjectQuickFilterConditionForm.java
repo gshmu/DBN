@@ -4,7 +4,7 @@ import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.common.ui.ComboBoxSelectionKeyListener;
 import com.dci.intellij.dbn.common.ui.DBNComboBox;
 import com.dci.intellij.dbn.common.ui.DBNFormImpl;
-import com.dci.intellij.dbn.common.util.ActionUtil;
+import com.dci.intellij.dbn.common.util.Actions;
 import com.dci.intellij.dbn.object.filter.ConditionOperator;
 import com.dci.intellij.dbn.object.filter.quick.ObjectQuickFilter;
 import com.dci.intellij.dbn.object.filter.quick.ObjectQuickFilterCondition;
@@ -61,7 +61,7 @@ public class ObjectQuickFilterConditionForm extends DBNFormImpl {
             }
         });
 
-        ActionToolbar actionToolbar = ActionUtil.createActionToolbar(actionsPanel,
+        ActionToolbar actionToolbar = Actions.createActionToolbar(actionsPanel,
                 "DBNavigator.DataEditor.SimpleFilter.Condition", true,
                 new EnableDisableQuickFilterConditionAction(this),
                 new DeleteQuickFilterConditionAction(this));

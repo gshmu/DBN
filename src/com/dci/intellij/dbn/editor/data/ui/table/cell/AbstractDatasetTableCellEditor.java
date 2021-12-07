@@ -4,7 +4,7 @@ import com.dci.intellij.dbn.common.dispose.StatefulDisposable;
 import com.dci.intellij.dbn.common.event.ProjectEvents;
 import com.dci.intellij.dbn.common.locale.Formatter;
 import com.dci.intellij.dbn.common.thread.Dispatch;
-import com.dci.intellij.dbn.common.util.StringUtil;
+import com.dci.intellij.dbn.common.util.Strings;
 import com.dci.intellij.dbn.data.editor.ui.DataEditorComponent;
 import com.dci.intellij.dbn.data.type.DBDataType;
 import com.dci.intellij.dbn.editor.data.model.DatasetEditorModelCell;
@@ -19,10 +19,17 @@ import lombok.Getter;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import javax.swing.*;
+import javax.swing.AbstractCellEditor;
+import javax.swing.JTable;
+import javax.swing.JTextField;
 import javax.swing.table.TableCellEditor;
-import java.awt.*;
-import java.awt.event.*;
+import java.awt.Component;
+import java.awt.Font;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
+import java.awt.event.MouseEvent;
 import java.io.Serializable;
 import java.text.ParseException;
 import java.util.EventObject;
@@ -151,7 +158,7 @@ public abstract class AbstractDatasetTableCellEditor extends AbstractCellEditor 
                 boolean trim = true;
                 if (clazz == String.class) {
                     DataEditorGeneralSettings generalSettings = settings.getGeneralSettings();
-                    boolean isEmpty = StringUtil.isEmptyOrSpaces(textValue);
+                    boolean isEmpty = Strings.isEmptyOrSpaces(textValue);
                     trim = (isEmpty && generalSettings.getConvertEmptyStringsToNull().value()) ||
                             (!isEmpty && generalSettings.getTrimWhitespaces().value());
                 }

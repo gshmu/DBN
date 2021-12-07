@@ -8,7 +8,7 @@ import com.dci.intellij.dbn.code.common.style.DBLCodeStyleManager;
 import com.dci.intellij.dbn.code.common.style.options.CodeStyleCaseOption;
 import com.dci.intellij.dbn.code.common.style.options.CodeStyleCaseSettings;
 import com.dci.intellij.dbn.common.dispose.Failsafe;
-import com.dci.intellij.dbn.common.util.StringUtil;
+import com.dci.intellij.dbn.common.util.Strings;
 import com.dci.intellij.dbn.database.DatabaseCompatibilityInterface;
 import com.dci.intellij.dbn.language.common.DBLanguage;
 import com.dci.intellij.dbn.language.common.QuotePair;
@@ -90,7 +90,7 @@ public class ObjectLookupItemBuilder extends LookupItemBuilder {
     @Override
     public CharSequence getText(CodeCompletionContext context) {
         String text = objectRef.getObjectName();
-        if (StringUtil.isNotEmptyOrSpaces(text)) {
+        if (Strings.isNotEmptyOrSpaces(text)) {
             DBObject object = getObject();
             if (object instanceof DBVirtualObject && text.contains(CodeCompletionContributor.DUMMY_TOKEN)) {
                 return null;
@@ -104,7 +104,7 @@ public class ObjectLookupItemBuilder extends LookupItemBuilder {
 
             String userInput = context.getUserInput();
             CodeCompletionFormatSettings codeCompletionFormatSettings = CodeCompletionSettings.getInstance(project).getFormatSettings();
-            if (StringUtil.isNotEmpty(userInput) && !text.startsWith(userInput) && !codeCompletionFormatSettings.isEnforceCodeStyleCase()) {
+            if (Strings.isNotEmpty(userInput) && !text.startsWith(userInput) && !codeCompletionFormatSettings.isEnforceCodeStyleCase()) {
                 char firstInputChar = userInput.charAt(0);
                 char firstPresentationChar = text.charAt(0);
 
@@ -112,7 +112,7 @@ public class ObjectLookupItemBuilder extends LookupItemBuilder {
                     boolean upperCaseInput = Character.isUpperCase(firstInputChar);
                     boolean upperCasePresentation = Character.isUpperCase(firstPresentationChar);
 
-                    if (StringUtil.isMixedCase(text)) {
+                    if (Strings.isMixedCase(text)) {
                         if (upperCaseInput != upperCasePresentation) {
                             text = upperCaseInput ?
                                     text.toUpperCase() :

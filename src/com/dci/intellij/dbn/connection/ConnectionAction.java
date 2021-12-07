@@ -6,13 +6,13 @@ import com.dci.intellij.dbn.common.load.ProgressMonitor;
 import com.dci.intellij.dbn.common.routine.ParametricCallable;
 import com.dci.intellij.dbn.common.routine.ParametricRunnable;
 import com.dci.intellij.dbn.common.thread.Dispatch;
-import com.dci.intellij.dbn.common.util.CommonUtil;
+import com.dci.intellij.dbn.common.util.Commons;
 import com.intellij.openapi.progress.ProgressIndicator;
 import com.intellij.openapi.project.Project;
 import org.jetbrains.annotations.NotNull;
 
 public abstract class ConnectionAction implements Runnable{
-    static final String[] OPTIONS_CONNECT_CANCEL = CommonUtil.list("Connect", "Cancel");
+    static final String[] OPTIONS_CONNECT_CANCEL = Commons.list("Connect", "Cancel");
 
     private final String description;
     private final boolean interactive;

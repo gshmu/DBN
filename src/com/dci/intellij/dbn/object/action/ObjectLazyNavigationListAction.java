@@ -1,6 +1,6 @@
 package com.dci.intellij.dbn.object.action;
 
-import com.dci.intellij.dbn.common.util.CommonUtil;
+import com.dci.intellij.dbn.common.util.Commons;
 import com.dci.intellij.dbn.object.common.DBObject;
 import com.dci.intellij.dbn.object.common.list.DBObjectNavigationList;
 import com.dci.intellij.dbn.object.lookup.DBObjectRef;
@@ -20,7 +20,7 @@ public class ObjectLazyNavigationListAction extends ObjectListShowAction {
 
     @Override
     public List<? extends DBObject> getObjectList() {
-        return CommonUtil.resolve(
+        return Commons.resolve(
                 () -> navigationList.getObjects(),
                 () -> navigationList.getObjectsProvider().getObjects());
     }

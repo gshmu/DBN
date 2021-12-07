@@ -2,8 +2,8 @@ package com.dci.intellij.dbn.execution.statement.variables;
 
 import com.dci.intellij.dbn.common.project.ProjectRef;
 import com.dci.intellij.dbn.common.state.PersistentStateElement;
-import com.dci.intellij.dbn.common.util.FileUtil;
-import com.dci.intellij.dbn.common.util.StringUtil;
+import com.dci.intellij.dbn.common.util.Files;
+import com.dci.intellij.dbn.common.util.Strings;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
 import gnu.trove.THashSet;
@@ -55,7 +55,7 @@ public class StatementExecutionVariablesCache implements PersistentStateElement 
         if (virtualFile != null) {
             Set<StatementExecutionVariable> variables = getVariables(virtualFile);
             for (StatementExecutionVariable variable : variables) {
-                if (StringUtil.equalsIgnoreCase(variable.getName(), name)) {
+                if (Strings.equalsIgnoreCase(variable.getName(), name)) {
                     return variable;
                 }
             }
@@ -75,7 +75,7 @@ public class StatementExecutionVariablesCache implements PersistentStateElement 
 
             for (Element fileElement : variablesElement.getChildren()) {
                 String fileUrl = fileElement.getAttributeValue("file-url");
-                if ( StringUtil.isEmpty(fileUrl)) {
+                if ( Strings.isEmpty(fileUrl)) {
                     // TODO backward compatibility. Do cleanup
                     fileUrl = fileElement.getAttributeValue("path");
                 }
@@ -98,7 +98,7 @@ public class StatementExecutionVariablesCache implements PersistentStateElement 
 
         for (String fileUrl : fileVariablesMap.keySet()) {
 
-            if (FileUtil.isValidFileUrl(fileUrl, getProject())) {
+            if (Files.isValidFileUrl(fileUrl, getProject())) {
                 Element fileElement = new Element("file");
                 fileElement.setAttribute("file-url", fileUrl);
                 Set<StatementExecutionVariable> executionVariables = fileVariablesMap.get(fileUrl);

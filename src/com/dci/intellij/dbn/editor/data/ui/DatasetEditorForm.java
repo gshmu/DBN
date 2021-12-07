@@ -9,8 +9,8 @@ import com.dci.intellij.dbn.common.ui.AutoCommitLabel;
 import com.dci.intellij.dbn.common.ui.DBNFormImpl;
 import com.dci.intellij.dbn.common.ui.GUIUtil;
 import com.dci.intellij.dbn.common.ui.table.DBNTableHeaderRenderer;
-import com.dci.intellij.dbn.common.util.ActionUtil;
-import com.dci.intellij.dbn.common.util.MessageUtil;
+import com.dci.intellij.dbn.common.util.Actions;
+import com.dci.intellij.dbn.common.util.Messages;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.SessionId;
 import com.dci.intellij.dbn.data.find.DataSearchComponent;
@@ -37,9 +37,13 @@ import com.intellij.util.ui.AsyncProcessIcon;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import javax.swing.*;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JTextField;
+import javax.swing.ScrollPaneConstants;
 import javax.swing.table.TableColumn;
-import java.awt.*;
+import java.awt.BorderLayout;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
@@ -81,18 +85,18 @@ public class DatasetEditorForm extends DBNFormImpl implements SearchableDataComp
             panel.setBorder(DBNTableHeaderRenderer.BORDER_LBR.get());
             datasetTableScrollPane.setCorner(ScrollPaneConstants.UPPER_LEFT_CORNER, panel);
 
-            ActionToolbar actionToolbar = ActionUtil.createActionToolbar(actionsPanel,"", true, "DBNavigator.ActionGroup.DataEditor");
+            ActionToolbar actionToolbar = Actions.createActionToolbar(actionsPanel,"", true, "DBNavigator.ActionGroup.DataEditor");
 
             actionsPanel.add(actionToolbar.getComponent(), BorderLayout.WEST);
             loadingIconPanel.add(new AsyncProcessIcon("Loading"), BorderLayout.CENTER);
             hideLoadingHint();
 
-            ActionToolbar loadingActionToolbar = ActionUtil.createActionToolbar(actionsPanel,"", true, new CancelLoadingAction());
+            ActionToolbar loadingActionToolbar = Actions.createActionToolbar(actionsPanel,"", true, new CancelLoadingAction());
             loadingActionPanel.add(loadingActionToolbar.getComponent(), BorderLayout.CENTER);
 
             Disposer.register(this, autoCommitLabel);
         } catch (SQLException e) {
-            MessageUtil.showErrorDialog(
+            Messages.showErrorDialog(
                     getProject(),
                     "Error",
                     "Error opening data editor for " + dataset.getQualifiedNameWithType(), e);

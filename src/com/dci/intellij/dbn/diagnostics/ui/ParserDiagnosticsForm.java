@@ -5,7 +5,7 @@ import com.dci.intellij.dbn.common.ui.Borders;
 import com.dci.intellij.dbn.common.ui.DBNFormImpl;
 import com.dci.intellij.dbn.common.ui.GUIUtil;
 import com.dci.intellij.dbn.common.ui.table.DBNTable;
-import com.dci.intellij.dbn.common.util.ActionUtil;
+import com.dci.intellij.dbn.common.util.Actions;
 import com.dci.intellij.dbn.diagnostics.ParserDiagnosticsManager;
 import com.dci.intellij.dbn.diagnostics.action.ParserDiagnosticsFileTypeFilterAction;
 import com.dci.intellij.dbn.diagnostics.action.ParserDiagnosticsStateFilterAction;
@@ -24,8 +24,12 @@ import lombok.Getter;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import javax.swing.*;
-import java.awt.*;
+import javax.swing.DefaultListModel;
+import javax.swing.JLabel;
+import javax.swing.JList;
+import javax.swing.JPanel;
+import java.awt.BorderLayout;
+import java.awt.Font;
 import java.util.List;
 
 public class ParserDiagnosticsForm extends DBNFormImpl {
@@ -59,10 +63,10 @@ public class ParserDiagnosticsForm extends DBNFormImpl {
         detailsLabel.setText("No result selected");
         stateTransitionLabel.setText("");
 
-        ActionToolbar actionToolbar = ActionUtil.createActionToolbar(actionsPanel,"", false, "DBNavigator.ActionGroup.ParserDiagnostics");
+        ActionToolbar actionToolbar = Actions.createActionToolbar(actionsPanel,"", false, "DBNavigator.ActionGroup.ParserDiagnostics");
         actionsPanel.add(actionToolbar.getComponent());
 
-        ActionToolbar filterActionToolbar = ActionUtil.createActionToolbar(filtersPanel,"", true,
+        ActionToolbar filterActionToolbar = Actions.createActionToolbar(filtersPanel,"", true,
                 new ParserDiagnosticsStateFilterAction(this),
                 new ParserDiagnosticsFileTypeFilterAction(this));
         filtersPanel.add(filterActionToolbar.getComponent(), BorderLayout.WEST);

@@ -10,7 +10,7 @@ import com.dci.intellij.dbn.common.project.ProjectRef;
 import com.dci.intellij.dbn.common.thread.Background;
 import com.dci.intellij.dbn.common.thread.Dispatch;
 import com.dci.intellij.dbn.common.ui.GUIUtil;
-import com.dci.intellij.dbn.common.util.MessageUtil;
+import com.dci.intellij.dbn.common.util.Messages;
 import com.dci.intellij.dbn.connection.ConnectionAction;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.ConnectionHandlerRef;
@@ -363,7 +363,7 @@ public class DatasetEditor extends DisposableUserDataHolderBase implements
                                                 "The operation was timed out. Please check your timeout configuration in Data Editor settings." :
                                                 "Database error message: " + e.getMessage());
 
-                        MessageUtil.showErrorDialog(project, message);
+                        Messages.showErrorDialog(project, message);
                     }
                 } else {
                     String message =
@@ -374,7 +374,7 @@ public class DatasetEditor extends DisposableUserDataHolderBase implements
                                                     "Database error message: " + e.getMessage());
                     String[] options = {"Retry", "Edit filter", "Remove filter", "Ignore filter", "Cancel"};
 
-                    MessageUtil.showErrorDialog(project, "Error", message, options, 0,
+                    Messages.showErrorDialog(project, "Error", message, options, 0,
                             (option) -> {
                                 DatasetLoadInstructions instructions = DatasetLoadInstructions.clone(instr);
                                 instructions.setDeliberateAction(true);
@@ -400,7 +400,7 @@ public class DatasetEditor extends DisposableUserDataHolderBase implements
                 String message =
                         "Error loading data for " + datasetName + ". Could not connect to database.\n" +
                                 "Database error message: " + e.getMessage();
-                MessageUtil.showErrorDialog(project, message);
+                Messages.showErrorDialog(project, message);
             }
         });
     }
@@ -583,7 +583,7 @@ public class DatasetEditor extends DisposableUserDataHolderBase implements
                         try {
                             model.postInsertRecord(true, false, true);
                         } catch (SQLException e1) {
-                            MessageUtil.showErrorDialog(getProject(), "Could not create row in " + getDataset().getQualifiedNameWithType() + '.', e1);
+                            Messages.showErrorDialog(getProject(), "Could not create row in " + getDataset().getQualifiedNameWithType() + '.', e1);
                             model.cancelInsert(true);
                         }
                     }
