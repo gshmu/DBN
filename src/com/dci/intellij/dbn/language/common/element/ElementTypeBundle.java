@@ -119,7 +119,11 @@ public class ElementTypeBundle {
             builder = null;
             Background.run(() -> Measured.run(
                     "initialising element-type lookup cache for " + this.languageDialect.getID(),
-                    () -> allElementTypes.forEach(elementType -> elementType.getLookupCache().initialise())));
+                    () -> {
+                        for (ElementType elementType : allElementTypes) {
+                            elementType.getLookupCache().initialise();
+                        }
+                    }));
 
             //warnAmbiguousBranches();
         } catch (Exception e) {

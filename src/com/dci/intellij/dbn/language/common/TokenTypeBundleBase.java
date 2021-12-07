@@ -13,7 +13,11 @@ import org.jdom.Document;
 import org.jdom.Element;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import static com.dci.intellij.dbn.common.options.setting.SettingsSupport.stringAttribute;
@@ -141,14 +145,18 @@ public abstract class TokenTypeBundleBase {
 
     private static SimpleTokenType[] createTokenArray(List<SimpleTokenType> tokenList) {
         SimpleTokenType[] tokenArray = new SimpleTokenType[tokenList.size()];
-        tokenList.forEach(token -> tokenArray[token.getLookupIndex()] = token);
+        for (SimpleTokenType token : tokenList) {
+            tokenArray[token.getLookupIndex()] = token;
+        }
         return tokenArray;
     }
 
     @NotNull
     private static Map<String, SimpleTokenType> createTokenMap(List<SimpleTokenType> tokenList) {
         Map<String, SimpleTokenType> map = new THashMap<>(tokenList.size());
-        tokenList.forEach(token -> map.put(token.getValue(), token));
+        for (SimpleTokenType token : tokenList) {
+            map.put(token.getValue(), token);
+        }
         return CollectionUtil.compact(map);
     }
 

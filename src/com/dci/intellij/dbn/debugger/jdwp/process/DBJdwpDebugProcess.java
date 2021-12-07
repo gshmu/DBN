@@ -70,8 +70,8 @@ public abstract class DBJdwpDebugProcess<T extends ExecutionInput>
         extends JavaDebugProcess
         implements DBDebugProcess {
 
-    public static final Key<DBJdwpDebugProcess> KEY = new Key<DBJdwpDebugProcess>("DBNavigator.JdwpDebugProcess");
-    private final ConnectionHandlerRef connectionHandlerRef;
+    public static final Key<DBJdwpDebugProcess> KEY = new Key<>("DBNavigator.JdwpDebugProcess");
+    private final ConnectionHandlerRef connectionHandler;
     private final DBDebugProcessStatusHolder status = new DBDebugProcessStatusHolder();
     private final DBBreakpointHandler<DBJdwpDebugProcess>[] breakpointHandlers;
     private final DBDebugConsoleLogger console;
@@ -83,8 +83,9 @@ public abstract class DBJdwpDebugProcess<T extends ExecutionInput>
 
     protected DBJdwpDebugProcess(@NotNull final XDebugSession session, DebuggerSession debuggerSession, ConnectionHandler connectionHandler, int tcpPort) {
         super(session, debuggerSession);
-        console = new DBDebugConsoleLogger(session);
-        this.connectionHandlerRef = ConnectionHandlerRef.of(connectionHandler);
+        this.console = new DBDebugConsoleLogger(session);
+        this.connectionHandler = ConnectionHandlerRef.of(connectionHandler);
+
         Project project = session.getProject();
         DatabaseDebuggerManager debuggerManager = DatabaseDebuggerManager.getInstance(project);
         debuggerManager.registerDebugSession(connectionHandler);
@@ -128,7 +129,7 @@ public abstract class DBJdwpDebugProcess<T extends ExecutionInput>
 
     @Override
     public ConnectionHandler getConnectionHandler() {
-        return connectionHandlerRef.ensure();
+        return connectionHandler.ensure();
     }
 
     @Nullable

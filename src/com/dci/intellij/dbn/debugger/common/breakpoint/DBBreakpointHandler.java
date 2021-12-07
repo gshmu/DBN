@@ -21,8 +21,8 @@ import static com.dci.intellij.dbn.debugger.common.breakpoint.DBBreakpointUtil.g
 import static com.dci.intellij.dbn.debugger.common.process.DBDebugProcessStatus.BREAKPOINT_SETTING_ALLOWED;
 
 public abstract class DBBreakpointHandler<T extends DBDebugProcess> extends XBreakpointHandler<XLineBreakpoint<XBreakpointProperties>> implements NotificationSupport {
-    private XDebugSession session;
-    private T debugProcess;
+    private final XDebugSession session;
+    private final T debugProcess;
 
     protected DBBreakpointHandler(XDebugSession session, T debugProcess) {
         super(DBBreakpointType.class);

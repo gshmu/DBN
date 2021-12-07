@@ -15,8 +15,6 @@ import com.intellij.util.messages.Topic;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.Arrays;
-
 
 public final class ProjectEvents {
     private ProjectEvents() {}
@@ -34,7 +32,9 @@ public final class ProjectEvents {
 
     public static <T> void subscribe(Topic<T> topic, T handler) {
         Project[] openProjects = ProjectManager.getInstance().getOpenProjects();
-        Arrays.stream(openProjects).forEach(project -> subscribe(project, null, topic, handler));
+        for (Project openProject : openProjects) {
+            subscribe(openProject, null, topic, handler);
+        }
 
         Application application = ApplicationManager.getApplication();
         application.invokeLater(() ->

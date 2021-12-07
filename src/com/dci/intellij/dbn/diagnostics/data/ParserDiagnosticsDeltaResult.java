@@ -22,15 +22,18 @@ public class ParserDiagnosticsDeltaResult {
     public ParserDiagnosticsDeltaResult(@Nullable ParserDiagnosticsResult previous, @NotNull ParserDiagnosticsResult current) {
         this.previous = previous;
         this.current = current;
-        current.getEntries().keySet().forEach(file -> {
-            int newErrorCount = current.getErrorCount(file);
-            int oldErrorCount = previous == null ? newErrorCount : previous.getErrorCount(file);
-            addEntry(file, oldErrorCount, newErrorCount);
-        });
+        for (String s : current.getEntries().keySet()) {
+            int newErrorCount = current.getErrorCount(s);
+            int oldErrorCount = previous == null ? newErrorCount : previous.getErrorCount(s);
+            addEntry(s, oldErrorCount, newErrorCount);
+        }
 
         if (previous != null) {
-            previous.getFiles().stream().filter(file -> !current.isPresent(file)).forEach(file ->
-                    addEntry(file, previous.getErrorCount(file), 0));
+            for (String file : previous.getFiles()) {
+                if (!current.isPresent(file)) {
+                    addEntry(file, previous.getErrorCount(file), 0);
+                }
+            }
         }
     }
 

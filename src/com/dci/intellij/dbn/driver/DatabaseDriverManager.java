@@ -113,7 +113,9 @@ public class DatabaseDriverManager implements ApplicationComponent {
                             toArray(URL[]::new);
 
                     ClassLoader classLoader = new DriverClassLoader(urls, parentClassLoader);
-                    Arrays.stream(files).forEach(file -> drivers.addAll(loadDrivers(file, classLoader)));
+                    for (File file : files) {
+                        drivers.addAll(loadDrivers(file, classLoader));
+                    }
                 }
 
                 return drivers;

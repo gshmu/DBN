@@ -193,8 +193,9 @@ public class DBObjectBundleImpl extends BrowserTreeNodeBase implements DBObjectB
         public void dataDefinitionChanged(DBSchema schema, DBObjectType objectType) {
             if (schema.getConnectionHandler() == getConnectionHandler()) {
                 schema.refresh(objectType);
-                objectType.getChildren().forEach(
-                        childObjectType -> schema.refresh(childObjectType));
+                for (DBObjectType childObjectType : objectType.getChildren()) {
+                    schema.refresh(childObjectType);
+                }
             }
         }
 
@@ -448,13 +449,14 @@ public class DBObjectBundleImpl extends BrowserTreeNodeBase implements DBObjectB
         List<BrowserTreeNode> treeChildren = CollectionUtil.filter(allPossibleTreeChildren, false, true, objectTypeFilter);
         treeChildren = CommonUtil.nvl(treeChildren, Collections.emptyList());
 
-        treeChildren.forEach(objectList -> {
+        for (BrowserTreeNode objectList : treeChildren) {
             Progress.background(
                     getProject(),
                     getConnectionHandler().getMetaLoadTitle(),
                     true,
                     progress -> objectList.initTreeElement());
-            checkDisposed();});
+            checkDisposed();
+        }
 
         if (visibleTreeChildren.size() == 1 && visibleTreeChildren.get(0) instanceof LoadInProgressTreeNode) {
             visibleTreeChildren.get(0).dispose();
@@ -473,7 +475,9 @@ public class DBObjectBundleImpl extends BrowserTreeNodeBase implements DBObjectB
     @Override
     public void refreshTreeChildren(@NotNull DBObjectType... objectTypes) {
         if (visibleTreeChildren != null) {
-            visibleTreeChildren.forEach(treeNode -> treeNode.refreshTreeChildren(objectTypes));
+            for (BrowserTreeNode treeNode : visibleTreeChildren) {
+                treeNode.refreshTreeChildren(objectTypes);
+            }
         }
     }
 
@@ -484,7 +488,9 @@ public class DBObjectBundleImpl extends BrowserTreeNodeBase implements DBObjectB
             if (treeVisibilityChanged(allPossibleTreeChildren, visibleTreeChildren, filter)) {
                 buildTreeChildren();
             }
-            visibleTreeChildren.forEach(treeNode -> treeNode.rebuildTreeChildren());
+            for (BrowserTreeNode treeNode : visibleTreeChildren) {
+                treeNode.rebuildTreeChildren();
+            }
         }
     }
 

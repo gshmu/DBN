@@ -134,15 +134,6 @@ public abstract class DBObjectImpl<M extends DBObjectMetadata> extends BrowserTr
 
     protected void initLists() {}
 
-/*    @Override
-    public PsiElement getParent() {
-        PsiFile containingFile = getContainingFile();
-        if (containingFile != null) {
-            return containingFile.getParent();
-        }
-        return null;
-    }*/
-
     @Override
     public boolean set(DBObjectProperty status, boolean value) {
         return properties.set(status, value);
@@ -724,10 +715,10 @@ public abstract class DBObjectImpl<M extends DBObjectMetadata> extends BrowserTr
         List<BrowserTreeNode> treeChildren = filter(getAllPossibleTreeChildren(), false, true, objectTypeFilter);
         treeChildren = CommonUtil.nvl(treeChildren, Collections.emptyList());
 
-        treeChildren.forEach(objectList -> {
+        for (BrowserTreeNode objectList : treeChildren) {
             Background.run(() -> objectList.initTreeElement());
             checkDisposed();
-        });
+        }
 
         if (visibleTreeChildren.size() == 1 && visibleTreeChildren.get(0) instanceof LoadInProgressTreeNode) {
             visibleTreeChildren.get(0).dispose();
@@ -748,7 +739,9 @@ public abstract class DBObjectImpl<M extends DBObjectMetadata> extends BrowserTr
     @Override
     public void refreshTreeChildren(@NotNull DBObjectType... objectTypes) {
         if (visibleTreeChildren != null) {
-            visibleTreeChildren.forEach(treeNode -> treeNode.refreshTreeChildren(objectTypes));
+            for (BrowserTreeNode treeNode : visibleTreeChildren) {
+                treeNode.refreshTreeChildren(objectTypes);
+            }
         }
 
     }
@@ -762,7 +755,9 @@ public abstract class DBObjectImpl<M extends DBObjectMetadata> extends BrowserTr
             if (treeVisibilityChanged(getAllPossibleTreeChildren(), visibleTreeChildren, filter)) {
                 buildTreeChildren();
             }
-            visibleTreeChildren.forEach(treeNode -> treeNode.rebuildTreeChildren());
+            for (BrowserTreeNode treeNode : visibleTreeChildren) {
+                treeNode.rebuildTreeChildren();
+            }
         }
 
 
