@@ -10,14 +10,14 @@ import com.intellij.openapi.project.Project;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import javax.swing.*;
+import javax.swing.Action;
 
 public class ObjectNameFilterConditionDialog extends DBNDialog<ObjectNameFilterConditionForm> {
     private CompoundFilterCondition parentCondition;
     private WeakRef<SimpleNameFilterCondition> condition;  // TODO dialog result - Disposable.nullify(...)
     private ConditionJoinType joinType;
-    private DBObjectType objectType;
-    private ObjectNameFilterConditionForm.Operation operation;
+    private final DBObjectType objectType;
+    private final ObjectNameFilterConditionForm.Operation operation;
 
     public ObjectNameFilterConditionDialog(Project project, CompoundFilterCondition parentCondition, SimpleNameFilterCondition condition, DBObjectType objectType, ObjectNameFilterConditionForm.Operation operation) {
         super(project, getTitle(operation), true);
