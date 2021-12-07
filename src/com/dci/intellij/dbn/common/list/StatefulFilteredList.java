@@ -18,7 +18,7 @@ import java.util.concurrent.Callable;
 final class StatefulFilteredList<T> extends FilteredListBase<T> {
     private final Latent<List<T>> inner = Latent.mutable(
             () -> filterSignature(),
-            () -> filter == null  || filter.isEmpty() ? null : Lists.filter(base, t -> filter.accepts(t)));
+            () -> filter == null  || filter.isEmpty() ? null : Lists.filtered(base, t -> filter.accepts(t)));
 
 
     StatefulFilteredList(Filter<T> filter, List<T> base) {

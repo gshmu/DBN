@@ -25,7 +25,7 @@ public abstract class MessagesTreeBundleNode<P extends MessagesTreeNode, C exten
     protected void clearChildren() {
         List<MessagesTreeNode> children = new ArrayList<>(this.children);
         this.children.clear();
-        SafeDisposer.dispose(children, false, false);
+        SafeDisposer.dispose(children, true, false);
     }
 
     @Override
@@ -84,7 +84,7 @@ public abstract class MessagesTreeBundleNode<P extends MessagesTreeNode, C exten
      ********************************************************  */
     @Override
     public void disposeInner() {
-        SafeDisposer.dispose(children, false, false);
+        SafeDisposer.dispose(children, true, false);
         nullify();
     }
 

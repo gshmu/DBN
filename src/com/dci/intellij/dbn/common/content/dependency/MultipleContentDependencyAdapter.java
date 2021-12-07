@@ -90,7 +90,7 @@ public class MultipleContentDependencyAdapter extends BasicDependencyAdapter imp
 
     @Override
     public void dispose() {
-        SafeDisposer.dispose(dependencies, false, false);
+        SafeDisposer.dispose(dependencies, true, false);
         dependencies = null;
         super.dispose();
     }

@@ -2,6 +2,7 @@ package com.dci.intellij.dbn.language.common;
 
 import com.dci.intellij.dbn.common.index.IndexRegistry;
 import com.dci.intellij.dbn.common.util.Compactables;
+import com.dci.intellij.dbn.common.util.Lists;
 import com.dci.intellij.dbn.common.util.Measured;
 import com.dci.intellij.dbn.common.util.Strings;
 import com.intellij.lang.Language;
@@ -228,7 +229,7 @@ public abstract class TokenTypeBundleBase {
     }
 
     private boolean isRegisteredToken(Map<String, Set<String>> tokenSetIds, String tokenId) {
-        return tokenSetIds.values().stream().anyMatch(tokenIds -> tokenIds.contains(tokenId));
+        return Lists.anyMatch(tokenSetIds.values(), tokenIds -> tokenIds.contains(tokenId));
     }
 
     public SimpleTokenType getTokenType(String id) {

@@ -2,6 +2,7 @@ package com.dci.intellij.dbn.data.sorting;
 
 import com.dci.intellij.dbn.common.state.PersistentStateElement;
 import com.dci.intellij.dbn.common.util.Cloneable;
+import com.dci.intellij.dbn.common.util.Lists;
 import com.dci.intellij.dbn.common.util.Strings;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
@@ -19,7 +20,7 @@ import static com.dci.intellij.dbn.common.options.setting.SettingsSupport.string
 @Setter
 @EqualsAndHashCode
 public class SortingState implements PersistentStateElement, Cloneable<SortingState> {
-    private final List<SortingInstruction> sortingInstructions = new ArrayList<>();
+    private final List<SortingInstruction> instructions = new ArrayList<>();
 
     public boolean applySorting(String columnName, SortDirection direction, boolean keepExisting, int maxColumns) {
         SortingInstruction instruction = getInstruction(columnName);
@@ -39,20 +40,20 @@ public class SortingState implements PersistentStateElement, Cloneable<SortingSt
 
 
         if (keepExisting) {
-            while (sortingInstructions.size() > maxColumns) {
-                sortingInstructions.remove(sortingInstructions.size()-1);
+            while (instructions.size() > maxColumns) {
+                instructions.remove(instructions.size()-1);
             }
 
             if (isNewColumn) {
-                if (sortingInstructions.size()== maxColumns) {
-                    sortingInstructions.remove(sortingInstructions.size()-1);
+                if (instructions.size()== maxColumns) {
+                    instructions.remove(instructions.size()-1);
                 }
-                sortingInstructions.add(instruction);
+                instructions.add(instruction);
             }
 
         } else {
-            sortingInstructions.clear();
-            sortingInstructions.add(instruction);
+            instructions.clear();
+            instructions.add(instruction);
         }
 
         updateIndexes();
@@ -61,40 +62,36 @@ public class SortingState implements PersistentStateElement, Cloneable<SortingSt
 
     private void updateIndexes() {
         int index = 1;
-        for (SortingInstruction sortingInstruction : sortingInstructions) {
+        for (SortingInstruction sortingInstruction : instructions) {
             sortingInstruction.setIndex(index);
             index++;
         }
     }
 
     private SortingInstruction getInstruction(String columnName) {
-        return sortingInstructions
-                .stream()
-                .filter(instruction -> Objects.equals(instruction.getColumnName(), columnName))
-                .findFirst()
-                .orElse(null);
+        return Lists.first(instructions, instruction -> Objects.equals(instruction.getColumnName(), columnName));
     }
 
     public void clear() {
-        sortingInstructions.clear();
+        instructions.clear();
     }
 
     public void addSortingInstruction(SortingInstruction sortingInstruction) {
-        sortingInstructions.add(sortingInstruction);
+        instructions.add(sortingInstruction);
     }
 
     public SortingInstruction addSortingInstruction(String columnName, SortDirection direction) {
         SortingInstruction sortingInstruction = new SortingInstruction(columnName, direction);
-        sortingInstructions.add(sortingInstruction);
+        instructions.add(sortingInstruction);
         return sortingInstruction;
     }
 
-    public List<SortingInstruction> getSortingInstructions() {
-        return sortingInstructions;
+    public List<SortingInstruction> getInstructions() {
+        return instructions;
     }
 
     public SortingInstruction getSortingInstruction(String columnName) {
-        for (SortingInstruction sortingInstruction :  sortingInstructions) {
+        for (SortingInstruction sortingInstruction : instructions) {
             if (Strings.equalsIgnoreCase(sortingInstruction.getColumnName(), columnName)) {
                 return sortingInstruction;
             }
@@ -109,15 +106,15 @@ public class SortingState implements PersistentStateElement, Cloneable<SortingSt
     @Override
     public SortingState clone() {
         SortingState clone = new SortingState();
-        for (SortingInstruction criterion : sortingInstructions) {
-            clone.sortingInstructions.add(criterion.clone());
+        for (SortingInstruction criterion : instructions) {
+            clone.instructions.add(criterion.clone());
         }
         return clone;
     }
 
     @Override
     public void writeState(Element element) {
-        for (SortingInstruction sortingInstruction : sortingInstructions) {
+        for (SortingInstruction sortingInstruction : instructions) {
             String columnName = sortingInstruction.getColumnName();
             SortDirection sortDirection = sortingInstruction.getDirection();
             if (columnName != null && !sortDirection.isIndefinite()) {
@@ -144,6 +141,6 @@ public class SortingState implements PersistentStateElement, Cloneable<SortingSt
     }
 
     public int size() {
-        return sortingInstructions.size();
+        return instructions.size();
     }
 }

@@ -45,7 +45,7 @@ public class PendingTransactionsTableModel extends StatefulDisposable.Base imple
 
     @NotNull
     public List<DBNConnection> getTransactionalConnections() {
-        return Lists.filter(connections, connection -> connection.getDataChanges() != null);
+        return Lists.filtered(connections, connection -> connection.getDataChanges() != null);
     }
 
     @Override

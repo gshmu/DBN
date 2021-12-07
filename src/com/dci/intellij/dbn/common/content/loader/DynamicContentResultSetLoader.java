@@ -44,8 +44,8 @@ public abstract class DynamicContentResultSetLoader<
     private final boolean master;
 
     public DynamicContentResultSetLoader(
-            @Nullable DynamicContentType parentContentType,
-            @NotNull DynamicContentType contentType,
+            @Nullable DynamicContentType<?> parentContentType,
+            @NotNull DynamicContentType<?> contentType,
             boolean register,
             boolean master) {
 

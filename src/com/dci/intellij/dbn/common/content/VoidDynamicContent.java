@@ -196,11 +196,6 @@ public class VoidDynamicContent extends StatefulDisposable.Base implements Dynam
     }
 
     @Override
-    public void compact() {
-
-    }
-
-    @Override
     protected void disposeInner() {
 
     }

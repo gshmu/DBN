@@ -3,6 +3,7 @@ package com.dci.intellij.dbn.editor.data.filter;
 import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.common.options.ui.ConfigurationEditorForm;
+import com.dci.intellij.dbn.common.util.Lists;
 import com.dci.intellij.dbn.data.sorting.SortingState;
 import com.dci.intellij.dbn.editor.data.filter.ui.DatasetBasicFilterForm;
 import com.dci.intellij.dbn.object.DBDataset;
@@ -64,7 +65,7 @@ public class DatasetBasicFilter extends DatasetFilterImpl {
     }
 
     public boolean containsConditionForColumn(String columnName) {
-        return conditions.stream().anyMatch(condition -> Objects.equals(condition.getColumnName(), columnName));
+        return Lists.anyMatch(conditions, condition -> Objects.equals(condition.getColumnName(), columnName));
     }
 
     @Override

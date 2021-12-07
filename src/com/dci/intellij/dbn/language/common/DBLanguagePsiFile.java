@@ -6,6 +6,7 @@ import com.dci.intellij.dbn.common.thread.Read;
 import com.dci.intellij.dbn.common.util.Commons;
 import com.dci.intellij.dbn.common.util.Documents;
 import com.dci.intellij.dbn.common.util.Editors;
+import com.dci.intellij.dbn.common.util.Lists;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.ConnectionHandlerRef;
 import com.dci.intellij.dbn.connection.PresentableConnectionProvider;
@@ -443,7 +444,7 @@ public abstract class DBLanguagePsiFile extends PsiFileImpl implements FileConne
             @Override
             public void visitElement(@NotNull PsiElement element) {
                 if (element instanceof PsiErrorElement) {
-                    if (errors.stream().noneMatch(error -> error.getTextOffset() == element.getTextOffset())) {
+                    if (Lists.noneMatch(errors, error -> error.getTextOffset() == element.getTextOffset())) {
                         errors.add((PsiErrorElement) element);
                     }
 

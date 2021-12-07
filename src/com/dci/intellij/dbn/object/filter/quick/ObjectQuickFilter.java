@@ -4,6 +4,7 @@ import com.dci.intellij.dbn.common.filter.Filter;
 import com.dci.intellij.dbn.common.options.setting.SettingsSupport;
 import com.dci.intellij.dbn.common.state.PersistentStateElement;
 import com.dci.intellij.dbn.common.util.Cloneable;
+import com.dci.intellij.dbn.common.util.Lists;
 import com.dci.intellij.dbn.object.common.DBObject;
 import com.dci.intellij.dbn.object.filter.ConditionJoinType;
 import com.dci.intellij.dbn.object.filter.ConditionOperator;
@@ -48,7 +49,7 @@ public class ObjectQuickFilter<T extends DBObject> implements Filter<T>, Cloneab
     }
 
     public boolean isEmpty() {
-        return conditions.isEmpty() || conditions.stream().noneMatch(condition -> condition.isActive());
+        return conditions.isEmpty() || Lists.noneMatch(conditions, condition -> condition.isActive());
     }
 
     @Override
