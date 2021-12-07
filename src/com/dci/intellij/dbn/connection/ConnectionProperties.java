@@ -1,13 +1,13 @@
 package com.dci.intellij.dbn.connection;
 
-import com.dci.intellij.dbn.common.property.PropertyHolderImpl;
+import com.dci.intellij.dbn.common.property.PropertyHolderBase;
 
 import java.sql.Connection;
 import java.sql.DatabaseMetaData;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
-public class ConnectionProperties extends PropertyHolderImpl<ConnectionProperty> {
+public class ConnectionProperties extends PropertyHolderBase.IntStore<ConnectionProperty> {
 
     public ConnectionProperties(Connection connection) throws SQLException {
         DatabaseMetaData metaData = connection.getMetaData();

@@ -1,26 +1,62 @@
 package com.dci.intellij.dbn.common.property;
 
-public interface Property{
-    int ordinal();
+public interface Property {
+    @Deprecated
+    default PropertyGroup group() {
+        return null;
+    }
 
-    Computed computedOrdinal();
+    default boolean implicit() {
+        return false;
+    }
 
-    default long computedZero(){return computedOrdinal().zero;};
+    interface LongBase extends Property{
+        int ordinal();
 
-    default long computedOne() {return computedOrdinal().one;}
+        Computed computedOrdinal();
 
-    default PropertyGroup group(){return null;}
+        default long computedZero() {
+            return computedOrdinal().zero;
+        }
 
-    default boolean implicit(){return false;}
+        default long computedOne() {
+            return computedOrdinal().one;
+        }
 
-    class Computed {
-        private final long zero;
-        private final long one;
+        class Computed {
+            private final long zero;
+            private final long one;
 
-        public Computed(Property p) {
-            int shift = p.ordinal() + 1;
-            this.zero = ~(1L << shift);
-            this.one = 1L << shift;
+            public Computed(LongBase p) {
+                int shift = p.ordinal() + 1;
+                this.zero = ~(1L << shift);
+                this.one = 1L << shift;
+            }
+        }
+    }
+
+    interface IntBase extends Property{
+        int ordinal();
+
+        Computed computedOrdinal();
+
+        default int computedZero() {
+            return computedOrdinal().zero;
+        }
+
+        default int computedOne() {
+            return computedOrdinal().one;
+        }
+
+        class Computed {
+            private final int zero;
+            private final int one;
+
+            public Computed(IntBase p) {
+                int shift = p.ordinal() + 1;
+                this.zero = ~(1 << shift);
+                this.one = 1 << shift;
+            }
         }
     }
 }

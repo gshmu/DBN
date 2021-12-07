@@ -1,8 +1,8 @@
 package com.dci.intellij.dbn.editor.data;
 
-import com.dci.intellij.dbn.common.property.PropertyHolderImpl;
+import com.dci.intellij.dbn.common.property.PropertyHolderBase;
 
-public class DatasetLoadInstructions extends PropertyHolderImpl<DatasetLoadInstruction>{
+public class DatasetLoadInstructions extends PropertyHolderBase.IntStore<DatasetLoadInstruction> {
 
 
     public DatasetLoadInstructions(DatasetLoadInstruction ... instructions) {
@@ -13,7 +13,7 @@ public class DatasetLoadInstructions extends PropertyHolderImpl<DatasetLoadInstr
 
     public static DatasetLoadInstructions clone(DatasetLoadInstructions source) {
         DatasetLoadInstructions instructions = new DatasetLoadInstructions();
-        instructions.computed(source.computed());
+        instructions.replace(source);
         return instructions;
     }
 

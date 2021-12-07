@@ -3,7 +3,7 @@ package com.dci.intellij.dbn.editor.data.model;
 
 import com.dci.intellij.dbn.common.property.Property;
 
-public enum RecordStatus implements Property {
+public enum RecordStatus implements Property.IntBase {
     INSERTING,
     UPDATING,
 

@@ -3,7 +3,7 @@ package com.dci.intellij.dbn.common.ui;
 import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.common.latent.Loader;
 import com.dci.intellij.dbn.common.property.PropertyHolder;
-import com.dci.intellij.dbn.common.property.PropertyHolderImpl;
+import com.dci.intellij.dbn.common.property.PropertyHolderBase;
 import com.dci.intellij.dbn.common.util.ActionUtil;
 import com.dci.intellij.dbn.common.util.Context;
 import com.dci.intellij.dbn.common.util.Safe;
@@ -19,8 +19,12 @@ import com.intellij.util.ui.UIUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import javax.swing.*;
-import java.awt.*;
+import javax.swing.ComboBoxEditor;
+import javax.swing.ComboBoxModel;
+import javax.swing.JComboBox;
+import javax.swing.JList;
+import java.awt.Color;
+import java.awt.Component;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
@@ -37,7 +41,7 @@ public class DBNComboBox<T extends Presentable> extends JComboBox<T> implements 
     private PresentableFactory<T> valueFactory;
     private Loader<List<T>> valueLoader;
 
-    private final PropertyHolder<ValueSelectorOption> options = new PropertyHolderImpl<ValueSelectorOption>() {
+    private final PropertyHolder<ValueSelectorOption> options = new PropertyHolderBase.IntStore<ValueSelectorOption>() {
         @Override
         protected ValueSelectorOption[] properties() {
             return ValueSelectorOption.values();

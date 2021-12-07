@@ -1,8 +1,8 @@
 package com.dci.intellij.dbn.common.navigation;
 
-import com.dci.intellij.dbn.common.property.PropertyHolderImpl;
+import com.dci.intellij.dbn.common.property.PropertyHolderBase;
 
-public class NavigationInstructions extends PropertyHolderImpl<NavigationInstruction> {
+public class NavigationInstructions extends PropertyHolderBase.IntStore<NavigationInstruction> {
 
     public static final NavigationInstructions NONE = new NavigationInstructions();
 

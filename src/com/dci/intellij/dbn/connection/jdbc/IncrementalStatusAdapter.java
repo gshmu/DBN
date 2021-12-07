@@ -5,7 +5,7 @@ import com.dci.intellij.dbn.language.common.WeakRef;
 
 import java.util.concurrent.atomic.AtomicInteger;
 
-public abstract class IncrementalStatusAdapter<T, P extends Property> {
+public abstract class IncrementalStatusAdapter<T, P extends Property.IntBase> {
     private final P status;
     private final WeakRef<T> resource;
     private final AtomicInteger count = new AtomicInteger();

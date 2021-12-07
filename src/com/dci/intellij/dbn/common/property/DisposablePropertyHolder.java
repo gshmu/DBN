@@ -2,7 +2,7 @@ package com.dci.intellij.dbn.common.property;
 
 import com.dci.intellij.dbn.common.dispose.StatefulDisposable;
 
-public abstract class DisposablePropertyHolder<T extends Property> extends PropertyHolderImpl<T> implements StatefulDisposable {
+public abstract class DisposablePropertyHolder<T extends Property.IntBase> extends PropertyHolderBase.IntStore<T> implements StatefulDisposable {
 
     @Override
     public final boolean isDisposed() {

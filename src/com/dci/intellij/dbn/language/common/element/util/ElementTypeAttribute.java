@@ -2,7 +2,7 @@ package com.dci.intellij.dbn.language.common.element.util;
 
 import com.dci.intellij.dbn.common.property.Property;
 
-public enum ElementTypeAttribute implements Property{
+public enum ElementTypeAttribute implements Property.LongBase {
     
     ROOT("ROOT", "Executable statement"),
     EXECUTABLE("EXECUTABLE", "Executable statement"),

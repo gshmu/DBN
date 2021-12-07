@@ -2,7 +2,7 @@ package com.dci.intellij.dbn.object.common.property;
 
 import com.dci.intellij.dbn.common.property.Property;
 
-public enum DBObjectProperty implements Property {
+public enum DBObjectProperty implements Property.LongBase {
     // generic
     TEMPORARY,
     NAVIGABLE,
