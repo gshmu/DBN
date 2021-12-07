@@ -82,7 +82,7 @@ public abstract class ObjectPool<T extends Disposable> extends StatefulDisposabl
 
     @Override
     protected void disposeInner() {
-        SafeDisposer.dispose(objects, false, true);
+        SafeDisposer.dispose(objects, true, true);
         available.clear();
     }
 }

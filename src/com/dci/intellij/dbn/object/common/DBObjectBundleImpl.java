@@ -446,7 +446,7 @@ public class DBObjectBundleImpl extends BrowserTreeNodeBase implements DBObjectB
         ConnectionHandler connectionHandler = getConnectionHandler();
         Filter<BrowserTreeNode> objectTypeFilter = connectionHandler.getObjectTypeFilter();
 
-        List<BrowserTreeNode> treeChildren = Lists.filter(allPossibleTreeChildren, false, true, objectTypeFilter);
+        List<BrowserTreeNode> treeChildren = Lists.filter(allPossibleTreeChildren, objectTypeFilter);
         treeChildren = Commons.nvl(treeChildren, Collections.emptyList());
 
         for (BrowserTreeNode objectList : treeChildren) {
@@ -801,6 +801,8 @@ public class DBObjectBundleImpl extends BrowserTreeNodeBase implements DBObjectB
     /*********************************************************
      *                         Loaders                       *
      *********************************************************/
+
+
     static {
         new DynamicContentLoaderImpl<DBConsole, DBObjectMetadata>(null, CONSOLE, true){
 

@@ -5,6 +5,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.Objects;
 import java.util.function.Function;
@@ -15,7 +16,7 @@ public class Lists {
         return collection.indexOf(element) == collection.size() - 1;
     }
 
-    public static <T> List<T> filter(@NotNull List<T> list, Predicate<T> predicate) {
+    public static <T> List<T> filtered(@NotNull List<T> list, Predicate<T> predicate) {
         ArrayList<T> result = new ArrayList<>();
         for (T element : list) {
             if (predicate.test(element)) {
@@ -26,28 +27,20 @@ public class Lists {
     }
 
     @Nullable
-    public static <T> List<T> filter(@NotNull List<T> list, boolean wrap, boolean ensure, @Nullable Filter<T> filter) {
+    public static <T> List<T> filter(@NotNull List<T> list, @Nullable Filter<T> filter) {
         if (list.isEmpty() || filter == null || filter.acceptsAll(list)) {
-            return wrap ? new ArrayList<>(list) : list;
+            return list;
         } else {
-            // implicitly wrapping
-            List<T> filteredList = ensure ? new ArrayList<>() : null;
+            List<T> result = null;
             for (T element : list) {
                 if (filter.accepts(element)) {
-                    if (filteredList == null) {
-                        filteredList = new ArrayList<>();
+                    if (result == null) {
+                        result = new ArrayList<>();
                     }
-                    filteredList.add(element);
+                    result.add(element);
                 }
             }
-            return filteredList;
-
-/*
-            return list.
-                    stream().
-                    filter(element -> element != null && filter.accepts(element)).
-                    collect(Collectors.toList());
-*/
+            return result;
         }
     }
 
@@ -62,7 +55,7 @@ public class Lists {
     }
 
     @Nullable
-    public static <T> T first(List<T> list, Predicate<? super T> predicate) {
+    public static <T> T first(@Nullable Collection<T> list, Predicate<? super T> predicate) {
         if (list != null && !list.isEmpty()) {
             for (T element : list) {
                 if (predicate.test(element)) {
@@ -73,7 +66,36 @@ public class Lists {
         return null;
     }
 
-    public static boolean contains(List<>)
+    public static <T> boolean anyMatch(@Nullable Collection<T> list, Predicate<? super T> predicate) {
+        return first(list, predicate) != null;
+    }
+
+    public static <T> boolean noneMatch(@Nullable Collection<T> list, Predicate<? super T> predicate) {
+        return !anyMatch(list, predicate);
+    }
+
+    public static <T> boolean allMatch(@Nullable Collection<T> list, Predicate<? super T> predicate) {
+        if (list != null && !list.isEmpty()) {
+            for (T element : list) {
+                if (!predicate.test(element)) {
+                    return false;
+                }
+            }
+        }
+        return true;
+    }
+
+    public static <T> int count(@Nullable Collection<T> list, Predicate<? super T> predicate) {
+        int count = 0;
+        if (list != null && !list.isEmpty()) {
+            for (T element : list) {
+                if (!predicate.test(element)) {
+                    count++;
+                }
+            }
+        }
+        return count;
+    }
 
     public static int indexOf(@NotNull List<String> where, @NotNull String what, boolean ignoreCase) {
         int index = where.indexOf(what);

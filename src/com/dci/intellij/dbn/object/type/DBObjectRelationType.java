@@ -1,7 +1,9 @@
 package com.dci.intellij.dbn.object.type;
 
 import com.dci.intellij.dbn.common.content.DynamicContentType;
+import lombok.Getter;
 
+@Getter
 public enum DBObjectRelationType implements DynamicContentType<DBObjectRelationType> {
     CONSTRAINT_COLUMN(DBObjectType.CONSTRAINT, DBObjectType.COLUMN),
     INDEX_COLUMN(DBObjectType.INDEX, DBObjectType.COLUMN),
@@ -10,8 +12,8 @@ public enum DBObjectRelationType implements DynamicContentType<DBObjectRelationT
     ROLE_ROLE(DBObjectType.ROLE, DBObjectType.GRANTED_ROLE),
     ROLE_PRIVILEGE(DBObjectType.ROLE, DBObjectType.GRANTED_PRIVILEGE);
 
-    private DBObjectType sourceType;
-    private DBObjectType targetType;
+    private final DBObjectType sourceType;
+    private final DBObjectType targetType;
 
     DBObjectRelationType(DBObjectType sourceType, DBObjectType targetType) {
         this.sourceType = sourceType;

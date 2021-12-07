@@ -65,13 +65,6 @@ public abstract class DynamicContentImpl<T extends DynamicContentElement>
     }
 
     @Override
-    public void compact() {
-         if (elements != EMPTY_CONTENT && elements != EMPTY_UNTOUCHED_CONTENT) {
-             elements = Compactables.compact(elements);
-         }
-    }
-
-    @Override
     protected DynamicContentStatus[] properties() {
         return DynamicContentStatus.values();
     }
@@ -337,14 +330,14 @@ public abstract class DynamicContentImpl<T extends DynamicContentElement>
     }
 
     private void replaceElements(List<T> elements) {
-        List<T> oldElements = this.elements;
         if (isDisposed() || elements == null || elements.size() == 0) {
             elements = cast(EMPTY_CONTENT);
         } else {
             sortElements(elements);
+            Compactables.compact(elements);
         }
+        List<T> oldElements = this.elements;
         this.elements = FilteredList.stateful((FilterDelegate<T>) () -> getFilter(), elements);
-        compact();
         if (oldElements.size() != 0 || elements.size() != 0 ){
             notifyChangeListeners();
         }
@@ -373,7 +366,7 @@ public abstract class DynamicContentImpl<T extends DynamicContentElement>
         return elements;
     }
 
-    public List getElementsNoLoad() {
+    public List<T> getElementsNoLoad() {
         return elements;
     }
 
@@ -413,7 +406,7 @@ public abstract class DynamicContentImpl<T extends DynamicContentElement>
     @Override
     @Nullable
     public List<T> getElements(String name) {
-        return Lists.filter(getAllElements(), false, false, element -> Strings.equalsIgnoreCase(element.getName(), name));
+        return Lists.filter(getAllElements(), element -> Strings.equalsIgnoreCase(element.getName(), name));
     }
 
     @Override
@@ -430,7 +423,7 @@ public abstract class DynamicContentImpl<T extends DynamicContentElement>
     public void disposeInner() {
         if (elements != EMPTY_CONTENT && elements != EMPTY_UNTOUCHED_CONTENT) {
             if (!dependencyAdapter.isSubContent()) {
-                SafeDisposer.dispose(elements, false, false);
+                SafeDisposer.dispose(elements, true, false);
             }
             elements = cast(EMPTY_DISPOSED_CONTENT);
         }

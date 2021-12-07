@@ -393,7 +393,7 @@ public class ConnectionManager extends AbstractProjectComponent implements Persi
      }
 
      public List<ConnectionHandler> getConnectionHandlers(Predicate<ConnectionHandler> predicate) {
-        return Lists.filter(getConnectionHandlers(), predicate);
+        return Lists.filtered(getConnectionHandlers(), predicate);
      }
 
      public List<ConnectionHandler> getConnectionHandlers() {

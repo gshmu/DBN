@@ -34,7 +34,7 @@ public class SortableDataModelRow<
         SortableDataModel model = getModel();
         SortingState sortingState = model.getSortingState();
 
-        for (SortingInstruction sortingInstruction : sortingState.getSortingInstructions()) {
+        for (SortingInstruction sortingInstruction : sortingState.getInstructions()) {
             int columnIndex = model.getColumnIndex(sortingInstruction.getColumnName());
 
             if (columnIndex > -1) {

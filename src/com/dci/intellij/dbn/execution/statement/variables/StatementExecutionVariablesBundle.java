@@ -2,6 +2,7 @@ package com.dci.intellij.dbn.execution.statement.variables;
 
 import com.dci.intellij.dbn.common.dispose.StatefulDisposable;
 import com.dci.intellij.dbn.common.locale.Formatter;
+import com.dci.intellij.dbn.common.util.Lists;
 import com.dci.intellij.dbn.common.util.Strings;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.data.type.DBDataType;
@@ -64,7 +65,7 @@ public class StatementExecutionVariablesBundle extends StatefulDisposable.Base i
     }
 
     private void uniqueAddVariable(List<StatementExecutionVariable> variables, StatementExecutionVariable variable) {
-        if (variables.stream().noneMatch(var -> Objects.equals(var.getName(), variable.getName()))) {
+        if (Lists.noneMatch(variables, var -> Objects.equals(var.getName(), variable.getName()))) {
             variables.add(variable);
         }
     }

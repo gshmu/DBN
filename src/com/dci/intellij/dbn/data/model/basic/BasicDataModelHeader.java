@@ -61,7 +61,7 @@ public class BasicDataModelHeader<T extends ColumnInfo> extends StatefulDisposab
      *******************************************************  */
     @Override
     public void disposeInner() {
-        SafeDisposer.dispose(columnInfos, false, false);
+        SafeDisposer.dispose(columnInfos, true, false);
         nullify();
     }
 }

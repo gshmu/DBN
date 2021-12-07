@@ -5,6 +5,7 @@ import com.dci.intellij.dbn.common.AbstractProjectComponent;
 import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.common.notification.NotificationGroup;
 import com.dci.intellij.dbn.common.routine.ParametricRunnable;
+import com.dci.intellij.dbn.common.util.Lists;
 import com.dci.intellij.dbn.common.util.Messages;
 import com.dci.intellij.dbn.common.util.Naming;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
@@ -155,7 +156,7 @@ public class DatabaseDebuggerManager extends AbstractProjectComponent implements
     }
 
     private static boolean nameExists(List<RunnerAndConfigurationSettings> configurationSettings, String name) {
-        return configurationSettings.stream().anyMatch(configurationSetting -> Objects.equals(configurationSetting.getName(), name));
+        return Lists.anyMatch(configurationSettings, configurationSetting -> Objects.equals(configurationSetting.getName(), name));
     }
 
     public static boolean isDebugConsole(VirtualFile virtualFile) {

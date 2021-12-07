@@ -2,6 +2,7 @@ package com.dci.intellij.dbn.common.list;
 
 import com.dci.intellij.dbn.common.filter.Filter;
 import com.dci.intellij.dbn.common.util.Compactables;
+import com.dci.intellij.dbn.common.util.Lists;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
@@ -81,7 +82,7 @@ public final class StatelessFilteredList<T> extends FilteredListBase<T> {
     public int size() {
         Filter<T> filter = getFilter();
         if (filter != null) {
-            return (int) base.stream().filter(e -> filter.accepts(e)).count();
+            return Lists.count(base, e -> filter.accepts(e));
         } else {
             return base.size();
 
