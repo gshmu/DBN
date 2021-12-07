@@ -16,6 +16,7 @@ import com.intellij.openapi.ui.popup.JBPopupFactory;
 import com.intellij.openapi.ui.popup.ListPopup;
 import com.intellij.ui.ColoredListCellRenderer;
 import com.intellij.util.ui.UIUtil;
+import lombok.experimental.Delegate;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -41,6 +42,7 @@ public class DBNComboBox<T extends Presentable> extends JComboBox<T> implements 
     private PresentableFactory<T> valueFactory;
     private Loader<List<T>> valueLoader;
 
+    @Delegate
     private final PropertyHolder<ValueSelectorOption> options = new PropertyHolderBase.IntStore<ValueSelectorOption>() {
         @Override
         protected ValueSelectorOption[] properties() {
@@ -315,16 +317,5 @@ public class DBNComboBox<T extends Presentable> extends JComboBox<T> implements 
                 selectValue(previousValue);
             }
         }
-    }
-
-
-    @Override
-    public boolean set(ValueSelectorOption status, boolean value) {
-        return options.set(status, value);
-    }
-
-    @Override
-    public boolean is(ValueSelectorOption status) {
-        return options.is(status);
     }
 }

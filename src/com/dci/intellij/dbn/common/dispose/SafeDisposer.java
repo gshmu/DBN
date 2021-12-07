@@ -26,7 +26,6 @@ import java.awt.Container;
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
@@ -163,7 +162,9 @@ public final class SafeDisposer {
                     Container container = (Container) component;
                     Component[] components = container.getComponents();
                     if (components.length > 0) {
-                        Arrays.stream(components).forEach(child -> dispose(child));
+                        for (Component child : components) {
+                            dispose(child);
+                        }
                         Unsafe.silent(() -> container.removeAll());
                     }
                 }

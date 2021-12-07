@@ -402,7 +402,7 @@ public class DatabaseBrowserManager extends AbstractProjectComponent implements 
             List<Element> connectionElements = nodesElement.getChildren();
             ConnectionManager connectionManager = ConnectionManager.getInstance(project);
 
-            connectionElements.forEach(connectionElement -> {
+            for (Element connectionElement : connectionElements) {
                 ConnectionId connectionId = connectionIdAttribute(connectionElement, "connection-id");
                 ConnectionHandler connectionHandler = connectionManager.getConnectionHandler(connectionId);
                 if (connectionHandler != null) {
@@ -411,7 +411,7 @@ public class DatabaseBrowserManager extends AbstractProjectComponent implements 
                         DBObjectBundle objectBundle = connectionHandler.getObjectBundle();
                         List<Element> schemaElements = connectionElement.getChildren();
 
-                        schemaElements.forEach(schemaElement -> {
+                        for (Element schemaElement : schemaElements) {
                             String schemaName = stringAttribute(schemaElement, "name");
                             DBSchema schema = objectBundle.getSchema(schemaName);
                             if (schema != null) {
@@ -421,20 +421,20 @@ public class DatabaseBrowserManager extends AbstractProjectComponent implements 
                                             String objectTypesAttr = stringAttribute(schemaElement, "object-types");
                                             List<DBObjectType> objectTypes = DBObjectType.fromCsv(objectTypesAttr);
 
-                                            objectTypes.forEach(objectType -> {
+                                            for (DBObjectType objectType : objectTypes) {
                                                 DBObjectListContainer childObjects = schema.getChildObjects();
                                                 if (childObjects != null) {
                                                     Progress.check(progress);
                                                     childObjects.loadObjectList(objectType);
                                                 }
-                                            });
+                                            }
                                         });
                             }
-                        });
+                        }
                     }
                 }
 
-            });
+            }
         }
     }
 

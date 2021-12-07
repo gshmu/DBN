@@ -18,7 +18,7 @@ public class DBObjectRecursiveLoaderVisitor extends StatefulDisposable.Base impl
     public void visit(DBObjectList<?> objectList) {
         if (!objectList.getDependencyAdapter().isSubContent()) {
             List<DBObject> objects = (List<DBObject>) objectList.getObjects();
-            objects.forEach(object -> {
+            for (DBObject object : objects) {
                 ProgressMonitor.checkCancelled();
                 checkDisposed();
 
@@ -26,7 +26,7 @@ public class DBObjectRecursiveLoaderVisitor extends StatefulDisposable.Base impl
                 if (childObjects != null) {
                     childObjects.visitLists(this, false);
                 }
-            });
+            }
         }
     }
 

@@ -24,6 +24,7 @@ import com.dci.intellij.dbn.vfs.VirtualFileStatusHolder;
 import com.intellij.openapi.fileTypes.FileType;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
+import lombok.experimental.Delegate;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -34,6 +35,8 @@ import java.io.InputStream;
 public abstract class DBContentVirtualFile extends DBVirtualFileImpl implements PropertyHolder<VirtualFileStatus>  {
     private final WeakRef<DBEditableObjectVirtualFile> mainDatabaseFile;
     private final FileType fileType;
+
+    @Delegate
     private final VirtualFileStatusHolder status = new VirtualFileStatusHolder();
 
     protected DBContentType contentType;
@@ -50,16 +53,6 @@ public abstract class DBContentVirtualFile extends DBVirtualFileImpl implements 
         DDLFileManager ddlFileManager = DDLFileManager.getInstance(project);
         DDLFileType ddlFileType = ddlFileManager.getDDLFileType(objectRef.getObjectType(), contentType);
         this.fileType = ddlFileType == null ? null : ddlFileType.getLanguageFileType();
-    }
-
-    @Override
-    public boolean set(VirtualFileStatus status, boolean value) {
-        return this.status.set(status, value);
-    }
-
-    @Override
-    public boolean is(VirtualFileStatus status) {
-        return this.status.is(status);
     }
 
     @Override

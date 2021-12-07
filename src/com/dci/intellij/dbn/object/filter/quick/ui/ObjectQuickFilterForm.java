@@ -70,7 +70,9 @@ public class ObjectQuickFilterForm extends DBNFormImpl {
         }
 
         List<ObjectQuickFilterCondition> conditions = this.filter.getConditions();
-        conditions.forEach(condition -> addConditionPanel(condition));
+        for (ObjectQuickFilterCondition condition : conditions) {
+            addConditionPanel(condition);
+        }
 
         actionsPanel.add(new NewFilterSelector(this.filter), BorderLayout.CENTER);
 

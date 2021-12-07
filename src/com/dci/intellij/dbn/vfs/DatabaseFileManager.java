@@ -38,8 +38,12 @@ import org.jdom.Element;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.*;
-import java.util.stream.Collectors;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.UUID;
 
 import static com.dci.intellij.dbn.common.util.CommonUtil.list;
 import static com.dci.intellij.dbn.vfs.VirtualFileStatus.MODIFIED;
@@ -116,8 +120,11 @@ public class DatabaseFileManager extends AbstractProjectComponent implements Per
     };
 
     private void closeFiles(ConnectionId connectionId) {
-        List<DBObjectVirtualFile> filesToClose = openFiles.stream().filter(file -> file.getConnectionId() == connectionId).collect(Collectors.toList());
-        filesToClose.forEach(file -> closeFile(file));
+        for (DBObjectVirtualFile file : openFiles) {
+            if (file.getConnectionId() == connectionId) {
+                closeFile(file);
+            }
+        }
     }
 
     public void closeFile(DBSchemaObject object) {

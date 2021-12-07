@@ -72,13 +72,12 @@ class DBObjectLookupScanner extends StatefulDisposable.Base implements DBObjectL
         if (selectedConnection == null || selectedConnection instanceof VirtualConnectionHandler) {
             ConnectionManager connectionManager = ConnectionManager.getInstance(model.getProject());
             List<ConnectionHandler> connectionHandlers = connectionManager.getConnectionHandlers();
-            connectionHandlers.forEach(
-                    connectionHandler -> {
-                        model.checkCancelled();
+            for (ConnectionHandler connectionHandler : connectionHandlers) {
+                model.checkCancelled();
 
-                        DBObjectListContainer objectListContainer = connectionHandler.getObjectBundle().getObjectListContainer();
-                        objectListContainer.visitLists(this, true);
-                    });
+                DBObjectListContainer objectListContainer = connectionHandler.getObjectBundle().getObjectListContainer();
+                objectListContainer.visitLists(this, true);
+            }
         } else {
             DBObjectListContainer objectListContainer =
                     selectedSchema == null ?

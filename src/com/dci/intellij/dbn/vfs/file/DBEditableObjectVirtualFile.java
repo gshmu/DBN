@@ -206,7 +206,9 @@ public class DBEditableObjectVirtualFile extends DBObjectVirtualFile<DBSchemaObj
     public void invalidate() {
         List<DBContentVirtualFile> contentVirtualFiles = contentFiles.value();
         if (contentVirtualFiles != null) {
-            contentVirtualFiles.forEach(virtualFile -> virtualFile.invalidate());
+            for (DBContentVirtualFile virtualFile : contentVirtualFiles) {
+                virtualFile.invalidate();
+            }
         }
 
         contentFiles.set(EMPTY_CONTENT_FILES);

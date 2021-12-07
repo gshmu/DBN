@@ -68,18 +68,18 @@ import static com.dci.intellij.dbn.execution.ExecutionStatus.CANCELLED;
 public abstract class DBJdbcDebugProcess<T extends ExecutionInput> extends XDebugProcess implements DBDebugProcess, NotificationSupport {
     protected DBNConnection targetConnection;
     private DBNConnection debugConnection;
-    private ConnectionHandlerRef connectionHandlerRef;
-    private DBBreakpointHandler[] breakpointHandlers;
-    private DBDebugProcessStatusHolder status = new DBDebugProcessStatusHolder();
+    private final DBDebugProcessStatusHolder status = new DBDebugProcessStatusHolder();
+    private final ConnectionHandlerRef connectionHandler;
+    private final DBBreakpointHandler[] breakpointHandlers;
+    private final DBDebugConsoleLogger console;
 
     private transient DebuggerRuntimeInfo runtimeInfo;
     private transient ExecutionBacktraceInfo backtraceInfo;
-    private DBDebugConsoleLogger console;
 
     public DBJdbcDebugProcess(@NotNull XDebugSession session, ConnectionHandler connectionHandler) {
         super(session);
-        console = new DBDebugConsoleLogger(session);
-        this.connectionHandlerRef = ConnectionHandlerRef.of(connectionHandler);
+        this.console = new DBDebugConsoleLogger(session);
+        this.connectionHandler = ConnectionHandlerRef.of(connectionHandler);
         Project project = session.getProject();
         DatabaseDebuggerManager.getInstance(project).registerDebugSession(connectionHandler);
 
@@ -96,7 +96,6 @@ public abstract class DBJdbcDebugProcess<T extends ExecutionInput> extends XDebu
     public boolean is(DBDebugProcessStatus status) {
         return this.status.is(status);
     }
-
     public DBNConnection getTargetConnection() {
         return targetConnection;
     }
@@ -107,7 +106,7 @@ public abstract class DBJdbcDebugProcess<T extends ExecutionInput> extends XDebu
 
     @Override
     public ConnectionHandler getConnectionHandler() {
-        return connectionHandlerRef.ensure();
+        return connectionHandler.ensure();
     }
 
     @Override
