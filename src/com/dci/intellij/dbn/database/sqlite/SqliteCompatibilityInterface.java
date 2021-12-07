@@ -1,6 +1,6 @@
 package com.dci.intellij.dbn.database.sqlite;
 
-import com.dci.intellij.dbn.common.util.StringUtil;
+import com.dci.intellij.dbn.common.util.Strings;
 import com.dci.intellij.dbn.connection.DatabaseAttachmentHandler;
 import com.dci.intellij.dbn.data.sorting.SortDirection;
 import com.dci.intellij.dbn.database.DatabaseCompatibilityInterface;
@@ -78,7 +78,7 @@ class SqliteCompatibilityInterface extends DatabaseCompatibilityInterface {
 
     @Override
     public SessionStatus getSessionStatus(String statusName) {
-        if (StringUtil.isEmpty(statusName)) return SessionStatus.INACTIVE;
+        if (Strings.isEmpty(statusName)) return SessionStatus.INACTIVE;
         else return SessionStatus.ACTIVE;
     }
 

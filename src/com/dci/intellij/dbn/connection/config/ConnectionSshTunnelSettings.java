@@ -1,7 +1,7 @@
 package com.dci.intellij.dbn.connection.config;
 
 import com.dci.intellij.dbn.common.options.BasicProjectConfiguration;
-import com.dci.intellij.dbn.common.util.StringUtil;
+import com.dci.intellij.dbn.common.util.Strings;
 import com.dci.intellij.dbn.connection.ConnectionId;
 import com.dci.intellij.dbn.connection.config.ui.ConnectionSshTunnelSettingsForm;
 import com.dci.intellij.dbn.connection.ssh.SshAuthType;
@@ -68,7 +68,7 @@ public class ConnectionSshTunnelSettings extends BasicProjectConfiguration<Conne
 
 
         password = PasswordUtil.decodePassword(getString(element, TEMP_PWD_ATTRIBUTE, password));
-        if (StringUtil.isEmpty(password)) {
+        if (Strings.isEmpty(password)) {
             password = PasswordUtil.decodePassword(getString(element, OLD_PWD_ATTRIBUTE, password));
         }
 

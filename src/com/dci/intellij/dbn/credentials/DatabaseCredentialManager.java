@@ -1,6 +1,6 @@
 package com.dci.intellij.dbn.credentials;
 
-import com.dci.intellij.dbn.common.util.StringUtil;
+import com.dci.intellij.dbn.common.util.Strings;
 import com.dci.intellij.dbn.connection.ConnectionId;
 import com.intellij.credentialStore.CredentialAttributes;
 import com.intellij.credentialStore.Credentials;
@@ -24,7 +24,7 @@ public class DatabaseCredentialManager implements NamedComponent {
 
     public void setPassword(@NotNull ConnectionId connectionId, @NotNull String userName, @Nullable String password) {
         CredentialAttributes credentialAttributes = createCredentialAttributes(connectionId, userName);
-        Credentials credentials = StringUtil.isEmpty(password) ? null : new Credentials(userName, password);
+        Credentials credentials = Strings.isEmpty(password) ? null : new Credentials(userName, password);
 
         PasswordSafe passwordSafe = PasswordSafe.getInstance();
         passwordSafe.set(credentialAttributes, credentials, false);

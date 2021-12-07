@@ -13,7 +13,7 @@ import org.jetbrains.annotations.NotNull;
 import javax.swing.JComponent;
 import java.util.UUID;
 
-public class ActionUtil implements Lookup {
+public class Actions implements Lookup {
     public static final AnAction SEPARATOR = Separator.getInstance();
 
     public static ActionToolbar createActionToolbar(@NotNull JComponent component, String place, boolean horizontal, String actionGroupName){
@@ -53,7 +53,7 @@ public class ActionUtil implements Lookup {
     }
 
     private static String adjustPlace(String place) {
-        if (StringUtil.isEmpty(place)) {
+        if (Strings.isEmpty(place)) {
             return UUID.randomUUID().toString();
         }
         return place;

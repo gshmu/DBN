@@ -9,12 +9,11 @@ import com.dci.intellij.dbn.common.option.DoNotAskOption;
 import com.dci.intellij.dbn.common.thread.Dispatch;
 import com.intellij.openapi.progress.ProcessCanceledException;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.ui.Messages;
 import org.jetbrains.annotations.Nullable;
 
 import javax.swing.Icon;
 
-public class MessageUtil {
+public class Messages {
 
     public static final String[] OPTIONS_OK = options("OK");
     public static final String[] OPTIONS_YES_NO = options("Yes", "No");
@@ -102,7 +101,7 @@ public class MessageUtil {
             @Nullable DoNotAskOption doNotAskOption) {
 
         Dispatch.run(() -> {
-            int option = Messages.showDialog(project, message, Constants.DBN_TITLE_DIALOG_SUFFIX + title, options, defaultOptionIndex, icon, doNotAskOption);
+            int option = com.intellij.openapi.ui.Messages.showDialog(project, message, Constants.DBN_TITLE_DIALOG_SUFFIX + title, options, defaultOptionIndex, icon, doNotAskOption);
             if (callback != null) {
                 callback.run(option);
             }
@@ -110,7 +109,7 @@ public class MessageUtil {
     }
 
     public static String[] options(String ... options) {
-        return CommonUtil.list(options);
+        return Commons.list(options);
     }
 
 }

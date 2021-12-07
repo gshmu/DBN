@@ -1,6 +1,6 @@
 package com.dci.intellij.dbn.execution.method.action;
 
-import com.dci.intellij.dbn.common.util.CommonUtil;
+import com.dci.intellij.dbn.common.util.Commons;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.SchemaId;
 import com.dci.intellij.dbn.execution.method.MethodExecutionInput;
@@ -11,7 +11,7 @@ import com.intellij.openapi.actionSystem.Presentation;
 import com.intellij.openapi.actionSystem.ex.ComboBoxAction;
 import org.jetbrains.annotations.NotNull;
 
-import javax.swing.*;
+import javax.swing.JComponent;
 
 public class ExecutionSchemasSelectAction extends ComboBoxAction {
     private MethodExecutionInput executionInput;
@@ -44,7 +44,7 @@ public class ExecutionSchemasSelectAction extends ComboBoxAction {
     public void update(AnActionEvent e) {
         SchemaId schema = executionInput.getTargetSchemaId();
         Presentation presentation = e.getPresentation();
-        schema = CommonUtil.nvl(schema, SchemaId.NONE);
+        schema = Commons.nvl(schema, SchemaId.NONE);
         presentation.setText(schema.getName(), false);
         presentation.setIcon(schema.getIcon());
     }

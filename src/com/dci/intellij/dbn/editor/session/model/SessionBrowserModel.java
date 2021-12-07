@@ -1,7 +1,7 @@
 package com.dci.intellij.dbn.editor.session.model;
 
 import com.dci.intellij.dbn.common.list.FilteredList;
-import com.dci.intellij.dbn.common.util.StringUtil;
+import com.dci.intellij.dbn.common.util.Strings;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.jdbc.DBNResultSet;
 import com.dci.intellij.dbn.data.model.DataModelState;
@@ -104,11 +104,11 @@ public class SessionBrowserModel extends ResultSetDataModel<SessionBrowserModelR
         }
         for (SessionBrowserModelRow row : rows) {
             String value = (String) row.getCellValue(columnName);
-            if (StringUtil.isNotEmpty(value) && !values.contains(value)) {
+            if (Strings.isNotEmpty(value) && !values.contains(value)) {
                 values.add(value);
             }
         }
-        if (StringUtil.isNotEmpty(selectedValue) && !values.contains(selectedValue)) {
+        if (Strings.isNotEmpty(selectedValue) && !values.contains(selectedValue)) {
             values.add(selectedValue);
         }
         Collections.sort(values);

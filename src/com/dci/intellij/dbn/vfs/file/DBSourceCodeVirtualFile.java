@@ -4,8 +4,8 @@ import com.dci.intellij.dbn.common.DevNullStreams;
 import com.dci.intellij.dbn.common.thread.Synchronized;
 import com.dci.intellij.dbn.common.thread.Write;
 import com.dci.intellij.dbn.common.util.ChangeTimestamp;
-import com.dci.intellij.dbn.common.util.DocumentUtil;
-import com.dci.intellij.dbn.common.util.StringUtil;
+import com.dci.intellij.dbn.common.util.Documents;
+import com.dci.intellij.dbn.common.util.Strings;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.ConnectionProvider;
 import com.dci.intellij.dbn.connection.session.DatabaseSession;
@@ -228,14 +228,14 @@ public class DBSourceCodeVirtualFile extends DBContentVirtualFile implements DBP
                 localContent.setText(newText);
             }
 
-            Document document = DocumentUtil.getDocument(DBSourceCodeVirtualFile.this);
+            Document document = Documents.getDocument(DBSourceCodeVirtualFile.this);
             if (document != null) {
-                DocumentUtil.setText(document, localContent.getText());
+                Documents.setText(document, localContent.getText());
                 SourceCodeOffsets offsets = localContent.getOffsets();
                 GuardedBlockMarkers guardedBlocks = offsets.getGuardedBlocks();
                 if (!guardedBlocks.isEmpty()) {
-                    DocumentUtil.removeGuardedBlocks(document, GuardedBlockType.READONLY_DOCUMENT_SECTION);
-                    DocumentUtil.createGuardedBlocks(document, GuardedBlockType.READONLY_DOCUMENT_SECTION, guardedBlocks, null);
+                    Documents.removeGuardedBlocks(document, GuardedBlockType.READONLY_DOCUMENT_SECTION);
+                    Documents.createGuardedBlocks(document, GuardedBlockType.READONLY_DOCUMENT_SECTION, guardedBlocks, null);
                 }
             }
         });
@@ -286,7 +286,7 @@ public class DBSourceCodeVirtualFile extends DBContentVirtualFile implements DBP
     @Override
     public void documentChanged(@NotNull DocumentEvent event) {
         CharSequence newContent = event.getDocument().getCharsSequence();
-        if (isNot(MODIFIED) && !StringUtil.equals(originalContent.getText(), newContent)) {
+        if (isNot(MODIFIED) && !Strings.equals(originalContent.getText(), newContent)) {
             set(MODIFIED, true);
         }
         localContent.setText(newContent);

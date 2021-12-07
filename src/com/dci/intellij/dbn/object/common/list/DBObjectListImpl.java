@@ -16,7 +16,7 @@ import com.dci.intellij.dbn.common.event.ProjectEvents;
 import com.dci.intellij.dbn.common.filter.CompoundFilter;
 import com.dci.intellij.dbn.common.filter.Filter;
 import com.dci.intellij.dbn.common.ui.tree.TreeEventType;
-import com.dci.intellij.dbn.common.util.StringUtil;
+import com.dci.intellij.dbn.common.util.Strings;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.GenericDatabaseElement;
 import com.dci.intellij.dbn.connection.config.ConnectionFilterSettings;
@@ -176,8 +176,8 @@ public class DBObjectListImpl<T extends DBObject> extends DynamicContentImpl<T> 
             String elementName = element.getName();
             String elementParentName = element.getParentObject().getName();
 
-            if (StringUtil.equalsIgnoreCase(elementName, name) &&
-                    StringUtil.equalsIgnoreCase(elementParentName, parentName)) {
+            if (Strings.equalsIgnoreCase(elementName, name) &&
+                    Strings.equalsIgnoreCase(elementParentName, parentName)) {
                 return element;
             }
         }

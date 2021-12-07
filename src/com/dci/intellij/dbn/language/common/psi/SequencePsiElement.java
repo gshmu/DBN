@@ -1,7 +1,7 @@
 package com.dci.intellij.dbn.language.common.psi;
 
 import com.dci.intellij.dbn.code.common.style.formatting.FormattingAttributes;
-import com.dci.intellij.dbn.common.util.StringUtil;
+import com.dci.intellij.dbn.common.util.Strings;
 import com.dci.intellij.dbn.language.common.element.ElementType;
 import com.dci.intellij.dbn.language.common.element.impl.BlockElementType;
 import com.dci.intellij.dbn.language.common.element.impl.ElementTypeBase;
@@ -226,7 +226,7 @@ public class SequencePsiElement<T extends ElementTypeBase> extends BasePsiElemen
             if (subjectPsiElement instanceof IdentifierPsiElement) {
                 IdentifierPsiElement identifierPsiElement = (IdentifierPsiElement) subjectPsiElement;
                 if (identifierPsiElement.getObjectType() == subjectType &&
-                        StringUtil.equalsIgnoreCase(subjectName, identifierPsiElement.getChars())) {
+                        Strings.equalsIgnoreCase(subjectName, identifierPsiElement.getChars())) {
                     return this;
                 }
             }

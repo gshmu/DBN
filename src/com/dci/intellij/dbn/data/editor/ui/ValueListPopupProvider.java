@@ -6,9 +6,9 @@ import com.dci.intellij.dbn.common.thread.Dispatch;
 import com.dci.intellij.dbn.common.thread.Progress;
 import com.dci.intellij.dbn.common.ui.GUIUtil;
 import com.dci.intellij.dbn.common.ui.KeyUtil;
-import com.dci.intellij.dbn.common.util.ActionUtil;
+import com.dci.intellij.dbn.common.util.Actions;
 import com.dci.intellij.dbn.common.util.Context;
-import com.dci.intellij.dbn.common.util.StringUtil;
+import com.dci.intellij.dbn.common.util.Strings;
 import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.actionSystem.DefaultActionGroup;
@@ -24,7 +24,8 @@ import com.intellij.openapi.util.Disposer;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import javax.swing.*;
+import javax.swing.Icon;
+import javax.swing.JLabel;
 import java.awt.event.FocusEvent;
 import java.awt.event.KeyEvent;
 import java.util.List;
@@ -139,16 +140,16 @@ public class ValueListPopupProvider implements TextFieldPopupProvider{
             DefaultActionGroup actionGroup = new DefaultActionGroup();
 
             for (String value : values) {
-                if (StringUtil.isNotEmpty(value)) {
+                if (Strings.isNotEmpty(value)) {
                     actionGroup.add(new ValueSelectAction(value));
                 }
             }
             if (secondaryValues.size() > 0) {
                 if (values.size() > 0) {
-                    actionGroup.add(ActionUtil.SEPARATOR);
+                    actionGroup.add(Actions.SEPARATOR);
                 }
                 for (String secondaryValue : secondaryValues) {
-                    if (StringUtil.isNotEmpty(secondaryValue)) {
+                    if (Strings.isNotEmpty(secondaryValue)) {
                         actionGroup.add(new ValueSelectAction(secondaryValue));
                     }
                 }

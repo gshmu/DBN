@@ -1,7 +1,7 @@
 package com.dci.intellij.dbn.editor.data.ui.table.listener;
 
 import com.dci.intellij.dbn.common.dispose.Failsafe;
-import com.dci.intellij.dbn.common.util.MessageUtil;
+import com.dci.intellij.dbn.common.util.Messages;
 import com.dci.intellij.dbn.data.type.DBDataType;
 import com.dci.intellij.dbn.editor.data.model.DatasetEditorModel;
 import com.dci.intellij.dbn.editor.data.model.DatasetEditorModelCell;
@@ -41,7 +41,7 @@ public class DatasetEditorKeyListener extends KeyAdapter {
                                     model.insertRecord(index + 1);
                                 }
                             } catch (SQLException e1) {
-                                MessageUtil.showErrorDialog(table.getProject(), "Could not create row in " + table.getDataset().getQualifiedNameWithType() + ".", e1);
+                                Messages.showErrorDialog(table.getProject(), "Could not create row in " + table.getDataset().getQualifiedNameWithType() + ".", e1);
                             }
                             e.consume();
                     }

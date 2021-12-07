@@ -2,7 +2,7 @@ package com.dci.intellij.dbn.language.common.psi;
 
 import com.dci.intellij.dbn.common.property.PropertyHolderBase;
 import com.dci.intellij.dbn.common.util.Safe;
-import com.dci.intellij.dbn.common.util.StringUtil;
+import com.dci.intellij.dbn.common.util.Strings;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.ConnectionHandlerRef;
 import com.dci.intellij.dbn.language.common.PsiElementRef;
@@ -59,7 +59,7 @@ public class PsiResolveResult extends PropertyHolderBase.IntStore<PsiResolveStat
         this.databaseSchema = DBObjectRef.of(psiElement.getDatabaseSchema());
         BasePsiElement enclosingScopePsiElement = psiElement.getEnclosingScopePsiElement();
         this.scopeTextLength = enclosingScopePsiElement == null ? 0 : enclosingScopePsiElement.getTextLength();
-        if (StringUtil.isEmpty(text)) {
+        if (Strings.isEmpty(text)) {
             text = "";
         }
     }

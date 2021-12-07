@@ -6,8 +6,8 @@ import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.common.routine.ParametricRunnable;
 import com.dci.intellij.dbn.common.thread.Dispatch;
 import com.dci.intellij.dbn.common.thread.Progress;
-import com.dci.intellij.dbn.common.util.CommonUtil;
-import com.dci.intellij.dbn.common.util.MessageUtil;
+import com.dci.intellij.dbn.common.util.Commons;
+import com.dci.intellij.dbn.common.util.Messages;
 import com.dci.intellij.dbn.connection.ConnectionAction;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.ConnectionId;
@@ -101,7 +101,7 @@ public class MethodExecutionManager extends AbstractProjectComponent implements 
                                     String message =
                                             "Can not execute method " +
                                                     executionInput.getMethodRef().getPath() + ".\nMethod not found!";
-                                    MessageUtil.showErrorDialog(project, message);
+                                    Messages.showErrorDialog(project, message);
                                 } else {
                                     // load the arguments in background
                                     executionInput.getMethod().getArguments();
@@ -118,7 +118,7 @@ public class MethodExecutionManager extends AbstractProjectComponent implements 
                                         "Can not execute method " + executionInput.getMethodRef().getPath() + ".\n" +
                                                 "No connectivity to '" + connectionHandler.getQualifiedName() + "'. " +
                                                 "Please check your connection settings and try again.";
-                                MessageUtil.showErrorDialog(project, message);
+                                Messages.showErrorDialog(project, message);
                             }
                         }));
     }
@@ -133,7 +133,7 @@ public class MethodExecutionManager extends AbstractProjectComponent implements 
         Project project = getProject();
         Progress.modal(project, "Loading method execution history", true,
                 (progress) -> {
-                    MethodExecutionInput selectedInput = CommonUtil.nvln(selection, executionHistory.getLastSelection());
+                    MethodExecutionInput selectedInput = Commons.nvln(selection, executionHistory.getLastSelection());
                     if (selectedInput != null) {
                         // initialize method arguments while in background
                         DBMethod method = selectedInput.getMethod();
@@ -171,7 +171,7 @@ public class MethodExecutionManager extends AbstractProjectComponent implements 
 
         if (method == null) {
             DBObjectRef<DBMethod> methodRef = executionInput.getMethodRef();
-            MessageUtil.showErrorDialog(getProject(), "Could not resolve " + methodRef.getQualifiedNameWithType() + "\".");
+            Messages.showErrorDialog(getProject(), "Could not resolve " + methodRef.getQualifiedNameWithType() + "\".");
         } else {
             Project project = method.getProject();
             ConnectionHandler connectionHandler = Failsafe.nn(method.getConnectionHandler());
@@ -193,7 +193,7 @@ public class MethodExecutionManager extends AbstractProjectComponent implements 
                         } catch (SQLException e) {
                             context.set(EXECUTING, false);
                             if (context.isNot(CANCELLED)) {
-                                MessageUtil.showErrorDialog(project,
+                                Messages.showErrorDialog(project,
                                         "Method execution error",
                                         "Error executing " + method.getQualifiedNameWithType() + ".\n" + e.getMessage().trim(),
                                         new String[]{"Try Again", "Cancel"}, 0,

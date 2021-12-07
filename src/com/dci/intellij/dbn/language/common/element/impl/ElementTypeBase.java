@@ -5,7 +5,7 @@ import com.dci.intellij.dbn.code.common.style.formatting.FormattingDefinitionFac
 import com.dci.intellij.dbn.code.common.style.formatting.IndentDefinition;
 import com.dci.intellij.dbn.code.common.style.formatting.SpacingDefinition;
 import com.dci.intellij.dbn.common.Icons;
-import com.dci.intellij.dbn.common.util.StringUtil;
+import com.dci.intellij.dbn.common.util.Strings;
 import com.dci.intellij.dbn.language.common.DBLanguage;
 import com.dci.intellij.dbn.language.common.DBLanguageDialect;
 import com.dci.intellij.dbn.language.common.TokenType;
@@ -83,7 +83,7 @@ public abstract class ElementTypeBase extends IElementType implements ElementTyp
         this.id = defId.intern();
         this.bundle = bundle;
         this.parent = parent;
-        if (StringUtil.isNotEmpty(stringAttribute(def,"exit")) && !(parent instanceof SequenceElementType)) {
+        if (Strings.isNotEmpty(stringAttribute(def,"exit")) && !(parent instanceof SequenceElementType)) {
             log.warn('[' + getLanguageDialect().getID() + "] Invalid element attribute 'exit'. (id=" + this.id + "). Attribute is only allowed for direct child of sequence element");
         }
         loadDefinition(def);
@@ -132,7 +132,7 @@ public abstract class ElementTypeBase extends IElementType implements ElementTyp
 
     protected void loadDefinition(Element def) throws ElementTypeDefinitionException {
         String attributesString = stringAttribute(def, "attributes");
-        if (StringUtil.isNotEmptyOrSpaces(attributesString)) {
+        if (Strings.isNotEmptyOrSpaces(attributesString)) {
             attributes =  new ElementTypeAttributeHolder(attributesString);
         }
 
@@ -160,11 +160,11 @@ public abstract class ElementTypeBase extends IElementType implements ElementTyp
         String templateId = stringAttribute(def, "wrapping-template");
         TokenElementType beginTokenElement = null;
         TokenElementType endTokenElement = null;
-        if (StringUtil.isEmpty(templateId)) {
+        if (Strings.isEmpty(templateId)) {
             String beginTokenId = stringAttribute(def, "wrapping-begin-token");
             String endTokenId = stringAttribute(def, "wrapping-end-token");
 
-            if (StringUtil.isNotEmpty(beginTokenId) && StringUtil.isNotEmpty(endTokenId)) {
+            if (Strings.isNotEmpty(beginTokenId) && Strings.isNotEmpty(endTokenId)) {
                 beginTokenElement = new TokenElementType(bundle, this, beginTokenId, id);
                 endTokenElement = new TokenElementType(bundle, this, endTokenId, id);
             }
@@ -255,7 +255,7 @@ public abstract class ElementTypeBase extends IElementType implements ElementTyp
 
     protected boolean getBooleanAttribute(Element element, String attributeName) {
         String attributeValue = stringAttribute(element, attributeName);
-        if (StringUtil.isNotEmpty(attributeValue)) {
+        if (Strings.isNotEmpty(attributeValue)) {
             if (Objects.equals(attributeValue, "true")) return true;
             if (Objects.equals(attributeValue, "false")) return false;
             log.warn('[' + getLanguageDialect().getID() + "] Invalid element boolean attribute '" + attributeName + "' (id=" + this.id + "). Expected 'true' or 'false'");

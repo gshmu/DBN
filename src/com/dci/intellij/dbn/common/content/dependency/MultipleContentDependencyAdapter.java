@@ -2,7 +2,7 @@ package com.dci.intellij.dbn.common.content.dependency;
 
 import com.dci.intellij.dbn.common.content.DynamicContent;
 import com.dci.intellij.dbn.common.dispose.SafeDisposer;
-import com.dci.intellij.dbn.common.util.CollectionUtil;
+import com.dci.intellij.dbn.common.util.Compactables;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 
 import java.util.ArrayList;
@@ -18,7 +18,7 @@ public class MultipleContentDependencyAdapter extends BasicDependencyAdapter imp
                 dependencies.add(new BasicContentDependency(sourceContent));
             }
         }
-        dependencies = CollectionUtil.compact(dependencies);
+        dependencies = Compactables.compact(dependencies);
     }
 
     @Override

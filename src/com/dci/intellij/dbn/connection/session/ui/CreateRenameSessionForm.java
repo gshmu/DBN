@@ -3,8 +3,8 @@ package com.dci.intellij.dbn.connection.session.ui;
 import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.common.ui.DBNFormImpl;
 import com.dci.intellij.dbn.common.ui.DBNHeaderForm;
-import com.dci.intellij.dbn.common.util.NamingUtil;
-import com.dci.intellij.dbn.common.util.StringUtil;
+import com.dci.intellij.dbn.common.util.Naming;
+import com.dci.intellij.dbn.common.util.Strings;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.ConnectionHandlerRef;
 import com.dci.intellij.dbn.connection.session.DatabaseSession;
@@ -48,7 +48,7 @@ public class CreateRenameSessionForm extends DBNFormImpl{
         if (session == null) {
             name = "Session 1";
             while (sessionNames.contains(name)) {
-                name = NamingUtil.getNextNumberedName(name, true);
+                name = Naming.getNextNumberedName(name, true);
             }
         } else {
             name = session.getName();
@@ -61,9 +61,9 @@ public class CreateRenameSessionForm extends DBNFormImpl{
             @Override
             protected void textChanged(@NotNull DocumentEvent e) {
                 String errorText = null;
-                String text = StringUtil.trim(sessionNameTextField.getText());
+                String text = Strings.trim(sessionNameTextField.getText());
 
-                if (StringUtil.isEmpty(text)) {
+                if (Strings.isEmpty(text)) {
                     errorText = "Session name must be specified";
                 }
                 else if (sessionNames.contains(text)) {

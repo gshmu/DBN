@@ -3,7 +3,7 @@ package com.dci.intellij.dbn.language.common.psi;
 import com.dci.intellij.dbn.common.consumer.SetCollector;
 import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.common.thread.Read;
-import com.dci.intellij.dbn.common.util.DocumentUtil;
+import com.dci.intellij.dbn.common.util.Documents;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.SchemaId;
 import com.dci.intellij.dbn.connection.mapping.FileConnectionMappingManager;
@@ -129,7 +129,7 @@ public class PsiUtil {
 
         int offset = editor.getCaretModel().getOffset();
 
-        PsiFile file = DocumentUtil.getFile(editor);
+        PsiFile file = Documents.getFile(editor);
         if (file != null) {
             PsiElement current;
 

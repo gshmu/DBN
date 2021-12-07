@@ -1,7 +1,7 @@
 package com.dci.intellij.dbn.diagnostics.data;
 
 import com.dci.intellij.dbn.common.filter.Filter;
-import com.dci.intellij.dbn.common.util.StringUtil;
+import com.dci.intellij.dbn.common.util.Strings;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -25,6 +25,6 @@ public class ParserDiagnosticsFilter implements Filter<ParserDiagnosticsEntry> {
     }
 
     private boolean matchesFileType(ParserDiagnosticsEntry entry) {
-        return StringUtil.isEmpty(fileType) || StringUtil.endsWithIgnoreCase(entry.getFilePath(), "." + fileType);
+        return Strings.isEmpty(fileType) || Strings.endsWithIgnoreCase(entry.getFilePath(), "." + fileType);
     }
 }

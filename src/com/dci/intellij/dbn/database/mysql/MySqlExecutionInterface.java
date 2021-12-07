@@ -2,7 +2,7 @@ package com.dci.intellij.dbn.database.mysql;
 
 import com.dci.intellij.dbn.common.database.AuthenticationInfo;
 import com.dci.intellij.dbn.common.database.DatabaseInfo;
-import com.dci.intellij.dbn.common.util.StringUtil;
+import com.dci.intellij.dbn.common.util.Strings;
 import com.dci.intellij.dbn.connection.SchemaId;
 import com.dci.intellij.dbn.database.CmdLineExecutionInput;
 import com.dci.intellij.dbn.database.common.DatabaseExecutionInterfaceImpl;
@@ -44,12 +44,12 @@ public class MySqlExecutionInterface extends DatabaseExecutionInterfaceImpl {
         command.add("--host=" + databaseInfo.getHost());
 
         String port = databaseInfo.getPort();
-        if (StringUtil.isNotEmpty(port)) {
+        if (Strings.isNotEmpty(port)) {
             command.add("--port=" + port);
         }
 
         String database = databaseInfo.getDatabase();
-        if (StringUtil.isNotEmpty(database)) {
+        if (Strings.isNotEmpty(database)) {
             command.add("--database=" + database);
         }
 

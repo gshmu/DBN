@@ -2,8 +2,8 @@ package com.dci.intellij.dbn.execution.common.ui;
 
 import com.dci.intellij.dbn.common.compatibility.CompatibilityUtil;
 import com.dci.intellij.dbn.common.dispose.Failsafe;
-import com.dci.intellij.dbn.common.util.DocumentUtil;
-import com.dci.intellij.dbn.common.util.EditorUtil;
+import com.dci.intellij.dbn.common.util.Documents;
+import com.dci.intellij.dbn.common.util.Editors;
 import com.dci.intellij.dbn.execution.ExecutionResult;
 import com.dci.intellij.dbn.language.sql.SQLFileType;
 import com.intellij.ide.highlighter.HighlighterFactory;
@@ -22,9 +22,11 @@ import com.intellij.openapi.ui.popup.LightweightWindowEvent;
 import com.intellij.psi.PsiFile;
 import org.jetbrains.annotations.NotNull;
 
-import javax.swing.*;
+import javax.swing.JScrollPane;
 import javax.swing.border.LineBorder;
-import java.awt.*;
+import java.awt.Component;
+import java.awt.Dimension;
+import java.awt.Point;
 
 public class StatementViewerPopup implements Disposable {
     private final String resultName;
@@ -35,7 +37,7 @@ public class StatementViewerPopup implements Disposable {
         Project project = executionResult.getProject();
 
         PsiFile previewFile = Failsafe.nn(executionResult.createPreviewFile());
-        Document document = Failsafe.nn(DocumentUtil.getDocument(previewFile));
+        Document document = Failsafe.nn(Documents.getDocument(previewFile));
         viewer = (EditorEx) EditorFactory.getInstance().createViewer(document, project);
         viewer.setEmbeddedIntoDialogWrapper(true);
         viewer.getScrollPane().setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
@@ -83,7 +85,7 @@ public class StatementViewerPopup implements Disposable {
         popupBuilder.setTitle("<html>" + resultName + "</html>");
         JBPopup popup = popupBuilder.createPopup();
 
-        Dimension dimension = EditorUtil.calculatePreferredSize(viewer);
+        Dimension dimension = Editors.calculatePreferredSize(viewer);
         //Dimension dimension = ((EditorImpl) viewer).getPreferredSize();
         dimension.setSize(Math.min(dimension.getWidth() + 20, 1000), Math.min(dimension.getHeight() + 70, 800) );
         popup.setSize(dimension);
@@ -100,7 +102,7 @@ public class StatementViewerPopup implements Disposable {
     @Override
     public void dispose() {
         if (viewer != null) {
-            EditorUtil.releaseEditor(viewer);
+            Editors.releaseEditor(viewer);
             viewer = null;
         }
     }

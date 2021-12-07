@@ -6,7 +6,7 @@ import com.dci.intellij.dbn.common.thread.Dispatch;
 import com.dci.intellij.dbn.common.ui.KeyUtil;
 import com.dci.intellij.dbn.common.ui.listener.MouseClickedListener;
 import com.dci.intellij.dbn.common.ui.panel.DBNPanelImpl;
-import com.dci.intellij.dbn.common.util.StringUtil;
+import com.dci.intellij.dbn.common.util.Strings;
 import com.dci.intellij.dbn.data.editor.text.TextEditorAdapter;
 import com.dci.intellij.dbn.data.editor.text.ui.TextEditorDialog;
 import com.intellij.openapi.actionSystem.IdeActions;
@@ -20,9 +20,13 @@ import lombok.Getter;
 import lombok.Setter;
 import org.jetbrains.annotations.NotNull;
 
-import javax.swing.*;
+import javax.swing.JLabel;
+import javax.swing.JTextField;
 import javax.swing.text.Document;
-import java.awt.*;
+import java.awt.BorderLayout;
+import java.awt.Cursor;
+import java.awt.Dimension;
+import java.awt.Font;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
@@ -62,7 +66,7 @@ public class TextFieldWithTextEditor extends DBNPanelImpl implements DataEditorC
 
         button.setToolTipText("Open editor (" + shortcutText + ')');
         add(button, BorderLayout.EAST);
-        if (StringUtil.isNotEmpty(displayValue)) {
+        if (Strings.isNotEmpty(displayValue)) {
             textField.setText(displayValue);
             textField.setEnabled(false);
             textField.setDisabledTextColor(UIUtil.getLabelDisabledForeground());
@@ -171,7 +175,7 @@ public class TextFieldWithTextEditor extends DBNPanelImpl implements DataEditorC
     @Override
     public void afterUpdate() {
         Object userValue = userValueHolder.getUserValue();
-        if (userValue instanceof String && StringUtil.isEmpty(displayValue)) {
+        if (userValue instanceof String && Strings.isEmpty(displayValue)) {
             Dispatch.run(() -> {
                 String text = (String) userValue;
                 setEditable(text.length() < 1000 && text.indexOf('\n') == -1);

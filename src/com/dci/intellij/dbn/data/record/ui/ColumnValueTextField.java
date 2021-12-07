@@ -1,7 +1,7 @@
 package com.dci.intellij.dbn.data.record.ui;
 
 import com.dci.intellij.dbn.common.ui.MouseUtil;
-import com.dci.intellij.dbn.common.util.TextAttributesUtil;
+import com.dci.intellij.dbn.common.util.TextAttributes;
 import com.dci.intellij.dbn.data.grid.color.DataGridTextAttributesKeys;
 import com.dci.intellij.dbn.data.record.DatasetRecord;
 import com.dci.intellij.dbn.editor.data.DatasetEditorManager;
@@ -14,8 +14,9 @@ import com.dci.intellij.dbn.object.lookup.DBObjectRef;
 import com.intellij.ui.SimpleTextAttributes;
 import org.jetbrains.annotations.Nullable;
 
-import javax.swing.*;
-import java.awt.*;
+import javax.swing.JTextField;
+import java.awt.Color;
+import java.awt.Cursor;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
@@ -28,7 +29,7 @@ class ColumnValueTextField extends JTextField {
         this.record = record;
         this.columnRef = DBObjectRef.of(column);
         if (column.isPrimaryKey()) {
-            SimpleTextAttributes textAttributes = TextAttributesUtil.getSimpleTextAttributes(DataGridTextAttributesKeys.PRIMARY_KEY);
+            SimpleTextAttributes textAttributes = TextAttributes.getSimpleTextAttributes(DataGridTextAttributesKeys.PRIMARY_KEY);
             setForeground(textAttributes.getFgColor());
             Color background = textAttributes.getBgColor();
             if (background != null) {
@@ -36,7 +37,7 @@ class ColumnValueTextField extends JTextField {
             }
         } else if (column.isForeignKey()) {
             addMouseListener(mouseListener);
-            SimpleTextAttributes textAttributes = TextAttributesUtil.getSimpleTextAttributes(DataGridTextAttributesKeys.FOREIGN_KEY);
+            SimpleTextAttributes textAttributes = TextAttributes.getSimpleTextAttributes(DataGridTextAttributesKeys.FOREIGN_KEY);
             setForeground(textAttributes.getFgColor());
             Color background = textAttributes.getBgColor();
             if (background != null) {

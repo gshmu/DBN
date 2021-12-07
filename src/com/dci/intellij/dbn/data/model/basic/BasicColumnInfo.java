@@ -1,7 +1,7 @@
 package com.dci.intellij.dbn.data.model.basic;
 
 import com.dci.intellij.dbn.common.dispose.Failsafe;
-import com.dci.intellij.dbn.common.util.StringUtil;
+import com.dci.intellij.dbn.common.util.Strings;
 import com.dci.intellij.dbn.data.model.ColumnInfo;
 import com.dci.intellij.dbn.data.type.DBDataType;
 import com.dci.intellij.dbn.data.type.GenericDataType;
@@ -15,7 +15,7 @@ public class BasicColumnInfo implements ColumnInfo {
     protected DBDataType dataType;
 
     public BasicColumnInfo(String name, DBDataType dataType, int columnIndex) {
-        this.name = StringUtil.intern(name);
+        this.name = Strings.intern(name);
         this.columnIndex = columnIndex;
         this.dataType = dataType;
     }

@@ -3,7 +3,7 @@ package com.dci.intellij.dbn.execution.script.action;
 import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.common.action.DumbAwareProjectAction;
 import com.dci.intellij.dbn.common.action.Lookup;
-import com.dci.intellij.dbn.common.util.DocumentUtil;
+import com.dci.intellij.dbn.common.util.Documents;
 import com.dci.intellij.dbn.debugger.DatabaseDebuggerManager;
 import com.dci.intellij.dbn.execution.script.ScriptExecutionManager;
 import com.dci.intellij.dbn.language.common.DBLanguagePsiFile;
@@ -25,7 +25,7 @@ public class ExecuteScriptEditorAction extends DumbAwareProjectAction {
         if (editor != null) {
             FileDocumentManager.getInstance().saveDocument(editor.getDocument());
             ScriptExecutionManager scriptExecutionManager = ScriptExecutionManager.getInstance(project);
-            VirtualFile virtualFile = DocumentUtil.getVirtualFile(editor);
+            VirtualFile virtualFile = Documents.getVirtualFile(editor);
             scriptExecutionManager.executeScript(virtualFile);
         }
     }

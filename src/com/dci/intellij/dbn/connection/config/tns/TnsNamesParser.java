@@ -1,6 +1,6 @@
 package com.dci.intellij.dbn.connection.config.tns;
 
-import com.dci.intellij.dbn.common.util.StringUtil;
+import com.dci.intellij.dbn.common.util.Strings;
 import com.intellij.openapi.fileChooser.FileChooserDescriptor;
 import com.intellij.openapi.util.Condition;
 import com.intellij.openapi.vfs.VirtualFile;
@@ -14,7 +14,7 @@ import java.util.Objects;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import static com.dci.intellij.dbn.common.util.CommonUtil.nvlf;
+import static com.dci.intellij.dbn.common.util.Commons.coalesce;
 
 public class TnsNamesParser {
     public static final FileChooserDescriptor FILE_CHOOSER_DESCRIPTOR = new FileChooserDescriptor(true, false, false, false, false, false).
@@ -39,9 +39,9 @@ public class TnsNamesParser {
         int start = 0;
         while (matcher.find(start)) {
             String schema         = matcher.group("schema");
-            String protocol       = nvlf(matcher.group("protocol1"), matcher.group("protocol2"), matcher.group("protocol3"));
-            String host           = nvlf(matcher.group("host1"), matcher.group("host2"), matcher.group("host3"));
-            String port           = nvlf(matcher.group("port1"), matcher.group("port2"), matcher.group("port3"));
+            String protocol       = coalesce(() -> matcher.group("protocol1"), () -> matcher.group("protocol2"), () -> matcher.group("protocol3"));
+            String host           = coalesce(() -> matcher.group("host1"), () -> matcher.group("host2"), () -> matcher.group("host3"));
+            String port           = coalesce(() -> matcher.group("port1"), () -> matcher.group("port2"), () -> matcher.group("port3"));
             String server         = matcher.group("server");
             String sid            = matcher.group("sid");
             String serviceName    = matcher.group("servicename");
@@ -51,7 +51,7 @@ public class TnsNamesParser {
             String failoverMethod = matcher.group("failovermethod");
             start = matcher.end();
 
-            if (StringUtil.isNotEmpty(schema)) {
+            if (Strings.isNotEmpty(schema)) {
                 TnsName tnsName = new TnsName(
                         schema,
                         protocol,

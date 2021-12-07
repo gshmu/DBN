@@ -1,7 +1,7 @@
 package com.dci.intellij.dbn.editor.session.color;
 
 import com.dci.intellij.dbn.common.latent.Latent;
-import com.dci.intellij.dbn.common.util.TextAttributesUtil;
+import com.dci.intellij.dbn.common.util.TextAttributes;
 import com.dci.intellij.dbn.data.grid.color.DataGridTextAttributes;
 import com.dci.intellij.dbn.data.grid.color.DataGridTextAttributesKeys;
 import com.intellij.openapi.editor.colors.EditorColors;
@@ -37,12 +37,12 @@ public class SessionBrowserTextAttributes implements DataGridTextAttributes {
         EditorColorsScheme globalScheme = EditorColorsManager.getInstance().getGlobalScheme();
         caretRowBgColor = globalScheme.getAttributes(DataGridTextAttributesKeys.CARET_ROW).getBackgroundColor();
 
-        activeSession = TextAttributesUtil.getSimpleTextAttributes(SessionBrowserTextAttributesKeys.ACTIVE_SESSION);
-        inactiveSession = TextAttributesUtil.getSimpleTextAttributes(SessionBrowserTextAttributesKeys.INACTIVE_SESSION);
-        cachedSession = TextAttributesUtil.getSimpleTextAttributes(SessionBrowserTextAttributesKeys.CACHED_SESSION);
-        snipedSession = TextAttributesUtil.getSimpleTextAttributes(SessionBrowserTextAttributesKeys.SNIPED_SESSION);
-        killedSession = TextAttributesUtil.getSimpleTextAttributes(SessionBrowserTextAttributesKeys.KILLED_SESSION);
-        loadingData = TextAttributesUtil.getSimpleTextAttributes(DataGridTextAttributesKeys.LOADING_DATA);
+        activeSession = TextAttributes.getSimpleTextAttributes(SessionBrowserTextAttributesKeys.ACTIVE_SESSION);
+        inactiveSession = TextAttributes.getSimpleTextAttributes(SessionBrowserTextAttributesKeys.INACTIVE_SESSION);
+        cachedSession = TextAttributes.getSimpleTextAttributes(SessionBrowserTextAttributesKeys.CACHED_SESSION);
+        snipedSession = TextAttributes.getSimpleTextAttributes(SessionBrowserTextAttributesKeys.SNIPED_SESSION);
+        killedSession = TextAttributes.getSimpleTextAttributes(SessionBrowserTextAttributesKeys.KILLED_SESSION);
+        loadingData = TextAttributes.getSimpleTextAttributes(DataGridTextAttributesKeys.LOADING_DATA);
 
         activeSessionAtCaretRow = new SimpleTextAttributes(caretRowBgColor, activeSession.getFgColor(), null, activeSession.getStyle());
         inactiveSessionAtCaretRow = new SimpleTextAttributes(caretRowBgColor, inactiveSession.getFgColor(), null, inactiveSession.getStyle());
@@ -51,8 +51,8 @@ public class SessionBrowserTextAttributes implements DataGridTextAttributes {
         killedSessionAtCaretRow = new SimpleTextAttributes(caretRowBgColor, killedSession.getFgColor(), null, killedSession.getStyle());
         loadingDataAtCaretRow = new SimpleTextAttributes(caretRowBgColor, loadingData.getFgColor(), null, loadingData.getFontStyle());
 
-        selection = TextAttributesUtil.getSimpleTextAttributes(DataGridTextAttributesKeys.SELECTION);
-        searchResult = TextAttributesUtil.getSimpleTextAttributes(EditorColors.TEXT_SEARCH_RESULT_ATTRIBUTES);
+        selection = TextAttributes.getSimpleTextAttributes(DataGridTextAttributesKeys.SELECTION);
+        searchResult = TextAttributes.getSimpleTextAttributes(EditorColors.TEXT_SEARCH_RESULT_ATTRIBUTES);
     }
 
     public static SessionBrowserTextAttributes get() {

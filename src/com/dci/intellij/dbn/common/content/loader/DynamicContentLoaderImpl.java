@@ -2,7 +2,7 @@ package com.dci.intellij.dbn.common.content.loader;
 
 import com.dci.intellij.dbn.common.content.DynamicContentElement;
 import com.dci.intellij.dbn.common.content.DynamicContentType;
-import com.dci.intellij.dbn.common.util.CommonUtil;
+import com.dci.intellij.dbn.common.util.Commons;
 import com.dci.intellij.dbn.database.common.metadata.DBObjectMetadata;
 import lombok.extern.slf4j.Slf4j;
 import org.jetbrains.annotations.NotNull;
@@ -43,7 +43,7 @@ public abstract class DynamicContentLoaderImpl<
             @NotNull DynamicContentType contentType,
             @NotNull DynamicContentLoader loader) {
 
-        parentContentType = CommonUtil.nvl(parentContentType, NULL);
+        parentContentType = Commons.nvl(parentContentType, NULL);
         Map<DynamicContentType, DynamicContentLoader> childLoaders = LOADERS.computeIfAbsent(parentContentType, k -> new HashMap<>());
         DynamicContentLoader contentLoader = childLoaders.get(contentType);
         if (contentLoader == null) {
@@ -58,7 +58,7 @@ public abstract class DynamicContentLoaderImpl<
             @Nullable DynamicContentType<?> parentContentType,
             @NotNull DynamicContentType<?> contentType) {
 
-        DynamicContentType<?> lookupParentContentType = CommonUtil.nvl(parentContentType, NULL);
+        DynamicContentType<?> lookupParentContentType = Commons.nvl(parentContentType, NULL);
         while (lookupParentContentType != null) {
             Map<DynamicContentType, DynamicContentLoader> loaderMap = LOADERS.get(lookupParentContentType);
             if (loaderMap != null) {

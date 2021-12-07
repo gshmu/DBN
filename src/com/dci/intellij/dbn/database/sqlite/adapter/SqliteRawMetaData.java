@@ -1,6 +1,6 @@
 package com.dci.intellij.dbn.database.sqlite.adapter;
 
-import com.dci.intellij.dbn.common.util.CommonUtil;
+import com.dci.intellij.dbn.common.util.Commons;
 import com.dci.intellij.dbn.database.common.util.ResultSetReader;
 import org.jetbrains.annotations.NotNull;
 
@@ -250,7 +250,7 @@ public class SqliteRawMetaData {
 
         @NotNull
         public List<T> getRows() {
-            return CommonUtil.nvl(rows, Collections.emptyList());
+            return Commons.nvl(rows, Collections.emptyList());
         }
 
         protected abstract T createRow(ResultSet resultSet) throws SQLException;

@@ -2,7 +2,7 @@ package com.dci.intellij.dbn.execution.script.options.ui;
 
 import com.dci.intellij.dbn.common.ui.table.DBNEditableTableModel;
 import com.dci.intellij.dbn.common.util.Safe;
-import com.dci.intellij.dbn.common.util.StringUtil;
+import com.dci.intellij.dbn.common.util.Strings;
 import com.dci.intellij.dbn.connection.DatabaseType;
 import com.dci.intellij.dbn.execution.script.CmdLineInterface;
 import com.dci.intellij.dbn.execution.script.CmdLineInterfaceBundle;
@@ -118,7 +118,7 @@ public class CmdLineInterfacesTableModel extends DBNEditableTableModel {
         Set<String> names = new HashSet<String>();
         for (CmdLineInterface cmdLineInterface : bundle.getInterfaces()) {
             String name = cmdLineInterface.getName();
-            if (StringUtil.isEmpty(name)) {
+            if (Strings.isEmpty(name)) {
                 throw new ConfigurationException("Please provide names for each Command-Line Interface.");
             } else if (names.contains(name)) {
                 throw new ConfigurationException("Please provide unique Command-Line Interface names.");
@@ -128,7 +128,7 @@ public class CmdLineInterfacesTableModel extends DBNEditableTableModel {
         }
 
         for (CmdLineInterface cmdLineInterface : bundle.getInterfaces()) {
-            if (StringUtil.isEmpty(cmdLineInterface.getExecutablePath())) {
+            if (Strings.isEmpty(cmdLineInterface.getExecutablePath())) {
                 throw new ConfigurationException("Please provide executable paths for each Command-Line Interface.");
             }
         }

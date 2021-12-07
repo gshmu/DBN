@@ -1,6 +1,6 @@
 package com.dci.intellij.dbn.language.common.element.util;
 
-import com.dci.intellij.dbn.common.util.StringUtil;
+import com.dci.intellij.dbn.common.util.Strings;
 import com.dci.intellij.dbn.language.common.TokenType;
 import com.dci.intellij.dbn.language.common.TokenTypeCategory;
 import com.dci.intellij.dbn.language.common.element.parser.ParserBuilder;
@@ -32,7 +32,7 @@ public class ParseBuilderErrorHandler {
                     String value = tokenType.getValue();
                     String description =
                             tokenType.isIdentifier() ? "identifier" :
-                                    StringUtil.isNotEmptyOrSpaces(value) ? value.toUpperCase() : tokenType.getTypeName();
+                                    Strings.isNotEmptyOrSpaces(value) ? value.toUpperCase() : tokenType.getTypeName();
 
                     tokenDescriptions.add(description);
                 }

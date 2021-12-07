@@ -19,7 +19,7 @@ import javax.swing.UIManager;
 import java.awt.Color;
 import java.util.Objects;
 
-import static com.dci.intellij.dbn.common.util.CommonUtil.nvlf;
+import static com.dci.intellij.dbn.common.util.Commons.coalesce;
 
 public final class Colors {
     private Colors() {}
@@ -68,29 +68,29 @@ public final class Colors {
         private final Color tableHeaderBorderColor = adjust(UIUtil.getPanelBackground(), -0.07);
         private final Color tableGridColor = adjust(UIUtil.getTableBackground(), -0.09);
 
-        private final Color tableCaretRowColor = nvlf(
+        private final Color tableCaretRowColor = coalesce(
                 getGlobalScheme().getAttributes(DataGridTextAttributesKeys.CARET_ROW).getBackgroundColor(),
                 getGlobalScheme().getColor(EditorColors.CARET_ROW_COLOR));
 
-        private final Color tableSelectionBackgroundColor = nvlf(
-                BasicTableTextAttributes.get().getSelection().getBgColor(),
-                getGlobalScheme().getColor(EditorColors.SELECTION_BACKGROUND_COLOR),
-                UIUtil.getTableSelectionBackground(false));
+        private final Color tableSelectionBackgroundColor = coalesce(
+                () -> BasicTableTextAttributes.get().getSelection().getBgColor(),
+                () -> getGlobalScheme().getColor(EditorColors.SELECTION_BACKGROUND_COLOR),
+                () -> UIUtil.getTableSelectionBackground(false));
 
-        private final Color tableSelectionBackgroundColorFocused = nvlf(
-                BasicTableTextAttributes.get().getSelection().getBgColor(),
-                getGlobalScheme().getColor(EditorColors.SELECTION_BACKGROUND_COLOR),
-                UIUtil.getTableSelectionBackground(true));
+        private final Color tableSelectionBackgroundColorFocused = coalesce(
+                () -> BasicTableTextAttributes.get().getSelection().getBgColor(),
+                () -> getGlobalScheme().getColor(EditorColors.SELECTION_BACKGROUND_COLOR),
+                () -> UIUtil.getTableSelectionBackground(true));
 
-        private final Color tableSelectionForegroundColor = nvlf(
-                BasicTableTextAttributes.get().getSelection().getFgColor(),
-                getGlobalScheme().getColor(EditorColors.SELECTION_FOREGROUND_COLOR),
-                UIUtil.getTableSelectionForeground(false));
+        private final Color tableSelectionForegroundColor = coalesce(
+                () -> BasicTableTextAttributes.get().getSelection().getFgColor(),
+                () -> getGlobalScheme().getColor(EditorColors.SELECTION_FOREGROUND_COLOR),
+                () -> UIUtil.getTableSelectionForeground(false));
 
-        private final Color tableSelectionForegroundColorFocused = nvlf(
-                BasicTableTextAttributes.get().getSelection().getFgColor(),
-                getGlobalScheme().getColor(EditorColors.SELECTION_FOREGROUND_COLOR),
-                UIUtil.getTableSelectionForeground(true));
+        private final Color tableSelectionForegroundColorFocused = coalesce(
+                () -> BasicTableTextAttributes.get().getSelection().getFgColor(),
+                () -> getGlobalScheme().getColor(EditorColors.SELECTION_FOREGROUND_COLOR),
+                () -> UIUtil.getTableSelectionForeground(true));
 
 
         private final Color tableLineNumberColor = getGlobalScheme().getColor(EditorColors.LINE_NUMBERS_COLOR);

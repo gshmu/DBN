@@ -3,8 +3,8 @@ package com.dci.intellij.dbn.connection.config.ui;
 import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.common.ui.ComboBoxUtil;
 import com.dci.intellij.dbn.common.ui.DBNFormImpl;
-import com.dci.intellij.dbn.common.util.MessageUtil;
-import com.dci.intellij.dbn.common.util.StringUtil;
+import com.dci.intellij.dbn.common.util.Messages;
+import com.dci.intellij.dbn.common.util.Strings;
 import com.dci.intellij.dbn.connection.DatabaseType;
 import com.dci.intellij.dbn.driver.DatabaseDriverManager;
 import com.dci.intellij.dbn.driver.DriverSource;
@@ -16,7 +16,11 @@ import com.intellij.util.ui.TimerUtil;
 import com.intellij.util.ui.UIUtil;
 import org.jetbrains.annotations.NotNull;
 
-import javax.swing.*;
+import javax.swing.JComboBox;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JTextField;
+import javax.swing.Timer;
 import java.io.File;
 import java.sql.Driver;
 import java.util.ArrayList;
@@ -120,7 +124,7 @@ public class ConnectionDriverSettingsForm extends DBNFormImpl{
         if (externalDriver) {
             String driverLibrary = getDriverLibrary();
 
-            boolean fileExists = StringUtil.isNotEmpty(driverLibrary) && fileExists(driverLibrary);
+            boolean fileExists = Strings.isNotEmpty(driverLibrary) && fileExists(driverLibrary);
             JTextField libraryTextField = driverLibraryTextField.getTextField();
             if (fileExists) {
                 libraryTextField.setForeground(UIUtil.getTextFieldForeground());
@@ -135,7 +139,7 @@ public class ConnectionDriverSettingsForm extends DBNFormImpl{
                     try {
                         drivers = driverManager.loadDrivers(new File(driverLibrary), false);
                     } catch (Exception e) {
-                        MessageUtil.showErrorDialog(getProject(), "");
+                        Messages.showErrorDialog(getProject(), "");
                         e.printStackTrace(); // TODO
                     }
                     DriverOption selectedOption = getSelection(driverComboBox);
@@ -163,7 +167,7 @@ public class ConnectionDriverSettingsForm extends DBNFormImpl{
                 }
             } else {
                 libraryTextField.setForeground(JBColor.RED);
-                if (StringUtil.isEmpty(driverLibrary)) {
+                if (Strings.isEmpty(driverLibrary)) {
                     error = "Driver library is not specified";
                 } else {
                     error = "Cannot locate driver library file";
@@ -201,7 +205,7 @@ public class ConnectionDriverSettingsForm extends DBNFormImpl{
 
     private boolean isDriverLibraryAccessible() {
         String driverLibrary = getDriverLibrary();
-        return StringUtil.isNotEmpty(driverLibrary) && new File(driverLibrary).exists();
+        return Strings.isNotEmpty(driverLibrary) && new File(driverLibrary).exists();
     }
 
     private String getDriverLibrary() {

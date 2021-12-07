@@ -1,7 +1,7 @@
 package com.dci.intellij.dbn.diagnostics.action;
 
 import com.dci.intellij.dbn.common.ui.DBNComboBoxAction;
-import com.dci.intellij.dbn.common.util.StringUtil;
+import com.dci.intellij.dbn.common.util.Strings;
 import com.dci.intellij.dbn.diagnostics.data.ParserDiagnosticsFilter;
 import com.dci.intellij.dbn.diagnostics.ui.ParserDiagnosticsForm;
 import com.intellij.openapi.actionSystem.AnAction;
@@ -39,7 +39,7 @@ public class ParserDiagnosticsFileTypeFilterAction extends DBNComboBoxAction imp
 
         ParserDiagnosticsFilter resultFilter = getResultFilter();
         String fileType = resultFilter.getFileType();
-        presentation.setText(StringUtil.isEmpty(fileType) ? "file type" : "*." + fileType, false);
+        presentation.setText(Strings.isEmpty(fileType) ? "file type" : "*." + fileType, false);
     }
 
     private ParserDiagnosticsFilter getResultFilter() {
@@ -50,7 +50,7 @@ public class ParserDiagnosticsFileTypeFilterAction extends DBNComboBoxAction imp
         private final String fileType;
 
         public SelectFilterValueAction(String fileType) {
-            super(StringUtil.isEmpty(fileType) ? "No Filter" : "*." + fileType);
+            super(Strings.isEmpty(fileType) ? "No Filter" : "*." + fileType);
             this.fileType = fileType;
         }
 

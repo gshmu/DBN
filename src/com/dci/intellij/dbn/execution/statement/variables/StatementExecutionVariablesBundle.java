@@ -2,7 +2,7 @@ package com.dci.intellij.dbn.execution.statement.variables;
 
 import com.dci.intellij.dbn.common.dispose.StatefulDisposable;
 import com.dci.intellij.dbn.common.locale.Formatter;
-import com.dci.intellij.dbn.common.util.StringUtil;
+import com.dci.intellij.dbn.common.util.Strings;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.data.type.DBDataType;
 import com.dci.intellij.dbn.data.type.GenericDataType;
@@ -114,7 +114,7 @@ public class StatementExecutionVariablesBundle extends StatefulDisposable.Base i
     @Nullable
     public StatementExecutionVariable getVariable(String name) {
         for (StatementExecutionVariable variable : variables) {
-            if (StringUtil.equalsIgnoreCase(variable.getName(), name)) {
+            if (Strings.equalsIgnoreCase(variable.getName(), name)) {
                 return variable;
             }
         }
@@ -135,13 +135,13 @@ public class StatementExecutionVariablesBundle extends StatefulDisposable.Base i
             boolean useNullValue = forPreview ? previewValueProvider.useNull() : variable.useNull();
 
             if (useNullValue) {
-                statementText = StringUtil.replaceIgnoreCase(statementText, variable.getName(), "NULL");
+                statementText = Strings.replaceIgnoreCase(statementText, variable.getName(), "NULL");
             } else {
                 String value = forPreview ? previewValueProvider.getValue() : variable.getValue();
-                if (!StringUtil.isEmpty(value)) {
+                if (!Strings.isEmpty(value)) {
                     GenericDataType genericDataType = forPreview ? previewValueProvider.getDataType() : variable.getDataType();
                     if (genericDataType == GenericDataType.LITERAL) {
-                        value = StringUtil.replace(value, "'", "''");
+                        value = Strings.replace(value, "'", "''");
                         value = '\'' + value + '\'';
                     } else {
                         if (genericDataType == GenericDataType.DATE_TIME){
@@ -169,7 +169,7 @@ public class StatementExecutionVariablesBundle extends StatefulDisposable.Base i
                         }
                     }
 
-                    statementText = StringUtil.replaceIgnoreCase(statementText, variable.getName(), value);
+                    statementText = Strings.replaceIgnoreCase(statementText, variable.getName(), value);
                 }
             }
         }

@@ -5,12 +5,12 @@ import com.dci.intellij.dbn.common.database.DatabaseInfo;
 import com.dci.intellij.dbn.common.dispose.DisposableContainer;
 import com.dci.intellij.dbn.common.options.ui.ConfigurationEditorForm;
 import com.dci.intellij.dbn.common.ui.GUIUtil;
-import com.dci.intellij.dbn.common.util.ActionUtil;
-import com.dci.intellij.dbn.common.util.ClipboardUtil;
-import com.dci.intellij.dbn.common.util.CommonUtil;
-import com.dci.intellij.dbn.common.util.MessageUtil;
-import com.dci.intellij.dbn.common.util.NamingUtil;
-import com.dci.intellij.dbn.common.util.StringUtil;
+import com.dci.intellij.dbn.common.util.Actions;
+import com.dci.intellij.dbn.common.util.Clipboard;
+import com.dci.intellij.dbn.common.util.Commons;
+import com.dci.intellij.dbn.common.util.Messages;
+import com.dci.intellij.dbn.common.util.Naming;
+import com.dci.intellij.dbn.common.util.Strings;
 import com.dci.intellij.dbn.connection.ConnectionId;
 import com.dci.intellij.dbn.connection.DatabaseType;
 import com.dci.intellij.dbn.connection.DatabaseUrlType;
@@ -80,7 +80,7 @@ public class ConnectionBundleSettingsForm extends ConfigurationEditorForm<Connec
         connectionsList.setFont(com.intellij.util.ui.UIUtil.getLabelFont());
         connectionsList.setBackground(UIUtil.getTextFieldBackground());
 
-        ActionToolbar actionToolbar = ActionUtil.createActionToolbar(actionsPanel,"", true, "DBNavigator.ActionGroup.ConnectionSettings");
+        ActionToolbar actionToolbar = Actions.createActionToolbar(actionsPanel,"", true, "DBNavigator.ActionGroup.ConnectionSettings");
         JComponent component = actionToolbar.getComponent();
         actionsPanel.add(component, BorderLayout.CENTER);
         connectionListScrollPane.setViewportView(connectionsList);
@@ -198,7 +198,7 @@ public class ConnectionBundleSettingsForm extends ConfigurationEditorForm<Connec
         String name = "Connection";
         ConnectionListModel model = (ConnectionListModel) connectionsList.getModel();
         while (model.getConnectionConfig(name) != null) {
-            name = NamingUtil.getNextNumberedName(name, true);
+            name = Naming.getNextNumberedName(name, true);
         }
         ConnectionDatabaseSettings connectionConfig = connectionSettings.getDatabaseSettings();
         connectionConfig.setName(name);
@@ -220,14 +220,14 @@ public class ConnectionBundleSettingsForm extends ConfigurationEditorForm<Connec
                     String name = duplicate.getDatabaseSettings().getName();
                     ConnectionListModel model = (ConnectionListModel) connectionsList.getModel();
                     while (model.getConnectionConfig(name) != null) {
-                        name = NamingUtil.getNextNumberedName(name, true);
+                        name = Naming.getNextNumberedName(name, true);
                     }
                     duplicate.getDatabaseSettings().setName(name);
                     int selectedIndex = connectionsList.getSelectedIndex() + 1;
                     model.add(selectedIndex, duplicate);
                     connectionsList.setSelectedIndex(selectedIndex);
                 } catch (ConfigurationException e) {
-                    MessageUtil.showErrorDialog(getProject(), e.getMessage());
+                    Messages.showErrorDialog(getProject(), e.getMessage());
                 }
             }
 
@@ -269,7 +269,7 @@ public class ConnectionBundleSettingsForm extends ConfigurationEditorForm<Connec
 
             CopyPasteManager copyPasteManager = CopyPasteManager.getInstance();
             copyPasteManager.setContents(new StringSelection(xmlString));
-            MessageUtil.showInfoDialog(getProject(), "Config Export", "Configuration for selected connections exported to clipboard.");
+            Messages.showInfoDialog(getProject(), "Config Export", "Configuration for selected connections exported to clipboard.");
         } catch (Exception ex) {
             log.error("Could not copy database configuration to clipboard", ex);
         }
@@ -277,9 +277,9 @@ public class ConnectionBundleSettingsForm extends ConfigurationEditorForm<Connec
 
     public void pasteConnectionsFromClipboard() {
         try {
-            String clipboardData = ClipboardUtil.getStringContent();
+            String clipboardData = Clipboard.getStringContent();
             if (clipboardData != null) {
-                Document xmlDocument = CommonUtil.createXMLDocument(new ByteArrayInputStream(clipboardData.getBytes()));
+                Document xmlDocument = Commons.createXMLDocument(new ByteArrayInputStream(clipboardData.getBytes()));
                 if (xmlDocument != null) {
                     Element rootElement = xmlDocument.getRootElement();
                     List<Element> configElements = rootElement.getChildren();
@@ -296,7 +296,7 @@ public class ConnectionBundleSettingsForm extends ConfigurationEditorForm<Connec
                         ConnectionDatabaseSettings databaseSettings = clone.getDatabaseSettings();
                         String name = databaseSettings.getName();
                         while (model.getConnectionConfig(name) != null) {
-                            name = NamingUtil.getNextNumberedName(name, true);
+                            name = Naming.getNextNumberedName(name, true);
                         }
                         databaseSettings.setName(name);
                         model.add(index, clone);
@@ -330,7 +330,7 @@ public class ConnectionBundleSettingsForm extends ConfigurationEditorForm<Connec
             ConnectionDatabaseSettings databaseSettings = connectionSettings.getDatabaseSettings();
             String name = tnsName.getName();
             while (model.getConnectionConfig(name) != null) {
-                name = NamingUtil.getNextNumberedName(name, true);
+                name = Naming.getNextNumberedName(name, true);
             }
 
             DatabaseInfo databaseInfo = databaseSettings.getDatabaseInfo();
@@ -340,10 +340,10 @@ public class ConnectionBundleSettingsForm extends ConfigurationEditorForm<Connec
 
             String sid = tnsName.getSid();
             String service = tnsName.getServiceName();
-            if (StringUtil.isNotEmpty(sid)) {
+            if (Strings.isNotEmpty(sid)) {
                 databaseInfo.setDatabase(sid);
                 databaseInfo.setUrlType(DatabaseUrlType.SID);
-            } else if (StringUtil.isNotEmpty(service)) {
+            } else if (Strings.isNotEmpty(service)) {
                 databaseInfo.setDatabase(service);
                 databaseInfo.setUrlType(DatabaseUrlType.SERVICE);
             }

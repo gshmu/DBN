@@ -43,8 +43,8 @@ import org.jetbrains.annotations.Nullable;
 import java.util.List;
 
 import static com.dci.intellij.dbn.common.message.MessageCallback.when;
-import static com.dci.intellij.dbn.common.util.MessageUtil.options;
-import static com.dci.intellij.dbn.common.util.MessageUtil.showWarningDialog;
+import static com.dci.intellij.dbn.common.util.Messages.options;
+import static com.dci.intellij.dbn.common.util.Messages.showWarningDialog;
 
 public abstract class DBProgramRunner<T extends ExecutionInput> extends GenericProgramRunner {
     public static final String INVALID_RUNNER_ID = "DBNInvalidRunner";

@@ -1,7 +1,7 @@
 package com.dci.intellij.dbn.debugger.jdbc.frame;
 
 import com.dci.intellij.dbn.common.compatibility.Compatibility;
-import com.dci.intellij.dbn.common.util.StringUtil;
+import com.dci.intellij.dbn.common.util.Strings;
 import com.dci.intellij.dbn.database.common.debug.BasicOperationInfo;
 import com.dci.intellij.dbn.debugger.jdbc.DBJdbcDebugProcess;
 import com.dci.intellij.dbn.language.sql.SQLLanguage;
@@ -31,7 +31,7 @@ public class DBJdbcDebugValueModifier extends XValueModifier {
         String expression = expr.getExpression();
         DBJdbcDebugProcess debugProcess = value.getDebugProcess();
         try {
-            if (StringUtil.isNotEmpty(expression)) {
+            if (Strings.isNotEmpty(expression)) {
                 while (expression.charAt(0) == '\'') {
                     expression = expression.substring(1);
                 }

@@ -4,10 +4,10 @@ import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.common.latent.Loader;
 import com.dci.intellij.dbn.common.property.PropertyHolder;
 import com.dci.intellij.dbn.common.property.PropertyHolderBase;
-import com.dci.intellij.dbn.common.util.ActionUtil;
+import com.dci.intellij.dbn.common.util.Actions;
 import com.dci.intellij.dbn.common.util.Context;
 import com.dci.intellij.dbn.common.util.Safe;
-import com.dci.intellij.dbn.common.util.StringUtil;
+import com.dci.intellij.dbn.common.util.Strings;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.actionSystem.DefaultActionGroup;
 import com.intellij.openapi.actionSystem.Presentation;
@@ -114,7 +114,7 @@ public class DBNComboBox<T extends Presentable> extends JComboBox<T> implements 
             actionGroup.add(new SelectValueAction(value));
         }
         if (valueFactory != null) {
-            actionGroup.add(ActionUtil.SEPARATOR);
+            actionGroup.add(Actions.SEPARATOR);
             actionGroup.add(new AddValueAction());
         }
         popup = JBPopupFactory.getInstance().createActionGroupPopup(
@@ -219,7 +219,7 @@ public class DBNComboBox<T extends Presentable> extends JComboBox<T> implements 
         if (value != null) {
             String description = value.getDescription();
             String name = value.getName();
-            return options.is(ValueSelectorOption.HIDE_DESCRIPTION) || StringUtil.isEmpty(description) ? name : name + " (" + description + ")";
+            return options.is(ValueSelectorOption.HIDE_DESCRIPTION) || Strings.isEmpty(description) ? name : name + " (" + description + ")";
         } else {
             return "";
         }

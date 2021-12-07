@@ -6,7 +6,7 @@ import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.common.event.ProjectEvents;
 import com.dci.intellij.dbn.common.thread.Dispatch;
 import com.dci.intellij.dbn.common.thread.Progress;
-import com.dci.intellij.dbn.common.util.MessageUtil;
+import com.dci.intellij.dbn.common.util.Messages;
 import com.dci.intellij.dbn.connection.ConnectionAction;
 import com.dci.intellij.dbn.editor.code.SourceCodeEditor;
 import com.dci.intellij.dbn.editor.code.SourceCodeManager;
@@ -141,7 +141,7 @@ public class SourceCodeDiffManager extends AbstractProjectComponent implements P
                                 }
 
                             } catch (Exception e1) {
-                                MessageUtil.showErrorDialog(
+                                Messages.showErrorDialog(
                                         project, "Could not load sourcecode for " +
                                                 object.getQualifiedNameWithType() + " from database.", e1);
                             }

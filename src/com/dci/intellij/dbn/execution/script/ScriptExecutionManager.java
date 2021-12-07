@@ -7,8 +7,8 @@ import com.dci.intellij.dbn.common.event.ProjectEvents;
 import com.dci.intellij.dbn.common.routine.ParametricRunnable;
 import com.dci.intellij.dbn.common.thread.CancellableDatabaseCall;
 import com.dci.intellij.dbn.common.thread.Progress;
-import com.dci.intellij.dbn.common.util.MessageUtil;
-import com.dci.intellij.dbn.common.util.StringUtil;
+import com.dci.intellij.dbn.common.util.Messages;
+import com.dci.intellij.dbn.common.util.Strings;
 import com.dci.intellij.dbn.common.util.Unsafe;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.DatabaseType;
@@ -102,7 +102,7 @@ public class ScriptExecutionManager extends AbstractProjectComponent implements 
     public void executeScript(VirtualFile virtualFile) {
         Project project = getProject();
         if (activeProcesses.containsKey(virtualFile)) {
-            MessageUtil.showInfoDialog(project, "Information", "SQL Script \"" + virtualFile.getPath() + "\" is already running. \nWait for the execution to finish before running again.");
+            Messages.showInfoDialog(project, "Information", "SQL Script \"" + virtualFile.getPath() + "\" is already running. \nWait for the execution to finish before running again.");
         } else {
             FileConnectionMappingManager connectionMappingManager = FileConnectionMappingManager.getInstance(project);
 
@@ -133,7 +133,7 @@ public class ScriptExecutionManager extends AbstractProjectComponent implements 
                             try {
                                 doExecuteScript(executionInput);
                             } catch (Exception e) {
-                                MessageUtil.showErrorDialog(getProject(), "Error", "Error executing SQL Script \"" + virtualFile.getPath() + "\". " + e.getMessage());
+                                Messages.showErrorDialog(getProject(), "Error", "Error executing SQL Script \"" + virtualFile.getPath() + "\". " + e.getMessage());
                             }
                         });
             }
@@ -188,7 +188,7 @@ public class ScriptExecutionManager extends AbstractProjectComponent implements 
                     processBuilder.redirectErrorStream(true);
                     String password = connectionHandler.getAuthenticationInfo().getPassword();
                     String lineCommand = executionInput.getLineCommand();
-                    if (StringUtil.isNotEmpty(password)) {
+                    if (Strings.isNotEmpty(password)) {
                         lineCommand = lineCommand.replace(password, "*********");
                     }
                     executionManager.writeLogOutput(outputContext, LogOutput.createSysOutput("Executing command: " + lineCommand));
@@ -232,7 +232,7 @@ public class ScriptExecutionManager extends AbstractProjectComponent implements 
 
                 @Override
                 public void handleTimeout() {
-                    MessageUtil.showErrorDialog(project,
+                    Messages.showErrorDialog(project,
                             "Script execution timeout",
                             "The script execution has timed out",
                             new String[]{"Retry", "Cancel"}, 0,
@@ -242,7 +242,7 @@ public class ScriptExecutionManager extends AbstractProjectComponent implements 
 
                 @Override
                 public void handleException(Throwable e) throws SQLException {
-                    MessageUtil.showErrorDialog(project,
+                    Messages.showErrorDialog(project,
                             "Script execution error",
                             "Error executing SQL script \"" + sourceFile.getPath() + "\". \nDetails: " + e.getMessage(),
                             new String[]{"Retry", "Cancel"}, 0,
@@ -314,7 +314,7 @@ public class ScriptExecutionManager extends AbstractProjectComponent implements 
                 withTitle("Select Command-Line Client").
                 withDescription("Select Command-Line Interface executable (" + defaultCli.getExecutablePath() + extension + ")").
                 withShowHiddenFiles(true);
-        VirtualFile selectedFile = StringUtil.isEmpty(selectedExecutable) ? null : LocalFileSystem.getInstance().findFileByPath(selectedExecutable);
+        VirtualFile selectedFile = Strings.isEmpty(selectedExecutable) ? null : LocalFileSystem.getInstance().findFileByPath(selectedExecutable);
         VirtualFile[] virtualFiles = FileChooser.chooseFiles(fileChooserDescriptor, getProject(), selectedFile);
         return virtualFiles.length == 1 ? virtualFiles[0] : null;
     }

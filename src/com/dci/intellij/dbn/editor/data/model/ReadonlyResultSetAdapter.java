@@ -1,7 +1,7 @@
 package com.dci.intellij.dbn.editor.data.model;
 
 import com.dci.intellij.dbn.common.dispose.AlreadyDisposedException;
-import com.dci.intellij.dbn.common.util.CollectionUtil;
+import com.dci.intellij.dbn.common.util.Lists;
 import com.dci.intellij.dbn.connection.jdbc.DBNConnection;
 import com.dci.intellij.dbn.connection.jdbc.DBNResultSet;
 import com.dci.intellij.dbn.connection.transaction.ConnectionSavepoint;
@@ -139,7 +139,7 @@ public class ReadonlyResultSetAdapter extends ResultSetAdapter {
         for (Cell cell : changedCells) {
             buffer.append(cell.getColumnName());
             buffer.append(" = ?");
-            if (!CollectionUtil.isLast(changedCells, cell)) {
+            if (!Lists.isLast(changedCells, cell)) {
                 buffer.append(", ");
             }
         }
@@ -148,7 +148,7 @@ public class ReadonlyResultSetAdapter extends ResultSetAdapter {
         for (Cell cell : keyCells) {
             buffer.append(cell.getColumnName());
             buffer.append(" = ?");
-            if (!CollectionUtil.isLast(keyCells, cell)) {
+            if (!Lists.isLast(keyCells, cell)) {
                 buffer.append(" and ");
             }
         }

@@ -13,7 +13,7 @@ import com.dci.intellij.dbn.common.ui.DBNForm;
 import com.dci.intellij.dbn.common.ui.DBNFormImpl;
 import com.dci.intellij.dbn.common.ui.GUIUtil;
 import com.dci.intellij.dbn.common.ui.table.DBNTable;
-import com.dci.intellij.dbn.common.util.NamingUtil;
+import com.dci.intellij.dbn.common.util.Naming;
 import com.dci.intellij.dbn.object.common.DBObject;
 import com.dci.intellij.dbn.object.lookup.DBObjectRef;
 import com.intellij.openapi.Disposable;
@@ -93,7 +93,7 @@ public class ObjectPropertiesForm extends DBNFormImpl {
                 Dispatch.run(() -> {
                     objectLabel.setText(object.getName());
                     objectLabel.setIcon(object.getIcon());
-                    objectTypeLabel.setText(NamingUtil.capitalize(object.getTypeName()) + ":");
+                    objectTypeLabel.setText(Naming.capitalize(object.getTypeName()) + ":");
 
                     ObjectPropertiesTableModel oldTableModel = (ObjectPropertiesTableModel) objectPropertiesTable.getModel();
                     objectPropertiesTable.setModel(tableModel);

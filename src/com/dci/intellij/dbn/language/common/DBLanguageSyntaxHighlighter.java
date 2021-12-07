@@ -1,6 +1,6 @@
 package com.dci.intellij.dbn.language.common;
 
-import com.dci.intellij.dbn.common.util.CommonUtil;
+import com.dci.intellij.dbn.common.util.Commons;
 import com.intellij.lexer.Lexer;
 import com.intellij.openapi.editor.colors.TextAttributesKey;
 import com.intellij.openapi.fileTypes.SyntaxHighlighterBase;
@@ -21,7 +21,7 @@ public abstract class DBLanguageSyntaxHighlighter extends SyntaxHighlighterBase 
     private final TokenTypeBundle tokenTypes;
 
     public DBLanguageSyntaxHighlighter(DBLanguageDialect languageDialect, String tokenTypesFile) {
-        Document document = CommonUtil.loadXmlFile(getResourceLookupClass(), tokenTypesFile);
+        Document document = Commons.loadXmlFile(getResourceLookupClass(), tokenTypesFile);
         tokenTypes = new TokenTypeBundle(languageDialect, document);
         this.languageDialect = languageDialect;
     }

@@ -8,8 +8,8 @@ import com.dci.intellij.dbn.common.environment.EnvironmentType;
 import com.dci.intellij.dbn.common.ui.Borders;
 import com.dci.intellij.dbn.common.ui.DBNFormImpl;
 import com.dci.intellij.dbn.common.ui.DBNHeaderForm;
-import com.dci.intellij.dbn.common.util.DocumentUtil;
-import com.dci.intellij.dbn.common.util.EditorUtil;
+import com.dci.intellij.dbn.common.util.Documents;
+import com.dci.intellij.dbn.common.util.Editors;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.SchemaId;
 import com.dci.intellij.dbn.debugger.DBDebuggerType;
@@ -34,10 +34,18 @@ import com.intellij.ui.GuiUtils;
 import com.intellij.ui.JBColor;
 import org.jetbrains.annotations.NotNull;
 
-import javax.swing.*;
+import javax.swing.BoxLayout;
+import javax.swing.Icon;
+import javax.swing.JCheckBox;
+import javax.swing.JComponent;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JSplitPane;
 import javax.swing.border.LineBorder;
 import javax.swing.event.DocumentEvent;
-import java.awt.*;
+import java.awt.BorderLayout;
+import java.awt.Dimension;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -204,7 +212,7 @@ public class StatementExecutionInputForm extends DBNFormImpl {
                     connectionHandler,
                     currentSchema);
 
-            previewDocument = DocumentUtil.getDocument(selectStatementFile);
+            previewDocument = Documents.getDocument(selectStatementFile);
 
             viewer = (EditorEx) EditorFactory.getInstance().createViewer(previewDocument, project);
             viewer.setEmbeddedIntoDialogWrapper(true);
@@ -232,14 +240,14 @@ public class StatementExecutionInputForm extends DBNFormImpl {
                 splitPreviewPanel.add(viewerComponent, BorderLayout.CENTER);
 
         } else {
-            DocumentUtil.setText(previewDocument, previewText);
+            Documents.setText(previewDocument, previewText);
         }
     }
 
 
     @Override
     public void disposeInner() {
-        EditorUtil.releaseEditor(viewer);
+        Editors.releaseEditor(viewer);
         executionProcessor = null;
         super.disposeInner();
     }

@@ -13,9 +13,9 @@ import com.dci.intellij.dbn.common.options.ui.ConfigurationEditorUtil;
 import com.dci.intellij.dbn.common.ui.ComboBoxUtil;
 import com.dci.intellij.dbn.common.ui.DBNHintForm;
 import com.dci.intellij.dbn.common.ui.GUIUtil;
-import com.dci.intellij.dbn.common.util.CommonUtil;
+import com.dci.intellij.dbn.common.util.Commons;
 import com.dci.intellij.dbn.common.util.Safe;
-import com.dci.intellij.dbn.common.util.StringUtil;
+import com.dci.intellij.dbn.common.util.Strings;
 import com.dci.intellij.dbn.connection.AuthenticationType;
 import com.dci.intellij.dbn.connection.ConnectionId;
 import com.dci.intellij.dbn.connection.ConnectivityStatus;
@@ -144,7 +144,7 @@ public class ConnectionDatabaseSettingsForm extends ConfigurationEditorForm<Conn
                 String file = databaseFileSettingsForm.getMainFilePath();
                 DatabaseInfo defaults = newUrlPattern.getDefaultInfo();
                 DatabaseInfo oldDefaults = oldUrlPattern == null ? null : oldUrlPattern.getDefaultInfo();
-                if (StringUtil.isEmpty(file) || (oldDefaults != null && Objects.equals(oldDefaults.getFiles().getMainFile().getPath(), file))) {
+                if (Strings.isEmpty(file) || (oldDefaults != null && Objects.equals(oldDefaults.getFiles().getMainFile().getPath(), file))) {
                     databaseFileSettingsForm.setMainFilePath(defaults.getFiles().getMainFile().getPath());
                 }
             } else {
@@ -154,14 +154,14 @@ public class ConnectionDatabaseSettingsForm extends ConfigurationEditorForm<Conn
 
                 DatabaseInfo defaults = newUrlPattern.getDefaultInfo();
                 DatabaseInfo oldDefaults = oldUrlPattern == null ? null : oldUrlPattern.getDefaultInfo();
-                if (StringUtil.isEmpty(host) || (oldDefaults != null && Objects.equals(oldDefaults.getHost(), host))) {
+                if (Strings.isEmpty(host) || (oldDefaults != null && Objects.equals(oldDefaults.getHost(), host))) {
                     hostTextField.setText(defaults.getHost());
                 }
 
-                if (StringUtil.isEmpty(port) || (oldDefaults != null && Objects.equals(oldDefaults.getPort(), port))) {
+                if (Strings.isEmpty(port) || (oldDefaults != null && Objects.equals(oldDefaults.getPort(), port))) {
                     portTextField.setText(defaults.getPort());
                 }
-                if (StringUtil.isEmpty(database) || (oldDefaults != null && Objects.equals(oldDefaults.getDatabase(), database))) {
+                if (Strings.isEmpty(database) || (oldDefaults != null && Objects.equals(oldDefaults.getDatabase(), database))) {
                     databaseTextField.setText(defaults.getDatabase());
                 }
                 DatabaseUrlType[] urlTypes = newDatabaseType.getUrlTypes();
@@ -174,9 +174,9 @@ public class ConnectionDatabaseSettingsForm extends ConfigurationEditorForm<Conn
             urlHistory.put(oldDatabaseType, oldUrl);
 
             String historyUrl = urlHistory.get(newDatabaseType);
-            if (StringUtil.isNotEmpty(historyUrl)) {
+            if (Strings.isNotEmpty(historyUrl)) {
                 urlTextField.setText(historyUrl);
-            } else if (StringUtil.isEmpty(oldUrl) || newDatabaseType != DatabaseType.GENERIC){
+            } else if (Strings.isEmpty(oldUrl) || newDatabaseType != DatabaseType.GENERIC){
                 urlTextField.setText(newUrlPattern.getDefaultUrl());
             }
         }
@@ -292,7 +292,7 @@ public class ConnectionDatabaseSettingsForm extends ConfigurationEditorForm<Conn
 
         DatabaseType databaseType = getSelectedDatabaseType();
         DriverOption driverOption = ComboBoxUtil.getSelection(driverComboBox);
-        DatabaseUrlType urlType = CommonUtil.nvl(getSelection(urlTypeComboBox), DatabaseUrlType.DATABASE);
+        DatabaseUrlType urlType = Commons.nvl(getSelection(urlTypeComboBox), DatabaseUrlType.DATABASE);
 
         configuration.setDatabaseType(databaseType);
         configuration.setName(nameTextField.getText());
@@ -375,7 +375,7 @@ public class ConnectionDatabaseSettingsForm extends ConfigurationEditorForm<Conn
     @NotNull
     DatabaseType getSelectedDatabaseType() {
         ConnectionDatabaseSettings configuration = getConfiguration();;
-        return CommonUtil.nvl(getSelection(databaseTypeComboBox), configuration.getDatabaseType());
+        return Commons.nvl(getSelection(databaseTypeComboBox), configuration.getDatabaseType());
     }
 
     @Nullable

@@ -3,8 +3,8 @@ package com.dci.intellij.dbn.execution.script;
 import com.dci.intellij.dbn.common.options.PersistentConfiguration;
 import com.dci.intellij.dbn.common.ui.Presentable;
 import com.dci.intellij.dbn.common.util.Cloneable;
-import com.dci.intellij.dbn.common.util.CommonUtil;
-import com.dci.intellij.dbn.common.util.StringUtil;
+import com.dci.intellij.dbn.common.util.Commons;
+import com.dci.intellij.dbn.common.util.Strings;
 import com.dci.intellij.dbn.connection.DatabaseType;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -76,19 +76,19 @@ public class CmdLineInterface implements Cloneable<CmdLineInterface>, Persistent
     @NotNull
     @Override
     public String getName() {
-        return CommonUtil.nvl(name, "");
+        return Commons.nvl(name, "");
     }
 
     @Nullable
     @Override
     public String getDescription() {
-        return CommonUtil.nvl(description, executablePath);
+        return Commons.nvl(description, executablePath);
     }
 
     @Override
     public void readConfiguration(Element element) {
         id = stringAttribute(element, "id");
-        if (StringUtil.isEmpty(id)) id = UUID.randomUUID().toString();
+        if (Strings.isEmpty(id)) id = UUID.randomUUID().toString();
         name = stringAttribute(element, "name");
         executablePath = stringAttribute(element, "executable-path");
         databaseType = enumAttribute(element, "database-type", DatabaseType.class);

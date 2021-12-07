@@ -7,8 +7,8 @@ import com.dci.intellij.dbn.common.ui.DBNForm;
 import com.dci.intellij.dbn.common.ui.GUIUtil;
 import com.dci.intellij.dbn.common.ui.MouseUtil;
 import com.dci.intellij.dbn.common.ui.table.DBNTableGutter;
-import com.dci.intellij.dbn.common.util.ActionUtil;
-import com.dci.intellij.dbn.common.util.MessageUtil;
+import com.dci.intellij.dbn.common.util.Actions;
+import com.dci.intellij.dbn.common.util.Messages;
 import com.dci.intellij.dbn.data.grid.options.DataGridTrackingColumnSettings;
 import com.dci.intellij.dbn.data.grid.ui.table.basic.BasicTableCellRenderer;
 import com.dci.intellij.dbn.data.grid.ui.table.basic.BasicTableGutter;
@@ -463,7 +463,7 @@ public class DatasetEditorTable extends ResultSetTable<DatasetEditorModel> {
                                 try {
                                     model.postInsertRecord(false, true, false);
                                 } catch (SQLException e1) {
-                                    MessageUtil.showErrorDialog(getProject(), "Could not create row in " + getDataset().getQualifiedNameWithType() + ".", e1);
+                                    Messages.showErrorDialog(getProject(), "Could not create row in " + getDataset().getQualifiedNameWithType() + ".", e1);
                                 }
                             });
                 }
@@ -523,7 +523,7 @@ public class DatasetEditorTable extends ResultSetTable<DatasetEditorModel> {
                     ActionGroup actionGroup = new DatasetEditorTableActionGroup(getDatasetEditor(), cell, columnInfo);
                     Progress.check(progress);
 
-                    ActionPopupMenu actionPopupMenu = ActionUtil.createActionPopupMenu(DatasetEditorTable.this, "", actionGroup);
+                    ActionPopupMenu actionPopupMenu = Actions.createActionPopupMenu(DatasetEditorTable.this, "", actionGroup);
                     JPopupMenu popupMenu = actionPopupMenu.getComponent();
                     Dispatch.run(() -> {
                         Component component = (Component) event.getSource();

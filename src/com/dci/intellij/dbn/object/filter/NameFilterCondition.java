@@ -1,8 +1,8 @@
 package com.dci.intellij.dbn.object.filter;
 
 import com.dci.intellij.dbn.common.state.PersistentStateElement;
-import com.dci.intellij.dbn.common.util.CommonUtil;
-import com.dci.intellij.dbn.common.util.StringUtil;
+import com.dci.intellij.dbn.common.util.Commons;
+import com.dci.intellij.dbn.common.util.Strings;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
@@ -31,7 +31,7 @@ public abstract class NameFilterCondition implements PersistentStateElement {
 
     @NotNull
     public ConditionOperator getOperator() {
-        return CommonUtil.nvl(operator, ConditionOperator.EQUAL);
+        return Commons.nvl(operator, ConditionOperator.EQUAL);
     }
 
     public boolean accepts(String name) {
@@ -45,7 +45,7 @@ public abstract class NameFilterCondition implements PersistentStateElement {
     }
 
     private static boolean isEqual(String name, String pattern) {
-        return StringUtil.equalsIgnoreCase(name, pattern);
+        return Strings.equalsIgnoreCase(name, pattern);
     }
 
     private static boolean isLike(String name, String pattern) {
@@ -53,7 +53,7 @@ public abstract class NameFilterCondition implements PersistentStateElement {
         int startIndex = 0;
         while (tokenizer.hasMoreTokens()) {
             String token = tokenizer.nextToken();
-            int index = StringUtil.indexOfIgnoreCase(name, token, startIndex);
+            int index = Strings.indexOfIgnoreCase(name, token, startIndex);
             if (index == -1 || (index > 0 && startIndex == 0 && !startsWithWildcard(pattern))) return false;
             startIndex = index + token.length();
         }

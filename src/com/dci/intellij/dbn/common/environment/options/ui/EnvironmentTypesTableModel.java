@@ -7,14 +7,14 @@ import com.dci.intellij.dbn.common.event.ProjectEvents;
 import com.dci.intellij.dbn.common.project.ProjectRef;
 import com.dci.intellij.dbn.common.ui.table.DBNEditableTableModel;
 import com.dci.intellij.dbn.common.util.Safe;
-import com.dci.intellij.dbn.common.util.StringUtil;
+import com.dci.intellij.dbn.common.util.Strings;
 import com.intellij.openapi.options.ConfigurationException;
 import com.intellij.openapi.project.Project;
 import org.jetbrains.annotations.NotNull;
 
 import javax.swing.event.TableModelEvent;
 import javax.swing.event.TableModelListener;
-import java.awt.*;
+import java.awt.Color;
 
 public class EnvironmentTypesTableModel extends DBNEditableTableModel {
     private EnvironmentTypeBundle environmentTypes;
@@ -139,7 +139,7 @@ public class EnvironmentTypesTableModel extends DBNEditableTableModel {
 
     public void validate() throws ConfigurationException {
         for (EnvironmentType environmentType : environmentTypes) {
-            if (StringUtil.isEmpty(environmentType.getName())) {
+            if (Strings.isEmpty(environmentType.getName())) {
                 throw new ConfigurationException("Please provide names for all environment types.");
             }
         }

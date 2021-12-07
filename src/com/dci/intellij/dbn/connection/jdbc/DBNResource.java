@@ -1,6 +1,6 @@
 package com.dci.intellij.dbn.connection.jdbc;
 
-import com.dci.intellij.dbn.common.util.StringUtil;
+import com.dci.intellij.dbn.common.util.Strings;
 import com.dci.intellij.dbn.common.util.TimeUtil;
 import com.dci.intellij.dbn.common.util.Traceable;
 import lombok.Getter;
@@ -87,7 +87,7 @@ public abstract class DBNResource<T> extends ResourceStatusHolder implements Res
     public String toString() {
         String string = resourceType + " (" + resourceId + ")";
         String suffix = super.toString();
-        return StringUtil.isEmpty(suffix) ? string : string + " - " + suffix + "";
+        return Strings.isEmpty(suffix) ? string : string + " - " + suffix + "";
     }
 
     @Override

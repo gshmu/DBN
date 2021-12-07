@@ -1,6 +1,6 @@
 package com.dci.intellij.dbn.language.common;
 
-import com.dci.intellij.dbn.common.util.StringUtil;
+import com.dci.intellij.dbn.common.util.Strings;
 import com.dci.intellij.dbn.language.common.psi.BasePsiElement;
 import com.intellij.codeInsight.folding.impl.ElementSignatureProvider;
 import com.intellij.openapi.util.TextRange;
@@ -39,11 +39,11 @@ public class DBLanguageElementSignatureProvider implements ElementSignatureProvi
             String startOffsetToken = tokenizer.hasMoreTokens() ? tokenizer.nextToken() : null;
             String endOffsetToken = tokenizer.hasMoreTokens() ? tokenizer.nextToken() : null;
 
-            if (StringUtil.isNotEmptyOrSpaces(id) &&
-                    StringUtil.isNotEmptyOrSpaces(startOffsetToken) &&
-                    StringUtil.isNotEmptyOrSpaces(endOffsetToken) &&
-                    StringUtil.isInteger(startOffsetToken) &&
-                    StringUtil.isInteger(endOffsetToken)) {
+            if (Strings.isNotEmptyOrSpaces(id) &&
+                    Strings.isNotEmptyOrSpaces(startOffsetToken) &&
+                    Strings.isNotEmptyOrSpaces(endOffsetToken) &&
+                    Strings.isInteger(startOffsetToken) &&
+                    Strings.isInteger(endOffsetToken)) {
 
 
                 int startOffset = Integer.parseInt(startOffsetToken);

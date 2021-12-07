@@ -10,7 +10,7 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
-import static com.dci.intellij.dbn.common.util.ExceptionUtil.toSqlException;
+import static com.dci.intellij.dbn.common.util.Exceptions.toSqlException;
 
 public class ResultSetUtil extends StatefulDisposable.Base {
     public static void insertRow(ResultSet resultSet) throws SQLException {

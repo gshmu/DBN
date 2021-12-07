@@ -4,7 +4,7 @@ import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.common.dispose.SafeDisposer;
 import com.dci.intellij.dbn.common.latent.Latent;
 import com.dci.intellij.dbn.common.thread.Read;
-import com.dci.intellij.dbn.common.util.CommonUtil;
+import com.dci.intellij.dbn.common.util.Commons;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.ConnectionHandlerRef;
 import com.dci.intellij.dbn.connection.ConnectionId;
@@ -94,7 +94,7 @@ public class StatementExecutionInput extends LocalExecutionInput {
             @Override
             public String getTargetName() {
                 ExecutablePsiElement executablePsiElement = getExecutablePsiElement();
-                return CommonUtil.nvl(executablePsiElement == null ? null : executablePsiElement.getPresentableText(), "Statement");
+                return Commons.nvl(executablePsiElement == null ? null : executablePsiElement.getPresentableText(), "Statement");
             }
 
             @Nullable

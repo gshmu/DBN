@@ -15,9 +15,10 @@ import com.dci.intellij.dbn.common.routine.ParametricRunnable;
 import com.dci.intellij.dbn.common.thread.Background;
 import com.dci.intellij.dbn.common.thread.Dispatch;
 import com.dci.intellij.dbn.common.thread.Progress;
-import com.dci.intellij.dbn.common.util.EditorUtil;
-import com.dci.intellij.dbn.common.util.InternalApiUtil;
-import com.dci.intellij.dbn.common.util.StringUtil;
+import com.dci.intellij.dbn.common.util.Editors;
+import com.dci.intellij.dbn.common.util.InternalApi;
+import com.dci.intellij.dbn.common.util.Lists;
+import com.dci.intellij.dbn.common.util.Strings;
 import com.dci.intellij.dbn.common.util.TimeUtil;
 import com.dci.intellij.dbn.connection.config.ConnectionDatabaseSettings;
 import com.dci.intellij.dbn.connection.config.ConnectionSettings;
@@ -56,12 +57,11 @@ import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
 import java.util.function.Predicate;
-import java.util.stream.Collectors;
 
 import static com.dci.intellij.dbn.common.message.MessageCallback.when;
-import static com.dci.intellij.dbn.common.util.CollectionUtil.isLast;
-import static com.dci.intellij.dbn.common.util.CommonUtil.list;
-import static com.dci.intellij.dbn.common.util.MessageUtil.*;
+import static com.dci.intellij.dbn.common.util.Commons.list;
+import static com.dci.intellij.dbn.common.util.Lists.isLast;
+import static com.dci.intellij.dbn.common.util.Messages.*;
 import static com.dci.intellij.dbn.connection.transaction.TransactionAction.actions;
 
 @State(
@@ -287,7 +287,7 @@ public class ConnectionManager extends AbstractProjectComponent implements Persi
         if (databaseInfo.getUrlType() == DatabaseUrlType.FILE) {
             String file = databaseInfo.getFiles().getMainFile().getPath();
             Project project = databaseSettings.getProject();
-            if (StringUtil.isEmpty(file)) {
+            if (Strings.isEmpty(file)) {
                 showErrorDialog(project, "Wrong database configuration", "Database file not specified");
             } else if (!new File(file).exists()) {
                 showWarningDialog(
@@ -393,7 +393,7 @@ public class ConnectionManager extends AbstractProjectComponent implements Persi
      }
 
      public List<ConnectionHandler> getConnectionHandlers(Predicate<ConnectionHandler> predicate) {
-        return getConnectionHandlers().stream().filter(predicate).collect(Collectors.toList());
+        return Lists.filter(getConnectionHandlers(), predicate);
      }
 
      public List<ConnectionHandler> getConnectionHandlers() {
@@ -402,7 +402,7 @@ public class ConnectionManager extends AbstractProjectComponent implements Persi
 
      public ConnectionHandler getActiveConnection(Project project) {
          ConnectionHandler connectionHandler = null;
-         VirtualFile virtualFile = EditorUtil.getSelectedFile(project);
+         VirtualFile virtualFile = Editors.getSelectedFile(project);
          if (DatabaseBrowserManager.getInstance(project).getBrowserToolWindow().isActive() || virtualFile == null) {
              connectionHandler = DatabaseBrowserManager.getInstance(project).getActiveConnection();
          }
@@ -525,7 +525,7 @@ public class ConnectionManager extends AbstractProjectComponent implements Persi
     @Override
     public boolean canCloseProject() {
         if (hasUncommittedChanges()) {
-            boolean exitApp = InternalApiUtil.isApplicationExitInProgress();
+            boolean exitApp = InternalApi.isApplicationExitInProgress();
             Project project = getProject();
             DatabaseTransactionManager transactionManager = DatabaseTransactionManager.getInstance(project);
             TransactionManagerSettings transactionManagerSettings = transactionManager.getSettings();

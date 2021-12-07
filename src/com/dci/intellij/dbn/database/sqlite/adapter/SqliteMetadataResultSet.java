@@ -2,7 +2,7 @@ package com.dci.intellij.dbn.database.sqlite.adapter;
 
 import com.dci.intellij.dbn.common.cache.Cache;
 import com.dci.intellij.dbn.common.dispose.StatefulDisposable;
-import com.dci.intellij.dbn.common.util.StringUtil;
+import com.dci.intellij.dbn.common.util.Strings;
 import com.dci.intellij.dbn.database.DatabaseInterface;
 import com.dci.intellij.dbn.database.common.util.ResultSetStub;
 
@@ -35,7 +35,7 @@ public class SqliteMetadataResultSet<T extends SqliteMetadataResultSetRow>
 
     protected T row(String name) {
         for (T element : rows) {
-            if (StringUtil.equalsIgnoreCase(element.identifier(), name)) {
+            if (Strings.equalsIgnoreCase(element.identifier(), name)) {
                 return element;
             }
         }

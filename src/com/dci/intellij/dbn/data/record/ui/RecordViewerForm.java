@@ -5,7 +5,7 @@ import com.dci.intellij.dbn.common.dispose.DisposableContainer;
 import com.dci.intellij.dbn.common.ui.DBNFormImpl;
 import com.dci.intellij.dbn.common.ui.DBNHeaderForm;
 import com.dci.intellij.dbn.common.ui.GUIUtil;
-import com.dci.intellij.dbn.common.util.ActionUtil;
+import com.dci.intellij.dbn.common.util.Actions;
 import com.dci.intellij.dbn.data.record.ColumnSortingType;
 import com.dci.intellij.dbn.data.record.DatasetRecord;
 import com.dci.intellij.dbn.data.record.RecordViewInfo;
@@ -19,8 +19,14 @@ import com.intellij.openapi.project.Project;
 import com.intellij.util.ui.UIUtil;
 import org.jetbrains.annotations.NotNull;
 
-import javax.swing.*;
-import java.awt.*;
+import javax.swing.BoxLayout;
+import javax.swing.Icon;
+import javax.swing.JComponent;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import java.awt.BorderLayout;
+import java.awt.Color;
+import java.awt.Dimension;
 import java.util.Comparator;
 import java.util.List;
 
@@ -57,11 +63,11 @@ public class RecordViewerForm extends DBNFormImpl {
         );
         headerPanel.add(headerForm.getComponent(), BorderLayout.CENTER);
 
-        ActionToolbar actionToolbar = ActionUtil.createActionToolbar(
+        ActionToolbar actionToolbar = Actions.createActionToolbar(
                 actionsPanel,
                 "DBNavigator.Place.DataEditor.TextAreaPopup", true,
                 new SortAlphabeticallyAction(),
-                ActionUtil.SEPARATOR);
+                Actions.SEPARATOR);
         actionsPanel.add(actionToolbar.getComponent(), BorderLayout.WEST);
 
 

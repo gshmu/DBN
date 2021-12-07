@@ -1,6 +1,6 @@
 package com.dci.intellij.dbn.vfs;
 
-import com.dci.intellij.dbn.common.util.CommonUtil;
+import com.dci.intellij.dbn.common.util.Commons;
 import com.dci.intellij.dbn.language.common.DBLanguageFileType;
 import com.dci.intellij.dbn.vfs.file.DBObjectVirtualFile;
 import com.dci.intellij.dbn.vfs.file.DBSourceCodeVirtualFile;
@@ -26,7 +26,7 @@ public class DatabaseFileViewProviderFactory implements FileViewProviderFactory{
             if (file instanceof DBVirtualFile) {
                 DBVirtualFile virtualFile = (DBVirtualFile) file;
 
-                return CommonUtil.nvl(virtualFile.getCachedViewProvider(),
+                return Commons.nvl(virtualFile.getCachedViewProvider(),
                         () -> createViewProvider(
                                 file,
                                 language,

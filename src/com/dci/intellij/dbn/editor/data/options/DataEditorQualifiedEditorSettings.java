@@ -1,7 +1,7 @@
 package com.dci.intellij.dbn.editor.data.options;
 
 import com.dci.intellij.dbn.common.options.BasicConfiguration;
-import com.dci.intellij.dbn.common.util.StringUtil;
+import com.dci.intellij.dbn.common.util.Strings;
 import com.dci.intellij.dbn.data.editor.text.TextContentType;
 import com.dci.intellij.dbn.editor.data.options.ui.DataEditorQualifiedEditorSettingsForm;
 import lombok.EqualsAndHashCode;
@@ -74,7 +74,7 @@ public class DataEditorQualifiedEditorSettings extends BasicConfiguration<DataEd
 
     @Nullable
     public TextContentType getContentType(String name) {
-        if (StringUtil.isNotEmpty(name)) {
+        if (Strings.isNotEmpty(name)) {
             for (TextContentType contentType : contentTypes) {
                 if (Objects.equals(contentType.getName(), name)) {
                     return contentType;

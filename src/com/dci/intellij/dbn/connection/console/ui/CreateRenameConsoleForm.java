@@ -3,8 +3,8 @@ package com.dci.intellij.dbn.connection.console.ui;
 import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.common.ui.DBNFormImpl;
 import com.dci.intellij.dbn.common.ui.DBNHeaderForm;
-import com.dci.intellij.dbn.common.util.NamingUtil;
-import com.dci.intellij.dbn.common.util.StringUtil;
+import com.dci.intellij.dbn.common.util.Naming;
+import com.dci.intellij.dbn.common.util.Strings;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.ConnectionHandlerRef;
 import com.dci.intellij.dbn.object.DBConsole;
@@ -53,7 +53,7 @@ public class CreateRenameConsoleForm extends DBNFormImpl{
         if (console == null) {
             name = connectionHandler.getName() + " 1";
             while (consoleNames.contains(name)) {
-                name = NamingUtil.getNextNumberedName(name, true);
+                name = Naming.getNextNumberedName(name, true);
             }
         } else {
             name = console.getName();
@@ -66,9 +66,9 @@ public class CreateRenameConsoleForm extends DBNFormImpl{
             @Override
             protected void textChanged(@NotNull DocumentEvent e) {
                 String errorText = null;
-                String text = StringUtil.trim(consoleNameTextField.getText());
+                String text = Strings.trim(consoleNameTextField.getText());
 
-                if (StringUtil.isEmpty(text)) {
+                if (Strings.isEmpty(text)) {
                     errorText = "Console name must be specified";
                 }
                 else if (consoleNames.contains(text)) {

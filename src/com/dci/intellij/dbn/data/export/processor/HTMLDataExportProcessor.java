@@ -1,7 +1,7 @@
 package com.dci.intellij.dbn.data.export.processor;
 
 import com.dci.intellij.dbn.common.locale.Formatter;
-import com.dci.intellij.dbn.common.util.StringUtil;
+import com.dci.intellij.dbn.common.util.Strings;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.data.export.DataExportException;
 import com.dci.intellij.dbn.data.export.DataExportFormat;
@@ -127,7 +127,7 @@ public class HTMLDataExportProcessor extends DataExportProcessor{
                 value = value.replaceAll("<", "&lt;");
                 value = value.replaceAll(">", "&gt;");
 
-                if (StringUtil.isEmptyOrSpaces(value)) value = "&nbsp;";
+                if (Strings.isEmptyOrSpaces(value)) value = "&nbsp;";
 
                 boolean isNoWrap =
                         genericDataType == GenericDataType.NUMERIC ||

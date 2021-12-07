@@ -25,7 +25,7 @@ import javax.swing.JLabel;
 import java.awt.BorderLayout;
 import java.awt.Color;
 
-import static com.dci.intellij.dbn.common.util.CommonUtil.nvl;
+import static com.dci.intellij.dbn.common.util.Commons.nvl;
 
 public class AutoCommitLabel extends DBNPanelImpl implements Disposable {
     private interface Colors {

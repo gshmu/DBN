@@ -1,6 +1,6 @@
 package com.dci.intellij.dbn.language.common.element.parser.impl;
 
-import com.dci.intellij.dbn.common.util.StringUtil;
+import com.dci.intellij.dbn.common.util.Strings;
 import com.dci.intellij.dbn.language.common.SharedTokenTypeBundle;
 import com.dci.intellij.dbn.language.common.SimpleTokenType;
 import com.dci.intellij.dbn.language.common.TokenType;
@@ -27,7 +27,7 @@ public class TokenElementTypeParser extends ElementTypeParser<TokenElementType> 
         if (tokenType == elementType.getTokenType() || isDummyToken(builder.getTokenText())) {
 
             String text = elementType.getText();
-            if (StringUtil.isNotEmpty(text) && StringUtil.equalsIgnoreCase(builder.getTokenText(), text)) {
+            if (Strings.isNotEmpty(text) && Strings.equalsIgnoreCase(builder.getTokenText(), text)) {
                 PsiBuilder.Marker marker = builder.mark(null);
                 builder.advanceLexer(parentNode);
                 return stepOut(marker, null, context, ParseResultType.FULL_MATCH, 1);

@@ -4,8 +4,8 @@ import com.dci.intellij.dbn.code.common.style.DBLCodeStyleManager;
 import com.dci.intellij.dbn.code.common.style.options.CodeStyleCustomSettings;
 import com.dci.intellij.dbn.common.compatibility.Compatibility;
 import com.dci.intellij.dbn.common.dispose.AlreadyDisposedException;
-import com.dci.intellij.dbn.common.util.CommonUtil;
-import com.dci.intellij.dbn.common.util.DocumentUtil;
+import com.dci.intellij.dbn.common.util.Commons;
+import com.dci.intellij.dbn.common.util.Documents;
 import com.dci.intellij.dbn.language.common.DBLanguage;
 import com.dci.intellij.dbn.language.common.DBLanguageDialect;
 import com.dci.intellij.dbn.language.common.psi.PsiUtil;
@@ -33,7 +33,7 @@ public class DBLFormattingModelBuilder implements FormattingModelBuilder {
         DBLanguage language = (DBLanguage) PsiUtil.getLanguage(element);
 
         PsiFile psiFile = element.getContainingFile();
-        Document document = DocumentUtil.getDocument(psiFile);
+        Document document = Documents.getDocument(psiFile);
         if (document != null && document.getTextLength() != psiFile.getTextLength()) {
             // TODO check why this happens (during startup)
             throw AlreadyDisposedException.INSTANCE;
@@ -42,7 +42,7 @@ public class DBLFormattingModelBuilder implements FormattingModelBuilder {
 
         CodeStyleCustomSettings settings = language.getCodeStyleSettings(element.getProject());
 
-        boolean deliberate = CommonUtil.isCalledThrough(CodeFormatterFacade.class);
+        boolean deliberate = Commons.isCalledThrough(CodeFormatterFacade.class);
         if (deliberate && settings.getCaseSettings().isEnabled()) {
             DBLCodeStyleManager.getInstance(element.getProject()).formatCase(element.getContainingFile());
         }

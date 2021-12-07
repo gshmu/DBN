@@ -3,7 +3,7 @@ package com.dci.intellij.dbn.data.export.processor;
 import com.dci.intellij.dbn.common.dispose.AlreadyDisposedException;
 import com.dci.intellij.dbn.common.load.ProgressMonitor;
 import com.dci.intellij.dbn.common.locale.Formatter;
-import com.dci.intellij.dbn.common.util.CommonUtil;
+import com.dci.intellij.dbn.common.util.Commons;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.data.export.DataExportException;
 import com.dci.intellij.dbn.data.export.DataExportFormat;
@@ -128,7 +128,7 @@ public abstract class DataExportProcessor {
             } else if (value instanceof ValueAdapter){
                 ValueAdapter valueAdapter = (ValueAdapter) value;
                 try {
-                    return CommonUtil.nvl(valueAdapter.export(), "");
+                    return Commons.nvl(valueAdapter.export(), "");
                 } catch (SQLException e) {
                     throw new DataExportException("Failed to export " + valueAdapter.getGenericDataType() + " cell. Cause: "  + e.getMessage());
                 }

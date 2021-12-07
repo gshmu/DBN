@@ -1,6 +1,6 @@
 package com.dci.intellij.dbn.object.factory;
 
-import com.dci.intellij.dbn.common.util.StringUtil;
+import com.dci.intellij.dbn.common.util.Strings;
 import com.dci.intellij.dbn.object.DBSchema;
 import com.dci.intellij.dbn.object.lookup.DBObjectRef;
 import com.dci.intellij.dbn.object.type.DBObjectType;
@@ -50,7 +50,7 @@ public class MethodFactoryInput extends ObjectFactoryInput{
             String hint = getParent() == null ? "" : " at index " + getIndex();
             errors.add(getObjectType().getName() + " name is not specified" + hint);
             
-        } else if (!StringUtil.isWord(getObjectName())) {
+        } else if (!Strings.isWord(getObjectName())) {
             errors.add("invalid " + getObjectType().getName() +" name specified" + ": \"" + getObjectName() + "\"");
         }
 

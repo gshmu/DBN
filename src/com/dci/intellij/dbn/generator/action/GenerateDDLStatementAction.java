@@ -1,6 +1,6 @@
 package com.dci.intellij.dbn.generator.action;
 
-import com.dci.intellij.dbn.common.util.StringUtil;
+import com.dci.intellij.dbn.common.util.Strings;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.generator.StatementGeneratorResult;
 import com.dci.intellij.dbn.object.common.DBObject;
@@ -37,7 +37,7 @@ public class GenerateDDLStatementAction extends GenerateStatementAction {
         DBObject object = getObject();
         try {
             String statement = object.extractDDL();
-            if (StringUtil.isEmptyOrSpaces(statement)) {
+            if (Strings.isEmptyOrSpaces(statement)) {
                 String message =
                         "Could not extract DDL statement for " + object.getQualifiedNameWithType() + ".\n" +
                                 "You may not have enough rights to perform this action. Please contact your database administrator for more details.";

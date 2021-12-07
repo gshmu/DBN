@@ -5,7 +5,7 @@ import com.dci.intellij.dbn.code.common.style.options.CodeStyleCaseOption;
 import com.dci.intellij.dbn.code.common.style.options.CodeStyleCaseSettings;
 import com.dci.intellij.dbn.common.AbstractProjectComponent;
 import com.dci.intellij.dbn.common.dispose.Failsafe;
-import com.dci.intellij.dbn.common.util.DocumentUtil;
+import com.dci.intellij.dbn.common.util.Documents;
 import com.dci.intellij.dbn.language.common.DBLanguage;
 import com.dci.intellij.dbn.language.common.TokenType;
 import com.dci.intellij.dbn.language.common.psi.IdentifierPsiElement;
@@ -48,7 +48,7 @@ public class DBLCodeStyleManager extends AbstractProjectComponent implements Per
     }
 
     public void formatCase(@NotNull PsiFile file) {
-        Document document = DocumentUtil.getDocument(file);
+        Document document = Documents.getDocument(file);
         if (document != null && document.isWritable()) {
             Editor[] editors = EditorFactory.getInstance().getEditors(document);
             if (editors.length == 1) {

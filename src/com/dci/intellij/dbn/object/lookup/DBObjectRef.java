@@ -4,7 +4,8 @@ import com.dci.intellij.dbn.common.Reference;
 import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.common.state.PersistentStateElement;
 import com.dci.intellij.dbn.common.thread.Timeout;
-import com.dci.intellij.dbn.common.util.StringUtil;
+import com.dci.intellij.dbn.common.util.Lists;
+import com.dci.intellij.dbn.common.util.Strings;
 import com.dci.intellij.dbn.connection.ConnectionCache;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.ConnectionId;
@@ -30,7 +31,6 @@ import java.util.List;
 import java.util.Objects;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import java.util.stream.Collectors;
 
 import static com.dci.intellij.dbn.common.options.setting.SettingsSupport.connectionIdAttribute;
 import static com.dci.intellij.dbn.common.options.setting.SettingsSupport.stringAttribute;
@@ -106,7 +106,7 @@ public class DBObjectRef<T extends DBObject> implements Comparable<DBObjectRef<?
 
     public static <T extends DBObject> DBObjectRef<T> from(Element element) {
         String objectIdentifier = stringAttribute(element, "object-ref");
-        if (StringUtil.isNotEmpty(objectIdentifier)) {
+        if (Strings.isNotEmpty(objectIdentifier)) {
             try {
                 DBObjectRef<T> objectRef = new DBObjectRef<>();
                 objectRef.readState(element);
@@ -298,17 +298,17 @@ public class DBObjectRef<T extends DBObject> implements Comparable<DBObjectRef<?
 
     @NotNull
     public static <T extends DBObject> List<T> get(@NotNull List<DBObjectRef<T>> objectRefs) {
-        return objectRefs.stream().map(ref -> get(ref)).collect(Collectors.toList());
+        return Lists.convert(objectRefs, ref -> get(ref));
     }
 
     @NotNull
     public static <T extends DBObject> List<T> ensure(@NotNull List<DBObjectRef<T>> objectRefs) {
-        return objectRefs.stream().map(ref -> ensure(ref)).collect(Collectors.toList());
+        return Lists.convert(objectRefs, ref -> ensure(ref));
     }
 
     @NotNull
     public static <T extends DBObject> List<DBObjectRef<T>> from(@NotNull List<T> objects) {
-        return objects.stream().map(obj -> of(obj)).collect(Collectors.toList());
+        return Lists.convert(objects, obj -> of(obj));
     }
 
     @Override

@@ -41,7 +41,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
-public class DocumentUtil {
+public class Documents {
     private static final Key<Boolean> FOLDING_STATE_KEY = Key.create("FOLDING_STATE_KEY");
     private static final Key<Long> LAST_ANNOTATION_REFRESH_KEY = Key.create("LAST_ANNOTATION_REFRESH");
 
@@ -50,7 +50,7 @@ public class DocumentUtil {
 
         // restart highlighting
         Project project = editor.getProject();
-        PsiFile file = DocumentUtil.getFile(editor);
+        PsiFile file = Documents.getFile(editor);
         if (project != null && !project.isDisposed() && file instanceof DBLanguagePsiFile) {
             DBLanguagePsiFile dbLanguageFile = (DBLanguagePsiFile) file;
             DBLanguage dbLanguage = dbLanguageFile.getDBLanguage();
@@ -87,7 +87,7 @@ public class DocumentUtil {
 
     public static void refreshEditorAnnotations(@Nullable Editor editor) {
         if (editor != null) {
-            refreshEditorAnnotations(DocumentUtil.getFile(editor));
+            refreshEditorAnnotations(Documents.getFile(editor));
         }
     }
 
@@ -201,9 +201,9 @@ public class DocumentUtil {
     public static void setReadonly(Document document, Project project, boolean readonly) {
         Write.run(() -> {
             //document.setReadOnly(readonly);
-            DocumentUtil.removeGuardedBlocks(document, GuardedBlockType.READONLY_DOCUMENT);
+            Documents.removeGuardedBlocks(document, GuardedBlockType.READONLY_DOCUMENT);
             if (readonly) {
-                DocumentUtil.createGuardedBlock(document, GuardedBlockType.READONLY_DOCUMENT, null, false);
+                Documents.createGuardedBlock(document, GuardedBlockType.READONLY_DOCUMENT, null, false);
             }
         });
     }

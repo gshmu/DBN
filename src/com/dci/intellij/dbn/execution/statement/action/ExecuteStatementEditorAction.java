@@ -3,7 +3,7 @@ package com.dci.intellij.dbn.execution.statement.action;
 import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.common.action.DumbAwareProjectAction;
 import com.dci.intellij.dbn.common.action.Lookup;
-import com.dci.intellij.dbn.common.util.EditorUtil;
+import com.dci.intellij.dbn.common.util.Editors;
 import com.dci.intellij.dbn.debugger.DatabaseDebuggerManager;
 import com.dci.intellij.dbn.execution.statement.StatementExecutionManager;
 import com.dci.intellij.dbn.language.common.DBLanguagePsiFile;
@@ -23,7 +23,7 @@ public class ExecuteStatementEditorAction extends DumbAwareProjectAction {
     protected void actionPerformed(@NotNull AnActionEvent e, @NotNull Project project) {
         Editor editor = Lookup.getEditor(e);
         if (editor != null) {
-            FileEditor fileEditor = EditorUtil.getFileEditor(editor);
+            FileEditor fileEditor = Editors.getFileEditor(editor);
             if (fileEditor != null) {
                 StatementExecutionManager executionManager = StatementExecutionManager.getInstance(project);
                 executionManager.executeStatementAtCursor(fileEditor);

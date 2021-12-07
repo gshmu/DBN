@@ -1,6 +1,6 @@
 package com.dci.intellij.dbn.editor;
 
-import com.dci.intellij.dbn.common.util.EnumerationUtil;
+import com.dci.intellij.dbn.common.util.Enumerations;
 import com.dci.intellij.dbn.object.type.DBObjectType;
 import lombok.Getter;
 
@@ -61,7 +61,7 @@ public enum DBContentType {
     }
 
     public boolean isOneOf(DBContentType ... contentTypes){
-        return EnumerationUtil.isOneOf(this, contentTypes);
+        return Enumerations.isOneOf(this, contentTypes);
     }
 
     public static DBContentType get(DBObjectType objectType) {

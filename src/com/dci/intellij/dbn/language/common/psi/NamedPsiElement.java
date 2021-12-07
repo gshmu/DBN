@@ -1,7 +1,7 @@
 package com.dci.intellij.dbn.language.common.psi;
 
 import com.dci.intellij.dbn.common.consumer.SetCollector;
-import com.dci.intellij.dbn.common.util.NamingUtil;
+import com.dci.intellij.dbn.common.util.Naming;
 import com.dci.intellij.dbn.language.common.element.impl.NamedElementType;
 import com.dci.intellij.dbn.language.common.element.util.ElementTypeAttribute;
 import com.dci.intellij.dbn.language.common.psi.lookup.PsiLookupAdapter;
@@ -12,7 +12,7 @@ import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiElement;
 import org.jetbrains.annotations.Nullable;
 
-import javax.swing.*;
+import javax.swing.Icon;
 
 public class NamedPsiElement extends SequencePsiElement<NamedElementType> {
     public NamedPsiElement(ASTNode astNode, NamedElementType elementType) {
@@ -23,7 +23,7 @@ public class NamedPsiElement extends SequencePsiElement<NamedElementType> {
     public String createSubjectList() {
         SetCollector<IdentifierPsiElement> subjects = SetCollector.create();
         collectSubjectPsiElements(subjects);
-        return subjects.isNotEmpty() ? NamingUtil.createNamesList(subjects.elements(), 3) : null;
+        return subjects.isNotEmpty() ? Naming.createNamesList(subjects.elements(), 3) : null;
     }
 
     @Override

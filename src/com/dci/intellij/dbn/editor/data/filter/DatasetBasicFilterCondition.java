@@ -3,7 +3,7 @@ package com.dci.intellij.dbn.editor.data.filter;
 import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.common.locale.Formatter;
 import com.dci.intellij.dbn.common.options.BasicConfiguration;
-import com.dci.intellij.dbn.common.util.StringUtil;
+import com.dci.intellij.dbn.common.util.Strings;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.data.type.DBDataType;
 import com.dci.intellij.dbn.data.type.GenericDataType;
@@ -50,7 +50,7 @@ public class DatasetBasicFilterCondition extends BasicConfiguration<DatasetBasic
         super(parent);
         this.columnName = columnName;
         this.value = value == null ? "" : value.toString();
-        this.operator = operator == null ? StringUtil.isEmpty(this.value) ? ConditionOperator.IS_NULL : ConditionOperator.EQUAL : operator;
+        this.operator = operator == null ? Strings.isEmpty(this.value) ? ConditionOperator.IS_NULL : ConditionOperator.EQUAL : operator;
 
         this.active = true;
     }
@@ -100,7 +100,7 @@ public class DatasetBasicFilterCondition extends BasicConfiguration<DatasetBasic
                 }
                 value = "(" + value + ")";
             }
-            else if (StringUtil.isNotEmptyOrSpaces(value)) {
+            else if (Strings.isNotEmptyOrSpaces(value)) {
                 ConnectionHandler connectionHandler = Failsafe.nn(dataset.getConnectionHandler());
                 if (genericDataType == GenericDataType.LITERAL || genericDataType == GenericDataType.CLOB) {
                     value = quoteValue(value);
@@ -144,7 +144,7 @@ public class DatasetBasicFilterCondition extends BasicConfiguration<DatasetBasic
             boolean needsEndQuote = value.charAt(value.length() -1) != '\'';
 
             if (needsBeginQuote && needsEndQuote) {
-                value = StringUtil.replace(value, "'", "''");
+                value = Strings.replace(value, "'", "''");
             }
 
             if (needsBeginQuote) {

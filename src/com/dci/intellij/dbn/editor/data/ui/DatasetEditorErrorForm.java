@@ -5,7 +5,7 @@ import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.common.thread.Dispatch;
 import com.dci.intellij.dbn.common.ui.DBNFormImpl;
 import com.dci.intellij.dbn.common.ui.listener.PopupCloseListener;
-import com.dci.intellij.dbn.common.util.StringUtil;
+import com.dci.intellij.dbn.common.util.Strings;
 import com.dci.intellij.dbn.editor.data.DatasetEditorError;
 import com.dci.intellij.dbn.editor.data.model.DatasetEditorModelCell;
 import com.dci.intellij.dbn.editor.data.model.DatasetEditorModelRow;
@@ -45,7 +45,7 @@ public class DatasetEditorErrorForm extends DBNFormImpl implements ChangeListene
         error.addChangeListener(this);
         errorIconLabel.setIcon(Icons.EXEC_MESSAGES_ERROR);
         errorIconLabel.setText("");
-        errorMessageTextArea.setText(StringUtil.textWrap(error.getMessage(), 60, ": ,."));
+        errorMessageTextArea.setText(Strings.textWrap(error.getMessage(), 60, ": ,."));
         Color backgroundColor = BACKGROUND_COLOR;
         errorMessageTextArea.setBackground(backgroundColor);
         errorMessageTextArea.setFont(mainPanel.getFont());

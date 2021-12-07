@@ -16,7 +16,7 @@ import com.intellij.psi.PsiFile;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import static com.dci.intellij.dbn.common.util.CommonUtil.nvln;
+import static com.dci.intellij.dbn.common.util.Commons.nvln;
 
 public abstract class AbstractMethodExecutionIntentionAction extends GenericIntentionAction implements HighPriorityAction {
     private DBObjectRef<DBMethod> lastChecked;

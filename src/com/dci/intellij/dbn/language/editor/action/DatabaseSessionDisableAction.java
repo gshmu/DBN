@@ -2,7 +2,7 @@ package com.dci.intellij.dbn.language.editor.action;
 
 import com.dci.intellij.dbn.common.action.DumbAwareProjectAction;
 import com.dci.intellij.dbn.common.action.Lookup;
-import com.dci.intellij.dbn.common.util.MessageUtil;
+import com.dci.intellij.dbn.common.util.Messages;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.ConnectionHandlerRef;
 import com.dci.intellij.dbn.connection.config.ConnectionDetailSettings;
@@ -26,11 +26,11 @@ public class DatabaseSessionDisableAction extends DumbAwareProjectAction {
         Editor editor = Lookup.getEditor(e);
         if (editor != null) {
             ConnectionHandler connectionHandler = connectionHandlerRef.ensure();
-            MessageUtil.showQuestionDialog(
+            Messages.showQuestionDialog(
                     project,
                     "Disable session support",
                     "Are you sure you want to disable the session support for connection \"" + connectionHandler.getName() + "\"\n(you can re-enable at any time in connection details settings)",
-                    MessageUtil.OPTIONS_YES_NO,
+                    Messages.OPTIONS_YES_NO,
                     0,
                     option -> when(option == 0, () -> {
                         ConnectionDetailSettings detailSettings = connectionHandler.getSettings().getDetailSettings();

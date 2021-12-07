@@ -2,7 +2,7 @@ package com.dci.intellij.dbn.code.common.intention;
 
 import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.common.util.Context;
-import com.dci.intellij.dbn.common.util.EditorUtil;
+import com.dci.intellij.dbn.common.util.Editors;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.database.DatabaseFeature;
 import com.dci.intellij.dbn.debugger.DatabaseDebuggerManager;
@@ -21,7 +21,7 @@ import com.intellij.psi.PsiFile;
 import com.intellij.util.IncorrectOperationException;
 import org.jetbrains.annotations.NotNull;
 
-import javax.swing.*;
+import javax.swing.Icon;
 
 public class ExplainPlanIntentionAction extends GenericIntentionAction implements HighPriorityAction {
     @Override
@@ -47,7 +47,7 @@ public class ExplainPlanIntentionAction extends GenericIntentionAction implement
 
             if (virtualFile != null && virtualFile.getFileType() instanceof DBLanguageFileType) {
                 ExecutablePsiElement executable = PsiUtil.lookupExecutableAtCaret(editor, true);
-                FileEditor fileEditor = EditorUtil.getFileEditor(editor);
+                FileEditor fileEditor = Editors.getFileEditor(editor);
                 if (executable != null && fileEditor != null && executable.is(ElementTypeAttribute.DATA_MANIPULATION)) {
                     ConnectionHandler activeConnection = executable.getConnectionHandler();
                     return DatabaseFeature.EXPLAIN_PLAN.isSupported(activeConnection);
@@ -60,7 +60,7 @@ public class ExplainPlanIntentionAction extends GenericIntentionAction implement
     @Override
     public void invoke(@NotNull Project project, Editor editor, PsiFile psiFile) throws IncorrectOperationException {
         ExecutablePsiElement executable = PsiUtil.lookupExecutableAtCaret(editor, true);
-        FileEditor fileEditor = EditorUtil.getFileEditor(editor);
+        FileEditor fileEditor = Editors.getFileEditor(editor);
         if (executable != null && fileEditor != null) {
             DataContext dataContext = Context.getDataContext(editor);
             ExplainPlanManager explainPlanManager = ExplainPlanManager.getInstance(project);

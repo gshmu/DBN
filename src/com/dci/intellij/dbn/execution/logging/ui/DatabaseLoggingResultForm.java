@@ -1,17 +1,21 @@
 package com.dci.intellij.dbn.execution.logging.ui;
 
-import com.dci.intellij.dbn.common.util.ActionUtil;
+import com.dci.intellij.dbn.common.util.Actions;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.execution.common.result.ui.ExecutionResultFormBase;
 import com.dci.intellij.dbn.execution.logging.DatabaseLoggingResult;
 import com.intellij.ide.actions.NextOccurenceToolbarAction;
 import com.intellij.ide.actions.PreviousOccurenceToolbarAction;
-import com.intellij.openapi.actionSystem.*;
+import com.intellij.openapi.actionSystem.ActionManager;
+import com.intellij.openapi.actionSystem.ActionToolbar;
+import com.intellij.openapi.actionSystem.AnAction;
+import com.intellij.openapi.actionSystem.Constraints;
+import com.intellij.openapi.actionSystem.DefaultActionGroup;
 import com.intellij.openapi.util.Disposer;
 import org.jetbrains.annotations.NotNull;
 
-import javax.swing.*;
-import java.awt.*;
+import javax.swing.JPanel;
+import java.awt.BorderLayout;
 
 public class DatabaseLoggingResultForm extends ExecutionResultFormBase<DatabaseLoggingResult> {
     private JPanel mainPanel;
@@ -40,7 +44,7 @@ public class DatabaseLoggingResultForm extends ExecutionResultFormBase<DatabaseL
             toolbarActions.add(actionManager.getAction("DBNavigator.Actions.DatabaseLogOutput.RerunProcess"), Constraints.FIRST);
             toolbarActions.add(actionManager.getAction("DBNavigator.Actions.DatabaseLogOutput.Close"), Constraints.FIRST);
             toolbarActions.add(actionManager.getAction("DBNavigator.Actions.DatabaseLogOutput.Settings"), Constraints.LAST);
-            ActionToolbar actionToolbar = ActionUtil.createActionToolbar(actionsPanel, "", false, toolbarActions);
+            ActionToolbar actionToolbar = Actions.createActionToolbar(actionsPanel, "", false, toolbarActions);
             actionsPanel.add(actionToolbar.getComponent());
             actionToolbar.setTargetComponent(console.getToolbarContextComponent());
         }

@@ -16,8 +16,8 @@ import java.util.Objects;
 import java.util.function.Supplier;
 
 @Slf4j
-public final class CommonUtil {
-    private CommonUtil() {}
+public final class Commons {
+    private Commons() {}
 
     public static boolean isPluginCall() {
         for (StackTraceElement stackTraceElement : Thread.currentThread().getStackTrace()) {
@@ -72,10 +72,23 @@ public final class CommonUtil {
         return value == null ? defaultValue.call() : value;
     }
 
-    public static <T> T nvlf(@Nullable T value, T... values) {
+    @SafeVarargs
+    public static <T> T coalesce(T... values) {
         int index = 0;
+        T value = null;
         while (value == null && index < values.length) {
             value = values[index];
+            index++;
+        }
+        return value;
+    }
+
+    @SafeVarargs
+    public static <T> T coalesce(Supplier<T>... suppliers) {
+        int index = 0;
+        T value = null;
+        while (value == null && index < suppliers.length) {
+            value = suppliers[index].get();
             index++;
         }
         return value;

@@ -1,6 +1,6 @@
 package com.dci.intellij.dbn.debugger.jdwp;
 
-import com.dci.intellij.dbn.common.util.DocumentUtil;
+import com.dci.intellij.dbn.common.util.Documents;
 import com.dci.intellij.dbn.debugger.DBDebugConsoleLogger;
 import com.dci.intellij.dbn.debugger.DBDebugUtil;
 import com.dci.intellij.dbn.debugger.common.breakpoint.DBBreakpointHandler;
@@ -64,7 +64,7 @@ public class DBJdwpBreakpointHandler extends DBBreakpointHandler<DBJdwpDebugProc
                 if (basePsiElement != null) {
                     BasePsiElement subject = basePsiElement.findFirstPsiElement(ElementTypeAttribute.SUBJECT);
                     int offset = subject.getTextOffset();
-                    Document document = DocumentUtil.getDocument(psqlFile);
+                    Document document = Documents.getDocument(psqlFile);
                     if (document != null) {
                         int line = document.getLineNumber(offset);
 

@@ -4,8 +4,8 @@ import com.dci.intellij.dbn.common.compatibility.CompatibilityUtil;
 import com.dci.intellij.dbn.common.ui.DBNFormImpl;
 import com.dci.intellij.dbn.common.ui.GUIUtil;
 import com.dci.intellij.dbn.common.ui.listener.MouseClickedListener;
-import com.dci.intellij.dbn.common.util.ActionUtil;
-import com.dci.intellij.dbn.common.util.StringUtil;
+import com.dci.intellij.dbn.common.util.Actions;
+import com.dci.intellij.dbn.common.util.Strings;
 import com.dci.intellij.dbn.data.find.action.CloseOnESCAction;
 import com.dci.intellij.dbn.data.find.action.NextOccurrenceAction;
 import com.dci.intellij.dbn.data.find.action.PrevOccurrenceAction;
@@ -198,7 +198,7 @@ public class DataSearchComponent extends DBNFormImpl implements SelectionListene
         myActionsGroup.add(new ToggleMatchCase(this));
         myActionsGroup.add(new ToggleRegex(this));
 
-        actionsToolbar = ActionUtil.createActionToolbar(actionsPanel, "SearchBar", true, myActionsGroup);
+        actionsToolbar = Actions.createActionToolbar(actionsPanel, "SearchBar", true, myActionsGroup);
 
         myActionsGroup.addAction(new ToggleWholeWordsOnlyAction(this));
 
@@ -215,7 +215,7 @@ public class DataSearchComponent extends DBNFormImpl implements SelectionListene
         CompatibilityUtil.setSmallerFont(searchField);
 
         searchField.registerKeyboardAction(e -> {
-            if (StringUtil.isEmptyOrSpaces(searchField.getText())) {
+            if (Strings.isEmptyOrSpaces(searchField.getText())) {
                 close();
             } else {
                 // TODO
@@ -252,7 +252,7 @@ public class DataSearchComponent extends DBNFormImpl implements SelectionListene
     private void searchFieldDocumentChanged() {
         String text = searchField.getText();
         findModel.setStringToFind(text);
-        if (!StringUtil.isEmpty(text)) {
+        if (!Strings.isEmpty(text)) {
             updateResults(true);
         } else {
             nothingToSearchFor();

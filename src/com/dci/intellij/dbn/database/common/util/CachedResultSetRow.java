@@ -1,7 +1,7 @@
 package com.dci.intellij.dbn.database.common.util;
 
 import com.dci.intellij.dbn.common.util.Safe;
-import com.dci.intellij.dbn.common.util.StringUtil;
+import com.dci.intellij.dbn.common.util.Strings;
 import org.jetbrains.annotations.Nullable;
 
 import java.sql.ResultSet;
@@ -50,7 +50,7 @@ public class CachedResultSetRow {
         CachedResultSetRow clone = new CachedResultSetRow(null, null);
         String[] columnNames = columns.names();
         for (String columnName : values.keySet()) {
-            if (StringUtil.isOneOf(columnName, columnNames)) {
+            if (Strings.isOneOf(columnName, columnNames)) {
                 Object columnValue = get(columnName);
                 clone.values.put(columnName, columnValue);
             }

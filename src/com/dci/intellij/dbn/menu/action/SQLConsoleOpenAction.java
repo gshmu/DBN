@@ -3,7 +3,7 @@ package com.dci.intellij.dbn.menu.action;
 import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.common.action.DumbAwareProjectAction;
 import com.dci.intellij.dbn.common.dispose.Failsafe;
-import com.dci.intellij.dbn.common.util.MessageUtil;
+import com.dci.intellij.dbn.common.util.Messages;
 import com.dci.intellij.dbn.connection.ConnectionBundle;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.ConnectionHandlerRef;
@@ -78,7 +78,7 @@ public class SQLConsoleOpenAction extends DumbAwareProjectAction {
             if (singleConnectionHandler != null) {
                 openSQLConsole(singleConnectionHandler);
             } else {
-                MessageUtil.showInfoDialog(
+                Messages.showInfoDialog(
                         project, "No connections available.", "No database connections found. Please setup a connection first",
                         new String[]{"Setup Connection", "Cancel"}, 0,
                         option -> when(option == 0, () -> {

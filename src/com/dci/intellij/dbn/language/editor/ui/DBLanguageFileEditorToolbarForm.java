@@ -2,7 +2,7 @@ package com.dci.intellij.dbn.language.editor.ui;
 
 import com.dci.intellij.dbn.common.ui.AutoCommitLabel;
 import com.dci.intellij.dbn.common.ui.DBNFormImpl;
-import com.dci.intellij.dbn.common.util.ActionUtil;
+import com.dci.intellij.dbn.common.util.Actions;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.mapping.FileConnectionMappingManager;
 import com.dci.intellij.dbn.connection.session.DatabaseSession;
@@ -14,8 +14,8 @@ import com.intellij.openapi.util.Key;
 import com.intellij.openapi.vfs.VirtualFile;
 import org.jetbrains.annotations.NotNull;
 
-import javax.swing.*;
-import java.awt.*;
+import javax.swing.JPanel;
+import java.awt.BorderLayout;
 
 public class DBLanguageFileEditorToolbarForm extends DBNFormImpl {
     public static final Key<DBLanguageFileEditorToolbarForm> USER_DATA_KEY = new Key<>("fileEditorToolbarForm");
@@ -25,7 +25,7 @@ public class DBLanguageFileEditorToolbarForm extends DBNFormImpl {
 
     public DBLanguageFileEditorToolbarForm(Disposable parent, Project project, VirtualFile file) {
         super(parent, project);
-        ActionToolbar actionToolbar = ActionUtil.createActionToolbar(actionsPanel,"", true, "DBNavigator.ActionGroup.FileEditor");
+        ActionToolbar actionToolbar = Actions.createActionToolbar(actionsPanel,"", true, "DBNavigator.ActionGroup.FileEditor");
         actionsPanel.add(actionToolbar.getComponent(), BorderLayout.CENTER);
 
         FileConnectionMappingManager mappingManager = FileConnectionMappingManager.getInstance(project);

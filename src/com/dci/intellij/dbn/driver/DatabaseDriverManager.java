@@ -2,8 +2,8 @@ package com.dci.intellij.dbn.driver;
 
 import com.dci.intellij.dbn.common.component.ApplicationComponent;
 import com.dci.intellij.dbn.common.load.ProgressMonitor;
-import com.dci.intellij.dbn.common.util.FileUtil;
-import com.dci.intellij.dbn.common.util.StringUtil;
+import com.dci.intellij.dbn.common.util.Files;
+import com.dci.intellij.dbn.common.util.Strings;
 import com.dci.intellij.dbn.connection.DatabaseType;
 import com.intellij.openapi.application.ApplicationManager;
 import lombok.SneakyThrows;
@@ -182,12 +182,12 @@ public class DatabaseDriverManager implements ApplicationComponent {
         String driverLibrary = BUNDLED_LIBS.get(databaseType);
         log.info("Loading driver library " + driverLibrary);
 
-        File deploymentRoot = FileUtil.getPluginDeploymentRoot();
-        return FileUtil.findFileRecursively(deploymentRoot, driverLibrary);
+        File deploymentRoot = Files.getPluginDeploymentRoot();
+        return Files.findFileRecursively(deploymentRoot, driverLibrary);
     }
 
     public Driver getDriver(File libraryFile, String className) throws Exception {
-        if (StringUtil.isEmptyOrSpaces(className)) {
+        if (Strings.isEmptyOrSpaces(className)) {
             throw new Exception("No driver class specified.");
         }
         if (libraryFile.exists()) {

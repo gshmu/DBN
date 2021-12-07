@@ -1,6 +1,6 @@
 package com.dci.intellij.dbn.execution.logging.ui;
 
-import com.dci.intellij.dbn.common.util.StringUtil;
+import com.dci.intellij.dbn.common.util.Strings;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.execution.logging.LogOutput;
 import com.dci.intellij.dbn.execution.logging.LogOutputContext;
@@ -31,7 +31,7 @@ public class DatabaseLoggingResultConsole extends LogConsoleBase{
 
     public void writeToConsole(LogOutputContext context, LogOutput output) {
         String text = output.getText();
-        boolean isEmpty = StringUtil.isEmptyOrSpaces(text);
+        boolean isEmpty = Strings.isEmptyOrSpaces(text);
         boolean hideEmptyLines = context.isHideEmptyLines();
 
         if (!hideEmptyLines || !isEmpty) {

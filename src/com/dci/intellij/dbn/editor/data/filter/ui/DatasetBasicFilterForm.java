@@ -9,8 +9,8 @@ import com.dci.intellij.dbn.common.ui.Borders;
 import com.dci.intellij.dbn.common.ui.GUIUtil;
 import com.dci.intellij.dbn.common.ui.ValueSelector;
 import com.dci.intellij.dbn.common.ui.ValueSelectorOption;
-import com.dci.intellij.dbn.common.util.DocumentUtil;
-import com.dci.intellij.dbn.common.util.EditorUtil;
+import com.dci.intellij.dbn.common.util.Documents;
+import com.dci.intellij.dbn.common.util.Editors;
 import com.dci.intellij.dbn.editor.data.filter.ConditionJoinType;
 import com.dci.intellij.dbn.editor.data.filter.ConditionOperator;
 import com.dci.intellij.dbn.editor.data.filter.DatasetBasicFilter;
@@ -36,9 +36,14 @@ import com.intellij.util.PlatformIcons;
 import com.intellij.util.ui.UIUtil;
 import org.jetbrains.annotations.NotNull;
 
-import javax.swing.*;
+import javax.swing.BoxLayout;
+import javax.swing.JComboBox;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JTextField;
 import javax.swing.border.LineBorder;
-import java.awt.*;
+import java.awt.BorderLayout;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
@@ -187,7 +192,7 @@ public class DatasetBasicFilterForm extends ConfigurationEditorForm<DatasetBasic
                 DatabaseFileViewProvider viewProvider = new DatabaseFileViewProvider(project, filterFile, true);
                 PsiFile selectStatementFile = filterFile.initializePsiFile(viewProvider, SQLLanguage.INSTANCE);
 
-                previewDocument = DocumentUtil.getDocument(selectStatementFile);
+                previewDocument = Documents.getDocument(selectStatementFile);
 
                 this.viewer = (EditorEx) EditorFactory.getInstance().createViewer(previewDocument, project);
                 this.viewer.setEmbeddedIntoDialogWrapper(true);
@@ -213,7 +218,7 @@ public class DatasetBasicFilterForm extends ConfigurationEditorForm<DatasetBasic
                 previewPanel.add(this.viewer.getComponent(), BorderLayout.CENTER);
 
             } else {
-                DocumentUtil.setText(previewDocument, selectStatement);
+                Documents.setText(previewDocument, selectStatement);
             }
         }
 
@@ -289,7 +294,7 @@ public class DatasetBasicFilterForm extends ConfigurationEditorForm<DatasetBasic
 
     @Override
     public void disposeInner() {
-        EditorUtil.releaseEditor(viewer);
+        Editors.releaseEditor(viewer);
         super.disposeInner();
     }
 }

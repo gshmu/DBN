@@ -11,7 +11,7 @@ import com.dci.intellij.dbn.common.option.InteractiveOptionBroker;
 import com.dci.intellij.dbn.common.thread.Dispatch;
 import com.dci.intellij.dbn.common.thread.Progress;
 import com.dci.intellij.dbn.common.thread.Read;
-import com.dci.intellij.dbn.common.util.MessageUtil;
+import com.dci.intellij.dbn.common.util.Messages;
 import com.dci.intellij.dbn.common.util.TimeUtil;
 import com.dci.intellij.dbn.connection.ConnectionAction;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
@@ -49,7 +49,7 @@ import java.util.Map;
 import java.util.Timer;
 import java.util.TimerTask;
 
-import static com.dci.intellij.dbn.common.util.CommonUtil.list;
+import static com.dci.intellij.dbn.common.util.Commons.list;
 
 @State(
     name = SessionBrowserManager.COMPONENT_NAME,
@@ -200,19 +200,19 @@ public class SessionBrowserManager extends AbstractProjectComponent implements P
                                     if (sessionIds.size() == 1) {
                                         Object sessionId = sessionIds.keySet().iterator().next();
                                         if (errors.size() == 0) {
-                                            MessageUtil.showInfoDialog(project, "Info", "Session " + sessionId + " " + disconnectedAction + ".");
+                                            Messages.showInfoDialog(project, "Info", "Session " + sessionId + " " + disconnectedAction + ".");
                                         } else {
                                             SQLException exception = errors.get(sessionId);
                                             if (messageParserInterface.isSuccessException(exception)) {
-                                                MessageUtil.showInfoDialog(project, "Info", "Session " + sessionId + " " + disconnectingAction + " requested.\n" + exception.getMessage());
+                                                Messages.showInfoDialog(project, "Info", "Session " + sessionId + " " + disconnectingAction + " requested.\n" + exception.getMessage());
                                             } else {
-                                                MessageUtil.showErrorDialog(project, "Error " + disconnectingAction + " session " + sessionId + ".", exception);
+                                                Messages.showErrorDialog(project, "Error " + disconnectingAction + " session " + sessionId + ".", exception);
                                             }
 
                                         }
                                     } else {
                                         if (errors.size() == 0) {
-                                            MessageUtil.showInfoDialog(project, "Info", sessionIds.size() + " sessions " + disconnectedAction + ".");
+                                            Messages.showInfoDialog(project, "Info", sessionIds.size() + " sessions " + disconnectedAction + ".");
                                         } else {
                                             StringBuilder message = new StringBuilder();
                                             boolean success = errors.values().stream().allMatch(error -> messageParserInterface.isSuccessException(error));
@@ -236,16 +236,16 @@ public class SessionBrowserManager extends AbstractProjectComponent implements P
                                                 }
                                             }
                                             if (success) {
-                                                MessageUtil.showInfoDialog(project, "Info", message.toString());
+                                                Messages.showInfoDialog(project, "Info", message.toString());
                                             } else {
-                                                MessageUtil.showErrorDialog(project, message.toString());
+                                                Messages.showErrorDialog(project, message.toString());
                                             }
                                         }
 
                                     }
                                 });
                     } catch (SQLException e) {
-                        MessageUtil.showErrorDialog(project, "Error performing operation", e);
+                        Messages.showErrorDialog(project, "Error performing operation", e);
                     } finally {
                         sessionBrowser.loadSessions(false);
                     }

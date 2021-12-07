@@ -7,7 +7,7 @@ import com.dci.intellij.dbn.common.file.util.FileSearchRequest;
 import com.dci.intellij.dbn.common.file.util.VirtualFileUtil;
 import com.dci.intellij.dbn.common.thread.Progress;
 import com.dci.intellij.dbn.common.thread.Read;
-import com.dci.intellij.dbn.common.util.CommonUtil;
+import com.dci.intellij.dbn.common.util.Commons;
 import com.dci.intellij.dbn.diagnostics.data.DiagnosticCategory;
 import com.dci.intellij.dbn.diagnostics.data.ParserDiagnosticsFilter;
 import com.dci.intellij.dbn.diagnostics.data.ParserDiagnosticsResult;
@@ -65,7 +65,7 @@ public class ParserDiagnosticsManager extends AbstractProjectComponent implement
                 Progress.check(progress);
                 String filePath = file.getPath();
                 progress.setText2(filePath);
-                progress.setFraction(CommonUtil.getProgressPercentage(i, files.length));
+                progress.setFraction(Commons.getProgressPercentage(i, files.length));
 
                 DBLanguagePsiFile psiFile = ensureFileParsed(file);
                 Progress.check(progress);
@@ -94,7 +94,7 @@ public class ParserDiagnosticsManager extends AbstractProjectComponent implement
                 () -> new ParserDiagnosticsForm(project));
 
         ParserDiagnosticsResult selectedResult = form.getSelectedResult();
-        form.selectResult(CommonUtil.nvln(result, selectedResult));
+        form.selectResult(Commons.nvln(result, selectedResult));
     }
 
 

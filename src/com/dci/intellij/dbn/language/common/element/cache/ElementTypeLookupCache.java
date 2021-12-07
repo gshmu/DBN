@@ -2,7 +2,7 @@ package com.dci.intellij.dbn.language.common.element.cache;
 
 import com.dci.intellij.dbn.common.index.IndexContainer;
 import com.dci.intellij.dbn.common.latent.Latent;
-import com.dci.intellij.dbn.common.util.CollectionUtil;
+import com.dci.intellij.dbn.common.util.Compactables;
 import com.dci.intellij.dbn.language.common.DBLanguage;
 import com.dci.intellij.dbn.language.common.SharedTokenTypeBundle;
 import com.dci.intellij.dbn.language.common.TokenType;
@@ -28,7 +28,7 @@ public abstract class ElementTypeLookupCache<T extends ElementTypeBase>/* implem
 
     public void initialise() {
         IndexContainer<TokenType> tokenTypes = nextPossibleTokens.get();
-        CollectionUtil.compact(tokenTypes);
+        Compactables.compact(tokenTypes);
     }
 
     /**

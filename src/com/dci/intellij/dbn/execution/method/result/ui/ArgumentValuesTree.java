@@ -2,7 +2,7 @@ package com.dci.intellij.dbn.execution.method.result.ui;
 
 import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.common.ui.tree.DBNTree;
-import com.dci.intellij.dbn.common.util.TextAttributesUtil;
+import com.dci.intellij.dbn.common.util.TextAttributes;
 import com.dci.intellij.dbn.data.grid.color.DataGridTextAttributesKeys;
 import com.dci.intellij.dbn.data.type.DBDataType;
 import com.dci.intellij.dbn.execution.method.ArgumentValue;
@@ -29,7 +29,7 @@ class ArgumentValuesTree extends DBNTree{
     ArgumentValuesTree(MethodExecutionResultForm parent, List<ArgumentValue> inputArgumentValues, List<ArgumentValue> outputArgumentValues) {
         super(parent, createModel(parent, inputArgumentValues, outputArgumentValues));
         setCellRenderer(new CellRenderer());
-        Color bgColor = TextAttributesUtil.getSimpleTextAttributes(DataGridTextAttributesKeys.PLAIN_DATA).getBgColor();
+        Color bgColor = TextAttributes.getSimpleTextAttributes(DataGridTextAttributesKeys.PLAIN_DATA).getBgColor();
         setBackground(bgColor == null ? UIUtil.getTableBackground() : bgColor);
 
         addMouseListener(mouseAdapter);

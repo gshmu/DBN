@@ -4,8 +4,8 @@ import com.dci.intellij.dbn.common.ui.DBNFormImpl;
 import com.dci.intellij.dbn.common.ui.DBNHeaderForm;
 import com.dci.intellij.dbn.common.ui.DBNHintForm;
 import com.dci.intellij.dbn.common.ui.Presentable;
-import com.dci.intellij.dbn.common.util.CollectionUtil;
-import com.dci.intellij.dbn.common.util.CommonUtil;
+import com.dci.intellij.dbn.common.util.Commons;
+import com.dci.intellij.dbn.common.util.Lists;
 import com.dci.intellij.dbn.debugger.common.config.DBRunConfig;
 import com.dci.intellij.dbn.debugger.common.config.ui.CompileDebugDependenciesDialog;
 import com.dci.intellij.dbn.debugger.common.config.ui.ObjectListCellRenderer;
@@ -16,8 +16,11 @@ import com.dci.intellij.dbn.object.common.DBSchemaObject;
 import com.dci.intellij.dbn.object.lookup.DBObjectRef;
 import org.jetbrains.annotations.NotNull;
 
-import javax.swing.*;
-import java.awt.*;
+import javax.swing.DefaultListModel;
+import javax.swing.JCheckBox;
+import javax.swing.JList;
+import javax.swing.JPanel;
+import java.awt.BorderLayout;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -68,7 +71,7 @@ public class CompileDebugDependenciesForm extends DBNFormImpl {
         Presentable source = runConfiguration.getSource();
         DBNHeaderForm headerForm = source instanceof DBObject ?
                 new DBNHeaderForm(this, (DBObject) source) :
-                new DBNHeaderForm(this, CommonUtil.nvl(source, Presentable.UNKNOWN));
+                new DBNHeaderForm(this, Commons.nvl(source, Presentable.UNKNOWN));
         headerPanel.add(headerForm.getComponent(), BorderLayout.CENTER);
         parent.registerRememberSelectionCheckBox(rememberSelectionCheckBox);
     }
@@ -99,7 +102,7 @@ public class CompileDebugDependenciesForm extends DBNFormImpl {
 
     public List<DBObjectRef<?>> getSelection() {
         List<DBSchemaObject> selectedValuesList = objectList.getSelectedValuesList();
-        return CollectionUtil.map(selectedValuesList, o -> o.getRef());
+        return Lists.convert(selectedValuesList, o -> o.getRef());
     }
 
     public void selectAll() {

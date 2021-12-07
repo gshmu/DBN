@@ -8,15 +8,19 @@ import com.dci.intellij.dbn.common.ui.Borders;
 import com.dci.intellij.dbn.common.ui.DBNFormImpl;
 import com.dci.intellij.dbn.common.ui.listener.PopupCloseListener;
 import com.dci.intellij.dbn.common.ui.table.TableUtil;
-import com.dci.intellij.dbn.common.util.ActionUtil;
-import com.dci.intellij.dbn.common.util.CommonUtil;
-import com.dci.intellij.dbn.common.util.StringUtil;
+import com.dci.intellij.dbn.common.util.Actions;
+import com.dci.intellij.dbn.common.util.Commons;
+import com.dci.intellij.dbn.common.util.Strings;
 import com.dci.intellij.dbn.data.editor.ui.UserValueHolder;
 import com.dci.intellij.dbn.data.grid.ui.table.basic.BasicTable;
 import com.dci.intellij.dbn.data.value.LargeObjectValue;
 import com.dci.intellij.dbn.editor.data.DatasetEditorManager;
 import com.dci.intellij.dbn.language.common.WeakRef;
-import com.intellij.openapi.actionSystem.*;
+import com.intellij.openapi.actionSystem.ActionToolbar;
+import com.intellij.openapi.actionSystem.AnAction;
+import com.intellij.openapi.actionSystem.AnActionEvent;
+import com.intellij.openapi.actionSystem.Presentation;
+import com.intellij.openapi.actionSystem.ToggleAction;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.popup.ComponentPopupBuilder;
 import com.intellij.openapi.ui.popup.JBPopup;
@@ -25,8 +29,16 @@ import com.intellij.openapi.ui.popup.JBPopupListener;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import javax.swing.*;
-import java.awt.*;
+import javax.swing.JComponent;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JTable;
+import javax.swing.JTextArea;
+import java.awt.BorderLayout;
+import java.awt.Component;
+import java.awt.Dimension;
+import java.awt.Point;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
@@ -60,7 +72,7 @@ public class LargeValuePreviewPopup extends DBNFormImpl {
 
         loadContent(true);
         String value = valueTextArea.getText();
-        int maxRowLength = StringUtil.textMaxRowLength(value);
+        int maxRowLength = Strings.textMaxRowLength(value);
         preferredWidth = Math.max(preferredWidth, Math.min(maxRowLength * 8, 600));
         largeTextLayout = preferredWidth > 500 || loadContentVisible;
 
@@ -70,12 +82,12 @@ public class LargeValuePreviewPopup extends DBNFormImpl {
         if (largeTextLayout) {
             boolean isBasicPreview = !(table instanceof BasicTable);
             if (isBasicPreview) {
-                ActionToolbar actionToolbar = ActionUtil.createActionToolbar(leftActionsPanel,"", false, new WrapUnwrapContentAction());
+                ActionToolbar actionToolbar = Actions.createActionToolbar(leftActionsPanel,"", false, new WrapUnwrapContentAction());
                 JComponent toolbarComponent = actionToolbar.getComponent();
                 leftActionsPanel.add(toolbarComponent, BorderLayout.NORTH);
                 topActionsPanel.setVisible(false);
             } else {
-                ActionToolbar actionToolbar = ActionUtil.createActionToolbar(topActionsPanel,"", true,
+                ActionToolbar actionToolbar = Actions.createActionToolbar(topActionsPanel,"", true,
                     /*new PinUnpinPopupAction(),
                     new CloseAction(),
                     ActionUtil.SEPARATOR,*/
@@ -124,7 +136,7 @@ public class LargeValuePreviewPopup extends DBNFormImpl {
                 text = initial ?
                         largeObjectValue.read(INITIAL_MAX_SIZE) :
                         largeObjectValue.read();
-                text = CommonUtil.nvl(text, "");
+                text = Commons.nvl(text, "");
 
                 long contentSize = largeObjectValue.size();
                 if (initial && contentSize > INITIAL_MAX_SIZE) {
@@ -154,7 +166,7 @@ public class LargeValuePreviewPopup extends DBNFormImpl {
     }
 
     private static int getNumberOfLines(String text) {
-        return StringUtil.countNewLines(text) + 1;
+        return Strings.countNewLines(text) + 1;
     }
 
     @NotNull

@@ -1,7 +1,7 @@
 package com.dci.intellij.dbn.execution.logging.action;
 
 import com.dci.intellij.dbn.common.Icons;
-import com.dci.intellij.dbn.common.util.MessageUtil;
+import com.dci.intellij.dbn.common.util.Messages;
 import com.dci.intellij.dbn.execution.ExecutionManager;
 import com.dci.intellij.dbn.execution.logging.DatabaseLoggingResult;
 import com.intellij.openapi.actionSystem.AnActionEvent;
@@ -18,11 +18,11 @@ public class DatabaseLogOutputCloseAction extends AbstractDatabaseLoggingAction 
     @Override
     protected void actionPerformed(@NotNull AnActionEvent e, @NotNull Project project, @NotNull DatabaseLoggingResult loggingResult) {
         if (loggingResult.getContext().isActive()) {
-            MessageUtil.showQuestionDialog(
+            Messages.showQuestionDialog(
                     project,
                     "Process active",
                     "The process is still active. Closing the log output will interrupt the process. \nAre you sure you want to close the console?",
-                    MessageUtil.OPTIONS_YES_NO, 0,
+                    Messages.OPTIONS_YES_NO, 0,
                     option -> when(option == 0, () -> closeConsole(loggingResult, project)));
         } else {
             closeConsole(loggingResult, project);

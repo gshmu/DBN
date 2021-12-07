@@ -4,7 +4,7 @@ import com.dci.intellij.dbn.common.thread.Dispatch;
 import com.dci.intellij.dbn.common.ui.GUIUtil;
 import com.dci.intellij.dbn.common.ui.component.DBNComponent;
 import com.dci.intellij.dbn.common.ui.table.DBNTableGutter;
-import com.dci.intellij.dbn.common.util.ActionUtil;
+import com.dci.intellij.dbn.common.util.Actions;
 import com.dci.intellij.dbn.common.util.Safe;
 import com.dci.intellij.dbn.data.grid.ui.table.basic.BasicTableCellRenderer;
 import com.dci.intellij.dbn.data.grid.ui.table.basic.BasicTableGutter;
@@ -191,7 +191,7 @@ public class SessionBrowserTable extends ResultSetTable<SessionBrowserModel> {
         if (eventSource.isShowing()) {
             SessionBrowser sessionBrowser = getSessionBrowser();
             ActionGroup actionGroup = new SessionBrowserTableActionGroup(sessionBrowser, cell, columnInfo);
-            ActionPopupMenu actionPopupMenu = ActionUtil.createActionPopupMenu(SessionBrowserTable.this, "", actionGroup);
+            ActionPopupMenu actionPopupMenu = Actions.createActionPopupMenu(SessionBrowserTable.this, "", actionGroup);
             JPopupMenu popupMenu = actionPopupMenu.getComponent();
             popupMenu.addPopupMenuListener(new PopupMenuListenerAdapter() {
                 @Override

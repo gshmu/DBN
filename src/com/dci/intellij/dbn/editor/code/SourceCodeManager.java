@@ -13,10 +13,10 @@ import com.dci.intellij.dbn.common.notification.NotificationGroup;
 import com.dci.intellij.dbn.common.thread.Progress;
 import com.dci.intellij.dbn.common.thread.Synchronized;
 import com.dci.intellij.dbn.common.util.ChangeTimestamp;
-import com.dci.intellij.dbn.common.util.DocumentUtil;
-import com.dci.intellij.dbn.common.util.EditorUtil;
-import com.dci.intellij.dbn.common.util.InternalApiUtil;
-import com.dci.intellij.dbn.common.util.StringUtil;
+import com.dci.intellij.dbn.common.util.Documents;
+import com.dci.intellij.dbn.common.util.Editors;
+import com.dci.intellij.dbn.common.util.InternalApi;
+import com.dci.intellij.dbn.common.util.Strings;
 import com.dci.intellij.dbn.connection.ConnectionAction;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.ResourceUtil;
@@ -72,9 +72,9 @@ import java.util.Objects;
 
 import static com.dci.intellij.dbn.common.message.MessageCallback.when;
 import static com.dci.intellij.dbn.common.navigation.NavigationInstruction.*;
-import static com.dci.intellij.dbn.common.util.CommonUtil.list;
-import static com.dci.intellij.dbn.common.util.MessageUtil.*;
-import static com.dci.intellij.dbn.common.util.NamingUtil.unquote;
+import static com.dci.intellij.dbn.common.util.Commons.list;
+import static com.dci.intellij.dbn.common.util.Messages.*;
+import static com.dci.intellij.dbn.common.util.Naming.unquote;
 import static com.dci.intellij.dbn.vfs.VirtualFileStatus.*;
 
 @State(
@@ -187,7 +187,7 @@ public class SourceCodeManager extends AbstractProjectComponent implements Persi
                     boolean initialLoad = !sourceCodeFile.isLoaded();
                     if (sourceCodeFile.isNot(LOADING) && (initialLoad || force)) {
                         sourceCodeFile.set(LOADING, true);
-                        EditorUtil.setEditorsReadonly(sourceCodeFile, true);
+                        Editors.setEditorsReadonly(sourceCodeFile, true);
                         Project project = getProject();
                         DBSchemaObject object = sourceCodeFile.getObject();
 
@@ -228,8 +228,8 @@ public class SourceCodeManager extends AbstractProjectComponent implements Persi
             sourceCodeFile.set(SAVING, true);
             Project project = getProject();
             try {
-                Document document = Failsafe.nn(DocumentUtil.getDocument(sourceCodeFile));
-                DocumentUtil.saveDocument(document);
+                Document document = Failsafe.nn(Documents.getDocument(sourceCodeFile));
+                Documents.saveDocument(document);
 
                 DBLanguagePsiFile psiFile = sourceCodeFile.getPsiFile();
                 if (psiFile == null || psiFile.getFirstChild() == null || isValidObjectTypeAndName(psiFile, object, contentType)) {
@@ -308,7 +308,7 @@ public class SourceCodeManager extends AbstractProjectComponent implements Persi
                         if (buffer.length() == 0 && !optionalContent)
                             throw new SQLException("Source lookup returned empty");
 
-                        return StringUtil.removeCharacter(buffer.toString(), '\r');
+                        return Strings.removeCharacter(buffer.toString(), '\r');
                     } finally {
                         ResourceUtil.close(resultSet);
                     }
@@ -474,13 +474,13 @@ public class SourceCodeManager extends AbstractProjectComponent implements Persi
             String objectName = object.getName();
             String schemaName = object.getSchema().getName();
 
-            if (psiElement == null || !StringUtil.equalsIgnoreCase(psiElement.getText(), typeName)) {
+            if (psiElement == null || !Strings.equalsIgnoreCase(psiElement.getText(), typeName)) {
                 return false;
             }
 
             if (subtypeName != null) {
                 psiElement = PsiUtil.getNextLeaf(psiElement);
-                if (psiElement == null || !StringUtil.equalsIgnoreCase(psiElement.getText(), subtypeName)) {
+                if (psiElement == null || !Strings.equalsIgnoreCase(psiElement.getText(), subtypeName)) {
                     return false;
                 }
             }
@@ -490,18 +490,18 @@ public class SourceCodeManager extends AbstractProjectComponent implements Persi
                 return false;
             }
 
-            if (StringUtil.equalsIgnoreCase(text(psiElement), schemaName)) {
+            if (Strings.equalsIgnoreCase(text(psiElement), schemaName)) {
                 psiElement = PsiUtil.getNextLeaf(psiElement) ;
                 if (psiElement == null || !Objects.equals(psiElement.getText(), ".")) {
                     return false;
                 } else {
                     psiElement = PsiUtil.getNextLeaf(psiElement);
-                    if (psiElement == null || !StringUtil.equalsIgnoreCase(text(psiElement), objectName)) {
+                    if (psiElement == null || !Strings.equalsIgnoreCase(text(psiElement), objectName)) {
                         return false;
                     }
                 }
             } else {
-                if (!StringUtil.equalsIgnoreCase(text(psiElement), objectName)) {
+                if (!Strings.equalsIgnoreCase(text(psiElement), objectName)) {
                     return false;
                 }
             }
@@ -552,11 +552,11 @@ public class SourceCodeManager extends AbstractProjectComponent implements Persi
         VirtualFile elementVirtualFile = psiFile.getVirtualFile();
         if (elementVirtualFile instanceof DBSourceCodeVirtualFile) {
             DBSourceCodeVirtualFile sourceCodeFile = (DBSourceCodeVirtualFile) elementVirtualFile;
-            BasicTextEditor textEditor = EditorUtil.getTextEditor(sourceCodeFile);
+            BasicTextEditor textEditor = Editors.getTextEditor(sourceCodeFile);
             if (textEditor != null) {
                 Project project = getProject();
                 EditorProviderId editorProviderId = textEditor.getEditorProviderId();
-                FileEditor fileEditor = EditorUtil.selectEditor(project, textEditor, editableObjectFile, editorProviderId, NavigationInstructions.create(OPEN));
+                FileEditor fileEditor = Editors.selectEditor(project, textEditor, editableObjectFile, editorProviderId, NavigationInstructions.create(OPEN));
                 basePsiElement.navigateInEditor(fileEditor, NavigationInstructions.create(FOCUS, SCROLL));
             }
         }
@@ -564,7 +564,7 @@ public class SourceCodeManager extends AbstractProjectComponent implements Persi
 
     @Override
     public boolean canCloseProject() {
-        boolean exitApp = InternalApiUtil.isApplicationExitInProgress();
+        boolean exitApp = InternalApi.isApplicationExitInProgress();
         boolean canClose = true;
         Project project = getProject();
         FileEditorManager fileEditorManager = FileEditorManager.getInstance(project);

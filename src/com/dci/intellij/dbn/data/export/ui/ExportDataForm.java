@@ -3,7 +3,7 @@ package com.dci.intellij.dbn.data.export.ui;
 import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.common.ui.DBNFormImpl;
 import com.dci.intellij.dbn.common.ui.DBNHeaderForm;
-import com.dci.intellij.dbn.common.util.MessageUtil;
+import com.dci.intellij.dbn.common.util.Messages;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.ConnectionHandlerRef;
 import com.dci.intellij.dbn.connection.config.ui.CharsetOption;
@@ -236,16 +236,16 @@ public class ExportDataForm extends DBNFormImpl {
         Project project = getProject();
         if (buffer.length() > 0) {
             buffer.insert(0, "Please provide values for: ");
-            MessageUtil.showErrorDialog(project, "Required input", buffer.toString());
+            Messages.showErrorDialog(project, "Required input", buffer.toString());
             return;
         }
 
         if (destinationFileRadioButton.isSelected()) {
             File file = getExportInstructions().getFile();
             if (file.exists()) {
-                MessageUtil.showQuestionDialog(project, "File exists",
+                Messages.showQuestionDialog(project, "File exists",
                         "File " + file.getPath() + " already exists. Overwrite?",
-                        MessageUtil.OPTIONS_YES_NO, 0,
+                        Messages.OPTIONS_YES_NO, 0,
                         option -> when(option == 0, callback));
 
                 return;

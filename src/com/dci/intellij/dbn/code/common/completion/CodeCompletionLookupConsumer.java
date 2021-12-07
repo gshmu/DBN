@@ -8,7 +8,7 @@ import com.dci.intellij.dbn.code.common.lookup.LookupItemBuilder;
 import com.dci.intellij.dbn.code.common.lookup.VariableLookupItemBuilder;
 import com.dci.intellij.dbn.common.consumer.CancellableConsumer;
 import com.dci.intellij.dbn.common.dispose.AlreadyDisposedException;
-import com.dci.intellij.dbn.common.util.StringUtil;
+import com.dci.intellij.dbn.common.util.Strings;
 import com.dci.intellij.dbn.language.common.DBLanguage;
 import com.dci.intellij.dbn.language.common.TokenType;
 import com.dci.intellij.dbn.language.common.TokenTypeCategory;
@@ -56,7 +56,7 @@ public class CodeCompletionLookupConsumer implements CancellableConsumer<Object>
                 } else if (object instanceof TokenElementType) {
                     TokenElementType tokenElementType = (TokenElementType) object;
                     String text = tokenElementType.getText();
-                    if (StringUtil.isNotEmpty(text)) {
+                    if (Strings.isNotEmpty(text)) {
                         lookupItemBuilder = tokenElementType.getLookupItemBuilder(language);
                     } else {
                         CodeCompletionFilterSettings filterSettings = context.getCodeCompletionFilterSettings();

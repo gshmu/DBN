@@ -5,7 +5,7 @@ import com.dci.intellij.dbn.common.Capture;
 import com.dci.intellij.dbn.common.consumer.ListCollector;
 import com.dci.intellij.dbn.common.thread.ThreadMonitor;
 import com.dci.intellij.dbn.common.util.RecursivityGate;
-import com.dci.intellij.dbn.common.util.StringUtil;
+import com.dci.intellij.dbn.common.util.Strings;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.language.common.QuotePair;
 import com.dci.intellij.dbn.language.common.element.impl.IdentifierElementType;
@@ -42,7 +42,7 @@ import javax.swing.Icon;
 import java.util.Set;
 import java.util.function.Consumer;
 
-import static com.dci.intellij.dbn.common.util.CommonUtil.nvl;
+import static com.dci.intellij.dbn.common.util.Commons.nvl;
 
 public abstract class IdentifierPsiElement extends LeafPsiElement<IdentifierElementType> {
     private PsiResolveResult ref;
@@ -86,7 +86,7 @@ public abstract class IdentifierPsiElement extends LeafPsiElement<IdentifierElem
      */
     @Override
     public String getPresentableText() {
-        return StringUtil.toUpperCase(getUnquotedText()) + " (" + getObjectType() + ")";
+        return Strings.toUpperCase(getUnquotedText()) + " (" + getObjectType() + ")";
     }
 
     @Override
@@ -289,7 +289,7 @@ public abstract class IdentifierPsiElement extends LeafPsiElement<IdentifierElem
     @Override
     public BasePsiElement findPsiElementBySubject(ElementTypeAttribute attribute, CharSequence subjectName, DBObjectType subjectType) {
         if (getElementType().is(attribute) && getElementType().is(ElementTypeAttribute.SUBJECT)) {
-            if (subjectType == getObjectType() && StringUtil.equalsIgnoreCase(subjectName, this.getChars())) {
+            if (subjectType == getObjectType() && Strings.equalsIgnoreCase(subjectName, this.getChars())) {
                 return this;
             }
         }
@@ -560,9 +560,9 @@ public abstract class IdentifierPsiElement extends LeafPsiElement<IdentifierElem
     public boolean textMatches(@NotNull CharSequence text) {
         CharSequence chars = getChars();
         if (isQuoted())  {
-            return chars.length() == text.length() + 2 && StringUtil.indexOfIgnoreCase(chars, text, 0) == 1;
+            return chars.length() == text.length() + 2 && Strings.indexOfIgnoreCase(chars, text, 0) == 1;
         } else {
-            return StringUtil.equalsIgnoreCase(chars, text);
+            return Strings.equalsIgnoreCase(chars, text);
         }
     }
 
@@ -580,7 +580,7 @@ public abstract class IdentifierPsiElement extends LeafPsiElement<IdentifierElem
     public boolean matches(BasePsiElement basePsiElement, MatchType matchType) {
         if (basePsiElement instanceof IdentifierPsiElement) {
             IdentifierPsiElement identifierPsiElement = (IdentifierPsiElement) basePsiElement;
-            return matchType == MatchType.SOFT || StringUtil.equalsIgnoreCase(identifierPsiElement.getChars(), getChars());
+            return matchType == MatchType.SOFT || Strings.equalsIgnoreCase(identifierPsiElement.getChars(), getChars());
         }
 
         return false;

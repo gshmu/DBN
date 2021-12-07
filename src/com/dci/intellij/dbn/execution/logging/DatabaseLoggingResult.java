@@ -3,7 +3,7 @@ package com.dci.intellij.dbn.execution.logging;
 import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.common.action.DataKeys;
 import com.dci.intellij.dbn.common.dispose.Failsafe;
-import com.dci.intellij.dbn.common.util.CommonUtil;
+import com.dci.intellij.dbn.common.util.Commons;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.ConnectionId;
 import com.dci.intellij.dbn.database.DatabaseCompatibilityInterface;
@@ -18,7 +18,7 @@ import com.intellij.psi.PsiFile;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import javax.swing.*;
+import javax.swing.Icon;
 
 public class DatabaseLoggingResult extends ExecutionResultBase<DatabaseLoggingResultForm> {
 
@@ -48,7 +48,7 @@ public class DatabaseLoggingResult extends ExecutionResultBase<DatabaseLoggingRe
             DatabaseCompatibilityInterface compatibilityInterface = connectionHandler.getInterfaceProvider().getCompatibilityInterface();
             String databaseLogName = compatibilityInterface.getDatabaseLogName();
 
-            return connectionHandler.getName() + " - " + CommonUtil.nvl(databaseLogName, "Log Output");
+            return connectionHandler.getName() + " - " + Commons.nvl(databaseLogName, "Log Output");
         } else {
             return connectionHandler.getName() + " - " + sourceFile.getName();
         }

@@ -1,8 +1,8 @@
 package com.dci.intellij.dbn.database.generic;
 
 import com.dci.intellij.dbn.common.routine.ThrowableCallable;
-import com.dci.intellij.dbn.common.util.CommonUtil;
-import com.dci.intellij.dbn.common.util.StringUtil;
+import com.dci.intellij.dbn.common.util.Commons;
+import com.dci.intellij.dbn.common.util.Strings;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.jdbc.DBNConnection;
 import com.dci.intellij.dbn.database.DatabaseCompatibility;
@@ -261,7 +261,7 @@ public interface GenericMetadataLoaders {
             ConnectionHandler connectionHandler = DatabaseInterface.getConnectionHandler();
             DatabaseCompatibilityInterface compatibilityInterface = connectionHandler.getInterfaceProvider().getCompatibilityInterface();
             CachedResultSet resultSet = compatibilityInterface.attempt(feature, loader);
-            return CommonUtil.nvl(resultSet, CachedResultSet.EMPTY);
+            return Commons.nvl(resultSet, CachedResultSet.EMPTY);
         });
     }
 
@@ -281,7 +281,7 @@ public interface GenericMetadataLoaders {
                     () -> rs.getString("FUNCTION_CAT"),
                     () -> rs.getString("PROCEDURE_CAT"),
                     () -> null);
-            if (StringUtil.isEmpty(catalog)) {
+            if (Strings.isEmpty(catalog)) {
                 return true;
             } else {
                 CachedResultSet catalogsRs = loadCatalogsRaw(connection);

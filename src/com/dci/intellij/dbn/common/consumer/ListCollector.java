@@ -1,6 +1,6 @@
 package com.dci.intellij.dbn.common.consumer;
 
-import com.dci.intellij.dbn.common.util.CommonUtil;
+import com.dci.intellij.dbn.common.util.Commons;
 import com.dci.intellij.dbn.common.util.Consumer;
 
 import java.util.ArrayList;
@@ -40,7 +40,7 @@ public class ListCollector<T> implements Consumer<T> {
     }
 
     public List<T> elements() {
-        return CommonUtil.nvl(elements, Collections.emptyList());
+        return Commons.nvl(elements, Collections.emptyList());
     }
 
     public boolean isEmpty() {

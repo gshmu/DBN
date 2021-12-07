@@ -1,6 +1,6 @@
 package com.dci.intellij.dbn.generator;
 
-import com.dci.intellij.dbn.common.util.StringUtil;
+import com.dci.intellij.dbn.common.util.Strings;
 import com.dci.intellij.dbn.object.DBColumn;
 import com.dci.intellij.dbn.object.DBDataset;
 import com.dci.intellij.dbn.object.lookup.DBObjectRef;
@@ -43,7 +43,7 @@ class DatasetJoin {
                 for (DBColumn column2 : dataset2.getColumns()) {
                     String name1 = column1.getName();
                     String name2 = column2.getName();
-                    if (name1.length() > 2 && StringUtil.equalsIgnoreCase(name1, name2) && name1.toUpperCase().endsWith("ID")) {
+                    if (name1.length() > 2 && Strings.equalsIgnoreCase(name1, name2) && name1.toUpperCase().endsWith("ID")) {
                         createMapping(column1, column2);
                     }
                 }

@@ -7,8 +7,8 @@ import com.dci.intellij.dbn.common.notification.NotificationSupport;
 import com.dci.intellij.dbn.common.thread.Progress;
 import com.dci.intellij.dbn.common.thread.Synchronized;
 import com.dci.intellij.dbn.common.thread.Write;
-import com.dci.intellij.dbn.common.util.MessageUtil;
-import com.dci.intellij.dbn.common.util.StringUtil;
+import com.dci.intellij.dbn.common.util.Messages;
+import com.dci.intellij.dbn.common.util.Strings;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.ConnectionHandlerRef;
 import com.dci.intellij.dbn.connection.ResourceUtil;
@@ -203,7 +203,7 @@ public abstract class DBJdbcDebugProcess<T extends ExecutionInput> extends XDebu
                                             } catch (SQLException e) {
                                                 set(SESSION_INITIALIZATION_THREW_EXCEPTION, true);
                                                 console.system("Error synchronizing debug session: " + e.getMessage());
-                                                MessageUtil.showErrorDialog(getProject(),
+                                                Messages.showErrorDialog(getProject(),
                                                         "Could not initialize debug environment on connection \"" +
                                                                 getConnectionHandler().getName() + "\". ", e);
                                                 getSession().stop();
@@ -236,7 +236,7 @@ public abstract class DBJdbcDebugProcess<T extends ExecutionInput> extends XDebu
                         //DatabaseDebuggerInterface debuggerInterface = getDebuggerInterface();
                         //debuggerInterface.disableDebugging(targetConnection);
 
-                        MessageUtil.showErrorDialog(getProject(), "Error executing " + executionInput.getExecutionContext().getTargetName(), e);
+                        Messages.showErrorDialog(getProject(), "Error executing " + executionInput.getExecutionContext().getTargetName(), e);
                     } finally {
                         set(TARGET_EXECUTION_TERMINATED, true);
                         getSession().stop();
@@ -415,7 +415,7 @@ public abstract class DBJdbcDebugProcess<T extends ExecutionInput> extends XDebu
     }
 
     private void showErrorDialog(SQLException e) {
-        MessageUtil.showErrorDialog(getProject(), "Could not perform operation.", e);
+        Messages.showErrorDialog(getProject(), "Could not perform operation.", e);
     }
 
     private void suspendSession() {
@@ -494,7 +494,7 @@ public abstract class DBJdbcDebugProcess<T extends ExecutionInput> extends XDebu
         String ownerName = runtimeInfo.getOwnerName();
         String programName = runtimeInfo.getProgramName();
 
-        if (StringUtil.isNotEmpty(ownerName) && StringUtil.isNotEmpty(programName)) {
+        if (Strings.isNotEmpty(ownerName) && Strings.isNotEmpty(programName)) {
             ConnectionHandler connectionHandler = getConnectionHandler();
             DBObjectBundle objectBundle = connectionHandler.getObjectBundle();
             DBSchema schema = Failsafe.nn(objectBundle.getSchema(ownerName));

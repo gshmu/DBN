@@ -13,8 +13,8 @@ import com.dci.intellij.dbn.common.project.ProjectRef;
 import com.dci.intellij.dbn.common.thread.CancellableDatabaseCall;
 import com.dci.intellij.dbn.common.thread.Progress;
 import com.dci.intellij.dbn.common.thread.Read;
-import com.dci.intellij.dbn.common.util.DocumentUtil;
-import com.dci.intellij.dbn.common.util.StringUtil;
+import com.dci.intellij.dbn.common.util.Documents;
+import com.dci.intellij.dbn.common.util.Strings;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.ConnectionId;
 import com.dci.intellij.dbn.connection.ResourceUtil;
@@ -104,7 +104,7 @@ public class StatementExecutionBasicProcessor extends StatefulDisposable.Base im
         if (executablePsiElement!= null) {
             resultName = executablePsiElement.createSubjectList();
         }
-        if (StringUtil.isEmptyOrSpaces(resultName)) {
+        if (Strings.isEmptyOrSpaces(resultName)) {
             resultName = "Result " + index;
         }
         return resultName;
@@ -310,7 +310,7 @@ public class StatementExecutionBasicProcessor extends StatefulDisposable.Base im
             context.set(EXECUTING, true);
 
             resultName.reset();
-            DocumentUtil.refreshEditorAnnotations(getPsiFile());
+            Documents.refreshEditorAnnotations(getPsiFile());
 
             String statementText = initStatementText();
             SQLException executionException = null;
@@ -858,7 +858,7 @@ public class StatementExecutionBasicProcessor extends StatefulDisposable.Base im
     public int getExecutableLineNumber() {
         ExecutablePsiElement cachedExecutable = getCachedExecutable();
         if (cachedExecutable != null) {
-            Document document = DocumentUtil.getDocument(cachedExecutable.getFile());
+            Document document = Documents.getDocument(cachedExecutable.getFile());
             if (document != null) {
                 int textOffset = cachedExecutable.getTextOffset();
                 return document.getLineNumber(textOffset);

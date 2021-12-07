@@ -5,8 +5,8 @@ import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.common.dispose.SafeDisposer;
 import com.dci.intellij.dbn.common.event.ProjectEvents;
 import com.dci.intellij.dbn.common.thread.Dispatch;
-import com.dci.intellij.dbn.common.util.DocumentUtil;
-import com.dci.intellij.dbn.common.util.EditorUtil;
+import com.dci.intellij.dbn.common.util.Documents;
+import com.dci.intellij.dbn.common.util.Editors;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.ConnectionLoadListener;
 import com.dci.intellij.dbn.connection.mapping.FileConnectionMappingManager;
@@ -39,8 +39,8 @@ public class DatabaseLoaderManager extends AbstractProjectComponent {
                             for (FileEditor fileEditor : fileEditors) {
 
                                 checkDisposed();
-                                Editor editor = EditorUtil.getEditor(fileEditor);
-                                DocumentUtil.refreshEditorAnnotations(editor);
+                                Editor editor = Editors.getEditor(fileEditor);
+                                Documents.refreshEditorAnnotations(editor);
                             }
 
                         }

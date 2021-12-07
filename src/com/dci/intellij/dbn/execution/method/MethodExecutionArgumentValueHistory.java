@@ -1,7 +1,7 @@
 package com.dci.intellij.dbn.execution.method;
 
 import com.dci.intellij.dbn.common.state.PersistentStateElement;
-import com.dci.intellij.dbn.common.util.StringUtil;
+import com.dci.intellij.dbn.common.util.Strings;
 import com.dci.intellij.dbn.connection.ConnectionId;
 import org.jdom.Element;
 
@@ -19,7 +19,7 @@ public class MethodExecutionArgumentValueHistory implements PersistentStateEleme
 
         if (argumentValues != null) {
             for (String argumentName : argumentValues.keySet()) {
-                if (StringUtil.equalsIgnoreCase(argumentName, name)) {
+                if (Strings.equalsIgnoreCase(argumentName, name)) {
                     return argumentValues.get(argumentName);
                 }
             }
@@ -40,7 +40,7 @@ public class MethodExecutionArgumentValueHistory implements PersistentStateEleme
     }
 
     public void cacheVariable(ConnectionId connectionId, String name, String value) {
-        if (StringUtil.isNotEmpty(value)) {
+        if (Strings.isNotEmpty(value)) {
             MethodExecutionArgumentValue argumentValue = getArgumentValue(connectionId, name, true);
             argumentValue.setValue(value);
         }

@@ -1,6 +1,6 @@
 package com.dci.intellij.dbn.debugger.jdbc.frame;
 
-import com.dci.intellij.dbn.common.util.StringUtil;
+import com.dci.intellij.dbn.common.util.Strings;
 import com.dci.intellij.dbn.database.common.debug.DebuggerRuntimeInfo;
 import com.dci.intellij.dbn.database.common.debug.ExecutionBacktraceInfo;
 import com.dci.intellij.dbn.debugger.jdbc.DBJdbcDebugProcess;
@@ -37,7 +37,7 @@ public class DBJdbcDebugExecutionStack extends XExecutionStack {
         ExecutionBacktraceInfo backtraceInfo = debugProcess.getBacktraceInfo();
         if (backtraceInfo != null) {
             for (DebuggerRuntimeInfo runtimeInfo : backtraceInfo.getFrames()) {
-                if (StringUtil.isNotEmpty(runtimeInfo.getOwnerName()) || debugProcess.getExecutionInput() instanceof StatementExecutionInput) {
+                if (Strings.isNotEmpty(runtimeInfo.getOwnerName()) || debugProcess.getExecutionInput() instanceof StatementExecutionInput) {
                     DBJdbcDebugStackFrame frame = new DBJdbcDebugStackFrame(debugProcess, runtimeInfo, runtimeInfo.getFrameIndex());
                     frames.add(frame);
                 }

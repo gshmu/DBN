@@ -1,7 +1,7 @@
 package com.dci.intellij.dbn.connection.config;
 
 import com.dci.intellij.dbn.common.options.BasicProjectConfiguration;
-import com.dci.intellij.dbn.common.util.CommonUtil;
+import com.dci.intellij.dbn.common.util.Commons;
 import com.dci.intellij.dbn.connection.ConnectionId;
 import com.dci.intellij.dbn.connection.config.ui.ConnectionPropertiesSettingsForm;
 import lombok.EqualsAndHashCode;
@@ -67,7 +67,7 @@ public class ConnectionPropertiesSettings extends BasicProjectConfiguration<Conn
             for (String propertyKey : properties.keySet()) {
                 Element propertyElement = new Element("property");
                 propertyElement.setAttribute("key", propertyKey);
-                propertyElement.setAttribute("value", CommonUtil.nvl(properties.get(propertyKey), ""));
+                propertyElement.setAttribute("value", Commons.nvl(properties.get(propertyKey), ""));
 
                 propertiesElement.addContent(propertyElement);
             }

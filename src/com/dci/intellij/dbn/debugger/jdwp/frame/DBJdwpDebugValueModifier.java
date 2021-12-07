@@ -1,7 +1,7 @@
 package com.dci.intellij.dbn.debugger.jdwp.frame;
 
 import com.dci.intellij.dbn.common.compatibility.Compatibility;
-import com.dci.intellij.dbn.common.util.StringUtil;
+import com.dci.intellij.dbn.common.util.Strings;
 import com.dci.intellij.dbn.debugger.jdwp.process.DBJdwpDebugProcess;
 import com.dci.intellij.dbn.language.sql.SQLLanguage;
 import com.intellij.xdebugger.XExpression;
@@ -29,7 +29,7 @@ public class DBJdwpDebugValueModifier extends XValueModifier {
 
         DBJdwpDebugProcess debugProcess = value.getDebugProcess();
         try {
-            if (StringUtil.isNotEmpty(expression)) {
+            if (Strings.isNotEmpty(expression)) {
                 while (expression.charAt(0) == '\'') {
                     expression = expression.substring(1);
                 }
