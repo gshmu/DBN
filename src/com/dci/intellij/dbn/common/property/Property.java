@@ -18,8 +18,9 @@ public interface Property{
         private final long one;
 
         public Computed(Property p) {
-            this.zero = ~(1L << p.ordinal());
-            this.one = 1L << p.ordinal();
+            int shift = p.ordinal() + 1;
+            this.zero = ~(1L << shift);
+            this.one = 1L << shift;
         }
     }
 }

@@ -3,6 +3,7 @@ package com.dci.intellij.dbn.object.filter.name;
 import com.dci.intellij.dbn.DatabaseNavigator;
 import com.dci.intellij.dbn.common.AbstractProjectComponent;
 import com.dci.intellij.dbn.common.dispose.Failsafe;
+import com.dci.intellij.dbn.common.ui.GUIUtil;
 import com.dci.intellij.dbn.object.filter.ConditionJoinType;
 import com.dci.intellij.dbn.object.filter.name.ui.ObjectNameFilterConditionDialog;
 import com.dci.intellij.dbn.object.filter.name.ui.ObjectNameFilterConditionForm;
@@ -18,7 +19,7 @@ import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import javax.swing.*;
+import javax.swing.JTree;
 import javax.swing.tree.TreePath;
 import java.util.List;
 
@@ -48,12 +49,16 @@ public class ObjectNameFilterManager extends AbstractProjectComponent implements
             TreePath treePath = settings.createTreePath(objectNameFilter);
             filtersTree.expandPath(treePath);
             filtersTree.setSelectionPath(treePath);
+            GUIUtil.repaint(filtersTree);
         }
     }
 
     public void createFilterCondition(CompoundFilterCondition parentCondition, ObjectNameFilterSettingsForm settingsForm) {
-        ObjectNameFilterConditionDialog dialog =
-                new ObjectNameFilterConditionDialog(getProject(), parentCondition, null, parentCondition.getObjectType(), ObjectNameFilterConditionForm.Operation.CREATE);
+        ObjectNameFilterConditionDialog dialog = new ObjectNameFilterConditionDialog(
+                getProject(),
+                parentCondition, null,
+                parentCondition.getObjectType(),
+                ObjectNameFilterConditionForm.Operation.CREATE);
         dialog.show();
         if (dialog.getExitCode() == DialogWrapper.OK_EXIT_CODE) {
             settingsForm.getConfiguration().setModified(true);
@@ -64,9 +69,10 @@ public class ObjectNameFilterManager extends AbstractProjectComponent implements
                 parentCondition.setJoinType(joinType);
             }
 
-            ObjectNameFilterSettings settings = (ObjectNameFilterSettings) settingsForm.getFiltersTree().getModel();
-            TreePath treePath = settings.createTreePath(newCondition);
-            settingsForm.getFiltersTree().setSelectionPath(treePath);
+            JTree filtersTree = settingsForm.getFiltersTree();
+            ObjectNameFilterSettings settings = (ObjectNameFilterSettings) filtersTree.getModel();
+            filtersTree.setSelectionPath(settings.createTreePath(newCondition));
+            GUIUtil.repaint(filtersTree);
         }
     }
 

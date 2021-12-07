@@ -34,15 +34,12 @@ import com.intellij.navigation.ItemPresentation;
 import com.intellij.openapi.progress.ProcessCanceledException;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiDirectory;
-import lombok.Getter;
-import lombok.Setter;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import javax.swing.Icon;
 import javax.swing.tree.TreeNode;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.Enumeration;
 import java.util.List;
@@ -52,7 +49,7 @@ import static com.dci.intellij.dbn.common.content.DynamicContentStatus.INTERNAL;
 
 public class DBObjectListImpl<T extends DBObject> extends DynamicContentImpl<T> implements DBObjectList<T> {
     private final DBObjectType objectType;
-    private final DBObjectListFilter filter = new DBObjectListFilter();
+    private ObjectQuickFilter<T> quickFilter;
     private PsiDirectory psiDirectory;
 
     DBObjectListImpl(
@@ -103,36 +100,27 @@ public class DBObjectListImpl<T extends DBObject> extends DynamicContentImpl<T> 
     @Nullable
     @Override
     public Filter<T> getFilter() {
-        return filter;
+        Filter<T> configFilter = getConfigFilter();
+        if (configFilter != null && this.quickFilter != null) {
+            return CompoundFilter.of(configFilter, this.quickFilter);
+
+        } else if (configFilter != null) {
+            return configFilter;
+
+        } else {
+            return this.quickFilter;
+        }
     }
 
     @Override
     public void setQuickFilter(ObjectQuickFilter<T> quickFilter) {
-        filter.setQuickFilter(quickFilter);
+        this.quickFilter = quickFilter;
     }
 
     @Nullable
     @Override
     public ObjectQuickFilter<T> getQuickFilter() {
-        return filter.quickFilter;
-    }
-
-    @Getter
-    @Setter
-    private class DBObjectListFilter extends CompoundFilter<T> {
-        private ObjectQuickFilter<T> quickFilter;
-
-        @NotNull
-        @Override
-        public List<Filter<T>> getFilters() {
-            return Arrays.asList(
-                    quickFilter,
-                    getConfigFilter());
-        }
-
-        public boolean isEmpty() {
-            return quickFilter == null && getConfigFilter() == null;
-        }
+        return this.quickFilter;
     }
 
     @Override
