@@ -1,6 +1,6 @@
 package com.dci.intellij.dbn.connection.transaction.action;
 
-import com.dci.intellij.dbn.common.util.StringUtil;
+import com.dci.intellij.dbn.common.util.Strings;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.action.AbstractConnectionToggleAction;
 import com.dci.intellij.dbn.database.DatabaseCompatibilityInterface;
@@ -34,7 +34,7 @@ public class DatabaseLoggingToggleAction extends AbstractConnectionToggleAction 
         Presentation presentation = e.getPresentation();
         presentation.setVisible(supportsLogging);
         String databaseLogName = compatibilityInterface.getDatabaseLogName();
-        if (StringUtil.isNotEmpty(databaseLogName)) {
+        if (Strings.isNotEmpty(databaseLogName)) {
             presentation.setText("Database Logging (" + databaseLogName + ")");
         }
     }

@@ -19,7 +19,7 @@ import java.util.Set;
 import java.util.TreeMap;
 import java.util.UUID;
 
-import static com.dci.intellij.dbn.common.util.CommonUtil.nvl;
+import static com.dci.intellij.dbn.common.util.Commons.nvl;
 
 
 @Getter

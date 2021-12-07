@@ -2,7 +2,7 @@ package com.dci.intellij.dbn.vfs;
 
 import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.common.project.ProjectRef;
-import com.dci.intellij.dbn.common.util.DocumentUtil;
+import com.dci.intellij.dbn.common.util.Documents;
 import com.dci.intellij.dbn.language.common.DBLanguage;
 import com.dci.intellij.dbn.language.common.DBLanguageDialect;
 import com.dci.intellij.dbn.language.common.DBLanguageParserDefinition;
@@ -90,7 +90,7 @@ public class DatabaseFileViewProvider extends SingleRootFileViewProvider {
             DBLanguageParserDefinition parserDefinition = languageDialect.getParserDefinition();
             file = (DBLanguagePsiFile) parserDefinition.createFile(this);
             forceCachedPsi(file);
-            Document document = DocumentUtil.getDocument(file);// cache hard reference to document (??)
+            Document document = Documents.getDocument(file);// cache hard reference to document (??)
             if (Failsafe.check(document)) {
                 // TODO non-physical fs assertion
                 //FileDocumentManagerImpl.registerDocument(document, getVirtualFile());

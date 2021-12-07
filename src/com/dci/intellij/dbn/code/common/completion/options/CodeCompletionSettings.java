@@ -6,7 +6,7 @@ import com.dci.intellij.dbn.code.common.completion.options.sorting.CodeCompletio
 import com.dci.intellij.dbn.code.common.completion.options.ui.CodeCompletionSettingsForm;
 import com.dci.intellij.dbn.common.options.CompositeProjectConfiguration;
 import com.dci.intellij.dbn.common.options.Configuration;
-import com.dci.intellij.dbn.common.util.CommonUtil;
+import com.dci.intellij.dbn.common.util.Commons;
 import com.dci.intellij.dbn.options.ConfigId;
 import com.dci.intellij.dbn.options.ProjectSettings;
 import com.dci.intellij.dbn.options.ProjectSettingsManager;
@@ -59,7 +59,7 @@ public class CodeCompletionSettings extends CompositeProjectConfiguration<Projec
     }
 
     private void loadDefaults() {
-        Document document = CommonUtil.loadXmlFile(getClass(), "default-settings.xml");
+        Document document = Commons.loadXmlFile(getClass(), "default-settings.xml");
         Element root = document.getRootElement();
         readConfiguration(root);
    }

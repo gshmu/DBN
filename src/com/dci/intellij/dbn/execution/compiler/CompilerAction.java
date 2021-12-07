@@ -1,6 +1,6 @@
 package com.dci.intellij.dbn.execution.compiler;
 
-import com.dci.intellij.dbn.common.util.EditorUtil;
+import com.dci.intellij.dbn.common.util.Editors;
 import com.dci.intellij.dbn.editor.DBContentType;
 import com.dci.intellij.dbn.editor.EditorProviderId;
 import com.dci.intellij.dbn.language.common.WeakRef;
@@ -72,7 +72,7 @@ public class CompilerAction {
     public FileEditor getFileEditor() {
         FileEditor fileEditor = this.fileEditorRef == null ? null : this.fileEditorRef.get();
         if (fileEditor != null) {
-            Editor editor = EditorUtil.getEditor(fileEditor);
+            Editor editor = Editors.getEditor(fileEditor);
             if (editor != null) {
                 this.fileEditorRef = null;
             }

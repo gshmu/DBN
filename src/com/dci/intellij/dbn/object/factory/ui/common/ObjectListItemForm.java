@@ -2,14 +2,14 @@ package com.dci.intellij.dbn.object.factory.ui.common;
 
 import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.common.ui.DBNFormImpl;
-import com.dci.intellij.dbn.common.util.ActionUtil;
+import com.dci.intellij.dbn.common.util.Actions;
 import com.intellij.openapi.actionSystem.ActionToolbar;
 import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import org.jetbrains.annotations.NotNull;
 
-import javax.swing.*;
-import java.awt.*;
+import javax.swing.JPanel;
+import java.awt.BorderLayout;
 
 public class ObjectListItemForm extends DBNFormImpl {
     private JPanel mainPanel;
@@ -21,7 +21,7 @@ public class ObjectListItemForm extends DBNFormImpl {
     ObjectListItemForm(@NotNull ObjectListForm<?> parent, ObjectFactoryInputForm<?> inputForm) {
         super(parent);
         this.inputForm = inputForm;
-        ActionToolbar actionToolbar = ActionUtil.createActionToolbar(removeActionPanel,
+        ActionToolbar actionToolbar = Actions.createActionToolbar(removeActionPanel,
                 "DBNavigator.ObjectFactory.AddElement", true,
                 new RemoveObjectAction());
         removeActionPanel.add(actionToolbar.getComponent(), BorderLayout.NORTH);

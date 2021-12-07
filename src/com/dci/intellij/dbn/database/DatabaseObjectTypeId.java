@@ -1,7 +1,7 @@
 package com.dci.intellij.dbn.database;
 
 
-import com.dci.intellij.dbn.common.util.EnumerationUtil;
+import com.dci.intellij.dbn.common.util.Enumerations;
 
 public enum DatabaseObjectTypeId {
     ATTRIBUTE,
@@ -97,6 +97,6 @@ public enum DatabaseObjectTypeId {
     OUTGOING_DEPENDENCY;
 
     public boolean isOneOf(DatabaseObjectTypeId ... objectTypeIds){
-        return EnumerationUtil.isOneOf(this, objectTypeIds);
+        return Enumerations.isOneOf(this, objectTypeIds);
     }
 }

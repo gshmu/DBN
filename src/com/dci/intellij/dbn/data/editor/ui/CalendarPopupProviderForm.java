@@ -7,7 +7,7 @@ import com.dci.intellij.dbn.common.ui.Borders;
 import com.dci.intellij.dbn.common.ui.GUIUtil;
 import com.dci.intellij.dbn.common.ui.KeyUtil;
 import com.dci.intellij.dbn.common.ui.listener.MouseClickedListener;
-import com.dci.intellij.dbn.common.util.ActionUtil;
+import com.dci.intellij.dbn.common.util.Actions;
 import com.intellij.openapi.actionSystem.ActionToolbar;
 import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.AnActionEvent;
@@ -21,7 +21,12 @@ import com.intellij.util.ui.UIUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import javax.swing.*;
+import javax.swing.Icon;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JTable;
+import javax.swing.JTextField;
+import javax.swing.ListSelectionModel;
 import javax.swing.border.Border;
 import javax.swing.border.CompoundBorder;
 import javax.swing.border.LineBorder;
@@ -30,13 +35,22 @@ import javax.swing.event.TableModelListener;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.TableCellRenderer;
 import javax.swing.table.TableModel;
-import java.awt.*;
+import java.awt.BorderLayout;
+import java.awt.Color;
+import java.awt.Component;
+import java.awt.Cursor;
+import java.awt.Font;
+import java.awt.KeyboardFocusManager;
 import java.awt.event.FocusEvent;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
 import java.sql.Timestamp;
 import java.text.ParseException;
-import java.util.*;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.GregorianCalendar;
+import java.util.HashSet;
+import java.util.Set;
 
 public class CalendarPopupProviderForm extends TextFieldPopupProviderForm implements TableModelListener {
     private static final Font BOLD = new Font(UIUtil.getMenuFont().getFontName(), Font.BOLD, UIUtil.getMenuFont().getSize());
@@ -89,18 +103,18 @@ public class CalendarPopupProviderForm extends TextFieldPopupProviderForm implem
             }
         });*/
 
-        ActionToolbar actionToolbarLeft = ActionUtil.createActionToolbar(
+        ActionToolbar actionToolbarLeft = Actions.createActionToolbar(
                 getMainComponent(),
                 "DBNavigator.Place.DataEditor.CalendarPopup", true,
                 new PreviousYearAction(),
                 new PreviousMonthAction());
-        ActionToolbar actionToolbarRight = ActionUtil.createActionToolbar(
+        ActionToolbar actionToolbarRight = Actions.createActionToolbar(
                 getMainComponent(),
                 "DBNavigator.Place.DataEditor.CalendarPopup", true,
                 new NextMonthAction(),
                 new NextYearAction());
 
-        ActionToolbar actionToolbarBottom = ActionUtil.createActionToolbar(
+        ActionToolbar actionToolbarBottom = Actions.createActionToolbar(
                 getMainComponent(),
                 "DBNavigator.Place.DataEditor.CalendarPopup",
                 true,

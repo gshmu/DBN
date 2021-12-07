@@ -3,7 +3,7 @@ package com.dci.intellij.dbn.connection;
 import com.dci.intellij.dbn.common.database.AuthenticationInfo;
 import com.dci.intellij.dbn.common.notification.NotificationGroup;
 import com.dci.intellij.dbn.common.notification.NotificationSupport;
-import com.dci.intellij.dbn.common.util.StringUtil;
+import com.dci.intellij.dbn.common.util.Strings;
 import com.dci.intellij.dbn.connection.config.ConnectionDatabaseSettings;
 import com.dci.intellij.dbn.connection.config.ConnectionSettings;
 import com.dci.intellij.dbn.connection.config.ConnectionSshTunnelSettings;
@@ -70,13 +70,13 @@ class Connector {
             AuthenticationType authenticationType = authenticationInfo.getType();
             if (authenticationType.isOneOf(AuthenticationType.USER, AuthenticationType.USER_PASSWORD)) {
                 String user = authenticationInfo.getUser();
-                if (StringUtil.isNotEmpty(user)) {
+                if (Strings.isNotEmpty(user)) {
                     properties.put("user", user);
                 }
 
                 if (authenticationType == AuthenticationType.USER_PASSWORD) {
                     String password = authenticationInfo.getPassword();
-                    if (StringUtil.isNotEmpty(password)) {
+                    if (Strings.isNotEmpty(password)) {
                         properties.put("password", password);
                     }
                 }

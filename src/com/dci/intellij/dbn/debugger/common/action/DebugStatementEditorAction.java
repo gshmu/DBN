@@ -3,8 +3,8 @@ package com.dci.intellij.dbn.debugger.common.action;
 import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.common.action.DumbAwareProjectAction;
 import com.dci.intellij.dbn.common.action.Lookup;
-import com.dci.intellij.dbn.common.util.DocumentUtil;
-import com.dci.intellij.dbn.common.util.EditorUtil;
+import com.dci.intellij.dbn.common.util.Documents;
+import com.dci.intellij.dbn.common.util.Editors;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.mapping.FileConnectionMappingManager;
 import com.dci.intellij.dbn.database.DatabaseFeature;
@@ -36,12 +36,12 @@ public class DebugStatementEditorAction extends DumbAwareProjectAction {
     protected void actionPerformed(@NotNull AnActionEvent e, @NotNull Project project) {
         Editor editor = Lookup.getEditor(e);
         if (editor != null) {
-            VirtualFile virtualFile = DocumentUtil.getVirtualFile(editor);
+            VirtualFile virtualFile = Documents.getVirtualFile(editor);
             ExecutablePsiElement executablePsiElement = null;
             if (virtualFile instanceof DBConsoleVirtualFile) {
                 DBConsoleVirtualFile consoleVirtualFile = (DBConsoleVirtualFile) virtualFile;
                 if (consoleVirtualFile.getType() == DBConsoleType.DEBUG) {
-                    PsiFile file = DocumentUtil.getFile(editor);
+                    PsiFile file = Documents.getFile(editor);
                     if (file != null) {
                         BasePsiElement basePsiElement = PsiUtil.lookupElementAtOffset(file, ElementTypeAttribute.EXECUTABLE, 100);
                         if (basePsiElement instanceof ExecutablePsiElement) {
@@ -56,7 +56,7 @@ public class DebugStatementEditorAction extends DumbAwareProjectAction {
             }
 
             if (executablePsiElement != null && executablePsiElement.is(ElementTypeAttribute.DEBUGGABLE)) {
-                FileEditor fileEditor = EditorUtil.getFileEditor(editor);
+                FileEditor fileEditor = Editors.getFileEditor(editor);
                 if (fileEditor != null) {
                     StatementExecutionManager statementExecutionManager = StatementExecutionManager.getInstance(project);
                     StatementExecutionProcessor executionProcessor = statementExecutionManager.getExecutionProcessor(fileEditor, executablePsiElement, true);
@@ -79,7 +79,7 @@ public class DebugStatementEditorAction extends DumbAwareProjectAction {
         boolean visible = false;
         if (editor != null) {
             FileConnectionMappingManager connectionMappingManager = FileConnectionMappingManager.getInstance(project);
-            VirtualFile virtualFile = DocumentUtil.getVirtualFile(editor);
+            VirtualFile virtualFile = Documents.getVirtualFile(editor);
             if (virtualFile != null) {
                 enabled = DatabaseDebuggerManager.isDebugConsole(virtualFile);
 

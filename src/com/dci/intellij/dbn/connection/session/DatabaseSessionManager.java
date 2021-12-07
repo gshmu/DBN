@@ -6,7 +6,7 @@ import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.common.event.ProjectEvents;
 import com.dci.intellij.dbn.common.routine.ParametricRunnable;
 import com.dci.intellij.dbn.common.thread.Dispatch;
-import com.dci.intellij.dbn.common.util.MessageUtil;
+import com.dci.intellij.dbn.common.util.Messages;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.ConnectionId;
 import com.dci.intellij.dbn.connection.ConnectionManager;
@@ -100,11 +100,11 @@ public class DatabaseSessionManager extends AbstractProjectComponent implements 
 
     public void deleteSession(final DatabaseSession session, boolean confirm) {
         if (confirm) {
-            MessageUtil.showQuestionDialog(
+            Messages.showQuestionDialog(
                     getProject(),
                     "Delete Session",
                     "Are you sure you want to delete the session \"" + session.getName() + "\" for connection\"" + session.getConnectionHandler().getName() + "\"" ,
-                    MessageUtil.OPTIONS_YES_NO, 0,
+                    Messages.OPTIONS_YES_NO, 0,
                     option -> when(option == 0, () -> deleteSession(session)));
         } else {
             deleteSession(session);

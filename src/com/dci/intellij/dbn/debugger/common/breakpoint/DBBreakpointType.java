@@ -1,6 +1,6 @@
 package com.dci.intellij.dbn.debugger.common.breakpoint;
 
-import com.dci.intellij.dbn.common.util.DocumentUtil;
+import com.dci.intellij.dbn.common.util.Documents;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.ConnectionProvider;
 import com.dci.intellij.dbn.debugger.DBDebuggerType;
@@ -63,7 +63,7 @@ public class DBBreakpointType extends XLineBreakpointType<XBreakpointProperties>
 
     @Nullable
     private BasePsiElement findPsiElement(PsiFile psiFile, int line) {
-        Document document = DocumentUtil.getDocument(psiFile);
+        Document document = Documents.getDocument(psiFile);
         if (document != null && line > -1 && document.getLineCount() > line) {
             int lineOffset = document.getLineStartOffset(line);
             PsiElement element = psiFile.findElementAt(lineOffset);

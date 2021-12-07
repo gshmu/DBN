@@ -5,7 +5,7 @@ import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.common.editor.BasicTextEditor;
 import com.dci.intellij.dbn.common.editor.BasicTextEditorProvider;
 import com.dci.intellij.dbn.common.environment.EnvironmentManager;
-import com.dci.intellij.dbn.common.util.EditorUtil;
+import com.dci.intellij.dbn.common.util.Editors;
 import com.dci.intellij.dbn.editor.DBContentType;
 import com.dci.intellij.dbn.editor.EditorProviderId;
 import com.dci.intellij.dbn.editor.code.ui.SourceCodeEditorActionsPanel;
@@ -73,7 +73,7 @@ abstract class SourceCodeEditorProviderBase extends BasicTextEditorProvider impl
 
         EnvironmentManager environmentManager = EnvironmentManager.getInstance(project);
         if (environmentManager.isReadonly(sourceCodeFile) || !sourceCodeFile.isLoaded()) {
-            EditorUtil.setEditorReadonly(sourceCodeEditor, true);
+            Editors.setEditorReadonly(sourceCodeEditor, true);
         }
 
         int documentSignature = document.hashCode();

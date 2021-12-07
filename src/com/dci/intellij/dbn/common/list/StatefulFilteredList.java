@@ -2,7 +2,8 @@ package com.dci.intellij.dbn.common.list;
 
 import com.dci.intellij.dbn.common.filter.Filter;
 import com.dci.intellij.dbn.common.latent.Latent;
-import com.dci.intellij.dbn.common.util.CollectionUtil;
+import com.dci.intellij.dbn.common.util.Compactables;
+import com.dci.intellij.dbn.common.util.Lists;
 import lombok.SneakyThrows;
 import org.jetbrains.annotations.NotNull;
 
@@ -13,12 +14,11 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.ListIterator;
 import java.util.concurrent.Callable;
-import java.util.stream.Collectors;
 
 final class StatefulFilteredList<T> extends FilteredListBase<T> {
     private final Latent<List<T>> inner = Latent.mutable(
             () -> filterSignature(),
-            () -> filter == null  || filter.isEmpty() ? null : base.stream().filter(t -> filter.accepts(t)).collect(Collectors.toList()));
+            () -> filter == null  || filter.isEmpty() ? null : Lists.filter(base, t -> filter.accepts(t)));
 
 
     StatefulFilteredList(Filter<T> filter, List<T> base) {
@@ -216,7 +216,7 @@ final class StatefulFilteredList<T> extends FilteredListBase<T> {
 
     @Override
     public void trimToSize() {
-        stateAware(() -> base = CollectionUtil.compact(base));
+        stateAware(() -> base = Compactables.compact(base));
     }
 
     @Override

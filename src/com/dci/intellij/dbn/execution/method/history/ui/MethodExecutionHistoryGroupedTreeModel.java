@@ -1,6 +1,6 @@
 package com.dci.intellij.dbn.execution.method.history.ui;
 
-import com.dci.intellij.dbn.common.util.StringUtil;
+import com.dci.intellij.dbn.common.util.Strings;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.database.DatabaseFeature;
 import com.dci.intellij.dbn.execution.method.MethodExecutionInput;
@@ -122,8 +122,8 @@ public class MethodExecutionHistoryGroupedTreeModel extends MethodExecutionHisto
             DBObjectRef<DBMethod> methodRef = executionInput.getMethodRef();
             ConnectionHandler connectionHandler = executionInput.getConnectionHandler();
             if (connectionHandler != null && connectionHandler.getConnectionId().equals(connectionNode.getConnectionHandlerId()) &&
-                StringUtil.equalsIgnoreCase(methodRef.getSchemaName(), schemaNode.getName()) &&
-                StringUtil.equalsIgnoreCase(methodRef.getObjectName(), methodNode.getName()) &&
+                Strings.equalsIgnoreCase(methodRef.getSchemaName(), schemaNode.getName()) &&
+                Strings.equalsIgnoreCase(methodRef.getObjectName(), methodNode.getName()) &&
                 methodRef.getOverload() == methodNode.getOverload() ) {
 
                 DBObjectRef<?> programRef = methodRef.getParentRef(DBObjectType.PROGRAM);
@@ -132,7 +132,7 @@ public class MethodExecutionHistoryGroupedTreeModel extends MethodExecutionHisto
                 } else if (programNode != null && programRef != null){
                     String programName = programNode.getName();
                     String inputProgramName = programRef.getObjectName();
-                    if (StringUtil.equalsIgnoreCase(programName, inputProgramName)) {
+                    if (Strings.equalsIgnoreCase(programName, inputProgramName)) {
                         return executionInput;
                     }
                 }

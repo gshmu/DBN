@@ -1,6 +1,6 @@
 package com.dci.intellij.dbn.language.common;
 
-import com.dci.intellij.dbn.common.util.StringUtil;
+import com.dci.intellij.dbn.common.util.Strings;
 import com.dci.intellij.dbn.language.common.element.util.ElementTypeAttribute;
 import com.dci.intellij.dbn.language.common.psi.BasePsiElement;
 import com.dci.intellij.dbn.language.common.psi.TokenPsiElement;
@@ -49,7 +49,7 @@ public abstract class DBLanguageFoldingBuilder implements FoldingBuilder, DumbAw
     protected static void createCommentFolding(FoldingContext context, PsiComment psiComment) {
         ASTNode node = psiComment.getNode();
         CharSequence chars = node.getChars();
-        if (StringUtil.startsWith(chars, "/*") && StringUtil.containsLineBreak(chars)) {
+        if (Strings.startsWith(chars, "/*") && Strings.containsLineBreak(chars)) {
             FoldingDescriptor foldingDescriptor = new FoldingDescriptor(node, psiComment.getTextRange());
 
             context.addDescriptor(foldingDescriptor);

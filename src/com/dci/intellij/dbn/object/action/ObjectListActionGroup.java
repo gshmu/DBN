@@ -1,6 +1,6 @@
 package com.dci.intellij.dbn.object.action;
 
-import com.dci.intellij.dbn.common.util.ActionUtil;
+import com.dci.intellij.dbn.common.util.Actions;
 import com.dci.intellij.dbn.object.common.DBObject;
 import com.intellij.openapi.actionSystem.DefaultActionGroup;
 
@@ -28,7 +28,7 @@ public class ObjectListActionGroup extends DefaultActionGroup {
             for (DBObject object : recentObjects) {
                 add(listShowAction.createObjectAction(object));
             }
-            add(ActionUtil.SEPARATOR);
+            add(Actions.SEPARATOR);
         }
 
         for (DBObject object : objects) {

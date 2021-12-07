@@ -2,6 +2,7 @@ package com.dci.intellij.dbn.connection.transaction.ui;
 
 import com.dci.intellij.dbn.common.dispose.StatefulDisposable;
 import com.dci.intellij.dbn.common.ui.table.DBNReadonlyTableModel;
+import com.dci.intellij.dbn.common.util.Lists;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.ConnectionHandlerRef;
 import com.dci.intellij.dbn.connection.ConnectionType;
@@ -44,7 +45,7 @@ public class PendingTransactionsTableModel extends StatefulDisposable.Base imple
 
     @NotNull
     public List<DBNConnection> getTransactionalConnections() {
-        return connections.stream().filter(connection -> connection.getDataChanges() != null).collect(Collectors.toList());
+        return Lists.filter(connections, connection -> connection.getDataChanges() != null);
     }
 
     @Override

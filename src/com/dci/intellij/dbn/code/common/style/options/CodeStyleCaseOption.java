@@ -1,8 +1,8 @@
 package com.dci.intellij.dbn.code.common.style.options;
 
 import com.dci.intellij.dbn.common.options.PersistentConfiguration;
-import com.dci.intellij.dbn.common.util.NamingUtil;
-import com.dci.intellij.dbn.common.util.StringUtil;
+import com.dci.intellij.dbn.common.util.Naming;
+import com.dci.intellij.dbn.common.util.Strings;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
@@ -31,7 +31,7 @@ public class CodeStyleCaseOption implements PersistentConfiguration {
             switch (styleCase) {
                 case UPPER: return ignore(string) ? string : string.toUpperCase();
                 case LOWER: return ignore(string) ? string : string.toLowerCase();
-                case CAPITALIZED: return ignore(string) ? string : NamingUtil.capitalize(string);
+                case CAPITALIZED: return ignore(string) ? string : Naming.capitalize(string);
                 case PRESERVE: return string;
             }
         }
@@ -39,7 +39,7 @@ public class CodeStyleCaseOption implements PersistentConfiguration {
     }
 
     boolean ignore(String string) {
-        return string.startsWith("`") || string.startsWith("'") || string.startsWith("\"") || (ignoreMixedCase && StringUtil.isMixedCase(string));
+        return string.startsWith("`") || string.startsWith("'") || string.startsWith("\"") || (ignoreMixedCase && Strings.isMixedCase(string));
     }
 
     /*********************************************************

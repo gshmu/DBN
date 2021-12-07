@@ -25,7 +25,7 @@ import org.jetbrains.annotations.Nullable;
 import java.util.ArrayList;
 import java.util.List;
 
-import static com.dci.intellij.dbn.common.util.ActionUtil.SEPARATOR;
+import static com.dci.intellij.dbn.common.util.Actions.SEPARATOR;
 
 public class ProgramMethodDebugAction extends GroupPopupAction {
     public ProgramMethodDebugAction() {

@@ -1,7 +1,7 @@
 package com.dci.intellij.dbn.connection.console;
 
 import com.dci.intellij.dbn.common.thread.Write;
-import com.dci.intellij.dbn.common.util.DocumentUtil;
+import com.dci.intellij.dbn.common.util.Documents;
 import com.dci.intellij.dbn.editor.code.content.GuardedBlockMarkers;
 import com.dci.intellij.dbn.editor.code.content.GuardedBlockType;
 import com.dci.intellij.dbn.vfs.file.DBConsoleVirtualFile;
@@ -19,8 +19,8 @@ public class DatabaseConsoleFileInitializer implements FileDocumentManagerListen
             Write.run(() -> {
                 GuardedBlockMarkers guardedBlocks = consoleFile.getContent().getOffsets().getGuardedBlocks();
                 if (!guardedBlocks.isEmpty()) {
-                    DocumentUtil.removeGuardedBlocks(document, GuardedBlockType.READONLY_DOCUMENT_SECTION);
-                    DocumentUtil.createGuardedBlocks(document, GuardedBlockType.READONLY_DOCUMENT_SECTION, guardedBlocks, null);
+                    Documents.removeGuardedBlocks(document, GuardedBlockType.READONLY_DOCUMENT_SECTION);
+                    Documents.createGuardedBlocks(document, GuardedBlockType.READONLY_DOCUMENT_SECTION, guardedBlocks, null);
                 }
             });
         }

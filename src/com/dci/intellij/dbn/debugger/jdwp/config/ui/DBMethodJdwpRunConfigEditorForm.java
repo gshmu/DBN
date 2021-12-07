@@ -9,7 +9,7 @@ import com.dci.intellij.dbn.common.thread.Progress;
 import com.dci.intellij.dbn.common.ui.DBNHeaderForm;
 import com.dci.intellij.dbn.common.ui.DBNHintForm;
 import com.dci.intellij.dbn.common.ui.GUIUtil;
-import com.dci.intellij.dbn.common.util.ActionUtil;
+import com.dci.intellij.dbn.common.util.Actions;
 import com.dci.intellij.dbn.debugger.DBDebuggerType;
 import com.dci.intellij.dbn.debugger.DatabaseDebuggerManager;
 import com.dci.intellij.dbn.debugger.common.config.DBRunConfigCategory;
@@ -60,7 +60,7 @@ public class DBMethodJdwpRunConfigEditorForm extends DBProgramRunConfigurationEd
             DBNHintForm hintForm = new DBNHintForm(this, DatabaseDebuggerManager.GENERIC_METHOD_RUNNER_HINT, null, true);
             hintPanel.add(hintForm.getComponent());
         } else {
-            ActionToolbar actionToolbar = ActionUtil.createActionToolbar(selectMethodActionPanel,"", true, new SelectMethodAction());
+            ActionToolbar actionToolbar = Actions.createActionToolbar(selectMethodActionPanel,"", true, new SelectMethodAction());
             selectMethodActionPanel.add(actionToolbar.getComponent(), BorderLayout.WEST);
             hintPanel.setVisible(false);
         }

@@ -21,10 +21,10 @@ import com.dci.intellij.dbn.common.event.ProjectEvents;
 import com.dci.intellij.dbn.common.filter.Filter;
 import com.dci.intellij.dbn.common.thread.Background;
 import com.dci.intellij.dbn.common.ui.tree.TreeEventType;
-import com.dci.intellij.dbn.common.util.CommonUtil;
+import com.dci.intellij.dbn.common.util.Commons;
 import com.dci.intellij.dbn.common.util.Consumer;
 import com.dci.intellij.dbn.common.util.Safe;
-import com.dci.intellij.dbn.common.util.StringUtil;
+import com.dci.intellij.dbn.common.util.Strings;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.ConnectionHandlerRef;
 import com.dci.intellij.dbn.connection.ConnectionId;
@@ -77,8 +77,8 @@ import java.util.List;
 import java.util.Objects;
 
 import static com.dci.intellij.dbn.browser.DatabaseBrowserUtils.treeVisibilityChanged;
-import static com.dci.intellij.dbn.common.util.CollectionUtil.compact;
-import static com.dci.intellij.dbn.common.util.CollectionUtil.filter;
+import static com.dci.intellij.dbn.common.util.Compactables.compact;
+import static com.dci.intellij.dbn.common.util.Lists.filter;
 
 public abstract class DBObjectImpl<M extends DBObjectMetadata> extends BrowserTreeNodeBase implements DBObject, ToolTipProvider {
 
@@ -244,7 +244,7 @@ public abstract class DBObjectImpl<M extends DBObjectMetadata> extends BrowserTr
                 name.indexOf('.') > 0 ||
                 name.indexOf('#') > 0 ||
                 getLanguageDialect(SQLLanguage.INSTANCE).isReservedWord(name) ||
-                StringUtil.isMixedCase(name);
+                Strings.isMixedCase(name);
     }
 
     @Override
@@ -713,7 +713,7 @@ public abstract class DBObjectImpl<M extends DBObjectMetadata> extends BrowserTr
         Filter<BrowserTreeNode> objectTypeFilter = connectionHandler.getObjectTypeFilter();
 
         List<BrowserTreeNode> treeChildren = filter(getAllPossibleTreeChildren(), false, true, objectTypeFilter);
-        treeChildren = CommonUtil.nvl(treeChildren, Collections.emptyList());
+        treeChildren = Commons.nvl(treeChildren, Collections.emptyList());
 
         for (BrowserTreeNode objectList : treeChildren) {
             Background.run(() -> objectList.initTreeElement());

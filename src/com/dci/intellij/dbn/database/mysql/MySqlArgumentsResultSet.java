@@ -1,7 +1,7 @@
 package com.dci.intellij.dbn.database.mysql;
 
 import com.dci.intellij.dbn.common.dispose.StatefulDisposable;
-import com.dci.intellij.dbn.common.util.StringUtil;
+import com.dci.intellij.dbn.common.util.Strings;
 import com.dci.intellij.dbn.common.util.WordTokenizer;
 import com.dci.intellij.dbn.connection.ResourceUtil;
 import com.dci.intellij.dbn.database.common.util.ResultSetStub;
@@ -99,7 +99,7 @@ public class MySqlArgumentsResultSet extends StatefulDisposable.Base implements 
                     }
 
                     // number token
-                    if (StringUtil.isInteger(token)) {
+                    if (Strings.isInteger(token)) {
                         if (!betweenBrackets) throwParseException(argumentsString, token, "No bracket opened.");
                         if (argument.name == null) throwParseException(argumentsString, token, "Argument name not set yet.");
                         if (argument.dataTypeName == null) throwParseException(argumentsString, token, "Data type not set yet.");

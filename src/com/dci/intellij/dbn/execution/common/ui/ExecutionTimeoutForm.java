@@ -4,7 +4,7 @@ import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.common.action.GroupPopupAction;
 import com.dci.intellij.dbn.common.ui.DBNForm;
 import com.dci.intellij.dbn.common.ui.DBNFormImpl;
-import com.dci.intellij.dbn.common.util.ActionUtil;
+import com.dci.intellij.dbn.common.util.Actions;
 import com.dci.intellij.dbn.debugger.DBDebuggerType;
 import com.dci.intellij.dbn.execution.ExecutionInput;
 import com.dci.intellij.dbn.execution.common.options.ExecutionTimeoutSettings;
@@ -17,9 +17,11 @@ import com.intellij.ui.DocumentAdapter;
 import com.intellij.util.ui.UIUtil;
 import org.jetbrains.annotations.NotNull;
 
-import javax.swing.*;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JTextField;
 import javax.swing.event.DocumentEvent;
-import java.awt.*;
+import java.awt.BorderLayout;
 
 public abstract class ExecutionTimeoutForm extends DBNFormImpl{
     private JTextField executionTimeoutTextField;
@@ -72,7 +74,7 @@ public abstract class ExecutionTimeoutForm extends DBNFormImpl{
             }
         });
 
-        ActionToolbar actionToolbar = ActionUtil.createActionToolbar(
+        ActionToolbar actionToolbar = Actions.createActionToolbar(
                 actionsPanel,
                 "DBNavigator.Place.ExecutionTimeoutForm.Settings", true,
                 new SettingsAction());

@@ -6,7 +6,7 @@ import com.dci.intellij.dbn.common.dispose.SafeDisposer;
 import com.dci.intellij.dbn.common.dispose.StatefulDisposable;
 import com.dci.intellij.dbn.common.thread.Dispatch;
 import com.dci.intellij.dbn.common.ui.component.DBNComponent;
-import com.dci.intellij.dbn.common.util.StringUtil;
+import com.dci.intellij.dbn.common.util.Strings;
 import com.dci.intellij.dbn.data.grid.ui.table.basic.BasicTableHeaderRenderer;
 import com.dci.intellij.dbn.language.common.WeakRef;
 import com.intellij.openapi.project.Project;
@@ -373,7 +373,7 @@ public abstract class DBNTable<T extends DBNTableModel> extends JTable implement
             TableColumn column = columnModel.getColumn(i);
             Object modelColumnIdentifier = column.getIdentifier();
             String modelColumnName = modelColumnIdentifier == null ? null : modelColumnIdentifier.toString();
-            if (StringUtil.equalsIgnoreCase(columnName, modelColumnName)) {
+            if (Strings.equalsIgnoreCase(columnName, modelColumnName)) {
                 return column;
             }
         }

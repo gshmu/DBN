@@ -2,7 +2,7 @@ package com.dci.intellij.dbn.editor.session;
 
 import com.dci.intellij.dbn.common.compatibility.LegacyEditorNotificationsProvider;
 import com.dci.intellij.dbn.common.event.ProjectEvents;
-import com.dci.intellij.dbn.common.util.StringUtil;
+import com.dci.intellij.dbn.common.util.Strings;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.editor.session.ui.SessionBrowserErrorNotificationPanel;
 import com.dci.intellij.dbn.vfs.file.DBSessionBrowserVirtualFile;
@@ -51,7 +51,7 @@ public class SessionBrowserNotificationProvider extends LegacyEditorNotification
                 SessionBrowser sessionBrowser = (SessionBrowser) fileEditor;
                 ConnectionHandler connectionHandler = sessionBrowser.getConnectionHandler();
                 String sourceLoadError = sessionBrowser.getModelError();
-                if (StringUtil.isNotEmpty(sourceLoadError)) {
+                if (Strings.isNotEmpty(sourceLoadError)) {
                     return createPanel(connectionHandler, sourceLoadError);
                 }
 

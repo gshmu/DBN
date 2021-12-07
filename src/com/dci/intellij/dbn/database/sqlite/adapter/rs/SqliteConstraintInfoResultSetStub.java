@@ -1,6 +1,6 @@
 package com.dci.intellij.dbn.database.sqlite.adapter.rs;
 
-import com.dci.intellij.dbn.common.util.StringUtil;
+import com.dci.intellij.dbn.common.util.Strings;
 import com.dci.intellij.dbn.connection.jdbc.DBNConnection;
 import com.dci.intellij.dbn.database.sqlite.adapter.SqliteMetadataResultSetRow;
 import org.jetbrains.annotations.NotNull;
@@ -110,7 +110,7 @@ public abstract class SqliteConstraintInfoResultSetStub<T extends SqliteMetadata
                     RawIndexDetailInfo detailInfo = getIndexDetailInfo(indexName);
                     for (RawIndexDetailInfo.Row detailRow : detailInfo.getRows()) {
                         String column = detailRow.getName();
-                        if (StringUtil.isNotEmpty(column)) {
+                        if (Strings.isNotEmpty(column)) {
                             int position = detailRow.getSeqno();
                             List<ConstraintColumnInfo> uniqueKeyColumns = getConstraintColumns(constraints, indexId);
                             uniqueKeyColumns.add(new ConstraintColumnInfo(dataset, column, null, null, position));

@@ -7,7 +7,7 @@ import com.dci.intellij.dbn.common.thread.Dispatch;
 import com.dci.intellij.dbn.common.thread.Read;
 import com.dci.intellij.dbn.common.ui.GUIUtil;
 import com.dci.intellij.dbn.common.ui.table.DBNTableHeaderRenderer;
-import com.dci.intellij.dbn.common.util.ActionUtil;
+import com.dci.intellij.dbn.common.util.Actions;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.SessionId;
 import com.dci.intellij.dbn.data.find.DataSearchComponent;
@@ -29,8 +29,12 @@ import lombok.EqualsAndHashCode;
 import lombok.ToString;
 import org.jetbrains.annotations.NotNull;
 
-import javax.swing.*;
-import java.awt.*;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JScrollBar;
+import javax.swing.JScrollPane;
+import javax.swing.ScrollPaneConstants;
+import java.awt.BorderLayout;
 
 public class StatementExecutionResultForm extends ExecutionResultFormBase<StatementExecutionCursorResult> implements SearchableDataComponent {
     private JScrollPane resultScrollPane;
@@ -54,7 +58,7 @@ public class StatementExecutionResultForm extends ExecutionResultFormBase<Statem
 
     public StatementExecutionResultForm(@NotNull StatementExecutionCursorResult executionResult) {
         super(executionResult);
-        ActionToolbar actionToolbar = ActionUtil.createActionToolbar(actionsPanel, "", false, "DBNavigator.ActionGroup.StatementExecutionResult");
+        ActionToolbar actionToolbar = Actions.createActionToolbar(actionsPanel, "", false, "DBNavigator.ActionGroup.StatementExecutionResult");
 
         actionsPanel.add(actionToolbar.getComponent());
 

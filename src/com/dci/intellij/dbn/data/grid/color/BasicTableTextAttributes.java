@@ -1,7 +1,7 @@
 package com.dci.intellij.dbn.data.grid.color;
 
 import com.dci.intellij.dbn.common.latent.Latent;
-import com.dci.intellij.dbn.common.util.TextAttributesUtil;
+import com.dci.intellij.dbn.common.util.TextAttributes;
 import com.intellij.openapi.editor.colors.EditorColors;
 import com.intellij.openapi.editor.colors.EditorColorsManager;
 import com.intellij.openapi.editor.colors.EditorColorsScheme;
@@ -10,7 +10,7 @@ import com.intellij.util.ui.UIUtil;
 
 import java.awt.Color;
 
-import static com.dci.intellij.dbn.common.util.CommonUtil.nvln;
+import static com.dci.intellij.dbn.common.util.Commons.nvln;
 
 public class BasicTableTextAttributes implements DataGridTextAttributes {
     private final SimpleTextAttributes plainData;
@@ -50,9 +50,9 @@ public class BasicTableTextAttributes implements DataGridTextAttributes {
         EditorColorsScheme globalScheme = EditorColorsManager.getInstance().getGlobalScheme();
         caretRowBgColor = globalScheme.getAttributes(DataGridTextAttributesKeys.CARET_ROW).getBackgroundColor();
 
-        deletedData = TextAttributesUtil.getSimpleTextAttributes(DataGridTextAttributesKeys.DELETED_DATA);
-        errorData = TextAttributesUtil.getSimpleTextAttributes(DataGridTextAttributesKeys.ERROR_DATA);
-        modifiedData = TextAttributesUtil.getSimpleTextAttributes(DataGridTextAttributesKeys.MODIFIED_DATA);
+        deletedData = TextAttributes.getSimpleTextAttributes(DataGridTextAttributesKeys.DELETED_DATA);
+        errorData = TextAttributes.getSimpleTextAttributes(DataGridTextAttributesKeys.ERROR_DATA);
+        modifiedData = TextAttributes.getSimpleTextAttributes(DataGridTextAttributesKeys.MODIFIED_DATA);
         modifiedDataAtCaretRow = new SimpleTextAttributes(caretRowBgColor, modifiedData.getFgColor(), null, modifiedData.getFontStyle());
 
         plainData = createPlainData();
@@ -68,7 +68,7 @@ public class BasicTableTextAttributes implements DataGridTextAttributes {
                 modifiedData.getFontStyle());
 
 
-        trackingData = TextAttributesUtil.getSimpleTextAttributes(DataGridTextAttributesKeys.TRACKING_DATA);
+        trackingData = TextAttributes.getSimpleTextAttributes(DataGridTextAttributesKeys.TRACKING_DATA);
         trackingDataModified = new SimpleTextAttributes(
                 nvln(modifiedData.getBgColor(), trackingData.getBgColor()),
                 nvln(modifiedData.getFgColor(), plainData.getFgColor()), null,
@@ -80,7 +80,7 @@ public class BasicTableTextAttributes implements DataGridTextAttributes {
                 modifiedData.getFontStyle());
 
 
-        readonlyData = TextAttributesUtil.getSimpleTextAttributes(DataGridTextAttributesKeys.READONLY_DATA);
+        readonlyData = TextAttributes.getSimpleTextAttributes(DataGridTextAttributesKeys.READONLY_DATA);
         readonlyDataModified = new SimpleTextAttributes(
                 nvln(modifiedData.getBgColor(), readonlyData.getBgColor()),
                 nvln(modifiedData.getFgColor(), readonlyData.getFgColor()), null,
@@ -91,10 +91,10 @@ public class BasicTableTextAttributes implements DataGridTextAttributes {
                 nvln(modifiedData.getFgColor(), readonlyData.getFgColor()), null,
                 modifiedData.getFontStyle());
 
-        loadingData = TextAttributesUtil.getSimpleTextAttributes(DataGridTextAttributesKeys.LOADING_DATA);
+        loadingData = TextAttributes.getSimpleTextAttributes(DataGridTextAttributesKeys.LOADING_DATA);
         loadingDataAtCaretRow = new SimpleTextAttributes(caretRowBgColor, loadingData.getFgColor(), null, loadingData.getFontStyle());
 
-        primaryKey= TextAttributesUtil.getSimpleTextAttributes(DataGridTextAttributesKeys.PRIMARY_KEY);
+        primaryKey= TextAttributes.getSimpleTextAttributes(DataGridTextAttributesKeys.PRIMARY_KEY);
         primaryKeyModified = new SimpleTextAttributes(
                 nvln(modifiedData.getBgColor(), primaryKey.getBgColor()),
                 nvln(modifiedData.getFgColor(), primaryKey.getFgColor()), null,
@@ -105,7 +105,7 @@ public class BasicTableTextAttributes implements DataGridTextAttributes {
                 nvln(modifiedData.getFgColor(), primaryKey.getFgColor()), null,
                 modifiedData.getStyle());
 
-        foreignKey = TextAttributesUtil.getSimpleTextAttributes(DataGridTextAttributesKeys.FOREIGN_KEY);
+        foreignKey = TextAttributes.getSimpleTextAttributes(DataGridTextAttributesKeys.FOREIGN_KEY);
         foreignKeyModified = new SimpleTextAttributes(
                 nvln(modifiedData.getBgColor(), foreignKey.getBgColor()),
                 nvln(modifiedData.getFgColor(), foreignKey.getFgColor()), null,
@@ -116,12 +116,12 @@ public class BasicTableTextAttributes implements DataGridTextAttributes {
                 nvln(modifiedData.getFgColor(), foreignKey.getFgColor()), null,
                 modifiedData.getStyle());
 
-        selection = TextAttributesUtil.getSimpleTextAttributes(DataGridTextAttributesKeys.SELECTION);
-        searchResult = TextAttributesUtil.getSimpleTextAttributes(EditorColors.TEXT_SEARCH_RESULT_ATTRIBUTES);
+        selection = TextAttributes.getSimpleTextAttributes(DataGridTextAttributesKeys.SELECTION);
+        searchResult = TextAttributes.getSimpleTextAttributes(EditorColors.TEXT_SEARCH_RESULT_ATTRIBUTES);
     }
 
     private SimpleTextAttributes createPlainData() {
-        SimpleTextAttributes plainData = TextAttributesUtil.getSimpleTextAttributes(DataGridTextAttributesKeys.PLAIN_DATA);
+        SimpleTextAttributes plainData = TextAttributes.getSimpleTextAttributes(DataGridTextAttributesKeys.PLAIN_DATA);
         if (plainData.getFgColor() == null) plainData = plainData.derive(plainData.getStyle(), UIUtil.getTextFieldForeground(), plainData.getBgColor(), null);
         if (plainData.getBgColor() == null) plainData = plainData.derive(plainData.getStyle(), plainData.getFgColor(), UIUtil.getTextFieldBackground(), null);
         return plainData;

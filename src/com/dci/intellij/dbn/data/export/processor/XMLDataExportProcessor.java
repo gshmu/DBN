@@ -1,8 +1,8 @@
 package com.dci.intellij.dbn.data.export.processor;
 
 import com.dci.intellij.dbn.common.locale.Formatter;
-import com.dci.intellij.dbn.common.util.ClipboardUtil;
-import com.dci.intellij.dbn.common.util.StringUtil;
+import com.dci.intellij.dbn.common.util.Clipboard;
+import com.dci.intellij.dbn.common.util.Strings;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.data.export.DataExportException;
 import com.dci.intellij.dbn.data.export.DataExportFormat;
@@ -42,7 +42,7 @@ public class XMLDataExportProcessor extends DataExportProcessor{
 
     @Override
     public Transferable createClipboardContent(String content) {
-        return ClipboardUtil.createXmlContent(content);
+        return Clipboard.createXmlContent(content);
     }
 
     @Override
@@ -79,7 +79,7 @@ public class XMLDataExportProcessor extends DataExportProcessor{
 
                 if (value == null) value = "";
 
-                boolean isCDATA = StringUtil.containsOneOf(value, "\n", "<", ">");
+                boolean isCDATA = Strings.containsOneOf(value, "\n", "<", ">");
                 boolean isWrap = isCDATA || value.length() > 100;
 
                 buffer.append("        <column name=\"");

@@ -4,7 +4,7 @@ import com.dci.intellij.dbn.common.environment.EnvironmentType;
 import com.dci.intellij.dbn.common.environment.EnvironmentTypeId;
 import com.dci.intellij.dbn.common.environment.options.EnvironmentSettings;
 import com.dci.intellij.dbn.common.options.BasicProjectConfiguration;
-import com.dci.intellij.dbn.common.util.CommonUtil;
+import com.dci.intellij.dbn.common.util.Commons;
 import com.dci.intellij.dbn.connection.ConnectionId;
 import com.dci.intellij.dbn.connection.config.ui.ConnectionDetailSettingsForm;
 import com.dci.intellij.dbn.options.general.GeneralProjectSettings;
@@ -118,7 +118,7 @@ public class ConnectionDetailSettings extends BasicProjectConfiguration<Connecti
         setInteger(element, "idle-time-to-disconnect-pool", idleTimeToDisconnectPool);
         setInteger(element, "credential-expiry-time", credentialExpiryTime);
         setInteger(element, "max-connection-pool-size", maxConnectionPoolSize);
-        setString(element, "alternative-statement-delimiter", CommonUtil.nvl(alternativeStatementDelimiter, ""));
+        setString(element, "alternative-statement-delimiter", Commons.nvl(alternativeStatementDelimiter, ""));
     }
 
     public ConnectionId getConnectionId() {

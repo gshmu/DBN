@@ -2,7 +2,7 @@ package com.dci.intellij.dbn.execution.explain.result.ui;
 
 import com.dci.intellij.dbn.common.ui.table.DBNTableHeaderRenderer;
 import com.dci.intellij.dbn.common.ui.tree.TreeUtil;
-import com.dci.intellij.dbn.common.util.ActionUtil;
+import com.dci.intellij.dbn.common.util.Actions;
 import com.dci.intellij.dbn.execution.ExecutionManager;
 import com.dci.intellij.dbn.execution.ExecutionResult;
 import com.dci.intellij.dbn.execution.common.result.ui.ExecutionResultFormBase;
@@ -12,7 +12,8 @@ import com.intellij.openapi.project.Project;
 import com.intellij.ui.IdeBorderFactory;
 import org.jetbrains.annotations.NotNull;
 
-import javax.swing.*;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
 
 public class ExplainPlanResultForm extends ExecutionResultFormBase<ExplainPlanResult> {
     private JPanel mainPanel;
@@ -24,7 +25,7 @@ public class ExplainPlanResultForm extends ExecutionResultFormBase<ExplainPlanRe
 
     public ExplainPlanResultForm(@NotNull ExplainPlanResult explainPlanResult) {
         super(explainPlanResult);
-        ActionToolbar actionToolbar = ActionUtil.createActionToolbar(actionsPanel,"", false, "DBNavigator.ActionGroup.ExplainPlanResult");
+        ActionToolbar actionToolbar = Actions.createActionToolbar(actionsPanel,"", false, "DBNavigator.ActionGroup.ExplainPlanResult");
 
         actionsPanel.add(actionToolbar.getComponent());
 

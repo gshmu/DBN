@@ -3,7 +3,7 @@ package com.dci.intellij.dbn.vfs.file;
 import com.dci.intellij.dbn.code.common.style.DBLCodeStyleManager;
 import com.dci.intellij.dbn.code.common.style.options.CodeStyleCaseSettings;
 import com.dci.intellij.dbn.common.Icons;
-import com.dci.intellij.dbn.common.util.StringUtil;
+import com.dci.intellij.dbn.common.util.Strings;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.SchemaId;
 import com.dci.intellij.dbn.connection.SessionId;
@@ -61,7 +61,7 @@ public class DBConsoleVirtualFile extends DBObjectVirtualFile<DBConsole> impleme
     }
 
     public void setText(String text) {
-        if (getObject().getConsoleType() == DBConsoleType.DEBUG && StringUtil.isEmpty(text)) {
+        if (getObject().getConsoleType() == DBConsoleType.DEBUG && Strings.isEmpty(text)) {
             ConnectionHandler connectionHandler = getConnectionHandler();
             Project project = connectionHandler.getProject();
 
@@ -104,7 +104,7 @@ public class DBConsoleVirtualFile extends DBObjectVirtualFile<DBConsole> impleme
     }
 
     public void setDatabaseSchemaName(String currentSchemaName) {
-        if (StringUtil.isEmpty(currentSchemaName)) {
+        if (Strings.isEmpty(currentSchemaName)) {
             this.databaseSchema = null;
         } else {
             this.databaseSchema = SchemaId.get(currentSchemaName);

@@ -1,7 +1,7 @@
 package com.dci.intellij.dbn.editor.code.diff;
 
 import com.dci.intellij.dbn.common.dispose.Failsafe;
-import com.dci.intellij.dbn.common.util.DocumentUtil;
+import com.dci.intellij.dbn.common.util.Documents;
 import com.dci.intellij.dbn.vfs.DBVirtualFileImpl;
 import com.intellij.diff.contents.DocumentContent;
 import com.intellij.diff.contents.FileDocumentContentImpl;
@@ -20,7 +20,7 @@ public class SourceCodeFileContent extends FileDocumentContentImpl implements Do
 
     @NotNull
     private static Document loadDocument(@NotNull DBVirtualFileImpl sourceCodeFile) {
-        return Failsafe.nn(DocumentUtil.getDocument(sourceCodeFile));
+        return Failsafe.nn(Documents.getDocument(sourceCodeFile));
     }
 
 

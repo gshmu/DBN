@@ -1,6 +1,6 @@
 package com.dci.intellij.dbn.code.common.color;
 
-import com.dci.intellij.dbn.common.util.CommonUtil;
+import com.dci.intellij.dbn.common.util.Commons;
 import com.intellij.openapi.editor.colors.TextAttributesKey;
 import com.intellij.openapi.options.colors.AttributesDescriptor;
 import com.intellij.openapi.options.colors.ColorDescriptor;
@@ -29,7 +29,7 @@ public abstract class DBLColorSettingsPage implements ColorSettingsPage {
         if (demoText == null) {
             String demoTextFileName = getDemoTextFileName();
             try (InputStream inputStream = getClass().getResourceAsStream(demoTextFileName)) {
-                demoText = CommonUtil.readInputStream(inputStream);
+                demoText = Commons.readInputStream(inputStream);
             } catch (IOException e) {
                 log.error("Failed to load file " + demoTextFileName, e);
             }

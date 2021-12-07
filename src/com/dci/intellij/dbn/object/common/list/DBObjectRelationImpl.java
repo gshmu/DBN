@@ -6,7 +6,7 @@ import com.dci.intellij.dbn.object.lookup.DBObjectRef;
 import com.dci.intellij.dbn.object.type.DBObjectRelationType;
 import org.jetbrains.annotations.NotNull;
 
-import static com.dci.intellij.dbn.common.util.CommonUtil.nvl;
+import static com.dci.intellij.dbn.common.util.Commons.nvl;
 
 public abstract class DBObjectRelationImpl<S extends DBObject, T extends DBObject> extends StatefulDisposable.Base implements DBObjectRelation<S, T> {
 

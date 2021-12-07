@@ -4,7 +4,7 @@ import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.common.ui.DBNFormImpl;
 import com.dci.intellij.dbn.common.ui.DBNHeaderForm;
 import com.dci.intellij.dbn.common.ui.tree.TreeUtil;
-import com.dci.intellij.dbn.common.util.ActionUtil;
+import com.dci.intellij.dbn.common.util.Actions;
 import com.dci.intellij.dbn.object.common.DBObject;
 import com.dci.intellij.dbn.object.common.DBSchemaObject;
 import com.dci.intellij.dbn.object.dependency.ObjectDependencyManager;
@@ -18,9 +18,10 @@ import com.intellij.openapi.project.Project;
 import com.intellij.ui.components.JBScrollPane;
 import org.jetbrains.annotations.NotNull;
 
-import javax.swing.*;
+import javax.swing.JComboBox;
+import javax.swing.JPanel;
 import javax.swing.tree.TreeModel;
-import java.awt.*;
+import java.awt.BorderLayout;
 
 import static com.dci.intellij.dbn.common.ui.ComboBoxUtil.*;
 
@@ -70,10 +71,10 @@ public class ObjectDependencyTreeForm extends DBNFormImpl{
         headerForm = new DBNHeaderForm(this, schemaObject);
         headerPanel.add(headerForm.getComponent(), BorderLayout.CENTER);
 
-        ActionToolbar actionToolbar = ActionUtil.createActionToolbar(actionsPanel,"", true,
+        ActionToolbar actionToolbar = Actions.createActionToolbar(actionsPanel,"", true,
                 new PreviousSelectionAction(),
                 new NextSelectionAction(),
-                ActionUtil.SEPARATOR,
+                Actions.SEPARATOR,
                 new ExpandTreeAction(),
                 new CollapseTreeAction());
         actionsPanel.add(actionToolbar.getComponent(), BorderLayout.CENTER);

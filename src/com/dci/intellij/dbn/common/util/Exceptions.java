@@ -4,7 +4,9 @@ import org.jetbrains.annotations.NotNull;
 
 import java.sql.SQLException;
 
-public class ExceptionUtil {
+public class Exceptions {
+    private Exceptions() {}
+
     @NotNull
     public static SQLException toSqlException(@NotNull Throwable e) {
         if (e instanceof SQLException) {

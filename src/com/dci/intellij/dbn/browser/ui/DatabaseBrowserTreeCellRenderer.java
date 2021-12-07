@@ -4,8 +4,8 @@ import com.dci.intellij.dbn.browser.model.BrowserTreeNode;
 import com.dci.intellij.dbn.browser.model.LoadInProgressTreeNode;
 import com.dci.intellij.dbn.browser.options.DatabaseBrowserSettings;
 import com.dci.intellij.dbn.common.ui.tree.TreeUtil;
-import com.dci.intellij.dbn.common.util.CommonUtil;
-import com.dci.intellij.dbn.common.util.StringUtil;
+import com.dci.intellij.dbn.common.util.Commons;
+import com.dci.intellij.dbn.common.util.Strings;
 import com.dci.intellij.dbn.connection.ConnectionBundle;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.data.grid.options.DataGridSettings;
@@ -21,9 +21,10 @@ import com.intellij.ui.SimpleTextAttributes;
 import com.intellij.util.ui.UIUtil;
 import org.jetbrains.annotations.NotNull;
 
-import javax.swing.*;
+import javax.swing.JTree;
 import javax.swing.tree.TreeCellRenderer;
-import java.awt.*;
+import java.awt.Component;
+import java.awt.Font;
 
 public class DatabaseBrowserTreeCellRenderer implements TreeCellRenderer {
     private DefaultTreeCellRenderer cellRenderer = new DefaultTreeCellRenderer();
@@ -75,7 +76,7 @@ public class DatabaseBrowserTreeCellRenderer implements TreeCellRenderer {
                                     isEmpty ? SimpleTextAttributes.REGULAR_ATTRIBUTES :
                                             SimpleTextAttributes.REGULAR_BOLD_ATTRIBUTES;
 
-                    append(CommonUtil.nvl(displayName, ""), textAttributes);
+                    append(Commons.nvl(displayName, ""), textAttributes);
 
                     // todo display load error
                     /*
@@ -126,14 +127,14 @@ public class DatabaseBrowserTreeCellRenderer implements TreeCellRenderer {
                     TreeUtil.applySpeedSearchHighlighting(tree, this, true, selected);
                 }
                 String displayDetails = treeNode.getPresentableTextDetails();
-                if (!StringUtil.isEmptyOrSpaces(displayDetails)) {
+                if (!Strings.isEmptyOrSpaces(displayDetails)) {
                     append(" " + displayDetails, isDirty ? SimpleTextAttributes.GRAY_ITALIC_ATTRIBUTES : SimpleTextAttributes.GRAY_ATTRIBUTES);
                 }
 
 
                 if (browserSettings.getGeneralSettings().getShowObjectDetails().value()) {
                     String conditionalDetails = treeNode.getPresentableTextConditionalDetails();
-                    if (!StringUtil.isEmptyOrSpaces(conditionalDetails)) {
+                    if (!Strings.isEmptyOrSpaces(conditionalDetails)) {
                         append(" - " + conditionalDetails, SimpleTextAttributes.GRAY_ATTRIBUTES);
                     }
 

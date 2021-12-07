@@ -8,7 +8,7 @@ import com.dci.intellij.dbn.code.common.completion.options.general.CodeCompletio
 import com.dci.intellij.dbn.code.common.style.DBLCodeStyleManager;
 import com.dci.intellij.dbn.code.common.style.options.CodeStyleCaseOption;
 import com.dci.intellij.dbn.code.common.style.options.CodeStyleCaseSettings;
-import com.dci.intellij.dbn.common.util.StringUtil;
+import com.dci.intellij.dbn.common.util.Strings;
 import com.dci.intellij.dbn.language.common.DBLanguage;
 import com.dci.intellij.dbn.language.common.TokenType;
 import com.dci.intellij.dbn.language.common.TokenTypeCategory;
@@ -41,7 +41,7 @@ public class TokenLookupItemBuilder extends LookupItemBuilder {
     public CharSequence getText(CodeCompletionContext completionContext) {
         String text = tokenElementType.getText();
         TokenType tokenType = tokenElementType.getTokenType();
-        if (StringUtil.isEmpty(text)) {
+        if (Strings.isEmpty(text)) {
             text = tokenType.getValue();
         }
         Project project = completionContext.getParameters().getOriginalFile().getProject();
@@ -60,7 +60,7 @@ public class TokenLookupItemBuilder extends LookupItemBuilder {
 
         String userInput = completionContext.getUserInput();
         CodeCompletionFormatSettings codeCompletionFormatSettings = CodeCompletionSettings.getInstance(project).getFormatSettings();
-        if (StringUtil.isNotEmpty(userInput) && !text.startsWith(userInput) && !codeCompletionFormatSettings.isEnforceCodeStyleCase()) {
+        if (Strings.isNotEmpty(userInput) && !text.startsWith(userInput) && !codeCompletionFormatSettings.isEnforceCodeStyleCase()) {
             char firstInputChar = userInput.charAt(0);
             char firstPresentationChar = text.charAt(0);
 

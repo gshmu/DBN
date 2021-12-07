@@ -3,7 +3,7 @@ package com.dci.intellij.dbn.editor.data;
 import com.dci.intellij.dbn.common.editor.EditorNotificationProvider;
 import com.dci.intellij.dbn.common.environment.options.listener.EnvironmentManagerListener;
 import com.dci.intellij.dbn.common.event.ProjectEvents;
-import com.dci.intellij.dbn.common.util.StringUtil;
+import com.dci.intellij.dbn.common.util.Strings;
 import com.dci.intellij.dbn.editor.data.ui.DatasetEditorLoadErrorNotificationPanel;
 import com.dci.intellij.dbn.editor.data.ui.DatasetEditorNotificationPanel;
 import com.dci.intellij.dbn.editor.data.ui.DatasetEditorReadonlyNotificationPanel;
@@ -79,7 +79,7 @@ public class DatasetEditorNotificationProvider extends EditorNotificationProvide
             DBSchemaObject editableObject = editableObjectFile.getObject();
             if (datasetEditor.isLoaded()) {
                 String sourceLoadError = datasetEditor.getDataLoadError();
-                if (StringUtil.isNotEmpty(sourceLoadError)) {
+                if (Strings.isNotEmpty(sourceLoadError)) {
                     return new DatasetEditorLoadErrorNotificationPanel(editableObject, sourceLoadError);
 
                 } else if (editableObject instanceof DBTable && editableObjectFile.getEnvironmentType().isReadonlyData()) {

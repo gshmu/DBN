@@ -2,6 +2,7 @@ package com.dci.intellij.dbn.database.common.util;
 
 import com.dci.intellij.dbn.common.data.Data;
 import com.dci.intellij.dbn.common.dispose.StatefulDisposable;
+import com.dci.intellij.dbn.common.util.Lists;
 import com.dci.intellij.dbn.connection.ResourceUtil;
 import com.dci.intellij.dbn.connection.ResultSetUtil;
 import lombok.extern.slf4j.Slf4j;
@@ -15,9 +16,8 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.stream.Collectors;
 
-import static com.dci.intellij.dbn.common.util.CommonUtil.nvl;
+import static com.dci.intellij.dbn.common.util.Commons.nvl;
 
 @Slf4j
 public class CachedResultSet extends StatefulDisposable.Base implements ResultSetStub {
@@ -51,7 +51,7 @@ public class CachedResultSet extends StatefulDisposable.Base implements ResultSe
         } else if (source != null && !source.isClosed()) {
             try {
                 List<String> columnNames = ResultSetUtil.getColumnNames(source);
-                this.columnNames = columnNames.stream().map(s -> s.toUpperCase().trim()).collect(Collectors.toList());
+                this.columnNames = Lists.convert(columnNames, s -> s.toUpperCase().trim());
                 load(source, condition);
             } finally {
                 ResourceUtil.close(source);
@@ -162,11 +162,8 @@ public class CachedResultSet extends StatefulDisposable.Base implements ResultSe
     }
 
     public CachedResultSet normalize(Mapper<String> columnMapper) {
-        columnNames = columnNames.stream().
-                map(columnName -> nvl(columnMapper.map(columnName), columnName)).
-                collect(Collectors.toList());
-        for (int i = 0; i < rows.size(); i++) {
-            CachedResultSetRow row = rows.get(i);
+        columnNames = Lists.convert(columnNames, columnName -> nvl(columnMapper.map(columnName), columnName));
+        for (CachedResultSetRow row : rows) {
             row.normalize(columnMapper);
         }
         return this;

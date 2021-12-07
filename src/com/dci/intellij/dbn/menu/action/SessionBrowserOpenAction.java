@@ -2,7 +2,7 @@ package com.dci.intellij.dbn.menu.action;
 
 import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.common.action.DumbAwareProjectAction;
-import com.dci.intellij.dbn.common.util.MessageUtil;
+import com.dci.intellij.dbn.common.util.Messages;
 import com.dci.intellij.dbn.connection.ConnectionBundle;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.ConnectionManager;
@@ -54,7 +54,7 @@ public class SessionBrowserOpenAction extends DumbAwareProjectAction {
             if (singleConnectionHandler != null) {
                 openSessionBrowser(singleConnectionHandler);
             } else {
-                MessageUtil.showInfoDialog(project, "No connections available.", "No database connections found. Please setup a connection first");
+                Messages.showInfoDialog(project, "No connections available.", "No database connections found. Please setup a connection first");
             }
 
         }

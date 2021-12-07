@@ -4,7 +4,7 @@ import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.common.ui.ComboBoxSelectionKeyListener;
 import com.dci.intellij.dbn.common.ui.DBNComboBox;
 import com.dci.intellij.dbn.common.ui.DBNFormImpl;
-import com.dci.intellij.dbn.common.util.StringUtil;
+import com.dci.intellij.dbn.common.util.Strings;
 import com.dci.intellij.dbn.data.editor.ui.ListPopupValuesProvider;
 import com.dci.intellij.dbn.data.editor.ui.TextFieldPopupType;
 import com.dci.intellij.dbn.data.editor.ui.TextFieldWithPopup;
@@ -111,7 +111,7 @@ public class StatementExecutionVariableValueForm extends DBNFormImpl {
         valueFieldPanel.add(editorComponent, BorderLayout.CENTER);
         JTextField textField = editorComponent.getTextField();
         String value = variable.getValue();
-        if (StringUtil.isEmpty(value)) {
+        if (Strings.isEmpty(value)) {
             VirtualFile virtualFile = executionProcessor.getVirtualFile();
             StatementExecutionVariable cachedVariable = variablesCache.getVariable(virtualFile, variable.getName());
             if (cachedVariable != null) {

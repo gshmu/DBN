@@ -2,6 +2,7 @@ package com.dci.intellij.dbn.execution.script;
 
 import com.dci.intellij.dbn.common.options.PersistentConfiguration;
 import com.dci.intellij.dbn.common.util.Cloneable;
+import com.dci.intellij.dbn.common.util.Lists;
 import com.dci.intellij.dbn.connection.DatabaseType;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
@@ -44,12 +45,7 @@ public class CmdLineInterfaceBundle implements Cloneable<CmdLineInterfaceBundle>
 
     @Nullable
     public CmdLineInterface getInterface(String id) {
-        return interfaces
-                .stream()
-                .filter(cli -> Objects.equals(cli.getId(), id))
-                .findFirst()
-                .orElse(null);
-
+        return Lists.first(interfaces, cli -> Objects.equals(cli.getId(), id));
     }
 
     public CmdLineInterface remove(int index) {

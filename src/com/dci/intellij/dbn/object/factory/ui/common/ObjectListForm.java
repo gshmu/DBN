@@ -5,7 +5,7 @@ import com.dci.intellij.dbn.common.dispose.DisposableContainer;
 import com.dci.intellij.dbn.common.ui.DBNFormImpl;
 import com.dci.intellij.dbn.common.ui.GUIUtil;
 import com.dci.intellij.dbn.common.ui.component.DBNComponent;
-import com.dci.intellij.dbn.common.util.ActionUtil;
+import com.dci.intellij.dbn.common.util.Actions;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.ConnectionHandlerRef;
 import com.dci.intellij.dbn.object.factory.ObjectFactoryInput;
@@ -15,8 +15,10 @@ import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import org.jetbrains.annotations.NotNull;
 
-import javax.swing.*;
-import java.awt.*;
+import javax.swing.BoxLayout;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import java.awt.BorderLayout;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -34,7 +36,7 @@ public abstract class ObjectListForm<T extends ObjectFactoryInput> extends DBNFo
         this.connectionHandler = connectionHandler.getRef();
         listPanel.setLayout(new BoxLayout(listPanel, BoxLayout.Y_AXIS));
 
-        ActionToolbar actionToolbar = ActionUtil.createActionToolbar(actionsPanel,
+        ActionToolbar actionToolbar = Actions.createActionToolbar(actionsPanel,
                 "DBNavigator.ObjectFactory.AddElement", true,
                 new CreateObjectAction());
         actionsPanel.add(actionToolbar.getComponent(), BorderLayout.WEST);

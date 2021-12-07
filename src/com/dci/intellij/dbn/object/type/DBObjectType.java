@@ -2,7 +2,7 @@ package com.dci.intellij.dbn.object.type;
 
 import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.common.content.DynamicContentType;
-import com.dci.intellij.dbn.common.util.StringUtil;
+import com.dci.intellij.dbn.common.util.Strings;
 import com.dci.intellij.dbn.database.DatabaseObjectTypeId;
 import com.dci.intellij.dbn.ddl.DDLFileTypeId;
 import com.dci.intellij.dbn.editor.DBContentType;
@@ -408,7 +408,7 @@ public enum DBObjectType implements DynamicContentType<DBObjectType> {
     }
 
     public static DBObjectType get(String typeName) {
-        if (StringUtil.isEmpty(typeName)) {
+        if (Strings.isEmpty(typeName)) {
             return null;
         }
 
@@ -417,7 +417,7 @@ public enum DBObjectType implements DynamicContentType<DBObjectType> {
         } catch (IllegalArgumentException e) {
             typeName = typeName.replace('_', ' ');
             for (DBObjectType objectType: values()) {
-                if (StringUtil.equalsIgnoreCase(objectType.name, typeName)) {
+                if (Strings.equalsIgnoreCase(objectType.name, typeName)) {
                     return objectType;
                 }
             }

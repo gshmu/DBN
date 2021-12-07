@@ -2,7 +2,7 @@ package com.dci.intellij.dbn.connection.config.file;
 
 import com.dci.intellij.dbn.common.options.PersistentConfiguration;
 import com.dci.intellij.dbn.common.util.Cloneable;
-import com.dci.intellij.dbn.common.util.StringUtil;
+import com.dci.intellij.dbn.common.util.Strings;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import org.jdom.Element;
@@ -74,7 +74,7 @@ public class DatabaseFiles implements PersistentConfiguration, Cloneable<Databas
         for (DatabaseFile file : files) {
             String path = file.getPath();
             String schema = file.getSchema();
-            if (StringUtil.isNotEmpty(path) || StringUtil.isNotEmpty(schema)) {
+            if (Strings.isNotEmpty(path) || Strings.isNotEmpty(schema)) {
                 Element child = new Element("file");
                 setStringAttribute(child, "path", path);
                 setStringAttribute(child, "schema", schema);

@@ -1,7 +1,7 @@
 package com.dci.intellij.dbn.database.common;
 
 import com.dci.intellij.dbn.common.dispose.Failsafe;
-import com.dci.intellij.dbn.common.util.CommonUtil;
+import com.dci.intellij.dbn.common.util.Commons;
 import com.dci.intellij.dbn.connection.DatabaseType;
 import com.dci.intellij.dbn.connection.jdbc.DBNConnection;
 import com.dci.intellij.dbn.database.DatabaseInterface;
@@ -33,7 +33,7 @@ public class DatabaseInterfaceImpl implements DatabaseInterface{
     @Override
     public void reset() {
         processors.clear();
-        Document document = CommonUtil.loadXmlFile(getClass(), fileName);
+        Document document = Commons.loadXmlFile(getClass(), fileName);
         Element root = document.getRootElement();
         for (Element child : root.getChildren()) {
             StatementExecutionProcessor executionProcessor = new StatementExecutionProcessor(child, provider);

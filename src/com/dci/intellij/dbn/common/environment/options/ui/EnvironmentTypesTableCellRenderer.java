@@ -3,13 +3,13 @@ package com.dci.intellij.dbn.common.environment.options.ui;
 import com.dci.intellij.dbn.common.environment.EnvironmentType;
 import com.dci.intellij.dbn.common.ui.table.DBNColoredTableCellRenderer;
 import com.dci.intellij.dbn.common.ui.table.DBNTable;
-import com.dci.intellij.dbn.common.util.StringUtil;
+import com.dci.intellij.dbn.common.util.Strings;
 import com.intellij.ui.ColoredSideBorder;
 import com.intellij.ui.SimpleTextAttributes;
 
 import javax.swing.border.CompoundBorder;
 import javax.swing.border.LineBorder;
-import java.awt.*;
+import java.awt.Color;
 
 public class EnvironmentTypesTableCellRenderer extends DBNColoredTableCellRenderer {
     @Override
@@ -26,7 +26,7 @@ public class EnvironmentTypesTableCellRenderer extends DBNColoredTableCellRender
                     new ColoredSideBorder(color.brighter(), color.brighter(), color.darker(), color.darker(), 1)));
         } else {
             String stringValue = (String) value;
-            if (StringUtil.isNotEmpty(stringValue)) {
+            if (Strings.isNotEmpty(stringValue)) {
                 append(stringValue, SimpleTextAttributes.REGULAR_ATTRIBUTES);
             }
         }

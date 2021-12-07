@@ -2,7 +2,7 @@ package com.dci.intellij.dbn.language.common.element.impl;
 
 import com.dci.intellij.dbn.code.common.lookup.LookupItemBuilderProvider;
 import com.dci.intellij.dbn.code.common.lookup.TokenLookupItemBuilder;
-import com.dci.intellij.dbn.common.util.StringUtil;
+import com.dci.intellij.dbn.common.util.Strings;
 import com.dci.intellij.dbn.language.common.DBLanguage;
 import com.dci.intellij.dbn.language.common.TokenType;
 import com.dci.intellij.dbn.language.common.TokenTypeCategory;
@@ -49,7 +49,7 @@ public final class TokenElementType extends LeafElementType implements LookupIte
         setDefaultFormatting(tokenType.getFormatting());
 
         String flavorName = stringAttribute(def, "flavor");
-        if (StringUtil.isNotEmpty(flavorName)) {
+        if (Strings.isNotEmpty(flavorName)) {
             flavor = TokenTypeCategory.getCategory(flavorName);
         }
 

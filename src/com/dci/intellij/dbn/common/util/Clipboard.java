@@ -9,7 +9,7 @@ import java.awt.datatransfer.UnsupportedFlavorException;
 import java.io.IOException;
 import java.util.Objects;
 
-public class ClipboardUtil {
+public class Clipboard {
 
     public static XmlContent createXmlContent(String text) {
         return new XmlContent(text);

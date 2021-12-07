@@ -6,7 +6,7 @@ import com.dci.intellij.dbn.code.common.style.options.CodeStyleCaseSettings;
 import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.common.consumer.ListCollector;
 import com.dci.intellij.dbn.common.latent.Latent;
-import com.dci.intellij.dbn.common.util.DocumentUtil;
+import com.dci.intellij.dbn.common.util.Documents;
 import com.dci.intellij.dbn.debugger.DBDebugUtil;
 import com.dci.intellij.dbn.debugger.common.process.DBDebugProcess;
 import com.dci.intellij.dbn.editor.code.SourceCodeManager;
@@ -66,7 +66,7 @@ public abstract class DBDebugStackFrame<P extends DBDebugProcess, V extends DBDe
 
 
         if (virtualFile != null) {
-            Document document = DocumentUtil.getDocument(virtualFile);
+            Document document = Documents.getDocument(virtualFile);
             DBLanguagePsiFile psiFile = (DBLanguagePsiFile) PsiUtil.getPsiFile(project, document);
 
             if (sourcePosition != null && psiFile != null && document != null) {
@@ -164,7 +164,7 @@ public abstract class DBDebugStackFrame<P extends DBDebugProcess, V extends DBDe
                 virtualFile = ((DBEditableObjectVirtualFile) virtualFile).getMainContentFile();
             }
             Project project = getDebugProcess().getProject();
-            Document document = DocumentUtil.getDocument(virtualFile);
+            Document document = Documents.getDocument(virtualFile);
             DBLanguagePsiFile psiFile = (DBLanguagePsiFile) PsiUtil.getPsiFile(project, virtualFile);
 
             if (document != null && psiFile != null) {

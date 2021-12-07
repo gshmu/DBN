@@ -4,7 +4,7 @@ import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.common.ui.DBNFormImpl;
 import com.dci.intellij.dbn.common.ui.DBNHeaderForm;
 import com.dci.intellij.dbn.common.ui.DBNHintForm;
-import com.dci.intellij.dbn.common.util.StringUtil;
+import com.dci.intellij.dbn.common.util.Strings;
 import com.dci.intellij.dbn.execution.ExecutionManager;
 import com.dci.intellij.dbn.execution.statement.result.StatementExecutionResult;
 import com.intellij.ui.DocumentAdapter;
@@ -55,9 +55,9 @@ public class RenameExecutionResultForm extends DBNFormImpl{
             @Override
             protected void textChanged(@NotNull DocumentEvent e) {
                 String errorText = null;
-                String text = StringUtil.trim(resultNameTextField.getText());
+                String text = Strings.trim(resultNameTextField.getText());
 
-                if (StringUtil.isEmpty(text)) {
+                if (Strings.isEmpty(text)) {
                     errorText = "Result name must be specified";
                 }
 

@@ -3,9 +3,9 @@ package com.dci.intellij.dbn.language.common;
 import com.dci.intellij.dbn.common.dispose.StatefulDisposable;
 import com.dci.intellij.dbn.common.environment.EnvironmentType;
 import com.dci.intellij.dbn.common.thread.Read;
-import com.dci.intellij.dbn.common.util.CommonUtil;
-import com.dci.intellij.dbn.common.util.DocumentUtil;
-import com.dci.intellij.dbn.common.util.EditorUtil;
+import com.dci.intellij.dbn.common.util.Commons;
+import com.dci.intellij.dbn.common.util.Documents;
+import com.dci.intellij.dbn.common.util.Editors;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.ConnectionHandlerRef;
 import com.dci.intellij.dbn.connection.PresentableConnectionProvider;
@@ -220,7 +220,7 @@ public abstract class DBLanguagePsiFile extends PsiFileImpl implements FileConne
                 super.getVirtualFile() :
                 originalFile.getVirtualFile();
 */
-        return CommonUtil.nvl(super.getVirtualFile(), getViewProvider().getVirtualFile());
+        return Commons.nvl(super.getVirtualFile(), getViewProvider().getVirtualFile());
     }
 
     public boolean isInjectedContext() {
@@ -299,9 +299,9 @@ public abstract class DBLanguagePsiFile extends PsiFileImpl implements FileConne
 
     @Override
     public void navigate(boolean requestFocus) {
-        Editor selectedEditor = EditorUtil.getSelectedEditor(getProject());
+        Editor selectedEditor = Editors.getSelectedEditor(getProject());
         if (selectedEditor != null) {
-            Document document = DocumentUtil.getDocument(getContainingFile());
+            Document document = Documents.getDocument(getContainingFile());
             if (document != null) {
                 Editor[] editors = EditorFactory.getInstance().getEditors(document);
                 for (Editor editor : editors) {
@@ -328,7 +328,7 @@ public abstract class DBLanguagePsiFile extends PsiFileImpl implements FileConne
 
     public ElementTypeBundle getElementTypeBundle() {
         DBLanguageDialect languageDialect = getLanguageDialect();
-        languageDialect = CommonUtil.nvl(languageDialect, SQLLanguage.INSTANCE.getMainLanguageDialect());
+        languageDialect = Commons.nvl(languageDialect, SQLLanguage.INSTANCE.getMainLanguageDialect());
         return languageDialect.getParserDefinition().getParser().getElementTypes();
     }
 

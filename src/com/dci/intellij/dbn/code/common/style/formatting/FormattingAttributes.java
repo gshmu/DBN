@@ -1,6 +1,6 @@
 package com.dci.intellij.dbn.code.common.style.formatting;
 
-import com.dci.intellij.dbn.common.util.CommonUtil;
+import com.dci.intellij.dbn.common.util.Commons;
 import com.intellij.formatting.Indent;
 import com.intellij.formatting.Spacing;
 import com.intellij.formatting.Wrap;
@@ -53,10 +53,10 @@ public class FormattingAttributes {
             if (attributes == null) {
                 attributes = new FormattingAttributes(defaultAttributes);
             } else {
-                attributes.wrap = CommonUtil.nvln(attributes.wrap, defaultAttributes.wrap);
-                attributes.indent = CommonUtil.nvln(attributes.indent, defaultAttributes.indent);
-                attributes.spacingBefore = CommonUtil.nvln(attributes.spacingBefore, defaultAttributes.spacingBefore);
-                attributes.spacingAfter = CommonUtil.nvln(attributes.spacingAfter, defaultAttributes.spacingAfter);
+                attributes.wrap = Commons.nvln(attributes.wrap, defaultAttributes.wrap);
+                attributes.indent = Commons.nvln(attributes.indent, defaultAttributes.indent);
+                attributes.spacingBefore = Commons.nvln(attributes.spacingBefore, defaultAttributes.spacingBefore);
+                attributes.spacingAfter = Commons.nvln(attributes.spacingAfter, defaultAttributes.spacingAfter);
             }
         }
         return attributes;
@@ -64,10 +64,10 @@ public class FormattingAttributes {
 
     public static FormattingAttributes overwrite(FormattingAttributes attributes, FormattingAttributes defaultAttributes) {
         if (attributes != null && defaultAttributes != null) {
-            attributes.wrap = CommonUtil.nvln(defaultAttributes.wrap, attributes.wrap);
-            attributes.indent = CommonUtil.nvln(defaultAttributes.indent, attributes.indent);
-            attributes.spacingBefore = CommonUtil.nvln(defaultAttributes.spacingBefore, attributes.spacingBefore);
-            attributes.spacingAfter = CommonUtil.nvln(defaultAttributes.spacingAfter, attributes.spacingAfter);
+            attributes.wrap = Commons.nvln(defaultAttributes.wrap, attributes.wrap);
+            attributes.indent = Commons.nvln(defaultAttributes.indent, attributes.indent);
+            attributes.spacingBefore = Commons.nvln(defaultAttributes.spacingBefore, attributes.spacingBefore);
+            attributes.spacingAfter = Commons.nvln(defaultAttributes.spacingAfter, attributes.spacingAfter);
         }
         return attributes;
     }

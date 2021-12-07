@@ -6,8 +6,8 @@ import com.dci.intellij.dbn.common.event.ProjectEvents;
 import com.dci.intellij.dbn.common.load.ProgressMonitor;
 import com.dci.intellij.dbn.common.routine.ProgressRunnable;
 import com.dci.intellij.dbn.common.thread.Progress;
-import com.dci.intellij.dbn.common.util.EditorUtil;
-import com.dci.intellij.dbn.common.util.MessageUtil;
+import com.dci.intellij.dbn.common.util.Editors;
+import com.dci.intellij.dbn.common.util.Messages;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.ConnectionHandlerStatusListener;
 import com.dci.intellij.dbn.connection.ConnectionId;
@@ -35,8 +35,8 @@ import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import static com.dci.intellij.dbn.common.message.MessageCallback.when;
-import static com.dci.intellij.dbn.common.util.CollectionUtil.isLast;
-import static com.dci.intellij.dbn.common.util.CommonUtil.list;
+import static com.dci.intellij.dbn.common.util.Commons.list;
+import static com.dci.intellij.dbn.common.util.Lists.isLast;
 import static com.dci.intellij.dbn.connection.transaction.TransactionAction.*;
 
 public class DatabaseTransactionManager extends AbstractProjectComponent implements ProjectManagerListener{
@@ -51,10 +51,10 @@ public class DatabaseTransactionManager extends AbstractProjectComponent impleme
 
     public void rollback(ConnectionHandler connectionHandler, @NotNull DBNConnection connection) {
         DatabaseSession session = connectionHandler.getSessionBundle().getSession(connection.getSessionId());
-        MessageUtil.showQuestionDialog(getProject(),
+        Messages.showQuestionDialog(getProject(),
                 "Rollback Session",
                 "Are you sure you want to rollback the session \"" + session.getName() + "\" for connection\"" + connectionHandler.getName() + "\"" ,
-                MessageUtil.OPTIONS_YES_NO, 0,
+                Messages.OPTIONS_YES_NO, 0,
                 option -> when(option == 0, () ->
                         execute(connectionHandler,
                                 connection,
@@ -65,10 +65,10 @@ public class DatabaseTransactionManager extends AbstractProjectComponent impleme
 
     public void commit(ConnectionHandler connectionHandler, @NotNull DBNConnection connection) {
         DatabaseSession session = connectionHandler.getSessionBundle().getSession(connection.getSessionId());
-        MessageUtil.showQuestionDialog(ensureProject(),
+        Messages.showQuestionDialog(ensureProject(),
                 "Commit Session",
                 "Are you sure you want to commit the session \"" + session.getName() + "\" for connection\"" + connectionHandler.getName() + "\"" ,
-                MessageUtil.OPTIONS_YES_NO, 0,
+                Messages.OPTIONS_YES_NO, 0,
                 option -> when(option == 0, () ->
                         execute(connectionHandler,
                                 connection,
@@ -195,7 +195,7 @@ public class DatabaseTransactionManager extends AbstractProjectComponent impleme
             PendingTransactionBundle dataChanges = conn.getDataChanges();
             if (fromEditor && dataChanges != null && dataChanges.size() > 1) {
                 Project project = connectionHandler.getProject();
-                VirtualFile selectedFile = EditorUtil.getSelectedFile(project);
+                VirtualFile selectedFile = Editors.getSelectedFile(project);
 
                 if (selectedFile != null) {
                     String connectionName = connectionHandler.getConnectionName(conn);
@@ -236,7 +236,7 @@ public class DatabaseTransactionManager extends AbstractProjectComponent impleme
             PendingTransactionBundle dataChanges = connection.getDataChanges();
             if (fromEditor && dataChanges != null && dataChanges.size() > 1) {
                 Project project = connectionHandler.getProject();
-                VirtualFile selectedFile = EditorUtil.getSelectedFile(project);
+                VirtualFile selectedFile = Editors.getSelectedFile(project);
                 if (selectedFile != null) {
                     String connectionName = connectionHandler.getConnectionName(connection);
 

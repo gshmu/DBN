@@ -1,7 +1,7 @@
 package com.dci.intellij.dbn.code.common.intention;
 
 import com.dci.intellij.dbn.common.Icons;
-import com.dci.intellij.dbn.common.util.EditorUtil;
+import com.dci.intellij.dbn.common.util.Editors;
 import com.dci.intellij.dbn.execution.statement.StatementExecutionManager;
 import com.dci.intellij.dbn.execution.statement.processor.StatementExecutionProcessor;
 import com.dci.intellij.dbn.language.common.DBLanguagePsiFile;
@@ -16,7 +16,7 @@ import com.intellij.psi.PsiFile;
 import com.intellij.util.IncorrectOperationException;
 import org.jetbrains.annotations.NotNull;
 
-import javax.swing.*;
+import javax.swing.Icon;
 
 public class JumpToExecutionResultIntentionAction extends GenericIntentionAction implements HighPriorityAction {
     private WeakRef<StatementExecutionProcessor> cachedExecutionProcessor;
@@ -57,7 +57,7 @@ public class JumpToExecutionResultIntentionAction extends GenericIntentionAction
     public boolean isAvailable(@NotNull Project project, Editor editor, PsiFile psiFile) {
         if (psiFile instanceof DBLanguagePsiFile) {
             ExecutablePsiElement executable = PsiUtil.lookupExecutableAtCaret(editor, true);
-            FileEditor fileEditor = EditorUtil.getFileEditor(editor);
+            FileEditor fileEditor = Editors.getFileEditor(editor);
             if (executable != null && fileEditor != null) {
                 StatementExecutionManager executionManager = StatementExecutionManager.getInstance(project);
                 StatementExecutionProcessor executionProcessor = executionManager.getExecutionProcessor(fileEditor, executable, false);
@@ -74,7 +74,7 @@ public class JumpToExecutionResultIntentionAction extends GenericIntentionAction
     @Override
     public void invoke(@NotNull Project project, Editor editor, PsiFile psiFile) throws IncorrectOperationException {
         ExecutablePsiElement executable = PsiUtil.lookupExecutableAtCaret(editor, true);
-        FileEditor fileEditor = EditorUtil.getFileEditor(editor);
+        FileEditor fileEditor = Editors.getFileEditor(editor);
         if (executable != null && fileEditor != null) {
             StatementExecutionManager executionManager = StatementExecutionManager.getInstance(project);
             StatementExecutionProcessor executionProcessor = executionManager.getExecutionProcessor(fileEditor, executable, false);

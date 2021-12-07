@@ -1,7 +1,7 @@
 package com.dci.intellij.dbn.debugger.jdwp.evaluation;
 
 import com.dci.intellij.dbn.common.thread.Dispatch;
-import com.dci.intellij.dbn.common.util.DocumentUtil;
+import com.dci.intellij.dbn.common.util.Documents;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.editor.Editor;
@@ -71,7 +71,7 @@ public class DBExecutionPointHighlighter {
     @Nullable
     private Editor openEditor() {
         VirtualFile file = sourcePosition.getFile();
-        Document document = DocumentUtil.getDocument(file);
+        Document document = Documents.getDocument(file);
         if (document != null) {
             int offset = sourcePosition.getOffset();
             if (offset < 0 || offset >= document.getTextLength()) {

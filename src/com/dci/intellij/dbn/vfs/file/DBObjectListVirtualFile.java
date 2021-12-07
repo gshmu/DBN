@@ -2,7 +2,7 @@ package com.dci.intellij.dbn.vfs.file;
 
 import com.dci.intellij.dbn.common.DevNullStreams;
 import com.dci.intellij.dbn.common.dispose.Failsafe;
-import com.dci.intellij.dbn.common.util.NamingUtil;
+import com.dci.intellij.dbn.common.util.Naming;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.ConnectionId;
 import com.dci.intellij.dbn.connection.GenericDatabaseElement;
@@ -19,7 +19,7 @@ import com.intellij.openapi.vfs.VirtualFile;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import javax.swing.*;
+import javax.swing.Icon;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -31,7 +31,7 @@ public class DBObjectListVirtualFile<T extends DBObjectList> extends DBVirtualFi
     public DBObjectListVirtualFile(T objectList) {
         super(objectList.getProject());
         this.objectList = objectList;
-        this.name = NamingUtil.capitalize(objectList.getName());
+        this.name = Naming.capitalize(objectList.getName());
     }
 
     public T getObjectList() {

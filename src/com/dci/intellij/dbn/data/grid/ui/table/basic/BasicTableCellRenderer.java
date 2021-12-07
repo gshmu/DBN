@@ -4,7 +4,7 @@ import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.common.ui.Borders;
 import com.dci.intellij.dbn.common.ui.table.DBNColoredTableCellRenderer;
 import com.dci.intellij.dbn.common.ui.table.DBNTable;
-import com.dci.intellij.dbn.common.util.CommonUtil;
+import com.dci.intellij.dbn.common.util.Commons;
 import com.dci.intellij.dbn.data.find.DataSearchResult;
 import com.dci.intellij.dbn.data.find.DataSearchResultMatch;
 import com.dci.intellij.dbn.data.grid.color.BasicTableTextAttributes;
@@ -59,8 +59,8 @@ public class BasicTableCellRenderer extends DBNColoredTableCellRenderer {
                 }
             }
 
-            Color background = CommonUtil.nvl(textAttributes.getBgColor(), table.getBackground());
-            Color foreground = CommonUtil.nvl(textAttributes.getFgColor(), table.getForeground());
+            Color background = Commons.nvl(textAttributes.getBgColor(), table.getBackground());
+            Color foreground = Commons.nvl(textAttributes.getFgColor(), table.getForeground());
             Border border = Borders.getLineBorder(background);
 
             setBorder(border);
@@ -79,7 +79,7 @@ public class BasicTableCellRenderer extends DBNColoredTableCellRenderer {
              }
 
          } else {
-             formattedUserValue = CommonUtil.nvl(cell.getFormattedUserValue(), "");
+             formattedUserValue = Commons.nvl(cell.getFormattedUserValue(), "");
          }
 
          DataModel model = cell.getModel();

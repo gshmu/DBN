@@ -1,8 +1,8 @@
 package com.dci.intellij.dbn.connection;
 
 import com.dci.intellij.dbn.common.database.DatabaseInfo;
-import com.dci.intellij.dbn.common.util.CommonUtil;
-import com.dci.intellij.dbn.common.util.StringUtil;
+import com.dci.intellij.dbn.common.util.Commons;
+import com.dci.intellij.dbn.common.util.Strings;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.regex.Matcher;
@@ -91,11 +91,11 @@ public enum DatabaseUrlPattern {
 
     public String getUrl(String vendor, String host, String port, String database, String file) {
         return urlPattern.
-                replace("<VENDOR>", CommonUtil.nvl(vendor, "")).
-                replace("<HOST>", CommonUtil.nvl(host, "")).
-                replace(":<PORT>", StringUtil.isEmpty(port) ? "" : ":" + port).
-                replace("<DATABASE>", CommonUtil.nvl(database, "")).
-                replace("<FILE>", CommonUtil.nvl(file, ""));
+                replace("<VENDOR>", Commons.nvl(vendor, "")).
+                replace("<HOST>", Commons.nvl(host, "")).
+                replace(":<PORT>", Strings.isEmpty(port) ? "" : ":" + port).
+                replace("<DATABASE>", Commons.nvl(database, "")).
+                replace("<FILE>", Commons.nvl(file, ""));
     }
 
     public String getDefaultUrl() {
@@ -120,7 +120,7 @@ public enum DatabaseUrlPattern {
 
     public String resolveHost(String url) {
         if (urlType != DatabaseUrlType.FILE) {
-            if (StringUtil.isNotEmpty(url)) {
+            if (Strings.isNotEmpty(url)) {
                 Matcher matcher = getMatcher(url);
                 if (matcher.matches()) {
                     return matcher.group("HOST");
@@ -132,11 +132,11 @@ public enum DatabaseUrlPattern {
 
     public String resolvePort(String url) {
         if (urlType != DatabaseUrlType.FILE) {
-            if (StringUtil.isNotEmpty(url)) {
+            if (Strings.isNotEmpty(url)) {
                 Matcher matcher = getMatcher(url);
                 if (matcher.matches()) {
                     String portGroup = matcher.group("PORT");
-                    if (StringUtil.isNotEmpty(portGroup)) {
+                    if (Strings.isNotEmpty(portGroup)) {
                         return portGroup.substring(1);
                     }
                 }
@@ -147,11 +147,11 @@ public enum DatabaseUrlPattern {
 
     public String resolveDatabase(String url) {
         if (urlType != DatabaseUrlType.FILE) {
-            if (StringUtil.isNotEmpty(url)) {
+            if (Strings.isNotEmpty(url)) {
                 Matcher matcher = getMatcher(url);
                 if (matcher.matches()) {
                     String databaseGroup = matcher.group("DATABASE");
-                    if (StringUtil.isNotEmpty(databaseGroup)) {
+                    if (Strings.isNotEmpty(databaseGroup)) {
                         return databaseGroup.substring(1);
                     }
                 }
@@ -163,11 +163,11 @@ public enum DatabaseUrlPattern {
 
     public String resolveFile(String url) {
         if (urlType == DatabaseUrlType.FILE) {
-            if (StringUtil.isNotEmpty(url)) {
+            if (Strings.isNotEmpty(url)) {
                 Matcher matcher = getMatcher(url);
                 if (matcher.matches()) {
                     String fileGroup = matcher.group("FILE");
-                    if (StringUtil.isNotEmpty(fileGroup)) {
+                    if (Strings.isNotEmpty(fileGroup)) {
                         return fileGroup;
                     }
                 }
@@ -177,7 +177,7 @@ public enum DatabaseUrlPattern {
     }
 
     public boolean isValid(String url) {
-        if (StringUtil.isNotEmpty(url)) {
+        if (Strings.isNotEmpty(url)) {
             Matcher matcher = getMatcher(url);
             return matcher.matches();
         }

@@ -9,7 +9,7 @@ import com.dci.intellij.dbn.common.thread.Progress;
 import com.dci.intellij.dbn.common.ui.Borders;
 import com.dci.intellij.dbn.common.ui.DBNFormImpl;
 import com.dci.intellij.dbn.common.ui.GUIUtil;
-import com.dci.intellij.dbn.common.util.ActionUtil;
+import com.dci.intellij.dbn.common.util.Actions;
 import com.dci.intellij.dbn.connection.ConnectionAction;
 import com.dci.intellij.dbn.database.DatabaseFeature;
 import com.dci.intellij.dbn.debugger.DBDebuggerType;
@@ -51,10 +51,10 @@ public class MethodExecutionHistoryForm extends DBNFormImpl {
     MethodExecutionHistoryForm(MethodExecutionHistoryDialog parent, MethodExecutionInput selectedExecutionInput, boolean debug) {
         super(parent);
         this.debug = debug;
-        ActionToolbar actionToolbar = ActionUtil.createActionToolbar(actionsPanel,"", true,
+        ActionToolbar actionToolbar = Actions.createActionToolbar(actionsPanel,"", true,
                 new ShowGroupedTreeAction(),
                 new DeleteHistoryEntryAction(),
-                ActionUtil.SEPARATOR,
+                Actions.SEPARATOR,
                 new ProjectSettingsOpenAction());
         actionsPanel.add(actionToolbar.getComponent());
         mainPanel.setBorder(Borders.BOTTOM_LINE_BORDER);

@@ -6,7 +6,7 @@ import com.dci.intellij.dbn.common.ui.Borders;
 import com.dci.intellij.dbn.common.ui.DBNForm;
 import com.dci.intellij.dbn.common.ui.listener.MouseClickedListener;
 import com.dci.intellij.dbn.common.ui.tree.TreeUtil;
-import com.dci.intellij.dbn.common.util.StringUtil;
+import com.dci.intellij.dbn.common.util.Strings;
 import com.dci.intellij.dbn.data.editor.ui.UserValueHolder;
 import com.dci.intellij.dbn.data.editor.ui.UserValueHolderImpl;
 import com.dci.intellij.dbn.data.grid.color.BasicTableTextAttributes;
@@ -147,7 +147,7 @@ public class ExplainPlanTreeTable extends TreeTable implements StatefulDisposabl
                 String operation = entry.getOperation();
                 String options = entry.getOperationOptions();
                 append(operation, selected ? selectedCellAttributes.derive(SimpleTextAttributes.STYLE_BOLD, null, null, null) : operationAttributes);
-                if (StringUtil.isNotEmpty(options)) {
+                if (Strings.isNotEmpty(options)) {
                     SimpleTextAttributes regularAttributes = Objects.equals(options, "FULL") ?
                             SimpleTextAttributes.ERROR_ATTRIBUTES :
                             SimpleTextAttributes.GRAYED_ATTRIBUTES;
@@ -199,7 +199,7 @@ public class ExplainPlanTreeTable extends TreeTable implements StatefulDisposabl
             int columnIndex = getSelectedColumns()[0];
             ExplainPlanTreeTableModel tableModel = (ExplainPlanTreeTableModel) getTableModel();
             Object value = getValueAt(rowIndex, columnIndex);
-            if (tableModel.isLargeValue(columnIndex) && value instanceof String && StringUtil.isNotEmpty((String) value) && this.isShowing()) {
+            if (tableModel.isLargeValue(columnIndex) && value instanceof String && Strings.isNotEmpty((String) value) && this.isShowing()) {
                 Rectangle cellRect = getCellRect(rowIndex, columnIndex, true);
 
                 TableColumn column = getColumnModel().getColumn(columnIndex);

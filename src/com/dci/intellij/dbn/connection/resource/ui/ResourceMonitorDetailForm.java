@@ -7,7 +7,7 @@ import com.dci.intellij.dbn.common.ui.DBNFormImpl;
 import com.dci.intellij.dbn.common.ui.DBNHeaderForm;
 import com.dci.intellij.dbn.common.ui.component.DBNComponent;
 import com.dci.intellij.dbn.common.ui.table.DBNTable;
-import com.dci.intellij.dbn.common.util.MessageUtil;
+import com.dci.intellij.dbn.common.util.Messages;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.ConnectionHandlerRef;
 import com.dci.intellij.dbn.connection.ConnectionPool;
@@ -124,10 +124,10 @@ public class ResourceMonitorDetailForm extends DBNFormImpl {
             DatabaseSession session = getSelectedSession();
             if (session != null) {
                 ConnectionHandler connectionHandler = getConnectionHandler();
-                MessageUtil.showQuestionDialog(getProject(),
+                Messages.showQuestionDialog(getProject(),
                         "Disconnect Session",
                         "Are you sure you want to disconnect the session \"" + session.getName() + "\" for connection\"" + connectionHandler.getName() + "\"" ,
-                        MessageUtil.OPTIONS_YES_NO, 0,
+                        Messages.OPTIONS_YES_NO, 0,
                         option -> when(option == 0, () -> {
                             DBNConnection connection = getSelectedConnection();
                             if (connection != null) {
@@ -156,10 +156,10 @@ public class ResourceMonitorDetailForm extends DBNFormImpl {
         public void actionPerformed(@NotNull AnActionEvent e) {
             DatabaseSession session = getSelectedSession();
             if (session != null) {
-                MessageUtil.showQuestionDialog(getProject(),
+                Messages.showQuestionDialog(getProject(),
                         "Delete Session",
                         "Are you sure you want to delete the session \"" + session.getName() + "\" for connection\"" + getConnectionHandler().getName() + "\"" ,
-                        MessageUtil.OPTIONS_YES_NO, 0,
+                        Messages.OPTIONS_YES_NO, 0,
                         option -> when(option == 0, () -> {
                             Project project = ensureProject();
                             DatabaseSessionManager sessionManager = DatabaseSessionManager.getInstance(project);

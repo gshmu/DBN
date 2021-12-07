@@ -12,7 +12,7 @@ public abstract class RefreshableValue<T>{
 
     public T get() {
         if (!loaded || lastRefreshTimestamp < System.currentTimeMillis() - refreshInterval) {
-            value = CommonUtil.nvln(load(), value);
+            value = Commons.nvln(load(), value);
             loaded = true;
             lastRefreshTimestamp = System.currentTimeMillis();
         }

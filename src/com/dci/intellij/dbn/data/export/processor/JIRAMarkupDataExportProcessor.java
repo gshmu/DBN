@@ -1,7 +1,7 @@
 package com.dci.intellij.dbn.data.export.processor;
 
 import com.dci.intellij.dbn.common.locale.Formatter;
-import com.dci.intellij.dbn.common.util.StringUtil;
+import com.dci.intellij.dbn.common.util.Strings;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.data.export.DataExportException;
 import com.dci.intellij.dbn.data.export.DataExportFormat;
@@ -111,7 +111,7 @@ public class JIRAMarkupDataExportProcessor extends DataExportProcessor{
                 value = value.replaceAll("\\*", "\\*");
                 // TODO add more markup escapes
 
-                if (StringUtil.isEmptyOrSpaces(value)) value = " ";
+                if (Strings.isEmptyOrSpaces(value)) value = " ";
 
 /*                boolean isNoWrap =
                         genericDataType == GenericDataType.NUMERIC ||

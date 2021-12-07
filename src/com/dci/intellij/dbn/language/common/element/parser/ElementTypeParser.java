@@ -1,7 +1,7 @@
 package com.dci.intellij.dbn.language.common.element.parser;
 
 import com.dci.intellij.dbn.code.common.completion.CodeCompletionContributor;
-import com.dci.intellij.dbn.common.util.CommonUtil;
+import com.dci.intellij.dbn.common.util.Commons;
 import com.dci.intellij.dbn.language.common.ParseException;
 import com.dci.intellij.dbn.language.common.SharedTokenTypeBundle;
 import com.dci.intellij.dbn.language.common.SimpleTokenType;
@@ -45,7 +45,7 @@ public abstract class ElementTypeParser<T extends ElementTypeBase> {
         try {
             marker = marker == null ? node == null ? null : node.getElementMarker() : marker;
             if (resultType == ParseResultType.PARTIAL_MATCH) {
-                ElementTypeBase offsetPsiElement = CommonUtil.nvl(context.getLastResolvedLeaf(), elementType);
+                ElementTypeBase offsetPsiElement = Commons.nvl(context.getLastResolvedLeaf(), elementType);
                 Set<TokenType> nextPossibleTokens = offsetPsiElement.getLookupCache().getNextPossibleTokens();
                 ParseBuilderErrorHandler.updateBuilderError(nextPossibleTokens, context);
             }

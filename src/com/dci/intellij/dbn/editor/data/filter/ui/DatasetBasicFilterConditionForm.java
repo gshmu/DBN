@@ -5,7 +5,7 @@ import com.dci.intellij.dbn.common.options.ui.ConfigurationEditorForm;
 import com.dci.intellij.dbn.common.ui.ComboBoxSelectionKeyListener;
 import com.dci.intellij.dbn.common.ui.DBNComboBox;
 import com.dci.intellij.dbn.common.ui.ValueSelectorOption;
-import com.dci.intellij.dbn.common.util.ActionUtil;
+import com.dci.intellij.dbn.common.util.Actions;
 import com.dci.intellij.dbn.data.editor.ui.TextFieldPopupType;
 import com.dci.intellij.dbn.data.editor.ui.TextFieldWithPopup;
 import com.dci.intellij.dbn.data.type.GenericDataType;
@@ -25,9 +25,12 @@ import com.intellij.ui.SimpleTextAttributes;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import javax.swing.*;
+import javax.swing.JList;
+import javax.swing.JPanel;
+import javax.swing.JTextField;
+import javax.swing.ListCellRenderer;
 import javax.swing.event.DocumentEvent;
-import java.awt.*;
+import java.awt.BorderLayout;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -50,7 +53,7 @@ public class DatasetBasicFilterConditionForm extends ConfigurationEditorForm<Dat
     public DatasetBasicFilterConditionForm(DBDataset dataset, DatasetBasicFilterCondition condition) {
         super(condition);
         this.dataset = DBObjectRef.of(dataset);
-        ActionToolbar actionToolbar = ActionUtil.createActionToolbar(
+        ActionToolbar actionToolbar = Actions.createActionToolbar(
                 actionsPanel,
                 "DBNavigator.DataEditor.SimpleFilter.Condition", true,
                 new EnableDisableBasicFilterConditionAction(this),

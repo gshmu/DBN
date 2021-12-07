@@ -1,7 +1,7 @@
 package com.dci.intellij.dbn.language.sql;
 
 import com.dci.intellij.dbn.common.consumer.SetCollector;
-import com.dci.intellij.dbn.common.util.NamingUtil;
+import com.dci.intellij.dbn.common.util.Naming;
 import com.dci.intellij.dbn.language.common.DBLanguageFoldingBuilder;
 import com.dci.intellij.dbn.language.common.psi.BasePsiElement;
 import com.dci.intellij.dbn.language.common.psi.ChameleonPsiElement;
@@ -83,7 +83,7 @@ public class SQLFoldingBuilder extends DBLanguageFoldingBuilder {
             buffer.append(basePsiElement.getSpecificElementType().getDescription());
             if (subjects.isNotEmpty()) {
                 buffer.append(" (");
-                buffer.append(NamingUtil.createNamesList(subjects.elements(), 3));
+                buffer.append(Naming.createNamesList(subjects.elements(), 3));
                 buffer.append(")");
             }
             return buffer.toString();

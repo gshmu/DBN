@@ -2,7 +2,7 @@ package com.dci.intellij.dbn.common.database;
 
 
 import com.dci.intellij.dbn.common.util.Cloneable;
-import com.dci.intellij.dbn.common.util.StringUtil;
+import com.dci.intellij.dbn.common.util.Strings;
 import com.dci.intellij.dbn.connection.DatabaseUrlType;
 import com.dci.intellij.dbn.connection.config.file.DatabaseFile;
 import com.dci.intellij.dbn.connection.config.file.DatabaseFiles;
@@ -49,7 +49,7 @@ public class DatabaseInfo implements Cloneable<DatabaseInfo> {
 
 
     public boolean isEmpty() {
-        return StringUtil.isEmpty(host) && StringUtil.isEmpty(port) && StringUtil.isEmpty(database) && (files == null || StringUtil.isEmpty(files.getMainFile().getPath()));
+        return Strings.isEmpty(host) && Strings.isEmpty(port) && Strings.isEmpty(database) && (files == null || Strings.isEmpty(files.getMainFile().getPath()));
     }
 
     public String getMainFile() {

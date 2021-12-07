@@ -4,8 +4,8 @@ import com.dci.intellij.dbn.common.list.MostRecentStack;
 import com.dci.intellij.dbn.common.options.setting.SettingsSupport;
 import com.dci.intellij.dbn.common.state.PersistentStateElement;
 import com.dci.intellij.dbn.common.util.Cloneable;
-import com.dci.intellij.dbn.common.util.CommonUtil;
-import com.dci.intellij.dbn.common.util.StringUtil;
+import com.dci.intellij.dbn.common.util.Commons;
+import com.dci.intellij.dbn.common.util.Strings;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import org.jdom.CDATA;
@@ -54,14 +54,14 @@ public class MethodExecutionArgumentValue implements PersistentStateElement, Clo
     public void readState(Element element) {
         name = stringAttribute(element, "name");
         List<String> values = new ArrayList<String>();
-        String value = CommonUtil.nullIfEmpty(element.getAttributeValue("value"));
-        if (StringUtil.isNotEmpty(value)) {
+        String value = Commons.nullIfEmpty(element.getAttributeValue("value"));
+        if (Strings.isNotEmpty(value)) {
             values.add(0, value);
         }
 
         for (Element child : element.getChildren()) {
             value = SettingsSupport.readCdata(child);
-            if (StringUtil.isNotEmpty(value)) {
+            if (Strings.isNotEmpty(value)) {
                 values.add(value);
             }
         }

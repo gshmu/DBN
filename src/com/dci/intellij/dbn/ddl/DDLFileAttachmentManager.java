@@ -8,8 +8,8 @@ import com.dci.intellij.dbn.common.file.util.FileSearchRequest;
 import com.dci.intellij.dbn.common.file.util.VirtualFileUtil;
 import com.dci.intellij.dbn.common.thread.Write;
 import com.dci.intellij.dbn.common.ui.ListUtil;
-import com.dci.intellij.dbn.common.util.DocumentUtil;
-import com.dci.intellij.dbn.common.util.MessageUtil;
+import com.dci.intellij.dbn.common.util.Documents;
+import com.dci.intellij.dbn.common.util.Messages;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.ConnectionId;
 import com.dci.intellij.dbn.connection.ConnectionManager;
@@ -64,7 +64,7 @@ import java.util.Map;
 
 import static com.dci.intellij.dbn.common.message.MessageCallback.when;
 import static com.dci.intellij.dbn.common.options.setting.SettingsSupport.stringAttribute;
-import static com.dci.intellij.dbn.common.util.MessageUtil.options;
+import static com.dci.intellij.dbn.common.util.Messages.options;
 
 @State(
     name = DDLFileAttachmentManager.COMPONENT_NAME,
@@ -274,7 +274,7 @@ public class DDLFileAttachmentManager extends AbstractProjectComponent implement
                         updateDDLFiles(editableObjectFile);
                         DatabaseFileSystem.getInstance().reopenEditor(object);
                     } catch (IOException e) {
-                        MessageUtil.showErrorDialog(project, "Could not create file " + parentDirectory + File.separator + fileName + ".", e);
+                        Messages.showErrorDialog(project, "Could not create file " + parentDirectory + File.separator + fileName + ".", e);
                     }
                 });
             }
@@ -315,9 +315,9 @@ public class DDLFileAttachmentManager extends AbstractProjectComponent implement
                             buffer.append('\n');
                         }
                     }
-                    Document document = DocumentUtil.getDocument(ddlFile);
+                    Document document = Documents.getDocument(ddlFile);
                     if (document != null) {
-                        DocumentUtil.setText(document, buffer);
+                        Documents.setText(document, buffer);
                     }
                 }
             }
@@ -348,7 +348,7 @@ public class DDLFileAttachmentManager extends AbstractProjectComponent implement
                 }
 
                 String[] options = {"Create New...", "Cancel"};
-                MessageUtil.showInfoDialog(getProject(),
+                Messages.showInfoDialog(getProject(),
                         "No DDL files found",
                         message.toString(), options, 0,
                         option -> when(option == 0, () -> createDDLFile(objectRef)));
@@ -364,7 +364,7 @@ public class DDLFileAttachmentManager extends AbstractProjectComponent implement
     }
 
     public void showMissingFileAssociations(DBObjectRef<DBSchemaObject> objectRef) {
-        MessageUtil.showWarningDialog(
+        Messages.showWarningDialog(
                 getProject(),
                 "No DDL File Type Association",
                 "No DDL file type is configured for database " + objectRef.getObjectType().getListName() +

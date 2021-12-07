@@ -5,10 +5,10 @@ import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.common.ui.Borders;
 import com.dci.intellij.dbn.common.ui.GUIUtil;
 import com.dci.intellij.dbn.common.ui.KeyUtil;
-import com.dci.intellij.dbn.common.util.ActionUtil;
-import com.dci.intellij.dbn.common.util.CommonUtil;
-import com.dci.intellij.dbn.common.util.MessageUtil;
-import com.dci.intellij.dbn.common.util.TextAttributesUtil;
+import com.dci.intellij.dbn.common.util.Actions;
+import com.dci.intellij.dbn.common.util.Commons;
+import com.dci.intellij.dbn.common.util.Messages;
+import com.dci.intellij.dbn.common.util.TextAttributes;
 import com.dci.intellij.dbn.data.grid.color.DataGridTextAttributesKeys;
 import com.dci.intellij.dbn.data.value.LargeObjectValue;
 import com.intellij.openapi.actionSystem.ActionToolbar;
@@ -26,9 +26,15 @@ import com.intellij.util.ui.UIUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import javax.swing.*;
+import javax.swing.Icon;
+import javax.swing.JComponent;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JTextArea;
+import javax.swing.JTextField;
 import javax.swing.event.DocumentEvent;
-import java.awt.*;
+import java.awt.BorderLayout;
+import java.awt.Dimension;
 import java.awt.event.FocusEvent;
 import java.awt.event.InputEvent;
 import java.awt.event.KeyEvent;
@@ -51,12 +57,12 @@ public class TextEditorPopupProviderForm extends TextFieldPopupProviderForm {
 
         textEditorScrollPane.setBorder(Borders.COMPONENT_LINE_BORDER);
 
-        ActionToolbar leftActionToolbar = ActionUtil.createActionToolbar(
+        ActionToolbar leftActionToolbar = Actions.createActionToolbar(
                 leftActionPanel,
                 "DBNavigator.Place.DataEditor.TextAreaPopup", true);
         leftActionPanel.add(leftActionToolbar.getComponent(), BorderLayout.WEST);
 
-        ActionToolbar rightActionToolbar = ActionUtil.createActionToolbar(
+        ActionToolbar rightActionToolbar = Actions.createActionToolbar(
                 rightActionPanel,
                 "DBNavigator.Place.DataEditor.TextAreaPopup", true,
                 new DeleteAction(),
@@ -71,12 +77,12 @@ public class TextEditorPopupProviderForm extends TextFieldPopupProviderForm {
     private void updateComponentColors() {
         GUIUtil.setPanelBackground(mainPanel, UIUtil.getPanelBackground());
 
-        SimpleTextAttributes textAttributes = TextAttributesUtil.getSimpleTextAttributes(DataGridTextAttributesKeys.DEFAULT_PLAIN_DATA);
-        editorTextArea.setBackground(CommonUtil.nvl(
+        SimpleTextAttributes textAttributes = TextAttributes.getSimpleTextAttributes(DataGridTextAttributesKeys.DEFAULT_PLAIN_DATA);
+        editorTextArea.setBackground(Commons.nvl(
                 textAttributes.getBgColor(),
                 UIUtil.getTextFieldBackground()));
 
-        editorTextArea.setForeground(CommonUtil.nvl(
+        editorTextArea.setForeground(Commons.nvl(
                 textAttributes.getFgColor(),
                 UIUtil.getTextFieldForeground()));
     }
@@ -108,9 +114,9 @@ public class TextEditorPopupProviderForm extends TextFieldPopupProviderForm {
             } else if (userValue instanceof LargeObjectValue) {
                 LargeObjectValue largeObjectValue = (LargeObjectValue) userValue;
                 try {
-                    text = CommonUtil.nvl(largeObjectValue.read(), "");
+                    text = Commons.nvl(largeObjectValue.read(), "");
                 } catch (SQLException e) {
-                    MessageUtil.showErrorDialog(getProject(), e.getMessage(), e);
+                    Messages.showErrorDialog(getProject(), e.getMessage(), e);
                     return null;
                 }
             }

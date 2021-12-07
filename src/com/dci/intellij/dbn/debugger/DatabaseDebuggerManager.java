@@ -5,8 +5,8 @@ import com.dci.intellij.dbn.common.AbstractProjectComponent;
 import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.common.notification.NotificationGroup;
 import com.dci.intellij.dbn.common.routine.ParametricRunnable;
-import com.dci.intellij.dbn.common.util.MessageUtil;
-import com.dci.intellij.dbn.common.util.NamingUtil;
+import com.dci.intellij.dbn.common.util.Messages;
+import com.dci.intellij.dbn.common.util.Naming;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.ConnectionProvider;
 import com.dci.intellij.dbn.connection.operation.options.OperationSettings;
@@ -81,7 +81,7 @@ import java.util.Objects;
 import java.util.Set;
 
 import static com.dci.intellij.dbn.common.message.MessageCallback.when;
-import static com.dci.intellij.dbn.common.util.CommonUtil.list;
+import static com.dci.intellij.dbn.common.util.Commons.list;
 
 @State(
     name = DatabaseDebuggerManager.COMPONENT_NAME,
@@ -126,7 +126,7 @@ public class DatabaseDebuggerManager extends AbstractProjectComponent implements
 
     public boolean checkForbiddenOperation(ConnectionHandler connectionHandler, String message) {
         if (activeDebugSessions.contains(connectionHandler)) {
-            MessageUtil.showErrorDialog(getProject(), message == null ? "Operation not supported during active debug session." : message);
+            Messages.showErrorDialog(getProject(), message == null ? "Operation not supported during active debug session." : message);
             return false;
         }
         return true;
@@ -149,7 +149,7 @@ public class DatabaseDebuggerManager extends AbstractProjectComponent implements
 
         String name = method.getName();
         while (nameExists(configurationSettings, name)) {
-            name = NamingUtil.getNextNumberedName(name, true);
+            name = Naming.getNextNumberedName(name, true);
         }
         return name;
     }
@@ -270,7 +270,7 @@ public class DatabaseDebuggerManager extends AbstractProjectComponent implements
                         ExecutionEnvironment executionEnvironment = new ExecutionEnvironment(executorInstance, programRunner, runConfigurationSetting, project);
                         programRunner.execute(executionEnvironment);
                     } catch (ExecutionException e) {
-                        MessageUtil.showErrorDialog(
+                        Messages.showErrorDialog(
                                 project, "Could not start debugger for " + method.getQualifiedName() + ". \n" +
                                         "Reason: " + e.getMessage());
                     }
@@ -306,7 +306,7 @@ public class DatabaseDebuggerManager extends AbstractProjectComponent implements
                     ExecutionEnvironment executionEnvironment = new ExecutionEnvironment(executorInstance, programRunner, runConfigurationSetting, project);
                     programRunner.execute(executionEnvironment);
                 } catch (ExecutionException e) {
-                    MessageUtil.showErrorDialog(
+                    Messages.showErrorDialog(
                             project, "Could not start statement debugger. \n" +
                                     "Reason: " + e.getMessage());
                 }
@@ -325,7 +325,7 @@ public class DatabaseDebuggerManager extends AbstractProjectComponent implements
                             debuggerStarter.run(debuggerType);
                         } else {
                             ApplicationInfo applicationInfo = ApplicationInfo.getInstance();
-                            MessageUtil.showErrorDialog(
+                            Messages.showErrorDialog(
                                     getProject(), "Unsupported debugger",
                                     debuggerType.name() + " debugging is not supported in \"" +
                                             applicationInfo.getVersionName() + " " +

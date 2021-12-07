@@ -1,6 +1,6 @@
 package com.dci.intellij.dbn.editor.data.model;
 
-import com.dci.intellij.dbn.common.util.CollectionUtil;
+import com.dci.intellij.dbn.common.util.Lists;
 import com.dci.intellij.dbn.connection.ResultSetUtil;
 import com.dci.intellij.dbn.data.model.ColumnInfo;
 import com.dci.intellij.dbn.data.model.resultSet.ResultSetDataModelHeader;
@@ -27,7 +27,7 @@ public class DatasetEditorModelHeader extends ResultSetDataModelHeader<DatasetEd
             DBColumn column = dataset.getColumn(columnState.getName());
             if (column != null && columnState.isVisible()) {
                 String columnName = column.getName();
-                int resultSetIndex = (columnNames == null ? index : CollectionUtil.indexOf(columnNames, columnName, true)) + 1;
+                int resultSetIndex = (columnNames == null ? index : Lists.indexOf(columnNames, columnName, true)) + 1;
                 if (resultSetIndex > 0) {
                     DatasetEditorColumnInfo columnInfo = new DatasetEditorColumnInfo(column, index, resultSetIndex);
                     addColumnInfo(columnInfo);

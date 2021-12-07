@@ -4,8 +4,8 @@ import com.dci.intellij.dbn.common.action.DumbAwareProjectAction;
 import com.dci.intellij.dbn.common.thread.Command;
 import com.dci.intellij.dbn.common.thread.Dispatch;
 import com.dci.intellij.dbn.common.thread.Progress;
-import com.dci.intellij.dbn.common.util.EditorUtil;
-import com.dci.intellij.dbn.common.util.MessageUtil;
+import com.dci.intellij.dbn.common.util.Editors;
+import com.dci.intellij.dbn.common.util.Messages;
 import com.dci.intellij.dbn.connection.ConnectionAction;
 import com.dci.intellij.dbn.connection.ConnectionProvider;
 import com.dci.intellij.dbn.generator.StatementGeneratorResult;
@@ -32,7 +32,7 @@ public abstract class GenerateStatementAction extends DumbAwareProjectAction imp
                         (progress) -> {
                             StatementGeneratorResult result = generateStatement(project);
                             if (result.getMessages().hasErrors()) {
-                                MessageUtil.showErrorDialog(project, "Error generating statement", result.getMessages());
+                                Messages.showErrorDialog(project, "Error generating statement", result.getMessages());
                             } else {
                                 pasteStatement(result, project);
                             }
@@ -41,7 +41,7 @@ public abstract class GenerateStatementAction extends DumbAwareProjectAction imp
 
     private void pasteStatement(StatementGeneratorResult result, Project project) {
         Dispatch.run(() -> {
-            Editor editor = EditorUtil.getSelectedEditor(project, SQLFileType.INSTANCE);
+            Editor editor = Editors.getSelectedEditor(project, SQLFileType.INSTANCE);
             if (editor != null)
                 pasteToEditor(editor, result); else
                 pasteToClipboard(result, project);
@@ -53,7 +53,7 @@ public abstract class GenerateStatementAction extends DumbAwareProjectAction imp
 
         CopyPasteManager copyPasteManager = CopyPasteManager.getInstance();
         copyPasteManager.setContents(content);
-        MessageUtil.showInfoDialog(project, "Statement extracted", "SQL statement exported to clipboard.");
+        Messages.showInfoDialog(project, "Statement extracted", "SQL statement exported to clipboard.");
     }
 
     private static void pasteToEditor(final Editor editor, final StatementGeneratorResult generatorResult) {

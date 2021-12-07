@@ -1,7 +1,7 @@
 package com.dci.intellij.dbn.common.editor.document;
 
 import com.dci.intellij.dbn.common.thread.Dispatch;
-import com.dci.intellij.dbn.common.util.MessageUtil;
+import com.dci.intellij.dbn.common.util.Messages;
 import com.dci.intellij.dbn.vfs.file.DBConsoleVirtualFile;
 import com.dci.intellij.dbn.vfs.file.DBSourceCodeVirtualFile;
 import com.intellij.openapi.editor.Document;
@@ -32,7 +32,7 @@ public class OverrideReadonlyFragmentModificationHandler implements
             Document document = guardedBlock.getDocument();
             String message = document.getUserData(GUARDED_BLOCK_REASON);
             if (message != null) {
-                MessageUtil.showErrorDialog(null, "Action denied", message);
+                Messages.showErrorDialog(null, "Action denied", message);
             } else {
                 VirtualFile virtualFile = FileDocumentManager.getInstance().getFile(document);
                 if (virtualFile instanceof DBSourceCodeVirtualFile || virtualFile instanceof LightVirtualFile || virtualFile instanceof DBConsoleVirtualFile) {

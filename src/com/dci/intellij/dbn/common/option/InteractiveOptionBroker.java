@@ -7,7 +7,7 @@ import com.dci.intellij.dbn.common.options.PersistentConfiguration;
 import com.dci.intellij.dbn.common.options.setting.SettingsSupport;
 import com.dci.intellij.dbn.common.routine.ParametricRunnable;
 import com.dci.intellij.dbn.common.thread.Dispatch;
-import com.dci.intellij.dbn.common.util.CommonUtil;
+import com.dci.intellij.dbn.common.util.Commons;
 import com.intellij.openapi.ui.Messages;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
@@ -61,7 +61,7 @@ public class InteractiveOptionBroker<T extends InteractiveOption> implements DoN
 
     @NotNull
     public T get() {
-        return CommonUtil.nvl(selectedOption, defaultOption);
+        return Commons.nvl(selectedOption, defaultOption);
     }
 
     @Override

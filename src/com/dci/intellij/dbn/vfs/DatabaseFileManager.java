@@ -45,7 +45,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
 
-import static com.dci.intellij.dbn.common.util.CommonUtil.list;
+import static com.dci.intellij.dbn.common.util.Commons.list;
 import static com.dci.intellij.dbn.vfs.VirtualFileStatus.MODIFIED;
 
 @State(

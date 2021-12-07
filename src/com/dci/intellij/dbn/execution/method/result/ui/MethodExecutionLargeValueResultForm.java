@@ -4,10 +4,10 @@ import com.dci.intellij.dbn.common.action.DumbAwareProjectAction;
 import com.dci.intellij.dbn.common.action.Lookup;
 import com.dci.intellij.dbn.common.ui.DBNComboBoxAction;
 import com.dci.intellij.dbn.common.ui.DBNFormImpl;
-import com.dci.intellij.dbn.common.util.ActionUtil;
-import com.dci.intellij.dbn.common.util.EditorUtil;
-import com.dci.intellij.dbn.common.util.MessageUtil;
-import com.dci.intellij.dbn.common.util.StringUtil;
+import com.dci.intellij.dbn.common.util.Actions;
+import com.dci.intellij.dbn.common.util.Editors;
+import com.dci.intellij.dbn.common.util.Messages;
+import com.dci.intellij.dbn.common.util.Strings;
 import com.dci.intellij.dbn.data.editor.text.TextContentType;
 import com.dci.intellij.dbn.data.value.LargeObjectValue;
 import com.dci.intellij.dbn.editor.data.options.DataEditorQualifiedEditorSettings;
@@ -31,8 +31,9 @@ import com.intellij.openapi.project.Project;
 import com.intellij.ui.IdeBorderFactory;
 import org.jetbrains.annotations.NotNull;
 
-import javax.swing.*;
-import java.awt.*;
+import javax.swing.JComponent;
+import javax.swing.JPanel;
+import java.awt.BorderLayout;
 import java.sql.SQLException;
 
 public class MethodExecutionLargeValueResultForm extends DBNFormImpl {
@@ -55,10 +56,10 @@ public class MethodExecutionLargeValueResultForm extends DBNFormImpl {
         try {
             text = value.read();
         } catch (SQLException e) {
-            MessageUtil.showWarningDialog(project, "Load error", "Could not load value for argument " + argument.getName() + ". Cause: " + e.getMessage());
+            Messages.showWarningDialog(project, "Load error", "Could not load value for argument " + argument.getName() + ". Cause: " + e.getMessage());
         }
 
-        Document document = EditorFactory.getInstance().createDocument(text == null ? "" : StringUtil.removeCharacter(text, '\r'));
+        Document document = EditorFactory.getInstance().createDocument(text == null ? "" : Strings.removeCharacter(text, '\r'));
         contentType = TextContentType.get(project, argument.getDataType().getContentTypeName());
         if (contentType == null) contentType = TextContentType.getPlainText(project);
 
@@ -70,7 +71,7 @@ public class MethodExecutionLargeValueResultForm extends DBNFormImpl {
 
         largeValuePanel.setBorder(IdeBorderFactory.createBorder());
 
-        ActionToolbar actionToolbar = ActionUtil.createActionToolbar(actionsPanel,
+        ActionToolbar actionToolbar = Actions.createActionToolbar(actionsPanel,
                 "DBNavigator.Place.MethodExecutionResult.LobContentTypeEditor", true,
                 new ContentTypeComboBoxAction());
         actionsPanel.add(actionToolbar.getComponent(), BorderLayout.WEST);
@@ -158,7 +159,7 @@ public class MethodExecutionLargeValueResultForm extends DBNFormImpl {
 
     @Override
     protected void disposeInner() {
-        EditorUtil.releaseEditor(editor);
+        Editors.releaseEditor(editor);
         editor = null;
     }
 }

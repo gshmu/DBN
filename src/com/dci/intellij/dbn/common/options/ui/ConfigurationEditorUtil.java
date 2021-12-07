@@ -1,6 +1,6 @@
 package com.dci.intellij.dbn.common.options.ui;
 
-import com.dci.intellij.dbn.common.util.StringUtil;
+import com.dci.intellij.dbn.common.util.Strings;
 import com.intellij.openapi.options.ConfigurationException;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -12,12 +12,12 @@ public class ConfigurationEditorUtil {
         try {
 
             String value = inputField.getText();
-            if (required && StringUtil.isEmpty(value)) {
+            if (required && Strings.isEmpty(value)) {
                 String message = "Input value for \"" + name + "\" must be specified";
                 throw new ConfigurationException(message, "Invalid config value");
             }
 
-            if (StringUtil.isNotEmpty(value)) {
+            if (Strings.isNotEmpty(value)) {
                 int integer = Integer.parseInt(value);
                 if (min > integer || max < integer) throw new NumberFormatException("Number not in range");
                 return integer;

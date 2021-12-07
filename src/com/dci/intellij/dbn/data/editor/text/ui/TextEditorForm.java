@@ -1,7 +1,12 @@
 package com.dci.intellij.dbn.data.editor.text.ui;
 
 import com.dci.intellij.dbn.common.ui.DBNFormImpl;
-import com.dci.intellij.dbn.common.util.*;
+import com.dci.intellij.dbn.common.util.Actions;
+import com.dci.intellij.dbn.common.util.Commons;
+import com.dci.intellij.dbn.common.util.Documents;
+import com.dci.intellij.dbn.common.util.Editors;
+import com.dci.intellij.dbn.common.util.Messages;
+import com.dci.intellij.dbn.common.util.Strings;
 import com.dci.intellij.dbn.data.editor.text.TextContentType;
 import com.dci.intellij.dbn.data.editor.text.TextEditorAdapter;
 import com.dci.intellij.dbn.data.editor.text.actions.TextContentTypeComboBoxAction;
@@ -25,8 +30,9 @@ import com.intellij.testFramework.LightVirtualFile;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import javax.swing.*;
-import java.awt.*;
+import javax.swing.JComponent;
+import javax.swing.JPanel;
+import java.awt.BorderLayout;
 import java.sql.SQLException;
 
 public class TextEditorForm extends DBNFormImpl {
@@ -60,12 +66,12 @@ public class TextEditorForm extends DBNFormImpl {
             userValueHolder.setContentType(TextContentType.getPlainText(project));
         }
 
-        ActionToolbar actionToolbar = ActionUtil.createActionToolbar(actionsPanel,
+        ActionToolbar actionToolbar = Actions.createActionToolbar(actionsPanel,
                 "DBNavigator.Place.DataEditor.LobContentTypeEditor", true,
                 new TextContentTypeComboBoxAction(this));
         actionsPanel.add(actionToolbar.getComponent(), BorderLayout.WEST);
 
-        text = StringUtil.removeCharacter(CommonUtil.nvl(readUserValue(), ""), '\r');
+        text = Strings.removeCharacter(Commons.nvl(readUserValue(), ""), '\r');
         initEditor();
     }
 
@@ -89,7 +95,7 @@ public class TextEditorForm extends DBNFormImpl {
             FileManager fileManager = ((PsiManagerEx)PsiManager.getInstance(project)).getFileManager();
             FileViewProvider viewProvider = fileManager.createFileViewProvider(virtualFile, true);
             PsiFile psiFile = viewProvider.getPsi(languageFileType.getLanguage());
-            document = psiFile == null ? null : DocumentUtil.getDocument(psiFile);
+            document = psiFile == null ? null : Documents.getDocument(psiFile);
         }
 
         if (document == null) {
@@ -103,7 +109,7 @@ public class TextEditorForm extends DBNFormImpl {
 
         if (oldEditor!= null) {
             editorPanel.remove(oldEditor.getComponent());
-            EditorUtil.releaseEditor(oldEditor);
+            Editors.releaseEditor(oldEditor);
 
         }
         editorPanel.add(editor.getComponent(), BorderLayout.CENTER);
@@ -135,7 +141,7 @@ public class TextEditorForm extends DBNFormImpl {
                 return largeObjectValue.read();
             }
         } catch (SQLException e) {
-            MessageUtil.showErrorDialog(getProject(), "Could not load LOB content from database.", e);
+            Messages.showErrorDialog(getProject(), "Could not load LOB content from database.", e);
         }
         return null;
     }
@@ -151,7 +157,7 @@ public class TextEditorForm extends DBNFormImpl {
 
     @Override
     public void disposeInner() {
-        EditorUtil.releaseEditor(editor);
+        Editors.releaseEditor(editor);
     }
 
     @Nullable

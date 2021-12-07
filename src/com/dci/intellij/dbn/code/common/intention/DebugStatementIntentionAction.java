@@ -2,7 +2,7 @@ package com.dci.intellij.dbn.code.common.intention;
 
 import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.common.util.Context;
-import com.dci.intellij.dbn.common.util.EditorUtil;
+import com.dci.intellij.dbn.common.util.Editors;
 import com.dci.intellij.dbn.connection.ConnectionAction;
 import com.dci.intellij.dbn.connection.mapping.FileConnectionMappingManager;
 import com.dci.intellij.dbn.debugger.DatabaseDebuggerManager;
@@ -23,7 +23,7 @@ import com.intellij.psi.PsiFile;
 import com.intellij.util.IncorrectOperationException;
 import org.jetbrains.annotations.NotNull;
 
-import javax.swing.*;
+import javax.swing.Icon;
 
 public class DebugStatementIntentionAction extends GenericIntentionAction implements HighPriorityAction {
     @Override
@@ -44,7 +44,7 @@ public class DebugStatementIntentionAction extends GenericIntentionAction implem
             VirtualFile virtualFile = psiFile.getVirtualFile();
             if (virtualFile != null && virtualFile.getFileType() instanceof DBLanguageFileType) {
                 ExecutablePsiElement executable = PsiUtil.lookupExecutableAtCaret(editor, true);
-                FileEditor fileEditor = EditorUtil.getFileEditor(editor);
+                FileEditor fileEditor = Editors.getFileEditor(editor);
                 if (executable != null && fileEditor != null) {
                     return executable.is(ElementTypeAttribute.DEBUGGABLE);
                 }
@@ -56,7 +56,7 @@ public class DebugStatementIntentionAction extends GenericIntentionAction implem
     @Override
     public void invoke(@NotNull final Project project, Editor editor, PsiFile psiFile) throws IncorrectOperationException {
         ExecutablePsiElement executable = PsiUtil.lookupExecutableAtCaret(editor, true);
-        FileEditor fileEditor = EditorUtil.getFileEditor(editor);
+        FileEditor fileEditor = Editors.getFileEditor(editor);
         if (executable != null && fileEditor != null && psiFile instanceof DBLanguagePsiFile) {
             DBLanguagePsiFile databasePsiFile = (DBLanguagePsiFile) psiFile;
             DataContext dataContext = Context.getDataContext(editor);

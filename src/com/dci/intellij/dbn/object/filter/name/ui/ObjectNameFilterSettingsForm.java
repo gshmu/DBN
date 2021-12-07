@@ -4,9 +4,18 @@ import com.dci.intellij.dbn.browser.options.ObjectFilterChangeListener;
 import com.dci.intellij.dbn.common.event.ProjectEvents;
 import com.dci.intellij.dbn.common.options.SettingsChangeNotifier;
 import com.dci.intellij.dbn.common.options.ui.ConfigurationEditorForm;
-import com.dci.intellij.dbn.common.util.ActionUtil;
-import com.dci.intellij.dbn.object.filter.name.*;
-import com.dci.intellij.dbn.object.filter.name.action.*;
+import com.dci.intellij.dbn.common.util.Actions;
+import com.dci.intellij.dbn.object.filter.name.FilterCondition;
+import com.dci.intellij.dbn.object.filter.name.ObjectNameFilter;
+import com.dci.intellij.dbn.object.filter.name.ObjectNameFilterManager;
+import com.dci.intellij.dbn.object.filter.name.ObjectNameFilterSettings;
+import com.dci.intellij.dbn.object.filter.name.SimpleNameFilterCondition;
+import com.dci.intellij.dbn.object.filter.name.action.FilterConditionCreateAction;
+import com.dci.intellij.dbn.object.filter.name.action.FilterConditionJoinTypeSwitchAction;
+import com.dci.intellij.dbn.object.filter.name.action.FilterConditionMoveDownAction;
+import com.dci.intellij.dbn.object.filter.name.action.FilterConditionMoveUpAction;
+import com.dci.intellij.dbn.object.filter.name.action.FilterConditionRemoveAction;
+import com.dci.intellij.dbn.object.filter.name.action.FilterCreateAction;
 import com.dci.intellij.dbn.object.type.DBObjectType;
 import com.intellij.openapi.actionSystem.ActionToolbar;
 import com.intellij.openapi.actionSystem.Separator;
@@ -15,7 +24,8 @@ import com.intellij.openapi.project.Project;
 import org.jdom.Element;
 import org.jetbrains.annotations.NotNull;
 
-import javax.swing.*;
+import javax.swing.JPanel;
+import javax.swing.JTree;
 import javax.swing.tree.TreePath;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
@@ -47,7 +57,7 @@ public class ObjectNameFilterSettingsForm extends ConfigurationEditorForm<Object
 
         configuration.addFilter(tableFilter);*/
 
-        ActionToolbar actionToolbar = ActionUtil.createActionToolbar(actionsPanel,
+        ActionToolbar actionToolbar = Actions.createActionToolbar(actionsPanel,
                 "DBNavigator.ObjectNameFilters.Setup", true,
                 new FilterCreateAction(this),
                 new FilterConditionCreateAction(this),

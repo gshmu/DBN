@@ -2,7 +2,7 @@ package com.dci.intellij.dbn.common.thread;
 
 import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.common.routine.ThrowableCallable;
-import com.dci.intellij.dbn.common.util.CommonUtil;
+import com.dci.intellij.dbn.common.util.Commons;
 import com.dci.intellij.dbn.common.util.Safe;
 import com.intellij.openapi.Disposable;
 import com.intellij.openapi.application.Application;
@@ -33,7 +33,7 @@ public final class Dispatch {
 
     public static void run(ModalityState modalityState, Runnable runnable) {
         Application application = ApplicationManager.getApplication();
-        modalityState = CommonUtil.nvl(modalityState, application.getDefaultModalityState());
+        modalityState = Commons.nvl(modalityState, application.getDefaultModalityState());
         application.invokeLater(() -> Safe.run(runnable), modalityState/*, ModalityState.NON_MODAL*/);
     }
 

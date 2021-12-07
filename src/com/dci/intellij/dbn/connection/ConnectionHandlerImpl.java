@@ -13,8 +13,9 @@ import com.dci.intellij.dbn.common.latent.Latent;
 import com.dci.intellij.dbn.common.notification.NotificationGroup;
 import com.dci.intellij.dbn.common.notification.NotificationSupport;
 import com.dci.intellij.dbn.common.thread.Synchronized;
-import com.dci.intellij.dbn.common.util.CommonUtil;
-import com.dci.intellij.dbn.common.util.StringUtil;
+import com.dci.intellij.dbn.common.util.Commons;
+import com.dci.intellij.dbn.common.util.Lists;
+import com.dci.intellij.dbn.common.util.Strings;
 import com.dci.intellij.dbn.common.util.TimeUtil;
 import com.dci.intellij.dbn.connection.config.ConnectionDatabaseSettings;
 import com.dci.intellij.dbn.connection.config.ConnectionDetailSettings;
@@ -368,7 +369,7 @@ public class ConnectionHandlerImpl extends StatefulDisposable.Base implements Co
 
     @Override
     public String getUserName() {
-        return CommonUtil.nvl(getSettings().getDatabaseSettings().getAuthenticationInfo().getUser(), "");
+        return Commons.nvl(getSettings().getDatabaseSettings().getAuthenticationInfo().getUser(), "");
     }
 
     @Override
@@ -389,7 +390,7 @@ public class ConnectionHandlerImpl extends StatefulDisposable.Base implements Co
         SchemaId schemaId = getUserSchema();
         if (schemaId == null) {
             String databaseName = getSettings().getDatabaseSettings().getDatabaseInfo().getDatabase();
-            if (StringUtil.isNotEmpty(databaseName)) {
+            if (Strings.isNotEmpty(databaseName)) {
                 DBSchema schema = getObjectBundle().getSchema(databaseName);
                 schemaId = SchemaId.from(schema);
             }
@@ -412,7 +413,7 @@ public class ConnectionHandlerImpl extends StatefulDisposable.Base implements Co
     @Nullable
     @Override
     public SchemaId getSchemaId(String name) {
-        return getSchemaIds().stream().filter(schemaId -> schemaId.is(name)).findFirst().orElse(null);
+        return Lists.first(getSchemaIds(), schemaId -> schemaId.is(name));
     }
 
     @Override

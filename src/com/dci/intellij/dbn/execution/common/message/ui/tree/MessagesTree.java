@@ -6,10 +6,10 @@ import com.dci.intellij.dbn.common.thread.Dispatch;
 import com.dci.intellij.dbn.common.ui.component.DBNComponent;
 import com.dci.intellij.dbn.common.ui.listener.MouseClickedListener;
 import com.dci.intellij.dbn.common.ui.tree.DBNTree;
-import com.dci.intellij.dbn.common.util.DocumentUtil;
-import com.dci.intellij.dbn.common.util.EditorUtil;
-import com.dci.intellij.dbn.common.util.StringUtil;
-import com.dci.intellij.dbn.common.util.TextAttributesUtil;
+import com.dci.intellij.dbn.common.util.Documents;
+import com.dci.intellij.dbn.common.util.Editors;
+import com.dci.intellij.dbn.common.util.Strings;
+import com.dci.intellij.dbn.common.util.TextAttributes;
 import com.dci.intellij.dbn.data.grid.color.DataGridTextAttributesKeys;
 import com.dci.intellij.dbn.editor.DBContentType;
 import com.dci.intellij.dbn.editor.EditorProviderId;
@@ -45,7 +45,9 @@ import org.jetbrains.annotations.NotNull;
 import javax.swing.event.TreeSelectionListener;
 import javax.swing.tree.TreePath;
 import javax.swing.tree.TreeSelectionModel;
-import java.awt.*;
+import java.awt.Color;
+import java.awt.Graphics;
+import java.awt.Rectangle;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
@@ -66,7 +68,7 @@ public class MessagesTree extends DBNTree implements Disposable {
         setRootVisible(false);
         setShowsRootHandles(true);
         setOpaque(false);
-        Color bgColor = TextAttributesUtil.getSimpleTextAttributes(DataGridTextAttributesKeys.PLAIN_DATA).getBgColor();
+        Color bgColor = TextAttributes.getSimpleTextAttributes(DataGridTextAttributesKeys.PLAIN_DATA).getBgColor();
         setBackground(bgColor == null ? UIUtil.getTableBackground() : bgColor);
     }
 
@@ -192,7 +194,7 @@ public class MessagesTree extends DBNTree implements Disposable {
                 VirtualFile virtualFile = executionProcessor.getVirtualFile();
                 if (virtualFile != null) {
                     FileEditor fileEditor = executionProcessor.getFileEditor();
-                    fileEditor = EditorUtil.selectEditor(ensureProject(), fileEditor, virtualFile, editorProviderId, instructions);
+                    fileEditor = Editors.selectEditor(ensureProject(), fileEditor, virtualFile, editorProviderId, instructions);
                     if (fileEditor != null) {
                         ExecutablePsiElement cachedExecutable = executionProcessor.getCachedExecutable();
                         if (cachedExecutable != null) {
@@ -246,7 +248,7 @@ public class MessagesTree extends DBNTree implements Disposable {
         CompilerAction compilerAction = compilerMessage.getCompilerResult().getCompilerAction();
         FileEditor fileEditor = compilerAction.getFileEditor();
         EditorProviderId editorProviderId = compilerAction.getEditorProviderId();
-        fileEditor = EditorUtil.selectEditor(ensureProject(), fileEditor, virtualFile, editorProviderId, instructions);
+        fileEditor = Editors.selectEditor(ensureProject(), fileEditor, virtualFile, editorProviderId, instructions);
 
         navigateInFileEditor(fileEditor, compilerMessage, instructions);
     }
@@ -254,10 +256,10 @@ public class MessagesTree extends DBNTree implements Disposable {
     private void navigateInFileEditor(FileEditor fileEditor, CompilerMessage compilerMessage, NavigationInstructions instructions) {
         CompilerAction compilerAction = compilerMessage.getCompilerResult().getCompilerAction();
         if (fileEditor != null) {
-            Editor editor = EditorUtil.getEditor(fileEditor);
+            Editor editor = Editors.getEditor(fileEditor);
             if (editor != null) {
                 if (!instructions.isOpen() && instructions.isFocus()) {
-                    EditorUtil.focusEditor(editor);
+                    Editors.focusEditor(editor);
                 }
 
                 if (instructions.isScroll()) {
@@ -265,7 +267,7 @@ public class MessagesTree extends DBNTree implements Disposable {
                     Document document = editor.getDocument();
                     CharSequence documentText = document.getCharsSequence();
                     String objectName = compilerMessage.getObjectName();
-                    int objectStartOffset = StringUtil.indexOfIgnoreCase(documentText, objectName, compilerAction.getSourceStartOffset());
+                    int objectStartOffset = Strings.indexOfIgnoreCase(documentText, objectName, compilerAction.getSourceStartOffset());
                     if (objectStartOffset > -1) {
                         lineShifting = document.getLineNumber(objectStartOffset);
                     }
@@ -292,18 +294,18 @@ public class MessagesTree extends DBNTree implements Disposable {
                     }
                 }
                 Project project = ensureProject();
-                objectFileEditor = EditorUtil.selectEditor(project, objectFileEditor, databaseFile, editorProviderId, instructions);
+                objectFileEditor = Editors.selectEditor(project, objectFileEditor, databaseFile, editorProviderId, instructions);
 
                 if (objectFileEditor instanceof SourceCodeEditor) {
                     SourceCodeEditor codeEditor = (SourceCodeEditor) objectFileEditor;
-                    Editor editor = EditorUtil.getEditor(codeEditor);
+                    Editor editor = Editors.getEditor(codeEditor);
                     if (editor != null) {
                         if (instructions.isScroll()) {
                             Document document = editor.getDocument();
                             int lineShifting = document.getLineNumber(codeEditor.getHeaderEndOffset());
                             navigateInEditor(editor, compilerMessage, lineShifting);
                         }
-                        VirtualFile virtualFile = DocumentUtil.getVirtualFile(editor);
+                        VirtualFile virtualFile = Documents.getVirtualFile(editor);
                         if (virtualFile != null) {
                             OpenFileDescriptor openFileDescriptor = new OpenFileDescriptor(project, virtualFile);
                             codeEditor.navigateTo(openFileDescriptor);
@@ -329,7 +331,7 @@ public class MessagesTree extends DBNTree implements Disposable {
                 if (identifier != null) {
                     int lineEndOffset = document.getLineEndOffset(compilerMessage.getLine() + lineShifting);
                     CharSequence lineText = document.getCharsSequence().subSequence(lineStartOffset, lineEndOffset);
-                    int selectionOffsetInLine = StringUtil.indexOfIgnoreCase(lineText, identifier, compilerMessage.getPosition());
+                    int selectionOffsetInLine = Strings.indexOfIgnoreCase(lineText, identifier, compilerMessage.getPosition());
                     if (selectionOffsetInLine > -1) {
                         int selectionOffset = selectionOffsetInLine + lineStartOffset;
                         selectionModel.setSelection(selectionOffset, selectionOffset + identifier.length());

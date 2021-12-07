@@ -2,7 +2,7 @@ package com.dci.intellij.dbn.debugger.jdbc;
 
 import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.common.notification.NotificationGroup;
-import com.dci.intellij.dbn.common.util.DocumentUtil;
+import com.dci.intellij.dbn.common.util.Documents;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.jdbc.DBNConnection;
 import com.dci.intellij.dbn.connection.mapping.FileConnectionMappingManager;
@@ -131,7 +131,7 @@ public class DBJdbcBreakpointHandler extends DBBreakpointHandler<DBJdbcDebugProc
                 if (basePsiElement != null) {
                     BasePsiElement subject = basePsiElement.findFirstPsiElement(ElementTypeAttribute.SUBJECT);
                     int offset = subject.getTextOffset();
-                    Document document = DocumentUtil.getDocument(psqlFile);
+                    Document document = Documents.getDocument(psqlFile);
                     if (document != null) {
                         int line = document.getLineNumber(offset);
 

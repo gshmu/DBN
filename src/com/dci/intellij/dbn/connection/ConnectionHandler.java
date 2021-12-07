@@ -9,7 +9,7 @@ import com.dci.intellij.dbn.common.dispose.StatefulDisposable;
 import com.dci.intellij.dbn.common.environment.EnvironmentTypeProvider;
 import com.dci.intellij.dbn.common.filter.Filter;
 import com.dci.intellij.dbn.common.ui.Presentable;
-import com.dci.intellij.dbn.common.util.CollectionUtil;
+import com.dci.intellij.dbn.common.util.Lists;
 import com.dci.intellij.dbn.connection.config.ConnectionSettings;
 import com.dci.intellij.dbn.connection.console.DatabaseConsoleBundle;
 import com.dci.intellij.dbn.connection.info.ConnectionInfo;
@@ -165,7 +165,7 @@ public interface ConnectionHandler extends StatefulDisposable, EnvironmentTypePr
     PsiDirectory getPsiDirectory();
 
     static List<ConnectionId> ids(List<ConnectionHandler> connectionHandlers) {
-        return CollectionUtil.map(connectionHandlers, (connectionHandler) -> connectionHandler.getConnectionId()) ;
+        return Lists.convert(connectionHandlers, (connectionHandler) -> connectionHandler.getConnectionId()) ;
     }
 
     DatabaseCompatibility getCompatibility();

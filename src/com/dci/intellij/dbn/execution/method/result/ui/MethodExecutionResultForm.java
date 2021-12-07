@@ -4,8 +4,8 @@ import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.common.thread.Dispatch;
 import com.dci.intellij.dbn.common.ui.GUIUtil;
 import com.dci.intellij.dbn.common.ui.tab.TabbedPane;
-import com.dci.intellij.dbn.common.util.ActionUtil;
-import com.dci.intellij.dbn.common.util.StringUtil;
+import com.dci.intellij.dbn.common.util.Actions;
+import com.dci.intellij.dbn.common.util.Strings;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.SessionId;
 import com.dci.intellij.dbn.database.DatabaseCompatibilityInterface;
@@ -111,7 +111,7 @@ public class MethodExecutionResultForm extends ExecutionResultFormBase<MethodExe
                         executionResult.getExecutionInput().getExecutionContext().getExecutionTimestamp(),
                         " - Method execution started", true));
 
-        if (StringUtil.isNotEmptyOrSpaces(logOutput)) {
+        if (Strings.isNotEmptyOrSpaces(logOutput)) {
             outputConsole.writeToConsole(context, LogOutput.createStdOutput(logOutput));
         }
         outputConsole.writeToConsole(context, LogOutput.createSysOutput(context, " - Method execution finished\n\n", false));
@@ -203,7 +203,7 @@ public class MethodExecutionResultForm extends ExecutionResultFormBase<MethodExe
 
 
     private void createActionsPanel() {
-        ActionToolbar actionToolbar = ActionUtil.createActionToolbar(actionsPanel,"DBNavigator.MethodExecutionResult.Controls", false,"DBNavigator.ActionGroup.MethodExecutionResult");
+        ActionToolbar actionToolbar = Actions.createActionToolbar(actionsPanel,"DBNavigator.MethodExecutionResult.Controls", false,"DBNavigator.ActionGroup.MethodExecutionResult");
         actionsPanel.add(actionToolbar.getComponent());
     }
 

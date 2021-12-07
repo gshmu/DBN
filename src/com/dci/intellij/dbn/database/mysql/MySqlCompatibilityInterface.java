@@ -1,6 +1,6 @@
 package com.dci.intellij.dbn.database.mysql;
 
-import com.dci.intellij.dbn.common.util.StringUtil;
+import com.dci.intellij.dbn.common.util.Strings;
 import com.dci.intellij.dbn.data.sorting.SortDirection;
 import com.dci.intellij.dbn.database.DatabaseCompatibilityInterface;
 import com.dci.intellij.dbn.database.DatabaseFeature;
@@ -89,7 +89,7 @@ public class MySqlCompatibilityInterface extends DatabaseCompatibilityInterface 
 
     @Override
     public SessionStatus getSessionStatus(String statusName) {
-        if (StringUtil.isEmpty(statusName)) return SessionStatus.INACTIVE;
+        if (Strings.isEmpty(statusName)) return SessionStatus.INACTIVE;
         else return SessionStatus.ACTIVE;
     }
 }

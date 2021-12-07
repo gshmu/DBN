@@ -1,6 +1,6 @@
 package com.dci.intellij.dbn.connection.config;
 
-import com.dci.intellij.dbn.common.util.StringUtil;
+import com.dci.intellij.dbn.common.util.Strings;
 import lombok.extern.slf4j.Slf4j;
 
 import java.util.Base64;
@@ -11,7 +11,7 @@ public final class PasswordUtil {
 
     public static String encodePassword(String password) {
         try {
-            password = StringUtil.isEmpty(password) ? "" : new String(Base64.getEncoder().encode(nvl(password).getBytes()));
+            password = Strings.isEmpty(password) ? "" : new String(Base64.getEncoder().encode(nvl(password).getBytes()));
         } catch (Exception e) {
             // any exception would break the logic storing the connection settings
             log.error("Error encoding password", e);
@@ -21,7 +21,7 @@ public final class PasswordUtil {
 
     public static String decodePassword(String password) {
         try {
-            password = StringUtil.isEmpty(password) ? "" : new String(Base64.getDecoder().decode(nvl(password).getBytes()));
+            password = Strings.isEmpty(password) ? "" : new String(Base64.getDecoder().decode(nvl(password).getBytes()));
         } catch (Exception e) {
             // password may not be encoded yet
         }

@@ -13,7 +13,7 @@ import com.dci.intellij.dbn.common.ui.Borders;
 import com.dci.intellij.dbn.common.ui.DBNComboBox;
 import com.dci.intellij.dbn.common.ui.GUIUtil;
 import com.dci.intellij.dbn.common.ui.ValueSelectorListener;
-import com.dci.intellij.dbn.common.util.CommonUtil;
+import com.dci.intellij.dbn.common.util.Commons;
 import com.intellij.openapi.options.ConfigurationException;
 import com.intellij.openapi.project.Project;
 import com.intellij.ui.DocumentAdapter;
@@ -124,7 +124,7 @@ public class RegionalSettingsEditorForm extends ConfigurationEditorForm<Regional
     public Locale getSelectedLocale() {
         LocaleOption localeOption = localeComboBox.getSelectedValue();
         Locale defaultLocale = Locale.getDefault();
-        return localeOption == null ? defaultLocale : CommonUtil.nvl(localeOption.getLocale(), defaultLocale);
+        return localeOption == null ? defaultLocale : Commons.nvl(localeOption.getLocale(), defaultLocale);
     }
 
     public void setSelectedLocale(Locale locale) {

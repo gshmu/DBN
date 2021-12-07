@@ -6,7 +6,7 @@ import com.dci.intellij.dbn.code.common.style.options.ProjectCodeStyleSettings;
 import com.dci.intellij.dbn.common.routine.AsyncTaskExecutor;
 import com.dci.intellij.dbn.common.thread.Read;
 import com.dci.intellij.dbn.common.thread.ThreadPool;
-import com.dci.intellij.dbn.common.util.StringUtil;
+import com.dci.intellij.dbn.common.util.Strings;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.ConnectionHandlerRef;
 import com.dci.intellij.dbn.language.common.DBLanguage;
@@ -109,7 +109,7 @@ public class CodeCompletionContext {
         int lineEndOffset = Math.min(offset, document.getTextLength());
         if (lineStartOffset < lineEndOffset) {
             String text = document.getText(new TextRange(lineStartOffset, lineEndOffset));
-            return !StringUtil.containsWhitespaces(text.trim());
+            return !Strings.containsWhitespaces(text.trim());
         }
         return true;
     }
@@ -169,7 +169,7 @@ public class CodeCompletionContext {
             TokenElementType tokenElementType = (TokenElementType) leaf;
             String text = tokenElementType.getText();
             String id = tokenElementType.getTokenType().getId();
-            return StringUtil.isEmpty(text) ? id : id + text;
+            return Strings.isEmpty(text) ? id : id + text;
         } else if (leaf instanceof IdentifierElementType){
             IdentifierElementType identifierElementType = (IdentifierElementType) leaf;
             return identifierElementType.getQualifiedObjectTypeName();

@@ -2,7 +2,7 @@ package com.dci.intellij.dbn.connection.ssh;
 
 import com.dci.intellij.dbn.common.component.ApplicationComponent;
 import com.dci.intellij.dbn.common.database.DatabaseInfo;
-import com.dci.intellij.dbn.common.util.StringUtil;
+import com.dci.intellij.dbn.common.util.Strings;
 import com.dci.intellij.dbn.connection.config.ConnectionDatabaseSettings;
 import com.dci.intellij.dbn.connection.config.ConnectionSettings;
 import com.dci.intellij.dbn.connection.config.ConnectionSshTunnelSettings;
@@ -25,11 +25,11 @@ public class SshTunnelManager implements ApplicationComponent {
             ConnectionDatabaseSettings databaseSettings = connectionSettings.getDatabaseSettings();
             DatabaseInfo databaseInfo = databaseSettings.getDatabaseInfo();
             String remoteHost = databaseInfo.getHost();
-            int remotePort = StringUtil.parseInt(databaseInfo.getPort(), -1);
+            int remotePort = Strings.parseInt(databaseInfo.getPort(), -1);
 
             String proxyHost = sshSettings.getHost();
             String proxyUser = sshSettings.getUser();
-            int proxyPort = StringUtil.parseInt(sshSettings.getPort(), -1);
+            int proxyPort = Strings.parseInt(sshSettings.getPort(), -1);
             String key = createKey(proxyHost, proxyPort, proxyUser, remoteHost, remotePort);
             SshTunnelConnector connector = sshTunnelConnectors.get(key);
             if (connector == null) {

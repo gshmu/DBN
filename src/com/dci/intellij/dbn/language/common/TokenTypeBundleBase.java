@@ -1,9 +1,9 @@
 package com.dci.intellij.dbn.language.common;
 
 import com.dci.intellij.dbn.common.index.IndexRegistry;
-import com.dci.intellij.dbn.common.util.CollectionUtil;
+import com.dci.intellij.dbn.common.util.Compactables;
 import com.dci.intellij.dbn.common.util.Measured;
-import com.dci.intellij.dbn.common.util.StringUtil;
+import com.dci.intellij.dbn.common.util.Strings;
 import com.intellij.lang.Language;
 import com.intellij.psi.tree.IElementType;
 import com.intellij.psi.tree.TokenSet;
@@ -157,7 +157,7 @@ public abstract class TokenTypeBundleBase {
         for (SimpleTokenType token : tokenList) {
             map.put(token.getValue(), token);
         }
-        return CollectionUtil.compact(map);
+        return Compactables.compact(map);
     }
 
     public SimpleTokenType getKeywordTokenType(int index) {
@@ -199,7 +199,7 @@ public abstract class TokenTypeBundleBase {
             Set<String> tokenIds = new HashSet<>();
 
             for (String tokenId : o.getText().split(",")) {
-                if (StringUtil.isNotEmpty(tokenId)) {
+                if (Strings.isNotEmpty(tokenId)) {
                     tokenIds.add(tokenId.trim());
                 }
             }

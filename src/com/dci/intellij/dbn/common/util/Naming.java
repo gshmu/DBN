@@ -7,7 +7,8 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-public class NamingUtil {
+public class Naming {
+    private Naming() {}
 
     public static String getNextNumberedName(String numberedIdentifier, boolean insertWhitespace) {
         StringBuilder text = new StringBuilder();

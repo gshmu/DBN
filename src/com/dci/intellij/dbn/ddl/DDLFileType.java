@@ -1,6 +1,6 @@
 package com.dci.intellij.dbn.ddl;
 
-import com.dci.intellij.dbn.common.util.StringUtil;
+import com.dci.intellij.dbn.common.util.Strings;
 import com.dci.intellij.dbn.editor.DBContentType;
 import com.dci.intellij.dbn.language.common.DBLanguageFileType;
 import lombok.EqualsAndHashCode;
@@ -37,11 +37,11 @@ public class DDLFileType {
     }
 
     public String getExtensionsAsString() {
-        return StringUtil.concatenate(extensions, ", ");
+        return Strings.concatenate(extensions, ", ");
     }
 
     public boolean setExtensionsAsString(String extensions) {
-        return setExtensions(StringUtil.tokenize(extensions, ","));
+        return setExtensions(Strings.tokenize(extensions, ","));
     }
 
 }

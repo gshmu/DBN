@@ -4,7 +4,7 @@ import com.dci.intellij.dbn.common.action.DataKeys;
 import com.dci.intellij.dbn.common.action.Lookup;
 import com.dci.intellij.dbn.common.ui.DBNComboBoxAction;
 import com.dci.intellij.dbn.common.util.Context;
-import com.dci.intellij.dbn.common.util.StringUtil;
+import com.dci.intellij.dbn.common.util.Strings;
 import com.dci.intellij.dbn.editor.session.SessionBrowser;
 import com.dci.intellij.dbn.editor.session.SessionBrowserFilter;
 import com.dci.intellij.dbn.editor.session.SessionBrowserFilterType;
@@ -21,7 +21,8 @@ import com.intellij.openapi.project.DumbAware;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import javax.swing.*;
+import javax.swing.Icon;
+import javax.swing.JComponent;
 import java.util.List;
 
 public abstract class AbstractFilterComboBoxAction extends DBNComboBoxAction implements DumbAware {
@@ -66,7 +67,7 @@ public abstract class AbstractFilterComboBoxAction extends DBNComboBoxAction imp
                 SessionBrowserFilter modelFilter = model.getFilter();
                 if (modelFilter != null) {
                     String filterValue = modelFilter.getFilterValue(filterType);
-                    if (StringUtil.isNotEmpty(filterValue)) {
+                    if (Strings.isNotEmpty(filterValue)) {
                         text = filterValue;
                         icon = filterType.getIcon();
                     }

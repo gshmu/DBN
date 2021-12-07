@@ -4,7 +4,7 @@ import com.dci.intellij.dbn.DatabaseNavigator;
 import com.dci.intellij.dbn.common.AbstractProjectComponent;
 import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.common.notification.NotificationGroup;
-import com.dci.intellij.dbn.common.util.MessageUtil;
+import com.dci.intellij.dbn.common.util.Messages;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.data.export.processor.CSVDataExportProcessor;
 import com.dci.intellij.dbn.data.export.processor.CustomDataExportProcessor;
@@ -25,7 +25,7 @@ import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.awt.*;
+import java.awt.Desktop;
 import java.io.File;
 import java.io.IOException;
 
@@ -80,7 +80,7 @@ public class DataExportManager extends AbstractProjectComponent implements Persi
                 DataExportInstructions.Destination destination = instructions.getDestination();
                 if (destination == DataExportInstructions.Destination.CLIPBOARD) {
                     successCallback.run();
-                    MessageUtil.showInfoDialog(
+                    Messages.showInfoDialog(
                             project,
                             "Export info",
                             "Content exported to clipboard",
@@ -98,7 +98,7 @@ public class DataExportManager extends AbstractProjectComponent implements Persi
                         //FileSystemView view = FileSystemView.getFileSystemView();
                         //Icon icon = view.getSystemIcon(file);
 
-                        MessageUtil.showInfoDialog(
+                        Messages.showInfoDialog(
                                 project,
                                 "Export info",
                                 "Content exported to file " + file.getPath(),
@@ -109,7 +109,7 @@ public class DataExportManager extends AbstractProjectComponent implements Persi
                                         try {
                                             Desktop.getDesktop().open(file);
                                         } catch (IOException e) {
-                                            MessageUtil.showErrorDialog(
+                                            Messages.showErrorDialog(
                                                     project,
                                                     "Open file",
                                                     "Could not open file " + file.getPath() + ".\n" +
@@ -127,7 +127,7 @@ public class DataExportManager extends AbstractProjectComponent implements Persi
             }
 
         } catch (DataExportException e) {
-            MessageUtil.showErrorDialog(project, "Error performing data export.", e);
+            Messages.showErrorDialog(project, "Error performing data export.", e);
         }
     }
 

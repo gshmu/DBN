@@ -1,6 +1,6 @@
 package com.dci.intellij.dbn.common.data;
 
-import com.dci.intellij.dbn.common.util.StringUtil;
+import com.dci.intellij.dbn.common.util.Strings;
 import org.jetbrains.annotations.Nullable;
 
 
@@ -114,7 +114,7 @@ public interface Data {
                 return (Boolean) object;
             } else if (object instanceof String) {
                 String string = (String) object;
-                return StringUtil.isOneOfIgnoreCase(string, "Y", "YES", "TRUE", "1");
+                return Strings.isOneOfIgnoreCase(string, "Y", "YES", "TRUE", "1");
             } else if (object instanceof Number) {
                 Number number = (Number) object;
                 return number.intValue() != 0;

@@ -5,7 +5,7 @@ import com.dci.intellij.dbn.common.AbstractProjectComponent;
 import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.common.environment.options.listener.EnvironmentManagerListener;
 import com.dci.intellij.dbn.common.event.ProjectEvents;
-import com.dci.intellij.dbn.common.util.EditorUtil;
+import com.dci.intellij.dbn.common.util.Editors;
 import com.dci.intellij.dbn.editor.DBContentType;
 import com.dci.intellij.dbn.object.common.DBSchemaObject;
 import com.dci.intellij.dbn.object.common.status.DBObjectStatus;
@@ -59,7 +59,7 @@ public class EnvironmentManager extends AbstractProjectComponent implements Pers
         schemaObject.getStatus().set(contentType, DBObjectStatus.EDITABLE, true);
         DBContentVirtualFile contentFile = schemaObject.getEditableVirtualFile().getContentFile(contentType);
         if (contentFile != null) {
-            EditorUtil.setEditorsReadonly(contentFile, false);
+            Editors.setEditorsReadonly(contentFile, false);
 
             Project project = getProject();
             ProjectEvents.notify(project,
@@ -73,7 +73,7 @@ public class EnvironmentManager extends AbstractProjectComponent implements Pers
         boolean readonly = isReadonly(schemaObject, contentType);
         DBContentVirtualFile contentFile = schemaObject.getEditableVirtualFile().getContentFile(contentType);
         if (contentFile != null) {
-            EditorUtil.setEditorsReadonly(contentFile, readonly);
+            Editors.setEditorsReadonly(contentFile, readonly);
 
             Project project = getProject();
             ProjectEvents.notify(project,

@@ -2,7 +2,7 @@ package com.dci.intellij.dbn.editor.session.action;
 
 import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.common.dispose.Failsafe;
-import com.dci.intellij.dbn.common.util.StringUtil;
+import com.dci.intellij.dbn.common.util.Strings;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.database.DatabaseFeature;
 import com.dci.intellij.dbn.editor.session.SessionBrowser;
@@ -54,7 +54,7 @@ public class SessionBrowserTableActionGroup extends DefaultActionGroup {
                 SessionBrowserFilterType filterType = columnInfo.getFilterType();
                 if (filterType != null && tableModel != null) {
                     SessionBrowserFilter filter = tableModel.getFilter();
-                    if (filter == null || StringUtil.isEmpty(filter.getFilterValue(filterType))) {
+                    if (filter == null || Strings.isEmpty(filter.getFilterValue(filterType))) {
                         add(new FilterByAction(filterType, userValue.toString()));
                     }
                 }

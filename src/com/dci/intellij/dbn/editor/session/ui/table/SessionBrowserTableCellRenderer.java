@@ -3,7 +3,7 @@ package com.dci.intellij.dbn.editor.session.ui.table;
 import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.common.ui.Borders;
 import com.dci.intellij.dbn.common.ui.table.DBNTable;
-import com.dci.intellij.dbn.common.util.CommonUtil;
+import com.dci.intellij.dbn.common.util.Commons;
 import com.dci.intellij.dbn.data.grid.ui.table.basic.BasicTableCellRenderer;
 import com.dci.intellij.dbn.editor.session.color.SessionBrowserTextAttributes;
 import com.dci.intellij.dbn.editor.session.model.SessionBrowserModelCell;
@@ -11,7 +11,7 @@ import com.dci.intellij.dbn.editor.session.model.SessionBrowserModelRow;
 import com.intellij.ui.SimpleTextAttributes;
 
 import javax.swing.border.Border;
-import java.awt.*;
+import java.awt.Color;
 
 public class SessionBrowserTableCellRenderer extends BasicTableCellRenderer {
 
@@ -52,8 +52,8 @@ public class SessionBrowserTableCellRenderer extends BasicTableCellRenderer {
                 }
             }
 
-            Color background = CommonUtil.nvl(textAttributes.getBgColor(), table.getBackground());
-            Color foreground = CommonUtil.nvl(textAttributes.getFgColor(), table.getForeground());
+            Color background = Commons.nvl(textAttributes.getBgColor(), table.getBackground());
+            Color foreground = Commons.nvl(textAttributes.getFgColor(), table.getForeground());
 
 
             Border border = Borders.getLineBorder(background);

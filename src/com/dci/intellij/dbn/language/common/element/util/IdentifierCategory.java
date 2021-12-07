@@ -1,6 +1,6 @@
 package com.dci.intellij.dbn.language.common.element.util;
 
-import com.dci.intellij.dbn.common.util.EnumerationUtil;
+import com.dci.intellij.dbn.common.util.Enumerations;
 import com.dci.intellij.dbn.language.common.psi.IdentifierPsiElement;
 
 public enum IdentifierCategory {
@@ -18,6 +18,6 @@ public enum IdentifierCategory {
     }
 
     public boolean isOneOf(IdentifierCategory... categories) {
-        return EnumerationUtil.isOneOf(this, categories);
+        return Enumerations.isOneOf(this, categories);
     }
 }

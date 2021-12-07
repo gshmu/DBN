@@ -1,7 +1,7 @@
 package com.dci.intellij.dbn.connection.transaction;
 
 
-import com.dci.intellij.dbn.common.util.CollectionUtil;
+import com.dci.intellij.dbn.common.util.Lists;
 import com.dci.intellij.dbn.connection.SessionId;
 import com.dci.intellij.dbn.connection.jdbc.DBNConnection;
 import com.intellij.openapi.vfs.VirtualFile;
@@ -25,7 +25,7 @@ public class PendingTransactionBundle {
 
     @Nullable
     public PendingTransaction getPendingTransaction(VirtualFile file, SessionId sessionId) {
-        return CollectionUtil.first(entries, transaction ->
+        return Lists.first(entries, transaction ->
                 file.equals(transaction.getFile()) &&
                 transaction.getSessionId().equals(sessionId));
     }

@@ -3,7 +3,7 @@ package com.dci.intellij.dbn.execution.logging;
 import com.dci.intellij.dbn.common.AbstractProjectComponent;
 import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.common.notification.NotificationGroup;
-import com.dci.intellij.dbn.common.util.StringUtil;
+import com.dci.intellij.dbn.common.util.Strings;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.jdbc.DBNConnection;
 import com.dci.intellij.dbn.database.DatabaseCompatibilityInterface;
@@ -91,7 +91,7 @@ public class DatabaseLoggingManager extends AbstractProjectComponent {
     @NotNull
     private String getLogName(@Nullable DatabaseCompatibilityInterface compatibilityInterface) {
         String logName = compatibilityInterface == null ? null : compatibilityInterface.getDatabaseLogName();
-        if (StringUtil.isEmpty(logName)) {
+        if (Strings.isEmpty(logName)) {
             logName = "database logging";
         }
         return logName;

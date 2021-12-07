@@ -4,7 +4,7 @@ package com.dci.intellij.dbn.editor.data.model;
 import com.dci.intellij.dbn.common.event.ProjectEvents;
 import com.dci.intellij.dbn.common.locale.Formatter;
 import com.dci.intellij.dbn.common.thread.Dispatch;
-import com.dci.intellij.dbn.common.util.MessageUtil;
+import com.dci.intellij.dbn.common.util.Messages;
 import com.dci.intellij.dbn.common.util.Safe;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.jdbc.DBNConnection;
@@ -66,7 +66,7 @@ public class DatasetEditorModelCell
             try {
                 resultSetAdapter.scroll(row.getResultSetRowIndex());
             } catch (Exception e) {
-                MessageUtil.showErrorDialog(getProject(), "Could not update cell value for " + columnInfo.getName() + ".", e);
+                Messages.showErrorDialog(getProject(), "Could not update cell value for " + columnInfo.getName() + ".", e);
                 return;
             }
 

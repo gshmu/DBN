@@ -2,7 +2,7 @@ package com.dci.intellij.dbn.options.ui;
 
 import com.dci.intellij.dbn.common.thread.Dispatch;
 import com.dci.intellij.dbn.common.ui.dialog.DBNDialog;
-import com.dci.intellij.dbn.common.util.MessageUtil;
+import com.dci.intellij.dbn.common.util.Messages;
 import com.dci.intellij.dbn.connection.ConnectionId;
 import com.dci.intellij.dbn.options.ConfigId;
 import com.dci.intellij.dbn.options.ProjectSettings;
@@ -83,7 +83,7 @@ public class ProjectSettingsDialog extends DBNDialog<ProjectSettingsForm> {
             super.doOKAction();
             projectSettings.disposeUIResources();
         } catch (ConfigurationException e) {
-            MessageUtil.showErrorDialog(getProject(), e.getMessage());
+            Messages.showErrorDialog(getProject(), e.getMessage());
         }
 
     }
@@ -94,7 +94,7 @@ public class ProjectSettingsDialog extends DBNDialog<ProjectSettingsForm> {
             bApply.setEnabled(false);
             setCancelButtonText("Close");
         } catch (ConfigurationException e) {
-            MessageUtil.showErrorDialog(getProject(), e.getTitle(), e.getMessage());
+            Messages.showErrorDialog(getProject(), e.getTitle(), e.getMessage());
         }
     }
 

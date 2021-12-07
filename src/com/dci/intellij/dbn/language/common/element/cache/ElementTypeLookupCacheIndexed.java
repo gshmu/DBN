@@ -11,7 +11,7 @@ import com.dci.intellij.dbn.language.common.element.impl.WrappingDefinition;
 
 import java.util.Set;
 
-import static com.dci.intellij.dbn.common.util.CollectionUtil.compact;
+import static com.dci.intellij.dbn.common.util.Compactables.compact;
 
 public abstract class ElementTypeLookupCacheIndexed<T extends ElementTypeBase> extends ElementTypeLookupCache<T> {
 

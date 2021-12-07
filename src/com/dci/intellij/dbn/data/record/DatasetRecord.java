@@ -17,7 +17,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import static com.dci.intellij.dbn.common.util.CollectionUtil.isLast;
+import static com.dci.intellij.dbn.common.util.Lists.isLast;
 
 public class DatasetRecord implements Disposable {
     private DatasetFilterInput filterInput;

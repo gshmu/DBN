@@ -17,7 +17,7 @@ import com.dci.intellij.dbn.common.thread.Progress;
 import com.dci.intellij.dbn.common.ui.GUIUtil;
 import com.dci.intellij.dbn.common.ui.component.DBNComponent;
 import com.dci.intellij.dbn.common.ui.tree.DBNTree;
-import com.dci.intellij.dbn.common.util.ActionUtil;
+import com.dci.intellij.dbn.common.util.Actions;
 import com.dci.intellij.dbn.connection.ConnectionBundle;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.ConnectionManager;
@@ -366,7 +366,7 @@ public final class DatabaseBrowserTree extends DBNTree {
                         }
 
                         if (actionGroup != null) {
-                            ActionPopupMenu actionPopupMenu = ActionUtil.createActionPopupMenu(DatabaseBrowserTree.this, "", actionGroup);
+                            ActionPopupMenu actionPopupMenu = Actions.createActionPopupMenu(DatabaseBrowserTree.this, "", actionGroup);
                             JPopupMenu popupMenu = actionPopupMenu.getComponent();
                             popupMenu.show(DatabaseBrowserTree.this, event.getX(), event.getY());
                         }
