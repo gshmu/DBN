@@ -109,7 +109,7 @@ public abstract class PropertyHolderBase<T extends Property> implements Property
     }
 
     public abstract static class IntStore<T extends Property.IntBase> extends PropertyHolderBase<T> {
-        private volatile int computed = 0;
+        private volatile int computed;
 
         @SafeVarargs
         public IntStore(T ... properties) {
@@ -137,7 +137,7 @@ public abstract class PropertyHolderBase<T extends Property> implements Property
     }
 
     public abstract static class LongStore<T extends Property.LongBase> extends PropertyHolderBase<T> {
-        private volatile long computed = 0;
+        private volatile long computed;
 
         @SafeVarargs
         public LongStore(T ... properties) {
