@@ -36,7 +36,7 @@ public enum JdbcProperty implements Property.IntBase {
     }
 
     @Override
-    public Computed computedOrdinal() {
+    public Computed computed() {
         return computed;
     }
 

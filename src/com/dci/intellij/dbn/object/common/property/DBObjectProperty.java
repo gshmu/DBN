@@ -54,7 +54,7 @@ public enum DBObjectProperty implements Property.LongBase {
     private final Computed computed = new Computed(this);
 
     @Override
-    public Computed computedOrdinal() {
+    public Computed computed() {
         return computed;
     }
 }

@@ -13,24 +13,24 @@ public interface Property {
     interface LongBase extends Property{
         int ordinal();
 
-        Computed computedOrdinal();
+        Computed computed();
 
-        default long computedZero() {
-            return computedOrdinal().zero;
+        default long computedOn() {
+            return computed().on;
         }
 
-        default long computedOne() {
-            return computedOrdinal().one;
+        default long computedOff() {
+            return computed().off;
         }
 
         class Computed {
-            private final long zero;
-            private final long one;
+            private final long on;
+            private final long off;
 
             public Computed(LongBase p) {
                 int shift = p.ordinal() + 1;
-                this.zero = ~(1L << shift);
-                this.one = 1L << shift;
+                this.on = 1L << shift;
+                this.off = ~(1L << shift);
             }
         }
     }
@@ -38,24 +38,24 @@ public interface Property {
     interface IntBase extends Property{
         int ordinal();
 
-        Computed computedOrdinal();
+        Computed computed();
 
-        default int computedZero() {
-            return computedOrdinal().zero;
+        default int computedOn() {
+            return computed().on;
         }
 
-        default int computedOne() {
-            return computedOrdinal().one;
+        default int computedOff() {
+            return computed().off;
         }
 
         class Computed {
-            private final int zero;
-            private final int one;
+            private final int on;
+            private final int off;
 
             public Computed(IntBase p) {
                 int shift = p.ordinal() + 1;
-                this.zero = ~(1 << shift);
-                this.one = 1 << shift;
+                this.on = 1 << shift;
+                this.off = ~(1 << shift);
                 assert shift < 32;
             }
         }

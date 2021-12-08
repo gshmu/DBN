@@ -55,7 +55,7 @@ public enum ResourceStatus implements Property.IntBase {
     }
 
     @Override
-    public Computed computedOrdinal() {
+    public Computed computed() {
         return computed;
     }
 }
