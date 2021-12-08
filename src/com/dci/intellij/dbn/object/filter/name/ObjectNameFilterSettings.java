@@ -262,7 +262,6 @@ public class ObjectNameFilterSettings
 
     @Override
     public void valueForPathChanged(TreePath path, Object newValue) {
-        System.out.println("");
     }
 
     @Override

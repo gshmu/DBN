@@ -53,7 +53,6 @@ public class DBJdwpNodeRenderer extends NodeRendererImpl {
                 NodeManagerImpl nodeManager = (NodeManagerImpl) builder.getNodeManager();
                 FieldDescriptorImpl fieldDescriptor = nodeManager.getFieldDescriptor(null, objectReference, field);
                 nodes.add(new DebuggerTreeNodeImpl(null, fieldDescriptor));
-                System.out.printf("");
             }
             builder.setChildren(nodes);
         }
