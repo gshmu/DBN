@@ -155,10 +155,8 @@ public class MethodExecutionResultForm extends ExecutionResultFormBase<MethodExe
                         isFirst = false;
                     }
                 } else {
-                    System.out.println();
                 }
             } else {
-                System.out.println();
             }
 
         }
