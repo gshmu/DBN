@@ -2,6 +2,7 @@ package com.dci.intellij.dbn.common.ui;
 
 import com.dci.intellij.dbn.common.Colors;
 import com.dci.intellij.dbn.common.thread.Dispatch;
+import com.dci.intellij.dbn.common.util.Unsafe;
 import com.intellij.openapi.editor.colors.EditorColorsManager;
 import com.intellij.openapi.editor.colors.EditorColorsScheme;
 import com.intellij.openapi.ui.Splitter;
@@ -136,37 +137,12 @@ public class GUIUtil{
         for (Method method : methods) {
             String name = method.getName();
             if (name.startsWith("remove") && name.endsWith("Listener")) {
-
                 Class[] params = method.getParameterTypes();
                 if (params.length == 1) {
-                    EventListener[] listeners;
-                    try {
-                        listeners = comp.getListeners(params[0]);
-                    } catch (Exception e) {
-                        // It is possible that someone could instructions a listener
-                        // that doesn't extend from EventListener.  If so, ignore it
-                        System.out.println("Listener " + params[0] + " does not extend EventListener");
-                        continue;
-                    }
+                    EventListener[] listeners = Unsafe.silent(new EventListener[0], () -> comp.getListeners(params[0]));
                     for (EventListener listener : listeners) {
-                        try {
-                            method.invoke(comp, listener);
-                            //System.out.println("removed Listener " + name + " for comp " + comp + "\n");
-                        } catch (Exception e) {
-                            System.out.println("Cannot invoke removeListener method " + e);
-                            // Continue on.  The reason for removing all listeners is to
-                            // make sure that we don't have a listener holding on to something
-                            // which will keep it from being garbage collected. We want to
-                            // continue freeing listeners to make sure we can free as much
-                            // memory has possible
-                        }
+                        Unsafe.silent(() -> method.invoke(comp, listener));
                     }
-                } else {
-                    // The only Listener method that I know of that has more than
-                    // one argument is removePropertyChangeListener.  If it is
-                    // something other than that, flag it and move on.
-                    if (!name.equals("removePropertyChangeListener"))
-                        System.out.println("    Wrong number of Args " + name);
                 }
             }
         }

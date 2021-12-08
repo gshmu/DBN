@@ -16,7 +16,6 @@ public class DBJdwpBreakpointProperties extends JavaBreakpointProperties<DBJdwpB
     private ConnectionHandlerRef connectionHandlerRef;
 
     public DBJdwpBreakpointProperties() {
-        System.out.println();
     }
 
     public DBJdwpBreakpointProperties(ConnectionHandler connectionHandler) {

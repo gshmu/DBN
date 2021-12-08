@@ -203,7 +203,7 @@ public abstract class DBJdwpDebugProcess<T extends ExecutionInput>
 
                     XExecutionStack[] executionStacks = xSuspendContext.getExecutionStacks();
                     for (XExecutionStack executionStack : executionStacks) {
-                        System.out.println();
+                        //System.out.println();
                     }
 
                     //underlyingFrame.getDescriptor().getLocation()

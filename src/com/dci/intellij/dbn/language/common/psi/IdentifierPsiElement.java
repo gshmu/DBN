@@ -513,7 +513,6 @@ public abstract class IdentifierPsiElement extends LeafPsiElement<IdentifierElem
             return ref.getReferencedElement();
         }
         if (ref.isDirty()) {
-            //System.out.println("resolving " + getTextOffset() + " " + getText() + " - attempt " + ref.getResolveAttempts());
             boolean cancelled = false;
             try {
                 ref.preResolve(this);
