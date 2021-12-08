@@ -610,7 +610,7 @@ public abstract class BasePsiElement<T extends ElementTypeBase> extends ASTDeleg
     }
 
     @Nullable
-    public <E extends BasePsiElement<?>> E findEnclosingPsiElement(Class<E> psiClass) {
+    public <E extends BasePsiElement> E findEnclosingPsiElement(Class<E> psiClass) {
         PsiElement element = getParent();
         while (element != null && !(element instanceof PsiFile)) {
             if (element instanceof BasePsiElement) {
