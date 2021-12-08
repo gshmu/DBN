@@ -245,7 +245,7 @@ public class CodeCompletionProvider extends CompletionProvider<CompletionParamet
             }
         });
 
-        BasePsiElement<?> scope = element.getEnclosingScopePsiElement();
+        BasePsiElement scope = element.getEnclosingScopePsiElement();
         if (scope != null) {
             collectObjectMatchingScope(consumer, identifierElementType, filterSettings, scope, context);
         }

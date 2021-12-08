@@ -82,13 +82,13 @@ public class DBVirtualObject extends DBObjectImpl implements PsiReference {
 
     private final Latent<Boolean> valid = Latent.basic(() -> {
         return Read.conditional(() -> {
-            BasePsiElement<?> underlyingPsiElement = getUnderlyingPsiElement();
+            BasePsiElement underlyingPsiElement = getUnderlyingPsiElement();
             if (underlyingPsiElement != null && underlyingPsiElement.isValid()) {
                 DBObjectType objectType = getObjectType();
                 if (objectType == DBObjectType.DATASET) {
                     return true;
                 }
-                BasePsiElement<?> relevantPsiElement = getRelevantPsiElement();
+                BasePsiElement relevantPsiElement = getRelevantPsiElement();
                 if (Strings.equalsIgnoreCase(getName(), relevantPsiElement.getText())) {
                     if (relevantPsiElement instanceof IdentifierPsiElement) {
                         IdentifierPsiElement identifierPsiElement = (IdentifierPsiElement) relevantPsiElement;
@@ -377,13 +377,13 @@ public class DBVirtualObject extends DBObjectImpl implements PsiReference {
     }
 
     @Nullable
-    public BasePsiElement<?> getUnderlyingPsiElement() {
-        return (BasePsiElement<?>) getPsiFacade().getPsiElement();
+    public BasePsiElement getUnderlyingPsiElement() {
+        return (BasePsiElement) getPsiFacade().getPsiElement();
     }
 
     @NotNull
-    private BasePsiElement<?> getRelevantPsiElement() {
-        BasePsiElement<?> basePsiElement = PsiElementRef.get(relevantPsiElement);
+    private BasePsiElement getRelevantPsiElement() {
+        BasePsiElement basePsiElement = PsiElementRef.get(relevantPsiElement);
         return Failsafe.nn(basePsiElement);
     }
 
