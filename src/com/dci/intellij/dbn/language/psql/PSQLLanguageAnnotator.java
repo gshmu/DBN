@@ -46,7 +46,7 @@ public class PSQLLanguageAnnotator implements Annotator {
                 ThreadProperty.CODE_ANNOTATING,
                 () -> {
                     if (psiElement instanceof BasePsiElement) {
-                        BasePsiElement<?> basePsiElement = (BasePsiElement<?>) psiElement;
+                        BasePsiElement basePsiElement = (BasePsiElement) psiElement;
 
                         ElementType elementType = basePsiElement.getElementType();
                         if (elementType.is(ElementTypeAttribute.OBJECT_SPECIFICATION) || elementType.is(ElementTypeAttribute.OBJECT_DECLARATION)) {
@@ -159,10 +159,10 @@ public class PSQLLanguageAnnotator implements Annotator {
         }*/
     }
 
-    private static void annotateSpecDeclarationNavigable(@NotNull BasePsiElement<?> basePsiElement, AnnotationHolder holder) {
+    private static void annotateSpecDeclarationNavigable(@NotNull BasePsiElement basePsiElement, AnnotationHolder holder) {
         if (basePsiElement.isInjectedContext()) return;
 
-        BasePsiElement<?> subjectPsiElement = basePsiElement.findFirstPsiElement(ElementTypeAttribute.SUBJECT);
+        BasePsiElement subjectPsiElement = basePsiElement.findFirstPsiElement(ElementTypeAttribute.SUBJECT);
         if (subjectPsiElement instanceof IdentifierPsiElement) {
             IdentifierPsiElement identifierPsiElement = (IdentifierPsiElement) subjectPsiElement;
             DBObjectType objectType = identifierPsiElement.getObjectType();
@@ -189,9 +189,9 @@ public class PSQLLanguageAnnotator implements Annotator {
                                             elementType.is(ElementTypeAttribute.OBJECT_SPECIFICATION) ? ElementTypeAttribute.OBJECT_DECLARATION : null;
 
                             if (targetAttribute != null) {
-                                BasePsiElement<?> rootPsiElement = identifierPsiElement.findEnclosingPsiElement(ElementTypeAttribute.ROOT);
+                                BasePsiElement rootPsiElement = identifierPsiElement.findEnclosingPsiElement(ElementTypeAttribute.ROOT);
 
-                                BasePsiElement<?> targetElement = rootPsiElement == null ? null :
+                                BasePsiElement targetElement = rootPsiElement == null ? null :
                                         rootPsiElement.findPsiElementBySubject(targetAttribute,
                                                 identifierPsiElement.getChars(),
                                                 identifierPsiElement.getObjectType());
@@ -211,7 +211,7 @@ public class PSQLLanguageAnnotator implements Annotator {
                             SourceCodeManager codeEditorManager = SourceCodeManager.getInstance(object.getProject());
 
 
-                            BasePsiElement<?> targetElement = codeEditorManager.getObjectNavigationElement(object, targetContentType, identifierPsiElement.getObjectType(), identifierPsiElement.getChars());
+                            BasePsiElement targetElement = codeEditorManager.getObjectNavigationElement(object, targetContentType, identifierPsiElement.getObjectType(), identifierPsiElement.getChars());
                             if (targetElement != null && targetElement.isValid()) {
                                 NavigationAction navigationAction = targetContentType == DBContentType.CODE_BODY ?
                                         new NavigateToDefinitionAction(object, targetElement, objectType) :
