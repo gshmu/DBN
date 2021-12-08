@@ -1,7 +1,9 @@
 package com.dci.intellij.dbn.language.common.element.util;
 
 import com.dci.intellij.dbn.common.property.Property;
+import lombok.Getter;
 
+@Getter
 public enum ElementTypeAttribute implements Property.LongBase {
     
     ROOT("ROOT", "Executable statement"),
@@ -54,16 +56,8 @@ public enum ElementTypeAttribute implements Property.LongBase {
     }
 
     @Override
-    public Computed computedOrdinal() {
+    public Computed computed() {
         return computed;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public String getDescription() {
-        return description;
     }
 
     @Override
@@ -71,7 +65,4 @@ public enum ElementTypeAttribute implements Property.LongBase {
         return name;
     }
 
-    public boolean isSpecific() {
-        return specific;
-    }
 }

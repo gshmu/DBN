@@ -11,7 +11,7 @@ public enum ExecutionStatus implements Property.IntBase {
     private final Computed computed = new Computed(this);
 
     @Override
-    public Computed computedOrdinal() {
+    public Computed computed() {
         return computed;
     }
 }

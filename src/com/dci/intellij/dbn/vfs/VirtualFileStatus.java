@@ -28,7 +28,7 @@ public enum VirtualFileStatus implements Property.IntBase {
     }
 
     @Override
-    public Computed computedOrdinal() {
+    public Computed computed() {
         return computed;
     }
 
