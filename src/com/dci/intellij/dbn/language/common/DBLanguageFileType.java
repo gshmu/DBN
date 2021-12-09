@@ -36,7 +36,7 @@ public abstract class DBLanguageFileType extends LanguageFileType implements Fil
             FileTypeManager fileTypeManager = FileTypeManager.getInstance();
             fileTypeManager.removeAssociatedExtension(this, this.extension);
             this.extension = extension;
-            fileTypeManager.registerFileType(this, extension);
+            fileTypeManager.associateExtension(this, extension);
         }
     }
 
