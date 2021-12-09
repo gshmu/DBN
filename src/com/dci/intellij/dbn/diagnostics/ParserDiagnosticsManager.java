@@ -13,11 +13,17 @@ import com.dci.intellij.dbn.diagnostics.data.DiagnosticCategory;
 import com.dci.intellij.dbn.diagnostics.data.ParserDiagnosticsFilter;
 import com.dci.intellij.dbn.diagnostics.data.ParserDiagnosticsResult;
 import com.dci.intellij.dbn.diagnostics.ui.ParserDiagnosticsForm;
+import com.dci.intellij.dbn.language.common.DBLanguageFileType;
 import com.dci.intellij.dbn.language.common.DBLanguagePsiFile;
 import com.dci.intellij.dbn.language.common.psi.PsiUtil;
+import com.dci.intellij.dbn.language.psql.PSQLFileType;
+import com.dci.intellij.dbn.language.sql.SQLFileType;
 import com.intellij.openapi.components.PersistentStateComponent;
 import com.intellij.openapi.components.State;
 import com.intellij.openapi.components.Storage;
+import com.intellij.openapi.fileTypes.ExtensionFileNameMatcher;
+import com.intellij.openapi.fileTypes.FileNameMatcher;
+import com.intellij.openapi.fileTypes.FileTypeManager;
 import com.intellij.openapi.progress.ProgressIndicator;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
@@ -57,7 +63,8 @@ public class ParserDiagnosticsManager extends AbstractProjectComponent implement
     public ParserDiagnosticsResult runParserDiagnostics(ProgressIndicator progress) {
         try {
             running = true;
-            FileSearchRequest searchRequest = FileSearchRequest.forExtensions("sql", "pkg");
+            String[] extensions = getFileExtensions();
+            FileSearchRequest searchRequest = FileSearchRequest.forExtensions(extensions);
             VirtualFile[] files = VirtualFileUtil.findFiles(getProject(), searchRequest);
             ParserDiagnosticsResult result = new ParserDiagnosticsResult(getProject());
 
@@ -84,6 +91,24 @@ public class ParserDiagnosticsManager extends AbstractProjectComponent implement
             return result;
         } finally {
             running = false;
+        }
+    }
+
+    public String[] getFileExtensions() {
+        List<String> extensions = new ArrayList<>();
+        collectFileExtensions(extensions, SQLFileType.INSTANCE);
+        collectFileExtensions(extensions, PSQLFileType.INSTANCE);
+        return extensions.toArray(new String[0]);
+    }
+
+    private void collectFileExtensions(List<String> bucket, DBLanguageFileType fileType) {
+        FileTypeManager fileTypeManager = FileTypeManager.getInstance();
+        List<FileNameMatcher> associations = fileTypeManager.getAssociations(fileType);
+        for (FileNameMatcher association : associations) {
+            if (association instanceof ExtensionFileNameMatcher) {
+                ExtensionFileNameMatcher matcher = (ExtensionFileNameMatcher) association;
+                bucket.add(matcher.getExtension());
+            }
         }
     }
 
