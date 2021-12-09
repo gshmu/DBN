@@ -42,9 +42,7 @@ public class DatasetFilterGroup extends BasicProjectConfiguration<ProjectConfigu
     private transient DatasetFilter activeFilter;
     private transient final List<DatasetFilter> filters = new ArrayList<>();
 
-    @lombok.experimental.Delegate
     private transient final State state = new State();
-
 
     @Getter
     @Setter
