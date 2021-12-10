@@ -512,8 +512,8 @@
     <element-def description="Trigger variable" id="trigger_variable">
         <token id="000000230" type-id="CHR_COLON" />
         <one-of id="000000231">
-            <token id="000000232" type-id="KW_OLD" virtual-object="DATASET"/>
-            <token id="000000233" type-id="KW_NEW" virtual-object="DATASET"/>
+            <token id="000000232" type-id="KW_OLD" virtual-object="DATASET" />
+            <token id="000000233" type-id="KW_NEW" virtual-object="DATASET" />
             <token id="000000234" type-id="KW_PARENT" />
             <variable-ref id="000000235" type="RECORD" />
         </one-of>
@@ -3988,6 +3988,7 @@
                 <element optional="true" ref-id="datetime_expression" />
             </sequence>
         </iteration>
+        <element optional="true" ref-id="chained_references_suffix" />
     </element-def>
 
     <element-def description="Expr" id="expr" wrapping-template="PARENTHESES">
@@ -6640,45 +6641,49 @@
             </one-of>
         </iteration>
     </element-def>
+    <element-def custom="true" description="Chained reference" id="chained_references_suffix">
+        <token id="000003446" type-id="CHR_DOT" />
+        <element ref-id="chained_references" />
+    </element-def>
     <element-def custom="true" description="Numeric index suffix" id="numeric_index_suffix">
-        <one-of id="000003446">
-            <token id="000003447" type-id="KW_FIRST" />
-            <token id="000003448" type-id="KW_LAST" />
-            <token id="000003449" type-id="KW_COUNT" />
+        <one-of id="000003447">
+            <token id="000003448" type-id="KW_FIRST" />
+            <token id="000003449" type-id="KW_LAST" />
+            <token id="000003450" type-id="KW_COUNT" />
         </one-of>
     </element-def>
     <element-def custom="true" description="DEFAULT ON CONVERSION ERROR" id="default_on_conversion_error">
-        <token id="000003450" type-id="KW_DEFAULT" />
+        <token id="000003451" type-id="KW_DEFAULT" />
         <element ref-id="expression" />
-        <token id="000003451" type-id="KW_ON" />
-        <token id="000003452" type-id="KW_CONVERSION" />
-        <token id="000003453" type-id="KW_ERROR" />
+        <token id="000003452" type-id="KW_ON" />
+        <token id="000003453" type-id="KW_CONVERSION" />
+        <token id="000003454" type-id="KW_ERROR" />
     </element-def>
     <element-def custom="true" description="FMT NLSPARAM" id="fmt_nlsparam">
-        <sequence id="000003454">
-            <token id="000003455" type-id="CHR_COMMA" />
+        <sequence id="000003455">
+            <token id="000003456" type-id="CHR_COMMA" />
             <element original-name="fmt" ref-id="expression" />
-            <sequence id="000003456" optional="true">
-                <token id="000003457" type-id="CHR_COMMA" />
+            <sequence id="000003457" optional="true">
+                <token id="000003458" type-id="CHR_COMMA" />
                 <element original-name="nlsparam" ref-id="expression" />
             </sequence>
         </sequence>
     </element-def>
 
     <element-def description="Unknown identifier" id="custom_undefined">
-        <token id="000003458" type-id="IDENTIFIER" />
+        <token id="000003459" type-id="IDENTIFIER" />
     </element-def>
     <element-def description="Number" id="number">
-        <one-of id="000003459" optional="true">
-            <token id="000003460" type-id="CHR_MINUS" />
-            <token id="000003461" type-id="CHR_PLUS" />
+        <one-of id="000003460" optional="true">
+            <token id="000003461" type-id="CHR_MINUS" />
+            <token id="000003462" type-id="CHR_PLUS" />
         </one-of>
-        <one-of id="000003462">
-            <token id="000003463" type-id="NUMBER" />
-            <token id="000003464" type-id="INTEGER" />
+        <one-of id="000003463">
+            <token id="000003464" type-id="NUMBER" />
+            <token id="000003465" type-id="INTEGER" />
         </one-of>
     </element-def>
     <element-def description="Statement end" formatting-spacing-before="NO_SPACE" id="end" truncate-on-execution="true">
-        <token id="000003465" type-id="CHR_SLASH" />
+        <token id="000003466" type-id="CHR_SLASH" />
     </element-def>
 </element-defs>
