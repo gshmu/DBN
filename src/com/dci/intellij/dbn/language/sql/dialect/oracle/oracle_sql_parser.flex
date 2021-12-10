@@ -46,12 +46,10 @@ import com.intellij.psi.tree.IElementType;
 
 %}
 
-PSQL_BLOCK_START_CREATE_OR_REPLACE = "create"({ws}"or"{ws}"replace")? {ws}
-PSQL_BLOCK_START_CREATE_PACKAGE = {PSQL_BLOCK_START_CREATE_OR_REPLACE}"package"
-PSQL_BLOCK_START_CREATE_TRIGGER = {PSQL_BLOCK_START_CREATE_OR_REPLACE}"trigger"
-PSQL_BLOCK_START_CREATE_METHOD  = {PSQL_BLOCK_START_CREATE_OR_REPLACE}("function"|"procedure")
-PSQL_BLOCK_START_CREATE_TYPE    = {PSQL_BLOCK_START_CREATE_OR_REPLACE}"type"
-PSQL_BLOCK_START_CREATE = {PSQL_BLOCK_START_CREATE_PACKAGE}|{PSQL_BLOCK_START_CREATE_TRIGGER}|{PSQL_BLOCK_START_CREATE_METHOD}|{PSQL_BLOCK_START_CREATE_TYPE}
+NON_PSQL_BLOCK_ENTER = ("grant"|"revoke"){ws}"create"
+NON_PSQL_BLOCK_EXIT = "to"|"from"|";"
+
+PSQL_BLOCK_START_CREATE = "create"({ws}"or"{ws}"replace")?{ws}("package"|"trigger"|"function"|"procedure"|"type")
 PSQL_BLOCK_START_DECLARE = "declare"
 PSQL_BLOCK_START_BEGIN = "begin"
 PSQL_BLOCK_END_IGNORE = "end"{ws}("if"|"loop"|"case")({ws}({IDENTIFIER}|{QUOTED_IDENTIFIER}))*{wso}";"
@@ -113,8 +111,20 @@ CT_SIZE_CLAUSE = {INTEGER}{wso}("k"|"m"|"g"|"t"|"p"|"e"){ws}
     <<EOF>>                         { plsqlBlockMonitor.end(true); return getChameleon(); }
 }
 
+<NON_PSQL_BLOCK> {
+    {NON_PSQL_BLOCK_EXIT}          { yybegin(YYINITIAL); yypushback(yylength()); }
+}
+
 
 <YYINITIAL> {
+    {NON_PSQL_BLOCK_ENTER}         { yybegin(NON_PSQL_BLOCK); yypushback(yylength()); }
+
+    {PSQL_BLOCK_START_CREATE}      { plsqlBlockMonitor.start(Marker.CREATE); }
+    {PSQL_BLOCK_START_DECLARE}     { plsqlBlockMonitor.start(Marker.DECLARE); }
+    {PSQL_BLOCK_START_BEGIN}       { plsqlBlockMonitor.start(Marker.BEGIN); }
+}
+
+<YYINITIAL, NON_PSQL_BLOCK> {
 
 {WHITE_SPACE}+   { return tt.getSharedTokenTypes().getWhiteSpace(); }
 
@@ -122,9 +132,9 @@ CT_SIZE_CLAUSE = {INTEGER}{wso}("k"|"m"|"g"|"t"|"p"|"e"){ws}
 {LINE_COMMENT}       { return tt.getSharedTokenTypes().getLineComment(); }
 {REM_LINE_COMMENT}   { return tt.getSharedTokenTypes().getLineComment(); }
 
-{PSQL_BLOCK_START_CREATE}          { plsqlBlockMonitor.start(Marker.CREATE); }
-{PSQL_BLOCK_START_DECLARE}         { plsqlBlockMonitor.start(Marker.DECLARE); }
-{PSQL_BLOCK_START_BEGIN}           { plsqlBlockMonitor.start(Marker.BEGIN); }
+//{PSQL_BLOCK_START_CREATE}          { plsqlBlockMonitor.start(Marker.CREATE); }
+//{PSQL_BLOCK_START_DECLARE}         { plsqlBlockMonitor.start(Marker.DECLARE); }
+//{PSQL_BLOCK_START_BEGIN}           { plsqlBlockMonitor.start(Marker.BEGIN); }
 
 {VARIABLE}          {return tt.getSharedTokenTypes().getVariable(); }
 {SQLP_VARIABLE}     {return tt.getSharedTokenTypes().getVariable(); }
