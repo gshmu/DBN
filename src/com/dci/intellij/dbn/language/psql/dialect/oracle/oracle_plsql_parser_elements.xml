@@ -512,14 +512,14 @@
     <element-def description="Trigger variable" id="trigger_variable">
         <token id="000000230" type-id="CHR_COLON" />
         <one-of id="000000231">
-            <token id="000000232" type-id="KW_OLD" />
-            <token id="000000233" type-id="KW_NEW" />
+            <token id="000000232" type-id="KW_OLD" virtual-object="DATASET"/>
+            <token id="000000233" type-id="KW_NEW" virtual-object="DATASET"/>
             <token id="000000234" type-id="KW_PARENT" />
             <variable-ref id="000000235" type="RECORD" />
         </one-of>
         <token id="000000236" type-id="CHR_DOT" />
         <one-of id="000000237">
-            <object-ref id="000000238" type="COLUMN" />
+            <object-ref id="000000238" local="true" type="COLUMN" />
             <token id="000000239" type-id="DT_ROWID" />
         </one-of>
     </element-def>

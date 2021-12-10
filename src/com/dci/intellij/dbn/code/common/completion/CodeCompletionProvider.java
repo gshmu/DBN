@@ -143,9 +143,8 @@ public class CodeCompletionProvider extends CompletionProvider<CompletionParamet
             }
         } else if (element.getElementType().getTokenType() == element.getLanguage().getSharedTokenTypes().getChrDot()) {
             LeafPsiElement parentPsiElement = element.getPrevLeaf();
-            if (parentPsiElement instanceof IdentifierPsiElement) {
-                parentIdentifierPsiElement = (IdentifierPsiElement) parentPsiElement;
-                parentObject = parentIdentifierPsiElement.getUnderlyingObject();
+            if (parentPsiElement instanceof IdentifierPsiElement || parentPsiElement.isVirtualObject()) {
+                parentObject = parentPsiElement.getUnderlyingObject();
             }
 
         } else if (parent instanceof BasePsiElement) {
