@@ -176,7 +176,7 @@ public abstract class LeafElementType extends ElementTypeBase implements Indexab
                             }
                         }
 
-                        if (!child.optional && !child.isOptionalFromHere()) {
+                        if (!child.optional/* && !child.isOptionalFromHere()*/) {
                             return false;
                         }
                         child = child.getNext();
