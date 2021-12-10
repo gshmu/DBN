@@ -1,7 +1,7 @@
 package com.dci.intellij.dbn.language.sql.dialect.oracle;
 
-import java.util.ArrayDeque;
 import java.util.Deque;
+import java.util.LinkedList;
 
 public abstract class OraclePLSQLBlockMonitor {
     public enum Marker {
@@ -11,7 +11,7 @@ public abstract class OraclePLSQLBlockMonitor {
         METHOD,
         CASE}
 
-    private Deque<Marker> stack = new ArrayDeque<Marker>();
+    private final Deque<Marker> stack = new LinkedList<>();
 
 
     public void start(Marker marker) {

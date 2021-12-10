@@ -13559,22 +13559,6 @@ public final class OracleSQLParserFlexLexer implements FlexLexer {
             private int blockNesting = 0;
             private int blockStartPos = 0;
 
-            /*
-            public void startPsqlBlock(boolean isDeclareBloc) {
-                blockNesting = 0;
-                yybegin(PSQL_BLOCK);
-                blockStartPos = zzStartRead;
-                if (incNesting) blockNesting++;
-            }
-
-            public IElementType endPsqlBlock() {
-                blockNesting = 0;
-                yybegin(YYINITIAL);
-                zzStartRead = blockStartPos;
-                return tt.getChameleon(DBLanguageDialectIdentifier.ORACLE_PLSQL);
-            }
-            */
-
             public IElementType getChameleon() {
                 return tt.getChameleon(DBLanguageDialectIdentifier.ORACLE_PLSQL);
             }

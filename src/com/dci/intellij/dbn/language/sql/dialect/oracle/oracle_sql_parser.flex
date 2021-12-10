@@ -28,22 +28,6 @@ import com.intellij.psi.tree.IElementType;
             private int blockNesting = 0;
             private int blockStartPos = 0;
 
-            /*
-            public void startPsqlBlock(boolean isDeclareBloc) {
-                blockNesting = 0;
-                yybegin(PSQL_BLOCK);
-                blockStartPos = zzStartRead;
-                if (incNesting) blockNesting++;
-            }
-
-            public IElementType endPsqlBlock() {
-                blockNesting = 0;
-                yybegin(YYINITIAL);
-                zzStartRead = blockStartPos;
-                return tt.getChameleon(DBLanguageDialectIdentifier.ORACLE_PLSQL);
-            }
-            */
-
             public IElementType getChameleon() {
                 return tt.getChameleon(DBLanguageDialectIdentifier.ORACLE_PLSQL);
             }
@@ -61,11 +45,6 @@ import com.intellij.psi.tree.IElementType;
             };
 
 %}
-
-
-//PLSQL_BLOCK_START = "create"({ws}"or"{ws}"replace")? {ws} ("function"|"procedure"|"type"|"trigger"|"package") | "declare" | "begin"
-//PLSQL_BLOCK_END = ";"{wso}"/"
-//PLSQL_BLOCK = {PLSQL_BLOCK_START}{ws}([^/;] | ";"{wso}([^/] | "/*") | [^;]{wso}"/")*{PLSQL_BLOCK_END}?
 
 PSQL_BLOCK_START_CREATE_OR_REPLACE = "create"({ws}"or"{ws}"replace")? {ws}
 PSQL_BLOCK_START_CREATE_PACKAGE = {PSQL_BLOCK_START_CREATE_OR_REPLACE}"package"
@@ -109,6 +88,7 @@ SQLP_VARIABLE = "&""&"?{IDENTIFIER}
 CT_SIZE_CLAUSE = {INTEGER}{wso}("k"|"m"|"g"|"t"|"p"|"e"){ws}
 
 %state PSQL_BLOCK
+%state NON_PSQL_BLOCK
 %%
 
 <PSQL_BLOCK> {
@@ -142,20 +122,12 @@ CT_SIZE_CLAUSE = {INTEGER}{wso}("k"|"m"|"g"|"t"|"p"|"e"){ws}
 {LINE_COMMENT}       { return tt.getSharedTokenTypes().getLineComment(); }
 {REM_LINE_COMMENT}   { return tt.getSharedTokenTypes().getLineComment(); }
 
-//{PSQL_BLOCK_START}  {  }
-//{PSQL_BLOCK_START_CREATE_PACKAGE}  { startPsqlBlock(true); }
-//{PSQL_BLOCK_START_CREATE_TRIGGER}  { startPsqlBlock(false); }
-//{PSQL_BLOCK_START_CREATE_METHOD}   { startPsqlBlock(false); }
-//{PSQL_BLOCK_START_CREATE_TYPE}     { startPsqlBlock(false); }
-//{PSQL_BLOCK_START_CREATE_TYPE}     { startPsqlBlock(false); }
 {PSQL_BLOCK_START_CREATE}          { plsqlBlockMonitor.start(Marker.CREATE); }
 {PSQL_BLOCK_START_DECLARE}         { plsqlBlockMonitor.start(Marker.DECLARE); }
 {PSQL_BLOCK_START_BEGIN}           { plsqlBlockMonitor.start(Marker.BEGIN); }
 
 {VARIABLE}          {return tt.getSharedTokenTypes().getVariable(); }
 {SQLP_VARIABLE}     {return tt.getSharedTokenTypes().getVariable(); }
-
-//{PLSQL_BLOCK}    {return tt.getChameleon(DBLanguageDialectIdentifier.ORACLE_PLSQL);}
 
 "("{wso}"+"{wso}")"  {return tt.getTokenType("CT_OUTER_JOIN");}
 
@@ -170,6 +142,7 @@ CT_SIZE_CLAUSE = {INTEGER}{wso}("k"|"m"|"g"|"t"|"p"|"e"){ws}
 "="{wso}">" {return tt.getOperatorTokenType(7);}
 ".."        {return tt.getOperatorTokenType(8);}
 "::"        {return tt.getOperatorTokenType(9);}
+
 
 "@" {return tt.getCharacterTokenType(0);}
 ":" {return tt.getCharacterTokenType(1);}
