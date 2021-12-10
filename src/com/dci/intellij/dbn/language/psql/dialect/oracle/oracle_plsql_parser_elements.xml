@@ -3968,7 +3968,7 @@
     </element-def>
 
     <element-def description="Expression" id="expression">
-        <iteration id="000001952" separator="OPR_CONCATENATION, OPR_NOT_EQUAL, OPR_LESS_GREATER, OPR_LESS_EQUAL, OPR_GREATER_EQUAL, CHR_STAR, CHR_SLASH, CHR_PLUS, CHR_MINUS, CHR_GREATER, CHR_LESS, CHR_EQUAL" wrapping-template="PARENTHESES">
+        <iteration id="000001952" separator="OPR_CONCATENATION, OPR_NOT_EQUAL, OPR_LESS_GREATER, OPR_LESS_EQUAL, OPR_GREATER_EQUAL, CHR_STAR, CHR_SLASH, CHR_PLUS, CHR_MINUS, CHR_GREATER, CHR_LESS, CHR_EQUAL, FN_MOD" wrapping-template="PARENTHESES">
             <sequence id="000001953" wrapping-template="PARENTHESES">
                 <one-of id="000001954" optional="true">
                     <token id="000001955" type-id="CHR_PLUS" />
