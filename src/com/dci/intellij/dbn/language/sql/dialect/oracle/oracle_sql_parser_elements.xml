@@ -3335,7 +3335,7 @@
         <one-of id="000002013">
             <sequence id="000002014">
                 <token id="000002015" type-id="KW_ADD" />
-                <iteration id="000002016" separator="CHR_COMMA" exit="true">
+                <iteration exit="true" id="000002016" separator="CHR_COMMA">
                     <sequence id="000002017">
                         <token id="000002018" type-id="KW_SUPPLEMENTAL" />
                         <token id="000002019" type-id="KW_LOG" />
@@ -3349,7 +3349,7 @@
             </sequence>
             <sequence id="000002021">
                 <token id="000002022" type-id="KW_DROP" />
-                <iteration id="000002023" separator="CHR_COMMA" exit="true">
+                <iteration exit="true" id="000002023" separator="CHR_COMMA">
                     <sequence id="000002024">
                         <token id="000002025" type-id="KW_SUPPLEMENTAL" />
                         <token id="000002026" type-id="KW_LOG" />
@@ -8132,6 +8132,7 @@
                 <element optional="true" ref-id="datetime_expression" />
             </sequence>
         </iteration>
+        <element optional="true" ref-id="chained_references_suffix" />
     </element-def>
     <element-def description="Expr" id="expr" wrapping-template="PARENTHESES">
         <token id="000004452" optional="true" type-id="KW_NEW" />
@@ -11000,42 +11001,46 @@
             </one-of>
         </iteration>
     </element-def>
+    <element-def custom="true" description="Chained reference" id="chained_references_suffix">
+        <token id="000006021" type-id="CHR_DOT" />
+        <element ref-id="chained_references" />
+    </element-def>
     <element-def custom="true" description="Numeric index suffix" id="numeric_index_suffix">
-        <one-of id="000006021">
-            <token id="000006022" type-id="KW_FIRST" />
-            <token id="000006023" type-id="KW_LAST" />
-            <token flavor="keyword" id="000006024" type-id="FN_COUNT" />
+        <one-of id="000006022">
+            <token id="000006023" type-id="KW_FIRST" />
+            <token id="000006024" type-id="KW_LAST" />
+            <token flavor="keyword" id="000006025" type-id="FN_COUNT" />
         </one-of>
     </element-def>
     <element-def custom="true" description="DEFAULT ON CONVERSION ERROR" id="default_on_conversion_error">
-        <token id="000006025" type-id="KW_DEFAULT" />
+        <token id="000006026" type-id="KW_DEFAULT" />
         <element ref-id="expression" />
-        <token id="000006026" type-id="KW_ON" />
-        <token id="000006027" type-id="KW_CONVERSION" />
-        <token id="000006028" type-id="KW_ERROR" />
+        <token id="000006027" type-id="KW_ON" />
+        <token id="000006028" type-id="KW_CONVERSION" />
+        <token id="000006029" type-id="KW_ERROR" />
     </element-def>
     <element-def custom="true" description="FMT NLSPARAM" id="fmt_nlsparam">
-        <sequence id="000006029">
-            <token id="000006030" type-id="CHR_COMMA" />
+        <sequence id="000006030">
+            <token id="000006031" type-id="CHR_COMMA" />
             <element original-name="fmt" ref-id="expression" />
-            <sequence id="000006031" optional="true">
-                <token id="000006032" type-id="CHR_COMMA" />
+            <sequence id="000006032" optional="true">
+                <token id="000006033" type-id="CHR_COMMA" />
                 <element original-name="nlsparam" ref-id="expression" />
             </sequence>
         </sequence>
     </element-def>
     <element-def custom="true" description="DBLINK qualifier" id="dblink_qualifier">
-        <token id="000006033" type-id="CHR_AT" />
-        <object-ref id="000006034" type="DBLINK" />
+        <token id="000006034" type-id="CHR_AT" />
+        <object-ref id="000006035" type="DBLINK" />
     </element-def>
 
     <element-def description="Unknown identifier" id="custom_undefined">
-        <token id="000006035" type-id="IDENTIFIER" />
+        <token id="000006036" type-id="IDENTIFIER" />
     </element-def>
     <element-def description="Statement end" formatting-spacing-before="NO_SPACE" id="end" truncate-on-execution="true">
-        <one-of id="000006036">
-            <token id="000006037" type-id="CHR_SEMICOLON" />
-            <token id="000006038" type-id="CHR_SLASH" />
+        <one-of id="000006037">
+            <token id="000006038" type-id="CHR_SEMICOLON" />
+            <token id="000006039" type-id="CHR_SLASH" />
         </one-of>
     </element-def>
 </element-defs>
