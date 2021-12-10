@@ -41,7 +41,6 @@ import com.intellij.extapi.psi.ASTDelegatePsiElement;
 import com.intellij.ide.util.EditSourceUtil;
 import com.intellij.lang.ASTNode;
 import com.intellij.navigation.ItemPresentation;
-import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.editor.colors.TextAttributesKey;
 import com.intellij.openapi.editor.ex.EditorEx;
@@ -263,10 +262,7 @@ public abstract class BasePsiElement<T extends ElementTypeBase> extends ASTDeleg
 
     @Override
     public String getText() {
-        if (ApplicationManager.getApplication().isReadAccessAllowed()) {
-            return super.getText();
-        }
-        return Read.call(() -> BasePsiElement.super.getText());
+        return Read.conditional(() -> BasePsiElement.super.getText());
     }
 
 
@@ -319,10 +315,10 @@ public abstract class BasePsiElement<T extends ElementTypeBase> extends ASTDeleg
             BasePsiElement basePsiElement = (BasePsiElement) previousElement;
             PsiElement lastChild = basePsiElement.getLastChild();
             while (lastChild != null) {
-                lastChild = lastChild.getLastChild();
                 if (lastChild instanceof LeafPsiElement) {
                     return (LeafPsiElement) lastChild;
                 }
+                lastChild = lastChild.getLastChild();
             }
         }
         return null;
