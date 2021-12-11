@@ -35,7 +35,7 @@ public class OneOfElementTypeParser extends ElementTypeParser<OneOfElementType> 
         if (tokenType != null && !tokenType.isChameleon()) {
             ElementTypeRef child = elementType.getFirstChild();
             while (child != null) {
-                if (context.check(child) && shouldParseElement(child.elementType, node, context)) {
+                if (context.check(child) && shouldParseElement(child.getElementType(), node, context)) {
                     ParseResult result = child.getParser().parse(node, context);
 
                     if (result.isMatch()) {
@@ -60,7 +60,7 @@ public class OneOfElementTypeParser extends ElementTypeParser<OneOfElementType> 
             Pair<ElementTypeRef, ParseResult> bestResult = null;
             ElementTypeRef child = elementType.getFirstChild();
             while (child != null) {
-                if (context.check(child) && shouldParseElement(child.elementType, node, context)) {
+                if (context.check(child) && shouldParseElement(child.getElementType(), node, context)) {
                     ParseResult result = child.getParser().parse(node, context);
 
                     if (result.isFullMatch()) {

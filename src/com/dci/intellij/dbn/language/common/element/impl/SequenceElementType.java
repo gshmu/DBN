@@ -138,12 +138,12 @@ public class SequenceElementType extends ElementTypeBase {
     }
 
     public Set<TokenType> getFirstPossibleTokensFromIndex(ElementLookupContext context, int index) {
-        if (children[index].optional) {
+        if (children[index].isOptional()) {
             Set<TokenType> tokenTypes = new THashSet<>();
             for (int i=index; i< children.length; i++) {
                 ElementTypeLookupCache lookupCache = children[i].getLookupCache();
                 lookupCache.captureFirstPossibleTokens(context.reset(), tokenTypes);
-                if (!children[i].optional) break;
+                if (!children[i].isOptional()) break;
             }
             return tokenTypes;
         } else {
@@ -158,7 +158,7 @@ public class SequenceElementType extends ElementTypeBase {
                 if (children[i].getLookupCache().couldStartWithToken(tokenType)){
                     return true;
                 }
-                if (!children[i].optional) {
+                if (!children[i].isOptional()) {
                     return false;
                 }
             }
@@ -176,8 +176,7 @@ public class SequenceElementType extends ElementTypeBase {
         }
         ElementTypeRef child = children[0];
         while (child != null) {
-            ElementTypeBase childElementType = child.elementType;
-            if (childElementType == leafElementType || childElementType.getLookupCache().containsLeaf(leafElementType)) {
+            if (child.getElementType() == leafElementType || child.getLookupCache().containsLeaf(leafElementType)) {
                 return child.getIndex();
             }
             child = child.getNext();
@@ -198,7 +197,7 @@ public class SequenceElementType extends ElementTypeBase {
         if (fromIndex < children.length) {
             ElementTypeRef child = children[fromIndex];
             while (child != null) {
-                if (child.elementType == elementType) {
+                if (child.getElementType() == elementType) {
                     return child.getIndex();
                 }
                 child = child.getNext();
@@ -216,7 +215,7 @@ public class SequenceElementType extends ElementTypeBase {
         super.collectLeafElements(bucket);
         if (basic) {
             for (ElementTypeRef child : children) {
-                bucket.add(cast(child.elementType));
+                bucket.add(cast(child.getElementType()));
             }
         }
     }

@@ -23,12 +23,12 @@ public class NamedElementTypeParser extends SequenceElementTypeParser<NamedEleme
 
     protected boolean isRecursive(ParsePathNode parseNode, int builderOffset, int iterations){
         while (parseNode != null &&  iterations > 0) {
-            if (parseNode.elementType == elementType &&
+            if (parseNode.getElementType() == elementType &&
                     parseNode.getStartOffset() == builderOffset) {
                 //return true;
                 iterations--;
             }
-            parseNode = parseNode.parent;
+            parseNode = parseNode.getParent();
         }
         return iterations == 0;
         //return false;

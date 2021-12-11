@@ -5,14 +5,16 @@ import com.dci.intellij.dbn.language.common.element.cache.ElementTypeLookupCache
 import com.dci.intellij.dbn.language.common.element.parser.Branch;
 import com.dci.intellij.dbn.language.common.element.parser.BranchCheck;
 import com.dci.intellij.dbn.language.common.element.parser.ElementTypeParser;
+import lombok.Getter;
 
 import java.util.Set;
 
+@Getter
 public class ElementTypeRef extends Linked<ElementTypeRef> {
-    public final ElementTypeBase parentElementType;
-    public final ElementTypeBase elementType;
-    public final boolean optional;
-    public final double version;
+    private final ElementTypeBase parentElementType;
+    private final ElementTypeBase elementType;
+    private final boolean optional;
+    private final double version;
     private final Set<BranchCheck> branchChecks;
 
     public ElementTypeRef(ElementTypeRef previous, ElementTypeBase parentElementType, ElementTypeBase elementType, boolean optional, double version, Set<BranchCheck> branchChecks) {
