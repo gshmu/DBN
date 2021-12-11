@@ -17,7 +17,6 @@ import com.dci.intellij.dbn.language.common.element.path.ParsePathNode;
 import com.dci.intellij.dbn.language.common.element.util.ElementTypeAttribute;
 import com.dci.intellij.dbn.language.common.element.util.ParseBuilderErrorHandler;
 import com.intellij.lang.PsiBuilder;
-import org.jetbrains.annotations.NotNull;
 
 import java.util.Set;
 
@@ -27,7 +26,7 @@ public class SequenceElementTypeParser<ET extends SequenceElementType> extends E
     }
 
     @Override
-    public ParseResult parse(@NotNull ParsePathNode parentNode, ParserContext context) throws ParseException {
+    public ParseResult parse(ParsePathNode parentNode, ParserContext context) throws ParseException {
         ParserBuilder builder = context.getBuilder();
         ParsePathNode node = stepIn(parentNode, context);
 
@@ -117,7 +116,7 @@ public class SequenceElementTypeParser<ET extends SequenceElementType> extends E
     private int advanceLexerToNextLandmark(ParsePathNode node, ParserContext context) {
         int siblingPosition = node.getCursorPosition();
         ParserBuilder builder = context.getBuilder();
-        PsiBuilder.Marker marker = builder.mark(null);
+        PsiBuilder.Marker marker = builder.mark();
         Set<TokenType> possibleTokens = elementType.getFirstPossibleTokensFromIndex(context, siblingPosition);
         ParseBuilderErrorHandler.updateBuilderError(possibleTokens, context);
 

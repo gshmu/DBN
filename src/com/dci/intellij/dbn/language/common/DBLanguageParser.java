@@ -44,7 +44,7 @@ public abstract class DBLanguageParser implements PsiParser {
         ParserContext context = new ParserContext(psiBuilder, languageDialect, databaseVersion);
         ParserBuilder builder = context.getBuilder();
         if (parseRootId == null ) parseRootId = defaultParseRootId;
-        PsiBuilder.Marker marker = builder.mark(null);
+        PsiBuilder.Marker marker = builder.mark();
         NamedElementType root =  elementTypes.getNamedElementType(parseRootId);
         if (root == null) {
             root = elementTypes.getRootElementType();
@@ -65,7 +65,7 @@ public abstract class DBLanguageParser implements PsiParser {
                         injectedLanguageMarker.done((IElementType) tokenType);
                     }
                     else*/ if (tokenType instanceof ChameleonTokenType) {
-                        PsiBuilder.Marker injectedLanguageMarker = builder.mark(null);
+                        PsiBuilder.Marker injectedLanguageMarker = builder.mark();
                         builder.advanceLexer(rootParseNode);
                         injectedLanguageMarker.done((IElementType) tokenType);
                     } else {
@@ -81,7 +81,7 @@ public abstract class DBLanguageParser implements PsiParser {
             }
         } catch (StackOverflowError e) {
             marker.rollbackTo();
-            marker = builder.mark(null);
+            marker = builder.mark();
             while (!builder.eof()) {
                 builder.advanceLexer(rootParseNode);
                 advancedLexer = true;

@@ -15,7 +15,6 @@ import com.dci.intellij.dbn.language.common.element.parser.ParserContext;
 import com.dci.intellij.dbn.language.common.element.path.ParsePathNode;
 import com.dci.intellij.dbn.language.common.element.util.ParseBuilderErrorHandler;
 import com.intellij.lang.PsiBuilder;
-import org.jetbrains.annotations.NotNull;
 
 import java.util.Set;
 
@@ -25,7 +24,7 @@ public class IterationElementTypeParser extends ElementTypeParser<IterationEleme
     }
 
     @Override
-    public ParseResult parse(@NotNull ParsePathNode parentNode, ParserContext context) throws ParseException {
+    public ParseResult parse(ParsePathNode parentNode, ParserContext context) throws ParseException {
         ParserBuilder builder = context.getBuilder();
         ParsePathNode node = stepIn(parentNode, context);
 
@@ -53,7 +52,7 @@ public class IterationElementTypeParser extends ElementTypeParser<IterationEleme
                     PsiBuilder.Marker partialMatchMarker = null;
                     if (separatorTokens != null) {
                         if (elementType.isFollowedBySeparator()) {
-                            partialMatchMarker = builder.mark(null);
+                            partialMatchMarker = builder.mark();
                         }
 
                         ParseResult sepResult = ParseResult.noMatch();
@@ -97,7 +96,7 @@ public class IterationElementTypeParser extends ElementTypeParser<IterationEleme
                         } else {
                             if (matchesMinIterations(iterations)) {
                                 if (elementType.isFollowedBySeparator()) {
-                                    builder.markerRollbackTo(partialMatchMarker, null);
+                                    builder.markerRollbackTo(partialMatchMarker);
                                     return stepOut(node, context, ParseResultType.FULL_MATCH, matchedTokens);
                                 } else {
                                     builder.markerDrop(partialMatchMarker);
@@ -125,7 +124,7 @@ public class IterationElementTypeParser extends ElementTypeParser<IterationEleme
     private boolean advanceLexerToNextLandmark(ParsePathNode parentNode, boolean lenient, ParserContext context) {
         ParserBuilder builder = context.getBuilder();
 
-        PsiBuilder.Marker marker = builder.mark(null);
+        PsiBuilder.Marker marker = builder.mark();
         ElementType iteratedElementType = elementType.getIteratedElementType();
         TokenElementType[] separatorTokens = elementType.getSeparatorTokens();
 
@@ -158,7 +157,7 @@ public class IterationElementTypeParser extends ElementTypeParser<IterationEleme
                             if (advanced || !lenient) {
                                 builder.markerDone(marker, unknownElementType);
                             } else {
-                                builder.markerRollbackTo(marker, null);
+                                builder.markerRollbackTo(marker);
                             }
                             return true;
                         }
@@ -172,13 +171,12 @@ public class IterationElementTypeParser extends ElementTypeParser<IterationEleme
         }
         if (advanced || !lenient)
             builder.markerDone(marker, unknownElementType); else
-            builder.markerRollbackTo(marker, null);
+            builder.markerRollbackTo(marker);
         return true;
     }
 
     private boolean matchesMinIterations(int iterations) {
-        Integer minIterations = elementType.getMinIterations();
-        return minIterations == null || minIterations <= iterations;
+        return elementType.getMinIterations() <= iterations;
     }
 
     private boolean matchesIterations(int iterations) {
