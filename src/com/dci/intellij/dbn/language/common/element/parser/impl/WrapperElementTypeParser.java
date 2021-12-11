@@ -75,13 +75,13 @@ public class WrapperElementTypeParser extends ElementTypeParser<WrapperElementTy
     }
 
     private static boolean isParentWrapping(ParsePathNode node, TokenType tokenType) {
-        ParsePathNode parent = node.parent;
+        ParsePathNode parent = node.getParent();
         while (parent != null && parent.getCursorPosition() == 0) {
-            WrappingDefinition parentWrapping = parent.elementType.getWrapping();
+            WrappingDefinition parentWrapping = parent.getElementType().getWrapping();
             if (parentWrapping != null && parentWrapping.getBeginElementType().getTokenType() == tokenType) {
                 return true;
             }
-            parent = parent.parent;
+            parent = parent.getParent();
         }
         return false;
     }

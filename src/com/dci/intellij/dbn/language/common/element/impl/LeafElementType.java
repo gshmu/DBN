@@ -63,15 +63,15 @@ public abstract class LeafElementType extends ElementTypeBase implements Indexab
     public static ElementType getPreviousElement(BasicPathNode pathNode) {
         int position = 0;
         while (pathNode != null) {
-            ElementType elementType = pathNode.elementType;
+            ElementType elementType = pathNode.getElementType();
             if (elementType instanceof SequenceElementType) {
                 SequenceElementType sequenceElementType = (SequenceElementType) elementType;
                 if (position > 0 ) {
-                    return sequenceElementType.getChild(position-1).elementType;
+                    return sequenceElementType.getChild(position-1).getElementType();
                 }
             }
             position = pathNode.getIndexInParent();
-            pathNode = pathNode.parent;
+            pathNode = pathNode.getParent();
         }
         return null;
     }
@@ -92,7 +92,7 @@ public abstract class LeafElementType extends ElementTypeBase implements Indexab
                     while (child != null) {
                         if (context.check(child)) {
                             child.getLookupCache().captureFirstPossibleLeafs(context.reset(), possibleLeafs);
-                            if (!child.optional) {
+                            if (!child.isOptional()) {
                                 pathNode = null;
                                 break;
                             }
@@ -167,7 +167,7 @@ public abstract class LeafElementType extends ElementTypeBase implements Indexab
                     while (child != null) {
                         ElementTypeLookupCache lookupCache = child.getLookupCache();
                         if (required) {
-                            if (lookupCache.isFirstRequiredToken(tokenType) && !child.optional) {
+                            if (lookupCache.isFirstRequiredToken(tokenType) && !child.isOptional()) {
                                 return true;
                             }
                         } else {
@@ -176,7 +176,7 @@ public abstract class LeafElementType extends ElementTypeBase implements Indexab
                             }
                         }
 
-                        if (!child.optional/* && !child.isOptionalFromHere()*/) {
+                        if (!child.isOptional()/* && !child.isOptionalFromHere()*/) {
                             return false;
                         }
                         child = child.getNext();
@@ -204,7 +204,7 @@ public abstract class LeafElementType extends ElementTypeBase implements Indexab
             }
 
             position = pathNode.getIndexInParent() + 1;
-            pathNode = pathNode.parent;
+            pathNode = pathNode.getParent();
         }
         return false;
     }
@@ -220,7 +220,7 @@ public abstract class LeafElementType extends ElementTypeBase implements Indexab
 
                 ElementTypeRef child = sequenceElementType.getChild(position + 1);
                 while (child != null) {
-                    if (!child.optional) {
+                    if (!child.isOptional()) {
                         ElementTypeLookupCache<?> lookupCache = child.getLookupCache();
                         requiredLeafs.addAll(lookupCache.getFirstRequiredLeafs());
                         pathNode = null;

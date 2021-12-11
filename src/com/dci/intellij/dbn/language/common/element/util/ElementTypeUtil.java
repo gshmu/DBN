@@ -6,21 +6,21 @@ import com.dci.intellij.dbn.language.common.element.path.ParsePathNode;
 
 public class ElementTypeUtil {
     public static ElementType getEnclosingElementType(ParsePathNode pathNode, ElementTypeAttribute elementTypeAttribute) {
-        ParsePathNode parentNode = pathNode.parent;
+        ParsePathNode parentNode = pathNode.getParent();
         while (parentNode != null) {
-            ElementType elementType = parentNode.elementType;
+            ElementType elementType = parentNode.getElementType();
             if (elementType.is(elementTypeAttribute)) return elementType;
-            parentNode = parentNode.parent;
+            parentNode = parentNode.getParent();
         }
         return null;
     }
 
     public static NamedElementType getEnclosingNamedElementType(ParsePathNode pathNode) {
-        ParsePathNode parentNode = pathNode.parent;
+        ParsePathNode parentNode = pathNode.getParent();
         while (parentNode != null) {
-            ElementType elementType = parentNode.elementType;
+            ElementType elementType = parentNode.getElementType();
             if (elementType instanceof NamedElementType) return (NamedElementType) elementType;
-            parentNode = parentNode.parent;
+            parentNode = parentNode.getParent();
         }
         return null;
     }

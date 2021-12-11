@@ -3,6 +3,7 @@ package com.dci.intellij.dbn.language.common.element.parser.impl;
 import com.dci.intellij.dbn.language.common.ParseException;
 import com.dci.intellij.dbn.language.common.TokenType;
 import com.dci.intellij.dbn.language.common.element.ElementType;
+import com.dci.intellij.dbn.language.common.element.impl.ElementTypeBase;
 import com.dci.intellij.dbn.language.common.element.impl.ElementTypeRef;
 import com.dci.intellij.dbn.language.common.element.impl.IdentifierElementType;
 import com.dci.intellij.dbn.language.common.element.impl.IterationElementType;
@@ -44,7 +45,7 @@ public class SequenceElementTypeParser<ET extends SequenceElementType> extends E
                 // is end of document
                 if (tokenType == null || tokenType.isChameleon()) {
                     ParseResultType resultType =
-                            child.optional && (child.isLast() || child.isOptionalFromHere()) ? ParseResultType.FULL_MATCH :
+                            child.isOptional() && (child.isLast() || child.isOptionalFromHere()) ? ParseResultType.FULL_MATCH :
                             !child.isFirst() && elementType.isExitIndex(index) ? ParseResultType.NO_MATCH : ParseResultType.PARTIAL_MATCH;
 
                     return stepOut(node, context, resultType, matchedTokens);
@@ -54,7 +55,7 @@ public class SequenceElementTypeParser<ET extends SequenceElementType> extends E
                     ParseResult result = ParseResult.noMatch();
                     // current token can still be part of the iterated element.
                     //if (elementTypes[i].containsToken(tokenType)) {
-                    if (shouldParseElement(child.elementType, node, context)) {
+                    if (shouldParseElement(child.getElementType(), node, context)) {
 
                         //node = node.createVariant(builder.getCurrentOffset(), i);
                         result = child.getParser().parse(node, context);
@@ -67,7 +68,7 @@ public class SequenceElementTypeParser<ET extends SequenceElementType> extends E
                     }
 
                     // not matched and not optional
-                    if (result.isNoMatch() && !child.optional) {
+                    if (result.isNoMatch() && !child.isOptional()) {
                         boolean isWeakMatch = matches < 2 && matchedTokens < 3 && index > 1 && ignoreFirstMatch();
 
                         if (child.isFirst() || elementType.isExitIndex(index) || isWeakMatch || matches == 0) {
@@ -106,8 +107,9 @@ public class SequenceElementTypeParser<ET extends SequenceElementType> extends E
 
     private boolean ignoreFirstMatch() {
         ElementTypeRef firstChild = elementType.getChild(0);
-        if (firstChild.elementType instanceof IdentifierElementType) {
-            IdentifierElementType identifierElementType = (IdentifierElementType) firstChild.elementType;
+        ElementTypeBase elementType = firstChild.getElementType();
+        if (elementType instanceof IdentifierElementType) {
+            IdentifierElementType identifierElementType = (IdentifierElementType) elementType;
             return !identifierElementType.isDefinition();
         }
         return false;
@@ -143,7 +145,7 @@ public class SequenceElementTypeParser<ET extends SequenceElementType> extends E
     private int getLandmarkIndex(TokenType tokenType, int index, ParsePathNode node) {
         if (tokenType.isParserLandmark()) {
             BasicPathNode statementPathNode = node.getPathNode(ElementTypeAttribute.STATEMENT);
-            if (statementPathNode != null && statementPathNode.elementType.getLookupCache().couldStartWithToken(tokenType)) {
+            if (statementPathNode != null && statementPathNode.getElementType().getLookupCache().couldStartWithToken(tokenType)) {
                 return -1;
             }
             ElementTypeRef[] children = elementType.getChildren();
@@ -156,7 +158,7 @@ public class SequenceElementTypeParser<ET extends SequenceElementType> extends E
 
             ParsePathNode parseNode = node;
             while (parseNode != null) {
-                ElementType elementType = parseNode.elementType;
+                ElementType elementType = parseNode.getElementType();
                 if (elementType instanceof SequenceElementType) {
                     SequenceElementType sequenceElementType = (SequenceElementType) elementType;
                     if ( sequenceElementType.containsLandmarkTokenFromIndex(tokenType, parseNode.getCursorPosition() + 1)) {
@@ -168,49 +170,9 @@ public class SequenceElementTypeParser<ET extends SequenceElementType> extends E
                         return -1;
                     }
                 }
-                parseNode = parseNode.parent;
+                parseNode = parseNode.getParent();
             }
         }
         return 0;
     }
-
-
-    private ParsePathNode advanceToLandmark_New(ParserBuilder builder, ParsePathNode node) {
-        TokenType tokenType = builder.getTokenType();
-        while (tokenType != null && !tokenType.isParserLandmark()) {
-            builder.advanceLexer(node);
-            tokenType = builder.getTokenType();
-        }
-
-        // scan current sequence
-        ElementTypeRef[] children = elementType.getChildren();
-        int siblingIndex = node.getCursorPosition();
-        while (siblingIndex < children.length) {
-            int builderOffset = builder.getCurrentOffset();
-            siblingIndex = node.incrementIndex(builderOffset);
-            // check children landmarks
-            if (children[siblingIndex].getLookupCache().couldStartWithToken(tokenType)) {
-                return node;
-            }
-        }
-
-        ParsePathNode parentNode = node.parent;
-        while (parentNode != null) {
-            ElementType elementType = parentNode.elementType;
-            if (elementType instanceof SequenceElementType) {
-                parentNode = advanceToLandmark_New(builder, node);
-
-            } else if (elementType instanceof IterationElementType) {
-                IterationElementType iterationElementType = (IterationElementType) elementType;
-                if (iterationElementType.isSeparator(tokenType)) {
-                    return parentNode;
-                }
-            }
-            parentNode = parentNode == null ? null : parentNode.parent;
-        }
-
-        return null;
-    }
-
-
 }

@@ -39,7 +39,7 @@ public class OneOfElementTypeLookupCache extends ElementTypeLookupCacheIndexed<O
         ElementTypeRef[] elementTypeRefs = elementType.getChildren();
         for (ElementTypeRef child : elementTypeRefs) {
             if (context.check(child)) {
-                bucket = child.elementType.getLookupCache().captureFirstPossibleLeafs(context, bucket);
+                bucket = child.getLookupCache().captureFirstPossibleLeafs(context, bucket);
             }
         }
         return bucket;
@@ -51,7 +51,7 @@ public class OneOfElementTypeLookupCache extends ElementTypeLookupCacheIndexed<O
         ElementTypeRef[] elementTypeRefs = elementType.getChildren();
         for (ElementTypeRef child : elementTypeRefs) {
             if (context.check(child)) {
-                bucket = child.elementType.getLookupCache().captureFirstPossibleTokens(context, bucket);
+                bucket = child.getLookupCache().captureFirstPossibleTokens(context, bucket);
             }
         }
         return bucket;

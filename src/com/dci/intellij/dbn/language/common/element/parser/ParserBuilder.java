@@ -119,7 +119,7 @@ public class ParserBuilder {
 
     public Marker mark(ParsePathNode node){
         Marker marker = builder.mark();
-        WrappingDefinition wrapping = node.elementType.getWrapping();
+        WrappingDefinition wrapping = node.getElementType().getWrapping();
         if (wrapping != null) {
             TokenElementType beginElementType = wrapping.getBeginElementType();
             TokenType beginTokenType = beginElementType.getTokenType();
@@ -154,7 +154,7 @@ public class ParserBuilder {
     public void markerDone(Marker marker, ElementType elementType, @Nullable ParsePathNode node) {
         if (marker != null) {
             if (node != null) {
-                WrappingDefinition wrapping = node.elementType.getWrapping();
+                WrappingDefinition wrapping = node.getElementType().getWrapping();
                 if (wrapping != null) {
                     TokenElementType endElementType = wrapping.getEndElementType();
                     TokenType endTokenType = endElementType.getTokenType();
