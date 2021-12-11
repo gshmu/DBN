@@ -14,12 +14,8 @@ public class ParseResult{
         this.matchedTokens = matchedTokens;
     }
 
-    public static ParseResult fullMatch(int matchedTokens) {
-        return new ParseResult(ParseResultType.FULL_MATCH, matchedTokens);
-    }
-
-    public static ParseResult partialMatch(int matchedTokens) {
-        return new ParseResult(ParseResultType.PARTIAL_MATCH, matchedTokens);
+    public static ParseResult match(ParseResultType type, int matchedTokens) {
+        return new ParseResult(type, matchedTokens);
     }
 
     public static ParseResult noMatch() {

@@ -70,7 +70,7 @@ public abstract class ElementTypeParser<T extends ElementTypeBase> {
                     context.setLastResolvedLeaf((LeafElementType) elementType);
                 }
 
-                return ParseResult.fullMatch(matchedTokens);
+                return ParseResult.match(resultType, matchedTokens);
             }
         } finally {
             if (node != null) {
@@ -124,11 +124,11 @@ public abstract class ElementTypeParser<T extends ElementTypeBase> {
 
     protected boolean shouldParseElement(ElementTypeBase elementType, ParsePathNode node, ParserContext context) {
         ParserBuilder builder = context.getBuilder();
-        TokenType tokenType = builder.getTokenType();
+        TokenType token = builder.getTokenType();
 
         return
-            elementType.getLookupCache().couldStartWithToken(tokenType) ||
-            isSuppressibleReservedWord(tokenType, node, context) ||
+            elementType.getLookupCache().couldStartWithToken(token) ||
+            isSuppressibleReservedWord(token, node, context) ||
             isDummyToken(builder.getTokenText());
     }
 
