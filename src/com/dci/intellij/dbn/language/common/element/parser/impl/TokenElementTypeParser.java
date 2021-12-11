@@ -22,8 +22,8 @@ public class TokenElementTypeParser extends ElementTypeParser<TokenElementType> 
     public ParseResult parse(ParsePathNode parentNode, ParserContext context) {
         ParserBuilder builder = context.getBuilder();
 
-        TokenType tokenType = builder.getTokenType();
-        if (tokenType == elementType.getTokenType() || isDummyToken(builder.getTokenText())) {
+        TokenType token = builder.getTokenType();
+        if (token == elementType.getTokenType() || isDummyToken(builder.getTokenText())) {
 
             String text = elementType.getText();
             if (Strings.isNotEmpty(text) && Strings.equalsIgnoreCase(builder.getTokenText(), text)) {
@@ -36,15 +36,15 @@ public class TokenElementTypeParser extends ElementTypeParser<TokenElementType> 
             SimpleTokenType leftParenthesis = sharedTokenTypes.getChrLeftParenthesis();
             SimpleTokenType dot = sharedTokenTypes.getChrDot();
 
-            if (tokenType.isSuppressibleReservedWord()) {
+            if (token.isSuppressibleReservedWord()) {
                 TokenType nextTokenType = builder.lookAhead(1);
                 if (nextTokenType == dot && !elementType.isNextPossibleToken(dot, parentNode, context)) {
-                    context.setWavedTokenType(tokenType);
+                    context.setWavedTokenType(token);
                     return stepOut(null, null, context, ParseResultType.NO_MATCH, 0);
                 }
-                if (tokenType.isFunction() && elementType.getFlavor() == null) {
+                if (token.isFunction() && elementType.getFlavor() == null) {
                     if (nextTokenType != leftParenthesis && elementType.isNextRequiredToken(leftParenthesis, parentNode, context)) {
-                        context.setWavedTokenType(tokenType);
+                        context.setWavedTokenType(token);
                         return stepOut(null, null, context, ParseResultType.NO_MATCH, 0);
                     }
                 }

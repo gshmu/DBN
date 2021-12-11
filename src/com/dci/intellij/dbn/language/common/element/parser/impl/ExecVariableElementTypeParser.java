@@ -18,9 +18,9 @@ public class ExecVariableElementTypeParser extends ElementTypeParser<ExecVariabl
     @Override
     public ParseResult parse(ParsePathNode parentNode, ParserContext context) {
         ParserBuilder builder = context.getBuilder();
-        TokenType tokenType = builder.getTokenType();
-        if (tokenType != null && !tokenType.isChameleon()){
-            if (tokenType.isVariable()) {
+        TokenType token = builder.getTokenType();
+        if (token != null && !token.isChameleon()){
+            if (token.isVariable()) {
                 PsiBuilder.Marker marker = builder.mark();
                 builder.advanceLexer(parentNode);
                 return stepOut(marker, null, context, ParseResultType.FULL_MATCH, 1);
