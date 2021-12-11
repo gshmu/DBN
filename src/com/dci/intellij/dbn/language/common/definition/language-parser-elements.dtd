@@ -8,7 +8,7 @@
         description CDATA #REQUIRED
         attributes CDATA #IMPLIED
         branch CDATA #IMPLIED
-        wrapping-template (PARENTHESES) #IMPLIED
+        optional-wrapping (PARENTHESES) #IMPLIED
         formatting-wrap (NORMAL | ALWAYS | IF_LONG ) #IMPLIED
         formatting-indent (NORMAL | CONTINUE | NONE | ABSOLUTE_NONE) #IMPLIED
         formatting-spacing-before (NO_SPACE | ONE_SPACE | ONE_LINE | MIN_LINE_BREAK | LINE_BREAK) #IMPLIED
@@ -69,7 +69,7 @@
         branch CDATA #IMPLIED
         branch-check CDATA #IMPLIED
         exit (true | false) #IMPLIED
-        wrapping-template (PARENTHESES) #IMPLIED
+        optional-wrapping (PARENTHESES) #IMPLIED
         virtual-object CDATA #IMPLIED
         formatting-wrap (NORMAL | ALWAYS | IF_LONG ) #IMPLIED
         formatting-indent (NORMAL | CONTINUE | NONE | ABSOLUTE_NONE) #IMPLIED
@@ -84,7 +84,7 @@
         version CDATA #IMPLIED
         branch CDATA #IMPLIED
         exit (true | false) #IMPLIED
-        wrapping-template (PARENTHESES) #IMPLIED
+        optional-wrapping (PARENTHESES) #IMPLIED
         elements-count CDATA #IMPLIED
         min-iterations CDATA #IMPLIED
         formatting-wrap (NORMAL | ALWAYS | IF_LONG ) #IMPLIED
@@ -102,7 +102,7 @@
         exit (true | false) #IMPLIED
         ambiguity-level CDATA #IMPLIED
         sortable (true | false) #IMPLIED
-        wrapping-template (PARENTHESES) #IMPLIED
+        optional-wrapping (PARENTHESES) #IMPLIED
         formatting-indent (NORMAL | CONTINUE | NONE | ABSOLUTE_NONE) #IMPLIED
         formatting-wrap (NORMAL | ALWAYS | IF_LONG ) #IMPLIED
         formatting-spacing-before (NO_SPACE | ONE_SPACE | ONE_LINE | LINE_BREAK) #IMPLIED

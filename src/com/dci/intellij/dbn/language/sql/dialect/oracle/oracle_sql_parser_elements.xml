@@ -7265,7 +7265,7 @@
         </one-of>
     </element-def>
 
-    <element-def attributes="GENERIC" description="JOIN clause" id="join_clause" wrapping-template="PARENTHESES">
+    <element-def attributes="GENERIC" description="JOIN clause" id="join_clause" optional-wrapping="PARENTHESES">
         <one-of id="000004038">
             <sequence id="000004039">
                 <token id="000004040" type-id="KW_INNER" />
@@ -7725,7 +7725,7 @@
 
     <!-- ========= EXPRESSION ========= -->
     <element-def description="Expression list" id="expression_list">
-        <iteration id="000004262" separator="CHR_COMMA" wrapping-template="PARENTHESES">
+        <iteration id="000004262" separator="CHR_COMMA" optional-wrapping="PARENTHESES">
             <element ref-id="boolean_expression" />
         </iteration>
     </element-def>
@@ -7738,8 +7738,8 @@
         <element ref-id="condition" />
     </element-def>
     <element-def description="Expression" id="expression">
-        <iteration id="000004264" separator="OPR_CONCATENATION, OPR_NOT_EQUAL, OPR_LESS_GREATER, OPR_LESS_EQUAL, OPR_GREATER_EQUAL, CHR_STAR, CHR_SLASH, CHR_PLUS, CHR_MINUS, CHR_GREATER, CHR_LESS, CHR_EQUAL, FN_MOD" wrapping-template="PARENTHESES">
-            <sequence id="000004265" wrapping-template="PARENTHESES">
+        <iteration id="000004264" separator="OPR_CONCATENATION, OPR_NOT_EQUAL, OPR_LESS_GREATER, OPR_LESS_EQUAL, OPR_GREATER_EQUAL, CHR_STAR, CHR_SLASH, CHR_PLUS, CHR_MINUS, CHR_GREATER, CHR_LESS, CHR_EQUAL, FN_MOD" optional-wrapping="PARENTHESES">
+            <sequence id="000004265" optional-wrapping="PARENTHESES">
                 <one-of id="000004266" optional="true">
                     <token id="000004267" type-id="CHR_PLUS" />
                     <token id="000004268" type-id="CHR_MINUS" />
@@ -7760,7 +7760,7 @@
         </iteration>
         <element optional="true" ref-id="chained_references_suffix" />
     </element-def>
-    <element-def description="Expr" id="expr" wrapping-template="PARENTHESES">
+    <element-def description="Expr" id="expr" optional-wrapping="PARENTHESES">
         <token id="000004274" optional="true" type-id="KW_NEW" />
         <one-of id="000004275">
             <exec-variable id="000004276" />
@@ -7795,7 +7795,7 @@
                 </one-of>
                 <token id="000004287" type-id="STRING" />
             </sequence>
-            <sequence id="000004288" wrapping-template="PARENTHESES">
+            <sequence id="000004288" optional-wrapping="PARENTHESES">
                 <qualified-identifier id="000004289" separator="CHR_DOT">
                     <variant>
                         <object-ref id="000004290" optional="true" type="SCHEMA" />
@@ -8182,19 +8182,19 @@
 
 
     <!-- ========= CONDITIONS ========= -->
-    <element-def description="Condition" id="condition" wrapping-template="PARENTHESES">
+    <element-def description="Condition" id="condition" optional-wrapping="PARENTHESES">
         <token id="000004478" optional="true" type-id="KW_NOT" />
-        <iteration id="000004479" original-name="compound_condition" separator="KW_AND, KW_OR" wrapping-template="PARENTHESES">
+        <iteration id="000004479" original-name="compound_condition" separator="KW_AND, KW_OR" optional-wrapping="PARENTHESES">
             <sequence attributes="CONDITION" id="000004480">
                 <token id="000004481" optional="true" type-id="KW_NOT" />
-                <one-of id="000004482" wrapping-template="PARENTHESES">
+                <one-of id="000004482" optional-wrapping="PARENTHESES">
                     <!--element ref-id="logical_conditions"/-->
                     <element ref-id="exists_condition" />
                     <element ref-id="equals_path_condition" />
                     <element ref-id="regexp_like_condition" />
                     <element ref-id="under_path_condition" />
                     <sequence id="000004483">
-                        <one-of id="000004484" wrapping-template="PARENTHESES">
+                        <one-of id="000004484" optional-wrapping="PARENTHESES">
                             <wrapper id="000004485" template="PARENTHESES">
                                 <one-of id="000004486">
                                     <iteration id="000004487" min-iterations="2" separator="CHR_COMMA">
@@ -8244,7 +8244,7 @@
                                     </sequence>
                                     <sequence id="000004513" original-name="in_condition">
                                         <token id="000004514" type-id="KW_IN" />
-                                        <one-of id="000004515" wrapping-template="PARENTHESES">
+                                        <one-of id="000004515" optional-wrapping="PARENTHESES">
                                             <wrapper id="000004516" template="PARENTHESES">
                                                 <one-of id="000004517" sortable="true">
                                                     <iteration id="000004518" min-iterations="2" separator="CHR_COMMA">

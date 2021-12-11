@@ -1786,7 +1786,7 @@
         <element optional="true" ref-id="order_by_clause" />
     </element-def>
     <element-def attributes="DATA_MANIPULATION, QUERY, SCOPE_DEMARCATION" description="Subquery" id="subquery" virtual-object="DATASET">
-        <one-of id="000000914" wrapping-template="PARENTHESES">
+        <one-of id="000000914" optional-wrapping="PARENTHESES">
             <sequence id="000000915">
                 <element optional="true" ref-id="subquery_factoring_clause" />
                 <token id="000000916" type-id="KW_SELECT" />
@@ -1876,7 +1876,7 @@
 
     <element-def attributes="CLAUSE" description="FROM clause" id="from_clause">
         <token id="000000943" type-id="KW_FROM" />
-        <iteration formatting-indent="NORMAL" id="000000944" separator="CHR_COMMA" wrapping-template="PARENTHESES">
+        <iteration formatting-indent="NORMAL" id="000000944" separator="CHR_COMMA" optional-wrapping="PARENTHESES">
             <element ref-id="table_reference" />
         </iteration>
     </element-def>
@@ -1903,7 +1903,7 @@
             </qualified-identifier>
         </one-of>
     </element-def>
-    <element-def attributes="SCOPE_DEMARCATION" description="Table reference" id="table_reference" wrapping-template="PARENTHESES">
+    <element-def attributes="SCOPE_DEMARCATION" description="Table reference" id="table_reference" optional-wrapping="PARENTHESES">
         <one-of id="000000955">
             <element ref-id="only_table_expression" />
             <element ref-id="lateral_view_expression" />
@@ -2177,7 +2177,7 @@
         </one-of>
     </element-def>
 
-    <element-def attributes="GENERIC" description="JOIN clause" id="join_clause" wrapping-template="PARENTHESES">
+    <element-def attributes="GENERIC" description="JOIN clause" id="join_clause" optional-wrapping="PARENTHESES">
         <one-of id="000001078">
             <sequence id="000001079">
                 <token id="000001080" type-id="KW_INNER" />
@@ -2656,12 +2656,12 @@
     </element-def>
 
     <!-- ========= CONDITIONS ========= -->
-    <element-def description="Condition" id="condition" wrapping-template="PARENTHESES">
+    <element-def description="Condition" id="condition" optional-wrapping="PARENTHESES">
         <token id="000001309" optional="true" type-id="KW_NOT" />
-        <iteration id="000001310" original-name="compound_condition" separator="KW_AND, KW_OR" wrapping-template="PARENTHESES">
+        <iteration id="000001310" original-name="compound_condition" separator="KW_AND, KW_OR" optional-wrapping="PARENTHESES">
             <sequence id="000001311">
                 <token id="000001312" optional="true" type-id="KW_NOT" />
-                <one-of id="000001313" wrapping-template="PARENTHESES">
+                <one-of id="000001313" optional-wrapping="PARENTHESES">
                     <!--element ref-id="logical_conditions"/-->
                     <element ref-id="exists_condition" />
                     <element ref-id="equals_path_condition" />
@@ -2669,7 +2669,7 @@
                     <element ref-id="under_path_condition" />
                     <element ref-id="trigger_event_condition" />
                     <sequence id="000001314">
-                        <one-of id="000001315" wrapping-template="PARENTHESES">
+                        <one-of id="000001315" optional-wrapping="PARENTHESES">
                             <wrapper id="000001316" template="PARENTHESES">
                                 <one-of id="000001317">
                                     <iteration id="000001318" min-iterations="2" separator="CHR_COMMA">
@@ -2754,7 +2754,7 @@
                                     </sequence>
                                     <sequence id="000001363" original-name="in_condition">
                                         <token id="000001364" type-id="KW_IN" />
-                                        <one-of id="000001365" wrapping-template="PARENTHESES">
+                                        <one-of id="000001365" optional-wrapping="PARENTHESES">
                                             <wrapper id="000001366" template="PARENTHESES">
                                                 <one-of id="000001367" sortable="true">
                                                     <element ref-id="expression_list" />
@@ -3954,7 +3954,7 @@
 
     <!-- ========= EXPRESSIONS ========= -->
     <element-def description="Expression list" id="expression_list">
-        <iteration id="000001950" separator="CHR_COMMA" wrapping-template="PARENTHESES">
+        <iteration id="000001950" separator="CHR_COMMA" optional-wrapping="PARENTHESES">
             <element ref-id="boolean_expression" />
         </iteration>
     </element-def>
@@ -3968,8 +3968,8 @@
     </element-def>
 
     <element-def description="Expression" id="expression">
-        <iteration id="000001952" separator="OPR_CONCATENATION, OPR_NOT_EQUAL, OPR_LESS_GREATER, OPR_LESS_EQUAL, OPR_GREATER_EQUAL, CHR_STAR, CHR_SLASH, CHR_PLUS, CHR_MINUS, CHR_GREATER, CHR_LESS, CHR_EQUAL, FN_MOD" wrapping-template="PARENTHESES">
-            <sequence id="000001953" wrapping-template="PARENTHESES">
+        <iteration id="000001952" separator="OPR_CONCATENATION, OPR_NOT_EQUAL, OPR_LESS_GREATER, OPR_LESS_EQUAL, OPR_GREATER_EQUAL, CHR_STAR, CHR_SLASH, CHR_PLUS, CHR_MINUS, CHR_GREATER, CHR_LESS, CHR_EQUAL, FN_MOD" optional-wrapping="PARENTHESES">
+            <sequence id="000001953" optional-wrapping="PARENTHESES">
                 <one-of id="000001954" optional="true">
                     <token id="000001955" type-id="CHR_PLUS" />
                     <token id="000001956" type-id="CHR_MINUS" />
@@ -3991,7 +3991,7 @@
         <element optional="true" ref-id="chained_references_suffix" />
     </element-def>
 
-    <element-def description="Expr" id="expr" wrapping-template="PARENTHESES">
+    <element-def description="Expr" id="expr" optional-wrapping="PARENTHESES">
         <token id="000001962" optional="true" type-id="KW_NEW" />
         <one-of id="000001963">
             <exec-variable id="000001964" />
@@ -4130,7 +4130,7 @@
                 <token id="000002021" type-id="STRING" />
             </sequence>
             <sequence id="000002022">
-                <sequence id="000002023" wrapping-template="PARENTHESES">
+                <sequence id="000002023" optional-wrapping="PARENTHESES">
                     <qualified-identifier id="000002024" separator="CHR_DOT">
                         <variant>
                             <object-ref id="000002025" optional="true" type="SCHEMA" />

@@ -1234,7 +1234,7 @@
         <element ref-id="subquery" />
     </element-def>
     <element-def description="Subquery" id="subquery" virtual-object="DATASET">
-        <sequence id="000000667" wrapping-template="PARENTHESES">
+        <sequence id="000000667" optional-wrapping="PARENTHESES">
             <token exit="true" id="000000668" type-id="KW_SELECT" />
             <element ref-id="select_list" />
             <element optional="true" ref-id="from_clause" />
@@ -1284,8 +1284,8 @@
     </element-def>
     <element-def attributes="CLAUSE" description="FROM clause" id="from_clause">
         <token id="000000686" type-id="KW_FROM" />
-        <iteration id="000000687" separator="CHR_COMMA" wrapping-template="PARENTHESES">
-            <sequence id="000000688" wrapping-template="PARENTHESES">
+        <iteration id="000000687" separator="CHR_COMMA" optional-wrapping="PARENTHESES">
+            <sequence id="000000688" optional-wrapping="PARENTHESES">
                 <element ref-id="from_item" />
                 <element optional="true" ref-id="join_clause" />
             </sequence>
@@ -1491,7 +1491,7 @@
         </one-of>
         <token id="000000802" type-id="KW_JOIN" />
     </element-def>
-    <element-def description="From item" id="from_item" wrapping-template="PARENTHESES">
+    <element-def description="From item" id="from_item" optional-wrapping="PARENTHESES">
         <one-of id="000000803">
             <sequence id="000000804">
                 <token id="000000805" optional="true" type-id="KW_ONLY" />
@@ -1628,7 +1628,7 @@
     <element-def description="Expression" id="expression">
         <iteration id="000000869" separator="OPR_CONCATENATION, CHR_STAR, CHR_SLASH, CHR_PLUS, CHR_MINUS, CHR_AND">
             <sequence id="000000870">
-                <sequence id="000000871" wrapping-template="PARENTHESES">
+                <sequence id="000000871" optional-wrapping="PARENTHESES">
                     <one-of id="000000872" optional="true">
                         <token id="000000873" type-id="CHR_PLUS" />
                         <token id="000000874" type-id="CHR_MINUS" />
@@ -1658,7 +1658,7 @@
             </sequence>
         </iteration>
     </element-def>
-    <element-def description="Expr" id="expr" wrapping-template="PARENTHESES">
+    <element-def description="Expr" id="expr" optional-wrapping="PARENTHESES">
         <one-of id="000000886">
             <wrapper id="000000887" template="PARENTHESES">
                 <element ref-id="subquery" />
@@ -2245,19 +2245,19 @@
     </element-def>
 
     <element-def description="Expression list" id="expression_list">
-        <iteration id="000001339" separator="CHR_COMMA" wrapping-template="PARENTHESES">
+        <iteration id="000001339" separator="CHR_COMMA" optional-wrapping="PARENTHESES">
             <element ref-id="expression" />
         </iteration>
     </element-def>
 
 
     <!-- ========= CONDITIONS ========= -->
-    <element-def description="Condition" id="condition" wrapping-template="PARENTHESES">
+    <element-def description="Condition" id="condition" optional-wrapping="PARENTHESES">
         <one-of id="000001340">
             <iteration formatting-indent="NORMAL" id="000001341" separator="KW_AND, KW_OR">
                 <element ref-id="condition" />
             </iteration>
-            <sequence id="000001342" wrapping-template="PARENTHESES">
+            <sequence id="000001342" optional-wrapping="PARENTHESES">
                 <element ref-id="expression_list" />
                 <one-of id="000001343" optional="true">
                     <sequence id="000001344">
