@@ -14,7 +14,6 @@ import com.dci.intellij.dbn.language.common.element.parser.ParserBuilder;
 import com.dci.intellij.dbn.language.common.element.parser.ParserContext;
 import com.dci.intellij.dbn.language.common.element.path.ParsePathNode;
 import com.dci.intellij.dbn.language.common.element.util.ParseBuilderErrorHandler;
-import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -27,7 +26,7 @@ public class QualifiedIdentifierElementTypeParser extends ElementTypeParser<Qual
     }
 
     @Override
-    public ParseResult parse(@NotNull ParsePathNode parentNode, ParserContext context) throws ParseException {
+    public ParseResult parse(ParsePathNode parentNode, ParserContext context) throws ParseException {
         ParserBuilder builder = context.getBuilder();
         ParsePathNode node = stepIn(parentNode, context);
 
@@ -63,7 +62,7 @@ public class QualifiedIdentifierElementTypeParser extends ElementTypeParser<Qual
         return stepOut(node, context, ParseResultType.NO_MATCH, matchedTokens);
     }
 
-    private QualifiedIdentifierVariant getMostProbableParseVariant(@NotNull ParserBuilder builder) {
+    private QualifiedIdentifierVariant getMostProbableParseVariant(ParserBuilder builder) {
         TokenType separatorToken = elementType.getSeparatorToken().getTokenType();
         SharedTokenTypeBundle sharedTokenTypes = getSharedTokenTypes();
         TokenType identifier = sharedTokenTypes.getIdentifier();

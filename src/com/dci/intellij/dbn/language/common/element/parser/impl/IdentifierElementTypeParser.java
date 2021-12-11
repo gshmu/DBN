@@ -9,7 +9,6 @@ import com.dci.intellij.dbn.language.common.element.parser.ParserBuilder;
 import com.dci.intellij.dbn.language.common.element.parser.ParserContext;
 import com.dci.intellij.dbn.language.common.element.path.ParsePathNode;
 import com.intellij.lang.PsiBuilder;
-import org.jetbrains.annotations.NotNull;
 
 public class IdentifierElementTypeParser extends ElementTypeParser<IdentifierElementType> {
     public IdentifierElementTypeParser(IdentifierElementType elementType) {
@@ -17,17 +16,17 @@ public class IdentifierElementTypeParser extends ElementTypeParser<IdentifierEle
     }
 
     @Override
-    public ParseResult parse(@NotNull ParsePathNode parentNode, ParserContext context) {
+    public ParseResult parse(ParsePathNode parentNode, ParserContext context) {
         ParserBuilder builder = context.getBuilder();
         TokenType tokenType = builder.getTokenType();
         if (tokenType != null && !tokenType.isChameleon()){
             if (tokenType.isIdentifier()) {
-                PsiBuilder.Marker marker = builder.mark(null);
+                PsiBuilder.Marker marker = builder.mark();
                 builder.advanceLexer(parentNode);
                 return stepOut(marker, null, context, ParseResultType.FULL_MATCH, 1);
             }
             else if (isSuppressibleReservedWord(parentNode, context, tokenType)) {
-                PsiBuilder.Marker marker = builder.mark(null);
+                PsiBuilder.Marker marker = builder.mark();
                 builder.advanceLexer(parentNode);
                 return stepOut(marker, null, context, ParseResultType.FULL_MATCH, 1);
             }

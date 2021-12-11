@@ -12,7 +12,6 @@ import com.dci.intellij.dbn.language.common.element.parser.ParserBuilder;
 import com.dci.intellij.dbn.language.common.element.parser.ParserContext;
 import com.dci.intellij.dbn.language.common.element.path.ParsePathNode;
 import com.intellij.lang.PsiBuilder;
-import org.jetbrains.annotations.NotNull;
 
 public class TokenElementTypeParser extends ElementTypeParser<TokenElementType> {
     public TokenElementTypeParser(TokenElementType elementType) {
@@ -20,7 +19,7 @@ public class TokenElementTypeParser extends ElementTypeParser<TokenElementType> 
     }
 
     @Override
-    public ParseResult parse(@NotNull ParsePathNode parentNode, ParserContext context) {
+    public ParseResult parse(ParsePathNode parentNode, ParserContext context) {
         ParserBuilder builder = context.getBuilder();
 
         TokenType tokenType = builder.getTokenType();
@@ -28,7 +27,7 @@ public class TokenElementTypeParser extends ElementTypeParser<TokenElementType> 
 
             String text = elementType.getText();
             if (Strings.isNotEmpty(text) && Strings.equalsIgnoreCase(builder.getTokenText(), text)) {
-                PsiBuilder.Marker marker = builder.mark(null);
+                PsiBuilder.Marker marker = builder.mark();
                 builder.advanceLexer(parentNode);
                 return stepOut(marker, null, context, ParseResultType.FULL_MATCH, 1);
             }
@@ -51,7 +50,7 @@ public class TokenElementTypeParser extends ElementTypeParser<TokenElementType> 
                 }
             }
 
-            PsiBuilder.Marker marker = builder.mark(null);
+            PsiBuilder.Marker marker = builder.mark();
             builder.advanceLexer(parentNode);
             return stepOut(marker, null, context, ParseResultType.FULL_MATCH, 1);
         }
