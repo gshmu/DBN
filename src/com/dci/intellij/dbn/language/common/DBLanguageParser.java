@@ -58,16 +58,16 @@ public abstract class DBLanguageParser implements PsiParser {
                 int currentOffset =  builder.getCurrentOffset();
                 root.getParser().parse(rootParseNode, context);
                 if (currentOffset == builder.getCurrentOffset()) {
-                    TokenType tokenType = builder.getTokenType();
+                    TokenType token = builder.getTokenType();
                     /*if (tokenType.isChameleon()) {
                         PsiBuilder.Marker injectedLanguageMarker = builder.mark();
                         builder.advanceLexer();
                         injectedLanguageMarker.done((IElementType) tokenType);
                     }
-                    else*/ if (tokenType instanceof ChameleonTokenType) {
+                    else*/ if (token instanceof ChameleonTokenType) {
                         PsiBuilder.Marker injectedLanguageMarker = builder.mark();
                         builder.advanceLexer(rootParseNode);
-                        injectedLanguageMarker.done((IElementType) tokenType);
+                        injectedLanguageMarker.done((IElementType) token);
                     } else {
                         builder.advanceLexer(rootParseNode);
                     }

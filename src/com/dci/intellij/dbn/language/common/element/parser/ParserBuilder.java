@@ -33,8 +33,8 @@ public class ParserBuilder {
     }
 
     private void advanceLexer(ParsePathNode node, boolean explicit) {
-        TokenType tokenType = getTokenType();
-        TokenPairRangeMonitor tokenPairRangeMonitor = getTokenPairRangeMonitor(tokenType);
+        TokenType token = getTokenType();
+        TokenPairRangeMonitor tokenPairRangeMonitor = getTokenPairRangeMonitor(token);
         if (tokenPairRangeMonitor != null) {
             tokenPairRangeMonitor.compute(node, explicit);
         }

@@ -135,13 +135,13 @@ public class IterationElementTypeParser extends ElementTypeParser<IterationEleme
         boolean advanced = false;
         BasicElementType unknownElementType = getElementBundle().getUnknownElementType();
         while (!builder.eof()) {
-            TokenType tokenType = builder.getTokenType();
-            if (tokenType == null || tokenType.isChameleon())  break;
+            TokenType token = builder.getTokenType();
+            if (token == null || token.isChameleon())  break;
 
-            if (tokenType.isParserLandmark()) {
+            if (token.isParserLandmark()) {
                 if (separatorTokens != null) {
                     for (TokenElementType separatorToken : separatorTokens) {
-                        if (separatorToken.getLookupCache().containsToken(tokenType)) {
+                        if (separatorToken.getLookupCache().containsToken(token)) {
                             builder.markerDone(marker, unknownElementType);
                             return false;
                         }
@@ -153,7 +153,7 @@ public class IterationElementTypeParser extends ElementTypeParser<IterationEleme
                     if (parseNode.getElementType() instanceof SequenceElementType) {
                         SequenceElementType sequenceElementType = (SequenceElementType) parseNode.getElementType();
                         int index = parseNode.getCursorPosition();
-                        if (!iteratedElementType.getLookupCache().containsToken(tokenType) && sequenceElementType.containsLandmarkTokenFromIndex(tokenType, index + 1)) {
+                        if (!iteratedElementType.getLookupCache().containsToken(token) && sequenceElementType.containsLandmarkTokenFromIndex(token, index + 1)) {
                             if (advanced || !lenient) {
                                 builder.markerDone(marker, unknownElementType);
                             } else {
