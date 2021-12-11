@@ -89,7 +89,7 @@ public final class NextTokenResolver {
                 ensureBucket();
                 ElementTypeLookupCache lookupCache = child.getLookupCache();
                 lookupCache.captureFirstPossibleTokens(bucket);
-                if (!child.optional) {
+                if (!child.isOptional()) {
                     parent = null;
                     break;
                 }

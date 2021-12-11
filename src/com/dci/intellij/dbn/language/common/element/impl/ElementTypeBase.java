@@ -232,9 +232,9 @@ public abstract class ElementTypeBase extends IElementType implements ElementTyp
 
     @Override
     public int getIndexInParent(BasicPathNode pathNode) {
-        BasicPathNode parentNode = pathNode.parent;
-        if (parentNode != null && parentNode.elementType instanceof SequenceElementType) {
-            SequenceElementType sequenceElementType = (SequenceElementType) parentNode.elementType;
+        BasicPathNode parentNode = pathNode.getParent();
+        if (parentNode != null && parentNode.getElementType() instanceof SequenceElementType) {
+            SequenceElementType sequenceElementType = (SequenceElementType) parentNode.getElementType();
             return sequenceElementType.indexOf(this);
         }
         return 0;

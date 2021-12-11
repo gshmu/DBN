@@ -9,7 +9,6 @@ import lombok.Setter;
 @Getter
 public class ParsePathNode extends BasicPathNode<ParsePathNode> {
     private final int startOffset;
-    private final int depth;
     private int currentOffset;
     private int cursorPosition;
     private PsiBuilder.Marker elementMarker;
@@ -19,30 +18,29 @@ public class ParsePathNode extends BasicPathNode<ParsePathNode> {
         this.startOffset = startOffset;
         this.currentOffset = startOffset;
         this.cursorPosition = cursorPosition;
-        this.depth = parent == null ? 0 : parent.depth + 1;
     }
 
     @Override
     public boolean isRecursive() {
-        ParsePathNode parseNode = this.parent;
+        ParsePathNode parseNode = this.getParent();
         while (parseNode != null) {
-            if (parseNode.elementType == this.elementType &&
+            if (parseNode.getElementType() == this.getElementType() &&
                 parseNode.startOffset == startOffset) {
                 return true;
             }
-            parseNode = parseNode.parent;
+            parseNode = parseNode.getParent();
         }
         return false;
     }
 
     public boolean isRecursive(int currentOffset) {
-        ParsePathNode parseNode = this.parent;
+        ParsePathNode parseNode = this.getParent();
         while (parseNode != null) {
-            if (parseNode.elementType == this.elementType &&
+            if (parseNode.getElementType() == this.getElementType() &&
                         parseNode.currentOffset == currentOffset) {
                     return true;
                 }
-            parseNode = parseNode.parent;
+            parseNode = parseNode.getParent();
         }
         return false;
     }
@@ -57,11 +55,6 @@ public class ParsePathNode extends BasicPathNode<ParsePathNode> {
     public void detach() {
         super.detach();
         elementMarker = null;
-    }
-
-    @Override
-    public boolean isSiblingOf(ParsePathNode parentNode) {
-        return depth < parentNode.depth && super.isSiblingOf(parentNode);
     }
 }
 

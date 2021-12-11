@@ -76,19 +76,19 @@ public class ElementLookupContext {
 
     @Nullable
     private static NamedElementType getNamedElement(ParsePathNode pathNode) {
-        pathNode = pathNode.parent;
+        pathNode = pathNode.getParent();
         while (pathNode != null) {
-            ElementType elementType = pathNode.elementType;
+            ElementType elementType = pathNode.getElementType();
             if (elementType instanceof NamedElementType) {
                 return (NamedElementType) elementType;
             }
-            pathNode = pathNode.parent;
+            pathNode = pathNode.getParent();
         }
         return null;
     }
 
     public void removeBranchMarkers(ParsePathNode pathNode) {
-        ElementType elementType = pathNode.elementType;
+        ElementType elementType = pathNode.getElementType();
         if (elementType instanceof NamedElementType) {
             removeBranchMarkers((NamedElementType) elementType);
         }

@@ -9,8 +9,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class BasicPathNode<T extends BasicPathNode> implements PathNode {
-    public T parent;
-    public final ElementType elementType;
+    private T parent;
+    private final ElementType elementType;
 
     public BasicPathNode(ElementType elementType, T parent) {
         this.elementType = elementType;
@@ -98,17 +98,6 @@ public class BasicPathNode<T extends BasicPathNode> implements PathNode {
     @Override
     public void detach() {
         parent = null;
-    }
-
-    public boolean isSiblingOf(ParsePathNode parentNode) {
-        BasicPathNode parent = this.parent;
-        while (parent != null) {
-            if (parent == parentNode) {
-                return true;
-            }
-            parent = parent.parent;
-        }
-        return false;
     }
 
     public static PathNode buildPathUp(ElementType elementType) {

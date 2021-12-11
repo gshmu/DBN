@@ -143,7 +143,7 @@ public final class OneOfElementType extends ElementTypeBase {
         super.collectLeafElements(bucket);
         if (basic) {
             for (ElementTypeRef child : children) {
-                bucket.add(cast(child.elementType));
+                bucket.add(cast(child.getElementType()));
             }
         }
     }

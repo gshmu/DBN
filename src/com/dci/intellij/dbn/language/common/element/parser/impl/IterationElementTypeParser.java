@@ -150,8 +150,8 @@ public class IterationElementTypeParser extends ElementTypeParser<IterationEleme
 
                 ParsePathNode parseNode = parentNode;
                 while (parseNode != null) {
-                    if (parseNode.elementType instanceof SequenceElementType) {
-                        SequenceElementType sequenceElementType = (SequenceElementType) parseNode.elementType;
+                    if (parseNode.getElementType() instanceof SequenceElementType) {
+                        SequenceElementType sequenceElementType = (SequenceElementType) parseNode.getElementType();
                         int index = parseNode.getCursorPosition();
                         if (!iteratedElementType.getLookupCache().containsToken(tokenType) && sequenceElementType.containsLandmarkTokenFromIndex(tokenType, index + 1)) {
                             if (advanced || !lenient) {
@@ -163,7 +163,7 @@ public class IterationElementTypeParser extends ElementTypeParser<IterationEleme
                         }
 
                     }
-                    parseNode = parseNode.parent;
+                    parseNode = parseNode.getParent();
                 }
             }
             builder.advanceLexer(parentNode);

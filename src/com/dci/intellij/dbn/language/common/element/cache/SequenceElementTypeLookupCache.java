@@ -35,10 +35,10 @@ public class SequenceElementTypeLookupCache<T extends SequenceElementType> exten
     private boolean couldStartWithElement(ElementType elementType) {
         ElementTypeRef child = this.elementType.getFirstChild();
         while (child != null) {
-            if (child.optional) {
-                if (elementType == child.elementType) return true;
+            if (child.isOptional()) {
+                if (elementType == child.getElementType()) return true;
             } else {
-                return child.elementType == elementType;
+                return child.getElementType() == elementType;
             }
             child = child.getNext();
         }
@@ -48,8 +48,8 @@ public class SequenceElementTypeLookupCache<T extends SequenceElementType> exten
     private boolean shouldStartWithElement(ElementType elementType) {
         ElementTypeRef child = this.elementType.getFirstChild();
         while (child != null) {
-            if (!child.optional) {
-                return child.elementType == elementType;
+            if (!child.isOptional()) {
+                return child.getElementType() == elementType;
             }
             child = child.getNext();
         }
@@ -64,7 +64,7 @@ public class SequenceElementTypeLookupCache<T extends SequenceElementType> exten
                 return true;
             }
 
-            if (!child.optional) {
+            if (!child.isOptional()) {
                 return false;
             }
             child = child.getNext();
@@ -80,9 +80,9 @@ public class SequenceElementTypeLookupCache<T extends SequenceElementType> exten
         ElementTypeRef child = this.elementType.getFirstChild();
         while (child != null) {
             if (context.check(child)) {
-                child.elementType.getLookupCache().captureFirstPossibleLeafs(context, bucket);
+                child.getLookupCache().captureFirstPossibleLeafs(context, bucket);
             }
-            if (!child.optional) break;
+            if (!child.isOptional()) break;
             child = child.getNext();
         }
         return bucket;
@@ -96,9 +96,9 @@ public class SequenceElementTypeLookupCache<T extends SequenceElementType> exten
         ElementTypeRef child = this.elementType.getFirstChild();
         while (child != null) {
             if (context.check(child)) {
-                child.elementType.getLookupCache().captureFirstPossibleTokens(context, bucket);
+                child.getLookupCache().captureFirstPossibleTokens(context, bucket);
             }
-            if (!child.optional) break;
+            if (!child.isOptional()) break;
             child = child.getNext();
         }
         return bucket;
