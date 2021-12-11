@@ -157,10 +157,10 @@ public abstract class ElementTypeBase extends IElementType implements ElementTyp
     }
 
     private void loadWrappingAttributes(Element def) {
-        String templateId = stringAttribute(def, "wrapping-template");
+        String optionalWrapping = stringAttribute(def, "optional-wrapping");
         TokenElementType beginTokenElement = null;
         TokenElementType endTokenElement = null;
-        if (Strings.isEmpty(templateId)) {
+        if (Strings.isEmpty(optionalWrapping)) {
             String beginTokenId = stringAttribute(def, "wrapping-begin-token");
             String endTokenId = stringAttribute(def, "wrapping-end-token");
 
@@ -169,7 +169,7 @@ public abstract class ElementTypeBase extends IElementType implements ElementTyp
                 endTokenElement = new TokenElementType(bundle, this, endTokenId, id);
             }
         } else {
-            TokenPairTemplate template = TokenPairTemplate.valueOf(templateId);
+            TokenPairTemplate template = TokenPairTemplate.valueOf(optionalWrapping);
             String beginTokenId = template.getBeginToken();
             String endTokenId = template.getEndToken();
             beginTokenElement = new TokenElementType(bundle, this, beginTokenId, id);
