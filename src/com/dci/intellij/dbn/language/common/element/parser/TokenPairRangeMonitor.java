@@ -8,7 +8,6 @@ import com.dci.intellij.dbn.language.common.element.TokenPairTemplate;
 import com.dci.intellij.dbn.language.common.element.path.ParsePathNode;
 import com.intellij.lang.PsiBuilder;
 import com.intellij.util.containers.Stack;
-import org.jetbrains.annotations.NotNull;
 
 public class TokenPairRangeMonitor {
     private int stackSize = 0;
@@ -44,7 +43,7 @@ public class TokenPairRangeMonitor {
         }
     }
 
-    public void compute(@NotNull ParsePathNode node, boolean explicit) {
+    public void compute(ParsePathNode node, boolean explicit) {
         TokenType tokenType = (TokenType) builder.getTokenType();
         if (tokenType == beginTokenType) {
             stackSize++;

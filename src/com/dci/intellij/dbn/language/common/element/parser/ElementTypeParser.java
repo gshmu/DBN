@@ -14,7 +14,6 @@ import com.dci.intellij.dbn.language.common.element.path.ParsePathNode;
 import com.dci.intellij.dbn.language.common.element.util.ElementTypeUtil;
 import com.dci.intellij.dbn.language.common.element.util.ParseBuilderErrorHandler;
 import com.intellij.lang.PsiBuilder.Marker;
-import org.jetbrains.annotations.NotNull;
 
 import java.util.Set;
 
@@ -51,7 +50,7 @@ public abstract class ElementTypeParser<T extends ElementTypeBase> {
             }
             ParserBuilder builder = context.getBuilder();
             if (resultType == ParseResultType.NO_MATCH) {
-                builder.markerRollbackTo(marker, node);
+                builder.markerRollbackTo(marker);
             } else {
                 if (elementType instanceof BlockElementType)
                     builder.markerDrop(marker); else
@@ -142,5 +141,5 @@ public abstract class ElementTypeParser<T extends ElementTypeBase> {
         return elementType.getLanguage().getSharedTokenTypes();
     }
 
-    public abstract ParseResult parse(@NotNull ParsePathNode parentNode, ParserContext context) throws ParseException;
+    public abstract ParseResult parse(ParsePathNode parentNode, ParserContext context) throws ParseException;
 }

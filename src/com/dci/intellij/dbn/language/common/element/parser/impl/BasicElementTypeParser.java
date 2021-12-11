@@ -5,7 +5,6 @@ import com.dci.intellij.dbn.language.common.element.parser.ElementTypeParser;
 import com.dci.intellij.dbn.language.common.element.parser.ParseResult;
 import com.dci.intellij.dbn.language.common.element.parser.ParserContext;
 import com.dci.intellij.dbn.language.common.element.path.ParsePathNode;
-import org.jetbrains.annotations.NotNull;
 
 public class BasicElementTypeParser extends ElementTypeParser<BasicElementType> {
     public BasicElementTypeParser(BasicElementType elementType) {
@@ -13,7 +12,7 @@ public class BasicElementTypeParser extends ElementTypeParser<BasicElementType> 
     }
 
     @Override
-    public ParseResult parse(@NotNull ParsePathNode parentNode, ParserContext context) {
+    public ParseResult parse(ParsePathNode parentNode, ParserContext context) {
         return ParseResult.noMatch();
     }
 }

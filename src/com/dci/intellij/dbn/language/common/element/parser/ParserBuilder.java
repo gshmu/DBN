@@ -12,7 +12,6 @@ import com.intellij.lang.ASTNode;
 import com.intellij.lang.PsiBuilder;
 import com.intellij.lang.PsiBuilder.Marker;
 import com.intellij.psi.tree.IElementType;
-import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Map;
@@ -29,11 +28,11 @@ public class ParserBuilder {
         tokenPairRangeMonitors = languageDialect.createTokenPairRangeMonitors(builder);
     }
 
-    public void advanceLexer(@NotNull ParsePathNode node) {
+    public void advanceLexer(ParsePathNode node) {
         advanceLexer(node, true);
     }
 
-    private void advanceLexer(@NotNull ParsePathNode node, boolean explicit) {
+    private void advanceLexer(ParsePathNode node, boolean explicit) {
         TokenType tokenType = getTokenType();
         TokenPairRangeMonitor tokenPairRangeMonitor = getTokenPairRangeMonitor(tokenType);
         if (tokenPairRangeMonitor != null) {
@@ -114,18 +113,20 @@ public class ParserBuilder {
         return builder.getTreeBuilt();
     }
 
-    public Marker mark(@Nullable ParsePathNode node){
+    public Marker mark(){
+        return builder.mark();
+    }
+
+    public Marker mark(ParsePathNode node){
         Marker marker = builder.mark();
-        if (node != null) {
-            WrappingDefinition wrapping = node.elementType.getWrapping();
-            if (wrapping != null) {
-                TokenElementType beginElementType = wrapping.getBeginElementType();
-                TokenType beginTokenType = beginElementType.getTokenType();
-                while(builder.getTokenType() == beginTokenType) {
-                    Marker beginTokenMarker = builder.mark();
-                    advanceLexer(node, false);
-                    beginTokenMarker.done(beginElementType);
-                }
+        WrappingDefinition wrapping = node.elementType.getWrapping();
+        if (wrapping != null) {
+            TokenElementType beginElementType = wrapping.getBeginElementType();
+            TokenType beginTokenType = beginElementType.getTokenType();
+            while(builder.getTokenType() == beginTokenType) {
+                Marker beginTokenMarker = builder.mark();
+                advanceLexer(node, false);
+                beginTokenMarker.done(beginElementType);
             }
         }
         return marker;
@@ -136,7 +137,7 @@ public class ParserBuilder {
         errorMaker.error(message);
     }
 
-    public void markerRollbackTo(Marker marker, @Nullable ParsePathNode node) {
+    public void markerRollbackTo(Marker marker) {
         if (marker != null) {
             marker.rollbackTo();
             for (TokenPairRangeMonitor tokenPairRangeMonitor : tokenPairRangeMonitors.values()) {
