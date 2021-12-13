@@ -6375,14 +6375,18 @@
                             <token id="000003593" type-id="KW_DEBUG" />
                             <token id="000003594" type-id="KW_DROP" />
                             <token id="000003595" type-id="KW_EXECUTE" />
+                            <token id="000003595" type-id="KW_EXTENDS" />
                             <token id="000003596" type-id="KW_FLASHBACK" />
+                            <token id="000003596" type-id="KW_FORCE" />
                             <token id="000003597" type-id="KW_GRANT" />
                             <token id="000003598" type-id="KW_INSERT" />
                             <token id="000003599" type-id="KW_LOCK" />
                             <token id="000003600" type-id="KW_MANAGE" />
                             <token id="000003601" type-id="KW_MERGE" />
+                            <token id="000003602" type-id="KW_QUERY" />
                             <token id="000003602" type-id="KW_READ" />
                             <token id="000003603" type-id="KW_REDEFINE" />
+                            <token id="000003603" type-id="KW_RESOURCE" />
                             <token id="000003604" type-id="KW_SELECT" />
                             <token id="000003605" type-id="KW_UNDER" />
                             <token id="000003606" type-id="KW_UNLIMITED" />
@@ -6413,6 +6417,7 @@
                             <token id="000003629" type-id="KW_PROCEDURE" />
                             <token id="000003630" type-id="KW_PROFILE" />
                             <token id="000003631" type-id="KW_ROLE" />
+                            <token id="000003631" type-id="KW_REWRITE" />
                             <token id="000003632" type-id="KW_SEQUENCE" />
                             <token id="000003633" type-id="KW_SESSION" />
                             <token id="000003634" type-id="KW_SNAPSHOT" />
@@ -6437,6 +6442,7 @@
                             <sequence id="000003653" tokens="KW_ROLLBACK, KW_SEGMENT" />
                             <sequence id="000003654" tokens="KW_SQL, KW_TRANSLATION, KW_PROFILE" />
                             <sequence id="000003655" tokens="KW_CONNECT, KW_SESSION" />
+                            <sequence id="000003655" tokens="KW_RESOURCE, KW_COST" />
                             <sequence id="000003656">
                                 <token id="000003657" type-id="KW_CUBE" />
                                 <one-of id="000003658" optional="true">

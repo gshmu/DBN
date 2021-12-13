@@ -125,6 +125,9 @@ public abstract class ElementTypeParser<T extends ElementTypeBase> {
     protected boolean shouldParseElement(ElementTypeBase elementType, ParsePathNode node, ParserContext context) {
         ParserBuilder builder = context.getBuilder();
         TokenType token = builder.getTokenType();
+        if (token == null) {
+            return false;
+        }
 
         return
             elementType.getLookupCache().couldStartWithToken(token) ||
