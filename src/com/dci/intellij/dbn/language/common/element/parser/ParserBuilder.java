@@ -61,6 +61,7 @@ public class ParserBuilder {
         return cachedTokenText;
     }
 
+    @Nullable
     public TokenType getTokenType() {
         IElementType tokenType = builder.getTokenType();
         return tokenType instanceof TokenType ? (TokenType) tokenType : null;
