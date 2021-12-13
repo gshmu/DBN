@@ -358,4 +358,8 @@ public class PsiUtil {
         }
         return language;
     }
+
+    public static boolean isWhiteSpaceOrComment(PsiElement element) {
+        return element instanceof PsiWhiteSpace || element instanceof PsiComment;
+    }
 }

@@ -6,6 +6,7 @@ import com.dci.intellij.dbn.language.common.ParseException;
 import com.dci.intellij.dbn.language.common.SharedTokenTypeBundle;
 import com.dci.intellij.dbn.language.common.SimpleTokenType;
 import com.dci.intellij.dbn.language.common.TokenType;
+import com.dci.intellij.dbn.language.common.element.ElementType;
 import com.dci.intellij.dbn.language.common.element.ElementTypeBundle;
 import com.dci.intellij.dbn.language.common.element.impl.BlockElementType;
 import com.dci.intellij.dbn.language.common.element.impl.ElementTypeBase;
@@ -122,7 +123,7 @@ public abstract class ElementTypeParser<T extends ElementTypeBase> {
         return elementType.getElementBundle();
     }
 
-    protected boolean shouldParseElement(ElementTypeBase elementType, ParsePathNode node, ParserContext context) {
+    protected boolean shouldParseElement(ElementType elementType, ParsePathNode node, ParserContext context) {
         ParserBuilder builder = context.getBuilder();
         TokenType token = builder.getTokenType();
         if (token == null) {
