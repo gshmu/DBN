@@ -14,7 +14,6 @@ import com.dci.intellij.dbn.language.common.element.path.ParsePathNode;
 import com.intellij.lang.PsiBuilder.Marker;
 
 public class OneOfElementTypeParser extends ElementTypeParser<OneOfElementType> {
-    private static boolean scanMode = false;
 
     public OneOfElementTypeParser(OneOfElementType elementType) {
         super(elementType);
@@ -22,7 +21,7 @@ public class OneOfElementTypeParser extends ElementTypeParser<OneOfElementType> 
 
     @Override
     public ParseResult parse(ParsePathNode parentNode, ParserContext context) throws ParseException {
-        if (scanMode) {
+        if (false) { // TODO switch to scan parser
             return scanParse(parentNode, context);
         }
 
@@ -56,26 +55,25 @@ public class OneOfElementTypeParser extends ElementTypeParser<OneOfElementType> 
         TokenType token = builder.getTokenType();
 
         if (token != null && !token.isChameleon()) {
-            Marker marker = builder.mark();
             Pair<ElementTypeRef, ParseResult> bestResult = null;
             ElementTypeRef element = elementType.getFirstChild();
             while (element != null) {
                 if (context.check(element) && shouldParseElement(element.getElementType(), node, context)) {
                     ParseResult result = element.getParser().parse(node, context);
+                    Marker marker = builder.mark();
 
                     if (result.isFullMatch()) {
-                        marker.drop();
+                        builder.markerDrop(marker);
                         return stepOut(node, context, result.getType(), result.getMatchedTokens());
                     } else if (result.isPartialMatch()) {
                         if (bestResult == null || result.isBetterThan(bestResult.second())) {
                             bestResult = Pair.of(element, result);
                         }
-                        builder.markerRollbackTo(marker);
                     }
+                    builder.markerRollbackTo(marker);
                 }
                 element = element.getNext();
             }
-            builder.markerRollbackTo(marker);
 
             if (bestResult != null) {
                 ElementTypeRef bestElement = bestResult.first();

@@ -8,7 +8,7 @@ import com.intellij.psi.PsiFile;
 import org.jetbrains.annotations.NotNull;
 
 public class SQLStructureViewModel extends DBLanguageStructureViewModel {
-    private Filter[] filters = new Filter[]{new SQLStructureViewModelFilter()};
+    private final Filter[] filters = new Filter[]{new SQLStructureViewModelFilter()};
 
     SQLStructureViewModel(Editor editor, PsiFile psiFile) {
         super(editor, psiFile);
