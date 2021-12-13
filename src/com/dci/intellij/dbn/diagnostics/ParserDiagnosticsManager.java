@@ -78,11 +78,12 @@ public class ParserDiagnosticsManager extends AbstractProjectComponent implement
                 DBLanguagePsiFile psiFile = ensureFileParsed(file);
                 Progress.check(progress);
                 if (psiFile == null) {
-                    result.addEntry(filePath, 1);
+                    result.addEntry(filePath, 1, 0);
                 } else {
-                    Integer errorCount = Read.call(() -> psiFile.countErrors());
-                    if (errorCount != null && errorCount > 0) {
-                        result.addEntry(filePath, errorCount);
+                    int errors = Read.call(() -> psiFile.countErrors());
+                    int warnings = Read.call(() -> psiFile.countWarnings());
+                    if (errors > 0 || warnings > 0) {
+                        result.addEntry(filePath, errors, warnings);
                     }
                 }
             }

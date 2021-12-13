@@ -48,6 +48,7 @@ import com.intellij.openapi.fileEditor.OpenFileDescriptor;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.FileViewProvider;
+import com.intellij.psi.PsiComment;
 import com.intellij.psi.PsiDirectory;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
@@ -56,8 +57,11 @@ import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiFileFactory;
 import com.intellij.psi.PsiManager;
 import com.intellij.psi.PsiRecursiveElementVisitor;
+import com.intellij.psi.PsiWhiteSpace;
 import com.intellij.psi.SingleRootFileViewProvider;
 import com.intellij.psi.impl.source.PsiFileImpl;
+import com.intellij.psi.impl.source.tree.LeafPsiElement;
+import com.intellij.psi.tree.IElementType;
 import com.intellij.psi.tree.IFileElementType;
 import com.intellij.testFramework.LightVirtualFile;
 import lombok.Getter;
@@ -68,6 +72,7 @@ import javax.swing.Icon;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Consumer;
 
 public abstract class DBLanguagePsiFile extends PsiFileImpl implements FileConnectionMappingProvider, PresentableConnectionProvider, StatefulDisposable {
@@ -455,5 +460,32 @@ public abstract class DBLanguagePsiFile extends PsiFileImpl implements FileConne
         };;
         visitor.visitFile(this);
         return errors.size();
+    }
+
+    public int countWarnings() {
+        AtomicInteger count = new AtomicInteger();
+        PsiElementVisitor visitor = new PsiRecursiveElementVisitor() {
+            @Override
+            public void visitElement(@NotNull PsiElement element) {
+                if (element instanceof PsiWhiteSpace || element instanceof PsiComment) {
+                    // ignore
+                } else if (element instanceof LeafPsiElement && element.getParent() instanceof DBLanguagePsiFile) {
+                    LeafPsiElement leafPsiElement = (LeafPsiElement) element;
+                    IElementType elementType = leafPsiElement.getElementType();
+                    if (elementType instanceof TokenType) {
+                        TokenType tokenType = (TokenType) elementType;
+
+                        if (!tokenType.isCharacter() && !tokenType.isChameleon()) {
+                            count.incrementAndGet();
+                        }
+                    }
+
+                } else{
+                    super.visitElement(element);
+                }
+            }
+        };;
+        visitor.visitFile(this);
+        return count.get();
     }
 }
