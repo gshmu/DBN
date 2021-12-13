@@ -8,19 +8,20 @@ import org.jetbrains.annotations.Nullable;
 
 import java.io.File;
 
+import static com.dci.intellij.dbn.common.util.Commons.nvl;
 import static com.dci.intellij.dbn.diagnostics.data.ParserDiagnosticsUtil.computeStateTransition;
 
 @Getter
 public class ParserDiagnosticsEntry implements Comparable<ParserDiagnosticsEntry>{
 
     private final String filePath;
-    private final int oldErrorCount;
-    private final int newErrorCount;
+    private final IssueCounter oldIssues;
+    private final IssueCounter newIssues;
 
-    public ParserDiagnosticsEntry(String filePath, int oldErrorCount, int newErrorCount) {
+    public ParserDiagnosticsEntry(String filePath, IssueCounter oldIssues, IssueCounter newIssues) {
         this.filePath = filePath;
-        this.oldErrorCount = oldErrorCount;
-        this.newErrorCount = newErrorCount;
+        this.oldIssues = nvl(oldIssues, IssueCounter.EMPTY);
+        this.newIssues = nvl(newIssues, IssueCounter.EMPTY);
     }
 
     @Nullable
@@ -30,7 +31,7 @@ public class ParserDiagnosticsEntry implements Comparable<ParserDiagnosticsEntry
     }
 
     public StateTransition getStateTransition() {
-        return computeStateTransition(oldErrorCount, newErrorCount);
+        return computeStateTransition(oldIssues, newIssues);
     }
 
     @Override

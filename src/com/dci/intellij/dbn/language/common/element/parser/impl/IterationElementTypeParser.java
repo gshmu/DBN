@@ -33,11 +33,9 @@ public class IterationElementTypeParser extends ElementTypeParser<IterationEleme
 
         int iterations = 0;
         int matchedTokens = 0;
-        //TokenType tokenType = (TokenType) builder.getTokenType();
-        // check if the token objectType can be part of this iteration
-        //if (isDummyToken(builder.getTokenText()) || isSuppressibleReservedWord(tokenType, node) || iteratedElementType.containsToken(tokenType)) {
-            ParseResult result = iteratedElementType.getParser().parse(node, context);
 
+        if (shouldParseElement(iteratedElementType, node, context)) {
+            ParseResult result = iteratedElementType.getParser().parse(node, context);
 
             // check first iteration element
             if (result.isMatch()) {
@@ -117,7 +115,7 @@ public class IterationElementTypeParser extends ElementTypeParser<IterationEleme
                     }
                 }
             }
-        //}
+        }
         return stepOut(node, context, ParseResultType.NO_MATCH, matchedTokens);
     }
 

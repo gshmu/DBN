@@ -11,8 +11,8 @@ import org.jetbrains.annotations.Nullable;
 
 public class ParserDiagnosticsTableModel implements DBNReadonlyTableModel<ParserDiagnosticsEntry>, Disposable {
     public static final ParserDiagnosticsTableModel EMPTY = new ParserDiagnosticsTableModel(null, null);
-    public static final String[] INITIAL_COLUMNS = {"File", "Error Count"};
-    public static final String[] DELTA_COLUMNS = {"File", "Previous Error Count", "Error Count", "Transition"};
+    public static final String[] INITIAL_COLUMNS = {"File", "Error Count", "Warning Count"};
+    public static final String[] DELTA_COLUMNS = {"File", "Previous Errors", "Previous Warnings", "Errors", "Warnings", "Transition"};
 
     private final ParserDiagnosticsDeltaResult deltaResult;
 
@@ -68,14 +68,17 @@ public class ParserDiagnosticsTableModel implements DBNReadonlyTableModel<Parser
         if (isInitial()) {
             switch (column) {
                 case 0: return row.getFilePath();
-                case 1: return row.getNewErrorCount();
+                case 1: return row.getNewIssues().getErrors();
+                case 2: return row.getNewIssues().getWarnings();
             }
         } else {
             switch (column) {
                 case 0: return row.getFilePath();
-                case 1: return row.getOldErrorCount();
-                case 2: return row.getNewErrorCount();
-                case 3: return row.getStateTransition();
+                case 1: return row.getOldIssues().getErrors();
+                case 2: return row.getOldIssues().getWarnings();
+                case 3: return row.getNewIssues().getErrors();
+                case 4: return row.getNewIssues().getWarnings();
+                case 5: return row.getStateTransition();
             }
         }
         return "";
@@ -86,14 +89,17 @@ public class ParserDiagnosticsTableModel implements DBNReadonlyTableModel<Parser
         if (isInitial()) {
             switch (column) {
                 case 0: return row.getFilePath();
-                case 1: return Integer.toString(row.getNewErrorCount());
+                case 1: return Integer.toString(row.getNewIssues().getErrors());
+                case 2: return Integer.toString(row.getNewIssues().getWarnings());
             }
         } else {
             switch (column) {
                 case 0: return row.getFilePath();
-                case 1: return Integer.toString(row.getOldErrorCount());
-                case 2: return Integer.toString(row.getNewErrorCount());
-                case 3: return row.getStateTransition().name();
+                case 1: return Integer.toString(row.getOldIssues().getErrors());
+                case 2: return Integer.toString(row.getOldIssues().getWarnings());
+                case 3: return Integer.toString(row.getNewIssues().getErrors());
+                case 4: return Integer.toString(row.getNewIssues().getWarnings());
+                case 5: return row.getStateTransition().name();
             }
         }
         return "";

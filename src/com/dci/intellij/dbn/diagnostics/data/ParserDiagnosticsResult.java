@@ -3,7 +3,6 @@ package com.dci.intellij.dbn.diagnostics.data;
 
 import com.dci.intellij.dbn.common.locale.Formatter;
 import com.dci.intellij.dbn.common.locale.options.RegionalSettings;
-import com.dci.intellij.dbn.common.options.setting.SettingsSupport;
 import com.dci.intellij.dbn.common.project.ProjectRef;
 import com.dci.intellij.dbn.common.state.PersistentStateElement;
 import com.intellij.openapi.project.Project;
@@ -19,20 +18,21 @@ import java.util.Set;
 import java.util.TreeMap;
 import java.util.UUID;
 
-import static com.dci.intellij.dbn.common.util.Commons.nvl;
+import static com.dci.intellij.dbn.common.options.setting.SettingsSupport.integerAttribute;
+import static com.dci.intellij.dbn.common.options.setting.SettingsSupport.setIntegerAttribute;
 
 
 @Getter
 public class ParserDiagnosticsResult implements PersistentStateElement, Comparable<ParserDiagnosticsResult> {
 
-    private final Map<String, Integer> entries = new TreeMap<>();
+    private final Map<String, IssueCounter> entries = new TreeMap<>();
     private final ProjectRef project;
 
     private String id = UUID.randomUUID().toString();
     private Timestamp timestamp = new Timestamp(System.currentTimeMillis());
     private int index;
     private boolean draft = true;
-    private int errorCount;
+    private final IssueCounter issues = new IssueCounter();
 
     public ParserDiagnosticsResult(@NotNull Project project) {
         this.project = ProjectRef.of(project);
@@ -47,17 +47,23 @@ public class ParserDiagnosticsResult implements PersistentStateElement, Comparab
         return new ParserDiagnosticsDeltaResult(previous, this);
     }
 
-    public void addEntry(String file, int errorCount) {
-        entries.put(file, errorCount);
-        this.errorCount += errorCount;
+    public void addEntry(String file, int errors, int warnings) {
+        this.entries.put(file, new IssueCounter(errors, warnings));
+        this.issues.merge(errors, warnings);
     }
 
     public Set<String> getFiles() {
         return entries.keySet();
     }
 
-    public int getErrorCount(String file) {
-        return nvl(entries.get(file), 0);
+    @Nullable
+    public IssueCounter getIssues(String file) {
+        return entries.get(file);
+    }
+
+    public int getIssueCount(String file) {
+        IssueCounter counter = entries.get(file);
+        return counter == null ? 0 : counter.issueCount();
     }
 
     public boolean isPresent(String file) {
@@ -79,7 +85,7 @@ public class ParserDiagnosticsResult implements PersistentStateElement, Comparab
 
     public String getName() {
         Formatter formatter = RegionalSettings.getInstance(getProject()).getBaseFormatter();
-        return "Result " + index + " (" + formatter.formatDateTime(timestamp) + ")" + (draft ? " - draft" : "") + "";
+        return formatter.formatDateTime(timestamp) + (draft ? " - draft" : "") + "";
     }
 
     @Override
@@ -91,8 +97,9 @@ public class ParserDiagnosticsResult implements PersistentStateElement, Comparab
             List<Element> children = element.getChildren();
             for (Element child : children) {
                 String filePath = child.getAttributeValue("path");
-                int errorCount = SettingsSupport.integerAttribute(child, "error-count", 0);
-                addEntry(filePath, errorCount);
+                int errorCount = integerAttribute(child, "error-count", 0);
+                int unresolvedCount = integerAttribute(child, "warning-count", -1);
+                addEntry(filePath, errorCount, unresolvedCount);
             }
         }
     }
@@ -102,11 +109,12 @@ public class ParserDiagnosticsResult implements PersistentStateElement, Comparab
         element.setAttribute("id", id);
         element.setAttribute("timestamp", timestamp.toString());
         for (String filePath : entries.keySet()) {
-            Integer errorCount = entries.get(filePath);
+            IssueCounter issues = entries.get(filePath);
 
             Element child = new Element("file");
             child.setAttribute("path", filePath);
-            SettingsSupport.setIntegerAttribute(child, "error-count", errorCount);
+            setIntegerAttribute(child, "error-count", issues.getErrors());
+            setIntegerAttribute(child, "warning-count", issues.getWarnings());
             element.addContent(child);
 
         }
