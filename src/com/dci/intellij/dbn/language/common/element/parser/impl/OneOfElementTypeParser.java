@@ -1,6 +1,7 @@
 package com.dci.intellij.dbn.language.common.element.parser.impl;
 
 import com.dci.intellij.dbn.common.Pair;
+import com.dci.intellij.dbn.diagnostics.Diagnostics;
 import com.dci.intellij.dbn.language.common.ParseException;
 import com.dci.intellij.dbn.language.common.TokenType;
 import com.dci.intellij.dbn.language.common.element.impl.ElementTypeRef;
@@ -21,8 +22,8 @@ public class OneOfElementTypeParser extends ElementTypeParser<OneOfElementType> 
 
     @Override
     public ParseResult parse(ParsePathNode parentNode, ParserContext context) throws ParseException {
-        if (false) { // TODO switch to scan parser
-            return scanParse(parentNode, context);
+        if (Diagnostics.isAlternativeParserEnabled()) {
+            return scanNew(parentNode, context);
         }
 
         ParserBuilder builder = context.getBuilder();
@@ -47,7 +48,7 @@ public class OneOfElementTypeParser extends ElementTypeParser<OneOfElementType> 
         return stepOut(node, context, ParseResultType.NO_MATCH, 0);
     }
 
-    private ParseResult scanParse(ParsePathNode parentNode, ParserContext context) throws ParseException {
+    private ParseResult scanNew(ParsePathNode parentNode, ParserContext context) throws ParseException {
         ParserBuilder builder = context.getBuilder();
         ParsePathNode node = stepIn(parentNode, context);
 

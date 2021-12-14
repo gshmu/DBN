@@ -6540,8 +6540,8 @@
                 <token id="000003713" type-id="KW_PUBLIC" />
                 <sequence id="000003714">
                     <qualified-identifier id="000003715" separator="CHR_DOT">
-                        <variant><object-ref id="000003716" attributes="SUBJECT" type="USER" /></variant>
-                        <variant><object-ref id="000003717" attributes="SUBJECT" type="ROLE" /></variant>
+                        <variant><object-ref attributes="SUBJECT" id="000003716" type="USER" /></variant>
+                        <variant><object-ref attributes="SUBJECT" id="000003717" type="ROLE" /></variant>
                     </qualified-identifier>
                     <sequence id="000003718" optional="true">
                         <token id="000003719" type-id="KW_IDENTIFIED" />
@@ -8203,7 +8203,7 @@
                         <one-of id="000004490" optional-wrapping="PARENTHESES">
                             <wrapper id="000004491" template="PARENTHESES">
                                 <one-of id="000004492">
-                                    <iteration id="000004493" min-iterations="2" separator="CHR_COMMA">
+                                    <iteration id="000004493" min-iterations="2" separator="CHR_COMMA"> <!--TODO why max 2 iterations-->
                                         <element ref-id="expression" />
                                     </iteration>
                                     <element exit="true" ref-id="subquery" />
@@ -10700,15 +10700,19 @@
     <element-def custom="true" description="DBLINK qualifier" id="dblink_qualifier">
         <token id="000005874" type-id="CHR_AT" />
         <object-ref id="000005875" type="DBLINK" />
+        <sequence optional="true" id="000005876"> <!--TODO dblinks seem to allow dots in the name - amend parser tokenizer-->
+            <token type-id="CHR_DOT" id="000005877" />
+            <token type-id="IDENTIFIER" id="000005878" />
+        </sequence>
     </element-def>
 
     <element-def description="Unknown identifier" id="custom_undefined">
-        <token id="000005876" type-id="IDENTIFIER" />
+        <token id="000005879" type-id="IDENTIFIER" />
     </element-def>
     <element-def description="Statement end" formatting-spacing-before="NO_SPACE" id="end" truncate-on-execution="true">
-        <one-of id="000005877">
-            <token id="000005878" type-id="CHR_SEMICOLON" />
-            <token id="000005879" type-id="CHR_SLASH" />
+        <one-of id="000005880">
+            <token id="000005881" type-id="CHR_SEMICOLON" />
+            <token id="000005882" type-id="CHR_SLASH" />
         </one-of>
     </element-def>
 </element-defs>

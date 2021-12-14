@@ -134,10 +134,24 @@ public class ParserDiagnosticsForm extends DBNFormImpl {
         resultsList.setSelectedValue(result, true);
     }
 
-    private static class ResultListCellRenderer extends ColoredListCellRenderer<ParserDiagnosticsResult> {
+    private class ResultListCellRenderer extends ColoredListCellRenderer<ParserDiagnosticsResult> {
         @Override
         protected void customizeCellRenderer(@NotNull JList list, ParserDiagnosticsResult value, int index, boolean selected, boolean hasFocus) {
-            append(value.getName(), SimpleTextAttributes.REGULAR_ATTRIBUTES);
+            append(value.getName() + " - ", SimpleTextAttributes.REGULAR_ATTRIBUTES);
+            ParserDiagnosticsResult previous = manager.getPreviousResult(value);
+            if (previous == null) {
+                append("INITIAL", SimpleTextAttributes.GRAY_ATTRIBUTES);
+            } else {
+                int previousCount = previous.getIssues().issueCount();
+                int currentCount = value.getIssues().issueCount();
+                if (previousCount < currentCount) {
+                    append("DEGRADED", StateTransition.DEGRADED.getCategory().getTextAttributes());
+                } else if (previousCount > currentCount) {
+                    append("IMPROVED", StateTransition.IMPROVED.getCategory().getTextAttributes());
+                } else {
+                    append("UNCHANGED", SimpleTextAttributes.GRAY_ATTRIBUTES);
+                }
+            }
         }
     }
 

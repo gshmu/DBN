@@ -22,6 +22,10 @@ public final class Diagnostics {
         return developerMode && miscellaneous.bulkActionsEnabled;
     }
 
+    public static boolean isAlternativeParserEnabled() {
+        return developerMode && miscellaneous.alternativeParserEnabled;
+    }
+
     public static boolean isDatabaseAccessDebug() {
         return developerMode && debugLogging.databaseAccess;
     }
@@ -121,6 +125,7 @@ public final class Diagnostics {
     public static final class Miscellaneous implements PersistentStateElement{
         private boolean dialogSizingReset = false;
         private boolean bulkActionsEnabled = false;
+        private boolean alternativeParserEnabled = false;
 
         @Override
         public void readState(Element element) {
@@ -128,6 +133,7 @@ public final class Diagnostics {
             if (miscellaneous != null) {
                 dialogSizingReset = booleanAttribute(miscellaneous, "dialog-sizing-reset", dialogSizingReset);
                 bulkActionsEnabled = booleanAttribute(miscellaneous, "bulk-actions-enabled", bulkActionsEnabled);
+                alternativeParserEnabled = booleanAttribute(miscellaneous, "alternative-parser-enabled", alternativeParserEnabled);
             }
         }
 
@@ -137,6 +143,7 @@ public final class Diagnostics {
             element.addContent(miscellaneous);
             setBooleanAttribute(miscellaneous, "dialog-sizing-reset", dialogSizingReset);
             setBooleanAttribute(miscellaneous, "bulk-actions-enabled", bulkActionsEnabled);
+            setBooleanAttribute(miscellaneous, "alternative-parser-enabled", alternativeParserEnabled);
         }
     }
 

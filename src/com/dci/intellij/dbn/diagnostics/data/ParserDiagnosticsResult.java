@@ -85,7 +85,7 @@ public class ParserDiagnosticsResult implements PersistentStateElement, Comparab
 
     public String getName() {
         Formatter formatter = RegionalSettings.getInstance(getProject()).getBaseFormatter();
-        return formatter.formatDateTime(timestamp) + (draft ? " - draft" : "") + "";
+        return "Result " + index + " - " + formatter.formatDateTime(timestamp) + (draft ? " (draft)" : "");
     }
 
     @Override
