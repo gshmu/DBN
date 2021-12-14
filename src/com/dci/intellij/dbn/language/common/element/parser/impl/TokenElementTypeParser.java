@@ -11,7 +11,7 @@ import com.dci.intellij.dbn.language.common.element.parser.ParseResultType;
 import com.dci.intellij.dbn.language.common.element.parser.ParserBuilder;
 import com.dci.intellij.dbn.language.common.element.parser.ParserContext;
 import com.dci.intellij.dbn.language.common.element.path.ParsePathNode;
-import com.intellij.lang.PsiBuilder;
+import com.intellij.lang.PsiBuilder.Marker;
 
 public class TokenElementTypeParser extends ElementTypeParser<TokenElementType> {
     public TokenElementTypeParser(TokenElementType elementType) {
@@ -20,16 +20,19 @@ public class TokenElementTypeParser extends ElementTypeParser<TokenElementType> 
 
     @Override
     public ParseResult parse(ParsePathNode parentNode, ParserContext context) {
+        if (context.isAlternative()) {
+            return parseNew(parentNode, context);
+        }
         ParserBuilder builder = context.getBuilder();
+        Marker marker = null;
 
         TokenType token = builder.getTokenType();
-        if (token == elementType.getTokenType() || isDummyToken(builder.getTokenText())) {
+        if (token == elementType.getTokenType() || builder.isDummyToken()) {
 
             String text = elementType.getText();
             if (Strings.isNotEmpty(text) && Strings.equalsIgnoreCase(builder.getTokenText(), text)) {
-                PsiBuilder.Marker marker = builder.mark();
-                builder.advanceLexer(parentNode);
-                return stepOut(marker, null, context, ParseResultType.FULL_MATCH, 1);
+                marker = builder.markAndAdvanceLexer(parentNode);
+                return stepOut(marker, context, ParseResultType.FULL_MATCH, 1);
             }
 
             SharedTokenTypeBundle sharedTokenTypes = getElementBundle().getTokenTypeBundle().getSharedTokenTypes();
@@ -40,20 +43,44 @@ public class TokenElementTypeParser extends ElementTypeParser<TokenElementType> 
                 TokenType nextTokenType = builder.lookAhead(1);
                 if (nextTokenType == dot && !elementType.isNextPossibleToken(dot, parentNode, context)) {
                     context.setWavedTokenType(token);
-                    return stepOut(null, null, context, ParseResultType.NO_MATCH, 0);
+                    return stepOut(marker, context, ParseResultType.NO_MATCH, 0);
                 }
                 if (token.isFunction() && elementType.getFlavor() == null) {
                     if (nextTokenType != leftParenthesis && elementType.isNextRequiredToken(leftParenthesis, parentNode, context)) {
                         context.setWavedTokenType(token);
-                        return stepOut(null, null, context, ParseResultType.NO_MATCH, 0);
+                        return stepOut(marker, context, ParseResultType.NO_MATCH, 0);
                     }
                 }
             }
 
-            PsiBuilder.Marker marker = builder.mark();
-            builder.advanceLexer(parentNode);
-            return stepOut(marker, null, context, ParseResultType.FULL_MATCH, 1);
+            marker = builder.markAndAdvanceLexer(parentNode);
+            return stepOut(marker, context, ParseResultType.FULL_MATCH, 1);
         }
-        return stepOut(null, null, context, ParseResultType.NO_MATCH, 0);
+        return stepOut(marker, context, ParseResultType.NO_MATCH, 0);
+    }
+
+    ParseResult parseNew(ParsePathNode parentNode, ParserContext context) {
+        ParserBuilder builder = context.getBuilder();
+        Marker marker = null;
+
+        TokenType token = builder.getTokenType();
+        if (token == elementType.getTokenType() || builder.isDummyToken()) {
+
+            String elementText = elementType.getText();
+            if (Strings.isNotEmpty(elementText)) {
+                if (Strings.equalsIgnoreCase(builder.getTokenText(), elementText)) {
+                    // custom elements with text definition
+                    marker = builder.markAndAdvanceLexer(parentNode);
+                    return stepOut(marker, context, ParseResultType.FULL_MATCH, 1);
+                }
+            } else {
+                // regular token match
+                marker = builder.markAndAdvanceLexer(parentNode);
+                return stepOut(marker, context, ParseResultType.FULL_MATCH, 1);
+            }
+        }
+
+        // no match
+        return stepOut(marker, context, ParseResultType.NO_MATCH, 0);
     }
 }

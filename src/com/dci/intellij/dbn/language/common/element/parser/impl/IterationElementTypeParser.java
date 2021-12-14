@@ -1,6 +1,5 @@
 package com.dci.intellij.dbn.language.common.element.parser.impl;
 
-import com.dci.intellij.dbn.diagnostics.Diagnostics;
 import com.dci.intellij.dbn.language.common.ParseException;
 import com.dci.intellij.dbn.language.common.TokenType;
 import com.dci.intellij.dbn.language.common.element.ElementType;
@@ -29,7 +28,7 @@ public class IterationElementTypeParser extends ElementTypeParser<IterationEleme
 
     @Override
     public ParseResult parse(ParsePathNode parentNode, ParserContext context) throws ParseException {
-        if (Diagnostics.isAlternativeParserEnabled()) return parseNew(parentNode, context);
+        if (context.isAlternative()) return parseNew(parentNode, context);
 
         ParserBuilder builder = context.getBuilder();
         ParsePathNode node = stepIn(parentNode, context);
