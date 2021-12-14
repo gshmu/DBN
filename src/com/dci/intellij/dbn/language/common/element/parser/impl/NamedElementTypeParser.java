@@ -15,22 +15,26 @@ public class NamedElementTypeParser extends SequenceElementTypeParser<NamedEleme
     @Override
     public ParseResult parse(ParsePathNode parentNode, ParserContext context) throws ParseException {
         ParserBuilder builder = context.getBuilder();
-        if (isRecursive(parentNode, builder.getCurrentOffset(), 2)) {
+        if (isRecursive(parentNode, builder.getCurrentOffset())) {
             return ParseResult.noMatch();
         }
         return super.parse(parentNode, context);
     }
 
-    protected boolean isRecursive(ParsePathNode parseNode, int builderOffset, int iterations){
-        while (parseNode != null &&  iterations > 0) {
+    protected boolean isRecursive(ParsePathNode parseNode, int builderOffset){
+        // allow 2 levels of recursivity
+        boolean recursive = false;
+        while (parseNode != null) {
             if (parseNode.getElementType() == elementType &&
                     parseNode.getStartOffset() == builderOffset) {
-                //return true;
-                iterations--;
+                if (recursive) {
+                    return true;
+                } else {
+                    recursive = true;
+                }
             }
             parseNode = parseNode.getParent();
         }
-        return iterations == 0;
-        //return false;
+        return false;
     }
 }

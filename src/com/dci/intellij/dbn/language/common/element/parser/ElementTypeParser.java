@@ -126,7 +126,7 @@ public abstract class ElementTypeParser<T extends ElementTypeBase> {
     protected boolean shouldParseElement(ElementType elementType, ParsePathNode node, ParserContext context) {
         ParserBuilder builder = context.getBuilder();
         TokenType token = builder.getTokenType();
-        if (token == null) {
+        if (token == null || token.isChameleon()) {
             return false;
         }
 

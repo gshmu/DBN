@@ -14,4 +14,14 @@ public enum ParseResultType {
         this.score = score;
     }
 
+    public static ParseResultType worseOf(ParseResultType ... resultTypes) {
+        ParseResultType worse = null;
+        for (ParseResultType resultType : resultTypes) {
+            if (worse == null || worse.score > resultType.score) {
+                worse = resultType;
+            }
+        }
+        return worse;
+    }
+
 }

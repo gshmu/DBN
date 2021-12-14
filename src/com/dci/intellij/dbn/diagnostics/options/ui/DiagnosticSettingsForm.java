@@ -31,6 +31,7 @@ public class DiagnosticSettingsForm extends DBNFormImpl {
     private JCheckBox bulkActionsCheckbox;
     private JPanel hintPanel;
     private JLabel acknowledgementLabel;
+    private JCheckBox alternativeParserCheckbox;
 
     private final DBNHintForm disclaimerForm;
 
@@ -58,6 +59,7 @@ public class DiagnosticSettingsForm extends DBNFormImpl {
         Diagnostics.Miscellaneous miscellaneous = Diagnostics.getMiscellaneous();
         dialogSizingCheckbox.setSelected(miscellaneous.isDialogSizingReset());
         bulkActionsCheckbox.setSelected(miscellaneous.isBulkActionsEnabled());
+        alternativeParserCheckbox.setSelected(miscellaneous.isAlternativeParserEnabled());
 
         updateFields(null);
 
@@ -72,6 +74,7 @@ public class DiagnosticSettingsForm extends DBNFormImpl {
         databaseLaggingCheckBox.setEnabled(developerMode);
         dialogSizingCheckbox.setEnabled(developerMode);
         bulkActionsCheckbox.setEnabled(developerMode);
+        alternativeParserCheckbox.setEnabled(developerMode);
 
         boolean databaseLaggingEnabled = developerMode && databaseLaggingCheckBox.isSelected();
         connectivityLagTextField.setEnabled(databaseLaggingEnabled);
@@ -100,6 +103,7 @@ public class DiagnosticSettingsForm extends DBNFormImpl {
         Diagnostics.Miscellaneous miscellaneous = Diagnostics.getMiscellaneous();
         miscellaneous.setDialogSizingReset(dialogSizingCheckbox.isSelected());
         miscellaneous.setBulkActionsEnabled(bulkActionsCheckbox.isSelected());
+        miscellaneous.setAlternativeParserEnabled(alternativeParserCheckbox.isSelected());
 
     }
 
