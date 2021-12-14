@@ -1,5 +1,6 @@
 package com.dci.intellij.dbn.language.common.element.parser;
 
+import com.dci.intellij.dbn.code.common.completion.CodeCompletionContributor;
 import com.dci.intellij.dbn.language.common.DBLanguageDialect;
 import com.dci.intellij.dbn.language.common.TokenType;
 import com.dci.intellij.dbn.language.common.TokenTypeCategory;
@@ -19,13 +20,20 @@ import java.util.Map;
 public class ParserBuilder {
     private final PsiBuilder builder;
     private final Map<TokenPairTemplate, TokenPairRangeMonitor> tokenPairRangeMonitors;
-    private String cachedTokenText;
+    private String tokenText;
+    private boolean dummyToken;
 
 
     public ParserBuilder(PsiBuilder builder, DBLanguageDialect languageDialect) {
         this.builder = builder;
         this.builder.setDebugMode(false);
         tokenPairRangeMonitors = languageDialect.createTokenPairRangeMonitors(builder);
+    }
+
+    public Marker markAndAdvanceLexer(ParsePathNode node) {
+        Marker marker = mark();
+        advanceLexer(node);
+        return marker;
     }
 
     public void advanceLexer(ParsePathNode node) {
@@ -39,7 +47,7 @@ public class ParserBuilder {
             tokenPairRangeMonitor.compute(node, explicit);
         }
         builder.advanceLexer();
-        cachedTokenText = null;
+        initCache();
     }
 
     @Nullable
@@ -53,12 +61,17 @@ public class ParserBuilder {
         return null;
     }
 
+    private void initCache() {
+        tokenText = builder.getTokenText();
+        dummyToken = tokenText != null && tokenText.contains(CodeCompletionContributor.DUMMY_TOKEN);
+    }
+
+    public boolean isDummyToken(){
+        return dummyToken;
+    }
 
     public String getTokenText() {
-        if (cachedTokenText == null) {
-            cachedTokenText = builder.getTokenText();
-        }
-        return cachedTokenText;
+        return tokenText;
     }
 
     @Nullable
@@ -144,7 +157,7 @@ public class ParserBuilder {
             for (TokenPairRangeMonitor tokenPairRangeMonitor : tokenPairRangeMonitors.values()) {
                 tokenPairRangeMonitor.rollback();
             }
-            cachedTokenText = null;
+            initCache();
         }
     }
 

@@ -17,22 +17,44 @@ public class IdentifierElementTypeParser extends ElementTypeParser<IdentifierEle
 
     @Override
     public ParseResult parse(ParsePathNode parentNode, ParserContext context) {
+        if (context.isAlternative()) {
+            return parseNew(parentNode, context);
+        }
+
         ParserBuilder builder = context.getBuilder();
         TokenType token = builder.getTokenType();
+        Marker marker = null;
+
         if (token != null && !token.isChameleon()){
             if (token.isIdentifier()) {
-                Marker marker = builder.mark();
-                builder.advanceLexer(parentNode);
-                return stepOut(marker, null, context, ParseResultType.FULL_MATCH, 1);
+                marker = builder.markAndAdvanceLexer(parentNode);
+                return stepOut(marker, context, ParseResultType.FULL_MATCH, 1);
             }
             else if (isSuppressibleReservedWord(parentNode, context, token)) {
-                Marker marker = builder.mark();
-                builder.advanceLexer(parentNode);
-                return stepOut(marker, null, context, ParseResultType.FULL_MATCH, 1);
+                marker = builder.markAndAdvanceLexer(parentNode);
+                return stepOut(marker, context, ParseResultType.FULL_MATCH, 1);
             }
         }
-        return stepOut(null, null, context, ParseResultType.NO_MATCH, 0);
+        return stepOut(marker, context, ParseResultType.NO_MATCH, 0);
     }
+
+
+    ParseResult parseNew(ParsePathNode parentNode, ParserContext context) {
+        ParserBuilder builder = context.getBuilder();
+        TokenType token = builder.getTokenType();
+        Marker marker = null;
+
+        if (token != null && !token.isChameleon()){
+            if (token.isIdentifier()) {
+                marker = builder.markAndAdvanceLexer(parentNode);
+                return stepOut(marker, context, ParseResultType.FULL_MATCH, 1);
+            }
+            // TODO suppressible reserved words support
+        }
+
+        return stepOut(marker, context, ParseResultType.NO_MATCH, 0);
+    }
+
 
     private boolean isSuppressibleReservedWord(ParsePathNode parentNode, ParserContext context, TokenType tokenType) {
         if (tokenType.isSuppressibleReservedWord()) {

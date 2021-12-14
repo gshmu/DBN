@@ -35,7 +35,6 @@ public class TokenPairRangeMonitor {
             TokenPairRangeMarker lastMarker = markersStack.peek();
             if (lastMarker.getOffset() >= builderOffset) {
                 markersStack.pop();
-                lastMarker.dropMarker();
                 if (stackSize > 0) stackSize--;
             } else {
                 break;
@@ -75,8 +74,7 @@ public class TokenPairRangeMonitor {
     public void cleanup(boolean force) {
         if (force) stackSize = 0;
         while(markersStack.size() > stackSize) {
-            TokenPairRangeMarker lastMarker = markersStack.pop();
-            lastMarker.dropMarker();
+            markersStack.pop();
         }
     }
 
