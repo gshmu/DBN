@@ -50,7 +50,7 @@ public class ParserDiagnosticsDeltaResult {
         if (previous == null) {
             return current.getName();
         } else {
-            return "Result " + current.getName() + " compared to result " + previous.getName();
+            return current.getName() + " compared to " + previous.getName();
         }
     }
 

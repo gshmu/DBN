@@ -1,5 +1,6 @@
 package com.dci.intellij.dbn.language.common.element.parser.impl;
 
+import com.dci.intellij.dbn.diagnostics.Diagnostics;
 import com.dci.intellij.dbn.language.common.ParseException;
 import com.dci.intellij.dbn.language.common.TokenType;
 import com.dci.intellij.dbn.language.common.element.ElementType;
@@ -18,6 +19,9 @@ import com.intellij.lang.PsiBuilder;
 
 import java.util.Set;
 
+import static com.dci.intellij.dbn.common.util.Commons.nvl;
+import static com.dci.intellij.dbn.language.common.element.parser.ParseResultType.*;
+
 public class IterationElementTypeParser extends ElementTypeParser<IterationElementType> {
     public IterationElementTypeParser(IterationElementType elementType) {
         super(elementType);
@@ -25,6 +29,8 @@ public class IterationElementTypeParser extends ElementTypeParser<IterationEleme
 
     @Override
     public ParseResult parse(ParsePathNode parentNode, ParserContext context) throws ParseException {
+        if (Diagnostics.isAlternativeParserEnabled()) return parseNew(parentNode, context);
+
         ParserBuilder builder = context.getBuilder();
         ParsePathNode node = stepIn(parentNode, context);
 
@@ -34,7 +40,7 @@ public class IterationElementTypeParser extends ElementTypeParser<IterationEleme
         int iterations = 0;
         int matchedTokens = 0;
 
-        if (shouldParseElement(iteratedElementType, node, context)) {
+        //if (shouldParseElement(iteratedElementType, node, context)) {
             ParseResult result = iteratedElementType.getParser().parse(node, context);
 
             // check first iteration element
@@ -115,8 +121,74 @@ public class IterationElementTypeParser extends ElementTypeParser<IterationEleme
                     }
                 }
             }
-        }
+        //}
         return stepOut(node, context, ParseResultType.NO_MATCH, matchedTokens);
+    }
+
+    public ParseResult parseNew(ParsePathNode parentNode, ParserContext context) throws ParseException {
+        ParserBuilder builder = context.getBuilder();
+        ParsePathNode node = stepIn(parentNode, context);
+
+        ElementType iteratedElement = elementType.getIteratedElementType();
+        TokenElementType[] separatorTokens = elementType.getSeparatorTokens();
+
+        ParseMonitor monitor = new ParseMonitor();
+
+        while (shouldParseElement(iteratedElement, node, context)) {
+            ParseResult result = iteratedElement.getParser().parse(node, context);
+            if (result.isMatch()) {
+                monitor.iterations++;
+                monitor.matchedTokens += result.getMatchedTokens();
+                monitor.update(result.getType());
+
+                node.setCurrentOffset(builder.getCurrentOffset());
+
+            } else {
+                if (monitor.iterations == 0) {
+                    return stepOut(node, context, NO_MATCH, 0);
+
+                } else if (matchesIterationConstraints(monitor.iterations)) {
+                    monitor.exit = true;
+                    break;
+                }
+
+            }
+
+            if (separatorTokens != null) {
+                ParseResult sepResult = ParseResult.noMatch();
+                for (TokenElementType separatorToken : separatorTokens) {
+                    sepResult = separatorToken.getParser().parse(node, context);
+                    if (sepResult.isMatch()) break;
+                }
+
+                if (sepResult.isMatch()) {
+                    monitor.matchedTokens++;
+                    node.setCurrentOffset(builder.getCurrentOffset());
+                } else {
+                    monitor.exit = true;
+                    break;
+                }
+            }
+
+            if (monitor.exit) {
+                return matchesIterationConstraints(monitor.iterations) ?
+                        stepOut(node, context, monitor.lastResultType, monitor.matchedTokens) :
+                        stepOut(node, context, PARTIAL_MATCH, monitor.matchedTokens);
+            }
+        }
+
+        return stepOut(node, context, nvl(monitor.lastResultType, NO_MATCH), monitor.matchedTokens);
+    }
+
+    private static class ParseMonitor {
+        private boolean exit;
+        private int iterations = 0;
+        private int matchedTokens = 0;
+        private ParseResultType lastResultType;
+
+        public void update(ParseResultType resultType) {
+            this.lastResultType = ParseResultType.worseOf(nvl(lastResultType, FULL_MATCH), resultType);
+        }
     }
 
     private boolean advanceLexerToNextLandmark(ParsePathNode parentNode, boolean lenient, ParserContext context) {
@@ -173,10 +245,12 @@ public class IterationElementTypeParser extends ElementTypeParser<IterationEleme
         return true;
     }
 
+    @Deprecated
     private boolean matchesMinIterations(int iterations) {
         return elementType.getMinIterations() <= iterations;
     }
 
+    @Deprecated
     private boolean matchesIterations(int iterations) {
         int[]elementsCountVariants = elementType.getElementsCountVariants();
         if (elementsCountVariants != null) {
@@ -187,6 +261,24 @@ public class IterationElementTypeParser extends ElementTypeParser<IterationEleme
             }
             return false;
         }
+        return true;
+    }
+
+    private boolean matchesIterationConstraints(int iterations) {
+        if (elementType.getMinIterations() <= iterations) {
+            int[]elementsCountVariants = elementType.getElementsCountVariants();
+            if (elementsCountVariants != null) {
+                for (int elementsCountVariant: elementsCountVariants) {
+                    if (elementsCountVariant == iterations) {
+                        return true;
+                    }
+                }
+                return false;
+            }
+        } else {
+            return false;
+        }
+
         return true;
     }
 }
