@@ -8,7 +8,7 @@ import com.dci.intellij.dbn.language.common.element.parser.ParseResultType;
 import com.dci.intellij.dbn.language.common.element.parser.ParserBuilder;
 import com.dci.intellij.dbn.language.common.element.parser.ParserContext;
 import com.dci.intellij.dbn.language.common.element.path.ParsePathNode;
-import com.intellij.lang.PsiBuilder;
+import com.intellij.lang.PsiBuilder.Marker;
 
 public class ExecVariableElementTypeParser extends ElementTypeParser<ExecVariableElementType> {
     public ExecVariableElementTypeParser(ExecVariableElementType elementType) {
@@ -19,14 +19,15 @@ public class ExecVariableElementTypeParser extends ElementTypeParser<ExecVariabl
     public ParseResult parse(ParsePathNode parentNode, ParserContext context) {
         ParserBuilder builder = context.getBuilder();
         TokenType token = builder.getTokenType();
+        Marker marker = null;
+
         if (token != null && !token.isChameleon()){
             if (token.isVariable()) {
-                PsiBuilder.Marker marker = builder.mark();
-                builder.advanceLexer(parentNode);
-                return stepOut(marker, null, context, ParseResultType.FULL_MATCH, 1);
+                marker = builder.markAndAdvanceLexer(parentNode);
+                return stepOut(marker, context, ParseResultType.FULL_MATCH, 1);
             }
         }
-        return stepOut(null, null, context, ParseResultType.NO_MATCH, 0);
+        return stepOut(marker, context, ParseResultType.NO_MATCH, 0);
     }
 
 }

@@ -1,7 +1,6 @@
 package com.dci.intellij.dbn.language.common.element.parser.impl;
 
 import com.dci.intellij.dbn.common.Pair;
-import com.dci.intellij.dbn.diagnostics.Diagnostics;
 import com.dci.intellij.dbn.language.common.ParseException;
 import com.dci.intellij.dbn.language.common.TokenType;
 import com.dci.intellij.dbn.language.common.element.impl.ElementTypeRef;
@@ -22,7 +21,7 @@ public class OneOfElementTypeParser extends ElementTypeParser<OneOfElementType> 
 
     @Override
     public ParseResult parse(ParsePathNode parentNode, ParserContext context) throws ParseException {
-        if (Diagnostics.isAlternativeParserEnabled()) {
+        if (context.isAlternative()) {
             return scanNew(parentNode, context);
         }
 

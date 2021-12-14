@@ -1,6 +1,5 @@
 package com.dci.intellij.dbn.language.common.element.parser;
 
-import com.dci.intellij.dbn.code.common.completion.CodeCompletionContributor;
 import com.dci.intellij.dbn.common.util.Commons;
 import com.dci.intellij.dbn.language.common.ParseException;
 import com.dci.intellij.dbn.language.common.SharedTokenTypeBundle;
@@ -25,10 +24,6 @@ public abstract class ElementTypeParser<T extends ElementTypeBase> {
         this.elementType = elementType;
     }
 
-    protected boolean isDummyToken(String tokenText){
-        return tokenText != null && tokenText.contains(CodeCompletionContributor.DUMMY_TOKEN);
-    }
-
     public ParsePathNode stepIn(ParsePathNode parentNode, ParserContext context) {
         ParserBuilder builder = context.getBuilder();
         ParsePathNode node = new ParsePathNode(elementType, parentNode, builder.getCurrentOffset(), 0);
@@ -41,7 +36,11 @@ public abstract class ElementTypeParser<T extends ElementTypeBase> {
         return stepOut(null, node, context, resultType, matchedTokens);
     }
 
-    public ParseResult stepOut(Marker marker, ParsePathNode node, ParserContext context, ParseResultType resultType, int matchedTokens) {
+    public ParseResult stepOut(Marker marker, ParserContext context, ParseResultType resultType, int matchedTokens) {
+        return stepOut(marker, null, context, resultType, matchedTokens);
+    }
+
+    private ParseResult stepOut(Marker marker, ParsePathNode node, ParserContext context, ParseResultType resultType, int matchedTokens) {
         try {
             marker = marker == null ? node == null ? null : node.getElementMarker() : marker;
             if (resultType == ParseResultType.PARTIAL_MATCH) {
@@ -131,9 +130,9 @@ public abstract class ElementTypeParser<T extends ElementTypeBase> {
         }
 
         return
+            builder.isDummyToken() ||
             elementType.getLookupCache().couldStartWithToken(token) ||
-            isSuppressibleReservedWord(token, node, context) ||
-            isDummyToken(builder.getTokenText());
+            isSuppressibleReservedWord(token, node, context);
     }
 
     @Override

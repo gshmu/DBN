@@ -1,5 +1,6 @@
 package com.dci.intellij.dbn.language.common.element.parser;
 
+import com.dci.intellij.dbn.diagnostics.Diagnostics;
 import com.dci.intellij.dbn.language.common.DBLanguageDialect;
 import com.dci.intellij.dbn.language.common.TokenType;
 import com.dci.intellij.dbn.language.common.element.cache.ElementLookupContext;
@@ -16,6 +17,7 @@ public class ParserContext extends ElementLookupContext {
     private transient LeafElementType lastResolvedLeaf;
     private TokenType wavedTokenType;
     private int wavedTokenTypeOffset;
+    private boolean alternative = Diagnostics.isAlternativeParserEnabled();
 
     public ParserContext(PsiBuilder builder, DBLanguageDialect languageDialect, double databaseVersion) {
         super(null, databaseVersion);
