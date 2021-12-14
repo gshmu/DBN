@@ -1,20 +1,19 @@
 package com.dci.intellij.dbn.language.common.element.parser;
 
 import com.dci.intellij.dbn.language.common.element.path.ParsePathNode;
-import com.intellij.lang.PsiBuilder;
 import lombok.Getter;
 import lombok.Setter;
 
 @Getter
 @Setter
-public class TokenPairRangeMarker {
+public class TokenPairMarker {
     private final ParsePathNode parseNode;
     private final int offset;
     private boolean explicit;
 
-    public TokenPairRangeMarker(ParsePathNode parseNode, PsiBuilder builder, boolean explicit) {
+    public TokenPairMarker(ParsePathNode parseNode, int offset, boolean explicit) {
         this.parseNode = parseNode;
-        this.offset = builder.getCurrentOffset();
+        this.offset = offset;
         this.explicit = explicit;
     }
 

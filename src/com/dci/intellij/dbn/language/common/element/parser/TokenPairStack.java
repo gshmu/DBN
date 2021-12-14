@@ -6,24 +6,23 @@ import com.dci.intellij.dbn.language.common.TokenType;
 import com.dci.intellij.dbn.language.common.TokenTypeBundle;
 import com.dci.intellij.dbn.language.common.element.TokenPairTemplate;
 import com.dci.intellij.dbn.language.common.element.path.ParsePathNode;
-import com.intellij.lang.PsiBuilder;
 import com.intellij.util.containers.Stack;
 
-public class TokenPairRangeMonitor {
+public class TokenPairStack {
     private int stackSize = 0;
-    private final Stack<TokenPairRangeMarker> markersStack = new Stack<>();
-    private final PsiBuilder builder;
+    private final Stack<TokenPairMarker> markersStack = new Stack<>();
+    private final ParserBuilder builder;
 
-    private final SimpleTokenType beginTokenType;
-    private final SimpleTokenType endTokenType;
+    private final SimpleTokenType beginToken;
+    private final SimpleTokenType endToken;
 
 
-    public TokenPairRangeMonitor(PsiBuilder builder, DBLanguageDialect languageDialect, TokenPairTemplate template) {
+    public TokenPairStack(ParserBuilder builder, DBLanguageDialect languageDialect, TokenPairTemplate template) {
         this.builder = builder;
 
         TokenTypeBundle parserTokenTypes = languageDialect.getParserTokenTypes();
-        beginTokenType = parserTokenTypes.getTokenType(template.getBeginToken());
-        endTokenType = parserTokenTypes.getTokenType(template.getEndToken());
+        beginToken = parserTokenTypes.getTokenType(template.getBeginToken());
+        endToken = parserTokenTypes.getTokenType(template.getEndToken());
     }
 
     /**
@@ -32,7 +31,7 @@ public class TokenPairRangeMonitor {
     public void rollback() {
         int builderOffset = builder.getCurrentOffset();
         while (markersStack.size() > 0) {
-            TokenPairRangeMarker lastMarker = markersStack.peek();
+            TokenPairMarker lastMarker = markersStack.peek();
             if (lastMarker.getOffset() >= builderOffset) {
                 markersStack.pop();
                 if (stackSize > 0) stackSize--;
@@ -42,13 +41,13 @@ public class TokenPairRangeMonitor {
         }
     }
 
-    public void compute(ParsePathNode node, boolean explicit) {
-        TokenType tokenType = (TokenType) builder.getTokenType();
-        if (tokenType == beginTokenType) {
+    public void acknowledge(ParsePathNode node, boolean explicit) {
+        TokenType tokenType = builder.getTokenType();
+        if (tokenType == beginToken) {
             stackSize++;
-            TokenPairRangeMarker marker = new TokenPairRangeMarker(node, builder, explicit);
+            TokenPairMarker marker = new TokenPairMarker(node, builder.getCurrentOffset(), explicit);
             markersStack.push(marker);
-        } else if (tokenType == endTokenType) {
+        } else if (tokenType == endToken) {
             if (stackSize > 0) stackSize--;
             if (markersStack.size() > 0) {
 /*
@@ -80,8 +79,8 @@ public class TokenPairRangeMonitor {
 
     public boolean isExplicitRange() {
         if (!markersStack.isEmpty()) {
-            TokenPairRangeMarker tokenPairRangeMarker = markersStack.peek();
-            return tokenPairRangeMarker.isExplicit();
+            TokenPairMarker marker = markersStack.peek();
+            return marker.isExplicit();
         }
 
         return false;
@@ -89,8 +88,8 @@ public class TokenPairRangeMonitor {
 
     public void setExplicitRange(boolean value) {
         if (!markersStack.isEmpty()) {
-            TokenPairRangeMarker tokenPairRangeMarker = markersStack.peek();
-            tokenPairRangeMarker.setExplicit(value);
+            TokenPairMarker marker = markersStack.peek();
+            marker.setExplicit(value);
         }
     }
 }

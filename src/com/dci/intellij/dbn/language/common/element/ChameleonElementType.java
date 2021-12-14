@@ -1,7 +1,11 @@
 package com.dci.intellij.dbn.language.common.element;
 
 import com.dci.intellij.dbn.code.common.style.formatting.FormattingDefinition;
-import com.dci.intellij.dbn.language.common.*;
+import com.dci.intellij.dbn.language.common.DBLanguage;
+import com.dci.intellij.dbn.language.common.DBLanguageDialect;
+import com.dci.intellij.dbn.language.common.TokenType;
+import com.dci.intellij.dbn.language.common.TokenTypeBundleBase;
+import com.dci.intellij.dbn.language.common.TokenTypeCategory;
 import com.dci.intellij.dbn.language.common.element.cache.ElementTypeLookupCache;
 import com.dci.intellij.dbn.language.common.element.impl.LeafElementType;
 import com.dci.intellij.dbn.language.common.element.impl.WrappingDefinition;
@@ -21,7 +25,7 @@ import com.intellij.psi.tree.ILazyParseableElementType;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import javax.swing.*;
+import javax.swing.Icon;
 
 public class ChameleonElementType extends ILazyParseableElementType implements ElementType, TokenType {
     private final DBLanguageDialect parentLanguage;
@@ -49,8 +53,9 @@ public class ChameleonElementType extends ILazyParseableElementType implements E
     @Override
     protected ASTNode doParseContents(@NotNull final ASTNode chameleon, @NotNull final PsiElement psi) {
         Project project = psi.getProject();
-        PsiBuilder builder = PsiBuilderFactory.getInstance().createBuilder(project, chameleon, null, getLanguageDialect(), chameleon.getChars());
-        PsiParser parser = getLanguageDialect().getParserDefinition().getParser();
+        DBLanguageDialect languageDialect = getLanguageDialect();
+        PsiBuilder builder = PsiBuilderFactory.getInstance().createBuilder(project, chameleon, null, languageDialect, chameleon.getChars());
+        PsiParser parser = languageDialect.getParserDefinition().getParser();
         return parser.parse(this, builder).getFirstChildNode();
     }
 
