@@ -10253,7 +10253,7 @@
     <element-def description="OVER analytic clause" id="over_analytic_clause">
         <token id="05638" type-id="KW_OVER" />
         <wrapper id="05639" template="PARENTHESES">
-            <element ref-id="analytic_clause" />
+            <element ref-id="analytic_clause" optional="true"/>
         </wrapper>
     </element-def>
     <element-def attributes="CLAUSE" description="Analytic clause" id="analytic_clause">

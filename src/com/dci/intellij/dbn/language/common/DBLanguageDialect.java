@@ -4,9 +4,7 @@ import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.common.latent.Latent;
 import com.dci.intellij.dbn.language.common.element.ChameleonElementType;
 import com.dci.intellij.dbn.language.common.element.TokenPairTemplate;
-import com.dci.intellij.dbn.language.common.element.parser.TokenPairRangeMonitor;
 import com.intellij.lang.Language;
-import com.intellij.lang.PsiBuilder;
 import com.intellij.psi.tree.IFileElementType;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
@@ -18,6 +16,7 @@ import java.util.Set;
 
 public abstract class DBLanguageDialect extends Language implements DBFileElementTypeProvider {
     private static final Map<DBLanguageDialectIdentifier, DBLanguageDialect> REGISTRY = new EnumMap<>(DBLanguageDialectIdentifier.class);
+    private static final TokenPairTemplate[] TOKEN_PAIR_TEMPLATES = new TokenPairTemplate[] {TokenPairTemplate.PARENTHESES};
 
     private final DBLanguageDialectIdentifier identifier;
 
@@ -99,9 +98,7 @@ public abstract class DBLanguageDialect extends Language implements DBFileElemen
         return null;
     }
 
-    public Map<TokenPairTemplate,TokenPairRangeMonitor> createTokenPairRangeMonitors(PsiBuilder builder){
-        Map<TokenPairTemplate,TokenPairRangeMonitor> tokenPairRangeMonitors = new EnumMap<>(TokenPairTemplate.class);
-        tokenPairRangeMonitors.put(TokenPairTemplate.PARENTHESES, new TokenPairRangeMonitor(builder, this, TokenPairTemplate.PARENTHESES));
-        return tokenPairRangeMonitors;
+    public TokenPairTemplate[] getTokenPairTemplates() {
+        return TOKEN_PAIR_TEMPLATES;
     }
 }
