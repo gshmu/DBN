@@ -272,7 +272,7 @@ public class ElementTypeBundle {
     private String createId() {
         String id = Integer.toString(idCursor.getAndIncrement());
         StringBuilder buffer = new StringBuilder();
-        while (buffer.length() + id.length() < 9) {
+        while (buffer.length() + id.length() < 5) {
             buffer.append('0');
         }
         buffer.append(id);
