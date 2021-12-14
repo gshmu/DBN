@@ -5,29 +5,28 @@ import com.dci.intellij.dbn.language.common.DBLanguageDialect;
 import com.dci.intellij.dbn.language.common.TokenType;
 import com.dci.intellij.dbn.language.common.TokenTypeCategory;
 import com.dci.intellij.dbn.language.common.element.ElementType;
-import com.dci.intellij.dbn.language.common.element.TokenPairTemplate;
-import com.dci.intellij.dbn.language.common.element.impl.TokenElementType;
-import com.dci.intellij.dbn.language.common.element.impl.WrappingDefinition;
 import com.dci.intellij.dbn.language.common.element.path.ParsePathNode;
 import com.intellij.lang.ASTNode;
 import com.intellij.lang.PsiBuilder;
 import com.intellij.lang.PsiBuilder.Marker;
 import com.intellij.psi.tree.IElementType;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
 import org.jetbrains.annotations.Nullable;
-
-import java.util.Map;
 
 public class ParserBuilder {
     private final PsiBuilder builder;
-    private final Map<TokenPairTemplate, TokenPairRangeMonitor> tokenPairRangeMonitors;
-    private String tokenText;
-    private boolean dummyToken;
-
+    private final TokenPairMonitor tokenPairMonitor;
+    private Cache cache;
 
     public ParserBuilder(PsiBuilder builder, DBLanguageDialect languageDialect) {
         this.builder = builder;
         this.builder.setDebugMode(false);
-        tokenPairRangeMonitors = languageDialect.createTokenPairRangeMonitors(builder);
+        this.tokenPairMonitor = new TokenPairMonitor(this, languageDialect);
+    }
+
+    public TokenPairMonitor getTokenPairMonitor() {
+        return tokenPairMonitor;
     }
 
     public Marker markAndAdvanceLexer(ParsePathNode node) {
@@ -37,41 +36,30 @@ public class ParserBuilder {
     }
 
     public void advanceLexer(ParsePathNode node) {
-        advanceLexer(node, true);
+        tokenPairMonitor.acknowledge(node,true);
+        advanceLexer();
     }
 
-    private void advanceLexer(ParsePathNode node, boolean explicit) {
-        TokenType token = getTokenType();
-        TokenPairRangeMonitor tokenPairRangeMonitor = getTokenPairRangeMonitor(token);
-        if (tokenPairRangeMonitor != null) {
-            tokenPairRangeMonitor.compute(node, explicit);
-        }
+    public void advanceLexer() {
         builder.advanceLexer();
-        initCache();
-    }
-
-    @Nullable
-    private TokenPairRangeMonitor getTokenPairRangeMonitor(TokenType tokenType) {
-        if (tokenType != null) {
-            TokenPairTemplate tokenPairTemplate = tokenType.getTokenPairTemplate();
-            if (tokenPairTemplate != null) {
-                return tokenPairRangeMonitors.get(tokenPairTemplate);
-            }
-        }
-        return null;
-    }
-
-    private void initCache() {
-        tokenText = builder.getTokenText();
-        dummyToken = tokenText != null && tokenText.contains(CodeCompletionContributor.DUMMY_TOKEN);
+        cache = null;
     }
 
     public boolean isDummyToken(){
-        return dummyToken;
+        return getCache().isDummyToken();
     }
 
     public String getTokenText() {
-        return tokenText;
+        return getCache().getTokenText();
+    }
+
+    private Cache getCache() {
+        if (cache == null) {
+            String tokenText = builder.getTokenText();
+            boolean dummyToken = tokenText != null && tokenText.contains(CodeCompletionContributor.DUMMY_TOKEN);
+            cache = new Cache(tokenText, dummyToken);
+        }
+        return cache;
     }
 
     @Nullable
@@ -121,9 +109,7 @@ public class ParserBuilder {
     }
 
     public ASTNode getTreeBuilt() {
-        for (TokenPairRangeMonitor tokenPairRangeMonitor : tokenPairRangeMonitors.values()) {
-            tokenPairRangeMonitor.cleanup(true);
-        }
+        tokenPairMonitor.cleanup();
         return builder.getTreeBuilt();
     }
 
@@ -132,19 +118,10 @@ public class ParserBuilder {
     }
 
     public Marker mark(ParsePathNode node){
-        Marker marker = builder.mark();
-        WrappingDefinition wrapping = node.getElementType().getWrapping();
-        if (wrapping != null) {
-            TokenElementType beginElementType = wrapping.getBeginElementType();
-            TokenType beginTokenType = beginElementType.getTokenType();
-            while(builder.getTokenType() == beginTokenType) {
-                Marker beginTokenMarker = builder.mark();
-                advanceLexer(node, false);
-                beginTokenMarker.done(beginElementType);
-            }
-        }
-        return marker;
+        tokenPairMonitor.consumeBeginTokens(node);
+        return builder.mark();
     }
+
 
     public void markError(String message) {
         Marker errorMaker = builder.mark();
@@ -154,10 +131,8 @@ public class ParserBuilder {
     public void markerRollbackTo(Marker marker) {
         if (marker != null) {
             marker.rollbackTo();
-            for (TokenPairRangeMonitor tokenPairRangeMonitor : tokenPairRangeMonitors.values()) {
-                tokenPairRangeMonitor.rollback();
-            }
-            initCache();
+            tokenPairMonitor.rollback();
+            cache = null;;
         }
     }
 
@@ -167,18 +142,7 @@ public class ParserBuilder {
 
     public void markerDone(Marker marker, ElementType elementType, @Nullable ParsePathNode node) {
         if (marker != null) {
-            if (node != null) {
-                WrappingDefinition wrapping = node.getElementType().getWrapping();
-                if (wrapping != null) {
-                    TokenElementType endElementType = wrapping.getEndElementType();
-                    TokenType endTokenType = endElementType.getTokenType();
-                    while (builder.getTokenType() == endTokenType && !isExplicitRange(endTokenType)) {
-                        Marker endTokenMarker = builder.mark();
-                        advanceLexer(node, false);
-                        endTokenMarker.done(endElementType);
-                    }
-                }
-            }
+            tokenPairMonitor.consumeEndTokens(node);
             marker.done((IElementType) elementType);
         }
     }
@@ -189,13 +153,10 @@ public class ParserBuilder {
         }
     }
 
-    public boolean isExplicitRange(TokenType tokenType) {
-        TokenPairRangeMonitor tokenPairRangeMonitor = getTokenPairRangeMonitor(tokenType);
-        return tokenPairRangeMonitor != null && tokenPairRangeMonitor.isExplicitRange();
-    }
-
-    public void setExplicitRange(TokenType tokenType, boolean value) {
-        TokenPairRangeMonitor tokenPairRangeMonitor = getTokenPairRangeMonitor(tokenType);
-        if (tokenPairRangeMonitor != null) tokenPairRangeMonitor.setExplicitRange(value);
+    @Getter
+    @AllArgsConstructor
+    private static class Cache {
+        private final String tokenText;
+        private final boolean dummyToken;
     }
 }

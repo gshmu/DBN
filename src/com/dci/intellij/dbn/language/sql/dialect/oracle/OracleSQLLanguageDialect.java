@@ -5,19 +5,21 @@ import com.dci.intellij.dbn.language.common.DBLanguageDialect;
 import com.dci.intellij.dbn.language.common.DBLanguageDialectIdentifier;
 import com.dci.intellij.dbn.language.common.DBLanguageSyntaxHighlighter;
 import com.dci.intellij.dbn.language.common.element.TokenPairTemplate;
-import com.dci.intellij.dbn.language.common.element.parser.TokenPairRangeMonitor;
 import com.dci.intellij.dbn.language.sql.dialect.SQLLanguageDialect;
-import com.intellij.lang.PsiBuilder;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.HashSet;
-import java.util.Map;
 import java.util.Set;
 
 public class OracleSQLLanguageDialect extends SQLLanguageDialect {
+    private static final TokenPairTemplate[] TOKEN_PAIR_TEMPLATES = new TokenPairTemplate[] {
+            TokenPairTemplate.PARENTHESES,
+            TokenPairTemplate.BEGIN_END};
+
     public OracleSQLLanguageDialect() {
         super(DBLanguageDialectIdentifier.ORACLE_SQL);
     }
+
 
     @Override
     protected Set<ChameleonTokenType> createChameleonTokenTypes() {
@@ -34,10 +36,8 @@ public class OracleSQLLanguageDialect extends SQLLanguageDialect {
     }
 
     @Override
-    public Map<TokenPairTemplate, TokenPairRangeMonitor> createTokenPairRangeMonitors(PsiBuilder builder) {
-        Map<TokenPairTemplate, TokenPairRangeMonitor> tokenPairRangeMonitors = super.createTokenPairRangeMonitors(builder);
-        tokenPairRangeMonitors.put(TokenPairTemplate.BEGIN_END, new TokenPairRangeMonitor(builder, this, TokenPairTemplate.BEGIN_END));
-        return tokenPairRangeMonitors;
+    public TokenPairTemplate[] getTokenPairTemplates() {
+        return TOKEN_PAIR_TEMPLATES;
     }
 
     @Override

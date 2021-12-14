@@ -11,6 +11,7 @@ import com.dci.intellij.dbn.language.common.element.parser.ParseResult;
 import com.dci.intellij.dbn.language.common.element.parser.ParseResultType;
 import com.dci.intellij.dbn.language.common.element.parser.ParserBuilder;
 import com.dci.intellij.dbn.language.common.element.parser.ParserContext;
+import com.dci.intellij.dbn.language.common.element.parser.TokenPairMonitor;
 import com.dci.intellij.dbn.language.common.element.path.ParsePathNode;
 import com.dci.intellij.dbn.language.common.element.util.ParseBuilderErrorHandler;
 
@@ -39,11 +40,12 @@ public class WrapperElementTypeParser extends ElementTypeParser<WrapperElementTy
         TokenType endTokenType = endTokenElement.getTokenType();
         boolean isStrong = elementType.isStrong();
 
-        boolean beginMatched = beginTokenResult.isMatch() || (builder.lookBack(1) == beginTokenType && !builder.isExplicitRange(beginTokenType));
+        TokenPairMonitor tokenPairMonitor = builder.getTokenPairMonitor();
+        boolean beginMatched = beginTokenResult.isMatch() || (builder.lookBack(1) == beginTokenType && !tokenPairMonitor.isExplicitRange(beginTokenType));
         if (beginMatched) {
             matchedTokens++;
-            boolean initialExplicitRange = builder.isExplicitRange(beginTokenType);
-            builder.setExplicitRange(beginTokenType, true);
+            boolean initialExplicitRange = tokenPairMonitor.isExplicitRange(beginTokenType);
+            tokenPairMonitor.setExplicitRange(beginTokenType, true);
 
             ParseResult wrappedResult = wrappedElement.getParser().parse(node, context);
             matchedTokens = matchedTokens + wrappedResult.getMatchedTokens();
@@ -51,7 +53,7 @@ public class WrapperElementTypeParser extends ElementTypeParser<WrapperElementTy
             ParseResultType wrappedResultType = wrappedResult.getType();
             if (wrappedResultType == ParseResultType.NO_MATCH  && !elementType.wrappedElementOptional) {
                 if (!isStrong && builder.getTokenType() != endTokenType) {
-                    builder.setExplicitRange(beginTokenType, initialExplicitRange);
+                    tokenPairMonitor.setExplicitRange(beginTokenType, initialExplicitRange);
                     return stepOut(node, context, ParseResultType.NO_MATCH, matchedTokens);
                 } else {
                     Set<TokenType> possibleTokens = wrappedElement.getLookupCache().getFirstPossibleTokens();
@@ -66,7 +68,7 @@ public class WrapperElementTypeParser extends ElementTypeParser<WrapperElementTy
                 matchedTokens++;
                 return stepOut(node, context, ParseResultType.FULL_MATCH, matchedTokens);
             } else {
-                builder.setExplicitRange(beginTokenType, initialExplicitRange);
+                tokenPairMonitor.setExplicitRange(beginTokenType, initialExplicitRange);
                 return stepOut(node, context, ParseResultType.PARTIAL_MATCH, matchedTokens);
             }
         }

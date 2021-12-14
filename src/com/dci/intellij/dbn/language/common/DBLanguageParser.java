@@ -80,7 +80,7 @@ public abstract class DBLanguageParser implements PsiParser {
                 advancedLexer = true;
             }
         } catch (StackOverflowError e) {
-            marker.rollbackTo();
+            builder.markerRollbackTo(marker);
             marker = builder.mark();
             while (!builder.eof()) {
                 builder.advanceLexer(rootParseNode);
