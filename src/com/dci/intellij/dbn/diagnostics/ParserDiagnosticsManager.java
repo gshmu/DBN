@@ -5,6 +5,8 @@ import com.dci.intellij.dbn.common.AbstractProjectComponent;
 import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.common.file.util.FileSearchRequest;
 import com.dci.intellij.dbn.common.file.util.VirtualFileUtil;
+import com.dci.intellij.dbn.common.notification.NotificationGroup;
+import com.dci.intellij.dbn.common.notification.NotificationSupport;
 import com.dci.intellij.dbn.common.thread.Progress;
 import com.dci.intellij.dbn.common.thread.Read;
 import com.dci.intellij.dbn.common.util.Commons;
@@ -16,6 +18,7 @@ import com.dci.intellij.dbn.diagnostics.ui.ParserDiagnosticsForm;
 import com.dci.intellij.dbn.language.common.DBLanguageFileType;
 import com.dci.intellij.dbn.language.common.DBLanguagePsiFile;
 import com.dci.intellij.dbn.language.common.psi.PsiUtil;
+import com.dci.intellij.dbn.language.common.psi.scrambler.DBLLanguageFileScrambler;
 import com.dci.intellij.dbn.language.psql.PSQLFileType;
 import com.dci.intellij.dbn.language.sql.SQLFileType;
 import com.intellij.openapi.components.PersistentStateComponent;
@@ -30,11 +33,14 @@ import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiFile;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.io.FileUtils;
 import org.jdom.Element;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -55,7 +61,7 @@ public class ParserDiagnosticsManager extends AbstractProjectComponent implement
         super(project);
     }
 
-    public static ParserDiagnosticsManager getInstance(@NotNull Project project) {
+    public static ParserDiagnosticsManager get(@NotNull Project project) {
         return Failsafe.getComponent(project, ParserDiagnosticsManager.class);
     }
 
@@ -92,6 +98,39 @@ public class ParserDiagnosticsManager extends AbstractProjectComponent implement
             return result;
         } finally {
             running = false;
+        }
+    }
+
+    public void scrambleProjectFiles(ProgressIndicator progress, File rootDir) {
+        String[] extensions = getFileExtensions();
+        FileSearchRequest searchRequest = FileSearchRequest.forExtensions(extensions);
+        VirtualFile[] files = VirtualFileUtil.findFiles(getProject(), searchRequest);
+
+        DBLLanguageFileScrambler scrambler = new DBLLanguageFileScrambler();
+
+        for (int i = 0, filesLength = files.length; i < filesLength; i++) {
+            VirtualFile file = files[i];
+            Progress.check(progress);
+            String filePath = file.getPath();
+            progress.setText2(filePath);
+            progress.setFraction(Commons.getProgressPercentage(i, files.length));
+
+            DBLanguagePsiFile psiFile = ensureFileParsed(file);
+            Progress.check(progress);
+            if (psiFile != null) {
+
+                String scrambled = scrambler.scramble(psiFile);
+                String newFileName = scrambler.scrambleName(file);
+                File scrambledFile = new File(rootDir, newFileName);
+                try {
+                    FileUtils.write(scrambledFile, scrambled, file.getCharset());
+                } catch (IOException e) {
+                    NotificationSupport.sendWarningNotification(
+                            getProject(),
+                            NotificationGroup.DEVELOPER,
+                            "Failed to write file" + scrambledFile.getPath() + ". " + e.getMessage());
+                }
+            }
         }
     }
 
