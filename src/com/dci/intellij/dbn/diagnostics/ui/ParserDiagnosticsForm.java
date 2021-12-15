@@ -49,7 +49,7 @@ public class ParserDiagnosticsForm extends DBNFormImpl {
 
     public ParserDiagnosticsForm(Project project) {
         super(null, project);
-        manager = ParserDiagnosticsManager.getInstance(ensureProject());
+        manager = ParserDiagnosticsManager.get(ensureProject());
         GuiUtils.replaceJSplitPaneWithIDEASplitter(mainPanel);
         GUIUtil.updateSplitterProportion(mainPanel, (float) 0.2);
 

@@ -2,8 +2,6 @@ package com.dci.intellij.dbn.connection.config.tns;
 
 import com.dci.intellij.dbn.common.util.Strings;
 import com.intellij.openapi.fileChooser.FileChooserDescriptor;
-import com.intellij.openapi.util.Condition;
-import com.intellij.openapi.vfs.VirtualFile;
 
 import java.io.File;
 import java.nio.file.Files;
@@ -20,13 +18,7 @@ public class TnsNamesParser {
     public static final FileChooserDescriptor FILE_CHOOSER_DESCRIPTOR = new FileChooserDescriptor(true, false, false, false, false, false).
             withTitle("Select TNS Names File").
             withDescription("Select a valid Oracle tnsnames.ora file").
-            withFileFilter(new Condition<VirtualFile>() {
-                @Override
-                public boolean value(VirtualFile virtualFile) {
-                    String extension = virtualFile.getExtension();
-                    return Objects.equals(extension, "ora");
-                }
-            });
+            withFileFilter(virtualFile -> Objects.equals(virtualFile.getExtension(), "ora"));
 
 
     public static List<TnsName> parse(File file) throws Exception {

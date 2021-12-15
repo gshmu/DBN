@@ -23,6 +23,6 @@ public abstract class AbstractParserDiagnosticsAction extends DumbAwareContextAc
 
     @NotNull
     protected ParserDiagnosticsManager getManager(@NotNull Project project) {
-        return ParserDiagnosticsManager.getInstance(project);
+        return ParserDiagnosticsManager.get(project);
     }
 }
