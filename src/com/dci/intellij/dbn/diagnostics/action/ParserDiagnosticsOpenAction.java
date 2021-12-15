@@ -9,14 +9,14 @@ import lombok.extern.slf4j.Slf4j;
 import org.jetbrains.annotations.NotNull;
 
 @Slf4j
-public class OpenParserDiagnosticsAction extends DumbAwareProjectAction {
-    public OpenParserDiagnosticsAction() {
+public class ParserDiagnosticsOpenAction extends DumbAwareProjectAction {
+    public ParserDiagnosticsOpenAction() {
         super("Parser Diagnostics...");
     }
 
     @Override
     protected void actionPerformed(@NotNull AnActionEvent e, @NotNull Project project) {
-        ParserDiagnosticsManager diagnosticsManager = ParserDiagnosticsManager.getInstance(project);
+        ParserDiagnosticsManager diagnosticsManager = ParserDiagnosticsManager.get(project);
         diagnosticsManager.openParserDiagnostics(null);
     }
 
