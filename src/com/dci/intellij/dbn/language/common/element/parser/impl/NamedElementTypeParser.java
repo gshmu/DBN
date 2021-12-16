@@ -15,7 +15,7 @@ public class NamedElementTypeParser extends SequenceElementTypeParser<NamedEleme
     @Override
     public ParseResult parse(ParsePathNode parentNode, ParserContext context) throws ParseException {
         ParserBuilder builder = context.getBuilder();
-        if (isRecursive(parentNode, builder.getCurrentOffset())) {
+        if (isRecursive(parentNode, builder.getOffset())) {
             return ParseResult.noMatch();
         }
         return super.parse(parentNode, context);

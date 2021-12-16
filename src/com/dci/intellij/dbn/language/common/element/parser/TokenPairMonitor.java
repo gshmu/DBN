@@ -32,10 +32,10 @@ public class TokenPairMonitor {
             if (wrapping != null) {
                 TokenElementType beginElement = wrapping.getBeginElementType();
                 TokenType beginToken = beginElement.getTokenType();
-                while(builder.getTokenType() == beginToken) {
+                while(builder.getToken() == beginToken) {
                     Marker beginTokenMarker = builder.mark();
-                    acknowledge(node, false);
-                    builder.advanceLexer();
+                    acknowledge(false);
+                    builder.advanceInternally();
                     beginTokenMarker.done(beginElement);
                 }
             }
@@ -48,21 +48,21 @@ public class TokenPairMonitor {
             if (wrapping != null) {
                 TokenElementType endElement = wrapping.getEndElementType();
                 TokenType endToken = endElement.getTokenType();
-                while (builder.getTokenType() == endToken && !isExplicitRange(endToken)) {
+                while (builder.getToken() == endToken && !isExplicitRange(endToken)) {
                     Marker endTokenMarker = builder.mark();
-                    acknowledge(node, false);
-                    builder.advanceLexer();
+                    acknowledge(false);
+                    builder.advanceInternally();
                     endTokenMarker.done(endElement);
                 }
             }
         }
     }
 
-    protected void acknowledge(ParsePathNode node, boolean explicit) {
-        TokenType token = builder.getTokenType();
+    protected void acknowledge(boolean explicit) {
+        TokenType token = builder.getToken();
         TokenPairStack tokenPairStack = getStack(token);
         if (tokenPairStack != null) {
-            tokenPairStack.acknowledge(node, explicit);
+            tokenPairStack.acknowledge(explicit);
         }
     }
 

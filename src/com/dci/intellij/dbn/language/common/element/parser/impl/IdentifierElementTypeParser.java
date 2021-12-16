@@ -22,16 +22,16 @@ public class IdentifierElementTypeParser extends ElementTypeParser<IdentifierEle
         }
 
         ParserBuilder builder = context.getBuilder();
-        TokenType token = builder.getTokenType();
+        TokenType token = builder.getToken();
         Marker marker = null;
 
         if (token != null && !token.isChameleon()){
             if (token.isIdentifier()) {
-                marker = builder.markAndAdvanceLexer(parentNode);
+                marker = builder.markAndAdvance();
                 return stepOut(marker, context, ParseResultType.FULL_MATCH, 1);
             }
             else if (isSuppressibleReservedWord(parentNode, context, token)) {
-                marker = builder.markAndAdvanceLexer(parentNode);
+                marker = builder.markAndAdvance();
                 return stepOut(marker, context, ParseResultType.FULL_MATCH, 1);
             }
         }
@@ -41,12 +41,12 @@ public class IdentifierElementTypeParser extends ElementTypeParser<IdentifierEle
 
     ParseResult parseNew(ParsePathNode parentNode, ParserContext context) {
         ParserBuilder builder = context.getBuilder();
-        TokenType token = builder.getTokenType();
+        TokenType token = builder.getToken();
         Marker marker = null;
 
         if (token != null && !token.isChameleon()){
             if (token.isIdentifier()) {
-                marker = builder.markAndAdvanceLexer(parentNode);
+                marker = builder.markAndAdvance();
                 return stepOut(marker, context, ParseResultType.FULL_MATCH, 1);
             }
             // TODO suppressible reserved words support

@@ -41,7 +41,7 @@ public class WrapperElementTypeParser extends ElementTypeParser<WrapperElementTy
         boolean isStrong = elementType.isStrong();
 
         TokenPairMonitor tokenPairMonitor = builder.getTokenPairMonitor();
-        boolean beginMatched = beginTokenResult.isMatch() || (builder.lookBack(1) == beginTokenType && !tokenPairMonitor.isExplicitRange(beginTokenType));
+        boolean beginMatched = beginTokenResult.isMatch() || (builder.getPreviousToken() == beginTokenType && !tokenPairMonitor.isExplicitRange(beginTokenType));
         if (beginMatched) {
             matchedTokens++;
             boolean initialExplicitRange = tokenPairMonitor.isExplicitRange(beginTokenType);
@@ -52,7 +52,7 @@ public class WrapperElementTypeParser extends ElementTypeParser<WrapperElementTy
 
             ParseResultType wrappedResultType = wrappedResult.getType();
             if (wrappedResultType == ParseResultType.NO_MATCH  && !elementType.wrappedElementOptional) {
-                if (!isStrong && builder.getTokenType() != endTokenType) {
+                if (!isStrong && builder.getToken() != endTokenType) {
                     tokenPairMonitor.setExplicitRange(beginTokenType, initialExplicitRange);
                     return stepOut(node, context, ParseResultType.NO_MATCH, matchedTokens);
                 } else {

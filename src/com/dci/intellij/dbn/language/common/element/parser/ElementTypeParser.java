@@ -26,7 +26,7 @@ public abstract class ElementTypeParser<T extends ElementTypeBase> {
 
     public ParsePathNode stepIn(ParsePathNode parentNode, ParserContext context) {
         ParserBuilder builder = context.getBuilder();
-        ParsePathNode node = new ParsePathNode(elementType, parentNode, builder.getCurrentOffset(), 0);
+        ParsePathNode node = new ParsePathNode(elementType, parentNode, builder.getOffset(), 0);
         Marker marker = builder.mark(node);
         node.setElementMarker(marker);
         return node;
@@ -91,11 +91,11 @@ public abstract class ElementTypeParser<T extends ElementTypeBase> {
             SimpleTokenType dot = sharedTokenTypes.getChrDot();
             SimpleTokenType leftParenthesis = sharedTokenTypes.getChrLeftParenthesis();
             ParserBuilder builder = context.getBuilder();
-            if (builder.lookBack(1) == dot || builder.lookAhead(1) == dot) {
+            if (builder.getPreviousToken() == dot || builder.getNextToken() == dot) {
                 return true;
             }
 
-            if (tokenType.isFunction() && builder.lookAhead(1) != leftParenthesis) {
+            if (tokenType.isFunction() && builder.getNextToken() != leftParenthesis) {
                 if (elementType instanceof LeafElementType) {
                     LeafElementType leafElementType = (LeafElementType) elementType;
                     return !leafElementType.isNextRequiredToken(leftParenthesis, node, context);
@@ -124,7 +124,7 @@ public abstract class ElementTypeParser<T extends ElementTypeBase> {
 
     protected boolean shouldParseElement(ElementType elementType, ParsePathNode node, ParserContext context) {
         ParserBuilder builder = context.getBuilder();
-        TokenType token = builder.getTokenType();
+        TokenType token = builder.getToken();
         if (token == null || token.isChameleon()) {
             return false;
         }
