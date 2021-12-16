@@ -5,7 +5,6 @@ import com.dci.intellij.dbn.language.common.SimpleTokenType;
 import com.dci.intellij.dbn.language.common.TokenType;
 import com.dci.intellij.dbn.language.common.TokenTypeBundle;
 import com.dci.intellij.dbn.language.common.element.TokenPairTemplate;
-import com.dci.intellij.dbn.language.common.element.path.ParsePathNode;
 import com.intellij.util.containers.Stack;
 
 public class TokenPairStack {
@@ -29,7 +28,7 @@ public class TokenPairStack {
      * cleanup all markers registered after the builder offset (remained dirty after a marker rollback)
      */
     public void rollback() {
-        int builderOffset = builder.getCurrentOffset();
+        int builderOffset = builder.getOffset();
         while (markersStack.size() > 0) {
             TokenPairMarker lastMarker = markersStack.peek();
             if (lastMarker.getOffset() >= builderOffset) {
@@ -41,11 +40,11 @@ public class TokenPairStack {
         }
     }
 
-    public void acknowledge(ParsePathNode node, boolean explicit) {
-        TokenType tokenType = builder.getTokenType();
+    public void acknowledge(boolean explicit) {
+        TokenType tokenType = builder.getToken();
         if (tokenType == beginToken) {
             stackSize++;
-            TokenPairMarker marker = new TokenPairMarker(node, builder.getCurrentOffset(), explicit);
+            TokenPairMarker marker = new TokenPairMarker(builder.getOffset(), explicit);
             markersStack.push(marker);
         } else if (tokenType == endToken) {
             if (stackSize > 0) stackSize--;

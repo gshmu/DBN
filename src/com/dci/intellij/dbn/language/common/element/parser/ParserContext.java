@@ -25,11 +25,11 @@ public class ParserContext extends ElementLookupContext {
     }
 
     public boolean isWavedTokenType(TokenType tokenType) {
-        return tokenType == wavedTokenType && builder.getCurrentOffset() == wavedTokenTypeOffset;
+        return tokenType == wavedTokenType && builder.getOffset() == wavedTokenTypeOffset;
     }
 
     public void setWavedTokenType(TokenType wavedTokenType) {
         this.wavedTokenType = wavedTokenType;
-        this.wavedTokenTypeOffset = builder.getCurrentOffset();
+        this.wavedTokenTypeOffset = builder.getOffset();
     }
 }

@@ -50,15 +50,15 @@ public abstract class DBLanguageParser implements PsiParser {
             root = elementTypes.getRootElementType();
         }
 
-        boolean advancedLexer = false;
+        boolean advanced = false;
         ParsePathNode rootParseNode = new ParsePathNode(root, null, 0, 0);
 
         try {
             while (!builder.eof()) {
-                int currentOffset =  builder.getCurrentOffset();
+                int currentOffset =  builder.getOffset();
                 root.getParser().parse(rootParseNode, context);
-                if (currentOffset == builder.getCurrentOffset()) {
-                    TokenType token = builder.getTokenType();
+                if (currentOffset == builder.getOffset()) {
+                    TokenType token = builder.getToken();
                     /*if (tokenType.isChameleon()) {
                         PsiBuilder.Marker injectedLanguageMarker = builder.mark();
                         builder.advanceLexer();
@@ -66,30 +66,30 @@ public abstract class DBLanguageParser implements PsiParser {
                     }
                     else*/ if (token instanceof ChameleonTokenType) {
                         PsiBuilder.Marker injectedLanguageMarker = builder.mark();
-                        builder.advanceLexer(rootParseNode);
+                        builder.advance();
                         injectedLanguageMarker.done((IElementType) token);
                     } else {
-                        builder.advanceLexer(rootParseNode);
+                        builder.advance();
                     }
-                    advancedLexer = true;
+                    advanced = true;
                 }
             }
         } catch (ParseException e) {
             while (!builder.eof()) {
-                builder.advanceLexer(rootParseNode);
-                advancedLexer = true;
+                builder.advance();
+                advanced = true;
             }
         } catch (StackOverflowError e) {
             builder.markerRollbackTo(marker);
             marker = builder.mark();
             while (!builder.eof()) {
-                builder.advanceLexer(rootParseNode);
-                advancedLexer = true;
+                builder.advance();
+                advanced = true;
             }
 
         }
 
-        if (!advancedLexer) builder.advanceLexer(rootParseNode);
+        if (!advanced) builder.advance();
         marker.done(rootElementType);
         return builder.getTreeBuilt();
     }

@@ -36,7 +36,7 @@ public class SequenceElementTypeParser<ET extends SequenceElementType> extends E
         int matches = 0;
         int matchedTokens = 0;
 
-        TokenType token = builder.getTokenType();
+        TokenType token = builder.getToken();
 
         if (token != null && !token.isChameleon() && shouldParseElement(elementType, node, context)) {
             ElementTypeRef[] elements = elementType.getChildren();
@@ -67,7 +67,7 @@ public class SequenceElementTypeParser<ET extends SequenceElementType> extends E
 
                         if (result.isMatch()) {
                             matchedTokens = matchedTokens + result.getMatchedTokens();
-                            token = builder.getTokenType();
+                            token = builder.getToken();
                             matches++;
                         }
                     }
@@ -89,7 +89,7 @@ public class SequenceElementTypeParser<ET extends SequenceElementType> extends E
                         } else {
                             // local landmarks found
 
-                            token = builder.getTokenType();
+                            token = builder.getToken();
                             node.setCursorPosition(index);
                             continue;
                         }
@@ -103,7 +103,7 @@ public class SequenceElementTypeParser<ET extends SequenceElementType> extends E
                     ParseResultType resultType = matches == 0 ? NO_MATCH : FULL_MATCH;
                     return stepOut(node, context, resultType, matchedTokens);
                 }
-                node.incrementIndex(builder.getCurrentOffset());
+                node.incrementIndex(builder.getOffset());
             }
         }
 
@@ -128,15 +128,15 @@ public class SequenceElementTypeParser<ET extends SequenceElementType> extends E
         Set<TokenType> possibleTokens = elementType.getFirstPossibleTokensFromIndex(context, siblingPosition);
         ParseBuilderErrorHandler.updateBuilderError(possibleTokens, context);
 
-        TokenType tokenType = builder.getTokenType();
+        TokenType tokenType = builder.getToken();
         siblingPosition++;
         while (tokenType != null) {
             int newIndex = getLandmarkIndex(tokenType, siblingPosition, node);
 
             // no landmark hit -> spool the builder
             if (newIndex == 0) {
-                builder.advanceLexer(node);
-                tokenType = builder.getTokenType();
+                builder.advance();
+                tokenType = builder.getToken();
             } else {
                 //builder.markerDone(marker, getElementBundle().getUnknownElementType());
                 marker.error("Invalid or incomplete statement. Expected: ");
