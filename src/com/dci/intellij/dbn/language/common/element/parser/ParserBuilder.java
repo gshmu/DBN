@@ -10,14 +10,13 @@ import com.intellij.lang.ASTNode;
 import com.intellij.lang.PsiBuilder;
 import com.intellij.lang.PsiBuilder.Marker;
 import com.intellij.psi.tree.IElementType;
-import lombok.AllArgsConstructor;
 import lombok.Getter;
 import org.jetbrains.annotations.Nullable;
 
-public class ParserBuilder {
+public final class ParserBuilder {
     private final PsiBuilder builder;
     private final TokenPairMonitor tokenPairMonitor;
-    private Cache cache;
+    private final Cache cache = new Cache();
 
     public ParserBuilder(PsiBuilder builder, DBLanguageDialect languageDialect) {
         this.builder = builder;
@@ -25,54 +24,61 @@ public class ParserBuilder {
         this.tokenPairMonitor = new TokenPairMonitor(this, languageDialect);
     }
 
+    public ASTNode getTreeBuilt() {
+        tokenPairMonitor.cleanup();
+        return builder.getTreeBuilt();
+    }
+
     public TokenPairMonitor getTokenPairMonitor() {
         return tokenPairMonitor;
     }
 
-    public Marker markAndAdvanceLexer(ParsePathNode node) {
+    public Marker markAndAdvance() {
         Marker marker = mark();
-        advanceLexer(node);
+        advance();
         return marker;
     }
 
-    public void advanceLexer(ParsePathNode node) {
-        tokenPairMonitor.acknowledge(node,true);
-        advanceLexer();
+    public void advance() {
+        tokenPairMonitor.acknowledge(true);
+        advanceInternally();
     }
 
-    public void advanceLexer() {
+    public void advanceInternally() {
         builder.advanceLexer();
-        cache = null;
-    }
-
-    public boolean isDummyToken(){
-        return getCache().isDummyToken();
-    }
-
-    public String getTokenText() {
-        return getCache().getTokenText();
-    }
-
-    private Cache getCache() {
-        if (cache == null) {
-            String tokenText = builder.getTokenText();
-            boolean dummyToken = tokenText != null && tokenText.contains(CodeCompletionContributor.DUMMY_TOKEN);
-            cache = new Cache(tokenText, dummyToken);
-        }
-        return cache;
+        cache.reset();
     }
 
     @Nullable
-    public TokenType getTokenType() {
+    public TokenType getToken() {
         IElementType tokenType = builder.getTokenType();
         return tokenType instanceof TokenType ? (TokenType) tokenType : null;
+    }
+
+    /****************************************************
+     *                 Cached  lookups                  *
+     ****************************************************/
+    public TokenType getPreviousToken() {
+        return cache.getPreviousToken();
+    }
+
+    public TokenType getNextToken() {
+        return cache.getNextToken();
+    }
+
+    public String getTokenText() {
+        return cache.getTokenText();
+    }
+
+    public boolean isDummyToken(){
+        return cache.isDummyToken();
     }
 
     public boolean eof() {
         return builder.eof();
     }
 
-    public int getCurrentOffset() {
+    public int getOffset() {
         return builder.getCurrentOffset();
     }
 
@@ -83,7 +89,7 @@ public class ParserBuilder {
     }
 
 
-    public TokenType lookBack(int steps) {
+    private TokenType lookBack(int steps) {
         int cursor = -1;
         int count = 0;
         TokenType tokenType = (TokenType) builder.rawLookup(cursor);
@@ -99,18 +105,12 @@ public class ParserBuilder {
         return null;
     }
 
-    public IElementType rawLookup(int steps) {
-        return builder.rawLookup(steps);
-    }
-
+    /****************************************************
+     *                 Marker utilities                 *
+     ****************************************************/
 
     public void error(String messageText) {
         builder.error(messageText);
-    }
-
-    public ASTNode getTreeBuilt() {
-        tokenPairMonitor.cleanup();
-        return builder.getTreeBuilt();
     }
 
     public Marker mark(){
@@ -122,7 +122,6 @@ public class ParserBuilder {
         return builder.mark();
     }
 
-
     public void markError(String message) {
         Marker errorMaker = builder.mark();
         errorMaker.error(message);
@@ -132,7 +131,7 @@ public class ParserBuilder {
         if (marker != null) {
             marker.rollbackTo();
             tokenPairMonitor.rollback();
-            cache = null;;
+            cache.reset();
         }
     }
 
@@ -154,9 +153,49 @@ public class ParserBuilder {
     }
 
     @Getter
-    @AllArgsConstructor
-    private static class Cache {
-        private final String tokenText;
-        private final boolean dummyToken;
+    private class Cache {
+        private String tokenText;
+        private Boolean dummyToken;
+        private TokenType previousToken;
+        private TokenType nextToken;
+
+        public void reset() {
+            tokenText = null;
+            dummyToken = null;
+            previousToken = null;
+            nextToken = null;
+        }
+
+        public TokenType getPreviousToken() {
+            if (previousToken == null) {
+                previousToken = lookBack(1);
+            }
+            return previousToken;
+        }
+
+        public TokenType getNextToken() {
+            if (nextToken == null) {
+                nextToken = lookAhead(1);
+            }
+            return nextToken;
+        }
+
+        public String getTokenText() {
+            if (tokenText == null) {
+                tokenText = builder.getTokenText();
+            }
+            return tokenText;
+        }
+
+        public Boolean isDummyToken() {
+            if (dummyToken == null) {
+                String tokenText = getTokenText();
+                dummyToken = tokenText != null && tokenText.contains(CodeCompletionContributor.DUMMY_TOKEN);
+
+            }
+            return dummyToken;
+        }
+
+
     }
 }

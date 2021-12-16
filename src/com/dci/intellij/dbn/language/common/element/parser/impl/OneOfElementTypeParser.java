@@ -29,7 +29,7 @@ public class OneOfElementTypeParser extends ElementTypeParser<OneOfElementType> 
         ParsePathNode node = stepIn(parentNode, context);
 
         elementType.sort();
-        TokenType token = builder.getTokenType();
+        TokenType token = builder.getToken();
 
         if (token != null && !token.isChameleon()) {
             ElementTypeRef element = elementType.getFirstChild();
@@ -52,7 +52,7 @@ public class OneOfElementTypeParser extends ElementTypeParser<OneOfElementType> 
         ParsePathNode node = stepIn(parentNode, context);
 
         elementType.sort();
-        TokenType token = builder.getTokenType();
+        TokenType token = builder.getToken();
 
         if (token != null && !token.isChameleon()) {
             Pair<ElementTypeRef, ParseResult> bestResult = null;

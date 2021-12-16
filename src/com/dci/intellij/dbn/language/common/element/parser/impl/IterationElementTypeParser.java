@@ -77,7 +77,7 @@ public class IterationElementTypeParser extends ElementTypeParser<IterationEleme
                             builder.markerDrop(partialMatchMarker);
                             return stepOut(node, context, resultType, matchedTokens);
                         } else {
-                            node.setCurrentOffset(builder.getCurrentOffset());
+                            node.setCurrentOffset(builder.getOffset());
                         }
                     }
 
@@ -140,7 +140,7 @@ public class IterationElementTypeParser extends ElementTypeParser<IterationEleme
                 monitor.matchedTokens += result.getMatchedTokens();
                 monitor.update(result.getType());
 
-                node.setCurrentOffset(builder.getCurrentOffset());
+                node.setCurrentOffset(builder.getOffset());
 
             } else {
                 if (monitor.iterations == 0) {
@@ -162,7 +162,7 @@ public class IterationElementTypeParser extends ElementTypeParser<IterationEleme
 
                 if (sepResult.isMatch()) {
                     monitor.matchedTokens++;
-                    node.setCurrentOffset(builder.getCurrentOffset());
+                    node.setCurrentOffset(builder.getOffset());
                 } else {
                     monitor.exit = true;
                     break;
@@ -204,7 +204,7 @@ public class IterationElementTypeParser extends ElementTypeParser<IterationEleme
         boolean advanced = false;
         BasicElementType unknownElementType = getElementBundle().getUnknownElementType();
         while (!builder.eof()) {
-            TokenType token = builder.getTokenType();
+            TokenType token = builder.getToken();
             if (token == null || token.isChameleon())  break;
 
             if (token.isParserLandmark()) {
@@ -235,7 +235,7 @@ public class IterationElementTypeParser extends ElementTypeParser<IterationEleme
                     parseNode = parseNode.getParent();
                 }
             }
-            builder.advanceLexer(parentNode);
+            builder.advance();
             advanced = true;
         }
         if (advanced || !lenient)

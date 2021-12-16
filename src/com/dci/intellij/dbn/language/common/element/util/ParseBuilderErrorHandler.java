@@ -14,7 +14,7 @@ import java.util.stream.Collectors;
 public class ParseBuilderErrorHandler {
     public static void updateBuilderError(Set<TokenType> expectedTokens, ParserContext context) {
         if (expectedTokens != null) {
-            int offset = context.getBuilder().getCurrentOffset();
+            int offset = context.getBuilder().getOffset();
             if (ParseBuilderErrorWatcher.show(offset, context.getTimestamp())) {
                 //expectedTokenError(1, context.builder, TokenTypeCategory.CHARACTER, expectedTokens);
                 //expectedTokenError(2, context.builder, TokenTypeCategory.OPERATOR, expectedTokens);
