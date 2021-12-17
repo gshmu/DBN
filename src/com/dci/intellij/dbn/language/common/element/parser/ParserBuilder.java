@@ -5,6 +5,7 @@ import com.dci.intellij.dbn.language.common.DBLanguageDialect;
 import com.dci.intellij.dbn.language.common.TokenType;
 import com.dci.intellij.dbn.language.common.TokenTypeCategory;
 import com.dci.intellij.dbn.language.common.element.ElementType;
+import com.dci.intellij.dbn.language.common.element.TokenPairTemplate;
 import com.dci.intellij.dbn.language.common.element.path.ParsePathNode;
 import com.intellij.lang.ASTNode;
 import com.intellij.lang.PsiBuilder;
@@ -18,19 +19,26 @@ public final class ParserBuilder {
     private final TokenPairMonitor tokenPairMonitor;
     private final Cache cache = new Cache();
 
+    @Deprecated
+    private final OldTokenPairMonitor tokenPairMonitorOld;
+
+
     public ParserBuilder(PsiBuilder builder, DBLanguageDialect languageDialect) {
         this.builder = builder;
         this.builder.setDebugMode(false);
         this.tokenPairMonitor = new TokenPairMonitor(this, languageDialect);
+
+        this.tokenPairMonitorOld = new OldTokenPairMonitor(this, languageDialect);
     }
 
     public ASTNode getTreeBuilt() {
-        tokenPairMonitor.cleanup();
+        tokenPairMonitorOld.cleanup();
         return builder.getTreeBuilt();
     }
 
-    public TokenPairMonitor getTokenPairMonitor() {
-        return tokenPairMonitor;
+    @Deprecated
+    public OldTokenPairMonitor getTokenPairMonitor() {
+        return tokenPairMonitorOld;
     }
 
     public Marker markAndAdvance() {
@@ -40,7 +48,7 @@ public final class ParserBuilder {
     }
 
     public void advance() {
-        tokenPairMonitor.acknowledge(true);
+        tokenPairMonitorOld.acknowledge(true);
         advanceInternally();
     }
 
@@ -53,6 +61,12 @@ public final class ParserBuilder {
     public TokenType getToken() {
         IElementType tokenType = builder.getTokenType();
         return tokenType instanceof TokenType ? (TokenType) tokenType : null;
+    }
+
+    @Nullable
+    public TokenPairTemplate getTokenPairTemplate() {
+        TokenType token = getToken();
+        return token == null ? null : token.getTokenPairTemplate();
     }
 
     /****************************************************
@@ -119,6 +133,7 @@ public final class ParserBuilder {
 
     public Marker mark(ParsePathNode node){
         tokenPairMonitor.consumeBeginTokens(node);
+        tokenPairMonitorOld.consumeBeginTokens(node);
         return builder.mark();
     }
 
@@ -130,7 +145,8 @@ public final class ParserBuilder {
     public void markerRollbackTo(Marker marker) {
         if (marker != null) {
             marker.rollbackTo();
-            tokenPairMonitor.rollback();
+            tokenPairMonitor.reset();
+            tokenPairMonitorOld.rollback();
             cache.reset();
         }
     }
@@ -141,8 +157,9 @@ public final class ParserBuilder {
 
     public void markerDone(Marker marker, ElementType elementType, @Nullable ParsePathNode node) {
         if (marker != null) {
-            tokenPairMonitor.consumeEndTokens(node);
+            tokenPairMonitorOld.consumeEndTokens(node);
             marker.done((IElementType) elementType);
+            tokenPairMonitor.consumeEndTokens(node);
         }
     }
 

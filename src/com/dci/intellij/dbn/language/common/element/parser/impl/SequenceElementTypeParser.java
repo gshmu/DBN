@@ -30,6 +30,8 @@ public class SequenceElementTypeParser<ET extends SequenceElementType> extends E
 
     @Override
     public ParseResult parse(ParsePathNode parentNode, ParserContext context) throws ParseException {
+        if (context.isAlternative()) return parseNew(parentNode, context);
+
         ParserBuilder builder = context.getBuilder();
         ParsePathNode node = stepIn(parentNode, context);
 
@@ -108,6 +110,10 @@ public class SequenceElementTypeParser<ET extends SequenceElementType> extends E
         }
 
         return stepOut(node, context, NO_MATCH, matchedTokens);
+    }
+
+    ParseResult parseNew(ParsePathNode parentNode, ParserContext context) throws ParseException {
+        return ParseResult.noMatch(); // TODO
     }
 
     @Deprecated // ambiguous
