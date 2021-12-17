@@ -14,7 +14,7 @@ public enum TokenPairTemplate {
     private final String endToken;
     private final boolean block;
 
-    private TokenPairTemplate(String beginToken, String endToken, boolean block) {
+    TokenPairTemplate(String beginToken, String endToken, boolean block) {
         this.beginToken = beginToken;
         this.endToken = endToken;
         this.block = block;

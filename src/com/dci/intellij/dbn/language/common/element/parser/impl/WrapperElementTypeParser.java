@@ -7,11 +7,11 @@ import com.dci.intellij.dbn.language.common.element.impl.TokenElementType;
 import com.dci.intellij.dbn.language.common.element.impl.WrapperElementType;
 import com.dci.intellij.dbn.language.common.element.impl.WrappingDefinition;
 import com.dci.intellij.dbn.language.common.element.parser.ElementTypeParser;
+import com.dci.intellij.dbn.language.common.element.parser.OldTokenPairMonitor;
 import com.dci.intellij.dbn.language.common.element.parser.ParseResult;
 import com.dci.intellij.dbn.language.common.element.parser.ParseResultType;
 import com.dci.intellij.dbn.language.common.element.parser.ParserBuilder;
 import com.dci.intellij.dbn.language.common.element.parser.ParserContext;
-import com.dci.intellij.dbn.language.common.element.parser.TokenPairMonitor;
 import com.dci.intellij.dbn.language.common.element.path.ParsePathNode;
 import com.dci.intellij.dbn.language.common.element.util.ParseBuilderErrorHandler;
 
@@ -40,7 +40,7 @@ public class WrapperElementTypeParser extends ElementTypeParser<WrapperElementTy
         TokenType endTokenType = endTokenElement.getTokenType();
         boolean isStrong = elementType.isStrong();
 
-        TokenPairMonitor tokenPairMonitor = builder.getTokenPairMonitor();
+        OldTokenPairMonitor tokenPairMonitor = builder.getTokenPairMonitor();
         boolean beginMatched = beginTokenResult.isMatch() || (builder.getPreviousToken() == beginTokenType && !tokenPairMonitor.isExplicitRange(beginTokenType));
         if (beginMatched) {
             matchedTokens++;
