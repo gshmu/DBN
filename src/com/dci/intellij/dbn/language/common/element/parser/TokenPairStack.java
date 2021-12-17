@@ -8,12 +8,11 @@ import com.dci.intellij.dbn.language.common.element.TokenPairTemplate;
 import com.intellij.util.containers.Stack;
 
 public class TokenPairStack {
-    private int stackSize = 0;
-    private final Stack<TokenPairMarker> markersStack = new Stack<>();
     private final ParserBuilder builder;
-
     private final SimpleTokenType beginToken;
     private final SimpleTokenType endToken;
+
+    private final Stack<Integer> offsetStack = new Stack<>();
 
 
     public TokenPairStack(ParserBuilder builder, DBLanguageDialect languageDialect, TokenPairTemplate template) {
@@ -27,68 +26,25 @@ public class TokenPairStack {
     /**
      * cleanup all markers registered after the builder offset (remained dirty after a marker rollback)
      */
-    public void rollback() {
+    public void reset() {
         int builderOffset = builder.getOffset();
-        while (markersStack.size() > 0) {
-            TokenPairMarker lastMarker = markersStack.peek();
-            if (lastMarker.getOffset() >= builderOffset) {
-                markersStack.pop();
-                if (stackSize > 0) stackSize--;
+        while (offsetStack.size() > 0) {
+            Integer lastOffset = offsetStack.peek();
+            if (lastOffset >= builderOffset) {
+                offsetStack.pop();
             } else {
                 break;
             }
         }
     }
 
-    public void acknowledge(boolean explicit) {
+    public void acknowledge() {
         TokenType tokenType = builder.getToken();
         if (tokenType == beginToken) {
-            stackSize++;
-            TokenPairMarker marker = new TokenPairMarker(builder.getOffset(), explicit);
-            markersStack.push(marker);
+            offsetStack.push(builder.getOffset());
+
         } else if (tokenType == endToken) {
-            if (stackSize > 0) stackSize--;
-            if (markersStack.size() > 0) {
-/*
-                NestedRangeMarker marker = markersStack.peek();
-                ParsePathNode markerNode = marker.getParseNode();
-                if (markerNode == node) {
-
-                } else if (markerNode.isSiblingOf(node)) {
-
-                } else if (node.isSiblingOf(markerNode)) {
-                    WrappingDefinition childWrapping = node.getElementType().getWrapping();
-                    WrappingDefinition parentWrapping = markerNode.getElementType().getWrapping();
-                    if (childWrapping != null && childWrapping.equals(parentWrapping)) {
-
-                    }
-                }
-*/
-                cleanup(false);
-            }
-        }
-    }
-
-    public void cleanup(boolean force) {
-        if (force) stackSize = 0;
-        while(markersStack.size() > stackSize) {
-            markersStack.pop();
-        }
-    }
-
-    public boolean isExplicitRange() {
-        if (!markersStack.isEmpty()) {
-            TokenPairMarker marker = markersStack.peek();
-            return marker.isExplicit();
-        }
-
-        return false;
-    }
-
-    public void setExplicitRange(boolean value) {
-        if (!markersStack.isEmpty()) {
-            TokenPairMarker marker = markersStack.peek();
-            marker.setExplicit(value);
+            offsetStack.pop();
         }
     }
 }
