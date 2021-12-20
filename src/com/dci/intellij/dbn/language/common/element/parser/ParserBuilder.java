@@ -17,6 +17,7 @@ import org.jetbrains.annotations.Nullable;
 public final class ParserBuilder {
     private final PsiBuilder builder;
     private final TokenPairMonitor tokenPairMonitor;
+    private final ParseErrorMonitor errorMonitor;
     private final Cache cache = new Cache();
 
     @Deprecated
@@ -27,6 +28,7 @@ public final class ParserBuilder {
         this.builder = builder;
         this.builder.setDebugMode(false);
         this.tokenPairMonitor = new TokenPairMonitor(this, languageDialect);
+        this.errorMonitor = new ParseErrorMonitor(this);
 
         this.tokenPairMonitorOld = new OldTokenPairMonitor(this, languageDialect);
     }
@@ -122,6 +124,9 @@ public final class ParserBuilder {
     /****************************************************
      *                 Marker utilities                 *
      ****************************************************/
+    public boolean isErrorAtOffset() {
+        return errorMonitor.isErrorAtOffset();
+    }
 
     public void error(String messageText) {
         builder.error(messageText);
@@ -138,13 +143,17 @@ public final class ParserBuilder {
     }
 
     public void markError(String message) {
-        Marker errorMaker = builder.mark();
-        errorMaker.error(message);
+        if (!errorMonitor.isErrorAtOffset()) {
+            errorMonitor.markError();
+            Marker errorMaker = builder.mark();
+            errorMaker.error(message);
+        }
     }
 
     public void markerRollbackTo(Marker marker) {
         if (marker != null) {
             marker.rollbackTo();
+            errorMonitor.reset();
             tokenPairMonitor.reset();
             tokenPairMonitorOld.rollback();
             cache.reset();
