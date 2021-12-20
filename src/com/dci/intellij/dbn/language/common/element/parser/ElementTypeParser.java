@@ -122,6 +122,7 @@ public abstract class ElementTypeParser<T extends ElementTypeBase> {
         return elementType.getElementBundle();
     }
 
+    @Deprecated
     protected boolean shouldParseElement(ElementType elementType, ParsePathNode node, ParserContext context) {
         ParserBuilder builder = context.getBuilder();
         TokenType token = builder.getToken();
