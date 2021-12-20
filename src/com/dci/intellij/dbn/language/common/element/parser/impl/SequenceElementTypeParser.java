@@ -3,7 +3,6 @@ package com.dci.intellij.dbn.language.common.element.parser.impl;
 import com.dci.intellij.dbn.language.common.ParseException;
 import com.dci.intellij.dbn.language.common.TokenType;
 import com.dci.intellij.dbn.language.common.element.ElementType;
-import com.dci.intellij.dbn.language.common.element.impl.ElementTypeBase;
 import com.dci.intellij.dbn.language.common.element.impl.ElementTypeRef;
 import com.dci.intellij.dbn.language.common.element.impl.IdentifierElementType;
 import com.dci.intellij.dbn.language.common.element.impl.IterationElementType;
@@ -113,13 +112,24 @@ public class SequenceElementTypeParser<ET extends SequenceElementType> extends E
     }
 
     ParseResult parseNew(ParsePathNode parentNode, ParserContext context) throws ParseException {
+        ParserBuilder builder = context.getBuilder();
+        ParsePathNode node = stepIn(parentNode, context);
+
+        ElementTypeRef element = elementType.getFirstChild();
+        while (element != null) {
+
+
+            element = element.getNext();
+        }
+
+
         return ParseResult.noMatch(); // TODO
     }
 
     @Deprecated // ambiguous
     private boolean ignoreFirstMatch() {
         ElementTypeRef firstChild = elementType.getChild(0);
-        ElementTypeBase elementType = firstChild.getElementType();
+        ElementType elementType = firstChild.getElementType();
         if (elementType instanceof IdentifierElementType) {
             IdentifierElementType identifierElementType = (IdentifierElementType) elementType;
             return !identifierElementType.isDefinition();

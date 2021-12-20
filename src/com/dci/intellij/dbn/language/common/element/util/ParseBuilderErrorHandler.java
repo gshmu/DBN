@@ -14,8 +14,8 @@ import java.util.stream.Collectors;
 public class ParseBuilderErrorHandler {
     public static void updateBuilderError(Set<TokenType> expectedTokens, ParserContext context) {
         if (expectedTokens != null) {
-            int offset = context.getBuilder().getOffset();
-            if (ParseBuilderErrorWatcher.show(offset, context.getTimestamp())) {
+            ParserBuilder builder = context.getBuilder();
+            if (!builder.isErrorAtOffset()) {
                 //expectedTokenError(1, context.builder, TokenTypeCategory.CHARACTER, expectedTokens);
                 //expectedTokenError(2, context.builder, TokenTypeCategory.OPERATOR, expectedTokens);
                 //expectedTokenError(3, context.builder, TokenTypeCategory.KEYWORD, expectedTokens);
@@ -50,8 +50,8 @@ public class ParseBuilderErrorHandler {
                     }
                 }
                 //buffer.append("\n");
-                context.getBuilder().markError("Invalid or incomplete statement");
-                context.getBuilder().error(buffer.toString());
+                builder.markError("Invalid or incomplete statement");
+                builder.error(buffer.toString());
             }
         }
     }

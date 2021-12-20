@@ -22,7 +22,7 @@ public class OneOfElementTypeParser extends ElementTypeParser<OneOfElementType> 
     @Override
     public ParseResult parse(ParsePathNode parentNode, ParserContext context) throws ParseException {
         if (context.isAlternative()) {
-            return scanNew(parentNode, context);
+            return parseNew(parentNode, context);
         }
 
         ParserBuilder builder = context.getBuilder();
@@ -47,7 +47,7 @@ public class OneOfElementTypeParser extends ElementTypeParser<OneOfElementType> 
         return stepOut(node, context, ParseResultType.NO_MATCH, 0);
     }
 
-    private ParseResult scanNew(ParsePathNode parentNode, ParserContext context) throws ParseException {
+    private ParseResult parseNew(ParsePathNode parentNode, ParserContext context) throws ParseException {
         ParserBuilder builder = context.getBuilder();
         ParsePathNode node = stepIn(parentNode, context);
 
@@ -58,13 +58,14 @@ public class OneOfElementTypeParser extends ElementTypeParser<OneOfElementType> 
             Pair<ElementTypeRef, ParseResult> bestResult = null;
             ElementTypeRef element = elementType.getFirstChild();
             while (element != null) {
-                if (context.check(element) && shouldParseElement(element.getElementType(), node, context)) {
+                if (context.check(element)) {
                     ParseResult result = element.getParser().parse(node, context);
                     Marker marker = builder.mark();
 
                     if (result.isFullMatch()) {
                         builder.markerDrop(marker);
                         return stepOut(node, context, result.getType(), result.getMatchedTokens());
+
                     } else if (result.isPartialMatch()) {
                         if (bestResult == null || result.isBetterThan(bestResult.second())) {
                             bestResult = Pair.of(element, result);

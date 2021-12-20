@@ -131,9 +131,9 @@ public class IterationElementTypeParser extends ElementTypeParser<IterationEleme
         ElementType iteratedElement = elementType.getIteratedElementType();
         TokenElementType[] separatorTokens = elementType.getSeparatorTokens();
 
-        ParseMonitor monitor = new ParseMonitor();
+        IterationParseMonitor monitor = new IterationParseMonitor();
 
-        while (shouldParseElement(iteratedElement, node, context)) {
+        while (true) {
             ParseResult result = iteratedElement.getParser().parse(node, context);
             if (result.isMatch()) {
                 monitor.iterations++;
@@ -179,7 +179,7 @@ public class IterationElementTypeParser extends ElementTypeParser<IterationEleme
         return stepOut(node, context, nvl(monitor.lastResultType, NO_MATCH), monitor.matchedTokens);
     }
 
-    private static class ParseMonitor {
+    private static class IterationParseMonitor {
         private boolean exit;
         private int iterations = 0;
         private int matchedTokens = 0;
