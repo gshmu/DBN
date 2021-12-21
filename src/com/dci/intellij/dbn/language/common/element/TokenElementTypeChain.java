@@ -8,7 +8,6 @@ import java.util.List;
 
 public class TokenElementTypeChain {
     private List<TokenElementType> elementTypes = new ArrayList<>();
-    private double version ;
 
     private TokenElementTypeChain(){};
 
@@ -22,10 +21,6 @@ public class TokenElementTypeChain {
 
     public List<TokenElementType> getElementTypes() {
         return elementTypes;
-    }
-
-    public double getVersion() {
-        return version;
     }
 
     public TokenElementTypeChain createVariant(TokenElementType tokenElementType) {
