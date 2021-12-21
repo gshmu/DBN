@@ -8,7 +8,6 @@ import com.intellij.psi.tree.IElementType;
 
 %class OraclePLSQLParserFlexLexer
 %implements FlexLexer
-%public
 %final
 %unicode
 %ignorecase
@@ -24,18 +23,15 @@ import com.intellij.psi.tree.IElementType;
     }
 %}
 
-WHITE_SPACE= {white_space_char}|{line_terminator}
-line_terminator = \r|\n|\r\n
-input_character = [^\r\n]
-white_space = [ \t\f]
-white_space_char= [ \n\r\t\f]
-ws  = {WHITE_SPACE}+
-wso = {WHITE_SPACE}*
+eol = \r|\n|\r\n
+wsc = [ \t\f]
+wso = ({eol}|{wsc})*
+ws  = ({eol}|{wsc})+
+WHITE_SPACE = {ws}
 
-comment_tail =([^"*"]*("*"+[^"*""/"])?)*("*"+"/")?
-BLOCK_COMMENT=("/*"[^]{comment_tail})|"/*"
-LINE_COMMENT = "--" {input_character}*
-REM_LINE_COMMENT = "rem"({white_space}+{input_character}*|{line_terminator})
+
+BLOCK_COMMENT=("/*"[^]([^"*"]*("*"+[^"*""/"])?)*("*"+"/")?)|"/*"
+LINE_COMMENT = ("--"[^\r\n]*{eol}?) | ("rem"({wsc}+[^\r\n]*{eol}?|{eol}?))
 
 IDENTIFIER = [:jletter:] ([:jletterdigit:]|"#")*
 QUOTED_IDENTIFIER = "\""[^\"]*"\""?
@@ -56,21 +52,17 @@ SQLP_VARIABLE = "&""&"?{IDENTIFIER}
 %%
 
 <WRAPPED> {
-    .*               { return tt.getSharedTokenTypes().getLineComment(); }
-    .               { return tt.getSharedTokenTypes().getLineComment(); }
+    .*           { return tt.getSharedTokenTypes().getLineComment(); }
+    .            { return tt.getSharedTokenTypes().getLineComment(); }
 }
 
+{BLOCK_COMMENT}  { return tt.getSharedTokenTypes().getBlockComment(); }
+{LINE_COMMENT}   { return tt.getSharedTokenTypes().getLineComment(); }
 
-{WHITE_SPACE}+   { return tt.getSharedTokenTypes().getWhiteSpace(); }
+"wrapped"        { yybegin(WRAPPED); return tt.getTokenType("KW_WRAPPED");}
 
-{BLOCK_COMMENT}      { return tt.getSharedTokenTypes().getBlockComment(); }
-{LINE_COMMENT}       { return tt.getSharedTokenTypes().getLineComment(); }
-{REM_LINE_COMMENT}   { return tt.getSharedTokenTypes().getLineComment(); }
-
-"wrapped"            { yybegin(WRAPPED); return tt.getTokenType("KW_WRAPPED");}
-
-{VARIABLE}          {return tt.getSharedTokenTypes().getVariable(); }
-{SQLP_VARIABLE}     {return tt.getSharedTokenTypes().getVariable(); }
+{VARIABLE}       {return tt.getSharedTokenTypes().getVariable(); }
+{SQLP_VARIABLE}  {return tt.getSharedTokenTypes().getVariable(); }
 
 
 {INTEGER}     { return tt.getSharedTokenTypes().getInteger(); }
@@ -900,6 +892,7 @@ SQLP_VARIABLE = "&""&"?{IDENTIFIER}
 
 {IDENTIFIER}           { return tt.getSharedTokenTypes().getIdentifier(); }
 {QUOTED_IDENTIFIER}    { return tt.getSharedTokenTypes().getQuotedIdentifier(); }
+{WHITE_SPACE}          { return tt.getSharedTokenTypes().getWhiteSpace(); }
 .                      { return tt.getSharedTokenTypes().getIdentifier(); }
 
 

@@ -96,8 +96,7 @@ public class ConnectionManager extends AbstractProjectComponent implements Persi
     @Override
     public void initializeComponent() {
         super.initComponent();
-        Project project = getProject();
-        idleConnectionCleaner = new Timer("DBN - Idle Connection Cleaner [" + project.getName() + "]");
+        idleConnectionCleaner = new Timer("DBN - Idle Connection Cleaner");
         idleConnectionCleaner.schedule(new CloseIdleConnectionTask(), TimeUtil.Millis.ONE_MINUTE, TimeUtil.Millis.ONE_MINUTE);
     }
 
