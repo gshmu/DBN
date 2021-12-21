@@ -10,6 +10,7 @@ public enum DatabaseObjectTypeId {
     CHARSET,
     CLUSTER,
     COLLATION,
+    CONTEXT,
     COLUMN,
     CONSTRAINT,
     DATABASE,
