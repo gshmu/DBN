@@ -64,7 +64,7 @@ public final class Progress {
     public static void prompt(Project project, String title, boolean cancellable, ProgressRunnable runnable) {
         if (Failsafe.check(project)) {
             ThreadInfo invoker = ThreadMonitor.current();
-            start(new Task.ConditionalModal(Failsafe.nd(project), title, cancellable, PerformInBackgroundOption.ALWAYS_BACKGROUND) {
+            start(new Task.ConditionalModal(Failsafe.nd(project), title, cancellable, PerformInBackgroundOption.DEAF) {
                 @Override
                 public void run(@NotNull ProgressIndicator indicator) {
                     ThreadMonitor.run(
@@ -93,6 +93,13 @@ public final class Progress {
     }
 
     public static void start(Task task) {
+        if (true) {
+            Dispatch.runConditional(() -> {
+                ProgressManager progressManager = ProgressManager.getInstance();
+                progressManager.run(task);
+            });
+            return;
+        }
         Application application = ApplicationManager.getApplication();
         application.invokeLater(() -> {
             if (Failsafe.check(task) && Failsafe.check(task.getProject())) {

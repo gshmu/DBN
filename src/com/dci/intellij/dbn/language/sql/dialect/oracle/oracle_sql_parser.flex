@@ -10,7 +10,6 @@ import com.intellij.psi.tree.IElementType;
 
 %class OracleSQLParserFlexLexer
 %implements FlexLexer
-%public
 %final
 %unicode
 %ignorecase
@@ -55,18 +54,15 @@ PSQL_BLOCK_START_BEGIN = "begin"
 PSQL_BLOCK_END_IGNORE = "end"{ws}("if"|"loop"|"case")({ws}({IDENTIFIER}|{QUOTED_IDENTIFIER}))*{wso}";"
 PSQL_BLOCK_END = "end"({ws}({IDENTIFIER}|{QUOTED_IDENTIFIER}))*{wso}(";"({wso}"/")?)?
 
-WHITE_SPACE= {white_space_char}|{line_terminator}
-line_terminator = \r|\n|\r\n
-input_character = [^\r\n]
-white_space = [ \t\f]
-white_space_char = [ \n\r\t\f]
-ws  = {WHITE_SPACE}+
-wso = {WHITE_SPACE}*
+eol = \r|\n|\r\n
+wsc = [ \t\f]
+wso = ({eol}|{wsc})*
+ws  = ({eol}|{wsc})+
+WHITE_SPACE = {ws}
 
-BLOCK_COMMENT = "/*"([^*/] | "*"[^/]? | [^*]"/" | {ws})*"*/"
-LINE_COMMENT = "--" {input_character}*
-REM_LINE_COMMENT = "rem"({white_space}+{input_character}*|{line_terminator})
 
+BLOCK_COMMENT=("/*"[^]([^"*"]*("*"+[^"*""/"])?)*("*"+"/")?)|"/*"
+LINE_COMMENT = ("--"[^\r\n]*{eol}?) | ("rem"({wsc}+[^\r\n]*{eol}?|{eol}?))
 
 IDENTIFIER = [:jletter:] ([:jletterdigit:]|"#")*
 QUOTED_IDENTIFIER = "\""[^\"]*"\""?
@@ -82,7 +78,7 @@ NUMBER = {INTEGER}?"."{digit}+(("e"{sign}?{digit}+)|(("f"|"d"){ws}))?
 
 VARIABLE = ":"({IDENTIFIER}|{INTEGER})
 SQLP_VARIABLE = "&""&"?({IDENTIFIER}|{INTEGER})
-VARIABLE_IDENTIFIER={IDENTIFIER}"&""&"?({IDENTIFIER}|{INTEGER})
+VARIABLE_IDENTIFIER={IDENTIFIER}"&""&"?({IDENTIFIER}|{INTEGER})|"<"{IDENTIFIER}({ws}{IDENTIFIER})*">"
 
 CT_SIZE_CLAUSE = {INTEGER}{wso}("k"|"m"|"g"|"t"|"p"|"e"){ws}
 
@@ -107,7 +103,7 @@ CT_SIZE_CLAUSE = {INTEGER}{wso}("k"|"m"|"g"|"t"|"p"|"e"){ws}
     {IDENTIFIER}                    {}
     {INTEGER}                       {}
     {NUMBER}                        {}
-    {WHITE_SPACE}+                  {}
+    {WHITE_SPACE}                   {}
     \n|\r|.                         {}
     <<EOF>>                         { plsqlBlockMonitor.end(true); return getChameleon(); }
 }
@@ -127,11 +123,8 @@ CT_SIZE_CLAUSE = {INTEGER}{wso}("k"|"m"|"g"|"t"|"p"|"e"){ws}
 
 <YYINITIAL, NON_PSQL_BLOCK> {
 
-{WHITE_SPACE}+   { return tt.getSharedTokenTypes().getWhiteSpace(); }
-
 {BLOCK_COMMENT}      { return tt.getSharedTokenTypes().getBlockComment(); }
 {LINE_COMMENT}       { return tt.getSharedTokenTypes().getLineComment(); }
-{REM_LINE_COMMENT}   { return tt.getSharedTokenTypes().getLineComment(); }
 
 //{PSQL_BLOCK_START_CREATE}          { plsqlBlockMonitor.start(Marker.CREATE); }
 //{PSQL_BLOCK_START_DECLARE}         { plsqlBlockMonitor.start(Marker.DECLARE); }
@@ -1410,8 +1403,9 @@ CT_SIZE_CLAUSE = {INTEGER}{wso}("k"|"m"|"g"|"t"|"p"|"e"){ws}
 {NUMBER}      { return tt.getSharedTokenTypes().getNumber(); }
 {STRING}      { return tt.getSharedTokenTypes().getString(); }
 
-{IDENTIFIER}           { return tt.getSharedTokenTypes().getIdentifier(); }
-{QUOTED_IDENTIFIER}    { return tt.getSharedTokenTypes().getQuotedIdentifier(); }
+{IDENTIFIER}         { return tt.getSharedTokenTypes().getIdentifier(); }
+{QUOTED_IDENTIFIER}  { return tt.getSharedTokenTypes().getQuotedIdentifier(); }
 
+{WHITE_SPACE}        { return tt.getSharedTokenTypes().getWhiteSpace(); }
 .                    { return tt.getSharedTokenTypes().getIdentifier(); }
 }
