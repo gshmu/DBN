@@ -8,7 +8,6 @@ import com.intellij.psi.tree.IElementType;
 
 %class OraclePLSQLHighlighterFlexLexer
 %implements FlexLexer
-%public
 %final
 %unicode
 %ignorecase
@@ -25,18 +24,15 @@ import com.intellij.psi.tree.IElementType;
     }
 %}
 
-WHITE_SPACE= {white_space_char}|{line_terminator}
-line_terminator = \r|\n|\r\n
-input_character = [^\r\n]
-white_space = [ \t\f]
-white_space_char= [ \n\r\t\f]
-ws  = {WHITE_SPACE}+
-wso = {WHITE_SPACE}*
+eol = \r|\n|\r\n
+wsc = [ \t\f]
+wso = ({eol}|{wsc})*
+ws  = ({eol}|{wsc})+
+WHITE_SPACE = {ws}
 
-block_comment_end =([^"*"]*("*"+[^"*""/"])?)*("*"+"/")?
-BLOCK_COMMENT=("/*"[^]{block_comment_end})|"/*"
-LINE_COMMENT = "--" {input_character}*
-REM_LINE_COMMENT = "rem"({white_space}+{input_character}*|{line_terminator})
+
+BLOCK_COMMENT=("/*"[^]([^"*"]*("*"+[^"*""/"])?)*("*"+"/")?)|"/*"
+LINE_COMMENT = ("--"[^\r\n]*{eol}?) | ("rem"({wsc}+[^\r\n]*{eol}?|{eol}?))
 
 IDENTIFIER = [:jletter:] ([:jletterdigit:]|"#")*
 QUOTED_IDENTIFIER = "\""[^\"]*"\""?
@@ -50,13 +46,7 @@ digit = [0-9]
 INTEGER = {digit}+("e"{sign}?{digit}+)?
 NUMBER = {INTEGER}?"."{digit}+(("e"{sign}?{digit}+)|(("f"|"d"){ws}))?
 
-operator_equals             = "="
-operator_not_equals         = (("!"|"^"){wso}"=")|("<"{wso}">")
-operator_greater_than       = ">"
-operator_greater_equal_than = ">"{wso}"="
-operator_less_than          = "<"
-operator_less_equal_than    = ">"{wso}"="
-OPERATOR                    = {operator_equals}|{operator_not_equals}|{operator_greater_than}|{operator_greater_equal_than}|{operator_less_than}|{operator_less_equal_than}
+OPERATOR = ("!"|"^"|"<"|">"){wso}"="|"<"{wso}">"|"<"|">"|"="
 
 
 KEYWORD     = "a set"|"absent"|"accessible"|"after"|"agent"|"aggregate"|"all"|"alter"|"analyze"|"and"|"any"|"apply"|"array"|"as"|"asc"|"associate"|"at"|"audit"|"authid"|"automatic"|"autonomous_transaction"|"before"|"begin"|"between"|"block"|"body"|"both"|"bulk"|"bulk_exceptions"|"bulk_rowcount"|"by"|"c"|"call"|"canonical"|"case"|"char_base"|"char_cs"|"charsetform"|"charsetid"|"check"|"chisq_df"|"chisq_obs"|"chisq_sig"|"clone"|"close"|"cluster"|"coalesce"|"coefficient"|"cohens_k"|"collation"|"collect"|"columns"|"comment"|"commit"|"committed"|"compatibility"|"compound"|"compress"|"conditional"|"connect"|"constant"|"constraint"|"constructor"|"cont_coefficient"|"container"|"content"|"context"|"conversion"|"count"|"cramers_v"|"create"|"cross"|"crossedition"|"cube"|"current"|"current_user"|"currval"|"cursor"|"database"|"day"|"db_role_change"|"ddl"|"declare"|"decrement"|"default"|"defaults"|"definer"|"delete"|"deleting"|"dense_rank"|"deprecate"|"desc"|"deterministic"|"df"|"df_between"|"df_den"|"df_num"|"df_within"|"dimension"|"disable"|"disassociate"|"distinct"|"do"|"document"|"drop"|"dump"|"duration"|"each"|"editionable"|"else"|"elsif"|"empty"|"enable"|"encoding"|"end"|"entityescaping"|"equals_path"|"error"|"error_code"|"error_index"|"errors"|"escape"|"evalname"|"exact_prob"|"except"|"exception"|"exception_init"|"exceptions"|"exclude"|"exclusive"|"execute"|"exists"|"exit"|"extend"|"extends"|"external"|"f_ratio"|"fetch"|"final"|"first"|"following"|"follows"|"for"|"forall"|"force"|"forward"|"found"|"from"|"format"|"full"|"function"|"goto"|"grant"|"group"|"hash"|"having"|"heap"|"hide"|"hour"|"if"|"ignore"|"immediate"|"in"|"include"|"increment"|"indent"|"index"|"indicator"|"indices"|"infinite"|"inline"|"inner"|"insert"|"inserting"|"instantiable"|"instead"|"interface"|"intersect"|"interval"|"into"|"is"|"isolation"|"isopen"|"iterate"|"java"|"join"|"json"|"keep"|"key"|"keys"|"language"|"last"|"leading"|"left"|"level"|"library"|"like"|"like2"|"like4"|"likec"|"limit"|"limited"|"local"|"lock"|"locked"|"log"|"logoff"|"logon"|"loop"|"main"|"map"|"matched"|"maxlen"|"maxvalue"|"mean_squares_between"|"mean_squares_within"|"measures"|"member"|"merge"|"metadata"|"minus"|"minute"|"minvalue"|"mismatch"|"mlslabel"|"mode"|"model"|"month"|"multiset"|"name"|"nan"|"natural"|"naturaln"|"nav"|"nchar_cs"|"nested"|"new"|"next"|"nextval"|"no"|"noaudit"|"nocopy"|"nocycle"|"none"|"noentityescaping"|"noneditionable"|"noschemacheck"|"not"|"notfound"|"nowait"|"null"|"nulls"|"number_base"|"object"|"ocirowid"|"of"|"offset"|"oid"|"old"|"on"|"one_sided_prob_or_less"|"one_sided_prob_or_more"|"one_sided_sig"|"only"|"opaque"|"open"|"operator"|"option"|"or"|"order"|"ordinality"|"organization"|"others"|"out"|"outer"|"over"|"overflow"|"overlaps"|"overriding"|"package"|"parallel_enable"|"parameters"|"parent"|"partition"|"passing"|"path"|"pctfree"|"percent"|"phi_coefficient"|"pipe"|"pipelined"|"pivot"|"pluggable"|"positive"|"positiven"|"power"|"pragma"|"preceding"|"precedes"|"present"|"pretty"|"prior"|"private"|"procedure"|"public"|"raise"|"range"|"read"|"record"|"ref"|"reference"|"referencing"|"regexp_like"|"reject"|"release"|"relies_on"|"remainder"|"rename"|"replace"|"restrict_references"|"result"|"result_cache"|"return"|"returning"|"reverse"|"revoke"|"right"|"rnds"|"rnps"|"rollback"|"rollup"|"row"|"rowcount"|"rownum"|"rows"|"rowtype"|"rules"|"sample"|"save"|"savepoint"|"schema"|"schemacheck"|"scn"|"second"|"seed"|"segment"|"select"|"self"|"separate"|"sequential"|"serializable"|"serially_reusable"|"servererror"|"set"|"sets"|"share"|"sharing"|"show"|"shutdown"|"siblings"|"sig"|"single"|"size"|"skip"|"some"|"space"|"sql"|"sqlcode"|"sqlerrm"|"standalone"|"start"|"startup"|"statement"|"static"|"statistic"|"statistics"|"strict"|"struct"|"submultiset"|"subpartition"|"subtype"|"successful"|"sum_squares_between"|"sum_squares_within"|"suspend"|"synonym"|"table"|"tdo"|"then"|"ties"|"time"|"timezone_abbr"|"timezone_hour"|"timezone_minute"|"timezone_region"|"to"|"trailing"|"transaction"|"trigger"|"truncate"|"trust"|"two_sided_prob"|"two_sided_sig"|"type"|"u_statistic"|"unbounded"|"unconditional"|"under"|"under_path"|"union"|"unique"|"unlimited"|"unpivot"|"unplug"|"until"|"update"|"updated"|"updating"|"upsert"|"use"|"user"|"using"|"validate"|"value"|"values"|"variable"|"varray"|"varying"|"version"|"versions"|"view"|"wait"|"wellformed"|"when"|"whenever"|"where"|"while"|"with"|"within"|"without"|"wnds"|"wnps"|"work"|"write"|"wrapped"|"wrapper"|"xml"|"xmlnamespaces"|"year"|"yes"|"zone"|"false"|"true"
@@ -77,40 +67,38 @@ SQLP_VARIABLE = "&""&"?{IDENTIFIER}
 }
 
 
-
-{WHITE_SPACE}+       { return tt.getSharedTokenTypes().getWhiteSpace(); }
-
 //{VARIABLE}           {return tt.getSharedTokenTypes().getVariable(); }
 {SQLP_VARIABLE}      {return tt.getSharedTokenTypes().getVariable(); }
 
 
 {BLOCK_COMMENT}      { return tt.getSharedTokenTypes().getBlockComment(); }
 {LINE_COMMENT}       { return tt.getSharedTokenTypes().getLineComment(); }
-{REM_LINE_COMMENT}   { return tt.getSharedTokenTypes().getLineComment(); }
 
 "wrapped"            { yybegin(WRAPPED); return tt.getTokenType("KEYWORD");}
 
-{INTEGER}              { return tt.getTokenType("INTEGER"); }
-{NUMBER}               { return tt.getTokenType("NUMBER"); }
-{STRING}               { return tt.getTokenType("STRING"); }
+{INTEGER}            { return tt.getTokenType("INTEGER"); }
+{NUMBER}             { return tt.getTokenType("NUMBER"); }
+{STRING}             { return tt.getTokenType("STRING"); }
 
-{FUNCTION}             { return tt.getTokenType("FUNCTION");}
-{PARAMETER}            { return tt.getTokenType("PARAMETER");}
-{EXCEPTION}            { return tt.getTokenType("EXCEPTION");}
+{FUNCTION}           { return tt.getTokenType("FUNCTION");}
+{PARAMETER}          { return tt.getTokenType("PARAMETER");}
+{EXCEPTION}          { return tt.getTokenType("EXCEPTION");}
 
-{DATA_TYPE}            { return tt.getTokenType("DATA_TYPE"); }
-{KEYWORD}              { return tt.getTokenType("KEYWORD"); }
-{OPERATOR}             { return tt.getTokenType("OPERATOR"); }
-
-
-{IDENTIFIER}           { return tt.getSharedTokenTypes().getIdentifier(); }
-{QUOTED_IDENTIFIER}    { return tt.getSharedTokenTypes().getQuotedIdentifier(); }
+{DATA_TYPE}          { return tt.getTokenType("DATA_TYPE"); }
+{KEYWORD}            { return tt.getTokenType("KEYWORD"); }
+{OPERATOR}           { return tt.getTokenType("OPERATOR"); }
 
 
-"("                    { return tt.getTokenType("CHR_LEFT_PARENTHESIS"); }
-")"                    { return tt.getTokenType("CHR_RIGHT_PARENTHESIS"); }
-"["                    { return tt.getTokenType("CHR_LEFT_BRACKET"); }
-"]"                    { return tt.getTokenType("CHR_RIGHT_BRACKET"); }
 
-.                      { return tt.getSharedTokenTypes().getIdentifier(); }
+{IDENTIFIER}         { return tt.getSharedTokenTypes().getIdentifier(); }
+{QUOTED_IDENTIFIER}  { return tt.getSharedTokenTypes().getQuotedIdentifier(); }
+
+
+"("                  { return tt.getSharedTokenTypes().getChrLeftParenthesis(); }
+")"                  { return tt.getSharedTokenTypes().getChrRightParenthesis(); }
+"["                  { return tt.getTokenType("CHR_LEFT_BRACKET"); }
+"]"                  { return tt.getTokenType("CHR_RIGHT_BRACKET"); }
+
+{WHITE_SPACE}        { return tt.getSharedTokenTypes().getWhiteSpace(); }
+.                    { return tt.getSharedTokenTypes().getIdentifier(); }
 
