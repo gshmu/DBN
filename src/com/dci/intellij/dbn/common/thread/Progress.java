@@ -4,14 +4,17 @@ import com.dci.intellij.dbn.common.dispose.AlreadyDisposedException;
 import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.common.routine.ProgressRunnable;
 import com.dci.intellij.dbn.common.util.Safe;
-import com.intellij.openapi.progress.PerformInBackgroundOption;
 import com.intellij.openapi.progress.ProgressIndicator;
 import com.intellij.openapi.progress.ProgressManager;
 import com.intellij.openapi.progress.Task;
+import com.intellij.openapi.progress.Task.Backgroundable;
 import com.intellij.openapi.project.Project;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.concurrent.atomic.AtomicReference;
+
+import static com.intellij.openapi.progress.PerformInBackgroundOption.ALWAYS_BACKGROUND;
+import static com.intellij.openapi.progress.PerformInBackgroundOption.DEAF;
 
 public final class Progress {
 
@@ -20,7 +23,7 @@ public final class Progress {
     public static void background(Project project, String title, boolean cancellable, ProgressRunnable runnable) {
         if (Failsafe.check(project)) {
             ThreadInfo invoker = ThreadMonitor.current();
-            start(new Task.Backgroundable(Failsafe.nd(project), title, cancellable, PerformInBackgroundOption.ALWAYS_BACKGROUND) {
+            start(new Backgroundable(Failsafe.nd(project), title, cancellable, ALWAYS_BACKGROUND) {
                 @Override
                 public void run(@NotNull ProgressIndicator indicator) {
                     ThreadMonitor.run(
@@ -39,7 +42,7 @@ public final class Progress {
                 current.interrupt();
             }
             ThreadInfo invoker = ThreadMonitor.current();
-            start(new Task.Backgroundable(Failsafe.nd(project), title, false, PerformInBackgroundOption.ALWAYS_BACKGROUND) {
+            start(new Backgroundable(Failsafe.nd(project), title, false, ALWAYS_BACKGROUND) {
                 @Override
                 public void run(@NotNull ProgressIndicator indicator) {
                     ThreadMonitor.run(
@@ -62,7 +65,7 @@ public final class Progress {
     public static void prompt(Project project, String title, boolean cancellable, ProgressRunnable runnable) {
         if (Failsafe.check(project)) {
             ThreadInfo invoker = ThreadMonitor.current();
-            start(new Task.Backgroundable(Failsafe.nd(project), title, cancellable, PerformInBackgroundOption.DEAF) {
+            start(new Backgroundable(Failsafe.nd(project), title, cancellable, DEAF) {
                 @Override
                 public void run(@NotNull ProgressIndicator indicator) {
                     ThreadMonitor.run(
@@ -90,10 +93,12 @@ public final class Progress {
         }
     }
 
-    public static void start(Task task) {
+    private static void start(Task task) {
         if (Failsafe.check(task) && Failsafe.check(task.getProject())) {
-            ProgressManager progressManager = ProgressManager.getInstance();
-            progressManager.run(task);
+            Dispatch.runConditional(() -> {
+                ProgressManager progressManager = ProgressManager.getInstance();
+                progressManager.run(task);
+            });
         }
     }
 
