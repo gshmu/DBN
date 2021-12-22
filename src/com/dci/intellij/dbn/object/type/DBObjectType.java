@@ -71,6 +71,7 @@ public enum DBObjectType implements DynamicContentType<DBObjectType> {
     PROCEDURE(DatabaseObjectTypeId.PROCEDURE, "procedure", "procedures", Icons.DBO_PROCEDURE, null, Icons.DBO_PROCEDURES, false),
     PROGRAM(DatabaseObjectTypeId.PROGRAM, "program", "programs", null, null, null, true),
     PROFILE(DatabaseObjectTypeId.PROFILE, "profile", "profiles", null, null, null, false),
+    POLICY(DatabaseObjectTypeId.POLICY, "policy", "policies", null, null, null, false),
     ROLLBACK_SEGMENT(DatabaseObjectTypeId.ROLLBACK_SEGMENT, "rollback segment", "rollback segments", null, null, null, false),
     ROLE(DatabaseObjectTypeId.ROLE, "role", "roles", Icons.DBO_ROLE, null, Icons.DBO_ROLES, false),
     SCHEMA(DatabaseObjectTypeId.SCHEMA, "schema", "schemas", Icons.DBO_SCHEMA, null, Icons.DBO_SCHEMAS, false),
