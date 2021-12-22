@@ -6209,7 +6209,7 @@
             <token id="03189" type-id="KW_ERROR" />
             <sequence id="03190">
                 <token id="03191" type-id="KW_TRUNCATE" />
-                <element original-name="truncation_indicator" ref-id="expression" />
+                <element original-name="truncation_indicator" ref-id="expression" optional="true"/>
                 <sequence id="03192" optional="true">
                     <one-of id="03193">
                         <token id="03194" type-id="KW_WITH" />

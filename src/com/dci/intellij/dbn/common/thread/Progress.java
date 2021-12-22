@@ -4,8 +4,6 @@ import com.dci.intellij.dbn.common.dispose.AlreadyDisposedException;
 import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.common.routine.ProgressRunnable;
 import com.dci.intellij.dbn.common.util.Safe;
-import com.intellij.openapi.application.Application;
-import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.progress.PerformInBackgroundOption;
 import com.intellij.openapi.progress.ProgressIndicator;
 import com.intellij.openapi.progress.ProgressManager;
@@ -64,7 +62,7 @@ public final class Progress {
     public static void prompt(Project project, String title, boolean cancellable, ProgressRunnable runnable) {
         if (Failsafe.check(project)) {
             ThreadInfo invoker = ThreadMonitor.current();
-            start(new Task.ConditionalModal(Failsafe.nd(project), title, cancellable, PerformInBackgroundOption.DEAF) {
+            start(new Task.Backgroundable(Failsafe.nd(project), title, cancellable, PerformInBackgroundOption.DEAF) {
                 @Override
                 public void run(@NotNull ProgressIndicator indicator) {
                     ThreadMonitor.run(
@@ -93,20 +91,10 @@ public final class Progress {
     }
 
     public static void start(Task task) {
-        if (true) {
-            Dispatch.runConditional(() -> {
-                ProgressManager progressManager = ProgressManager.getInstance();
-                progressManager.run(task);
-            });
-            return;
+        if (Failsafe.check(task) && Failsafe.check(task.getProject())) {
+            ProgressManager progressManager = ProgressManager.getInstance();
+            progressManager.run(task);
         }
-        Application application = ApplicationManager.getApplication();
-        application.invokeLater(() -> {
-            if (Failsafe.check(task) && Failsafe.check(task.getProject())) {
-                ProgressManager progressManager = ProgressManager.getInstance();
-                progressManager.run(task);
-            }
-        });
     }
 
     public static void check(ProgressIndicator progress) {
