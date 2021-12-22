@@ -2653,7 +2653,7 @@
     <element-def description="Condition" id="condition" optional-wrapping="PARENTHESES">
         <token id="01306" optional="true" type-id="KW_NOT" />
         <iteration id="01307" optional-wrapping="PARENTHESES" original-name="compound_condition" separator="KW_AND, KW_OR">
-            <sequence id="01308">
+            <sequence id="01308" optional-wrapping="PARENTHESES">
                 <token id="01309" optional="true" type-id="KW_NOT" />
                 <one-of id="01310" optional-wrapping="PARENTHESES">
                     <!--element ref-id="logical_conditions"/-->
