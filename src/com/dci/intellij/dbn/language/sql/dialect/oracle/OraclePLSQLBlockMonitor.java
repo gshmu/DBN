@@ -8,7 +8,7 @@ public abstract class OraclePLSQLBlockMonitor {
         BEGIN,
         CREATE,
         DECLARE,
-        METHOD,
+        PROGRAM,
         CASE}
 
     private final Deque<Marker> stack = new LinkedList<>();
@@ -39,7 +39,7 @@ public abstract class OraclePLSQLBlockMonitor {
                     }
                 }
             } else {
-                while (marker == Marker.METHOD) {
+                while (marker == Marker.PROGRAM) {
                     marker = stack.poll();
                 }
             }
