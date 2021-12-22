@@ -51,6 +51,7 @@ public enum DatabaseObjectTypeId {
     OBJECT_PRIVILEGE,
     PROCEDURE,
     PROFILE,
+    POLICY,
     PROGRAM,
     ROLLBACK_SEGMENT,
     ROLE,
