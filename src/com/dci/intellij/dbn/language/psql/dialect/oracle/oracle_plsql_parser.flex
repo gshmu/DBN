@@ -30,14 +30,35 @@ ws  = ({eol}|{wsc})+
 WHITE_SPACE = {ws}
 
 
-BLOCK_COMMENT=("/*"[^]([^"*"]*("*"+[^"*""/"])?)*("*"+"/")?)|"/*"
+BLOCK_COMMENT="/"{wsc}*"*"(~"*/")?
 LINE_COMMENT = ("--"[^\r\n]*{eol}?) | ("rem"({wsc}+[^\r\n]*{eol}?|{eol}?))
 
 IDENTIFIER = [:jletter:] ([:jletterdigit:]|"#")*
 QUOTED_IDENTIFIER = "\""[^\"]*"\""?
 
-string_simple_quoted      = "'"([^\']|"''")*"'"?
-string_alternative_quoted = "q'["[^\[\]]*"]'"? | "q'("[^\(\)]*")'"? | "q'{"[^\{\}]*"}'"? | "q'!"[^\!]*"!'"? | "q'<"[^\<\>]*">'"? | "q'|"[^|]*"|'"?
+string_simple_quoted      = "'"([^']|"''")*"'"?
+string_alternative_quoted =
+    "q'["(~"]'")? |
+    "q'("(~")'")? |
+    "q'{"(~"}'")? |
+    "q'<"(~">'")? |
+    "q'!"(~"!'")? |
+    "q'?"(~"?'")? |
+    "q'|"(~"|'")? |
+    "q'/"(~"/'")? |
+    "q'\\"(~"\\'")? |
+    "q'+"(~"+'")? |
+    "q'-"(~"-'")? |
+    "q'*"(~"*'")? |
+    "q'="(~"='")? |
+    "q'#"(~"#'")? |
+    "q'%"(~"%'")? |
+    "q'$"(~"$'")? |
+    "q'&"(~"&'")? |
+    "q':"(~":'")? |
+    "q';"(~";'")? |
+    "q'."(~".'")? |
+    "q',"(~",'")?
 STRING = "n"?({string_alternative_quoted}|{string_simple_quoted})
 
 sign = "+"|"-"

@@ -13,6 +13,7 @@ import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiComment;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiWhiteSpace;
+import com.intellij.psi.tree.IElementType;
 import org.apache.commons.lang.StringUtils;
 import org.jetbrains.annotations.NotNull;
 
@@ -79,7 +80,19 @@ public class DBLLanguageFileScrambler {
                 builder.append(objectName);
             }
         } else if (child instanceof com.intellij.psi.impl.source.tree.LeafPsiElement) {
-            builder.append(child.getText());
+            IElementType elementType = ((com.intellij.psi.impl.source.tree.LeafPsiElement) child).getElementType();
+            String text = child.getText();
+            if (elementType instanceof TokenType) {
+                TokenType tokenType = (TokenType) elementType;
+                if (tokenType.getCategory() == TokenTypeCategory.LITERAL) {
+                    builder.append(text.replaceAll("[a-zA-Z0-9]", "#"));
+                } else {
+                    builder.append(text);
+                }
+            } else {
+                builder.append(text);
+            }
+
         } else {
             child = child.getFirstChild();
             while (child != null) {
