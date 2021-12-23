@@ -1198,7 +1198,7 @@ CT_SIZE_CLAUSE = {INTEGER}{wso}("k"|"m"|"g"|"t"|"p"|"e"){ws}
 "db_cache_advice" {return tt.getParameterTokenType(32);}
 "db_cache_size" {return tt.getParameterTokenType(33);}
 "db_create_file_dest" {return tt.getParameterTokenType(34);}
-"db_create_online_log_dest_n" {return tt.getParameterTokenType(35);}
+"db_create_online_log_dest_"{digit}+ {return tt.getParameterTokenType(35);}
 "db_domain" {return tt.getParameterTokenType(36);}
 "db_file_multiblock_read_count" {return tt.getParameterTokenType(37);}
 "db_file_name_convert" {return tt.getParameterTokenType(38);}
@@ -1260,8 +1260,8 @@ CT_SIZE_CLAUSE = {INTEGER}{wso}("k"|"m"|"g"|"t"|"p"|"e"){ws}
 "lock_sga" {return tt.getParameterTokenType(94);}
 "log_archive_config" {return tt.getParameterTokenType(95);}
 "log_archive_dest" {return tt.getParameterTokenType(96);}
-"log_archive_dest_n" {return tt.getParameterTokenType(97);}
-"log_archive_dest_state_n" {return tt.getParameterTokenType(98);}
+"log_archive_dest_"{digit}+ {return tt.getParameterTokenType(97);}
+"log_archive_dest_state_"{digit}+ {return tt.getParameterTokenType(98);}
 "log_archive_duplex_dest" {return tt.getParameterTokenType(99);}
 "log_archive_format" {return tt.getParameterTokenType(100);}
 "log_archive_local_first" {return tt.getParameterTokenType(101);}
