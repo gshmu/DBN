@@ -122,11 +122,12 @@ CT_SIZE_CLAUSE = {INTEGER}{wso}("k"|"m"|"g"|"t"|"p"|"e"){ws}
     "procedure"{ws}{IDENTIFIER}     { plsqlBlockMonitor.mark(Marker.PROGRAM); }
     "case"                          { plsqlBlockMonitor.mark(Marker.CASE); }
     "end"                           { plsqlBlockMonitor.end(false);}
+
     {IDENTIFIER}                    {}
     {INTEGER}                       {}
     {NUMBER}                        {}
     {WHITE_SPACE}                   {}
-    \n|\r|.                         {}
+    .                               {}
     <<EOF>>                         { plsqlBlockMonitor.end(true); return getChameleon(); }
 }
 
@@ -147,10 +148,6 @@ CT_SIZE_CLAUSE = {INTEGER}{wso}("k"|"m"|"g"|"t"|"p"|"e"){ws}
 
 {BLOCK_COMMENT}      { return tt.getSharedTokenTypes().getBlockComment(); }
 {LINE_COMMENT}       { return tt.getSharedTokenTypes().getLineComment(); }
-
-//{PSQL_BLOCK_START_CREATE}          { plsqlBlockMonitor.start(Marker.CREATE); }
-//{PSQL_BLOCK_START_DECLARE}         { plsqlBlockMonitor.start(Marker.DECLARE); }
-//{PSQL_BLOCK_START_BEGIN}           { plsqlBlockMonitor.start(Marker.BEGIN); }
 
 {VARIABLE}             { return tt.getSharedTokenTypes().getVariable(); }
 {VARIABLE_IDENTIFIER}  { return tt.getSharedTokenTypes().getIdentifier(); }

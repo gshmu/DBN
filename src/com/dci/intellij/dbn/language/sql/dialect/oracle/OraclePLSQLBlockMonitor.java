@@ -5,11 +5,11 @@ import java.util.LinkedList;
 
 public abstract class OraclePLSQLBlockMonitor {
     public enum Marker {
+        CASE,
         BEGIN,
         CREATE,
         DECLARE,
-        PROGRAM,
-        CASE}
+        PROGRAM}
 
     private final Deque<Marker> stack = new LinkedList<>();
 
