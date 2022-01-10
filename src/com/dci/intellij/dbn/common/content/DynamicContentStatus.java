@@ -18,10 +18,10 @@ public enum DynamicContentStatus implements Property.IntBase {
     LOADING,
     LOADING_IN_BACKGROUND;
 
-    private final Computed computed = new Computed(this);
+    private final Masks masks = new Masks(this);
 
     @Override
-    public Computed computed() {
-        return computed;
+    public Masks masks() {
+        return masks;
     }
 }

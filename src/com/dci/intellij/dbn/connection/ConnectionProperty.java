@@ -6,10 +6,10 @@ public enum ConnectionProperty implements Property.IntBase {
     RS_TYPE_SCROLL_INSENSITIVE,
     RS_TYPE_FORWARD_ONLY;
 
-    private final Computed computed = new Computed(this);
+    private final Masks masks = new Masks(this);
 
     @Override
-    public Computed computed() {
-        return computed;
+    public Masks masks() {
+        return masks;
     }
 }

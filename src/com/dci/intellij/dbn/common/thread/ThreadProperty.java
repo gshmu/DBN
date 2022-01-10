@@ -13,7 +13,7 @@ public enum ThreadProperty implements Property.IntBase {
     MODAL      (false)
 
 ;
-    private final Computed computed = new Computed(this);
+    private final Masks masks = new Masks(this);
     private final boolean propagatable;
 
     ThreadProperty(boolean propagatable) {
@@ -21,8 +21,8 @@ public enum ThreadProperty implements Property.IntBase {
     }
 
     @Override
-    public Computed computed() {
-        return computed;
+    public Masks masks() {
+        return masks;
     }
 
     public boolean propagatable() {

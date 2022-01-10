@@ -6,10 +6,10 @@ public enum ValueSelectorOption implements Property.IntBase {
     HIDE_ICON,
     HIDE_DESCRIPTION;
 
-    private final Computed computed = new Computed(this);
+    private final Masks masks = new Masks(this);
 
     @Override
-    public Computed computed() {
-        return computed;
+    public Masks masks() {
+        return masks;
     }
 }

@@ -14,7 +14,7 @@ public enum VirtualFileStatus implements Property.IntBase {
     SAVING,
     REFRESHING;
 
-    private final Computed computed = new Computed(this);
+    private final Masks masks = new Masks(this);
     private final boolean implicit;
     private final PropertyGroup group;
 
@@ -28,8 +28,8 @@ public enum VirtualFileStatus implements Property.IntBase {
     }
 
     @Override
-    public Computed computed() {
-        return computed;
+    public Masks masks() {
+        return masks;
     }
 
     @Override
