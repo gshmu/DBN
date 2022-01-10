@@ -125,6 +125,8 @@ public abstract class PropertyHolderBase<T extends Property> implements Property
         }
 
         protected void change(T property, boolean value) {
+            // TODO synchronization overhead??
+            // noinspection NonAtomicOperationOnVolatileField
             this.computed = value ?
                     this.computed | property.maskOn() :
                     this.computed & property.maskOff();
@@ -154,6 +156,8 @@ public abstract class PropertyHolderBase<T extends Property> implements Property
 
 
         protected void change(T property, boolean value) {
+            // TODO synchronization overhead??
+            // noinspection NonAtomicOperationOnVolatileField
             this.computed = value ?
                     this.computed | property.maskOn() :
                     this.computed & property.maskOff();
