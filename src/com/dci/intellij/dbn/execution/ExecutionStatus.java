@@ -8,10 +8,10 @@ public enum ExecutionStatus implements Property.IntBase {
     EXECUTING,
     CANCELLED;
 
-    private final Computed computed = new Computed(this);
+    private final Masks masks = new Masks(this);
 
     @Override
-    public Computed computed() {
-        return computed;
+    public Masks masks() {
+        return masks;
     }
 }
