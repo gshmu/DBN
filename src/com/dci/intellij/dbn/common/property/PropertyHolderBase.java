@@ -121,13 +121,13 @@ public abstract class PropertyHolderBase<T extends Property> implements Property
         }
 
         public final boolean is(T property) {
-            return (computed & property.computedOn()) != 0;
+            return (computed & property.maskOn()) != 0;
         }
 
         protected void change(T property, boolean value) {
             this.computed = value ?
-                    this.computed | property.computedOn() :
-                    this.computed & property.computedOff();
+                    this.computed | property.maskOn() :
+                    this.computed & property.maskOff();
         }
 
         public void reset() {
@@ -149,14 +149,14 @@ public abstract class PropertyHolderBase<T extends Property> implements Property
         }
 
         public final boolean is(T property) {
-            return (computed & property.computedOn()) != 0;
+            return (computed & property.maskOn()) != 0;
         }
 
 
         protected void change(T property, boolean value) {
             this.computed = value ?
-                    this.computed | property.computedOn() :
-                    this.computed & property.computedOff();
+                    this.computed | property.maskOn() :
+                    this.computed & property.maskOff();
         }
 
         public void reset() {

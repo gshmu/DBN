@@ -6,9 +6,9 @@ public enum ExecutionOption implements Property.IntBase {
     ENABLE_LOGGING,
     COMMIT_AFTER_EXECUTION;
 
-    private final Computed computed = new Computed(this);
+    private final Masks masks = new Masks(this);
 
     @Override
-    public Computed computed() {
-        return computed;
+    public Masks masks() {
+        return masks;
     }}

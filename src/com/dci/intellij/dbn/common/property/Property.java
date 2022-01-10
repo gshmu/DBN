@@ -13,24 +13,25 @@ public interface Property {
     interface LongBase extends Property{
         int ordinal();
 
-        Computed computed();
+        Masks masks();
 
-        default long computedOn() {
-            return computed().on;
+        default long maskOn() {
+            return masks().on;
         }
 
-        default long computedOff() {
-            return computed().off;
+        default long maskOff() {
+            return masks().off;
         }
 
-        class Computed {
+        class Masks {
             private final long on;
             private final long off;
 
-            public Computed(LongBase p) {
-                int shift = p.ordinal() + 1;
+            public Masks(LongBase property) {
+                int shift = property.ordinal();
+                assert shift < 32;
                 this.on = 1L << shift;
-                this.off = ~(1L << shift);
+                this.off = ~this.on;
             }
         }
     }
@@ -38,26 +39,26 @@ public interface Property {
     interface IntBase extends Property{
         int ordinal();
 
-        Computed computed();
+        Masks masks();
 
-        default int computedOn() {
-            return computed().on;
+        default int maskOn() {
+            return masks().on;
         }
 
-        default int computedOff() {
-            return computed().off;
+        default int maskOff() {
+            return masks().off;
         }
 
-        class Computed {
+        class Masks {
             private final int on;
             private final int off;
 
-            public Computed(IntBase p) {
-                int shift = p.ordinal() + 1;
+            public Masks(IntBase property) {
+                int shift = property.ordinal();
+                assert shift < 63;
                 this.on = 1 << shift;
-                this.off = ~(1 << shift);
-                assert shift < 32;
-            }
+                this.off = ~this.on;
+           }
         }
     }
 }
