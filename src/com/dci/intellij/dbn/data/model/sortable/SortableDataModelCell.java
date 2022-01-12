@@ -28,8 +28,9 @@ public class SortableDataModelCell<
 
     @Override
     public int compareTo(@NotNull DataModelCell cell) {
-        Comparable local = (Comparable) getUserValue();
-        Comparable remote = (Comparable) cell.getUserValue();
+        Object local = getUserValue();
+        Object remote = cell.getUserValue();
+
         boolean nullsFirst = getModel().isSortingNullsFirst();
 
         if (local == null && remote == null) return 0;
@@ -37,12 +38,17 @@ public class SortableDataModelCell<
         if (remote == null) return nullsFirst ? 1 : -1;
         // local class may differ from remote class for
         // columns with data conversion error
-        if (local.getClass().equals(remote.getClass())) {
-            return local.compareTo(remote);
+        Class<?> localClass = local.getClass();
+        Class<?> remoteClass = remote.getClass();
+
+        if (local instanceof Comparable && remote instanceof Comparable && localClass.equals(remoteClass)) {
+            Comparable localComparable = (Comparable) local;
+            Comparable remoteComparable = (Comparable) remote;
+            return localComparable.compareTo(remoteComparable);
         } else {
             Class typeClass = cell.getColumnInfo().getDataType().getTypeClass();
-            return local.getClass().equals(typeClass) ? 1 :
-                   remote.getClass().equals(typeClass) ? -1 : 0;
+            return localClass.equals(typeClass) ? 1 :
+                   remoteClass.equals(typeClass) ? -1 : 0;
         }
     }
 }

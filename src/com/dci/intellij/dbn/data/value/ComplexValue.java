@@ -9,7 +9,9 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
-public class ComplexValue extends ValueAdapter<String>{
+import static com.dci.intellij.dbn.common.util.Commons.nvl;
+
+public class ComplexValue extends ValueAdapter<String> implements Comparable<ComplexValue>{
     private String displayValue;
     private Object value;
 
@@ -80,5 +82,10 @@ public class ComplexValue extends ValueAdapter<String>{
     @Override
     public String toString() {
         return getDisplayValue();
+    }
+
+    @Override
+    public int compareTo(ComplexValue that) {
+        return nvl(this.displayValue, "").compareTo(nvl(that.displayValue, ""));
     }
 }
