@@ -67,6 +67,7 @@ import com.intellij.openapi.vfs.newvfs.events.VFileMoveEvent;
 import com.intellij.openapi.vfs.newvfs.events.VFilePropertyChangeEvent;
 import com.intellij.testFramework.LightVirtualFile;
 import com.intellij.util.IncorrectOperationException;
+import lombok.extern.slf4j.Slf4j;
 import org.jdom.Element;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -86,6 +87,7 @@ import static com.dci.intellij.dbn.connection.ConnectionSelectorOptions.Option.*
     name = FileConnectionMappingManager.COMPONENT_NAME,
     storages = @Storage(DatabaseNavigator.STORAGE_FILE)
 )
+@Slf4j
 public class FileConnectionMappingManager extends AbstractProjectComponent implements PersistentStateComponent<Element> {
     public static final String COMPONENT_NAME = "DBNavigator.Project.FileConnectionMappingManager";
 
@@ -920,9 +922,13 @@ public class FileConnectionMappingManager extends AbstractProjectComponent imple
             mapping.readState(child);
 
             String fileUrl = mapping.getFileUrl();
-            VirtualFile virtualFile = virtualFileManager.findFileByUrl(fileUrl);
-            if (virtualFile != null && virtualFile.isValid()) {
-                mappings.put(fileUrl, mapping);
+            try {
+                VirtualFile virtualFile = virtualFileManager.findFileByUrl(fileUrl);
+                if (virtualFile != null && virtualFile.isValid()) {
+                    mappings.put(fileUrl, mapping);
+                }
+            } catch (Exception e) {
+                log.warn("Failed to read file " + fileUrl, e);
             }
         }
     }
