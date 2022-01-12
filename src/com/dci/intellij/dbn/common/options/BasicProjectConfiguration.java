@@ -9,10 +9,11 @@ public abstract class BasicProjectConfiguration<P extends ProjectConfiguration, 
         extends BasicConfiguration<P, E>
         implements ProjectConfiguration<P, E> {
 
-    private ProjectRef project;
+    private final ProjectRef project;
 
     public BasicProjectConfiguration(@NotNull P parent) {
         super(parent);
+        this.project = ProjectRef.of(parent.getProject());
     }
 
     public BasicProjectConfiguration(@NotNull Project project) {
