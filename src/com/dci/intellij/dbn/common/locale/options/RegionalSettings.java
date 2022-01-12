@@ -51,12 +51,18 @@ public class RegionalSettings extends BasicProjectConfiguration<GeneralProjectSe
 
     @Override
     public void apply() throws ConfigurationException {
-        super.apply();
-        signature = hashCode();
-        baseFormatter = createFormatter();
+        try {
+            super.apply();
+            signature = hashCode();
+            baseFormatter = createFormatter();
+        } catch (ConfigurationException e) {
+            throw e;
+        } catch (Exception e) {
+            throw new ConfigurationException(e.getMessage(), e, "Invalid configuration");
+        }
     }
 
-    public Formatter createFormatter(){
+    public Formatter createFormatter() {
         return useCustomFormats.value() ?
                 new Formatter(signature, locale, customDateFormat.value(), customTimeFormat.value(), customNumberFormat.value()) :
                 new Formatter(signature, locale, dateFormatOption, numberFormatOption);
