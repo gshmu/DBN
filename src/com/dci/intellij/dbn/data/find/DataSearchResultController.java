@@ -12,6 +12,7 @@ import com.dci.intellij.dbn.data.model.basic.BasicDataModel;
 import com.dci.intellij.dbn.language.common.WeakRef;
 import com.intellij.find.FindManager;
 import com.intellij.find.FindResult;
+import com.intellij.openapi.util.text.StringUtil;
 import org.jetbrains.annotations.NotNull;
 
 import java.awt.Rectangle;
@@ -92,7 +93,7 @@ public class DataSearchResultController {
                     for (Object c : row.getCells()) {
                         DataModelCell cell = (DataModelCell) c;
                         String userValue = cell.getFormattedUserValue();
-                        if (userValue != null) {
+                        if (StringUtil.isNotEmpty(userValue)) {
                             int findOffset = 0;
                             while (true) {
                                 FindResult findResult = findManager.findString(userValue, findOffset, findModel);
