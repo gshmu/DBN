@@ -330,15 +330,17 @@ public class DBObjectBundleImpl extends BrowserTreeNodeBase implements DBObjectB
     @Override
     @Nullable
     public DBNativeDataType getNativeDataType(String name) {
-        String upperCaseName = name.toUpperCase();
-        for (DBNativeDataType dataType : getNativeDataTypes()) {
-            if (Objects.equals(upperCaseName, dataType.getName())) {
-                return dataType;
+        if (name != null) {
+            String upperCaseName = name.toUpperCase();
+            for (DBNativeDataType dataType : getNativeDataTypes()) {
+                if (Objects.equals(upperCaseName, dataType.getName())) {
+                    return dataType;
+                }
             }
-        }
-        for (DBNativeDataType dataType : getNativeDataTypes()) {
-            if (upperCaseName.startsWith(dataType.getName())) {
-                return dataType;
+            for (DBNativeDataType dataType : getNativeDataTypes()) {
+                if (upperCaseName.startsWith(dataType.getName())) {
+                    return dataType;
+                }
             }
         }
         return null;
