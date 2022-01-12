@@ -311,12 +311,14 @@ public abstract class DBJdbcDebugProcess<T extends ExecutionInput> extends XDebu
                         rollOutDebugger();
 
                         DatabaseDebuggerInterface debuggerInterface = getDebuggerInterface();
-                        if (isNot(TARGET_EXECUTION_TERMINATED)) {
-                            runtimeInfo = debuggerInterface.stopExecution(debugConnection);
+                        if (debugConnection != null) {
+                            if (isNot(TARGET_EXECUTION_TERMINATED)) {
+                                runtimeInfo = debuggerInterface.stopExecution(debugConnection);
+                            }
+                            debuggerInterface.detachSession(debugConnection);
                         }
-                        debuggerInterface.detachSession(debugConnection);
                         console.system("Debugger session detached");
-                    } catch (final SQLException e) {
+                    } catch (SQLException e) {
                         console.error("Error detaching debugger session: " + e.getMessage());
                     } finally {
                         set(PROCESS_TERMINATED, true);
