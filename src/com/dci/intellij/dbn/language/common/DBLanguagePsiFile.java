@@ -380,7 +380,7 @@ public abstract class DBLanguagePsiFile extends PsiFileImpl implements FileConne
     }
 
     @Nullable
-    public static DBLanguagePsiFile createFromText(Project project, String fileName, DBLanguageDialect languageDialect, String text, ConnectionHandler activeConnection, SchemaId currentSchema) {
+    public static DBLanguagePsiFile createFromText(@NotNull Project project, String fileName, @NotNull DBLanguageDialect languageDialect, String text, ConnectionHandler activeConnection, SchemaId currentSchema) {
         PsiFileFactory psiFileFactory = PsiFileFactory.getInstance(project);
         PsiFile rawPsiFile = psiFileFactory.createFileFromText(fileName, languageDialect, text);
         if (rawPsiFile instanceof DBLanguagePsiFile) {
