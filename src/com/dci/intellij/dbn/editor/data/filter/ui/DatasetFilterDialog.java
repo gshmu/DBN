@@ -13,7 +13,8 @@ import com.intellij.openapi.options.ConfigurationException;
 import com.intellij.openapi.project.Project;
 import org.jetbrains.annotations.NotNull;
 
-import javax.swing.*;
+import javax.swing.AbstractAction;
+import javax.swing.Action;
 import java.awt.event.ActionEvent;
 
 public class DatasetFilterDialog extends DBNDialog<DatasetFilterForm> {
@@ -21,7 +22,7 @@ public class DatasetFilterDialog extends DBNDialog<DatasetFilterForm> {
     private final DBObjectRef<DBDataset> dataset;
     private DatasetFilterGroup filterGroup;
 
-    public DatasetFilterDialog(DBDataset dataset, boolean automaticPrompt, boolean createNewFilter, DatasetFilterType defaultFilterType) {
+    public DatasetFilterDialog(@NotNull DBDataset dataset, boolean automaticPrompt, boolean createNewFilter, DatasetFilterType defaultFilterType) {
         super(dataset.getProject(), "Data filters", true);
         this.dataset = DBObjectRef.of(dataset);
         this.automaticPrompt = automaticPrompt;
@@ -52,12 +53,12 @@ public class DatasetFilterDialog extends DBNDialog<DatasetFilterForm> {
         DBDataset dataset = getDataset();
         DatasetFilterManager filterManager = DatasetFilterManager.getInstance(dataset.getProject());
         filterGroup = filterManager.getFilterGroup(dataset);
-        DatasetFilterForm filterForm = filterGroup.createConfigurationEditor();
-        return filterForm;
+        return filterGroup.createConfigurationEditor();
     }
 
+    @NotNull
     private DBDataset getDataset() {
-        return DBObjectRef.get(dataset);
+        return DBObjectRef.ensure(dataset);
     }
 
     public DatasetFilterGroup getFilterGroup() {
