@@ -12,8 +12,10 @@ import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.ui.SimpleTextAttributes;
 import org.jetbrains.annotations.NotNull;
 
-import javax.swing.*;
-import java.awt.*;
+import javax.swing.ListSelectionModel;
+import java.awt.Cursor;
+import java.awt.MouseInfo;
+import java.awt.Point;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.ArrayList;
@@ -77,7 +79,7 @@ public class PendingTransactionsTable extends DBNTable<PendingTransactionsTableM
                 PendingTransaction transaction = getModel().getValueAt(selectedRow, 0);
                 FileEditorManager fileEditorManager = FileEditorManager.getInstance(getProject());
                 VirtualFile virtualFile = transaction.getFile();
-                if (virtualFile != null) {
+                if (virtualFile != null && virtualFile.isValid()) {
                     fileEditorManager.openFile(virtualFile, true);
                 }
             }
