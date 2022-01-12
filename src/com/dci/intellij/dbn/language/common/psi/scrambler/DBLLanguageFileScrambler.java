@@ -55,7 +55,14 @@ public class DBLLanguageFileScrambler {
                 TokenType tokenType = token.getTokenType();
                 String text = child.getText();
                 if (tokenType.getCategory() == TokenTypeCategory.LITERAL) {
-                    builder.append(text.replaceAll("[a-zA-Z0-9]", "#"));
+                    if (text.startsWith("'")) {
+                        builder.append(text.replaceAll("[a-zA-Z0-9]", "#"));
+                    } else {
+                        builder.append(text, 0, 3);
+                        builder.append(text.substring(3, text.length() - 2).replaceAll("[a-zA-Z0-9]", "#"));
+                        builder.append(text, text.length() - 2, text.length());
+                    }
+
                 } else {
                     builder.append(text);
                 }
@@ -84,8 +91,11 @@ public class DBLLanguageFileScrambler {
             String text = child.getText();
             if (elementType instanceof TokenType) {
                 TokenType tokenType = (TokenType) elementType;
-                if (tokenType.getCategory() == TokenTypeCategory.LITERAL) {
+                TokenTypeCategory category = tokenType.getCategory();
+                if (category == TokenTypeCategory.LITERAL) {
                     builder.append(text.replaceAll("[a-zA-Z0-9]", "#"));
+                } else if (category == TokenTypeCategory.IDENTIFIER || category == TokenTypeCategory.UNKNOWN) {
+                    builder.append(getObjectName(DBObjectType.ANY, text));
                 } else {
                     builder.append(text);
                 }
@@ -109,7 +119,7 @@ public class DBLLanguageFileScrambler {
         String path = directory.getPath();
         String[] pathTokens = path.split("[\\\\/]");
         for (String pathToken : pathTokens) {
-            String newPathToken = locationMap.computeIfAbsent(pathToken, key -> scrambledName("location", locationMap.size() + 1));
+            String newPathToken = locationMap.computeIfAbsent(pathToken, key -> scrambledName("package", locationMap.size() + 1));
             newPath.append(newPathToken);
             newPath.append(File.separator);
         }
