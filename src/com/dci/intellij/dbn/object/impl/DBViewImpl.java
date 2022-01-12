@@ -15,17 +15,18 @@ import com.dci.intellij.dbn.object.DBType;
 import com.dci.intellij.dbn.object.DBView;
 import com.dci.intellij.dbn.object.common.DBObjectBundle;
 import com.dci.intellij.dbn.object.common.list.DBObjectNavigationList;
-import com.dci.intellij.dbn.object.common.list.DBObjectNavigationListImpl;
 import com.dci.intellij.dbn.object.common.property.DBObjectProperty;
+import com.dci.intellij.dbn.object.lookup.DBObjectRef;
 import com.dci.intellij.dbn.object.type.DBObjectType;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.sql.SQLException;
-import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 
 public class DBViewImpl extends DBDatasetImpl<DBViewMetadata> implements DBView {
-    private DBType type;
+    private DBObjectRef<DBType> type;
     DBViewImpl(DBSchema schema, DBViewMetadata metadata) throws SQLException {
         super(schema, metadata);
     }
@@ -39,7 +40,7 @@ public class DBViewImpl extends DBDatasetImpl<DBViewMetadata> implements DBView 
         if (typeOwner != null && typeName != null) {
             DBObjectBundle objectBundle = getConnectionHandler().getObjectBundle();
             DBSchema typeSchema = objectBundle.getSchema(typeOwner);
-            type = typeSchema == null ? null : typeSchema.getType(typeName);
+            type = DBObjectRef.of(typeSchema == null ? null : typeSchema.getType(typeName));
         }
         return name;
     }
@@ -52,7 +53,7 @@ public class DBViewImpl extends DBDatasetImpl<DBViewMetadata> implements DBView 
 
     @Override
     public DBType getType() {
-        return type;
+        return DBObjectRef.get(type);
     }
 
     /*********************************************************
@@ -73,13 +74,14 @@ public class DBViewImpl extends DBDatasetImpl<DBViewMetadata> implements DBView 
     }
 
     @Override
-    protected List<DBObjectNavigationList> createNavigationLists() {
-        List<DBObjectNavigationList> objectNavigationLists = new ArrayList<DBObjectNavigationList>();
-
+    protected @Nullable List<DBObjectNavigationList> createNavigationLists() {
+        DBType type = getType();
         if (type != null) {
-            objectNavigationLists.add(new DBObjectNavigationListImpl<DBType>("Type", type));
+            List<DBObjectNavigationList> navigationLists = new LinkedList<>();
+            navigationLists.add(DBObjectNavigationList.create("Type", type));
+            return navigationLists;
         }
-        return objectNavigationLists;
+        return null;
     }
 
     @Override

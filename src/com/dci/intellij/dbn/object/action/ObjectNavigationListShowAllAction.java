@@ -12,8 +12,8 @@ import com.intellij.openapi.ui.popup.ListPopup;
 import org.jetbrains.annotations.NotNull;
 
 public class ObjectNavigationListShowAllAction extends DumbAwareProjectAction {
-    private DBObjectNavigationList navigationList;
-    private DBObject parentObject;
+    private final DBObjectNavigationList navigationList;
+    private final DBObject parentObject;
 
     ObjectNavigationListShowAllAction(DBObject parentObject, DBObjectNavigationList navigationList) {
         super("Show all...");

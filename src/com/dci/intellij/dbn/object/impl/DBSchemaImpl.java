@@ -17,39 +17,13 @@ import com.dci.intellij.dbn.connection.jdbc.DBNConnection;
 import com.dci.intellij.dbn.database.DatabaseCompatibilityInterface;
 import com.dci.intellij.dbn.database.DatabaseInterface;
 import com.dci.intellij.dbn.database.DatabaseMetadataInterface;
-import com.dci.intellij.dbn.database.common.metadata.def.DBArgumentMetadata;
-import com.dci.intellij.dbn.database.common.metadata.def.DBClusterMetadata;
-import com.dci.intellij.dbn.database.common.metadata.def.DBColumnMetadata;
-import com.dci.intellij.dbn.database.common.metadata.def.DBConstraintColumnMetadata;
-import com.dci.intellij.dbn.database.common.metadata.def.DBConstraintMetadata;
-import com.dci.intellij.dbn.database.common.metadata.def.DBDatabaseLinkMetadata;
-import com.dci.intellij.dbn.database.common.metadata.def.DBDimensionMetadata;
-import com.dci.intellij.dbn.database.common.metadata.def.DBFunctionMetadata;
-import com.dci.intellij.dbn.database.common.metadata.def.DBIndexColumnMetadata;
-import com.dci.intellij.dbn.database.common.metadata.def.DBIndexMetadata;
-import com.dci.intellij.dbn.database.common.metadata.def.DBMaterializedViewMetadata;
-import com.dci.intellij.dbn.database.common.metadata.def.DBNestedTableMetadata;
-import com.dci.intellij.dbn.database.common.metadata.def.DBPackageMetadata;
-import com.dci.intellij.dbn.database.common.metadata.def.DBProcedureMetadata;
-import com.dci.intellij.dbn.database.common.metadata.def.DBSchemaMetadata;
-import com.dci.intellij.dbn.database.common.metadata.def.DBSequenceMetadata;
-import com.dci.intellij.dbn.database.common.metadata.def.DBSynonymMetadata;
-import com.dci.intellij.dbn.database.common.metadata.def.DBTableMetadata;
-import com.dci.intellij.dbn.database.common.metadata.def.DBTriggerMetadata;
-import com.dci.intellij.dbn.database.common.metadata.def.DBTypeAttributeMetadata;
-import com.dci.intellij.dbn.database.common.metadata.def.DBTypeMetadata;
-import com.dci.intellij.dbn.database.common.metadata.def.DBViewMetadata;
+import com.dci.intellij.dbn.database.common.metadata.def.*;
 import com.dci.intellij.dbn.editor.DBContentType;
 import com.dci.intellij.dbn.object.*;
 import com.dci.intellij.dbn.object.common.DBObject;
 import com.dci.intellij.dbn.object.common.DBObjectImpl;
 import com.dci.intellij.dbn.object.common.DBSchemaObject;
-import com.dci.intellij.dbn.object.common.list.DBObjectList;
-import com.dci.intellij.dbn.object.common.list.DBObjectListContainer;
-import com.dci.intellij.dbn.object.common.list.DBObjectListVisitor;
-import com.dci.intellij.dbn.object.common.list.DBObjectNavigationList;
-import com.dci.intellij.dbn.object.common.list.DBObjectNavigationListImpl;
-import com.dci.intellij.dbn.object.common.list.DBObjectRelationListContainer;
+import com.dci.intellij.dbn.object.common.list.*;
 import com.dci.intellij.dbn.object.common.status.DBObjectStatus;
 import com.dci.intellij.dbn.object.common.status.DBObjectStatusHolder;
 import com.dci.intellij.dbn.object.type.DBObjectType;
@@ -58,11 +32,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 import static com.dci.intellij.dbn.common.content.DynamicContentStatus.INTERNAL;
 import static com.dci.intellij.dbn.object.common.property.DBObjectProperty.*;
@@ -207,12 +177,12 @@ public class DBSchemaImpl extends DBObjectImpl<DBSchemaMetadata> implements DBSc
     }
 
     @Override
-    protected List<DBObjectNavigationList> createNavigationLists() {
+    protected @Nullable List<DBObjectNavigationList> createNavigationLists() {
         DBUser user = getOwner();
         if (user != null) {
-            List<DBObjectNavigationList> objectNavigationLists = new ArrayList<>();
-            objectNavigationLists.add(new DBObjectNavigationListImpl("User", user));
-            return objectNavigationLists;
+            LinkedList<DBObjectNavigationList> navigationLists = new LinkedList<>();
+            navigationLists.add(DBObjectNavigationList.create("User", user));
+            return navigationLists;
         }
         return null;
     }

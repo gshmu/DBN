@@ -8,15 +8,16 @@ import com.dci.intellij.dbn.object.DBIndex;
 import com.dci.intellij.dbn.object.common.DBSchemaObjectImpl;
 import com.dci.intellij.dbn.object.common.list.DBObjectList;
 import com.dci.intellij.dbn.object.common.list.DBObjectNavigationList;
-import com.dci.intellij.dbn.object.common.list.DBObjectNavigationListImpl;
 import com.dci.intellij.dbn.object.common.list.loader.DBObjectListFromRelationListLoader;
 import com.dci.intellij.dbn.object.common.status.DBObjectStatus;
 import com.dci.intellij.dbn.object.type.DBObjectRelationType;
 import com.dci.intellij.dbn.object.type.DBObjectType;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.sql.SQLException;
 import java.util.Collections;
+import java.util.LinkedList;
 import java.util.List;
 
 import static com.dci.intellij.dbn.object.common.property.DBObjectProperty.*;
@@ -80,15 +81,15 @@ public class DBIndexImpl extends DBSchemaObjectImpl<DBIndexMetadata> implements 
     }
 
     @Override
-    protected List<DBObjectNavigationList> createNavigationLists() {
-        List<DBObjectNavigationList> objectNavigationLists = super.createNavigationLists();
+    protected @Nullable List<DBObjectNavigationList> createNavigationLists() {
+        List<DBObjectNavigationList> navigationLists = new LinkedList<>();
 
         if (columns != null && columns.size() > 0) {
-            objectNavigationLists.add(new DBObjectNavigationListImpl<>("Columns", columns.getObjects()));
+            navigationLists.add(DBObjectNavigationList.create("Columns", columns.getObjects()));
         }
-        objectNavigationLists.add(new DBObjectNavigationListImpl<>("Dataset", getDataset()));
+        navigationLists.add(DBObjectNavigationList.create("Dataset", getDataset()));
 
-        return objectNavigationLists;
+        return navigationLists;
     }
 
     @Override

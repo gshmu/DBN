@@ -7,14 +7,14 @@ import com.dci.intellij.dbn.object.DBType;
 import com.dci.intellij.dbn.object.DBTypeAttribute;
 import com.dci.intellij.dbn.object.common.DBObjectImpl;
 import com.dci.intellij.dbn.object.common.list.DBObjectNavigationList;
-import com.dci.intellij.dbn.object.common.list.DBObjectNavigationListImpl;
 import com.dci.intellij.dbn.object.properties.DBDataTypePresentableProperty;
 import com.dci.intellij.dbn.object.properties.PresentableProperty;
 import com.dci.intellij.dbn.object.type.DBObjectType;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.sql.SQLException;
-import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 
 public class DBTypeAttributeImpl extends DBObjectImpl<DBTypeAttributeMetadata> implements DBTypeAttribute {
@@ -78,14 +78,13 @@ public class DBTypeAttributeImpl extends DBObjectImpl<DBTypeAttributeMetadata> i
     }
 
     @Override
-    protected List<DBObjectNavigationList> createNavigationLists() {
-        List<DBObjectNavigationList> objectNavigationLists = new ArrayList<>();
-
+    protected @Nullable List<DBObjectNavigationList> createNavigationLists() {
         if (dataType.isDeclared()) {
-            objectNavigationLists.add(new DBObjectNavigationListImpl("Type", dataType.getDeclaredType()));
+            List<DBObjectNavigationList> navigationLists = new LinkedList<>();
+            navigationLists.add(DBObjectNavigationList.create("Type", dataType.getDeclaredType()));
+            return navigationLists;
         }
-
-        return objectNavigationLists;
+        return null;
     }
 
     @Override
