@@ -4,6 +4,7 @@ import com.dci.intellij.dbn.common.content.DynamicContent;
 import com.dci.intellij.dbn.common.content.DynamicContentElement;
 import com.dci.intellij.dbn.common.content.DynamicContentStatus;
 import com.dci.intellij.dbn.common.content.DynamicContentType;
+import com.dci.intellij.dbn.common.content.dependency.ContentDependencyAdapter;
 import com.dci.intellij.dbn.common.content.dependency.SubcontentDependencyAdapter;
 import com.dci.intellij.dbn.common.thread.ThreadMonitor;
 import com.dci.intellij.dbn.common.thread.ThreadProperty;
@@ -42,43 +43,47 @@ public abstract class DynamicSubcontentLoader<
 
     @Override
     public void loadContent(DynamicContent<T> dynamicContent, boolean force) throws SQLException {
-        SubcontentDependencyAdapter dependencyAdapter = (SubcontentDependencyAdapter) dynamicContent.getDependencyAdapter();
+        ContentDependencyAdapter dependency = dynamicContent.getDependencyAdapter();
+        if (dependency instanceof SubcontentDependencyAdapter) {
+            SubcontentDependencyAdapter subcontentDependency = (SubcontentDependencyAdapter) dependency;
 
-        DynamicContent<?> sourceContent = dependencyAdapter.getSourceContent();
-        DynamicContentLoader<T, M> alternativeLoader = getAlternativeLoader();
+            DynamicContent<?> sourceContent = subcontentDependency.getSourceContent();
+            DynamicContentLoader<T, M> alternativeLoader = getAlternativeLoader();
 
-        if (alternativeLoader != null && useAlternativeLoader(dependencyAdapter)) {
-            sourceContent.loadInBackground();
-            alternativeLoader.loadContent(dynamicContent, false);
+            if (alternativeLoader != null && useAlternativeLoader(subcontentDependency)) {
+                sourceContent.loadInBackground();
+                alternativeLoader.loadContent(dynamicContent, false);
 
-        } else {
-            //load from sub-content
-            boolean matchedOnce = false;
-            List<T> list = null;
-            for (Object object : sourceContent.getAllElements()) {
-                dynamicContent.checkDisposed();
+            } else {
+                //load from sub-content
+                boolean matchedOnce = false;
+                List<T> list = null;
+                for (Object object : sourceContent.getAllElements()) {
+                    dynamicContent.checkDisposed();
 
-                T element = (T) object;
-                if (match(element, dynamicContent)) {
-                    matchedOnce = true;
-                    if (list == null) {
-                        list = dynamicContent.isMutable() ?
-                                CollectionUtil.createConcurrentList() :
-                                new ArrayList<T>();
+                    T element = (T) object;
+                    if (match(element, dynamicContent)) {
+                        matchedOnce = true;
+                        if (list == null) {
+                            list = dynamicContent.isMutable() ?
+                                    CollectionUtil.createConcurrentList() :
+                                    new ArrayList<T>();
+                        }
+                        list.add(element);
                     }
-                    list.add(element);
+                    else if (matchedOnce && optimized) {
+                        // the optimization check assumes that source content is sorted
+                        // such as all matching elements are building a consecutive segment in the source content.
+                        // If at least one match occurred and current element does not match any more,
+                        // => there are no matching elements left in the source content, hence break the loop
+                        break;
+                    }
                 }
-                else if (matchedOnce && optimized) {
-                    // the optimization check assumes that source content is sorted
-                    // such as all matching elements are building a consecutive segment in the source content.
-                    // If at least one match occurred and current element does not match any more,
-                    // => there are no matching elements left in the source content, hence break the loop
-                    break;
-                }
+                dynamicContent.setElements(list);
+                dynamicContent.set(DynamicContentStatus.MASTER, false);
             }
-            dynamicContent.setElements(list);
-            dynamicContent.set(DynamicContentStatus.MASTER, false);
         }
+
     }
 
     private boolean useAlternativeLoader(SubcontentDependencyAdapter dependencyAdapter) {
