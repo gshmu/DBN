@@ -9,7 +9,6 @@ import com.dci.intellij.dbn.object.DBFunction;
 import com.dci.intellij.dbn.object.DBMethod;
 import com.dci.intellij.dbn.object.common.DBObjectImpl;
 import com.dci.intellij.dbn.object.common.list.DBObjectNavigationList;
-import com.dci.intellij.dbn.object.common.list.DBObjectNavigationListImpl;
 import com.dci.intellij.dbn.object.common.property.DBObjectProperty;
 import com.dci.intellij.dbn.object.properties.DBDataTypePresentableProperty;
 import com.dci.intellij.dbn.object.properties.PresentableProperty;
@@ -18,9 +17,9 @@ import com.dci.intellij.dbn.object.type.DBObjectType;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import javax.swing.Icon;
+import javax.swing.*;
 import java.sql.SQLException;
-import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 
 public class DBArgumentImpl extends DBObjectImpl<DBArgumentMetadata> implements DBArgument {
@@ -119,11 +118,11 @@ public class DBArgumentImpl extends DBObjectImpl<DBArgumentMetadata> implements 
     }
 
     @Override
-    protected List<DBObjectNavigationList> createNavigationLists() {
+    protected @Nullable List<DBObjectNavigationList> createNavigationLists() {
         if (dataType.isDeclared()) {
-            List<DBObjectNavigationList> objectNavigationLists = new ArrayList<>();
-            objectNavigationLists.add(new DBObjectNavigationListImpl<>("Type", dataType.getDeclaredType()));
-            return objectNavigationLists;
+            List<DBObjectNavigationList> navigationLists = new LinkedList<>();
+            navigationLists.add(DBObjectNavigationList.create("Type", dataType.getDeclaredType()));
+            return navigationLists;
         }
         return null;
     }

@@ -1,17 +1,19 @@
 package com.dci.intellij.dbn.object.impl;
 
 import com.dci.intellij.dbn.connection.ConnectionHandler;
+import com.dci.intellij.dbn.database.DatabaseCompatibilityInterface;
 import com.dci.intellij.dbn.database.common.metadata.def.DBPrivilegeMetadata;
 import com.dci.intellij.dbn.object.DBPrivilege;
 import com.dci.intellij.dbn.object.DBRole;
 import com.dci.intellij.dbn.object.DBUser;
 import com.dci.intellij.dbn.object.common.DBObjectImpl;
 import com.dci.intellij.dbn.object.common.list.DBObjectNavigationList;
-import com.dci.intellij.dbn.object.common.list.DBObjectNavigationListImpl;
 import com.dci.intellij.dbn.object.type.DBObjectType;
+import org.jetbrains.annotations.Nullable;
 
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 
 public abstract class DBPrivilegeImpl<M extends DBPrivilegeMetadata> extends DBObjectImpl<M> implements DBPrivilege {
@@ -43,11 +45,13 @@ public abstract class DBPrivilegeImpl<M extends DBPrivilegeMetadata> extends DBO
     }
 
     @Override
-    protected List<DBObjectNavigationList> createNavigationLists() {
-        List<DBObjectNavigationList> navigationLists = new ArrayList<>();
-        navigationLists.add(new DBObjectNavigationListImpl<>("User grantees", getUserGrantees()));
-        if (getConnectionHandler().getInterfaceProvider().getCompatibilityInterface().supportsObjectType(DBObjectType.ROLE.getTypeId())) {
-            navigationLists.add(new DBObjectNavigationListImpl<>("Role grantees", getRoleGrantees()));
+    protected @Nullable List<DBObjectNavigationList> createNavigationLists() {
+        List<DBObjectNavigationList> navigationLists = new LinkedList<>();
+        navigationLists.add(DBObjectNavigationList.create("User grantees", getUserGrantees()));
+
+        DatabaseCompatibilityInterface compatibilityInterface = getConnectionHandler().getInterfaceProvider().getCompatibilityInterface();
+        if (compatibilityInterface.supportsObjectType(DBObjectType.ROLE.getTypeId())) {
+            navigationLists.add(DBObjectNavigationList.create("Role grantees", getRoleGrantees()));
         }
         return navigationLists;
     }

@@ -25,14 +25,7 @@ import com.dci.intellij.dbn.common.util.Commons;
 import com.dci.intellij.dbn.common.util.Consumer;
 import com.dci.intellij.dbn.common.util.Safe;
 import com.dci.intellij.dbn.common.util.Strings;
-import com.dci.intellij.dbn.connection.ConnectionHandler;
-import com.dci.intellij.dbn.connection.ConnectionHandlerRef;
-import com.dci.intellij.dbn.connection.ConnectionId;
-import com.dci.intellij.dbn.connection.DatabaseType;
-import com.dci.intellij.dbn.connection.GenericDatabaseElement;
-import com.dci.intellij.dbn.connection.PooledConnection;
-import com.dci.intellij.dbn.connection.ResourceUtil;
-import com.dci.intellij.dbn.connection.SchemaId;
+import com.dci.intellij.dbn.connection.*;
 import com.dci.intellij.dbn.connection.config.ConnectionDatabaseSettings;
 import com.dci.intellij.dbn.connection.jdbc.DBNCallableStatement;
 import com.dci.intellij.dbn.database.DatabaseCompatibilityInterface;
@@ -68,7 +61,7 @@ import com.intellij.psi.PsiInvalidElementAccessException;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import javax.swing.Icon;
+import javax.swing.*;
 import java.sql.SQLException;
 import java.sql.Types;
 import java.util.ArrayList;
@@ -82,8 +75,7 @@ import static com.dci.intellij.dbn.common.util.Lists.filter;
 
 public abstract class DBObjectImpl<M extends DBObjectMetadata> extends BrowserTreeNodeBase implements DBObject, ToolTipProvider {
 
-    private static final List<DBObject> EMPTY_OBJECT_LIST = java.util.Collections.unmodifiableList(new ArrayList<>(0));
-    public static final List<BrowserTreeNode> EMPTY_TREE_NODE_LIST = java.util.Collections.unmodifiableList(new ArrayList<BrowserTreeNode>(0));
+    public static final List<BrowserTreeNode> EMPTY_TREE_NODE_LIST = Collections.unmodifiableList(new ArrayList<>(0));
 
     private List<BrowserTreeNode> allPossibleTreeChildren;
     private List<BrowserTreeNode> visibleTreeChildren;
@@ -469,10 +461,13 @@ public abstract class DBObjectImpl<M extends DBObjectMetadata> extends BrowserTr
             }
         } else if (childObjects != null) {
             if (objectType == DBObjectType.ANY) {
-                for (DBObjectList<?> objectList : childObjects.getElements()) {
-                    CancellableConsumer.checkCancelled(consumer);
-                    if (!objectList.isInternal() && Failsafe.check(objectList)) {
-                        objectList.collectObjects(consumer);
+                DBObjectList<?>[] elements = childObjects.getElements();
+                if (elements != null) {
+                    for (DBObjectList<?> objectList : elements) {
+                        CancellableConsumer.checkCancelled(consumer);
+                        if (!objectList.isInternal() && Failsafe.check(objectList)) {
+                            objectList.collectObjects(consumer);
+                        }
                     }
                 }
             } else {
@@ -499,6 +494,7 @@ public abstract class DBObjectImpl<M extends DBObjectMetadata> extends BrowserTr
         return createNavigationLists();
     }
 
+    @Nullable
     protected List<DBObjectNavigationList> createNavigationLists() {
         return null;
     }

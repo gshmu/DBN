@@ -14,23 +14,14 @@ import com.dci.intellij.dbn.connection.jdbc.DBNConnection;
 import com.dci.intellij.dbn.data.type.DBDataType;
 import com.dci.intellij.dbn.data.type.DBNativeDataType;
 import com.dci.intellij.dbn.database.DatabaseMetadataInterface;
-import com.dci.intellij.dbn.database.common.metadata.def.DBDataTypeMetadata;
-import com.dci.intellij.dbn.database.common.metadata.def.DBFunctionMetadata;
-import com.dci.intellij.dbn.database.common.metadata.def.DBProcedureMetadata;
-import com.dci.intellij.dbn.database.common.metadata.def.DBTypeAttributeMetadata;
-import com.dci.intellij.dbn.database.common.metadata.def.DBTypeMetadata;
+import com.dci.intellij.dbn.database.common.metadata.def.*;
 import com.dci.intellij.dbn.editor.DBContentType;
-import com.dci.intellij.dbn.object.DBSchema;
-import com.dci.intellij.dbn.object.DBType;
-import com.dci.intellij.dbn.object.DBTypeAttribute;
-import com.dci.intellij.dbn.object.DBTypeFunction;
-import com.dci.intellij.dbn.object.DBTypeProcedure;
+import com.dci.intellij.dbn.object.*;
 import com.dci.intellij.dbn.object.common.DBObject;
 import com.dci.intellij.dbn.object.common.DBSchemaObject;
 import com.dci.intellij.dbn.object.common.list.DBObjectList;
 import com.dci.intellij.dbn.object.common.list.DBObjectListContainer;
 import com.dci.intellij.dbn.object.common.list.DBObjectNavigationList;
-import com.dci.intellij.dbn.object.common.list.DBObjectNavigationListImpl;
 import com.dci.intellij.dbn.object.common.property.DBObjectProperty;
 import com.dci.intellij.dbn.object.common.status.DBObjectStatus;
 import com.dci.intellij.dbn.object.lookup.DBObjectRef;
@@ -40,11 +31,12 @@ import com.dci.intellij.dbn.object.type.DBObjectType;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import javax.swing.Icon;
+import javax.swing.*;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.LinkedList;
 import java.util.List;
 
 import static com.dci.intellij.dbn.object.type.DBObjectType.*;
@@ -347,26 +339,26 @@ public class DBTypeImpl
     }
 
     @Override
-    protected List<DBObjectNavigationList> createNavigationLists() {
-        List<DBObjectNavigationList> objectNavigationLists = super.createNavigationLists();
+    protected @Nullable List<DBObjectNavigationList> createNavigationLists() {
+        List<DBObjectNavigationList> navigationLists = new LinkedList<>();
 
         DBType superType = getSuperType();
         if (superType != null) {
-            objectNavigationLists.add(new DBObjectNavigationListImpl<>("Super Type", superType));
+            navigationLists.add(DBObjectNavigationList.create("Super Type", superType));
         }
         if (subTypes != null && subTypes.size() > 0) {
-            objectNavigationLists.add(new DBObjectNavigationListImpl<>("Sub Types", subTypes.getObjects()));
+            navigationLists.add(DBObjectNavigationList.create("Sub Types", subTypes.getObjects()));
         }
         if (isCollection()) {
             DBDataType dataType = getCollectionElementType();
             if (dataType != null && dataType.isDeclared()) {
                 DBType collectionElementType = dataType.getDeclaredType();
                 if (collectionElementType != null) {
-                    objectNavigationLists.add(new DBObjectNavigationListImpl("Collection element type", collectionElementType));
+                    navigationLists.add(DBObjectNavigationList.create("Collection element type", collectionElementType));
                 }
             }
         }
 
-        return objectNavigationLists;
+        return navigationLists;
     }
 }

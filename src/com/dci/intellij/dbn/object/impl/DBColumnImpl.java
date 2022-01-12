@@ -5,22 +5,10 @@ import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.common.load.ProgressMonitor;
 import com.dci.intellij.dbn.data.type.DBDataType;
 import com.dci.intellij.dbn.database.common.metadata.def.DBColumnMetadata;
-import com.dci.intellij.dbn.object.DBColumn;
-import com.dci.intellij.dbn.object.DBConstraint;
-import com.dci.intellij.dbn.object.DBDataset;
-import com.dci.intellij.dbn.object.DBIndex;
-import com.dci.intellij.dbn.object.DBSchema;
-import com.dci.intellij.dbn.object.DBTable;
-import com.dci.intellij.dbn.object.DBType;
+import com.dci.intellij.dbn.object.*;
 import com.dci.intellij.dbn.object.common.DBObject;
 import com.dci.intellij.dbn.object.common.DBObjectImpl;
-import com.dci.intellij.dbn.object.common.list.DBObjectList;
-import com.dci.intellij.dbn.object.common.list.DBObjectListContainer;
-import com.dci.intellij.dbn.object.common.list.DBObjectNavigationList;
-import com.dci.intellij.dbn.object.common.list.DBObjectNavigationListImpl;
-import com.dci.intellij.dbn.object.common.list.DBObjectRelationList;
-import com.dci.intellij.dbn.object.common.list.DBObjectRelationListContainer;
-import com.dci.intellij.dbn.object.common.list.ObjectListProvider;
+import com.dci.intellij.dbn.object.common.list.*;
 import com.dci.intellij.dbn.object.common.list.loader.DBObjectListFromRelationListLoader;
 import com.dci.intellij.dbn.object.properties.DBDataTypePresentableProperty;
 import com.dci.intellij.dbn.object.properties.DBObjectPresentableProperty;
@@ -35,6 +23,7 @@ import javax.swing.*;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.LinkedList;
 import java.util.List;
 
 import static com.dci.intellij.dbn.object.common.property.DBObjectProperty.*;
@@ -269,31 +258,31 @@ public class DBColumnImpl extends DBObjectImpl<DBColumnMetadata> implements DBCo
     }
 
     @Override
-    protected List<DBObjectNavigationList> createNavigationLists() {
-        List<DBObjectNavigationList> navigationLists = new ArrayList<>();
+    protected @Nullable List<DBObjectNavigationList> createNavigationLists() {
+        List<DBObjectNavigationList> navigationLists = new LinkedList<>();
 
         if (dataType.isDeclared()) {
-            navigationLists.add(new DBObjectNavigationListImpl<>("Type", dataType.getDeclaredType()));
+            navigationLists.add(DBObjectNavigationList.create("Type", dataType.getDeclaredType()));
         }
 
         if (constraints.size() > 0) {
-            navigationLists.add(new DBObjectNavigationListImpl<>("Constraints", constraints.getObjects()));
+            navigationLists.add(DBObjectNavigationList.create("Constraints", constraints.getObjects()));
         }
 
         if (getParentObject() instanceof DBTable) {
             if (indexes != null && indexes.size() > 0) {
-                navigationLists.add(new DBObjectNavigationListImpl<>("Indexes", indexes.getObjects()));
+                navigationLists.add(DBObjectNavigationList.create("Indexes", indexes.getObjects()));
             }
 
             if (isForeignKey()) {
                 DBColumn foreignKeyColumn = getForeignKeyColumn();
-                navigationLists.add(new DBObjectNavigationListImpl<>("Referenced column", foreignKeyColumn));
+                navigationLists.add(DBObjectNavigationList.create("Referenced column", foreignKeyColumn));
             }
         }
 
         if (isPrimaryKey()) {
             ObjectListProvider<DBColumn> objectListProvider = () -> getReferencingColumns();
-            navigationLists.add(new DBObjectNavigationListImpl<>("Foreign-key columns", objectListProvider));
+            navigationLists.add(DBObjectNavigationList.create("Foreign-key columns", objectListProvider));
         }
         return navigationLists;
     }

@@ -9,12 +9,7 @@ import com.dci.intellij.dbn.object.DBConstraint;
 import com.dci.intellij.dbn.object.DBDataset;
 import com.dci.intellij.dbn.object.DBSchema;
 import com.dci.intellij.dbn.object.common.DBSchemaObjectImpl;
-import com.dci.intellij.dbn.object.common.list.DBObjectList;
-import com.dci.intellij.dbn.object.common.list.DBObjectListContainer;
-import com.dci.intellij.dbn.object.common.list.DBObjectNavigationList;
-import com.dci.intellij.dbn.object.common.list.DBObjectNavigationListImpl;
-import com.dci.intellij.dbn.object.common.list.DBObjectRelationList;
-import com.dci.intellij.dbn.object.common.list.DBObjectRelationListContainer;
+import com.dci.intellij.dbn.object.common.list.*;
 import com.dci.intellij.dbn.object.common.list.loader.DBObjectListFromRelationListLoader;
 import com.dci.intellij.dbn.object.common.operation.DBOperationExecutor;
 import com.dci.intellij.dbn.object.common.operation.DatabaseOperationManager;
@@ -29,10 +24,10 @@ import com.dci.intellij.dbn.object.type.DBObjectType;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import javax.swing.Icon;
+import javax.swing.*;
 import java.sql.SQLException;
-import java.util.ArrayList;
 import java.util.Collections;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Objects;
 
@@ -230,19 +225,19 @@ public class DBConstraintImpl extends DBSchemaObjectImpl<DBConstraintMetadata> i
     }
 
     @Override
-    protected List<DBObjectNavigationList> createNavigationLists() {
-        List<DBObjectNavigationList> objectNavigationLists = new ArrayList<>();
+    protected @Nullable List<DBObjectNavigationList> createNavigationLists() {
+        List<DBObjectNavigationList> navigationLists = new LinkedList<>();
 
         if (columns != null) {
-            objectNavigationLists.add(new DBObjectNavigationListImpl<>("Columns", columns.getObjects()));
+            navigationLists.add(DBObjectNavigationList.create("Columns", columns.getObjects()));
         }
 
         DBConstraint foreignKeyConstraint = getForeignKeyConstraint();
         if (foreignKeyConstraint != null) {
-            objectNavigationLists.add(new DBObjectNavigationListImpl<>("Foreign key constraint", foreignKeyConstraint));
+            navigationLists.add(DBObjectNavigationList.create("Foreign key constraint", foreignKeyConstraint));
         }
 
-        return objectNavigationLists;
+        return navigationLists;
     }
 
     @Override
