@@ -33,7 +33,10 @@ public class IndexContainer<T extends Indexable> implements Compactable {
             TIntIterator iterator = INDEX.iterator();
             while (iterator.hasNext()) {
                 int next = iterator.next();
-                elements.add(resolver.apply(next));
+                T element = resolver.apply(next);
+                if (element != null) {
+                    elements.add(element);
+                }
             }
             return elements;
         }
