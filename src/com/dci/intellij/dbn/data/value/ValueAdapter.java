@@ -24,7 +24,7 @@ public abstract class ValueAdapter<T> {
     public abstract void write(Connection connection, ResultSet resultSet, int columnIndex, @Nullable T value) throws SQLException;
     public abstract String getDisplayValue();
 
-    public static final Map<GenericDataType, Class<? extends ValueAdapter>> REGISTRY = new EnumMap<GenericDataType, Class<? extends ValueAdapter>>(GenericDataType.class);
+    public static final Map<GenericDataType, Class<? extends ValueAdapter>> REGISTRY = new EnumMap<>(GenericDataType.class);
     static {
         REGISTRY.put(GenericDataType.ARRAY, ArrayValue.class);
         REGISTRY.put(GenericDataType.BLOB, BlobValue.class);
