@@ -3,19 +3,20 @@ package com.dci.intellij.dbn.object.action;
 import com.dci.intellij.dbn.object.common.DBObject;
 import com.dci.intellij.dbn.object.common.list.DBObjectNavigationList;
 import com.dci.intellij.dbn.object.common.list.ObjectListProvider;
+import com.dci.intellij.dbn.object.lookup.DBObjectRef;
 import com.intellij.openapi.actionSystem.DefaultActionGroup;
 
 import java.util.List;
 
 public class ObjectNavigationListActionGroup extends DefaultActionGroup {
     public static final int MAX_ITEMS = 30;
-    private DBObjectNavigationList navigationList;
-    private DBObject parentObject;
-    private boolean showFullList;
+    private final DBObjectNavigationList navigationList;
+    private final DBObjectRef<?> parentObject;
+    private final boolean showFullList;
 
     public ObjectNavigationListActionGroup(DBObject parentObject, DBObjectNavigationList navigationList, boolean showFullList) {
         super(navigationList.getName(), true);
-        this.parentObject = parentObject;
+        this.parentObject = DBObjectRef.of(parentObject);
         this.navigationList = navigationList;
         this.showFullList = showFullList;
 
@@ -29,7 +30,7 @@ public class ObjectNavigationListActionGroup extends DefaultActionGroup {
     }
 
     public DBObject getParentObject() {
-        return parentObject;
+        return DBObjectRef.get(parentObject);
     }
 
     private List<DBObject> getObjects() {
@@ -47,6 +48,7 @@ public class ObjectNavigationListActionGroup extends DefaultActionGroup {
     private void buildNavigationActions(int length) {
         List<DBObject> objects = getObjects();
         if (objects != null) {
+            DBObject parentObject = getParentObject();
             for (int i=0; i<length; i++) {
                 if (i == objects.size()) {
                     return;

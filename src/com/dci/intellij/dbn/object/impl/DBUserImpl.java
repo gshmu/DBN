@@ -8,19 +8,13 @@ import com.dci.intellij.dbn.common.util.Strings;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.database.DatabaseCompatibilityInterface;
 import com.dci.intellij.dbn.database.common.metadata.def.DBUserMetadata;
-import com.dci.intellij.dbn.object.DBGrantedPrivilege;
-import com.dci.intellij.dbn.object.DBGrantedRole;
-import com.dci.intellij.dbn.object.DBRole;
-import com.dci.intellij.dbn.object.DBSchema;
-import com.dci.intellij.dbn.object.DBSystemPrivilege;
-import com.dci.intellij.dbn.object.DBUser;
+import com.dci.intellij.dbn.object.*;
 import com.dci.intellij.dbn.object.common.DBObject;
 import com.dci.intellij.dbn.object.common.DBObjectBundle;
 import com.dci.intellij.dbn.object.common.DBObjectImpl;
 import com.dci.intellij.dbn.object.common.list.DBObjectList;
 import com.dci.intellij.dbn.object.common.list.DBObjectListContainer;
 import com.dci.intellij.dbn.object.common.list.DBObjectNavigationList;
-import com.dci.intellij.dbn.object.common.list.DBObjectNavigationListImpl;
 import com.dci.intellij.dbn.object.common.list.loader.DBObjectListFromRelationListLoader;
 import com.dci.intellij.dbn.object.common.property.DBObjectProperty;
 import com.dci.intellij.dbn.object.type.DBObjectRelationType;
@@ -28,9 +22,9 @@ import com.dci.intellij.dbn.object.type.DBObjectType;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import javax.swing.Icon;
+import javax.swing.*;
 import java.sql.SQLException;
-import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 
 import static com.dci.intellij.dbn.object.common.property.DBObjectProperty.ROOT_OBJECT;
@@ -169,12 +163,12 @@ public class DBUserImpl extends DBObjectImpl<DBUserMetadata> implements DBUser {
     }
 
     @Override
-    protected List<DBObjectNavigationList> createNavigationLists() {
+    protected @Nullable List<DBObjectNavigationList> createNavigationLists() {
         DBSchema schema = getSchema();
         if(schema != null) {
-            List<DBObjectNavigationList> objectNavigationLists = new ArrayList<>();
-            objectNavigationLists.add(new DBObjectNavigationListImpl("Schema", schema));
-            return objectNavigationLists;
+            List<DBObjectNavigationList> navigationLists = new LinkedList<>();
+            navigationLists.add(DBObjectNavigationList.create("Schema", schema));
+            return navigationLists;
         }
         return null;
     }

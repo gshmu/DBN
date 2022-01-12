@@ -13,15 +13,10 @@ import com.dci.intellij.dbn.database.DatabaseMetadataInterface;
 import com.dci.intellij.dbn.database.common.metadata.def.DBNestedTableMetadata;
 import com.dci.intellij.dbn.database.common.metadata.def.DBTableMetadata;
 import com.dci.intellij.dbn.editor.DBContentType;
-import com.dci.intellij.dbn.object.DBColumn;
-import com.dci.intellij.dbn.object.DBIndex;
-import com.dci.intellij.dbn.object.DBNestedTable;
-import com.dci.intellij.dbn.object.DBSchema;
-import com.dci.intellij.dbn.object.DBTable;
+import com.dci.intellij.dbn.object.*;
 import com.dci.intellij.dbn.object.common.list.DBObjectList;
 import com.dci.intellij.dbn.object.common.list.DBObjectListContainer;
 import com.dci.intellij.dbn.object.common.list.DBObjectNavigationList;
-import com.dci.intellij.dbn.object.common.list.DBObjectNavigationListImpl;
 import com.dci.intellij.dbn.object.common.list.DBObjectRelationListContainer;
 import com.dci.intellij.dbn.object.properties.PresentableProperty;
 import com.dci.intellij.dbn.object.properties.SimplePresentableProperty;
@@ -33,6 +28,8 @@ import javax.swing.*;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.LinkedList;
 import java.util.List;
 
 import static com.dci.intellij.dbn.object.common.property.DBObjectProperty.TEMPORARY;
@@ -40,7 +37,7 @@ import static com.dci.intellij.dbn.object.type.DBObjectRelationType.INDEX_COLUMN
 import static com.dci.intellij.dbn.object.type.DBObjectType.*;
 
 public class DBTableImpl extends DBDatasetImpl<DBTableMetadata> implements DBTable {
-    private static final List<DBColumn> EMPTY_COLUMN_LIST = new ArrayList<DBColumn>();
+    private static final List<DBColumn> EMPTY_COLUMN_LIST = Collections.unmodifiableList(new ArrayList<>());
 
     private DBObjectList<DBIndex> indexes;
     private DBObjectList<DBNestedTable> nestedTables;
@@ -115,7 +112,7 @@ public class DBTableImpl extends DBDatasetImpl<DBTableMetadata> implements DBTab
         for (DBColumn column : getColumns()) {
             if (column.isPrimaryKey()) {
                 if (columns == null) {
-                    columns = new ArrayList<DBColumn>();
+                    columns = new ArrayList<>();
                 }
                 columns.add(column);
             }
@@ -129,7 +126,7 @@ public class DBTableImpl extends DBDatasetImpl<DBTableMetadata> implements DBTab
         for (DBColumn column : getColumns()) {
             if (column.isForeignKey()) {
                 if (columns == null) {
-                    columns = new ArrayList<DBColumn>();
+                    columns = new ArrayList<>();
                 }
                 columns.add(column);
             }
@@ -143,7 +140,7 @@ public class DBTableImpl extends DBDatasetImpl<DBTableMetadata> implements DBTab
         for (DBColumn column : getColumns()) {
             if (column.isUniqueKey()) {
                 if (columns == null) {
-                    columns = new ArrayList<DBColumn>();
+                    columns = new ArrayList<>();
                 }
                 columns.add(column);
             }
@@ -158,13 +155,13 @@ public class DBTableImpl extends DBDatasetImpl<DBTableMetadata> implements DBTab
 
 
     @Override
-    protected List<DBObjectNavigationList> createNavigationLists() {
-        List<DBObjectNavigationList> objectNavigationLists = super.createNavigationLists();
+    protected @Nullable List<DBObjectNavigationList> createNavigationLists() {
+        List<DBObjectNavigationList> navigationLists = new LinkedList<>();
         if (indexes.size() > 0) {
-            objectNavigationLists.add(new DBObjectNavigationListImpl<DBIndex>("Indexes", indexes.getObjects()));
+            navigationLists.add(DBObjectNavigationList.create("Indexes", indexes.getObjects()));
         }
 
-        return objectNavigationLists;
+        return navigationLists;
     }
 
     /*********************************************************

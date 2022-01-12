@@ -9,7 +9,6 @@ import com.dci.intellij.dbn.object.DBSynonym;
 import com.dci.intellij.dbn.object.common.DBObject;
 import com.dci.intellij.dbn.object.common.DBSchemaObjectImpl;
 import com.dci.intellij.dbn.object.common.list.DBObjectNavigationList;
-import com.dci.intellij.dbn.object.common.list.DBObjectNavigationListImpl;
 import com.dci.intellij.dbn.object.common.status.DBObjectStatus;
 import com.dci.intellij.dbn.object.lookup.DBObjectRef;
 import com.dci.intellij.dbn.object.properties.DBObjectPresentableProperty;
@@ -20,6 +19,7 @@ import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
 import java.sql.SQLException;
+import java.util.LinkedList;
 import java.util.List;
 
 import static com.dci.intellij.dbn.object.common.property.DBObjectProperty.*;
@@ -114,16 +114,14 @@ public class DBSynonymImpl extends DBSchemaObjectImpl<DBSynonymMetadata> impleme
     }
 
     @Override
-    protected List<DBObjectNavigationList> createNavigationLists() {
-        List<DBObjectNavigationList> objectNavigationLists = super.createNavigationLists();
-
+    protected @Nullable List<DBObjectNavigationList> createNavigationLists() {
         DBObject underlyingObject = getUnderlyingObject();
         if (underlyingObject != null) {
-            DBObjectNavigationListImpl objectNavigationList = new DBObjectNavigationListImpl("Underlying " + underlyingObject.getTypeName(), underlyingObject);
-            objectNavigationLists.add(objectNavigationList);
+            List<DBObjectNavigationList> navigationLists = new LinkedList<>();
+            navigationLists.add(DBObjectNavigationList.create("Underlying " + underlyingObject.getTypeName(), underlyingObject));
+            return navigationLists;
         }
-
-        return objectNavigationLists;
+        return null;
     }
 
     @Override

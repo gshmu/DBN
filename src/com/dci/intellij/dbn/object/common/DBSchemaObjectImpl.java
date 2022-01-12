@@ -18,7 +18,6 @@ import com.dci.intellij.dbn.language.psql.PSQLLanguage;
 import com.dci.intellij.dbn.object.DBSchema;
 import com.dci.intellij.dbn.object.common.list.DBObjectList;
 import com.dci.intellij.dbn.object.common.list.DBObjectListContainer;
-import com.dci.intellij.dbn.object.common.list.DBObjectNavigationList;
 import com.dci.intellij.dbn.object.common.status.DBObjectStatusHolder;
 import com.dci.intellij.dbn.object.type.DBObjectType;
 import com.dci.intellij.dbn.vfs.DatabaseFileSystem;
@@ -87,11 +86,6 @@ public abstract class DBSchemaObjectImpl<M extends DBObjectMetadata> extends DBO
     @Override
     public List<DBObject> getReferencingObjects() {
         return referencingObjects == null ? Collections.emptyList() : referencingObjects.getObjects();
-    }
-
-    @Override
-    protected List<DBObjectNavigationList> createNavigationLists() {
-        return Collections.emptyList();
     }
 
     @Override
