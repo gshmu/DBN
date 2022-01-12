@@ -22,7 +22,12 @@ public class IndexContainer<T extends Indexable> implements Compactable {
     }
 
     public boolean contains(T indexable) {
-        return INDEX.contains(indexable.index());
+        try {
+            return INDEX.contains(indexable.index());
+        } catch (IndexOutOfBoundsException e) {
+            // TODO temporary workaround - happens in parser lookup caches (probably due to latent background initialisation)
+            return false;
+        }
     }
 
     public Set<T> elements(Function<Integer, T> resolver) {
