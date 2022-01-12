@@ -516,11 +516,14 @@ public abstract class IdentifierPsiElement extends LeafPsiElement<IdentifierElem
             boolean cancelled = false;
             try {
                 ref.preResolve(this);
-                if (getParent() instanceof QualifiedIdentifierPsiElement) {
-                    QualifiedIdentifierPsiElement qualifiedIdentifier = (QualifiedIdentifierPsiElement) getParent();
-                    resolveWithinQualifiedIdentifierElement(qualifiedIdentifier);
-                } else {
-                    resolveWithScopeParentLookup(getObjectType(), getElementType());
+                CharSequence text = ref.getText();
+                if (text != null && text.length() > 0) {
+                    if (getParent() instanceof QualifiedIdentifierPsiElement) {
+                        QualifiedIdentifierPsiElement qualifiedIdentifier = (QualifiedIdentifierPsiElement) getParent();
+                        resolveWithinQualifiedIdentifierElement(qualifiedIdentifier);
+                    } else {
+                        resolveWithScopeParentLookup(getObjectType(), getElementType());
+                    }
                 }
             } catch (ProcessCanceledException e){
                 cancelled = true;
