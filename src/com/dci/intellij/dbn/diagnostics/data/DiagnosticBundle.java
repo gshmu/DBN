@@ -5,14 +5,14 @@ import lombok.Getter;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 @Getter
 public final class DiagnosticBundle {
     private final DiagnosticType type;
-    private final List<DiagnosticEntry> entries = new ArrayList<>();
+    private final List<DiagnosticEntry> entries = new CopyOnWriteArrayList<>();
 
     public DiagnosticBundle(DiagnosticType type) {
         this.type = type;
