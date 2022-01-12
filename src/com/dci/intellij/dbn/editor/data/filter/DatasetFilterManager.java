@@ -53,7 +53,7 @@ public class DatasetFilterManager extends AbstractProjectComponent implements Pe
         return filterDialog.getExitCode();
     }
 
-    public void createBasicFilter(DBDataset dataset, String columnName, Object columnValue, ConditionOperator operator, boolean interactive) {
+    public void createBasicFilter(@NotNull DBDataset dataset, String columnName, Object columnValue, ConditionOperator operator, boolean interactive) {
         DatasetFilterGroup filterGroup = getFilterGroup(dataset);
         DatasetBasicFilter filter = filterGroup.createBasicFilter(columnName, columnValue, operator, interactive);
 
@@ -68,7 +68,7 @@ public class DatasetFilterManager extends AbstractProjectComponent implements Pe
         }
     }
 
-    public void createBasicFilter(DBDataset dataset, String columnName, Object columnValue, ConditionOperator operator) {
+    public void createBasicFilter(@NotNull DBDataset dataset, String columnName, Object columnValue, ConditionOperator operator) {
         DatasetFilterGroup filterGroup = getFilterGroup(dataset);
         DatasetBasicFilter filter = filterGroup.createBasicFilter(columnName, columnValue, operator);
 
@@ -120,17 +120,17 @@ public class DatasetFilterManager extends AbstractProjectComponent implements Pe
 
 
 
-    public DatasetFilter getActiveFilter(DBDataset dataset) {
+    public DatasetFilter getActiveFilter(@NotNull DBDataset dataset) {
         DatasetFilterGroup filterGroup = getFilterGroup(dataset);
         return filterGroup.getActiveFilter();
     }
 
-    public void setActiveFilter(DBDataset dataset, DatasetFilter filter) {
+    public void setActiveFilter(@NotNull DBDataset dataset, DatasetFilter filter) {
         DatasetFilterGroup filterGroup = getFilterGroup(dataset);
         filterGroup.setActiveFilter(filter);
     }
 
-    private void addFilterGroup(DatasetFilterGroup filterGroup) {
+    private void addFilterGroup(@NotNull DatasetFilterGroup filterGroup) {
         ConnectionId connectionId = filterGroup.getConnectionId();
         String datasetName = filterGroup.getDatasetName();
         Map<String, DatasetFilterGroup> connectionFilters =
@@ -139,14 +139,14 @@ public class DatasetFilterManager extends AbstractProjectComponent implements Pe
         connectionFilters.put(datasetName, filterGroup);
     }
 
-    public DatasetFilterGroup getFilterGroup(DBDataset dataset) {
+    public DatasetFilterGroup getFilterGroup(@NotNull DBDataset dataset) {
         ConnectionHandler connectionHandler = Failsafe.nn(dataset.getConnectionHandler());
         ConnectionId connectionId = connectionHandler.getConnectionId();
         String datasetName = dataset.getQualifiedName();
         return getFilterGroup(connectionId, datasetName);
     }
 
-    public DatasetFilterGroup getFilterGroup(DatasetFilter filter) {
+    public DatasetFilterGroup getFilterGroup(@NotNull DatasetFilter filter) {
         ConnectionId connectionId = filter.getConnectionId();
         String datasetName = filter.getDatasetName();
         return getFilterGroup(connectionId, datasetName);
