@@ -27,6 +27,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.sql.SQLException;
 import java.sql.SQLFeatureNotSupportedException;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
@@ -39,9 +40,9 @@ public abstract class DynamicContentImpl<T extends DynamicContentElement>
         implements DynamicContent<T>,
                    NotificationSupport {
 
-    protected static final List<?> EMPTY_CONTENT = Collections.unmodifiableList(Collections.emptyList());
-    protected static final List<?> EMPTY_DISPOSED_CONTENT = Collections.unmodifiableList(Collections.emptyList());
-    protected static final List<?> EMPTY_UNTOUCHED_CONTENT = Collections.unmodifiableList(Collections.emptyList());
+    protected static final List<?> EMPTY_CONTENT = Collections.unmodifiableList(new ArrayList<>(0));
+    protected static final List<?> EMPTY_DISPOSED_CONTENT = Collections.unmodifiableList(new ArrayList<>(0));
+    protected static final List<?> EMPTY_UNTOUCHED_CONTENT = Collections.unmodifiableList(new ArrayList<>(0));
 
     private short changeSignature = 0;
 

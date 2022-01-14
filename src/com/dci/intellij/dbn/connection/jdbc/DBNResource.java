@@ -39,8 +39,8 @@ public abstract class DBNResource<T> extends ResourceStatusHolder implements Res
             CloseableResource closeable = (CloseableResource) this;
             closed = new ResourceStatusAdapterImpl<CloseableResource>(closeable,
                     ResourceStatus.CLOSED,
-                    ResourceStatus.CLOSED_APPLYING,
-                    ResourceStatus.CLOSED_CHECKING,
+                    ResourceStatus.CHANGING_CLOSED,
+                    ResourceStatus.CHECKING_CLOSED,
                     TimeUtil.Millis.FIVE_SECONDS,
                     Boolean.FALSE,
                     Boolean.TRUE) {
@@ -61,8 +61,8 @@ public abstract class DBNResource<T> extends ResourceStatusHolder implements Res
             CancellableResource cancellable = (CancellableResource) this;
             cancelled = new ResourceStatusAdapterImpl<CancellableResource>(cancellable,
                     ResourceStatus.CANCELLED,
-                    ResourceStatus.CANCELLED_APPLYING,
-                    ResourceStatus.CANCELLED_CHECKING,
+                    ResourceStatus.CHANGING_CANCELLED,
+                    ResourceStatus.CHECKING_CANCELLED,
                     TimeUtil.Millis.FIVE_SECONDS,
                     Boolean.FALSE,
                     Boolean.TRUE) {
