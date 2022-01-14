@@ -25,6 +25,7 @@ import java.awt.Component;
 import java.awt.Container;
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
@@ -106,6 +107,7 @@ public final class SafeDisposer {
                     disposeCollection = collection;
                 }
                 if (!disposeCollection.isEmpty()) {
+                    disposeCollection = new ArrayList<>(disposeCollection);
                     for (Object object : disposeCollection) {
                         if (object instanceof Disposable) {
                             Disposable disposable = (Disposable) object;
