@@ -220,7 +220,7 @@ public final class ResourceUtil {
             try {
                 invokeResourceAction(
                         connection,
-                        ResourceStatus.CHANGING_READONLY_STATUS,
+                        ResourceStatus.CHANGING_READ_ONLY,
                         () -> connection.setReadOnly(readonly),
                         () -> "[DBN] Applying status READ_ONLY=" + readonly + " on " + connection,
                         () -> "[DBN] Done applying status READ_ONLY=" + readonly + " on " + connection,
@@ -241,7 +241,7 @@ public final class ResourceUtil {
             if (connection != null && !connection.isClosed()) {
                 invokeResourceAction(
                         connection,
-                        ResourceStatus.CHANGING_AUTOCOMMIT_STATUS, () -> connection.setAutoCommit(autoCommit),
+                        ResourceStatus.CHANGING_AUTO_COMMIT, () -> connection.setAutoCommit(autoCommit),
                         () -> "[DBN] Applying status AUTO_COMMIT=" + autoCommit + " on " + connection,
                         () -> "[DBN] Done applying status AUTO_COMMIT=" + autoCommit + " on " + connection,
                         () -> "[DBN] Failed to apply status AUTO_COMMIT=" + autoCommit + " on " + connection);
