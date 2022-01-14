@@ -5,27 +5,25 @@ import lombok.Getter;
 
 @Getter
 public enum ResourceStatus implements Property.IntBase {
-    // shared
-    CLOSED,
-    CLOSED_CHECKING(true),
-    CLOSED_APPLYING(true),
-
-    VALID,
-    VALID_CHECKING(true),
-    VALID_APPLYING(true),
-
-    // statement
-    CANCELLED,
-    CANCELLED_CHECKING(true),
-    CANCELLED_APPLYING(true),
-
-    // connection
     ACTIVE,
+    VALID,
+    CLOSED,
+    CANCELLED,
     RESERVED,
-
+    READ_ONLY,
     AUTO_COMMIT,
-    AUTO_COMMIT_CHECKING(true),
-    AUTO_COMMIT_APPLYING(true),
+
+    CHECKING_VALID(true),
+    CHECKING_CLOSED(true),
+    CHECKING_CANCELLED(true),
+    CHECKING_READ_ONLY(true),
+    CHECKING_AUTO_COMMIT(true),
+
+    CHANGING_VALID(true),
+    CHANGING_CLOSED(true),
+    CHANGING_CANCELLED(true),
+    CHANGING_READ_ONLY(true),
+    CHANGING_AUTO_COMMIT(true),
 
     // transient statuses
     CLOSING(true),
@@ -37,9 +35,6 @@ public enum ResourceStatus implements Property.IntBase {
     COMMITTING_SAVEPOINT(true),
     ROLLING_BACK_SAVEPOINT(true),
     RELEASING_SAVEPOINT(true),
-
-    CHANGING_READONLY_STATUS(true),
-    CHANGING_AUTOCOMMIT_STATUS(true),
 
     RESOLVING_TRANSACTION(true);
 
