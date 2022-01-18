@@ -53,7 +53,7 @@ public class SubcontentDependencyAdapterImpl extends BasicDependencyAdapter impl
 
     @Override
     public void afterLoad() {
-        contentDependency.reset();
+        contentDependency.updateSignature();
     }
 
     @Override

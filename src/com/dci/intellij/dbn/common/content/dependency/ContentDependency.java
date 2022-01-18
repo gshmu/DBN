@@ -5,16 +5,16 @@ import com.intellij.openapi.Disposable;
 import org.jetbrains.annotations.NotNull;
 
 public abstract class ContentDependency implements Disposable {
-    private short changeSignature;
+    private short signature;
 
     @NotNull
     public abstract DynamicContent getSourceContent();
 
-    public void reset() {
-        changeSignature = getSourceContent().getChangeSignature();
+    public void updateSignature() {
+        signature = getSourceContent().getSignature();
     }
 
     public boolean isDirty() {
-        return changeSignature != getSourceContent().getChangeSignature();
+        return signature != getSourceContent().getSignature();
     }
 }
