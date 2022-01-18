@@ -1,7 +1,7 @@
 package com.dci.intellij.dbn.object.common.list;
 
 import com.dci.intellij.dbn.common.content.dependency.ContentDependencyAdapter;
-import com.dci.intellij.dbn.common.content.dependency.MultipleContentDependencyAdapter;
+import com.dci.intellij.dbn.common.content.dependency.DualContentDependencyAdapter;
 import com.dci.intellij.dbn.common.content.dependency.SubcontentDependencyAdapterImpl;
 import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.common.dispose.SafeDisposer;
@@ -60,9 +60,10 @@ public class DBObjectRelationListContainer implements StatefulDisposable {
     public DBObjectRelationList createObjectRelationList(
             DBObjectRelationType type,
             GenericDatabaseElement parent,
-            DBObjectList... sourceContents) {
+            DBObjectList firstContent,
+            DBObjectList secondContent) {
         if (isSupported(type)) {
-            ContentDependencyAdapter dependencyAdapter = new MultipleContentDependencyAdapter(sourceContents);
+            ContentDependencyAdapter dependencyAdapter = new DualContentDependencyAdapter(firstContent, secondContent);
             return createObjectRelationList(type, parent, dependencyAdapter);
         }
         return null;

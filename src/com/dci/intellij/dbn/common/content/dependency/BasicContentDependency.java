@@ -10,7 +10,7 @@ public class BasicContentDependency extends ContentDependency {
 
     public BasicContentDependency(@NotNull DynamicContent sourceContent) {
         this.sourceContent = sourceContent;
-        reset();
+        updateSignature();
     }
 
     @NotNull

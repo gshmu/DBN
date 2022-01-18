@@ -52,7 +52,7 @@ public class VoidDynamicContent extends StatefulDisposable.Base implements Dynam
     }
 
     @Override
-    public short getChangeSignature() {
+    public short getSignature() {
         return 0;
     }
 

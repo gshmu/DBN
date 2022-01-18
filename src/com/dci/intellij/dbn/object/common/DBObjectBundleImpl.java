@@ -170,7 +170,7 @@ public class DBObjectBundleImpl extends BrowserTreeNodeBase implements DBObjectB
 
         objectRelationLists.createObjectRelationList(
                 ROLE_ROLE, this,
-                roles);
+                roles, roles);
 
         objectRelationLists.createObjectRelationList(
                 ROLE_PRIVILEGE, this,
