@@ -5,7 +5,6 @@ import com.dci.intellij.dbn.common.content.DynamicContentStatus;
 import com.dci.intellij.dbn.common.content.DynamicContentType;
 import com.dci.intellij.dbn.common.content.dependency.BasicDependencyAdapter;
 import com.dci.intellij.dbn.common.content.dependency.ContentDependencyAdapter;
-import com.dci.intellij.dbn.common.content.dependency.MultipleContentDependencyAdapter;
 import com.dci.intellij.dbn.common.content.dependency.SubcontentDependencyAdapterImpl;
 import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.common.dispose.SafeDisposer;
@@ -223,19 +222,6 @@ public class DBObjectListContainer implements StatefulDisposable {
             DynamicContentStatus... statuses) {
         if (isSupported(objectType)) {
             return createObjectList(objectType, treeParent, BasicDependencyAdapter.INSTANCE, statuses);
-        }
-        return null;
-    }
-
-    @Nullable
-    public <T extends DBObject> DBObjectList<T>  createObjectList(
-            @NotNull DBObjectType objectType,
-            @NotNull BrowserTreeNode treeParent,
-            DBObjectList<?>[] sourceContents,
-            DynamicContentStatus... statuses) {
-        if (isSupported(objectType)) {
-            ContentDependencyAdapter dependencyAdapter = new MultipleContentDependencyAdapter(sourceContents);
-            return createObjectList(objectType, treeParent, dependencyAdapter, statuses);
         }
         return null;
     }

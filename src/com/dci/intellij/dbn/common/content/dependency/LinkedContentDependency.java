@@ -13,7 +13,7 @@ public class LinkedContentDependency extends ContentDependency {
     public LinkedContentDependency(@NotNull GenericDatabaseElement sourceContentOwner, @NotNull DynamicContentType sourceContentType) {
         this.sourceContentOwner = sourceContentOwner;
         this.sourceContentType = sourceContentType;
-        reset();
+        updateSignature();
     }
 
     @Override

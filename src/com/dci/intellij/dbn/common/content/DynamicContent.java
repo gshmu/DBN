@@ -43,7 +43,7 @@ public interface DynamicContent<T extends DynamicContentElement> extends Statefu
     /**
      * The timestamp of the last change on the content.
      */
-    short getChangeSignature();
+    short getSignature();
 
     /**
      * A load attempt has been made already

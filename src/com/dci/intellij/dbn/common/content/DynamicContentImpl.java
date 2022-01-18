@@ -44,7 +44,7 @@ public abstract class DynamicContentImpl<T extends DynamicContentElement>
     protected static final List<?> EMPTY_DISPOSED_CONTENT = Collections.unmodifiableList(new ArrayList<>(0));
     protected static final List<?> EMPTY_UNTOUCHED_CONTENT = Collections.unmodifiableList(new ArrayList<>(0));
 
-    private short changeSignature = 0;
+    private short signature = 0;
 
     private GenericDatabaseElement parent;
     private ContentDependencyAdapter dependencyAdapter;
@@ -96,8 +96,8 @@ public abstract class DynamicContentImpl<T extends DynamicContentElement>
     }
 
     @Override
-    public short getChangeSignature() {
-        return changeSignature;
+    public short getSignature() {
+        return signature;
     }
 
     @Override
@@ -316,7 +316,7 @@ public abstract class DynamicContentImpl<T extends DynamicContentElement>
 
     @Override
     public void updateChangeSignature() {
-        changeSignature = Numbers.timeSignature();
+        signature = Numbers.timeSignature();
     }
 
 
