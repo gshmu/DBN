@@ -25,11 +25,12 @@ import com.dci.intellij.dbn.common.util.Commons;
 import com.dci.intellij.dbn.common.util.Consumer;
 import com.dci.intellij.dbn.common.util.Safe;
 import com.dci.intellij.dbn.common.util.Strings;
+import com.dci.intellij.dbn.common.util.Unsafe;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.ConnectionHandlerRef;
 import com.dci.intellij.dbn.connection.ConnectionId;
+import com.dci.intellij.dbn.connection.DatabaseEntity;
 import com.dci.intellij.dbn.connection.DatabaseType;
-import com.dci.intellij.dbn.connection.GenericDatabaseElement;
 import com.dci.intellij.dbn.connection.PooledConnection;
 import com.dci.intellij.dbn.connection.ResourceUtil;
 import com.dci.intellij.dbn.connection.SchemaId;
@@ -194,8 +195,8 @@ public abstract class DBObjectImpl<M extends DBObjectMetadata> extends BrowserTr
 
     @Nullable
     @Override
-    public GenericDatabaseElement getParentElement() {
-        return getParentObject();
+    public <E extends DatabaseEntity> E getParentEntity() {
+        return Unsafe.cast(getParentObject());
     }
 
     @Override
@@ -536,7 +537,7 @@ public abstract class DBObjectImpl<M extends DBObjectMetadata> extends BrowserTr
 
     @Override
     @Nullable
-    public DBObject getUndisposedElement() {
+    public DBObject getUndisposedEntity() {
         return objectRef.get();
     }
 

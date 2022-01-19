@@ -1,7 +1,7 @@
 package com.dci.intellij.dbn.browser.model;
 
 import com.dci.intellij.dbn.browser.ui.ToolTipProvider;
-import com.dci.intellij.dbn.connection.GenericDatabaseElement;
+import com.dci.intellij.dbn.connection.DatabaseEntity;
 import com.dci.intellij.dbn.object.type.DBObjectType;
 import com.intellij.navigation.ItemPresentation;
 import com.intellij.navigation.NavigationItem;
@@ -12,7 +12,7 @@ import javax.swing.Icon;
 import javax.swing.tree.TreeNode;
 import java.util.List;
 
-public interface BrowserTreeNode extends TreeNode, NavigationItem, ItemPresentation, ToolTipProvider, GenericDatabaseElement {
+public interface BrowserTreeNode extends TreeNode, NavigationItem, ItemPresentation, ToolTipProvider, DatabaseEntity {
     void initTreeElement();
 
     boolean canExpand();

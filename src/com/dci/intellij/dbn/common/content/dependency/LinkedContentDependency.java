@@ -3,14 +3,14 @@ package com.dci.intellij.dbn.common.content.dependency;
 import com.dci.intellij.dbn.common.content.DynamicContent;
 import com.dci.intellij.dbn.common.content.DynamicContentType;
 import com.dci.intellij.dbn.common.content.VoidDynamicContent;
-import com.dci.intellij.dbn.connection.GenericDatabaseElement;
+import com.dci.intellij.dbn.connection.DatabaseEntity;
 import org.jetbrains.annotations.NotNull;
 
 public class LinkedContentDependency extends ContentDependency {
-    private GenericDatabaseElement sourceContentOwner;
+    private DatabaseEntity sourceContentOwner;
     private final DynamicContentType sourceContentType;
 
-    public LinkedContentDependency(@NotNull GenericDatabaseElement sourceContentOwner, @NotNull DynamicContentType sourceContentType) {
+    public LinkedContentDependency(@NotNull DatabaseEntity sourceContentOwner, @NotNull DynamicContentType sourceContentType) {
         this.sourceContentOwner = sourceContentOwner;
         this.sourceContentType = sourceContentType;
         updateSignature();

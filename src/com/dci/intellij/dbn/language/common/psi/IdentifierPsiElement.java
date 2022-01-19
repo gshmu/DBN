@@ -251,7 +251,7 @@ public abstract class IdentifierPsiElement extends LeafPsiElement<IdentifierElem
             if (psiReferenceElement instanceof DBObjectPsiElement) {
                 DBObjectPsiElement underlyingObject = (DBObjectPsiElement) psiReferenceElement;
                 DBObject object = underlyingObject.getObject();
-                return object == null ? null : resolveActualObject(object.getUndisposedElement());
+                return object == null ? null : resolveActualObject(object.getUndisposedEntity());
             }
 
             if (psiReferenceElement instanceof IdentifierPsiElement) {

@@ -12,6 +12,8 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
+import static com.dci.intellij.dbn.common.content.DynamicContentType.NULL;
+
 @Slf4j
 public abstract class DynamicContentLoaderImpl<
                 T extends DynamicContentElement,
@@ -19,18 +21,6 @@ public abstract class DynamicContentLoaderImpl<
         implements DynamicContentLoader<T, M>{
 
     private static final Map<DynamicContentType, Map<DynamicContentType, DynamicContentLoader>> LOADERS = new ConcurrentHashMap<>();
-
-    private static final DynamicContentType NULL = new DynamicContentType() {
-        @Override
-        public boolean matches(DynamicContentType contentType) {
-            return contentType == this;
-        }
-
-        @Override
-        public String toString() {
-            return "NULL";
-        }
-    };
 
     public DynamicContentLoaderImpl(@Nullable DynamicContentType parentContentType, @NotNull DynamicContentType contentType, boolean register) {
         if (register) {

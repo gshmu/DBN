@@ -49,7 +49,7 @@ public abstract class DBTriggerImpl extends DBSchemaObjectImpl<DBTriggerMetadata
 
 
         String triggeringEventString = metadata.getTriggeringEvent();
-        List<DBTriggerEvent> eventList = new ArrayList<DBTriggerEvent>();
+        List<DBTriggerEvent> eventList = new ArrayList<>();
         if (triggeringEventString.contains("INSERT")) eventList.add(INSERT);
         if (triggeringEventString.contains("UPDATE")) eventList.add(UPDATE);
         if (triggeringEventString.contains("DELETE")) eventList.add(DELETE);

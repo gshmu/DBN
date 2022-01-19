@@ -13,7 +13,7 @@ import com.dci.intellij.dbn.common.ui.ValueSelector;
 import com.dci.intellij.dbn.common.ui.ValueSelectorOption;
 import com.dci.intellij.dbn.common.util.Naming;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
-import com.dci.intellij.dbn.connection.GenericDatabaseElement;
+import com.dci.intellij.dbn.connection.DatabaseEntity;
 import com.dci.intellij.dbn.object.DBSchema;
 import com.dci.intellij.dbn.object.common.list.DBObjectList;
 import com.dci.intellij.dbn.object.filter.ConditionJoinType;
@@ -88,7 +88,7 @@ public class ObjectQuickFilterForm extends DBNFormImpl {
     private void addHeader(DBObjectList<?> objectList) {
         Icon headerIcon = Icons.DATASET_FILTER;
         ConnectionHandler connectionHandler = objectList.getConnectionHandler();
-        GenericDatabaseElement parentElement = objectList.getParentElement();
+        DatabaseEntity parentElement = objectList.getParentEntity();
         String headerText = "[" + connectionHandler.getName() + "] " +
                 (parentElement instanceof DBSchema ? (parentElement.getName() + " - ") : "") +
                 Naming.capitalizeWords(objectList.getObjectType().getName()) + " filters";

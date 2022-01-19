@@ -18,7 +18,7 @@ import com.dci.intellij.dbn.connection.ConnectionCache;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.ConnectionId;
 import com.dci.intellij.dbn.connection.ConnectionManager;
-import com.dci.intellij.dbn.connection.GenericDatabaseElement;
+import com.dci.intellij.dbn.connection.DatabaseEntity;
 import com.dci.intellij.dbn.connection.config.ConnectionDetailSettings;
 import com.dci.intellij.dbn.database.DatabaseFeature;
 import com.dci.intellij.dbn.ddl.DDLFileAttachmentManager;
@@ -313,7 +313,7 @@ public class DatabaseFileSystem extends VirtualFileSystem implements /*NonPhysic
             if (virtualFile instanceof DBObjectListVirtualFile) {
                 DBObjectListVirtualFile<?> file = (DBObjectListVirtualFile<?>) virtualFile;
                 DBObjectList<?> objectList = file.getObjectList();
-                GenericDatabaseElement parentElement = objectList.getParentElement();
+                DatabaseEntity parentElement = objectList.getParentEntity();
                 String listName = objectList.getObjectType().getListName();
                 String connectionPath = connectionId.id();
                 if (parentElement instanceof DBObject) {

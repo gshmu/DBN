@@ -83,7 +83,7 @@ public class DBPackageTypeImpl extends DBTypeImpl implements DBPackageType {
             @Override
             public ResultSet createResultSet(DynamicContent<DBTypeAttribute> dynamicContent, DBNConnection connection) throws SQLException {
                 DatabaseMetadataInterface metadataInterface = dynamicContent.getMetadataInterface();
-                DBPackageType type = (DBPackageType) dynamicContent.getParentElement();
+                DBPackageType type = (DBPackageType) dynamicContent.getParentEntity();
                 return metadataInterface.loadProgramTypeAttributes(
                         type.getSchema().getName(),
                         type.getPackage().getName(),
@@ -92,7 +92,7 @@ public class DBPackageTypeImpl extends DBTypeImpl implements DBPackageType {
 
             @Override
             public DBTypeAttribute createElement(DynamicContent<DBTypeAttribute> content, DBTypeAttributeMetadata metadata, LoaderCache cache) throws SQLException {
-                DBType type = (DBType) content.getParentElement();
+                DBType type = (DBType) content.getParentEntity();
                 return new DBTypeAttributeImpl(type, metadata);
             }
         };

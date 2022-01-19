@@ -8,15 +8,12 @@ import com.dci.intellij.dbn.object.common.DBObject;
 import com.dci.intellij.dbn.object.filter.quick.ObjectQuickFilter;
 import com.dci.intellij.dbn.object.type.DBObjectType;
 import com.intellij.psi.PsiDirectory;
-import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 import java.util.function.Consumer;
 
 public interface DBObjectList<T extends DBObject> extends BrowserTreeNode, DynamicContent<T>, Comparable<DBObjectList>, ConnectionProvider {
-    @Override
-    @NotNull String getName();
 
     PsiDirectory getPsiDirectory();
 
@@ -39,7 +36,9 @@ public interface DBObjectList<T extends DBObject> extends BrowserTreeNode, Dynam
     List<T> getObjects(String name);
 
     T getObject(String name);
+
     T getObject(String name, short overload);
+
     T getObject(String name, String parentName);
 
     void collectObjects(Consumer<? super DBObject> consumer);

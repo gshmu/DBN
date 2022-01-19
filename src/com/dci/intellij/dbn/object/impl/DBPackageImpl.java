@@ -123,13 +123,13 @@ public class DBPackageImpl
                     @Override
                     public ResultSet createResultSet(DynamicContent<DBPackageFunction> dynamicContent, DBNConnection connection) throws SQLException {
                         DatabaseMetadataInterface metadataInterface = dynamicContent.getMetadataInterface();
-                        DBPackage packagee = (DBPackage) dynamicContent.getParentElement();
+                        DBPackage packagee = dynamicContent.getParentEntity();
                         return metadataInterface.loadPackageFunctions(packagee.getSchema().getName(), packagee.getName(), connection);
                     }
 
                     @Override
                     public DBPackageFunction createElement(DynamicContent<DBPackageFunction> content, DBFunctionMetadata metadata, LoaderCache cache) throws SQLException {
-                        DBPackageImpl packagee = (DBPackageImpl) content.getParentElement();
+                        DBPackageImpl packagee = content.getParentEntity();
                         return new DBPackageFunctionImpl(packagee, metadata);
                     }
                 };
@@ -137,7 +137,7 @@ public class DBPackageImpl
 
             @Override
             public boolean match(DBPackageFunction function, DynamicContent dynamicContent) {
-                DBPackage packagee = (DBPackage) dynamicContent.getParentElement();
+                DBPackage packagee = (DBPackage) dynamicContent.getParentEntity();
                 return Safe.equal(function.getPackage(), packagee);
             }
         };
@@ -146,7 +146,7 @@ public class DBPackageImpl
 
             @Override
             public boolean match(DBPackageProcedure procedure, DynamicContent dynamicContent) {
-                DBPackage packagee = (DBPackage) dynamicContent.getParentElement();
+                DBPackage packagee = (DBPackage) dynamicContent.getParentEntity();
                 return Safe.equal(procedure.getPackage(), packagee);
             }
 
@@ -157,13 +157,13 @@ public class DBPackageImpl
                     @Override
                     public ResultSet createResultSet(DynamicContent<DBPackageProcedure> dynamicContent, DBNConnection connection) throws SQLException {
                         DatabaseMetadataInterface metadataInterface = dynamicContent.getMetadataInterface();
-                        DBPackage packagee = (DBPackage) dynamicContent.getParentElement();
+                        DBPackage packagee = dynamicContent.getParentEntity();
                         return metadataInterface.loadPackageProcedures(packagee.getSchema().getName(), packagee.getName(), connection);
                     }
 
                     @Override
                     public DBPackageProcedure createElement(DynamicContent<DBPackageProcedure> content, DBProcedureMetadata metadata, LoaderCache cache) throws SQLException {
-                        DBPackageImpl packagee = (DBPackageImpl) content.getParentElement();
+                        DBPackageImpl packagee = content.getParentEntity();
                         return new DBPackageProcedureImpl(packagee, metadata);
                     }
                 };
@@ -174,7 +174,7 @@ public class DBPackageImpl
 
             @Override
             public boolean match(DBPackageType type, DynamicContent dynamicContent) {
-                DBPackage packagee = (DBPackage) dynamicContent.getParentElement();
+                DBPackage packagee = (DBPackage) dynamicContent.getParentEntity();
                 return Safe.equal(type.getPackage(), packagee);
             }
 
@@ -185,13 +185,13 @@ public class DBPackageImpl
                     @Override
                     public ResultSet createResultSet(DynamicContent<DBPackageType> dynamicContent, DBNConnection connection) throws SQLException {
                         DatabaseMetadataInterface metadataInterface = dynamicContent.getMetadataInterface();
-                        DBPackage packagee = (DBPackage) dynamicContent.getParentElement();
+                        DBPackage packagee = dynamicContent.getParentEntity();
                         return metadataInterface.loadPackageTypes(packagee.getSchema().getName(), packagee.getName(), connection);
                     }
 
                     @Override
                     public DBPackageType createElement(DynamicContent<DBPackageType> content, DBTypeMetadata metadata, LoaderCache cache) throws SQLException {
-                        DBPackageImpl packagee = (DBPackageImpl) content.getParentElement();
+                        DBPackageImpl packagee = content.getParentEntity();
                         return new DBPackageTypeImpl(packagee, metadata);
                     }
                 };
