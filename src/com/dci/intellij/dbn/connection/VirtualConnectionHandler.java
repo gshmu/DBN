@@ -30,7 +30,7 @@ import com.intellij.psi.PsiDirectory;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import javax.swing.*;
+import javax.swing.Icon;
 import java.sql.SQLException;
 import java.util.Collections;
 import java.util.HashMap;
@@ -63,7 +63,7 @@ public class VirtualConnectionHandler extends StatefulDisposable.Base implements
         this.projectRef = ProjectRef.of(project);
         this.databaseType = databaseType;
         this.databaseVersion = databaseVersion;
-        this.ref = new ConnectionHandlerRef(this);
+        this.ref = ConnectionHandlerRef.of(this);
         this.connectionStatus = new ConnectionHandlerStatusHolder(this);
         this.objectBundle = new DBVirtualObjectBundle(this);
     }
