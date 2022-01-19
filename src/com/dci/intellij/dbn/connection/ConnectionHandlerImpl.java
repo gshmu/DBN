@@ -95,7 +95,7 @@ public class ConnectionHandlerImpl extends StatefulDisposable.Base implements Co
         this.connectionBundle = WeakRef.of(connectionBundle);
         this.connectionSettings = connectionSettings;
         this.enabled = connectionSettings.isActive();
-        ref = new ConnectionHandlerRef(this);
+        ref = ConnectionHandlerRef.of(this);
 
         connectionStatus = new ConnectionHandlerStatusHolder(this);
         connectionPool = new ConnectionPool(this);
