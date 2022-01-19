@@ -19,7 +19,6 @@ import com.dci.intellij.dbn.object.DBUser;
 import com.dci.intellij.dbn.object.common.list.DBObjectList;
 import com.dci.intellij.dbn.object.common.list.DBObjectListContainer;
 import com.dci.intellij.dbn.object.common.list.DBObjectNavigationList;
-import com.dci.intellij.dbn.object.common.list.DBObjectRelationListContainer;
 import com.dci.intellij.dbn.object.common.operation.DBOperationExecutor;
 import com.dci.intellij.dbn.object.common.property.DBObjectProperty;
 import com.dci.intellij.dbn.object.lookup.DBObjectRef;
@@ -111,7 +110,6 @@ public interface DBObject extends
     DBObjectListContainer getChildObjects();
 
     @Nullable
-    DBObjectRelationListContainer getChildObjectRelations();
     String extractDDL() throws SQLException;
 
     @Override

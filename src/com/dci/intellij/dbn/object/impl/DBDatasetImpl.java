@@ -55,7 +55,7 @@ public abstract class DBDatasetImpl<M extends DBObjectMetadata> extends DBSchema
         constraints = childObjects.createSubcontentObjectList(CONSTRAINT, this, schema);
         triggers = childObjects.createSubcontentObjectList(DATASET_TRIGGER, this, schema);
 
-        initChildObjectRelations().createSubcontentObjectRelationList(CONSTRAINT_COLUMN, this, schema);
+        childObjects.createSubcontentObjectRelationList(CONSTRAINT_COLUMN, this, schema);
     }
 
     @Override

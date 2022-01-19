@@ -74,7 +74,6 @@ import com.dci.intellij.dbn.object.DBUser;
 import com.dci.intellij.dbn.object.common.list.DBObjectList;
 import com.dci.intellij.dbn.object.common.list.DBObjectListContainer;
 import com.dci.intellij.dbn.object.common.list.DBObjectListImpl;
-import com.dci.intellij.dbn.object.common.list.DBObjectRelationListContainer;
 import com.dci.intellij.dbn.object.impl.DBCharsetImpl;
 import com.dci.intellij.dbn.object.impl.DBGrantedPrivilegeImpl;
 import com.dci.intellij.dbn.object.impl.DBGrantedRoleImpl;
@@ -135,7 +134,6 @@ public class DBObjectBundleImpl extends BrowserTreeNodeBase implements DBObjectB
     private final List<DBDataType> cachedDataTypes = createConcurrentList();
 
     private final DBObjectListContainer objectLists;
-    private final DBObjectRelationListContainer objectRelationLists;
     private final long configSignature;
 
     private final Map<DBObjectRef<?>, LookupItemBuilder> sqlLookupItemBuilders = new ConcurrentHashMap<>();
@@ -159,20 +157,19 @@ public class DBObjectBundleImpl extends BrowserTreeNodeBase implements DBObjectB
         charsets = objectLists.createObjectList(CHARSET, this);
         allPossibleTreeChildren = DatabaseBrowserUtils.createList(consoles, schemas, users, roles, systemPrivileges, charsets);
 
-        objectRelationLists = new DBObjectRelationListContainer(this);
-        objectRelationLists.createObjectRelationList(
+        objectLists.createObjectRelationList(
                 USER_ROLE, this,
                 users, roles);
 
-        objectRelationLists.createObjectRelationList(
+        objectLists.createObjectRelationList(
                 USER_PRIVILEGE, this,
                 users, systemPrivileges);
 
-        objectRelationLists.createObjectRelationList(
+        objectLists.createObjectRelationList(
                 ROLE_ROLE, this,
                 roles, roles);
 
-        objectRelationLists.createObjectRelationList(
+        objectLists.createObjectRelationList(
                 ROLE_PRIVILEGE, this,
                 roles, systemPrivileges);
 
@@ -747,13 +744,13 @@ public class DBObjectBundleImpl extends BrowserTreeNodeBase implements DBObjectB
 
     @Override
     @NotNull
-    public DBObjectListContainer getObjectListContainer() {
+    public DBObjectListContainer getObjectLists() {
         return Failsafe.nn(objectLists);
     }
 
     @Override
     public <T extends DBObject> DBObjectList<T> getObjectList(DBObjectType objectType) {
-        return getObjectListContainer().getObjectList(objectType);
+        return getObjectLists().getObjects(objectType);
     }
 
     @Override
@@ -777,16 +774,15 @@ public class DBObjectBundleImpl extends BrowserTreeNodeBase implements DBObjectB
     @Nullable
     public DynamicContent<?> getDynamicContent(DynamicContentType<?> dynamicContentType) {
         if(dynamicContentType instanceof DBObjectType) {
-            DBObjectListContainer objectLists = getObjectListContainer();
             DBObjectType objectType = (DBObjectType) dynamicContentType;
-            DynamicContent<?> dynamicContent = objectLists.getObjectList(objectType);
-            if (dynamicContent == null) dynamicContent = objectLists.getInternalObjectList(objectType);
+            DynamicContent<?> dynamicContent = objectLists.getObjects(objectType);
+            if (dynamicContent == null) dynamicContent = objectLists.getInternalObjects(objectType);
             return dynamicContent;
         }
 
         if (dynamicContentType instanceof DBObjectRelationType) {
             DBObjectRelationType objectRelationType = (DBObjectRelationType) dynamicContentType;
-            return objectRelationLists.getObjectRelationList(objectRelationType);
+            return objectLists.getObjectRelations(objectRelationType);
         }
 
         return null;
@@ -983,7 +979,6 @@ public class DBObjectBundleImpl extends BrowserTreeNodeBase implements DBObjectB
     @Override
     public void disposeInner() {
         SafeDisposer.dispose(objectLists, false, true);
-        SafeDisposer.dispose(objectRelationLists, false, true);
         sqlLookupItemBuilders.clear();
         psqlLookupItemBuilders.clear();
         objectPsiFacades.clear();
