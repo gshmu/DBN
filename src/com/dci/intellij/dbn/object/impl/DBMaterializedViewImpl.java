@@ -8,7 +8,6 @@ import com.dci.intellij.dbn.object.DBMaterializedView;
 import com.dci.intellij.dbn.object.DBSchema;
 import com.dci.intellij.dbn.object.common.list.DBObjectList;
 import com.dci.intellij.dbn.object.common.list.DBObjectListContainer;
-import com.dci.intellij.dbn.object.common.list.DBObjectRelationListContainer;
 import com.dci.intellij.dbn.object.type.DBObjectType;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -32,8 +31,7 @@ public class DBMaterializedViewImpl extends DBViewImpl implements DBMaterialized
         DBObjectListContainer childObjects = initChildObjects();
         indexes = childObjects.createSubcontentObjectList(DBObjectType.INDEX, this, schema);
 
-        DBObjectRelationListContainer childObjectRelations = initChildObjectRelations();
-        childObjectRelations.createSubcontentObjectRelationList(INDEX_COLUMN, this, schema);
+        childObjects.createSubcontentObjectRelationList(INDEX_COLUMN, this, schema);
     }
 
     @NotNull

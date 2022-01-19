@@ -8,18 +8,11 @@ import com.intellij.navigation.NavigationItem;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import javax.swing.*;
+import javax.swing.Icon;
 import javax.swing.tree.TreeNode;
 import java.util.List;
 
 public interface BrowserTreeNode extends TreeNode, NavigationItem, ItemPresentation, ToolTipProvider, GenericDatabaseElement {
-
-    enum LoadStatus {
-        NEW,
-        LOADING,
-        LOADED
-    }
-
     void initTreeElement();
 
     boolean canExpand();

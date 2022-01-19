@@ -13,18 +13,21 @@ import com.dci.intellij.dbn.database.DatabaseMetadataInterface;
 import com.dci.intellij.dbn.database.common.metadata.def.DBNestedTableMetadata;
 import com.dci.intellij.dbn.database.common.metadata.def.DBTableMetadata;
 import com.dci.intellij.dbn.editor.DBContentType;
-import com.dci.intellij.dbn.object.*;
+import com.dci.intellij.dbn.object.DBColumn;
+import com.dci.intellij.dbn.object.DBIndex;
+import com.dci.intellij.dbn.object.DBNestedTable;
+import com.dci.intellij.dbn.object.DBSchema;
+import com.dci.intellij.dbn.object.DBTable;
 import com.dci.intellij.dbn.object.common.list.DBObjectList;
 import com.dci.intellij.dbn.object.common.list.DBObjectListContainer;
 import com.dci.intellij.dbn.object.common.list.DBObjectNavigationList;
-import com.dci.intellij.dbn.object.common.list.DBObjectRelationListContainer;
 import com.dci.intellij.dbn.object.properties.PresentableProperty;
 import com.dci.intellij.dbn.object.properties.SimplePresentableProperty;
 import com.dci.intellij.dbn.object.type.DBObjectType;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import javax.swing.*;
+import javax.swing.Icon;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -61,8 +64,7 @@ public class DBTableImpl extends DBDatasetImpl<DBTableMetadata> implements DBTab
         indexes = childObjects.createSubcontentObjectList(INDEX, this, schema);
         nestedTables = childObjects.createSubcontentObjectList(NESTED_TABLE, this, schema);
 
-        DBObjectRelationListContainer childObjectRelations = initChildObjectRelations();
-        childObjectRelations.createSubcontentObjectRelationList(INDEX_COLUMN, this, schema);
+        childObjects.createSubcontentObjectRelationList(INDEX_COLUMN, this, schema);
     }
 
     @NotNull

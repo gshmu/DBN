@@ -25,7 +25,14 @@ import com.dci.intellij.dbn.common.util.Commons;
 import com.dci.intellij.dbn.common.util.Consumer;
 import com.dci.intellij.dbn.common.util.Safe;
 import com.dci.intellij.dbn.common.util.Strings;
-import com.dci.intellij.dbn.connection.*;
+import com.dci.intellij.dbn.connection.ConnectionHandler;
+import com.dci.intellij.dbn.connection.ConnectionHandlerRef;
+import com.dci.intellij.dbn.connection.ConnectionId;
+import com.dci.intellij.dbn.connection.DatabaseType;
+import com.dci.intellij.dbn.connection.GenericDatabaseElement;
+import com.dci.intellij.dbn.connection.PooledConnection;
+import com.dci.intellij.dbn.connection.ResourceUtil;
+import com.dci.intellij.dbn.connection.SchemaId;
 import com.dci.intellij.dbn.connection.config.ConnectionDatabaseSettings;
 import com.dci.intellij.dbn.connection.jdbc.DBNCallableStatement;
 import com.dci.intellij.dbn.database.DatabaseCompatibilityInterface;
@@ -40,7 +47,6 @@ import com.dci.intellij.dbn.object.DBUser;
 import com.dci.intellij.dbn.object.common.list.DBObjectList;
 import com.dci.intellij.dbn.object.common.list.DBObjectListContainer;
 import com.dci.intellij.dbn.object.common.list.DBObjectNavigationList;
-import com.dci.intellij.dbn.object.common.list.DBObjectRelationListContainer;
 import com.dci.intellij.dbn.object.common.operation.DBOperationExecutor;
 import com.dci.intellij.dbn.object.common.operation.DBOperationNotSupportedException;
 import com.dci.intellij.dbn.object.common.property.DBObjectProperties;
@@ -61,7 +67,7 @@ import com.intellij.psi.PsiInvalidElementAccessException;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import javax.swing.*;
+import javax.swing.Icon;
 import java.sql.SQLException;
 import java.sql.Types;
 import java.util.ArrayList;
@@ -77,17 +83,15 @@ public abstract class DBObjectImpl<M extends DBObjectMetadata> extends BrowserTr
 
     public static final List<BrowserTreeNode> EMPTY_TREE_NODE_LIST = Collections.unmodifiableList(new ArrayList<>(0));
 
+    private final ConnectionHandlerRef connectionHandler;
+    protected DBObjectRef<?> objectRef;
+    protected DBObjectRef<?> parentObjectRef;
+    protected DBObjectProperties properties = new DBObjectProperties();
+
     private List<BrowserTreeNode> allPossibleTreeChildren;
     private List<BrowserTreeNode> visibleTreeChildren;
 
-    protected DBObjectRef<?> objectRef;
-    protected DBObjectRef<?> parentObjectRef;
-
-    protected DBObjectProperties properties = new DBObjectProperties();
     private DBObjectListContainer childObjects;
-    private DBObjectRelationListContainer childObjectRelations;
-
-    private final ConnectionHandlerRef connectionHandler;
 
     private static final DBOperationExecutor NULL_OPERATION_EXECUTOR = operationType -> {
         throw new DBOperationNotSupportedException(operationType);
@@ -346,12 +350,7 @@ public abstract class DBObjectImpl<M extends DBObjectMetadata> extends BrowserTr
 
     @Override
     public void initChildren() {
-        if (childObjects != null) childObjects.load();
-    }
-
-    @Override
-    public DBObjectRelationListContainer getChildObjectRelations() {
-        return childObjectRelations;
+        if (childObjects != null) childObjects.loadObjects();
     }
 
     @NotNull
@@ -360,15 +359,6 @@ public abstract class DBObjectImpl<M extends DBObjectMetadata> extends BrowserTr
             childObjects = new DBObjectListContainer(this);
         }
         return childObjects;
-    }
-
-    @NotNull
-    public synchronized DBObjectRelationListContainer initChildObjectRelations() {
-        if (childObjectRelations == null) {
-            childObjectRelations = new DBObjectRelationListContainer(this);
-        }
-        return childObjectRelations;
-
     }
 
     public static DBObject getObjectByName(List<? extends DBObject> objects, String name) {
@@ -390,7 +380,7 @@ public abstract class DBObjectImpl<M extends DBObjectMetadata> extends BrowserTr
     @Override
     public List<String> getChildObjectNames(DBObjectType objectType) {
         if (childObjects != null) {
-            DBObjectList objectList = childObjects.getObjectList(objectType);
+            DBObjectList objectList = childObjects.getObjects(objectType);
             if (objectList != null) {
                 List<String> objectNames = new ArrayList<>();
                 List<DBObject> objects = objectList.getObjects();
@@ -453,7 +443,7 @@ public abstract class DBObjectImpl<M extends DBObjectMetadata> extends BrowserTr
                 if (objectType != childObjectType) {
                     collectChildObjects(childObjectType, consumer);
                 } else {
-                    DBObjectList<?> objectList = childObjects == null ? null : childObjects.getObjectList(objectType);
+                    DBObjectList<?> objectList = childObjects == null ? null : childObjects.getObjects(objectType);
                     if (objectList != null) {
                         objectList.collectObjects(consumer);
                     }
@@ -461,7 +451,7 @@ public abstract class DBObjectImpl<M extends DBObjectMetadata> extends BrowserTr
             }
         } else if (childObjects != null) {
             if (objectType == DBObjectType.ANY) {
-                DBObjectList<?>[] elements = childObjects.getElements();
+                DBObjectList<?>[] elements = childObjects.getObjects();
                 if (elements != null) {
                     for (DBObjectList<?> objectList : elements) {
                         CancellableConsumer.checkCancelled(consumer);
@@ -471,9 +461,9 @@ public abstract class DBObjectImpl<M extends DBObjectMetadata> extends BrowserTr
                     }
                 }
             } else {
-                DBObjectList<?> objectList = childObjects.getObjectList(objectType);
+                DBObjectList<?> objectList = childObjects.getObjects(objectType);
                 if (objectList == null) {
-                    objectList = childObjects.getInternalObjectList(objectType);
+                    objectList = childObjects.getInternalObjects(objectType);
                 }
                 if (objectList != null) objectList.collectObjects(consumer);
             }
@@ -485,7 +475,7 @@ public abstract class DBObjectImpl<M extends DBObjectMetadata> extends BrowserTr
     @Nullable
     @Override
     public DBObjectList<? extends DBObject> getChildObjectList(DBObjectType objectType) {
-        return childObjects == null ? null : childObjects.getObjectList(objectType);
+        return childObjects == null ? null : childObjects.getObjects(objectType);
     }
 
     @Override
@@ -553,16 +543,18 @@ public abstract class DBObjectImpl<M extends DBObjectMetadata> extends BrowserTr
     @Override
     @Nullable
     public DynamicContent getDynamicContent(DynamicContentType dynamicContentType) {
-        if(dynamicContentType instanceof DBObjectType && childObjects != null) {
-            DBObjectType objectType = (DBObjectType) dynamicContentType;
-            DynamicContent dynamicContent = childObjects.getObjectList(objectType);
-            if (dynamicContent == null) dynamicContent = childObjects.getInternalObjectList(objectType);
-            return dynamicContent;
-        }
+        if (childObjects != null) {
+            if(dynamicContentType instanceof DBObjectType) {
+                DBObjectType objectType = (DBObjectType) dynamicContentType;
+                DynamicContent dynamicContent = childObjects.getObjects(objectType);
+                if (dynamicContent == null) dynamicContent = childObjects.getInternalObjects(objectType);
+                return dynamicContent;
+            }
 
-        else if (dynamicContentType instanceof DBObjectRelationType && childObjectRelations != null) {
-            DBObjectRelationType objectRelationType = (DBObjectRelationType) dynamicContentType;
-            return childObjectRelations.getObjectRelationList(objectRelationType);
+            else if (dynamicContentType instanceof DBObjectRelationType) {
+                DBObjectRelationType objectRelationType = (DBObjectRelationType) dynamicContentType;
+                return childObjects.getObjectRelations(objectRelationType);
+            }
         }
 
         return null;
@@ -571,14 +563,14 @@ public abstract class DBObjectImpl<M extends DBObjectMetadata> extends BrowserTr
     @Override
     public final void reload() {
         if (childObjects != null) {
-            childObjects.reload();
+            childObjects.reloadObjects();
         }
     }
 
     @Override
     public final void refresh() {
         if (childObjects != null) {
-            childObjects.refresh();
+            childObjects.refreshObjects();
         }
     }
 
@@ -660,7 +652,7 @@ public abstract class DBObjectImpl<M extends DBObjectMetadata> extends BrowserTr
             if (object != null) {
                 DBObjectListContainer childObjects = object.getChildObjects();
                 if (childObjects != null) {
-                    DBObjectList parentObjectList = childObjects.getObjectList(objectType);
+                    DBObjectList parentObjectList = childObjects.getObjects(objectType);
                     return Failsafe.nn(parentObjectList);
                 }
             }
@@ -895,7 +887,6 @@ public abstract class DBObjectImpl<M extends DBObjectMetadata> extends BrowserTr
     @Override
     public void disposeInner() {
         SafeDisposer.dispose(childObjects, false);
-        SafeDisposer.dispose(childObjectRelations, false);
         nullify();
     }
 }

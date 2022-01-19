@@ -30,7 +30,7 @@ import com.intellij.util.IncorrectOperationException;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import javax.swing.*;
+import javax.swing.Icon;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -115,7 +115,7 @@ public class DBConnectionPsiDirectory implements PsiDirectory, Disposable {
     @NotNull
     public PsiElement[] getChildren() {
         List<PsiElement> children = new ArrayList<>();
-        DBObjectList[] objectLists = virtualFile.getConnectionHandler().getObjectBundle().getObjectListContainer().getElements();
+        DBObjectList[] objectLists = virtualFile.getConnectionHandler().getObjectBundle().getObjectLists().getObjects();
         if (objectLists != null) {
             for (DBObjectList objectList : objectLists) {
                 if (!objectList.isInternal() && Failsafe.check(objectList)) {
