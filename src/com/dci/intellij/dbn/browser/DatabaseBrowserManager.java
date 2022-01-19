@@ -367,7 +367,7 @@ public class DatabaseBrowserManager extends AbstractProjectComponent implements 
                         List<DBObjectType> objectTypes = new ArrayList<>();
                         DBObjectListContainer childObjects = schema.getChildObjects();
                         if (childObjects != null) {
-                            DBObjectList[] objectLists = childObjects.getElements();
+                            DBObjectList[] objectLists = childObjects.getObjects();
                             if (objectLists != null) {
                                 for (DBObjectList objectList : objectLists) {
                                     if (objectList.isLoaded() || objectList.isLoading()) {
@@ -425,7 +425,7 @@ public class DatabaseBrowserManager extends AbstractProjectComponent implements 
                                                 DBObjectListContainer childObjects = schema.getChildObjects();
                                                 if (childObjects != null) {
                                                     Progress.check(progress);
-                                                    childObjects.loadObjectList(objectType);
+                                                    childObjects.loadObjects(objectType);
                                                 }
                                             }
                                         });

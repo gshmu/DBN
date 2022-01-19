@@ -144,7 +144,7 @@ public class ConnectionManager extends AbstractProjectComponent implements Persi
                                 Progress.check(progress);
                                 transactionManager.execute(connectionHandler, connection, actions, false, null);
                             }
-                            connectionHandler.getObjectBundle().getObjectListContainer().refresh();
+                            connectionHandler.getObjectBundle().getObjectLists().refreshObjects();
 
                         });
             }

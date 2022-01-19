@@ -9,7 +9,10 @@ import com.dci.intellij.dbn.object.DBConstraint;
 import com.dci.intellij.dbn.object.DBDataset;
 import com.dci.intellij.dbn.object.DBSchema;
 import com.dci.intellij.dbn.object.common.DBSchemaObjectImpl;
-import com.dci.intellij.dbn.object.common.list.*;
+import com.dci.intellij.dbn.object.common.list.DBObjectList;
+import com.dci.intellij.dbn.object.common.list.DBObjectListContainer;
+import com.dci.intellij.dbn.object.common.list.DBObjectNavigationList;
+import com.dci.intellij.dbn.object.common.list.DBObjectRelationList;
 import com.dci.intellij.dbn.object.common.list.loader.DBObjectListFromRelationListLoader;
 import com.dci.intellij.dbn.object.common.operation.DBOperationExecutor;
 import com.dci.intellij.dbn.object.common.operation.DatabaseOperationManager;
@@ -24,7 +27,7 @@ import com.dci.intellij.dbn.object.type.DBObjectType;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import javax.swing.*;
+import javax.swing.Icon;
 import java.sql.SQLException;
 import java.util.Collections;
 import java.util.LinkedList;
@@ -149,9 +152,9 @@ public class DBConstraintImpl extends DBSchemaObjectImpl<DBConstraintMetadata> i
 
     @Override
     public short getColumnPosition(DBColumn column) {
-        DBObjectRelationListContainer childObjectRelations = getDataset().getChildObjectRelations();
-        if (childObjectRelations != null) {
-            DBObjectRelationList<DBConstraintColumnRelation> relations = childObjectRelations.getObjectRelationList(DBObjectRelationType.CONSTRAINT_COLUMN);
+        DBObjectListContainer childObjects = getDataset().getChildObjects();
+        if (childObjects != null) {
+            DBObjectRelationList<DBConstraintColumnRelation> relations = childObjects.getObjectRelations(DBObjectRelationType.CONSTRAINT_COLUMN);
             if (relations != null) {
                 for (DBConstraintColumnRelation relation : relations.getObjectRelations()) {
                     if (relation.getConstraint().equals(this) && relation.getColumn().equals(column)) {
@@ -166,9 +169,9 @@ public class DBConstraintImpl extends DBSchemaObjectImpl<DBConstraintMetadata> i
     @Override
     @Nullable
     public DBColumn getColumnForPosition(short position) {
-        DBObjectRelationListContainer childObjectRelations = getDataset().getChildObjectRelations();
+        DBObjectListContainer childObjectRelations = getDataset().getChildObjects();
         if (childObjectRelations != null) {
-            DBObjectRelationList<DBConstraintColumnRelation> relations = childObjectRelations.getObjectRelationList(DBObjectRelationType.CONSTRAINT_COLUMN);
+            DBObjectRelationList<DBConstraintColumnRelation> relations = childObjectRelations.getObjectRelations(DBObjectRelationType.CONSTRAINT_COLUMN);
             if (relations != null) {
                 for (DBConstraintColumnRelation relation : relations.getObjectRelations()) {
                     DBConstraint constraint = relation.getConstraint();

@@ -181,7 +181,7 @@ public class DBVirtualObjectBundle extends BrowserTreeNodeBase implements DBObje
     }
 
     @Override
-    public DBObjectListContainer getObjectListContainer() {
+    public DBObjectListContainer getObjectLists() {
         return null;
     }
 

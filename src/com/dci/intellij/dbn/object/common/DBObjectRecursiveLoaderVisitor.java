@@ -24,7 +24,7 @@ public class DBObjectRecursiveLoaderVisitor extends StatefulDisposable.Base impl
 
                 DBObjectListContainer childObjects = object.getChildObjects();
                 if (childObjects != null) {
-                    childObjects.visitLists(this, false);
+                    childObjects.visitObjects(this, false);
                 }
             }
         }
