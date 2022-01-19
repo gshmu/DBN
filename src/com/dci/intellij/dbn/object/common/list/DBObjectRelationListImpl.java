@@ -7,7 +7,7 @@ import com.dci.intellij.dbn.common.content.dependency.ContentDependencyAdapter;
 import com.dci.intellij.dbn.common.content.loader.DynamicContentLoader;
 import com.dci.intellij.dbn.common.content.loader.DynamicContentLoaderImpl;
 import com.dci.intellij.dbn.common.filter.Filter;
-import com.dci.intellij.dbn.connection.GenericDatabaseElement;
+import com.dci.intellij.dbn.connection.DatabaseEntity;
 import com.dci.intellij.dbn.database.common.metadata.DBObjectMetadata;
 import com.dci.intellij.dbn.object.common.DBObject;
 import com.dci.intellij.dbn.object.type.DBObjectRelationType;
@@ -24,7 +24,7 @@ class DBObjectRelationListImpl<T extends DBObjectRelation> extends DynamicConten
 
     public DBObjectRelationListImpl(
             @NotNull DBObjectRelationType type,
-            @NotNull GenericDatabaseElement parent,
+            @NotNull DatabaseEntity parent,
             ContentDependencyAdapter dependencyAdapter,
             DynamicContentStatus... statuses) {
         super(parent, dependencyAdapter, statuses);
@@ -34,7 +34,7 @@ class DBObjectRelationListImpl<T extends DBObjectRelation> extends DynamicConten
 
     @Override
     public DynamicContentLoader<T, DBObjectMetadata> getLoader() {
-        DynamicContentType<?> parentContentType = getParentElement().getDynamicContentType();
+        DynamicContentType<?> parentContentType = getParentEntity().getDynamicContentType();
         return DynamicContentLoaderImpl.resolve(parentContentType, objectRelationType);
     }
 
@@ -60,6 +60,7 @@ class DBObjectRelationListImpl<T extends DBObjectRelation> extends DynamicConten
         return objectRelationType;
     }
 
+    @NotNull
     @Override
     public String getName() {
         return
@@ -98,15 +99,16 @@ class DBObjectRelationListImpl<T extends DBObjectRelation> extends DynamicConten
      *                   DynamicContent                      *
      *********************************************************/
 
+    @NotNull
     @Override
     public Project getProject() {
-        return getParentElement().getProject();
+        return getParentEntity().getProject();
     }
 
    @Override
    public String getContentDescription() {
-        if (getParentElement() instanceof DBObject) {
-            DBObject object = (DBObject) getParentElement();
+        if (getParentEntity() instanceof DBObject) {
+            DBObject object = (DBObject) getParentEntity();
             return getName() + " of " + object.getQualifiedNameWithType();
         }
        return getName() + " from " + getConnectionHandler().getName() ;

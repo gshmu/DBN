@@ -3,7 +3,7 @@ package com.dci.intellij.dbn.navigation.psi;
 import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.common.dispose.SafeDisposer;
 import com.dci.intellij.dbn.common.util.Naming;
-import com.dci.intellij.dbn.connection.GenericDatabaseElement;
+import com.dci.intellij.dbn.connection.DatabaseEntity;
 import com.dci.intellij.dbn.language.common.psi.EmptySearchScope;
 import com.dci.intellij.dbn.object.common.DBObject;
 import com.dci.intellij.dbn.object.common.DBObjectBundle;
@@ -96,7 +96,7 @@ public class DBObjectListPsiDirectory implements PsiDirectory, Disposable {
 
     @Override
     public PsiDirectory getParent() {
-        GenericDatabaseElement parent = getObjectList().getParent();
+        DatabaseEntity parent = getObjectList().getParent();
         if (parent instanceof DBObject) {
             DBObject parentObject = (DBObject) parent;
             return DBObjectPsiFacade.asPsiDirectory(parentObject);

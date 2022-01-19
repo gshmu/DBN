@@ -123,7 +123,7 @@ public final class DatabaseBrowserTree extends DBNTree {
             Background.run(() -> {
                 BrowserTreeNode targetSelection = this.targetSelection;
                 if (targetSelection != null) {
-                    targetSelection = (BrowserTreeNode) targetSelection.getUndisposedElement();
+                    targetSelection = targetSelection.getUndisposedEntity();
                     if (targetSelection != null) {
                         TreePath treePath = DatabaseBrowserUtils.createTreePath(targetSelection);
                         if (treePath != null) {

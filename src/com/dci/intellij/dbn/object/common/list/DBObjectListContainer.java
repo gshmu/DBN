@@ -13,7 +13,7 @@ import com.dci.intellij.dbn.common.dispose.StatefulDisposable;
 import com.dci.intellij.dbn.common.load.ProgressMonitor;
 import com.dci.intellij.dbn.common.util.Safe;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
-import com.dci.intellij.dbn.connection.GenericDatabaseElement;
+import com.dci.intellij.dbn.connection.DatabaseEntity;
 import com.dci.intellij.dbn.database.DatabaseCompatibilityInterface;
 import com.dci.intellij.dbn.database.DatabaseObjectTypeId;
 import com.dci.intellij.dbn.object.common.DBObject;
@@ -34,16 +34,16 @@ public final class DBObjectListContainer implements StatefulDisposable {
     private static final DBObjectList<?>[] DISPOSED_OBJECTS = new DBObjectList[0];
     private static final DBObjectRelationList[] DISPOSED_OBJECT_RELATIONS = new DBObjectRelationList[0];
 
-    private GenericDatabaseElement owner;
+    private DatabaseEntity owner;
     private DBObjectList<?>[] objects;
     private DBObjectRelationList[] objectRelations;
 
-    public DBObjectListContainer(@NotNull GenericDatabaseElement owner) {
+    public DBObjectListContainer(@NotNull DatabaseEntity owner) {
         this.owner = owner;
     }
 
     @NotNull
-    private GenericDatabaseElement getOwner() {
+    private DatabaseEntity getOwner() {
         return Failsafe.nn(owner);
     }
 
@@ -186,7 +186,7 @@ public final class DBObjectListContainer implements StatefulDisposable {
     }
 
     private boolean isSupported(DBObjectType objectType) {
-        GenericDatabaseElement owner = getOwner();
+        DatabaseEntity owner = getOwner();
         ConnectionHandler connectionHandler = owner.getConnectionHandler();
         DatabaseCompatibilityInterface compatibilityInterface = DatabaseCompatibilityInterface.getInstance(connectionHandler);
         return compatibilityInterface.supportsObjectType(objectType.getTypeId());
@@ -198,7 +198,7 @@ public final class DBObjectListContainer implements StatefulDisposable {
                 if (check(objectList) && objectList.isLoaded() && !objectList.isDirty()) {
                     DBObject object = objectList.getObject(name, overload);
                     if (object != null) {
-                        GenericDatabaseElement owner = getOwner();
+                        DatabaseEntity owner = getOwner();
                         if (owner instanceof DBObject) {
                             DBObject ownerObject = (DBObject) owner;
                             if (ownerObject.isParentOf(object)) {
@@ -232,7 +232,7 @@ public final class DBObjectListContainer implements StatefulDisposable {
     public <T extends DBObject> DBObjectList<T> createSubcontentObjectList(
             @NotNull DBObjectType objectType,
             @NotNull BrowserTreeNode treeParent,
-            GenericDatabaseElement sourceContentHolder,
+            DatabaseEntity sourceContentHolder,
             DynamicContentType<?> sourceContentType,
             DynamicContentStatus... statuses) {
         if (isSupported(objectType)) {
@@ -355,7 +355,7 @@ public final class DBObjectListContainer implements StatefulDisposable {
     @Nullable
     public DBObjectRelationList createObjectRelationList(
             DBObjectRelationType type,
-            GenericDatabaseElement parent,
+            DatabaseEntity parent,
             DBObjectList firstContent,
             DBObjectList secondContent) {
         if (isSupported(type)) {
@@ -367,7 +367,7 @@ public final class DBObjectListContainer implements StatefulDisposable {
 
     public DBObjectRelationList createSubcontentObjectRelationList(
             DBObjectRelationType relationType,
-            GenericDatabaseElement parent,
+            DatabaseEntity parent,
             DBObject sourceContentObject) {
         if (isSupported(relationType)) {
             ContentDependencyAdapter dependencyAdapter = new SubcontentDependencyAdapterImpl(sourceContentObject, relationType);
@@ -379,7 +379,7 @@ public final class DBObjectListContainer implements StatefulDisposable {
 
     private DBObjectRelationList createObjectRelationList(
             DBObjectRelationType type,
-            GenericDatabaseElement parent,
+            DatabaseEntity parent,
             ContentDependencyAdapter dependencyAdapter) {
         if (isSupported(type)) {
             DBObjectRelationList objectRelationList = new DBObjectRelationListImpl(type, parent, dependencyAdapter);

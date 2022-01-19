@@ -14,9 +14,17 @@ import com.dci.intellij.dbn.connection.jdbc.DBNConnection;
 import com.dci.intellij.dbn.data.type.DBDataType;
 import com.dci.intellij.dbn.data.type.DBNativeDataType;
 import com.dci.intellij.dbn.database.DatabaseMetadataInterface;
-import com.dci.intellij.dbn.database.common.metadata.def.*;
+import com.dci.intellij.dbn.database.common.metadata.def.DBDataTypeMetadata;
+import com.dci.intellij.dbn.database.common.metadata.def.DBFunctionMetadata;
+import com.dci.intellij.dbn.database.common.metadata.def.DBProcedureMetadata;
+import com.dci.intellij.dbn.database.common.metadata.def.DBTypeAttributeMetadata;
+import com.dci.intellij.dbn.database.common.metadata.def.DBTypeMetadata;
 import com.dci.intellij.dbn.editor.DBContentType;
-import com.dci.intellij.dbn.object.*;
+import com.dci.intellij.dbn.object.DBSchema;
+import com.dci.intellij.dbn.object.DBType;
+import com.dci.intellij.dbn.object.DBTypeAttribute;
+import com.dci.intellij.dbn.object.DBTypeFunction;
+import com.dci.intellij.dbn.object.DBTypeProcedure;
 import com.dci.intellij.dbn.object.common.DBObject;
 import com.dci.intellij.dbn.object.common.DBSchemaObject;
 import com.dci.intellij.dbn.object.common.list.DBObjectList;
@@ -31,7 +39,7 @@ import com.dci.intellij.dbn.object.type.DBObjectType;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import javax.swing.*;
+import javax.swing.Icon;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -219,7 +227,7 @@ public class DBTypeImpl
 
             @Override
             public boolean match(DBTypeAttribute typeAttribute, DynamicContent dynamicContent) {
-                DBType type = (DBType) dynamicContent.getParentElement();
+                DBType type = (DBType) dynamicContent.getParentEntity();
                 return Safe.equal(typeAttribute.getType(), type);
             }
 
@@ -230,13 +238,13 @@ public class DBTypeImpl
                     @Override
                     public ResultSet createResultSet(DynamicContent<DBTypeAttribute> dynamicContent, DBNConnection connection) throws SQLException {
                         DatabaseMetadataInterface metadataInterface = dynamicContent.getMetadataInterface();
-                        DBType type = (DBType) dynamicContent.getParentElement();
+                        DBType type = (DBType) dynamicContent.getParentEntity();
                         return metadataInterface.loadTypeAttributes(type.getSchema().getName(), type.getName(), connection);
                     }
 
                     @Override
                     public DBTypeAttribute createElement(DynamicContent<DBTypeAttribute> content, DBTypeAttributeMetadata metadata, LoaderCache cache) throws SQLException {
-                        DBTypeImpl type = (DBTypeImpl) content.getParentElement();
+                        DBTypeImpl type = (DBTypeImpl) content.getParentEntity();
                         return new DBTypeAttributeImpl(type, metadata);
                     }
                 };
@@ -248,7 +256,7 @@ public class DBTypeImpl
 
             @Override
             public boolean match(DBTypeFunction function, DynamicContent dynamicContent) {
-                DBType type = (DBType) dynamicContent.getParentElement();
+                DBType type = (DBType) dynamicContent.getParentEntity();
                 return Safe.equal(function.getType(), type);
             }
 
@@ -259,13 +267,13 @@ public class DBTypeImpl
                     @Override
                     public ResultSet createResultSet(DynamicContent<DBTypeFunction> dynamicContent, DBNConnection connection) throws SQLException {
                         DatabaseMetadataInterface metadataInterface = dynamicContent.getMetadataInterface();
-                        DBType type = (DBType) dynamicContent.getParentElement();
+                        DBType type = (DBType) dynamicContent.getParentEntity();
                         return metadataInterface.loadTypeFunctions(type.getSchema().getName(), type.getName(), connection);
                     }
 
                     @Override
                     public DBTypeFunction createElement(DynamicContent<DBTypeFunction> content, DBFunctionMetadata metadata, LoaderCache cache) throws SQLException {
-                        DBType type = (DBType) content.getParentElement();
+                        DBType type = (DBType) content.getParentEntity();
                         return new DBTypeFunctionImpl(type, metadata);
                     }
                 };
@@ -276,7 +284,7 @@ public class DBTypeImpl
 
             @Override
             public boolean match(DBTypeProcedure procedure, DynamicContent dynamicContent) {
-                DBType type = (DBType) dynamicContent.getParentElement();
+                DBType type = (DBType) dynamicContent.getParentEntity();
                 return Safe.equal(procedure.getType(), type);
             }
 
@@ -287,13 +295,13 @@ public class DBTypeImpl
                     @Override
                     public ResultSet createResultSet(DynamicContent<DBTypeProcedure> dynamicContent, DBNConnection connection) throws SQLException {
                         DatabaseMetadataInterface metadataInterface = dynamicContent.getMetadataInterface();
-                        DBType type = (DBType) dynamicContent.getParentElement();
+                        DBType type = (DBType) dynamicContent.getParentEntity();
                         return metadataInterface.loadTypeProcedures(type.getSchema().getName(), type.getName(), connection);
                     }
 
                     @Override
                     public DBTypeProcedure createElement(DynamicContent<DBTypeProcedure> content, DBProcedureMetadata metadata, LoaderCache cache) throws SQLException {
-                        DBType type = (DBType) content.getParentElement();
+                        DBType type = (DBType) content.getParentEntity();
                         return new DBTypeProcedureImpl(type, metadata);
                     }
                 };
@@ -305,7 +313,7 @@ public class DBTypeImpl
             @Override
             public boolean match(DBType type, DynamicContent dynamicContent) {
                 DBType superType = type.getSuperType();
-                DBType thisType = (DBType) dynamicContent.getParentElement();
+                DBType thisType = (DBType) dynamicContent.getParentEntity();
                 return Safe.equal(superType, thisType);
             }
 

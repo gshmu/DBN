@@ -4,7 +4,7 @@ import com.dci.intellij.dbn.common.content.DynamicContentElement;
 import com.dci.intellij.dbn.common.content.DynamicContentType;
 import com.dci.intellij.dbn.common.content.loader.DynamicContentLoader;
 import com.dci.intellij.dbn.common.content.loader.DynamicContentLoaderImpl;
-import com.dci.intellij.dbn.connection.GenericDatabaseElement;
+import com.dci.intellij.dbn.connection.DatabaseEntity;
 import com.dci.intellij.dbn.database.common.metadata.DBObjectMetadata;
 import com.dci.intellij.dbn.object.common.DBObject;
 import com.dci.intellij.dbn.object.common.DBVirtualObject;
@@ -19,7 +19,7 @@ public class DBObjectListLoaderRegistry {
     private static final Map<DynamicContentType, DynamicContentLoader> ROOT_LOADERS = new HashMap<>();
     private static final Map<DynamicContentType, Map<DynamicContentType, DynamicContentLoader>> CHILD_LOADERS = new HashMap<>();
 
-    public static void register(@NotNull GenericDatabaseElement parent, @NotNull DynamicContentType contentType, @NotNull DynamicContentLoader loader) {
+    public static void register(@NotNull DatabaseEntity parent, @NotNull DynamicContentType contentType, @NotNull DynamicContentLoader loader) {
         if (parent instanceof DBObject) {
             DBObject parentObject = (DBObject) parent;
             DBObjectType parentObjectType = parentObject.getObjectType();
@@ -42,7 +42,7 @@ public class DBObjectListLoaderRegistry {
 
     @NotNull
     public static <T extends DynamicContentElement, M extends DBObjectMetadata> DynamicContentLoader<T, M> get(
-            @NotNull GenericDatabaseElement parent,
+            @NotNull DatabaseEntity parent,
             @NotNull DynamicContentType contentType) {
 
         if (parent instanceof DBVirtualObject) {
@@ -64,7 +64,7 @@ public class DBObjectListLoaderRegistry {
     }
 
     public static <T extends DynamicContentElement, M extends DBObjectMetadata> DynamicContentLoader<T, M> find(
-            @NotNull GenericDatabaseElement parent,
+            @NotNull DatabaseEntity parent,
             @NotNull DynamicContentType contentType) {
 
         if (parent instanceof DBObject) {

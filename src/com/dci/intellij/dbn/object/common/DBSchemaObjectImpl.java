@@ -172,7 +172,7 @@ public abstract class DBSchemaObjectImpl<M extends DBObjectMetadata> extends DBO
             @Override
             public ResultSet createResultSet(DynamicContent<DBObject> dynamicContent, DBNConnection connection) throws SQLException {
                 DatabaseMetadataInterface metadataInterface = dynamicContent.getMetadataInterface();
-                DBSchemaObject schemaObject = (DBSchemaObject) dynamicContent.getParentElement();
+                DBSchemaObject schemaObject = (DBSchemaObject) dynamicContent.getParentEntity();
                 return metadataInterface.loadReferencedObjects(schemaObject.getSchema().getName(), schemaObject.getName(), connection);
             }
 
@@ -188,7 +188,7 @@ public abstract class DBSchemaObjectImpl<M extends DBObjectMetadata> extends DBO
                 DBSchema schema = (DBSchema) cache.getObject(objectOwner);
 
                 if (schema == null) {
-                    DBSchemaObject schemaObject = (DBSchemaObject) content.getParentElement();
+                    DBSchemaObject schemaObject = (DBSchemaObject) content.getParentEntity();
                     ConnectionHandler connectionHandler = schemaObject.getConnectionHandler();
                     schema = connectionHandler.getObjectBundle().getSchema(objectOwner);
                     cache.setObject(objectOwner,  schema);
@@ -202,7 +202,7 @@ public abstract class DBSchemaObjectImpl<M extends DBObjectMetadata> extends DBO
             @Override
             public ResultSet createResultSet(DynamicContent<DBObject> dynamicContent, DBNConnection connection) throws SQLException {
                 DatabaseMetadataInterface metadataInterface = dynamicContent.getMetadataInterface();
-                DBSchemaObject schemaObject = (DBSchemaObject) dynamicContent.getParentElement();
+                DBSchemaObject schemaObject = (DBSchemaObject) dynamicContent.getParentEntity();
                 return metadataInterface.loadReferencingObjects(schemaObject.getSchema().getName(), schemaObject.getName(), connection);
             }
 
@@ -217,7 +217,7 @@ public abstract class DBSchemaObjectImpl<M extends DBObjectMetadata> extends DBO
 
                 DBSchema schema = (DBSchema) cache.getObject(objectOwner);
                 if (schema == null) {
-                    DBSchemaObject schemaObject = (DBSchemaObject) content.getParentElement();
+                    DBSchemaObject schemaObject = (DBSchemaObject) content.getParentEntity();
                     ConnectionHandler connectionHandler = schemaObject.getConnectionHandler();
                     schema = connectionHandler.getObjectBundle().getSchema(objectOwner);
                     cache.setObject(objectOwner,  schema);

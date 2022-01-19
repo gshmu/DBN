@@ -197,7 +197,7 @@ public class DBTableImpl extends DBDatasetImpl<DBTableMetadata> implements DBTab
 
             @Override
             public boolean match(DBNestedTable nestedTable, DynamicContent dynamicContent) {
-                DBTable table = (DBTable) dynamicContent.getParentElement();
+                DBTable table = (DBTable) dynamicContent.getParentEntity();
                 return Safe.equal(nestedTable.getTable(), table);
             }
 
@@ -208,13 +208,13 @@ public class DBTableImpl extends DBDatasetImpl<DBTableMetadata> implements DBTab
                     @Override
                     public ResultSet createResultSet(DynamicContent<DBNestedTable> dynamicContent, DBNConnection connection) throws SQLException {
                         DatabaseMetadataInterface metadataInterface = dynamicContent.getMetadataInterface();
-                        DBTable table = (DBTable) dynamicContent.getParentElement();
+                        DBTable table = (DBTable) dynamicContent.getParentEntity();
                         return metadataInterface.loadNestedTables(table.getSchema().getName(), table.getName(), connection);
                     }
 
                     @Override
                     public DBNestedTable createElement(DynamicContent<DBNestedTable> content, DBNestedTableMetadata metadata, LoaderCache cache) throws SQLException {
-                        DBTable table = (DBTable) content.getParentElement();
+                        DBTable table = (DBTable) content.getParentEntity();
                         return new DBNestedTableImpl(table, metadata);
                     }
                 };

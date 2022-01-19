@@ -102,7 +102,7 @@ class DBObjectLookupScanner extends StatefulDisposable.Base implements DBObjectL
                     }
                 }
 
-                if (objectType.isSchemaObject() && objectList.getParentElement() instanceof DBSchema) {
+                if (objectType.isSchemaObject() && objectList.getParentEntity() instanceof DBSchema) {
                     if (objectList.isLoaded()) {
                         return true;
                     } else {

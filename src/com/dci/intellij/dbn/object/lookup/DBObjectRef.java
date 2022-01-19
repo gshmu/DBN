@@ -6,6 +6,7 @@ import com.dci.intellij.dbn.common.state.PersistentStateElement;
 import com.dci.intellij.dbn.common.thread.Timeout;
 import com.dci.intellij.dbn.common.util.Lists;
 import com.dci.intellij.dbn.common.util.Strings;
+import com.dci.intellij.dbn.common.util.Unsafe;
 import com.dci.intellij.dbn.connection.ConnectionCache;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.ConnectionId;
@@ -40,12 +41,13 @@ import static com.dci.intellij.dbn.vfs.DatabaseFileSystem.PS;
 @Getter
 @Setter
 public class DBObjectRef<T extends DBObject> implements Comparable<DBObjectRef<?>>, Reference<T>, PersistentStateElement, ConnectionProvider {
-    public static final String QUOTE = "'";
+    private static final String QUOTE = "'";
+
+    protected ConnectionId connectionId;
+    private String objectName;
     private short overload;
     private DBObjectRef<?> parent;
     private DBObjectType objectType;
-    private String objectName;
-    protected ConnectionId connectionId;
 
     private WeakRef<T> reference;
     private int hashCode = -1;
@@ -58,9 +60,9 @@ public class DBObjectRef<T extends DBObject> implements Comparable<DBObjectRef<?
     public DBObjectRef(T object, String name) {
         this(object, object.getObjectType(), name);
     }
-    public DBObjectRef(T object, DBObjectType objectType, String name) {
+    public DBObjectRef(T object, DBObjectType objectType, String objectName) {
         this.reference = WeakRef.of(object);
-        this.objectName = name.intern();
+        this.objectName = objectName.intern();
         this.objectType = objectType;
         this.overload = object.getOverload();
         DBObject parentObj = object.getParentObject();
@@ -94,12 +96,12 @@ public class DBObjectRef<T extends DBObject> implements Comparable<DBObjectRef<?
     }
 
     public DBObjectRef<?> getParentRef(DBObjectType objectType) {
-        DBObjectRef<?> parent = this;
-        while (parent != null) {
-            if (parent.objectType.matches(objectType)) {
-                return parent;
+        DBObjectRef<?> element = this;
+        while (element != null) {
+            if (element.objectType.matches(objectType)) {
+                return element;
             }
-            parent = parent.parent;
+            element = element.parent;
         }
         return null;
     }
@@ -387,7 +389,7 @@ public class DBObjectRef<T extends DBObject> implements Comparable<DBObjectRef<?
                 }
             }
         }
-        return (T) object;
+        return Unsafe.cast(object);
     }
 
 

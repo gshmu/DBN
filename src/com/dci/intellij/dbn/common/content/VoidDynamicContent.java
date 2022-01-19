@@ -8,7 +8,8 @@ import com.dci.intellij.dbn.common.dispose.StatefulDisposable;
 import com.dci.intellij.dbn.common.filter.Filter;
 import com.dci.intellij.dbn.common.property.Property;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
-import com.dci.intellij.dbn.connection.GenericDatabaseElement;
+import com.dci.intellij.dbn.connection.ConnectionId;
+import com.dci.intellij.dbn.connection.DatabaseEntity;
 import com.intellij.openapi.project.Project;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -52,7 +53,7 @@ public class VoidDynamicContent extends StatefulDisposable.Base implements Dynam
     }
 
     @Override
-    public short getSignature() {
+    public byte getSignature() {
         return 0;
     }
 
@@ -106,9 +107,16 @@ public class VoidDynamicContent extends StatefulDisposable.Base implements Dynam
         return null;
     }
 
+    @NotNull
     @Override
     public Project getProject() {
-        return null;
+        throw new UnsupportedOperationException();
+    }
+
+    @NotNull
+    @Override
+    public ConnectionId getConnectionId() {
+        throw new UnsupportedOperationException();
     }
 
     @Override
@@ -156,7 +164,7 @@ public class VoidDynamicContent extends StatefulDisposable.Base implements Dynam
 
     @NotNull
     @Override
-    public GenericDatabaseElement getParentElement() {
+    public DatabaseEntity getParentEntity() {
         throw new UnsupportedOperationException();
     }
 
@@ -170,16 +178,18 @@ public class VoidDynamicContent extends StatefulDisposable.Base implements Dynam
         return VoidContentDependencyAdapter.INSTANCE;
     }
 
+    @NotNull
     @Override
     public ConnectionHandler getConnectionHandler() {
-        return null;
+        throw new UnsupportedOperationException();
     }
 
     @Override
-    public void updateChangeSignature() {
+    public void updateSignature() {
 
     }
 
+    @NotNull
     @Override
     public String getName() {
         return "Empty Content";
