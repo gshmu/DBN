@@ -7,15 +7,14 @@ import com.dci.intellij.dbn.common.dispose.StatefulDisposable;
 import com.dci.intellij.dbn.common.filter.Filter;
 import com.dci.intellij.dbn.common.property.PropertyHolder;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
-import com.dci.intellij.dbn.connection.GenericDatabaseElement;
+import com.dci.intellij.dbn.connection.DatabaseEntity;
 import com.dci.intellij.dbn.database.DatabaseMetadataInterface;
-import com.intellij.openapi.project.Project;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 
-public interface DynamicContent<T extends DynamicContentElement> extends StatefulDisposable, PropertyHolder<DynamicContentStatus> {
+public interface DynamicContent<T extends DynamicContentElement> extends StatefulDisposable, PropertyHolder<DynamicContentStatus>, DatabaseEntity {
 
     /**
      * Loads the content. It is typically called every time the content is queried.
@@ -41,9 +40,9 @@ public interface DynamicContent<T extends DynamicContentElement> extends Statefu
     void refresh();
 
     /**
-     * The timestamp of the last change on the content.
+     * The signature of the last change on the content (incrementing byte).
      */
-    short getSignature();
+    byte getSignature();
 
     /**
      * A load attempt has been made already
@@ -74,8 +73,6 @@ public interface DynamicContent<T extends DynamicContentElement> extends Statefu
 
     DynamicContentType getContentType();
 
-    Project getProject();
-
     String getContentDescription();
 
     @NotNull List<T> getElements();
@@ -94,14 +91,9 @@ public interface DynamicContent<T extends DynamicContentElement> extends Statefu
 
     int size();
 
-    @NotNull
-    GenericDatabaseElement getParentElement();
-
     DynamicContentLoader getLoader();
 
     ContentDependencyAdapter getDependencyAdapter();
-
-    ConnectionHandler getConnectionHandler();
 
     @NotNull
     default DatabaseMetadataInterface getMetadataInterface() {
@@ -111,7 +103,5 @@ public interface DynamicContent<T extends DynamicContentElement> extends Statefu
 
     void loadInBackground();
 
-    void updateChangeSignature();
-
-    String getName();
+    void updateSignature();
 }

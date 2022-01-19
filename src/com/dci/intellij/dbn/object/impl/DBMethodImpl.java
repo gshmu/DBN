@@ -177,7 +177,7 @@ public abstract class DBMethodImpl<M extends DBMethodMetadata> extends DBSchemaO
         new DynamicSubcontentLoader<DBArgument, DBArgumentMetadata>(METHOD, ARGUMENT, true) {
             @Override
             public boolean match(DBArgument argument, DynamicContent dynamicContent) {
-                DBMethod method = (DBMethod) dynamicContent.getParentElement();
+                DBMethod method = (DBMethod) dynamicContent.getParentEntity();
                 DBMethod argumentMethod = argument.getMethod();
                 return Safe.equal(argumentMethod, method) && argument.getOverload() == method.getOverload();
             }
@@ -188,7 +188,7 @@ public abstract class DBMethodImpl<M extends DBMethodMetadata> extends DBSchemaO
                     @Override
                     public ResultSet createResultSet(DynamicContent<DBArgument> dynamicContent, DBNConnection connection) throws SQLException {
                         DatabaseMetadataInterface metadataInterface = dynamicContent.getMetadataInterface();
-                        DBMethod method = (DBMethod) dynamicContent.getParentElement();
+                        DBMethod method = (DBMethod) dynamicContent.getParentEntity();
                         String ownerName = method.getSchema().getName();
                         short overload = method.getOverload();
                         DBProgram program = method.getProgram();
@@ -211,7 +211,7 @@ public abstract class DBMethodImpl<M extends DBMethodMetadata> extends DBSchemaO
 
                     @Override
                     public DBArgument createElement(DynamicContent<DBArgument> content, DBArgumentMetadata metadata, LoaderCache cache) throws SQLException {
-                        DBMethod method = (DBMethod) content.getParentElement();
+                        DBMethod method = (DBMethod) content.getParentEntity();
                         return new DBArgumentImpl(method, metadata);
                     }
                 };

@@ -149,17 +149,6 @@ public class ConnectionBundle extends BrowserTreeNodeBase implements BrowserTree
         return project.ensure();
     }
 
-    @Nullable
-    @Override
-    public GenericDatabaseElement getParentElement() {
-        return null;
-    }
-
-    @Override
-    public GenericDatabaseElement getUndisposedElement() {
-        return this;
-    }
-
     @NotNull
     @Override
     public ConnectionId getConnectionId() {

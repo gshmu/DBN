@@ -8,7 +8,6 @@ import com.dci.intellij.dbn.common.content.DynamicContentType;
 import com.dci.intellij.dbn.common.environment.EnvironmentTypeProvider;
 import com.dci.intellij.dbn.common.property.PropertyHolder;
 import com.dci.intellij.dbn.common.util.Consumer;
-import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.PresentableConnectionProvider;
 import com.dci.intellij.dbn.connection.SchemaId;
 import com.dci.intellij.dbn.editor.DBContentType;
@@ -41,10 +40,6 @@ public interface DBObject extends
         EnvironmentTypeProvider,
         PresentableConnectionProvider {
 
-    @Override
-    @NotNull
-    String getName();
-
     @NotNull
     DBObjectType getObjectType();
 
@@ -72,10 +67,6 @@ public interface DBObject extends
     DBUser getOwner();
     DBSchema getSchema();
     SchemaId getSchemaIdentifier();
-
-    @NotNull
-    @Override
-    ConnectionHandler getConnectionHandler();
 
     DBObject getParentObject();
 
@@ -112,10 +103,6 @@ public interface DBObject extends
     @Nullable
     String extractDDL() throws SQLException;
 
-    @Override
-    @Nullable
-    DBObject getUndisposedElement();
-
     DBOperationExecutor getOperationExecutor();
 
     @NotNull
@@ -125,13 +112,10 @@ public interface DBObject extends
     DBObjectRef getRef();
 
     boolean isValid();
+
     boolean isVirtual();
 
     boolean isParentOf(DBObject object);
-
-    @NotNull
-    @Override
-    BrowserTreeNode getParent();
 
     @NotNull
     DBObjectPsiFacade getPsiFacade();

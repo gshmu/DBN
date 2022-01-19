@@ -9,7 +9,6 @@ import com.dci.intellij.dbn.editor.data.filter.DatasetFilterInput;
 import com.dci.intellij.dbn.object.DBColumn;
 import com.dci.intellij.dbn.object.DBConstraint;
 import com.dci.intellij.dbn.object.DBDataset;
-import com.dci.intellij.dbn.object.common.DBObject;
 import com.dci.intellij.dbn.object.lookup.DBObjectRef;
 import com.intellij.ui.SimpleTextAttributes;
 import org.jetbrains.annotations.Nullable;
@@ -22,8 +21,8 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 
 class ColumnValueTextField extends JTextField {
-    private DatasetRecord record;
-    private DBObjectRef<DBColumn> columnRef;
+    private final DatasetRecord record;
+    private final DBObjectRef<DBColumn> columnRef;
 
     ColumnValueTextField(DatasetRecord record, DBColumn column) {
         this.record = record;
@@ -79,9 +78,9 @@ class ColumnValueTextField extends JTextField {
                         DatasetFilterInput filterInput = null;
 
                         for (DBColumn constraintColumn : constraint.getColumns()) {
-                            DBObject constraintCol = constraintColumn.getUndisposedElement();
+                            DBColumn constraintCol = constraintColumn.getUndisposedEntity();
                             if (constraintCol != null) {
-                                DBColumn foreignKeyColumn = ((DBColumn) constraintCol).getForeignKeyColumn();
+                                DBColumn foreignKeyColumn = constraintCol.getForeignKeyColumn();
                                 if (foreignKeyColumn != null) {
                                     Object value = record.getColumnValue(column);
                                     if (filterInput == null) {
@@ -104,7 +103,7 @@ class ColumnValueTextField extends JTextField {
         return DBObjectRef.get(columnRef);
     }
 
-    private MouseListener mouseListener = new MouseAdapter() {
+    private final MouseListener mouseListener = new MouseAdapter() {
         @Override
         public void mouseClicked(MouseEvent event) {
             DBColumn column = getColumn();

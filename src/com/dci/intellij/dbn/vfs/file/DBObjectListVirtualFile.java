@@ -5,7 +5,7 @@ import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.common.util.Naming;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.ConnectionId;
-import com.dci.intellij.dbn.connection.GenericDatabaseElement;
+import com.dci.intellij.dbn.connection.DatabaseEntity;
 import com.dci.intellij.dbn.connection.SchemaId;
 import com.dci.intellij.dbn.connection.session.DatabaseSession;
 import com.dci.intellij.dbn.object.common.DBObject;
@@ -53,7 +53,7 @@ public class DBObjectListVirtualFile<T extends DBObjectList> extends DBVirtualFi
     @Nullable
     @Override
     public SchemaId getSchemaId() {
-        GenericDatabaseElement parent = objectList.getParentElement();
+        DatabaseEntity parent = objectList.getParentEntity();
         if (parent instanceof DBObject) {
             DBObject object = (DBObject) parent;
             return SchemaId.from(object.getSchema());
@@ -97,7 +97,7 @@ public class DBObjectListVirtualFile<T extends DBObjectList> extends DBVirtualFi
     @Nullable
     public VirtualFile getParent() {
         if (Failsafe.check(objectList)) {
-            GenericDatabaseElement parent = objectList.getParentElement();
+            DatabaseEntity parent = objectList.getParentEntity();
             if (parent instanceof DBObject) {
                 DBObject parentObject = (DBObject) parent;
                 return DBObjectPsiFacade.asPsiDirectory(parentObject).getVirtualFile();

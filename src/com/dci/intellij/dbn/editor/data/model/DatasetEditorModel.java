@@ -320,7 +320,7 @@ public class DatasetEditorModel
         DBColumn column = cell.getColumnInfo().getColumn();
         if (column.isForeignKey()) {
             for (DBConstraint constraint : column.getConstraints()) {
-                constraint = (DBConstraint) constraint.getUndisposedElement();
+                constraint = constraint.getUndisposedEntity();
                 if (constraint != null && constraint.isForeignKey()) {
                     DBConstraint foreignKeyConstraint = constraint.getForeignKeyConstraint();
                     if (foreignKeyConstraint != null) {
@@ -328,7 +328,7 @@ public class DatasetEditorModel
                         DatasetFilterInput filterInput = new DatasetFilterInput(foreignKeyDataset);
 
                         for (DBColumn constraintColumn : constraint.getColumns()) {
-                            constraintColumn = (DBColumn) constraintColumn.getUndisposedElement();
+                            constraintColumn = constraintColumn.getUndisposedEntity();
                             if (constraintColumn != null) {
                                 DBColumn foreignKeyColumn = constraintColumn.getForeignKeyColumn();
                                 if (foreignKeyColumn != null) {

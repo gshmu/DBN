@@ -5,7 +5,7 @@ import com.intellij.openapi.Disposable;
 import org.jetbrains.annotations.NotNull;
 
 public abstract class ContentDependency implements Disposable {
-    private short signature;
+    private byte signature;
 
     @NotNull
     public abstract DynamicContent getSourceContent();

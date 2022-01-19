@@ -18,7 +18,7 @@ import com.dci.intellij.dbn.common.filter.Filter;
 import com.dci.intellij.dbn.common.ui.tree.TreeEventType;
 import com.dci.intellij.dbn.common.util.Strings;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
-import com.dci.intellij.dbn.connection.GenericDatabaseElement;
+import com.dci.intellij.dbn.connection.DatabaseEntity;
 import com.dci.intellij.dbn.connection.config.ConnectionFilterSettings;
 import com.dci.intellij.dbn.database.common.metadata.DBObjectMetadata;
 import com.dci.intellij.dbn.navigation.psi.DBObjectListPsiDirectory;
@@ -215,13 +215,8 @@ public class DBObjectListImpl<T extends DBObject> extends DynamicContentImpl<T> 
     @Override
     @NotNull
     public Project getProject() {
-        GenericDatabaseElement parent = getParentElement();
+        DatabaseEntity parent = getParentEntity();
         return Failsafe.nn(parent.getProject());
-    }
-
-    @Override
-    public GenericDatabaseElement getUndisposedElement() {
-        return this;
     }
 
     @Override
@@ -295,7 +290,7 @@ public class DBObjectListImpl<T extends DBObject> extends DynamicContentImpl<T> 
     @Override
     @NotNull
     public BrowserTreeNode getParent() {
-        return (BrowserTreeNode) getParentElement();
+        return getParentEntity();
     }
 
     @Override
@@ -453,7 +448,7 @@ public class DBObjectListImpl<T extends DBObject> extends DynamicContentImpl<T> 
             DBObject object = (DBObject) getTreeParent();
             return getName() + " of " + object.getQualifiedNameWithType();
         }*/
-        return getParentElement().getDynamicContentType() + " (" + getParentElement().getName() + ") " + getName() + " - " + super.toString();
+        return getParentEntity().getDynamicContentType() + " (" + getParentEntity().getName() + ") " + getName() + " - " + super.toString();
     }
 
     @Override

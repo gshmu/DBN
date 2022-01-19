@@ -7,7 +7,6 @@ import com.dci.intellij.dbn.common.util.Commons;
 import com.dci.intellij.dbn.connection.ConnectionBundle;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.ConnectionId;
-import com.dci.intellij.dbn.connection.GenericDatabaseElement;
 import com.dci.intellij.dbn.object.type.DBObjectType;
 import com.intellij.navigation.ItemPresentation;
 import com.intellij.openapi.editor.colors.TextAttributesKey;
@@ -35,12 +34,6 @@ public final class SimpleBrowserTreeRoot extends BrowserTreeNodeBase implements 
     @NotNull
     public Project getProject() {
         return project.ensure();
-    }
-
-    @Nullable
-    @Override
-    public GenericDatabaseElement getParentElement() {
-        return null;
     }
 
     /**************************************************
@@ -143,11 +136,6 @@ public final class SimpleBrowserTreeRoot extends BrowserTreeNodeBase implements 
     @NotNull
     public ConnectionHandler getConnectionHandler() {
         throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public GenericDatabaseElement getUndisposedElement() {
-        return this;
     }
 
    /*********************************************************

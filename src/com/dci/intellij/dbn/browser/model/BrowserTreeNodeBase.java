@@ -16,7 +16,7 @@ public abstract class BrowserTreeNodeBase extends StatefulDisposable.Base implem
     }
 
     @Override
-    public Enumeration children() {
+    public Enumeration<? extends BrowserTreeNode> children() {
         return Collections.enumeration(getChildren());
     }
 

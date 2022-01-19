@@ -20,15 +20,6 @@ public enum DBObjectRelationType implements DynamicContentType<DBObjectRelationT
         this.targetType = targetType;
     }
 
-    public DBObjectType getSourceType() {
-        return sourceType;
-    }
-
-    public DBObjectType getTargetType() {
-        return targetType;
-    }
-
-
     @Override
     public boolean matches(DBObjectRelationType contentType) {
         return

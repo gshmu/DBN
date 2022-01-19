@@ -5,7 +5,6 @@ import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.common.load.LoadInProgressIcon;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.ConnectionId;
-import com.dci.intellij.dbn.connection.GenericDatabaseElement;
 import com.dci.intellij.dbn.language.common.WeakRef;
 import com.dci.intellij.dbn.object.type.DBObjectType;
 import com.intellij.navigation.ItemPresentation;
@@ -14,9 +13,8 @@ import com.intellij.openapi.editor.colors.TextAttributesKey;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vcs.FileStatus;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
-import javax.swing.*;
+import javax.swing.Icon;
 import java.util.ArrayList;
 
 public class LoadInProgressTreeNode extends BrowserTreeNodeBase implements BrowserTreeNode {
@@ -116,17 +114,6 @@ public class LoadInProgressTreeNode extends BrowserTreeNodeBase implements Brows
     @NotNull
     public Project getProject() {
         return getParent().getProject();
-    }
-
-    @Nullable
-    @Override
-    public GenericDatabaseElement getParentElement() {
-        return null;
-    }
-
-    @Override
-    public GenericDatabaseElement getUndisposedElement() {
-        return this;
     }
 
     /*********************************************************
