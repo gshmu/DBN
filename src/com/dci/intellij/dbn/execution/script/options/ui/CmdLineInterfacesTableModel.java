@@ -115,7 +115,7 @@ public class CmdLineInterfacesTableModel extends DBNEditableTableModel {
     }
 
     public void validate() throws ConfigurationException {
-        Set<String> names = new HashSet<String>();
+        Set<String> names = new HashSet<>();
         for (CmdLineInterface cmdLineInterface : bundle.getInterfaces()) {
             String name = cmdLineInterface.getName();
             if (Strings.isEmpty(name)) {

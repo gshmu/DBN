@@ -150,7 +150,7 @@ public class DatabaseDebuggerManager extends AbstractProjectComponent implements
 
         String name = method.getName();
         while (nameExists(configurationSettings, name)) {
-            name = Naming.getNextNumberedName(name, true);
+            name = Naming.nextNumberedIdentifier(name, true);
         }
         return name;
     }

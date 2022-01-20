@@ -27,6 +27,7 @@ import com.dci.intellij.dbn.connection.config.ConnectionConfigType;
 import com.dci.intellij.dbn.connection.config.ConnectionDatabaseSettings;
 import com.dci.intellij.dbn.connection.config.ConnectionSettings;
 import com.dci.intellij.dbn.connection.config.ConnectionSettingsListener;
+import com.dci.intellij.dbn.connection.config.file.DatabaseFiles;
 import com.dci.intellij.dbn.connection.config.file.ui.DatabaseFileSettingsForm;
 import com.dci.intellij.dbn.driver.DriverSource;
 import com.intellij.openapi.options.ConfigurationException;
@@ -285,7 +286,7 @@ public class ConnectionDatabaseSettingsForm extends ConfigurationEditorForm<Conn
     }
 
     @Override
-    public void applyFormChanges(final ConnectionDatabaseSettings configuration){
+    public void applyFormChanges(final ConnectionDatabaseSettings configuration) throws ConfigurationException {
         JComboBox<DriverSource> driverSourceComboBox = driverSettingsForm.getDriverSourceComboBox();
         TextFieldWithBrowseButton driverLibraryTextField = driverSettingsForm.getDriverLibraryTextField();
         JComboBox<DriverOption> driverComboBox = driverSettingsForm.getDriverComboBox();
@@ -306,7 +307,15 @@ public class ConnectionDatabaseSettingsForm extends ConfigurationEditorForm<Conn
         databaseInfo.setDatabase(databaseTextField.getText());
         databaseInfo.setUrl(urlTextField.getText());
         databaseInfo.setUrlType(urlType);
-        databaseInfo.setFiles(urlType == DatabaseUrlType.FILE ? databaseFileSettingsForm.getDatabaseFiles() : null);
+
+        if (urlType == DatabaseUrlType.FILE) {
+            DatabaseFiles databaseFiles = databaseFileSettingsForm.getDatabaseFiles();
+            databaseFiles.validate();
+            databaseInfo.setFiles(databaseFiles);
+        } else {
+            databaseInfo.setFiles(null);
+        }
+
 
         AuthenticationInfo authenticationInfo = configuration.getAuthenticationInfo();
         String oldUserName = authenticationInfo.getUser();

@@ -42,7 +42,7 @@ public class DDLFileExtensionSettingsForm extends ConfigurationEditorForm<DDLFil
     private JTextField typeSpecTextField;
     private JTextField typeBodyTextField;
 
-    private Map<String, JTextField> extensionTextFields = new HashMap<String, JTextField>();
+    private final Map<String, JTextField> extensionTextFields = new HashMap<>();
 
     public DDLFileExtensionSettingsForm(DDLFileExtensionSettings settings) {
         super(settings);
@@ -83,7 +83,7 @@ public class DDLFileExtensionSettingsForm extends ConfigurationEditorForm<DDLFil
     }
 
     private void validateInputs() throws ConfigurationException {
-        List<String> allExtensions = new ArrayList<String>();
+        List<String> allExtensions = new ArrayList<>();
         for (String fieldName : extensionTextFields.keySet()) {
             JTextField extensionTextField = extensionTextFields.get(fieldName);
             String extensionsText = ConfigurationEditorUtil.validateStringValue(extensionTextField, fieldName, false);
@@ -119,7 +119,7 @@ public class DDLFileExtensionSettingsForm extends ConfigurationEditorForm<DDLFil
         }
     }
 
-    private void applySetting(JTextField textField, DDLFileTypeId fileTypeId, AtomicBoolean changed) throws ConfigurationException {
+    private void applySetting(JTextField textField, DDLFileTypeId fileTypeId, AtomicBoolean changed) {
         DDLFileType ddlFileType = getConfiguration().getFileType(fileTypeId);
         boolean valueChanged = ddlFileType.setExtensionsAsString(textField.getText().trim());
         if (valueChanged) {

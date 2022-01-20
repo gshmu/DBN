@@ -53,7 +53,7 @@ public class CreateRenameConsoleForm extends DBNFormImpl{
         if (console == null) {
             name = connectionHandler.getName() + " 1";
             while (consoleNames.contains(name)) {
-                name = Naming.getNextNumberedName(name, true);
+                name = Naming.nextNumberedIdentifier(name, true);
             }
         } else {
             name = console.getName();
