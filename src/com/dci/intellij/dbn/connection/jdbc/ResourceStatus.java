@@ -39,7 +39,7 @@ public enum ResourceStatus implements Property.IntBase {
     RESOLVING_TRANSACTION(true);
 
     private final boolean transitory;
-    private final Masks masks = new Masks(this);
+    private final IntMasks masks = new IntMasks(this);
 
     ResourceStatus() {
         this(false);
@@ -50,7 +50,7 @@ public enum ResourceStatus implements Property.IntBase {
     }
 
     @Override
-    public Masks masks() {
+    public IntMasks masks() {
         return masks;
     }
 }
