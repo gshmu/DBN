@@ -6,19 +6,20 @@ import com.dci.intellij.dbn.object.common.DBObject;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.function.Supplier;
 
 public class Naming {
     private Naming() {}
 
-    public static String getNextNumberedName(String numberedIdentifier, boolean insertWhitespace) {
+    public static String nextNumberedIdentifier(String identifier, boolean insertWhitespace) {
         StringBuilder text = new StringBuilder();
         StringBuilder number = new StringBuilder();
-        for (int i=numberedIdentifier.length() -1; i >= 0; i--) {
-            char chr = numberedIdentifier.charAt(i);
+        for (int i=identifier.length() -1; i >= 0; i--) {
+            char chr = identifier.charAt(i);
             if ('0' <= chr && chr <= '9') {
                 number.insert(0, chr);
             } else {
-                text.append(numberedIdentifier.substring(0, i+1));
+                text.append(identifier.substring(0, i+1));
                 break;
             }
         }
@@ -28,9 +29,17 @@ public class Naming {
         return text.toString() + nr;
     }
 
+    public static String nextNumberedIdentifier(String identifier, boolean insertWhitespace, Supplier<Set<String>> taken) {
+        Set<String> takenIdentifiers = taken.get();
+        while (takenIdentifiers.contains(identifier)) {
+            identifier = nextNumberedIdentifier(identifier, insertWhitespace);
+        }
+        return identifier;
+    }
+
     public static String createNamesList(Set<IdentifierPsiElement> identifiers, int maxItems) {
         boolean partial = false;
-        Set<String> names = new HashSet<String>();
+        Set<String> names = new HashSet<>();
         for (IdentifierPsiElement identifier : identifiers) {
             names.add(identifier.getUnquotedText().toString().toUpperCase());
             if (names.size() >= maxItems) {
@@ -97,13 +106,6 @@ public class Naming {
             }
         }
         return buffer.toString();
-    }
-
-
-    public static boolean isVowel(char chr){
-        chr  = Character.toLowerCase(chr);
-        String vowels = "a����e���i���o����u����";
-        return vowels.indexOf(chr) > -1;
     }
 
     public static String createFriendlyName(String name) {
@@ -177,10 +179,5 @@ public class Naming {
         } else {
             return charSequence;
         }
-    }
-
-    public static String getClassName(Class clazz) {
-        int index = clazz.getName().lastIndexOf('.');
-        return clazz.getName().substring(index + 1);
     }
 }

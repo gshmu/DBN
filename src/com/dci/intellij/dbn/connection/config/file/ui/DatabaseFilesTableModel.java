@@ -45,7 +45,7 @@ public class DatabaseFilesTableModel extends DBNEditableTableModel {
 
     @Override
     public boolean isCellEditable(int rowIndex, int columnIndex) {
-        return true;
+        return !(rowIndex == 0 && columnIndex == 1);
     }
 
     @Override
@@ -60,11 +60,12 @@ public class DatabaseFilesTableModel extends DBNEditableTableModel {
     public void setValueAt(Object o, int rowIndex, int columnIndex) {
         Object actualValue = getValueAt(rowIndex, columnIndex);
         if (!Safe.equal(actualValue, o)) {
-            DatabaseFile filePathOption = databaseFiles.get(rowIndex);
+            DatabaseFile databaseFile = databaseFiles.get(rowIndex);
             if (columnIndex == 0) {
-                filePathOption.setPath((String) o);
+                databaseFile.setPath((String) o);
+                databaseFiles.adjustSchemaName(databaseFile);
             } else if (columnIndex == 1) {
-                filePathOption.setSchema((String) o);
+                databaseFile.setSchema((String) o);
             }
 
             notifyListeners(rowIndex, rowIndex, columnIndex);

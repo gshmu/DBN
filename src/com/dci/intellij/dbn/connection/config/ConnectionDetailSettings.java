@@ -27,10 +27,10 @@ public class ConnectionDetailSettings extends BasicProjectConfiguration<Connecti
     private EnvironmentTypeId environmentTypeId = EnvironmentTypeId.DEFAULT;
     private boolean enableSessionManagement = true;
     private boolean enableDdlFileBinding = true;
-    private boolean enableDatabaseLogging = false;
+    private boolean enableDatabaseLogging = true;
     private boolean connectAutomatically = true;
     private boolean restoreWorkspace = true;
-    private boolean restoreWorkspaceDeep = true;
+    private boolean restoreWorkspaceDeep = false;
     private int connectivityTimeout = 5;
     private int idleTimeToDisconnect = 30;
     private int idleTimeToDisconnectPool = 5;

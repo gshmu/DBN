@@ -198,7 +198,7 @@ public class ConnectionBundleSettingsForm extends ConfigurationEditorForm<Connec
         String name = "Connection";
         ConnectionListModel model = (ConnectionListModel) connectionsList.getModel();
         while (model.getConnectionConfig(name) != null) {
-            name = Naming.getNextNumberedName(name, true);
+            name = Naming.nextNumberedIdentifier(name, true);
         }
         ConnectionDatabaseSettings connectionConfig = connectionSettings.getDatabaseSettings();
         connectionConfig.setName(name);
@@ -220,7 +220,7 @@ public class ConnectionBundleSettingsForm extends ConfigurationEditorForm<Connec
                     String name = duplicate.getDatabaseSettings().getName();
                     ConnectionListModel model = (ConnectionListModel) connectionsList.getModel();
                     while (model.getConnectionConfig(name) != null) {
-                        name = Naming.getNextNumberedName(name, true);
+                        name = Naming.nextNumberedIdentifier(name, true);
                     }
                     duplicate.getDatabaseSettings().setName(name);
                     int selectedIndex = connectionsList.getSelectedIndex() + 1;
@@ -296,7 +296,7 @@ public class ConnectionBundleSettingsForm extends ConfigurationEditorForm<Connec
                         ConnectionDatabaseSettings databaseSettings = clone.getDatabaseSettings();
                         String name = databaseSettings.getName();
                         while (model.getConnectionConfig(name) != null) {
-                            name = Naming.getNextNumberedName(name, true);
+                            name = Naming.nextNumberedIdentifier(name, true);
                         }
                         databaseSettings.setName(name);
                         model.add(index, clone);
@@ -330,7 +330,7 @@ public class ConnectionBundleSettingsForm extends ConfigurationEditorForm<Connec
             ConnectionDatabaseSettings databaseSettings = connectionSettings.getDatabaseSettings();
             String name = tnsName.getName();
             while (model.getConnectionConfig(name) != null) {
-                name = Naming.getNextNumberedName(name, true);
+                name = Naming.nextNumberedIdentifier(name, true);
             }
 
             DatabaseInfo databaseInfo = databaseSettings.getDatabaseInfo();
