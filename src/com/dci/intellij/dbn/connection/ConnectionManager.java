@@ -165,7 +165,7 @@ public class ConnectionManager extends AbstractProjectComponent implements Persi
                     ConnectionDatabaseSettings databaseSettings = connectionHandler.getSettings().getDatabaseSettings();
                     String connectionName = connectionHandler.getName();
                     try {
-                        databaseSettings.checkConfiguration();
+                        databaseSettings.validate();
                         connectionHandler.getConnection(sessionId, schemaId);
                         ConnectionHandlerStatusHolder connectionStatus = connectionHandler.getConnectionStatus();
                         connectionStatus.setValid(true);
@@ -191,7 +191,7 @@ public class ConnectionManager extends AbstractProjectComponent implements Persi
         Project project = connectionSettings.getProject();
         ConnectionDatabaseSettings databaseSettings = connectionSettings.getDatabaseSettings();
         try {
-            databaseSettings.checkConfiguration();
+            databaseSettings.validate();
 
             if (databaseSettings.isDatabaseInitialized()) {
                 ensureAuthenticationProvided(databaseSettings, (authenticationInfo) ->
@@ -246,7 +246,7 @@ public class ConnectionManager extends AbstractProjectComponent implements Persi
         Project project = connectionSettings.getProject();
 
         try {
-            databaseSettings.checkConfiguration();
+            databaseSettings.validate();
             ensureAuthenticationProvided(databaseSettings, (authenticationInfo) ->
                     Progress.modal(project, "Connecting to " + connectionName, false, (progress) -> {
                         try {

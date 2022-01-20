@@ -156,7 +156,7 @@ public class ConnectionDatabaseSettings extends BasicConfiguration<ConnectionSet
         return clone;
     }
 
-    public void checkConfiguration() throws ConfigurationException{
+    public void validate() throws ConfigurationException{
         List<String> errors = new ArrayList<>();
         DatabaseType databaseType = getDatabaseType();
 // TODO: clean up. Now it is allowed generic JDBC database configuration
@@ -238,16 +238,9 @@ public class ConnectionDatabaseSettings extends BasicConfiguration<ConnectionSet
 
             if (urlType == DatabaseUrlType.FILE) {
                 Element filesElement = element.getChild("files");
-                if (filesElement != null) {
-                    DatabaseFiles databaseFiles = new DatabaseFiles();
-                    databaseFiles.readConfiguration(filesElement);
-                    databaseInfo.setFiles(databaseFiles);
-                } else {
-                    // TODO backward compatibility. Do cleanup
-                    String file = getString(element, "file", null);
-                    DatabaseFiles databaseFiles = new DatabaseFiles(file);
-                    databaseInfo.setFiles(databaseFiles);
-                }
+                DatabaseFiles databaseFiles = new DatabaseFiles();
+                databaseFiles.readConfiguration(filesElement);
+                databaseInfo.setFiles(databaseFiles);
             }
         } else if (configType == ConnectionConfigType.CUSTOM){
             String url = getString(element, "url", databaseInfo.getUrl());

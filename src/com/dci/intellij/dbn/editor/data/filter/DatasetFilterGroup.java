@@ -100,7 +100,7 @@ public class DatasetFilterGroup extends BasicProjectConfiguration<ProjectConfigu
 
     public String createFilterName(String baseName) {
         while (lookupFilter(baseName) != null) {
-            baseName = Naming.getNextNumberedName(baseName, true);
+            baseName = Naming.nextNumberedIdentifier(baseName, true);
         }
         return baseName;
     }

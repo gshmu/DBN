@@ -14,7 +14,9 @@ public class DatabaseFilesTable extends DBNEditableTable<DatabaseFilesTableModel
     public DatabaseFilesTable(@NotNull DBNComponent parent, DatabaseFiles databaseFiles) {
         super(parent, new DatabaseFilesTableModel(databaseFiles), false);
         setDefaultRenderer(Object.class, new DatabaseFilesTableCellRenderer());
-        getColumnModel().getColumn(0).setCellEditor(new FileBrowserTableCellEditor(new FileChooserDescriptor(true, true, false, false, false, false)));
+        FileChooserDescriptor fileChooserDescriptor = new FileChooserDescriptor(true, true, false, false, false, false);
+        FileBrowserTableCellEditor fileChooser = new FileBrowserTableCellEditor(fileChooserDescriptor);
+        getColumnModel().getColumn(0).setCellEditor(fileChooser);
         setFixedWidth(columnModel.getColumn(1), 100);
     }
 
@@ -27,11 +29,4 @@ public class DatabaseFilesTable extends DBNEditableTable<DatabaseFilesTableModel
         tableColumn.setMaxWidth(width);
         tableColumn.setMinWidth(width);
     }
-
-
-    @Override
-    public boolean isCellEditable(int row, int column) {
-        return !(row == 0 && column == 1);
-    }
-
 }

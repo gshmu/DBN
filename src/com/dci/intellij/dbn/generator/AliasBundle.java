@@ -25,7 +25,7 @@ public class AliasBundle {
     private String getNextAvailable(String alias) {
         for (String availableAlias : aliases.values()) {
             if (Objects.equals(alias, availableAlias)) {
-                alias = Naming.getNextNumberedName(alias, false);
+                alias = Naming.nextNumberedIdentifier(alias, false);
             }
         }
         return alias;
