@@ -28,7 +28,7 @@ public enum JdbcProperty implements Property.IntBase {
 
     private final String description;
     private final boolean feature;
-    private final Masks masks = new Masks(this);
+    private final IntMasks masks = new IntMasks(this);
 
     JdbcProperty(String description, boolean feature) {
         this.description = description;
@@ -36,7 +36,7 @@ public enum JdbcProperty implements Property.IntBase {
     }
 
     @Override
-    public Masks masks() {
+    public IntMasks masks() {
         return masks;
     }
 

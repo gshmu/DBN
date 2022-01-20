@@ -15,10 +15,10 @@ public class ConnectionSelectorOptions extends PropertyHolderBase.IntStore<Conne
         SHOW_CREATE_CONNECTION,
         PROMPT_SCHEMA_SELECTION;
 
-        private final Masks masks = new Masks(this);
+        private final IntMasks masks = new IntMasks(this);
 
         @Override
-        public Masks masks() {
+        public IntMasks masks() {
             return masks;
         }    }
 }

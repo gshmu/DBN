@@ -13,7 +13,7 @@ public interface Property {
     interface LongBase extends Property{
         int ordinal();
 
-        Masks masks();
+        LongMasks masks();
 
         default long maskOn() {
             return masks().on;
@@ -23,11 +23,11 @@ public interface Property {
             return masks().off;
         }
 
-        class Masks {
+        class LongMasks {
             private final long on;
             private final long off;
 
-            public Masks(LongBase property) {
+            public LongMasks(LongBase property) {
                 int shift = property.ordinal();
                 assert shift < 32;
                 this.on = 1L << shift;
@@ -39,7 +39,7 @@ public interface Property {
     interface IntBase extends Property{
         int ordinal();
 
-        Masks masks();
+        IntMasks masks();
 
         default int maskOn() {
             return masks().on;
@@ -49,11 +49,11 @@ public interface Property {
             return masks().off;
         }
 
-        class Masks {
+        class IntMasks {
             private final int on;
             private final int off;
 
-            public Masks(IntBase property) {
+            public IntMasks(IntBase property) {
                 int shift = property.ordinal();
                 assert shift < 63;
                 this.on = 1 << shift;

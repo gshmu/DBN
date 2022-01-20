@@ -10,7 +10,7 @@ public enum DBObjectStatus implements Property.IntBase {
     DEBUG(true, true),
     COMPILING(false, false);
 
-    private final Masks masks = new Masks(this);
+    private final IntMasks masks = new IntMasks(this);
     private final boolean propagable;
     private final boolean defaultValue;
 
@@ -20,7 +20,7 @@ public enum DBObjectStatus implements Property.IntBase {
     }
 
     @Override
-    public Masks masks() {
+    public IntMasks masks() {
         return masks;
     }
 
