@@ -51,10 +51,10 @@ public enum DBObjectProperty implements Property.LongBase {
     TREE_LOADED // belongs to DBObjectStatus (here for optimization reasons)
     ;
 
-    private final Masks masks = new Masks(this);
+    private final LongMasks masks = new LongMasks(this);
 
     @Override
-    public Masks masks() {
+    public LongMasks masks() {
         return masks;
     }
 }
