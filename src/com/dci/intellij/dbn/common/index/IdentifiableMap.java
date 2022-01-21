@@ -17,6 +17,10 @@ public class IdentifiableMap<K, V extends Identifiable<K>>{
         this.data = values.collect(Collectors.toMap(v -> v.getId(), v -> v));
     }
 
+    public void clear() {
+        data.clear();
+    }
+
     public V get(K id) {
         return id == null ? null : data.get(id);
     }

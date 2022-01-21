@@ -1,6 +1,7 @@
 package com.dci.intellij.dbn.connection.session;
 
 import com.dci.intellij.dbn.common.Icons;
+import com.dci.intellij.dbn.common.index.Identifiable;
 import com.dci.intellij.dbn.common.ui.Presentable;
 import com.dci.intellij.dbn.common.util.Safe;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
@@ -11,9 +12,9 @@ import com.dci.intellij.dbn.connection.jdbc.DBNConnection;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import javax.swing.*;
+import javax.swing.Icon;
 
-public class DatabaseSession implements Comparable<DatabaseSession>, Presentable {
+public class DatabaseSession implements Comparable<DatabaseSession>, Presentable, Identifiable<SessionId> {
     private final ConnectionHandlerRef connectionHandler;
     private final ConnectionType connectionType;
     private final SessionId id;

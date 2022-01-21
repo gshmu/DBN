@@ -294,6 +294,7 @@ public class ConnectionBundle extends BrowserTreeNodeBase implements BrowserTree
 
     @Override
     protected void disposeInner() {
+        index.clear();
         nullify();
     }
 }
