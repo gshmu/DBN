@@ -4,7 +4,7 @@ import com.dci.intellij.dbn.common.ui.dialog.DBNDialog;
 import com.dci.intellij.dbn.editor.data.DatasetEditor;
 import org.jetbrains.annotations.NotNull;
 
-import javax.swing.*;
+import javax.swing.Action;
 
 public class DatasetEditorSortingDialog extends DBNDialog<DatasetEditorSortingForm> {
     private DatasetEditor datasetEditor;
@@ -14,7 +14,7 @@ public class DatasetEditorSortingDialog extends DBNDialog<DatasetEditorSortingFo
         this.datasetEditor = datasetEditor;
         setModal(true);
         setResizable(true);
-        getCancelAction().putValue(Action.NAME, "Cancel");
+        renameAction(getCancelAction(), "Cancel");
         init();
     }
 

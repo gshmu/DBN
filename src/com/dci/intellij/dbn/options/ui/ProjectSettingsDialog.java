@@ -122,8 +122,7 @@ public class ProjectSettingsDialog extends DBNDialog<ProjectSettingsForm> {
         }
 
         public ApplyAction() {
-            putValue(Action.NAME, "Apply");
-            putValue(DEFAULT_ACTION, Boolean.FALSE);
+            renameAction(this, "Apply");
             addReloadRequest();
         }
 

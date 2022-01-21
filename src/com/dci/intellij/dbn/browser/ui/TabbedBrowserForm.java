@@ -46,7 +46,7 @@ public class TabbedBrowserForm extends DatabaseBrowserForm{
 
         ConnectionManager connectionManager = ConnectionManager.getInstance(project);
         ConnectionBundle connectionBundle = connectionManager.getConnectionBundle();
-        for (ConnectionHandler connectionHandler: connectionBundle.getConnectionHandlers()) {
+        for (ConnectionHandler connectionHandler: connectionBundle.getConnections()) {
             ConnectionId connectionId = connectionHandler.getConnectionId();
             SimpleBrowserForm browserForm = previous == null ? null : previous.removeBrowserForm(connectionId);
             if (browserForm == null) {

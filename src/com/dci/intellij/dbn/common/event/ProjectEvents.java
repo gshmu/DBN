@@ -1,14 +1,13 @@
 package com.dci.intellij.dbn.common.event;
 
 import com.dci.intellij.dbn.common.dispose.Failsafe;
-import com.dci.intellij.dbn.common.project.ProjectUtil;
+import com.dci.intellij.dbn.common.project.Projects;
 import com.dci.intellij.dbn.common.routine.ParametricRunnable;
 import com.dci.intellij.dbn.common.util.Safe;
 import com.intellij.openapi.Disposable;
 import com.intellij.openapi.application.Application;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.project.ProjectManager;
 import com.intellij.util.messages.MessageBus;
 import com.intellij.util.messages.MessageBusConnection;
 import com.intellij.util.messages.Topic;
@@ -31,14 +30,14 @@ public final class ProjectEvents {
     }
 
     public static <T> void subscribe(Topic<T> topic, T handler) {
-        Project[] openProjects = ProjectManager.getInstance().getOpenProjects();
+        Project[] openProjects = Projects.getOpenProjects();
         for (Project openProject : openProjects) {
             subscribe(openProject, null, topic, handler);
         }
 
         Application application = ApplicationManager.getApplication();
         application.invokeLater(() ->
-                ProjectUtil.projectOpened(project ->
+                Projects.projectOpened(project ->
                     subscribe(project, null, topic, handler)));
 
     }

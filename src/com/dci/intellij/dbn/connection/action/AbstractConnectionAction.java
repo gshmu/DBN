@@ -9,10 +9,10 @@ import com.intellij.openapi.project.Project;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import javax.swing.*;
+import javax.swing.Icon;
 
 public abstract class AbstractConnectionAction extends DumbAwareContextAction<ConnectionHandler> {
-    private final ConnectionHandlerRef connectionHandlerRef;
+    private final ConnectionHandlerRef connectionHandler;
 
     public AbstractConnectionAction(String text, @NotNull ConnectionHandler connectionHandler) {
         this(text, null, connectionHandler);
@@ -23,22 +23,28 @@ public abstract class AbstractConnectionAction extends DumbAwareContextAction<Co
     }
     public AbstractConnectionAction(String text, String description, Icon icon, @NotNull ConnectionHandler connectionHandler) {
         super(text, description, icon);
-        this.connectionHandlerRef = connectionHandler.getRef();
+        this.connectionHandler = connectionHandler.getRef();
     }
 
-    protected ConnectionId getConnectionId() {
-        return connectionHandlerRef.getConnectionId();
+    public ConnectionId getConnectionId() {
+        return connectionHandler.getConnectionId();
     }
+
+    @Nullable
+    public ConnectionHandler getConnectionHandler() {
+        return ConnectionHandlerRef.get(connectionHandler);
+    }
+
 
     @Override
     protected ConnectionHandler getTarget(@NotNull AnActionEvent e) {
-        return connectionHandlerRef.get();
+        return connectionHandler.get();
     }
 
     @Nullable
     @Override
     protected Project getProject() {
-        ConnectionHandler connectionHandler = connectionHandlerRef.get();
+        ConnectionHandler connectionHandler = this.connectionHandler.get();
         return connectionHandler == null ? null : connectionHandler.getProject();
     }
 }

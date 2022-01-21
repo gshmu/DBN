@@ -84,6 +84,18 @@ public abstract class DBNDialog<F extends DBNForm> extends DialogWrapper impleme
         return Diagnostics.isDialogSizingReset() ? null : "DBNavigator." + getClass().getSimpleName();
     }
 
+    protected static void renameAction(@NotNull Action action, String name) {
+        action.putValue(Action.NAME, name);
+    }
+
+    protected static void makeDefaultAction(@NotNull Action action) {
+        action.putValue(DEFAULT_ACTION, Boolean.TRUE);
+    }
+
+    protected static void makeFocusAction(@NotNull Action action) {
+        action.putValue(FOCUSED_ACTION, Boolean.TRUE);
+    }
+
     @Override
     public JComponent getPreferredFocusedComponent() {
         JComponent focusComponent = null;

@@ -68,14 +68,14 @@ public class ParserDiagnosticsTableModel implements DBNReadonlyTableModel<Parser
         if (isInitial()) {
             switch (column) {
                 case 0: return getRowIndex(row);
-                case 1: return row.getFilePath();
+                case 1: return row.getFile();
                 case 2: return row.getNewIssues().getErrors();
                 case 3: return row.getNewIssues().getWarnings();
             }
         } else {
             switch (column) {
                 case 0: return getRowIndex(row);
-                case 1: return row.getFilePath();
+                case 1: return row.getFile();
                 case 2: return row.getOldIssues().getErrors();
                 case 3: return row.getOldIssues().getWarnings();
                 case 4: return row.getNewIssues().getErrors();

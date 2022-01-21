@@ -49,7 +49,7 @@ public class MethodExecutionInputDialog extends DBNDialog<MethodExecutionInputFo
         ExecuteAction() {
             super(debuggerType.isDebug() ? "Debug" : "Execute",
                     debuggerType.isDebug() ? Icons.METHOD_EXECUTION_DEBUG : Icons.METHOD_EXECUTION_RUN);
-            putValue(FOCUSED_ACTION, Boolean.TRUE);
+            makeFocusAction(this);
         }
 
         @Override

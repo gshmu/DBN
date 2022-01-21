@@ -65,7 +65,7 @@ public class MethodExecutionHistoryDialog extends DBNDialog<MethodExecutionHisto
             selectAction = new SelectAction();
             selectAction.setEnabled(false);
             closeAction = new CloseAction();
-            closeAction.putValue(Action.NAME, "Cancel");
+            renameAction(closeAction, "Cancel");
             return new Action[]{selectAction, closeAction};
         }
     }
@@ -148,7 +148,7 @@ public class MethodExecutionHistoryDialog extends DBNDialog<MethodExecutionHisto
         public void actionPerformed(ActionEvent e) {
             saveChanges();
             saveAction.setEnabled(false);
-            closeAction.putValue(Action.NAME, "Close");
+            renameAction(closeAction, "Close");
         }
     }
 
@@ -178,7 +178,7 @@ public class MethodExecutionHistoryDialog extends DBNDialog<MethodExecutionHisto
     void setSaveButtonEnabled(boolean enabled){
         if (!isDisposed()) {
             if (saveAction != null) saveAction.setEnabled(enabled);
-            closeAction.putValue(Action.NAME, enabled ? "Cancel" : "Close");
+            renameAction(closeAction, enabled ? "Cancel" : "Close");
         }
     }
 }

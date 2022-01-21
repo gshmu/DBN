@@ -17,8 +17,7 @@ public class CmdLineInterfaceInputDialog extends DBNDialog<CmdLineInterfaceInput
         this.cmdLineInterface = cmdLineInterface;
         this.usedNames = usedNames;
         setModal(true);
-        Action okAction = getOKAction();
-        okAction.putValue(Action.NAME, "Save");
+        renameAction(getOKAction(), "Save");
         init();
     }
 

@@ -18,7 +18,7 @@ public class ObjectQuickFilterDialog extends DBNDialog<ObjectQuickFilterForm> {
         this.objectList = objectList;
         setModal(true);
         //setResizable(false);
-        getOKAction().putValue(Action.NAME, "Apply");
+        renameAction(getOKAction(), "Apply");
         init();
     }
 
