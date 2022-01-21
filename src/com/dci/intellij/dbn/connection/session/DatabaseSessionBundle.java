@@ -3,6 +3,7 @@ package com.dci.intellij.dbn.connection.session;
 import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.common.dispose.SafeDisposer;
 import com.dci.intellij.dbn.common.dispose.StatefulDisposable;
+import com.dci.intellij.dbn.common.index.IdentifiableMap;
 import com.dci.intellij.dbn.common.util.CollectionUtil;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.ConnectionHandlerRef;
@@ -15,39 +16,47 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.Collections;
 import java.util.Comparator;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
 import java.util.Set;
+import java.util.stream.Collectors;
 
+import static com.dci.intellij.dbn.common.util.Commons.nvl;
 import static com.dci.intellij.dbn.common.util.Lists.filtered;
 import static com.dci.intellij.dbn.common.util.Lists.first;
 
 public class DatabaseSessionBundle extends StatefulDisposable.Base implements Disposable{
-    private final ConnectionHandlerRef connectionHandler;
+    private final ConnectionHandlerRef connection;
     private DatabaseSession mainSession;
     private DatabaseSession debugSession;
     private DatabaseSession debuggerSession;
     private DatabaseSession poolSession;
 
     private final List<DatabaseSession> sessions = CollectionUtil.createConcurrentList();
+    private final IdentifiableMap<SessionId, DatabaseSession> index = new IdentifiableMap<>();
 
-    public DatabaseSessionBundle(ConnectionHandler connectionHandler) {
-        super(connectionHandler);
-        this.connectionHandler = connectionHandler.getRef();
+    public DatabaseSessionBundle(ConnectionHandler connection) {
+        super(connection);
+        this.connection = connection.getRef();
 
-        mainSession = new DatabaseSession(SessionId.MAIN, "Main", ConnectionType.MAIN, connectionHandler);
+        mainSession = new DatabaseSession(SessionId.MAIN, "Main", ConnectionType.MAIN, connection);
         sessions.add(mainSession);
 
-        if (DatabaseFeature.DEBUGGING.isSupported(connectionHandler)) {
-            debugSession = new DatabaseSession(SessionId.DEBUG, "Debug", ConnectionType.DEBUG, connectionHandler);
-            debuggerSession = new DatabaseSession(SessionId.DEBUGGER, "Debugger", ConnectionType.DEBUGGER, connectionHandler);
+        if (DatabaseFeature.DEBUGGING.isSupported(connection)) {
+            debugSession = new DatabaseSession(SessionId.DEBUG, "Debug", ConnectionType.DEBUG, connection);
+            debuggerSession = new DatabaseSession(SessionId.DEBUGGER, "Debugger", ConnectionType.DEBUGGER, connection);
             sessions.add(debugSession);
             sessions.add(debuggerSession);
         }
 
-        poolSession = new DatabaseSession(SessionId.POOL, "Pool", ConnectionType.POOL, connectionHandler);
+        poolSession = new DatabaseSession(SessionId.POOL, "Pool", ConnectionType.POOL, connection);
         sessions.add(poolSession);
+        rebuildIndex();
+    }
+
+    private void rebuildIndex() {
+        Collections.sort(sessions);
+        this.index.rebuild(sessions);
     }
 
     public List<DatabaseSession> getSessions(ConnectionType ... connectionTypes) {
@@ -57,16 +66,11 @@ public class DatabaseSessionBundle extends StatefulDisposable.Base implements Di
     }
 
     public Set<String> getSessionNames() {
-        Set<String> sessionNames = new HashSet<>();
-        for (DatabaseSession session : sessions) {
-            sessionNames.add(session.getName());
-        }
-
-        return sessionNames;
+        return sessions.stream().map(s -> s.getName()).collect(Collectors.toSet());
     }
 
-    public ConnectionHandler getConnectionHandler() {
-        return connectionHandler.ensure();
+    public ConnectionHandler getConnection() {
+        return connection.ensure();
     }
 
     public DatabaseSession getDebugSession() {
@@ -93,30 +97,26 @@ public class DatabaseSessionBundle extends StatefulDisposable.Base implements Di
 
     @NotNull
     public DatabaseSession getSession(SessionId id) {
-        for (DatabaseSession session : sessions) {
-            if (session.getId() == id) {
-                return session;
-            }
-        }
-        return getMainSession();
+        DatabaseSession session = index.get(id);
+        return nvl(session, getMainSession());
     }
 
     void addSession(SessionId id, String name) {
-        sessions.add(new DatabaseSession(id, name, ConnectionType.SESSION, getConnectionHandler()));
-        Collections.sort(sessions);
+        sessions.add(new DatabaseSession(id, name, ConnectionType.SESSION, getConnection()));
+        rebuildIndex();
     }
 
     DatabaseSession createSession(String name) {
-        ConnectionHandler connectionHandler = getConnectionHandler();
-        DatabaseSession session = new DatabaseSession(null, name, ConnectionType.SESSION, connectionHandler);
+        ConnectionHandler connection = getConnection();
+        DatabaseSession session = new DatabaseSession(null, name, ConnectionType.SESSION, connection);
         sessions.add(session);
-        Collections.sort(sessions);
+        rebuildIndex();
         return session;
     }
 
     void deleteSession(SessionId id) {
         DatabaseSession session = getSession(id);
-        sessions.remove(session);
+        rebuildIndex();
     }
 
     void renameSession(String oldName, String newName) {
@@ -129,6 +129,7 @@ public class DatabaseSessionBundle extends StatefulDisposable.Base implements Di
     @Override
     public void disposeInner() {
         SafeDisposer.dispose(sessions, true, false);
+        index.clear();
         mainSession = null;
         debugSession = null;
         debuggerSession = null;
