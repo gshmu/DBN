@@ -338,11 +338,6 @@ public class DBVirtualObject extends DBObjectImpl implements PsiReference {
         return connectionHandler;
     }
 
-    @Override
-    public DBObject getParentObject() {
-        return DBObjectRef.get(parentObjectRef);
-    }
-
     public void setParentObject(DBVirtualObject virtualObject) {
         parentObjectRef = DBObjectRef.of(virtualObject);
     }
