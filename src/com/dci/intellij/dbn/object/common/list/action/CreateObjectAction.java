@@ -12,7 +12,7 @@ import org.jetbrains.annotations.NotNull;
 
 public class CreateObjectAction extends AnAction {
 
-    private WeakRef<DBObjectList> objectList;
+    private final WeakRef<DBObjectList> objectList;
 
     CreateObjectAction(DBObjectList objectList) {
         super("New " + objectList.getObjectType().getName() + "...");
@@ -22,7 +22,7 @@ public class CreateObjectAction extends AnAction {
     @Override
     public void actionPerformed(@NotNull AnActionEvent e) {
         DBObjectList objectList = getObjectList();
-        DBSchema schema = Failsafe.nn((DBSchema) objectList.getParentEntity());
+        DBSchema schema = Failsafe.nn(objectList.getParentEntity());
         Project project = schema.getProject();
         DatabaseObjectFactory factory = DatabaseObjectFactory.getInstance(project);
         factory.openFactoryInputDialog(schema, objectList.getObjectType());
