@@ -68,7 +68,7 @@ public class ScriptExecutionInputForm extends DBNFormImpl{
         ConnectionManager connectionManager = ConnectionManager.getInstance(project);
         connectionComboBox.set(ValueSelectorOption.HIDE_DESCRIPTION, true);
         connectionComboBox.setEnabled(sourceFile.isInLocalFileSystem());
-        connectionComboBox.setValues(connectionManager.getConnectionHandlers());
+        connectionComboBox.setValues(connectionManager.getConnections());
 
         schemaComboBox.set(ValueSelectorOption.HIDE_DESCRIPTION, true);
 

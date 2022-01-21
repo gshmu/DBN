@@ -232,7 +232,7 @@ public class DatabaseBrowserManager extends AbstractProjectComponent implements 
     @Nullable
     private ConnectionHandler getConnectionHandler(ConnectionId connectionId) {
         ConnectionManager connectionManager = ConnectionManager.getInstance(getProject());
-        return connectionManager.getConnectionHandler(connectionId);
+        return connectionManager.getConnection(connectionId);
     }
 
     public Filter<BrowserTreeNode> getObjectTypeFilter() {
@@ -353,7 +353,7 @@ public class DatabaseBrowserManager extends AbstractProjectComponent implements 
         element.addContent(nodesElement);
 
         ConnectionManager connectionManager = ConnectionManager.getInstance(getProject());
-        List<ConnectionHandler> connectionHandlers = connectionManager.getConnectionHandlers();
+        List<ConnectionHandler> connectionHandlers = connectionManager.getConnections();
         for (ConnectionHandler connectionHandler : connectionHandlers) {
             ConnectionDetailSettings settings = connectionHandler.getSettings().getDetailSettings();
             if (settings.isRestoreWorkspaceDeep()) {
@@ -404,7 +404,7 @@ public class DatabaseBrowserManager extends AbstractProjectComponent implements 
 
             for (Element connectionElement : connectionElements) {
                 ConnectionId connectionId = connectionIdAttribute(connectionElement, "connection-id");
-                ConnectionHandler connectionHandler = connectionManager.getConnectionHandler(connectionId);
+                ConnectionHandler connectionHandler = connectionManager.getConnection(connectionId);
                 if (connectionHandler != null) {
                     ConnectionDetailSettings settings = connectionHandler.getSettings().getDetailSettings();
                     if (settings.isRestoreWorkspaceDeep()) {

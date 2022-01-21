@@ -30,10 +30,10 @@ public class SessionBrowserOpenAction extends DumbAwareProjectAction {
         DefaultActionGroup actionGroup = new DefaultActionGroup();
         if (connectionBundle.getConnections().size() > 0) {
             actionGroup.addSeparator();
-            for (ConnectionHandler connectionHandler : connectionBundle.getConnections()) {
-                SelectConnectionAction connectionAction = new SelectConnectionAction(connectionHandler);
+            for (ConnectionHandler connection : connectionBundle.getConnections()) {
+                SelectConnectionAction connectionAction = new SelectConnectionAction(connection);
                 actionGroup.add(connectionAction);
-                singleConnectionHandler = connectionHandler;
+                singleConnectionHandler = connection;
             }
         }
 

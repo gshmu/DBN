@@ -39,9 +39,9 @@ public class ConnectionSelectDropdownAction extends DBNComboBoxAction {
 
         if (connectionBundle.getConnections().size() > 0) {
             //actionGroup.addSeparator();
-            for (ConnectionHandler connectionHandler : connectionBundle.getConnections()) {
-                if (!debug || DatabaseFeature.DEBUGGING.isSupported(connectionHandler)) {
-                    ConnectionSelectAction connectionAction = new ConnectionSelectAction(browserComponent, connectionHandler);
+            for (ConnectionHandler connection : connectionBundle.getConnections()) {
+                if (!debug || DatabaseFeature.DEBUGGING.isSupported(connection)) {
+                    ConnectionSelectAction connectionAction = new ConnectionSelectAction(browserComponent, connection);
                     actionGroup.add(connectionAction);
                 }
             }

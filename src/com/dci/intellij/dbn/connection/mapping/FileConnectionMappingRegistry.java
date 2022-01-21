@@ -3,7 +3,6 @@ package com.dci.intellij.dbn.connection.mapping;
 import com.dci.intellij.dbn.common.dispose.StatefulDisposable;
 import com.dci.intellij.dbn.common.file.util.VirtualFileUtil;
 import com.dci.intellij.dbn.common.project.ProjectRef;
-import com.dci.intellij.dbn.connection.ConnectionBundle;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.ConnectionHandlerRef;
 import com.dci.intellij.dbn.connection.ConnectionId;
@@ -179,23 +178,18 @@ public class FileConnectionMappingRegistry extends StatefulDisposable.Base {
                 }
 
                 // lookup connection mappings
-                ConnectionHandlerRef connectionHandlerRef = virtualFile.getUserData(CONNECTION_HANDLER);
-                if (connectionHandlerRef == null) {
+                ConnectionHandlerRef connectionRef = virtualFile.getUserData(CONNECTION_HANDLER);
+                if (connectionRef == null) {
                     FileConnectionMapping mapping = lookupMapping(virtualFile);
                     if (mapping != null) {
                         ConnectionManager connectionManager = ConnectionManager.getInstance(project);
-                        ConnectionHandler connectionHandler = connectionManager.getConnectionHandler(mapping.getConnectionId());
-                        if (connectionHandler == null) {
-                            ConnectionBundle connectionBundle = connectionManager.getConnectionBundle();
-                            connectionHandler = connectionBundle.getVirtualConnection(mapping.getConnectionId());
-                        }
-                        connectionHandlerRef = ConnectionHandlerRef.of(connectionHandler);
-
-                        virtualFile.putUserData(CONNECTION_HANDLER, connectionHandlerRef);
+                        ConnectionHandler connectionHandler = connectionManager.getConnection(mapping.getConnectionId());
+                        connectionRef = ConnectionHandlerRef.of(connectionHandler);
+                        virtualFile.putUserData(CONNECTION_HANDLER, connectionRef);
 
                     }
                 }
-                return ConnectionHandlerRef.get(connectionHandlerRef);
+                return ConnectionHandlerRef.get(connectionRef);
             }
         } catch (ProcessCanceledException ignore) {}
 
