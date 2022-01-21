@@ -24,7 +24,7 @@ public class AttachDDLFileDialog extends DBNDialog<SelectDDLFileForm> {
         this.virtualFiles = virtualFiles;
         this.objectRef = DBObjectRef.of(object);
         this.showLookupOption = showLookupOption;
-        getOKAction().putValue(Action.NAME, "Attach selected");
+        renameAction(getOKAction(), "Attach selected");
         setDefaultSize(700, 400);
         init();
     }

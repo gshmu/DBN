@@ -10,9 +10,16 @@ import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.util.ui.UIUtil;
 
-import javax.swing.*;
+import javax.swing.AbstractCellEditor;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JTable;
+import javax.swing.JTextField;
 import javax.swing.table.TableCellEditor;
-import java.awt.*;
+import java.awt.BorderLayout;
+import java.awt.Component;
+import java.awt.Cursor;
+import java.awt.Dimension;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
@@ -21,9 +28,9 @@ import java.io.File;
 import static com.dci.intellij.dbn.data.editor.ui.DataEditorComponent.BUTTON_BORDER;
 
 public class FileBrowserTableCellEditor extends AbstractCellEditor implements TableCellEditor{
-    private JPanel mainPanel = new JPanel();
-    private JTextField textField = new JTextField();
-    private FileChooserDescriptor fileChooserDescriptor;
+    private final JPanel mainPanel = new JPanel();
+    private final JTextField textField = new JTextField();
+    private final FileChooserDescriptor fileChooserDescriptor;
 
     public FileBrowserTableCellEditor(FileChooserDescriptor fileChooserDescriptor) {
         this.fileChooserDescriptor = fileChooserDescriptor;
@@ -45,7 +52,7 @@ public class FileBrowserTableCellEditor extends AbstractCellEditor implements Ta
 
 
 
-    private MouseListener mouseListener = new MouseAdapter() {
+    private final MouseListener mouseListener = new MouseAdapter() {
         @Override
         public void mouseClicked(MouseEvent e) {
             if (e.getButton() == MouseEvent.BUTTON1 && e.getClickCount() == 1) {

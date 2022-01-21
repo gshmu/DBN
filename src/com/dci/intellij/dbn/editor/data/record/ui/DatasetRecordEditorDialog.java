@@ -5,7 +5,7 @@ import com.dci.intellij.dbn.editor.data.model.DatasetEditorModelRow;
 import com.intellij.openapi.project.Project;
 import org.jetbrains.annotations.NotNull;
 
-import javax.swing.*;
+import javax.swing.Action;
 
 public class DatasetRecordEditorDialog extends DBNDialog<DatasetRecordEditorForm> {
     private DatasetEditorModelRow row;
@@ -14,7 +14,7 @@ public class DatasetRecordEditorDialog extends DBNDialog<DatasetRecordEditorForm
         this.row = row;
         setModal(true);
         setResizable(true);
-        getCancelAction().putValue(Action.NAME, "Close");
+        renameAction(getCancelAction(), "Close");
         init();
     }
 

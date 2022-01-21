@@ -28,6 +28,14 @@ public final class Safe {
     }
 
 
+    public static <R, S, E extends Throwable> R call(@Nullable S target, ParametricCallable<S, R, RuntimeException> callable, R defaultValue) throws E {
+        if (target == null) {
+            return defaultValue;
+        } else {
+            return callable.call(target);
+        }
+    }
+
     @Nullable
     public static <R, S, E extends Throwable> R call(@Nullable S target, @NotNull ParametricCallable<S, R, E> callable) throws E{
         if (target == null) {

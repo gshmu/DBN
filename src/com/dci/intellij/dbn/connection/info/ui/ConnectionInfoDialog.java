@@ -8,7 +8,7 @@ import com.dci.intellij.dbn.connection.info.ConnectionInfo;
 import com.intellij.openapi.project.Project;
 import org.jetbrains.annotations.NotNull;
 
-import javax.swing.*;
+import javax.swing.Action;
 
 public class ConnectionInfoDialog extends DBNDialog<ConnectionInfoForm> {
     private ConnectionHandlerRef connectionHandlerRef;
@@ -19,7 +19,7 @@ public class ConnectionInfoDialog extends DBNDialog<ConnectionInfoForm> {
     public ConnectionInfoDialog(@NotNull ConnectionHandler connectionHandler) {
         super(connectionHandler.getProject(), "Connection information", true);
         connectionHandlerRef = connectionHandler.getRef();
-        getCancelAction().putValue(Action.NAME, "Close");
+        renameAction(getCancelAction(), "Close");
         setResizable(false);
         init();
     }
@@ -29,7 +29,7 @@ public class ConnectionInfoDialog extends DBNDialog<ConnectionInfoForm> {
         this.connectionInfo = connectionInfo;
         this.connectionName = connectionName;
         this.environmentType = environmentType;
-        getCancelAction().putValue(Action.NAME, "Close");
+        renameAction(getCancelAction(), "Close");
         setResizable(false);
         init();
     }

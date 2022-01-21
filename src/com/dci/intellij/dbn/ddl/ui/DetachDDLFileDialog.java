@@ -18,8 +18,8 @@ public class DetachDDLFileDialog extends DBNDialog<SelectDDLFileForm> {
     public DetachDDLFileDialog(@NotNull List<VirtualFile> virtualFiles, @NotNull DBSchemaObject object) {
         super(object.getProject(), "Detach DDL files", true);
         this.virtualFiles = virtualFiles;
-        this.objectRef = object.getRef();
-        getOKAction().putValue(Action.NAME, "Detach selected");
+        this.objectRef = DBObjectRef.of(object);
+        renameAction(getOKAction(), "Detach selected");
         setDefaultSize(700, 400);
         init();
     }

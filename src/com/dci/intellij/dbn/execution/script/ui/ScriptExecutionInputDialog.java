@@ -14,8 +14,7 @@ public class ScriptExecutionInputDialog extends DBNDialog<ScriptExecutionInputFo
         super(project, "Execute SQL script", true);
         this.executionInput = executionInput;
         setModal(true);
-        Action okAction = getOKAction();
-        okAction.putValue(Action.NAME, "Execute");
+        renameAction(getOKAction(), "Execute");
         init();
     }
 

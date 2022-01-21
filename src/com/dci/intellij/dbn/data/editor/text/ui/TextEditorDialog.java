@@ -18,7 +18,7 @@ public class TextEditorDialog extends DBNDialog<TextEditorForm> {
     private TextEditorDialog(Project project, TextEditorAdapter textEditorAdapter){
         super(project, getTitle(textEditorAdapter), true);
         this.textEditorAdapter = textEditorAdapter;
-        getCancelAction().putValue(Action.NAME, "Close");
+        renameAction(getCancelAction(), "Close");
         getOKAction().setEnabled(false);
         setModal(true);
         init();
@@ -69,7 +69,7 @@ public class TextEditorDialog extends DBNDialog<TextEditorForm> {
     private final DocumentListener documentListener = new DocumentListener() {
         @Override
         public void documentChanged(@NotNull DocumentEvent event) {
-            getCancelAction().putValue(Action.NAME, "Cancel");
+            renameAction(getCancelAction(), "Cancel");
             getOKAction().setEnabled(true);
         }
     };

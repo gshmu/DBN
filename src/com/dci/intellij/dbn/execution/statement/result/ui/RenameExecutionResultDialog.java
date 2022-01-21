@@ -13,7 +13,7 @@ public class RenameExecutionResultDialog extends DBNDialog<RenameExecutionResult
     public RenameExecutionResultDialog(StatementExecutionResult executionResult) {
         super(executionResult.getProject(), "Rename result", true);
         this.executionResult = executionResult;
-        getOKAction().putValue(Action.NAME, "Rename");
+        renameAction(getOKAction(), "Rename");
         init();
     }
 

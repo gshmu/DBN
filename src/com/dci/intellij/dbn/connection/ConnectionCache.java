@@ -2,9 +2,8 @@ package com.dci.intellij.dbn.connection;
 
 import com.dci.intellij.dbn.common.component.ApplicationComponent;
 import com.dci.intellij.dbn.common.dispose.Failsafe;
-import com.dci.intellij.dbn.common.project.ProjectUtil;
+import com.dci.intellij.dbn.common.project.Projects;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.project.ProjectManager;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -17,20 +16,19 @@ public class ConnectionCache implements ApplicationComponent {
     private static final Map<ConnectionId, ConnectionHandler> CACHE = new ConcurrentHashMap<>();
 
     public ConnectionCache() {
-        ProjectUtil.projectOpened(project -> initializeCache(project));
-        ProjectUtil.projectClosed(project -> releaseCache(project));
+        Projects.projectOpened(project -> initializeCache(project));
+        Projects.projectClosed(project -> releaseCache(project));
     }
 
     @Nullable
     public static ConnectionHandler findConnectionHandler(ConnectionId connectionId) {
         if (connectionId != null) {
             ConnectionHandler connectionHandler = CACHE.get(connectionId);
-            ProjectManager projectManager = ProjectManager.getInstance();
-            if (connectionHandler == null && projectManager != null) {
+            if (connectionHandler == null) {
                 synchronized (ConnectionCache.class) {
                     connectionHandler = CACHE.get(connectionId);
                     if (connectionHandler == null) {
-                        for (Project project : projectManager.getOpenProjects()) {
+                        for (Project project : Projects.getOpenProjects()) {
                             ConnectionManager connectionManager = ConnectionManager.getInstance(project);
                             connectionHandler = connectionManager.getConnectionHandler(connectionId);
                             if (Failsafe.check(connectionHandler)) {

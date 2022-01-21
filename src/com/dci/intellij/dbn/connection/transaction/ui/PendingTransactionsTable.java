@@ -77,10 +77,10 @@ public class PendingTransactionsTable extends DBNTable<PendingTransactionsTableM
             if (e.getButton() == MouseEvent.BUTTON1 && e.getClickCount() == 1) {
                 int selectedRow = getSelectedRow();
                 PendingTransaction transaction = getModel().getValueAt(selectedRow, 0);
-                FileEditorManager fileEditorManager = FileEditorManager.getInstance(getProject());
                 VirtualFile virtualFile = transaction.getFile();
                 if (virtualFile != null && virtualFile.isValid()) {
-                    fileEditorManager.openFile(virtualFile, true);
+                    FileEditorManager editorManager = FileEditorManager.getInstance(getProject());
+                    editorManager.openFile(virtualFile, true);
                 }
             }
         }

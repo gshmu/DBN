@@ -40,9 +40,13 @@ public interface DatabaseEntity extends ConnectionProvider, StatefulDisposable {
     }
 
     @NotNull
-    ConnectionId getConnectionId();
+    default ConnectionId getConnectionId() {
+        throw new UnsupportedOperationException();
+    }
 
     @NotNull
     @Override
-    ConnectionHandler getConnectionHandler();
+    default ConnectionHandler getConnectionHandler() {
+        throw new UnsupportedOperationException();
+    };
 }

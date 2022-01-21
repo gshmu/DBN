@@ -59,7 +59,7 @@ public class StatementExecutionInputsDialog extends DBNDialog<StatementExecution
     private class ExecuteAction extends AbstractAction {
         ExecuteAction() {
             super(debuggerType.isDebug() ? "Debug" : "Execute", debuggerType.isDebug() ? Icons.STMT_EXECUTION_DEBUG : Icons.STMT_EXECUTION_RUN);
-            putValue(DEFAULT_ACTION, Boolean.TRUE);
+            makeDefaultAction(this);
         }
 
         @Override

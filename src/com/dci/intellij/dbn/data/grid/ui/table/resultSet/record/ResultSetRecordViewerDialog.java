@@ -15,7 +15,7 @@ public class ResultSetRecordViewerDialog extends DBNDialog<ResultSetRecordViewer
         this.showDataTypes = showDataTypes;
         setModal(true);
         setResizable(true);
-        getCancelAction().putValue(Action.NAME, "Close");
+        renameAction(getCancelAction(), "Close");
         init();
     }
 

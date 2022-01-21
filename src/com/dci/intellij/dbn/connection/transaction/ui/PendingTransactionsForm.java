@@ -59,7 +59,7 @@ public class PendingTransactionsForm extends DBNFormImpl {
         DefaultListModel<ConnectionHandler> model = new DefaultListModel<>();
         ConnectionManager connectionManager = ConnectionManager.getInstance(ensureProject());
         ConnectionBundle connectionBundle = connectionManager.getConnectionBundle();
-        for (ConnectionHandler connectionHandler : connectionBundle.getConnectionHandlers()) {
+        for (ConnectionHandler connectionHandler : connectionBundle.getConnections()) {
             if (connectionHandler.hasUncommittedChanges()) {
                 connectionHandlers.add(connectionHandler);
                 model.addElement(connectionHandler);

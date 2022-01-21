@@ -10,16 +10,17 @@ import com.intellij.openapi.project.ProjectManagerListener;
 import com.intellij.openapi.wm.impl.welcomeScreen.WelcomeFrame;
 import org.jetbrains.annotations.NotNull;
 
-public interface ProjectUtil {
-    static void closeProject(@NotNull Project project) {
+public final class Projects {
+    private Projects() {}
+
+    public static void closeProject(@NotNull Project project) {
         Dispatch.run(() -> {
             ProjectManager.getInstance().closeProject(project);
             WelcomeFrame.showIfNoProjectOpened();
         });
     }
 
-
-    static void projectOpened(ParametricRunnable<Project, RuntimeException> runnable) {
+    public static void projectOpened(ParametricRunnable<Project, RuntimeException> runnable) {
         ApplicationEvents.subscribe(null, ProjectManager.TOPIC,
                 new ProjectManagerListener() {
                     @Override
@@ -29,7 +30,7 @@ public interface ProjectUtil {
                 });
     }
 
-    static void projectClosing(ParametricRunnable<Project, RuntimeException> runnable) {
+    public static void projectClosing(ParametricRunnable<Project, RuntimeException> runnable) {
         ApplicationEvents.subscribe(null, ProjectManager.TOPIC,
                 new ProjectManagerListener() {
                     @Override
@@ -40,7 +41,7 @@ public interface ProjectUtil {
 
     }
 
-    static void projectClosed(ParametricRunnable<Project, RuntimeException> runnable) {
+    public static void projectClosed(ParametricRunnable<Project, RuntimeException> runnable) {
         ApplicationEvents.subscribe(null, ProjectManager.TOPIC,
                 new ProjectManagerListener() {
                     @Override
@@ -51,4 +52,7 @@ public interface ProjectUtil {
 
     }
 
+    public static @NotNull Project[] getOpenProjects() {
+        return ProjectManager.getInstance().getOpenProjects();
+    }
 }

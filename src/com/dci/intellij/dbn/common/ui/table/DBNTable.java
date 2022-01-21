@@ -366,6 +366,14 @@ public abstract class DBNTable<T extends DBNTableModel> extends JTable implement
         }
     }
 
+    public Point getCellLocation(int row, int column) {
+        Rectangle rectangle = getCellRect(row, column, true);
+        Point location = getLocationOnScreen();
+        return new Point(
+                (int) (location.getX() + rectangle.getX()),
+                (int) (location.getY() + rectangle.getY()));
+    }
+
     public TableColumn getColumnByName(String columnName) {
         TableColumnModel columnModel = getColumnModel();
         int columnCount = columnModel.getColumnCount();
