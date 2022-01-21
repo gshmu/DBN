@@ -128,7 +128,7 @@ public class DDLFileAttachmentManager extends AbstractProjectComponent implement
         DBObjectRef<DBSchemaObject> objectRef = mappings.get(ddlFile.getUrl());
         if (objectRef != null) {
             ConnectionId connectionId = objectRef.getConnectionId();
-            return ConnectionManager.getInstance(getProject()).getConnectionHandler(connectionId);
+            return ConnectionManager.getInstance(getProject()).getConnection(connectionId);
         }
         return null;
     }

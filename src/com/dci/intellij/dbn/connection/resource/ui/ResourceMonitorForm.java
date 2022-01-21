@@ -21,8 +21,10 @@ import com.intellij.ui.GuiUtils;
 import com.intellij.ui.SimpleTextAttributes;
 import org.jetbrains.annotations.NotNull;
 
-import javax.swing.*;
-import java.awt.*;
+import javax.swing.DefaultListModel;
+import javax.swing.JList;
+import javax.swing.JPanel;
+import java.awt.BorderLayout;
 import java.util.List;
 import java.util.Map;
 
@@ -57,17 +59,17 @@ public class ResourceMonitorForm extends DBNFormImpl {
         DefaultListModel<ConnectionHandler> model = new DefaultListModel<>();
         ConnectionManager connectionManager = ConnectionManager.getInstance(ensureProject());
         ConnectionBundle connectionBundle = connectionManager.getConnectionBundle();
-        List<ConnectionHandler> connectionHandlers = connectionBundle.getConnections();
-        for (ConnectionHandler connectionHandler : connectionHandlers) {
+        List<ConnectionHandler> connections = connectionBundle.getConnections();
+        for (ConnectionHandler connection : connections) {
             checkDisposed();
-            model.addElement(connectionHandler);
+            model.addElement(connection);
         }
         connectionsList.setModel(model);
 
         if (selectionIndex < 0) {
             ConnectionHandler connectionHandler = ConnectionManager.getLastUsedConnection();
             if (connectionHandler != null) {
-                selectionIndex = connectionHandlers.indexOf(connectionHandler);
+                selectionIndex = connections.indexOf(connectionHandler);
             }
         }
         selectionIndex = Integer.max(selectionIndex, 0);

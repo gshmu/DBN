@@ -195,7 +195,7 @@ public class DatabaseFileSystem extends VirtualFileSystem implements /*NonPhysic
         if (index > -1) {
             ConnectionId connectionId = ConnectionId.get(path.substring(0, index));
             ConnectionManager connectionManager = ConnectionManager.getInstance(project);
-            ConnectionHandler connectionHandler = connectionManager.getConnectionHandler(connectionId);
+            ConnectionHandler connectionHandler = connectionManager.getConnection(connectionId);
             //ConnectionHandler connectionHandler = ConnectionCache.findConnectionHandler(connectionId);
             if (connectionHandler != null || !project.isInitialized()) {
                 String relativePath = path.substring(index + 1);

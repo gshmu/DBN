@@ -44,9 +44,9 @@ public class ConnectionDiagnosticsForm extends DBNFormImpl {
         DefaultListModel<ConnectionHandler> model = new DefaultListModel<>();
         ConnectionManager connectionManager = ConnectionManager.getInstance(ensureProject());
         ConnectionBundle connectionBundle = connectionManager.getConnectionBundle();
-        List<ConnectionHandler> connectionHandlers = connectionBundle.getConnections();
-        for (ConnectionHandler connectionHandler : connectionHandlers) {
-            model.addElement(connectionHandler);
+        List<ConnectionHandler> connections = connectionBundle.getConnections();
+        for (ConnectionHandler connection : connections) {
+            model.addElement(connection);
         }
         connectionsList.setModel(model);
         connectionsList.setSelectedIndex(0);

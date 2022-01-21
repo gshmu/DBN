@@ -397,7 +397,7 @@ public class DBObjectRef<T extends DBObject> implements Comparable<DBObjectRef<?
         ConnectionId connectionId = getConnectionId();
         return project == null || project.isDisposed() ?
                 ConnectionCache.findConnectionHandler(connectionId) :
-                ConnectionManager.getInstance(project).getConnectionHandler(connectionId);
+                ConnectionManager.getInstance(project).getConnection(connectionId);
     }
 
     @Nullable

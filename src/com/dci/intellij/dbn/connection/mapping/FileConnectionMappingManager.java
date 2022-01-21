@@ -260,11 +260,11 @@ public class FileConnectionMappingManager extends AbstractProjectComponent imple
         Project project = getProject();
         ConnectionManager connectionManager = ConnectionManager.getInstance(project);
         ConnectionBundle connectionBundle = connectionManager.getConnectionBundle();
-        List<ConnectionHandler> connectionHandlers = connectionBundle.getConnections();
+        List<ConnectionHandler> connection = connectionBundle.getConnections();
 
         DefaultActionGroup actionGroup = new DefaultActionGroup();
-        if (connectionHandlers.size() > 0) {
-            for (ConnectionHandler connectionHandler : connectionHandlers) {
+        if (connection.size() > 0) {
+            for (ConnectionHandler connectionHandler : connection) {
                 ConnectionSelectAction connectionAction = new ConnectionSelectAction(
                         connectionHandler,
                         psiFile,

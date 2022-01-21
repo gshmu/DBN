@@ -46,23 +46,23 @@ public class TabbedBrowserForm extends DatabaseBrowserForm{
 
         ConnectionManager connectionManager = ConnectionManager.getInstance(project);
         ConnectionBundle connectionBundle = connectionManager.getConnectionBundle();
-        for (ConnectionHandler connectionHandler: connectionBundle.getConnections()) {
-            ConnectionId connectionId = connectionHandler.getConnectionId();
+        for (ConnectionHandler connection: connectionBundle.getConnections()) {
+            ConnectionId connectionId = connection.getConnectionId();
             SimpleBrowserForm browserForm = previous == null ? null : previous.removeBrowserForm(connectionId);
             if (browserForm == null) {
-                browserForm = new SimpleBrowserForm(this, connectionHandler);
+                browserForm = new SimpleBrowserForm(this, connection);
             } else {
                 browserForm.setParent(this);
             }
 
             JComponent component = browserForm.getComponent();
             TabInfo tabInfo = new TabInfo(component);
-            tabInfo.setText(Commons.nvl(connectionHandler.getName(), "[unnamed connection]"));
+            tabInfo.setText(Commons.nvl(connection.getName(), "[unnamed connection]"));
             tabInfo.setObject(browserForm);
             //tabInfo.setIcon(connectionHandler.getIcon());
             this.connectionTabs.addTab(tabInfo);
 
-            EnvironmentType environmentType = connectionHandler.getEnvironmentType();
+            EnvironmentType environmentType = connection.getEnvironmentType();
             tabInfo.setTabColor(environmentType.getColor());
         }
         if (this.connectionTabs.getTabCount() == 0) {
