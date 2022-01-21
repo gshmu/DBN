@@ -3,14 +3,13 @@ package com.dci.intellij.dbn.connection;
 import com.dci.intellij.dbn.common.content.DynamicContent;
 import com.dci.intellij.dbn.common.content.DynamicContentType;
 import com.dci.intellij.dbn.common.dispose.StatefulDisposable;
+import com.dci.intellij.dbn.common.ui.Presentable;
 import com.dci.intellij.dbn.common.util.Unsafe;
 import com.intellij.openapi.project.Project;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-public interface DatabaseEntity extends ConnectionProvider, StatefulDisposable {
-    @NotNull
-    String getName();
+public interface DatabaseEntity extends ConnectionProvider, StatefulDisposable, Presentable {
 
     @NotNull
     default String getQualifiedName() {
