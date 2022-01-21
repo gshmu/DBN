@@ -2,6 +2,7 @@ package com.dci.intellij.dbn.connection;
 
 import com.dci.intellij.dbn.common.Reference;
 import com.dci.intellij.dbn.common.dispose.Failsafe;
+import com.dci.intellij.dbn.common.index.Identifiable;
 import com.dci.intellij.dbn.language.common.WeakRef;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
@@ -14,7 +15,7 @@ import java.util.concurrent.ConcurrentHashMap;
 
 @Getter
 @EqualsAndHashCode
-public final class ConnectionHandlerRef implements Reference<ConnectionHandler> {
+public final class ConnectionHandlerRef implements Reference<ConnectionHandler>, Identifiable<ConnectionId> {
     private static final Map<ConnectionId, ConnectionHandlerRef> REGISTRY = new ConcurrentHashMap<>();
     private final ConnectionId connectionId;
 
@@ -23,6 +24,11 @@ public final class ConnectionHandlerRef implements Reference<ConnectionHandler> 
 
     private ConnectionHandlerRef(ConnectionId connectionId) {
         this.connectionId = connectionId;
+    }
+
+    @Override
+    public ConnectionId getId() {
+        return connectionId;
     }
 
     @NotNull

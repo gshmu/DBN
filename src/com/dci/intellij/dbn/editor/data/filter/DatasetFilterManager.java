@@ -181,7 +181,7 @@ public class DatasetFilterManager extends AbstractProjectComponent implements Pe
         Element element = new Element("state");
         for (ConnectionId connectionId : filters.keySet()){
             ConnectionManager connectionManager = ConnectionManager.getInstance(getProject());
-            if (connectionManager.getConnectionHandler(connectionId) != null) {
+            if (connectionManager.getConnection(connectionId) != null) {
                 Map<String, DatasetFilterGroup> filterLists = filters.get(connectionId);
                 for (String datasetName : filterLists.keySet()) {
                     DatasetFilterGroup filterGroup = filterLists.get(datasetName);

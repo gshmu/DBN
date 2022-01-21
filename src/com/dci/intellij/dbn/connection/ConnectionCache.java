@@ -30,7 +30,7 @@ public class ConnectionCache implements ApplicationComponent {
                     if (connectionHandler == null) {
                         for (Project project : Projects.getOpenProjects()) {
                             ConnectionManager connectionManager = ConnectionManager.getInstance(project);
-                            connectionHandler = connectionManager.getConnectionHandler(connectionId);
+                            connectionHandler = connectionManager.getConnection(connectionId);
                             if (Failsafe.check(connectionHandler)) {
                                 CACHE.put(connectionId, connectionHandler);
                                 return connectionHandler;
@@ -55,7 +55,7 @@ public class ConnectionCache implements ApplicationComponent {
     private static void initializeCache(@NotNull Project project) {
         if (!project.isDefault()) {
             ConnectionManager connectionManager = ConnectionManager.getInstance(project);
-            List<ConnectionHandler> connectionHandlers = connectionManager.getConnectionHandlers();
+            List<ConnectionHandler> connectionHandlers = connectionManager.getConnections();
             for (ConnectionHandler connectionHandler : connectionHandlers) {
                 CACHE.put(connectionHandler.getConnectionId(), connectionHandler);
             }

@@ -77,8 +77,8 @@ public class DatabaseBrowserTreeSpeedSearch extends SpeedSearchBase<JTree> imple
         if (browserTreeNode.isTreeStructureLoaded()) {
             if (browserTreeNode instanceof ConnectionBundle) {
                 ConnectionBundle connectionBundle = (ConnectionBundle) browserTreeNode;
-                for (ConnectionHandler connectionHandler : connectionBundle.getConnections()){
-                    DBObjectBundle objectBundle = connectionHandler.getObjectBundle();
+                for (ConnectionHandler connection : connectionBundle.getConnections()){
+                    DBObjectBundle objectBundle = connection.getObjectBundle();
                     loadElements(nodes, objectBundle);
                 }
             }

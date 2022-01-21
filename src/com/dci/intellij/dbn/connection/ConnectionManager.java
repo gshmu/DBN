@@ -128,7 +128,7 @@ public class ConnectionManager extends AbstractProjectComponent implements Persi
     private final ConnectionSettingsListener connectionSettingsListener = new ConnectionSettingsListener() {
         @Override
         public void connectionChanged(ConnectionId connectionId) {
-            ConnectionHandler connectionHandler = getConnectionHandler(connectionId);
+            ConnectionHandler connectionHandler = getConnection(connectionId);
             if (connectionHandler != null) {
                 Project project = getProject();
                 Progress.background(
@@ -382,20 +382,15 @@ public class ConnectionManager extends AbstractProjectComponent implements Persi
      *                     Miscellaneous                     *
      *********************************************************/
     @Nullable
-    public ConnectionHandler getConnectionHandler(ConnectionId connectionId) {
-         for (ConnectionHandler connectionHandler : getConnectionBundle().getAllConnections()) {
-            if (connectionHandler.getConnectionId() == connectionId) {
-                return connectionHandler;
-            }
-         }
-         return null;
+    public ConnectionHandler getConnection(ConnectionId connectionId) {
+        return getConnectionBundle().getConnection(connectionId);
      }
 
-     public List<ConnectionHandler> getConnectionHandlers(Predicate<ConnectionHandler> predicate) {
-        return Lists.filtered(getConnectionHandlers(), predicate);
+     public List<ConnectionHandler> getConnections(Predicate<ConnectionHandler> predicate) {
+        return Lists.filtered(getConnections(), predicate);
      }
 
-     public List<ConnectionHandler> getConnectionHandlers() {
+     public List<ConnectionHandler> getConnections() {
          return getConnectionBundle().getConnections();
      }
 
@@ -414,7 +409,7 @@ public class ConnectionManager extends AbstractProjectComponent implements Persi
      }
 
     public boolean hasUncommittedChanges() {
-        for (ConnectionHandler connectionHandler : getConnectionHandlers()) {
+        for (ConnectionHandler connectionHandler : getConnections()) {
             if (connectionHandler.hasUncommittedChanges()) {
                 return true;
             }
@@ -425,7 +420,7 @@ public class ConnectionManager extends AbstractProjectComponent implements Persi
     private void commitAll(@Nullable Runnable callback) {
         DatabaseTransactionManager transactionManager = DatabaseTransactionManager.getInstance(getProject());
 
-        List<ConnectionHandler> connectionHandlers = getConnectionHandlers(
+        List<ConnectionHandler> connectionHandlers = getConnections(
                 connectionHandler -> connectionHandler.hasUncommittedChanges());
 
         for (ConnectionHandler connectionHandler : connectionHandlers) {
@@ -437,7 +432,7 @@ public class ConnectionManager extends AbstractProjectComponent implements Persi
     private void rollbackAll(@Nullable Runnable callback) {
         DatabaseTransactionManager transactionManager = DatabaseTransactionManager.getInstance(getProject());
 
-        List<ConnectionHandler> connectionHandlers = getConnectionHandlers(
+        List<ConnectionHandler> connectionHandlers = getConnections(
                 connectionHandler -> connectionHandler.hasUncommittedChanges());
 
         for (ConnectionHandler connectionHandler : connectionHandlers) {
@@ -447,14 +442,14 @@ public class ConnectionManager extends AbstractProjectComponent implements Persi
     }
 
     public boolean isValidConnectionId(ConnectionId connectionId) {
-        return getConnectionHandler(connectionId) != null;
+        return getConnection(connectionId) != null;
     }
 
     private class CloseIdleConnectionTask extends TimerTask {
         @Override
         public void run() {
             try {
-                List<ConnectionHandler> connectionHandlers = getConnectionHandlers();
+                List<ConnectionHandler> connectionHandlers = getConnections();
                 for (ConnectionHandler connectionHandler : connectionHandlers) {
                     resolveIdleStatus(connectionHandler);
                 }

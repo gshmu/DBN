@@ -97,7 +97,7 @@ public class StatementExecutionManager extends AbstractProjectComponent implemen
 
     public StatementExecutionQueue getExecutionQueue(ConnectionId connectionId, SessionId sessionId) {
         ConnectionManager connectionManager = ConnectionManager.getInstance(getProject());
-        ConnectionHandler connectionHandler = connectionManager.getConnectionHandler(connectionId);
+        ConnectionHandler connectionHandler = connectionManager.getConnection(connectionId);
         connectionHandler = Failsafe.nn(connectionHandler);
         return connectionHandler.getExecutionQueue(sessionId);
     }

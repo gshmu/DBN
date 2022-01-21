@@ -284,7 +284,7 @@ public class DatabaseFileManager extends AbstractProjectComponent implements Per
             for (ConnectionId connectionId : pendingOpenFiles.keySet()) {
 
                 List<DBObjectRef<DBSchemaObject>> objectRefs = pendingOpenFiles.get(connectionId);
-                ConnectionHandler connectionHandler = connectionManager.getConnectionHandler(connectionId);
+                ConnectionHandler connectionHandler = connectionManager.getConnection(connectionId);
                 if (connectionHandler != null) {
                     ConnectionDetailSettings connectionDetailSettings = connectionHandler.getSettings().getDetailSettings();
                     if (connectionDetailSettings.isRestoreWorkspace()) {
