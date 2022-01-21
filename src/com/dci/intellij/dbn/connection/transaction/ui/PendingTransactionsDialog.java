@@ -112,7 +112,7 @@ public class PendingTransactionsDialog extends DBNDialog<PendingTransactionsForm
             ConnectionManager connectionManager = ConnectionManager.getInstance(connectionHandler.getProject());
             if (!connectionManager.hasUncommittedChanges()) {
                 Dispatch.run(() -> {
-                    getCancelAction().putValue(Action.NAME, "Close");
+                    renameAction(getCancelAction(), "Close");
                     commitAllAction.setEnabled(false);
                     rollbackAllAction.setEnabled(false);
                 });

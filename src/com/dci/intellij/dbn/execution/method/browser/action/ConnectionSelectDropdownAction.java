@@ -13,11 +13,12 @@ import com.intellij.openapi.actionSystem.Presentation;
 import com.intellij.openapi.project.Project;
 import org.jetbrains.annotations.NotNull;
 
-import javax.swing.*;
+import javax.swing.Icon;
+import javax.swing.JComponent;
 
 public class ConnectionSelectDropdownAction extends DBNComboBoxAction {
-    private MethodExecutionBrowserForm browserComponent;
-    private boolean debug;
+    private final MethodExecutionBrowserForm browserComponent;
+    private final boolean debug;
 
     public ConnectionSelectDropdownAction(MethodExecutionBrowserForm browserComponent, boolean debug) {
         this.browserComponent = browserComponent;
@@ -36,9 +37,9 @@ public class ConnectionSelectDropdownAction extends DBNComboBoxAction {
             actionGroup.add(connectionAction);
         }*/
 
-        if (connectionBundle.getConnectionHandlers().size() > 0) {
+        if (connectionBundle.getConnections().size() > 0) {
             //actionGroup.addSeparator();
-            for (ConnectionHandler connectionHandler : connectionBundle.getConnectionHandlers()) {
+            for (ConnectionHandler connectionHandler : connectionBundle.getConnections()) {
                 if (!debug || DatabaseFeature.DEBUGGING.isSupported(connectionHandler)) {
                     ConnectionSelectAction connectionAction = new ConnectionSelectAction(browserComponent, connectionHandler);
                     actionGroup.add(connectionAction);

@@ -15,8 +15,8 @@ public class SQLConsoleOpenAction extends AbstractConnectionAction {
 
     @Override
     protected void actionPerformed(@NotNull AnActionEvent e, @NotNull Project project, @NotNull ConnectionHandler connectionHandler) {
-        FileEditorManager fileEditorManager = FileEditorManager.getInstance(project);
+        FileEditorManager editorManager = FileEditorManager.getInstance(project);
         DBConsole defaultConsole = connectionHandler.getConsoleBundle().getDefaultConsole();
-        fileEditorManager.openFile(defaultConsole.getVirtualFile(), true);
+        editorManager.openFile(defaultConsole.getVirtualFile(), true);
     }
 }

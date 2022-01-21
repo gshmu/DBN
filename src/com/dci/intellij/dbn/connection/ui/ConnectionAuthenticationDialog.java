@@ -23,7 +23,7 @@ public class ConnectionAuthenticationDialog extends DBNDialog<ConnectionAuthenti
         setResizable(false);
         this.connectionHandler = ConnectionHandlerRef.of(connectionHandler);
         Action okAction = getOKAction();
-        okAction.putValue(Action.NAME, "Connect");
+        renameAction(okAction, "Connect");
         okAction.setEnabled(false);
         if (connectionHandler != null) {
             setDoNotAskOption(new DoNotAskOption() {

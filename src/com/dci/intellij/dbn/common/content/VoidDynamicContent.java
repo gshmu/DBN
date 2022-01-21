@@ -18,39 +18,27 @@ import java.util.Collections;
 import java.util.List;
 
 public class VoidDynamicContent extends StatefulDisposable.Base implements DynamicContent{
-    private final List<?> elements = Collections.emptyList();
-
     public static final VoidDynamicContent INSTANCE = new VoidDynamicContent();
 
-    private VoidDynamicContent() {
+    private final List<?> elements = Collections.emptyList();
 
-    }
-
-    @Override
-    public void load() {
-
-    }
+    private VoidDynamicContent() {}
 
     @Override
-    public void ensure() {
-
-    }
+    public void load() {}
 
     @Override
-    public void loadInBackground() {
+    public void ensure() {}
 
-    }
+    @Override
+    public void loadInBackground() {}
 
 
     @Override
-    public void reload() {
-
-    }
+    public void reload() {}
 
     @Override
-    public void refresh() {
-
-    }
+    public void refresh() {}
 
     @Override
     public byte getSignature() {
@@ -98,9 +86,7 @@ public class VoidDynamicContent extends StatefulDisposable.Base implements Dynam
     }
 
     @Override
-    public void markDirty() {
-
-    }
+    public void markDirty() {}
 
     @Override
     public DynamicContentType getContentType() {
@@ -110,12 +96,6 @@ public class VoidDynamicContent extends StatefulDisposable.Base implements Dynam
     @NotNull
     @Override
     public Project getProject() {
-        throw new UnsupportedOperationException();
-    }
-
-    @NotNull
-    @Override
-    public ConnectionId getConnectionId() {
         throw new UnsupportedOperationException();
     }
 
@@ -164,7 +144,7 @@ public class VoidDynamicContent extends StatefulDisposable.Base implements Dynam
 
     @NotNull
     @Override
-    public DatabaseEntity getParentEntity() {
+    public <E extends DatabaseEntity> E getParentEntity() {
         throw new UnsupportedOperationException();
     }
 
@@ -185,9 +165,7 @@ public class VoidDynamicContent extends StatefulDisposable.Base implements Dynam
     }
 
     @Override
-    public void updateSignature() {
-
-    }
+    public void updateSignature() {}
 
     @NotNull
     @Override
@@ -206,7 +184,5 @@ public class VoidDynamicContent extends StatefulDisposable.Base implements Dynam
     }
 
     @Override
-    protected void disposeInner() {
-
-    }
+    protected void disposeInner() {}
 }

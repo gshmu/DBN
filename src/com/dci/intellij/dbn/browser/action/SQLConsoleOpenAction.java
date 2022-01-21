@@ -83,8 +83,8 @@ public class SQLConsoleOpenAction extends GroupPopupAction {
                 DatabaseConsoleManager databaseConsoleManager = DatabaseConsoleManager.getInstance(project);
                 databaseConsoleManager.showCreateConsoleDialog(connectionHandler, consoleType);
             } else {
-                FileEditorManager fileEditorManager = FileEditorManager.getInstance(project);
-                fileEditorManager.openFile(console.getVirtualFile(), true);
+                FileEditorManager editorManager = FileEditorManager.getInstance(project);
+                editorManager.openFile(console.getVirtualFile(), true);
             }
         }
     }

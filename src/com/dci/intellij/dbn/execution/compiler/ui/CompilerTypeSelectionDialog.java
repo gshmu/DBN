@@ -9,7 +9,8 @@ import com.intellij.openapi.project.Project;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import javax.swing.*;
+import javax.swing.AbstractAction;
+import javax.swing.Action;
 import java.awt.event.ActionEvent;
 
 public class CompilerTypeSelectionDialog extends DBNDialog<CompilerTypeSelectionForm> {
@@ -48,7 +49,7 @@ public class CompilerTypeSelectionDialog extends DBNDialog<CompilerTypeSelection
         private CompileKeep() {
             super("Keep current");
             //super("Keep current", Icons.OBEJCT_COMPILE_KEEP);
-            putValue(DEFAULT_ACTION, Boolean.TRUE);
+            makeDefaultAction(this);;
         }
 
         @Override

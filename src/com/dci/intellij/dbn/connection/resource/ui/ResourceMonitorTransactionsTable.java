@@ -74,8 +74,8 @@ public class ResourceMonitorTransactionsTable extends DBNTable<ResourceMonitorTr
                 PendingTransaction change = (PendingTransaction) getModel().getValueAt(selectedRow, 0);
                 VirtualFile virtualFile = change.getFile();
                 if (virtualFile != null) {
-                    FileEditorManager fileEditorManager = FileEditorManager.getInstance(getProject());
-                    fileEditorManager.openFile(virtualFile, true);
+                    FileEditorManager editorManager = FileEditorManager.getInstance(getProject());
+                    editorManager.openFile(virtualFile, true);
                 }
             }
 

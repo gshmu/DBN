@@ -8,7 +8,7 @@ import com.dci.intellij.dbn.object.DBConsole;
 import com.dci.intellij.dbn.vfs.DBConsoleType;
 import org.jetbrains.annotations.NotNull;
 
-import javax.swing.*;
+import javax.swing.Action;
 
 public class CreateRenameConsoleDialog extends DBNDialog<CreateRenameConsoleForm> {
     private ConnectionHandlerRef connectionHandlerRef;
@@ -19,7 +19,7 @@ public class CreateRenameConsoleDialog extends DBNDialog<CreateRenameConsoleForm
         super(connectionHandler.getProject(), "Create " + consoleType.getName(), true);
         connectionHandlerRef = connectionHandler.getRef();
         this.consoleType = consoleType;
-        getOKAction().putValue(Action.NAME, "Create");
+        renameAction(getOKAction(), "Create");
         init();
     }
 
@@ -27,7 +27,7 @@ public class CreateRenameConsoleDialog extends DBNDialog<CreateRenameConsoleForm
         super(connectionHandler.getProject(), "Rename " + console.getConsoleType().getName(), true);
         connectionHandlerRef = connectionHandler.getRef();
         this.console = console;
-        getOKAction().putValue(Action.NAME, "Rename");
+        renameAction(getOKAction(), "Rename");
         init();
     }
 

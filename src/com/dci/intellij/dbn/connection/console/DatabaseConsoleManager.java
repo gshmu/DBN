@@ -150,7 +150,7 @@ public class DatabaseConsoleManager extends AbstractProjectComponent implements 
         @Override
         public void sessionDeleted(DatabaseSession session) {
             ConnectionManager connectionManager = ConnectionManager.getInstance(getProject());
-            List<ConnectionHandler> connectionHandlers = connectionManager.getConnectionBundle().getAllConnectionHandlers();
+            List<ConnectionHandler> connectionHandlers = connectionManager.getConnectionBundle().getAllConnections();
             for (ConnectionHandler connectionHandler : connectionHandlers) {
                 List<DBConsole> consoles = connectionHandler.getConsoleBundle().getConsoles();
                 for (DBConsole console : consoles) {
@@ -172,7 +172,7 @@ public class DatabaseConsoleManager extends AbstractProjectComponent implements 
     public Element getState() {
         Element element = new Element("state");
         ConnectionManager connectionManager = ConnectionManager.getInstance(getProject());
-        List<ConnectionHandler> connectionHandlers = connectionManager.getConnectionBundle().getAllConnectionHandlers();
+        List<ConnectionHandler> connectionHandlers = connectionManager.getConnectionBundle().getAllConnections();
         for (ConnectionHandler connectionHandler : connectionHandlers) {
             Element connectionElement = new Element("connection");
             element.addContent(connectionElement);

@@ -5,12 +5,9 @@ import com.dci.intellij.dbn.editor.data.DatasetEditor;
 import com.dci.intellij.dbn.editor.data.DatasetLoadInstructions;
 import org.jetbrains.annotations.NotNull;
 
-import javax.swing.*;
+import javax.swing.Action;
 
-import static com.dci.intellij.dbn.editor.data.DatasetLoadInstruction.DELIBERATE_ACTION;
-import static com.dci.intellij.dbn.editor.data.DatasetLoadInstruction.PRESERVE_CHANGES;
-import static com.dci.intellij.dbn.editor.data.DatasetLoadInstruction.REBUILD;
-import static com.dci.intellij.dbn.editor.data.DatasetLoadInstruction.USE_CURRENT_FILTER;
+import static com.dci.intellij.dbn.editor.data.DatasetLoadInstruction.*;
 
 public class DatasetColumnSetupDialog extends DBNDialog<DatasetColumnSetupForm> {
     private static final DatasetLoadInstructions LOAD_INSTRUCTIONS = new DatasetLoadInstructions(USE_CURRENT_FILTER, PRESERVE_CHANGES, DELIBERATE_ACTION, REBUILD);
@@ -21,7 +18,7 @@ public class DatasetColumnSetupDialog extends DBNDialog<DatasetColumnSetupForm> 
         this.datasetEditor = datasetEditor;
         setModal(true);
         setResizable(true);
-        getCancelAction().putValue(Action.NAME, "Cancel");
+        renameAction(getCancelAction(), "Cancel");
         init();
     }
 

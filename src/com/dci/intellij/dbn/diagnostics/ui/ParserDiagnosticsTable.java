@@ -55,6 +55,9 @@ public class ParserDiagnosticsTable extends DBNTable<ParserDiagnosticsTableModel
             if (columnValue instanceof StateTransition) {
                 StateTransition stateTransition = (StateTransition) columnValue;
                 textAttributes = stateTransition.getCategory().getTextAttributes();
+            } else if (columnValue instanceof VirtualFile) {
+                VirtualFile virtualFile = (VirtualFile) columnValue;
+                setIcon(virtualFile.getFileType().getIcon());
             }
 
             String presentableValue = model.getPresentableValue(entry, column);
@@ -71,10 +74,10 @@ public class ParserDiagnosticsTable extends DBNTable<ParserDiagnosticsTableModel
                 if (selectedRow > -1) {
                     ParserDiagnosticsEntry entry = (ParserDiagnosticsEntry) getValueAt(selectedRow, 0);
                     if (entry != null) {
-                        FileEditorManager fileEditorManager = FileEditorManager.getInstance(getProject());
                         VirtualFile virtualFile = entry.getFile();
                         if (virtualFile != null) {
-                            fileEditorManager.openFile(virtualFile, true);
+                            FileEditorManager editorManager = FileEditorManager.getInstance(getProject());
+                            editorManager.openFile(virtualFile, true);
                         }
                     }
                 }

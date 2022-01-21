@@ -6,7 +6,7 @@ import com.dci.intellij.dbn.object.lookup.DBObjectRef;
 import com.intellij.openapi.project.Project;
 import org.jetbrains.annotations.NotNull;
 
-import javax.swing.*;
+import javax.swing.Action;
 
 public class ObjectDependencyTreeDialog extends DBNDialog<ObjectDependencyTreeForm> {
     private DBObjectRef<DBSchemaObject> objectRef;
@@ -15,7 +15,7 @@ public class ObjectDependencyTreeDialog extends DBNDialog<ObjectDependencyTreeFo
         this.objectRef = DBObjectRef.of(object);
         setModal(false);
         setResizable(true);
-        getCancelAction().putValue(Action.NAME, "Close");
+        renameAction(getCancelAction(), "Close");
         init();
     }
 

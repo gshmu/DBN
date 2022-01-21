@@ -24,9 +24,9 @@ public class ConnectionSelectActionGroup extends DefaultActionGroup {
             add(connectionAction);
         }
 
-        if (connectionBundle.getConnectionHandlers().size() > 0) {
+        if (connectionBundle.getConnections().size() > 0) {
             addSeparator();
-            for (ConnectionHandler connectionHandler : connectionBundle.getConnectionHandlers()) {
+            for (ConnectionHandler connectionHandler : connectionBundle.getConnections()) {
                 ConnectionSelectAction connectionAction = new ConnectionSelectAction(connectionHandler);
                 add(connectionAction);
             }

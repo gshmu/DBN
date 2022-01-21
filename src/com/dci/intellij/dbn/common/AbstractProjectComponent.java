@@ -4,7 +4,7 @@ import com.dci.intellij.dbn.common.component.LegacyComponent;
 import com.dci.intellij.dbn.common.dispose.StatefulDisposable;
 import com.dci.intellij.dbn.common.notification.NotificationSupport;
 import com.dci.intellij.dbn.common.project.ProjectRef;
-import com.dci.intellij.dbn.common.project.ProjectUtil;
+import com.dci.intellij.dbn.common.project.Projects;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.components.ProjectComponent;
 import com.intellij.openapi.project.Project;
@@ -73,7 +73,7 @@ public abstract class AbstractProjectComponent extends StatefulDisposable.Base i
         if (exitApp) {
             ApplicationManager.getApplication().exit();
         } else {
-            ProjectUtil.closeProject(getProject());
+            Projects.closeProject(getProject());
         }
     }
 

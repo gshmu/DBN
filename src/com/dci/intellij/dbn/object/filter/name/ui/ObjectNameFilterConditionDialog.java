@@ -27,10 +27,11 @@ public class ObjectNameFilterConditionDialog extends DBNDialog<ObjectNameFilterC
         this.operation = operation;
         setModal(true);
         setResizable(false);
+        Action okAction = getOKAction();
         switch (operation) {
-            case CREATE: getOKAction().putValue(Action.NAME, "Add"); break;
-            case EDIT: getOKAction().putValue(Action.NAME, "Update"); break;
-            case JOIN: getOKAction().putValue(Action.NAME, "Add"); break;
+            case CREATE: renameAction(okAction, "Add"); break;
+            case EDIT: renameAction(okAction, "Update"); break;
+            case JOIN: renameAction(okAction, "Add"); break;
         }
 
         init();

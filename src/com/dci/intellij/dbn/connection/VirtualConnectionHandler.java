@@ -27,6 +27,7 @@ import com.dci.intellij.dbn.vfs.file.DBSessionBrowserVirtualFile;
 import com.intellij.lang.Language;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiDirectory;
+import lombok.Getter;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -37,6 +38,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+@Getter
 public class VirtualConnectionHandler extends StatefulDisposable.Base implements ConnectionHandler {
     private final ConnectionId id;
     private final String name;
@@ -57,7 +59,7 @@ public class VirtualConnectionHandler extends StatefulDisposable.Base implements
         return new ConnectionSettings(connectionBundleSettings);
     });
 
-    public VirtualConnectionHandler(ConnectionId id, String name, DatabaseType databaseType, double databaseVersion, @NotNull Project project){
+    public VirtualConnectionHandler(ConnectionId id, String name, DatabaseType databaseType, double databaseVersion, @NotNull Project project) {
         this.id = id;
         this.name = name;
         this.projectRef = ProjectRef.of(project);
@@ -72,19 +74,6 @@ public class VirtualConnectionHandler extends StatefulDisposable.Base implements
         ConnectionManager connectionManager = ConnectionManager.getInstance(project);
         return connectionManager.getConnectionBundle().getVirtualConnection(ConnectionId.VIRTUAL_ORACLE_CONNECTION);
 
-    }
-
-    @Override
-    public ConnectionInstructions getInstructions() {
-        return instructions;
-    }
-
-    @Override
-    public DatabaseType getDatabaseType() {return databaseType;}
-
-    @Override
-    public double getDatabaseVersion() {
-        return databaseVersion;
     }
 
     @Override
@@ -116,36 +105,70 @@ public class VirtualConnectionHandler extends StatefulDisposable.Base implements
 
     @Override
     @NotNull
-    public Project getProject() {return projectRef.ensure();}
+    public Project getProject() {
+        return projectRef.ensure();
+    }
 
     @Override
     public boolean isEnabled() {
         return true;
     }
 
-    @Override public ConnectionId getConnectionId() {return id;}
+    @Override
+    public ConnectionId getConnectionId() {
+        return id;
+    }
 
-    @NotNull
-    @Override public String getName() {return name;}
-    @Override public String getPresentableText() {
+    @Override
+    public String getPresentableText() {
         return name;
     }
-    @Override public String getQualifiedName() {
+
+    @Override
+    public String getQualifiedName() {
         return name;
     }
-    @Override public String getDescription() {return "Virtual database connection"; }
-    @Override public Icon getIcon() { return Icons.CONNECTION_VIRTUAL; }
-    @Override public boolean isVirtual() {return true;}
-    @Override public boolean isAutoCommit() {return false;}
 
-    @Override public boolean isLoggingEnabled() {return false;}
-    @Override public void setAutoCommit(boolean autoCommit) {}
-    @Override public void setLoggingEnabled(boolean loggingEnabled) {}
+    @Override
+    public String getDescription() {
+        return "Virtual database connection";
+    }
 
-    @Override public boolean isConnected() {return false;}
-    @Override public boolean isConnected(SessionId sessionId) {return false;}
+    @Override
+    public Icon getIcon() {
+        return Icons.CONNECTION_VIRTUAL;
+    }
 
-    public Map<String, String> getProperties() {return properties;}
+    @Override
+    public boolean isVirtual() {
+        return true;
+    }
+
+    @Override
+    public boolean isAutoCommit() {
+        return false;
+    }
+
+    @Override
+    public boolean isLoggingEnabled() {
+        return false;
+    }
+
+    @Override
+    public void setAutoCommit(boolean autoCommit) {}
+
+    @Override
+    public void setLoggingEnabled(boolean loggingEnabled) {}
+
+    @Override
+    public boolean isConnected() {
+        return false;
+    }
+
+    @Override
+    public boolean isConnected(SessionId sessionId) {
+        return false;
+    }
 
     @Override
     public DatabaseInterfaceProvider getInterfaceProvider() {
@@ -166,21 +189,37 @@ public class VirtualConnectionHandler extends StatefulDisposable.Base implements
         return this;
     }
 
-    @Override public String getUserName() {return "root";}
-
-    @Override public DBNConnection getTestConnection() {return null;}
-
-    @NotNull
-    @Override public DBNConnection getPoolConnection(boolean readonly) {throw new UnsupportedOperationException();}
-
-    @NotNull
-    @Override public DBNConnection getPoolConnection(@Nullable SchemaId schemaId, boolean readonly) {throw new UnsupportedOperationException();}
+    @Override
+    public String getUserName() {
+        return "root";
+    }
 
     @Override
-    public void setCurrentSchema(DBNConnection connection, @Nullable SchemaId schema) {}
+    public DBNConnection getTestConnection() {
+        return null;
+    }
 
     @NotNull
-    @Override public DBNConnection getMainConnection() {throw new UnsupportedOperationException();}
+    @Override
+    public DBNConnection getPoolConnection(boolean readonly) {
+        throw new UnsupportedOperationException();
+    }
+
+    @NotNull
+    @Override
+    public DBNConnection getPoolConnection(@Nullable SchemaId schemaId, boolean readonly) {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public void setCurrentSchema(DBNConnection connection, @Nullable SchemaId schema) {
+    }
+
+    @NotNull
+    @Override
+    public DBNConnection getMainConnection() {
+        throw new UnsupportedOperationException();
+    }
 
     @NotNull
     @Override
@@ -196,18 +235,31 @@ public class VirtualConnectionHandler extends StatefulDisposable.Base implements
 
     @NotNull
     @Override
-    public DBNConnection getConnection(SessionId sessionId, @Nullable SchemaId schemaId) {throw new UnsupportedOperationException();}
+    public DBNConnection getConnection(SessionId sessionId, @Nullable SchemaId schemaId) {
+        throw new UnsupportedOperationException();
+    }
 
     @NotNull
-    @Override public DBNConnection getMainConnection(@Nullable SchemaId schemaId) {throw new UnsupportedOperationException();}
+    @Override
+    public DBNConnection getMainConnection(@Nullable SchemaId schemaId) {
+        throw new UnsupportedOperationException();
+    }
 
-    @Override public void closeConnection(DBNConnection connection) {}
-    @Override public void freePoolConnection(DBNConnection connection) {}
+    @Override
+    public void closeConnection(DBNConnection connection) {}
+
+    @Override
+    public void freePoolConnection(DBNConnection connection) {}
 
     @NotNull
-    @Override public ConnectionSettings getSettings() {return connectionSettings.get();}
+    @Override
+    public ConnectionSettings getSettings() {
+        return connectionSettings.get();
+    }
 
-    @Override public void setSettings(ConnectionSettings connectionSettings) {}
+    @Override
+    public void setSettings(ConnectionSettings connectionSettings) {
+    }
 
     @NotNull
     @Override
@@ -215,13 +267,15 @@ public class VirtualConnectionHandler extends StatefulDisposable.Base implements
         return Collections.emptyList();
     }
 
-    @NotNull
-    @Override public ConnectionHandlerStatusHolder getConnectionStatus() {return connectionStatus;}
-
-    @Override public void setTemporaryAuthenticationInfo(AuthenticationInfo temporaryAuthenticationInfo) {}
+    @Override
+    public void setTemporaryAuthenticationInfo(AuthenticationInfo temporaryAuthenticationInfo) {
+    }
 
     @Nullable
-    @Override public ConnectionInfo getConnectionInfo() { return null;}
+    @Override
+    public ConnectionInfo getConnectionInfo() {
+        return null;
+    }
 
     @NotNull
     @Override
@@ -229,12 +283,19 @@ public class VirtualConnectionHandler extends StatefulDisposable.Base implements
         return getName();
     }
 
-    @Override public void setConnectionInfo(ConnectionInfo connectionInfo) {}
-    @Override public boolean canConnect() {
+    @Override
+    public void setConnectionInfo(ConnectionInfo connectionInfo) {
+    }
+
+    @Override
+    public boolean canConnect() {
         return false;
     }
 
-    @Override public boolean hasPendingTransactions(@NotNull DBNConnection connection) {return false;}
+    @Override
+    public boolean hasPendingTransactions(@NotNull DBNConnection connection) {
+        return false;
+    }
 
     @NotNull
     @Override
@@ -248,7 +309,9 @@ public class VirtualConnectionHandler extends StatefulDisposable.Base implements
     }
 
     @Override
-    public boolean isDatabaseInitialized() {return true;}
+    public boolean isDatabaseInitialized() {
+        return true;
+    }
 
     @Override
     @NotNull
@@ -263,10 +326,9 @@ public class VirtualConnectionHandler extends StatefulDisposable.Base implements
     }
 
     @Override
-    @NotNull
-    public DBObjectBundle getObjectBundle() {return objectBundle;}
-    @Override
-    public SchemaId getUserSchema() {return null;}
+    public SchemaId getUserSchema() {
+        return null;
+    }
 
     @Override
     public SchemaId getDefaultSchema() {
@@ -316,14 +378,12 @@ public class VirtualConnectionHandler extends StatefulDisposable.Base implements
     }
 
     @Override
-    public boolean isValid() {return true;}
-    @Override
-    public void disconnect() {}
+    public boolean isValid() {
+        return true;
+    }
 
     @Override
-    public ConnectionHandlerRef getRef() {
-        return ref;
-    }
+    public void disconnect() {}
 
     @Override
     public DatabaseInfo getDatabaseInfo() {
@@ -336,17 +396,14 @@ public class VirtualConnectionHandler extends StatefulDisposable.Base implements
     }
 
     @Override
-    public boolean hasUncommittedChanges() {return false;}
+    public boolean hasUncommittedChanges() {
+        return false;
+    }
 
     @NotNull
     @Override
     public StatementExecutionQueue getExecutionQueue(SessionId sessionId) {
         throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public DatabaseCompatibility getCompatibility() {
-        return compatibility;
     }
 
     @Override

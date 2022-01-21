@@ -8,7 +8,9 @@ import com.dci.intellij.dbn.connection.jdbc.DBNConnection;
 import com.dci.intellij.dbn.execution.statement.processor.StatementExecutionProcessor;
 import org.jetbrains.annotations.NotNull;
 
-import javax.swing.*;
+import javax.swing.AbstractAction;
+import javax.swing.Action;
+import javax.swing.JComponent;
 import java.awt.event.ActionEvent;
 
 import static com.dci.intellij.dbn.execution.ExecutionStatus.PROMPTED;
@@ -60,7 +62,7 @@ public class PendingTransactionDialog extends DialogWithTimeout {
     private class CommitAction extends AbstractAction {
         CommitAction() {
             super("Commit", Icons.CONNECTION_COMMIT);
-            putValue(DEFAULT_ACTION, Boolean.TRUE);
+            makeDefaultAction(this);
         }
 
         @Override

@@ -301,6 +301,7 @@
             <action class="com.dci.intellij.dbn.menu.action.MethodExecutionHistoryAction" text="Method Execution History" id="DBNavigator.Actions.MainMenu.MethodExecutionHistory">
                 <keyboard-shortcut keymap="$default" first-keystroke="ctrl shift M"/>
             </action>
+            <action class="com.dci.intellij.dbn.menu.action.FileConnectionMappingsOpenAction" text="File Connection Mappings" id="DBNavigator.Actions.MainMenu.FileConnectionMappings"/>
             <action class="com.dci.intellij.dbn.menu.action.ResourceMonitorOpenAction" text="Resource Monitor" id="DBNavigator.Actions.MainMenu.ResourceMonitor"/>
             <action class="com.dci.intellij.dbn.menu.action.PendingTransactionsOpenAction" text="Open Transactions" id="DBNavigator.Actions.MainMenu.PendingTransactions"/>
             <separator/>
