@@ -8,7 +8,6 @@ import com.dci.intellij.dbn.common.project.ProjectRef;
 import com.dci.intellij.dbn.common.util.Safe;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.ConnectionHandlerRef;
-import com.dci.intellij.dbn.connection.VirtualConnectionHandler;
 import com.dci.intellij.dbn.navigation.options.ObjectsLookupSettings;
 import com.dci.intellij.dbn.object.DBSchema;
 import com.dci.intellij.dbn.object.common.DBObject;
@@ -51,7 +50,7 @@ public class DBObjectLookupModel extends StatefulDisposable.Base implements Choo
     @Override
     public String getPromptText() {
         ConnectionHandler selectedConnection = getSelectedConnection();
-        String connectionIdentifier = selectedConnection == null || selectedConnection instanceof VirtualConnectionHandler ?
+        String connectionIdentifier = selectedConnection == null || selectedConnection.isVirtual() ?
                 "All Connections" :
                 selectedConnection.getName();
         return "Enter database object name (" + connectionIdentifier + (selectedSchema == null ? "" : " / " + selectedSchema.getObjectName()) + ")";
