@@ -81,7 +81,7 @@ public class ConnectionBundle extends BrowserTreeNodeBase implements BrowserTree
     public ConnectionHandler getVirtualConnection(ConnectionId id) {
         ConnectionHandler connection = getConnection(id);
         // TODO clear assertion
-        assert connection == null || connection instanceof VirtualConnectionHandler;
+        assert connection == null || connection.isVirtual();
         return connection;
     }
 
