@@ -6,7 +6,6 @@ import com.dci.intellij.dbn.common.routine.AsyncTaskExecutor;
 import com.dci.intellij.dbn.common.thread.ThreadPool;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.ConnectionManager;
-import com.dci.intellij.dbn.connection.VirtualConnectionHandler;
 import com.dci.intellij.dbn.object.DBSchema;
 import com.dci.intellij.dbn.object.common.DBObject;
 import com.dci.intellij.dbn.object.common.list.DBObjectList;
@@ -69,7 +68,7 @@ class DBObjectLookupScanner extends StatefulDisposable.Base implements DBObjectL
         ConnectionHandler selectedConnection = model.getSelectedConnection();
         DBSchema selectedSchema = model.getSelectedSchema();
 
-        if (selectedConnection == null || selectedConnection instanceof VirtualConnectionHandler) {
+        if (selectedConnection == null || selectedConnection.isVirtual()) {
             ConnectionManager connectionManager = ConnectionManager.getInstance(model.getProject());
             List<ConnectionHandler> connectionHandlers = connectionManager.getConnections();
             for (ConnectionHandler connectionHandler : connectionHandlers) {

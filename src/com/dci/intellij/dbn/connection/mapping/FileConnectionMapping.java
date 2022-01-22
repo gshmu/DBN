@@ -60,7 +60,7 @@ public class FileConnectionMapping implements PersistentStateElement {
     @Nullable
     public DatabaseSession getSession() {
         ConnectionHandler connection = getConnection();
-        if (connection != null) {
+        if (connection != null && !connection.isVirtual()) {
             return connection.getSessionBundle().getSession(sessionId);
         }
         return null;
