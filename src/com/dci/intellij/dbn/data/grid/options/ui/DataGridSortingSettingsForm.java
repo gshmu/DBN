@@ -13,7 +13,6 @@ import javax.swing.JPanel;
 import javax.swing.JTextField;
 
 import static com.dci.intellij.dbn.common.ui.ComboBoxUtil.*;
-import static com.dci.intellij.dbn.common.ui.GUIUtil.updateBorderTitleForeground;
 
 public class DataGridSortingSettingsForm extends ConfigurationEditorForm<DataGridSortingSettings> {
     private JPanel mainPanel;
@@ -23,8 +22,6 @@ public class DataGridSortingSettingsForm extends ConfigurationEditorForm<DataGri
 
     public DataGridSortingSettingsForm(DataGridSortingSettings settings) {
         super(settings);
-        updateBorderTitleForeground(mainPanel);
-
         initComboBox(nullsPositionComboBox, NullSortingOption.values());
 
         resetFormChanges();

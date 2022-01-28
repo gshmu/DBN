@@ -5,10 +5,8 @@ import com.dci.intellij.dbn.code.sql.style.options.SQLCodeStyleSettings;
 import com.dci.intellij.dbn.common.options.ui.CompositeConfigurationEditorForm;
 import org.jetbrains.annotations.NotNull;
 
-import javax.swing.*;
-import java.awt.*;
-
-import static com.dci.intellij.dbn.common.ui.GUIUtil.updateBorderTitleForeground;
+import javax.swing.JPanel;
+import java.awt.BorderLayout;
 
 public class SQLCodeStyleSettingsEditorForm extends CompositeConfigurationEditorForm<CodeStyleCustomSettings> {
     private JPanel mainPanel;
@@ -20,7 +18,6 @@ public class SQLCodeStyleSettingsEditorForm extends CompositeConfigurationEditor
         super(settings);
         casePanel.add(settings.getCaseSettings().createComponent(), BorderLayout.CENTER);
         attributesPanel.add(settings.getFormattingSettings().createComponent(), BorderLayout.CENTER);
-        updateBorderTitleForeground(previewPanel);
     }
 
     @NotNull

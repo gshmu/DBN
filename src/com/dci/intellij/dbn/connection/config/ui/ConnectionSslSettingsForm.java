@@ -7,10 +7,9 @@ import com.intellij.openapi.options.ConfigurationException;
 import com.intellij.openapi.ui.TextFieldWithBrowseButton;
 import org.jetbrains.annotations.NotNull;
 
-import javax.swing.*;
+import javax.swing.JCheckBox;
+import javax.swing.JPanel;
 import java.awt.event.ActionListener;
-
-import static com.dci.intellij.dbn.common.ui.GUIUtil.updateBorderTitleForeground;
 
 public class ConnectionSslSettingsForm extends ConfigurationEditorForm<ConnectionSslSettings> {
     private JPanel mainPanel;
@@ -23,7 +22,6 @@ public class ConnectionSslSettingsForm extends ConfigurationEditorForm<Connectio
     public ConnectionSslSettingsForm(final ConnectionSslSettings configuration) {
         super(configuration);
 
-        updateBorderTitleForeground(sshGroupPanel);
         resetFormChanges();
 
         enableDisableFields();

@@ -6,7 +6,7 @@
       <xy x="20" y="20" width="337" height="146"/>
     </constraints>
     <properties/>
-    <border type="etched" title="Confirmations"/>
+    <border type="none" title="Confirmations"/>
     <children>
       <vspacer id="1c48a">
         <constraints>

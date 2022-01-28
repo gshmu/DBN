@@ -11,7 +11,6 @@ import javax.swing.JScrollPane;
 import javax.swing.JTextField;
 
 import static com.dci.intellij.dbn.common.options.ui.ConfigurationEditorUtil.validateIntegerValue;
-import static com.dci.intellij.dbn.common.ui.GUIUtil.updateBorderTitleForeground;
 
 public class DataEditorQualifiedEditorSettingsForm extends ConfigurationEditorForm<DataEditorQualifiedEditorSettings> {
     private JPanel mainPanel;
@@ -23,7 +22,6 @@ public class DataEditorQualifiedEditorSettingsForm extends ConfigurationEditorFo
         super(settings);
         checkBoxList = new CheckBoxList(settings.getContentTypes());
         listScrollPane.setViewportView(checkBoxList);
-        updateBorderTitleForeground(mainPanel);
         resetFormChanges();
 
         registerComponent(mainPanel);

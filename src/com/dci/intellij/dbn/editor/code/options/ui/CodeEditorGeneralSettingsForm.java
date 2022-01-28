@@ -9,9 +9,8 @@ import com.intellij.openapi.options.ConfigurationException;
 import com.intellij.openapi.project.Project;
 import org.jetbrains.annotations.NotNull;
 
-import javax.swing.*;
-
-import static com.dci.intellij.dbn.common.ui.GUIUtil.updateBorderTitleForeground;
+import javax.swing.JCheckBox;
+import javax.swing.JPanel;
 
 public class CodeEditorGeneralSettingsForm extends ConfigurationEditorForm<CodeEditorGeneralSettings> {
     private JCheckBox showObjectNavigationGutterCheckBox;
@@ -22,7 +21,6 @@ public class CodeEditorGeneralSettingsForm extends ConfigurationEditorForm<CodeE
 
     public CodeEditorGeneralSettingsForm(CodeEditorGeneralSettings settings) {
         super(settings);
-        updateBorderTitleForeground(mainPanel);
         resetFormChanges();
         registerComponent(mainPanel);
     }

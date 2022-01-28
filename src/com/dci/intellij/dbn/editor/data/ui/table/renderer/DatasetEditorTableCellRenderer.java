@@ -66,10 +66,10 @@ public class DatasetEditorTableCellRenderer extends BasicTableCellRenderer {
             Color foreground = Commons.nvl(textAttributes.getFgColor(), table.getForeground());
 
 
-            Border border = Borders.getLineBorder(background);
+            Border border = Borders.lineBorder(background);
 
             if (cell.hasError() && isConnected) {
-                border = Borders.getLineBorder(SimpleTextAttributes.ERROR_ATTRIBUTES.getFgColor());
+                border = Borders.lineBorder(SimpleTextAttributes.ERROR_ATTRIBUTES.getFgColor());
                 SimpleTextAttributes errorData = attributes.getErrorData();
                 background = errorData.getBgColor();
                 foreground = errorData.getFgColor();

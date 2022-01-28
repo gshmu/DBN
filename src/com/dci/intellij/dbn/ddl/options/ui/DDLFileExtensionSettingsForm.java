@@ -21,8 +21,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicBoolean;
 
-import static com.dci.intellij.dbn.common.ui.GUIUtil.updateBorderTitleForeground;
-
 public class DDLFileExtensionSettingsForm extends ConfigurationEditorForm<DDLFileExtensionSettings> {
     private JPanel mainPanel;
     private JLabel viewIconLabel;
@@ -46,7 +44,6 @@ public class DDLFileExtensionSettingsForm extends ConfigurationEditorForm<DDLFil
 
     public DDLFileExtensionSettingsForm(DDLFileExtensionSettings settings) {
         super(settings);
-        updateBorderTitleForeground(mainPanel);
         resetFormChanges();
         viewIconLabel.setText(null);
         triggerIconLabel.setText(null);

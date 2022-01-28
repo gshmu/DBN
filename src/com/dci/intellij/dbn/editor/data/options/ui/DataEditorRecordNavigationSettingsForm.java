@@ -6,12 +6,10 @@ import com.dci.intellij.dbn.editor.data.options.DataEditorRecordNavigationSettin
 import com.intellij.openapi.options.ConfigurationException;
 import org.jetbrains.annotations.NotNull;
 
-import javax.swing.*;
+import javax.swing.JComboBox;
+import javax.swing.JPanel;
 
-import static com.dci.intellij.dbn.common.ui.ComboBoxUtil.getSelection;
-import static com.dci.intellij.dbn.common.ui.ComboBoxUtil.initComboBox;
-import static com.dci.intellij.dbn.common.ui.ComboBoxUtil.setSelection;
-import static com.dci.intellij.dbn.common.ui.GUIUtil.updateBorderTitleForeground;
+import static com.dci.intellij.dbn.common.ui.ComboBoxUtil.*;
 
 public class DataEditorRecordNavigationSettingsForm extends ConfigurationEditorForm<DataEditorRecordNavigationSettings> {
     private JPanel mainPanel;
@@ -20,7 +18,6 @@ public class DataEditorRecordNavigationSettingsForm extends ConfigurationEditorF
 
     public DataEditorRecordNavigationSettingsForm(DataEditorRecordNavigationSettings configuration) {
         super(configuration);
-        updateBorderTitleForeground(mainPanel);
         initComboBox(navigationTargetComboBox,
                 RecordNavigationTarget.EDITOR,
                 RecordNavigationTarget.VIEWER,

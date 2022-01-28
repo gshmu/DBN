@@ -24,8 +24,6 @@ import java.awt.BorderLayout;
 import java.awt.event.ActionListener;
 import java.util.List;
 
-import static com.dci.intellij.dbn.common.ui.GUIUtil.updateBorderTitleForeground;
-
 public class CodeCompletionSortingSettingsForm extends ConfigurationEditorForm<CodeCompletionSortingSettings> {
     private JPanel mainPanel;
     private JList sortingItemsList;
@@ -44,7 +42,6 @@ public class CodeCompletionSortingSettingsForm extends ConfigurationEditorForm<C
                 new MoveDownAction(sortingItemsList, settings));
         actionPanel.add(actionToolbar.getComponent(), BorderLayout.WEST);
         registerComponent(mainPanel);
-        updateBorderTitleForeground(mainPanel);
     }
 
 

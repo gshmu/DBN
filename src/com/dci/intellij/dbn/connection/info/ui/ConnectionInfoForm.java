@@ -26,8 +26,6 @@ import java.awt.FontMetrics;
 import java.sql.Connection;
 import java.sql.SQLException;
 
-import static com.dci.intellij.dbn.common.ui.GUIUtil.updateBorderTitleForeground;
-
 public class ConnectionInfoForm extends DBNFormImpl{
     private JPanel mainPanel;
     private JPanel headerPanel;
@@ -118,8 +116,6 @@ public class ConnectionInfoForm extends DBNFormImpl{
             statusMessageLabel.setText(e.getMessage());
             statusMessageLabel.setIcon(Icons.EXEC_MESSAGES_ERROR);
         }
-
-        updateBorderTitleForeground(detailsPanel);
     }
 
     private void initInfoPanel(ConnectionInfo connectionInfo) {
@@ -157,7 +153,6 @@ public class ConnectionInfoForm extends DBNFormImpl{
         initValueField(setupDatabaseLabel, setupDatabaseTextField, databaseInfo.getDatabase(), !isFileUrlType);
         initValueField(setupUrlLabel, setupUrlTextField, databaseSettings.getConnectionUrl(), true);
         initValueField(setupFileLabel, setupFileTextField, databaseInfo.getMainFile(), isFileUrlType);
-        updateBorderTitleForeground(setupPanel);
     }
 
     private void initValueField(JLabel label, JTextField textField, String value) {

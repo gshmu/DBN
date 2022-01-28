@@ -6,12 +6,11 @@ import com.dci.intellij.dbn.editor.code.options.CodeEditorConfirmationSettings;
 import com.intellij.openapi.options.ConfigurationException;
 import org.jetbrains.annotations.NotNull;
 
-import javax.swing.*;
+import javax.swing.JCheckBox;
+import javax.swing.JComboBox;
+import javax.swing.JPanel;
 
-import static com.dci.intellij.dbn.common.ui.ComboBoxUtil.getSelection;
-import static com.dci.intellij.dbn.common.ui.ComboBoxUtil.initComboBox;
-import static com.dci.intellij.dbn.common.ui.ComboBoxUtil.setSelection;
-import static com.dci.intellij.dbn.common.ui.GUIUtil.updateBorderTitleForeground;
+import static com.dci.intellij.dbn.common.ui.ComboBoxUtil.*;
 
 public class CodeEditorConfirmationSettingsForm extends ConfigurationEditorForm<CodeEditorConfirmationSettings> {
     private JPanel mainPanel;
@@ -27,7 +26,6 @@ public class CodeEditorConfirmationSettingsForm extends ConfigurationEditorForm<
                 CodeEditorChangesOption.SAVE,
                 CodeEditorChangesOption.DISCARD);
 
-        updateBorderTitleForeground(mainPanel);
         resetFormChanges();
         registerComponent(mainPanel);
     }

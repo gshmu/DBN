@@ -10,8 +10,6 @@ import javax.swing.JCheckBox;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 
-import static com.dci.intellij.dbn.common.ui.GUIUtil.updateBorderTitleForeground;
-
 public class StatementExecutionSettingsForm extends ConfigurationEditorForm<StatementExecutionSettings> {
     private JPanel mainPanel;
     private JTextField fetchBlockSizeTextField;
@@ -22,7 +20,6 @@ public class StatementExecutionSettingsForm extends ConfigurationEditorForm<Stat
 
     public StatementExecutionSettingsForm(StatementExecutionSettings settings) {
         super(settings);
-        updateBorderTitleForeground(mainPanel);
         resetFormChanges();
         registerComponent(mainPanel);
     }

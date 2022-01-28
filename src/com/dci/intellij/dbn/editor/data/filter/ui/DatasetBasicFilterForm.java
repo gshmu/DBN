@@ -91,7 +91,6 @@ public class DatasetBasicFilterForm extends ConfigurationEditorForm<DatasetBasic
 
         nameTextField.addKeyListener(createKeyListener());
         registerComponent(mainPanel);
-        GUIUtil.updateBorderTitleForeground(mainPanel);
 
         if (filter.getError() == null) {
             errorLabel.setText("");
