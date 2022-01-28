@@ -65,6 +65,7 @@ public class Icons {
     public static final Icon ACTION_SAVE_CHANGES = load("/img/action/Save.png");
     public static final Icon ACTION_SELECT_ALL = load("/img/action/SelectAll.png");
     public static final Icon ACTION_OPTIONS = load("/img/action/Options.png");
+    public static final Icon ACTION_OPTIONS_MENU = load("/img/action/OptionsMenu.png");
     public static final Icon ACTION_NAVIGATE = load("/img/action/Navigate.png");
     public static final Icon ACTION_DISCONNECT_SESSION = load("/img/action/DisconnectSession.png");
     public static final Icon ACTION_KILL_SESSION = load("/img/action/KillSession.png");

@@ -167,7 +167,7 @@ public class MethodExecutionHistoryForm extends DBNFormImpl {
         @Override
         protected void update(@NotNull AnActionEvent e, @NotNull Project project) {
             Presentation presentation = e.getPresentation();
-            presentation.setIcon(Icons.ACTION_SETTINGS);
+            presentation.setIcon(Icons.ACTION_OPTIONS);
             presentation.setText("Settings");
         }
     }
