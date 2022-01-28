@@ -1,7 +1,6 @@
 package com.dci.intellij.dbn.common.ui;
 
-import javax.swing.*;
-import java.awt.*;
+import javax.swing.JComponent;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 
@@ -32,17 +31,12 @@ public class MouseUtil {
         return button == MouseEvent.BUTTON2 || (event.isControlDown() && button == MouseEvent.BUTTON1);
     }
 
-    public static void removeMouseListeners(JComponent component, boolean recursive) {
-        MouseListener[] mouseListeners = component.getMouseListeners();
-        for (MouseListener mouseListener : mouseListeners) {
-            component.removeMouseListener(mouseListener);
-        }
-        if (recursive) {
-            Component[] components = component.getComponents();
-            for (Component childComponent : components) {
-                if (childComponent instanceof JComponent)
-                removeMouseListeners((JComponent) childComponent, true);
+    public static void removeMouseListeners(JComponent root) {
+        GUIUtil.visitRecursively(root, component -> {
+            MouseListener[] mouseListeners = component.getMouseListeners();
+            for (MouseListener mouseListener : mouseListeners) {
+                root.removeMouseListener(mouseListener);
             }
-        }
+        });
     }
 }

@@ -64,7 +64,7 @@ public class DBNComboBox<T extends Presentable> extends JComboBox<T> implements 
 
     public DBNComboBox() {
         super(new DBNComboBoxModel<>());
-        MouseUtil.removeMouseListeners(this, true);
+        MouseUtil.removeMouseListeners(this);
 
         addMouseListener(mouseListener);
         Color background = UIUtil.getTextFieldBackground();
