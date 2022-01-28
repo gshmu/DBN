@@ -8,6 +8,7 @@ import com.dci.intellij.dbn.options.general.GeneralProjectSettings;
 import com.intellij.ide.DataManager;
 import com.intellij.openapi.Disposable;
 import com.intellij.openapi.project.Project;
+import com.intellij.ui.GuiUtils;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -48,6 +49,7 @@ public abstract class DBNFormImpl
                 GUIUtil.updateTitledBorders(panel);
             }
         });
+        GuiUtils.replaceJSplitPaneWithIDEASplitter(mainComponent);
     }
 
     protected abstract JComponent getMainComponent();

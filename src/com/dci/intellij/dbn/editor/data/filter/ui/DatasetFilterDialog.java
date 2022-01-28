@@ -26,6 +26,7 @@ public class DatasetFilterDialog extends DBNDialog<DatasetFilterForm> {
         super(dataset.getProject(), "Data filters", true);
         this.dataset = DBObjectRef.of(dataset);
         this.automaticPrompt = automaticPrompt;
+        setDefaultSize(1000, 700);
         DatasetFilterForm component = getForm();
         if ((createNewFilter || filterGroup.getFilters().isEmpty()) && defaultFilterType != DatasetFilterType.NONE) {
             DatasetFilter filter =

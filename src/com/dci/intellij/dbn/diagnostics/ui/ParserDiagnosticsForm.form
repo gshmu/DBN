@@ -23,7 +23,7 @@
               </grid>
             </constraints>
             <properties>
-              <resizeWeight value="0.2"/>
+              <dividerLocation value="360"/>
             </properties>
             <border type="none"/>
             <children>

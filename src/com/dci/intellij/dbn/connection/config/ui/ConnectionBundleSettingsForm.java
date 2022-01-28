@@ -4,7 +4,6 @@ import com.dci.intellij.dbn.common.action.DataKeys;
 import com.dci.intellij.dbn.common.database.DatabaseInfo;
 import com.dci.intellij.dbn.common.dispose.DisposableContainer;
 import com.dci.intellij.dbn.common.options.ui.ConfigurationEditorForm;
-import com.dci.intellij.dbn.common.ui.GUIUtil;
 import com.dci.intellij.dbn.common.util.Actions;
 import com.dci.intellij.dbn.common.util.Clipboard;
 import com.dci.intellij.dbn.common.util.Commons;
@@ -25,7 +24,6 @@ import com.intellij.ide.DataManager;
 import com.intellij.openapi.actionSystem.ActionToolbar;
 import com.intellij.openapi.ide.CopyPasteManager;
 import com.intellij.openapi.options.ConfigurationException;
-import com.intellij.ui.GuiUtils;
 import com.intellij.ui.ListUtil;
 import com.intellij.ui.components.JBList;
 import com.intellij.ui.components.JBScrollPane;
@@ -92,8 +90,6 @@ public class ConnectionBundleSettingsForm extends ConfigurationEditorForm<Connec
         JPanel emptyPanel = new JPanel();
         connectionSetupPanel.setPreferredSize(new Dimension(500, -1));
         connectionSetupPanel.add(emptyPanel, BLANK_PANEL_ID);
-        GuiUtils.replaceJSplitPaneWithIDEASplitter(mainPanel);
-        GUIUtil.updateSplitterProportion(mainPanel, (float) 0.3);
 
         DataManager.registerDataProvider(mainPanel, this);
     }

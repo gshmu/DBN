@@ -2,7 +2,6 @@ package com.dci.intellij.dbn.editor.session.ui;
 
 import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.common.ui.DBNFormImpl;
-import com.dci.intellij.dbn.common.ui.GUIUtil;
 import com.dci.intellij.dbn.common.ui.component.DBNComponent;
 import com.dci.intellij.dbn.common.ui.tab.TabbedPane;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
@@ -12,7 +11,6 @@ import com.dci.intellij.dbn.editor.session.details.SessionDetailsTable;
 import com.dci.intellij.dbn.editor.session.details.SessionDetailsTableModel;
 import com.dci.intellij.dbn.editor.session.model.SessionBrowserModelRow;
 import com.dci.intellij.dbn.language.common.WeakRef;
-import com.intellij.ui.GuiUtils;
 import com.intellij.ui.components.JBScrollPane;
 import com.intellij.ui.tabs.TabInfo;
 import com.intellij.ui.tabs.TabsListener;
@@ -39,8 +37,6 @@ public class SessionBrowserDetailsForm extends DBNFormImpl{
         sessionDetailsTable = new SessionDetailsTable(this);
         sessionDetailsTablePane.setViewportView(sessionDetailsTable);
         sessionDetailsTablePane.getViewport().setBackground(sessionDetailsTable.getBackground());
-        GuiUtils.replaceJSplitPaneWithIDEASplitter(mainPanel);
-        GUIUtil.updateSplitterProportion(mainPanel, (float) 0.3);
 
         detailsTabbedPane = new TabbedPane(this);
         sessionDetailsTabsPanel.add(detailsTabbedPane, BorderLayout.CENTER);

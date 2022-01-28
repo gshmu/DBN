@@ -19,7 +19,6 @@ import com.dci.intellij.dbn.object.DBArgument;
 import com.dci.intellij.dbn.object.DBMethod;
 import com.intellij.openapi.actionSystem.ActionToolbar;
 import com.intellij.openapi.util.Disposer;
-import com.intellij.ui.GuiUtils;
 import com.intellij.ui.IdeBorderFactory;
 import com.intellij.ui.components.JBScrollPane;
 import com.intellij.ui.tabs.TabInfo;
@@ -64,7 +63,6 @@ public class MethodExecutionResultForm extends ExecutionResultFormBase<MethodExe
         argumentValuesPanel.setBorder(IdeBorderFactory.createBorder());
         updateStatusBarLabels();
         executionResultPanel.setSize(800, -1);
-        GuiUtils.replaceJSplitPaneWithIDEASplitter(mainPanel);
         TreeUtil.expand(argumentValuesTree, 2);
     }
 

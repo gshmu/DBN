@@ -47,7 +47,7 @@ public class AutoCommitLabel extends DBNPanelImpl implements Disposable {
         add(connectionLabel, BorderLayout.EAST);
 
         autoCommitLabel = new JLabel();
-        autoCommitLabel.setFont(GUIUtil.BOLD_FONT);
+        autoCommitLabel.setFont(Fonts.BOLD);
         add(autoCommitLabel, BorderLayout.WEST);
 
         add(new JLabel(" "), BorderLayout.CENTER);
@@ -89,7 +89,7 @@ public class AutoCommitLabel extends DBNPanelImpl implements Disposable {
                         disconnected ?
                                 "Not connected to " + sessionName + " database session" : "");
 
-                connectionLabel.setFont(disconnected ? GUIUtil.REGULAR_FONT : GUIUtil.BOLD_FONT);
+                connectionLabel.setFont(disconnected ? Fonts.REGULAR : Fonts.BOLD);
 
                 autoCommitLabel.setForeground(autoCommit ?
                         com.dci.intellij.dbn.common.Colors.FAILURE_COLOR :

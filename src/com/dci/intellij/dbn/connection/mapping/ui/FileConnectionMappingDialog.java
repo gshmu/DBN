@@ -12,6 +12,7 @@ public class FileConnectionMappingDialog extends DBNDialog<FileConnectionMapping
         super(project, "File connection mappings", true);
         setModal(false);
         setResizable(true);
+        setDefaultSize(1200, 700);
         renameAction(getCancelAction(), "Close");
         init();
     }
