@@ -10,7 +10,7 @@ import com.intellij.openapi.actionSystem.AnActionEvent;
 
 public class DatasetEditorOptionsAction extends GroupPopupAction {
     public DatasetEditorOptionsAction() {
-        super("Options", "Options", Icons.ACTION_OPTIONS);
+        super("Options", "Options", Icons.ACTION_OPTIONS_MENU);
     }
     @Override
     protected AnAction[] getActions(AnActionEvent e) {

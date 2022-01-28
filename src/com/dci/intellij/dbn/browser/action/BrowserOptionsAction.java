@@ -10,7 +10,7 @@ import com.intellij.openapi.actionSystem.AnActionEvent;
 
 public class BrowserOptionsAction extends GroupPopupAction {
     public BrowserOptionsAction() {
-        super("Options", "Options", Icons.ACTION_OPTIONS);
+        super("Options", "Options", Icons.ACTION_OPTIONS_MENU);
     }
     @Override
     protected AnAction[] getActions(AnActionEvent e) {

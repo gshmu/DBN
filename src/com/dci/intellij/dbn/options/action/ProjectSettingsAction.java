@@ -12,7 +12,7 @@ import com.intellij.openapi.project.Project;
 import org.jetbrains.annotations.NotNull;
 
 public class ProjectSettingsAction extends DumbAwareProjectAction {
-    private ConfigId configId;
+    private final ConfigId configId;
 
     ProjectSettingsAction(ConfigId configId) {
         super(configId.getName() + "...");
