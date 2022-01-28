@@ -13,10 +13,10 @@ import com.intellij.openapi.project.Project;
 import org.jetbrains.annotations.NotNull;
 
 public class ProjectSettingsOpenAction extends DumbAwareProjectAction {
-    private ConfigId configId;
+    private final ConfigId configId;
 
     public ProjectSettingsOpenAction(ConfigId configId, boolean showIcon) {
-        super("Settings...", null, showIcon ? Icons.ACTION_SETTINGS : null);
+        super("Settings...", null, showIcon ? Icons.ACTION_OPTIONS : null);
         this.configId = configId;
     }
 

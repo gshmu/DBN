@@ -109,7 +109,7 @@ public abstract class ExecutionTimeoutForm extends DBNFormImpl{
 
     public class SettingsAction extends GroupPopupAction {
         SettingsAction() {
-            super("Settings", null, Icons.ACTION_OPTIONS);
+            super("Settings", null, Icons.ACTION_OPTIONS_MENU);
         }
         @Override
         protected AnAction[] getActions(AnActionEvent e) {

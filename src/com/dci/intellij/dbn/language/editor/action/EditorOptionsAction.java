@@ -22,12 +22,12 @@ import java.util.List;
 
 public class EditorOptionsAction extends GroupPopupAction {
     public EditorOptionsAction() {
-        super("Options", "Options", Icons.ACTION_OPTIONS);
+        super("Options", "Options", Icons.ACTION_OPTIONS_MENU);
     }
 
     @Override
     protected AnAction[] getActions(AnActionEvent e) {
-        List<AnAction> actions = new ArrayList<AnAction>();
+        List<AnAction> actions = new ArrayList<>();
         VirtualFile virtualFile = Lookup.getVirtualFile(e);
         if (virtualFile instanceof DBConsoleVirtualFile) {
             actions.add(new ConsoleRenameAction());
