@@ -11,11 +11,10 @@ import com.intellij.openapi.options.ConfigurationException;
 import com.intellij.openapi.project.Project;
 import org.jetbrains.annotations.NotNull;
 
-import javax.swing.*;
-import java.awt.*;
+import javax.swing.JCheckBox;
+import javax.swing.JPanel;
+import java.awt.BorderLayout;
 import java.awt.event.ActionListener;
-
-import static com.dci.intellij.dbn.common.ui.GUIUtil.updateBorderTitleForeground;
 
 public class DDLFileGeneralSettingsForm extends ConfigurationEditorForm<DDLFileGeneralSettings> {
     private JPanel mainPanel;
@@ -28,7 +27,6 @@ public class DDLFileGeneralSettingsForm extends ConfigurationEditorForm<DDLFileG
 
     public DDLFileGeneralSettingsForm(DDLFileGeneralSettings settings) {
         super(settings);
-        updateBorderTitleForeground(mainPanel);
 
         String hintText = "NOTE: When \"Synchronize\" option is enabled, the DDL file content gets overwritten with the source from the underlying database object whenever this gets saved to database.";
         DBNHintForm hintForm = new DBNHintForm(this, hintText, MessageType.INFO, false);

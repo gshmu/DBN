@@ -4,10 +4,8 @@ import com.dci.intellij.dbn.browser.options.DatabaseBrowserFilterSettings;
 import com.dci.intellij.dbn.common.options.ui.CompositeConfigurationEditorForm;
 import org.jetbrains.annotations.NotNull;
 
-import javax.swing.*;
-import java.awt.*;
-
-import static com.dci.intellij.dbn.common.ui.GUIUtil.updateBorderTitleForeground;
+import javax.swing.JPanel;
+import java.awt.BorderLayout;
 
 public class DatabaseBrowserFilterSettingsForm extends CompositeConfigurationEditorForm<DatabaseBrowserFilterSettings> {
     private JPanel mainPanel;
@@ -15,7 +13,6 @@ public class DatabaseBrowserFilterSettingsForm extends CompositeConfigurationEdi
 
     public DatabaseBrowserFilterSettingsForm(DatabaseBrowserFilterSettings settings) {
         super(settings);
-        updateBorderTitleForeground(mainPanel);
         visibleObjectTypesPanel.add(settings.getObjectTypeFilterSettings().createComponent(), BorderLayout.CENTER);
     }
 

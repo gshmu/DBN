@@ -15,11 +15,11 @@ import com.intellij.ui.AnActionButton;
 import com.intellij.ui.ToolbarDecorator;
 import org.jetbrains.annotations.NotNull;
 
-import javax.swing.*;
+import javax.swing.JCheckBox;
+import javax.swing.JPanel;
 import javax.swing.table.TableCellEditor;
-import java.awt.*;
-
-import static com.dci.intellij.dbn.common.ui.GUIUtil.updateBorderTitleForeground;
+import java.awt.BorderLayout;
+import java.awt.Dimension;
 
 public class EnvironmentSettingsForm extends ConfigurationEditorForm<EnvironmentSettings> {
     private JPanel mainPanel;
@@ -36,9 +36,6 @@ public class EnvironmentSettingsForm extends ConfigurationEditorForm<Environment
     public EnvironmentSettingsForm(EnvironmentSettings settings) {
         super(settings);
         environmentTypesTable = new EnvironmentTypesEditorTable(this, settings.getEnvironmentTypes());
-
-        updateBorderTitleForeground(environmentTypesPanel);
-        updateBorderTitleForeground(environmentApplicabilityPanel);
 
         EnvironmentVisibilitySettings visibilitySettings = settings.getVisibilitySettings();
         visibilitySettings.getConnectionTabs().from(connectionTabsCheckBox);

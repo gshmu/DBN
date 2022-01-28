@@ -14,10 +14,11 @@ import com.intellij.openapi.project.Project;
 import com.intellij.util.ui.UIUtil;
 import org.jetbrains.annotations.NotNull;
 
-import javax.swing.*;
-import java.awt.*;
-
-import static com.dci.intellij.dbn.common.ui.GUIUtil.updateBorderTitleForeground;
+import javax.swing.JCheckBox;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import java.awt.Color;
 
 public class ObjectTypeFilterSettingsForm extends ConfigurationEditorForm<ObjectTypeFilterSettings> {
     private JPanel mainPanel;
@@ -28,7 +29,6 @@ public class ObjectTypeFilterSettingsForm extends ConfigurationEditorForm<Object
 
     public ObjectTypeFilterSettingsForm(ObjectTypeFilterSettings configuration) {
         super(configuration);
-        updateBorderTitleForeground(mainPanel);
 
         visibleObjectsList = new CheckBoxList<>(configuration.getSettings());
         visibleObjectsScrollPane.setViewportView(visibleObjectsList);

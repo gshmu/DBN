@@ -17,16 +17,17 @@ import com.intellij.ui.SimpleTextAttributes;
 import com.intellij.ui.components.JBScrollPane;
 import org.jetbrains.annotations.NotNull;
 
-import javax.swing.*;
+import javax.swing.JPanel;
+import javax.swing.JTable;
+import javax.swing.ListSelectionModel;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.table.TableCellEditor;
-import java.awt.*;
+import java.awt.Cursor;
+import java.awt.Point;
 import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 import java.util.List;
-
-import static com.dci.intellij.dbn.common.ui.GUIUtil.updateBorderTitleForeground;
 
 public class DatabaseBrowserEditorSettingsForm extends ConfigurationEditorForm<DatabaseBrowserEditorSettings> {
     private JPanel mainPanel;
@@ -36,7 +37,6 @@ public class DatabaseBrowserEditorSettingsForm extends ConfigurationEditorForm<D
 
     public DatabaseBrowserEditorSettingsForm(DatabaseBrowserEditorSettings settings) {
         super(settings);
-        updateBorderTitleForeground(mainPanel);
         editorTypeTable = new EditorTypeTable(this, settings.getOptions());
         editorTypesScrollPanel.setViewportView(editorTypeTable);
         editorTypesScrollPanel.getViewport().setBackground(editorTypeTable.getBackground());

@@ -10,8 +10,6 @@ import javax.swing.JCheckBox;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 
-import static com.dci.intellij.dbn.common.ui.GUIUtil.updateBorderTitleForeground;
-
 public class DataEditorGeneralSettingsForm extends ConfigurationEditorForm<DataEditorGeneralSettings> {
     private JPanel mainPanel;
     private JTextField fetchBlockSizeTextField;
@@ -23,7 +21,6 @@ public class DataEditorGeneralSettingsForm extends ConfigurationEditorForm<DataE
 
     public DataEditorGeneralSettingsForm(DataEditorGeneralSettings settings) {
         super(settings);
-        updateBorderTitleForeground(mainPanel);
         resetFormChanges();
 
         registerComponent(mainPanel);

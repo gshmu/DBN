@@ -6,12 +6,11 @@ import com.dci.intellij.dbn.debugger.options.DebuggerTypeOption;
 import com.intellij.openapi.options.ConfigurationException;
 import org.jetbrains.annotations.NotNull;
 
-import javax.swing.*;
+import javax.swing.JCheckBox;
+import javax.swing.JComboBox;
+import javax.swing.JPanel;
 
-import static com.dci.intellij.dbn.common.ui.ComboBoxUtil.getSelection;
-import static com.dci.intellij.dbn.common.ui.ComboBoxUtil.initComboBox;
-import static com.dci.intellij.dbn.common.ui.ComboBoxUtil.setSelection;
-import static com.dci.intellij.dbn.common.ui.GUIUtil.updateBorderTitleForeground;
+import static com.dci.intellij.dbn.common.ui.ComboBoxUtil.*;
 
 public class DebuggerSettingsForm extends ConfigurationEditorForm<DebuggerSettings> {
     private JPanel mainPanel;
@@ -34,7 +33,6 @@ public class DebuggerSettingsForm extends ConfigurationEditorForm<DebuggerSettin
 */
 
 
-        updateBorderTitleForeground(mainPanel);
         resetFormChanges();
 
         registerComponent(mainPanel);

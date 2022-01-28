@@ -1,6 +1,7 @@
 package com.dci.intellij.dbn.common.ui;
 
 import com.dci.intellij.dbn.common.Colors;
+import com.dci.intellij.dbn.common.lookup.Visitor;
 import com.dci.intellij.dbn.common.thread.Dispatch;
 import com.dci.intellij.dbn.common.util.Unsafe;
 import com.intellij.openapi.editor.colors.EditorColorsManager;
@@ -23,6 +24,7 @@ import javax.swing.JPanel;
 import javax.swing.JTable;
 import javax.swing.SwingConstants;
 import javax.swing.border.Border;
+import javax.swing.border.CompoundBorder;
 import javax.swing.border.TitledBorder;
 import javax.swing.table.TableCellEditor;
 import javax.swing.text.JTextComponent;
@@ -123,12 +125,17 @@ public class GUIUtil{
         return UIUtil.isUnderDarcula();
     }
 
-    public static void updateBorderTitleForeground(JPanel panel) {
+    public static void updateTitledBorders(JPanel panel) {
         Border border = panel.getBorder();
         if (border instanceof TitledBorder) {
             TitledBorder titledBorder = (TitledBorder) border;
             //titledBorder.setTitleColor(com.intellij.util.ui.GUIUtil.getLabelForeground());
             titledBorder.setTitleColor(Colors.HINT_COLOR);
+            //titledBorder.setBorder(Borders.getLineBorder(JBColor.border()));
+            titledBorder.setBorder(Borders.TOP_LINE_BORDER);
+            border = new CompoundBorder(Borders.topInsetBorder(8), titledBorder);
+            panel.setBorder(border);
+
         }
     }
 
@@ -236,5 +243,18 @@ public class GUIUtil{
         else {
             popup.showUnderneathOf(textField);
         }
+    }
+
+    public static void visit(JComponent component, Visitor<Component> visitor) {
+        visitor.visit(component);
+        Component[] childComponents = component.getComponents();
+        for (Component childComponent : childComponents) {
+            if (childComponent instanceof JComponent) {
+                visit((JComponent) childComponent, visitor);
+            }
+
+        }
+
+
     }
 }

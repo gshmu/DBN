@@ -6,12 +6,11 @@ import com.dci.intellij.dbn.editor.session.options.SessionInterruptionOption;
 import com.intellij.openapi.options.ConfigurationException;
 import org.jetbrains.annotations.NotNull;
 
-import javax.swing.*;
+import javax.swing.JCheckBox;
+import javax.swing.JComboBox;
+import javax.swing.JPanel;
 
-import static com.dci.intellij.dbn.common.ui.ComboBoxUtil.getSelection;
-import static com.dci.intellij.dbn.common.ui.ComboBoxUtil.initComboBox;
-import static com.dci.intellij.dbn.common.ui.ComboBoxUtil.setSelection;
-import static com.dci.intellij.dbn.common.ui.GUIUtil.updateBorderTitleForeground;
+import static com.dci.intellij.dbn.common.ui.ComboBoxUtil.*;
 
 public class SessionBrowserSettingsForm extends ConfigurationEditorForm<SessionBrowserSettings> {
     private JPanel mainPanel;
@@ -22,7 +21,6 @@ public class SessionBrowserSettingsForm extends ConfigurationEditorForm<SessionB
     public SessionBrowserSettingsForm(SessionBrowserSettings settings) {
         super(settings);
 
-        updateBorderTitleForeground(mainPanel);
         initComboBox(disconnectSessionComboBox,
                 SessionInterruptionOption.ASK,
                 SessionInterruptionOption.IMMEDIATE,

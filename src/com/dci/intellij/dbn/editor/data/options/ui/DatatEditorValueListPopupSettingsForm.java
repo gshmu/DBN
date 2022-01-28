@@ -10,7 +10,6 @@ import javax.swing.JPanel;
 import javax.swing.JTextField;
 
 import static com.dci.intellij.dbn.common.options.ui.ConfigurationEditorUtil.validateIntegerValue;
-import static com.dci.intellij.dbn.common.ui.GUIUtil.updateBorderTitleForeground;
 
 public class DatatEditorValueListPopupSettingsForm extends ConfigurationEditorForm<DataEditorValueListPopupSettings> {
     private JTextField elementCountThresholdTextBox;
@@ -20,7 +19,6 @@ public class DatatEditorValueListPopupSettingsForm extends ConfigurationEditorFo
 
     public DatatEditorValueListPopupSettingsForm(DataEditorValueListPopupSettings settings) {
         super(settings);
-        updateBorderTitleForeground(mainPanel);
         resetFormChanges();
         registerComponent(mainPanel);
     }

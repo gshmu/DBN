@@ -36,7 +36,6 @@ import java.nio.charset.Charset;
 
 import static com.dci.intellij.dbn.common.message.MessageCallback.when;
 import static com.dci.intellij.dbn.common.ui.ComboBoxUtil.*;
-import static com.dci.intellij.dbn.common.ui.GUIUtil.updateBorderTitleForeground;
 import static com.dci.intellij.dbn.data.export.processor.DataExportFeature.*;
 
 public class ExportDataForm extends DBNFormImpl {
@@ -83,10 +82,6 @@ public class ExportDataForm extends DBNFormImpl {
         this.connectionHandler = connectionHandler.getRef();
         this.sourceObject = DBObjectRef.of(sourceObject);
         this.instructions = instructions;
-        updateBorderTitleForeground(scopePanel);
-        updateBorderTitleForeground(formatPanel);
-        updateBorderTitleForeground(destinationPanel);
-        updateBorderTitleForeground(optionsPanel);
 
         initComboBox(encodingComboBox, CharsetOption.ALL);
         setSelection(encodingComboBox, CharsetOption.get(instructions.getCharset()));

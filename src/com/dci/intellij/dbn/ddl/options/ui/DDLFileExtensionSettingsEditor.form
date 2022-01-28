@@ -6,7 +6,7 @@
       <xy x="20" y="20" width="504" height="408"/>
     </constraints>
     <properties/>
-    <border type="etched" title="Extensions">
+    <border type="none" title="Extensions">
       <font/>
     </border>
     <children>
@@ -33,7 +33,7 @@
           </grid>
         </constraints>
         <properties>
-          <margin top="1" left="3" bottom="1" right="1"/>
+          <margin top="2" left="6" bottom="2" right="6"/>
         </properties>
       </component>
       <component id="2b830" class="javax.swing.JLabel" binding="functionIconLabel">
@@ -59,7 +59,7 @@
           </grid>
         </constraints>
         <properties>
-          <margin top="1" left="3" bottom="1" right="1"/>
+          <margin top="2" left="6" bottom="2" right="6"/>
         </properties>
       </component>
       <component id="bf81f" class="javax.swing.JLabel" binding="packageIconLabel">
@@ -85,7 +85,7 @@
           </grid>
         </constraints>
         <properties>
-          <margin top="1" left="3" bottom="1" right="1"/>
+          <margin top="2" left="6" bottom="2" right="6"/>
         </properties>
       </component>
       <component id="362ce" class="javax.swing.JTextField" binding="typeTextField">
@@ -95,7 +95,7 @@
           </grid>
         </constraints>
         <properties>
-          <margin top="1" left="3" bottom="1" right="1"/>
+          <margin top="2" left="6" bottom="2" right="6"/>
         </properties>
       </component>
       <component id="9ad8f" class="javax.swing.JLabel">
@@ -147,7 +147,7 @@
           </grid>
         </constraints>
         <properties>
-          <margin top="1" left="3" bottom="1" right="1"/>
+          <margin top="2" left="6" bottom="2" right="6"/>
         </properties>
       </component>
       <component id="da036" class="javax.swing.JLabel">
@@ -166,7 +166,7 @@
           </grid>
         </constraints>
         <properties>
-          <margin top="1" left="3" bottom="1" right="1"/>
+          <margin top="2" left="6" bottom="2" right="6"/>
         </properties>
       </component>
       <component id="753d7" class="javax.swing.JLabel">
@@ -184,7 +184,7 @@
           </grid>
         </constraints>
         <properties>
-          <margin top="1" left="3" bottom="1" right="1"/>
+          <margin top="2" left="6" bottom="2" right="6"/>
         </properties>
       </component>
       <component id="b6966" class="javax.swing.JLabel">
@@ -202,7 +202,7 @@
           </grid>
         </constraints>
         <properties>
-          <margin top="1" left="3" bottom="1" right="1"/>
+          <margin top="2" left="6" bottom="2" right="6"/>
         </properties>
       </component>
       <component id="f27f" class="javax.swing.JLabel">
@@ -220,7 +220,7 @@
           </grid>
         </constraints>
         <properties>
-          <margin top="1" left="3" bottom="1" right="1"/>
+          <margin top="2" left="6" bottom="2" right="6"/>
         </properties>
       </component>
       <component id="41252" class="javax.swing.JLabel" binding="triggerIconLabel">
@@ -246,7 +246,7 @@
           </grid>
         </constraints>
         <properties>
-          <margin top="1" left="3" bottom="1" right="1"/>
+          <margin top="2" left="6" bottom="2" right="6"/>
         </properties>
       </component>
     </children>

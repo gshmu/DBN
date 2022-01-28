@@ -5,9 +5,8 @@ import com.dci.intellij.dbn.common.options.ui.ConfigurationEditorForm;
 import com.intellij.openapi.options.ConfigurationException;
 import org.jetbrains.annotations.NotNull;
 
-import javax.swing.*;
-
-import static com.dci.intellij.dbn.common.ui.GUIUtil.updateBorderTitleForeground;
+import javax.swing.JCheckBox;
+import javax.swing.JPanel;
 
 public class CodeCompletionFormatSettingsForm extends ConfigurationEditorForm<CodeCompletionFormatSettings> {
     private JCheckBox enforceCaseCheckBox;
@@ -15,7 +14,6 @@ public class CodeCompletionFormatSettingsForm extends ConfigurationEditorForm<Co
 
     public CodeCompletionFormatSettingsForm(CodeCompletionFormatSettings settings) {
         super(settings);
-        updateBorderTitleForeground(mainPanel);
         resetFormChanges();
 
         registerComponent(mainPanel);

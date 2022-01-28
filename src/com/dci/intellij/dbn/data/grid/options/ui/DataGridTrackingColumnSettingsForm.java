@@ -10,12 +10,12 @@ import com.intellij.openapi.options.ConfigurationException;
 import com.intellij.openapi.project.Project;
 import org.jetbrains.annotations.NotNull;
 
-import javax.swing.*;
-import java.awt.*;
+import javax.swing.JCheckBox;
+import javax.swing.JComponent;
+import javax.swing.JPanel;
+import java.awt.BorderLayout;
 import java.awt.event.ActionListener;
 import java.util.Collection;
-
-import static com.dci.intellij.dbn.common.ui.GUIUtil.updateBorderTitleForeground;
 
 public class DataGridTrackingColumnSettingsForm extends ConfigurationEditorForm<DataGridTrackingColumnSettings> {
     private JPanel mainPanel;
@@ -27,8 +27,6 @@ public class DataGridTrackingColumnSettingsForm extends ConfigurationEditorForm<
 
     public DataGridTrackingColumnSettingsForm(DataGridTrackingColumnSettings settings) {
         super(settings);
-        updateBorderTitleForeground(mainPanel);
-
         editableStringListForm = new EditableStringListForm(this, "Tracking column names", true);
         JComponent listComponent = editableStringListForm.getComponent();
         columnNameListPanel.add(listComponent, BorderLayout.CENTER);
