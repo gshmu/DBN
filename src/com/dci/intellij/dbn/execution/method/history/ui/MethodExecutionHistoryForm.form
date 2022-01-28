@@ -34,7 +34,9 @@
                 <preferred-size width="200" height="200"/>
               </grid>
             </constraints>
-            <properties/>
+            <properties>
+              <dividerLocation value="300"/>
+            </properties>
             <border type="none"/>
             <children>
               <grid id="cfd5b" binding="argumentsPanel" layout-manager="BorderLayout" hgap="0" vgap="0">

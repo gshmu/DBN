@@ -21,6 +21,7 @@ import org.jetbrains.annotations.Nullable;
 import javax.swing.JComponent;
 import javax.swing.JList;
 import javax.swing.JPanel;
+import javax.swing.JSplitPane;
 import javax.swing.JTable;
 import javax.swing.SwingConstants;
 import javax.swing.border.Border;
@@ -30,6 +31,7 @@ import javax.swing.table.TableCellEditor;
 import javax.swing.text.JTextComponent;
 import java.awt.Color;
 import java.awt.Component;
+import java.awt.Container;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.IllegalComponentStateException;
@@ -41,22 +43,6 @@ import java.lang.reflect.Method;
 import java.util.EventListener;
 
 public class GUIUtil{
-    public static final Font REGULAR_FONT = UIUtil.getLabelFont();
-    public static final Font BOLD_FONT = new Font(REGULAR_FONT.getName(), Font.BOLD, REGULAR_FONT.getSize());
-
-    public static void updateSplitterProportion(JComponent root, float proportion) {
-        if (root instanceof Splitter) {
-            Splitter splitter = (Splitter) root;
-            splitter.setProportion(proportion);
-        } else {
-            Component[] components = root.getComponents();
-            for (Component component : components) {
-                if (component instanceof JComponent) {
-                    updateSplitterProportion((JComponent) component, proportion);
-                }
-            }
-        };
-    }
 
     public static void stopTableCellEditing(final JComponent root) {
         if (root instanceof JTable) {
@@ -254,7 +240,31 @@ public class GUIUtil{
             }
 
         }
+    }
+
+    @Deprecated
+    public static void replaceSplitters(JComponent root) {
+        //GuiUtils.replaceJSplitPaneWithIDEASplitter(root);
+    }
 
 
+    public static void updateSplitterProportion(JComponent root, float proportion) {
+        if (true) return;
+        visit(root, component -> {
+            if (component instanceof Splitter) {
+                Splitter splitter = (Splitter) root;
+                splitter.setProportion(proportion);
+            } else if (component instanceof JSplitPane) {
+                JSplitPane pane = (JSplitPane) component;
+                Container parent = pane.getParent();
+                int dividerSize = pane.getDividerSize();
+                int orientation = pane.getOrientation();
+                Dimension preferredSize = parent.getPreferredSize();
+                int dividerLocation = (int) (orientation == JSplitPane.VERTICAL_SPLIT ?
+                                        proportion * (preferredSize.getHeight() - dividerSize) :
+                                        proportion * (preferredSize.getWidth() - dividerSize));
+                pane.setDividerLocation(dividerLocation);
+            }
+        });
     }
 }

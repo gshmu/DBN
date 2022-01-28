@@ -22,7 +22,6 @@ import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.project.Project;
 import com.intellij.ui.AnActionButton;
 import com.intellij.ui.DumbAwareActionButton;
-import com.intellij.ui.GuiUtils;
 import com.intellij.ui.ToolbarDecorator;
 import com.intellij.ui.components.JBScrollPane;
 import org.jetbrains.annotations.NotNull;
@@ -82,8 +81,6 @@ public class ResourceMonitorDetailForm extends DBNFormImpl {
         transactionsTable = new ResourceMonitorTransactionsTable(this, transactionsTableModel);
         transactionsTableScrollPane.setViewportView(transactionsTable);
         transactionsTableScrollPane.getViewport().setBackground(transactionsTable.getBackground());
-
-        GuiUtils.replaceJSplitPaneWithIDEASplitter(mainPanel);
 
         ActionListener actionListener = e -> {
             Project project = connectionHandler.getProject();

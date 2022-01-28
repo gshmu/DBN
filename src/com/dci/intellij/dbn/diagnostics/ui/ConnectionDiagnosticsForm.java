@@ -10,7 +10,6 @@ import com.dci.intellij.dbn.connection.ConnectionId;
 import com.dci.intellij.dbn.connection.ConnectionManager;
 import com.intellij.openapi.project.Project;
 import com.intellij.ui.ColoredListCellRenderer;
-import com.intellij.ui.GuiUtils;
 import com.intellij.ui.SimpleTextAttributes;
 import org.jetbrains.annotations.NotNull;
 
@@ -32,7 +31,6 @@ public class ConnectionDiagnosticsForm extends DBNFormImpl {
 
     public ConnectionDiagnosticsForm(@NotNull Project project) {
         super(null, project);
-        GuiUtils.replaceJSplitPaneWithIDEASplitter(mainPanel);
         mainPanel.setBorder(Borders.BOTTOM_LINE_BORDER);
 
         connectionsList.addListSelectionListener(e -> {

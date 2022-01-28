@@ -17,7 +17,6 @@ import com.intellij.openapi.actionSystem.ActionToolbar;
 import com.intellij.openapi.options.ConfigurationException;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Disposer;
-import com.intellij.ui.GuiUtils;
 import com.intellij.util.ui.UIUtil;
 import org.jetbrains.annotations.NotNull;
 
@@ -67,7 +66,6 @@ public class DatasetFilterForm extends ConfigurationEditorForm<DatasetFilterGrou
             filtersList.setSelectedValue(filter, true);
         }
         valueChanged(null);
-        GuiUtils.replaceJSplitPaneWithIDEASplitter(mainPanel);
         filtersList.addListSelectionListener(this);
     }
 

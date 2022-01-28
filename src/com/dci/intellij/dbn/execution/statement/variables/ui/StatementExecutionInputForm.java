@@ -30,7 +30,6 @@ import com.intellij.openapi.editor.ex.EditorEx;
 import com.intellij.openapi.fileTypes.SyntaxHighlighter;
 import com.intellij.openapi.project.Project;
 import com.intellij.ui.DocumentAdapter;
-import com.intellij.ui.GuiUtils;
 import com.intellij.ui.JBColor;
 import org.jetbrains.annotations.NotNull;
 
@@ -141,7 +140,6 @@ public class StatementExecutionInputForm extends DBNFormImpl {
         executionOptionsForm = new ExecutionOptionsForm(this, executionProcessor.getExecutionInput(), debuggerType);
         executionOptionsPanel.add(executionOptionsForm.getComponent());
 
-        GuiUtils.replaceJSplitPaneWithIDEASplitter(mainPanel);
         updatePreview();
 
         JCheckBox reuseVariablesCheckBox = executionOptionsForm.getReuseVariablesCheckBox();

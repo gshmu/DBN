@@ -33,7 +33,7 @@
               </grid>
             </constraints>
             <properties>
-              <dividerLocation value="200"/>
+              <dividerLocation value="240"/>
             </properties>
             <border type="none"/>
             <children>

@@ -3,7 +3,6 @@ package com.dci.intellij.dbn.diagnostics.ui;
 import com.dci.intellij.dbn.common.action.DataKeys;
 import com.dci.intellij.dbn.common.ui.Borders;
 import com.dci.intellij.dbn.common.ui.DBNFormImpl;
-import com.dci.intellij.dbn.common.ui.GUIUtil;
 import com.dci.intellij.dbn.common.ui.table.DBNTable;
 import com.dci.intellij.dbn.common.util.Actions;
 import com.dci.intellij.dbn.diagnostics.ParserDiagnosticsManager;
@@ -16,7 +15,6 @@ import com.dci.intellij.dbn.diagnostics.ui.model.ParserDiagnosticsTableModel;
 import com.intellij.openapi.actionSystem.ActionToolbar;
 import com.intellij.openapi.project.Project;
 import com.intellij.ui.ColoredListCellRenderer;
-import com.intellij.ui.GuiUtils;
 import com.intellij.ui.SimpleTextAttributes;
 import com.intellij.ui.components.JBScrollPane;
 import com.intellij.util.ui.UIUtil;
@@ -50,8 +48,6 @@ public class ParserDiagnosticsForm extends DBNFormImpl {
     public ParserDiagnosticsForm(Project project) {
         super(null, project);
         manager = ParserDiagnosticsManager.get(ensureProject());
-        GuiUtils.replaceJSplitPaneWithIDEASplitter(mainPanel);
-        GUIUtil.updateSplitterProportion(mainPanel, (float) 0.2);
 
         diagnosticsTable = new ParserDiagnosticsTable(this, ParserDiagnosticsTableModel.EMPTY);
         diagnosticsTable.accommodateColumnsSize();
