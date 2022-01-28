@@ -19,7 +19,6 @@ import javax.swing.JTextField;
 import java.awt.event.ActionListener;
 
 import static com.dci.intellij.dbn.common.ui.ComboBoxUtil.*;
-import static com.dci.intellij.dbn.common.ui.GUIUtil.updateBorderTitleForeground;
 
 public class ConnectionSshTunnelSettingsForm extends ConfigurationEditorForm<ConnectionSshTunnelSettings> {
     private JPanel mainPanel;
@@ -39,7 +38,6 @@ public class ConnectionSshTunnelSettingsForm extends ConfigurationEditorForm<Con
     public ConnectionSshTunnelSettingsForm(final ConnectionSshTunnelSettings configuration) {
         super(configuration);
 
-        updateBorderTitleForeground(sshGroupPanel);
         initComboBox(authTypeComboBox, SshAuthType.values());
         resetFormChanges();
 

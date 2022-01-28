@@ -56,7 +56,7 @@ public class SessionBrowserTableCellRenderer extends BasicTableCellRenderer {
             Color foreground = Commons.nvl(textAttributes.getFgColor(), table.getForeground());
 
 
-            Border border = Borders.getLineBorder(background);
+            Border border = Borders.lineBorder(background);
 
             setBorder(border);
             setBackground(background);

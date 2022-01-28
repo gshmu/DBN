@@ -11,7 +11,6 @@ import javax.swing.JTextField;
 import java.awt.event.ActionListener;
 
 import static com.dci.intellij.dbn.common.options.ui.ConfigurationEditorUtil.validateIntegerValue;
-import static com.dci.intellij.dbn.common.ui.GUIUtil.updateBorderTitleForeground;
 
 public class DataEditorPopupSettingsForm extends ConfigurationEditorForm<DataEditorPopupSettings> {
     private JTextField lengthThresholdTextField;
@@ -22,7 +21,6 @@ public class DataEditorPopupSettingsForm extends ConfigurationEditorForm<DataEdi
 
     public DataEditorPopupSettingsForm(DataEditorPopupSettings settings) {
         super(settings);
-        updateBorderTitleForeground(mainPanel);
         resetFormChanges();
         enableDisableFields();
 

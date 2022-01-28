@@ -32,8 +32,6 @@ import java.awt.event.ItemListener;
 import java.util.Date;
 import java.util.Locale;
 
-import static com.dci.intellij.dbn.common.ui.GUIUtil.updateBorderTitleForeground;
-
 public class RegionalSettingsEditorForm extends ConfigurationEditorForm<RegionalSettings> {
     private JPanel mainPanel;
     private JPanel previewPanel;
@@ -62,7 +60,6 @@ public class RegionalSettingsEditorForm extends ConfigurationEditorForm<Regional
         previewPanel.setBorder(Borders.COMPONENT_LINE_BORDER);
         previewPanel.setBackground(UIUtil.getToolTipBackground());
         errorLabel.setVisible(false);
-        updateBorderTitleForeground(mainPanel);
         localeComboBox.setValues(LocaleOption.ALL);
 
         numberFormatComboBox.setValues(

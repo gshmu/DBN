@@ -6,13 +6,12 @@ import com.dci.intellij.dbn.editor.data.options.DataEditorFilterSettings;
 import com.intellij.openapi.options.ConfigurationException;
 import org.jetbrains.annotations.NotNull;
 
-import javax.swing.*;
+import javax.swing.JCheckBox;
+import javax.swing.JComboBox;
+import javax.swing.JPanel;
 import java.awt.event.ActionListener;
 
-import static com.dci.intellij.dbn.common.ui.ComboBoxUtil.getSelection;
-import static com.dci.intellij.dbn.common.ui.ComboBoxUtil.initComboBox;
-import static com.dci.intellij.dbn.common.ui.ComboBoxUtil.setSelection;
-import static com.dci.intellij.dbn.common.ui.GUIUtil.updateBorderTitleForeground;
+import static com.dci.intellij.dbn.common.ui.ComboBoxUtil.*;
 
 public class DataEditorFilterSettingsForm extends ConfigurationEditorForm<DataEditorFilterSettings> {
     private JPanel mainPanel;
@@ -26,7 +25,6 @@ public class DataEditorFilterSettingsForm extends ConfigurationEditorForm<DataEd
                 DatasetFilterType.BASIC,
                 DatasetFilterType.CUSTOM);
 
-        updateBorderTitleForeground(mainPanel);
         resetFormChanges();
         defaultFilterTypeComboBox.setEnabled(promptFilterDialogCheckBox.isSelected());
         registerComponent(mainPanel);

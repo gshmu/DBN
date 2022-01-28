@@ -34,8 +34,6 @@ import java.awt.event.MouseEvent;
 import java.util.HashSet;
 import java.util.Set;
 
-import static com.dci.intellij.dbn.common.ui.GUIUtil.updateBorderTitleForeground;
-
 public class ObjectNameFilterSettingsForm extends ConfigurationEditorForm<ObjectNameFilterSettings> {
     private JPanel mainPanel;
     private JTree filtersTree;
@@ -43,7 +41,6 @@ public class ObjectNameFilterSettingsForm extends ConfigurationEditorForm<Object
 
     public ObjectNameFilterSettingsForm(ObjectNameFilterSettings configuration) {
         super(configuration);
-        updateBorderTitleForeground(mainPanel);
 
 /*        ObjectNameFilter schemaFilter = new ObjectNameFilter(DBObjectType.SCHEMA, ConditionOperator.NOT_LIKE, "T%");
 

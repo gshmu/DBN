@@ -23,8 +23,6 @@ import javax.swing.JTextField;
 import java.awt.BorderLayout;
 import java.awt.Dimension;
 
-import static com.dci.intellij.dbn.common.ui.GUIUtil.updateBorderTitleForeground;
-
 public class ScriptExecutionSettingsForm extends ConfigurationEditorForm<ScriptExecutionSettings> {
     private JPanel mainPanel;
     private JPanel cmdLineInterfacesTablePanel;
@@ -49,7 +47,6 @@ public class ScriptExecutionSettingsForm extends ConfigurationEditorForm<ScriptE
         cmdLineInterfacesTable.getParent().setBackground(cmdLineInterfacesTable.getBackground());
         executionTimeoutTextField.setText(String.valueOf(settings.getExecutionTimeout()));
         registerComponents(mainPanel);
-        updateBorderTitleForeground(mainPanel);
     }
 
     private void showNewInterfacePopup(DataContext dataContext, RelativePoint point) {

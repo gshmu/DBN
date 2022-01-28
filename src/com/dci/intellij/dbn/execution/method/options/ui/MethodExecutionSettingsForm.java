@@ -9,8 +9,6 @@ import org.jetbrains.annotations.NotNull;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 
-import static com.dci.intellij.dbn.common.ui.GUIUtil.updateBorderTitleForeground;
-
 public class MethodExecutionSettingsForm extends ConfigurationEditorForm<MethodExecutionSettings> {
     private JPanel mainPanel;
     private JTextField executionTimeoutTextField;
@@ -19,8 +17,6 @@ public class MethodExecutionSettingsForm extends ConfigurationEditorForm<MethodE
 
     public MethodExecutionSettingsForm(MethodExecutionSettings settings) {
         super(settings);
-        updateBorderTitleForeground(mainPanel);
-
         resetFormChanges();
         registerComponent(mainPanel);
     }

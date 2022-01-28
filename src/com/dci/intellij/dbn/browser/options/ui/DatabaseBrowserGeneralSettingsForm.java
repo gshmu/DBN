@@ -18,7 +18,6 @@ import javax.swing.JPanel;
 import javax.swing.JTextField;
 
 import static com.dci.intellij.dbn.common.ui.ComboBoxUtil.*;
-import static com.dci.intellij.dbn.common.ui.GUIUtil.updateBorderTitleForeground;
 
 public class DatabaseBrowserGeneralSettingsForm extends ConfigurationEditorForm<DatabaseBrowserGeneralSettings> {
     private JPanel mainPanel;
@@ -29,7 +28,6 @@ public class DatabaseBrowserGeneralSettingsForm extends ConfigurationEditorForm<
 
     public DatabaseBrowserGeneralSettingsForm(DatabaseBrowserGeneralSettings configuration) {
         super(configuration);
-        updateBorderTitleForeground(mainPanel);
 
         initComboBox(browserTypeComboBox,
                 BrowserDisplayMode.SIMPLE,

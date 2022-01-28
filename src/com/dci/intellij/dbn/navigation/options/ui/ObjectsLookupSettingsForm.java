@@ -11,11 +11,13 @@ import com.intellij.openapi.options.ConfigurationException;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import javax.swing.*;
+import javax.swing.Icon;
+import javax.swing.JComboBox;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
 import javax.swing.border.TitledBorder;
 
 import static com.dci.intellij.dbn.common.ui.ComboBoxUtil.*;
-import static com.dci.intellij.dbn.common.ui.GUIUtil.updateBorderTitleForeground;
 
 public class ObjectsLookupSettingsForm extends ConfigurationEditorForm<ObjectsLookupSettings> {
     private JPanel mainPanel;
@@ -29,7 +31,6 @@ public class ObjectsLookupSettingsForm extends ConfigurationEditorForm<ObjectsLo
         Shortcut[] shortcuts = KeyUtil.getShortcuts("DBNavigator.Actions.Navigation.GotoDatabaseObject");
         TitledBorder border = (TitledBorder) mainPanel.getBorder();
         border.setTitle("Lookup Objects (" + KeymapUtil.getShortcutsText(shortcuts) + ")");
-        updateBorderTitleForeground(mainPanel);
 
         initComboBox(connectionComboBox,
                 ConnectionOption.PROMPT,

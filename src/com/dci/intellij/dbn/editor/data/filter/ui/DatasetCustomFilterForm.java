@@ -3,7 +3,6 @@ package com.dci.intellij.dbn.editor.data.filter.ui;
 import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.common.compatibility.CompatibilityUtil;
 import com.dci.intellij.dbn.common.options.ui.ConfigurationEditorForm;
-import com.dci.intellij.dbn.common.ui.GUIUtil;
 import com.dci.intellij.dbn.common.util.Documents;
 import com.dci.intellij.dbn.common.util.Editors;
 import com.dci.intellij.dbn.common.util.Strings;
@@ -46,7 +45,6 @@ public class DatasetCustomFilterForm extends ConfigurationEditorForm<DatasetCust
     public DatasetCustomFilterForm(DBDataset dataset, DatasetCustomFilter filter) {
         super(filter);
         nameTextField.setText(filter.getDisplayName());
-        GUIUtil.updateBorderTitleForeground(mainPanel);
         Project project = dataset.getProject();
 
         StringBuilder selectStatement = new StringBuilder("select * from ");

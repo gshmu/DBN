@@ -21,7 +21,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static com.dci.intellij.dbn.common.ui.ComboBoxUtil.*;
-import static com.dci.intellij.dbn.common.ui.GUIUtil.updateBorderTitleForeground;
 
 public class CodeStyleFormattingSettingsForm extends ConfigurationEditorForm<CodeStyleFormattingSettings> {
     private JPanel mainPanel;
@@ -33,7 +32,6 @@ public class CodeStyleFormattingSettingsForm extends ConfigurationEditorForm<Cod
         super(settings);
         List<CodeStyleFormattingOption> options = settings.getOptions();
         settingsPanel.setLayout(new GridLayoutManager(options.size() + 1, 2, JBUI.insets(4), -1, -1));
-        updateBorderTitleForeground(mainPanel);
         for (int i=0; i< options.size(); i++) {
             CodeStyleFormattingOption option = options.get(i);
             JLabel label = new JLabel(option.getDisplayName());

@@ -12,7 +12,6 @@ import javax.swing.JComboBox;
 import javax.swing.JPanel;
 
 import static com.dci.intellij.dbn.common.ui.ComboBoxUtil.*;
-import static com.dci.intellij.dbn.common.ui.GUIUtil.updateBorderTitleForeground;
 
 public class CompilerSettingsForm extends ConfigurationEditorForm<CompilerSettings> {
     private JPanel mainPanel;
@@ -40,7 +39,6 @@ public class CompilerSettingsForm extends ConfigurationEditorForm<CompilerSettin
                 CompileDependenciesOption.ASK);
 
 
-        updateBorderTitleForeground(mainPanel);
         resetFormChanges();
 
         registerComponent(mainPanel);
