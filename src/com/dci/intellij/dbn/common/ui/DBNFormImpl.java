@@ -43,7 +43,7 @@ public abstract class DBNFormImpl
         initialised = true;
         JComponent mainComponent = getMainComponent();
         DataManager.registerDataProvider(mainComponent, this);
-        GUIUtil.visit(mainComponent, component -> {
+        GUIUtil.visitRecursively(mainComponent, component -> {
             if (component instanceof JPanel) {
                 JPanel panel = (JPanel) component;
                 GUIUtil.updateTitledBorders(panel);
