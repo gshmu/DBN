@@ -6,7 +6,6 @@ import com.dci.intellij.dbn.common.thread.Dispatch;
 import com.dci.intellij.dbn.common.util.Unsafe;
 import com.intellij.openapi.editor.colors.EditorColorsManager;
 import com.intellij.openapi.editor.colors.EditorColorsScheme;
-import com.intellij.openapi.ui.Splitter;
 import com.intellij.openapi.ui.popup.JBPopup;
 import com.intellij.openapi.ui.popup.JBPopupFactory;
 import com.intellij.openapi.ui.popup.PopupChooserBuilder;
@@ -21,7 +20,6 @@ import org.jetbrains.annotations.Nullable;
 import javax.swing.JComponent;
 import javax.swing.JList;
 import javax.swing.JPanel;
-import javax.swing.JSplitPane;
 import javax.swing.JTable;
 import javax.swing.SwingConstants;
 import javax.swing.border.Border;
@@ -31,7 +29,6 @@ import javax.swing.table.TableCellEditor;
 import javax.swing.text.JTextComponent;
 import java.awt.Color;
 import java.awt.Component;
-import java.awt.Container;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.IllegalComponentStateException;
@@ -45,20 +42,15 @@ import java.util.EventListener;
 public class GUIUtil{
 
     public static void stopTableCellEditing(final JComponent root) {
-        if (root instanceof JTable) {
-            JTable table = (JTable) root;
-            TableCellEditor cellEditor = table.getCellEditor();
-            if (cellEditor != null) {
-                cellEditor.stopCellEditing();
-            }
-        } else {
-            Component[] components = root.getComponents();
-            for (Component component : components) {
-                if (component instanceof JComponent) {
-                    stopTableCellEditing((JComponent) component);
+        visitRecursively(root, component -> {
+            if (component instanceof JTable) {
+                JTable table = (JTable) root;
+                TableCellEditor cellEditor = table.getCellEditor();
+                if (cellEditor != null) {
+                    cellEditor.stopCellEditing();
                 }
             }
-        }
+        });
     }
 
     @Nullable
@@ -115,9 +107,7 @@ public class GUIUtil{
         Border border = panel.getBorder();
         if (border instanceof TitledBorder) {
             TitledBorder titledBorder = (TitledBorder) border;
-            //titledBorder.setTitleColor(com.intellij.util.ui.GUIUtil.getLabelForeground());
             titledBorder.setTitleColor(Colors.HINT_COLOR);
-            //titledBorder.setBorder(Borders.getLineBorder(JBColor.border()));
             titledBorder.setBorder(Borders.TOP_LINE_BORDER);
             border = new CompoundBorder(Borders.topInsetBorder(8), titledBorder);
             panel.setBorder(border);
@@ -231,40 +221,14 @@ public class GUIUtil{
         }
     }
 
-    public static void visit(JComponent component, Visitor<Component> visitor) {
+    public static void visitRecursively(JComponent component, Visitor<Component> visitor) {
         visitor.visit(component);
         Component[] childComponents = component.getComponents();
         for (Component childComponent : childComponents) {
             if (childComponent instanceof JComponent) {
-                visit((JComponent) childComponent, visitor);
+                visitRecursively((JComponent) childComponent, visitor);
             }
 
         }
-    }
-
-    @Deprecated
-    public static void replaceSplitters(JComponent root) {
-        //GuiUtils.replaceJSplitPaneWithIDEASplitter(root);
-    }
-
-
-    public static void updateSplitterProportion(JComponent root, float proportion) {
-        if (true) return;
-        visit(root, component -> {
-            if (component instanceof Splitter) {
-                Splitter splitter = (Splitter) root;
-                splitter.setProportion(proportion);
-            } else if (component instanceof JSplitPane) {
-                JSplitPane pane = (JSplitPane) component;
-                Container parent = pane.getParent();
-                int dividerSize = pane.getDividerSize();
-                int orientation = pane.getOrientation();
-                Dimension preferredSize = parent.getPreferredSize();
-                int dividerLocation = (int) (orientation == JSplitPane.VERTICAL_SPLIT ?
-                                        proportion * (preferredSize.getHeight() - dividerSize) :
-                                        proportion * (preferredSize.getWidth() - dividerSize));
-                pane.setDividerLocation(dividerLocation);
-            }
-        });
     }
 }
