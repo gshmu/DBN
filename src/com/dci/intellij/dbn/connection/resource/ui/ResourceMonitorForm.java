@@ -17,7 +17,6 @@ import com.dci.intellij.dbn.connection.transaction.PendingTransactionBundle;
 import com.dci.intellij.dbn.connection.transaction.TransactionAction;
 import com.dci.intellij.dbn.connection.transaction.TransactionListener;
 import com.intellij.ui.ColoredListCellRenderer;
-import com.intellij.ui.GuiUtils;
 import com.intellij.ui.SimpleTextAttributes;
 import org.jetbrains.annotations.NotNull;
 
@@ -38,7 +37,6 @@ public class ResourceMonitorForm extends DBNFormImpl {
 
     ResourceMonitorForm(ResourceMonitorDialog parentComponent) {
         super(parentComponent);
-        GuiUtils.replaceJSplitPaneWithIDEASplitter(mainPanel);
         mainPanel.setBorder(Borders.BOTTOM_LINE_BORDER);
 
         connectionsList.addListSelectionListener(e -> {

@@ -18,7 +18,6 @@ import com.dci.intellij.dbn.object.properties.ui.ObjectPropertiesForm;
 import com.intellij.openapi.Disposable;
 import com.intellij.openapi.actionSystem.ActionToolbar;
 import com.intellij.openapi.project.Project;
-import com.intellij.ui.GuiUtils;
 import lombok.Getter;
 import lombok.Setter;
 import org.jetbrains.annotations.NotNull;
@@ -58,8 +57,6 @@ public class BrowserToolWindowForm extends DBNFormImpl {
         objectPropertiesPanel.setVisible(browserManager.getShowObjectProperties().value());
         objectPropertiesForm = new ObjectPropertiesForm(this);
         objectPropertiesPanel.add(objectPropertiesForm.getComponent());
-        GuiUtils.replaceJSplitPaneWithIDEASplitter(mainPanel);
-        GUIUtil.updateSplitterProportion(mainPanel, (float) 0.7);
 
 
         ProjectEvents.subscribe(project, this, DisplayModeSettingsListener.TOPIC, displayModeSettingsListener);

@@ -23,7 +23,6 @@ import com.intellij.openapi.editor.colors.EditorColorsScheme;
 import com.intellij.openapi.editor.ex.EditorEx;
 import com.intellij.openapi.fileTypes.SyntaxHighlighter;
 import com.intellij.openapi.project.Project;
-import com.intellij.ui.GuiUtils;
 import com.intellij.ui.JBColor;
 import org.jetbrains.annotations.NotNull;
 
@@ -67,7 +66,6 @@ public class PendingTransactionDialogForm extends DBNFormImpl {
         headerPanel.add(headerForm.getComponent(), BorderLayout.CENTER);
 
         updatePreview();
-        GuiUtils.replaceJSplitPaneWithIDEASplitter(mainPanel);
     }
 
     @NotNull
