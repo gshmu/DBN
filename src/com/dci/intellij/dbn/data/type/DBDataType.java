@@ -11,13 +11,10 @@ import com.dci.intellij.dbn.object.common.DBObjectBundle;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 
-import java.lang.reflect.Constructor;
-import java.lang.reflect.Method;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Types;
-import java.util.Date;
 import java.util.List;
 
 @Getter
@@ -37,53 +34,27 @@ public class DBDataType {
     }
 
     public static DBDataType get(ConnectionHandler connectionHandler, String dataTypeName, long length, int precision, int scale, boolean set) {
-        String dataTypeOwner = null;
-        String dataTypePackage = null;
+        String declaredTypeName = null;
+        String declaredTypeOwner = null;
+        String declaredTypePackage = null;
         if (dataTypeName.contains(".")) {
             String[] nameChain = dataTypeName.split("\\.");
             if (nameChain.length == 1) {
-                dataTypeName = nameChain[0];
+                declaredTypeName = nameChain[0];
             } else if (nameChain.length == 2) {
-                dataTypeOwner = nameChain[0];
-                dataTypeName = nameChain[1];
+                declaredTypeOwner = nameChain[0];
+                declaredTypeName = nameChain[1];
             } else if (nameChain.length == 3) {
-                dataTypeOwner = nameChain[0];
-                dataTypePackage = nameChain[1];
-                dataTypeName = nameChain[2];
+                declaredTypeOwner = nameChain[0];
+                declaredTypePackage = nameChain[1];
+                declaredTypeName = nameChain[2];
             }
         }
-        return new Ref(dataTypeName, dataTypeOwner, dataTypePackage, length, precision, scale, set).get(connectionHandler);
+        return new Ref(dataTypeName, declaredTypeName, declaredTypeOwner, declaredTypePackage, length, precision, scale, set).get(connectionHandler);
     }
 
-    protected DBDataType() {
-    }
+    protected DBDataType() {}
 
-/*    public DBDataType(DBObject parent, ResultSet resultSet) throws SQLException {
-        length = resultSet.getLong("DATA_LENGTH");
-        precision = resultSet.getInt("DATA_PRECISION");
-        scale = resultSet.getInt("DATA_SCALE");
-        set = "Y".equals(resultSet.getString("IS_SET"));
-
-        String typeOwner = resultSet.getString("DATA_TYPE_OWNER");
-        String typePackage = resultSet.getString("DATA_TYPE_PACKAGE");
-        String dataTypeName = resultSet.getString("DATA_TYPE_NAME");
-        DBObjectBundle objectBundle = parent.getCache().getObjectBundle();
-        if (typeOwner != null) {
-            DBSchema typeSchema = objectBundle.getSchema(typeOwner);
-            if (typePackage != null) {
-                DBPackage packagee = typeSchema.getPackage(typePackage);
-                if (packagee != null) {
-                    declaredType = packagee.getType(dataTypeName);
-                }
-            } else {
-                declaredType = typeSchema.getType(dataTypeName);
-            }
-            if (declaredType == null) typeName = dataTypeName;
-        } else {
-            nativeDataType = objectBundle.getNativeDataType(dataTypeName);
-            if (nativeDataType == null) typeName = dataTypeName;
-        }
-    }*/
 
     public boolean isSet() {
         return set;
@@ -167,23 +138,6 @@ public class DBDataType {
         return qualifiedName;
     }
 
-    /**
-     * @deprecated
-     */
-    public Object convert(String stringValue) throws Exception{
-        Class clazz = getTypeClass();
-        if (String.class.isAssignableFrom(clazz)) {
-            return stringValue;
-        }
-        if (Date.class.isAssignableFrom(clazz)) {
-            Method method = clazz.getMethod("valueOf", String.class);
-            return method.invoke(clazz, stringValue);
-        } else {
-            Constructor constructor = clazz.getConstructor(String.class);
-            return constructor.newInstance(stringValue);
-        }
-    }
-
     @Override
     public String toString() {
         return getName();
@@ -198,29 +152,33 @@ public class DBDataType {
     }
 
     public static class Ref {
-        String dataTypeName;
-        String dataTypeOwner;
-        String dataTypePackage;
-        long length;
-        int precision;
-        int scale;
-        boolean set;
+        private final String dataTypeName;
+        private final String declaredTypeName;
+        private final String declaredTypeOwner;
+        private final String declaredTypeProgram;
+        private final long length;
+        private final int precision;
+        private final int scale;
+        private final boolean set;
 
         public Ref(DBDataTypeMetadata metadata) throws SQLException {
-            dataTypeName = metadata.getDataTypeName();
-            length = metadata.getDataLength();
-            precision = metadata.getDataPrecision();
-            scale = metadata.getDataScale();
-            set = metadata.isSet();
+            this.dataTypeName = metadata.getDataTypeName();
+            this.declaredTypeName = metadata.getDeclaredTypeName();
+            this.declaredTypeOwner = metadata.getDeclaredTypeOwner();
+            this.declaredTypeProgram = metadata.getDeclaredTypeProgram();
 
-            dataTypeOwner = metadata.getDataTypeOwner();
-            dataTypePackage = metadata.getDataTypeProgram();
+            this.length = metadata.getDataLength();
+            this.precision = metadata.getDataPrecision();
+            this.scale = metadata.getDataScale();
+            this.set = metadata.isSet();
         }
 
-        Ref(String dataTypeName, String dataTypeOwner, String dataTypePackage, long length, int precision, int scale, boolean set) {
+        Ref(String dataTypeName, String declaredTypeName, String declaredTypeOwner, String declaredTypeProgram, long length, int precision, int scale, boolean set) {
             this.dataTypeName = dataTypeName;
-            this.dataTypeOwner = dataTypeOwner;
-            this.dataTypePackage = dataTypePackage;
+            this.declaredTypeName = declaredTypeName;
+            this.declaredTypeOwner = declaredTypeOwner;
+            this.declaredTypeProgram = declaredTypeProgram;
+
             this.length = length;
             this.precision = precision;
             this.scale = scale;
@@ -233,20 +191,25 @@ public class DBDataType {
             DBNativeDataType nativeDataType = null;
 
             DBObjectBundle objectBundle = connectionHandler.getObjectBundle();
-            if (dataTypeOwner != null) {
-                DBSchema typeSchema = objectBundle.getSchema(dataTypeOwner);
+            if (declaredTypeOwner != null) {
+                DBSchema typeSchema = objectBundle.getSchema(declaredTypeOwner);
                 if (typeSchema != null) {
-                    if (dataTypePackage != null) {
-                        DBPackage packagee = typeSchema.getPackage(dataTypePackage);
+                    if (declaredTypeProgram != null) {
+                        DBPackage packagee = typeSchema.getPackage(declaredTypeProgram);
                         if (packagee != null) {
-                            declaredType = packagee.getType(dataTypeName);
-                        }
+                            declaredType = packagee.getType(declaredTypeName);
+                        } /*else {
+                            DBType type = typeSchema.getType(declaredTypeProgram);
+                            if (type != null) {
+                                declaredType = packagee.getType(declaredTypeName);
+                            }
+                        }*/
                     } else {
-                        declaredType = typeSchema.getType(dataTypeName);
+                        declaredType = typeSchema.getType(declaredTypeName);
                     }
                 }
                 if (declaredType == null)  {
-                    name = dataTypeName;
+                    name = declaredTypeName;
                 }
 
                 DBNativeDataType nDataType = objectBundle.getNativeDataType(dataTypeName);
