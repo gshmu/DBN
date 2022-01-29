@@ -14,14 +14,16 @@ import com.dci.intellij.dbn.object.properties.DBDataTypePresentableProperty;
 import com.dci.intellij.dbn.object.properties.PresentableProperty;
 import com.dci.intellij.dbn.object.properties.SimplePresentableProperty;
 import com.dci.intellij.dbn.object.type.DBObjectType;
+import lombok.Getter;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import javax.swing.*;
+import javax.swing.Icon;
 import java.sql.SQLException;
 import java.util.LinkedList;
 import java.util.List;
 
+@Getter
 public class DBArgumentImpl extends DBObjectImpl<DBArgumentMetadata> implements DBArgument {
     private DBDataType dataType;
     private short overload;
@@ -54,28 +56,8 @@ public class DBArgumentImpl extends DBObjectImpl<DBArgumentMetadata> implements 
     }
 
     @Override
-    public DBDataType getDataType() {
-        return dataType;
-    }
-
-    @Override
     public DBMethod getMethod() {
         return (DBMethod) getParentObject();
-    }
-
-    @Override
-    public short getOverload() {
-        return overload;
-    }
-
-    @Override
-    public short getPosition() {
-        return position;
-    }
-
-    @Override
-    public short getSequence() {
-        return sequence;
     }
 
     @Override

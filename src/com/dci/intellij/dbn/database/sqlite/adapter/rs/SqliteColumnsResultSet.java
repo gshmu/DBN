@@ -14,8 +14,9 @@ import static com.dci.intellij.dbn.database.sqlite.adapter.SqliteRawMetaData.Raw
  * COLUMN_NAME
  * POSITION
  * DATA_TYPE_NAME
- * DATA_TYPE_OWNER
- * DATA_TYPE_PACKAGE
+ * DECLARED_TYPE_NAME
+ * DECLARED_TYPE_OWNER
+ * DECLARED_TYPE_PROGRAM
  * DATA_LENGTH
  * DATA_PRECISION
  * DATA_SCALE

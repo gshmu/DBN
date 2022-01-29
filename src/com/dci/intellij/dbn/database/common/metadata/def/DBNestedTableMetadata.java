@@ -10,7 +10,7 @@ public interface DBNestedTableMetadata extends DBObjectMetadata {
 
     String getTableName() throws SQLException;
 
-    String getDataTypeName() throws SQLException;
+    String getDeclaredTypeName() throws SQLException;
 
-    String getDataTypeOwner() throws SQLException;
+    String getDeclaredTypeOwner() throws SQLException;
 }
