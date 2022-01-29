@@ -57,7 +57,7 @@ public interface NotificationSupport extends ProjectSupplier {
             message = MessageFormat.format(message, args);
             Notification notification = new Notification(
                     "DBNavigator.NotificationGroup",
-                    Constants.DBN_TITLE_NOTIFICATION_SUFFIX + "[" + group + "]",
+                    Constants.DBN_TITLE_NOTIFICATION_SUFFIX + " - " + group + "",
                     message,
                     type);
             notification.setImportant(false);
