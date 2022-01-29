@@ -415,6 +415,6 @@ public class DBNConnection extends DBNConnectionBase {
     }
 
     public boolean hasDataChanges() {
-        return dataChanges != null && !dataChanges.isEmpty();
+        return dataChanges != null && !dataChanges.isEmpty() && !isClosed();
     }
 }
