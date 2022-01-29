@@ -15,6 +15,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
+@Getter
 public enum TransactionAction implements Serializable, Constant<TransactionAction> {
     COMMIT(
             "Commit",
@@ -81,14 +82,14 @@ public enum TransactionAction implements Serializable, Constant<TransactionActio
             (connectionHandler, connection) -> connection.setAutoCommit(false));
 
 
-    private final @Getter NotificationGroup group;
-    private final @Getter String name;
-    private final @Getter String successNotificationMessage;
-    private final @Getter String failureNotificationMessage;
-    private final @Getter NotificationType notificationType;
-    private final @Getter NotificationType failureNotificationType;
-    private final @Getter Executor executor;
-    private final @Getter boolean statusChange;
+    private final NotificationGroup group;
+    private final String name;
+    private final String successNotificationMessage;
+    private final String failureNotificationMessage;
+    private final NotificationType notificationType;
+    private final NotificationType failureNotificationType;
+    private final Executor executor;
+    private final boolean statusChange;
 
     TransactionAction(String name, NotificationGroup group, NotificationType notificationType, String successNotificationMessage, NotificationType failureNotificationType, String failureNotificationMessage, boolean statusChange, Executor executor) {
         this.group = group;
