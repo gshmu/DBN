@@ -17,34 +17,23 @@ import com.intellij.util.ui.UIUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import javax.swing.JComponent;
-import javax.swing.JList;
-import javax.swing.JPanel;
-import javax.swing.JTable;
-import javax.swing.SwingConstants;
+import javax.swing.*;
 import javax.swing.border.Border;
 import javax.swing.border.CompoundBorder;
 import javax.swing.border.TitledBorder;
 import javax.swing.table.TableCellEditor;
 import javax.swing.text.JTextComponent;
-import java.awt.Color;
-import java.awt.Component;
-import java.awt.Dimension;
-import java.awt.Font;
-import java.awt.IllegalComponentStateException;
-import java.awt.MouseInfo;
-import java.awt.Point;
-import java.awt.PointerInfo;
+import java.awt.*;
 import java.awt.event.InputEvent;
 import java.lang.reflect.Method;
 import java.util.EventListener;
 
 public class GUIUtil{
 
-    public static void stopTableCellEditing(final JComponent root) {
+    public static void stopTableCellEditing(JComponent root) {
         visitRecursively(root, component -> {
             if (component instanceof JTable) {
-                JTable table = (JTable) root;
+                JTable table = (JTable) component;
                 TableCellEditor cellEditor = table.getCellEditor();
                 if (cellEditor != null) {
                     cellEditor.stopCellEditing();
