@@ -23,12 +23,12 @@ public class DBNestedTableMetadataImpl extends DBObjectMetadataBase implements D
     }
 
     @Override
-    public String getDataTypeName() throws SQLException {
-        return getString("DATA_TYPE_NAME");
+    public String getDeclaredTypeName() throws SQLException {
+        return getString("DECLARED_TYPE_NAME");
     }
 
     @Override
-    public String getDataTypeOwner() throws SQLException {
-        return getString("DATA_TYPE_OWNER");
+    public String getDeclaredTypeOwner() throws SQLException {
+        return getString("DECLARED_TYPE_OWNER");
     }
 }

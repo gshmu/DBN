@@ -16,48 +16,43 @@ public abstract class DatabaseNativeDataTypes {
     protected List<DataTypeDefinition> dataTypes = new ArrayList<DataTypeDefinition>();
     public List<DataTypeDefinition> list() {return dataTypes;}
 
-    protected DataTypeDefinition createBasicDefinition(String name, Class typeClass, int sqlType, GenericDataType genericDataType) {
-        return createBasicDefinition(name, typeClass, sqlType, genericDataType, false, null);
+    protected void createBasicDefinition(String name, Class typeClass, int sqlType, GenericDataType genericDataType) {
+        createBasicDefinition(name, typeClass, sqlType, genericDataType, false, null);
     }
 
-    protected DataTypeDefinition createBasicDefinition(String name, Class typeClass, int sqlType, GenericDataType genericDataType, boolean pseudoNative, String contentTypeName) {
+    protected void createBasicDefinition(String name, Class typeClass, int sqlType, GenericDataType genericDataType, boolean pseudoNative, String contentTypeName) {
         BasicDataTypeDefinition dataTypeDefinition = new BasicDataTypeDefinition(name, typeClass, sqlType, genericDataType, pseudoNative, contentTypeName);
         dataTypes.add(dataTypeDefinition);
-        return dataTypeDefinition;
     }
 
-    protected DataTypeDefinition createLargeValueDefinition(String name, Class typeClass, int sqlType, GenericDataType genericDataType, boolean pseudoNative, String contentTypeName) {
+    protected void createLargeValueDefinition(String name, Class typeClass, int sqlType, GenericDataType genericDataType, boolean pseudoNative, String contentTypeName) {
         LargeObjectDataTypeDefinition dataTypeDefinition = new LargeObjectDataTypeDefinition(name, typeClass, sqlType, genericDataType, pseudoNative, contentTypeName);
         dataTypes.add(dataTypeDefinition);
-        return dataTypeDefinition;
     }
 
-    protected DataTypeDefinition createLargeValueDefinition(String name, Class typeClass, int sqlType, GenericDataType genericDataType) {
+    protected void createLargeValueDefinition(String name, Class typeClass, int sqlType, GenericDataType genericDataType) {
         LargeObjectDataTypeDefinition dataTypeDefinition = new LargeObjectDataTypeDefinition(name, typeClass, sqlType, genericDataType);
         dataTypes.add(dataTypeDefinition);
-        return dataTypeDefinition;
     }
 
-    protected DataTypeDefinition createLiteralDefinition(String name, Class typeClass, int sqlType) {
+    protected void createLiteralDefinition(String name, Class typeClass, int sqlType) {
         BasicDataTypeDefinition dataTypeDefinition = new LiteralDataTypeDefinition(name, typeClass, sqlType);
         dataTypes.add(dataTypeDefinition);
-        return dataTypeDefinition;
     }
 
-    protected DataTypeDefinition createNumericDefinition(String name, Class typeClass, int sqlType) {
+    protected void createNumericDefinition(String name, Class typeClass, int sqlType) {
         BasicDataTypeDefinition dataTypeDefinition = new NumericDataTypeDefinition(name, typeClass, sqlType);
         dataTypes.add(dataTypeDefinition);
-        return dataTypeDefinition;
     }
 
-    protected <T> DataTypeDefinition createDateTimeDefinition(String name, Class<T> typeClass, int sqlType) {
-        return createDateTimeDefinition(name, typeClass, sqlType, null);
+    protected <T> void createDateTimeDefinition(String name, Class<T> typeClass, int sqlType) {
+        createDateTimeDefinition(name, typeClass, sqlType, null);
     }
-    protected <T> DataTypeDefinition createDateTimeDefinition(String name, Class<T> typeClass, int sqlType, DataTypeParseAdapter<T> parseAdapter) {
+
+    protected <T> void createDateTimeDefinition(String name, Class<T> typeClass, int sqlType, DataTypeParseAdapter<T> parseAdapter) {
         BasicDataTypeDefinition dataTypeDefinition = new DateTimeDataTypeDefinition(name, typeClass, sqlType);
         dataTypeDefinition.setParseAdapter(parseAdapter);
         dataTypes.add(dataTypeDefinition);
-        return dataTypeDefinition;
 
     }
 

@@ -6,9 +6,11 @@ public interface DBDataTypeMetadata {
 
     String getDataTypeName() throws SQLException;
 
-    String getDataTypeOwner() throws SQLException;
+    String getDeclaredTypeName() throws SQLException;
 
-    String getDataTypeProgram() throws SQLException;
+    String getDeclaredTypeOwner() throws SQLException;
+
+    String getDeclaredTypeProgram() throws SQLException;
 
     long getDataLength() throws SQLException;
 
