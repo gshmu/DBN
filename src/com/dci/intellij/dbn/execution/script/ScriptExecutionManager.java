@@ -51,12 +51,7 @@ import java.nio.file.attribute.PosixFileAttributeView;
 import java.nio.file.attribute.PosixFilePermission;
 import java.security.SecureRandom;
 import java.sql.SQLException;
-import java.util.EnumMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Set;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicReference;
@@ -145,7 +140,7 @@ public class ScriptExecutionManager extends AbstractProjectComponent implements 
         context.set(EXECUTING, true);
         ConnectionHandler connectionHandler = Failsafe.nn(input.getConnectionHandler());
         VirtualFile sourceFile = input.getSourceFile();
-        activeProcesses.put(sourceFile, null);
+        activeProcesses.remove(sourceFile, null);
 
         Project project = getProject();
         AtomicReference<File> tempScriptFile = new AtomicReference<>();
