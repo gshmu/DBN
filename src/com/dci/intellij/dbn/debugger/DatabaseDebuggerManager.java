@@ -16,15 +16,7 @@ import com.dci.intellij.dbn.database.DatabaseFeature;
 import com.dci.intellij.dbn.database.DatabaseInterface;
 import com.dci.intellij.dbn.database.common.debug.DebuggerVersionInfo;
 import com.dci.intellij.dbn.debugger.common.breakpoint.DBBreakpointUpdaterFileEditorListener;
-import com.dci.intellij.dbn.debugger.common.config.DBMethodRunConfig;
-import com.dci.intellij.dbn.debugger.common.config.DBMethodRunConfigFactory;
-import com.dci.intellij.dbn.debugger.common.config.DBMethodRunConfigType;
-import com.dci.intellij.dbn.debugger.common.config.DBRunConfig;
-import com.dci.intellij.dbn.debugger.common.config.DBRunConfigCategory;
-import com.dci.intellij.dbn.debugger.common.config.DBRunConfigFactory;
-import com.dci.intellij.dbn.debugger.common.config.DBRunConfigType;
-import com.dci.intellij.dbn.debugger.common.config.DBStatementRunConfig;
-import com.dci.intellij.dbn.debugger.common.config.DBStatementRunConfigType;
+import com.dci.intellij.dbn.debugger.common.config.*;
 import com.dci.intellij.dbn.debugger.common.process.DBProgramRunner;
 import com.dci.intellij.dbn.debugger.jdbc.process.DBMethodJdbcRunner;
 import com.dci.intellij.dbn.debugger.jdbc.process.DBStatementJdbcRunner;
@@ -35,11 +27,7 @@ import com.dci.intellij.dbn.editor.code.SourceCodeManager;
 import com.dci.intellij.dbn.execution.method.MethodExecutionInput;
 import com.dci.intellij.dbn.execution.method.MethodExecutionManager;
 import com.dci.intellij.dbn.execution.statement.processor.StatementExecutionProcessor;
-import com.dci.intellij.dbn.object.DBMethod;
-import com.dci.intellij.dbn.object.DBProgram;
-import com.dci.intellij.dbn.object.DBSchema;
-import com.dci.intellij.dbn.object.DBSystemPrivilege;
-import com.dci.intellij.dbn.object.DBUser;
+import com.dci.intellij.dbn.object.*;
 import com.dci.intellij.dbn.object.common.DBObject;
 import com.dci.intellij.dbn.object.common.DBObjectBundle;
 import com.dci.intellij.dbn.object.common.DBSchemaObject;
@@ -75,11 +63,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.List;
-import java.util.Objects;
-import java.util.Set;
+import java.util.*;
 
 import static com.dci.intellij.dbn.common.message.MessageCallback.when;
 import static com.dci.intellij.dbn.common.util.Commons.list;
@@ -273,7 +257,7 @@ public class DatabaseDebuggerManager extends AbstractProjectComponent implements
                     } catch (ExecutionException e) {
                         Messages.showErrorDialog(
                                 project, "Could not start debugger for " + method.getQualifiedName() + ". \n" +
-                                        "Reason: " + e.getMessage());
+                                        "Cause: " + e.getMessage());
                     }
                 }
             }
@@ -309,7 +293,7 @@ public class DatabaseDebuggerManager extends AbstractProjectComponent implements
                 } catch (ExecutionException e) {
                     Messages.showErrorDialog(
                             project, "Could not start statement debugger. \n" +
-                                    "Reason: " + e.getMessage());
+                                    "Cause: " + e.getMessage());
                 }
             }
         });

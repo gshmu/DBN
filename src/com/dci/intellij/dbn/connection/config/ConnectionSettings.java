@@ -2,6 +2,7 @@ package com.dci.intellij.dbn.connection.config;
 
 import com.dci.intellij.dbn.common.options.CompositeProjectConfiguration;
 import com.dci.intellij.dbn.common.options.Configuration;
+import com.dci.intellij.dbn.common.property.PropertyHolderBase;
 import com.dci.intellij.dbn.common.util.Cloneable;
 import com.dci.intellij.dbn.connection.ConnectionId;
 import com.dci.intellij.dbn.connection.ConnectionIdProvider;
@@ -15,6 +16,7 @@ import org.jetbrains.annotations.NotNull;
 
 import static com.dci.intellij.dbn.common.options.setting.SettingsSupport.booleanAttribute;
 import static com.dci.intellij.dbn.common.options.setting.SettingsSupport.connectionIdAttribute;
+import static com.dci.intellij.dbn.connection.config.ConnectionSettingsStatus.*;
 
 @Getter
 @Setter
@@ -23,8 +25,13 @@ public class ConnectionSettings extends CompositeProjectConfiguration<Connection
         implements ConnectionRef, ConnectionIdProvider, Cloneable<ConnectionSettings> {
 
     private ConnectionId connectionId;
-    private boolean active = true;
-    private boolean isNew;
+
+    private final PropertyHolderBase<ConnectionSettingsStatus> status = new PropertyHolderBase.IntStore<ConnectionSettingsStatus>(ACTIVE) {
+        @Override
+        protected ConnectionSettingsStatus[] properties() {
+            return ConnectionSettingsStatus.values();
+        }
+    };
 
     private final ConnectionDatabaseSettings databaseSettings;
     private final ConnectionPropertiesSettings propertiesSettings = new ConnectionPropertiesSettings(this);
@@ -36,6 +43,7 @@ public class ConnectionSettings extends CompositeProjectConfiguration<Connection
     public ConnectionSettings(ConnectionBundleSettings parent) {
         this(parent, DatabaseType.GENERIC, ConnectionConfigType.CUSTOM);
     }
+
     public ConnectionSettings(ConnectionBundleSettings parent, DatabaseType databaseType, ConnectionConfigType configType) {
         super(parent);
         databaseSettings = new ConnectionDatabaseSettings(this, databaseType, configType);
@@ -62,6 +70,30 @@ public class ConnectionSettings extends CompositeProjectConfiguration<Connection
         return new ConnectionSettingsForm(this);
     }
 
+    public boolean isNew() {
+        return status.is(NEW);
+    }
+
+    public boolean isActive() {
+        return status.is(ACTIVE);
+    }
+
+    public boolean isSigned() {
+        return status.is(SIGNED);
+    }
+
+    public void setNew(boolean isNew) {
+        status.set(NEW, isNew);
+    }
+
+    public void setActive(boolean active) {
+        status.set(ACTIVE, active);
+    }
+
+    public void setSigned(boolean signed) {
+        status.set(SIGNED, signed);
+    }
+
     @Override
     public void readConfiguration(Element element) {
         if (ConnectionBundleSettings.IS_IMPORT_EXPORT_ACTION.get()) {
@@ -69,31 +101,25 @@ public class ConnectionSettings extends CompositeProjectConfiguration<Connection
         } else {
             connectionId = connectionIdAttribute(element, "id");
         }
-        active = booleanAttribute(element, "active", active);
+        status.set(ACTIVE, booleanAttribute(element, "active", true));
+        status.set(SIGNED, booleanAttribute(element, "signed", true));
         super.readConfiguration(element);
-    }
-
-    public boolean isNew() {
-        return isNew;
-    }
-
-    public void setNew(boolean isNew) {
-        this.isNew = isNew;
     }
 
     @Override
     public void writeConfiguration(Element element) {
         element.setAttribute("id", connectionId.id());
-        element.setAttribute("active", Boolean.toString(active));
+        element.setAttribute("active", Boolean.toString(isActive()));
+        element.setAttribute("signed", Boolean.toString(isSigned()));
         super.writeConfiguration(element);
     }
 
     @Override
     public ConnectionSettings clone() {
-        Element connectionElement = new Element("Connection");
-        writeConfiguration(connectionElement);
+        Element element = new Element("Connection");
+        writeConfiguration(element);
         ConnectionSettings clone = new ConnectionSettings(getParent() /*TODO config*/, databaseSettings.getDatabaseType(), databaseSettings.getConfigType());
-        clone.readConfiguration(connectionElement);
+        clone.readConfiguration(element);
         clone.databaseSettings.setConnectivityStatus(databaseSettings.getConnectivityStatus());
         clone.generateNewId();
         return clone;
