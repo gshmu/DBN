@@ -11,15 +11,7 @@ import com.intellij.openapi.project.Project;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.poi.hssf.usermodel.HSSFFont;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
-import org.apache.poi.ss.usermodel.Cell;
-import org.apache.poi.ss.usermodel.CellStyle;
-import org.apache.poi.ss.usermodel.CreationHelper;
-import org.apache.poi.ss.usermodel.DataFormat;
-import org.apache.poi.ss.usermodel.Font;
-import org.apache.poi.ss.usermodel.IndexedColors;
-import org.apache.poi.ss.usermodel.Row;
-import org.apache.poi.ss.usermodel.Sheet;
-import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.xssf.streaming.SXSSFWorkbook;
 
 import java.io.File;
@@ -57,15 +49,16 @@ public class ExcelDataExportProcessor extends DataExportProcessor{
 
     @Override
     public void performExport(DataExportModel model, DataExportInstructions instructions, ConnectionHandler connectionHandler) throws DataExportException {
-        Workbook workbook = createWorkbook();
+        Workbook workbook = null;
         try {
+            workbook = createWorkbook();
             String sheetName = model.getTableName();
             Sheet sheet = Strings.isEmpty(sheetName) ? workbook.createSheet() : workbook.createSheet(sheetName);
 
             if (instructions.isCreateHeader()) {
                 Row headerRow = sheet.createRow(0);
 
-                for (int columnIndex = 0; columnIndex < model.getColumnCount(); columnIndex++){
+                for (int columnIndex = 0; columnIndex < model.getColumnCount(); columnIndex++) {
                     String columnName = getColumnName(model, instructions, columnIndex);
 
                     Cell cell = headerRow.createCell(columnIndex);
@@ -85,7 +78,7 @@ public class ExcelDataExportProcessor extends DataExportProcessor{
             CellStyleCache cellStyleCache = new CellStyleCache(workbook, model.getProject());
             for (short rowIndex = 0; rowIndex < model.getRowCount(); rowIndex++) {
                 Row row = sheet.createRow(rowIndex + 1);
-                for (int columnIndex = 0; columnIndex < model.getColumnCount(); columnIndex++){
+                for (int columnIndex = 0; columnIndex < model.getColumnCount(); columnIndex++) {
                     checkCancelled();
                     Cell cell = row.createCell(columnIndex);
                     Object value = model.getValue(rowIndex, columnIndex);
@@ -114,7 +107,7 @@ public class ExcelDataExportProcessor extends DataExportProcessor{
                 }
             }
 
-            for (int columnIndex=0; columnIndex < model.getColumnCount(); columnIndex++){
+            for (int columnIndex = 0; columnIndex < model.getColumnCount(); columnIndex++) {
                 sheet.autoSizeColumn(columnIndex);
             }
 
@@ -127,9 +120,12 @@ public class ExcelDataExportProcessor extends DataExportProcessor{
             } catch (Throwable e) {
                 log.warn("Failed to export data", e);
                 throw new DataExportException(
-                        "Could not write file " + file.getPath() +".\n" +
-                                "Reason: " + e.getMessage());
+                        "Could not write file " + file.getPath() + ".\nCause: " + e.getMessage());
             }
+        } catch (DataExportException e) {
+            throw e;
+        } catch (Throwable e) {
+            throw new DataExportException("Failed to export data. Cause: " + e.getMessage());
         } finally {
             if (workbook instanceof SXSSFWorkbook) {
                 SXSSFWorkbook sxssfWorkbook = (SXSSFWorkbook) workbook;

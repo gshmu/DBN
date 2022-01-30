@@ -17,11 +17,7 @@ import com.intellij.openapi.project.Project;
 
 import java.awt.datatransfer.StringSelection;
 import java.awt.datatransfer.Transferable;
-import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.OutputStreamWriter;
+import java.io.*;
 import java.nio.charset.Charset;
 import java.sql.SQLException;
 import java.util.Calendar;
@@ -76,7 +72,7 @@ public abstract class DataExportProcessor {
             writer.close();
         } catch (IOException e) {
             e.printStackTrace();
-            throw new DataExportException("Could not write file " + file.getPath() + ".\n Reason: " + e.getMessage());
+            throw new DataExportException("Could not write file " + file.getPath() + ".\nCause: " + e.getMessage());
         }
     }
 
