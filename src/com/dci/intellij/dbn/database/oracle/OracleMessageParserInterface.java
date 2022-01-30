@@ -33,7 +33,8 @@ public class OracleMessageParserInterface implements DatabaseMessageParserInterf
 
     @Override
     public boolean isModelException(SQLException e) {
-        return e.getErrorCode() == 942;
+        int errorCode = e.getErrorCode();
+        return errorCode == 942 || errorCode == 17006;
     }
 
     @Override

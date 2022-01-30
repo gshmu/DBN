@@ -136,8 +136,8 @@ public interface DatabaseMetadataInterface extends DatabaseInterface{
      * Loads the columns of the given dataset (can be a TABLE, VIEW or MATERIALIZED_VIEW)<br>
      * Column names of the returned ResultSet
      *  <li> COLUMN_NAME (char)
-     *  <li> DECLARED_TYPE_NAME (char)
-     *  <li> DECLARED_TYPE_OWNER (char)
+     *  <li> DECL_TYPE_NAME (char)
+     *  <li> DECL_TYPE_OWNER (char)
      *  <li> DATA_LENGTH (number)
      *  <li> DATA_PRECISION (number)
      *  <li> DATA_SCALE (number)
@@ -194,8 +194,8 @@ public interface DatabaseMetadataInterface extends DatabaseInterface{
      * Column names of the returned ResultSet
      *  <li> DATASET_NAME (char)
      *  <li> COLUMN_NAME (char)
-     *  <li> DECLARED_TYPE_NAME (char)
-     *  <li> DECLARED_TYPE_OWNER (char)
+     *  <li> DECL_TYPE_NAME (char)
+     *  <li> DECL_TYPE_OWNER (char)
      *  <li> DATA_LENGTH (number)
      *  <li> DATA_PRECISION (number)
      *  <li> DATA_SCALE (number)
