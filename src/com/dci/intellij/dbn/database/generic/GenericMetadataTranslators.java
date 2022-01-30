@@ -145,9 +145,9 @@ public class GenericMetadataTranslators {
                             () -> inner.getString("TYPE_NAME"));
 
 
-                case "DECLARED_TYPE_NAME":   return null;
-                case "DECLARED_TYPE_OWNER":   return null;
-                case "DECLARED_TYPE_PROGRAM": return null;
+                case "DECL_TYPE_NAME":   return null;
+                case "DECL_TYPE_OWNER":   return null;
+                case "DECL_TYPE_PROGRAM": return null;
                 case "IS_SET":            return literalBoolean(false);
                 default: return null;
             }

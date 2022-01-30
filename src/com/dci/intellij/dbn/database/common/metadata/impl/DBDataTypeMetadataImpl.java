@@ -26,15 +26,15 @@ public class DBDataTypeMetadataImpl extends DBObjectMetadataBase implements DBDa
     }
 
     public String getDeclaredTypeName() throws SQLException {
-        return getString(prefix + "DECLARED_TYPE_NAME");
+        return getString(prefix + "DECL_TYPE_NAME");
     }
 
     public String getDeclaredTypeOwner() throws SQLException {
-        return getString(prefix + "DECLARED_TYPE_OWNER");
+        return getString(prefix + "DECL_TYPE_OWNER");
     }
 
     public String getDeclaredTypeProgram() throws SQLException {
-        return getString(prefix + "DECLARED_TYPE_PROGRAM");
+        return getString(prefix + "DECL_TYPE_PROGRAM");
     }
 
     public long getDataLength() throws SQLException {
