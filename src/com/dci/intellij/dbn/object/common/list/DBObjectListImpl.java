@@ -16,6 +16,7 @@ import com.dci.intellij.dbn.common.event.ProjectEvents;
 import com.dci.intellij.dbn.common.filter.CompoundFilter;
 import com.dci.intellij.dbn.common.filter.Filter;
 import com.dci.intellij.dbn.common.ui.tree.TreeEventType;
+import com.dci.intellij.dbn.common.util.SearchStrategy;
 import com.dci.intellij.dbn.common.util.Strings;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.DatabaseEntity;
@@ -37,7 +38,7 @@ import com.intellij.psi.PsiDirectory;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import javax.swing.Icon;
+import javax.swing.*;
 import javax.swing.tree.TreeNode;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -46,6 +47,7 @@ import java.util.List;
 import java.util.function.Consumer;
 
 import static com.dci.intellij.dbn.common.content.DynamicContentStatus.INTERNAL;
+import static com.dci.intellij.dbn.object.type.DBObjectType.*;
 
 public class DBObjectListImpl<T extends DBObject> extends DynamicContentImpl<T> implements DBObjectList<T> {
     private final DBObjectType objectType;
@@ -74,6 +76,19 @@ public class DBObjectListImpl<T extends DBObject> extends DynamicContentImpl<T> 
         } else {
             DynamicContentType parentContentType = parent.getDynamicContentType();
             return DynamicContentLoaderImpl.resolve(parentContentType, objectType);
+        }
+    }
+
+    @Override
+    protected SearchStrategy getSearchStrategy() {
+        if (objectType == COLUMN ||
+                objectType == ARGUMENT ||
+                objectType == TYPE ||
+                objectType == TYPE_ATTRIBUTE) {
+            // todo support binary search for position sorted elements
+            return SearchStrategy.LINEAR;
+        } else {
+            return SearchStrategy.BINARY;
         }
     }
 
@@ -188,9 +203,7 @@ public class DBObjectListImpl<T extends DBObject> extends DynamicContentImpl<T> 
     public void sortElements(List<T> elements) {
         DatabaseBrowserSettings browserSettings = DatabaseBrowserSettings.getInstance(getProject());
         DatabaseBrowserSortingSettings sortingSettings = browserSettings.getSortingSettings();
-        DBObjectComparator<T> comparator =
-                objectType == DBObjectType.ANY ? null :
-                        sortingSettings.getComparator(objectType);
+        DBObjectComparator<T> comparator = objectType == ANY ? null : sortingSettings.getComparator(objectType);
 
         if (comparator != null) {
             elements.sort(comparator);
