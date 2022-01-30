@@ -144,8 +144,10 @@ public final class Commons {
         }
     }
 
-    public static <T> boolean isOneOf(T[] objects, T object) {
+    @SafeVarargs
+    public static <T> boolean isOneOf(T object, T... objects) {
         for (T obj : objects) {
+            if (obj == null && object == null) return true;
             if (obj == object) return true;
         }
         return false;
