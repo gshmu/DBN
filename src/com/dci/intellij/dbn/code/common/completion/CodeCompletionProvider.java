@@ -10,29 +10,17 @@ import com.dci.intellij.dbn.language.common.element.ElementType;
 import com.dci.intellij.dbn.language.common.element.ElementTypeBundle;
 import com.dci.intellij.dbn.language.common.element.cache.ElementLookupContext;
 import com.dci.intellij.dbn.language.common.element.cache.ElementTypeLookupCache;
-import com.dci.intellij.dbn.language.common.element.impl.ElementTypeBase;
-import com.dci.intellij.dbn.language.common.element.impl.IdentifierElementType;
-import com.dci.intellij.dbn.language.common.element.impl.LeafElementType;
-import com.dci.intellij.dbn.language.common.element.impl.QualifiedIdentifierVariant;
-import com.dci.intellij.dbn.language.common.element.impl.TokenElementType;
+import com.dci.intellij.dbn.language.common.element.impl.*;
 import com.dci.intellij.dbn.language.common.element.parser.Branch;
 import com.dci.intellij.dbn.language.common.element.path.ASTPathNode;
 import com.dci.intellij.dbn.language.common.element.path.PathNode;
 import com.dci.intellij.dbn.language.common.element.util.ElementTypeAttribute;
-import com.dci.intellij.dbn.language.common.psi.BasePsiElement;
-import com.dci.intellij.dbn.language.common.psi.IdentifierPsiElement;
-import com.dci.intellij.dbn.language.common.psi.LeafPsiElement;
-import com.dci.intellij.dbn.language.common.psi.PsiUtil;
-import com.dci.intellij.dbn.language.common.psi.QualifiedIdentifierPsiElement;
+import com.dci.intellij.dbn.language.common.psi.*;
 import com.dci.intellij.dbn.language.common.psi.lookup.AliasDefinitionLookupAdapter;
 import com.dci.intellij.dbn.language.common.psi.lookup.LookupAdapterCache;
 import com.dci.intellij.dbn.language.common.psi.lookup.PsiLookupAdapter;
 import com.dci.intellij.dbn.object.DBSchema;
-import com.dci.intellij.dbn.object.common.DBObject;
-import com.dci.intellij.dbn.object.common.DBObjectBundle;
-import com.dci.intellij.dbn.object.common.DBObjectPsiElement;
-import com.dci.intellij.dbn.object.common.DBVirtualObject;
-import com.dci.intellij.dbn.object.common.ObjectTypeFilter;
+import com.dci.intellij.dbn.object.common.*;
 import com.dci.intellij.dbn.object.type.DBObjectType;
 import com.intellij.codeInsight.completion.CompletionParameters;
 import com.intellij.codeInsight.completion.CompletionProvider;
@@ -143,10 +131,11 @@ public class CodeCompletionProvider extends CompletionProvider<CompletionParamet
             }
         } else if (element.getElementType().getTokenType() == element.getLanguage().getSharedTokenTypes().getChrDot()) {
             LeafPsiElement parentPsiElement = element.getPrevLeaf();
-            if (parentPsiElement instanceof IdentifierPsiElement || parentPsiElement.isVirtualObject()) {
-                parentObject = parentPsiElement.getUnderlyingObject();
+            if (parentPsiElement != null) {
+                if (parentPsiElement instanceof IdentifierPsiElement || parentPsiElement.isVirtualObject()) {
+                    parentObject = parentPsiElement.getUnderlyingObject();
+                }
             }
-
         } else if (parent instanceof BasePsiElement) {
             BasePsiElement basePsiElement = (BasePsiElement) parent;
             ElementTypeBase elementType = basePsiElement.getElementType();
