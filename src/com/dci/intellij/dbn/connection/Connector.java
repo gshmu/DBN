@@ -25,7 +25,21 @@ import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 
+import static com.dci.intellij.dbn.common.util.Commons.nvl;
+
 class Connector {
+    private interface Property {
+        String APPLICATION_NAME = "ApplicationName";
+        String SESSION_PROGRAM = "v$session.program";
+
+        String USER = "user";
+        String PASSWORD = "password";
+
+        String SSL = "ssl";
+        String USE_SSL = "useSSL";
+        String REQUIRE_SSL = "requireSSL";
+    }
+
     private final SessionId sessionId;
     private final AuthenticationInfo authenticationInfo;
     private final ConnectionSettings connectionSettings;
@@ -71,29 +85,31 @@ class Connector {
             if (authenticationType.isOneOf(AuthenticationType.USER, AuthenticationType.USER_PASSWORD)) {
                 String user = authenticationInfo.getUser();
                 if (Strings.isNotEmpty(user)) {
-                    properties.put("user", user);
+                    properties.put(Property.USER, user);
                 }
 
                 if (authenticationType == AuthenticationType.USER_PASSWORD) {
                     String password = authenticationInfo.getPassword();
                     if (Strings.isNotEmpty(password)) {
-                        properties.put("password", password);
+                        properties.put(Property.PASSWORD, password);
                     }
                 }
             }
-
-            // SESSION INFO
-            ConnectionType connectionType = sessionId.getConnectionType();
-            String appName = "Database Navigator - " + connectionType.getName();
-            properties.put("ApplicationName", appName);
 
             DatabaseType databaseType = databaseSettings.getDatabaseType();
             if (databaseType == DatabaseType.GENERIC) {
                 databaseType = DatabaseType.resolve(databaseSettings.getDriver());
             }
 
+            // SESSION INFO
+            ConnectionType connectionType = sessionId.getConnectionType();
+            String appName = "Database Navigator - " + connectionType.getName();
+            if (connectionSettings.isSigned()) {
+                properties.put(Property.APPLICATION_NAME, appName);
+            }
+
             if (databaseType == DatabaseType.ORACLE) {
-                properties.put("v$session.program", appName);
+                properties.put(Property.SESSION_PROGRAM, appName);
             }
 
             Map<String, String> configProperties = databaseSettings.getParent().getPropertiesSettings().getProperties();
@@ -113,10 +129,10 @@ class Connector {
                 SslConnectionManager connectionManager = SslConnectionManager.getInstance();
                 connectionManager.ensureSslConnection(connectionSettings);
                 if (databaseType == DatabaseType.MYSQL) {
-                    properties.setProperty("useSSL", "true");
-                    properties.setProperty("requireSSL", "true");
+                    properties.setProperty(Property.USE_SSL, "true");
+                    properties.setProperty(Property.REQUIRE_SSL, "true");
                 } else if (databaseType == DatabaseType.POSTGRES) {
-                    properties.setProperty("ssl", "true");
+                    properties.setProperty(Property.SSL, "true");
                 }
             }
 
@@ -179,6 +195,15 @@ class Connector {
             return conn;
 
         } catch (Throwable e) {
+            String message = nvl(e.getMessage(), e.getClass().getSimpleName());
+            if (connectionSettings.isSigned()) {
+                // DBN-524 strongly asserted property names
+                if (message.contains(Property.APPLICATION_NAME)) {
+                    connectionSettings.setSigned(false);
+                    return connect();
+                }
+            }
+
             DatabaseType databaseType = ConnectionUtil.getDatabaseType(databaseSettings.getDriver());
             databaseSettings.setResolvedDatabaseType(databaseType);
             databaseSettings.setConnectivityStatus(ConnectivityStatus.INVALID);
@@ -186,7 +211,7 @@ class Connector {
                 connectionStatus.setConnectionException(e);
                 connectionStatus.setValid(false);
             }
-            exception = e instanceof SQLException ? (SQLException) e : new SQLException("Connection error: " + e.getMessage(), e);
+            exception = e instanceof SQLException ? (SQLException) e : new SQLException("Connection error: " + message, e);
         }
         return null;
     }
