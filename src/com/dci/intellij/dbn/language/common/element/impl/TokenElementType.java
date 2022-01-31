@@ -13,7 +13,7 @@ import com.dci.intellij.dbn.language.common.element.cache.ElementTypeLookupCache
 import com.dci.intellij.dbn.language.common.element.cache.TokenElementTypeLookupCache;
 import com.dci.intellij.dbn.language.common.element.parser.ParserContext;
 import com.dci.intellij.dbn.language.common.element.parser.impl.TokenElementTypeParser;
-import com.dci.intellij.dbn.language.common.element.path.PathNode;
+import com.dci.intellij.dbn.language.common.element.path.LanguageNode;
 import com.dci.intellij.dbn.language.common.element.util.ElementTypeDefinitionException;
 import com.dci.intellij.dbn.language.common.psi.TokenPsiElement;
 import com.intellij.lang.ASTNode;
@@ -82,7 +82,7 @@ public final class TokenElementType extends LeafElementType implements LookupIte
     }
 
     @Override
-    public Set<LeafElementType> getNextPossibleLeafs(PathNode pathNode, @NotNull ElementLookupContext context) {
+    public Set<LeafElementType> getNextPossibleLeafs(LanguageNode pathNode, @NotNull ElementLookupContext context) {
         ElementType parent = getParent();
         if (isIterationSeparator()) {
             if (parent instanceof IterationElementType) {
@@ -105,7 +105,7 @@ public final class TokenElementType extends LeafElementType implements LookupIte
     }
 
     @Override
-    public Set<LeafElementType> getNextRequiredLeafs(PathNode pathNode, ParserContext context) {
+    public Set<LeafElementType> getNextRequiredLeafs(LanguageNode pathNode, ParserContext context) {
         if (isIterationSeparator()) {
             if (getParent() instanceof IterationElementType) {
                 IterationElementType iterationElementType = (IterationElementType) getParent();

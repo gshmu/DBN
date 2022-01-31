@@ -16,7 +16,10 @@ public enum DynamicContentStatus implements Property.IntBase {
     CHANGING,
     REFRESHING,
     LOADING,
-    LOADING_IN_BACKGROUND;
+    LOADING_IN_BACKGROUND,
+
+    SCANNABLE
+    ;
 
     private final IntMasks masks = new IntMasks(this);
 

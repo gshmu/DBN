@@ -2,24 +2,34 @@ package com.dci.intellij.dbn.object.common.sorting;
 
 import com.dci.intellij.dbn.object.common.DBObject;
 import com.dci.intellij.dbn.object.type.DBObjectType;
+import lombok.Getter;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Comparator;
 import java.util.List;
 
-public abstract class DBObjectComparator<T extends DBObject> implements Comparator<T>{
-    private static final List<DBObjectComparator> REGISTRY = new ArrayList<>();
-    static {
-        new DBColumnNameComparator();
-        new DBColumnPositionComparator();
-        new DBProcedureNameComparator();
-        new DBProcedurePositionComparator();
-        new DBFunctionNameComparator();
-        new DBFunctionPositionComparator();
-        new DBArgumentNameComparator();
-        new DBArgumentPositionComparator();
+@Getter
+public abstract class DBObjectComparator<T extends DBObject> implements Comparator<T> {
+    private static final List<DBObjectComparator> REGISTRY = Arrays.asList(
+            new DBColumnNameComparator(),
+            new DBColumnPositionComparator(),
+            new DBProcedureNameComparator(),
+            new DBProcedurePositionComparator(),
+            new DBFunctionNameComparator(),
+            new DBFunctionPositionComparator(),
+            new DBArgumentNameComparator(),
+            new DBArgumentPositionComparator());
+
+    private final DBObjectType objectType;
+    private final SortingType sortingType;
+
+    public DBObjectComparator(DBObjectType objectType, SortingType sortingType) {
+        this.objectType = objectType;
+        this.sortingType = sortingType;
     }
+
 
     @Nullable
     public static DBObjectComparator get(DBObjectType objectType, SortingType sortingType) {
@@ -32,7 +42,7 @@ public abstract class DBObjectComparator<T extends DBObject> implements Comparat
     }
 
     public static List<SortingType> getSortingTypes(DBObjectType objectType) {
-        List<SortingType> sortingTypes = new ArrayList<SortingType>();
+        List<SortingType> sortingTypes = new ArrayList<>();
         for (DBObjectComparator comparator : REGISTRY) {
             if (comparator.objectType == objectType) {
                 sortingTypes.add(comparator.sortingType);
@@ -41,20 +51,4 @@ public abstract class DBObjectComparator<T extends DBObject> implements Comparat
         return sortingTypes;
     }
 
-    private DBObjectType objectType;
-    private SortingType sortingType;
-
-    public DBObjectComparator(DBObjectType objectType, SortingType sortingType) {
-        this.objectType = objectType;
-        this.sortingType = sortingType;
-        REGISTRY.add(this);
-    }
-
-    public DBObjectType getObjectType() {
-        return objectType;
-    }
-
-    public SortingType getSortingType() {
-        return sortingType;
-    }
 }

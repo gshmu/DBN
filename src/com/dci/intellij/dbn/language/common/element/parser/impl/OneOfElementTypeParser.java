@@ -10,7 +10,7 @@ import com.dci.intellij.dbn.language.common.element.parser.ParseResult;
 import com.dci.intellij.dbn.language.common.element.parser.ParseResultType;
 import com.dci.intellij.dbn.language.common.element.parser.ParserBuilder;
 import com.dci.intellij.dbn.language.common.element.parser.ParserContext;
-import com.dci.intellij.dbn.language.common.element.path.ParsePathNode;
+import com.dci.intellij.dbn.language.common.element.path.ParserNode;
 import com.intellij.lang.PsiBuilder.Marker;
 
 public class OneOfElementTypeParser extends ElementTypeParser<OneOfElementType> {
@@ -20,13 +20,13 @@ public class OneOfElementTypeParser extends ElementTypeParser<OneOfElementType> 
     }
 
     @Override
-    public ParseResult parse(ParsePathNode parentNode, ParserContext context) throws ParseException {
+    public ParseResult parse(ParserNode parentNode, ParserContext context) throws ParseException {
         if (context.isAlternative()) {
             return parseNew(parentNode, context);
         }
 
         ParserBuilder builder = context.getBuilder();
-        ParsePathNode node = stepIn(parentNode, context);
+        ParserNode node = stepIn(parentNode, context);
 
         elementType.sort();
         TokenType token = builder.getToken();
@@ -47,9 +47,9 @@ public class OneOfElementTypeParser extends ElementTypeParser<OneOfElementType> 
         return stepOut(node, context, ParseResultType.NO_MATCH, 0);
     }
 
-    private ParseResult parseNew(ParsePathNode parentNode, ParserContext context) throws ParseException {
+    private ParseResult parseNew(ParserNode parentNode, ParserContext context) throws ParseException {
         ParserBuilder builder = context.getBuilder();
-        ParsePathNode node = stepIn(parentNode, context);
+        ParserNode node = stepIn(parentNode, context);
 
         elementType.sort();
         TokenType token = builder.getToken();

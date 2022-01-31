@@ -6,7 +6,7 @@ import com.dci.intellij.dbn.language.common.TokenType;
 import com.dci.intellij.dbn.language.common.element.TokenPairTemplate;
 import com.dci.intellij.dbn.language.common.element.impl.TokenElementType;
 import com.dci.intellij.dbn.language.common.element.impl.WrappingDefinition;
-import com.dci.intellij.dbn.language.common.element.path.ParsePathNode;
+import com.dci.intellij.dbn.language.common.element.path.ParserNode;
 import com.intellij.lang.PsiBuilder.Marker;
 import org.jetbrains.annotations.Nullable;
 
@@ -29,9 +29,9 @@ public class TokenPairMonitor {
         }
     }
 
-    public void consumeBeginTokens(@Nullable ParsePathNode node) {
+    public void consumeBeginTokens(@Nullable ParserNode node) {
         if (effective && node != null) {
-            WrappingDefinition wrapping = node.getElementType().getWrapping();
+            WrappingDefinition wrapping = node.getElement().getWrapping();
             if (wrapping != null) {
                 TokenElementType beginElement = wrapping.getBeginElementType();
                 TokenType beginToken = beginElement.getTokenType();
@@ -45,9 +45,9 @@ public class TokenPairMonitor {
         }
     }
 
-    public void consumeEndTokens(@Nullable ParsePathNode node) {
+    public void consumeEndTokens(@Nullable ParserNode node) {
         if (effective && node != null) {
-            WrappingDefinition wrapping = node.getElementType().getWrapping();
+            WrappingDefinition wrapping = node.getElement().getWrapping();
             if (wrapping != null) {
                 TokenElementType endElement = wrapping.getEndElementType();
                 TokenType endToken = endElement.getTokenType();
