@@ -21,7 +21,7 @@ import com.intellij.util.LocalTimeCounter;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import javax.swing.*;
+import javax.swing.Icon;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -70,7 +70,7 @@ public class DBDatasetFilterVirtualFile extends DBVirtualFileImpl implements DBP
     @Override
     @NotNull
     public ConnectionHandler getConnectionHandler() {
-        return Failsafe.nn(datasetRef.resolveConnectionHandler());
+        return Failsafe.nn(datasetRef.resolveConnection());
     }
 
     @Nullable

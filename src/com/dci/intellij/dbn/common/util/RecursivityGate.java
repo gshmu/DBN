@@ -1,5 +1,6 @@
 package com.dci.intellij.dbn.common.util;
 
+import com.intellij.openapi.progress.ProcessCanceledException;
 import lombok.SneakyThrows;
 import org.jetbrains.annotations.NotNull;
 
@@ -7,48 +8,53 @@ import java.util.concurrent.Callable;
 import java.util.concurrent.atomic.AtomicInteger;
 
 public class RecursivityGate {
-    private final int maxIterations;
-    private static final ThreadLocal<AtomicInteger> iterations = new ThreadLocal<>();
+    private final int maxPasses;
+    private final ThreadLocal<AtomicInteger> passes = new ThreadLocal<>();
 
-    public RecursivityGate(int maxIterations) {
-        this.maxIterations = maxIterations;
+    public RecursivityGate() {
+        this(1);
+    }
+
+    public RecursivityGate(int passes) {
+        assert passes > 0;
+        this.maxPasses = passes;
     }
 
     @SneakyThrows
     public <T> T call(Callable<T> resolver, Callable<T> defaultResolver) {
-        AtomicInteger iterations = current();
-        int currentIterations = iterations.get();
-        if (currentIterations <= maxIterations) {
+        AtomicInteger passes = current();
+        if (passes.get() < maxPasses) {
             try {
-                iterations.incrementAndGet();
+                passes.incrementAndGet();
                 return resolver.call();
+            } catch (ProcessCanceledException ignore){
             } finally {
-                iterations.decrementAndGet();
+                passes.decrementAndGet();
             }
         }
-        return defaultResolver.call();
+        return defaultResolver == null ? null : defaultResolver.call();
     }
 
     @SneakyThrows
     public void run(Runnable task) {
-        AtomicInteger iterations = current();
-        int currentIterations = iterations.get();
-        if (currentIterations <= maxIterations) {
+        AtomicInteger passes = current();
+        if (passes.get() < maxPasses) {
             try {
-                iterations.incrementAndGet();
+                passes.incrementAndGet();
                 task.run();
+            } catch (ProcessCanceledException ignore){
             } finally {
-                iterations.decrementAndGet();
+                passes.decrementAndGet();
             }
         }
     }
 
     @NotNull
-    private static AtomicInteger current() {
-        AtomicInteger current = iterations.get();
+    private AtomicInteger current() {
+        AtomicInteger current = passes.get();
         if (current == null) {
             current = new AtomicInteger(0);
-            iterations.set(current);
+            passes.set(current);
         }
         return current;
     }

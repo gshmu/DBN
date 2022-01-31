@@ -149,18 +149,18 @@ public class DatabaseFileSystem extends VirtualFileSystem implements /*NonPhysic
 
         if (index > -1) {
             ConnectionId connectionId = ConnectionId.get(path.substring(0, index));
-            ConnectionHandler connectionHandler = ConnectionCache.findConnectionHandler(connectionId);
-            if (Failsafe.check(connectionHandler) && connectionHandler.isEnabled()) {
-                if (allowFileLookup(connectionHandler)) {
-                    Project project = connectionHandler.getProject();
+            ConnectionHandler connection = ConnectionCache.resolveConnection(connectionId);
+            if (Failsafe.check(connection) && connection.isEnabled()) {
+                if (allowFileLookup(connection)) {
+                    Project project = connection.getProject();
                     String relativePath = path.substring(index + 1);
                     if (CONSOLES.is(relativePath)) {
                         String consoleName = CONSOLES.collate(relativePath);
-                        DBConsole console = connectionHandler.getConsoleBundle().getConsole(consoleName);
+                        DBConsole console = connection.getConsoleBundle().getConsole(consoleName);
                         return Safe.call(console, target -> target.getVirtualFile());
 
                     } else if (SESSION_BROWSERS.is(relativePath)) {
-                        return connectionHandler.getSessionBrowserFile();
+                        return connection.getSessionBrowserFile();
 
                     } else if (OBJECTS.is(relativePath)) {
                         String objectIdentifier = OBJECTS.collate(relativePath);
@@ -224,11 +224,11 @@ public class DatabaseFileSystem extends VirtualFileSystem implements /*NonPhysic
     public String extractPresentablePath(@NotNull String path) {
         int index = path.indexOf(PS);
         ConnectionId connectionId = ConnectionId.get(index == -1 ? path : path.substring(0, index));
-        ConnectionHandler connectionHandler = ConnectionCache.findConnectionHandler(connectionId);
-        if (connectionHandler == null) {
+        ConnectionHandler connection = ConnectionCache.resolveConnection(connectionId);
+        if (connection == null) {
             path = path.replace(connectionId.id(), "UNKNOWN");
         } else {
-            path = path.replace(connectionId.id(), connectionHandler.getName());
+            path = path.replace(connectionId.id(), connection.getName());
         }
 
         if (index > -1) {

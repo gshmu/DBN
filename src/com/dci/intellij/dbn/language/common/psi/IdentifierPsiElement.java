@@ -46,7 +46,7 @@ import static com.dci.intellij.dbn.common.util.Commons.nvl;
 
 public abstract class IdentifierPsiElement extends LeafPsiElement<IdentifierElementType> {
     private PsiResolveResult ref;
-    private final RecursivityGate underlyingObjectResolver = new RecursivityGate(3);
+    private final RecursivityGate underlyingObjectResolver = new RecursivityGate(4);
     private final Capture<DBObject> underlyingObject = new Capture<>();
 
     public IdentifierPsiElement(ASTNode astNode, IdentifierElementType elementType) {

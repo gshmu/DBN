@@ -54,7 +54,7 @@ public class FileConnectionMapping implements PersistentStateElement {
 
     @Nullable
     public ConnectionHandler getConnection() {
-        return ConnectionCache.findConnectionHandler(connectionId);
+        return ConnectionCache.resolveConnection(connectionId);
     }
 
     @Nullable
