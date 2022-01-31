@@ -337,11 +337,11 @@ public class DBTypeImpl
     @Override
     public int compareTo(@NotNull Object o) {
         if (o instanceof DBType) {
-            DBType type = (DBType) o;
-            if (getParentObject().equals(type.getParentObject())) {
-                if ((type.isCollection() && isCollection()) ||
-                        (!type.isCollection() && !isCollection())) return super.compareTo(o); else
-                return type.isCollection() ? -1 : 1;
+            DBType that = (DBType) o;
+            if (this.getParentObject().equals(that.getParentObject())) {
+                return this.isCollection() == that.isCollection() ?
+                        super.compareTo(o) :
+                        that.isCollection() ? -1 : 1;
             }
         }
         return super.compareTo(o);

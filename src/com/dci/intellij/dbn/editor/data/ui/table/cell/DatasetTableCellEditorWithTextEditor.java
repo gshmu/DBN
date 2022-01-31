@@ -15,10 +15,11 @@ import com.intellij.ui.RoundedLineBorder;
 import com.intellij.util.ui.JBUI;
 import org.jetbrains.annotations.NotNull;
 
-import javax.swing.*;
+import javax.swing.JLabel;
+import javax.swing.JTextField;
 import javax.swing.border.Border;
 import javax.swing.border.CompoundBorder;
-import java.awt.*;
+import java.awt.Color;
 import java.awt.event.KeyEvent;
 
 public class DatasetTableCellEditorWithTextEditor extends DatasetTableCellEditor {
@@ -65,7 +66,7 @@ public class DatasetTableCellEditorWithTextEditor extends DatasetTableCellEditor
         JTextField textField = getTextField();
         if (dataType.isNative()) {
             highlight(cell.hasError() ? HIGHLIGHT_TYPE_ERROR : HIGHLIGHT_TYPE_NONE);
-            if (dataType.getNativeDataType().isLargeObject()) {
+            if (dataType.getNativeType().isLargeObject()) {
                 setEditable(false);
             } else {
                 String userValue = (String) cell.getUserValue();

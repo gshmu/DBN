@@ -94,7 +94,7 @@ public class SortableTableExportModel implements DataExportModel{
     public GenericDataType getGenericDataType(int columnIndex) {
         int realColumnIndex = getRealColumnIndex(columnIndex);
         ColumnInfo columnInfo = table.getModel().getColumnInfo(realColumnIndex);
-        DBNativeDataType nativeDataType = columnInfo.getDataType().getNativeDataType();
+        DBNativeDataType nativeDataType = columnInfo.getDataType().getNativeType();
 
         return nativeDataType == null ?
                 GenericDataType.LITERAL :

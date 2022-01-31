@@ -2,7 +2,13 @@ package com.dci.intellij.dbn.editor.data.record.ui;
 
 import com.dci.intellij.dbn.common.locale.Formatter;
 import com.dci.intellij.dbn.common.ui.DBNFormImpl;
-import com.dci.intellij.dbn.data.editor.ui.*;
+import com.dci.intellij.dbn.data.editor.ui.BasicDataEditorComponent;
+import com.dci.intellij.dbn.data.editor.ui.DataEditorComponent;
+import com.dci.intellij.dbn.data.editor.ui.ListPopupValuesProvider;
+import com.dci.intellij.dbn.data.editor.ui.ListPopupValuesProviderImpl;
+import com.dci.intellij.dbn.data.editor.ui.TextFieldWithPopup;
+import com.dci.intellij.dbn.data.editor.ui.TextFieldWithTextEditor;
+import com.dci.intellij.dbn.data.editor.ui.UserValueHolder;
 import com.dci.intellij.dbn.data.type.DBDataType;
 import com.dci.intellij.dbn.data.type.DBNativeDataType;
 import com.dci.intellij.dbn.data.type.DataTypeDefinition;
@@ -21,11 +27,23 @@ import com.intellij.ui.JBColor;
 import com.intellij.util.ui.UIUtil;
 import org.jetbrains.annotations.NotNull;
 
-import javax.swing.*;
+import javax.swing.JComponent;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JTextField;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
-import java.awt.*;
-import java.awt.event.*;
+import java.awt.BorderLayout;
+import java.awt.Component;
+import java.awt.Cursor;
+import java.awt.Dimension;
+import java.awt.Rectangle;
+import java.awt.event.FocusAdapter;
+import java.awt.event.FocusEvent;
+import java.awt.event.FocusListener;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
 import java.text.ParseException;
 import java.util.List;
 
@@ -52,7 +70,7 @@ public class DatasetRecordEditorColumnForm extends DBNFormImpl {
         dataTypeLabel.setText(dataType.getQualifiedName());
         dataTypeLabel.setForeground(UIUtil.getInactiveTextColor());
 
-        DBNativeDataType nativeDataType = dataType.getNativeDataType();
+        DBNativeDataType nativeDataType = dataType.getNativeType();
         if (nativeDataType != null) {
             DataTypeDefinition dataTypeDefinition = nativeDataType.getDefinition();
             GenericDataType genericDataType = dataTypeDefinition.getGenericDataType();
@@ -180,7 +198,7 @@ public class DatasetRecordEditorColumnForm extends DBNFormImpl {
         String textValue = editorComponent.getText().trim();
         if (textValue.length() > 0) {
             Object value = cell.getFormatter().parseObject(clazz, textValue);
-            DBNativeDataType nativeDataType = dataType.getNativeDataType();
+            DBNativeDataType nativeDataType = dataType.getNativeType();
             return nativeDataType == null ? null : nativeDataType.getDefinition().convert(value);
         } else {
             return null;

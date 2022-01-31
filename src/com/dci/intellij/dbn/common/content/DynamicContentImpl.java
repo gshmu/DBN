@@ -15,9 +15,6 @@ import com.dci.intellij.dbn.common.thread.ThreadMonitor;
 import com.dci.intellij.dbn.common.thread.ThreadProperty;
 import com.dci.intellij.dbn.common.util.Compactables;
 import com.dci.intellij.dbn.common.util.Lists;
-import com.dci.intellij.dbn.common.util.Search;
-import com.dci.intellij.dbn.common.util.SearchAdapter;
-import com.dci.intellij.dbn.common.util.SearchStrategy;
 import com.dci.intellij.dbn.common.util.Strings;
 import com.dci.intellij.dbn.common.util.Unsafe;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
@@ -396,27 +393,9 @@ public abstract class DynamicContentImpl<T extends DynamicContentElement>
     @Override
     public T getElement(String name, short overload) {
         if (name != null) {
-            List<T> elements = getAllElements();
-            if (getSearchStrategy() == SearchStrategy.BINARY) {
-                T result = Search.binarySearch(elements, SearchAdapter.forNameAndOverload(name, overload));
-
-/*
-                // TODO cleanup
-                if (Diagnostics.isDeveloperMode()) {
-                    assert result == Lists.first(elements, element -> matchElement(element, name, overload));
-                }
-*/
-
-                return result;
-            } else {
-                return Lists.first(elements, element -> matchElement(element, name, overload));
-            }
+            return Lists.first(elements, element -> matchElement(element, name, overload));
         }
         return null;
-    }
-
-    protected SearchStrategy getSearchStrategy() {
-        return SearchStrategy.LINEAR;
     }
 
     private boolean matchElement(T element, String name, short overload) {
