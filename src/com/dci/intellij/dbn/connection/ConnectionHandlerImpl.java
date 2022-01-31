@@ -14,7 +14,6 @@ import com.dci.intellij.dbn.common.notification.NotificationGroup;
 import com.dci.intellij.dbn.common.notification.NotificationSupport;
 import com.dci.intellij.dbn.common.thread.Synchronized;
 import com.dci.intellij.dbn.common.util.Commons;
-import com.dci.intellij.dbn.common.util.Lists;
 import com.dci.intellij.dbn.common.util.Strings;
 import com.dci.intellij.dbn.common.util.TimeUtil;
 import com.dci.intellij.dbn.connection.config.ConnectionDatabaseSettings;
@@ -413,7 +412,8 @@ public class ConnectionHandlerImpl extends StatefulDisposable.Base implements Co
     @Nullable
     @Override
     public SchemaId getSchemaId(String name) {
-        return Lists.first(getSchemaIds(), schemaId -> schemaId.is(name));
+        DBSchema schema = getObjectBundle().getSchema(name);
+        return schema == null ? null : schema.getIdentifier();
     }
 
     @Override
