@@ -197,7 +197,7 @@ public abstract class MethodExecutionProcessorImpl implements MethodExecutionPro
             if (Strings.isNotEmptyOrSpaces(stringValue))  {
                 Formatter formatter = Formatter.getInstance(getProject());
                 value = formatter.parseObject(dataType.getTypeClass(), stringValue);
-                value = dataType.getNativeDataType().getDefinition().convert(value);
+                value = dataType.getNativeType().getDefinition().convert(value);
             }
             dataType.setValueToPreparedStatement(preparedStatement, parameterIndex, value);
 

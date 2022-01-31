@@ -1,38 +1,31 @@
 package com.dci.intellij.dbn.common.util;
 
-import com.dci.intellij.dbn.common.content.DynamicContentElement;
+import com.dci.intellij.dbn.object.DBType;
+import com.dci.intellij.dbn.object.common.DBObject;
 
 public interface SearchAdapter<T> {
     int compare(T element);
 
 
-    static <O extends DynamicContentElement> SearchAdapter<O> forNameAndOverload(String name, short overload) {
-        String upperCaseName = name.toUpperCase();
+    static <O extends DBObject> SearchAdapter<O> forObject(String name, short overload) {
         return object -> {
-            String objectName = object.getName();
+            String objName = object.getName();
             short objectOverload = object.getOverload();
 
-            if (objectName.equalsIgnoreCase(name)) {
-                return objectOverload - overload;
+
+            int result = objName.compareToIgnoreCase(name);
+            return result == 0 ? objectOverload - overload : result;
+        };
+    }
+
+    static <O extends DBObject> SearchAdapter<O> forType(String name, short overload, boolean collection) {
+        return object -> {
+            if (((DBType) object).isCollection() == collection) {
+                int result = object.getName().compareToIgnoreCase(name);
+                return result == 0 ? object.getOverload() - overload : result;
+            } else {
+                return collection ? -1 : 1;
             }
-
-            int comp = objectName.toUpperCase().compareTo(upperCaseName);
-
-
-
-/*
-            // TODO underscore (_ 95) is between upper case (A 65) and lower case (b 97)
-            // none of the "compare ignore case" will match the upper case sorting
-
-            int comp0 = Strings.compare(objectName, name, true);
-            int comp1 = objectName.compareToIgnoreCase(name);
-
-            if (Integer.signum(comp) != Integer.signum(comp0)) {
-                System.out.println(objectName + " " + name);
-            }
-*/
-
-            return comp == 0 ? objectOverload - overload : comp;
         };
     }
 }

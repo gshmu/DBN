@@ -53,7 +53,7 @@ public class ArgumentValue {
         DBArgument argument = getArgument();
         if (argument != null) {
             DBDataType dataType = argument.getDataType();
-            return dataType.isNative() && dataType.getNativeDataType().isLargeObject();
+            return dataType.isNative() && dataType.getNativeType().isLargeObject();
         }
         return false;
     }

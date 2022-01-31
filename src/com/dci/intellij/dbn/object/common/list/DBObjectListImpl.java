@@ -16,7 +16,8 @@ import com.dci.intellij.dbn.common.event.ProjectEvents;
 import com.dci.intellij.dbn.common.filter.CompoundFilter;
 import com.dci.intellij.dbn.common.filter.Filter;
 import com.dci.intellij.dbn.common.ui.tree.TreeEventType;
-import com.dci.intellij.dbn.common.util.SearchStrategy;
+import com.dci.intellij.dbn.common.util.Search;
+import com.dci.intellij.dbn.common.util.SearchAdapter;
 import com.dci.intellij.dbn.common.util.Strings;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.DatabaseEntity;
@@ -76,19 +77,6 @@ public class DBObjectListImpl<T extends DBObject> extends DynamicContentImpl<T> 
         } else {
             DynamicContentType parentContentType = parent.getDynamicContentType();
             return DynamicContentLoaderImpl.resolve(parentContentType, objectType);
-        }
-    }
-
-    @Override
-    protected SearchStrategy getSearchStrategy() {
-        if (objectType == COLUMN ||
-                objectType == ARGUMENT ||
-                objectType == TYPE ||
-                objectType == TYPE_ATTRIBUTE) {
-            // todo support binary search for position sorted elements
-            return SearchStrategy.LINEAR;
-        } else {
-            return SearchStrategy.BINARY;
         }
     }
 
@@ -183,6 +171,32 @@ public class DBObjectListImpl<T extends DBObject> extends DynamicContentImpl<T> 
     @Override
     public T getObject(String name, short overload) {
         return getElement(name, overload);
+    }
+
+    @Override
+    public T getElement(String name, short overload) {
+        if (name != null) {
+            List<T> elements = getAllElements();
+            if (objectType == COLUMN ||
+                    objectType == ARGUMENT ||
+                    objectType == TYPE_ATTRIBUTE) {
+
+                // arguments and type attributes are sorted by position (linear search)
+                // TODO columns are sorted by PK first, then by name - split binary search possible
+                return super.getElement(name, overload);
+
+            } else if (objectType == TYPE) {
+                T element = Search.binarySearch(elements, SearchAdapter.forType(name, overload, false));
+                if (element == null) {
+                    element = Search.binarySearch(elements, SearchAdapter.forType(name, overload, true));
+                }
+                return element;
+
+            } else {
+                return Search.binarySearch(elements, SearchAdapter.forObject(name, overload));
+            }
+        }
+        return null;
     }
 
     @Override

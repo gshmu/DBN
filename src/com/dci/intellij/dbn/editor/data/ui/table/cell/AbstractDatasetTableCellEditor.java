@@ -168,7 +168,7 @@ public abstract class AbstractDatasetTableCellEditor extends AbstractCellEditor 
                 if (textValue.length() > 0) {
                     Formatter formatter = cell.getFormatter();
                     Object value = formatter.parseObject(clazz, textValue);
-                    return dataType.getNativeDataType().getDefinition().convert(value);
+                    return dataType.getNativeType().getDefinition().convert(value);
                 } else {
                     return null;
                 }
