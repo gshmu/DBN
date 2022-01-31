@@ -120,7 +120,7 @@ public final class DBDataTypeBundle extends StatefulDisposable.Base {
         }
 
         DBDataType dataType = new DBDataType();
-        dataType.setNativeDataType(nativeDataType);
+        dataType.setNativeType(nativeDataType);
         dataType.setDeclaredType(declaredType);
         dataType.setName(name);
         dataType.setLength(def.getLength());

@@ -254,7 +254,7 @@ public class ReadonlyResultSetAdapter extends ResultSetAdapter {
         @NotNull
         public DBNativeDataType getDataType() throws SQLException {
             DBDataType dataType = columnInfo.getDataType();
-            DBNativeDataType nativeDataType = dataType.getNativeDataType();
+            DBNativeDataType nativeDataType = dataType.getNativeType();
             if (nativeDataType == null) {
                 throw new SQLException("Operation not supported for " + dataType.getName());
             }

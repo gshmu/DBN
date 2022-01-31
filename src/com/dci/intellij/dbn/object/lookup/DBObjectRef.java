@@ -495,7 +495,7 @@ public class DBObjectRef<T extends DBObject> implements Comparable<DBObjectRef<?
                 result = this.objectType.compareTo(that.objectType);
                 if (result != 0) return result;
 
-                int nameCompare = this.objectName.compareTo(that.objectName);
+                int nameCompare = this.objectName.compareToIgnoreCase(that.objectName);
                 return nameCompare == 0 ? this.overload - that.overload : nameCompare;
             } else {
                 return this.parent.compareTo(that.parent);
@@ -504,7 +504,7 @@ public class DBObjectRef<T extends DBObject> implements Comparable<DBObjectRef<?
             result = this.objectType.compareTo(that.objectType);
             if (result != 0) return result;
 
-            return this.objectName.compareTo(that.objectName);
+            return this.objectName.compareToIgnoreCase(that.objectName);
         } else if (this.parent == null) {
             return -1;
         } else if (that.parent == null) {

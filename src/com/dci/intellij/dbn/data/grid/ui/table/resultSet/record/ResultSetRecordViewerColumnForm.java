@@ -8,8 +8,12 @@ import com.dci.intellij.dbn.data.type.DBDataType;
 import com.intellij.util.ui.UIUtil;
 import org.jetbrains.annotations.NotNull;
 
-import javax.swing.*;
-import java.awt.*;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JTextField;
+import java.awt.BorderLayout;
+import java.awt.Cursor;
+import java.awt.Dimension;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
@@ -93,7 +97,7 @@ public class ResultSetRecordViewerColumnForm extends DBNFormImpl {
         String textValue = valueTextField.getText().trim();
         if (textValue.length() > 0) {
             Object value = cell.getFormatter().parseObject(clazz, textValue);
-            return dataType.getNativeDataType().getDefinition().convert(value);
+            return dataType.getNativeType().getDefinition().convert(value);
         } else {
             return null;
         }

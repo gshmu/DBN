@@ -110,7 +110,7 @@ public abstract class DBDatasetImpl<M extends DBObjectMetadata> extends DBSchema
     public boolean hasLobColumns() {
         for (DBColumn column : getColumns()) {
             DBDataType dataType = column.getDataType();
-            if (dataType.isNative() && dataType.getNativeDataType().isLargeObject()) {
+            if (dataType.isNative() && dataType.getNativeType().isLargeObject()) {
                 return true;
             }
 

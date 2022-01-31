@@ -4,6 +4,7 @@ import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.data.value.ComplexValue;
 import com.dci.intellij.dbn.database.common.metadata.def.DBDataTypeMetadata;
 import com.dci.intellij.dbn.object.DBType;
+import com.dci.intellij.dbn.object.lookup.DBObjectRef;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -15,8 +16,8 @@ import java.sql.Types;
 @Getter
 @Setter
 public class DBDataType {
-    private DBNativeDataType nativeDataType;
-    private DBType declaredType;
+    private DBNativeDataType nativeType;
+    private DBObjectRef<DBType> declaredType;
     private String name;
     private String qualifiedName;
     private long length;
@@ -57,12 +58,20 @@ public class DBDataType {
         return set;
     }
 
+    public DBType getDeclaredType() {
+        return DBObjectRef.get(declaredType);
+    }
+
+    public void setDeclaredType(DBType declaredType) {
+        this.declaredType = DBObjectRef.of(declaredType);
+    }
+
     public boolean isDeclared() {
         return declaredType != null;
     }
 
     public boolean isNative() {
-        return nativeDataType != null;
+        return nativeType != null;
     }
 
     public boolean isPurelyDeclared() {
@@ -74,41 +83,41 @@ public class DBDataType {
     }
 
     public boolean isNativeDeclared() {
-        return nativeDataType != null && declaredType != null;
+        return nativeType != null && declaredType != null;
     }
 
     public String getName() {
         return (set ? "set of " : "") +
-                (nativeDataType == null && declaredType == null ? name :
-                 nativeDataType == null ? declaredType.getQualifiedName() :
-                 nativeDataType.getName());
+                (nativeType == null && declaredType == null ? name :
+                 nativeType == null ? declaredType.getQualifiedName() :
+                 nativeType.getName());
     }
 
     public Class getTypeClass() {
-        return nativeDataType == null ? Object.class : nativeDataType.getDefinition().getTypeClass();
+        return nativeType == null ? Object.class : nativeType.getDefinition().getTypeClass();
     }
 
     public int getSqlType() {
-        return nativeDataType == null ? Types.CHAR : nativeDataType.getSqlType();
+        return nativeType == null ? Types.CHAR : nativeType.getSqlType();
     }
 
     public Object getValueFromResultSet(ResultSet resultSet, int columnIndex) throws SQLException {
-        if (nativeDataType != null) {
-            return nativeDataType.getValueFromResultSet(resultSet, columnIndex);
+        if (nativeType != null) {
+            return nativeType.getValueFromResultSet(resultSet, columnIndex);
         } else {
             return new ComplexValue(resultSet, columnIndex);
         }
     }
 
     public void setValueToResultSet(ResultSet resultSet, int columnIndex, Object value) throws SQLException {
-        if (nativeDataType != null) {
-            nativeDataType.setValueToResultSet(resultSet, columnIndex, value);
+        if (nativeType != null) {
+            nativeType.setValueToResultSet(resultSet, columnIndex, value);
         }
     }
 
     public void setValueToPreparedStatement(PreparedStatement preparedStatement, int index, Object value) throws SQLException {
-        if (nativeDataType != null) {
-            nativeDataType.setValueToStatement(preparedStatement, index, value);
+        if (nativeType != null) {
+            nativeType.setValueToStatement(preparedStatement, index, value);
         }
     }
 
@@ -141,11 +150,11 @@ public class DBDataType {
     }
 
     public GenericDataType getGenericDataType() {
-        return nativeDataType != null ? nativeDataType.getGenericDataType() : GenericDataType.OBJECT;
+        return nativeType != null ? nativeType.getGenericDataType() : GenericDataType.OBJECT;
     }
 
     public String getContentTypeName() {
-        return nativeDataType == null ? null : nativeDataType.getDefinition().getContentTypeName();
+        return nativeType == null ? null : nativeType.getDefinition().getContentTypeName();
     }
 
 }

@@ -41,6 +41,10 @@ public interface DBObject extends
         PresentableConnectionProvider {
 
     @NotNull
+    @Override
+    String getName();
+
+    @NotNull
     DBObjectType getObjectType();
 
     boolean isOfType(DBObjectType objectType);

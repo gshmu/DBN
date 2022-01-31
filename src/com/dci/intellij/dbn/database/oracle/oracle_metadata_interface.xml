@@ -1178,7 +1178,7 @@
                 t.OWNER = {0} and
                 apo.OWNER (+) = t.OWNER and
                 apo.OBJECT_NAME (+) = t.TYPE_NAME and
-                apo.OBJECT_TYPE in ('TYPE', 'TYPE BODY') and
+                apo.OBJECT_TYPE (+) in ('TYPE', 'TYPE BODY') and
                 ct.OWNER (+) = t.OWNER and
                 ct.TYPE_NAME (+) = t.TYPE_NAME
             group by
