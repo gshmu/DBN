@@ -88,7 +88,7 @@ public class MessagesTreeCellRenderer extends ColoredTreeCellRenderer {
                     DBObjectRef<DBSchemaObject> objectRef = compilerMessagesObjectNode.getObjectRef();
                     icon = objectRef.getObjectType().getIcon();
                     append(objectRef.getPath(), SimpleTextAttributes.REGULAR_ATTRIBUTES);
-                    connectionHandler = objectRef.resolveConnectionHandler();
+                    connectionHandler = objectRef.resolveConnection();
                 } else {
                     icon = compilerMessagesObjectNode.hasMessageChildren(MessageType.ERROR) ?
                             object.getIcon() :

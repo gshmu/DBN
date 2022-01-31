@@ -141,7 +141,7 @@ public class MethodExecutionInput extends LocalExecutionInput implements Compara
     }
 
     public boolean isObsolete() {
-        ConnectionHandler connectionHandler = method.resolveConnectionHandler();
+        ConnectionHandler connectionHandler = method.resolveConnection();
         return connectionHandler == null/* || getMethod() == null*/;
     }
 

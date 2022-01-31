@@ -253,9 +253,9 @@ public class DBNConnection extends DBNConnectionBase {
 
     @Override
     public void statusChanged(ResourceStatus status) {
-        ConnectionHandler connectionHandler = ConnectionCache.findConnectionHandler(id);
-        if (Failsafe.check(connectionHandler)) {
-            ConnectionHandlerStatusHolder connectionStatus = connectionHandler.getConnectionStatus();
+        ConnectionHandler connection = ConnectionCache.resolveConnection(id);
+        if (Failsafe.check(connection)) {
+            ConnectionHandlerStatusHolder connectionStatus = connection.getConnectionStatus();
             switch (status) {
                 case CLOSED: connectionStatus.getConnected().markDirty(); break;
                 case VALID: connectionStatus.getValid().markDirty(); break;

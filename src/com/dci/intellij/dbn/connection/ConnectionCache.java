@@ -3,6 +3,7 @@ package com.dci.intellij.dbn.connection;
 import com.dci.intellij.dbn.common.component.ApplicationComponent;
 import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.common.project.Projects;
+import com.intellij.openapi.progress.ProcessCanceledException;
 import com.intellij.openapi.project.Project;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -13,7 +14,9 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 public class ConnectionCache implements ApplicationComponent {
-    private static final Map<ConnectionId, ConnectionHandler> CACHE = new ConcurrentHashMap<>();
+    private static final Map<ConnectionId, ConnectionHandler> cache = new ConcurrentHashMap<>();
+
+    private static final ProcessCanceledException CANCELED_EXCEPTION = new ProcessCanceledException();
 
     public ConnectionCache() {
         Projects.projectOpened(project -> initializeCache(project));
@@ -21,28 +24,23 @@ public class ConnectionCache implements ApplicationComponent {
     }
 
     @Nullable
-    public static ConnectionHandler findConnectionHandler(ConnectionId connectionId) {
+    public static ConnectionHandler resolveConnection(@Nullable ConnectionId connectionId) {
         if (connectionId != null) {
-            ConnectionHandler connectionHandler = CACHE.get(connectionId);
-            if (connectionHandler == null) {
-                synchronized (ConnectionCache.class) {
-                    connectionHandler = CACHE.get(connectionId);
-                    if (connectionHandler == null) {
-                        for (Project project : Projects.getOpenProjects()) {
-                            ConnectionManager connectionManager = ConnectionManager.getInstance(project);
-                            connectionHandler = connectionManager.getConnection(connectionId);
-                            if (Failsafe.check(connectionHandler)) {
-                                CACHE.put(connectionId, connectionHandler);
-                                return connectionHandler;
-                            }
+            try {
+                return cache.computeIfAbsent(connectionId, id -> {
+                    for (Project project : Projects.getOpenProjects()) {
+                        ConnectionManager connectionManager = ConnectionManager.getInstance(project);
+                        ConnectionHandler connectionHandler = connectionManager.getConnection(connectionId);
+                        if (Failsafe.check(connectionHandler)) {
+                            return connectionHandler;
                         }
                     }
-                }
-            }
-            return Failsafe.check(connectionHandler) ? connectionHandler : null;
-        } else{
-            return null;
+                    throw CANCELED_EXCEPTION;
+                });
+            } catch (ProcessCanceledException ignore) {}
         }
+
+        return null;
     }
 
     @NotNull
@@ -57,17 +55,17 @@ public class ConnectionCache implements ApplicationComponent {
             ConnectionManager connectionManager = ConnectionManager.getInstance(project);
             List<ConnectionHandler> connectionHandlers = connectionManager.getConnections();
             for (ConnectionHandler connectionHandler : connectionHandlers) {
-                CACHE.put(connectionHandler.getConnectionId(), connectionHandler);
+                cache.put(connectionHandler.getConnectionId(), connectionHandler);
             }
         }
     }
 
     private static void releaseCache(@NotNull Project project) {
         if (!project.isDefault()) {
-            Iterator<ConnectionId> connectionIds = CACHE.keySet().iterator();
+            Iterator<ConnectionId> connectionIds = cache.keySet().iterator();
             while (connectionIds.hasNext()) {
                 ConnectionId connectionId = connectionIds.next();
-                ConnectionHandler connectionHandler = CACHE.get(connectionId);
+                ConnectionHandler connectionHandler = cache.get(connectionId);
                 if (connectionHandler.isDisposed() || connectionHandler.getProject() == project) {
                     connectionIds.remove();
                 }
