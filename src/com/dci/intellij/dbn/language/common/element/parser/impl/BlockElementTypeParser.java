@@ -6,7 +6,7 @@ import com.dci.intellij.dbn.language.common.element.parser.ParseResult;
 import com.dci.intellij.dbn.language.common.element.parser.ParseResultType;
 import com.dci.intellij.dbn.language.common.element.parser.ParserBuilder;
 import com.dci.intellij.dbn.language.common.element.parser.ParserContext;
-import com.dci.intellij.dbn.language.common.element.path.ParsePathNode;
+import com.dci.intellij.dbn.language.common.element.path.ParserNode;
 import com.intellij.lang.PsiBuilder.Marker;
 
 public class BlockElementTypeParser extends SequenceElementTypeParser<BlockElementType>{
@@ -15,7 +15,7 @@ public class BlockElementTypeParser extends SequenceElementTypeParser<BlockEleme
     }
 
     @Override
-    public ParseResult parse(ParsePathNode parentNode, ParserContext context) throws ParseException {
+    public ParseResult parse(ParserNode parentNode, ParserContext context) throws ParseException {
         ParserBuilder builder = context.getBuilder();
         Marker marker = builder.mark();
         ParseResult result = super.parse(parentNode, context);

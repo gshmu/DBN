@@ -4,7 +4,7 @@ import com.dci.intellij.dbn.language.common.element.ElementType;
 import com.dci.intellij.dbn.language.common.element.impl.ElementTypeRef;
 import com.dci.intellij.dbn.language.common.element.impl.NamedElementType;
 import com.dci.intellij.dbn.language.common.element.parser.Branch;
-import com.dci.intellij.dbn.language.common.element.path.ParsePathNode;
+import com.dci.intellij.dbn.language.common.element.path.ParserNode;
 import com.dci.intellij.dbn.language.common.element.util.ElementTypeAttribute;
 import com.intellij.lang.ASTNode;
 import com.intellij.psi.tree.IElementType;
@@ -53,7 +53,7 @@ public class ElementLookupContext {
         }
     }
 
-    public void addBranchMarker(ParsePathNode pathNode, Branch branch) {
+    public void addBranchMarker(ParserNode pathNode, Branch branch) {
         NamedElementType namedElementType = getNamedElement(pathNode);
         if (namedElementType != null) {
             branchMarkers.put(branch, namedElementType);
@@ -75,10 +75,10 @@ public class ElementLookupContext {
     }
 
     @Nullable
-    private static NamedElementType getNamedElement(ParsePathNode pathNode) {
+    private static NamedElementType getNamedElement(ParserNode pathNode) {
         pathNode = pathNode.getParent();
         while (pathNode != null) {
-            ElementType elementType = pathNode.getElementType();
+            ElementType elementType = pathNode.getElement();
             if (elementType instanceof NamedElementType) {
                 return (NamedElementType) elementType;
             }
@@ -87,8 +87,8 @@ public class ElementLookupContext {
         return null;
     }
 
-    public void removeBranchMarkers(ParsePathNode pathNode) {
-        ElementType elementType = pathNode.getElementType();
+    public void removeBranchMarkers(ParserNode pathNode) {
+        ElementType elementType = pathNode.getElement();
         if (elementType instanceof NamedElementType) {
             removeBranchMarkers((NamedElementType) elementType);
         }

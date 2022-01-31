@@ -29,6 +29,7 @@ import com.dci.intellij.dbn.object.common.DBObject;
 import com.dci.intellij.dbn.object.common.DBObjectBundle;
 import com.dci.intellij.dbn.object.common.DBVirtualObject;
 import com.dci.intellij.dbn.object.common.sorting.DBObjectComparator;
+import com.dci.intellij.dbn.object.common.sorting.SortingType;
 import com.dci.intellij.dbn.object.filter.quick.ObjectQuickFilter;
 import com.dci.intellij.dbn.object.filter.quick.ObjectQuickFilterManager;
 import com.dci.intellij.dbn.object.type.DBObjectType;
@@ -48,6 +49,7 @@ import java.util.List;
 import java.util.function.Consumer;
 
 import static com.dci.intellij.dbn.common.content.DynamicContentStatus.INTERNAL;
+import static com.dci.intellij.dbn.common.content.DynamicContentStatus.SCANNABLE;
 import static com.dci.intellij.dbn.object.type.DBObjectType.*;
 
 public class DBObjectListImpl<T extends DBObject> extends DynamicContentImpl<T> implements DBObjectList<T> {
@@ -180,23 +182,27 @@ public class DBObjectListImpl<T extends DBObject> extends DynamicContentImpl<T> 
     public T getElement(String name, short overload) {
         if (name != null) {
             List<T> elements = getAllElements();
-            if (objectType == COLUMN ||
-                    objectType == ARGUMENT ||
-                    objectType == TYPE_ATTRIBUTE) {
+            if (!elements.isEmpty()) {
+                if (objectType == COLUMN ||
+                        objectType == ARGUMENT ||
+                        objectType == TYPE_ATTRIBUTE) {
 
-                // arguments and type attributes are sorted by position (linear search)
-                // TODO columns are sorted by PK first, then by name - split binary search possible
-                return super.getElement(name, overload);
+                    // arguments and type attributes are sorted by position (linear search)
+                    // TODO columns are sorted by PK first, then by name - split binary search possible
+                    return super.getElement(name, overload);
 
-            } else if (objectType == TYPE) {
-                T element = Search.binarySearch(elements, SearchAdapter.forType(name, overload, false));
-                if (element == null) {
-                    element = Search.binarySearch(elements, SearchAdapter.forType(name, overload, true));
+                } else if (objectType == TYPE) {
+                    T element = Search.binarySearch(elements, SearchAdapter.forType(name, overload, false));
+                    if (element == null) {
+                        element = Search.binarySearch(elements, SearchAdapter.forType(name, overload, true));
+                    }
+                    return element;
+
+                } else if (is(SCANNABLE)) {
+                    return Search.binarySearch(elements, SearchAdapter.forObject(name, overload));
+                } else {
+                    super.getElement(name, overload);
                 }
-                return element;
-
-            } else {
-                return Search.binarySearch(elements, SearchAdapter.forObject(name, overload));
             }
         }
         return null;
@@ -224,8 +230,10 @@ public class DBObjectListImpl<T extends DBObject> extends DynamicContentImpl<T> 
 
         if (comparator != null) {
             elements.sort(comparator);
+            set(SCANNABLE, comparator.getSortingType() == SortingType.NAME);
         } else {
             super.sortElements(elements);
+            set(SCANNABLE, true);
         }
     }
 

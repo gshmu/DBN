@@ -16,7 +16,7 @@ import com.dci.intellij.dbn.language.common.element.cache.ElementTypeLookupCache
 import com.dci.intellij.dbn.language.common.element.parser.Branch;
 import com.dci.intellij.dbn.language.common.element.parser.BranchCheck;
 import com.dci.intellij.dbn.language.common.element.parser.ElementTypeParser;
-import com.dci.intellij.dbn.language.common.element.path.BasicPathNode;
+import com.dci.intellij.dbn.language.common.element.path.LanguageNode;
 import com.dci.intellij.dbn.language.common.element.util.ElementTypeAttribute;
 import com.dci.intellij.dbn.language.common.element.util.ElementTypeAttributeHolder;
 import com.dci.intellij.dbn.language.common.element.util.ElementTypeDefinitionException;
@@ -231,10 +231,10 @@ public abstract class ElementTypeBase extends IElementType implements ElementTyp
     }
 
     @Override
-    public int getIndexInParent(BasicPathNode pathNode) {
-        BasicPathNode parentNode = pathNode.getParent();
-        if (parentNode != null && parentNode.getElementType() instanceof SequenceElementType) {
-            SequenceElementType sequenceElementType = (SequenceElementType) parentNode.getElementType();
+    public int getIndexInParent(LanguageNode node) {
+        LanguageNode parentNode = node.getParent();
+        if (parentNode != null && parentNode.getElement() instanceof SequenceElementType) {
+            SequenceElementType sequenceElementType = (SequenceElementType) parentNode.getElement();
             return sequenceElementType.indexOf(this);
         }
         return 0;

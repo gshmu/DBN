@@ -5,7 +5,7 @@ import com.dci.intellij.dbn.language.common.element.ElementTypeBundle;
 import com.dci.intellij.dbn.language.common.element.impl.NamedElementType;
 import com.dci.intellij.dbn.language.common.element.parser.ParserBuilder;
 import com.dci.intellij.dbn.language.common.element.parser.ParserContext;
-import com.dci.intellij.dbn.language.common.element.path.ParsePathNode;
+import com.dci.intellij.dbn.language.common.element.path.ParserNode;
 import com.intellij.lang.ASTNode;
 import com.intellij.lang.PsiBuilder;
 import com.intellij.lang.PsiParser;
@@ -51,7 +51,7 @@ public abstract class DBLanguageParser implements PsiParser {
         }
 
         boolean advanced = false;
-        ParsePathNode rootParseNode = new ParsePathNode(root, null, 0, 0);
+        ParserNode rootParseNode = new ParserNode(root, null, 0, 0);
 
         try {
             while (!builder.eof()) {

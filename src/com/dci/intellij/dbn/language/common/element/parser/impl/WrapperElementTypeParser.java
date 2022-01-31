@@ -12,7 +12,7 @@ import com.dci.intellij.dbn.language.common.element.parser.ParseResult;
 import com.dci.intellij.dbn.language.common.element.parser.ParseResultType;
 import com.dci.intellij.dbn.language.common.element.parser.ParserBuilder;
 import com.dci.intellij.dbn.language.common.element.parser.ParserContext;
-import com.dci.intellij.dbn.language.common.element.path.ParsePathNode;
+import com.dci.intellij.dbn.language.common.element.path.ParserNode;
 import com.dci.intellij.dbn.language.common.element.util.ParseBuilderErrorHandler;
 
 import java.util.Set;
@@ -23,9 +23,9 @@ public class WrapperElementTypeParser extends ElementTypeParser<WrapperElementTy
     }
 
     @Override
-    public ParseResult parse(ParsePathNode parentNode, ParserContext context) throws ParseException {
+    public ParseResult parse(ParserNode parentNode, ParserContext context) throws ParseException {
         ParserBuilder builder = context.getBuilder();
-        ParsePathNode node = stepIn(parentNode, context);
+        ParserNode node = stepIn(parentNode, context);
 
         ElementTypeBase wrappedElement = elementType.getWrappedElement();
         TokenElementType beginTokenElement = elementType.getBeginTokenElement();
@@ -76,10 +76,10 @@ public class WrapperElementTypeParser extends ElementTypeParser<WrapperElementTy
         return stepOut(node, context, ParseResultType.NO_MATCH, matchedTokens);
     }
 
-    private static boolean isParentWrapping(ParsePathNode node, TokenType tokenType) {
-        ParsePathNode parent = node.getParent();
+    private static boolean isParentWrapping(ParserNode node, TokenType tokenType) {
+        ParserNode parent = node.getParent();
         while (parent != null && parent.getCursorPosition() == 0) {
-            WrappingDefinition parentWrapping = parent.getElementType().getWrapping();
+            WrappingDefinition parentWrapping = parent.getElement().getWrapping();
             if (parentWrapping != null && parentWrapping.getBeginElementType().getTokenType() == tokenType) {
                 return true;
             }

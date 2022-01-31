@@ -12,8 +12,8 @@ import com.dci.intellij.dbn.language.common.element.parser.ParseResult;
 import com.dci.intellij.dbn.language.common.element.parser.ParseResultType;
 import com.dci.intellij.dbn.language.common.element.parser.ParserBuilder;
 import com.dci.intellij.dbn.language.common.element.parser.ParserContext;
-import com.dci.intellij.dbn.language.common.element.path.BasicPathNode;
-import com.dci.intellij.dbn.language.common.element.path.ParsePathNode;
+import com.dci.intellij.dbn.language.common.element.path.LanguageNode;
+import com.dci.intellij.dbn.language.common.element.path.ParserNode;
 import com.dci.intellij.dbn.language.common.element.util.ElementTypeAttribute;
 import com.dci.intellij.dbn.language.common.element.util.ParseBuilderErrorHandler;
 import com.intellij.lang.PsiBuilder;
@@ -28,11 +28,11 @@ public class SequenceElementTypeParser<ET extends SequenceElementType> extends E
     }
 
     @Override
-    public ParseResult parse(ParsePathNode parentNode, ParserContext context) throws ParseException {
+    public ParseResult parse(ParserNode parentNode, ParserContext context) throws ParseException {
         if (context.isAlternative()) return parseNew(parentNode, context);
 
         ParserBuilder builder = context.getBuilder();
-        ParsePathNode node = stepIn(parentNode, context);
+        ParserNode node = stepIn(parentNode, context);
 
         int matches = 0;
         int matchedTokens = 0;
@@ -111,9 +111,9 @@ public class SequenceElementTypeParser<ET extends SequenceElementType> extends E
         return stepOut(node, context, NO_MATCH, matchedTokens);
     }
 
-    ParseResult parseNew(ParsePathNode parentNode, ParserContext context) throws ParseException {
+    ParseResult parseNew(ParserNode parentNode, ParserContext context) throws ParseException {
         ParserBuilder builder = context.getBuilder();
-        ParsePathNode node = stepIn(parentNode, context);
+        ParserNode node = stepIn(parentNode, context);
 
         ElementTypeRef element = elementType.getFirstChild();
         while (element != null) {
@@ -137,7 +137,7 @@ public class SequenceElementTypeParser<ET extends SequenceElementType> extends E
         return false;
     }
 
-    private int advanceLexerToNextLandmark(ParsePathNode node, ParserContext context) {
+    private int advanceLexerToNextLandmark(ParserNode node, ParserContext context) {
         int siblingPosition = node.getCursorPosition();
         ParserBuilder builder = context.getBuilder();
         PsiBuilder.Marker marker = builder.mark();
@@ -164,10 +164,10 @@ public class SequenceElementTypeParser<ET extends SequenceElementType> extends E
         return 0;
     }
 
-    private int getLandmarkIndex(TokenType tokenType, int index, ParsePathNode node) {
+    private int getLandmarkIndex(TokenType tokenType, int index, ParserNode node) {
         if (tokenType.isParserLandmark()) {
-            BasicPathNode statementPathNode = node.getPathNode(ElementTypeAttribute.STATEMENT);
-            if (statementPathNode != null && statementPathNode.getElementType().getLookupCache().couldStartWithToken(tokenType)) {
+            LanguageNode statementPathNode = node.getParent(ElementTypeAttribute.STATEMENT);
+            if (statementPathNode != null && statementPathNode.getElement().getLookupCache().couldStartWithToken(tokenType)) {
                 return -1;
             }
             ElementTypeRef[] children = elementType.getChildren();
@@ -178,9 +178,9 @@ public class SequenceElementTypeParser<ET extends SequenceElementType> extends E
                 }
             }
 
-            ParsePathNode parseNode = node;
+            ParserNode parseNode = node;
             while (parseNode != null) {
-                ElementType elementType = parseNode.getElementType();
+                ElementType elementType = parseNode.getElement();
                 if (elementType instanceof SequenceElementType) {
                     SequenceElementType sequenceElementType = (SequenceElementType) elementType;
                     if ( sequenceElementType.containsLandmarkTokenFromIndex(tokenType, parseNode.getCursorPosition() + 1)) {

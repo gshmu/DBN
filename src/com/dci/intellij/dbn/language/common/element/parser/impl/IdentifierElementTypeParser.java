@@ -7,7 +7,7 @@ import com.dci.intellij.dbn.language.common.element.parser.ParseResult;
 import com.dci.intellij.dbn.language.common.element.parser.ParseResultType;
 import com.dci.intellij.dbn.language.common.element.parser.ParserBuilder;
 import com.dci.intellij.dbn.language.common.element.parser.ParserContext;
-import com.dci.intellij.dbn.language.common.element.path.ParsePathNode;
+import com.dci.intellij.dbn.language.common.element.path.ParserNode;
 import com.intellij.lang.PsiBuilder.Marker;
 
 public class IdentifierElementTypeParser extends ElementTypeParser<IdentifierElementType> {
@@ -16,7 +16,7 @@ public class IdentifierElementTypeParser extends ElementTypeParser<IdentifierEle
     }
 
     @Override
-    public ParseResult parse(ParsePathNode parentNode, ParserContext context) {
+    public ParseResult parse(ParserNode parentNode, ParserContext context) {
         if (context.isAlternative()) {
             return parseNew(parentNode, context);
         }
@@ -39,7 +39,7 @@ public class IdentifierElementTypeParser extends ElementTypeParser<IdentifierEle
     }
 
 
-    ParseResult parseNew(ParsePathNode parentNode, ParserContext context) {
+    ParseResult parseNew(ParserNode parentNode, ParserContext context) {
         ParserBuilder builder = context.getBuilder();
         TokenType token = builder.getToken();
         Marker marker = null;
@@ -56,7 +56,7 @@ public class IdentifierElementTypeParser extends ElementTypeParser<IdentifierEle
     }
 
 
-    private boolean isSuppressibleReservedWord(ParsePathNode parentNode, ParserContext context, TokenType tokenType) {
+    private boolean isSuppressibleReservedWord(ParserNode parentNode, ParserContext context, TokenType tokenType) {
         if (tokenType.isSuppressibleReservedWord()) {
             if (context.isWavedTokenType(tokenType)) {
                 return true;
