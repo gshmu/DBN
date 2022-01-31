@@ -1,15 +1,16 @@
 package com.dci.intellij.dbn.data.editor.ui;
 
+import com.dci.intellij.dbn.common.project.ProjectRef;
 import com.dci.intellij.dbn.data.editor.text.TextContentType;
 import com.dci.intellij.dbn.data.type.DBDataType;
 import com.dci.intellij.dbn.object.type.DBObjectType;
 import com.intellij.openapi.project.Project;
 
 public class UserValueHolderImpl<T> implements UserValueHolder<T>{
-    private String name;
-    private DBDataType dataType;
-    private DBObjectType objectType;
-    private Project project;
+    private final String name;
+    private final DBDataType dataType;
+    private final DBObjectType objectType;
+    private final ProjectRef project;
     private T userValue;
     private TextContentType contentType;
 
@@ -17,7 +18,7 @@ public class UserValueHolderImpl<T> implements UserValueHolder<T>{
         this.name = name;
         this.objectType = objectType;
         this.dataType = dataType;
-        this.project = project;
+        this.project = ProjectRef.of(project);
     }
 
     @Override
@@ -67,6 +68,6 @@ public class UserValueHolderImpl<T> implements UserValueHolder<T>{
 
     @Override
     public Project getProject() {
-        return project;
+        return project.ensure();
     }
 }

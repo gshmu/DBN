@@ -18,7 +18,6 @@ import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.common.dispose.SafeDisposer;
 import com.dci.intellij.dbn.common.event.ProjectEvents;
 import com.dci.intellij.dbn.common.filter.Filter;
-import com.dci.intellij.dbn.common.latent.Latent;
 import com.dci.intellij.dbn.common.load.ProgressMonitor;
 import com.dci.intellij.dbn.common.notification.NotificationGroup;
 import com.dci.intellij.dbn.common.notification.NotificationSupport;
@@ -35,12 +34,10 @@ import com.dci.intellij.dbn.connection.ConnectionId;
 import com.dci.intellij.dbn.connection.ConnectionPool;
 import com.dci.intellij.dbn.connection.SchemaId;
 import com.dci.intellij.dbn.connection.jdbc.DBNConnection;
-import com.dci.intellij.dbn.data.type.DBDataType;
+import com.dci.intellij.dbn.data.type.DBDataTypeBundle;
 import com.dci.intellij.dbn.data.type.DBNativeDataType;
-import com.dci.intellij.dbn.data.type.DataTypeDefinition;
 import com.dci.intellij.dbn.database.DatabaseCompatibilityInterface;
 import com.dci.intellij.dbn.database.DatabaseFeature;
-import com.dci.intellij.dbn.database.DatabaseInterfaceProvider;
 import com.dci.intellij.dbn.database.DatabaseMetadataInterface;
 import com.dci.intellij.dbn.database.DatabaseObjectIdentifier;
 import com.dci.intellij.dbn.database.common.metadata.DBObjectMetadata;
@@ -105,12 +102,10 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
 import static com.dci.intellij.dbn.browser.DatabaseBrowserUtils.treeVisibilityChanged;
-import static com.dci.intellij.dbn.common.util.CollectionUtil.createConcurrentList;
 import static com.dci.intellij.dbn.object.type.DBObjectRelationType.*;
 import static com.dci.intellij.dbn.object.type.DBObjectType.*;
 
@@ -129,8 +124,7 @@ public class DBObjectBundleImpl extends BrowserTreeNodeBase implements DBObjectB
     private final DBObjectList<DBObjectPrivilege> objectPrivileges = null; // TODO
     private final DBObjectList<DBCharset> charsets;
 
-    private final Latent<List<DBNativeDataType>> nativeDataTypes = Latent.basic(() -> computeNativeDataTypes());
-    private final List<DBDataType> cachedDataTypes = createConcurrentList();
+    private final DBDataTypeBundle dataTypes;
 
     private final DBObjectListContainer objectLists;
     private final long configSignature;
@@ -144,38 +138,27 @@ public class DBObjectBundleImpl extends BrowserTreeNodeBase implements DBObjectB
 
     public DBObjectBundleImpl(ConnectionHandler connectionHandler, BrowserTreeNode treeParent) {
         this.connectionHandler = ConnectionHandlerRef.of(connectionHandler);
+        this.dataTypes = new DBDataTypeBundle(connectionHandler);
         this.treeParent = treeParent;
-        configSignature = connectionHandler.getSettings().getDatabaseSettings().getSignature();
+        this.configSignature = connectionHandler.getSettings().getDatabaseSettings().getSignature();
 
-        objectLists = new DBObjectListContainer(this);
-        consoles = objectLists.createObjectList(CONSOLE, this, DynamicContentStatus.PASSIVE);
-        users = objectLists.createObjectList(USER, this);
-        schemas = objectLists.createObjectList(SCHEMA, this);
-        roles = objectLists.createObjectList(ROLE, this);
-        systemPrivileges = objectLists.createObjectList(SYSTEM_PRIVILEGE, this);
-        charsets = objectLists.createObjectList(CHARSET, this);
-        allPossibleTreeChildren = DatabaseBrowserUtils.createList(consoles, schemas, users, roles, systemPrivileges, charsets);
+        this.objectLists = new DBObjectListContainer(this);
+        this.consoles = objectLists.createObjectList(CONSOLE, this, DynamicContentStatus.PASSIVE);
+        this.users = objectLists.createObjectList(USER, this);
+        this.schemas = objectLists.createObjectList(SCHEMA, this);
+        this.roles = objectLists.createObjectList(ROLE, this);
+        this.systemPrivileges = objectLists.createObjectList(SYSTEM_PRIVILEGE, this);
+        this.charsets = objectLists.createObjectList(CHARSET, this);
+        this.allPossibleTreeChildren = DatabaseBrowserUtils.createList(consoles, schemas, users, roles, systemPrivileges, charsets);
 
-        objectLists.createObjectRelationList(
-                USER_ROLE, this,
-                users, roles);
-
-        objectLists.createObjectRelationList(
-                USER_PRIVILEGE, this,
-                users, systemPrivileges);
-
-        objectLists.createObjectRelationList(
-                ROLE_ROLE, this,
-                roles, roles);
-
-        objectLists.createObjectRelationList(
-                ROLE_PRIVILEGE, this,
-                roles, systemPrivileges);
+        this.objectLists.createObjectRelationList(USER_ROLE, this, users, roles);
+        this.objectLists.createObjectRelationList(USER_PRIVILEGE, this, users, systemPrivileges);
+        this.objectLists.createObjectRelationList(ROLE_ROLE, this, roles, roles);
+        this.objectLists.createObjectRelationList(ROLE_PRIVILEGE, this, roles, systemPrivileges);
 
         Project project = connectionHandler.getProject();
-
         PsiFileFactory psiFileFactory = PsiFileFactory.getInstance(project);
-        fakeObjectFile = Read.call(() -> psiFileFactory.createFileFromText("object", SQLLanguage.INSTANCE, ""));
+        this.fakeObjectFile = Read.call(() -> psiFileFactory.createFileFromText("object", SQLLanguage.INSTANCE, ""));
 
         ProjectEvents.subscribe(project, this, DataDefinitionChangeListener.TOPIC, dataDefinitionChangeListener);
         ProjectEvents.subscribe(project, this, SourceCodeManagerListener.TOPIC, sourceCodeManagerListener);
@@ -305,41 +288,15 @@ public class DBObjectBundleImpl extends BrowserTreeNodeBase implements DBObjectB
     }
 
     @Override
-    @NotNull
-    public List<DBNativeDataType> getNativeDataTypes(){
-        return nativeDataTypes.get();
-    }
-
-    private List<DBNativeDataType> computeNativeDataTypes() {
-        List<DBNativeDataType> nativeDataTypes = new ArrayList<>();
-
-        DatabaseInterfaceProvider interfaceProvider = getConnectionHandler().getInterfaceProvider();
-        List<DataTypeDefinition> dataTypeDefinitions = interfaceProvider.getNativeDataTypes().list();
-        for (DataTypeDefinition dataTypeDefinition : dataTypeDefinitions) {
-            DBNativeDataType dataType = new DBNativeDataType(dataTypeDefinition);
-            nativeDataTypes.add(dataType);
-        }
-        nativeDataTypes.sort((o1, o2) -> -o1.compareTo(o2));
-        return nativeDataTypes;
-    }
-
-    @Override
     @Nullable
     public DBNativeDataType getNativeDataType(String name) {
-        if (name != null) {
-            String upperCaseName = name.toUpperCase();
-            for (DBNativeDataType dataType : getNativeDataTypes()) {
-                if (Objects.equals(upperCaseName, dataType.getName())) {
-                    return dataType;
-                }
-            }
-            for (DBNativeDataType dataType : getNativeDataTypes()) {
-                if (upperCaseName.startsWith(dataType.getName())) {
-                    return dataType;
-                }
-            }
-        }
-        return null;
+        return dataTypes.getNativeDataType(name);
+    }
+
+    @NotNull
+    @Override
+    public DBDataTypeBundle getDataTypes() {
+        return dataTypes;
     }
 
     @Override
@@ -393,11 +350,6 @@ public class DBObjectBundleImpl extends BrowserTreeNodeBase implements DBObjectB
         return DBObjectListImpl.getObject(charsets, name);
     }
 
-    @NotNull
-    @Override
-    public List<DBDataType> getCachedDataTypes() {
-        return cachedDataTypes;
-    }
 
     /*********************************************************
      *                     TreeElement                       *
@@ -967,10 +919,12 @@ public class DBObjectBundleImpl extends BrowserTreeNodeBase implements DBObjectB
     @Override
     public void disposeInner() {
         SafeDisposer.dispose(objectLists, false, true);
+        SafeDisposer.dispose(dataTypes, false, false);
         sqlLookupItemBuilders.clear();
         psqlLookupItemBuilders.clear();
         objectPsiFacades.clear();
         virtualFiles.clear();
+
         nullify();
     }
 }

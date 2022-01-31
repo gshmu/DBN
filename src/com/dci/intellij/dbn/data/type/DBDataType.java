@@ -1,24 +1,19 @@
 package com.dci.intellij.dbn.data.type;
 
-import com.dci.intellij.dbn.common.util.Safe;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.data.value.ComplexValue;
 import com.dci.intellij.dbn.database.common.metadata.def.DBDataTypeMetadata;
-import com.dci.intellij.dbn.object.DBPackage;
-import com.dci.intellij.dbn.object.DBSchema;
 import com.dci.intellij.dbn.object.DBType;
-import com.dci.intellij.dbn.object.common.DBObjectBundle;
-import lombok.EqualsAndHashCode;
 import lombok.Getter;
+import lombok.Setter;
 
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Types;
-import java.util.List;
 
 @Getter
-@EqualsAndHashCode
+@Setter
 public class DBDataType {
     private DBNativeDataType nativeDataType;
     private DBType declaredType;
@@ -30,7 +25,8 @@ public class DBDataType {
     private boolean set;
 
     public static DBDataType get(ConnectionHandler connectionHandler, DBDataTypeMetadata metadata) throws SQLException {
-        return new Ref(metadata).get(connectionHandler);
+        DBDataTypeDefinition definition = new DBDataTypeDefinition(metadata);
+        return connectionHandler.getObjectBundle().getDataTypes().getDataType(definition);
     }
 
     public static DBDataType get(ConnectionHandler connectionHandler, String dataTypeName, long length, int precision, int scale, boolean set) {
@@ -50,10 +46,11 @@ public class DBDataType {
                 declaredTypeName = nameChain[2];
             }
         }
-        return new Ref(dataTypeName, declaredTypeName, declaredTypeOwner, declaredTypePackage, length, precision, scale, set).get(connectionHandler);
+        DBDataTypeDefinition definition = new DBDataTypeDefinition(dataTypeName, declaredTypeName, declaredTypeOwner, declaredTypePackage, length, precision, scale, set);
+        return connectionHandler.getObjectBundle().getDataTypes().getDataType(definition);
     }
 
-    protected DBDataType() {}
+    public DBDataType() {}
 
 
     public boolean isSet() {
@@ -151,111 +148,4 @@ public class DBDataType {
         return nativeDataType == null ? null : nativeDataType.getDefinition().getContentTypeName();
     }
 
-    public static class Ref {
-        private final String dataTypeName;
-        private final String declaredTypeName;
-        private final String declaredTypeOwner;
-        private final String declaredTypeProgram;
-        private final long length;
-        private final int precision;
-        private final int scale;
-        private final boolean set;
-
-        public Ref(DBDataTypeMetadata metadata) throws SQLException {
-            this.dataTypeName = metadata.getDataTypeName();
-            this.declaredTypeName = metadata.getDeclaredTypeName();
-            this.declaredTypeOwner = metadata.getDeclaredTypeOwner();
-            this.declaredTypeProgram = metadata.getDeclaredTypeProgram();
-
-            this.length = metadata.getDataLength();
-            this.precision = metadata.getDataPrecision();
-            this.scale = metadata.getDataScale();
-            this.set = metadata.isSet();
-        }
-
-        Ref(String dataTypeName, String declaredTypeName, String declaredTypeOwner, String declaredTypeProgram, long length, int precision, int scale, boolean set) {
-            this.dataTypeName = dataTypeName;
-            this.declaredTypeName = declaredTypeName;
-            this.declaredTypeOwner = declaredTypeOwner;
-            this.declaredTypeProgram = declaredTypeProgram;
-
-            this.length = length;
-            this.precision = precision;
-            this.scale = scale;
-            this.set = set;
-        }
-
-        public DBDataType get(ConnectionHandler connectionHandler) {
-            String name = null;
-            DBType declaredType = null;
-            DBNativeDataType nativeDataType = null;
-
-            DBObjectBundle objectBundle = connectionHandler.getObjectBundle();
-            if (declaredTypeOwner != null) {
-                DBSchema typeSchema = objectBundle.getSchema(declaredTypeOwner);
-                if (typeSchema != null) {
-                    if (declaredTypeProgram != null) {
-                        DBPackage packagee = typeSchema.getPackage(declaredTypeProgram);
-                        if (packagee != null) {
-                            declaredType = packagee.getType(declaredTypeName);
-                        } /*else {
-                            DBType type = typeSchema.getType(declaredTypeProgram);
-                            if (type != null) {
-                                declaredType = packagee.getType(declaredTypeName);
-                            }
-                        }*/
-                    } else {
-                        declaredType = typeSchema.getType(declaredTypeName);
-                    }
-                }
-                if (declaredType == null)  {
-                    name = declaredTypeName;
-                }
-
-                DBNativeDataType nDataType = objectBundle.getNativeDataType(dataTypeName);
-                if (nDataType != null && nDataType.getDefinition().isPseudoNative()) {
-                    nativeDataType = nDataType;
-                }
-
-            } else {
-                nativeDataType = objectBundle.getNativeDataType(dataTypeName);
-                if (nativeDataType == null) name = dataTypeName;
-            }
-
-            List<DBDataType> cachedDataTypes = objectBundle.getCachedDataTypes();
-            DBDataType dataType = find(cachedDataTypes, name, declaredType, nativeDataType);
-            if (dataType == null) {
-                synchronized (cachedDataTypes) {
-                    dataType = find(cachedDataTypes, name, declaredType, nativeDataType);
-                    if (dataType == null) {
-                        dataType = new DBDataType();
-                        dataType.nativeDataType = nativeDataType;
-                        dataType.declaredType = declaredType;
-                        dataType.name = name;
-                        dataType.length = length;
-                        dataType.precision = precision;
-                        dataType.scale = scale;
-                        dataType.set = set;
-                        cachedDataTypes.add(dataType);
-                    }
-                }
-            }
-            return dataType;
-        }
-
-        protected DBDataType find(List<DBDataType> cachedDataTypes, String name, DBType declaredType, DBNativeDataType nativeDataType) {
-            for (DBDataType dataType : cachedDataTypes) {
-                if (Safe.equal(dataType.declaredType, declaredType) &&
-                        Safe.equal(dataType.nativeDataType, nativeDataType) &&
-                        Safe.equal(dataType.name, name) &&
-                        dataType.length == length &&
-                        dataType.precision == precision &&
-                        dataType.scale == scale &&
-                        dataType.set == set) {
-                    return dataType;
-                }
-            }
-            return null;
-        }
-    }
 }
