@@ -13,11 +13,16 @@ import com.dci.intellij.dbn.common.property.DisposablePropertyHolder;
 import com.dci.intellij.dbn.common.thread.Progress;
 import com.dci.intellij.dbn.common.thread.ThreadMonitor;
 import com.dci.intellij.dbn.common.thread.ThreadProperty;
-import com.dci.intellij.dbn.common.util.*;
+import com.dci.intellij.dbn.common.util.Compactables;
+import com.dci.intellij.dbn.common.util.Lists;
+import com.dci.intellij.dbn.common.util.Search;
+import com.dci.intellij.dbn.common.util.SearchAdapter;
+import com.dci.intellij.dbn.common.util.SearchStrategy;
+import com.dci.intellij.dbn.common.util.Strings;
+import com.dci.intellij.dbn.common.util.Unsafe;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.ConnectionId;
 import com.dci.intellij.dbn.connection.DatabaseEntity;
-import com.dci.intellij.dbn.diagnostics.Diagnostics;
 import com.intellij.openapi.progress.ProcessCanceledException;
 import lombok.extern.slf4j.Slf4j;
 import org.jetbrains.annotations.NotNull;
@@ -28,7 +33,6 @@ import java.sql.SQLFeatureNotSupportedException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.function.Function;
 
 import static com.dci.intellij.dbn.common.content.DynamicContentStatus.*;
 import static com.dci.intellij.dbn.common.util.Unsafe.cast;
@@ -62,27 +66,6 @@ public abstract class DynamicContentImpl<T extends DynamicContentElement>
                 set(status, true);
             }
         }
-    }
-
-    private static <T> T binarySearch(List<? extends T> list, Function<T, Integer> comparator) {
-        int left = 0;
-        int right = list.size() - 1;
-
-        while (left <= right) {
-            int mid = left + right >>> 1;
-            T midVal = list.get(mid);
-            int comparison = comparator.apply(midVal);
-            if (comparison < 0) {
-                left = mid + 1;
-            } else {
-                if (comparison <= 0) {
-                    return list.get(mid);
-                }
-
-                right = mid - 1;
-            }
-        }
-        return null;
     }
 
     @Override
@@ -415,15 +398,14 @@ public abstract class DynamicContentImpl<T extends DynamicContentElement>
         if (name != null) {
             List<T> elements = getAllElements();
             if (getSearchStrategy() == SearchStrategy.BINARY) {
-                T result = binarySearch(elements, e -> {
-                    int comp = e.getName().compareTo(name);
-                    return comp == 0 ? e.getOverload() - overload : comp;
-                });
+                T result = Search.binarySearch(elements, SearchAdapter.forNameAndOverload(name, overload));
 
+/*
                 // TODO cleanup
                 if (Diagnostics.isDeveloperMode()) {
                     assert result == Lists.first(elements, element -> matchElement(element, name, overload));
                 }
+*/
 
                 return result;
             } else {

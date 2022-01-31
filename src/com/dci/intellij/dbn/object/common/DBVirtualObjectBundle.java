@@ -8,7 +8,7 @@ import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.ConnectionId;
 import com.dci.intellij.dbn.connection.SchemaId;
 import com.dci.intellij.dbn.connection.VirtualConnectionHandler;
-import com.dci.intellij.dbn.data.type.DBDataType;
+import com.dci.intellij.dbn.data.type.DBDataTypeBundle;
 import com.dci.intellij.dbn.data.type.DBNativeDataType;
 import com.dci.intellij.dbn.database.DatabaseObjectIdentifier;
 import com.dci.intellij.dbn.language.common.DBLanguage;
@@ -36,9 +36,17 @@ import java.util.List;
 
 public class DBVirtualObjectBundle extends BrowserTreeNodeBase implements DBObjectBundle{
     private final VirtualConnectionHandler connectionHandler;
+    private final DBDataTypeBundle dataTypes;
 
     public DBVirtualObjectBundle(@NotNull VirtualConnectionHandler connectionHandler) {
         this.connectionHandler = connectionHandler;
+        this.dataTypes = new DBDataTypeBundle(connectionHandler);
+    }
+
+    @NotNull
+    @Override
+    public DBDataTypeBundle getDataTypes() {
+        return dataTypes;
     }
 
     @Override
@@ -77,12 +85,6 @@ public class DBVirtualObjectBundle extends BrowserTreeNodeBase implements DBObje
     @Nullable
     @Override
     public List<DBCharset> getCharsets() {
-        return Collections.emptyList();
-    }
-
-    @NotNull
-    @Override
-    public List<DBNativeDataType> getNativeDataTypes() {
         return Collections.emptyList();
     }
 
@@ -138,12 +140,6 @@ public class DBVirtualObjectBundle extends BrowserTreeNodeBase implements DBObje
     @Override
     public DBCharset getCharset(String name) {
         return null;
-    }
-
-    @NotNull
-    @Override
-    public List<DBDataType> getCachedDataTypes() {
-        return Collections.emptyList();
     }
 
     @Nullable

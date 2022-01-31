@@ -5,7 +5,7 @@ import com.dci.intellij.dbn.code.common.lookup.LookupItemBuilder;
 import com.dci.intellij.dbn.common.dispose.StatefulDisposable;
 import com.dci.intellij.dbn.common.util.Consumer;
 import com.dci.intellij.dbn.connection.SchemaId;
-import com.dci.intellij.dbn.data.type.DBDataType;
+import com.dci.intellij.dbn.data.type.DBDataTypeBundle;
 import com.dci.intellij.dbn.data.type.DBNativeDataType;
 import com.dci.intellij.dbn.database.DatabaseObjectIdentifier;
 import com.dci.intellij.dbn.language.common.DBLanguage;
@@ -46,9 +46,6 @@ public interface DBObjectBundle extends BrowserTreeNode, StatefulDisposable {
     @Nullable
     List<DBCharset> getCharsets();
 
-    @NotNull
-    List<DBNativeDataType> getNativeDataTypes();
-
     @Nullable
     DBNativeDataType getNativeDataType(String name);
 
@@ -77,7 +74,7 @@ public interface DBObjectBundle extends BrowserTreeNode, StatefulDisposable {
     DBCharset getCharset(String name);
 
     @NotNull
-    List<DBDataType> getCachedDataTypes();
+    DBDataTypeBundle getDataTypes();
 
     @Nullable
     DBObject getObject(DatabaseObjectIdentifier objectIdentifier);
