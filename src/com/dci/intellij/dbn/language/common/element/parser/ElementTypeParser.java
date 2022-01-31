@@ -10,7 +10,7 @@ import com.dci.intellij.dbn.language.common.element.ElementTypeBundle;
 import com.dci.intellij.dbn.language.common.element.impl.BlockElementType;
 import com.dci.intellij.dbn.language.common.element.impl.ElementTypeBase;
 import com.dci.intellij.dbn.language.common.element.impl.LeafElementType;
-import com.dci.intellij.dbn.language.common.element.path.ParsePathNode;
+import com.dci.intellij.dbn.language.common.element.path.ParserNode;
 import com.dci.intellij.dbn.language.common.element.util.ElementTypeUtil;
 import com.dci.intellij.dbn.language.common.element.util.ParseBuilderErrorHandler;
 import com.intellij.lang.PsiBuilder.Marker;
@@ -24,15 +24,15 @@ public abstract class ElementTypeParser<T extends ElementTypeBase> {
         this.elementType = elementType;
     }
 
-    public ParsePathNode stepIn(ParsePathNode parentNode, ParserContext context) {
+    public ParserNode stepIn(ParserNode parentNode, ParserContext context) {
         ParserBuilder builder = context.getBuilder();
-        ParsePathNode node = new ParsePathNode(elementType, parentNode, builder.getOffset(), 0);
+        ParserNode node = new ParserNode(elementType, parentNode, builder.getOffset(), 0);
         Marker marker = builder.mark(node);
         node.setElementMarker(marker);
         return node;
     }
 
-    public ParseResult stepOut(ParsePathNode node, ParserContext context, ParseResultType resultType, int matchedTokens) {
+    public ParseResult stepOut(ParserNode node, ParserContext context, ParseResultType resultType, int matchedTokens) {
         return stepOut(null, node, context, resultType, matchedTokens);
     }
 
@@ -40,7 +40,7 @@ public abstract class ElementTypeParser<T extends ElementTypeBase> {
         return stepOut(marker, null, context, resultType, matchedTokens);
     }
 
-    private ParseResult stepOut(Marker marker, ParsePathNode node, ParserContext context, ParseResultType resultType, int matchedTokens) {
+    private ParseResult stepOut(Marker marker, ParserNode node, ParserContext context, ParseResultType resultType, int matchedTokens) {
         try {
             marker = marker == null ? node == null ? null : node.getElementMarker() : marker;
             if (resultType == ParseResultType.PARTIAL_MATCH) {
@@ -85,7 +85,7 @@ public abstract class ElementTypeParser<T extends ElementTypeBase> {
     /**
      * Returns true if the token is a reserved word, but can act as an identifier in this context.
      */
-    protected boolean isSuppressibleReservedWord(TokenType tokenType, ParsePathNode node, ParserContext context) {
+    protected boolean isSuppressibleReservedWord(TokenType tokenType, ParserNode node, ParserContext context) {
         if (tokenType != null && tokenType.isSuppressibleReservedWord()) {
             SharedTokenTypeBundle sharedTokenTypes = getElementBundle().getTokenTypeBundle().getSharedTokenTypes();
             SimpleTokenType dot = sharedTokenTypes.getChrDot();
@@ -123,7 +123,7 @@ public abstract class ElementTypeParser<T extends ElementTypeBase> {
     }
 
     @Deprecated
-    protected boolean shouldParseElement(ElementType elementType, ParsePathNode node, ParserContext context) {
+    protected boolean shouldParseElement(ElementType elementType, ParserNode node, ParserContext context) {
         ParserBuilder builder = context.getBuilder();
         TokenType token = builder.getToken();
         if (token == null || token.isChameleon()) {
@@ -145,5 +145,5 @@ public abstract class ElementTypeParser<T extends ElementTypeBase> {
         return elementType.getLanguage().getSharedTokenTypes();
     }
 
-    public abstract ParseResult parse(ParsePathNode parentNode, ParserContext context) throws ParseException;
+    public abstract ParseResult parse(ParserNode parentNode, ParserContext context) throws ParseException;
 }

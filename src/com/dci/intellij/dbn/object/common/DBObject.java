@@ -6,6 +6,7 @@ import com.dci.intellij.dbn.common.Referenceable;
 import com.dci.intellij.dbn.common.content.DynamicContentElement;
 import com.dci.intellij.dbn.common.content.DynamicContentType;
 import com.dci.intellij.dbn.common.environment.EnvironmentTypeProvider;
+import com.dci.intellij.dbn.common.path.Node;
 import com.dci.intellij.dbn.common.property.PropertyHolder;
 import com.dci.intellij.dbn.common.util.Consumer;
 import com.dci.intellij.dbn.connection.PresentableConnectionProvider;
@@ -94,6 +95,10 @@ public interface DBObject extends
 
     @Nullable
     DBObject getChildObject(String name, short overload, boolean lookupHidden);
+
+    default DBObject getChildObject(String name, short overload, boolean lookupHidden, Node<DBObject> lookupPath) {
+        throw new UnsupportedOperationException();
+    }
 
     List<String> getChildObjectNames(DBObjectType objectType);
 

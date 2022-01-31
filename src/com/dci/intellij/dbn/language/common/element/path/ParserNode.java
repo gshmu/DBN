@@ -7,13 +7,13 @@ import lombok.Setter;
 
 @Setter
 @Getter
-public class ParsePathNode extends BasicPathNode<ParsePathNode> {
+public class ParserNode extends LanguageNodeBase {
     private final int startOffset;
     private int currentOffset;
     private int cursorPosition;
     private PsiBuilder.Marker elementMarker;
 
-    public ParsePathNode(ElementType elementType, ParsePathNode parent, int startOffset, int cursorPosition) {
+    public ParserNode(ElementType elementType, ParserNode parent, int startOffset, int cursorPosition) {
         super(elementType, parent);
         this.startOffset = startOffset;
         this.currentOffset = startOffset;
@@ -21,10 +21,15 @@ public class ParsePathNode extends BasicPathNode<ParsePathNode> {
     }
 
     @Override
+    public ParserNode getParent() {
+        return (ParserNode) super.getParent();
+    }
+
+    @Override
     public boolean isRecursive() {
-        ParsePathNode parseNode = this.getParent();
+        ParserNode parseNode = this.getParent();
         while (parseNode != null) {
-            if (parseNode.getElementType() == this.getElementType() &&
+            if (parseNode.getElement() == this.getElement() &&
                 parseNode.startOffset == startOffset) {
                 return true;
             }
@@ -34,9 +39,9 @@ public class ParsePathNode extends BasicPathNode<ParsePathNode> {
     }
 
     public boolean isRecursive(int currentOffset) {
-        ParsePathNode parseNode = this.getParent();
+        ParserNode parseNode = this.getParent();
         while (parseNode != null) {
-            if (parseNode.getElementType() == this.getElementType() &&
+            if (parseNode.getElement() == this.getElement() &&
                         parseNode.currentOffset == currentOffset) {
                     return true;
                 }

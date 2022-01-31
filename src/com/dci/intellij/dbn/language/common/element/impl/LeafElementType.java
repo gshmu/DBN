@@ -8,9 +8,8 @@ import com.dci.intellij.dbn.language.common.element.ElementTypeBundle;
 import com.dci.intellij.dbn.language.common.element.cache.ElementLookupContext;
 import com.dci.intellij.dbn.language.common.element.cache.ElementTypeLookupCache;
 import com.dci.intellij.dbn.language.common.element.parser.ParserContext;
-import com.dci.intellij.dbn.language.common.element.path.BasicPathNode;
-import com.dci.intellij.dbn.language.common.element.path.ParsePathNode;
-import com.dci.intellij.dbn.language.common.element.path.PathNode;
+import com.dci.intellij.dbn.language.common.element.path.LanguageNode;
+import com.dci.intellij.dbn.language.common.element.path.ParserNode;
 import com.dci.intellij.dbn.language.common.element.util.ElementTypeAttribute;
 import com.dci.intellij.dbn.language.common.element.util.ElementTypeDefinitionException;
 import gnu.trove.THashSet;
@@ -60,10 +59,10 @@ public abstract class LeafElementType extends ElementTypeBase implements Indexab
         return true;
     }
 
-    public static ElementType getPreviousElement(BasicPathNode pathNode) {
+    public static ElementType getPreviousElement(LanguageNode pathNode) {
         int position = 0;
         while (pathNode != null) {
-            ElementType elementType = pathNode.getElementType();
+            ElementType elementType = pathNode.getElement();
             if (elementType instanceof SequenceElementType) {
                 SequenceElementType sequenceElementType = (SequenceElementType) elementType;
                 if (position > 0 ) {
@@ -76,11 +75,11 @@ public abstract class LeafElementType extends ElementTypeBase implements Indexab
         return null;
     }
 
-    public Set<LeafElementType> getNextPossibleLeafs(PathNode pathNode, @NotNull ElementLookupContext context) {
-        Set<LeafElementType> possibleLeafs = new THashSet<LeafElementType>();
+    public Set<LeafElementType> getNextPossibleLeafs(LanguageNode pathNode, @NotNull ElementLookupContext context) {
+        Set<LeafElementType> possibleLeafs = new THashSet<>();
         int position = 1;
         while (pathNode != null) {
-            ElementType elementType = pathNode.getElementType();
+            ElementType elementType = pathNode.getElement();
 
             if (elementType instanceof SequenceElementType) {
                 SequenceElementType sequenceElementType = (SequenceElementType) elementType;
@@ -118,12 +117,12 @@ public abstract class LeafElementType extends ElementTypeBase implements Indexab
                 }
             } else if (elementType instanceof ChameleonElementType) {
                 ChameleonElementType chameleonElementType = (ChameleonElementType) elementType;
-                ElementTypeBundle elementTypeBundle = chameleonElementType.getParentLanguage().getParserDefinition().getParser().getElementTypes();;
+                ElementTypeBundle elementTypeBundle = chameleonElementType.getParentLanguage().getParserDefinition().getParser().getElementTypes();
                 ElementTypeLookupCache<?> lookupCache = elementTypeBundle.getRootElementType().getLookupCache();
                 possibleLeafs.addAll(lookupCache.getFirstPossibleLeafs());
             }
             if (pathNode != null) {
-                ElementType pathElementType = pathNode.getElementType();
+                ElementType pathElementType = pathNode.getElement();
                 if (pathElementType != null && pathElementType.is(ElementTypeAttribute.STATEMENT) && context.isBreakOnAttribute(ElementTypeAttribute.STATEMENT)){
                     break;
                 }
@@ -134,18 +133,18 @@ public abstract class LeafElementType extends ElementTypeBase implements Indexab
         return possibleLeafs;
     }
 
-    public boolean isNextPossibleToken(TokenType tokenType, ParsePathNode pathNode, ParserContext context) {
+    public boolean isNextPossibleToken(TokenType tokenType, ParserNode pathNode, ParserContext context) {
         return isNextToken(tokenType, pathNode, context, false);
     }
 
-    public boolean isNextRequiredToken(TokenType tokenType, ParsePathNode pathNode, ParserContext context) {
+    public boolean isNextRequiredToken(TokenType tokenType, ParserNode pathNode, ParserContext context) {
         return isNextToken(tokenType, pathNode, context, true);
     }
 
-    private boolean isNextToken(TokenType tokenType, ParsePathNode pathNode, ParserContext context, boolean required) {
+    private boolean isNextToken(TokenType tokenType, ParserNode pathNode, ParserContext context, boolean required) {
         int position = -1;
         while (pathNode != null) {
-            ElementType elementType = pathNode.getElementType();
+            ElementType elementType = pathNode.getElement();
 
             if (elementType instanceof SequenceElementType) {
                 SequenceElementType sequenceElementType = (SequenceElementType) elementType;
@@ -209,11 +208,11 @@ public abstract class LeafElementType extends ElementTypeBase implements Indexab
         return false;
     }
 
-    public Set<LeafElementType> getNextRequiredLeafs(PathNode pathNode, ParserContext context) {
+    public Set<LeafElementType> getNextRequiredLeafs(LanguageNode pathNode, ParserContext context) {
         Set<LeafElementType> requiredLeafs = new THashSet<>();
         int position = 0;
         while (pathNode != null) {
-            ElementType elementType = pathNode.getElementType();
+            ElementType elementType = pathNode.getElement();
 
             if (elementType instanceof SequenceElementType) {
                 SequenceElementType sequenceElementType = (SequenceElementType) elementType;

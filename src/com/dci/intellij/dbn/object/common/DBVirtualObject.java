@@ -5,6 +5,8 @@ import com.dci.intellij.dbn.code.common.lookup.ObjectLookupItemBuilder;
 import com.dci.intellij.dbn.common.content.DynamicContentStatus;
 import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.common.latent.Latent;
+import com.dci.intellij.dbn.common.path.Node;
+import com.dci.intellij.dbn.common.path.NodeBase;
 import com.dci.intellij.dbn.common.thread.Read;
 import com.dci.intellij.dbn.common.util.Consumer;
 import com.dci.intellij.dbn.common.util.Documents;
@@ -206,12 +208,18 @@ public class DBVirtualObject extends DBObjectImpl implements PsiReference {
     @Nullable
     @Override
     public DBObject getChildObject(String name, short overload, boolean lookupHidden) {
+        return getChildObject(name, overload, lookupHidden, new NodeBase<>(this, null));
+    }
+
+    public DBObject getChildObject(String name, short overload, boolean lookupHidden, Node<DBObject> lookupPath) {
         DBObject childObject = super.getChildObject(name, overload, lookupHidden);
         if (childObject == null) {
             BasePsiElement relevantPsiElement = getRelevantPsiElement();
             DBObject underlyingObject = relevantPsiElement.getUnderlyingObject();
-            if (underlyingObject != null) {
-                return underlyingObject.getChildObject(name, overload, lookupHidden);
+
+            if (underlyingObject != null && !lookupPath.isAncestor(underlyingObject)) {
+                lookupPath = new NodeBase<>(underlyingObject, lookupPath);
+                return underlyingObject.getChildObject(name, overload, lookupHidden, lookupPath);
             }
         }
         return childObject;

@@ -8,18 +8,18 @@ import com.intellij.psi.impl.source.tree.FileElement;
 import com.intellij.psi.tree.IElementType;
 import org.jetbrains.annotations.Nullable;
 
-public class ASTPathNode implements PathNode{
+public class AstNode implements LanguageNode {
     private final ASTNode astNode;
 
-    public ASTPathNode(ASTNode astNode) {
+    public AstNode(ASTNode astNode) {
         this.astNode = astNode;
     }
 
     @Override
-    public PathNode getParent() {
+    public AstNode getParent() {
         ASTNode treeParent = astNode.getTreeParent();
         if (treeParent != null && !(treeParent instanceof FileElement)) {
-            return new ASTPathNode(treeParent);
+            return new AstNode(treeParent);
         }
         return null;
     }
@@ -52,15 +52,10 @@ public class ASTPathNode implements PathNode{
 
     @Override
     @Nullable
-    public ElementType getElementType() {
+    public ElementType getElement() {
         IElementType elementType = astNode.getElementType();
 
         return elementType instanceof ElementType ? (ElementType) elementType : null;
-    }
-
-    @Override
-    public PathNode getRootPathNode() {
-        return null;
     }
 
     @Override
@@ -69,7 +64,7 @@ public class ASTPathNode implements PathNode{
     }
 
     @Override
-    public boolean isRecursive(ElementType elementType) {
+    public boolean isAncestor(ElementType elementType) {
         return false;
     }
 

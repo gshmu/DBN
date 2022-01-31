@@ -6,7 +6,7 @@ import com.dci.intellij.dbn.language.common.TokenType;
 import com.dci.intellij.dbn.language.common.TokenTypeCategory;
 import com.dci.intellij.dbn.language.common.element.ElementType;
 import com.dci.intellij.dbn.language.common.element.TokenPairTemplate;
-import com.dci.intellij.dbn.language.common.element.path.ParsePathNode;
+import com.dci.intellij.dbn.language.common.element.path.ParserNode;
 import com.intellij.lang.ASTNode;
 import com.intellij.lang.PsiBuilder;
 import com.intellij.lang.PsiBuilder.Marker;
@@ -136,7 +136,7 @@ public final class ParserBuilder {
         return builder.mark();
     }
 
-    public Marker mark(ParsePathNode node){
+    public Marker mark(ParserNode node){
         tokenPairMonitor.consumeBeginTokens(node);
         tokenPairMonitorOld.consumeBeginTokens(node);
         return builder.mark();
@@ -164,7 +164,7 @@ public final class ParserBuilder {
         markerDone(marker, elementType, null);
     }
 
-    public void markerDone(Marker marker, ElementType elementType, @Nullable ParsePathNode node) {
+    public void markerDone(Marker marker, ElementType elementType, @Nullable ParserNode node) {
         if (marker != null) {
             tokenPairMonitorOld.consumeEndTokens(node);
             marker.done((IElementType) elementType);

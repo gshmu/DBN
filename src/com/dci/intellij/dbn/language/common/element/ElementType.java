@@ -10,7 +10,7 @@ import com.dci.intellij.dbn.language.common.element.impl.LeafElementType;
 import com.dci.intellij.dbn.language.common.element.impl.WrappingDefinition;
 import com.dci.intellij.dbn.language.common.element.parser.Branch;
 import com.dci.intellij.dbn.language.common.element.parser.ElementTypeParser;
-import com.dci.intellij.dbn.language.common.element.path.BasicPathNode;
+import com.dci.intellij.dbn.language.common.element.path.LanguageNode;
 import com.dci.intellij.dbn.language.common.element.util.ElementTypeAttribute;
 import com.dci.intellij.dbn.object.type.DBObjectType;
 import com.intellij.lang.ASTNode;
@@ -18,7 +18,7 @@ import com.intellij.psi.PsiElement;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import javax.swing.*;
+import javax.swing.Icon;
 
 public interface ElementType extends PropertyHolder<ElementTypeAttribute>{
 
@@ -71,7 +71,7 @@ public interface ElementType extends PropertyHolder<ElementTypeAttribute>{
 
     boolean isWrappingEnd(TokenType tokenType);
 
-    int getIndexInParent(BasicPathNode pathNode);
+    int getIndexInParent(LanguageNode node);
 
     @Nullable
     Branch getBranch();

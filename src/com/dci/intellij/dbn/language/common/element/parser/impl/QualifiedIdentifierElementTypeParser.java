@@ -12,7 +12,7 @@ import com.dci.intellij.dbn.language.common.element.parser.ParseResult;
 import com.dci.intellij.dbn.language.common.element.parser.ParseResultType;
 import com.dci.intellij.dbn.language.common.element.parser.ParserBuilder;
 import com.dci.intellij.dbn.language.common.element.parser.ParserContext;
-import com.dci.intellij.dbn.language.common.element.path.ParsePathNode;
+import com.dci.intellij.dbn.language.common.element.path.ParserNode;
 import com.dci.intellij.dbn.language.common.element.util.ParseBuilderErrorHandler;
 
 import java.util.ArrayList;
@@ -26,9 +26,9 @@ public class QualifiedIdentifierElementTypeParser extends ElementTypeParser<Qual
     }
 
     @Override
-    public ParseResult parse(ParsePathNode parentNode, ParserContext context) throws ParseException {
+    public ParseResult parse(ParserNode parentNode, ParserContext context) throws ParseException {
         ParserBuilder builder = context.getBuilder();
-        ParsePathNode node = stepIn(parentNode, context);
+        ParserNode node = stepIn(parentNode, context);
 
         TokenElementType separatorToken = elementType.getSeparatorToken();
         int matchedTokens = 0;

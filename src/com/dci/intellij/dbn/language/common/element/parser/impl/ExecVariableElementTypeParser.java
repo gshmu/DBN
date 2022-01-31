@@ -7,7 +7,7 @@ import com.dci.intellij.dbn.language.common.element.parser.ParseResult;
 import com.dci.intellij.dbn.language.common.element.parser.ParseResultType;
 import com.dci.intellij.dbn.language.common.element.parser.ParserBuilder;
 import com.dci.intellij.dbn.language.common.element.parser.ParserContext;
-import com.dci.intellij.dbn.language.common.element.path.ParsePathNode;
+import com.dci.intellij.dbn.language.common.element.path.ParserNode;
 import com.intellij.lang.PsiBuilder.Marker;
 
 public class ExecVariableElementTypeParser extends ElementTypeParser<ExecVariableElementType> {
@@ -16,7 +16,7 @@ public class ExecVariableElementTypeParser extends ElementTypeParser<ExecVariabl
     }
 
     @Override
-    public ParseResult parse(ParsePathNode parentNode, ParserContext context) {
+    public ParseResult parse(ParserNode parentNode, ParserContext context) {
         ParserBuilder builder = context.getBuilder();
         TokenType token = builder.getToken();
         Marker marker = null;
