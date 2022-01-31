@@ -23,7 +23,6 @@ import java.sql.Timestamp;
 @Slf4j
 @Getter
 public class DBNativeDataType extends StatefulDisposable.Base implements DynamicContentElement{
-
     private final DataTypeDefinition definition;
 
     public DBNativeDataType(DataTypeDefinition definition) {

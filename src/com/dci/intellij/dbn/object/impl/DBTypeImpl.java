@@ -12,6 +12,7 @@ import com.dci.intellij.dbn.common.util.Safe;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.jdbc.DBNConnection;
 import com.dci.intellij.dbn.data.type.DBDataType;
+import com.dci.intellij.dbn.data.type.DBDataTypeDefinition;
 import com.dci.intellij.dbn.data.type.DBNativeDataType;
 import com.dci.intellij.dbn.database.DatabaseMetadataInterface;
 import com.dci.intellij.dbn.database.common.metadata.def.DBDataTypeMetadata;
@@ -62,7 +63,7 @@ public class DBTypeImpl
     private String superTypeName;
     private DBObjectRef<DBType> superType;
 
-    private DBDataType.Ref collectionElementTypeRef;
+    private DBDataTypeDefinition collectionElementTypeRef;
     private DBDataType collectionElementType;
 
     private DBNativeDataType nativeDataType;
@@ -91,7 +92,7 @@ public class DBTypeImpl
         nativeDataType = connectionHandler.getObjectBundle().getNativeDataType(typeCode);
         if (collection) {
             DBDataTypeMetadata collectionMetadata = metadata.getDataType().collection();
-            collectionElementTypeRef = new DBDataType.Ref(collectionMetadata);
+            collectionElementTypeRef = new DBDataTypeDefinition(collectionMetadata);
         }
         return name;
     }
@@ -155,9 +156,9 @@ public class DBTypeImpl
 
     @Override
     public DBDataType getCollectionElementType() {
-        ConnectionHandler connectionHandler = getConnectionHandler();
+        ConnectionHandler connection = getConnectionHandler();
         if (collectionElementType == null && collectionElementTypeRef != null) {
-            collectionElementType = collectionElementTypeRef.get(connectionHandler);
+            collectionElementType = connection.getObjectBundle().getDataTypes().getDataType(collectionElementTypeRef);
             collectionElementTypeRef = null;
         }
         return collectionElementType;
