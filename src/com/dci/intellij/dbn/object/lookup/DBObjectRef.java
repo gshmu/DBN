@@ -337,7 +337,7 @@ public class DBObjectRef<T extends DBObject> implements Comparable<DBObjectRef<?
         T object = getObject();
         if (object == null) {
             clearReference();
-            ConnectionHandler connectionHandler = resolveConnectionHandler(project);
+            ConnectionHandler connectionHandler = resolveConnection(project);
             if (Failsafe.check(connectionHandler) && connectionHandler.isEnabled()) {
                 object = lookup(connectionHandler);
                 if (object != null) {
@@ -393,22 +393,22 @@ public class DBObjectRef<T extends DBObject> implements Comparable<DBObjectRef<?
     }
 
 
-    private ConnectionHandler resolveConnectionHandler(Project project) {
+    private ConnectionHandler resolveConnection(Project project) {
         ConnectionId connectionId = getConnectionId();
         return project == null || project.isDisposed() ?
-                ConnectionCache.findConnectionHandler(connectionId) :
+                ConnectionCache.resolveConnection(connectionId) :
                 ConnectionManager.getInstance(project).getConnection(connectionId);
     }
 
     @Nullable
-    public ConnectionHandler resolveConnectionHandler() {
-        return ConnectionCache.findConnectionHandler(getConnectionId());
+    public ConnectionHandler resolveConnection() {
+        return ConnectionCache.resolveConnection(getConnectionId());
     }
 
     @Nullable
     @Override
     public ConnectionHandler getConnectionHandler() {
-        return resolveConnectionHandler();
+        return resolveConnection();
     }
 
     protected DBSchema getSchema() {

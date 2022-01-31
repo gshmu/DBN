@@ -56,7 +56,7 @@ public class ConnectionSelectDropdownAction extends DBNComboBoxAction {
         String text = "Select Connection";
         Icon icon = null;
 
-        ConnectionHandler connectionHandler = browserComponent.getSettings().getConnectionHandler();
+        ConnectionHandler connectionHandler = browserComponent.getSettings().getConnection();
         if (connectionHandler != null) {
             text = connectionHandler.getQualifiedName();
             icon = connectionHandler.getIcon();

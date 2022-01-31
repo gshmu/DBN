@@ -64,7 +64,7 @@ public class MethodExecutionBrowserForm extends DBNFormImpl {
 
     public void setConnectionHandler(ConnectionHandler connectionHandler) {
         MethodBrowserSettings settings = getSettings();
-        if (settings.getConnectionHandler() != connectionHandler) {
+        if (settings.getConnection() != connectionHandler) {
             settings.setConnectionHandler(connectionHandler);
             if (settings.getSchema() != null) {
                 DBSchema schema  = connectionHandler.getObjectBundle().getSchema(settings.getSchema().getName());

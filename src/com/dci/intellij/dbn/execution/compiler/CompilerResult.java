@@ -129,7 +129,7 @@ public class CompilerResult implements Disposable, NotificationSupport {
     public Project getProject() {
         DBSchemaObject object = DBObjectRef.get(objectRef);
         if (object == null) {
-            ConnectionHandler connectionHandler = objectRef.resolveConnectionHandler();
+            ConnectionHandler connectionHandler = objectRef.resolveConnection();
             if (connectionHandler != null) return connectionHandler.getProject();
         } else {
             return object.getProject();

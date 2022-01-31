@@ -23,15 +23,15 @@ public class MethodBrowserSettings implements PersistentConfiguration {
     private ConnectionId connectionId;
     private String schemaName;
     private DBObjectRef<DBMethod> method;
-    private Map<DBObjectType, Boolean> objectVisibility = new EnumMap<DBObjectType, Boolean>(DBObjectType.class);
+    private final Map<DBObjectType, Boolean> objectVisibility = new EnumMap<>(DBObjectType.class);
 
     public MethodBrowserSettings() {
         objectVisibility.put(DBObjectType.FUNCTION, true);
         objectVisibility.put(DBObjectType.PROCEDURE, true);
     }
 
-    public ConnectionHandler getConnectionHandler() {
-        return ConnectionCache.findConnectionHandler(connectionId);
+    public ConnectionHandler getConnection() {
+        return ConnectionCache.resolveConnection(connectionId);
     }
 
     public void setConnectionHandler(ConnectionHandler connectionHandler) {
@@ -39,7 +39,7 @@ public class MethodBrowserSettings implements PersistentConfiguration {
     }
 
     public DBSchema getSchema() {
-        return getConnectionHandler() == null || schemaName == null ? null : getConnectionHandler().getObjectBundle().getSchema(schemaName);
+        return getConnection() == null || schemaName == null ? null : getConnection().getObjectBundle().getSchema(schemaName);
     }
 
     public Set<DBObjectType> getVisibleObjectTypes() {
@@ -84,14 +84,14 @@ public class MethodBrowserSettings implements PersistentConfiguration {
 
         Element methodElement = element.getChild("selected-method");
         if (methodElement != null) {
-            method = new DBObjectRef<DBMethod>();
+            method = new DBObjectRef<>();
             method.readState(methodElement);
         }
     }
 
     @Override
     public void writeConfiguration(Element element) {
-        ConnectionHandler connectionHandler = getConnectionHandler();
+        ConnectionHandler connectionHandler = getConnection();
         if (connectionHandler != null) element.setAttribute("connection-id", connectionHandler.getConnectionId().id());
         if (schemaName != null) element.setAttribute("schema", schemaName);
         if(method != null) {

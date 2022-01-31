@@ -142,7 +142,11 @@ public class ConnectionBundle extends BrowserTreeNodeBase implements BrowserTree
 
     @Nullable
     public ConnectionHandler getConnection(@Nullable ConnectionId id) {
-        return id == null ? null : ConnectionHandlerRef.get(index.get(id));
+        if (id != null) {
+            ConnectionHandlerRef ref = index.get(id);
+            return ConnectionHandlerRef.get(ref);
+        }
+        return null;
     }
 
     public List<ConnectionHandler> getConnections() {
