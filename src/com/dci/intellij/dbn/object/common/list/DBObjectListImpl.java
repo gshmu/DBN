@@ -160,7 +160,10 @@ public class DBObjectListImpl<T extends DBObject> extends DynamicContentImpl<T> 
         if (elements == EMPTY_CONTENT || elements == EMPTY_UNTOUCHED_CONTENT) {
             elements = new ArrayList<>();
         }
-        elements.add(object);
+
+        if (!elements.contains(object)) {
+            elements.add(object);
+        }
     }
 
     @Override
