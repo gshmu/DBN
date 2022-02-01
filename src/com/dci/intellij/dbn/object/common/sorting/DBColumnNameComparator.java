@@ -18,7 +18,7 @@ public class DBColumnNameComparator extends DBObjectComparator<DBColumn> {
             String name2 = column2.getName();
             String name1 = column1.getName();
             if (column1.isPrimaryKey() && column2.isPrimaryKey()) {
-                return name1.compareTo(name2);
+                return name1.compareToIgnoreCase(name2);
             } else if (column1.isPrimaryKey()) {
                 return -1;
             } else if (column2.isPrimaryKey()){

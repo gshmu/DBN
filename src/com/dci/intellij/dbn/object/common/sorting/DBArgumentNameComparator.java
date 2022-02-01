@@ -23,7 +23,7 @@ public class DBArgumentNameComparator extends DBObjectComparator<DBArgument> {
                     return 1;
                 }
             }
-            return argument1.getName().compareTo(argument2.getName());
+            return argument1.getName().compareToIgnoreCase(argument2.getName());
         } else {
             return method1.compareTo(method2);
         }
