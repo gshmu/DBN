@@ -29,6 +29,7 @@ import com.dci.intellij.dbn.object.common.DBObjectBundle;
 import com.dci.intellij.dbn.object.common.DBObjectPsiElement;
 import com.dci.intellij.dbn.object.common.DBObjectPsiFacade;
 import com.dci.intellij.dbn.object.common.DBVirtualObject;
+import com.dci.intellij.dbn.object.lookup.DBObjectRef;
 import com.dci.intellij.dbn.object.type.DBObjectType;
 import com.intellij.lang.ASTNode;
 import com.intellij.navigation.ItemPresentation;
@@ -47,7 +48,7 @@ import static com.dci.intellij.dbn.common.util.Commons.nvl;
 public abstract class IdentifierPsiElement extends LeafPsiElement<IdentifierElementType> {
     private PsiResolveResult ref;
     private final RecursivityGate underlyingObjectResolver = new RecursivityGate(4);
-    private final Capture<DBObject> underlyingObject = new Capture<>();
+    private final Capture<DBObjectRef<?>> underlyingObject = new Capture<>();
 
     public IdentifierPsiElement(ASTNode astNode, IdentifierElementType elementType) {
         super(astNode, elementType);
@@ -158,11 +159,10 @@ public abstract class IdentifierPsiElement extends LeafPsiElement<IdentifierElem
     public void collectExecVariablePsiElements(@NotNull Consumer<ExecVariablePsiElement> consumer) {
     }
 
-    /**
-     * ******************************************************
-     * Miscellaneous                     *
-     * *******************************************************
-     */
+    /*********************************************************
+     *                     Miscellaneous                     *
+     *********************************************************/
+
     public boolean isObject() {
         return getElementType().isObject();
     }
@@ -175,11 +175,9 @@ public abstract class IdentifierPsiElement extends LeafPsiElement<IdentifierElem
         return getElementType().isVariable();
     }
 
-
     public boolean isDefinition() {
         return getElementType().isDefinition();
     }
-
 
     public boolean isSubject() {
         return getElementType().isSubject();
@@ -230,13 +228,14 @@ public abstract class IdentifierPsiElement extends LeafPsiElement<IdentifierElem
     @Override
     @Nullable
     public DBObject getUnderlyingObject() {
-        if (underlyingObject.get() == null || !underlyingObject.valid(getChars())) {
-            underlyingObjectResolver.run(() -> this.underlyingObject.capture(
-                    loadUnderlyingObject(),
-                    getChars()));
+        DBObject object = DBObjectRef.get(underlyingObject.get());
+        if (object == null || !underlyingObject.valid(getChars())) {
+            object = underlyingObjectResolver.call(() -> loadUnderlyingObject(), null);
+            underlyingObject.capture(DBObjectRef.of(object), getChars());
         }
-        return underlyingObject.get();
+        return object;
     }
+
 
     private DBObject loadUnderlyingObject() {
         UnderlyingObjectResolver underlyingObjectResolver = getElementType().getUnderlyingObjectResolver();

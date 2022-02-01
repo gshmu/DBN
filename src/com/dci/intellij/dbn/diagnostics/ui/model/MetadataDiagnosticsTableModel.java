@@ -16,6 +16,8 @@ public class MetadataDiagnosticsTableModel extends AbstractDiagnosticsTableModel
             "Invocations",
             "Failures",
             "Timeouts",
+            "Best Execution Time (ms)",
+            "Worst Execution Time (ms)",
             "Average Execution Time (ms)",
             "Total Execution Time (ms)"};
 
@@ -44,8 +46,10 @@ public class MetadataDiagnosticsTableModel extends AbstractDiagnosticsTableModel
             case 1: return entry.getInvocationCount();
             case 2: return entry.getFailureCount();
             case 3: return entry.getTimeoutCount();
-            case 4: return entry.getAverageExecutionTime();
-            case 5: return entry.getTotalExecutionTime();
+            case 4: return entry.getBestExecutionTime();
+            case 5: return entry.getWorstExecutionTime();
+            case 6: return entry.getAverageExecutionTime();
+            case 7: return entry.getTotalExecutionTime();
         }
         return "";
     }
@@ -57,8 +61,10 @@ public class MetadataDiagnosticsTableModel extends AbstractDiagnosticsTableModel
             case 1: return Long.toString(entry.getInvocationCount());
             case 2: return Long.toString(entry.getFailureCount());
             case 3: return Long.toString(entry.getTimeoutCount());
-            case 4: return Long.toString(entry.getAverageExecutionTime());
-            case 5: return Long.toString(entry.getTotalExecutionTime());
+            case 4: return Long.toString(entry.getBestExecutionTime());
+            case 5: return Long.toString(entry.getWorstExecutionTime());
+            case 6: return Long.toString(entry.getAverageExecutionTime());
+            case 7: return Long.toString(entry.getTotalExecutionTime());
         }
         return "";
     }
