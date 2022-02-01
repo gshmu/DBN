@@ -20,9 +20,7 @@ public abstract class MutableLatentImpl<T, M> extends BasicLatentImpl<T> impleme
     @Override
     @SneakyThrows
     protected boolean shouldLoad(){
-        return super.shouldLoad() ||
-                mutable == null ||
-                !Objects.equals(mutable, getMutableLoader().load());
+        return super.shouldLoad() || (mutable != null && !Objects.equals(mutable, getMutableLoader().load()));
     }
 
     @Override
