@@ -25,7 +25,7 @@ public abstract class DBMethodPositionComparator<T extends DBMethod> extends DBO
             if (position1 == position2) {
                 short overload1 = method1.getOverload();
                 short overload2 = method2.getOverload();
-                int nameComparison = method1.getName().compareTo(method2.getName());
+                int nameComparison = method1.getName().compareToIgnoreCase(method2.getName());
                 if (nameComparison == 0) {
                     return overload1 - overload2;
                 } else {

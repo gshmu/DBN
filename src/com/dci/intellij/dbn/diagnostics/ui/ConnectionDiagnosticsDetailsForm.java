@@ -38,10 +38,12 @@ public class ConnectionDiagnosticsDetailsForm extends DBNFormImpl {
 
         MetadataDiagnosticsTableModel metadataTableModel = new MetadataDiagnosticsTableModel(connectionHandler);
         metadataTable = new DiagnosticsTable<>(this, metadataTableModel);
+        metadataTable.getRowSorter().toggleSortOrder(0);
         addTab(metadataTable, "Metadata Interface");
 
         ConnectivityDiagnosticsTableModel connectivityTableModel = new ConnectivityDiagnosticsTableModel(connectionHandler);
         connectivityTable = new DiagnosticsTable<>(this, connectivityTableModel);
+        connectivityTable.getRowSorter().toggleSortOrder(0);
         addTab(connectivityTable, "Database Connectivity");
 
         diagnosticsTabs.addListener(new TabsListener() {
