@@ -4,6 +4,7 @@ import com.dci.intellij.dbn.common.Colors;
 import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.common.dispose.SafeDisposer;
 import com.dci.intellij.dbn.common.dispose.StatefulDisposable;
+import com.dci.intellij.dbn.common.latent.Latent;
 import com.dci.intellij.dbn.common.thread.Dispatch;
 import com.dci.intellij.dbn.common.ui.component.DBNComponent;
 import com.dci.intellij.dbn.common.util.Strings;
@@ -61,6 +62,11 @@ public abstract class DBNTable<T extends DBNTableModel> extends JTable implement
     private double scrollDistance;
     private Timer scrollTimer;
     private KeyFMap userData = KeyFMap.EMPTY_MAP;
+
+    private final Latent<FontRenderContext> fontRenderContext = Latent.mutable(
+            () -> getFont(),
+            () -> getFontMetrics(getFont()).getFontRenderContext());
+
 
     public DBNTable(@NotNull DBNComponent parent, @NotNull T tableModel, boolean showHeader) {
         super(tableModel);
@@ -141,10 +147,13 @@ public abstract class DBNTable<T extends DBNTableModel> extends JTable implement
 
     protected void adjustRowHeight() {
         Font font = getFont();
-        FontRenderContext fontRenderContext = getFontMetrics(getFont()).getFontRenderContext();
-        LineMetrics lineMetrics = font.getLineMetrics("ABCÄÜÖÂÇĞIİÖŞĀČḎĒËĠḤŌŠṢṬŪŽy", fontRenderContext);
+        LineMetrics lineMetrics = font.getLineMetrics("ABCÄÜÖÂÇĞIİÖŞĀČḎĒËĠḤŌŠṢṬŪŽy", fontRenderContext.get());
         int fontHeight = Math.round(lineMetrics.getHeight());
         setRowHeight(fontHeight + (rowVerticalPadding * 2));
+    }
+
+    protected int getCellWidth(String displayValue) {
+        return (int) getFont().getStringBounds(displayValue, fontRenderContext.get()).getWidth();
     }
 
     @Override
@@ -255,29 +264,19 @@ public abstract class DBNTable<T extends DBNTableModel> extends JTable implement
                 if (preferredWidth > MAX_COLUMN_WIDTH) {
                     break;
                 }
-                TableCellRenderer renderer = getCellRenderer(rowIndex, columnIndex);
 
-                if (renderer != null) {
-                    Object value = model.getValueAt(rowIndex, columnIndex);
-                    if (value != null) {
-                        Component component = renderer.getTableCellRendererComponent(this, value, false, false, rowIndex, columnIndex);
-                        if (component.getPreferredSize().width > preferredWidth) {
-                            preferredWidth = component.getPreferredSize().width;
-                        }
+                Object value = model.getValueAt(rowIndex, columnIndex);
+                if (value != null) {
+                    String displayValue = value.toString();
+                    if (displayValue != null && displayValue.length() < 100) {
+                        int cellWidth = getCellWidth(displayValue);
+                        preferredWidth = Math.max(preferredWidth, cellWidth);
                     }
                 }
             }
 
-            int maxColumnWidth = getMaxColumnWidth();
-            if (preferredWidth > maxColumnWidth) {
-                preferredWidth = maxColumnWidth;
-            }
-
-            int minColumnWidth = getMinColumnWidth();
-            if (preferredWidth < minColumnWidth) {
-                preferredWidth = minColumnWidth;
-            }
-
+            preferredWidth = Math.min(preferredWidth, getMaxColumnWidth());
+            preferredWidth = Math.max(preferredWidth, getMinColumnWidth());
             preferredWidth = preferredWidth + span;
 
             if (column.getPreferredWidth() != preferredWidth)  {

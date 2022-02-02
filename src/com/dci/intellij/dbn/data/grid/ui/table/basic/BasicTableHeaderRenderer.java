@@ -4,8 +4,16 @@ import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.common.ui.table.DBNTableHeaderRendererBase;
 import com.intellij.util.ui.UIUtil;
 
-import javax.swing.*;
-import java.awt.*;
+import javax.swing.Icon;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JTable;
+import javax.swing.RowSorter;
+import javax.swing.SortOrder;
+import java.awt.Component;
+import java.awt.Cursor;
+import java.awt.Dimension;
+import java.awt.FontMetrics;
 import java.util.List;
 
 public class BasicTableHeaderRenderer extends DBNTableHeaderRendererBase {
@@ -30,7 +38,7 @@ public class BasicTableHeaderRenderer extends DBNTableHeaderRendererBase {
         width += fontMetrics.stringWidth(columnName) + 24;
         int height = fontMetrics.getHeight() + 6;
         mainPanel.setPreferredSize(new Dimension(width, height));
-        mainPanel.setBorder(columnIndex == 0 ? BORDER_LBR.get() : BORDER_BR.get());
+        mainPanel.setBorder(BORDER_R.get());
 
         Icon icon = null;
         RowSorter rowSorter = table.getRowSorter();

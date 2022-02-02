@@ -20,7 +20,7 @@ public class DBNHintForm extends DBNFormImpl {
     private JLabel hintLabel;
     private JTextPane hintTextPane;
 
-    private boolean boxed;
+    private final boolean boxed;
 
     public DBNHintForm(DBNForm parent, String hintText, MessageType messageType, boolean boxed) {
         super(parent);

@@ -49,6 +49,13 @@ public abstract class DBNFormImpl
                 GUIUtil.updateTitledBorders(panel);
             }
         });
+
+        GUIUtil.visitRecursively(mainComponent, component -> {
+            if (component instanceof JPanel) {
+                JPanel panel = (JPanel) component;
+                GUIUtil.updateTitledBorders(panel);
+            }
+        });
         GuiUtils.replaceJSplitPaneWithIDEASplitter(mainComponent);
     }
 

@@ -62,7 +62,7 @@ public class ParserDiagnosticsTable extends DBNTable<ParserDiagnosticsTableModel
 
             String presentableValue = model.getPresentableValue(entry, column);
             append(presentableValue, textAttributes);
-            setBorder(Borders.TEXT_FIELD_BORDER);
+            setBorder(Borders.TEXT_FIELD_INSETS);
         }
     }
 

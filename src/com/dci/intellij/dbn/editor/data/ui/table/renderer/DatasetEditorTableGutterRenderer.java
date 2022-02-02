@@ -2,54 +2,23 @@ package com.dci.intellij.dbn.editor.data.ui.table.renderer;
 
 import com.dci.intellij.dbn.common.Colors;
 import com.dci.intellij.dbn.common.Icons;
-import com.dci.intellij.dbn.common.ui.Borders;
-import com.dci.intellij.dbn.common.ui.table.DBNTableGutterRenderer;
+import com.dci.intellij.dbn.common.ui.table.DBNTableGutterRendererBase;
 import com.dci.intellij.dbn.data.grid.ui.table.basic.BasicTableGutter;
 import com.dci.intellij.dbn.editor.data.model.DatasetEditorModelRow;
 import com.dci.intellij.dbn.editor.data.ui.table.DatasetEditorTable;
-import com.intellij.openapi.editor.colors.EditorColorsManager;
-import com.intellij.openapi.editor.colors.EditorFontType;
-import com.intellij.ui.border.CustomLineBorder;
-import com.intellij.util.ui.JBUI;
 import com.intellij.util.ui.UIUtil;
 
-import javax.swing.*;
-import javax.swing.border.CompoundBorder;
-import java.awt.*;
+import javax.swing.Icon;
+import javax.swing.JList;
+import javax.swing.ListModel;
+import java.awt.Color;
 
 import static com.dci.intellij.dbn.editor.data.model.RecordStatus.*;
 
-public class DatasetEditorTableGutterRenderer extends JPanel implements DBNTableGutterRenderer {
-    private final JLabel textLabel;
-    private final JLabel imageLabel;
-    private final JPanel textPanel;
-    private static final Cursor HAND_CURSOR = Cursor.getPredefinedCursor(Cursor.HAND_CURSOR);
-
-    public DatasetEditorTableGutterRenderer() {
-        setBackground(UIUtil.getPanelBackground());
-        setBorder(new CompoundBorder(new CustomLineBorder(UIUtil.getPanelBackground(), 0, 0, 1, 1), Borders.TEXT_FIELD_BORDER));
-        setLayout(new BorderLayout());
-        textLabel = new JLabel();
-        textLabel.setFont(EditorColorsManager.getInstance().getGlobalScheme().getFont(EditorFontType.PLAIN));
-        imageLabel = new JLabel();
-
-        textPanel = new JPanel(new BorderLayout());
-        textPanel.setBorder(JBUI.Borders.emptyRight(3));
-        textPanel.add(textLabel, BorderLayout.EAST);
-        add(textPanel, BorderLayout.CENTER);
-        add(imageLabel, BorderLayout.EAST);
-        textLabel.setHorizontalTextPosition(SwingConstants.RIGHT);
-        textLabel.setCursor(HAND_CURSOR);
-    }
+public class DatasetEditorTableGutterRenderer extends DBNTableGutterRendererBase {
 
     @Override
-    public void setFont(Font font) {
-        super.setFont(font);
-        if (textLabel != null) textLabel.setFont(font);
-    }
-
-    @Override
-    public Component getListCellRendererComponent(JList list, Object value, int index, boolean isSelected, boolean cellHasFocus) {
+    protected void adjustListCellRendererComponent(JList list, Object value, int index, boolean isSelected, boolean cellHasFocus) {
         BasicTableGutter tableGutter = (BasicTableGutter) list;
         ListModel model = list.getModel();
         DatasetEditorModelRow row = (DatasetEditorModelRow) model.getElementAt(index);
@@ -62,9 +31,8 @@ public class DatasetEditorTableGutterRenderer extends JPanel implements DBNTable
                     row.is(MODIFIED) ? Icons.DATA_EDITOR_ROW_MODIFIED :
                     table.getModel().is(MODIFIED) ? Icons.DATA_EDITOR_ROW_DEFAULT : null;
 
-            textLabel.setText(Integer.toString(row.getIndex() + 1));
-            if (imageLabel.getIcon() != icon) {
-                imageLabel.setIcon(icon);
+            if (icon == null || icon != iconLabel.getIcon()) {
+                iconLabel.setIcon(icon);
             }
         }
         //lText.setFont(isSelected ? BOLD_FONT : REGULAR_FONT);
@@ -75,11 +43,10 @@ public class DatasetEditorTableGutterRenderer extends JPanel implements DBNTable
                 isCaretRow ?
                         Colors.tableCaretRowColor() :
                         UIUtil.getPanelBackground();
-        setBackground(background);
-        textPanel.setBackground(background);
+        mainPanel.setBackground(background);
+        iconLabel.setBackground(background);
         textLabel.setForeground(isSelected ?
                 Colors.tableSelectionForegroundColor(cellHasFocus) :
                 Colors.tableLineNumberColor());
-        return this;
     }
 }

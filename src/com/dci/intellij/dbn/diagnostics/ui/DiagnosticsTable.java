@@ -38,7 +38,7 @@ public class DiagnosticsTable<T extends AbstractDiagnosticsTableModel> extends D
             DiagnosticEntry entry = (DiagnosticEntry) value;
             Object columnValue = getModel().getPresentableValue(entry, column);
             append(columnValue.toString(), SimpleTextAttributes.REGULAR_ATTRIBUTES);
-            setBorder(Borders.TEXT_FIELD_BORDER);
+            setBorder(Borders.TEXT_FIELD_INSETS);
         }
     }
 }

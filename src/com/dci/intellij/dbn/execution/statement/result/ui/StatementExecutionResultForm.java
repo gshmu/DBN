@@ -6,7 +6,6 @@ import com.dci.intellij.dbn.common.latent.Latent;
 import com.dci.intellij.dbn.common.thread.Dispatch;
 import com.dci.intellij.dbn.common.thread.Read;
 import com.dci.intellij.dbn.common.ui.GUIUtil;
-import com.dci.intellij.dbn.common.ui.table.DBNTableHeaderRenderer;
 import com.dci.intellij.dbn.common.util.Actions;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.SessionId;
@@ -33,7 +32,6 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollBar;
 import javax.swing.JScrollPane;
-import javax.swing.ScrollPaneConstants;
 import java.awt.BorderLayout;
 
 public class StatementExecutionResultForm extends ExecutionResultFormBase<StatementExecutionCursorResult> implements SearchableDataComponent {
@@ -74,10 +72,6 @@ public class StatementExecutionResultForm extends ExecutionResultFormBase<Statem
         resultScrollPane.setViewportView(resultTable);
         resultScrollPane.getViewport().setBackground(resultTable.getBackground());
         resultTable.initTableGutter();
-
-        JPanel panel = new JPanel();
-        panel.setBorder(DBNTableHeaderRenderer.BORDER_LBR.get());
-        resultScrollPane.setCorner(ScrollPaneConstants.UPPER_LEFT_CORNER, panel);
 
         Disposer.register(this, executionResult);
     }

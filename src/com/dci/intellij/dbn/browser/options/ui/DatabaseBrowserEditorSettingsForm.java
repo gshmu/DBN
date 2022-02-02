@@ -91,7 +91,7 @@ public class DatabaseBrowserEditorSettingsForm extends ConfigurationEditorForm<D
             });
 
             ComboBoxTableRenderer<DefaultEditorType> editor = new ComboBoxTableRenderer<DefaultEditorType>(DefaultEditorType.values());
-            editor.setBorder(Borders.TEXT_FIELD_BORDER);
+            editor.setBorder(Borders.TEXT_FIELD_INSETS);
             setDefaultEditor(DefaultEditorType.class, editor);
 
             getSelectionModel().addListSelectionListener(new ListSelectionListener() {

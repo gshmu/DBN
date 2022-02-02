@@ -110,7 +110,7 @@ public class PendingTransactionsTable extends DBNTable<PendingTransactionsTableM
                         changesCount + " uncommitted changes",
                         SimpleTextAttributes.REGULAR_ATTRIBUTES);
             }
-            setBorder(Borders.TEXT_FIELD_BORDER);
+            setBorder(Borders.TEXT_FIELD_INSETS);
         }
     }
 }
