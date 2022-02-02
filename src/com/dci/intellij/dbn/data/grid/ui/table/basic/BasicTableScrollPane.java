@@ -5,17 +5,29 @@ import com.dci.intellij.dbn.data.grid.options.DataGridSettings;
 import com.intellij.ide.IdeTooltip;
 import com.intellij.ide.IdeTooltipManager;
 import com.intellij.openapi.project.Project;
+import com.intellij.ui.border.CustomLineBorder;
 import com.intellij.ui.components.JBScrollPane;
 import com.intellij.util.Alarm;
 import com.intellij.util.ui.UIUtil;
 
 import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.ScrollPaneConstants;
 import java.awt.Component;
 import java.awt.Font;
 import java.awt.event.MouseWheelEvent;
 
+import static com.dci.intellij.dbn.common.Colors.tableHeaderBorderColor;
+
 public class BasicTableScrollPane extends JBScrollPane{
     private final Alarm resizeAlarm = new Alarm();
+
+    public BasicTableScrollPane() {
+        JPanel panel = new JPanel();
+        panel.setBorder(new CustomLineBorder(tableHeaderBorderColor(), 0, 0, 1, 0));
+        setCorner(ScrollPaneConstants.UPPER_LEFT_CORNER, panel);
+    }
+
     @Override
     protected void processMouseWheelEvent(MouseWheelEvent e) {
         if (e.isControlDown()) {

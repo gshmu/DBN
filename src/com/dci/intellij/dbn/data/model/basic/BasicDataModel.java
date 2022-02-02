@@ -29,6 +29,7 @@ import javax.swing.event.ListDataEvent;
 import javax.swing.event.TableModelEvent;
 import javax.swing.event.TableModelListener;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -362,7 +363,8 @@ public class BasicDataModel<
      *******************************************************  */
     @Override
     public void disposeInner() {
-        SafeDisposer.dispose(rows, true, false);
+        SafeDisposer.dispose(this.rows, true, true);
+        this.rows = Collections.emptyList();
         nullify();
     }
 

@@ -34,7 +34,7 @@ public class FileBrowserTableCellEditor extends AbstractCellEditor implements Ta
 
     public FileBrowserTableCellEditor(FileChooserDescriptor fileChooserDescriptor) {
         this.fileChooserDescriptor = fileChooserDescriptor;
-        textField.setBorder(Borders.TEXT_FIELD_BORDER);
+        textField.setBorder(Borders.TEXT_FIELD_INSETS);
 
         JLabel button = new JLabel(Icons.DATA_EDITOR_BROWSE);
         button.setBorder(BUTTON_BORDER);

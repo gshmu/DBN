@@ -8,8 +8,13 @@ import com.dci.intellij.dbn.data.sorting.SortingInstruction;
 import com.dci.intellij.dbn.data.sorting.SortingState;
 import com.intellij.util.ui.UIUtil;
 
-import javax.swing.*;
-import java.awt.*;
+import javax.swing.Icon;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JTable;
+import java.awt.Component;
+import java.awt.Dimension;
+import java.awt.FontMetrics;
 
 public class SortableTableHeaderRenderer extends DBNTableHeaderRendererBase {
     private JPanel mainPanel;
@@ -49,7 +54,7 @@ public class SortableTableHeaderRenderer extends DBNTableHeaderRendererBase {
         width += fontMetrics.stringWidth(columnName) + 24;
         int height = fontMetrics.getHeight() + 6;
         mainPanel.setPreferredSize(new Dimension(width, height));
-        mainPanel.setBorder(columnIndex == 0 ? BORDER_LBR.get() : BORDER_BR.get());
+        mainPanel.setBorder(columnIndex == 0 ? BORDER_LR.get() : BORDER_R.get());
         return mainPanel;
     }
 

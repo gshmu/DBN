@@ -12,7 +12,7 @@ import com.intellij.ui.SimpleTextAttributes;
 import com.intellij.util.text.DateFormatUtil;
 import org.jetbrains.annotations.NotNull;
 
-import javax.swing.*;
+import javax.swing.ListSelectionModel;
 import java.util.List;
 
 class ResourceMonitorSessionsTable extends DBNTable<ResourceMonitorSessionsTableModel> {
@@ -76,7 +76,7 @@ class ResourceMonitorSessionsTable extends DBNTable<ResourceMonitorSessionsTable
 
                 }
             }
-            setBorder(Borders.TEXT_FIELD_BORDER);
+            setBorder(Borders.TEXT_FIELD_INSETS);
 
         }
     }

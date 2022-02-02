@@ -6,7 +6,6 @@ import com.dci.intellij.dbn.common.latent.Latent;
 import com.dci.intellij.dbn.common.thread.Dispatch;
 import com.dci.intellij.dbn.common.ui.DBNFormImpl;
 import com.dci.intellij.dbn.common.ui.GUIUtil;
-import com.dci.intellij.dbn.common.ui.table.DBNTableHeaderRenderer;
 import com.dci.intellij.dbn.common.util.Actions;
 import com.dci.intellij.dbn.common.util.Messages;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
@@ -30,7 +29,6 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextField;
-import javax.swing.ScrollPaneConstants;
 import javax.swing.table.TableCellEditor;
 import java.awt.BorderLayout;
 import java.sql.SQLException;
@@ -70,10 +68,6 @@ public class SessionBrowserForm extends DBNFormImpl implements SearchableDataCom
 
             loadTimestampLabel.setForeground(Colors.HINT_COLOR);
             refreshLoadTimestamp();
-
-            JPanel panel = new JPanel();
-            panel.setBorder(DBNTableHeaderRenderer.BORDER_LBR.get());
-            editorTableScrollPane.setCorner(ScrollPaneConstants.UPPER_LEFT_CORNER, panel);
 
             ActionToolbar actionToolbar = Actions.createActionToolbar(actionsPanel,"", true, "DBNavigator.ActionGroup.SessionBrowser");
 

@@ -93,7 +93,7 @@ public class DatabaseBrowserSortingSettingsForm extends ConfigurationEditorForm<
             });
 
             ComboBoxTableRenderer<SortingType> editor = new ComboBoxTableRenderer<SortingType>(SortingType.values()) {};
-            editor.setBorder(Borders.TEXT_FIELD_BORDER);
+            editor.setBorder(Borders.TEXT_FIELD_INSETS);
             setDefaultEditor(SortingType.class, editor);
 
             getSelectionModel().addListSelectionListener(new ListSelectionListener() {
