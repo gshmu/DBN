@@ -9,7 +9,7 @@ import com.dci.intellij.dbn.connection.config.tns.TnsName;
 import com.intellij.ui.SimpleTextAttributes;
 import org.jetbrains.annotations.NotNull;
 
-import javax.swing.*;
+import javax.swing.ListSelectionModel;
 import javax.swing.table.TableModel;
 import java.util.List;
 
@@ -36,7 +36,7 @@ public class TnsNamesTable extends DBNTable<TnsNamesTableModel> {
             TnsName entry = (TnsName) value;
             Object columnValue = getModel().getPresentableValue(entry, column);
             append(columnValue == null ? "" : columnValue.toString(), SimpleTextAttributes.REGULAR_ATTRIBUTES);
-            setBorder(Borders.TEXT_FIELD_BORDER);
+            setBorder(Borders.TEXT_FIELD_INSETS);
         }
     }
 }

@@ -8,14 +8,16 @@ import com.intellij.ui.TableUtil;
 import com.intellij.util.ui.UIUtil;
 import org.jetbrains.annotations.NotNull;
 
-import javax.swing.*;
+import javax.swing.JTextField;
+import javax.swing.ListSelectionModel;
 import javax.swing.border.LineBorder;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.table.JTableHeader;
 import javax.swing.table.TableCellEditor;
-import java.awt.*;
+import java.awt.Color;
+import java.awt.Component;
 
 public class DBNEditableTable<T extends DBNEditableTableModel> extends DBNTableWithGutter<T> {
     public static final LineBorder SELECTION_BORDER = new LineBorder(UIUtil.getTableBackground());
@@ -37,8 +39,8 @@ public class DBNEditableTable<T extends DBNEditableTableModel> extends DBNTableW
                 Color foreground = table.getForeground();
                 SimpleTextAttributes attributes = SimpleTextAttributes.SIMPLE_CELL_ATTRIBUTES;
                 if (selected && !table.isEditing()) {
-                    background = UIUtil.getListSelectionBackground();
-                    foreground = UIUtil.getListSelectionForeground();
+                    background = UIUtil.getListSelectionBackground(true);
+                    foreground = UIUtil.getListSelectionForeground(true);
                     attributes = SimpleTextAttributes.SELECTED_SIMPLE_CELL_ATTRIBUTES;
 
                 }

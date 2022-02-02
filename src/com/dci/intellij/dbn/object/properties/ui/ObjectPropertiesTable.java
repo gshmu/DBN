@@ -9,11 +9,18 @@ import com.dci.intellij.dbn.object.properties.PresentableProperty;
 import com.intellij.openapi.progress.ProcessCanceledException;
 import com.intellij.pom.Navigatable;
 
-import javax.swing.*;
+import javax.swing.JTable;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.TableCellRenderer;
-import java.awt.*;
-import java.awt.event.*;
+import java.awt.Component;
+import java.awt.Cursor;
+import java.awt.Dimension;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 
 public class ObjectPropertiesTable extends DBNTable<DBNTableModel> {
     ObjectPropertiesTable(DBNForm parent, DBNTableModel tableModel) {
@@ -105,7 +112,7 @@ public class ObjectPropertiesTable extends DBNTable<DBNTableModel> {
                 Dimension dimension = getSize();
                 dimension.setSize(dimension.getWidth(), 30);
                 setSize(dimension);
-                setBorder(Borders.TEXT_FIELD_BORDER);
+                setBorder(Borders.TEXT_FIELD_INSETS);
 
                 return component;
             } catch (ProcessCanceledException e) {

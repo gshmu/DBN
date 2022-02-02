@@ -10,6 +10,7 @@ import com.intellij.openapi.Disposable;
 import com.intellij.openapi.editor.colors.EditorColors;
 import com.intellij.openapi.editor.colors.EditorColorsManager;
 import com.intellij.openapi.editor.colors.EditorColorsScheme;
+import com.intellij.ui.ColorUtil;
 import com.intellij.ui.JBColor;
 import com.intellij.util.ui.UIUtil;
 import org.jetbrains.annotations.NotNull;
@@ -17,12 +18,16 @@ import org.jetbrains.annotations.Nullable;
 
 import javax.swing.UIManager;
 import java.awt.Color;
+import java.util.Map;
 import java.util.Objects;
+import java.util.concurrent.ConcurrentHashMap;
 
 import static com.dci.intellij.dbn.common.util.Commons.coalesce;
+import static java.lang.Math.*;
 
 public final class Colors {
     private Colors() {}
+    private static final Map<Color, Map<Double, Color>> cache = new ConcurrentHashMap<>();
 
     public static Color LIGHT_BLUE = new JBColor(new Color(235, 244, 254), new Color(0x2D3548));
     public static Color BUTTON_BORDER_COLOR = new JBColor(new Color(0x8C8C8C), new Color(0x606060));
@@ -65,8 +70,8 @@ public final class Colors {
 
 
     private static class ColorsImpl {
-        private final Color tableHeaderBorderColor = adjust(UIUtil.getPanelBackground(), -0.07);
-        private final Color tableGridColor = adjust(UIUtil.getTableBackground(), -0.09);
+        private final Color tableHeaderBorderColor = stronger(UIUtil.getPanelBackground(), 1);
+        private final Color tableGridColor = stronger(UIUtil.getTableBackground(), 1);
 
         private final Color tableCaretRowColor = coalesce(
                 getGlobalScheme().getAttributes(DataGridTextAttributesKeys.CARET_ROW).getBackgroundColor(),
@@ -125,23 +130,42 @@ public final class Colors {
         });
     }
 
-    public static Color adjust(Color color, double shift) {
-        if (GUIUtil.isDarkLookAndFeel()) {
-            shift = -shift;
-        }
-        return adjustRaw(color, shift);
-
+    public static Color adjust(Color color, double factor) {
+        Map<Double, Color> cache = Colors.cache.computeIfAbsent(color, k -> new ConcurrentHashMap<>());
+        return cache.computeIfAbsent(factor, k ->
+                GUIUtil.isDarkLookAndFeel() ?
+                        adjustRaw(color, -k) :
+                        adjustRaw(color, k));
     }
 
-    @NotNull
-    private static Color adjustRaw(Color color, double shift) {
-        int red = (int) Math.round(Math.min(255, color.getRed() + 255 * shift));
-        int green = (int) Math.round(Math.min(255, color.getGreen() + 255 * shift));
-        int blue = (int) Math.round(Math.min(255, color.getBlue() + 255 * shift));
 
-        red = Math.max(Math.min(255, red), 0);
-        green = Math.max(Math.min(255, green), 0);
-        blue = Math.max(Math.min(255, blue), 0);
+    public static Color softer(Color color, int tones) {
+        return GUIUtil.isDarkLookAndFeel() ?
+                ColorUtil.darker(color, tones) :
+                ColorUtil.brighter(color, tones);
+    }
+
+    public static Color stronger(Color color, int tones) {
+        return GUIUtil.isDarkLookAndFeel() ?
+                ColorUtil.brighter(color, tones) :
+                ColorUtil.darker(color, tones);
+    }
+
+
+
+    @NotNull
+    private static Color adjustRaw(Color color, double factor) {
+        int red   = color.getRed();
+        int green = color.getGreen();
+        int blue  = color.getBlue();
+
+        red   = (int) round(min(255, red   + red   * factor));
+        green = (int) round(min(255, green + green * factor));
+        blue  = (int) round(min(255, blue  + blue  * factor));
+
+        red   = max(min(255, red), 0);
+        green = max(min(255, green), 0);
+        blue  = max(min(255, blue), 0);
 
         int alpha = color.getAlpha();
 

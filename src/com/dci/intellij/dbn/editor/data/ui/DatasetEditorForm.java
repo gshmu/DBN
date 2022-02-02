@@ -1,14 +1,15 @@
 package com.dci.intellij.dbn.editor.data.ui;
 
+import com.dci.intellij.dbn.common.Colors;
 import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.common.dispose.SafeDisposer;
 import com.dci.intellij.dbn.common.latent.Latent;
 import com.dci.intellij.dbn.common.thread.Dispatch;
 import com.dci.intellij.dbn.common.ui.AutoCommitLabel;
+import com.dci.intellij.dbn.common.ui.Borders;
 import com.dci.intellij.dbn.common.ui.DBNFormImpl;
 import com.dci.intellij.dbn.common.ui.GUIUtil;
-import com.dci.intellij.dbn.common.ui.table.DBNTableHeaderRenderer;
 import com.dci.intellij.dbn.common.util.Actions;
 import com.dci.intellij.dbn.common.util.Messages;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
@@ -41,7 +42,6 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextField;
-import javax.swing.ScrollPaneConstants;
 import javax.swing.table.TableColumn;
 import java.awt.BorderLayout;
 import java.sql.SQLException;
@@ -50,15 +50,16 @@ import java.util.List;
 
 public class DatasetEditorForm extends DBNFormImpl implements SearchableDataComponent {
     private JPanel actionsPanel;
-    private JScrollPane datasetTableScrollPane;
     private JPanel mainPanel;
     private JLabel loadingLabel;
     private JPanel loadingIconPanel;
     private JPanel searchPanel;
-    private AutoCommitLabel autoCommitLabel;
     private JPanel loadingActionPanel;
     private JPanel loadingDataPanel;
+    private JPanel datasetTablePanel;
+    private JScrollPane datasetTableScrollPane;
 
+    private AutoCommitLabel autoCommitLabel;
     private DatasetEditorTable datasetEditorTable;
     private final WeakRef<DatasetEditor> datasetEditor;
 
@@ -76,14 +77,10 @@ public class DatasetEditorForm extends DBNFormImpl implements SearchableDataComp
 
         DBDataset dataset = getDataset();
         try {
+            datasetTablePanel.setBorder(Borders.lineBorder(Colors.tableHeaderBorderColor(), 1, 0, 0, 0));
             datasetEditorTable = new DatasetEditorTable(this, datasetEditor);
             datasetTableScrollPane.setViewportView(datasetEditorTable);
             datasetEditorTable.initTableGutter();
-
-
-            JPanel panel = new JPanel();
-            panel.setBorder(DBNTableHeaderRenderer.BORDER_LBR.get());
-            datasetTableScrollPane.setCorner(ScrollPaneConstants.UPPER_LEFT_CORNER, panel);
 
             ActionToolbar actionToolbar = Actions.createActionToolbar(actionsPanel,"", true, "DBNavigator.ActionGroup.DataEditor");
 

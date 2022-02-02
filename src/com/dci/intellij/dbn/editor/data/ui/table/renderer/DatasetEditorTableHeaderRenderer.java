@@ -12,8 +12,14 @@ import com.dci.intellij.dbn.object.DBColumn;
 import com.dci.intellij.dbn.object.DBDataset;
 import com.intellij.util.ui.UIUtil;
 
-import javax.swing.*;
-import java.awt.*;
+import javax.swing.Icon;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JTable;
+import java.awt.Component;
+import java.awt.Cursor;
+import java.awt.Dimension;
+import java.awt.FontMetrics;
 
 public class DatasetEditorTableHeaderRenderer extends DBNTableHeaderRendererBase {
     private JPanel mainPanel;
@@ -73,7 +79,7 @@ public class DatasetEditorTableHeaderRenderer extends DBNTableHeaderRendererBase
             width += fontMetrics.stringWidth(columnName) + 20;
             int height = fontMetrics.getHeight() + 6;
             mainPanel.setPreferredSize(new Dimension(width, height));
-            mainPanel.setBorder(columnIndex == 0 ? BORDER_TLBR.get() : BORDER_TBR.get());
+            mainPanel.setBorder(columnIndex == 0 ? BORDER_LR.get() : BORDER_R.get());
             mainPanel.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
             updateTooltip(column);
             return mainPanel;

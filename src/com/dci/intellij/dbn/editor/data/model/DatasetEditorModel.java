@@ -278,6 +278,7 @@ public class DatasetEditorModel
 
     private void clearChanges() {
         changedRows.clear();
+        set(MODIFIED, false);
     }
 
     @Override

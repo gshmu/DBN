@@ -1,5 +1,8 @@
 package com.dci.intellij.dbn.connection.mapping.ui;
 
+import com.dci.intellij.dbn.common.Colors;
+import com.dci.intellij.dbn.common.thread.Dispatch;
+import com.dci.intellij.dbn.common.thread.Progress;
 import com.dci.intellij.dbn.common.ui.Borders;
 import com.dci.intellij.dbn.common.ui.Presentable;
 import com.dci.intellij.dbn.common.ui.component.DBNComponent;
@@ -17,6 +20,8 @@ import com.dci.intellij.dbn.connection.SchemaId;
 import com.dci.intellij.dbn.connection.mapping.FileConnectionMapping;
 import com.dci.intellij.dbn.connection.mapping.FileConnectionMappingManager;
 import com.dci.intellij.dbn.connection.session.DatabaseSession;
+import com.dci.intellij.dbn.object.DBSchema;
+import com.intellij.openapi.actionSystem.ActionGroup;
 import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.actionSystem.DefaultActionGroup;
@@ -25,7 +30,9 @@ import com.intellij.openapi.project.DumbAware;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.popup.JBPopupFactory;
 import com.intellij.openapi.ui.popup.ListPopup;
+import com.intellij.openapi.util.Condition;
 import com.intellij.openapi.vfs.VirtualFile;
+import com.intellij.ui.JBColor;
 import com.intellij.ui.SimpleTextAttributes;
 import lombok.Getter;
 import org.jetbrains.annotations.NotNull;
@@ -50,9 +57,11 @@ public class FileConnectionMappingTable extends DBNTable<FileConnectionMappingTa
         initTableSorter();
         setCellSelectionEnabled(true);
         adjustRowHeight(2);
+        getRowSorter().toggleSortOrder(2);
         accommodateColumnsSize();
         addMouseListener(new MouseListener());
         manager = FileConnectionMappingManager.getInstance(getProject());
+
     }
 
     @Override
@@ -74,7 +83,7 @@ public class FileConnectionMappingTable extends DBNTable<FileConnectionMappingTa
             Object columnValue = model.getValue(entry, column);
             if (columnValue instanceof Presentable) {
                 Presentable presentable = (Presentable) columnValue;
-                setIcon(presentable.getIcon());
+                //setIcon(presentable.getIcon());
             }
 
             if (columnValue instanceof ConnectionHandler ||
@@ -87,10 +96,21 @@ public class FileConnectionMappingTable extends DBNTable<FileConnectionMappingTa
                 setIcon(virtualFile.getFileType().getIcon());
             }
 
+            if (!selected) {
+                ConnectionHandler connection = entry.getConnection();
+                if (connection != null) {
+                    JBColor color = connection.getEnvironmentType().getColor();
+                    if (color != null) {
+                        setBackground(Colors.adjust(color, -0.01));
+                        //setBackground(color.brighter());
+                    }
+                }
+            }
+
             SimpleTextAttributes textAttributes = SimpleTextAttributes.REGULAR_ATTRIBUTES;
             String presentableValue = model.getPresentableValue(entry, column);
             append(presentableValue, textAttributes);
-            setBorder(Borders.TEXT_FIELD_BORDER);
+            setBorder(Borders.TEXT_FIELD_INSETS);
         }
     }
 
@@ -111,8 +131,10 @@ public class FileConnectionMappingTable extends DBNTable<FileConnectionMappingTa
                                 fileEditorManager.openFile(file, true);
                             } else if (selectedColumn == 1) {
                                 promptConnectionSelector(mapping);
-                            } else if (selectedColumn == 2) {
+                            } else if (selectedColumn == 3) {
                                 promptSchemaSelector(mapping);
+                            } else if (selectedColumn == 4) {
+                                promptSessionSelector(mapping);
                             }
                         }
                     }
@@ -126,59 +148,63 @@ public class FileConnectionMappingTable extends DBNTable<FileConnectionMappingTa
         Project project = getProject();
         ConnectionManager connectionManager = ConnectionManager.getInstance(project);
         ConnectionBundle connectionBundle = connectionManager.getConnectionBundle();
-        List<ConnectionHandler> connectionHandlers = connectionBundle.getConnections();
+        VirtualFile file = mapping.getFile();
 
         DefaultActionGroup actionGroup = new DefaultActionGroup();
-        VirtualFile file = mapping.getFile();
-        if (connectionHandlers.size() > 0) {
-            for (ConnectionHandler connection : connectionHandlers) {
-                actionGroup.add(new ConnectionAction(file, connection));
-            }
-        }
+
+        List<ConnectionHandler> connections = connectionBundle.getConnections();
+        connections.stream().map(c -> new ConnectionAction(file, c)).forEach(a -> actionGroup.add(a));
 
         actionGroup.addSeparator();
-        for (ConnectionHandler connection : connectionBundle.getVirtualConnections()) {
-            actionGroup.add(new ConnectionAction(file, connection));
-        }
+        List<ConnectionHandler> virtualConnections = connectionBundle.getVirtualConnections();
+        virtualConnections.stream().map(c -> new ConnectionAction(file, c)).forEach(a -> actionGroup.add(a));
+
         actionGroup.addSeparator();
         actionGroup.add(new ConnectionAction(file, null));
-
-        ListPopup popupBuilder = JBPopupFactory.getInstance().createActionGroupPopup(
-                null,
-                actionGroup,
-                Context.getDataContext(this),
-                JBPopupFactory.ActionSelectionAid.SPEEDSEARCH,
-                true,
-                null,
-                1000,
-                action -> ((ConnectionAction) action).getConnectionId() == mapping.getConnectionId(),
-                null);
-
-        popupBuilder.showInScreenCoordinates(this, getPopupLocation());
+        promptSelector(actionGroup, a -> ((ConnectionAction) a).getConnectionId() == mapping.getConnectionId());
     }
 
     private void promptSchemaSelector(@NotNull FileConnectionMapping mapping) {
         ConnectionHandler connection = mapping.getConnection();
         if (connection != null) {
+            Progress.modal(connection.getProject(), "Loading schemas", true, progress -> {
+                List<DBSchema> schemas = connection.getObjectBundle().getSchemas();
+
+                DefaultActionGroup actionGroup = new DefaultActionGroup();
+                VirtualFile file = mapping.getFile();
+                schemas.stream().map(schema -> new SchemaAction(file, schema.getIdentifier())).forEach(a -> actionGroup.add(a));
+                promptSelector(actionGroup, a -> ((SchemaAction) a).getSchemaId() == mapping.getSchemaId());
+            });
+        }
+    }
+
+    private void promptSessionSelector(@NotNull FileConnectionMapping mapping) {
+        ConnectionHandler connection = mapping.getConnection();
+        if (connection != null) {
             DefaultActionGroup actionGroup = new DefaultActionGroup();
             VirtualFile file = mapping.getFile();
-            List<SchemaId> schemaIds = connection.getSchemaIds();
-            for (SchemaId schemaId : schemaIds) {
-                actionGroup.add(new SchemaAction(file, schemaId));
-            }
+
+            List<DatabaseSession> sessions = connection.getSessionBundle().getSessions();
+            sessions.stream().map(session -> new SessionAction(file, session)).forEach(a -> actionGroup.add(a));
+            promptSelector(actionGroup, a -> ((SessionAction) a).getSession() == mapping.getSession());
+        }
+    }
+
+    private void promptSelector(ActionGroup actionGroup, Condition<? super AnAction> preselectCondition) {
+        Dispatch.runConditional(() -> {
             ListPopup popupBuilder = JBPopupFactory.getInstance().createActionGroupPopup(
                     null,
                     actionGroup,
-                    Context.getDataContext(this),
+                    Context.getDataContext(FileConnectionMappingTable.this),
                     JBPopupFactory.ActionSelectionAid.SPEEDSEARCH,
                     true,
                     null,
                     30,
-                    action -> ((SchemaAction) action).getSchemaId() == mapping.getSchemaId(),
+                    preselectCondition,
                     null);
 
             popupBuilder.showInScreenCoordinates(this, getPopupLocation());
-        }
+        });
     }
 
     @NotNull
@@ -207,6 +233,7 @@ public class FileConnectionMappingTable extends DBNTable<FileConnectionMappingTa
         @Override
         public void actionPerformed(@NotNull AnActionEvent e) {
             manager.setConnectionHandler(virtualFile, getConnectionHandler());
+            notifyModelChanges(virtualFile);
         }
 
         @Nullable
@@ -233,6 +260,32 @@ public class FileConnectionMappingTable extends DBNTable<FileConnectionMappingTa
         @Override
         public void actionPerformed(@NotNull AnActionEvent e) {
             manager.setDatabaseSchema(virtualFile, schemaId);
+            notifyModelChanges(virtualFile);
+        }
+    }
+
+    @Getter
+    private class SessionAction extends AnAction implements DumbAware {
+        private final VirtualFile virtualFile;
+        private final DatabaseSession session;
+        private SessionAction(VirtualFile virtualFile, DatabaseSession session) {
+            super(session.getName(), "", session.getIcon());
+            this.virtualFile = virtualFile;
+            this.session = session;
+        }
+
+        @Override
+        public void actionPerformed(@NotNull AnActionEvent e) {
+            manager.setDatabaseSession(virtualFile, session);
+            notifyModelChanges(virtualFile);
+        }
+    }
+
+    private void notifyModelChanges(VirtualFile virtualFile) {
+        FileConnectionMappingTableModel model = getModel();
+        int rowIndex = model.indexOf(virtualFile);
+        if (rowIndex > -1) {
+            model.notifyRowChange(rowIndex);
         }
     }
 }
