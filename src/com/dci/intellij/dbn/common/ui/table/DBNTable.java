@@ -22,26 +22,10 @@ import lombok.Getter;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import javax.swing.DefaultListSelectionModel;
-import javax.swing.JScrollPane;
-import javax.swing.JTable;
-import javax.swing.JViewport;
+import javax.swing.*;
 import javax.swing.event.EventListenerList;
-import javax.swing.table.DefaultTableColumnModel;
-import javax.swing.table.JTableHeader;
-import javax.swing.table.TableCellEditor;
-import javax.swing.table.TableCellRenderer;
-import javax.swing.table.TableColumn;
-import javax.swing.table.TableColumnModel;
-import javax.swing.table.TableModel;
-import java.awt.Component;
-import java.awt.Cursor;
-import java.awt.Dimension;
-import java.awt.Font;
-import java.awt.MouseInfo;
-import java.awt.Point;
-import java.awt.PointerInfo;
-import java.awt.Rectangle;
+import javax.swing.table.*;
+import java.awt.*;
 import java.awt.event.MouseEvent;
 import java.awt.font.FontRenderContext;
 import java.awt.font.LineMetrics;
@@ -263,7 +247,7 @@ public abstract class DBNTable<T extends DBNTableModel> extends JTable implement
 
                 Object value = model.getValueAt(rowIndex, column.getModelIndex());
                 if (value != null) {
-                    String displayValue = value.toString();
+                    String displayValue = model.getPresentableValue(value, column.getModelIndex());
                     if (displayValue != null && displayValue.length() < 100) {
                         int cellWidth = metricsCache.getTextWidth(displayValue);
                         preferredWidth = Math.max(preferredWidth, cellWidth);
