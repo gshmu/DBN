@@ -4,6 +4,7 @@ import com.dci.intellij.dbn.common.Colors;
 import com.dci.intellij.dbn.common.dispose.DisposableContainer;
 import com.dci.intellij.dbn.common.project.ProjectRef;
 import com.dci.intellij.dbn.common.ui.KeyUtil;
+import com.dci.intellij.dbn.common.ui.Mouse;
 import com.dci.intellij.dbn.common.ui.panel.DBNPanelImpl;
 import com.intellij.openapi.actionSystem.Shortcut;
 import com.intellij.openapi.project.Project;
@@ -13,10 +14,19 @@ import lombok.Setter;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import javax.swing.*;
+import javax.swing.Icon;
+import javax.swing.JComponent;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JTextField;
 import javax.swing.border.Border;
 import javax.swing.text.Document;
-import java.awt.*;
+import java.awt.BorderLayout;
+import java.awt.Color;
+import java.awt.Cursor;
+import java.awt.Dimension;
+import java.awt.FlowLayout;
+import java.awt.Font;
 import java.awt.event.ActionListener;
 import java.awt.event.FocusAdapter;
 import java.awt.event.FocusEvent;
@@ -24,8 +34,6 @@ import java.awt.event.FocusListener;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
 import java.util.List;
 
 public class TextFieldWithPopup<T extends JComponent> extends DBNPanelImpl implements DataEditorComponent {
@@ -192,7 +200,14 @@ public class TextFieldWithPopup<T extends JComponent> extends DBNPanelImpl imple
             }
             button.setToolTipText(toolTipText);
 
-            button.addMouseListener(new ButtonMouseListener(popupProvider));
+            button.addMouseListener(Mouse.listener().onClick(e -> {
+                getTextField().requestFocus();
+                TextFieldPopupProvider activePopupProvider = getActivePopupProvider();
+                if (activePopupProvider == null || activePopupProvider != popupProvider) {
+                    hideActivePopup();
+                    popupProvider.showPopup();
+                }}));
+
             buttonsPanel.add(button, buttonsPanel.getComponentCount());
             customizeButton(button);
             popupProvider.setButton(button);
@@ -305,23 +320,6 @@ public class TextFieldWithPopup<T extends JComponent> extends DBNPanelImpl imple
         }
     };
 
-    private class ButtonMouseListener extends MouseAdapter {
-        TextFieldPopupProvider popupProvider;
-
-        ButtonMouseListener(TextFieldPopupProvider popupProvider) {
-            this.popupProvider = popupProvider;
-        }
-
-        @Override
-        public void mouseClicked(MouseEvent e) {
-            getTextField().requestFocus();
-            TextFieldPopupProvider activePopupProvider = getActivePopupProvider();
-            if (activePopupProvider == null || activePopupProvider != popupProvider) {
-                hideActivePopup();
-                popupProvider.showPopup();
-            }
-        }
-    }
 
     @Override
     protected void disposeInner() {

@@ -4,7 +4,7 @@
  import com.dci.intellij.dbn.common.thread.Background;
  import com.dci.intellij.dbn.common.thread.Dispatch;
  import com.dci.intellij.dbn.common.ui.Borders;
- import com.dci.intellij.dbn.common.ui.MouseUtil;
+ import com.dci.intellij.dbn.common.ui.Mouse;
  import com.dci.intellij.dbn.data.editor.ui.BasicDataEditorComponent;
  import com.dci.intellij.dbn.data.editor.ui.DataEditorComponent;
  import com.dci.intellij.dbn.data.model.ColumnInfo;
@@ -29,7 +29,6 @@
  import java.awt.Point;
  import java.awt.event.KeyEvent;
  import java.awt.event.KeyListener;
- import java.awt.event.MouseAdapter;
  import java.awt.event.MouseEvent;
  import java.awt.event.MouseListener;
  import java.awt.event.MouseMotionAdapter;
@@ -227,29 +226,24 @@
         }
     };
 
-    private final MouseListener mouseListener = new MouseAdapter() {
-        @Override
-        public void mouseReleased(MouseEvent event) {
-            DatasetEditorModelCell cell = getCell();
-            if (cell != null && event.getButton() == MouseEvent.BUTTON3 ) {
-                getTable().showPopupMenu(event, cell, cell.getColumnInfo());
-            }
-        }
-
-        @Override
-        public void mouseClicked(MouseEvent event) {
-            if (MouseUtil.isNavigationEvent(event)) {
-                DatasetEditorModelCell cell = getCell();
-                if (cell != null && cell.isNavigable()) {
-                    DatasetEditorTable table = getTable();
-                    DatasetFilterInput filterInput = table.getModel().resolveForeignKeyRecord(cell);
-                    if (filterInput != null) {
-                        DatasetEditorManager datasetEditorManager = DatasetEditorManager.getInstance(table.getProject());
-                        datasetEditorManager.navigateToRecord(filterInput, event);
-                        event.consume();
+    private final MouseListener mouseListener = Mouse.listener().
+            onClick(e -> {
+                if (Mouse.isNavigationEvent(e)) {
+                    DatasetEditorModelCell cell = getCell();
+                    if (cell != null && cell.isNavigable()) {
+                        DatasetEditorTable table = getTable();
+                        DatasetFilterInput filterInput = table.getModel().resolveForeignKeyRecord(cell);
+                        if (filterInput != null) {
+                            DatasetEditorManager datasetEditorManager = DatasetEditorManager.getInstance(table.getProject());
+                            datasetEditorManager.navigateToRecord(filterInput, e);
+                            e.consume();
+                        }
                     }
                 }
-            }
-        }
-    };
+            }).
+            onRelease(e -> {
+                DatasetEditorModelCell cell = getCell();
+                if (cell != null && e.getButton() == MouseEvent.BUTTON3 ) {
+                    getTable().showPopupMenu(e, cell, cell.getColumnInfo());
+                }});
  }

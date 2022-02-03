@@ -2,6 +2,7 @@ package com.dci.intellij.dbn.execution.script.options.ui;
 
 import com.dci.intellij.dbn.common.thread.Dispatch;
 import com.dci.intellij.dbn.common.ui.DBNForm;
+import com.dci.intellij.dbn.common.ui.Mouse;
 import com.dci.intellij.dbn.common.ui.table.DBNTable;
 import com.dci.intellij.dbn.connection.DatabaseType;
 import com.dci.intellij.dbn.execution.script.CmdLineInterface;
@@ -13,14 +14,16 @@ import com.intellij.ui.TableUtil;
 import com.intellij.util.ui.JBUI;
 import com.intellij.util.ui.UIUtil;
 
-import javax.swing.*;
+import javax.swing.JTextField;
+import javax.swing.ListSelectionModel;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.table.JTableHeader;
 import javax.swing.table.TableCellEditor;
-import java.awt.*;
-import java.awt.event.MouseAdapter;
+import java.awt.Component;
+import java.awt.Cursor;
+import java.awt.Point;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.util.Set;
@@ -54,26 +57,23 @@ public class CmdLineInterfacesTable extends DBNTable<CmdLineInterfacesTableModel
         columnModel.getColumn(1).setPreferredWidth(120);
     }
 
-    private MouseListener mouseListener = new MouseAdapter() {
-        @Override
-        public void mouseClicked(MouseEvent e) {
-            if (e.getButton() == MouseEvent.BUTTON1 && e.getClickCount() == 1) {
-                Point point = e.getPoint();
-                int rowIndex = rowAtPoint(point);
-                int columnIndex = columnAtPoint(point);
-                DatabaseType databaseType = (DatabaseType) getValueAt(rowIndex, 0);
-                if (columnIndex == 2) {
-                    Project project = getProject();
-                    String executablePath = (String) getValueAt(rowIndex, 2);
-                    ScriptExecutionManager scriptExecutionManager = ScriptExecutionManager.getInstance(project);
-                    VirtualFile virtualFile = scriptExecutionManager.selectCmdLineExecutable(databaseType, executablePath);
-                    if (virtualFile != null) {
-                        setValueAt(virtualFile.getPath(), rowIndex, 2);
-                    }
+    private final MouseListener mouseListener = Mouse.listener().onClick(e -> {
+        if (e.getButton() == MouseEvent.BUTTON1 && e.getClickCount() == 1) {
+            Point point = e.getPoint();
+            int rowIndex = rowAtPoint(point);
+            int columnIndex = columnAtPoint(point);
+            DatabaseType databaseType = (DatabaseType) getValueAt(rowIndex, 0);
+            if (columnIndex == 2) {
+                Project project = getProject();
+                String executablePath = (String) getValueAt(rowIndex, 2);
+                ScriptExecutionManager scriptExecutionManager = ScriptExecutionManager.getInstance(project);
+                VirtualFile virtualFile = scriptExecutionManager.selectCmdLineExecutable(databaseType, executablePath);
+                if (virtualFile != null) {
+                    setValueAt(virtualFile.getPath(), rowIndex, 2);
                 }
             }
         }
-    };
+    });
 
     @Override
     protected void processMouseMotionEvent(MouseEvent e) {

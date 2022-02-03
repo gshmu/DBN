@@ -1,10 +1,10 @@
 package com.dci.intellij.dbn.editor.session.ui.table;
 
-import com.dci.intellij.dbn.common.ui.listener.MouseClickedListener;
+import com.dci.intellij.dbn.common.ui.Mouse;
 import com.dci.intellij.dbn.data.grid.ui.table.basic.BasicTableGutter;
 import com.dci.intellij.dbn.data.grid.ui.table.basic.BasicTableGutterCellRenderer;
 
-import javax.swing.*;
+import javax.swing.ListCellRenderer;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 
@@ -19,7 +19,7 @@ public class SessionBrowserTableGutter extends BasicTableGutter<SessionBrowserTa
         return new BasicTableGutterCellRenderer();
     }
 
-    MouseListener mouseListener = MouseClickedListener.create(e -> {
+    MouseListener mouseListener = Mouse.listener().onClick(e -> {
         if (e.getButton() == MouseEvent.BUTTON1 && e.getClickCount() == 2) {
             // TODO
         }

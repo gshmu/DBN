@@ -1,6 +1,7 @@
 package com.dci.intellij.dbn.connection.resource.ui;
 
 import com.dci.intellij.dbn.common.ui.Borders;
+import com.dci.intellij.dbn.common.ui.Mouse;
 import com.dci.intellij.dbn.common.ui.component.DBNComponent;
 import com.dci.intellij.dbn.common.ui.table.DBNColoredTableCellRenderer;
 import com.dci.intellij.dbn.common.ui.table.DBNTable;
@@ -14,7 +15,6 @@ import javax.swing.ListSelectionModel;
 import java.awt.Cursor;
 import java.awt.MouseInfo;
 import java.awt.Point;
-import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 
 public class ResourceMonitorTransactionsTable extends DBNTable<ResourceMonitorTransactionsTableModel> {
@@ -26,7 +26,19 @@ public class ResourceMonitorTransactionsTable extends DBNTable<ResourceMonitorTr
         setCellSelectionEnabled(true);
         adjustRowHeight(2);
         accommodateColumnsSize();
-        addMouseListener(new MouseListener());
+        addMouseListener(Mouse.listener().onClick(e -> clickEvent(e)));
+    }
+
+    private void clickEvent(MouseEvent e) {
+        if (e.getButton() == MouseEvent.BUTTON1 && e.getClickCount() == 1) {
+            int selectedRow = getSelectedRow();
+            PendingTransaction change = (PendingTransaction) getModel().getValueAt(selectedRow, 0);
+            VirtualFile virtualFile = change.getFile();
+            if (virtualFile != null) {
+                FileEditorManager editorManager = FileEditorManager.getInstance(getProject());
+                editorManager.openFile(virtualFile, true);
+            }
+        }
     }
 
     @Override
@@ -64,22 +76,6 @@ public class ResourceMonitorTransactionsTable extends DBNTable<ResourceMonitorTr
                 append(transaction.getChangesCount() + " uncommitted changes", SimpleTextAttributes.REGULAR_ATTRIBUTES);
             }
             setBorder(Borders.TEXT_FIELD_INSETS);
-
-        }
-    }
-
-    public class MouseListener extends MouseAdapter {
-        @Override
-        public void mouseClicked(MouseEvent e) {
-            if (e.getButton() == MouseEvent.BUTTON1 && e.getClickCount() == 1) {
-                int selectedRow = getSelectedRow();
-                PendingTransaction change = (PendingTransaction) getModel().getValueAt(selectedRow, 0);
-                VirtualFile virtualFile = change.getFile();
-                if (virtualFile != null) {
-                    FileEditorManager editorManager = FileEditorManager.getInstance(getProject());
-                    editorManager.openFile(virtualFile, true);
-                }
-            }
 
         }
     }

@@ -1,8 +1,8 @@
 package com.dci.intellij.dbn.common.environment.options.ui;
 
 import com.dci.intellij.dbn.common.environment.EnvironmentTypeBundle;
+import com.dci.intellij.dbn.common.ui.Mouse;
 import com.dci.intellij.dbn.common.ui.component.DBNComponent;
-import com.dci.intellij.dbn.common.ui.listener.MouseClickedListener;
 import com.dci.intellij.dbn.common.ui.table.DBNEditableTable;
 import com.intellij.openapi.project.Project;
 import com.intellij.ui.BooleanTableCellEditor;
@@ -11,9 +11,11 @@ import com.intellij.ui.ColorChooser;
 import com.intellij.util.ui.UIUtil;
 import org.jetbrains.annotations.NotNull;
 
-import javax.swing.*;
+import javax.swing.ListSelectionModel;
 import javax.swing.table.TableColumn;
-import java.awt.*;
+import java.awt.Color;
+import java.awt.Cursor;
+import java.awt.Point;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 
@@ -54,7 +56,7 @@ public class EnvironmentTypesEditorTable extends DBNEditableTable<EnvironmentTyp
         tableColumn.setMinWidth(width);
     }
 
-    private final MouseListener mouseListener = MouseClickedListener.create(e -> {
+    private final MouseListener mouseListener = Mouse.listener().onClick(e -> {
         if (e.getButton() == MouseEvent.BUTTON1 && e.getClickCount() == 1) {
             Point point = e.getPoint();
             int columnIndex = columnAtPoint(point);

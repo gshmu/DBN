@@ -15,6 +15,7 @@ import com.dci.intellij.dbn.common.thread.Background;
 import com.dci.intellij.dbn.common.thread.Dispatch;
 import com.dci.intellij.dbn.common.thread.Progress;
 import com.dci.intellij.dbn.common.ui.GUIUtil;
+import com.dci.intellij.dbn.common.ui.Mouse;
 import com.dci.intellij.dbn.common.ui.component.DBNComponent;
 import com.dci.intellij.dbn.common.ui.tree.DBNTree;
 import com.dci.intellij.dbn.common.util.Actions;
@@ -51,7 +52,6 @@ import java.awt.event.InputEvent;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
-import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 
@@ -332,48 +332,43 @@ public final class DatabaseBrowserTree extends DBNTree {
      *                      MouseListener                   *
      ********************************************************/
     private MouseListener createMouseListener() {
-        return new MouseAdapter() {
-            @Override
-            public void mouseClicked(MouseEvent event) {
-                if (event.getButton() == MouseEvent.BUTTON1) {
-                    DatabaseBrowserManager browserManager = DatabaseBrowserManager.getInstance(ensureProject());
-                    if (browserManager.getAutoscrollToEditor().value() || event.getClickCount() > 1) {
-                        TreePath path = getPathForLocation(event.getX(), event.getY());
-                        processSelectEvent(event, path, event.getClickCount() > 1);
-                    }
-                }
-            }
-
-            @Override
-            public void mouseReleased(MouseEvent event) {
-                if (event.getButton() == MouseEvent.BUTTON3) {
-                    TreePath path = getPathForLocation(event.getX(), event.getY());
-                    if (path != null) {
-                        BrowserTreeNode lastPathEntity = (BrowserTreeNode) path.getLastPathComponent();
-                        if (lastPathEntity.isDisposed()) return;
-
-                        ActionGroup actionGroup = null;
-                        if (lastPathEntity instanceof DBObjectList) {
-                            DBObjectList<?> objectList = (DBObjectList<?>) lastPathEntity;
-                            actionGroup = new ObjectListActionGroup(objectList);
-                        } else if (lastPathEntity instanceof DBObject) {
-                            DBObject object = (DBObject) lastPathEntity;
-                            actionGroup = new ObjectActionGroup(object);
-                        } else if (lastPathEntity instanceof DBObjectBundle) {
-                            DBObjectBundle objectsBundle = (DBObjectBundle) lastPathEntity;
-                            ConnectionHandler connectionHandler = objectsBundle.getConnectionHandler();
-                            actionGroup = new ConnectionActionGroup(connectionHandler);
+        return Mouse.listener().
+                onClick(e -> {
+                    if (e.getButton() == MouseEvent.BUTTON1) {
+                        DatabaseBrowserManager browserManager = DatabaseBrowserManager.getInstance(ensureProject());
+                        if (browserManager.getAutoscrollToEditor().value() || e.getClickCount() > 1) {
+                            TreePath path = getPathForLocation(e.getX(), e.getY());
+                            processSelectEvent(e, path, e.getClickCount() > 1);
                         }
+                    }}).
+                onRelease(e -> {
+                    if (e.getButton() == MouseEvent.BUTTON3) {
+                        TreePath path = getPathForLocation(e.getX(), e.getY());
+                        if (path != null) {
+                            BrowserTreeNode lastPathEntity = (BrowserTreeNode) path.getLastPathComponent();
+                            if (lastPathEntity.isDisposed()) return;
 
-                        if (actionGroup != null) {
-                            ActionPopupMenu actionPopupMenu = Actions.createActionPopupMenu(DatabaseBrowserTree.this, "", actionGroup);
-                            JPopupMenu popupMenu = actionPopupMenu.getComponent();
-                            popupMenu.show(DatabaseBrowserTree.this, event.getX(), event.getY());
+                            ActionGroup actionGroup = null;
+                            if (lastPathEntity instanceof DBObjectList) {
+                                DBObjectList<?> objectList = (DBObjectList<?>) lastPathEntity;
+                                actionGroup = new ObjectListActionGroup(objectList);
+                            } else if (lastPathEntity instanceof DBObject) {
+                                DBObject object = (DBObject) lastPathEntity;
+                                actionGroup = new ObjectActionGroup(object);
+                            } else if (lastPathEntity instanceof DBObjectBundle) {
+                                DBObjectBundle objectsBundle = (DBObjectBundle) lastPathEntity;
+                                ConnectionHandler connectionHandler = objectsBundle.getConnectionHandler();
+                                actionGroup = new ConnectionActionGroup(connectionHandler);
+                            }
+
+                            if (actionGroup != null) {
+                                ActionPopupMenu actionPopupMenu = Actions.createActionPopupMenu(DatabaseBrowserTree.this, "", actionGroup);
+                                JPopupMenu popupMenu = actionPopupMenu.getComponent();
+                                popupMenu.show(DatabaseBrowserTree.this, e.getX(), e.getY());
+                            }
                         }
                     }
-                }
-            }
-        };
+                });
     }
 
     /********************************************************

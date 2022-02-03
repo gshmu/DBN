@@ -1,9 +1,11 @@
 package com.dci.intellij.dbn.common.ui.table;
 
-import javax.swing.*;
-import java.awt.*;
+import javax.swing.JTable;
+import java.awt.Rectangle;
 
-public class TableUtil {
+public class Tables {
+    private Tables() {}
+
     public static Rectangle getCellRectangle(JTable table, int row, int column) {
         Rectangle rectangle = table.getCellRect(row, column, true);
 

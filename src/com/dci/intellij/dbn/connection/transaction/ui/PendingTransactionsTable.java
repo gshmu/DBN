@@ -1,6 +1,7 @@
 package com.dci.intellij.dbn.connection.transaction.ui;
 
 import com.dci.intellij.dbn.common.ui.Borders;
+import com.dci.intellij.dbn.common.ui.Mouse;
 import com.dci.intellij.dbn.common.ui.table.DBNColoredTableCellRenderer;
 import com.dci.intellij.dbn.common.ui.table.DBNTable;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
@@ -16,7 +17,6 @@ import javax.swing.ListSelectionModel;
 import java.awt.Cursor;
 import java.awt.MouseInfo;
 import java.awt.Point;
-import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -33,7 +33,19 @@ public class PendingTransactionsTable extends DBNTable<PendingTransactionsTableM
         setCellSelectionEnabled(true);
         adjustRowHeight(2);
         accommodateColumnsSize();
-        addMouseListener(new MouseListener());
+        addMouseListener(Mouse.listener().onClick(e -> clickEvent(e)));
+    }
+
+    private void clickEvent(MouseEvent e) {
+        if (e.getButton() == MouseEvent.BUTTON1 && e.getClickCount() == 1) {
+            int selectedRow = getSelectedRow();
+            PendingTransaction transaction = getModel().getValueAt(selectedRow, 0);
+            VirtualFile virtualFile = transaction.getFile();
+            if (virtualFile != null && virtualFile.isValid()) {
+                FileEditorManager editorManager = FileEditorManager.getInstance(getProject());
+                editorManager.openFile(virtualFile, true);
+            }
+        }
     }
 
     public List<DBNConnection> getSelectedConnections() {
@@ -69,21 +81,6 @@ public class PendingTransactionsTable extends DBNTable<PendingTransactionsTableM
         }
 
         return null;
-    }
-
-    public class MouseListener extends MouseAdapter {
-        @Override
-        public void mouseClicked(MouseEvent e) {
-            if (e.getButton() == MouseEvent.BUTTON1 && e.getClickCount() == 1) {
-                int selectedRow = getSelectedRow();
-                PendingTransaction transaction = getModel().getValueAt(selectedRow, 0);
-                VirtualFile virtualFile = transaction.getFile();
-                if (virtualFile != null && virtualFile.isValid()) {
-                    FileEditorManager editorManager = FileEditorManager.getInstance(getProject());
-                    editorManager.openFile(virtualFile, true);
-                }
-            }
-        }
     }
 
     private static class CellRenderer extends DBNColoredTableCellRenderer {

@@ -2,7 +2,7 @@ package com.dci.intellij.dbn.object.properties.ui;
 
 import com.dci.intellij.dbn.common.ui.Borders;
 import com.dci.intellij.dbn.common.ui.DBNForm;
-import com.dci.intellij.dbn.common.ui.MouseUtil;
+import com.dci.intellij.dbn.common.ui.Mouse;
 import com.dci.intellij.dbn.common.ui.table.DBNTable;
 import com.dci.intellij.dbn.common.ui.table.DBNTableModel;
 import com.dci.intellij.dbn.object.properties.PresentableProperty;
@@ -18,7 +18,6 @@ import java.awt.Dimension;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
-import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 
@@ -33,21 +32,18 @@ public class ObjectPropertiesTable extends DBNTable<DBNTableModel> {
         addKeyListener(keyListener);
     }
 
-    private final MouseListener mouseListener = new MouseAdapter() {
-        @Override
-        public void mouseClicked(MouseEvent event) {
-            if (event.getButton() == MouseEvent.BUTTON1 && event.getClickCount() > 1) {
-                navigateInBrowser();
-                event.consume();
-            }
-
-
-            if (MouseUtil.isNavigationEvent(event)) {
-                navigateInBrowser();
-                event.consume();
-            }
+    private final MouseListener mouseListener = Mouse.listener().onClick(e -> {
+        if (e.getButton() == MouseEvent.BUTTON1 && e.getClickCount() > 1) {
+            navigateInBrowser();
+            e.consume();
         }
-    };
+
+
+        if (Mouse.isNavigationEvent(e)) {
+            navigateInBrowser();
+            e.consume();
+        }
+    });
 
 
     private final KeyListener keyListener = new KeyAdapter() {

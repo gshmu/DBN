@@ -1,6 +1,7 @@
 package com.dci.intellij.dbn.diagnostics.ui;
 
 import com.dci.intellij.dbn.common.ui.Borders;
+import com.dci.intellij.dbn.common.ui.Mouse;
 import com.dci.intellij.dbn.common.ui.component.DBNComponent;
 import com.dci.intellij.dbn.common.ui.table.DBNColoredTableCellRenderer;
 import com.dci.intellij.dbn.common.ui.table.DBNTable;
@@ -16,7 +17,6 @@ import org.jetbrains.annotations.NotNull;
 
 import javax.swing.ListSelectionModel;
 import javax.swing.table.TableModel;
-import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 
 public class ParserDiagnosticsTable extends DBNTable<ParserDiagnosticsTableModel> {
@@ -30,7 +30,23 @@ public class ParserDiagnosticsTable extends DBNTable<ParserDiagnosticsTableModel
         setCellSelectionEnabled(true);
         adjustRowHeight(2);
         accommodateColumnsSize();
-        addMouseListener(new MouseListener());
+        addMouseListener(Mouse.listener().onClick(e -> clickEvent(e)));
+    }
+
+    private void clickEvent(MouseEvent e) {
+        if (e.getButton() == MouseEvent.BUTTON1 && e.getClickCount() == 2) {
+            int selectedRow = getSelectedRow();
+            if (selectedRow > -1) {
+                ParserDiagnosticsEntry entry = (ParserDiagnosticsEntry) getValueAt(selectedRow, 0);
+                if (entry != null) {
+                    VirtualFile virtualFile = entry.getFile();
+                    if (virtualFile != null) {
+                        FileEditorManager editorManager = FileEditorManager.getInstance(getProject());
+                        editorManager.openFile(virtualFile, true);
+                    }
+                }
+            }
+        }
     }
 
     @Override
@@ -63,25 +79,6 @@ public class ParserDiagnosticsTable extends DBNTable<ParserDiagnosticsTableModel
             String presentableValue = model.getPresentableValue(entry, column);
             append(presentableValue, textAttributes);
             setBorder(Borders.TEXT_FIELD_INSETS);
-        }
-    }
-
-    public class MouseListener extends MouseAdapter {
-        @Override
-        public void mouseClicked(MouseEvent e) {
-            if (e.getButton() == MouseEvent.BUTTON1 && e.getClickCount() == 2) {
-                int selectedRow = getSelectedRow();
-                if (selectedRow > -1) {
-                    ParserDiagnosticsEntry entry = (ParserDiagnosticsEntry) getValueAt(selectedRow, 0);
-                    if (entry != null) {
-                        VirtualFile virtualFile = entry.getFile();
-                        if (virtualFile != null) {
-                            FileEditorManager editorManager = FileEditorManager.getInstance(getProject());
-                            editorManager.openFile(virtualFile, true);
-                        }
-                    }
-                }
-            }
         }
     }
 }
