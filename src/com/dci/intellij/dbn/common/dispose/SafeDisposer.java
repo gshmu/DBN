@@ -196,37 +196,40 @@ public final class SafeDisposer {
             List<Field> fields = CLASS_FIELDS.computeIfAbsent(object.getClass(), clazz -> ReflectionUtil.collectFields(clazz));
             for (Field field : fields) {
                 try {
-                    field.setAccessible(true);
-                    Object fieldValue = field.get(object);
-                    if ( fieldValue != null) {
-                        if (fieldValue instanceof Collection<?>) {
-                            Collection collection = (Collection) fieldValue;
-                            clearCollection(collection);
-                        } else if (fieldValue instanceof Map) {
-                            Map map = (Map) fieldValue;
-                            clearMap(map);
-                        } else if (fieldValue instanceof Latent){
-                            Latent latent = (Latent) fieldValue;
-                            latent.reset();
-                        } else {
-                            int modifiers = field.getModifiers();
-                            if (!Modifier.isFinal(modifiers) &&
-                                    !Modifier.isStatic(modifiers) &&
-                                    !Modifier.isNative(modifiers) &&
-                                    !Modifier.isTransient(modifiers) &&
-                                    (//fieldValue instanceof Disposable ||
-                                     //fieldValue instanceof Component ||
-                                     fieldValue instanceof Editor ||
-                                     fieldValue instanceof Document ||
-                                     fieldValue instanceof VirtualFile ||
-                                     fieldValue instanceof Configuration ||
-                                     fieldValue instanceof AutoCloseable ||
-                                     fieldValue instanceof NamedComponent)) {
+                    Sticky sticky = field.getAnnotation(Sticky.class);
+                    if (sticky == null) {
+                        field.setAccessible(true);
+                        Object fieldValue = field.get(object);
+                        if ( fieldValue != null) {
+                            if (fieldValue instanceof Collection<?>) {
+                                Collection collection = (Collection) fieldValue;
+                                clearCollection(collection);
+                            } else if (fieldValue instanceof Map) {
+                                Map map = (Map) fieldValue;
+                                clearMap(map);
+                            } else if (fieldValue instanceof Latent){
+                                Latent latent = (Latent) fieldValue;
+                                latent.reset();
+                            } else {
+                                int modifiers = field.getModifiers();
+                                if (!Modifier.isFinal(modifiers) &&
+                                        !Modifier.isStatic(modifiers) &&
+                                        !Modifier.isNative(modifiers) &&
+                                        !Modifier.isTransient(modifiers) &&
+                                        (//fieldValue instanceof Disposable ||
+                                                //fieldValue instanceof Component ||
+                                                fieldValue instanceof Editor ||
+                                                        fieldValue instanceof Document ||
+                                                        fieldValue instanceof VirtualFile ||
+                                                        fieldValue instanceof Configuration ||
+                                                        fieldValue instanceof AutoCloseable ||
+                                                        fieldValue instanceof NamedComponent)) {
 
-                                field.set(object, null);
+                                    field.set(object, null);
+                                }
                             }
-                        }
 
+                        }
                     }
                 } catch (UnsupportedOperationException ignore) {
                 } catch (Throwable e) {

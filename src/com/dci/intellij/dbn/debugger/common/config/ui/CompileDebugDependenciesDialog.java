@@ -1,9 +1,9 @@
 package com.dci.intellij.dbn.debugger.common.config.ui;
 
+import com.dci.intellij.dbn.common.dispose.Sticky;
 import com.dci.intellij.dbn.common.ui.dialog.DBNDialog;
 import com.dci.intellij.dbn.debugger.common.config.DBRunConfig;
 import com.dci.intellij.dbn.debugger.common.process.ui.CompileDebugDependenciesForm;
-import com.dci.intellij.dbn.language.common.WeakRef;
 import com.dci.intellij.dbn.object.common.DBSchemaObject;
 import com.dci.intellij.dbn.object.lookup.DBObjectRef;
 import org.jetbrains.annotations.NotNull;
@@ -16,7 +16,9 @@ import java.util.List;
 public class CompileDebugDependenciesDialog extends DBNDialog<CompileDebugDependenciesForm> {
     private final DBRunConfig runConfiguration;
     private final List<DBSchemaObject> compileList;
-    private WeakRef<DBObjectRef<DBSchemaObject>[]> selection; // TODO dialog result - Disposable.nullify(...)
+
+    @Sticky
+    private DBObjectRef<DBSchemaObject>[] selection;
 
     public CompileDebugDependenciesDialog(DBRunConfig runConfiguration, List<DBSchemaObject> compileList) {
         super(runConfiguration.getProject(), "Compile object dependencies", true);
@@ -84,8 +86,7 @@ public class CompileDebugDependenciesDialog extends DBNDialog<CompileDebugDepend
 
     @Override
     protected void doOKAction() {
-        DBObjectRef<DBSchemaObject>[] schemaObjectRefs = getForm().getSelection().toArray(new DBObjectRef[0]);
-        selection = WeakRef.of(schemaObjectRefs);
+        selection = getForm().getSelection().toArray(new DBObjectRef[0]);
         runConfiguration.setCompileDependencies(!isRememberSelection());
         super.doOKAction();
     }
@@ -97,6 +98,6 @@ public class CompileDebugDependenciesDialog extends DBNDialog<CompileDebugDepend
     }
 
     public DBObjectRef<DBSchemaObject>[] getSelection() {
-        return WeakRef.get(selection);
+        return selection;
     }
 }
