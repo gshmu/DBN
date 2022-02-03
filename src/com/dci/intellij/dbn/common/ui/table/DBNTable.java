@@ -116,6 +116,11 @@ public abstract class DBNTable<T extends DBNTableModel> extends JTable implement
     }
 
     @Override
+    public String getToolTipText(@NotNull MouseEvent event) {
+        return null;
+    }
+
+    @Override
     public void setModel(@NotNull TableModel dataModel) {
         T oldDataModel = (T) super.getModel();
         super.setModel(dataModel);
