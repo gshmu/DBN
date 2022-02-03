@@ -3,7 +3,7 @@ package com.dci.intellij.dbn.common.about.ui;
 import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.common.ui.Borders;
 import com.dci.intellij.dbn.common.ui.DBNFormImpl;
-import com.dci.intellij.dbn.common.ui.listener.MouseClickedListener;
+import com.dci.intellij.dbn.common.ui.Mouse;
 import com.dci.intellij.dbn.common.ui.listener.PopupCloseListener;
 import com.intellij.ide.BrowserUtil;
 import com.intellij.ide.plugins.IdeaPluginDescriptor;
@@ -16,12 +16,12 @@ import com.intellij.openapi.ui.popup.JBPopup;
 import com.intellij.openapi.ui.popup.JBPopupFactory;
 import org.jetbrains.annotations.NotNull;
 
-import javax.swing.*;
-import java.awt.*;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import java.awt.Cursor;
 
 public class AboutComponent extends DBNFormImpl{
+    public static final String PAYPAL_URL = "https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=3QAPZFCCARA4J";
     private JPanel mainPanel;
     private JLabel splashLabel;
     private JLabel donateLabel;
@@ -42,36 +42,25 @@ public class AboutComponent extends DBNFormImpl{
         donateLabel.setIcon(Icons.DONATE_DISABLED);
         donateLabel.setText("");
         donateLabel.setCursor(handCursor);
-        donateLabel.addMouseListener(new MouseAdapter() {
-            @Override
-            public void mouseClicked(MouseEvent e) {
-                BrowserUtil.browse("https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=3QAPZFCCARA4J");
-            }
 
-            @Override
-            public void mouseEntered(MouseEvent e) {
-                donateLabel.setIcon(Icons.DONATE);
-            }
-
-            @Override
-            public void mouseExited(MouseEvent e) {
-                donateLabel.setIcon(Icons.DONATE_DISABLED);
-            }
-        });
+        donateLabel.addMouseListener(Mouse.listener().
+                onClick(e -> BrowserUtil.browse(PAYPAL_URL)).
+                onEnter(e -> donateLabel.setIcon(Icons.DONATE)).
+                onExit(e -> donateLabel.setIcon(Icons.DONATE_DISABLED)));
 
         downloadPageLinkLabel.setForeground(CodeInsightColors.HYPERLINK_ATTRIBUTES.getDefaultAttributes().getForegroundColor());
         downloadPageLinkLabel.setCursor(handCursor);
-        downloadPageLinkLabel.addMouseListener(MouseClickedListener.create(e ->
+        downloadPageLinkLabel.addMouseListener(Mouse.listener().onClick(e ->
                 BrowserUtil.browse("http://plugins.jetbrains.com/plugin/?id=1800")));
 
         supportPageLinkLabel.setForeground(CodeInsightColors.HYPERLINK_ATTRIBUTES.getDefaultAttributes().getForegroundColor());
         supportPageLinkLabel.setCursor(handCursor);
-        supportPageLinkLabel.addMouseListener(MouseClickedListener.create(e ->
+        supportPageLinkLabel.addMouseListener(Mouse.listener().onClick(e ->
                 BrowserUtil.browse("http://confluence.jetbrains.com/display/CONTEST/Database+Navigator")));
 
         requestTrackerPageLinkLabel.setForeground(CodeInsightColors.HYPERLINK_ATTRIBUTES.getDefaultAttributes().getForegroundColor());
         requestTrackerPageLinkLabel.setCursor(handCursor);
-        requestTrackerPageLinkLabel.addMouseListener(MouseClickedListener.create(e ->
+        requestTrackerPageLinkLabel.addMouseListener(Mouse.listener().onClick(e ->
                 BrowserUtil.browse("https://database-navigator.atlassian.net/issues/?filter=10104")));
 
         IdeaPluginDescriptor ideaPluginDescriptor = PluginManager.getPlugin(PluginId.getId("DBN"));

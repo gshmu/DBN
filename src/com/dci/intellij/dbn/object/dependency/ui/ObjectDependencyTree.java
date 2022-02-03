@@ -6,6 +6,7 @@ import com.dci.intellij.dbn.common.dispose.SafeDisposer;
 import com.dci.intellij.dbn.common.load.LoadInProgressRegistry;
 import com.dci.intellij.dbn.common.thread.Dispatch;
 import com.dci.intellij.dbn.common.ui.GUIUtil;
+import com.dci.intellij.dbn.common.ui.Mouse;
 import com.dci.intellij.dbn.common.ui.component.DBNComponent;
 import com.dci.intellij.dbn.common.ui.tree.DBNTree;
 import com.dci.intellij.dbn.common.util.Actions;
@@ -30,7 +31,6 @@ import com.intellij.util.ui.tree.TreeUtil;
 import org.jetbrains.annotations.NotNull;
 
 import javax.swing.JPopupMenu;
-import javax.swing.event.MouseInputAdapter;
 import javax.swing.event.TreeSelectionEvent;
 import javax.swing.tree.TreeModel;
 import javax.swing.tree.TreePath;
@@ -59,41 +59,35 @@ public class ObjectDependencyTree extends DBNTree{
         addTreeSelectionListener((TreeSelectionEvent e) -> GUIUtil.repaint(ObjectDependencyTree.this));
 
         speedSearch = new ObjectDependencyTreeSpeedSearch(this);
+        addMouseListener(Mouse.listener().onRelease(e -> releaseEvent(e)));
+    }
 
-        addMouseListener(new MouseInputAdapter() {
-            @Override
-            public void mouseClicked(MouseEvent event) {
-            }
-
-            @Override
-            public void mouseReleased(final MouseEvent event) {
-                if (event.getButton() == MouseEvent.BUTTON3) {
-                    final TreePath path = getPathForLocation(event.getX(), event.getY());
-                    if (path != null) {
-                        final ObjectDependencyTreeNode node = (ObjectDependencyTreeNode) path.getLastPathComponent();
-                        if (node != null) {
-                            DefaultActionGroup actionGroup = new DefaultActionGroup();
-                            ObjectDependencyTreeNode rootNode = node.getModel().getRoot();
-                            DBObject object = node.getObject();
-                            if (object instanceof DBSchemaObject && !Safe.equal(rootNode.getObject(), object)) {
-                                actionGroup.add(new SelectObjectAction((DBSchemaObject) object));
-                                DBSchemaObject schemaObject = (DBSchemaObject) object;
-                                if (schemaObject.is(DBObjectProperty.EDITABLE)) {
-                                    actionGroup.add(new EditObjectAction((DBSchemaObject) object));
-                                }
-                                ActionPopupMenu actionPopupMenu = Actions.createActionPopupMenu(ObjectDependencyTree.this, "", actionGroup);
-                                JPopupMenu popupMenu = actionPopupMenu.getComponent();
-                                Dispatch.run(() -> {
-                                    if (isShowing()) {
-                                        popupMenu.show(ObjectDependencyTree.this, event.getX(), event.getY());
-                                    }
-                                });
-                            }
+    private void releaseEvent(MouseEvent e) {
+        if (e.getButton() == MouseEvent.BUTTON3) {
+            TreePath path = getPathForLocation(e.getX(), e.getY());
+            if (path != null) {
+                ObjectDependencyTreeNode node = (ObjectDependencyTreeNode) path.getLastPathComponent();
+                if (node != null) {
+                    DefaultActionGroup actionGroup = new DefaultActionGroup();
+                    ObjectDependencyTreeNode rootNode = node.getModel().getRoot();
+                    DBObject object = node.getObject();
+                    if (object instanceof DBSchemaObject && !Safe.equal(rootNode.getObject(), object)) {
+                        actionGroup.add(new SelectObjectAction((DBSchemaObject) object));
+                        DBSchemaObject schObject = (DBSchemaObject) object;
+                        if (schObject.is(DBObjectProperty.EDITABLE)) {
+                            actionGroup.add(new EditObjectAction((DBSchemaObject) object));
                         }
+                        ActionPopupMenu actionPopupMenu = Actions.createActionPopupMenu(ObjectDependencyTree.this, "", actionGroup);
+                        JPopupMenu popupMenu = actionPopupMenu.getComponent();
+                        Dispatch.run(() -> {
+                            if (isShowing()) {
+                                popupMenu.show(ObjectDependencyTree.this, e.getX(), e.getY());
+                            }
+                        });
                     }
                 }
             }
-        });
+        }
     }
 
     @Override

@@ -4,7 +4,7 @@ import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.common.project.ProjectRef;
 import com.dci.intellij.dbn.common.thread.Dispatch;
 import com.dci.intellij.dbn.common.ui.KeyUtil;
-import com.dci.intellij.dbn.common.ui.listener.MouseClickedListener;
+import com.dci.intellij.dbn.common.ui.Mouse;
 import com.dci.intellij.dbn.common.ui.panel.DBNPanelImpl;
 import com.dci.intellij.dbn.common.util.Strings;
 import com.dci.intellij.dbn.data.editor.text.TextEditorAdapter;
@@ -167,7 +167,7 @@ public class TextFieldWithTextEditor extends DBNPanelImpl implements DataEditorC
      ********************************************************/
     private final ActionListener actionListener = e -> openEditor();
 
-    private final MouseListener mouseListener = MouseClickedListener.create(e -> openEditor());
+    private final MouseListener mouseListener = Mouse.listener().onClick(e -> openEditor());
 
     /********************************************************
      *                 TextEditorListener                   *

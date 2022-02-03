@@ -3,7 +3,7 @@ package com.dci.intellij.dbn.data.find;
 import com.dci.intellij.dbn.common.compatibility.CompatibilityUtil;
 import com.dci.intellij.dbn.common.ui.DBNFormImpl;
 import com.dci.intellij.dbn.common.ui.GUIUtil;
-import com.dci.intellij.dbn.common.ui.listener.MouseClickedListener;
+import com.dci.intellij.dbn.common.ui.Mouse;
 import com.dci.intellij.dbn.common.util.Actions;
 import com.dci.intellij.dbn.common.util.Strings;
 import com.dci.intellij.dbn.data.find.action.CloseOnESCAction;
@@ -100,7 +100,7 @@ public class DataSearchComponent extends DBNFormImpl implements SelectionListene
 
         closeLabel.setText(" ");
         closeLabel.setIcon(IconLoader.getIcon("/actions/cross.png"));
-        closeLabel.addMouseListener(MouseClickedListener.create(e -> close()));
+        closeLabel.addMouseListener(Mouse.listener().onClick(e -> close()));
 
         updateUIWithFindModel();
         //new CloseOnESCAction(this, table);
@@ -209,7 +209,7 @@ public class DataSearchComponent extends DBNFormImpl implements SelectionListene
 
 
         JLabel closeLabel = new JLabel(" ", IconLoader.getIcon("/actions/cross.png"), SwingConstants.RIGHT);
-        closeLabel.addMouseListener(MouseClickedListener.create(e -> close()));
+        closeLabel.addMouseListener(Mouse.listener().onClick(e -> close()));
 
         closeLabel.setToolTipText("Close search bar (Escape)");
         CompatibilityUtil.setSmallerFont(searchField);

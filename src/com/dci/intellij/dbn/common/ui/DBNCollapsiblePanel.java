@@ -3,11 +3,13 @@ package com.dci.intellij.dbn.common.ui;
 import com.dci.intellij.dbn.common.Colors;
 import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.common.ui.component.DBNComponent;
-import com.dci.intellij.dbn.common.ui.listener.MouseClickedListener;
 import org.jetbrains.annotations.NotNull;
 
-import javax.swing.*;
-import java.awt.*;
+import javax.swing.JComponent;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import java.awt.BorderLayout;
+import java.awt.Cursor;
 import java.awt.event.MouseEvent;
 
 public class DBNCollapsiblePanel<P extends DBNComponent> extends DBNFormImpl{
@@ -32,7 +34,7 @@ public class DBNCollapsiblePanel<P extends DBNComponent> extends DBNFormImpl{
         collapseExpandLabel.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
         collapseExpandLabel.setForeground(Colors.HINT_COLOR);
 
-        collapseExpandLabel.addMouseListener(MouseClickedListener.create(e -> {
+        collapseExpandLabel.addMouseListener(Mouse.listener().onClick(e -> {
             if (e.getClickCount() == 1 && e.getButton() == MouseEvent.BUTTON1) {
                 DBNCollapsiblePanel.this.expanded = !DBNCollapsiblePanel.this.expanded;
                 contentPanel.setVisible(DBNCollapsiblePanel.this.expanded);

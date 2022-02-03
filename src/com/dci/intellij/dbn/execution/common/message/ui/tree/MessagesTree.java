@@ -3,8 +3,8 @@ package com.dci.intellij.dbn.execution.common.message.ui.tree;
 import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.common.navigation.NavigationInstructions;
 import com.dci.intellij.dbn.common.thread.Dispatch;
+import com.dci.intellij.dbn.common.ui.Mouse;
 import com.dci.intellij.dbn.common.ui.component.DBNComponent;
-import com.dci.intellij.dbn.common.ui.listener.MouseClickedListener;
 import com.dci.intellij.dbn.common.ui.tree.DBNTree;
 import com.dci.intellij.dbn.common.util.Documents;
 import com.dci.intellij.dbn.common.util.Editors;
@@ -363,7 +363,7 @@ public class MessagesTree extends DBNTree implements Disposable {
     /*********************************************************
      *                        MouseListener                  *
      *********************************************************/
-    private final MouseListener mouseListener = MouseClickedListener.create(e -> {
+    private final MouseListener mouseListener = Mouse.listener().onClick(e -> {
         if (e.getButton() == MouseEvent.BUTTON1 && e.getClickCount() > 1) {
             TreePath selectionPath = getSelectionPath();
             if (selectionPath != null) {

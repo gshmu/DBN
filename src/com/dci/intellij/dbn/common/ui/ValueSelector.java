@@ -30,8 +30,6 @@ import java.awt.BorderLayout;
 import java.awt.Cursor;
 import java.awt.Dimension;
 import java.awt.Graphics;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -127,48 +125,41 @@ public abstract class ValueSelector<T extends Presentable> extends JPanel{
         label.setForeground(isEnabled ? UIUtil.getTextFieldForeground() : UIUtil.getLabelDisabledForeground());
     }
 
-   @Override
-   public void paintComponent(Graphics g) {
+    public JPanel getInnerPanel() {
+        return innerPanel;
+    }
+
+    @Override
+    public void paintComponent(Graphics g) {
         super.paintComponent(g);
     }
-    private MouseListener mouseListener = new MouseAdapter() {
-        @Override
-        public void mouseEntered(MouseEvent e) {
-            if (popup == null) {
-                innerPanel.setBorder(focusBorder);
-                innerPanel.setBackground(new JBColor(Gray._210, Gray._75));
+    private final MouseListener mouseListener = Mouse.listener().
+            onEnter(e -> {
+                if (popup == null) {
+                    JPanel innerPanel = getInnerPanel();
+                    innerPanel.setBorder(focusBorder);
+                    innerPanel.setBackground(new JBColor(Gray._210, Gray._75));
 
-                GUIUtil.repaint(ValueSelector.this);
-            }
-        }
+                    GUIUtil.repaint(ValueSelector.this);
+                }}).
+            onExit(e -> {
+                if (popup == null) {
+                    JPanel innerPanel = getInnerPanel();
+                    innerPanel.setBorder(defaultBorder);
+                    innerPanel.setBackground(UIUtil.getPanelBackground());
 
-        @Override
-        public void mouseExited(MouseEvent e) {
-            if (popup == null) {
-                innerPanel.setBorder(defaultBorder);
-                innerPanel.setBackground(UIUtil.getPanelBackground());
-
-                GUIUtil.repaint(ValueSelector.this);
-            }
-        }
-
-        @Override
-        public void mousePressed(MouseEvent e) {
-            if (getValues().size() == 0) {
-                selectValue(null);
-            } else {
-                if (isEnabled && popup == null) {
-                    innerPanel.requestFocus();
-                    showPopup();
+                    GUIUtil.repaint(ValueSelector.this);
+                }}).
+            onPress(e -> {
+                if (getValues().size() == 0) {
+                    selectValue(null);
+                } else {
+                    if (isEnabled && popup == null) {
+                        getInnerPanel().requestFocus();
+                        showPopup();
+                    }
                 }
-            }
-        }
-
-        @Override
-        public void mouseMoved(MouseEvent e) {
-            super.mouseMoved(e);
-        }
-    };
+            });
 
     private void showPopup() {
         innerPanel.setCursor(Cursor.getDefaultCursor());
