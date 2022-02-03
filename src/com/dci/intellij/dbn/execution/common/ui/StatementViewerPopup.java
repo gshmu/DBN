@@ -5,8 +5,7 @@ import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.common.util.Documents;
 import com.dci.intellij.dbn.common.util.Editors;
 import com.dci.intellij.dbn.execution.ExecutionResult;
-import com.dci.intellij.dbn.language.sql.SQLFileType;
-import com.intellij.ide.highlighter.HighlighterFactory;
+import com.dci.intellij.dbn.language.sql.SQLLanguage;
 import com.intellij.openapi.Disposable;
 import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.editor.EditorFactory;
@@ -40,12 +39,14 @@ public class StatementViewerPopup implements Disposable {
         Document document = Failsafe.nn(Documents.getDocument(previewFile));
         viewer = (EditorEx) EditorFactory.getInstance().createViewer(document, project);
         viewer.setEmbeddedIntoDialogWrapper(true);
-        viewer.getScrollPane().setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
-        viewer.getScrollPane().setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
-        viewer.setHighlighter(HighlighterFactory.createHighlighter(project, SQLFileType.INSTANCE));
+        Editors.initEditorHighlighter(viewer, SQLLanguage.INSTANCE, executionResult.getConnectionHandler());
         viewer.setBackgroundColor(viewer.getColorsScheme().getColor(ColorKey.find("CARET_ROW_COLOR")));
-        viewer.getScrollPane().setViewportBorder(new LineBorder(CompatibilityUtil.getEditorBackgroundColor(viewer), 4, false));
-        viewer.getScrollPane().setBorder(null);
+
+        JScrollPane viewerScrollPane = viewer.getScrollPane();
+        viewerScrollPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
+        viewerScrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
+        viewerScrollPane.setViewportBorder(new LineBorder(CompatibilityUtil.getEditorBackgroundColor(viewer), 4, false));
+        viewerScrollPane.setBorder(null);
 
 
         EditorSettings settings = viewer.getSettings();

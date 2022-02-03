@@ -8,13 +8,10 @@ import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.editor.code.content.GuardedBlockMarkers;
 import com.dci.intellij.dbn.editor.code.content.GuardedBlockType;
 import com.dci.intellij.dbn.language.common.DBLanguage;
-import com.dci.intellij.dbn.language.common.DBLanguageDialect;
 import com.dci.intellij.dbn.language.common.DBLanguagePsiFile;
-import com.dci.intellij.dbn.language.common.DBLanguageSyntaxHighlighter;
 import com.dci.intellij.dbn.language.common.psi.PsiUtil;
 import com.intellij.codeInsight.daemon.DaemonCodeAnalyzer;
 import com.intellij.codeInsight.folding.CodeFoldingManager;
-import com.intellij.ide.highlighter.HighlighterFactory;
 import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.editor.EditorFactory;
@@ -24,7 +21,6 @@ import com.intellij.openapi.editor.colors.EditorColorsScheme;
 import com.intellij.openapi.editor.ex.DocumentBulkUpdateListener;
 import com.intellij.openapi.editor.ex.DocumentEx;
 import com.intellij.openapi.editor.ex.EditorEx;
-import com.intellij.openapi.editor.highlighter.EditorHighlighter;
 import com.intellij.openapi.fileEditor.FileDocumentManager;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Key;
@@ -56,10 +52,7 @@ public class Documents {
             DBLanguage dbLanguage = dbLanguageFile.getDBLanguage();
             if (dbLanguage != null) {
                 ConnectionHandler connectionHandler = dbLanguageFile.getConnectionHandler();
-                DBLanguageSyntaxHighlighter syntaxHighlighter = getSyntaxHighlighter(dbLanguage, connectionHandler);
-
-                EditorHighlighter editorHighlighter = HighlighterFactory.createHighlighter(syntaxHighlighter, editor.getColorsScheme());
-                ((EditorEx) editor).setHighlighter(editorHighlighter);
+                Editors.initEditorHighlighter(editor, dbLanguage, connectionHandler);
             }
             if (reparse) {
                 ProjectEvents.notify(project,
@@ -73,17 +66,6 @@ public class Documents {
             refreshEditorAnnotations(file);
         }
     }
-
-    private static DBLanguageSyntaxHighlighter getSyntaxHighlighter(DBLanguage dbLanguage, ConnectionHandler connectionHandler) {
-        if (connectionHandler != null) {
-            DBLanguageDialect languageDialect = connectionHandler.getLanguageDialect(dbLanguage);
-            if (languageDialect != null) {
-                return languageDialect.getSyntaxHighlighter();
-            }
-        }
-        return dbLanguage.getMainLanguageDialect().getSyntaxHighlighter();
-    }
-
 
     public static void refreshEditorAnnotations(@Nullable Editor editor) {
         if (editor != null) {

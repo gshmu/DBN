@@ -72,7 +72,7 @@ public abstract class DBNTable<T extends DBNTableModel> extends JTable implement
         super(tableModel);
         this.parentComponentRef = WeakRef.of(parent);
 
-        setGridColor(Colors.tableGridColor());
+        setGridColor(Colors.TABLE_GRID_COLOR);
         Font font = getFont();//UIUtil.getListFont();
         setFont(font);
         setBackground(UIUtil.getTextFieldBackground());
@@ -134,8 +134,6 @@ public abstract class DBNTable<T extends DBNTableModel> extends JTable implement
     }
 
     private void updateComponentColors() {
-        setGridColor(Colors.tableGridColor());
-
         setSelectionBackground(Colors.tableSelectionBackgroundColor(true));
         setSelectionForeground(Colors.tableSelectionForegroundColor(true));
     }

@@ -35,7 +35,7 @@ public abstract class DBNTableGutterRendererBase implements DBNTableGutterRender
         mainPanel.setPreferredSize(new Dimension(40, -1));
         iconLabel.setBorder(Borders.insetBorder(4));
 
-        Border border = new CustomLineBorder(Colors.tableHeaderBorderColor(), 0, 0, 0, 1);
+        Border border = new CustomLineBorder(Colors.TABLE_HEADER_GRID_COLOR, 0, 0, 0, 1);
         mainPanel.setBorder(border);
     }
 

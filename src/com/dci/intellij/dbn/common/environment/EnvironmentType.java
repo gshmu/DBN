@@ -1,13 +1,13 @@
 package com.dci.intellij.dbn.common.environment;
 
 import com.dci.intellij.dbn.common.options.PersistentConfiguration;
+import com.dci.intellij.dbn.common.ui.LookAndFeel;
 import com.dci.intellij.dbn.common.ui.Presentable;
 import com.dci.intellij.dbn.common.util.Cloneable;
 import com.dci.intellij.dbn.common.util.Commons;
 import com.dci.intellij.dbn.common.util.Strings;
 import com.intellij.ui.JBColor;
 import com.intellij.util.ui.ColorIcon;
-import com.intellij.util.ui.UIUtil;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
@@ -56,7 +56,6 @@ public class EnvironmentType implements Cloneable<EnvironmentType>, PersistentCo
     private JBColor color;
     private boolean readonlyCode = false;
     private boolean readonlyData = false;
-    private boolean isDarkScheme = UIUtil.isUnderDarcula();
 
     public static EnvironmentType forName(String name) {
         for (EnvironmentType environmentType : DEFAULT_ENVIRONMENT_TYPES){
@@ -100,16 +99,12 @@ public class EnvironmentType implements Cloneable<EnvironmentType>, PersistentCo
 
     @Nullable
     public JBColor getColor() {
-        if (isDarkScheme != UIUtil.isUnderDarcula()) {
-            isDarkScheme = UIUtil.isUnderDarcula();
-            color = null;
-        }
-
         if (color == null) {
-            if (isDarkScheme && darkColor != null) {
+            boolean darkMode = LookAndFeel.isDarkMode();
+            if (darkMode && darkColor != null) {
                 Color regularColor = Commons.nvl(this.regularColor, DEFAULT_REGULAR_COLOR);
                 color = new JBColor(regularColor, darkColor);
-            } else if (!isDarkScheme && regularColor != null) {
+            } else if (!darkMode && regularColor != null) {
                 Color darkColor = Commons.nvl(this.darkColor, DEFAULT_DARK_COLOR);
                 this.color = new JBColor(regularColor, darkColor);
             }
@@ -119,7 +114,7 @@ public class EnvironmentType implements Cloneable<EnvironmentType>, PersistentCo
     }
 
     public void setColor(Color color) {
-        if (UIUtil.isUnderDarcula())
+        if (LookAndFeel.isDarkMode())
             darkColor = color; else
             regularColor = color;
         this.color = null;

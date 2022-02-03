@@ -11,12 +11,10 @@ import com.dci.intellij.dbn.language.sql.SQLLanguage;
 import com.dci.intellij.dbn.object.DBDataset;
 import com.dci.intellij.dbn.vfs.DatabaseFileViewProvider;
 import com.dci.intellij.dbn.vfs.file.DBDatasetFilterVirtualFile;
-import com.intellij.ide.highlighter.HighlighterFactory;
 import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.editor.EditorFactory;
 import com.intellij.openapi.editor.EditorSettings;
 import com.intellij.openapi.editor.ex.EditorEx;
-import com.intellij.openapi.fileTypes.SyntaxHighlighter;
 import com.intellij.openapi.options.ConfigurationException;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiFile;
@@ -64,10 +62,9 @@ public class DatasetCustomFilterForm extends ConfigurationEditorForm<DatasetCust
         document = Documents.getDocument(selectStatementFile);
         document.createGuardedBlock(0, conditionStartOffset);
         editor = (EditorEx) EditorFactory.getInstance().createEditor(document, project);
-        editor.setEmbeddedIntoDialogWrapper(true);
+        Editors.initEditorHighlighter(editor, SQLLanguage.INSTANCE, dataset);
 
-        SyntaxHighlighter syntaxHighlighter = dataset.getLanguageDialect(SQLLanguage.INSTANCE).getSyntaxHighlighter();
-        editor.setHighlighter(HighlighterFactory.createHighlighter(syntaxHighlighter, editor.getColorsScheme()));
+        editor.setEmbeddedIntoDialogWrapper(true);
         editor.getCaretModel().moveToOffset(conditionStartOffset);
         if (!isValidCondition) editor.getSelectionModel().setSelection(conditionStartOffset, document.getTextLength());
 

@@ -17,13 +17,24 @@ import com.intellij.util.ui.UIUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import javax.swing.*;
+import javax.swing.JComponent;
+import javax.swing.JList;
+import javax.swing.JPanel;
+import javax.swing.JTable;
+import javax.swing.SwingConstants;
 import javax.swing.border.Border;
 import javax.swing.border.CompoundBorder;
 import javax.swing.border.TitledBorder;
 import javax.swing.table.TableCellEditor;
 import javax.swing.text.JTextComponent;
-import java.awt.*;
+import java.awt.Color;
+import java.awt.Component;
+import java.awt.Dimension;
+import java.awt.Font;
+import java.awt.IllegalComponentStateException;
+import java.awt.MouseInfo;
+import java.awt.Point;
+import java.awt.PointerInfo;
 import java.awt.event.InputEvent;
 import java.lang.reflect.Method;
 import java.util.EventListener;
@@ -85,11 +96,6 @@ public class GUIUtil{
             }
         }
         return false;
-    }
-
-
-    public static boolean isDarkLookAndFeel() {
-        return UIUtil.isUnderDarcula();
     }
 
     public static void updateTitledBorders(JPanel panel) {

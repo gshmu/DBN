@@ -6,25 +6,32 @@ import com.dci.intellij.dbn.common.editor.BasicTextEditor;
 import com.dci.intellij.dbn.common.navigation.NavigationInstructions;
 import com.dci.intellij.dbn.common.thread.Dispatch;
 import com.dci.intellij.dbn.common.thread.Read;
+import com.dci.intellij.dbn.connection.ConnectionHandler;
+import com.dci.intellij.dbn.data.editor.text.TextContentType;
 import com.dci.intellij.dbn.ddl.DDLFileAttachmentManager;
 import com.dci.intellij.dbn.editor.EditorProviderId;
 import com.dci.intellij.dbn.editor.code.SourceCodeEditor;
 import com.dci.intellij.dbn.editor.data.DatasetEditor;
 import com.dci.intellij.dbn.editor.ddl.DDLFileEditor;
+import com.dci.intellij.dbn.language.common.DBLanguage;
+import com.dci.intellij.dbn.language.common.DBLanguageDialect;
 import com.dci.intellij.dbn.language.common.psi.PsiUtil;
+import com.dci.intellij.dbn.object.common.DBObject;
 import com.dci.intellij.dbn.object.common.DBSchemaObject;
 import com.dci.intellij.dbn.vfs.file.DBConsoleVirtualFile;
 import com.dci.intellij.dbn.vfs.file.DBContentVirtualFile;
 import com.dci.intellij.dbn.vfs.file.DBDatasetVirtualFile;
 import com.dci.intellij.dbn.vfs.file.DBEditableObjectVirtualFile;
 import com.dci.intellij.dbn.vfs.file.DBSourceCodeVirtualFile;
+import com.intellij.ide.highlighter.HighlighterFactory;
 import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.editor.EditorFactory;
 import com.intellij.openapi.editor.colors.EditorColors;
 import com.intellij.openapi.editor.colors.EditorColorsManager;
 import com.intellij.openapi.editor.colors.EditorColorsScheme;
-import com.intellij.openapi.editor.impl.EditorImpl;
+import com.intellij.openapi.editor.ex.EditorEx;
+import com.intellij.openapi.editor.highlighter.EditorHighlighter;
 import com.intellij.openapi.fileEditor.FileDocumentManager;
 import com.intellij.openapi.fileEditor.FileEditor;
 import com.intellij.openapi.fileEditor.FileEditorManager;
@@ -34,6 +41,8 @@ import com.intellij.openapi.fileEditor.TextEditor;
 import com.intellij.openapi.fileEditor.ex.FileEditorProviderManager;
 import com.intellij.openapi.fileEditor.impl.EditorHistoryManager;
 import com.intellij.openapi.fileTypes.FileType;
+import com.intellij.openapi.fileTypes.SyntaxHighlighter;
+import com.intellij.openapi.fileTypes.SyntaxHighlighterFactory;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.openapi.wm.IdeFocusManager;
@@ -210,19 +219,63 @@ public class Editors {
             }
         }
         return null;
-
     }
-    public static void setEditorReadonly(SourceCodeEditor sourceCodeEditor, boolean readonly) {
-        EditorImpl editor = (EditorImpl) sourceCodeEditor.getEditor();
-        editor.setViewer(readonly);
-        EditorColorsScheme scheme = editor.getColorsScheme();
-        Color defaultBackground = scheme.getDefaultBackground();
-        Dispatch.run(() -> {
-            editor.setBackgroundColor(readonly ? Colors.adjust(defaultBackground, -0.03) : defaultBackground);
-            scheme.setColor(EditorColors.CARET_ROW_COLOR, readonly ?
-                    Colors.adjust(defaultBackground, -0.03) :
-                    EditorColorsManager.getInstance().getGlobalScheme().getColor(EditorColors.CARET_ROW_COLOR));
-        });
+
+    public static void initEditorHighlighter(
+            @NotNull Editor editor,
+            @NotNull TextContentType contentType) {
+        if (editor instanceof EditorEx) {
+            EditorEx editorEx = (EditorEx) editor;
+            SyntaxHighlighter syntaxHighlighter = SyntaxHighlighterFactory.getSyntaxHighlighter(contentType.getFileType(), editor.getProject(), null);
+            EditorColorsScheme colorsScheme = editor.getColorsScheme();
+            EditorHighlighter highlighter = HighlighterFactory.createHighlighter(syntaxHighlighter, colorsScheme);
+            editorEx.setHighlighter(highlighter);
+        }
+    }
+
+    public static void initEditorHighlighter(
+            @NotNull Editor editor,
+            @NotNull DBLanguage language,
+            @Nullable ConnectionHandler connection) {
+        DBLanguageDialect languageDialect = connection == null ?
+                        language.getMainLanguageDialect() :
+                        connection.getLanguageDialect(language);
+
+        initEditorHighlighter(editor, languageDialect);
+    }
+
+    public static void initEditorHighlighter(
+            @NotNull Editor editor,
+            @NotNull DBLanguage language,
+            @NotNull DBObject object) {
+        DBLanguageDialect languageDialect = object.getLanguageDialect(language);
+        initEditorHighlighter(editor, languageDialect);
+    }
+
+    private static void initEditorHighlighter(Editor editor, DBLanguageDialect languageDialect) {
+        if (editor instanceof EditorEx) {
+            EditorEx editorEx = (EditorEx) editor;
+            SyntaxHighlighter syntaxHighlighter = languageDialect.getSyntaxHighlighter();
+
+            EditorColorsScheme colorsScheme = editorEx.getColorsScheme();
+            EditorHighlighter highlighter = HighlighterFactory.createHighlighter(syntaxHighlighter, colorsScheme);
+            editorEx.setHighlighter(highlighter);
+        }
+    }
+
+    public static void setEditorReadonly(Editor editor, boolean readonly) {
+        if (editor instanceof EditorEx) {
+            EditorEx editorEx = (EditorEx) editor;
+            editorEx.setViewer(readonly);
+            EditorColorsScheme scheme = editor.getColorsScheme();
+            Color defaultBackground = scheme.getDefaultBackground();
+            Dispatch.runConditional(() -> {
+                editorEx.setBackgroundColor(readonly ? Colors.stronger(defaultBackground, 1) : defaultBackground);
+                scheme.setColor(EditorColors.CARET_ROW_COLOR, readonly ?
+                        Colors.stronger(defaultBackground, 3) :
+                        EditorColorsManager.getInstance().getGlobalScheme().getColor(EditorColors.CARET_ROW_COLOR));
+            });
+        }
     }
 
     public static void setEditorsReadonly(DBContentVirtualFile contentFile, boolean readonly) {
@@ -239,7 +292,7 @@ public class Editors {
                             SourceCodeEditor sourceCodeEditor = (SourceCodeEditor) fileEditor;
                             DBSourceCodeVirtualFile virtualFile = sourceCodeEditor.getVirtualFile();
                             if (virtualFile.equals(sourceCodeFile)) {
-                                setEditorReadonly(sourceCodeEditor, readonly);
+                                setEditorReadonly(sourceCodeEditor.getEditor(), readonly);
                             }
                         }
                     }

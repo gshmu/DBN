@@ -73,7 +73,7 @@ abstract class SourceCodeEditorProviderBase extends BasicTextEditorProvider impl
 
         EnvironmentManager environmentManager = EnvironmentManager.getInstance(project);
         if (environmentManager.isReadonly(sourceCodeFile) || !sourceCodeFile.isLoaded()) {
-            Editors.setEditorReadonly(sourceCodeEditor, true);
+            Editors.setEditorReadonly(sourceCodeEditor.getEditor(), true);
         }
 
         int documentSignature = document.hashCode();
