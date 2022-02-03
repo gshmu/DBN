@@ -7,16 +7,17 @@ import com.intellij.openapi.project.Project;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import javax.swing.*;
+import javax.swing.AbstractAction;
+import javax.swing.Action;
 import java.awt.event.ActionEvent;
 import java.io.File;
 import java.util.List;
 
 public class TnsNamesImportDialog extends DBNDialog<TnsNamesImportForm> {
     private WeakRef<List<TnsName>> tnsNames;  // TODO dialog result - Disposable.nullify(...)
-    private ImportAllAction importAllAction = new ImportAllAction();
-    private ImportSelectedAction importSelectedAction = new ImportSelectedAction();
-    private File file;
+    private final ImportAllAction importAllAction = new ImportAllAction();
+    private final ImportSelectedAction importSelectedAction = new ImportSelectedAction();
+    private final File file;
 
     public TnsNamesImportDialog(Project project, @Nullable File file) {
         super(project, "Import TNS names", true);

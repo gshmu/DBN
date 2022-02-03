@@ -1,5 +1,6 @@
 package com.dci.intellij.dbn.data.model.basic;
 
+import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.common.dispose.SafeDisposer;
 import com.dci.intellij.dbn.common.locale.Formatter;
 import com.dci.intellij.dbn.common.property.PropertyHolderBase;
@@ -11,7 +12,6 @@ import com.dci.intellij.dbn.data.type.DBDataType;
 import com.dci.intellij.dbn.data.value.ArrayValue;
 import com.dci.intellij.dbn.data.value.LargeObjectValue;
 import com.dci.intellij.dbn.editor.data.model.RecordStatus;
-import com.dci.intellij.dbn.language.common.WeakRef;
 import com.dci.intellij.dbn.object.type.DBObjectType;
 import com.intellij.openapi.project.Project;
 import org.jetbrains.annotations.NotNull;
@@ -22,14 +22,14 @@ public class BasicDataModelCell<
         extends PropertyHolderBase.IntStore<RecordStatus>
         implements DataModelCell<R, M> {
 
-    protected WeakRef<R> row;
+    protected R row;
     protected Object userValue;
     private String formattedUserValue;
     protected int index;
 
     public BasicDataModelCell(Object userValue, R row, int index) {
         this.userValue = userValue;
-        this.row = WeakRef.of(row);
+        this.row = row;
         this.index = index;
     }
 
@@ -68,7 +68,7 @@ public class BasicDataModelCell<
     @Override
     @NotNull
     public R getRow() {
-        return row.ensure();
+        return Failsafe.nd(row);
     }
 
     @Override
@@ -146,6 +146,8 @@ public class BasicDataModelCell<
 
     @Override
     public void dispose() {
+        row = null;
         SafeDisposer.nullify(this);
+
     }
 }
