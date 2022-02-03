@@ -335,10 +335,10 @@ public class DatasetEditorTable extends ResultSetTable<DatasetEditorModel> {
                 if (editorTableCell.is(MODIFIED) && !(editorTableCell.getUserValue() instanceof ValueAdapter)) {
                     text.append("<br>Original value: <b>");
                     text.append(editorTableCell.getOriginalUserValue());
-                    text.append("</b></html>");
-                } else {
-                    text.append("</html>");
+                    text.append("</b>");
                 }
+
+                text.append("</html>");
 
                 return text.toString();
             }
@@ -349,7 +349,7 @@ public class DatasetEditorTable extends ResultSetTable<DatasetEditorModel> {
                 } else  if (editorTableCell.getUserValue() instanceof LargeObjectValue) {
                     return "LOB content has changed";
                 } else {
-                    return "<HTML>Original value: <b>" + editorTableCell.getOriginalUserValue() + "</b></html>";
+                    return "<html>Original value: <b>" + editorTableCell.getOriginalUserValue() + "</b></html>";
                 }
 
             }
