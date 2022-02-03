@@ -45,7 +45,7 @@ public class DBNHintForm extends DBNFormImpl {
         hintTextPane.setBackground(background);
         hintTextPane.setText(hintText);
         hintTextPane.setFont(UIUtil.getLabelFont());
-        hintTextPane.setForeground(boxed ? Colors.adjust(UIUtil.getLabelForeground(), 0.18) : Colors.HINT_COLOR);
+        hintTextPane.setForeground(boxed ? Colors.lighter(UIUtil.getLabelForeground(), 1) : Colors.HINT_COLOR);
         if (boxed) {
             mainPanel.setBorder(new RoundedLineBorder(UIUtil.getBoundsColor(), 4));
         } else {
@@ -56,7 +56,7 @@ public class DBNHintForm extends DBNFormImpl {
 
     @NotNull
     private Color getBackground() {
-        return boxed ? Colors.adjust(UIUtil.getPanelBackground(), 0.01) : UIUtil.getPanelBackground();
+        return boxed ? Colors.lighter(UIUtil.getPanelBackground(), 1) : UIUtil.getPanelBackground();
     }
 
     public void setHighlighted(boolean highlighted) {
