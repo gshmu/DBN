@@ -420,7 +420,7 @@
             <action id="DBNavigator.Actions.MethodExecutionResult.ExecuteAgain" class="com.dci.intellij.dbn.execution.method.result.action.MethodExecutionStartAction" text="Method Execution Result - Execute Again" icon="/img/RerunMethodExecution.png"/>
             <action id="DBNavigator.Actions.MethodExecutionResult.OpenExecutionDialog" class="com.dci.intellij.dbn.execution.method.result.action.MethodExecutionPromptAction" text="Method Execution Result - Open Execution Dialog" icon="/img/ExecuteMethodDialog.png"/>
             <separator/>
-            <action id="DBNavigator.Actions.MethodExecutionResult.Settings" class="com.dci.intellij.dbn.execution.method.result.action.ExecutionEngineSettingsAction" text="Method Execution Result - Open Execution Dialog" icon="/img/action/Properties.png"/>
+            <action id="DBNavigator.Actions.MethodExecutionResult.Settings" class="com.dci.intellij.dbn.execution.method.result.action.ExecutionEngineSettingsAction" text="Method Execution Result - Open Execution Dialog" icon="/img/action/Options.png"/>
         </group>
         <group id="DBNavigator.ActionGroup.MethodExecutionCursorResult">
             <action id="DBNavigator.Actions.MethodExecutionCursorResult.Find" class="com.dci.intellij.dbn.execution.method.result.action.CursorResultFindAction" text="Method Execution Cursor Result - Find Data" icon="/img/action/Find.png">

@@ -6,6 +6,7 @@ import com.dci.intellij.dbn.common.dispose.SafeDisposer;
 import com.dci.intellij.dbn.common.dispose.StatefulDisposable;
 import com.dci.intellij.dbn.common.latent.Latent;
 import com.dci.intellij.dbn.common.thread.Dispatch;
+import com.dci.intellij.dbn.common.ui.FontMetricsCache;
 import com.dci.intellij.dbn.common.ui.Mouse;
 import com.dci.intellij.dbn.common.ui.component.DBNComponent;
 import com.dci.intellij.dbn.common.util.Strings;
@@ -42,7 +43,6 @@ import java.awt.Point;
 import java.awt.PointerInfo;
 import java.awt.Rectangle;
 import java.awt.event.MouseEvent;
-import java.awt.event.MouseMotionAdapter;
 import java.awt.font.FontRenderContext;
 import java.awt.font.LineMetrics;
 import java.util.HashMap;
@@ -54,23 +54,20 @@ public abstract class DBNTable<T extends DBNTableModel> extends JTable implement
     private static final int MAX_COLUMN_WIDTH = 300;
     private static final int MIN_COLUMN_WIDTH = 10;
 
-    private final WeakRef<DBNComponent> parentComponentRef;
+    private final WeakRef<DBNComponent> parentComponent;
 
     private DBNTableGutter<?> tableGutter;
-    private JBScrollPane scrollPane;
     private int rowVerticalPadding;
     private double scrollDistance;
-    private Timer scrollTimer;
     private KeyFMap userData = KeyFMap.EMPTY_MAP;
 
-    private final Latent<FontRenderContext> fontRenderContext = Latent.mutable(
-            () -> getFont(),
-            () -> getFontMetrics(getFont()).getFontRenderContext());
-
+    private Timer scrollTimer;
+    private final Latent<JBScrollPane> scrollPane = Latent.weak(() -> UIUtil.getParentOfType(JBScrollPane.class, DBNTable.this));
+    private final FontMetricsCache metricsCache = new FontMetricsCache(this);
 
     public DBNTable(@NotNull DBNComponent parent, @NotNull T tableModel, boolean showHeader) {
         super(tableModel);
-        this.parentComponentRef = WeakRef.of(parent);
+        this.parentComponent = WeakRef.of(parent);
 
         setGridColor(Colors.TABLE_GRID_COLOR);
         Font font = getFont();//UIUtil.getListFont();
@@ -86,19 +83,16 @@ public abstract class DBNTable<T extends DBNTableModel> extends JTable implement
             tableHeader.setPreferredSize(new Dimension(-1, 0));
         } else {
             tableHeader.setDefaultRenderer(new BasicTableHeaderRenderer());
-            tableHeader.addMouseMotionListener(new MouseMotionAdapter() {
-                @Override
-                public void mouseDragged(MouseEvent e) {
-                    scrollPane = UIUtil.getParentOfType(JBScrollPane.class, DBNTable.this);
-                    if (scrollPane != null) {
-                        calculateScrollDistance();
-                        if (scrollDistance != 0 && scrollTimer == null) {
-                            scrollTimer = new Timer();
-                            scrollTimer.schedule(new ScrollTask(), 100, 100);
-                        }
+            tableHeader.addMouseMotionListener(Mouse.listener().onDrag(e -> {
+                JBScrollPane scrollPane = getScrollPane();
+                if (scrollPane != null) {
+                    calculateScrollDistance();
+                    if (scrollDistance != 0 && scrollTimer == null) {
+                        scrollTimer = new Timer();
+                        scrollTimer.schedule(new ScrollTask(), 100, 100);
                     }
                 }
-            });
+            }));
 
             tableHeader.addMouseListener(Mouse.listener().onRelease(e -> {
                 if (scrollTimer != null) {
@@ -113,6 +107,10 @@ public abstract class DBNTable<T extends DBNTableModel> extends JTable implement
 
         SafeDisposer.register(parent, this);
         SafeDisposer.register(this, tableModel);
+    }
+
+    public JBScrollPane getScrollPane() {
+        return scrollPane.get();
     }
 
     @Override
@@ -147,13 +145,10 @@ public abstract class DBNTable<T extends DBNTableModel> extends JTable implement
 
     protected void adjustRowHeight() {
         Font font = getFont();
-        LineMetrics lineMetrics = font.getLineMetrics("ABCÄÜÖÂÇĞIİÖŞĀČḎĒËĠḤŌŠṢṬŪŽy", fontRenderContext.get());
+        FontRenderContext fontRenderContext = getFontMetrics(font).getFontRenderContext();
+        LineMetrics lineMetrics = font.getLineMetrics("ABCÄÜÖÂÇĞIİÖŞĀČḎĒËĠḤŌŠṢṬŪŽy", fontRenderContext);
         int fontHeight = Math.round(lineMetrics.getHeight());
         setRowHeight(fontHeight + (rowVerticalPadding * 2));
-    }
-
-    protected int getCellWidth(String displayValue) {
-        return (int) getFont().getStringBounds(displayValue, fontRenderContext.get()).getWidth();
     }
 
     @Override
@@ -163,6 +158,7 @@ public abstract class DBNTable<T extends DBNTableModel> extends JTable implement
     }
 
     private void calculateScrollDistance() {
+        JBScrollPane scrollPane = getScrollPane();
         if (scrollPane != null) {
             JViewport viewport = scrollPane.getViewport();
             PointerInfo pointerInfo = MouseInfo.getPointerInfo();
@@ -191,12 +187,12 @@ public abstract class DBNTable<T extends DBNTableModel> extends JTable implement
 
     @NotNull
     public final Project getProject() {
-        return parentComponentRef.ensure().ensureProject();
+        return parentComponent.ensure().ensureProject();
     }
 
     @NotNull
     public DBNComponent getParentComponent() {
-        return parentComponentRef.ensure();
+        return parentComponent.ensure();
     }
 
     protected Object getValueAtMouseLocation() {
@@ -269,7 +265,7 @@ public abstract class DBNTable<T extends DBNTableModel> extends JTable implement
                 if (value != null) {
                     String displayValue = value.toString();
                     if (displayValue != null && displayValue.length() < 100) {
-                        int cellWidth = getCellWidth(displayValue);
+                        int cellWidth = metricsCache.getTextWidth(displayValue);
                         preferredWidth = Math.max(preferredWidth, cellWidth);
                     }
                 }
@@ -324,6 +320,7 @@ public abstract class DBNTable<T extends DBNTableModel> extends JTable implement
     private class ScrollTask extends TimerTask {
         @Override
         public void run() {
+            JBScrollPane scrollPane = getScrollPane();
             if (scrollPane != null && scrollDistance != 0) {
                 Dispatch.run(() -> {
                     JViewport viewport = scrollPane.getViewport();

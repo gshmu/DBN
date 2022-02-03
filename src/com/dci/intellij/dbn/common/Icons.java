@@ -140,7 +140,7 @@ public class Icons {
     public static final Icon EXEC_RESULT_CLOSE              = load("/img/action/Close.png");
     public static final Icon EXEC_RESULT_VIEW_STATEMENT     = load("/img/action/Preview.png");
     public static final Icon EXEC_RESULT_VIEW_RECORD        = load("/img/RecordViewer.png");
-    public static final Icon EXEC_RESULT_OPTIONS            = load("/img/action/Properties.png");
+    public static final Icon EXEC_RESULT_OPTIONS            = load("/img/action/Options.png");
     public static final Icon EXEC_RESULT_MESSAGES           = load("/img/common/Messages.png");
     public static final Icon EXEC_CONFIG                    = load("/img/DBProgram.png");
     public static final Icon EXEC_METHOD_CONFIG             = load("/img/DBMethodExecution.png");
