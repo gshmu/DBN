@@ -13,7 +13,10 @@ import lombok.Getter;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import javax.swing.*;
+import javax.swing.JList;
+import javax.swing.ListCellRenderer;
+import javax.swing.ListModel;
+import java.awt.event.MouseEvent;
 
 public abstract class DBNTableGutter<T extends DBNTableWithGutter> extends JList implements StatefulDisposable, EditorColorsListener {
     @Getter
@@ -32,6 +35,11 @@ public abstract class DBNTableGutter<T extends DBNTableWithGutter> extends JList
 
         ApplicationEvents.subscribe(this, EditorColorsManager.TOPIC, this);
         Disposer.register(table, this);
+    }
+
+    @Override
+    public String getToolTipText(MouseEvent event) {
+        return null;
     }
 
     protected abstract ListCellRenderer createCellRenderer();
