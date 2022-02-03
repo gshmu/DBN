@@ -102,7 +102,8 @@ public class TnsNamesImportForm extends DBNFormImpl{
         List<TnsName> tnsNames = tnsNamesTable.getModel().getTnsNames();
         int[] selectedRows = tnsNamesTable.getSelectedRows();
         for (int selectedRow : selectedRows) {
-            selectedTnsNames.add(tnsNames.get(selectedRow));
+            int rowIndex = tnsNamesTable.convertRowIndexToModel(selectedRow);
+            selectedTnsNames.add(tnsNames.get(rowIndex));
         }
         return selectedTnsNames;
     }
