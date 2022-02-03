@@ -7,7 +7,7 @@ import com.dci.intellij.dbn.common.dispose.SafeDisposer;
 import com.dci.intellij.dbn.common.ui.Borders;
 import com.dci.intellij.dbn.common.ui.DBNFormImpl;
 import com.dci.intellij.dbn.common.ui.listener.PopupCloseListener;
-import com.dci.intellij.dbn.common.ui.table.TableUtil;
+import com.dci.intellij.dbn.common.ui.table.Tables;
 import com.dci.intellij.dbn.common.util.Actions;
 import com.dci.intellij.dbn.common.util.Commons;
 import com.dci.intellij.dbn.common.util.Strings;
@@ -202,7 +202,7 @@ public class LargeValuePreviewPopup extends DBNFormImpl {
                 }
 
                 if (row != selectedRow || column != selectedColumn) {
-                    TableUtil.selectCell(table, row, column);
+                    Tables.selectCell(table, row, column);
                 }
             }
         }

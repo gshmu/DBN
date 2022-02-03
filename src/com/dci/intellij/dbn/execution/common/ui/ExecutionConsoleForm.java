@@ -11,7 +11,7 @@ import com.dci.intellij.dbn.common.message.MessageType;
 import com.dci.intellij.dbn.common.navigation.NavigationInstructions;
 import com.dci.intellij.dbn.common.ui.DBNFormImpl;
 import com.dci.intellij.dbn.common.ui.GUIUtil;
-import com.dci.intellij.dbn.common.ui.listener.MouseClickedListener;
+import com.dci.intellij.dbn.common.ui.Mouse;
 import com.dci.intellij.dbn.common.ui.tab.TabbedPane;
 import com.dci.intellij.dbn.common.util.Documents;
 import com.dci.intellij.dbn.common.util.Strings;
@@ -152,7 +152,7 @@ public class ExecutionConsoleForm extends DBNFormImpl{
     };
 
 
-    private final MouseListener mouseListener = MouseClickedListener.create(e -> {
+    private final MouseListener mouseListener = Mouse.listener().onClick(e -> {
         if (e.isShiftDown() && (16 & e.getModifiers()) > 0 || ((8 & e.getModifiers()) > 0)) {
             if (e.getSource() instanceof TabLabel) {
                 TabLabel tabLabel = (TabLabel) e.getSource();

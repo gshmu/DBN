@@ -7,19 +7,17 @@ import com.dci.intellij.dbn.data.grid.ui.table.basic.BasicTableSpeedSearch;
 import com.dci.intellij.dbn.data.model.ColumnInfo;
 import com.dci.intellij.dbn.data.model.sortable.SortableDataModel;
 import com.dci.intellij.dbn.data.model.sortable.SortableTableHeaderMouseListener;
-import com.dci.intellij.dbn.data.model.sortable.SortableTableMouseListener;
 import com.dci.intellij.dbn.data.sorting.SortDirection;
 import org.jetbrains.annotations.NotNull;
 
-import javax.swing.*;
+import javax.swing.JTable;
 import javax.swing.table.JTableHeader;
-import java.awt.*;
+import java.awt.Cursor;
 
 public abstract class SortableTable<T extends SortableDataModel<?, ?>> extends BasicTable<T> {
 
     public SortableTable(@NotNull DBNComponent parent, @NotNull T dataModel, boolean enableSpeedSearch) {
         super(parent, dataModel);
-        addMouseListener(new SortableTableMouseListener(this));
         JTableHeader tableHeader = getTableHeader();
         tableHeader.setDefaultRenderer(new SortableTableHeaderRenderer());
         tableHeader.addMouseListener(new SortableTableHeaderMouseListener(this));

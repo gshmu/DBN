@@ -4,6 +4,7 @@ import com.dci.intellij.dbn.browser.options.ObjectFilterChangeListener;
 import com.dci.intellij.dbn.common.event.ProjectEvents;
 import com.dci.intellij.dbn.common.options.SettingsChangeNotifier;
 import com.dci.intellij.dbn.common.options.ui.ConfigurationEditorForm;
+import com.dci.intellij.dbn.common.ui.Mouse;
 import com.dci.intellij.dbn.common.util.Actions;
 import com.dci.intellij.dbn.object.filter.name.FilterCondition;
 import com.dci.intellij.dbn.object.filter.name.ObjectNameFilter;
@@ -29,7 +30,6 @@ import javax.swing.JTree;
 import javax.swing.tree.TreePath;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
-import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.HashSet;
 import java.util.Set;
@@ -76,18 +76,15 @@ public class ObjectNameFilterSettingsForm extends ConfigurationEditorForm<Object
             filtersTree.expandPath(tableModel.createTreePath(filter));
         }
 
-        filtersTree.addMouseListener(new MouseAdapter() {
-            @Override
-            public void mouseClicked(MouseEvent e) {
-                if (e.getButton() == MouseEvent.BUTTON1 && e.getClickCount() > 1) {
-                    Object selection = getSelection();
-                    if (selection instanceof SimpleNameFilterCondition) {
-                        SimpleNameFilterCondition condition = (SimpleNameFilterCondition) selection;
-                        getManager().editFilterCondition(condition, ObjectNameFilterSettingsForm.this);
-                    }
+        filtersTree.addMouseListener(Mouse.listener().onClick(e -> {
+            if (e.getButton() == MouseEvent.BUTTON1 && e.getClickCount() > 1) {
+                Object selection = getSelection();
+                if (selection instanceof SimpleNameFilterCondition) {
+                    SimpleNameFilterCondition condition = (SimpleNameFilterCondition) selection;
+                    getManager().editFilterCondition(condition, ObjectNameFilterSettingsForm.this);
                 }
             }
-        });
+        }));
 
         filtersTree.addKeyListener(new KeyAdapter() {
             @Override

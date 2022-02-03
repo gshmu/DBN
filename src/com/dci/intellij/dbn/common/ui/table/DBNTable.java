@@ -6,6 +6,7 @@ import com.dci.intellij.dbn.common.dispose.SafeDisposer;
 import com.dci.intellij.dbn.common.dispose.StatefulDisposable;
 import com.dci.intellij.dbn.common.latent.Latent;
 import com.dci.intellij.dbn.common.thread.Dispatch;
+import com.dci.intellij.dbn.common.ui.Mouse;
 import com.dci.intellij.dbn.common.ui.component.DBNComponent;
 import com.dci.intellij.dbn.common.util.Strings;
 import com.dci.intellij.dbn.data.grid.ui.table.basic.BasicTableHeaderRenderer;
@@ -40,7 +41,6 @@ import java.awt.MouseInfo;
 import java.awt.Point;
 import java.awt.PointerInfo;
 import java.awt.Rectangle;
-import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseMotionAdapter;
 import java.awt.font.FontRenderContext;
@@ -100,15 +100,12 @@ public abstract class DBNTable<T extends DBNTableModel> extends JTable implement
                 }
             });
 
-            tableHeader.addMouseListener(new MouseAdapter() {
-                @Override
-                public void mouseReleased(MouseEvent e) {
-                    if (scrollTimer != null) {
-                        SafeDisposer.dispose(scrollTimer);
-                        scrollTimer = null;
-                    }
+            tableHeader.addMouseListener(Mouse.listener().onRelease(e -> {
+                if (scrollTimer != null) {
+                    SafeDisposer.dispose(scrollTimer);
+                    scrollTimer = null;
                 }
-            });
+            }));
         }
 
         updateComponentColors();
@@ -263,7 +260,7 @@ public abstract class DBNTable<T extends DBNTableModel> extends JTable implement
                     break;
                 }
 
-                Object value = model.getValueAt(rowIndex, columnIndex);
+                Object value = model.getValueAt(rowIndex, column.getModelIndex());
                 if (value != null) {
                     String displayValue = value.toString();
                     if (displayValue != null && displayValue.length() < 100) {

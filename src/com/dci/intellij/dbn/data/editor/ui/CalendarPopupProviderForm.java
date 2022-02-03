@@ -6,7 +6,7 @@ import com.dci.intellij.dbn.common.locale.Formatter;
 import com.dci.intellij.dbn.common.ui.Borders;
 import com.dci.intellij.dbn.common.ui.GUIUtil;
 import com.dci.intellij.dbn.common.ui.KeyUtil;
-import com.dci.intellij.dbn.common.ui.listener.MouseClickedListener;
+import com.dci.intellij.dbn.common.ui.Mouse;
 import com.dci.intellij.dbn.common.util.Actions;
 import com.intellij.openapi.actionSystem.ActionToolbar;
 import com.intellij.openapi.actionSystem.AnAction;
@@ -87,7 +87,7 @@ public class CalendarPopupProviderForm extends TextFieldPopupProviderForm implem
         daysTable.getTableHeader().setDefaultRenderer(HEADER_CELL_RENDERER);
         daysTable.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
         daysTable.setShowGrid(false);
-        daysTable.addMouseListener(MouseClickedListener.create(e -> {
+        daysTable.addMouseListener(Mouse.listener().onClick(e -> {
             if (e.getButton() == MouseEvent.BUTTON1) {
                 selectDate();
             }

@@ -1,6 +1,6 @@
 package com.dci.intellij.dbn.editor.data.ui.table.listener;
 
-import com.dci.intellij.dbn.common.ui.MouseUtil;
+import com.dci.intellij.dbn.common.ui.Mouse;
 import com.dci.intellij.dbn.editor.data.DatasetEditorManager;
 import com.dci.intellij.dbn.editor.data.filter.DatasetFilterInput;
 import com.dci.intellij.dbn.editor.data.model.DatasetEditorModelCell;
@@ -9,7 +9,7 @@ import com.dci.intellij.dbn.language.common.WeakRef;
 import com.dci.intellij.dbn.object.DBColumn;
 import org.jetbrains.annotations.NotNull;
 
-import java.awt.*;
+import java.awt.Point;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 
@@ -53,7 +53,7 @@ public class DatasetEditorMouseListener extends MouseAdapter {
 
     @Override
     public void mouseClicked(MouseEvent event) {
-        if (MouseUtil.isNavigationEvent(event)) {
+        if (Mouse.isNavigationEvent(event)) {
             DatasetEditorTable table = getTable();
             DatasetEditorModelCell cell = (DatasetEditorModelCell) table.getCellAtLocation(event.getPoint());
             if (cell != null){

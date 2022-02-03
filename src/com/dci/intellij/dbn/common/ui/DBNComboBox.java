@@ -25,8 +25,6 @@ import javax.swing.JComboBox;
 import javax.swing.JList;
 import java.awt.Color;
 import java.awt.Component;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -36,7 +34,7 @@ import java.util.List;
 import java.util.Set;
 
 public class DBNComboBox<T extends Presentable> extends JComboBox<T> implements PropertyHolder<ValueSelectorOption> {
-    private final Set<ValueSelectorListener<T>> listeners = new HashSet<ValueSelectorListener<T>>();
+    private final Set<ValueSelectorListener<T>> listeners = new HashSet<>();
     private ListPopup popup;
     private PresentableFactory<T> valueFactory;
     private Loader<List<T>> valueLoader;
@@ -48,14 +46,11 @@ public class DBNComboBox<T extends Presentable> extends JComboBox<T> implements 
         }
     };
 
-    private final MouseListener mouseListener = new MouseAdapter() {
-        @Override
-        public void mousePressed(MouseEvent e) {
-            if (DBNComboBox.this.isEnabled()) {
-                showPopup();
-            }
+    private final MouseListener mouseListener = Mouse.listener().onPress(e -> {
+        if (DBNComboBox.this.isEnabled()) {
+            showPopup();
         }
-    };
+    });
 
     public DBNComboBox(T ... values) {
         this();
@@ -64,7 +59,7 @@ public class DBNComboBox<T extends Presentable> extends JComboBox<T> implements 
 
     public DBNComboBox() {
         super(new DBNComboBoxModel<>());
-        MouseUtil.removeMouseListeners(this);
+        Mouse.removeMouseListeners(this);
 
         addMouseListener(mouseListener);
         Color background = UIUtil.getTextFieldBackground();

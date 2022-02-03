@@ -1,6 +1,7 @@
 package com.dci.intellij.dbn.execution.method.result.ui;
 
 import com.dci.intellij.dbn.common.Icons;
+import com.dci.intellij.dbn.common.ui.Mouse;
 import com.dci.intellij.dbn.common.ui.tree.DBNTree;
 import com.dci.intellij.dbn.common.util.TextAttributes;
 import com.dci.intellij.dbn.data.grid.color.DataGridTextAttributesKeys;
@@ -19,8 +20,8 @@ import org.jetbrains.annotations.NotNull;
 
 import javax.swing.JTree;
 import java.awt.Color;
-import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 import java.sql.ResultSet;
 import java.util.List;
 
@@ -45,27 +46,24 @@ class ArgumentValuesTree extends DBNTree{
         return new ArgumentValuesTreeModel(parentForm.getMethod(), inputArgumentValues, outputArgumentValues);
     }
 
-    private final MouseAdapter mouseAdapter = new MouseAdapter() {
-        @Override
-        public void mouseClicked(MouseEvent e) {
-            if (e.getButton() == MouseEvent.BUTTON1 && e.getClickCount() == 2) {
-                ArgumentValuesTreeNode treeNode = (ArgumentValuesTreeNode) getLastSelectedPathComponent();
-                if (treeNode != null) {
-                    Object userValue = treeNode.getUserValue();
-                    if (userValue instanceof ArgumentValue) {
-                        ArgumentValue argumentValue = (ArgumentValue) userValue;
-                        DBArgument argument = argumentValue.getArgument();
-                        if (argument != null && argument.isOutput()) {
-                            Object value = argumentValue.getValue();
-                            if (value instanceof ResultSet || argumentValue.isLargeObject()) {
-                                getParentForm().selectArgumentOutputTab(argument);
-                            }
+    private final MouseListener mouseAdapter = Mouse.listener().onClick(e -> {
+        if (e.getButton() == MouseEvent.BUTTON1 && e.getClickCount() == 2) {
+            ArgumentValuesTreeNode treeNode = (ArgumentValuesTreeNode) getLastSelectedPathComponent();
+            if (treeNode != null) {
+                Object userValue = treeNode.getUserValue();
+                if (userValue instanceof ArgumentValue) {
+                    ArgumentValue argumentValue = (ArgumentValue) userValue;
+                    DBArgument argument = argumentValue.getArgument();
+                    if (argument != null && argument.isOutput()) {
+                        Object value = argumentValue.getValue();
+                        if (value instanceof ResultSet || argumentValue.isLargeObject()) {
+                            getParentForm().selectArgumentOutputTab(argument);
                         }
                     }
                 }
             }
         }
-    };
+    });
 
 
     static class CellRenderer extends ColoredTreeCellRenderer {
