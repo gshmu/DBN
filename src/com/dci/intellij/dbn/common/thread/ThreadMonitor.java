@@ -81,17 +81,15 @@ public class ThreadMonitor {
     }
 
 
+    public static boolean isProgressProcess() {
+        return current().is(ThreadProperty.PROGRESS);
+    }
+
     public static boolean isBackgroundProcess() {
-        // default false
-        ThreadInfo threadInfo = current();
-        return
-            threadInfo.is(ThreadProperty.BACKGROUND) ||
-            threadInfo.is(ThreadProperty.PROGRESS) ||
-            threadInfo.is(ThreadProperty.MODAL);
+        return current().is(ThreadProperty.BACKGROUND);
     }
 
     public static boolean isTimeoutProcess() {
-        // default false
         return current().is(ThreadProperty.TIMEOUT);
     }
 

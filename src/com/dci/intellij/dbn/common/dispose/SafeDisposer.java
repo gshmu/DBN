@@ -5,7 +5,6 @@ import com.dci.intellij.dbn.common.list.FilteredList;
 import com.dci.intellij.dbn.common.options.Configuration;
 import com.dci.intellij.dbn.common.thread.Background;
 import com.dci.intellij.dbn.common.thread.Dispatch;
-import com.dci.intellij.dbn.common.thread.ThreadMonitor;
 import com.dci.intellij.dbn.common.ui.GUIUtil;
 import com.dci.intellij.dbn.common.util.Unsafe;
 import com.dci.intellij.dbn.vfs.DBVirtualFile;
@@ -31,6 +30,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Timer;
 import java.util.concurrent.ConcurrentHashMap;
+
+import static com.dci.intellij.dbn.common.thread.ThreadMonitor.isBackgroundProcess;
 
 @Slf4j
 public final class SafeDisposer {
@@ -86,7 +87,7 @@ public final class SafeDisposer {
 
     public static void dispose(@Nullable Disposable disposable, boolean registered, boolean background) {
         if (disposable != null) {
-            if (background && !ThreadMonitor.isBackgroundProcess()) {
+            if (background && !isBackgroundProcess()) {
                 Background.run(() -> dispose(disposable, registered, false));
             } else {
                 dispose(disposable, registered);
@@ -96,7 +97,7 @@ public final class SafeDisposer {
 
     public static void dispose(@Nullable Collection<?> collection, boolean clear, boolean background) {
         if (collection != null) {
-            if (background) {
+            if (background && !isBackgroundProcess()) {
                 Background.run(() -> dispose(collection, true, false));
             } else {
                 Collection<?> disposeCollection;
@@ -124,7 +125,7 @@ public final class SafeDisposer {
 
     public static void dispose(@Nullable Object[] array, boolean registered, boolean background) {
         if (array != null) {
-            if (background && !ThreadMonitor.isBackgroundProcess()) {
+            if (background && !isBackgroundProcess()) {
                 Background.run(() -> dispose(array, registered, false));
             } else {
                 for (int i = 0; i < array.length; i++) {

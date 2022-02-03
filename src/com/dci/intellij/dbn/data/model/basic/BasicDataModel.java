@@ -363,8 +363,8 @@ public class BasicDataModel<
      *******************************************************  */
     @Override
     public void disposeInner() {
-        SafeDisposer.dispose(this.rows, true, true);
-        this.rows = Collections.emptyList();
+        SafeDisposer.dispose(rows, true, true);
+        rows = Collections.emptyList();
         nullify();
     }
 

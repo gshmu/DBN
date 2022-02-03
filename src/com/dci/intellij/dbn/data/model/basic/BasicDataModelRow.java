@@ -1,16 +1,17 @@
 package com.dci.intellij.dbn.data.model.basic;
 
+import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.common.dispose.SafeDisposer;
 import com.dci.intellij.dbn.common.property.DisposablePropertyHolder;
 import com.dci.intellij.dbn.data.model.DataModelCell;
 import com.dci.intellij.dbn.data.model.DataModelRow;
 import com.dci.intellij.dbn.editor.data.model.RecordStatus;
-import com.dci.intellij.dbn.language.common.WeakRef;
 import com.intellij.openapi.project.Project;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 
@@ -20,13 +21,13 @@ public class BasicDataModelRow<
         extends DisposablePropertyHolder<RecordStatus>
         implements DataModelRow<M, C> {
 
-    private final WeakRef<M> model;
-    private final List<C> cells;
+    private M model;
+    private List<C> cells;
     private int index;
 
     public BasicDataModelRow(M model) {
         cells = new ArrayList<C>(model.getColumnCount());
-        this.model = WeakRef.of(model);
+        this.model = model;
     }
 
     @Override
@@ -41,7 +42,7 @@ public class BasicDataModelRow<
     @Override
     @NotNull
     public M getModel() {
-        return model.ensure();
+        return Failsafe.nd(model);
     }
 
     @Override
@@ -98,6 +99,8 @@ public class BasicDataModelRow<
     @Override
     public void disposeInner() {
         SafeDisposer.dispose(cells, true, false);
+        cells = Collections.emptyList();
+        model = null;
         nullify();
     }
 
