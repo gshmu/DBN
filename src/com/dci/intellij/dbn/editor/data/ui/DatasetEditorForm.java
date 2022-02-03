@@ -77,7 +77,7 @@ public class DatasetEditorForm extends DBNFormImpl implements SearchableDataComp
 
         DBDataset dataset = getDataset();
         try {
-            datasetTablePanel.setBorder(Borders.lineBorder(Colors.tableHeaderBorderColor(), 1, 0, 0, 0));
+            datasetTablePanel.setBorder(Borders.lineBorder(Colors.TABLE_HEADER_GRID_COLOR, 1, 0, 0, 0));
             datasetEditorTable = new DatasetEditorTable(this, datasetEditor);
             datasetTableScrollPane.setViewportView(datasetEditorTable);
             datasetEditorTable.initTableGutter();

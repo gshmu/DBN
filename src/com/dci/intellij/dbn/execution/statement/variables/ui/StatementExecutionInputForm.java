@@ -1,6 +1,5 @@
 package com.dci.intellij.dbn.execution.statement.variables.ui;
 
-import com.dci.intellij.dbn.common.Colors;
 import com.dci.intellij.dbn.common.compatibility.CompatibilityUtil;
 import com.dci.intellij.dbn.common.dispose.DisposableContainer;
 import com.dci.intellij.dbn.common.dispose.Failsafe;
@@ -21,13 +20,10 @@ import com.dci.intellij.dbn.execution.statement.variables.StatementExecutionVari
 import com.dci.intellij.dbn.language.common.DBLanguageDialect;
 import com.dci.intellij.dbn.language.common.DBLanguagePsiFile;
 import com.dci.intellij.dbn.language.sql.SQLLanguage;
-import com.intellij.ide.highlighter.HighlighterFactory;
 import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.editor.EditorFactory;
 import com.intellij.openapi.editor.EditorSettings;
-import com.intellij.openapi.editor.colors.EditorColorsScheme;
 import com.intellij.openapi.editor.ex.EditorEx;
-import com.intellij.openapi.fileTypes.SyntaxHighlighter;
 import com.intellij.openapi.project.Project;
 import com.intellij.ui.DocumentAdapter;
 import com.intellij.ui.JBColor;
@@ -214,11 +210,10 @@ public class StatementExecutionInputForm extends DBNFormImpl {
 
             viewer = (EditorEx) EditorFactory.getInstance().createViewer(previewDocument, project);
             viewer.setEmbeddedIntoDialogWrapper(true);
+            Editors.initEditorHighlighter(viewer, SQLLanguage.INSTANCE, connectionHandler);
+            Editors.setEditorReadonly(viewer, true);
+
             JScrollPane viewerScrollPane = viewer.getScrollPane();
-            SyntaxHighlighter syntaxHighlighter = languageDialect.getSyntaxHighlighter();
-            EditorColorsScheme colorsScheme = viewer.getColorsScheme();
-            viewer.setHighlighter(HighlighterFactory.createHighlighter(syntaxHighlighter, colorsScheme));
-            viewer.setBackgroundColor(Colors.adjust(viewer.getBackgroundColor(), -0.01));
             viewerScrollPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
             viewerScrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
             //viewerScrollPane.setBorder(null);

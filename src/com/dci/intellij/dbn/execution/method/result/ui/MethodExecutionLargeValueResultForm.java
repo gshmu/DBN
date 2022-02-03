@@ -16,17 +16,13 @@ import com.dci.intellij.dbn.execution.method.ArgumentValue;
 import com.dci.intellij.dbn.execution.method.result.MethodExecutionResult;
 import com.dci.intellij.dbn.object.DBArgument;
 import com.dci.intellij.dbn.object.lookup.DBObjectRef;
-import com.intellij.ide.highlighter.HighlighterFactory;
 import com.intellij.openapi.actionSystem.ActionToolbar;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.actionSystem.DefaultActionGroup;
 import com.intellij.openapi.actionSystem.Presentation;
 import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.editor.EditorFactory;
-import com.intellij.openapi.editor.colors.EditorColorsScheme;
 import com.intellij.openapi.editor.ex.EditorEx;
-import com.intellij.openapi.fileTypes.SyntaxHighlighter;
-import com.intellij.openapi.fileTypes.SyntaxHighlighterFactory;
 import com.intellij.openapi.project.Project;
 import com.intellij.ui.IdeBorderFactory;
 import org.jetbrains.annotations.NotNull;
@@ -89,9 +85,7 @@ public class MethodExecutionLargeValueResultForm extends DBNFormImpl {
     }
 
     public void setContentType(TextContentType contentType) {
-        SyntaxHighlighter syntaxHighlighter = SyntaxHighlighterFactory.getSyntaxHighlighter(contentType.getFileType(), editor.getProject(), null);
-        EditorColorsScheme colorsScheme = editor.getColorsScheme();
-        editor.setHighlighter(HighlighterFactory.createHighlighter(syntaxHighlighter, colorsScheme));
+        Editors.initEditorHighlighter(editor, contentType);
     }
 
     public DBArgument getArgument() {
@@ -150,9 +144,7 @@ public class MethodExecutionLargeValueResultForm extends DBNFormImpl {
 
         @Override
         protected void actionPerformed(@NotNull AnActionEvent e, @NotNull Project project) {
-            SyntaxHighlighter syntaxHighlighter = SyntaxHighlighterFactory.getSyntaxHighlighter(contentType.getFileType(), project, null);
-            EditorColorsScheme colorsScheme = editor.getColorsScheme();
-            editor.setHighlighter(HighlighterFactory.createHighlighter(syntaxHighlighter, colorsScheme));
+            Editors.initEditorHighlighter(editor, contentType);
             MethodExecutionLargeValueResultForm.this.contentType = contentType;
         }
     }
