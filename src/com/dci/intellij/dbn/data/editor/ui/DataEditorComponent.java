@@ -1,14 +1,14 @@
 package com.dci.intellij.dbn.data.editor.ui;
 
-import com.dci.intellij.dbn.common.Colors;
+import com.dci.intellij.dbn.common.color.Colors;
 import com.dci.intellij.dbn.common.dispose.StatefulDisposable;
 import com.intellij.ui.RoundedLineBorder;
 import com.intellij.util.ui.JBUI;
 
-import javax.swing.*;
+import javax.swing.JTextField;
 import javax.swing.border.Border;
 import javax.swing.border.CompoundBorder;
-import java.awt.*;
+import java.awt.Font;
 
 public interface DataEditorComponent extends StatefulDisposable {
     Border BUTTON_OUTSIDE_BORDER = JBUI.Borders.empty(1);

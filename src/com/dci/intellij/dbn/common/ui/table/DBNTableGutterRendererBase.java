@@ -1,9 +1,9 @@
 package com.dci.intellij.dbn.common.ui.table;
 
-import com.dci.intellij.dbn.common.Colors;
+import com.dci.intellij.dbn.common.color.Colors;
 import com.dci.intellij.dbn.common.latent.Latent;
 import com.dci.intellij.dbn.common.ui.Borders;
-import com.dci.intellij.dbn.common.ui.GUIUtil;
+import com.dci.intellij.dbn.common.ui.Fonts;
 import com.intellij.ui.border.CustomLineBorder;
 import org.apache.commons.lang3.StringUtils;
 
@@ -30,12 +30,12 @@ public abstract class DBNTableGutterRendererBase implements DBNTableGutterRender
     public DBNTableGutterRendererBase() {
         textLabel.setText("");
         iconLabel.setText("");
-        textLabel.setFont(GUIUtil.getEditorFont());
-        textLabel.setForeground(Colors.tableLineNumberColor());
+        textLabel.setFont(Fonts.getEditorFont());
+        textLabel.setForeground(Colors.getTableLineNumberColor());
         mainPanel.setPreferredSize(new Dimension(40, -1));
         iconLabel.setBorder(Borders.insetBorder(4));
 
-        Border border = new CustomLineBorder(Colors.TABLE_HEADER_GRID_COLOR, 0, 0, 0, 1);
+        Border border = new CustomLineBorder(Colors.getTableHeaderGridColor(), 0, 0, 0, 1);
         mainPanel.setBorder(border);
     }
 

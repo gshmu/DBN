@@ -1,7 +1,7 @@
 package com.dci.intellij.dbn.editor.data.ui.table.renderer;
 
-import com.dci.intellij.dbn.common.Colors;
 import com.dci.intellij.dbn.common.Icons;
+import com.dci.intellij.dbn.common.color.Colors;
 import com.dci.intellij.dbn.common.ui.Borders;
 import com.dci.intellij.dbn.common.ui.table.DBNTableHeaderRendererBase;
 import com.dci.intellij.dbn.common.util.Safe;
@@ -12,7 +12,6 @@ import com.dci.intellij.dbn.data.sorting.SortingState;
 import com.dci.intellij.dbn.editor.data.model.DatasetEditorModel;
 import com.dci.intellij.dbn.object.DBColumn;
 import com.dci.intellij.dbn.object.DBDataset;
-import com.intellij.util.ui.UIUtil;
 
 import javax.swing.Icon;
 import javax.swing.JLabel;
@@ -30,8 +29,8 @@ public class DatasetEditorTableHeaderRenderer extends DBNTableHeaderRendererBase
 
     public DatasetEditorTableHeaderRenderer() {
         mainPanel.setOpaque(true);
-        mainPanel.setBackground(UIUtil.getPanelBackground());
-        mainPanel.setBorder(Borders.lineBorder(Colors.TABLE_HEADER_GRID_COLOR, 0, 0, 0, 1));
+        mainPanel.setBackground(Colors.getPanelBackground());
+        mainPanel.setBorder(Borders.lineBorder(Colors.getTableHeaderGridColor(), 0, 0, 0, 1));
     }
 
     @Override
@@ -76,7 +75,7 @@ public class DatasetEditorTableHeaderRenderer extends DBNTableHeaderRendererBase
                     width += icon.getIconWidth();
                 }
             }
-            nameLabel.setForeground(UIUtil.getLabelForeground());
+            nameLabel.setForeground(Colors.getLabelForeground());
 
             FontMetrics fontMetrics = getFontMetrics();
             width += fontMetrics.stringWidth(columnName) + 20;

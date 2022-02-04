@@ -1,6 +1,7 @@
 package com.dci.intellij.dbn.execution.method.result.ui;
 
 import com.dci.intellij.dbn.common.Icons;
+import com.dci.intellij.dbn.common.color.Colors;
 import com.dci.intellij.dbn.common.ui.Mouse;
 import com.dci.intellij.dbn.common.ui.tree.DBNTree;
 import com.dci.intellij.dbn.common.util.TextAttributes;
@@ -15,7 +16,6 @@ import com.dci.intellij.dbn.object.type.DBObjectType;
 import com.intellij.openapi.progress.ProcessCanceledException;
 import com.intellij.ui.ColoredTreeCellRenderer;
 import com.intellij.ui.SimpleTextAttributes;
-import com.intellij.util.ui.UIUtil;
 import org.jetbrains.annotations.NotNull;
 
 import javax.swing.JTree;
@@ -31,7 +31,7 @@ class ArgumentValuesTree extends DBNTree{
         super(parent, createModel(parent, inputArgumentValues, outputArgumentValues));
         setCellRenderer(new CellRenderer());
         Color bgColor = TextAttributes.getSimpleTextAttributes(DataGridTextAttributesKeys.PLAIN_DATA).getBgColor();
-        setBackground(bgColor == null ? UIUtil.getTableBackground() : bgColor);
+        setBackground(bgColor == null ? Colors.getTableBackground() : bgColor);
 
         addMouseListener(mouseAdapter);
     }

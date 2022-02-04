@@ -1,7 +1,7 @@
 package com.dci.intellij.dbn.editor.data.ui;
 
-import com.dci.intellij.dbn.common.Colors;
 import com.dci.intellij.dbn.common.Icons;
+import com.dci.intellij.dbn.common.color.Colors;
 import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.common.dispose.SafeDisposer;
 import com.dci.intellij.dbn.common.latent.Latent;
@@ -77,7 +77,7 @@ public class DatasetEditorForm extends DBNFormImpl implements SearchableDataComp
 
         DBDataset dataset = getDataset();
         try {
-            datasetTablePanel.setBorder(Borders.lineBorder(Colors.TABLE_HEADER_GRID_COLOR, 1, 0, 0, 0));
+            datasetTablePanel.setBorder(Borders.lineBorder(Colors.getTableHeaderGridColor(), 1, 0, 0, 0));
             datasetEditorTable = new DatasetEditorTable(this, datasetEditor);
             datasetTableScrollPane.setViewportView(datasetEditorTable);
             datasetEditorTable.initTableGutter();

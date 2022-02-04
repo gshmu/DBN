@@ -1,6 +1,7 @@
 package com.dci.intellij.dbn.connection.config.ui;
 
 import com.dci.intellij.dbn.common.Icons;
+import com.dci.intellij.dbn.common.color.Colors;
 import com.dci.intellij.dbn.common.ui.ComboBoxUtil;
 import com.dci.intellij.dbn.common.ui.DBNFormImpl;
 import com.dci.intellij.dbn.common.util.Messages;
@@ -13,7 +14,6 @@ import com.intellij.openapi.ui.TextFieldWithBrowseButton;
 import com.intellij.ui.HyperlinkLabel;
 import com.intellij.ui.JBColor;
 import com.intellij.util.ui.TimerUtil;
-import com.intellij.util.ui.UIUtil;
 import org.jetbrains.annotations.NotNull;
 
 import javax.swing.JComboBox;
@@ -127,7 +127,7 @@ public class ConnectionDriverSettingsForm extends DBNFormImpl{
             boolean fileExists = Strings.isNotEmpty(driverLibrary) && fileExists(driverLibrary);
             JTextField libraryTextField = driverLibraryTextField.getTextField();
             if (fileExists) {
-                libraryTextField.setForeground(UIUtil.getTextFieldForeground());
+                libraryTextField.setForeground(Colors.getTextFieldForeground());
                 DatabaseType libraryDatabaseType = DatabaseType.resolve(driverLibrary);
                 if (isBuiltInLibrarySupported(databaseType) && libraryDatabaseType != getDatabaseType()) {
                     error = "The driver library does not match the selected database type";

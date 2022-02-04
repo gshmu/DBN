@@ -1,6 +1,7 @@
 package com.dci.intellij.dbn.editor.data.filter.ui;
 
 import com.dci.intellij.dbn.common.Icons;
+import com.dci.intellij.dbn.common.color.Colors;
 import com.dci.intellij.dbn.common.compatibility.CompatibilityUtil;
 import com.dci.intellij.dbn.common.dispose.DisposableContainer;
 import com.dci.intellij.dbn.common.options.ui.ConfigurationEditorForm;
@@ -130,7 +131,7 @@ public class DatasetBasicFilterForm extends ConfigurationEditorForm<DatasetBasic
             @Override
             public void keyPressed(KeyEvent e) {
                 isCustomNamed = true;
-                nameTextField.setForeground(UIUtil.getTextFieldForeground());
+                nameTextField.setForeground(Colors.getTextFieldForeground());
             }
         };
     }

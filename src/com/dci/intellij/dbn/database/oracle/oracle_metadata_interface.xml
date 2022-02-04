@@ -102,7 +102,7 @@
     </statement-execution-processor>
     <statement-execution-processor id="schemas" is-query="true" is-prepared-statement="true">
         <statement prefixes="DBA, ALL">
-            with DBN_OBJECTS as (select /*+ materialize */ distinct OWNER from [PREFIX]_OBJECTS)
+            with DBN_OBJECTS as (select distinct OWNER from [PREFIX]_OBJECTS)
             select
                 u.USERNAME as SCHEMA_NAME,
                 'N' as IS_PUBLIC,

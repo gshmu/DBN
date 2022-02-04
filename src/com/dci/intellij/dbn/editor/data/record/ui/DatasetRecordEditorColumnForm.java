@@ -1,5 +1,6 @@
 package com.dci.intellij.dbn.editor.data.record.ui;
 
+import com.dci.intellij.dbn.common.color.Colors;
 import com.dci.intellij.dbn.common.locale.Formatter;
 import com.dci.intellij.dbn.common.ui.DBNFormImpl;
 import com.dci.intellij.dbn.data.editor.ui.BasicDataEditorComponent;
@@ -169,7 +170,7 @@ public class DatasetRecordEditorColumnForm extends DBNFormImpl {
             editorComponent.setText(formattedUserValue);
         }
         JTextField valueTextField = editorComponent.getTextField();
-        valueTextField.setBackground(UIUtil.getTextFieldBackground());
+        valueTextField.setBackground(Colors.getTextFieldBackground());
     }
 
     public DatasetEditorModelCell getCell() {
@@ -213,7 +214,7 @@ public class DatasetRecordEditorColumnForm extends DBNFormImpl {
                     Object value = getEditorValue();
                     UserValueHolder<Object> userValueHolder = (UserValueHolder<Object>) editorComponent.getUserValueHolder();
                     userValueHolder.updateUserValue(value, false);
-                    valueTextField.setForeground(UIUtil.getTextFieldForeground());
+                    valueTextField.setForeground(Colors.getTextFieldForeground());
                 } catch (ParseException e1) {
                     if (highlightError) {
                         valueTextField.setForeground(JBColor.RED);
@@ -233,7 +234,7 @@ public class DatasetRecordEditorColumnForm extends DBNFormImpl {
         @Override
         protected void textChanged(@NotNull DocumentEvent e) {
             JTextField valueTextField = editorComponent.getTextField();
-            valueTextField.setForeground(UIUtil.getTextFieldForeground());
+            valueTextField.setForeground(Colors.getTextFieldForeground());
         }
     };
 

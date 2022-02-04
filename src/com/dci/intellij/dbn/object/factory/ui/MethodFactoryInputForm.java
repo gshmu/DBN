@@ -1,6 +1,7 @@
 package com.dci.intellij.dbn.object.factory.ui;
 
 import com.dci.intellij.dbn.common.Icons;
+import com.dci.intellij.dbn.common.color.Colors;
 import com.dci.intellij.dbn.common.ui.Borders;
 import com.dci.intellij.dbn.common.ui.DBNHeaderForm;
 import com.dci.intellij.dbn.common.ui.component.DBNComponent;
@@ -14,12 +15,15 @@ import com.dci.intellij.dbn.object.factory.ui.common.ObjectFactoryInputForm;
 import com.dci.intellij.dbn.object.lookup.DBObjectRef;
 import com.dci.intellij.dbn.object.type.DBObjectType;
 import com.intellij.ui.DocumentAdapter;
-import com.intellij.util.ui.UIUtil;
 import org.jetbrains.annotations.NotNull;
 
-import javax.swing.*;
+import javax.swing.Icon;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JTextField;
 import javax.swing.event.DocumentEvent;
-import java.awt.*;
+import java.awt.BorderLayout;
+import java.awt.Color;
 
 public abstract class MethodFactoryInputForm extends ObjectFactoryInputForm<MethodFactoryInput> {
     private JPanel mainPanel;
@@ -70,7 +74,7 @@ public abstract class MethodFactoryInputForm extends ObjectFactoryInputForm<Meth
     private DBNHeaderForm createHeaderForm(DBSchema schema, DBObjectType objectType) {
         String headerTitle = schema.getName() + ".[unnamed]";
         Icon headerIcon = objectType.getIcon();
-        Color headerBackground = UIUtil.getPanelBackground();
+        Color headerBackground = Colors.getPanelBackground();
         if (getEnvironmentSettings(schema.getProject()).getVisibilitySettings().getDialogHeaders().value()) {
             headerBackground = schema.getEnvironmentType().getColor();
         }

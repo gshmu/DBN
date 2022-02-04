@@ -1,5 +1,6 @@
 package com.dci.intellij.dbn.common.ui;
 
+import com.dci.intellij.dbn.common.color.Colors;
 import com.dci.intellij.dbn.common.event.ProjectEvents;
 import com.dci.intellij.dbn.common.util.Commons;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
@@ -113,7 +114,7 @@ public class DBNHeaderForm extends DBNFormImpl{
                 background = connectionHandler.getEnvironmentType().getColor();
             }
         }
-        mainPanel.setBackground(Commons.nvl(background, UIUtil.getPanelBackground()));
+        mainPanel.setBackground(Commons.nvl(background, Colors.getPanelBackground()));
     }
 
     public void setBackground(Color background) {

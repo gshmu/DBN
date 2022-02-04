@@ -1,7 +1,6 @@
 package com.dci.intellij.dbn.common.ui.table;
 
-import com.dci.intellij.dbn.common.Colors;
-import com.intellij.util.ui.UIUtil;
+import com.dci.intellij.dbn.common.color.Colors;
 
 import javax.swing.JList;
 
@@ -15,12 +14,12 @@ public class IndexTableGutterCellRenderer extends DBNTableGutterRendererBase {
         boolean isCaretRow = table.getCellSelectionEnabled() && table.getSelectedRow() == index && table.getSelectedRowCount() == 1;
 
         mainPanel.setBackground(isSelected ?
-                Colors.tableSelectionBackgroundColor(true) :
+                Colors.getTableSelectionBackground(true) :
                 isCaretRow ?
-                        Colors.tableCaretRowColor() :
-                        UIUtil.getPanelBackground());
+                        Colors.getTableCaretRowColor() :
+                        Colors.getPanelBackground());
         textLabel.setForeground(isSelected ?
-                Colors.tableSelectionForegroundColor(cellHasFocus) :
-                Colors.tableLineNumberColor());
+                Colors.getTableSelectionForeground(cellHasFocus) :
+                Colors.getTableLineNumberColor());
     }
 }

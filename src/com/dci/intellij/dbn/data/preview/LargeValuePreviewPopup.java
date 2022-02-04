@@ -1,8 +1,8 @@
 package com.dci.intellij.dbn.data.preview;
 
-import com.dci.intellij.dbn.common.Colors;
 import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.common.action.Lookup;
+import com.dci.intellij.dbn.common.color.Colors;
 import com.dci.intellij.dbn.common.dispose.SafeDisposer;
 import com.dci.intellij.dbn.common.ui.Borders;
 import com.dci.intellij.dbn.common.ui.DBNFormImpl;

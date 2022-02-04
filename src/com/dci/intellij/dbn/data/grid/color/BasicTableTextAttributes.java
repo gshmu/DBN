@@ -1,12 +1,12 @@
 package com.dci.intellij.dbn.data.grid.color;
 
+import com.dci.intellij.dbn.common.color.Colors;
 import com.dci.intellij.dbn.common.latent.Latent;
 import com.dci.intellij.dbn.common.util.TextAttributes;
 import com.intellij.openapi.editor.colors.EditorColors;
 import com.intellij.openapi.editor.colors.EditorColorsManager;
 import com.intellij.openapi.editor.colors.EditorColorsScheme;
 import com.intellij.ui.SimpleTextAttributes;
-import com.intellij.util.ui.UIUtil;
 
 import java.awt.Color;
 
@@ -122,8 +122,8 @@ public class BasicTableTextAttributes implements DataGridTextAttributes {
 
     private SimpleTextAttributes createPlainData() {
         SimpleTextAttributes plainData = TextAttributes.getSimpleTextAttributes(DataGridTextAttributesKeys.PLAIN_DATA);
-        if (plainData.getFgColor() == null) plainData = plainData.derive(plainData.getStyle(), UIUtil.getTextFieldForeground(), plainData.getBgColor(), null);
-        if (plainData.getBgColor() == null) plainData = plainData.derive(plainData.getStyle(), plainData.getFgColor(), UIUtil.getTextFieldBackground(), null);
+        if (plainData.getFgColor() == null) plainData = plainData.derive(plainData.getStyle(), Colors.getTextFieldForeground(), plainData.getBgColor(), null);
+        if (plainData.getBgColor() == null) plainData = plainData.derive(plainData.getStyle(), plainData.getFgColor(), Colors.getTextFieldBackground(), null);
         return plainData;
     }
 

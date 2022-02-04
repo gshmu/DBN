@@ -1,6 +1,7 @@
 package com.dci.intellij.dbn.data.record.ui;
 
 import com.dci.intellij.dbn.common.Icons;
+import com.dci.intellij.dbn.common.color.Colors;
 import com.dci.intellij.dbn.common.dispose.DisposableContainer;
 import com.dci.intellij.dbn.common.ui.DBNFormImpl;
 import com.dci.intellij.dbn.common.ui.DBNHeaderForm;
@@ -16,7 +17,6 @@ import com.intellij.openapi.actionSystem.ActionToolbar;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.actionSystem.ToggleAction;
 import com.intellij.openapi.project.Project;
-import com.intellij.util.ui.UIUtil;
 import org.jetbrains.annotations.NotNull;
 
 import javax.swing.BoxLayout;
@@ -51,7 +51,7 @@ public class RecordViewerForm extends DBNFormImpl {
         // HEADER
         String headerTitle = recordViewInfo.getTitle();
         Icon headerIcon = recordViewInfo.getIcon();
-        Color headerBackground = UIUtil.getPanelBackground();
+        Color headerBackground = Colors.getPanelBackground();
         Project project = ensureProject();
         if (getEnvironmentSettings(project).getVisibilitySettings().getDialogHeaders().value()) {
             headerBackground = dataset.getEnvironmentType().getColor();

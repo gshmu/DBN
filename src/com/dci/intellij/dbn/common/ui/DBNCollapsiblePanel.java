@@ -1,7 +1,7 @@
 package com.dci.intellij.dbn.common.ui;
 
-import com.dci.intellij.dbn.common.Colors;
 import com.dci.intellij.dbn.common.Icons;
+import com.dci.intellij.dbn.common.color.Colors;
 import com.dci.intellij.dbn.common.ui.component.DBNComponent;
 import org.jetbrains.annotations.NotNull;
 

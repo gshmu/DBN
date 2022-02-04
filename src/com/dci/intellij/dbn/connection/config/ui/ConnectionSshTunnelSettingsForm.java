@@ -1,5 +1,6 @@
 package com.dci.intellij.dbn.connection.config.ui;
 
+import com.dci.intellij.dbn.common.color.Colors;
 import com.dci.intellij.dbn.common.options.ui.ConfigurationEditorForm;
 import com.dci.intellij.dbn.common.options.ui.ConfigurationEditorUtil;
 import com.dci.intellij.dbn.connection.config.ConnectionSshTunnelSettings;
@@ -7,7 +8,6 @@ import com.dci.intellij.dbn.connection.ssh.SshAuthType;
 import com.intellij.openapi.fileChooser.FileChooserDescriptor;
 import com.intellij.openapi.options.ConfigurationException;
 import com.intellij.openapi.ui.TextFieldWithBrowseButton;
-import com.intellij.util.ui.UIUtil;
 import org.jetbrains.annotations.NotNull;
 
 import javax.swing.JCheckBox;
@@ -89,10 +89,10 @@ public class ConnectionSshTunnelSettingsForm extends ConfigurationEditorForm<Con
         userTextField.setEnabled(enabled);
         authTypeComboBox.setEnabled(enabled);
         passwordField.setEnabled(enabled);
-        passwordField.setBackground(enabled ? UIUtil.getTextFieldBackground() : UIUtil.getPanelBackground());
+        passwordField.setBackground(enabled ? Colors.getTextFieldBackground() : Colors.getPanelBackground());
         keyFileField.setEnabled(enabled);
         keyPassphraseField.setEnabled(enabled);
-        keyPassphraseField.setBackground(enabled ? UIUtil.getTextFieldBackground() : UIUtil.getPanelBackground());
+        keyPassphraseField.setBackground(enabled ? Colors.getTextFieldBackground() : Colors.getPanelBackground());
 
     }
 
