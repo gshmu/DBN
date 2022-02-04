@@ -1,6 +1,5 @@
 package com.dci.intellij.dbn.editor.data.model;
 
-import com.dci.intellij.dbn.common.thread.Synchronized;
 import com.dci.intellij.dbn.common.util.RefreshableValue;
 import com.dci.intellij.dbn.data.grid.options.DataGridSettings;
 import com.dci.intellij.dbn.data.model.resultSet.ResultSetColumnInfo;
@@ -13,12 +12,14 @@ import com.dci.intellij.dbn.object.lookup.DBObjectRef;
 import com.intellij.openapi.project.Project;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
+import lombok.Setter;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.List;
 
 @Getter
+@Setter
 @EqualsAndHashCode(callSuper = true)
 public class DatasetEditorColumnInfo extends ResultSetColumnInfo {
     private static final List<String> EMPTY_LIST = new ArrayList<>(0);
@@ -29,7 +30,7 @@ public class DatasetEditorColumnInfo extends ResultSetColumnInfo {
     private final DBObjectRef<DBColumn> columnRef;
 
     @EqualsAndHashCode.Exclude
-    private List<String> possibleValues;
+    private volatile List<String> possibleValues;
 
     @EqualsAndHashCode.Exclude
     private final RefreshableValue<Boolean> trackingColumn = new RefreshableValue<Boolean>(2000) {
@@ -58,9 +59,9 @@ public class DatasetEditorColumnInfo extends ResultSetColumnInfo {
     }
 
     public List<String> getPossibleValues() {
-        Synchronized.run(this,
-                () -> possibleValues == null,
-                () -> {
+        if (possibleValues == null) {
+            synchronized (this) {
+                if (possibleValues == null) {
                     possibleValues = EMPTY_LIST;
                     List<String> values = null;
                     DBColumn column = getColumn();
@@ -80,7 +81,8 @@ public class DatasetEditorColumnInfo extends ResultSetColumnInfo {
                         possibleValues = values;
                     }
                 }
-            );
+            }
+        }
         return possibleValues;
     }
 
