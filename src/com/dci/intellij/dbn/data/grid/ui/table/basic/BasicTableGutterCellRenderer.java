@@ -1,10 +1,9 @@
 package com.dci.intellij.dbn.data.grid.ui.table.basic;
 
-import com.dci.intellij.dbn.common.Colors;
+import com.dci.intellij.dbn.common.color.Colors;
 import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.common.ui.table.DBNTable;
 import com.dci.intellij.dbn.common.ui.table.DBNTableGutterRendererBase;
-import com.intellij.util.ui.UIUtil;
 
 import javax.swing.JList;
 
@@ -21,12 +20,12 @@ public class BasicTableGutterCellRenderer extends DBNTableGutterRendererBase {
                 table.getSelectedRowCount() == 1;
 
         mainPanel.setBackground(isSelected ?
-                Colors.tableSelectionBackgroundColor(cellHasFocus) :
+                Colors.getTableSelectionBackground(cellHasFocus) :
                 isCaretRow ?
-                        Colors.tableCaretRowColor() :
-                        UIUtil.getPanelBackground());
+                        Colors.getTableCaretRowColor() :
+                        Colors.getPanelBackground());
         textLabel.setForeground(isSelected ?
-                Colors.tableSelectionForegroundColor(cellHasFocus) :
-                Colors.tableLineNumberColor());
+                Colors.getTableSelectionForeground(cellHasFocus) :
+                Colors.getTableLineNumberColor());
     }
 }

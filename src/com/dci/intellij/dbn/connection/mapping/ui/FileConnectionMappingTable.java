@@ -1,6 +1,6 @@
 package com.dci.intellij.dbn.connection.mapping.ui;
 
-import com.dci.intellij.dbn.common.Colors;
+import com.dci.intellij.dbn.common.color.Colors;
 import com.dci.intellij.dbn.common.thread.Dispatch;
 import com.dci.intellij.dbn.common.thread.Progress;
 import com.dci.intellij.dbn.common.ui.Borders;
@@ -101,7 +101,7 @@ public class FileConnectionMappingTable extends DBNTable<FileConnectionMappingTa
                 if (connection != null) {
                     JBColor color = connection.getEnvironmentType().getColor();
                     if (color != null) {
-                        setBackground(Colors.lighter(color, 10));
+                        setBackground(Colors.softer(color, 30));
                         //setBackground(color.brighter());
                     }
                 }

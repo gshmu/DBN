@@ -1,6 +1,7 @@
 package com.dci.intellij.dbn.common.ui;
 
 import com.dci.intellij.dbn.common.Icons;
+import com.dci.intellij.dbn.common.color.Colors;
 import com.dci.intellij.dbn.common.latent.Loader;
 import com.dci.intellij.dbn.common.property.PropertyHolder;
 import com.dci.intellij.dbn.common.property.PropertyHolderBase;
@@ -15,7 +16,6 @@ import com.intellij.openapi.project.DumbAwareAction;
 import com.intellij.openapi.ui.popup.JBPopupFactory;
 import com.intellij.openapi.ui.popup.ListPopup;
 import com.intellij.ui.ColoredListCellRenderer;
-import com.intellij.util.ui.UIUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -62,7 +62,7 @@ public class DBNComboBox<T extends Presentable> extends JComboBox<T> implements 
         Mouse.removeMouseListeners(this);
 
         addMouseListener(mouseListener);
-        Color background = UIUtil.getTextFieldBackground();
+        Color background = Colors.getTextFieldBackground();
         for (Component component : getComponents()) {
             component.addMouseListener(mouseListener);
         }

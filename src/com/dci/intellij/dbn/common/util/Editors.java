@@ -1,6 +1,6 @@
 package com.dci.intellij.dbn.common.util;
 
-import com.dci.intellij.dbn.common.Colors;
+import com.dci.intellij.dbn.common.color.Colors;
 import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.common.editor.BasicTextEditor;
 import com.dci.intellij.dbn.common.navigation.NavigationInstructions;
@@ -270,9 +270,9 @@ public class Editors {
             EditorColorsScheme scheme = editor.getColorsScheme();
             Color defaultBackground = scheme.getDefaultBackground();
             Dispatch.runConditional(() -> {
-                editorEx.setBackgroundColor(readonly ? Colors.stronger(defaultBackground, 1) : defaultBackground);
+                editorEx.setBackgroundColor(readonly ? Colors.lafDarker(defaultBackground, 1) : defaultBackground);
                 scheme.setColor(EditorColors.CARET_ROW_COLOR, readonly ?
-                        Colors.stronger(defaultBackground, 3) :
+                        Colors.lafDarker(defaultBackground, 3) :
                         EditorColorsManager.getInstance().getGlobalScheme().getColor(EditorColors.CARET_ROW_COLOR));
             });
         }

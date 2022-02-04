@@ -1,9 +1,9 @@
 package com.dci.intellij.dbn.code.common.completion.options.filter.ui;
 
+import com.dci.intellij.dbn.common.color.Colors;
 import com.dci.intellij.dbn.common.ui.tree.DBNTreeTransferHandler;
 import com.dci.intellij.dbn.common.ui.tree.TreeUtil;
 import com.intellij.ui.CheckboxTree;
-import com.intellij.util.ui.UIUtil;
 
 import javax.swing.tree.TreeNode;
 
@@ -17,6 +17,6 @@ public class CodeCompletionFilterTree extends CheckboxTree {
         setExpandedState(TreeUtil.createTreePath(expandedTreeNode), true);
         installSpeedSearch();
         setTransferHandler(DBNTreeTransferHandler.INSTANCE);
-        setBackground(UIUtil.getTextFieldBackground());
+        setBackground(Colors.getTextFieldBackground());
     }
 }

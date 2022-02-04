@@ -1,6 +1,7 @@
 package com.dci.intellij.dbn.common.ui;
 
 import com.dci.intellij.dbn.common.Icons;
+import com.dci.intellij.dbn.common.color.Colors;
 import com.dci.intellij.dbn.common.property.PropertyHolder;
 import com.dci.intellij.dbn.common.util.Actions;
 import com.dci.intellij.dbn.common.util.Commons;
@@ -120,9 +121,9 @@ public abstract class ValueSelector<T extends Presentable> extends JPanel{
         label.setCursor(isEnabled ? Cursor.getPredefinedCursor(Cursor.HAND_CURSOR): Cursor.getDefaultCursor());
         innerPanel.setCursor(isEnabled ? Cursor.getPredefinedCursor(Cursor.HAND_CURSOR) : Cursor.getDefaultCursor());
 
-        innerPanel.setBackground(UIUtil.getPanelBackground());
+        innerPanel.setBackground(Colors.getPanelBackground());
         innerPanel.setFocusable(isEnabled);
-        label.setForeground(isEnabled ? UIUtil.getTextFieldForeground() : UIUtil.getLabelDisabledForeground());
+        label.setForeground(isEnabled ? Colors.getTextFieldForeground() : UIUtil.getLabelDisabledForeground());
     }
 
     public JPanel getInnerPanel() {
@@ -146,7 +147,7 @@ public abstract class ValueSelector<T extends Presentable> extends JPanel{
                 if (popup == null) {
                     JPanel innerPanel = getInnerPanel();
                     innerPanel.setBorder(defaultBorder);
-                    innerPanel.setBackground(UIUtil.getPanelBackground());
+                    innerPanel.setBackground(Colors.getPanelBackground());
 
                     GUIUtil.repaint(ValueSelector.this);
                 }}).
@@ -183,7 +184,7 @@ public abstract class ValueSelector<T extends Presentable> extends JPanel{
                     popup = null;
 
                     innerPanel.setBorder(defaultBorder);
-                    innerPanel.setBackground(UIUtil.getPanelBackground());
+                    innerPanel.setBackground(Colors.getPanelBackground());
                     innerPanel.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
                     label.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
 

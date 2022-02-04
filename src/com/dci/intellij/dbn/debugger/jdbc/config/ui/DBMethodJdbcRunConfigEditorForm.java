@@ -3,6 +3,7 @@ package com.dci.intellij.dbn.debugger.jdbc.config.ui;
 import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.common.action.DumbAwareProjectAction;
 import com.dci.intellij.dbn.common.action.GroupPopupAction;
+import com.dci.intellij.dbn.common.color.Colors;
 import com.dci.intellij.dbn.common.dispose.SafeDisposer;
 import com.dci.intellij.dbn.common.thread.Dispatch;
 import com.dci.intellij.dbn.common.thread.Progress;
@@ -24,7 +25,6 @@ import com.intellij.openapi.actionSystem.ActionToolbar;
 import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.project.Project;
-import com.intellij.util.ui.UIUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -144,7 +144,7 @@ public class DBMethodJdbcRunConfigEditorForm extends DBProgramRunConfigurationEd
 
                         String headerTitle = "No method selected";
                         Icon headerIcon = null;
-                        Color headerBackground = UIUtil.getPanelBackground();
+                        Color headerBackground = Colors.getPanelBackground();
 
                         if (executionInput != null) {
                             DBObjectRef<DBMethod> methodRef = executionInput.getMethodRef();

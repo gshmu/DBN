@@ -1,5 +1,6 @@
 package com.dci.intellij.dbn.data.grid.ui.table.basic;
 
+import com.dci.intellij.dbn.common.color.Colors;
 import com.dci.intellij.dbn.common.event.ApplicationEvents;
 import com.dci.intellij.dbn.common.event.ProjectEvents;
 import com.dci.intellij.dbn.common.locale.options.RegionalSettings;
@@ -72,7 +73,7 @@ public class BasicTable<T extends BasicDataModel<?, ?>> extends DBNTableWithGutt
 
         ApplicationEvents.subscribe(this, EditorColorsManager.TOPIC, this);
         Color bgColor = displayAttributes.getPlainData(false, false).getBgColor();
-        setBackground(bgColor == null ? UIUtil.getTableBackground() : bgColor);
+        setBackground(bgColor == null ? Colors.getTableBackground() : bgColor);
         addMouseListener(Mouse.listener().onClick(e -> {
             if (e.getClickCount() == 1 && e.getButton() == MouseEvent.BUTTON1 && valuePopup == null) {
                 showCellValuePopup();
@@ -229,11 +230,6 @@ public class BasicTable<T extends BasicDataModel<?, ?>> extends DBNTableWithGutt
             if (viewport != null) {
                 viewport.setBackground(background);
                 GUIUtil.repaint(viewport);
-            }
-            JTableHeader tableHeader = getTableHeader();
-            if (tableHeader != null) {
-                tableHeader.setBackground(background);
-                GUIUtil.repaint(tableHeader);
             }
         });
 

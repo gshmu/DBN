@@ -11,7 +11,7 @@ import com.dci.intellij.dbn.common.options.SettingsChangeNotifier;
 import com.dci.intellij.dbn.common.options.ui.ConfigurationEditorForm;
 import com.dci.intellij.dbn.common.ui.Borders;
 import com.dci.intellij.dbn.common.ui.DBNComboBox;
-import com.dci.intellij.dbn.common.ui.GUIUtil;
+import com.dci.intellij.dbn.common.ui.Fonts;
 import com.dci.intellij.dbn.common.ui.ValueSelectorListener;
 import com.dci.intellij.dbn.common.util.Commons;
 import com.intellij.openapi.options.ConfigurationException;
@@ -77,7 +77,7 @@ public class RegionalSettingsEditorForm extends ConfigurationEditorForm<Regional
         resetFormChanges();
         updatePreview();
 
-        Font labelFont = GUIUtil.getEditorFont();
+        Font labelFont = Fonts.getEditorFont();
         Font previewFont = labelFont.deriveFont((float) (labelFont.getSize() * 1.2));
         numberPreviewLabel.setFont(previewFont);
         integerPreviewLabel.setFont(previewFont);

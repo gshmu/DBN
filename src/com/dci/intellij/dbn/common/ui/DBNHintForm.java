@@ -1,7 +1,7 @@
 package com.dci.intellij.dbn.common.ui;
 
-import com.dci.intellij.dbn.common.Colors;
 import com.dci.intellij.dbn.common.Icons;
+import com.dci.intellij.dbn.common.color.Colors;
 import com.dci.intellij.dbn.common.message.MessageType;
 import com.intellij.ui.RoundedLineBorder;
 import com.intellij.uiDesigner.core.GridLayoutManager;
@@ -45,7 +45,7 @@ public class DBNHintForm extends DBNFormImpl {
         hintTextPane.setBackground(background);
         hintTextPane.setText(hintText);
         hintTextPane.setFont(UIUtil.getLabelFont());
-        hintTextPane.setForeground(boxed ? Colors.lighter(UIUtil.getLabelForeground(), 1) : Colors.HINT_COLOR);
+        hintTextPane.setForeground(boxed ? Colors.lafBrighter(Colors.getLabelForeground(), 1) : Colors.HINT_COLOR);
         if (boxed) {
             mainPanel.setBorder(new RoundedLineBorder(UIUtil.getBoundsColor(), 4));
         } else {
@@ -56,11 +56,11 @@ public class DBNHintForm extends DBNFormImpl {
 
     @NotNull
     private Color getBackground() {
-        return boxed ? Colors.lighter(UIUtil.getPanelBackground(), 1) : UIUtil.getPanelBackground();
+        return boxed ? Colors.lafBrighter(Colors.getPanelBackground(), 1) : Colors.getPanelBackground();
     }
 
     public void setHighlighted(boolean highlighted) {
-        Color background = highlighted ? UIUtil.getTextFieldBackground() : getBackground();
+        Color background = highlighted ? Colors.getTextFieldBackground() : getBackground();
         mainPanel.setBackground(background);
         hintTextPane.setBackground(background);
     }

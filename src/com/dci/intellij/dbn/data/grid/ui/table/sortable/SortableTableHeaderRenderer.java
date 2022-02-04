@@ -1,14 +1,13 @@
 package com.dci.intellij.dbn.data.grid.ui.table.sortable;
 
-import com.dci.intellij.dbn.common.Colors;
 import com.dci.intellij.dbn.common.Icons;
+import com.dci.intellij.dbn.common.color.Colors;
 import com.dci.intellij.dbn.common.ui.Borders;
 import com.dci.intellij.dbn.common.ui.table.DBNTableHeaderRendererBase;
 import com.dci.intellij.dbn.data.model.sortable.SortableDataModel;
 import com.dci.intellij.dbn.data.sorting.SortDirection;
 import com.dci.intellij.dbn.data.sorting.SortingInstruction;
 import com.dci.intellij.dbn.data.sorting.SortingState;
-import com.intellij.util.ui.UIUtil;
 
 import javax.swing.Icon;
 import javax.swing.JLabel;
@@ -25,8 +24,8 @@ public class SortableTableHeaderRenderer extends DBNTableHeaderRendererBase {
 
     public SortableTableHeaderRenderer() {
         mainPanel.setOpaque(true);
-        mainPanel.setBackground(UIUtil.getPanelBackground());
-        mainPanel.setBorder(Borders.lineBorder(Colors.TABLE_HEADER_GRID_COLOR, 0, 0, 0, 1));
+        mainPanel.setBackground(Colors.getPanelBackground());
+        mainPanel.setBorder(Borders.lineBorder(Colors.getTableHeaderGridColor(), 0, 0, 0, 1));
     }
 
     @Override

@@ -1,6 +1,7 @@
 package com.dci.intellij.dbn.connection.config.ui;
 
 import com.dci.intellij.dbn.common.Icons;
+import com.dci.intellij.dbn.common.color.Colors;
 import com.dci.intellij.dbn.common.environment.EnvironmentType;
 import com.dci.intellij.dbn.common.event.ProjectEvents;
 import com.dci.intellij.dbn.common.options.ConfigurationHandle;
@@ -31,7 +32,6 @@ import com.intellij.openapi.project.Project;
 import com.intellij.ui.JBColor;
 import com.intellij.ui.components.JBScrollPane;
 import com.intellij.ui.tabs.TabInfo;
-import com.intellij.util.ui.UIUtil;
 import org.jetbrains.annotations.NotNull;
 
 import javax.swing.Icon;
@@ -241,7 +241,7 @@ public class ConnectionSettingsForm extends CompositeConfigurationEditorForm<Con
                 if (configuration.getConnectionId().equals(connectionId)) {
                     if (name != null) headerForm.setTitle(name);
                     if (icon != null) headerForm.setIcon(icon);
-                    if (color != null) headerForm.setBackground(color); else headerForm.setBackground(UIUtil.getPanelBackground());
+                    if (color != null) headerForm.setBackground(color); else headerForm.setBackground(Colors.getPanelBackground());
                     //if (databaseType != null) databaseIconLabel.setIcon(databaseType.getLargeIcon());
                 }
             });

@@ -1,6 +1,7 @@
 package com.dci.intellij.dbn.data.grid.ui.table.resultSet.record;
 
 import com.dci.intellij.dbn.common.Icons;
+import com.dci.intellij.dbn.common.color.Colors;
 import com.dci.intellij.dbn.common.ui.DBNFormImpl;
 import com.dci.intellij.dbn.data.model.ColumnInfo;
 import com.dci.intellij.dbn.data.model.resultSet.ResultSetDataModelCell;
@@ -50,7 +51,7 @@ public class ResultSetRecordViewerColumnForm extends DBNFormImpl {
         valueFieldPanel.add(valueTextField, BorderLayout.CENTER);
         valueTextField.setEditable(false);
         valueTextField.setCursor(Cursor.getPredefinedCursor(Cursor.TEXT_CURSOR));
-        valueTextField.setBackground(UIUtil.getTextFieldBackground());
+        valueTextField.setBackground(Colors.getTextFieldBackground());
         setCell(cell);
     }
 

@@ -1,5 +1,6 @@
 package com.dci.intellij.dbn.execution.script.options.ui;
 
+import com.dci.intellij.dbn.common.color.Colors;
 import com.dci.intellij.dbn.common.thread.Dispatch;
 import com.dci.intellij.dbn.common.ui.DBNForm;
 import com.dci.intellij.dbn.common.ui.Mouse;
@@ -12,7 +13,6 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.ui.TableUtil;
 import com.intellij.util.ui.JBUI;
-import com.intellij.util.ui.UIUtil;
 
 import javax.swing.JTextField;
 import javax.swing.ListSelectionModel;
@@ -34,8 +34,8 @@ public class CmdLineInterfacesTable extends DBNTable<CmdLineInterfacesTableModel
         super(parent, new CmdLineInterfacesTableModel(environmentTypes), true);
         setSelectionMode(ListSelectionModel.SINGLE_INTERVAL_SELECTION);
         getSelectionModel().addListSelectionListener(selectionListener);
-        setSelectionBackground(UIUtil.getTableBackground());
-        setSelectionForeground(UIUtil.getTableForeground());
+        setSelectionBackground(Colors.getTableBackground());
+        setSelectionForeground(Colors.getTableForeground());
         setCellSelectionEnabled(true);
         setDefaultRenderer(Object.class, new CmdLineInterfacesTableCellRenderer());
         adjustRowHeight(3);

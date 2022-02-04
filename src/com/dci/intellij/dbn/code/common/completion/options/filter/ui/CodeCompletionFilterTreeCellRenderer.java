@@ -3,12 +3,13 @@ package com.dci.intellij.dbn.code.common.completion.options.filter.ui;
 import com.dci.intellij.dbn.code.common.completion.options.filter.CodeCompletionFilterOption;
 import com.dci.intellij.dbn.code.common.completion.options.filter.CodeCompletionFilterOptionBundle;
 import com.dci.intellij.dbn.code.common.completion.options.filter.CodeCompletionFilterSettings;
+import com.dci.intellij.dbn.common.color.Colors;
 import com.intellij.ui.CheckboxTree;
 import com.intellij.ui.ColoredTreeCellRenderer;
 import com.intellij.ui.SimpleTextAttributes;
-import com.intellij.util.ui.UIUtil;
 
-import javax.swing.*;
+import javax.swing.Icon;
+import javax.swing.JTree;
 import javax.swing.tree.DefaultMutableTreeNode;
 
 public class CodeCompletionFilterTreeCellRenderer extends CheckboxTree.CheckboxTreeCellRenderer { //implements TreeCellEditor {
@@ -37,8 +38,8 @@ public class CodeCompletionFilterTreeCellRenderer extends CheckboxTree.CheckboxT
             textRenderer.append(codeCompletionFilterSettings.getDisplayName(), SimpleTextAttributes.REGULAR_ATTRIBUTES);
         }
 
-        textRenderer.setBackground(UIUtil.getTextFieldBackground());
-        setBackground(UIUtil.getTextFieldBackground());
+        textRenderer.setBackground(Colors.getTextFieldBackground());
+        setBackground(Colors.getTextFieldBackground());
     }
 }
 
