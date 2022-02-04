@@ -37,15 +37,15 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class DBObjectPsiDirectory implements PsiDirectory, Disposable{
-    private DBObjectRef objectRef;
+    private final DBObjectRef object;
 
-    public DBObjectPsiDirectory(@NotNull DBObjectRef objectRef) {
-        this.objectRef = objectRef;
+    public DBObjectPsiDirectory(@NotNull DBObjectRef object) {
+        this.object = object;
     }
 
     @NotNull
     public DBObject getObject() {
-        DBObject object = objectRef.get();
+        DBObject object = this.object.get();
         return Failsafe.nn(object);
     }
 
@@ -59,7 +59,7 @@ public class DBObjectPsiDirectory implements PsiDirectory, Disposable{
     @Override
     @NotNull
     public String getName() {
-        return objectRef.getObjectName();
+        return object.getObjectName();
     }
 
     @Override

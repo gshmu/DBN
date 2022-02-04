@@ -116,6 +116,8 @@ public class DBObjectVirtualFile<T extends DBObject> extends DBVirtualFileImpl {
         return null;
     }
 
+
+
     @Override
     public Icon getIcon() {
         return objectRef.getObjectType().getIcon();

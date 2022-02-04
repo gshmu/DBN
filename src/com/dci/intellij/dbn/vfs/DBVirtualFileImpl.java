@@ -33,8 +33,8 @@ public abstract class DBVirtualFileImpl extends VirtualFile implements DBVirtual
     private final WeakRef<DatabaseFileSystem> fileSystem;
 
     protected String name;
-    protected String path;
-    protected String url;
+    protected volatile String path;
+    protected volatile String url;
     private int documentSignature;
     private boolean valid = true;
 
@@ -86,9 +86,13 @@ public abstract class DBVirtualFileImpl extends VirtualFile implements DBVirtual
 
     @NotNull
     @Override
-    public final synchronized String getPath() {
+    public final String getPath() {
         if (path == null) {
-            path = createPath();
+            synchronized (this) {
+                if (path == null) {
+                    path = createPath();
+                }
+            }
         }
         return path;
     }
@@ -106,9 +110,13 @@ public abstract class DBVirtualFileImpl extends VirtualFile implements DBVirtual
 
     @NotNull
     @Override
-    public final synchronized String getUrl() {
+    public final String getUrl() {
         if (url == null) {
-            url = createUrl();
+            synchronized (this) {
+                if (url == null) {
+                    url = createUrl();
+                }
+            }
         }
         return url;
     }
