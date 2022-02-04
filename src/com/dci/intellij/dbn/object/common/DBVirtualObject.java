@@ -77,7 +77,7 @@ public class DBVirtualObject extends DBObjectImpl implements PsiReference {
     };
     private static final ObjectReferenceLookupAdapter DATASET_LOOKUP_ADAPTER = new ObjectReferenceLookupAdapter(null, DBObjectType.DATASET, null);
 
-    private boolean loadingChildren;
+    private volatile boolean loadingChildren;
     private PsiElementRef<BasePsiElement> relevantPsiElement;
     private final DBObjectPsiFacade psiFacade;
     private final Map<String, ObjectLookupItemBuilder> lookupItemBuilder = new ConcurrentHashMap<>();
@@ -238,13 +238,17 @@ public class DBVirtualObject extends DBObjectImpl implements PsiReference {
 
     @Override
     @Nullable
-    public synchronized DBObjectList<DBObject> getChildObjectList(DBObjectType objectType) {
+    public DBObjectList<DBObject> getChildObjectList(DBObjectType objectType) {
         if (!loadingChildren) {
-            try {
-                loadingChildren = true;
-                return loadChildObjectList(objectType);
-            } finally {
-                loadingChildren = false;
+            synchronized (this) {
+                if (!loadingChildren) {
+                    try {
+                        loadingChildren = true;
+                        return loadChildObjectList(objectType);
+                    } finally {
+                        loadingChildren = false;
+                    }
+                }
             }
         }
         return null;

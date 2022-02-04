@@ -39,7 +39,7 @@ import static com.dci.intellij.dbn.object.type.DBObjectType.*;
 public abstract class DBSchemaObjectImpl<M extends DBObjectMetadata> extends DBObjectImpl<M> implements DBSchemaObject {
     private DBObjectList<DBObject> referencedObjects;
     private DBObjectList<DBObject> referencingObjects;
-    private DBObjectStatusHolder objectStatus;
+    private volatile DBObjectStatusHolder objectStatus;
 
     public DBSchemaObjectImpl(@NotNull DBSchema schema, M metadata) throws SQLException {
         super(schema, metadata);
@@ -66,9 +66,13 @@ public abstract class DBSchemaObjectImpl<M extends DBObjectMetadata> extends DBO
     }
 
     @Override
-    public synchronized DBObjectStatusHolder getStatus() {
+    public DBObjectStatusHolder getStatus() {
         if (objectStatus == null) {
-            objectStatus = new DBObjectStatusHolder(getContentType());
+            synchronized (this) {
+                if (objectStatus == null) {
+                    objectStatus = new DBObjectStatusHolder(getContentType());
+                }
+            }
         }
         return objectStatus;
     }

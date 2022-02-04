@@ -55,7 +55,7 @@ import static com.dci.intellij.dbn.object.type.DBObjectType.*;
 public class DBObjectListImpl<T extends DBObject> extends DynamicContentImpl<T> implements DBObjectList<T> {
     private final DBObjectType objectType;
     private ObjectQuickFilter<T> quickFilter;
-    private PsiDirectory psiDirectory;
+    private volatile PsiDirectory psiDirectory;
 
     DBObjectListImpl(
             @NotNull DBObjectType objectType,
@@ -258,13 +258,19 @@ public class DBObjectListImpl<T extends DBObject> extends DynamicContentImpl<T> 
     }
 
     @Override
-    public synchronized PsiDirectory getPsiDirectory() {
+    public PsiDirectory getPsiDirectory() {
         if (psiDirectory == null) {
-            Failsafe.nd(this);
-            psiDirectory = new DBObjectListPsiDirectory(this);
+            synchronized (this) {
+                if (psiDirectory == null) {
+                    Failsafe.nd(this);
+                    psiDirectory = new DBObjectListPsiDirectory(this);
+                }
+            }
         }
         return psiDirectory;
     }
+
+
 
     @Override
     public void notifyChangeListeners() {

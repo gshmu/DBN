@@ -4,25 +4,29 @@ import com.dci.intellij.dbn.language.common.WeakRef;
 import lombok.SneakyThrows;
 
 abstract class WeakRefLatent<T> implements Latent<T>{
-    private WeakRef<T> valueRef;
-    private boolean loaded;
+    private WeakRef<T> value;
+    private volatile boolean loaded;
 
     WeakRefLatent() {}
 
     @SneakyThrows
-    public final synchronized T get() {
+    public final T get() {
         if (!loaded) {
-            T value = getLoader().load();
-            valueRef = WeakRef.of(value);
-            loaded = true;
+            synchronized (this) {
+                if (!loaded) {
+                    T value = getLoader().load();
+                    this.value = WeakRef.of(value);
+                    loaded = true;
+                }
+            }
         }
-        return WeakRef.get(valueRef);
+        return WeakRef.get(value);
     }
 
     public abstract Loader<T> getLoader();
 
     public final void set(T value) {
-        this.valueRef = WeakRef.of(value);
+        this.value = WeakRef.of(value);
         loaded = true;
     }
 
@@ -31,12 +35,12 @@ abstract class WeakRefLatent<T> implements Latent<T>{
     }
 
     public void reset() {
-        valueRef = null;
+        value = null;
         loaded = false;
     }
 
     @Override
     public T value() {
-        return WeakRef.get(valueRef);
+        return WeakRef.get(value);
     }
 }
