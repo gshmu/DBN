@@ -31,9 +31,11 @@ public abstract class DBNTableGutterRendererBase implements DBNTableGutterRender
         textLabel.setText("");
         iconLabel.setText("");
         textLabel.setFont(Fonts.getEditorFont());
-        textLabel.setForeground(Colors.getTableLineNumberColor());
+        textLabel.setForeground(Colors.getTableGutterForeground());
+        mainPanel.setBackground(Colors.getTableGutterBackground());
         mainPanel.setPreferredSize(new Dimension(40, -1));
         iconLabel.setBorder(Borders.insetBorder(4));
+
 
         Border border = new CustomLineBorder(Colors.getTableHeaderGridColor(), 0, 0, 0, 1);
         mainPanel.setBorder(border);

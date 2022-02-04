@@ -1,6 +1,7 @@
 package com.dci.intellij.dbn.diagnostics.ui;
 
 import com.dci.intellij.dbn.common.action.DataKeys;
+import com.dci.intellij.dbn.common.color.Colors;
 import com.dci.intellij.dbn.common.ui.Borders;
 import com.dci.intellij.dbn.common.ui.DBNFormImpl;
 import com.dci.intellij.dbn.common.ui.table.DBNTable;
@@ -52,7 +53,7 @@ public class ParserDiagnosticsForm extends DBNFormImpl {
         diagnosticsTable = new ParserDiagnosticsTable(this, ParserDiagnosticsTableModel.EMPTY);
         diagnosticsTable.accommodateColumnsSize();
         diagnosticsTableScrollPane.setViewportView(diagnosticsTable);
-        diagnosticsTableScrollPane.getViewport().setBackground(diagnosticsTable.getBackground());
+        diagnosticsTableScrollPane.getViewport().setBackground(Colors.getTableBackground());
 
         mainPanel.setBorder(Borders.BOTTOM_LINE_BORDER);
 

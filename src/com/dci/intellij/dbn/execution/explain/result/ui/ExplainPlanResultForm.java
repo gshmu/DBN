@@ -35,7 +35,7 @@ public class ExplainPlanResultForm extends ExecutionResultFormBase<ExplainPlanRe
         explainPlanTreeTable = new ExplainPlanTreeTable(this, treeTableModel);
 
         resultScrollPane.setViewportView(explainPlanTreeTable);
-        resultScrollPane.getViewport().setBackground(explainPlanTreeTable.getBackground());
+        resultScrollPane.getViewport().setBackground(Colors.getTableBackground());
 
         JPanel panel = new JPanel();
         panel.setBorder(new CustomLineBorder(Colors.getTableHeaderGridColor(), 0, 1, 1, 1));

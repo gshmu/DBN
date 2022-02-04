@@ -23,9 +23,9 @@ public class BasicTableGutterCellRenderer extends DBNTableGutterRendererBase {
                 Colors.getTableSelectionBackground(cellHasFocus) :
                 isCaretRow ?
                         Colors.getTableCaretRowColor() :
-                        Colors.getPanelBackground());
+                        Colors.getTableGutterBackground());
         textLabel.setForeground(isSelected ?
                 Colors.getTableSelectionForeground(cellHasFocus) :
-                Colors.getTableLineNumberColor());
+                Colors.getTableGutterForeground());
     }
 }

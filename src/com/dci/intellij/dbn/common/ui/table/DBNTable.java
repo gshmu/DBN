@@ -102,8 +102,8 @@ public abstract class DBNTable<T extends DBNTableModel> extends JTable implement
             }));
         }
 
-        updateComponentColors();
-        Colors.subscribe(this, () -> updateComponentColors());
+        setSelectionBackground(Colors.getTableSelectionBackground(true));
+        setSelectionForeground(Colors.getTableSelectionForeground(true));
 
         SafeDisposer.register(parent, this);
         SafeDisposer.register(this, tableModel);
@@ -131,11 +131,6 @@ public abstract class DBNTable<T extends DBNTableModel> extends JTable implement
         if (tableHeader != null) {
             tableHeader.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
         }
-    }
-
-    private void updateComponentColors() {
-        setSelectionBackground(Colors.getTableSelectionBackground(true));
-        setSelectionForeground(Colors.getTableSelectionForeground(true));
     }
 
     protected void adjustRowHeight(int padding) {

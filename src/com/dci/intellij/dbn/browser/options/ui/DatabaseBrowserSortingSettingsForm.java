@@ -1,6 +1,7 @@
 package com.dci.intellij.dbn.browser.options.ui;
 
 import com.dci.intellij.dbn.browser.options.DatabaseBrowserSortingSettings;
+import com.dci.intellij.dbn.common.color.Colors;
 import com.dci.intellij.dbn.common.options.ui.ConfigurationEditorForm;
 import com.dci.intellij.dbn.common.ui.Borders;
 import com.dci.intellij.dbn.common.ui.DBNForm;
@@ -12,7 +13,6 @@ import com.dci.intellij.dbn.object.common.sorting.DBObjectComparator;
 import com.dci.intellij.dbn.object.common.sorting.SortingType;
 import com.dci.intellij.dbn.object.type.DBObjectType;
 import com.intellij.openapi.options.ConfigurationException;
-import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.ComboBoxTableRenderer;
 import com.intellij.ui.SimpleTextAttributes;
 import com.intellij.ui.components.JBScrollPane;
@@ -36,10 +36,9 @@ public class DatabaseBrowserSortingSettingsForm extends ConfigurationEditorForm<
 
     public DatabaseBrowserSortingSettingsForm(DatabaseBrowserSortingSettings settings) {
         super(settings);
-        Project project = settings.getProject();
         sortingTypeTable = new SortingTypeTable(this, settings.getComparators());
         sortingTypesScrollPanel.setViewportView(sortingTypeTable);
-        sortingTypesScrollPanel.getViewport().setBackground(sortingTypeTable.getBackground());
+        sortingTypesScrollPanel.getViewport().setBackground(Colors.getTableBackground());
         registerComponent(sortingTypeTable);
     }
 

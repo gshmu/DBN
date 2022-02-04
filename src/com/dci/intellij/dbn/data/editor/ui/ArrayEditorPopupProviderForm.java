@@ -75,11 +75,9 @@ public class ArrayEditorPopupProviderForm extends TextFieldPopupProviderForm {
         listScrollPane.setBorder(Borders.COMPONENT_LINE_BORDER);
         list.initTableGutter();
         list.addKeyListener(this);
-        Color bgColor = TextAttributes.getSimpleTextAttributes(DataGridTextAttributesKeys.PLAIN_DATA).getBgColor();
-        if (bgColor != null) {
-            list.setBackground(bgColor);
-            listScrollPane.getViewport().setBackground(bgColor);
-        }
+        Color background = Colors.getEditorBackground();
+        list.setBackground(background);
+        listScrollPane.getViewport().setBackground(background);
 
         mainPanel.addKeyListener(this);
 

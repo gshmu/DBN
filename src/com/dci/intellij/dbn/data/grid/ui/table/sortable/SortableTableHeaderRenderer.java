@@ -26,6 +26,7 @@ public class SortableTableHeaderRenderer extends DBNTableHeaderRendererBase {
         mainPanel.setOpaque(true);
         mainPanel.setBackground(Colors.getPanelBackground());
         mainPanel.setBorder(Borders.lineBorder(Colors.getTableHeaderGridColor(), 0, 0, 0, 1));
+        nameLabel.setForeground(Colors.getLabelForeground());
     }
 
     @Override
@@ -51,6 +52,7 @@ public class SortableTableHeaderRenderer extends DBNTableHeaderRendererBase {
         }
 
         nameLabel.setText(columnName);
+
 
         FontMetrics fontMetrics = getFontMetrics();
         width += fontMetrics.stringWidth(columnName) + 24;

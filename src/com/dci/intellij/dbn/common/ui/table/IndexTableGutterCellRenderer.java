@@ -20,6 +20,6 @@ public class IndexTableGutterCellRenderer extends DBNTableGutterRendererBase {
                         Colors.getPanelBackground());
         textLabel.setForeground(isSelected ?
                 Colors.getTableSelectionForeground(cellHasFocus) :
-                Colors.getTableLineNumberColor());
+                Colors.getTableGutterForeground());
     }
 }

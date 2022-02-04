@@ -1,5 +1,6 @@
 package com.dci.intellij.dbn.common.util;
 
+import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.common.editor.document.OverrideReadonlyFragmentModificationHandler;
 import com.dci.intellij.dbn.common.event.ProjectEvents;
 import com.dci.intellij.dbn.common.thread.Read;
@@ -87,6 +88,11 @@ public class Documents {
                 });
             }
         }
+    }
+
+    @NotNull
+    public static Document ensureDocument(@NotNull PsiFile file) {
+        return Failsafe.nn(getDocument(file));
     }
 
     @Nullable
