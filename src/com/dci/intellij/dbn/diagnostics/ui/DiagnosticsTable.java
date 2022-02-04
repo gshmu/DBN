@@ -1,6 +1,7 @@
 package com.dci.intellij.dbn.diagnostics.ui;
 
 import com.dci.intellij.dbn.common.ui.Borders;
+import com.dci.intellij.dbn.common.ui.Presentable;
 import com.dci.intellij.dbn.common.ui.component.DBNComponent;
 import com.dci.intellij.dbn.common.ui.table.DBNColoredTableCellRenderer;
 import com.dci.intellij.dbn.common.ui.table.DBNTable;
@@ -35,9 +36,17 @@ public class DiagnosticsTable<T extends AbstractDiagnosticsTableModel> extends D
     private class CellRenderer extends DBNColoredTableCellRenderer {
         @Override
         protected void customizeCellRenderer(DBNTable table, Object value, boolean selected, boolean hasFocus, int row, int column) {
-            DiagnosticEntry entry = (DiagnosticEntry) value;
-            Object columnValue = getModel().getPresentableValue(entry, column);
-            append(columnValue.toString(), SimpleTextAttributes.REGULAR_ATTRIBUTES);
+            DiagnosticEntry<?> entry = (DiagnosticEntry) value;
+            T model = getModel();
+            Object columnValue = model.getValue(entry, column);
+            if (columnValue instanceof Presentable) {
+                Presentable presentable = (Presentable) columnValue;
+                setIcon(presentable.getIcon());
+                append(presentable.getName(), SimpleTextAttributes.REGULAR_ATTRIBUTES);
+            } else {
+                String presentableValue = model.getPresentableValue(entry, column);
+                append(presentableValue, SimpleTextAttributes.REGULAR_ATTRIBUTES);
+            }
             setBorder(Borders.TEXT_FIELD_INSETS);
         }
     }

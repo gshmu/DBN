@@ -2,19 +2,21 @@ package com.dci.intellij.dbn.diagnostics.data;
 
 import lombok.Getter;
 
+import java.util.Objects;
 import java.util.concurrent.atomic.AtomicLong;
 
 @Getter
-public class DiagnosticEntry {
-    private final String identifier;
+public class DiagnosticEntry<T> {
+    private final T identifier;
     private final AtomicLong invocationCount = new AtomicLong();
     private final AtomicLong failureCount = new AtomicLong();
     private final AtomicLong timeoutCount = new AtomicLong();
     private final AtomicLong totalExecutionTime = new AtomicLong();
     private final AtomicLong bestExecutionTime = new AtomicLong();
     private final AtomicLong worstExecutionTime = new AtomicLong();
+    private transient int signature;
 
-    public DiagnosticEntry(String identifier) {
+    public DiagnosticEntry(T identifier) {
         this.identifier = identifier;
     }
 
@@ -63,6 +65,14 @@ public class DiagnosticEntry {
         }
 
         totalExecutionTime.addAndGet(executionTime);
+        signature = Objects.hash(
+                identifier,
+                invocationCount.get(),
+                failureCount.get(),
+                timeoutCount.get(),
+                totalExecutionTime.get(),
+                bestExecutionTime.get(),
+                worstExecutionTime.get());
     }
 
 

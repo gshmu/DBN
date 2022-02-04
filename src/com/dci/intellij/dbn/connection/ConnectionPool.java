@@ -190,7 +190,7 @@ public final class ConnectionPool extends StatefulDisposable.Base implements Not
                     if (attempts > 10) {
                         throw new SQLTimeoutException("Busy connection pool");
                     }
-                    Thread.sleep(TimeUtil.Millis.ONE_SECOND);
+                    Thread.sleep(TimeUtil.Millis.TWO_SECONDS);
                     return allocateConnection(readonly, attempts + 1);
                 } catch (SQLException e) {
                     throw e;

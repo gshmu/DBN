@@ -333,7 +333,7 @@ public class StatementExecutionProcessor {
     @NotNull
     private Context createExecutionContext(@NotNull DBNConnection connection) {
         DiagnosticsManager diagnosticsManager = DiagnosticsManager.getInstance(connection.getProject());
-        DiagnosticBundle diagnostics =  diagnosticsManager.getMetadataInterfaceDiagnostics(connection.getId());
+        DiagnosticBundle<String> diagnostics =  diagnosticsManager.getMetadataInterfaceDiagnostics(connection.getId());
         return StatementExecutor.context(diagnostics, id, timeout);
     }
 }

@@ -5,6 +5,7 @@ import java.util.concurrent.TimeUnit;
 public class TimeUtil {
     public interface Millis{
         long ONE_SECOND = 1000;
+        long TWO_SECONDS = 2 * ONE_SECOND;
         long FIVE_SECONDS = 5 * ONE_SECOND;
         long TEN_SECONDS = 10 * ONE_SECOND;
         long THIRTY_SECONDS = 30 * ONE_SECOND;
