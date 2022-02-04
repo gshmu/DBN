@@ -1,11 +1,11 @@
 package com.dci.intellij.dbn.common.ui.table;
 
+import com.dci.intellij.dbn.common.color.Colors;
 import com.dci.intellij.dbn.common.thread.Dispatch;
 import com.dci.intellij.dbn.common.ui.Borders;
 import com.dci.intellij.dbn.common.ui.component.DBNComponent;
 import com.intellij.ui.SimpleTextAttributes;
 import com.intellij.ui.TableUtil;
-import com.intellij.util.ui.UIUtil;
 import org.jetbrains.annotations.NotNull;
 
 import javax.swing.JTextField;
@@ -20,14 +20,14 @@ import java.awt.Color;
 import java.awt.Component;
 
 public class DBNEditableTable<T extends DBNEditableTableModel> extends DBNTableWithGutter<T> {
-    public static final LineBorder SELECTION_BORDER = new LineBorder(UIUtil.getTableBackground());
+    public static final LineBorder SELECTION_BORDER = new LineBorder(Colors.getTableBackground());
 
     public DBNEditableTable(@NotNull DBNComponent parent, @NotNull T model, boolean showHeader) {
         super(parent, model, showHeader);
         setSelectionMode(ListSelectionModel.SINGLE_INTERVAL_SELECTION);
         getSelectionModel().addListSelectionListener(selectionListener);
-        setSelectionBackground(UIUtil.getTableBackground());
-        setSelectionForeground(UIUtil.getTableForeground());
+        setSelectionBackground(Colors.getTableBackground());
+        setSelectionForeground(Colors.getTableForeground());
         setCellSelectionEnabled(true);
         putClientProperty("terminateEditOnFocusLost", Boolean.TRUE);
 
@@ -39,8 +39,8 @@ public class DBNEditableTable<T extends DBNEditableTableModel> extends DBNTableW
                 Color foreground = table.getForeground();
                 SimpleTextAttributes attributes = SimpleTextAttributes.SIMPLE_CELL_ATTRIBUTES;
                 if (selected && !table.isEditing()) {
-                    background = UIUtil.getListSelectionBackground(true);
-                    foreground = UIUtil.getListSelectionForeground(true);
+                    background = Colors.getListSelectionBackground(true);
+                    foreground = Colors.getListSelectionForeground(true);
                     attributes = SimpleTextAttributes.SELECTED_SIMPLE_CELL_ATTRIBUTES;
 
                 }

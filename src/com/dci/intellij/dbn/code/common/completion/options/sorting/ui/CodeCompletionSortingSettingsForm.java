@@ -4,6 +4,7 @@ import com.dci.intellij.dbn.code.common.completion.options.sorting.CodeCompletio
 import com.dci.intellij.dbn.code.common.completion.options.sorting.CodeCompletionSortingSettings;
 import com.dci.intellij.dbn.code.common.completion.options.sorting.action.MoveDownAction;
 import com.dci.intellij.dbn.code.common.completion.options.sorting.action.MoveUpAction;
+import com.dci.intellij.dbn.common.color.Colors;
 import com.dci.intellij.dbn.common.options.ui.ConfigurationEditorForm;
 import com.dci.intellij.dbn.common.util.Actions;
 import com.dci.intellij.dbn.object.type.DBObjectType;
@@ -52,7 +53,7 @@ public class CodeCompletionSortingSettingsForm extends ConfigurationEditorForm<C
              sortingItemsList.setEnabled(enableCheckBox.isSelected());
              sortingItemsList.setBackground(
                      enableCheckBox.isSelected() ?
-                             UIUtil.getTextFieldBackground() :
+                             Colors.getTextFieldBackground() :
                              UIUtil.getComboBoxDisabledBackground());
              sortingItemsList.clearSelection();
          };
@@ -86,7 +87,7 @@ public class CodeCompletionSortingSettingsForm extends ConfigurationEditorForm<C
         sortingItemsList.setEnabled(getConfiguration().isEnabled());
         sortingItemsList.setBackground(
                 enableCheckBox.isSelected() ?
-                        UIUtil.getTextFieldBackground() :
+                        Colors.getTextFieldBackground() :
                         UIUtil.getComboBoxDisabledBackground());
     }
 

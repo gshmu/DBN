@@ -92,8 +92,8 @@ public class AutoCommitLabel extends DBNPanelImpl implements Disposable {
                 connectionLabel.setFont(disconnected ? Fonts.REGULAR : Fonts.BOLD);
 
                 autoCommitLabel.setForeground(autoCommit ?
-                        com.dci.intellij.dbn.common.Colors.FAILURE_COLOR :
-                        com.dci.intellij.dbn.common.Colors.SUCCESS_COLOR);
+                        com.dci.intellij.dbn.common.color.Colors.FAILURE_COLOR :
+                        com.dci.intellij.dbn.common.color.Colors.SUCCESS_COLOR);
                 autoCommitLabel.setText(autoCommit ? "Auto-Commit ON" : "Auto-Commit OFF");
                 autoCommitLabel.setToolTipText(
                         autoCommit ?

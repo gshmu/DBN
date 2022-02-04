@@ -1,6 +1,6 @@
 package com.dci.intellij.dbn.common.ui;
 
-import com.dci.intellij.dbn.common.Colors;
+import com.dci.intellij.dbn.common.color.Colors;
 import com.intellij.ui.JBColor;
 import com.intellij.ui.border.CustomLineBorder;
 import com.intellij.util.ui.JBUI;

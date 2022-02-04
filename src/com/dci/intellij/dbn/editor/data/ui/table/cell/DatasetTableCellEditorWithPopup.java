@@ -1,5 +1,6 @@
 package com.dci.intellij.dbn.editor.data.ui.table.cell;
 
+import com.dci.intellij.dbn.common.color.Colors;
 import com.dci.intellij.dbn.common.ui.Borders;
 import com.dci.intellij.dbn.data.editor.ui.TextFieldPopupProvider;
 import com.dci.intellij.dbn.data.editor.ui.TextFieldWithPopup;
@@ -8,13 +9,16 @@ import com.dci.intellij.dbn.editor.data.model.DatasetEditorModelCell;
 import com.dci.intellij.dbn.editor.data.options.DataEditorPopupSettings;
 import com.dci.intellij.dbn.editor.data.ui.table.DatasetEditorTable;
 import com.intellij.util.ui.JBUI;
-import com.intellij.util.ui.UIUtil;
 import org.jetbrains.annotations.NotNull;
 
-import javax.swing.*;
+import javax.swing.JLabel;
+import javax.swing.JTable;
+import javax.swing.JTextField;
 import javax.swing.border.CompoundBorder;
 import javax.swing.border.EmptyBorder;
-import java.awt.*;
+import java.awt.Cursor;
+import java.awt.Dimension;
+import java.awt.Font;
 import java.awt.event.KeyEvent;
 
 public class DatasetTableCellEditorWithPopup extends DatasetTableCellEditor {
@@ -144,7 +148,7 @@ public class DatasetTableCellEditorWithPopup extends DatasetTableCellEditor {
             JTable table = getTableComponent();
             if (table != null) {
                 button.setBorder(BUTTON_BORDER);
-                button.setBackground(UIUtil.getTableBackground());
+                button.setBackground(Colors.getTableBackground());
                 button.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
                 int rowHeight = table.getRowHeight();
                 button.setPreferredSize(new Dimension(Math.max(20, rowHeight), rowHeight - 2));

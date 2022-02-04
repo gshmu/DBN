@@ -1,6 +1,6 @@
 package com.dci.intellij.dbn.diagnostics.data;
 
-import com.dci.intellij.dbn.common.Colors;
+import com.dci.intellij.dbn.common.color.Colors;
 import com.intellij.ui.SimpleTextAttributes;
 import lombok.Getter;
 

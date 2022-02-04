@@ -1,6 +1,7 @@
 package com.dci.intellij.dbn.connection.info.ui;
 
 import com.dci.intellij.dbn.common.Icons;
+import com.dci.intellij.dbn.common.color.Colors;
 import com.dci.intellij.dbn.common.database.DatabaseInfo;
 import com.dci.intellij.dbn.common.environment.EnvironmentType;
 import com.dci.intellij.dbn.common.ui.Borders;
@@ -13,7 +14,6 @@ import com.dci.intellij.dbn.connection.DatabaseUrlType;
 import com.dci.intellij.dbn.connection.config.ConnectionDatabaseSettings;
 import com.dci.intellij.dbn.connection.info.ConnectionInfo;
 import com.dci.intellij.dbn.driver.DriverSource;
-import com.intellij.util.ui.UIUtil;
 import org.jetbrains.annotations.NotNull;
 
 import javax.swing.JLabel;
@@ -162,7 +162,7 @@ public class ConnectionInfoForm extends DBNFormImpl{
         label.setVisible(visible);
         textField.setVisible(visible);
         textField.setBorder(Borders.EMPTY_BORDER);
-        textField.setBackground(UIUtil.getPanelBackground());
+        textField.setBackground(Colors.getPanelBackground());
         textField.setEditable(false);
         textField.setText(getPresentableText(value));
         textField.setCursor(Cursor.getPredefinedCursor(Cursor.TEXT_CURSOR));

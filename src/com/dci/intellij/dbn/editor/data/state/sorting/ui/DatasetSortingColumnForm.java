@@ -1,6 +1,7 @@
 package com.dci.intellij.dbn.editor.data.state.sorting.ui;
 
 import com.dci.intellij.dbn.common.Icons;
+import com.dci.intellij.dbn.common.color.Colors;
 import com.dci.intellij.dbn.common.ui.DBNComboBox;
 import com.dci.intellij.dbn.common.ui.DBNFormImpl;
 import com.dci.intellij.dbn.common.ui.ValueSelector;
@@ -42,7 +43,7 @@ public class DatasetSortingColumnForm extends DBNFormImpl {
         columnComboBox.setValues(dataset.getColumns());
         columnComboBox.setSelectedValue(column);
         columnComboBox.set(ValueSelectorOption.HIDE_DESCRIPTION, true);
-        columnComboBox.setBackground(UIUtil.getTextFieldBackground());
+        columnComboBox.setBackground(Colors.getTextFieldBackground());
         dataTypeLabel.setText(column.getDataType().getQualifiedName());
         dataTypeLabel.setForeground(UIUtil.getInactiveTextColor());
 

@@ -1,6 +1,6 @@
 package com.dci.intellij.dbn.execution.statement.result.ui;
 
-import com.dci.intellij.dbn.common.Colors;
+import com.dci.intellij.dbn.common.color.Colors;
 import com.dci.intellij.dbn.common.compatibility.CompatibilityUtil;
 import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.common.environment.EnvironmentType;
@@ -106,7 +106,7 @@ public class PendingTransactionDialogForm extends DBNFormImpl {
             JScrollPane viewerScrollPane = viewer.getScrollPane();
 
             Editors.initEditorHighlighter(viewer, SQLLanguage.INSTANCE, connectionHandler);
-            viewer.setBackgroundColor(Colors.stronger(viewer.getBackgroundColor(), 1));
+            viewer.setBackgroundColor(Colors.lafDarker(viewer.getBackgroundColor(), 1));
             viewerScrollPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
             viewerScrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
             //viewerScrollPane.setBorder(null);

@@ -1,5 +1,6 @@
 package com.dci.intellij.dbn.data.find;
 
+import com.dci.intellij.dbn.common.color.Colors;
 import com.dci.intellij.dbn.common.compatibility.CompatibilityUtil;
 import com.dci.intellij.dbn.common.ui.DBNFormImpl;
 import com.dci.intellij.dbn.common.ui.GUIUtil;
@@ -31,7 +32,6 @@ import com.intellij.openapi.wm.IdeFocusManager;
 import com.intellij.ui.LightColors;
 import com.intellij.ui.components.JBList;
 import com.intellij.util.ArrayUtil;
-import com.intellij.util.ui.UIUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -476,7 +476,7 @@ public class DataSearchComponent extends DBNFormImpl implements SelectionListene
     }
 
     private void setRegularBackground() {
-        searchField.setBackground(UIUtil.getTextFieldBackground());
+        searchField.setBackground(Colors.getTextFieldBackground());
     }
 
     public String getTextInField() {

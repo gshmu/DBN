@@ -1,6 +1,6 @@
 package com.dci.intellij.dbn.data.grid.ui.table.basic;
 
-import com.dci.intellij.dbn.common.Colors;
+import com.dci.intellij.dbn.common.color.Colors;
 import com.dci.intellij.dbn.common.thread.Dispatch;
 import com.dci.intellij.dbn.data.grid.options.DataGridSettings;
 import com.intellij.ide.IdeTooltip;
@@ -23,7 +23,7 @@ public class BasicTableScrollPane extends JBScrollPane{
 
     public BasicTableScrollPane() {
         JPanel panel = new JPanel();
-        panel.setBorder(new CustomLineBorder(Colors.TABLE_HEADER_GRID_COLOR, 0, 0, 1, 1));
+        panel.setBorder(new CustomLineBorder(Colors.getTableHeaderGridColor(), 0, 0, 1, 1));
         setCorner(ScrollPaneConstants.UPPER_LEFT_CORNER, panel);
     }
 

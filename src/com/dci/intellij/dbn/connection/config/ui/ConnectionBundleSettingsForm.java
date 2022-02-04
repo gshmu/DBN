@@ -1,6 +1,7 @@
 package com.dci.intellij.dbn.connection.config.ui;
 
 import com.dci.intellij.dbn.common.action.DataKeys;
+import com.dci.intellij.dbn.common.color.Colors;
 import com.dci.intellij.dbn.common.database.DatabaseInfo;
 import com.dci.intellij.dbn.common.dispose.DisposableContainer;
 import com.dci.intellij.dbn.common.options.ui.ConfigurationEditorForm;
@@ -75,8 +76,8 @@ public class ConnectionBundleSettingsForm extends ConfigurationEditorForm<Connec
         connectionsList = new JBList<>(new ConnectionListModel(configuration));
         connectionsList.addListSelectionListener(this);
         connectionsList.setCellRenderer(new ConnectionConfigListCellRenderer());
-        connectionsList.setFont(com.intellij.util.ui.UIUtil.getLabelFont());
-        connectionsList.setBackground(UIUtil.getTextFieldBackground());
+        connectionsList.setFont(UIUtil.getLabelFont());
+        connectionsList.setBackground(Colors.getTextFieldBackground());
 
         ActionToolbar actionToolbar = Actions.createActionToolbar(actionsPanel,"", true, "DBNavigator.ActionGroup.ConnectionSettings");
         JComponent component = actionToolbar.getComponent();
@@ -281,7 +282,7 @@ public class ConnectionBundleSettingsForm extends ConfigurationEditorForm<Connec
                     List<Element> configElements = rootElement.getChildren();
                     ConnectionListModel model = (ConnectionListModel) connectionsList.getModel();
                     int index = connectionsList.getModel().getSize();
-                    List<Integer> selectedIndexes = new ArrayList<Integer>();
+                    List<Integer> selectedIndexes = new ArrayList<>();
                     ConnectionBundleSettings configuration = getConfiguration();
                     for (Element configElement : configElements) {
                         ConnectionSettings clone = new ConnectionSettings(configuration);

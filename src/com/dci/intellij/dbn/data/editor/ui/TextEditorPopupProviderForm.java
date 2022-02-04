@@ -1,7 +1,7 @@
 package com.dci.intellij.dbn.data.editor.ui;
 
-import com.dci.intellij.dbn.common.Colors;
 import com.dci.intellij.dbn.common.Icons;
+import com.dci.intellij.dbn.common.color.Colors;
 import com.dci.intellij.dbn.common.ui.Borders;
 import com.dci.intellij.dbn.common.ui.GUIUtil;
 import com.dci.intellij.dbn.common.ui.KeyUtil;
@@ -22,7 +22,6 @@ import com.intellij.openapi.ui.popup.JBPopupFactory;
 import com.intellij.ui.DocumentAdapter;
 import com.intellij.ui.SimpleTextAttributes;
 import com.intellij.util.ui.JBUI;
-import com.intellij.util.ui.UIUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -75,16 +74,16 @@ public class TextEditorPopupProviderForm extends TextFieldPopupProviderForm {
     }
 
     private void updateComponentColors() {
-        GUIUtil.setPanelBackground(mainPanel, UIUtil.getPanelBackground());
+        GUIUtil.setPanelBackground(mainPanel, Colors.getPanelBackground());
 
         SimpleTextAttributes textAttributes = TextAttributes.getSimpleTextAttributes(DataGridTextAttributesKeys.DEFAULT_PLAIN_DATA);
         editorTextArea.setBackground(Commons.nvl(
                 textAttributes.getBgColor(),
-                UIUtil.getTextFieldBackground()));
+                Colors.getTextFieldBackground()));
 
         editorTextArea.setForeground(Commons.nvl(
                 textAttributes.getFgColor(),
-                UIUtil.getTextFieldForeground()));
+                Colors.getTextFieldForeground()));
     }
 
 

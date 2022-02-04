@@ -1,7 +1,7 @@
 package com.dci.intellij.dbn.data.editor.ui;
 
-import com.dci.intellij.dbn.common.Colors;
 import com.dci.intellij.dbn.common.Icons;
+import com.dci.intellij.dbn.common.color.Colors;
 import com.dci.intellij.dbn.common.locale.Formatter;
 import com.dci.intellij.dbn.common.ui.Borders;
 import com.dci.intellij.dbn.common.ui.GUIUtil;
@@ -129,9 +129,9 @@ public class CalendarPopupProviderForm extends TextFieldPopupProviderForm implem
     }
 
     private void updateComponentColors() {
-        Color panelBackground = UIUtil.getPanelBackground();
-        Color labelForeground = UIUtil.getLabelForeground();
-        Color tableBackground = UIUtil.getTableBackground();
+        Color panelBackground = Colors.getPanelBackground();
+        Color labelForeground = Colors.getLabelForeground();
+        Color tableBackground = Colors.getTableBackground();
 
         GUIUtil.setPanelBackground(mainPanel, panelBackground);
         timeLabel.setForeground(labelForeground);
@@ -549,7 +549,7 @@ public class CalendarPopupProviderForm extends TextFieldPopupProviderForm implem
      *                  TableCellRenderers                *
      ******************************************************/
     private static class CalendarTableCellRenderer extends DefaultTableCellRenderer {
-        static final Border SELECTION_BORDER = new CompoundBorder(new LineBorder(UIUtil.getLabelForeground(), 1, false), JBUI.Borders.emptyRight(6));
+        static final Border SELECTION_BORDER = new CompoundBorder(new LineBorder(Colors.getLabelForeground(), 1, false), JBUI.Borders.emptyRight(6));
         static final Border EMPTY_BORDER = JBUI.Borders.empty(1, 1, 1, 9);
         static final Color INACTIVE_DAY_COLOR = new JBColor(new Color(0xC0C0C0), new Color(0x5B5B5B));
 
@@ -561,13 +561,13 @@ public class CalendarPopupProviderForm extends TextFieldPopupProviderForm implem
             boolean isInputDate = model.isInputDate(row, column);
             boolean isFromActiveMonth = model.isFromActiveMonth(row, column);
             Color foreground =
-                    isInputDate ? UIUtil.getTableForeground() :
-                            isFromActiveMonth ? UIUtil.getLabelForeground() : INACTIVE_DAY_COLOR;
+                    isInputDate ? Colors.getTableForeground() :
+                    isFromActiveMonth ? Colors.getLabelForeground() : INACTIVE_DAY_COLOR;
 
-            setForeground(isSelected ? UIUtil.getTableSelectionForeground(true) : foreground);
+            setForeground(isSelected ? Colors.getTableSelectionForeground(true) : foreground);
             setHorizontalAlignment(RIGHT);
             setBorder(isInputDate && !isSelected ? SELECTION_BORDER : EMPTY_BORDER);
-            setBackground(isSelected ? UIUtil.getListSelectionBackground(true) :  UIUtil.getTableBackground());
+            setBackground(isSelected ? Colors.getListSelectionBackground(true) :  Colors.getTableBackground());
             //setBorder(new DottedBorder(Color.BLACK));
             return component;
         }

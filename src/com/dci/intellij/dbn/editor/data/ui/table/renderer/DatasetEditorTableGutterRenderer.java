@@ -1,12 +1,11 @@
 package com.dci.intellij.dbn.editor.data.ui.table.renderer;
 
-import com.dci.intellij.dbn.common.Colors;
 import com.dci.intellij.dbn.common.Icons;
+import com.dci.intellij.dbn.common.color.Colors;
 import com.dci.intellij.dbn.common.ui.table.DBNTableGutterRendererBase;
 import com.dci.intellij.dbn.data.grid.ui.table.basic.BasicTableGutter;
 import com.dci.intellij.dbn.editor.data.model.DatasetEditorModelRow;
 import com.dci.intellij.dbn.editor.data.ui.table.DatasetEditorTable;
-import com.intellij.util.ui.UIUtil;
 
 import javax.swing.Icon;
 import javax.swing.JList;
@@ -39,14 +38,14 @@ public class DatasetEditorTableGutterRenderer extends DBNTableGutterRendererBase
 
         boolean isCaretRow = table.getCellSelectionEnabled() && table.getSelectedRow() == index && table.getSelectedRowCount() == 1;
         Color background = isSelected ?
-                Colors.tableSelectionBackgroundColor(cellHasFocus) :
+                Colors.getTableSelectionBackground(cellHasFocus) :
                 isCaretRow ?
-                        Colors.tableCaretRowColor() :
-                        UIUtil.getPanelBackground();
+                        Colors.getTableCaretRowColor() :
+                        Colors.getPanelBackground();
         mainPanel.setBackground(background);
         iconLabel.setBackground(background);
         textLabel.setForeground(isSelected ?
-                Colors.tableSelectionForegroundColor(cellHasFocus) :
-                Colors.tableLineNumberColor());
+                Colors.getTableSelectionForeground(cellHasFocus) :
+                Colors.getTableLineNumberColor());
     }
 }

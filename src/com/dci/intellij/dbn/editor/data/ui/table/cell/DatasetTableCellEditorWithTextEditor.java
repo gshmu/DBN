@@ -1,6 +1,6 @@
 package com.dci.intellij.dbn.editor.data.ui.table.cell;
 
-import com.dci.intellij.dbn.common.Colors;
+import com.dci.intellij.dbn.common.color.Colors;
 import com.dci.intellij.dbn.common.ui.Borders;
 import com.dci.intellij.dbn.common.ui.KeyUtil;
 import com.dci.intellij.dbn.data.editor.ui.TextFieldWithTextEditor;

@@ -1,6 +1,7 @@
 package com.dci.intellij.dbn.data.export.ui;
 
 import com.dci.intellij.dbn.common.Icons;
+import com.dci.intellij.dbn.common.color.Colors;
 import com.dci.intellij.dbn.common.ui.DBNFormImpl;
 import com.dci.intellij.dbn.common.ui.DBNHeaderForm;
 import com.dci.intellij.dbn.common.util.Messages;
@@ -18,7 +19,6 @@ import com.dci.intellij.dbn.object.lookup.DBObjectRef;
 import com.intellij.openapi.fileChooser.FileChooserDescriptor;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.TextFieldWithBrowseButton;
-import com.intellij.util.ui.UIUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -146,7 +146,7 @@ public class ExportDataForm extends DBNFormImpl {
 
         String headerTitle;
         Icon headerIcon;
-        Color headerBackground = UIUtil.getPanelBackground();
+        Color headerBackground = Colors.getPanelBackground();
         if (getEnvironmentSettings(project).getVisibilitySettings().getDialogHeaders().value()) {
             headerBackground = connectionHandler.getEnvironmentType().getColor();
         }

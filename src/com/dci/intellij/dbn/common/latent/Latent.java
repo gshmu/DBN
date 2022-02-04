@@ -1,7 +1,7 @@
 package com.dci.intellij.dbn.common.latent;
 
 
-import com.dci.intellij.dbn.common.Colors;
+import com.dci.intellij.dbn.common.color.Colors;
 import com.dci.intellij.dbn.common.latent.impl.BasicLatentImpl;
 import com.dci.intellij.dbn.common.latent.impl.MutableLatentImpl;
 
