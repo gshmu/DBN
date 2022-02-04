@@ -113,7 +113,7 @@ public class DBObjectBundleImpl extends BrowserTreeNodeBase implements DBObjectB
     private final ConnectionHandlerRef connectionHandler;
     private final BrowserTreeNode treeParent;
     private final List<BrowserTreeNode> allPossibleTreeChildren;
-    private List<BrowserTreeNode> visibleTreeChildren;
+    private volatile List<BrowserTreeNode> visibleTreeChildren;
     private boolean treeChildrenLoaded;
 
     private final DBObjectList<DBConsole> consoles;
@@ -381,12 +381,16 @@ public class DBObjectBundleImpl extends BrowserTreeNodeBase implements DBObjectB
     }
 
     @Override
-    public synchronized List<? extends BrowserTreeNode> getChildren() {
+    public List<? extends BrowserTreeNode> getChildren() {
         if (visibleTreeChildren == null) {
-            visibleTreeChildren = new ArrayList<>();
-            visibleTreeChildren.add(new LoadInProgressTreeNode(this));
+            synchronized (this) {
+                if (visibleTreeChildren == null) {
+                    visibleTreeChildren = new ArrayList<>();
+                    visibleTreeChildren.add(new LoadInProgressTreeNode(this));
 
-            Background.run(() -> buildTreeChildren());
+                    Background.run(() -> buildTreeChildren());
+                }
+            }
         }
         return visibleTreeChildren;
     }
