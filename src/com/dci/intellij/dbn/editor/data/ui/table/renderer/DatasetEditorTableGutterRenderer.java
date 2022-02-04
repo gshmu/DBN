@@ -46,6 +46,6 @@ public class DatasetEditorTableGutterRenderer extends DBNTableGutterRendererBase
         iconLabel.setBackground(background);
         textLabel.setForeground(isSelected ?
                 Colors.getTableSelectionForeground(cellHasFocus) :
-                Colors.getTableLineNumberColor());
+                Colors.getTableGutterForeground());
     }
 }

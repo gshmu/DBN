@@ -28,7 +28,6 @@ import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.editor.EditorFactory;
 import com.intellij.openapi.editor.colors.EditorColors;
-import com.intellij.openapi.editor.colors.EditorColorsManager;
 import com.intellij.openapi.editor.colors.EditorColorsScheme;
 import com.intellij.openapi.editor.ex.EditorEx;
 import com.intellij.openapi.editor.highlighter.EditorHighlighter;
@@ -268,12 +267,12 @@ public class Editors {
             EditorEx editorEx = (EditorEx) editor;
             editorEx.setViewer(readonly);
             EditorColorsScheme scheme = editor.getColorsScheme();
-            Color defaultBackground = scheme.getDefaultBackground();
             Dispatch.runConditional(() -> {
+                Color defaultBackground = Colors.getEditorBackground();
                 editorEx.setBackgroundColor(readonly ? Colors.lafDarker(defaultBackground, 1) : defaultBackground);
                 scheme.setColor(EditorColors.CARET_ROW_COLOR, readonly ?
                         Colors.lafDarker(defaultBackground, 3) :
-                        EditorColorsManager.getInstance().getGlobalScheme().getColor(EditorColors.CARET_ROW_COLOR));
+                        Colors.getEditorCaretRowBackground());
             });
         }
     }

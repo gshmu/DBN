@@ -1,6 +1,7 @@
 package com.dci.intellij.dbn.browser.options.ui;
 
 import com.dci.intellij.dbn.browser.options.DatabaseBrowserEditorSettings;
+import com.dci.intellij.dbn.common.color.Colors;
 import com.dci.intellij.dbn.common.options.ui.ConfigurationEditorForm;
 import com.dci.intellij.dbn.common.ui.Borders;
 import com.dci.intellij.dbn.common.ui.DBNForm;
@@ -39,7 +40,7 @@ public class DatabaseBrowserEditorSettingsForm extends ConfigurationEditorForm<D
         super(settings);
         editorTypeTable = new EditorTypeTable(this, settings.getOptions());
         editorTypesScrollPanel.setViewportView(editorTypeTable);
-        editorTypesScrollPanel.getViewport().setBackground(editorTypeTable.getBackground());
+        editorTypesScrollPanel.getViewport().setBackground(Colors.getTableBackground());
         registerComponent(editorTypeTable);
     }
 

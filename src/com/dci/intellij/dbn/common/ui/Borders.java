@@ -37,6 +37,10 @@ public final class Borders {
         return new CustomLineBorder(color, top, left, bottom, right);
     }
 
+    public static Border lineBorder(Color color, int thickness) {
+        return new LineBorder(color, thickness);
+    }
+
     public static Border insetBorder(int insets) {
         return INSET_BORDERS.computeIfAbsent(insets, i -> new EmptyBorder(JBUI.insets(i)));
     }

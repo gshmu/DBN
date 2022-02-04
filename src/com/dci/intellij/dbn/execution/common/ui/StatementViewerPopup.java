@@ -1,7 +1,8 @@
 package com.dci.intellij.dbn.execution.common.ui;
 
-import com.dci.intellij.dbn.common.compatibility.CompatibilityUtil;
+import com.dci.intellij.dbn.common.color.Colors;
 import com.dci.intellij.dbn.common.dispose.Failsafe;
+import com.dci.intellij.dbn.common.ui.Borders;
 import com.dci.intellij.dbn.common.util.Documents;
 import com.dci.intellij.dbn.common.util.Editors;
 import com.dci.intellij.dbn.execution.ExecutionResult;
@@ -10,7 +11,6 @@ import com.intellij.openapi.Disposable;
 import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.editor.EditorFactory;
 import com.intellij.openapi.editor.EditorSettings;
-import com.intellij.openapi.editor.colors.ColorKey;
 import com.intellij.openapi.editor.ex.EditorEx;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.popup.ComponentPopupBuilder;
@@ -22,7 +22,6 @@ import com.intellij.psi.PsiFile;
 import org.jetbrains.annotations.NotNull;
 
 import javax.swing.JScrollPane;
-import javax.swing.border.LineBorder;
 import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.Point;
@@ -36,16 +35,16 @@ public class StatementViewerPopup implements Disposable {
         Project project = executionResult.getProject();
 
         PsiFile previewFile = Failsafe.nn(executionResult.createPreviewFile());
-        Document document = Failsafe.nn(Documents.getDocument(previewFile));
+        Document document = Documents.ensureDocument(previewFile);
         viewer = (EditorEx) EditorFactory.getInstance().createViewer(document, project);
         viewer.setEmbeddedIntoDialogWrapper(true);
         Editors.initEditorHighlighter(viewer, SQLLanguage.INSTANCE, executionResult.getConnectionHandler());
-        viewer.setBackgroundColor(viewer.getColorsScheme().getColor(ColorKey.find("CARET_ROW_COLOR")));
+        viewer.setBackgroundColor(Colors.getEditorCaretRowBackground());
 
         JScrollPane viewerScrollPane = viewer.getScrollPane();
         viewerScrollPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
         viewerScrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
-        viewerScrollPane.setViewportBorder(new LineBorder(CompatibilityUtil.getEditorBackgroundColor(viewer), 4, false));
+        viewerScrollPane.setViewportBorder(Borders.lineBorder(Colors.getEditorCaretRowBackground(), 4));
         viewerScrollPane.setBorder(null);
 
 

@@ -26,8 +26,8 @@ public class BasicTableHeaderRenderer extends DBNTableHeaderRendererBase {
         mainPanel.setOpaque(true);
         mainPanel.setBackground(Colors.getPanelBackground());
         mainPanel.setBorder(Borders.lineBorder(Colors.getTableHeaderGridColor(), 0, 0, 0, 1));
+        nameLabel.setForeground(Colors.getLabelForeground());
         sortingLabel.setText("");
-
     }
 
     @Override

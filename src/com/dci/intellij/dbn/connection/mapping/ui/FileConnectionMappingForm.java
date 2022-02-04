@@ -1,5 +1,6 @@
 package com.dci.intellij.dbn.connection.mapping.ui;
 
+import com.dci.intellij.dbn.common.color.Colors;
 import com.dci.intellij.dbn.common.ui.DBNFormImpl;
 import com.dci.intellij.dbn.common.ui.table.DBNTable;
 import com.dci.intellij.dbn.connection.mapping.FileConnectionMapping;
@@ -30,7 +31,7 @@ public class FileConnectionMappingForm extends DBNFormImpl {
 
         mappingsTable.accommodateColumnsSize();
         mappingsTableScrollPane.setViewportView(mappingsTable);
-        mappingsTableScrollPane.getViewport().setBackground(mappingsTable.getBackground());
+        mappingsTableScrollPane.getViewport().setBackground(Colors.getTableBackground());
 
     }
 

@@ -1,10 +1,11 @@
 package com.dci.intellij.dbn.editor.session.ui;
 
 import com.dci.intellij.dbn.common.Icons;
-import com.dci.intellij.dbn.common.compatibility.CompatibilityUtil;
+import com.dci.intellij.dbn.common.color.Colors;
 import com.dci.intellij.dbn.common.dispose.AlreadyDisposedException;
 import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.common.thread.Background;
+import com.dci.intellij.dbn.common.ui.Borders;
 import com.dci.intellij.dbn.common.ui.DBNFormImpl;
 import com.dci.intellij.dbn.common.ui.component.DBNComponent;
 import com.dci.intellij.dbn.common.util.Actions;
@@ -37,7 +38,6 @@ import org.jetbrains.annotations.NotNull;
 
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
-import javax.swing.border.LineBorder;
 import java.awt.BorderLayout;
 import java.util.concurrent.atomic.AtomicReference;
 
@@ -162,7 +162,7 @@ public class SessionBrowserCurrentSqlPanel extends DBNFormImpl {
         viewerScrollPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
         viewerScrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
         //viewerScrollPane.setBorder(null);
-        viewerScrollPane.setViewportBorder(new LineBorder(CompatibilityUtil.getEditorBackgroundColor(viewer), 4, false));
+        viewerScrollPane.setViewportBorder(Borders.lineBorder(Colors.getEditorBackground(), 4));
 
         EditorSettings settings = viewer.getSettings();
         settings.setFoldingOutlineShown(false);

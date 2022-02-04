@@ -61,7 +61,7 @@ public class SessionBrowserForm extends DBNFormImpl implements SearchableDataCom
         try {
             editorTable = new SessionBrowserTable(this, sessionBrowser);
             editorTableScrollPane.setViewportView(editorTable);
-            editorTableScrollPane.getViewport().setBackground(editorTable.getBackground());
+            editorTableScrollPane.getViewport().setBackground(Colors.getTableBackground());
             editorTable.initTableGutter();
             detailsForm = new SessionBrowserDetailsForm(this, sessionBrowser);
             detailsPanel.add(detailsForm.getComponent(), BorderLayout.CENTER);

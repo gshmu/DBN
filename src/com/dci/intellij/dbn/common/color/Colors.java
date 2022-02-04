@@ -5,6 +5,7 @@ import com.dci.intellij.dbn.common.ui.LookAndFeel;
 import com.dci.intellij.dbn.common.util.Safe;
 import com.dci.intellij.dbn.data.grid.color.DataGridTextAttributesKeys;
 import com.intellij.openapi.Disposable;
+import com.intellij.openapi.editor.HighlighterColors;
 import com.intellij.openapi.editor.colors.EditorColors;
 import com.intellij.openapi.editor.colors.EditorColorsManager;
 import com.intellij.openapi.editor.colors.EditorColorsScheme;
@@ -106,19 +107,34 @@ public final class Colors {
                         DataGridTextAttributesKeys.SELECTION,
                         EditorColors.SELECTION_FOREGROUND_COLOR,
                         () -> UIUtil.getTableSelectionForeground(false)));
-
-    }
-
-    public static Color getTableLineNumberColor() {
-        return cached(17, () -> getGlobalScheme().getColor(EditorColors.LINE_NUMBERS_COLOR));
     }
 
     public static Color getTableGridColor() {
-        return cached(18, () -> new JBColor(() -> lafDarker(Colors.getTableBackground(), 3)));
+        return cached(17, () -> new JBColor(() -> lafDarker(Colors.getTableBackground(), 3)));
     }
 
     public static Color getTableHeaderGridColor() {
-        return cached(19, () -> new JBColor(() -> lafDarker(Colors.getPanelBackground(), 3)));
+        return cached(18, () -> new JBColor(() -> lafDarker(Colors.getPanelBackground(), 3)));
+    }
+
+    public static Color getTableGutterBackground() {
+        return cached(19, () -> background(null, EditorColors.GUTTER_BACKGROUND, () -> getPanelBackground()));
+    }
+
+    public static Color getTableGutterForeground() {
+        return cached(20, () -> background(null, EditorColors.LINE_NUMBERS_COLOR, () -> JBColor.GRAY));
+    }
+
+    public static Color getEditorBackground() {
+        return cached(21, () -> background(HighlighterColors.TEXT, null, () -> JBColor.WHITE));
+    }
+
+    public static Color getEditorForeground() {
+        return cached(22, () -> foreground(HighlighterColors.TEXT, null, () -> JBColor.BLACK));
+    }
+
+    public static Color getEditorCaretRowBackground() {
+        return cached(23, () -> foreground(null, EditorColors.CARET_ROW_COLOR, () -> getEditorBackground()));
     }
 
 
