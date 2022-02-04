@@ -12,7 +12,6 @@ import com.dci.intellij.dbn.common.filter.Filter;
 import com.dci.intellij.dbn.common.latent.Latent;
 import com.dci.intellij.dbn.common.notification.NotificationGroup;
 import com.dci.intellij.dbn.common.notification.NotificationSupport;
-import com.dci.intellij.dbn.common.thread.Synchronized;
 import com.dci.intellij.dbn.common.util.Commons;
 import com.dci.intellij.dbn.common.util.Strings;
 import com.dci.intellij.dbn.common.util.TimeUtil;
@@ -57,7 +56,7 @@ import java.util.concurrent.ConcurrentHashMap;
 public class ConnectionHandlerImpl extends StatefulDisposable.Base implements ConnectionHandler, NotificationSupport {
 
     private ConnectionSettings connectionSettings;
-    private DatabaseInterfaceProvider interfaceProvider;
+    private volatile DatabaseInterfaceProvider interfaceProvider;
     private final WeakRef<ConnectionBundle> connectionBundle;
     private final ConnectionHandlerStatusHolder connectionStatus;
     private final ConnectionPool connectionPool;
@@ -526,16 +525,17 @@ public class ConnectionHandlerImpl extends StatefulDisposable.Base implements Co
 
     @Override
     public DatabaseInterfaceProvider getInterfaceProvider() {
-        Synchronized.run(this,
-                () -> !isValidInterfaceProvider(),
-                () -> {
+        if (!isValidInterfaceProvider()) {
+            synchronized (this) {
+                if (!isValidInterfaceProvider()) {
                     try {
                         interfaceProvider = DatabaseInterfaceProviderFactory.getInterfaceProvider(this);
                     } catch (SQLException e) {
                         log.warn("Failed to resolve database interface provider", e);
                     }
-                });
-
+                }
+            }
+        }
         // do not initialize
         return interfaceProvider == null ? DatabaseInterfaceProviderFactory.GENERIC_INTERFACE_PROVIDER : interfaceProvider;
     }

@@ -187,7 +187,7 @@ public final class ConnectionPool extends StatefulDisposable.Base implements Not
             ConnectionDetailSettings detailSettings = connectionHandler.getSettings().getDetailSettings();
             if (poolConnections.size() >= detailSettings.getMaxConnectionPoolSize() && !ThreadMonitor.isDispatchThread()) {
                 try {
-                    if (attempts > 30) {
+                    if (attempts > 10) {
                         throw new SQLTimeoutException("Busy connection pool");
                     }
                     Thread.sleep(TimeUtil.Millis.ONE_SECOND);

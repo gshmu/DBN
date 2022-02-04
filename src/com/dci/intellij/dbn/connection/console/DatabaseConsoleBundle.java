@@ -4,7 +4,6 @@ import com.dci.intellij.dbn.common.dispose.DisposableContainer;
 import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.common.dispose.SafeDisposer;
 import com.dci.intellij.dbn.common.dispose.StatefulDisposable;
-import com.dci.intellij.dbn.common.thread.Synchronized;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.ConnectionHandlerRef;
 import com.dci.intellij.dbn.object.DBConsole;
@@ -30,9 +29,13 @@ public class DatabaseConsoleBundle extends StatefulDisposable.Base {
     }
 
     public List<DBConsole> getConsoles() {
-        Synchronized.run(this,
-                () -> consoles.isEmpty(),
-                () -> createConsole(getConnectionHandler().getName(), DBConsoleType.STANDARD));
+        if (consoles.isEmpty()) {
+            synchronized (this) {
+                if (consoles.isEmpty()) {
+                    createConsole(getConnectionHandler().getName(), DBConsoleType.STANDARD);
+                }
+            }
+        }
         return consoles;
     }
 

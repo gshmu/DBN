@@ -11,7 +11,6 @@ import com.dci.intellij.dbn.common.load.ProgressMonitor;
 import com.dci.intellij.dbn.common.navigation.NavigationInstructions;
 import com.dci.intellij.dbn.common.notification.NotificationGroup;
 import com.dci.intellij.dbn.common.thread.Progress;
-import com.dci.intellij.dbn.common.thread.Synchronized;
 import com.dci.intellij.dbn.common.util.ChangeTimestamp;
 import com.dci.intellij.dbn.common.util.Documents;
 import com.dci.intellij.dbn.common.util.Editors;
@@ -181,38 +180,34 @@ public class SourceCodeManager extends AbstractProjectComponent implements Persi
     }
 
     private void loadSourceFromDatabase(@NotNull DBSourceCodeVirtualFile sourceCodeFile, boolean force, boolean notifyError) {
-        Synchronized.run(
-                "LOAD_SOURCE:" + sourceCodeFile.getUrl(),
-                () -> {
-                    boolean initialLoad = !sourceCodeFile.isLoaded();
-                    if (sourceCodeFile.isNot(LOADING) && (initialLoad || force)) {
-                        sourceCodeFile.set(LOADING, true);
-                        Editors.setEditorsReadonly(sourceCodeFile, true);
-                        Project project = getProject();
-                        DBSchemaObject object = sourceCodeFile.getObject();
+        boolean initialLoad = !sourceCodeFile.isLoaded();
+        if (sourceCodeFile.isNot(LOADING) && (initialLoad || force)) {
+            sourceCodeFile.set(LOADING, true);
+            Editors.setEditorsReadonly(sourceCodeFile, true);
+            Project project = getProject();
+            DBSchemaObject object = sourceCodeFile.getObject();
 
-                        ProjectEvents.notify(project,
-                                SourceCodeManagerListener.TOPIC,
-                                (listener) -> listener.sourceCodeLoading(sourceCodeFile));
-                        try {
-                            sourceCodeFile.loadSourceFromDatabase();
-                        } catch (SQLException e) {
-                            sourceCodeFile.setSourceLoadError(e.getMessage());
-                            sourceCodeFile.set(MODIFIED, false);
-                            if (notifyError) {
-                                String objectDesc = object.getQualifiedNameWithType();
-                                sendErrorNotification(
-                                        NotificationGroup.SOURCE_CODE,
-                                        "Could not load sourcecode for {0} from database: {1}", objectDesc, e);
-                            }
-                        } finally {
-                            sourceCodeFile.set(LOADING, false);
-                            ProjectEvents.notify(project,
-                                    SourceCodeManagerListener.TOPIC,
-                                    (listener) -> listener.sourceCodeLoaded(sourceCodeFile, initialLoad));
-                        }
-                    }
-                });
+            ProjectEvents.notify(project,
+                    SourceCodeManagerListener.TOPIC,
+                    (listener) -> listener.sourceCodeLoading(sourceCodeFile));
+            try {
+                sourceCodeFile.loadSourceFromDatabase();
+            } catch (SQLException e) {
+                sourceCodeFile.setSourceLoadError(e.getMessage());
+                sourceCodeFile.set(MODIFIED, false);
+                if (notifyError) {
+                    String objectDesc = object.getQualifiedNameWithType();
+                    sendErrorNotification(
+                            NotificationGroup.SOURCE_CODE,
+                            "Could not load sourcecode for {0} from database: {1}", objectDesc, e);
+                }
+            } finally {
+                sourceCodeFile.set(LOADING, false);
+                ProjectEvents.notify(project,
+                        SourceCodeManagerListener.TOPIC,
+                        (listener) -> listener.sourceCodeLoaded(sourceCodeFile, initialLoad));
+            }
+        }
     }
 
     private void saveSourceToDatabase(@NotNull DBSourceCodeVirtualFile sourceCodeFile, @Nullable SourceCodeEditor fileEditor, @Nullable Runnable successCallback) {

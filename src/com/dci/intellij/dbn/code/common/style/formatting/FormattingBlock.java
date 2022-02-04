@@ -4,7 +4,6 @@ import com.dci.intellij.dbn.code.common.style.options.CodeStyleCustomSettings;
 import com.dci.intellij.dbn.code.common.style.options.CodeStyleFormattingOption;
 import com.dci.intellij.dbn.code.common.style.presets.CodeStyleDefaultPresets;
 import com.dci.intellij.dbn.code.common.style.presets.CodeStylePreset;
-import com.dci.intellij.dbn.common.thread.Synchronized;
 import com.dci.intellij.dbn.language.common.DBLanguage;
 import com.dci.intellij.dbn.language.common.DBLanguagePsiFile;
 import com.dci.intellij.dbn.language.common.PsiElementRef;
@@ -43,9 +42,9 @@ public class FormattingBlock implements Block {
     private final CodeStyleSettings codeStyleSettings;
     private final CodeStyleCustomSettings codeStyleCustomSettings;
     private static final List<Block> EMPTY_LIST = new ArrayList<>(0);
-    private List<Block> childBlocks;
-    private FormattingBlock parentBlock;
-    private int index;
+    private volatile List<Block> childBlocks;
+    private final FormattingBlock parentBlock;
+    private final int index;
 
     public FormattingBlock(
             CodeStyleSettings codeStyleSettings,
@@ -329,24 +328,30 @@ public class FormattingBlock implements Block {
     @Override
     @NotNull
     public List<Block> getSubBlocks() {
-        Synchronized.run(this,
-                () -> childBlocks == null,
-                () -> {
-                    PsiElement psiElement = getPsiElement();
-                    PsiElement child = psiElement.getFirstChild();
-                    while (child != null) {
-                        if (!(child instanceof PsiWhiteSpace) /*&& !(child instanceof PsiErrorElement)*/ && child.getTextLength() > 0) {
-                            if (childBlocks == null) childBlocks = new ArrayList<>();
-                            CodeStyleCustomSettings codeStyleCustomSettings = getCodeStyleSettings(child);
-                            FormattingBlock childBlock = new FormattingBlock(codeStyleSettings, codeStyleCustomSettings, child, this, index);
-                            childBlocks.add(childBlock);
-                        }
-                        child = child.getNextSibling();
-                    }
-
-                    if (childBlocks == null) childBlocks = EMPTY_LIST;
-                });
+        if (childBlocks == null) {
+            synchronized (this) {
+                if (childBlocks == null) {
+                    initChildBlocks();
+                }
+            }
+        }
         return childBlocks;
+    }
+
+    private void initChildBlocks() {
+        PsiElement psiElement = getPsiElement();
+        PsiElement child = psiElement.getFirstChild();
+        while (child != null) {
+            if (!(child instanceof PsiWhiteSpace) /*&& !(child instanceof PsiErrorElement)*/ && child.getTextLength() > 0) {
+                if (childBlocks == null) childBlocks = new ArrayList<>();
+                CodeStyleCustomSettings codeStyleCustomSettings = getCodeStyleSettings(child);
+                FormattingBlock childBlock = new FormattingBlock(codeStyleSettings, codeStyleCustomSettings, child, this, index);
+                childBlocks.add(childBlock);
+            }
+            child = child.getNextSibling();
+        }
+
+        if (childBlocks == null) childBlocks = EMPTY_LIST;
     }
 
     private CodeStyleCustomSettings getCodeStyleSettings(PsiElement child) {
