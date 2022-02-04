@@ -1,6 +1,7 @@
 package com.dci.intellij.dbn.connection.transaction.ui;
 
 import com.dci.intellij.dbn.common.Icons;
+import com.dci.intellij.dbn.common.color.Colors;
 import com.dci.intellij.dbn.common.event.ProjectEvents;
 import com.dci.intellij.dbn.common.thread.Dispatch;
 import com.dci.intellij.dbn.common.ui.DBNFormImpl;
@@ -15,8 +16,11 @@ import com.dci.intellij.dbn.connection.transaction.TransactionListener;
 import com.intellij.openapi.project.Project;
 import org.jetbrains.annotations.NotNull;
 
-import javax.swing.*;
-import java.awt.*;
+import javax.swing.JButton;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.ListSelectionModel;
+import java.awt.BorderLayout;
 import java.awt.event.ActionListener;
 import java.util.List;
 
@@ -44,7 +48,7 @@ public class PendingTransactionsDetailForm extends DBNFormImpl {
         PendingTransactionsTableModel transactionsTableModel = new PendingTransactionsTableModel(connectionHandler);
         pendingTransactionsTable = new PendingTransactionsTable(this, transactionsTableModel);
         changesTableScrollPane.setViewportView(pendingTransactionsTable);
-        changesTableScrollPane.getViewport().setBackground(pendingTransactionsTable.getBackground());
+        changesTableScrollPane.getViewport().setBackground(Colors.getTableBackground());
 
         transactionActionsPanel.setVisible(showActions);
         if (showActions) {

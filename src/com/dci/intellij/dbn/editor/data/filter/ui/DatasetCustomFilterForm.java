@@ -1,8 +1,9 @@
 package com.dci.intellij.dbn.editor.data.filter.ui;
 
 import com.dci.intellij.dbn.common.Icons;
-import com.dci.intellij.dbn.common.compatibility.CompatibilityUtil;
+import com.dci.intellij.dbn.common.color.Colors;
 import com.dci.intellij.dbn.common.options.ui.ConfigurationEditorForm;
+import com.dci.intellij.dbn.common.ui.Borders;
 import com.dci.intellij.dbn.common.util.Documents;
 import com.dci.intellij.dbn.common.util.Editors;
 import com.dci.intellij.dbn.common.util.Strings;
@@ -24,7 +25,6 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextField;
-import javax.swing.border.LineBorder;
 import java.awt.BorderLayout;
 import java.util.Objects;
 
@@ -59,7 +59,7 @@ public class DatasetCustomFilterForm extends ConfigurationEditorForm<DatasetCust
         DatabaseFileViewProvider viewProvider = new DatabaseFileViewProvider(project, filterFile, true);
         PsiFile selectStatementFile = filterFile.initializePsiFile(viewProvider, SQLLanguage.INSTANCE);
 
-        document = Documents.getDocument(selectStatementFile);
+        document = Documents.ensureDocument(selectStatementFile);
         document.createGuardedBlock(0, conditionStartOffset);
         editor = (EditorEx) EditorFactory.getInstance().createEditor(document, project);
         Editors.initEditorHighlighter(editor, SQLLanguage.INSTANCE, dataset);
@@ -71,7 +71,7 @@ public class DatasetCustomFilterForm extends ConfigurationEditorForm<DatasetCust
         JScrollPane editorScrollPane = editor.getScrollPane();
         editorScrollPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
         editorScrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
-        editorScrollPane.setViewportBorder(new LineBorder(CompatibilityUtil.getEditorBackgroundColor(editor), 3));
+        editorScrollPane.setViewportBorder(Borders.lineBorder(Colors.getEditorBackground(), 4));
 
         //viewer.setBackgroundColor(viewer.getColorsScheme().getColor(ColorKey.find("CARET_ROW_COLOR")));
         //viewer.getScrollPane().setViewportBorder(new LineBorder(viewer.getBackroundColor(), 4, false));

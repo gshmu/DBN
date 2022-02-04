@@ -1,5 +1,6 @@
 package com.dci.intellij.dbn.execution.statement.result.ui;
 
+import com.dci.intellij.dbn.common.color.Colors;
 import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.common.dispose.SafeDisposer;
 import com.dci.intellij.dbn.common.latent.Latent;
@@ -70,7 +71,7 @@ public class StatementExecutionResultForm extends ExecutionResultFormBase<Statem
         resultTable.setName(executionResult.getName());
 
         resultScrollPane.setViewportView(resultTable);
-        resultScrollPane.getViewport().setBackground(resultTable.getBackground());
+        resultScrollPane.getViewport().setBackground(Colors.getTableBackground());
         resultTable.initTableGutter();
 
         Disposer.register(this, executionResult);

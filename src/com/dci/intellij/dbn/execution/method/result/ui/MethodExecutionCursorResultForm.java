@@ -1,6 +1,7 @@
 package com.dci.intellij.dbn.execution.method.result.ui;
 
 import com.dci.intellij.dbn.common.action.DataKeys;
+import com.dci.intellij.dbn.common.color.Colors;
 import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.common.latent.Latent;
 import com.dci.intellij.dbn.common.ui.DBNFormImpl;
@@ -57,7 +58,7 @@ public class MethodExecutionCursorResultForm extends DBNFormImpl implements Sear
 
         resultPanel.setBorder(IdeBorderFactory.createBorder());
         resultScrollPane.setViewportView(resultTable);
-        resultScrollPane.getViewport().setBackground(resultTable.getBackground());
+        resultScrollPane.getViewport().setBackground(Colors.getTableBackground());
         resultTable.initTableGutter();
 
         ActionToolbar actionToolbar = Actions.createActionToolbar(actionsPanel, "", true, "DBNavigator.ActionGroup.MethodExecutionCursorResult");

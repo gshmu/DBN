@@ -1,6 +1,7 @@
 package com.dci.intellij.dbn.editor.session.ui;
 
 import com.dci.intellij.dbn.common.Icons;
+import com.dci.intellij.dbn.common.color.Colors;
 import com.dci.intellij.dbn.common.ui.DBNFormImpl;
 import com.dci.intellij.dbn.common.ui.component.DBNComponent;
 import com.dci.intellij.dbn.common.ui.tab.TabbedPane;
@@ -36,7 +37,7 @@ public class SessionBrowserDetailsForm extends DBNFormImpl{
         this.sessionBrowser = WeakRef.of(sessionBrowser);
         sessionDetailsTable = new SessionDetailsTable(this);
         sessionDetailsTablePane.setViewportView(sessionDetailsTable);
-        sessionDetailsTablePane.getViewport().setBackground(sessionDetailsTable.getBackground());
+        sessionDetailsTablePane.getViewport().setBackground(Colors.getTableBackground());
 
         detailsTabbedPane = new TabbedPane(this);
         sessionDetailsTabsPanel.add(detailsTabbedPane, BorderLayout.CENTER);

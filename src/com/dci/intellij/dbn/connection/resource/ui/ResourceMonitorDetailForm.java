@@ -1,6 +1,7 @@
 package com.dci.intellij.dbn.connection.resource.ui;
 
 import com.dci.intellij.dbn.common.Icons;
+import com.dci.intellij.dbn.common.color.Colors;
 import com.dci.intellij.dbn.common.event.ProjectEvents;
 import com.dci.intellij.dbn.common.thread.Dispatch;
 import com.dci.intellij.dbn.common.ui.DBNFormImpl;
@@ -80,7 +81,7 @@ public class ResourceMonitorDetailForm extends DBNFormImpl {
         ResourceMonitorTransactionsTableModel transactionsTableModel = new ResourceMonitorTransactionsTableModel(connectionHandler, null);
         transactionsTable = new ResourceMonitorTransactionsTable(this, transactionsTableModel);
         transactionsTableScrollPane.setViewportView(transactionsTable);
-        transactionsTableScrollPane.getViewport().setBackground(transactionsTable.getBackground());
+        transactionsTableScrollPane.getViewport().setBackground(Colors.getTableBackground());
 
         ActionListener actionListener = e -> {
             Project project = connectionHandler.getProject();

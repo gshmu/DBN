@@ -1,9 +1,9 @@
 package com.dci.intellij.dbn.execution.statement.result.ui;
 
 import com.dci.intellij.dbn.common.color.Colors;
-import com.dci.intellij.dbn.common.compatibility.CompatibilityUtil;
 import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.common.environment.EnvironmentType;
+import com.dci.intellij.dbn.common.ui.Borders;
 import com.dci.intellij.dbn.common.ui.DBNFormImpl;
 import com.dci.intellij.dbn.common.ui.DBNHeaderForm;
 import com.dci.intellij.dbn.common.util.Documents;
@@ -28,7 +28,6 @@ import javax.swing.JComponent;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextPane;
-import javax.swing.border.LineBorder;
 import java.awt.BorderLayout;
 
 public class PendingTransactionDialogForm extends DBNFormImpl {
@@ -99,7 +98,7 @@ public class PendingTransactionDialogForm extends DBNFormImpl {
                 currentSchema);
 
         if (selectStatementFile != null) {
-            Document previewDocument = Documents.getDocument(selectStatementFile);
+            Document previewDocument = Failsafe.nn(Documents.getDocument(selectStatementFile));
 
             viewer = (EditorEx) EditorFactory.getInstance().createViewer(previewDocument, project);
             viewer.setEmbeddedIntoDialogWrapper(true);
@@ -110,7 +109,7 @@ public class PendingTransactionDialogForm extends DBNFormImpl {
             viewerScrollPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
             viewerScrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
             //viewerScrollPane.setBorder(null);
-            viewerScrollPane.setViewportBorder(new LineBorder(CompatibilityUtil.getEditorBackgroundColor(viewer), 4, false));
+            viewerScrollPane.setViewportBorder(Borders.lineBorder(Colors.getEditorBackground(), 4));
 
             EditorSettings settings = viewer.getSettings();
             settings.setFoldingOutlineShown(false);
