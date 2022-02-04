@@ -8,8 +8,8 @@ import com.dci.intellij.dbn.diagnostics.data.DiagnosticEntry;
 import com.intellij.openapi.project.Project;
 import org.jetbrains.annotations.NotNull;
 
-public class MetadataDiagnosticsTableModel extends AbstractDiagnosticsTableModel {
-    private final ConnectionHandlerRef connectionHandler;
+public class MetadataDiagnosticsTableModel extends AbstractDiagnosticsTableModel<String> {
+    private final ConnectionHandlerRef connection;
 
     private static final String[] COLUMN_NAMES = new String[] {
             "Identifier",
@@ -21,9 +21,9 @@ public class MetadataDiagnosticsTableModel extends AbstractDiagnosticsTableModel
             "Average Execution Time (ms)",
             "Total Execution Time (ms)"};
 
-    public MetadataDiagnosticsTableModel(ConnectionHandler connectionHandler) {
-        super(connectionHandler.getProject());
-        this.connectionHandler = connectionHandler.getRef();
+    public MetadataDiagnosticsTableModel(ConnectionHandler connection) {
+        super(connection.getProject());
+        this.connection = connection.getRef();
     }
 
     @NotNull
@@ -34,13 +34,13 @@ public class MetadataDiagnosticsTableModel extends AbstractDiagnosticsTableModel
 
     @NotNull
     @Override
-    protected DiagnosticBundle resolveDiagnostics() {
+    protected DiagnosticBundle<String> resolveDiagnostics() {
         DiagnosticsManager diagnosticsManager = DiagnosticsManager.getInstance(getProject());
-        return diagnosticsManager.getMetadataInterfaceDiagnostics(connectionHandler.getConnectionId());
+        return diagnosticsManager.getMetadataInterfaceDiagnostics(connection.getConnectionId());
     }
 
     @Override
-    public Object getValue(DiagnosticEntry entry, int column) {
+    public Object getValue(DiagnosticEntry<String> entry, int column) {
         switch (column) {
             case 0: return entry.getIdentifier();
             case 1: return entry.getInvocationCount();
@@ -55,7 +55,7 @@ public class MetadataDiagnosticsTableModel extends AbstractDiagnosticsTableModel
     }
 
     @Override
-    public String getPresentableValue(DiagnosticEntry entry, int column) {
+    public String getPresentableValue(DiagnosticEntry<String> entry, int column) {
         switch (column) {
             case 0: return entry.getIdentifier();
             case 1: return Long.toString(entry.getInvocationCount());
@@ -69,16 +69,12 @@ public class MetadataDiagnosticsTableModel extends AbstractDiagnosticsTableModel
         return "";
     }
 
-    public ConnectionHandler getConnectionHandler() {
-        return connectionHandler.ensure();
+    public ConnectionHandler getConnection() {
+        return connection.ensure();
     }
 
     @NotNull
     public Project getProject() {
-        return getConnectionHandler().getProject();
-    }
-
-    @Override
-    public void dispose() {
+        return getConnection().getProject();
     }
 }

@@ -32,7 +32,7 @@ public class ConnectionUtil {
         ConnectionPropertiesSettings propertiesSettings = connectionSettings.getPropertiesSettings();
 
         DiagnosticsManager diagnosticsManager = DiagnosticsManager.getInstance(connectionHandler.getProject());
-        DiagnosticBundle diagnostics = diagnosticsManager.getConnectivityDiagnostics(connectionHandler.getConnectionId());
+        DiagnosticBundle<SessionId> diagnostics = diagnosticsManager.getConnectivityDiagnostics(connectionHandler.getConnectionId());
 
 
         // do not retry connection on authentication error unless
@@ -61,13 +61,13 @@ public class ConnectionUtil {
                         connectionHandler.setConnectionInfo(connectionInfo);
                         connectionStatus.setAuthenticationError(null);
                         connectionHandler.getCompatibility().read(connection.getMetaData());
-                        diagnostics.log(sessionId.id(), false, false, millisSince(start));
+                        diagnostics.log(sessionId, false, false, millisSince(start));
                         return connection;
                     } catch (SQLTimeoutException e) {
-                        diagnostics.log(sessionId.id(), false, true, millisSince(start));
+                        diagnostics.log(sessionId, false, true, millisSince(start));
                         throw e;
                     } catch (SQLException e) {
-                        diagnostics.log(sessionId.id(), true, false, millisSince(start));
+                        diagnostics.log(sessionId, true, false, millisSince(start));
                         DatabaseMessageParserInterface messageParserInterface = interfaceProvider.getMessageParserInterface();
                         if (messageParserInterface.isAuthenticationException(e)){
                             authenticationInfo.setPassword(null);
