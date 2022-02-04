@@ -38,6 +38,11 @@ public abstract class DBNMutableTableModel<R> extends StatefulDisposable.Base im
         listeners.forEach(listener -> listener.tableChanged(event));
     }
 
+    public final void notifyRowChanges() {
+        TableModelEvent event = new TableModelEvent(this);
+        listeners.forEach(listener -> listener.tableChanged(event));
+    }
+
     @Override
     protected void disposeInner() {
         listeners.clear();

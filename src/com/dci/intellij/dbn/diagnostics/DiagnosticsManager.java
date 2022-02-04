@@ -6,6 +6,7 @@ import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.common.dispose.SafeDisposer;
 import com.dci.intellij.dbn.common.ui.DBNForm;
 import com.dci.intellij.dbn.connection.ConnectionId;
+import com.dci.intellij.dbn.connection.SessionId;
 import com.dci.intellij.dbn.diagnostics.data.DiagnosticBundle;
 import com.dci.intellij.dbn.diagnostics.data.DiagnosticCategory;
 import com.dci.intellij.dbn.diagnostics.data.DiagnosticType;
@@ -41,8 +42,8 @@ public class DiagnosticsManager extends AbstractProjectComponent implements Pers
     private static final Key<DBNForm> CONTENT_FORM_KEY = Key.create("CONTENT_FORM");
 
 
-    private final Map<ConnectionId, DiagnosticBundle> metadataInterfaceDiagnostics = new ConcurrentHashMap<>();
-    private final Map<ConnectionId, DiagnosticBundle> connectivityDiagnostics = new ConcurrentHashMap<>();
+    private final Map<ConnectionId, DiagnosticBundle<String>> metadataInterfaceDiagnostics = new ConcurrentHashMap<>();
+    private final Map<ConnectionId, DiagnosticBundle<SessionId>> connectivityDiagnostics = new ConcurrentHashMap<>();
 
     public static DiagnosticsManager getInstance(@NotNull Project project) {
         return Failsafe.getComponent(project, DiagnosticsManager.class);
@@ -52,14 +53,14 @@ public class DiagnosticsManager extends AbstractProjectComponent implements Pers
         super(project);
     }
 
-    public DiagnosticBundle getMetadataInterfaceDiagnostics(ConnectionId connectionId) {
+    public DiagnosticBundle<String> getMetadataInterfaceDiagnostics(ConnectionId connectionId) {
         return metadataInterfaceDiagnostics.
-                computeIfAbsent(connectionId, connId -> new DiagnosticBundle(DiagnosticType.METADATA_INTERFACE));
+                computeIfAbsent(connectionId, connId -> new DiagnosticBundle<>(DiagnosticType.METADATA_INTERFACE));
     }
 
-    public DiagnosticBundle getConnectivityDiagnostics(ConnectionId connectionId) {
+    public DiagnosticBundle<SessionId> getConnectivityDiagnostics(ConnectionId connectionId) {
         return connectivityDiagnostics.
-                computeIfAbsent(connectionId, connId -> new DiagnosticBundle(DiagnosticType.DATABASE_CONNECTIVITY));
+                computeIfAbsent(connectionId, connId -> new DiagnosticBundle<>(DiagnosticType.DATABASE_CONNECTIVITY));
     }
 
     public void openDiagnosticsSettings() {

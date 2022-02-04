@@ -10,27 +10,29 @@ import java.util.Objects;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 @Getter
-public final class DiagnosticBundle {
+public final class DiagnosticBundle<T> {
     private final DiagnosticType type;
-    private final List<DiagnosticEntry> entries = new CopyOnWriteArrayList<>();
+    private final List<DiagnosticEntry<T>> entries = new CopyOnWriteArrayList<>();
+    private transient int signature;
 
     public DiagnosticBundle(DiagnosticType type) {
         this.type = type;
     }
 
-    public void log(String identifier, boolean failure, boolean timeout, long executionTime) {
-        DiagnosticEntry entry = ensure(identifier);
+    public void log(T identifier, boolean failure, boolean timeout, long executionTime) {
+        DiagnosticEntry<T> entry = ensure(identifier);
         entry.log(failure, timeout, executionTime);
+        signature = Objects.hash(entries.toArray());
     }
 
     @NotNull
-    private DiagnosticEntry ensure(String identifier) {
-        DiagnosticEntry record = find(identifier);
+    private DiagnosticEntry<T> ensure(T identifier) {
+        DiagnosticEntry<T> record = find(identifier);
         if (record == null) {
             synchronized (this) {
                 record = find(identifier);
                 if (record == null) {
-                    record = new DiagnosticEntry(identifier);
+                    record = new DiagnosticEntry<T>(identifier);
                     entries.add(record);
                 }
             }
@@ -39,7 +41,7 @@ public final class DiagnosticBundle {
     }
 
     @Nullable
-    private DiagnosticEntry find(String identifier) {
+    private DiagnosticEntry<T> find(T identifier) {
         return Lists.first(entries, entry -> Objects.equals(entry.getIdentifier(), identifier));
     }
 

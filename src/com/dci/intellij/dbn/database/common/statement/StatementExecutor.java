@@ -10,7 +10,13 @@ import lombok.Setter;
 import java.sql.SQLException;
 import java.sql.SQLTimeoutException;
 import java.sql.Statement;
-import java.util.concurrent.*;
+import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Future;
+import java.util.concurrent.RejectedExecutionException;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
 
 public final class StatementExecutor {
     private StatementExecutor() {}
@@ -19,7 +25,7 @@ public final class StatementExecutor {
         long start = System.currentTimeMillis();
         String identifier = context.getIdentifier();
         int timeout = context.getTimeout();
-        DiagnosticBundle diagnostics = context.getDiagnostics();
+        DiagnosticBundle<String> diagnostics = context.getDiagnostics();
         try {
             ExecutorService executorService = ThreadPool.databaseInterfaceExecutor();
             Future<T> future = executorService.submit(callable);
@@ -54,7 +60,7 @@ public final class StatementExecutor {
         return System.currentTimeMillis() - start;
     }
 
-    public static Context context(DiagnosticBundle diagnostics, String identifier, int timeout) {
+    public static Context context(DiagnosticBundle<String> diagnostics, String identifier, int timeout) {
         return new Context(diagnostics, identifier, timeout);
     }
 
@@ -62,11 +68,11 @@ public final class StatementExecutor {
     @Setter
     public static final class Context {
         private Statement statement;
-        private final DiagnosticBundle diagnostics;
+        private final DiagnosticBundle<String> diagnostics;
         private final String identifier;
         private final int timeout;
 
-        public Context(DiagnosticBundle diagnostics, String identifier, int timeout) {
+        public Context(DiagnosticBundle<String> diagnostics, String identifier, int timeout) {
             this.diagnostics = diagnostics;
             this.identifier = identifier;
             this.timeout = timeout;
