@@ -1,12 +1,12 @@
 package com.dci.intellij.dbn.common.load;
 
 import com.dci.intellij.dbn.common.dispose.SafeDisposer;
-import com.dci.intellij.dbn.common.thread.Synchronized;
 import com.dci.intellij.dbn.common.util.TimeUtil;
 import com.intellij.openapi.util.IconLoader;
 
-import javax.swing.*;
-import java.awt.*;
+import javax.swing.Icon;
+import java.awt.Component;
+import java.awt.Graphics;
 import java.lang.reflect.Field;
 import java.util.Timer;
 import java.util.TimerTask;
@@ -37,7 +37,7 @@ public class LoadInProgressIcon implements Icon{
     private static int iconIndex;
     private static long lastAccessTimestamp = System.currentTimeMillis();
 
-    private static Timer ICON_ROLLER;
+    private static volatile Timer ICON_ROLLER;
     private static class IconRollerTimerTask extends TimerTask {
         @Override
         public void run() {
@@ -58,12 +58,14 @@ public class LoadInProgressIcon implements Icon{
     };
 
     private static void startRoller() {
-        Synchronized.run(IconRollerTimerTask.class,
-                () -> ICON_ROLLER == null,
-                () -> {
+        if (ICON_ROLLER == null) {
+            synchronized (IconRollerTimerTask.class) {
+                if (ICON_ROLLER == null) {
                     ICON_ROLLER = new Timer("DBN - Load in Progress (icon roller)");
                     ICON_ROLLER.schedule(new IconRollerTimerTask(), ROLL_INTERVAL, ROLL_INTERVAL);
-                });
+                }
+            }
+        }
     }
 
     private static Icon getIcon() {

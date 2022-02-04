@@ -5,7 +5,6 @@ import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.common.notification.NotificationGroup;
 import com.dci.intellij.dbn.common.notification.NotificationSupport;
 import com.dci.intellij.dbn.common.thread.Progress;
-import com.dci.intellij.dbn.common.thread.Synchronized;
 import com.dci.intellij.dbn.common.thread.Write;
 import com.dci.intellij.dbn.common.util.Messages;
 import com.dci.intellij.dbn.common.util.Strings;
@@ -270,7 +269,7 @@ public abstract class DBJdbcDebugProcess<T extends ExecutionInput> extends XDebu
     private void unregisterBreakpoints() {
         Collection<XLineBreakpoint<XBreakpointProperties>> breakpoints = DBBreakpointUtil.getDatabaseBreakpoints(getConnectionHandler());
         Set<Integer> unregisteredBreakpointIds = new HashSet<>();
-        DBBreakpointHandler breakpointHandler = getBreakpointHandler();
+        DBBreakpointHandler<?> breakpointHandler = getBreakpointHandler();
         for (XLineBreakpoint breakpoint : breakpoints) {
             Integer breakpointId = getBreakpointId(breakpoint);
             if (breakpointId != null) {
@@ -287,16 +286,22 @@ public abstract class DBJdbcDebugProcess<T extends ExecutionInput> extends XDebu
 
     @Override
     public void stop() {
-        Synchronized.run(this,
-                () -> isNot(PROCESS_TERMINATED) && isNot(PROCESS_TERMINATING),
-                () -> {
+        if (canStopDebuger()) {
+            synchronized (this) {
+                if (canStopDebuger()) {
                     set(PROCESS_TERMINATING, true);
                     console.system("Stopping debugger...");
                     T executionInput = getExecutionInput();
                     ExecutionContext executionContext = executionInput.getExecutionContext();
                     executionContext.set(CANCELLED, isNot(PROCESS_STOPPED_NORMALLY));
                     stopDebugger();
-                });
+                }
+            }
+        }
+    }
+
+    private boolean canStopDebuger() {
+        return isNot(PROCESS_TERMINATED) && isNot(PROCESS_TERMINATING);
     }
 
     private void stopDebugger() {
