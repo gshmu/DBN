@@ -6,7 +6,7 @@ import javax.swing.table.TableModel;
 
 public interface DBNTableModel<R> extends TableModel, StatefulDisposable {
     default String getPresentableValue(R rowObject, int column) {
-        throw new UnsupportedOperationException();
+        return rowObject == null ? "" : rowObject.toString();
     };
 
     default Object getValue(R rowObject, int column) {
