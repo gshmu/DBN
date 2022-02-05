@@ -9,25 +9,24 @@ import com.intellij.openapi.actionSystem.Shortcut;
 import com.intellij.openapi.keymap.KeymapUtil;
 import org.jetbrains.annotations.NotNull;
 
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.JScrollPane;
+import javax.swing.*;
+import java.awt.*;
 
 public class CodeCompletionFiltersSettingsForm extends CompositeConfigurationEditorForm<CodeCompletionFiltersSettings> {
 
     private JLabel basicCompletionLabel;
     private JLabel extendedCompletionLabel;
     private JPanel mainPanel;
-    private JScrollPane basicScrollPane;
-    private JScrollPane extendedScrollPane;
+    private JPanel basicFilterPanel;
+    private JPanel extendedFilterPanel;
 
     public CodeCompletionFiltersSettingsForm(CodeCompletionFiltersSettings filtersSettings) {
         super(filtersSettings);
         CodeCompletionFilterSettings basicFilterSettings = filtersSettings.getBasicFilterSettings();
         CodeCompletionFilterSettings extendedFilterSettings = filtersSettings.getExtendedFilterSettings();
 
-        basicScrollPane.setViewportView(basicFilterSettings.createComponent());
-        extendedScrollPane.setViewportView(extendedFilterSettings.createComponent());
+        basicFilterPanel.add(basicFilterSettings.createComponent(), BorderLayout.CENTER);
+        extendedFilterPanel.add(extendedFilterSettings.createComponent(), BorderLayout.CENTER);
 
         Shortcut[] basicShortcuts = KeyUtil.getShortcuts(IdeActions.ACTION_CODE_COMPLETION);
         Shortcut[] extendedShortcuts = KeyUtil.getShortcuts(IdeActions.ACTION_SMART_TYPE_COMPLETION);

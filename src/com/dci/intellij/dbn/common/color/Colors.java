@@ -142,7 +142,15 @@ public final class Colors {
     }
 
     public static Color getReadonlyEditorCaretRowBackground() {
-        return cached(25, () -> background(null, null, () -> Colors.lafDarker(getReadonlyEditorBackground(), 1)));
+        return cached(25, () -> new JBColor(() -> Colors.lafDarker(getReadonlyEditorBackground(), 1)));
+    }
+
+    public static Color getLightPanelBackground() {
+        return cached(26, () -> new JBColor(() -> Colors.lafBrighter(UIUtil.getPanelBackground(), 2)));
+    }
+
+    public static Color getDarkPanelBackground() {
+        return cached(27, () -> new JBColor(() -> Colors.lafDarker(UIUtil.getPanelBackground(), 2)));
     }
 
 
