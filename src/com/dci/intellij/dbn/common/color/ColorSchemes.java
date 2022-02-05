@@ -1,6 +1,7 @@
 package com.dci.intellij.dbn.common.color;
 
 import com.dci.intellij.dbn.common.latent.Latent;
+import com.dci.intellij.dbn.common.ui.LookAndFeel;
 import com.intellij.openapi.editor.colors.ColorKey;
 import com.intellij.openapi.editor.colors.EditorColorsManager;
 import com.intellij.openapi.editor.colors.EditorColorsScheme;
@@ -11,7 +12,7 @@ import com.twelvemonkeys.lang.StringUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.awt.Color;
+import java.awt.*;
 import java.util.Arrays;
 import java.util.function.Function;
 import java.util.function.Supplier;
@@ -85,14 +86,16 @@ public class ColorSchemes {
         }
 
         if (lightColor != null && darkColor != null) {
-            return new JBColor(lightColor, darkColor);
+            return lightDarkColor(lightColor, darkColor);
         }
 
-        return fallback.get();
+        return new JBColor(() -> fallback.get());
     }
 
-
-
+    @NotNull
+    private static JBColor lightDarkColor(Color lightColor, Color darkColor) {
+        return new JBColor(() -> LookAndFeel.isDarkMode() ? darkColor : lightColor);
+    }
 
 
     @NotNull

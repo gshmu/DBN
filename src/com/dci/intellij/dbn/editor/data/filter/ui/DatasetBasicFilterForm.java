@@ -32,13 +32,8 @@ import com.intellij.util.PlatformIcons;
 import com.intellij.util.ui.UIUtil;
 import org.jetbrains.annotations.NotNull;
 
-import javax.swing.BoxLayout;
-import javax.swing.JComboBox;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.JScrollPane;
-import javax.swing.JTextField;
-import java.awt.BorderLayout;
+import javax.swing.*;
+import java.awt.*;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
@@ -198,7 +193,7 @@ public class DatasetBasicFilterForm extends ConfigurationEditorForm<DatasetBasic
                 viewerScrollPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
                 viewerScrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
                 //viewerScrollPane.setBorder(null);
-                viewerScrollPane.setViewportBorder(Borders.lineBorder(Colors.getEditorBackground(), 4));
+                viewerScrollPane.setViewportBorder(Borders.lineBorder(Colors.getReadonlyEditorBackground(), 4));
 
                 EditorSettings settings = this.viewer.getSettings();
                 settings.setFoldingOutlineShown(false);

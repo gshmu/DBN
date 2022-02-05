@@ -29,17 +29,9 @@ import com.intellij.ui.DocumentAdapter;
 import com.intellij.ui.JBColor;
 import org.jetbrains.annotations.NotNull;
 
-import javax.swing.BoxLayout;
-import javax.swing.Icon;
-import javax.swing.JCheckBox;
-import javax.swing.JComponent;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.JScrollPane;
-import javax.swing.JSplitPane;
+import javax.swing.*;
 import javax.swing.event.DocumentEvent;
-import java.awt.BorderLayout;
-import java.awt.Dimension;
+import java.awt.*;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -216,7 +208,7 @@ public class StatementExecutionInputForm extends DBNFormImpl {
             viewerScrollPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
             viewerScrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
             //viewerScrollPane.setBorder(null);
-            viewerScrollPane.setViewportBorder(Borders.lineBorder(Colors.getEditorBackground(), 4));
+            viewerScrollPane.setViewportBorder(Borders.lineBorder(Colors.getReadonlyEditorBackground(), 4));
 
             EditorSettings settings = viewer.getSettings();
             settings.setFoldingOutlineShown(false);
