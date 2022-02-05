@@ -3,22 +3,16 @@ package com.dci.intellij.dbn.common.ui;
 import com.dci.intellij.dbn.common.color.Colors;
 import com.dci.intellij.dbn.common.event.ProjectEvents;
 import com.dci.intellij.dbn.common.util.Commons;
-import com.dci.intellij.dbn.connection.ConnectionHandler;
-import com.dci.intellij.dbn.connection.ConnectionHandlerStatusListener;
-import com.dci.intellij.dbn.connection.ConnectionId;
-import com.dci.intellij.dbn.connection.ConnectionManager;
-import com.dci.intellij.dbn.connection.ConnectionProvider;
+import com.dci.intellij.dbn.connection.*;
 import com.dci.intellij.dbn.object.common.DBObject;
 import com.dci.intellij.dbn.object.lookup.DBObjectRef;
 import com.intellij.openapi.project.Project;
 import com.intellij.util.ui.UIUtil;
 import org.jetbrains.annotations.NotNull;
 
-import javax.swing.Icon;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
+import javax.swing.*;
 import javax.swing.border.LineBorder;
-import java.awt.Color;
+import java.awt.*;
 
 public class DBNHeaderForm extends DBNFormImpl{
     public static final LineBorder BORDER = new LineBorder(UIUtil.getBoundsColor());
@@ -28,6 +22,7 @@ public class DBNHeaderForm extends DBNFormImpl{
     public DBNHeaderForm(DBNForm parent) {
         super(parent);
         mainPanel.setBorder(BORDER);
+        objectLabel.setForeground(Colors.getLabelForeground());
     }
 
     public DBNHeaderForm(DBNForm parent, String title, Icon icon) {
@@ -114,7 +109,7 @@ public class DBNHeaderForm extends DBNFormImpl{
                 background = connectionHandler.getEnvironmentType().getColor();
             }
         }
-        mainPanel.setBackground(Commons.nvl(background, Colors.getPanelBackground()));
+        mainPanel.setBackground(Commons.nvl(background, Colors.getLightPanelBackground()));
     }
 
     public void setBackground(Color background) {

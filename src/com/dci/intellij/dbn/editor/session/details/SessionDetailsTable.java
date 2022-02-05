@@ -7,16 +7,17 @@ import com.dci.intellij.dbn.common.util.Commons;
 import com.dci.intellij.dbn.common.util.Strings;
 import org.jetbrains.annotations.NotNull;
 
-import javax.swing.JTable;
+import javax.swing.*;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.TableCellRenderer;
-import java.awt.Component;
+import java.awt.*;
 
 public class SessionDetailsTable extends DBNTable<SessionDetailsTableModel> {
 
     public SessionDetailsTable(@NotNull DBNComponent parent) {
         super(parent, new SessionDetailsTableModel(), false);
         setDefaultRenderer(Object.class, cellRenderer);
+        adjustRowHeight(3);
     }
 
     private final TableCellRenderer cellRenderer = new DefaultTableCellRenderer() {
