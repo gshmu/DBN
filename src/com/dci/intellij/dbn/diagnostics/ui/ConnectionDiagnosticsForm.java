@@ -1,6 +1,5 @@
 package com.dci.intellij.dbn.diagnostics.ui;
 
-import com.dci.intellij.dbn.common.color.Colors;
 import com.dci.intellij.dbn.common.dispose.DisposableContainer;
 import com.dci.intellij.dbn.common.ui.Borders;
 import com.dci.intellij.dbn.common.ui.DBNFormImpl;
@@ -11,14 +10,11 @@ import com.dci.intellij.dbn.connection.ConnectionId;
 import com.dci.intellij.dbn.connection.ConnectionManager;
 import com.intellij.openapi.project.Project;
 import com.intellij.ui.ColoredListCellRenderer;
-import com.intellij.ui.JBColor;
 import com.intellij.ui.SimpleTextAttributes;
 import org.jetbrains.annotations.NotNull;
 
-import javax.swing.DefaultListModel;
-import javax.swing.JList;
-import javax.swing.JPanel;
-import java.awt.BorderLayout;
+import javax.swing.*;
+import java.awt.*;
 import java.util.List;
 import java.util.Map;
 
@@ -77,10 +73,10 @@ public class ConnectionDiagnosticsForm extends DBNFormImpl {
         @Override
         protected void customizeCellRenderer(@NotNull JList list, ConnectionHandler value, int index, boolean selected, boolean hasFocus) {
             setIcon(value.getIcon());
-            if (!selected) {
-                JBColor color = value.getEnvironmentType().getColor();
+/*            if (!selected) {
+                JBColor color = Commons.nvl(value.getEnvironmentType().getColor(), JBColor.WHITE);
                 setBackground(Colors.softer(color, 30));
-            }
+            }*/
             append(value.getName(), SimpleTextAttributes.REGULAR_ATTRIBUTES);
         }
     }
