@@ -14,8 +14,8 @@ import com.intellij.util.ui.UIUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import javax.swing.UIManager;
-import java.awt.Color;
+import javax.swing.*;
+import java.awt.*;
 import java.util.Objects;
 
 import static com.dci.intellij.dbn.common.color.ColorCache.cached;
@@ -135,6 +135,14 @@ public final class Colors {
 
     public static Color getEditorCaretRowBackground() {
         return cached(23, () -> foreground(null, EditorColors.CARET_ROW_COLOR, () -> getEditorBackground()));
+    }
+
+    public static Color getReadonlyEditorBackground() {
+        return cached(24, () -> background(null, EditorColors.READONLY_BACKGROUND_COLOR, () -> Colors.lafDarker(getEditorBackground(), 1)));
+    }
+
+    public static Color getReadonlyEditorCaretRowBackground() {
+        return cached(25, () -> background(null, null, () -> Colors.lafDarker(getReadonlyEditorBackground(), 1)));
     }
 
 

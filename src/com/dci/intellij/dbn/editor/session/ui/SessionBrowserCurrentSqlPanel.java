@@ -36,9 +36,8 @@ import com.intellij.openapi.editor.ex.EditorEx;
 import com.intellij.openapi.project.Project;
 import org.jetbrains.annotations.NotNull;
 
-import javax.swing.JPanel;
-import javax.swing.JScrollPane;
-import java.awt.BorderLayout;
+import javax.swing.*;
+import java.awt.*;
 import java.util.concurrent.atomic.AtomicReference;
 
 public class SessionBrowserCurrentSqlPanel extends DBNFormImpl {
@@ -155,6 +154,7 @@ public class SessionBrowserCurrentSqlPanel extends DBNFormImpl {
 
         viewer = (EditorEx) EditorFactory.getInstance().createViewer(document, project);
         viewer.setEmbeddedIntoDialogWrapper(true);
+        Editors.setEditorReadonly(this.viewer, true);
         Editors.initEditorHighlighter(viewer, SQLLanguage.INSTANCE, connectionHandler);
         //statementViewer.setBackgroundColor(colorsScheme.getColor(ColorKey.find("CARET_ROW_COLOR")));
 
@@ -162,7 +162,7 @@ public class SessionBrowserCurrentSqlPanel extends DBNFormImpl {
         viewerScrollPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
         viewerScrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
         //viewerScrollPane.setBorder(null);
-        viewerScrollPane.setViewportBorder(Borders.lineBorder(Colors.getEditorBackground(), 4));
+        viewerScrollPane.setViewportBorder(Borders.lineBorder(Colors.getReadonlyEditorBackground(), 4));
 
         EditorSettings settings = viewer.getSettings();
         settings.setFoldingOutlineShown(false);
