@@ -18,11 +18,7 @@ import com.dci.intellij.dbn.language.common.DBLanguageDialect;
 import com.dci.intellij.dbn.language.common.psi.PsiUtil;
 import com.dci.intellij.dbn.object.common.DBObject;
 import com.dci.intellij.dbn.object.common.DBSchemaObject;
-import com.dci.intellij.dbn.vfs.file.DBConsoleVirtualFile;
-import com.dci.intellij.dbn.vfs.file.DBContentVirtualFile;
-import com.dci.intellij.dbn.vfs.file.DBDatasetVirtualFile;
-import com.dci.intellij.dbn.vfs.file.DBEditableObjectVirtualFile;
-import com.dci.intellij.dbn.vfs.file.DBSourceCodeVirtualFile;
+import com.dci.intellij.dbn.vfs.file.*;
 import com.intellij.ide.highlighter.HighlighterFactory;
 import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.editor.Editor;
@@ -31,12 +27,7 @@ import com.intellij.openapi.editor.colors.EditorColors;
 import com.intellij.openapi.editor.colors.EditorColorsScheme;
 import com.intellij.openapi.editor.ex.EditorEx;
 import com.intellij.openapi.editor.highlighter.EditorHighlighter;
-import com.intellij.openapi.fileEditor.FileDocumentManager;
-import com.intellij.openapi.fileEditor.FileEditor;
-import com.intellij.openapi.fileEditor.FileEditorManager;
-import com.intellij.openapi.fileEditor.FileEditorProvider;
-import com.intellij.openapi.fileEditor.FileEditorState;
-import com.intellij.openapi.fileEditor.TextEditor;
+import com.intellij.openapi.fileEditor.*;
 import com.intellij.openapi.fileEditor.ex.FileEditorProviderManager;
 import com.intellij.openapi.fileEditor.impl.EditorHistoryManager;
 import com.intellij.openapi.fileTypes.FileType;
@@ -53,12 +44,8 @@ import com.intellij.util.ui.UIUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import javax.swing.Icon;
-import javax.swing.JComponent;
-import java.awt.Color;
-import java.awt.Component;
-import java.awt.Dimension;
-import java.awt.Font;
+import javax.swing.*;
+import java.awt.*;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -268,11 +255,16 @@ public class Editors {
             editorEx.setViewer(readonly);
             EditorColorsScheme scheme = editor.getColorsScheme();
             Dispatch.runConditional(() -> {
-                Color defaultBackground = Colors.getEditorBackground();
-                editorEx.setBackgroundColor(readonly ? Colors.lafDarker(defaultBackground, 1) : defaultBackground);
-                scheme.setColor(EditorColors.CARET_ROW_COLOR, readonly ?
-                        Colors.lafDarker(defaultBackground, 3) :
-                        Colors.getEditorCaretRowBackground());
+                Color background = readonly ?
+                        Colors.getReadonlyEditorBackground() :
+                        Colors.getEditorBackground();
+
+                Color caretRowBackground = readonly ?
+                        Colors.getReadonlyEditorCaretRowBackground() :
+                        Colors.getEditorCaretRowBackground();
+
+                editorEx.setBackgroundColor(background);
+                scheme.setColor(EditorColors.CARET_ROW_COLOR, caretRowBackground);
             });
         }
     }
