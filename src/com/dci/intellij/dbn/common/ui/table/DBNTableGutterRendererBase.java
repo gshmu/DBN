@@ -5,7 +5,7 @@ import com.dci.intellij.dbn.common.latent.Latent;
 import com.dci.intellij.dbn.common.ui.Borders;
 import com.dci.intellij.dbn.common.ui.Fonts;
 import com.intellij.ui.border.CustomLineBorder;
-import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang.StringUtils;
 
 import javax.swing.JLabel;
 import javax.swing.JList;
