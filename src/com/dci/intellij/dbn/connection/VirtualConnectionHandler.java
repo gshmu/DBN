@@ -31,7 +31,7 @@ import lombok.Getter;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import javax.swing.Icon;
+import javax.swing.*;
 import java.sql.SQLException;
 import java.util.Collections;
 import java.util.HashMap;
@@ -72,7 +72,7 @@ public class VirtualConnectionHandler extends StatefulDisposable.Base implements
 
     public static ConnectionHandler getDefault(Project project) {
         ConnectionManager connectionManager = ConnectionManager.getInstance(project);
-        return connectionManager.getConnectionBundle().getVirtualConnection(ConnectionId.VIRTUAL_ORACLE_CONNECTION);
+        return connectionManager.getConnectionBundle().getVirtualConnection(ConnectionId.VIRTUAL_ORACLE);
 
     }
 

@@ -13,14 +13,14 @@ import com.dci.intellij.dbn.object.type.DBObjectType;
 import lombok.Getter;
 import org.jetbrains.annotations.Nullable;
 
-import javax.swing.Icon;
+import javax.swing.*;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeModel;
 import javax.swing.tree.TreeNode;
 import javax.swing.tree.TreePath;
 import java.util.List;
 
-import static com.dci.intellij.dbn.connection.ConnectionId.UNKNOWN_CONNECTION;
+import static com.dci.intellij.dbn.connection.ConnectionId.UNKNOWN;
 
 public abstract class MethodExecutionHistoryTreeModel extends DefaultTreeModel implements StatefulDisposable {
     protected List<MethodExecutionInput> executionInputs;
@@ -77,7 +77,7 @@ public abstract class MethodExecutionHistoryTreeModel extends DefaultTreeModel i
 
         public ConnectionId getConnectionHandlerId() {
             ConnectionHandler connectionHandler = getConnectionHandler();
-            return connectionHandler == null ? UNKNOWN_CONNECTION : connectionHandler.getConnectionId();
+            return connectionHandler == null ? UNKNOWN : connectionHandler.getConnectionId();
         }
 
         @Override
