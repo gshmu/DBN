@@ -15,9 +15,7 @@ import com.intellij.util.Alarm;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import javax.swing.AbstractAction;
-import javax.swing.Action;
-import javax.swing.JButton;
+import javax.swing.*;
 import java.awt.event.ActionEvent;
 
 public class ProjectSettingsDialog extends DBNDialog<ProjectSettingsForm> {
@@ -33,7 +31,7 @@ public class ProjectSettingsDialog extends DBNDialog<ProjectSettingsForm> {
         ProjectSettings projectSettings = ProjectSettingsManager.getSettings(project);
         this.projectSettings = projectSettings.clone();
         this.projectSettings.createCustomComponent();
-        setDefaultSize(1100, 700);
+        setDefaultSize(1100, 800);
         init();
     }
 
