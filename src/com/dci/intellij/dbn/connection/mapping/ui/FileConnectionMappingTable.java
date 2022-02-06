@@ -38,6 +38,7 @@ import javax.swing.table.TableModel;
 import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.util.Collection;
 import java.util.List;
 
 public class FileConnectionMappingTable extends DBNTable<FileConnectionMappingTableModel> {
@@ -150,7 +151,7 @@ public class FileConnectionMappingTable extends DBNTable<FileConnectionMappingTa
         connections.stream().map(c -> new ConnectionAction(file, c)).forEach(a -> actionGroup.add(a));
 
         actionGroup.addSeparator();
-        List<ConnectionHandler> virtualConnections = connectionBundle.getVirtualConnections();
+        Collection<ConnectionHandler> virtualConnections = connectionBundle.getVirtualConnections();
         virtualConnections.stream().map(c -> new ConnectionAction(file, c)).forEach(a -> actionGroup.add(a));
 
         actionGroup.addSeparator();

@@ -24,65 +24,69 @@ import com.intellij.openapi.util.Disposer;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import javax.swing.Icon;
-import java.util.ArrayList;
-import java.util.List;
+import javax.swing.*;
+import java.util.*;
 import java.util.stream.Stream;
 
 public class ConnectionBundle extends BrowserTreeNodeBase implements BrowserTreeNode, StatefulDisposable {
     private final ProjectRef project;
     private final IdentifiableMap<ConnectionId, ConnectionHandlerRef> index = new IdentifiableMap<>();
-    private final List<ConnectionHandler> virtualConnections = new ArrayList<>();
+    private final Map<ConnectionId, ConnectionHandler> virtualConnections = new LinkedHashMap<>();
     private FilteredList<ConnectionHandler> connections = FilteredList.stateful(c -> c.isEnabled());
 
     public ConnectionBundle(Project project) {
         this.project = ProjectRef.of(project);
-        virtualConnections.add(new VirtualConnectionHandler(
-                ConnectionId.VIRTUAL_ORACLE_CONNECTION,
-                "Virtual - Oracle 10.1",
-                DatabaseType.ORACLE,
-                10.1,
-                project));
+        virtualConnections.put(
+                ConnectionId.VIRTUAL_ORACLE,
+                new VirtualConnectionHandler(
+                        ConnectionId.VIRTUAL_ORACLE,
+                        "Virtual - Oracle 10.1",
+                        DatabaseType.ORACLE,
+                        10.1,
+                        project));
 
-        virtualConnections.add(new VirtualConnectionHandler(
-                ConnectionId.VIRTUAL_MYSQL_CONNECTION,
-                "Virtual - MySQL 5.0",
-                DatabaseType.MYSQL,
-                5.0,
-                project));
+        virtualConnections.put(
+                ConnectionId.VIRTUAL_MYSQL,
+                new VirtualConnectionHandler(
+                        ConnectionId.VIRTUAL_MYSQL,
+                        "Virtual - MySQL 5.0",
+                        DatabaseType.MYSQL,
+                        5.0,
+                        project));
 
-        virtualConnections.add(new VirtualConnectionHandler(
-                ConnectionId.VIRTUAL_POSTGRES_CONNECTION,
-                "Virtual - PostgreSQL 9.3.4",
-                DatabaseType.POSTGRES,
-                9.3,
-                project));
+        virtualConnections.put(ConnectionId.VIRTUAL_POSTGRES,
+                new VirtualConnectionHandler(
+                        ConnectionId.VIRTUAL_POSTGRES,
+                        "Virtual - PostgreSQL 9.3.4",
+                        DatabaseType.POSTGRES,
+                        9.3,
+                        project));
 
-        virtualConnections.add(new VirtualConnectionHandler(
-                ConnectionId.VIRTUAL_SQLITE_CONNECTION,
-                "Virtual - SQLite 3.10.2",
-                DatabaseType.SQLITE,
-                3.10,
-                project));
+        virtualConnections.put(ConnectionId.VIRTUAL_SQLITE,
+                new VirtualConnectionHandler(
+                        ConnectionId.VIRTUAL_SQLITE,
+                        "Virtual - SQLite 3.10.2",
+                        DatabaseType.SQLITE,
+                        3.10,
+                        project));
 
-        virtualConnections.add(new VirtualConnectionHandler(
-                ConnectionId.VIRTUAL_ISO92_SQL_CONNECTION,
-                "Virtual - ISO-92 SQL",
-                DatabaseType.GENERIC,
-                92,
-                project));
+        virtualConnections.put(
+                ConnectionId.VIRTUAL_ISO92_SQL,
+                new VirtualConnectionHandler(
+                        ConnectionId.VIRTUAL_ISO92_SQL,
+                        "Virtual - ISO-92 SQL",
+                        DatabaseType.GENERIC,
+                        92,
+                        project));
         rebuildIndex();
     }
 
-    public List<ConnectionHandler> getVirtualConnections() {
-        return virtualConnections;
+    public Collection<ConnectionHandler> getVirtualConnections() {
+        return virtualConnections.values();
     }
 
     public ConnectionHandler getVirtualConnection(ConnectionId id) {
-        ConnectionHandler connection = getConnection(id);
-        // TODO clear assertion
-        assert connection == null || connection.isVirtual();
-        return connection;
+        return virtualConnections.get(id);
     }
 
     public void applySettings(ConnectionBundleSettings configuration) {
@@ -126,7 +130,7 @@ public class ConnectionBundle extends BrowserTreeNodeBase implements BrowserTree
     private void rebuildIndex() {
         this.index.rebuild(Stream.of(
                 this.connections.getBase(),
-                this.virtualConnections).flatMap(c -> c.stream()).map(c -> c.getRef()));
+                this.virtualConnections.values()).flatMap(c -> c.stream()).map(c -> c.getRef()));
     }
 
     @Override
