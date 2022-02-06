@@ -39,9 +39,7 @@
                 <constraints>
                   <splitpane position="right"/>
                 </constraints>
-                <properties>
-                  <preferredSize width="600" height="0"/>
-                </properties>
+                <properties/>
                 <border type="none"/>
                 <children/>
               </grid>

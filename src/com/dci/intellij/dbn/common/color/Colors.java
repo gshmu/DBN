@@ -146,11 +146,11 @@ public final class Colors {
     }
 
     public static Color getLightPanelBackground() {
-        return cached(26, () -> new JBColor(() -> Colors.lafBrighter(UIUtil.getPanelBackground(), 2)));
+        return cached(26, () -> new JBColor(() -> Colors.lafBrighter(UIUtil.getPanelBackground(), 1)));
     }
 
     public static Color getDarkPanelBackground() {
-        return cached(27, () -> new JBColor(() -> Colors.lafDarker(UIUtil.getPanelBackground(), 2)));
+        return cached(27, () -> new JBColor(() -> Colors.lafDarker(UIUtil.getPanelBackground(), 1)));
     }
 
 
