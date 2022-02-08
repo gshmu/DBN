@@ -9,7 +9,7 @@ import java.awt.font.FontRenderContext;
 import java.util.HashMap;
 import java.util.Map;
 
-public class FontMetricsCache {
+public class FontMetrics {
     private final JComponent component;
     private final Map<Font, int[]> cache = new HashMap<>();
 
@@ -17,7 +17,7 @@ public class FontMetricsCache {
             () -> getComponent().getFont(),
             () -> getComponent().getFontMetrics(getComponent().getFont()).getFontRenderContext());
 
-    public FontMetricsCache(JComponent component) {
+    public FontMetrics(JComponent component) {
         this.component = component;
     }
 

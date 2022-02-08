@@ -6,7 +6,6 @@ import com.dci.intellij.dbn.common.ui.Borders;
 import com.dci.intellij.dbn.common.ui.component.DBNComponent;
 import com.intellij.ui.SimpleTextAttributes;
 import com.intellij.ui.TableUtil;
-import org.jetbrains.annotations.NotNull;
 
 import javax.swing.JTextField;
 import javax.swing.ListSelectionModel;
@@ -22,7 +21,7 @@ import java.awt.Component;
 public class DBNEditableTable<T extends DBNEditableTableModel> extends DBNTableWithGutter<T> {
     public static final LineBorder SELECTION_BORDER = new LineBorder(Colors.getTableBackground());
 
-    public DBNEditableTable(@NotNull DBNComponent parent, @NotNull T model, boolean showHeader) {
+    public DBNEditableTable(DBNComponent parent, T model, boolean showHeader) {
         super(parent, model, showHeader);
         setSelectionMode(ListSelectionModel.SINGLE_INTERVAL_SELECTION);
         getSelectionModel().addListSelectionListener(selectionListener);
