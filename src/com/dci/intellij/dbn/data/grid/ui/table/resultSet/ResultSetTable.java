@@ -12,7 +12,7 @@ import java.awt.event.MouseEvent;
 
 public class ResultSetTable<T extends ResultSetDataModel<?, ?>> extends SortableTable<T> {
     private final RecordViewInfo recordViewInfo;
-    public ResultSetTable(@NotNull DBNComponent parent, @NotNull T dataModel, boolean enableSpeedSearch, RecordViewInfo recordViewInfo) {
+    public ResultSetTable(DBNComponent parent, T dataModel, boolean enableSpeedSearch, RecordViewInfo recordViewInfo) {
         super(parent, dataModel, enableSpeedSearch);
         this.recordViewInfo = recordViewInfo;
         addMouseListener(Mouse.listener().onClick(e -> {

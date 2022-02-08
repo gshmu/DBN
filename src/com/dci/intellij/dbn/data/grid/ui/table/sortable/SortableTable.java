@@ -8,7 +8,6 @@ import com.dci.intellij.dbn.data.model.ColumnInfo;
 import com.dci.intellij.dbn.data.model.sortable.SortableDataModel;
 import com.dci.intellij.dbn.data.model.sortable.SortableTableHeaderMouseListener;
 import com.dci.intellij.dbn.data.sorting.SortDirection;
-import org.jetbrains.annotations.NotNull;
 
 import javax.swing.JTable;
 import javax.swing.table.JTableHeader;
@@ -16,7 +15,7 @@ import java.awt.Cursor;
 
 public abstract class SortableTable<T extends SortableDataModel<?, ?>> extends BasicTable<T> {
 
-    public SortableTable(@NotNull DBNComponent parent, @NotNull T dataModel, boolean enableSpeedSearch) {
+    public SortableTable(DBNComponent parent, T dataModel, boolean enableSpeedSearch) {
         super(parent, dataModel);
         JTableHeader tableHeader = getTableHeader();
         tableHeader.setDefaultRenderer(new SortableTableHeaderRenderer());

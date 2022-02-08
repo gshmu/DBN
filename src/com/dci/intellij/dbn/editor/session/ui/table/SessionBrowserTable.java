@@ -37,7 +37,7 @@ import java.util.EventObject;
 public class SessionBrowserTable extends ResultSetTable<SessionBrowserModel> {
     private final WeakRef<SessionBrowser> sessionBrowser;
 
-    public SessionBrowserTable(@NotNull DBNComponent parent, SessionBrowser sessionBrowser) throws SQLException {
+    public SessionBrowserTable(DBNComponent parent, SessionBrowser sessionBrowser) throws SQLException {
         super(parent, createModel(sessionBrowser), false, createRecordInfo(sessionBrowser));
         getTableHeader().setDefaultRenderer(new SortableTableHeaderRenderer());
         getTableHeader().addMouseListener(new SessionBrowserTableHeaderMouseListener(this));
