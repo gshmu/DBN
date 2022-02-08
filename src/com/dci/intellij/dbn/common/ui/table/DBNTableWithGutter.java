@@ -4,7 +4,7 @@ import com.dci.intellij.dbn.common.ui.component.DBNComponent;
 import org.jetbrains.annotations.NotNull;
 
 public class DBNTableWithGutter<T extends DBNTableWithGutterModel> extends DBNTable<T>{
-    public DBNTableWithGutter(@NotNull DBNComponent parent, T tableModel, boolean showHeader) {
+    public DBNTableWithGutter(DBNComponent parent, T tableModel, boolean showHeader) {
         super(parent, tableModel, showHeader);
     }
 

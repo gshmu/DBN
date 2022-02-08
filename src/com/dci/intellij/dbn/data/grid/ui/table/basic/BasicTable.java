@@ -62,7 +62,7 @@ public class BasicTable<T extends BasicDataModel<?, ?>> extends DBNTableWithGutt
     private MathResult selectionMath;
     private boolean loading;
 
-    public BasicTable(@NotNull DBNComponent parent, T dataModel) {
+    public BasicTable(DBNComponent parent, T dataModel) {
         super(parent, dataModel, true);
 
         Project project = getProject();
