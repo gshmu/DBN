@@ -44,7 +44,7 @@ public class DBNHintForm extends DBNFormImpl {
         mainPanel.setBackground(background);
         hintTextPane.setBackground(background);
         hintTextPane.setText(hintText);
-        hintTextPane.setFont(UIUtil.getLabelFont());
+        hintTextPane.setFont(Fonts.getLabelFont());
         hintTextPane.setForeground(boxed ? Colors.lafBrighter(Colors.getLabelForeground(), 1) : Colors.HINT_COLOR);
         if (boxed) {
             mainPanel.setBorder(new RoundedLineBorder(UIUtil.getBoundsColor(), 4));

@@ -78,7 +78,7 @@ public class RegionalSettingsEditorForm extends ConfigurationEditorForm<Regional
         updatePreview();
 
         Font labelFont = Fonts.getEditorFont();
-        Font previewFont = labelFont.deriveFont((float) (labelFont.getSize() * 1.2));
+        Font previewFont = Fonts.deriveFont(labelFont, (float) (labelFont.getSize() * 1.2));
         numberPreviewLabel.setFont(previewFont);
         integerPreviewLabel.setFont(previewFont);
         datePreviewLabel.setFont(previewFont);

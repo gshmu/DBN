@@ -3,6 +3,7 @@ package com.dci.intellij.dbn.data.find;
 import com.dci.intellij.dbn.common.color.Colors;
 import com.dci.intellij.dbn.common.compatibility.CompatibilityUtil;
 import com.dci.intellij.dbn.common.ui.DBNFormImpl;
+import com.dci.intellij.dbn.common.ui.Fonts;
 import com.dci.intellij.dbn.common.ui.GUIUtil;
 import com.dci.intellij.dbn.common.ui.Mouse;
 import com.dci.intellij.dbn.common.util.Actions;
@@ -415,7 +416,7 @@ public class DataSearchComponent extends DBNFormImpl implements SelectionListene
     }
 
     private void updateResults(final boolean allowedToChangedEditorSelection) {
-        matchesLabel.setFont(matchesLabel.getFont().deriveFont(Font.PLAIN));
+        matchesLabel.setFont(Fonts.deriveFont(matchesLabel.getFont(), Font.PLAIN));
         String text = searchField.getText();
         if (text.length() == 0) {
             nothingToSearchFor();
@@ -467,7 +468,7 @@ public class DataSearchComponent extends DBNFormImpl implements SelectionListene
     }
 
     private void boldMatchInfo() {
-        matchesLabel.setFont(matchesLabel.getFont().deriveFont(Font.BOLD));
+        matchesLabel.setFont(Fonts.deriveFont(matchesLabel.getFont(), Font.BOLD));
     }
 
 

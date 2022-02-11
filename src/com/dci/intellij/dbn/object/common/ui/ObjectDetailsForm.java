@@ -1,10 +1,14 @@
 package com.dci.intellij.dbn.object.common.ui;
 
+import com.dci.intellij.dbn.common.ui.Fonts;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.object.common.DBObject;
 
-import javax.swing.*;
-import java.awt.*;
+import javax.swing.BoxLayout;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.SwingConstants;
+import java.awt.Font;
 import java.util.ArrayList;
 
 public class ObjectDetailsForm {
@@ -33,7 +37,7 @@ public class ObjectDetailsForm {
 
             JLabel objectLabel = new JLabel(object.getName(), object.getIcon(), SwingConstants.LEFT);
             if (object == this.object) {
-                Font font = objectLabel.getFont().deriveFont(Font.BOLD);
+                Font font = Fonts.deriveFont(objectLabel.getFont(), Font.BOLD);
                 objectLabel.setFont(font);
             }
             objectPanel.add(objectLabel);
