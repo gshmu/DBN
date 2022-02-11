@@ -4,6 +4,7 @@ import com.dci.intellij.dbn.common.action.DataKeys;
 import com.dci.intellij.dbn.common.color.Colors;
 import com.dci.intellij.dbn.common.ui.Borders;
 import com.dci.intellij.dbn.common.ui.DBNFormImpl;
+import com.dci.intellij.dbn.common.ui.Fonts;
 import com.dci.intellij.dbn.common.ui.table.DBNTable;
 import com.dci.intellij.dbn.common.util.Actions;
 import com.dci.intellij.dbn.diagnostics.ParserDiagnosticsManager;
@@ -18,7 +19,6 @@ import com.intellij.openapi.project.Project;
 import com.intellij.ui.ColoredListCellRenderer;
 import com.intellij.ui.SimpleTextAttributes;
 import com.intellij.ui.components.JBScrollPane;
-import com.intellij.util.ui.UIUtil;
 import lombok.Getter;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -92,8 +92,8 @@ public class ParserDiagnosticsForm extends DBNFormImpl {
         stateTransitionLabel.setText(previous == null ? current == null ? "" : "INITIAL" : stateTransition.name());
         stateTransitionLabel.setForeground(category.getColor());
         stateTransitionLabel.setFont(category.isBold() ?
-                UIUtil.getLabelFont().deriveFont(Font.BOLD) :
-                UIUtil.getLabelFont());
+                Fonts.deriveFont(Fonts.getLabelFont(), Font.BOLD) :
+                Fonts.getLabelFont());
     }
 
     public void refreshResult() {

@@ -1,18 +1,18 @@
 package com.dci.intellij.dbn.common.ui.tree;
 
 import com.dci.intellij.dbn.common.dispose.SafeDisposer;
+import com.dci.intellij.dbn.common.ui.Fonts;
 import com.dci.intellij.dbn.common.ui.component.DBNComponent;
 import com.dci.intellij.dbn.language.common.WeakRef;
 import com.intellij.openapi.Disposable;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Disposer;
 import com.intellij.ui.treeStructure.Tree;
-import com.intellij.util.ui.UIUtil;
 import lombok.Getter;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import javax.swing.*;
+import javax.swing.JComponent;
 import javax.swing.tree.DefaultTreeCellRenderer;
 import javax.swing.tree.TreeModel;
 import javax.swing.tree.TreeNode;
@@ -33,7 +33,7 @@ public class DBNTree extends Tree implements DBNComponent {
         super(treeModel);
         this.parent = WeakRef.of(parent);
         setTransferHandler(DBNTreeTransferHandler.INSTANCE);
-        setFont(UIUtil.getLabelFont());
+        setFont(Fonts.getLabelFont());
 
         Disposer.register(parent, this);
         SafeDisposer.register(this, treeModel);

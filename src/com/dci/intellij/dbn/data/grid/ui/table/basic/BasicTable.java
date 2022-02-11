@@ -6,6 +6,7 @@ import com.dci.intellij.dbn.common.event.ProjectEvents;
 import com.dci.intellij.dbn.common.locale.options.RegionalSettings;
 import com.dci.intellij.dbn.common.locale.options.RegionalSettingsListener;
 import com.dci.intellij.dbn.common.thread.Dispatch;
+import com.dci.intellij.dbn.common.ui.Fonts;
 import com.dci.intellij.dbn.common.ui.GUIUtil;
 import com.dci.intellij.dbn.common.ui.Mouse;
 import com.dci.intellij.dbn.common.ui.component.DBNComponent;
@@ -168,7 +169,7 @@ public class BasicTable<T extends BasicDataModel<?, ?>> extends DBNTableWithGutt
             Point mousePosition = getMousePosition();
             if (mousePosition != null && isCellSelected(mousePosition)) {
                 IdeTooltip tooltip = new IdeTooltip(this, mousePosition, mathPanel.getComponent());
-                tooltip.setFont(UIUtil.getLabelFont().deriveFont((float) 16));
+                tooltip.setFont(Fonts.deriveFont(Fonts.REGULAR,  (float) 16));
                 IdeTooltipManager.getInstance().show(tooltip, true);
             }
         }

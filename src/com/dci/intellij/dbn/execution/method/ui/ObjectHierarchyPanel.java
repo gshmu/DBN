@@ -1,15 +1,20 @@
 package com.dci.intellij.dbn.execution.method.ui;
 
 import com.dci.intellij.dbn.common.Icons;
+import com.dci.intellij.dbn.common.ui.Fonts;
 import com.dci.intellij.dbn.object.common.DBObject;
 import com.intellij.ui.JBColor;
 import com.intellij.ui.RowIcon;
 
-import javax.swing.*;
+import javax.swing.BoxLayout;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.SwingConstants;
 import javax.swing.border.Border;
 import javax.swing.border.CompoundBorder;
 import javax.swing.border.LineBorder;
-import java.awt.*;
+import java.awt.Color;
+import java.awt.Font;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -45,7 +50,7 @@ public class ObjectHierarchyPanel extends JPanel {
             JLabel label = new JLabel(object.getName(), icon, SwingConstants.LEFT);
             
             if (object == this.object) {
-                Font font = label.getFont().deriveFont(Font.BOLD);
+                Font font = Fonts.deriveFont(label.getFont(), Font.BOLD);
                 label.setFont(font);
             } else {
 

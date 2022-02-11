@@ -132,7 +132,11 @@ public class Formatter implements Cloneable, Signed {
     }
 
     public Date parseDateTime(String string) throws ParseException {
-        return dateTimeFormat.parse(string);
+        try {
+            return dateTimeFormat.parse(string);
+        } catch (ParseException e) {
+            return dateFormat.parse(string);
+        }
     }
 
 
