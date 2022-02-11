@@ -6,6 +6,7 @@ import com.dci.intellij.dbn.code.common.completion.options.sorting.action.MoveDo
 import com.dci.intellij.dbn.code.common.completion.options.sorting.action.MoveUpAction;
 import com.dci.intellij.dbn.common.color.Colors;
 import com.dci.intellij.dbn.common.options.ui.ConfigurationEditorForm;
+import com.dci.intellij.dbn.common.ui.Fonts;
 import com.dci.intellij.dbn.common.util.Actions;
 import com.dci.intellij.dbn.object.type.DBObjectType;
 import com.intellij.openapi.actionSystem.ActionToolbar;
@@ -35,7 +36,7 @@ public class CodeCompletionSortingSettingsForm extends ConfigurationEditorForm<C
         super(settings);
         resetFormChanges();
         sortingItemsList.setCellRenderer(LIST_CELL_RENDERER);
-        sortingItemsList.setFont(UIUtil.getLabelFont());
+        sortingItemsList.setFont(Fonts.getLabelFont());
         ActionToolbar actionToolbar = Actions.createActionToolbar(
                 actionPanel,
                 "", true,
