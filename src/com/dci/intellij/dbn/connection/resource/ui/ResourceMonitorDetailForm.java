@@ -28,11 +28,8 @@ import com.intellij.ui.components.JBScrollPane;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import javax.swing.JButton;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import java.awt.BorderLayout;
-import java.awt.Dimension;
+import javax.swing.*;
+import java.awt.*;
 import java.awt.event.ActionListener;
 
 import static com.dci.intellij.dbn.common.message.MessageCallback.when;
@@ -223,21 +220,21 @@ public class ResourceMonitorDetailForm extends DBNFormImpl {
     private final SessionManagerListener sessionManagerListener = new SessionManagerListener() {
         @Override
         public void sessionCreated(DatabaseSession session) {
-            if (session.getConnectionHandler() == getConnectionHandler()) {
+            if (session.getConnection() == getConnectionHandler()) {
                 refreshSessionData();
             }
         }
 
         @Override
         public void sessionDeleted(DatabaseSession session) {
-            if (session.getConnectionHandler() == getConnectionHandler()) {
+            if (session.getConnection() == getConnectionHandler()) {
                 refreshSessionData();
             }
         }
 
         @Override
         public void sessionChanged(DatabaseSession session) {
-            if (session.getConnectionHandler() == getConnectionHandler()) {
+            if (session.getConnection() == getConnectionHandler()) {
                 refreshSessionData();
             }
         }

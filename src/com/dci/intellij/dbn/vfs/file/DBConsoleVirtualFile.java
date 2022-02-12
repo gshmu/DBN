@@ -7,8 +7,8 @@ import com.dci.intellij.dbn.common.util.Strings;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.SchemaId;
 import com.dci.intellij.dbn.connection.SessionId;
-import com.dci.intellij.dbn.connection.mapping.FileConnectionMapping;
-import com.dci.intellij.dbn.connection.mapping.FileConnectionMappingProvider;
+import com.dci.intellij.dbn.connection.mapping.FileConnectionContext;
+import com.dci.intellij.dbn.connection.mapping.FileConnectionContextProvider;
 import com.dci.intellij.dbn.connection.session.DatabaseSession;
 import com.dci.intellij.dbn.database.DatabaseDebuggerInterface;
 import com.dci.intellij.dbn.editor.code.content.SourceCodeContent;
@@ -20,7 +20,7 @@ import com.dci.intellij.dbn.object.lookup.DBObjectRef;
 import com.dci.intellij.dbn.vfs.DBConsoleType;
 import com.dci.intellij.dbn.vfs.DBParseableVirtualFile;
 import com.dci.intellij.dbn.vfs.DatabaseFileViewProvider;
-import com.dci.intellij.dbn.vfs.file.DBConnectionVirtualFile.CustomFileConnectionMapping;
+import com.dci.intellij.dbn.vfs.file.DBConnectionVirtualFile.CustomFileConnectionContext;
 import com.intellij.lang.Language;
 import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.editor.RangeMarker;
@@ -43,10 +43,10 @@ import java.util.List;
 import java.util.Objects;
 
 @Getter
-public class DBConsoleVirtualFile extends DBObjectVirtualFile<DBConsole> implements DocumentListener, DBParseableVirtualFile, Comparable<DBConsoleVirtualFile>, FileConnectionMappingProvider {
+public class DBConsoleVirtualFile extends DBObjectVirtualFile<DBConsole> implements DocumentListener, DBParseableVirtualFile, Comparable<DBConsoleVirtualFile>, FileConnectionContextProvider {
     private transient long modificationTimestamp = LocalTimeCounter.currentTime();
     private final SourceCodeContent content = new SourceCodeContent();
-    private final FileConnectionMapping connectionMapping;
+    private final FileConnectionContext connectionContext;
 
     public DBConsoleVirtualFile(@NotNull DBConsole console) {
         super(console.getProject(), DBObjectRef.of(console));
@@ -54,7 +54,7 @@ public class DBConsoleVirtualFile extends DBObjectVirtualFile<DBConsole> impleme
         ConnectionHandler connectionHandler = console.getConnection();
         SchemaId schemaId = connectionHandler.getDefaultSchema();
         SessionId sessionId = connectionHandler.getSessionBundle().getMainSession().getId();
-        connectionMapping = new CustomFileConnectionMapping(this, sessionId, schemaId);
+        connectionContext = new CustomFileConnectionContext(this, sessionId, schemaId);
 
         setCharset(connectionHandler.getSettings().getDetailSettings().getCharset());
     }
@@ -99,7 +99,7 @@ public class DBConsoleVirtualFile extends DBObjectVirtualFile<DBConsole> impleme
         return null;
     }
     public void setDatabaseSchema(SchemaId schemaId) {
-        connectionMapping.setSchemaId(schemaId);
+        connectionContext.setSchemaId(schemaId);
     }
 
     public void setDatabaseSchemaName(String schemaName) {
@@ -111,20 +111,20 @@ public class DBConsoleVirtualFile extends DBObjectVirtualFile<DBConsole> impleme
     }
 
     public String getDatabaseSchemaName() {
-        return connectionMapping.getSchemaName();
+        return connectionContext.getSchemaName();
     }
 
     public void setDatabaseSessionId(SessionId sessionId) {
-        connectionMapping.setSessionId(sessionId);
+        connectionContext.setSessionId(sessionId);
     }
 
     @Override
     public DatabaseSession getSession() {
-        return connectionMapping.getSession();
+        return connectionContext.getSession();
     }
 
     public void setDatabaseSession(DatabaseSession databaseSession) {
-        this.connectionMapping.setSessionId(databaseSession == null ? SessionId.MAIN : databaseSession.getId());;
+        this.connectionContext.setSessionId(databaseSession == null ? SessionId.MAIN : databaseSession.getId());;
     }
 
     @Override
@@ -135,7 +135,7 @@ public class DBConsoleVirtualFile extends DBObjectVirtualFile<DBConsole> impleme
     @Override
     @Nullable
     public SchemaId getSchemaId() {
-        return connectionMapping.getSchemaId();
+        return connectionContext.getSchemaId();
     }
 
     public DBConsoleType getType() {

@@ -53,7 +53,7 @@ public class DatabaseSessionManager extends AbstractProjectComponent implements 
             @NotNull DatabaseSession session,
             @Nullable ParametricRunnable.Basic<DatabaseSession> callback) {
 
-        showCreateRenameSessionDialog(session.getConnectionHandler(), session, callback);
+        showCreateRenameSessionDialog(session.getConnection(), session, callback);
     }
 
 
@@ -83,7 +83,7 @@ public class DatabaseSessionManager extends AbstractProjectComponent implements 
     }
 
     public void renameSession(DatabaseSession session, String newName) {
-        ConnectionHandler connectionHandler = session.getConnectionHandler();
+        ConnectionHandler connectionHandler = session.getConnection();
         String oldName = session.getName();
         connectionHandler.getSessionBundle().renameSession(oldName, newName);
         ProjectEvents.notify(getProject(),
@@ -103,7 +103,7 @@ public class DatabaseSessionManager extends AbstractProjectComponent implements 
             Messages.showQuestionDialog(
                     getProject(),
                     "Delete Session",
-                    "Are you sure you want to delete the session \"" + session.getName() + "\" for connection\"" + session.getConnectionHandler().getName() + "\"" ,
+                    "Are you sure you want to delete the session \"" + session.getName() + "\" for connection\"" + session.getConnection().getName() + "\"" ,
                     Messages.OPTIONS_YES_NO, 0,
                     option -> when(option == 0, () -> deleteSession(session)));
         } else {
@@ -112,7 +112,7 @@ public class DatabaseSessionManager extends AbstractProjectComponent implements 
     }
 
     public void deleteSession(@NotNull DatabaseSession session) {
-        ConnectionHandler connectionHandler = session.getConnectionHandler();
+        ConnectionHandler connectionHandler = session.getConnection();
         connectionHandler.getSessionBundle().deleteSession(session.getId());
         ProjectEvents.notify(getProject(),
                 SessionManagerListener.TOPIC,

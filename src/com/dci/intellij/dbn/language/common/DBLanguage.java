@@ -3,7 +3,7 @@ package com.dci.intellij.dbn.language.common;
 import com.dci.intellij.dbn.code.common.style.options.CodeStyleCustomSettings;
 import com.dci.intellij.dbn.common.latent.Latent;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
-import com.dci.intellij.dbn.connection.mapping.FileConnectionMappingManager;
+import com.dci.intellij.dbn.connection.mapping.FileConnectionContextManager;
 import com.dci.intellij.dbn.language.psql.PSQLLanguage;
 import com.dci.intellij.dbn.language.sql.SQLLanguage;
 import com.intellij.lang.Language;
@@ -41,8 +41,8 @@ public abstract class DBLanguage<D extends DBLanguageDialect> extends Language i
     public abstract D getMainLanguageDialect();
 
     public D getLanguageDialect(Project project, VirtualFile virtualFile) {
-        FileConnectionMappingManager connectionMappingManager = FileConnectionMappingManager.getInstance(project);
-        ConnectionHandler connectionHandler = connectionMappingManager.getConnection(virtualFile);
+        FileConnectionContextManager contextManager = FileConnectionContextManager.getInstance(project);
+        ConnectionHandler connectionHandler = contextManager.getConnection(virtualFile);
         if (connectionHandler != null) {
             return (D) connectionHandler.getLanguageDialect(this);
         }

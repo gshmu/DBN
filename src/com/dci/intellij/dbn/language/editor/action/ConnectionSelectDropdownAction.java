@@ -3,7 +3,7 @@ package com.dci.intellij.dbn.language.editor.action;
 import com.dci.intellij.dbn.common.action.Lookup;
 import com.dci.intellij.dbn.common.ui.DBNComboBoxAction;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
-import com.dci.intellij.dbn.connection.mapping.FileConnectionMappingManager;
+import com.dci.intellij.dbn.connection.mapping.FileConnectionContextManager;
 import com.dci.intellij.dbn.ddl.DDLFileAttachmentManager;
 import com.dci.intellij.dbn.object.common.DBSchemaObject;
 import com.dci.intellij.dbn.vfs.DatabaseFileSystem;
@@ -37,8 +37,8 @@ public class ConnectionSelectDropdownAction extends DBNComboBoxAction implements
         Project project = Lookup.getProject(e);
         VirtualFile virtualFile = Lookup.getVirtualFile(e);
         if (project != null && virtualFile != null) {
-            FileConnectionMappingManager connectionMappingManager = FileConnectionMappingManager.getInstance(project);
-            ConnectionHandler activeConnection = connectionMappingManager.getConnection(virtualFile);
+            FileConnectionContextManager contextManager = FileConnectionContextManager.getInstance(project);
+            ConnectionHandler activeConnection = contextManager.getConnection(virtualFile);
             if (activeConnection != null) {
                 text = activeConnection.getQualifiedName();
                 icon = activeConnection.getIcon();

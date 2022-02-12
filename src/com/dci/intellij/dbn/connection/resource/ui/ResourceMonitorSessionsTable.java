@@ -12,7 +12,7 @@ import com.intellij.ui.SimpleTextAttributes;
 import com.intellij.util.text.DateFormatUtil;
 import org.jetbrains.annotations.NotNull;
 
-import javax.swing.ListSelectionModel;
+import javax.swing.*;
 import java.util.List;
 
 class ResourceMonitorSessionsTable extends DBNTable<ResourceMonitorSessionsTableModel> {
@@ -31,7 +31,7 @@ class ResourceMonitorSessionsTable extends DBNTable<ResourceMonitorSessionsTable
         @Override
         protected void customizeCellRenderer(DBNTable table, Object value, boolean selected, boolean hasFocus, int row, int column) {
             DatabaseSession session = (DatabaseSession) value;
-            ConnectionPool connectionPool = session.getConnectionHandler().getConnectionPool();
+            ConnectionPool connectionPool = session.getConnection().getConnectionPool();
 
             if (session.isPool()) {
                 int connectionPoolSize = connectionPool.getSize();

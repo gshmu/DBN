@@ -4,7 +4,7 @@ import com.dci.intellij.dbn.common.environment.EnvironmentType;
 import com.dci.intellij.dbn.common.environment.options.EnvironmentSettings;
 import com.dci.intellij.dbn.common.environment.options.EnvironmentVisibilitySettings;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
-import com.dci.intellij.dbn.connection.mapping.FileConnectionMappingManager;
+import com.dci.intellij.dbn.connection.mapping.FileConnectionContextManager;
 import com.dci.intellij.dbn.language.common.DBLanguageFileType;
 import com.dci.intellij.dbn.options.general.GeneralProjectSettings;
 import com.dci.intellij.dbn.vfs.DBVirtualFileImpl;
@@ -68,7 +68,7 @@ public class DBEditorTabColorProvider implements EditorTabColorProvider, DumbAwa
             return objectFile.getConnection();
         }
 
-        return FileConnectionMappingManager.getInstance(project).getConnection(file);
+        return FileConnectionContextManager.getInstance(project).getConnection(file);
     }
 
     private static Color getColor(ConnectionHandler connectionHandler) {

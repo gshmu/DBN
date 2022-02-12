@@ -3,6 +3,8 @@ package com.dci.intellij.dbn.connection;
 import com.dci.intellij.dbn.common.property.Property;
 import com.dci.intellij.dbn.common.property.PropertyHolderBase;
 
+import java.util.Arrays;
+
 public class ConnectionSelectorOptions extends PropertyHolderBase.IntStore<ConnectionSelectorOptions.Option> {
 
     @Override
@@ -20,5 +22,13 @@ public class ConnectionSelectorOptions extends PropertyHolderBase.IntStore<Conne
         @Override
         public IntMasks masks() {
             return masks;
-        }    }
+        }
+    }
+
+    public static ConnectionSelectorOptions options(Option ... options) {
+        ConnectionSelectorOptions holder = new ConnectionSelectorOptions();
+        Arrays.stream(options).forEach(option -> holder.set(option));
+        return holder;
+    }
+
 }

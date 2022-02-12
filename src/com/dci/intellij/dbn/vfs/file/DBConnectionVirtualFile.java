@@ -2,7 +2,7 @@ package com.dci.intellij.dbn.vfs.file;
 
 import com.dci.intellij.dbn.common.DevNullStreams;
 import com.dci.intellij.dbn.connection.*;
-import com.dci.intellij.dbn.connection.mapping.FileConnectionMappingImpl;
+import com.dci.intellij.dbn.connection.mapping.FileConnectionContextImpl;
 import com.dci.intellij.dbn.connection.session.DatabaseSession;
 import com.dci.intellij.dbn.language.sql.SQLFileType;
 import com.dci.intellij.dbn.vfs.DBVirtualFileImpl;
@@ -140,8 +140,8 @@ public class DBConnectionVirtualFile extends DBVirtualFileImpl {
         return null;
     }
 
-    static final class CustomFileConnectionMapping extends FileConnectionMappingImpl {
-        public CustomFileConnectionMapping(
+    static final class CustomFileConnectionContext extends FileConnectionContextImpl {
+        public CustomFileConnectionContext(
                 @NotNull DBConsoleVirtualFile consoleFile,
                 @Nullable SessionId sessionId,
                 @Nullable SchemaId schemaId) {

@@ -2,7 +2,7 @@ package com.dci.intellij.dbn.language.editor.action;
 
 import com.dci.intellij.dbn.common.action.Lookup;
 import com.dci.intellij.dbn.connection.SchemaId;
-import com.dci.intellij.dbn.connection.mapping.FileConnectionMappingManager;
+import com.dci.intellij.dbn.connection.mapping.FileConnectionContextManager;
 import com.dci.intellij.dbn.language.common.DBLanguagePsiFile;
 import com.dci.intellij.dbn.language.common.psi.PsiUtil;
 import com.dci.intellij.dbn.object.DBSchema;
@@ -30,8 +30,8 @@ public class SchemaSelectAction extends AnObjectAction<DBSchema> {
 
         Editor editor = Lookup.getEditor(e);
         if (editor != null) {
-            FileConnectionMappingManager connectionMappingManager = FileConnectionMappingManager.getInstance(project);
-            connectionMappingManager.setDatabaseSchema(editor, SchemaId.from(object));
+            FileConnectionContextManager contextManager = FileConnectionContextManager.getInstance(project);
+            contextManager.setDatabaseSchema(editor, SchemaId.from(object));
         }
     }
 

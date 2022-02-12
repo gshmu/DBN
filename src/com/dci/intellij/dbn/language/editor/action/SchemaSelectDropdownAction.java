@@ -6,7 +6,7 @@ import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.common.ui.DBNComboBoxAction;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.SchemaId;
-import com.dci.intellij.dbn.connection.mapping.FileConnectionMappingManager;
+import com.dci.intellij.dbn.connection.mapping.FileConnectionContextManager;
 import com.dci.intellij.dbn.ddl.DDLFileAttachmentManager;
 import com.dci.intellij.dbn.object.DBSchema;
 import com.dci.intellij.dbn.object.common.DBSchemaObject;
@@ -32,7 +32,7 @@ public class SchemaSelectDropdownAction extends DBNComboBoxAction implements Dum
         Project project = Lookup.getProject(component);
         VirtualFile virtualFile = Lookup.getVirtualFile(component);
         if (virtualFile != null) {
-            ConnectionHandler activeConnection = FileConnectionMappingManager.getInstance(project).getConnection(virtualFile);
+            ConnectionHandler activeConnection = FileConnectionContextManager.getInstance(project).getConnection(virtualFile);
             if (Failsafe.check(activeConnection) && !activeConnection.isVirtual()) {
                 for (DBSchema schema : activeConnection.getObjectBundle().getSchemas()){
                     actionGroup.add(new SchemaSelectAction(schema));
@@ -53,11 +53,11 @@ public class SchemaSelectDropdownAction extends DBNComboBoxAction implements Dum
         boolean enabled = true;
 
         if (project != null && virtualFile != null) {
-            FileConnectionMappingManager mappingManager = FileConnectionMappingManager.getInstance(project);
-            ConnectionHandler activeConnection = mappingManager.getConnection(virtualFile);
+            FileConnectionContextManager contextManager = FileConnectionContextManager.getInstance(project);
+            ConnectionHandler activeConnection = contextManager.getConnection(virtualFile);
             visible = activeConnection != null && !activeConnection.isVirtual();
             if (visible) {
-                SchemaId schema = mappingManager.getDatabaseSchema(virtualFile);
+                SchemaId schema = contextManager.getDatabaseSchema(virtualFile);
                 if (schema != null) {
                     text = schema.getName();
                     icon = Icons.DBO_SCHEMA;

@@ -9,8 +9,8 @@ import com.intellij.util.messages.Topic;
 
 import java.util.EventListener;
 
-public interface FileConnectionMappingListener extends EventListener {
-    Topic<FileConnectionMappingListener> TOPIC = Topic.create("Connection mapping changed", FileConnectionMappingListener.class);
+public interface FileConnectionContextListener extends EventListener {
+    Topic<FileConnectionContextListener> TOPIC = Topic.create("Connection mapping changed", FileConnectionContextListener.class);
 
     default void connectionChanged(Project project, VirtualFile file, ConnectionHandler connection){
         mappingChanged(project, file);

@@ -9,43 +9,42 @@ import com.intellij.openapi.project.Project;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import javax.swing.Icon;
+import javax.swing.*;
 
 public abstract class AbstractConnectionAction extends DumbAwareContextAction<ConnectionHandler> {
-    private final ConnectionHandlerRef connectionHandler;
+    private final ConnectionHandlerRef connection;
 
-    public AbstractConnectionAction(String text, @NotNull ConnectionHandler connectionHandler) {
-        this(text, null, connectionHandler);
+    public AbstractConnectionAction(String text, @NotNull ConnectionHandler connection) {
+        this(text, null, connection);
 
     }
-    public AbstractConnectionAction(String text, Icon icon, @NotNull ConnectionHandler connectionHandler) {
-        this(text, null, icon, connectionHandler);
+    public AbstractConnectionAction(String text, Icon icon, @NotNull ConnectionHandler connection) {
+        this(text, null, icon, connection);
     }
-    public AbstractConnectionAction(String text, String description, Icon icon, @NotNull ConnectionHandler connectionHandler) {
+    public AbstractConnectionAction(String text, String description, Icon icon, @NotNull ConnectionHandler connection) {
         super(text, description, icon);
-        this.connectionHandler = connectionHandler.getRef();
+        this.connection = connection.getRef();
     }
 
     public ConnectionId getConnectionId() {
-        return connectionHandler.getConnectionId();
+        return connection.getConnectionId();
     }
 
     @Nullable
-    public ConnectionHandler getConnectionHandler() {
-        return ConnectionHandlerRef.get(connectionHandler);
+    public ConnectionHandler getConnection() {
+        return ConnectionHandlerRef.get(connection);
     }
-
 
     @Override
     protected ConnectionHandler getTarget(@NotNull AnActionEvent e) {
-        return connectionHandler.get();
+        return connection.get();
     }
 
-    @Nullable
+    @NotNull
     @Override
     protected Project getProject() {
-        ConnectionHandler connectionHandler = this.connectionHandler.get();
-        return connectionHandler == null ? null : connectionHandler.getProject();
+        ConnectionHandler connection = this.connection.ensure();
+        return connection.getProject();
     }
 }
 
