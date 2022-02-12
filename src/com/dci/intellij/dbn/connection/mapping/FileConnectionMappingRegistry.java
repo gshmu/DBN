@@ -4,7 +4,10 @@ import com.dci.intellij.dbn.common.dispose.StatefulDisposable;
 import com.dci.intellij.dbn.common.file.util.VirtualFiles;
 import com.dci.intellij.dbn.common.project.ProjectRef;
 import com.dci.intellij.dbn.common.util.Safe;
-import com.dci.intellij.dbn.connection.*;
+import com.dci.intellij.dbn.connection.ConnectionHandler;
+import com.dci.intellij.dbn.connection.ConnectionId;
+import com.dci.intellij.dbn.connection.SchemaId;
+import com.dci.intellij.dbn.connection.SessionId;
 import com.dci.intellij.dbn.connection.session.DatabaseSession;
 import com.dci.intellij.dbn.ddl.DDLFileAttachmentManager;
 import com.dci.intellij.dbn.object.DBSchema;
@@ -12,7 +15,6 @@ import com.dci.intellij.dbn.object.common.DBSchemaObject;
 import com.dci.intellij.dbn.vfs.DatabaseFileSystem;
 import com.dci.intellij.dbn.vfs.file.DBConsoleVirtualFile;
 import com.intellij.injected.editor.VirtualFileWindow;
-import com.intellij.openapi.progress.ProcessCanceledException;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VirtualFile;
@@ -27,7 +29,7 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Function;
 
-import static com.dci.intellij.dbn.common.action.UserDataKeys.*;
+import static com.dci.intellij.dbn.common.action.UserDataKeys.FILE_CONNECTION_MAPPING;
 import static com.dci.intellij.dbn.common.util.Commons.coalesce;
 
 @Getter
@@ -214,21 +216,21 @@ public class FileConnectionMappingRegistry extends StatefulDisposable.Base {
         return mapping;
     }
 
-    private FileConnectionMapping lookupMapping(VirtualFile file) {
-        return mappings.get(file.getUrl());
+    public boolean removeMapping(VirtualFile file) {
+        FileConnectionMapping mapping = mappings.remove(file.getUrl());
+        FileConnectionMapping localMapping = file.getUserData(FILE_CONNECTION_MAPPING);
+        file.putUserData(FILE_CONNECTION_MAPPING, null);
+
+        return mapping != null || localMapping != null;
     }
 
-    public void removeMapping(VirtualFile virtualFile) {
-        mappings.remove(virtualFile.getUrl());
-    }
-
-    public List<VirtualFile> getMappedFiles(ConnectionHandler connectionHandler) {
+    public List<VirtualFile> getMappedFiles(ConnectionHandler connection) {
         List<VirtualFile> list = new ArrayList<>();
 
         LocalFileSystem localFileSystem = LocalFileSystem.getInstance();
         for (FileConnectionMapping mapping : mappings.values()) {
             ConnectionId connectionId = mapping.getConnectionId();
-            if (connectionHandler.getConnectionId() == connectionId) {
+            if (connection.getConnectionId() == connectionId) {
                 VirtualFile file = localFileSystem.findFileByPath(mapping.getFileUrl());
                 if (file != null) {
                     list.add(file);
