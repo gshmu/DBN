@@ -1,6 +1,7 @@
 package com.dci.intellij.dbn.common.editor;
 
 import com.dci.intellij.dbn.common.Icons;
+import com.dci.intellij.dbn.common.color.Colors;
 import com.dci.intellij.dbn.common.message.MessageType;
 import com.dci.intellij.dbn.common.util.Context;
 import com.intellij.codeInsight.hint.HintUtil;
@@ -24,9 +25,9 @@ public class EditorNotificationPanel extends JPanel{
 
     public EditorNotificationPanel(MessageType messageType) {
         super(new BorderLayout());
-        setBorder(BorderFactory.createEmptyBorder(1, 15, 1, 15));
+        setBorder(BorderFactory.createEmptyBorder(4, 12, 4, 12));
 
-        setPreferredSize(new Dimension(-1, 24));
+        //setPreferredSize(new Dimension(-1, 32));
 
         add(label, BorderLayout.CENTER);
         Icon icon = null;
@@ -35,12 +36,12 @@ public class EditorNotificationPanel extends JPanel{
         switch (messageType) {
             case INFO: {
                 icon = Icons.COMMON_INFO;
-                background = HintUtil.getInformationColor();
+                background = Colors.getLightPanelBackground();
                 break;
             }
             case WARNING:{
                 icon = Icons.COMMON_WARNING;
-                background = HintUtil.getInformationColor();
+                background = Colors.getLightPanelBackground();
                 break;
             }
             case ERROR:{
@@ -50,7 +51,7 @@ public class EditorNotificationPanel extends JPanel{
             }
             default:{
                 //icon = AllIcons.General.Information;
-                background = HintUtil.getInformationColor();
+                background = Colors.getLightPanelBackground();
                 break;
             }
         }

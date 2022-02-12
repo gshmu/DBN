@@ -113,7 +113,7 @@ public class DBNHeaderForm extends DBNFormImpl{
                 background = connectionHandler.getEnvironmentType().getColor();
             }
         }
-        mainPanel.setBackground(Commons.nvl(background, Colors.getLightPanelBackground()));
+        mainPanel.setBackground(Commons.nvl(background, Colors.getLighterPanelBackground()));
     }
 
     public void setBackground(Color background) {
