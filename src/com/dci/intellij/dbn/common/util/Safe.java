@@ -4,6 +4,7 @@ import com.dci.intellij.dbn.common.routine.ParametricCallable;
 import com.dci.intellij.dbn.common.routine.ParametricRunnable;
 import com.dci.intellij.dbn.common.routine.ThrowableCallable;
 import com.intellij.openapi.progress.ProcessCanceledException;
+import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -12,8 +13,7 @@ import java.util.function.Function;
 public final class Safe {
     private Safe() {}
 
-    @NotNull
-    public static <R, E extends Throwable> R call(@NotNull R defaultValue, @NotNull ThrowableCallable<R, E> callable) throws E{
+    public static <R, E extends Throwable> R call(R defaultValue, @NotNull ThrowableCallable<R, E> callable) throws E{
         try {
             return callable.call();
         } catch (ProcessCanceledException e){

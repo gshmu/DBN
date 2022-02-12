@@ -54,7 +54,7 @@ public class DatasetFilterUtil {
     }
 
     public static void createSimpleSelectStatement(DBDataset dataset, StringBuilder buffer) {
-        DatabaseCompatibility compatibility = dataset.getConnectionHandler().getCompatibility();
+        DatabaseCompatibility compatibility = dataset.getConnection().getCompatibility();
         // TODO not implemented yet - returning always true at the moment
         boolean aliased = compatibility.isSupported(JdbcProperty.SQL_DATASET_ALIASING);
 

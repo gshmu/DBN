@@ -33,7 +33,7 @@ public class DBSystemPrivilegeImpl extends DBPrivilegeImpl<DBPrivilegeMetadata> 
     @Override
     public List<DBUser> getUserGrantees() {
         List<DBUser> grantees = new ArrayList<DBUser>();
-        List<DBUser> users = getConnectionHandler().getObjectBundle().getUsers();
+        List<DBUser> users = this.getConnection().getObjectBundle().getUsers();
         if (users != null) {
             for (DBUser user : users) {
                 if (user.hasSystemPrivilege(this)) {

@@ -96,7 +96,7 @@ public class DBBreakpointType extends XLineBreakpointType<XBreakpointProperties>
         ConnectionHandler connectionHandler = null;
         if (file instanceof ConnectionProvider) {
             ConnectionProvider connectionProvider = (ConnectionProvider) file;
-            connectionHandler = connectionProvider.getConnectionHandler();
+            connectionHandler = connectionProvider.getConnection();
         }
 
         return createBreakpointProperties(connectionHandler);

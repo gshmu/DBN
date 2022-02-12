@@ -55,20 +55,20 @@ public class DBEditorTabColorProvider implements EditorTabColorProvider, DumbAwa
     public static ConnectionHandler getConnectionHandler(VirtualFile file, Project project) {
         if (file instanceof DBConsoleVirtualFile) {
             DBConsoleVirtualFile consoleFile = (DBConsoleVirtualFile) file;
-            return consoleFile.getConnectionHandler();
+            return consoleFile.getConnection();
         }
 
         if (file instanceof DBSessionBrowserVirtualFile) {
             DBSessionBrowserVirtualFile sessionBrowserFile = (DBSessionBrowserVirtualFile) file;
-            return sessionBrowserFile.getConnectionHandler();
+            return sessionBrowserFile.getConnection();
         }
         
         if (file instanceof DBObjectVirtualFile) {
             DBObjectVirtualFile objectFile = (DBObjectVirtualFile) file;
-            return objectFile.getConnectionHandler();
+            return objectFile.getConnection();
         }
 
-        return FileConnectionMappingManager.getInstance(project).getConnectionHandler(file);
+        return FileConnectionMappingManager.getInstance(project).getConnection(file);
     }
 
     private static Color getColor(ConnectionHandler connectionHandler) {

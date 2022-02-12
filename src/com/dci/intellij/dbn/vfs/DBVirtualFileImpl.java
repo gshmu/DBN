@@ -50,12 +50,12 @@ public abstract class DBVirtualFileImpl extends VirtualFile implements DBVirtual
     @NotNull
     @Override
     public EnvironmentType getEnvironmentType() {
-        return getConnectionHandler().getEnvironmentType();
+        return getConnection().getEnvironmentType();
     }
 
     @NotNull
     public ConnectionId getConnectionId() {
-        return getConnectionHandler().getConnectionId();
+        return getConnection().getConnectionId();
     }
 
     @Override

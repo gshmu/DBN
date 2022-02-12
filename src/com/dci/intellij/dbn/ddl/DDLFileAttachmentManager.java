@@ -5,7 +5,7 @@ import com.dci.intellij.dbn.common.AbstractProjectComponent;
 import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.common.event.ProjectEvents;
 import com.dci.intellij.dbn.common.file.util.FileSearchRequest;
-import com.dci.intellij.dbn.common.file.util.VirtualFileUtil;
+import com.dci.intellij.dbn.common.file.util.VirtualFiles;
 import com.dci.intellij.dbn.common.thread.Write;
 import com.dci.intellij.dbn.common.ui.ListUtil;
 import com.dci.intellij.dbn.common.util.Documents;
@@ -193,13 +193,13 @@ public class DDLFileAttachmentManager extends AbstractProjectComponent implement
         if (objectRef != null) {
             // map last used connection/schema
             FileConnectionMappingManager connectionMappingManager = FileConnectionMappingManager.getInstance(getProject());
-            ConnectionHandler activeConnection = connectionMappingManager.getConnectionHandler(virtualFile);
+            ConnectionHandler activeConnection = connectionMappingManager.getConnection(virtualFile);
             if (activeConnection == null) {
                 DBSchemaObject schemaObject = objectRef.get();
                 if (schemaObject != null) {
-                    ConnectionHandler connectionHandler = schemaObject.getConnectionHandler();
-                    connectionMappingManager.setConnectionHandler(virtualFile, connectionHandler);
-                    connectionMappingManager.setDatabaseSchema(virtualFile, schemaObject.getSchemaIdentifier());
+                    ConnectionHandler connectionHandler = schemaObject.getConnection();
+                    connectionMappingManager.setConnection(virtualFile, connectionHandler);
+                    connectionMappingManager.setDatabaseSchema(virtualFile, schemaObject.getSchemaId());
                 }
             }
         }
@@ -219,7 +219,7 @@ public class DDLFileAttachmentManager extends AbstractProjectComponent implement
             for (String extension : ddlFileType.getExtensions()) {
                 String fileName = objectRef.getFileName() + '.' + extension;
                 FileSearchRequest searchRequest = FileSearchRequest.forNames(fileName);
-                VirtualFile[] files = VirtualFileUtil.findFiles(project, searchRequest);
+                VirtualFile[] files = VirtualFiles.findFiles(project, searchRequest);
                 fileList.addAll(Arrays.asList(files));
             }
         }
@@ -337,7 +337,7 @@ public class DDLFileAttachmentManager extends AbstractProjectComponent implement
                     message.append(':');
                     for (String fileUrl : fileUrls) {
                         message.append('\n');
-                        message.append(VirtualFileUtil.ensureFilePath(fileUrl));
+                        message.append(VirtualFiles.ensureFilePath(fileUrl));
                     }
                 }
 
@@ -503,7 +503,7 @@ public class DDLFileAttachmentManager extends AbstractProjectComponent implement
             }
 
             if (StringUtil.isNotEmpty(fileUrl)) {
-                fileUrl = VirtualFileUtil.ensureFileUrl(fileUrl);
+                fileUrl = VirtualFiles.ensureFileUrl(fileUrl);
 
                 VirtualFile virtualFile = virtualFileManager.findFileByUrl(fileUrl);
                 if (virtualFile != null) {

@@ -15,11 +15,7 @@ import com.dci.intellij.dbn.common.routine.ParametricRunnable;
 import com.dci.intellij.dbn.common.thread.Background;
 import com.dci.intellij.dbn.common.thread.Dispatch;
 import com.dci.intellij.dbn.common.thread.Progress;
-import com.dci.intellij.dbn.common.util.Editors;
-import com.dci.intellij.dbn.common.util.InternalApi;
-import com.dci.intellij.dbn.common.util.Lists;
-import com.dci.intellij.dbn.common.util.Strings;
-import com.dci.intellij.dbn.common.util.TimeUtil;
+import com.dci.intellij.dbn.common.util.*;
 import com.dci.intellij.dbn.connection.config.ConnectionDatabaseSettings;
 import com.dci.intellij.dbn.connection.config.ConnectionSettings;
 import com.dci.intellij.dbn.connection.config.ConnectionSettingsListener;
@@ -402,7 +398,7 @@ public class ConnectionManager extends AbstractProjectComponent implements Persi
          }
 
          if (connectionHandler == null && virtualFile != null) {
-             connectionHandler = FileConnectionMappingManager.getInstance(project).getConnectionHandler(virtualFile);
+             connectionHandler = FileConnectionMappingManager.getInstance(project).getConnection(virtualFile);
          }
 
          return connectionHandler;

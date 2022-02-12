@@ -36,13 +36,13 @@ public class DBLooseContentVirtualFile extends DBVirtualFileImpl implements DBPa
         this.content = content;
         this.fileType = fileType;
         name = object.getName();
-        ConnectionHandler connectionHandler = Failsafe.nn(getConnectionHandler());
+        ConnectionHandler connectionHandler = Failsafe.nn(getConnection());
         setCharset(connectionHandler.getSettings().getDetailSettings().getCharset());
     }
 
     @Override
     public PsiFile initializePsiFile(DatabaseFileViewProvider fileViewProvider, Language language) {
-        ConnectionHandler connectionHandler = Failsafe.nn(getConnectionHandler());
+        ConnectionHandler connectionHandler = Failsafe.nn(getConnection());
         DBLanguageDialect languageDialect = connectionHandler.resolveLanguageDialect(language);
         return languageDialect == null ? null : fileViewProvider.initializePsiFile(languageDialect);
     }
@@ -65,20 +65,20 @@ public class DBLooseContentVirtualFile extends DBVirtualFileImpl implements DBPa
 
     @Override
     @NotNull
-    public ConnectionHandler getConnectionHandler() {
-        return getObject().getConnectionHandler();
+    public ConnectionHandler getConnection() {
+        return getObject().getConnection();
     }
 
     @Nullable
     @Override
     public SchemaId getSchemaId() {
-        return getObject().getSchemaIdentifier();
+        return getObject().getSchemaId();
     }
 
     @Nullable
     @Override
-    public DatabaseSession getDatabaseSession() {
-        return getConnectionHandler().getSessionBundle().getMainSession();
+    public DatabaseSession getSession() {
+        return getConnection().getSessionBundle().getMainSession();
     }
 
     @Override

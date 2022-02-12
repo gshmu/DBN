@@ -52,7 +52,7 @@ public class ExplainPlanEditorAction extends DumbAwareProjectAction {
             if (psiFile instanceof DBLanguagePsiFile) {
                 DBLanguagePsiFile languagePsiFile = (DBLanguagePsiFile) psiFile;
 
-                ConnectionHandler activeConnection = languagePsiFile.getConnectionHandler();
+                ConnectionHandler activeConnection = languagePsiFile.getConnection();
                 visible = isVisible(e) && DatabaseFeature.EXPLAIN_PLAN.isSupported(activeConnection);
 
                 if (visible) {

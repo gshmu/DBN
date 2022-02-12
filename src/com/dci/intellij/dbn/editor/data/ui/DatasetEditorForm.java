@@ -38,12 +38,9 @@ import com.intellij.util.ui.AsyncProcessIcon;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.JScrollPane;
-import javax.swing.JTextField;
+import javax.swing.*;
 import javax.swing.table.TableColumn;
-import java.awt.BorderLayout;
+import java.awt.*;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
@@ -181,7 +178,7 @@ public class DatasetEditorForm extends DBNFormImpl implements SearchableDataComp
     }
 
     private ConnectionHandler getConnectionHandler() {
-        return getEditorTable().getDataset().getConnectionHandler();
+        return getEditorTable().getDataset().getConnection();
     }
 
     public float getHorizontalScrollProportion() {

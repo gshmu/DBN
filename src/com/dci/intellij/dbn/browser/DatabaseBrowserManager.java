@@ -18,11 +18,7 @@ import com.dci.intellij.dbn.common.latent.Latent;
 import com.dci.intellij.dbn.common.options.setting.BooleanSetting;
 import com.dci.intellij.dbn.common.thread.Dispatch;
 import com.dci.intellij.dbn.common.thread.Progress;
-import com.dci.intellij.dbn.connection.ConnectionBundle;
-import com.dci.intellij.dbn.connection.ConnectionHandler;
-import com.dci.intellij.dbn.connection.ConnectionId;
-import com.dci.intellij.dbn.connection.ConnectionManager;
-import com.dci.intellij.dbn.connection.SchemaId;
+import com.dci.intellij.dbn.connection.*;
 import com.dci.intellij.dbn.connection.config.ConnectionDetailSettings;
 import com.dci.intellij.dbn.object.DBSchema;
 import com.dci.intellij.dbn.object.common.DBObject;
@@ -105,7 +101,7 @@ public class DatabaseBrowserManager extends AbstractProjectComponent implements 
 
             BrowserTreeNode browserTreeNode = activeBrowserTree.getSelectedNode();
             if (browserTreeNode != null && !(browserTreeNode instanceof ConnectionBundle)) {
-                return browserTreeNode.getConnectionHandler();
+                return browserTreeNode.getConnection();
             }
         }
 
@@ -255,7 +251,7 @@ public class DatabaseBrowserManager extends AbstractProjectComponent implements 
                 }
                 else  if (file instanceof DBVirtualFileImpl) {
                     DBVirtualFileImpl databaseVirtualFile = (DBVirtualFileImpl) file;
-                    ConnectionHandler connectionHandler = databaseVirtualFile.getConnectionHandler();
+                    ConnectionHandler connectionHandler = databaseVirtualFile.getConnection();
                     navigateToElement(connectionHandler.getObjectBundle(), false);
                 }
             }
@@ -278,7 +274,7 @@ public class DatabaseBrowserManager extends AbstractProjectComponent implements 
 
                     } else if (newFile instanceof DBVirtualFileImpl) {
                         DBVirtualFileImpl databaseVirtualFile = (DBVirtualFileImpl) newFile;
-                        ConnectionHandler connectionHandler = databaseVirtualFile.getConnectionHandler();
+                        ConnectionHandler connectionHandler = databaseVirtualFile.getConnection();
                         FileEditor oldEditor = event.getOldEditor();
                         SchemaId schemaId = databaseVirtualFile.getSchemaId();
                         boolean scroll = oldEditor != null && oldEditor.isValid();

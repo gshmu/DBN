@@ -216,7 +216,7 @@ public class SourceCodeManager extends AbstractProjectComponent implements Persi
 
         if (sourceCodeFile.isNot(SAVING)) {
             DatabaseDebuggerManager debuggerManager = DatabaseDebuggerManager.getInstance(getProject());
-            if (!debuggerManager.checkForbiddenOperation(sourceCodeFile.getConnectionHandler())) {
+            if (!debuggerManager.checkForbiddenOperation(sourceCodeFile.getConnection())) {
                 return;
             }
 
@@ -279,7 +279,7 @@ public class SourceCodeManager extends AbstractProjectComponent implements Persi
 
     public SourceCodeContent loadSourceFromDatabase(@NotNull DBSchemaObject object, DBContentType contentType) throws SQLException {
         ProgressMonitor.setTaskDescription("Loading source code of " + object.getQualifiedNameWithType());
-        ConnectionHandler connectionHandler = object.getConnectionHandler();
+        ConnectionHandler connectionHandler = object.getConnection();
         boolean optionalContent = contentType == DBContentType.CODE_BODY;
 
         String sourceCode = DatabaseInterface.call(true,
@@ -408,7 +408,7 @@ public class SourceCodeManager extends AbstractProjectComponent implements Persi
     public ChangeTimestamp loadChangeTimestamp(@NotNull DBSchemaObject object, DBContentType contentType) throws SQLException{
         if (DatabaseFeature.OBJECT_CHANGE_TRACING.isSupported(object)) {
             ProgressMonitor.setTaskDescription("Loading timestamp for " + object.getQualifiedNameWithType());
-            ConnectionHandler connectionHandler = object.getConnectionHandler();
+            ConnectionHandler connectionHandler = object.getConnection();
 
             Timestamp timestamp = DatabaseInterface.call(true,
                     connectionHandler,
@@ -459,7 +459,7 @@ public class SourceCodeManager extends AbstractProjectComponent implements Persi
     }
 
     private boolean isValidObjectTypeAndName(@NotNull DBLanguagePsiFile psiFile, @NotNull DBSchemaObject object, DBContentType contentType) {
-        ConnectionHandler connectionHandler = object.getConnectionHandler();
+        ConnectionHandler connectionHandler = object.getConnection();
         DatabaseDDLInterface ddlInterface = connectionHandler.getInterfaceProvider().getDdlInterface();
         if (ddlInterface.includesTypeAndNameInSourceContent(object.getObjectType().getTypeId())) {
             PsiElement psiElement = PsiUtil.getFirstLeaf(psiFile);

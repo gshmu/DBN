@@ -49,7 +49,7 @@ public class SessionBrowserNotificationProvider extends LegacyEditorNotification
         if (virtualFile instanceof DBSessionBrowserVirtualFile) {
             if (fileEditor instanceof SessionBrowser) {
                 SessionBrowser sessionBrowser = (SessionBrowser) fileEditor;
-                ConnectionHandler connectionHandler = sessionBrowser.getConnectionHandler();
+                ConnectionHandler connectionHandler = sessionBrowser.getConnection();
                 String sourceLoadError = sessionBrowser.getModelError();
                 if (Strings.isNotEmpty(sourceLoadError)) {
                     return createPanel(connectionHandler, sourceLoadError);

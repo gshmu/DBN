@@ -5,20 +5,10 @@ import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.common.load.ProgressMonitor;
 import com.dci.intellij.dbn.data.type.DBDataType;
 import com.dci.intellij.dbn.database.common.metadata.def.DBColumnMetadata;
-import com.dci.intellij.dbn.object.DBColumn;
-import com.dci.intellij.dbn.object.DBConstraint;
-import com.dci.intellij.dbn.object.DBDataset;
-import com.dci.intellij.dbn.object.DBIndex;
-import com.dci.intellij.dbn.object.DBSchema;
-import com.dci.intellij.dbn.object.DBTable;
-import com.dci.intellij.dbn.object.DBType;
+import com.dci.intellij.dbn.object.*;
 import com.dci.intellij.dbn.object.common.DBObject;
 import com.dci.intellij.dbn.object.common.DBObjectImpl;
-import com.dci.intellij.dbn.object.common.list.DBObjectList;
-import com.dci.intellij.dbn.object.common.list.DBObjectListContainer;
-import com.dci.intellij.dbn.object.common.list.DBObjectNavigationList;
-import com.dci.intellij.dbn.object.common.list.DBObjectRelationList;
-import com.dci.intellij.dbn.object.common.list.ObjectListProvider;
+import com.dci.intellij.dbn.object.common.list.*;
 import com.dci.intellij.dbn.object.common.list.loader.DBObjectListFromRelationListLoader;
 import com.dci.intellij.dbn.object.properties.DBDataTypePresentableProperty;
 import com.dci.intellij.dbn.object.properties.DBObjectPresentableProperty;
@@ -29,7 +19,7 @@ import com.dci.intellij.dbn.object.type.DBObjectType;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import javax.swing.Icon;
+import javax.swing.*;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -60,7 +50,7 @@ public class DBColumnImpl extends DBObjectImpl<DBColumnMetadata> implements DBCo
         set(HIDDEN, metadata.isHidden());
         position = metadata.getPosition();
 
-        dataType = DBDataType.get(this.getConnectionHandler(), metadata.getDataType());
+        dataType = DBDataType.get(this.getConnection(), metadata.getDataType());
         return name;
     }
 
@@ -245,7 +235,7 @@ public class DBColumnImpl extends DBObjectImpl<DBColumnMetadata> implements DBCo
 
         List<DBColumn> list = new ArrayList<>();
         boolean isSystemSchema = getDataset().getSchema().isSystemSchema();
-        for (DBSchema schema : getConnectionHandler().getObjectBundle().getSchemas()) {
+        for (DBSchema schema : this.getConnection().getObjectBundle().getSchemas()) {
             if (ProgressMonitor.isCancelled()) {
                 break;
             }

@@ -50,14 +50,14 @@ public class DBUserImpl extends DBObjectImpl<DBUserMetadata> implements DBUser {
         String name = metadata.getUserName();
         set(DBObjectProperty.EXPIRED, metadata.isExpired());
         set(DBObjectProperty.LOCKED, metadata.isLocked());
-        set(SESSION_USER, Strings.equalsIgnoreCase(name, getConnectionHandler().getUserName()));
+        set(SESSION_USER, Strings.equalsIgnoreCase(name, this.getConnection().getUserName()));
         return name;
     }
 
     @Override
     protected void initLists() {
         DBObjectListContainer childObjects = initChildObjects();
-        DBObjectBundle sourceContentHolder = getConnectionHandler().getObjectBundle();
+        DBObjectBundle sourceContentHolder = this.getConnection().getObjectBundle();
         roles = childObjects.createSubcontentObjectList(GRANTED_ROLE, this, sourceContentHolder, DBObjectRelationType.USER_ROLE);
         privileges = childObjects.createSubcontentObjectList(GRANTED_PRIVILEGE, this, sourceContentHolder, DBObjectRelationType.USER_PRIVILEGE);
     }
@@ -124,7 +124,7 @@ public class DBUserImpl extends DBObjectImpl<DBUserMetadata> implements DBUser {
                 return true;
             }
         }
-        DatabaseCompatibilityInterface compatibilityInterface = getConnectionHandler().getInterfaceProvider().getCompatibilityInterface();
+        DatabaseCompatibilityInterface compatibilityInterface = this.getConnection().getInterfaceProvider().getCompatibilityInterface();
         if (compatibilityInterface.supportsObjectType(GRANTED_ROLE.getTypeId())) {
             for (DBGrantedRole grantedRole : getRoles()) {
                 if (grantedRole.getRole().hasPrivilege(systemPrivilege)) {

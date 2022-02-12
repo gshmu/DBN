@@ -4,7 +4,7 @@ import com.dci.intellij.dbn.DatabaseNavigator;
 import com.dci.intellij.dbn.common.AbstractProjectComponent;
 import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.common.file.util.FileSearchRequest;
-import com.dci.intellij.dbn.common.file.util.VirtualFileUtil;
+import com.dci.intellij.dbn.common.file.util.VirtualFiles;
 import com.dci.intellij.dbn.common.notification.NotificationGroup;
 import com.dci.intellij.dbn.common.notification.NotificationSupport;
 import com.dci.intellij.dbn.common.thread.Progress;
@@ -71,7 +71,7 @@ public class ParserDiagnosticsManager extends AbstractProjectComponent implement
             running = true;
             String[] extensions = getFileExtensions();
             FileSearchRequest searchRequest = FileSearchRequest.forExtensions(extensions);
-            VirtualFile[] files = VirtualFileUtil.findFiles(getProject(), searchRequest);
+            VirtualFile[] files = VirtualFiles.findFiles(getProject(), searchRequest);
             ParserDiagnosticsResult result = new ParserDiagnosticsResult(getProject());
 
             for (int i = 0, filesLength = files.length; i < filesLength; i++) {
@@ -104,7 +104,7 @@ public class ParserDiagnosticsManager extends AbstractProjectComponent implement
     public void scrambleProjectFiles(ProgressIndicator progress, File rootDir) {
         String[] extensions = getFileExtensions();
         FileSearchRequest searchRequest = FileSearchRequest.forExtensions(extensions);
-        VirtualFile[] files = VirtualFileUtil.findFiles(getProject(), searchRequest);
+        VirtualFile[] files = VirtualFiles.findFiles(getProject(), searchRequest);
 
         DBLLanguageFileScrambler scrambler = new DBLLanguageFileScrambler();
 

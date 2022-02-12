@@ -123,7 +123,7 @@ public class MethodExecutionInputTypeAttributeForm extends DBNFormImpl {
                 DBArgument argument = getArgument();
                 DBTypeAttribute typeAttribute = getTypeAttribute();
                 if (argument != null && typeAttribute != null) {
-                    ConnectionHandler connectionHandler = argument.getConnectionHandler();
+                    ConnectionHandler connectionHandler = argument.getConnection();
                     MethodExecutionManager executionManager = MethodExecutionManager.getInstance(argument.getProject());
                     MethodExecutionArgumentValueHistory argumentValuesCache = executionManager.getArgumentValuesHistory();
                     MethodExecutionArgumentValue argumentValue = argumentValuesCache.getArgumentValue(

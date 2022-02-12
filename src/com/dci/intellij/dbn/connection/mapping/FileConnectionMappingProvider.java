@@ -7,7 +7,7 @@ import org.jetbrains.annotations.Nullable;
 
 public interface FileConnectionMappingProvider extends ConnectionProvider {
     @Nullable
-    DatabaseSession getDatabaseSession();
+    DatabaseSession getSession();
 
     @Nullable
     SchemaId getSchemaId();

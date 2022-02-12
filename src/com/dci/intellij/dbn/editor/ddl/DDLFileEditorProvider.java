@@ -3,7 +3,7 @@ package com.dci.intellij.dbn.editor.ddl;
 import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.common.editor.BasicTextEditor;
 import com.dci.intellij.dbn.common.editor.BasicTextEditorProvider;
-import com.dci.intellij.dbn.common.file.util.VirtualFileUtil;
+import com.dci.intellij.dbn.common.file.util.VirtualFiles;
 import com.dci.intellij.dbn.vfs.file.DBEditableObjectVirtualFile;
 import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.fileEditor.FileEditor;
@@ -49,7 +49,7 @@ public abstract class DDLFileEditorProvider extends BasicTextEditorProvider impl
         VirtualFile virtualFile = ddlFiles.get(index);
 
         BasicTextEditor textEditor = new DDLFileEditor(project, virtualFile, getEditorProviderId());
-        updateTabIcon(databaseFile, textEditor, VirtualFileUtil.getIcon(virtualFile));
+        updateTabIcon(databaseFile, textEditor, VirtualFiles.getIcon(virtualFile));
         return textEditor;
     }
 

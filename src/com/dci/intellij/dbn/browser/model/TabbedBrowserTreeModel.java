@@ -13,11 +13,11 @@ public class TabbedBrowserTreeModel extends BrowserTreeModel {
 
     @Override
     public boolean contains(BrowserTreeNode node) {
-        return getConnectionHandler() == node.getConnectionHandler();
+        return getConnectionHandler() == node.getConnection();
     }
 
     public ConnectionHandler getConnectionHandler() {
-        return getRoot().getConnectionHandler();
+        return getRoot().getConnection();
     }
 
     private final ConnectionHandlerStatusListener connectionHandlerStatusListener = (connectionId) -> {

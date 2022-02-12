@@ -70,7 +70,7 @@ public class CodeCompletionContext {
         this.parameters = parameters;
         this.result = result;
         this.extended = parameters.getCompletionType() == CompletionType.SMART;
-        this.connectionHandler = ConnectionHandlerRef.of(file.getConnectionHandler());
+        this.connectionHandler = ConnectionHandlerRef.of(file.getConnection());
 
         PsiElement position = parameters.getPosition();
         if (position instanceof PsiComment) {

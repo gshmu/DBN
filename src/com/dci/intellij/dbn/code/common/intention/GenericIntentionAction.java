@@ -22,7 +22,7 @@ public abstract class GenericIntentionAction implements IntentionAction, Priorit
     protected ConnectionHandler getConnectionHandler(PsiFile psiFile) {
         if (psiFile instanceof DBLanguagePsiFile) {
             DBLanguagePsiFile dbLanguagePsiFile = (DBLanguagePsiFile) psiFile;
-            return dbLanguagePsiFile.getConnectionHandler();
+            return dbLanguagePsiFile.getConnection();
         }
         return null;
     }

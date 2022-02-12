@@ -21,7 +21,7 @@ public class MethodExecutionHistoryGroupedTreeModel extends MethodExecutionHisto
         for (MethodExecutionInput executionInput : executionInputs) {
             if (!executionInput.isObsolete() &&
                     !executionInput.isInactive() &&
-                    (!debug || DatabaseFeature.DEBUGGING.isSupported(executionInput.getConnectionHandler()))) {
+                    (!debug || DatabaseFeature.DEBUGGING.isSupported(executionInput.getConnection()))) {
                 RootTreeNode root = getRoot();
 
                 if (root != null) {
@@ -120,7 +120,7 @@ public class MethodExecutionHistoryGroupedTreeModel extends MethodExecutionHisto
             MethodTreeNode methodNode) {
         for (MethodExecutionInput executionInput : executionInputs) {
             DBObjectRef<DBMethod> methodRef = executionInput.getMethodRef();
-            ConnectionHandler connectionHandler = executionInput.getConnectionHandler();
+            ConnectionHandler connectionHandler = executionInput.getConnection();
             if (connectionHandler != null && connectionHandler.getConnectionId().equals(connectionNode.getConnectionHandlerId()) &&
                 Strings.equalsIgnoreCase(methodRef.getSchemaName(), schemaNode.getName()) &&
                 Strings.equalsIgnoreCase(methodRef.getObjectName(), methodNode.getName()) &&

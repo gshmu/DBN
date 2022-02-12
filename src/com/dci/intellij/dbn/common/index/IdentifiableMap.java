@@ -24,4 +24,8 @@ public class IdentifiableMap<K, V extends Identifiable<K>>{
     public V get(K id) {
         return id == null ? null : data.get(id);
     }
+
+    public boolean contains(K key) {
+        return data.containsKey(key);
+    }
 }

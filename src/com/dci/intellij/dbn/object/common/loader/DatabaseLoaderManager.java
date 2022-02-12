@@ -33,7 +33,7 @@ public class DatabaseLoaderManager extends AbstractProjectComponent {
                     for (VirtualFile openFile : openFiles) {
 
                         checkDisposed();
-                        ConnectionHandler activeConnection = connectionMappingManager.getConnectionHandler(openFile);
+                        ConnectionHandler activeConnection = connectionMappingManager.getConnection(openFile);
                         if (activeConnection == connectionHandler) {
                             FileEditor[] fileEditors = fileEditorManager.getEditors(openFile);
                             for (FileEditor fileEditor : fileEditors) {

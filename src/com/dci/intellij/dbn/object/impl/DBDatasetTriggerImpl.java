@@ -19,7 +19,7 @@ import com.dci.intellij.dbn.object.type.DBTriggerType;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import javax.swing.Icon;
+import javax.swing.*;
 import java.sql.SQLException;
 
 public class DBDatasetTriggerImpl extends DBTriggerImpl implements DBDatasetTrigger {
@@ -95,7 +95,7 @@ public class DBDatasetTriggerImpl extends DBTriggerImpl implements DBDatasetTrig
 
     @Override
     public void executeUpdateDDL(DBContentType contentType, String oldCode, String newCode) throws SQLException {
-        ConnectionHandler connectionHandler = getConnectionHandler();
+        ConnectionHandler connectionHandler = this.getConnection();
         DBSchema schema = getSchema();
         PooledConnection.run(false, connectionHandler, SchemaId.from(schema), connection -> {
             DatabaseDDLInterface ddlInterface = connectionHandler.getInterfaceProvider().getDdlInterface();

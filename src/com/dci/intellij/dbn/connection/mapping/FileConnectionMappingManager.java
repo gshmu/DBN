@@ -7,7 +7,7 @@ import com.dci.intellij.dbn.common.action.ProjectAction;
 import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.common.dispose.SafeDisposer;
 import com.dci.intellij.dbn.common.event.ProjectEvents;
-import com.dci.intellij.dbn.common.file.util.VirtualFileUtil;
+import com.dci.intellij.dbn.common.file.util.VirtualFiles;
 import com.dci.intellij.dbn.common.project.ProjectRef;
 import com.dci.intellij.dbn.common.thread.Dispatch;
 import com.dci.intellij.dbn.common.thread.Progress;
@@ -112,29 +112,34 @@ public class FileConnectionMappingManager extends AbstractProjectComponent imple
      *                    Connection mappings                          *
      *******************************************************************/
     @Nullable
-    public ConnectionHandler getConnectionHandler(@NotNull VirtualFile virtualFile) {
+    public ConnectionHandler getConnection(@NotNull VirtualFile virtualFile) {
         return registry.getConnectionHandler(virtualFile);
     }
 
-    public boolean setConnectionHandler(VirtualFile virtualFile, ConnectionHandler connectionHandler) {
-        return registry.setConnectionHandler(virtualFile, connectionHandler);
+    public boolean setConnection(VirtualFile file, ConnectionHandler connection) {
+        if (isConnectionSelectable(file)) {
+            boolean changed = registry.setConnectionHandler(file, connection);
+            if (changed) {
+                Project project = getProject();
+                ProjectEvents.notify(project,
+                        FileConnectionMappingListener.TOPIC,
+                        (listener) -> listener.connectionChanged(project, file, connection));
+            }
+
+            return changed;
+        }
+        return false;
     }
 
-    public void setConnectionHandler(@NotNull Editor editor, @Nullable ConnectionHandler connectionHandler) {
+    public void setConnection(@NotNull Editor editor, @Nullable ConnectionHandler connection) {
         Document document = editor.getDocument();
-        VirtualFile virtualFile = FileDocumentManager.getInstance().getFile(document);
-        if (isConnectionSelectable(virtualFile)) {
-            boolean changed = setConnectionHandler(virtualFile, connectionHandler);
-            if (changed) {
-                Documents.touchDocument(editor, true);
-
-                ProjectEvents.notify(getProject(),
-                        FileConnectionMappingListener.TOPIC,
-                        (listener) -> listener.connectionChanged(virtualFile, connectionHandler));
-            }
+        VirtualFile file = FileDocumentManager.getInstance().getFile(document);
+        boolean changed = setConnection(file, connection);
+        if (changed) {
+            // TODO add as FileConnectionMappingListener.TOPIC
+            Documents.touchDocument(editor, true);
         }
     }
-
 
     /*******************************************************************
      *                        Schema mappings                          *
@@ -144,22 +149,27 @@ public class FileConnectionMappingManager extends AbstractProjectComponent imple
         return registry.getDatabaseSchema(virtualFile);
     }
 
-    public boolean setDatabaseSchema(VirtualFile virtualFile, SchemaId schemaId) {
-        return registry.setDatabaseSchema(virtualFile, schemaId);
+    public boolean setDatabaseSchema(VirtualFile file, SchemaId schema) {
+        if (isSchemaSelectable(file)) {
+            boolean changed = registry.setDatabaseSchema(file, schema);
+            if (changed) {
+                Project project = getProject();
+                ProjectEvents.notify(project,
+                        FileConnectionMappingListener.TOPIC,
+                        (listener) -> listener.schemaChanged(project, file, schema));
+            }
+            return changed;
+        }
+        return false;
     }
 
     public void setDatabaseSchema(@NotNull Editor editor, SchemaId schema) {
         Document document = editor.getDocument();
         VirtualFile virtualFile = FileDocumentManager.getInstance().getFile(document);
-        if (isSchemaSelectable(virtualFile)) {
-            boolean changed = registry.setDatabaseSchema(virtualFile, schema);
-            if (changed) {
-                Documents.touchDocument(editor, false);
-
-                ProjectEvents.notify(getProject(),
-                        FileConnectionMappingListener.TOPIC,
-                        (listener) -> listener.schemaChanged(virtualFile, schema));
-            }
+        boolean changed = setDatabaseSchema(virtualFile, schema);
+        if (changed) {
+            // TODO add as FileConnectionMappingListener.TOPIC
+            Documents.touchDocument(editor, false);
         }
     }
 
@@ -171,50 +181,63 @@ public class FileConnectionMappingManager extends AbstractProjectComponent imple
         return registry.getDatabaseSession(virtualFile);
     }
 
-    public boolean setDatabaseSession(VirtualFile virtualFile, DatabaseSession session) {
-        return registry.setDatabaseSession(virtualFile, session);
+    public boolean setDatabaseSession(VirtualFile file, DatabaseSession session) {
+        if (isSessionSelectable(file)) {
+            boolean changed = registry.setDatabaseSession(file, session);
+            if (changed) {
+                Project project = getProject();
+                ProjectEvents.notify(project,
+                        FileConnectionMappingListener.TOPIC,
+                        (listener) -> listener.sessionChanged(project, file, session));
+            }
+
+            return changed;
+        }
+        return false;
     }
 
     public void setDatabaseSession(@NotNull Editor editor, DatabaseSession session) {
         Document document = editor.getDocument();
-        VirtualFile virtualFile = FileDocumentManager.getInstance().getFile(document);
-        if (isSessionSelectable(virtualFile)) {
-            registry.setDatabaseSession(virtualFile, session);
-
-            ProjectEvents.notify(getProject(),
-                    FileConnectionMappingListener.TOPIC,
-                    (listener) -> listener.sessionChanged(virtualFile, session));
-        }
+        VirtualFile file = FileDocumentManager.getInstance().getFile(document);
+        setDatabaseSession(file, session);
     }
 
-    public boolean isConnectionSelectable(VirtualFile virtualFile) {
-        return virtualFile != null &&
-                virtualFile.getFileType() instanceof DBLanguageFileType &&
-                (VirtualFileUtil.isLocalFileSystem(virtualFile) ||
-                        virtualFile instanceof LightVirtualFile);
+
+
+    @Nullable
+    public FileConnectionMapping getMapping(@NotNull VirtualFile file) {
+        return registry.getFileConnectionMapping(file);
     }
 
-    public boolean isSchemaSelectable(VirtualFile virtualFile) {
-        return virtualFile != null &&
-                virtualFile.getFileType() instanceof DBLanguageFileType &&
-                (VirtualFileUtil.isLocalFileSystem(virtualFile) ||
-                        virtualFile instanceof LightVirtualFile ||
-                        virtualFile instanceof DBConsoleVirtualFile);
+
+    public boolean isConnectionSelectable(VirtualFile file) {
+        return file != null &&
+                file.getFileType() instanceof DBLanguageFileType &&
+                (VirtualFiles.isLocalFileSystem(file) ||
+                        file instanceof LightVirtualFile);
     }
 
-    public boolean isSessionSelectable(VirtualFile virtualFile) {
-        return virtualFile != null &&
-                virtualFile.getFileType() instanceof DBLanguageFileType &&
-                (VirtualFileUtil.isLocalFileSystem(virtualFile) ||
-                        virtualFile instanceof LightVirtualFile ||
-                        virtualFile instanceof DBConsoleVirtualFile);
+    public boolean isSchemaSelectable(VirtualFile file) {
+        return file != null &&
+                file.getFileType() instanceof DBLanguageFileType &&
+                (VirtualFiles.isLocalFileSystem(file) ||
+                        file instanceof LightVirtualFile ||
+                        file instanceof DBConsoleVirtualFile);
+    }
+
+    public boolean isSessionSelectable(VirtualFile file) {
+        return file != null &&
+                file.getFileType() instanceof DBLanguageFileType &&
+                (VirtualFiles.isLocalFileSystem(file) ||
+                        file instanceof LightVirtualFile ||
+                        file instanceof DBConsoleVirtualFile);
     }
 
 
     public void selectConnectionAndSchema(@NotNull DBLanguagePsiFile file, DataContext dataContext, @NotNull Runnable callback) {
         Dispatch.run(() -> {
             Project project = getProject();
-            ConnectionHandler activeConnection = file.getConnectionHandler();
+            ConnectionHandler activeConnection = file.getConnection();
             if (activeConnection == null || activeConnection.isVirtual()) {
                 String message =
                         activeConnection == null ?
@@ -330,7 +353,7 @@ public class FileConnectionMappingManager extends AbstractProjectComponent imple
         protected void actionPerformed(@NotNull AnActionEvent e, @NotNull Project project, @NotNull ConnectionHandler connectionHandler) {
             DBLanguagePsiFile file = psiFile.get();
             if (file != null) {
-                file.setConnectionHandler(connectionHandler);
+                file.setConnection(connectionHandler);
                 if (promptSchemaSelection) {
                     promptSchemaSelector(file, e.getDataContext(), callback);
                 } else {
@@ -349,7 +372,7 @@ public class FileConnectionMappingManager extends AbstractProjectComponent imple
         public boolean isSelected() {
             DBLanguagePsiFile file = psiFile.get();
             if (file != null) {
-                ConnectionHandler connectionHandler = file.getConnectionHandler();
+                ConnectionHandler connectionHandler = file.getConnection();
                 return connectionHandler != null && connectionHandler.getConnectionId().equals(getConnectionId());
             }
             return false;
@@ -529,7 +552,7 @@ public class FileConnectionMappingManager extends AbstractProjectComponent imple
         public boolean isSelected() {
             DBLanguagePsiFile file = psiFile.get();
             if (file != null) {
-                DatabaseSession fileSession = file.getDatabaseSession();
+                DatabaseSession fileSession = file.getSession();
                 return fileSession != null && fileSession.equals(session.get());
             }
             return false;

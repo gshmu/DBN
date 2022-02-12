@@ -40,7 +40,7 @@ import com.intellij.psi.PsiDirectory;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import javax.swing.Icon;
+import javax.swing.*;
 import javax.swing.tree.TreeNode;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -131,7 +131,7 @@ public class DBObjectListImpl<T extends DBObject> extends DynamicContentImpl<T> 
     @Override
     @Nullable
     public Filter<T> getConfigFilter() {
-        ConnectionHandler connectionHandler = getConnectionHandler();
+        ConnectionHandler connectionHandler = this.getConnection();
         if (Failsafe.check(connectionHandler) && !connectionHandler.isVirtual()) {
             ConnectionFilterSettings filterSettings = connectionHandler.getSettings().getFilterSettings();
             return filterSettings.getNameFilter(objectType);
@@ -297,7 +297,7 @@ public class DBObjectListImpl<T extends DBObject> extends DynamicContentImpl<T> 
                 DBObject object = (DBObject) getParent();
                 return getName() + " of " + object.getQualifiedNameWithType();
             }
-            ConnectionHandler connectionHandler = getConnectionHandler();
+            ConnectionHandler connectionHandler = this.getConnection();
             return getName() + " from " + connectionHandler.getName();
         }
     }
@@ -363,7 +363,7 @@ public class DBObjectListImpl<T extends DBObject> extends DynamicContentImpl<T> 
                 }
 
                 if (scroll) {
-                    ConnectionHandler connectionHandler = getConnectionHandler();
+                    ConnectionHandler connectionHandler = this.getConnection();
                     DatabaseBrowserManager.scrollToSelectedElement(connectionHandler);
                 }
             }

@@ -32,7 +32,7 @@ public class RecordsFetchNextAction extends AbstractDataEditorAction {
         boolean enabled =
                 Failsafe.check(datasetEditor) &&
                         datasetEditor.isLoaded() &&
-                        datasetEditor.getConnectionHandler().isConnected() &&
+                        datasetEditor.getConnection().isConnected() &&
                         !datasetEditor.isInserting() &&
                         !datasetEditor.isLoading() &&
                         !datasetEditor.isDirty() &&

@@ -122,7 +122,7 @@ public abstract class ConnectionAction implements Runnable{
 
     @NotNull
     public ConnectionHandler getConnectionHandler() {
-        ConnectionHandler connectionHandler = connectionProvider.getConnectionHandler();
+        ConnectionHandler connectionHandler = connectionProvider.getConnection();
         return Failsafe.nn(connectionHandler);
     }
 

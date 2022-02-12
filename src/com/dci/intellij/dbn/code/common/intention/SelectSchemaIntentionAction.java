@@ -35,7 +35,7 @@ public class SelectSchemaIntentionAction extends GenericIntentionAction implemen
             FileConnectionMappingManager connectionMappingManager = FileConnectionMappingManager.getInstance(project);
             if (connectionMappingManager.isSchemaSelectable(virtualFile)) {
                 DBLanguagePsiFile file = (DBLanguagePsiFile) psiFile;
-                ConnectionHandler connectionHandler = file.getConnectionHandler();
+                ConnectionHandler connectionHandler = file.getConnection();
                 return connectionHandler != null && !connectionHandler.isVirtual();
             }
         }

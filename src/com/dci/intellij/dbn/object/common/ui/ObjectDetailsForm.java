@@ -20,7 +20,7 @@ public class ObjectDetailsForm {
     public ObjectDetailsForm(DBObject object) {
         this.object = object;
         objectPanel.setLayout(new BoxLayout(objectPanel, BoxLayout.X_AXIS));
-        ConnectionHandler connectionHandler = object.getConnectionHandler();
+        ConnectionHandler connectionHandler = object.getConnection();
         connectionLabel.setText(connectionHandler.getName());
         connectionLabel.setIcon(connectionHandler.getIcon());
         

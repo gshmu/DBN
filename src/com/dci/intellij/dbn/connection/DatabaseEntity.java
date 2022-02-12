@@ -45,7 +45,7 @@ public interface DatabaseEntity extends ConnectionProvider, StatefulDisposable, 
 
     @NotNull
     @Override
-    default ConnectionHandler getConnectionHandler() {
+    default ConnectionHandler getConnection() {
         throw new UnsupportedOperationException();
     };
 }

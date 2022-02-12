@@ -53,8 +53,8 @@ public class DBObjectVirtualFile<T extends DBObject> extends DBVirtualFileImpl {
 
     @Override
     @NotNull
-    public ConnectionHandler getConnectionHandler() {
-        return Failsafe.nn(objectRef.getConnectionHandler());
+    public ConnectionHandler getConnection() {
+        return Failsafe.nn(objectRef.getConnection());
     }
 
     @Nullable
@@ -64,8 +64,8 @@ public class DBObjectVirtualFile<T extends DBObject> extends DBVirtualFileImpl {
     }
 
     @Override
-    public DatabaseSession getDatabaseSession() {
-        return getConnectionHandler().getSessionBundle().getPoolSession();
+    public DatabaseSession getSession() {
+        return getConnection().getSessionBundle().getPoolSession();
     }
 
     @Override
@@ -76,7 +76,7 @@ public class DBObjectVirtualFile<T extends DBObject> extends DBVirtualFileImpl {
     @NotNull
     @Override
     public String getPresentablePath() {
-        return getConnectionHandler().getName() + File.separatorChar +
+        return getConnection().getName() + File.separatorChar +
                 getObjectRef().getObjectType().getListName() + File.separatorChar +
                 getObjectRef().getQualifiedName();
     }

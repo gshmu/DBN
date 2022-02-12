@@ -102,7 +102,7 @@ public class ObjectActionGroup extends DefaultActionGroup implements DumbAware {
             add(new ConsoleRenameAction(console));
             add(new ConsoleDeleteAction(console));
             addSeparator();
-            ConnectionHandler connectionHandler = object.getConnectionHandler();
+            ConnectionHandler connectionHandler = object.getConnection();
             add(new ConsoleCreateAction(connectionHandler, DBConsoleType.STANDARD));
             if (DatabaseFeature.DEBUGGING.isSupported(connectionHandler)) {
                 add(new ConsoleCreateAction(connectionHandler, DBConsoleType.DEBUG));

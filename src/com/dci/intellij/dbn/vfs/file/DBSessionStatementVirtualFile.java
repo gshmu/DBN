@@ -40,7 +40,7 @@ public class DBSessionStatementVirtualFile extends DBVirtualFileImpl implements 
         super(sessionBrowser.getProject());
         this.sessionBrowser = WeakRef.of(sessionBrowser);
         this.content = content;
-        ConnectionHandler connectionHandler = Failsafe.nn(sessionBrowser.getConnectionHandler());
+        ConnectionHandler connectionHandler = Failsafe.nn(sessionBrowser.getConnection());
         name = connectionHandler.getName();
         setCharset(connectionHandler.getSettings().getDetailSettings().getCharset());
         //putUserData(PARSE_ROOT_ID_KEY, "subquery");
@@ -48,7 +48,7 @@ public class DBSessionStatementVirtualFile extends DBVirtualFileImpl implements 
 
     @Override
     public PsiFile initializePsiFile(DatabaseFileViewProvider fileViewProvider, Language language) {
-        ConnectionHandler connectionHandler = Failsafe.nn(getConnectionHandler());
+        ConnectionHandler connectionHandler = Failsafe.nn(getConnection());
         DBLanguageDialect languageDialect = connectionHandler.resolveLanguageDialect(language);
         return languageDialect == null ? null : fileViewProvider.initializePsiFile(languageDialect);
     }
@@ -71,8 +71,8 @@ public class DBSessionStatementVirtualFile extends DBVirtualFileImpl implements 
 
     @Override
     @NotNull
-    public ConnectionHandler getConnectionHandler() {
-        ConnectionHandler connectionHandler = getSessionBrowser().getConnectionHandler();
+    public ConnectionHandler getConnection() {
+        ConnectionHandler connectionHandler = getSessionBrowser().getConnection();
         return Failsafe.nn(connectionHandler);
     }
 
@@ -84,8 +84,8 @@ public class DBSessionStatementVirtualFile extends DBVirtualFileImpl implements 
 
     @Nullable
     @Override
-    public DatabaseSession getDatabaseSession() {
-        return getConnectionHandler().getSessionBundle().getPoolSession();
+    public DatabaseSession getSession() {
+        return getConnection().getSessionBundle().getPoolSession();
     }
 
     public void setSchemaId(SchemaId schemaId) {

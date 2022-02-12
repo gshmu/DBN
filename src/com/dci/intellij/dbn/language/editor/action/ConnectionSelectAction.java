@@ -30,7 +30,7 @@ public class ConnectionSelectAction extends DumbAwareProjectAction {
         Editor editor = Lookup.getEditor(e);
         if (editor != null) {
             FileConnectionMappingManager connectionMappingManager = FileConnectionMappingManager.getInstance(project);
-            connectionMappingManager.setConnectionHandler(editor, connectionHandler);
+            connectionMappingManager.setConnection(editor, connectionHandler);
         }
     }
 

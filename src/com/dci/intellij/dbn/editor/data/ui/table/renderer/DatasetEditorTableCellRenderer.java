@@ -13,7 +13,7 @@ import com.dci.intellij.dbn.editor.data.ui.table.DatasetEditorTable;
 import com.intellij.ui.SimpleTextAttributes;
 
 import javax.swing.border.Border;
-import java.awt.Color;
+import java.awt.*;
 
 import static com.dci.intellij.dbn.editor.data.model.RecordStatus.*;
 
@@ -37,7 +37,7 @@ public class DatasetEditorTableCellRenderer extends BasicTableCellRenderer {
             boolean isCaretRow = !isInsertRow && table.getCellSelectionEnabled() && table.getSelectedRow() == rowIndex && table.getSelectedRowCount() == 1;
             boolean isModified = cell.is(MODIFIED);
             boolean isTrackingColumn = columnInfo.isTrackingColumn();
-            boolean isConnected = Failsafe.nn(datasetEditorTable.getDatasetEditor().getConnectionHandler()).isConnected();
+            boolean isConnected = Failsafe.nn(datasetEditorTable.getDatasetEditor().getConnection()).isConnected();
 
             BasicTableTextAttributes attributes = (BasicTableTextAttributes) getAttributes();
             SimpleTextAttributes textAttributes = attributes.getPlainData(isModified, isCaretRow);

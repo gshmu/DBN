@@ -74,7 +74,7 @@ public class SQLConsoleOpenAction extends GroupPopupAction {
         }
 
         SelectConsoleAction(DBConsole console) {
-            super(Actions.adjustActionName(console.getName()), null, console.getIcon(), console.getConnectionHandler());
+            super(Actions.adjustActionName(console.getName()), null, console.getIcon(), console.getConnection());
             this.console = console;
         }
 

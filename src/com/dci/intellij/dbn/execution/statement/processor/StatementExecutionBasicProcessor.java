@@ -161,7 +161,7 @@ public class StatementExecutionBasicProcessor extends StatefulDisposable.Base im
     public boolean isDirty(){
         return Read.conditional(() -> {
             if (getPsiFile() == null ||
-                    getConnectionHandler() != executionInput.getConnectionHandler() || // connection changed since execution
+                    getConnection() != executionInput.getConnection() || // connection changed since execution
                     getTargetSchema() != executionInput.getTargetSchemaId()) { // current schema changed since execution)
                 return true;
 
@@ -289,7 +289,7 @@ public class StatementExecutionBasicProcessor extends StatefulDisposable.Base im
         if (cachedExecutable != null) {
             executionInput.setOriginalStatementText(cachedExecutable.getText());
             executionInput.setExecutableStatementText(cachedExecutable.prepareStatementText());
-            executionInput.setConnectionHandler(getConnectionHandler());
+            executionInput.setConnectionHandler(getConnection());
             executionInput.setTargetSchemaId(getTargetSchema());
             executionInput.setTargetSession(getTargetSession());
             executionInput.setBulkExecution(bulkExecution);
@@ -376,7 +376,7 @@ public class StatementExecutionBasicProcessor extends StatefulDisposable.Base im
             DBNConnection connection = context.getConnection();
             if (connection != null && connection.isPoolConnection()) {
                 ResourceUtil.cancel(context.getStatement());
-                ConnectionHandler connectionHandler = Failsafe.nn(getConnectionHandler());
+                ConnectionHandler connectionHandler = Failsafe.nn(getConnection());
                 connectionHandler.freePoolConnection(connection);
             }
             context.reset();
@@ -613,7 +613,7 @@ public class StatementExecutionBasicProcessor extends StatefulDisposable.Base im
     private void attachDdlExecutionInfo(StatementExecutionInput executionInput, final StatementExecutionBasicResult executionResult) {
         boolean isDdlStatement = isDataDefinitionStatement();
         boolean hasCompilerErrors = false;
-        ConnectionHandler connectionHandler = executionInput.getConnectionHandler();
+        ConnectionHandler connectionHandler = executionInput.getConnection();
         if (isDdlStatement && connectionHandler != null && DatabaseFeature.OBJECT_INVALIDATION.isSupported(connectionHandler)) {
             BasePsiElement compilablePsiElement = getCompilableBlockPsiElement();
             if (compilablePsiElement != null) {
@@ -686,15 +686,15 @@ public class StatementExecutionBasicProcessor extends StatefulDisposable.Base im
 
     @Override
     @Nullable
-    public ConnectionHandler getConnectionHandler() {
+    public ConnectionHandler getConnection() {
         DBLanguagePsiFile psiFile = getPsiFile();
-        return psiFile == null ? null : psiFile.getConnectionHandler();
+        return psiFile == null ? null : psiFile.getConnection();
     }
 
     @Override
     @NotNull
     public ConnectionHandler getTargetConnection() {
-        return Failsafe.nn(getConnectionHandler());
+        return Failsafe.nn(getConnection());
     }
 
     @Override
@@ -719,7 +719,7 @@ public class StatementExecutionBasicProcessor extends StatefulDisposable.Base im
     @Nullable
     public DatabaseSession getTargetSession() {
         DBLanguagePsiFile psiFile = getPsiFile();
-        return psiFile == null ? null : psiFile.getDatabaseSession();
+        return psiFile == null ? null : psiFile.getSession();
     }
 
     @Override
@@ -789,7 +789,7 @@ public class StatementExecutionBasicProcessor extends StatefulDisposable.Base im
             IdentifierPsiElement subjectPsiElement = getSubjectPsiElement();
             if (subjectPsiElement != null) {
                 SchemaId targetSchema = getTargetSchema();
-                ConnectionHandler connectionHandler = getConnectionHandler();
+                ConnectionHandler connectionHandler = getConnection();
                 if (targetSchema != null && connectionHandler != null) {
                     DBObject schemaObject = connectionHandler.getSchema(targetSchema);
                     if (schemaObject != null) {
@@ -822,7 +822,7 @@ public class StatementExecutionBasicProcessor extends StatefulDisposable.Base im
                 }
             }
         }
-        ConnectionHandler connectionHandler = getConnectionHandler();
+        ConnectionHandler connectionHandler = getConnection();
         SchemaId targetSchema = getTargetSchema();
         return connectionHandler == null || targetSchema == null ? null : connectionHandler.getSchema(targetSchema);
     }

@@ -19,14 +19,7 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Key;
 import com.intellij.openapi.util.TextRange;
 import com.intellij.openapi.vcs.FileStatus;
-import com.intellij.psi.PsiDirectory;
-import com.intellij.psi.PsiElement;
-import com.intellij.psi.PsiElementVisitor;
-import com.intellij.psi.PsiFile;
-import com.intellij.psi.PsiInvalidElementAccessException;
-import com.intellij.psi.PsiManager;
-import com.intellij.psi.PsiReference;
-import com.intellij.psi.ResolveState;
+import com.intellij.psi.*;
 import com.intellij.psi.scope.PsiScopeProcessor;
 import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.psi.search.PsiElementProcessor;
@@ -35,7 +28,7 @@ import com.intellij.util.IncorrectOperationException;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import javax.swing.Icon;
+import javax.swing.*;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -104,7 +97,7 @@ public class DBObjectListPsiDirectory implements PsiDirectory, Disposable {
 
         if (parent instanceof DBObjectBundle) {
             DBObjectBundle objectBundle = (DBObjectBundle) parent;
-            return objectBundle.getConnectionHandler().getPsiDirectory();
+            return objectBundle.getConnection().getPsiDirectory();
         }
 
         return null;

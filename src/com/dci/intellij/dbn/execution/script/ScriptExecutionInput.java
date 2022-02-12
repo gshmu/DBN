@@ -35,7 +35,7 @@ public class ScriptExecutionInput extends RemoteExecutionInput {
             @Nullable
             @Override
             public ConnectionHandler getTargetConnection() {
-                return getConnectionHandler();
+                return ScriptExecutionInput.this.getConnection();
             }
 
             @Nullable
@@ -63,7 +63,7 @@ public class ScriptExecutionInput extends RemoteExecutionInput {
     }
 
     @Override
-    public ConnectionHandler getConnectionHandler() {
+    public ConnectionHandler getConnection() {
         return getTargetConnection();
     }
 

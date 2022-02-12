@@ -13,7 +13,7 @@ public class ObjectListActionGroup extends DefaultActionGroup {
     public ObjectListActionGroup(DBObjectList objectList) {
         add(new ReloadObjectsAction(objectList));
         DatabaseEntity parentElement = objectList.getParentEntity();
-        ConnectionHandler connectionHandler = objectList.getConnectionHandler();
+        ConnectionHandler connectionHandler = objectList.getConnection();
         if(parentElement instanceof DBSchema) {
             add (new ObjectListFilterAction(objectList));
             addSeparator();

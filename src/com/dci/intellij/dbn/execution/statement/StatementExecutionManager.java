@@ -246,7 +246,7 @@ public class StatementExecutionManager extends AbstractProjectComponent implemen
                         dataContext,
                         () -> ConnectionAction.invoke(
                                 "the statement execution", false,
-                                () -> connectionMappingManager.getConnectionHandler(virtualFile),
+                                () -> connectionMappingManager.getConnection(virtualFile),
                                 (action) -> promptExecutionDialogs(executionProcessors, DBDebuggerType.NONE,
                                         () -> {
                                             for (StatementExecutionProcessor executionProcessor : executionProcessors) {
@@ -278,7 +278,7 @@ public class StatementExecutionManager extends AbstractProjectComponent implemen
             try {
                 StatementExecutionInput executionInput = executionProcessor.getExecutionInput();
                 SchemaId schema = executionInput.getTargetSchemaId();
-                ConnectionHandler connectionHandler = Failsafe.nn(executionProcessor.getConnectionHandler());
+                ConnectionHandler connectionHandler = Failsafe.nn(executionProcessor.getConnection());
                 connection = connectionHandler.getConnection(executionInput.getTargetSessionId(), schema);
             } catch (SQLException e) {
                 sendErrorNotification(

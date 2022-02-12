@@ -71,7 +71,7 @@ public class SessionBrowserDetailsForm extends DBNFormImpl{
 
     @NotNull
     private ConnectionHandler getConnectionHandler() {
-        return getSessionBrowser().getConnectionHandler();
+        return getSessionBrowser().getConnection();
     }
 
     @NotNull

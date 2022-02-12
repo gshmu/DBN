@@ -8,9 +8,11 @@ import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.database.DatabaseCompatibilityInterface;
 import com.dci.intellij.dbn.database.DatabaseFeature;
 import com.dci.intellij.dbn.debugger.DatabaseDebuggerManager;
+import com.dci.intellij.dbn.language.common.DBLanguagePsiFile;
 import com.dci.intellij.dbn.language.common.PsiFileRef;
 import com.dci.intellij.dbn.vfs.file.DBSourceCodeVirtualFile;
 import com.intellij.codeInsight.intention.LowPriorityAction;
+import com.intellij.injected.editor.VirtualFileWindow;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
@@ -64,14 +66,19 @@ public class ToggleDatabaseLoggingIntentionAction extends GenericIntentionAction
 
     @Override
     public boolean isAvailable(@NotNull Project project, Editor editor, PsiFile psiFile) {
-        VirtualFile virtualFile = psiFile.getVirtualFile();
-        if (DatabaseDebuggerManager.isDebugConsole(virtualFile) || virtualFile instanceof DBSourceCodeVirtualFile) {
-            return false;
-        }
+        if (psiFile instanceof DBLanguagePsiFile) {
+            VirtualFile virtualFile = psiFile.getVirtualFile();
+            if (virtualFile instanceof DBSourceCodeVirtualFile ||
+                    virtualFile instanceof VirtualFileWindow ||
+                    DatabaseDebuggerManager.isDebugConsole(virtualFile)) {
+                return false;
+            }
 
-        lastChecked = PsiFileRef.of(psiFile);
-        ConnectionHandler connectionHandler = getConnectionHandler(psiFile);
-        return supportsLogging(connectionHandler);
+            lastChecked = PsiFileRef.of(psiFile);
+            ConnectionHandler connectionHandler = getConnectionHandler(psiFile);
+            return supportsLogging(connectionHandler);
+        }
+        return false;
     }
 
     private static boolean supportsLogging(ConnectionHandler connectionHandler) {

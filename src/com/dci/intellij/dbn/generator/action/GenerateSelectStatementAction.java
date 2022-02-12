@@ -31,10 +31,10 @@ public class GenerateSelectStatementAction extends GenerateStatementAction {
 
     @Nullable
     @Override
-    public ConnectionHandler getConnectionHandler() {
+    public ConnectionHandler getConnection() {
         List<DBObject> selectedObjects = getSelectedObjects();
         if (selectedObjects.size() > 0) {
-            return selectedObjects.get(0).getConnectionHandler();
+            return selectedObjects.get(0).getConnection();
         }
         return null;
     }

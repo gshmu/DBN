@@ -142,7 +142,7 @@ public class SessionBrowserForm extends DBNFormImpl implements SearchableDataCom
 
     @NotNull
     private ConnectionHandler getConnectionHandler() {
-        return getSessionBrowser().getConnectionHandler();
+        return getSessionBrowser().getConnection();
     }
 
     public float getHorizontalScrollProportion() {
