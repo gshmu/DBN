@@ -1,26 +1,20 @@
 package com.dci.intellij.dbn.connection.mapping.ui;
 
-import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.common.editor.EditorNotificationPanel;
 import com.dci.intellij.dbn.common.message.MessageType;
-import com.dci.intellij.dbn.connection.*;
+import com.dci.intellij.dbn.connection.ConnectionCache;
+import com.dci.intellij.dbn.connection.ConnectionHandler;
+import com.dci.intellij.dbn.connection.ConnectionId;
 import com.dci.intellij.dbn.connection.mapping.FileConnectionMapping;
-import com.dci.intellij.dbn.connection.session.DatabaseSession;
-import com.dci.intellij.dbn.ddl.DDLFileAttachmentManager;
-import com.dci.intellij.dbn.object.DBSchema;
-import com.dci.intellij.dbn.object.common.DBSchemaObject;
-import com.dci.intellij.dbn.object.lookup.DBObjectRef;
-import com.dci.intellij.dbn.vfs.DatabaseFileSystem;
+import com.dci.intellij.dbn.connection.mapping.FileConnectionMappingManager;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
-import javax.security.auth.callback.CallbackHandler;
 
 public class FileConnectionMappingNotificationPanel extends EditorNotificationPanel {
 
     public FileConnectionMappingNotificationPanel(
+            @NotNull Project project,
             @NotNull VirtualFile virtualFile,
             @NotNull FileConnectionMapping mapping) {
         super(MessageType.SYSTEM);
@@ -34,6 +28,11 @@ public class FileConnectionMappingNotificationPanel extends EditorNotificationPa
             setText("No connection selected");
             setIcon(null);
         }
+
+        createActionLabel("Unlink", () -> {
+                FileConnectionMappingManager mappingManager = FileConnectionMappingManager.getInstance(project);
+                mappingManager.removeMapping(virtualFile);
+            });
 
 
 /*

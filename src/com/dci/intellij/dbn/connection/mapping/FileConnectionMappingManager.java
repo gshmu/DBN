@@ -12,14 +12,7 @@ import com.dci.intellij.dbn.common.project.ProjectRef;
 import com.dci.intellij.dbn.common.thread.Dispatch;
 import com.dci.intellij.dbn.common.thread.Progress;
 import com.dci.intellij.dbn.common.util.Documents;
-import com.dci.intellij.dbn.connection.ConnectionAction;
-import com.dci.intellij.dbn.connection.ConnectionBundle;
-import com.dci.intellij.dbn.connection.ConnectionHandler;
-import com.dci.intellij.dbn.connection.ConnectionHandlerRef;
-import com.dci.intellij.dbn.connection.ConnectionManager;
-import com.dci.intellij.dbn.connection.ConnectionSelectorOptions;
-import com.dci.intellij.dbn.connection.SchemaId;
-import com.dci.intellij.dbn.connection.SessionId;
+import com.dci.intellij.dbn.connection.*;
 import com.dci.intellij.dbn.connection.action.AbstractConnectionAction;
 import com.dci.intellij.dbn.connection.mapping.ui.FileConnectionMappingDialog;
 import com.dci.intellij.dbn.connection.session.DatabaseSession;
@@ -58,6 +51,7 @@ import com.intellij.openapi.vfs.newvfs.events.VFilePropertyChangeEvent;
 import com.intellij.testFramework.LightVirtualFile;
 import com.intellij.util.IncorrectOperationException;
 import lombok.Getter;
+import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.jdom.Element;
 import org.jetbrains.annotations.NotNull;
@@ -65,6 +59,8 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.Callable;
+import java.util.function.Consumer;
 
 import static com.dci.intellij.dbn.common.message.MessageCallback.when;
 import static com.dci.intellij.dbn.common.util.Messages.options;
@@ -108,6 +104,12 @@ public class FileConnectionMappingManager extends AbstractProjectComponent imple
     }
 
 
+    public void removeMapping(VirtualFile file) {
+        notifiedChange(
+                () -> registry.removeMapping(file),
+                handler -> handler.mappingChanged(getProject(), file));
+    }
+
     /*******************************************************************
      *                    Connection mappings                          *
      *******************************************************************/
@@ -118,15 +120,9 @@ public class FileConnectionMappingManager extends AbstractProjectComponent imple
 
     public boolean setConnection(VirtualFile file, ConnectionHandler connection) {
         if (isConnectionSelectable(file)) {
-            boolean changed = registry.setConnectionHandler(file, connection);
-            if (changed) {
-                Project project = getProject();
-                ProjectEvents.notify(project,
-                        FileConnectionMappingListener.TOPIC,
-                        (listener) -> listener.connectionChanged(project, file, connection));
-            }
-
-            return changed;
+            return notifiedChange(
+                    () -> registry.setConnectionHandler(file, connection),
+                    handler -> handler.connectionChanged(getProject(), file, connection));
         }
         return false;
     }
@@ -151,14 +147,9 @@ public class FileConnectionMappingManager extends AbstractProjectComponent imple
 
     public boolean setDatabaseSchema(VirtualFile file, SchemaId schema) {
         if (isSchemaSelectable(file)) {
-            boolean changed = registry.setDatabaseSchema(file, schema);
-            if (changed) {
-                Project project = getProject();
-                ProjectEvents.notify(project,
-                        FileConnectionMappingListener.TOPIC,
-                        (listener) -> listener.schemaChanged(project, file, schema));
-            }
-            return changed;
+            return notifiedChange(
+                    () -> registry.setDatabaseSchema(file, schema),
+                    handler -> handler.schemaChanged(getProject(), file, schema));
         }
         return false;
     }
@@ -183,15 +174,9 @@ public class FileConnectionMappingManager extends AbstractProjectComponent imple
 
     public boolean setDatabaseSession(VirtualFile file, DatabaseSession session) {
         if (isSessionSelectable(file)) {
-            boolean changed = registry.setDatabaseSession(file, session);
-            if (changed) {
-                Project project = getProject();
-                ProjectEvents.notify(project,
-                        FileConnectionMappingListener.TOPIC,
-                        (listener) -> listener.sessionChanged(project, file, session));
-            }
-
-            return changed;
+            return notifiedChange(
+                    () -> registry.setDatabaseSession(file, session),
+                    handler -> handler.sessionChanged(getProject(), file, session));
         }
         return false;
     }
@@ -233,6 +218,17 @@ public class FileConnectionMappingManager extends AbstractProjectComponent imple
                         file instanceof DBConsoleVirtualFile);
     }
 
+
+    @SneakyThrows
+    private boolean notifiedChange(Callable<Boolean> action, Consumer<FileConnectionMappingListener> consumer) {
+        if (action.call()) {
+            ProjectEvents.notify(getProject(),
+                    FileConnectionMappingListener.TOPIC,
+                    listener -> consumer.accept(listener));
+            return true;
+        }
+        return false;
+    }
 
     public void selectConnectionAndSchema(@NotNull DBLanguagePsiFile file, DataContext dataContext, @NotNull Runnable callback) {
         Dispatch.run(() -> {
@@ -335,7 +331,6 @@ public class FileConnectionMappingManager extends AbstractProjectComponent imple
             popupBuilder.showCenteredInCurrentWindow(project);
         });
     }
-
 
     private class ConnectionSelectAction extends AbstractConnectionAction {
         private final PsiFileRef<DBLanguagePsiFile> psiFile;
