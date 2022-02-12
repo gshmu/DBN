@@ -13,7 +13,7 @@ import org.jetbrains.annotations.NotNull;
 public class DDLMappedNotificationPanel extends EditorNotificationPanel {
 
     public DDLMappedNotificationPanel(@NotNull final VirtualFile virtualFile, final DBSchemaObject editableObject) {
-        super(MessageType.INFO);
+        super(MessageType.NEUTRAL);
         Project project = editableObject.getProject();
         DBObjectRef<DBSchemaObject> editableObjectRef = DBObjectRef.of(editableObject);
         String objectName = editableObject.getQualifiedNameWithType();

@@ -15,7 +15,7 @@ import static com.dci.intellij.dbn.common.message.MessageCallback.when;
 
 public class SourceCodeReadonlyNotificationPanel extends SourceCodeEditorNotificationPanel{
     public SourceCodeReadonlyNotificationPanel(DBSchemaObject schemaObject, SourceCodeEditor sourceCodeEditor) {
-        super(isReadonly(sourceCodeEditor) ? MessageType.INFO : MessageType.WARNING);
+        super(isReadonly(sourceCodeEditor) ? MessageType.NEUTRAL : MessageType.WARNING);
         DBSourceCodeVirtualFile sourceCodeFile = sourceCodeEditor.getVirtualFile();
         String environmentName = sourceCodeFile.getEnvironmentType().getName();
 
@@ -23,7 +23,7 @@ public class SourceCodeReadonlyNotificationPanel extends SourceCodeEditorNotific
         DBContentType contentType = sourceCodeEditor.getContentType();
 
         if (isReadonly(sourceCodeEditor)) {
-            setText("Readonly code - This editor is readonly to prevent accidental code changes in \"" + environmentName + "\" environments (check environment settings)");
+            setText("READONLY CODE - This is meant to prevent accidental code changes in \"" + environmentName + "\" environments (check environment settings)");
             createActionLabel("Edit Mode", () ->
                     Messages.showQuestionDialog(project,
                             "Enable edit-mode",
@@ -34,7 +34,7 @@ public class SourceCodeReadonlyNotificationPanel extends SourceCodeEditorNotific
                                 environmentManager.enableEditing(schemaObject, contentType);
                             })));
         } else {
-            setText("Active edit-mode! (the environment \"" + environmentName + "\" is configured with readonly code to prevent accidental changes)");
+            setText("EDITABLE CODE! - Edit-mode enabled (the environment \"" + environmentName + "\" is configured with \"readonly code\")");
             createActionLabel("Cancel Editing", () -> {
                 EnvironmentManager environmentManager = EnvironmentManager.getInstance(project);
                 environmentManager.disableEditing(schemaObject, contentType);

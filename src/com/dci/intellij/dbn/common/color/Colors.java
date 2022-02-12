@@ -145,12 +145,20 @@ public final class Colors {
         return cached(25, () -> new JBColor(() -> Colors.lafDarker(getReadonlyEditorBackground(), 1)));
     }
 
-    public static Color getLightPanelBackground() {
+    public static Color getLighterPanelBackground() {
         return cached(26, () -> new JBColor(() -> Colors.lafBrighter(UIUtil.getPanelBackground(), 1)));
     }
 
+    public static Color getLightPanelBackground() {
+        return cached(27, () -> new JBColor(() -> Colors.lafBrighter(UIUtil.getPanelBackground(), 2)));
+    }
+
+    public static Color getDarkerPanelBackground() {
+        return cached(28, () -> new JBColor(() -> Colors.lafDarker(UIUtil.getPanelBackground(), 1)));
+    }
+
     public static Color getDarkPanelBackground() {
-        return cached(27, () -> new JBColor(() -> Colors.lafDarker(UIUtil.getPanelBackground(), 1)));
+        return cached(29, () -> new JBColor(() -> Colors.lafDarker(UIUtil.getPanelBackground(), 2)));
     }
 
 
