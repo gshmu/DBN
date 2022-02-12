@@ -22,8 +22,8 @@ public class GenerateDDLStatementAction extends GenerateStatementAction {
 
     @Nullable
     @Override
-    public ConnectionHandler getConnectionHandler() {
-        return getObject().getConnectionHandler();
+    public ConnectionHandler getConnection() {
+        return getObject().getConnection();
     }
 
     @NotNull

@@ -48,7 +48,7 @@ public class DBSessionBrowserVirtualFile extends DBVirtualFileImpl implements Co
 
     @Override
     @NotNull
-    public ConnectionHandler getConnectionHandler() {
+    public ConnectionHandler getConnection() {
         return connectionHandlerRef.ensure();
     }
 
@@ -60,8 +60,8 @@ public class DBSessionBrowserVirtualFile extends DBVirtualFileImpl implements Co
 
     @Nullable
     @Override
-    public DatabaseSession getDatabaseSession() {
-        return getConnectionHandler().getSessionBundle().getPoolSession();
+    public DatabaseSession getSession() {
+        return getConnection().getSessionBundle().getPoolSession();
     }
 
     @Override
@@ -79,11 +79,11 @@ public class DBSessionBrowserVirtualFile extends DBVirtualFileImpl implements Co
         return false;
     }
 
-    public boolean isDefault() {return Objects.equals(name, getConnectionHandler().getName());}
+    public boolean isDefault() {return Objects.equals(name, getConnection().getName());}
 
     @Override
     public VirtualFile getParent() {
-        ConnectionHandler connectionHandler = getConnectionHandler();
+        ConnectionHandler connectionHandler = getConnection();
         return connectionHandler.getPsiDirectory().getVirtualFile();
     }
 

@@ -36,7 +36,7 @@ public class DatabaseLoggingToggleAction extends ToggleAction implements DumbAwa
         VirtualFile virtualFile = Lookup.getVirtualFile(e);
         if (project != null && virtualFile != null) {
             FileConnectionMappingManager connectionMappingManager = FileConnectionMappingManager.getInstance(project);
-            ConnectionHandler activeConnection = connectionMappingManager.getConnectionHandler(virtualFile);
+            ConnectionHandler activeConnection = connectionMappingManager.getConnection(virtualFile);
             if (Failsafe.check(activeConnection) && !activeConnection.isVirtual()) {
                 return activeConnection ;
             }

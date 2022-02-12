@@ -22,7 +22,7 @@ class ObjectQuickFilterKey implements PersistentStateElement {
     }
 
     private ObjectQuickFilterKey(DBObjectList<?> objectList) {
-        connectionId = objectList.getConnectionHandler().getConnectionId();
+        connectionId = objectList.getConnection().getConnectionId();
         BrowserTreeNode treeParent = objectList.getParent();
         if (treeParent instanceof DBSchema) {
             schemaName = treeParent.getName();

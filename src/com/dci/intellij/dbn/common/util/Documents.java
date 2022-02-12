@@ -52,7 +52,7 @@ public class Documents {
             DBLanguagePsiFile dbLanguageFile = (DBLanguagePsiFile) file;
             DBLanguage dbLanguage = dbLanguageFile.getDBLanguage();
             if (dbLanguage != null) {
-                ConnectionHandler connectionHandler = dbLanguageFile.getConnectionHandler();
+                ConnectionHandler connectionHandler = dbLanguageFile.getConnection();
                 Editors.initEditorHighlighter(editor, dbLanguage, connectionHandler);
             }
             if (reparse) {

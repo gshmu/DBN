@@ -24,7 +24,7 @@ public abstract class LocalExecutionInput extends ExecutionInput{
     public LocalExecutionInput(Project project, ExecutionTarget executionTarget) {
         super(project, executionTarget);
 
-        ConnectionHandler connectionHandler = getConnectionHandler();
+        ConnectionHandler connectionHandler = getConnection();
         if (connectionHandler != null) {
             if (DatabaseFeature.DATABASE_LOGGING.isSupported(connectionHandler)) {
                 connectionHandler = Failsafe.nn(connectionHandler);
@@ -47,7 +47,7 @@ public abstract class LocalExecutionInput extends ExecutionInput{
 
     @Override
     public ConnectionId getConnectionHandlerId() {
-        ConnectionHandler connectionHandler = getConnectionHandler();
+        ConnectionHandler connectionHandler = getConnection();
         return connectionHandler == null ? null : connectionHandler.getConnectionId();
     }
 

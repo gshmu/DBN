@@ -400,8 +400,8 @@ public class SessionBrowser extends DisposableUserDataHolderBase implements File
 
     @Override
     @NotNull
-    public ConnectionHandler getConnectionHandler() {
-        return getDatabaseFile().getConnectionHandler();
+    public ConnectionHandler getConnection() {
+        return getDatabaseFile().getConnection();
     }
 
     /*******************************************************

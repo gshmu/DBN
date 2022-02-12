@@ -229,7 +229,7 @@ public class FileConnectionMappingTable extends DBNTable<FileConnectionMappingTa
         @Override
         public void actionPerformed(@NotNull AnActionEvent e) {
             ConnectionHandler connectionHandler = getConnection();
-            manager.setConnectionHandler(virtualFile, connectionHandler);
+            manager.setConnection(virtualFile, connectionHandler);
             notifyModelChanges(virtualFile);
         }
 

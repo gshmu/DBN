@@ -30,7 +30,7 @@ public class RecordInsertAction extends AbstractDataEditorAction {
             boolean isEnvironmentReadonlyData = environmentManager.isReadonly(datasetEditor.getDataset(), DBContentType.DATA);
             presentation.setVisible(!isEnvironmentReadonlyData && !datasetEditor.isReadonlyData());
             presentation.setEnabled(
-                    datasetEditor.getConnectionHandler().isConnected() &&
+                    datasetEditor.getConnection().isConnected() &&
                     !datasetEditor.isReadonly() &&
                     !datasetEditor.isInserting() &&
                     !datasetEditor.isLoading() &&

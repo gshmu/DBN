@@ -213,7 +213,7 @@ public class DBVirtualObjectBundle extends BrowserTreeNodeBase implements DBObje
 
     @NotNull
     @Override
-    public ConnectionHandler getConnectionHandler() {
+    public ConnectionHandler getConnection() {
         return connectionHandler;
     }
 

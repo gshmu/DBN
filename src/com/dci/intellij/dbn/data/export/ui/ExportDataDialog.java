@@ -23,7 +23,7 @@ public class ExportDataDialog extends DBNDialog<ExportDataForm> {
     private final DBObjectRef<?> sourceObject;
 
     public ExportDataDialog(ResultSetTable<?> table, @NotNull DBObject sourceObject) {
-        this(table, sourceObject, sourceObject.getConnectionHandler());
+        this(table, sourceObject, sourceObject.getConnection());
     }
 
     public ExportDataDialog(ResultSetTable<?> table, @NotNull ExecutionResult<?> executionResult) {

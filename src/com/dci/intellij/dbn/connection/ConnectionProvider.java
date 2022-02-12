@@ -6,10 +6,10 @@ import org.jetbrains.annotations.Nullable;
 
 public interface ConnectionProvider {
     @Nullable
-    ConnectionHandler getConnectionHandler();
+    ConnectionHandler getConnection();
 
     @NotNull
     default ConnectionHandler ensureConnectionHandler() {
-        return Failsafe.nn(getConnectionHandler());
+        return Failsafe.nn(getConnection());
     }
 }

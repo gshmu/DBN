@@ -174,7 +174,7 @@ public class MethodExecutionManager extends AbstractProjectComponent implements 
             Messages.showErrorDialog(getProject(), "Could not resolve " + methodRef.getQualifiedNameWithType() + "\".");
         } else {
             Project project = method.getProject();
-            ConnectionHandler connectionHandler = Failsafe.nn(method.getConnectionHandler());
+            ConnectionHandler connectionHandler = Failsafe.nn(method.getConnection());
             DatabaseExecutionInterface executionInterface = connectionHandler.getInterfaceProvider().getExecutionInterface();
             MethodExecutionProcessor executionProcessor = executionInterface.createExecutionProcessor(method);
 
@@ -226,7 +226,7 @@ public class MethodExecutionManager extends AbstractProjectComponent implements 
 
         DBMethod method = executionInput.getMethod();
         if (method != null) {
-            ConnectionHandler connectionHandler = method.getConnectionHandler();
+            ConnectionHandler connectionHandler = method.getConnection();
             DatabaseExecutionInterface executionInterface = connectionHandler.getInterfaceProvider().getExecutionInterface();
             MethodExecutionProcessor executionProcessor = debuggerType == DBDebuggerType.JDWP ?
                     executionInterface.createExecutionProcessor(method) :
@@ -254,7 +254,7 @@ public class MethodExecutionManager extends AbstractProjectComponent implements 
                     DBMethod currentMethod = executionInput == null ? null : executionInput.getMethod();
                     if (currentMethod != null) {
                         currentMethod.getArguments();
-                        settings.setConnectionHandler(currentMethod.getConnectionHandler());
+                        settings.setConnectionHandler(currentMethod.getConnection());
                         settings.setSchema(currentMethod.getSchema());
                         settings.setMethod(currentMethod);
                     }

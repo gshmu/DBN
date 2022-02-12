@@ -14,8 +14,8 @@ import com.intellij.openapi.util.Key;
 import com.intellij.openapi.vfs.VirtualFile;
 import org.jetbrains.annotations.NotNull;
 
-import javax.swing.JPanel;
-import java.awt.BorderLayout;
+import javax.swing.*;
+import java.awt.*;
 
 public class DBLanguageFileEditorToolbarForm extends DBNFormImpl {
     public static final Key<DBLanguageFileEditorToolbarForm> USER_DATA_KEY = new Key<>("fileEditorToolbarForm");
@@ -29,7 +29,7 @@ public class DBLanguageFileEditorToolbarForm extends DBNFormImpl {
         actionsPanel.add(actionToolbar.getComponent(), BorderLayout.CENTER);
 
         FileConnectionMappingManager mappingManager = FileConnectionMappingManager.getInstance(project);
-        ConnectionHandler connectionHandler = mappingManager.getConnectionHandler(file);
+        ConnectionHandler connectionHandler = mappingManager.getConnection(file);
         DatabaseSession databaseSession = mappingManager.getDatabaseSession(file);
 
         autoCommitLabel.init(project, file, connectionHandler, databaseSession);

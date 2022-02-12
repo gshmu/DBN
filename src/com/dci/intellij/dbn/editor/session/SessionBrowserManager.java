@@ -88,7 +88,7 @@ public class SessionBrowserManager extends AbstractProjectComponent implements P
     }
 
     public SessionBrowserModel loadSessions(DBSessionBrowserVirtualFile sessionBrowserFile) {
-        ConnectionHandler connectionHandler = sessionBrowserFile.getConnectionHandler();
+        ConnectionHandler connectionHandler = sessionBrowserFile.getConnection();
 
         try {
             return DatabaseInterface.call(true,
@@ -137,7 +137,7 @@ public class SessionBrowserManager extends AbstractProjectComponent implements P
     }
 
     public void interruptSessions(@NotNull SessionBrowser sessionBrowser, Map<Object, Object> sessionIds, SessionInterruptionType type) {
-        ConnectionHandler connectionHandler = Failsafe.nn(sessionBrowser.getConnectionHandler());
+        ConnectionHandler connectionHandler = Failsafe.nn(sessionBrowser.getConnection());
         if (DatabaseFeature.SESSION_INTERRUPTION_TIMING.isSupported(connectionHandler)) {
 
             SessionBrowserSettings sessionBrowserSettings = getSessionBrowserSettings();
@@ -169,7 +169,7 @@ public class SessionBrowserManager extends AbstractProjectComponent implements P
         Progress.prompt(project, taskAction, true,
                 (progress) -> {
                     try {
-                        ConnectionHandler connectionHandler = sessionBrowser.getConnectionHandler();
+                        ConnectionHandler connectionHandler = sessionBrowser.getConnection();
 
                         DatabaseInterface.run(true,
                                 connectionHandler,

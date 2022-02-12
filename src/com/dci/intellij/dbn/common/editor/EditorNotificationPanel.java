@@ -67,7 +67,7 @@ public class EditorNotificationPanel extends JPanel{
         label.setText(text);
     }
 
-    public void setIcon(@NotNull Icon icon) {
+    public void setIcon(Icon icon) {
         label.setIcon(icon);
     }
 

@@ -77,7 +77,7 @@ public abstract class DBRunConfig<I extends ExecutionInput> extends RunConfigura
     @Nullable
     public final ConnectionHandler getConnectionHandler() {
         PresentableConnectionProvider source = getSource();
-        return source == null ? null : source.getConnectionHandler();
+        return source == null ? null : source.getConnection();
     }
 
 

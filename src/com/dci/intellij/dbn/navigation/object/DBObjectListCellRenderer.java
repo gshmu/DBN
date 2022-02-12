@@ -20,7 +20,7 @@ public class DBObjectListCellRenderer extends ColoredListCellRenderer {
             DBObject object = (DBObject) value;
             setIcon(object.getIcon());
             append(object.getName(), SimpleTextAttributes.REGULAR_ATTRIBUTES);
-            ConnectionHandler connectionHandler = Failsafe.nn(object.getConnectionHandler());
+            ConnectionHandler connectionHandler = Failsafe.nn(object.getConnection());
             append(" [" + connectionHandler.getName() + "]", SimpleTextAttributes.GRAY_ATTRIBUTES);
             if (object.getParentObject() != null) {
                 append(" - " + object.getParentObject().getQualifiedName(), SimpleTextAttributes.GRAY_ATTRIBUTES);

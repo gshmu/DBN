@@ -26,7 +26,7 @@ public class ReloadObjectsAction extends DumbAwareProjectAction {
                 objectList.isLoaded() ? "reloading the " + listName : "loading the " + listName, true, objectList,
                 (action) -> Progress.prompt(project, "Reloading " + objectList.getContentDescription(), true,
                         (progress) -> {
-                            objectList.getConnectionHandler().getMetaDataCache().reset();
+                            objectList.getConnection().getMetaDataCache().reset();
                             objectList.reload();
                         }));
     }

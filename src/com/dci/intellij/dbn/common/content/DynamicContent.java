@@ -97,7 +97,7 @@ public interface DynamicContent<T extends DynamicContentElement> extends Statefu
 
     @NotNull
     default DatabaseMetadataInterface getMetadataInterface() {
-        ConnectionHandler connectionHandler = getConnectionHandler();
+        ConnectionHandler connectionHandler = getConnection();
         return Failsafe.nn(connectionHandler).getInterfaceProvider().getMetadataInterface();
     }
 

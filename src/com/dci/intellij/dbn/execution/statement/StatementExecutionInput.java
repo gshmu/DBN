@@ -39,7 +39,7 @@ public class StatementExecutionInput extends LocalExecutionInput {
     private String originalStatementText;
     private String executableStatementText;
     private final Latent<ExecutablePsiElement> executablePsiElement = Latent.basic(() -> {
-        ConnectionHandler connectionHandler = getConnectionHandler();
+        ConnectionHandler connectionHandler = getConnection();
         SchemaId currentSchema = getTargetSchemaId();
         if (connectionHandler != null) {
             return Read.conditional(() -> {
@@ -71,7 +71,7 @@ public class StatementExecutionInput extends LocalExecutionInput {
     public StatementExecutionInput(String originalStatementText, String executableStatementText, StatementExecutionProcessor executionProcessor) {
         super(executionProcessor.getProject(), ExecutionTarget.STATEMENT);
         this.executionProcessor = executionProcessor;
-        ConnectionHandler connectionHandler = executionProcessor.getConnectionHandler();
+        ConnectionHandler connectionHandler = executionProcessor.getConnection();
         SchemaId currentSchema = executionProcessor.getTargetSchema();
         DatabaseSession targetSession = executionProcessor.getTargetSession();
 
@@ -100,7 +100,7 @@ public class StatementExecutionInput extends LocalExecutionInput {
             @Nullable
             @Override
             public ConnectionHandler getTargetConnection() {
-                return getConnectionHandler();
+                return StatementExecutionInput.this.getConnection();
             }
 
             @Nullable
@@ -146,7 +146,7 @@ public class StatementExecutionInput extends LocalExecutionInput {
     }
 
     public PsiFile createPreviewFile() {
-        ConnectionHandler activeConnection = getConnectionHandler();
+        ConnectionHandler activeConnection = getConnection();
         SchemaId currentSchema = getTargetSchemaId();
         DBLanguageDialect languageDialect = activeConnection == null ?
                 SQLLanguage.INSTANCE.getMainLanguageDialect() :
@@ -167,7 +167,7 @@ public class StatementExecutionInput extends LocalExecutionInput {
 
     @Override
     @Nullable
-    public ConnectionHandler getConnectionHandler() {
+    public ConnectionHandler getConnection() {
         return ConnectionHandlerRef.get(targetConnectionRef);
     }
 

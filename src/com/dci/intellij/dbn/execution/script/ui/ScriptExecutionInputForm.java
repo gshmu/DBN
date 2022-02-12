@@ -122,7 +122,7 @@ public class ScriptExecutionInputForm extends DBNFormImpl{
     }
 
     private void updateControls(ScriptExecutionInput executionInput) {
-        ConnectionHandler connectionHandler = executionInput.getConnectionHandler();
+        ConnectionHandler connectionHandler = executionInput.getConnection();
         SchemaId schema = executionInput.getSchema();
         CmdLineInterface cmdLineInterface;
         if (connectionHandler != null && !connectionHandler.isVirtual()) {

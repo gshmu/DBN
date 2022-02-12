@@ -51,6 +51,7 @@ public class VirtualConnectionHandler extends StatefulDisposable.Base implements
     private final DBObjectBundle objectBundle;
     private final ConnectionInstructions instructions = new ConnectionInstructions();
     private final DatabaseCompatibility compatibility = DatabaseCompatibility.noFeatures();
+    private final DatabaseSessionBundle sessionBundle = new DatabaseSessionBundle(this);
 
     private DatabaseInterfaceProvider interfaceProvider;
 
@@ -185,7 +186,7 @@ public class VirtualConnectionHandler extends StatefulDisposable.Base implements
 
     @Nullable
     @Override
-    public ConnectionHandler getConnectionHandler() {
+    public ConnectionHandler getConnection() {
         return this;
     }
 

@@ -106,8 +106,8 @@ public class LoadInProgressTreeNode extends BrowserTreeNodeBase implements Brows
 
     @Override
     @NotNull
-    public ConnectionHandler getConnectionHandler() {
-        return Failsafe.nn(getParent().getConnectionHandler());
+    public ConnectionHandler getConnection() {
+        return Failsafe.nn(getParent().getConnection());
     }
 
     @Override

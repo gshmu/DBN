@@ -37,7 +37,7 @@ public class StatementExecutionCursorResult extends StatementExecutionBasicResul
             int updateCount) throws SQLException {
         super(executionProcessor, resultName, updateCount);
 
-        ConnectionHandler connectionHandler = Failsafe.nd(executionProcessor.getConnectionHandler());
+        ConnectionHandler connectionHandler = Failsafe.nd(executionProcessor.getConnection());
         int fetchBlockSize = executionProcessor.getExecutionInput().getResultSetFetchBlockSize();
         dataModel = new ResultSetDataModel<>(resultSet, connectionHandler, fetchBlockSize);
     }

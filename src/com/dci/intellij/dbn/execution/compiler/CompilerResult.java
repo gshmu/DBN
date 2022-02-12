@@ -35,7 +35,7 @@ public class CompilerResult implements Disposable, NotificationSupport {
 
     public CompilerResult(CompilerAction compilerAction, DBSchemaObject object) {
         objectRef = DBObjectRef.of(object);
-        init(object.getConnectionHandler(), object.getSchema(), object.getName(), compilerAction);
+        init(object.getConnection(), object.getSchema(), object.getName(), compilerAction);
     }
 
     public CompilerResult(CompilerAction compilerAction, DBSchemaObject object, DBContentType contentType, String errorMessage) {

@@ -32,7 +32,7 @@ public class SchemaSelectDropdownAction extends DBNComboBoxAction implements Dum
         Project project = Lookup.getProject(component);
         VirtualFile virtualFile = Lookup.getVirtualFile(component);
         if (virtualFile != null) {
-            ConnectionHandler activeConnection = FileConnectionMappingManager.getInstance(project).getConnectionHandler(virtualFile);
+            ConnectionHandler activeConnection = FileConnectionMappingManager.getInstance(project).getConnection(virtualFile);
             if (Failsafe.check(activeConnection) && !activeConnection.isVirtual()) {
                 for (DBSchema schema : activeConnection.getObjectBundle().getSchemas()){
                     actionGroup.add(new SchemaSelectAction(schema));
@@ -54,7 +54,7 @@ public class SchemaSelectDropdownAction extends DBNComboBoxAction implements Dum
 
         if (project != null && virtualFile != null) {
             FileConnectionMappingManager mappingManager = FileConnectionMappingManager.getInstance(project);
-            ConnectionHandler activeConnection = mappingManager.getConnectionHandler(virtualFile);
+            ConnectionHandler activeConnection = mappingManager.getConnection(virtualFile);
             visible = activeConnection != null && !activeConnection.isVirtual();
             if (visible) {
                 SchemaId schema = mappingManager.getDatabaseSchema(virtualFile);

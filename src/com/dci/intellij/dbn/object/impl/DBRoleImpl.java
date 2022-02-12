@@ -41,7 +41,7 @@ public class DBRoleImpl extends DBObjectImpl<DBRoleMetadata> implements DBRole {
     @Override
     protected void initLists() {
         DBObjectListContainer ol = initChildObjects();
-        DBObjectBundle sourceContentHolder = getConnectionHandler().getObjectBundle();
+        DBObjectBundle sourceContentHolder = this.getConnection().getObjectBundle();
         privileges = ol.createSubcontentObjectList(GRANTED_PRIVILEGE, this, sourceContentHolder, DBObjectRelationType.ROLE_PRIVILEGE);
         grantedRoles = ol.createSubcontentObjectList(GRANTED_ROLE, this, sourceContentHolder, DBObjectRelationType.ROLE_ROLE);
     }
@@ -70,7 +70,7 @@ public class DBRoleImpl extends DBObjectImpl<DBRoleMetadata> implements DBRole {
     @Override
     public List<DBUser> getUserGrantees() {
         List<DBUser> grantees = new ArrayList<>();
-        List<DBUser> users = getConnectionHandler().getObjectBundle().getUsers();
+        List<DBUser> users = this.getConnection().getObjectBundle().getUsers();
         if (users != null) {
             for (DBUser user : users) {
                 if (user.hasRole(this)) {
@@ -84,7 +84,7 @@ public class DBRoleImpl extends DBObjectImpl<DBRoleMetadata> implements DBRole {
     @Override
     public List<DBRole> getRoleGrantees() {
         List<DBRole> grantees = new ArrayList<>();
-        List<DBRole> roles = getConnectionHandler().getObjectBundle().getRoles();
+        List<DBRole> roles = this.getConnection().getObjectBundle().getRoles();
         if (roles != null) {
             for (DBRole role : roles) {
                 if (role.hasRole(this)) {
@@ -125,7 +125,7 @@ public class DBRoleImpl extends DBObjectImpl<DBRoleMetadata> implements DBRole {
         List<DBObjectNavigationList> navigationLists = new LinkedList<>();
         navigationLists.add(DBObjectNavigationList.create("User grantees", getUserGrantees()));
 
-        DatabaseCompatibilityInterface compatibilityInterface = getConnectionHandler().getInterfaceProvider().getCompatibilityInterface();
+        DatabaseCompatibilityInterface compatibilityInterface = this.getConnection().getInterfaceProvider().getCompatibilityInterface();
         if (compatibilityInterface.supportsObjectType(ROLE.getTypeId())) {
             navigationLists.add(DBObjectNavigationList.create("Role grantees", getRoleGrantees()));
         }

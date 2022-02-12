@@ -26,7 +26,7 @@ public class RecordEditAction extends AbstractDataEditorAction {
 
         boolean enabled =
                 Failsafe.check(datasetEditor) &&
-                datasetEditor.getConnectionHandler().isConnected() &&
+                datasetEditor.getConnection().isConnected() &&
                 datasetEditor.getEditorTable().getSelectedRow() != -1 &&
                 !datasetEditor.isInserting() &&
                 !datasetEditor.isLoading() &&

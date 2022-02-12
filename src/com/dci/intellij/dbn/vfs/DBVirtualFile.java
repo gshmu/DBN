@@ -19,7 +19,7 @@ public interface DBVirtualFile extends /*VirtualFileWithId, */EnvironmentTypePro
 
     @Override
     @NotNull
-    ConnectionHandler getConnectionHandler();
+    ConnectionHandler getConnection();
 
     @NotNull
     ConnectionId getConnectionId();

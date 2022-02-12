@@ -41,7 +41,7 @@ public abstract class MethodFactoryInputForm extends ObjectFactoryInputForm<Meth
     private final DBObjectRef<DBSchema> schema;
 
     public MethodFactoryInputForm(DBNComponent parent, DBSchema schema, DBObjectType objectType, int index) {
-        super(parent, schema.getConnectionHandler(), objectType, index);
+        super(parent, schema.getConnection(), objectType, index);
         this.schema = DBObjectRef.of(schema);
         connectionLabel.setText(getConnectionHandler().getName());
         connectionLabel.setIcon(getConnectionHandler().getIcon());

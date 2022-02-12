@@ -36,7 +36,7 @@ public class DBConnectionVirtualFile extends DBVirtualFileImpl {
 
     @Override
     @NotNull
-    public ConnectionHandler getConnectionHandler() {
+    public ConnectionHandler getConnection() {
         return connectionHandler.ensure();
     }
 
@@ -48,7 +48,7 @@ public class DBConnectionVirtualFile extends DBVirtualFileImpl {
 
     @Nullable
     @Override
-    public DatabaseSession getDatabaseSession() {
+    public DatabaseSession getSession() {
         return null;
     }
 
@@ -91,7 +91,7 @@ public class DBConnectionVirtualFile extends DBVirtualFileImpl {
 
     @Override
     public Icon getIcon() {
-        return getConnectionHandler().getIcon();
+        return getConnection().getIcon();
     }
 
     @Override

@@ -1,6 +1,6 @@
 package com.dci.intellij.dbn.ddl.ui;
 
-import com.dci.intellij.dbn.common.file.util.VirtualFileUtil;
+import com.dci.intellij.dbn.common.file.util.VirtualFiles;
 import com.dci.intellij.dbn.common.project.ProjectRef;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleUtil;
@@ -35,7 +35,7 @@ public class FileListCellRenderer extends ColoredListCellRenderer<VirtualFile> {
             append(relativePath, SimpleTextAttributes.REGULAR_ATTRIBUTES);
         }
 
-        setIcon(VirtualFileUtil.getIcon(value));
+        setIcon(VirtualFiles.getIcon(value));
     }
 
     @NotNull

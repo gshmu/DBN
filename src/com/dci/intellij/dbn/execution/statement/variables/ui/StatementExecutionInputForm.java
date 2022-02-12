@@ -66,7 +66,7 @@ public class StatementExecutionInputForm extends DBNFormImpl {
 
         variablesPanel.setLayout(new BoxLayout(variablesPanel, BoxLayout.Y_AXIS));
 
-        ConnectionHandler connectionHandler = executionProcessor.getConnectionHandler();
+        ConnectionHandler connectionHandler = executionProcessor.getConnection();
         if (debuggerType.isDebug()) {
             debuggerVersionPanel.setVisible(true);
             debuggerVersionPanel.setBorder(Borders.BOTTOM_LINE_BORDER);
@@ -169,7 +169,7 @@ public class StatementExecutionInputForm extends DBNFormImpl {
     }
 
     void updatePreview() {
-        ConnectionHandler connectionHandler = Failsafe.nn(executionProcessor.getConnectionHandler());
+        ConnectionHandler connectionHandler = Failsafe.nn(executionProcessor.getConnection());
         SchemaId currentSchema = executionProcessor.getTargetSchema();
         Project project = connectionHandler.getProject();
         String previewText = this.statementText;

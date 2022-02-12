@@ -593,6 +593,7 @@
         <editorNotificationProvider implementation="com.dci.intellij.dbn.editor.code.SourceCodeEditorNotificationProvider"/>
         <editorNotificationProvider implementation="com.dci.intellij.dbn.editor.data.DatasetEditorNotificationProvider"/>
         <editorNotificationProvider implementation="com.dci.intellij.dbn.editor.session.SessionBrowserNotificationProvider"/>
+        <editorNotificationProvider implementation="com.dci.intellij.dbn.connection.mapping.FileConnectionMappingNotificationProvider"/>
 
         <additionalTextAttributes scheme="Default" file="resources/textAttributes/DBNDefaultColors.xml" id="DBN-Default"/>
         <additionalTextAttributes scheme="Darcula" file="resources/textAttributes/DBNDarculaColors.xml" id="DBN-Darcula"/>

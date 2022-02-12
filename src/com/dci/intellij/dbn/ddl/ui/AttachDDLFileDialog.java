@@ -9,8 +9,7 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
 import org.jetbrains.annotations.NotNull;
 
-import javax.swing.AbstractAction;
-import javax.swing.Action;
+import javax.swing.*;
 import java.awt.event.ActionEvent;
 import java.util.List;
 
@@ -79,7 +78,7 @@ public class AttachDDLFileDialog extends DBNDialog<SelectDDLFileForm> {
             SelectDDLFileForm component = getForm();
             component.selectNone();
             if (showLookupOption && component.isDoNotPromptSelected()) {
-                ConnectionHandler connectionHandler = getObject().getConnectionHandler();
+                ConnectionHandler connectionHandler = getObject().getConnection();
                 connectionHandler.getSettings().getDetailSettings().setEnableDdlFileBinding(false);
             }
             close(2);
@@ -97,7 +96,7 @@ public class AttachDDLFileDialog extends DBNDialog<SelectDDLFileForm> {
             fileAttachmentManager.attachDDLFile(object.getRef(), virtualFile);
         }
         if (showLookupOption && component.isDoNotPromptSelected()) {
-            ConnectionHandler connectionHandler = object.getConnectionHandler();
+            ConnectionHandler connectionHandler = object.getConnection();
             connectionHandler.getSettings().getDetailSettings().setEnableDdlFileBinding(false);
         }
 

@@ -49,9 +49,9 @@ public class ConsoleSaveToFileAction extends DumbAwareProjectAction {
                         if (newVirtualFile != null) {
                             newVirtualFile.setBinaryContent(document.getCharsSequence().toString().getBytes());
                             FileConnectionMappingManager mappingManager = FileConnectionMappingManager.getInstance(project);
-                            mappingManager.setConnectionHandler(newVirtualFile, consoleVirtualFile.getConnectionHandler());
+                            mappingManager.setConnection(newVirtualFile, consoleVirtualFile.getConnection());
                             mappingManager.setDatabaseSchema(newVirtualFile, consoleVirtualFile.getSchemaId());
-                            mappingManager.setDatabaseSession(newVirtualFile, consoleVirtualFile.getDatabaseSession());
+                            mappingManager.setDatabaseSession(newVirtualFile, consoleVirtualFile.getSession());
 
                             FileEditorManager fileEditorManager = FileEditorManager.getInstance(project);
                             fileEditorManager.openFile(newVirtualFile, true);

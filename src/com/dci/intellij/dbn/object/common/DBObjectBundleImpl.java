@@ -28,11 +28,7 @@ import com.dci.intellij.dbn.common.ui.tree.TreeEventType;
 import com.dci.intellij.dbn.common.util.Commons;
 import com.dci.intellij.dbn.common.util.Consumer;
 import com.dci.intellij.dbn.common.util.Lists;
-import com.dci.intellij.dbn.connection.ConnectionHandler;
-import com.dci.intellij.dbn.connection.ConnectionHandlerRef;
-import com.dci.intellij.dbn.connection.ConnectionId;
-import com.dci.intellij.dbn.connection.ConnectionPool;
-import com.dci.intellij.dbn.connection.SchemaId;
+import com.dci.intellij.dbn.connection.*;
 import com.dci.intellij.dbn.connection.jdbc.DBNConnection;
 import com.dci.intellij.dbn.data.type.DBDataTypeBundle;
 import com.dci.intellij.dbn.data.type.DBNativeDataType;
@@ -41,13 +37,7 @@ import com.dci.intellij.dbn.database.DatabaseFeature;
 import com.dci.intellij.dbn.database.DatabaseMetadataInterface;
 import com.dci.intellij.dbn.database.DatabaseObjectIdentifier;
 import com.dci.intellij.dbn.database.common.metadata.DBObjectMetadata;
-import com.dci.intellij.dbn.database.common.metadata.def.DBCharsetMetadata;
-import com.dci.intellij.dbn.database.common.metadata.def.DBGrantedPrivilegeMetadata;
-import com.dci.intellij.dbn.database.common.metadata.def.DBGrantedRoleMetadata;
-import com.dci.intellij.dbn.database.common.metadata.def.DBPrivilegeMetadata;
-import com.dci.intellij.dbn.database.common.metadata.def.DBRoleMetadata;
-import com.dci.intellij.dbn.database.common.metadata.def.DBSchemaMetadata;
-import com.dci.intellij.dbn.database.common.metadata.def.DBUserMetadata;
+import com.dci.intellij.dbn.database.common.metadata.def.*;
 import com.dci.intellij.dbn.editor.code.SourceCodeEditor;
 import com.dci.intellij.dbn.editor.code.SourceCodeManagerAdapter;
 import com.dci.intellij.dbn.editor.code.SourceCodeManagerListener;
@@ -56,32 +46,11 @@ import com.dci.intellij.dbn.execution.statement.DataDefinitionChangeListener;
 import com.dci.intellij.dbn.language.common.DBLanguage;
 import com.dci.intellij.dbn.language.psql.PSQLLanguage;
 import com.dci.intellij.dbn.language.sql.SQLLanguage;
-import com.dci.intellij.dbn.object.DBCharset;
-import com.dci.intellij.dbn.object.DBConsole;
-import com.dci.intellij.dbn.object.DBGrantedPrivilege;
-import com.dci.intellij.dbn.object.DBGrantedRole;
-import com.dci.intellij.dbn.object.DBObjectPrivilege;
-import com.dci.intellij.dbn.object.DBPrivilege;
-import com.dci.intellij.dbn.object.DBRole;
-import com.dci.intellij.dbn.object.DBSchema;
-import com.dci.intellij.dbn.object.DBSynonym;
-import com.dci.intellij.dbn.object.DBSystemPrivilege;
-import com.dci.intellij.dbn.object.DBUser;
+import com.dci.intellij.dbn.object.*;
 import com.dci.intellij.dbn.object.common.list.DBObjectList;
 import com.dci.intellij.dbn.object.common.list.DBObjectListContainer;
 import com.dci.intellij.dbn.object.common.list.DBObjectListImpl;
-import com.dci.intellij.dbn.object.impl.DBCharsetImpl;
-import com.dci.intellij.dbn.object.impl.DBGrantedPrivilegeImpl;
-import com.dci.intellij.dbn.object.impl.DBGrantedRoleImpl;
-import com.dci.intellij.dbn.object.impl.DBObjectPrivilegeImpl;
-import com.dci.intellij.dbn.object.impl.DBRoleImpl;
-import com.dci.intellij.dbn.object.impl.DBRolePrivilegeRelation;
-import com.dci.intellij.dbn.object.impl.DBRoleRoleRelation;
-import com.dci.intellij.dbn.object.impl.DBSchemaImpl;
-import com.dci.intellij.dbn.object.impl.DBSystemPrivilegeImpl;
-import com.dci.intellij.dbn.object.impl.DBUserImpl;
-import com.dci.intellij.dbn.object.impl.DBUserPrivilegeRelation;
-import com.dci.intellij.dbn.object.impl.DBUserRoleRelation;
+import com.dci.intellij.dbn.object.impl.*;
 import com.dci.intellij.dbn.object.lookup.DBObjectRef;
 import com.dci.intellij.dbn.object.type.DBObjectRelationType;
 import com.dci.intellij.dbn.object.type.DBObjectType;
@@ -95,14 +64,10 @@ import com.intellij.psi.PsiFileFactory;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import javax.swing.Icon;
+import javax.swing.*;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
 import static com.dci.intellij.dbn.browser.DatabaseBrowserUtils.treeVisibilityChanged;
@@ -170,7 +135,7 @@ public class DBObjectBundleImpl extends BrowserTreeNodeBase implements DBObjectB
     private final DataDefinitionChangeListener dataDefinitionChangeListener = new DataDefinitionChangeListener() {
         @Override
         public void dataDefinitionChanged(DBSchema schema, DBObjectType objectType) {
-            if (schema.getConnectionHandler() == getConnectionHandler()) {
+            if (schema.getConnection() == DBObjectBundleImpl.this.getConnection()) {
                 schema.refresh(objectType);
                 for (DBObjectType childObjectType : objectType.getChildren()) {
                     schema.refresh(childObjectType);
@@ -180,7 +145,7 @@ public class DBObjectBundleImpl extends BrowserTreeNodeBase implements DBObjectB
 
         @Override
         public void dataDefinitionChanged(@NotNull DBSchemaObject schemaObject) {
-            if (schemaObject.getConnectionHandler() == getConnectionHandler()) {
+            if (schemaObject.getConnection() == DBObjectBundleImpl.this.getConnection()) {
                 schemaObject.refresh();
             }
         }
@@ -200,7 +165,7 @@ public class DBObjectBundleImpl extends BrowserTreeNodeBase implements DBObjectB
     };
 
     private final CompileManagerListener compileManagerListener = (connectionHandler, object) -> {
-        if (getConnectionHandler().equals(connectionHandler)) {
+        if (this.getConnection().equals(connectionHandler)) {
             refreshObjectsStatus(object);
         }
     };
@@ -233,7 +198,7 @@ public class DBObjectBundleImpl extends BrowserTreeNodeBase implements DBObjectB
 
     @Override
     public boolean isValid() {
-        return configSignature == getConnectionHandler().getSettings().getDatabaseSettings().getSignature();
+        return configSignature == this.getConnection().getSettings().getDatabaseSettings().getSignature();
     }
 
     @NotNull
@@ -244,13 +209,13 @@ public class DBObjectBundleImpl extends BrowserTreeNodeBase implements DBObjectB
 
     @Override
     @NotNull
-    public ConnectionHandler getConnectionHandler() {
+    public ConnectionHandler getConnection() {
         return connectionHandler.ensure();
     }
 
     @Override
     public List<DBConsole> getConsoles() {
-        return getConnectionHandler().getConsoleBundle().getConsoles();
+        return this.getConnection().getConsoleBundle().getConsoles();
     }
 
     @Override
@@ -397,7 +362,7 @@ public class DBObjectBundleImpl extends BrowserTreeNodeBase implements DBObjectB
 
     private void buildTreeChildren() {
         checkDisposed();
-        ConnectionHandler connectionHandler = getConnectionHandler();
+        ConnectionHandler connectionHandler = this.getConnection();
         Filter<BrowserTreeNode> objectTypeFilter = connectionHandler.getObjectTypeFilter();
 
         List<BrowserTreeNode> treeChildren = Lists.filter(allPossibleTreeChildren, objectTypeFilter);
@@ -406,7 +371,7 @@ public class DBObjectBundleImpl extends BrowserTreeNodeBase implements DBObjectB
         for (BrowserTreeNode objectList : treeChildren) {
             Progress.background(
                     getProject(),
-                    getConnectionHandler().getMetaLoadTitle(),
+                    this.getConnection().getMetaLoadTitle(),
                     true,
                     progress -> objectList.initTreeElement());
             checkDisposed();
@@ -438,7 +403,7 @@ public class DBObjectBundleImpl extends BrowserTreeNodeBase implements DBObjectB
     @Override
     public void rebuildTreeChildren() {
         if (visibleTreeChildren != null) {
-            Filter<BrowserTreeNode> filter = getConnectionHandler().getObjectTypeFilter();
+            Filter<BrowserTreeNode> filter = this.getConnection().getObjectTypeFilter();
             if (treeVisibilityChanged(allPossibleTreeChildren, visibleTreeChildren, filter)) {
                 buildTreeChildren();
             }
@@ -465,12 +430,12 @@ public class DBObjectBundleImpl extends BrowserTreeNodeBase implements DBObjectB
 
     @Override
     public Icon getIcon(int flags) {
-        return getConnectionHandler().getIcon();
+        return this.getConnection().getIcon();
     }
 
     @Override
     public String getPresentableText() {
-        return getConnectionHandler().getPresentableText();
+        return this.getConnection().getPresentableText();
     }
 
     @Override
@@ -493,7 +458,7 @@ public class DBObjectBundleImpl extends BrowserTreeNodeBase implements DBObjectB
             @Override
             public void buildToolTip() {
                 append(true, "connection", true);
-                ConnectionHandler connectionHandler = getConnectionHandler();
+                ConnectionHandler connectionHandler = DBObjectBundleImpl.this.getConnection();
                 if (connectionHandler.getConnectionStatus().isConnected()) {
                     append(false, " - active", true);
                 } else if (connectionHandler.canConnect() && !connectionHandler.isValid()) {
@@ -586,7 +551,7 @@ public class DBObjectBundleImpl extends BrowserTreeNodeBase implements DBObjectB
     @Override
     @Nullable
     public DBObject getObject(DBObjectType objectType, String name, short overload) {
-        if (objectType == CONSOLE) return getConnectionHandler().getConsoleBundle().getConsole(name);
+        if (objectType == CONSOLE) return this.getConnection().getConsoleBundle().getConsole(name);
         if (objectType == SCHEMA) return getSchema(name);
         if (objectType == USER) return getUser(name);
         if (objectType == ROLE) return getRole(name);
@@ -604,7 +569,7 @@ public class DBObjectBundleImpl extends BrowserTreeNodeBase implements DBObjectB
     }
 
     private Filter<DBObjectType> getConnectionObjectTypeFilter() {
-        return getConnectionHandler().getSettings().getFilterSettings().getObjectTypeFilterSettings().getTypeFilter();
+        return this.getConnection().getSettings().getFilterSettings().getObjectTypeFilterSettings().getTypeFilter();
     }
 
     @Override
@@ -666,7 +631,7 @@ public class DBObjectBundleImpl extends BrowserTreeNodeBase implements DBObjectB
 
     @Override
     public void refreshObjectsStatus(final @Nullable DBSchemaObject requester) {
-        ConnectionHandler connectionHandler = getConnectionHandler();
+        ConnectionHandler connectionHandler = this.getConnection();
         if (DatabaseFeature.OBJECT_INVALIDATION.isSupported(connectionHandler)) {
             Project project = getProject();
             Progress.background(project, "Updating objects status", true,
@@ -711,7 +676,7 @@ public class DBObjectBundleImpl extends BrowserTreeNodeBase implements DBObjectB
     @Override
     @NotNull
     public Project getProject() {
-        return getConnectionHandler().getProject();
+        return this.getConnection().getProject();
     }
 
     @Override
@@ -737,7 +702,7 @@ public class DBObjectBundleImpl extends BrowserTreeNodeBase implements DBObjectB
 
     @Override
     public String toString() {
-        return getConnectionHandler().getName();
+        return this.getConnection().getName();
     }
 
     /*********************************************************
@@ -750,7 +715,7 @@ public class DBObjectBundleImpl extends BrowserTreeNodeBase implements DBObjectB
 
             @Override
             public void loadContent(DynamicContent<DBConsole> dynamicContent, boolean forceReload) {
-                ConnectionHandler connectionHandler = dynamicContent.getConnectionHandler();
+                ConnectionHandler connectionHandler = dynamicContent.getConnection();
                 List<DBConsole> consoles = connectionHandler.getConsoleBundle().getConsoles();
                 dynamicContent.setElements(consoles);
             }
@@ -765,7 +730,7 @@ public class DBObjectBundleImpl extends BrowserTreeNodeBase implements DBObjectB
 
             @Override
             public DBSchema createElement(DynamicContent<DBSchema> content, DBSchemaMetadata metadata, LoaderCache cache) throws SQLException {
-                return new DBSchemaImpl(content.getConnectionHandler(), metadata);
+                return new DBSchemaImpl(content.getConnection(), metadata);
             }
         };
 
@@ -778,7 +743,7 @@ public class DBObjectBundleImpl extends BrowserTreeNodeBase implements DBObjectB
 
             @Override
             public DBUser createElement(DynamicContent<DBUser> content, DBUserMetadata metadata, LoaderCache cache) throws SQLException {
-                return new DBUserImpl(content.getConnectionHandler(), metadata);
+                return new DBUserImpl(content.getConnection(), metadata);
             }
         };
 
@@ -791,7 +756,7 @@ public class DBObjectBundleImpl extends BrowserTreeNodeBase implements DBObjectB
 
             @Override
             public DBRole createElement(DynamicContent<DBRole> content, DBRoleMetadata metadata, LoaderCache cache) throws SQLException {
-                return new DBRoleImpl(content.getConnectionHandler(), metadata);
+                return new DBRoleImpl(content.getConnection(), metadata);
             }
         };
 
@@ -804,7 +769,7 @@ public class DBObjectBundleImpl extends BrowserTreeNodeBase implements DBObjectB
 
             @Override
             public DBSystemPrivilege createElement(DynamicContent<DBSystemPrivilege> content, DBPrivilegeMetadata metadata, LoaderCache cache) throws SQLException {
-                return new DBSystemPrivilegeImpl(content.getConnectionHandler(), metadata);
+                return new DBSystemPrivilegeImpl(content.getConnection(), metadata);
             }
         };
 
@@ -817,7 +782,7 @@ public class DBObjectBundleImpl extends BrowserTreeNodeBase implements DBObjectB
 
             @Override
             public DBObjectPrivilege createElement(DynamicContent<DBObjectPrivilege> content, DBPrivilegeMetadata metadata, LoaderCache cache) throws SQLException {
-                return new DBObjectPrivilegeImpl(content.getConnectionHandler(), metadata);
+                return new DBObjectPrivilegeImpl(content.getConnection(), metadata);
             }
         };
 
@@ -830,7 +795,7 @@ public class DBObjectBundleImpl extends BrowserTreeNodeBase implements DBObjectB
 
             @Override
             public DBCharset createElement(DynamicContent<DBCharset> content, DBCharsetMetadata metadata, LoaderCache cache) throws SQLException {
-                return new DBCharsetImpl(content.getConnectionHandler(), metadata);
+                return new DBCharsetImpl(content.getConnection(), metadata);
             }
         };
 

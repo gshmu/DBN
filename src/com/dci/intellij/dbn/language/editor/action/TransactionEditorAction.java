@@ -67,7 +67,7 @@ public abstract class TransactionEditorAction extends DumbAwareProjectAction {
         VirtualFile virtualFile = Lookup.getVirtualFile(e);
         if (project != null && virtualFile != null) {
             FileConnectionMappingManager connectionMappingManager = FileConnectionMappingManager.getInstance(project);
-            return connectionMappingManager.getConnectionHandler(virtualFile);
+            return connectionMappingManager.getConnection(virtualFile);
         }
         return null;
     }

@@ -58,7 +58,7 @@ public class DatasetRecord implements Disposable {
             }
         }
 
-        ConnectionHandler connectionHandler = dataset.getConnectionHandler();
+        ConnectionHandler connectionHandler = dataset.getConnection();
         PooledConnection.run(true,
                 connectionHandler,
                 connection -> {

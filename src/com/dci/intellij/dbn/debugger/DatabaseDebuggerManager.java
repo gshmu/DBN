@@ -105,7 +105,7 @@ public class DatabaseDebuggerManager extends AbstractProjectComponent implements
     }
 
     public boolean checkForbiddenOperation(ConnectionProvider connectionProvider) {
-        return checkForbiddenOperation(connectionProvider.getConnectionHandler());
+        return checkForbiddenOperation(connectionProvider.getConnection());
     }
 
 

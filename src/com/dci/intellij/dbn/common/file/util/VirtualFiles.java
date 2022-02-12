@@ -26,7 +26,8 @@ import java.io.IOException;
 import java.util.Collections;
 import java.util.List;
 
-public class VirtualFileUtil {
+public final class VirtualFiles {
+    private VirtualFiles() {}
 
     public static Icon getIcon(VirtualFile virtualFile) {
         if (virtualFile instanceof DBVirtualFileImpl) {

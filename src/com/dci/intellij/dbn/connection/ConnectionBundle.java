@@ -262,7 +262,7 @@ public class ConnectionBundle extends BrowserTreeNodeBase implements BrowserTree
     @Override
     public int getIndex(BrowserTreeNode child) {
         DBObjectBundle objectBundle = (DBObjectBundle) child;
-        return connections.indexOf(objectBundle.getConnectionHandler());
+        return connections.indexOf(objectBundle.getConnection());
     }
 
     @Override

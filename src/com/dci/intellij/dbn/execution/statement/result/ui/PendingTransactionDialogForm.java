@@ -83,7 +83,7 @@ public class PendingTransactionDialogForm extends DBNFormImpl {
     private void updatePreview() {
         StatementExecutionProcessor executionProcessor = getExecutionProcessor();
 
-        ConnectionHandler connectionHandler = Failsafe.nn(executionProcessor.getConnectionHandler());
+        ConnectionHandler connectionHandler = Failsafe.nn(executionProcessor.getConnection());
         SchemaId currentSchema = executionProcessor.getTargetSchema();
         Project project = connectionHandler.getProject();
         String previewText = executionProcessor.getExecutionInput().getExecutableStatementText();
