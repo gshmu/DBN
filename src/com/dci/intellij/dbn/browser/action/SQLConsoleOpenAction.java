@@ -4,6 +4,7 @@ import com.dci.intellij.dbn.browser.DatabaseBrowserManager;
 import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.common.action.GroupPopupAction;
 import com.dci.intellij.dbn.common.action.Lookup;
+import com.dci.intellij.dbn.common.util.Actions;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.action.AbstractConnectionAction;
 import com.dci.intellij.dbn.connection.console.DatabaseConsoleManager;
@@ -73,7 +74,7 @@ public class SQLConsoleOpenAction extends GroupPopupAction {
         }
 
         SelectConsoleAction(DBConsole console) {
-            super(console.getName().replaceAll("_", "__"), null, console.getIcon(), console.getConnectionHandler());
+            super(Actions.adjustActionName(console.getName()), null, console.getIcon(), console.getConnectionHandler());
             this.console = console;
         }
 
