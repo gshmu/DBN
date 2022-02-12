@@ -3,6 +3,7 @@ package com.dci.intellij.dbn.menu.action;
 import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.common.action.DumbAwareProjectAction;
 import com.dci.intellij.dbn.common.dispose.Failsafe;
+import com.dci.intellij.dbn.common.util.Actions;
 import com.dci.intellij.dbn.common.util.Messages;
 import com.dci.intellij.dbn.connection.ConnectionBundle;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
@@ -14,11 +15,7 @@ import com.dci.intellij.dbn.object.DBConsole;
 import com.dci.intellij.dbn.options.ConfigId;
 import com.dci.intellij.dbn.options.ProjectSettingsManager;
 import com.dci.intellij.dbn.vfs.DBConsoleType;
-import com.intellij.openapi.actionSystem.ActionGroup;
-import com.intellij.openapi.actionSystem.AnAction;
-import com.intellij.openapi.actionSystem.AnActionEvent;
-import com.intellij.openapi.actionSystem.DefaultActionGroup;
-import com.intellij.openapi.actionSystem.Separator;
+import com.intellij.openapi.actionSystem.*;
 import com.intellij.openapi.fileEditor.FileEditorManager;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.popup.JBPopupFactory;
@@ -138,7 +135,7 @@ public class SQLConsoleOpenAction extends DumbAwareProjectAction {
         }
 
         SelectConsoleAction(DBConsole console) {
-            super(console.getName().replaceAll("_", "__"), null, console.getIcon());
+            super(Actions.adjustActionName(console.getName()), null, console.getIcon());
             this.console = console;
         }
 

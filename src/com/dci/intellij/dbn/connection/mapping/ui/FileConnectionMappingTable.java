@@ -9,6 +9,7 @@ import com.dci.intellij.dbn.common.ui.component.DBNComponent;
 import com.dci.intellij.dbn.common.ui.table.DBNColoredTableCellRenderer;
 import com.dci.intellij.dbn.common.ui.table.DBNTable;
 import com.dci.intellij.dbn.common.ui.table.DBNTableTransferHandler;
+import com.dci.intellij.dbn.common.util.Actions;
 import com.dci.intellij.dbn.common.util.Context;
 import com.dci.intellij.dbn.common.util.Safe;
 import com.dci.intellij.dbn.connection.*;
@@ -161,7 +162,7 @@ public class FileConnectionMappingTable extends DBNTable<FileConnectionMappingTa
 
     private void promptSchemaSelector(@NotNull FileConnectionMapping mapping) {
         ConnectionHandler connection = mapping.getConnection();
-        if (connection != null) {
+        if (connection != null && !connection.isVirtual()) {
             Progress.modal(connection.getProject(), "Loading schemas", true, progress -> {
                 List<DBSchema> schemas = connection.getObjectBundle().getSchemas();
 
@@ -175,7 +176,7 @@ public class FileConnectionMappingTable extends DBNTable<FileConnectionMappingTa
 
     private void promptSessionSelector(@NotNull FileConnectionMapping mapping) {
         ConnectionHandler connection = mapping.getConnection();
-        if (connection != null) {
+        if (connection != null && !connection.isVirtual()) {
             DefaultActionGroup actionGroup = new DefaultActionGroup();
             VirtualFile file = mapping.getFile();
 
@@ -216,28 +217,29 @@ public class FileConnectionMappingTable extends DBNTable<FileConnectionMappingTa
 
     private class ConnectionAction extends AnAction implements DumbAware {
         private final VirtualFile virtualFile;
-        private final ConnectionHandlerRef connectionHandler;
-        private ConnectionAction(VirtualFile virtualFile, ConnectionHandler connectionHandler) {
+        private final ConnectionHandlerRef connection;
+        private ConnectionAction(VirtualFile virtualFile, ConnectionHandler connection) {
             super(
-                Safe.call(connectionHandler, c -> c.getName(), "No Connection"), null,
-                Safe.call(connectionHandler, c -> c.getIcon()));
+                Safe.call(connection, c -> c.getName(), "No Connection"), null,
+                Safe.call(connection, c -> c.getIcon()));
             this.virtualFile = virtualFile;
-            this.connectionHandler = ConnectionHandlerRef.of(connectionHandler);
+            this.connection = ConnectionHandlerRef.of(connection);
         }
 
         @Override
         public void actionPerformed(@NotNull AnActionEvent e) {
-            manager.setConnectionHandler(virtualFile, getConnectionHandler());
+            ConnectionHandler connectionHandler = getConnection();
+            manager.setConnectionHandler(virtualFile, connectionHandler);
             notifyModelChanges(virtualFile);
         }
 
         @Nullable
-        private ConnectionHandler getConnectionHandler() {
-            return ConnectionHandlerRef.get(connectionHandler);
+        private ConnectionHandler getConnection() {
+            return ConnectionHandlerRef.get(connection);
         }
 
         public ConnectionId getConnectionId() {
-            ConnectionHandler connectionHandler = getConnectionHandler();
+            ConnectionHandler connectionHandler = getConnection();
             return connectionHandler == null ? null : connectionHandler.getConnectionId();
         }
     }
@@ -247,7 +249,7 @@ public class FileConnectionMappingTable extends DBNTable<FileConnectionMappingTa
         private final VirtualFile virtualFile;
         private final SchemaId schemaId;
         private SchemaAction(VirtualFile virtualFile, SchemaId schemaId) {
-            super(schemaId.getName(), "", schemaId.getIcon());
+            super(Actions.adjustActionName(schemaId.getName()), "", schemaId.getIcon());
             this.virtualFile = virtualFile;
             this.schemaId = schemaId;
         }
@@ -264,7 +266,7 @@ public class FileConnectionMappingTable extends DBNTable<FileConnectionMappingTa
         private final VirtualFile virtualFile;
         private final DatabaseSession session;
         private SessionAction(VirtualFile virtualFile, DatabaseSession session) {
-            super(session.getName(), "", session.getIcon());
+            super(Actions.adjustActionName(session.getName()), "", session.getIcon());
             this.virtualFile = virtualFile;
             this.session = session;
         }

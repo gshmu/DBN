@@ -3,15 +3,11 @@ package com.dci.intellij.dbn.connection.mapping;
 import com.dci.intellij.dbn.common.dispose.StatefulDisposable;
 import com.dci.intellij.dbn.common.file.util.VirtualFileUtil;
 import com.dci.intellij.dbn.common.project.ProjectRef;
-import com.dci.intellij.dbn.connection.ConnectionHandler;
-import com.dci.intellij.dbn.connection.ConnectionHandlerRef;
-import com.dci.intellij.dbn.connection.ConnectionId;
-import com.dci.intellij.dbn.connection.ConnectionManager;
-import com.dci.intellij.dbn.connection.SchemaId;
-import com.dci.intellij.dbn.connection.SessionId;
+import com.dci.intellij.dbn.connection.*;
 import com.dci.intellij.dbn.connection.jdbc.DBNConnection;
 import com.dci.intellij.dbn.connection.session.DatabaseSession;
 import com.dci.intellij.dbn.ddl.DDLFileAttachmentManager;
+import com.dci.intellij.dbn.object.DBSchema;
 import com.dci.intellij.dbn.object.common.DBSchemaObject;
 import com.dci.intellij.dbn.vfs.DatabaseFileSystem;
 import com.dci.intellij.dbn.vfs.file.DBConsoleVirtualFile;
@@ -50,6 +46,10 @@ public class FileConnectionMappingRegistry extends StatefulDisposable.Base {
 
         if (virtualFile instanceof LightVirtualFile) {
             virtualFile.putUserData(CONNECTION_HANDLER, connectionHandlerRef);
+            if (connectionHandler == null || connectionHandler.isVirtual()) {
+                setDatabaseSession(virtualFile, null);
+                setDatabaseSchema(virtualFile, null);
+            }
             return true;
         }
 
@@ -73,6 +73,10 @@ public class FileConnectionMappingRegistry extends StatefulDisposable.Base {
                         // overwrite current schema only if the existing
                         // selection is not a valid schema for the given connection
                         currentSchema = mapping.getSchemaId();
+                        DBSchema schema = currentSchema == null ? null : connectionHandler.getSchema(currentSchema);
+                        if (schema == null) {
+                            currentSchema = connectionHandler.getDefaultSchema();
+                        }
                         setDatabaseSchema(virtualFile, currentSchema);
                     } else {
                         setDatabaseSchema(virtualFile, null);

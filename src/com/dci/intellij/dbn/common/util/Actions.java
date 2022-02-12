@@ -1,16 +1,10 @@
 package com.dci.intellij.dbn.common.util;
 
 import com.dci.intellij.dbn.common.action.Lookup;
-import com.intellij.openapi.actionSystem.ActionGroup;
-import com.intellij.openapi.actionSystem.ActionManager;
-import com.intellij.openapi.actionSystem.ActionPopupMenu;
-import com.intellij.openapi.actionSystem.ActionToolbar;
-import com.intellij.openapi.actionSystem.AnAction;
-import com.intellij.openapi.actionSystem.DefaultActionGroup;
-import com.intellij.openapi.actionSystem.Separator;
+import com.intellij.openapi.actionSystem.*;
 import org.jetbrains.annotations.NotNull;
 
-import javax.swing.JComponent;
+import javax.swing.*;
 import java.util.UUID;
 
 public class Actions implements Lookup {
@@ -52,11 +46,17 @@ public class Actions implements Lookup {
         return popupMenu;
     }
 
+    public static String adjustActionName(@NotNull String name) {
+        return name.replaceAll("_", "__");
+    }
+
     private static String adjustPlace(String place) {
         if (Strings.isEmpty(place)) {
             return UUID.randomUUID().toString();
         }
         return place;
     }
+
+
 
 }
