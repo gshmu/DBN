@@ -4,7 +4,7 @@ import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.common.util.Context;
 import com.dci.intellij.dbn.common.util.Editors;
 import com.dci.intellij.dbn.connection.ConnectionAction;
-import com.dci.intellij.dbn.connection.mapping.FileConnectionMappingManager;
+import com.dci.intellij.dbn.connection.mapping.FileConnectionContextManager;
 import com.dci.intellij.dbn.debugger.DatabaseDebuggerManager;
 import com.dci.intellij.dbn.execution.statement.StatementExecutionManager;
 import com.dci.intellij.dbn.execution.statement.processor.StatementExecutionProcessor;
@@ -23,7 +23,7 @@ import com.intellij.psi.PsiFile;
 import com.intellij.util.IncorrectOperationException;
 import org.jetbrains.annotations.NotNull;
 
-import javax.swing.Icon;
+import javax.swing.*;
 
 public class DebugStatementIntentionAction extends GenericIntentionAction implements HighPriorityAction {
     @Override
@@ -61,9 +61,9 @@ public class DebugStatementIntentionAction extends GenericIntentionAction implem
             DBLanguagePsiFile databasePsiFile = (DBLanguagePsiFile) psiFile;
             DataContext dataContext = Context.getDataContext(editor);
 
-            FileConnectionMappingManager connectionMappingManager = FileConnectionMappingManager.getInstance(project);
-            connectionMappingManager.selectConnectionAndSchema(
-                    databasePsiFile,
+            FileConnectionContextManager contextManager = FileConnectionContextManager.getInstance(project);
+            contextManager.selectConnectionAndSchema(
+                    databasePsiFile.getVirtualFile(),
                     dataContext,
                     () -> ConnectionAction.invoke("", false, databasePsiFile,
                             (action) -> {

@@ -2,24 +2,24 @@ package com.dci.intellij.dbn.connection.mapping.ui;
 
 import com.dci.intellij.dbn.common.ui.table.DBNMutableTableModel;
 import com.dci.intellij.dbn.common.util.Safe;
-import com.dci.intellij.dbn.connection.mapping.FileConnectionMapping;
+import com.dci.intellij.dbn.connection.mapping.FileConnectionContext;
 import com.intellij.openapi.vfs.VirtualFile;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 import java.util.Objects;
 
-public class FileConnectionMappingTableModel extends DBNMutableTableModel<FileConnectionMapping> {
+public class FileConnectionMappingTableModel extends DBNMutableTableModel<FileConnectionContext> {
     public static final String[] COLUMNS = {"File", "Connection", "Environment", "Schema", "Session"};
-    private final List<FileConnectionMapping> mappings;
+    private final List<FileConnectionContext> mappings;
 
-    public FileConnectionMappingTableModel(List<FileConnectionMapping> mappings) {
+    public FileConnectionMappingTableModel(List<FileConnectionContext> mappings) {
         this.mappings = mappings;
     }
 
     public final int indexOf(@NotNull VirtualFile file) {
         for (int i = 0; i < mappings.size(); i++) {
-            FileConnectionMapping mapping = mappings.get(i);
+            FileConnectionContext mapping = mappings.get(i);
             if (Objects.equals(mapping.getFile(), file)) {
                 return i;
             }
@@ -44,7 +44,7 @@ public class FileConnectionMappingTableModel extends DBNMutableTableModel<FileCo
 
     @Override
     public final Class<?> getColumnClass(int columnIndex) {
-        return FileConnectionMapping.class;
+        return FileConnectionContext.class;
     }
 
     @Override
@@ -53,7 +53,7 @@ public class FileConnectionMappingTableModel extends DBNMutableTableModel<FileCo
     }
 
     @Override
-    public Object getValue(FileConnectionMapping row, int column) {
+    public Object getValue(FileConnectionContext row, int column) {
         switch (column) {
             case 0: return row.getFile();
             case 1: return row.getConnection();
@@ -65,7 +65,7 @@ public class FileConnectionMappingTableModel extends DBNMutableTableModel<FileCo
     }
 
     @Override
-    public String getPresentableValue(FileConnectionMapping row, int column) {
+    public String getPresentableValue(FileConnectionContext row, int column) {
         switch (column) {
             case 0: return Safe.call(row.getFile(), f -> f.getPath(), "");
             case 1: return Safe.call(row.getConnection(), c -> c.getName(), "");

@@ -3,7 +3,7 @@ package com.dci.intellij.dbn.code.common.intention;
 import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.common.util.Context;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
-import com.dci.intellij.dbn.connection.mapping.FileConnectionMappingManager;
+import com.dci.intellij.dbn.connection.mapping.FileConnectionContextManager;
 import com.dci.intellij.dbn.language.common.DBLanguagePsiFile;
 import com.intellij.codeInsight.intention.LowPriorityAction;
 import com.intellij.openapi.actionSystem.DataContext;
@@ -32,8 +32,8 @@ public class SelectSchemaIntentionAction extends GenericIntentionAction implemen
     public boolean isAvailable(@NotNull Project project, Editor editor, PsiFile psiFile) {
         if (psiFile instanceof DBLanguagePsiFile) {
             VirtualFile virtualFile = psiFile.getVirtualFile();
-            FileConnectionMappingManager connectionMappingManager = FileConnectionMappingManager.getInstance(project);
-            if (connectionMappingManager.isSchemaSelectable(virtualFile)) {
+            FileConnectionContextManager contextManager = FileConnectionContextManager.getInstance(project);
+            if (contextManager.isSchemaSelectable(virtualFile)) {
                 DBLanguagePsiFile file = (DBLanguagePsiFile) psiFile;
                 ConnectionHandler connectionHandler = file.getConnection();
                 return connectionHandler != null && !connectionHandler.isVirtual();
@@ -46,9 +46,9 @@ public class SelectSchemaIntentionAction extends GenericIntentionAction implemen
     public void invoke(@NotNull Project project, Editor editor, PsiFile psiFile) throws IncorrectOperationException {
         if (psiFile instanceof DBLanguagePsiFile) {
             DBLanguagePsiFile dbLanguageFile = (DBLanguagePsiFile) psiFile;
-            FileConnectionMappingManager connectionMappingManager = FileConnectionMappingManager.getInstance(project);
+            FileConnectionContextManager contextManager = FileConnectionContextManager.getInstance(project);
             DataContext dataContext = Context.getDataContext(editor);
-            connectionMappingManager.promptSchemaSelector(dbLanguageFile, dataContext, null);
+            contextManager.promptSchemaSelector(dbLanguageFile.getVirtualFile(), dataContext, null);
         }
     }
 

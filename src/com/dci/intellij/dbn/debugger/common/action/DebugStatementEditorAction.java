@@ -6,7 +6,7 @@ import com.dci.intellij.dbn.common.action.Lookup;
 import com.dci.intellij.dbn.common.util.Documents;
 import com.dci.intellij.dbn.common.util.Editors;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
-import com.dci.intellij.dbn.connection.mapping.FileConnectionMappingManager;
+import com.dci.intellij.dbn.connection.mapping.FileConnectionContextManager;
 import com.dci.intellij.dbn.database.DatabaseFeature;
 import com.dci.intellij.dbn.debugger.DatabaseDebuggerManager;
 import com.dci.intellij.dbn.execution.statement.StatementExecutionManager;
@@ -78,13 +78,13 @@ public class DebugStatementEditorAction extends DumbAwareProjectAction {
         boolean enabled = false;
         boolean visible = false;
         if (editor != null) {
-            FileConnectionMappingManager connectionMappingManager = FileConnectionMappingManager.getInstance(project);
+            FileConnectionContextManager contextManager = FileConnectionContextManager.getInstance(project);
             VirtualFile virtualFile = Documents.getVirtualFile(editor);
             if (virtualFile != null) {
                 enabled = DatabaseDebuggerManager.isDebugConsole(virtualFile);
 
-                ConnectionHandler connectionHandler = connectionMappingManager.getConnection(virtualFile);
-                if (DatabaseFeature.DEBUGGING.isSupported(connectionHandler)){
+                ConnectionHandler connection = contextManager.getConnection(virtualFile);
+                if (DatabaseFeature.DEBUGGING.isSupported(connection)){
                     visible = true;
                     if (!enabled) {
                         PsiFile psiFile = PsiUtil.getPsiFile(project, editor.getDocument());

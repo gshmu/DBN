@@ -5,7 +5,7 @@ import com.dci.intellij.dbn.common.action.Lookup;
 import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.common.util.Strings;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
-import com.dci.intellij.dbn.connection.mapping.FileConnectionMappingManager;
+import com.dci.intellij.dbn.connection.mapping.FileConnectionContextManager;
 import com.dci.intellij.dbn.database.DatabaseCompatibilityInterface;
 import com.dci.intellij.dbn.database.DatabaseFeature;
 import com.dci.intellij.dbn.debugger.DatabaseDebuggerManager;
@@ -35,8 +35,8 @@ public class DatabaseLoggingToggleAction extends ToggleAction implements DumbAwa
         Project project = Lookup.getProject(e);
         VirtualFile virtualFile = Lookup.getVirtualFile(e);
         if (project != null && virtualFile != null) {
-            FileConnectionMappingManager connectionMappingManager = FileConnectionMappingManager.getInstance(project);
-            ConnectionHandler activeConnection = connectionMappingManager.getConnection(virtualFile);
+            FileConnectionContextManager contextManager = FileConnectionContextManager.getInstance(project);
+            ConnectionHandler activeConnection = contextManager.getConnection(virtualFile);
             if (Failsafe.check(activeConnection) && !activeConnection.isVirtual()) {
                 return activeConnection ;
             }

@@ -3,8 +3,8 @@ package com.dci.intellij.dbn.connection.mapping.ui;
 import com.dci.intellij.dbn.common.color.Colors;
 import com.dci.intellij.dbn.common.ui.DBNFormImpl;
 import com.dci.intellij.dbn.common.ui.table.DBNTable;
-import com.dci.intellij.dbn.connection.mapping.FileConnectionMapping;
-import com.dci.intellij.dbn.connection.mapping.FileConnectionMappingManager;
+import com.dci.intellij.dbn.connection.mapping.FileConnectionContext;
+import com.dci.intellij.dbn.connection.mapping.FileConnectionContextManager;
 import com.intellij.openapi.Disposable;
 import com.intellij.openapi.project.Project;
 import com.intellij.ui.components.JBScrollPane;
@@ -23,8 +23,8 @@ public class FileConnectionMappingForm extends DBNFormImpl {
     public FileConnectionMappingForm(@Nullable Disposable parent) {
         super(parent);
         Project project = ensureProject();
-        FileConnectionMappingManager manager = FileConnectionMappingManager.getInstance(project);
-        List<FileConnectionMapping> mappings = new ArrayList<>(manager.getRegistry().getMappings().values());
+        FileConnectionContextManager manager = FileConnectionContextManager.getInstance(project);
+        List<FileConnectionContext> mappings = new ArrayList<>(manager.getRegistry().getMappings().values());
         FileConnectionMappingTableModel model = new FileConnectionMappingTableModel(mappings);
         mappingsTable = new FileConnectionMappingTable(this, model);
 

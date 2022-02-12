@@ -6,7 +6,7 @@ import com.dci.intellij.dbn.common.thread.Read;
 import com.dci.intellij.dbn.common.util.Documents;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.SchemaId;
-import com.dci.intellij.dbn.connection.mapping.FileConnectionMappingManager;
+import com.dci.intellij.dbn.connection.mapping.FileConnectionContextManager;
 import com.dci.intellij.dbn.language.common.DBLanguageDialect;
 import com.dci.intellij.dbn.language.common.element.ElementType;
 import com.dci.intellij.dbn.language.common.element.util.ElementTypeAttribute;
@@ -19,12 +19,7 @@ import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
-import com.intellij.psi.PsiComment;
-import com.intellij.psi.PsiDocumentManager;
-import com.intellij.psi.PsiElement;
-import com.intellij.psi.PsiFile;
-import com.intellij.psi.PsiManager;
-import com.intellij.psi.PsiWhiteSpace;
+import com.intellij.psi.*;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -41,9 +36,9 @@ public class PsiUtil {
         if (currentSchema == null) {
             VirtualFile virtualFile = getVirtualFileForElement(psiElement);
             if (virtualFile != null) {
-                FileConnectionMappingManager mappingManager = FileConnectionMappingManager.getInstance(psiElement.getProject());
-                SchemaId schemaId = mappingManager.getDatabaseSchema(virtualFile);
-                ConnectionHandler connectionHandler = mappingManager.getConnection(virtualFile);
+                FileConnectionContextManager contextManager = FileConnectionContextManager.getInstance(psiElement.getProject());
+                SchemaId schemaId = contextManager.getDatabaseSchema(virtualFile);
+                ConnectionHandler connectionHandler = contextManager.getConnection(virtualFile);
                 if (schemaId != null && connectionHandler != null) {
                     currentSchema = connectionHandler.getSchema(schemaId);
                 }

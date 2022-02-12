@@ -12,17 +12,17 @@ import org.jetbrains.annotations.Nullable;
 import javax.swing.*;
 
 public abstract class AnObjectAction<T extends DBObject> extends DumbAwareContextAction<T> {
-    private final DBObjectRef<T> objectRef;
+    private final DBObjectRef<T> object;
     private boolean custom;
 
     public AnObjectAction(String text, Icon icon, @NotNull T object) {
         super(text, null, icon);
-        objectRef = DBObjectRef.of(object);
+        this.object = DBObjectRef.of(object);
         custom = true;
     }
     public AnObjectAction(@NotNull T object) {
         super(object.getName(), null, object.getIcon());
-        objectRef = DBObjectRef.of(object);
+        this.object = DBObjectRef.of(object);
     }
 
     @Override
@@ -31,7 +31,14 @@ public abstract class AnObjectAction<T extends DBObject> extends DumbAwareContex
     }
 
     public T getTarget() {
-        return DBObjectRef.get(objectRef);
+        return DBObjectRef.get(object);
+    }
+
+    @NotNull
+    @Override
+    protected Project getProject() {
+        T object = this.object.ensure();
+        return object.getProject();
     }
 
     @Override

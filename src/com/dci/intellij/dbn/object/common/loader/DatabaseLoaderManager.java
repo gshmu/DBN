@@ -9,7 +9,7 @@ import com.dci.intellij.dbn.common.util.Documents;
 import com.dci.intellij.dbn.common.util.Editors;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.ConnectionLoadListener;
-import com.dci.intellij.dbn.connection.mapping.FileConnectionMappingManager;
+import com.dci.intellij.dbn.connection.mapping.FileConnectionContextManager;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.fileEditor.FileEditor;
 import com.intellij.openapi.fileEditor.FileEditorManager;
@@ -28,12 +28,12 @@ public class DatabaseLoaderManager extends AbstractProjectComponent {
                     checkDisposed();
                     Failsafe.nn(project);
                     FileEditorManager fileEditorManager = FileEditorManager.getInstance(project);
-                    FileConnectionMappingManager connectionMappingManager = FileConnectionMappingManager.getInstance(project);
+                    FileConnectionContextManager contextManager = FileConnectionContextManager.getInstance(project);
                     VirtualFile[] openFiles = fileEditorManager.getOpenFiles();
                     for (VirtualFile openFile : openFiles) {
 
                         checkDisposed();
-                        ConnectionHandler activeConnection = connectionMappingManager.getConnection(openFile);
+                        ConnectionHandler activeConnection = contextManager.getConnection(openFile);
                         if (activeConnection == connectionHandler) {
                             FileEditor[] fileEditors = fileEditorManager.getEditors(openFile);
                             for (FileEditor fileEditor : fileEditors) {

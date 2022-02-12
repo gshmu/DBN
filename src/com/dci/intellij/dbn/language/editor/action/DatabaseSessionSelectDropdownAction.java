@@ -5,7 +5,7 @@ import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.common.ui.DBNComboBoxAction;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.ConnectionType;
-import com.dci.intellij.dbn.connection.mapping.FileConnectionMappingManager;
+import com.dci.intellij.dbn.connection.mapping.FileConnectionContextManager;
 import com.dci.intellij.dbn.connection.session.DatabaseSession;
 import com.dci.intellij.dbn.connection.session.DatabaseSessionBundle;
 import com.dci.intellij.dbn.vfs.DBConsoleType;
@@ -31,7 +31,7 @@ public class DatabaseSessionSelectDropdownAction extends DBNComboBoxAction imple
         DefaultActionGroup actionGroup = new DefaultActionGroup();
         VirtualFile virtualFile = Lookup.getVirtualFile(component);
         if (virtualFile != null) {
-            ConnectionHandler connectionHandler = FileConnectionMappingManager.getInstance(project).getConnection(virtualFile);
+            ConnectionHandler connectionHandler = FileConnectionContextManager.getInstance(project).getConnection(virtualFile);
             if (Failsafe.check(connectionHandler) && !connectionHandler.isVirtual()) {
                 DatabaseSessionBundle sessionBundle = connectionHandler.getSessionBundle();
 
@@ -78,8 +78,8 @@ public class DatabaseSessionSelectDropdownAction extends DBNComboBoxAction imple
         boolean enabled = true;
 
         if (project != null && virtualFile != null) {
-            FileConnectionMappingManager mappingManager = FileConnectionMappingManager.getInstance(project);
-            ConnectionHandler connectionHandler = mappingManager.getConnection(virtualFile);
+            FileConnectionContextManager contextManager = FileConnectionContextManager.getInstance(project);
+            ConnectionHandler connectionHandler = contextManager.getConnection(virtualFile);
             visible = connectionHandler != null && !connectionHandler.isVirtual() && connectionHandler.getSettings().getDetailSettings().isEnableSessionManagement();
             if (visible) {
                 if (isDebugConsole(virtualFile)) {
@@ -88,14 +88,14 @@ public class DatabaseSessionSelectDropdownAction extends DBNComboBoxAction imple
                     icon = debugSession.getIcon();
                     enabled = false;
                 } else {
-                    DatabaseSession session = mappingManager.getDatabaseSession(virtualFile);
+                    DatabaseSession session = contextManager.getDatabaseSession(virtualFile);
                     if (session != null) {
                         text = session.getName();
                         icon = session.getIcon();
                         enabled = true;
 /*
                     // TODO allow selecting "hot" session?
-                    DatabaseSession databaseSession = mappingManager.getDatabaseSession(virtualFile);
+                    DatabaseSession databaseSession = contextManager.getDatabaseSession(virtualFile);
                     if (databaseSession != null) {
                         DBNConnection connection = connectionHandler.getConnectionPool().getSessionConnection(databaseSession.getId());
                         enabled = connection == null || !connection.hasDataChanges();
