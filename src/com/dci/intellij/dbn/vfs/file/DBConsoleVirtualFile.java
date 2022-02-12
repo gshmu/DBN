@@ -5,10 +5,10 @@ import com.dci.intellij.dbn.code.common.style.options.CodeStyleCaseSettings;
 import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.common.util.Strings;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
-import com.dci.intellij.dbn.connection.ConnectionId;
 import com.dci.intellij.dbn.connection.SchemaId;
 import com.dci.intellij.dbn.connection.SessionId;
 import com.dci.intellij.dbn.connection.mapping.FileConnectionMapping;
+import com.dci.intellij.dbn.connection.mapping.FileConnectionMappingProvider;
 import com.dci.intellij.dbn.connection.session.DatabaseSession;
 import com.dci.intellij.dbn.database.DatabaseDebuggerInterface;
 import com.dci.intellij.dbn.editor.code.content.SourceCodeContent;
@@ -20,6 +20,7 @@ import com.dci.intellij.dbn.object.lookup.DBObjectRef;
 import com.dci.intellij.dbn.vfs.DBConsoleType;
 import com.dci.intellij.dbn.vfs.DBParseableVirtualFile;
 import com.dci.intellij.dbn.vfs.DatabaseFileViewProvider;
+import com.dci.intellij.dbn.vfs.file.DBConnectionVirtualFile.CustomFileConnectionMapping;
 import com.intellij.lang.Language;
 import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.editor.RangeMarker;
@@ -42,7 +43,7 @@ import java.util.List;
 import java.util.Objects;
 
 @Getter
-public class DBConsoleVirtualFile extends DBObjectVirtualFile<DBConsole> implements DocumentListener, DBParseableVirtualFile, Comparable<DBConsoleVirtualFile> {
+public class DBConsoleVirtualFile extends DBObjectVirtualFile<DBConsole> implements DocumentListener, DBParseableVirtualFile, Comparable<DBConsoleVirtualFile>, FileConnectionMappingProvider {
     private transient long modificationTimestamp = LocalTimeCounter.currentTime();
     private final SourceCodeContent content = new SourceCodeContent();
     private final FileConnectionMapping connectionMapping;
@@ -51,10 +52,9 @@ public class DBConsoleVirtualFile extends DBObjectVirtualFile<DBConsole> impleme
         super(console.getProject(), DBObjectRef.of(console));
 
         ConnectionHandler connectionHandler = console.getConnection();
-        ConnectionId connectionId = connectionHandler.getConnectionId();
         SchemaId schemaId = connectionHandler.getDefaultSchema();
         SessionId sessionId = connectionHandler.getSessionBundle().getMainSession().getId();
-        connectionMapping = new FileConnectionMapping(this.getUrl(), connectionId, sessionId, schemaId);
+        connectionMapping = new CustomFileConnectionMapping(this, sessionId, schemaId);
 
         setCharset(connectionHandler.getSettings().getDetailSettings().getCharset());
     }
@@ -92,7 +92,7 @@ public class DBConsoleVirtualFile extends DBObjectVirtualFile<DBConsole> impleme
     @Nullable
     @Override
     public Icon getIcon() {
-        switch (getConsole().getConsoleType()) {
+        switch (getType()) {
             case STANDARD: return Icons.FILE_SQL_CONSOLE;
             case DEBUG: return Icons.FILE_SQL_DEBUG_CONSOLE;
         }
