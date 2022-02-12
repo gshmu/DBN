@@ -3,18 +3,16 @@ package com.dci.intellij.dbn.connection.mapping;
 import com.dci.intellij.dbn.common.dispose.StatefulDisposable;
 import com.dci.intellij.dbn.common.file.util.VirtualFiles;
 import com.dci.intellij.dbn.common.project.ProjectRef;
-import com.dci.intellij.dbn.common.util.Safe;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.ConnectionId;
 import com.dci.intellij.dbn.connection.SchemaId;
 import com.dci.intellij.dbn.connection.SessionId;
+import com.dci.intellij.dbn.connection.context.ConnectionContextProvider;
 import com.dci.intellij.dbn.connection.session.DatabaseSession;
 import com.dci.intellij.dbn.ddl.DDLFileAttachmentManager;
 import com.dci.intellij.dbn.object.DBSchema;
 import com.dci.intellij.dbn.object.common.DBSchemaObject;
 import com.dci.intellij.dbn.vfs.DatabaseFileSystem;
-import com.dci.intellij.dbn.vfs.file.DBConsoleVirtualFile;
-import com.intellij.injected.editor.VirtualFileWindow;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VirtualFile;
@@ -90,66 +88,63 @@ public class FileConnectionMappingRegistry extends StatefulDisposable.Base {
 
     @Nullable
     public ConnectionHandler getConnectionHandler(@NotNull VirtualFile file) {
+        VirtualFile underlyingFile = VirtualFiles.getUnderlyingFile(file);
         return coalesce(
-                () -> resolveDdlAttachment(file,   mapping -> mapping.getConnection()),
-                () -> resolveFileMapping(file,     mapping -> mapping.getConnection()),
-                () -> resolveMappingProvider(file, mapping -> mapping.getConnection()));
+                () -> resolveDdlAttachment(underlyingFile,   mapping -> mapping.getConnection()),
+                () -> resolveMappingProvider(underlyingFile, mapping -> mapping.getConnection()),
+                () -> resolveFileMapping(underlyingFile,     mapping -> mapping.getConnection()));
     }
 
     @Nullable
     public SchemaId getDatabaseSchema(@NotNull VirtualFile file) {
+        VirtualFile underlyingFile = VirtualFiles.getUnderlyingFile(file);
         return coalesce(
-                () -> resolveDdlAttachment(file,   mapping -> mapping.getSchemaId()),
-                () -> resolveFileMapping(file,     mapping -> mapping.getSchemaId()),
-                () -> resolveMappingProvider(file, mapping -> mapping.getSchemaId()));
+                () -> resolveDdlAttachment(underlyingFile,   mapping -> mapping.getSchemaId()),
+                () -> resolveMappingProvider(underlyingFile, mapping -> mapping.getSchemaId()),
+                () -> resolveFileMapping(underlyingFile,     mapping -> mapping.getSchemaId()));
     }
 
     @Nullable
     public DatabaseSession getDatabaseSession(@NotNull VirtualFile file) {
+        VirtualFile underlyingFile = VirtualFiles.getUnderlyingFile(file);
         return coalesce(
-                () -> resolveFileMapping(file,     mapping -> mapping.getSession()),
-                () -> resolveMappingProvider(file, mapping -> mapping.getSession()));
+                () -> resolveMappingProvider(underlyingFile, mapping -> mapping.getSession()),
+                () -> resolveFileMapping(underlyingFile,     mapping -> mapping.getSession()));
     }
 
     @Nullable
-    private <T> T resolveMappingProvider(@NotNull VirtualFile file, Function<FileConnectionMappingProvider, T> mapping) {
-        return Safe.call(null, () -> {
-            if (VirtualFiles.isDatabaseFileSystem(file)) {
-                if (file instanceof FileConnectionMappingProvider) {
-                    FileConnectionMappingProvider mappingProvider = (FileConnectionMappingProvider) file;
-                    return mapping.apply(mappingProvider);
-                }
+    private <T> T resolveMappingProvider(@NotNull VirtualFile file, Function<ConnectionContextProvider, T> handler) {
+        if (VirtualFiles.isDatabaseFileSystem(file)) {
+            if (file instanceof ConnectionContextProvider) {
+                ConnectionContextProvider mappingProvider = (ConnectionContextProvider) file;
+                return handler.apply(mappingProvider);
             }
-            return null;
-        });
+        }
+        return null;
     }
 
     @Nullable
-    private <T> T resolveFileMapping(@NotNull VirtualFile file, Function<FileConnectionMapping, T> mapping) {
-        return Safe.call(null, () -> {
-            FileConnectionMapping connectionMapping = getFileConnectionMapping(file);
-            if (connectionMapping != null) {
-                return mapping.apply(connectionMapping);
-            }
-            return null;
-        });
+    private <T> T resolveFileMapping(@NotNull VirtualFile file, Function<FileConnectionMapping, T> handler) {
+        FileConnectionMapping connectionMapping = getFileConnectionMapping(file);
+        if (connectionMapping != null) {
+            return handler.apply(connectionMapping);
+        }
+        return null;
     }
 
     @Nullable
-    private <T> T resolveDdlAttachment(@NotNull VirtualFile file, Function<DBSchemaObject, T> mapping) {
-        return Safe.call(null, () -> {
-            if (VirtualFiles.isLocalFileSystem(file)) {
-                // if the file is an attached ddl file, then resolve the object which it is
-                // linked to, and return its parent schema
-                Project project = getProject();
-                DDLFileAttachmentManager fileAttachmentManager = DDLFileAttachmentManager.getInstance(project);
-                DBSchemaObject schemaObject = fileAttachmentManager.getEditableObject(file);
-                if (schemaObject != null && DatabaseFileSystem.isFileOpened(schemaObject)) {
-                    return mapping.apply(schemaObject);
-                }
+    private <T> T resolveDdlAttachment(@NotNull VirtualFile file, Function<DBSchemaObject, T> handler) {
+        if (VirtualFiles.isLocalFileSystem(file)) {
+            // if the file is an attached ddl file, then resolve the object which it is
+            // linked to, and return its parent schema
+            Project project = getProject();
+            DDLFileAttachmentManager fileAttachmentManager = DDLFileAttachmentManager.getInstance(project);
+            DBSchemaObject schemaObject = fileAttachmentManager.getEditableObject(file);
+            if (schemaObject != null && DatabaseFileSystem.isFileOpened(schemaObject)) {
+                return handler.apply(schemaObject);
             }
-            return null;
-        });
+        }
+        return null;
     }
 
     @NotNull
@@ -159,42 +154,32 @@ public class FileConnectionMappingRegistry extends StatefulDisposable.Base {
 
     @Nullable
     public FileConnectionMapping getFileConnectionMapping(VirtualFile file) {
-        if (VirtualFiles.isDatabaseFileSystem(file)) {
-            return null;
-        }
         return getFileConnectionMapping(file, false);
     }
 
     private FileConnectionMapping getFileConnectionMapping(VirtualFile file, boolean ensure) {
-        FileConnectionMapping mapping = null;
-        if (file instanceof LightVirtualFile) {
-            LightVirtualFile lightFile = (LightVirtualFile) file;
-            VirtualFile originalFile = lightFile.getOriginalFile();
-            if (originalFile != null && !originalFile.equals(file)) {
-                file = originalFile;
-            }
+        file = VirtualFiles.getUnderlyingFile(file);
 
-            if (file instanceof VirtualFileWindow) {
-                VirtualFileWindow fileWindow = (VirtualFileWindow) file;
-                file = fileWindow.getDelegate();
-            }
-
-            mapping = file.getUserData(FILE_CONNECTION_MAPPING);
-
-            if (mapping == null && ensure) {
-                mapping = new FileConnectionMapping(file);
-                file.putUserData(FILE_CONNECTION_MAPPING, mapping);
-            }
-            return mapping;
-        }
-
-        if (file instanceof DBConsoleVirtualFile) {
-            DBConsoleVirtualFile consoleFile = (DBConsoleVirtualFile) file;
-            return consoleFile.getConnectionMapping();
+        if (file instanceof FileConnectionMappingProvider) {
+            FileConnectionMappingProvider mappingProvider = (FileConnectionMappingProvider) file;
+            return mappingProvider.getConnectionMapping();
         }
 
         if (VirtualFiles.isDatabaseFileSystem(file)) {
-            throw new UnsupportedOperationException();
+            if (ensure) {
+                throw new UnsupportedOperationException();
+            }
+        }
+
+        FileConnectionMapping mapping = null;
+        if (file instanceof LightVirtualFile) {
+            mapping = file.getUserData(FILE_CONNECTION_MAPPING);
+
+            if (mapping == null && ensure) {
+                mapping = new FileConnectionMappingImpl(file);
+                file.putUserData(FILE_CONNECTION_MAPPING, mapping);
+            }
+            return mapping;
         }
 
         if (VirtualFiles.isLocalFileSystem(file)) {
@@ -203,7 +188,7 @@ public class FileConnectionMappingRegistry extends StatefulDisposable.Base {
                 mapping = mappings.get(file.getUrl());
 
                 if (mapping == null && ensure) {
-                    mapping = new FileConnectionMapping(file);
+                    mapping = new FileConnectionMappingImpl(file);
                     mappings.put(file.getUrl(), mapping);
                 }
 

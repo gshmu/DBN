@@ -599,9 +599,9 @@ public class FileConnectionMappingManager extends AbstractProjectComponent imple
                     } else if (event instanceof VFileMoveEvent) {
                         VFileMoveEvent moveEvent = (VFileMoveEvent) event;
                         String oldFileUrl = moveEvent.getOldParent().getUrl() + "/" + file.getName();
-                        FileConnectionMapping fileConnectionMapping = mappings.get(oldFileUrl);
-                        if (fileConnectionMapping != null) {
-                            fileConnectionMapping.setFileUrl(event.getFile().getUrl());
+                        FileConnectionMapping mapping = mappings.get(oldFileUrl);
+                        if (mapping != null) {
+                            mapping.setFileUrl(event.getFile().getUrl());
                         }
 
                     } else if (event instanceof VFilePropertyChangeEvent) {
@@ -609,9 +609,9 @@ public class FileConnectionMappingManager extends AbstractProjectComponent imple
                         VirtualFile parent = file.getParent();
                         if (file.isInLocalFileSystem() && parent != null) {
                             String oldFileUrl = parent.getUrl() + "/" + propChangeEvent.getOldValue();
-                            FileConnectionMapping fileConnectionMapping = mappings.get(oldFileUrl);
-                            if (fileConnectionMapping != null) {
-                                fileConnectionMapping.setFileUrl(file.getUrl());
+                            FileConnectionMapping mapping = mappings.get(oldFileUrl);
+                            if (mapping != null) {
+                                mapping.setFileUrl(file.getUrl());
                             }
                         }
                     }
@@ -655,7 +655,7 @@ public class FileConnectionMappingManager extends AbstractProjectComponent imple
     public void loadState(@NotNull Element element) {
         Map<String, FileConnectionMapping> mappings = registry.getMappings();
         for (Element child : element.getChildren()) {
-            FileConnectionMapping mapping = new FileConnectionMapping();
+            FileConnectionMapping mapping = new FileConnectionMappingImpl();
             mapping.readState(child);
 
             String fileUrl = mapping.getFileUrl();

@@ -2,7 +2,7 @@ package com.dci.intellij.dbn.database;
 
 import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
-import com.dci.intellij.dbn.connection.ConnectionProvider;
+import com.dci.intellij.dbn.connection.context.ConnectionProvider;
 import com.dci.intellij.dbn.object.common.DBObject;
 import lombok.Getter;
 import org.jetbrains.annotations.Nullable;

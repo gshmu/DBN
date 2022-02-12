@@ -11,7 +11,7 @@ import com.dci.intellij.dbn.common.ui.GUIUtil;
 import com.dci.intellij.dbn.connection.ConnectionAction;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.ConnectionId;
-import com.dci.intellij.dbn.connection.ConnectionProvider;
+import com.dci.intellij.dbn.connection.context.ConnectionProvider;
 import com.dci.intellij.dbn.connection.operation.options.OperationSettings;
 import com.dci.intellij.dbn.editor.session.model.SessionBrowserModel;
 import com.dci.intellij.dbn.editor.session.model.SessionBrowserModelRow;
@@ -35,8 +35,7 @@ import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import javax.swing.JComponent;
-import javax.swing.JPanel;
+import javax.swing.*;
 import java.beans.PropertyChangeListener;
 import java.util.HashMap;
 import java.util.Map;

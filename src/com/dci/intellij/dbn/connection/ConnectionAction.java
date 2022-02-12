@@ -7,6 +7,7 @@ import com.dci.intellij.dbn.common.routine.ParametricCallable;
 import com.dci.intellij.dbn.common.routine.ParametricRunnable;
 import com.dci.intellij.dbn.common.thread.Dispatch;
 import com.dci.intellij.dbn.common.util.Commons;
+import com.dci.intellij.dbn.connection.context.ConnectionProvider;
 import com.intellij.openapi.progress.ProgressIndicator;
 import com.intellij.openapi.project.Project;
 import org.jetbrains.annotations.NotNull;

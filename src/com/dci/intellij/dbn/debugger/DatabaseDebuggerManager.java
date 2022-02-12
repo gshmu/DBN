@@ -9,7 +9,7 @@ import com.dci.intellij.dbn.common.util.Lists;
 import com.dci.intellij.dbn.common.util.Messages;
 import com.dci.intellij.dbn.common.util.Naming;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
-import com.dci.intellij.dbn.connection.ConnectionProvider;
+import com.dci.intellij.dbn.connection.context.ConnectionProvider;
 import com.dci.intellij.dbn.connection.operation.options.OperationSettings;
 import com.dci.intellij.dbn.database.DatabaseDebuggerInterface;
 import com.dci.intellij.dbn.database.DatabaseFeature;
