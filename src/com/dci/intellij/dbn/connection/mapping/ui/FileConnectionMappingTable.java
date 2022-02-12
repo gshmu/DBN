@@ -13,8 +13,8 @@ import com.dci.intellij.dbn.common.util.Actions;
 import com.dci.intellij.dbn.common.util.Context;
 import com.dci.intellij.dbn.common.util.Safe;
 import com.dci.intellij.dbn.connection.*;
-import com.dci.intellij.dbn.connection.mapping.FileConnectionMapping;
-import com.dci.intellij.dbn.connection.mapping.FileConnectionMappingManager;
+import com.dci.intellij.dbn.connection.mapping.FileConnectionContext;
+import com.dci.intellij.dbn.connection.mapping.FileConnectionContextManager;
 import com.dci.intellij.dbn.connection.session.DatabaseSession;
 import com.dci.intellij.dbn.object.DBSchema;
 import com.intellij.openapi.actionSystem.ActionGroup;
@@ -43,12 +43,12 @@ import java.util.Collection;
 import java.util.List;
 
 public class FileConnectionMappingTable extends DBNTable<FileConnectionMappingTableModel> {
-    private final FileConnectionMappingManager manager;
+    private final FileConnectionContextManager manager;
 
     public FileConnectionMappingTable(@NotNull DBNComponent parent, FileConnectionMappingTableModel model) {
         super(parent, model, true);
         setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-        setDefaultRenderer(FileConnectionMapping.class, new CellRenderer());
+        setDefaultRenderer(FileConnectionContext.class, new CellRenderer());
         setTransferHandler(DBNTableTransferHandler.INSTANCE);
         initTableSorter();
         setCellSelectionEnabled(true);
@@ -56,7 +56,7 @@ public class FileConnectionMappingTable extends DBNTable<FileConnectionMappingTa
         getRowSorter().toggleSortOrder(2);
         accommodateColumnsSize();
         addMouseListener(new MouseListener());
-        manager = FileConnectionMappingManager.getInstance(getProject());
+        manager = FileConnectionContextManager.getInstance(getProject());
 
     }
 
@@ -74,7 +74,7 @@ public class FileConnectionMappingTable extends DBNTable<FileConnectionMappingTa
     private static class CellRenderer extends DBNColoredTableCellRenderer {
         @Override
         protected void customizeCellRenderer(DBNTable table, Object value, boolean selected, boolean hasFocus, int row, int column) {
-            FileConnectionMapping entry = (FileConnectionMapping) value;
+            FileConnectionContext entry = (FileConnectionContext) value;
             FileConnectionMappingTableModel model = (FileConnectionMappingTableModel) table.getModel();
             Object columnValue = model.getValue(entry, column);
             if (columnValue instanceof Presentable) {
@@ -118,7 +118,7 @@ public class FileConnectionMappingTable extends DBNTable<FileConnectionMappingTa
                 int selectedRow = getSelectedRow();
                 int selectedColumn = getSelectedColumn();
                 if (selectedRow > -1) {
-                    FileConnectionMapping mapping = (FileConnectionMapping) getValueAt(selectedRow, 0);
+                    FileConnectionContext mapping = (FileConnectionContext) getValueAt(selectedRow, 0);
                     if (mapping != null) {
                         VirtualFile file = mapping.getFile();
                         if (file != null) {
@@ -140,7 +140,7 @@ public class FileConnectionMappingTable extends DBNTable<FileConnectionMappingTa
     }
 
 
-    private void promptConnectionSelector(@NotNull FileConnectionMapping mapping) {
+    private void promptConnectionSelector(@NotNull FileConnectionContext mapping) {
         Project project = getProject();
         ConnectionManager connectionManager = ConnectionManager.getInstance(project);
         ConnectionBundle connectionBundle = connectionManager.getConnectionBundle();
@@ -160,7 +160,7 @@ public class FileConnectionMappingTable extends DBNTable<FileConnectionMappingTa
         promptSelector(actionGroup, a -> ((ConnectionAction) a).getConnectionId() == mapping.getConnectionId());
     }
 
-    private void promptSchemaSelector(@NotNull FileConnectionMapping mapping) {
+    private void promptSchemaSelector(@NotNull FileConnectionContext mapping) {
         ConnectionHandler connection = mapping.getConnection();
         if (connection != null && !connection.isVirtual()) {
             Progress.modal(connection.getProject(), "Loading schemas", true, progress -> {
@@ -174,7 +174,7 @@ public class FileConnectionMappingTable extends DBNTable<FileConnectionMappingTa
         }
     }
 
-    private void promptSessionSelector(@NotNull FileConnectionMapping mapping) {
+    private void promptSessionSelector(@NotNull FileConnectionContext mapping) {
         ConnectionHandler connection = mapping.getConnection();
         if (connection != null && !connection.isVirtual()) {
             DefaultActionGroup actionGroup = new DefaultActionGroup();

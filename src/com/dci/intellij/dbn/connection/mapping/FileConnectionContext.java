@@ -9,7 +9,7 @@ import com.dci.intellij.dbn.connection.context.ConnectionContextProvider;
 import com.intellij.openapi.vfs.VirtualFile;
 import org.jetbrains.annotations.Nullable;
 
-public interface FileConnectionMapping extends ConnectionContextProvider, PersistentStateElement {
+public interface FileConnectionContext extends ConnectionContextProvider, PersistentStateElement {
     String getFileUrl();
 
     @Nullable

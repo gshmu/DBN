@@ -2,33 +2,24 @@ package com.dci.intellij.dbn.connection.mapping;
 
 import com.dci.intellij.dbn.DatabaseNavigator;
 import com.dci.intellij.dbn.common.AbstractProjectComponent;
-import com.dci.intellij.dbn.common.Icons;
-import com.dci.intellij.dbn.common.action.ProjectAction;
 import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.common.dispose.SafeDisposer;
 import com.dci.intellij.dbn.common.event.ProjectEvents;
 import com.dci.intellij.dbn.common.file.util.VirtualFiles;
-import com.dci.intellij.dbn.common.project.ProjectRef;
 import com.dci.intellij.dbn.common.thread.Dispatch;
 import com.dci.intellij.dbn.common.thread.Progress;
 import com.dci.intellij.dbn.common.util.Documents;
 import com.dci.intellij.dbn.connection.*;
-import com.dci.intellij.dbn.connection.action.AbstractConnectionAction;
+import com.dci.intellij.dbn.connection.mapping.ConnectionContextActions.ConnectionSetupAction;
+import com.dci.intellij.dbn.connection.mapping.ConnectionContextActions.SchemaSelectAction;
+import com.dci.intellij.dbn.connection.mapping.ConnectionContextActions.SessionCreateAction;
+import com.dci.intellij.dbn.connection.mapping.ConnectionContextActions.SessionSelectAction;
 import com.dci.intellij.dbn.connection.mapping.ui.FileConnectionMappingDialog;
 import com.dci.intellij.dbn.connection.session.DatabaseSession;
-import com.dci.intellij.dbn.connection.session.DatabaseSessionManager;
 import com.dci.intellij.dbn.connection.session.SessionManagerListener;
 import com.dci.intellij.dbn.language.common.DBLanguageFileType;
-import com.dci.intellij.dbn.language.common.DBLanguagePsiFile;
-import com.dci.intellij.dbn.language.common.PsiFileRef;
-import com.dci.intellij.dbn.language.common.WeakRef;
 import com.dci.intellij.dbn.object.DBSchema;
-import com.dci.intellij.dbn.object.action.AnObjectAction;
-import com.dci.intellij.dbn.options.ConfigId;
-import com.dci.intellij.dbn.options.ProjectSettingsManager;
 import com.dci.intellij.dbn.vfs.file.DBConsoleVirtualFile;
-import com.intellij.openapi.actionSystem.AnAction;
-import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.actionSystem.DataContext;
 import com.intellij.openapi.actionSystem.DefaultActionGroup;
 import com.intellij.openapi.components.PersistentStateComponent;
@@ -37,7 +28,6 @@ import com.intellij.openapi.components.Storage;
 import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.fileEditor.FileDocumentManager;
-import com.intellij.openapi.project.DumbAwareAction;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.popup.JBPopupFactory;
 import com.intellij.openapi.ui.popup.ListPopup;
@@ -66,21 +56,22 @@ import static com.dci.intellij.dbn.common.message.MessageCallback.when;
 import static com.dci.intellij.dbn.common.util.Messages.options;
 import static com.dci.intellij.dbn.common.util.Messages.showWarningDialog;
 import static com.dci.intellij.dbn.connection.ConnectionSelectorOptions.Option.*;
+import static com.dci.intellij.dbn.connection.mapping.ConnectionContextActions.ConnectionSelectAction;
 
 @State(
-    name = FileConnectionMappingManager.COMPONENT_NAME,
+    name = FileConnectionContextManager.COMPONENT_NAME,
     storages = @Storage(DatabaseNavigator.STORAGE_FILE)
 )
 @Slf4j
-public class FileConnectionMappingManager extends AbstractProjectComponent implements PersistentStateComponent<Element> {
+public class FileConnectionContextManager extends AbstractProjectComponent implements PersistentStateComponent<Element> {
     public static final String COMPONENT_NAME = "DBNavigator.Project.FileConnectionMappingManager";
 
     @Getter
-    private final FileConnectionMappingRegistry registry;
+    private final FileConnectionContextRegistry registry;
 
-    private FileConnectionMappingManager(@NotNull Project project) {
+    private FileConnectionContextManager(@NotNull Project project) {
         super(project);
-        this.registry = new FileConnectionMappingRegistry(project);
+        this.registry = new FileConnectionContextRegistry(project);
         SafeDisposer.register(this, this.registry);
         //VirtualFileManager.getInstance().addVirtualFileListener(virtualFileListener);
         ProjectEvents.subscribe(project, this, VirtualFileManager.VFS_CHANGES, bulkFileListener);
@@ -88,8 +79,8 @@ public class FileConnectionMappingManager extends AbstractProjectComponent imple
     }
 
     @NotNull
-    public static FileConnectionMappingManager getInstance(@NotNull Project project) {
-        return Failsafe.getComponent(project, FileConnectionMappingManager.class);
+    public static FileConnectionContextManager getInstance(@NotNull Project project) {
+        return Failsafe.getComponent(project, FileConnectionContextManager.class);
     }
 
     @Override
@@ -190,50 +181,45 @@ public class FileConnectionMappingManager extends AbstractProjectComponent imple
 
 
     @Nullable
-    public FileConnectionMapping getMapping(@NotNull VirtualFile file) {
+    public FileConnectionContext getMapping(@NotNull VirtualFile file) {
         return registry.getFileConnectionMapping(file);
     }
 
 
     public boolean isConnectionSelectable(VirtualFile file) {
-        return file != null &&
-                file.getFileType() instanceof DBLanguageFileType &&
-                (VirtualFiles.isLocalFileSystem(file) ||
-                        file instanceof LightVirtualFile);
+        if (file == null) return false;
+        if (VirtualFiles.isLocalFileSystem(file)) return true;
+        return file instanceof LightVirtualFile && file.getFileType() instanceof DBLanguageFileType;
     }
 
     public boolean isSchemaSelectable(VirtualFile file) {
-        return file != null &&
-                file.getFileType() instanceof DBLanguageFileType &&
-                (VirtualFiles.isLocalFileSystem(file) ||
-                        file instanceof LightVirtualFile ||
-                        file instanceof DBConsoleVirtualFile);
+        if (file == null) return false;
+        if (VirtualFiles.isLocalFileSystem(file)) return true;
+        return (file instanceof LightVirtualFile || file instanceof DBConsoleVirtualFile) && file.getFileType() instanceof DBLanguageFileType;
     }
 
     public boolean isSessionSelectable(VirtualFile file) {
-        return file != null &&
-                file.getFileType() instanceof DBLanguageFileType &&
-                (VirtualFiles.isLocalFileSystem(file) ||
-                        file instanceof LightVirtualFile ||
-                        file instanceof DBConsoleVirtualFile);
+        if (file == null) return false;
+        //if (VirtualFiles.isLocalFileSystem(file)) return true;
+        return (file instanceof LightVirtualFile || file instanceof DBConsoleVirtualFile) && file.getFileType() instanceof DBLanguageFileType;
     }
 
 
     @SneakyThrows
-    private boolean notifiedChange(Callable<Boolean> action, Consumer<FileConnectionMappingListener> consumer) {
+    private boolean notifiedChange(Callable<Boolean> action, Consumer<FileConnectionContextListener> consumer) {
         if (action.call()) {
             ProjectEvents.notify(getProject(),
-                    FileConnectionMappingListener.TOPIC,
+                    FileConnectionContextListener.TOPIC,
                     listener -> consumer.accept(listener));
             return true;
         }
         return false;
     }
 
-    public void selectConnectionAndSchema(@NotNull DBLanguagePsiFile file, DataContext dataContext, @NotNull Runnable callback) {
+    public void selectConnectionAndSchema(@NotNull VirtualFile file, DataContext dataContext, @NotNull Runnable callback) {
         Dispatch.run(() -> {
             Project project = getProject();
-            ConnectionHandler activeConnection = file.getConnection();
+            ConnectionHandler activeConnection = getConnection(file);
             if (activeConnection == null || activeConnection.isVirtual()) {
                 String message =
                         activeConnection == null ?
@@ -242,9 +228,9 @@ public class FileConnectionMappingManager extends AbstractProjectComponent imple
                                         "You can not execute statements against this connection. Please select a proper connection to continue.";
 
 
-                ConnectionSelectorOptions options = new ConnectionSelectorOptions();
-                options.set(SHOW_CREATE_CONNECTION, true);
-                options.set(PROMPT_SCHEMA_SELECTION, true);
+                ConnectionSelectorOptions options = ConnectionSelectorOptions.options(
+                        SHOW_CREATE_CONNECTION,
+                        PROMPT_SCHEMA_SELECTION);
 
                 showWarningDialog(project,
                         "No valid connection", message,
@@ -252,7 +238,7 @@ public class FileConnectionMappingManager extends AbstractProjectComponent imple
                         option -> when(option == 0, () ->
                                 promptConnectionSelector(file, dataContext, options, callback)));
 
-            } else if (file.getSchemaId() == null) {
+            } else if (getDatabaseSchema(file) == null) {
                 String message =
                         "You did not select any schema to run the statement against.\n" +
                                 "To continue with the statement execution please select a schema.";
@@ -275,7 +261,7 @@ public class FileConnectionMappingManager extends AbstractProjectComponent imple
     /***************************************************
      *             Select connection popup             *
      ***************************************************/
-    public void promptConnectionSelector(DBLanguagePsiFile psiFile, DataContext dataContext, ConnectionSelectorOptions options, Runnable callback) {
+    public void promptConnectionSelector(VirtualFile file, DataContext dataContext, ConnectionSelectorOptions options, Runnable callback) {
         Project project = getProject();
         ConnectionManager connectionManager = ConnectionManager.getInstance(project);
         ConnectionBundle connectionBundle = connectionManager.getConnectionBundle();
@@ -286,7 +272,7 @@ public class FileConnectionMappingManager extends AbstractProjectComponent imple
             for (ConnectionHandler connectionHandler : connection) {
                 ConnectionSelectAction connectionAction = new ConnectionSelectAction(
                         connectionHandler,
-                        psiFile,
+                        file,
                         options.is(PROMPT_SCHEMA_SELECTION),
                         callback);
                 actionGroup.add(connectionAction);
@@ -298,7 +284,7 @@ public class FileConnectionMappingManager extends AbstractProjectComponent imple
             for (ConnectionHandler virtualConnectionHandler : connectionBundle.getVirtualConnections()) {
                 ConnectionSelectAction connectionAction = new ConnectionSelectAction(
                         virtualConnectionHandler,
-                        psiFile,
+                        file,
                         options.is(PROMPT_SCHEMA_SELECTION),
                         callback);
                 actionGroup.add(connectionAction);
@@ -332,76 +318,14 @@ public class FileConnectionMappingManager extends AbstractProjectComponent imple
         });
     }
 
-    private class ConnectionSelectAction extends AbstractConnectionAction {
-        private final PsiFileRef<DBLanguagePsiFile> psiFile;
-        private final Runnable callback;
-        private final boolean promptSchemaSelection;
-
-        private ConnectionSelectAction(ConnectionHandler connectionHandler, DBLanguagePsiFile file, boolean promptSchemaSelection, Runnable callback) {
-            super(connectionHandler.getName(), null, connectionHandler.getIcon(), connectionHandler);
-            this.psiFile = PsiFileRef.of(file);
-            this.callback = callback;
-            this.promptSchemaSelection = promptSchemaSelection;
-        }
-
-        @Override
-        protected void actionPerformed(@NotNull AnActionEvent e, @NotNull Project project, @NotNull ConnectionHandler connectionHandler) {
-            DBLanguagePsiFile file = psiFile.get();
-            if (file != null) {
-                file.setConnection(connectionHandler);
-                if (promptSchemaSelection) {
-                    promptSchemaSelector(file, e.getDataContext(), callback);
-                } else {
-                    if (file.getSchemaId() == null) {
-                        SchemaId defaultSchema = connectionHandler.getDefaultSchema();
-                        file.setDatabaseSchema(defaultSchema);
-                    }
-                    if (callback != null) {
-                        callback.run();
-                    }
-                }
-
-            }
-        }
-
-        public boolean isSelected() {
-            DBLanguagePsiFile file = psiFile.get();
-            if (file != null) {
-                ConnectionHandler connectionHandler = file.getConnection();
-                return connectionHandler != null && connectionHandler.getConnectionId().equals(getConnectionId());
-            }
-            return false;
-
-        }
-    }
-
-    private static class ConnectionSetupAction extends ProjectAction {
-        private final ProjectRef project;
-
-        private ConnectionSetupAction(Project project) {
-            super("Setup New Connection", null, Icons.CONNECTION_NEW);
-            this.project = ProjectRef.of(project);
-        }
-
-        @Override
-        protected void actionPerformed(@NotNull AnActionEvent e, @NotNull Project project) {
-            ProjectSettingsManager settingsManager = ProjectSettingsManager.getInstance(project);
-            settingsManager.openProjectSettings(ConfigId.CONNECTIONS);
-        }
-
-        @Nullable
-        @Override
-        protected Project getProject() {
-            return project.get();
-        }
-    }
-
     /***************************************************
      *             Select schema popup                 *
      ***************************************************/
-    public void promptSchemaSelector(DBLanguagePsiFile psiFile, DataContext dataContext, Runnable callback) throws IncorrectOperationException {
+    public void promptSchemaSelector(VirtualFile file, DataContext dataContext, Runnable callback) throws IncorrectOperationException {
         Project project = getProject();
-        ConnectionAction.invoke("selecting the current schema", true, psiFile,
+        ConnectionAction.invoke(
+                "selecting the current schema", true,
+                () -> getConnection(file),
                 (action) -> Progress.prompt(project, "Loading schemas", true,
                         (progress) -> {
                             DefaultActionGroup actionGroup = new DefaultActionGroup();
@@ -410,7 +334,7 @@ public class FileConnectionMappingManager extends AbstractProjectComponent imple
                             if (Failsafe.check(connectionHandler) && !connectionHandler.isVirtual()) {
                                 List<DBSchema> schemas = connectionHandler.getObjectBundle().getSchemas();
                                 for (DBSchema schema : schemas) {
-                                    SchemaSelectAction schemaAction = new SchemaSelectAction(psiFile, schema, callback);
+                                    SchemaSelectAction schemaAction = new SchemaSelectAction(file, schema, callback);
                                     actionGroup.add(schemaAction);
                                 }
                             }
@@ -439,63 +363,25 @@ public class FileConnectionMappingManager extends AbstractProjectComponent imple
     }
 
 
-    private static class SchemaSelectAction extends AnObjectAction<DBSchema> {
-        private final PsiFileRef<DBLanguagePsiFile> psiFile;
-        private final Runnable callback;
-
-        private SchemaSelectAction(DBLanguagePsiFile file, DBSchema schema, Runnable callback) {
-            super(schema);
-            this.psiFile = PsiFileRef.of(file);
-            this.callback = callback;
-        }
-
-        @Override
-        protected void actionPerformed(
-                @NotNull AnActionEvent e,
-                @NotNull Project project,
-                @NotNull DBSchema object) {
-
-            DBLanguagePsiFile file = psiFile.get();
-            if (file != null) {
-                file.setDatabaseSchema(getSchemaId());
-                if (callback != null) {
-                    callback.run();
-                }
-            }
-        }
-
-        @Nullable
-        public SchemaId getSchemaId() {
-            return SchemaId.from(getTarget());
-        }
-
-        public boolean isSelected() {
-            DBLanguagePsiFile file = psiFile.get();
-            if (file != null) {
-                SchemaId fileSchema = file.getSchemaId();
-                return fileSchema != null && fileSchema.equals(getSchemaId());
-            }
-            return false;
-        }
-    }
-
     /***************************************************
      *             Select schema popup                 *
      ***************************************************/
-    public void promptSessionSelector(DBLanguagePsiFile psiFile, DataContext dataContext, Runnable callback) throws IncorrectOperationException {
+    public void promptSessionSelector(VirtualFile file, DataContext dataContext, Runnable callback) throws IncorrectOperationException {
         Project project = getProject();
-        ConnectionAction.invoke("selecting the current session", true, psiFile,
+        ConnectionAction.invoke(
+                "selecting the current session", true,
+                () -> getConnection(file),
                 (action) -> {
                     DefaultActionGroup actionGroup = new DefaultActionGroup();
                     ConnectionHandler connectionHandler = action.getConnectionHandler();
                     if (Failsafe.check(connectionHandler) && !connectionHandler.isVirtual()) {
                         List<DatabaseSession> sessions = connectionHandler.getSessionBundle().getSessions();
                         for (DatabaseSession session : sessions) {
-                            SessionSelectAction sessionAction = new SessionSelectAction(psiFile, session, callback);
+                            SessionSelectAction sessionAction = new SessionSelectAction(file, session, callback);
                             actionGroup.add(sessionAction);
                         }
                         actionGroup.addSeparator();
-                        actionGroup.add(new SessionCreateAction(psiFile, connectionHandler));
+                        actionGroup.add(new SessionCreateAction(file, connectionHandler));
                     }
 
                     ListPopup popupBuilder = JBPopupFactory.getInstance().createActionGroupPopup(
@@ -520,68 +406,6 @@ public class FileConnectionMappingManager extends AbstractProjectComponent imple
     }
 
 
-    private static class SessionSelectAction extends AnAction {
-        private final PsiFileRef<DBLanguagePsiFile> psiFile;
-        private final WeakRef<DatabaseSession> session;
-        private final Runnable callback;
-
-        private SessionSelectAction(DBLanguagePsiFile file, DatabaseSession session, Runnable callback) {
-            super(session.getName(), null, session.getIcon());
-            this.psiFile = PsiFileRef.of(file);
-            this.session = WeakRef.of(session);
-            this.callback = callback;
-        }
-
-        @Override
-        public void actionPerformed(@NotNull AnActionEvent e) {
-            DBLanguagePsiFile file = psiFile.get();
-            DatabaseSession session = this.session.get();
-            if (file != null && session != null) {
-                file.setDatabaseSession(session);
-                if (callback != null) {
-                    callback.run();
-                }
-            }
-        }
-
-        public boolean isSelected() {
-            DBLanguagePsiFile file = psiFile.get();
-            if (file != null) {
-                DatabaseSession fileSession = file.getSession();
-                return fileSession != null && fileSession.equals(session.get());
-            }
-            return false;
-        }
-    }
-
-    private class SessionCreateAction extends DumbAwareAction {
-        private final PsiFileRef<DBLanguagePsiFile> psiFile;
-        private final ConnectionHandlerRef connectionHandler;
-
-        private SessionCreateAction(DBLanguagePsiFile file, ConnectionHandler connectionHandler) {
-            super("New Session...");
-            this.psiFile = PsiFileRef.of(file);
-            this.connectionHandler = connectionHandler.getRef();
-        }
-
-        @Override
-        public void actionPerformed(@NotNull AnActionEvent e) {
-            DBLanguagePsiFile file = psiFile.get();
-            if (file != null) {
-                Project project = getProject();
-                DatabaseSessionManager sessionManager = DatabaseSessionManager.getInstance(project);
-                ConnectionHandler connectionHandler = this.connectionHandler.ensure();
-                sessionManager.showCreateSessionDialog(
-                        connectionHandler,
-                        (session) -> {
-                            if (session != null) {
-                                file.setDatabaseSession(session);
-                            }
-                        });
-            }
-        }
-    }
-
     /***************************************
      *         VirtualFileListener         *
      ***************************************/
@@ -589,7 +413,7 @@ public class FileConnectionMappingManager extends AbstractProjectComponent imple
     private final BulkFileListener bulkFileListener = new BulkFileListener() {
         @Override
         public void after(@NotNull List<? extends VFileEvent> events) {
-            Map<String, FileConnectionMapping> mappings = registry.getMappings();
+            Map<String, FileConnectionContext> mappings = registry.getMappings();
             for (VFileEvent event : events) {
                 VirtualFile file = event.getFile();
                 if (file != null) {
@@ -599,7 +423,7 @@ public class FileConnectionMappingManager extends AbstractProjectComponent imple
                     } else if (event instanceof VFileMoveEvent) {
                         VFileMoveEvent moveEvent = (VFileMoveEvent) event;
                         String oldFileUrl = moveEvent.getOldParent().getUrl() + "/" + file.getName();
-                        FileConnectionMapping mapping = mappings.get(oldFileUrl);
+                        FileConnectionContext mapping = mappings.get(oldFileUrl);
                         if (mapping != null) {
                             mapping.setFileUrl(event.getFile().getUrl());
                         }
@@ -609,7 +433,7 @@ public class FileConnectionMappingManager extends AbstractProjectComponent imple
                         VirtualFile parent = file.getParent();
                         if (file.isInLocalFileSystem() && parent != null) {
                             String oldFileUrl = parent.getUrl() + "/" + propChangeEvent.getOldValue();
-                            FileConnectionMapping mapping = mappings.get(oldFileUrl);
+                            FileConnectionContext mapping = mappings.get(oldFileUrl);
                             if (mapping != null) {
                                 mapping.setFileUrl(file.getUrl());
                             }
@@ -626,8 +450,8 @@ public class FileConnectionMappingManager extends AbstractProjectComponent imple
     private final SessionManagerListener sessionManagerListener = new SessionManagerListener() {
         @Override
         public void sessionDeleted(DatabaseSession session) {
-            Map<String, FileConnectionMapping> mappings = registry.getMappings();
-            for (FileConnectionMapping mapping : mappings.values()) {
+            Map<String, FileConnectionContext> mappings = registry.getMappings();
+            for (FileConnectionContext mapping : mappings.values()) {
                 if (session.getId() == mapping.getSessionId()) {
                     mapping.setSessionId(SessionId.MAIN);
                 }
@@ -642,8 +466,8 @@ public class FileConnectionMappingManager extends AbstractProjectComponent imple
     @Override
     public Element getState() {
         Element element = new Element("state");
-        Map<String, FileConnectionMapping> mappings = registry.getMappings();
-        for (FileConnectionMapping mapping : mappings.values()) {
+        Map<String, FileConnectionContext> mappings = registry.getMappings();
+        for (FileConnectionContext mapping : mappings.values()) {
             Element mappingElement = new Element("mapping");
             mapping.writeState(mappingElement);
             element.addContent(mappingElement);
@@ -653,9 +477,9 @@ public class FileConnectionMappingManager extends AbstractProjectComponent imple
 
     @Override
     public void loadState(@NotNull Element element) {
-        Map<String, FileConnectionMapping> mappings = registry.getMappings();
+        Map<String, FileConnectionContext> mappings = registry.getMappings();
         for (Element child : element.getChildren()) {
-            FileConnectionMapping mapping = new FileConnectionMappingImpl();
+            FileConnectionContext mapping = new FileConnectionContextImpl();
             mapping.readState(child);
 
             String fileUrl = mapping.getFileUrl();

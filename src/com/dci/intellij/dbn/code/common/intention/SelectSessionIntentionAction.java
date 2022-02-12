@@ -3,14 +3,12 @@ package com.dci.intellij.dbn.code.common.intention;
 import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.common.util.Context;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
-import com.dci.intellij.dbn.connection.mapping.FileConnectionMappingManager;
-import com.dci.intellij.dbn.language.common.DBLanguageFileType;
+import com.dci.intellij.dbn.connection.mapping.FileConnectionContextManager;
 import com.dci.intellij.dbn.language.common.DBLanguagePsiFile;
 import com.intellij.codeInsight.intention.LowPriorityAction;
 import com.intellij.injected.editor.VirtualFileWindow;
 import com.intellij.openapi.actionSystem.DataContext;
 import com.intellij.openapi.editor.Editor;
-import com.intellij.openapi.fileTypes.FileType;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiFile;
@@ -36,8 +34,8 @@ public class SelectSessionIntentionAction extends GenericIntentionAction impleme
         if (psiFile instanceof DBLanguagePsiFile) {
             VirtualFile virtualFile = psiFile.getVirtualFile();
             if (!(virtualFile instanceof VirtualFileWindow)) {
-                FileConnectionMappingManager mappingManager = FileConnectionMappingManager.getInstance(project);
-                if (mappingManager.isSessionSelectable(virtualFile)) {
+                FileConnectionContextManager contextManager = FileConnectionContextManager.getInstance(project);
+                if (contextManager.isSessionSelectable(virtualFile)) {
                     DBLanguagePsiFile file = (DBLanguagePsiFile) psiFile;
                     ConnectionHandler connection = file.getConnection();
                     return connection != null &&
@@ -54,8 +52,8 @@ public class SelectSessionIntentionAction extends GenericIntentionAction impleme
         if (psiFile instanceof DBLanguagePsiFile) {
             DBLanguagePsiFile dbLanguageFile = (DBLanguagePsiFile) psiFile;
             DataContext dataContext = Context.getDataContext(editor);
-            FileConnectionMappingManager mappingManager = FileConnectionMappingManager.getInstance(project);
-            mappingManager.promptSessionSelector(dbLanguageFile, dataContext, null);
+            FileConnectionContextManager contextManager = FileConnectionContextManager.getInstance(project);
+            contextManager.promptSessionSelector(dbLanguageFile.getVirtualFile(), dataContext, null);
         }
     }
 

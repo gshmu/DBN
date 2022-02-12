@@ -7,7 +7,7 @@ import com.dci.intellij.dbn.common.action.Lookup;
 import com.dci.intellij.dbn.common.thread.Write;
 import com.dci.intellij.dbn.common.util.Documents;
 import com.dci.intellij.dbn.common.util.Messages;
-import com.dci.intellij.dbn.connection.mapping.FileConnectionMappingManager;
+import com.dci.intellij.dbn.connection.mapping.FileConnectionContextManager;
 import com.dci.intellij.dbn.debugger.DatabaseDebuggerManager;
 import com.dci.intellij.dbn.vfs.file.DBConsoleVirtualFile;
 import com.intellij.openapi.actionSystem.AnActionEvent;
@@ -48,10 +48,10 @@ public class ConsoleSaveToFileAction extends DumbAwareProjectAction {
                         VirtualFile newVirtualFile = virtualFileWrapper.getVirtualFile(true);
                         if (newVirtualFile != null) {
                             newVirtualFile.setBinaryContent(document.getCharsSequence().toString().getBytes());
-                            FileConnectionMappingManager mappingManager = FileConnectionMappingManager.getInstance(project);
-                            mappingManager.setConnection(newVirtualFile, consoleVirtualFile.getConnection());
-                            mappingManager.setDatabaseSchema(newVirtualFile, consoleVirtualFile.getSchemaId());
-                            mappingManager.setDatabaseSession(newVirtualFile, consoleVirtualFile.getSession());
+                            FileConnectionContextManager contextManager = FileConnectionContextManager.getInstance(project);
+                            contextManager.setConnection(newVirtualFile, consoleVirtualFile.getConnection());
+                            contextManager.setDatabaseSchema(newVirtualFile, consoleVirtualFile.getSchemaId());
+                            contextManager.setDatabaseSession(newVirtualFile, consoleVirtualFile.getSession());
 
                             FileEditorManager fileEditorManager = FileEditorManager.getInstance(project);
                             fileEditorManager.openFile(newVirtualFile, true);

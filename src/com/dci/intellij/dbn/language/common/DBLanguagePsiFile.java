@@ -12,7 +12,7 @@ import com.dci.intellij.dbn.connection.ConnectionHandlerRef;
 import com.dci.intellij.dbn.connection.PresentableConnectionProvider;
 import com.dci.intellij.dbn.connection.SchemaId;
 import com.dci.intellij.dbn.connection.context.ConnectionContextProvider;
-import com.dci.intellij.dbn.connection.mapping.FileConnectionMappingManager;
+import com.dci.intellij.dbn.connection.mapping.FileConnectionContextManager;
 import com.dci.intellij.dbn.connection.session.DatabaseSession;
 import com.dci.intellij.dbn.ddl.DDLFileAttachmentManager;
 import com.dci.intellij.dbn.language.common.element.ElementTypeBundle;
@@ -222,8 +222,8 @@ public abstract class DBLanguagePsiFile extends PsiFileImpl implements Connectio
         return getVirtualFile() instanceof VirtualFileWindow;
     }
 
-    private FileConnectionMappingManager getConnectionMappingManager() {
-        return FileConnectionMappingManager.getInstance(getProject());
+    private FileConnectionContextManager getContextManager() {
+        return FileConnectionContextManager.getInstance(getProject());
     }
 
     @Override
@@ -231,8 +231,8 @@ public abstract class DBLanguagePsiFile extends PsiFileImpl implements Connectio
     public ConnectionHandler getConnection() {
         VirtualFile file = getVirtualFile();
         if (file != null && !getProject().isDisposed()) {
-            FileConnectionMappingManager connectionMappingManager = getConnectionMappingManager();
-            return connectionMappingManager.getConnection(file);
+            FileConnectionContextManager contextManager = getContextManager();
+            return contextManager.getConnection(file);
         }
         return null;
     }
@@ -240,8 +240,8 @@ public abstract class DBLanguagePsiFile extends PsiFileImpl implements Connectio
     public void setConnection(ConnectionHandler connectionHandler) {
         VirtualFile file = getVirtualFile();
         if (file != null) {
-            FileConnectionMappingManager mappingManager = getConnectionMappingManager();
-            mappingManager.setConnection(file, connectionHandler);
+            FileConnectionContextManager contextManager = getContextManager();
+            contextManager.setConnection(file, connectionHandler);
         }
     }
 
@@ -250,8 +250,8 @@ public abstract class DBLanguagePsiFile extends PsiFileImpl implements Connectio
     public SchemaId getSchemaId() {
         VirtualFile file = getVirtualFile();
         if (file != null) {
-            FileConnectionMappingManager connectionMappingManager = getConnectionMappingManager();
-            return connectionMappingManager.getDatabaseSchema(file);
+            FileConnectionContextManager contextManager = getContextManager();
+            return contextManager.getDatabaseSchema(file);
         }
         return null;
     }
@@ -259,8 +259,8 @@ public abstract class DBLanguagePsiFile extends PsiFileImpl implements Connectio
     public void setDatabaseSchema(SchemaId schema) {
         VirtualFile file = getVirtualFile();
         if (file != null) {
-            FileConnectionMappingManager mappingManager = getConnectionMappingManager();
-            mappingManager.setDatabaseSchema(file, schema);
+            FileConnectionContextManager contextManager = getContextManager();
+            contextManager.setDatabaseSchema(file, schema);
         }
     }
 
@@ -268,8 +268,8 @@ public abstract class DBLanguagePsiFile extends PsiFileImpl implements Connectio
     public DatabaseSession getSession() {
         VirtualFile file = getVirtualFile();
         if (file != null && !getProject().isDisposed()) {
-            FileConnectionMappingManager mappingManager = getConnectionMappingManager();
-            return mappingManager.getDatabaseSession(file);
+            FileConnectionContextManager contextManager = getContextManager();
+            return contextManager.getDatabaseSession(file);
         }
         return null;
     }
@@ -277,8 +277,8 @@ public abstract class DBLanguagePsiFile extends PsiFileImpl implements Connectio
     public void setDatabaseSession(DatabaseSession session) {
         VirtualFile file = getVirtualFile();
         if (file != null) {
-            FileConnectionMappingManager mappingManager = getConnectionMappingManager();
-            mappingManager.setDatabaseSession(file, session);
+            FileConnectionContextManager contextManager = getContextManager();
+            contextManager.setDatabaseSession(file, session);
         }
     }
 

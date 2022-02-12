@@ -15,19 +15,19 @@ import static com.dci.intellij.dbn.common.options.setting.SettingsSupport.*;
 
 @Slf4j
 @EqualsAndHashCode
-public class FileConnectionMappingImpl implements FileConnectionMapping {
+public class FileConnectionContextImpl implements FileConnectionContext {
     private String fileUrl = "";
     private ConnectionId connectionId;
     private SessionId sessionId = SessionId.MAIN;
     private SchemaId schemaId;
 
-    FileConnectionMappingImpl(){}
+    FileConnectionContextImpl(){}
 
-    public FileConnectionMappingImpl(VirtualFile virtualFile){
+    public FileConnectionContextImpl(VirtualFile virtualFile){
         this.fileUrl = virtualFile.getUrl();
     }
 
-    public FileConnectionMappingImpl(String fileUrl, ConnectionId connectionId, SessionId sessionId, SchemaId schemaId) {
+    public FileConnectionContextImpl(String fileUrl, ConnectionId connectionId, SessionId sessionId, SchemaId schemaId) {
         this.fileUrl = fileUrl;
         this.connectionId = connectionId;
         this.sessionId = sessionId;

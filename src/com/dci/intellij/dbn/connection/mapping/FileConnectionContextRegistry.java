@@ -31,11 +31,11 @@ import static com.dci.intellij.dbn.common.action.UserDataKeys.FILE_CONNECTION_MA
 import static com.dci.intellij.dbn.common.util.Commons.coalesce;
 
 @Getter
-public class FileConnectionMappingRegistry extends StatefulDisposable.Base {
+public class FileConnectionContextRegistry extends StatefulDisposable.Base {
     private final ProjectRef project;
-    private final Map<String, FileConnectionMapping> mappings = new ConcurrentHashMap<>();
+    private final Map<String, FileConnectionContext> mappings = new ConcurrentHashMap<>();
 
-    public FileConnectionMappingRegistry(Project project) {
+    public FileConnectionContextRegistry(Project project) {
         this.project = ProjectRef.of(project);
     }
 
@@ -49,7 +49,7 @@ public class FileConnectionMappingRegistry extends StatefulDisposable.Base {
             return false;
         }
 
-        FileConnectionMapping mapping = ensureFileConnectionMapping(file);
+        FileConnectionContext mapping = ensureFileConnectionMapping(file);
         boolean changed = mapping.setConnectionId(connectionHandler == null ? null : connectionHandler.getConnectionId());
 
         if (changed) {
@@ -77,12 +77,12 @@ public class FileConnectionMappingRegistry extends StatefulDisposable.Base {
     }
 
     public boolean setDatabaseSchema(VirtualFile file, SchemaId schemaId) {
-        FileConnectionMapping mapping = ensureFileConnectionMapping(file);
+        FileConnectionContext mapping = ensureFileConnectionMapping(file);
         return mapping.setSchemaId(schemaId);
     }
 
     public boolean setDatabaseSession(VirtualFile file, DatabaseSession session) {
-        FileConnectionMapping mapping = ensureFileConnectionMapping(file);
+        FileConnectionContext mapping = ensureFileConnectionMapping(file);
         return mapping.setSessionId(session == null ? null : session.getId());
     }
 
@@ -124,8 +124,8 @@ public class FileConnectionMappingRegistry extends StatefulDisposable.Base {
     }
 
     @Nullable
-    private <T> T resolveFileMapping(@NotNull VirtualFile file, Function<FileConnectionMapping, T> handler) {
-        FileConnectionMapping connectionMapping = getFileConnectionMapping(file);
+    private <T> T resolveFileMapping(@NotNull VirtualFile file, Function<FileConnectionContext, T> handler) {
+        FileConnectionContext connectionMapping = getFileConnectionMapping(file);
         if (connectionMapping != null) {
             return handler.apply(connectionMapping);
         }
@@ -148,21 +148,21 @@ public class FileConnectionMappingRegistry extends StatefulDisposable.Base {
     }
 
     @NotNull
-    private FileConnectionMapping ensureFileConnectionMapping(VirtualFile file) {
+    private FileConnectionContext ensureFileConnectionMapping(VirtualFile file) {
         return getFileConnectionMapping(file, true);
     }
 
     @Nullable
-    public FileConnectionMapping getFileConnectionMapping(VirtualFile file) {
+    public FileConnectionContext getFileConnectionMapping(VirtualFile file) {
         return getFileConnectionMapping(file, false);
     }
 
-    private FileConnectionMapping getFileConnectionMapping(VirtualFile file, boolean ensure) {
+    private FileConnectionContext getFileConnectionMapping(VirtualFile file, boolean ensure) {
         file = VirtualFiles.getUnderlyingFile(file);
 
-        if (file instanceof FileConnectionMappingProvider) {
-            FileConnectionMappingProvider mappingProvider = (FileConnectionMappingProvider) file;
-            return mappingProvider.getConnectionMapping();
+        if (file instanceof FileConnectionContextProvider) {
+            FileConnectionContextProvider mappingProvider = (FileConnectionContextProvider) file;
+            return mappingProvider.getConnectionContext();
         }
 
         if (VirtualFiles.isDatabaseFileSystem(file)) {
@@ -171,12 +171,12 @@ public class FileConnectionMappingRegistry extends StatefulDisposable.Base {
             }
         }
 
-        FileConnectionMapping mapping = null;
+        FileConnectionContext mapping = null;
         if (file instanceof LightVirtualFile) {
             mapping = file.getUserData(FILE_CONNECTION_MAPPING);
 
             if (mapping == null && ensure) {
-                mapping = new FileConnectionMappingImpl(file);
+                mapping = new FileConnectionContextImpl(file);
                 file.putUserData(FILE_CONNECTION_MAPPING, mapping);
             }
             return mapping;
@@ -188,7 +188,7 @@ public class FileConnectionMappingRegistry extends StatefulDisposable.Base {
                 mapping = mappings.get(file.getUrl());
 
                 if (mapping == null && ensure) {
-                    mapping = new FileConnectionMappingImpl(file);
+                    mapping = new FileConnectionContextImpl(file);
                     mappings.put(file.getUrl(), mapping);
                 }
 
@@ -202,8 +202,8 @@ public class FileConnectionMappingRegistry extends StatefulDisposable.Base {
     }
 
     public boolean removeMapping(VirtualFile file) {
-        FileConnectionMapping mapping = mappings.remove(file.getUrl());
-        FileConnectionMapping localMapping = file.getUserData(FILE_CONNECTION_MAPPING);
+        FileConnectionContext mapping = mappings.remove(file.getUrl());
+        FileConnectionContext localMapping = file.getUserData(FILE_CONNECTION_MAPPING);
         file.putUserData(FILE_CONNECTION_MAPPING, null);
 
         return mapping != null || localMapping != null;
@@ -213,7 +213,7 @@ public class FileConnectionMappingRegistry extends StatefulDisposable.Base {
         List<VirtualFile> list = new ArrayList<>();
 
         LocalFileSystem localFileSystem = LocalFileSystem.getInstance();
-        for (FileConnectionMapping mapping : mappings.values()) {
+        for (FileConnectionContext mapping : mappings.values()) {
             ConnectionId connectionId = mapping.getConnectionId();
             if (connection.getConnectionId() == connectionId) {
                 VirtualFile file = localFileSystem.findFileByPath(mapping.getFileUrl());

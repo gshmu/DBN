@@ -23,7 +23,7 @@ import com.dci.intellij.dbn.connection.info.ConnectionInfo;
 import com.dci.intellij.dbn.connection.info.ui.ConnectionInfoDialog;
 import com.dci.intellij.dbn.connection.jdbc.DBNConnection;
 import com.dci.intellij.dbn.connection.jdbc.ResourceStatus;
-import com.dci.intellij.dbn.connection.mapping.FileConnectionMappingManager;
+import com.dci.intellij.dbn.connection.mapping.FileConnectionContextManager;
 import com.dci.intellij.dbn.connection.transaction.DatabaseTransactionManager;
 import com.dci.intellij.dbn.connection.transaction.TransactionAction;
 import com.dci.intellij.dbn.connection.transaction.TransactionOption;
@@ -391,17 +391,18 @@ public class ConnectionManager extends AbstractProjectComponent implements Persi
      }
 
      public ConnectionHandler getActiveConnection(Project project) {
-         ConnectionHandler connectionHandler = null;
+         ConnectionHandler connection = null;
          VirtualFile virtualFile = Editors.getSelectedFile(project);
          if (DatabaseBrowserManager.getInstance(project).getBrowserToolWindow().isActive() || virtualFile == null) {
-             connectionHandler = DatabaseBrowserManager.getInstance(project).getActiveConnection();
+             connection = DatabaseBrowserManager.getInstance(project).getActiveConnection();
          }
 
-         if (connectionHandler == null && virtualFile != null) {
-             connectionHandler = FileConnectionMappingManager.getInstance(project).getConnection(virtualFile);
+         if (connection == null && virtualFile != null) {
+             FileConnectionContextManager contextManager = FileConnectionContextManager.getInstance(project);
+             connection = contextManager.getConnection(virtualFile);
          }
 
-         return connectionHandler;
+         return connection;
      }
 
     public boolean hasUncommittedChanges() {

@@ -5,7 +5,7 @@ import com.dci.intellij.dbn.common.notification.NotificationGroup;
 import com.dci.intellij.dbn.common.util.Documents;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.jdbc.DBNConnection;
-import com.dci.intellij.dbn.connection.mapping.FileConnectionMappingManager;
+import com.dci.intellij.dbn.connection.mapping.FileConnectionContextManager;
 import com.dci.intellij.dbn.database.DatabaseDebuggerInterface;
 import com.dci.intellij.dbn.database.common.debug.BreakpointInfo;
 import com.dci.intellij.dbn.database.common.debug.BreakpointOperationInfo;
@@ -235,10 +235,10 @@ public class DBJdbcBreakpointHandler extends DBBreakpointHandler<DBJdbcDebugProc
                 XLineBreakpoint lineBreakpoint = (XLineBreakpoint) breakpoint;
                 VirtualFile virtualFile = getVirtualFile(lineBreakpoint);
                 if (virtualFile != null) {
-                    FileConnectionMappingManager connectionMappingManager = FileConnectionMappingManager.getInstance(project);
-                    ConnectionHandler connectionHandler = connectionMappingManager.getConnection(virtualFile);
+                    FileConnectionContextManager contextManager = FileConnectionContextManager.getInstance(project);
+                    ConnectionHandler connection = contextManager.getConnection(virtualFile);
 
-                    if (connectionHandler == getDebugProcess().getConnectionHandler()) {
+                    if (connection == getDebugProcess().getConnectionHandler()) {
                         setBreakpointId(lineBreakpoint, null);
                     }
                 }

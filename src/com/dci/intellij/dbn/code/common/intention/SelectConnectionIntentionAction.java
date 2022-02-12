@@ -3,7 +3,7 @@ package com.dci.intellij.dbn.code.common.intention;
 import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.common.util.Context;
 import com.dci.intellij.dbn.connection.ConnectionSelectorOptions;
-import com.dci.intellij.dbn.connection.mapping.FileConnectionMappingManager;
+import com.dci.intellij.dbn.connection.mapping.FileConnectionContextManager;
 import com.dci.intellij.dbn.language.common.DBLanguagePsiFile;
 import com.intellij.codeInsight.intention.LowPriorityAction;
 import com.intellij.openapi.actionSystem.DataContext;
@@ -18,6 +18,7 @@ import javax.swing.*;
 
 import static com.dci.intellij.dbn.connection.ConnectionSelectorOptions.Option.SHOW_CREATE_CONNECTION;
 import static com.dci.intellij.dbn.connection.ConnectionSelectorOptions.Option.SHOW_VIRTUAL_CONNECTIONS;
+import static com.dci.intellij.dbn.connection.ConnectionSelectorOptions.options;
 
 public class SelectConnectionIntentionAction extends GenericIntentionAction implements LowPriorityAction {
     @Override
@@ -35,8 +36,8 @@ public class SelectConnectionIntentionAction extends GenericIntentionAction impl
     public boolean isAvailable(@NotNull Project project, Editor editor, PsiFile psiFile) {
         if (psiFile instanceof DBLanguagePsiFile) {
             VirtualFile virtualFile = psiFile.getVirtualFile();
-            FileConnectionMappingManager connectionMappingManager = FileConnectionMappingManager.getInstance(project);
-            return connectionMappingManager.isConnectionSelectable(virtualFile);
+            FileConnectionContextManager contextManager = FileConnectionContextManager.getInstance(project);
+            return contextManager.isConnectionSelectable(virtualFile);
         }
         return false;
     }
@@ -44,16 +45,14 @@ public class SelectConnectionIntentionAction extends GenericIntentionAction impl
     @Override
     public void invoke(@NotNull Project project, Editor editor, PsiFile psiFile) throws IncorrectOperationException {
         if (psiFile instanceof DBLanguagePsiFile) {
-            DBLanguagePsiFile dbLanguageFile = (DBLanguagePsiFile) psiFile;
-            FileConnectionMappingManager connectionMappingManager = FileConnectionMappingManager.getInstance(project);
+            FileConnectionContextManager contextManager = FileConnectionContextManager.getInstance(project);
 
-            ConnectionSelectorOptions options = new ConnectionSelectorOptions();
-            options.set(SHOW_VIRTUAL_CONNECTIONS, true);
-            options.set(SHOW_CREATE_CONNECTION, true);
+            ConnectionSelectorOptions options = options(
+                    SHOW_VIRTUAL_CONNECTIONS,
+                    SHOW_CREATE_CONNECTION);
 
             DataContext dataContext = Context.getDataContext(editor);
-
-            connectionMappingManager.promptConnectionSelector(dbLanguageFile, dataContext, options, null);
+            contextManager.promptConnectionSelector(psiFile.getVirtualFile(), dataContext, options, null);
         }
     }
 

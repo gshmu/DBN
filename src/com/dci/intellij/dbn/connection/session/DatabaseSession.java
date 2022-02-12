@@ -12,19 +12,19 @@ import com.dci.intellij.dbn.connection.jdbc.DBNConnection;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import javax.swing.Icon;
+import javax.swing.*;
 
 public class DatabaseSession implements Comparable<DatabaseSession>, Presentable, Identifiable<SessionId> {
-    private final ConnectionHandlerRef connectionHandler;
+    private final ConnectionHandlerRef connection;
     private final ConnectionType connectionType;
     private final SessionId id;
     private String name;
 
-    public DatabaseSession(SessionId id, String name, ConnectionType connectionType, ConnectionHandler connectionHandler) {
+    public DatabaseSession(SessionId id, String name, ConnectionType connectionType, ConnectionHandler connection) {
         this.id = id == null ? SessionId.create() : id;
         this.name = name;
         this.connectionType = connectionType;
-        this.connectionHandler = connectionHandler.getRef();
+        this.connection = connection.getRef();
     }
 
     @NotNull
@@ -55,7 +55,7 @@ public class DatabaseSession implements Comparable<DatabaseSession>, Presentable
             if (isPool()) {
                 return Icons.SESSION_POOL;
             } else {
-                DBNConnection connection = getConnectionHandler().getConnectionPool().getSessionConnection(id);
+                DBNConnection connection = getConnection().getConnectionPool().getSessionConnection(id);
                 if (connection == null || !connection.isValid()) {
                     return
                             isMain() ?  Icons.SESSION_MAIN :
@@ -97,8 +97,8 @@ public class DatabaseSession implements Comparable<DatabaseSession>, Presentable
     }
 
     @NotNull
-    public ConnectionHandler getConnectionHandler() {
-        return connectionHandler.ensure();
+    public ConnectionHandler getConnection() {
+        return connection.ensure();
     }
 
     @Override

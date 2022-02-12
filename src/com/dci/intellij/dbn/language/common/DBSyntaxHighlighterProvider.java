@@ -1,7 +1,7 @@
 package com.dci.intellij.dbn.language.common;
 
 import com.dci.intellij.dbn.connection.ConnectionHandler;
-import com.dci.intellij.dbn.connection.mapping.FileConnectionMappingManager;
+import com.dci.intellij.dbn.connection.mapping.FileConnectionContextManager;
 import com.intellij.openapi.fileTypes.FileType;
 import com.intellij.openapi.fileTypes.SyntaxHighlighter;
 import com.intellij.openapi.fileTypes.SyntaxHighlighterProvider;
@@ -23,7 +23,7 @@ public class DBSyntaxHighlighterProvider implements SyntaxHighlighterProvider {
 
             DBLanguageDialect mainLanguageDialect = language.getMainLanguageDialect();
             if (project != null && virtualFile != null) {
-                ConnectionHandler connectionHandler = FileConnectionMappingManager.getInstance(project).getConnection(virtualFile);
+                ConnectionHandler connectionHandler = FileConnectionContextManager.getInstance(project).getConnection(virtualFile);
                 DBLanguageDialect languageDialect = connectionHandler == null ?
                         mainLanguageDialect :
                         connectionHandler.getLanguageDialect(language);

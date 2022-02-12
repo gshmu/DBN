@@ -220,7 +220,7 @@
         <component><implementation-class>com.dci.intellij.dbn.browser.DatabaseBrowserManager</implementation-class></component>
         <component><implementation-class>com.dci.intellij.dbn.common.environment.EnvironmentManager</implementation-class></component>
         <component><implementation-class>com.dci.intellij.dbn.connection.ConnectionManager</implementation-class></component>
-        <component><implementation-class>com.dci.intellij.dbn.connection.mapping.FileConnectionMappingManager</implementation-class></component>
+        <component><implementation-class>com.dci.intellij.dbn.connection.mapping.FileConnectionContextManager</implementation-class></component>
         <component><implementation-class>com.dci.intellij.dbn.connection.transaction.DatabaseTransactionManager</implementation-class></component>
         <component><implementation-class>com.dci.intellij.dbn.execution.ExecutionManager</implementation-class></component>
         <component><implementation-class>com.dci.intellij.dbn.execution.statement.StatementExecutionManager</implementation-class></component>
@@ -264,6 +264,13 @@
             <add-to-group group-id="ProjectViewPopupMenu" relative-to-action="WeighingNewGroup" anchor="before"/>
             <add-to-group group-id="EditorPopupMenu" anchor="first"/>
         </action>
+        <group>
+            <group id="DBNavigator.ActionGroup.ProjectViewPopup" text="DB Navigator" popup="true">
+                <action id="DBNavigator.Actions.ConnectionContext.SelectConnection" class="com.dci.intellij.dbn.connection.context.action.ConnectionSelectAction" text="Connection Context - Associate Connection" icon="/img/connection/ConnectionConnected.png"/>
+                <action id="DBNavigator.Actions.ConnectionContext.SelectSchema" class="com.dci.intellij.dbn.connection.context.action.SchemaSelectAction" text="Connection Context - Associate Schema" icon="/img/object/Schema.png"/>
+            </group>
+            <add-to-group group-id="ProjectViewPopupMenu" relative-to-action="CutCopyPasteGroup" anchor="before"/>
+        </group>
         <group id="DBNavigator.ActionGroup.ConnectionSettings" text="Connections Settings">
             <action id="DBNavigator.Actions.ConnectionSettings.CreateConnection" class="com.dci.intellij.dbn.connection.config.action.CreateConnectionDropdownAction" text="Connection Setup - Create Connection" icon="/img/action/AddMore.png"/>
             <action id="DBNavigator.Actions.ConnectionSettings.RemoveConnection" class="com.dci.intellij.dbn.connection.config.action.ConnectionRemoveAction" text="Connection Setup - Remove Connection" icon="/img/action/Remove.png"/>
@@ -593,7 +600,7 @@
         <editorNotificationProvider implementation="com.dci.intellij.dbn.editor.code.SourceCodeEditorNotificationProvider"/>
         <editorNotificationProvider implementation="com.dci.intellij.dbn.editor.data.DatasetEditorNotificationProvider"/>
         <editorNotificationProvider implementation="com.dci.intellij.dbn.editor.session.SessionBrowserNotificationProvider"/>
-        <editorNotificationProvider implementation="com.dci.intellij.dbn.connection.mapping.FileConnectionMappingNotificationProvider"/>
+        <editorNotificationProvider implementation="com.dci.intellij.dbn.connection.mapping.FileConnectionContextNotificationProvider"/>
 
         <additionalTextAttributes scheme="Default" file="resources/textAttributes/DBNDefaultColors.xml" id="DBN-Default"/>
         <additionalTextAttributes scheme="Darcula" file="resources/textAttributes/DBNDarculaColors.xml" id="DBN-Darcula"/>

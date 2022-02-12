@@ -1,6 +1,7 @@
 package com.dci.intellij.dbn.common.locale.options.ui;
 
 import com.dci.intellij.dbn.common.Icons;
+import com.dci.intellij.dbn.common.color.Colors;
 import com.dci.intellij.dbn.common.event.ProjectEvents;
 import com.dci.intellij.dbn.common.locale.DBDateFormat;
 import com.dci.intellij.dbn.common.locale.DBNumberFormat;
@@ -17,16 +18,12 @@ import com.dci.intellij.dbn.common.util.Commons;
 import com.intellij.openapi.options.ConfigurationException;
 import com.intellij.openapi.project.Project;
 import com.intellij.ui.DocumentAdapter;
-import com.intellij.util.ui.UIUtil;
 import org.jetbrains.annotations.NotNull;
 
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.JRadioButton;
-import javax.swing.JTextField;
+import javax.swing.*;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
-import java.awt.Font;
+import java.awt.*;
 import java.awt.event.ActionListener;
 import java.awt.event.ItemListener;
 import java.util.Date;
@@ -58,7 +55,7 @@ public class RegionalSettingsEditorForm extends ConfigurationEditorForm<Regional
     public RegionalSettingsEditorForm(RegionalSettings regionalSettings) {
         super(regionalSettings);
         previewPanel.setBorder(Borders.COMPONENT_LINE_BORDER);
-        previewPanel.setBackground(UIUtil.getToolTipBackground());
+        previewPanel.setBackground(Colors.getLighterPanelBackground());
         errorLabel.setVisible(false);
         localeComboBox.setValues(LocaleOption.ALL);
 

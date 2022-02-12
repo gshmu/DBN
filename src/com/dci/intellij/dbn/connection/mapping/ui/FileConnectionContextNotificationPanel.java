@@ -5,18 +5,18 @@ import com.dci.intellij.dbn.common.message.MessageType;
 import com.dci.intellij.dbn.connection.ConnectionCache;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.ConnectionId;
-import com.dci.intellij.dbn.connection.mapping.FileConnectionMapping;
-import com.dci.intellij.dbn.connection.mapping.FileConnectionMappingManager;
+import com.dci.intellij.dbn.connection.mapping.FileConnectionContext;
+import com.dci.intellij.dbn.connection.mapping.FileConnectionContextManager;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
 import org.jetbrains.annotations.NotNull;
 
-public class FileConnectionMappingNotificationPanel extends EditorNotificationPanel {
+public class FileConnectionContextNotificationPanel extends EditorNotificationPanel {
 
-    public FileConnectionMappingNotificationPanel(
+    public FileConnectionContextNotificationPanel(
             @NotNull Project project,
-            @NotNull VirtualFile virtualFile,
-            @NotNull FileConnectionMapping mapping) {
+            @NotNull VirtualFile file,
+            @NotNull FileConnectionContext mapping) {
         super(MessageType.SYSTEM);
 
         ConnectionId connectionId = mapping.getConnectionId();
@@ -30,8 +30,8 @@ public class FileConnectionMappingNotificationPanel extends EditorNotificationPa
         }
 
         createActionLabel("Unlink", () -> {
-                FileConnectionMappingManager mappingManager = FileConnectionMappingManager.getInstance(project);
-                mappingManager.removeMapping(virtualFile);
+                FileConnectionContextManager contextManager = FileConnectionContextManager.getInstance(project);
+                contextManager.removeMapping(file);
             });
 
 

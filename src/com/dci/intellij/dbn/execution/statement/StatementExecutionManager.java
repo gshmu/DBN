@@ -9,20 +9,10 @@ import com.dci.intellij.dbn.common.event.ProjectEvents;
 import com.dci.intellij.dbn.common.notification.NotificationGroup;
 import com.dci.intellij.dbn.common.thread.Dispatch;
 import com.dci.intellij.dbn.common.thread.Progress;
-import com.dci.intellij.dbn.common.util.CollectionUtil;
-import com.dci.intellij.dbn.common.util.Context;
-import com.dci.intellij.dbn.common.util.Documents;
-import com.dci.intellij.dbn.common.util.Editors;
-import com.dci.intellij.dbn.common.util.Messages;
-import com.dci.intellij.dbn.common.util.UserDataUtil;
-import com.dci.intellij.dbn.connection.ConnectionAction;
-import com.dci.intellij.dbn.connection.ConnectionHandler;
-import com.dci.intellij.dbn.connection.ConnectionId;
-import com.dci.intellij.dbn.connection.ConnectionManager;
-import com.dci.intellij.dbn.connection.SchemaId;
-import com.dci.intellij.dbn.connection.SessionId;
+import com.dci.intellij.dbn.common.util.*;
+import com.dci.intellij.dbn.connection.*;
 import com.dci.intellij.dbn.connection.jdbc.DBNConnection;
-import com.dci.intellij.dbn.connection.mapping.FileConnectionMappingManager;
+import com.dci.intellij.dbn.connection.mapping.FileConnectionContextManager;
 import com.dci.intellij.dbn.debugger.DBDebuggerType;
 import com.dci.intellij.dbn.editor.console.SQLConsoleEditor;
 import com.dci.intellij.dbn.editor.ddl.DDLFileEditor;
@@ -39,11 +29,7 @@ import com.dci.intellij.dbn.execution.statement.variables.StatementExecutionVari
 import com.dci.intellij.dbn.execution.statement.variables.ui.StatementExecutionInputsDialog;
 import com.dci.intellij.dbn.language.common.DBLanguagePsiFile;
 import com.dci.intellij.dbn.language.common.psi.BasePsiElement.MatchType;
-import com.dci.intellij.dbn.language.common.psi.ChameleonPsiElement;
-import com.dci.intellij.dbn.language.common.psi.ExecVariablePsiElement;
-import com.dci.intellij.dbn.language.common.psi.ExecutablePsiElement;
-import com.dci.intellij.dbn.language.common.psi.PsiUtil;
-import com.dci.intellij.dbn.language.common.psi.RootPsiElement;
+import com.dci.intellij.dbn.language.common.psi.*;
 import com.intellij.openapi.actionSystem.DataContext;
 import com.intellij.openapi.components.PersistentStateComponent;
 import com.intellij.openapi.components.State;
@@ -65,12 +51,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import static com.dci.intellij.dbn.execution.ExecutionStatus.*;
@@ -238,15 +219,15 @@ public class StatementExecutionManager extends AbstractProjectComponent implemen
         if (virtualFile != null && executionProcessors.size() > 0) {
             try {
                 Project project = getProject();
-                FileConnectionMappingManager connectionMappingManager = FileConnectionMappingManager.getInstance(project);
+                FileConnectionContextManager contextManager = FileConnectionContextManager.getInstance(project);
 
                 DBLanguagePsiFile databaseFile = Failsafe.nn(executionProcessors.get(0).getPsiFile());
-                connectionMappingManager.selectConnectionAndSchema(
-                        databaseFile,
+                contextManager.selectConnectionAndSchema(
+                        databaseFile.getVirtualFile(),
                         dataContext,
                         () -> ConnectionAction.invoke(
                                 "the statement execution", false,
-                                () -> connectionMappingManager.getConnection(virtualFile),
+                                () -> contextManager.getConnection(virtualFile),
                                 (action) -> promptExecutionDialogs(executionProcessors, DBDebuggerType.NONE,
                                         () -> {
                                             for (StatementExecutionProcessor executionProcessor : executionProcessors) {

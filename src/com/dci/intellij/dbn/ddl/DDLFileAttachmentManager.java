@@ -13,7 +13,7 @@ import com.dci.intellij.dbn.common.util.Messages;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.ConnectionId;
 import com.dci.intellij.dbn.connection.ConnectionManager;
-import com.dci.intellij.dbn.connection.mapping.FileConnectionMappingManager;
+import com.dci.intellij.dbn.connection.mapping.FileConnectionContextManager;
 import com.dci.intellij.dbn.ddl.options.DDLFileSettings;
 import com.dci.intellij.dbn.ddl.ui.AttachDDLFileDialog;
 import com.dci.intellij.dbn.ddl.ui.DDLFileNameListCellRenderer;
@@ -192,14 +192,14 @@ public class DDLFileAttachmentManager extends AbstractProjectComponent implement
 
         if (objectRef != null) {
             // map last used connection/schema
-            FileConnectionMappingManager connectionMappingManager = FileConnectionMappingManager.getInstance(getProject());
-            ConnectionHandler activeConnection = connectionMappingManager.getConnection(virtualFile);
+            FileConnectionContextManager contextManager = FileConnectionContextManager.getInstance(getProject());
+            ConnectionHandler activeConnection = contextManager.getConnection(virtualFile);
             if (activeConnection == null) {
                 DBSchemaObject schemaObject = objectRef.get();
                 if (schemaObject != null) {
                     ConnectionHandler connectionHandler = schemaObject.getConnection();
-                    connectionMappingManager.setConnection(virtualFile, connectionHandler);
-                    connectionMappingManager.setDatabaseSchema(virtualFile, schemaObject.getSchemaId());
+                    contextManager.setConnection(virtualFile, connectionHandler);
+                    contextManager.setDatabaseSchema(virtualFile, schemaObject.getSchemaId());
                 }
             }
         }

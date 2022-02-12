@@ -9,7 +9,7 @@ import com.dci.intellij.dbn.connection.ConnectionHandlerRef;
 import com.dci.intellij.dbn.connection.ConnectionStatusListener;
 import com.dci.intellij.dbn.connection.SessionId;
 import com.dci.intellij.dbn.connection.jdbc.DBNConnection;
-import com.dci.intellij.dbn.connection.mapping.FileConnectionMappingListener;
+import com.dci.intellij.dbn.connection.mapping.FileConnectionContextListener;
 import com.dci.intellij.dbn.connection.session.DatabaseSession;
 import com.dci.intellij.dbn.connection.transaction.TransactionAction;
 import com.dci.intellij.dbn.connection.transaction.TransactionListener;
@@ -64,7 +64,7 @@ public class AutoCommitLabel extends DBNPanelImpl implements Disposable {
         if (!subscribed) {
             subscribed = true;
             ProjectEvents.subscribe(project, this, ConnectionStatusListener.TOPIC, connectionStatusListener);
-            ProjectEvents.subscribe(project, this, FileConnectionMappingListener.TOPIC, connectionMappingListener);
+            ProjectEvents.subscribe(project, this, FileConnectionContextListener.TOPIC, connectionMappingListener);
             ProjectEvents.subscribe(project, this, TransactionListener.TOPIC, transactionListener);
         }
         update();
@@ -121,7 +121,7 @@ public class AutoCommitLabel extends DBNPanelImpl implements Disposable {
         }
     };
 
-    private final FileConnectionMappingListener connectionMappingListener = new FileConnectionMappingListener() {
+    private final FileConnectionContextListener connectionMappingListener = new FileConnectionContextListener() {
         @Override
         public void connectionChanged(Project project, VirtualFile file, ConnectionHandler connection) {
             VirtualFile localVirtualFile = getVirtualFile();
