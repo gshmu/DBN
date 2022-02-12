@@ -5,5 +5,6 @@ public enum MessageType {
     WARNING,
     ERROR,
     SYSTEM,
-    QUESTION
+    QUESTION,
+    NEUTRAL
 }
