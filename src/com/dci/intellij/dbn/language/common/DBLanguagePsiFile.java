@@ -11,8 +11,8 @@ import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.ConnectionHandlerRef;
 import com.dci.intellij.dbn.connection.PresentableConnectionProvider;
 import com.dci.intellij.dbn.connection.SchemaId;
+import com.dci.intellij.dbn.connection.context.ConnectionContextProvider;
 import com.dci.intellij.dbn.connection.mapping.FileConnectionMappingManager;
-import com.dci.intellij.dbn.connection.mapping.FileConnectionMappingProvider;
 import com.dci.intellij.dbn.connection.session.DatabaseSession;
 import com.dci.intellij.dbn.ddl.DDLFileAttachmentManager;
 import com.dci.intellij.dbn.language.common.element.ElementTypeBundle;
@@ -64,7 +64,7 @@ import java.util.Set;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Consumer;
 
-public abstract class DBLanguagePsiFile extends PsiFileImpl implements FileConnectionMappingProvider, PresentableConnectionProvider, StatefulDisposable {
+public abstract class DBLanguagePsiFile extends PsiFileImpl implements ConnectionContextProvider, PresentableConnectionProvider, StatefulDisposable {
     private final Language language;
     private final DBLanguageFileType fileType;
     private final ParserDefinition parserDefinition;

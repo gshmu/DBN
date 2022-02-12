@@ -4,23 +4,21 @@ import com.dci.intellij.dbn.common.event.ApplicationEvents;
 import com.dci.intellij.dbn.common.thread.Write;
 import com.dci.intellij.dbn.vfs.DBVirtualFileImpl;
 import com.dci.intellij.dbn.vfs.DatabaseFileSystem;
+import com.intellij.injected.editor.VirtualFileWindow;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.roots.ProjectRootManager;
-import com.intellij.openapi.vfs.LocalFileSystem;
-import com.intellij.openapi.vfs.StandardFileSystems;
-import com.intellij.openapi.vfs.VfsUtilCore;
-import com.intellij.openapi.vfs.VirtualFile;
-import com.intellij.openapi.vfs.VirtualFileManager;
+import com.intellij.openapi.vfs.*;
 import com.intellij.openapi.vfs.newvfs.BulkFileListener;
 import com.intellij.openapi.vfs.newvfs.events.VFileDeleteEvent;
 import com.intellij.openapi.vfs.newvfs.events.VFileEvent;
 import com.intellij.openapi.vfs.newvfs.events.VFilePropertyChangeEvent;
 import com.intellij.testFramework.LightVirtualFile;
 import com.intellij.util.io.ReadOnlyAttributeUtil;
+import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import javax.swing.Icon;
+import javax.swing.*;
 import java.io.File;
 import java.io.IOException;
 import java.util.Collections;
@@ -94,12 +92,31 @@ public final class VirtualFiles {
     }
 
     @Nullable
-    public static VirtualFile getOriginalFile(VirtualFile virtualFile) {
-        if (virtualFile instanceof LightVirtualFile) {
-            LightVirtualFile lightVirtualFile = (LightVirtualFile) virtualFile;
-            return lightVirtualFile.getOriginalFile();
+    public static VirtualFile getOriginalFile(VirtualFile file) {
+        if (file instanceof LightVirtualFile) {
+            LightVirtualFile lightVirtualFile = (LightVirtualFile) file;
+            VirtualFile originalFile = lightVirtualFile.getOriginalFile();
+            if (originalFile != null && originalFile != file) {
+                return getOriginalFile(originalFile);
+            }
         }
-        return null;
+        return file;
+    }
+
+    @Contract("null -> null; !null-> !null")
+    public static VirtualFile getUnderlyingFile(VirtualFile file) {
+        file = getOriginalFile(file);
+
+        if (file instanceof VirtualFileWindow) {
+            VirtualFileWindow fileWindow = (VirtualFileWindow) file;
+            return fileWindow.getDelegate();
+        }
+
+        if (file instanceof LightVirtualFile) {
+            LightVirtualFile lightVirtualFile = (LightVirtualFile) file;
+        }
+        return file;
+
     }
 
     public static VFileEvent createFileRenameEvent(

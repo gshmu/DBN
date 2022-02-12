@@ -73,25 +73,15 @@ public final class Commons {
     }
 
     @SafeVarargs
-    public static <T> T coalesce(T... values) {
-        int index = 0;
-        T value = null;
-        while (value == null && index < values.length) {
-            value = values[index];
-            index++;
-        }
-        return value;
-    }
-
-    @SafeVarargs
+    @Nullable
     public static <T> T coalesce(Supplier<T>... suppliers) {
-        int index = 0;
-        T value = null;
-        while (value == null && index < suppliers.length) {
-            value = suppliers[index].get();
-            index++;
+        for (Supplier<T> supplier : suppliers) {
+            T value = Safe.call(null, () -> supplier.get());
+            if (value != null) {
+                return value;
+            }
         }
-        return value;
+        return null;
     }
 
     @NotNull

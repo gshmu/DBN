@@ -1,10 +1,7 @@
 package com.dci.intellij.dbn.common.action;
 
 import com.dci.intellij.dbn.common.project.ProjectRef;
-import com.dci.intellij.dbn.connection.ConnectionHandlerRef;
-import com.dci.intellij.dbn.connection.SchemaId;
 import com.dci.intellij.dbn.connection.mapping.FileConnectionMapping;
-import com.dci.intellij.dbn.connection.session.DatabaseSession;
 import com.dci.intellij.dbn.execution.statement.processor.StatementExecutionProcessor;
 import com.intellij.openapi.util.Key;
 

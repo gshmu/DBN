@@ -1,6 +1,7 @@
-package com.dci.intellij.dbn.connection;
+package com.dci.intellij.dbn.connection.context;
 
 import com.dci.intellij.dbn.common.dispose.Failsafe;
+import com.dci.intellij.dbn.connection.ConnectionHandler;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -9,7 +10,7 @@ public interface ConnectionProvider {
     ConnectionHandler getConnection();
 
     @NotNull
-    default ConnectionHandler ensureConnectionHandler() {
+    default ConnectionHandler ensureConnection() {
         return Failsafe.nn(getConnection());
     }
 }
