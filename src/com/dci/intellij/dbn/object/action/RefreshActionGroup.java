@@ -14,7 +14,7 @@ public class RefreshActionGroup  extends DefaultActionGroup {
         DBObjectList objectList = (DBObjectList) object.getParent();
         add(new ObjectsReloadAction(objectList));
         if (object instanceof DBSchemaObject && DatabaseFeature.OBJECT_INVALIDATION.isSupported(object)) {
-            add(new ObjectsStatusRefreshAction(object.getConnectionHandler()));
+            add(new ObjectsStatusRefreshAction(object.getConnection()));
         }
     }
 }

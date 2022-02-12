@@ -44,10 +44,8 @@ public final class ProjectEvents {
 
     public static <T> void notify(@Nullable Project project, Topic<T> topic, ParametricRunnable.Basic<T> callback) {
         Safe.run(() -> {
-            if (project != Failsafe.DUMMY_PROJECT) {
-                T publisher = publisher(project, topic);
-                callback.run(publisher);
-            }
+            T publisher = publisher(project, topic);
+            callback.run(publisher);
         });
     }
 

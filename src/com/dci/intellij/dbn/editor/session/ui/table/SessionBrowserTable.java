@@ -53,12 +53,12 @@ public class SessionBrowserTable extends ResultSetTable<SessionBrowserModel> {
 
     @NotNull
     private static RecordViewInfo createRecordInfo(SessionBrowser sessionBrowser) {
-        return new RecordViewInfo(sessionBrowser.getConnectionHandler().getName(), null);
+        return new RecordViewInfo(sessionBrowser.getConnection().getName(), null);
     }
 
     @NotNull
     private static SessionBrowserModel createModel(SessionBrowser sessionBrowser) {
-        return new SessionBrowserModel(sessionBrowser.getConnectionHandler());
+        return new SessionBrowserModel(sessionBrowser.getConnection());
     }
 
     @Override
@@ -74,7 +74,7 @@ public class SessionBrowserTable extends ResultSetTable<SessionBrowserModel> {
 
     @Override
     public String getName() {
-        return getSessionBrowser().getConnectionHandler().getName();
+        return getSessionBrowser().getConnection().getName();
     }
 
     @Override

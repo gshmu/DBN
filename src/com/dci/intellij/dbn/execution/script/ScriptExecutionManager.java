@@ -101,7 +101,7 @@ public class ScriptExecutionManager extends AbstractProjectComponent implements 
         } else {
             FileConnectionMappingManager connectionMappingManager = FileConnectionMappingManager.getInstance(project);
 
-            ConnectionHandler activeConnection = connectionMappingManager.getConnectionHandler(virtualFile);
+            ConnectionHandler activeConnection = connectionMappingManager.getConnection(virtualFile);
             SchemaId currentSchema = connectionMappingManager.getDatabaseSchema(virtualFile);
 
             ScriptExecutionInput executionInput = new ScriptExecutionInput(getProject(), virtualFile, activeConnection, currentSchema, clearOutputOption);
@@ -113,10 +113,10 @@ public class ScriptExecutionManager extends AbstractProjectComponent implements 
 
             inputDialog.show();
             if (inputDialog.getExitCode() == DialogWrapper.OK_EXIT_CODE) {
-                ConnectionHandler connectionHandler = executionInput.getConnectionHandler();
+                ConnectionHandler connectionHandler = executionInput.getConnection();
                 SchemaId schema = executionInput.getSchema();
                 CmdLineInterface cmdLineExecutable = executionInput.getCmdLineInterface();
-                connectionMappingManager.setConnectionHandler(virtualFile, connectionHandler);
+                connectionMappingManager.setConnection(virtualFile, connectionHandler);
                 connectionMappingManager.setDatabaseSchema(virtualFile, schema);
                 if (connectionHandler != null) {
                     recentlyUsedInterfaces.put(connectionHandler.getDatabaseType(), cmdLineExecutable.getId());
@@ -138,7 +138,7 @@ public class ScriptExecutionManager extends AbstractProjectComponent implements 
     private void doExecuteScript(ScriptExecutionInput input) throws Exception {
         ExecutionContext context = input.getExecutionContext();
         context.set(EXECUTING, true);
-        ConnectionHandler connectionHandler = Failsafe.nn(input.getConnectionHandler());
+        ConnectionHandler connectionHandler = Failsafe.nn(input.getConnection());
         VirtualFile sourceFile = input.getSourceFile();
         activeProcesses.remove(sourceFile, null);
 
@@ -152,7 +152,7 @@ public class ScriptExecutionManager extends AbstractProjectComponent implements 
             new CancellableDatabaseCall<Object>(connectionHandler, null, timeout, TimeUnit.SECONDS) {
                 @Override
                 public Object execute() throws Exception {
-                    ConnectionHandler connectionHandler = Failsafe.nn(input.getConnectionHandler());
+                    ConnectionHandler connectionHandler = Failsafe.nn(input.getConnection());
                     SchemaId schema = input.getSchema();
 
                     String content = new String(sourceFile.contentsToByteArray());

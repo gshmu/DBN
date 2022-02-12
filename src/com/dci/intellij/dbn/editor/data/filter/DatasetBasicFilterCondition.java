@@ -101,7 +101,7 @@ public class DatasetBasicFilterCondition extends BasicConfiguration<DatasetBasic
                 value = "(" + value + ")";
             }
             else if (Strings.isNotEmptyOrSpaces(value)) {
-                ConnectionHandler connectionHandler = Failsafe.nn(dataset.getConnectionHandler());
+                ConnectionHandler connectionHandler = Failsafe.nn(dataset.getConnection());
                 if (genericDataType == GenericDataType.LITERAL || genericDataType == GenericDataType.CLOB) {
                     value = quoteValue(value);
                 } else if (genericDataType == GenericDataType.DATE_TIME) {

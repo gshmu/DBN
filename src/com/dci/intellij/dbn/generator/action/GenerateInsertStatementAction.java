@@ -31,7 +31,7 @@ public class GenerateInsertStatementAction extends GenerateStatementAction {
 
     @Nullable
     @Override
-    public ConnectionHandler getConnectionHandler() {
-        return getTable().getConnectionHandler();
+    public ConnectionHandler getConnection() {
+        return getTable().getConnection();
     }
 }

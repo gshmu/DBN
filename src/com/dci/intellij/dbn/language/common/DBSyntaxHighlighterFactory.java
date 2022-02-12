@@ -18,7 +18,7 @@ public class DBSyntaxHighlighterFactory extends SyntaxHighlighterFactory {
             DBLanguageFileType fileType = (DBLanguageFileType) virtualFile.getFileType();
             DBLanguage language = (DBLanguage) fileType.getLanguage();
             if (project != null) {
-                ConnectionHandler connectionHandler = FileConnectionMappingManager.getInstance(project).getConnectionHandler(virtualFile);
+                ConnectionHandler connectionHandler = FileConnectionMappingManager.getInstance(project).getConnection(virtualFile);
                 DBLanguageDialect languageDialect = connectionHandler == null ?
                         language.getMainLanguageDialect() :
                         connectionHandler.getLanguageDialect(language);

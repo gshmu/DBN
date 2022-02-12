@@ -1,7 +1,8 @@
 package com.dci.intellij.dbn.connection.mapping;
 
-import com.dci.intellij.dbn.common.file.util.VirtualFileUtil;
+import com.dci.intellij.dbn.common.file.util.VirtualFiles;
 import com.dci.intellij.dbn.common.state.PersistentStateElement;
+import com.dci.intellij.dbn.common.util.Safe;
 import com.dci.intellij.dbn.connection.ConnectionCache;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.ConnectionId;
@@ -20,8 +21,6 @@ import org.jetbrains.annotations.Nullable;
 import static com.dci.intellij.dbn.common.options.setting.SettingsSupport.*;
 
 @Slf4j
-@Getter
-@Setter
 @EqualsAndHashCode
 public class FileConnectionMapping implements PersistentStateElement {
     private String fileUrl = "";
@@ -31,11 +30,66 @@ public class FileConnectionMapping implements PersistentStateElement {
 
     FileConnectionMapping(){}
 
-    FileConnectionMapping(String fileUrl, ConnectionId connectionId, SessionId sessionId, SchemaId schemaId) {
+    public FileConnectionMapping(VirtualFile virtualFile){
+        this.fileUrl = virtualFile.getUrl();
+    }
+
+    public FileConnectionMapping(String fileUrl, ConnectionId connectionId, SessionId sessionId, SchemaId schemaId) {
         this.fileUrl = fileUrl;
         this.connectionId = connectionId;
         this.sessionId = sessionId;
         this.schemaId = schemaId;
+    }
+
+    public String getFileUrl() {
+        return fileUrl;
+    }
+
+    @Nullable
+    public ConnectionId getConnectionId() {
+        return connectionId;
+    }
+
+    @Nullable
+    public SessionId getSessionId() {
+        return sessionId;
+    }
+
+    @Nullable
+    public SchemaId getSchemaId() {
+        return schemaId;
+    }
+
+    public void setFileUrl(String fileUrl) {
+        this.fileUrl = fileUrl;
+    }
+
+    public boolean setConnectionId(ConnectionId connectionId) {
+        if (!Safe.equal(this.connectionId, connectionId)) {
+            this.connectionId = connectionId;
+            return true;
+        }
+        return false;
+    }
+
+    public boolean setSessionId(SessionId sessionId) {
+        if (!Safe.equal(this.sessionId, sessionId)) {
+            this.sessionId = sessionId;
+            return true;
+        }
+        return false;
+    }
+
+    public boolean setSchemaId(SchemaId schemaId) {
+        if (!Safe.equal(this.schemaId, schemaId)) {
+            this.schemaId = schemaId;
+            return true;
+        }
+        return false;
+    }
+
+    public String getSchemaName() {
+        return schemaId == null ? null : schemaId.getName();
     }
 
     @Nullable
@@ -79,7 +133,7 @@ public class FileConnectionMapping implements PersistentStateElement {
             fileUrl = stringAttribute(element, "file-path");
         }
 
-        fileUrl = VirtualFileUtil.ensureFileUrl(fileUrl);
+        fileUrl = VirtualFiles.ensureFileUrl(fileUrl);
 
         connectionId = connectionIdAttribute(element, "connection-id");
         sessionId = sessionIdAttribute(element, "session-id", sessionId);

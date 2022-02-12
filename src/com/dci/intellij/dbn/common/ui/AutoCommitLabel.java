@@ -21,9 +21,8 @@ import com.intellij.ui.JBColor;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import javax.swing.JLabel;
-import java.awt.BorderLayout;
-import java.awt.Color;
+import javax.swing.*;
+import java.awt.*;
 
 import static com.dci.intellij.dbn.common.util.Commons.nvl;
 
@@ -124,18 +123,18 @@ public class AutoCommitLabel extends DBNPanelImpl implements Disposable {
 
     private final FileConnectionMappingListener connectionMappingListener = new FileConnectionMappingListener() {
         @Override
-        public void connectionChanged(VirtualFile virtualFile, ConnectionHandler connectionHandler) {
+        public void connectionChanged(Project project, VirtualFile file, ConnectionHandler connection) {
             VirtualFile localVirtualFile = getVirtualFile();
-            if (virtualFile.equals(localVirtualFile)) {
-                AutoCommitLabel.this.connectionHandler = ConnectionHandlerRef.of(connectionHandler);
+            if (file.equals(localVirtualFile)) {
+                AutoCommitLabel.this.connectionHandler = ConnectionHandlerRef.of(connection);
                 update();
             }
         }
 
         @Override
-        public void sessionChanged(VirtualFile virtualFile, DatabaseSession session) {
+        public void sessionChanged(Project project, VirtualFile file, DatabaseSession session) {
             VirtualFile localVirtualFile = getVirtualFile();
-            if (virtualFile.equals(localVirtualFile)) {
+            if (file.equals(localVirtualFile)) {
                 sessionId = session == null ? SessionId.MAIN : session.getId();
                 update();
             }

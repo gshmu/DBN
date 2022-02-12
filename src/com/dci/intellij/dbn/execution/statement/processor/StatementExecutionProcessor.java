@@ -29,7 +29,7 @@ public interface StatementExecutionProcessor extends ConnectionProvider, Statefu
 
     @Override
     @Nullable
-    ConnectionHandler getConnectionHandler();
+    ConnectionHandler getConnection();
 
     @NotNull
     ConnectionHandler getTargetConnection();

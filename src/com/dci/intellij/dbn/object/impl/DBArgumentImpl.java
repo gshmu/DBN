@@ -18,7 +18,7 @@ import lombok.Getter;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import javax.swing.Icon;
+import javax.swing.*;
 import java.sql.SQLException;
 import java.util.LinkedList;
 import java.util.List;
@@ -48,7 +48,7 @@ public class DBArgumentImpl extends DBObjectImpl<DBArgumentMetadata> implements 
         String name = metadata.getArgumentName();
         if (name == null) name = position == 0 ? "return" : "[unnamed]";
 
-        dataType = DBDataType.get(getConnectionHandler(), metadata.getDataType());
+        dataType = DBDataType.get(this.getConnection(), metadata.getDataType());
         if (getParentObject() instanceof DBFunction) {
             position++;
         }

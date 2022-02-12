@@ -38,7 +38,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import javax.swing.ListSelectionModel;
+import javax.swing.*;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import java.sql.ResultSet;
@@ -68,7 +68,7 @@ public class DatasetEditorModel
     private final List<DatasetEditorModelRow> changedRows = new ArrayList<>();
 
     public DatasetEditorModel(DatasetEditor datasetEditor) throws SQLException {
-        super(datasetEditor.getConnectionHandler());
+        super(datasetEditor.getConnection());
         Project project = getProject();
         this.datasetEditor = WeakRef.of(datasetEditor);
         DBDataset dataset = datasetEditor.getDataset();

@@ -44,7 +44,7 @@ public class StatementExecutionBasicResult extends ExecutionResultBase<Statement
         this.name = name;
         this.executionProcessor = executionProcessor;
         this.updateCount = updateCount;
-        this.connectionHandler = Failsafe.nn(executionProcessor.getConnectionHandler()).getRef();
+        this.connectionHandler = Failsafe.nn(executionProcessor.getConnection()).getRef();
         this.databaseSchema = executionProcessor.getTargetSchema();
     }
 

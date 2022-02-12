@@ -26,8 +26,8 @@ public class SQLConsoleEditorToolbarForm extends DBNFormImpl {
         actionsPanel.add(actionToolbar.getComponent(), BorderLayout.CENTER);
 
         DBConsoleVirtualFile virtualFile = fileEditor.getVirtualFile();
-        ConnectionHandler connectionHandler = virtualFile.getConnectionHandler();
-        DatabaseSession databaseSession = virtualFile.getDatabaseSession();
+        ConnectionHandler connectionHandler = virtualFile.getConnection();
+        DatabaseSession databaseSession = virtualFile.getSession();
         autoCommitLabel.init(project, virtualFile, connectionHandler, databaseSession);
         Disposer.register(this, autoCommitLabel);
     }

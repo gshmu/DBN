@@ -330,10 +330,10 @@ public class DBVirtualObject extends DBObjectImpl implements PsiReference {
 
     @Override
     @NotNull
-    public ConnectionHandler getConnectionHandler() {
+    public ConnectionHandler getConnection() {
         BasePsiElement underlyingPsiElement = Failsafe.nd(getUnderlyingPsiElement());
         DBLanguagePsiFile file = underlyingPsiElement.getFile();
-        ConnectionHandler connectionHandler = file.getConnectionHandler();
+        ConnectionHandler connectionHandler = file.getConnection();
         if (connectionHandler == null) {
             ConnectionManager connectionManager = ConnectionManager.getInstance(getProject());
             return connectionManager.getConnectionBundle().getVirtualConnection(ConnectionId.VIRTUAL_ORACLE);

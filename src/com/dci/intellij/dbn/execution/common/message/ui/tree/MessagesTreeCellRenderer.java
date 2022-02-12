@@ -2,7 +2,7 @@ package com.dci.intellij.dbn.execution.common.message.ui.tree;
 
 import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.common.dispose.StatefulDisposable;
-import com.dci.intellij.dbn.common.file.util.VirtualFileUtil;
+import com.dci.intellij.dbn.common.file.util.VirtualFiles;
 import com.dci.intellij.dbn.common.message.MessageType;
 import com.dci.intellij.dbn.common.util.Commons;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
@@ -66,7 +66,7 @@ public class MessagesTreeCellRenderer extends ColoredTreeCellRenderer {
                 StatementExecutionMessagesFileNode node = (StatementExecutionMessagesFileNode) value;
                 VirtualFile virtualFile = node.getVirtualFile();
 
-                icon = VirtualFileUtil.getIcon(virtualFile);
+                icon = VirtualFiles.getIcon(virtualFile);
                 append(virtualFile.getName(), SimpleTextAttributes.REGULAR_ATTRIBUTES);
                 append(" (" + virtualFile.getPath() + ")", SimpleTextAttributes.GRAY_ATTRIBUTES);
             }
@@ -74,7 +74,7 @@ public class MessagesTreeCellRenderer extends ColoredTreeCellRenderer {
                 ExplainPlanMessagesFileNode node = (ExplainPlanMessagesFileNode) value;
                 VirtualFile virtualFile = node.getVirtualFile();
 
-                icon = VirtualFileUtil.getIcon(virtualFile);
+                icon = VirtualFiles.getIcon(virtualFile);
                 append(virtualFile.getName(), SimpleTextAttributes.REGULAR_ATTRIBUTES);
                 append(" (" + virtualFile.getPath() + ")", SimpleTextAttributes.GRAY_ATTRIBUTES);
 
@@ -94,7 +94,7 @@ public class MessagesTreeCellRenderer extends ColoredTreeCellRenderer {
                             object.getIcon() :
                             object.getObjectType().getIcon();
                     append(object.getQualifiedName(), SimpleTextAttributes.REGULAR_ATTRIBUTES);
-                    connectionHandler = object.getConnectionHandler();
+                    connectionHandler = object.getConnection();
                 }
 
                 if (connectionHandler != null) {

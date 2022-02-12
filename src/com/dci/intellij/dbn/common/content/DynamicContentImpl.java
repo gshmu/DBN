@@ -83,8 +83,8 @@ public abstract class DynamicContentImpl<T extends DynamicContentElement>
 
     @Override
     @NotNull
-    public ConnectionHandler getConnectionHandler() {
-        return Failsafe.nn(getParentEntity().getConnectionHandler());
+    public ConnectionHandler getConnection() {
+        return Failsafe.nn(getParentEntity().getConnection());
     }
 
     @Override
@@ -152,7 +152,7 @@ public abstract class DynamicContentImpl<T extends DynamicContentElement>
             return true;
         }
 
-        ConnectionHandler connectionHandler = getConnectionHandler();
+        ConnectionHandler connectionHandler = this.getConnection();
         if (!isLoaded()) {
             return dependencyAdapter.canConnect(connectionHandler);
         }
@@ -249,7 +249,7 @@ public abstract class DynamicContentImpl<T extends DynamicContentElement>
     public final void loadInBackground() {
         if (shouldLoadInBackground()) {
             set(LOADING_IN_BACKGROUND, true);
-            ConnectionHandler connectionHandler = getConnectionHandler();
+            ConnectionHandler connectionHandler = this.getConnection();
             Progress.background(
                     getProject(),
                     connectionHandler.getMetaLoadTitle(), false,

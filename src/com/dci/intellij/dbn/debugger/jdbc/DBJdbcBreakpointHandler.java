@@ -236,7 +236,7 @@ public class DBJdbcBreakpointHandler extends DBBreakpointHandler<DBJdbcDebugProc
                 VirtualFile virtualFile = getVirtualFile(lineBreakpoint);
                 if (virtualFile != null) {
                     FileConnectionMappingManager connectionMappingManager = FileConnectionMappingManager.getInstance(project);
-                    ConnectionHandler connectionHandler = connectionMappingManager.getConnectionHandler(virtualFile);
+                    ConnectionHandler connectionHandler = connectionMappingManager.getConnection(virtualFile);
 
                     if (connectionHandler == getDebugProcess().getConnectionHandler()) {
                         setBreakpointId(lineBreakpoint, null);

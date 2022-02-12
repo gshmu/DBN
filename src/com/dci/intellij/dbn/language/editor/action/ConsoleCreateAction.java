@@ -25,7 +25,7 @@ public class ConsoleCreateAction extends DumbAwareProjectAction {
         if (virtualFile instanceof DBConsoleVirtualFile) {
             DBConsoleVirtualFile consoleVirtualFile = (DBConsoleVirtualFile) virtualFile;
         DatabaseConsoleManager consoleManager = DatabaseConsoleManager.getInstance(project);
-            consoleManager.showCreateConsoleDialog(consoleVirtualFile.getConnectionHandler(), consoleType);
+            consoleManager.showCreateConsoleDialog(consoleVirtualFile.getConnection(), consoleType);
         }
     }
     @Override

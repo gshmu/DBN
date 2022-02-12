@@ -24,7 +24,7 @@ public class DatabaseOperationManager extends AbstractProjectComponent {
     }
 
     public void enableConstraint(DBConstraint constraint) throws SQLException {
-        ConnectionHandler connectionHandler = constraint.getConnectionHandler();
+        ConnectionHandler connectionHandler = constraint.getConnection();
         DatabaseInterface.run(true,
                 connectionHandler,
                 (provider, connection) -> {
@@ -39,7 +39,7 @@ public class DatabaseOperationManager extends AbstractProjectComponent {
     }
 
     public void disableConstraint(DBConstraint constraint) throws SQLException {
-        ConnectionHandler connectionHandler = constraint.getConnectionHandler();
+        ConnectionHandler connectionHandler = constraint.getConnection();
         DatabaseInterface.run(true,
                 connectionHandler,
                 (provider, connection) -> {
@@ -54,7 +54,7 @@ public class DatabaseOperationManager extends AbstractProjectComponent {
     }
 
     public void enableTrigger(DBTrigger trigger) throws SQLException {
-        ConnectionHandler connectionHandler = trigger.getConnectionHandler();
+        ConnectionHandler connectionHandler = trigger.getConnection();
         DatabaseInterface.run(true,
                 connectionHandler,
                 (provider, connection) -> {
@@ -68,7 +68,7 @@ public class DatabaseOperationManager extends AbstractProjectComponent {
     }
 
     public void disableTrigger(DBTrigger trigger) throws SQLException {
-        ConnectionHandler connectionHandler = trigger.getConnectionHandler();
+        ConnectionHandler connectionHandler = trigger.getConnection();
         DatabaseInterface.run(true,
                 connectionHandler,
                 (provider, connection) -> {

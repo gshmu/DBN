@@ -7,11 +7,7 @@ import com.dci.intellij.dbn.common.thread.Timeout;
 import com.dci.intellij.dbn.common.util.Lists;
 import com.dci.intellij.dbn.common.util.Strings;
 import com.dci.intellij.dbn.common.util.Unsafe;
-import com.dci.intellij.dbn.connection.ConnectionCache;
-import com.dci.intellij.dbn.connection.ConnectionHandler;
-import com.dci.intellij.dbn.connection.ConnectionId;
-import com.dci.intellij.dbn.connection.ConnectionManager;
-import com.dci.intellij.dbn.connection.ConnectionProvider;
+import com.dci.intellij.dbn.connection.*;
 import com.dci.intellij.dbn.language.common.WeakRef;
 import com.dci.intellij.dbn.object.DBSchema;
 import com.dci.intellij.dbn.object.common.DBObject;
@@ -69,7 +65,7 @@ public class DBObjectRef<T extends DBObject> implements Comparable<DBObjectRef<?
         if (parentObj != null) {
             this.parent = parentObj.getRef();
         } else if (!(object instanceof DBVirtualObject)){
-            ConnectionHandler connectionHandler = object.getConnectionHandler();
+            ConnectionHandler connectionHandler = object.getConnection();
             this.connectionId = connectionHandler.getConnectionId();
         }
     }
@@ -407,7 +403,7 @@ public class DBObjectRef<T extends DBObject> implements Comparable<DBObjectRef<?
 
     @Nullable
     @Override
-    public ConnectionHandler getConnectionHandler() {
+    public ConnectionHandler getConnection() {
         return resolveConnection();
     }
 

@@ -87,7 +87,7 @@ public class ObjectQuickFilterForm extends DBNFormImpl {
 
     private void addHeader(DBObjectList<?> objectList) {
         Icon headerIcon = Icons.DATASET_FILTER;
-        ConnectionHandler connectionHandler = objectList.getConnectionHandler();
+        ConnectionHandler connectionHandler = objectList.getConnection();
         DatabaseEntity parentElement = objectList.getParentEntity();
         String headerText = "[" + connectionHandler.getName() + "] " +
                 (parentElement instanceof DBSchema ? (parentElement.getName() + " - ") : "") +

@@ -3,11 +3,7 @@ package com.dci.intellij.dbn.object.impl;
 import com.dci.intellij.dbn.browser.model.BrowserTreeNode;
 import com.dci.intellij.dbn.browser.ui.HtmlToolTipBuilder;
 import com.dci.intellij.dbn.database.common.metadata.def.DBNestedTableMetadata;
-import com.dci.intellij.dbn.object.DBNestedTable;
-import com.dci.intellij.dbn.object.DBNestedTableColumn;
-import com.dci.intellij.dbn.object.DBSchema;
-import com.dci.intellij.dbn.object.DBTable;
-import com.dci.intellij.dbn.object.DBType;
+import com.dci.intellij.dbn.object.*;
 import com.dci.intellij.dbn.object.common.DBObjectImpl;
 import com.dci.intellij.dbn.object.lookup.DBObjectRef;
 import com.dci.intellij.dbn.object.type.DBObjectType;
@@ -32,7 +28,7 @@ public class DBNestedTableImpl extends DBObjectImpl<DBNestedTableMetadata> imple
 
         String typeOwner = metadata.getDeclaredTypeOwner();
         String typeName = metadata.getDeclaredTypeName();
-        DBSchema schema = getConnectionHandler().getObjectBundle().getSchema(typeOwner);
+        DBSchema schema = this.getConnection().getObjectBundle().getSchema(typeOwner);
         typeRef = DBObjectRef.of(schema == null ? null : schema.getType(typeName));
         // todo !!!
         return name;

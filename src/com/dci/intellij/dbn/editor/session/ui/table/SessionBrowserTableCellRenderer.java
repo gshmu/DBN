@@ -31,7 +31,7 @@ public class SessionBrowserTableCellRenderer extends BasicTableCellRenderer {
             boolean isLoading = sessionBrowserTable.isLoading();
 
             boolean isCaretRow = table.getCellSelectionEnabled() && table.getSelectedRow() == rowIndex && table.getSelectedRowCount() == 1;
-            boolean isConnected = Failsafe.nn(sessionBrowserTable.getSessionBrowser().getConnectionHandler()).isConnected();
+            boolean isConnected = Failsafe.nn(sessionBrowserTable.getSessionBrowser().getConnection()).isConnected();
 
             SessionBrowserTextAttributes attributes = getAttributes();
             SimpleTextAttributes textAttributes = attributes.getActiveSession(isCaretRow);

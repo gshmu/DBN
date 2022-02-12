@@ -83,7 +83,7 @@ public class DebugStatementEditorAction extends DumbAwareProjectAction {
             if (virtualFile != null) {
                 enabled = DatabaseDebuggerManager.isDebugConsole(virtualFile);
 
-                ConnectionHandler connectionHandler = connectionMappingManager.getConnectionHandler(virtualFile);
+                ConnectionHandler connectionHandler = connectionMappingManager.getConnection(virtualFile);
                 if (DatabaseFeature.DEBUGGING.isSupported(connectionHandler)){
                     visible = true;
                     if (!enabled) {

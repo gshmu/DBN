@@ -60,7 +60,7 @@ public class MethodExecutionInput extends LocalExecutionInput implements Compara
 
 
         if (DatabaseFeature.DATABASE_LOGGING.isSupported(method)) {
-            ConnectionHandler connectionHandler = Failsafe.nn(method.getConnectionHandler());
+            ConnectionHandler connectionHandler = Failsafe.nn(method.getConnection());
             getOptions().set(ExecutionOption.ENABLE_LOGGING, connectionHandler.isLoggingEnabled());
         }
     }
@@ -84,7 +84,7 @@ public class MethodExecutionInput extends LocalExecutionInput implements Compara
             @Nullable
             @Override
             public ConnectionHandler getTargetConnection() {
-                return getConnectionHandler();
+                return MethodExecutionInput.this.getConnection();
             }
 
             @Nullable
@@ -97,9 +97,9 @@ public class MethodExecutionInput extends LocalExecutionInput implements Compara
 
     @Nullable
     @Override
-    public ConnectionHandler getConnectionHandler() {
+    public ConnectionHandler getConnection() {
         DBMethod method = getMethod();
-        return method == null ? this.method == null ? null : this.method.getConnectionHandler() : method.getConnectionHandler();
+        return method == null ? this.method == null ? null : this.method.getConnection() : method.getConnection();
     }
 
     @Override
@@ -114,7 +114,7 @@ public class MethodExecutionInput extends LocalExecutionInput implements Compara
 
     @Override
     public boolean isSchemaSelectionAllowed() {
-        return DatabaseFeature.AUTHID_METHOD_EXECUTION.isSupported(getConnectionHandler());
+        return DatabaseFeature.AUTHID_METHOD_EXECUTION.isSupported(getConnection());
     }
 
     @Override
@@ -146,7 +146,7 @@ public class MethodExecutionInput extends LocalExecutionInput implements Compara
     }
 
     public boolean isInactive() {
-        ConnectionHandler connectionHandler = getConnectionHandler();
+        ConnectionHandler connectionHandler = getConnection();
         return connectionHandler != null && !connectionHandler.getSettings().isActive();
     }
 

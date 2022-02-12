@@ -95,7 +95,7 @@ public class DBSchemaImpl extends DBObjectImpl<DBSchemaMetadata> implements DBSc
         set(PUBLIC_SCHEMA, metadata.isPublic());
         set(SYSTEM_SCHEMA, metadata.isSystem());
         set(EMPTY_SCHEMA, metadata.isEmpty());
-        set(USER_SCHEMA, Strings.equalsIgnoreCase(name, getConnectionHandler().getUserName()));
+        set(USER_SCHEMA, Strings.equalsIgnoreCase(name, this.getConnection().getUserName()));
         return name;
     }
 
@@ -442,7 +442,7 @@ public class DBSchemaImpl extends DBObjectImpl<DBSchemaMetadata> implements DBSc
     @Override
     public void refreshObjectsStatus() throws SQLException {
         Set<BrowserTreeNode> refreshNodes = resetObjectsStatus();
-        ConnectionHandler connectionHandler = getConnectionHandler();
+        ConnectionHandler connectionHandler = this.getConnection();
 
         DatabaseInterface.run(true,
                 connectionHandler,

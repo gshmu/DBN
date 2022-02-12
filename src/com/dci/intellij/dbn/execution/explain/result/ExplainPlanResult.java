@@ -66,7 +66,7 @@ public class ExplainPlanResult extends ExecutionResultBase<ExplainPlanResultForm
 
     public ExplainPlanResult(ExecutablePsiElement executablePsiElement, String errorMessage) {
         DBLanguagePsiFile psiFile = executablePsiElement.getFile();
-        ConnectionHandler connectionHandler = Failsafe.nn(psiFile.getConnectionHandler());
+        ConnectionHandler connectionHandler = Failsafe.nn(psiFile.getConnection());
         this.connectionHandler = connectionHandler.getRef();
         this.currentSchema = psiFile.getSchemaId();
         this.virtualFile = psiFile.getVirtualFile();

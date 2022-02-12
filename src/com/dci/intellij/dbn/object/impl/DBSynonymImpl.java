@@ -38,7 +38,7 @@ public class DBSynonymImpl extends DBSchemaObjectImpl<DBSynonymMetadata> impleme
         String objectName = metadata.getUnderlyingObjectName();
         DBObjectType objectType = DBObjectType.get(metadata.getUnderlyingObjectType(), DBObjectType.ANY);
 
-        ConnectionHandler connectionHandler = getConnectionHandler();
+        ConnectionHandler connectionHandler = this.getConnection();
         DBSchema schema = connectionHandler.getObjectBundle().getSchema(schemaName);
         if (schema != null) {
             DBObjectRef schemaRef = schema.getRef();

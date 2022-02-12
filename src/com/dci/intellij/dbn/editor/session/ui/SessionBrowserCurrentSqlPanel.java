@@ -134,7 +134,7 @@ public class SessionBrowserCurrentSqlPanel extends DBNFormImpl {
 
     @NotNull
     private ConnectionHandler getConnectionHandler() {
-        return getSessionBrowser().getConnectionHandler();
+        return getSessionBrowser().getConnection();
     }
 
     public DBLanguagePsiFile getPsiFile() {

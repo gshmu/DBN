@@ -14,11 +14,7 @@ import com.intellij.openapi.Disposable;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.List;
-import java.util.Objects;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import static com.dci.intellij.dbn.common.util.Commons.nvl;
@@ -42,16 +38,18 @@ public class DatabaseSessionBundle extends StatefulDisposable.Base implements Di
         mainSession = new DatabaseSession(SessionId.MAIN, "Main", ConnectionType.MAIN, connection);
         sessions.add(mainSession);
 
-        if (DatabaseFeature.DEBUGGING.isSupported(connection)) {
-            debugSession = new DatabaseSession(SessionId.DEBUG, "Debug", ConnectionType.DEBUG, connection);
-            debuggerSession = new DatabaseSession(SessionId.DEBUGGER, "Debugger", ConnectionType.DEBUGGER, connection);
-            sessions.add(debugSession);
-            sessions.add(debuggerSession);
-        }
+        if (!connection.isVirtual()) {
+            if (DatabaseFeature.DEBUGGING.isSupported(connection)) {
+                debugSession = new DatabaseSession(SessionId.DEBUG, "Debug", ConnectionType.DEBUG, connection);
+                debuggerSession = new DatabaseSession(SessionId.DEBUGGER, "Debugger", ConnectionType.DEBUGGER, connection);
+                sessions.add(debugSession);
+                sessions.add(debuggerSession);
+            }
 
-        poolSession = new DatabaseSession(SessionId.POOL, "Pool", ConnectionType.POOL, connection);
-        sessions.add(poolSession);
-        rebuildIndex();
+            poolSession = new DatabaseSession(SessionId.POOL, "Pool", ConnectionType.POOL, connection);
+            sessions.add(poolSession);
+            rebuildIndex();
+        }
     }
 
     private void rebuildIndex() {
@@ -93,6 +91,10 @@ public class DatabaseSessionBundle extends StatefulDisposable.Base implements Di
     @Nullable
     public DatabaseSession getSession(String name) {
         return first(sessions, session -> Objects.equals(session.getName(), name));
+    }
+
+    public boolean hasSession(SessionId id) {
+        return index.contains(id);
     }
 
     @NotNull

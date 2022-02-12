@@ -41,7 +41,7 @@ public class DBDatasetVirtualFile extends DBContentVirtualFile {
     }
 
     @Override
-    public DatabaseSession getDatabaseSession() {
-        return getConnectionHandler().getSessionBundle().getMainSession();
+    public DatabaseSession getSession() {
+        return this.getConnection().getSessionBundle().getMainSession();
     }
 }

@@ -111,7 +111,7 @@ class DBObjectRelationListImpl<T extends DBObjectRelation> extends DynamicConten
             DBObject object = (DBObject) getParentEntity();
             return getName() + " of " + object.getQualifiedNameWithType();
         }
-       return getName() + " from " + getConnectionHandler().getName() ;
+       return getName() + " from " + this.getConnection().getName() ;
     }
 
     @Override

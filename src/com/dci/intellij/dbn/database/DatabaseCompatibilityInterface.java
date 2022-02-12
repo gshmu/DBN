@@ -25,7 +25,7 @@ public abstract class DatabaseCompatibilityInterface implements DatabaseInterfac
 
     @NotNull
     public static DatabaseCompatibilityInterface getInstance(DBObject object) {
-        ConnectionHandler connectionHandler = object.getConnectionHandler();
+        ConnectionHandler connectionHandler = object.getConnection();
         return getInstance(connectionHandler);
     }
 

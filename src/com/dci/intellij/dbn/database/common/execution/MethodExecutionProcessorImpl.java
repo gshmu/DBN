@@ -155,7 +155,7 @@ public abstract class MethodExecutionProcessorImpl implements MethodExecutionPro
 
     @NotNull
     private ConnectionHandler getConnectionHandler() {
-        return Failsafe.nn(getMethod().getConnectionHandler());
+        return Failsafe.nn(getMethod().getConnection());
     }
 
     protected boolean isQuery() {

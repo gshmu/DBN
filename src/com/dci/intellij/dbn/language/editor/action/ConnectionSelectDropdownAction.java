@@ -38,7 +38,7 @@ public class ConnectionSelectDropdownAction extends DBNComboBoxAction implements
         VirtualFile virtualFile = Lookup.getVirtualFile(e);
         if (project != null && virtualFile != null) {
             FileConnectionMappingManager connectionMappingManager = FileConnectionMappingManager.getInstance(project);
-            ConnectionHandler activeConnection = connectionMappingManager.getConnectionHandler(virtualFile);
+            ConnectionHandler activeConnection = connectionMappingManager.getConnection(virtualFile);
             if (activeConnection != null) {
                 text = activeConnection.getQualifiedName();
                 icon = activeConnection.getIcon();

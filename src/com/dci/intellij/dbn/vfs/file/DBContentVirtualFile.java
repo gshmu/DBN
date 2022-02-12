@@ -27,7 +27,7 @@ import com.intellij.openapi.vfs.VirtualFile;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import javax.swing.Icon;
+import javax.swing.*;
 import java.io.IOException;
 import java.io.InputStream;
 
@@ -98,8 +98,8 @@ public abstract class DBContentVirtualFile extends DBVirtualFileImpl implements 
 
     @NotNull
     @Override
-    public ConnectionHandler getConnectionHandler() {
-        return getMainDatabaseFile().getConnectionHandler();
+    public ConnectionHandler getConnection() {
+        return getMainDatabaseFile().getConnection();
     }
 
     public DBLanguageDialect getLanguageDialect() {

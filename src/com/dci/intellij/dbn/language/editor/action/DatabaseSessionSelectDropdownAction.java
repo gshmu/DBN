@@ -31,7 +31,7 @@ public class DatabaseSessionSelectDropdownAction extends DBNComboBoxAction imple
         DefaultActionGroup actionGroup = new DefaultActionGroup();
         VirtualFile virtualFile = Lookup.getVirtualFile(component);
         if (virtualFile != null) {
-            ConnectionHandler connectionHandler = FileConnectionMappingManager.getInstance(project).getConnectionHandler(virtualFile);
+            ConnectionHandler connectionHandler = FileConnectionMappingManager.getInstance(project).getConnection(virtualFile);
             if (Failsafe.check(connectionHandler) && !connectionHandler.isVirtual()) {
                 DatabaseSessionBundle sessionBundle = connectionHandler.getSessionBundle();
 
@@ -79,7 +79,7 @@ public class DatabaseSessionSelectDropdownAction extends DBNComboBoxAction imple
 
         if (project != null && virtualFile != null) {
             FileConnectionMappingManager mappingManager = FileConnectionMappingManager.getInstance(project);
-            ConnectionHandler connectionHandler = mappingManager.getConnectionHandler(virtualFile);
+            ConnectionHandler connectionHandler = mappingManager.getConnection(virtualFile);
             visible = connectionHandler != null && !connectionHandler.isVirtual() && connectionHandler.getSettings().getDetailSettings().isEnableSessionManagement();
             if (visible) {
                 if (isDebugConsole(virtualFile)) {

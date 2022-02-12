@@ -21,12 +21,8 @@ import com.intellij.util.LocalTimeCounter;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import javax.swing.Icon;
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
+import javax.swing.*;
+import java.io.*;
 import java.nio.charset.Charset;
 
 public class DBDatasetFilterVirtualFile extends DBVirtualFileImpl implements DBParseableVirtualFile {
@@ -39,14 +35,14 @@ public class DBDatasetFilterVirtualFile extends DBVirtualFileImpl implements DBP
         this.datasetRef = DBObjectRef.of(dataset);
         this.content = content;
         name = dataset.getName();
-        ConnectionHandler connectionHandler = Failsafe.nn(getConnectionHandler());
+        ConnectionHandler connectionHandler = Failsafe.nn(getConnection());
         setCharset(connectionHandler.getSettings().getDetailSettings().getCharset());
         putUserData(PARSE_ROOT_ID_KEY, "subquery");
     }
 
     @Override
     public PsiFile initializePsiFile(DatabaseFileViewProvider fileViewProvider, Language language) {
-        ConnectionHandler connectionHandler = Failsafe.nn(getConnectionHandler());
+        ConnectionHandler connectionHandler = Failsafe.nn(getConnection());
         DBLanguageDialect languageDialect = connectionHandler.resolveLanguageDialect(language);
         return languageDialect == null ? null : fileViewProvider.initializePsiFile(languageDialect);
     }
@@ -69,7 +65,7 @@ public class DBDatasetFilterVirtualFile extends DBVirtualFileImpl implements DBP
 
     @Override
     @NotNull
-    public ConnectionHandler getConnectionHandler() {
+    public ConnectionHandler getConnection() {
         return Failsafe.nn(datasetRef.resolveConnection());
     }
 
@@ -77,13 +73,13 @@ public class DBDatasetFilterVirtualFile extends DBVirtualFileImpl implements DBP
     @Override
     public SchemaId getSchemaId() {
         DBDataset dataset = getDataset();
-        return dataset == null ? null : dataset.getSchemaIdentifier();
+        return dataset == null ? null : dataset.getSchemaId();
     }
 
     @Nullable
     @Override
-    public DatabaseSession getDatabaseSession() {
-        return getConnectionHandler().getSessionBundle().getMainSession();
+    public DatabaseSession getSession() {
+        return getConnection().getSessionBundle().getMainSession();
     }
 
     @Override

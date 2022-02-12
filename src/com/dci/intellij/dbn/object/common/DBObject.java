@@ -28,7 +28,7 @@ import com.dci.intellij.dbn.vfs.file.DBObjectVirtualFile;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import javax.swing.Icon;
+import javax.swing.*;
 import java.sql.SQLException;
 import java.util.List;
 
@@ -71,7 +71,7 @@ public interface DBObject extends
     @Nullable
     DBUser getOwner();
     DBSchema getSchema();
-    SchemaId getSchemaIdentifier();
+    SchemaId getSchemaId();
 
     DBObject getParentObject();
 

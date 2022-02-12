@@ -153,7 +153,7 @@ public class MethodExecutionInputArgumentForm extends DBNFormImpl {
             public List<String> getSecondaryValues() {
                 DBArgument argument = getArgument();
                 if (argument != null) {
-                    ConnectionHandler connectionHandler = argument.getConnectionHandler();
+                    ConnectionHandler connectionHandler = argument.getConnection();
                     MethodExecutionManager executionManager = MethodExecutionManager.getInstance(argument.getProject());
                     MethodExecutionArgumentValue argumentValue = executionManager.getArgumentValuesHistory().getArgumentValue(connectionHandler.getConnectionId(), argument.getName(), false);
                     if (argumentValue != null) {

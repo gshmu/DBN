@@ -42,7 +42,7 @@ public abstract class DBLanguage<D extends DBLanguageDialect> extends Language i
 
     public D getLanguageDialect(Project project, VirtualFile virtualFile) {
         FileConnectionMappingManager connectionMappingManager = FileConnectionMappingManager.getInstance(project);
-        ConnectionHandler connectionHandler = connectionMappingManager.getConnectionHandler(virtualFile);
+        ConnectionHandler connectionHandler = connectionMappingManager.getConnection(virtualFile);
         if (connectionHandler != null) {
             return (D) connectionHandler.getLanguageDialect(this);
         }

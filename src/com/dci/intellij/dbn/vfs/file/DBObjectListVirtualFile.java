@@ -19,7 +19,7 @@ import com.intellij.openapi.vfs.VirtualFile;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import javax.swing.Icon;
+import javax.swing.*;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -46,8 +46,8 @@ public class DBObjectListVirtualFile<T extends DBObjectList> extends DBVirtualFi
 
     @Override
     @NotNull
-    public ConnectionHandler getConnectionHandler() {
-        return objectList.getConnectionHandler();
+    public ConnectionHandler getConnection() {
+        return objectList.getConnection();
     }
 
     @Nullable
@@ -63,8 +63,8 @@ public class DBObjectListVirtualFile<T extends DBObjectList> extends DBVirtualFi
 
     @Nullable
     @Override
-    public DatabaseSession getDatabaseSession() {
-        return getConnectionHandler().getSessionBundle().getPoolSession();
+    public DatabaseSession getSession() {
+        return this.getConnection().getSessionBundle().getPoolSession();
     }
 
     /*********************************************************
@@ -105,7 +105,7 @@ public class DBObjectListVirtualFile<T extends DBObjectList> extends DBVirtualFi
 
             if (parent instanceof DBObjectBundle) {
                 DBObjectBundle objectBundle = (DBObjectBundle) parent;
-                return objectBundle.getConnectionHandler().getPsiDirectory().getVirtualFile();
+                return objectBundle.getConnection().getPsiDirectory().getVirtualFile();
             }
         }
 

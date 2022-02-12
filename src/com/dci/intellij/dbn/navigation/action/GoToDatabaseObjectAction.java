@@ -184,7 +184,7 @@ public class GoToDatabaseObjectAction extends GotoActionBase implements DumbAwar
                 @NotNull Project project,
                 @NotNull DBSchema object) {
 
-            showLookupPopup(e, project, object.getConnectionHandler(), object);
+            showLookupPopup(e, project, object.getConnection(), object);
             latestSchemaName = object.getName();
         }
     }

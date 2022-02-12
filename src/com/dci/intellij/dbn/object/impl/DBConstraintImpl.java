@@ -27,7 +27,7 @@ import com.dci.intellij.dbn.object.type.DBObjectType;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import javax.swing.Icon;
+import javax.swing.*;
 import java.sql.SQLException;
 import java.util.Collections;
 import java.util.LinkedList;
@@ -71,7 +71,7 @@ public class DBConstraintImpl extends DBSchemaObjectImpl<DBConstraintMetadata> i
             String fkOwner = metadata.getFkConstraintOwner();
             String fkName = metadata.getFkConstraintName();
 
-            ConnectionHandler connectionHandler = getConnectionHandler();
+            ConnectionHandler connectionHandler = this.getConnection();
             DBSchema schema = connectionHandler.getObjectBundle().getSchema(fkOwner);
             if (schema != null) {
                 DBObjectRef<DBSchema> schemaRef = schema.getRef();

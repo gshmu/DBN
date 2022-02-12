@@ -38,7 +38,7 @@ import org.jetbrains.annotations.Nullable;
 import java.util.List;
 import java.util.Objects;
 
-import static com.dci.intellij.dbn.common.file.util.VirtualFileUtil.*;
+import static com.dci.intellij.dbn.common.file.util.VirtualFiles.*;
 import static com.dci.intellij.dbn.common.message.MessageCallback.when;
 import static com.dci.intellij.dbn.common.options.setting.SettingsSupport.*;
 
@@ -63,7 +63,7 @@ public class DatabaseConsoleManager extends AbstractProjectComponent implements 
     }
 
     public void showRenameConsoleDialog(@NotNull DBConsole console) {
-        ConnectionHandler connectionHandler = console.getConnectionHandler();
+        ConnectionHandler connectionHandler = console.getConnection();
         showCreateRenameConsoleDialog(
                 connectionHandler,
                 console,
@@ -101,7 +101,7 @@ public class DatabaseConsoleManager extends AbstractProjectComponent implements 
     public void renameConsole(@NotNull DBConsole console, String newName) {
         String oldName = console.getName();
         if (!Objects.equals(oldName, newName)) {
-            ConnectionHandler connectionHandler = console.getConnectionHandler();
+            ConnectionHandler connectionHandler = console.getConnection();
             DatabaseConsoleBundle consoleBundle = connectionHandler.getConsoleBundle();
 
             DBConsoleVirtualFile virtualFile = console.getVirtualFile();
@@ -121,7 +121,7 @@ public class DatabaseConsoleManager extends AbstractProjectComponent implements 
                         "Are you sure you want to delete the console?",
                 Messages.OPTIONS_YES_NO, 0,
                 option -> when(option == 0, () -> {
-                    ConnectionHandler connectionHandler = console.getConnectionHandler();
+                    ConnectionHandler connectionHandler = console.getConnection();
                     DatabaseConsoleBundle consoleBundle = connectionHandler.getConsoleBundle();
 
                     DBConsoleVirtualFile virtualFile = console.getVirtualFile();
@@ -155,7 +155,7 @@ public class DatabaseConsoleManager extends AbstractProjectComponent implements 
                 List<DBConsole> consoles = connectionHandler.getConsoleBundle().getConsoles();
                 for (DBConsole console : consoles) {
                     DBConsoleVirtualFile virtualFile = console.getVirtualFile();
-                    if (virtualFile.getDatabaseSession() == session) {
+                    if (virtualFile.getSession() == session) {
                         DatabaseSession mainSession = connectionHandler.getSessionBundle().getMainSession();
                         virtualFile.setDatabaseSession(mainSession);
                     }
@@ -185,7 +185,7 @@ public class DatabaseConsoleManager extends AbstractProjectComponent implements 
                 connectionElement.addContent(consoleElement);
 
                 DatabaseSession databaseSession = Commons.nvl(
-                        virtualFile.getDatabaseSession(),
+                        virtualFile.getSession(),
                         connectionHandler.getSessionBundle().getMainSession());
 
                 consoleElement.setAttribute("name", console.getName());

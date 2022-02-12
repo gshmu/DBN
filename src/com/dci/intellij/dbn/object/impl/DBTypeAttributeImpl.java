@@ -29,7 +29,7 @@ public class DBTypeAttributeImpl extends DBObjectImpl<DBTypeAttributeMetadata> i
     protected String initObject(DBTypeAttributeMetadata metadata) throws SQLException {
         String name = metadata.getAttributeName();
         position = metadata.getPosition();
-        dataType = DBDataType.get(getConnectionHandler(), metadata.getDataType());
+        dataType = DBDataType.get(this.getConnection(), metadata.getDataType());
         return name;
     }
 

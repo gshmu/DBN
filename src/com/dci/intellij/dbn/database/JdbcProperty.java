@@ -49,11 +49,11 @@ public enum JdbcProperty implements Property.IntBase {
     }
 
     public boolean isSupported(@Nullable ConnectionProvider connectionProvider) {
-        return connectionProvider != null && isSupported(connectionProvider.getConnectionHandler());
+        return connectionProvider != null && isSupported(connectionProvider.getConnection());
     }
 
     public boolean isSupported(@Nullable DBObject object) {
-        return Failsafe.check(object) && isSupported(object.getConnectionHandler());
+        return Failsafe.check(object) && isSupported(object.getConnection());
     }
     public boolean isSupported(@Nullable ConnectionHandler connectionHandler) {
         if (Failsafe.check(connectionHandler)) {

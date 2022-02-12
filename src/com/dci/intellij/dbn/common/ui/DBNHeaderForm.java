@@ -75,7 +75,7 @@ public class DBNHeaderForm extends DBNFormImpl{
     }
 
     public void update(@NotNull DBObject object) {
-        ConnectionHandler connectionHandler = object.getConnectionHandler();
+        ConnectionHandler connectionHandler = object.getConnection();
 
         String connectionName = connectionHandler.getName();
         objectLabel.setText("[" + connectionName + "] " + object.getQualifiedName());
@@ -101,7 +101,7 @@ public class DBNHeaderForm extends DBNFormImpl{
     }
 
     private void updateBorderAndBackground(ConnectionProvider connectionProvider) {
-        ConnectionHandler connectionHandler = connectionProvider.getConnectionHandler();
+        ConnectionHandler connectionHandler = connectionProvider.getConnection();
         Color background = null;
         if (connectionHandler != null) {
             Project project = connectionHandler.getProject();

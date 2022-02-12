@@ -146,7 +146,7 @@ public class SQLConsoleOpenAction extends DumbAwareProjectAction {
                 DatabaseConsoleManager databaseConsoleManager = DatabaseConsoleManager.getInstance(connectionHandler.getProject());
                 databaseConsoleManager.showCreateConsoleDialog(connectionHandler, consoleType);
             } else {
-                ConnectionHandler connectionHandler = Failsafe.nn(console.getConnectionHandler());
+                ConnectionHandler connectionHandler = Failsafe.nn(console.getConnection());
                 FileEditorManager editorManager = FileEditorManager.getInstance(connectionHandler.getProject());
                 editorManager.openFile(console.getVirtualFile(), true);
             }

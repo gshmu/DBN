@@ -219,7 +219,7 @@ public abstract class DBProgramRunner<T extends ExecutionInput> extends GenericP
             ExecutionEnvironment environment,
             Callback callback) {
         Dispatch.run(() -> {
-            ConnectionHandler connectionHandler = executionInput.getConnectionHandler();
+            ConnectionHandler connectionHandler = executionInput.getConnection();
             Project project = environment.getProject();
 
             promptExecutionDialog(executionInput,

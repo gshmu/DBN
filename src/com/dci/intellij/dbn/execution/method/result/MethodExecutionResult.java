@@ -138,7 +138,7 @@ public class MethodExecutionResult extends ExecutionResultBase<MethodExecutionRe
     @Override
     @NotNull
     public ConnectionHandler getConnectionHandler() {
-        return getMethod().getConnectionHandler();
+        return getMethod().getConnection();
     }
 
     @Override

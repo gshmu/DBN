@@ -43,7 +43,7 @@ public class PsiUtil {
             if (virtualFile != null) {
                 FileConnectionMappingManager mappingManager = FileConnectionMappingManager.getInstance(psiElement.getProject());
                 SchemaId schemaId = mappingManager.getDatabaseSchema(virtualFile);
-                ConnectionHandler connectionHandler = mappingManager.getConnectionHandler(virtualFile);
+                ConnectionHandler connectionHandler = mappingManager.getConnection(virtualFile);
                 if (schemaId != null && connectionHandler != null) {
                     currentSchema = connectionHandler.getSchema(schemaId);
                 }

@@ -53,7 +53,7 @@ public class Failsafe {
 
         } else if (object instanceof Project) {
             Project project = (Project) object;
-            return !project.isDisposed();
+            return project != DUMMY_PROJECT && !project.isDisposed();
 
         }
         return true;
