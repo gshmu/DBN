@@ -3,7 +3,7 @@ package com.dci.intellij.dbn.common;
 import com.intellij.openapi.util.IconLoader;
 import com.intellij.ui.RowIcon;
 
-import javax.swing.Icon;
+import javax.swing.*;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -72,6 +72,8 @@ public class Icons {
 
     public static final Icon ACTION_SAVE_TO_SETTINGS = load("/img/action/SaveToSettings.png");
     public static final Icon ACTION_REVERT_FROM_SETTINGS = load("/img/action/RevertFromSettings.png");
+    public static final Icon FOLDER_CONNECTION_ASSOCIATION = load("/img/action/FolderConnectionAssociation.png");
+    public static final Icon FOLDER_SCHEMA_ASSOCIATION = load("/img/action/FolderSchemaAssociation.png");
 
 
     public static final Icon DATABASE_NAVIGATOR = load("/img/project/DatabaseNavigator.png");

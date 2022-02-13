@@ -13,7 +13,7 @@ import org.jetbrains.annotations.NotNull;
 
 import static com.dci.intellij.dbn.connection.ConnectionSelectorOptions.Option.SHOW_VIRTUAL_CONNECTIONS;
 
-public class SchemaSelectAction extends DumbAwareProjectAction {
+public class FolderSchemaLinkAction extends DumbAwareProjectAction {
 
     @Override
     protected void actionPerformed(@NotNull AnActionEvent e, @NotNull Project project) {
@@ -36,6 +36,6 @@ public class SchemaSelectAction extends DumbAwareProjectAction {
         Presentation presentation = e.getPresentation();
         VirtualFile virtualFile = Lookup.getVirtualFile(e);
         presentation.setVisible(isAvailableFor(virtualFile));
-        presentation.setText("Associate Schema");
+        presentation.setText("Associate Schema...");
     }
 }
