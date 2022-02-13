@@ -43,12 +43,7 @@ import javax.swing.event.TableModelEvent;
 import javax.swing.table.JTableHeader;
 import javax.swing.table.TableCellRenderer;
 import javax.swing.table.TableColumn;
-import java.awt.Color;
-import java.awt.Component;
-import java.awt.Font;
-import java.awt.MouseInfo;
-import java.awt.Point;
-import java.awt.Rectangle;
+import java.awt.*;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseMotionAdapter;
 import java.math.BigDecimal;
@@ -230,6 +225,7 @@ public class BasicTable<T extends BasicDataModel<?, ?>> extends DBNTableWithGutt
 
             if (viewport != null) {
                 viewport.setBackground(background);
+                viewport.getParent().setBackground(background);
                 GUIUtil.repaint(viewport);
             }
         });
