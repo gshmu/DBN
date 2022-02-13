@@ -25,19 +25,18 @@ import com.intellij.openapi.actionSystem.ActionPopupMenu;
 import com.intellij.ui.PopupMenuListenerAdapter;
 import org.jetbrains.annotations.NotNull;
 
-import javax.swing.JPopupMenu;
+import javax.swing.*;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.event.PopupMenuEvent;
 import javax.swing.table.TableCellRenderer;
-import java.awt.Component;
+import java.awt.*;
 import java.awt.event.MouseEvent;
-import java.sql.SQLException;
 import java.util.EventObject;
 
 public class SessionBrowserTable extends ResultSetTable<SessionBrowserModel> {
     private final WeakRef<SessionBrowser> sessionBrowser;
 
-    public SessionBrowserTable(DBNComponent parent, SessionBrowser sessionBrowser) throws SQLException {
+    public SessionBrowserTable(DBNComponent parent, SessionBrowser sessionBrowser) {
         super(parent, createModel(sessionBrowser), false, createRecordInfo(sessionBrowser));
         getTableHeader().setDefaultRenderer(new SortableTableHeaderRenderer());
         getTableHeader().addMouseListener(new SessionBrowserTableHeaderMouseListener(this));
