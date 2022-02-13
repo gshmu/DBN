@@ -15,6 +15,7 @@ import com.dci.intellij.dbn.language.common.WeakRef;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Key;
 import com.intellij.openapi.util.UserDataHolder;
+import com.intellij.ui.border.CustomLineBorder;
 import com.intellij.ui.components.JBScrollPane;
 import com.intellij.util.keyFMap.KeyFMap;
 import com.intellij.util.ui.UIUtil;
@@ -22,28 +23,10 @@ import lombok.Getter;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import javax.swing.DefaultListSelectionModel;
-import javax.swing.JScrollPane;
-import javax.swing.JTable;
-import javax.swing.JViewport;
+import javax.swing.*;
 import javax.swing.event.EventListenerList;
-import javax.swing.table.DefaultTableColumnModel;
-import javax.swing.table.JTableHeader;
-import javax.swing.table.TableCellEditor;
-import javax.swing.table.TableCellRenderer;
-import javax.swing.table.TableColumn;
-import javax.swing.table.TableColumnModel;
-import javax.swing.table.TableModel;
-import java.awt.Color;
-import java.awt.Component;
-import java.awt.Container;
-import java.awt.Cursor;
-import java.awt.Dimension;
-import java.awt.Font;
-import java.awt.MouseInfo;
-import java.awt.Point;
-import java.awt.PointerInfo;
-import java.awt.Rectangle;
+import javax.swing.table.*;
+import java.awt.*;
 import java.awt.event.MouseEvent;
 import java.awt.font.FontRenderContext;
 import java.awt.font.LineMetrics;
@@ -86,6 +69,8 @@ public abstract class DBNTable<T extends DBNTableModel> extends JTable implement
             tableHeader.setVisible(false);
             tableHeader.setPreferredSize(new Dimension(-1, 0));
         } else {
+            tableHeader.setBackground(Colors.getPanelBackground());
+            tableHeader.setBorder(new CustomLineBorder(Colors.getTableHeaderGridColor(), 0, 0, 1, 0));
             tableHeader.setDefaultRenderer(new BasicTableHeaderRenderer());
             tableHeader.addMouseMotionListener(Mouse.listener().onDrag(e -> {
                 JBScrollPane scrollPane = getScrollPane();
