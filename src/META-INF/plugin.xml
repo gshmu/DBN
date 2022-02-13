@@ -266,8 +266,8 @@
         </action>
         <group>
             <group id="DBNavigator.ActionGroup.ProjectViewPopup" text="DB Navigator" popup="true">
-                <action id="DBNavigator.Actions.ConnectionContext.SelectConnection" class="com.dci.intellij.dbn.connection.context.action.ConnectionSelectAction" text="Connection Context - Associate Connection" icon="/img/connection/ConnectionConnected.png"/>
-                <action id="DBNavigator.Actions.ConnectionContext.SelectSchema" class="com.dci.intellij.dbn.connection.context.action.SchemaSelectAction" text="Connection Context - Associate Schema" icon="/img/object/Schema.png"/>
+                <action id="DBNavigator.Actions.ConnectionContext.SelectConnection" class="com.dci.intellij.dbn.connection.context.action.FolderConnectionLinkAction" text="Connection Context - Associate Connection" icon="/img/action/FolderConnectionLink.png"/>
+                <action id="DBNavigator.Actions.ConnectionContext.SelectSchema" class="com.dci.intellij.dbn.connection.context.action.FolderSchemaLinkAction" text="Connection Context - Associate Schema" icon="/img/action/FolderSchemaLink.png"/>
             </group>
             <add-to-group group-id="ProjectViewPopupMenu" relative-to-action="CutCopyPasteGroup" anchor="before"/>
         </group>
