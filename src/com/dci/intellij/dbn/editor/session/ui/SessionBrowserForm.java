@@ -4,10 +4,10 @@ import com.dci.intellij.dbn.common.color.Colors;
 import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.common.latent.Latent;
 import com.dci.intellij.dbn.common.thread.Dispatch;
+import com.dci.intellij.dbn.common.ui.Borders;
 import com.dci.intellij.dbn.common.ui.DBNFormImpl;
 import com.dci.intellij.dbn.common.ui.GUIUtil;
 import com.dci.intellij.dbn.common.util.Actions;
-import com.dci.intellij.dbn.common.util.Messages;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.data.find.DataSearchComponent;
 import com.dci.intellij.dbn.data.find.SearchableDataComponent;
@@ -25,24 +25,20 @@ import com.intellij.util.ui.AsyncProcessIcon;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.JScrollPane;
-import javax.swing.JTextField;
+import javax.swing.*;
 import javax.swing.table.TableCellEditor;
-import java.awt.BorderLayout;
-import java.sql.SQLException;
+import java.awt.*;
 
 public class SessionBrowserForm extends DBNFormImpl implements SearchableDataComponent {
     private JPanel actionsPanel;
-    private JScrollPane editorTableScrollPane;
     private JPanel mainPanel;
-    private JLabel loadingLabel;
-    private JPanel loadingIconPanel;
     private JPanel searchPanel;
-    private JLabel loadTimestampLabel;
+    private JPanel loadingIconPanel;
     private JPanel detailsPanel;
     private JPanel editorPanel;
+    private JScrollPane editorTableScrollPane;
+    private JLabel loadingLabel;
+    private JLabel loadTimestampLabel;
     private SessionBrowserTable editorTable;
 
     private final Latent<DataSearchComponent> dataSearchComponent = Latent.basic(() -> {
@@ -53,35 +49,29 @@ public class SessionBrowserForm extends DBNFormImpl implements SearchableDataCom
     });
 
     private final WeakRef<SessionBrowser> sessionBrowser;
-    private SessionBrowserDetailsForm detailsForm;
+    private final SessionBrowserDetailsForm detailsForm;
 
     public SessionBrowserForm(SessionBrowser sessionBrowser) {
         super(sessionBrowser, sessionBrowser.getProject());
         this.sessionBrowser = WeakRef.of(sessionBrowser);
-        try {
-            editorTable = new SessionBrowserTable(this, sessionBrowser);
-            editorTableScrollPane.setViewportView(editorTable);
-            editorTableScrollPane.getViewport().setBackground(Colors.getTableBackground());
-            editorTable.initTableGutter();
-            detailsForm = new SessionBrowserDetailsForm(this, sessionBrowser);
-            detailsPanel.add(detailsForm.getComponent(), BorderLayout.CENTER);
+        editorPanel.setBorder(Borders.lineBorder(Colors.getTableHeaderGridColor(), 1, 0, 0, 0));
+        editorTable = new SessionBrowserTable(this, sessionBrowser);
+        editorTableScrollPane.setViewportView(editorTable);
+        editorTableScrollPane.getViewport().setBackground(Colors.getTableBackground());
+        editorTable.initTableGutter();
+        detailsForm = new SessionBrowserDetailsForm(this, sessionBrowser);
+        detailsPanel.add(detailsForm.getComponent(), BorderLayout.CENTER);
 
-            loadTimestampLabel.setForeground(Colors.HINT_COLOR);
-            refreshLoadTimestamp();
+        loadTimestampLabel.setForeground(Colors.HINT_COLOR);
+        refreshLoadTimestamp();
 
-            ActionToolbar actionToolbar = Actions.createActionToolbar(actionsPanel,"", true, "DBNavigator.ActionGroup.SessionBrowser");
+        ActionToolbar actionToolbar = Actions.createActionToolbar(actionsPanel,"", true, "DBNavigator.ActionGroup.SessionBrowser");
 
-            actionsPanel.add(actionToolbar.getComponent(), BorderLayout.WEST);
-            loadingIconPanel.add(new AsyncProcessIcon("Loading"), BorderLayout.CENTER);
-            hideLoadingHint();
+        actionsPanel.add(actionToolbar.getComponent(), BorderLayout.WEST);
+        loadingIconPanel.add(new AsyncProcessIcon("Loading"), BorderLayout.CENTER);
+        hideLoadingHint();
 
-            DataManager.registerDataProvider(actionsPanel, this);
-        } catch (SQLException e) {
-            Messages.showErrorDialog(
-                    sessionBrowser.getProject(),
-                    "Error",
-                    "Error opening session browser for connection " + getConnectionHandler().getName(), e);
-        }
+        DataManager.registerDataProvider(actionsPanel, this);
     }
 
     @NotNull
