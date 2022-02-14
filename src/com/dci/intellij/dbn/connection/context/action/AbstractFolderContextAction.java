@@ -6,10 +6,11 @@ import com.dci.intellij.dbn.connection.mapping.FileConnectionContextManager;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 public abstract class AbstractFolderContextAction extends DumbAwareProjectAction {
 
-    protected static FileConnectionContext getFileContext(VirtualFile file, @NotNull Project project) {
+    protected static FileConnectionContext getFileContext(@Nullable VirtualFile file, @NotNull Project project) {
         if (file != null && file.isDirectory()) {
             FileConnectionContextManager contextManager = getContextManager(project);
             FileConnectionContext mapping = contextManager.getMapping(file);

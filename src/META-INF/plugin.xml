@@ -260,7 +260,7 @@
     </module-components>
 
     <actions>
-        <action class="com.dci.intellij.dbn.execution.script.action.ExecuteScriptFileAction" id="DBNavigator.Actions.File.ExecuteScript" text="Execute SQL Script" icon="/img/action/ExecuteAsScript.png">
+        <action class="com.dci.intellij.dbn.execution.script.action.ExecuteScriptFileAction" id="DBNavigator.Actions.Editor.ExecuteScript" text="Execute SQL Script" icon="/img/action/ExecuteAsScript.png">
             <!--<add-to-group group-id="ProjectViewPopupMenu" relative-to-action="WeighingNewGroup" anchor="before"/>-->
             <add-to-group group-id="EditorPopupMenu" anchor="first"/>
         </action>
@@ -272,7 +272,7 @@
                 <separator/>
                 <action id="DBNavigator.Actions.ConnectionContext.UnlinkConnection" class="com.dci.intellij.dbn.connection.context.action.FolderConnectionUnlinkAction" text="Connection Context - Remove Connection Association"/>
             </group>
-            <add-to-group group-id="ProjectViewPopupMenu" relative-to-action="CutCopyPasteGroup" anchor="before"/>
+            <add-to-group group-id="ProjectViewPopupMenu" relative-to-action="CutCopyPasteGroup" anchor="after"/>
         </group>
         <group id="DBNavigator.ActionGroup.ConnectionSettings" text="Connections Settings">
             <action id="DBNavigator.Actions.ConnectionSettings.CreateConnection" class="com.dci.intellij.dbn.connection.config.action.CreateConnectionDropdownAction" text="Connection Setup - Create Connection" icon="/img/action/AddMore.png"/>
