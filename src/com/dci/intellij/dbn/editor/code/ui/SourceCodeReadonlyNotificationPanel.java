@@ -34,7 +34,7 @@ public class SourceCodeReadonlyNotificationPanel extends SourceCodeEditorNotific
                                 environmentManager.enableEditing(schemaObject, contentType);
                             })));
         } else {
-            setText("EDITABLE CODE! - Edit-mode enabled (the environment \"" + environmentName + "\" is configured with \"readonly code\")");
+            setText("EDITABLE CODE! - Edit-mode enabled (the environment \"" + environmentName + "\" is configured as \"Readonly Code\")");
             createActionLabel("Cancel Editing", () -> {
                 EnvironmentManager environmentManager = EnvironmentManager.getInstance(project);
                 environmentManager.disableEditing(schemaObject, contentType);

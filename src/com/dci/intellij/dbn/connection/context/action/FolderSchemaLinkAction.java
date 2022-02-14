@@ -41,10 +41,12 @@ public class FolderSchemaLinkAction extends AbstractFolderContextAction {
         boolean visible = isAvailableFor(file, project);
         if (visible) {
             FileConnectionContext mapping = getFileContext(file, project);
-            // TODO
+            if (mapping != null && mapping.getSchemaId() != null) {
+                text = "Change Schema Association...";
+            }
         }
 
         presentation.setVisible(visible);
-        presentation.setText("Associate Schema...");
+        presentation.setText(text);
     }
 }

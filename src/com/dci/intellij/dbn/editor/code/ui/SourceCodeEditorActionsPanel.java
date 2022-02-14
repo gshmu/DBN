@@ -2,6 +2,7 @@ package com.dci.intellij.dbn.editor.code.ui;
 
 import com.dci.intellij.dbn.common.event.ProjectEvents;
 import com.dci.intellij.dbn.common.thread.Dispatch;
+import com.dci.intellij.dbn.common.ui.Borders;
 import com.dci.intellij.dbn.common.ui.DBNFormImpl;
 import com.dci.intellij.dbn.common.util.Actions;
 import com.dci.intellij.dbn.editor.code.SourceCodeEditor;
@@ -16,7 +17,6 @@ import com.intellij.util.ui.AsyncProcessIcon;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import java.awt.BorderLayout;
@@ -32,13 +32,14 @@ public class SourceCodeEditorActionsPanel extends DBNFormImpl{
 
     public SourceCodeEditorActionsPanel(@NotNull SourceCodeEditor sourceCodeEditor) {
         super(sourceCodeEditor, sourceCodeEditor.getProject());
+        this.mainPanel.setBorder(Borders.insetBorder(2));
         this.sourceCodeEditor = WeakRef.of(sourceCodeEditor);
         Editor editor = sourceCodeEditor.getEditor();
-        JComponent editorComponent = editor.getComponent();
+
         ActionToolbar actionToolbar = Actions.createActionToolbar(actionsPanel,"", true, "DBNavigator.ActionGroup.SourceEditor");
-        actionsPanel.add(actionToolbar.getComponent(), BorderLayout.CENTER);
-        loadingIconPanel.add(new AsyncProcessIcon("Loading"), BorderLayout.CENTER);
-        loadingDataPanel.setVisible(false);
+        this.actionsPanel.add(actionToolbar.getComponent(), BorderLayout.CENTER);
+        this.loadingIconPanel.add(new AsyncProcessIcon("Loading"), BorderLayout.CENTER);
+        this.loadingDataPanel.setVisible(false);
 
         ProjectEvents.subscribe(ensureProject(), this, SourceCodeManagerListener.TOPIC, sourceCodeManagerListener);
         Disposer.register(sourceCodeEditor, this);

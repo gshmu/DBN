@@ -38,9 +38,12 @@ import com.intellij.util.ui.AsyncProcessIcon;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import javax.swing.*;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JTextField;
 import javax.swing.table.TableColumn;
-import java.awt.*;
+import java.awt.BorderLayout;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
@@ -57,6 +60,7 @@ public class DatasetEditorForm extends DBNFormImpl implements SearchableDataComp
     private JScrollPane datasetTableScrollPane;
 
     private AutoCommitLabel autoCommitLabel;
+    private JPanel toolbarPanel;
     private DatasetEditorTable datasetEditorTable;
     private final WeakRef<DatasetEditor> datasetEditor;
 
@@ -74,6 +78,8 @@ public class DatasetEditorForm extends DBNFormImpl implements SearchableDataComp
 
         DBDataset dataset = getDataset();
         try {
+            this.toolbarPanel.setBorder(Borders.insetBorder(2));
+
             datasetTablePanel.setBorder(Borders.lineBorder(Colors.getTableHeaderGridColor(), 1, 0, 0, 0));
             datasetEditorTable = new DatasetEditorTable(this, datasetEditor);
             datasetTableScrollPane.setViewportView(datasetEditorTable);

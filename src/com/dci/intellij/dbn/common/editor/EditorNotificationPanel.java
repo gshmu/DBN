@@ -14,9 +14,15 @@ import com.intellij.util.ui.PlatformColors;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 
-import javax.swing.*;
+import javax.swing.BorderFactory;
+import javax.swing.Icon;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
 import javax.swing.event.HyperlinkEvent;
-import java.awt.*;
+import java.awt.BorderLayout;
+import java.awt.Color;
+import java.awt.Dimension;
+import java.awt.FlowLayout;
 import java.util.UUID;
 
 public class EditorNotificationPanel extends JPanel{
@@ -25,7 +31,10 @@ public class EditorNotificationPanel extends JPanel{
 
     public EditorNotificationPanel(MessageType messageType) {
         super(new BorderLayout());
-        setBorder(BorderFactory.createEmptyBorder(4, 12, 4, 12));
+        setBorder(BorderFactory.createEmptyBorder(2, 8, 2, 8));
+
+        Dimension dimension = getPreferredSize();
+        setPreferredSize(new Dimension((int) dimension.getWidth(), 28));
 
         //setPreferredSize(new Dimension(-1, 32));
 
