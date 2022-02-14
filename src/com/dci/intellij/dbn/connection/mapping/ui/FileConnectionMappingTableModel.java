@@ -10,7 +10,7 @@ import java.util.List;
 import java.util.Objects;
 
 public class FileConnectionMappingTableModel extends DBNMutableTableModel<FileConnectionContext> {
-    public static final String[] COLUMNS = {"File", "Connection", "Environment", "Schema", "Session"};
+    public static final String[] COLUMNS = {"File", "Connection", "Environment", "Schema", "Session", ""};
     private final List<FileConnectionContext> mappings;
 
     public FileConnectionMappingTableModel(List<FileConnectionContext> mappings) {

@@ -1,20 +1,12 @@
 package com.dci.intellij.dbn.common.dispose;
 
-import com.dci.intellij.dbn.common.latent.Latent;
 import com.dci.intellij.dbn.common.list.FilteredList;
-import com.dci.intellij.dbn.common.options.Configuration;
-import com.dci.intellij.dbn.common.thread.Background;
 import com.dci.intellij.dbn.common.thread.Dispatch;
 import com.dci.intellij.dbn.common.ui.GUIUtil;
 import com.dci.intellij.dbn.common.util.Unsafe;
 import com.dci.intellij.dbn.vfs.DBVirtualFile;
 import com.intellij.openapi.Disposable;
-import com.intellij.openapi.components.NamedComponent;
-import com.intellij.openapi.editor.Document;
-import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.util.Disposer;
-import com.intellij.openapi.vfs.VirtualFile;
-import com.intellij.util.ReflectionUtil;
 import com.intellij.util.ui.UIUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.jetbrains.annotations.NotNull;
@@ -22,20 +14,15 @@ import org.jetbrains.annotations.Nullable;
 
 import java.awt.Component;
 import java.awt.Container;
-import java.lang.reflect.Field;
-import java.lang.reflect.Modifier;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.List;
 import java.util.Map;
 import java.util.Timer;
-import java.util.concurrent.ConcurrentHashMap;
 
-import static com.dci.intellij.dbn.common.thread.ThreadMonitor.isBackgroundProcess;
+import static com.dci.intellij.dbn.common.dispose.BackgroundDisposer.queue;
 
 @Slf4j
 public final class SafeDisposer {
-    private static final Map<Class<?>, List<Field>> CLASS_FIELDS = new ConcurrentHashMap<>();
 
     private SafeDisposer() {}
 
@@ -80,15 +67,16 @@ public final class SafeDisposer {
         });
     }
 
-    public static <T extends Disposable> T replace(T oldElement, T newElement, boolean registered) {
+    public static <T> T replace(T oldElement, T newElement, boolean registered) {
         dispose(oldElement, registered, true);
         return newElement;
     }
 
-    public static void dispose(@Nullable Disposable disposable, boolean registered, boolean background) {
-        if (disposable != null) {
-            if (background && !isBackgroundProcess()) {
-                Background.run(() -> dispose(disposable, registered, false));
+    public static void dispose(@Nullable Object object, boolean registered, boolean background) {
+        if (object instanceof Disposable) {
+            Disposable disposable = (Disposable) object;
+            if (background) {
+                queue(() -> dispose(disposable, registered, false));
             } else {
                 dispose(disposable, registered);
             }
@@ -97,8 +85,8 @@ public final class SafeDisposer {
 
     public static void dispose(@Nullable Collection<?> collection, boolean clear, boolean background) {
         if (collection != null) {
-            if (background && !isBackgroundProcess()) {
-                Background.run(() -> dispose(collection, true, false));
+            if (background) {
+                queue(() -> dispose(collection, true, false));
             } else {
                 Collection<?> disposeCollection;
                 if (collection instanceof FilteredList) {
@@ -116,7 +104,7 @@ public final class SafeDisposer {
                         }
                     }
                     if (clear) {
-                        clearCollection(collection);
+                        Nullifier.clearCollection(collection);
                     }
                 }
             }
@@ -125,8 +113,8 @@ public final class SafeDisposer {
 
     public static void dispose(@Nullable Object[] array, boolean registered, boolean background) {
         if (array != null) {
-            if (background && !isBackgroundProcess()) {
-                Background.run(() -> dispose(array, registered, false));
+            if (background) {
+                queue(() -> dispose(array, registered, false));
             } else {
                 for (int i = 0; i < array.length; i++) {
                     Object object = array[i];
@@ -143,16 +131,8 @@ public final class SafeDisposer {
     public static void dispose(@Nullable Map<?, ?> map, boolean background) {
         if (map != null && !map.isEmpty()) {
             dispose(map.values(), true, background);
-            clearMap(map);
+            Nullifier.clearMap(map);
         }
-    }
-
-    public static void clearCollection(Collection<?> collection) {
-        Unsafe.silent(() -> collection.clear());
-    }
-
-    public static void clearMap(Map<?, ?> map) {
-        Unsafe.silent(() -> map.clear());
     }
 
     public static void dispose(@Nullable Component component) {
@@ -187,57 +167,4 @@ public final class SafeDisposer {
         }
     }
 
-    public static void nullify(Object object) {
-        nullify(object, null);
-    }
-
-    public static void nullify(Object object, @Nullable Runnable callback) {
-        try {
-            List<Field> fields = CLASS_FIELDS.computeIfAbsent(object.getClass(), clazz -> ReflectionUtil.collectFields(clazz));
-            for (Field field : fields) {
-                try {
-                    Sticky sticky = field.getAnnotation(Sticky.class);
-                    if (sticky == null) {
-                        field.setAccessible(true);
-                        Object fieldValue = field.get(object);
-                        if ( fieldValue != null) {
-                            if (fieldValue instanceof Collection<?>) {
-                                Collection collection = (Collection) fieldValue;
-                                clearCollection(collection);
-                            } else if (fieldValue instanceof Map) {
-                                Map map = (Map) fieldValue;
-                                clearMap(map);
-                            } else if (fieldValue instanceof Latent){
-                                Latent latent = (Latent) fieldValue;
-                                latent.reset();
-                            } else {
-                                int modifiers = field.getModifiers();
-                                if (!Modifier.isFinal(modifiers) &&
-                                        !Modifier.isStatic(modifiers) &&
-                                        !Modifier.isNative(modifiers) &&
-                                        !Modifier.isTransient(modifiers) &&
-                                        (//fieldValue instanceof Disposable ||
-                                                //fieldValue instanceof Component ||
-                                                fieldValue instanceof Editor ||
-                                                        fieldValue instanceof Document ||
-                                                        fieldValue instanceof VirtualFile ||
-                                                        fieldValue instanceof Configuration ||
-                                                        fieldValue instanceof AutoCloseable ||
-                                                        fieldValue instanceof NamedComponent)) {
-
-                                    field.set(object, null);
-                                }
-                            }
-
-                        }
-                    }
-                } catch (UnsupportedOperationException ignore) {
-                } catch (Throwable e) {
-                    log.error("Failed to nullify field", e);
-                }
-            }
-        } finally {
-            if (callback != null) callback.run();
-        }
-    }
 }

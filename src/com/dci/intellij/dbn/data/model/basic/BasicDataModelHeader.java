@@ -9,10 +9,11 @@ import com.dci.intellij.dbn.data.model.DataModelHeader;
 import com.dci.intellij.dbn.data.type.DBDataType;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 public class BasicDataModelHeader<T extends ColumnInfo> extends StatefulDisposable.Base implements DataModelHeader<T> {
-    private final List<T> columnInfos = new ArrayList<T>();
+    private List<T> columnInfos = new ArrayList<T>();
 
 
     protected void addColumnInfo(T columnInfo) {
@@ -61,7 +62,7 @@ public class BasicDataModelHeader<T extends ColumnInfo> extends StatefulDisposab
      *******************************************************  */
     @Override
     public void disposeInner() {
-        SafeDisposer.dispose(columnInfos, true, false);
+        columnInfos = SafeDisposer.replace(columnInfos, Collections.emptyList(), false);
         nullify();
     }
 }

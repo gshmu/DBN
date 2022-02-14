@@ -30,10 +30,7 @@ public interface DisposableContainer {
 
             @Override
             public void dispose() {
-                for (T disposable : this) {
-                    SafeDisposer.dispose(disposable);
-                }
-                clear();
+                SafeDisposer.dispose(this, true, true);
             }
 
             @Override
@@ -61,10 +58,7 @@ public interface DisposableContainer {
 
             @Override
             public void dispose() {
-                for (T disposable : this) {
-                    SafeDisposer.dispose(disposable);
-                }
-                clear();
+                SafeDisposer.dispose(this, true, true);
             }
 
             @Override
@@ -93,10 +87,7 @@ public interface DisposableContainer {
 
             @Override
             public void dispose() {
-                for (V disposable : values()) {
-                    SafeDisposer.dispose(disposable);
-                }
-                clear();
+                SafeDisposer.dispose(this.values(), true, true);
             }
 
             @Override

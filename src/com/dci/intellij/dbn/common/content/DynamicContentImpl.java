@@ -423,7 +423,7 @@ public abstract class DynamicContentImpl<T extends DynamicContentElement>
     public void disposeInner() {
         if (elements != EMPTY_CONTENT && elements != EMPTY_UNTOUCHED_CONTENT) {
             if (!dependencyAdapter.isSubContent()) {
-                SafeDisposer.dispose(elements, true, false);
+                SafeDisposer.dispose(elements, true, true);
             }
             elements = cast(EMPTY_DISPOSED_CONTENT);
         }

@@ -16,7 +16,8 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
 import org.jetbrains.annotations.NotNull;
 
-import javax.swing.*;
+import javax.swing.Icon;
+import javax.swing.JComponent;
 
 public class ConnectionSelectDropdownAction extends DBNComboBoxAction implements DumbAware {
     private static final String NAME = "DB Connections";
