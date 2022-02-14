@@ -7,6 +7,7 @@ import com.dci.intellij.dbn.connection.SchemaId;
 import com.dci.intellij.dbn.connection.SessionId;
 import com.dci.intellij.dbn.connection.context.ConnectionContextProvider;
 import com.intellij.openapi.vfs.VirtualFile;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 public interface FileConnectionContext extends ConnectionContextProvider, PersistentStateElement {
@@ -24,6 +25,10 @@ public interface FileConnectionContext extends ConnectionContextProvider, Persis
 
     @Nullable
     VirtualFile getFile();
+
+    default boolean isForFile(@NotNull VirtualFile file) {
+        return file.equals(getFile());
+    }
 
     default void setFileUrl(String fileUrl) {
         throw new UnsupportedOperationException();

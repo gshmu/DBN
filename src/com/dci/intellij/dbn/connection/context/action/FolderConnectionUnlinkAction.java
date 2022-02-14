@@ -1,46 +1,47 @@
 package com.dci.intellij.dbn.connection.context.action;
 
 import com.dci.intellij.dbn.common.action.Lookup;
-import com.dci.intellij.dbn.connection.ConnectionSelectorOptions;
+import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.mapping.FileConnectionContext;
 import com.dci.intellij.dbn.connection.mapping.FileConnectionContextManager;
 import com.intellij.openapi.actionSystem.AnActionEvent;
-import com.intellij.openapi.actionSystem.DataContext;
 import com.intellij.openapi.actionSystem.Presentation;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
 import org.jetbrains.annotations.NotNull;
 
-import static com.dci.intellij.dbn.connection.ConnectionSelectorOptions.Option.SHOW_VIRTUAL_CONNECTIONS;
-
-public class FolderConnectionLinkAction extends AbstractFolderContextAction {
+public class FolderConnectionUnlinkAction extends AbstractFolderContextAction {
 
     @Override
     protected void actionPerformed(@NotNull AnActionEvent e, @NotNull Project project) {
         VirtualFile file = Lookup.getVirtualFile(e);
-        if (isAvailableFor(file)) {
-            DataContext dataContext = e.getDataContext();
-            ConnectionSelectorOptions options = ConnectionSelectorOptions.options(SHOW_VIRTUAL_CONNECTIONS);
-
+        if (isAvailableFor(file, project)) {
             FileConnectionContextManager contextManager = getContextManager(project);
-            contextManager.promptConnectionSelector(file, dataContext, options, null);
+            contextManager.removeMapping(file);
         }
     }
 
-    private boolean isAvailableFor(VirtualFile virtualFile) {
-        return virtualFile != null && virtualFile.isDirectory();
+    private boolean isAvailableFor(VirtualFile file, @NotNull Project project) {
+        return getFileContext(file, project) != null;
     }
 
     @Override
     protected void update(@NotNull AnActionEvent e, @NotNull Project project) {
         Presentation presentation = e.getPresentation();
         VirtualFile file = Lookup.getVirtualFile(e);
-        presentation.setVisible(isAvailableFor(file));
-        String text = "Associate Connection...";
+        boolean visible = isAvailableFor(file, project);
+        presentation.setVisible(visible);
+        String text = "Remove Connection Association";
 
-        FileConnectionContext mapping = getFileContext(file, project);
-        if (mapping != null && mapping.getConnection() != null) {
-            text = "Change Connection Association...";
+        if (visible) {
+            FileConnectionContext fileContext = getFileContext(file, project);
+            if (fileContext != null) {
+                ConnectionHandler connection = fileContext.getConnection();
+                if (connection != null) {
+                    text = "Remove Association from \"" + connection.getName() + "\"";
+                }
+            }
+
         }
 
         presentation.setText(text);

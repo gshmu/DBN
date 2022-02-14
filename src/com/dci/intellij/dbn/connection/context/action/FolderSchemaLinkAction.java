@@ -1,8 +1,8 @@
 package com.dci.intellij.dbn.connection.context.action;
 
-import com.dci.intellij.dbn.common.action.DumbAwareProjectAction;
 import com.dci.intellij.dbn.common.action.Lookup;
-import com.dci.intellij.dbn.connection.ConnectionSelectorOptions;
+import com.dci.intellij.dbn.connection.ConnectionHandler;
+import com.dci.intellij.dbn.connection.mapping.FileConnectionContext;
 import com.dci.intellij.dbn.connection.mapping.FileConnectionContextManager;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.actionSystem.DataContext;
@@ -11,31 +11,40 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
 import org.jetbrains.annotations.NotNull;
 
-import static com.dci.intellij.dbn.connection.ConnectionSelectorOptions.Option.SHOW_VIRTUAL_CONNECTIONS;
-
-public class FolderSchemaLinkAction extends DumbAwareProjectAction {
+public class FolderSchemaLinkAction extends AbstractFolderContextAction {
 
     @Override
     protected void actionPerformed(@NotNull AnActionEvent e, @NotNull Project project) {
         VirtualFile file = Lookup.getVirtualFile(e);
-        if (isAvailableFor(file)) {
+        if (isAvailableFor(file, project)) {
             DataContext dataContext = e.getDataContext();
-            ConnectionSelectorOptions options = ConnectionSelectorOptions.options(SHOW_VIRTUAL_CONNECTIONS);
-
-            FileConnectionContextManager contextManager = FileConnectionContextManager.getInstance(project);
+            FileConnectionContextManager contextManager = getContextManager(project);
             contextManager.promptSchemaSelector(file, dataContext, null);
         }
     }
 
-    private boolean isAvailableFor(VirtualFile virtualFile) {
-        return virtualFile != null && virtualFile.isDirectory();
+    private boolean isAvailableFor(VirtualFile file, @NotNull Project project) {
+        FileConnectionContext mapping = getFileContext(file, project);
+        if (mapping != null) {
+            ConnectionHandler connection = mapping.getConnection();
+            return connection != null && !connection.isVirtual();
+        }
+        return false;
     }
 
     @Override
     protected void update(@NotNull AnActionEvent e, @NotNull Project project) {
         Presentation presentation = e.getPresentation();
-        VirtualFile virtualFile = Lookup.getVirtualFile(e);
-        presentation.setVisible(isAvailableFor(virtualFile));
+        VirtualFile file = Lookup.getVirtualFile(e);
+        String text = "Associate Schema...";
+
+        boolean visible = isAvailableFor(file, project);
+        if (visible) {
+            FileConnectionContext mapping = getFileContext(file, project);
+            // TODO
+        }
+
+        presentation.setVisible(visible);
         presentation.setText("Associate Schema...");
     }
 }
