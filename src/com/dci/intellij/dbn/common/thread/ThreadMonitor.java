@@ -93,6 +93,10 @@ public class ThreadMonitor {
         return current().is(ThreadProperty.TIMEOUT);
     }
 
+    public static boolean isDisposerProcess() {
+        return current().is(ThreadProperty.DISPOSER);
+    }
+
     public static boolean isDispatchThread() {
         return ApplicationManager.getApplication().isDispatchThread();
     }

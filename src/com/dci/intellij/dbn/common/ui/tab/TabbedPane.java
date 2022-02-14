@@ -12,7 +12,7 @@ import com.intellij.ui.tabs.impl.JBEditorTabs;
 import lombok.Getter;
 import org.jetbrains.annotations.NotNull;
 
-import javax.swing.*;
+import javax.swing.JComponent;
 
 public class TabbedPane extends JBEditorTabs implements StatefulDisposable {
     @Getter
@@ -61,7 +61,7 @@ public class TabbedPane extends JBEditorTabs implements StatefulDisposable {
         ActionCallback actionCallback = super.removeTab(tabInfo);
         if (disposeComponent && object instanceof Disposable) {
             Disposable disposable = (Disposable) object;
-            Disposer.dispose(disposable);
+            SafeDisposer.dispose(disposable, false, true);
             tabInfo.setObject(null);
         }
         return actionCallback;

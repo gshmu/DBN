@@ -23,7 +23,10 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Disposer;
 import org.jetbrains.annotations.NotNull;
 
-import javax.swing.*;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JTable;
 import java.util.Objects;
 import java.util.concurrent.atomic.AtomicReference;
 
@@ -100,7 +103,7 @@ public class ObjectPropertiesForm extends DBNFormImpl {
                     ((DBNTable<?>) objectPropertiesTable).accommodateColumnsSize();
 
                     GUIUtil.repaint(mainPanel);
-                    SafeDisposer.dispose(oldTableModel);
+                    SafeDisposer.dispose(oldTableModel, false, true);
                 });
 
             });

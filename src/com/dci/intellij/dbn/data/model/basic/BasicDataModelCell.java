@@ -1,7 +1,7 @@
 package com.dci.intellij.dbn.data.model.basic;
 
 import com.dci.intellij.dbn.common.dispose.Failsafe;
-import com.dci.intellij.dbn.common.dispose.SafeDisposer;
+import com.dci.intellij.dbn.common.dispose.Nullifier;
 import com.dci.intellij.dbn.common.locale.Formatter;
 import com.dci.intellij.dbn.common.property.PropertyHolderBase;
 import com.dci.intellij.dbn.data.editor.text.TextContentType;
@@ -147,7 +147,7 @@ public class BasicDataModelCell<
     @Override
     public void dispose() {
         row = null;
-        SafeDisposer.nullify(this);
+        Nullifier.nullify(this);
 
     }
 }
