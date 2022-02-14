@@ -1,6 +1,5 @@
 package com.dci.intellij.dbn.execution.statement;
 
-import com.dci.intellij.dbn.common.dispose.SafeDisposer;
 import com.dci.intellij.dbn.common.dispose.StatefulDisposable;
 import com.dci.intellij.dbn.common.project.ProjectRef;
 import com.dci.intellij.dbn.common.thread.Progress;
@@ -101,6 +100,6 @@ public final class StatementExecutionQueue extends StatefulDisposable.Base {
 
     @Override
     protected void disposeInner() {
-        SafeDisposer.nullify(this);
+        nullify();
     }
 }

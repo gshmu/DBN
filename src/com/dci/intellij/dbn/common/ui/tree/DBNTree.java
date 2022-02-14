@@ -50,11 +50,10 @@ public class DBNTree extends Tree implements DBNComponent {
 
     @Override
     public void setModel(TreeModel treeModel) {
-        TreeModel oldTreeModel = getModel();
+        treeModel = SafeDisposer.replace(getModel(), treeModel, false);
         super.setModel(treeModel);
 
         SafeDisposer.register(this, treeModel);
-        SafeDisposer.dispose(oldTreeModel);
     }
 
     @Nullable

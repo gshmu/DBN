@@ -10,7 +10,8 @@ public enum ThreadProperty implements Property.IntBase {
     CANCELABLE (true),
     BACKGROUND (false),
     PROGRESS   (false),
-    MODAL      (false)
+    MODAL      (false),
+    DISPOSER   (false)
 
 ;
     private final IntMasks masks = new IntMasks(this);

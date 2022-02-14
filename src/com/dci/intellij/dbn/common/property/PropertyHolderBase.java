@@ -2,7 +2,7 @@ package com.dci.intellij.dbn.common.property;
 
 import org.jetbrains.annotations.Nullable;
 
-public abstract class PropertyHolderBase<T extends Property> implements PropertyHolder<T> {
+public abstract class PropertyHolderBase<T extends Property> implements PropertyHolder<T>, Cloneable {
     protected abstract T[] properties();
     protected abstract void change(T property, boolean value);
 
