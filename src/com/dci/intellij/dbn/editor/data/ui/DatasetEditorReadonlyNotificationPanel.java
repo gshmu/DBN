@@ -28,7 +28,7 @@ public class DatasetEditorReadonlyNotificationPanel extends DatasetEditorNotific
                         environmentManager.enableEditing(schemaObject, DBContentType.DATA);
                     })));
         } else {
-            setText("EDITABLE DATA! - Edit-mode enabled (the environment \"" + environmentName + "\" is configured with \"readonly data\")");
+            setText("EDITABLE DATA! - Edit-mode enabled (the environment \"" + environmentName + "\" is configured as \"Readonly Data\")");
             createActionLabel("Cancel Editing", () -> {
                 EnvironmentManager environmentManager = EnvironmentManager.getInstance(project);
                 environmentManager.disableEditing(schemaObject, DBContentType.DATA);

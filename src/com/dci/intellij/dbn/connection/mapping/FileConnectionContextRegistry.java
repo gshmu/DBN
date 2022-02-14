@@ -196,6 +196,13 @@ public class FileConnectionContextRegistry extends StatefulDisposable.Base {
                     file.putUserData(FILE_CONNECTION_MAPPING, mapping);
                 }
             }
+            if (mapping == null) {
+                VirtualFile parent = file.getParent();
+                if (parent != null) {
+                    return getFileConnectionMapping(parent);
+                }
+
+            }
         }
 
         return mapping;
