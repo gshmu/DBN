@@ -1,6 +1,6 @@
 package com.dci.intellij.dbn.connection.resource.ui;
 
-import com.dci.intellij.dbn.common.dispose.DisposableContainer;
+import com.dci.intellij.dbn.common.dispose.DisposableContainers;
 import com.dci.intellij.dbn.common.event.ProjectEvents;
 import com.dci.intellij.dbn.common.thread.Dispatch;
 import com.dci.intellij.dbn.common.ui.Borders;
@@ -33,7 +33,7 @@ public class ResourceMonitorForm extends DBNFormImpl {
     private JPanel detailsPanel;
     private JList<ConnectionHandler> connectionsList;
 
-    private final Map<ConnectionId, ResourceMonitorDetailForm> resourceMonitorForms = DisposableContainer.map(this);
+    private final Map<ConnectionId, ResourceMonitorDetailForm> resourceMonitorForms = DisposableContainers.map(this);
 
     ResourceMonitorForm(ResourceMonitorDialog parentComponent) {
         super(parentComponent);

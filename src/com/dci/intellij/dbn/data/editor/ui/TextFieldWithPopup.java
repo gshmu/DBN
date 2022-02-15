@@ -1,7 +1,7 @@
 package com.dci.intellij.dbn.data.editor.ui;
 
 import com.dci.intellij.dbn.common.color.Colors;
-import com.dci.intellij.dbn.common.dispose.DisposableContainer;
+import com.dci.intellij.dbn.common.dispose.DisposableContainers;
 import com.dci.intellij.dbn.common.project.ProjectRef;
 import com.dci.intellij.dbn.common.ui.KeyUtil;
 import com.dci.intellij.dbn.common.ui.Mouse;
@@ -41,7 +41,7 @@ public class TextFieldWithPopup<T extends JComponent> extends DBNPanelImpl imple
     private final JPanel buttonsPanel;
 
     private @Getter @Setter UserValueHolder<?> userValueHolder;
-    private final List<TextFieldPopupProvider> popupProviders = DisposableContainer.list(this);
+    private final List<TextFieldPopupProvider> popupProviders = DisposableContainers.list(this);
     private final ProjectRef project;
     private T parentComponent;
 

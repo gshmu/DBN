@@ -1,7 +1,7 @@
 package com.dci.intellij.dbn.object.factory.ui.common;
 
 import com.dci.intellij.dbn.common.Icons;
-import com.dci.intellij.dbn.common.dispose.DisposableContainer;
+import com.dci.intellij.dbn.common.dispose.DisposableContainers;
 import com.dci.intellij.dbn.common.ui.DBNFormImpl;
 import com.dci.intellij.dbn.common.ui.GUIUtil;
 import com.dci.intellij.dbn.common.ui.component.DBNComponent;
@@ -29,7 +29,7 @@ public abstract class ObjectListForm<T extends ObjectFactoryInput> extends DBNFo
     private JLabel newLabel;
     private final ConnectionHandlerRef connectionHandler;
 
-    private final List<ObjectFactoryInputForm<T>> inputForms = DisposableContainer.list(this);
+    private final List<ObjectFactoryInputForm<T>> inputForms = DisposableContainers.list(this);
 
     public ObjectListForm(DBNComponent parent, @NotNull ConnectionHandler connectionHandler) {
         super(parent);

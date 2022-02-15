@@ -1,6 +1,6 @@
 package com.dci.intellij.dbn.editor.data.state.sorting.ui;
 
-import com.dci.intellij.dbn.common.dispose.DisposableContainer;
+import com.dci.intellij.dbn.common.dispose.DisposableContainers;
 import com.dci.intellij.dbn.common.ui.DBNFormImpl;
 import com.dci.intellij.dbn.common.ui.DBNHeaderForm;
 import com.dci.intellij.dbn.common.ui.GUIUtil;
@@ -32,7 +32,7 @@ public class DatasetEditorSortingForm extends DBNFormImpl{
     private JPanel headerPanel;
 
     private final DBObjectRef<DBDataset> dataset;
-    private final List<DatasetSortingColumnForm> sortingInstructionForms = DisposableContainer.concurrentList(this);
+    private final List<DatasetSortingColumnForm> sortingInstructionForms = DisposableContainers.concurrentList(this);
     private final SortingState sortingState;
 
 

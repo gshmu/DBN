@@ -2,7 +2,7 @@ package com.dci.intellij.dbn.data.grid.ui.table.resultSet.record;
 
 import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.common.color.Colors;
-import com.dci.intellij.dbn.common.dispose.DisposableContainer;
+import com.dci.intellij.dbn.common.dispose.DisposableContainers;
 import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.common.ui.DBNFormImpl;
 import com.dci.intellij.dbn.common.ui.DBNHeaderForm;
@@ -42,7 +42,7 @@ public class ResultSetRecordViewerForm extends DBNFormImpl {
     private JScrollPane columnsPanelScrollPane;
     private JPanel headerPanel;
 
-    private final List<ResultSetRecordViewerColumnForm> columnForms = DisposableContainer.list(this);
+    private final List<ResultSetRecordViewerColumnForm> columnForms = DisposableContainers.list(this);
 
     private ResultSetTable<?> table;
     private ResultSetDataModelRow<?, ?> row;

@@ -1,6 +1,6 @@
 package com.dci.intellij.dbn.editor.data.filter.ui;
 
-import com.dci.intellij.dbn.common.dispose.DisposableContainer;
+import com.dci.intellij.dbn.common.dispose.DisposableContainers;
 import com.dci.intellij.dbn.common.options.ui.ConfigurationEditorForm;
 import com.dci.intellij.dbn.common.ui.DBNHeaderForm;
 import com.dci.intellij.dbn.common.ui.Fonts;
@@ -31,7 +31,7 @@ import java.util.List;
 import java.util.Map;
 
 public class DatasetFilterForm extends ConfigurationEditorForm<DatasetFilterGroup> implements ListSelectionListener {
-    private final Map<String, ConfigurationEditorForm> filterDetailPanels = DisposableContainer.map(this);
+    private final Map<String, ConfigurationEditorForm> filterDetailPanels = DisposableContainers.map(this);
     private static final String BLANK_PANEL_ID = "BLANK_PANEL";
 
     private JPanel mainPanel;
