@@ -3,7 +3,6 @@ package com.dci.intellij.dbn.data.preview;
 import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.common.action.Lookup;
 import com.dci.intellij.dbn.common.color.Colors;
-import com.dci.intellij.dbn.common.dispose.SafeDisposer;
 import com.dci.intellij.dbn.common.ui.Borders;
 import com.dci.intellij.dbn.common.ui.DBNFormImpl;
 import com.dci.intellij.dbn.common.ui.listener.PopupCloseListener;
@@ -43,6 +42,8 @@ import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.sql.SQLException;
+
+import static com.dci.intellij.dbn.common.dispose.SafeDisposer.replace;
 
 public class LargeValuePreviewPopup extends DBNFormImpl {
     public static final int INITIAL_MAX_SIZE = 4000;
@@ -262,7 +263,7 @@ public class LargeValuePreviewPopup extends DBNFormImpl {
             LargeObjectValue largeObjectValue = (LargeObjectValue) userValue;
             largeObjectValue.release();
         }
-        SafeDisposer.dispose(popup);
+        popup = replace(popup, null, true);
         super.disposeInner();
     }
 

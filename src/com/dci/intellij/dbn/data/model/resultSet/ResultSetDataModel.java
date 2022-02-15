@@ -1,6 +1,7 @@
 package com.dci.intellij.dbn.data.model.resultSet;
 
 import com.dci.intellij.dbn.common.dispose.Failsafe;
+import com.dci.intellij.dbn.common.dispose.SafeDisposer;
 import com.dci.intellij.dbn.common.thread.Background;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.ConnectionHandlerRef;
@@ -149,16 +150,11 @@ public class ResultSetDataModel<
     }
 
     private void disposeRows(final List<R> oldRows) {
-        Background.run(() -> {
-            // dispose old content
-            for (R row : oldRows) {
-                disposeRow(row);
-            }
-        });
+        SafeDisposer.dispose(oldRows);
     }
 
     protected void disposeRow(R row) {
-        Disposer.dispose(row);
+        SafeDisposer.dispose(row);
     }
 
     public void closeResultSet() {
