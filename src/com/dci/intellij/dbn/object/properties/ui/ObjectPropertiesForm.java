@@ -103,7 +103,7 @@ public class ObjectPropertiesForm extends DBNFormImpl {
                     ((DBNTable<?>) objectPropertiesTable).accommodateColumnsSize();
 
                     GUIUtil.repaint(mainPanel);
-                    SafeDisposer.dispose(oldTableModel, false, true);
+                    SafeDisposer.dispose(oldTableModel, false);
                 });
 
             });

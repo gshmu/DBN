@@ -3,7 +3,6 @@ package com.dci.intellij.dbn.common.ui.tab;
 import com.dci.intellij.dbn.common.dispose.SafeDisposer;
 import com.dci.intellij.dbn.common.dispose.StatefulDisposable;
 import com.dci.intellij.dbn.common.ui.DBNForm;
-import com.intellij.openapi.Disposable;
 import com.intellij.openapi.util.ActionCallback;
 import com.intellij.openapi.util.Disposer;
 import com.intellij.openapi.wm.IdeFocusManager;
@@ -12,7 +11,7 @@ import com.intellij.ui.tabs.impl.JBEditorTabs;
 import lombok.Getter;
 import org.jetbrains.annotations.NotNull;
 
-import javax.swing.*;
+import javax.swing.JComponent;
 
 public class TabbedPane extends JBEditorTabs implements StatefulDisposable {
     @Getter
@@ -59,9 +58,8 @@ public class TabbedPane extends JBEditorTabs implements StatefulDisposable {
     public ActionCallback removeTab(TabInfo tabInfo, boolean disposeComponent) {
         Object object = tabInfo.getObject();
         ActionCallback actionCallback = super.removeTab(tabInfo);
-        if (disposeComponent && object instanceof Disposable) {
-            Disposable disposable = (Disposable) object;
-            SafeDisposer.dispose(disposable, false, true);
+        if (disposeComponent) {
+            SafeDisposer.dispose(object, true);
             tabInfo.setObject(null);
         }
         return actionCallback;
@@ -73,7 +71,7 @@ public class TabbedPane extends JBEditorTabs implements StatefulDisposable {
             disposed = true;
             for (TabInfo tabInfo : myInfo2Label.keySet()) {
                 Object object = tabInfo.getObject();
-                SafeDisposer.dispose(object, false, true);
+                SafeDisposer.dispose(object, true);
             }
             nullify();
         }

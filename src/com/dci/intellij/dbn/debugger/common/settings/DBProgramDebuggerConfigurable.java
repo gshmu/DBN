@@ -1,12 +1,14 @@
 package com.dci.intellij.dbn.debugger.common.settings;
 
-import com.dci.intellij.dbn.common.dispose.SafeDisposer;
 import com.dci.intellij.dbn.debugger.common.settings.ui.DBProgramDebuggerSettingsForm;
 import com.intellij.openapi.options.Configurable;
 import com.intellij.openapi.options.ConfigurationException;
 import org.jetbrains.annotations.Nls;
 
-import javax.swing.*;
+import javax.swing.Icon;
+import javax.swing.JComponent;
+
+import static com.dci.intellij.dbn.common.dispose.SafeDisposer.replace;
 
 public class DBProgramDebuggerConfigurable implements Configurable {
 
@@ -48,7 +50,6 @@ public class DBProgramDebuggerConfigurable implements Configurable {
 
     @Override
     public void disposeUIResources() {
-        SafeDisposer.dispose(component);
-        component = null;
+        component = replace(component, null, true);
     }
 }

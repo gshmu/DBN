@@ -52,7 +52,7 @@ public class DatasetEditorProvider implements FileEditorProvider, NamedComponent
     @Override
     public void disposeEditor(@NotNull FileEditor editor) {
         // expensive task. start in background
-        SafeDisposer.dispose(editor, true, true);
+        SafeDisposer.dispose(editor, true);
     }
 
     @Override

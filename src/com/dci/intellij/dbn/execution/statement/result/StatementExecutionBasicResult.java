@@ -2,7 +2,6 @@ package com.dci.intellij.dbn.execution.statement.result;
 
 import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.common.dispose.Failsafe;
-import com.dci.intellij.dbn.common.dispose.SafeDisposer;
 import com.dci.intellij.dbn.common.message.MessageType;
 import com.dci.intellij.dbn.common.navigation.NavigationInstructions;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
@@ -21,7 +20,9 @@ import com.intellij.psi.PsiFile;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import javax.swing.*;
+import javax.swing.Icon;
+
+import static com.dci.intellij.dbn.common.dispose.SafeDisposer.replace;
 
 public class StatementExecutionBasicResult extends ExecutionResultBase<StatementExecutionResultForm> implements StatementExecutionResult{
     private String name;
@@ -135,8 +136,7 @@ public class StatementExecutionBasicResult extends ExecutionResultBase<Statement
 
     @Override
     public void clearExecutionMessage() {
-        SafeDisposer.dispose(executionMessage);
-        executionMessage = null;
+        executionMessage = replace(executionMessage, null, false);
     }
 
     @Override

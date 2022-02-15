@@ -32,13 +32,7 @@ public final class Nullifier {
     }
 
     public static void nullify(Object object) {
-        nullify(object, true);
-    }
-
-    private static void nullify(Object object, boolean background) {
-        if (background) {
-            BackgroundDisposer.queue(() -> nullify(object, false));
-        } else {
+        BackgroundDisposer.queue(() -> {
             List<Field> fields = CLASS_FIELDS.computeIfAbsent(object.getClass(), clazz -> ReflectionUtil.collectFields(clazz));
             for (Field field : fields) {
                 try {
@@ -51,7 +45,7 @@ public final class Nullifier {
                     log.error("Failed to nullify field", e);
                 }
             }
-        }
+        });
     }
 
     private static void nullifyField(Object object, Field field) throws IllegalAccessException {
@@ -85,5 +79,6 @@ public final class Nullifier {
                     field.set(object, null);
                 }
             }
-        }    }
+        }
+    }
 }

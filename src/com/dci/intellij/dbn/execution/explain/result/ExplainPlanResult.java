@@ -3,7 +3,6 @@ package com.dci.intellij.dbn.execution.explain.result;
 import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.common.action.DataKeys;
 import com.dci.intellij.dbn.common.dispose.Failsafe;
-import com.dci.intellij.dbn.common.dispose.SafeDisposer;
 import com.dci.intellij.dbn.common.util.Commons;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.ConnectionHandlerRef;
@@ -30,6 +29,8 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import static com.dci.intellij.dbn.common.dispose.SafeDisposer.replace;
 
 public class ExplainPlanResult extends ExecutionResultBase<ExplainPlanResultForm> {
     private String planId;
@@ -144,7 +145,7 @@ public class ExplainPlanResult extends ExecutionResultBase<ExplainPlanResultForm
      *******************************************************  */
     @Override
     public void disposeInner() {
-        SafeDisposer.dispose(root);
+        root = replace(root, null, false);
         super.disposeInner();
     }
 }

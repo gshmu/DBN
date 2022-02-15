@@ -4,7 +4,6 @@ import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.common.action.DumbAwareProjectAction;
 import com.dci.intellij.dbn.common.action.GroupPopupAction;
 import com.dci.intellij.dbn.common.color.Colors;
-import com.dci.intellij.dbn.common.dispose.SafeDisposer;
 import com.dci.intellij.dbn.common.thread.Dispatch;
 import com.dci.intellij.dbn.common.thread.Progress;
 import com.dci.intellij.dbn.common.ui.DBNHeaderForm;
@@ -34,6 +33,8 @@ import javax.swing.JPanel;
 import java.awt.BorderLayout;
 import java.awt.Color;
 
+import static com.dci.intellij.dbn.common.dispose.SafeDisposer.replace;
+
 public class DBMethodJdbcRunConfigEditorForm extends DBProgramRunConfigurationEditorForm<DBMethodJdbcRunConfig> {
     private JPanel headerPanel;
     private JPanel mainPanel;
@@ -42,7 +43,7 @@ public class DBMethodJdbcRunConfigEditorForm extends DBProgramRunConfigurationEd
     private JPanel selectMethodActionPanel;
     private JPanel hintPanel;
 
-    private MethodExecutionInputForm methodExecutionInputForm;
+    private MethodExecutionInputForm inputForm;
 
     public DBMethodJdbcRunConfigEditorForm(DBMethodJdbcRunConfig configuration) {
         super(configuration.getProject());
@@ -107,13 +108,13 @@ public class DBMethodJdbcRunConfigEditorForm extends DBProgramRunConfigurationEd
     }
 
     public MethodExecutionInput getExecutionInput() {
-        return methodExecutionInputForm == null ? null : methodExecutionInputForm.getExecutionInput();
+        return inputForm == null ? null : inputForm.getExecutionInput();
     }
 
     @Override
     public void writeConfiguration(DBMethodJdbcRunConfig configuration) {
-        if (methodExecutionInputForm != null) {
-            methodExecutionInputForm.updateExecutionInput();
+        if (inputForm != null) {
+            inputForm.updateExecutionInput();
             configuration.setExecutionInput(getExecutionInput());
         }
         configuration.setCompileDependencies(compileDependenciesCheckBox.isSelected());
@@ -139,8 +140,7 @@ public class DBMethodJdbcRunConfigEditorForm extends DBProgramRunConfigurationEd
 
                     Dispatch.run(() -> {
                         methodArgumentsPanel.removeAll();
-                        SafeDisposer.dispose(methodExecutionInputForm);
-                        methodExecutionInputForm = null;
+                        inputForm = replace(inputForm, null, true);
 
                         String headerTitle = "No method selected";
                         Icon headerIcon = null;
@@ -152,9 +152,9 @@ public class DBMethodJdbcRunConfigEditorForm extends DBProgramRunConfigurationEd
                             headerIcon = methodRef.getObjectType().getIcon();
                             DBMethod method = executionInput.getMethod();
                             if (method != null) {
-                                methodExecutionInputForm = new MethodExecutionInputForm(this, executionInput, false, DBDebuggerType.JDBC);
-                                methodArgumentsPanel.add(methodExecutionInputForm.getComponent(), BorderLayout.CENTER);
-                                if (touchForm) methodExecutionInputForm.touch();
+                                inputForm = new MethodExecutionInputForm(this, executionInput, false, DBDebuggerType.JDBC);
+                                methodArgumentsPanel.add(inputForm.getComponent(), BorderLayout.CENTER);
+                                if (touchForm) inputForm.touch();
                                 headerIcon = method.getOriginalIcon();
                                 if (getEnvironmentSettings(method.getProject()).getVisibilitySettings().getDialogHeaders().value()) {
                                     headerBackground = method.getEnvironmentType().getColor();

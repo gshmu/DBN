@@ -54,6 +54,7 @@ import java.util.Timer;
 import java.util.TimerTask;
 
 import static com.dci.intellij.dbn.common.dispose.Failsafe.nd;
+import static com.dci.intellij.dbn.common.dispose.SafeDisposer.replace;
 
 public abstract class DBNTable<T extends DBNTableModel> extends JTable implements StatefulDisposable, UserDataHolder {
     private static final int MAX_COLUMN_WIDTH = 300;
@@ -137,7 +138,7 @@ public abstract class DBNTable<T extends DBNTableModel> extends JTable implement
 
     @Override
     public void setModel(@NotNull TableModel dataModel) {
-        dataModel = SafeDisposer.replace(super.getModel(), dataModel, false);
+        dataModel = replace(super.getModel(), dataModel, false);
         super.setModel(dataModel);
     }
 
@@ -454,7 +455,7 @@ public abstract class DBNTable<T extends DBNTableModel> extends JTable implement
     public void dispose(){
         if (!disposed) {
             disposed = true;
-            SafeDisposer.dispose(super.getModel(), false, true);
+            SafeDisposer.dispose(super.getModel(), false);
             listenerList = new EventListenerList();
             columnModel = new DefaultTableColumnModel();
             selectionModel = new DefaultListSelectionModel();

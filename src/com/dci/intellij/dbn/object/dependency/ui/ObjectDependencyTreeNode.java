@@ -22,7 +22,7 @@ public class ObjectDependencyTreeNode extends StatefulDisposable.Base implements
     private ObjectDependencyTreeModel model;
     private ObjectDependencyTreeNode parent;
     private boolean shouldLoad = true;
-    private boolean isLoading = false;
+    private boolean loading = false;
     private static int loaderCount = 0;
 
     private ObjectDependencyTreeNode(ObjectDependencyTreeNode parent, DBObject object) {
@@ -73,7 +73,7 @@ public class ObjectDependencyTreeNode extends StatefulDisposable.Base implements
         }
 
         if (load && shouldLoad) {
-            isLoading = true;
+            loading = true;
 
             if (loaderCount < 10) {
                 shouldLoad = false;
@@ -100,7 +100,7 @@ public class ObjectDependencyTreeNode extends StatefulDisposable.Base implements
                             getModel().notifyNodeLoaded(ObjectDependencyTreeNode.this);
                         }
                     } finally {
-                        isLoading = false;
+                        loading = false;
                         loaderCount--;
                     }
                 });
@@ -110,7 +110,7 @@ public class ObjectDependencyTreeNode extends StatefulDisposable.Base implements
     }
 
     public boolean isLoading() {
-        return isLoading;
+        return loading;
     }
 
     @Nullable
