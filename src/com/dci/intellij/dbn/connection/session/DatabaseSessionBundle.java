@@ -28,7 +28,7 @@ public class DatabaseSessionBundle extends StatefulDisposable.Base implements Di
     private DatabaseSession debuggerSession;
     private DatabaseSession poolSession;
 
-    private final List<DatabaseSession> sessions = CollectionUtil.createConcurrentList();
+    private List<DatabaseSession> sessions = CollectionUtil.createConcurrentList();
     private final IdentifiableMap<SessionId, DatabaseSession> index = new IdentifiableMap<>();
 
     public DatabaseSessionBundle(ConnectionHandler connection) {
@@ -130,11 +130,8 @@ public class DatabaseSessionBundle extends StatefulDisposable.Base implements Di
 
     @Override
     public void disposeInner() {
-        SafeDisposer.dispose(sessions, true, false);
+        sessions = SafeDisposer.replace(sessions, Collections.emptyList(), false);
         index.clear();
-        mainSession = null;
-        debugSession = null;
-        debuggerSession = null;
-        poolSession = null;
+        nullify();
     }
 }

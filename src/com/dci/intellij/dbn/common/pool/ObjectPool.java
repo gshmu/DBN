@@ -12,8 +12,11 @@ import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.TimeUnit;
 
+import static com.dci.intellij.dbn.common.dispose.SafeDisposer.replace;
+import static java.util.Collections.emptyList;
+
 public abstract class ObjectPool<T extends Disposable> extends StatefulDisposable.Base {
-    private final List<T> objects = new CopyOnWriteArrayList<>();
+    private List<T> objects = new CopyOnWriteArrayList<>();
     private final BlockingQueue<T> available = new LinkedBlockingQueue<>();
 
     public final T acquire(long timeout, TimeUnit timeUnit) throws InterruptedException {
@@ -82,7 +85,7 @@ public abstract class ObjectPool<T extends Disposable> extends StatefulDisposabl
 
     @Override
     protected void disposeInner() {
-        SafeDisposer.dispose(objects, true, true);
+        objects = replace(objects, emptyList(), true);
         available.clear();
     }
 }

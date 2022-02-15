@@ -1,7 +1,6 @@
 package com.dci.intellij.dbn.execution.method.ui;
 
 import com.dci.intellij.dbn.common.dispose.Failsafe;
-import com.dci.intellij.dbn.common.dispose.SafeDisposer;
 import com.dci.intellij.dbn.common.options.setting.SettingsSupport;
 import com.dci.intellij.dbn.common.project.ProjectRef;
 import com.dci.intellij.dbn.common.state.PersistentStateElement;
@@ -24,12 +23,15 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import static com.dci.intellij.dbn.common.dispose.SafeDisposer.replace;
+import static java.util.Collections.emptyList;
+
 public class MethodExecutionHistory implements PersistentStateElement, Disposable{
     private final ProjectRef project;
     private boolean groupEntries = true;
     private DBObjectRef<DBMethod> selection;
 
-    private final List<MethodExecutionInput> executionInputs = CollectionUtil.createConcurrentList();
+    private List<MethodExecutionInput> executionInputs = CollectionUtil.createConcurrentList();
 
     public MethodExecutionHistory(Project project) {
         this.project = ProjectRef.of(project);
@@ -201,7 +203,7 @@ public class MethodExecutionHistory implements PersistentStateElement, Disposabl
 
     @Override
     public void dispose() {
-        SafeDisposer.dispose(executionInputs, true, false);
+        executionInputs = replace(executionInputs, emptyList(), false);
     }
 
 

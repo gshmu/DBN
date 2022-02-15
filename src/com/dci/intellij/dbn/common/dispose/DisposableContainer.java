@@ -30,7 +30,7 @@ public interface DisposableContainer {
 
             @Override
             public void dispose() {
-                SafeDisposer.dispose(this, true, true);
+                SafeDisposer.disposeCollection(this, true, true);
             }
 
             @Override
@@ -58,7 +58,7 @@ public interface DisposableContainer {
 
             @Override
             public void dispose() {
-                SafeDisposer.dispose(this, true, true);
+                SafeDisposer.disposeCollection(this, true, true);
             }
 
             @Override
@@ -87,7 +87,7 @@ public interface DisposableContainer {
 
             @Override
             public void dispose() {
-                SafeDisposer.dispose(this.values(), true, true);
+                SafeDisposer.disposeCollection(this.values(), true, true);
             }
 
             @Override
