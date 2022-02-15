@@ -1,6 +1,6 @@
 package com.dci.intellij.dbn.connection.transaction.ui;
 
-import com.dci.intellij.dbn.common.dispose.DisposableContainer;
+import com.dci.intellij.dbn.common.dispose.DisposableContainers;
 import com.dci.intellij.dbn.common.event.ProjectEvents;
 import com.dci.intellij.dbn.common.thread.Dispatch;
 import com.dci.intellij.dbn.common.ui.Borders;
@@ -34,7 +34,7 @@ public class PendingTransactionsForm extends DBNFormImpl {
     private JList<ConnectionHandler> connectionsList;
     private final List<ConnectionHandler> connectionHandlers = new ArrayList<>();
 
-    private final Map<ConnectionId, PendingTransactionsDetailForm> uncommittedChangeForms = DisposableContainer.map(this);
+    private final Map<ConnectionId, PendingTransactionsDetailForm> uncommittedChangeForms = DisposableContainers.map(this);
 
     PendingTransactionsForm(PendingTransactionsDialog parentComponent) {
         super(parentComponent);

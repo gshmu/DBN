@@ -1,7 +1,7 @@
 package com.dci.intellij.dbn.object.filter.quick.ui;
 
 import com.dci.intellij.dbn.common.Icons;
-import com.dci.intellij.dbn.common.dispose.DisposableContainer;
+import com.dci.intellij.dbn.common.dispose.DisposableContainers;
 import com.dci.intellij.dbn.common.filter.Filter;
 import com.dci.intellij.dbn.common.ui.Borders;
 import com.dci.intellij.dbn.common.ui.DBNComboBox;
@@ -44,7 +44,7 @@ public class ObjectQuickFilterForm extends DBNFormImpl {
     private DBNComboBox<ConditionJoinType> joinTypeComboBox;
     private JPanel joinTypePanel;
 
-    private final List<ObjectQuickFilterConditionForm> conditionForms = DisposableContainer.list(this);
+    private final List<ObjectQuickFilterConditionForm> conditionForms = DisposableContainers.list(this);
     private final DBObjectList<?> objectList;
     private ObjectQuickFilter<?> filter;
 

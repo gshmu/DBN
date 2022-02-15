@@ -1,7 +1,7 @@
 package com.dci.intellij.dbn.execution.method.result;
 
 import com.dci.intellij.dbn.common.action.DataKeys;
-import com.dci.intellij.dbn.common.dispose.DisposableContainer;
+import com.dci.intellij.dbn.common.dispose.DisposableContainers;
 import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.ConnectionId;
@@ -25,7 +25,7 @@ import com.intellij.psi.PsiFile;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import javax.swing.*;
+import javax.swing.Icon;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -39,7 +39,7 @@ public class MethodExecutionResult extends ExecutionResultBase<MethodExecutionRe
     private String logOutput;
     private int executionDuration;
 
-    private Map<DBObjectRef<DBArgument>, ResultSetDataModel> cursorModels = DisposableContainer.map(this);
+    private Map<DBObjectRef<DBArgument>, ResultSetDataModel> cursorModels = DisposableContainers.map(this);
 
     public MethodExecutionResult(MethodExecutionInput executionInput, DBDebuggerType debuggerType) {
         this.executionInput = WeakRef.of(executionInput);

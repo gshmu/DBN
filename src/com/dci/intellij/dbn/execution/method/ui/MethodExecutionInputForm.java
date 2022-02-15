@@ -1,6 +1,6 @@
 package com.dci.intellij.dbn.execution.method.ui;
 
-import com.dci.intellij.dbn.common.dispose.DisposableContainer;
+import com.dci.intellij.dbn.common.dispose.DisposableContainers;
 import com.dci.intellij.dbn.common.ui.Borders;
 import com.dci.intellij.dbn.common.ui.DBNFormImpl;
 import com.dci.intellij.dbn.common.ui.DBNHeaderForm;
@@ -16,12 +16,17 @@ import com.dci.intellij.dbn.object.lookup.DBObjectRef;
 import com.intellij.ui.DocumentAdapter;
 import org.jetbrains.annotations.NotNull;
 
-import javax.swing.*;
+import javax.swing.BoxLayout;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.ScrollPaneConstants;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
-import java.awt.*;
+import java.awt.BorderLayout;
+import java.awt.Dimension;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -40,7 +45,7 @@ public class MethodExecutionInputForm extends DBNFormImpl {
     private JPanel argumentsContainerPanel;
 
 
-    private final List<MethodExecutionInputArgumentForm> argumentForms = DisposableContainer.list(this);
+    private final List<MethodExecutionInputArgumentForm> argumentForms = DisposableContainers.list(this);
     private final ExecutionOptionsForm executionOptionsForm;
     private final Set<ChangeListener> changeListeners = new HashSet<>();
 

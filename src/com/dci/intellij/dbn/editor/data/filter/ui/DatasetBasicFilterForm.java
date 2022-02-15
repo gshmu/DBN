@@ -2,7 +2,7 @@ package com.dci.intellij.dbn.editor.data.filter.ui;
 
 import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.common.color.Colors;
-import com.dci.intellij.dbn.common.dispose.DisposableContainer;
+import com.dci.intellij.dbn.common.dispose.DisposableContainers;
 import com.dci.intellij.dbn.common.options.ui.ConfigurationEditorForm;
 import com.dci.intellij.dbn.common.ui.Borders;
 import com.dci.intellij.dbn.common.ui.GUIUtil;
@@ -32,8 +32,13 @@ import com.intellij.util.PlatformIcons;
 import com.intellij.util.ui.UIUtil;
 import org.jetbrains.annotations.NotNull;
 
-import javax.swing.*;
-import java.awt.*;
+import javax.swing.BoxLayout;
+import javax.swing.JComboBox;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JTextField;
+import java.awt.BorderLayout;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
@@ -56,7 +61,7 @@ public class DatasetBasicFilterForm extends ConfigurationEditorForm<DatasetBasic
     private JComboBox<ConditionJoinType> joinTypeComboBox;
 
     private final DBObjectRef<DBDataset> datasetRef;
-    private final List<DatasetBasicFilterConditionForm> conditionForms = DisposableContainer.list(this);
+    private final List<DatasetBasicFilterConditionForm> conditionForms = DisposableContainers.list(this);
     private Document previewDocument;
     private boolean isCustomNamed;
     private EditorEx viewer;

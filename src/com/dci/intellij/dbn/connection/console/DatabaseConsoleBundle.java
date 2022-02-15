@@ -1,6 +1,6 @@
 package com.dci.intellij.dbn.connection.console;
 
-import com.dci.intellij.dbn.common.dispose.DisposableContainer;
+import com.dci.intellij.dbn.common.dispose.DisposableContainers;
 import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.common.dispose.SafeDisposer;
 import com.dci.intellij.dbn.common.dispose.StatefulDisposable;
@@ -21,7 +21,7 @@ import java.util.Set;
 public class DatabaseConsoleBundle extends StatefulDisposable.Base {
     private final ConnectionHandlerRef connectionHandler;
 
-    private final List<DBConsole> consoles = DisposableContainer.concurrentList(this);
+    private final List<DBConsole> consoles = DisposableContainers.concurrentList(this);
 
     public DatabaseConsoleBundle(ConnectionHandler connectionHandler) {
         super(connectionHandler);

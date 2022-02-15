@@ -1,6 +1,6 @@
 package com.dci.intellij.dbn.diagnostics.ui;
 
-import com.dci.intellij.dbn.common.dispose.DisposableContainer;
+import com.dci.intellij.dbn.common.dispose.DisposableContainers;
 import com.dci.intellij.dbn.common.ui.Borders;
 import com.dci.intellij.dbn.common.ui.DBNFormImpl;
 import com.dci.intellij.dbn.common.ui.GUIUtil;
@@ -13,8 +13,10 @@ import com.intellij.ui.ColoredListCellRenderer;
 import com.intellij.ui.SimpleTextAttributes;
 import org.jetbrains.annotations.NotNull;
 
-import javax.swing.*;
-import java.awt.*;
+import javax.swing.DefaultListModel;
+import javax.swing.JList;
+import javax.swing.JPanel;
+import java.awt.BorderLayout;
 import java.util.List;
 import java.util.Map;
 
@@ -25,7 +27,7 @@ public class ConnectionDiagnosticsForm extends DBNFormImpl {
     private JList<ConnectionHandler> connectionsList;
     private int tabSelectionIndex;
 
-    private final Map<ConnectionId, ConnectionDiagnosticsDetailsForm> resourceMonitorForms = DisposableContainer.map(this);
+    private final Map<ConnectionId, ConnectionDiagnosticsDetailsForm> resourceMonitorForms = DisposableContainers.map(this);
 
     public ConnectionDiagnosticsForm(@NotNull Project project) {
         super(null, project);
