@@ -29,11 +29,8 @@ import lombok.EqualsAndHashCode;
 import lombok.ToString;
 import org.jetbrains.annotations.NotNull;
 
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.JScrollBar;
-import javax.swing.JScrollPane;
-import java.awt.BorderLayout;
+import javax.swing.*;
+import java.awt.*;
 
 public class StatementExecutionResultForm extends ExecutionResultFormBase<StatementExecutionCursorResult> implements SearchableDataComponent {
     private JScrollPane resultScrollPane;
@@ -74,6 +71,7 @@ public class StatementExecutionResultForm extends ExecutionResultFormBase<Statem
         resultScrollPane.getViewport().setBackground(Colors.getTableBackground());
         resultTable.initTableGutter();
 
+        Disposer.register(this, resultTable);
         Disposer.register(this, executionResult);
     }
 

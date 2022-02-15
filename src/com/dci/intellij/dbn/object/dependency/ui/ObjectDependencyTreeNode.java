@@ -1,7 +1,6 @@
 package com.dci.intellij.dbn.object.dependency.ui;
 
 import com.dci.intellij.dbn.common.dispose.AlreadyDisposedException;
-import com.dci.intellij.dbn.common.dispose.SafeDisposer;
 import com.dci.intellij.dbn.common.dispose.StatefulDisposable;
 import com.dci.intellij.dbn.common.thread.Background;
 import com.dci.intellij.dbn.object.common.DBObject;
@@ -11,8 +10,10 @@ import com.dci.intellij.dbn.object.lookup.DBObjectRef;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
+
+import static com.dci.intellij.dbn.common.dispose.SafeDisposer.replace;
+import static java.util.Collections.emptyList;
 
 public class ObjectDependencyTreeNode extends StatefulDisposable.Base implements StatefulDisposable {
     private final DBObjectRef<DBObject> object;
@@ -53,13 +54,13 @@ public class ObjectDependencyTreeNode extends StatefulDisposable.Base implements
     public synchronized List<ObjectDependencyTreeNode> getChildren(final boolean load) {
         final ObjectDependencyTreeModel model = getModel();
         if (object == null || model == null)  {
-            return Collections.emptyList();
+            return emptyList();
         }
 
         if (dependencies == null && load) {
             DBObject object = getObject();
             if (isDisposed() || object == null || isRecursive(object)) {
-                dependencies = Collections.emptyList();
+                dependencies = emptyList();
                 shouldLoad = false;
             } else {
                 dependencies = new ArrayList<>();
@@ -95,10 +96,7 @@ public class ObjectDependencyTreeNode extends StatefulDisposable.Base implements
                                 }
                             }
 
-                            List<ObjectDependencyTreeNode> oldDependencies = dependencies;
-                            dependencies = newDependencies;
-                            SafeDisposer.dispose(oldDependencies, false, true);
-
+                            dependencies = replace(dependencies, newDependencies, false);
                             getModel().notifyNodeLoaded(ObjectDependencyTreeNode.this);
                         }
                     } finally {
@@ -149,7 +147,7 @@ public class ObjectDependencyTreeNode extends StatefulDisposable.Base implements
 
     @Override
     public void disposeInner() {
-        SafeDisposer.dispose(dependencies, true, false);
+        dependencies = replace(dependencies, emptyList(), false);
         nullify();
     }
 }

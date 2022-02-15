@@ -546,7 +546,7 @@ public abstract class DBObjectImpl<M extends DBObjectMetadata> extends BrowserTr
 
             else if (dynamicContentType instanceof DBObjectRelationType) {
                 DBObjectRelationType objectRelationType = (DBObjectRelationType) dynamicContentType;
-                return childObjects.getObjectRelations(objectRelationType);
+                return childObjects.getRelations(objectRelationType);
             }
         }
 

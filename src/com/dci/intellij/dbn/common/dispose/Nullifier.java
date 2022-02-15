@@ -17,10 +17,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
-import static com.dci.intellij.dbn.common.dispose.BackgroundDisposer.queue;
-
 @Slf4j
-public class Nullifier {
+public final class Nullifier {
+    private Nullifier() {}
+
     private static final Map<Class<?>, List<Field>> CLASS_FIELDS = new ConcurrentHashMap<>();
 
     public static void clearCollection(Collection<?> collection) {
@@ -37,45 +37,14 @@ public class Nullifier {
 
     private static void nullify(Object object, boolean background) {
         if (background) {
-            queue(() -> nullify(object, false));
+            BackgroundDisposer.queue(() -> nullify(object, false));
         } else {
             List<Field> fields = CLASS_FIELDS.computeIfAbsent(object.getClass(), clazz -> ReflectionUtil.collectFields(clazz));
             for (Field field : fields) {
                 try {
                     Sticky sticky = field.getAnnotation(Sticky.class);
                     if (sticky == null) {
-                        field.setAccessible(true);
-                        Object fieldValue = field.get(object);
-                        if ( fieldValue != null) {
-                            if (fieldValue instanceof Collection<?>) {
-                                Collection collection = (Collection) fieldValue;
-                                clearCollection(collection);
-                            } else if (fieldValue instanceof Map) {
-                                Map map = (Map) fieldValue;
-                                clearMap(map);
-                            } else if (fieldValue instanceof Latent){
-                                Latent latent = (Latent) fieldValue;
-                                latent.reset();
-                            } else {
-                                int modifiers = field.getModifiers();
-                                if (!Modifier.isFinal(modifiers) &&
-                                        !Modifier.isStatic(modifiers) &&
-                                        !Modifier.isNative(modifiers) &&
-                                        !Modifier.isTransient(modifiers) &&
-                                        (//fieldValue instanceof Disposable ||
-                                                //fieldValue instanceof Component ||
-                                                fieldValue instanceof Editor ||
-                                                        fieldValue instanceof Document ||
-                                                        fieldValue instanceof VirtualFile ||
-                                                        fieldValue instanceof Configuration ||
-                                                        fieldValue instanceof AutoCloseable ||
-                                                        fieldValue instanceof NamedComponent)) {
-
-                                    field.set(object, null);
-                                }
-                            }
-
-                        }
+                        nullifyField(object, field);
                     }
                 } catch (UnsupportedOperationException ignore) {
                 } catch (Throwable e) {
@@ -84,4 +53,37 @@ public class Nullifier {
             }
         }
     }
+
+    private static void nullifyField(Object object, Field field) throws IllegalAccessException {
+        field.setAccessible(true);
+        Object fieldValue = field.get(object);
+        if ( fieldValue != null) {
+            if (fieldValue instanceof Collection<?>) {
+                Collection collection = (Collection) fieldValue;
+                clearCollection(collection);
+            } else if (fieldValue instanceof Map) {
+                Map map = (Map) fieldValue;
+                clearMap(map);
+            } else if (fieldValue instanceof Latent){
+                Latent latent = (Latent) fieldValue;
+                latent.reset();
+            } else {
+                int modifiers = field.getModifiers();
+                if (!Modifier.isFinal(modifiers) &&
+                        !Modifier.isStatic(modifiers) &&
+                        !Modifier.isNative(modifiers) &&
+                        !Modifier.isTransient(modifiers) &&
+                        (//fieldValue instanceof Disposable ||
+                                //fieldValue instanceof Component ||
+                                fieldValue instanceof Editor ||
+                                        fieldValue instanceof Document ||
+                                        fieldValue instanceof VirtualFile ||
+                                        fieldValue instanceof Configuration ||
+                                        fieldValue instanceof AutoCloseable ||
+                                        fieldValue instanceof NamedComponent)) {
+
+                    field.set(object, null);
+                }
+            }
+        }    }
 }
