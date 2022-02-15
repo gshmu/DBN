@@ -1,7 +1,6 @@
 package com.dci.intellij.dbn.data.editor.ui;
 
 import com.dci.intellij.dbn.common.Icons;
-import com.dci.intellij.dbn.common.dispose.SafeDisposer;
 import com.dci.intellij.dbn.common.thread.Dispatch;
 import com.dci.intellij.dbn.common.thread.Progress;
 import com.dci.intellij.dbn.common.ui.GUIUtil;
@@ -29,6 +28,8 @@ import javax.swing.JLabel;
 import java.awt.event.FocusEvent;
 import java.awt.event.KeyEvent;
 import java.util.List;
+
+import static com.dci.intellij.dbn.common.dispose.SafeDisposer.replace;
 
 public class ValueListPopupProvider implements TextFieldPopupProvider{
     private TextFieldWithPopup editorComponent;
@@ -209,7 +210,7 @@ public class ValueListPopupProvider implements TextFieldPopupProvider{
 
     @Override
     public void dispose() {
-        SafeDisposer.dispose(popup);
+        popup = replace(popup, null, true);
     }
 
     private class ValueSelectAction extends AnAction {

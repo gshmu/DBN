@@ -1,7 +1,6 @@
 package com.dci.intellij.dbn.connection.session;
 
 import com.dci.intellij.dbn.common.dispose.Failsafe;
-import com.dci.intellij.dbn.common.dispose.SafeDisposer;
 import com.dci.intellij.dbn.common.dispose.StatefulDisposable;
 import com.dci.intellij.dbn.common.index.IdentifiableMap;
 import com.dci.intellij.dbn.common.util.CollectionUtil;
@@ -14,12 +13,18 @@ import com.intellij.openapi.Disposable;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.*;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.List;
+import java.util.Objects;
+import java.util.Set;
 import java.util.stream.Collectors;
 
+import static com.dci.intellij.dbn.common.dispose.SafeDisposer.replace;
 import static com.dci.intellij.dbn.common.util.Commons.nvl;
 import static com.dci.intellij.dbn.common.util.Lists.filtered;
 import static com.dci.intellij.dbn.common.util.Lists.first;
+import static java.util.Collections.emptyList;
 
 public class DatabaseSessionBundle extends StatefulDisposable.Base implements Disposable{
     private final ConnectionHandlerRef connection;
@@ -130,7 +135,7 @@ public class DatabaseSessionBundle extends StatefulDisposable.Base implements Di
 
     @Override
     public void disposeInner() {
-        sessions = SafeDisposer.replace(sessions, Collections.emptyList(), false);
+        sessions = replace(sessions, emptyList(), false);
         index.clear();
         nullify();
     }

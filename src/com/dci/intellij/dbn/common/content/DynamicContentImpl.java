@@ -343,7 +343,7 @@ public abstract class DynamicContentImpl<T extends DynamicContentElement>
             notifyChangeListeners();
         }
         if (is(MASTER)) {
-            SafeDisposer.disposeCollection(oldElements, false, true);
+            SafeDisposer.disposeCollection(oldElements);
         }
     }
 
@@ -423,7 +423,7 @@ public abstract class DynamicContentImpl<T extends DynamicContentElement>
     public void disposeInner() {
         if (elements != EMPTY_CONTENT && elements != EMPTY_UNTOUCHED_CONTENT) {
             if (!dependencyAdapter.isSubContent()) {
-                SafeDisposer.disposeCollection(elements, true, true);
+                SafeDisposer.disposeCollection(elements);
             }
             elements = cast(EMPTY_DISPOSED_CONTENT);
         }
