@@ -98,9 +98,7 @@ public class BasicDataModelRow<
 
     @Override
     public void disposeInner() {
-        SafeDisposer.dispose(cells, true, false);
-        cells = Collections.emptyList();
-        model = null;
+        cells = SafeDisposer.replace(cells, Collections.emptyList(), false);
         nullify();
     }
 

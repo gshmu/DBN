@@ -12,14 +12,11 @@ import lombok.extern.slf4j.Slf4j;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.awt.Component;
-import java.awt.Container;
+import java.awt.*;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Map;
 import java.util.Timer;
-
-import static com.dci.intellij.dbn.common.dispose.BackgroundDisposer.queue;
 
 @Slf4j
 public final class SafeDisposer {
@@ -73,20 +70,28 @@ public final class SafeDisposer {
     }
 
     public static void dispose(@Nullable Object object, boolean registered, boolean background) {
-        if (object instanceof Disposable) {
-            Disposable disposable = (Disposable) object;
-            if (background) {
-                queue(() -> dispose(disposable, registered, false));
-            } else {
-                dispose(disposable, registered);
+        if (object != null) {
+            if (object instanceof Disposable) {
+                Disposable disposable = (Disposable) object;
+                if (background) {
+                    BackgroundDisposer.queue(() -> dispose(disposable, registered, false));
+                } else {
+                    dispose(disposable, registered);
+                }
+            } else if (object instanceof Collection) {
+                disposeCollection((Collection<?>) object, true, background);
+            } else if (object instanceof Map) {
+                disposeMap((Map) object, background);
+            } else if (object.getClass().isArray()) {
+                disposeArray((Object[]) object, false, background);
             }
         }
     }
 
-    public static void dispose(@Nullable Collection<?> collection, boolean clear, boolean background) {
+    public static void disposeCollection(@Nullable Collection<?> collection, boolean clear, boolean background) {
         if (collection != null) {
             if (background) {
-                queue(() -> dispose(collection, true, false));
+                BackgroundDisposer.queue(() -> disposeCollection(collection, true, false));
             } else {
                 Collection<?> disposeCollection;
                 if (collection instanceof FilteredList) {
@@ -111,10 +116,10 @@ public final class SafeDisposer {
         }
     }
 
-    public static void dispose(@Nullable Object[] array, boolean registered, boolean background) {
+    public static void disposeArray(@Nullable Object[] array, boolean registered, boolean background) {
         if (array != null) {
             if (background) {
-                queue(() -> dispose(array, registered, false));
+                BackgroundDisposer.queue(() -> disposeArray(array, registered, false));
             } else {
                 for (int i = 0; i < array.length; i++) {
                     Object object = array[i];
@@ -128,9 +133,9 @@ public final class SafeDisposer {
         }
     }
 
-    public static void dispose(@Nullable Map<?, ?> map, boolean background) {
+    public static void disposeMap(@Nullable Map<?, ?> map, boolean background) {
         if (map != null && !map.isEmpty()) {
-            dispose(map.values(), true, background);
+            disposeCollection(map.values(), true, background);
             Nullifier.clearMap(map);
         }
     }
