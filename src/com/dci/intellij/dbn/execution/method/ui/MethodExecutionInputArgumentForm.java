@@ -1,6 +1,6 @@
 package com.dci.intellij.dbn.execution.method.ui;
 
-import com.dci.intellij.dbn.common.dispose.DisposableContainer;
+import com.dci.intellij.dbn.common.dispose.DisposableContainers;
 import com.dci.intellij.dbn.common.ui.DBNFormImpl;
 import com.dci.intellij.dbn.common.util.Commons;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
@@ -47,7 +47,7 @@ public class MethodExecutionInputArgumentForm extends DBNFormImpl {
     private UserValueHolderImpl<String> userValueHolder;
 
     private final DBObjectRef<DBArgument> argument;
-    private final List<MethodExecutionInputTypeAttributeForm> typeAttributeForms = DisposableContainer.list(this);
+    private final List<MethodExecutionInputTypeAttributeForm> typeAttributeForms = DisposableContainers.list(this);
 
     MethodExecutionInputArgumentForm(MethodExecutionInputForm parentForm, final DBArgument argument) {
         super(parentForm);

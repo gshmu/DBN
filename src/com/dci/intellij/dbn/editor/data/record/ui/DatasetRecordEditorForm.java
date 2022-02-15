@@ -1,7 +1,7 @@
 package com.dci.intellij.dbn.editor.data.record.ui;
 
 import com.dci.intellij.dbn.common.Icons;
-import com.dci.intellij.dbn.common.dispose.DisposableContainer;
+import com.dci.intellij.dbn.common.dispose.DisposableContainers;
 import com.dci.intellij.dbn.common.ui.DBNFormImpl;
 import com.dci.intellij.dbn.common.ui.DBNHeaderForm;
 import com.dci.intellij.dbn.common.ui.GUIUtil;
@@ -37,7 +37,7 @@ public class DatasetRecordEditorForm extends DBNFormImpl {
     private JScrollPane columnsPanelScrollPane;
     private JPanel headerPanel;
 
-    private final List<DatasetRecordEditorColumnForm> columnForms = DisposableContainer.list(this);
+    private final List<DatasetRecordEditorColumnForm> columnForms = DisposableContainers.list(this);
 
     private WeakRef<DatasetEditorModelRow> row;
 

@@ -3,7 +3,7 @@ package com.dci.intellij.dbn.connection.config.ui;
 import com.dci.intellij.dbn.common.action.DataKeys;
 import com.dci.intellij.dbn.common.color.Colors;
 import com.dci.intellij.dbn.common.database.DatabaseInfo;
-import com.dci.intellij.dbn.common.dispose.DisposableContainer;
+import com.dci.intellij.dbn.common.dispose.DisposableContainers;
 import com.dci.intellij.dbn.common.options.ui.ConfigurationEditorForm;
 import com.dci.intellij.dbn.common.ui.Fonts;
 import com.dci.intellij.dbn.common.util.Actions;
@@ -65,7 +65,7 @@ public class ConnectionBundleSettingsForm extends ConfigurationEditorForm<Connec
     private String currentPanelId;
 
     
-    private final Map<String, ConnectionSettingsForm> cachedForms = DisposableContainer.map(this);
+    private final Map<String, ConnectionSettingsForm> cachedForms = DisposableContainers.map(this);
 
     public JList getList() {
         return connectionsList;

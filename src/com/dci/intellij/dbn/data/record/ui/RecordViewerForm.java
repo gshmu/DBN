@@ -2,7 +2,7 @@ package com.dci.intellij.dbn.data.record.ui;
 
 import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.common.color.Colors;
-import com.dci.intellij.dbn.common.dispose.DisposableContainer;
+import com.dci.intellij.dbn.common.dispose.DisposableContainers;
 import com.dci.intellij.dbn.common.ui.DBNFormImpl;
 import com.dci.intellij.dbn.common.ui.DBNHeaderForm;
 import com.dci.intellij.dbn.common.ui.GUIUtil;
@@ -37,7 +37,7 @@ public class RecordViewerForm extends DBNFormImpl {
     private JScrollPane columnsPanelScrollPane;
     private JPanel headerPanel;
 
-    private final List<RecordViewerColumnForm> columnForms = DisposableContainer.list(this);
+    private final List<RecordViewerColumnForm> columnForms = DisposableContainers.list(this);
 
     private final DatasetRecord record;
 

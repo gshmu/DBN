@@ -3,7 +3,7 @@ package com.dci.intellij.dbn.execution.method.history.ui;
 import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.common.action.DumbAwareProjectAction;
 import com.dci.intellij.dbn.common.action.Lookup;
-import com.dci.intellij.dbn.common.dispose.DisposableContainer;
+import com.dci.intellij.dbn.common.dispose.DisposableContainers;
 import com.dci.intellij.dbn.common.thread.Dispatch;
 import com.dci.intellij.dbn.common.thread.Progress;
 import com.dci.intellij.dbn.common.ui.Borders;
@@ -45,7 +45,7 @@ public class MethodExecutionHistoryForm extends DBNFormImpl {
     private ChangeListener changeListener;
     private final boolean debug;
 
-    private final Map<DBObjectRef<DBMethod>, MethodExecutionInputForm> methodExecutionForms = DisposableContainer.map(this);
+    private final Map<DBObjectRef<DBMethod>, MethodExecutionInputForm> methodExecutionForms = DisposableContainers.map(this);
 
     MethodExecutionHistoryForm(MethodExecutionHistoryDialog parent, MethodExecutionInput selectedExecutionInput, boolean debug) {
         super(parent);
