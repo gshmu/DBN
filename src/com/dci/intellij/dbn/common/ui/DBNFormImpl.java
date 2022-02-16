@@ -1,6 +1,6 @@
 package com.dci.intellij.dbn.common.ui;
 
-import com.dci.intellij.dbn.common.dispose.SafeDisposer;
+import com.dci.intellij.dbn.common.dispose.ComponentDisposer;
 import com.dci.intellij.dbn.common.environment.options.EnvironmentSettings;
 import com.dci.intellij.dbn.common.notification.NotificationSupport;
 import com.dci.intellij.dbn.common.ui.component.DBNComponent;
@@ -81,7 +81,7 @@ public abstract class DBNFormImpl
     protected void disposeInner() {
         JComponent component = getComponent();
         DataManager.removeDataProvider(component);
-        SafeDisposer.dispose(component);
+        ComponentDisposer.dispose(component);
         nullify();
     }
 }
