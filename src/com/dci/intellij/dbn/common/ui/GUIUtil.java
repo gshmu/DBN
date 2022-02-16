@@ -3,7 +3,6 @@ package com.dci.intellij.dbn.common.ui;
 import com.dci.intellij.dbn.common.color.Colors;
 import com.dci.intellij.dbn.common.lookup.Visitor;
 import com.dci.intellij.dbn.common.thread.Dispatch;
-import com.dci.intellij.dbn.common.util.Unsafe;
 import com.intellij.openapi.ui.popup.JBPopup;
 import com.intellij.openapi.ui.popup.JBPopupFactory;
 import com.intellij.openapi.ui.popup.PopupChooserBuilder;
@@ -32,8 +31,6 @@ import java.awt.MouseInfo;
 import java.awt.Point;
 import java.awt.PointerInfo;
 import java.awt.event.InputEvent;
-import java.lang.reflect.Method;
-import java.util.EventListener;
 
 public class GUIUtil{
 
@@ -103,22 +100,6 @@ public class GUIUtil{
             border = new CompoundBorder(Borders.topInsetBorder(8), titledBorder);
             panel.setBorder(border);
 
-        }
-    }
-
-    public static void removeListeners(Component comp) {
-        Method[] methods = comp.getClass().getMethods();
-        for (Method method : methods) {
-            String name = method.getName();
-            if (name.startsWith("remove") && name.endsWith("Listener")) {
-                Class[] params = method.getParameterTypes();
-                if (params.length == 1) {
-                    EventListener[] listeners = Unsafe.silent(new EventListener[0], () -> comp.getListeners(params[0]));
-                    for (EventListener listener : listeners) {
-                        Unsafe.silent(() -> method.invoke(comp, listener));
-                    }
-                }
-            }
         }
     }
 
