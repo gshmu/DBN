@@ -1,19 +1,13 @@
 package com.dci.intellij.dbn.common.dispose;
 
 import com.dci.intellij.dbn.common.list.FilteredList;
-import com.dci.intellij.dbn.common.thread.Dispatch;
-import com.dci.intellij.dbn.common.ui.GUIUtil;
-import com.dci.intellij.dbn.common.util.Unsafe;
 import com.dci.intellij.dbn.vfs.DBVirtualFile;
 import com.intellij.openapi.Disposable;
 import com.intellij.openapi.util.Disposer;
-import com.intellij.util.ui.UIUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.awt.Component;
-import java.awt.Container;
 import java.util.Collection;
 import java.util.Map;
 import java.util.Timer;
@@ -137,25 +131,6 @@ public final class SafeDisposer {
                     }
                 }
                 Nullifier.clearMap(map);
-            });
-        }
-    }
-
-    public static void dispose(@Nullable Component component) {
-        if (component != null) {
-            Dispatch.runConditional(() -> {
-                GUIUtil.removeListeners(component);
-                UIUtil.dispose(component);
-                if (component instanceof Container) {
-                    Container container = (Container) component;
-                    Component[] components = container.getComponents();
-                    if (components.length > 0) {
-                        for (Component child : components) {
-                            dispose(child);
-                        }
-                        Unsafe.silent(() -> container.removeAll());
-                    }
-                }
             });
         }
     }
