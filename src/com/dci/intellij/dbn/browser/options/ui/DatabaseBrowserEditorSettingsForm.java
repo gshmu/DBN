@@ -62,7 +62,7 @@ public class DatabaseBrowserEditorSettingsForm extends ConfigurationEditorForm<D
         return mainPanel;
     }
 
-    public class EditorTypeTable extends DBNEditableTable<EditorTypeTableModel> {
+    public static class EditorTypeTable extends DBNEditableTable<EditorTypeTableModel> {
 
         EditorTypeTable(DBNForm parent, List<DefaultEditorOption> options) {
             super(parent, new EditorTypeTableModel(options), true);
@@ -130,7 +130,7 @@ public class DatabaseBrowserEditorSettingsForm extends ConfigurationEditorForm<D
         }
     }
 
-    public class EditorTypeTableModel extends DBNEditableTableModel {
+    public static class EditorTypeTableModel extends DBNEditableTableModel {
         private List<DefaultEditorOption> options = new ArrayList<DefaultEditorOption>();
 
         public EditorTypeTableModel(List<DefaultEditorOption> options) {

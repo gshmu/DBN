@@ -1,8 +1,12 @@
 package com.dci.intellij.dbn.connection.mapping;
 
 import com.dci.intellij.dbn.common.file.util.VirtualFiles;
-import com.dci.intellij.dbn.common.util.Safe;
-import com.dci.intellij.dbn.connection.*;
+import com.dci.intellij.dbn.common.util.Commons;
+import com.dci.intellij.dbn.connection.ConnectionCache;
+import com.dci.intellij.dbn.connection.ConnectionHandler;
+import com.dci.intellij.dbn.connection.ConnectionId;
+import com.dci.intellij.dbn.connection.SchemaId;
+import com.dci.intellij.dbn.connection.SessionId;
 import com.dci.intellij.dbn.connection.session.DatabaseSession;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.openapi.vfs.VirtualFileManager;
@@ -64,7 +68,7 @@ public class FileConnectionContextImpl implements FileConnectionContext {
 
     @Override
     public boolean setConnectionId(ConnectionId connectionId) {
-        if (!Safe.equal(this.connectionId, connectionId)) {
+        if (!Commons.match(this.connectionId, connectionId)) {
             this.connectionId = connectionId;
             return true;
         }
@@ -73,7 +77,7 @@ public class FileConnectionContextImpl implements FileConnectionContext {
 
     @Override
     public boolean setSessionId(SessionId sessionId) {
-        if (!Safe.equal(this.sessionId, sessionId)) {
+        if (!Commons.match(this.sessionId, sessionId)) {
             this.sessionId = sessionId;
             return true;
         }
@@ -82,7 +86,7 @@ public class FileConnectionContextImpl implements FileConnectionContext {
 
     @Override
     public boolean setSchemaId(SchemaId schemaId) {
-        if (!Safe.equal(this.schemaId, schemaId)) {
+        if (!Commons.match(this.schemaId, schemaId)) {
             this.schemaId = schemaId;
             return true;
         }

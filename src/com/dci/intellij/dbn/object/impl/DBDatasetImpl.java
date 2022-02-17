@@ -6,7 +6,7 @@ import com.dci.intellij.dbn.common.content.DynamicContentElement;
 import com.dci.intellij.dbn.common.content.loader.DynamicContentLoader;
 import com.dci.intellij.dbn.common.content.loader.DynamicContentResultSetLoader;
 import com.dci.intellij.dbn.common.content.loader.DynamicSubcontentLoader;
-import com.dci.intellij.dbn.common.util.Safe;
+import com.dci.intellij.dbn.common.util.Commons;
 import com.dci.intellij.dbn.connection.jdbc.DBNConnection;
 import com.dci.intellij.dbn.data.type.DBDataType;
 import com.dci.intellij.dbn.database.DatabaseMetadataInterface;
@@ -135,7 +135,7 @@ public abstract class DBDatasetImpl<M extends DBObjectMetadata> extends DBSchema
             @Override
             public boolean match(DBColumn column, DynamicContent dynamicContent) {
                 DBDataset dataset = (DBDataset) dynamicContent.getParentEntity();
-                return Safe.equal(column.getDataset(), dataset);
+                return Commons.match(column.getDataset(), dataset);
             }
 
             @Override
@@ -164,7 +164,7 @@ public abstract class DBDatasetImpl<M extends DBObjectMetadata> extends DBSchema
             public boolean match(DBConstraint constraint, DynamicContent dynamicContent) {
                 DBDataset dataset = (DBDataset) dynamicContent.getParentEntity();
                 DBDataset constraintDataset = constraint.getDataset();
-                return Safe.equal(constraintDataset, dataset);
+                return Commons.match(constraintDataset, dataset);
             }
 
             @Override
@@ -193,7 +193,7 @@ public abstract class DBDatasetImpl<M extends DBObjectMetadata> extends DBSchema
             @Override
             public boolean match(DBDatasetTrigger trigger, DynamicContent dynamicContent) {
                 DBDataset dataset = (DBDataset) dynamicContent.getParentEntity();
-                return Safe.equal(trigger.getDataset(), dataset);
+                return Commons.match(trigger.getDataset(), dataset);
             }
 
             @Override
@@ -222,7 +222,7 @@ public abstract class DBDatasetImpl<M extends DBObjectMetadata> extends DBSchema
             public boolean match(DBIndex index, DynamicContent dynamicContent) {
                 DBDataset dataset = (DBDataset) dynamicContent.getParentEntity();
                 DBDataset indexDataset = index.getDataset();
-                return Safe.equal(indexDataset, dataset);
+                return Commons.match(indexDataset, dataset);
             }
 
             @Override
@@ -251,7 +251,7 @@ public abstract class DBDatasetImpl<M extends DBObjectMetadata> extends DBSchema
                 DBIndexColumnRelation indexColumnRelation = (DBIndexColumnRelation) sourceElement;
                 DBDataset dataset = (DBDataset) dynamicContent.getParentEntity();
                 DBDataset columnDataset = indexColumnRelation.getColumn().getDataset();
-                return Safe.equal(columnDataset, dataset);
+                return Commons.match(columnDataset, dataset);
             }
 
             @Override
@@ -290,7 +290,7 @@ public abstract class DBDatasetImpl<M extends DBObjectMetadata> extends DBSchema
                 DBConstraintColumnRelation constraintColumnRelation = (DBConstraintColumnRelation) sourceElement;
                 DBDataset dataset = (DBDataset) dynamicContent.getParentEntity();
                 DBDataset columnDataset = constraintColumnRelation.getColumn().getDataset();
-                return Safe.equal(columnDataset, dataset);
+                return Commons.match(columnDataset, dataset);
             }
 
             @Override

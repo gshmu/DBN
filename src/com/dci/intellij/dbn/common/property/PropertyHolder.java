@@ -12,7 +12,7 @@ public interface PropertyHolder<T extends Property> {
     static <T extends Property.LongBase> PropertyHolder<T> longBase(Class<T> type) {
         return new PropertyHolderBase.LongStore<T>() {
             @Override
-            protected T[] properties() {
+            public T[] properties() {
                 return type.getEnumConstants();
             }
         };
@@ -21,7 +21,7 @@ public interface PropertyHolder<T extends Property> {
     static <T extends Property.IntBase> PropertyHolder<T> integerBase(Class<T> type) {
         return new PropertyHolderBase.IntStore<T>() {
             @Override
-            protected T[] properties() {
+            public T[] properties() {
                 return type.getEnumConstants();
             }
         };

@@ -3,6 +3,7 @@ package com.dci.intellij.dbn.common.dispose;
 import com.dci.intellij.dbn.common.list.FilteredList;
 import com.dci.intellij.dbn.vfs.DBVirtualFile;
 import com.intellij.openapi.Disposable;
+import com.intellij.openapi.progress.ProcessCanceledException;
 import com.intellij.openapi.util.Disposer;
 import lombok.extern.slf4j.Slf4j;
 import org.jetbrains.annotations.NotNull;
@@ -55,6 +56,7 @@ public final class SafeDisposer {
                     disposable.dispose();
                 }
             }
+        } catch (ProcessCanceledException ignore) {
         } catch (Throwable e) {
             log.warn("Failed to dispose entity {}", disposable, e);
         }

@@ -6,7 +6,6 @@ import com.dci.intellij.dbn.common.dispose.SafeDisposer;
 import com.dci.intellij.dbn.common.environment.EnvironmentManager;
 import com.dci.intellij.dbn.common.thread.CancellableDatabaseCall;
 import com.dci.intellij.dbn.common.thread.Progress;
-import com.dci.intellij.dbn.common.util.Commons;
 import com.dci.intellij.dbn.common.util.Messages;
 import com.dci.intellij.dbn.common.util.Safe;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
@@ -38,7 +37,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import javax.swing.*;
+import javax.swing.ListSelectionModel;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import java.sql.ResultSet;
@@ -361,7 +360,7 @@ public class DatasetEditorModel
                 (progress) -> {
                     progress.setIndeterminate(false);
                     for (int index : rowIndexes) {
-                        progress.setFraction(Commons.getProgressPercentage(index, rowIndexes.length));
+                        progress.setFraction(Progress.progressOf(index, rowIndexes.length));
                         DatasetEditorModelRow row = getRowAtIndex(index);
                         if (progress.isCanceled()) break;
 

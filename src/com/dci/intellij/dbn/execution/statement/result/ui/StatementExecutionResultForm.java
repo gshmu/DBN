@@ -1,5 +1,6 @@
 package com.dci.intellij.dbn.execution.statement.result.ui;
 
+import com.dci.intellij.dbn.common.action.DataProviders;
 import com.dci.intellij.dbn.common.color.Colors;
 import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.common.dispose.SafeDisposer;
@@ -20,7 +21,6 @@ import com.dci.intellij.dbn.data.record.RecordViewInfo;
 import com.dci.intellij.dbn.execution.ExecutionManager;
 import com.dci.intellij.dbn.execution.common.result.ui.ExecutionResultFormBase;
 import com.dci.intellij.dbn.execution.statement.result.StatementExecutionCursorResult;
-import com.intellij.ide.DataManager;
 import com.intellij.openapi.actionSystem.ActionToolbar;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Disposer;
@@ -29,8 +29,11 @@ import lombok.EqualsAndHashCode;
 import lombok.ToString;
 import org.jetbrains.annotations.NotNull;
 
-import javax.swing.*;
-import java.awt.*;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JScrollBar;
+import javax.swing.JScrollPane;
+import java.awt.BorderLayout;
 
 public class StatementExecutionResultForm extends ExecutionResultFormBase<StatementExecutionCursorResult> implements SearchableDataComponent {
     private JScrollPane resultScrollPane;
@@ -48,7 +51,7 @@ public class StatementExecutionResultForm extends ExecutionResultFormBase<Statem
     private final Latent<DataSearchComponent> dataSearchComponent = Latent.basic(() -> {
         DataSearchComponent dataSearchComponent = new DataSearchComponent(StatementExecutionResultForm.this);
         searchPanel.add(dataSearchComponent.getComponent(), BorderLayout.CENTER);
-        DataManager.registerDataProvider(dataSearchComponent.getSearchField(), this);
+        DataProviders.register(dataSearchComponent.getSearchField(), this);
         return dataSearchComponent;
     });
 

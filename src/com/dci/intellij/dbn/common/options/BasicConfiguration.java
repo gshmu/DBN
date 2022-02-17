@@ -17,7 +17,7 @@ import javax.swing.JComponent;
 public abstract class BasicConfiguration<P extends Configuration, E extends ConfigurationEditorForm>
         extends AbstractConfiguration<P, E> {
 
-    private E editorForm;
+    private WeakRef<E> editorForm;
 
     private boolean modified = false;
     private final boolean transitory = ConfigurationHandle.isTransitory();
@@ -59,19 +59,20 @@ public abstract class BasicConfiguration<P extends Configuration, E extends Conf
 
     @Nullable
     public final E getSettingsEditor() {
-        return editorForm;
+        return WeakRef.get(editorForm);
     }
 
     @NotNull
     public final E ensureSettingsEditor() {
-        return Failsafe.nn(editorForm);
+        return Failsafe.nd(getSettingsEditor());
     }
 
 
     @Override
     @NotNull
     public JComponent createComponent() {
-        editorForm = createConfigurationEditor();
+        E editorForm = createConfigurationEditor();
+        this.editorForm = WeakRef.of(editorForm);
         return editorForm.getComponent();
     }
 
@@ -96,6 +97,7 @@ public abstract class BasicConfiguration<P extends Configuration, E extends Conf
 
     @Override
     public void apply() throws ConfigurationException {
+        E editorForm = getSettingsEditor();
         if (Failsafe.check(editorForm)) {
             editorForm.applyFormChanges();
         }
@@ -119,8 +121,10 @@ public abstract class BasicConfiguration<P extends Configuration, E extends Conf
     public void reset() {
         try {
             ConfigurationHandle.setResetting(true);
-            if (editorForm != null)
-            editorForm.resetFormChanges();
+            E editorForm = getSettingsEditor();
+            if (editorForm != null) {
+                editorForm.resetFormChanges();
+            }
         } finally {
             modified = false;
             ConfigurationHandle.setResetting(false);

@@ -107,4 +107,8 @@ public final class Progress {
             throw AlreadyDisposedException.INSTANCE;
         }
     }
+
+    public static double progressOf(int is, int should) {
+        return ((double) is) / should;
+    }
 }

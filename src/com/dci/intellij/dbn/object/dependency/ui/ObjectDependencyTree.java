@@ -10,7 +10,7 @@ import com.dci.intellij.dbn.common.ui.Mouse;
 import com.dci.intellij.dbn.common.ui.component.DBNComponent;
 import com.dci.intellij.dbn.common.ui.tree.DBNTree;
 import com.dci.intellij.dbn.common.util.Actions;
-import com.dci.intellij.dbn.common.util.Safe;
+import com.dci.intellij.dbn.common.util.Commons;
 import com.dci.intellij.dbn.common.util.TimeUtil;
 import com.dci.intellij.dbn.object.common.DBObject;
 import com.dci.intellij.dbn.object.common.DBObjectSelectionHistory;
@@ -71,7 +71,7 @@ public class ObjectDependencyTree extends DBNTree{
                     DefaultActionGroup actionGroup = new DefaultActionGroup();
                     ObjectDependencyTreeNode rootNode = node.getModel().getRoot();
                     DBObject object = node.getObject();
-                    if (object instanceof DBSchemaObject && !Safe.equal(rootNode.getObject(), object)) {
+                    if (object instanceof DBSchemaObject && !Commons.match(rootNode.getObject(), object)) {
                         actionGroup.add(new SelectObjectAction((DBSchemaObject) object));
                         DBSchemaObject schObject = (DBSchemaObject) object;
                         if (schObject.is(DBObjectProperty.EDITABLE)) {

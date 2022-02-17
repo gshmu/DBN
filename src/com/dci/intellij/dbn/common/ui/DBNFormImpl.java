@@ -1,5 +1,6 @@
 package com.dci.intellij.dbn.common.ui;
 
+import com.dci.intellij.dbn.common.action.DataProviders;
 import com.dci.intellij.dbn.common.dispose.ComponentDisposer;
 import com.dci.intellij.dbn.common.environment.options.EnvironmentSettings;
 import com.dci.intellij.dbn.common.notification.NotificationSupport;
@@ -42,7 +43,7 @@ public abstract class DBNFormImpl
     private void initialise() {
         initialised = true;
         JComponent mainComponent = getMainComponent();
-        DataManager.registerDataProvider(mainComponent, this);
+        DataProviders.register(mainComponent, this);
         GUIUtil.visitRecursively(mainComponent, component -> {
             if (component instanceof JPanel) {
                 JPanel panel = (JPanel) component;

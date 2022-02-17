@@ -1,6 +1,7 @@
 package com.dci.intellij.dbn.execution.method.result.ui;
 
 import com.dci.intellij.dbn.common.action.DataKeys;
+import com.dci.intellij.dbn.common.action.DataProviders;
 import com.dci.intellij.dbn.common.color.Colors;
 import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.common.latent.Latent;
@@ -16,7 +17,6 @@ import com.dci.intellij.dbn.data.record.RecordViewInfo;
 import com.dci.intellij.dbn.execution.method.result.MethodExecutionResult;
 import com.dci.intellij.dbn.object.DBArgument;
 import com.dci.intellij.dbn.object.lookup.DBObjectRef;
-import com.intellij.ide.DataManager;
 import com.intellij.openapi.actionSystem.ActionToolbar;
 import com.intellij.ui.IdeBorderFactory;
 import org.jetbrains.annotations.NotNull;
@@ -41,7 +41,7 @@ public class MethodExecutionCursorResultForm extends DBNFormImpl implements Sear
     private final Latent<DataSearchComponent> dataSearchComponent = Latent.basic(() -> {
         DataSearchComponent dataSearchComponent = new DataSearchComponent(MethodExecutionCursorResultForm.this);
         searchPanel.add(dataSearchComponent.getComponent(), BorderLayout.CENTER);
-        DataManager.registerDataProvider(dataSearchComponent.getSearchField(), this);
+        DataProviders.register(dataSearchComponent.getSearchField(), this);
         return dataSearchComponent;
     });
 
@@ -63,7 +63,7 @@ public class MethodExecutionCursorResultForm extends DBNFormImpl implements Sear
 
         ActionToolbar actionToolbar = Actions.createActionToolbar(actionsPanel, "", true, "DBNavigator.ActionGroup.MethodExecutionCursorResult");
         actionsPanel.add(actionToolbar.getComponent());
-        DataManager.registerDataProvider(actionToolbar.getComponent(), this);
+        DataProviders.register(actionToolbar.getComponent(), this);
     }
 
     public DBArgument getArgument() {

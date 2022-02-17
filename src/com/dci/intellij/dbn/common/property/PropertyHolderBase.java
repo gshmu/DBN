@@ -2,14 +2,28 @@ package com.dci.intellij.dbn.common.property;
 
 import org.jetbrains.annotations.Nullable;
 
-public abstract class PropertyHolderBase<T extends Property> implements PropertyHolder<T>, Cloneable {
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
+
+import static com.dci.intellij.dbn.common.util.Unsafe.cast;
+
+public abstract class PropertyHolderBase<T extends Property> implements PropertyHolder<T> {
+    private static final Map<Class<? extends PropertyHolder>, Property[]> REGISTRY = new ConcurrentHashMap<>();
+
     protected abstract T[] properties();
     protected abstract void change(T property, boolean value);
 
+    private T[] props() {
+        try {
+            return cast(REGISTRY.computeIfAbsent(getClass(), k -> properties()));
+        } catch (IllegalStateException e) {
+            return cast(REGISTRY.get(getClass()));
+        }
+    }
 
     @SafeVarargs
     protected PropertyHolderBase(T ... properties) {
-        for (T property : properties()) {
+        for (T property : props()) {
             if (property.implicit()) {
                 set(property);
             }
@@ -32,7 +46,7 @@ public abstract class PropertyHolderBase<T extends Property> implements Property
         if (isNot(property)) {
             PropertyGroup group = property.group();
             if (group != null) {
-                for (T prop : properties()) {
+                for (T prop : props()) {
                     if (is(prop)) {
                         change(prop, false);
                         break;
@@ -53,7 +67,7 @@ public abstract class PropertyHolderBase<T extends Property> implements Property
             PropertyGroup group = property.group();
             if (group != null) {
                 // set implicit property
-                for (T prop : properties()) {
+                for (T prop : props()) {
                     if (prop.group() == group && prop.implicit() && prop != property && !is(prop)) {
                         change(prop, true);
                         break;
@@ -67,7 +81,7 @@ public abstract class PropertyHolderBase<T extends Property> implements Property
     }
 
     public void reset() {
-        for (T property : properties()) {
+        for (T property : props()) {
             if (property.implicit()) {
                 set(property);
             }
@@ -76,7 +90,7 @@ public abstract class PropertyHolderBase<T extends Property> implements Property
 
     public void merge(@Nullable PropertyHolder<T> source) {
         if (source != null) {
-            for (T property : properties()) {
+            for (T property : props()) {
                 if (source.is(property)) {
                     set(property, true);
                 }
@@ -86,7 +100,7 @@ public abstract class PropertyHolderBase<T extends Property> implements Property
 
     public void unmerge(@Nullable PropertyHolder<T> source) {
         if (source != null) {
-            for (T property : properties()) {
+            for (T property : props()) {
                 if (source.is(property)) {
                     set(property, false);
                 }
@@ -97,7 +111,7 @@ public abstract class PropertyHolderBase<T extends Property> implements Property
     @Override
     public String toString() {
         StringBuilder builder = new StringBuilder();
-        for (T property : properties()) {
+        for (T property : props()) {
             if (is(property)) {
                 if (builder.length() > 0) {
                     builder.append(" / ");
