@@ -7,7 +7,6 @@ import com.dci.intellij.dbn.common.util.Strings;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.ConnectionHandlerRef;
 import com.dci.intellij.dbn.language.common.PsiElementRef;
-import com.dci.intellij.dbn.language.common.WeakRef;
 import com.dci.intellij.dbn.object.DBSchema;
 import com.dci.intellij.dbn.object.common.DBObject;
 import com.dci.intellij.dbn.object.common.DBObjectPsiElement;
@@ -22,19 +21,18 @@ import java.util.Objects;
 import static com.dci.intellij.dbn.language.common.psi.PsiResolveStatus.*;
 
 public class PsiResolveResult extends PropertyHolderBase.IntStore<PsiResolveStatus> {
-    private ConnectionHandlerRef connectionHandler;
-    private DBObjectRef<DBSchema> databaseSchema;
+    private ConnectionHandlerRef connection;
+    private DBObjectRef<DBSchema> schema;
     private PsiElementRef<IdentifierPsiElement> element;
     private PsiElementRef<BasePsiElement> parent;
     private PsiElementRef referencedElement;
-    private WeakRef<DBObject> underlyingObject;
     private CharSequence text;
     private long lastResolveInvocation = 0;
     private int scopeTextLength;
     private int resolveAttempts = 0;
 
     PsiResolveResult(IdentifierPsiElement element) {
-        this.connectionHandler = ConnectionHandlerRef.of(element.getConnectionHandler());
+        this.connection = ConnectionHandlerRef.of(element.getConnectionHandler());
         this.element = PsiElementRef.from(element);
         set(PsiResolveStatus.NEW, true);
     }
@@ -56,8 +54,8 @@ public class PsiResolveResult extends PropertyHolderBase.IntStore<PsiResolveStat
         set(CONNECTION_ACTIVE, connectionHandler != null && !connectionHandler.isVirtual() && connectionHandler.canConnect());
         this.referencedElement = null;
         this.parent = null;
-        this.connectionHandler = ConnectionHandlerRef.of(connectionHandler);
-        this.databaseSchema = DBObjectRef.of(psiElement.getDatabaseSchema());
+        this.connection = ConnectionHandlerRef.of(connectionHandler);
+        this.schema = DBObjectRef.of(psiElement.getDatabaseSchema());
         BasePsiElement enclosingScopePsiElement = psiElement.getEnclosingScopePsiElement();
         this.scopeTextLength = enclosingScopePsiElement == null ? 0 : enclosingScopePsiElement.getTextLength();
         if (Strings.isEmpty(text)) {
@@ -142,7 +140,7 @@ public class PsiResolveResult extends PropertyHolderBase.IntStore<PsiResolveStat
         IdentifierPsiElement element = this.element.get();
         ConnectionHandler activeConnection = element == null ? null : element.getConnectionHandler();
         if (activeConnection == null || activeConnection.isVirtual()) {
-            if (databaseSchema != null) return true;
+            if (schema != null) return true;
         } else {
             if (connectionBecameActive(activeConnection) || connectionBecameValid(activeConnection)) {
                 return true;
@@ -162,12 +160,12 @@ public class PsiResolveResult extends PropertyHolderBase.IntStore<PsiResolveStat
 
     private boolean connectionChanged() {
         IdentifierPsiElement element = this.element.get();
-        return element != null && getConnectionHandler() != element.getConnectionHandler();
+        return element != null && getConnection() != element.getConnectionHandler();
     }
 
     private boolean schemaChanged() {
         IdentifierPsiElement element = this.element.get();
-        return element != null && !Commons.match(DBObjectRef.get(databaseSchema), element.getDatabaseSchema());
+        return element != null && !Commons.match(DBObjectRef.get(schema), element.getDatabaseSchema());
     }
 
     private boolean connectionBecameValid(ConnectionHandler connectionHandler) {
@@ -231,8 +229,8 @@ public class PsiResolveResult extends PropertyHolderBase.IntStore<PsiResolveStat
         return Safe.call(referencedElement, source -> source.get());
     }
 
-    public ConnectionHandler getConnectionHandler() {
-        return ConnectionHandlerRef.get(connectionHandler);
+    public ConnectionHandler getConnection() {
+        return ConnectionHandlerRef.get(connection);
     }
 
     public void setParent(@Nullable BasePsiElement parent) {
@@ -245,17 +243,5 @@ public class PsiResolveResult extends PropertyHolderBase.IntStore<PsiResolveStat
 
     public int getResolveAttempts() {
         return resolveAttempts;
-    }
-
-    public long getLastResolveInvocation() {
-        return lastResolveInvocation;
-    }
-
-    public DBObject getUnderlyingObject() {
-        return WeakRef.get(underlyingObject);
-    }
-
-    public void setUnderlyingObject(DBObject underlyingObject) {
-        this.underlyingObject = WeakRef.of(underlyingObject);
     }
 }

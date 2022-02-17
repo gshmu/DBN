@@ -215,6 +215,11 @@ public enum DBObjectType implements DynamicContentType<DBObjectType> {
         return objectType.children.contains(this);
     }
 
+    public boolean isOverloadable() {
+        // TODO confirm no other object type can be overloadable
+        return getGenericType() == METHOD;
+    }
+
     public boolean hasChild(DBObjectType objectType) {
         for (DBObjectType childObjectType : children) {
             if (childObjectType.matches(objectType)) {
