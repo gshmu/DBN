@@ -66,7 +66,7 @@ public final class ComponentDisposer {
                     if (components.length > 0) {
                         for (Component child : components) {
                             dispose(child);
-                            Unsafe.silent(() -> container.remove(child));
+                            //Unsafe.silent(() -> container.remove(child));
                         }
                     }
                 }

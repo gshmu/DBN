@@ -6,7 +6,7 @@ import com.dci.intellij.dbn.common.content.DynamicContent;
 import com.dci.intellij.dbn.common.content.loader.DynamicContentLoader;
 import com.dci.intellij.dbn.common.content.loader.DynamicContentResultSetLoader;
 import com.dci.intellij.dbn.common.content.loader.DynamicSubcontentLoader;
-import com.dci.intellij.dbn.common.util.Safe;
+import com.dci.intellij.dbn.common.util.Commons;
 import com.dci.intellij.dbn.connection.jdbc.DBNConnection;
 import com.dci.intellij.dbn.database.DatabaseMetadataInterface;
 import com.dci.intellij.dbn.database.common.metadata.def.DBArgumentMetadata;
@@ -179,7 +179,7 @@ public abstract class DBMethodImpl<M extends DBMethodMetadata> extends DBSchemaO
             public boolean match(DBArgument argument, DynamicContent dynamicContent) {
                 DBMethod method = (DBMethod) dynamicContent.getParentEntity();
                 DBMethod argumentMethod = argument.getMethod();
-                return Safe.equal(argumentMethod, method) && argument.getOverload() == method.getOverload();
+                return Commons.match(argumentMethod, method) && argument.getOverload() == method.getOverload();
             }
 
             @Override

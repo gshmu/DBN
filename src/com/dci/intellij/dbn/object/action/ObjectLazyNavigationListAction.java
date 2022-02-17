@@ -20,7 +20,7 @@ public class ObjectLazyNavigationListAction extends ObjectListShowAction {
 
     @Override
     public List<? extends DBObject> getObjectList() {
-        return Commons.resolve(
+        return Commons.coalesce(
                 () -> navigationList.getObjects(),
                 () -> navigationList.getObjectsProvider().getObjects());
     }

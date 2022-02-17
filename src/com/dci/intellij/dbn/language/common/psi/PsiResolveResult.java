@@ -1,6 +1,7 @@
 package com.dci.intellij.dbn.language.common.psi;
 
 import com.dci.intellij.dbn.common.property.PropertyHolderBase;
+import com.dci.intellij.dbn.common.util.Commons;
 import com.dci.intellij.dbn.common.util.Safe;
 import com.dci.intellij.dbn.common.util.Strings;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
@@ -166,7 +167,7 @@ public class PsiResolveResult extends PropertyHolderBase.IntStore<PsiResolveStat
 
     private boolean schemaChanged() {
         IdentifierPsiElement element = this.element.get();
-        return element != null && !Safe.equal(DBObjectRef.get(databaseSchema), element.getDatabaseSchema());
+        return element != null && !Commons.match(DBObjectRef.get(databaseSchema), element.getDatabaseSchema());
     }
 
     private boolean connectionBecameValid(ConnectionHandler connectionHandler) {

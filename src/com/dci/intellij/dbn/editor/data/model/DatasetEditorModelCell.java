@@ -4,8 +4,8 @@ package com.dci.intellij.dbn.editor.data.model;
 import com.dci.intellij.dbn.common.event.ProjectEvents;
 import com.dci.intellij.dbn.common.locale.Formatter;
 import com.dci.intellij.dbn.common.thread.Dispatch;
+import com.dci.intellij.dbn.common.util.Commons;
 import com.dci.intellij.dbn.common.util.Messages;
-import com.dci.intellij.dbn.common.util.Safe;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.jdbc.DBNConnection;
 import com.dci.intellij.dbn.data.model.resultSet.ResultSetDataModelCell;
@@ -141,7 +141,7 @@ public class DatasetEditorModelCell
         if (userValue instanceof ValueAdapter) {
             ValueAdapter<?> valueAdapter = (ValueAdapter<?>) userValue;
             try {
-                return !Safe.equal(valueAdapter.read(), newUserValue);
+                return !Commons.match(valueAdapter.read(), newUserValue);
             } catch (SQLException e) {
                 return true;
             }
@@ -158,13 +158,13 @@ public class DatasetEditorModelCell
             return !Objects.equals(formattedValue1, formattedValue2);
         }
         
-        return !Safe.equal(userValue, newUserValue);
+        return !Commons.match(userValue, newUserValue);
     }
 
     public void updateUserValue(Object userValue, String errorMessage) {
         getConnection().updateLastAccess();
 
-        if (!Safe.equal(userValue, getUserValue()) || hasError()) {
+        if (!Commons.match(userValue, getUserValue()) || hasError()) {
             DatasetEditorModelRow row = getRow();
             DatasetEditorError error = new DatasetEditorError(errorMessage, getColumnInfo().getColumn());
             getRow().notifyError(error, true, true);
@@ -182,7 +182,7 @@ public class DatasetEditorModelCell
     }
 
     public boolean matches(DatasetEditorModelCell remoteCell, boolean lenient) {
-        if (Safe.equal(getUserValue(), remoteCell.getUserValue())){
+        if (Commons.match(getUserValue(), remoteCell.getUserValue())){
             return true;
         }
         if (lenient && (getRow().is(INSERTED) || getRow().is(MODIFIED)) && getUserValue() == null && remoteCell.getUserValue() != null) {
@@ -307,7 +307,7 @@ public class DatasetEditorModelCell
 
     boolean notifyError(DatasetEditorError error, boolean showPopup) {
         error.setNotified(true);
-        if(!Safe.equal(this.error, error, err -> err.getMessage())) {
+        if(!Commons.match(this.error, error, err -> err.getMessage())) {
             clearError();
             this.error = error;
             notifyCellUpdated();

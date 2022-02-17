@@ -2,7 +2,7 @@ package com.dci.intellij.dbn.execution.method;
 
 import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.common.util.Cloneable;
-import com.dci.intellij.dbn.common.util.Safe;
+import com.dci.intellij.dbn.common.util.Commons;
 import com.dci.intellij.dbn.common.util.Strings;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.ConnectionId;
@@ -190,7 +190,7 @@ public class MethodExecutionInput extends LocalExecutionInput implements Compara
 
     private ArgumentValue getArgumentValue(@NotNull DBArgument argument) {
         for (ArgumentValue argumentValue : argumentValues) {
-            if (Safe.equal(argument, argumentValue.getArgument())) {
+            if (Commons.match(argument, argumentValue.getArgument())) {
                 return argumentValue;
             }
         }
@@ -202,8 +202,8 @@ public class MethodExecutionInput extends LocalExecutionInput implements Compara
 
     private ArgumentValue getArgumentValue(DBArgument argument, DBTypeAttribute attribute) {
         for (ArgumentValue argumentValue : argumentValues) {
-            if (Safe.equal(argumentValue.getArgument(), argument) &&
-                    Safe.equal(argumentValue.getAttribute(), attribute)) {
+            if (Commons.match(argumentValue.getArgument(), argument) &&
+                    Commons.match(argumentValue.getAttribute(), attribute)) {
                 return argumentValue;
             }
         }

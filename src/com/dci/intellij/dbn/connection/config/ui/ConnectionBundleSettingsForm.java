@@ -1,6 +1,7 @@
 package com.dci.intellij.dbn.connection.config.ui;
 
 import com.dci.intellij.dbn.common.action.DataKeys;
+import com.dci.intellij.dbn.common.action.DataProviders;
 import com.dci.intellij.dbn.common.color.Colors;
 import com.dci.intellij.dbn.common.database.DatabaseInfo;
 import com.dci.intellij.dbn.common.dispose.DisposableContainers;
@@ -22,7 +23,6 @@ import com.dci.intellij.dbn.connection.config.ConnectionDatabaseSettings;
 import com.dci.intellij.dbn.connection.config.ConnectionSettings;
 import com.dci.intellij.dbn.connection.config.tns.TnsName;
 import com.dci.intellij.dbn.driver.DriverSource;
-import com.intellij.ide.DataManager;
 import com.intellij.openapi.actionSystem.ActionToolbar;
 import com.intellij.openapi.ide.CopyPasteManager;
 import com.intellij.openapi.options.ConfigurationException;
@@ -92,7 +92,7 @@ public class ConnectionBundleSettingsForm extends ConfigurationEditorForm<Connec
         connectionSetupPanel.setPreferredSize(new Dimension(500, -1));
         connectionSetupPanel.add(emptyPanel, BLANK_PANEL_ID);
 
-        DataManager.registerDataProvider(mainPanel, this);
+        DataProviders.register(mainPanel, this);
     }
 
     @NotNull

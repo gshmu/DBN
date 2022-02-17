@@ -101,7 +101,7 @@
         </statement>
     </statement-execution-processor>
     <statement-execution-processor id="schemas" is-query="true" is-prepared-statement="true">
-        <statement prefixes="DBA, ALL">
+<!--        <statement prefixes="DBA, ALL">
             with DBN_OBJECTS as (select distinct OWNER from [PREFIX]_OBJECTS)
             select
                 u.USERNAME as SCHEMA_NAME,
@@ -118,7 +118,7 @@
                 'Y' as IS_SYSTEM,
                 'N' as IS_EMPTY
             from DUAL
-        </statement>
+        </statement>-->
         <statement prefixes="DBA, ALL">
             select
                 u.USERNAME as SCHEMA_NAME,

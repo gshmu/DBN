@@ -5,7 +5,6 @@ import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.common.event.ProjectEvents;
 import com.dci.intellij.dbn.common.routine.ParametricRunnable;
 import com.dci.intellij.dbn.common.thread.Progress;
-import com.dci.intellij.dbn.common.util.Commons;
 import com.dci.intellij.dbn.connection.ConnectionAction;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.operation.options.OperationSettings;
@@ -268,7 +267,7 @@ public class DatabaseCompilerManager extends AbstractProjectComponent {
                 break;
             } else {
                 DBSchemaObject object = objects.get(i);
-                progressIndicator.setFraction(Commons.getProgressPercentage(i, count));
+                progressIndicator.setFraction(Progress.progressOf(i, count));
                 DBObjectStatusHolder objectStatus = object.getStatus();
                 if (object.getContentType().isBundle()) {
                     for (DBContentType contentType : object.getContentType().getSubContentTypes()) {

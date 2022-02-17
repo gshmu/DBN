@@ -1,6 +1,5 @@
 package com.dci.intellij.dbn.common.action;
 
-import com.intellij.ide.DataManager;
 import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.actionSystem.DataProvider;
@@ -11,12 +10,13 @@ import com.intellij.openapi.ui.popup.ListPopup;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import javax.swing.*;
-import java.awt.*;
+import javax.swing.Icon;
+import java.awt.Component;
+import java.awt.Point;
 import java.awt.event.InputEvent;
 
 public abstract class GroupPopupAction extends DumbAwareProjectAction {
-    private String groupTitle;
+    private final String groupTitle;
     public GroupPopupAction(String name, @Nullable String groupTitle, @Nullable Icon icon) {
         super(name, null, icon);
         this.groupTitle = groupTitle;
@@ -43,7 +43,7 @@ public abstract class GroupPopupAction extends DumbAwareProjectAction {
                 //Project project = (Project) e.getDataContext().getData(DataConstants.PROJECT);
                 DataProvider dataProvider = getDataProvider(e);
                 if (dataProvider != null) {
-                    DataManager.registerDataProvider(popup.getContent(), dataProvider);
+                    DataProviders.register(popup.getContent(), dataProvider);
                 }
                 showBelowComponent(popup, component);
             }

@@ -1,5 +1,6 @@
 package com.dci.intellij.dbn.common.editor;
 
+import com.dci.intellij.dbn.common.action.DataProviders;
 import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.common.dispose.StatefulDisposable;
 import com.dci.intellij.dbn.common.project.ProjectRef;
@@ -7,7 +8,6 @@ import com.dci.intellij.dbn.editor.EditorProviderId;
 import com.dci.intellij.dbn.language.common.WeakRef;
 import com.dci.intellij.dbn.vfs.DatabaseOpenFileDescriptor;
 import com.intellij.codeHighlighting.BackgroundEditorHighlighter;
-import com.intellij.ide.DataManager;
 import com.intellij.ide.structureView.StructureViewBuilder;
 import com.intellij.openapi.actionSystem.DataProvider;
 import com.intellij.openapi.editor.Editor;
@@ -25,7 +25,7 @@ import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import javax.swing.*;
+import javax.swing.JComponent;
 import java.beans.PropertyChangeListener;
 
 public abstract class BasicTextEditorImpl<T extends VirtualFile> extends StatefulDisposable.Base implements BasicTextEditor<T>, StatefulDisposable, DataProvider {
@@ -44,7 +44,7 @@ public abstract class BasicTextEditorImpl<T extends VirtualFile> extends Statefu
 
         TextEditorProvider textEditorProvider = TextEditorProvider.getInstance();
         textEditor = (TextEditor) textEditorProvider.createEditor(project, virtualFile);
-        DataManager.registerDataProvider(textEditor.getComponent(), this);
+        DataProviders.register(textEditor.getComponent(), this);
 
         Disposer.register(this, textEditor);
     }

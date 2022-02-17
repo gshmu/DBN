@@ -3,25 +3,44 @@ package com.dci.intellij.dbn.common.dispose;
 import com.dci.intellij.dbn.common.latent.Latent;
 import com.dci.intellij.dbn.common.options.Configuration;
 import com.dci.intellij.dbn.common.util.Unsafe;
+import com.dci.intellij.dbn.connection.DatabaseEntity;
 import com.intellij.openapi.components.NamedComponent;
 import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.vfs.VirtualFile;
+import com.intellij.psi.PsiElement;
 import com.intellij.util.ReflectionUtil;
 import lombok.extern.slf4j.Slf4j;
 
+import java.awt.Component;
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 import java.util.Collection;
+import java.util.EventListener;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.stream.Collectors;
 
 @Slf4j
 public final class Nullifier {
     private Nullifier() {}
 
-    private static final Map<Class<?>, List<Field>> CLASS_FIELDS = new ConcurrentHashMap<>();
+    private static final Map<Class<?>, List<Field>> NULLIFIABLE_FIELDS = new ConcurrentHashMap<>();
+    private static final Class[] NULLIFIABLE_CLASSES = new Class[] {
+            Map.class,
+            Collection.class,
+            Latent.class,
+            Editor.class,
+            Document.class,
+            PsiElement.class,
+            VirtualFile.class,
+            Configuration.class,
+            DatabaseEntity.class,
+            AutoCloseable.class,
+            NamedComponent.class,
+            EventListener.class,
+    };
 
     public static void clearCollection(Collection<?> collection) {
         Unsafe.silent(() -> collection.clear());
@@ -32,20 +51,21 @@ public final class Nullifier {
     }
 
     public static void nullify(Object object) {
-        BackgroundDisposer.queue(() -> {
-            List<Field> fields = CLASS_FIELDS.computeIfAbsent(object.getClass(), clazz -> ReflectionUtil.collectFields(clazz));
-            for (Field field : fields) {
-                try {
-                    Sticky sticky = field.getAnnotation(Sticky.class);
-                    if (sticky == null) {
+        if (!(object instanceof Component)) {
+            BackgroundDisposer.queue(() -> {
+                List<Field> fields = nullifiableFields(object.getClass());
+                for (Field field : fields) {
+                    try {
                         nullifyField(object, field);
+                    } catch (UnsupportedOperationException ignore) {
+                    } catch (Throwable e) {
+                        log.error("Failed to nullify field", e);
                     }
-                } catch (UnsupportedOperationException ignore) {
-                } catch (Throwable e) {
-                    log.error("Failed to nullify field", e);
                 }
-            }
-        });
+            });
+        } else {
+            System.out.println();
+        }
     }
 
     private static void nullifyField(Object object, Field field) throws IllegalAccessException {
@@ -62,23 +82,38 @@ public final class Nullifier {
                 Latent latent = (Latent) fieldValue;
                 latent.reset();
             } else {
-                int modifiers = field.getModifiers();
-                if (!Modifier.isFinal(modifiers) &&
-                        !Modifier.isStatic(modifiers) &&
-                        !Modifier.isNative(modifiers) &&
-                        !Modifier.isTransient(modifiers) &&
-                        (//fieldValue instanceof Disposable ||
-                                //fieldValue instanceof Component ||
-                                fieldValue instanceof Editor ||
-                                        fieldValue instanceof Document ||
-                                        fieldValue instanceof VirtualFile ||
-                                        fieldValue instanceof Configuration ||
-                                        fieldValue instanceof AutoCloseable ||
-                                        fieldValue instanceof NamedComponent)) {
-
-                    field.set(object, null);
-                }
+                field.set(object, null);
             }
         }
+    }
+
+    private static List<Field> nullifiableFields(Class clazz) {
+        return NULLIFIABLE_FIELDS.computeIfAbsent(clazz, k ->
+                ReflectionUtil.
+                        collectFields(k).
+                        stream().
+                        filter(field -> isNullifiable(field)).
+                        collect(Collectors.toList()));
+    }
+
+    private static boolean isNullifiable(Field field) {
+        int modifiers = field.getModifiers();
+        if (Modifier.isStatic(modifiers) ||
+                //Modifier.isFinal(modifiers) ||
+                Modifier.isNative(modifiers)) {
+            return false;
+        }
+
+        Sticky sticky = field.getAnnotation(Sticky.class);
+        if (sticky != null) {
+            return false;
+        }
+
+        for (Class<?> nullifiableClass : NULLIFIABLE_CLASSES) {
+            if (nullifiableClass.isAssignableFrom(field.getType())) {
+                return true;
+            }
+        }
+        return false;
     }
 }

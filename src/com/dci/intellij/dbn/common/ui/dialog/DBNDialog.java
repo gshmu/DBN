@@ -50,6 +50,7 @@ public abstract class DBNDialog<F extends DBNForm> extends DialogWrapper impleme
     public final F getForm() {
         if (form == null && !isDisposed()) {
             form = createForm();
+            SafeDisposer.register(this, form);
         }
         return Failsafe.nn(form);
     }
@@ -148,9 +149,8 @@ public abstract class DBNDialog<F extends DBNForm> extends DialogWrapper impleme
         if (!disposed) {
             disposed = true;
             super.dispose();
-            SafeDisposer.dispose(form, true);
             disposeInner();
-            nullify();
+            //nullify();
         }
     }
 

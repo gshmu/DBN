@@ -6,8 +6,8 @@ import com.dci.intellij.dbn.common.latent.Loader;
 import com.dci.intellij.dbn.common.property.PropertyHolder;
 import com.dci.intellij.dbn.common.property.PropertyHolderBase;
 import com.dci.intellij.dbn.common.util.Actions;
+import com.dci.intellij.dbn.common.util.Commons;
 import com.dci.intellij.dbn.common.util.Context;
-import com.dci.intellij.dbn.common.util.Safe;
 import com.dci.intellij.dbn.common.util.Strings;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.actionSystem.DefaultActionGroup;
@@ -283,7 +283,7 @@ public class DBNComboBox<T extends Presentable> extends JComboBox<T> implements 
         if (value != null) {
             value = model.containsItem(value) ? value : model.isEmpty() ? null : model.getElementAt(0);
         }
-        if (!Safe.equal(oldValue, value) || (model.isEmpty() && value == null)) {
+        if (!Commons.match(oldValue, value) || (model.isEmpty() && value == null)) {
             setSelectedItem(value);
         }
     }

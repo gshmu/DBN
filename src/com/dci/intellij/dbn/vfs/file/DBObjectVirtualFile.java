@@ -3,7 +3,7 @@ package com.dci.intellij.dbn.vfs.file;
 import com.dci.intellij.dbn.browser.model.BrowserTreeNode;
 import com.dci.intellij.dbn.common.DevNullStreams;
 import com.dci.intellij.dbn.common.dispose.Failsafe;
-import com.dci.intellij.dbn.common.util.Commons;
+import com.dci.intellij.dbn.common.util.Traces;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.ConnectionId;
 import com.dci.intellij.dbn.connection.SchemaId;
@@ -105,7 +105,7 @@ public class DBObjectVirtualFile<T extends DBObject> extends DBVirtualFileImpl {
     @Override
     @Nullable
     public VirtualFile getParent() {
-        if (Commons.isCalledThrough(NavBarPresentation.class)) {
+        if (Traces.isCalledThrough(NavBarPresentation.class)) {
             T object = getObject();
             BrowserTreeNode treeParent = object.getParent();
             if (treeParent instanceof DBObjectList<?>) {
