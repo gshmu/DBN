@@ -112,7 +112,7 @@ public abstract class DBNResource<T> extends ResourceStatusHolder implements Res
 
     public boolean shouldNotify(String error) {
         long timestamp = System.currentTimeMillis();
-        long lastTimestamp = errorLogs.computeIfAbsent(error, key -> 0L);
+        long lastTimestamp = errorLogs.computeIfAbsent(error, e -> 0L);
         errorLogs.put(error, timestamp);
         return TimeUtil.isOlderThan(lastTimestamp, TimeUtil.Millis.THIRTY_SECONDS);
     }

@@ -15,8 +15,9 @@ public abstract class PropertyHolderBase<T extends Property> implements Property
 
     private T[] props() {
         try {
-            return cast(REGISTRY.computeIfAbsent(getClass(), k -> properties()));
+            return cast(REGISTRY.computeIfAbsent(getClass(), c -> properties()));
         } catch (IllegalStateException e) {
+            // TODO why??
             return cast(REGISTRY.get(getClass()));
         }
     }

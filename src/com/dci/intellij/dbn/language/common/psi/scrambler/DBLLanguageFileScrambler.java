@@ -119,7 +119,7 @@ public class DBLLanguageFileScrambler {
         String path = directory.getPath();
         String[] pathTokens = path.split("[\\\\/]");
         for (String pathToken : pathTokens) {
-            String newPathToken = locationMap.computeIfAbsent(pathToken, key -> scrambledName("package", locationMap.size() + 1));
+            String newPathToken = locationMap.computeIfAbsent(pathToken, t -> scrambledName("package", locationMap.size() + 1));
             newPath.append(newPathToken);
             newPath.append(File.separator);
         }
@@ -139,7 +139,7 @@ public class DBLLanguageFileScrambler {
     }
 
     private String getObjectName(DBObjectType objectType, String objectName) {
-        Map<String, String> indexMap = objectTypeIndex.computeIfAbsent(objectType, key -> new HashMap<>());
-        return indexMap.computeIfAbsent(objectName.toLowerCase(), key -> scrambledName(objectType.getName().replaceAll(" ", "_"), indexMap.size() + 1));
+        Map<String, String> indexMap = objectTypeIndex.computeIfAbsent(objectType, t -> new HashMap<>());
+        return indexMap.computeIfAbsent(objectName.toLowerCase(), n -> scrambledName(objectType.getName().replaceAll(" ", "_"), indexMap.size() + 1));
     }
 }

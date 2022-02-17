@@ -23,7 +23,7 @@ public class DBObjectListLoaderRegistry {
         if (parent instanceof DBObject) {
             DBObject parentObject = (DBObject) parent;
             DBObjectType parentObjectType = parentObject.getObjectType();
-            Map<DynamicContentType, DynamicContentLoader> childLoaders = CHILD_LOADERS.computeIfAbsent(parentObjectType, k -> new HashMap<>());
+            Map<DynamicContentType, DynamicContentLoader> childLoaders = CHILD_LOADERS.computeIfAbsent(parentObjectType, t -> new HashMap<>());
             DynamicContentLoader contentLoader = childLoaders.get(contentType);
             if (contentLoader == null) {
                 childLoaders.put(contentType, loader);

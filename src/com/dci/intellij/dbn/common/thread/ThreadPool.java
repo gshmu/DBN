@@ -5,7 +5,12 @@ import lombok.extern.slf4j.Slf4j;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Map;
-import java.util.concurrent.*;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.SynchronousQueue;
+import java.util.concurrent.ThreadFactory;
+import java.util.concurrent.ThreadPoolExecutor;
+import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 
 @Slf4j
@@ -26,7 +31,7 @@ public final class ThreadPool {
     @NotNull
     private static ThreadFactory createThreadFactory(String name, boolean daemon) {
         return runnable -> {
-            AtomicInteger index = THREAD_COUNTERS.computeIfAbsent(name, s -> new AtomicInteger(0));
+            AtomicInteger index = THREAD_COUNTERS.computeIfAbsent(name, n -> new AtomicInteger(0));
             String indexedName = name + " (" + index.incrementAndGet() + ")";
             log.info("Creating thread \"" + indexedName + "\"");
             Thread thread = new Thread(() -> {

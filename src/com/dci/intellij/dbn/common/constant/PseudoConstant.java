@@ -15,6 +15,8 @@ import java.util.Objects;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
+import static com.dci.intellij.dbn.common.util.Unsafe.cast;
+
 /**
  * Use this "constant" if the possible values are variable (i.e. cannot be implemented with enum).
  */
@@ -30,7 +32,7 @@ public abstract class PseudoConstant<T extends PseudoConstant<T>> implements Con
     }
 
     private static <T extends PseudoConstant<T>> Map<String, T> getRegistry(Class<T> clazz) {
-        return (Map<String, T>) REGISTRY.computeIfAbsent(clazz, k -> new ConcurrentHashMap<>());
+        return cast(REGISTRY.computeIfAbsent(clazz, c -> new ConcurrentHashMap<>()));
     }
 
     @Override
@@ -62,7 +64,7 @@ public abstract class PseudoConstant<T extends PseudoConstant<T>> implements Con
                 queue = new HashSet<>();
                 INTERNAL.set(queue);
                 try {
-                    return registry.computeIfAbsent(id, key -> createConstant(clazz, key));
+                    return registry.computeIfAbsent(id, i -> createConstant(clazz, i));
                 } finally {
                     for (T queued : queue) {
                         registry.put(queued.id(), queued);

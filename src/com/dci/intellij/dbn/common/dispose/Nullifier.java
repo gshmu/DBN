@@ -88,9 +88,9 @@ public final class Nullifier {
     }
 
     private static List<Field> nullifiableFields(Class clazz) {
-        return NULLIFIABLE_FIELDS.computeIfAbsent(clazz, k ->
+        return NULLIFIABLE_FIELDS.computeIfAbsent(clazz, c ->
                 ReflectionUtil.
-                        collectFields(k).
+                        collectFields(c).
                         stream().
                         filter(field -> isNullifiable(field)).
                         collect(Collectors.toList()));

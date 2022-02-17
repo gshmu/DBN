@@ -267,7 +267,7 @@ public class DatabaseFileManager extends AbstractProjectComponent implements Per
                 if (objectRef != null) {
                     ConnectionId connectionId = objectRef.getConnectionId();
                     List<DBObjectRef<DBSchemaObject>> objectRefs =
-                            pendingOpenFiles.computeIfAbsent(connectionId, k -> new ArrayList<>());
+                            pendingOpenFiles.computeIfAbsent(connectionId, id -> new ArrayList<>());
                     objectRefs.add(objectRef);
                 }
             }

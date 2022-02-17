@@ -148,7 +148,7 @@ public abstract class SqliteConstraintInfoResultSetStub<T extends SqliteMetadata
 
         @NotNull
         List<ConstraintColumnInfo> getConstraintColumns(Map<String, List<ConstraintColumnInfo>> constraints, String indexId) {
-            return constraints.computeIfAbsent(indexId, k -> new ArrayList<>());
+            return constraints.computeIfAbsent(indexId, id -> new ArrayList<>());
         }
 
         public abstract ResultSet loadTableInfo(String datasetName) throws SQLException;

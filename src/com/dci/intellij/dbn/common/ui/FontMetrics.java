@@ -34,7 +34,7 @@ public class FontMetrics {
         Font font = component.getFont();
         length = Math.min(100, length);
 
-        int[] widths = cache.computeIfAbsent(font, k -> new int[100]);
+        int[] widths = cache.computeIfAbsent(font, f -> new int[100]);
         int index = length - 1;
         if (widths[index] == 0) {
             String mock = StringUtils.leftPad("", length, "O");

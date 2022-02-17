@@ -131,7 +131,7 @@ public class CachedResultSet extends StatefulDisposable.Base implements ResultSe
      *                          Utilities                         *
      **************************************************************/
     public CachedResultSet where(@NotNull Condition whereCondition) {
-        return filtered.computeIfAbsent(whereCondition, condition -> createFilteredSet(condition));
+        return filtered.computeIfAbsent(whereCondition, c -> createFilteredSet(c));
     }
 
     @NotNull
@@ -288,7 +288,7 @@ public class CachedResultSet extends StatefulDisposable.Base implements ResultSe
         if (rows.isEmpty()) {
             return this;
         } else {
-            return grouped.computeIfAbsent(groupByClause, clause -> createGroupBySet(clause));
+            return grouped.computeIfAbsent(groupByClause, c -> createGroupBySet(c));
         }
     }
 

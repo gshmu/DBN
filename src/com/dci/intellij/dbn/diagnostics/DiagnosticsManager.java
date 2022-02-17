@@ -55,12 +55,12 @@ public class DiagnosticsManager extends AbstractProjectComponent implements Pers
 
     public DiagnosticBundle<String> getMetadataInterfaceDiagnostics(ConnectionId connectionId) {
         return metadataInterfaceDiagnostics.
-                computeIfAbsent(connectionId, connId -> new DiagnosticBundle<>(DiagnosticType.METADATA_INTERFACE));
+                computeIfAbsent(connectionId, id -> new DiagnosticBundle<>(DiagnosticType.METADATA_INTERFACE));
     }
 
     public DiagnosticBundle<SessionId> getConnectivityDiagnostics(ConnectionId connectionId) {
         return connectivityDiagnostics.
-                computeIfAbsent(connectionId, connId -> new DiagnosticBundle<>(DiagnosticType.DATABASE_CONNECTIVITY));
+                computeIfAbsent(connectionId, id -> new DiagnosticBundle<>(DiagnosticType.DATABASE_CONNECTIVITY));
     }
 
     public void openDiagnosticsSettings() {

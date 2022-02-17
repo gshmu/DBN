@@ -34,7 +34,7 @@ public abstract class DynamicContentLoaderImpl<
             @NotNull DynamicContentLoader loader) {
 
         parentContentType = Commons.nvl(parentContentType, NULL);
-        Map<DynamicContentType, DynamicContentLoader> childLoaders = LOADERS.computeIfAbsent(parentContentType, k -> new HashMap<>());
+        Map<DynamicContentType, DynamicContentLoader> childLoaders = LOADERS.computeIfAbsent(parentContentType, t -> new HashMap<>());
         DynamicContentLoader contentLoader = childLoaders.get(contentType);
         if (contentLoader == null) {
             childLoaders.put(contentType, loader);
