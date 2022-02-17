@@ -16,9 +16,9 @@ public class DBNTableSorter<R, M extends DBNTableModel<R>> extends TableRowSorte
     @Override
     public Comparator<?> getComparator(int column) {
         M model = getModel();
-        return comparators.computeIfAbsent(column, col -> (Comparator<R>) (row1, row2) -> {
-            Object value1 = model.getValue(row1, col);
-            Object value2 = model.getValue(row2, col);
+        return comparators.computeIfAbsent(column, c -> (Comparator<R>) (row1, row2) -> {
+            Object value1 = model.getValue(row1, c);
+            Object value2 = model.getValue(row2, c);
 
             if (value1 == null && value2 == null) {
                 return 0;
@@ -39,8 +39,8 @@ public class DBNTableSorter<R, M extends DBNTableModel<R>> extends TableRowSorte
                 return comparable1.compareTo(comparable2);
             }
 
-            String presentableValue1 = model.getPresentableValue(row1, col);
-            String presentableValue2 = model.getPresentableValue(row2, col);
+            String presentableValue1 = model.getPresentableValue(row1, c);
+            String presentableValue2 = model.getPresentableValue(row2, c);
             return presentableValue1 == null ? -1 : presentableValue2 == null ? 1 : presentableValue1.compareTo(presentableValue2);
         });
     }

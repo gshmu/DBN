@@ -106,7 +106,7 @@ public class ThreadMonitor {
     }
 
     private static AtomicInteger getProcessCounter(ThreadProperty property) {
-        return PROCESS_COUNTERS.computeIfAbsent(property, property1 -> new AtomicInteger(0));
+        return PROCESS_COUNTERS.computeIfAbsent(property, p -> new AtomicInteger(0));
     }
 
     public static <E extends Throwable> void wrap(@NotNull ThreadProperty threadProperty, ThrowableRunnable<E> runnable) throws E {

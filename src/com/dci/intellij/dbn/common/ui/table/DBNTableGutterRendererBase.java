@@ -62,8 +62,8 @@ public abstract class DBNTableGutterRendererBase implements DBNTableGutterRender
     }
 
     private int computeLabelWidth(int count) {
-        return indexWidth.get().computeIfAbsent(count, k -> {
-            int digits = (int) Math.log10(count) + 1;
+        return indexWidth.get().computeIfAbsent(count, c -> {
+            int digits = (int) Math.log10(c) + 1;
             String text = StringUtils.leftPad("", digits, "0");
             Font font = textLabel.getFont();
             FontRenderContext fontRenderContext = textLabel.getFontMetrics(font).getFontRenderContext();

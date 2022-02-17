@@ -32,7 +32,7 @@ public class StatementExecutionVariablesCache implements PersistentStateElement 
     public Set<StatementExecutionVariable> getVariables(@Nullable VirtualFile virtualFile) {
         if (virtualFile != null) {
             String fileUrl = virtualFile.getUrl();
-            return fileVariablesMap.computeIfAbsent(fileUrl, s -> new THashSet<>());
+            return fileVariablesMap.computeIfAbsent(fileUrl, u -> new THashSet<>());
         }
         return Collections.emptySet();
     }

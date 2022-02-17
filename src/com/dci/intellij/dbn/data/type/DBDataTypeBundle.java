@@ -72,7 +72,7 @@ public final class DBDataTypeBundle extends StatefulDisposable.Base {
     }
 
     public DBDataType getDataType(DBDataTypeDefinition definition) {
-        return dataTypes.computeIfAbsent(definition, def -> createDataType(def));
+        return dataTypes.computeIfAbsent(definition, d -> createDataType(d));
     }
 
     private DBDataType createDataType(DBDataTypeDefinition def) {

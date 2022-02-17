@@ -27,7 +27,7 @@ final class ColorAdjustmentCache {
         return adjustedColor;
     }
 
-    private static TIntObjectHashMap<TIntObjectHashMap<Color>> adjustmentStore(ColorAdjustment adj) {
-        return store.computeIfAbsent(adj, k -> new TIntObjectHashMap<>());
+    private static TIntObjectHashMap<TIntObjectHashMap<Color>> adjustmentStore(ColorAdjustment adjustment) {
+        return store.computeIfAbsent(adjustment, a -> new TIntObjectHashMap<>());
     }
 }

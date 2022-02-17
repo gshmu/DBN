@@ -208,22 +208,22 @@ public class DBObjectBundleImpl extends BrowserTreeNodeBase implements DBObjectB
     @Override
     public LookupItemBuilder getLookupItemBuilder(DBObjectRef<?> objectRef, DBLanguage<?> language) {
         if (language == SQLLanguage.INSTANCE) {
-            return sqlLookupItemBuilders.computeIfAbsent(objectRef, ref ->  new ObjectLookupItemBuilder(ref, SQLLanguage.INSTANCE));
+            return sqlLookupItemBuilders.computeIfAbsent(objectRef, r ->  new ObjectLookupItemBuilder(r, SQLLanguage.INSTANCE));
         }
         if (language == PSQLLanguage.INSTANCE) {
-            return psqlLookupItemBuilders.computeIfAbsent(objectRef, ref -> new ObjectLookupItemBuilder(ref, PSQLLanguage.INSTANCE));
+            return psqlLookupItemBuilders.computeIfAbsent(objectRef, r -> new ObjectLookupItemBuilder(r, PSQLLanguage.INSTANCE));
         }
         return null;
     }
 
     @Override
     public DBObjectPsiFacade getObjectPsiFacade(DBObjectRef<?> objectRef) {
-        return objectPsiFacades.computeIfAbsent(objectRef, ref -> new DBObjectPsiFacade(ref));
+        return objectPsiFacades.computeIfAbsent(objectRef, r -> new DBObjectPsiFacade(r));
     }
 
     @Override
     public DBObjectVirtualFile<?> getObjectVirtualFile(DBObjectRef<?> objectRef) {
-        return virtualFiles.computeIfAbsent(objectRef, ref -> new DBObjectVirtualFile<>(getProject(), ref));
+        return virtualFiles.computeIfAbsent(objectRef, r -> new DBObjectVirtualFile<>(getProject(), r));
     }
 
     @Override
