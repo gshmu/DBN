@@ -39,9 +39,10 @@ public final class ComponentDisposer {
 
     @NotNull
     private static List<Pair<Method, Class[]>> getListenerRemovalMethods(Component comp) {
-        return LISTENER_REMOVE_METHODS.computeIfAbsent(comp.getClass(), k -> {
+        Class<? extends Component> clazz = comp.getClass();
+        return LISTENER_REMOVE_METHODS.computeIfAbsent(clazz, c -> {
             List<Pair<Method, Class[]>> listenerMethods = new ArrayList<>();
-            Method[] methods = comp.getClass().getMethods();
+            Method[] methods = c.getMethods();
             for (Method method : methods) {
                 String name = method.getName();
                 if (name.startsWith("remove") && name.endsWith("Listener")) {

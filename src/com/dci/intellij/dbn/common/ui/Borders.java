@@ -46,7 +46,7 @@ public final class Borders {
     }
 
     public static Border topInsetBorder(int inset) {
-        return TOP_INSET_BORDERS.computeIfAbsent(inset, i -> new EmptyBorder(JBUI.insets(inset, 0, 0, 0)));
+        return TOP_INSET_BORDERS.computeIfAbsent(inset, i -> new EmptyBorder(JBUI.insets(i, 0, 0, 0)));
     }
 
 }

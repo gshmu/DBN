@@ -30,7 +30,7 @@ public class ConnectionCache implements ApplicationComponent {
                 return cache.computeIfAbsent(connectionId, id -> {
                     for (Project project : Projects.getOpenProjects()) {
                         ConnectionManager connectionManager = ConnectionManager.getInstance(project);
-                        ConnectionHandler connectionHandler = connectionManager.getConnection(connectionId);
+                        ConnectionHandler connectionHandler = connectionManager.getConnection(id);
                         if (Failsafe.check(connectionHandler)) {
                             return connectionHandler;
                         }

@@ -239,10 +239,10 @@ public class ElementTypeBundle {
     }*/
 
     private NamedElementType getNamedElementType(String id, ElementTypeBase parent) {
-        NamedElementType elementType = namedElementTypes.computeIfAbsent(id, k -> {
-            NamedElementType namedElementType = new NamedElementType(this, k);
+        NamedElementType elementType = namedElementTypes.computeIfAbsent(id, i -> {
+            NamedElementType namedElementType = new NamedElementType(this, i);
             builder.allElementTypes.add(namedElementType);
-            log.debug("Created named element type '" + id + '\'');
+            log.debug("Created named element type '" + i + '\'');
             return namedElementType;
         });
 

@@ -75,7 +75,7 @@ public class DatabaseDriverManager implements ApplicationComponent {
                 disposeClassLoader(drivers);
             }
 
-            return driversCache.computeIfAbsent(libraryFile, file -> loadDrivers(file));
+            return driversCache.computeIfAbsent(libraryFile, f -> loadDrivers(f));
         } catch (Exception e) {
             log.warn("failed to load drivers from library " + libraryFile, e);
             throw e;

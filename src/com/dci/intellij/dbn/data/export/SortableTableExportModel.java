@@ -74,7 +74,7 @@ public class SortableTableExportModel implements DataExportModel{
     @Override
     public String getColumnFriendlyName(int columnIndex) {
         String columnName = getColumnName(columnIndex);
-        return columnFriendlyNames.computeIfAbsent(columnName, key -> produceColumnFriendlyName(key));
+        return columnFriendlyNames.computeIfAbsent(columnName, n -> produceColumnFriendlyName(n));
     }
 
     @Nullable
