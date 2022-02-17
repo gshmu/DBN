@@ -241,7 +241,7 @@ public class DBEditableObjectVirtualFile extends DBObjectVirtualFile<DBSchemaObj
 
     @NotNull
     public DBContentType getContentType() {
-        return objectRef.getObjectType().getContentType();
+        return object.getObjectType().getContentType();
     }
 }
 

@@ -18,7 +18,11 @@ import com.dci.intellij.dbn.language.common.DBLanguageDialect;
 import com.dci.intellij.dbn.language.common.psi.PsiUtil;
 import com.dci.intellij.dbn.object.common.DBObject;
 import com.dci.intellij.dbn.object.common.DBSchemaObject;
-import com.dci.intellij.dbn.vfs.file.*;
+import com.dci.intellij.dbn.vfs.file.DBConsoleVirtualFile;
+import com.dci.intellij.dbn.vfs.file.DBContentVirtualFile;
+import com.dci.intellij.dbn.vfs.file.DBDatasetVirtualFile;
+import com.dci.intellij.dbn.vfs.file.DBEditableObjectVirtualFile;
+import com.dci.intellij.dbn.vfs.file.DBSourceCodeVirtualFile;
 import com.intellij.ide.highlighter.HighlighterFactory;
 import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.editor.Editor;
@@ -27,7 +31,12 @@ import com.intellij.openapi.editor.colors.EditorColors;
 import com.intellij.openapi.editor.colors.EditorColorsScheme;
 import com.intellij.openapi.editor.ex.EditorEx;
 import com.intellij.openapi.editor.highlighter.EditorHighlighter;
-import com.intellij.openapi.fileEditor.*;
+import com.intellij.openapi.fileEditor.FileDocumentManager;
+import com.intellij.openapi.fileEditor.FileEditor;
+import com.intellij.openapi.fileEditor.FileEditorManager;
+import com.intellij.openapi.fileEditor.FileEditorProvider;
+import com.intellij.openapi.fileEditor.FileEditorState;
+import com.intellij.openapi.fileEditor.TextEditor;
 import com.intellij.openapi.fileEditor.ex.FileEditorProviderManager;
 import com.intellij.openapi.fileEditor.impl.EditorHistoryManager;
 import com.intellij.openapi.fileTypes.FileType;
@@ -44,8 +53,12 @@ import com.intellij.util.ui.UIUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import javax.swing.*;
-import java.awt.*;
+import javax.swing.Icon;
+import javax.swing.JComponent;
+import java.awt.Color;
+import java.awt.Component;
+import java.awt.Dimension;
+import java.awt.Font;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -54,8 +67,8 @@ public class Editors {
         FileEditorManager fileEditorManager = FileEditorManager.getInstance(project);
         if (fileEditor != null) {
             if (fileEditor instanceof DDLFileEditor) {
-                DDLFileAttachmentManager fileAttachmentManager = DDLFileAttachmentManager.getInstance(project);
-                DBSchemaObject editableObject = fileAttachmentManager.getEditableObject(virtualFile);
+                DDLFileAttachmentManager attachmentManager = DDLFileAttachmentManager.getInstance(project);
+                DBSchemaObject editableObject = attachmentManager.getEditableObject(virtualFile);
                 if (editableObject != null) {
                     virtualFile = editableObject.getVirtualFile();
                 }
@@ -70,24 +83,25 @@ public class Editors {
                 }
             }
         } else if (editorProviderId != null) {
-            DBEditableObjectVirtualFile editableObjectFile = null;
+            DBEditableObjectVirtualFile file = null;
             if (virtualFile instanceof DBEditableObjectVirtualFile) {
-                editableObjectFile = (DBEditableObjectVirtualFile) virtualFile;
+                file = (DBEditableObjectVirtualFile) virtualFile;
+
             } else if (virtualFile.isInLocalFileSystem()) {
                 DDLFileAttachmentManager fileAttachmentManager = DDLFileAttachmentManager.getInstance(project);
                 DBSchemaObject schemaObject = fileAttachmentManager.getEditableObject(virtualFile);
                 if (schemaObject != null) {
-                    editableObjectFile = schemaObject.getEditableVirtualFile();
+                    file = schemaObject.getEditableVirtualFile();
                 }
             }
 
-            if (editableObjectFile != null && editableObjectFile.isValid()) {
+            if (file != null && file.isValid()) {
                 FileEditor[] fileEditors = instructions.isOpen() ?
-                        fileEditorManager.openFile(editableObjectFile, instructions.isFocus()) :
-                        fileEditorManager.getEditors(editableObjectFile);
+                        fileEditorManager.openFile(file, instructions.isFocus()) :
+                        fileEditorManager.getEditors(file);
 
                 if (fileEditors.length > 0) {
-                    fileEditorManager.setSelectedEditor(editableObjectFile, editorProviderId.getId());
+                    fileEditorManager.setSelectedEditor(file, editorProviderId.getId());
 
                     for (FileEditor openFileEditor : fileEditors) {
                         if (openFileEditor instanceof BasicTextEditor) {
