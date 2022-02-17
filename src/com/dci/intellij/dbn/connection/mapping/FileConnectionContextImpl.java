@@ -98,9 +98,9 @@ public class FileConnectionContextImpl implements FileConnectionContext {
     public VirtualFile getFile() {
         try {
             VirtualFileManager virtualFileManager = VirtualFileManager.getInstance();
-            VirtualFile virtualFile = virtualFileManager.findFileByUrl(fileUrl);
-            if (virtualFile != null && virtualFile.isValid()) {
-                return virtualFile;
+            VirtualFile file = virtualFileManager.findFileByUrl(fileUrl);
+            if (file != null && file.isValid()) {
+                return file;
             }
         } catch (Exception e) {
             log.warn("Failed to read file " + fileUrl, e);

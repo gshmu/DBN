@@ -29,7 +29,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 public abstract class DBVirtualFileImpl extends VirtualFile implements DBVirtualFile, Presentable, VirtualFilePathWrapper {
     private static final AtomicInteger ID_STORE = new AtomicInteger(1000);
     private final int id;
-    private final ProjectRef projectRef;
+    private final ProjectRef project;
     private final WeakRef<DatabaseFileSystem> fileSystem;
 
     protected String name;
@@ -39,10 +39,10 @@ public abstract class DBVirtualFileImpl extends VirtualFile implements DBVirtual
     private boolean valid = true;
 
     public DBVirtualFileImpl(@NotNull Project project) {
-        id = ID_STORE.incrementAndGet();
+        this.id = ID_STORE.incrementAndGet();
         //id = DummyFileIdGenerator.next();
-        projectRef = ProjectRef.of(project);
-        fileSystem = WeakRef.of(DatabaseFileSystem.getInstance());
+        this.project = ProjectRef.of(project);
+        this.fileSystem = WeakRef.of(DatabaseFileSystem.getInstance());
     }
 
 
@@ -72,7 +72,7 @@ public abstract class DBVirtualFileImpl extends VirtualFile implements DBVirtual
     @Override
     @NotNull
     public Project getProject() {
-        return projectRef.ensure();
+        return project.ensure();
     }
 
     @Override

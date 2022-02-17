@@ -28,33 +28,33 @@ import java.io.OutputStream;
 
 public class DBObjectVirtualFile<T extends DBObject> extends DBVirtualFileImpl {
     private static final byte[] EMPTY_BYTE_CONTENT = new byte[0];
-    protected DBObjectRef<T> objectRef;
+    protected DBObjectRef<T> object;
 
-    public DBObjectVirtualFile(@NotNull Project project, @NotNull DBObjectRef<T> objectRef) {
+    public DBObjectVirtualFile(@NotNull Project project, @NotNull DBObjectRef<T> object) {
         super(project);
-        this.objectRef = objectRef;
-        this.name = objectRef.getFileName();
+        this.object = object;
+        this.name = object.getFileName();
     }
 
     public DBObjectRef<T> getObjectRef() {
-        return objectRef;
+        return object;
     }
 
     @NotNull
     public T getObject() {
-        return DBObjectRef.ensure(objectRef);
+        return DBObjectRef.ensure(object);
     }
 
     @NotNull
     @Override
     public final ConnectionId getConnectionId() {
-        return objectRef.getConnectionId();
+        return object.getConnectionId();
     }
 
     @Override
     @NotNull
     public ConnectionHandler getConnection() {
-        return Failsafe.nn(objectRef.getConnection());
+        return Failsafe.nn(object.getConnection());
     }
 
     @Nullable
@@ -70,7 +70,7 @@ public class DBObjectVirtualFile<T extends DBObject> extends DBVirtualFileImpl {
 
     @Override
     public boolean isValid() {
-        return super.isValid() && objectRef.get() != null;
+        return super.isValid() && object.get() != null;
     }
 
     @NotNull
@@ -120,7 +120,7 @@ public class DBObjectVirtualFile<T extends DBObject> extends DBVirtualFileImpl {
 
     @Override
     public Icon getIcon() {
-        return objectRef.getObjectType().getIcon();
+        return object.getObjectType().getIcon();
     }
 
     @Override
