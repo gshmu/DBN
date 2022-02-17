@@ -4,6 +4,7 @@ import com.dci.intellij.dbn.common.dispose.StatefulDisposable;
 import com.dci.intellij.dbn.common.event.ProjectEvents;
 import com.dci.intellij.dbn.common.notification.NotificationGroup;
 import com.dci.intellij.dbn.common.notification.NotificationSupport;
+import com.dci.intellij.dbn.common.thread.Background;
 import com.dci.intellij.dbn.common.thread.ThreadMonitor;
 import com.dci.intellij.dbn.common.util.Commons;
 import com.dci.intellij.dbn.common.util.TimeUtil;
@@ -326,7 +327,7 @@ public final class ConnectionPool extends StatefulDisposable.Base implements Not
 
     @Override
     public void disposeInner() {
-        closeConnections();
+        Background.run(() -> closeConnections());
     }
 
     public boolean isConnected(SessionId sessionId) {
