@@ -681,7 +681,7 @@ public class DBObjectBundleImpl extends BrowserTreeNodeBase implements DBObjectB
                                 DBSchema schema = schemas.get(i);
                                 if (size > 3) {
                                     progress.setIndeterminate(false);
-                                    progress.setFraction(Commons.getProgressPercentage(i, size));
+                                    progress.setFraction(Progress.progressOf(i, size));
                                 }
                                 progress.setText("Updating object status in schema " + schema.getName() + "... ");
                                 schema.refreshObjectsStatus();

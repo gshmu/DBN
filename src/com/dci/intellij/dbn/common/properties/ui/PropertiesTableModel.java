@@ -3,7 +3,6 @@ package com.dci.intellij.dbn.common.properties.ui;
 import com.dci.intellij.dbn.common.properties.KeyValueProperty;
 import com.dci.intellij.dbn.common.ui.table.DBNEditableTableModel;
 import com.dci.intellij.dbn.common.util.Commons;
-import com.dci.intellij.dbn.common.util.Safe;
 import com.dci.intellij.dbn.common.util.Strings;
 
 import java.util.ArrayList;
@@ -75,7 +74,7 @@ public class PropertiesTableModel extends DBNEditableTableModel {
     @Override
     public void setValueAt(Object o, int rowIndex, int columnIndex) {
         Object actualValue = getValueAt(rowIndex, columnIndex);
-        if (!Safe.equal(actualValue, o)) {
+        if (!Commons.match(actualValue, o)) {
             KeyValueProperty property = properties.get(rowIndex);
             if (columnIndex == 0) {
                 property.setKey((String) o);

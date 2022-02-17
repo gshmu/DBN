@@ -1,19 +1,19 @@
 package com.dci.intellij.dbn.common.util;
 
-import com.dci.intellij.dbn.common.routine.ParametricCallable;
-import com.dci.intellij.dbn.common.routine.ParametricRunnable;
-import com.dci.intellij.dbn.common.routine.ThrowableCallable;
 import com.intellij.openapi.progress.ProcessCanceledException;
-import org.jetbrains.annotations.Contract;
+import lombok.SneakyThrows;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.concurrent.Callable;
+import java.util.function.Consumer;
 import java.util.function.Function;
 
 public final class Safe {
     private Safe() {}
 
-    public static <R, E extends Throwable> R call(R defaultValue, @NotNull ThrowableCallable<R, E> callable) throws E{
+    @SneakyThrows
+    public static <R> R call(R defaultValue, @NotNull Callable<R> callable){
         try {
             return callable.call();
         } catch (ProcessCanceledException e){
@@ -28,59 +28,27 @@ public final class Safe {
     }
 
 
-    public static <R, S, E extends Throwable> R call(@Nullable S target, ParametricCallable<S, R, RuntimeException> callable, R defaultValue) throws E {
+    public static <R, S> R call(@Nullable S target, Function<S, R> supplier, R defaultValue) {
         if (target == null) {
             return defaultValue;
         } else {
-            return callable.call(target);
+            return supplier.apply(target);
         }
     }
 
     @Nullable
-    public static <R, S, E extends Throwable> R call(@Nullable S target, @NotNull ParametricCallable<S, R, E> callable) throws E{
+    public static <R, S> R call(@Nullable S target, @NotNull Function<S, R> supplier){
         if (target == null) {
             return null;
         } else {
-            return callable.call(target);
+            return supplier.apply(target);
         }
     }
 
-    public static <S, E extends Throwable> void run(@Nullable S target, @NotNull ParametricRunnable<S, E> runnable) throws E{
+    public static <S> void run(@Nullable S target, @NotNull Consumer<S> runnable){
         if (target != null) {
-            runnable.run(target);
+            runnable.accept(target);
         }
-    }
-
-    public static <T> boolean equal(@Nullable T value1, @Nullable T value2) {
-        if (value1 == null && value2 == null) {
-            return true;
-        }
-
-        if (value1 == value2) {
-            return true;
-        }
-
-        if (value1 != null) {
-            return value1.equals(value2);
-        }
-        return false;
-    }
-
-    public static <T> boolean equal(@Nullable T value1, @Nullable T value2, Function<T, ?> valueProvider) {
-        if (value1 == null && value2 == null) {
-            return true;
-        }
-
-        if (value1 == value2) {
-            return true;
-        }
-
-        if (value1 != null) {
-            return equal(
-                    valueProvider.apply(value1),
-                    valueProvider.apply(value2));
-        }
-        return false;
     }
 
     public static <T extends Comparable<T>> int compare(@Nullable T value1, @Nullable T value2) {

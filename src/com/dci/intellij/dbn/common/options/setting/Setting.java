@@ -1,6 +1,6 @@
 package com.dci.intellij.dbn.common.options.setting;
 
-import com.dci.intellij.dbn.common.util.Safe;
+import com.dci.intellij.dbn.common.util.Commons;
 import com.intellij.openapi.options.ConfigurationException;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
@@ -21,7 +21,7 @@ public abstract class Setting<T, E> {
     }
 
     public boolean setValue(T value) {
-        boolean response = !Safe.equal(this.value, value);
+        boolean response = !Commons.match(this.value, value);
         this.value = value;
         return response;
     }

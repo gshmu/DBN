@@ -8,7 +8,7 @@ import com.dci.intellij.dbn.common.content.DynamicContent;
 import com.dci.intellij.dbn.common.content.loader.DynamicContentLoader;
 import com.dci.intellij.dbn.common.content.loader.DynamicContentResultSetLoader;
 import com.dci.intellij.dbn.common.content.loader.DynamicSubcontentLoader;
-import com.dci.intellij.dbn.common.util.Safe;
+import com.dci.intellij.dbn.common.util.Commons;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.jdbc.DBNConnection;
 import com.dci.intellij.dbn.data.type.DBDataType;
@@ -229,7 +229,7 @@ public class DBTypeImpl
             @Override
             public boolean match(DBTypeAttribute typeAttribute, DynamicContent dynamicContent) {
                 DBType type = (DBType) dynamicContent.getParentEntity();
-                return Safe.equal(typeAttribute.getType(), type);
+                return Commons.match(typeAttribute.getType(), type);
             }
 
             @Override
@@ -258,7 +258,7 @@ public class DBTypeImpl
             @Override
             public boolean match(DBTypeFunction function, DynamicContent dynamicContent) {
                 DBType type = (DBType) dynamicContent.getParentEntity();
-                return Safe.equal(function.getType(), type);
+                return Commons.match(function.getType(), type);
             }
 
             @Override
@@ -286,7 +286,7 @@ public class DBTypeImpl
             @Override
             public boolean match(DBTypeProcedure procedure, DynamicContent dynamicContent) {
                 DBType type = (DBType) dynamicContent.getParentEntity();
-                return Safe.equal(procedure.getType(), type);
+                return Commons.match(procedure.getType(), type);
             }
 
             @Override
@@ -315,7 +315,7 @@ public class DBTypeImpl
             public boolean match(DBType type, DynamicContent dynamicContent) {
                 DBType superType = type.getSuperType();
                 DBType thisType = (DBType) dynamicContent.getParentEntity();
-                return Safe.equal(superType, thisType);
+                return Commons.match(superType, thisType);
             }
 
             @Override

@@ -10,7 +10,7 @@ import org.jetbrains.annotations.NotNull;
  */
 public class InternalApi {
     public static boolean isApplicationExitInProgress() {
-        return Commons.isCalledThrough(ApplicationImpl.class, "exit");
+        return Traces.isCalledThrough(ApplicationImpl.class, "exit");
         //return ApplicationManagerEx.getApplicationEx().isDisposeInProgress();
         //return ApplicationManagerEx.getApplicationEx().isExitInProgress();
     }

@@ -1,6 +1,6 @@
 package com.dci.intellij.dbn.database.generic;
 
-import com.dci.intellij.dbn.common.util.Safe;
+import com.dci.intellij.dbn.common.util.Commons;
 import com.dci.intellij.dbn.connection.jdbc.DBNConnection;
 import com.dci.intellij.dbn.database.DatabaseCompatibility;
 import com.dci.intellij.dbn.database.DatabaseInterface;
@@ -421,6 +421,6 @@ public class GenericMetadataInterface extends DatabaseMetadataInterfaceImpl {
     }
 
     private static boolean match(Object value1, Object value2) {
-        return Safe.equal(value1, value2);
+        return Commons.match(value1, value2);
     }
 }

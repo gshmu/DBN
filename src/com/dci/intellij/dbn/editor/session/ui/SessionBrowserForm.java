@@ -1,5 +1,6 @@
 package com.dci.intellij.dbn.editor.session.ui;
 
+import com.dci.intellij.dbn.common.action.DataProviders;
 import com.dci.intellij.dbn.common.color.Colors;
 import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.common.latent.Latent;
@@ -25,9 +26,12 @@ import com.intellij.util.ui.AsyncProcessIcon;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import javax.swing.*;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JTextField;
 import javax.swing.table.TableCellEditor;
-import java.awt.*;
+import java.awt.BorderLayout;
 
 public class SessionBrowserForm extends DBNFormImpl implements SearchableDataComponent {
     private JPanel actionsPanel;
@@ -44,7 +48,7 @@ public class SessionBrowserForm extends DBNFormImpl implements SearchableDataCom
     private final Latent<DataSearchComponent> dataSearchComponent = Latent.basic(() -> {
         DataSearchComponent dataSearchComponent = new DataSearchComponent(SessionBrowserForm.this);
         searchPanel.add(dataSearchComponent.getComponent(), BorderLayout.CENTER);
-        DataManager.registerDataProvider(dataSearchComponent.getSearchField(), this);
+        DataProviders.register(dataSearchComponent.getSearchField(), this);
         return dataSearchComponent;
     });
 
@@ -71,7 +75,7 @@ public class SessionBrowserForm extends DBNFormImpl implements SearchableDataCom
         loadingIconPanel.add(new AsyncProcessIcon("Loading"), BorderLayout.CENTER);
         hideLoadingHint();
 
-        DataManager.registerDataProvider(actionsPanel, this);
+        DataProviders.register(actionsPanel, this);
     }
 
     @NotNull

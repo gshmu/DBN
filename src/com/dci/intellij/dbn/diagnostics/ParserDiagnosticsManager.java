@@ -79,7 +79,7 @@ public class ParserDiagnosticsManager extends AbstractProjectComponent implement
                 Progress.check(progress);
                 String filePath = file.getPath();
                 progress.setText2(filePath);
-                progress.setFraction(Commons.getProgressPercentage(i, files.length));
+                progress.setFraction(Progress.progressOf(i, files.length));
 
                 DBLanguagePsiFile psiFile = ensureFileParsed(file);
                 Progress.check(progress);
@@ -113,7 +113,7 @@ public class ParserDiagnosticsManager extends AbstractProjectComponent implement
             Progress.check(progress);
             String filePath = file.getPath();
             progress.setText2(filePath);
-            progress.setFraction(Commons.getProgressPercentage(i, files.length));
+            progress.setFraction(Progress.progressOf(i, files.length));
 
             DBLanguagePsiFile psiFile = ensureFileParsed(file);
             Progress.check(progress);

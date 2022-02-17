@@ -1,6 +1,5 @@
 package com.dci.intellij.dbn.common.util;
 
-import com.dci.intellij.dbn.common.routine.ThrowableCallable;
 import lombok.extern.slf4j.Slf4j;
 import org.jdom.Document;
 import org.jdom.adapters.XML4JDOMAdapter;
@@ -12,64 +11,16 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Reader;
-import java.util.Objects;
+import java.util.function.Function;
 import java.util.function.Supplier;
 
 @Slf4j
 public final class Commons {
     private Commons() {}
 
-    public static boolean isPluginCall() {
-        for (StackTraceElement stackTraceElement : Thread.currentThread().getStackTrace()) {
-            if (stackTraceElement.getClassName().contains(".dbn.")) {
-                return true;
-            }
-        }
-        return false;
-    }
-
-    public static boolean isCalledThrough(Class clazz) {
-        StackTraceElement[] stackTraceElements = Thread.currentThread().getStackTrace();
-        try {
-            for (int i = 3; i < stackTraceElements.length; i++) {
-                StackTraceElement stackTraceElement = stackTraceElements[i];
-                String className = stackTraceElement.getClassName();
-                if (Objects.equals(clazz.getName(), className) /*|| clazz.isAssignableFrom(Class.forName(className))*/) {
-                    return true;
-                }
-            }
-        } catch (Exception e) {
-            return false;
-        }
-        return false;
-    }
-
-    public static boolean isCalledThrough(Class clazz, String methodName) {
-        StackTraceElement[] stackTraceElements = Thread.currentThread().getStackTrace();
-        try {
-            for (int i = 3; i < stackTraceElements.length; i++) {
-                StackTraceElement stackTraceElement = stackTraceElements[i];
-                String className = stackTraceElement.getClassName();
-                if (Objects.equals(clazz.getName(), className) /*|| clazz.isAssignableFrom(Class.forName(className))*/) {
-                    String methName = stackTraceElement.getMethodName();
-                    if (Objects.equals(methodName, methName)) {
-                        return true;
-                    }
-                }
-            }
-        } catch (Exception e) {
-            return false;
-        }
-        return false;
-    }
-
-    public static double getProgressPercentage(int is, int should) {
-        return ((double) is) / should;
-    }
-
     @NotNull
-    public static <T, E extends Throwable> T nvl(@Nullable T value, @NotNull ThrowableCallable<T, E> defaultValue) throws E {
-        return value == null ? defaultValue.call() : value;
+    public static <T> T nvl(@Nullable T value, @NotNull Supplier<T> defaultValue) {
+        return value == null ? defaultValue.get() : value;
     }
 
     @SafeVarargs
@@ -95,8 +46,8 @@ public final class Commons {
     }
 
     @Nullable
-    public static <T, E extends Throwable> T nvln(@Nullable T value, @NotNull ThrowableCallable<T, E> defaultValue) throws E {
-        return value == null ? defaultValue.call() : value;
+    public static <T> T nvln(@Nullable T value, @NotNull Supplier<T> defaultValue) {
+        return value == null ? defaultValue.get() : value;
     }
 
     public static String nullIfEmpty(String string) {
@@ -155,14 +106,40 @@ public final class Commons {
         return values;
     }
 
-    public static <T> T resolve(Supplier<T>... resolvers) {
-        for (Supplier<T> resolver : resolvers) {
-            T result = resolver.get();
-            if (result != null) {
-                return result;
-            }
+    public static <T> boolean match(@Nullable T value1, @Nullable T value2) {
+        if (value1 == null && value2 == null) {
+            return true;
         }
-        return null;
+
+        if (value1 == value2) {
+            return true;
+        }
+
+        if (value1 != null && value2 != null) {
+            return value1.equals(value2);
+        }
+
+        if (value1 instanceof String || value2 instanceof String) {
+            return nvl(value1, "").equals(nvl(value2, ""));
+        }
+
+        return false;
     }
 
+    public static <T> boolean match(@Nullable T value1, @Nullable T value2, Function<T, ?> valueProvider) {
+        if (value1 == null && value2 == null) {
+            return true;
+        }
+
+        if (value1 == value2) {
+            return true;
+        }
+
+        if (value1 != null) {
+            return match(
+                    valueProvider.apply(value1),
+                    valueProvider.apply(value2));
+        }
+        return false;
+    }
 }

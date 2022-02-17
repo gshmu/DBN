@@ -1,6 +1,5 @@
 package com.dci.intellij.dbn.debugger.common.config.ui;
 
-import com.dci.intellij.dbn.common.dispose.Sticky;
 import com.dci.intellij.dbn.common.ui.dialog.DBNDialog;
 import com.dci.intellij.dbn.debugger.common.config.DBRunConfig;
 import com.dci.intellij.dbn.debugger.common.process.ui.CompileDebugDependenciesForm;
@@ -17,7 +16,7 @@ public class CompileDebugDependenciesDialog extends DBNDialog<CompileDebugDepend
     private final DBRunConfig runConfiguration;
     private final List<DBSchemaObject> compileList;
 
-    @Sticky
+    //@Sticky
     private DBObjectRef<DBSchemaObject>[] selection;
 
     public CompileDebugDependenciesDialog(DBRunConfig runConfiguration, List<DBSchemaObject> compileList) {
