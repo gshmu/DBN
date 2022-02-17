@@ -354,8 +354,14 @@ public abstract class IdentifierPsiElement extends LeafPsiElement<IdentifierElem
                 } else { // index > 0
                     IdentifierElementType parentElementType = (IdentifierElementType) parseVariant.getLeaf(index - 1);
                     if (parentObject.isOfType(parentElementType.getObjectType())) {
-                        DBObject referencedObject = parentObject.getChildObject(objectType, refText.toString(), false);
-                        if (updateReference(parentObjectElement, elementType, referencedObject)) return;
+                        String objectName = refText.toString();
+                        DBObject childObject = parentObject.getChildObject(objectType, objectName, false);
+
+                        if (childObject == null && objectType.isOverloadable()) {
+                            // TODO support multiple references in PsiResolveResult
+                            childObject = parentObject.getChildObject(objectType, objectName, (short) 1, false);
+                        }
+                        if (updateReference(parentObjectElement, elementType, childObject)) return;
 
                     }
                 }
@@ -380,7 +386,7 @@ public abstract class IdentifierPsiElement extends LeafPsiElement<IdentifierElem
         }
 
         if (elementType.isObject()) {
-            ConnectionHandler activeConnection = ref.getConnectionHandler();
+            ConnectionHandler activeConnection = ref.getConnection();
 
             if (!elementType.isDefinition()){
                 PsiLookupAdapter lookupAdapter = new ObjectDefinitionLookupAdapter(this, objectType, refText);
@@ -393,21 +399,32 @@ public abstract class IdentifierPsiElement extends LeafPsiElement<IdentifierElem
                 Set<DBObject> parentObjects = identifyPotentialParentObjects(objectType, null, this, this);
                 if (parentObjects != null && parentObjects.size() > 0) {
                     for (DBObject parentObject : parentObjects) {
-                        DBObject referencedObject = parentObject.getChildObject(objectType, objectName, false);
-                        if (updateReference(null, elementType, referencedObject)) return;
+                        DBObject childObject = parentObject.getChildObject(objectType, objectName, false);
+
+                        if (childObject == null && objectType.isOverloadable()) {
+                            childObject = parentObject.getChildObject(objectType, objectName, (short) 1, false);
+                        }
+
+                        if (updateReference(null, elementType, childObject)) return;
                     }
                 }
 
                 DBObjectBundle objectBundle = activeConnection.getObjectBundle();
-                DBObject referencedObject = objectBundle.getObject(objectType, objectName, (short) 0);
-                if (updateReference(null, elementType, referencedObject)) {
+                DBObject childObject = objectBundle.getObject(objectType, objectName, (short) 0);
+                if (updateReference(null, elementType, childObject)) {
                     return;
                 }
 
                 DBSchema schema = getDatabaseSchema();
                 if (schema != null && objectType.isSchemaObject()) {
-                    referencedObject = schema.getChildObject(objectType, objectName, false);
-                    if (updateReference(null, elementType, referencedObject)) return;
+                    childObject = schema.getChildObject(objectType, objectName, false);
+
+                    if (childObject == null && objectType.isOverloadable()) {
+                        childObject = schema.getChildObject(objectType, objectName, (short) 1, false);
+                    }
+
+
+                    if (updateReference(null, elementType, childObject)) return;
                 }
             }
 
