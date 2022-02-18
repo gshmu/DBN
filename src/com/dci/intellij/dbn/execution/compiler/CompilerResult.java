@@ -4,6 +4,7 @@ import com.dci.intellij.dbn.common.message.MessageType;
 import com.dci.intellij.dbn.common.notification.NotificationGroup;
 import com.dci.intellij.dbn.common.notification.NotificationSupport;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
+import com.dci.intellij.dbn.connection.ConnectionId;
 import com.dci.intellij.dbn.connection.Resources;
 import com.dci.intellij.dbn.database.DatabaseInterface;
 import com.dci.intellij.dbn.editor.DBContentType;
@@ -23,24 +24,24 @@ import java.util.List;
 
 public class CompilerResult implements Disposable, NotificationSupport {
 
-    private final DBObjectRef<DBSchemaObject> objectRef;
+    private final DBObjectRef<DBSchemaObject> object;
     private final List<CompilerMessage> compilerMessages = new ArrayList<>();
     private CompilerAction compilerAction;
     private boolean error = false;
 
     public CompilerResult(CompilerAction compilerAction, ConnectionHandler connectionHandler, DBSchema schema, DBObjectType objectType, String objectName) {
-        objectRef = new DBObjectRef<>(schema.getRef(), objectType, objectName);
+        object = new DBObjectRef<>(schema.getRef(), objectType, objectName);
         init(connectionHandler, schema, objectName, compilerAction);
     }
 
     public CompilerResult(CompilerAction compilerAction, DBSchemaObject object) {
-        objectRef = DBObjectRef.of(object);
+        this.object = DBObjectRef.of(object);
         init(object.getConnection(), object.getSchema(), object.getName(), compilerAction);
     }
 
     public CompilerResult(CompilerAction compilerAction, DBSchemaObject object, DBContentType contentType, String errorMessage) {
         this.compilerAction = compilerAction;
-        objectRef = DBObjectRef.of(object);
+        this.object = DBObjectRef.of(object);
         CompilerMessage compilerMessage = new CompilerMessage(this, contentType, errorMessage, MessageType.ERROR);
         compilerMessages.add(compilerMessage);
     }
@@ -83,7 +84,7 @@ public class CompilerResult implements Disposable, NotificationSupport {
                     contentType == DBContentType.CODE_SPEC ? "spec of " :
                     contentType == DBContentType.CODE_BODY ? "body of " : "";
 
-            String message = "The " + contentDesc + objectRef.getQualifiedNameWithType() + " was " + (compilerAction.isSave() ? "updated" : "compiled") + " successfully.";
+            String message = "The " + contentDesc + object.getQualifiedNameWithType() + " was " + (compilerAction.isSave() ? "updated" : "compiled") + " successfully.";
             CompilerMessage compilerMessage = new CompilerMessage(this, contentType, message);
             compilerMessages.add(compilerMessage);
         } else {
@@ -110,15 +111,19 @@ public class CompilerResult implements Disposable, NotificationSupport {
 
     @Nullable
     public DBSchemaObject getObject() {
-        return DBObjectRef.get(objectRef);
+        return DBObjectRef.get(object);
+    }
+
+    public ConnectionId getConnectionId() {
+        return object.getConnectionId();
     }
 
     DBObjectType getObjectType() {
-        return objectRef.getObjectType();
+        return object.getObjectType();
     }
 
     public DBObjectRef<DBSchemaObject> getObjectRef() {
-        return objectRef;
+        return object;
     }
 
     @Override
@@ -127,9 +132,9 @@ public class CompilerResult implements Disposable, NotificationSupport {
     }
 
     public Project getProject() {
-        DBSchemaObject object = DBObjectRef.get(objectRef);
+        DBSchemaObject object = DBObjectRef.get(this.object);
         if (object == null) {
-            ConnectionHandler connectionHandler = objectRef.resolveConnection();
+            ConnectionHandler connectionHandler = this.object.resolveConnection();
             if (connectionHandler != null) return connectionHandler.getProject();
         } else {
             return object.getProject();

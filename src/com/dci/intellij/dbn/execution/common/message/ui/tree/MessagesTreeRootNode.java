@@ -1,6 +1,7 @@
 package com.dci.intellij.dbn.execution.common.message.ui.tree;
 
 import com.dci.intellij.dbn.common.ui.tree.TreeEventType;
+import com.dci.intellij.dbn.connection.ConnectionId;
 import com.dci.intellij.dbn.execution.common.message.ui.tree.node.CompilerMessagesNode;
 import com.dci.intellij.dbn.execution.common.message.ui.tree.node.ExplainPlanMessagesNode;
 import com.dci.intellij.dbn.execution.common.message.ui.tree.node.StatementExecutionMessagesNode;
@@ -8,10 +9,12 @@ import com.dci.intellij.dbn.execution.compiler.CompilerMessage;
 import com.dci.intellij.dbn.execution.explain.result.ExplainPlanMessage;
 import com.dci.intellij.dbn.execution.statement.StatementExecutionMessage;
 import com.dci.intellij.dbn.language.common.WeakRef;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import javax.swing.tree.TreeNode;
 import javax.swing.tree.TreePath;
+import java.util.List;
 
 public class MessagesTreeRootNode extends MessagesTreeBundleNode<MessagesTreeNode, MessagesTreeBundleNode> {
     private final WeakRef<MessagesTreeModel> treeModel;
@@ -67,9 +70,9 @@ public class MessagesTreeRootNode extends MessagesTreeBundleNode<MessagesTreeNod
 
     @Nullable
     private CompilerMessagesNode getCompilerMessagesNode() {
-        for (TreeNode treeNode : getChildren()) {
-            if (treeNode instanceof CompilerMessagesNode) {
-                return (CompilerMessagesNode) treeNode;
+        for (TreeNode node : getChildren()) {
+            if (node instanceof CompilerMessagesNode) {
+                return (CompilerMessagesNode) node;
             }
         }
         return null;
@@ -77,9 +80,9 @@ public class MessagesTreeRootNode extends MessagesTreeBundleNode<MessagesTreeNod
 
     @Nullable
     private StatementExecutionMessagesNode getStatementExecutionMessagesNode() {
-        for (TreeNode treeNode : getChildren()) {
-            if (treeNode instanceof StatementExecutionMessagesNode) {
-                return (StatementExecutionMessagesNode) treeNode;
+        for (TreeNode node : getChildren()) {
+            if (node instanceof StatementExecutionMessagesNode) {
+                return (StatementExecutionMessagesNode) node;
             }
         }
         return null;
@@ -87,25 +90,34 @@ public class MessagesTreeRootNode extends MessagesTreeBundleNode<MessagesTreeNod
 
     @Nullable
     public TreePath getTreePath(CompilerMessage compilerMessage) {
-        CompilerMessagesNode compilerMessagesNode = getCompilerMessagesNode();
-        if (compilerMessagesNode != null) {
-            return compilerMessagesNode.getTreePath(compilerMessage);
+        CompilerMessagesNode node = getCompilerMessagesNode();
+        if (node != null) {
+            return node.getTreePath(compilerMessage);
         }
         return null;
     }
 
     @Nullable
     public TreePath getTreePath(StatementExecutionMessage executionMessage) {
-        StatementExecutionMessagesNode executionMessagesNode = getStatementExecutionMessagesNode();
-        if (executionMessagesNode != null) {
-            return executionMessagesNode.getTreePath(executionMessage);
+        StatementExecutionMessagesNode node = getStatementExecutionMessagesNode();
+        if (node != null) {
+            return node.getTreePath(executionMessage);
         }
         return null;
     }
 
-
     @Override
     public MessagesTreeModel getTreeModel() {
         return treeModel.ensure();
+    }
+
+    @Override
+    public void removeMessages(@NotNull ConnectionId connectionId) {
+        super.removeMessages(connectionId);
+        List<MessagesTreeBundleNode> children = getChildren();
+        boolean childrenRemoved = children.removeIf(c -> c.isLeaf());
+        if (childrenRemoved) {
+            getTreeModel().notifyTreeModelListeners(this, TreeEventType.STRUCTURE_CHANGED);
+        }
     }
 }

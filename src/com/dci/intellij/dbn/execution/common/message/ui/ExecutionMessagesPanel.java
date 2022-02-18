@@ -1,9 +1,12 @@
 package com.dci.intellij.dbn.execution.common.message.ui;
 
 import com.dci.intellij.dbn.common.dispose.Failsafe;
+import com.dci.intellij.dbn.common.event.ProjectEvents;
 import com.dci.intellij.dbn.common.navigation.NavigationInstructions;
 import com.dci.intellij.dbn.common.ui.DBNFormImpl;
 import com.dci.intellij.dbn.common.util.Actions;
+import com.dci.intellij.dbn.connection.ConnectionId;
+import com.dci.intellij.dbn.connection.config.ConnectionSettingsListener;
 import com.dci.intellij.dbn.execution.common.message.action.ExecutedStatementViewAction;
 import com.dci.intellij.dbn.execution.common.message.action.ExecutionEngineSettingsAction;
 import com.dci.intellij.dbn.execution.common.message.action.MessagesTreeCollapseAction;
@@ -46,6 +49,13 @@ public class ExecutionMessagesPanel extends DBNFormImpl{
                 Actions.SEPARATOR,
                 new ExecutionEngineSettingsAction(messagesTree));
         actionsPanel.add(actionToolbar.getComponent());
+
+        ProjectEvents.subscribe(ConnectionSettingsListener.TOPIC, new ConnectionSettingsListener() {
+            @Override
+            public void connectionRemoved(ConnectionId connectionId) {
+                messagesTree.removeMessages(connectionId);
+            }
+        });
     }
 
     public void resetMessagesStatus() {

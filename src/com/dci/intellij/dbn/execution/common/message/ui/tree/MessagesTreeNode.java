@@ -2,7 +2,9 @@ package com.dci.intellij.dbn.execution.common.message.ui.tree;
 
 import com.dci.intellij.dbn.common.dispose.StatefulDisposable;
 import com.dci.intellij.dbn.common.message.MessageType;
+import com.dci.intellij.dbn.connection.ConnectionId;
 import com.intellij.openapi.vfs.VirtualFile;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import javax.swing.tree.TreeNode;
@@ -22,4 +24,9 @@ public interface MessagesTreeNode<P extends MessagesTreeNode, C extends Messages
     default List<C> getChildren() {return Collections.emptyList();}
 
     default boolean hasMessageChildren(MessageType type) {return false;}
+
+    default void removeMessages(@NotNull ConnectionId connectionId) {};
+
+    @Nullable
+    default ConnectionId getConnectionId() {return null;};
 }

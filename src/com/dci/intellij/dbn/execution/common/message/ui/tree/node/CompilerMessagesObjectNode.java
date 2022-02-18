@@ -2,6 +2,7 @@ package com.dci.intellij.dbn.execution.common.message.ui.tree.node;
 
 import com.dci.intellij.dbn.common.ui.tree.TreeEventType;
 import com.dci.intellij.dbn.common.ui.tree.TreeUtil;
+import com.dci.intellij.dbn.connection.ConnectionId;
 import com.dci.intellij.dbn.execution.common.message.ui.tree.MessagesTreeBundleNode;
 import com.dci.intellij.dbn.execution.compiler.CompilerMessage;
 import com.dci.intellij.dbn.object.common.DBSchemaObject;
@@ -13,11 +14,11 @@ import javax.swing.tree.TreePath;
 import java.util.List;
 
 public class CompilerMessagesObjectNode extends MessagesTreeBundleNode<CompilerMessagesNode, CompilerMessageNode> {
-    private DBObjectRef<DBSchemaObject> objectRef;
+    private final DBObjectRef<DBSchemaObject> object;
 
-    CompilerMessagesObjectNode(CompilerMessagesNode parent, DBObjectRef<DBSchemaObject> objectRef) {
+    CompilerMessagesObjectNode(CompilerMessagesNode parent, DBObjectRef<DBSchemaObject> object) {
         super(parent);
-        this.objectRef = objectRef;
+        this.object = object;
     }
 
     @Override
@@ -31,12 +32,18 @@ public class CompilerMessagesObjectNode extends MessagesTreeBundleNode<CompilerM
     }
 
     @Nullable
+    @Override
+    public ConnectionId getConnectionId() {
+        return object.getConnectionId();
+    }
+
+    @Nullable
     public DBSchemaObject getObject() {
-        return DBObjectRef.get(objectRef);
+        return DBObjectRef.get(object);
     }
 
     public DBObjectRef<DBSchemaObject> getObjectRef() {
-        return objectRef;
+        return object;
     }
 
     TreePath addCompilerMessage(CompilerMessage compilerMessage) {
@@ -66,6 +73,6 @@ public class CompilerMessagesObjectNode extends MessagesTreeBundleNode<CompilerM
 
     @Override
     public String toString() {
-        return objectRef.toString();
+        return object.toString();
     }
 }
