@@ -2,7 +2,7 @@
     <name>Database Navigator</name>
     <id>DBN</id>
     <!--3050 -->
-    <version>3.3.1249.0</version>
+    <version>3.3.1500.0</version>
     <category>Database</category>
     <depends>com.intellij.modules.platform</depends>
     <depends>com.intellij.modules.lang</depends>
@@ -31,7 +31,7 @@
     ]]></description>
     <change-notes><![CDATA[
         <ul>
-            <li><b>3.3.1249</b>
+            <li><b>3.3.1500</b>
             <ul>
                 <li>Oracle SQL "create synonym" syntax support
                 <li>SQLite configuration validations (multiple db files)
