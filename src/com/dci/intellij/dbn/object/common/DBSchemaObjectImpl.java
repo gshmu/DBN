@@ -5,7 +5,7 @@ import com.dci.intellij.dbn.common.content.DynamicContentStatus;
 import com.dci.intellij.dbn.common.content.loader.DynamicContentResultSetLoader;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.PooledConnection;
-import com.dci.intellij.dbn.connection.ResourceUtil;
+import com.dci.intellij.dbn.connection.Resources;
 import com.dci.intellij.dbn.connection.jdbc.DBNConnection;
 import com.dci.intellij.dbn.database.DatabaseDDLInterface;
 import com.dci.intellij.dbn.database.DatabaseInterface;
@@ -153,7 +153,7 @@ public abstract class DBSchemaObjectImpl<M extends DBObjectMetadata> extends DBO
                         }
 
                     } finally {
-                        ResourceUtil.close(resultSet);
+                        Resources.close(resultSet);
                     }
                     return schemas;
                 });

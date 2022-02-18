@@ -1,6 +1,6 @@
 package com.dci.intellij.dbn.database.common.util;
 
-import com.dci.intellij.dbn.connection.ResourceUtil;
+import com.dci.intellij.dbn.connection.Resources;
 import org.jetbrains.annotations.Nullable;
 
 import java.sql.ResultSet;
@@ -47,7 +47,7 @@ public class MultipartResultSet extends WrappedResultSet {
             return true;
 
         } else {
-            ResourceUtil.close(inner);
+            Resources.close(inner);
             inner = null;
             return next();
         }

@@ -86,25 +86,24 @@ public final class SafeDisposer {
     }
 
     public static void disposeCollection(@Nullable Collection<?> collection) {
-        if (collection != null && !collection.isEmpty()) {
-            BackgroundDisposer.queue(() -> {
-                Collection<?> disposeCollection;
-                if (collection instanceof FilteredList) {
-                    FilteredList<?> filteredList = (FilteredList<?>) collection;
-                    disposeCollection = filteredList.getBase();
-                } else {
-                    disposeCollection = collection;
-                }
-                if (!disposeCollection.isEmpty()) {
+        if (collection != null) {
+            if (collection instanceof FilteredList) {
+                FilteredList<?> filteredList = (FilteredList<?>) collection;
+                collection = filteredList.getBase();
+            }
+
+            if (!collection.isEmpty()) {
+                Collection<?> disposeCollection = collection;
+                BackgroundDisposer.queue(() -> {
                     for (Object object : disposeCollection) {
                         if (object instanceof Disposable) {
                             Disposable disposable = (Disposable) object;
                             dispose(disposable, false);
                         }
                     }
-                    Nullifier.clearCollection(collection);
-                }
-            });
+                    Nullifier.clearCollection(disposeCollection);
+                });
+            }
         }
     }
 

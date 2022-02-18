@@ -12,7 +12,7 @@ import java.util.List;
 
 import static com.dci.intellij.dbn.common.util.Exceptions.toSqlException;
 
-public class ResultSetUtil extends StatefulDisposable.Base {
+public class ResultSets extends StatefulDisposable.Base {
     public static void insertRow(ResultSet resultSet) throws SQLException {
         try {
             resultSet.insertRow();
@@ -81,13 +81,13 @@ public class ResultSetUtil extends StatefulDisposable.Base {
 
     public static void forEachRow(ResultSet resultSet, ThrowableRunnable<SQLException> consumer) throws SQLException {
         try {
-            if (resultSet != null && !ResourceUtil.isClosed(resultSet)) {
+            if (resultSet != null && !Resources.isClosed(resultSet)) {
                 while (resultSet.next()) {
                     consumer.run();
                 }
             }
         } finally {
-            ResourceUtil.close(resultSet);
+            Resources.close(resultSet);
         }
     }
 

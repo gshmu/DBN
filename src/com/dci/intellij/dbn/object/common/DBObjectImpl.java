@@ -21,8 +21,19 @@ import com.dci.intellij.dbn.common.event.ProjectEvents;
 import com.dci.intellij.dbn.common.filter.Filter;
 import com.dci.intellij.dbn.common.thread.Background;
 import com.dci.intellij.dbn.common.ui.tree.TreeEventType;
-import com.dci.intellij.dbn.common.util.*;
-import com.dci.intellij.dbn.connection.*;
+import com.dci.intellij.dbn.common.util.Cancellable;
+import com.dci.intellij.dbn.common.util.Commons;
+import com.dci.intellij.dbn.common.util.Consumer;
+import com.dci.intellij.dbn.common.util.Strings;
+import com.dci.intellij.dbn.common.util.Unsafe;
+import com.dci.intellij.dbn.connection.ConnectionHandler;
+import com.dci.intellij.dbn.connection.ConnectionHandlerRef;
+import com.dci.intellij.dbn.connection.ConnectionId;
+import com.dci.intellij.dbn.connection.DatabaseEntity;
+import com.dci.intellij.dbn.connection.DatabaseType;
+import com.dci.intellij.dbn.connection.PooledConnection;
+import com.dci.intellij.dbn.connection.Resources;
+import com.dci.intellij.dbn.connection.SchemaId;
 import com.dci.intellij.dbn.connection.config.ConnectionDatabaseSettings;
 import com.dci.intellij.dbn.connection.jdbc.DBNCallableStatement;
 import com.dci.intellij.dbn.database.DatabaseCompatibilityInterface;
@@ -57,7 +68,7 @@ import com.intellij.psi.PsiInvalidElementAccessException;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import javax.swing.*;
+import javax.swing.Icon;
 import java.sql.SQLException;
 import java.sql.Types;
 import java.util.ArrayList;
@@ -522,7 +533,7 @@ public abstract class DBObjectImpl<M extends DBObjectMetadata> extends BrowserTr
                         String ddl = statement.getString(1);
                         return ddl == null ? null : ddl.trim();
                     } finally{
-                        ResourceUtil.close(statement);
+                        Resources.close(statement);
                     }
                 });
     }
@@ -759,7 +770,7 @@ public abstract class DBObjectImpl<M extends DBObjectMetadata> extends BrowserTr
 
     @Override
     public boolean isLeaf() {
-        return Safe.call(true, () -> {
+        return Cancellable.call(true, () -> {
             if (visibleTreeChildren == null) {
                 ConnectionHandler connectionHandler = this.getConnection();
                 Filter<BrowserTreeNode> filter = connectionHandler.getObjectTypeFilter();

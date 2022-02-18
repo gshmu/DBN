@@ -18,7 +18,7 @@ import com.dci.intellij.dbn.common.util.InternalApi;
 import com.dci.intellij.dbn.common.util.Strings;
 import com.dci.intellij.dbn.connection.ConnectionAction;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
-import com.dci.intellij.dbn.connection.ResourceUtil;
+import com.dci.intellij.dbn.connection.Resources;
 import com.dci.intellij.dbn.connection.jdbc.DBNConnection;
 import com.dci.intellij.dbn.database.DatabaseDDLInterface;
 import com.dci.intellij.dbn.database.DatabaseFeature;
@@ -305,7 +305,7 @@ public class SourceCodeManager extends AbstractProjectComponent implements Persi
 
                         return Strings.removeCharacter(buffer.toString(), '\r');
                     } finally {
-                        ResourceUtil.close(resultSet);
+                        Resources.close(resultSet);
                     }
                 });
 
@@ -427,7 +427,7 @@ public class SourceCodeManager extends AbstractProjectComponent implements Persi
 
                             return resultSet.next() ? resultSet.getTimestamp(1) : null;
                         } finally {
-                            ResourceUtil.close(resultSet);
+                            Resources.close(resultSet);
                         }
                     });
 

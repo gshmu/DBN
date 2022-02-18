@@ -3,8 +3,8 @@ package com.dci.intellij.dbn.common.thread;
 import com.dci.intellij.dbn.common.dispose.AlreadyDisposedException;
 import com.dci.intellij.dbn.common.load.ProgressMonitor;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
+import com.dci.intellij.dbn.connection.Savepoints;
 import com.dci.intellij.dbn.connection.jdbc.DBNConnection;
-import com.dci.intellij.dbn.connection.transaction.ConnectionSavepoint;
 import com.dci.intellij.dbn.database.DatabaseFeature;
 import com.intellij.openapi.progress.ProgressIndicator;
 import lombok.extern.slf4j.Slf4j;
@@ -60,7 +60,7 @@ public abstract class CancellableDatabaseCall<T> implements Callable<T> {
                 () -> {
                     if (createSavepoint) {
                         AtomicReference<Exception> innerException = new AtomicReference<>();
-                        T result = ConnectionSavepoint.call(connection, () -> {
+                        T result = Savepoints.call(connection, () -> {
                             try {
                                 return CancellableDatabaseCall.this.execute();
                             } catch (SQLException e) {

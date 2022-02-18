@@ -1,8 +1,8 @@
 package com.dci.intellij.dbn.common.action;
 
 import com.dci.intellij.dbn.common.dispose.Failsafe;
+import com.dci.intellij.dbn.common.util.Cancellable;
 import com.dci.intellij.dbn.common.util.Commons;
-import com.dci.intellij.dbn.common.util.Safe;
 import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.progress.ProcessCanceledException;
@@ -28,8 +28,8 @@ public abstract class ProjectAction extends AnAction {
     @Override
     public final void actionPerformed(@NotNull AnActionEvent e) {
         try {
-            Project project = Commons.nvln(
-                    getProject(),
+            Project project = Commons.coalesce(
+                    () -> getProject(),
                     () -> Lookup.getProject(e));
             if (Failsafe.check(project)) {
                 actionPerformed(e, project);
@@ -50,7 +50,7 @@ public abstract class ProjectAction extends AnAction {
         try {
             Project project = Lookup.getProject(e);
             if (Failsafe.check(project)) {
-                Safe.run(() -> update(e, project));
+                Cancellable.run(() -> update(e, project));
             }
         } catch (ProcessCanceledException ignore){}
     }

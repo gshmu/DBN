@@ -1,7 +1,7 @@
 package com.dci.intellij.dbn.editor.data.model;
 
 import com.dci.intellij.dbn.common.util.Lists;
-import com.dci.intellij.dbn.connection.ResultSetUtil;
+import com.dci.intellij.dbn.connection.ResultSets;
 import com.dci.intellij.dbn.data.model.ColumnInfo;
 import com.dci.intellij.dbn.data.model.resultSet.ResultSetDataModelHeader;
 import com.dci.intellij.dbn.editor.data.DatasetEditor;
@@ -19,7 +19,7 @@ public class DatasetEditorModelHeader extends ResultSetDataModelHeader<DatasetEd
     DatasetEditorModelHeader(DatasetEditor datasetEditor, @Nullable ResultSet resultSet) throws SQLException {
         DBDataset dataset = datasetEditor.getDataset();
 
-        List<String> columnNames = resultSet == null ? null : ResultSetUtil.getColumnNames(resultSet);
+        List<String> columnNames = resultSet == null ? null : ResultSets.getColumnNames(resultSet);
         List<DatasetColumnState> columnStates = datasetEditor.refreshColumnStates(columnNames);
 
         int index = 0;

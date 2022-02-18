@@ -3,6 +3,8 @@ package com.dci.intellij.dbn.connection.jdbc;
 import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.common.event.ProjectEvents;
 import com.dci.intellij.dbn.common.project.ProjectRef;
+import com.dci.intellij.dbn.common.routine.ThrowableCallable;
+import com.dci.intellij.dbn.common.routine.ThrowableRunnable;
 import com.dci.intellij.dbn.common.util.TimeUtil;
 import com.dci.intellij.dbn.connection.ConnectionCache;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
@@ -11,7 +13,7 @@ import com.dci.intellij.dbn.connection.ConnectionId;
 import com.dci.intellij.dbn.connection.ConnectionProperties;
 import com.dci.intellij.dbn.connection.ConnectionStatusListener;
 import com.dci.intellij.dbn.connection.ConnectionType;
-import com.dci.intellij.dbn.connection.ResourceUtil;
+import com.dci.intellij.dbn.connection.Resources;
 import com.dci.intellij.dbn.connection.SchemaId;
 import com.dci.intellij.dbn.connection.SessionId;
 import com.dci.intellij.dbn.connection.transaction.PendingTransactionBundle;
@@ -27,6 +29,7 @@ import java.sql.CallableStatement;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
+import java.sql.Savepoint;
 import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
@@ -334,7 +337,7 @@ public class DBNConnection extends DBNConnectionBase {
             updateLastAccess();
             List<DBNPreparedStatement> statements = new ArrayList<>(cachedStatements.values());
             cachedStatements.clear();
-            ResourceUtil.close(statements);
+            Resources.close(statements);
         } finally {
             resetDataChanges();
             notifyStatusChange();
@@ -396,6 +399,31 @@ public class DBNConnection extends DBNConnectionBase {
 
 
         return changed;
+    }
+
+
+    public synchronized <T> T withSavepoint(ThrowableCallable<T, SQLException> callable) throws SQLException{
+        Savepoint savepoint = Resources.createSavepoint(this);
+        try {
+            return callable.call();
+        } catch (SQLException e) {
+            Resources.rollbackSilently(this, savepoint);
+            throw e;
+        } finally {
+            Resources.releaseSavepoint(this, savepoint);
+        }
+    }
+
+    public synchronized void withSavepoint(ThrowableRunnable<SQLException> runnable) throws SQLException{
+        Savepoint savepoint = Resources.createSavepoint(this);
+        try {
+            runnable.run();
+        } catch (SQLException e) {
+            Resources.rollbackSilently(this, savepoint);
+            throw e;
+        } finally {
+            Resources.releaseSavepoint(this, savepoint);
+        }
     }
 
     /********************************************************************

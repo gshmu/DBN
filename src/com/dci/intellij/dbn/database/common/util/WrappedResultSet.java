@@ -1,5 +1,6 @@
 package com.dci.intellij.dbn.database.common.util;
 
+import com.dci.intellij.dbn.connection.Resources;
 import org.jetbrains.annotations.Nullable;
 
 import java.io.InputStream;
@@ -46,7 +47,7 @@ public abstract class WrappedResultSet<T extends ResultSet> implements ResultSet
 
     @Override
     public boolean isClosed() throws SQLException {
-        return inner == null || inner.isClosed();
+        return inner == null || Resources.isClosed(inner);
     }
 
     @Override

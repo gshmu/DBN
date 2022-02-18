@@ -5,7 +5,7 @@ import com.dci.intellij.dbn.common.consumer.SetCollector;
 import com.dci.intellij.dbn.common.dispose.AlreadyDisposedException;
 import com.dci.intellij.dbn.common.dispose.StatefulDisposable;
 import com.dci.intellij.dbn.common.project.ProjectRef;
-import com.dci.intellij.dbn.common.util.Safe;
+import com.dci.intellij.dbn.common.util.Cancellable;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.ConnectionHandlerRef;
 import com.dci.intellij.dbn.navigation.options.ObjectsLookupSettings;
@@ -115,7 +115,7 @@ public class DBObjectLookupModel extends StatefulDisposable.Base implements Choo
     @Override
     @NotNull
     public String[] getNames(boolean checkBoxState) {
-        return Safe.call(EMPTY_STRING_ARRAY, () -> {
+        return Cancellable.call(EMPTY_STRING_ARRAY, () -> {
             boolean databaseLoadActive = settings.getForceDatabaseLoad().value();
             boolean forceLoad = checkBoxState && databaseLoadActive;
 
@@ -145,7 +145,7 @@ public class DBObjectLookupModel extends StatefulDisposable.Base implements Choo
     @Override
     @NotNull
     public Object[] getElementsByName(@NotNull String name, boolean checkBoxState, @NotNull String pattern) {
-        return Safe.call(EMPTY_ARRAY, () -> data.elements().
+        return Cancellable.call(EMPTY_ARRAY, () -> data.elements().
                 stream().
                 filter(object -> Objects.equals(object.getName(), name)).
                 sorted(Comparator.comparing(DBObject::getQualifiedName)).

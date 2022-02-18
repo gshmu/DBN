@@ -11,7 +11,6 @@ import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.common.dispose.SafeDisposer;
 import com.dci.intellij.dbn.common.dispose.StatefulDisposable;
 import com.dci.intellij.dbn.common.load.ProgressMonitor;
-import com.dci.intellij.dbn.common.util.Safe;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.DatabaseEntity;
 import com.dci.intellij.dbn.database.DatabaseCompatibilityInterface;
@@ -19,6 +18,7 @@ import com.dci.intellij.dbn.database.DatabaseObjectTypeId;
 import com.dci.intellij.dbn.object.common.DBObject;
 import com.dci.intellij.dbn.object.type.DBObjectRelationType;
 import com.dci.intellij.dbn.object.type.DBObjectType;
+import com.intellij.openapi.progress.ProcessCanceledException;
 import lombok.Getter;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -49,7 +49,7 @@ public final class DBObjectListContainer implements StatefulDisposable {
 
     public void visitObjects(@NotNull DBObjectListVisitor visitor, boolean visitInternal) {
         if (objects != null) {
-            Safe.run(() -> {
+            try {
                 checkDisposed(visitor);
                 for (DBObjectList<?> objectList : objects) {
                     if (check(objectList) && (visitInternal || !objectList.isInternal())) {
@@ -59,7 +59,7 @@ public final class DBObjectListContainer implements StatefulDisposable {
                         visitor.visit(objectList);
                     }
                 }
-            });
+            } catch (ProcessCanceledException ignore) {}
         }
     }
 

@@ -4,7 +4,7 @@ import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.common.color.Colors;
 import com.dci.intellij.dbn.common.ui.Borders;
 import com.dci.intellij.dbn.common.ui.table.DBNTableHeaderRendererBase;
-import com.dci.intellij.dbn.common.util.Safe;
+import com.dci.intellij.dbn.common.util.Cancellable;
 import com.dci.intellij.dbn.data.grid.options.DataGridSettings;
 import com.dci.intellij.dbn.data.sorting.SortDirection;
 import com.dci.intellij.dbn.data.sorting.SortingInstruction;
@@ -35,7 +35,7 @@ public class DatasetEditorTableHeaderRenderer extends DBNTableHeaderRendererBase
 
     @Override
     public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int rowIndex, int columnIndex) {
-        return Safe.call(mainPanel, () -> {
+        return Cancellable.call(mainPanel, () -> {
             DatasetEditorModel model = (DatasetEditorModel) table.getModel();
             sortingLabel.setText(null);
             int width = 0;

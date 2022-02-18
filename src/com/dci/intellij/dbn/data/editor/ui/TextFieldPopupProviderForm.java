@@ -8,6 +8,7 @@ import com.dci.intellij.dbn.common.ui.DBNFormImpl;
 import com.dci.intellij.dbn.common.ui.KeyAdapter;
 import com.dci.intellij.dbn.common.ui.KeyUtil;
 import com.dci.intellij.dbn.common.util.Context;
+import com.dci.intellij.dbn.language.common.WeakRef;
 import com.intellij.openapi.actionSystem.ActionManager;
 import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.AnActionEvent;
@@ -23,24 +24,31 @@ import lombok.Setter;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import javax.swing.*;
-import java.awt.*;
+import javax.swing.JComponent;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JTextField;
+import java.awt.Point;
 import java.awt.event.KeyEvent;
 import java.util.HashSet;
 import java.util.Set;
 
+@Getter
+@Setter
 public abstract class TextFieldPopupProviderForm extends DBNFormImpl implements KeyAdapter, TextFieldPopupProvider {
-    protected TextFieldWithPopup<?> editorComponent;
-    @Getter private final boolean autoPopup;
-    @Getter private final boolean buttonVisible;
-    @Getter @Setter private boolean enabled = true;
-    @Getter @Setter private JLabel button;
-    @Getter private JBPopup popup;
-    @Getter private final Set<AnAction> actions = new HashSet<>();
+    private final WeakRef<TextFieldWithPopup> editorComponent;
+    private final boolean autoPopup;
+    private final boolean buttonVisible;
+
+    private boolean enabled = true;
+    private boolean preparing = false;
+    private JLabel button;
+    private JBPopup popup;
+    private final Set<AnAction> actions = new HashSet<>();
 
     TextFieldPopupProviderForm(TextFieldWithPopup<?> editorComponent, boolean autoPopup, boolean buttonVisible) {
         super(editorComponent, editorComponent.getProject());
-        this.editorComponent = editorComponent;
+        this.editorComponent = WeakRef.of(editorComponent);
         this.autoPopup = autoPopup;
         this.buttonVisible = buttonVisible;
         ProjectEvents.subscribe(ensureProject(), this, FileEditorManagerListener.FILE_EDITOR_MANAGER, fileEditorManagerListener);
@@ -54,11 +62,11 @@ public abstract class TextFieldPopupProviderForm extends DBNFormImpl implements 
     };
 
     public TextFieldWithPopup<?> getEditorComponent() {
-        return editorComponent;
+        return editorComponent.ensure();
     }
 
     public JTextField getTextField() {
-        return editorComponent.getTextField();
+        return getEditorComponent().getTextField();
     }
 
     /**
@@ -103,22 +111,22 @@ public abstract class TextFieldPopupProviderForm extends DBNFormImpl implements 
 
     public void preparePopup() {}
 
-    boolean isPreparingPopup = false;
     @Override
     public void showPopup() {
-        if (isPreparingPopup) return;
+        if (preparing) return;
 
-        isPreparingPopup = true;
+        preparing = true;
         Progress.prompt(getProject(), "Loading " + getDescription(), true, (progress) -> {
             preparePopup();
             if (progress.isCanceled()) {
-                isPreparingPopup = false;
+                preparing = false;
                 return;
             }
 
             Dispatch.run(() -> {
                 try {
                     if (!isShowingPopup()) {
+                        TextFieldWithPopup editorComponent = getEditorComponent();
                         popup = createPopup();
                         if (popup != null) {
                             Disposer.register(TextFieldPopupProviderForm.this, popup);
@@ -137,7 +145,7 @@ public abstract class TextFieldPopupProviderForm extends DBNFormImpl implements 
                         }
                     }
                 } finally {
-                    isPreparingPopup = false;
+                    preparing = false;
                 }
             });
         });

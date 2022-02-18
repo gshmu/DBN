@@ -2,9 +2,9 @@ package com.dci.intellij.dbn.editor.data.model;
 
 import com.dci.intellij.dbn.common.dispose.AlreadyDisposedException;
 import com.dci.intellij.dbn.common.util.Lists;
+import com.dci.intellij.dbn.connection.Savepoints;
 import com.dci.intellij.dbn.connection.jdbc.DBNConnection;
 import com.dci.intellij.dbn.connection.jdbc.DBNResultSet;
-import com.dci.intellij.dbn.connection.transaction.ConnectionSavepoint;
 import com.dci.intellij.dbn.data.model.ColumnInfo;
 import com.dci.intellij.dbn.data.type.DBDataType;
 import com.dci.intellij.dbn.data.type.DBNativeDataType;
@@ -53,7 +53,7 @@ public class ReadonlyResultSetAdapter extends ResultSetAdapter {
     public synchronized void updateRow() throws SQLException {
         if (!isInsertMode())  {
             if (isUseSavePoints()) {
-                ConnectionSavepoint.run(connection, () -> this.executeUpdate());
+                Savepoints.run(connection, () -> this.executeUpdate());
             } else {
                 executeUpdate();
             }
@@ -86,7 +86,7 @@ public class ReadonlyResultSetAdapter extends ResultSetAdapter {
     public synchronized void insertRow() throws SQLException {
         if (isInsertMode())  {
             if (isUseSavePoints()) {
-                ConnectionSavepoint.run(connection, () -> {
+                Savepoints.run(connection, () -> {
                     executeInsert();
                     setInsertMode(false);
                 });
@@ -101,7 +101,7 @@ public class ReadonlyResultSetAdapter extends ResultSetAdapter {
     public synchronized void deleteRow() throws SQLException {
         if (!isInsertMode())  {
             if (isUseSavePoints()) {
-                ConnectionSavepoint.run(connection, this::executeDelete);
+                Savepoints.run(connection, this::executeDelete);
             } else {
                 executeDelete();
             }
