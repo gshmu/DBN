@@ -12,7 +12,7 @@ import com.dci.intellij.dbn.common.ui.DBNFormImpl;
 import com.dci.intellij.dbn.common.ui.GUIUtil;
 import com.dci.intellij.dbn.common.util.Actions;
 import com.dci.intellij.dbn.connection.ConnectionId;
-import com.dci.intellij.dbn.connection.config.ConnectionSettingsListener;
+import com.dci.intellij.dbn.connection.config.ConnectionConfigListener;
 import com.dci.intellij.dbn.object.common.DBObject;
 import com.dci.intellij.dbn.object.properties.ui.ObjectPropertiesForm;
 import com.intellij.openapi.Disposable;
@@ -42,7 +42,7 @@ public class BrowserToolWindowForm extends DBNFormImpl {
         //toolWindow.setIcon(dbBrowser.getIcon(0));
         DatabaseBrowserManager browserManager = DatabaseBrowserManager.getInstance(project);
 
-        rebuild();
+        rebuildTabs();
 
         ActionToolbar actionToolbar = Actions.createActionToolbar(
                 actionsPanel,
@@ -59,11 +59,15 @@ public class BrowserToolWindowForm extends DBNFormImpl {
         objectPropertiesPanel.add(objectPropertiesForm.getComponent());
 
 
-        ProjectEvents.subscribe(project, this, DisplayModeSettingsListener.TOPIC, displayModeSettingsListener);
-        ProjectEvents.subscribe(project, this, ConnectionSettingsListener.TOPIC, connectionSettingsListener);
+        ProjectEvents.subscribe(project, this, DisplayModeSettingsListener.TOPIC, mode -> changeDisplayMode(mode));
+        ProjectEvents.subscribe(project, this,
+                ConnectionConfigListener.TOPIC,
+                ConnectionConfigListener
+                        .whenSetupChanged(() -> rebuildTabs())
+                        .whenNameChanged(id -> refreshTabs(id)));
     }
 
-    public void rebuild() {
+    public void rebuildTabs() {
         Project project = ensureProject();
         DatabaseBrowserSettings browserSettings = DatabaseBrowserSettings.getInstance(project);
         displayMode = browserSettings.getGeneralSettings().getDisplayMode();
@@ -128,31 +132,19 @@ public class BrowserToolWindowForm extends DBNFormImpl {
         return mainPanel;
     }
 
-    /********************************************************
-     *                       Listeners                      *
-     ********************************************************/
-    private final DisplayModeSettingsListener displayModeSettingsListener = displayMode -> {
+    private void changeDisplayMode(BrowserDisplayMode displayMode) {
         if (getDisplayMode() != displayMode) {
             setDisplayMode(displayMode);
-            rebuild();
+            rebuildTabs();
         }
-    };
+    }
 
-
-    private final ConnectionSettingsListener connectionSettingsListener = new ConnectionSettingsListener() {
-        @Override
-        public void connectionsChanged() {
-            rebuild();
+    private void refreshTabs(ConnectionId connectionId) {
+        if (browserForm instanceof TabbedBrowserForm && Failsafe.check(browserForm)) {
+            TabbedBrowserForm tabbedBrowserForm = (TabbedBrowserForm) browserForm;
+            tabbedBrowserForm.refreshTabInfo(connectionId);
         }
-
-        @Override
-        public void connectionNameChanged(ConnectionId connectionId) {
-            if (browserForm instanceof TabbedBrowserForm && Failsafe.check(browserForm)) {
-                TabbedBrowserForm tabbedBrowserForm = (TabbedBrowserForm) browserForm;
-                tabbedBrowserForm.refreshTabInfo(connectionId);
-            }
-        }
-    };
+    }
 
     @Override
     protected void disposeInner() {

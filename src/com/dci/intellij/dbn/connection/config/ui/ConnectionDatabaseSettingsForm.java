@@ -22,10 +22,10 @@ import com.dci.intellij.dbn.connection.DatabaseType;
 import com.dci.intellij.dbn.connection.DatabaseUrlPattern;
 import com.dci.intellij.dbn.connection.DatabaseUrlType;
 import com.dci.intellij.dbn.connection.config.ConnectionBundleSettings;
+import com.dci.intellij.dbn.connection.config.ConnectionConfigListener;
 import com.dci.intellij.dbn.connection.config.ConnectionConfigType;
 import com.dci.intellij.dbn.connection.config.ConnectionDatabaseSettings;
 import com.dci.intellij.dbn.connection.config.ConnectionSettings;
-import com.dci.intellij.dbn.connection.config.ConnectionSettingsListener;
 import com.dci.intellij.dbn.connection.config.file.DatabaseFiles;
 import com.dci.intellij.dbn.connection.config.file.ui.DatabaseFileSettingsForm;
 import com.dci.intellij.dbn.driver.DriverSource;
@@ -368,14 +368,14 @@ public class ConnectionDatabaseSettingsForm extends ConfigurationEditorForm<Conn
             ConnectionId connectionId = configuration.getConnectionId();
             if (nameChanged) {
                 ProjectEvents.notify(project,
-                        ConnectionSettingsListener.TOPIC,
-                        (listener) -> listener.connectionNameChanged(connectionId));
+                        ConnectionConfigListener.TOPIC,
+                        listener -> listener.connectionNameChanged(connectionId));
             }
 
             if (settingsChanged) {
                 ProjectEvents.notify(project,
-                        ConnectionSettingsListener.TOPIC,
-                        (listener) -> listener.connectionChanged(connectionId));
+                        ConnectionConfigListener.TOPIC,
+                        listener -> listener.connectionChanged(connectionId));
             }
         });
     }

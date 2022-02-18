@@ -7,5 +7,6 @@ import java.util.EventListener;
 
 public interface DisplayModeSettingsListener extends EventListener {
     Topic<DisplayModeSettingsListener> TOPIC = Topic.create("Browser Display Mode Settings", DisplayModeSettingsListener.class);
+
     void displayModeChanged(BrowserDisplayMode displayMode);
 }

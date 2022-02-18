@@ -9,7 +9,7 @@ import com.dci.intellij.dbn.connection.ConnectionBundle;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.ConnectionId;
 import com.dci.intellij.dbn.connection.ConnectionManager;
-import com.dci.intellij.dbn.connection.config.ConnectionSettingsListener;
+import com.dci.intellij.dbn.connection.config.ConnectionConfigListener;
 import com.intellij.openapi.project.Project;
 import com.intellij.ui.ColoredListCellRenderer;
 import com.intellij.ui.SimpleTextAttributes;
@@ -46,17 +46,14 @@ public class ConnectionDiagnosticsForm extends DBNFormImpl {
         connectionsList.setModel(model);
         connectionsList.setSelectedIndex(0);
 
-        ProjectEvents.subscribe(project, this, ConnectionSettingsListener.TOPIC, createSettingsListener());
+        ProjectEvents.subscribe(project, this,
+                ConnectionConfigListener.TOPIC,
+                ConnectionConfigListener.whenSetupChanged(() -> rebuildModel()));
     }
 
-    @NotNull
-    private ConnectionSettingsListener createSettingsListener() {
-        return new ConnectionSettingsListener() {
-            @Override
-            public void connectionsChanged() {
-                connectionsList.setModel(createModel());
-            }
-        };
+    private void rebuildModel() {
+        ListModel<ConnectionHandler> model = createModel();
+        connectionsList.setModel(model);
     }
 
     @NotNull
