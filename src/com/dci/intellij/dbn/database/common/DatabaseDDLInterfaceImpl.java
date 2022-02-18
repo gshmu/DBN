@@ -2,7 +2,7 @@ package com.dci.intellij.dbn.database.common;
 
 import com.dci.intellij.dbn.code.common.style.options.CodeStyleCaseOption;
 import com.dci.intellij.dbn.code.common.style.options.CodeStyleCaseSettings;
-import com.dci.intellij.dbn.connection.ResourceUtil;
+import com.dci.intellij.dbn.connection.Resources;
 import com.dci.intellij.dbn.connection.jdbc.DBNConnection;
 import com.dci.intellij.dbn.database.DatabaseDDLInterface;
 import com.dci.intellij.dbn.database.DatabaseInterfaceProvider;
@@ -46,7 +46,7 @@ public abstract class DatabaseDDLInterfaceImpl extends DatabaseInterfaceImpl imp
             statement.setQueryTimeout(20);
             statement.execute(statementText);
         } finally {
-            ResourceUtil.close(statement);
+            Resources.close(statement);
         }
     }
 
@@ -58,7 +58,7 @@ public abstract class DatabaseDDLInterfaceImpl extends DatabaseInterfaceImpl imp
                 return resultSet.getString(1);
             }
         } finally {
-            ResourceUtil.close(resultSet);
+            Resources.close(resultSet);
         }
         return null;
     }

@@ -7,7 +7,7 @@ import com.dci.intellij.dbn.common.util.Commons;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.ConnectionHandlerRef;
 import com.dci.intellij.dbn.connection.ConnectionId;
-import com.dci.intellij.dbn.connection.ResultSetUtil;
+import com.dci.intellij.dbn.connection.ResultSets;
 import com.dci.intellij.dbn.connection.SchemaId;
 import com.dci.intellij.dbn.execution.ExecutionResultBase;
 import com.dci.intellij.dbn.execution.explain.result.ui.ExplainPlanResultForm;
@@ -48,7 +48,7 @@ public class ExplainPlanResult extends ExecutionResultBase<ExplainPlanResultForm
         // entries must be sorted by PARENT_ID NULLS FIRST, ID
         Map<Integer, ExplainPlanEntry> entries = new HashMap<>();
         ConnectionHandler connectionHandler = getConnectionHandler();
-        List<String> explainColumnNames = ResultSetUtil.getColumnNames(resultSet);
+        List<String> explainColumnNames = ResultSets.getColumnNames(resultSet);
 
         while (resultSet.next()) {
             ExplainPlanEntry entry = new ExplainPlanEntry(connectionHandler, resultSet, explainColumnNames);

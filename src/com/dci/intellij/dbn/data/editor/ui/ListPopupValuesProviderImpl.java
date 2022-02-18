@@ -4,8 +4,8 @@ import java.util.Collections;
 import java.util.List;
 
 public abstract class ListPopupValuesProviderImpl implements ListPopupValuesProvider{
-    private String description;
-    private boolean longLoading;
+    private final String description;
+    private final boolean longLoading;
 
     public ListPopupValuesProviderImpl(String description, boolean longLoading) {
         this.description = description;

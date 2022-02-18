@@ -3,8 +3,8 @@ package com.dci.intellij.dbn.database.common.util;
 import com.dci.intellij.dbn.common.data.Data;
 import com.dci.intellij.dbn.common.dispose.StatefulDisposable;
 import com.dci.intellij.dbn.common.util.Lists;
-import com.dci.intellij.dbn.connection.ResourceUtil;
-import com.dci.intellij.dbn.connection.ResultSetUtil;
+import com.dci.intellij.dbn.connection.Resources;
+import com.dci.intellij.dbn.connection.ResultSets;
 import lombok.extern.slf4j.Slf4j;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -48,13 +48,13 @@ public class CachedResultSet extends StatefulDisposable.Base implements ResultSe
             this.columnNames = new ArrayList<>(cachedResultSet.columnNames);
             source = cachedResultSet.open();
             load(source, condition);
-        } else if (source != null && !source.isClosed()) {
+        } else if (source != null && !Resources.isClosed(source)) {
             try {
-                List<String> columnNames = ResultSetUtil.getColumnNames(source);
+                List<String> columnNames = ResultSets.getColumnNames(source);
                 this.columnNames = Lists.convert(columnNames, s -> s.toUpperCase().trim());
                 load(source, condition);
             } finally {
-                ResourceUtil.close(source);
+                Resources.close(source);
             }
         }
     }
@@ -83,7 +83,7 @@ public class CachedResultSet extends StatefulDisposable.Base implements ResultSe
      * @throws SQLException propagated from original result set evaluations
      */
     private void load(@NotNull ResultSet resultSet, @Nullable ResultSetCondition condition) throws SQLException {
-        ResultSetUtil.forEachRow(resultSet, () -> {
+        ResultSets.forEachRow(resultSet, () -> {
             if (condition == null || condition.evaluate(resultSet)) {
                 CachedResultSetRow row = CachedResultSetRow.create(resultSet, columnNames);
                 rows.add(row);

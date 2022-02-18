@@ -16,7 +16,7 @@ import com.dci.intellij.dbn.common.util.Messages;
 import com.dci.intellij.dbn.common.util.TimeUtil;
 import com.dci.intellij.dbn.connection.ConnectionAction;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
-import com.dci.intellij.dbn.connection.ResourceUtil;
+import com.dci.intellij.dbn.connection.Resources;
 import com.dci.intellij.dbn.connection.jdbc.DBNResultSet;
 import com.dci.intellij.dbn.database.DatabaseFeature;
 import com.dci.intellij.dbn.database.DatabaseInterface;
@@ -99,7 +99,7 @@ public class SessionBrowserManager extends AbstractProjectComponent implements P
                             resultSet = (DBNResultSet) provider.getMetadataInterface().loadSessions(connection);
                             return new SessionBrowserModel(connectionHandler, resultSet);
                         } finally {
-                            ResourceUtil.close(resultSet);
+                            Resources.close(resultSet);
                         }
                     });
 
@@ -123,7 +123,7 @@ public class SessionBrowserManager extends AbstractProjectComponent implements P
                                     return resultSet.getString(1);
                                 }
                             } finally {
-                                ResourceUtil.close(resultSet);
+                                Resources.close(resultSet);
                             }
                             return "";
                         });

@@ -8,7 +8,7 @@ import com.dci.intellij.dbn.common.ui.DBNFormImpl;
 import com.dci.intellij.dbn.common.ui.DBNHeaderForm;
 import com.dci.intellij.dbn.common.ui.GUIUtil;
 import com.dci.intellij.dbn.common.util.Actions;
-import com.dci.intellij.dbn.common.util.Safe;
+import com.dci.intellij.dbn.common.util.Cancellable;
 import com.dci.intellij.dbn.data.grid.ui.table.resultSet.ResultSetTable;
 import com.dci.intellij.dbn.data.model.ColumnInfo;
 import com.dci.intellij.dbn.data.model.resultSet.ResultSetDataModel;
@@ -320,14 +320,14 @@ public class ResultSetRecordViewerForm extends DBNFormImpl {
 
 
     private int getRowIndex() {
-        return Safe.call(-1, () -> {
+        return Cancellable.call(-1, () -> {
             ResultSetDataModelRow<?, ?> row = getRow();
             return row.getIndex();
         });
     }
 
     private int getRowCount() {
-        return Safe.call(0, () -> {
+        return Cancellable.call(0, () -> {
             ResultSetDataModelRow<?, ?> row = getRow();
             return row.getModel().getRowCount();
         });

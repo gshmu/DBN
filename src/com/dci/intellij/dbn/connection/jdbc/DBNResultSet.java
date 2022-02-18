@@ -1,6 +1,7 @@
 package com.dci.intellij.dbn.connection.jdbc;
 
 import com.dci.intellij.dbn.common.dispose.Failsafe;
+import com.dci.intellij.dbn.connection.Resources;
 import com.dci.intellij.dbn.language.common.WeakRef;
 import org.jetbrains.annotations.Nullable;
 
@@ -8,7 +9,20 @@ import java.io.InputStream;
 import java.io.Reader;
 import java.math.BigDecimal;
 import java.net.URL;
-import java.sql.*;
+import java.sql.Array;
+import java.sql.Blob;
+import java.sql.Clob;
+import java.sql.Date;
+import java.sql.NClob;
+import java.sql.Ref;
+import java.sql.ResultSet;
+import java.sql.ResultSetMetaData;
+import java.sql.RowId;
+import java.sql.SQLException;
+import java.sql.SQLWarning;
+import java.sql.SQLXML;
+import java.sql.Time;
+import java.sql.Timestamp;
 import java.util.Calendar;
 import java.util.Map;
 
@@ -65,7 +79,7 @@ public class DBNResultSet extends DBNResource<ResultSet> implements ResultSet, C
 
     @Override
     public boolean isClosedInner() throws SQLException {
-        return inner.isClosed();
+        return Resources.isClosed(inner);
     }
 
     @Override

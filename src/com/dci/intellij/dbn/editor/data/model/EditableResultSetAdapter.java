@@ -1,8 +1,8 @@
 package com.dci.intellij.dbn.editor.data.model;
 
 import com.dci.intellij.dbn.common.dispose.Failsafe;
+import com.dci.intellij.dbn.connection.Savepoints;
 import com.dci.intellij.dbn.connection.jdbc.DBNResultSet;
-import com.dci.intellij.dbn.connection.transaction.ConnectionSavepoint;
 import com.dci.intellij.dbn.data.type.DBDataType;
 import com.dci.intellij.dbn.data.value.ValueAdapter;
 import org.jetbrains.annotations.NotNull;
@@ -24,7 +24,7 @@ public class EditableResultSetAdapter extends ResultSetAdapter {
         if (!isInsertMode()) {
             DBNResultSet resultSet = getResultSet();
             if (isUseSavePoints()) {
-                ConnectionSavepoint.run(resultSet, () -> absolute(resultSet, rowIndex));
+                Savepoints.run(resultSet, () -> absolute(resultSet, rowIndex));
             } else {
                 absolute(resultSet, rowIndex);
             }
@@ -36,7 +36,7 @@ public class EditableResultSetAdapter extends ResultSetAdapter {
         if (!isInsertMode())  {
             DBNResultSet resultSet = getResultSet();
             if (isUseSavePoints()) {
-                ConnectionSavepoint.run(resultSet, () -> updateRow(resultSet));
+                Savepoints.run(resultSet, () -> updateRow(resultSet));
             } else {
                 updateRow(resultSet);
             }
@@ -48,7 +48,7 @@ public class EditableResultSetAdapter extends ResultSetAdapter {
         if (!isInsertMode())  {
             DBNResultSet resultSet = getResultSet();
             if (isUseSavePoints()) {
-                ConnectionSavepoint.run(resultSet, () -> refreshRow(resultSet));
+                Savepoints.run(resultSet, () -> refreshRow(resultSet));
             } else {
                 refreshRow(resultSet);
             }
@@ -60,7 +60,7 @@ public class EditableResultSetAdapter extends ResultSetAdapter {
         if (!isInsertMode())  {
             DBNResultSet resultSet = getResultSet();
             if (isUseSavePoints()) {
-                ConnectionSavepoint.run(resultSet, () -> {
+                Savepoints.run(resultSet, () -> {
                     moveToInsertRow(resultSet);
                     setInsertMode(true);
                 });
@@ -76,7 +76,7 @@ public class EditableResultSetAdapter extends ResultSetAdapter {
         if (isInsertMode())  {
             DBNResultSet resultSet = getResultSet();
             if (isUseSavePoints()) {
-                ConnectionSavepoint.run(resultSet, () -> {
+                Savepoints.run(resultSet, () -> {
                     moveToCurrentRow(resultSet);
                     setInsertMode(false);
                 });
@@ -92,7 +92,7 @@ public class EditableResultSetAdapter extends ResultSetAdapter {
         if (isInsertMode())  {
             DBNResultSet resultSet = getResultSet();
             if (isUseSavePoints()) {
-                ConnectionSavepoint.run(resultSet, () -> {
+                Savepoints.run(resultSet, () -> {
                     insertRow(resultSet);
                     moveToCurrentRow(resultSet);
                     setInsertMode(false);
@@ -110,7 +110,7 @@ public class EditableResultSetAdapter extends ResultSetAdapter {
         if (!isInsertMode())  {
             DBNResultSet resultSet = getResultSet();
             if (isUseSavePoints()) {
-                ConnectionSavepoint.run(resultSet, () -> deleteRow(resultSet));
+                Savepoints.run(resultSet, () -> deleteRow(resultSet));
             } else {
                 deleteRow(resultSet);
             }
@@ -122,7 +122,7 @@ public class EditableResultSetAdapter extends ResultSetAdapter {
         DBNResultSet resultSet = getResultSet();
         Connection connection = resultSet.getConnection();
         if (isUseSavePoints()) {
-            ConnectionSavepoint.run(resultSet,
+            Savepoints.run(resultSet,
                     () -> valueAdapter.write(connection, resultSet, columnIndex, value));
         } else {
             valueAdapter.write(connection, resultSet, columnIndex, value);
@@ -133,7 +133,7 @@ public class EditableResultSetAdapter extends ResultSetAdapter {
     public void setValue(int columnIndex, @NotNull DBDataType dataType, @Nullable Object value) throws SQLException {
         DBNResultSet resultSet = getResultSet();
         if (isUseSavePoints()) {
-            ConnectionSavepoint.run(resultSet,
+            Savepoints.run(resultSet,
                     () -> dataType.setValueToResultSet(resultSet, columnIndex, value));
         } else {
             dataType.setValueToResultSet(resultSet, columnIndex, value);

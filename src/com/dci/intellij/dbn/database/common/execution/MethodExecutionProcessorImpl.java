@@ -5,7 +5,7 @@ import com.dci.intellij.dbn.common.locale.Formatter;
 import com.dci.intellij.dbn.common.thread.CancellableDatabaseCall;
 import com.dci.intellij.dbn.common.util.Strings;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
-import com.dci.intellij.dbn.connection.ResourceUtil;
+import com.dci.intellij.dbn.connection.Resources;
 import com.dci.intellij.dbn.connection.SchemaId;
 import com.dci.intellij.dbn.connection.SessionId;
 import com.dci.intellij.dbn.connection.jdbc.DBNConnection;
@@ -68,7 +68,7 @@ public abstract class MethodExecutionProcessorImpl implements MethodExecutionPro
         DBNConnection connection = connectionHandler.getConnection(targetSessionId, targetSchemaId);
 
         if (targetSessionId == SessionId.POOL) {
-            ResourceUtil.setAutoCommit(connection, false);
+            Resources.setAutoCommit(connection, false);
         }
 
         execute(executionInput, connection, debuggerType);
@@ -117,7 +117,7 @@ public abstract class MethodExecutionProcessorImpl implements MethodExecutionPro
 
                 @Override
                 public void cancel() throws Exception {
-                    ResourceUtil.cancel(statement);
+                    Resources.cancel(statement);
                 }
             }.start();
 
@@ -133,7 +133,7 @@ public abstract class MethodExecutionProcessorImpl implements MethodExecutionPro
 
             if (targetSessionId != SessionId.POOL) connection.notifyDataChanges(method.getVirtualFile());
         } catch (SQLException e) {
-            ResourceUtil.cancel(context.getStatement());
+            Resources.cancel(context.getStatement());
             throw e;
         } finally {
             if (loggingEnabled) {
@@ -141,11 +141,11 @@ public abstract class MethodExecutionProcessorImpl implements MethodExecutionPro
             }
 
             if (options.is(ExecutionOption.COMMIT_AFTER_EXECUTION)) {
-                ResourceUtil.commitSilently(connection);
+                Resources.commitSilently(connection);
             }
 
             if (connection.isDebugConnection()) {
-                ResourceUtil.close(connection);
+                Resources.close(connection);
 
             } else if (connection.isPoolConnection()) {
                 connectionHandler.freePoolConnection(connection);

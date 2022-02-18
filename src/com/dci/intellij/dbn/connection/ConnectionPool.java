@@ -128,7 +128,7 @@ public final class ConnectionPool extends StatefulDisposable.Base implements Not
             synchronized (this) {
                 if (shouldInit(connection)) {
                     try {
-                        ResourceUtil.close(connection);
+                        Resources.close(connection);
 
                         connection = ConnectionUtil.connect(connectionHandler, sessionId);
                         dedicatedConnections.put(sessionId, connection);
@@ -199,8 +199,8 @@ public final class ConnectionPool extends StatefulDisposable.Base implements Not
             }
             connection = createPoolConnection();
         }
-        ResourceUtil.setReadonly(connectionHandler, connection, readonly);
-        ResourceUtil.setAutoCommit(connection, readonly);
+        Resources.setReadonly(connectionHandler, connection, readonly);
+        Resources.setAutoCommit(connection, readonly);
         return connection;
     }
 
@@ -221,7 +221,7 @@ public final class ConnectionPool extends StatefulDisposable.Base implements Not
                             return connection;
                         } else {
                             poolConnections.remove(connection);
-                            ResourceUtil.close(connection);
+                            Resources.close(connection);
                         }
                     }
                 }
@@ -239,8 +239,8 @@ public final class ConnectionPool extends StatefulDisposable.Base implements Not
         log.debug("[DBN] Attempt to create new pool connection for '" + connectionName + "'");
         DBNConnection connection = ConnectionUtil.connect(connectionHandler, SessionId.POOL);
 
-        ResourceUtil.setAutoCommit(connection, true);
-        ResourceUtil.setReadonly(connectionHandler, connection, true);
+        Resources.setAutoCommit(connection, true);
+        Resources.setReadonly(connectionHandler, connection, true);
         connectionStatus.setConnected(true);
         connectionStatus.setValid(true);
 
@@ -270,9 +270,9 @@ public final class ConnectionPool extends StatefulDisposable.Base implements Not
         if (connection != null) {
             if (connection.isPoolConnection()) {
                 try {
-                    ResourceUtil.rollback(connection);
-                    ResourceUtil.setAutoCommit(connection, true);
-                    ResourceUtil.setReadonly(getConnectionHandler(), connection, true);
+                    Resources.rollback(connection);
+                    Resources.setAutoCommit(connection, true);
+                    Resources.setReadonly(getConnectionHandler(), connection, true);
                     connection.set(ResourceStatus.RESERVED, false);
                 } catch (SQLException e) {
                     dropConnection(connection);
@@ -287,7 +287,7 @@ public final class ConnectionPool extends StatefulDisposable.Base implements Not
     void dropConnection(DBNConnection connection) {
         if (connection != null) {
             poolConnections.remove(connection);
-            ResourceUtil.close(connection);
+            Resources.close(connection);
         }
     }
 
@@ -302,10 +302,10 @@ public final class ConnectionPool extends StatefulDisposable.Base implements Not
         SessionId sessionId = connection.getSessionId();
         if (sessionId == SessionId.POOL) {
             poolConnections.remove(connection);
-            ResourceUtil.close(connection);
+            Resources.close(connection);
         } else {
             dedicatedConnections.remove(sessionId);
-            ResourceUtil.close(connection);
+            Resources.close(connection);
         }
     }
 
@@ -364,7 +364,7 @@ public final class ConnectionPool extends StatefulDisposable.Base implements Not
                             this.poolConnections.clear();
 
                             for (DBNConnection connection : poolConnections) {
-                                ResourceUtil.close(connection);
+                                Resources.close(connection);
                             }
                         }
 

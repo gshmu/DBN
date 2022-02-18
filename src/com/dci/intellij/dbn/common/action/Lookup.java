@@ -1,5 +1,6 @@
 package com.dci.intellij.dbn.common.action;
 
+import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.common.util.Context;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.actionSystem.DataContext;
@@ -12,12 +13,17 @@ import com.intellij.openapi.vfs.VirtualFile;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.awt.*;
+import java.awt.Component;
 
 public interface Lookup {
     @Nullable
     static Project getProject(AnActionEvent e) {
         return e.getData(PlatformDataKeys.PROJECT);
+    }
+
+    @NotNull
+    static Project ensureProject(AnActionEvent e) {
+        return Failsafe.nn(e.getData(PlatformDataKeys.PROJECT));
     }
 
     @Nullable

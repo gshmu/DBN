@@ -9,6 +9,7 @@ import com.intellij.openapi.Disposable;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
@@ -18,7 +19,7 @@ import java.util.Set;
 @Setter
 public class DataSearchResult implements Disposable {
     private final Set<DataSearchResultListener> listeners = new HashSet<>();
-    private List<DataSearchResultMatch> matches = java.util.Collections.emptyList();
+    private List<DataSearchResultMatch> matches = Collections.emptyList();
     private DataSearchResultMatch selectedMatch;
     private int matchesLimit;
     private long updateTimestamp = 0;
@@ -26,7 +27,7 @@ public class DataSearchResult implements Disposable {
 
     public void clear() {
         selectedMatch = null;
-        matches = java.util.Collections.emptyList();
+        matches = Collections.emptyList();
     }
 
     public int size() {

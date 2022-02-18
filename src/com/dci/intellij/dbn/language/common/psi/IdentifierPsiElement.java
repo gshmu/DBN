@@ -4,7 +4,6 @@ import com.dci.intellij.dbn.code.common.style.formatting.FormattingAttributes;
 import com.dci.intellij.dbn.common.Capture;
 import com.dci.intellij.dbn.common.consumer.ListCollector;
 import com.dci.intellij.dbn.common.thread.ThreadMonitor;
-import com.dci.intellij.dbn.common.util.RecursivityGate;
 import com.dci.intellij.dbn.common.util.Strings;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.language.common.QuotePair;
@@ -47,7 +46,6 @@ import static com.dci.intellij.dbn.common.util.Commons.nvl;
 
 public abstract class IdentifierPsiElement extends LeafPsiElement<IdentifierElementType> {
     private PsiResolveResult ref;
-    private final RecursivityGate underlyingObjectResolver = new RecursivityGate(4);
     private final Capture<DBObjectRef<?>> underlyingObject = new Capture<>();
 
     public IdentifierPsiElement(ASTNode astNode, IdentifierElementType elementType) {
@@ -229,9 +227,8 @@ public abstract class IdentifierPsiElement extends LeafPsiElement<IdentifierElem
     @Nullable
     public DBObject getUnderlyingObject() {
         DBObject object = DBObjectRef.get(underlyingObject.get());
-        if (object == null || !underlyingObject.valid(getChars())) {
-            object = underlyingObjectResolver.call(() -> loadUnderlyingObject(), null);
-            underlyingObject.capture(DBObjectRef.of(object), getChars());
+        if (object == null || !underlyingObject.isValid(getChars())) {
+            underlyingObject.capture(getChars(), () -> DBObjectRef.of(loadUnderlyingObject()));
         }
         return object;
     }

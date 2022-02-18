@@ -2,7 +2,7 @@ package com.dci.intellij.dbn.editor.data.model;
 
 import com.dci.intellij.dbn.common.dispose.StatefulDisposable;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
-import com.dci.intellij.dbn.connection.ResultSetUtil;
+import com.dci.intellij.dbn.connection.ResultSets;
 import com.dci.intellij.dbn.data.type.DBDataType;
 import com.dci.intellij.dbn.data.value.ValueAdapter;
 import com.dci.intellij.dbn.database.DatabaseFeature;
@@ -16,7 +16,7 @@ import java.sql.SQLException;
 
 @Getter
 @Setter
-public abstract class ResultSetAdapter extends ResultSetUtil implements StatefulDisposable {
+public abstract class ResultSetAdapter extends ResultSets implements StatefulDisposable {
     private final boolean useSavePoints;
     private boolean insertMode;
     private final WeakRef<DatasetEditorModel> model;

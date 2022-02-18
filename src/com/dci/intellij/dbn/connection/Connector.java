@@ -191,7 +191,7 @@ class Connector {
                     connectionSettings.getConnectionId(),
                     sessionId);
 
-            ResourceUtil.setAutoCommit(conn, autoCommit);
+            Resources.setAutoCommit(conn, autoCommit);
             return conn;
 
         } catch (Throwable e) {

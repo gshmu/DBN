@@ -3,7 +3,7 @@ package com.dci.intellij.dbn.connection.jdbc;
 import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.common.routine.ThrowableCallable;
 import com.dci.intellij.dbn.common.util.Unsafe;
-import com.dci.intellij.dbn.connection.ResourceUtil;
+import com.dci.intellij.dbn.connection.Resources;
 import com.dci.intellij.dbn.language.common.WeakRef;
 
 import java.sql.ResultSet;
@@ -123,7 +123,7 @@ public class DBNStatement<T extends Statement> extends DBNResource<T> implements
                 executeDuration.set(System.currentTimeMillis() - init);
             }
         } catch (SQLException e) {
-            ResourceUtil.close(DBNStatement.this);
+            Resources.close(DBNStatement.this);
             throw e;
         } finally {
             connection.updateLastAccess();

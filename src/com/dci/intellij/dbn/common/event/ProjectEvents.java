@@ -3,10 +3,10 @@ package com.dci.intellij.dbn.common.event;
 import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.common.project.Projects;
 import com.dci.intellij.dbn.common.routine.ParametricRunnable;
-import com.dci.intellij.dbn.common.util.Safe;
 import com.intellij.openapi.Disposable;
 import com.intellij.openapi.application.Application;
 import com.intellij.openapi.application.ApplicationManager;
+import com.intellij.openapi.progress.ProcessCanceledException;
 import com.intellij.openapi.project.Project;
 import com.intellij.util.messages.MessageBus;
 import com.intellij.util.messages.MessageBusConnection;
@@ -19,7 +19,7 @@ public final class ProjectEvents {
     private ProjectEvents() {}
 
     public static <T> void subscribe(@NotNull Project project, @Nullable Disposable parentDisposable, Topic<T> topic, T handler) {
-        Safe.run(() -> {
+        try {
             if (Failsafe.check(project)) {
                 MessageBus messageBus = messageBus(project);
                 MessageBusConnection connection = parentDisposable == null ?
@@ -28,7 +28,7 @@ public final class ProjectEvents {
 
                 connection.subscribe(topic, handler);
             }
-        });
+        } catch (ProcessCanceledException ignore) {}
     }
 
     public static <T> void subscribe(Topic<T> topic, T handler) {
@@ -45,10 +45,10 @@ public final class ProjectEvents {
     }
 
     public static <T> void notify(@Nullable Project project, Topic<T> topic, ParametricRunnable.Basic<T> callback) {
-        Safe.run(() -> {
+        try {
             T publisher = publisher(project, topic);
             callback.run(publisher);
-        });
+        } catch (ProcessCanceledException ignore){}
     }
 
     @NotNull

@@ -1,5 +1,6 @@
 package com.dci.intellij.dbn.connection.session;
 
+import com.dci.intellij.dbn.common.dispose.Disposed;
 import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.common.dispose.StatefulDisposable;
 import com.dci.intellij.dbn.common.index.IdentifiableMap;
@@ -24,7 +25,6 @@ import static com.dci.intellij.dbn.common.dispose.SafeDisposer.replace;
 import static com.dci.intellij.dbn.common.util.Commons.nvl;
 import static com.dci.intellij.dbn.common.util.Lists.filtered;
 import static com.dci.intellij.dbn.common.util.Lists.first;
-import static java.util.Collections.emptyList;
 
 public class DatabaseSessionBundle extends StatefulDisposable.Base implements Disposable{
     private final ConnectionHandlerRef connection;
@@ -135,7 +135,7 @@ public class DatabaseSessionBundle extends StatefulDisposable.Base implements Di
 
     @Override
     public void disposeInner() {
-        sessions = replace(sessions, emptyList(), false);
+        sessions = replace(sessions, Disposed.list(), false);
         index.clear();
         nullify();
     }

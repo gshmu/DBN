@@ -3,7 +3,7 @@ package com.dci.intellij.dbn.common.thread;
 import com.dci.intellij.dbn.common.dispose.AlreadyDisposedException;
 import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.common.routine.ProgressRunnable;
-import com.dci.intellij.dbn.common.util.Safe;
+import com.dci.intellij.dbn.common.util.Cancellable;
 import com.intellij.openapi.progress.ProgressIndicator;
 import com.intellij.openapi.progress.ProgressManager;
 import com.intellij.openapi.progress.Task;
@@ -29,7 +29,7 @@ public final class Progress {
                     ThreadMonitor.run(
                             invoker,
                             ThreadProperty.PROGRESS,
-                            () -> Safe.run(() -> runnable.run(indicator)));
+                            () -> Cancellable.run(() -> runnable.run(indicator)));
                 }
             });
         }
@@ -48,7 +48,7 @@ public final class Progress {
                     ThreadMonitor.run(
                             invoker,
                             ThreadProperty.PROGRESS,
-                            () -> Safe.run(() -> {
+                            () -> Cancellable.run(() -> {
                                 try {
                                     handle.set(Thread.currentThread());
                                     runnable.run(indicator);
@@ -71,7 +71,7 @@ public final class Progress {
                     ThreadMonitor.run(
                             invoker,
                             ThreadProperty.PROGRESS,
-                            () -> Safe.run(() -> runnable.run(indicator)));
+                            () -> Cancellable.run(() -> runnable.run(indicator)));
                 }
             });
         }
@@ -86,7 +86,7 @@ public final class Progress {
                     ThreadMonitor.run(
                             invoker,
                             ThreadProperty.MODAL,
-                            () -> Safe.run(() -> runnable.run(indicator)));
+                            () -> Cancellable.run(() -> runnable.run(indicator)));
 
                 }
             });

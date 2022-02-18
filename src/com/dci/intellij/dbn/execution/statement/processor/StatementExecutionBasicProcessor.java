@@ -15,7 +15,11 @@ import com.dci.intellij.dbn.common.thread.Progress;
 import com.dci.intellij.dbn.common.thread.Read;
 import com.dci.intellij.dbn.common.util.Documents;
 import com.dci.intellij.dbn.common.util.Strings;
-import com.dci.intellij.dbn.connection.*;
+import com.dci.intellij.dbn.connection.ConnectionHandler;
+import com.dci.intellij.dbn.connection.ConnectionId;
+import com.dci.intellij.dbn.connection.Resources;
+import com.dci.intellij.dbn.connection.SchemaId;
+import com.dci.intellij.dbn.connection.SessionId;
 import com.dci.intellij.dbn.connection.jdbc.DBNConnection;
 import com.dci.intellij.dbn.connection.jdbc.DBNStatement;
 import com.dci.intellij.dbn.connection.mapping.FileConnectionContextManager;
@@ -26,7 +30,12 @@ import com.dci.intellij.dbn.editor.EditorProviderId;
 import com.dci.intellij.dbn.execution.ExecutionContext;
 import com.dci.intellij.dbn.execution.ExecutionManager;
 import com.dci.intellij.dbn.execution.ExecutionOption;
-import com.dci.intellij.dbn.execution.compiler.*;
+import com.dci.intellij.dbn.execution.compiler.CompileManagerListener;
+import com.dci.intellij.dbn.execution.compiler.CompileType;
+import com.dci.intellij.dbn.execution.compiler.CompilerAction;
+import com.dci.intellij.dbn.execution.compiler.CompilerActionSource;
+import com.dci.intellij.dbn.execution.compiler.CompilerResult;
+import com.dci.intellij.dbn.execution.compiler.DatabaseCompilerManager;
 import com.dci.intellij.dbn.execution.logging.DatabaseLoggingManager;
 import com.dci.intellij.dbn.execution.statement.DataDefinitionChangeListener;
 import com.dci.intellij.dbn.execution.statement.StatementExecutionInput;
@@ -41,7 +50,11 @@ import com.dci.intellij.dbn.language.common.PsiElementRef;
 import com.dci.intellij.dbn.language.common.PsiFileRef;
 import com.dci.intellij.dbn.language.common.WeakRef;
 import com.dci.intellij.dbn.language.common.element.util.ElementTypeAttribute;
-import com.dci.intellij.dbn.language.common.psi.*;
+import com.dci.intellij.dbn.language.common.psi.BasePsiElement;
+import com.dci.intellij.dbn.language.common.psi.ChameleonPsiElement;
+import com.dci.intellij.dbn.language.common.psi.ExecutablePsiElement;
+import com.dci.intellij.dbn.language.common.psi.IdentifierPsiElement;
+import com.dci.intellij.dbn.language.common.psi.QualifiedIdentifierPsiElement;
 import com.dci.intellij.dbn.object.DBSchema;
 import com.dci.intellij.dbn.object.common.DBObject;
 import com.dci.intellij.dbn.object.common.DBSchemaObject;
@@ -57,7 +70,7 @@ import com.intellij.psi.PsiElement;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import javax.swing.*;
+import javax.swing.Icon;
 import java.sql.SQLException;
 import java.util.concurrent.TimeUnit;
 
@@ -319,7 +332,7 @@ public class StatementExecutionBasicProcessor extends StatefulDisposable.Base im
                         notifySchemaSelectionChanges(context);
                     }
                 } catch (SQLException e) {
-                    ResourceUtil.cancel(context.getStatement());
+                    Resources.cancel(context.getStatement());
                     if (context.isNot(CANCELLED)) {
                         executionException = e;
                         executionResult = createErrorExecutionResult(e.getMessage());
@@ -362,7 +375,7 @@ public class StatementExecutionBasicProcessor extends StatefulDisposable.Base im
         if (context.isNot(PROMPTED)) {
             DBNConnection connection = context.getConnection();
             if (connection != null && connection.isPoolConnection()) {
-                ResourceUtil.cancel(context.getStatement());
+                Resources.cancel(context.getStatement());
                 ConnectionHandler connectionHandler = Failsafe.nn(getConnection());
                 connectionHandler.freePoolConnection(connection);
             }
@@ -446,7 +459,7 @@ public class StatementExecutionBasicProcessor extends StatefulDisposable.Base im
             public void cancel(){
                 try {
                     context.set(CANCELLED, true);
-                    ResourceUtil.cancel(statement);
+                    Resources.cancel(statement);
                 } finally {
                     databaseCall = null;
                 }
@@ -592,7 +605,7 @@ public class StatementExecutionBasicProcessor extends StatefulDisposable.Base im
     @NotNull
     protected StatementExecutionResult createExecutionResult(DBNStatement statement, final StatementExecutionInput executionInput) throws SQLException {
         StatementExecutionBasicResult executionResult = new StatementExecutionBasicResult(this, getResultName(), statement.getUpdateCount());
-        ResourceUtil.close(statement);
+        Resources.close(statement);
         attachDdlExecutionInfo(executionInput, executionResult);
         return executionResult;
     }
