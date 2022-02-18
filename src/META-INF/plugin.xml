@@ -265,14 +265,14 @@
             <add-to-group group-id="EditorPopupMenu" anchor="first"/>
         </action>
         <group>
-            <group id="DBNavigator.ActionGroup.ProjectViewPopup" text="DB Navigator" popup="true">
+            <group id="DBNavigator.ActionGroup.ProjectViewPopup" text="DB Navigator" popup="true" keep-content="true">
                 <action id="DBNavigator.Actions.File.ExecuteScript" class="com.dci.intellij.dbn.execution.script.action.ExecuteScriptFileAction" text="Execute SQL Script" icon="/img/action/ExecuteAsScript.png"/>
                 <action id="DBNavigator.Actions.ConnectionContext.LinkConnection" class="com.dci.intellij.dbn.connection.context.action.FolderConnectionLinkAction" text="Connection Context - Associate Connection" icon="/img/action/FolderConnectionLink.png"/>
                 <action id="DBNavigator.Actions.ConnectionContext.LinkSchema" class="com.dci.intellij.dbn.connection.context.action.FolderSchemaLinkAction" text="Connection Context - Associate Schema" icon="/img/action/FolderSchemaLink.png"/>
                 <separator/>
                 <action id="DBNavigator.Actions.ConnectionContext.UnlinkConnection" class="com.dci.intellij.dbn.connection.context.action.FolderConnectionUnlinkAction" text="Connection Context - Remove Connection Association"/>
             </group>
-            <add-to-group group-id="ProjectViewPopupMenu" relative-to-action="CutCopyPasteGroup" anchor="after"/>
+            <add-to-group group-id="ProjectViewPopupMenu" relative-to-action="WeighingNewGroup" anchor="after"/>
         </group>
         <group id="DBNavigator.ActionGroup.ConnectionSettings" text="Connections Settings">
             <action id="DBNavigator.Actions.ConnectionSettings.CreateConnection" class="com.dci.intellij.dbn.connection.config.action.CreateConnectionDropdownAction" text="Connection Setup - Create Connection" icon="/img/action/AddMore.png"/>
