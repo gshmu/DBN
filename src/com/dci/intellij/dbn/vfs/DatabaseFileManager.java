@@ -12,8 +12,8 @@ import com.dci.intellij.dbn.connection.ConnectionAction;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.ConnectionId;
 import com.dci.intellij.dbn.connection.ConnectionManager;
+import com.dci.intellij.dbn.connection.config.ConnectionConfigListener;
 import com.dci.intellij.dbn.connection.config.ConnectionDetailSettings;
-import com.dci.intellij.dbn.connection.config.ConnectionSettingsListener;
 import com.dci.intellij.dbn.editor.code.SourceCodeManager;
 import com.dci.intellij.dbn.editor.code.diff.SourceCodeDiffManager;
 import com.dci.intellij.dbn.editor.code.options.CodeEditorConfirmationSettings;
@@ -67,7 +67,9 @@ public class DatabaseFileManager extends AbstractProjectComponent implements Per
 
         ProjectEvents.subscribe(project, this, FileEditorManagerListener.FILE_EDITOR_MANAGER, fileEditorManagerListener);
         ProjectEvents.subscribe(project, this, FileEditorManagerListener.Before.FILE_EDITOR_MANAGER, fileEditorManagerListenerBefore);
-        ProjectEvents.subscribe(project, this, ConnectionSettingsListener.TOPIC, connectionSettingsListener);
+        ProjectEvents.subscribe(project, this,
+                ConnectionConfigListener.TOPIC,
+                ConnectionConfigListener.whenChangedOrRemoved(id -> closeFiles(id)));
 
 /*
         StartupManager.getInstance(project).registerPreStartupActivity(new Runnable() {
@@ -112,13 +114,6 @@ public class DatabaseFileManager extends AbstractProjectComponent implements Per
     public String getComponentName() {
         return COMPONENT_NAME;
     }
-
-    private final ConnectionSettingsListener connectionSettingsListener = new ConnectionSettingsListener() {
-        @Override
-        public void connectionChanged(ConnectionId connectionId) {
-            closeFiles(connectionId);
-        }
-    };
 
     private void closeFiles(ConnectionId connectionId) {
         for (DBObjectVirtualFile file : openFiles) {

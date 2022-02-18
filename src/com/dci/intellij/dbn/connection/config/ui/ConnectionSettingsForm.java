@@ -18,13 +18,13 @@ import com.dci.intellij.dbn.connection.ConnectionManager;
 import com.dci.intellij.dbn.connection.ConnectivityStatus;
 import com.dci.intellij.dbn.connection.DatabaseType;
 import com.dci.intellij.dbn.connection.config.ConnectionBundleSettings;
+import com.dci.intellij.dbn.connection.config.ConnectionConfigListener;
 import com.dci.intellij.dbn.connection.config.ConnectionConfigType;
 import com.dci.intellij.dbn.connection.config.ConnectionDatabaseSettings;
 import com.dci.intellij.dbn.connection.config.ConnectionDetailSettings;
 import com.dci.intellij.dbn.connection.config.ConnectionFilterSettings;
 import com.dci.intellij.dbn.connection.config.ConnectionPropertiesSettings;
 import com.dci.intellij.dbn.connection.config.ConnectionSettings;
-import com.dci.intellij.dbn.connection.config.ConnectionSettingsListener;
 import com.dci.intellij.dbn.connection.config.ConnectionSshTunnelSettings;
 import com.dci.intellij.dbn.connection.config.ConnectionSslSettings;
 import com.intellij.openapi.options.ConfigurationException;
@@ -267,8 +267,8 @@ public class ConnectionSettingsForm extends CompositeConfigurationEditorForm<Con
         SettingsChangeNotifier.register(() -> {
             if (settingsChanged) {
                 ProjectEvents.notify(getProject(),
-                        ConnectionSettingsListener.TOPIC,
-                        (listener) -> listener.connectionChanged(configuration.getConnectionId()));
+                        ConnectionConfigListener.TOPIC,
+                        listener -> listener.connectionChanged(configuration.getConnectionId()));
             }
         });
     }

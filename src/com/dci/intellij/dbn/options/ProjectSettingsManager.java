@@ -12,8 +12,8 @@ import com.dci.intellij.dbn.common.util.Messages;
 import com.dci.intellij.dbn.connection.ConnectionId;
 import com.dci.intellij.dbn.connection.DatabaseType;
 import com.dci.intellij.dbn.connection.config.ConnectionBundleSettings;
+import com.dci.intellij.dbn.connection.config.ConnectionConfigListener;
 import com.dci.intellij.dbn.connection.config.ConnectionConfigType;
-import com.dci.intellij.dbn.connection.config.ConnectionSettingsListener;
 import com.dci.intellij.dbn.connection.config.tns.TnsName;
 import com.dci.intellij.dbn.connection.config.ui.ConnectionBundleSettingsForm;
 import com.dci.intellij.dbn.connection.operation.options.OperationSettings;
@@ -219,7 +219,7 @@ public class ProjectSettingsManager extends AbstractProjectComponent implements 
                             getProjectSettings().readConfiguration(element);
 
                             ProjectEvents.notify(project,
-                                    ConnectionSettingsListener.TOPIC,
+                                    ConnectionConfigListener.TOPIC,
                                     (listener) -> listener.connectionsChanged());
 
                             if (!isNewProject) {
