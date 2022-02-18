@@ -2,7 +2,9 @@ package com.dci.intellij.dbn.connection;
 
 import com.dci.intellij.dbn.common.component.ApplicationComponent;
 import com.dci.intellij.dbn.common.dispose.Failsafe;
+import com.dci.intellij.dbn.common.event.ProjectEvents;
 import com.dci.intellij.dbn.common.project.Projects;
+import com.dci.intellij.dbn.connection.config.ConnectionSettingsListener;
 import com.intellij.openapi.progress.ProcessCanceledException;
 import com.intellij.openapi.project.Project;
 import org.jetbrains.annotations.NotNull;
@@ -21,6 +23,13 @@ public class ConnectionCache implements ApplicationComponent {
     public ConnectionCache() {
         Projects.projectOpened(project -> initializeCache(project));
         Projects.projectClosed(project -> releaseCache(project));
+
+        ProjectEvents.subscribe(ConnectionSettingsListener.TOPIC, new ConnectionSettingsListener() {
+            @Override
+            public void connectionRemoved(ConnectionId connectionId) {
+                cache.remove(connectionId);
+            }
+        });
     }
 
     @Nullable
@@ -71,5 +80,9 @@ public class ConnectionCache implements ApplicationComponent {
                 }
             }
         }
+    }
+
+    private static void refreshConnections(@NotNull Project project) {
+
     }
 }

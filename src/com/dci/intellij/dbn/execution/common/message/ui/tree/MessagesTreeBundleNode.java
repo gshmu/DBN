@@ -1,10 +1,15 @@
 package com.dci.intellij.dbn.execution.common.message.ui.tree;
 
 import com.dci.intellij.dbn.common.dispose.Disposed;
+import com.dci.intellij.dbn.common.dispose.SafeDisposer;
 import com.dci.intellij.dbn.common.message.MessageType;
+import com.dci.intellij.dbn.common.ui.tree.TreeEventType;
 import com.dci.intellij.dbn.common.util.CollectionUtil;
+import com.dci.intellij.dbn.connection.ConnectionId;
+import org.jetbrains.annotations.NotNull;
 
 import javax.swing.tree.TreeNode;
+import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.List;
 
@@ -61,7 +66,27 @@ public abstract class MessagesTreeBundleNode<P extends MessagesTreeNode, C exten
     }
 
     @Override
-    public Enumeration children() {
+    public void removeMessages(@NotNull ConnectionId connectionId) {
+        List<C> removeCandidates = new ArrayList<>();
+        for (C child : this.children) {
+            child.removeMessages(connectionId);
+            if (child.getConnectionId() == connectionId) {
+                removeCandidates.add(child);
+            }
+        }
+
+        for (C child : removeCandidates) {
+            this.children.remove(child);
+            SafeDisposer.dispose(child);
+        }
+
+        if (!removeCandidates.isEmpty()) {
+            getTreeModel().notifyTreeModelListeners(this, TreeEventType.STRUCTURE_CHANGED);
+        }
+    }
+
+    @Override
+    public Enumeration<C> children() {
         return java.util.Collections.enumeration(children);
     }
 

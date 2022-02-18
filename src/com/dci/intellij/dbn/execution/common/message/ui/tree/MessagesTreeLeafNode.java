@@ -1,9 +1,11 @@
 package com.dci.intellij.dbn.execution.common.message.ui.tree;
 
 import com.dci.intellij.dbn.common.dispose.Failsafe;
+import com.dci.intellij.dbn.connection.ConnectionId;
 import com.dci.intellij.dbn.execution.common.message.ConsoleMessage;
 import com.intellij.openapi.util.Disposer;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import javax.swing.tree.TreeNode;
 import java.util.Enumeration;
@@ -14,6 +16,12 @@ public abstract class MessagesTreeLeafNode<P extends MessagesTreeNode, M extends
     protected MessagesTreeLeafNode(P parent, M message) {
         super(parent);
         this.message = message;
+    }
+
+    @Nullable
+    @Override
+    public ConnectionId getConnectionId() {
+        return message.getConnectionId();
     }
 
     @NotNull

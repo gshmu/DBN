@@ -2,6 +2,7 @@ package com.dci.intellij.dbn.execution.statement;
 
 import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.common.message.MessageType;
+import com.dci.intellij.dbn.connection.ConnectionId;
 import com.dci.intellij.dbn.execution.common.message.ConsoleMessage;
 import com.dci.intellij.dbn.execution.statement.processor.StatementExecutionProcessor;
 import com.dci.intellij.dbn.execution.statement.result.StatementExecutionResult;
@@ -10,14 +11,18 @@ import com.intellij.openapi.vfs.VirtualFile;
 import lombok.Getter;
 import lombok.Setter;
 
+@Getter
+@Setter
 public class StatementExecutionMessage extends ConsoleMessage {
     private final String causeMessage;
-    private @Getter @Setter StatementExecutionResult executionResult;
+    private StatementExecutionResult executionResult;
+    private final ConnectionId connectionId;
 
     public StatementExecutionMessage(StatementExecutionResult executionResult, String message, String causeMessage, MessageType messageType) {
         super(messageType, message);
         this.executionResult = executionResult;
         this.causeMessage = causeMessage;
+        this.connectionId = executionResult.getConnectionId();
     }
 
     public VirtualFile getVirtualFile() {
