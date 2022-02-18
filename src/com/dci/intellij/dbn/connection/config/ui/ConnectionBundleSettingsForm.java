@@ -86,7 +86,7 @@ public class ConnectionBundleSettingsForm extends ConfigurationEditorForm<Connec
 
         List<ConnectionSettings> connections = configuration.getConnections();
         if (connections.size() > 0) {
-            selectConnection(ConnectionId.get(connections.get(0).getId()));
+            selectConnection(connections.get(0).getConnectionId());
         }
         JPanel emptyPanel = new JPanel();
         connectionSetupPanel.setPreferredSize(new Dimension(500, -1));
