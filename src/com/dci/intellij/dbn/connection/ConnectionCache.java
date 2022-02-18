@@ -4,7 +4,7 @@ import com.dci.intellij.dbn.common.component.ApplicationComponent;
 import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.common.event.ProjectEvents;
 import com.dci.intellij.dbn.common.project.Projects;
-import com.dci.intellij.dbn.connection.config.ConnectionSettingsListener;
+import com.dci.intellij.dbn.connection.config.ConnectionConfigListener;
 import com.intellij.openapi.progress.ProcessCanceledException;
 import com.intellij.openapi.project.Project;
 import org.jetbrains.annotations.NotNull;
@@ -24,12 +24,9 @@ public class ConnectionCache implements ApplicationComponent {
         Projects.projectOpened(project -> initializeCache(project));
         Projects.projectClosed(project -> releaseCache(project));
 
-        ProjectEvents.subscribe(ConnectionSettingsListener.TOPIC, new ConnectionSettingsListener() {
-            @Override
-            public void connectionRemoved(ConnectionId connectionId) {
-                cache.remove(connectionId);
-            }
-        });
+        ProjectEvents.subscribe(
+                ConnectionConfigListener.TOPIC,
+                ConnectionConfigListener.whenRemoved(id -> cache.remove(id)));
     }
 
     @Nullable

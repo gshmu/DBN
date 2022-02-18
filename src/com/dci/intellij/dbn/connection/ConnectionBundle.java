@@ -14,8 +14,8 @@ import com.dci.intellij.dbn.common.project.ProjectRef;
 import com.dci.intellij.dbn.common.util.Commons;
 import com.dci.intellij.dbn.common.util.Lists;
 import com.dci.intellij.dbn.connection.config.ConnectionBundleSettings;
+import com.dci.intellij.dbn.connection.config.ConnectionConfigListener;
 import com.dci.intellij.dbn.connection.config.ConnectionSettings;
-import com.dci.intellij.dbn.connection.config.ConnectionSettingsListener;
 import com.dci.intellij.dbn.object.common.DBObjectBundle;
 import com.dci.intellij.dbn.object.type.DBObjectType;
 import com.intellij.navigation.ItemPresentation;
@@ -121,13 +121,14 @@ public class ConnectionBundle extends BrowserTreeNodeBase implements BrowserTree
             Project project = configuration.getProject();
             SettingsChangeNotifier.register(() -> {
                 ProjectEvents.notify(project,
-                        ConnectionSettingsListener.TOPIC,
-                        (listener) -> listener.connectionsChanged());
+                        ConnectionConfigListener.TOPIC,
+                        listener -> listener.connectionsChanged());
 
-                for (ConnectionHandler oldConnection : oldConnections) {
+                for (ConnectionHandler connection : oldConnections) {
+                    ConnectionId connectionId = connection.getConnectionId();
                     ProjectEvents.notify(project,
-                        ConnectionSettingsListener.TOPIC,
-                        (listener) -> listener.connectionRemoved(oldConnection.getConnectionId()));
+                        ConnectionConfigListener.TOPIC,
+                        listener -> listener.connectionRemoved(connectionId));
                 }
 
                 ConnectionManager connectionManager = ConnectionManager.getInstance(project);

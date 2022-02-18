@@ -20,9 +20,9 @@ import com.dci.intellij.dbn.common.util.InternalApi;
 import com.dci.intellij.dbn.common.util.Lists;
 import com.dci.intellij.dbn.common.util.Strings;
 import com.dci.intellij.dbn.common.util.TimeUtil;
+import com.dci.intellij.dbn.connection.config.ConnectionConfigListener;
 import com.dci.intellij.dbn.connection.config.ConnectionDatabaseSettings;
 import com.dci.intellij.dbn.connection.config.ConnectionSettings;
-import com.dci.intellij.dbn.connection.config.ConnectionSettingsListener;
 import com.dci.intellij.dbn.connection.info.ConnectionInfo;
 import com.dci.intellij.dbn.connection.info.ui.ConnectionInfoDialog;
 import com.dci.intellij.dbn.connection.jdbc.DBNConnection;
@@ -89,7 +89,10 @@ public class ConnectionManager extends AbstractProjectComponent implements Persi
         super(project);
         connectionBundle = new ConnectionBundle(project);
 
-        ProjectEvents.subscribe(project, this, ConnectionSettingsListener.TOPIC, connectionSettingsListener);
+        ProjectEvents.subscribe(project, this,
+                ConnectionConfigListener.TOPIC,
+                ConnectionConfigListener.whenChanged(id -> refreshObjects(id)));
+
         Disposer.register(this, connectionBundle);
     }
 
@@ -121,35 +124,28 @@ public class ConnectionManager extends AbstractProjectComponent implements Persi
         ConnectionManager.lastUsedConnection = lastUsedConnection.getRef();
     }
 
-    /*********************************************************
-    *                       Listeners                        *
-    *********************************************************/
+    private void refreshObjects(ConnectionId connectionId) {
+        ConnectionHandler connectionHandler = getConnection(connectionId);
+        if (connectionHandler != null) {
+            Project project = getProject();
+            Progress.background(
+                    project,
+                    "Refreshing database objects", true,
+                    (progress) -> {
+                        connectionHandler.resetCompatibilityMonitor();
+                        List<TransactionAction> actions = actions(TransactionAction.DISCONNECT);
 
-    private final ConnectionSettingsListener connectionSettingsListener = new ConnectionSettingsListener() {
-        @Override
-        public void connectionChanged(ConnectionId connectionId) {
-            ConnectionHandler connectionHandler = getConnection(connectionId);
-            if (connectionHandler != null) {
-                Project project = getProject();
-                Progress.background(
-                        project,
-                        "Refreshing database objects", true,
-                        (progress) -> {
-                            connectionHandler.resetCompatibilityMonitor();
-                            List<TransactionAction> actions = actions(TransactionAction.DISCONNECT);
+                        DatabaseTransactionManager transactionManager = DatabaseTransactionManager.getInstance(project);
+                        List<DBNConnection> connections = connectionHandler.getConnections();
+                        for (DBNConnection connection : connections) {
+                            Progress.check(progress);
+                            transactionManager.execute(connectionHandler, connection, actions, false, null);
+                        }
+                        connectionHandler.getObjectBundle().getObjectLists().refreshObjects();
 
-                            DatabaseTransactionManager transactionManager = DatabaseTransactionManager.getInstance(project);
-                            List<DBNConnection> connections = connectionHandler.getConnections();
-                            for (DBNConnection connection : connections) {
-                                Progress.check(progress);
-                                transactionManager.execute(connectionHandler, connection, actions, false, null);
-                            }
-                            connectionHandler.getObjectBundle().getObjectLists().refreshObjects();
-
-                        });
-            }
+                    });
         }
-    };
+    }
 
     /*********************************************************
     *                        Custom                         *
