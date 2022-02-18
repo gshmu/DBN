@@ -63,8 +63,6 @@ public final class Nullifier {
                     }
                 }
             });
-        } else {
-            System.out.println();
         }
     }
 
