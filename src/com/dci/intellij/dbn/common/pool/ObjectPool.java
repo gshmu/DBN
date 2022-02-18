@@ -1,6 +1,7 @@
 package com.dci.intellij.dbn.common.pool;
 
 
+import com.dci.intellij.dbn.common.dispose.Disposed;
 import com.dci.intellij.dbn.common.dispose.SafeDisposer;
 import com.dci.intellij.dbn.common.dispose.StatefulDisposable;
 import com.dci.intellij.dbn.common.lookup.Visitor;
@@ -13,7 +14,6 @@ import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.TimeUnit;
 
 import static com.dci.intellij.dbn.common.dispose.SafeDisposer.replace;
-import static java.util.Collections.emptyList;
 
 public abstract class ObjectPool<T extends Disposable> extends StatefulDisposable.Base {
     private List<T> objects = new CopyOnWriteArrayList<>();
@@ -85,7 +85,7 @@ public abstract class ObjectPool<T extends Disposable> extends StatefulDisposabl
 
     @Override
     protected void disposeInner() {
-        objects = replace(objects, emptyList(), true);
+        objects = replace(objects, Disposed.list(), true);
         available.clear();
     }
 }

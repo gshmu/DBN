@@ -7,7 +7,7 @@ import com.dci.intellij.dbn.common.thread.Progress;
 import com.dci.intellij.dbn.common.util.Commons;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.ConnectionHandlerRef;
-import com.dci.intellij.dbn.connection.ResourceUtil;
+import com.dci.intellij.dbn.connection.Resources;
 import com.dci.intellij.dbn.connection.SchemaId;
 import com.dci.intellij.dbn.connection.jdbc.DBNConnection;
 import com.dci.intellij.dbn.database.DatabaseDebuggerInterface;
@@ -332,7 +332,7 @@ public abstract class DBJdwpDebugProcess<T extends ExecutionInput>
                     T executionInput = getExecutionInput();
                     if (executionInput != null && isNot(TARGET_EXECUTION_TERMINATED)) {
                         ExecutionContext context = executionInput.getExecutionContext();
-                        ResourceUtil.cancel(context.getStatement());
+                        Resources.cancel(context.getStatement());
                     }
 
                     ConnectionHandler connectionHandler = getConnectionHandler();
@@ -359,7 +359,7 @@ public abstract class DBJdwpDebugProcess<T extends ExecutionInput>
 
 
     protected void releaseTargetConnection() {
-        ResourceUtil.close(targetConnection);
+        Resources.close(targetConnection);
         targetConnection = null;
     }
 

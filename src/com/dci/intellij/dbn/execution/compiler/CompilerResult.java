@@ -4,7 +4,7 @@ import com.dci.intellij.dbn.common.message.MessageType;
 import com.dci.intellij.dbn.common.notification.NotificationGroup;
 import com.dci.intellij.dbn.common.notification.NotificationSupport;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
-import com.dci.intellij.dbn.connection.ResourceUtil;
+import com.dci.intellij.dbn.connection.Resources;
 import com.dci.intellij.dbn.database.DatabaseInterface;
 import com.dci.intellij.dbn.editor.DBContentType;
 import com.dci.intellij.dbn.object.DBSchema;
@@ -68,7 +68,7 @@ public class CompilerResult implements Disposable, NotificationSupport {
                                 }
                             }
                         } finally{
-                            ResourceUtil.close(resultSet);
+                            Resources.close(resultSet);
                         }
                     });
         } catch (SQLException e) {

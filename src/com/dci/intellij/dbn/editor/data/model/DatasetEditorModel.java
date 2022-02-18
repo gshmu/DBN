@@ -6,11 +6,11 @@ import com.dci.intellij.dbn.common.dispose.SafeDisposer;
 import com.dci.intellij.dbn.common.environment.EnvironmentManager;
 import com.dci.intellij.dbn.common.thread.CancellableDatabaseCall;
 import com.dci.intellij.dbn.common.thread.Progress;
+import com.dci.intellij.dbn.common.util.Cancellable;
 import com.dci.intellij.dbn.common.util.Messages;
-import com.dci.intellij.dbn.common.util.Safe;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.ConnectionProperties;
-import com.dci.intellij.dbn.connection.ResourceUtil;
+import com.dci.intellij.dbn.connection.Resources;
 import com.dci.intellij.dbn.connection.SessionId;
 import com.dci.intellij.dbn.connection.jdbc.DBNConnection;
 import com.dci.intellij.dbn.connection.jdbc.DBNResultSet;
@@ -115,7 +115,7 @@ public class DatasetEditorModel
             @Override
             public void cancel() {
                 DBNStatement statement = statementRef.get();
-                ResourceUtil.cancel(statement);
+                Resources.cancel(statement);
                 loaderCall = null;
                 set(DIRTY, true);
             }
@@ -268,7 +268,7 @@ public class DatasetEditorModel
     @NotNull
     @Override
     public DatasetEditorState getState() {
-        return Safe.call(DatasetEditorState.VOID, () -> getDatasetEditor().getEditorState());
+        return Cancellable.call(DatasetEditorState.VOID, () -> getDatasetEditor().getEditorState());
     }
 
     private boolean hasChanges() {

@@ -2,7 +2,7 @@ package com.dci.intellij.dbn.database.common.statement;
 
 import com.dci.intellij.dbn.common.thread.ThreadPool;
 import com.dci.intellij.dbn.common.thread.Timeout;
-import com.dci.intellij.dbn.connection.ResourceUtil;
+import com.dci.intellij.dbn.connection.Resources;
 import com.dci.intellij.dbn.diagnostics.data.DiagnosticBundle;
 import lombok.Getter;
 import lombok.Setter;
@@ -36,12 +36,12 @@ public final class StatementExecutor {
 
         } catch (TimeoutException | InterruptedException | RejectedExecutionException e) {
             diagnostics.log(identifier, false, true, millisSince(start));
-            ResourceUtil.close(context.getStatement());
+            Resources.close(context.getStatement());
             throw new SQLTimeoutException("Operation timed out (timeout = " + timeout + "s)", e);
 
         } catch (ExecutionException e) {
             diagnostics.log(identifier, true, false, millisSince(start));
-            ResourceUtil.close(context.getStatement());
+            Resources.close(context.getStatement());
             Throwable cause = e.getCause();
             if (cause instanceof SQLException) {
                 throw (SQLException) cause;
@@ -50,7 +50,7 @@ public final class StatementExecutor {
             }
         } catch (Throwable e) {
             diagnostics.log(identifier, true, false, millisSince(start));
-            ResourceUtil.close(context.getStatement());
+            Resources.close(context.getStatement());
             throw new SQLException("Error processing request: " + e.getMessage(), e);
 
         }

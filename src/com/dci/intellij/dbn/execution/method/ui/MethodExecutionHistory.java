@@ -1,5 +1,6 @@
 package com.dci.intellij.dbn.execution.method.ui;
 
+import com.dci.intellij.dbn.common.dispose.Disposed;
 import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.common.options.setting.SettingsSupport;
 import com.dci.intellij.dbn.common.project.ProjectRef;
@@ -24,7 +25,6 @@ import java.util.Collections;
 import java.util.List;
 
 import static com.dci.intellij.dbn.common.dispose.SafeDisposer.replace;
-import static java.util.Collections.emptyList;
 
 public class MethodExecutionHistory implements PersistentStateElement, Disposable{
     private final ProjectRef project;
@@ -203,7 +203,7 @@ public class MethodExecutionHistory implements PersistentStateElement, Disposabl
 
     @Override
     public void dispose() {
-        executionInputs = replace(executionInputs, emptyList(), false);
+        executionInputs = replace(executionInputs, Disposed.list(), false);
     }
 
 

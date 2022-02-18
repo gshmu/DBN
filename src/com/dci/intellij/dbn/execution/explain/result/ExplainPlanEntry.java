@@ -1,5 +1,6 @@
 package com.dci.intellij.dbn.execution.explain.result;
 
+import com.dci.intellij.dbn.common.dispose.Disposed;
 import com.dci.intellij.dbn.common.dispose.SafeDisposer;
 import com.dci.intellij.dbn.common.dispose.StatefulDisposable;
 import com.dci.intellij.dbn.common.util.Strings;
@@ -12,7 +13,6 @@ import java.math.BigDecimal;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 public class ExplainPlanEntry extends StatefulDisposable.Base {
@@ -109,7 +109,7 @@ public class ExplainPlanEntry extends StatefulDisposable.Base {
 
     @Override
     public void disposeInner() {
-        children = SafeDisposer.replace(children, Collections.emptyList(), false);
+        children = SafeDisposer.replace(children, Disposed.list(), false);
         nullify();
     }
 }

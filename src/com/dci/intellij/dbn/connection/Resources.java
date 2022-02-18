@@ -25,8 +25,8 @@ import static com.dci.intellij.dbn.common.util.Commons.nvl;
 import static com.dci.intellij.dbn.diagnostics.Diagnostics.isDatabaseResourceDebug;
 
 @Slf4j
-public final class ResourceUtil {
-    private ResourceUtil() {}
+public final class Resources {
+    private Resources() {}
 
     public static boolean isClosed(ResultSet resultSet) throws SQLException {
         try {

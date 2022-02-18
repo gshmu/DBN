@@ -3,7 +3,7 @@ package com.dci.intellij.dbn.common.project;
 import com.dci.intellij.dbn.common.event.ApplicationEvents;
 import com.dci.intellij.dbn.common.routine.ParametricRunnable;
 import com.dci.intellij.dbn.common.thread.Dispatch;
-import com.dci.intellij.dbn.common.util.Safe;
+import com.intellij.openapi.progress.ProcessCanceledException;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.project.ProjectManager;
 import com.intellij.openapi.project.ProjectManagerListener;
@@ -46,7 +46,9 @@ public final class Projects {
                 new ProjectManagerListener() {
                     @Override
                     public void projectClosed(@NotNull Project project) {
-                        Safe.run(() -> runnable.run(project));
+                        try {
+                            runnable.run(project);
+                        } catch (ProcessCanceledException ignore) {}
                     }
                 });
 

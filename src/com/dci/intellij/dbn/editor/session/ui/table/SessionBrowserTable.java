@@ -5,7 +5,6 @@ import com.dci.intellij.dbn.common.ui.GUIUtil;
 import com.dci.intellij.dbn.common.ui.component.DBNComponent;
 import com.dci.intellij.dbn.common.ui.table.DBNTableGutter;
 import com.dci.intellij.dbn.common.util.Actions;
-import com.dci.intellij.dbn.common.util.Safe;
 import com.dci.intellij.dbn.data.grid.ui.table.basic.BasicTableCellRenderer;
 import com.dci.intellij.dbn.data.grid.ui.table.basic.BasicTableGutter;
 import com.dci.intellij.dbn.data.grid.ui.table.basic.BasicTableSelectionRestorer;
@@ -22,14 +21,15 @@ import com.dci.intellij.dbn.editor.session.model.SessionBrowserModelRow;
 import com.dci.intellij.dbn.language.common.WeakRef;
 import com.intellij.openapi.actionSystem.ActionGroup;
 import com.intellij.openapi.actionSystem.ActionPopupMenu;
+import com.intellij.openapi.progress.ProcessCanceledException;
 import com.intellij.ui.PopupMenuListenerAdapter;
 import org.jetbrains.annotations.NotNull;
 
-import javax.swing.*;
+import javax.swing.JPopupMenu;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.event.PopupMenuEvent;
 import javax.swing.table.TableCellRenderer;
-import java.awt.*;
+import java.awt.Component;
 import java.awt.event.MouseEvent;
 import java.util.EventObject;
 
@@ -38,11 +38,12 @@ public class SessionBrowserTable extends ResultSetTable<SessionBrowserModel> {
 
     public SessionBrowserTable(DBNComponent parent, SessionBrowser sessionBrowser) {
         super(parent, createModel(sessionBrowser), false, createRecordInfo(sessionBrowser));
+        this.sessionBrowser = WeakRef.of(sessionBrowser);
+
         getTableHeader().setDefaultRenderer(new SortableTableHeaderRenderer());
         getTableHeader().addMouseListener(new SessionBrowserTableHeaderMouseListener(this));
         addMouseListener(new SessionBrowserTableMouseListener(this));
         getSelectionModel().addListSelectionListener(listSelectionListener);
-        this.sessionBrowser = WeakRef.of(sessionBrowser);
 /*
         DataProvider dataProvider = sessionBrowser.getDataProvider();
         ActionUtil.registerDataProvider(this, dataProvider, false);
@@ -124,13 +125,13 @@ public class SessionBrowserTable extends ResultSetTable<SessionBrowserModel> {
     }
 
     private final ListSelectionListener listSelectionListener = e -> {
-        Safe.run(() -> {
+        try {
             if (!e.getValueIsAdjusting()) {
                 snapshotSelection();
                 SessionBrowser sessionBrowser = getSessionBrowser();
                 sessionBrowser.updateDetails();
             }
-        });
+        } catch (ProcessCanceledException ignore) {}
     };
 
     @Override

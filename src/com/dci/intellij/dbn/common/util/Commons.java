@@ -27,7 +27,7 @@ public final class Commons {
     @Nullable
     public static <T> T coalesce(Supplier<T>... suppliers) {
         for (Supplier<T> supplier : suppliers) {
-            T value = Safe.call(null, () -> supplier.get());
+            T value = Cancellable.call(null, () -> supplier.get());
             if (value != null) {
                 return value;
             }

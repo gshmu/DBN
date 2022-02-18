@@ -1,5 +1,6 @@
 package com.dci.intellij.dbn.data.model.basic;
 
+import com.dci.intellij.dbn.common.dispose.Disposed;
 import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.common.dispose.SafeDisposer;
 import com.dci.intellij.dbn.common.event.ProjectEvents;
@@ -12,17 +13,26 @@ import com.dci.intellij.dbn.common.project.ProjectRef;
 import com.dci.intellij.dbn.common.property.DisposablePropertyHolder;
 import com.dci.intellij.dbn.common.thread.Dispatch;
 import com.dci.intellij.dbn.data.find.DataSearchResult;
-import com.dci.intellij.dbn.data.model.*;
+import com.dci.intellij.dbn.data.model.ColumnInfo;
+import com.dci.intellij.dbn.data.model.DataModel;
+import com.dci.intellij.dbn.data.model.DataModelCell;
+import com.dci.intellij.dbn.data.model.DataModelHeader;
+import com.dci.intellij.dbn.data.model.DataModelListener;
+import com.dci.intellij.dbn.data.model.DataModelRow;
+import com.dci.intellij.dbn.data.model.DataModelState;
 import com.dci.intellij.dbn.editor.data.model.RecordStatus;
 import com.intellij.openapi.project.Project;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import javax.swing.*;
+import javax.swing.ListModel;
 import javax.swing.event.ListDataEvent;
 import javax.swing.event.TableModelEvent;
 import javax.swing.event.TableModelListener;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 public class BasicDataModel<
         R extends DataModelRow<? extends BasicDataModel<R, C>, C>,
@@ -353,7 +363,7 @@ public class BasicDataModel<
      *******************************************************  */
     @Override
     public void disposeInner() {
-        rows = SafeDisposer.replace(rows, Collections.emptyList(), false);
+        rows = SafeDisposer.replace(rows, Disposed.list(), false);
         nullify();
     }
 

@@ -3,7 +3,7 @@ package com.dci.intellij.dbn.database.common.statement;
 import com.dci.intellij.dbn.common.util.Commons;
 import com.dci.intellij.dbn.common.util.Compactables;
 import com.dci.intellij.dbn.common.util.Strings;
-import com.dci.intellij.dbn.connection.ResourceUtil;
+import com.dci.intellij.dbn.connection.Resources;
 import com.dci.intellij.dbn.connection.jdbc.DBNConnection;
 import com.dci.intellij.dbn.connection.jdbc.DBNPreparedStatement;
 import com.dci.intellij.dbn.connection.jdbc.DBNStatement;
@@ -149,16 +149,16 @@ public class StatementExecutionProcessor {
                                         resultSet = statement.getResultSet();
                                         return resultSet;
                                     } catch (SQLException e) {
-                                        ResourceUtil.close(statement);
+                                        Resources.close(statement);
                                         return null;
                                     }
                                 } else {
-                                    ResourceUtil.close(statement);
+                                    Resources.close(statement);
                                     return null;
                                 }
                             }
                         } catch (SQLException exception) {
-                            ResourceUtil.close(statement);
+                            Resources.close(statement);
                             String message = exception.getMessage();
                             if (isDatabaseAccessDebug()) log.warn("[DBN] Error executing statement: " + statementText + "\nCause: " + message);
 
@@ -176,7 +176,7 @@ public class StatementExecutionProcessor {
                                 if (statement.isCached()) {
                                     statement.park();
                                 } else {
-                                    ResourceUtil.close(statement);
+                                    Resources.close(statement);
                                 }
 
                             }
@@ -237,7 +237,7 @@ public class StatementExecutionProcessor {
 
                         throw exception;
                     } finally {
-                        ResourceUtil.close(statement);
+                        Resources.close(statement);
                     }
                 });
     }
@@ -281,7 +281,7 @@ public class StatementExecutionProcessor {
 
                         throw exception;
                     } finally {
-                        ResourceUtil.close(statement);
+                        Resources.close(statement);
                     }
                     return null;
                 });
@@ -325,7 +325,7 @@ public class StatementExecutionProcessor {
 
                         throw exception;
                     } finally {
-                        ResourceUtil.close(statement);
+                        Resources.close(statement);
                     }
                 });
     }

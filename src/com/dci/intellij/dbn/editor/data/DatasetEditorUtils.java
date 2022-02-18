@@ -1,7 +1,7 @@
 package com.dci.intellij.dbn.editor.data;
 
 import com.dci.intellij.dbn.connection.ConnectionHandler;
-import com.dci.intellij.dbn.connection.ResourceUtil;
+import com.dci.intellij.dbn.connection.Resources;
 import com.dci.intellij.dbn.database.DatabaseInterface;
 import com.dci.intellij.dbn.database.DatabaseMetadataInterface;
 import com.dci.intellij.dbn.object.DBColumn;
@@ -41,7 +41,7 @@ public class DatasetEditorUtils {
                                 list.add(value);
                             }
                         } finally {
-                            ResourceUtil.close(resultSet);
+                            Resources.close(resultSet);
                         }
                         return list;
                     });

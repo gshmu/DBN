@@ -7,7 +7,7 @@ import com.dci.intellij.dbn.common.event.ProjectEvents;
 import com.dci.intellij.dbn.common.load.LoadInProgressRegistry;
 import com.dci.intellij.dbn.common.ui.tree.TreeEventType;
 import com.dci.intellij.dbn.common.ui.tree.TreeUtil;
-import com.dci.intellij.dbn.common.util.Safe;
+import com.dci.intellij.dbn.common.util.Cancellable;
 import com.dci.intellij.dbn.language.common.WeakRef;
 import com.intellij.openapi.project.Project;
 import org.jetbrains.annotations.NotNull;
@@ -76,17 +76,17 @@ public abstract class BrowserTreeModel extends StatefulDisposable.Base implement
 
     @Override
     public int getChildCount(Object parent) {
-        return Safe.call(0, () -> ((BrowserTreeNode) parent).getChildCount());
+        return Cancellable.call(0, () -> ((BrowserTreeNode) parent).getChildCount());
     }
 
     @Override
     public boolean isLeaf(Object node) {
-        return Safe.call(true, () -> ((BrowserTreeNode) node).isLeaf());
+        return Cancellable.call(true, () -> ((BrowserTreeNode) node).isLeaf());
     }
 
     @Override
     public int getIndexOfChild(Object parent, Object child) {
-        return Safe.call(-1, () -> ((BrowserTreeNode) parent).getIndex((BrowserTreeNode) child));
+        return Cancellable.call(-1, () -> ((BrowserTreeNode) parent).getIndex((BrowserTreeNode) child));
     }
 
     @Override

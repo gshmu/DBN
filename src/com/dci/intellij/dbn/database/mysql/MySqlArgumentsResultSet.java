@@ -3,7 +3,7 @@ package com.dci.intellij.dbn.database.mysql;
 import com.dci.intellij.dbn.common.dispose.StatefulDisposable;
 import com.dci.intellij.dbn.common.util.Strings;
 import com.dci.intellij.dbn.common.util.WordTokenizer;
-import com.dci.intellij.dbn.connection.ResourceUtil;
+import com.dci.intellij.dbn.connection.Resources;
 import com.dci.intellij.dbn.database.common.util.ResultSetStub;
 
 import java.sql.ResultSet;
@@ -140,7 +140,7 @@ public class MySqlArgumentsResultSet extends StatefulDisposable.Base implements 
             arguments = argumentList.iterator();
 
         } finally {
-            ResourceUtil.close(resultSet);
+            Resources.close(resultSet);
         }
 
     }

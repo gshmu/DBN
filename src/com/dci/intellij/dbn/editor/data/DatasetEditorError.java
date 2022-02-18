@@ -4,6 +4,7 @@ import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.database.DatabaseMessageParserInterface;
 import com.dci.intellij.dbn.database.DatabaseObjectIdentifier;
 import com.dci.intellij.dbn.object.common.DBObject;
+import com.dci.intellij.dbn.object.lookup.DBObjectRef;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
@@ -19,8 +20,8 @@ import java.util.Set;
 @Setter
 @EqualsAndHashCode
 public class DatasetEditorError {
+    private final DBObjectRef<?> messageObject;
     private final String message;
-    private final DBObject messageObject;
     private boolean dirty;
     private boolean notified;
 
@@ -29,7 +30,12 @@ public class DatasetEditorError {
 
     public DatasetEditorError(ConnectionHandler connectionHandler, Exception exception) {
         this.message = exception.getMessage();
-        this.messageObject = resolveMessageObject(connectionHandler, exception);
+        DBObject messageObject = resolveMessageObject(connectionHandler, exception);
+        this.messageObject = DBObjectRef.of(messageObject);
+    }
+
+    public DBObject getMessageObject() {
+        return DBObjectRef.get(messageObject);
     }
 
     @Nullable
@@ -47,7 +53,7 @@ public class DatasetEditorError {
 
     public DatasetEditorError(String message, DBObject messageObject) {
         this.message = message;
-        this.messageObject = messageObject;
+        this.messageObject = DBObjectRef.of(messageObject);
     }
 
     public void addChangeListener(ChangeListener changeListener) {
