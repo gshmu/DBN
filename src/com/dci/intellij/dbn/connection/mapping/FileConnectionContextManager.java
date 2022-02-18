@@ -9,7 +9,13 @@ import com.dci.intellij.dbn.common.file.util.VirtualFiles;
 import com.dci.intellij.dbn.common.thread.Dispatch;
 import com.dci.intellij.dbn.common.thread.Progress;
 import com.dci.intellij.dbn.common.util.Documents;
-import com.dci.intellij.dbn.connection.*;
+import com.dci.intellij.dbn.connection.ConnectionAction;
+import com.dci.intellij.dbn.connection.ConnectionBundle;
+import com.dci.intellij.dbn.connection.ConnectionHandler;
+import com.dci.intellij.dbn.connection.ConnectionManager;
+import com.dci.intellij.dbn.connection.ConnectionSelectorOptions;
+import com.dci.intellij.dbn.connection.SchemaId;
+import com.dci.intellij.dbn.connection.SessionId;
 import com.dci.intellij.dbn.connection.mapping.ConnectionContextActions.ConnectionSetupAction;
 import com.dci.intellij.dbn.connection.mapping.ConnectionContextActions.SchemaSelectAction;
 import com.dci.intellij.dbn.connection.mapping.ConnectionContextActions.SessionCreateAction;
@@ -265,13 +271,13 @@ public class FileConnectionContextManager extends AbstractProjectComponent imple
         Project project = getProject();
         ConnectionManager connectionManager = ConnectionManager.getInstance(project);
         ConnectionBundle connectionBundle = connectionManager.getConnectionBundle();
-        List<ConnectionHandler> connection = connectionBundle.getConnections();
+        List<ConnectionHandler> connections = connectionBundle.getConnections();
 
         DefaultActionGroup actionGroup = new DefaultActionGroup();
-        if (connection.size() > 0) {
-            for (ConnectionHandler connectionHandler : connection) {
+        if (connections.size() > 0) {
+            for (ConnectionHandler connection : connections) {
                 ConnectionSelectAction connectionAction = new ConnectionSelectAction(
-                        connectionHandler,
+                        connection,
                         file,
                         options.is(PROMPT_SCHEMA_SELECTION),
                         callback);

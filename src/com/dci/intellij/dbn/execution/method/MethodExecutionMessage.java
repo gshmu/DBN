@@ -1,6 +1,7 @@
 package com.dci.intellij.dbn.execution.method;
 
 import com.dci.intellij.dbn.common.message.MessageType;
+import com.dci.intellij.dbn.connection.ConnectionId;
 import com.dci.intellij.dbn.database.common.execution.MethodExecutionProcessor;
 import com.dci.intellij.dbn.editor.DBContentType;
 import com.dci.intellij.dbn.execution.common.message.ConsoleMessage;
@@ -11,15 +12,19 @@ import lombok.Getter;
 import lombok.Setter;
 import org.jetbrains.annotations.Nullable;
 
+@Getter
+@Setter
 public class MethodExecutionMessage extends ConsoleMessage {
-    private @Getter @Setter MethodExecutionProcessor executionProcessor;
+    private MethodExecutionProcessor executionProcessor;
     private DBEditableObjectVirtualFile databaseFile;
     private DBContentVirtualFile contentFile;
     private DBContentType contentType;
+    private ConnectionId connectionId;
 
     public MethodExecutionMessage(MethodExecutionProcessor executionProcessor, String message, MessageType messageType) {
         super(messageType, message);
         this.executionProcessor = executionProcessor;
+        this.connectionId = executionProcessor.getMethod().getConnectionId();
     }
 
     public DBEditableObjectVirtualFile getDatabaseFile() {

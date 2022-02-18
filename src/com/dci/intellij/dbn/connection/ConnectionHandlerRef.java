@@ -74,12 +74,12 @@ public final class ConnectionHandlerRef implements Reference<ConnectionHandler>,
 
 
     @Contract("null -> null;!null -> !null;")
-    public static ConnectionHandlerRef of(@Nullable ConnectionHandler connectionHandler) {
-        if (connectionHandler != null) {
-            ConnectionHandlerRef ref = ConnectionHandlerRef.of(connectionHandler.getConnectionId());
+    public static ConnectionHandlerRef of(@Nullable ConnectionHandler connection) {
+        if (connection != null) {
+            ConnectionHandlerRef ref = ConnectionHandlerRef.of(connection.getConnectionId());
             ConnectionHandler local = ref.get();
-            if (local == null || local != connectionHandler) {
-                ref.reference = WeakRef.of(connectionHandler);
+            if (local == null || local != connection) {
+                ref.reference = WeakRef.of(connection);
             }
             return ref;
         }

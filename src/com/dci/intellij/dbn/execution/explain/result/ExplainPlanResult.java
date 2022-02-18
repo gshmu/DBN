@@ -19,6 +19,7 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiFile;
 import lombok.Getter;
+import lombok.Setter;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -32,14 +33,16 @@ import java.util.Map;
 
 import static com.dci.intellij.dbn.common.dispose.SafeDisposer.replace;
 
+@Getter
+@Setter
 public class ExplainPlanResult extends ExecutionResultBase<ExplainPlanResultForm> {
     private String planId;
     private Date timestamp;
-    private @Getter ExplainPlanEntry root;
+    private ExplainPlanEntry root;
     private final ConnectionHandlerRef connectionHandler;
-    private final @Getter VirtualFile virtualFile;
-    private final @Getter SchemaId currentSchema;
-    private final @Getter String errorMessage;
+    private final VirtualFile virtualFile;
+    private final SchemaId currentSchema;
+    private final String errorMessage;
     private final String statementText;
     private final String resultName;
 

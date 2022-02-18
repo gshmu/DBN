@@ -1,6 +1,7 @@
 package com.dci.intellij.dbn.execution.compiler;
 
 import com.dci.intellij.dbn.common.message.MessageType;
+import com.dci.intellij.dbn.connection.ConnectionId;
 import com.dci.intellij.dbn.editor.DBContentType;
 import com.dci.intellij.dbn.execution.common.message.ConsoleMessage;
 import com.dci.intellij.dbn.object.common.DBSchemaObject;
@@ -8,11 +9,15 @@ import com.dci.intellij.dbn.vfs.file.DBContentVirtualFile;
 import com.dci.intellij.dbn.vfs.file.DBEditableObjectVirtualFile;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Disposer;
+import lombok.Getter;
+import lombok.Setter;
 import org.jetbrains.annotations.Nullable;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
+@Getter
+@Setter
 public class CompilerMessage extends ConsoleMessage implements Comparable<CompilerMessage> {
     private final CompilerResult compilerResult;
     private final DBContentType contentType;
@@ -97,45 +102,14 @@ public class CompilerMessage extends ConsoleMessage implements Comparable<Compil
         return contentFile;
     }
 
-    public DBContentType getContentType() {
-        return contentType;
-    }
-
-    public CompilerResult getCompilerResult() {
-        return compilerResult;
-    }
-
     public DBSchemaObject getObject() {
         return compilerResult.getObject();
     }
 
-    public int getLine() {
-        return line;
-    }
-
-    public void setLine(int line) {
-        this.line = line;
-    }
-
-    public void setPosition(int position) {
-        this.position = position;
-    }
-
-    public void setSubjectIdentifier(String subjectIdentifier) {
-        this.subjectIdentifier = subjectIdentifier;
-    }
-
-    public int getPosition() {
-        return position;
-    }
-
+    @Nullable
     @Override
-    public String getText() {
-        return text;
-    }
-
-    public boolean isEcho() {
-        return echo;
+    public ConnectionId getConnectionId() {
+        return compilerResult.getConnectionId();
     }
 
     public Project getProject() {

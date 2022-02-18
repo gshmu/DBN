@@ -10,7 +10,11 @@ public interface ConnectionSettingsListener extends EventListener {
 
     default void connectionsChanged() {}
 
+    default void connectionRemoved(ConnectionId connectionId) {}
+
     default void connectionChanged(ConnectionId connectionId) {}
 
     default void connectionNameChanged(ConnectionId connectionId) {}
+
+
 }

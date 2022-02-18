@@ -10,6 +10,7 @@ import com.dci.intellij.dbn.common.util.Documents;
 import com.dci.intellij.dbn.common.util.Editors;
 import com.dci.intellij.dbn.common.util.Strings;
 import com.dci.intellij.dbn.common.util.TextAttributes;
+import com.dci.intellij.dbn.connection.ConnectionId;
 import com.dci.intellij.dbn.data.grid.color.DataGridTextAttributesKeys;
 import com.dci.intellij.dbn.editor.DBContentType;
 import com.dci.intellij.dbn.editor.EditorProviderId;
@@ -105,6 +106,10 @@ public class MessagesTree extends DBNTree implements Disposable {
     @Override
     public MessagesTreeModel getModel() {
         return (MessagesTreeModel) super.getModel();
+    }
+
+    public void removeMessages(ConnectionId connectionId) {
+        getModel().removeMessages(connectionId);
     }
 
     public void resetMessagesStatus() {
