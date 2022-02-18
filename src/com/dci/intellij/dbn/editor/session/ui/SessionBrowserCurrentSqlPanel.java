@@ -36,8 +36,9 @@ import com.intellij.openapi.editor.ex.EditorEx;
 import com.intellij.openapi.project.Project;
 import org.jetbrains.annotations.NotNull;
 
-import javax.swing.*;
-import java.awt.*;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import java.awt.BorderLayout;
 import java.util.concurrent.atomic.AtomicReference;
 
 public class SessionBrowserCurrentSqlPanel extends DBNFormImpl {
@@ -91,7 +92,7 @@ public class SessionBrowserCurrentSqlPanel extends DBNFormImpl {
 
     void loadCurrentStatement() {
         SessionBrowser sessionBrowser = getSessionBrowser();
-        SessionBrowserTable editorTable = sessionBrowser.getEditorTable();
+        SessionBrowserTable editorTable = sessionBrowser.getBrowserTable();
         if (editorTable.getSelectedRowCount() == 1) {
             SessionBrowserModelRow selectedRow = editorTable.getModel().getRowAtIndex(editorTable.getSelectedRow());
             if (selectedRow != null) {

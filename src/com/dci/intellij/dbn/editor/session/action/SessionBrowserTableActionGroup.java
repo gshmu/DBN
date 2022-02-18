@@ -29,7 +29,7 @@ public class SessionBrowserTableActionGroup extends DefaultActionGroup {
 
     public SessionBrowserTableActionGroup(SessionBrowser sessionBrowser, @Nullable SessionBrowserModelCell cell, SessionBrowserColumnInfo columnInfo) {
         this.sessionBrowser = WeakRef.of(sessionBrowser);
-        SessionBrowserTable table = sessionBrowser.getEditorTable();
+        SessionBrowserTable table = sessionBrowser.getBrowserTable();
 
         headerAction = cell == null;
         row = WeakRef.of(cell == null ? null : cell.getRow());
