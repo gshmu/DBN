@@ -3,7 +3,6 @@ package com.dci.intellij.dbn.connection.config.file;
 import com.dci.intellij.dbn.common.util.Cloneable;
 import com.dci.intellij.dbn.common.util.Strings;
 import lombok.Data;
-import org.apache.commons.io.FilenameUtils;
 
 import java.io.File;
 
@@ -23,7 +22,12 @@ public class DatabaseFile implements Cloneable<DatabaseFile> {
     public String getFileName() {
         if (Strings.isNotEmpty(path)) {
             File file = new File(path);
-            return FilenameUtils.removeExtension(file.getName());
+            String name = file.getName();
+            int index = name.lastIndexOf(".");
+            if (index > -1) {
+                return name.substring(0, index);
+            }
+            return name;
         }
         return path;
     }
