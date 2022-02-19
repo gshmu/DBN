@@ -1,6 +1,6 @@
 package com.dci.intellij.dbn.language.common;
 
-import com.dci.intellij.dbn.common.util.Commons;
+import com.dci.intellij.dbn.common.util.XmlContents;
 import com.dci.intellij.dbn.language.common.element.ElementTypeBundle;
 import com.dci.intellij.dbn.language.common.element.impl.NamedElementType;
 import com.dci.intellij.dbn.language.common.element.parser.ParserBuilder;
@@ -11,6 +11,7 @@ import com.intellij.lang.PsiBuilder;
 import com.intellij.lang.PsiParser;
 import com.intellij.psi.tree.IElementType;
 import lombok.Getter;
+import lombok.SneakyThrows;
 import org.jdom.Document;
 import org.jetbrains.annotations.NotNull;
 
@@ -23,10 +24,18 @@ public abstract class DBLanguageParser implements PsiParser {
 
     public DBLanguageParser(DBLanguageDialect languageDialect, String tokenTypesFile, String elementTypesFile, String defaultParseRootId) {
         this.languageDialect = languageDialect;
-        this.tokenTypes = new TokenTypeBundle(languageDialect, Commons.loadXmlFile(getResourceLookupClass(), tokenTypesFile));
-        Document document = Commons.loadXmlFile(getResourceLookupClass(), elementTypesFile);
-        this.elementTypes = new ElementTypeBundle(languageDialect, tokenTypes, document);
         this.defaultParseRootId = defaultParseRootId;
+
+        Document document = loadDefinition(tokenTypesFile);
+        this.tokenTypes = new TokenTypeBundle(languageDialect, document);
+
+        document = loadDefinition(elementTypesFile);
+        this.elementTypes = new ElementTypeBundle(languageDialect, tokenTypes, document);
+    }
+
+    @SneakyThrows
+    private Document loadDefinition(String tokenTypesFile) {
+        return XmlContents.loadXmlFile(getResourceLookupClass(), tokenTypesFile);
     }
 
     protected Class getResourceLookupClass() {

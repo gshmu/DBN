@@ -1,11 +1,12 @@
 package com.dci.intellij.dbn.language.common;
 
-import com.dci.intellij.dbn.common.util.Commons;
+import com.dci.intellij.dbn.common.util.XmlContents;
 import com.intellij.lexer.Lexer;
 import com.intellij.openapi.editor.colors.TextAttributesKey;
 import com.intellij.openapi.fileTypes.SyntaxHighlighterBase;
 import com.intellij.psi.tree.IElementType;
 import lombok.Getter;
+import lombok.SneakyThrows;
 import org.jdom.Document;
 import org.jetbrains.annotations.NotNull;
 
@@ -21,9 +22,14 @@ public abstract class DBLanguageSyntaxHighlighter extends SyntaxHighlighterBase 
     private final TokenTypeBundle tokenTypes;
 
     public DBLanguageSyntaxHighlighter(DBLanguageDialect languageDialect, String tokenTypesFile) {
-        Document document = Commons.loadXmlFile(getResourceLookupClass(), tokenTypesFile);
+        Document document = loadDefinition(tokenTypesFile);
         tokenTypes = new TokenTypeBundle(languageDialect, document);
         this.languageDialect = languageDialect;
+    }
+
+    @SneakyThrows
+    private Document loadDefinition(String tokenTypesFile) {
+        return XmlContents.loadXmlFile(getResourceLookupClass(), tokenTypesFile);
     }
 
     protected Class getResourceLookupClass() {

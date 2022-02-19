@@ -6,7 +6,7 @@ import com.dci.intellij.dbn.code.common.completion.options.sorting.CodeCompletio
 import com.dci.intellij.dbn.code.common.completion.options.ui.CodeCompletionSettingsForm;
 import com.dci.intellij.dbn.common.options.CompositeProjectConfiguration;
 import com.dci.intellij.dbn.common.options.Configuration;
-import com.dci.intellij.dbn.common.util.Commons;
+import com.dci.intellij.dbn.common.util.XmlContents;
 import com.dci.intellij.dbn.options.ConfigId;
 import com.dci.intellij.dbn.options.ProjectSettings;
 import com.dci.intellij.dbn.options.ProjectSettingsManager;
@@ -15,6 +15,7 @@ import com.intellij.openapi.project.Project;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
+import lombok.SneakyThrows;
 import org.jdom.Document;
 import org.jdom.Element;
 import org.jetbrains.annotations.NotNull;
@@ -23,9 +24,9 @@ import org.jetbrains.annotations.NotNull;
 @Setter
 @EqualsAndHashCode(callSuper = false)
 public class CodeCompletionSettings extends CompositeProjectConfiguration<ProjectSettings, CodeCompletionSettingsForm> implements TopLevelConfig {
-    private final CodeCompletionFiltersSettings filterSettings  = new CodeCompletionFiltersSettings(this);
+    private final CodeCompletionFiltersSettings filterSettings = new CodeCompletionFiltersSettings(this);
     private final CodeCompletionSortingSettings sortingSettings = new CodeCompletionSortingSettings(this);
-    private final CodeCompletionFormatSettings formatSettings   = new CodeCompletionFormatSettings(this);
+    private final CodeCompletionFormatSettings formatSettings = new CodeCompletionFormatSettings(this);
 
     public CodeCompletionSettings(ProjectSettings parent) {
         super(parent);
@@ -59,14 +60,19 @@ public class CodeCompletionSettings extends CompositeProjectConfiguration<Projec
     }
 
     private void loadDefaults() {
-        Document document = Commons.loadXmlFile(getClass(), "default-settings.xml");
+        Document document = loadDefinition();
         Element root = document.getRootElement();
         readConfiguration(root);
-   }
+    }
+
+    @SneakyThrows
+    private Document loadDefinition() {
+        return XmlContents.loadXmlFile(getClass(), "default-settings.xml");
+    }
 
     /*********************************************************
-    *                     Configuration                      *
-    *********************************************************/
+     *                     Configuration                      *
+     *********************************************************/
 
     @Override
     @NotNull
@@ -87,7 +93,7 @@ public class CodeCompletionSettings extends CompositeProjectConfiguration<Projec
 
     @Override
     protected Configuration[] createConfigurations() {
-        return new Configuration[] {
+        return new Configuration[]{
                 filterSettings,
                 sortingSettings,
                 formatSettings};
