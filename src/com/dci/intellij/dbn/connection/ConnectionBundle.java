@@ -24,13 +24,8 @@ import com.intellij.openapi.util.Disposer;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import javax.swing.Icon;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
+import javax.swing.*;
+import java.util.*;
 
 public class ConnectionBundle extends BrowserTreeNodeBase implements BrowserTreeNode, StatefulDisposable {
     private final ProjectRef project;
@@ -163,7 +158,12 @@ public class ConnectionBundle extends BrowserTreeNodeBase implements BrowserTree
     @Nullable
     public ConnectionHandler getConnection(@Nullable ConnectionId id) {
         if (id != null) {
-            return index.get(id);
+            ConnectionHandler connection = index.get(id);
+            if (connection == null) {
+                connection = virtualConnections.get(id);
+            }
+
+            return connection;
         }
         return null;
     }
