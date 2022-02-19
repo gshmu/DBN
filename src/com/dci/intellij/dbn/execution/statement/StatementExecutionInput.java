@@ -76,7 +76,7 @@ public class StatementExecutionInput extends LocalExecutionInput {
         SchemaId currentSchema = executionProcessor.getTargetSchema();
         DatabaseSession targetSession = executionProcessor.getTargetSession();
 
-        this.targetConnectionRef = ConnectionHandlerRef.of(connectionHandler);
+        this.targetConnection = ConnectionHandlerRef.of(connectionHandler);
         this.targetSchemaId = currentSchema;
         this.setTargetSession(targetSession);
         this.originalStatementText = originalStatementText;
@@ -169,7 +169,7 @@ public class StatementExecutionInput extends LocalExecutionInput {
     @Override
     @Nullable
     public ConnectionHandler getConnection() {
-        return ConnectionHandlerRef.get(targetConnectionRef);
+        return ConnectionHandlerRef.get(targetConnection);
     }
 
     @Override
@@ -188,14 +188,14 @@ public class StatementExecutionInput extends LocalExecutionInput {
     }
 
     public void setConnectionHandler(ConnectionHandler connectionHandler) {
-        this.targetConnectionRef = ConnectionHandlerRef.of(connectionHandler);
+        this.targetConnection = ConnectionHandlerRef.of(connectionHandler);
         if (DatabaseFeature.DATABASE_LOGGING.isSupported(connectionHandler)) {
             getOptions().set(ExecutionOption.ENABLE_LOGGING, connectionHandler.isLoggingEnabled());
         }
     }
 
     public ConnectionId getConnectionId() {
-        return targetConnectionRef == null ? null : targetConnectionRef.getConnectionId();
+        return targetConnection == null ? null : targetConnection.getConnectionId();
     }
 
     public boolean isBulkExecution() {

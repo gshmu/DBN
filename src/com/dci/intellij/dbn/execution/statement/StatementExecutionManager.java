@@ -76,11 +76,11 @@ public class StatementExecutionManager extends AbstractProjectComponent implemen
         ProjectEvents.subscribe(project, this, PsiDocumentTransactionListener.TOPIC, psiDocumentTransactionListener);
     }
 
+    @Nullable
     public StatementExecutionQueue getExecutionQueue(ConnectionId connectionId, SessionId sessionId) {
         ConnectionManager connectionManager = ConnectionManager.getInstance(getProject());
-        ConnectionHandler connectionHandler = connectionManager.getConnection(connectionId);
-        connectionHandler = Failsafe.nn(connectionHandler);
-        return connectionHandler.getExecutionQueue(sessionId);
+        ConnectionHandler connection = Failsafe.nd(connectionManager.getConnection(connectionId));
+        return connection.isVirtual() ? null : connection.getExecutionQueue(sessionId);
     }
 
     public static StatementExecutionManager getInstance(@NotNull Project project) {
@@ -234,15 +234,15 @@ public class StatementExecutionManager extends AbstractProjectComponent implemen
                                                 ExecutionContext context = executionProcessor.getExecutionContext();
                                                 StatementExecutionInput executionInput = executionProcessor.getExecutionInput();
                                                 SessionId sessionId = executionInput.getTargetSessionId();
-                                                ConnectionId connectionId = executionInput.getConnectionHandlerId();
+                                                ConnectionId connectionId = executionInput.getConnectionId();
                                                 if (context.isNot(EXECUTING) && context.isNot(QUEUED)) {
                                                     if (sessionId == SessionId.POOL) {
                                                         Progress.background(project, "Executing statement", true,
                                                                 (progress) -> process(executionProcessor));
                                                     } else {
-                                                        StatementExecutionQueue executionQueue = getExecutionQueue(connectionId, sessionId);
-                                                        if (!executionQueue.contains(executionProcessor)) {
-                                                            executionQueue.queue(executionProcessor);
+                                                        StatementExecutionQueue queue = getExecutionQueue(connectionId, sessionId);
+                                                        if (queue != null && !queue.contains(executionProcessor)) {
+                                                            queue.queue(executionProcessor);
                                                         }
                                                     }
                                                 }

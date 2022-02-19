@@ -22,8 +22,8 @@ public abstract class ExecutionInput extends StatefulDisposable.Base implements 
     private final ExecutionTimeout debugExecutionTimeout;
     private final ExecutionTarget executionTarget;
 
-    private final ProjectRef projectRef;
-    protected ConnectionHandlerRef targetConnectionRef;
+    private final ProjectRef project;
+    protected ConnectionHandlerRef targetConnection;
     protected SchemaId targetSchemaId;
 
     private final Latent<ExecutionContext> executionContext = Latent.basic(() -> createExecutionContext());
@@ -40,7 +40,7 @@ public abstract class ExecutionInput extends StatefulDisposable.Base implements 
     protected abstract ExecutionContext createExecutionContext();
 
     public ExecutionInput(Project project, ExecutionTarget executionTarget) {
-        projectRef = ProjectRef.of(project);
+        this.project = ProjectRef.of(project);
         this.executionTarget = executionTarget;
         executionTimeout = new ExecutionTimeout(project, executionTarget, false);
         debugExecutionTimeout = new ExecutionTimeout(project, executionTarget, true);
@@ -55,7 +55,7 @@ public abstract class ExecutionInput extends StatefulDisposable.Base implements 
 
     @NotNull
     public final Project getProject() {
-        return projectRef.ensure();
+        return project.ensure();
     }
 
     @Nullable
@@ -69,11 +69,11 @@ public abstract class ExecutionInput extends StatefulDisposable.Base implements 
 
     @Nullable
     public final ConnectionHandler getTargetConnection() {
-        return ConnectionHandlerRef.get(targetConnectionRef);
+        return ConnectionHandlerRef.get(targetConnection);
     }
 
     public final void setTargetConnection(@Nullable ConnectionHandler connectionHandler) {
-        this.targetConnectionRef = ConnectionHandlerRef.of(connectionHandler);
+        this.targetConnection = ConnectionHandlerRef.of(connectionHandler);
     }
 
     @NotNull
@@ -99,7 +99,7 @@ public abstract class ExecutionInput extends StatefulDisposable.Base implements 
         debugExecutionTimeout.set(timeout);
     }
 
-    public abstract ConnectionId getConnectionHandlerId();
+    public abstract ConnectionId getConnectionId();
 
     @Override
     public void readConfiguration(Element element) {
