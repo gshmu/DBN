@@ -1,9 +1,6 @@
 package com.dci.intellij.dbn.common.util;
 
 import lombok.extern.slf4j.Slf4j;
-import org.jdom.Document;
-import org.jdom.adapters.XML4JDOMAdapter;
-import org.jdom.input.DOMBuilder;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -58,21 +55,6 @@ public final class Commons {
             }
         }
         return string;
-    }
-
-    public static Document loadXmlFile(Class clazz, String name) {
-        InputStream inputStream = clazz.getResourceAsStream(name);
-        return createXMLDocument(inputStream);
-    }
-
-    @Nullable
-    public static Document createXMLDocument(InputStream inputStream) {
-        try {
-            return new DOMBuilder().build(new XML4JDOMAdapter().getDocument(inputStream, false));
-        } catch (Exception e) {
-            log.error("Failed to read xml document", e);
-        }
-        return null;
     }
 
     public static String readInputStream(InputStream inputStream) throws IOException {
