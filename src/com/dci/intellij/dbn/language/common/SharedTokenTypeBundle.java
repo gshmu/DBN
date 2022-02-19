@@ -1,9 +1,11 @@
 package com.dci.intellij.dbn.language.common;
 
-import com.dci.intellij.dbn.common.util.Commons;
+import com.dci.intellij.dbn.common.util.XmlContents;
 import com.intellij.psi.tree.TokenSet;
 import gnu.trove.THashSet;
 import lombok.Getter;
+import lombok.SneakyThrows;
+import org.jdom.Document;
 
 import java.util.Set;
 
@@ -33,7 +35,7 @@ public class SharedTokenTypeBundle extends TokenTypeBundleBase {
     private final Set<TokenType> identifierTokens;
 
     public SharedTokenTypeBundle(DBLanguage language) {
-        super(language, Commons.loadXmlFile(SharedTokenTypeBundle.class, "db_language_common_tokens.xml"));
+        super(language, loadDefinition());
         whiteSpace = getTokenType("WHITE_SPACE");
         identifier = getTokenType("IDENTIFIER");
         quotedIdentifier = getTokenType("QUOTED_IDENTIFIER");
@@ -58,6 +60,11 @@ public class SharedTokenTypeBundle extends TokenTypeBundleBase {
         identifierTokens = new THashSet<>(2);
         identifierTokens.add(identifier);
         identifierTokens.add(quotedIdentifier);
+    }
+
+    @SneakyThrows
+    private static Document loadDefinition() {
+        return XmlContents.loadXmlFile(SharedTokenTypeBundle.class, "db_language_common_tokens.xml");
     }
 
 

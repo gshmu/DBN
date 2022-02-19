@@ -1,13 +1,14 @@
 package com.dci.intellij.dbn.database.common;
 
 import com.dci.intellij.dbn.common.dispose.Failsafe;
-import com.dci.intellij.dbn.common.util.Commons;
+import com.dci.intellij.dbn.common.util.XmlContents;
 import com.dci.intellij.dbn.connection.DatabaseType;
 import com.dci.intellij.dbn.connection.jdbc.DBNConnection;
 import com.dci.intellij.dbn.database.DatabaseInterface;
 import com.dci.intellij.dbn.database.DatabaseInterfaceProvider;
 import com.dci.intellij.dbn.database.common.statement.CallableStatementOutput;
 import com.dci.intellij.dbn.database.common.statement.StatementExecutionProcessor;
+import lombok.SneakyThrows;
 import org.jdom.Document;
 import org.jdom.Element;
 import org.jetbrains.annotations.NotNull;
@@ -33,13 +34,18 @@ public class DatabaseInterfaceImpl implements DatabaseInterface{
     @Override
     public void reset() {
         processors.clear();
-        Document document = Commons.loadXmlFile(getClass(), fileName);
+        Document document = loadDefinition();
         Element root = document.getRootElement();
         for (Element child : root.getChildren()) {
             StatementExecutionProcessor executionProcessor = new StatementExecutionProcessor(child, provider);
             String id = executionProcessor.getId();
             processors.put(id, executionProcessor);
         }
+    }
+
+    @SneakyThrows
+    private Document loadDefinition() {
+        return XmlContents.loadXmlFile(getClass(), fileName);
     }
 
     protected ResultSet executeQuery(@NotNull DBNConnection connection, String loaderId, @Nullable Object... arguments) throws SQLException {

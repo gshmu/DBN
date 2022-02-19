@@ -7,25 +7,17 @@ import com.dci.intellij.dbn.common.database.DatabaseInfo;
 import com.dci.intellij.dbn.common.dispose.DisposableContainers;
 import com.dci.intellij.dbn.common.options.ui.ConfigurationEditorForm;
 import com.dci.intellij.dbn.common.ui.Fonts;
-import com.dci.intellij.dbn.common.util.Actions;
-import com.dci.intellij.dbn.common.util.Clipboard;
-import com.dci.intellij.dbn.common.util.Commons;
-import com.dci.intellij.dbn.common.util.Messages;
-import com.dci.intellij.dbn.common.util.Naming;
-import com.dci.intellij.dbn.common.util.Strings;
+import com.dci.intellij.dbn.common.util.*;
 import com.dci.intellij.dbn.connection.ConnectionId;
 import com.dci.intellij.dbn.connection.DatabaseType;
 import com.dci.intellij.dbn.connection.DatabaseUrlType;
-import com.dci.intellij.dbn.connection.config.ConnectionBundleSettings;
-import com.dci.intellij.dbn.connection.config.ConnectionConfigListCellRenderer;
-import com.dci.intellij.dbn.connection.config.ConnectionConfigType;
-import com.dci.intellij.dbn.connection.config.ConnectionDatabaseSettings;
-import com.dci.intellij.dbn.connection.config.ConnectionSettings;
+import com.dci.intellij.dbn.connection.config.*;
 import com.dci.intellij.dbn.connection.config.tns.TnsName;
 import com.dci.intellij.dbn.driver.DriverSource;
 import com.intellij.openapi.actionSystem.ActionToolbar;
 import com.intellij.openapi.ide.CopyPasteManager;
 import com.intellij.openapi.options.ConfigurationException;
+import com.intellij.openapi.project.Project;
 import com.intellij.ui.ListUtil;
 import com.intellij.ui.components.JBList;
 import com.intellij.ui.components.JBScrollPane;
@@ -38,14 +30,10 @@ import org.jdom.output.XMLOutputter;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import javax.swing.JComponent;
-import javax.swing.JList;
-import javax.swing.JPanel;
+import javax.swing.*;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
-import java.awt.BorderLayout;
-import java.awt.CardLayout;
-import java.awt.Dimension;
+import java.awt.*;
 import java.awt.datatransfer.StringSelection;
 import java.io.ByteArrayInputStream;
 import java.util.ArrayList;
@@ -252,6 +240,7 @@ public class ConnectionBundleSettingsForm extends ConfigurationEditorForm<Connec
 
     public void copyConnectionsToClipboard() {
         List<ConnectionSettings> configurations = connectionsList.getSelectedValuesList();
+        Project project = getProject();
         try {
             Element rootElement = new Element("connection-configurations");
             for (ConnectionSettings configuration : configurations) {
@@ -266,23 +255,26 @@ public class ConnectionBundleSettingsForm extends ConfigurationEditorForm<Connec
 
             CopyPasteManager copyPasteManager = CopyPasteManager.getInstance();
             copyPasteManager.setContents(new StringSelection(xmlString));
-            Messages.showInfoDialog(getProject(), "Config Export", "Configuration for selected connections exported to clipboard.");
-        } catch (Exception ex) {
-            log.error("Could not copy database configuration to clipboard", ex);
+            Messages.showInfoDialog(project, "Config Export", "Configuration for selected connections exported to clipboard.");
+        } catch (Exception e) {
+            Messages.showErrorDialog(project,
+                    "Connection Export Failed",
+                    "Failed to export connection setup to clipboard.", e);
         }
     }
 
     public void pasteConnectionsFromClipboard() {
-        try {
-            String clipboardData = Clipboard.getStringContent();
-            if (clipboardData != null) {
-                Document xmlDocument = Commons.createXMLDocument(new ByteArrayInputStream(clipboardData.getBytes()));
+        String clipboardData = Clipboard.getStringContent();
+        if (clipboardData != null) {
+            try (ByteArrayInputStream inputStream = new ByteArrayInputStream(clipboardData.getBytes())) {
+                Document xmlDocument = XmlContents.createXmlDocument(inputStream);
+                boolean configurationsFound = false;
                 if (xmlDocument != null) {
                     Element rootElement = xmlDocument.getRootElement();
                     List<Element> configElements = rootElement.getChildren();
                     ConnectionListModel model = (ConnectionListModel) connectionsList.getModel();
                     int index = connectionsList.getModel().getSize();
-                    List<Integer> selectedIndexes = new ArrayList<>();
+                    List<Integer> selectedIndices = new ArrayList<>();
                     ConnectionBundleSettings configuration = getConfiguration();
                     for (Element configElement : configElements) {
                         ConnectionSettings clone = new ConnectionSettings(configuration);
@@ -297,17 +289,29 @@ public class ConnectionBundleSettingsForm extends ConfigurationEditorForm<Connec
                         }
                         databaseSettings.setName(name);
                         model.add(index, clone);
-                        selectedIndexes.add(index);
+                        selectedIndices.add(index);
                         configuration.setModified(true);
                         index++;
+                        configurationsFound = true;
                     }
 
-                    connectionsList.setSelectedIndices(ArrayUtils.toPrimitive(selectedIndexes.toArray(new Integer[0])));
-
+                    if (configurationsFound) {
+                        int[] indices = ArrayUtils.toPrimitive(selectedIndices.toArray(new Integer[0]));
+                        connectionsList.setSelectedIndices(indices);
+                    }
                 }
+
+                if (!configurationsFound) {
+                    Messages.showWarningDialog(getProject(),
+                            "Connection Import Failed",
+                            "The clipboard content is empty or malformed (not valid connection setup)");
+                }
+
+            } catch (Exception e) {
+                Messages.showErrorDialog(getProject(),
+                        "Connection Import Failed",
+                        "The clipboard content was not recognized as valid connection setup.", e);
             }
-        } catch (Exception ex) {
-            log.error("Could not paste database configuration from clipboard", ex);
         }
     }
 
