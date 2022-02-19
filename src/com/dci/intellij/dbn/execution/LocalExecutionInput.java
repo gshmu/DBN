@@ -46,7 +46,7 @@ public abstract class LocalExecutionInput extends ExecutionInput{
     public abstract boolean isDatabaseLogProducer();
 
     @Override
-    public ConnectionId getConnectionHandlerId() {
+    public ConnectionId getConnectionId() {
         ConnectionHandler connectionHandler = getConnection();
         return connectionHandler == null ? null : connectionHandler.getConnectionId();
     }
