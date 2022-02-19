@@ -72,8 +72,8 @@ public class Icons {
 
     public static final Icon ACTION_SAVE_TO_SETTINGS = load("/img/action/SaveToSettings.png");
     public static final Icon ACTION_REVERT_FROM_SETTINGS = load("/img/action/RevertFromSettings.png");
-    public static final Icon FOLDER_CONNECTION_ASSOCIATION = load("/img/action/FolderConnectionAssociation.png");
-    public static final Icon FOLDER_SCHEMA_ASSOCIATION = load("/img/action/FolderSchemaAssociation.png");
+    public static final Icon FOLDER_CONNECTION_ASSOCIATION = load("/img/action/FolderConnectionLink.png");
+    public static final Icon FOLDER_SCHEMA_ASSOCIATION = load("/img/action/FolderSchemaLink.png");
 
 
     public static final Icon DATABASE_NAVIGATOR = load("/img/project/DatabaseNavigator.png");
