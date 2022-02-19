@@ -9,11 +9,7 @@ import com.dci.intellij.dbn.connection.ConnectionId;
 import com.dci.intellij.dbn.connection.SchemaId;
 import com.dci.intellij.dbn.database.DatabaseFeature;
 import com.dci.intellij.dbn.debugger.DBDebuggerType;
-import com.dci.intellij.dbn.execution.ExecutionContext;
-import com.dci.intellij.dbn.execution.ExecutionOption;
-import com.dci.intellij.dbn.execution.ExecutionOptions;
-import com.dci.intellij.dbn.execution.ExecutionTarget;
-import com.dci.intellij.dbn.execution.LocalExecutionInput;
+import com.dci.intellij.dbn.execution.*;
 import com.dci.intellij.dbn.execution.method.result.MethodExecutionResult;
 import com.dci.intellij.dbn.object.DBArgument;
 import com.dci.intellij.dbn.object.DBMethod;
@@ -25,11 +21,7 @@ import org.jdom.Element;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import static com.dci.intellij.dbn.common.options.setting.SettingsSupport.stringAttribute;
 
@@ -103,7 +95,7 @@ public class MethodExecutionInput extends LocalExecutionInput implements Compara
     }
 
     @Override
-    public ConnectionId getConnectionHandlerId() {
+    public ConnectionId getConnectionId() {
         return method.getConnectionId();
     }
 
@@ -134,10 +126,6 @@ public class MethodExecutionInput extends LocalExecutionInput implements Compara
 
     public DBObjectRef<DBMethod> getMethodRef() {
         return method;
-    }
-
-    public ConnectionId getConnectionId() {
-        return method.getConnectionId();
     }
 
     public boolean isObsolete() {
