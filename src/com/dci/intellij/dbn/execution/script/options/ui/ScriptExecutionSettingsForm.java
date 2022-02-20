@@ -18,10 +18,8 @@ import com.intellij.ui.ToolbarDecorator;
 import com.intellij.ui.awt.RelativePoint;
 import org.jetbrains.annotations.NotNull;
 
-import javax.swing.JPanel;
-import javax.swing.JTextField;
-import java.awt.BorderLayout;
-import java.awt.Dimension;
+import javax.swing.*;
+import java.awt.*;
 
 public class ScriptExecutionSettingsForm extends ConfigurationEditorForm<ScriptExecutionSettings> {
     private JPanel mainPanel;
@@ -68,7 +66,7 @@ public class ScriptExecutionSettingsForm extends ConfigurationEditorForm<ScriptE
     }
 
     public class CreateInterfaceAction extends DumbAwareAction {
-        private DatabaseType databaseType;
+        private final DatabaseType databaseType;
         CreateInterfaceAction(DatabaseType databaseType) {
             super();
             getTemplatePresentation().setText(databaseType.getName(), false);
