@@ -1,20 +1,25 @@
 package com.dci.intellij.dbn.common.dispose;
 
 import com.dci.intellij.dbn.common.list.FilteredList;
+import com.dci.intellij.dbn.common.thread.Dispatch;
+import com.dci.intellij.dbn.common.thread.ThreadMonitor;
 import com.dci.intellij.dbn.vfs.DBVirtualFile;
 import com.intellij.openapi.Disposable;
 import com.intellij.openapi.progress.ProcessCanceledException;
 import com.intellij.openapi.util.Disposer;
+import com.intellij.ui.popup.AbstractPopup;
 import lombok.extern.slf4j.Slf4j;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Collection;
 import java.util.Map;
+import java.util.Set;
 import java.util.Timer;
 
 @Slf4j
 public final class SafeDisposer {
+    private static final Set<Class<?>> DISPATCH_CANDIDATES = Set.of(AbstractPopup.class);
 
     private SafeDisposer() {}
 
@@ -50,10 +55,14 @@ public final class SafeDisposer {
     public static void dispose(@Nullable Disposable disposable, boolean registered) {
         try {
             if (Failsafe.check(disposable)) {
-                if (registered) {
-                    Disposer.dispose(disposable);
+                if (isDispatchCandidate(disposable) && !ThreadMonitor.isDispatchThread()) {
+                    Dispatch.run(() -> dispose(disposable, registered));
                 } else {
-                    disposable.dispose();
+                    if (registered) {
+                        Disposer.dispose(disposable);
+                    } else {
+                        disposable.dispose();
+                    }
                 }
             }
         } catch (ProcessCanceledException ignore) {
@@ -149,4 +158,12 @@ public final class SafeDisposer {
         }
     }
 
+    private static boolean isDispatchCandidate(Object object) {
+        for (Class<?> candidate : DISPATCH_CANDIDATES) {
+            if (candidate.isAssignableFrom(object.getClass())) {
+                return true;
+            }
+        }
+        return false;
+    }
 }
