@@ -35,16 +35,12 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.startup.StartupManager;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.util.containers.ContainerUtil;
+import lombok.var;
 import org.jdom.Element;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.UUID;
+import java.util.*;
 
 import static com.dci.intellij.dbn.common.util.Commons.list;
 import static com.dci.intellij.dbn.vfs.VirtualFileStatus.MODIFIED;
@@ -272,13 +268,14 @@ public class DatabaseFileManager extends AbstractProjectComponent implements Per
     private void reopenDatabaseEditors() {
         Project project = getProject();
         if (pendingOpenFiles != null && !pendingOpenFiles.isEmpty()) {
-            Map<ConnectionId, List<DBObjectRef<DBSchemaObject>>> pendingOpenFiles = this.pendingOpenFiles;
+            var pendingOpenFiles = this.pendingOpenFiles;
             this.pendingOpenFiles = null;
 
             ConnectionManager connectionManager = ConnectionManager.getInstance(project);
-            for (ConnectionId connectionId : pendingOpenFiles.keySet()) {
+            for (var entry : pendingOpenFiles.entrySet()) {
+                ConnectionId connectionId = entry.getKey();
+                List<DBObjectRef<DBSchemaObject>> objectRefs = entry.getValue();
 
-                List<DBObjectRef<DBSchemaObject>> objectRefs = pendingOpenFiles.get(connectionId);
                 ConnectionHandler connectionHandler = connectionManager.getConnection(connectionId);
                 if (connectionHandler != null) {
                     ConnectionDetailSettings connectionDetailSettings = connectionHandler.getSettings().getDetailSettings();

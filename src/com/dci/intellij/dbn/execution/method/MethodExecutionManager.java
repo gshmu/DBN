@@ -34,6 +34,7 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.DialogWrapper;
 import com.intellij.openapi.util.Disposer;
 import lombok.Getter;
+import lombok.var;
 import org.jdom.Element;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
@@ -209,8 +210,9 @@ public class MethodExecutionManager extends AbstractProjectComponent implements 
         ConnectionHandler connectionHandler = executionInput.getExecutionContext().getTargetConnection();
         if (connectionHandler != null) {
             Map<String, MethodExecutionArgumentValue> argumentValues = executionInput.getArgumentValueHistory();
-            for (String argumentName : argumentValues.keySet()) {
-                MethodExecutionArgumentValue argumentValue = argumentValues.get(argumentName);
+            for (var entry : argumentValues.entrySet()) {
+                MethodExecutionArgumentValue argumentValue = entry.getValue();
+
                 argumentValuesHistory.cacheVariable(
                         connectionHandler.getConnectionId(),
                         argumentValue.getName(),
