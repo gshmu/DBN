@@ -95,7 +95,7 @@ public final class Progress {
 
     private static void start(Task task) {
         if (Failsafe.check(task) && Failsafe.check(task.getProject())) {
-            Dispatch.runConditional(() -> {
+            Dispatch.run(() -> {
                 ProgressManager progressManager = ProgressManager.getInstance();
                 progressManager.run(task);
             });
