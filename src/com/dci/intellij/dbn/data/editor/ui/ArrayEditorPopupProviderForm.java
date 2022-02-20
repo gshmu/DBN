@@ -25,17 +25,10 @@ import com.intellij.ui.SimpleTextAttributes;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import javax.swing.Icon;
-import javax.swing.JComponent;
-import javax.swing.JPanel;
-import javax.swing.JScrollPane;
-import javax.swing.JTextField;
+import javax.swing.*;
 import javax.swing.event.DocumentEvent;
 import javax.swing.table.TableCellEditor;
-import java.awt.BorderLayout;
-import java.awt.Color;
-import java.awt.Component;
-import java.awt.Dimension;
+import java.awt.*;
 import java.awt.event.FocusEvent;
 import java.awt.event.InputEvent;
 import java.awt.event.KeyEvent;
@@ -231,7 +224,7 @@ public class ArrayEditorPopupProviderForm extends TextFieldPopupProviderForm {
 
         @Override
         public void update(@NotNull AnActionEvent e) {
-            getTemplatePresentation().setEnabled(changed);
+            e.getPresentation().setEnabled(changed);
         }
     }
 
@@ -249,7 +242,7 @@ public class ArrayEditorPopupProviderForm extends TextFieldPopupProviderForm {
 
         @Override
         public void update(@NotNull AnActionEvent e) {
-            getTemplatePresentation().setEnabled(changed);
+            e.getPresentation().setEnabled(changed);
         }
     }
 
