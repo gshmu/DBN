@@ -33,7 +33,10 @@ public class SequenceElementType extends ElementTypeBase {
         return children;
     }
 
-    public ElementTypeRef getFirstChild() {return children[0];}
+    public ElementTypeRef getFirstChild() {
+        // TODO check parser definitions (empty sequence blocks)
+        return children.length == 0 ? null : children[0];
+    }
 
     public ElementTypeRef getChild(int index) {
         return children[index];
