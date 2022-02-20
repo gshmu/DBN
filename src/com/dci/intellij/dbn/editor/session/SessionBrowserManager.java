@@ -36,6 +36,7 @@ import com.intellij.openapi.fileEditor.FileEditorManagerListener;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.util.containers.ContainerUtil;
+import lombok.var;
 import org.jdom.Element;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
@@ -43,12 +44,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Timer;
-import java.util.TimerTask;
+import java.util.*;
 
 import static com.dci.intellij.dbn.common.util.Commons.list;
 
@@ -176,8 +172,10 @@ public class SessionBrowserManager extends AbstractProjectComponent implements P
                                 (provider, connection) -> {
                                     Map<Object, SQLException> errors = new HashMap<>();
                                     DatabaseMetadataInterface metadataInterface = provider.getMetadataInterface();
-                                    for (Object sessionId : sessionIds.keySet()) {
-                                        Object serialNumber = sessionIds.get(sessionId);
+                                    for (var entry : sessionIds.entrySet()) {
+                                        Object sessionId = entry.getKey();
+                                        Object serialNumber = entry.getValue();
+
                                         checkDisposed();
                                         ProgressMonitor.checkCancelled();
 

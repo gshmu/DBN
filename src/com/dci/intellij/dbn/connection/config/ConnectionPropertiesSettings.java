@@ -7,6 +7,7 @@ import com.dci.intellij.dbn.connection.config.ui.ConnectionPropertiesSettingsFor
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
+import lombok.var;
 import org.jdom.Element;
 import org.jetbrains.annotations.NotNull;
 
@@ -64,13 +65,14 @@ public class ConnectionPropertiesSettings extends BasicProjectConfiguration<Conn
         setBoolean(element, "auto-commit", enableAutoCommit);
         if (properties.size() > 0) {
             Element propertiesElement = new Element("properties");
-            for (String propertyKey : properties.keySet()) {
+            for (var entry : properties.entrySet()) {
                 Element propertyElement = new Element("property");
-                propertyElement.setAttribute("key", propertyKey);
-                propertyElement.setAttribute("value", Commons.nvl(properties.get(propertyKey), ""));
+                propertyElement.setAttribute("key", entry.getKey());
+                propertyElement.setAttribute("value", Commons.nvl(entry.getValue(), ""));
 
                 propertiesElement.addContent(propertyElement);
             }
+
             element.addContent(propertiesElement);
         }
     }

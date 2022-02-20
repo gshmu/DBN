@@ -10,11 +10,10 @@ import com.dci.intellij.dbn.ddl.DDLFileTypeId;
 import com.dci.intellij.dbn.ddl.options.DDLFileExtensionSettings;
 import com.intellij.openapi.options.ConfigurationException;
 import com.intellij.openapi.project.Project;
+import lombok.var;
 import org.jetbrains.annotations.NotNull;
 
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.JTextField;
+import javax.swing.*;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -81,8 +80,10 @@ public class DDLFileExtensionSettingsForm extends ConfigurationEditorForm<DDLFil
 
     private void validateInputs() throws ConfigurationException {
         List<String> allExtensions = new ArrayList<>();
-        for (String fieldName : extensionTextFields.keySet()) {
-            JTextField extensionTextField = extensionTextFields.get(fieldName);
+        for (var entry : extensionTextFields.entrySet()) {
+            String fieldName = entry.getKey();
+            JTextField extensionTextField = entry.getValue();
+
             String extensionsText = ConfigurationEditorUtil.validateStringValue(extensionTextField, fieldName, false);
             List<String> extensions = Strings.tokenize(extensionsText, ",");
             for (String extension : extensions) {

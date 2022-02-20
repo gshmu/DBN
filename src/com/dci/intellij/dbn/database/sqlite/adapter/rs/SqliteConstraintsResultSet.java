@@ -2,6 +2,7 @@ package com.dci.intellij.dbn.database.sqlite.adapter.rs;
 
 import com.dci.intellij.dbn.connection.jdbc.DBNConnection;
 import com.dci.intellij.dbn.database.sqlite.adapter.SqliteMetadataResultSetRow;
+import lombok.var;
 
 import java.sql.SQLException;
 import java.util.List;
@@ -34,11 +35,12 @@ public abstract class SqliteConstraintsResultSet extends SqliteConstraintInfoRes
     @Override
     protected void init(String ownerName, String datasetName) throws SQLException {
         Map<String, List<ConstraintColumnInfo>> constraints = loadConstraintInfo(ownerName, datasetName);
+        for (var entry : constraints.entrySet()) {
+            String indexKey = entry.getKey();
+            List<ConstraintColumnInfo> columnInfos = entry.getValue();
 
-        for (String indexKey : constraints.keySet()) {
             if (indexKey.startsWith("FK")) {
-                List<ConstraintColumnInfo> constraintColumnInfos = constraints.get(indexKey);
-                String constraintName = getConstraintName(ConstraintType.FK, constraintColumnInfos);
+                String constraintName = getConstraintName(ConstraintType.FK, columnInfos);
                 Constraint constraint = new Constraint();
                 constraint.constraintName = constraintName;
                 constraint.datasetName = datasetName;
@@ -47,22 +49,21 @@ public abstract class SqliteConstraintsResultSet extends SqliteConstraintInfoRes
                 constraint.fkConstraintName = constraintName.replace("fk_", "pk_");
                 add(constraint);
             } else if (indexKey.startsWith("PK")) {
-                List<ConstraintColumnInfo> constraintColumnInfos = constraints.get(indexKey);
-                String constraintName = getConstraintName(ConstraintType.PK, constraintColumnInfos);
+                String constraintName = getConstraintName(ConstraintType.PK, columnInfos);
                 Constraint constraint = new Constraint();
                 constraint.constraintName = constraintName;
                 constraint.datasetName = datasetName;
                 constraint.constraintType = "PRIMARY KEY";
                 add(constraint);
             } else if (indexKey.startsWith("UQ")) {
-                List<ConstraintColumnInfo> constraintColumnInfos = constraints.get(indexKey);
-                String constraintName = getConstraintName(ConstraintType.UQ, constraintColumnInfos);
+                String constraintName = getConstraintName(ConstraintType.UQ, columnInfos);
                 Constraint constraint = new Constraint();
                 constraint.constraintName = constraintName;
                 constraint.datasetName = datasetName;
                 constraint.constraintType = "UNIQUE";
                 add(constraint);
             }
+
         }
     }
 

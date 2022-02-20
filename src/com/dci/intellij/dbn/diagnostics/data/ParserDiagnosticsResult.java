@@ -7,16 +7,13 @@ import com.dci.intellij.dbn.common.project.ProjectRef;
 import com.dci.intellij.dbn.common.state.PersistentStateElement;
 import com.intellij.openapi.project.Project;
 import lombok.Getter;
+import lombok.var;
 import org.jdom.Element;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.sql.Timestamp;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.TreeMap;
-import java.util.UUID;
+import java.util.*;
 
 import static com.dci.intellij.dbn.common.options.setting.SettingsSupport.integerAttribute;
 import static com.dci.intellij.dbn.common.options.setting.SettingsSupport.setIntegerAttribute;
@@ -108,15 +105,15 @@ public class ParserDiagnosticsResult implements PersistentStateElement, Comparab
     public void writeState(Element element) {
         element.setAttribute("id", id);
         element.setAttribute("timestamp", timestamp.toString());
-        for (String filePath : entries.keySet()) {
-            IssueCounter issues = entries.get(filePath);
+        for (var entry : entries.entrySet()) {
+            String filePath = entry.getKey();
+            IssueCounter issues = entry.getValue();
 
             Element child = new Element("file");
             child.setAttribute("path", filePath);
             setIntegerAttribute(child, "error-count", issues.getErrors());
             setIntegerAttribute(child, "warning-count", issues.getWarnings());
             element.addContent(child);
-
         }
     }
 

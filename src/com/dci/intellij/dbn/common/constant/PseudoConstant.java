@@ -7,12 +7,7 @@ import lombok.extern.slf4j.Slf4j;
 import java.io.Serializable;
 import java.lang.reflect.Array;
 import java.lang.reflect.Constructor;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Set;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
 import static com.dci.intellij.dbn.common.util.Unsafe.cast;
@@ -66,8 +61,10 @@ public abstract class PseudoConstant<T extends PseudoConstant<T>> implements Con
                 try {
                     return registry.computeIfAbsent(id, i -> createConstant(clazz, i));
                 } finally {
-                    for (T queued : queue) {
-                        registry.put(queued.id(), queued);
+                    if (!queue.isEmpty()) {
+                        for (T queued : queue) {
+                            registry.put(queued.id(), queued);
+                        }
                     }
                     INTERNAL.set(null);
                 }

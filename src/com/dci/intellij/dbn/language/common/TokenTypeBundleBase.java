@@ -10,15 +10,12 @@ import com.intellij.psi.tree.IElementType;
 import com.intellij.psi.tree.TokenSet;
 import gnu.trove.THashMap;
 import lombok.extern.slf4j.Slf4j;
+import lombok.var;
 import org.jdom.Document;
 import org.jdom.Element;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import static com.dci.intellij.dbn.common.options.setting.SettingsSupport.stringAttribute;
@@ -211,8 +208,10 @@ public abstract class TokenTypeBundleBase {
     }
     
     private void createTokenSets(Map<String, Set<String>> tokenSetIds) {
-        for (String tokenSetId : tokenSetIds.keySet()) {
-            Set<String> tokenIds = tokenSetIds.get(tokenSetId);
+        for (var entry : tokenSetIds.entrySet()) {
+            String tokenSetId = entry.getKey();
+            Set<String> tokenIds = entry.getValue();
+
             List<SimpleTokenType> tokenSetList = new ArrayList<>();
             for (String tokenId : tokenIds) {
                 SimpleTokenType tokenType = tokenTypes.get(tokenId);
@@ -220,7 +219,7 @@ public abstract class TokenTypeBundleBase {
                     System.out.println("DEBUG - [" + language.getID() + "] undefined token type: " + tokenId);
                 } else {
                     tokenSetList.add(tokenType);
-                }                
+                }
             }
             IElementType[] tokenSetArray = tokenSetList.toArray(new IElementType[0]);
             TokenSet tokenSet = TokenSet.create(tokenSetArray);
