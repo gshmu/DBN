@@ -7,7 +7,6 @@ import com.dci.intellij.dbn.common.util.Strings;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
 import gnu.trove.THashSet;
-import lombok.var;
 import org.jdom.Element;
 import org.jetbrains.annotations.Nullable;
 
@@ -92,7 +91,7 @@ public class StatementExecutionVariablesCache implements PersistentStateElement 
         Element variablesElement = new Element("execution-variables");
         element.addContent(variablesElement);
 
-        for (var entry : fileVariablesMap.entrySet()) {
+        for (Map.Entry<String, Set<StatementExecutionVariable>> entry : fileVariablesMap.entrySet()) {
             String fileUrl = entry.getKey();
             if (Files.isValidFileUrl(fileUrl, getProject())) {
                 Element fileElement = new Element("file");

@@ -15,7 +15,6 @@ import com.intellij.openapi.components.PersistentStateComponent;
 import com.intellij.openapi.components.State;
 import com.intellij.openapi.components.Storage;
 import com.intellij.openapi.project.Project;
-import lombok.var;
 import org.jdom.Element;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
@@ -98,7 +97,7 @@ public class ObjectQuickFilterManager extends AbstractProjectComponent implement
         element.addContent(filtersElement);
 
         ConnectionManager connectionManager = ConnectionManager.getInstance(getProject());
-        for (var entry : quickFilters.entrySet()) {
+        for (Map.Entry<ObjectQuickFilterKey, ObjectQuickFilter<?>> entry : quickFilters.entrySet()) {
             ObjectQuickFilterKey key = entry.getKey();
             if (connectionManager.isValidConnectionId(key.getConnectionId())) {
                 ObjectQuickFilter<?> filter = entry.getValue();

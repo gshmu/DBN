@@ -47,21 +47,15 @@ import com.intellij.openapi.vfs.VirtualFileManager;
 import com.intellij.openapi.vfs.newvfs.BulkFileListener;
 import com.intellij.openapi.vfs.newvfs.events.VFileDeleteEvent;
 import com.intellij.openapi.vfs.newvfs.events.VFileEvent;
-import lombok.var;
 import org.jdom.Element;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import javax.swing.JList;
-import javax.swing.ListSelectionModel;
+import javax.swing.*;
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import static com.dci.intellij.dbn.common.message.MessageCallback.when;
 import static com.dci.intellij.dbn.common.options.setting.SettingsSupport.stringAttribute;
@@ -136,7 +130,7 @@ public class DDLFileAttachmentManager extends AbstractProjectComponent implement
 
 
     public boolean hasAttachedDDLFiles(DBObjectRef<DBSchemaObject> objectRef) {
-        for (var entry : mappings.entrySet()) {
+        for (Map.Entry<String, DBObjectRef<DBSchemaObject>> entry : mappings.entrySet()) {
             if (entry.getValue().equals(objectRef)) return true;
         }
         return false;
@@ -422,7 +416,7 @@ public class DDLFileAttachmentManager extends AbstractProjectComponent implement
 
     private List<String> getAttachedFileUrls(DBObjectRef<DBSchemaObject> objectRef) {
         List<String> fileUrls = new ArrayList<>();
-        for (var entry : mappings.entrySet()) {
+        for (Map.Entry<String, DBObjectRef<DBSchemaObject>> entry : mappings.entrySet()) {
             String fileUrl = entry.getKey();
             if (entry.getValue().equals(objectRef)) {
                 fileUrls.add(fileUrl);
@@ -486,7 +480,7 @@ public class DDLFileAttachmentManager extends AbstractProjectComponent implement
     @Override
     public Element getState() {
         Element element = new Element("state");
-        for (var entry : mappings.entrySet()) {
+        for (Map.Entry<String, DBObjectRef<DBSchemaObject>> entry : mappings.entrySet()) {
             String fileUrl = entry.getKey();
             DBObjectRef<DBSchemaObject> objectRef = entry.getValue();
 

@@ -22,19 +22,15 @@ import com.intellij.openapi.diagnostic.IdeaLoggingEvent;
 import com.intellij.openapi.diagnostic.SubmittedReportInfo;
 import com.intellij.openapi.project.Project;
 import lombok.extern.slf4j.Slf4j;
-import lombok.var;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.awt.Component;
+import java.awt.*;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
-import java.util.Calendar;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import java.util.function.Consumer;
 
 import static com.dci.intellij.dbn.common.util.Commons.nvl;
@@ -216,7 +212,7 @@ abstract class IssueReportSubmitter extends ErrorReportSubmitter {
 
     static byte[] join(Map<String, String> params) throws UnsupportedEncodingException {
         StringBuilder builder = new StringBuilder();
-        for (var param : params.entrySet()) {
+        for (Map.Entry<String, String> param : params.entrySet()) {
             if (Strings.isEmpty(param.getKey())) {
                 throw new IllegalArgumentException(param.toString());
             }

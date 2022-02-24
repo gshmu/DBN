@@ -37,7 +37,6 @@ import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.util.text.LineReader;
-import lombok.var;
 import org.jdesktop.swingx.util.OS;
 import org.jdom.Element;
 import org.jetbrains.annotations.NonNls;
@@ -52,12 +51,7 @@ import java.nio.file.attribute.PosixFileAttributeView;
 import java.nio.file.attribute.PosixFilePermission;
 import java.security.SecureRandom;
 import java.sql.SQLException;
-import java.util.EnumMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Set;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicReference;
@@ -386,7 +380,7 @@ public class ScriptExecutionManager extends AbstractProjectComponent implements 
         setBooleanAttribute(element, "clear-outputs", clearOutputOption);
         Element interfacesElement = new Element("recently-used-interfaces");
         element.addContent(interfacesElement);
-        for (var entry : recentlyUsedInterfaces.entrySet()) {
+        for (Map.Entry<DatabaseType, String> entry : recentlyUsedInterfaces.entrySet()) {
             DatabaseType databaseType = entry.getKey();
             String interfaceId = entry.getValue();
             Element interfaceElement = new Element("mapping");

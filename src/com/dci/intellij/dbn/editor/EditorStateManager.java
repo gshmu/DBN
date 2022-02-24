@@ -29,7 +29,6 @@ import com.intellij.openapi.fileEditor.FileEditorManagerEvent;
 import com.intellij.openapi.fileEditor.FileEditorManagerListener;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
-import lombok.var;
 import org.jdom.Element;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
@@ -164,7 +163,7 @@ public class EditorStateManager extends AbstractProjectComponent implements Pers
         Element element = new Element("state");
         Element editorProvidersElement = new Element("last-used-providers");
         element.addContent(editorProvidersElement);
-        for (var entry : lastUsedEditorProviders.entrySet()) {
+        for (Map.Entry<DBObjectType, EditorProviderId> entry : lastUsedEditorProviders.entrySet()) {
             DBObjectType objectType = entry.getKey();
             EditorProviderId editorProviderId = entry.getValue();
 
