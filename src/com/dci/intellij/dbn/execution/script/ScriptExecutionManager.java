@@ -37,6 +37,7 @@ import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.util.text.LineReader;
+import lombok.val;
 import org.jdesktop.swingx.util.OS;
 import org.jdom.Element;
 import org.jetbrains.annotations.NonNls;
@@ -380,7 +381,7 @@ public class ScriptExecutionManager extends AbstractProjectComponent implements 
         setBooleanAttribute(element, "clear-outputs", clearOutputOption);
         Element interfacesElement = new Element("recently-used-interfaces");
         element.addContent(interfacesElement);
-        for (Map.Entry<DatabaseType, String> entry : recentlyUsedInterfaces.entrySet()) {
+        for (val entry : recentlyUsedInterfaces.entrySet()) {
             DatabaseType databaseType = entry.getKey();
             String interfaceId = entry.getValue();
             Element interfaceElement = new Element("mapping");

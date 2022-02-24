@@ -34,6 +34,7 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.DialogWrapper;
 import com.intellij.openapi.util.Disposer;
 import lombok.Getter;
+import lombok.val;
 import org.jdom.Element;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
@@ -41,7 +42,6 @@ import org.jetbrains.annotations.Nullable;
 
 import java.sql.SQLException;
 import java.util.List;
-import java.util.Map;
 
 import static com.dci.intellij.dbn.common.message.MessageCallback.when;
 import static com.dci.intellij.dbn.execution.ExecutionStatus.CANCELLED;
@@ -206,8 +206,7 @@ public class MethodExecutionManager extends AbstractProjectComponent implements 
     private void cacheArgumentValues(MethodExecutionInput executionInput) {
         ConnectionHandler connection = executionInput.getExecutionContext().getTargetConnection();
         if (connection != null) {
-            Map<String, MethodExecutionArgumentValue> argumentValues = executionInput.getArgumentValueHistory();
-            for (Map.Entry<String, MethodExecutionArgumentValue> entry : argumentValues.entrySet()) {
+            for (val entry : executionInput.getArgumentValueHistory().entrySet()) {
                 MethodExecutionArgumentValue argumentValue = entry.getValue();
 
                 argumentValuesHistory.cacheVariable(

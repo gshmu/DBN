@@ -7,6 +7,7 @@ import com.dci.intellij.dbn.language.common.WeakRef;
 import com.intellij.openapi.Disposable;
 import com.intellij.openapi.util.Disposer;
 import com.intellij.util.containers.ContainerUtil;
+import lombok.val;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
@@ -46,7 +47,7 @@ public class Cache {
 
     public void cleanup() {
         if (!elements.isEmpty()) {
-            for (Map.Entry<String, CacheValue> entry : elements.entrySet()) {
+            for (val entry : elements.entrySet()) {
                 String key = entry.getKey();
                 CacheValue cacheValue = entry.getValue();
                 if (!isValid(cacheValue)) {

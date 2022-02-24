@@ -47,6 +47,7 @@ import com.intellij.openapi.vfs.VirtualFileManager;
 import com.intellij.openapi.vfs.newvfs.BulkFileListener;
 import com.intellij.openapi.vfs.newvfs.events.VFileDeleteEvent;
 import com.intellij.openapi.vfs.newvfs.events.VFileEvent;
+import lombok.val;
 import org.jdom.Element;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
@@ -130,7 +131,7 @@ public class DDLFileAttachmentManager extends AbstractProjectComponent implement
 
 
     public boolean hasAttachedDDLFiles(DBObjectRef<DBSchemaObject> objectRef) {
-        for (Map.Entry<String, DBObjectRef<DBSchemaObject>> entry : mappings.entrySet()) {
+        for (val entry : mappings.entrySet()) {
             if (entry.getValue().equals(objectRef)) return true;
         }
         return false;
@@ -416,7 +417,7 @@ public class DDLFileAttachmentManager extends AbstractProjectComponent implement
 
     private List<String> getAttachedFileUrls(DBObjectRef<DBSchemaObject> objectRef) {
         List<String> fileUrls = new ArrayList<>();
-        for (Map.Entry<String, DBObjectRef<DBSchemaObject>> entry : mappings.entrySet()) {
+        for (val entry : mappings.entrySet()) {
             String fileUrl = entry.getKey();
             if (entry.getValue().equals(objectRef)) {
                 fileUrls.add(fileUrl);
@@ -480,9 +481,9 @@ public class DDLFileAttachmentManager extends AbstractProjectComponent implement
     @Override
     public Element getState() {
         Element element = new Element("state");
-        for (Map.Entry<String, DBObjectRef<DBSchemaObject>> entry : mappings.entrySet()) {
+        for (val entry : mappings.entrySet()) {
             String fileUrl = entry.getKey();
-            DBObjectRef<DBSchemaObject> objectRef = entry.getValue();
+            val objectRef = entry.getValue();
 
             Element childElement = new Element("mapping");
             childElement.setAttribute("file-url", fileUrl);
