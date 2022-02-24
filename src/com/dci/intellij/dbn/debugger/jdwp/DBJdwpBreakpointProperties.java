@@ -18,10 +18,10 @@ public class DBJdwpBreakpointProperties extends JavaBreakpointProperties<DBJdwpB
     public DBJdwpBreakpointProperties() {
     }
 
-    public DBJdwpBreakpointProperties(ConnectionHandler connectionHandler) {
-        this.connectionHandlerRef = ConnectionHandlerRef.of(connectionHandler);
-        if (connectionHandler != null) {
-            connectionId = connectionHandler.getConnectionId();
+    public DBJdwpBreakpointProperties(ConnectionHandler connection) {
+        this.connectionHandlerRef = ConnectionHandlerRef.of(connection);
+        if (connection != null) {
+            connectionId = connection.getConnectionId();
         }
     }
 
@@ -32,7 +32,7 @@ public class DBJdwpBreakpointProperties extends JavaBreakpointProperties<DBJdwpB
 
     @Nullable
     @Override
-    public ConnectionHandler getConnectionHandler() {
+    public ConnectionHandler getConnection() {
         if (connectionHandlerRef == null && connectionId != null) {
             connectionHandlerRef = ConnectionHandlerRef.of(connectionId);
         }

@@ -110,7 +110,7 @@ import static com.dci.intellij.dbn.object.type.DBObjectRelationType.*;
 import static com.dci.intellij.dbn.object.type.DBObjectType.*;
 
 public class DBObjectBundleImpl extends BrowserTreeNodeBase implements DBObjectBundle, NotificationSupport {
-    private final ConnectionHandlerRef connectionHandler;
+    private final ConnectionHandlerRef connection;
     private final BrowserTreeNode treeParent;
     private final List<BrowserTreeNode> allPossibleTreeChildren;
     private volatile List<BrowserTreeNode> visibleTreeChildren;
@@ -136,11 +136,11 @@ public class DBObjectBundleImpl extends BrowserTreeNodeBase implements DBObjectB
 
     private final PsiFile fakeObjectFile;
 
-    public DBObjectBundleImpl(ConnectionHandler connectionHandler, BrowserTreeNode treeParent) {
-        this.connectionHandler = ConnectionHandlerRef.of(connectionHandler);
-        this.dataTypes = new DBDataTypeBundle(connectionHandler);
+    public DBObjectBundleImpl(ConnectionHandler connection, BrowserTreeNode treeParent) {
+        this.connection = ConnectionHandlerRef.of(connection);
+        this.dataTypes = new DBDataTypeBundle(connection);
         this.treeParent = treeParent;
-        this.configSignature = connectionHandler.getSettings().getDatabaseSettings().getSignature();
+        this.configSignature = connection.getSettings().getDatabaseSettings().getSignature();
 
         this.objectLists = new DBObjectListContainer(this);
         this.consoles = objectLists.createObjectList(CONSOLE, this, DynamicContentStatus.PASSIVE);
@@ -156,7 +156,7 @@ public class DBObjectBundleImpl extends BrowserTreeNodeBase implements DBObjectB
         this.objectLists.createObjectRelationList(ROLE_ROLE, this, roles, roles);
         this.objectLists.createObjectRelationList(ROLE_PRIVILEGE, this, roles, systemPrivileges);
 
-        Project project = connectionHandler.getProject();
+        Project project = connection.getProject();
         PsiFileFactory psiFileFactory = PsiFileFactory.getInstance(project);
         this.fakeObjectFile = Read.call(() -> psiFileFactory.createFileFromText("object", SQLLanguage.INSTANCE, ""));
 
@@ -164,7 +164,7 @@ public class DBObjectBundleImpl extends BrowserTreeNodeBase implements DBObjectB
         ProjectEvents.subscribe(project, this, SourceCodeManagerListener.TOPIC, sourceCodeManagerListener);
         ProjectEvents.subscribe(project, this, CompileManagerListener.TOPIC, compileManagerListener);
 
-        Disposer.register(connectionHandler, this);
+        Disposer.register(connection, this);
     }
 
     private final DataDefinitionChangeListener dataDefinitionChangeListener = new DataDefinitionChangeListener() {
@@ -190,17 +190,16 @@ public class DBObjectBundleImpl extends BrowserTreeNodeBase implements DBObjectB
         @Override
         public void sourceCodeSaved(@NotNull DBSourceCodeVirtualFile sourceCodeFile, @Nullable SourceCodeEditor fileEditor) {
             if (sourceCodeFile.getConnectionId() == getConnectionId()) {
-                Progress.background(getProject(), "Reloading database object", false,
-                        (progress) -> {
-                            DBObject object = sourceCodeFile.getObject();
-                            object.refresh();
-                        });
+                Progress.background(getProject(), "Reloading database object", false, progress -> {
+                    DBObject object = sourceCodeFile.getObject();
+                    object.refresh();
+                });
             }
         }
     };
 
-    private final CompileManagerListener compileManagerListener = (connectionHandler, object) -> {
-        if (this.getConnection().equals(connectionHandler)) {
+    private final CompileManagerListener compileManagerListener = (connection, object) -> {
+        if (this.getConnection().equals(connection)) {
             refreshObjectsStatus(object);
         }
     };
@@ -239,13 +238,13 @@ public class DBObjectBundleImpl extends BrowserTreeNodeBase implements DBObjectB
     @NotNull
     @Override
     public ConnectionId getConnectionId() {
-        return connectionHandler.getConnectionId();
+        return connection.getConnectionId();
     }
 
     @Override
     @NotNull
     public ConnectionHandler getConnection() {
-        return connectionHandler.ensure();
+        return connection.ensure();
     }
 
     @Override
@@ -397,8 +396,8 @@ public class DBObjectBundleImpl extends BrowserTreeNodeBase implements DBObjectB
 
     private void buildTreeChildren() {
         checkDisposed();
-        ConnectionHandler connectionHandler = this.getConnection();
-        Filter<BrowserTreeNode> objectTypeFilter = connectionHandler.getObjectTypeFilter();
+        ConnectionHandler connection = this.getConnection();
+        Filter<BrowserTreeNode> objectTypeFilter = connection.getObjectTypeFilter();
 
         List<BrowserTreeNode> treeChildren = Lists.filter(allPossibleTreeChildren, objectTypeFilter);
         treeChildren = Commons.nvl(treeChildren, Collections.emptyList());
@@ -423,7 +422,7 @@ public class DBObjectBundleImpl extends BrowserTreeNodeBase implements DBObjectB
                 BrowserTreeEventListener.TOPIC,
                 (listener) -> listener.nodeChanged(this, TreeEventType.STRUCTURE_CHANGED));
 
-        DatabaseBrowserManager.scrollToSelectedElement(connectionHandler);
+        DatabaseBrowserManager.scrollToSelectedElement(connection);
     }
 
     @Override
@@ -493,20 +492,20 @@ public class DBObjectBundleImpl extends BrowserTreeNodeBase implements DBObjectB
             @Override
             public void buildToolTip() {
                 append(true, "connection", true);
-                ConnectionHandler connectionHandler = DBObjectBundleImpl.this.getConnection();
-                if (connectionHandler.getConnectionStatus().isConnected()) {
+                ConnectionHandler connection = DBObjectBundleImpl.this.getConnection();
+                if (connection.getConnectionStatus().isConnected()) {
                     append(false, " - active", true);
-                } else if (connectionHandler.canConnect() && !connectionHandler.isValid()) {
+                } else if (connection.canConnect() && !connection.isValid()) {
                     append(false, " - invalid", true);
-                    append(true, connectionHandler.getConnectionStatus().getStatusMessage(), null, "red", false);
+                    append(true, connection.getConnectionStatus().getStatusMessage(), null, "red", false);
                 }
                 createEmptyRow();
 
-                append(true, connectionHandler.getProject().getName(), false);
+                append(true, connection.getProject().getName(), false);
                 append(false, "/", false);
-                append(false, connectionHandler.getName(), false);
+                append(false, connection.getName(), false);
 
-                ConnectionPool connectionPool = connectionHandler.getConnectionPool();
+                ConnectionPool connectionPool = connection.getConnectionPool();
                 append(true, "Pool size: ", null, null, false);
                 append(false, String.valueOf(connectionPool.getSize()), false);
                 append(false, " (", false);
@@ -666,34 +665,33 @@ public class DBObjectBundleImpl extends BrowserTreeNodeBase implements DBObjectB
 
     @Override
     public void refreshObjectsStatus(final @Nullable DBSchemaObject requester) {
-        ConnectionHandler connectionHandler = this.getConnection();
-        if (DatabaseFeature.OBJECT_INVALIDATION.isSupported(connectionHandler)) {
+        ConnectionHandler connection = this.getConnection();
+        if (DatabaseFeature.OBJECT_INVALIDATION.isSupported(connection)) {
             Project project = getProject();
-            Progress.background(project, "Updating objects status", true,
-                    (progress) -> {
-                        try {
-                            List<DBSchema> schemas = requester == null ? getSchemas() : requester.getReferencingSchemas();
+            Progress.background(project, "Updating objects status", true, progress -> {
+                try {
+                    List<DBSchema> schemas = requester == null ? getSchemas() : requester.getReferencingSchemas();
 
-                            int size = schemas.size();
-                            for (int i = 0; i < size; i++) {
-                                ProgressMonitor.checkCancelled();
+                    int size = schemas.size();
+                    for (int i = 0; i < size; i++) {
+                        ProgressMonitor.checkCancelled();
 
-                                DBSchema schema = schemas.get(i);
-                                if (size > 3) {
-                                    progress.setIndeterminate(false);
-                                    progress.setFraction(Progress.progressOf(i, size));
-                                }
-                                progress.setText("Updating object status in schema " + schema.getName() + "... ");
-                                schema.refreshObjectsStatus();
-                            }
-                        } catch (IndexOutOfBoundsException ignore) {
-                            // underlying list may mutate
-                        } catch (SQLException e) {
-                            sendErrorNotification(
-                                    NotificationGroup.BROWSER,
-                                    "Error refreshing object status: {0}", e);
+                        DBSchema schema = schemas.get(i);
+                        if (size > 3) {
+                            progress.setIndeterminate(false);
+                            progress.setFraction(Progress.progressOf(i, size));
                         }
-                    });
+                        progress.setText("Updating object status in schema " + schema.getName() + "... ");
+                        schema.refreshObjectsStatus();
+                    }
+                } catch (IndexOutOfBoundsException ignore) {
+                    // underlying list may mutate
+                } catch (SQLException e) {
+                    sendErrorNotification(
+                            NotificationGroup.BROWSER,
+                            "Error refreshing object status: {0}", e);
+                }
+            });
         }
     }
 
@@ -750,8 +748,8 @@ public class DBObjectBundleImpl extends BrowserTreeNodeBase implements DBObjectB
 
             @Override
             public void loadContent(DynamicContent<DBConsole> dynamicContent, boolean forceReload) {
-                ConnectionHandler connectionHandler = dynamicContent.getConnection();
-                List<DBConsole> consoles = connectionHandler.getConsoleBundle().getConsoles();
+                ConnectionHandler connection = dynamicContent.getConnection();
+                List<DBConsole> consoles = connection.getConsoleBundle().getConsoles();
                 dynamicContent.setElements(consoles);
             }
         };

@@ -87,10 +87,10 @@ public class DatasetEditorModel
         closeResultSet();
         int timeout = getSettings().getGeneralSettings().getFetchTimeout().value();
         AtomicReference<DBNStatement> statementRef = new AtomicReference<>();
-        ConnectionHandler connectionHandler = getConnectionHandler();
-        DBNConnection connection = connectionHandler.getMainConnection();
+        ConnectionHandler connection = getConnectionHandler();
+        DBNConnection conn = connection.getMainConnection();
 
-        loaderCall = new CancellableDatabaseCall<Object>(connectionHandler, connection, timeout, TimeUnit.SECONDS) {
+        loaderCall = new CancellableDatabaseCall<Object>(connection, conn, timeout, TimeUnit.SECONDS) {
             @Override
             public Object execute() throws Exception {
                 DBNResultSet newResultSet = loadResultSet(useCurrentFilter, statementRef);
@@ -127,9 +127,9 @@ public class DatasetEditorModel
     public void setResultSet(DBNResultSet resultSet) throws SQLException {
         super.setResultSet(resultSet);
 
-        ConnectionHandler connectionHandler = getConnectionHandler();
+        ConnectionHandler connection = getConnectionHandler();
         resultSetAdapter = SafeDisposer.replace(resultSetAdapter,
-                DatabaseFeature.UPDATABLE_RESULT_SETS.isSupported(connectionHandler) ?
+                DatabaseFeature.UPDATABLE_RESULT_SETS.isSupported(connection) ?
                     new EditableResultSetAdapter(this, resultSet) :
                     new ReadonlyResultSetAdapter(this, resultSet), false);
 
@@ -158,8 +158,8 @@ public class DatasetEditorModel
 
     private DBNResultSet loadResultSet(boolean useCurrentFilter, AtomicReference<DBNStatement> statementRef) throws SQLException {
         int timeout = getSettings().getGeneralSettings().getFetchTimeout().value();
-        ConnectionHandler connectionHandler = getConnectionHandler();
-        DBNConnection connection = connectionHandler.getMainConnection();
+        ConnectionHandler connection = getConnectionHandler();
+        DBNConnection conn = connection.getMainConnection();
         DBDataset dataset = getDataset();
         Project project = dataset.getProject();
         DatasetFilter filter = DatasetFilterManager.EMPTY_FILTER;
@@ -172,13 +172,13 @@ public class DatasetEditorModel
         String selectStatement = filter.createSelectStatement(dataset, getState().getSortingState());
         DBNStatement statement = null;
         if (isReadonly()) {
-            statement = connection.createStatement();
+            statement = conn.createStatement();
         } else {
             // ensure we always get a statement,
-            ConnectionProperties properties = connection.getProperties();
+            ConnectionProperties properties = conn.getProperties();
             if (properties.is(RS_TYPE_SCROLL_INSENSITIVE)) {
                 try {
-                    statement = connection.createStatement(
+                    statement = conn.createStatement(
                             ResultSet.TYPE_SCROLL_INSENSITIVE,
                             ResultSet.CONCUR_UPDATABLE);
 
@@ -189,7 +189,7 @@ public class DatasetEditorModel
 
             if (statement == null && properties.is(RS_TYPE_FORWARD_ONLY)) {
                 try {
-                    statement = connection.createStatement(
+                    statement = conn.createStatement(
                             ResultSet.TYPE_FORWARD_ONLY,
                             ResultSet.CONCUR_READ_ONLY);
                 } catch (Throwable e) {
@@ -199,7 +199,7 @@ public class DatasetEditorModel
 
             if (statement == null) {
                 // default statement creation
-                statement = connection.createStatement();
+                statement = conn.createStatement();
             }
         }
         statementRef.set(statement);
@@ -356,28 +356,27 @@ public class DatasetEditorModel
     public void deleteRecords(int[] rowIndexes) {
         DatasetEditorTable editorTable = getEditorTable();
         editorTable.fireEditingCancel();
-        Progress.prompt(getProject(), "Deleting records", true,
-                (progress) -> {
-                    progress.setIndeterminate(false);
-                    for (int index : rowIndexes) {
-                        progress.setFraction(Progress.progressOf(index, rowIndexes.length));
-                        DatasetEditorModelRow row = getRowAtIndex(index);
-                        if (progress.isCanceled()) break;
+        Progress.prompt(getProject(), "Deleting records", true, progress -> {
+            progress.setIndeterminate(false);
+            for (int index : rowIndexes) {
+                progress.setFraction(Progress.progressOf(index, rowIndexes.length));
+                DatasetEditorModelRow row = getRowAtIndex(index);
+                if (progress.isCanceled()) break;
 
-                        if (row != null && row.isNot(DELETED)) {
-                            int rsRowIndex = row.getResultSetRowIndex();
-                            row.delete();
-                            if (row.is(DELETED)) {
-                                shiftResultSetRowIndex(rsRowIndex, -1);
-                                notifyRowUpdated(index);
-                            }
-                        }
-                        set(MODIFIED, true);
+                if (row != null && row.isNot(DELETED)) {
+                    int rsRowIndex = row.getResultSetRowIndex();
+                    row.delete();
+                    if (row.is(DELETED)) {
+                        shiftResultSetRowIndex(rsRowIndex, -1);
+                        notifyRowUpdated(index);
                     }
-                    DBDataset dataset = getDataset();
-                    DBNConnection connection = getConnection();
-                    connection.notifyDataChanges(dataset.getVirtualFile());
-                });
+                }
+                set(MODIFIED, true);
+            }
+            DBDataset dataset = getDataset();
+            DBNConnection connection = getConnection();
+            connection.notifyDataChanges(dataset.getVirtualFile());
+        });
     }
 
     public void insertRecord(int rowIndex) {

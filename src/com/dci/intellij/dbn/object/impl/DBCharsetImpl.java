@@ -11,8 +11,8 @@ import java.sql.SQLException;
 
 public class DBCharsetImpl extends DBObjectImpl<DBCharsetMetadata> implements DBCharset {
     private int maxLength;
-    public DBCharsetImpl(ConnectionHandler connectionHandler, DBCharsetMetadata resultSet) throws SQLException {
-        super(connectionHandler, resultSet);
+    public DBCharsetImpl(ConnectionHandler connection, DBCharsetMetadata resultSet) throws SQLException {
+        super(connection, resultSet);
     }
 
     @Override

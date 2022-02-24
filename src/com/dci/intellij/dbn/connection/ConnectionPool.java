@@ -36,7 +36,7 @@ public final class ConnectionPool extends StatefulDisposable.Base implements Not
 
     private int peakPoolSize = 0;
 
-    private final ConnectionHandlerRef connectionHandler;
+    private final ConnectionHandlerRef connection;
 
     private final List<DBNConnection> poolConnections = ContainerUtil.createLockFreeCopyOnWriteList();
     private final Map<SessionId, DBNConnection> dedicatedConnections = new ConcurrentHashMap<>();
@@ -59,9 +59,9 @@ public final class ConnectionPool extends StatefulDisposable.Base implements Not
         }
     };
 
-    ConnectionPool(@NotNull ConnectionHandler connectionHandler) {
-        super(connectionHandler);
-        this.connectionHandler = connectionHandler.getRef();
+    ConnectionPool(@NotNull ConnectionHandler connection) {
+        super(connection);
+        this.connection = connection.ref();
     }
 
     DBNConnection ensureTestConnection() throws SQLException {
@@ -120,32 +120,32 @@ public final class ConnectionPool extends StatefulDisposable.Base implements Not
 
     @NotNull
     private DBNConnection ensureConnection(SessionId sessionId) throws SQLException {
-        DBNConnection connection = dedicatedConnections.get(sessionId);
-        ConnectionHandler connectionHandler = getConnectionHandler();
-        ConnectionManager.setLastUsedConnection(connectionHandler);
+        DBNConnection conn = dedicatedConnections.get(sessionId);
+        ConnectionHandler connection = getConnection();
+        ConnectionManager.setLastUsedConnection(connection);
 
-        if (shouldInit(connection)) {
+        if (shouldInit(conn)) {
             synchronized (this) {
-                if (shouldInit(connection)) {
+                if (shouldInit(conn)) {
                     try {
-                        Resources.close(connection);
+                        Resources.close(conn);
 
-                        connection = ConnectionUtil.connect(connectionHandler, sessionId);
-                        dedicatedConnections.put(sessionId, connection);
+                        conn = ConnectionUtil.connect(connection, sessionId);
+                        dedicatedConnections.put(sessionId, conn);
                         sendInfoNotification(
                                 NotificationGroup.SESSION,
                                 "Connected to database \"{0}\"",
-                                connectionHandler.getConnectionName(connection));
+                                connection.getConnectionName(conn));
                     } finally {
                         ProjectEvents.notify(getProject(),
                                 ConnectionStatusListener.TOPIC,
-                                (listener) -> listener.statusChanged(connectionHandler.getConnectionId(), sessionId));
+                                (listener) -> listener.statusChanged(connection.getConnectionId(), sessionId));
                     }
                 }
             }
         }
 
-        return connection;
+        return conn;
     }
 
     private boolean shouldInit(DBNConnection connection) {
@@ -161,14 +161,14 @@ public final class ConnectionPool extends StatefulDisposable.Base implements Not
     }
 
     @NotNull
-    public ConnectionHandler getConnectionHandler() {
-        return connectionHandler.ensure();
+    public ConnectionHandler getConnection() {
+        return connection.ensure();
     }
 
     @Override
     @NotNull
     public Project getProject() {
-        return getConnectionHandler().getProject();
+        return getConnection().getProject();
     }
 
     @NotNull
@@ -178,12 +178,12 @@ public final class ConnectionPool extends StatefulDisposable.Base implements Not
 
     @NotNull
     private DBNConnection allocateConnection(boolean readonly, int attempts) throws SQLException {
-        ConnectionHandler connectionHandler = getConnectionHandler();
-        ConnectionManager.setLastUsedConnection(connectionHandler);
+        ConnectionHandler connection = getConnection();
+        ConnectionManager.setLastUsedConnection(connection);
 
-        DBNConnection connection = lookupConnection();
-        if (connection == null)  {
-            ConnectionDetailSettings detailSettings = connectionHandler.getSettings().getDetailSettings();
+        DBNConnection conn = lookupConnection();
+        if (conn == null)  {
+            ConnectionDetailSettings detailSettings = connection.getSettings().getDetailSettings();
             if (poolConnections.size() >= detailSettings.getMaxConnectionPoolSize() && !ThreadMonitor.isDispatchThread()) {
                 try {
                     if (attempts > 10) {
@@ -194,34 +194,34 @@ public final class ConnectionPool extends StatefulDisposable.Base implements Not
                 } catch (SQLException e) {
                     throw e;
                 } catch (Throwable e) {
-                    throw new SQLException("Could not allocate connection for '" + connectionHandler.getName() + "'. ", e);
+                    throw new SQLException("Could not allocate connection for '" + connection.getName() + "'. ", e);
                 }
             }
-            connection = createPoolConnection();
+            conn = createPoolConnection();
         }
-        Resources.setReadonly(connectionHandler, connection, readonly);
-        Resources.setAutoCommit(connection, readonly);
-        return connection;
+        Resources.setReadonly(connection, conn, readonly);
+        Resources.setAutoCommit(conn, readonly);
+        return conn;
     }
 
     @Nullable
     private DBNConnection lookupConnection() {
-        ConnectionHandler connectionHandler = getConnectionHandler();
-        ConnectionHandlerStatusHolder connectionStatus = connectionHandler.getConnectionStatus();
+        ConnectionHandler connection = getConnection();
+        ConnectionHandlerStatusHolder statusHolder = connection.getConnectionStatus();
 
-        for (DBNConnection connection : poolConnections) {
+        for (DBNConnection conn : poolConnections) {
             checkDisposed();
-            if (!connection.isReserved() && !connection.isActive()) {
+            if (!conn.isReserved() && !conn.isActive()) {
                 synchronized (this) {
-                    if (!connection.isReserved() && !connection.isActive()) {
-                        connection.set(ResourceStatus.RESERVED, true);
-                        if (!connection.isClosed() && connection.isValid()) {
-                            connectionStatus.setConnected(true);
-                            connectionStatus.setValid(true);
-                            return connection;
+                    if (!conn.isReserved() && !conn.isActive()) {
+                        conn.set(ResourceStatus.RESERVED, true);
+                        if (!conn.isClosed() && conn.isValid()) {
+                            statusHolder.setConnected(true);
+                            statusHolder.setValid(true);
+                            return conn;
                         } else {
-                            poolConnections.remove(connection);
-                            Resources.close(connection);
+                            poolConnections.remove(conn);
+                            Resources.close(conn);
                         }
                     }
                 }
@@ -233,37 +233,37 @@ public final class ConnectionPool extends StatefulDisposable.Base implements Not
     @NotNull
     private DBNConnection createPoolConnection() throws SQLException {
         checkDisposed();
-        ConnectionHandler connectionHandler = getConnectionHandler();
-        ConnectionHandlerStatusHolder connectionStatus = connectionHandler.getConnectionStatus();
-        String connectionName = connectionHandler.getName();
+        ConnectionHandler connection = getConnection();
+        ConnectionHandlerStatusHolder connectionStatus = connection.getConnectionStatus();
+        String connectionName = connection.getName();
         log.debug("[DBN] Attempt to create new pool connection for '" + connectionName + "'");
-        DBNConnection connection = ConnectionUtil.connect(connectionHandler, SessionId.POOL);
+        DBNConnection conn = ConnectionUtil.connect(connection, SessionId.POOL);
 
-        Resources.setAutoCommit(connection, true);
-        Resources.setReadonly(connectionHandler, connection, true);
+        Resources.setAutoCommit(conn, true);
+        Resources.setReadonly(connection, conn, true);
         connectionStatus.setConnected(true);
         connectionStatus.setValid(true);
 
 
-        //connectionHandler.getConnectionBundle().notifyConnectionStatusListeners(connectionHandler);
+        //connection.getConnectionBundle().notifyConnectionStatusListeners(connection);
 
         // pool connections do not need to have current schema set
-        //connectionHandler.getDataDictionary().setTargetSchema(connectionHandler.getCurrentSchemaName(), connection);
-        connection.set(ResourceStatus.RESERVED, true);
+        //connection.getDataDictionary().setTargetSchema(connection.getCurrentSchemaName(), connection);
+        conn.set(ResourceStatus.RESERVED, true);
 
         if (poolConnections.size() == 0) {
             // Notify first pool connection
             sendInfoNotification(
                     NotificationGroup.SESSION,
                     "Connected to database \"{0}\"",
-                    connectionHandler.getConnectionName(connection));
+                    connection.getConnectionName(conn));
         }
 
-        poolConnections.add(connection);
+        poolConnections.add(conn);
         int size = poolConnections.size();
         if (size > peakPoolSize) peakPoolSize = size;
         log.debug("[DBN] Pool connection for '" + connectionName + "' created. Pool size = " + getSize());
-        return connection;
+        return conn;
     }
 
     void releaseConnection(@Nullable DBNConnection connection) {
@@ -272,7 +272,7 @@ public final class ConnectionPool extends StatefulDisposable.Base implements Not
                 try {
                     Resources.rollback(connection);
                     Resources.setAutoCommit(connection, true);
-                    Resources.setReadonly(getConnectionHandler(), connection, true);
+                    Resources.setReadonly(getConnection(), connection, true);
                     connection.set(ResourceStatus.RESERVED, false);
                 } catch (SQLException e) {
                     dropConnection(connection);
@@ -346,25 +346,25 @@ public final class ConnectionPool extends StatefulDisposable.Base implements Not
     void clean() {
         if (!poolConnections.isEmpty()) {
             try {
-                ConnectionHandler connectionHandler = getConnectionHandler();
-                ConnectionHandlerStatusHolder status = connectionHandler.getConnectionStatus();
+                ConnectionHandler connection = getConnection();
+                ConnectionHandlerStatusHolder status = connection.getConnectionStatus();
                 if (!status.is(ConnectionHandlerStatus.CLEANING)) {
                     try {
                         status.set(ConnectionHandlerStatus.CLEANING, true);
 
-                        ConnectionDetailSettings detailSettings = connectionHandler.getSettings().getDetailSettings();
+                        ConnectionDetailSettings detailSettings = connection.getSettings().getDetailSettings();
                         long lastAccessTimestamp = getLastAccessTimestamp();
                         if (lastAccessTimestamp > 0 && TimeUtil.isOlderThan(lastAccessTimestamp, detailSettings.getIdleTimeToDisconnectPool(), TimeUnit.MINUTES)) {
                             // close connections only if pool is passive
-                            for (DBNConnection connection : poolConnections) {
-                                if (!connection.isIdle()) return;
+                            for (DBNConnection conn : poolConnections) {
+                                if (!conn.isIdle()) return;
                             }
 
                             List<DBNConnection> poolConnections = new ArrayList<>(this.poolConnections);
                             this.poolConnections.clear();
 
-                            for (DBNConnection connection : poolConnections) {
-                                Resources.close(connection);
+                            for (DBNConnection conn : poolConnections) {
+                                Resources.close(conn);
                             }
                         }
 

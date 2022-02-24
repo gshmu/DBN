@@ -18,7 +18,7 @@ import com.intellij.openapi.vfs.VirtualFile;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import javax.swing.*;
+import javax.swing.Icon;
 
 public abstract class TransactionEditorAction extends DumbAwareProjectAction {
     TransactionEditorAction(String text, String description, Icon icon) {
@@ -30,17 +30,17 @@ public abstract class TransactionEditorAction extends DumbAwareProjectAction {
         VirtualFile virtualFile = Lookup.getVirtualFile(e);
         boolean enabled = false;
         boolean visible = false;
-        ConnectionHandler connectionHandler = getConnectionHandler(e);
-        if (connectionHandler != null && !connectionHandler.isVirtual()) {
+        ConnectionHandler connection = getConnection(e);
+        if (connection != null && !connection.isVirtual()) {
 
             DatabaseSession session = getDatabaseSession(e);
             if (session != null && !session.isPool()) {
-                DBNConnection connection = getConnection(e);
-                if (connection != null && !connection.isPoolConnection() && connection.hasDataChanges()) {
+                DBNConnection conn = getTargetConnection(e);
+                if (conn != null && !conn.isPoolConnection() && conn.hasDataChanges()) {
                     enabled = true;
                 }
 
-                if (!connectionHandler.isAutoCommit()) {
+                if (!connection.isAutoCommit()) {
                     visible = true;
                     if (virtualFile instanceof DBEditableObjectVirtualFile) {
                         DBEditableObjectVirtualFile databaseFile = (DBEditableObjectVirtualFile) virtualFile;
@@ -62,7 +62,7 @@ public abstract class TransactionEditorAction extends DumbAwareProjectAction {
     }
 
     @Nullable
-    protected ConnectionHandler getConnectionHandler(@NotNull AnActionEvent e) {
+    protected ConnectionHandler getConnection(@NotNull AnActionEvent e) {
         Project project = Lookup.getProject(e);
         VirtualFile virtualFile = Lookup.getVirtualFile(e);
         if (project != null && virtualFile != null) {
@@ -84,11 +84,11 @@ public abstract class TransactionEditorAction extends DumbAwareProjectAction {
     }
 
     @Nullable
-    protected DBNConnection getConnection(@NotNull AnActionEvent e) {
-        ConnectionHandler connectionHandler = getConnectionHandler(e);
-        DatabaseSession databaseSession = getDatabaseSession(e);
-        if (connectionHandler != null && databaseSession != null) {
-            return connectionHandler.getConnectionPool().getSessionConnection(databaseSession.getId());
+    protected DBNConnection getTargetConnection(@NotNull AnActionEvent e) {
+        ConnectionHandler connection = getConnection(e);
+        DatabaseSession session = getDatabaseSession(e);
+        if (connection != null && session != null) {
+            return connection.getConnectionPool().getSessionConnection(session.getId());
         }
         return null;
     }

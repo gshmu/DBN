@@ -37,8 +37,8 @@ public class ConnectionDiagnosticsForm extends DBNFormImpl {
         mainPanel.setBorder(Borders.BOTTOM_LINE_BORDER);
 
         connectionsList.addListSelectionListener(e -> {
-            ConnectionHandler connectionHandler = connectionsList.getSelectedValue();
-            showDetailsForm(connectionHandler);
+            ConnectionHandler connection = connectionsList.getSelectedValue();
+            showDetailsForm(connection);
         });
         connectionsList.setCellRenderer(new ConnectionListCellRenderer());
 
@@ -68,13 +68,13 @@ public class ConnectionDiagnosticsForm extends DBNFormImpl {
         return model;
     }
 
-    private void showDetailsForm(ConnectionHandler connectionHandler) {
+    private void showDetailsForm(ConnectionHandler connection) {
         detailsPanel.removeAll();
-        if (connectionHandler != null) {
-            ConnectionId connectionId = connectionHandler.getConnectionId();
+        if (connection != null) {
+            ConnectionId connectionId = connection.getConnectionId();
             ConnectionDiagnosticsDetailsForm detailForm = resourceMonitorForms.get(connectionId);
             if (detailForm == null) {
-                detailForm = new ConnectionDiagnosticsDetailsForm(this, connectionHandler);
+                detailForm = new ConnectionDiagnosticsDetailsForm(this, connection);
                 resourceMonitorForms.put(connectionId, detailForm);
             }
             detailsPanel.add(detailForm.getComponent(), BorderLayout.CENTER);

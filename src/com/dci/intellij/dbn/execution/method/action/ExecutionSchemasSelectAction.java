@@ -29,10 +29,10 @@ public class ExecutionSchemasSelectAction extends ComboBoxAction {
     @Override
     @NotNull
     protected DefaultActionGroup createPopupActionGroup(JComponent jComponent) {
-        ConnectionHandler connectionHandler = executionInput.getConnection();
+        ConnectionHandler connection = executionInput.getConnection();
         DefaultActionGroup actionGroup = new DefaultActionGroup();
-        if (connectionHandler != null) {
-            for (DBSchema schema : connectionHandler.getObjectBundle().getSchemas()){
+        if (connection != null) {
+            for (DBSchema schema : connection.getObjectBundle().getSchemas()){
                 actionGroup.add(new ExecutionSchemaSelectAction(executionInput, schema));
             }
         }

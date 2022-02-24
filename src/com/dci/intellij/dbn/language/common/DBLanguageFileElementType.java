@@ -1,7 +1,11 @@
 package com.dci.intellij.dbn.language.common;
 
 import com.dci.intellij.dbn.connection.ConnectionHandler;
-import com.intellij.lang.*;
+import com.intellij.lang.ASTNode;
+import com.intellij.lang.Language;
+import com.intellij.lang.ParserDefinition;
+import com.intellij.lang.PsiBuilder;
+import com.intellij.lang.PsiBuilderFactory;
 import com.intellij.lexer.Lexer;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.tree.IFileElementType;
@@ -29,9 +33,9 @@ public class DBLanguageFileElementType extends IFileElementType {
 
         DBLanguageParser parser = (DBLanguageParser) parserDefinition.createParser(project);
         double databaseVersion = 9999;
-        ConnectionHandler activeConnection = file.getConnection();
-        if (activeConnection != null) {
-            databaseVersion = activeConnection.getDatabaseVersion();
+        ConnectionHandler connection = file.getConnection();
+        if (connection != null) {
+            databaseVersion = connection.getDatabaseVersion();
         }
 
         PsiBuilder builder = PsiBuilderFactory.getInstance().createBuilder(project, chameleon, lexer, languageDialect, text);

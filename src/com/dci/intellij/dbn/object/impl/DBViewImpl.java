@@ -38,7 +38,7 @@ public class DBViewImpl extends DBDatasetImpl<DBViewMetadata> implements DBView 
         String typeOwner = metadata.getViewTypeOwner();
         String typeName = metadata.getViewType();
         if (typeOwner != null && typeName != null) {
-            DBObjectBundle objectBundle = this.getConnection().getObjectBundle();
+            DBObjectBundle objectBundle = getConnection().getObjectBundle();
             DBSchema typeSchema = objectBundle.getSchema(typeOwner);
             type = DBObjectRef.of(typeSchema == null ? null : typeSchema.getType(typeName));
         }
@@ -95,12 +95,12 @@ public class DBViewImpl extends DBDatasetImpl<DBViewMetadata> implements DBView 
 
     @Override
     public void executeUpdateDDL(DBContentType contentType, String oldCode, String newCode) throws SQLException {
-        ConnectionHandler connectionHandler = this.getConnection();
+        ConnectionHandler connection = getConnection();
         DatabaseInterface.run(
-                connectionHandler,
-                provider -> PooledConnection.run(false, connectionHandler, getSchemaId(), connection -> {
+                connection,
+                provider -> PooledConnection.run(false, connection, getSchemaId(), conn -> {
                     DatabaseDDLInterface ddlInterface = provider.getDdlInterface();
-                    ddlInterface.updateView(getName(), newCode, connection);
+                    ddlInterface.updateView(getName(), newCode, conn);
                 }));
     }
 

@@ -55,8 +55,8 @@ public class SessionBrowserModelRow
     }
 
     public SessionStatus getSessionStatus() {
-        ConnectionHandler connectionHandler = getModel().getConnectionHandler();
-        DatabaseCompatibilityInterface compatibilityInterface = connectionHandler.getInterfaceProvider().getCompatibilityInterface();
+        ConnectionHandler connection = getModel().getConnectionHandler();
+        DatabaseCompatibilityInterface compatibilityInterface = connection.getInterfaceProvider().getCompatibilityInterface();
         return compatibilityInterface.getSessionStatus(getStatus());
     }
 

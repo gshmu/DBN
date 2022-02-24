@@ -10,15 +10,15 @@ import org.jetbrains.annotations.NotNull;
 
 public class DatabaseInformationOpenAction extends AbstractConnectionAction {
 
-    DatabaseInformationOpenAction(ConnectionHandler connectionHandler) {
-        super("Connection Info", connectionHandler);
-        //getTemplatePresentation().setEnabled(connectionHandler.getConnectionStatus().isConnected());
+    DatabaseInformationOpenAction(ConnectionHandler connection) {
+        super("Connection Info", connection);
+        //getTemplatePresentation().setEnabled(connection.getConnectionStatus().isConnected());
     }
 
     @Override
-    protected void actionPerformed(@NotNull AnActionEvent e, @NotNull Project project, @NotNull ConnectionHandler connectionHandler) {
-        ConnectionAction.invoke("showing database information", true, connectionHandler,
-                (action) -> Progress.prompt(project, "Loading database information for " + connectionHandler.getName(), false,
-                        (progress) -> ConnectionManager.showConnectionInfoDialog(connectionHandler)));
+    protected void actionPerformed(@NotNull AnActionEvent e, @NotNull Project project, @NotNull ConnectionHandler connection) {
+        ConnectionAction.invoke("showing database information", true, connection,
+                action -> Progress.prompt(project, "Loading database information for " + connection.getName(), false,
+                        progress -> ConnectionManager.showConnectionInfoDialog(connection)));
     }
 }

@@ -21,9 +21,9 @@ public class ConnectivityDiagnosticsTableModel extends AbstractDiagnosticsTableM
             "Average Time (ms)",
             "Total Time (ms)"};
 
-    public ConnectivityDiagnosticsTableModel(ConnectionHandler connectionHandler) {
-        super(connectionHandler.getProject());
-        this.connection = connectionHandler.getRef();
+    public ConnectivityDiagnosticsTableModel(ConnectionHandler connection) {
+        super(connection.getProject());
+        this.connection = connection.ref();
     }
 
     @NotNull

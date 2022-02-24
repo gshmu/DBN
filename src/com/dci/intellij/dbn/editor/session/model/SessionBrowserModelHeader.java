@@ -11,13 +11,13 @@ public class SessionBrowserModelHeader extends ResultSetDataModelHeader<SessionB
     public SessionBrowserModelHeader() {
     }
 
-    public SessionBrowserModelHeader(ConnectionHandler connectionHandler, ResultSet resultSet) throws SQLException {
-        super(connectionHandler, resultSet);
+    public SessionBrowserModelHeader(ConnectionHandler connection, ResultSet resultSet) throws SQLException {
+        super(connection, resultSet);
     }
 
     @NotNull
     @Override
-    public SessionBrowserColumnInfo createColumnInfo(ConnectionHandler connectionHandler, ResultSet resultSet, int columnIndex) throws SQLException {
-        return new SessionBrowserColumnInfo(connectionHandler, resultSet, columnIndex);
+    public SessionBrowserColumnInfo createColumnInfo(ConnectionHandler connection, ResultSet resultSet, int columnIndex) throws SQLException {
+        return new SessionBrowserColumnInfo(connection, resultSet, columnIndex);
     }
 }

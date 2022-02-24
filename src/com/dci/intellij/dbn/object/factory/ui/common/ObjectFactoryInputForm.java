@@ -10,18 +10,18 @@ import lombok.Getter;
 import lombok.Setter;
 import org.jetbrains.annotations.NotNull;
 
-import javax.swing.*;
+import javax.swing.JPanel;
 
 public abstract class ObjectFactoryInputForm<T extends ObjectFactoryInput> extends DBNFormImpl {
     @Getter
     @Setter
     private int index;
-    private final ConnectionHandlerRef connectionHandlerRef;
+    private final ConnectionHandlerRef connection;
     private final DBObjectType objectType;
 
-    protected ObjectFactoryInputForm(@NotNull DBNComponent parent, @NotNull ConnectionHandler connectionHandler, DBObjectType objectType, int index) {
+    protected ObjectFactoryInputForm(@NotNull DBNComponent parent, @NotNull ConnectionHandler connection, DBObjectType objectType, int index) {
         super(parent);
-        this.connectionHandlerRef = connectionHandler.getRef();
+        this.connection = connection.ref();
         this.objectType = objectType;
         this.index = index;
     }
@@ -31,8 +31,8 @@ public abstract class ObjectFactoryInputForm<T extends ObjectFactoryInput> exten
     public abstract JPanel getMainComponent();
 
     @NotNull
-    public ConnectionHandler getConnectionHandler() {
-        return connectionHandlerRef.ensure();
+    public ConnectionHandler getConnection() {
+        return connection.ensure();
     }
 
     public DBObjectType getObjectType() {

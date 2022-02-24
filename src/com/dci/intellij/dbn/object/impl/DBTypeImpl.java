@@ -88,8 +88,8 @@ public class DBTypeImpl
         boolean collection = metadata.isCollection();
         set(DBObjectProperty.COLLECTION, collection);
 
-        ConnectionHandler connectionHandler = this.getConnection();
-        nativeDataType = connectionHandler.getObjectBundle().getNativeDataType(typeCode);
+        ConnectionHandler connection = this.getConnection();
+        nativeDataType = connection.getObjectBundle().getNativeDataType(typeCode);
         if (collection) {
             DBDataTypeMetadata collectionMetadata = metadata.getDataType().collection();
             collectionElementTypeRef = new DBDataTypeDefinition(collectionMetadata);
@@ -143,9 +143,9 @@ public class DBTypeImpl
 
     @Override
     public DBType getSuperType() {
-        ConnectionHandler connectionHandler = this.getConnection();
+        ConnectionHandler connection = this.getConnection();
         if (superType == null && superTypeOwner != null && superTypeName != null) {
-            DBSchema schema = connectionHandler.getObjectBundle().getSchema(superTypeOwner);
+            DBSchema schema = connection.getObjectBundle().getSchema(superTypeOwner);
             DBType type = schema == null ? null : schema.getType(superTypeName);
             superType = DBObjectRef.of(type);
             superTypeOwner = null;

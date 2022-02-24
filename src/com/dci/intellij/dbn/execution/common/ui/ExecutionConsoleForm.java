@@ -108,8 +108,8 @@ public class ExecutionConsoleForm extends DBNFormImpl{
             for (TabInfo tabInfo : resultTabs.getTabs()) {
                 ExecutionResult<?> executionResult = getExecutionResult(tabInfo);
                 if (executionResult != null) {
-                    ConnectionHandler connectionHandler = executionResult.getConnectionHandler();
-                    EnvironmentType environmentType = connectionHandler.getEnvironmentType();
+                    ConnectionHandler connection = executionResult.getConnection();
+                    EnvironmentType environmentType = connection.getEnvironmentType();
                     if (visibilitySettings.getExecutionResultTabs().value()){
                         tabInfo.setTabColor(environmentType.getColor());
                     } else {
@@ -369,7 +369,7 @@ public class ExecutionConsoleForm extends DBNFormImpl{
         TabbedPane resultTabs = getResultTabs();
         boolean emptyOutput = Strings.isEmptyOrSpaces(output.getText());
         VirtualFile sourceFile = context.getSourceFile();
-        ConnectionHandler connectionHandler = context.getConnectionHandler();
+        ConnectionHandler connection = context.getConnection();
         boolean selectTab = sourceFile != null;
         for (TabInfo tabInfo : resultTabs.getTabs()) {
             ExecutionResult<?> executionResult = getExecutionResult(tabInfo);
@@ -401,7 +401,7 @@ public class ExecutionConsoleForm extends DBNFormImpl{
                     Icons.EXEC_LOG_OUTPUT_CONSOLE_UNREAD);
             EnvironmentVisibilitySettings visibilitySettings = getEnvironmentSettings(getProject()).getVisibilitySettings();
             if (visibilitySettings.getExecutionResultTabs().value()){
-                tabInfo.setTabColor(connectionHandler.getEnvironmentType().getColor());
+                tabInfo.setTabColor(connection.getEnvironmentType().getColor());
             } else {
                 tabInfo.setTabColor(null);
             }
@@ -450,7 +450,7 @@ public class ExecutionConsoleForm extends DBNFormImpl{
             tabInfo.setObject(resultForm);
             EnvironmentVisibilitySettings visibilitySettings = getEnvironmentSettings(getProject()).getVisibilitySettings();
             if (visibilitySettings.getExecutionResultTabs().value()){
-                tabInfo.setTabColor(executionResult.getConnectionHandler().getEnvironmentType().getColor());
+                tabInfo.setTabColor(executionResult.getConnection().getEnvironmentType().getColor());
             } else {
                 tabInfo.setTabColor(null);
             }

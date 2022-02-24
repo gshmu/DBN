@@ -203,7 +203,7 @@ public abstract class BasePsiElement<T extends ElementTypeBase> extends ASTDeleg
     }
 
     @Nullable
-    public ConnectionHandler getConnectionHandler() {
+    public ConnectionHandler getConnection() {
         DBLanguagePsiFile file = getFile();
         return file.getConnection();
     }
@@ -211,10 +211,10 @@ public abstract class BasePsiElement<T extends ElementTypeBase> extends ASTDeleg
     @Nullable
     public DBSchema getDatabaseSchema() {
         DBLanguagePsiFile file = getFile();
-        ConnectionHandler connectionHandler = getConnectionHandler();
+        ConnectionHandler connection = getConnection();
         SchemaId databaseSchema = file.getSchemaId();
-        if (connectionHandler != null && databaseSchema != null) {
-            DBObjectBundle objectBundle = connectionHandler.getObjectBundle();
+        if (connection != null && databaseSchema != null) {
+            DBObjectBundle objectBundle = connection.getObjectBundle();
             return objectBundle.getSchema(databaseSchema.id());
         }
 
@@ -749,7 +749,7 @@ public abstract class BasePsiElement<T extends ElementTypeBase> extends ASTDeleg
     }
 
     public QuoteDefinition getIdentifierQuotes() {
-        ConnectionHandler activeConnection = getConnectionHandler();
+        ConnectionHandler activeConnection = getConnection();
         if (activeConnection != null) {
             return DatabaseCompatibilityInterface.getInstance(activeConnection).getIdentifierQuotes();
         }

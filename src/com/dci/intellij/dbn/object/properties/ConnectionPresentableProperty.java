@@ -9,14 +9,14 @@ import javax.swing.Icon;
 
 @EqualsAndHashCode(callSuper = false)
 public class ConnectionPresentableProperty extends PresentableProperty{
-    private final ConnectionHandlerRef connectionHandler;
+    private final ConnectionHandlerRef connection;
 
-    public ConnectionPresentableProperty(ConnectionHandler connectionHandler) {
-        this.connectionHandler = connectionHandler.getRef();
+    public ConnectionPresentableProperty(ConnectionHandler connection) {
+        this.connection = connection.ref();
     }
 
-    public ConnectionHandler getConnectionHandler() {
-        return connectionHandler.ensure();
+    public ConnectionHandler getConnection() {
+        return connection.ensure();
     }
 
     @Override
@@ -26,16 +26,16 @@ public class ConnectionPresentableProperty extends PresentableProperty{
 
     @Override
     public String getValue() {
-        return getConnectionHandler().getName();
+        return getConnection().getName();
     }
 
     @Override
     public Icon getIcon() {
-        return getConnectionHandler().getIcon();
+        return getConnection().getIcon();
     }
 
     @Override
     public Navigatable getNavigatable() {
-        return getConnectionHandler().getObjectBundle();
+        return getConnection().getObjectBundle();
     }
 }

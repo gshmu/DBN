@@ -10,20 +10,21 @@ import com.dci.intellij.dbn.connection.transaction.TransactionAction;
 import com.intellij.openapi.project.Project;
 import org.jetbrains.annotations.NotNull;
 
-import javax.swing.*;
+import javax.swing.AbstractAction;
+import javax.swing.Action;
 import java.awt.event.ActionEvent;
 import java.util.List;
 
 import static com.dci.intellij.dbn.connection.transaction.TransactionAction.*;
 
 public class PendingTransactionsDetailDialog extends DBNDialog<PendingTransactionsDetailForm> {
-    private final ConnectionHandlerRef connectionHandlerRef;
+    private final ConnectionHandlerRef connection;
     private final TransactionAction additionalOperation;
     private final boolean showActions;
 
-    public PendingTransactionsDetailDialog(ConnectionHandler connectionHandler, TransactionAction additionalOperation, boolean showActions) {
-        super(connectionHandler.getProject(), "Open transactions", true);
-        this.connectionHandlerRef = connectionHandler.getRef();
+    public PendingTransactionsDetailDialog(ConnectionHandler connection, TransactionAction additionalOperation, boolean showActions) {
+        super(connection.getProject(), "Open transactions", true);
+        this.connection = connection.ref();
         this.additionalOperation = additionalOperation;
         this.showActions = showActions;
         setModal(false);
@@ -34,12 +35,12 @@ public class PendingTransactionsDetailDialog extends DBNDialog<PendingTransactio
     @NotNull
     @Override
     protected PendingTransactionsDetailForm createForm() {
-        return new PendingTransactionsDetailForm(this, getConnectionHandler(), additionalOperation, showActions);
+        return new PendingTransactionsDetailForm(this, getConnection(), additionalOperation, showActions);
     }
 
     @NotNull
-    public ConnectionHandler getConnectionHandler() {
-        return connectionHandlerRef.ensure();
+    public ConnectionHandler getConnection() {
+        return connection.ensure();
     }
 
     @Override
@@ -91,16 +92,16 @@ public class PendingTransactionsDetailDialog extends DBNDialog<PendingTransactio
     }
 
     protected void executeActions(List<TransactionAction>  actions) {
-        ConnectionHandler connectionHandler = getConnectionHandler();
+        ConnectionHandler connection = getConnection();
         List<DBNConnection> connections = getForm().getConnections();
         DatabaseTransactionManager transactionManager = getTransactionManager();
-        for (DBNConnection connection : connections) {
-            transactionManager.execute(connectionHandler, connection, actions, true, null);
+        for (DBNConnection conn : connections) {
+            transactionManager.execute(connection, conn, actions, true, null);
         }
     }
 
     private DatabaseTransactionManager getTransactionManager() {
-        Project project = getConnectionHandler().getProject();
+        Project project = getConnection().getProject();
         return DatabaseTransactionManager.getInstance(project);
     }
 }

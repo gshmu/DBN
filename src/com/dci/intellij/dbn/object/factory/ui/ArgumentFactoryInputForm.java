@@ -10,7 +10,11 @@ import com.dci.intellij.dbn.object.factory.ui.common.ObjectFactoryInputForm;
 import com.dci.intellij.dbn.object.type.DBObjectType;
 import org.jetbrains.annotations.NotNull;
 
-import javax.swing.*;
+import javax.swing.Icon;
+import javax.swing.JCheckBox;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JTextField;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
@@ -23,8 +27,8 @@ public class ArgumentFactoryInputForm extends ObjectFactoryInputForm<ArgumentFac
     private JPanel dataTypeEditor;
     private final boolean enforceInArgument;
 
-    ArgumentFactoryInputForm(DBNForm parent, ConnectionHandler connectionHandler, boolean enforceInArgument, int index) {
-        super(parent, connectionHandler, DBObjectType.ARGUMENT, index);
+    ArgumentFactoryInputForm(DBNForm parent, ConnectionHandler connection, boolean enforceInArgument, int index) {
+        super(parent, connection, DBObjectType.ARGUMENT, index);
         this.enforceInArgument = enforceInArgument;
         iconLabel.setText(null);
         iconLabel.setIcon(enforceInArgument ? Icons.DBO_ARGUMENT_IN : DBObjectType.ARGUMENT.getIcon());
@@ -74,6 +78,6 @@ public class ArgumentFactoryInputForm extends ObjectFactoryInputForm<ArgumentFac
     }
 
     private void createUIComponents() {
-        dataTypeEditor = new DataTypeEditor(getConnectionHandler());
+        dataTypeEditor = new DataTypeEditor(getConnection());
     }
 }

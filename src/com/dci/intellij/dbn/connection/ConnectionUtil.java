@@ -26,43 +26,43 @@ public class ConnectionUtil {
     private ConnectionUtil() {}
 
 
-    public static DBNConnection connect(ConnectionHandler connectionHandler, SessionId sessionId) throws SQLException {
-        ConnectionHandlerStatusHolder connectionStatus = connectionHandler.getConnectionStatus();
-        ConnectionSettings connectionSettings = connectionHandler.getSettings();
+    public static DBNConnection connect(ConnectionHandler connection, SessionId sessionId) throws SQLException {
+        ConnectionHandlerStatusHolder connectionStatus = connection.getConnectionStatus();
+        ConnectionSettings connectionSettings = connection.getSettings();
         ConnectionPropertiesSettings propertiesSettings = connectionSettings.getPropertiesSettings();
 
-        DiagnosticsManager diagnosticsManager = DiagnosticsManager.getInstance(connectionHandler.getProject());
-        DiagnosticBundle<SessionId> diagnostics = diagnosticsManager.getConnectivityDiagnostics(connectionHandler.getConnectionId());
+        DiagnosticsManager diagnosticsManager = DiagnosticsManager.getInstance(connection.getProject());
+        DiagnosticBundle<SessionId> diagnostics = diagnosticsManager.getConnectivityDiagnostics(connection.getConnectionId());
 
 
         // do not retry connection on authentication error unless
         // credentials changed (account can be locked on several invalid trials)
         AuthenticationError authenticationError = connectionStatus.getAuthenticationError();
-        AuthenticationInfo authenticationInfo = ensureAuthenticationInfo(connectionHandler);
+        AuthenticationInfo authenticationInfo = ensureAuthenticationInfo(connection);
 
         if (authenticationError != null && authenticationError.getAuthenticationInfo().isSame(authenticationInfo) && !authenticationError.isExpired()) {
             throw authenticationError.getException();
         }
 
         return DatabaseInterface.call(
-                connectionHandler,
+                connection,
                 (interfaceProvider) -> {
                     long start = System.currentTimeMillis();
                     try {
                         DatabaseAttachmentHandler attachmentHandler = interfaceProvider.getCompatibilityInterface().getDatabaseAttachmentHandler();
-                        DBNConnection connection = connect(
+                        DBNConnection conn = connect(
                                 connectionSettings,
                                 connectionStatus,
-                                connectionHandler.getTemporaryAuthenticationInfo(),
+                                connection.getTemporaryAuthenticationInfo(),
                                 sessionId,
                                 propertiesSettings.isEnableAutoCommit(),
                                 attachmentHandler);
-                        ConnectionInfo connectionInfo = new ConnectionInfo(connection.getMetaData());
-                        connectionHandler.setConnectionInfo(connectionInfo);
+                        ConnectionInfo connectionInfo = new ConnectionInfo(conn.getMetaData());
+                        connection.setConnectionInfo(connectionInfo);
                         connectionStatus.setAuthenticationError(null);
-                        connectionHandler.getCompatibility().read(connection.getMetaData());
+                        connection.getCompatibility().read(conn.getMetaData());
                         diagnostics.log(sessionId, false, false, millisSince(start));
-                        return connection;
+                        return conn;
                     } catch (SQLTimeoutException e) {
                         diagnostics.log(sessionId, false, true, millisSince(start));
                         throw e;
@@ -83,12 +83,12 @@ public class ConnectionUtil {
     }
 
     @NotNull
-    private static AuthenticationInfo ensureAuthenticationInfo(ConnectionHandler connectionHandler) {
-        ConnectionSettings connectionSettings = connectionHandler.getSettings();
+    private static AuthenticationInfo ensureAuthenticationInfo(ConnectionHandler connection) {
+        ConnectionSettings connectionSettings = connection.getSettings();
         ConnectionDatabaseSettings databaseSettings = connectionSettings.getDatabaseSettings();
         AuthenticationInfo authenticationInfo = databaseSettings.getAuthenticationInfo();
         if (!authenticationInfo.isProvided()) {
-            authenticationInfo = connectionHandler.getTemporaryAuthenticationInfo();
+            authenticationInfo = connection.getTemporaryAuthenticationInfo();
         }
         return authenticationInfo;
     }

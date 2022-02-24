@@ -15,10 +15,10 @@ public class ScriptExecutionInput extends RemoteExecutionInput {
     private VirtualFile sourceFile;
     private boolean clearOutput;
 
-    ScriptExecutionInput(Project project, VirtualFile sourceFile, ConnectionHandler connectionHandler, SchemaId targetSchema, boolean clearOutput) {
+    ScriptExecutionInput(Project project, VirtualFile sourceFile, ConnectionHandler connection, SchemaId targetSchema, boolean clearOutput) {
         super(project, ExecutionTarget.SCRIPT);
         this.sourceFile = sourceFile;
-        setTargetConnection(connectionHandler);
+        setTargetConnection(connection);
         setSchema(targetSchema);
         this.clearOutput = clearOutput;
     }

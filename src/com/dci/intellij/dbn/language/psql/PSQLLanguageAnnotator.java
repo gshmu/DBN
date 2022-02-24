@@ -58,8 +58,8 @@ public class PSQLLanguageAnnotator implements Annotator {
                         } else if (basePsiElement instanceof IdentifierPsiElement) {
                             if (!basePsiElement.isInjectedContext()) {
                                 IdentifierPsiElement identifierPsiElement = (IdentifierPsiElement) basePsiElement;
-                                ConnectionHandler connectionHandler = identifierPsiElement.getConnectionHandler();
-                                if (connectionHandler != null) {
+                                ConnectionHandler connection = identifierPsiElement.getConnection();
+                                if (connection != null) {
                                     annotateIdentifier(identifierPsiElement, holder);
                                 }
                             }
@@ -151,8 +151,8 @@ public class PSQLLanguageAnnotator implements Annotator {
 
     private static void annotateObject(@NotNull IdentifierPsiElement objectReference, AnnotationHolder holder) {
         PsiElement reference = objectReference.resolve();
-        /*ConnectionHandler connectionHandler = objectReference.getCache();
-        if (reference == null && connectionHandler != null && connectionHandler.getConnectionStatus().isValid()) {
+        /*ConnectionHandler connection = objectReference.getCache();
+        if (reference == null && connection != null && connection.getConnectionStatus().isValid()) {
             Annotation annotation = holder.createErrorAnnotation(objectReference.getAstNode(),
                     "Unknown " + objectReference.getObjectTypeName());
             annotation.setTextAttributes(PSQLTextAttributesKeys.UNKNOWN_IDENTIFIER);

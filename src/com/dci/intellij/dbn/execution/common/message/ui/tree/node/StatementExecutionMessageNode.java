@@ -15,7 +15,7 @@ public class StatementExecutionMessageNode extends MessagesTreeLeafNode<Statemen
         return
             executionMessage.getText() + " " +
             executionMessage.getCauseMessage() + " - Connection: " +
-            executionMessage.getExecutionResult().getConnectionHandler().getName() + ": " +
+            executionMessage.getExecutionResult().getConnection().getName() + ": " +
             executionMessage.getExecutionResult().getExecutionDuration() + "ms";
     }
 }

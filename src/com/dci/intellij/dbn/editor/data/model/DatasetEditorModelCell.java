@@ -70,7 +70,7 @@ public class DatasetEditorModelCell
                 return;
             }
 
-            ConnectionHandler connectionHandler = getConnectionHandler();
+            ConnectionHandler connection = getConnectionHandler();
             try {
                 clearError();
                 int columnIndex = columnInfo.getResultSetColumnIndex();
@@ -97,7 +97,7 @@ public class DatasetEditorModelCell
             } catch (Exception e) {
                 //try { Thread.sleep(6000); } catch (InterruptedException e1) { e1.printStackTrace(); }
 
-                DatasetEditorError error = new DatasetEditorError(connectionHandler, e);
+                DatasetEditorError error = new DatasetEditorError(connection, e);
 
                 // error may affect other cells in the row (e.g. foreign key constraint for multiple primary key)
                 if (e instanceof SQLException) {
@@ -108,8 +108,8 @@ public class DatasetEditorModelCell
                 if (!error.isNotified()) notifyError(error, !bulk);
             } finally {
                 if (valueChanged) {
-                    DBNConnection connection = getModel().getConnection();
-                    connection.notifyDataChanges(getDataset().getVirtualFile());
+                    DBNConnection conn = getModel().getConnection();
+                    conn.notifyDataChanges(getDataset().getVirtualFile());
                     ProjectEvents.notify(getProject(),
                             DatasetEditorModelCellValueListener.TOPIC,
                             (listener) -> listener.valueChanged(this));
@@ -117,12 +117,12 @@ public class DatasetEditorModelCell
                 try {
                     resultSetAdapter.refreshRow();
                 } catch (SQLException e) {
-                    DatasetEditorError error = new DatasetEditorError(connectionHandler, e);
+                    DatasetEditorError error = new DatasetEditorError(connection, e);
                     row.notifyError(error, false, !bulk);
                 }
             }
 
-            if (row.isNot(INSERTING) && !connectionHandler.isAutoCommit()) {
+            if (row.isNot(INSERTING) && !connection.isAutoCommit()) {
                 reset();
                 set(MODIFIED, true);
 
@@ -169,8 +169,8 @@ public class DatasetEditorModelCell
             DatasetEditorError error = new DatasetEditorError(errorMessage, getColumnInfo().getColumn());
             getRow().notifyError(error, true, true);
             setUserValue(userValue);
-            ConnectionHandler connectionHandler = getConnectionHandler();
-            if (row.isNot(INSERTING) && !connectionHandler.isAutoCommit()) {
+            ConnectionHandler connection = getConnectionHandler();
+            if (row.isNot(INSERTING) && !connection.isAutoCommit()) {
                 reset();
                 set(MODIFIED, true);
 

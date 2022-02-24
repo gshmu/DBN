@@ -79,7 +79,7 @@ public class ValueListPopupProvider implements TextFieldPopupProvider{
             Progress.prompt(
                     editorComponent.getProject(),
                     "Loading " + getDescription(), true,
-                    (progress) -> {
+                    progress -> {
                         // load the values
                         getValues();
                         getSecondaryValues();

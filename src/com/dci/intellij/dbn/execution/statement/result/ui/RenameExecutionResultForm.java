@@ -38,7 +38,7 @@ public class RenameExecutionResultForm extends DBNFormImpl{
         DBNHeaderForm headerForm = new DBNHeaderForm(this,
                 "Execution result - " + executionResult.getName(),
                 executionResult.getIcon(),
-                executionResult.getConnectionHandler().getEnvironmentType().getColor());
+                executionResult.getConnection().getEnvironmentType().getColor());
         headerPanel.add(headerForm.getComponent(), BorderLayout.CENTER);
 
         String hint = "Use \"Sticky\" option to retain the name after the result is closed.";

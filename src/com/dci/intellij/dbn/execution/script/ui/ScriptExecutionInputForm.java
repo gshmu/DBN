@@ -76,10 +76,10 @@ public class ScriptExecutionInputForm extends DBNFormImpl{
         cmdLineExecutableComboBox.setValueFactory(new PresentableFactory<CmdLineInterface>("New Cmd-Line Interface...") {
             @Override
             public void create(ParametricRunnable.Basic<CmdLineInterface> callback) {
-                ConnectionHandler connectionHandler = connectionComboBox.getSelectedValue();
-                if (connectionHandler != null) {
+                ConnectionHandler connection = connectionComboBox.getSelectedValue();
+                if (connection != null) {
                     ScriptExecutionManager scriptExecutionManager = ScriptExecutionManager.getInstance(project);
-                    scriptExecutionManager.createCmdLineInterface(connectionHandler.getDatabaseType(), null, callback);
+                    scriptExecutionManager.createCmdLineInterface(connection.getDatabaseType(), null, callback);
                 }
             }
         });
@@ -122,18 +122,18 @@ public class ScriptExecutionInputForm extends DBNFormImpl{
     }
 
     private void updateControls(ScriptExecutionInput executionInput) {
-        ConnectionHandler connectionHandler = executionInput.getConnection();
+        ConnectionHandler connection = executionInput.getConnection();
         SchemaId schema = executionInput.getSchema();
         CmdLineInterface cmdLineInterface;
-        if (connectionHandler != null && !connectionHandler.isVirtual()) {
-            schema = Commons.nvln(schema, connectionHandler.getDefaultSchema());
-            connectionComboBox.setSelectedValue(connectionHandler);
-            schemaComboBox.setValues(connectionHandler.getSchemaIds());
+        if (connection != null && !connection.isVirtual()) {
+            schema = Commons.nvln(schema, connection.getDefaultSchema());
+            connectionComboBox.setSelectedValue(connection);
+            schemaComboBox.setValues(connection.getSchemaIds());
             schemaComboBox.setSelectedValue(schema);
             schemaComboBox.setEnabled(true);
-            headerForm.setBackground(connectionHandler.getEnvironmentType().getColor());
+            headerForm.setBackground(connection.getEnvironmentType().getColor());
 
-            DatabaseType databaseType = connectionHandler.getDatabaseType();
+            DatabaseType databaseType = connection.getDatabaseType();
             ScriptExecutionManager scriptExecutionManager = ScriptExecutionManager.getInstance(getProject());
             List<CmdLineInterface> interfaces = scriptExecutionManager.getAvailableInterfaces(databaseType);
             cmdLineExecutableComboBox.clearValues();
@@ -146,7 +146,7 @@ public class ScriptExecutionInputForm extends DBNFormImpl{
 
             }
 
-            executionInput.setTargetConnection(connectionHandler);
+            executionInput.setTargetConnection(connection);
             executionInput.setSchema(schema);
             executionInput.setCmdLineInterface(cmdLineInterface);
         } else {

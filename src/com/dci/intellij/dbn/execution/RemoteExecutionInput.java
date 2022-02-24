@@ -11,7 +11,7 @@ public abstract class RemoteExecutionInput extends ExecutionInput{
 
     @Override
     public ConnectionId getConnectionId() {
-        ConnectionHandler connectionHandler = getConnection();
-        return connectionHandler == null ? null : connectionHandler.getConnectionId();
+        ConnectionHandler connection = getConnection();
+        return connection == null ? null : connection.getConnectionId();
     }
 }

@@ -58,7 +58,7 @@ public class MethodExecutionHistorySimpleTreeModel extends MethodExecutionHistor
             MethodTreeNode methodNode) {
         for (MethodExecutionInput executionInput : executionInputs) {
             DBObjectRef<DBMethod> methodRef = executionInput.getMethodRef();
-            if (executionInput.getConnectionId() == connectionNode.getConnectionHandlerId() &&
+            if (executionInput.getConnectionId() == connectionNode.getConnectionId() &&
                 Strings.equalsIgnoreCase(methodRef.getSchemaName(), schemaNode.getName()) &&
                 Strings.equalsIgnoreCase(methodRef.getQualifiedObjectName(), methodNode.getName()) &&
                 methodRef.getOverload() == methodNode.getOverload() ) {

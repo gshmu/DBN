@@ -57,8 +57,8 @@ public abstract class ObjectListShowAction extends DumbAwareAction {
         DBObject sourceObject = getSourceObject();
         String listName = getListName();
         ConnectionAction.invoke("loading " + listName, true, sourceObject,
-                (action) -> Progress.prompt(sourceObject.getProject(), "Loading " + listName, true,
-                        (progress) -> {
+                action -> Progress.prompt(sourceObject.getProject(), "Loading " + listName, true,
+                        progress -> {
                             if (!action.isCancelled()) {
                                 List<? extends DBObject> recentObjectList = getRecentObjectList();
                                 List<? extends DBObject> objects = getObjectList();

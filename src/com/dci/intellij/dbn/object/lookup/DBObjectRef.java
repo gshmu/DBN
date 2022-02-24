@@ -67,10 +67,9 @@ public class DBObjectRef<T extends DBObject> implements Comparable<DBObjectRef<?
         this.overload = object.getOverload();
         DBObject parentObj = object.getParentObject();
         if (parentObj != null) {
-            this.parent = parentObj.getRef();
+            this.parent = parentObj.ref();
         } else if (!(object instanceof DBVirtualObject)){
-            ConnectionHandler connectionHandler = object.getConnection();
-            this.connectionId = connectionHandler.getConnectionId();
+            this.connectionId = object.getConnectionId();
         }
     }
 
@@ -279,12 +278,12 @@ public class DBObjectRef<T extends DBObject> implements Comparable<DBObjectRef<?
     }
 
     public boolean is(@NotNull DBObject object) {
-        return Objects.equals(object.getRef(), this);
+        return Objects.equals(object.ref(), this);
     }
 
     @Contract("null -> null;!null -> !null;")
     public static <T extends DBObject> DBObjectRef<T> of(@Nullable T object) {
-        return object == null ? null : (DBObjectRef<T>) object.getRef();
+        return object == null ? null : (DBObjectRef<T>) object.ref();
     }
 
     @Nullable
@@ -337,9 +336,9 @@ public class DBObjectRef<T extends DBObject> implements Comparable<DBObjectRef<?
         T object = getObject();
         if (object == null) {
             clearReference();
-            ConnectionHandler connectionHandler = resolveConnection(project);
-            if (Failsafe.check(connectionHandler) && connectionHandler.isEnabled()) {
-                object = lookup(connectionHandler);
+            ConnectionHandler connection = resolveConnection(project);
+            if (Failsafe.check(connection) && connection.isEnabled()) {
+                object = lookup(connection);
                 if (object != null) {
                     reference = WeakRef.of(object);
                 }
@@ -373,13 +372,13 @@ public class DBObjectRef<T extends DBObject> implements Comparable<DBObjectRef<?
 
 
     @Nullable
-    private T lookup(@NotNull ConnectionHandler connectionHandler) {
+    private T lookup(@NotNull ConnectionHandler connection) {
         DBObject object = null;
         if (parent == null) {
-            DBObjectBundle objectBundle = connectionHandler.getObjectBundle();
+            DBObjectBundle objectBundle = connection.getObjectBundle();
             object = objectBundle.getObject(objectType, objectName, overload);
         } else {
-            Project project = connectionHandler.getProject();
+            Project project = connection.getProject();
             DBObject parentObject = parent.get(project);
             if (parentObject != null) {
                 object = parentObject.getChildObject(objectType, objectName, overload, true);

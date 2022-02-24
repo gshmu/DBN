@@ -102,7 +102,7 @@ public class DBVirtualObject extends DBObjectImpl implements PsiReference {
     }, false));
 
     public DBVirtualObject(@NotNull DBObjectType objectType, @NotNull BasePsiElement psiElement) {
-        super(psiElement.getConnectionHandler(), objectType, psiElement.getText());
+        super(psiElement.getConnection(), objectType, psiElement.getText());
 
         psiFacade = new DBObjectPsiFacade(psiElement);
         relevantPsiElement = PsiElementRef.from(psiElement);
@@ -179,7 +179,7 @@ public class DBVirtualObject extends DBObjectImpl implements PsiReference {
 
     @NotNull
     public LookupItemBuilder getLookupItemBuilder(DBLanguage language) {
-        return lookupItemBuilder.computeIfAbsent(language.getID(), id -> new ObjectLookupItemBuilder(getRef(), language));
+        return lookupItemBuilder.computeIfAbsent(language.getID(), id -> new ObjectLookupItemBuilder(ref(), language));
     }
 
     @Override
@@ -342,12 +342,12 @@ public class DBVirtualObject extends DBObjectImpl implements PsiReference {
     public ConnectionHandler getConnection() {
         BasePsiElement underlyingPsiElement = Failsafe.nd(getUnderlyingPsiElement());
         DBLanguagePsiFile file = underlyingPsiElement.getFile();
-        ConnectionHandler connectionHandler = file.getConnection();
-        if (connectionHandler == null) {
+        ConnectionHandler connection = file.getConnection();
+        if (connection == null) {
             ConnectionManager connectionManager = ConnectionManager.getInstance(getProject());
             return connectionManager.getConnectionBundle().getVirtualConnection(ConnectionId.VIRTUAL_ORACLE);
         }
-        return connectionHandler;
+        return connection;
     }
 
     public void setParentObject(DBVirtualObject virtualObject) {

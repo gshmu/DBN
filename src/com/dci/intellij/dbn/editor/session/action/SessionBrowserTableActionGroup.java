@@ -1,7 +1,6 @@
 package com.dci.intellij.dbn.editor.session.action;
 
 import com.dci.intellij.dbn.common.Icons;
-import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.common.util.Strings;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.database.DatabaseFeature;
@@ -39,8 +38,8 @@ public class SessionBrowserTableActionGroup extends DefaultActionGroup {
         if (table.getSelectedRowCount() > 0) {
             int rowCount = table.getSelectedRowCount();
             addSeparator();
-            ConnectionHandler connectionHandler = getConnectionHandler();
-            if (DatabaseFeature.SESSION_DISCONNECT.isSupported(connectionHandler)) {
+            ConnectionHandler connection = getConnection();
+            if (DatabaseFeature.SESSION_DISCONNECT.isSupported(connection)) {
                 add(new DisconnectSessionAction(rowCount > 1));
             }
             add(new KillSessionAction(rowCount > 1));
@@ -77,8 +76,8 @@ public class SessionBrowserTableActionGroup extends DefaultActionGroup {
     }
 
     @NotNull
-    private ConnectionHandler getConnectionHandler() {
-        return Failsafe.nn(getSessionBrowser().getConnection());
+    private ConnectionHandler getConnection() {
+        return getSessionBrowser().getConnection();
     }
 
     private class ReloadSessionsAction extends DumbAwareAction {

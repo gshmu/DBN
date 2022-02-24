@@ -11,14 +11,14 @@ import org.jetbrains.annotations.NotNull;
 import javax.swing.Action;
 
 public class ConnectionInfoDialog extends DBNDialog<ConnectionInfoForm> {
-    private ConnectionHandlerRef connectionHandlerRef;
+    private ConnectionHandlerRef connection;
     private ConnectionInfo connectionInfo;
     private String connectionName;
     private EnvironmentType environmentType;
 
-    public ConnectionInfoDialog(@NotNull ConnectionHandler connectionHandler) {
-        super(connectionHandler.getProject(), "Connection information", true);
-        connectionHandlerRef = connectionHandler.getRef();
+    public ConnectionInfoDialog(@NotNull ConnectionHandler connection) {
+        super(connection.getProject(), "Connection information", true);
+        this.connection = connection.ref();
         renameAction(getCancelAction(), "Close");
         setResizable(false);
         init();
@@ -37,9 +37,9 @@ public class ConnectionInfoDialog extends DBNDialog<ConnectionInfoForm> {
     @NotNull
     @Override
     protected ConnectionInfoForm createForm() {
-        if (connectionHandlerRef != null) {
-            ConnectionHandler connectionHandler = connectionHandlerRef.ensure();
-            return new ConnectionInfoForm(this, connectionHandler);
+        if (connection != null) {
+            ConnectionHandler connection = this.connection.ensure();
+            return new ConnectionInfoForm(this, connection);
         } else {
             return new ConnectionInfoForm(this, connectionInfo, connectionName, environmentType);
         }

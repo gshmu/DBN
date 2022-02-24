@@ -5,7 +5,11 @@ import com.dci.intellij.dbn.browser.model.BrowserTreeNode;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.database.DatabaseCompatibilityInterface;
 import com.dci.intellij.dbn.database.common.metadata.def.DBRoleMetadata;
-import com.dci.intellij.dbn.object.*;
+import com.dci.intellij.dbn.object.DBGrantedPrivilege;
+import com.dci.intellij.dbn.object.DBGrantedRole;
+import com.dci.intellij.dbn.object.DBPrivilege;
+import com.dci.intellij.dbn.object.DBRole;
+import com.dci.intellij.dbn.object.DBUser;
 import com.dci.intellij.dbn.object.common.DBObjectBundle;
 import com.dci.intellij.dbn.object.common.DBObjectImpl;
 import com.dci.intellij.dbn.object.common.list.DBObjectList;
@@ -29,8 +33,8 @@ public class DBRoleImpl extends DBObjectImpl<DBRoleMetadata> implements DBRole {
     private DBObjectList<DBGrantedPrivilege> privileges;
     private DBObjectList<DBGrantedRole> grantedRoles;
 
-    public DBRoleImpl(ConnectionHandler connectionHandler, DBRoleMetadata metadata) throws SQLException {
-        super(connectionHandler, metadata);
+    public DBRoleImpl(ConnectionHandler connection, DBRoleMetadata metadata) throws SQLException {
+        super(connection, metadata);
     }
 
     @Override
@@ -125,7 +129,7 @@ public class DBRoleImpl extends DBObjectImpl<DBRoleMetadata> implements DBRole {
         List<DBObjectNavigationList> navigationLists = new LinkedList<>();
         navigationLists.add(DBObjectNavigationList.create("User grantees", getUserGrantees()));
 
-        DatabaseCompatibilityInterface compatibilityInterface = this.getConnection().getInterfaceProvider().getCompatibilityInterface();
+        DatabaseCompatibilityInterface compatibilityInterface = getConnection().getInterfaceProvider().getCompatibilityInterface();
         if (compatibilityInterface.supportsObjectType(ROLE.getTypeId())) {
             navigationLists.add(DBObjectNavigationList.create("Role grantees", getRoleGrantees()));
         }

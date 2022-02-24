@@ -29,13 +29,13 @@ public class CreateRenameConsoleForm extends DBNFormImpl{
     private JTextField consoleNameTextField;
     private JLabel errorLabel;
 
-    private final ConnectionHandlerRef connectionHandler;
+    private final ConnectionHandlerRef connection;
     private final DBConsoleType consoleType;
     private final DBConsole console;
 
-    CreateRenameConsoleForm(final CreateRenameConsoleDialog parent, @NotNull ConnectionHandler connectionHandler, @Nullable final DBConsole console, DBConsoleType consoleType) {
+    CreateRenameConsoleForm(final CreateRenameConsoleDialog parent, @NotNull ConnectionHandler connection, @Nullable final DBConsole console, DBConsoleType consoleType) {
         super(parent);
-        this.connectionHandler = connectionHandler.getRef();
+        this.connection = connection.ref();
         this.console = console;
         this.consoleType = consoleType;
         errorLabel.setForeground(JBColor.RED);
@@ -43,15 +43,15 @@ public class CreateRenameConsoleForm extends DBNFormImpl{
         errorLabel.setVisible(false);
 
         DBNHeaderForm headerForm = console == null ?
-                new DBNHeaderForm(this, "[New " + consoleType.getName() + "]", consoleType.getIcon(), connectionHandler.getEnvironmentType().getColor()) :
+                new DBNHeaderForm(this, "[New " + consoleType.getName() + "]", consoleType.getIcon(), connection.getEnvironmentType().getColor()) :
                 new DBNHeaderForm(this, console);
         headerPanel.add(headerForm.getComponent(), BorderLayout.CENTER);
 
-        final Set<String> consoleNames = connectionHandler.getConsoleBundle().getConsoleNames();
+        final Set<String> consoleNames = connection.getConsoleBundle().getConsoleNames();
 
         String name;
         if (console == null) {
-            name = connectionHandler.getName() + " 1";
+            name = connection.getName() + " 1";
             while (consoleNames.contains(name)) {
                 name = Naming.nextNumberedIdentifier(name, true);
             }
@@ -99,8 +99,8 @@ public class CreateRenameConsoleForm extends DBNFormImpl{
         return console == null ? consoleType : console.getConsoleType();
     }
 
-    public ConnectionHandler getConnectionHandler() {
-        return connectionHandler.ensure();
+    public ConnectionHandler getConnection() {
+        return connection.ensure();
     }
 
     public DBConsole getConsole() {

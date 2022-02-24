@@ -141,10 +141,6 @@ public class SessionBrowserForm extends DBNFormImpl implements SearchableDataCom
         return getSessionBrowser().getConnection();
     }
 
-    public float getHorizontalScrollProportion() {
-        editorTableScrollPane.getHorizontalScrollBar().getModel();
-        return 0;
-    }
 
     /*********************************************************
      *              SearchableDataComponent                  *

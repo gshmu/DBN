@@ -25,12 +25,12 @@ public class DBDataType {
     private int scale;
     private boolean set;
 
-    public static DBDataType get(ConnectionHandler connectionHandler, DBDataTypeMetadata metadata) throws SQLException {
+    public static DBDataType get(ConnectionHandler connection, DBDataTypeMetadata metadata) throws SQLException {
         DBDataTypeDefinition definition = new DBDataTypeDefinition(metadata);
-        return connectionHandler.getObjectBundle().getDataTypes().getDataType(definition);
+        return connection.getObjectBundle().getDataTypes().getDataType(definition);
     }
 
-    public static DBDataType get(ConnectionHandler connectionHandler, String dataTypeName, long length, int precision, int scale, boolean set) {
+    public static DBDataType get(ConnectionHandler connection, String dataTypeName, long length, int precision, int scale, boolean set) {
         String declaredTypeName = null;
         String declaredTypeOwner = null;
         String declaredTypePackage = null;
@@ -48,7 +48,7 @@ public class DBDataType {
             }
         }
         DBDataTypeDefinition definition = new DBDataTypeDefinition(dataTypeName, declaredTypeName, declaredTypeOwner, declaredTypePackage, length, precision, scale, set);
-        return connectionHandler.getObjectBundle().getDataTypes().getDataType(definition);
+        return connection.getObjectBundle().getDataTypes().getDataType(definition);
     }
 
     public DBDataType() {}

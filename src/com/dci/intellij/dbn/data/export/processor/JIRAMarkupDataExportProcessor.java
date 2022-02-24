@@ -85,7 +85,7 @@ public class JIRAMarkupDataExportProcessor extends DataExportProcessor{
 
 
     @Override
-    public void performExport(DataExportModel model, DataExportInstructions instructions, ConnectionHandler connectionHandler) throws DataExportException {
+    public void performExport(DataExportModel model, DataExportInstructions instructions, ConnectionHandler connection) throws DataExportException {
         StringBuilder buffer = new StringBuilder();
 
         if (instructions.isCreateHeader()) {
@@ -97,7 +97,7 @@ public class JIRAMarkupDataExportProcessor extends DataExportProcessor{
             buffer.append("\n");
         }
 
-        Formatter formatter = getFormatter(connectionHandler.getProject());
+        Formatter formatter = getFormatter(connection.getProject());
 
         for (int rowIndex=0; rowIndex < model.getRowCount(); rowIndex++) {
             buffer.append("|");

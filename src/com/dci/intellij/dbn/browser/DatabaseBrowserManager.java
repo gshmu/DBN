@@ -18,7 +18,11 @@ import com.dci.intellij.dbn.common.latent.Latent;
 import com.dci.intellij.dbn.common.options.setting.BooleanSetting;
 import com.dci.intellij.dbn.common.thread.Dispatch;
 import com.dci.intellij.dbn.common.thread.Progress;
-import com.dci.intellij.dbn.connection.*;
+import com.dci.intellij.dbn.connection.ConnectionBundle;
+import com.dci.intellij.dbn.connection.ConnectionHandler;
+import com.dci.intellij.dbn.connection.ConnectionId;
+import com.dci.intellij.dbn.connection.ConnectionManager;
+import com.dci.intellij.dbn.connection.SchemaId;
 import com.dci.intellij.dbn.connection.config.ConnectionDetailSettings;
 import com.dci.intellij.dbn.object.DBSchema;
 import com.dci.intellij.dbn.object.common.DBObject;
@@ -96,7 +100,7 @@ public class DatabaseBrowserManager extends AbstractProjectComponent implements 
             BrowserTreeModel browserTreeModel = activeBrowserTree.getModel();
             if (browserTreeModel instanceof TabbedBrowserTreeModel) {
                 TabbedBrowserTreeModel tabbedBrowserTreeModel = (TabbedBrowserTreeModel) browserTreeModel;
-                return tabbedBrowserTreeModel.getConnectionHandler();
+                return tabbedBrowserTreeModel.getConnection();
             }
 
             BrowserTreeNode browserTreeNode = activeBrowserTree.getSelectedNode();
@@ -182,12 +186,12 @@ public class DatabaseBrowserManager extends AbstractProjectComponent implements 
         return COMPONENT_NAME;
     }
 
-    public static void scrollToSelectedElement(ConnectionHandler connectionHandler) {
+    public static void scrollToSelectedElement(ConnectionHandler connection) {
         Dispatch.run(() -> {
-            Project project = connectionHandler.getProject();
+            Project project = connection.getProject();
             DatabaseBrowserManager browserManager = DatabaseBrowserManager.getInstance(project);
             BrowserToolWindowForm toolWindowForm = browserManager.getToolWindowForm();
-            ConnectionId connectionId = connectionHandler.getConnectionId();
+            ConnectionId connectionId = connection.getConnectionId();
             DatabaseBrowserTree browserTree = toolWindowForm.getBrowserTree(connectionId);
             if (browserTree != null && browserTree.getTargetSelection() != null) {
                 browserTree.scrollToSelectedElement();
@@ -207,26 +211,26 @@ public class DatabaseBrowserManager extends AbstractProjectComponent implements 
         @Override
         public void typeFiltersChanged(ConnectionId connectionId) {
             if (toolWindowForm.loaded()) {
-                ConnectionHandler connectionHandler = getConnectionHandler(connectionId);
-                if (connectionHandler == null) {
+                ConnectionHandler connection = getConnection(connectionId);
+                if (connection == null) {
                     getBrowserForm().rebuildTree();
                 } else {
-                    connectionHandler.getObjectBundle().rebuildTreeChildren();
+                    connection.getObjectBundle().rebuildTreeChildren();
                 }
             }
         }
 
         @Override
         public void nameFiltersChanged(ConnectionId connectionId, @NotNull DBObjectType... objectTypes) {
-            ConnectionHandler connectionHandler = getConnectionHandler(connectionId);
-            if (toolWindowForm.loaded() && connectionHandler != null && objectTypes.length > 0) {
-                connectionHandler.getObjectBundle().refreshTreeChildren(objectTypes);
+            ConnectionHandler connection = getConnection(connectionId);
+            if (toolWindowForm.loaded() && connection != null && objectTypes.length > 0) {
+                connection.getObjectBundle().refreshTreeChildren(objectTypes);
             }
         }
     };
 
     @Nullable
-    private ConnectionHandler getConnectionHandler(ConnectionId connectionId) {
+    private ConnectionHandler getConnection(ConnectionId connectionId) {
         ConnectionManager connectionManager = ConnectionManager.getInstance(getProject());
         return connectionManager.getConnection(connectionId);
     }
@@ -251,8 +255,8 @@ public class DatabaseBrowserManager extends AbstractProjectComponent implements 
                 }
                 else  if (file instanceof DBVirtualFileImpl) {
                     DBVirtualFileImpl databaseVirtualFile = (DBVirtualFileImpl) file;
-                    ConnectionHandler connectionHandler = databaseVirtualFile.getConnection();
-                    navigateToElement(connectionHandler.getObjectBundle(), false);
+                    ConnectionHandler connection = databaseVirtualFile.getConnection();
+                    navigateToElement(connection.getObjectBundle(), false);
                 }
             }
         }
@@ -274,19 +278,19 @@ public class DatabaseBrowserManager extends AbstractProjectComponent implements 
 
                     } else if (newFile instanceof DBVirtualFileImpl) {
                         DBVirtualFileImpl databaseVirtualFile = (DBVirtualFileImpl) newFile;
-                        ConnectionHandler connectionHandler = databaseVirtualFile.getConnection();
+                        ConnectionHandler connection = databaseVirtualFile.getConnection();
                         FileEditor oldEditor = event.getOldEditor();
                         SchemaId schemaId = databaseVirtualFile.getSchemaId();
                         boolean scroll = oldEditor != null && oldEditor.isValid();
 
                         Progress.background(
                                 getProject(),
-                                connectionHandler.getMetaLoadTitle(),
+                                connection.getMetaLoadTitle(),
                                 false,
-                                (progress) -> {
+                                progress -> {
                                     BrowserTreeNode treeNode = schemaId == null ?
-                                            connectionHandler.getObjectBundle() :
-                                            connectionHandler.getSchema(schemaId);
+                                            connection.getObjectBundle() :
+                                            connection.getSchema(schemaId);
 
                                     navigateToElement(treeNode, scroll);
                                 });
@@ -350,13 +354,13 @@ public class DatabaseBrowserManager extends AbstractProjectComponent implements 
 
         ConnectionManager connectionManager = ConnectionManager.getInstance(getProject());
         List<ConnectionHandler> connectionHandlers = connectionManager.getConnections();
-        for (ConnectionHandler connectionHandler : connectionHandlers) {
-            ConnectionDetailSettings settings = connectionHandler.getSettings().getDetailSettings();
+        for (ConnectionHandler connection : connectionHandlers) {
+            ConnectionDetailSettings settings = connection.getSettings().getDetailSettings();
             if (settings.isRestoreWorkspaceDeep()) {
                 Element connectionElement = new Element("connection");
 
                 boolean addConnectionElement = false;
-                DBObjectBundle objectBundle = connectionHandler.getObjectBundle();
+                DBObjectBundle objectBundle = connection.getObjectBundle();
                 DBObjectList<?> schemas = objectBundle.getObjectList(DBObjectType.SCHEMA);
                 if (schemas != null && schemas.isLoaded()) {
                     for (DBSchema schema : objectBundle.getSchemas()) {
@@ -382,7 +386,7 @@ public class DatabaseBrowserManager extends AbstractProjectComponent implements 
                     }
 
                     if (addConnectionElement) {
-                        connectionElement.setAttribute("connection-id", connectionHandler.getConnectionId().id());
+                        connectionElement.setAttribute("connection-id", connection.getConnectionId().id());
                         nodesElement.addContent(connectionElement);
                     }
                 }
@@ -400,11 +404,11 @@ public class DatabaseBrowserManager extends AbstractProjectComponent implements 
 
             for (Element connectionElement : connectionElements) {
                 ConnectionId connectionId = connectionIdAttribute(connectionElement, "connection-id");
-                ConnectionHandler connectionHandler = connectionManager.getConnection(connectionId);
-                if (connectionHandler != null) {
-                    ConnectionDetailSettings settings = connectionHandler.getSettings().getDetailSettings();
+                ConnectionHandler connection = connectionManager.getConnection(connectionId);
+                if (connection != null) {
+                    ConnectionDetailSettings settings = connection.getSettings().getDetailSettings();
                     if (settings.isRestoreWorkspaceDeep()) {
-                        DBObjectBundle objectBundle = connectionHandler.getObjectBundle();
+                        DBObjectBundle objectBundle = connection.getObjectBundle();
                         List<Element> schemaElements = connectionElement.getChildren();
 
                         for (Element schemaElement : schemaElements) {
@@ -412,8 +416,8 @@ public class DatabaseBrowserManager extends AbstractProjectComponent implements 
                             DBSchema schema = objectBundle.getSchema(schemaName);
                             if (schema != null) {
                                 Progress.background(project,
-                                        connectionHandler.getMetaLoadTitle(), true,
-                                        (progress) -> {
+                                        connection.getMetaLoadTitle(), true,
+                                        progress -> {
                                             String objectTypesAttr = stringAttribute(schemaElement, "object-types");
                                             List<DBObjectType> objectTypes = DBObjectType.fromCsv(objectTypesAttr);
 

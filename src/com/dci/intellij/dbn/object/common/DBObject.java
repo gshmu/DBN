@@ -28,7 +28,7 @@ import com.dci.intellij.dbn.vfs.file.DBObjectVirtualFile;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import javax.swing.*;
+import javax.swing.Icon;
 import java.sql.SQLException;
 import java.util.List;
 
@@ -118,7 +118,7 @@ public interface DBObject extends
     DBObjectVirtualFile getVirtualFile();
     List<PresentableProperty> getPresentableProperties();
     @Override
-    DBObjectRef getRef();
+    DBObjectRef ref();
 
     boolean isValid();
 

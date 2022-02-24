@@ -23,7 +23,7 @@ public enum TransactionAction implements Serializable, Constant<TransactionActio
             NotificationType.INFORMATION, "Connection \"{0}\" committed",
             NotificationType.ERROR, "Error committing connection \"{0}\". Details: {1}",
             false,
-            (connectionHandler, connection) -> Resources.commit(connection)),
+            (connection, target) -> Resources.commit(target)),
 
     ROLLBACK(
             "Rollback",
@@ -31,7 +31,7 @@ public enum TransactionAction implements Serializable, Constant<TransactionActio
             NotificationType.INFORMATION, "Connection \"{0}\" rolled back.",
             NotificationType.ERROR, "Error rolling back connection \"{0}\". Details: {1}",
             false,
-            (connectionHandler, connection) -> Resources.rollback(connection)),
+            (connection, target) -> Resources.rollback(target)),
 
     ROLLBACK_IDLE(
             "Idle Rollback",
@@ -39,7 +39,7 @@ public enum TransactionAction implements Serializable, Constant<TransactionActio
             NotificationType.INFORMATION, "Connection \"{0}\" rolled back.",
             NotificationType.ERROR, "Error rolling back connection \"{0}\". Details: {1}",
             false,
-            (connectionHandler, connection) -> Resources.rollback(connection)),
+            (connection, target) -> Resources.rollback(target)),
 
     DISCONNECT(
             "Disconnect",
@@ -47,7 +47,7 @@ public enum TransactionAction implements Serializable, Constant<TransactionActio
             NotificationType.INFORMATION, "Disconnected from \"{0}\"",
             NotificationType.WARNING, "Error disconnecting from \"{0}\". Details: {1}",
             true,
-            (connectionHandler, connection) -> connectionHandler.closeConnection(connection)),
+            (connection, target) -> connection.closeConnection(target)),
 
     DISCONNECT_IDLE(
             "Idle disconnect",
@@ -55,7 +55,7 @@ public enum TransactionAction implements Serializable, Constant<TransactionActio
             NotificationType.INFORMATION, "Disconnected from \"{0}\" - exceeded the configured idle timeout.",
             NotificationType.WARNING, "Error disconnecting from \"{0}\". Details: {1}",
             true,
-            (connectionHandler, connection) -> connectionHandler.closeConnection(connection)),
+            (connection, target) -> connection.closeConnection(target)),
 
     KEEP_ALIVE(
             "Keep Alive",
@@ -63,7 +63,7 @@ public enum TransactionAction implements Serializable, Constant<TransactionActio
             null, "",
             NotificationType.ERROR, "Error checking connectivity for \"{0}\". Details: {1}",
             false,
-            (connectionHandler, connection) -> connection.updateLastAccess()),
+            (connection, target) -> target.updateLastAccess()),
 
     TURN_AUTO_COMMIT_ON(
             "Enable Auto-Commit",
@@ -71,7 +71,7 @@ public enum TransactionAction implements Serializable, Constant<TransactionActio
             NotificationType.WARNING, "Auto-Commit switched ON for connection \"{0}\".",
             NotificationType.ERROR, "Error switching Auto-Commit ON for connection \"{0}\". Details: {1}",
             true,
-            (connectionHandler, connection) -> connection.setAutoCommit(true)),
+            (connection, target) -> target.setAutoCommit(true)),
 
     TURN_AUTO_COMMIT_OFF(
             "Disable Auto-Commit",
@@ -79,7 +79,7 @@ public enum TransactionAction implements Serializable, Constant<TransactionActio
             NotificationType.INFORMATION, "Auto-Commit switched OFF for connection \"{0}\".",
             NotificationType.ERROR, "Error switching Auto-Commit OFF for connection\"{0}\". Details: {1}",
             true,
-            (connectionHandler, connection) -> connection.setAutoCommit(false));
+            (connection, target) -> target.setAutoCommit(false));
 
 
     private final NotificationGroup group;
@@ -104,11 +104,11 @@ public enum TransactionAction implements Serializable, Constant<TransactionActio
 
     @FunctionalInterface
     private interface Executor {
-        void execute(@NotNull ConnectionHandler connectionHandler, @NotNull DBNConnection connection) throws SQLException;
+        void execute(@NotNull ConnectionHandler connection, @NotNull DBNConnection target) throws SQLException;
     }
 
-    public void execute(@NotNull ConnectionHandler connectionHandler, @NotNull DBNConnection connection) throws SQLException {
-        executor.execute(connectionHandler, connection);
+    public void execute(@NotNull ConnectionHandler connection, @NotNull DBNConnection target) throws SQLException {
+        executor.execute(connection, target);
     }
 
     public static List<TransactionAction> actions(TransactionAction ... actions) {

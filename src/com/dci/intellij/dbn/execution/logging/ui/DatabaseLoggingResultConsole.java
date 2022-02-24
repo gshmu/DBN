@@ -14,12 +14,12 @@ import java.io.StringReader;
 
 public class DatabaseLoggingResultConsole extends LogConsoleBase{
     public static final StringReader EMPTY_READER = new StringReader("");
-    public DatabaseLoggingResultConsole(@NotNull ConnectionHandler connectionHandler, String title, boolean buildInActions) {
-        super(connectionHandler.getProject(), EMPTY_READER, title, buildInActions, createFilterModel(connectionHandler));
+    public DatabaseLoggingResultConsole(@NotNull ConnectionHandler connection, String title, boolean buildInActions) {
+        super(connection.getProject(), EMPTY_READER, title, buildInActions, createFilterModel(connection));
     }
 
-    private static LogFilterModel createFilterModel(ConnectionHandler connectionHandler) {
-        DefaultLogFilterModel defaultLogFilterModel = new DefaultLogFilterModel(connectionHandler.getProject());
+    private static LogFilterModel createFilterModel(ConnectionHandler connection) {
+        DefaultLogFilterModel defaultLogFilterModel = new DefaultLogFilterModel(connection.getProject());
         defaultLogFilterModel.setCheckStandartFilters(false);
         return defaultLogFilterModel;
     }

@@ -32,7 +32,7 @@ public class PsiResolveResult extends PropertyHolderBase.IntStore<PsiResolveStat
     private int resolveAttempts = 0;
 
     PsiResolveResult(IdentifierPsiElement element) {
-        this.connection = ConnectionHandlerRef.of(element.getConnectionHandler());
+        this.connection = ConnectionHandlerRef.of(element.getConnection());
         this.element = PsiElementRef.from(element);
         set(PsiResolveStatus.NEW, true);
     }
@@ -49,12 +49,12 @@ public class PsiResolveResult extends PropertyHolderBase.IntStore<PsiResolveStat
     public void preResolve(IdentifierPsiElement psiElement) {
         set(RESOLVING, true);
         this.text = psiElement.getUnquotedText();
-        ConnectionHandler connectionHandler = psiElement.getConnectionHandler();
-        set(CONNECTION_VALID, connectionHandler != null && !connectionHandler.isVirtual() && connectionHandler.isValid());
-        set(CONNECTION_ACTIVE, connectionHandler != null && !connectionHandler.isVirtual() && connectionHandler.canConnect());
+        ConnectionHandler connection = psiElement.getConnection();
+        set(CONNECTION_VALID, connection != null && !connection.isVirtual() && connection.isValid());
+        set(CONNECTION_ACTIVE, connection != null && !connection.isVirtual() && connection.canConnect());
         this.referencedElement = null;
         this.parent = null;
-        this.connection = ConnectionHandlerRef.of(connectionHandler);
+        this.connection = ConnectionHandlerRef.of(connection);
         this.schema = DBObjectRef.of(psiElement.getDatabaseSchema());
         BasePsiElement enclosingScopePsiElement = psiElement.getEnclosingScopePsiElement();
         this.scopeTextLength = enclosingScopePsiElement == null ? 0 : enclosingScopePsiElement.getTextLength();
@@ -138,7 +138,7 @@ public class PsiResolveResult extends PropertyHolderBase.IntStore<PsiResolveStat
             return true;
         }
         IdentifierPsiElement element = this.element.get();
-        ConnectionHandler activeConnection = element == null ? null : element.getConnectionHandler();
+        ConnectionHandler activeConnection = element == null ? null : element.getConnection();
         if (activeConnection == null || activeConnection.isVirtual()) {
             if (schema != null) return true;
         } else {
@@ -160,7 +160,7 @@ public class PsiResolveResult extends PropertyHolderBase.IntStore<PsiResolveStat
 
     private boolean connectionChanged() {
         IdentifierPsiElement element = this.element.get();
-        return element != null && getConnection() != element.getConnectionHandler();
+        return element != null && getConnection() != element.getConnection();
     }
 
     private boolean schemaChanged() {
@@ -168,12 +168,12 @@ public class PsiResolveResult extends PropertyHolderBase.IntStore<PsiResolveStat
         return element != null && !Commons.match(DBObjectRef.get(schema), element.getDatabaseSchema());
     }
 
-    private boolean connectionBecameValid(ConnectionHandler connectionHandler) {
-        return isNot(CONNECTION_VALID) && connectionHandler!= null && !connectionHandler.isVirtual() && connectionHandler.isValid();
+    private boolean connectionBecameValid(ConnectionHandler connection) {
+        return isNot(CONNECTION_VALID) && connection!= null && !connection.isVirtual() && connection.isValid();
     }
 
-    private boolean connectionBecameActive(ConnectionHandler connectionHandler) {
-        return isNot(CONNECTION_ACTIVE) && connectionHandler!= null && !connectionHandler.isVirtual() && connectionHandler.canConnect();
+    private boolean connectionBecameActive(ConnectionHandler connection) {
+        return isNot(CONNECTION_ACTIVE) && connection!= null && !connection.isVirtual() && connection.canConnect();
     }
 
     private boolean enclosingScopeChanged() {

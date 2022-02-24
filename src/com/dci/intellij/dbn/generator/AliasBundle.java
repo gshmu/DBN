@@ -12,7 +12,7 @@ public class AliasBundle {
     private final Map<DBObjectRef, String> aliases = new HashMap<>();
 
     public String getAlias(DBObject object) {
-        DBObjectRef objectRef = object.getRef();
+        DBObjectRef objectRef = object.ref();
         String alias = aliases.get(objectRef);
         if (alias == null) {
             alias = Naming.createAliasName(object.getName());

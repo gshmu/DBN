@@ -38,7 +38,7 @@ public class DatabaseSessionBundle extends StatefulDisposable.Base implements Di
 
     public DatabaseSessionBundle(ConnectionHandler connection) {
         super(connection);
-        this.connection = connection.getRef();
+        this.connection = connection.ref();
 
         mainSession = new DatabaseSession(SessionId.MAIN, "Main", ConnectionType.MAIN, connection);
         sessions.add(mainSession);

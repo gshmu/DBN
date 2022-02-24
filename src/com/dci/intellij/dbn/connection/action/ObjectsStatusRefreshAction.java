@@ -11,9 +11,9 @@ public class ObjectsStatusRefreshAction extends DumbAwareAction {
 
     private final ConnectionHandlerRef connectionHandlerRef;
 
-    public ObjectsStatusRefreshAction(ConnectionHandler connectionHandler) {
+    public ObjectsStatusRefreshAction(ConnectionHandler connection) {
         super("Refresh objects status", "", Icons.ACTION_REFRESH);
-        this.connectionHandlerRef = connectionHandler.getRef();
+        this.connectionHandlerRef = connection.ref();
     }
 
     @Override

@@ -23,9 +23,9 @@ public class SchemaSelectDropdownAction extends DBNComboBoxAction {
     @NotNull
     protected DefaultActionGroup createPopupActionGroup(JComponent jComponent) {
         DefaultActionGroup actionGroup = new DefaultActionGroup();
-        ConnectionHandler connectionHandler = browserComponent.getSettings().getConnection();
-        if (connectionHandler != null) {
-            for (DBSchema schema : connectionHandler.getObjectBundle().getSchemas()) {
+        ConnectionHandler connection = browserComponent.getSettings().getConnection();
+        if (connection != null) {
+            for (DBSchema schema : connection.getObjectBundle().getSchemas()) {
                 SchemaSelectAction schemaSelectAction = new SchemaSelectAction(browserComponent, schema);
                 actionGroup.add(schemaSelectAction);
             }

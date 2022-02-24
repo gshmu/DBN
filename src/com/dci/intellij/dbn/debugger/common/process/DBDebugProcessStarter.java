@@ -5,13 +5,13 @@ import com.dci.intellij.dbn.connection.ConnectionHandlerRef;
 import com.intellij.xdebugger.XDebugProcessStarter;
 
 public abstract class DBDebugProcessStarter extends XDebugProcessStarter {
-    private ConnectionHandlerRef connectionHandlerRef;
+    private final ConnectionHandlerRef connection;
 
-    public DBDebugProcessStarter(ConnectionHandler connectionHandler) {
-        connectionHandlerRef = ConnectionHandlerRef.of(connectionHandler);
+    public DBDebugProcessStarter(ConnectionHandler connection) {
+        this.connection = ConnectionHandlerRef.of(connection);
     }
 
-    public ConnectionHandler getConnectionHandler() {
-        return connectionHandlerRef.ensure();
+    public ConnectionHandler getConnection() {
+        return connection.ensure();
     }
 }

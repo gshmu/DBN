@@ -9,6 +9,7 @@ import com.dci.intellij.dbn.common.util.Lists;
 import com.dci.intellij.dbn.common.util.Messages;
 import com.dci.intellij.dbn.common.util.Naming;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
+import com.dci.intellij.dbn.connection.ConnectionHandlerRef;
 import com.dci.intellij.dbn.connection.context.ConnectionProvider;
 import com.dci.intellij.dbn.connection.operation.options.OperationSettings;
 import com.dci.intellij.dbn.database.DatabaseDebuggerInterface;
@@ -16,7 +17,15 @@ import com.dci.intellij.dbn.database.DatabaseFeature;
 import com.dci.intellij.dbn.database.DatabaseInterface;
 import com.dci.intellij.dbn.database.common.debug.DebuggerVersionInfo;
 import com.dci.intellij.dbn.debugger.common.breakpoint.DBBreakpointUpdaterFileEditorListener;
-import com.dci.intellij.dbn.debugger.common.config.*;
+import com.dci.intellij.dbn.debugger.common.config.DBMethodRunConfig;
+import com.dci.intellij.dbn.debugger.common.config.DBMethodRunConfigFactory;
+import com.dci.intellij.dbn.debugger.common.config.DBMethodRunConfigType;
+import com.dci.intellij.dbn.debugger.common.config.DBRunConfig;
+import com.dci.intellij.dbn.debugger.common.config.DBRunConfigCategory;
+import com.dci.intellij.dbn.debugger.common.config.DBRunConfigFactory;
+import com.dci.intellij.dbn.debugger.common.config.DBRunConfigType;
+import com.dci.intellij.dbn.debugger.common.config.DBStatementRunConfig;
+import com.dci.intellij.dbn.debugger.common.config.DBStatementRunConfigType;
 import com.dci.intellij.dbn.debugger.common.process.DBProgramRunner;
 import com.dci.intellij.dbn.debugger.jdbc.process.DBMethodJdbcRunner;
 import com.dci.intellij.dbn.debugger.jdbc.process.DBStatementJdbcRunner;
@@ -27,7 +36,11 @@ import com.dci.intellij.dbn.editor.code.SourceCodeManager;
 import com.dci.intellij.dbn.execution.method.MethodExecutionInput;
 import com.dci.intellij.dbn.execution.method.MethodExecutionManager;
 import com.dci.intellij.dbn.execution.statement.processor.StatementExecutionProcessor;
-import com.dci.intellij.dbn.object.*;
+import com.dci.intellij.dbn.object.DBMethod;
+import com.dci.intellij.dbn.object.DBProgram;
+import com.dci.intellij.dbn.object.DBSchema;
+import com.dci.intellij.dbn.object.DBSystemPrivilege;
+import com.dci.intellij.dbn.object.DBUser;
 import com.dci.intellij.dbn.object.common.DBObject;
 import com.dci.intellij.dbn.object.common.DBObjectBundle;
 import com.dci.intellij.dbn.object.common.DBSchemaObject;
@@ -56,14 +69,18 @@ import com.intellij.openapi.progress.ProgressIndicator;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.util.containers.ContainerUtil;
-import gnu.trove.THashSet;
 import org.jdom.Element;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.sql.SQLException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Objects;
+import java.util.Set;
 
 import static com.dci.intellij.dbn.common.message.MessageCallback.when;
 import static com.dci.intellij.dbn.common.util.Commons.list;
@@ -85,32 +102,33 @@ public class DatabaseDebuggerManager extends AbstractProjectComponent implements
                     "This is used when debugging is invoked on a given SQL statement. " +
                     "No specific statement information can be specified here.";
 
-    private Set<ConnectionHandler> activeDebugSessions = new THashSet<>();
+    private final Set<ConnectionHandlerRef> activeDebugSessions = new HashSet<>();
 
     private DatabaseDebuggerManager(Project project) {
         super(project);
         FileEditorManager.getInstance(project).addFileEditorManagerListener(new DBBreakpointUpdaterFileEditorListener());
     }
 
-    public void registerDebugSession(ConnectionHandler connectionHandler) {
-        activeDebugSessions.add(connectionHandler);
+    public void registerDebugSession(ConnectionHandler connection) {
+        activeDebugSessions.add(connection.ref());
     }
 
-    public void unregisterDebugSession(ConnectionHandler connectionHandler) {
-        activeDebugSessions.remove(connectionHandler);
+    public void unregisterDebugSession(ConnectionHandler connection) {
+        activeDebugSessions.remove(connection.ref());
     }
 
-    public boolean checkForbiddenOperation(ConnectionHandler connectionHandler) {
-        return checkForbiddenOperation(connectionHandler, null);
+    public boolean checkForbiddenOperation(ConnectionHandler connection) {
+        return checkForbiddenOperation(connection, null);
     }
 
-    public boolean checkForbiddenOperation(ConnectionProvider connectionProvider) {
-        return checkForbiddenOperation(connectionProvider.getConnection());
+    public boolean checkForbiddenOperation(ConnectionProvider connection) {
+        return checkForbiddenOperation(connection.getConnection());
     }
 
 
-    public boolean checkForbiddenOperation(ConnectionHandler connectionHandler, String message) {
-        if (activeDebugSessions.contains(connectionHandler)) {
+    public boolean checkForbiddenOperation(ConnectionHandler connection, String message) {
+        // TODO add flag on connection handler instead of this
+        if (activeDebugSessions.contains(connection.ref())) {
             Messages.showErrorDialog(getProject(), message == null ? "Operation not supported during active debug session." : message);
             return false;
         }
@@ -371,14 +389,14 @@ public class DatabaseDebuggerManager extends AbstractProjectComponent implements
         return false;
     }
 
-    public List<String> getMissingDebugPrivileges(@NotNull ConnectionHandler connectionHandler) {
+    public List<String> getMissingDebugPrivileges(@NotNull ConnectionHandler connection) {
         List<String> missingPrivileges = new ArrayList<>();
-        String userName = connectionHandler.getUserName();
-        DBObjectBundle objectBundle = connectionHandler.getObjectBundle();
+        String userName = connection.getUserName();
+        DBObjectBundle objectBundle = connection.getObjectBundle();
         DBUser user = objectBundle.getUser(userName);
 
         if (user != null) {
-            String[] privilegeNames = connectionHandler.getInterfaceProvider().getDebuggerInterface().getRequiredPrivilegeNames();
+            String[] privilegeNames = connection.getInterfaceProvider().getDebuggerInterface().getRequiredPrivilegeNames();
 
             for (String privilegeName : privilegeNames) {
                 DBSystemPrivilege systemPrivilege = objectBundle.getSystemPrivilege(privilegeName);
@@ -397,14 +415,14 @@ public class DatabaseDebuggerManager extends AbstractProjectComponent implements
         return 0;
     };
 
-    public String getDebuggerVersion(@NotNull ConnectionHandler connectionHandler) {
-        if (DatabaseFeature.DEBUGGING.isSupported(connectionHandler)) {
+    public String getDebuggerVersion(@NotNull ConnectionHandler connection) {
+        if (DatabaseFeature.DEBUGGING.isSupported(connection)) {
             try {
                 return DatabaseInterface.call(true,
-                        connectionHandler,
-                        (provider, connection) -> {
+                        connection,
+                        (provider, conn) -> {
                             DatabaseDebuggerInterface debuggerInterface = provider.getDebuggerInterface();
-                            DebuggerVersionInfo debuggerVersion = debuggerInterface.getDebuggerVersion(connection);
+                            DebuggerVersionInfo debuggerVersion = debuggerInterface.getDebuggerVersion(conn);
                             return debuggerVersion.getVersion();
                         });
             } catch (SQLException e) {

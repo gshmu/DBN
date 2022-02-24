@@ -17,7 +17,7 @@ public class GlobalDataFilter implements SelectStatementFilter{
         this.filterTable = (DBTable) filterColumn.getDataset();
     }
 
-    public ConnectionHandler getConnectionHandler() {
+    public ConnectionHandler getConnection() {
         return filterColumn.getConnection();
     }
 

@@ -10,17 +10,17 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 public class MiscellaneousConnectionAction extends AbstractConnectionAction {
-    public MiscellaneousConnectionAction(@NotNull ConnectionHandler connectionHandler) {
-        super("Dev Test", connectionHandler);
+    public MiscellaneousConnectionAction(@NotNull ConnectionHandler connection) {
+        super("Dev Test", connection);
     }
 
     @Override
-    protected void actionPerformed(@NotNull AnActionEvent e, @NotNull Project project, @NotNull ConnectionHandler connectionHandler) {
+    protected void actionPerformed(@NotNull AnActionEvent e, @NotNull Project project, @NotNull ConnectionHandler connection) {
 
     }
 
     @Override
-    protected void update(@NotNull AnActionEvent e, @NotNull Presentation presentation, @NotNull Project project, @Nullable ConnectionHandler connectionHandler) {
+    protected void update(@NotNull AnActionEvent e, @NotNull Presentation presentation, @NotNull Project project, @Nullable ConnectionHandler connection) {
         presentation.setVisible(Diagnostics.isBulkActionsEnabled());
     }
 }

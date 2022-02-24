@@ -101,11 +101,11 @@ public class DatasetBasicFilterCondition extends BasicConfiguration<DatasetBasic
                 value = "(" + value + ")";
             }
             else if (Strings.isNotEmptyOrSpaces(value)) {
-                ConnectionHandler connectionHandler = Failsafe.nn(dataset.getConnection());
+                ConnectionHandler connection = Failsafe.nn(dataset.getConnection());
                 if (genericDataType == GenericDataType.LITERAL || genericDataType == GenericDataType.CLOB) {
                     value = quoteValue(value);
                 } else if (genericDataType == GenericDataType.DATE_TIME) {
-                    DatabaseMetadataInterface metadataInterface = connectionHandler.getInterfaceProvider().getMetadataInterface();
+                    DatabaseMetadataInterface metadataInterface = connection.getInterfaceProvider().getMetadataInterface();
                     Formatter formatter = Formatter.getInstance(dataset.getProject());
                     try {
                         Date date = formatter.parseDateTime(value);

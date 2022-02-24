@@ -16,7 +16,7 @@ public class DatabaseSessionCreateAction extends DumbAwareProjectAction {
 
     DatabaseSessionCreateAction(ConnectionHandler connection) {
         super("New Session...");
-        this.connection = connection.getRef();
+        this.connection = connection.ref();
     }
 
     @Override
@@ -24,9 +24,9 @@ public class DatabaseSessionCreateAction extends DumbAwareProjectAction {
         Editor editor = Lookup.getEditor(e);
         if (editor != null) {
             DatabaseSessionManager sessionManager = DatabaseSessionManager.getInstance(project);
-            ConnectionHandler connectionHandler = connection.ensure();
+            ConnectionHandler connection = this.connection.ensure();
             sessionManager.showCreateSessionDialog(
-                    connectionHandler,
+                    connection,
                     (session) -> {
                         if (session != null) {
                             FileConnectionContextManager contextManager = FileConnectionContextManager.getInstance(project);

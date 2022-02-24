@@ -9,7 +9,7 @@ import com.intellij.openapi.project.Project;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import javax.swing.*;
+import javax.swing.Icon;
 
 public abstract class AbstractConnectionAction extends DumbAwareContextAction<ConnectionHandler> {
     private final ConnectionHandlerRef connection;
@@ -23,7 +23,7 @@ public abstract class AbstractConnectionAction extends DumbAwareContextAction<Co
     }
     public AbstractConnectionAction(String text, String description, Icon icon, @NotNull ConnectionHandler connection) {
         super(text, description, icon);
-        this.connection = connection.getRef();
+        this.connection = connection.ref();
     }
 
     public ConnectionId getConnectionId() {

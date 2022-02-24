@@ -1,6 +1,5 @@
 package com.dci.intellij.dbn.database.common.execution;
 
-import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.common.locale.Formatter;
 import com.dci.intellij.dbn.common.thread.CancellableDatabaseCall;
 import com.dci.intellij.dbn.common.util.Strings;
@@ -62,23 +61,23 @@ public abstract class MethodExecutionProcessorImpl implements MethodExecutionPro
 
     @Override
     public void execute(MethodExecutionInput executionInput, DBDebuggerType debuggerType) throws SQLException {
-        ConnectionHandler connectionHandler = getConnectionHandler();
+        ConnectionHandler connection = getConnection();
         SessionId targetSessionId = executionInput.getTargetSessionId();
         SchemaId targetSchemaId = executionInput.getTargetSchemaId();
-        DBNConnection connection = connectionHandler.getConnection(targetSessionId, targetSchemaId);
+        DBNConnection conn = connection.getConnection(targetSessionId, targetSchemaId);
 
         if (targetSessionId == SessionId.POOL) {
-            Resources.setAutoCommit(connection, false);
+            Resources.setAutoCommit(conn, false);
         }
 
-        execute(executionInput, connection, debuggerType);
+        execute(executionInput, conn, debuggerType);
     }
 
     @Override
-    public void execute(final MethodExecutionInput executionInput, @NotNull DBNConnection connection, DBDebuggerType debuggerType) throws SQLException {
+    public void execute(final MethodExecutionInput executionInput, @NotNull DBNConnection conn, DBDebuggerType debuggerType) throws SQLException {
         ExecutionContext context = executionInput.initExecution(debuggerType);
         ExecutionOptions options = executionInput.getOptions();
-        ConnectionHandler connectionHandler = getConnectionHandler();
+        ConnectionHandler connection = getConnection();
         SessionId targetSessionId = executionInput.getTargetSessionId();
 
         boolean loggingEnabled = debuggerType != DBDebuggerType.JDBC && options.is(ExecutionOption.ENABLE_LOGGING);
@@ -88,16 +87,16 @@ public abstract class MethodExecutionProcessorImpl implements MethodExecutionPro
         try {
             String command = buildExecutionCommand(executionInput);
             DBMethod method = getMethod();
-            loggingEnabled = loggingEnabled && loggingManager.supportsLogging(connectionHandler);
+            loggingEnabled = loggingEnabled && loggingManager.supportsLogging(connection);
             if (loggingEnabled) {
-                loggingEnabled = loggingManager.enableLogger(connectionHandler, connection);
+                loggingEnabled = loggingManager.enableLogger(connection, conn);
             }
 
             DBNPreparedStatement<?> statement = isQuery() ?
-                    connection.prepareStatement(command) :
-                    connection.prepareCall(command);
+                    conn.prepareStatement(command) :
+                    conn.prepareCall(command);
 
-            context.setConnection(connection);
+            context.setConnection(conn);
             context.setStatement(statement);
 
             bindParameters(executionInput, statement);
@@ -108,7 +107,7 @@ public abstract class MethodExecutionProcessorImpl implements MethodExecutionPro
                     methodExecutionSettings.getExecutionTimeout();
 
             statement.setQueryTimeout(timeout);
-            MethodExecutionResult executionResult = new CancellableDatabaseCall<MethodExecutionResult>(connectionHandler, connection, timeout, TimeUnit.SECONDS) {
+            MethodExecutionResult executionResult = new CancellableDatabaseCall<MethodExecutionResult>(connection, conn, timeout, TimeUnit.SECONDS) {
                 @Override
                 public MethodExecutionResult execute() throws Exception {
                     statement.execute();
@@ -126,36 +125,36 @@ public abstract class MethodExecutionProcessorImpl implements MethodExecutionPro
                 executionResult.calculateExecDuration();
 
                 if (loggingEnabled) {
-                    String logOutput = loggingManager.readLoggerOutput(connectionHandler, connection);
+                    String logOutput = loggingManager.readLoggerOutput(connection, conn);
                     executionResult.setLogOutput(logOutput);
                 }
             }
 
-            if (targetSessionId != SessionId.POOL) connection.notifyDataChanges(method.getVirtualFile());
+            if (targetSessionId != SessionId.POOL) conn.notifyDataChanges(method.getVirtualFile());
         } catch (SQLException e) {
             Resources.cancel(context.getStatement());
             throw e;
         } finally {
             if (loggingEnabled) {
-                loggingManager.disableLogger(connectionHandler, connection);
+                loggingManager.disableLogger(connection, conn);
             }
 
             if (options.is(ExecutionOption.COMMIT_AFTER_EXECUTION)) {
-                Resources.commitSilently(connection);
+                Resources.commitSilently(conn);
             }
 
-            if (connection.isDebugConnection()) {
-                Resources.close(connection);
+            if (conn.isDebugConnection()) {
+                Resources.close(conn);
 
-            } else if (connection.isPoolConnection()) {
-                connectionHandler.freePoolConnection(connection);
+            } else if (conn.isPoolConnection()) {
+                connection.freePoolConnection(conn);
             }
         }
     }
 
     @NotNull
-    private ConnectionHandler getConnectionHandler() {
-        return Failsafe.nn(getMethod().getConnection());
+    private ConnectionHandler getConnection() {
+        return getMethod().getConnection();
     }
 
     protected boolean isQuery() {

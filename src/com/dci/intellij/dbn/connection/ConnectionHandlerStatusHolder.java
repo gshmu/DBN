@@ -17,7 +17,7 @@ import java.util.List;
 @Getter
 @Setter
 public class ConnectionHandlerStatusHolder extends PropertyHolderBase.IntStore<ConnectionHandlerStatus> {
-    private final ConnectionHandlerRef  connectionHandlerRef;
+    private final ConnectionHandlerRef connection;
 
     private AuthenticationError authenticationError;
     private Throwable connectionException;
@@ -30,10 +30,10 @@ public class ConnectionHandlerStatusHolder extends PropertyHolderBase.IntStore<C
     private final LatentConnectionStatus active = new LatentConnectionStatus(ConnectionHandlerStatus.ACTIVE, true, TimeUtil.Millis.ONE_SECOND) {
         @Override
         protected boolean doCheck() {
-            ConnectionHandler connectionHandler = getConnectionHandler();
-            List<DBNConnection> connections = connectionHandler.getConnections();
-            for (DBNConnection connection : connections) {
-                if (connection.isActive()) {
+            ConnectionHandler connection = getConnection();
+            List<DBNConnection> connections = connection.getConnections();
+            for (DBNConnection conn : connections) {
+                if (conn.isActive()) {
                     return true;
                 }
             }
@@ -44,10 +44,10 @@ public class ConnectionHandlerStatusHolder extends PropertyHolderBase.IntStore<C
     private final LatentConnectionStatus busy = new LatentConnectionStatus(ConnectionHandlerStatus.BUSY, true, TimeUtil.Millis.ONE_SECOND) {
         @Override
         protected boolean doCheck() {
-            ConnectionHandler connectionHandler = getConnectionHandler();
-            List<DBNConnection> connections = connectionHandler.getConnections();
-            for (DBNConnection connection : connections) {
-                if (connection.hasDataChanges()) {
+            ConnectionHandler connection = getConnection();
+            List<DBNConnection> connections = connection.getConnections();
+            for (DBNConnection conn : connections) {
+                if (conn.hasDataChanges()) {
                     return true;
                 }
             }
@@ -59,10 +59,10 @@ public class ConnectionHandlerStatusHolder extends PropertyHolderBase.IntStore<C
         @Override
         protected boolean doCheck() {
             DBNConnection poolConnection = null;
-            ConnectionHandler connectionHandler = getConnectionHandler();
+            ConnectionHandler connection = getConnection();
             try {
                 boolean valid = get();
-                ConnectionPool connectionPool = connectionHandler.getConnectionPool();
+                ConnectionPool connectionPool = connection.getConnectionPool();
                 if (isConnected() || !valid || connectionPool.wasNeverAccessed()) {
                     poolConnection = connectionPool.allocateConnection(true);
                 }
@@ -70,7 +70,7 @@ public class ConnectionHandlerStatusHolder extends PropertyHolderBase.IntStore<C
             } catch (Exception e) {
                 return false;
             } finally {
-                connectionHandler.freePoolConnection(poolConnection);
+                connection.freePoolConnection(poolConnection);
             }
         }
     };
@@ -79,10 +79,10 @@ public class ConnectionHandlerStatusHolder extends PropertyHolderBase.IntStore<C
         @Override
         protected boolean doCheck() {
             try {
-                ConnectionHandler connectionHandler = getConnectionHandler();
-                List<DBNConnection> connections = connectionHandler.getConnections();
-                for (DBNConnection connection : connections) {
-                    if (connection != null && !connection.isActive() && !connection.isClosed() && connection.isValid()) {
+                ConnectionHandler connection = getConnection();
+                List<DBNConnection> connections = connection.getConnections();
+                for (DBNConnection conn : connections) {
+                    if (conn != null && !conn.isActive() && !conn.isClosed() && conn.isValid()) {
                         return true;
                     }
                 }
@@ -103,26 +103,26 @@ public class ConnectionHandlerStatusHolder extends PropertyHolderBase.IntStore<C
                 @Override
                 protected void statusChanged() {
                     if (true || getResource().isNot(ConnectionHandlerStatus.LOADING)) {
-                        ConnectionHandler connectionHandler = Failsafe.nn(getConnectionHandler());
-                        Project project = connectionHandler.getProject();
+                        ConnectionHandler connection = Failsafe.nn(getConnection());
+                        Project project = connection.getProject();
                         ProjectEvents.notify(project,
                                 ConnectionLoadListener.TOPIC,
-                                (listener) -> listener.contentsLoaded(connectionHandler));
+                                (listener) -> listener.contentsLoaded(connection));
                     }
                 }
             };
 
-    ConnectionHandlerStatusHolder(@NotNull ConnectionHandler connectionHandler) {
-        this.connectionHandlerRef = connectionHandler.getRef();
+    ConnectionHandlerStatusHolder(@NotNull ConnectionHandler connection) {
+        this.connection = connection.ref();
     }
 
     @NotNull
-    private ConnectionHandler getConnectionHandler() {
-        return connectionHandlerRef.ensure();
+    private ConnectionHandler getConnection() {
+        return connection.ensure();
     }
 
     private boolean canConnect() {
-        return getConnectionHandler().canConnect();
+        return getConnection().canConnect();
     }
 
 
@@ -173,11 +173,11 @@ public class ConnectionHandlerStatusHolder extends PropertyHolderBase.IntStore<C
 
         @Override
         public final void statusChanged(ConnectionHandlerStatus status) {
-            ConnectionHandler connectionHandler = connectionHandlerRef.ensure();
-            Project project = connectionHandler.getProject();
+            ConnectionHandler connection = getConnection();
+            Project project = connection.getProject();
             ProjectEvents.notify(project,
                     ConnectionHandlerStatusListener.TOPIC,
-                    (listener) -> listener.statusChanged(connectionHandler.getConnectionId()));
+                    (listener) -> listener.statusChanged(connection.getConnectionId()));
         }
     }
 }

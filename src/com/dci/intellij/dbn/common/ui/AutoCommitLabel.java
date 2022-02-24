@@ -21,8 +21,9 @@ import com.intellij.ui.JBColor;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import javax.swing.*;
-import java.awt.*;
+import javax.swing.JLabel;
+import java.awt.BorderLayout;
+import java.awt.Color;
 
 import static com.dci.intellij.dbn.common.util.Commons.nvl;
 
@@ -31,7 +32,7 @@ public class AutoCommitLabel extends DBNPanelImpl implements Disposable {
         Color DISCONNECTED = new JBColor(new Color(0x454545), new Color(0x808080));
         Color CONNECTED = new JBColor(new Color(0x454545), new Color(0x808080));
     }
-    private ConnectionHandlerRef connectionHandler;
+    private ConnectionHandlerRef connection;
     private WeakRef<VirtualFile> virtualFile;
     private SessionId sessionId;
     private boolean subscribed = false;
@@ -53,13 +54,13 @@ public class AutoCommitLabel extends DBNPanelImpl implements Disposable {
 
     }
 
-    public void init(Project project, VirtualFile virtualFile, ConnectionHandler connectionHandler, DatabaseSession session) {
-        init(project, virtualFile, connectionHandler, session == null ? null : session.getId());
+    public void init(Project project, VirtualFile file, ConnectionHandler connection, DatabaseSession session) {
+        init(project, file, connection, session == null ? null : session.getId());
     }
 
-    public void init(Project project, VirtualFile virtualFile, ConnectionHandler connectionHandler, SessionId sessionId) {
-        this.virtualFile = WeakRef.of(virtualFile);
-        this.connectionHandler = ConnectionHandlerRef.of(connectionHandler);
+    public void init(Project project, VirtualFile file, ConnectionHandler connection, SessionId sessionId) {
+        this.virtualFile = WeakRef.of(file);
+        this.connection = ConnectionHandlerRef.of(connection);
         this.sessionId = nvl(sessionId, SessionId.MAIN);
         if (!subscribed) {
             subscribed = true;
@@ -72,14 +73,14 @@ public class AutoCommitLabel extends DBNPanelImpl implements Disposable {
 
     private void update() {
         Dispatch.runConditional(() -> {
-            ConnectionHandler connectionHandler = getConnectionHandler();
-            if (connectionHandler != null && !connectionHandler.isVirtual()) {
+            ConnectionHandler connection = getConnection();
+            if (connection != null && !connection.isVirtual()) {
                 setVisible(true);
-                boolean disconnected = !connectionHandler.isConnected(sessionId);
-                boolean autoCommit = connectionHandler.isAutoCommit();
+                boolean disconnected = !connection.isConnected(sessionId);
+                boolean autoCommit = connection.isAutoCommit();
 
                 connectionLabel.setForeground(disconnected ? Colors.DISCONNECTED : Colors.CONNECTED);
-                DatabaseSession session = connectionHandler.getSessionBundle().getSession(sessionId);
+                DatabaseSession session = connection.getSessionBundle().getSession(sessionId);
 
 
                 String sessionName = session.getName();
@@ -96,8 +97,8 @@ public class AutoCommitLabel extends DBNPanelImpl implements Disposable {
                 autoCommitLabel.setText(autoCommit ? "Auto-Commit ON" : "Auto-Commit OFF");
                 autoCommitLabel.setToolTipText(
                         autoCommit ?
-                                "Auto-Commit is enabled for connection \"" + connectionHandler + "\". Data changes will be automatically committed to the database." :
-                                "Auto-Commit is disabled for connection \"" + connectionHandler + "\". Data changes will need to be manually committed to the database.");
+                                "Auto-Commit is enabled for connection \"" + connection + "\". Data changes will be automatically committed to the database." :
+                                "Auto-Commit is disabled for connection \"" + connection + "\". Data changes will need to be manually committed to the database.");
             } else {
                 setVisible(false);
             }
@@ -105,18 +106,18 @@ public class AutoCommitLabel extends DBNPanelImpl implements Disposable {
     }
 
     @Nullable
-    private ConnectionHandler getConnectionHandler() {
+    private ConnectionHandler getConnection() {
         try {
-            return ConnectionHandlerRef.get(connectionHandler);
+            return ConnectionHandlerRef.get(connection);
         } catch (AlreadyDisposedException e) {
-            this.connectionHandler = null;
+            this.connection = null;
             return null;
         }
     }
 
     private final ConnectionStatusListener connectionStatusListener = (connectionId, sessionId) -> {
-        ConnectionHandler connectionHandler = getConnectionHandler();
-        if (connectionHandler != null && connectionHandler.getConnectionId() == connectionId) {
+        ConnectionHandler connection = getConnection();
+        if (connection != null && connection.getConnectionId() == connectionId) {
             update();
         }
     };
@@ -126,7 +127,7 @@ public class AutoCommitLabel extends DBNPanelImpl implements Disposable {
         public void connectionChanged(Project project, VirtualFile file, ConnectionHandler connection) {
             VirtualFile localVirtualFile = getVirtualFile();
             if (file.equals(localVirtualFile)) {
-                AutoCommitLabel.this.connectionHandler = ConnectionHandlerRef.of(connection);
+                AutoCommitLabel.this.connection = ConnectionHandlerRef.of(connection);
                 update();
             }
         }
@@ -146,11 +147,11 @@ public class AutoCommitLabel extends DBNPanelImpl implements Disposable {
      ********************************************************/
     private final TransactionListener transactionListener = new TransactionListener() {
         @Override
-        public void afterAction(@NotNull ConnectionHandler connectionHandler, DBNConnection connection, TransactionAction action, boolean succeeded) {
+        public void afterAction(@NotNull ConnectionHandler connection, DBNConnection conn, TransactionAction action, boolean succeeded) {
             if (action.isOneOf(
                     TransactionAction.TURN_AUTO_COMMIT_ON,
                     TransactionAction.TURN_AUTO_COMMIT_OFF) &&
-                    ConnectionHandlerRef.get(AutoCommitLabel.this.connectionHandler) == connectionHandler) {
+                    ConnectionHandlerRef.get(AutoCommitLabel.this.connection) == connection) {
 
                 update();
             }

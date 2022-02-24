@@ -17,10 +17,10 @@ public class DBJdbcBreakpointProperties extends XBreakpointProperties<DBJdbcBrea
     public DBJdbcBreakpointProperties() {
     }
 
-    public DBJdbcBreakpointProperties(ConnectionHandler connectionHandler) {
-        this.connectionHandlerRef = ConnectionHandlerRef.of(connectionHandler);
-        if (connectionHandler != null) {
-            connectionId = connectionHandler.getConnectionId();
+    public DBJdbcBreakpointProperties(ConnectionHandler connection) {
+        this.connectionHandlerRef = ConnectionHandlerRef.of(connection);
+        if (connection != null) {
+            connectionId = connection.getConnectionId();
         }
     }
 
@@ -31,7 +31,7 @@ public class DBJdbcBreakpointProperties extends XBreakpointProperties<DBJdbcBrea
 
     @Override
     @Nullable
-    public ConnectionHandler getConnectionHandler() {
+    public ConnectionHandler getConnection() {
         if (connectionHandlerRef == null && connectionId != null) {
             connectionHandlerRef = ConnectionHandlerRef.of(connectionId);
         }

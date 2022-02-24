@@ -85,9 +85,9 @@ public class DatabaseObjectFactory extends AbstractProjectComponent {
             MethodFactoryInput methodFactoryInput = (MethodFactoryInput) factoryInput;
             DBSchema schema = methodFactoryInput.getSchema();
             try {
-                ConnectionHandler connectionHandler = schema.getConnection();
-                DBNConnection connection = connectionHandler.getMainConnection(SchemaId.from(schema));
-                connectionHandler.getInterfaceProvider().getDdlInterface().createMethod(methodFactoryInput, connection);
+                ConnectionHandler connection = schema.getConnection();
+                DBNConnection mainConnection = connection.getMainConnection(SchemaId.from(schema));
+                connection.getInterfaceProvider().getDdlInterface().createMethod(methodFactoryInput, mainConnection);
                 DBObjectType objectType = methodFactoryInput.isFunction() ? DBObjectType.FUNCTION : DBObjectType.PROCEDURE;
                 Failsafe.nn(schema.getChildObjectList(objectType)).reload();
 
@@ -124,9 +124,8 @@ public class DatabaseObjectFactory extends AbstractProjectComponent {
     }
 
     private void doDropObject(DBSchemaObject object) {
-        ConnectionHandler connectionHandler = object.getConnection();
         try {
-            DatabaseInterface.run(false, connectionHandler,
+            DatabaseInterface.run(false, object.getConnection(),
                     (provider, connection) -> {
                         DBContentType contentType = object.getContentType();
 

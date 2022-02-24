@@ -99,7 +99,7 @@ public class MethodExecutionHistory implements PersistentStateElement, Disposabl
 
     @Nullable
     public MethodExecutionInput getExecutionInput(@NotNull DBMethod method, boolean create) {
-        return getExecutionInput(method.getRef(), create);
+        return getExecutionInput(method.ref(), create);
     }
 
     public MethodExecutionInput getExecutionInput(DBObjectRef method, boolean create) {

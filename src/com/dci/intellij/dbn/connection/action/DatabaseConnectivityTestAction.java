@@ -10,15 +10,15 @@ import org.jetbrains.annotations.NotNull;
 
 public class DatabaseConnectivityTestAction extends AbstractConnectionAction {
 
-    DatabaseConnectivityTestAction(ConnectionHandler connectionHandler) {
-        super("Test connectivity", "Test connectivity of " + connectionHandler.getName(), null, connectionHandler);
+    DatabaseConnectivityTestAction(ConnectionHandler connection) {
+        super("Test connectivity", "Test connectivity of " + connection.getName(), null, connection);
     }
 
     @Override
-    protected void actionPerformed(@NotNull AnActionEvent e, @NotNull Project project, @NotNull ConnectionHandler connectionHandler) {
-        connectionHandler.getInstructions().setAllowAutoConnect(true);
+    protected void actionPerformed(@NotNull AnActionEvent e, @NotNull Project project, @NotNull ConnectionHandler connection) {
+        connection.getInstructions().setAllowAutoConnect(true);
 
-        ConnectionAction.invoke("testing the connectivity", true, connectionHandler,
-                (action) -> ConnectionManager.testConnection(connectionHandler, null, SessionId.MAIN, true, true));
+        ConnectionAction.invoke("testing the connectivity", true, connection,
+                (action) -> ConnectionManager.testConnection(connection, null, SessionId.MAIN, true, true));
     }
 }

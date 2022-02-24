@@ -12,21 +12,21 @@ import org.jetbrains.annotations.Nullable;
 
 public class TransactionCommitAction extends AbstractConnectionAction {
 
-    public TransactionCommitAction(ConnectionHandler connectionHandler) {
-        super("Commit", "Commit connection", Icons.CONNECTION_COMMIT, connectionHandler);
+    public TransactionCommitAction(ConnectionHandler connection) {
+        super("Commit", "Commit connection", Icons.CONNECTION_COMMIT, connection);
 
     }
 
     @Override
-    protected void actionPerformed(@NotNull AnActionEvent e, @NotNull Project project, @NotNull ConnectionHandler connectionHandler) {
+    protected void actionPerformed(@NotNull AnActionEvent e, @NotNull Project project, @NotNull ConnectionHandler connection) {
         DatabaseTransactionManager transactionManager = DatabaseTransactionManager.getInstance(project);
-        transactionManager.commit(connectionHandler, null, false, false, null);
+        transactionManager.commit(connection, null, false, false, null);
     }
 
     @Override
-    protected void update(@NotNull AnActionEvent e, @NotNull Presentation presentation, @NotNull Project project, @Nullable ConnectionHandler connectionHandler) {
-        boolean enabled = connectionHandler != null && connectionHandler.hasUncommittedChanges();
-        boolean visible = connectionHandler != null && !connectionHandler.isAutoCommit();
+    protected void update(@NotNull AnActionEvent e, @NotNull Presentation presentation, @NotNull Project project, @Nullable ConnectionHandler connection) {
+        boolean enabled = connection != null && connection.hasUncommittedChanges();
+        boolean visible = connection != null && !connection.isAutoCommit();
 
         presentation.setEnabled(enabled);
         presentation.setVisible(visible);

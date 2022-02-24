@@ -12,26 +12,24 @@ import com.dci.intellij.dbn.connection.transaction.TransactionAction;
 import com.intellij.openapi.project.Project;
 import org.jetbrains.annotations.NotNull;
 
-import javax.swing.*;
+import javax.swing.AbstractAction;
+import javax.swing.Action;
+import javax.swing.JComponent;
 import java.awt.event.ActionEvent;
 import java.util.List;
 
-import static com.dci.intellij.dbn.connection.transaction.TransactionAction.COMMIT;
-import static com.dci.intellij.dbn.connection.transaction.TransactionAction.DISCONNECT_IDLE;
-import static com.dci.intellij.dbn.connection.transaction.TransactionAction.KEEP_ALIVE;
-import static com.dci.intellij.dbn.connection.transaction.TransactionAction.ROLLBACK_IDLE;
-import static com.dci.intellij.dbn.connection.transaction.TransactionAction.actions;
+import static com.dci.intellij.dbn.connection.transaction.TransactionAction.*;
 
 public class IdleConnectionDialog extends DialogWithTimeout {
     private final IdleConnectionDialogForm idleConnectionDialogForm;
-    private final ConnectionHandlerRef connectionHandlerRef;
-    private final DBNConnection connection;
+    private final ConnectionHandlerRef connection;
+    private final DBNConnection conn;
 
-    public IdleConnectionDialog(ConnectionHandler connectionHandler, DBNConnection connection) {
-        super(connectionHandler.getProject(), "Idle connection", true, TimeUtil.getSeconds(5));
-        this.connectionHandlerRef = connectionHandler.getRef();
-        this.connection = connection;
-        idleConnectionDialogForm = new IdleConnectionDialogForm(this, connectionHandler, connection, 5);
+    public IdleConnectionDialog(ConnectionHandler targetConnection, DBNConnection conn) {
+        super(targetConnection.getProject(), "Idle connection", true, TimeUtil.getSeconds(5));
+        this.connection = targetConnection.ref();
+        this.conn = conn;
+        idleConnectionDialogForm = new IdleConnectionDialogForm(this, targetConnection, conn, 5);
         setModal(false);
         init();
     }
@@ -46,14 +44,14 @@ public class IdleConnectionDialog extends DialogWithTimeout {
         rollback();
     }
 
-    public ConnectionHandler getConnectionHandler() {
-        return connectionHandlerRef.ensure();
+    public ConnectionHandler getConnection() {
+        return connection.ensure();
     }
 
     @Override
     protected void doOKAction() {
         try {
-            connection.set(ResourceStatus.RESOLVING_TRANSACTION, false);
+            conn.set(ResourceStatus.RESOLVING_TRANSACTION, false);
         } finally {
             super.doOKAction();
         }
@@ -111,7 +109,7 @@ public class IdleConnectionDialog extends DialogWithTimeout {
         try {
             List<TransactionAction> actions = actions(COMMIT, DISCONNECT_IDLE);
             DatabaseTransactionManager transactionManager = getTransactionManager();
-            transactionManager.execute(getConnectionHandler(), connection, actions, true, null);
+            transactionManager.execute(getConnection(), conn, actions, true, null);
         } finally {
             doOKAction();
         }
@@ -122,7 +120,7 @@ public class IdleConnectionDialog extends DialogWithTimeout {
         try {
             List<TransactionAction> actions = actions(ROLLBACK_IDLE, DISCONNECT_IDLE);
             DatabaseTransactionManager transactionManager = getTransactionManager();
-            transactionManager.execute(getConnectionHandler(), connection, actions, true, null);
+            transactionManager.execute(getConnection(), conn, actions, true, null);
         } finally {
             doOKAction();
         }
@@ -132,7 +130,7 @@ public class IdleConnectionDialog extends DialogWithTimeout {
         try {
             List<TransactionAction> actions = actions(KEEP_ALIVE);
             DatabaseTransactionManager transactionManager = getTransactionManager();
-            transactionManager.execute(getConnectionHandler(), connection, actions, true, null);
+            transactionManager.execute(getConnection(), conn, actions, true, null);
         } finally {
             doOKAction();
         }

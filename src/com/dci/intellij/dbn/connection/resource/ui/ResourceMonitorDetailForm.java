@@ -28,8 +28,11 @@ import com.intellij.ui.components.JBScrollPane;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import javax.swing.*;
-import java.awt.*;
+import javax.swing.JButton;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import java.awt.BorderLayout;
+import java.awt.Dimension;
 import java.awt.event.ActionListener;
 
 import static com.dci.intellij.dbn.common.message.MessageCallback.when;
@@ -48,20 +51,20 @@ public class ResourceMonitorDetailForm extends DBNFormImpl {
     private JButton commitButton;
     private JButton rollbackButton;
 
-    private final ConnectionHandlerRef connectionHandler;
+    private final ConnectionHandlerRef connection;
 
-    ResourceMonitorDetailForm(@NotNull DBNComponent parent, ConnectionHandler connectionHandler) {
+    ResourceMonitorDetailForm(@NotNull DBNComponent parent, ConnectionHandler connection) {
         super(parent);
-        this.connectionHandler = connectionHandler.getRef();
+        this.connection = connection.ref();
 
-        DBNHeaderForm headerForm = new DBNHeaderForm(this, connectionHandler);
+        DBNHeaderForm headerForm = new DBNHeaderForm(this, connection);
         headerPanel.add(headerForm.getComponent(), BorderLayout.CENTER);
 
-        ResourceMonitorSessionsTableModel sessionsTableModel = new ResourceMonitorSessionsTableModel(connectionHandler);
+        ResourceMonitorSessionsTableModel sessionsTableModel = new ResourceMonitorSessionsTableModel(connection);
         sessionsTable = new ResourceMonitorSessionsTable(this, sessionsTableModel);
         sessionsTable.getSelectionModel().addListSelectionListener(e -> {
-            DBNConnection connection = getSelectedConnection();
-            refreshTransactionsData(connection);
+            DBNConnection conn = getSelectedConnection();
+            refreshTransactionsData(conn);
             updateTransactionActions();
         });
 
@@ -75,21 +78,21 @@ public class ResourceMonitorDetailForm extends DBNFormImpl {
         sessionLabel.setText("");
 
         // transactions table
-        ResourceMonitorTransactionsTableModel transactionsTableModel = new ResourceMonitorTransactionsTableModel(connectionHandler, null);
+        ResourceMonitorTransactionsTableModel transactionsTableModel = new ResourceMonitorTransactionsTableModel(connection, null);
         transactionsTable = new ResourceMonitorTransactionsTable(this, transactionsTableModel);
         transactionsTableScrollPane.setViewportView(transactionsTable);
         transactionsTableScrollPane.getViewport().setBackground(Colors.getTableBackground());
 
         ActionListener actionListener = e -> {
-            Project project = connectionHandler.getProject();
-            DBNConnection connection = getSelectedConnection();
-            if (connection != null) {
+            Project project = connection.getProject();
+            DBNConnection conn = getSelectedConnection();
+            if (conn != null) {
                 DatabaseTransactionManager transactionManager = getTransactionManager();
                 Object source = e.getSource();
                 if (source == commitButton) {
-                    transactionManager.commit(connectionHandler, connection);
+                    transactionManager.commit(connection, conn);
                 } else if (source == rollbackButton) {
-                    transactionManager.rollback(connectionHandler, connection);
+                    transactionManager.rollback(connection, conn);
                 }
             }
         };
@@ -118,18 +121,18 @@ public class ResourceMonitorDetailForm extends DBNFormImpl {
         public void actionPerformed(@NotNull AnActionEvent e) {
             DatabaseSession session = getSelectedSession();
             if (session != null) {
-                ConnectionHandler connectionHandler = getConnectionHandler();
+                ConnectionHandler connection = getConnection();
                 Messages.showQuestionDialog(getProject(),
                         "Disconnect Session",
-                        "Are you sure you want to disconnect the session \"" + session.getName() + "\" for connection\"" + connectionHandler.getName() + "\"" ,
+                        "Are you sure you want to disconnect the session \"" + session.getName() + "\" for connection\"" + connection.getName() + "\"" ,
                         Messages.OPTIONS_YES_NO, 0,
                         option -> when(option == 0, () -> {
-                            DBNConnection connection = getSelectedConnection();
-                            if (connection != null) {
+                            DBNConnection conn = getSelectedConnection();
+                            if (conn != null) {
                                 DatabaseTransactionManager transactionManager = getTransactionManager();
                                 transactionManager.execute(
-                                        connectionHandler,
                                         connection,
+                                        conn,
                                         actions(TransactionAction.DISCONNECT),
                                         false,
                                         null);
@@ -153,7 +156,7 @@ public class ResourceMonitorDetailForm extends DBNFormImpl {
             if (session != null) {
                 Messages.showQuestionDialog(getProject(),
                         "Delete Session",
-                        "Are you sure you want to delete the session \"" + session.getName() + "\" for connection\"" + getConnectionHandler().getName() + "\"" ,
+                        "Are you sure you want to delete the session \"" + session.getName() + "\" for connection\"" + getConnection().getName() + "\"" ,
                         Messages.OPTIONS_YES_NO, 0,
                         option -> when(option == 0, () -> {
                             Project project = ensureProject();
@@ -195,8 +198,8 @@ public class ResourceMonitorDetailForm extends DBNFormImpl {
         }
     };
 
-    public ConnectionHandler getConnectionHandler() {
-        return connectionHandler.ensure();
+    public ConnectionHandler getConnection() {
+        return connection.ensure();
     }
 
     @NotNull
@@ -210,9 +213,9 @@ public class ResourceMonitorDetailForm extends DBNFormImpl {
      ********************************************************/
     private final TransactionListener transactionListener = new TransactionListener() {
         @Override
-        public void afterAction(@NotNull ConnectionHandler connectionHandler, DBNConnection connection, TransactionAction action, boolean succeeded) {
-            if (connectionHandler == getConnectionHandler() && transactionsTable.getModel().getConnection() == connection && succeeded) {
-                refreshTransactionsData(connection);
+        public void afterAction(@NotNull ConnectionHandler connection, DBNConnection conn, TransactionAction action, boolean succeeded) {
+            if (connection == getConnection() && transactionsTable.getModel().getConn() == conn && succeeded) {
+                refreshTransactionsData(conn);
             }
         }
     };
@@ -220,21 +223,21 @@ public class ResourceMonitorDetailForm extends DBNFormImpl {
     private final SessionManagerListener sessionManagerListener = new SessionManagerListener() {
         @Override
         public void sessionCreated(DatabaseSession session) {
-            if (session.getConnection() == getConnectionHandler()) {
+            if (session.getConnection() == getConnection()) {
                 refreshSessionData();
             }
         }
 
         @Override
         public void sessionDeleted(DatabaseSession session) {
-            if (session.getConnection() == getConnectionHandler()) {
+            if (session.getConnection() == getConnection()) {
                 refreshSessionData();
             }
         }
 
         @Override
         public void sessionChanged(DatabaseSession session) {
-            if (session.getConnection() == getConnectionHandler()) {
+            if (session.getConnection() == getConnection()) {
                 refreshSessionData();
             }
         }
@@ -243,22 +246,22 @@ public class ResourceMonitorDetailForm extends DBNFormImpl {
     private void refreshSessionData() {
         Dispatch.run(() -> {
             checkDisposed();
-            ConnectionHandler connectionHandler = getConnectionHandler();
+            ConnectionHandler connection = getConnection();
 
-            ResourceMonitorSessionsTableModel sessionsTableModel = new ResourceMonitorSessionsTableModel(connectionHandler);
+            ResourceMonitorSessionsTableModel sessionsTableModel = new ResourceMonitorSessionsTableModel(connection);
             sessionsTable.setModel(sessionsTableModel);
         });
     }
 
-    private void refreshTransactionsData(DBNConnection connection) {
+    private void refreshTransactionsData(DBNConnection conn) {
         Dispatch.run(() -> {
             checkDisposed();
-            ConnectionHandler connectionHandler = getConnectionHandler();
+            ConnectionHandler connection = getConnection();
 
-            ResourceMonitorTransactionsTableModel transactionsTableModel = new ResourceMonitorTransactionsTableModel(connectionHandler, connection);
+            ResourceMonitorTransactionsTableModel transactionsTableModel = new ResourceMonitorTransactionsTableModel(connection, conn);
             transactionsTable.setModel(transactionsTableModel);
             DatabaseSession session = getSelectedSession();
-            sessionLabel.setText(session == null ? "" : session.getName() + " (" + connectionHandler.getName() + ")");
+            sessionLabel.setText(session == null ? "" : session.getName() + " (" + connection.getName() + ")");
             sessionLabel.setIcon(session == null ? null : session.getIcon());
             updateTransactionActions();
         });
@@ -274,8 +277,8 @@ public class ResourceMonitorDetailForm extends DBNFormImpl {
     private DBNConnection getSelectedConnection() {
         DatabaseSession session = getSelectedSession();
         if (session != null) {
-            ConnectionHandler connectionHandler = getConnectionHandler();
-            ConnectionPool connectionPool = connectionHandler.getConnectionPool();
+            ConnectionHandler connection = getConnection();
+            ConnectionPool connectionPool = connection.getConnectionPool();
             return connectionPool.getSessionConnection(session.getId());
         }
         return null;

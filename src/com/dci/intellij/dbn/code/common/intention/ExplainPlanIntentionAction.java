@@ -49,7 +49,7 @@ public class ExplainPlanIntentionAction extends GenericIntentionAction implement
                 ExecutablePsiElement executable = PsiUtil.lookupExecutableAtCaret(editor, true);
                 FileEditor fileEditor = Editors.getFileEditor(editor);
                 if (executable != null && fileEditor != null && executable.is(ElementTypeAttribute.DATA_MANIPULATION)) {
-                    ConnectionHandler activeConnection = executable.getConnectionHandler();
+                    ConnectionHandler activeConnection = executable.getConnection();
                     return DatabaseFeature.EXPLAIN_PLAN.isSupported(activeConnection);
                 }
             }

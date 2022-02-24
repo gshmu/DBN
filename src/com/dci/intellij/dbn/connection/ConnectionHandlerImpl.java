@@ -289,7 +289,7 @@ public class ConnectionHandlerImpl extends StatefulDisposable.Base implements Co
     }
 
     @Override
-    public ConnectionHandlerRef getRef() {
+    public ConnectionHandlerRef ref() {
         return ref;
     }
 

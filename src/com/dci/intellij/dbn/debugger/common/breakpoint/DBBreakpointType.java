@@ -93,13 +93,13 @@ public class DBBreakpointType extends XLineBreakpointType<XBreakpointProperties>
 
     @Override
     public XBreakpointProperties createBreakpointProperties(@NotNull VirtualFile file, int line) {
-        ConnectionHandler connectionHandler = null;
+        ConnectionHandler connection = null;
         if (file instanceof ConnectionProvider) {
             ConnectionProvider connectionProvider = (ConnectionProvider) file;
-            connectionHandler = connectionProvider.getConnection();
+            connection = connectionProvider.getConnection();
         }
 
-        return createBreakpointProperties(connectionHandler);
+        return createBreakpointProperties(connection);
     }
 
     @Nullable
@@ -131,18 +131,18 @@ public class DBBreakpointType extends XLineBreakpointType<XBreakpointProperties>
         return "unknown";
     }
 
-    private static XBreakpointProperties createBreakpointProperties(ConnectionHandler connectionHandler) {
+    private static XBreakpointProperties createBreakpointProperties(ConnectionHandler connection) {
         if (DBDebuggerType.JDWP.isSupported()) {
             try {
                 Class propertiesClass = Class.forName("com.dci.intellij.dbn.debugger.jdwp.DBJdwpBreakpointProperties");
                 Constructor constructor = propertiesClass.getConstructor(ConnectionHandler.class);
-                return (XBreakpointProperties) constructor.newInstance(connectionHandler);
+                return (XBreakpointProperties) constructor.newInstance(connection);
             } catch (Exception e) {
                 log.error("Error creating JDWP breakpoints properties", e);
             }
         }
 
-        return new DBJdbcBreakpointProperties(connectionHandler);
+        return new DBJdbcBreakpointProperties(connection);
     }
 
 }

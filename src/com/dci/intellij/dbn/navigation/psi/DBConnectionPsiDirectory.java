@@ -14,7 +14,14 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Key;
 import com.intellij.openapi.util.TextRange;
 import com.intellij.openapi.vcs.FileStatus;
-import com.intellij.psi.*;
+import com.intellij.psi.PsiDirectory;
+import com.intellij.psi.PsiElement;
+import com.intellij.psi.PsiElementVisitor;
+import com.intellij.psi.PsiFile;
+import com.intellij.psi.PsiInvalidElementAccessException;
+import com.intellij.psi.PsiManager;
+import com.intellij.psi.PsiReference;
+import com.intellij.psi.ResolveState;
 import com.intellij.psi.scope.PsiScopeProcessor;
 import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.psi.search.PsiElementProcessor;
@@ -23,15 +30,15 @@ import com.intellij.util.IncorrectOperationException;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import javax.swing.*;
+import javax.swing.Icon;
 import java.util.ArrayList;
 import java.util.List;
 
 public class DBConnectionPsiDirectory implements PsiDirectory, Disposable {
     private DBConnectionVirtualFile virtualFile;
 
-    public DBConnectionPsiDirectory(ConnectionHandler connectionHandler) {
-        virtualFile = new DBConnectionVirtualFile(connectionHandler);
+    public DBConnectionPsiDirectory(ConnectionHandler connection) {
+        virtualFile = new DBConnectionVirtualFile(connection);
     }
 
     @Override
@@ -41,19 +48,19 @@ public class DBConnectionPsiDirectory implements PsiDirectory, Disposable {
     }
 
     @NotNull
-    public ConnectionHandler getConnectionHandler() {
+    public ConnectionHandler getConnection() {
         return getVirtualFile().getConnection();
     }
 
     @Override
     @NotNull
     public String getName() {
-        return getConnectionHandler().getName();
+        return getConnection().getName();
     }
 
     @Override
     public ItemPresentation getPresentation() {
-        return getConnectionHandler().getObjectBundle();
+        return getConnection().getObjectBundle();
     }
 
     public FileStatus getFileStatus() {
@@ -406,7 +413,7 @@ public class DBConnectionPsiDirectory implements PsiDirectory, Disposable {
 
     @Override
     public void navigate(boolean requestFocus) {
-        getConnectionHandler().getObjectBundle().navigate(requestFocus);
+        getConnection().getObjectBundle().navigate(requestFocus);
     }
 
     @Override

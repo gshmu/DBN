@@ -17,7 +17,7 @@ public class ObjectTreeModel extends DefaultTreeModel {
     private Object[] elements;
 
     public ObjectTreeModel(DBSchema schema, Set<DBObjectType> objectTypes, DBObject selectedObject) {
-        super(new DefaultMutableTreeNode(schema == null ? "No schema selected" : schema.getRef()));
+        super(new DefaultMutableTreeNode(schema == null ? "No schema selected" : schema.ref()));
 
 
 
@@ -26,7 +26,7 @@ public class ObjectTreeModel extends DefaultTreeModel {
 
             for (DBObjectType objectType : objectTypes) {
                 for (DBObject schemaObject :schema.getChildObjects(objectType)) {
-                    DefaultMutableTreeNode objectNode = new DefaultMutableTreeNode(schemaObject.getRef());
+                    DefaultMutableTreeNode objectNode = new DefaultMutableTreeNode(schemaObject.ref());
                     rootNode.add(objectNode);
                     if (selectedObject != null && selectedObject.equals(schemaObject)) {
                         initialSelection = new TreePath(objectNode.getPath());
@@ -37,7 +37,7 @@ public class ObjectTreeModel extends DefaultTreeModel {
             for (DBObjectType schemaObjectType : schema.getObjectType().getChildren()) {
                 if (hasChild(schemaObjectType, objectTypes)) {
                     for (DBObject schemaObject : schema.getChildObjects(schemaObjectType)) {
-                        DefaultMutableTreeNode bundleNode = new DefaultMutableTreeNode(schemaObject.getRef());
+                        DefaultMutableTreeNode bundleNode = new DefaultMutableTreeNode(schemaObject.ref());
 
                         List<DBObject> objects = new ArrayList<DBObject>();
                         for (DBObjectType objectType : objectTypes) {
@@ -47,7 +47,7 @@ public class ObjectTreeModel extends DefaultTreeModel {
                         if (objects.size() > 0) {
                             rootNode.add(bundleNode);
                             for (DBObject object : objects) {
-                                DefaultMutableTreeNode objectNode = new DefaultMutableTreeNode(object.getRef());
+                                DefaultMutableTreeNode objectNode = new DefaultMutableTreeNode(object.ref());
                                 bundleNode.add(objectNode);
                                 if (selectedObject != null && selectedObject.equals(object)) {
                                     initialSelection = new TreePath(objectNode.getPath());

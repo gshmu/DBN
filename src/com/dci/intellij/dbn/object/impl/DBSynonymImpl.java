@@ -17,7 +17,7 @@ import com.dci.intellij.dbn.object.type.DBObjectType;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import javax.swing.*;
+import javax.swing.Icon;
 import java.sql.SQLException;
 import java.util.LinkedList;
 import java.util.List;
@@ -38,10 +38,10 @@ public class DBSynonymImpl extends DBSchemaObjectImpl<DBSynonymMetadata> impleme
         String objectName = metadata.getUnderlyingObjectName();
         DBObjectType objectType = DBObjectType.get(metadata.getUnderlyingObjectType(), DBObjectType.ANY);
 
-        ConnectionHandler connectionHandler = this.getConnection();
-        DBSchema schema = connectionHandler.getObjectBundle().getSchema(schemaName);
+        ConnectionHandler connection = this.getConnection();
+        DBSchema schema = connection.getObjectBundle().getSchema(schemaName);
         if (schema != null) {
-            DBObjectRef schemaRef = schema.getRef();
+            DBObjectRef schemaRef = schema.ref();
             underlyingObject = new DBObjectRef<>(schemaRef, objectType, objectName);
         }
 

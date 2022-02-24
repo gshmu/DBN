@@ -458,14 +458,13 @@ public class DatasetEditorTable extends ResultSetTable<DatasetEditorModel> {
             if (model.is(INSERTING)) {
                 int insertRowIndex = getModel().getInsertRowIndex();
                 if (insertRowIndex != -1 && (insertRowIndex == e.getFirstIndex() || insertRowIndex == e.getLastIndex()) && getSelectedRow() != insertRowIndex) {
-                    Progress.prompt(getProject(), "Refreshing data", false,
-                            (progress) -> {
-                                try {
-                                    model.postInsertRecord(false, true, false);
-                                } catch (SQLException e1) {
-                                    Messages.showErrorDialog(getProject(), "Could not create row in " + getDataset().getQualifiedNameWithType() + ".", e1);
-                                }
-                            });
+                    Progress.prompt(getProject(), "Refreshing data", false, progress -> {
+                        try {
+                            model.postInsertRecord(false, true, false);
+                        } catch (SQLException e1) {
+                            Messages.showErrorDialog(getProject(), "Could not create row in " + getDataset().getQualifiedNameWithType() + ".", e1);
+                        }
+                    });
                 }
             }
             startCellEditing(e);
@@ -516,25 +515,22 @@ public class DatasetEditorTable extends ResultSetTable<DatasetEditorModel> {
             DatasetEditorModelCell cell,
             ColumnInfo columnInfo) {
 
-        Progress.modal(
-                getProject(),
-                "Loading column information", true,
-                (progress) -> {
-                    ActionGroup actionGroup = new DatasetEditorTableActionGroup(getDatasetEditor(), cell, columnInfo);
-                    Progress.check(progress);
+        Progress.modal(getProject(), "Loading column information", true, progress -> {
+            ActionGroup actionGroup = new DatasetEditorTableActionGroup(getDatasetEditor(), cell, columnInfo);
+            Progress.check(progress);
 
-                    ActionPopupMenu actionPopupMenu = Actions.createActionPopupMenu(DatasetEditorTable.this, "", actionGroup);
-                    JPopupMenu popupMenu = actionPopupMenu.getComponent();
-                    Dispatch.run(() -> {
-                        Component component = (Component) event.getSource();
-                        if (component.isShowing()) {
-                            int x = event.getX();
-                            int y = event.getY();
-                            if (x >= 0 && x < component.getWidth() && y >= 0 && y < component.getHeight()) {
-                                popupMenu.show(component, x, y);
-                            }
-                        }
-                    });
-                });
+            ActionPopupMenu actionPopupMenu = Actions.createActionPopupMenu(DatasetEditorTable.this, "", actionGroup);
+            JPopupMenu popupMenu = actionPopupMenu.getComponent();
+            Dispatch.run(() -> {
+                Component component = (Component) event.getSource();
+                if (component.isShowing()) {
+                    int x = event.getX();
+                    int y = event.getY();
+                    if (x >= 0 && x < component.getWidth() && y >= 0 && y < component.getHeight()) {
+                        popupMenu.show(component, x, y);
+                    }
+                }
+            });
+        });
     }
 }

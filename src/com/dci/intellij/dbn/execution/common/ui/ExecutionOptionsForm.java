@@ -56,12 +56,12 @@ public class ExecutionOptionsForm extends DBNFormImpl {
         this.executionInput = executionInput;
         this.debuggerType = debuggerType;
 
-        ConnectionHandler connectionHandler = Failsafe.nn(executionInput.getConnection());
+        ConnectionHandler connection = executionInput.ensureConnection();
 
         if (isSchemaSelectionAllowed()) {
             //ActionToolbar actionToolbar = ActionUtil.createActionToolbar("", true, new SetExecutionSchemaComboBoxAction(executionInput));
 
-            targetSchemaComboBox.setValues(connectionHandler.getSchemaIds());
+            targetSchemaComboBox.setValues(connection.getSchemaIds());
             targetSchemaComboBox.setSelectedValue(executionInput.getTargetSchemaId());
             targetSchemaComboBox.set(ValueSelectorOption.HIDE_DESCRIPTION, true);
             targetSchemaComboBox.addActionListener(actionListener);
@@ -79,7 +79,7 @@ public class ExecutionOptionsForm extends DBNFormImpl {
             }
         }
 
-        DatabaseSessionBundle sessionBundle = connectionHandler.getSessionBundle();
+        DatabaseSessionBundle sessionBundle = connection.getSessionBundle();
         SessionId targetSessionId = executionInput.getTargetSessionId();
         if (isSessionSelectionAllowed()) {
             DatabaseSession targetSession = sessionBundle.getSession(targetSessionId);
@@ -99,20 +99,20 @@ public class ExecutionOptionsForm extends DBNFormImpl {
             targetSessionLabel.setIcon(targetSession.getIcon());
         }
 
-        connectionLabel.setText(connectionHandler.getPresentableText());
-        connectionLabel.setIcon(connectionHandler.getIcon());
-        autoCommitLabel.init(getProject(), null, connectionHandler, targetSessionId);
+        connectionLabel.setText(connection.getPresentableText());
+        connectionLabel.setIcon(connection.getIcon());
+        autoCommitLabel.init(getProject(), null, connection, targetSessionId);
 
         ExecutionOptions options = executionInput.getOptions();
         commitCheckBox.setSelected(options.is(ExecutionOption.COMMIT_AFTER_EXECUTION));
-        commitCheckBox.setEnabled(!connectionHandler.isAutoCommit());
+        commitCheckBox.setEnabled(!connection.isAutoCommit());
 
         commitCheckBox.addActionListener(actionListener);
 
-        if (DatabaseFeature.DATABASE_LOGGING.isSupported(connectionHandler) && executionInput.isDatabaseLogProducer()) {
+        if (DatabaseFeature.DATABASE_LOGGING.isSupported(connection) && executionInput.isDatabaseLogProducer()) {
             enableLoggingCheckBox.setEnabled(!debuggerType.isDebug());
             enableLoggingCheckBox.setSelected(!debuggerType.isDebug() && options.is(ExecutionOption.ENABLE_LOGGING));
-            DatabaseCompatibilityInterface compatibilityInterface = DatabaseCompatibilityInterface.getInstance(connectionHandler);
+            DatabaseCompatibilityInterface compatibilityInterface = DatabaseCompatibilityInterface.getInstance(connection);
             String databaseLogName = compatibilityInterface == null ? null : compatibilityInterface.getDatabaseLogName();
             if (Strings.isNotEmpty(databaseLogName)) {
                 enableLoggingCheckBox.setText("Enable logging (" + databaseLogName + ")");
@@ -180,9 +180,9 @@ public class ExecutionOptionsForm extends DBNFormImpl {
         return Failsafe.nn(executionInput);
     }
 
-    public ConnectionHandler getConnectionHandler() {
-        ConnectionHandler connectionHandler = getExecutionInput().getConnection();
-        return Failsafe.nn(connectionHandler);
+    public ConnectionHandler getConnection() {
+        ConnectionHandler connection = getExecutionInput().getConnection();
+        return Failsafe.nn(connection);
     }
 
     private final ActionListener actionListener = e -> {

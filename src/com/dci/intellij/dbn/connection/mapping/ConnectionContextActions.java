@@ -29,8 +29,8 @@ public class ConnectionContextActions {
         private final Runnable callback;
         private final boolean promptSchemaSelection;
 
-        ConnectionSelectAction(ConnectionHandler connectionHandler, VirtualFile file, boolean promptSchemaSelection, Runnable callback) {
-            super(connectionHandler.getName(), null, connectionHandler.getIcon(), connectionHandler);
+        ConnectionSelectAction(ConnectionHandler connection, VirtualFile file, boolean promptSchemaSelection, Runnable callback) {
+            super(connection.getName(), null, connection.getIcon(), connection);
             this.file = VirtualFileRef.of(file);
             this.callback = callback;
             this.promptSchemaSelection = promptSchemaSelection;
@@ -179,7 +179,7 @@ public class ConnectionContextActions {
         SessionCreateAction(VirtualFile file, ConnectionHandler connection) {
             super("New Session...");
             this.file = VirtualFileRef.of(file);
-            this.connection = connection.getRef();
+            this.connection = connection.ref();
         }
 
         @Override

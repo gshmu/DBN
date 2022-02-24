@@ -20,8 +20,8 @@ public class DualContentDependencyAdapter extends BasicDependencyAdapter impleme
     }
 
     @Override
-    public boolean canLoad(ConnectionHandler connectionHandler) {
-        if (canConnect(connectionHandler)) {
+    public boolean canLoad(ConnectionHandler connection) {
+        if (canConnect(connection)) {
             return
                 content(first).isLoaded() &&
                 content(second).isLoaded();

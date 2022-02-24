@@ -48,6 +48,6 @@ public interface DBSchema extends DBObject {
     void refreshObjectsStatus() throws SQLException;
 
     @Override
-    DBObjectRef<DBSchema> getRef();
+    DBObjectRef<DBSchema> ref();
     SchemaId getIdentifier();
 }

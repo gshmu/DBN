@@ -36,7 +36,7 @@ public class ExplainPlanEntry extends StatefulDisposable.Base {
     private ExplainPlanEntry parent;
     private List<ExplainPlanEntry> children;
 
-    public ExplainPlanEntry(ConnectionHandler connectionHandler, ResultSet resultSet, List<String> columnNames) throws SQLException {
+    public ExplainPlanEntry(ConnectionHandler connection, ResultSet resultSet, List<String> columnNames) throws SQLException {
         operation = resultSet.getString("OPERATION");
         operationOptions = resultSet.getString("OPTIONS");
         optimizer = resultSet.getString("OPTIMIZER");
@@ -74,7 +74,7 @@ public class ExplainPlanEntry extends StatefulDisposable.Base {
             }
 
 
-            DBObjectRef<?> schemaRef = new DBObjectRef<>(connectionHandler.getConnectionId(), DBObjectType.SCHEMA, objectOwner);
+            DBObjectRef<?> schemaRef = new DBObjectRef<>(connection.getConnectionId(), DBObjectType.SCHEMA, objectOwner);
             objectRef = new DBObjectRef<>(schemaRef, objectType, objectName);
         }
     }

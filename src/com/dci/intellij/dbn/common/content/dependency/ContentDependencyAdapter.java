@@ -4,14 +4,14 @@ import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.intellij.openapi.Disposable;
 
 public interface ContentDependencyAdapter extends Disposable {
-    boolean canConnect(ConnectionHandler connectionHandler);
+    boolean canConnect(ConnectionHandler connection);
 
     /**
      * This method is typically called when the dynamic content is dirty and
      * the system tries to reload it.
      * e.g. one basic condition for reloading dirty content is valid connectivity
      */
-    boolean canLoad(ConnectionHandler connectionHandler);
+    boolean canLoad(ConnectionHandler connection);
 
     boolean areDependenciesDirty();
 

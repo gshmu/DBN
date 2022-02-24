@@ -43,8 +43,8 @@ public abstract class MethodFactoryInputForm extends ObjectFactoryInputForm<Meth
     public MethodFactoryInputForm(DBNComponent parent, DBSchema schema, DBObjectType objectType, int index) {
         super(parent, schema.getConnection(), objectType, index);
         this.schema = DBObjectRef.of(schema);
-        connectionLabel.setText(getConnectionHandler().getName());
-        connectionLabel.setIcon(getConnectionHandler().getIcon());
+        connectionLabel.setText(getConnection().getName());
+        connectionLabel.setIcon(getConnection().getIcon());
 
         schemaLabel.setText(schema.getName());
         schemaLabel.setIcon(schema.getIcon());
@@ -101,11 +101,11 @@ public abstract class MethodFactoryInputForm extends ObjectFactoryInputForm<Meth
     public abstract boolean hasReturnArgument();
 
     private void createUIComponents() {
-        ConnectionHandler connectionHandler = getConnectionHandler();
-        boolean enforceInArguments = hasReturnArgument() && !DatabaseFeature.FUNCTION_OUT_ARGUMENTS.isSupported(connectionHandler);
-        argumentListPanel = new ArgumentFactoryInputListForm(this, connectionHandler, enforceInArguments);
+        ConnectionHandler connection = getConnection();
+        boolean enforceInArguments = hasReturnArgument() && !DatabaseFeature.FUNCTION_OUT_ARGUMENTS.isSupported(connection);
+        argumentListPanel = new ArgumentFactoryInputListForm(this, connection, enforceInArguments);
         argumentListComponent = (JPanel) argumentListPanel.getComponent();
-        returnArgumentDataTypeEditor = new DataTypeEditor(getConnectionHandler());
+        returnArgumentDataTypeEditor = new DataTypeEditor(getConnection());
     }
 
     @Override

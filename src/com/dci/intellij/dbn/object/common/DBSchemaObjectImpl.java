@@ -107,7 +107,7 @@ public abstract class DBSchemaObjectImpl<M extends DBObjectMetadata> extends DBO
     public DBObjectVirtualFile<?> getVirtualFile() {
         if (getObjectType().isSchemaObject()) {
             DatabaseFileSystem databaseFileSystem = DatabaseFileSystem.getInstance();
-            return databaseFileSystem.findOrCreateDatabaseFile(getProject(), getRef());
+            return databaseFileSystem.findOrCreateDatabaseFile(getProject(), ref());
         }
         return super.getVirtualFile();
     }
@@ -129,10 +129,9 @@ public abstract class DBSchemaObjectImpl<M extends DBObjectMetadata> extends DBO
 
     @Override
     public List<DBSchema> getReferencingSchemas() throws SQLException {
-        ConnectionHandler connectionHandler = this.getConnection();
         return DatabaseInterface.call(
                 true,
-                connectionHandler,
+                getConnection(),
                 (provider, connection) -> {
                     List<DBSchema> schemas = new ArrayList<>();
                     ResultSet resultSet = null;
@@ -140,7 +139,7 @@ public abstract class DBSchemaObjectImpl<M extends DBObjectMetadata> extends DBO
                         DBSchema schema1 = getSchema();
                         DatabaseMetadataInterface metadataInterface = provider.getMetadataInterface();
                         resultSet = metadataInterface.loadReferencingSchemas(schema1.getName(), getName(), connection);
-                        DBObjectBundle objectBundle = connectionHandler.getObjectBundle();
+                        DBObjectBundle objectBundle = getConnection().getObjectBundle();
                         while (resultSet.next()) {
                             String schemaName = resultSet.getString("SCHEMA_NAME");
                             DBSchema schema = objectBundle.getSchema(schemaName);
@@ -161,10 +160,10 @@ public abstract class DBSchemaObjectImpl<M extends DBObjectMetadata> extends DBO
 
     @Override
     public void executeUpdateDDL(DBContentType contentType, String oldCode, String newCode) throws SQLException {
-        ConnectionHandler connectionHandler = this.getConnection();
-        PooledConnection.run(false, connectionHandler, getSchemaId(), connection -> {
-            DatabaseDDLInterface ddlInterface = connectionHandler.getInterfaceProvider().getDdlInterface();
-            ddlInterface.updateObject(getName(), getObjectType().getName(), oldCode,  newCode, connection);
+        ConnectionHandler connection = this.getConnection();
+        PooledConnection.run(false, connection, getSchemaId(), conn -> {
+            DatabaseDDLInterface ddlInterface = connection.getInterfaceProvider().getDdlInterface();
+            ddlInterface.updateObject(getName(), getObjectType().getName(), oldCode,  newCode, conn);
         });
     }
 
@@ -176,7 +175,7 @@ public abstract class DBSchemaObjectImpl<M extends DBObjectMetadata> extends DBO
             @Override
             public ResultSet createResultSet(DynamicContent<DBObject> dynamicContent, DBNConnection connection) throws SQLException {
                 DatabaseMetadataInterface metadataInterface = dynamicContent.getMetadataInterface();
-                DBSchemaObject schemaObject = (DBSchemaObject) dynamicContent.getParentEntity();
+                DBSchemaObject schemaObject = dynamicContent.getParentEntity();
                 return metadataInterface.loadReferencedObjects(schemaObject.getSchema().getName(), schemaObject.getName(), connection);
             }
 
@@ -192,9 +191,9 @@ public abstract class DBSchemaObjectImpl<M extends DBObjectMetadata> extends DBO
                 DBSchema schema = (DBSchema) cache.getObject(objectOwner);
 
                 if (schema == null) {
-                    DBSchemaObject schemaObject = (DBSchemaObject) content.getParentEntity();
-                    ConnectionHandler connectionHandler = schemaObject.getConnection();
-                    schema = connectionHandler.getObjectBundle().getSchema(objectOwner);
+                    DBSchemaObject schemaObject = content.getParentEntity();
+                    ConnectionHandler connection = schemaObject.getConnection();
+                    schema = connection.getObjectBundle().getSchema(objectOwner);
                     cache.setObject(objectOwner,  schema);
                 }
 
@@ -206,7 +205,7 @@ public abstract class DBSchemaObjectImpl<M extends DBObjectMetadata> extends DBO
             @Override
             public ResultSet createResultSet(DynamicContent<DBObject> dynamicContent, DBNConnection connection) throws SQLException {
                 DatabaseMetadataInterface metadataInterface = dynamicContent.getMetadataInterface();
-                DBSchemaObject schemaObject = (DBSchemaObject) dynamicContent.getParentEntity();
+                DBSchemaObject schemaObject = dynamicContent.getParentEntity();
                 return metadataInterface.loadReferencingObjects(schemaObject.getSchema().getName(), schemaObject.getName(), connection);
             }
 
@@ -221,9 +220,9 @@ public abstract class DBSchemaObjectImpl<M extends DBObjectMetadata> extends DBO
 
                 DBSchema schema = (DBSchema) cache.getObject(objectOwner);
                 if (schema == null) {
-                    DBSchemaObject schemaObject = (DBSchemaObject) content.getParentEntity();
-                    ConnectionHandler connectionHandler = schemaObject.getConnection();
-                    schema = connectionHandler.getObjectBundle().getSchema(objectOwner);
+                    DBSchemaObject schemaObject = content.getParentEntity();
+                    ConnectionHandler connection = schemaObject.getConnection();
+                    schema = connection.getObjectBundle().getSchema(objectOwner);
                     cache.setObject(objectOwner,  schema);
                 }
                 return schema == null ? null : schema.getChildObject(objectType, objectName, (short) 0, true);

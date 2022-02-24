@@ -26,22 +26,22 @@ public class ConnectionDiagnosticsDetailsForm extends DBNFormImpl {
     private JPanel diagnosticsTabsPanel;
     private final TabbedPane diagnosticsTabs;
 
-    public ConnectionDiagnosticsDetailsForm(@NotNull ConnectionDiagnosticsForm parent, ConnectionHandler connectionHandler) {
+    public ConnectionDiagnosticsDetailsForm(@NotNull ConnectionDiagnosticsForm parent, ConnectionHandler connection) {
         super(parent);
 
-        DBNHeaderForm headerForm = new DBNHeaderForm(this, connectionHandler);
+        DBNHeaderForm headerForm = new DBNHeaderForm(this, connection);
         headerPanel.add(headerForm.getComponent(), BorderLayout.CENTER);
 
         diagnosticsTabs = new TabbedPane(this);
         diagnosticsTabsPanel.add(diagnosticsTabs, BorderLayout.CENTER);
 
 
-        MetadataDiagnosticsTableModel metadataTableModel = new MetadataDiagnosticsTableModel(connectionHandler);
+        MetadataDiagnosticsTableModel metadataTableModel = new MetadataDiagnosticsTableModel(connection);
         metadataTable = new DiagnosticsTable<>(this, metadataTableModel);
         metadataTable.getRowSorter().toggleSortOrder(0);
         addTab(metadataTable, "Metadata Interface");
 
-        ConnectivityDiagnosticsTableModel connectivityTableModel = new ConnectivityDiagnosticsTableModel(connectionHandler);
+        ConnectivityDiagnosticsTableModel connectivityTableModel = new ConnectivityDiagnosticsTableModel(connection);
         connectivityTable = new DiagnosticsTable<>(this, connectivityTableModel);
         connectivityTable.getRowSorter().toggleSortOrder(0);
         addTab(connectivityTable, "Database Connectivity");

@@ -104,15 +104,15 @@ public class SessionBrowserCurrentSqlPanel extends DBNFormImpl {
                 Project project = sessionBrowser.getProject();
 
                 Background.run(refreshHandle, () -> {
-                    ConnectionHandler connectionHandler = getConnectionHandler();
+                    ConnectionHandler connection = getConnection();
                     DBSchema schema = null;
                     if (Strings.isNotEmpty(schemaName)) {
-                        schema = connectionHandler.getObjectBundle().getSchema(schemaName);
+                        schema = connection.getObjectBundle().getSchema(schemaName);
                     }
 
                     checkCancelled(sessionId);
                     SessionBrowserManager sessionBrowserManager = SessionBrowserManager.getInstance(project);
-                    String sql = sessionBrowserManager.loadSessionCurrentSql(connectionHandler, sessionId);
+                    String sql = sessionBrowserManager.loadSessionCurrentSql(connection, sessionId);
                     sql = sql.trim().replaceAll("\r\n", "\n").replaceAll("\r", "\n");
 
                     checkCancelled(sessionId);
@@ -134,7 +134,7 @@ public class SessionBrowserCurrentSqlPanel extends DBNFormImpl {
     }
 
     @NotNull
-    private ConnectionHandler getConnectionHandler() {
+    private ConnectionHandler getConnection() {
         return getSessionBrowser().getConnection();
     }
 
@@ -145,7 +145,7 @@ public class SessionBrowserCurrentSqlPanel extends DBNFormImpl {
     private void createStatementViewer() {
         SessionBrowser sessionBrowser = getSessionBrowser();
         Project project = sessionBrowser.getProject();
-        ConnectionHandler connectionHandler = getConnectionHandler();
+        ConnectionHandler connection = getConnection();
         virtualFile = new DBSessionStatementVirtualFile(sessionBrowser, "");
         DatabaseFileViewProvider viewProvider = new DatabaseFileViewProvider(project, virtualFile, true);
         DBLanguagePsiFile psiFile = (DBLanguagePsiFile) virtualFile.initializePsiFile(viewProvider, SQLLanguage.INSTANCE);
@@ -156,7 +156,7 @@ public class SessionBrowserCurrentSqlPanel extends DBNFormImpl {
         viewer = (EditorEx) EditorFactory.getInstance().createViewer(document, project);
         viewer.setEmbeddedIntoDialogWrapper(true);
         Editors.setEditorReadonly(this.viewer, true);
-        Editors.initEditorHighlighter(viewer, SQLLanguage.INSTANCE, connectionHandler);
+        Editors.initEditorHighlighter(viewer, SQLLanguage.INSTANCE, connection);
         //statementViewer.setBackgroundColor(colorsScheme.getColor(ColorKey.find("CARET_ROW_COLOR")));
 
         JScrollPane viewerScrollPane = viewer.getScrollPane();

@@ -15,7 +15,7 @@ public class DDLFileAttachAction extends AnObjectAction<DBSchemaObject> {
     @Override
     protected void actionPerformed(@NotNull AnActionEvent e, @NotNull Project project, @NotNull DBSchemaObject target) {
         DDLFileAttachmentManager fileAttachmentManager = DDLFileAttachmentManager.getInstance(project);
-        fileAttachmentManager.attachDDLFiles(target.getRef());
+        fileAttachmentManager.attachDDLFiles(target.ref());
     }
 
 }

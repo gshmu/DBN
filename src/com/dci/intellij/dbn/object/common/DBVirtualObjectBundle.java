@@ -35,12 +35,12 @@ import java.util.Collections;
 import java.util.List;
 
 public class DBVirtualObjectBundle extends BrowserTreeNodeBase implements DBObjectBundle{
-    private final VirtualConnectionHandler connectionHandler;
+    private final VirtualConnectionHandler connection;
     private final DBDataTypeBundle dataTypes;
 
-    public DBVirtualObjectBundle(@NotNull VirtualConnectionHandler connectionHandler) {
-        this.connectionHandler = connectionHandler;
-        this.dataTypes = new DBDataTypeBundle(connectionHandler);
+    public DBVirtualObjectBundle(@NotNull VirtualConnectionHandler connection) {
+        this.connection = connection;
+        this.dataTypes = new DBDataTypeBundle(connection);
     }
 
     @NotNull
@@ -208,13 +208,13 @@ public class DBVirtualObjectBundle extends BrowserTreeNodeBase implements DBObje
     @NotNull
     @Override
     public ConnectionId getConnectionId() {
-        return connectionHandler.getConnectionId();
+        return connection.getConnectionId();
     }
 
     @NotNull
     @Override
     public ConnectionHandler getConnection() {
-        return connectionHandler;
+        return connection;
     }
 
     @Override
@@ -313,7 +313,7 @@ public class DBVirtualObjectBundle extends BrowserTreeNodeBase implements DBObje
     @NotNull
     @Override
     public Project getProject() {
-        return connectionHandler.getProject();
+        return connection.getProject();
     }
 
     @NotNull

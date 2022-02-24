@@ -17,8 +17,12 @@ import org.jdom.Element;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import javax.swing.*;
-import java.util.*;
+import javax.swing.Icon;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 public abstract class DBMethodRunConfig extends DBRunConfig<MethodExecutionInput> implements Cloneable<DBMethodRunConfig> {
     private Map<DBObjectRef<DBMethod>, MethodExecutionInput> methodSelectionHistory = new HashMap<>();
@@ -61,10 +65,10 @@ public abstract class DBMethodRunConfig extends DBRunConfig<MethodExecutionInput
 
             DBMethod method = getMethod();
             if (method != null) {
-                ConnectionHandler connectionHandler = method.getConnection();
-                if (!DatabaseFeature.DEBUGGING.isSupported(connectionHandler)){
+                ConnectionHandler connection = method.getConnection();
+                if (!DatabaseFeature.DEBUGGING.isSupported(connection)){
                     throw new RuntimeConfigurationError(
-                            "Debugging is not supported for " + connectionHandler.getDatabaseType().getName() +" databases.");
+                            "Debugging is not supported for " + connection.getDatabaseType().getName() +" databases.");
                 }
             }
         }

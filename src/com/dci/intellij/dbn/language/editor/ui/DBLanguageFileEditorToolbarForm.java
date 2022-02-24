@@ -32,10 +32,10 @@ public class DBLanguageFileEditorToolbarForm extends DBNFormImpl {
         this.actionsPanel.add(actionToolbar.getComponent(), BorderLayout.CENTER);
 
         FileConnectionContextManager contextManager = FileConnectionContextManager.getInstance(project);
-        ConnectionHandler connectionHandler = contextManager.getConnection(file);
+        ConnectionHandler connection = contextManager.getConnection(file);
         DatabaseSession databaseSession = contextManager.getDatabaseSession(file);
 
-        this.autoCommitLabel.init(project, file, connectionHandler, databaseSession);
+        this.autoCommitLabel.init(project, file, connection, databaseSession);
         Disposer.register(this, autoCommitLabel);
     }
 

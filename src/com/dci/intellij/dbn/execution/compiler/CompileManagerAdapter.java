@@ -7,7 +7,7 @@ import org.jetbrains.annotations.Nullable;
 
 public abstract class CompileManagerAdapter implements CompileManagerListener {
     @Override
-    public void compileFinished(@NotNull ConnectionHandler connectionHandler, @Nullable DBSchemaObject object) {
+    public void compileFinished(@NotNull ConnectionHandler connection, @Nullable DBSchemaObject object) {
 
     }
 }

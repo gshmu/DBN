@@ -34,8 +34,8 @@ public final class ConnectionHandlerRef implements Reference<ConnectionHandler>,
 
     @NotNull
     public ConnectionHandler ensure() {
-        ConnectionHandler connectionHandler = get();
-        return Failsafe.nn(connectionHandler);
+        ConnectionHandler connection = get();
+        return Failsafe.nn(connection);
     }
 
 

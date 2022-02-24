@@ -9,13 +9,13 @@ import org.jetbrains.annotations.NotNull;
 
 public class ConnectionSettingsOpenAction extends AbstractConnectionAction {
 
-    ConnectionSettingsOpenAction(ConnectionHandler connectionHandler) {
-        super("Settings", "Connection settings", Icons.ACTION_EDIT, connectionHandler);
+    ConnectionSettingsOpenAction(ConnectionHandler connection) {
+        super("Settings", "Connection settings", Icons.ACTION_EDIT, connection);
     }
 
     @Override
-    protected void actionPerformed(@NotNull AnActionEvent e, @NotNull Project project, @NotNull ConnectionHandler connectionHandler) {
+    protected void actionPerformed(@NotNull AnActionEvent e, @NotNull Project project, @NotNull ConnectionHandler connection) {
         ProjectSettingsManager settingsManager = ProjectSettingsManager.getInstance(project);
-        settingsManager.openConnectionSettings(connectionHandler.getConnectionId());
+        settingsManager.openConnectionSettings(connection.getConnectionId());
     }
 }

@@ -11,7 +11,7 @@ import com.intellij.psi.PsiFile;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import javax.swing.*;
+import javax.swing.Icon;
 
 public interface ExecutionResult<F extends ExecutionResultForm> extends StatefulDisposable, DataProvider {
 
@@ -40,7 +40,7 @@ public interface ExecutionResult<F extends ExecutionResultForm> extends Stateful
     ConnectionId getConnectionId();
 
     @NotNull
-    ConnectionHandler getConnectionHandler();
+    ConnectionHandler getConnection();
 
     PsiFile createPreviewFile();
 

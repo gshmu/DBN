@@ -17,7 +17,11 @@ import com.intellij.openapi.project.Project;
 
 import java.awt.datatransfer.StringSelection;
 import java.awt.datatransfer.Transferable;
-import java.io.*;
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.OutputStreamWriter;
 import java.nio.charset.Charset;
 import java.sql.SQLException;
 import java.util.Calendar;
@@ -27,7 +31,7 @@ import java.util.GregorianCalendar;
 public abstract class DataExportProcessor {
     public abstract boolean supports(DataExportFeature feature);
 
-    public abstract void performExport(DataExportModel model, DataExportInstructions instructions, ConnectionHandler connectionHandler) throws DataExportException;
+    public abstract void performExport(DataExportModel model, DataExportInstructions instructions, ConnectionHandler connection) throws DataExportException;
 
     Formatter getFormatter(Project project) {
         return Formatter.getInstance(project).clone();
@@ -35,7 +39,7 @@ public abstract class DataExportProcessor {
 
     public abstract String getFileExtension();
 
-    public void export(DataExportModel model, DataExportInstructions instructions, ConnectionHandler connectionHandler)
+    public void export(DataExportModel model, DataExportInstructions instructions, ConnectionHandler connection)
             throws DataExportException {
         try {
             if ((model.getColumnCount() == 0 || model.getRowCount() == 0) &&
@@ -44,7 +48,7 @@ public abstract class DataExportProcessor {
             }
             String fileName = adjustFileName(instructions.getFileName());
             instructions.setFileName(fileName);
-            performExport(model, instructions, connectionHandler);
+            performExport(model, instructions, connection);
         } catch (ProcessCanceledException ignore) {
         } catch (DataExportException e) {
             throw e;

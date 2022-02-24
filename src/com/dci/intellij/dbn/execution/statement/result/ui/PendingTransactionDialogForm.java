@@ -83,18 +83,18 @@ public class PendingTransactionDialogForm extends DBNFormImpl {
     private void updatePreview() {
         StatementExecutionProcessor executionProcessor = getExecutionProcessor();
 
-        ConnectionHandler connectionHandler = Failsafe.nn(executionProcessor.getConnection());
+        ConnectionHandler connection = Failsafe.nn(executionProcessor.getConnection());
         SchemaId currentSchema = executionProcessor.getTargetSchema();
-        Project project = connectionHandler.getProject();
+        Project project = connection.getProject();
         String previewText = executionProcessor.getExecutionInput().getExecutableStatementText();
 
-        DBLanguageDialect languageDialect = connectionHandler.getLanguageDialect(SQLLanguage.INSTANCE);
+        DBLanguageDialect languageDialect = connection.getLanguageDialect(SQLLanguage.INSTANCE);
         DBLanguagePsiFile selectStatementFile = DBLanguagePsiFile.createFromText(
                 project,
                 "preview",
                 languageDialect,
                 previewText,
-                connectionHandler,
+                connection,
                 currentSchema);
 
         if (selectStatementFile != null) {
@@ -104,7 +104,7 @@ public class PendingTransactionDialogForm extends DBNFormImpl {
             viewer.setEmbeddedIntoDialogWrapper(true);
             JScrollPane viewerScrollPane = viewer.getScrollPane();
 
-            Editors.initEditorHighlighter(viewer, SQLLanguage.INSTANCE, connectionHandler);
+            Editors.initEditorHighlighter(viewer, SQLLanguage.INSTANCE, connection);
             viewer.setBackgroundColor(Colors.lafDarker(viewer.getBackgroundColor(), 1));
             viewerScrollPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
             viewerScrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);

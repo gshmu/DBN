@@ -15,12 +15,12 @@ public class TransactionRollbackAction extends TransactionEditorAction {
 
     @Override
     protected void actionPerformed(@NotNull AnActionEvent e, @NotNull Project project) {
-        ConnectionHandler connectionHandler = getConnectionHandler(e);
-        if (connectionHandler != null) {
-            DBNConnection connection = getConnection(e);
-            if (connection != null) {
+        ConnectionHandler connection = getConnection(e);
+        if (connection != null) {
+            DBNConnection conn = getTargetConnection(e);
+            if (conn != null) {
                 DatabaseTransactionManager transactionManager = DatabaseTransactionManager.getInstance(project);
-                transactionManager.rollback(connectionHandler, connection, true, false, null);
+                transactionManager.rollback(connection, conn, true, false, null);
             }
         }
     }

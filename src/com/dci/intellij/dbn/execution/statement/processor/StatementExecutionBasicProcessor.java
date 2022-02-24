@@ -15,7 +15,11 @@ import com.dci.intellij.dbn.common.thread.Progress;
 import com.dci.intellij.dbn.common.thread.Read;
 import com.dci.intellij.dbn.common.util.Documents;
 import com.dci.intellij.dbn.common.util.Strings;
-import com.dci.intellij.dbn.connection.*;
+import com.dci.intellij.dbn.connection.ConnectionHandler;
+import com.dci.intellij.dbn.connection.ConnectionId;
+import com.dci.intellij.dbn.connection.Resources;
+import com.dci.intellij.dbn.connection.SchemaId;
+import com.dci.intellij.dbn.connection.SessionId;
 import com.dci.intellij.dbn.connection.jdbc.DBNConnection;
 import com.dci.intellij.dbn.connection.jdbc.DBNStatement;
 import com.dci.intellij.dbn.connection.mapping.FileConnectionContextManager;
@@ -26,7 +30,12 @@ import com.dci.intellij.dbn.editor.EditorProviderId;
 import com.dci.intellij.dbn.execution.ExecutionContext;
 import com.dci.intellij.dbn.execution.ExecutionManager;
 import com.dci.intellij.dbn.execution.ExecutionOption;
-import com.dci.intellij.dbn.execution.compiler.*;
+import com.dci.intellij.dbn.execution.compiler.CompileManagerListener;
+import com.dci.intellij.dbn.execution.compiler.CompileType;
+import com.dci.intellij.dbn.execution.compiler.CompilerAction;
+import com.dci.intellij.dbn.execution.compiler.CompilerActionSource;
+import com.dci.intellij.dbn.execution.compiler.CompilerResult;
+import com.dci.intellij.dbn.execution.compiler.DatabaseCompilerManager;
 import com.dci.intellij.dbn.execution.logging.DatabaseLoggingManager;
 import com.dci.intellij.dbn.execution.statement.DataDefinitionChangeListener;
 import com.dci.intellij.dbn.execution.statement.StatementExecutionInput;
@@ -41,7 +50,11 @@ import com.dci.intellij.dbn.language.common.PsiElementRef;
 import com.dci.intellij.dbn.language.common.PsiFileRef;
 import com.dci.intellij.dbn.language.common.WeakRef;
 import com.dci.intellij.dbn.language.common.element.util.ElementTypeAttribute;
-import com.dci.intellij.dbn.language.common.psi.*;
+import com.dci.intellij.dbn.language.common.psi.BasePsiElement;
+import com.dci.intellij.dbn.language.common.psi.ChameleonPsiElement;
+import com.dci.intellij.dbn.language.common.psi.ExecutablePsiElement;
+import com.dci.intellij.dbn.language.common.psi.IdentifierPsiElement;
+import com.dci.intellij.dbn.language.common.psi.QualifiedIdentifierPsiElement;
 import com.dci.intellij.dbn.object.DBSchema;
 import com.dci.intellij.dbn.object.common.DBObject;
 import com.dci.intellij.dbn.object.common.DBSchemaObject;
@@ -57,7 +70,7 @@ import com.intellij.psi.PsiElement;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import javax.swing.*;
+import javax.swing.Icon;
 import java.sql.SQLException;
 import java.util.concurrent.TimeUnit;
 
@@ -276,7 +289,7 @@ public class StatementExecutionBasicProcessor extends StatefulDisposable.Base im
         if (cachedExecutable != null) {
             executionInput.setOriginalStatementText(cachedExecutable.getText());
             executionInput.setExecutableStatementText(cachedExecutable.prepareStatementText());
-            executionInput.setConnectionHandler(getConnection());
+            executionInput.setTargetConnection(getConnection());
             executionInput.setTargetSchemaId(getTargetSchema());
             executionInput.setTargetSession(getTargetSession());
             executionInput.setBulkExecution(bulkExecution);
@@ -360,22 +373,22 @@ public class StatementExecutionBasicProcessor extends StatefulDisposable.Base im
     public void postExecute() {
         ExecutionContext context = getExecutionContext();
         if (context.isNot(PROMPTED)) {
-            DBNConnection connection = context.getConnection();
-            if (connection != null && connection.isPoolConnection()) {
+            DBNConnection conn = context.getConnection();
+            if (conn != null && conn.isPoolConnection()) {
                 Resources.cancel(context.getStatement());
-                ConnectionHandler connectionHandler = Failsafe.nn(getConnection());
-                connectionHandler.freePoolConnection(connection);
+                ConnectionHandler connection = Failsafe.nn(getConnection());
+                connection.freePoolConnection(conn);
             }
             context.reset();
         }
     }
 
     private String initStatementText() {
-        ConnectionHandler connectionHandler = getTargetConnection();
+        ConnectionHandler connection = getTargetConnection();
         String statementText = executionInput.getExecutableStatementText();
         StatementExecutionVariablesBundle executionVariables = executionInput.getExecutionVariables();
         if (executionVariables != null) {
-            statementText = executionVariables.prepareStatementText(connectionHandler, statementText, false);
+            statementText = executionVariables.prepareStatementText(connection, statementText, false);
             executionInput.setExecutableStatementText(statementText);
 
             if (executionVariables.hasErrors()) {
@@ -393,23 +406,23 @@ public class StatementExecutionBasicProcessor extends StatefulDisposable.Base im
         context.setTimeout(timeout);
     }
 
-    private void initConnection(ExecutionContext context, DBNConnection connection) throws SQLException {
-        ConnectionHandler connectionHandler = getTargetConnection();
-        if (connection == null) {
+    private void initConnection(ExecutionContext context, DBNConnection conn) throws SQLException {
+        ConnectionHandler connection = getTargetConnection();
+        if (conn == null) {
             SchemaId schema = getTargetSchema();
-            connection = connectionHandler.getMainConnection(schema);
+            conn = connection.getMainConnection(schema);
         }
-        context.setConnection(connection);
+        context.setConnection(conn);
     }
 
     private void initLogging(ExecutionContext context, boolean debug) {
         boolean logging = false;
         if (!debug && executionInput.getOptions().is(ExecutionOption.ENABLE_LOGGING) && executionInput.isDatabaseLogProducer()) {
-            ConnectionHandler connectionHandler = getTargetConnection();
-            DBNConnection connection = context.getConnection();
+            ConnectionHandler connection = getTargetConnection();
+            DBNConnection conn = context.getConnection();
 
             DatabaseLoggingManager loggingManager = DatabaseLoggingManager.getInstance(getProject());
-            logging = loggingManager.enableLogger(connectionHandler, connection);
+            logging = loggingManager.enableLogger(connection, conn);
         }
         context.setLogging(logging);
 
@@ -420,9 +433,9 @@ public class StatementExecutionBasicProcessor extends StatefulDisposable.Base im
         ExecutionContext context = getExecutionContext();
         assertNotCancelled();
 
-        ConnectionHandler connectionHandler = getTargetConnection();
-        DBNConnection connection = context.getConnection();
-        DBNStatement statement = connection.createStatement();
+        ConnectionHandler connection = getTargetConnection();
+        DBNConnection conn = context.getConnection();
+        DBNStatement statement = conn.createStatement();
 
         statement.setFetchSize(executionInput.getResultSetFetchBlockSize());
         context.setStatement(statement);
@@ -431,7 +444,7 @@ public class StatementExecutionBasicProcessor extends StatefulDisposable.Base im
         statement.setQueryTimeout(timeout);
         assertNotCancelled();
 
-        databaseCall = new CancellableDatabaseCall<StatementExecutionResult>(connectionHandler, connection, timeout, TimeUnit.SECONDS) {
+        databaseCall = new CancellableDatabaseCall<StatementExecutionResult>(connection, conn, timeout, TimeUnit.SECONDS) {
             @Override
             public StatementExecutionResult execute() throws Exception {
                 try {
@@ -471,7 +484,7 @@ public class StatementExecutionBasicProcessor extends StatefulDisposable.Base im
             Progress.background(
                     getProject(),
                     "Cancelling statement execution", false,
-                    (progress) -> databaseCall.cancelSilently());
+                    progress -> databaseCall.cancelSilently());
         }
     }
 
@@ -480,18 +493,18 @@ public class StatementExecutionBasicProcessor extends StatefulDisposable.Base im
         executionResult.setLoggingActive(logging);
         if (logging) {
             Project project = getProject();
-            DBNConnection connection = context.getConnection();
-            ConnectionHandler connectionHandler = getTargetConnection();
+            DBNConnection conn = context.getConnection();
+            ConnectionHandler connection = getTargetConnection();
 
             DatabaseLoggingManager loggingManager = DatabaseLoggingManager.getInstance(project);
-            String logOutput = loggingManager.readLoggerOutput(connectionHandler, connection);
+            String logOutput = loggingManager.readLoggerOutput(connection, conn);
             executionResult.setLoggingOutput(logOutput);
         }
     }
 
     private void notifyDataManipulationChanges(ExecutionContext context) {
-        DBNConnection connection = context.getConnection();
-        ConnectionHandler connectionHandler = getTargetConnection();
+        DBNConnection conn = context.getConnection();
+        ConnectionHandler connection = getTargetConnection();
         ExecutablePsiElement psiElement = executionInput.getExecutablePsiElement();
         boolean notifyChanges = false;
         boolean resetChanges = false;
@@ -501,7 +514,7 @@ public class StatementExecutionBasicProcessor extends StatefulDisposable.Base im
                 notifyChanges = true;
             }
             else if (psiElement.isTransactionalCandidate()) {
-                if (connectionHandler.hasPendingTransactions(connection)) {
+                if (connection.hasPendingTransactions(conn)) {
                     notifyChanges = true;
                 }
             }
@@ -511,24 +524,24 @@ public class StatementExecutionBasicProcessor extends StatefulDisposable.Base im
         } else{
             if (executionResult.getUpdateCount() > 0) {
                 notifyChanges = true;
-            } else if (connectionHandler.hasPendingTransactions(connection)) {
+            } else if (connection.hasPendingTransactions(conn)) {
                 notifyChanges = true;
             }
         }
 
         if (notifyChanges) {
-            if (connection.isPoolConnection()) {
+            if (conn.isPoolConnection()) {
                 StatementExecutionManager executionManager = getExecutionManager();
                 executionManager.promptPendingTransactionDialog(this);
             } else {
                 VirtualFile virtualFile = getVirtualFile();
                 if (virtualFile != null) {
-                    connection.notifyDataChanges(virtualFile);
+                    conn.notifyDataChanges(virtualFile);
                 }
             }
         } else if (resetChanges) {
-            if (!connection.isPoolConnection()) {
-                connection.resetDataChanges();
+            if (!conn.isPoolConnection()) {
+                conn.resetDataChanges();
             }
         }
     }
@@ -574,12 +587,12 @@ public class StatementExecutionBasicProcessor extends StatefulDisposable.Base im
     }
 
     private void disableLogging(ExecutionContext context) {
-        DBNConnection connection = context.getConnection();
-        ConnectionHandler connectionHandler = getTargetConnection();
+        DBNConnection conn = context.getConnection();
+        ConnectionHandler connection = getTargetConnection();
         if (context.isLogging()) {
             Project project = getProject();
             DatabaseLoggingManager loggingManager = DatabaseLoggingManager.getInstance(project);
-            loggingManager.disableLogger(connectionHandler, connection);
+            loggingManager.disableLogger(connection, conn);
         }
     }
 
@@ -600,8 +613,8 @@ public class StatementExecutionBasicProcessor extends StatefulDisposable.Base im
     private void attachDdlExecutionInfo(StatementExecutionInput executionInput, final StatementExecutionBasicResult executionResult) {
         boolean isDdlStatement = isDataDefinitionStatement();
         boolean hasCompilerErrors = false;
-        ConnectionHandler connectionHandler = executionInput.getConnection();
-        if (isDdlStatement && connectionHandler != null && DatabaseFeature.OBJECT_INVALIDATION.isSupported(connectionHandler)) {
+        ConnectionHandler connection = executionInput.getConnection();
+        if (isDdlStatement && connection != null && DatabaseFeature.OBJECT_INVALIDATION.isSupported(connection)) {
             BasePsiElement compilablePsiElement = getCompilableBlockPsiElement();
             if (compilablePsiElement != null) {
                 hasCompilerErrors = Read.call(() -> {
@@ -617,7 +630,7 @@ public class StatementExecutionBasicProcessor extends StatefulDisposable.Base im
                         if (schema != null && subjectPsiElement != null) {
                             DBObjectType objectType = subjectPsiElement.getObjectType();
                             String objectName = subjectPsiElement.getUnquotedText().toString().toUpperCase();
-                            compilerResult = new CompilerResult(compilerAction, connectionHandler, schema, objectType, objectName);
+                            compilerResult = new CompilerResult(compilerAction, connection, schema, objectType, objectName);
                         }
                     } else {
                         compilerResult = new CompilerResult(compilerAction, object);
@@ -634,7 +647,7 @@ public class StatementExecutionBasicProcessor extends StatefulDisposable.Base im
                                 }
                                 ProjectEvents.notify(project,
                                         CompileManagerListener.TOPIC,
-                                        (listener) -> listener.compileFinished(connectionHandler, object));
+                                        (listener) -> listener.compileFinished(connection, object));
                             }
                             object.refresh();
                         }
@@ -776,9 +789,9 @@ public class StatementExecutionBasicProcessor extends StatefulDisposable.Base im
             IdentifierPsiElement subjectPsiElement = getSubjectPsiElement();
             if (subjectPsiElement != null) {
                 SchemaId targetSchema = getTargetSchema();
-                ConnectionHandler connectionHandler = getConnection();
-                if (targetSchema != null && connectionHandler != null) {
-                    DBObject schemaObject = connectionHandler.getSchema(targetSchema);
+                ConnectionHandler connection = getConnection();
+                if (targetSchema != null && connection != null) {
+                    DBObject schemaObject = connection.getSchema(targetSchema);
                     if (schemaObject != null) {
                         DBObjectListContainer childObjects = schemaObject.getChildObjects();
                         if (childObjects != null) {
@@ -809,9 +822,9 @@ public class StatementExecutionBasicProcessor extends StatefulDisposable.Base im
                 }
             }
         }
-        ConnectionHandler connectionHandler = getConnection();
+        ConnectionHandler connection = getConnection();
         SchemaId targetSchema = getTargetSchema();
-        return connectionHandler == null || targetSchema == null ? null : connectionHandler.getSchema(targetSchema);
+        return connection == null || targetSchema == null ? null : connection.getSchema(targetSchema);
     }
 
 

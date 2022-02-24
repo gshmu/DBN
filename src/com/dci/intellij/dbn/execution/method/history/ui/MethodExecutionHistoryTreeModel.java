@@ -13,7 +13,7 @@ import com.dci.intellij.dbn.object.type.DBObjectType;
 import lombok.Getter;
 import org.jetbrains.annotations.Nullable;
 
-import javax.swing.*;
+import javax.swing.Icon;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeModel;
 import javax.swing.tree.TreeNode;
@@ -21,6 +21,7 @@ import javax.swing.tree.TreePath;
 import java.util.List;
 
 import static com.dci.intellij.dbn.connection.ConnectionId.UNKNOWN;
+import static com.dci.intellij.dbn.execution.method.history.ui.MethodExecutionHistoryTreeNode.Type.*;
 
 public abstract class MethodExecutionHistoryTreeModel extends DefaultTreeModel implements StatefulDisposable {
     protected List<MethodExecutionInput> executionInputs;
@@ -48,14 +49,14 @@ public abstract class MethodExecutionHistoryTreeModel extends DefaultTreeModel i
      **********************************************************/
     class RootTreeNode extends MethodExecutionHistoryTreeNode {
         RootTreeNode() {
-            super(null, MethodExecutionHistoryTreeNode.Type.ROOT, "ROOT");
+            super(null, ROOT, "ROOT");
         }
 
         ConnectionTreeNode getConnectionNode(MethodExecutionInput executionInput) {
             if (!isLeaf())
                 for (TreeNode node : getChildren()) {
                     ConnectionTreeNode connectionNode = (ConnectionTreeNode) node;
-                    if (connectionNode.getConnectionHandlerId().equals(executionInput.getMethodRef().getConnectionId())) {
+                    if (connectionNode.getConnectionId().equals(executionInput.getMethodRef().getConnectionId())) {
                         return connectionNode;
                     }
                 }
@@ -65,31 +66,31 @@ public abstract class MethodExecutionHistoryTreeModel extends DefaultTreeModel i
     }
 
     protected class ConnectionTreeNode extends MethodExecutionHistoryTreeNode {
-        ConnectionHandlerRef connectionHandler;
+        ConnectionHandlerRef connection;
         ConnectionTreeNode(MethodExecutionHistoryTreeNode parent, MethodExecutionInput executionInput) {
-            super(parent, MethodExecutionHistoryTreeNode.Type.CONNECTION, null);
-            this.connectionHandler = ConnectionHandlerRef.of(executionInput.getConnection());
+            super(parent, CONNECTION, null);
+            this.connection = ConnectionHandlerRef.of(executionInput.getConnection());
         }
 
-        ConnectionHandler getConnectionHandler() {
-            return ConnectionHandlerRef.get(connectionHandler);
+        ConnectionHandler getConnection() {
+            return ConnectionHandlerRef.get(connection);
         }
 
-        public ConnectionId getConnectionHandlerId() {
-            ConnectionHandler connectionHandler = getConnectionHandler();
-            return connectionHandler == null ? UNKNOWN : connectionHandler.getConnectionId();
+        public ConnectionId getConnectionId() {
+            ConnectionHandler connection = getConnection();
+            return connection == null ? UNKNOWN : connection.getConnectionId();
         }
 
         @Override
         public String getName() {
-            ConnectionHandler connectionHandler = getConnectionHandler();
-            return connectionHandler == null ? "[unknown]" : connectionHandler.getName();
+            ConnectionHandler connection = getConnection();
+            return connection == null ? "[unknown]" : connection.getName();
         }
 
         @Override
         public Icon getIcon() {
-            ConnectionHandler connectionHandler = getConnectionHandler();
-            return connectionHandler == null ? Icons.CONNECTION_INVALID : connectionHandler.getIcon();
+            ConnectionHandler connection = getConnection();
+            return connection == null ? Icons.CONNECTION_INVALID : connection.getIcon();
         }
 
         SchemaTreeNode getSchemaNode(MethodExecutionInput executionInput) {
@@ -106,7 +107,7 @@ public abstract class MethodExecutionHistoryTreeModel extends DefaultTreeModel i
 
     class SchemaTreeNode extends MethodExecutionHistoryTreeNode {
         SchemaTreeNode(MethodExecutionHistoryTreeNode parent, MethodExecutionInput executionInput) {
-            super(parent, MethodExecutionHistoryTreeNode.Type.SCHEMA, executionInput.getMethodRef().getSchemaName());
+            super(parent, SCHEMA, executionInput.getMethodRef().getSchemaName());
         }
 
         ProgramTreeNode getProgramNode(MethodExecutionInput executionInput) {

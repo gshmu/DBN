@@ -26,8 +26,8 @@ public class DatabaseLoggingResultForm extends ExecutionResultFormBase<DatabaseL
 
     public DatabaseLoggingResultForm(@NotNull DatabaseLoggingResult loggingResult) {
         super(loggingResult);
-        ConnectionHandler connectionHandler = loggingResult.getConnectionHandler();
-        console = new DatabaseLoggingResultConsole(connectionHandler, loggingResult.getName(), false);
+        ConnectionHandler connection = loggingResult.getConnection();
+        console = new DatabaseLoggingResultConsole(connection, loggingResult.getName(), false);
         consolePanel.add(console.getComponent(), BorderLayout.CENTER);
 
         ActionManager actionManager = ActionManager.getInstance();

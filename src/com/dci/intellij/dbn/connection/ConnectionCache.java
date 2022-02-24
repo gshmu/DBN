@@ -36,9 +36,9 @@ public class ConnectionCache implements ApplicationComponent {
                 return cache.computeIfAbsent(connectionId, id -> {
                     for (Project project : Projects.getOpenProjects()) {
                         ConnectionManager connectionManager = ConnectionManager.getInstance(project);
-                        ConnectionHandler connectionHandler = connectionManager.getConnection(id);
-                        if (Failsafe.check(connectionHandler)) {
-                            return connectionHandler;
+                        ConnectionHandler connection = connectionManager.getConnection(id);
+                        if (Failsafe.check(connection)) {
+                            return connection;
                         }
                     }
                     throw CANCELED_EXCEPTION;
@@ -60,8 +60,8 @@ public class ConnectionCache implements ApplicationComponent {
         if (!project.isDefault()) {
             ConnectionManager connectionManager = ConnectionManager.getInstance(project);
             List<ConnectionHandler> connectionHandlers = connectionManager.getConnections();
-            for (ConnectionHandler connectionHandler : connectionHandlers) {
-                cache.put(connectionHandler.getConnectionId(), connectionHandler);
+            for (ConnectionHandler connection : connectionHandlers) {
+                cache.put(connection.getConnectionId(), connection);
             }
         }
     }
@@ -71,8 +71,8 @@ public class ConnectionCache implements ApplicationComponent {
             Iterator<ConnectionId> connectionIds = cache.keySet().iterator();
             while (connectionIds.hasNext()) {
                 ConnectionId connectionId = connectionIds.next();
-                ConnectionHandler connectionHandler = cache.get(connectionId);
-                if (connectionHandler.isDisposed() || connectionHandler.getProject() == project) {
+                ConnectionHandler connection = cache.get(connectionId);
+                if (connection.isDisposed() || connection.getProject() == project) {
                     connectionIds.remove();
                 }
             }

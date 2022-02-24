@@ -39,7 +39,7 @@ public class DBFictiveObject extends DBObjectImpl implements PsiReference {
     @NotNull
     @Override
     public DBObjectType getObjectType() {
-        return getRef().getObjectType();
+        return ref().getObjectType();
     }
 
 
