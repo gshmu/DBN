@@ -40,11 +40,11 @@ public abstract class CancellableDatabaseCall<T> implements Callable<T> {
     private transient boolean cancelRequested = false;
     private Timer cancelCheckTimer;
 
-    protected CancellableDatabaseCall(@Nullable ConnectionHandler connectionHandler, @Nullable DBNConnection connection, int timeout, TimeUnit timeUnit) {
-        this.connection = connection;
+    protected CancellableDatabaseCall(@Nullable ConnectionHandler connection, @Nullable DBNConnection conn, int timeout, TimeUnit timeUnit) {
+        this.connection = conn;
         this.timeout = timeout;
         this.timeUnit = timeUnit;
-        createSavepoint = !DatabaseFeature.CONNECTION_ERROR_RECOVERY.isSupported(connectionHandler);
+        createSavepoint = !DatabaseFeature.CONNECTION_ERROR_RECOVERY.isSupported(connection);
     }
 
     public void requestCancellation() {

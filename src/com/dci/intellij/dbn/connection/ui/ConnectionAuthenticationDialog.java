@@ -14,18 +14,18 @@ import javax.swing.Action;
 public class ConnectionAuthenticationDialog extends DBNDialog<ConnectionAuthenticationForm> {
     private boolean rememberCredentials;
     private final WeakRef<AuthenticationInfo> authenticationInfo; // TODO dialog result - Disposable.nullify(...)
-    private final ConnectionHandlerRef connectionHandler;
+    private final ConnectionHandlerRef connection;
 
-    public ConnectionAuthenticationDialog(Project project, @Nullable ConnectionHandler connectionHandler, @NotNull AuthenticationInfo authenticationInfo) {
+    public ConnectionAuthenticationDialog(Project project, @Nullable ConnectionHandler connection, @NotNull AuthenticationInfo authenticationInfo) {
         super(project, "Enter password", true);
         this.authenticationInfo = WeakRef.of(authenticationInfo);
         setModal(true);
         setResizable(false);
-        this.connectionHandler = ConnectionHandlerRef.of(connectionHandler);
+        this.connection = ConnectionHandlerRef.of(connection);
         Action okAction = getOKAction();
         renameAction(okAction, "Connect");
         okAction.setEnabled(false);
-        if (connectionHandler != null) {
+        if (connection != null) {
             setDoNotAskOption(new DoNotAskOption() {
                 @Override
                 public boolean isToBeShown() {
@@ -62,8 +62,8 @@ public class ConnectionAuthenticationDialog extends DBNDialog<ConnectionAuthenti
     @NotNull
     @Override
     protected ConnectionAuthenticationForm createForm() {
-        ConnectionHandler connectionHandler = ConnectionHandlerRef.get(this.connectionHandler);
-        return new ConnectionAuthenticationForm(this, connectionHandler);
+        ConnectionHandler connection = ConnectionHandlerRef.get(this.connection);
+        return new ConnectionAuthenticationForm(this, connection);
     }
 
     public boolean isRememberCredentials() {

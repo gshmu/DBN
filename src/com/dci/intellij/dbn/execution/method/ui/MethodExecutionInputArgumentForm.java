@@ -4,6 +4,7 @@ import com.dci.intellij.dbn.common.dispose.DisposableContainers;
 import com.dci.intellij.dbn.common.ui.DBNFormImpl;
 import com.dci.intellij.dbn.common.util.Commons;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
+import com.dci.intellij.dbn.connection.ConnectionId;
 import com.dci.intellij.dbn.data.editor.text.TextContentType;
 import com.dci.intellij.dbn.data.editor.ui.ListPopupValuesProvider;
 import com.dci.intellij.dbn.data.editor.ui.TextFieldWithPopup;
@@ -14,6 +15,7 @@ import com.dci.intellij.dbn.data.type.DBNativeDataType;
 import com.dci.intellij.dbn.data.type.DataTypeDefinition;
 import com.dci.intellij.dbn.data.type.GenericDataType;
 import com.dci.intellij.dbn.execution.method.MethodExecutionArgumentValue;
+import com.dci.intellij.dbn.execution.method.MethodExecutionArgumentValueHistory;
 import com.dci.intellij.dbn.execution.method.MethodExecutionInput;
 import com.dci.intellij.dbn.execution.method.MethodExecutionManager;
 import com.dci.intellij.dbn.object.DBArgument;
@@ -153,9 +155,11 @@ public class MethodExecutionInputArgumentForm extends DBNFormImpl {
             public List<String> getSecondaryValues() {
                 DBArgument argument = getArgument();
                 if (argument != null) {
-                    ConnectionHandler connectionHandler = argument.getConnection();
+                    ConnectionHandler connection = argument.getConnection();
+                    ConnectionId connectionId = connection.getConnectionId();
                     MethodExecutionManager executionManager = MethodExecutionManager.getInstance(argument.getProject());
-                    MethodExecutionArgumentValue argumentValue = executionManager.getArgumentValuesHistory().getArgumentValue(connectionHandler.getConnectionId(), argument.getName(), false);
+                    MethodExecutionArgumentValueHistory valuesHistory = executionManager.getArgumentValuesHistory();
+                    MethodExecutionArgumentValue argumentValue = valuesHistory.getArgumentValue(connectionId, argument.getName(), false);
                     if (argumentValue != null) {
                         List<String> cachedValues = new ArrayList<>(argumentValue.getValueHistory());
                         cachedValues.removeAll(getValues());

@@ -7,18 +7,18 @@ import com.dci.intellij.dbn.data.editor.ui.BasicListPopupValuesProvider;
 import com.dci.intellij.dbn.data.editor.ui.TextFieldWithPopup;
 import com.dci.intellij.dbn.data.type.DataTypeDefinition;
 
-import javax.swing.*;
+import javax.swing.JLabel;
 import java.util.ArrayList;
 import java.util.List;
 
 public class DataTypeEditor extends TextFieldWithPopup {
-    public DataTypeEditor(ConnectionHandler connectionHandler) {
-        super(connectionHandler.getProject());
+    public DataTypeEditor(ConnectionHandler connection) {
+        super(connection.getProject());
         PSQLCodeStyleSettings codeStyleSettings =
-                PSQLCodeStyleSettings.getInstance(connectionHandler.getProject());
+                PSQLCodeStyleSettings.getInstance(connection.getProject());
         CodeStyleCaseOption caseOption = codeStyleSettings.getCaseSettings().getDatatypeCaseOption();
 
-        List<DataTypeDefinition> nativeDataTypes = connectionHandler.getInterfaceProvider().getNativeDataTypes().list();
+        List<DataTypeDefinition> nativeDataTypes = connection.getInterfaceProvider().getNativeDataTypes().list();
         List<String> nativeDataTypeNames = new ArrayList<String>();
         for (DataTypeDefinition nativeDataType : nativeDataTypes) {
             String typeName = nativeDataType.getName();

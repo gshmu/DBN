@@ -23,8 +23,8 @@ public abstract class ResultSetAdapter extends ResultSets implements StatefulDis
 
     public ResultSetAdapter(DatasetEditorModel model) {
         this.model = WeakRef.of(model);
-        ConnectionHandler connectionHandler = model.getConnectionHandler();
-        useSavePoints = !DatabaseFeature.CONNECTION_ERROR_RECOVERY.isSupported(connectionHandler);
+        ConnectionHandler connection = model.getConnectionHandler();
+        useSavePoints = !DatabaseFeature.CONNECTION_ERROR_RECOVERY.isSupported(connection);
     }
 
     public DatasetEditorModel getModel() {

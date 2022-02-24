@@ -24,8 +24,13 @@ import com.intellij.openapi.util.Disposer;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import javax.swing.*;
-import java.util.*;
+import javax.swing.Icon;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
 
 public class ConnectionBundle extends BrowserTreeNodeBase implements BrowserTreeNode, StatefulDisposable {
     private final ProjectRef project;
@@ -247,15 +252,15 @@ public class ConnectionBundle extends BrowserTreeNodeBase implements BrowserTree
 
     @Override
     public void refreshTreeChildren(@NotNull DBObjectType... objectTypes) {
-        for (ConnectionHandler connectionHandler : connections) {
-            connectionHandler.getObjectBundle().refreshTreeChildren(objectTypes);
+        for (ConnectionHandler connection : connections) {
+            connection.getObjectBundle().refreshTreeChildren(objectTypes);
         }
     }
 
     @Override
     public void rebuildTreeChildren() {
-        for (ConnectionHandler connectionHandler : connections) {
-            connectionHandler.getObjectBundle().rebuildTreeChildren();
+        for (ConnectionHandler connection : connections) {
+            connection.getObjectBundle().rebuildTreeChildren();
         }
     }
 

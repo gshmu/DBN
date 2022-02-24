@@ -11,26 +11,26 @@ import org.jetbrains.annotations.NotNull;
 
 public class DatabaseLoggingToggleAction extends AbstractConnectionToggleAction {
 
-    public DatabaseLoggingToggleAction(ConnectionHandler connectionHandler) {
-        super("Database Logging", connectionHandler);
+    public DatabaseLoggingToggleAction(ConnectionHandler connection) {
+        super("Database Logging", connection);
     }
 
     @Override
     public boolean isSelected(@NotNull AnActionEvent e) {
-        return getConnectionHandler().isLoggingEnabled();
+        return getConnection().isLoggingEnabled();
     }
 
     @Override
     public void setSelected(@NotNull AnActionEvent e, boolean state) {
-        getConnectionHandler().setLoggingEnabled(state);
+        getConnection().setLoggingEnabled(state);
     }
 
     @Override
     public void update(@NotNull AnActionEvent e) {
         super.update(e);
-        ConnectionHandler connectionHandler = getConnectionHandler();
-        DatabaseCompatibilityInterface compatibilityInterface = connectionHandler.getInterfaceProvider().getCompatibilityInterface();
-        boolean supportsLogging = DatabaseFeature.DATABASE_LOGGING.isSupported(connectionHandler);
+        ConnectionHandler connection = getConnection();
+        DatabaseCompatibilityInterface compatibilityInterface = connection.getInterfaceProvider().getCompatibilityInterface();
+        boolean supportsLogging = DatabaseFeature.DATABASE_LOGGING.isSupported(connection);
         Presentation presentation = e.getPresentation();
         presentation.setVisible(supportsLogging);
         String databaseLogName = compatibilityInterface.getDatabaseLogName();

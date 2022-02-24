@@ -21,7 +21,7 @@ import com.intellij.util.LocalTimeCounter;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import javax.swing.*;
+import javax.swing.Icon;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -40,16 +40,16 @@ public class DBSessionStatementVirtualFile extends DBVirtualFileImpl implements 
         super(sessionBrowser.getProject());
         this.sessionBrowser = WeakRef.of(sessionBrowser);
         this.content = content;
-        ConnectionHandler connectionHandler = Failsafe.nn(sessionBrowser.getConnection());
-        name = connectionHandler.getName();
-        setCharset(connectionHandler.getSettings().getDetailSettings().getCharset());
+        ConnectionHandler connection = Failsafe.nn(sessionBrowser.getConnection());
+        name = connection.getName();
+        setCharset(connection.getSettings().getDetailSettings().getCharset());
         //putUserData(PARSE_ROOT_ID_KEY, "subquery");
     }
 
     @Override
     public PsiFile initializePsiFile(DatabaseFileViewProvider fileViewProvider, Language language) {
-        ConnectionHandler connectionHandler = Failsafe.nn(getConnection());
-        DBLanguageDialect languageDialect = connectionHandler.resolveLanguageDialect(language);
+        ConnectionHandler connection = Failsafe.nn(getConnection());
+        DBLanguageDialect languageDialect = connection.resolveLanguageDialect(language);
         return languageDialect == null ? null : fileViewProvider.initializePsiFile(languageDialect);
     }
 
@@ -72,8 +72,7 @@ public class DBSessionStatementVirtualFile extends DBVirtualFileImpl implements 
     @Override
     @NotNull
     public ConnectionHandler getConnection() {
-        ConnectionHandler connectionHandler = getSessionBrowser().getConnection();
-        return Failsafe.nn(connectionHandler);
+        return getSessionBrowser().getConnection();
     }
 
     @Nullable

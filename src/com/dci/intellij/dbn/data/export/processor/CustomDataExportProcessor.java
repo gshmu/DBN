@@ -30,7 +30,7 @@ public class CustomDataExportProcessor extends DataExportProcessor{
     }
 
     @Override
-    public void performExport(DataExportModel model, DataExportInstructions instructions, ConnectionHandler connectionHandler) throws DataExportException {
+    public void performExport(DataExportModel model, DataExportInstructions instructions, ConnectionHandler connection) throws DataExportException {
         StringBuilder buffer = new StringBuilder();
         if (instructions.isCreateHeader()) {
             for (int columnIndex=0; columnIndex < model.getColumnCount(); columnIndex++){
@@ -68,7 +68,7 @@ public class CustomDataExportProcessor extends DataExportProcessor{
             buffer.append('\n');
         }
 
-        Formatter formatter = getFormatter(connectionHandler.getProject());
+        Formatter formatter = getFormatter(connection.getProject());
         for (int rowIndex=0; rowIndex < model.getRowCount(); rowIndex++) {
             for (int columnIndex=0; columnIndex < model.getColumnCount(); columnIndex++){
                 checkCancelled();

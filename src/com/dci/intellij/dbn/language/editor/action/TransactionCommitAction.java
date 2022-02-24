@@ -15,12 +15,12 @@ public class TransactionCommitAction extends TransactionEditorAction {
 
     @Override
     protected void actionPerformed(@NotNull AnActionEvent e, @NotNull Project project) {
-        ConnectionHandler connectionHandler = getConnectionHandler(e);
-        if (connectionHandler != null) {
-            DBNConnection connection = getConnection(e);
-            if (connection != null) {
+        ConnectionHandler connection = getConnection(e);
+        if (connection != null) {
+            DBNConnection conn = getTargetConnection(e);
+            if (conn != null) {
                 DatabaseTransactionManager transactionManager = DatabaseTransactionManager.getInstance(project);
-                transactionManager.commit(connectionHandler, connection, true, false, null);
+                transactionManager.commit(connection, conn, true, false, null);
             }
         }
     }

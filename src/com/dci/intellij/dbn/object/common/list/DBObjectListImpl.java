@@ -130,9 +130,9 @@ public class DBObjectListImpl<T extends DBObject> extends DynamicContentImpl<T> 
     @Override
     @Nullable
     public Filter<T> getConfigFilter() {
-        ConnectionHandler connectionHandler = this.getConnection();
-        if (Failsafe.check(connectionHandler) && !connectionHandler.isVirtual()) {
-            ConnectionFilterSettings filterSettings = connectionHandler.getSettings().getFilterSettings();
+        ConnectionHandler connection = this.getConnection();
+        if (Failsafe.check(connection) && !connection.isVirtual()) {
+            ConnectionFilterSettings filterSettings = connection.getSettings().getFilterSettings();
             return filterSettings.getNameFilter(objectType);
         }
         return null;
@@ -296,8 +296,8 @@ public class DBObjectListImpl<T extends DBObject> extends DynamicContentImpl<T> 
                 DBObject object = (DBObject) getParent();
                 return getName() + " of " + object.getQualifiedNameWithType();
             }
-            ConnectionHandler connectionHandler = this.getConnection();
-            return getName() + " from " + connectionHandler.getName();
+            ConnectionHandler connection = this.getConnection();
+            return getName() + " from " + connection.getName();
         }
     }
 
@@ -362,8 +362,8 @@ public class DBObjectListImpl<T extends DBObject> extends DynamicContentImpl<T> 
                 }
 
                 if (scroll) {
-                    ConnectionHandler connectionHandler = this.getConnection();
-                    DatabaseBrowserManager.scrollToSelectedElement(connectionHandler);
+                    ConnectionHandler connection = this.getConnection();
+                    DatabaseBrowserManager.scrollToSelectedElement(connection);
                 }
             }
         } catch (ProcessCanceledException ignore) {}

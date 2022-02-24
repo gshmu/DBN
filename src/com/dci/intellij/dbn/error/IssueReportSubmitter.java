@@ -27,11 +27,14 @@ import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.awt.*;
+import java.awt.Component;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
+import java.util.Calendar;
+import java.util.HashSet;
 import java.util.List;
-import java.util.*;
+import java.util.Map;
+import java.util.Set;
 import java.util.function.Consumer;
 
 import static com.dci.intellij.dbn.common.util.Commons.nvl;
@@ -146,42 +149,41 @@ abstract class IssueReportSubmitter extends ErrorReportSubmitter {
         }
 
 
-        Progress.prompt(project, "Submitting issue report", true,
-                (progress) -> {
-                    TicketResponse result;
-                    try {
-                        result = submit(events, localPluginVersion, summary, description.toString());
-                    } catch (Exception e) {
+        Progress.prompt(project, "Submitting issue report", true, progress -> {
+            TicketResponse result;
+            try {
+                result = submit(events, localPluginVersion, summary, description.toString());
+            } catch (Exception e) {
 
-                        NotificationSupport.sendErrorNotification(
-                                project,
-                                NotificationGroup.REPORTING,
-                                "<html>Failed to send error report: {0}</html>", e);
+                NotificationSupport.sendErrorNotification(
+                        project,
+                        NotificationGroup.REPORTING,
+                        "<html>Failed to send error report: {0}</html>", e);
 
-                        consumer.accept(new SubmittedReportInfo(null, null, FAILED));
-                        return;
-                    }
+                consumer.accept(new SubmittedReportInfo(null, null, FAILED));
+                return;
+            }
 
-                    String errorMessage = result.getErrorMessage();
-                    if (Strings.isEmpty(errorMessage)) {
-                        log.info("Error report submitted, response: " + result);
+            String errorMessage = result.getErrorMessage();
+            if (Strings.isEmpty(errorMessage)) {
+                log.info("Error report submitted, response: " + result);
 
-                        String ticketId = result.getTicketId();
-                        String ticketUrl = getTicketUrl(ticketId);
-                        NotificationSupport.sendInfoNotification(
-                                project,
-                                NotificationGroup.REPORTING,
-                                "<html>Error report successfully sent. Ticket <a href='" + ticketUrl + "'>" + ticketId + "</a> created.</html>");
+                String ticketId = result.getTicketId();
+                String ticketUrl = getTicketUrl(ticketId);
+                NotificationSupport.sendInfoNotification(
+                        project,
+                        NotificationGroup.REPORTING,
+                        "<html>Error report successfully sent. Ticket <a href='" + ticketUrl + "'>" + ticketId + "</a> created.</html>");
 
-                        consumer.accept(new SubmittedReportInfo(ticketUrl, ticketId, NEW_ISSUE));
-                    } else {
-                        NotificationSupport.sendErrorNotification(
-                                project,
-                                NotificationGroup.REPORTING,
-                                "<html>Failed to send error report: " + errorMessage + "</html>");
-                        consumer.accept(new SubmittedReportInfo(null, null, FAILED));
-                    }
-                });
+                consumer.accept(new SubmittedReportInfo(ticketUrl, ticketId, NEW_ISSUE));
+            } else {
+                NotificationSupport.sendErrorNotification(
+                        project,
+                        NotificationGroup.REPORTING,
+                        "<html>Failed to send error report: " + errorMessage + "</html>");
+                consumer.accept(new SubmittedReportInfo(null, null, FAILED));
+            }
+        });
 
         return true;
     }

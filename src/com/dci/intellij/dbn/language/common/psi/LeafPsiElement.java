@@ -105,10 +105,10 @@ public abstract class LeafPsiElement<T extends LeafElementType> extends BasePsiE
         Set<DBObjectType> parentTypes = objectType.getGenericParents();
         if (parentTypes.size() > 0) {
             if (objectType.isSchemaObject()) {
-                ConnectionHandler connectionHandler = sourceScope.getConnectionHandler();
+                ConnectionHandler connection = sourceScope.getConnection();
 
-                if (connectionHandler != null && !connectionHandler.isVirtual()) {
-                    DBObjectBundle objectBundle = connectionHandler.getObjectBundle();
+                if (connection != null && !connection.isVirtual()) {
+                    DBObjectBundle objectBundle = connection.getObjectBundle();
 
                     if (filter == null || filter.acceptsCurrentSchemaObject(objectType)) {
                         DBSchema currentSchema = sourceScope.getDatabaseSchema();

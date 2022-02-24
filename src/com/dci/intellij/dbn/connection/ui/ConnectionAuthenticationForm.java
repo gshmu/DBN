@@ -37,7 +37,7 @@ public class ConnectionAuthenticationForm extends DBNFormImpl {
     private String cachedUser = "";
     private String cachedPassword = "";
 
-    ConnectionAuthenticationForm(@NotNull ConnectionAuthenticationDialog parentComponent, @Nullable ConnectionHandler connectionHandler) {
+    ConnectionAuthenticationForm(@NotNull ConnectionAuthenticationDialog parentComponent, @Nullable ConnectionHandler connection) {
         super(parentComponent);
 
         AuthenticationInfo authenticationInfo = parentComponent.getAuthenticationInfo();
@@ -49,12 +49,12 @@ public class ConnectionAuthenticationForm extends DBNFormImpl {
         }
 
         String hintText;
-        if (connectionHandler != null) {
-            initComboBox(authTypeComboBox, connectionHandler.getDatabaseType().getAuthTypes());
-            DBNHeaderForm headerForm = new DBNHeaderForm(this, connectionHandler);
+        if (connection != null) {
+            initComboBox(authTypeComboBox, connection.getDatabaseType().getAuthTypes());
+            DBNHeaderForm headerForm = new DBNHeaderForm(this, connection);
             headerPanel.add(headerForm.getComponent(), BorderLayout.CENTER);
 
-            int passwordExpiryTime = connectionHandler.getSettings().getDetailSettings().getCredentialExpiryTime();
+            int passwordExpiryTime = connection.getSettings().getDetailSettings().getCredentialExpiryTime();
             String expiryTimeText = passwordExpiryTime == 0 ? "0 - no expiry" :
                     passwordExpiryTime == 1 ? "1 minute" : passwordExpiryTime + " minutes";
 

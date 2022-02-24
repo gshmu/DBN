@@ -198,8 +198,8 @@ public class MethodExecutionHistoryForm extends DBNFormImpl {
         MethodExecutionInput executionInput = getTree().getSelectedExecutionInput();
         if (executionInput != null) {
             ConnectionAction.invoke("loading the execution history", true, executionInput,
-                    (action) -> Progress.prompt(getProject(), "Loading method details", false,
-                            (progress) -> {
+                    action -> Progress.prompt(getProject(), "Loading method details", false,
+                            progress -> {
                                 DBMethod method = executionInput.getMethod();
                                 if (method != null) {
                                     method.getArguments();

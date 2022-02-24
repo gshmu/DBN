@@ -133,7 +133,7 @@ public class ExecutionManager extends AbstractProjectComponent implements Persis
             showExecutionConsole();
             ExecutionConsoleForm executionConsoleForm = getExecutionConsoleForm();
             if (executionResult.isLoggingActive()) {
-                LogOutputContext context = new LogOutputContext(executionResult.getConnectionHandler());
+                LogOutputContext context = new LogOutputContext(executionResult.getConnection());
                 context.setHideEmptyLines(false);
                 String loggingOutput = executionResult.getLoggingOutput();
 

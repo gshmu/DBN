@@ -17,13 +17,13 @@ import org.jetbrains.annotations.NotNull;
 import javax.swing.Action;
 
 public class ConnectionFilterSettingsDialog extends DBNDialog<DBNContentWithHeaderForm> {
-    private final ConnectionHandlerRef connectionHandler;
+    private final ConnectionHandlerRef connection;
     private ConnectionFilterSettingsForm configurationEditor;
     private ConnectionFilterSettings filterSettings;
 
-    public ConnectionFilterSettingsDialog(@NotNull ConnectionHandler connectionHandler) {
-        super(connectionHandler.getProject(), "Object filters", true);
-        this.connectionHandler = connectionHandler.getRef();
+    public ConnectionFilterSettingsDialog(@NotNull ConnectionHandler connection) {
+        super(connection.getProject(), "Object filters", true);
+        this.connection = connection.ref();
         setModal(true);
         setResizable(true);
         init();
@@ -32,17 +32,17 @@ public class ConnectionFilterSettingsDialog extends DBNDialog<DBNContentWithHead
     @NotNull
     @Override
     protected DBNContentWithHeaderForm createForm() {
-        ConnectionHandler connectionHandler = this.connectionHandler.ensure();
+        ConnectionHandler connection = this.connection.ensure();
         return new DBNContentWithHeaderForm(this) {
             @Override
             public DBNHeaderForm createHeaderForm() {
-                return new DBNHeaderForm(this, connectionHandler);
+                return new DBNHeaderForm(this, connection);
             }
 
             @Override
             public DBNForm createContentForm() {
-                ProjectSettingsManager settingsManager = ProjectSettingsManager.getInstance(getProject());
-                ConnectionSettings connectionSettings = settingsManager.getConnectionSettings().getConnectionSettings(connectionHandler.getConnectionId());
+                ProjectSettingsManager settingsManager = ProjectSettingsManager.getInstance(ensureProject());
+                ConnectionSettings connectionSettings = settingsManager.getConnectionSettings().getConnectionSettings(connection.getConnectionId());
                 filterSettings = connectionSettings.getFilterSettings();
                 configurationEditor = filterSettings.createConfigurationEditor();
                 return configurationEditor;

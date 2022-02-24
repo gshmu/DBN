@@ -68,11 +68,11 @@ public class ConnectionInfoForm extends DBNFormImpl{
     private JLabel infoConnectionUrlLabel;
     private JLabel infoUserNameLabel;
 
-    public ConnectionInfoForm(ConnectionInfoDialog parent, ConnectionHandler connectionHandler) {
+    public ConnectionInfoForm(ConnectionInfoDialog parent, ConnectionHandler connection) {
         super(parent);
-        initHeaderPanel(connectionHandler);
-        initSetupPanel(connectionHandler);
-        initInfoPanel(connectionHandler);
+        initHeaderPanel(connection);
+        initSetupPanel(connection);
+        initInfoPanel(connection);
     }
 
     public ConnectionInfoForm(@NotNull ConnectionInfoDialog parent, ConnectionInfo connectionInfo, String connectionName, EnvironmentType environmentType) {
@@ -82,8 +82,8 @@ public class ConnectionInfoForm extends DBNFormImpl{
         initInfoPanel(connectionInfo);
     }
 
-    private void initHeaderPanel(ConnectionHandler connectionHandler) {
-        DBNHeaderForm headerForm = new DBNHeaderForm(this, connectionHandler);
+    private void initHeaderPanel(ConnectionHandler connection) {
+        DBNHeaderForm headerForm = new DBNHeaderForm(this, connection);
         headerPanel.add(headerForm.getComponent(), BorderLayout.CENTER);
     }
 
@@ -95,10 +95,10 @@ public class ConnectionInfoForm extends DBNFormImpl{
         headerPanel.add(headerForm.getComponent(), BorderLayout.CENTER);
     }
 
-    private void initInfoPanel(ConnectionHandler connectionHandler) {
+    private void initInfoPanel(ConnectionHandler connection) {
         try {
-            Connection connection = connectionHandler.getMainConnection();
-            ConnectionInfo connectionInfo = new ConnectionInfo(connection.getMetaData());
+            Connection conn = connection.getMainConnection();
+            ConnectionInfo connectionInfo = new ConnectionInfo(conn.getMetaData());
 
             initInfoPanel(connectionInfo);
         } catch (SQLException e) {
@@ -135,13 +135,13 @@ public class ConnectionInfoForm extends DBNFormImpl{
         statusMessageLabel.setIcon(Icons.EXEC_MESSAGES_INFO);
     }
 
-    private void initSetupPanel(ConnectionHandler connectionHandler) {
-        initValueField(setupNameLabel, setupNameTextField, connectionHandler.getName());
+    private void initSetupPanel(ConnectionHandler connection) {
+        initValueField(setupNameLabel, setupNameTextField, connection.getName());
 
-        String description = connectionHandler.getDescription();
+        String description = connection.getDescription();
         initValueField(setupDescriptionLabel, setupDescriptionTextField, description, !Strings.isEmpty(description));
 
-        ConnectionDatabaseSettings databaseSettings = connectionHandler.getSettings().getDatabaseSettings();
+        ConnectionDatabaseSettings databaseSettings = connection.getSettings().getDatabaseSettings();
         String driverLibrary = databaseSettings.getDriverLibrary();
         initValueField(setupDriverLibraryLabel, setupDriverLibraryTextField, databaseSettings.getDriverSource() == DriverSource.BUILTIN ? "Built-in library" : driverLibrary);
         initValueField(setupDriverLabel, setupDriverTextField, databaseSettings.getDriver(), true);

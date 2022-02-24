@@ -40,8 +40,8 @@ public class EditorOptionsAction extends GroupPopupAction {
                 actions.add(new ConsoleCreateAction(DBConsoleType.STANDARD));
             }
 
-            ConnectionHandler connectionHandler = consoleVirtualFile.getConnection();
-            if (DatabaseFeature.DEBUGGING.isSupported(connectionHandler)) {
+            ConnectionHandler connection = consoleVirtualFile.getConnection();
+            if (DatabaseFeature.DEBUGGING.isSupported(connection)) {
                 actions.add(new ConsoleCreateAction(DBConsoleType.DEBUG));
             }
         }

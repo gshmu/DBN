@@ -22,14 +22,14 @@ public class SessionBrowserModel extends ResultSetDataModel<SessionBrowserModelR
     private final long timestamp = System.currentTimeMillis();
     private String loadError;
 
-    public SessionBrowserModel(ConnectionHandler connectionHandler) {
-        super(connectionHandler);
+    public SessionBrowserModel(ConnectionHandler connection) {
+        super(connection);
         setHeader(new SessionBrowserModelHeader());
     }
 
-    public SessionBrowserModel(ConnectionHandler connectionHandler, DBNResultSet resultSet) throws SQLException {
-        super(connectionHandler);
-        setHeader(new SessionBrowserModelHeader(connectionHandler, resultSet));
+    public SessionBrowserModel(ConnectionHandler connection, DBNResultSet resultSet) throws SQLException {
+        super(connection);
+        setHeader(new SessionBrowserModelHeader(connection, resultSet));
         checkDisposed();
         setResultSet(resultSet);
         setResultSetExhausted(false);

@@ -7,21 +7,21 @@ import com.intellij.openapi.project.DumbAwareAction;
 import org.jetbrains.annotations.NotNull;
 
 public class ConnectionSelectAction extends DumbAwareAction {
-    private final ConnectionHandler connectionHandler;
+    private final ConnectionHandler connection;
     private MethodExecutionBrowserForm browserComponent;
 
-    ConnectionSelectAction(MethodExecutionBrowserForm browserComponent, ConnectionHandler connectionHandler) {
+    ConnectionSelectAction(MethodExecutionBrowserForm browserComponent, ConnectionHandler connection) {
         super();
         this.browserComponent = browserComponent;
-        this.connectionHandler = connectionHandler;
-        getTemplatePresentation().setText(connectionHandler.getName(), false);
-        getTemplatePresentation().setIcon(connectionHandler.getIcon());
+        this.connection = connection;
+        getTemplatePresentation().setText(connection.getName(), false);
+        getTemplatePresentation().setIcon(connection.getIcon());
 
     }
 
     @Override
     public void actionPerformed(@NotNull AnActionEvent e) {
-        browserComponent.setConnectionHandler(connectionHandler);
+        browserComponent.setConnectionHandler(connection);
     }
 
 

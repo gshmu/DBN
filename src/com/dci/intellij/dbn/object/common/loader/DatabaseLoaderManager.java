@@ -24,7 +24,7 @@ public class DatabaseLoaderManager extends AbstractProjectComponent {
     private DatabaseLoaderManager(Project project) {
         super(project);
         ProjectEvents.subscribe(project, this, ConnectionLoadListener.TOPIC,
-                connectionHandler -> Dispatch.run(() -> {
+                connection -> Dispatch.run(() -> {
                     checkDisposed();
                     Failsafe.nn(project);
                     FileEditorManager fileEditorManager = FileEditorManager.getInstance(project);
@@ -34,7 +34,7 @@ public class DatabaseLoaderManager extends AbstractProjectComponent {
 
                         checkDisposed();
                         ConnectionHandler activeConnection = contextManager.getConnection(openFile);
-                        if (activeConnection == connectionHandler) {
+                        if (activeConnection == connection) {
                             FileEditor[] fileEditors = fileEditorManager.getEditors(openFile);
                             for (FileEditor fileEditor : fileEditors) {
 

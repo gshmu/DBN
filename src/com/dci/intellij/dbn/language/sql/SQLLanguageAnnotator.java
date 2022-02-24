@@ -41,8 +41,8 @@ public class SQLLanguageAnnotator implements Annotator {
 
                     } else if (psiElement instanceof IdentifierPsiElement) {
                         IdentifierPsiElement identifierPsiElement = (IdentifierPsiElement) psiElement;
-                        ConnectionHandler connectionHandler = identifierPsiElement.getConnectionHandler();
-                        if (connectionHandler != null && !connectionHandler.isVirtual()) {
+                        ConnectionHandler connection = identifierPsiElement.getConnection();
+                        if (connection != null && !connection.isVirtual()) {
                             annotateIdentifier(identifierPsiElement, holder);
                         }
                     }
@@ -126,12 +126,12 @@ public class SQLLanguageAnnotator implements Annotator {
     }
 
     private static boolean checkConnection(@NotNull IdentifierPsiElement objectReference) {
-        ConnectionHandler connectionHandler = objectReference.getConnectionHandler();
-        return connectionHandler != null &&
-                !connectionHandler.isVirtual() &&
-                connectionHandler.canConnect() &&
-                connectionHandler.isValid() &&
-                !connectionHandler.getConnectionStatus().is(ConnectionHandlerStatus.LOADING);
+        ConnectionHandler connection = objectReference.getConnection();
+        return connection != null &&
+                !connection.isVirtual() &&
+                connection.canConnect() &&
+                connection.isValid() &&
+                !connection.getConnectionStatus().is(ConnectionHandlerStatus.LOADING);
     }
 
     private static void annotateExecutable(@NotNull ExecutablePsiElement executablePsiElement, AnnotationHolder holder) {

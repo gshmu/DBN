@@ -11,20 +11,20 @@ import org.jetbrains.annotations.Nullable;
 
 public class PendingTransactionsOpenAction extends AbstractConnectionAction {
 
-    public PendingTransactionsOpenAction(ConnectionHandler connectionHandler) {
-        super("Show uncommitted changes", connectionHandler);
+    public PendingTransactionsOpenAction(ConnectionHandler connection) {
+        super("Show uncommitted changes", connection);
 
     }
 
     @Override
-    protected void actionPerformed(@NotNull AnActionEvent e, @NotNull Project project, @NotNull ConnectionHandler connectionHandler) {
+    protected void actionPerformed(@NotNull AnActionEvent e, @NotNull Project project, @NotNull ConnectionHandler connection) {
         DatabaseTransactionManager transactionManager = DatabaseTransactionManager.getInstance(project);
-        transactionManager.showPendingTransactionsDialog(connectionHandler, null);
+        transactionManager.showPendingTransactionsDialog(connection, null);
     }
 
     @Override
-    protected void update(@NotNull AnActionEvent e, @NotNull Presentation presentation, @NotNull Project project, @Nullable ConnectionHandler connectionHandler) {
-        boolean enabled = connectionHandler != null && connectionHandler.hasUncommittedChanges();
+    protected void update(@NotNull AnActionEvent e, @NotNull Presentation presentation, @NotNull Project project, @Nullable ConnectionHandler connection) {
+        boolean enabled = connection != null && connection.hasUncommittedChanges();
 
         presentation.setEnabled(enabled);
     }

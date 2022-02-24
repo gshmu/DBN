@@ -5,25 +5,25 @@ import com.dci.intellij.dbn.connection.ConnectionHandlerRef;
 import com.intellij.openapi.actionSystem.ToggleAction;
 import org.jetbrains.annotations.NotNull;
 
-import javax.swing.*;
+import javax.swing.Icon;
 
 public abstract class AbstractConnectionToggleAction extends ToggleAction {
-    private final ConnectionHandlerRef connectionHandlerRef;
+    private final ConnectionHandlerRef connection;
 
-    public AbstractConnectionToggleAction(String text, @NotNull ConnectionHandler connectionHandler) {
-        this(text, null, connectionHandler);
+    public AbstractConnectionToggleAction(String text, @NotNull ConnectionHandler connection) {
+        this(text, null, connection);
 
     }
-    public AbstractConnectionToggleAction(String text, Icon icon, @NotNull ConnectionHandler connectionHandler) {
-        this(text, null, icon, connectionHandler);
+    public AbstractConnectionToggleAction(String text, Icon icon, @NotNull ConnectionHandler connection) {
+        this(text, null, icon, connection);
     }
-    public AbstractConnectionToggleAction(String text, String description, Icon icon, @NotNull ConnectionHandler connectionHandler) {
+    public AbstractConnectionToggleAction(String text, String description, Icon icon, @NotNull ConnectionHandler connection) {
         super(text, description, icon);
-        this.connectionHandlerRef = connectionHandler.getRef();
+        this.connection = connection.ref();
     }
 
     @NotNull
-    public ConnectionHandler getConnectionHandler() {
-        return connectionHandlerRef.ensure();
+    public ConnectionHandler getConnection() {
+        return connection.ensure();
     }
 }

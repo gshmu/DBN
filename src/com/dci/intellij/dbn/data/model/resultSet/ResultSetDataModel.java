@@ -42,21 +42,21 @@ public class ResultSetDataModel<
     @Getter
     private long fetchDuration = -1;
 
-    public ResultSetDataModel(@NotNull ConnectionHandler connectionHandler) {
-        super(connectionHandler.getProject());
-        this.connectionHandler = connectionHandler.getRef();
+    public ResultSetDataModel(@NotNull ConnectionHandler connection) {
+        super(connection.getProject());
+        this.connectionHandler = connection.ref();
     }
 
-    public ResultSetDataModel(DBNResultSet resultSet, @NotNull ConnectionHandler connectionHandler, int maxRecords) throws SQLException {
-        super(connectionHandler.getProject());
-        this.connectionHandler = connectionHandler.getRef();
+    public ResultSetDataModel(DBNResultSet resultSet, @NotNull ConnectionHandler connection, int maxRecords) throws SQLException {
+        super(connection.getProject());
+        this.connectionHandler = connection.ref();
         this.resultSet = resultSet;
         DBNStatement<?> statement = resultSet.getStatement();
         this.executeDuration = statement == null ? 0 : statement.getExecuteDuration();
-        setHeader(new ResultSetDataModelHeader<>(connectionHandler, resultSet));
+        setHeader(new ResultSetDataModelHeader<>(connection, resultSet));
         fetchNextRecords(maxRecords, false);
 
-        Disposer.register(connectionHandler, this);
+        Disposer.register(connection, this);
     }
 
     protected R createRow(int resultSetRowIndex) throws SQLException {

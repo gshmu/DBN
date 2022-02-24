@@ -19,20 +19,20 @@ import java.util.Objects;
 import java.util.Set;
 
 public class DatabaseConsoleBundle extends StatefulDisposable.Base {
-    private final ConnectionHandlerRef connectionHandler;
+    private final ConnectionHandlerRef connection;
 
     private final List<DBConsole> consoles = DisposableContainers.concurrentList(this);
 
-    public DatabaseConsoleBundle(ConnectionHandler connectionHandler) {
-        super(connectionHandler);
-        this.connectionHandler = connectionHandler.getRef();
+    public DatabaseConsoleBundle(ConnectionHandler connection) {
+        super(connection);
+        this.connection = connection.ref();
     }
 
     public List<DBConsole> getConsoles() {
         if (consoles.isEmpty()) {
             synchronized (this) {
                 if (consoles.isEmpty()) {
-                    createConsole(getConnectionHandler().getName(), DBConsoleType.STANDARD);
+                    createConsole(getConnection().getName(), DBConsoleType.STANDARD);
                 }
             }
         }
@@ -48,13 +48,13 @@ public class DatabaseConsoleBundle extends StatefulDisposable.Base {
         return consoleNames;
     }
 
-    public ConnectionHandler getConnectionHandler() {
-        return connectionHandler.ensure();
+    public ConnectionHandler getConnection() {
+        return connection.ensure();
     }
 
     @NotNull
     public DBConsole getDefaultConsole() {
-        return getConsole(getConnectionHandler().getName(), DBConsoleType.STANDARD, true);
+        return getConsole(getConnection().getName(), DBConsoleType.STANDARD, true);
     }
 
     @Nullable
@@ -87,8 +87,8 @@ public class DatabaseConsoleBundle extends StatefulDisposable.Base {
     }
 
     DBConsole createConsole(String name, DBConsoleType type) {
-        ConnectionHandler connectionHandler = getConnectionHandler();
-        DBConsole console = new DBConsoleImpl(connectionHandler, name, type);
+        ConnectionHandler connection = getConnection();
+        DBConsole console = new DBConsoleImpl(connection, name, type);
         consoles.add(console);
         Collections.sort(consoles);
         return console;

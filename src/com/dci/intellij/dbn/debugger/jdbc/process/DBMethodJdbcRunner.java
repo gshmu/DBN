@@ -35,8 +35,8 @@ public class DBMethodJdbcRunner extends DBProgramRunner<MethodExecutionInput> {
         return false;    }
 
     @Override
-    protected DBDebugProcessStarter createProcessStarter(ConnectionHandler connectionHandler) {
-        return new DBMethodJdbcProcessStarter(connectionHandler);
+    protected DBDebugProcessStarter createProcessStarter(ConnectionHandler connection) {
+        return new DBMethodJdbcProcessStarter(connection);
     }
 
     @Override

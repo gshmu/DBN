@@ -21,8 +21,8 @@ public class DBConsoleImpl extends DBObjectImpl<DBObjectMetadata> implements DBC
     private final DBConsoleVirtualFile virtualFile;
     private final DBConsoleType consoleType;
 
-    public DBConsoleImpl(@NotNull ConnectionHandler connectionHandler, String name, DBConsoleType consoleType) {
-        super(connectionHandler, DBObjectType.CONSOLE, name);
+    public DBConsoleImpl(@NotNull ConnectionHandler connection, String name, DBConsoleType consoleType) {
+        super(connection, DBObjectType.CONSOLE, name);
         virtualFile = new DBConsoleVirtualFile(this);
         this.consoleType = consoleType;
     }
@@ -56,7 +56,7 @@ public class DBConsoleImpl extends DBObjectImpl<DBObjectMetadata> implements DBC
 
     @Override
     public void setName(String newName) {
-        getRef().setObjectName(newName);
+        ref().setObjectName(newName);
         virtualFile.setName(newName);
     }
 }

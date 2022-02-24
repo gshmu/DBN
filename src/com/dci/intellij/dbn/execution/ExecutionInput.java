@@ -72,8 +72,8 @@ public abstract class ExecutionInput extends StatefulDisposable.Base implements 
         return ConnectionHandlerRef.get(targetConnection);
     }
 
-    public final void setTargetConnection(@Nullable ConnectionHandler connectionHandler) {
-        this.targetConnection = ConnectionHandlerRef.of(connectionHandler);
+    public void setTargetConnection(@Nullable ConnectionHandler connection) {
+        this.targetConnection = ConnectionHandlerRef.of(connection);
     }
 
     @NotNull

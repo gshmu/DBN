@@ -258,15 +258,15 @@ public interface GenericMetadataLoaders {
 
     static CachedResultSet attemptCached(JdbcProperty feature, String key, ThrowableCallable<CachedResultSet, SQLException> loader) throws SQLException{
         return cached(key, () -> {
-            ConnectionHandler connectionHandler = DatabaseInterface.getConnectionHandler();
-            DatabaseCompatibilityInterface compatibilityInterface = connectionHandler.getInterfaceProvider().getCompatibilityInterface();
+            ConnectionHandler connection = DatabaseInterface.getConnection();
+            DatabaseCompatibilityInterface compatibilityInterface = connection.getInterfaceProvider().getCompatibilityInterface();
             CachedResultSet resultSet = compatibilityInterface.attempt(feature, loader);
             return Commons.nvl(resultSet, CachedResultSet.EMPTY);
         });
     }
 
     static DatabaseCompatibility getCompatibility() {
-        return DatabaseInterface.getConnectionHandler().getCompatibility();
+        return DatabaseInterface.getConnection().getCompatibility();
     }
 
     static boolean is(JdbcProperty property) {

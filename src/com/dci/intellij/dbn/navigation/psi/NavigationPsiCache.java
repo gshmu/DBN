@@ -9,8 +9,8 @@ public class NavigationPsiCache implements Disposable {
     private final Map<DBObjectList, DBObjectListPsiDirectory> objectListPsiDirectories = new THashMap<DBObjectList, DBObjectListPsiDirectory>();
     private final DBConnectionPsiDirectory connectionPsiDirectory;
 
-    public NavigationPsiCache(ConnectionHandler connectionHandler) {
-        connectionPsiDirectory = new DBConnectionPsiDirectory(connectionHandler);
+    public NavigationPsiCache(ConnectionHandler connection) {
+        connectionPsiDirectory = new DBConnectionPsiDirectory(connection);
     }
 
     public DBConnectionPsiDirectory getConnectionPsiDirectory() {
@@ -67,15 +67,15 @@ public class NavigationPsiCache implements Disposable {
     
     public static DBObjectPsiFile getPsiFile(DBObject object) {
         object = FailsafeUtil.get(object);
-        ConnectionHandler connectionHandler = FailsafeUtil.get(object.getCache());
-        NavigationPsiCache psiCache = connectionHandler.getPsiCache();
+        ConnectionHandler connection = FailsafeUtil.get(object.getCache());
+        NavigationPsiCache psiCache = connection.getPsiCache();
         return psiCache.lookupPsiFile(object);
     }
 
     public static DBObjectPsiDirectory getPsiDirectory(DBObject object) {
         object = FailsafeUtil.get(object);
-        ConnectionHandler connectionHandler = FailsafeUtil.get(object.getCache());
-        NavigationPsiCache psiCache = connectionHandler.getPsiCache();
+        ConnectionHandler connection = FailsafeUtil.get(object.getCache());
+        NavigationPsiCache psiCache = connection.getPsiCache();
         return psiCache.lookupPsiDirectory(object);
     }
     
@@ -84,8 +84,8 @@ public class NavigationPsiCache implements Disposable {
                 objectList.getCache().getPsiCache().lookupPsiDirectory(objectList);
     }
 
-    public static DBConnectionPsiDirectory getPsiDirectory(ConnectionHandler connectionHandler) {
-        return connectionHandler.getPsiCache().connectionPsiDirectory;
+    public static DBConnectionPsiDirectory getPsiDirectory(ConnectionHandler connection) {
+        return connection.getPsiCache().connectionPsiDirectory;
     }*/
 
     @Override

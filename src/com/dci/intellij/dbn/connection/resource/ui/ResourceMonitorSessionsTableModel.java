@@ -13,21 +13,21 @@ import org.jetbrains.annotations.Nullable;
 import java.util.List;
 
 public class ResourceMonitorSessionsTableModel extends StatefulDisposable.Base implements DBNReadonlyTableModel {
-    private final ConnectionHandlerRef connectionHandler;
+    private final ConnectionHandlerRef connection;
     private final List<DatabaseSession> sessions;
 
-    ResourceMonitorSessionsTableModel(ConnectionHandler connectionHandler) {
-        this.connectionHandler = connectionHandler.getRef();
-        sessions = connectionHandler.getSessionBundle().getSessions();
+    ResourceMonitorSessionsTableModel(ConnectionHandler connection) {
+        this.connection = connection.ref();
+        sessions = connection.getSessionBundle().getSessions();
     }
 
-    public ConnectionHandler getConnectionHandler() {
-        return connectionHandler.ensure();
+    public ConnectionHandler getConnection() {
+        return connection.ensure();
     }
 
     @NotNull
     public Project getProject() {
-        return getConnectionHandler().getProject();
+        return getConnection().getProject();
     }
 
     @NotNull

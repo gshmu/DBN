@@ -39,7 +39,7 @@ public class ExplainPlanResult extends ExecutionResultBase<ExplainPlanResultForm
     private String planId;
     private Date timestamp;
     private ExplainPlanEntry root;
-    private final ConnectionHandlerRef connectionHandler;
+    private final ConnectionHandlerRef connection;
     private final VirtualFile virtualFile;
     private final SchemaId currentSchema;
     private final String errorMessage;
@@ -50,11 +50,11 @@ public class ExplainPlanResult extends ExecutionResultBase<ExplainPlanResultForm
         this(executablePsiElement, (String) null);
         // entries must be sorted by PARENT_ID NULLS FIRST, ID
         Map<Integer, ExplainPlanEntry> entries = new HashMap<>();
-        ConnectionHandler connectionHandler = getConnectionHandler();
+        ConnectionHandler connection = getConnection();
         List<String> explainColumnNames = ResultSets.getColumnNames(resultSet);
 
         while (resultSet.next()) {
-            ExplainPlanEntry entry = new ExplainPlanEntry(connectionHandler, resultSet, explainColumnNames);
+            ExplainPlanEntry entry = new ExplainPlanEntry(connection, resultSet, explainColumnNames);
             Integer id = entry.getId();
             Integer parentId = entry.getParentId();
             entries.put(id, entry);
@@ -70,8 +70,8 @@ public class ExplainPlanResult extends ExecutionResultBase<ExplainPlanResultForm
 
     public ExplainPlanResult(ExecutablePsiElement executablePsiElement, String errorMessage) {
         DBLanguagePsiFile psiFile = executablePsiElement.getFile();
-        ConnectionHandler connectionHandler = Failsafe.nn(psiFile.getConnection());
-        this.connectionHandler = connectionHandler.getRef();
+        ConnectionHandler connection = Failsafe.nn(psiFile.getConnection());
+        this.connection = connection.ref();
         this.currentSchema = psiFile.getSchemaId();
         this.virtualFile = psiFile.getVirtualFile();
         this.resultName = Commons.nvl(executablePsiElement.createSubjectList(), "Explain Plan");
@@ -81,33 +81,33 @@ public class ExplainPlanResult extends ExecutionResultBase<ExplainPlanResultForm
 
     @Override
     public ConnectionId getConnectionId() {
-        return connectionHandler.getConnectionId();
+        return connection.getConnectionId();
     }
 
     @Override
     @NotNull
-    public ConnectionHandler getConnectionHandler() {
-        return ConnectionHandlerRef.ensure(connectionHandler);
+    public ConnectionHandler getConnection() {
+        return ConnectionHandlerRef.ensure(connection);
     }
 
     @Override
     public PsiFile createPreviewFile() {
-        ConnectionHandler connectionHandler = getConnectionHandler();
+        ConnectionHandler connection = getConnection();
         SchemaId currentSchema = getCurrentSchema();
-        DBLanguageDialect languageDialect = connectionHandler.getLanguageDialect(SQLLanguage.INSTANCE);
+        DBLanguageDialect languageDialect = connection.getLanguageDialect(SQLLanguage.INSTANCE);
         return DBLanguagePsiFile.createFromText(
                 getProject(),
                 "preview",
                 languageDialect,
                 statementText,
-                connectionHandler,
+                connection,
                 currentSchema);
     }
 
     @NotNull
     @Override
     public Project getProject() {
-        return getConnectionHandler().getProject();
+        return getConnection().getProject();
     }
 
     @Nullable

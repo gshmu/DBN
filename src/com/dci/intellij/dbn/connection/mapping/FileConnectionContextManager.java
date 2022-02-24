@@ -112,7 +112,7 @@ public class FileConnectionContextManager extends AbstractProjectComponent imple
      *******************************************************************/
     @Nullable
     public ConnectionHandler getConnection(@NotNull VirtualFile virtualFile) {
-        return registry.getConnectionHandler(virtualFile);
+        return registry.getDatabaseConnection(virtualFile);
     }
 
     public boolean setConnection(VirtualFile file, ConnectionHandler connection) {
@@ -332,13 +332,13 @@ public class FileConnectionContextManager extends AbstractProjectComponent imple
         ConnectionAction.invoke(
                 "selecting the current schema", true,
                 () -> getConnection(file),
-                (action) -> Progress.prompt(project, "Loading schemas", true,
-                        (progress) -> {
+                action -> Progress.prompt(project, "Loading schemas", true,
+                        progress -> {
                             DefaultActionGroup actionGroup = new DefaultActionGroup();
 
-                            ConnectionHandler connectionHandler = action.getConnectionHandler();
-                            if (Failsafe.check(connectionHandler) && !connectionHandler.isVirtual()) {
-                                List<DBSchema> schemas = connectionHandler.getObjectBundle().getSchemas();
+                            ConnectionHandler connection = action.getConnection();
+                            if (Failsafe.check(connection) && !connection.isVirtual()) {
+                                List<DBSchema> schemas = connection.getObjectBundle().getSchemas();
                                 for (DBSchema schema : schemas) {
                                     SchemaSelectAction schemaAction = new SchemaSelectAction(file, schema, callback);
                                     actionGroup.add(schemaAction);
@@ -379,15 +379,15 @@ public class FileConnectionContextManager extends AbstractProjectComponent imple
                 () -> getConnection(file),
                 (action) -> {
                     DefaultActionGroup actionGroup = new DefaultActionGroup();
-                    ConnectionHandler connectionHandler = action.getConnectionHandler();
-                    if (Failsafe.check(connectionHandler) && !connectionHandler.isVirtual()) {
-                        List<DatabaseSession> sessions = connectionHandler.getSessionBundle().getSessions();
+                    ConnectionHandler connection = action.getConnection();
+                    if (Failsafe.check(connection) && !connection.isVirtual()) {
+                        List<DatabaseSession> sessions = connection.getSessionBundle().getSessions();
                         for (DatabaseSession session : sessions) {
                             SessionSelectAction sessionAction = new SessionSelectAction(file, session, callback);
                             actionGroup.add(sessionAction);
                         }
                         actionGroup.addSeparator();
-                        actionGroup.add(new SessionCreateAction(file, connectionHandler));
+                        actionGroup.add(new SessionCreateAction(file, connection));
                     }
 
                     ListPopup popupBuilder = JBPopupFactory.getInstance().createActionGroupPopup(

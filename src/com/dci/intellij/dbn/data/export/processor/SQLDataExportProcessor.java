@@ -45,8 +45,8 @@ public class SQLDataExportProcessor extends DataExportProcessor{
     }
 
     @Override
-    public void performExport(DataExportModel model, DataExportInstructions instructions, ConnectionHandler connectionHandler) throws DataExportException {
-        Project project = connectionHandler.getProject();
+    public void performExport(DataExportModel model, DataExportInstructions instructions, ConnectionHandler connection) throws DataExportException {
+        Project project = connection.getProject();
         CodeStyleCaseSettings styleCaseSettings = DBLCodeStyleManager.getInstance(project).getCodeStyleCaseSettings(SQLLanguage.INSTANCE);
         CodeStyleCaseOption kco = styleCaseSettings.getKeywordCaseOption();
         CodeStyleCaseOption oco = styleCaseSettings.getObjectCaseOption();
@@ -92,7 +92,7 @@ public class SQLDataExportProcessor extends DataExportProcessor{
                             buffer.append(value);
                         } else if (genericDataType == GenericDataType.DATE_TIME) {
                             Date date = (Date) object;
-                            DatabaseMetadataInterface metadataInterface = connectionHandler.getInterfaceProvider().getMetadataInterface();
+                            DatabaseMetadataInterface metadataInterface = connection.getInterfaceProvider().getMetadataInterface();
                             String dateString = metadataInterface.createDateString(date);
                             buffer.append(dateString);
                         }

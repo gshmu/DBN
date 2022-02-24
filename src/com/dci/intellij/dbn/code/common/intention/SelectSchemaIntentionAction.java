@@ -14,7 +14,7 @@ import com.intellij.psi.PsiFile;
 import com.intellij.util.IncorrectOperationException;
 import org.jetbrains.annotations.NotNull;
 
-import javax.swing.*;
+import javax.swing.Icon;
 
 public class SelectSchemaIntentionAction extends GenericIntentionAction implements LowPriorityAction {
     @Override
@@ -35,8 +35,8 @@ public class SelectSchemaIntentionAction extends GenericIntentionAction implemen
             FileConnectionContextManager contextManager = FileConnectionContextManager.getInstance(project);
             if (contextManager.isSchemaSelectable(virtualFile)) {
                 DBLanguagePsiFile file = (DBLanguagePsiFile) psiFile;
-                ConnectionHandler connectionHandler = file.getConnection();
-                return connectionHandler != null && !connectionHandler.isVirtual();
+                ConnectionHandler connection = file.getConnection();
+                return connection != null && !connection.isVirtual();
             }
         }
         return false;

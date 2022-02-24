@@ -52,7 +52,12 @@ import java.nio.file.attribute.PosixFileAttributeView;
 import java.nio.file.attribute.PosixFilePermission;
 import java.security.SecureRandom;
 import java.sql.SQLException;
-import java.util.*;
+import java.util.EnumMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicReference;
@@ -114,24 +119,24 @@ public class ScriptExecutionManager extends AbstractProjectComponent implements 
 
             inputDialog.show();
             if (inputDialog.getExitCode() == DialogWrapper.OK_EXIT_CODE) {
-                ConnectionHandler connectionHandler = executionInput.getConnection();
+                ConnectionHandler connection = executionInput.getConnection();
                 SchemaId schema = executionInput.getSchema();
                 CmdLineInterface cmdLineExecutable = executionInput.getCmdLineInterface();
-                contextManager.setConnection(virtualFile, connectionHandler);
+                contextManager.setConnection(virtualFile, connection);
                 contextManager.setDatabaseSchema(virtualFile, schema);
-                if (connectionHandler != null) {
-                    recentlyUsedInterfaces.put(connectionHandler.getDatabaseType(), cmdLineExecutable.getId());
+                if (connection != null) {
+                    recentlyUsedInterfaces.put(connection.getDatabaseType(), cmdLineExecutable.getId());
                 }
                 clearOutputOption = executionInput.isClearOutput();
 
-                Progress.prompt(project, "Executing database script", true,
-                        (progress) -> {
-                            try {
-                                doExecuteScript(executionInput);
-                            } catch (Exception e) {
-                                Messages.showErrorDialog(getProject(), "Error", "Error executing SQL Script \"" + virtualFile.getPath() + "\". " + e.getMessage());
-                            }
-                        });
+                Progress.prompt(project, "Executing database script", true, progress -> {
+                    try {
+                        doExecuteScript(executionInput);
+                    } catch (Exception e) {
+                        Messages.showErrorDialog(getProject(), "Error",
+                                "Error executing SQL Script \"" + virtualFile.getPath() + "\". " + e.getMessage());
+                    }
+                });
             }
         }
     }
@@ -139,21 +144,20 @@ public class ScriptExecutionManager extends AbstractProjectComponent implements 
     private void doExecuteScript(ScriptExecutionInput input) throws Exception {
         ExecutionContext context = input.getExecutionContext();
         context.set(EXECUTING, true);
-        ConnectionHandler connectionHandler = Failsafe.nn(input.getConnection());
+        ConnectionHandler connection = Failsafe.nn(input.getConnection());
         VirtualFile sourceFile = input.getSourceFile();
         activeProcesses.remove(sourceFile, null);
 
         Project project = getProject();
         AtomicReference<File> tempScriptFile = new AtomicReference<>();
-        LogOutputContext outputContext = new LogOutputContext(connectionHandler, sourceFile, null);
+        LogOutputContext outputContext = new LogOutputContext(connection, sourceFile, null);
         int timeout = input.getExecutionTimeout();
         executionManager.writeLogOutput(outputContext, LogOutput.createSysOutput(outputContext, " - Initializing script execution", input.isClearOutput()));
 
         try {
-            new CancellableDatabaseCall<Object>(connectionHandler, null, timeout, TimeUnit.SECONDS) {
+            new CancellableDatabaseCall<Object>(connection, null, timeout, TimeUnit.SECONDS) {
                 @Override
                 public Object execute() throws Exception {
-                    ConnectionHandler connectionHandler = Failsafe.nn(input.getConnection());
                     SchemaId schema = input.getSchema();
 
                     String content = new String(sourceFile.contentsToByteArray());
@@ -162,14 +166,14 @@ public class ScriptExecutionManager extends AbstractProjectComponent implements 
                     executionManager.writeLogOutput(outputContext, LogOutput.createSysOutput("Creating temporary script file " + temporaryScriptFile));
                     tempScriptFile.set(temporaryScriptFile);
 
-                    DatabaseExecutionInterface executionInterface = connectionHandler.getInterfaceProvider().getExecutionInterface();
+                    DatabaseExecutionInterface executionInterface = connection.getInterfaceProvider().getExecutionInterface();
                     CmdLineInterface cmdLineInterface = input.getCmdLineInterface();
                     CmdLineExecutionInput executionInput = executionInterface.createScriptExecutionInput(cmdLineInterface,
                             temporaryScriptFile.getPath(),
                             content,
                             schema,
-                            connectionHandler.getDatabaseInfo(),
-                            connectionHandler.getAuthenticationInfo()
+                            connection.getDatabaseInfo(),
+                            connection.getAuthenticationInfo()
                     );
 
 
@@ -182,7 +186,7 @@ public class ScriptExecutionManager extends AbstractProjectComponent implements 
                     ProcessBuilder processBuilder = new ProcessBuilder(executionInput.getCommand());
                     processBuilder.environment().putAll(executionInput.getEnvironmentVars());
                     processBuilder.redirectErrorStream(true);
-                    String password = connectionHandler.getAuthenticationInfo().getPassword();
+                    String password = connection.getAuthenticationInfo().getPassword();
                     String lineCommand = executionInput.getLineCommand();
                     if (Strings.isNotEmpty(password)) {
                         lineCommand = lineCommand.replace(password, "*********");

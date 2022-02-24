@@ -3,7 +3,11 @@ package com.dci.intellij.dbn.browser.ui;
 import com.dci.intellij.dbn.browser.DatabaseBrowserManager;
 import com.dci.intellij.dbn.browser.DatabaseBrowserUtils;
 import com.dci.intellij.dbn.browser.TreeNavigationHistory;
-import com.dci.intellij.dbn.browser.model.*;
+import com.dci.intellij.dbn.browser.model.BrowserTreeEventListener;
+import com.dci.intellij.dbn.browser.model.BrowserTreeModel;
+import com.dci.intellij.dbn.browser.model.BrowserTreeNode;
+import com.dci.intellij.dbn.browser.model.SimpleBrowserTreeModel;
+import com.dci.intellij.dbn.browser.model.TabbedBrowserTreeModel;
 import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.common.event.ProjectEvents;
 import com.dci.intellij.dbn.common.filter.Filter;
@@ -38,12 +42,18 @@ import lombok.Getter;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import javax.swing.*;
+import javax.swing.JPopupMenu;
 import javax.swing.event.TreeSelectionEvent;
 import javax.swing.event.TreeSelectionListener;
 import javax.swing.tree.TreePath;
-import java.awt.*;
-import java.awt.event.*;
+import java.awt.Point;
+import java.awt.Rectangle;
+import java.awt.event.InputEvent;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 
 @Getter
 public final class DatabaseBrowserTree extends DBNTree {
@@ -51,8 +61,8 @@ public final class DatabaseBrowserTree extends DBNTree {
     private transient BrowserTreeNode targetSelection;
     private transient boolean listenersEnabled = true;
 
-    public DatabaseBrowserTree(@NotNull DBNComponent parent, @Nullable ConnectionHandler connectionHandler) {
-        super(parent, createModel(parent.ensureProject(), connectionHandler));
+    public DatabaseBrowserTree(@NotNull DBNComponent parent, @Nullable ConnectionHandler connection) {
+        super(parent, createModel(parent.ensureProject(), connection));
         BrowserTreeModel treeModel = getModel();
 
         addKeyListener(createKeyListener());
@@ -73,11 +83,11 @@ public final class DatabaseBrowserTree extends DBNTree {
         Disposer.register(this, navigationHistory);
     }
 
-    private static BrowserTreeModel createModel(@NotNull Project project, @Nullable ConnectionHandler connectionHandler) {
+    private static BrowserTreeModel createModel(@NotNull Project project, @Nullable ConnectionHandler connection) {
         ConnectionManager connectionManager = ConnectionManager.getInstance(project);
-        return connectionHandler == null ?
+        return connection == null ?
                 new SimpleBrowserTreeModel(project, connectionManager.getConnectionBundle()) :
-                new TabbedBrowserTreeModel(connectionHandler);
+                new TabbedBrowserTreeModel(connection);
 
     }
 
@@ -97,8 +107,8 @@ public final class DatabaseBrowserTree extends DBNTree {
 
     public void selectElement(BrowserTreeNode treeNode, boolean focus) {
         if (treeNode != null) {
-            ConnectionHandler connectionHandler = treeNode.getConnection();
-            Filter<BrowserTreeNode> filter = connectionHandler.getObjectTypeFilter();
+            ConnectionHandler connection = treeNode.getConnection();
+            Filter<BrowserTreeNode> filter = connection.getObjectTypeFilter();
 
             if (filter.accepts(treeNode)) {
                 targetSelection = treeNode;
@@ -253,20 +263,19 @@ public final class DatabaseBrowserTree extends DBNTree {
                     event.consume();
 
                 } else if (deliberate) {
-                    Progress.prompt(project, "Loading object reference", true,
-                            (progress) -> {
-                                DBObject navigationObject = object.getDefaultNavigationObject();
-                                if (navigationObject != null) {
-                                    Progress.check(progress);
-                                    Dispatch.run(() -> navigationObject.navigate(true));
-                                }
-                            });
+                    Progress.prompt(project, "Loading object reference", true, progress -> {
+                        DBObject navigationObject = object.getDefaultNavigationObject();
+                        if (navigationObject != null) {
+                            Progress.check(progress);
+                            Dispatch.run(() -> navigationObject.navigate(true));
+                        }
+                    });
                 }
             } else if (lastPathEntity instanceof DBObjectBundle) {
                 DBObjectBundle objectBundle = (DBObjectBundle) lastPathEntity;
-                ConnectionHandler connectionHandler = objectBundle.getConnection();
-                FileEditorManager fileEditorManager = FileEditorManager.getInstance(connectionHandler.getProject());
-                DBConsole defaultConsole = connectionHandler.getConsoleBundle().getDefaultConsole();
+                ConnectionHandler connection = objectBundle.getConnection();
+                FileEditorManager fileEditorManager = FileEditorManager.getInstance(connection.getProject());
+                DBConsole defaultConsole = connection.getConsoleBundle().getDefaultConsole();
                 fileEditorManager.openFile(defaultConsole.getVirtualFile(), deliberate);
             }
         }
@@ -347,8 +356,8 @@ public final class DatabaseBrowserTree extends DBNTree {
                                 actionGroup = new ObjectActionGroup(object);
                             } else if (lastPathEntity instanceof DBObjectBundle) {
                                 DBObjectBundle objectsBundle = (DBObjectBundle) lastPathEntity;
-                                ConnectionHandler connectionHandler = objectsBundle.getConnection();
-                                actionGroup = new ConnectionActionGroup(connectionHandler);
+                                ConnectionHandler connection = objectsBundle.getConnection();
+                                actionGroup = new ConnectionActionGroup(connection);
                             }
 
                             if (actionGroup != null) {

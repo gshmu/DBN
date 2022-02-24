@@ -150,7 +150,7 @@ public interface ConnectionHandler extends StatefulDisposable, EnvironmentTypePr
 
     boolean isConnected(SessionId sessionId);
 
-    ConnectionHandlerRef getRef();
+    ConnectionHandlerRef ref();
 
     DatabaseInfo getDatabaseInfo();
 
@@ -166,7 +166,7 @@ public interface ConnectionHandler extends StatefulDisposable, EnvironmentTypePr
     PsiDirectory getPsiDirectory();
 
     static List<ConnectionId> ids(List<ConnectionHandler> connectionHandlers) {
-        return Lists.convert(connectionHandlers, (connectionHandler) -> connectionHandler.getConnectionId()) ;
+        return Lists.convert(connectionHandlers, connection -> connection.getConnectionId()) ;
     }
 
     DatabaseCompatibility getCompatibility();

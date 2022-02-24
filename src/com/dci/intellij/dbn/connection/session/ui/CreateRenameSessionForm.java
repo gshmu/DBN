@@ -28,21 +28,21 @@ public class CreateRenameSessionForm extends DBNFormImpl{
     private JTextField sessionNameTextField;
     private JLabel errorLabel;
 
-    private final ConnectionHandlerRef connectionHandler;
+    private final ConnectionHandlerRef connection;
     private DatabaseSession session;
 
-    CreateRenameSessionForm(final CreateRenameSessionDialog parent, @NotNull ConnectionHandler connectionHandler, @Nullable final DatabaseSession session) {
+    CreateRenameSessionForm(final CreateRenameSessionDialog parent, @NotNull ConnectionHandler connection, @Nullable final DatabaseSession session) {
         super(parent);
-        this.connectionHandler = connectionHandler.getRef();
+        this.connection = connection.ref();
         this.session = session;
         errorLabel.setForeground(JBColor.RED);
         errorLabel.setIcon(Icons.EXEC_MESSAGES_ERROR);
         errorLabel.setVisible(false);
 
-        DBNHeaderForm headerForm = new DBNHeaderForm(this, connectionHandler);
+        DBNHeaderForm headerForm = new DBNHeaderForm(this, connection);
         headerPanel.add(headerForm.getComponent(), BorderLayout.CENTER);
 
-        final Set<String> sessionNames = connectionHandler.getSessionBundle().getSessionNames();
+        final Set<String> sessionNames = connection.getSessionBundle().getSessionNames();
 
         String name;
         if (session == null) {
@@ -90,8 +90,8 @@ public class CreateRenameSessionForm extends DBNFormImpl{
         return sessionNameTextField.getText();
     }
 
-    public ConnectionHandler getConnectionHandler() {
-        return connectionHandler.ensure();
+    public ConnectionHandler getConnection() {
+        return connection.ensure();
     }
 
     public DatabaseSession getSession() {

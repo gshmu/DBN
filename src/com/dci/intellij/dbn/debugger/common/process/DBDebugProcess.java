@@ -9,7 +9,7 @@ import com.dci.intellij.dbn.execution.ExecutionTarget;
 import com.intellij.openapi.project.Project;
 
 public interface DBDebugProcess extends Presentable, PropertyHolder<DBDebugProcessStatus> {
-    ConnectionHandler getConnectionHandler();
+    ConnectionHandler getConnection();
 
     DBDebugConsoleLogger getConsole();
 

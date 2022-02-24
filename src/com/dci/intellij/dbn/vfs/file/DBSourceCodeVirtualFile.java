@@ -65,10 +65,10 @@ public class DBSourceCodeVirtualFile extends DBContentVirtualFile implements DBP
 
     @Override
     public PsiFile initializePsiFile(DatabaseFileViewProvider fileViewProvider, Language language) {
-        ConnectionHandler connectionHandler = this.getConnection();
+        ConnectionHandler connection = this.getConnection();
         String parseRootId = getParseRootId();
         if (parseRootId != null) {
-            DBLanguageDialect languageDialect = connectionHandler.resolveLanguageDialect(language);
+            DBLanguageDialect languageDialect = connection.resolveLanguageDialect(language);
             if (languageDialect != null) {
                 fileViewProvider.getVirtualFile().putUserData(PARSE_ROOT_ID_KEY, getParseRootId());
                 DBLanguagePsiFile file = fileViewProvider.initializePsiFile(languageDialect);

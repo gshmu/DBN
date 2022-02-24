@@ -9,14 +9,14 @@ import com.dci.intellij.dbn.object.type.DBObjectType;
 
 public class ArgumentFactoryInputListForm extends ObjectListForm<ArgumentFactoryInput> {
     private final boolean enforceInArguments;
-    public ArgumentFactoryInputListForm(DBNComponent parent, ConnectionHandler connectionHandler, boolean enforceInArguments) {
-        super(parent, connectionHandler);
+    public ArgumentFactoryInputListForm(DBNComponent parent, ConnectionHandler connection, boolean enforceInArguments) {
+        super(parent, connection);
         this.enforceInArguments = enforceInArguments;
     }
 
     @Override
     public ObjectFactoryInputForm<ArgumentFactoryInput> createObjectDetailsPanel(int index) {
-        return new ArgumentFactoryInputForm(this, getConnectionHandler(), enforceInArguments, index);
+        return new ArgumentFactoryInputForm(this, getConnection(), enforceInArguments, index);
     }
 
     @Override

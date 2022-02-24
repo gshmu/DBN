@@ -24,7 +24,7 @@ public class DatabaseSession implements Comparable<DatabaseSession>, Presentable
         this.id = id == null ? SessionId.create() : id;
         this.name = name;
         this.connectionType = connectionType;
-        this.connection = connection.getRef();
+        this.connection = connection.ref();
     }
 
     @NotNull

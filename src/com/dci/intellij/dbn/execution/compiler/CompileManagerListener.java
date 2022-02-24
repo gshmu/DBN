@@ -11,5 +11,5 @@ import java.util.EventListener;
 public interface CompileManagerListener extends EventListener {
     Topic<CompileManagerListener> TOPIC = Topic.create("Compile Manager Event", CompileManagerListener.class);
 
-    void compileFinished(@NotNull ConnectionHandler connectionHandler, @Nullable DBSchemaObject object);
+    void compileFinished(@NotNull ConnectionHandler connection, @Nullable DBSchemaObject object);
 }

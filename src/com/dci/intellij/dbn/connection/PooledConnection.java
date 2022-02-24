@@ -15,65 +15,65 @@ public final class PooledConnection {
 
     public static void run(
             boolean readonly,
-            @NotNull ConnectionHandler connectionHandler,
+            @NotNull ConnectionHandler connection,
             @NotNull ParametricRunnable<DBNConnection, SQLException> runnable) throws SQLException {
-        run(readonly, connectionHandler, null, runnable);
+        run(readonly, connection, null, runnable);
     }
 
     public static void run(
             boolean readonly,
-            @NotNull ConnectionHandler connectionHandler,
+            @NotNull ConnectionHandler connection,
             @Nullable SchemaId schemaId,
             @NotNull ParametricRunnable<DBNConnection, SQLException> runnable) throws SQLException {
 
-        DBNConnection connection = null;
+        DBNConnection conn = null;
         try {
-            connectionHandler.checkDisposed();
-            connection = schemaId == null ?
-                    connectionHandler.getPoolConnection(readonly) :
-                    connectionHandler.getPoolConnection(schemaId, readonly);
+            connection.checkDisposed();
+            conn = schemaId == null ?
+                    connection.getPoolConnection(readonly) :
+                    connection.getPoolConnection(schemaId, readonly);
 
-            connectionHandler.checkDisposed();
-            connection.set(ResourceStatus.ACTIVE, true);
-            runnable.run(connection);
+            connection.checkDisposed();
+            conn.set(ResourceStatus.ACTIVE, true);
+            runnable.run(conn);
 
         } catch (ProcessCanceledException ignore){
         } finally {
-            if (connection != null) {
-                connectionHandler.freePoolConnection(connection);
-                connection.set(ResourceStatus.ACTIVE, false);
+            if (conn != null) {
+                connection.freePoolConnection(conn);
+                conn.set(ResourceStatus.ACTIVE, false);
             }
         }
     }
 
     public static <R> R call(
             boolean readonly,
-            @NotNull ConnectionHandler connectionHandler,
+            @NotNull ConnectionHandler connection,
             @NotNull ParametricCallable<DBNConnection, R, SQLException> callable) throws SQLException{
-        return call(readonly, connectionHandler, null, callable);
+        return call(readonly, connection, null, callable);
     }
 
     public static <R> R call(
             boolean readonly,
-            @NotNull ConnectionHandler connectionHandler,
+            @NotNull ConnectionHandler connection,
             @Nullable SchemaId schemaId,
             @NotNull ParametricCallable<DBNConnection, R, SQLException> callable) throws SQLException{
 
-        DBNConnection connection = null;
+        DBNConnection conn = null;
         try {
-            connectionHandler.checkDisposed();
-            connection = schemaId == null ?
-                    connectionHandler.getPoolConnection(readonly) :
-                    connectionHandler.getPoolConnection(schemaId, readonly);
+            connection.checkDisposed();
+            conn = schemaId == null ?
+                    connection.getPoolConnection(readonly) :
+                    connection.getPoolConnection(schemaId, readonly);
 
-            connectionHandler.checkDisposed();
-            connection.set(ResourceStatus.ACTIVE, true);
-            return callable.call(connection);
+            connection.checkDisposed();
+            conn.set(ResourceStatus.ACTIVE, true);
+            return callable.call(conn);
 
         } finally {
-            if (connection != null) {
-                connectionHandler.freePoolConnection(connection);
-                connection.set(ResourceStatus.ACTIVE, false);
+            if (conn != null) {
+                connection.freePoolConnection(conn);
+                conn.set(ResourceStatus.ACTIVE, false);
             }
         }
     }

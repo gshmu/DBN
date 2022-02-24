@@ -103,8 +103,8 @@ public class DatasetEditorForm extends DBNFormImpl implements SearchableDataComp
         }
 
         if (dataset.isEditable(DBContentType.DATA)) {
-            ConnectionHandler connectionHandler = getConnectionHandler();
-            autoCommitLabel.init(getProject(), datasetEditor.getFile(), connectionHandler, SessionId.MAIN);
+            ConnectionHandler connection = getConnectionHandler();
+            autoCommitLabel.init(getProject(), datasetEditor.getFile(), connection, SessionId.MAIN);
         }
 
         Disposer.register(datasetEditor, this);

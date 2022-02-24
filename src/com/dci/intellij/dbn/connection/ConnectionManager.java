@@ -121,29 +121,26 @@ public class ConnectionManager extends AbstractProjectComponent implements Persi
     }
 
     static void setLastUsedConnection(@NotNull ConnectionHandler lastUsedConnection) {
-        ConnectionManager.lastUsedConnection = lastUsedConnection.getRef();
+        ConnectionManager.lastUsedConnection = lastUsedConnection.ref();
     }
 
     private void refreshObjects(ConnectionId connectionId) {
-        ConnectionHandler connectionHandler = getConnection(connectionId);
-        if (connectionHandler != null) {
+        ConnectionHandler connection = getConnection(connectionId);
+        if (connection != null) {
             Project project = getProject();
-            Progress.background(
-                    project,
-                    "Refreshing database objects", true,
-                    (progress) -> {
-                        connectionHandler.resetCompatibilityMonitor();
-                        List<TransactionAction> actions = actions(TransactionAction.DISCONNECT);
+            Progress.background(project, "Refreshing database objects", true, progress -> {
+                connection.resetCompatibilityMonitor();
+                List<TransactionAction> actions = actions(TransactionAction.DISCONNECT);
 
-                        DatabaseTransactionManager transactionManager = DatabaseTransactionManager.getInstance(project);
-                        List<DBNConnection> connections = connectionHandler.getConnections();
-                        for (DBNConnection connection : connections) {
-                            Progress.check(progress);
-                            transactionManager.execute(connectionHandler, connection, actions, false, null);
-                        }
-                        connectionHandler.getObjectBundle().getObjectLists().refreshObjects();
+                DatabaseTransactionManager transactionManager = DatabaseTransactionManager.getInstance(project);
+                List<DBNConnection> connections = connection.getConnections();
+                for (DBNConnection conn : connections) {
+                    Progress.check(progress);
+                    transactionManager.execute(connection, conn, actions, false, null);
+                }
+                connection.getObjectBundle().getObjectLists().refreshObjects();
 
-                    });
+            });
         }
     }
 
@@ -154,32 +151,31 @@ public class ConnectionManager extends AbstractProjectComponent implements Persi
         return connectionBundle;
     }
 
-    public static void testConnection(ConnectionHandler connectionHandler, SchemaId schemaId, SessionId sessionId, boolean showSuccessMessage, boolean showErrorMessage) {
-        Project project = connectionHandler.getProject();
-        Progress.prompt(project, "Trying to connect to " + connectionHandler.getName(), true,
-                (progress) -> {
-                    ConnectionDatabaseSettings databaseSettings = connectionHandler.getSettings().getDatabaseSettings();
-                    String connectionName = connectionHandler.getName();
-                    try {
-                        databaseSettings.validate();
-                        connectionHandler.getConnection(sessionId, schemaId);
-                        ConnectionHandlerStatusHolder connectionStatus = connectionHandler.getConnectionStatus();
-                        connectionStatus.setValid(true);
-                        connectionStatus.setConnected(true);
-                        if (showSuccessMessage) {
-                            showSuccessfulConnectionMessage(project, connectionName);
-                        }
-                    } catch (ConfigurationException e) {
-                        if (showErrorMessage) {
-                            showInvalidConfigMessage(project, e);
+    public static void testConnection(ConnectionHandler connection, SchemaId schemaId, SessionId sessionId, boolean showSuccessMessage, boolean showErrorMessage) {
+        Project project = connection.getProject();
+        Progress.prompt(project, "Trying to connect to " + connection.getName(), true, progress -> {
+            ConnectionDatabaseSettings databaseSettings = connection.getSettings().getDatabaseSettings();
+            String connectionName = connection.getName();
+            try {
+                databaseSettings.validate();
+                connection.getConnection(sessionId, schemaId);
+                ConnectionHandlerStatusHolder connectionStatus = connection.getConnectionStatus();
+                connectionStatus.setValid(true);
+                connectionStatus.setConnected(true);
+                if (showSuccessMessage) {
+                    showSuccessfulConnectionMessage(project, connectionName);
+                }
+            } catch (ConfigurationException e) {
+                if (showErrorMessage) {
+                    showInvalidConfigMessage(project, e);
 
-                        }
-                    } catch (Exception e) {
-                        if (showErrorMessage) {
-                            showErrorConnectionMessage(project, connectionName, e);
-                        }
-                    }
-                });
+                }
+            } catch (Exception e) {
+                if (showErrorMessage) {
+                    showErrorConnectionMessage(project, connectionName, e);
+                }
+            }
+        });
 
     }
 
@@ -218,22 +214,21 @@ public class ConnectionManager extends AbstractProjectComponent implements Persi
         ConnectionDatabaseSettings databaseSettings = connectionSettings.getDatabaseSettings();
         String connectionName = databaseSettings.getName();
 
-        Progress.modal(project, "Connecting to " + connectionName, false,
-                (progress) -> {
-                    try {
-                        DBNConnection connection = ConnectionUtil.connect(connectionSettings, null, authentication, SessionId.TEST, false, null);
-                        Resources.close(connection);
-                        databaseSettings.setConnectivityStatus(ConnectivityStatus.VALID);
-                        if (showMessageDialog) {
-                            showSuccessfulConnectionMessage(project, connectionName);
-                        }
-                    } catch (Exception e) {
-                        databaseSettings.setConnectivityStatus(ConnectivityStatus.INVALID);
-                        if (showMessageDialog) {
-                            showErrorConnectionMessage(project, connectionName, e);
-                        }
-                    }
-                });
+        Progress.modal(project, "Connecting to " + connectionName, false, progress -> {
+            try {
+                DBNConnection connection = ConnectionUtil.connect(connectionSettings, null, authentication, SessionId.TEST, false, null);
+                Resources.close(connection);
+                databaseSettings.setConnectivityStatus(ConnectivityStatus.VALID);
+                if (showMessageDialog) {
+                    showSuccessfulConnectionMessage(project, connectionName);
+                }
+            } catch (Exception e) {
+                databaseSettings.setConnectivityStatus(ConnectivityStatus.INVALID);
+                if (showMessageDialog) {
+                    showErrorConnectionMessage(project, connectionName, e);
+                }
+            }
+        });
     }
 
     public void showConnectionInfo(ConnectionSettings connectionSettings, EnvironmentType environmentType) {
@@ -272,8 +267,8 @@ public class ConnectionManager extends AbstractProjectComponent implements Persi
         }
     }
 
-    static void promptDatabaseInitDialog(ConnectionHandler connectionHandler, MessageCallback callback) {
-        ConnectionDatabaseSettings databaseSettings = connectionHandler.getSettings().getDatabaseSettings();
+    static void promptDatabaseInitDialog(ConnectionHandler connection, MessageCallback callback) {
+        ConnectionDatabaseSettings databaseSettings = connection.getSettings().getDatabaseSettings();
         promptDatabaseInitDialog(databaseSettings, callback);
     }
 
@@ -295,11 +290,11 @@ public class ConnectionManager extends AbstractProjectComponent implements Persi
         }
     }
 
-    static void promptConnectDialog(ConnectionHandler connectionHandler, @Nullable String actionDesc, MessageCallback callback) {
+    static void promptConnectDialog(ConnectionHandler connection, @Nullable String actionDesc, MessageCallback callback) {
         showInfoDialog(
-                connectionHandler.getProject(),
+                connection.getProject(),
                 "Not connected to database",
-                "You are not connected to database \"" + connectionHandler.getName() + "\". \n" +
+                "You are not connected to database \"" + connection.getName() + "\". \n" +
                         "If you want to continue" + (actionDesc == null ? "" : " with " + actionDesc) + ", you need to connect.",
                 ConnectionAction.OPTIONS_CONNECT_CANCEL, 0,
                 callback);
@@ -326,9 +321,9 @@ public class ConnectionManager extends AbstractProjectComponent implements Persi
                 e.getMessage());
     }
 
-    public static void showConnectionInfoDialog(ConnectionHandler connectionHandler) {
+    public static void showConnectionInfoDialog(ConnectionHandler connection) {
         Dispatch.run(() -> {
-            ConnectionInfoDialog infoDialog = new ConnectionInfoDialog(connectionHandler);
+            ConnectionInfoDialog infoDialog = new ConnectionInfoDialog(connection);
             infoDialog.setModal(true);
             infoDialog.show();
         });
@@ -343,16 +338,16 @@ public class ConnectionManager extends AbstractProjectComponent implements Persi
     }
 
     void promptAuthenticationDialog(
-            @Nullable ConnectionHandler connectionHandler,
+            @Nullable ConnectionHandler connection,
             @NotNull AuthenticationInfo authenticationInfo,
             @NotNull ParametricRunnable.Basic<AuthenticationInfo> callback) {
 
-        ConnectionAuthenticationDialog passwordDialog = new ConnectionAuthenticationDialog(getProject(), connectionHandler, authenticationInfo);
+        ConnectionAuthenticationDialog passwordDialog = new ConnectionAuthenticationDialog(getProject(), connection, authenticationInfo);
         passwordDialog.show();
         if (passwordDialog.getExitCode() == DialogWrapper.OK_EXIT_CODE) {
             AuthenticationInfo newAuthenticationInfo = passwordDialog.getAuthenticationInfo();
-            if (connectionHandler != null) {
-                AuthenticationInfo storedAuthenticationInfo = connectionHandler.getAuthenticationInfo();
+            if (connection != null) {
+                AuthenticationInfo storedAuthenticationInfo = connection.getAuthenticationInfo();
 
                 if (passwordDialog.isRememberCredentials()) {
                     String oldUser = storedAuthenticationInfo.getUser();
@@ -366,9 +361,9 @@ public class ConnectionManager extends AbstractProjectComponent implements Persi
                 } else {
                     AuthenticationInfo temporaryAuthenticationInfo = newAuthenticationInfo.clone();
                     temporaryAuthenticationInfo.setTemporary(true);
-                    connectionHandler.setTemporaryAuthenticationInfo(temporaryAuthenticationInfo);
+                    connection.setTemporaryAuthenticationInfo(temporaryAuthenticationInfo);
                 }
-                connectionHandler.getInstructions().setAllowAutoConnect(true);
+                connection.getInstructions().setAllowAutoConnect(true);
             }
             callback.run(newAuthenticationInfo);
         }
@@ -406,8 +401,8 @@ public class ConnectionManager extends AbstractProjectComponent implements Persi
      }
 
     public boolean hasUncommittedChanges() {
-        for (ConnectionHandler connectionHandler : getConnections()) {
-            if (connectionHandler.hasUncommittedChanges()) {
+        for (ConnectionHandler connection : getConnections()) {
+            if (connection.hasUncommittedChanges()) {
                 return true;
             }
         }
@@ -417,24 +412,24 @@ public class ConnectionManager extends AbstractProjectComponent implements Persi
     private void commitAll(@Nullable Runnable callback) {
         DatabaseTransactionManager transactionManager = DatabaseTransactionManager.getInstance(getProject());
 
-        List<ConnectionHandler> connectionHandlers = getConnections(
-                connectionHandler -> connectionHandler.hasUncommittedChanges());
+        List<ConnectionHandler> connections = getConnections(
+                connection -> connection.hasUncommittedChanges());
 
-        for (ConnectionHandler connectionHandler : connectionHandlers) {
-            Runnable commitCallback = isLast(connectionHandlers, connectionHandler) ? callback : null;
-            transactionManager.commit(connectionHandler, null, false, false, commitCallback);
+        for (ConnectionHandler connection : connections) {
+            Runnable commitCallback = isLast(connections, connection) ? callback : null;
+            transactionManager.commit(connection, null, false, false, commitCallback);
         }
     }
 
     private void rollbackAll(@Nullable Runnable callback) {
         DatabaseTransactionManager transactionManager = DatabaseTransactionManager.getInstance(getProject());
 
-        List<ConnectionHandler> connectionHandlers = getConnections(
-                connectionHandler -> connectionHandler.hasUncommittedChanges());
+        List<ConnectionHandler> connections = getConnections(
+                connection -> connection.hasUncommittedChanges());
 
-        for (ConnectionHandler connectionHandler : connectionHandlers) {
-            Runnable rollbackCallback = isLast(connectionHandlers, connectionHandler) ? callback : null;
-            transactionManager.rollback(connectionHandler, null, false, false, rollbackCallback);
+        for (ConnectionHandler connection : connections) {
+            Runnable rollbackCallback = isLast(connections, connection) ? callback : null;
+            transactionManager.rollback(connection, null, false, false, rollbackCallback);
         }
     }
 
@@ -446,36 +441,36 @@ public class ConnectionManager extends AbstractProjectComponent implements Persi
         @Override
         public void run() {
             try {
-                List<ConnectionHandler> connectionHandlers = getConnections();
-                for (ConnectionHandler connectionHandler : connectionHandlers) {
-                    resolveIdleStatus(connectionHandler);
+                List<ConnectionHandler> connections = getConnections();
+                for (ConnectionHandler connection : connections) {
+                    resolveIdleStatus(connection);
                 }
             } catch (Exception e){
                 log.error("Failed to release idle connections", e);
             }
         }
 
-        private void resolveIdleStatus(ConnectionHandler connectionHandler) {
+        private void resolveIdleStatus(ConnectionHandler connection) {
             try {
                 List<TransactionAction> actions = actions(TransactionAction.DISCONNECT_IDLE);
 
-                Failsafe.nd(connectionHandler);
+                Failsafe.nd(connection);
                 DatabaseTransactionManager transactionManager = DatabaseTransactionManager.getInstance(getProject());
-                List<DBNConnection> connections = connectionHandler.getConnections(ConnectionType.MAIN, ConnectionType.SESSION);
+                List<DBNConnection> connections = connection.getConnections(ConnectionType.MAIN, ConnectionType.SESSION);
 
-                for (DBNConnection connection : connections) {
-                    if (connection.isIdle() && connection.isNot(ResourceStatus.RESOLVING_TRANSACTION)) {
-                        int idleMinutes = connection.getIdleMinutes();
-                        int idleMinutesToDisconnect = connectionHandler.getSettings().getDetailSettings().getIdleTimeToDisconnect();
+                for (DBNConnection conn : connections) {
+                    if (conn.isIdle() && conn.isNot(ResourceStatus.RESOLVING_TRANSACTION)) {
+                        int idleMinutes = conn.getIdleMinutes();
+                        int idleMinutesToDisconnect = connection.getSettings().getDetailSettings().getIdleTimeToDisconnect();
                         if (idleMinutes > idleMinutesToDisconnect) {
-                            if (connection.hasDataChanges()) {
-                                connection.set(ResourceStatus.RESOLVING_TRANSACTION, true);
+                            if (conn.hasDataChanges()) {
+                                conn.set(ResourceStatus.RESOLVING_TRANSACTION, true);
                                 Dispatch.run(() -> {
-                                    IdleConnectionDialog idleConnectionDialog = new IdleConnectionDialog(connectionHandler, connection);
+                                    IdleConnectionDialog idleConnectionDialog = new IdleConnectionDialog(connection, conn);
                                     idleConnectionDialog.show();
                                 });
                             } else {
-                                transactionManager.execute(connectionHandler, connection, actions, false, null);
+                                transactionManager.execute(connection, conn, actions, false, null);
                             }
                         }
                     }
@@ -484,11 +479,11 @@ public class ConnectionManager extends AbstractProjectComponent implements Persi
         }
     }
 
-    void disposeConnections(@NotNull List<ConnectionHandler> connectionHandlers) {
-        if (connectionHandlers.size() > 0) {
+    void disposeConnections(@NotNull List<ConnectionHandler> connections) {
+        if (connections.size() > 0) {
             Project project = getProject();
             Dispatch.run(() -> {
-                List<ConnectionId> connectionIds = ConnectionHandler.ids(connectionHandlers);
+                List<ConnectionId> connectionIds = ConnectionHandler.ids(connections);
 
                 ExecutionManager executionManager = ExecutionManager.getInstance(project);
                 executionManager.closeExecutionResults(connectionIds);
@@ -500,9 +495,9 @@ public class ConnectionManager extends AbstractProjectComponent implements Persi
                 methodExecutionManager.cleanupExecutionHistory(connectionIds);
 
                 Background.run(() -> {
-                    for (ConnectionHandler connectionHandler : connectionHandlers) {
-                        connectionHandler.getConnectionPool().closeConnections();
-                        Disposer.dispose(connectionHandler);
+                    for (ConnectionHandler connection : connections) {
+                        connection.getConnectionPool().closeConnections();
+                        Disposer.dispose(connection);
                     }
                 });
             });
@@ -516,7 +511,7 @@ public class ConnectionManager extends AbstractProjectComponent implements Persi
     @Override
     public boolean canCloseProject() {
         if (hasUncommittedChanges()) {
-            boolean exitApp = InternalApi.isApplicationExitInProgress();
+            boolean exitApp = InternalApi.isAppExitInProgress();
             Project project = getProject();
             DatabaseTransactionManager transactionManager = DatabaseTransactionManager.getInstance(project);
             TransactionManagerSettings transactionManagerSettings = transactionManager.getSettings();

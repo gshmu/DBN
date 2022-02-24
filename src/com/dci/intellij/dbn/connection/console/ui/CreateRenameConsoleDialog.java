@@ -11,21 +11,21 @@ import org.jetbrains.annotations.NotNull;
 import javax.swing.Action;
 
 public class CreateRenameConsoleDialog extends DBNDialog<CreateRenameConsoleForm> {
-    private ConnectionHandlerRef connectionHandlerRef;
+    private final ConnectionHandlerRef connection;
     private DBConsole console;
     private DBConsoleType consoleType;
 
-    public CreateRenameConsoleDialog(ConnectionHandler connectionHandler, @NotNull DBConsoleType consoleType) {
-        super(connectionHandler.getProject(), "Create " + consoleType.getName(), true);
-        connectionHandlerRef = connectionHandler.getRef();
+    public CreateRenameConsoleDialog(ConnectionHandler connection, @NotNull DBConsoleType consoleType) {
+        super(connection.getProject(), "Create " + consoleType.getName(), true);
+        this.connection = connection.ref();
         this.consoleType = consoleType;
         renameAction(getOKAction(), "Create");
         init();
     }
 
-    public CreateRenameConsoleDialog(ConnectionHandler connectionHandler, @NotNull DBConsole console) {
-        super(connectionHandler.getProject(), "Rename " + console.getConsoleType().getName(), true);
-        connectionHandlerRef = connectionHandler.getRef();
+    public CreateRenameConsoleDialog(ConnectionHandler connection, @NotNull DBConsole console) {
+        super(connection.getProject(), "Rename " + console.getConsoleType().getName(), true);
+        this.connection = connection.ref();
         this.console = console;
         renameAction(getOKAction(), "Rename");
         init();
@@ -34,10 +34,10 @@ public class CreateRenameConsoleDialog extends DBNDialog<CreateRenameConsoleForm
     @NotNull
     @Override
     protected CreateRenameConsoleForm createForm() {
-        ConnectionHandler connectionHandler = connectionHandlerRef.ensure();
+        ConnectionHandler connection = this.connection.ensure();
         return console == null ?
-                new CreateRenameConsoleForm(this, connectionHandler, null, consoleType) :
-                new CreateRenameConsoleForm(this, connectionHandler, console, console.getConsoleType());
+                new CreateRenameConsoleForm(this, connection, null, consoleType) :
+                new CreateRenameConsoleForm(this, connection, console, console.getConsoleType());
     }
 
     @Override
@@ -56,7 +56,7 @@ public class CreateRenameConsoleDialog extends DBNDialog<CreateRenameConsoleForm
         DBConsole console = component.getConsole();
         if (console == null) {
             databaseConsoleManager.createConsole(
-                    component.getConnectionHandler(),
+                    component.getConnection(),
                     component.getConsoleName(),
                     component.getConsoleType());
         } else {

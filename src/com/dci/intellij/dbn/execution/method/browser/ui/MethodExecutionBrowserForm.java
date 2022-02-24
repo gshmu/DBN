@@ -62,12 +62,12 @@ public class MethodExecutionBrowserForm extends DBNFormImpl {
         }
     }
 
-    public void setConnectionHandler(ConnectionHandler connectionHandler) {
+    public void setConnectionHandler(ConnectionHandler connection) {
         MethodBrowserSettings settings = getSettings();
-        if (settings.getConnection() != connectionHandler) {
-            settings.setConnectionHandler(connectionHandler);
+        if (settings.getConnection() != connection) {
+            settings.setConnection(connection);
             if (settings.getSchema() != null) {
-                DBSchema schema  = connectionHandler.getObjectBundle().getSchema(settings.getSchema().getName());
+                DBSchema schema  = connection.getObjectBundle().getSchema(settings.getSchema().getName());
                 setSchema(schema);
             }
             updateTree();
@@ -103,15 +103,14 @@ public class MethodExecutionBrowserForm extends DBNFormImpl {
     }
 
     private void updateTree() {
-        Progress.prompt(getProject(), "Loading executable components", false,
-                (progress) -> {
-                    MethodBrowserSettings settings = getSettings();
-                    ObjectTreeModel model = new ObjectTreeModel(settings.getSchema(), settings.getVisibleObjectTypes(), null);
-                    Dispatch.run(() -> {
-                        methodsTree.setModel(model);
-                        GUIUtil.repaint(methodsTree);
-                    });
-                });
+        Progress.prompt(getProject(), "Loading executable components", false, progress -> {
+            MethodBrowserSettings settings = getSettings();
+            ObjectTreeModel model = new ObjectTreeModel(settings.getSchema(), settings.getVisibleObjectTypes(), null);
+            Dispatch.run(() -> {
+                methodsTree.setModel(model);
+                GUIUtil.repaint(methodsTree);
+            });
+        });
     }
 
     @NotNull

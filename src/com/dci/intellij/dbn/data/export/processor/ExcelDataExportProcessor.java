@@ -11,7 +11,15 @@ import com.intellij.openapi.project.Project;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.poi.hssf.usermodel.HSSFFont;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
-import org.apache.poi.ss.usermodel.*;
+import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.CellStyle;
+import org.apache.poi.ss.usermodel.CreationHelper;
+import org.apache.poi.ss.usermodel.DataFormat;
+import org.apache.poi.ss.usermodel.Font;
+import org.apache.poi.ss.usermodel.IndexedColors;
+import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.xssf.streaming.SXSSFWorkbook;
 
 import java.io.File;
@@ -48,7 +56,7 @@ public class ExcelDataExportProcessor extends DataExportProcessor{
     }
 
     @Override
-    public void performExport(DataExportModel model, DataExportInstructions instructions, ConnectionHandler connectionHandler) throws DataExportException {
+    public void performExport(DataExportModel model, DataExportInstructions instructions, ConnectionHandler connection) throws DataExportException {
         Workbook workbook = null;
         try {
             workbook = createWorkbook();
@@ -74,7 +82,7 @@ public class ExcelDataExportProcessor extends DataExportProcessor{
             }
             sheet.createFreezePane(0, 1);
 
-            Formatter formatter = getFormatter(connectionHandler.getProject());
+            Formatter formatter = getFormatter(connection.getProject());
             CellStyleCache cellStyleCache = new CellStyleCache(workbook, model.getProject());
             for (short rowIndex = 0; rowIndex < model.getRowCount(); rowIndex++) {
                 Row row = sheet.createRow(rowIndex + 1);

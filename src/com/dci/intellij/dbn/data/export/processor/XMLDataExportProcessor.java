@@ -46,12 +46,12 @@ public class XMLDataExportProcessor extends DataExportProcessor{
     }
 
     @Override
-    public void performExport(DataExportModel model, DataExportInstructions instructions, ConnectionHandler connectionHandler) throws DataExportException {
+    public void performExport(DataExportModel model, DataExportInstructions instructions, ConnectionHandler connection) throws DataExportException {
         StringBuilder buffer = new StringBuilder();
         buffer.append("<table name=\"");
         buffer.append(model.getTableName());
         buffer.append("\">\n");
-        Formatter formatter = getFormatter(connectionHandler.getProject());
+        Formatter formatter = getFormatter(connection.getProject());
 
         for (int rowIndex=0; rowIndex < model.getRowCount(); rowIndex++) {
             buffer.append("    <row index=\"");

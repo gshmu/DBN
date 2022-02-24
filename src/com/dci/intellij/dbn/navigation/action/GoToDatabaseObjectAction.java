@@ -89,7 +89,7 @@ public class GoToDatabaseObjectAction extends GotoActionBase implements DumbAwar
                             preselect -> {
                                 if (preselect instanceof SelectConnectionAction) {
                                     SelectConnectionAction selectConnectionAction = (SelectConnectionAction) preselect;
-                                    return latestConnectionId == selectConnectionAction.getConnectionHandler().getConnectionId();
+                                    return latestConnectionId == selectConnectionAction.getConnection().getConnectionId();
                                 } else if (preselect instanceof SelectSchemaAction) {
                                     SelectSchemaAction selectSchemaAction = (SelectSchemaAction) preselect;
                                     DBSchema object = selectSchemaAction.getTarget();
@@ -112,7 +112,7 @@ public class GoToDatabaseObjectAction extends GotoActionBase implements DumbAwar
                                     AnAction action = actionItem.getAction();
                                     if (!isSelected && action instanceof SelectConnectionAction) {
                                         SelectConnectionAction selectConnectionAction = (SelectConnectionAction) action;
-                                        label.setBackground(selectConnectionAction.connectionHandler.getEnvironmentType().getColor());
+                                        label.setBackground(selectConnectionAction.connection.getEnvironmentType().getColor());
                                     }
                                 }
                                 return component;
@@ -125,27 +125,27 @@ public class GoToDatabaseObjectAction extends GotoActionBase implements DumbAwar
                 }
             } else {
                 ConnectionManager connectionManager = ConnectionManager.getInstance(project);
-                ConnectionHandler connectionHandler = connectionManager.getActiveConnection(project);
-                showLookupPopup(event, project, connectionHandler, null);
+                ConnectionHandler connection = connectionManager.getActiveConnection(project);
+                showLookupPopup(event, project, connection, null);
             }
         }
     }
 
 
     private class SelectConnectionAction extends ActionGroup {
-        private final ConnectionHandlerRef connectionHandler;
+        private final ConnectionHandlerRef connection;
 
-        private SelectConnectionAction(ConnectionHandler connectionHandler) {
+        private SelectConnectionAction(ConnectionHandler connection) {
             super();
-            this.connectionHandler = ConnectionHandlerRef.of(connectionHandler);
+            this.connection = ConnectionHandlerRef.of(connection);
             Presentation presentation = getTemplatePresentation();
-            presentation.setText(connectionHandler.getName(), false);
-            presentation.setIcon(connectionHandler.getIcon());
+            presentation.setText(connection.getName(), false);
+            presentation.setIcon(connection.getIcon());
             setPopup(true);
         }
 
-        public ConnectionHandler getConnectionHandler() {
-            return connectionHandler.ensure();
+        public ConnectionHandler getConnection() {
+            return connection.ensure();
         }
 
         @Override
@@ -155,18 +155,18 @@ public class GoToDatabaseObjectAction extends GotoActionBase implements DumbAwar
 
         @Override
         public void actionPerformed(@NotNull AnActionEvent e) {
-            ConnectionHandler connectionHandler = getConnectionHandler();
-            Project project = connectionHandler.getProject();
-            showLookupPopup(e, project, connectionHandler, null);
-            latestConnectionId = connectionHandler.getConnectionId();
+            ConnectionHandler connection = getConnection();
+            Project project = connection.getProject();
+            showLookupPopup(e, project, connection, null);
+            latestConnectionId = connection.getConnectionId();
         }
 
         @NotNull
         @Override
         public AnAction[] getChildren(AnActionEvent e) {
             List<SelectSchemaAction> schemaActions = new ArrayList<>();
-            ConnectionHandler connectionHandler = getConnectionHandler();
-            for (DBSchema schema : connectionHandler.getObjectBundle().getSchemas()) {
+            ConnectionHandler connection = getConnection();
+            for (DBSchema schema : connection.getObjectBundle().getSchemas()) {
                 schemaActions.add(new SelectSchemaAction(schema));
             }
             return schemaActions.toArray(new AnAction[0]);
@@ -190,12 +190,12 @@ public class GoToDatabaseObjectAction extends GotoActionBase implements DumbAwar
     }
 
 
-    private void showLookupPopup(AnActionEvent e, Project project, ConnectionHandler connectionHandler, DBSchema selectedSchema) {
-        if (connectionHandler == null) {
+    private void showLookupPopup(AnActionEvent e, Project project, ConnectionHandler connection, DBSchema selectedSchema) {
+        if (connection == null) {
             // remove action lock here since the pop-up will not be fired to remove it onClose()
             removeActionLock();
         } else {
-            DBObjectLookupModel model = new DBObjectLookupModel(project, connectionHandler, selectedSchema);
+            DBObjectLookupModel model = new DBObjectLookupModel(project, connection, selectedSchema);
             String predefinedText = getPredefinedText(project);
 
             popup = ChooseByNamePopup.createPopup(project, model, getPsiContext(e), predefinedText);

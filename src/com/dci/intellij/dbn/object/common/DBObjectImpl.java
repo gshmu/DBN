@@ -146,7 +146,7 @@ public abstract class DBObjectImpl<M extends DBObjectMetadata> extends BrowserTr
     }
 
     @Override
-    public DBObjectRef getRef() {
+    public DBObjectRef ref() {
         return objectRef;
     }
 
@@ -218,10 +218,10 @@ public abstract class DBObjectImpl<M extends DBObjectMetadata> extends BrowserTr
     public String getQuotedName(boolean quoteAlways) {
         String name = getName();
         if (quoteAlways || needsNameQuoting()) {
-            ConnectionHandler connectionHandler = this.getConnection();
-            ConnectionDatabaseSettings databaseSettings = connectionHandler.getSettings().getDatabaseSettings();
+            ConnectionHandler connection = this.getConnection();
+            ConnectionDatabaseSettings databaseSettings = connection.getSettings().getDatabaseSettings();
             if (databaseSettings.getDatabaseType() == DatabaseType.GENERIC) {
-                String identifierQuotes = connectionHandler.getCompatibility().getIdentifierQuote();
+                String identifierQuotes = connection.getCompatibility().getIdentifierQuote();
                 return identifierQuotes + name + identifierQuotes;
             } else {
                 DatabaseCompatibilityInterface compatibilityInterface = DatabaseCompatibilityInterface.getInstance(this);
@@ -299,10 +299,10 @@ public abstract class DBObjectImpl<M extends DBObjectMetadata> extends BrowserTr
     }
 
     public void buildToolTip(HtmlToolTipBuilder ttb) {
-        ConnectionHandler connectionHandler = this.getConnection();
+        ConnectionHandler connection = this.getConnection();
         ttb.append(true, getQualifiedName(), false);
         ttb.append(true, "Connection: ", null, null, false );
-        ttb.append(false, connectionHandler.getPresentableText(), false);
+        ttb.append(false, connection.getPresentableText(), false);
     }
 
     @Override
@@ -313,8 +313,8 @@ public abstract class DBObjectImpl<M extends DBObjectMetadata> extends BrowserTr
     @NotNull
     @Override
     public DBObjectBundle getObjectBundle() {
-        ConnectionHandler connectionHandler = this.getConnection();
-        return connectionHandler.getObjectBundle();
+        ConnectionHandler connection = this.getConnection();
+        return connection.getObjectBundle();
     }
 
 
@@ -333,14 +333,14 @@ public abstract class DBObjectImpl<M extends DBObjectMetadata> extends BrowserTr
     @NotNull
     @Override
     public EnvironmentType getEnvironmentType() {
-        ConnectionHandler connectionHandler = this.getConnection();
-        return connectionHandler.getEnvironmentType();
+        ConnectionHandler connection = this.getConnection();
+        return connection.getEnvironmentType();
     }
 
     @Override
     public DBLanguageDialect getLanguageDialect(DBLanguage language) {
-        ConnectionHandler connectionHandler = this.getConnection();
-        return connectionHandler.getLanguageDialect(language);
+        ConnectionHandler connection = this.getConnection();
+        return connection.getLanguageDialect(language);
     }
 
     @Override
@@ -504,22 +504,21 @@ public abstract class DBObjectImpl<M extends DBObjectMetadata> extends BrowserTr
     @NotNull
     public DBObjectPsiFacade getPsiFacade() {
         DBObjectBundle objectBundle = Failsafe.nn(getObjectBundle());
-        return objectBundle.getObjectPsiFacade(getRef());
+        return objectBundle.getObjectPsiFacade(ref());
     }
 
     @Override
     @NotNull
     public DBObjectVirtualFile<?> getVirtualFile() {
         DBObjectBundle objectBundle = Failsafe.nn(getObjectBundle());
-        return objectBundle.getObjectVirtualFile(getRef());
+        return objectBundle.getObjectVirtualFile(ref());
     }
 
     @Override
     public String extractDDL() throws SQLException {
-        ConnectionHandler connectionHandler = Failsafe.nn(this.getConnection());
         // TODO move to database interface (ORACLE)
         return PooledConnection.call(true,
-                connectionHandler,
+                getConnection(),
                 connection -> {
                     DBNCallableStatement statement = null;
                     try {
@@ -709,8 +708,8 @@ public abstract class DBObjectImpl<M extends DBObjectMetadata> extends BrowserTr
 
     private void buildTreeChildren() {
         checkDisposed();
-        ConnectionHandler connectionHandler = this.getConnection();
-        Filter<BrowserTreeNode> objectTypeFilter = connectionHandler.getObjectTypeFilter();
+        ConnectionHandler connection = this.getConnection();
+        Filter<BrowserTreeNode> objectTypeFilter = connection.getObjectTypeFilter();
 
         List<BrowserTreeNode> treeChildren = filter(getAllPossibleTreeChildren(), objectTypeFilter);
         treeChildren = Commons.nvl(treeChildren, Collections.emptyList());
@@ -749,8 +748,8 @@ public abstract class DBObjectImpl<M extends DBObjectMetadata> extends BrowserTr
     @Override
     public void rebuildTreeChildren() {
         if (visibleTreeChildren != null) {
-            ConnectionHandler connectionHandler = this.getConnection();
-            Filter<BrowserTreeNode> filter = connectionHandler.getObjectTypeFilter();
+            ConnectionHandler connection = this.getConnection();
+            Filter<BrowserTreeNode> filter = connection.getObjectTypeFilter();
 
             if (treeVisibilityChanged(getAllPossibleTreeChildren(), visibleTreeChildren, filter)) {
                 buildTreeChildren();
@@ -772,8 +771,8 @@ public abstract class DBObjectImpl<M extends DBObjectMetadata> extends BrowserTr
     public boolean isLeaf() {
         return Cancellable.call(true, () -> {
             if (visibleTreeChildren == null) {
-                ConnectionHandler connectionHandler = this.getConnection();
-                Filter<BrowserTreeNode> filter = connectionHandler.getObjectTypeFilter();
+                ConnectionHandler connection = this.getConnection();
+                Filter<BrowserTreeNode> filter = connection.getObjectTypeFilter();
                 for (BrowserTreeNode treeNode : getAllPossibleTreeChildren() ) {
                     if (treeNode != null && filter.accepts(treeNode)) {
                         return false;
@@ -806,7 +805,7 @@ public abstract class DBObjectImpl<M extends DBObjectMetadata> extends BrowserTr
         if (obj == this) return true;
         if (obj instanceof DBObject) {
             DBObject object = (DBObject) obj;
-            return objectRef.equals(object.getRef());
+            return objectRef.equals(object.ref());
         }
         return false;
     }
@@ -819,15 +818,15 @@ public abstract class DBObjectImpl<M extends DBObjectMetadata> extends BrowserTr
     @Override
     @NotNull
     public Project getProject() throws PsiInvalidElementAccessException {
-        ConnectionHandler connectionHandler = Failsafe.nn(this.getConnection());
-        return connectionHandler.getProject();
+        ConnectionHandler connection = Failsafe.nn(this.getConnection());
+        return connection.getProject();
     }
 
     @Override
     public int compareTo(@NotNull Object o) {
         if (o instanceof DBObject) {
             DBObject object = (DBObject) o;
-            return objectRef.compareTo(object.getRef());
+            return objectRef.compareTo(object.ref());
         }
         return -1;
     }

@@ -43,10 +43,10 @@ public class DatabaseSessionManager extends AbstractProjectComponent implements 
     }
 
     public void showCreateSessionDialog(
-            @NotNull ConnectionHandler connectionHandler,
+            @NotNull ConnectionHandler connection,
             @Nullable ParametricRunnable.Basic<DatabaseSession> callback) {
 
-        showCreateRenameSessionDialog(connectionHandler, null, callback);
+        showCreateRenameSessionDialog(connection, null, callback);
     }
 
     public void showRenameSessionDialog(
@@ -58,14 +58,14 @@ public class DatabaseSessionManager extends AbstractProjectComponent implements 
 
 
     private void showCreateRenameSessionDialog(
-            @NotNull ConnectionHandler connectionHandler,
+            @NotNull ConnectionHandler connection,
             @Nullable DatabaseSession session,
             @Nullable ParametricRunnable.Basic<DatabaseSession> callback) {
 
         Dispatch.run(() -> {
             CreateRenameSessionDialog dialog = session == null ?
-                    new CreateRenameSessionDialog(connectionHandler) :
-                    new CreateRenameSessionDialog(connectionHandler, session);
+                    new CreateRenameSessionDialog(connection) :
+                    new CreateRenameSessionDialog(connection, session);
             dialog.setModal(true);
             dialog.show();
             if (callback != null) {
@@ -74,8 +74,8 @@ public class DatabaseSessionManager extends AbstractProjectComponent implements 
         });
     }
 
-    public DatabaseSession createSession(ConnectionHandler connectionHandler, String name) {
-        DatabaseSession session = connectionHandler.getSessionBundle().createSession(name);
+    public DatabaseSession createSession(ConnectionHandler connection, String name) {
+        DatabaseSession session = connection.getSessionBundle().createSession(name);
         ProjectEvents.notify(getProject(),
                 SessionManagerListener.TOPIC,
                 (listener) -> listener.sessionCreated(session));
@@ -83,9 +83,9 @@ public class DatabaseSessionManager extends AbstractProjectComponent implements 
     }
 
     public void renameSession(DatabaseSession session, String newName) {
-        ConnectionHandler connectionHandler = session.getConnection();
+        ConnectionHandler connection = session.getConnection();
         String oldName = session.getName();
-        connectionHandler.getSessionBundle().renameSession(oldName, newName);
+        connection.getSessionBundle().renameSession(oldName, newName);
         ProjectEvents.notify(getProject(),
                 SessionManagerListener.TOPIC,
                 (listener) -> listener.sessionChanged(session));
@@ -112,8 +112,8 @@ public class DatabaseSessionManager extends AbstractProjectComponent implements 
     }
 
     public void deleteSession(@NotNull DatabaseSession session) {
-        ConnectionHandler connectionHandler = session.getConnection();
-        connectionHandler.getSessionBundle().deleteSession(session.getId());
+        ConnectionHandler connection = session.getConnection();
+        connection.getSessionBundle().deleteSession(session.getId());
         ProjectEvents.notify(getProject(),
                 SessionManagerListener.TOPIC,
                 (listener) -> listener.sessionDeleted(session));
@@ -128,12 +128,12 @@ public class DatabaseSessionManager extends AbstractProjectComponent implements 
         Element element = new Element("state");
         ConnectionManager connectionManager = ConnectionManager.getInstance(getProject());
         List<ConnectionHandler> connectionHandlers = connectionManager.getConnectionBundle().getAllConnections();
-        for (ConnectionHandler connectionHandler : connectionHandlers) {
+        for (ConnectionHandler connection : connectionHandlers) {
             Element connectionElement = new Element("connection");
             element.addContent(connectionElement);
-            connectionElement.setAttribute("id", connectionHandler.getConnectionId().id());
+            connectionElement.setAttribute("id", connection.getConnectionId().id());
 
-            List<DatabaseSession> sessions = connectionHandler.getSessionBundle().getSessions();
+            List<DatabaseSession> sessions = connection.getSessionBundle().getSessions();
             for (DatabaseSession session : sessions) {
                 if (session.isCustom()) {
                     Element sessionElement = new Element("session");
@@ -151,10 +151,10 @@ public class DatabaseSessionManager extends AbstractProjectComponent implements 
         ConnectionManager connectionManager = ConnectionManager.getInstance(getProject());
         for (Element connectionElement : element.getChildren()) {
             ConnectionId connectionId = connectionIdAttribute(connectionElement, "id");
-            ConnectionHandler connectionHandler = connectionManager.getConnection(connectionId);
+            ConnectionHandler connection = connectionManager.getConnection(connectionId);
 
-            if (connectionHandler != null) {
-                DatabaseSessionBundle sessionBundle = connectionHandler.getSessionBundle();
+            if (connection != null) {
+                DatabaseSessionBundle sessionBundle = connection.getSessionBundle();
                 for (Element sessionElement : connectionElement.getChildren()) {
                     String sessionName = stringAttribute(sessionElement, "name");
                     SessionId sessionId = SessionId.get(stringAttribute(sessionElement, "id"));

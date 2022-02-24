@@ -85,12 +85,12 @@ public abstract class DynamicContentResultSetLoader<
     public void loadContent(DynamicContent<T> dynamicContent, boolean forceReload) throws SQLException {
         ProgressMonitor.setTaskDescription("Loading " + dynamicContent.getContentDescription());
 
-        ConnectionHandler connectionHandler = dynamicContent.getConnection();
+        ConnectionHandler connection = dynamicContent.getConnection();
         DatabaseInterface.run(true,
-                connectionHandler,
-                (provider, connection) -> {
+                connection,
+                (provider, conn) -> {
                     DebugInfo debugInfo = preLoadContent(dynamicContent);
-                    IncrementalStatusAdapter loading = connectionHandler.getConnectionStatus().getLoading();
+                    IncrementalStatusAdapter loading = connection.getConnectionStatus().getLoading();
                     try {
                         loading.set(true);
                         dynamicContent.checkDisposed();
@@ -98,7 +98,7 @@ public abstract class DynamicContentResultSetLoader<
                         List<T> list = null;
                         try {
                             dynamicContent.checkDisposed();
-                            resultSet = createResultSet(dynamicContent, connection);
+                            resultSet = createResultSet(dynamicContent, conn);
 
                             DynamicContentType<?> contentType = dynamicContent.getContentType();
                             M metadata = DBObjectMetadataFactory.INSTANCE.create(contentType, resultSet);

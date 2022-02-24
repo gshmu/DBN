@@ -36,16 +36,16 @@ public class PendingTransactionsDetailForm extends DBNFormImpl {
     private JButton rollbackButton;
     private JPanel transactionActionsPanel;
 
-    private final ConnectionHandlerRef connectionHandler;
+    private final ConnectionHandlerRef connection;
 
-    PendingTransactionsDetailForm(@NotNull DBNComponent parent, @NotNull ConnectionHandler connectionHandler, TransactionAction additionalOperation, boolean showActions) {
+    PendingTransactionsDetailForm(@NotNull DBNComponent parent, @NotNull ConnectionHandler connection, TransactionAction additionalOperation, boolean showActions) {
         super(parent);
-        this.connectionHandler = connectionHandler.getRef();
+        this.connection = connection.ref();
 
-        DBNHeaderForm headerForm = new DBNHeaderForm(this, connectionHandler);
+        DBNHeaderForm headerForm = new DBNHeaderForm(this, connection);
         headerPanel.add(headerForm.getComponent(), BorderLayout.CENTER);
 
-        PendingTransactionsTableModel transactionsTableModel = new PendingTransactionsTableModel(connectionHandler);
+        PendingTransactionsTableModel transactionsTableModel = new PendingTransactionsTableModel(connection);
         pendingTransactionsTable = new PendingTransactionsTable(this, transactionsTableModel);
         changesTableScrollPane.setViewportView(pendingTransactionsTable);
         changesTableScrollPane.getViewport().setBackground(Colors.getTableBackground());
@@ -53,17 +53,17 @@ public class PendingTransactionsDetailForm extends DBNFormImpl {
         transactionActionsPanel.setVisible(showActions);
         if (showActions) {
             ActionListener actionListener = e -> {
-                Project project = connectionHandler.getProject();
+                Project project = connection.getProject();
                 DatabaseTransactionManager transactionManager = DatabaseTransactionManager.getInstance(project);
                 List<DBNConnection> connections = pendingTransactionsTable.getSelectedConnections();
                 Object source = e.getSource();
 
-                for (DBNConnection connection : connections) {
+                for (DBNConnection conn : connections) {
                     if (source == commitButton) {
-                        transactionManager.commit(connectionHandler, connection);
+                        transactionManager.commit(connection, conn);
                     } else if (source == rollbackButton) {
                         List<TransactionAction> actions = actions(TransactionAction.ROLLBACK, additionalOperation);
-                        transactionManager.rollback(connectionHandler, connection);
+                        transactionManager.rollback(connection, conn);
                     }
                 }
             };
@@ -93,8 +93,8 @@ public class PendingTransactionsDetailForm extends DBNFormImpl {
         rollbackButton.setEnabled(selectionAvailable);
     }
 
-    public ConnectionHandler getConnectionHandler() {
-        return connectionHandler.ensure();
+    public ConnectionHandler getConnection() {
+        return connection.ensure();
     }
 
     @NotNull
@@ -113,17 +113,17 @@ public class PendingTransactionsDetailForm extends DBNFormImpl {
      ********************************************************/
     private final TransactionListener transactionListener = new TransactionListener() {
         @Override
-        public void afterAction(@NotNull ConnectionHandler connectionHandler, DBNConnection connection, TransactionAction action, boolean succeeded) {
-            if (connectionHandler == getConnectionHandler() && succeeded) {
-                refreshForm(connectionHandler);
+        public void afterAction(@NotNull ConnectionHandler connection, DBNConnection conn, TransactionAction action, boolean succeeded) {
+            if (connection == getConnection() && succeeded) {
+                refreshForm(connection);
             }
         }
     };
 
-    private void refreshForm(ConnectionHandler connectionHandler) {
+    private void refreshForm(ConnectionHandler connection) {
         Dispatch.run(() -> {
             checkDisposed();
-            PendingTransactionsTableModel transactionsTableModel = new PendingTransactionsTableModel(connectionHandler);
+            PendingTransactionsTableModel transactionsTableModel = new PendingTransactionsTableModel(connection);
             pendingTransactionsTable.setModel(transactionsTableModel);
             if (transactionsTableModel.getRowCount() > 0) {
                 pendingTransactionsTable.selectCell(0, 0);

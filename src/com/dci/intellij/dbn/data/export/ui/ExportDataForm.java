@@ -73,13 +73,13 @@ public class ExportDataForm extends DBNFormImpl {
     private JLabel encodingLabel;
 
     private final DataExportInstructions instructions;
-    private final ConnectionHandlerRef connectionHandler;
+    private final ConnectionHandlerRef connection;
     private final DBObjectRef<?> sourceObject;
     private final ActionListener actionListener = e -> enableDisableFields();
 
-    ExportDataForm(ExportDataDialog parentComponent, DataExportInstructions instructions, boolean hasSelection, @NotNull ConnectionHandler connectionHandler, @Nullable DBObject sourceObject) {
+    ExportDataForm(ExportDataDialog parentComponent, DataExportInstructions instructions, boolean hasSelection, @NotNull ConnectionHandler connection, @Nullable DBObject sourceObject) {
         super(parentComponent);
-        this.connectionHandler = connectionHandler.getRef();
+        this.connection = connection.ref();
         this.sourceObject = DBObjectRef.of(sourceObject);
         this.instructions = instructions;
 
@@ -137,7 +137,7 @@ public class ExportDataForm extends DBNFormImpl {
         //fileNameTextField.setText(instructions.getFileName());
         fileLocationTextField.setText(instructions.getFileLocation());
 
-        Project project = connectionHandler.getProject();
+        Project project = connection.getProject();
         fileLocationTextField.addBrowseFolderListener(
                 "Select Directory",
                 "Select destination directory for the exported file", project, DIRECTORY_FILE_DESCRIPTOR);
@@ -148,7 +148,7 @@ public class ExportDataForm extends DBNFormImpl {
         Icon headerIcon;
         Color headerBackground = Colors.getPanelBackground();
         if (getEnvironmentSettings(project).getVisibilitySettings().getDialogHeaders().value()) {
-            headerBackground = connectionHandler.getEnvironmentType().getColor();
+            headerBackground = connection.getEnvironmentType().getColor();
         }
         if (sourceObject != null) {
             headerTitle = sourceObject instanceof DBSchemaObject ? sourceObject.getQualifiedName() : sourceObject.getName();
@@ -161,8 +161,8 @@ public class ExportDataForm extends DBNFormImpl {
         headerPanel.add(headerComponent.getComponent());
     }
 
-    public ConnectionHandler getConnectionHandler() {
-        return connectionHandler.ensure();
+    public ConnectionHandler getConnection() {
+        return connection.ensure();
     }
 
     @NotNull

@@ -44,30 +44,30 @@ public class FileConnectionContextRegistry extends StatefulDisposable.Base {
         return project.ensure();
     }
 
-    public boolean setConnectionHandler(@NotNull VirtualFile file, @Nullable ConnectionHandler connectionHandler) {
+    public boolean setConnectionHandler(@NotNull VirtualFile file, @Nullable ConnectionHandler connection) {
         if (VirtualFiles.isDatabaseFileSystem(file)) {
             return false;
         }
 
         FileConnectionContext mapping = ensureFileConnectionMapping(file);
-        boolean changed = mapping.setConnectionId(connectionHandler == null ? null : connectionHandler.getConnectionId());
+        boolean changed = mapping.setConnectionId(connection == null ? null : connection.getConnectionId());
 
         if (changed) {
-            if (connectionHandler == null || connectionHandler.isVirtual()) {
+            if (connection == null || connection.isVirtual()) {
                 setDatabaseSession(file, null);
                 setDatabaseSchema(file, null);
             } else {
                 // restore session if available in new connection
                 SessionId sessionId = mapping.getSessionId();
-                boolean match = connectionHandler.getSessionBundle().hasSession(sessionId);
+                boolean match = connection.getSessionBundle().hasSession(sessionId);
                 sessionId = match ? sessionId : SessionId.MAIN;
                 mapping.setSessionId(sessionId);
 
                 // restore schema if available in new connection
                 SchemaId schemaId = mapping.getSchemaId();
-                DBSchema schema = schemaId == null ? null : connectionHandler.getSchema(schemaId);
+                DBSchema schema = schemaId == null ? null : connection.getSchema(schemaId);
                 if (schema == null) {
-                    schemaId = connectionHandler.getDefaultSchema();
+                    schemaId = connection.getDefaultSchema();
                 }
                 mapping.setSchemaId(schemaId);
             }
@@ -87,7 +87,7 @@ public class FileConnectionContextRegistry extends StatefulDisposable.Base {
     }
 
     @Nullable
-    public ConnectionHandler getConnectionHandler(@NotNull VirtualFile file) {
+    public ConnectionHandler getDatabaseConnection(@NotNull VirtualFile file) {
         VirtualFile underlyingFile = VirtualFiles.getUnderlyingFile(file);
         return coalesce(
                 () -> resolveDdlAttachment(underlyingFile,   mapping -> mapping.getConnection()),

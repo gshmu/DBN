@@ -126,11 +126,11 @@ public class StatementExecutionVariablesBundle extends StatefulDisposable.Base i
         return variables;
     }
 
-    public String prepareStatementText(@NotNull ConnectionHandler connectionHandler, String statementText, boolean forPreview) {
+    public String prepareStatementText(@NotNull ConnectionHandler connection, String statementText, boolean forPreview) {
         errorMap = null;
         List<StatementExecutionVariable> variables = new ArrayList<StatementExecutionVariable>(this.variables);
         variables.sort(NAME_LENGTH_COMPARATOR);
-        Formatter formatter = Formatter.getInstance(connectionHandler.getProject());
+        Formatter formatter = Formatter.getInstance(connection.getProject());
         for (StatementExecutionVariable variable : variables) {
             VariableValueProvider previewValueProvider = variable.getPreviewValueProvider();
             boolean useNullValue = forPreview ? previewValueProvider.useNull() : variable.useNull();
@@ -146,7 +146,7 @@ public class StatementExecutionVariablesBundle extends StatefulDisposable.Base i
                         value = '\'' + value + '\'';
                     } else {
                         if (genericDataType == GenericDataType.DATE_TIME){
-                            DatabaseMetadataInterface metadataInterface = connectionHandler.getInterfaceProvider().getMetadataInterface();
+                            DatabaseMetadataInterface metadataInterface = connection.getInterfaceProvider().getMetadataInterface();
                             try {
                                 Date date = formatter.parseDateTime(value);
                                 value = metadataInterface.createDateString(date);

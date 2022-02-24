@@ -14,12 +14,12 @@ public class ResultSetDataModelHeader<T extends ResultSetColumnInfo> extends Bas
     public ResultSetDataModelHeader() {
     }
 
-    public ResultSetDataModelHeader(ConnectionHandler connectionHandler, ResultSet resultSet) throws SQLException {
+    public ResultSetDataModelHeader(ConnectionHandler connection, ResultSet resultSet) throws SQLException {
         super();
         ResultSetMetaData metaData = resultSet.getMetaData();
         int columnCount = metaData.getColumnCount();
         for (int i = 0; i < columnCount; i++) {
-            T columnInfo = createColumnInfo(connectionHandler, resultSet, i);
+            T columnInfo = createColumnInfo(connection, resultSet, i);
             addColumnInfo(columnInfo);
         }
     }
@@ -35,7 +35,7 @@ public class ResultSetDataModelHeader<T extends ResultSetColumnInfo> extends Bas
     }
 
     @NotNull
-    public T createColumnInfo(ConnectionHandler connectionHandler, ResultSet resultSet, int columnIndex) throws SQLException {
-        return (T) new ResultSetColumnInfo(connectionHandler, resultSet, columnIndex);
+    public T createColumnInfo(ConnectionHandler connection, ResultSet resultSet, int columnIndex) throws SQLException {
+        return (T) new ResultSetColumnInfo(connection, resultSet, columnIndex);
     }
 }

@@ -7,7 +7,7 @@ import com.intellij.ui.ColoredListCellRenderer;
 import com.intellij.ui.SimpleTextAttributes;
 import org.jetbrains.annotations.NotNull;
 
-import javax.swing.*;
+import javax.swing.JList;
 
 public class DBObjectListCellRenderer extends ColoredListCellRenderer {
     public static final DBObjectListCellRenderer INSTANCE = new DBObjectListCellRenderer();
@@ -20,8 +20,8 @@ public class DBObjectListCellRenderer extends ColoredListCellRenderer {
             DBObject object = (DBObject) value;
             setIcon(object.getIcon());
             append(object.getName(), SimpleTextAttributes.REGULAR_ATTRIBUTES);
-            ConnectionHandler connectionHandler = Failsafe.nn(object.getConnection());
-            append(" [" + connectionHandler.getName() + "]", SimpleTextAttributes.GRAY_ATTRIBUTES);
+            ConnectionHandler connection = Failsafe.nn(object.getConnection());
+            append(" [" + connection.getName() + "]", SimpleTextAttributes.GRAY_ATTRIBUTES);
             if (object.getParentObject() != null) {
                 append(" - " + object.getParentObject().getQualifiedName(), SimpleTextAttributes.GRAY_ATTRIBUTES);
             }

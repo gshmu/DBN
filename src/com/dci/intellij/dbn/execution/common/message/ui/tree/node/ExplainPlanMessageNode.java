@@ -22,6 +22,6 @@ public class ExplainPlanMessageNode extends MessagesTreeLeafNode<ExplainPlanMess
         ExplainPlanMessage explainPlanMessage = getMessage();
         return
             explainPlanMessage.getText() + " - Connection: " +
-            explainPlanMessage.getConnectionHandler().getName();
+            explainPlanMessage.getConnection().getName();
     }
 }

@@ -147,50 +147,49 @@ public class DBMethodJdwpRunConfigEditorForm extends DBProgramRunConfigurationEd
     }
 
     public void setExecutionInput(@Nullable MethodExecutionInput executionInput, boolean touchForm) {
-        Progress.modal(getProject(), "Loading method arguments", false,
-                (progress) -> {
-                    // initialize method and arguments
-                    if (executionInput != null) {
-                        DBMethod method = executionInput.getMethod();
-                        if (method != null) {
-                            method.getArguments();
+        Progress.modal(getProject(), "Loading method arguments", false, progress -> {
+            // initialize method and arguments
+            if (executionInput != null) {
+                DBMethod method = executionInput.getMethod();
+                if (method != null) {
+                    method.getArguments();
+                }
+            }
+
+            Dispatch.run(() -> {
+                methodArgumentsPanel.removeAll();
+                inputForm = replace(inputForm, null, true);
+
+                String headerTitle = "No method selected";
+                Icon headerIcon = null;
+                Color headerBackground = Colors.getPanelBackground();
+
+                if (executionInput != null) {
+                    DBObjectRef<DBMethod> methodRef = executionInput.getMethodRef();
+                    headerTitle = methodRef.getPath();
+                    headerIcon = methodRef.getObjectType().getIcon();
+                    DBMethod method = executionInput.getMethod();
+                    if (method != null) {
+                        inputForm = new MethodExecutionInputForm(this, executionInput, false, DBDebuggerType.JDWP);
+                        methodArgumentsPanel.add(inputForm.getComponent(), BorderLayout.CENTER);
+                        if (touchForm) inputForm.touch();
+                        headerIcon = method.getOriginalIcon();
+                        if (getEnvironmentSettings(method.getProject()).getVisibilitySettings().getDialogHeaders().value()) {
+                            headerBackground = method.getEnvironmentType().getColor();
                         }
                     }
+                }
 
-                    Dispatch.run(() -> {
-                        methodArgumentsPanel.removeAll();
-                        inputForm = replace(inputForm, null, true);
+                DBNHeaderForm headerForm = new DBNHeaderForm(
+                        this, headerTitle,
+                        headerIcon,
+                        headerBackground
+                );
+                headerPanel.removeAll();
+                headerPanel.add(headerForm.getComponent(), BorderLayout.CENTER);
 
-                        String headerTitle = "No method selected";
-                        Icon headerIcon = null;
-                        Color headerBackground = Colors.getPanelBackground();
-
-                        if (executionInput != null) {
-                            DBObjectRef<DBMethod> methodRef = executionInput.getMethodRef();
-                            headerTitle = methodRef.getPath();
-                            headerIcon = methodRef.getObjectType().getIcon();
-                            DBMethod method = executionInput.getMethod();
-                            if (method != null) {
-                                inputForm = new MethodExecutionInputForm(this, executionInput, false, DBDebuggerType.JDWP);
-                                methodArgumentsPanel.add(inputForm.getComponent(), BorderLayout.CENTER);
-                                if (touchForm) inputForm.touch();
-                                headerIcon = method.getOriginalIcon();
-                                if (getEnvironmentSettings(method.getProject()).getVisibilitySettings().getDialogHeaders().value()) {
-                                    headerBackground = method.getEnvironmentType().getColor();
-                                }
-                            }
-                        }
-
-                        DBNHeaderForm headerForm = new DBNHeaderForm(
-                                this, headerTitle,
-                                headerIcon,
-                                headerBackground
-                        );
-                        headerPanel.removeAll();
-                        headerPanel.add(headerForm.getComponent(), BorderLayout.CENTER);
-
-                        GUIUtil.repaint(mainPanel);
-                    });
-                });
+                GUIUtil.repaint(mainPanel);
+            });
+        });
     }
 }

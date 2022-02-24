@@ -11,7 +11,12 @@ import com.dci.intellij.dbn.common.thread.Background;
 import com.dci.intellij.dbn.common.thread.Dispatch;
 import com.dci.intellij.dbn.common.ui.GUIUtil;
 import com.dci.intellij.dbn.common.util.Messages;
-import com.dci.intellij.dbn.connection.*;
+import com.dci.intellij.dbn.connection.ConnectionAction;
+import com.dci.intellij.dbn.connection.ConnectionHandler;
+import com.dci.intellij.dbn.connection.ConnectionHandlerRef;
+import com.dci.intellij.dbn.connection.ConnectionStatusListener;
+import com.dci.intellij.dbn.connection.SchemaId;
+import com.dci.intellij.dbn.connection.SessionId;
 import com.dci.intellij.dbn.connection.context.ConnectionContextProvider;
 import com.dci.intellij.dbn.connection.context.ConnectionProvider;
 import com.dci.intellij.dbn.connection.jdbc.DBNConnection;
@@ -45,7 +50,11 @@ import com.intellij.openapi.actionSystem.DataContext;
 import com.intellij.openapi.actionSystem.DataProvider;
 import com.intellij.openapi.actionSystem.PlatformDataKeys;
 import com.intellij.openapi.editor.Editor;
-import com.intellij.openapi.fileEditor.*;
+import com.intellij.openapi.fileEditor.FileEditor;
+import com.intellij.openapi.fileEditor.FileEditorLocation;
+import com.intellij.openapi.fileEditor.FileEditorManager;
+import com.intellij.openapi.fileEditor.FileEditorState;
+import com.intellij.openapi.fileEditor.FileEditorStateLevel;
 import com.intellij.openapi.progress.ProcessCanceledException;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
@@ -54,7 +63,7 @@ import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import javax.swing.*;
+import javax.swing.JComponent;
 import java.beans.PropertyChangeListener;
 import java.sql.SQLException;
 import java.util.List;
@@ -80,7 +89,7 @@ public class DatasetEditor extends DisposableUserDataHolderBase implements
     private final DBEditableObjectVirtualFile databaseFile;
     private final DatasetEditorForm editorForm;
     private final DatasetEditorStatusHolder status;
-    private final ConnectionHandlerRef connectionHandler;
+    private final ConnectionHandlerRef connection;
     private final DataEditorSettings settings;
     private StructureViewModel structureViewModel;
     private String dataLoadError;
@@ -94,7 +103,7 @@ public class DatasetEditor extends DisposableUserDataHolderBase implements
         this.dataset = DBObjectRef.of(dataset);
         this.settings = DataEditorSettings.getInstance(project);
 
-        connectionHandler = ConnectionHandlerRef.of(dataset.getConnection());
+        connection = ConnectionHandlerRef.of(dataset.getConnection());
         status = new DatasetEditorStatusHolder();
         status.set(CONNECTED, true);
         editorForm = new DatasetEditorForm(this);
@@ -337,15 +346,15 @@ public class DatasetEditor extends DisposableUserDataHolderBase implements
         Dispatch.run(() -> {
             checkDisposed();
             focusEditor();
-            ConnectionHandler connectionHandler = getConnection();
-            DatabaseMessageParserInterface messageParserInterface = connectionHandler.getInterfaceProvider().getMessageParserInterface();
+            ConnectionHandler connection = getConnection();
+            DatabaseMessageParserInterface messageParserInterface = connection.getInterfaceProvider().getMessageParserInterface();
             Project project = getProject();
             DatasetFilterManager filterManager = DatasetFilterManager.getInstance(project);
 
             DBDataset dataset = getDataset();
             DatasetFilter filter = filterManager.getActiveFilter(dataset);
             String datasetName = dataset.getQualifiedNameWithType();
-            if (connectionHandler.isValid()) {
+            if (connection.isValid()) {
                 if (filter == null || filter == DatasetFilterManager.EMPTY_FILTER || filter.getError() != null) {
                     if (instr.isDeliberateAction()) {
                         String message =
@@ -509,8 +518,8 @@ public class DatasetEditor extends DisposableUserDataHolderBase implements
 
     public boolean isEditable() {
         DatasetEditorModel tableModel = getTableModel();
-        ConnectionHandler connectionHandler = tableModel.getConnectionHandler();
-        return tableModel.isEditable() && connectionHandler.isConnected(SessionId.MAIN);
+        ConnectionHandler connection = tableModel.getConnectionHandler();
+        return tableModel.isEditable() && connection.isConnected(SessionId.MAIN);
     }
 
     public int getRowCount() {
@@ -521,7 +530,7 @@ public class DatasetEditor extends DisposableUserDataHolderBase implements
     @Override
     @NotNull
     public ConnectionHandler getConnection() {
-        return connectionHandler.ensure();
+        return connection.ensure();
     }
 
     @Nullable
@@ -534,9 +543,9 @@ public class DatasetEditor extends DisposableUserDataHolderBase implements
      *                      Listeners                      *
      *******************************************************/
     private final ConnectionStatusListener connectionStatusListener = (connectionId, sessionId) -> {
-        ConnectionHandler connectionHandler = getConnection();
-        if (connectionHandler.getConnectionId() == connectionId && sessionId == SessionId.MAIN) {
-            boolean connected = connectionHandler.isConnected(SessionId.MAIN);
+        ConnectionHandler connection = getConnection();
+        if (connection.getConnectionId() == connectionId && sessionId == SessionId.MAIN) {
+            boolean connected = connection.isConnected(SessionId.MAIN);
             boolean statusChanged = getStatus().set(CONNECTED, connected);
 
             if (statusChanged) {
@@ -560,8 +569,8 @@ public class DatasetEditor extends DisposableUserDataHolderBase implements
 
     private final TransactionListener transactionListener = new TransactionListener() {
         @Override
-        public void beforeAction(@NotNull ConnectionHandler connectionHandler, DBNConnection connection, TransactionAction action) {
-            if (connectionHandler == getConnection()) {
+        public void beforeAction(@NotNull ConnectionHandler connection, DBNConnection conn, TransactionAction action) {
+            if (connection == getConnection()) {
                 DatasetEditorModel model = getTableModel();
                 DatasetEditorTable editorTable = getEditorTable();
                 if (action == TransactionAction.COMMIT) {
@@ -592,8 +601,8 @@ public class DatasetEditor extends DisposableUserDataHolderBase implements
         }
 
         @Override
-        public void afterAction(@NotNull ConnectionHandler connectionHandler, DBNConnection connection, TransactionAction action, boolean succeeded) {
-            if (connectionHandler == getConnection()) {
+        public void afterAction(@NotNull ConnectionHandler connection, DBNConnection conn, TransactionAction action, boolean succeeded) {
+            if (connection == getConnection()) {
                 DatasetEditorModel model = getTableModel();
                 DatasetEditorTable editorTable = getEditorTable();
                 if (action == TransactionAction.COMMIT || action == TransactionAction.ROLLBACK) {

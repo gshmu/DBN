@@ -187,8 +187,8 @@ public final class DBObjectListContainer implements StatefulDisposable {
 
     private boolean isSupported(DBObjectType objectType) {
         DatabaseEntity owner = getOwner();
-        ConnectionHandler connectionHandler = owner.getConnection();
-        DatabaseCompatibilityInterface compatibilityInterface = DatabaseCompatibilityInterface.getInstance(connectionHandler);
+        ConnectionHandler connection = owner.getConnection();
+        DatabaseCompatibilityInterface compatibilityInterface = DatabaseCompatibilityInterface.getInstance(connection);
         return compatibilityInterface.supportsObjectType(objectType.getTypeId());
     }
 
@@ -332,8 +332,8 @@ public final class DBObjectListContainer implements StatefulDisposable {
      *                      Object Relation Lists                    *
      *****************************************************************/
     private boolean isSupported(DBObjectRelationType objectRelationType) {
-        ConnectionHandler connectionHandler = getOwner().getConnection();
-        DatabaseCompatibilityInterface compatibilityInterface = DatabaseCompatibilityInterface.getInstance(connectionHandler);
+        ConnectionHandler connection = getOwner().getConnection();
+        DatabaseCompatibilityInterface compatibilityInterface = DatabaseCompatibilityInterface.getInstance(connection);
         DatabaseObjectTypeId sourceTypeId = objectRelationType.getSourceType().getTypeId();
         DatabaseObjectTypeId targetTypeId = objectRelationType.getTargetType().getTypeId();
         return compatibilityInterface.supportsObjectType(sourceTypeId) &&

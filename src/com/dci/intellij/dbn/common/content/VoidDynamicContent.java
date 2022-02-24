@@ -8,7 +8,6 @@ import com.dci.intellij.dbn.common.dispose.StatefulDisposable;
 import com.dci.intellij.dbn.common.filter.Filter;
 import com.dci.intellij.dbn.common.property.Property;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
-import com.dci.intellij.dbn.connection.ConnectionId;
 import com.dci.intellij.dbn.connection.DatabaseEntity;
 import com.intellij.openapi.project.Project;
 import org.jetbrains.annotations.NotNull;
@@ -144,7 +143,7 @@ public class VoidDynamicContent extends StatefulDisposable.Base implements Dynam
 
     @NotNull
     @Override
-    public <E extends DatabaseEntity> E getParentEntity() {
+    public DatabaseEntity getParentEntity() {
         throw new UnsupportedOperationException();
     }
 

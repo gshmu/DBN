@@ -22,7 +22,7 @@ import static com.dci.intellij.dbn.connection.config.ConnectionSettingsStatus.*;
 @Setter
 @EqualsAndHashCode(callSuper = false)
 public class ConnectionSettings extends CompositeProjectConfiguration<ConnectionBundleSettings, ConnectionSettingsForm>
-        implements ConnectionRef, ConnectionIdProvider, Cloneable<ConnectionSettings> {
+        implements ConnectionIdProvider, Cloneable<ConnectionSettings> {
 
     private ConnectionId connectionId;
 

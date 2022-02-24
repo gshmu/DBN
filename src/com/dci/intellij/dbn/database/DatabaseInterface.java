@@ -21,13 +21,13 @@ public interface DatabaseInterface {
 
     default void reset(){};
 
-    static boolean init(ConnectionHandler connectionHandler) {
+    static boolean init(ConnectionHandler connection) {
         ConnectionHandler localConnectionHandler = CONNECTION_HANDLER.get();
         if (localConnectionHandler == null) {
-            CONNECTION_HANDLER.set(connectionHandler);
+            CONNECTION_HANDLER.set(connection);
             return true;
         } else {
-            if (connectionHandler != localConnectionHandler) {
+            if (connection != localConnectionHandler) {
                 throw new IllegalStateException("Already initialized for another connection");
             }
         }
@@ -41,11 +41,11 @@ public interface DatabaseInterface {
     }
 
     static Cache cache() {
-        return getConnectionHandler().getMetaDataCache();
+        return getConnection().getMetaDataCache();
     }
 
     @NotNull
-    static ConnectionHandler getConnectionHandler() {
+    static ConnectionHandler getConnection() {
         return Failsafe.nd(CONNECTION_HANDLER.get());
     }
 
@@ -54,11 +54,11 @@ public interface DatabaseInterface {
     }
 
     static void run(
-            @NotNull ConnectionHandler connectionHandler,
+            @NotNull ConnectionHandler connection,
             @NotNull ParametricRunnable<DatabaseInterfaceProvider, SQLException> runnable) throws SQLException {
-        boolean owner = init(connectionHandler);
+        boolean owner = init(connection);
         try {
-            runnable.run(connectionHandler.getInterfaceProvider());
+            runnable.run(connection.getInterfaceProvider());
         } catch (ProcessCanceledException ignore){
         } finally {
             release(owner);
@@ -67,24 +67,24 @@ public interface DatabaseInterface {
 
     static void run(
             boolean readonly,
-            @NotNull ConnectionHandler connectionHandler,
+            @NotNull ConnectionHandler connection,
             @NotNull Runnable<SQLException> runnable) throws SQLException {
 
-        run(connectionHandler, provider -> PooledConnection.run(
+        run(connection, provider -> PooledConnection.run(
                 readonly,
-                connectionHandler,
-                connection -> runnable.run(
-                        connectionHandler.getInterfaceProvider(),
-                        connection)));
+                connection,
+                conn -> runnable.run(
+                        connection.getInterfaceProvider(),
+                        conn)));
     }
 
     static <T> T call(
-            @NotNull ConnectionHandler connectionHandler,
+            @NotNull ConnectionHandler connection,
             @NotNull ParametricCallable<DatabaseInterfaceProvider, T, SQLException> callable) throws SQLException {
 
-        boolean owner = init(connectionHandler);
+        boolean owner = init(connection);
         try {
-            return callable.call(connectionHandler.getInterfaceProvider());
+            return callable.call(connection.getInterfaceProvider());
             //} catch (ProcessCanceledException ignore){ // TODO
         } finally {
             release(owner);
@@ -93,16 +93,16 @@ public interface DatabaseInterface {
 
     static <T> T call(
             boolean readonly,
-            @NotNull ConnectionHandler connectionHandler,
+            @NotNull ConnectionHandler connection,
             @NotNull Callable<T, SQLException> callable) throws SQLException {
 
-        return call(connectionHandler, provider ->
+        return call(connection, provider ->
                 PooledConnection.call(
                         readonly,
-                        connectionHandler,
-                        connection -> callable.call(
-                                connectionHandler.getInterfaceProvider(),
-                                connection)));
+                        connection,
+                        conn -> callable.call(
+                                connection.getInterfaceProvider(),
+                                conn)));
     }
 
     @FunctionalInterface

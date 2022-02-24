@@ -10,12 +10,12 @@ import com.intellij.openapi.project.Project;
 import org.jetbrains.annotations.NotNull;
 
 public class ConsoleCreateAction extends DumbAwareProjectAction {
-    private DBConsoleType consoleType;
-    private ConnectionHandlerRef connectionHandlerRef;
+    private final DBConsoleType consoleType;
+    private final ConnectionHandlerRef connection;
 
-    ConsoleCreateAction(ConnectionHandler connectionHandler, DBConsoleType consoleType) {
+    ConsoleCreateAction(ConnectionHandler connection, DBConsoleType consoleType) {
         super("New " + consoleType.getName() + "...");
-        this.connectionHandlerRef = connectionHandler.getRef();
+        this.connection = connection.ref();
         this.consoleType = consoleType;
 
     }
@@ -23,6 +23,6 @@ public class ConsoleCreateAction extends DumbAwareProjectAction {
     @Override
     protected void actionPerformed(@NotNull AnActionEvent e, @NotNull Project project) {
         DatabaseConsoleManager consoleManager = DatabaseConsoleManager.getInstance(project);
-        consoleManager.showCreateConsoleDialog(connectionHandlerRef.get(), consoleType);
+        consoleManager.showCreateConsoleDialog(connection.get(), consoleType);
     }
 }

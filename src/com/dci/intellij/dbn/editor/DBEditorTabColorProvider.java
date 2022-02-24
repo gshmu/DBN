@@ -19,7 +19,7 @@ import com.intellij.openapi.vfs.VirtualFile;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.awt.*;
+import java.awt.Color;
 
 public class DBEditorTabColorProvider implements EditorTabColorProvider, DumbAware {
 
@@ -27,14 +27,14 @@ public class DBEditorTabColorProvider implements EditorTabColorProvider, DumbAwa
     public Color getEditorTabColor(@NotNull Project project, @NotNull VirtualFile file) {
         if (file.getFileType() instanceof DBLanguageFileType) {
             try {
-                ConnectionHandler connectionHandler = getConnectionHandler(file, project);
-                if (connectionHandler == null) {
+                ConnectionHandler connection = getConnection(file, project);
+                if (connection == null) {
                     return null;
                 } else {
                     GeneralProjectSettings instance = GeneralProjectSettings.getInstance(project);
                     EnvironmentSettings environmentSettings = instance.getEnvironmentSettings();
                     EnvironmentVisibilitySettings visibilitySettings = environmentSettings.getVisibilitySettings();
-                    EnvironmentType environmentType = connectionHandler.getEnvironmentType();
+                    EnvironmentType environmentType = connection.getEnvironmentType();
                     if (file instanceof DBVirtualFileImpl) {
                         if (visibilitySettings.getObjectEditorTabs().value()) {
                             return environmentType.getColor();
@@ -52,7 +52,7 @@ public class DBEditorTabColorProvider implements EditorTabColorProvider, DumbAwa
     }
     
     @Nullable
-    public static ConnectionHandler getConnectionHandler(VirtualFile file, Project project) {
+    public static ConnectionHandler getConnection(VirtualFile file, Project project) {
         if (file instanceof DBConsoleVirtualFile) {
             DBConsoleVirtualFile consoleFile = (DBConsoleVirtualFile) file;
             return consoleFile.getConnection();
@@ -71,8 +71,8 @@ public class DBEditorTabColorProvider implements EditorTabColorProvider, DumbAwa
         return FileConnectionContextManager.getInstance(project).getConnection(file);
     }
 
-    private static Color getColor(ConnectionHandler connectionHandler) {
-        EnvironmentType environmentType = connectionHandler.getEnvironmentType();
+    private static Color getColor(ConnectionHandler connection) {
+        EnvironmentType environmentType = connection.getEnvironmentType();
         return environmentType.getColor();
     }
 }

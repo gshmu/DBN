@@ -61,12 +61,12 @@ public class MethodExecutionInputForm extends DBNFormImpl {
         this.executionInput = executionInput;
         DBObjectRef<?> methodRef = executionInput.getMethodRef();
 
-        ConnectionHandler connectionHandler = executionInput.getConnection();
-        if (connectionHandler != null && debuggerType.isDebug()) {
+        ConnectionHandler connection = executionInput.getConnection();
+        if (connection != null && debuggerType.isDebug()) {
             versionPanel.setVisible(true);
             versionPanel.setBorder(Borders.BOTTOM_LINE_BORDER);
-            DatabaseDebuggerManager debuggerManager = DatabaseDebuggerManager.getInstance(getProject());
-            String debuggerVersion = debuggerManager.getDebuggerVersion(connectionHandler);
+            DatabaseDebuggerManager debuggerManager = DatabaseDebuggerManager.getInstance(ensureProject());
+            String debuggerVersion = debuggerManager.getDebuggerVersion(connection);
             debuggerVersionLabel.setText(debuggerVersion);
             debuggerTypeLabel.setText(debuggerType.name());
         } else {

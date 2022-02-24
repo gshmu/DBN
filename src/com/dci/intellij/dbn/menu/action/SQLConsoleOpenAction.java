@@ -15,7 +15,11 @@ import com.dci.intellij.dbn.object.DBConsole;
 import com.dci.intellij.dbn.options.ConfigId;
 import com.dci.intellij.dbn.options.ProjectSettingsManager;
 import com.dci.intellij.dbn.vfs.DBConsoleType;
-import com.intellij.openapi.actionSystem.*;
+import com.intellij.openapi.actionSystem.ActionGroup;
+import com.intellij.openapi.actionSystem.AnAction;
+import com.intellij.openapi.actionSystem.AnActionEvent;
+import com.intellij.openapi.actionSystem.DefaultActionGroup;
+import com.intellij.openapi.actionSystem.Separator;
 import com.intellij.openapi.fileEditor.FileEditorManager;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.popup.JBPopupFactory;
@@ -65,7 +69,7 @@ public class SQLConsoleOpenAction extends DumbAwareProjectAction {
                     preselect -> {
 /*
                         SelectConsoleAction selectConnectionAction = (SelectConsoleAction) action;
-                        return latestSelection == selectConnectionAction.connectionHandler;
+                        return latestSelection == selectConnectionAction.connection;
 */
                         return true;
                     });
@@ -89,33 +93,33 @@ public class SQLConsoleOpenAction extends DumbAwareProjectAction {
     }
 
     private class SelectConnectionAction extends ActionGroup {
-        private ConnectionHandlerRef connectionHandlerRef;
+        private ConnectionHandlerRef connection;
 
-        private SelectConnectionAction(ConnectionHandler connectionHandler) {
-            super(connectionHandler.getName(), null, connectionHandler.getIcon());
-            this.connectionHandlerRef = ConnectionHandlerRef.of(connectionHandler);
+        private SelectConnectionAction(ConnectionHandler connection) {
+            super(connection.getName(), null, connection.getIcon());
+            this.connection = ConnectionHandlerRef.of(connection);
             setPopup(true);
         }
 /*
         @Override
         public void actionPerformed(AnActionEvent e) {
-            openSQLConsole(connectionHandler);
-            latestSelection = connectionHandler;
+            openSQLConsole(connection);
+            latestSelection = connection;
         }*/
 
         @NotNull
         @Override
         public AnAction[] getChildren(AnActionEvent e) {
-            ConnectionHandler connectionHandler = connectionHandlerRef.ensure();
+            ConnectionHandler connection = this.connection.ensure();
             List<AnAction> actions = new ArrayList<>();
-            Collection<DBConsole> consoles = connectionHandler.getConsoleBundle().getConsoles();
+            Collection<DBConsole> consoles = connection.getConsoleBundle().getConsoles();
             for (DBConsole console : consoles) {
                 actions.add(new SelectConsoleAction(console));
             }
             actions.add(Separator.getInstance());
-            actions.add(new SelectConsoleAction(connectionHandler, DBConsoleType.STANDARD));
-            if (DatabaseFeature.DEBUGGING.isSupported(connectionHandler)) {
-                actions.add(new SelectConsoleAction(connectionHandler, DBConsoleType.DEBUG));
+            actions.add(new SelectConsoleAction(connection, DBConsoleType.STANDARD));
+            if (DatabaseFeature.DEBUGGING.isSupported(connection)) {
+                actions.add(new SelectConsoleAction(connection, DBConsoleType.DEBUG));
             }
 
             return actions.toArray(new AnAction[0]);
@@ -128,9 +132,9 @@ public class SQLConsoleOpenAction extends DumbAwareProjectAction {
         private DBConsoleType consoleType;
 
 
-        SelectConsoleAction(ConnectionHandler connectionHandler, DBConsoleType consoleType) {
+        SelectConsoleAction(ConnectionHandler connection, DBConsoleType consoleType) {
             super("New " + consoleType.getName() + "...");
-            this.connectionHandlerRef = ConnectionHandlerRef.of(connectionHandler);
+            this.connectionHandlerRef = ConnectionHandlerRef.of(connection);
             this.consoleType = consoleType;
         }
 
@@ -142,20 +146,20 @@ public class SQLConsoleOpenAction extends DumbAwareProjectAction {
         @Override
         public void actionPerformed(@NotNull AnActionEvent e) {
             if (console == null) {
-                ConnectionHandler connectionHandler = connectionHandlerRef.ensure();
-                DatabaseConsoleManager databaseConsoleManager = DatabaseConsoleManager.getInstance(connectionHandler.getProject());
-                databaseConsoleManager.showCreateConsoleDialog(connectionHandler, consoleType);
+                ConnectionHandler connection = connectionHandlerRef.ensure();
+                DatabaseConsoleManager consoleManager = DatabaseConsoleManager.getInstance(connection.getProject());
+                consoleManager.showCreateConsoleDialog(connection, consoleType);
             } else {
-                ConnectionHandler connectionHandler = Failsafe.nn(console.getConnection());
-                FileEditorManager editorManager = FileEditorManager.getInstance(connectionHandler.getProject());
+                ConnectionHandler connection = Failsafe.nn(console.getConnection());
+                FileEditorManager editorManager = FileEditorManager.getInstance(connection.getProject());
                 editorManager.openFile(console.getVirtualFile(), true);
             }
         }
     }
 
-    private static void openSQLConsole(ConnectionHandler connectionHandler) {
-        FileEditorManager editorManager = FileEditorManager.getInstance(connectionHandler.getProject());
-        DBConsole defaultConsole = connectionHandler.getConsoleBundle().getDefaultConsole();
+    private static void openSQLConsole(ConnectionHandler connection) {
+        FileEditorManager editorManager = FileEditorManager.getInstance(connection.getProject());
+        DBConsole defaultConsole = connection.getConsoleBundle().getDefaultConsole();
         editorManager.openFile(defaultConsole.getVirtualFile(), true);
     }
 }

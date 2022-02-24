@@ -102,7 +102,7 @@ public class CompileDebugDependenciesForm extends DBNFormImpl {
 
     public List<DBObjectRef<?>> getSelection() {
         List<DBSchemaObject> selectedValuesList = objectList.getSelectedValuesList();
-        return Lists.convert(selectedValuesList, o -> o.getRef());
+        return Lists.convert(selectedValuesList, o -> o.ref());
     }
 
     public void selectAll() {

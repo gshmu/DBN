@@ -63,10 +63,10 @@ public class DatabaseCompilerManager extends AbstractProjectComponent {
                     if (compileType == CompileType.DEBUG) {
                         compileObject(object, compileType, compilerAction);
                     }
-                    ConnectionHandler connectionHandler = object.getConnection();
+                    ConnectionHandler connection = object.getConnection();
                     ProjectEvents.notify(project,
                             CompileManagerListener.TOPIC,
-                            (listener) -> listener.compileFinished(connectionHandler, object));
+                            (listener) -> listener.compileFinished(connection, object));
 
                     createCompilerResult(object, compilerAction);
                 }
@@ -114,7 +114,7 @@ public class DatabaseCompilerManager extends AbstractProjectComponent {
         Progress.background(
                 getProject(),
                 "Refreshing local content state", false,
-                (progress) -> {
+                progress -> {
                     DBEditableObjectVirtualFile databaseFile = object.getCachedVirtualFile();
                     if (databaseFile != null && databaseFile.isContentLoaded()) {
                         if (contentType.isBundle()) {
@@ -137,23 +137,23 @@ public class DatabaseCompilerManager extends AbstractProjectComponent {
     public void compileInBackground(DBSchemaObject object, CompileType compileType, CompilerAction compilerAction) {
         Project project = getProject();
         ConnectionAction.invoke("compiling the object", false, object,
-                (action) -> promptCompileTypeSelection(compileType, object,
-                        (selectedCompileType) -> Progress.background(project, "Compiling " + object.getObjectType().getName(), false,
-                                (progress) -> {
+                action -> promptCompileTypeSelection(compileType, object,
+                        selectedCompileType -> Progress.background(project, "Compiling " + object.getObjectType().getName(), false,
+                                progress -> {
                                     doCompileObject(object, selectedCompileType, compilerAction);
-                                    ConnectionHandler connectionHandler = object.getConnection();
+                                    ConnectionHandler connection = object.getConnection();
                                     ProjectEvents.notify(project,
                                             CompileManagerListener.TOPIC,
-                                            (listener) -> listener.compileFinished(connectionHandler, object));
+                                            (listener) -> listener.compileFinished(connection, object));
 
                                     DBContentType contentType = compilerAction.getContentType();
                                     updateFilesContentState(object, contentType);
                                 })),
                 null,
-                (action) -> {
-                    ConnectionHandler connectionHandler = action.getConnectionHandler();
+                action -> {
+                    ConnectionHandler connection = action.getConnection();
                     DatabaseDebuggerManager debuggerManager = DatabaseDebuggerManager.getInstance(project);
-                    return debuggerManager.checkForbiddenOperation(connectionHandler);
+                    return debuggerManager.checkForbiddenOperation(connection);
                 });
     }
 
@@ -162,10 +162,9 @@ public class DatabaseCompilerManager extends AbstractProjectComponent {
         DBObjectStatusHolder objectStatus = object.getStatus();
         if (objectStatus.isNot(contentType, DBObjectStatus.COMPILING)) {
             objectStatus.set(contentType, DBObjectStatus.COMPILING, true);
-            ConnectionHandler connectionHandler = object.getConnection();
             try {
                 DatabaseInterface.run(true,
-                        connectionHandler,
+                        object.getConnection(),
                         (provider, connection) -> {
                             DatabaseMetadataInterface metadataInterface = provider.getMetadataInterface();
 
@@ -217,12 +216,11 @@ public class DatabaseCompilerManager extends AbstractProjectComponent {
     }
 
     public void compileInvalidObjects(@NotNull DBSchema schema, CompileType compileType) {
-        ConnectionHandler connectionHandler = schema.getConnection();
         ConnectionAction.invoke("compiling the invalid objects", false, schema,
-                (action) -> promptCompileTypeSelection(compileType, null,
-                        (selectedCompileType) -> {
+                action -> promptCompileTypeSelection(compileType, null,
+                        selectedCompileType -> {
                             Progress.prompt(getProject(), "Compiling invalid objects", true,
-                                    (progress) -> {
+                                    progress -> {
                                         Project project = getProject();
                                         progress.setIndeterminate(false);
                                         doCompileInvalidObjects(schema.getPackages(), "packages", progress, selectedCompileType);
@@ -230,9 +228,10 @@ public class DatabaseCompilerManager extends AbstractProjectComponent {
                                         doCompileInvalidObjects(schema.getProcedures(), "procedures", progress, selectedCompileType);
                                         doCompileInvalidObjects(schema.getDatasetTriggers(), "dataset triggers", progress, selectedCompileType);
                                         doCompileInvalidObjects(schema.getDatabaseTriggers(), "database triggers", progress, selectedCompileType);
+                                        ConnectionHandler connection = schema.getConnection();
                                         ProjectEvents.notify(project,
                                                 CompileManagerListener.TOPIC,
-                                                (listener) -> listener.compileFinished(connectionHandler, null));
+                                                (listener) -> listener.compileFinished(connection, null));
 
 /*
                                     if (!progress.isCanceled()) {
@@ -251,9 +250,10 @@ public class DatabaseCompilerManager extends AbstractProjectComponent {
                                     });
                         }),
                 null,
-                (action) -> {
+                action -> {
                     DatabaseDebuggerManager debuggerManager = DatabaseDebuggerManager.getInstance(getProject());
-                    return debuggerManager.checkForbiddenOperation(connectionHandler);
+                    ConnectionHandler connection = schema.getConnection();
+                    return debuggerManager.checkForbiddenOperation(connection);
                 });
     }
 

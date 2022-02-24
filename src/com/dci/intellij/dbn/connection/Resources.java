@@ -214,23 +214,23 @@ public final class Resources {
         }
     }
 
-    public static void setReadonly(ConnectionHandler connectionHandler, DBNConnection connection, boolean readonly) {
-        boolean readonlySupported = DatabaseFeature.READONLY_CONNECTIVITY.isSupported(connectionHandler);
+    public static void setReadonly(ConnectionHandler connection, DBNConnection conn, boolean readonly) {
+        boolean readonlySupported = DatabaseFeature.READONLY_CONNECTIVITY.isSupported(connection);
         if (readonlySupported) {
             try {
                 invokeResourceAction(
-                        connection,
+                        conn,
                         ResourceStatus.CHANGING_READ_ONLY,
-                        () -> connection.setReadOnly(readonly),
-                        () -> "[DBN] Applying status READ_ONLY=" + readonly + " on " + connection,
-                        () -> "[DBN] Done applying status READ_ONLY=" + readonly + " on " + connection,
-                        () -> "[DBN] Failed to apply status READ_ONLY=" + readonly + " on " + connection);
+                        () -> conn.setReadOnly(readonly),
+                        () -> "[DBN] Applying status READ_ONLY=" + readonly + " on " + conn,
+                        () -> "[DBN] Done applying status READ_ONLY=" + readonly + " on " + conn,
+                        () -> "[DBN] Failed to apply status READ_ONLY=" + readonly + " on " + conn);
             } catch (SQLRecoverableException ignore) {
             } catch (SQLException e) {
                 sentWarningNotification(
                         NotificationGroup.CONNECTION,
                         "Failed to initialize readonly status for",
-                        connection,
+                        conn,
                         e);
             }
         }

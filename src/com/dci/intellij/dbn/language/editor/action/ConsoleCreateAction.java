@@ -2,6 +2,7 @@ package com.dci.intellij.dbn.language.editor.action;
 
 import com.dci.intellij.dbn.common.action.DumbAwareProjectAction;
 import com.dci.intellij.dbn.common.action.Lookup;
+import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.console.DatabaseConsoleManager;
 import com.dci.intellij.dbn.vfs.DBConsoleType;
 import com.dci.intellij.dbn.vfs.file.DBConsoleVirtualFile;
@@ -12,7 +13,7 @@ import com.intellij.openapi.vfs.VirtualFile;
 import org.jetbrains.annotations.NotNull;
 
 public class ConsoleCreateAction extends DumbAwareProjectAction {
-    private DBConsoleType consoleType;
+    private final DBConsoleType consoleType;
     ConsoleCreateAction(DBConsoleType consoleType) {
         super("New " + consoleType.getName() + "...");
         this.consoleType = consoleType;
@@ -24,8 +25,9 @@ public class ConsoleCreateAction extends DumbAwareProjectAction {
         VirtualFile virtualFile = Lookup.getVirtualFile(e);
         if (virtualFile instanceof DBConsoleVirtualFile) {
             DBConsoleVirtualFile consoleVirtualFile = (DBConsoleVirtualFile) virtualFile;
-        DatabaseConsoleManager consoleManager = DatabaseConsoleManager.getInstance(project);
-            consoleManager.showCreateConsoleDialog(consoleVirtualFile.getConnection(), consoleType);
+            DatabaseConsoleManager consoleManager = DatabaseConsoleManager.getInstance(project);
+            ConnectionHandler connection = consoleVirtualFile.getConnection();
+            consoleManager.showCreateConsoleDialog(connection, consoleType);
         }
     }
     @Override

@@ -28,7 +28,7 @@ public abstract class ConnectionAction implements Runnable{
 
     @NotNull
     public Project getProject() {
-        return getConnectionHandler().getProject();
+        return getConnection().getProject();
     }
 
     public boolean isCancelled() {
@@ -46,18 +46,18 @@ public abstract class ConnectionAction implements Runnable{
 
     public final void start() {
         Dispatch.run(() -> {
-            ConnectionHandler connectionHandler = getConnectionHandler();
-            if (connectionHandler.isVirtual() || connectionHandler.canConnect()) {
-                if (interactive || connectionHandler.isValid()) {
+            ConnectionHandler connection = getConnection();
+            if (connection.isVirtual() || connection.canConnect()) {
+                if (interactive || connection.isValid()) {
                     run();
                 } else {
-                    String connectionName = connectionHandler.getName();
-                    Throwable connectionException = connectionHandler.getConnectionStatus().getConnectionException();
+                    String connectionName = connection.getName();
+                    Throwable connectionException = connection.getConnectionStatus().getConnectionException();
                     ConnectionManager.showErrorConnectionMessage(getProject(), connectionName, connectionException);
                 }
             } else {
-                if (connectionHandler.isDatabaseInitialized()) {
-                    if (connectionHandler.isAuthenticationProvided()) {
+                if (connection.isDatabaseInitialized()) {
+                    if (connection.isAuthenticationProvided()) {
                         promptConnectDialog();
                     } else {
                         promptAuthenticationDialog();
@@ -70,15 +70,15 @@ public abstract class ConnectionAction implements Runnable{
     }
 
     private void promptDatabaseInitDialog() {
-        ConnectionHandler connectionHandler = getConnectionHandler();
+        ConnectionHandler connection = getConnection();
         ConnectionManager.promptDatabaseInitDialog(
-                connectionHandler,
+                connection,
                 (option) -> {
                     if (option == 0) {
-                        ConnectionInstructions instructions = connectionHandler.getInstructions();
+                        ConnectionInstructions instructions = connection.getInstructions();
                         instructions.setAllowAutoInit(true);
                         instructions.setAllowAutoConnect(true);
-                        if (connectionHandler.isAuthenticationProvided()) {
+                        if (connection.isAuthenticationProvided()) {
                             run();
                         } else {
                             promptAuthenticationDialog();
@@ -90,12 +90,12 @@ public abstract class ConnectionAction implements Runnable{
     }
 
     private void promptAuthenticationDialog() {
-        ConnectionHandler connectionHandler = getConnectionHandler();
-        AuthenticationInfo temporaryAuthenticationInfo = connectionHandler.getAuthenticationInfo().clone();
+        ConnectionHandler connection = getConnection();
+        AuthenticationInfo temporaryAuthenticationInfo = connection.getAuthenticationInfo().clone();
         temporaryAuthenticationInfo.setTemporary(true);
-        ConnectionManager connectionManager = ConnectionManager.getInstance(connectionHandler.getProject());
+        ConnectionManager connectionManager = ConnectionManager.getInstance(connection.getProject());
         connectionManager.promptAuthenticationDialog(
-                connectionHandler,
+                connection,
                 temporaryAuthenticationInfo,
                 (authenticationInfo) -> {
                     if (authenticationInfo != null) {
@@ -107,13 +107,13 @@ public abstract class ConnectionAction implements Runnable{
     }
 
     private void promptConnectDialog() {
-        ConnectionHandler connectionHandler = getConnectionHandler();
+        ConnectionHandler connection = getConnection();
         ConnectionManager.promptConnectDialog(
-                connectionHandler,
+                connection,
                 description,
                 (option) -> {
                     if (option == 0) {
-                        connectionHandler.getInstructions().setAllowAutoConnect(true);
+                        connection.getInstructions().setAllowAutoConnect(true);
                         run();
                     } else {
                         cancel();
@@ -122,9 +122,9 @@ public abstract class ConnectionAction implements Runnable{
     }
 
     @NotNull
-    public ConnectionHandler getConnectionHandler() {
-        ConnectionHandler connectionHandler = connectionProvider.getConnection();
-        return Failsafe.nn(connectionHandler);
+    public ConnectionHandler getConnection() {
+        ConnectionHandler connection = connectionProvider.getConnection();
+        return Failsafe.nn(connection);
     }
 
     public static void invoke(

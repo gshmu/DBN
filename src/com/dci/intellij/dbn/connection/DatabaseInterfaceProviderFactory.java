@@ -19,19 +19,19 @@ public class DatabaseInterfaceProviderFactory {
     private static final DatabaseInterfaceProvider POSTGRES_INTERFACE_PROVIDER = new PostgresInterfaceProvider();
     private static final DatabaseInterfaceProvider SQLITE_INTERFACE_PROVIDER = new SqliteInterfaceProvider();
 
-    public static DatabaseInterfaceProvider getInterfaceProvider(@NotNull ConnectionHandler connectionHandler) throws SQLException {
+    public static DatabaseInterfaceProvider getInterfaceProvider(@NotNull ConnectionHandler connection) throws SQLException {
         DatabaseType databaseType;
-        if (connectionHandler.isVirtual()) {
-            databaseType = connectionHandler.getDatabaseType();
+        if (connection.isVirtual()) {
+            databaseType = connection.getDatabaseType();
         } else {
-            ConnectionDatabaseSettings databaseSettings = connectionHandler.getSettings().getDatabaseSettings();
+            ConnectionDatabaseSettings databaseSettings = connection.getSettings().getDatabaseSettings();
             databaseType = databaseSettings.getDatabaseType();
 /*
             TODO use resolvedDatabaseType to guess better interface provider ??
             if (databaseType == DatabaseType.UNKNOWN) {
                 DBNConnection testConnection = null;
                 try {
-                    testConnection = connectionHandler.getTestConnection();
+                    testConnection = connection.getTestConnection();
                     databaseType = ResourceUtil.getDatabaseType(testConnection);
                     databaseSettings.setDatabaseType(databaseType);
                 }  finally {

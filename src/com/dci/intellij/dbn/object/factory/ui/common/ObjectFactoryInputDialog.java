@@ -36,7 +36,7 @@ public class ObjectFactoryInputDialog extends DBNDialog<ObjectFactoryInputForm<?
 
     @Override
     public void doOKAction() {
-        Project project = getForm().getConnectionHandler().getProject();
+        Project project = getForm().getConnection().getProject();
         DatabaseObjectFactory factory = DatabaseObjectFactory.getInstance(project);
         ObjectFactoryInput factoryInput = getForm().createFactoryInput(null);
         if (factory.createObject(factoryInput)) {

@@ -40,7 +40,12 @@ import org.jdom.Element;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.UUID;
 
 import static com.dci.intellij.dbn.common.util.Commons.list;
 import static com.dci.intellij.dbn.vfs.VirtualFileStatus.MODIFIED;
@@ -276,37 +281,36 @@ public class DatabaseFileManager extends AbstractProjectComponent implements Per
                 ConnectionId connectionId = entry.getKey();
                 List<DBObjectRef<DBSchemaObject>> objectRefs = entry.getValue();
 
-                ConnectionHandler connectionHandler = connectionManager.getConnection(connectionId);
-                if (connectionHandler != null) {
-                    ConnectionDetailSettings connectionDetailSettings = connectionHandler.getSettings().getDetailSettings();
+                ConnectionHandler connection = connectionManager.getConnection(connectionId);
+                if (connection != null) {
+                    ConnectionDetailSettings connectionDetailSettings = connection.getSettings().getDetailSettings();
                     if (connectionDetailSettings.isRestoreWorkspace()) {
-                        reopenDatabaseEditors(objectRefs, connectionHandler);
+                        reopenDatabaseEditors(objectRefs, connection);
                     }
                 }
             }
         }
     }
 
-    private static void reopenDatabaseEditors(@NotNull List<DBObjectRef<DBSchemaObject>> objectRefs, @NotNull ConnectionHandler connectionHandler) {
-        Project project = connectionHandler.getProject();
-        ConnectionAction.invoke("opening database editors", false, connectionHandler, action ->
-                Progress.background(project, "Opening database editors (" + connectionHandler.getQualifiedName() + ")", true,
-                        (progress) -> {
-                            progress.setIndeterminate(true);
-                            progress.setText2(connectionHandler.getQualifiedName());
-                            DatabaseFileSystem databaseFileSystem = DatabaseFileSystem.getInstance();
+    private static void reopenDatabaseEditors(@NotNull List<DBObjectRef<DBSchemaObject>> objectRefs, @NotNull ConnectionHandler connection) {
+        Project project = connection.getProject();
+        ConnectionAction.invoke("opening database editors", false, connection, action ->
+                Progress.background(project, "Opening database editors (" + connection.getQualifiedName() + ")", true, progress -> {
+                    progress.setIndeterminate(true);
+                    progress.setText2(connection.getQualifiedName());
+                    DatabaseFileSystem databaseFileSystem = DatabaseFileSystem.getInstance();
 
-                            for (DBObjectRef<DBSchemaObject> objectRef : objectRefs) {
-                                if (progress.isCanceled()) continue;
-                                if (connectionHandler.canConnect()) {
-                                    DBSchemaObject object = objectRef.get(project);
-                                    if (object != null) {
-                                        progress.setText2(connectionHandler.getQualifiedName() + " - " + objectRef.getQualifiedNameWithType());
-                                        object.initChildren();
-                                        databaseFileSystem.openEditor(object, null, false, false);
-                                    }
-                                }
+                    for (DBObjectRef<DBSchemaObject> objectRef : objectRefs) {
+                        if (progress.isCanceled()) continue;
+                        if (connection.canConnect()) {
+                            DBSchemaObject object = objectRef.get(project);
+                            if (object != null) {
+                                progress.setText2(connection.getQualifiedName() + " - " + objectRef.getQualifiedNameWithType());
+                                object.initChildren();
+                                databaseFileSystem.openEditor(object, null, false, false);
                             }
-                        }));
+                        }
+                    }
+                }));
     }
 }

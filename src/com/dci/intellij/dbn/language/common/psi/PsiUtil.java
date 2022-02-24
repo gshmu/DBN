@@ -19,7 +19,12 @@ import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
-import com.intellij.psi.*;
+import com.intellij.psi.PsiComment;
+import com.intellij.psi.PsiDocumentManager;
+import com.intellij.psi.PsiElement;
+import com.intellij.psi.PsiFile;
+import com.intellij.psi.PsiManager;
+import com.intellij.psi.PsiWhiteSpace;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -38,9 +43,9 @@ public class PsiUtil {
             if (virtualFile != null) {
                 FileConnectionContextManager contextManager = FileConnectionContextManager.getInstance(psiElement.getProject());
                 SchemaId schemaId = contextManager.getDatabaseSchema(virtualFile);
-                ConnectionHandler connectionHandler = contextManager.getConnection(virtualFile);
-                if (schemaId != null && connectionHandler != null) {
-                    currentSchema = connectionHandler.getSchema(schemaId);
+                ConnectionHandler connection = contextManager.getConnection(virtualFile);
+                if (schemaId != null && connection != null) {
+                    currentSchema = connection.getSchema(schemaId);
                 }
 
             }

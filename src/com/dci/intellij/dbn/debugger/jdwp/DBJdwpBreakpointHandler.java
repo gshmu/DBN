@@ -97,7 +97,7 @@ public class DBJdwpBreakpointHandler extends DBBreakpointHandler<DBJdwpDebugProc
             VirtualMachineProxyImpl virtualMachineProxy = getVirtualMachineProxy();
             RequestManagerImpl requestsManager = getRequestsManager();
 
-            String programIdentifier = getProgramIdentifier(getConnectionHandler(), breakpoint);
+            String programIdentifier = getProgramIdentifier(getConnection(), breakpoint);
             if (programIdentifier != null) {
                 LineBreakpoint lineBreakpoint = getLineBreakpoint(getSession().getProject(), breakpoint);
 
@@ -157,7 +157,7 @@ public class DBJdwpBreakpointHandler extends DBBreakpointHandler<DBJdwpDebugProc
                 XBreakpointProperties properties = breakpoint.getProperties();
                 if (properties instanceof DBBreakpointProperties) {
                     DBBreakpointProperties breakpointProperties = (DBBreakpointProperties) properties;
-                    if (breakpointProperties.getConnectionHandler() == getConnectionHandler()) {
+                    if (breakpointProperties.getConnection() == getConnection()) {
                         prepareObjectClasses(breakpoint);
                     }
                 }
@@ -168,7 +168,7 @@ public class DBJdwpBreakpointHandler extends DBBreakpointHandler<DBJdwpDebugProc
     private void prepareObjectClasses(@NotNull final XLineBreakpoint<XBreakpointProperties> breakpoint) {
         RequestManagerImpl requestsManager = getRequestsManager();
 
-        String programIdentifier = getProgramIdentifier(getConnectionHandler(), breakpoint);
+        String programIdentifier = getProgramIdentifier(getConnection(), breakpoint);
         if (programIdentifier != null) {
             LineBreakpoint lineBreakpoint = getLineBreakpoint(getSession().getProject(), breakpoint);
             if (lineBreakpoint != null) {
@@ -186,7 +186,7 @@ public class DBJdwpBreakpointHandler extends DBBreakpointHandler<DBJdwpDebugProc
 
     private void prepareObjectClasses(final DBSchemaObject object, final DBContentType contentType) {
         RequestManagerImpl requestsManager = getRequestsManager();
-        String programIdentifier = getProgramIdentifier(getConnectionHandler(), object, contentType);
+        String programIdentifier = getProgramIdentifier(getConnection(), object, contentType);
 
         ClassPrepareRequest request = requestsManager.createClassPrepareRequest(GENERIC_CLASS_PREPARE_REQUESTOR, programIdentifier);
         if (request != null) {

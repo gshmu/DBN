@@ -13,24 +13,24 @@ import com.intellij.openapi.actionSystem.DefaultActionGroup;
 
 public class ConnectionActionGroup extends DefaultActionGroup {
 
-    public ConnectionActionGroup(ConnectionHandler connectionHandler) {
-        //add(new ConnectAction(connectionHandler));
-        add(new TransactionCommitAction(connectionHandler));
-        add(new TransactionRollbackAction(connectionHandler));
-        add(new AutoCommitToggleAction(connectionHandler));
-        add(new DatabaseLoggingToggleAction(connectionHandler));
+    public ConnectionActionGroup(ConnectionHandler connection) {
+        //add(new ConnectAction(connection));
+        add(new TransactionCommitAction(connection));
+        add(new TransactionRollbackAction(connection));
+        add(new AutoCommitToggleAction(connection));
+        add(new DatabaseLoggingToggleAction(connection));
         addSeparator();
-        add(new SQLConsoleOpenAction(connectionHandler));
-        add(new PendingTransactionsOpenAction(connectionHandler));
+        add(new SQLConsoleOpenAction(connection));
+        add(new PendingTransactionsOpenAction(connection));
         addSeparator();
-        add(new AutoConnectToggleAction(connectionHandler));
-        add(new DatabaseConnectAction(connectionHandler));
-        add(new DatabaseDisconnectAction(connectionHandler));
-        add(new DatabaseConnectivityTestAction(connectionHandler));
-        add(new BulkLoadAllObjectsAction(connectionHandler));
-        add(new MiscellaneousConnectionAction(connectionHandler));
+        add(new AutoConnectToggleAction(connection));
+        add(new DatabaseConnectAction(connection));
+        add(new DatabaseDisconnectAction(connection));
+        add(new DatabaseConnectivityTestAction(connection));
+        add(new BulkLoadAllObjectsAction(connection));
+        add(new MiscellaneousConnectionAction(connection));
         addSeparator();
-        add(new DatabaseInformationOpenAction(connectionHandler));
-        add(new ConnectionSettingsOpenAction(connectionHandler));
+        add(new DatabaseInformationOpenAction(connection));
+        add(new ConnectionSettingsOpenAction(connection));
     }
 }

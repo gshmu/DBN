@@ -1,6 +1,5 @@
 package com.dci.intellij.dbn.execution;
 
-import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.ConnectionId;
 import com.dci.intellij.dbn.connection.SessionId;
@@ -24,11 +23,10 @@ public abstract class LocalExecutionInput extends ExecutionInput{
     public LocalExecutionInput(Project project, ExecutionTarget executionTarget) {
         super(project, executionTarget);
 
-        ConnectionHandler connectionHandler = getConnection();
-        if (connectionHandler != null) {
-            if (DatabaseFeature.DATABASE_LOGGING.isSupported(connectionHandler)) {
-                connectionHandler = Failsafe.nn(connectionHandler);
-                options.set(ENABLE_LOGGING, connectionHandler.isLoggingEnabled());
+        ConnectionHandler connection = getConnection();
+        if (connection != null) {
+            if (DatabaseFeature.DATABASE_LOGGING.isSupported(connection)) {
+                options.set(ENABLE_LOGGING, connection.isLoggingEnabled());
             }
         }
     }
@@ -47,8 +45,8 @@ public abstract class LocalExecutionInput extends ExecutionInput{
 
     @Override
     public ConnectionId getConnectionId() {
-        ConnectionHandler connectionHandler = getConnection();
-        return connectionHandler == null ? null : connectionHandler.getConnectionId();
+        ConnectionHandler connection = getConnection();
+        return connection == null ? null : connection.getConnectionId();
     }
 
     /*********************************************************

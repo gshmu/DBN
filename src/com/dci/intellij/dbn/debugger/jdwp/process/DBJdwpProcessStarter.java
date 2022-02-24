@@ -30,8 +30,8 @@ public abstract class DBJdwpProcessStarter extends DBDebugProcessStarter {
 
     public static final Key<Integer> JDWP_DEBUGGER_PORT = new Key<Integer>("JDWP_DEBUGGER_PORT");
 
-    DBJdwpProcessStarter(ConnectionHandler connectionHandler) {
-        super(connectionHandler);
+    DBJdwpProcessStarter(ConnectionHandler connection) {
+        super(connection);
     }
 
     private static int findFreePort(int minPortNumber, int maxPortNumber) throws ExecutionException {

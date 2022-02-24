@@ -1,6 +1,5 @@
 package com.dci.intellij.dbn.editor.data;
 
-import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.Resources;
 import com.dci.intellij.dbn.database.DatabaseInterface;
 import com.dci.intellij.dbn.database.DatabaseMetadataInterface;
@@ -16,10 +15,9 @@ import java.util.List;
 public class DatasetEditorUtils {
     public static List<String> loadDistinctColumnValues(@NotNull DBColumn column) {
         try {
-            ConnectionHandler connectionHandler = column.getConnection();
             return DatabaseInterface.call(
                     true,
-                    connectionHandler,
+                    column.getConnection(),
                     (provider, connection) -> {
                         List<String> list = new ArrayList<>();
                         ResultSet resultSet = null;

@@ -56,7 +56,7 @@ public final class DBFileOpenHandle<T extends DBObject> {
     }
 
     public static boolean isFileOpening(@NotNull DBObject object) {
-        return REGISTRY.contains(object.getRef());
+        return REGISTRY.contains(object.ref());
     }
 
     public void init() {

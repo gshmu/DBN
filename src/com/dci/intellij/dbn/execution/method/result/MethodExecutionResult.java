@@ -66,7 +66,7 @@ public class MethodExecutionResult extends ExecutionResultBase<MethodExecutionRe
 
             ExecutionEngineSettings settings = ExecutionEngineSettings.getInstance(argument.getProject());
             int maxRecords = settings.getStatementExecutionSettings().getResultSetFetchBlockSize();
-            ResultSetDataModel dataModel = new ResultSetDataModel(resultSet, getConnectionHandler(), maxRecords);
+            ResultSetDataModel dataModel = new ResultSetDataModel(resultSet, getConnection(), maxRecords);
             cursorModels.put(DBObjectRef.of(argument), dataModel);
         }
     }
@@ -137,7 +137,7 @@ public class MethodExecutionResult extends ExecutionResultBase<MethodExecutionRe
 
     @Override
     @NotNull
-    public ConnectionHandler getConnectionHandler() {
+    public ConnectionHandler getConnection() {
         return getMethod().getConnection();
     }
 
@@ -169,7 +169,7 @@ public class MethodExecutionResult extends ExecutionResultBase<MethodExecutionRe
     }
 
     public ResultSetDataModel getTableModel(DBArgument argument) {
-        return cursorModels.get(argument.getRef());
+        return cursorModels.get(argument.ref());
     }
 
     public String getLogOutput() {

@@ -24,7 +24,7 @@ public final class DBDataTypeBundle extends StatefulDisposable.Base {
     private final Map<DBDataTypeDefinition, DBDataType> dataTypes = new ConcurrentHashMap<>();
 
     public DBDataTypeBundle(@NotNull ConnectionHandler connection) {
-        this.connection = connection.getRef();
+        this.connection = connection.ref();
     }
 
     @NotNull

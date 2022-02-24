@@ -28,11 +28,11 @@ public class DBSessionBrowserVirtualFile extends DBVirtualFileImpl implements Co
     private long modificationTimestamp = LocalTimeCounter.currentTime();
     private CharSequence content = "";
 
-    public DBSessionBrowserVirtualFile(ConnectionHandler connectionHandler) {
-        super(connectionHandler.getProject());
-        this.connectionHandlerRef = connectionHandler.getRef();
-        this.name = connectionHandler.getName() + " Sessions";
-        setCharset(connectionHandler.getSettings().getDetailSettings().getCharset());
+    public DBSessionBrowserVirtualFile(ConnectionHandler connection) {
+        super(connection.getProject());
+        this.connectionHandlerRef = connection.ref();
+        this.name = connection.getName() + " Sessions";
+        setCharset(connection.getSettings().getDetailSettings().getCharset());
     }
 
     @Override
@@ -83,8 +83,8 @@ public class DBSessionBrowserVirtualFile extends DBVirtualFileImpl implements Co
 
     @Override
     public VirtualFile getParent() {
-        ConnectionHandler connectionHandler = getConnection();
-        return connectionHandler.getPsiDirectory().getVirtualFile();
+        ConnectionHandler connection = getConnection();
+        return connection.getPsiDirectory().getVirtualFile();
     }
 
     @Override

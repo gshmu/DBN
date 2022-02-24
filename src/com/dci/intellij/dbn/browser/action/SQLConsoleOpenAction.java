@@ -28,7 +28,7 @@ public class SQLConsoleOpenAction extends GroupPopupAction {
         super("Open SQL Console", "SQL Console", Icons.FILE_SQL_CONSOLE);
     }
 
-    private static ConnectionHandler getConnectionHandler(@NotNull AnActionEvent e) {
+    private static ConnectionHandler getConnection(@NotNull AnActionEvent e) {
         Project project = Lookup.getProject(e);
         if (project != null) {
             DatabaseBrowserManager browserManager = DatabaseBrowserManager.getInstance(project);
@@ -40,24 +40,24 @@ public class SQLConsoleOpenAction extends GroupPopupAction {
     @Override
     protected void update(@NotNull AnActionEvent e, @NotNull Project project) {
         Presentation presentation = e.getPresentation();
-        ConnectionHandler connectionHandler = getConnectionHandler(e);
-        presentation.setEnabled(connectionHandler != null);
+        ConnectionHandler connection = getConnection(e);
+        presentation.setEnabled(connection != null);
         presentation.setText("Open SQL Console");
     }
 
     @Override
     protected AnAction[] getActions(AnActionEvent e) {
-        ConnectionHandler connectionHandler = getConnectionHandler(e);
+        ConnectionHandler connection = getConnection(e);
         List<AnAction> actions = new ArrayList<>();
-        if (connectionHandler != null) {
-            Collection<DBConsole> consoles = connectionHandler.getConsoleBundle().getConsoles();
+        if (connection != null) {
+            Collection<DBConsole> consoles = connection.getConsoleBundle().getConsoles();
             for (DBConsole console : consoles) {
                 actions.add(new SelectConsoleAction(console));
             }
             actions.add(Separator.getInstance());
-            actions.add(new SelectConsoleAction(connectionHandler, DBConsoleType.STANDARD));
-            if (DatabaseFeature.DEBUGGING.isSupported(connectionHandler)) {
-                actions.add(new SelectConsoleAction(connectionHandler, DBConsoleType.DEBUG));
+            actions.add(new SelectConsoleAction(connection, DBConsoleType.STANDARD));
+            if (DatabaseFeature.DEBUGGING.isSupported(connection)) {
+                actions.add(new SelectConsoleAction(connection, DBConsoleType.DEBUG));
             }
         }
         return actions.toArray(new AnAction[0]);
@@ -68,8 +68,8 @@ public class SQLConsoleOpenAction extends GroupPopupAction {
         private DBConsole console;
         private DBConsoleType consoleType;
 
-        SelectConsoleAction(@NotNull ConnectionHandler connectionHandler, @NotNull DBConsoleType consoleType) {
-            super("New " + consoleType.getName() + "...", connectionHandler);
+        SelectConsoleAction(@NotNull ConnectionHandler connection, @NotNull DBConsoleType consoleType) {
+            super("New " + consoleType.getName() + "...", connection);
             this.consoleType = consoleType;
         }
 
@@ -79,10 +79,10 @@ public class SQLConsoleOpenAction extends GroupPopupAction {
         }
 
         @Override
-        protected void actionPerformed(@NotNull AnActionEvent e, @NotNull Project project, @NotNull ConnectionHandler connectionHandler) {
+        protected void actionPerformed(@NotNull AnActionEvent e, @NotNull Project project, @NotNull ConnectionHandler connection) {
             if (console == null) {
                 DatabaseConsoleManager databaseConsoleManager = DatabaseConsoleManager.getInstance(project);
-                databaseConsoleManager.showCreateConsoleDialog(connectionHandler, consoleType);
+                databaseConsoleManager.showCreateConsoleDialog(connection, consoleType);
             } else {
                 FileEditorManager editorManager = FileEditorManager.getInstance(project);
                 editorManager.openFile(console.getVirtualFile(), true);

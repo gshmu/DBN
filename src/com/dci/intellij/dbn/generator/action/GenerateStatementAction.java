@@ -28,8 +28,8 @@ public abstract class GenerateStatementAction extends DumbAwareProjectAction imp
     @Override
     protected void actionPerformed(@NotNull AnActionEvent e, @NotNull Project project) {
         ConnectionAction.invoke("generating the statement", false, this,
-                (action) -> Progress.prompt(project, "Extracting select statement", true,
-                        (progress) -> {
+                action -> Progress.prompt(project, "Extracting select statement", true,
+                        progress -> {
                             StatementGeneratorResult result = generateStatement(project);
                             if (result.getMessages().hasErrors()) {
                                 Messages.showErrorDialog(project, "Error generating statement", result.getMessages());

@@ -9,8 +9,18 @@ import com.dci.intellij.dbn.common.event.ProjectEvents;
 import com.dci.intellij.dbn.common.notification.NotificationGroup;
 import com.dci.intellij.dbn.common.thread.Dispatch;
 import com.dci.intellij.dbn.common.thread.Progress;
-import com.dci.intellij.dbn.common.util.*;
-import com.dci.intellij.dbn.connection.*;
+import com.dci.intellij.dbn.common.util.CollectionUtil;
+import com.dci.intellij.dbn.common.util.Context;
+import com.dci.intellij.dbn.common.util.Documents;
+import com.dci.intellij.dbn.common.util.Editors;
+import com.dci.intellij.dbn.common.util.Messages;
+import com.dci.intellij.dbn.common.util.UserDataUtil;
+import com.dci.intellij.dbn.connection.ConnectionAction;
+import com.dci.intellij.dbn.connection.ConnectionHandler;
+import com.dci.intellij.dbn.connection.ConnectionId;
+import com.dci.intellij.dbn.connection.ConnectionManager;
+import com.dci.intellij.dbn.connection.SchemaId;
+import com.dci.intellij.dbn.connection.SessionId;
 import com.dci.intellij.dbn.connection.jdbc.DBNConnection;
 import com.dci.intellij.dbn.connection.mapping.FileConnectionContextManager;
 import com.dci.intellij.dbn.debugger.DBDebuggerType;
@@ -29,7 +39,11 @@ import com.dci.intellij.dbn.execution.statement.variables.StatementExecutionVari
 import com.dci.intellij.dbn.execution.statement.variables.ui.StatementExecutionInputsDialog;
 import com.dci.intellij.dbn.language.common.DBLanguagePsiFile;
 import com.dci.intellij.dbn.language.common.psi.BasePsiElement.MatchType;
-import com.dci.intellij.dbn.language.common.psi.*;
+import com.dci.intellij.dbn.language.common.psi.ChameleonPsiElement;
+import com.dci.intellij.dbn.language.common.psi.ExecVariablePsiElement;
+import com.dci.intellij.dbn.language.common.psi.ExecutablePsiElement;
+import com.dci.intellij.dbn.language.common.psi.PsiUtil;
+import com.dci.intellij.dbn.language.common.psi.RootPsiElement;
 import com.intellij.openapi.actionSystem.DataContext;
 import com.intellij.openapi.components.PersistentStateComponent;
 import com.intellij.openapi.components.State;
@@ -51,7 +65,12 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.sql.SQLException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import static com.dci.intellij.dbn.execution.ExecutionStatus.*;
@@ -238,7 +257,7 @@ public class StatementExecutionManager extends AbstractProjectComponent implemen
                                                 if (context.isNot(EXECUTING) && context.isNot(QUEUED)) {
                                                     if (sessionId == SessionId.POOL) {
                                                         Progress.background(project, "Executing statement", true,
-                                                                (progress) -> process(executionProcessor));
+                                                                progress -> process(executionProcessor));
                                                     } else {
                                                         StatementExecutionQueue queue = getExecutionQueue(connectionId, sessionId);
                                                         if (queue != null && !queue.contains(executionProcessor)) {
@@ -255,12 +274,12 @@ public class StatementExecutionManager extends AbstractProjectComponent implemen
     public void process(StatementExecutionProcessor executionProcessor) {
         String statementName = executionProcessor.getStatementName();
         try {
-            DBNConnection connection = null;
+            DBNConnection conn = null;
             try {
                 StatementExecutionInput executionInput = executionProcessor.getExecutionInput();
                 SchemaId schema = executionInput.getTargetSchemaId();
-                ConnectionHandler connectionHandler = Failsafe.nn(executionProcessor.getConnection());
-                connection = connectionHandler.getConnection(executionInput.getTargetSessionId(), schema);
+                ConnectionHandler connection = Failsafe.nn(executionProcessor.getConnection());
+                conn = connection.getConnection(executionInput.getTargetSessionId(), schema);
             } catch (SQLException e) {
                 sendErrorNotification(
                         NotificationGroup.EXECUTION,
@@ -270,8 +289,8 @@ public class StatementExecutionManager extends AbstractProjectComponent implemen
                 context.reset();
             }
 
-            if (connection != null) {
-                executionProcessor.execute(connection, false);
+            if (conn != null) {
+                executionProcessor.execute(conn, false);
             }
         } catch (ProcessCanceledException ignore) {
         } catch (SQLException e) {

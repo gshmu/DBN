@@ -27,11 +27,12 @@ public class ExecutionResultVariablesDialogAction extends AbstractExecutionResul
     protected void actionPerformed(@NotNull AnActionEvent e, @NotNull Project project, @NotNull StatementExecutionCursorResult executionResult) {
         StatementExecutionCursorProcessor executionProcessor = executionResult.getExecutionProcessor();
         StatementExecutionManager statementExecutionManager = StatementExecutionManager.getInstance(project);
+        String statementName = executionResult.getExecutionProcessor().getStatementName();
         statementExecutionManager.promptExecutionDialog(
                 executionProcessor,
                 DBDebuggerType.NONE,
-                () -> Progress.prompt(project, "Executing " + executionResult.getExecutionProcessor().getStatementName(), true,
-                        (progress) -> {
+                () -> Progress.prompt(project, "Executing " + statementName, true,
+                        progress -> {
                             try {
                                 executionProcessor.execute();
                             } catch (SQLException ex) {

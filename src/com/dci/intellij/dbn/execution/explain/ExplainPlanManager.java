@@ -60,36 +60,36 @@ public class ExplainPlanManager extends AbstractProjectComponent {
                 databaseFile.getVirtualFile(),
                 dataContext,
                 ()-> ConnectionAction.invoke("generating the explain plan", false, executable.getFile(),
-                        (action) -> Progress.prompt(getProject(), "Extracting explain plan for " + elementDescription, true,
-                                (progress) -> {
-                                    ConnectionHandler connectionHandler = action.getConnectionHandler();
+                        action -> Progress.prompt(getProject(), "Extracting explain plan for " + elementDescription, true,
+                                progress -> {
+                                    ConnectionHandler connection = action.getConnection();
                                     ExplainPlanResult explainPlanResult;
                                     try {
                                         explainPlanResult = DatabaseInterface.call(true,
-                                                connectionHandler,
-                                                (provider, connection) -> {
+                                                connection,
+                                                (provider, conn) -> {
                                                     SchemaId currentSchema = executable.getFile().getSchemaId();
-                                                    connectionHandler.setCurrentSchema(connection, currentSchema);
+                                                    connection.setCurrentSchema(conn, currentSchema);
                                                     Statement statement = null;
                                                     ResultSet resultSet = null;
                                                     try {
                                                         DatabaseMetadataInterface metadataInterface = provider.getMetadataInterface();
-                                                        metadataInterface.clearExplainPlanData(connection);
+                                                        metadataInterface.clearExplainPlanData(conn);
 
                                                         DatabaseCompatibilityInterface compatibilityInterface = provider.getCompatibilityInterface();
                                                         String explainPlanStatementPrefix = compatibilityInterface.getExplainPlanStatementPrefix();
                                                         String explainPlanQuery = explainPlanStatementPrefix + "\n" + executable.prepareStatementText();
-                                                        statement = connection.createStatement();
+                                                        statement = conn.createStatement();
                                                         statement.setFetchSize(500);
                                                         statement.execute(explainPlanQuery);
 
-                                                        resultSet = metadataInterface.loadExplainPlan(connection);
+                                                        resultSet = metadataInterface.loadExplainPlan(conn);
                                                         return new ExplainPlanResult(executable, resultSet);
 
                                                     } finally {
                                                         Resources.close(resultSet);
                                                         Resources.close(statement);
-                                                        Resources.rollbackSilently(connection);
+                                                        Resources.rollbackSilently(conn);
                                                     }
                                                 });
                                     } catch (SQLException e) {

@@ -49,8 +49,8 @@ public class SessionBrowserDetailsForm extends DBNFormImpl{
         currentSqlTabInfo.setObject(currentSqlPanel);
         detailsTabbedPane.addTab(currentSqlTabInfo);
 
-        ConnectionHandler connectionHandler = getConnectionHandler();
-        if (DatabaseFeature.EXPLAIN_PLAN.isSupported(connectionHandler)) {
+        ConnectionHandler connection = getConnection();
+        if (DatabaseFeature.EXPLAIN_PLAN.isSupported(connection)) {
             explainPlanPanel = new JPanel(new BorderLayout());
             TabInfo explainPlanTabInfo = new TabInfo(new JPanel());
             explainPlanTabInfo.setText("Explain Plan");
@@ -70,7 +70,7 @@ public class SessionBrowserDetailsForm extends DBNFormImpl{
     }
 
     @NotNull
-    private ConnectionHandler getConnectionHandler() {
+    private ConnectionHandler getConnection() {
         return getSessionBrowser().getConnection();
     }
 

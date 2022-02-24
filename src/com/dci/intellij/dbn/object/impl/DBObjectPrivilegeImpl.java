@@ -10,8 +10,8 @@ import java.sql.SQLException;
 
 public class DBObjectPrivilegeImpl extends DBPrivilegeImpl<DBPrivilegeMetadata> implements DBObjectPrivilege {
 
-    public DBObjectPrivilegeImpl(ConnectionHandler connectionHandler, DBPrivilegeMetadata metadata) throws SQLException {
-        super(connectionHandler, metadata);
+    public DBObjectPrivilegeImpl(ConnectionHandler connection, DBPrivilegeMetadata metadata) throws SQLException {
+        super(connection, metadata);
     }
 
     @NotNull

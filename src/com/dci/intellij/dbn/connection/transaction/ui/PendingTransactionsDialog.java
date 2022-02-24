@@ -93,10 +93,10 @@ public class PendingTransactionsDialog extends DBNDialog<PendingTransactionsForm
     private void executeActions(List<TransactionAction> actions) {
         DatabaseTransactionManager transactionManager = getTransactionManager();
         List<ConnectionHandler> connectionHandlers = new ArrayList<>(getForm().getConnectionHandlers());
-        for (ConnectionHandler connectionHandler : connectionHandlers) {
-            List<DBNConnection> connections = connectionHandler.getConnections(ConnectionType.MAIN, ConnectionType.SESSION);
-            for (DBNConnection connection : connections) {
-                transactionManager.execute(connectionHandler, connection, actions, true, null);
+        for (ConnectionHandler connection : connectionHandlers) {
+            List<DBNConnection> connections = connection.getConnections(ConnectionType.MAIN, ConnectionType.SESSION);
+            for (DBNConnection conn : connections) {
+                transactionManager.execute(connection, conn, actions, true, null);
             }
 
         }
@@ -108,8 +108,8 @@ public class PendingTransactionsDialog extends DBNDialog<PendingTransactionsForm
 
     private final TransactionListener transactionListener = new TransactionListener() {
         @Override
-        public void afterAction(@NotNull ConnectionHandler connectionHandler, DBNConnection connection, TransactionAction action, boolean succeeded) {
-            ConnectionManager connectionManager = ConnectionManager.getInstance(connectionHandler.getProject());
+        public void afterAction(@NotNull ConnectionHandler connection, DBNConnection conn, TransactionAction action, boolean succeeded) {
+            ConnectionManager connectionManager = ConnectionManager.getInstance(connection.getProject());
             if (!connectionManager.hasUncommittedChanges()) {
                 Dispatch.run(() -> {
                     renameAction(getCancelAction(), "Close");
