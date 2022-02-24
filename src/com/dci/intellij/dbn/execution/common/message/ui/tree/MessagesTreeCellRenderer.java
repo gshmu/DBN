@@ -83,22 +83,22 @@ public class MessagesTreeCellRenderer extends ColoredTreeCellRenderer {
                 CompilerMessagesObjectNode compilerMessagesObjectNode = (CompilerMessagesObjectNode) value;
                 DBSchemaObject object = compilerMessagesObjectNode.getObject();
 
-                ConnectionHandler connectionHandler;
+                ConnectionHandler connection;
                 if (object == null) {
                     DBObjectRef<DBSchemaObject> objectRef = compilerMessagesObjectNode.getObjectRef();
                     icon = objectRef.getObjectType().getIcon();
                     append(objectRef.getPath(), SimpleTextAttributes.REGULAR_ATTRIBUTES);
-                    connectionHandler = objectRef.resolveConnection();
+                    connection = objectRef.resolveConnection();
                 } else {
                     icon = compilerMessagesObjectNode.hasMessageChildren(MessageType.ERROR) ?
                             object.getIcon() :
                             object.getObjectType().getIcon();
                     append(object.getQualifiedName(), SimpleTextAttributes.REGULAR_ATTRIBUTES);
-                    connectionHandler = object.getConnection();
+                    connection = object.getConnection();
                 }
 
-                if (connectionHandler != null) {
-                    append(" - " + connectionHandler.getPresentableText(), SimpleTextAttributes.GRAY_ATTRIBUTES);
+                if (connection != null) {
+                    append(" - " + connection.getPresentableText(), SimpleTextAttributes.GRAY_ATTRIBUTES);
                 }
             }
             else if (value instanceof CompilerMessageNode) {
@@ -149,8 +149,8 @@ public class MessagesTreeCellRenderer extends ColoredTreeCellRenderer {
                             errorAttributes);
                 }
 
-                ConnectionHandler connectionHandler = message.getExecutionResult().getConnectionHandler();
-                append(" - Connection: " + connectionHandler.getName() + ": " + message.getExecutionResult().getExecutionDuration() + "ms", greyAttributes);
+                ConnectionHandler connection = message.getExecutionResult().getConnection();
+                append(" - Connection: " + connection.getName() + ": " + message.getExecutionResult().getExecutionDuration() + "ms", greyAttributes);
                 background = regularAttributes.getBgColor();
             }
             else if (value instanceof ExplainPlanMessageNode) {
@@ -169,9 +169,9 @@ public class MessagesTreeCellRenderer extends ColoredTreeCellRenderer {
                                         messageType == MessageType.INFO ? Icons.EXEC_MESSAGES_INFO : null;
 
                 append(message.getText(), regularAttributes);
-                ConnectionHandler connectionHandler = message.getConnectionHandler();
-                if (connectionHandler != null) {
-                    append(" - Connection: " + connectionHandler.getName(), greyAttributes);
+                ConnectionHandler connection = message.getConnection();
+                if (connection != null) {
+                    append(" - Connection: " + connection.getName(), greyAttributes);
                 }
                 background = regularAttributes.getBgColor();
             }

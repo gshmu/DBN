@@ -6,14 +6,14 @@ public class BasicDependencyAdapter implements ContentDependencyAdapter {
     public static BasicDependencyAdapter INSTANCE = new BasicDependencyAdapter();
 
     @Override
-    public boolean canConnect(ConnectionHandler connectionHandler) {
-        return connectionHandler != null && connectionHandler.canConnect() && connectionHandler.isValid();
+    public boolean canConnect(ConnectionHandler connection) {
+        return connection != null && connection.canConnect() && connection.isValid();
     }
 
     @Override
-    public boolean canLoad(ConnectionHandler connectionHandler) {
+    public boolean canLoad(ConnectionHandler connection) {
         //should reload if connection is valid
-        return canConnect(connectionHandler);
+        return canConnect(connection);
     }
 
     @Override

@@ -14,9 +14,11 @@ import com.intellij.openapi.project.Project;
 import com.intellij.util.ui.UIUtil;
 import org.jetbrains.annotations.NotNull;
 
-import javax.swing.*;
+import javax.swing.Icon;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
 import javax.swing.border.LineBorder;
-import java.awt.*;
+import java.awt.Color;
 
 public class DBNHeaderForm extends DBNFormImpl{
     public static final LineBorder BORDER = new LineBorder(UIUtil.getBoundsColor());
@@ -59,13 +61,13 @@ public class DBNHeaderForm extends DBNFormImpl{
         updateBorderAndBackground(presentable);
     }
 
-    public DBNHeaderForm(DBNForm parent, @NotNull ConnectionHandler connectionHandler) {
+    public DBNHeaderForm(DBNForm parent, @NotNull ConnectionHandler connection) {
         this(parent);
-        objectLabel.setText(connectionHandler.getName());
-        objectLabel.setIcon(connectionHandler.getIcon());
-        updateBorderAndBackground((Presentable) connectionHandler);
-        ConnectionId id = connectionHandler.getConnectionId();
-        Project project = connectionHandler.getProject();
+        objectLabel.setText(connection.getName());
+        objectLabel.setIcon(connection.getIcon());
+        updateBorderAndBackground((Presentable) connection);
+        ConnectionId id = connection.getConnectionId();
+        Project project = connection.getProject();
 
         ProjectEvents.subscribe(project, this, ConnectionHandlerStatusListener.TOPIC, (connectionId) -> {
             if (connectionId == id) {
@@ -79,18 +81,18 @@ public class DBNHeaderForm extends DBNFormImpl{
     }
 
     public void update(@NotNull DBObject object) {
-        ConnectionHandler connectionHandler = object.getConnection();
+        ConnectionHandler connection = object.getConnection();
 
-        String connectionName = connectionHandler.getName();
+        String connectionName = connection.getName();
         objectLabel.setText("[" + connectionName + "] " + object.getQualifiedName());
         objectLabel.setIcon(object.getIcon());
         updateBorderAndBackground((Presentable) object);
     }
 
     public void update(@NotNull DBObjectRef<?> objectRef) {
-        ConnectionHandler connectionHandler = objectRef.resolveConnection();
+        ConnectionHandler connection = objectRef.resolveConnection();
 
-        String connectionName = connectionHandler == null ? "UNKNOWN" : connectionHandler.getName();
+        String connectionName = connection == null ? "UNKNOWN" : connection.getName();
         objectLabel.setText("[" + connectionName + "] " + objectRef.getQualifiedName());
         objectLabel.setIcon(objectRef.getObjectType().getIcon());
         updateBorderAndBackground(objectRef);
@@ -105,12 +107,12 @@ public class DBNHeaderForm extends DBNFormImpl{
     }
 
     private void updateBorderAndBackground(ConnectionProvider connectionProvider) {
-        ConnectionHandler connectionHandler = connectionProvider.getConnection();
+        ConnectionHandler connection = connectionProvider.getConnection();
         Color background = null;
-        if (connectionHandler != null) {
-            Project project = connectionHandler.getProject();
+        if (connection != null) {
+            Project project = connection.getProject();
             if (getEnvironmentSettings(project).getVisibilitySettings().getDialogHeaders().value()) {
-                background = connectionHandler.getEnvironmentType().getColor();
+                background = connection.getEnvironmentType().getColor();
             }
         }
         mainPanel.setBackground(Commons.nvl(background, Colors.getLighterPanelBackground()));

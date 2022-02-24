@@ -7,7 +7,6 @@ import com.dci.intellij.dbn.common.options.BasicProjectConfiguration;
 import com.dci.intellij.dbn.common.options.ProjectConfiguration;
 import com.dci.intellij.dbn.common.options.setting.BooleanSetting;
 import com.dci.intellij.dbn.connection.ConnectionId;
-import com.dci.intellij.dbn.connection.config.ConnectionRef;
 import com.dci.intellij.dbn.object.common.DBObject;
 import com.dci.intellij.dbn.object.common.list.DBObjectList;
 import com.dci.intellij.dbn.object.filter.type.ui.ObjectTypeFilterSettingsForm;
@@ -58,11 +57,11 @@ public class ObjectTypeFilterSettings extends BasicProjectConfiguration<ProjectC
     private final BooleanSetting useMasterSettings = new BooleanSetting("use-master-settings", true);
 
     @EqualsAndHashCode.Exclude
-    private final ConnectionRef connectionRef;
+    private final ConnectionId connectionId;
 
-    public ObjectTypeFilterSettings(ProjectConfiguration parent, @Nullable ConnectionRef connectionRef) {
+    public ObjectTypeFilterSettings(ProjectConfiguration parent, @Nullable ConnectionId connectionId) {
         super(parent);
-        this.connectionRef = connectionRef;
+        this.connectionId = connectionId;
     }
 
     public ObjectTypeFilterSettings getMasterSettings() {
@@ -75,11 +74,11 @@ public class ObjectTypeFilterSettings extends BasicProjectConfiguration<ProjectC
     }
 
     private boolean isProjectLevel() {
-        return connectionRef == null;
+        return connectionId == null;
     }
 
     public ConnectionId getConnectionId() {
-        return connectionRef == null ? null : connectionRef.getConnectionId();
+        return connectionId;
     }
 
     @NotNull

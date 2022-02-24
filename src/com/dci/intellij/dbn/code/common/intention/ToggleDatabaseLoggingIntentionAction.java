@@ -28,11 +28,11 @@ public class ToggleDatabaseLoggingIntentionAction extends GenericIntentionAction
     @Override
     @NotNull
     public String getText() {
-        ConnectionHandler connectionHandler = getLastCheckedConnection();
-        if (Failsafe.check(connectionHandler)) {
-            DatabaseCompatibilityInterface compatibilityInterface = connectionHandler.getInterfaceProvider().getCompatibilityInterface();
+        ConnectionHandler connection = getLastCheckedConnection();
+        if (Failsafe.check(connection)) {
+            DatabaseCompatibilityInterface compatibilityInterface = connection.getInterfaceProvider().getCompatibilityInterface();
             String databaseLogName = compatibilityInterface.getDatabaseLogName();
-            boolean loggingEnabled = connectionHandler.isLoggingEnabled();
+            boolean loggingEnabled = connection.isLoggingEnabled();
             if (Strings.isEmpty(databaseLogName)) {
                 return loggingEnabled ? "Disable database logging" : "Enable database logging";
             } else {
@@ -45,9 +45,9 @@ public class ToggleDatabaseLoggingIntentionAction extends GenericIntentionAction
 
     @Override
     public Icon getIcon(int flags) {
-        ConnectionHandler connectionHandler = getLastCheckedConnection();
-        if (connectionHandler != null) {
-            return connectionHandler.isLoggingEnabled() ? Icons.EXEC_LOG_OUTPUT_DISABLE : Icons.EXEC_LOG_OUTPUT_ENABLE;
+        ConnectionHandler connection = getLastCheckedConnection();
+        if (connection != null) {
+            return connection.isLoggingEnabled() ? Icons.EXEC_LOG_OUTPUT_DISABLE : Icons.EXEC_LOG_OUTPUT_ENABLE;
         }
         return Icons.EXEC_LOG_OUTPUT_CONSOLE;
     }
@@ -56,9 +56,9 @@ public class ToggleDatabaseLoggingIntentionAction extends GenericIntentionAction
     ConnectionHandler getLastCheckedConnection() {
         PsiFile psiFile = Read.conditional(() -> PsiFileRef.from(lastChecked));
         if (psiFile != null) {
-            ConnectionHandler connectionHandler = getConnectionHandler(psiFile);
-            if (supportsLogging(connectionHandler)) {
-                return connectionHandler;
+            ConnectionHandler connection = getConnection(psiFile);
+            if (supportsLogging(connection)) {
+                return connection;
             }
         }
         return null;
@@ -75,23 +75,23 @@ public class ToggleDatabaseLoggingIntentionAction extends GenericIntentionAction
             }
 
             lastChecked = PsiFileRef.of(psiFile);
-            ConnectionHandler connectionHandler = getConnectionHandler(psiFile);
-            return supportsLogging(connectionHandler);
+            ConnectionHandler connection = getConnection(psiFile);
+            return supportsLogging(connection);
         }
         return false;
     }
 
-    private static boolean supportsLogging(ConnectionHandler connectionHandler) {
-        return Failsafe.check(connectionHandler) &&
-                !connectionHandler.isVirtual() &&
-                DatabaseFeature.DATABASE_LOGGING.isSupported(connectionHandler);
+    private static boolean supportsLogging(ConnectionHandler connection) {
+        return Failsafe.check(connection) &&
+                !connection.isVirtual() &&
+                DatabaseFeature.DATABASE_LOGGING.isSupported(connection);
     }
 
     @Override
     public void invoke(@NotNull final Project project, Editor editor, PsiFile psiFile) throws IncorrectOperationException {
-        ConnectionHandler connectionHandler = getConnectionHandler(psiFile);
-        if (connectionHandler != null && DatabaseFeature.DATABASE_LOGGING.isSupported(connectionHandler)) {
-            connectionHandler.setLoggingEnabled(!connectionHandler.isLoggingEnabled());
+        ConnectionHandler connection = getConnection(psiFile);
+        if (connection != null && DatabaseFeature.DATABASE_LOGGING.isSupported(connection)) {
+            connection.setLoggingEnabled(!connection.isLoggingEnabled());
         }
     }
 

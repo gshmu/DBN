@@ -23,10 +23,10 @@ public class ObjectHierarchyPanel2 extends JPanel {
         this.setLayout(new BorderLayout());
         JPanel panel = new JPanel();
         panel.setLayout(new BoxLayout(panel, BoxLayout.X_AXIS));
-        ConnectionHandler connectionHandler = Failsafe.nn(object.getConnection());
+        ConnectionHandler connection = Failsafe.nn(object.getConnection());
         JLabel connectionLabel = new JLabel(
-                connectionHandler.getName(),
-                connectionHandler.getIcon(),
+                connection.getName(),
+                connection.getIcon(),
                 SwingConstants.LEFT);
         add(connectionLabel);
         add(panel, BorderLayout.SOUTH );

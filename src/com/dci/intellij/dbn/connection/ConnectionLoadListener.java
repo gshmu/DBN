@@ -6,5 +6,5 @@ import java.util.EventListener;
 
 public interface ConnectionLoadListener extends EventListener {
     Topic<ConnectionLoadListener> TOPIC = Topic.create("meta-data load event", ConnectionLoadListener.class);
-    void contentsLoaded(ConnectionHandler connectionHandler);
+    void contentsLoaded(ConnectionHandler connection);
 }

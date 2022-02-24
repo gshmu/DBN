@@ -2,7 +2,6 @@ package com.dci.intellij.dbn.object.common.operation;
 
 import com.dci.intellij.dbn.common.AbstractProjectComponent;
 import com.dci.intellij.dbn.common.dispose.Failsafe;
-import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.database.DatabaseInterface;
 import com.dci.intellij.dbn.database.DatabaseMetadataInterface;
 import com.dci.intellij.dbn.object.DBConstraint;
@@ -24,9 +23,8 @@ public class DatabaseOperationManager extends AbstractProjectComponent {
     }
 
     public void enableConstraint(DBConstraint constraint) throws SQLException {
-        ConnectionHandler connectionHandler = constraint.getConnection();
         DatabaseInterface.run(true,
-                connectionHandler,
+                constraint.getConnection(),
                 (provider, connection) -> {
                     DatabaseMetadataInterface metadataInterface = provider.getMetadataInterface();
                     metadataInterface.enableConstraint(
@@ -39,9 +37,8 @@ public class DatabaseOperationManager extends AbstractProjectComponent {
     }
 
     public void disableConstraint(DBConstraint constraint) throws SQLException {
-        ConnectionHandler connectionHandler = constraint.getConnection();
         DatabaseInterface.run(true,
-                connectionHandler,
+                constraint.getConnection(),
                 (provider, connection) -> {
                     DatabaseMetadataInterface metadataInterface = provider.getMetadataInterface();
                     metadataInterface.disableConstraint(
@@ -54,9 +51,8 @@ public class DatabaseOperationManager extends AbstractProjectComponent {
     }
 
     public void enableTrigger(DBTrigger trigger) throws SQLException {
-        ConnectionHandler connectionHandler = trigger.getConnection();
         DatabaseInterface.run(true,
-                connectionHandler,
+                trigger.getConnection(),
                 (provider, connection) -> {
                     DatabaseMetadataInterface metadataInterface = provider.getMetadataInterface();
                     metadataInterface.enableTrigger(
@@ -68,9 +64,8 @@ public class DatabaseOperationManager extends AbstractProjectComponent {
     }
 
     public void disableTrigger(DBTrigger trigger) throws SQLException {
-        ConnectionHandler connectionHandler = trigger.getConnection();
         DatabaseInterface.run(true,
-                connectionHandler,
+                trigger.getConnection(),
                 (provider, connection) -> {
                     DatabaseMetadataInterface metadataInterface = provider.getMetadataInterface();
                     metadataInterface.disableTrigger(

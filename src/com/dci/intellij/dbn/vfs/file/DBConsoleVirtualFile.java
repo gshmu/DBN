@@ -36,8 +36,12 @@ import lombok.Getter;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import javax.swing.*;
-import java.io.*;
+import javax.swing.Icon;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.nio.charset.Charset;
 import java.util.List;
 import java.util.Objects;
@@ -51,20 +55,20 @@ public class DBConsoleVirtualFile extends DBObjectVirtualFile<DBConsole> impleme
     public DBConsoleVirtualFile(@NotNull DBConsole console) {
         super(console.getProject(), DBObjectRef.of(console));
 
-        ConnectionHandler connectionHandler = console.getConnection();
-        SchemaId schemaId = connectionHandler.getDefaultSchema();
-        SessionId sessionId = connectionHandler.getSessionBundle().getMainSession().getId();
+        ConnectionHandler connection = console.getConnection();
+        SchemaId schemaId = connection.getDefaultSchema();
+        SessionId sessionId = connection.getSessionBundle().getMainSession().getId();
         connectionContext = new CustomFileConnectionContext(this, sessionId, schemaId);
 
-        setCharset(connectionHandler.getSettings().getDetailSettings().getCharset());
+        setCharset(connection.getSettings().getDetailSettings().getCharset());
     }
 
     public void setText(String text) {
         if (getObject().getConsoleType() == DBConsoleType.DEBUG && Strings.isEmpty(text)) {
-            ConnectionHandler connectionHandler = getConnection();
-            Project project = connectionHandler.getProject();
+            ConnectionHandler connection = getConnection();
+            Project project = connection.getProject();
 
-            DatabaseDebuggerInterface debuggerInterface = connectionHandler.getInterfaceProvider().getDebuggerInterface();
+            DatabaseDebuggerInterface debuggerInterface = connection.getInterfaceProvider().getDebuggerInterface();
             CodeStyleCaseSettings styleCaseSettings = DBLCodeStyleManager.getInstance(project).getCodeStyleCaseSettings(PSQLLanguage.INSTANCE);
             text = debuggerInterface.getDebugConsoleTemplate(styleCaseSettings);
         }
@@ -73,8 +77,8 @@ public class DBConsoleVirtualFile extends DBObjectVirtualFile<DBConsole> impleme
 
     @Override
     public PsiFile initializePsiFile(DatabaseFileViewProvider fileViewProvider, Language language) {
-        ConnectionHandler connectionHandler = getConnection();
-        DBLanguageDialect languageDialect = connectionHandler.resolveLanguageDialect(language);
+        ConnectionHandler connection = getConnection();
+        DBLanguageDialect languageDialect = connection.resolveLanguageDialect(language);
         return languageDialect == null ? null : fileViewProvider.initializePsiFile(languageDialect);
     }
 

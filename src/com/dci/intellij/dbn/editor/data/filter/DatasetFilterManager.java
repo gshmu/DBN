@@ -141,8 +141,8 @@ public class DatasetFilterManager extends AbstractProjectComponent implements Pe
     }
 
     public DatasetFilterGroup getFilterGroup(@NotNull DBDataset dataset) {
-        ConnectionHandler connectionHandler = Failsafe.nn(dataset.getConnection());
-        ConnectionId connectionId = connectionHandler.getConnectionId();
+        ConnectionHandler connection = Failsafe.nn(dataset.getConnection());
+        ConnectionId connectionId = connection.getConnectionId();
         String datasetName = dataset.getQualifiedName();
         return getFilterGroup(connectionId, datasetName);
     }

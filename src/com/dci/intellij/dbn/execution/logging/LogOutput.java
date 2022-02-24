@@ -57,11 +57,11 @@ public class LogOutput {
     }
 
     public static LogOutput createSysOutput(LogOutputContext context, long timestamp, String message, boolean clearBuffer) {
-        ConnectionHandler connectionHandler = context.getConnectionHandler();
-        Project project = connectionHandler.getProject();
+        ConnectionHandler connection = context.getConnection();
+        Project project = connection.getProject();
         Formatter formatter = Formatter.getInstance(project);
         String date = formatter.formatDateTime(new Date(timestamp));
-        String text = date + ": " + connectionHandler.getName();
+        String text = date + ": " + connection.getName();
         VirtualFile sourceFile = context.getSourceFile();
         if (sourceFile != null) {
             text += " / " + sourceFile.getName();

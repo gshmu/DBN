@@ -90,7 +90,7 @@ public class HTMLDataExportProcessor extends DataExportProcessor{
 
 
     @Override
-    public void performExport(DataExportModel model, DataExportInstructions instructions, ConnectionHandler connectionHandler) throws DataExportException {
+    public void performExport(DataExportModel model, DataExportInstructions instructions, ConnectionHandler connection) throws DataExportException {
         StringBuilder buffer = new StringBuilder();
         buffer.append("<html>\n");
         buffer.append("    <head>\n");
@@ -114,7 +114,7 @@ public class HTMLDataExportProcessor extends DataExportProcessor{
 
         buffer.append("            </tr>\n");
 
-        Formatter formatter = getFormatter(connectionHandler.getProject());
+        Formatter formatter = getFormatter(connection.getProject());
 
         for (int rowIndex=0; rowIndex < model.getRowCount(); rowIndex++) {
             buffer.append("            <tr>\n");

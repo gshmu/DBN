@@ -17,25 +17,25 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 public class PendingTransactionsTableModel extends StatefulDisposable.Base implements DBNReadonlyTableModel {
-    private final ConnectionHandlerRef connectionHandler;
+    private final ConnectionHandlerRef connection;
     private final List<DBNConnection> connections;
 
-    PendingTransactionsTableModel(ConnectionHandler connectionHandler) {
-        this.connectionHandler = connectionHandler.getRef();
-        this.connections = connectionHandler.getConnections(
+    PendingTransactionsTableModel(ConnectionHandler connection) {
+        this.connection = connection.ref();
+        this.connections = connection.getConnections(
                 ConnectionType.MAIN,
                 ConnectionType.SESSION,
                 ConnectionType.DEBUG,
                 ConnectionType.DEBUGGER);
     }
 
-    public ConnectionHandler getConnectionHandler() {
-        return connectionHandler.ensure();
+    public ConnectionHandler getConnection() {
+        return connection.ensure();
     }
 
     @NotNull
     public Project getProject() {
-        return getConnectionHandler().getProject();
+        return getConnection().getProject();
     }
 
     @NotNull

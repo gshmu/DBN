@@ -17,25 +17,25 @@ public class LogOutputContext {
         STOPPED,     // interrupted by user
         CLOSED      // cancelled completely (console closed)
     }
-    private final ConnectionHandlerRef connectionHandler;
+    private final ConnectionHandlerRef connection;
     private final WeakRef<VirtualFile> sourceFile;
     private WeakRef<Process> process;
     private Status status = Status.NEW;
     private boolean hideEmptyLines = false;
 
-    public LogOutputContext(@NotNull ConnectionHandler connectionHandler) {
-        this(connectionHandler, null, null);
+    public LogOutputContext(@NotNull ConnectionHandler connection) {
+        this(connection, null, null);
     }
 
-    public LogOutputContext(@NotNull ConnectionHandler connectionHandler, @Nullable VirtualFile sourceFile, @Nullable Process process) {
-        this.connectionHandler = connectionHandler.getRef();
+    public LogOutputContext(@NotNull ConnectionHandler connection, @Nullable VirtualFile sourceFile, @Nullable Process process) {
+        this.connection = connection.ref();
         this.sourceFile = WeakRef.of(sourceFile);
         this.process = WeakRef.of(process);
     }
 
     @NotNull
-    public ConnectionHandler getConnectionHandler() {
-        return connectionHandler.ensure();
+    public ConnectionHandler getConnection() {
+        return connection.ensure();
     }
 
     @Nullable
@@ -78,7 +78,7 @@ public class LogOutputContext {
     }
 
     public boolean matches(LogOutputContext context) {
-        return getConnectionHandler() == context.getConnectionHandler() &&
+        return getConnection() == context.getConnection() &&
                 Commons.match(getSourceFile(), context.getSourceFile());
     }
 
@@ -131,6 +131,6 @@ public class LogOutputContext {
     }
 
     public ConnectionId getConnectionId() {
-        return connectionHandler.getConnectionId();
+        return connection.getConnectionId();
     }
 }

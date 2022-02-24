@@ -94,7 +94,7 @@ public class SessionBrowser extends DisposableUserDataHolderBase implements File
         if (shouldLoad(force)) {
             ConnectionAction.invoke("loading the sessions", false, this,
                     action -> Progress.background(getProject(), "Loading sessions", false,
-                            (progress) -> {
+                            progress -> {
                                 if (shouldLoad(force)) {
                                     DBSessionBrowserVirtualFile databaseFile = getDatabaseFile();
                                     try {

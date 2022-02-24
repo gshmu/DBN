@@ -12,30 +12,30 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 public class ResourceMonitorTransactionsTableModel implements DBNReadonlyTableModel, Disposable {
-    private final ConnectionHandlerRef connectionHandler;
-    private DBNConnection connection;
+    private final ConnectionHandlerRef connection;
+    private DBNConnection conn;
 
-    public ResourceMonitorTransactionsTableModel(ConnectionHandler connectionHandler, @Nullable DBNConnection connection) {
-        this.connectionHandler = connectionHandler.getRef();
-        this.connection = connection;
+    public ResourceMonitorTransactionsTableModel(ConnectionHandler connection, @Nullable DBNConnection conn) {
+        this.connection = connection.ref();
+        this.conn = conn;
     }
 
-    public ConnectionHandler getConnectionHandler() {
-        return connectionHandler.ensure();
+    public ConnectionHandler getConnection() {
+        return connection.ensure();
     }
 
     @NotNull
     public Project getProject() {
-        return getConnectionHandler().getProject();
+        return getConnection().getProject();
     }
 
-    public DBNConnection getConnection() {
-        return connection;
+    public DBNConnection getConn() {
+        return conn;
     }
 
     @Override
     public int getRowCount() {
-        PendingTransactionBundle dataChanges = connection == null ? null : connection.getDataChanges();
+        PendingTransactionBundle dataChanges = conn == null ? null : conn.getDataChanges();
         return dataChanges == null ? 0 : dataChanges.size();
     }
 
@@ -58,7 +58,7 @@ public class ResourceMonitorTransactionsTableModel implements DBNReadonlyTableMo
 
     @Override
     public Object getValueAt(int rowIndex, int columnIndex) {
-        PendingTransactionBundle dataChanges = connection == null ? null : connection.getDataChanges();
+        PendingTransactionBundle dataChanges = conn == null ? null : conn.getDataChanges();
         if (dataChanges != null) {
             return dataChanges.getEntries().get(rowIndex);
         }
@@ -67,6 +67,6 @@ public class ResourceMonitorTransactionsTableModel implements DBNReadonlyTableMo
 
     @Override
     public void dispose() {
-        connection = null;
+        conn = null;
     }
 }

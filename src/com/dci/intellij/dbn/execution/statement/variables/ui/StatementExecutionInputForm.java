@@ -74,12 +74,12 @@ public class StatementExecutionInputForm extends DBNFormImpl {
 
         variablesPanel.setLayout(new BoxLayout(variablesPanel, BoxLayout.Y_AXIS));
 
-        ConnectionHandler connectionHandler = executionProcessor.getConnection();
+        ConnectionHandler connection = executionProcessor.getConnection();
         if (debuggerType.isDebug()) {
             debuggerVersionPanel.setVisible(true);
             debuggerVersionPanel.setBorder(Borders.BOTTOM_LINE_BORDER);
-            DatabaseDebuggerManager debuggerManager = DatabaseDebuggerManager.getInstance(getProject());
-            String debuggerVersion = debuggerManager.getDebuggerVersion(connectionHandler);
+            DatabaseDebuggerManager debuggerManager = DatabaseDebuggerManager.getInstance(ensureProject());
+            String debuggerVersion = debuggerManager.getDebuggerVersion(connection);
             debuggerVersionLabel.setText(debuggerVersion);
             debuggerTypeLabel.setText(debuggerType.name());
         } else {
@@ -177,14 +177,14 @@ public class StatementExecutionInputForm extends DBNFormImpl {
     }
 
     void updatePreview() {
-        ConnectionHandler connectionHandler = Failsafe.nn(executionProcessor.getConnection());
+        ConnectionHandler connection = Failsafe.nn(executionProcessor.getConnection());
         SchemaId currentSchema = executionProcessor.getTargetSchema();
-        Project project = connectionHandler.getProject();
+        Project project = connection.getProject();
         String previewText = this.statementText;
 
         StatementExecutionVariablesBundle executionVariables = executionProcessor.getExecutionVariables();
         if (executionVariables != null) {
-            previewText = executionVariables.prepareStatementText(connectionHandler, this.statementText, true);
+            previewText = executionVariables.prepareStatementText(connection, this.statementText, true);
 
             for (StatementExecutionVariableValueForm variableValueForm : variableValueForms) {
                 String errorText = executionVariables.getError(variableValueForm.getVariable());
@@ -196,20 +196,20 @@ public class StatementExecutionInputForm extends DBNFormImpl {
 
 
         if (previewDocument == null) {
-            DBLanguageDialect languageDialect = connectionHandler.getLanguageDialect(SQLLanguage.INSTANCE);
+            DBLanguageDialect languageDialect = connection.getLanguageDialect(SQLLanguage.INSTANCE);
             DBLanguagePsiFile selectStatementFile = DBLanguagePsiFile.createFromText(
                     project,
                     "preview",
                     languageDialect,
                     previewText,
-                    connectionHandler,
+                    connection,
                     currentSchema);
 
             previewDocument = Documents.getDocument(selectStatementFile);
 
             viewer = (EditorEx) EditorFactory.getInstance().createViewer(previewDocument, project);
             viewer.setEmbeddedIntoDialogWrapper(true);
-            Editors.initEditorHighlighter(viewer, SQLLanguage.INSTANCE, connectionHandler);
+            Editors.initEditorHighlighter(viewer, SQLLanguage.INSTANCE, connection);
             Editors.setEditorReadonly(viewer, true);
 
             JScrollPane viewerScrollPane = viewer.getScrollPane();

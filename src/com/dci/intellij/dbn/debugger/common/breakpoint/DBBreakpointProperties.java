@@ -8,5 +8,5 @@ public interface DBBreakpointProperties {
     ConnectionId getConnectionId();
 
     @Nullable
-    ConnectionHandler getConnectionHandler();
+    ConnectionHandler getConnection();
 }

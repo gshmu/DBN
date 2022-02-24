@@ -42,15 +42,15 @@ public class DatabaseLoggingResult extends ExecutionResultBase<DatabaseLoggingRe
     @Override
     @NotNull
     public String getName() {
-        ConnectionHandler connectionHandler = getConnectionHandler();
+        ConnectionHandler connection = getConnection();
         VirtualFile sourceFile = context.getSourceFile();
         if (sourceFile == null) {
-            DatabaseCompatibilityInterface compatibilityInterface = connectionHandler.getInterfaceProvider().getCompatibilityInterface();
+            DatabaseCompatibilityInterface compatibilityInterface = connection.getInterfaceProvider().getCompatibilityInterface();
             String databaseLogName = compatibilityInterface.getDatabaseLogName();
 
-            return connectionHandler.getName() + " - " + Commons.nvl(databaseLogName, "Log Output");
+            return connection.getName() + " - " + Commons.nvl(databaseLogName, "Log Output");
         } else {
-            return connectionHandler.getName() + " - " + sourceFile.getName();
+            return connection.getName() + " - " + sourceFile.getName();
         }
     }
 
@@ -66,7 +66,7 @@ public class DatabaseLoggingResult extends ExecutionResultBase<DatabaseLoggingRe
     @NotNull
     @Override
     public Project getProject() {
-        return getConnectionHandler().getProject();
+        return getConnection().getProject();
     }
 
     @Override
@@ -81,8 +81,8 @@ public class DatabaseLoggingResult extends ExecutionResultBase<DatabaseLoggingRe
 
     @NotNull
     @Override
-    public ConnectionHandler getConnectionHandler() {
-        return context.getConnectionHandler();
+    public ConnectionHandler getConnection() {
+        return context.getConnection();
     }
 
     @Override

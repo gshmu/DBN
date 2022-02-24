@@ -85,8 +85,8 @@ public class DBSchemaImpl extends DBObjectImpl<DBSchemaMetadata> implements DBSc
     private DBObjectList<DBCluster> clusters;
     private DBObjectList<DBDatabaseLink> databaseLinks;
 
-    public DBSchemaImpl(ConnectionHandler connectionHandler, DBSchemaMetadata metadata) throws SQLException {
-        super(connectionHandler, metadata);
+    public DBSchemaImpl(ConnectionHandler connection, DBSchemaMetadata metadata) throws SQLException {
+        super(connection, metadata);
     }
 
     @Override
@@ -442,16 +442,16 @@ public class DBSchemaImpl extends DBObjectImpl<DBSchemaMetadata> implements DBSc
     @Override
     public void refreshObjectsStatus() throws SQLException {
         Set<BrowserTreeNode> refreshNodes = resetObjectsStatus();
-        ConnectionHandler connectionHandler = this.getConnection();
+        ConnectionHandler connection = this.getConnection();
 
         DatabaseInterface.run(true,
-                connectionHandler,
-                (provider, connection) -> {
+                connection,
+                (provider, conn) -> {
 
                     ResultSet resultSet = null;
                     DatabaseMetadataInterface metadataInterface = provider.getMetadataInterface();
                     try {
-                        resultSet = metadataInterface.loadInvalidObjects(getName(), connection);
+                        resultSet = metadataInterface.loadInvalidObjects(getName(), conn);
                         while (resultSet != null && resultSet.next()) {
                             String objectName = resultSet.getString("OBJECT_NAME");
                             DBSchemaObject schemaObject = (DBSchemaObject) getChildObjectNoLoad(objectName);
@@ -477,7 +477,7 @@ public class DBSchemaImpl extends DBObjectImpl<DBSchemaMetadata> implements DBSc
                     }
 
                     try {
-                        resultSet = metadataInterface.loadDebugObjects(getName(), connection);
+                        resultSet = metadataInterface.loadDebugObjects(getName(), conn);
                         while (resultSet != null && resultSet.next()) {
                             String objectName = resultSet.getString("OBJECT_NAME");
                             DBSchemaObject schemaObject = (DBSchemaObject) getChildObjectNoLoad(objectName);

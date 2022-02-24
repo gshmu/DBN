@@ -18,8 +18,8 @@ public class CSVDataExportProcessor extends CustomDataExportProcessor{
     }
 
     @Override
-    public void performExport(DataExportModel model, DataExportInstructions instructions, ConnectionHandler connectionHandler) throws DataExportException {
+    public void performExport(DataExportModel model, DataExportInstructions instructions, ConnectionHandler connection) throws DataExportException {
         instructions.setValueSeparator(",");
-        super.performExport(model, instructions, connectionHandler);
+        super.performExport(model, instructions, connection);
     }
 }

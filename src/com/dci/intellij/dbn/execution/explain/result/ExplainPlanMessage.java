@@ -36,7 +36,7 @@ public class ExplainPlanMessage extends ConsoleMessage {
         //executionResult.getExecutionProcessor().navigateToEditor(requestFocus);
     }
 
-    public ConnectionHandler getConnectionHandler() {
-        return explainPlanResult.getConnectionHandler();
+    public ConnectionHandler getConnection() {
+        return explainPlanResult.getConnection();
     }
 }

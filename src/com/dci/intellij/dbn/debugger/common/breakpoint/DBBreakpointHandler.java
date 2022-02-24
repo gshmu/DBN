@@ -53,7 +53,7 @@ public abstract class DBBreakpointHandler<T extends DBDebugProcess> extends XBre
             XBreakpointProperties properties = breakpoint.getProperties();
             if (properties instanceof DBBreakpointProperties) {
                 DBBreakpointProperties breakpointProperties = (DBBreakpointProperties) properties;
-                if (getConnectionHandler() == breakpointProperties.getConnectionHandler()) {
+                if (getConnection() == breakpointProperties.getConnection()) {
                     registerDatabaseBreakpoint(breakpoint);
                 }
             }
@@ -65,7 +65,7 @@ public abstract class DBBreakpointHandler<T extends DBDebugProcess> extends XBre
         XBreakpointProperties properties = breakpoint.getProperties();
         if (properties instanceof DBBreakpointProperties) {
             DBBreakpointProperties breakpointProperties = (DBBreakpointProperties) properties;
-            if (getConnectionHandler() == breakpointProperties.getConnectionHandler()) {
+            if (getConnection() == breakpointProperties.getConnection()) {
                 unregisterDatabaseBreakpoint(breakpoint, temporary);
             }
         }
@@ -95,12 +95,12 @@ public abstract class DBBreakpointHandler<T extends DBDebugProcess> extends XBre
         return getDebugProcess().getConsole();
     }
 
-    protected ConnectionHandler getConnectionHandler() {
-        return getDebugProcess().getConnectionHandler();
+    protected ConnectionHandler getConnection() {
+        return getDebugProcess().getConnection();
     }
 
     protected DatabaseDebuggerInterface getDebuggerInterface() {
-        return getConnectionHandler().getInterfaceProvider().getDebuggerInterface();
+        return getConnection().getInterfaceProvider().getDebuggerInterface();
     }
 
     public abstract void registerDefaultBreakpoint(DBMethod method);

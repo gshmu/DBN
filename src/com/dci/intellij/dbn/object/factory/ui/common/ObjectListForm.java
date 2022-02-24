@@ -27,13 +27,13 @@ public abstract class ObjectListForm<T extends ObjectFactoryInput> extends DBNFo
     private JPanel listPanel;
     private JPanel actionsPanel;
     private JLabel newLabel;
-    private final ConnectionHandlerRef connectionHandler;
+    private final ConnectionHandlerRef connection;
 
     private final List<ObjectFactoryInputForm<T>> inputForms = DisposableContainers.list(this);
 
-    public ObjectListForm(DBNComponent parent, @NotNull ConnectionHandler connectionHandler) {
+    public ObjectListForm(DBNComponent parent, @NotNull ConnectionHandler connection) {
         super(parent);
-        this.connectionHandler = connectionHandler.getRef();
+        this.connection = connection.ref();
         listPanel.setLayout(new BoxLayout(listPanel, BoxLayout.Y_AXIS));
 
         ActionToolbar actionToolbar = Actions.createActionToolbar(actionsPanel,
@@ -50,8 +50,8 @@ public abstract class ObjectListForm<T extends ObjectFactoryInput> extends DBNFo
         return mainPanel;
     }
 
-    public ConnectionHandler getConnectionHandler() {
-        return connectionHandler.ensure();
+    public ConnectionHandler getConnection() {
+        return connection.ensure();
     }
 
     protected abstract ObjectFactoryInputForm<T> createObjectDetailsPanel(int index);

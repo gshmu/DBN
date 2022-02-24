@@ -1,7 +1,6 @@
 package com.dci.intellij.dbn.data.record;
 
 
-import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.PooledConnection;
 import com.dci.intellij.dbn.connection.Resources;
 import com.dci.intellij.dbn.connection.jdbc.DBNPreparedStatement;
@@ -58,9 +57,8 @@ public class DatasetRecord implements Disposable {
             }
         }
 
-        ConnectionHandler connectionHandler = dataset.getConnection();
         PooledConnection.run(true,
-                connectionHandler,
+                dataset.getConnection(),
                 connection -> {
                     DBNPreparedStatement statement = null;
                     DBNResultSet resultSet = null;

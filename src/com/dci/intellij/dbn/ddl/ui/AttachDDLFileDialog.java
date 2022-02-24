@@ -9,7 +9,8 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
 import org.jetbrains.annotations.NotNull;
 
-import javax.swing.*;
+import javax.swing.AbstractAction;
+import javax.swing.Action;
 import java.awt.event.ActionEvent;
 import java.util.List;
 
@@ -78,8 +79,8 @@ public class AttachDDLFileDialog extends DBNDialog<SelectDDLFileForm> {
             SelectDDLFileForm component = getForm();
             component.selectNone();
             if (showLookupOption && component.isDoNotPromptSelected()) {
-                ConnectionHandler connectionHandler = getObject().getConnection();
-                connectionHandler.getSettings().getDetailSettings().setEnableDdlFileBinding(false);
+                ConnectionHandler connection = getObject().getConnection();
+                connection.getSettings().getDetailSettings().setEnableDdlFileBinding(false);
             }
             close(2);
         }
@@ -93,11 +94,11 @@ public class AttachDDLFileDialog extends DBNDialog<SelectDDLFileForm> {
         DDLFileAttachmentManager fileAttachmentManager = DDLFileAttachmentManager.getInstance(project);
         List<VirtualFile> virtualFiles = component.getSelection();
         for (VirtualFile virtualFile : virtualFiles) {
-            fileAttachmentManager.attachDDLFile(object.getRef(), virtualFile);
+            fileAttachmentManager.attachDDLFile(object.ref(), virtualFile);
         }
         if (showLookupOption && component.isDoNotPromptSelected()) {
-            ConnectionHandler connectionHandler = object.getConnection();
-            connectionHandler.getSettings().getDetailSettings().setEnableDdlFileBinding(false);
+            ConnectionHandler connection = object.getConnection();
+            connection.getSettings().getDetailSettings().setEnableDdlFileBinding(false);
         }
 
         super.doOKAction();

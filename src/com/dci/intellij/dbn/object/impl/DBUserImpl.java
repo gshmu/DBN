@@ -8,7 +8,12 @@ import com.dci.intellij.dbn.common.util.Strings;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.database.DatabaseCompatibilityInterface;
 import com.dci.intellij.dbn.database.common.metadata.def.DBUserMetadata;
-import com.dci.intellij.dbn.object.*;
+import com.dci.intellij.dbn.object.DBGrantedPrivilege;
+import com.dci.intellij.dbn.object.DBGrantedRole;
+import com.dci.intellij.dbn.object.DBRole;
+import com.dci.intellij.dbn.object.DBSchema;
+import com.dci.intellij.dbn.object.DBSystemPrivilege;
+import com.dci.intellij.dbn.object.DBUser;
 import com.dci.intellij.dbn.object.common.DBObject;
 import com.dci.intellij.dbn.object.common.DBObjectBundle;
 import com.dci.intellij.dbn.object.common.DBObjectImpl;
@@ -22,7 +27,7 @@ import com.dci.intellij.dbn.object.type.DBObjectType;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import javax.swing.*;
+import javax.swing.Icon;
 import java.sql.SQLException;
 import java.util.LinkedList;
 import java.util.List;
@@ -35,8 +40,8 @@ public class DBUserImpl extends DBObjectImpl<DBUserMetadata> implements DBUser {
     private DBObjectList<DBGrantedRole> roles;
     private DBObjectList<DBGrantedPrivilege> privileges;
 
-    public DBUserImpl(ConnectionHandler connectionHandler, DBUserMetadata metadata) throws SQLException {
-        super(connectionHandler, metadata);
+    public DBUserImpl(ConnectionHandler connection, DBUserMetadata metadata) throws SQLException {
+        super(connection, metadata);
     }
 
     @Nullable

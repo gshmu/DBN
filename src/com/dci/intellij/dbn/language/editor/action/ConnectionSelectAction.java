@@ -15,14 +15,14 @@ import com.intellij.openapi.vfs.VirtualFile;
 import org.jetbrains.annotations.NotNull;
 
 public class ConnectionSelectAction extends DumbAwareProjectAction {
-    private final ConnectionHandler connectionHandler;
+    private final ConnectionHandler connection;
 
-    ConnectionSelectAction(ConnectionHandler connectionHandler) {
+    ConnectionSelectAction(ConnectionHandler connection) {
         super();
         Presentation presentation = getTemplatePresentation();
-        presentation.setText(connectionHandler == null ? "No Connection" : connectionHandler.getQualifiedName(), false);
-        presentation.setIcon(connectionHandler == null ? Icons.SPACE : connectionHandler.getIcon());
-        this.connectionHandler = connectionHandler;
+        presentation.setText(connection == null ? "No Connection" : connection.getQualifiedName(), false);
+        presentation.setIcon(connection == null ? Icons.SPACE : connection.getIcon());
+        this.connection = connection;
     }
 
     @Override
@@ -30,7 +30,7 @@ public class ConnectionSelectAction extends DumbAwareProjectAction {
         Editor editor = Lookup.getEditor(e);
         if (editor != null) {
             FileConnectionContextManager contextManager = FileConnectionContextManager.getInstance(project);
-            contextManager.setConnection(editor, connectionHandler);
+            contextManager.setConnection(editor, connection);
         }
     }
 
@@ -43,7 +43,7 @@ public class ConnectionSelectAction extends DumbAwareProjectAction {
             enabled = false;
         } else {
             if (virtualFile != null && virtualFile.getFileType() instanceof DBLanguageFileType) {
-                if (connectionHandler == null) {
+                if (connection == null) {
                     enabled = true;
                 }
             } else {

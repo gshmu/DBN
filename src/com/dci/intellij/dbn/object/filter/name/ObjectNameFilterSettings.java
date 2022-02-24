@@ -4,7 +4,6 @@ import com.dci.intellij.dbn.common.filter.Filter;
 import com.dci.intellij.dbn.common.options.BasicProjectConfiguration;
 import com.dci.intellij.dbn.connection.ConnectionId;
 import com.dci.intellij.dbn.connection.config.ConnectionFilterSettings;
-import com.dci.intellij.dbn.connection.config.ConnectionRef;
 import com.dci.intellij.dbn.object.common.DBObject;
 import com.dci.intellij.dbn.object.filter.name.ui.ObjectNameFilterSettingsForm;
 import com.dci.intellij.dbn.object.type.DBObjectType;
@@ -37,19 +36,15 @@ public class ObjectNameFilterSettings
     private final Map<DBObjectType, Filter<DBObject>> objectFilterMap = new EnumMap<>(DBObjectType.class);
 
     @EqualsAndHashCode.Exclude
-    private final ConnectionRef connectionRef;
+    private final ConnectionId connectionId;
 
     @EqualsAndHashCode.Exclude
     private final Set<TreeModelListener> listeners = new HashSet<>();
 
 
-    public ObjectNameFilterSettings(ConnectionFilterSettings parent, ConnectionRef connectionRef) {
+    public ObjectNameFilterSettings(ConnectionFilterSettings parent, ConnectionId connectionId) {
         super(parent);
-        this.connectionRef = connectionRef;
-    }
-
-    public ConnectionId getConnectionId() {
-        return connectionRef.getConnectionId();
+        this.connectionId = connectionId;
     }
 
     public void addFilter(ObjectNameFilter filter) {

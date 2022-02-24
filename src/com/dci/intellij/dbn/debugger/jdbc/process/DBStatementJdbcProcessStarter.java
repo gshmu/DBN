@@ -7,13 +7,13 @@ import com.intellij.xdebugger.XDebugSession;
 import org.jetbrains.annotations.NotNull;
 
 public class DBStatementJdbcProcessStarter extends DBDebugProcessStarter {
-    DBStatementJdbcProcessStarter(ConnectionHandler connectionHandler) {
-        super(connectionHandler);
+    DBStatementJdbcProcessStarter(ConnectionHandler connection) {
+        super(connection);
     }
 
     @NotNull
     @Override
     public XDebugProcess start(@NotNull XDebugSession session) {
-        return new DBStatementJdbcDebugProcess(session, getConnectionHandler());
+        return new DBStatementJdbcDebugProcess(session, getConnection());
     }
 }

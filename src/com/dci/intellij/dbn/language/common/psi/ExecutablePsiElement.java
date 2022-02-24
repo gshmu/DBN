@@ -83,9 +83,9 @@ public class ExecutablePsiElement extends NamedPsiElement implements Cloneable<E
     public SchemaId getSchemaChangeTargetId() {
         BasePsiElement subjectPsiElement = findFirstPsiElement(SUBJECT);
         if (subjectPsiElement != null) {
-            ConnectionHandler connectionHandler = getConnectionHandler();
-            if (connectionHandler != null) {
-                return connectionHandler.getSchemaId(subjectPsiElement.getText());
+            ConnectionHandler connection = getConnection();
+            if (connection != null) {
+                return connection.getSchemaId(subjectPsiElement.getText());
             }
         }
         return null;

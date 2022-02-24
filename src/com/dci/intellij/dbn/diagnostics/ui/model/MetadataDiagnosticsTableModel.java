@@ -23,7 +23,7 @@ public class MetadataDiagnosticsTableModel extends AbstractDiagnosticsTableModel
 
     public MetadataDiagnosticsTableModel(ConnectionHandler connection) {
         super(connection.getProject());
-        this.connection = connection.getRef();
+        this.connection = connection.ref();
     }
 
     @NotNull

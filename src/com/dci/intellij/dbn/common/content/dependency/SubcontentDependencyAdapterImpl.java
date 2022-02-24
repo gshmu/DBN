@@ -28,8 +28,8 @@ public class SubcontentDependencyAdapterImpl extends BasicDependencyAdapter impl
     }
 
     @Override
-    public boolean canLoad(ConnectionHandler connectionHandler) {
-        return canConnect(connectionHandler) && getSourceContent().isLoaded();
+    public boolean canLoad(ConnectionHandler connection) {
+        return canConnect(connection) && getSourceContent().isLoaded();
     }
 
     @Override

@@ -21,8 +21,12 @@ import com.intellij.util.LocalTimeCounter;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import javax.swing.*;
-import java.io.*;
+import javax.swing.Icon;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.nio.charset.Charset;
 
 public class DBDatasetFilterVirtualFile extends DBVirtualFileImpl implements DBParseableVirtualFile {
@@ -35,15 +39,15 @@ public class DBDatasetFilterVirtualFile extends DBVirtualFileImpl implements DBP
         this.datasetRef = DBObjectRef.of(dataset);
         this.content = content;
         name = dataset.getName();
-        ConnectionHandler connectionHandler = Failsafe.nn(getConnection());
-        setCharset(connectionHandler.getSettings().getDetailSettings().getCharset());
+        ConnectionHandler connection = Failsafe.nn(getConnection());
+        setCharset(connection.getSettings().getDetailSettings().getCharset());
         putUserData(PARSE_ROOT_ID_KEY, "subquery");
     }
 
     @Override
     public PsiFile initializePsiFile(DatabaseFileViewProvider fileViewProvider, Language language) {
-        ConnectionHandler connectionHandler = Failsafe.nn(getConnection());
-        DBLanguageDialect languageDialect = connectionHandler.resolveLanguageDialect(language);
+        ConnectionHandler connection = Failsafe.nn(getConnection());
+        DBLanguageDialect languageDialect = connection.resolveLanguageDialect(language);
         return languageDialect == null ? null : fileViewProvider.initializePsiFile(languageDialect);
     }
 

@@ -35,8 +35,8 @@ public class DBMethodJdwpRunner extends DBProgramRunner<MethodExecutionInput> {
     }
 
     @Override
-    protected DBDebugProcessStarter createProcessStarter(ConnectionHandler connectionHandler) {
-        return new DBMethodJdwpProcessStarter(connectionHandler);
+    protected DBDebugProcessStarter createProcessStarter(ConnectionHandler connection) {
+        return new DBMethodJdwpProcessStarter(connection);
     }
 
     @Override

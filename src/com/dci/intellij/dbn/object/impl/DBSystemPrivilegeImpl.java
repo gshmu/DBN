@@ -15,8 +15,8 @@ import static com.dci.intellij.dbn.object.common.property.DBObjectProperty.ROOT_
 
 public class DBSystemPrivilegeImpl extends DBPrivilegeImpl<DBPrivilegeMetadata> implements DBSystemPrivilege {
 
-    public DBSystemPrivilegeImpl(ConnectionHandler connectionHandler, DBPrivilegeMetadata metadata) throws SQLException {
-        super(connectionHandler, metadata);
+    public DBSystemPrivilegeImpl(ConnectionHandler connection, DBPrivilegeMetadata metadata) throws SQLException {
+        super(connection, metadata);
     }
 
     @Override

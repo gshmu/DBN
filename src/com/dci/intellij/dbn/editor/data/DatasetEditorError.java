@@ -28,9 +28,9 @@ public class DatasetEditorError {
     @EqualsAndHashCode.Exclude
     private final Set<ChangeListener> changeListeners = new HashSet<>();
 
-    public DatasetEditorError(ConnectionHandler connectionHandler, Exception exception) {
+    public DatasetEditorError(ConnectionHandler connection, Exception exception) {
         this.message = exception.getMessage();
-        DBObject messageObject = resolveMessageObject(connectionHandler, exception);
+        DBObject messageObject = resolveMessageObject(connection, exception);
         this.messageObject = DBObjectRef.of(messageObject);
     }
 
@@ -39,13 +39,13 @@ public class DatasetEditorError {
     }
 
     @Nullable
-    private static DBObject resolveMessageObject(ConnectionHandler connectionHandler, Exception exception) {
+    private static DBObject resolveMessageObject(ConnectionHandler connection, Exception exception) {
         DBObject messageObject = null;
         if (exception instanceof SQLException) {
-            DatabaseMessageParserInterface messageParserInterface = connectionHandler.getInterfaceProvider().getMessageParserInterface();
+            DatabaseMessageParserInterface messageParserInterface = connection.getInterfaceProvider().getMessageParserInterface();
             DatabaseObjectIdentifier objectIdentifier = messageParserInterface.identifyObject((SQLException) exception);
             if (objectIdentifier != null) {
-                messageObject = connectionHandler.getObjectBundle().getObject(objectIdentifier);
+                messageObject = connection.getObjectBundle().getObject(objectIdentifier);
             }
         }
         return messageObject;

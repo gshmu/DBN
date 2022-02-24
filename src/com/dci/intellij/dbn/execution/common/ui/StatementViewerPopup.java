@@ -38,7 +38,7 @@ public class StatementViewerPopup implements Disposable {
         Document document = Documents.ensureDocument(previewFile);
         viewer = (EditorEx) EditorFactory.getInstance().createViewer(document, project);
         viewer.setEmbeddedIntoDialogWrapper(true);
-        Editors.initEditorHighlighter(viewer, SQLLanguage.INSTANCE, executionResult.getConnectionHandler());
+        Editors.initEditorHighlighter(viewer, SQLLanguage.INSTANCE, executionResult.getConnection());
         viewer.setBackgroundColor(Colors.getEditorCaretRowBackground());
 
         JScrollPane viewerScrollPane = viewer.getScrollPane();

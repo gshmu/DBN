@@ -68,7 +68,7 @@ public class DataExportManager extends AbstractProjectComponent implements Persi
     public void exportSortableTableContent(
             SortableTable table,
             DataExportInstructions instructions,
-            ConnectionHandler connectionHandler,
+            ConnectionHandler connection,
             @NotNull Runnable successCallback) {
         Project project = getProject();
         boolean isSelection = instructions.getScope() == DataExportInstructions.Scope.SELECTION;
@@ -76,7 +76,7 @@ public class DataExportManager extends AbstractProjectComponent implements Persi
         try {
             DataExportProcessor processor = getExportProcessor(instructions.getFormat());
             if (processor != null) {
-                processor.export(exportModel, instructions, connectionHandler);
+                processor.export(exportModel, instructions, connection);
                 DataExportInstructions.Destination destination = instructions.getDestination();
                 if (destination == DataExportInstructions.Destination.CLIPBOARD) {
                     successCallback.run();

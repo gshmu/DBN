@@ -13,16 +13,18 @@ import com.intellij.util.ui.JBUI;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import javax.swing.*;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.ToolTipManager;
 
 public class SimpleBrowserForm extends DatabaseBrowserForm{
     private JPanel mainPanel;
     private JScrollPane browserScrollPane;
     private final DatabaseBrowserTree browserTree;
 
-    public SimpleBrowserForm(@NotNull TabbedBrowserForm parent, @NotNull ConnectionHandler connectionHandler) {
+    public SimpleBrowserForm(@NotNull TabbedBrowserForm parent, @NotNull ConnectionHandler connection) {
         super(parent);
-        browserTree = createBrowserTree(connectionHandler);
+        browserTree = createBrowserTree(connection);
     }
 
     public SimpleBrowserForm(@NotNull Project project) {
@@ -31,8 +33,8 @@ public class SimpleBrowserForm extends DatabaseBrowserForm{
     }
 
     @NotNull
-    private DatabaseBrowserTree createBrowserTree(@Nullable ConnectionHandler connectionHandler) {
-        DatabaseBrowserTree browserTree = new DatabaseBrowserTree(this, connectionHandler);
+    private DatabaseBrowserTree createBrowserTree(@Nullable ConnectionHandler connection) {
+        DatabaseBrowserTree browserTree = new DatabaseBrowserTree(this, connection);
         browserScrollPane.setViewportView(browserTree);
         browserScrollPane.setBorder(JBUI.Borders.emptyTop(1));
         ToolTipManager.sharedInstance().registerComponent(browserTree);
@@ -44,16 +46,16 @@ public class SimpleBrowserForm extends DatabaseBrowserForm{
 
     @Nullable
     public ConnectionId getConnectionId(){
-        ConnectionHandler connectionHandler = getConnectionHandler();
-        return connectionHandler == null ? null : connectionHandler.getConnectionId();
+        ConnectionHandler connection = getConnection();
+        return connection == null ? null : connection.getConnectionId();
     }
 
     @Nullable
-    public ConnectionHandler getConnectionHandler(){
+    public ConnectionHandler getConnection(){
         DatabaseBrowserTree browserTree = getBrowserTree();
         if (browserTree.getModel() instanceof TabbedBrowserTreeModel) {
             TabbedBrowserTreeModel treeModel = (TabbedBrowserTreeModel) browserTree.getModel();
-            return treeModel.getConnectionHandler();
+            return treeModel.getConnection();
         }
         return null;
     }

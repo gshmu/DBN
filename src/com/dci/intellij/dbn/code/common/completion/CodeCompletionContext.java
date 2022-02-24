@@ -47,7 +47,7 @@ public class CodeCompletionContext {
 
     private boolean extended;
     private final PsiFileRef<DBLanguagePsiFile> file;
-    private final ConnectionHandlerRef connectionHandler;
+    private final ConnectionHandlerRef connection;
     private final ProjectCodeStyleSettings codeStyleSettings;
     private final CodeCompletionSettings codeCompletionSettings;
     private final CompletionParameters parameters;
@@ -70,7 +70,7 @@ public class CodeCompletionContext {
         this.parameters = parameters;
         this.result = result;
         this.extended = parameters.getCompletionType() == CompletionType.SMART;
-        this.connectionHandler = ConnectionHandlerRef.of(file.getConnection());
+        this.connection = ConnectionHandlerRef.of(file.getConnection());
 
         PsiElement position = parameters.getPosition();
         if (position instanceof PsiComment) {
@@ -115,8 +115,8 @@ public class CodeCompletionContext {
     }
 
     @Nullable
-    public ConnectionHandler getConnectionHandler() {
-        return ConnectionHandlerRef.get(connectionHandler);
+    public ConnectionHandler getConnection() {
+        return ConnectionHandlerRef.get(connection);
     }
 
     public CodeCompletionFilterSettings getCodeCompletionFilterSettings() {
@@ -135,8 +135,8 @@ public class CodeCompletionContext {
     }
 
     public boolean isLiveConnection() {
-        ConnectionHandler connectionHandler = getConnectionHandler();
-        return connectionHandler != null && !connectionHandler.isVirtual();
+        ConnectionHandler connection = getConnection();
+        return connection != null && !connection.isVirtual();
     }
 
     public void queue(Runnable runnable) {

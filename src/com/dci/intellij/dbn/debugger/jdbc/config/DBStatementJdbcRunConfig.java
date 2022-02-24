@@ -41,10 +41,10 @@ public class DBStatementJdbcRunConfig extends DBStatementRunConfig {
                     "The database connection is down or method has been dropped.");
         }
 
-        ConnectionHandler connectionHandler = getMethod().getCache();
-        if (!DatabaseFeature.DEBUGGING.isSupported(connectionHandler)){
+        ConnectionHandler connection = getMethod().getCache();
+        if (!DatabaseFeature.DEBUGGING.isSupported(connection)){
             throw new RuntimeConfigurationError(
-                    "Debugging is not supported for " + connectionHandler.getDatabaseType().getDisplayName() +" databases.");
+                    "Debugging is not supported for " + connection.getDatabaseType().getDisplayName() +" databases.");
         }*/
     }
 }

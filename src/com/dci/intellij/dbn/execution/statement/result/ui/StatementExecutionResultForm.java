@@ -101,8 +101,8 @@ public class StatementExecutionResultForm extends ExecutionResultFormBase<Statem
         Dispatch.run(() -> {
             StatementExecutionCursorResult executionResult = getExecutionResult();
             ResultSetDataModel<?, ?> dataModel = executionResult.getTableModel();
-            ConnectionHandler connectionHandler = executionResult.getConnectionHandler();
-            String connectionName = connectionHandler.getPresentableText();
+            ConnectionHandler connection = executionResult.getConnection();
+            String connectionName = connection.getPresentableText();
             SessionId sessionId = executionResult.getExecutionInput().getTargetSessionId();
             String connectionType =
                     sessionId == SessionId.MAIN ? " (main)" :
@@ -116,7 +116,7 @@ public class StatementExecutionResultForm extends ExecutionResultFormBase<Statem
             String fetchDurationInfo = fetchDuration == -1 ? "" : " / fetched in " + fetchDuration + " ms.";
 
             statusLabel.setText(connectionName + connectionType + ": " + rowCount + " records " + partialResultInfo + executionDurationInfo + fetchDurationInfo );
-            statusLabel.setIcon(connectionHandler.getIcon());
+            statusLabel.setIcon(connection.getIcon());
         });
     }
 

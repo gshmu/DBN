@@ -40,10 +40,10 @@ public class DatasetEditorMouseListener extends MouseAdapter {
 
                 if (table.getSelectedRowCount() <= 1 && table.getSelectedColumnCount() <= 1) {
                     table.cancelEditing();
-                    boolean oldEditingSatus = table.isEditingEnabled();
+                    boolean oldEditingStatus = table.isEditingEnabled();
                     table.setEditingEnabled(false);
                     table.selectCell(table.rowAtPoint(mousePoint), table.columnAtPoint(mousePoint));
-                    table.setEditingEnabled(oldEditingSatus);
+                    table.setEditingEnabled(oldEditingStatus);
                 }
 
                 table.showPopupMenu(event, cell, cell.getColumnInfo());

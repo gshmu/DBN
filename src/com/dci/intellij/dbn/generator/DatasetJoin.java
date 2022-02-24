@@ -58,7 +58,7 @@ class DatasetJoin {
 
     protected boolean contains(DBDataset... datasets) {
         for (DBDataset dataset : datasets) {
-            if (!dataset1.equals(dataset.getRef()) && !dataset2.equals(dataset.getRef())) {
+            if (!dataset1.equals(dataset.ref()) && !dataset2.equals(dataset.ref())) {
                 return false;
             }
         }

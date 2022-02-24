@@ -12,23 +12,23 @@ import org.jetbrains.annotations.NotNull;
 
 public class HideEmptySchemasToggleAction extends AbstractConnectionToggleAction {
 
-    HideEmptySchemasToggleAction(ConnectionHandler connectionHandler) {
-        super("Hide Empty Schemas", connectionHandler);
+    HideEmptySchemasToggleAction(ConnectionHandler connection) {
+        super("Hide Empty Schemas", connection);
 
     }
     @Override
     public boolean isSelected(@NotNull AnActionEvent e) {
-        ConnectionHandler connectionHandler = getConnectionHandler();
-        return connectionHandler.getSettings().getFilterSettings().isHideEmptySchemas();
+        ConnectionHandler connection = getConnection();
+        return connection.getSettings().getFilterSettings().isHideEmptySchemas();
     }
 
     @Override
     public void setSelected(@NotNull AnActionEvent e, boolean state) {
-        ConnectionHandler connectionHandler = getConnectionHandler();
-        connectionHandler.getSettings().getFilterSettings().setHideEmptySchemas(state);
-        ConnectionId connectionId = connectionHandler.getConnectionId();
+        ConnectionHandler connection = getConnection();
+        connection.getSettings().getFilterSettings().setHideEmptySchemas(state);
+        ConnectionId connectionId = connection.getConnectionId();
         ProjectEvents.notify(
-                connectionHandler.getProject(),
+                connection.getProject(),
                 ObjectFilterChangeListener.TOPIC,
                 (listener) -> listener.nameFiltersChanged(connectionId, Constant.array(DBObjectType.SCHEMA)));
 

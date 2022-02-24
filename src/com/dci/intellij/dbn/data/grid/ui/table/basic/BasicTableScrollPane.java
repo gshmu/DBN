@@ -11,8 +11,11 @@ import com.intellij.ui.border.CustomLineBorder;
 import com.intellij.ui.components.JBScrollPane;
 import com.intellij.util.Alarm;
 
-import javax.swing.*;
-import java.awt.*;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.ScrollPaneConstants;
+import java.awt.Component;
+import java.awt.Font;
 import java.awt.event.MouseWheelEvent;
 
 public class BasicTableScrollPane extends JBScrollPane{
@@ -37,7 +40,7 @@ public class BasicTableScrollPane extends JBScrollPane{
                 if (font == null) {
                     font = resultTable.getFont();
                 }
-                float size = font.getSize() + e.getWheelRotation();
+                float size = font.getSize() - e.getWheelRotation();
                 if (size > 7 && size < 20) {
                     font = Fonts.deriveFont(font, size);
                     float defaultSize = Fonts.getLabelFont().getSize();

@@ -35,8 +35,8 @@ public class DBStatementJdwpRunner extends DBProgramRunner<StatementExecutionInp
     }
 
     @Override
-    protected DBDebugProcessStarter createProcessStarter(ConnectionHandler connectionHandler) {
-        return new DBStatementJdwpProcessStarter(connectionHandler);
+    protected DBDebugProcessStarter createProcessStarter(ConnectionHandler connection) {
+        return new DBStatementJdwpProcessStarter(connection);
     }
 
     @Override

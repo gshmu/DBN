@@ -14,23 +14,23 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 public class BulkLoadAllObjectsAction extends AbstractConnectionAction {
-    public BulkLoadAllObjectsAction(ConnectionHandler connectionHandler) {
-        super("Load All Objects", null, Icons.DATA_EDITOR_RELOAD_DATA, connectionHandler);
+    public BulkLoadAllObjectsAction(ConnectionHandler connection) {
+        super("Load All Objects", null, Icons.DATA_EDITOR_RELOAD_DATA, connection);
     }
 
     @Override
-    protected void actionPerformed(@NotNull AnActionEvent e, @NotNull Project project, @NotNull ConnectionHandler connectionHandler) {
+    protected void actionPerformed(@NotNull AnActionEvent e, @NotNull Project project, @NotNull ConnectionHandler connection) {
         Progress.prompt(
                 project,
-                connectionHandler.getMetaLoadTitle(), true,
-                (progress) -> {
-                    DBObjectListContainer objectListContainer = connectionHandler.getObjectBundle().getObjectLists();
+                connection.getMetaLoadTitle(), true,
+                progress -> {
+                    DBObjectListContainer objectListContainer = connection.getObjectBundle().getObjectLists();
                     objectListContainer.visitObjects(DBObjectRecursiveLoaderVisitor.INSTANCE, false);
                 });
     }
 
     @Override
-    protected void update(@NotNull AnActionEvent e, @NotNull Presentation presentation, @NotNull Project project, @Nullable ConnectionHandler connectionHandler) {
+    protected void update(@NotNull AnActionEvent e, @NotNull Presentation presentation, @NotNull Project project, @Nullable ConnectionHandler connection) {
         presentation.setVisible(Diagnostics.isBulkActionsEnabled());
     }
 }

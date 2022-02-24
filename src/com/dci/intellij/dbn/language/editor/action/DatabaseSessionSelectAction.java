@@ -49,10 +49,10 @@ public class DatabaseSessionSelectAction extends DumbAwareProjectAction {
                 PsiFile currentFile = PsiUtil.getPsiFile(project, virtualFile);
                 if (currentFile instanceof DBLanguagePsiFile) {
                     FileConnectionMappingManager connectionMappingManager = getComponent(e, FileConnectionMappingManager.class);
-                    ConnectionHandler connectionHandler = connectionMappingManager.getCache(virtualFile);
-                    if (connectionHandler != null) {
-                        DBNConnection connection = connectionHandler.getConnectionPool().getSessionConnection(session.getId());
-                        enabled = connection == null || !connection.hasDataChanges();
+                    ConnectionHandler connection = connectionMappingManager.getCache(virtualFile);
+                    if (connection != null) {
+                        DBNConnection conn = connection.getConnectionPool().getSessionConnection(session.getId());
+                        enabled = conn == null || !conn.hasDataChanges();
                     }
                 }
 */

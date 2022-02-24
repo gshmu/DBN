@@ -29,9 +29,9 @@ public class CompilerResult implements Disposable, NotificationSupport {
     private CompilerAction compilerAction;
     private boolean error = false;
 
-    public CompilerResult(CompilerAction compilerAction, ConnectionHandler connectionHandler, DBSchema schema, DBObjectType objectType, String objectName) {
-        object = new DBObjectRef<>(schema.getRef(), objectType, objectName);
-        init(connectionHandler, schema, objectName, compilerAction);
+    public CompilerResult(CompilerAction compilerAction, ConnectionHandler connection, DBSchema schema, DBObjectType objectType, String objectName) {
+        object = new DBObjectRef<>(schema.ref(), objectType, objectName);
+        init(connection, schema, objectName, compilerAction);
     }
 
     public CompilerResult(CompilerAction compilerAction, DBSchemaObject object) {
@@ -46,20 +46,20 @@ public class CompilerResult implements Disposable, NotificationSupport {
         compilerMessages.add(compilerMessage);
     }
 
-    private void init(ConnectionHandler connectionHandler, DBSchema schema, String objectName, CompilerAction compilerAction) {
+    private void init(ConnectionHandler connection, DBSchema schema, String objectName, CompilerAction compilerAction) {
         this.compilerAction = compilerAction;
         DBContentType contentType = compilerAction.getContentType();
 
         try {
             DatabaseInterface.run(true,
-                    connectionHandler,
-                    (provider, connection) -> {
+                    connection,
+                    (provider, conn) -> {
                         ResultSet resultSet = null;
                         try {
                             resultSet = provider.getMetadataInterface().loadCompileObjectErrors(
                                     schema.getName(),
                                     objectName,
-                                    connection);
+                                    conn);
 
                             while (resultSet != null && resultSet.next()) {
                                 CompilerMessage errorMessage = new CompilerMessage(this, resultSet);
@@ -134,8 +134,8 @@ public class CompilerResult implements Disposable, NotificationSupport {
     public Project getProject() {
         DBSchemaObject object = DBObjectRef.get(this.object);
         if (object == null) {
-            ConnectionHandler connectionHandler = this.object.resolveConnection();
-            if (connectionHandler != null) return connectionHandler.getProject();
+            ConnectionHandler connection = this.object.resolveConnection();
+            if (connection != null) return connection.getProject();
         } else {
             return object.getProject();
         }

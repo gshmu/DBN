@@ -6,12 +6,12 @@ import com.intellij.xdebugger.XDebugSession;
 import org.jetbrains.annotations.NotNull;
 
 public class DBStatementJdwpProcessStarter extends DBJdwpProcessStarter {
-    DBStatementJdwpProcessStarter(ConnectionHandler connectionHandler) {
-        super(connectionHandler);
+    DBStatementJdwpProcessStarter(ConnectionHandler connection) {
+        super(connection);
     }
 
     @Override
     protected DBJdwpDebugProcess createDebugProcess(@NotNull XDebugSession session, DebuggerSession debuggerSession, int tcpPort) {
-        return new DBStatementJdwpDebugProcess(session, debuggerSession, getConnectionHandler(), tcpPort);
+        return new DBStatementJdwpDebugProcess(session, debuggerSession, getConnection(), tcpPort);
     }
 }

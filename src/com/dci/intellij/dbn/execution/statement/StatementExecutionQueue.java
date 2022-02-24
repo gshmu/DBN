@@ -20,9 +20,9 @@ public final class StatementExecutionQueue extends StatefulDisposable.Base {
     private final ProjectRef project;
     private volatile boolean executing = false;
 
-    public StatementExecutionQueue(ConnectionHandler connectionHandler) {
-        super(connectionHandler);
-        project = ProjectRef.of(connectionHandler.getProject());
+    public StatementExecutionQueue(ConnectionHandler connection) {
+        super(connection);
+        project = ProjectRef.of(connection.getProject());
     }
 
     void queue(StatementExecutionProcessor processor) {
@@ -45,7 +45,7 @@ public final class StatementExecutionQueue extends StatefulDisposable.Base {
         if (!executing) {
             executing = true;
             Project project = getProject();
-            Progress.background(project, "Executing statements", true, (progress) -> {
+            Progress.background(project, "Executing statements", true, progress -> {
                 try {
                     StatementExecutionProcessor processor = processors.poll();
                     while (processor != null) {

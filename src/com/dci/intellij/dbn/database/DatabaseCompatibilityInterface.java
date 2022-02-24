@@ -25,12 +25,12 @@ public abstract class DatabaseCompatibilityInterface implements DatabaseInterfac
 
     @NotNull
     public static DatabaseCompatibilityInterface getInstance(DBObject object) {
-        ConnectionHandler connectionHandler = object.getConnection();
-        return getInstance(connectionHandler);
+        ConnectionHandler connection = object.getConnection();
+        return getInstance(connection);
     }
 
-    public static DatabaseCompatibilityInterface getInstance(@NotNull ConnectionHandler connectionHandler) {
-        return connectionHandler.getInterfaceProvider().getCompatibilityInterface();
+    public static DatabaseCompatibilityInterface getInstance(@NotNull ConnectionHandler connection) {
+        return connection.getInterfaceProvider().getCompatibilityInterface();
     }
 
     public abstract boolean supportsObjectType(DatabaseObjectTypeId objectTypeId);
@@ -71,8 +71,8 @@ public abstract class DatabaseCompatibilityInterface implements DatabaseInterfac
     };
 
     public  <T> T attempt(JdbcProperty feature, ThrowableCallable<T, SQLException> loader) throws SQLException {
-        ConnectionHandler connectionHandler = DatabaseInterface.getConnectionHandler();
-        DatabaseCompatibility compatibility = connectionHandler.getCompatibility();
+        ConnectionHandler connection = DatabaseInterface.getConnection();
+        DatabaseCompatibility compatibility = connection.getCompatibility();
         try {
             if (compatibility.isSupported(feature)) {
                 return loader.call();

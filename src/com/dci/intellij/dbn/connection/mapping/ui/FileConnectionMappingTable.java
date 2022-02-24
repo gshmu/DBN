@@ -12,7 +12,12 @@ import com.dci.intellij.dbn.common.ui.table.DBNTableTransferHandler;
 import com.dci.intellij.dbn.common.util.Actions;
 import com.dci.intellij.dbn.common.util.Context;
 import com.dci.intellij.dbn.common.util.Safe;
-import com.dci.intellij.dbn.connection.*;
+import com.dci.intellij.dbn.connection.ConnectionBundle;
+import com.dci.intellij.dbn.connection.ConnectionHandler;
+import com.dci.intellij.dbn.connection.ConnectionHandlerRef;
+import com.dci.intellij.dbn.connection.ConnectionId;
+import com.dci.intellij.dbn.connection.ConnectionManager;
+import com.dci.intellij.dbn.connection.SchemaId;
 import com.dci.intellij.dbn.connection.mapping.FileConnectionContext;
 import com.dci.intellij.dbn.connection.mapping.FileConnectionContextManager;
 import com.dci.intellij.dbn.connection.session.DatabaseSession;
@@ -34,9 +39,10 @@ import lombok.Getter;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import javax.swing.*;
+import javax.swing.ListSelectionModel;
 import javax.swing.table.TableModel;
-import java.awt.*;
+import java.awt.Point;
+import java.awt.Rectangle;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.Collection;
@@ -228,8 +234,8 @@ public class FileConnectionMappingTable extends DBNTable<FileConnectionMappingTa
 
         @Override
         public void actionPerformed(@NotNull AnActionEvent e) {
-            ConnectionHandler connectionHandler = getConnection();
-            manager.setConnection(virtualFile, connectionHandler);
+            ConnectionHandler connection = getConnection();
+            manager.setConnection(virtualFile, connection);
             notifyModelChanges(virtualFile);
         }
 
@@ -239,8 +245,8 @@ public class FileConnectionMappingTable extends DBNTable<FileConnectionMappingTa
         }
 
         public ConnectionId getConnectionId() {
-            ConnectionHandler connectionHandler = getConnection();
-            return connectionHandler == null ? null : connectionHandler.getConnectionId();
+            ConnectionHandler connection = getConnection();
+            return connection == null ? null : connection.getConnectionId();
         }
     }
 

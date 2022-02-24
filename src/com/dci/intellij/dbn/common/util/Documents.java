@@ -52,8 +52,8 @@ public class Documents {
             DBLanguagePsiFile dbLanguageFile = (DBLanguagePsiFile) file;
             DBLanguage dbLanguage = dbLanguageFile.getDBLanguage();
             if (dbLanguage != null) {
-                ConnectionHandler connectionHandler = dbLanguageFile.getConnection();
-                Editors.initEditorHighlighter(editor, dbLanguage, connectionHandler);
+                ConnectionHandler connection = dbLanguageFile.getConnection();
+                Editors.initEditorHighlighter(editor, dbLanguage, connection);
             }
             if (reparse) {
                 ProjectEvents.notify(project,

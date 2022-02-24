@@ -2,6 +2,7 @@ package com.dci.intellij.dbn.language.common;
 
 import com.dci.intellij.dbn.code.common.style.options.CodeStyleCustomSettings;
 import com.dci.intellij.dbn.common.latent.Latent;
+import com.dci.intellij.dbn.common.util.Unsafe;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.mapping.FileConnectionContextManager;
 import com.dci.intellij.dbn.language.psql.PSQLLanguage;
@@ -42,9 +43,9 @@ public abstract class DBLanguage<D extends DBLanguageDialect> extends Language i
 
     public D getLanguageDialect(Project project, VirtualFile virtualFile) {
         FileConnectionContextManager contextManager = FileConnectionContextManager.getInstance(project);
-        ConnectionHandler connectionHandler = contextManager.getConnection(virtualFile);
-        if (connectionHandler != null) {
-            return (D) connectionHandler.getLanguageDialect(this);
+        ConnectionHandler connection = contextManager.getConnection(virtualFile);
+        if (connection != null) {
+            return Unsafe.cast(connection.getLanguageDialect(this));
         }
         return getMainLanguageDialect();
     }
@@ -65,8 +66,8 @@ public abstract class DBLanguage<D extends DBLanguageDialect> extends Language i
 
     public abstract CodeStyleCustomSettings getCodeStyleSettings(Project project);
 
-    public DBLanguageParserDefinition getParserDefinition(ConnectionHandler connectionHandler) {
-        return connectionHandler.getLanguageDialect(this).getParserDefinition();
+    public DBLanguageParserDefinition getParserDefinition(ConnectionHandler connection) {
+        return connection.getLanguageDialect(this).getParserDefinition();
     }
 
     public static DBLanguage getLanguage(String identifier) {

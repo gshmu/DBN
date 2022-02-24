@@ -417,7 +417,7 @@ public class GenericMetadataInterface extends DatabaseMetadataInterfaceImpl {
     }
 
     static DatabaseCompatibility getCompatibility() {
-        return DatabaseInterface.getConnectionHandler().getCompatibility();
+        return DatabaseInterface.getConnection().getCompatibility();
     }
 
     private static boolean match(Object value1, Object value2) {

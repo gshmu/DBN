@@ -90,12 +90,12 @@ public class DDLFileManager extends AbstractProjectComponent implements Persiste
         DBSchemaObject object = sourceCodeFile.getObject();
         String content = sourceCodeFile.getOriginalContent().toString().trim();
         if (content.length() > 0) {
-            ConnectionHandler connectionHandler = object.getConnection();
-            String alternativeStatementDelimiter = connectionHandler.getSettings().getDetailSettings().getAlternativeStatementDelimiter();
-            DatabaseDDLInterface ddlInterface = connectionHandler.getInterfaceProvider().getDdlInterface();
+            ConnectionHandler connection = object.getConnection();
+            String alternativeStatementDelimiter = connection.getSettings().getDetailSettings().getAlternativeStatementDelimiter();
+            DatabaseDDLInterface ddlInterface = connection.getInterfaceProvider().getDdlInterface();
             return ddlInterface.createDDLStatement(getProject(),
                     object.getObjectType().getTypeId(),
-                    connectionHandler.getUserName(),
+                    connection.getUserName(),
                     object.getSchema().getName(),
                     object.getName(),
                     contentType,

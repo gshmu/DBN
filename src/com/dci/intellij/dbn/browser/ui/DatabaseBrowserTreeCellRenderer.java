@@ -21,9 +21,10 @@ import com.intellij.ui.SimpleTextAttributes;
 import com.intellij.util.ui.UIUtil;
 import org.jetbrains.annotations.NotNull;
 
-import javax.swing.*;
+import javax.swing.JTree;
 import javax.swing.tree.TreeCellRenderer;
-import java.awt.*;
+import java.awt.Component;
+import java.awt.Font;
 
 public class DatabaseBrowserTreeCellRenderer implements TreeCellRenderer {
     private DefaultTreeCellRenderer cellRenderer = new DefaultTreeCellRenderer();
@@ -142,8 +143,8 @@ public class DatabaseBrowserTreeCellRenderer implements TreeCellRenderer {
         }
 
         private boolean hasConnectivity(@NotNull DBObjectList objectsList) {
-            ConnectionHandler connectionHandler = objectsList.getConnection();
-            return objectsList.getConnection().canConnect() && connectionHandler.isValid();
+            ConnectionHandler connection = objectsList.getConnection();
+            return connection.canConnect() && connection.isValid();
         }
     }
 }

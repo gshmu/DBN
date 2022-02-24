@@ -15,13 +15,13 @@ import com.intellij.xdebugger.XDebugSession;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import javax.swing.*;
+import javax.swing.Icon;
 import java.sql.SQLException;
 import java.util.List;
 
 public class DBStatementJdbcDebugProcess extends DBJdbcDebugProcess<StatementExecutionInput> {
-    DBStatementJdbcDebugProcess(@NotNull XDebugSession session, ConnectionHandler connectionHandler) {
-        super(session, connectionHandler);
+    DBStatementJdbcDebugProcess(@NotNull XDebugSession session, ConnectionHandler connection) {
+        super(session, connection);
     }
 
     @Override

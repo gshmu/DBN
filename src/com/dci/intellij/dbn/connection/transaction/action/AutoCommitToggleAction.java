@@ -8,19 +8,19 @@ import org.jetbrains.annotations.NotNull;
 
 public class AutoCommitToggleAction extends AbstractConnectionToggleAction {
 
-    public AutoCommitToggleAction(ConnectionHandler connectionHandler) {
-        super("Auto-Commit", connectionHandler);
+    public AutoCommitToggleAction(ConnectionHandler connection) {
+        super("Auto-Commit", connection);
 
     }
     @Override
     public boolean isSelected(@NotNull AnActionEvent e) {
-        return getConnectionHandler().isAutoCommit();
+        return getConnection().isAutoCommit();
     }
 
     @Override
     public void setSelected(@NotNull AnActionEvent e, boolean state) {
-        ConnectionHandler connectionHandler = getConnectionHandler();
-        DatabaseTransactionManager transactionManager = DatabaseTransactionManager.getInstance(connectionHandler.getProject());
-        transactionManager.toggleAutoCommit(connectionHandler);
+        ConnectionHandler connection = getConnection();
+        DatabaseTransactionManager transactionManager = DatabaseTransactionManager.getInstance(connection.getProject());
+        transactionManager.toggleAutoCommit(connection);
     }
 }

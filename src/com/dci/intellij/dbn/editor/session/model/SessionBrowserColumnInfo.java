@@ -9,13 +9,13 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 
 public class SessionBrowserColumnInfo extends ResultSetColumnInfo{
-    public SessionBrowserColumnInfo(ConnectionHandler connectionHandler, ResultSet resultSet, int columnIndex) throws SQLException {
-        super(connectionHandler, resultSet, columnIndex);
+    public SessionBrowserColumnInfo(ConnectionHandler connection, ResultSet resultSet, int columnIndex) throws SQLException {
+        super(connection, resultSet, columnIndex);
     }
 
     @Override
-    public String translateName(String columnName, ConnectionHandler connectionHandler) {
-        DatabaseCompatibilityInterface compatibilityInterface = connectionHandler.getInterfaceProvider().getCompatibilityInterface();
+    public String translateName(String columnName, ConnectionHandler connection) {
+        DatabaseCompatibilityInterface compatibilityInterface = connection.getInterfaceProvider().getCompatibilityInterface();
         return compatibilityInterface.getSessionBrowserColumnName(columnName);
     }
 

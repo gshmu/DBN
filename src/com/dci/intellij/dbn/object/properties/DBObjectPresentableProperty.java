@@ -18,7 +18,7 @@ public class DBObjectPresentableProperty extends PresentableProperty{
 
 
     public DBObjectPresentableProperty(String name, DBObject object, boolean qualified) {
-        this.objectRef = object.getRef();
+        this.objectRef = object.ref();
         this.qualified = qualified;
         this.name = name;
     }

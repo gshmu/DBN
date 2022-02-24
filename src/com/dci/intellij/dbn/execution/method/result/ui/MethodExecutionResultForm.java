@@ -95,15 +95,15 @@ public class MethodExecutionResultForm extends ExecutionResultFormBase<MethodExe
         MethodExecutionResult executionResult = getExecutionResult();
         String logOutput = executionResult.getLogOutput();
         String logConsoleName = "Output";
-        ConnectionHandler connectionHandler = executionResult.getConnectionHandler();
-        DatabaseCompatibilityInterface compatibilityInterface = connectionHandler.getInterfaceProvider().getCompatibilityInterface();
+        ConnectionHandler connection = executionResult.getConnection();
+        DatabaseCompatibilityInterface compatibilityInterface = connection.getInterfaceProvider().getCompatibilityInterface();
         String databaseLogName = compatibilityInterface.getDatabaseLogName();
         if (databaseLogName != null) {
             logConsoleName = databaseLogName;
         }
 
-        DatabaseLoggingResultConsole outputConsole = new DatabaseLoggingResultConsole(connectionHandler, logConsoleName, true);
-        LogOutputContext context = new LogOutputContext(connectionHandler);
+        DatabaseLoggingResultConsole outputConsole = new DatabaseLoggingResultConsole(connection, logConsoleName, true);
+        LogOutputContext context = new LogOutputContext(connection);
         outputConsole.writeToConsole(context,
                 LogOutput.createSysOutput(context,
                         executionResult.getExecutionInput().getExecutionContext().getExecutionTimestamp(),
@@ -189,9 +189,9 @@ public class MethodExecutionResultForm extends ExecutionResultFormBase<MethodExe
         String connectionType =
                 sessionId == SessionId.MAIN ? " (main)" :
                 sessionId == SessionId.POOL ? " (pool)" : " (session)";
-        ConnectionHandler connectionHandler = executionResult.getConnectionHandler();
-        connectionLabel.setIcon(connectionHandler.getIcon());
-        connectionLabel.setText(connectionHandler.getName() + connectionType);
+        ConnectionHandler connection = executionResult.getConnection();
+        connectionLabel.setIcon(connection.getIcon());
+        connectionLabel.setText(connection.getName() + connectionType);
 
         durationLabel.setText(": " + executionResult.getExecutionDuration() + " ms");
     }

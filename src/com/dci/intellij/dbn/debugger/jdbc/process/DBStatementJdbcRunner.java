@@ -25,8 +25,8 @@ public class DBStatementJdbcRunner extends DBProgramRunner<StatementExecutionInp
     }
 
     @Override
-    protected DBDebugProcessStarter createProcessStarter(ConnectionHandler connectionHandler) {
-        return new DBStatementJdbcProcessStarter(connectionHandler);
+    protected DBDebugProcessStarter createProcessStarter(ConnectionHandler connection) {
+        return new DBStatementJdbcProcessStarter(connection);
     }
 
     @Override

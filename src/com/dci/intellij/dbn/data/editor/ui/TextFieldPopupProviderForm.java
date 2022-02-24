@@ -116,7 +116,7 @@ public abstract class TextFieldPopupProviderForm extends DBNFormImpl implements 
         if (preparing) return;
 
         preparing = true;
-        Progress.prompt(getProject(), "Loading " + getDescription(), true, (progress) -> {
+        Progress.prompt(getProject(), "Loading " + getDescription(), true, progress -> {
             preparePopup();
             if (progress.isCanceled()) {
                 preparing = false;

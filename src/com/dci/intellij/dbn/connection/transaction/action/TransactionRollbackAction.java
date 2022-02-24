@@ -12,21 +12,21 @@ import org.jetbrains.annotations.Nullable;
 
 public class TransactionRollbackAction extends AbstractConnectionAction {
 
-    public TransactionRollbackAction(ConnectionHandler connectionHandler) {
-        super("Rollback", "Rollback connection", Icons.CONNECTION_ROLLBACK, connectionHandler);
+    public TransactionRollbackAction(ConnectionHandler connection) {
+        super("Rollback", "Rollback connection", Icons.CONNECTION_ROLLBACK, connection);
 
     }
 
     @Override
-    protected void actionPerformed(@NotNull AnActionEvent e, @NotNull Project project, @NotNull ConnectionHandler connectionHandler) {
+    protected void actionPerformed(@NotNull AnActionEvent e, @NotNull Project project, @NotNull ConnectionHandler connection) {
         DatabaseTransactionManager transactionManager = DatabaseTransactionManager.getInstance(project);
-        transactionManager.rollback(connectionHandler, null, false, false, null);
+        transactionManager.rollback(connection, null, false, false, null);
     }
 
     @Override
-    protected void update(@NotNull AnActionEvent e, @NotNull Presentation presentation, @NotNull Project project, @Nullable ConnectionHandler connectionHandler) {
-        boolean enabled = connectionHandler != null && connectionHandler.hasUncommittedChanges();
-        boolean visible = connectionHandler != null && !connectionHandler.isAutoCommit();
+    protected void update(@NotNull AnActionEvent e, @NotNull Presentation presentation, @NotNull Project project, @Nullable ConnectionHandler connection) {
+        boolean enabled = connection != null && connection.hasUncommittedChanges();
+        boolean visible = connection != null && !connection.isAutoCommit();
 
         presentation.setEnabled(enabled);
         presentation.setVisible(visible);

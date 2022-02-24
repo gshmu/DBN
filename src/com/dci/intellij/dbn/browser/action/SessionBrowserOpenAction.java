@@ -17,7 +17,7 @@ public class SessionBrowserOpenAction extends DumbAwareProjectAction {
         super("Open Session Browser", "", Icons.FILE_SESSION_BROWSER);
     }
 
-    private static ConnectionHandler getConnectionHandler(@NotNull AnActionEvent e) {
+    private static ConnectionHandler getConnection(@NotNull AnActionEvent e) {
         Project project = Lookup.getProject(e);
         if (project != null) {
             DatabaseBrowserManager browserManager = DatabaseBrowserManager.getInstance(project);
@@ -29,10 +29,10 @@ public class SessionBrowserOpenAction extends DumbAwareProjectAction {
     @Override
     protected void update(@NotNull AnActionEvent e, @NotNull Project project) {
         Presentation presentation = e.getPresentation();
-        ConnectionHandler connectionHandler = getConnectionHandler(e);
-        if (connectionHandler != null) {
+        ConnectionHandler connection = getConnection(e);
+        if (connection != null) {
             presentation.setEnabled(true);
-            presentation.setVisible(DatabaseFeature.SESSION_BROWSING.isSupported(connectionHandler));
+            presentation.setVisible(DatabaseFeature.SESSION_BROWSING.isSupported(connection));
         } else {
             presentation.setVisible(false);
             presentation.setEnabled(false);
@@ -42,10 +42,10 @@ public class SessionBrowserOpenAction extends DumbAwareProjectAction {
 
     @Override
     protected void actionPerformed(@NotNull AnActionEvent e, @NotNull Project project) {
-        ConnectionHandler connectionHandler = getConnectionHandler(e);
-        if (connectionHandler != null) {
+        ConnectionHandler connection = getConnection(e);
+        if (connection != null) {
             SessionBrowserManager sessionBrowserManager = SessionBrowserManager.getInstance(project);
-            sessionBrowserManager.openSessionBrowser(connectionHandler);
+            sessionBrowserManager.openSessionBrowser(connection);
         }
 
     }

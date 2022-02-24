@@ -63,18 +63,18 @@ public class SessionBrowserOpenAction extends DumbAwareProjectAction {
 
     private class SelectConnectionAction extends AbstractConnectionAction{
 
-        SelectConnectionAction(ConnectionHandler connectionHandler) {
-            super(connectionHandler.getName(), connectionHandler.getIcon(), connectionHandler);
+        SelectConnectionAction(ConnectionHandler connection) {
+            super(connection.getName(), connection.getIcon(), connection);
         }
 
         @Override
-        protected void actionPerformed(@NotNull AnActionEvent e, @NotNull Project project, @NotNull ConnectionHandler connectionHandler) {
-            openSessionBrowser(connectionHandler);
+        protected void actionPerformed(@NotNull AnActionEvent e, @NotNull Project project, @NotNull ConnectionHandler connection) {
+            openSessionBrowser(connection);
         }
     }
 
-    private static void openSessionBrowser(ConnectionHandler connectionHandler) {
-        SessionBrowserManager sessionBrowserManager = SessionBrowserManager.getInstance(connectionHandler.getProject());
-        sessionBrowserManager.openSessionBrowser(connectionHandler);
+    private static void openSessionBrowser(ConnectionHandler connection) {
+        SessionBrowserManager sessionBrowserManager = SessionBrowserManager.getInstance(connection.getProject());
+        sessionBrowserManager.openSessionBrowser(connection);
     }
 }

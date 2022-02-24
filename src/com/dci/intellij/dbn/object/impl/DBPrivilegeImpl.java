@@ -17,8 +17,8 @@ import java.util.LinkedList;
 import java.util.List;
 
 public abstract class DBPrivilegeImpl<M extends DBPrivilegeMetadata> extends DBObjectImpl<M> implements DBPrivilege {
-    DBPrivilegeImpl(ConnectionHandler connectionHandler, M metadata) throws SQLException {
-        super(connectionHandler, metadata);
+    DBPrivilegeImpl(ConnectionHandler connection, M metadata) throws SQLException {
+        super(connection, metadata);
     }
 
     @Override
@@ -49,7 +49,7 @@ public abstract class DBPrivilegeImpl<M extends DBPrivilegeMetadata> extends DBO
         List<DBObjectNavigationList> navigationLists = new LinkedList<>();
         navigationLists.add(DBObjectNavigationList.create("User grantees", getUserGrantees()));
 
-        DatabaseCompatibilityInterface compatibilityInterface = this.getConnection().getInterfaceProvider().getCompatibilityInterface();
+        DatabaseCompatibilityInterface compatibilityInterface = getConnection().getInterfaceProvider().getCompatibilityInterface();
         if (compatibilityInterface.supportsObjectType(DBObjectType.ROLE.getTypeId())) {
             navigationLists.add(DBObjectNavigationList.create("Role grantees", getRoleGrantees()));
         }

@@ -11,19 +11,19 @@ import org.jetbrains.annotations.NotNull;
 import javax.swing.Action;
 
 public class CreateRenameSessionDialog extends DBNDialog<CreateRenameSessionForm> {
-    private final ConnectionHandlerRef connectionHandler;
+    private final ConnectionHandlerRef connection;
     private WeakRef<DatabaseSession> session;
 
-    public CreateRenameSessionDialog(@NotNull ConnectionHandler connectionHandler) {
-        super(connectionHandler.getProject(), "Create session", true);
-        this.connectionHandler = connectionHandler.getRef();
+    public CreateRenameSessionDialog(@NotNull ConnectionHandler connection) {
+        super(connection.getProject(), "Create session", true);
+        this.connection = connection.ref();
         renameAction(getOKAction(), "Create");
         init();
     }
 
-    public CreateRenameSessionDialog(ConnectionHandler connectionHandler, @NotNull DatabaseSession session) {
-        super(connectionHandler.getProject(), "Rename session", true);
-        this.connectionHandler = connectionHandler.getRef();
+    public CreateRenameSessionDialog(ConnectionHandler connection, @NotNull DatabaseSession session) {
+        super(connection.getProject(), "Rename session", true);
+        this.connection = connection.ref();
         this.session = WeakRef.of(session);
         renameAction(getOKAction(), "Rename");
         init();
@@ -32,8 +32,8 @@ public class CreateRenameSessionDialog extends DBNDialog<CreateRenameSessionForm
     @NotNull
     @Override
     protected CreateRenameSessionForm createForm() {
-        ConnectionHandler connectionHandler = this.connectionHandler.ensure();
-        return new CreateRenameSessionForm(this, connectionHandler, getSession());
+        ConnectionHandler connection = this.connection.ensure();
+        return new CreateRenameSessionForm(this, connection, getSession());
     }
 
     @Override
@@ -51,7 +51,7 @@ public class CreateRenameSessionDialog extends DBNDialog<CreateRenameSessionForm
         DatabaseSessionManager databaseSessionManager = DatabaseSessionManager.getInstance(getProject());
         if (session == null) {
             DatabaseSession session = databaseSessionManager.createSession(
-                    component.getConnectionHandler(),
+                    component.getConnection(),
                     component.getSessionName());
             this.session = WeakRef.of(session);
             component.setSession(session);

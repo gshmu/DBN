@@ -59,7 +59,7 @@ public class TabbedBrowserForm extends DatabaseBrowserForm{
             TabInfo tabInfo = new TabInfo(component);
             tabInfo.setText(Commons.nvl(connection.getName(), "[unnamed connection]"));
             tabInfo.setObject(browserForm);
-            //tabInfo.setIcon(connectionHandler.getIcon());
+            //tabInfo.setIcon(connection.getIcon());
             this.connectionTabs.addTab(tabInfo);
 
             EnvironmentType environmentType = connection.getEnvironmentType();
@@ -85,8 +85,8 @@ public class TabbedBrowserForm extends DatabaseBrowserForm{
     private SimpleBrowserForm getBrowserForm(ConnectionId connectionId) {
         for (TabInfo tabInfo : listTabs()) {
             SimpleBrowserForm browserForm = (SimpleBrowserForm) tabInfo.getObject();
-            ConnectionHandler connectionHandler = browserForm.getConnectionHandler();
-            if (connectionHandler != null && connectionHandler.getConnectionId() == connectionId) {
+            ConnectionHandler connection = browserForm.getConnection();
+            if (connection != null && connection.getConnectionId() == connectionId) {
                 return browserForm;
             }
         }
@@ -170,9 +170,9 @@ public class TabbedBrowserForm extends DatabaseBrowserForm{
             for (TabInfo tabInfo : listTabs()) {
                 try {
                     SimpleBrowserForm browserForm = (SimpleBrowserForm) tabInfo.getObject();
-                    ConnectionHandler connectionHandler = browserForm.getConnectionHandler();
-                    if (connectionHandler != null) {
-                        JBColor environmentColor = connectionHandler.getEnvironmentType().getColor();
+                    ConnectionHandler connection = browserForm.getConnection();
+                    if (connection != null) {
+                        JBColor environmentColor = connection.getEnvironmentType().getColor();
                         if (visibilitySettings.getConnectionTabs().value()) {
                             tabInfo.setTabColor(environmentColor);
                         } else {
@@ -187,10 +187,10 @@ public class TabbedBrowserForm extends DatabaseBrowserForm{
     void refreshTabInfo(ConnectionId connectionId) {
         for (TabInfo tabInfo : listTabs()) {
             SimpleBrowserForm browserForm = (SimpleBrowserForm) tabInfo.getObject();
-            ConnectionHandler connectionHandler = browserForm.getConnectionHandler();
-            if (connectionHandler != null) {
-                if (connectionHandler.getConnectionId() == connectionId) {
-                    tabInfo.setText(connectionHandler.getName());
+            ConnectionHandler connection = browserForm.getConnection();
+            if (connection != null) {
+                if (connection.getConnectionId() == connectionId) {
+                    tabInfo.setText(connection.getName());
                     break;
                 }
             }

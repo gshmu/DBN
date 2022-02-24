@@ -75,8 +75,8 @@ public class ConnectionFilterSettings extends CompositeProjectConfiguration<Conn
     ConnectionFilterSettings(ConnectionSettings connectionSettings) {
         super(connectionSettings.getProject());
         this.connectionSettings = connectionSettings;
-        objectTypeFilterSettings = new ObjectTypeFilterSettings(this, connectionSettings);
-        objectNameFilterSettings = new ObjectNameFilterSettings(this, connectionSettings);
+        objectTypeFilterSettings = new ObjectTypeFilterSettings(this, getConnectionId());
+        objectNameFilterSettings = new ObjectNameFilterSettings(this, getConnectionId());
     }
 
     public ConnectionId getConnectionId() {

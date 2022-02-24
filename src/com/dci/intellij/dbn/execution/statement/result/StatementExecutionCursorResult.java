@@ -37,9 +37,9 @@ public class StatementExecutionCursorResult extends StatementExecutionBasicResul
             int updateCount) throws SQLException {
         super(executionProcessor, resultName, updateCount);
 
-        ConnectionHandler connectionHandler = Failsafe.nd(executionProcessor.getConnection());
+        ConnectionHandler connection = Failsafe.nd(executionProcessor.getConnection());
         int fetchBlockSize = executionProcessor.getExecutionInput().getResultSetFetchBlockSize();
-        dataModel = new ResultSetDataModel<>(resultSet, connectionHandler, fetchBlockSize);
+        dataModel = new ResultSetDataModel<>(resultSet, connection, fetchBlockSize);
     }
 
     private StatementExecutionSettings getQueryExecutionSettings() {
@@ -63,39 +63,38 @@ public class StatementExecutionCursorResult extends StatementExecutionBasicResul
     public void reload() {
         StatementExecutionCursorProcessor executionProcessor = getExecutionProcessor();
         ConnectionAction.invoke("Reload data", false, executionProcessor, (action) -> {
-            Progress.background(getProject(), "Reloading data", false,
-                    (progress) -> {
-                        StatementExecutionResultForm resultForm = getForm();
-                        if (Failsafe.check(resultForm)) {
-                            progress.setText("Reloading results for " + executionProcessor.getStatementName());
-                            ExecutionContext context = executionProcessor.initExecutionContext();
-                            context.set(EXECUTING, true);
+            Progress.background(getProject(), "Reloading data", false, progress -> {
+                StatementExecutionResultForm resultForm = getForm();
+                if (Failsafe.check(resultForm)) {
+                    progress.setText("Reloading results for " + executionProcessor.getStatementName());
+                    ExecutionContext context = executionProcessor.initExecutionContext();
+                    context.set(EXECUTING, true);
 
-                            try {
-                                resultForm.highlightLoading(true);
-                                StatementExecutionInput executionInput = getExecutionInput();
-                                try {
-                                    ConnectionHandler connectionHandler = getConnectionHandler();
-                                    SchemaId currentSchema = getDatabaseSchema();
-                                    DBNConnection connection = connectionHandler.getMainConnection(currentSchema);
-                                    DBNStatement<?> statement = connection.createStatement();
-                                    statement.setQueryTimeout(executionInput.getExecutionTimeout());
-                                    statement.setFetchSize(executionInput.getResultSetFetchBlockSize());
-                                    statement.execute(executionInput.getExecutableStatementText());
-                                    DBNResultSet resultSet = statement.getResultSet();
-                                    if (resultSet != null) {
-                                        loadResultSet(resultSet);
-                                    }
-                                } catch (final SQLException e) {
-                                    Messages.showErrorDialog(getProject(), "Could not perform reload operation.", e);
-                                }
-                            } finally {
-                                calculateExecDuration();
-                                resultForm.highlightLoading(false);
-                                context.reset();
+                    try {
+                        resultForm.highlightLoading(true);
+                        StatementExecutionInput executionInput = getExecutionInput();
+                        try {
+                            ConnectionHandler connection = getConnection();
+                            SchemaId currentSchema = getDatabaseSchema();
+                            DBNConnection conn = connection.getMainConnection(currentSchema);
+                            DBNStatement<?> statement = conn.createStatement();
+                            statement.setQueryTimeout(executionInput.getExecutionTimeout());
+                            statement.setFetchSize(executionInput.getResultSetFetchBlockSize());
+                            statement.execute(executionInput.getExecutableStatementText());
+                            DBNResultSet resultSet = statement.getResultSet();
+                            if (resultSet != null) {
+                                loadResultSet(resultSet);
                             }
+                        } catch (final SQLException e) {
+                            Messages.showErrorDialog(getProject(), "Could not perform reload operation.", e);
                         }
-                    });
+                    } finally {
+                        calculateExecDuration();
+                        resultForm.highlightLoading(false);
+                        context.reset();
+                    }
+                }
+            });
         });
     }
 
@@ -103,7 +102,7 @@ public class StatementExecutionCursorResult extends StatementExecutionBasicResul
         StatementExecutionResultForm resultForm = getForm();
         if (Failsafe.check(resultForm)) {
             int rowCount = Math.max(dataModel == null ? 0 : dataModel.getRowCount() + 1, 100);
-            dataModel = new ResultSetDataModel<>(resultSet, getConnectionHandler(), rowCount);
+            dataModel = new ResultSetDataModel<>(resultSet, getConnection(), rowCount);
             resultForm.rebuildForm();
             resultForm.updateVisibleComponents();
         }
@@ -119,30 +118,29 @@ public class StatementExecutionCursorResult extends StatementExecutionBasicResul
 
     public void fetchNextRecords() {
         Project project = getProject();
-        Progress.background(project, "Loading data", false,
-                (progress) -> {
-                    StatementExecutionResultForm resultForm = getForm();
-                    if (Failsafe.check(resultForm)) {
-                        progress.setText("Loading next records for " + getExecutionProcessor().getStatementName());
-                        resultForm.highlightLoading(true);
-                        try {
-                            if (hasResult() && !dataModel.isResultSetExhausted()) {
-                                int fetchBlockSize = getExecutionInput().getResultSetFetchBlockSize();
-                                dataModel.fetchNextRecords(fetchBlockSize, false);
-                                //tResult.accommodateColumnsSize();
-                                if (dataModel.isResultSetExhausted()) {
-                                    dataModel.closeResultSet();
-                                }
-                                resultForm.updateVisibleComponents();
-                            }
-
-                        } catch (SQLException e) {
-                            Messages.showErrorDialog(project, "Could not perform operation.", e);
-                        } finally {
-                            resultForm.highlightLoading(false);
+        Progress.background(project, "Loading data", false, progress -> {
+            StatementExecutionResultForm resultForm = getForm();
+            if (Failsafe.check(resultForm)) {
+                progress.setText("Loading next records for " + getExecutionProcessor().getStatementName());
+                resultForm.highlightLoading(true);
+                try {
+                    if (hasResult() && !dataModel.isResultSetExhausted()) {
+                        int fetchBlockSize = getExecutionInput().getResultSetFetchBlockSize();
+                        dataModel.fetchNextRecords(fetchBlockSize, false);
+                        //tResult.accommodateColumnsSize();
+                        if (dataModel.isResultSetExhausted()) {
+                            dataModel.closeResultSet();
                         }
+                        resultForm.updateVisibleComponents();
                     }
-                });
+
+                } catch (SQLException e) {
+                    Messages.showErrorDialog(project, "Could not perform operation.", e);
+                } finally {
+                    resultForm.highlightLoading(false);
+                }
+            }
+        });
     }
 
     public ResultSetDataModel<?, ?> getTableModel() {

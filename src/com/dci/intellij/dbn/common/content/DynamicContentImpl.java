@@ -152,13 +152,13 @@ public abstract class DynamicContentImpl<T extends DynamicContentElement>
             return true;
         }
 
-        ConnectionHandler connectionHandler = this.getConnection();
+        ConnectionHandler connection = this.getConnection();
         if (!isLoaded()) {
-            return dependencyAdapter.canConnect(connectionHandler);
+            return dependencyAdapter.canConnect(connection);
         }
 
         if (isDirty() || dependencyAdapter.areDependenciesDirty()) {
-            return dependencyAdapter.canLoad(connectionHandler);
+            return dependencyAdapter.canLoad(connection);
         }
 
         return false;
@@ -249,11 +249,11 @@ public abstract class DynamicContentImpl<T extends DynamicContentElement>
     public final void loadInBackground() {
         if (shouldLoadInBackground()) {
             set(LOADING_IN_BACKGROUND, true);
-            ConnectionHandler connectionHandler = this.getConnection();
+            ConnectionHandler connection = this.getConnection();
             Progress.background(
                     getProject(),
-                    connectionHandler.getMetaLoadTitle(), false,
-                    (progress) -> {
+                    connection.getMetaLoadTitle(), false,
+                    progress -> {
                         try{
                             progress.setText("Loading " + getContentDescription());
                             ensure();

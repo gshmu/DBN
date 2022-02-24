@@ -181,11 +181,11 @@ public class DatasetFilterGroup extends BasicProjectConfiguration<ProjectConfigu
     public DBDataset lookupDataset() {
         Project project = getProject();
         ConnectionManager connectionManager = ConnectionManager.getInstance(project);
-        ConnectionHandler connectionHandler = connectionManager.getConnection(connectionId);
-        if (connectionHandler != null) {
+        ConnectionHandler connection = connectionManager.getConnection(connectionId);
+        if (connection != null) {
             int index = datasetName.lastIndexOf('.');
             String schemaName = datasetName.substring(0, index);
-            DBSchema schema = connectionHandler.getObjectBundle().getSchema(schemaName);
+            DBSchema schema = connection.getObjectBundle().getSchema(schemaName);
             if (schema != null) {
                 String name = datasetName.substring(index + 1);
                 DBDataset dataset = schema.getDataset(name);

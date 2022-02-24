@@ -14,12 +14,12 @@ import com.dci.intellij.dbn.object.lookup.DBObjectRef;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import javax.swing.*;
+import javax.swing.Action;
 import java.awt.event.ActionEvent;
 
 public class ExportDataDialog extends DBNDialog<ExportDataForm> {
     private final ResultSetTable<?> table;
-    private final ConnectionHandlerRef connectionHandler;
+    private final ConnectionHandlerRef connection;
     private final DBObjectRef<?> sourceObject;
 
     public ExportDataDialog(ResultSetTable<?> table, @NotNull DBObject sourceObject) {
@@ -27,14 +27,14 @@ public class ExportDataDialog extends DBNDialog<ExportDataForm> {
     }
 
     public ExportDataDialog(ResultSetTable<?> table, @NotNull ExecutionResult<?> executionResult) {
-        this(table, null, executionResult.getConnectionHandler());
+        this(table, null, executionResult.getConnection());
     }
 
 
-    private ExportDataDialog(ResultSetTable<?> table, @Nullable DBObject sourceObject, @NotNull ConnectionHandler connectionHandler) {
-        super(connectionHandler.getProject(), "Export data", true);
+    private ExportDataDialog(ResultSetTable<?> table, @Nullable DBObject sourceObject, @NotNull ConnectionHandler connection) {
+        super(connection.getProject(), "Export data", true);
         this.table = table;
-        this.connectionHandler = connectionHandler.getRef();
+        this.connection = connection.ref();
         this.sourceObject = DBObjectRef.of(sourceObject);
         init();
     }
@@ -43,16 +43,16 @@ public class ExportDataDialog extends DBNDialog<ExportDataForm> {
     @Override
     protected ExportDataForm createForm() {
         DBObject sourceObject = DBObjectRef.get(this.sourceObject);
-        ConnectionHandler connectionHandler = this.connectionHandler.ensure();
-        DataExportManager exportManager = DataExportManager.getInstance(connectionHandler.getProject());
+        ConnectionHandler connection = this.connection.ensure();
+        DataExportManager exportManager = DataExportManager.getInstance(connection.getProject());
         DataExportInstructions instructions = exportManager.getExportInstructions();
         boolean hasSelection = table.getSelectedRowCount() > 1 || table.getSelectedColumnCount() > 1;
         instructions.setBaseName(table.getName());
-        return new ExportDataForm(this, instructions, hasSelection, connectionHandler, sourceObject);
+        return new ExportDataForm(this, instructions, hasSelection, connection, sourceObject);
     }
 
-    public ConnectionHandler getConnectionHandler() {
-        return connectionHandler.ensure();
+    public ConnectionHandler getConnection() {
+        return connection.ensure();
     }
 
     @NotNull
@@ -71,20 +71,17 @@ public class ExportDataDialog extends DBNDialog<ExportDataForm> {
     @Override
     protected void doOKAction() {
         getForm().validateEntries(
-                () -> Progress.modal(
-                        getProject(),
-                        "Creating export file", true,
-                        (progress) -> {
-                            ConnectionHandler connectionHandler = getConnectionHandler();
-                            DataExportManager exportManager = DataExportManager.getInstance(connectionHandler.getProject());
-                            DataExportInstructions exportInstructions = getForm().getExportInstructions();
-                            exportManager.setExportInstructions(exportInstructions);
-                            exportManager.exportSortableTableContent(
-                                    table,
-                                    exportInstructions,
-                                    connectionHandler,
-                                    () -> Dispatch.run(() -> ExportDataDialog.super.doOKAction()));
-                        })
+                () -> Progress.modal(getProject(), "Creating export file", true, progress -> {
+                    ConnectionHandler connection = getConnection();
+                    DataExportManager exportManager = DataExportManager.getInstance(connection.getProject());
+                    DataExportInstructions exportInstructions = getForm().getExportInstructions();
+                    exportManager.setExportInstructions(exportInstructions);
+                    exportManager.exportSortableTableContent(
+                            table,
+                            exportInstructions,
+                            connection,
+                            () -> Dispatch.run(() -> ExportDataDialog.super.doOKAction()));
+                })
         );
     }
 }

@@ -88,10 +88,10 @@ public class PendingTransactionsTable extends DBNTable<PendingTransactionsTableM
         @Override
         protected void customizeCellRenderer(DBNTable table, Object value, boolean selected, boolean hasFocus, int row, int column) {
             PendingTransactionsTableModel model = (PendingTransactionsTableModel) table.getModel();
-            ConnectionHandler connectionHandler = model.getConnectionHandler();
+            ConnectionHandler connection = model.getConnection();
             PendingTransaction transaction = (PendingTransaction) value;
             if (column == 0) {
-                DatabaseSession session = connectionHandler.getSessionBundle().getSession(transaction.getSessionId());
+                DatabaseSession session = connection.getSessionBundle().getSession(transaction.getSessionId());
                 setIcon(session.getId().getIcon());
                 append(session.getName());
 

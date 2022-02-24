@@ -319,10 +319,10 @@ public class CodeCompletionProvider extends CompletionProvider<CompletionParamet
             CodeCompletionContext context) {
         DBObjectType objectType = identifierElementType.getObjectType();
         PsiElement sourceElement = context.getElementAtCaret();
-        ConnectionHandler connectionHandler = context.getConnectionHandler();
+        ConnectionHandler connection = context.getConnection();
 
-        if (Failsafe.check(connectionHandler) && !connectionHandler.isVirtual()) {
-            DBObjectBundle objectBundle = connectionHandler.getObjectBundle();
+        if (Failsafe.check(connection) && !connection.isVirtual()) {
+            DBObjectBundle objectBundle = connection.getObjectBundle();
             if (sourceElement.getParent() instanceof QualifiedIdentifierPsiElement && sourceElement.getParent().getFirstChild() != sourceElement) {
                 QualifiedIdentifierPsiElement qualifiedIdentifierPsiElement = (QualifiedIdentifierPsiElement) sourceElement.getOriginalElement().getParent();
                 DBObject parentObject = qualifiedIdentifierPsiElement.lookupParentObjectFor(identifierElementType);

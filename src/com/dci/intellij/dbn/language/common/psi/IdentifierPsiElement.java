@@ -515,8 +515,8 @@ public abstract class IdentifierPsiElement extends LeafPsiElement<IdentifierElem
             return null;
         }
 
-        ConnectionHandler connectionHandler = getConnectionHandler();
-        if ((connectionHandler == null || connectionHandler.isVirtual()) && isObject() && isDefinition()) {
+        ConnectionHandler connection = getConnection();
+        if ((connection == null || connection.isVirtual()) && isObject() && isDefinition()) {
             return null;
         }
 

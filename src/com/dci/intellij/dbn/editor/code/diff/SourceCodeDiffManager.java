@@ -127,8 +127,8 @@ public class SourceCodeDiffManager extends AbstractProjectComponent implements P
 
     public void opedDatabaseDiffWindow(DBSourceCodeVirtualFile sourceCodeFile) {
         ConnectionAction.invoke("comparing changes", false, sourceCodeFile,
-                (action) -> Progress.prompt(getProject(), "Loading database source code", true,
-                        (progress) -> {
+                action -> Progress.prompt(getProject(), "Loading database source code", true,
+                        progress -> {
                             DBSchemaObject object = sourceCodeFile.getObject();
                             Project project = getProject();
                             try {

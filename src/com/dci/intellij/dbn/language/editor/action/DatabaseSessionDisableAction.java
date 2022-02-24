@@ -14,26 +14,26 @@ import org.jetbrains.annotations.NotNull;
 import static com.dci.intellij.dbn.common.message.MessageCallback.when;
 
 public class DatabaseSessionDisableAction extends DumbAwareProjectAction {
-    private ConnectionHandlerRef connectionHandlerRef;
+    private final ConnectionHandlerRef connection;
 
-    DatabaseSessionDisableAction(ConnectionHandler connectionHandler) {
+    DatabaseSessionDisableAction(ConnectionHandler connection) {
         super("Disable Session Support...");
-        this.connectionHandlerRef = connectionHandler.getRef();
+        this.connection = connection.ref();
     }
 
     @Override
     protected void actionPerformed(@NotNull AnActionEvent e, @NotNull Project project) {
         Editor editor = Lookup.getEditor(e);
         if (editor != null) {
-            ConnectionHandler connectionHandler = connectionHandlerRef.ensure();
+            ConnectionHandler connection = this.connection.ensure();
             Messages.showQuestionDialog(
                     project,
                     "Disable session support",
-                    "Are you sure you want to disable the session support for connection \"" + connectionHandler.getName() + "\"\n(you can re-enable at any time in connection details settings)",
+                    "Are you sure you want to disable the session support for connection \"" + connection.getName() + "\"\n(you can re-enable at any time in connection details settings)",
                     Messages.OPTIONS_YES_NO,
                     0,
                     option -> when(option == 0, () -> {
-                        ConnectionDetailSettings detailSettings = connectionHandler.getSettings().getDetailSettings();
+                        ConnectionDetailSettings detailSettings = connection.getSettings().getDetailSettings();
                         detailSettings.setEnableSessionManagement(false);
                     }));
         }

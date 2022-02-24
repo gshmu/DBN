@@ -35,7 +35,7 @@ public class StatementExecutionBasicResult extends ExecutionResultBase<Statement
     private boolean loggingActive;
 
     private StatementExecutionProcessor executionProcessor;
-    private final ConnectionHandlerRef connectionHandler;
+    private final ConnectionHandlerRef connection;
     private final SchemaId databaseSchema;
 
     public StatementExecutionBasicResult(
@@ -45,7 +45,7 @@ public class StatementExecutionBasicResult extends ExecutionResultBase<Statement
         this.name = name;
         this.executionProcessor = executionProcessor;
         this.updateCount = updateCount;
-        this.connectionHandler = Failsafe.nn(executionProcessor.getConnection()).getRef();
+        this.connection = Failsafe.nn(executionProcessor.getConnection()).ref();
         this.databaseSchema = executionProcessor.getTargetSchema();
     }
 
@@ -152,8 +152,8 @@ public class StatementExecutionBasicResult extends ExecutionResultBase<Statement
 
     @Override
     @NotNull
-    public ConnectionHandler getConnectionHandler() {
-        return connectionHandler.ensure();
+    public ConnectionHandler getConnection() {
+        return connection.ensure();
     }
 
     @Nullable

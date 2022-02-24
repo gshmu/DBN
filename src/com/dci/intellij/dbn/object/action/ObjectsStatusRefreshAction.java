@@ -8,15 +8,15 @@ import org.jetbrains.annotations.NotNull;
 
 public class ObjectsStatusRefreshAction extends DumbAwareAction {
 
-    private final ConnectionHandlerRef connectionHandler;
+    private final ConnectionHandlerRef connection;
 
-    public ObjectsStatusRefreshAction(ConnectionHandler connectionHandler) {
+    public ObjectsStatusRefreshAction(ConnectionHandler connection) {
         super("Refresh objects status");
-        this.connectionHandler = connectionHandler.getRef();
+        this.connection = connection.ref();
     }
 
     @Override
     public void actionPerformed(@NotNull AnActionEvent e) {
-        connectionHandler.ensure().getObjectBundle().refreshObjectsStatus(null);
+        connection.ensure().getObjectBundle().refreshObjectsStatus(null);
     }
 }

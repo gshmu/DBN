@@ -9,7 +9,11 @@ import com.dci.intellij.dbn.connection.ConnectionId;
 import com.dci.intellij.dbn.connection.SchemaId;
 import com.dci.intellij.dbn.database.DatabaseFeature;
 import com.dci.intellij.dbn.debugger.DBDebuggerType;
-import com.dci.intellij.dbn.execution.*;
+import com.dci.intellij.dbn.execution.ExecutionContext;
+import com.dci.intellij.dbn.execution.ExecutionOption;
+import com.dci.intellij.dbn.execution.ExecutionOptions;
+import com.dci.intellij.dbn.execution.ExecutionTarget;
+import com.dci.intellij.dbn.execution.LocalExecutionInput;
 import com.dci.intellij.dbn.execution.method.result.MethodExecutionResult;
 import com.dci.intellij.dbn.object.DBArgument;
 import com.dci.intellij.dbn.object.DBMethod;
@@ -21,7 +25,11 @@ import org.jdom.Element;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 import static com.dci.intellij.dbn.common.options.setting.SettingsSupport.stringAttribute;
 
@@ -52,8 +60,8 @@ public class MethodExecutionInput extends LocalExecutionInput implements Compara
 
 
         if (DatabaseFeature.DATABASE_LOGGING.isSupported(method)) {
-            ConnectionHandler connectionHandler = Failsafe.nn(method.getConnection());
-            getOptions().set(ExecutionOption.ENABLE_LOGGING, connectionHandler.isLoggingEnabled());
+            ConnectionHandler connection = Failsafe.nn(method.getConnection());
+            getOptions().set(ExecutionOption.ENABLE_LOGGING, connection.isLoggingEnabled());
         }
     }
 
@@ -129,13 +137,13 @@ public class MethodExecutionInput extends LocalExecutionInput implements Compara
     }
 
     public boolean isObsolete() {
-        ConnectionHandler connectionHandler = method.resolveConnection();
-        return connectionHandler == null/* || getMethod() == null*/;
+        ConnectionHandler connection = method.resolveConnection();
+        return connection == null/* || getMethod() == null*/;
     }
 
     public boolean isInactive() {
-        ConnectionHandler connectionHandler = getConnection();
-        return connectionHandler != null && !connectionHandler.getSettings().isActive();
+        ConnectionHandler connection = getConnection();
+        return connection != null && !connection.getSettings().isActive();
     }
 
     public void setInputValue(@NotNull DBArgument argument, DBTypeAttribute typeAttribute, String value) {

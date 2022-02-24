@@ -40,9 +40,9 @@ public class StatementExecutionInput extends LocalExecutionInput {
     private String originalStatementText;
     private String executableStatementText;
     private final Latent<ExecutablePsiElement> executablePsiElement = Latent.basic(() -> {
-        ConnectionHandler connectionHandler = getConnection();
+        ConnectionHandler connection = getConnection();
         SchemaId currentSchema = getTargetSchemaId();
-        if (connectionHandler != null) {
+        if (connection != null) {
             return Read.conditional(() -> {
                 DBLanguagePsiFile psiFile = Failsafe.nn(executionProcessor.getPsiFile());
                 DBLanguageDialect languageDialect = psiFile.getLanguageDialect();
@@ -51,7 +51,7 @@ public class StatementExecutionInput extends LocalExecutionInput {
                         "preview",
                         languageDialect,
                         originalStatementText,
-                        connectionHandler,
+                        connection,
                         currentSchema);
 
                 if (previewFile != null) {
@@ -72,19 +72,18 @@ public class StatementExecutionInput extends LocalExecutionInput {
     public StatementExecutionInput(String originalStatementText, String executableStatementText, StatementExecutionProcessor executionProcessor) {
         super(executionProcessor.getProject(), ExecutionTarget.STATEMENT);
         this.executionProcessor = executionProcessor;
-        ConnectionHandler connectionHandler = executionProcessor.getConnection();
+        ConnectionHandler connection = executionProcessor.getConnection();
         SchemaId currentSchema = executionProcessor.getTargetSchema();
         DatabaseSession targetSession = executionProcessor.getTargetSession();
 
-        this.targetConnection = ConnectionHandlerRef.of(connectionHandler);
+        this.targetConnection = ConnectionHandlerRef.of(connection);
         this.targetSchemaId = currentSchema;
         this.setTargetSession(targetSession);
         this.originalStatementText = originalStatementText;
         this.executableStatementText = executableStatementText;
 
-        if (DatabaseFeature.DATABASE_LOGGING.isSupported(connectionHandler)) {
-            connectionHandler = Failsafe.nn(connectionHandler);
-            getOptions().set(ExecutionOption.ENABLE_LOGGING, connectionHandler.isLoggingEnabled());
+        if (connection != null && DatabaseFeature.DATABASE_LOGGING.isSupported(connection)) {
+            getOptions().set(ExecutionOption.ENABLE_LOGGING, connection.isLoggingEnabled());
         }
     }
 
@@ -147,19 +146,19 @@ public class StatementExecutionInput extends LocalExecutionInput {
     }
 
     public PsiFile createPreviewFile() {
-        ConnectionHandler activeConnection = getConnection();
-        SchemaId currentSchema = getTargetSchemaId();
-        DBLanguageDialect languageDialect = activeConnection == null ?
+        ConnectionHandler connection = getConnection();
+        SchemaId schema = getTargetSchemaId();
+        DBLanguageDialect languageDialect = connection == null ?
                 SQLLanguage.INSTANCE.getMainLanguageDialect() :
-                activeConnection.getLanguageDialect(SQLLanguage.INSTANCE);
+                connection.getLanguageDialect(SQLLanguage.INSTANCE);
 
         return DBLanguagePsiFile.createFromText(
                 getProject(),
                 "preview",
                 languageDialect,
                 executableStatementText,
-                activeConnection,
-                currentSchema);
+                connection,
+                schema);
     }
 
     public StatementExecutionProcessor getExecutionProcessor() {
@@ -187,10 +186,10 @@ public class StatementExecutionInput extends LocalExecutionInput {
         return false;
     }
 
-    public void setConnectionHandler(ConnectionHandler connectionHandler) {
-        this.targetConnection = ConnectionHandlerRef.of(connectionHandler);
-        if (DatabaseFeature.DATABASE_LOGGING.isSupported(connectionHandler)) {
-            getOptions().set(ExecutionOption.ENABLE_LOGGING, connectionHandler.isLoggingEnabled());
+    public void setTargetConnection(ConnectionHandler connection) {
+        super.setTargetConnection(connection);
+        if (DatabaseFeature.DATABASE_LOGGING.isSupported(connection)) {
+            getOptions().set(ExecutionOption.ENABLE_LOGGING, connection.isLoggingEnabled());
         }
     }
 

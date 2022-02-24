@@ -41,8 +41,8 @@ public class PendingTransactionsForm extends DBNFormImpl {
         mainPanel.setBorder(Borders.BOTTOM_LINE_BORDER);
 
         connectionsList.addListSelectionListener(e -> {
-            ConnectionHandler connectionHandler = connectionsList.getSelectedValue();
-            showChangesForm(connectionHandler);
+            ConnectionHandler connection = connectionsList.getSelectedValue();
+            showChangesForm(connection);
         });
 
         connectionsList.setCellRenderer(new ListCellRenderer());
@@ -70,8 +70,8 @@ public class PendingTransactionsForm extends DBNFormImpl {
     }
 
     boolean hasUncommittedChanges() {
-        for (ConnectionHandler connectionHandler : connectionHandlers) {
-            if (connectionHandler.hasUncommittedChanges()) {
+        for (ConnectionHandler connection : connectionHandlers) {
+            if (connection.hasUncommittedChanges()) {
                 return true;
             }
         }
@@ -88,13 +88,13 @@ public class PendingTransactionsForm extends DBNFormImpl {
         return connectionHandlers;
     }
 
-    public void showChangesForm(ConnectionHandler connectionHandler) {
+    public void showChangesForm(ConnectionHandler connection) {
         detailsPanel.removeAll();
-        if (connectionHandler != null) {
-            ConnectionId connectionId = connectionHandler.getConnectionId();
+        if (connection != null) {
+            ConnectionId connectionId = connection.getConnectionId();
             PendingTransactionsDetailForm pendingTransactionsForm = uncommittedChangeForms.get(connectionId);
             if (pendingTransactionsForm == null) {
-                pendingTransactionsForm = new PendingTransactionsDetailForm(this, connectionHandler, null, true);
+                pendingTransactionsForm = new PendingTransactionsDetailForm(this, connection, null, true);
                 uncommittedChangeForms.put(connectionId, pendingTransactionsForm);
             }
             detailsPanel.add(pendingTransactionsForm.getComponent(), BorderLayout.CENTER);
@@ -106,13 +106,13 @@ public class PendingTransactionsForm extends DBNFormImpl {
     private static class ListCellRenderer extends ColoredListCellRenderer<Object> {
         @Override
         protected void customizeCellRenderer(@NotNull JList list, Object value, int index, boolean selected, boolean hasFocus) {
-            ConnectionHandler connectionHandler = (ConnectionHandler) value;
-            setIcon(connectionHandler.getIcon());
-            append(connectionHandler.getName(), SimpleTextAttributes.REGULAR_ATTRIBUTES);
-            List<DBNConnection> connections = connectionHandler.getConnections(ConnectionType.MAIN, ConnectionType.SESSION);
+            ConnectionHandler connection = (ConnectionHandler) value;
+            setIcon(connection.getIcon());
+            append(connection.getName(), SimpleTextAttributes.REGULAR_ATTRIBUTES);
+            List<DBNConnection> connections = connection.getConnections(ConnectionType.MAIN, ConnectionType.SESSION);
             int changes = 0;
-            for (DBNConnection connection : connections) {
-                PendingTransactionBundle dataChanges = connection.getDataChanges();
+            for (DBNConnection conn : connections) {
+                PendingTransactionBundle dataChanges = conn.getDataChanges();
                 changes += dataChanges == null ? 0 : dataChanges.size();
             }
 
@@ -125,7 +125,7 @@ public class PendingTransactionsForm extends DBNFormImpl {
      ********************************************************/
     private final TransactionListener transactionListener = new TransactionListener() {
         @Override
-        public void afterAction(@NotNull ConnectionHandler connectionHandler, DBNConnection connection, TransactionAction action, boolean succeeded) {
+        public void afterAction(@NotNull ConnectionHandler connection, DBNConnection conn, TransactionAction action, boolean succeeded) {
             refreshForm();
         }
     };
