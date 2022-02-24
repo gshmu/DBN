@@ -15,7 +15,6 @@ import com.intellij.openapi.components.PersistentStateComponent;
 import com.intellij.openapi.components.State;
 import com.intellij.openapi.components.Storage;
 import com.intellij.openapi.project.Project;
-import lombok.var;
 import org.jdom.Element;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
@@ -181,12 +180,12 @@ public class DatasetFilterManager extends AbstractProjectComponent implements Pe
     public Element getState() {
         Element element = new Element("state");
 
-        for (var entry : filters.entrySet()) {
+        for (Map.Entry<ConnectionId, Map<String, DatasetFilterGroup>> entry : filters.entrySet()) {
             ConnectionId connectionId = entry.getKey();
             ConnectionManager connectionManager = ConnectionManager.getInstance(getProject());
             if (connectionManager.getConnection(connectionId) != null) {
                 Map<String, DatasetFilterGroup> filterLists = entry.getValue();
-                for (var groupEntry : filterLists.entrySet()) {
+                for (Map.Entry<String, DatasetFilterGroup> groupEntry : filterLists.entrySet()) {
                     DatasetFilterGroup filterGroup = groupEntry.getValue();
                     Element filterListElement = new Element("filter-actions");
                     filterGroup.writeConfiguration(filterListElement);
