@@ -29,7 +29,7 @@ import com.dci.intellij.dbn.common.util.Commons;
 import com.dci.intellij.dbn.common.util.Consumer;
 import com.dci.intellij.dbn.common.util.Lists;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
-import com.dci.intellij.dbn.connection.ConnectionHandlerRef;
+import com.dci.intellij.dbn.connection.ConnectionRef;
 import com.dci.intellij.dbn.connection.ConnectionId;
 import com.dci.intellij.dbn.connection.ConnectionPool;
 import com.dci.intellij.dbn.connection.SchemaId;
@@ -110,7 +110,7 @@ import static com.dci.intellij.dbn.object.type.DBObjectRelationType.*;
 import static com.dci.intellij.dbn.object.type.DBObjectType.*;
 
 public class DBObjectBundleImpl extends BrowserTreeNodeBase implements DBObjectBundle, NotificationSupport {
-    private final ConnectionHandlerRef connection;
+    private final ConnectionRef connection;
     private final BrowserTreeNode treeParent;
     private final List<BrowserTreeNode> allPossibleTreeChildren;
     private volatile List<BrowserTreeNode> visibleTreeChildren;
@@ -137,7 +137,7 @@ public class DBObjectBundleImpl extends BrowserTreeNodeBase implements DBObjectB
     private final PsiFile fakeObjectFile;
 
     public DBObjectBundleImpl(ConnectionHandler connection, BrowserTreeNode treeParent) {
-        this.connection = ConnectionHandlerRef.of(connection);
+        this.connection = ConnectionRef.of(connection);
         this.dataTypes = new DBDataTypeBundle(connection);
         this.treeParent = treeParent;
         this.configSignature = connection.getSettings().getDatabaseSettings().getSignature();

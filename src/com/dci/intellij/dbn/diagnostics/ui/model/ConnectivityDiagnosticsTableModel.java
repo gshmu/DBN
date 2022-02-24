@@ -1,7 +1,7 @@
 package com.dci.intellij.dbn.diagnostics.ui.model;
 
 import com.dci.intellij.dbn.connection.ConnectionHandler;
-import com.dci.intellij.dbn.connection.ConnectionHandlerRef;
+import com.dci.intellij.dbn.connection.ConnectionRef;
 import com.dci.intellij.dbn.connection.SessionId;
 import com.dci.intellij.dbn.connection.session.DatabaseSession;
 import com.dci.intellij.dbn.diagnostics.DiagnosticsManager;
@@ -11,7 +11,7 @@ import com.intellij.openapi.project.Project;
 import org.jetbrains.annotations.NotNull;
 
 public class ConnectivityDiagnosticsTableModel extends AbstractDiagnosticsTableModel<SessionId> {
-    private final ConnectionHandlerRef connection;
+    private final ConnectionRef connection;
 
     private static final String[] COLUMN_NAMES = new String[] {
             "Session",

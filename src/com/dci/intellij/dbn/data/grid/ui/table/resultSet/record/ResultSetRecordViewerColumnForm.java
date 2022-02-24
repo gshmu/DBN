@@ -2,7 +2,7 @@ package com.dci.intellij.dbn.data.grid.ui.table.resultSet.record;
 
 import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.common.color.Colors;
-import com.dci.intellij.dbn.common.ui.DBNFormImpl;
+import com.dci.intellij.dbn.common.ui.form.DBNFormBase;
 import com.dci.intellij.dbn.data.model.ColumnInfo;
 import com.dci.intellij.dbn.data.model.resultSet.ResultSetDataModelCell;
 import com.dci.intellij.dbn.data.type.DBDataType;
@@ -20,7 +20,7 @@ import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.text.ParseException;
 
-public class ResultSetRecordViewerColumnForm extends DBNFormImpl {
+public class ResultSetRecordViewerColumnForm extends DBNFormBase {
     private JLabel columnLabel;
     private JPanel valueFieldPanel;
     private JLabel dataTypeLabel;

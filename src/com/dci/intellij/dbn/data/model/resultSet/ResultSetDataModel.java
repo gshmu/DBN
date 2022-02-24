@@ -4,7 +4,7 @@ import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.common.dispose.SafeDisposer;
 import com.dci.intellij.dbn.common.thread.Background;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
-import com.dci.intellij.dbn.connection.ConnectionHandlerRef;
+import com.dci.intellij.dbn.connection.ConnectionRef;
 import com.dci.intellij.dbn.connection.Resources;
 import com.dci.intellij.dbn.connection.jdbc.DBNConnection;
 import com.dci.intellij.dbn.connection.jdbc.DBNResultSet;
@@ -28,7 +28,7 @@ public class ResultSetDataModel<
         C extends ResultSetDataModelCell<R, ? extends ResultSetDataModel<R, C>>>
         extends SortableDataModel<R, C> {
 
-    private final ConnectionHandlerRef connectionHandler;
+    private final ConnectionRef connectionHandler;
     private DBNResultSet resultSet;
 
     @Getter

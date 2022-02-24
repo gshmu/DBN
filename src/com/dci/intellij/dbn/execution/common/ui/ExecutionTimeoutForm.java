@@ -2,8 +2,8 @@ package com.dci.intellij.dbn.execution.common.ui;
 
 import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.common.action.GroupPopupAction;
-import com.dci.intellij.dbn.common.ui.DBNForm;
-import com.dci.intellij.dbn.common.ui.DBNFormImpl;
+import com.dci.intellij.dbn.common.ui.form.DBNForm;
+import com.dci.intellij.dbn.common.ui.form.DBNFormBase;
 import com.dci.intellij.dbn.common.util.Actions;
 import com.dci.intellij.dbn.debugger.DBDebuggerType;
 import com.dci.intellij.dbn.execution.ExecutionInput;
@@ -23,7 +23,7 @@ import javax.swing.JTextField;
 import javax.swing.event.DocumentEvent;
 import java.awt.BorderLayout;
 
-public abstract class ExecutionTimeoutForm extends DBNFormImpl{
+public abstract class ExecutionTimeoutForm extends DBNFormBase {
     private JTextField executionTimeoutTextField;
     private JPanel mainPanel;
     private JPanel actionsPanel;

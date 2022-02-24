@@ -1,7 +1,7 @@
 package com.dci.intellij.dbn.common.options;
 
 import com.dci.intellij.dbn.common.options.ui.CompositeConfigurationEditorForm;
-import com.dci.intellij.dbn.common.ui.GUIUtil;
+import com.dci.intellij.dbn.common.ui.util.UserInterface;
 import com.dci.intellij.dbn.options.TopLevelConfig;
 import com.intellij.openapi.options.ConfigurationException;
 import lombok.EqualsAndHashCode;
@@ -40,7 +40,7 @@ public abstract class CompositeConfiguration<P extends Configuration, E extends 
     public void apply() throws ConfigurationException {
         E settingsEditor = getSettingsEditor();
         if (this instanceof TopLevelConfig && settingsEditor != null) {
-            GUIUtil.stopTableCellEditing(settingsEditor.getComponent());
+            UserInterface.stopTableCellEditing(settingsEditor.getComponent());
         }
         for (Configuration configuration : getConfigurations()) {
             configuration.apply();

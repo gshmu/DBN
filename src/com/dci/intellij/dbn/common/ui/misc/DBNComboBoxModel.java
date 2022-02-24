@@ -1,4 +1,6 @@
-package com.dci.intellij.dbn.common.ui;
+package com.dci.intellij.dbn.common.ui.misc;
+
+import com.dci.intellij.dbn.common.ui.Presentable;
 
 import javax.swing.*;
 import javax.swing.event.ListDataListener;

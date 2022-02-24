@@ -2,8 +2,8 @@ package com.dci.intellij.dbn.connection.config.ui;
 
 import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.common.color.Colors;
-import com.dci.intellij.dbn.common.ui.ComboBoxUtil;
-import com.dci.intellij.dbn.common.ui.DBNFormImpl;
+import com.dci.intellij.dbn.common.ui.form.DBNFormBase;
+import com.dci.intellij.dbn.common.ui.util.ComboBoxes;
 import com.dci.intellij.dbn.common.util.Messages;
 import com.dci.intellij.dbn.common.util.Strings;
 import com.dci.intellij.dbn.connection.DatabaseType;
@@ -16,20 +16,16 @@ import com.intellij.ui.JBColor;
 import com.intellij.util.ui.TimerUtil;
 import org.jetbrains.annotations.NotNull;
 
-import javax.swing.JComboBox;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.JTextField;
-import javax.swing.Timer;
+import javax.swing.*;
 import java.io.File;
 import java.sql.Driver;
 import java.util.ArrayList;
 import java.util.List;
 
-import static com.dci.intellij.dbn.common.ui.ComboBoxUtil.*;
+import static com.dci.intellij.dbn.common.ui.util.ComboBoxes.*;
 
 
-public class ConnectionDriverSettingsForm extends DBNFormImpl{
+public class ConnectionDriverSettingsForm extends DBNFormBase {
     private TextFieldWithBrowseButton driverLibraryTextField;
     private JPanel mainPanel;
     private JPanel driverSetupPanel;
@@ -109,7 +105,7 @@ public class ConnectionDriverSettingsForm extends DBNFormImpl{
 
         driverSourceComboBox.setEnabled(allowBuiltInLibrary);
         if (!allowBuiltInLibrary) {
-            ComboBoxUtil.setSelection(driverSourceComboBox, DriverSource.EXTERNAL);
+            ComboBoxes.setSelection(driverSourceComboBox, DriverSource.EXTERNAL);
         }
         //driverSourceLabel.setVisible(allowBuiltInLibrary);
 

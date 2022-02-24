@@ -7,7 +7,7 @@ import com.dci.intellij.dbn.common.event.ProjectEvents;
 import com.dci.intellij.dbn.common.file.util.FileSearchRequest;
 import com.dci.intellij.dbn.common.file.util.VirtualFiles;
 import com.dci.intellij.dbn.common.thread.Write;
-import com.dci.intellij.dbn.common.ui.ListUtil;
+import com.dci.intellij.dbn.common.ui.util.Lists;
 import com.dci.intellij.dbn.common.util.Documents;
 import com.dci.intellij.dbn.common.util.Messages;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
@@ -401,7 +401,7 @@ public class DDLFileAttachmentManager extends AbstractProjectComponent implement
             SelectFromListDialog fileTypeDialog = new SelectFromListDialog(
                     getProject(),
                     fileNameProviders.toArray(),
-                    ListUtil.BASIC_TO_STRING_ASPECT,
+                    Lists.BASIC_TO_STRING_ASPECT,
                     "Select DDL file type",
                     ListSelectionModel.SINGLE_SELECTION);
             JList list = Failsafe.nd((JList) fileTypeDialog.getPreferredFocusedComponent());

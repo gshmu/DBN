@@ -1,6 +1,6 @@
 package com.dci.intellij.dbn.diagnostics.action;
 
-import com.dci.intellij.dbn.common.ui.DBNComboBoxAction;
+import com.dci.intellij.dbn.common.ui.misc.DBNComboBoxAction;
 import com.dci.intellij.dbn.common.util.Strings;
 import com.dci.intellij.dbn.diagnostics.ParserDiagnosticsManager;
 import com.dci.intellij.dbn.diagnostics.data.ParserDiagnosticsFilter;

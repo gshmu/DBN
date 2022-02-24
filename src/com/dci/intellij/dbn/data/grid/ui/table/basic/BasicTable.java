@@ -6,14 +6,14 @@ import com.dci.intellij.dbn.common.event.ProjectEvents;
 import com.dci.intellij.dbn.common.locale.options.RegionalSettings;
 import com.dci.intellij.dbn.common.locale.options.RegionalSettingsListener;
 import com.dci.intellij.dbn.common.thread.Dispatch;
-import com.dci.intellij.dbn.common.ui.Fonts;
-import com.dci.intellij.dbn.common.ui.GUIUtil;
-import com.dci.intellij.dbn.common.ui.Mouse;
 import com.dci.intellij.dbn.common.ui.component.DBNComponent;
 import com.dci.intellij.dbn.common.ui.table.DBNTableGutter;
 import com.dci.intellij.dbn.common.ui.table.DBNTableHeaderRenderer;
 import com.dci.intellij.dbn.common.ui.table.DBNTableWithGutter;
 import com.dci.intellij.dbn.common.ui.table.TableSelectionRestorer;
+import com.dci.intellij.dbn.common.ui.util.Fonts;
+import com.dci.intellij.dbn.common.ui.util.Mouse;
+import com.dci.intellij.dbn.common.ui.util.UserInterface;
 import com.dci.intellij.dbn.common.util.MathResult;
 import com.dci.intellij.dbn.data.grid.color.DataGridTextAttributes;
 import com.dci.intellij.dbn.data.grid.options.DataGridSettings;
@@ -226,7 +226,7 @@ public class BasicTable<T extends BasicDataModel<?, ?>> extends DBNTableWithGutt
             if (viewport != null) {
                 viewport.setBackground(background);
                 viewport.getParent().setBackground(background);
-                GUIUtil.repaint(viewport);
+                UserInterface.repaint(viewport);
             }
         });
 

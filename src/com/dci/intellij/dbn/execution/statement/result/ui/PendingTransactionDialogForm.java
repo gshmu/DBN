@@ -3,9 +3,9 @@ package com.dci.intellij.dbn.execution.statement.result.ui;
 import com.dci.intellij.dbn.common.color.Colors;
 import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.common.environment.EnvironmentType;
-import com.dci.intellij.dbn.common.ui.Borders;
-import com.dci.intellij.dbn.common.ui.DBNFormImpl;
-import com.dci.intellij.dbn.common.ui.DBNHeaderForm;
+import com.dci.intellij.dbn.common.ui.util.Borders;
+import com.dci.intellij.dbn.common.ui.form.DBNFormBase;
+import com.dci.intellij.dbn.common.ui.form.DBNHeaderForm;
 import com.dci.intellij.dbn.common.util.Documents;
 import com.dci.intellij.dbn.common.util.Editors;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
@@ -30,7 +30,7 @@ import javax.swing.JScrollPane;
 import javax.swing.JTextPane;
 import java.awt.BorderLayout;
 
-public class PendingTransactionDialogForm extends DBNFormImpl {
+public class PendingTransactionDialogForm extends DBNFormBase {
     private JPanel mainPanel;
     private JPanel previewPanel;
     private JPanel headerPanel;

@@ -15,15 +15,15 @@ import java.util.concurrent.ConcurrentHashMap;
 
 @Getter
 @EqualsAndHashCode
-public final class ConnectionHandlerRef implements Reference<ConnectionHandler>, Identifiable<ConnectionId> {
-    private static final Map<ConnectionId, ConnectionHandlerRef> registry = new ConcurrentHashMap<>();
+public final class ConnectionRef implements Reference<ConnectionHandler>, Identifiable<ConnectionId> {
+    private static final Map<ConnectionId, ConnectionRef> registry = new ConcurrentHashMap<>();
     private final ConnectionId connectionId;
     private volatile boolean resolving;
 
     @EqualsAndHashCode.Exclude
     private WeakRef<ConnectionHandler> reference;
 
-    private ConnectionHandlerRef(ConnectionId connectionId) {
+    private ConnectionRef(ConnectionId connectionId) {
         this.connectionId = connectionId;
     }
 
@@ -74,9 +74,9 @@ public final class ConnectionHandlerRef implements Reference<ConnectionHandler>,
 
 
     @Contract("null -> null;!null -> !null;")
-    public static ConnectionHandlerRef of(@Nullable ConnectionHandler connection) {
+    public static ConnectionRef of(@Nullable ConnectionHandler connection) {
         if (connection != null) {
-            ConnectionHandlerRef ref = ConnectionHandlerRef.of(connection.getConnectionId());
+            ConnectionRef ref = ConnectionRef.of(connection.getConnectionId());
             ConnectionHandler local = ref.get();
             if (local == null || local != connection) {
                 ref.reference = WeakRef.of(connection);
@@ -87,17 +87,17 @@ public final class ConnectionHandlerRef implements Reference<ConnectionHandler>,
     }
 
     @NotNull
-    public static ConnectionHandlerRef of(@NotNull ConnectionId connectionId) {
-        return registry.computeIfAbsent(connectionId, id -> new ConnectionHandlerRef(id));
+    public static ConnectionRef of(@NotNull ConnectionId connectionId) {
+        return registry.computeIfAbsent(connectionId, id -> new ConnectionRef(id));
     }
 
     @Contract("null -> null;!null -> !null;")
-    public static ConnectionHandler get(@Nullable ConnectionHandlerRef ref) {
+    public static ConnectionHandler get(@Nullable ConnectionRef ref) {
         return ref == null ? null : ref.get();
     }
 
     @NotNull
-    public static ConnectionHandler ensure(@NotNull ConnectionHandlerRef ref) {
+    public static ConnectionHandler ensure(@NotNull ConnectionRef ref) {
         return Failsafe.nn(ref).ensure();
     }
 }

@@ -3,8 +3,8 @@ package com.dci.intellij.dbn.data.editor.ui;
 import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.common.thread.Dispatch;
 import com.dci.intellij.dbn.common.thread.Progress;
-import com.dci.intellij.dbn.common.ui.GUIUtil;
-import com.dci.intellij.dbn.common.ui.KeyUtil;
+import com.dci.intellij.dbn.common.ui.util.Keyboard;
+import com.dci.intellij.dbn.common.ui.util.Popups;
 import com.dci.intellij.dbn.common.util.Actions;
 import com.dci.intellij.dbn.common.util.Context;
 import com.dci.intellij.dbn.common.util.Strings;
@@ -144,7 +144,7 @@ public class ValueListPopupProvider implements TextFieldPopupProvider{
                     true, null, 10);
         }
 
-        GUIUtil.showUnderneathOf(popup, editorComponent, 4, 200);
+        Popups.showUnderneathOf(popup, editorComponent, 4, 200);
     }
 
     private List<String> getValues() {
@@ -179,7 +179,7 @@ public class ValueListPopupProvider implements TextFieldPopupProvider{
 
     @Override
     public Shortcut[] getShortcuts() {
-        return KeyUtil.getShortcuts(IdeActions.ACTION_CODE_COMPLETION);
+        return Keyboard.getShortcuts(IdeActions.ACTION_CODE_COMPLETION);
     }
 
     @Nullable

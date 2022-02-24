@@ -1,4 +1,4 @@
-package com.dci.intellij.dbn.common.ui;
+package com.dci.intellij.dbn.common.ui.panel;
 
 import com.intellij.ui.JBColor;
 
@@ -6,9 +6,9 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.MouseEvent;
 
-public class DBNLinkComponent extends JPanel{
-    private JLabel label;
-    public DBNLinkComponent(String text) {
+public class DBNLinkPanel extends JPanel{
+    private final JLabel label;
+    public DBNLinkPanel(String text) {
         label = new JLabel(text);
         label.setForeground(JBColor.BLUE);
         setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));

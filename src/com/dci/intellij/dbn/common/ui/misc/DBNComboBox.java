@@ -1,10 +1,17 @@
-package com.dci.intellij.dbn.common.ui;
+package com.dci.intellij.dbn.common.ui.misc;
 
 import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.common.color.Colors;
 import com.dci.intellij.dbn.common.latent.Loader;
 import com.dci.intellij.dbn.common.property.PropertyHolder;
 import com.dci.intellij.dbn.common.property.PropertyHolderBase;
+import com.dci.intellij.dbn.common.ui.Presentable;
+import com.dci.intellij.dbn.common.ui.PresentableFactory;
+import com.dci.intellij.dbn.common.ui.ValueSelectorListener;
+import com.dci.intellij.dbn.common.ui.ValueSelectorOption;
+import com.dci.intellij.dbn.common.ui.util.Mouse;
+import com.dci.intellij.dbn.common.ui.util.Popups;
+import com.dci.intellij.dbn.common.ui.util.UserInterface;
 import com.dci.intellij.dbn.common.util.Actions;
 import com.dci.intellij.dbn.common.util.Commons;
 import com.dci.intellij.dbn.common.util.Context;
@@ -19,19 +26,11 @@ import com.intellij.ui.ColoredListCellRenderer;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import javax.swing.ComboBoxEditor;
-import javax.swing.ComboBoxModel;
-import javax.swing.JComboBox;
-import javax.swing.JList;
-import java.awt.Color;
-import java.awt.Component;
+import javax.swing.*;
+import java.awt.*;
 import java.awt.event.MouseListener;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 public class DBNComboBox<T extends Presentable> extends JComboBox<T> implements PropertyHolder<ValueSelectorOption> {
     private final Set<ValueSelectorListener<T>> listeners = new HashSet<>();
@@ -119,7 +118,7 @@ public class DBNComboBox<T extends Presentable> extends JComboBox<T> implements 
                 false,
                 () -> {
                     popup = null;
-                    GUIUtil.repaintAndFocus(DBNComboBox.this);
+                    UserInterface.repaintAndFocus(DBNComboBox.this);
                 },
                 10,
                 preselect -> {
@@ -130,7 +129,7 @@ public class DBNComboBox<T extends Presentable> extends JComboBox<T> implements 
                     }
                     return false;
                 });
-        GUIUtil.showUnderneathOf(popup, this, 3, 200);
+        Popups.showUnderneathOf(popup, this, 3, 200);
     }
 
     public void setValueFactory(PresentableFactory<T> valueFactory) {

@@ -4,8 +4,7 @@ import com.dci.intellij.dbn.common.dispose.AlreadyDisposedException;
 import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.common.options.BasicProjectConfiguration;
 import com.dci.intellij.dbn.common.options.ProjectConfiguration;
-import com.dci.intellij.dbn.common.ui.ListUtil;
-import com.dci.intellij.dbn.common.util.Lists;
+import com.dci.intellij.dbn.common.ui.util.Lists;
 import com.dci.intellij.dbn.common.util.Naming;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.ConnectionId;
@@ -21,14 +20,10 @@ import lombok.Setter;
 import org.jdom.Element;
 import org.jetbrains.annotations.NotNull;
 
-import javax.swing.ListModel;
+import javax.swing.*;
 import javax.swing.event.ListDataEvent;
 import javax.swing.event.ListDataListener;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Objects;
-import java.util.Set;
+import java.util.*;
 
 import static com.dci.intellij.dbn.common.options.setting.SettingsSupport.connectionIdAttribute;
 import static com.dci.intellij.dbn.common.options.setting.SettingsSupport.stringAttribute;
@@ -106,7 +101,7 @@ public class DatasetFilterGroup extends BasicProjectConfiguration<ProjectConfigu
     }
 
     private Object lookupFilter(String name) {
-        return Lists.first(getFilters(), filter -> Objects.equals(filter.getName(), name));
+        return com.dci.intellij.dbn.common.util.Lists.first(getFilters(), filter -> Objects.equals(filter.getName(), name));
     }
 
     public DatasetCustomFilter createCustomFilter(boolean interactive) {
@@ -135,7 +130,7 @@ public class DatasetFilterGroup extends BasicProjectConfiguration<ProjectConfigu
         int index = getFilters().indexOf(filter);
         getFilters().remove(index);
         filter.disposeUIResources();
-        ListUtil.notifyListDataListeners(this, state.listeners, index, index, ListDataEvent.INTERVAL_REMOVED);
+        Lists.notifyListDataListeners(this, state.listeners, index, index, ListDataEvent.INTERVAL_REMOVED);
 
     }
 
@@ -147,7 +142,7 @@ public class DatasetFilterGroup extends BasicProjectConfiguration<ProjectConfigu
         }
         getFilters().add(filter);
         if (interactive) {
-            ListUtil.notifyListDataListeners(this, state.listeners, index, index, ListDataEvent.INTERVAL_ADDED);
+            Lists.notifyListDataListeners(this, state.listeners, index, index, ListDataEvent.INTERVAL_ADDED);
         }
     }
 
@@ -161,7 +156,7 @@ public class DatasetFilterGroup extends BasicProjectConfiguration<ProjectConfigu
         if (index > 0) {
             getFilters().remove(filter);
             getFilters().add(index-1, filter);
-            ListUtil.notifyListDataListeners(this, state.listeners, index-1, index, ListDataEvent.CONTENTS_CHANGED);
+            Lists.notifyListDataListeners(this, state.listeners, index-1, index, ListDataEvent.CONTENTS_CHANGED);
         }
     }
 
@@ -171,7 +166,7 @@ public class DatasetFilterGroup extends BasicProjectConfiguration<ProjectConfigu
         if (index < getFilters().size()-1) {
             getFilters().remove(filter);
             getFilters().add(index + 1, filter);
-            ListUtil.notifyListDataListeners(this, state.listeners, index, index + 1, ListDataEvent.CONTENTS_CHANGED);
+            Lists.notifyListDataListeners(this, state.listeners, index, index + 1, ListDataEvent.CONTENTS_CHANGED);
         }
 
     }

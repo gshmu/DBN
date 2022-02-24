@@ -4,7 +4,7 @@ import com.dci.intellij.dbn.browser.options.ObjectFilterChangeListener;
 import com.dci.intellij.dbn.common.event.ProjectEvents;
 import com.dci.intellij.dbn.common.options.SettingsChangeNotifier;
 import com.dci.intellij.dbn.common.options.ui.ConfigurationEditorForm;
-import com.dci.intellij.dbn.common.ui.GUIUtil;
+import com.dci.intellij.dbn.common.ui.util.UserInterface;
 import com.dci.intellij.dbn.common.ui.list.CheckBoxList;
 import com.dci.intellij.dbn.connection.ConnectionId;
 import com.dci.intellij.dbn.object.filter.type.ObjectTypeFilterSetting;
@@ -44,7 +44,7 @@ public class ObjectTypeFilterSettingsForm extends ConfigurationEditorForm<Object
                 visibleObjectsList.setBackground(background);
                 visibleObjectsList.clearSelection();
                 visibleObjectsScrollPane.setVisible(enabled);
-                GUIUtil.repaint(mainPanel);
+                UserInterface.repaint(mainPanel);
             });
         } else {
             mainPanel.setBorder(null);

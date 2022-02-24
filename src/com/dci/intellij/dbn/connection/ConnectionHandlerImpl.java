@@ -23,11 +23,7 @@ import com.dci.intellij.dbn.connection.info.ConnectionInfo;
 import com.dci.intellij.dbn.connection.jdbc.DBNConnection;
 import com.dci.intellij.dbn.connection.session.DatabaseSession;
 import com.dci.intellij.dbn.connection.session.DatabaseSessionBundle;
-import com.dci.intellij.dbn.database.DatabaseCompatibility;
-import com.dci.intellij.dbn.database.DatabaseFeature;
-import com.dci.intellij.dbn.database.DatabaseInterface;
-import com.dci.intellij.dbn.database.DatabaseInterfaceProvider;
-import com.dci.intellij.dbn.database.DatabaseMetadataInterface;
+import com.dci.intellij.dbn.database.*;
 import com.dci.intellij.dbn.execution.statement.StatementExecutionQueue;
 import com.dci.intellij.dbn.language.common.DBLanguage;
 import com.dci.intellij.dbn.language.common.DBLanguageDialect;
@@ -45,7 +41,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import javax.swing.Icon;
+import javax.swing.*;
 import java.sql.SQLException;
 import java.util.Comparator;
 import java.util.List;
@@ -65,7 +61,7 @@ public class ConnectionHandlerImpl extends StatefulDisposable.Base implements Co
     private final ConnectionInstructions instructions = new ConnectionInstructions();
 
     private boolean enabled;
-    private final ConnectionHandlerRef ref;
+    private final ConnectionRef ref;
     private ConnectionInfo connectionInfo;
     private DatabaseCompatibility compatibility = DatabaseCompatibility.allFeatures();
 
@@ -93,7 +89,7 @@ public class ConnectionHandlerImpl extends StatefulDisposable.Base implements Co
         this.connectionBundle = WeakRef.of(connectionBundle);
         this.connectionSettings = connectionSettings;
         this.enabled = connectionSettings.isActive();
-        ref = ConnectionHandlerRef.of(this);
+        ref = ConnectionRef.of(this);
 
         connectionStatus = new ConnectionHandlerStatusHolder(this);
         connectionPool = new ConnectionPool(this);
@@ -289,7 +285,7 @@ public class ConnectionHandlerImpl extends StatefulDisposable.Base implements Co
     }
 
     @Override
-    public ConnectionHandlerRef ref() {
+    public ConnectionRef ref() {
         return ref;
     }
 

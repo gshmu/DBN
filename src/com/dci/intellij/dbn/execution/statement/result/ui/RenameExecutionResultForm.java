@@ -1,9 +1,9 @@
 package com.dci.intellij.dbn.execution.statement.result.ui;
 
 import com.dci.intellij.dbn.common.Icons;
-import com.dci.intellij.dbn.common.ui.DBNFormImpl;
-import com.dci.intellij.dbn.common.ui.DBNHeaderForm;
-import com.dci.intellij.dbn.common.ui.DBNHintForm;
+import com.dci.intellij.dbn.common.ui.form.DBNFormBase;
+import com.dci.intellij.dbn.common.ui.form.DBNHeaderForm;
+import com.dci.intellij.dbn.common.ui.form.DBNHintForm;
 import com.dci.intellij.dbn.common.util.Strings;
 import com.dci.intellij.dbn.execution.ExecutionManager;
 import com.dci.intellij.dbn.execution.statement.result.StatementExecutionResult;
@@ -21,7 +21,7 @@ import javax.swing.event.DocumentEvent;
 import java.awt.BorderLayout;
 import java.util.Objects;
 
-public class RenameExecutionResultForm extends DBNFormImpl{
+public class RenameExecutionResultForm extends DBNFormBase {
     private JPanel headerPanel;
     private JPanel mainPanel;
     private JPanel hintPanel;

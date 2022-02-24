@@ -2,7 +2,7 @@ package com.dci.intellij.dbn.execution.logging;
 
 import com.dci.intellij.dbn.common.util.Commons;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
-import com.dci.intellij.dbn.connection.ConnectionHandlerRef;
+import com.dci.intellij.dbn.connection.ConnectionRef;
 import com.dci.intellij.dbn.connection.ConnectionId;
 import com.dci.intellij.dbn.language.common.WeakRef;
 import com.intellij.openapi.vfs.VirtualFile;
@@ -17,7 +17,7 @@ public class LogOutputContext {
         STOPPED,     // interrupted by user
         CLOSED      // cancelled completely (console closed)
     }
-    private final ConnectionHandlerRef connection;
+    private final ConnectionRef connection;
     private final WeakRef<VirtualFile> sourceFile;
     private WeakRef<Process> process;
     private Status status = Status.NEW;

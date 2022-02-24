@@ -1,6 +1,6 @@
 package com.dci.intellij.dbn.execution.common.result.ui;
 
-import com.dci.intellij.dbn.common.ui.DBNForm;
+import com.dci.intellij.dbn.common.ui.form.DBNForm;
 import com.dci.intellij.dbn.execution.ExecutionResult;
 import org.jetbrains.annotations.NotNull;
 

@@ -1,11 +1,7 @@
 package com.dci.intellij.dbn.vfs.file;
 
 import com.dci.intellij.dbn.common.DevNullStreams;
-import com.dci.intellij.dbn.connection.ConnectionHandler;
-import com.dci.intellij.dbn.connection.ConnectionHandlerRef;
-import com.dci.intellij.dbn.connection.ConnectionId;
-import com.dci.intellij.dbn.connection.SchemaId;
-import com.dci.intellij.dbn.connection.SessionId;
+import com.dci.intellij.dbn.connection.*;
 import com.dci.intellij.dbn.connection.mapping.FileConnectionContextImpl;
 import com.dci.intellij.dbn.connection.session.DatabaseSession;
 import com.dci.intellij.dbn.language.sql.SQLFileType;
@@ -15,14 +11,14 @@ import com.intellij.openapi.vfs.VirtualFile;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import javax.swing.Icon;
+import javax.swing.*;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 
 public class DBConnectionVirtualFile extends DBVirtualFileImpl {
     private static final byte[] EMPTY_CONTENT = new byte[0];
-    private final ConnectionHandlerRef connection;
+    private final ConnectionRef connection;
 
     public DBConnectionVirtualFile(ConnectionHandler connection) {
         super(connection.getProject());

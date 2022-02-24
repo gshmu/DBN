@@ -1,7 +1,7 @@
 package com.dci.intellij.dbn.common.environment;
 
 import com.dci.intellij.dbn.common.options.PersistentConfiguration;
-import com.dci.intellij.dbn.common.ui.LookAndFeel;
+import com.dci.intellij.dbn.common.ui.util.LookAndFeel;
 import com.dci.intellij.dbn.common.ui.Presentable;
 import com.dci.intellij.dbn.common.util.Cloneable;
 import com.dci.intellij.dbn.common.util.Commons;

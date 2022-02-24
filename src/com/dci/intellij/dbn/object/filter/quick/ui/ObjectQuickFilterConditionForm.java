@@ -1,9 +1,9 @@
 package com.dci.intellij.dbn.object.filter.quick.ui;
 
 import com.dci.intellij.dbn.common.dispose.Failsafe;
-import com.dci.intellij.dbn.common.ui.ComboBoxSelectionKeyListener;
-import com.dci.intellij.dbn.common.ui.DBNComboBox;
-import com.dci.intellij.dbn.common.ui.DBNFormImpl;
+import com.dci.intellij.dbn.common.ui.listener.ComboBoxSelectionKeyListener;
+import com.dci.intellij.dbn.common.ui.misc.DBNComboBox;
+import com.dci.intellij.dbn.common.ui.form.DBNFormBase;
 import com.dci.intellij.dbn.common.util.Actions;
 import com.dci.intellij.dbn.object.filter.ConditionOperator;
 import com.dci.intellij.dbn.object.filter.quick.ObjectQuickFilter;
@@ -24,7 +24,7 @@ import javax.swing.JTextField;
 import javax.swing.event.DocumentEvent;
 import java.awt.BorderLayout;
 
-public class ObjectQuickFilterConditionForm extends DBNFormImpl {
+public class ObjectQuickFilterConditionForm extends DBNFormBase {
     private JPanel mainPanel;
     private JPanel actionsPanel;
     private JLabel objectNameLabel;

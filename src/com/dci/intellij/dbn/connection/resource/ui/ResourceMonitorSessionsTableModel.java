@@ -4,7 +4,7 @@ import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.common.dispose.StatefulDisposable;
 import com.dci.intellij.dbn.common.ui.table.DBNReadonlyTableModel;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
-import com.dci.intellij.dbn.connection.ConnectionHandlerRef;
+import com.dci.intellij.dbn.connection.ConnectionRef;
 import com.dci.intellij.dbn.connection.session.DatabaseSession;
 import com.intellij.openapi.project.Project;
 import org.jetbrains.annotations.NotNull;
@@ -13,7 +13,7 @@ import org.jetbrains.annotations.Nullable;
 import java.util.List;
 
 public class ResourceMonitorSessionsTableModel extends StatefulDisposable.Base implements DBNReadonlyTableModel {
-    private final ConnectionHandlerRef connection;
+    private final ConnectionRef connection;
     private final List<DatabaseSession> sessions;
 
     ResourceMonitorSessionsTableModel(ConnectionHandler connection) {

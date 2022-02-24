@@ -3,9 +3,9 @@ package com.dci.intellij.dbn.connection.resource.ui;
 import com.dci.intellij.dbn.common.dispose.DisposableContainers;
 import com.dci.intellij.dbn.common.event.ProjectEvents;
 import com.dci.intellij.dbn.common.thread.Dispatch;
-import com.dci.intellij.dbn.common.ui.Borders;
-import com.dci.intellij.dbn.common.ui.DBNFormImpl;
-import com.dci.intellij.dbn.common.ui.GUIUtil;
+import com.dci.intellij.dbn.common.ui.util.Borders;
+import com.dci.intellij.dbn.common.ui.form.DBNFormBase;
+import com.dci.intellij.dbn.common.ui.util.UserInterface;
 import com.dci.intellij.dbn.connection.ConnectionBundle;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.ConnectionHandlerStatusListener;
@@ -27,7 +27,7 @@ import java.awt.BorderLayout;
 import java.util.List;
 import java.util.Map;
 
-public class ResourceMonitorForm extends DBNFormImpl {
+public class ResourceMonitorForm extends DBNFormBase {
     private JPanel mainPanel;
     private JPanel actionsPanel;
     private JPanel detailsPanel;
@@ -48,7 +48,7 @@ public class ResourceMonitorForm extends DBNFormImpl {
         updateListModel();
 
         ProjectEvents.subscribe(ensureProject(), this, TransactionListener.TOPIC, transactionListener);
-        ProjectEvents.subscribe(ensureProject(), this, ConnectionHandlerStatusListener.TOPIC, (connectionId) -> GUIUtil.repaint(connectionsList));
+        ProjectEvents.subscribe(ensureProject(), this, ConnectionHandlerStatusListener.TOPIC, (connectionId) -> UserInterface.repaint(connectionsList));
     }
 
     private void updateListModel() {
@@ -94,7 +94,7 @@ public class ResourceMonitorForm extends DBNFormImpl {
             detailsPanel.add(detailForm.getComponent(), BorderLayout.CENTER);
         }
 
-        GUIUtil.repaint(detailsPanel);
+        UserInterface.repaint(detailsPanel);
     }
 
     private static class ConnectionListCellRenderer extends ColoredListCellRenderer<ConnectionHandler> {

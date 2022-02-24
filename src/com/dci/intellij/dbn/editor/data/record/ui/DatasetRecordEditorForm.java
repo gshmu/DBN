@@ -2,9 +2,9 @@ package com.dci.intellij.dbn.editor.data.record.ui;
 
 import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.common.dispose.DisposableContainers;
-import com.dci.intellij.dbn.common.ui.DBNFormImpl;
-import com.dci.intellij.dbn.common.ui.DBNHeaderForm;
-import com.dci.intellij.dbn.common.ui.GUIUtil;
+import com.dci.intellij.dbn.common.ui.form.DBNFormBase;
+import com.dci.intellij.dbn.common.ui.form.DBNHeaderForm;
+import com.dci.intellij.dbn.common.ui.util.UserInterface;
 import com.dci.intellij.dbn.common.util.Actions;
 import com.dci.intellij.dbn.data.record.ColumnSortingType;
 import com.dci.intellij.dbn.editor.data.DatasetEditorManager;
@@ -21,16 +21,12 @@ import com.intellij.openapi.actionSystem.ToggleAction;
 import com.intellij.openapi.project.Project;
 import org.jetbrains.annotations.NotNull;
 
-import javax.swing.BoxLayout;
-import javax.swing.JComponent;
-import javax.swing.JPanel;
-import javax.swing.JScrollPane;
-import java.awt.BorderLayout;
-import java.awt.Dimension;
+import javax.swing.*;
+import java.awt.*;
 import java.util.Comparator;
 import java.util.List;
 
-public class DatasetRecordEditorForm extends DBNFormImpl {
+public class DatasetRecordEditorForm extends DBNFormBase {
     private JPanel actionsPanel;
     private JPanel columnsPanel;
     private JPanel mainPanel;
@@ -155,7 +151,7 @@ public class DatasetRecordEditorForm extends DBNFormImpl {
             for (DatasetRecordEditorColumnForm columnForm : columnForms) {
                 columnsPanel.add(columnForm.getComponent());
             }
-            GUIUtil.repaint(columnsPanel);
+            UserInterface.repaint(columnsPanel);
         }
     }
 

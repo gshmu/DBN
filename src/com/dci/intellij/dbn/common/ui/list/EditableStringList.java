@@ -1,6 +1,6 @@
 package com.dci.intellij.dbn.common.ui.list;
 
-import com.dci.intellij.dbn.common.ui.Borders;
+import com.dci.intellij.dbn.common.ui.util.Borders;
 import com.dci.intellij.dbn.common.ui.component.DBNComponent;
 import com.dci.intellij.dbn.common.ui.table.DBNEditableTable;
 import com.dci.intellij.dbn.common.ui.table.DBNEditableTableModel;

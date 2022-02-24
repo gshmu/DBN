@@ -8,8 +8,8 @@ import com.dci.intellij.dbn.browser.options.listener.DisplayModeSettingsListener
 import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.common.dispose.SafeDisposer;
 import com.dci.intellij.dbn.common.event.ProjectEvents;
-import com.dci.intellij.dbn.common.ui.DBNFormImpl;
-import com.dci.intellij.dbn.common.ui.GUIUtil;
+import com.dci.intellij.dbn.common.ui.form.DBNFormBase;
+import com.dci.intellij.dbn.common.ui.util.UserInterface;
 import com.dci.intellij.dbn.common.util.Actions;
 import com.dci.intellij.dbn.connection.ConnectionId;
 import com.dci.intellij.dbn.connection.config.ConnectionConfigListener;
@@ -23,10 +23,10 @@ import lombok.Setter;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import javax.swing.JPanel;
-import java.awt.BorderLayout;
+import javax.swing.*;
+import java.awt.*;
 
-public class BrowserToolWindowForm extends DBNFormImpl {
+public class BrowserToolWindowForm extends DBNFormBase {
     private JPanel mainPanel;
     private JPanel actionsPanel;
     private JPanel browserPanel;
@@ -84,7 +84,7 @@ public class BrowserToolWindowForm extends DBNFormImpl {
 
         browserPanel.removeAll();
         browserPanel.add(this.browserForm.getComponent(), BorderLayout.CENTER);
-        GUIUtil.repaint(browserPanel);
+        UserInterface.repaint(browserPanel);
 
         SafeDisposer.dispose(oldBrowserForm, true);
     }

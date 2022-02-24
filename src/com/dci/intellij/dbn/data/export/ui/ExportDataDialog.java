@@ -4,7 +4,7 @@ import com.dci.intellij.dbn.common.thread.Dispatch;
 import com.dci.intellij.dbn.common.thread.Progress;
 import com.dci.intellij.dbn.common.ui.dialog.DBNDialog;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
-import com.dci.intellij.dbn.connection.ConnectionHandlerRef;
+import com.dci.intellij.dbn.connection.ConnectionRef;
 import com.dci.intellij.dbn.data.export.DataExportInstructions;
 import com.dci.intellij.dbn.data.export.DataExportManager;
 import com.dci.intellij.dbn.data.grid.ui.table.resultSet.ResultSetTable;
@@ -19,7 +19,7 @@ import java.awt.event.ActionEvent;
 
 public class ExportDataDialog extends DBNDialog<ExportDataForm> {
     private final ResultSetTable<?> table;
-    private final ConnectionHandlerRef connection;
+    private final ConnectionRef connection;
     private final DBObjectRef<?> sourceObject;
 
     public ExportDataDialog(ResultSetTable<?> table, @NotNull DBObject sourceObject) {

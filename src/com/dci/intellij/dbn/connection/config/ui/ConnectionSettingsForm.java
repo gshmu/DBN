@@ -8,25 +8,16 @@ import com.dci.intellij.dbn.common.options.ConfigurationHandle;
 import com.dci.intellij.dbn.common.options.SettingsChangeNotifier;
 import com.dci.intellij.dbn.common.options.ui.CompositeConfigurationEditorForm;
 import com.dci.intellij.dbn.common.thread.Dispatch;
-import com.dci.intellij.dbn.common.ui.DBNHeaderForm;
-import com.dci.intellij.dbn.common.ui.GUIUtil;
+import com.dci.intellij.dbn.common.ui.form.DBNHeaderForm;
 import com.dci.intellij.dbn.common.ui.tab.TabbedPane;
 import com.dci.intellij.dbn.common.ui.tab.TabbedPaneUtil;
+import com.dci.intellij.dbn.common.ui.util.UserInterface;
 import com.dci.intellij.dbn.common.util.Messages;
 import com.dci.intellij.dbn.connection.ConnectionId;
 import com.dci.intellij.dbn.connection.ConnectionManager;
 import com.dci.intellij.dbn.connection.ConnectivityStatus;
 import com.dci.intellij.dbn.connection.DatabaseType;
-import com.dci.intellij.dbn.connection.config.ConnectionBundleSettings;
-import com.dci.intellij.dbn.connection.config.ConnectionConfigListener;
-import com.dci.intellij.dbn.connection.config.ConnectionConfigType;
-import com.dci.intellij.dbn.connection.config.ConnectionDatabaseSettings;
-import com.dci.intellij.dbn.connection.config.ConnectionDetailSettings;
-import com.dci.intellij.dbn.connection.config.ConnectionFilterSettings;
-import com.dci.intellij.dbn.connection.config.ConnectionPropertiesSettings;
-import com.dci.intellij.dbn.connection.config.ConnectionSettings;
-import com.dci.intellij.dbn.connection.config.ConnectionSshTunnelSettings;
-import com.dci.intellij.dbn.connection.config.ConnectionSslSettings;
+import com.dci.intellij.dbn.connection.config.*;
 import com.intellij.openapi.options.ConfigurationException;
 import com.intellij.openapi.project.Project;
 import com.intellij.ui.JBColor;
@@ -34,13 +25,8 @@ import com.intellij.ui.components.JBScrollPane;
 import com.intellij.ui.tabs.TabInfo;
 import org.jetbrains.annotations.NotNull;
 
-import javax.swing.Icon;
-import javax.swing.JButton;
-import javax.swing.JCheckBox;
-import javax.swing.JList;
-import javax.swing.JPanel;
-import java.awt.BorderLayout;
-import java.awt.Color;
+import javax.swing.*;
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
@@ -123,7 +109,7 @@ public class ConnectionSettingsForm extends CompositeConfigurationEditorForm<Con
         try {
             ConfigurationHandle.setTransitory(true);
 
-            GUIUtil.stopTableCellEditing(mainPanel);
+            UserInterface.stopTableCellEditing(mainPanel);
             ConnectionSettings configuration = getConfiguration();
             ConnectionSettings clone = configuration.clone();
             clone.getDatabaseSettings().getAuthenticationInfo().setTemporary(true);
@@ -205,7 +191,7 @@ public class ConnectionSettingsForm extends CompositeConfigurationEditorForm<Con
                 ConnectionBundleSettingsForm bundleSettingsEditor = bundleSettings.getSettingsEditor();
                 if (bundleSettingsEditor != null) {
                     JList connectionList = bundleSettingsEditor.getList();
-                    GUIUtil.repaint(connectionList);
+                    UserInterface.repaint(connectionList);
                     ConnectionDatabaseSettingsForm settingsEditor = configuration.getDatabaseSettings().getSettingsEditor();
                     if (settingsEditor != null) {
                         settingsEditor.notifyPresentationChanges();
@@ -255,7 +241,7 @@ public class ConnectionSettingsForm extends CompositeConfigurationEditorForm<Con
 
     @Override
     public void applyFormChanges() throws ConfigurationException {
-        GUIUtil.stopTableCellEditing(mainPanel);
+        UserInterface.stopTableCellEditing(mainPanel);
         applyFormChanges(getConfiguration());
     }
 

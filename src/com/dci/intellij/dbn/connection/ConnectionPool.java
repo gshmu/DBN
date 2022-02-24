@@ -36,7 +36,7 @@ public final class ConnectionPool extends StatefulDisposable.Base implements Not
 
     private int peakPoolSize = 0;
 
-    private final ConnectionHandlerRef connection;
+    private final ConnectionRef connection;
 
     private final List<DBNConnection> poolConnections = ContainerUtil.createLockFreeCopyOnWriteList();
     private final Map<SessionId, DBNConnection> dedicatedConnections = new ConcurrentHashMap<>();

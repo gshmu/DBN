@@ -98,7 +98,7 @@
               <text value="[schema]"/>
             </properties>
           </component>
-          <component id="b8f11" class="com.dci.intellij.dbn.common.ui.DBNComboBox" binding="targetSchemaComboBox">
+          <component id="b8f11" class="com.dci.intellij.dbn.common.ui.misc.DBNComboBox" binding="targetSchemaComboBox">
             <constraints>
               <grid row="0" column="1" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
             </constraints>
@@ -140,7 +140,7 @@
               <text value="[session]"/>
             </properties>
           </component>
-          <component id="7241c" class="com.dci.intellij.dbn.common.ui.DBNComboBox" binding="targetSessionComboBox">
+          <component id="7241c" class="com.dci.intellij.dbn.common.ui.misc.DBNComboBox" binding="targetSessionComboBox">
             <constraints>
               <grid row="0" column="1" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
             </constraints>

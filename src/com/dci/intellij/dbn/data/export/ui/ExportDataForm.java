@@ -2,11 +2,11 @@ package com.dci.intellij.dbn.data.export.ui;
 
 import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.common.color.Colors;
-import com.dci.intellij.dbn.common.ui.DBNFormImpl;
-import com.dci.intellij.dbn.common.ui.DBNHeaderForm;
+import com.dci.intellij.dbn.common.ui.form.DBNFormBase;
+import com.dci.intellij.dbn.common.ui.form.DBNHeaderForm;
 import com.dci.intellij.dbn.common.util.Messages;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
-import com.dci.intellij.dbn.connection.ConnectionHandlerRef;
+import com.dci.intellij.dbn.connection.ConnectionRef;
 import com.dci.intellij.dbn.connection.config.ui.CharsetOption;
 import com.dci.intellij.dbn.data.export.DataExportFormat;
 import com.dci.intellij.dbn.data.export.DataExportInstructions;
@@ -35,10 +35,10 @@ import java.io.File;
 import java.nio.charset.Charset;
 
 import static com.dci.intellij.dbn.common.message.MessageCallback.when;
-import static com.dci.intellij.dbn.common.ui.ComboBoxUtil.*;
+import static com.dci.intellij.dbn.common.ui.util.ComboBoxes.*;
 import static com.dci.intellij.dbn.data.export.processor.DataExportFeature.*;
 
-public class ExportDataForm extends DBNFormImpl {
+public class ExportDataForm extends DBNFormBase {
     private static final FileChooserDescriptor DIRECTORY_FILE_DESCRIPTOR = new FileChooserDescriptor(false, true, false, false, false, false);
 
     private JPanel mainPanel;
@@ -73,7 +73,7 @@ public class ExportDataForm extends DBNFormImpl {
     private JLabel encodingLabel;
 
     private final DataExportInstructions instructions;
-    private final ConnectionHandlerRef connection;
+    private final ConnectionRef connection;
     private final DBObjectRef<?> sourceObject;
     private final ActionListener actionListener = e -> enableDisableFields();
 

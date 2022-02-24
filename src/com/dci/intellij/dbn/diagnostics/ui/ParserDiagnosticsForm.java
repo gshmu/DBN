@@ -2,9 +2,9 @@ package com.dci.intellij.dbn.diagnostics.ui;
 
 import com.dci.intellij.dbn.common.action.DataKeys;
 import com.dci.intellij.dbn.common.color.Colors;
-import com.dci.intellij.dbn.common.ui.Borders;
-import com.dci.intellij.dbn.common.ui.DBNFormImpl;
-import com.dci.intellij.dbn.common.ui.Fonts;
+import com.dci.intellij.dbn.common.ui.util.Borders;
+import com.dci.intellij.dbn.common.ui.form.DBNFormBase;
+import com.dci.intellij.dbn.common.ui.util.Fonts;
 import com.dci.intellij.dbn.common.ui.table.DBNTable;
 import com.dci.intellij.dbn.common.util.Actions;
 import com.dci.intellij.dbn.diagnostics.ParserDiagnosticsManager;
@@ -31,7 +31,7 @@ import java.awt.BorderLayout;
 import java.awt.Font;
 import java.util.List;
 
-public class ParserDiagnosticsForm extends DBNFormImpl {
+public class ParserDiagnosticsForm extends DBNFormBase {
     private JPanel mainPanel;
     private JPanel detailsPanel;
     private JList<ParserDiagnosticsResult> resultsList;

@@ -1,18 +1,17 @@
-package com.dci.intellij.dbn.common.ui;
+package com.dci.intellij.dbn.common.ui.panel;
 
 import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.common.color.Colors;
 import com.dci.intellij.dbn.common.ui.component.DBNComponent;
+import com.dci.intellij.dbn.common.ui.form.DBNFormBase;
+import com.dci.intellij.dbn.common.ui.util.Mouse;
 import org.jetbrains.annotations.NotNull;
 
-import javax.swing.JComponent;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import java.awt.BorderLayout;
-import java.awt.Cursor;
+import javax.swing.*;
+import java.awt.*;
 import java.awt.event.MouseEvent;
 
-public class DBNCollapsiblePanel<P extends DBNComponent> extends DBNFormImpl{
+public class DBNCollapsiblePanel<P extends DBNComponent> extends DBNFormBase {
     private JLabel collapseExpandLabel;
     private JPanel contentPanel;
     private JPanel mainPanel;

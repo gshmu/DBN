@@ -2,18 +2,14 @@ package com.dci.intellij.dbn.data.find;
 
 import com.dci.intellij.dbn.common.dispose.AlreadyDisposedException;
 import com.dci.intellij.dbn.common.list.ReversedList;
-import com.dci.intellij.dbn.common.ui.ListUtil;
 import com.dci.intellij.dbn.common.util.CollectionUtil;
+import com.dci.intellij.dbn.common.util.Lists;
 import com.dci.intellij.dbn.data.model.DataModelCell;
 import com.intellij.openapi.Disposable;
 import lombok.Getter;
 import lombok.Setter;
 
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 @Getter
 @Setter
@@ -159,7 +155,7 @@ public class DataSearchResult implements Disposable {
             }
             //reached end of the matches without resolving selection
             // scroll to the beginning
-            return ListUtil.getFirst(matches);
+            return Lists.firstElement(matches);
         }
         
         return null;
@@ -188,7 +184,7 @@ public class DataSearchResult implements Disposable {
             }
             //reached beginning of the matches actions without resolving selection
             // scroll to the end
-            return ListUtil.getLast(matches);
+            return Lists.lastElement(matches);
         }
         
         return null;

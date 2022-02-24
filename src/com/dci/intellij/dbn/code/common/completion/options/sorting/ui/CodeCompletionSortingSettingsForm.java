@@ -6,7 +6,7 @@ import com.dci.intellij.dbn.code.common.completion.options.sorting.action.MoveDo
 import com.dci.intellij.dbn.code.common.completion.options.sorting.action.MoveUpAction;
 import com.dci.intellij.dbn.common.color.Colors;
 import com.dci.intellij.dbn.common.options.ui.ConfigurationEditorForm;
-import com.dci.intellij.dbn.common.ui.Fonts;
+import com.dci.intellij.dbn.common.ui.util.Fonts;
 import com.dci.intellij.dbn.common.util.Actions;
 import com.dci.intellij.dbn.object.type.DBObjectType;
 import com.intellij.openapi.actionSystem.ActionToolbar;
@@ -16,13 +16,8 @@ import com.intellij.ui.SimpleTextAttributes;
 import com.intellij.util.ui.UIUtil;
 import org.jetbrains.annotations.NotNull;
 
-import javax.swing.DefaultListModel;
-import javax.swing.JCheckBox;
-import javax.swing.JList;
-import javax.swing.JPanel;
-import javax.swing.ListCellRenderer;
-import javax.swing.ListModel;
-import java.awt.BorderLayout;
+import javax.swing.*;
+import java.awt.*;
 import java.awt.event.ActionListener;
 import java.util.List;
 

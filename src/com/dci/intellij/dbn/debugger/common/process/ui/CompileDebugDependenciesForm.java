@@ -1,9 +1,9 @@
 package com.dci.intellij.dbn.debugger.common.process.ui;
 
-import com.dci.intellij.dbn.common.ui.DBNFormImpl;
-import com.dci.intellij.dbn.common.ui.DBNHeaderForm;
-import com.dci.intellij.dbn.common.ui.DBNHintForm;
 import com.dci.intellij.dbn.common.ui.Presentable;
+import com.dci.intellij.dbn.common.ui.form.DBNFormBase;
+import com.dci.intellij.dbn.common.ui.form.DBNHeaderForm;
+import com.dci.intellij.dbn.common.ui.form.DBNHintForm;
 import com.dci.intellij.dbn.common.util.Commons;
 import com.dci.intellij.dbn.common.util.Lists;
 import com.dci.intellij.dbn.debugger.common.config.DBRunConfig;
@@ -16,16 +16,13 @@ import com.dci.intellij.dbn.object.common.DBSchemaObject;
 import com.dci.intellij.dbn.object.lookup.DBObjectRef;
 import org.jetbrains.annotations.NotNull;
 
-import javax.swing.DefaultListModel;
-import javax.swing.JCheckBox;
-import javax.swing.JList;
-import javax.swing.JPanel;
-import java.awt.BorderLayout;
+import javax.swing.*;
+import java.awt.*;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-public class CompileDebugDependenciesForm extends DBNFormImpl {
+public class CompileDebugDependenciesForm extends DBNFormBase {
     private JList<DBSchemaObject> objectList;
     private JPanel mainPanel;
     private JCheckBox rememberSelectionCheckBox;

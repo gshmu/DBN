@@ -1,7 +1,7 @@
 package com.dci.intellij.dbn.execution.method.ui;
 
 import com.dci.intellij.dbn.common.dispose.DisposableContainers;
-import com.dci.intellij.dbn.common.ui.DBNFormImpl;
+import com.dci.intellij.dbn.common.ui.form.DBNFormBase;
 import com.dci.intellij.dbn.common.util.Commons;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.ConnectionId;
@@ -38,7 +38,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-public class MethodExecutionInputArgumentForm extends DBNFormImpl {
+public class MethodExecutionInputArgumentForm extends DBNFormBase {
     private JPanel mainPanel;
     private JLabel argumentLabel;
     private JLabel argumentTypeLabel;

@@ -2,9 +2,9 @@ package com.dci.intellij.dbn.editor.data.filter.ui;
 
 import com.dci.intellij.dbn.common.dispose.SafeDisposer;
 import com.dci.intellij.dbn.common.options.ui.ConfigurationEditorForm;
-import com.dci.intellij.dbn.common.ui.ComboBoxSelectionKeyListener;
-import com.dci.intellij.dbn.common.ui.DBNComboBox;
 import com.dci.intellij.dbn.common.ui.ValueSelectorOption;
+import com.dci.intellij.dbn.common.ui.listener.ComboBoxSelectionKeyListener;
+import com.dci.intellij.dbn.common.ui.misc.DBNComboBox;
 import com.dci.intellij.dbn.common.util.Actions;
 import com.dci.intellij.dbn.data.editor.ui.TextFieldPopupType;
 import com.dci.intellij.dbn.data.editor.ui.TextFieldWithPopup;
@@ -25,12 +25,9 @@ import com.intellij.ui.SimpleTextAttributes;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import javax.swing.JList;
-import javax.swing.JPanel;
-import javax.swing.JTextField;
-import javax.swing.ListCellRenderer;
+import javax.swing.*;
 import javax.swing.event.DocumentEvent;
-import java.awt.BorderLayout;
+import java.awt.*;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;

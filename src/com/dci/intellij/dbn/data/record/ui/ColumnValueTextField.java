@@ -1,6 +1,6 @@
 package com.dci.intellij.dbn.data.record.ui;
 
-import com.dci.intellij.dbn.common.ui.Mouse;
+import com.dci.intellij.dbn.common.ui.util.Mouse;
 import com.dci.intellij.dbn.common.util.TextAttributes;
 import com.dci.intellij.dbn.data.grid.color.DataGridTextAttributesKeys;
 import com.dci.intellij.dbn.data.record.DatasetRecord;
@@ -14,9 +14,8 @@ import com.intellij.ui.SimpleTextAttributes;
 import lombok.Getter;
 import org.jetbrains.annotations.Nullable;
 
-import javax.swing.JTextField;
-import java.awt.Color;
-import java.awt.Cursor;
+import javax.swing.*;
+import java.awt.*;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 

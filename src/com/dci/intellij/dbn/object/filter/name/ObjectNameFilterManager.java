@@ -3,7 +3,7 @@ package com.dci.intellij.dbn.object.filter.name;
 import com.dci.intellij.dbn.DatabaseNavigator;
 import com.dci.intellij.dbn.common.AbstractProjectComponent;
 import com.dci.intellij.dbn.common.dispose.Failsafe;
-import com.dci.intellij.dbn.common.ui.GUIUtil;
+import com.dci.intellij.dbn.common.ui.util.UserInterface;
 import com.dci.intellij.dbn.object.filter.ConditionJoinType;
 import com.dci.intellij.dbn.object.filter.name.ui.ObjectNameFilterConditionDialog;
 import com.dci.intellij.dbn.object.filter.name.ui.ObjectNameFilterConditionForm;
@@ -49,7 +49,7 @@ public class ObjectNameFilterManager extends AbstractProjectComponent implements
             TreePath treePath = settings.createTreePath(objectNameFilter);
             filtersTree.expandPath(treePath);
             filtersTree.setSelectionPath(treePath);
-            GUIUtil.repaint(filtersTree);
+            UserInterface.repaint(filtersTree);
         }
     }
 
@@ -72,7 +72,7 @@ public class ObjectNameFilterManager extends AbstractProjectComponent implements
             JTree filtersTree = settingsForm.getFiltersTree();
             ObjectNameFilterSettings settings = (ObjectNameFilterSettings) filtersTree.getModel();
             filtersTree.setSelectionPath(settings.createTreePath(newCondition));
-            GUIUtil.repaint(filtersTree);
+            UserInterface.repaint(filtersTree);
         }
     }
 

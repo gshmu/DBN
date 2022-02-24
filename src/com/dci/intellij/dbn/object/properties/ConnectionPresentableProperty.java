@@ -1,15 +1,15 @@
 package com.dci.intellij.dbn.object.properties;
 
 import com.dci.intellij.dbn.connection.ConnectionHandler;
-import com.dci.intellij.dbn.connection.ConnectionHandlerRef;
+import com.dci.intellij.dbn.connection.ConnectionRef;
 import com.intellij.pom.Navigatable;
 import lombok.EqualsAndHashCode;
 
-import javax.swing.Icon;
+import javax.swing.*;
 
 @EqualsAndHashCode(callSuper = false)
 public class ConnectionPresentableProperty extends PresentableProperty{
-    private final ConnectionHandlerRef connection;
+    private final ConnectionRef connection;
 
     public ConnectionPresentableProperty(ConnectionHandler connection) {
         this.connection = connection.ref();

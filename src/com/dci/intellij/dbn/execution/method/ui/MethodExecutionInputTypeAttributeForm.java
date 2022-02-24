@@ -1,6 +1,6 @@
 package com.dci.intellij.dbn.execution.method.ui;
 
-import com.dci.intellij.dbn.common.ui.DBNFormImpl;
+import com.dci.intellij.dbn.common.ui.form.DBNFormBase;
 import com.dci.intellij.dbn.common.util.Commons;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.data.editor.text.TextContentType;
@@ -32,7 +32,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-public class MethodExecutionInputTypeAttributeForm extends DBNFormImpl {
+public class MethodExecutionInputTypeAttributeForm extends DBNFormBase {
     private JLabel attributeTypeLabel;
     private JLabel attributeLabel;
     private JPanel mainPanel;

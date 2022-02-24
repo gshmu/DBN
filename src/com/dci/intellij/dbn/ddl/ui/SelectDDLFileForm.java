@@ -1,8 +1,8 @@
 package com.dci.intellij.dbn.ddl.ui;
 
-import com.dci.intellij.dbn.common.ui.DBNFormImpl;
-import com.dci.intellij.dbn.common.ui.DBNHeaderForm;
-import com.dci.intellij.dbn.common.ui.DBNHintForm;
+import com.dci.intellij.dbn.common.ui.form.DBNFormBase;
+import com.dci.intellij.dbn.common.ui.form.DBNHeaderForm;
+import com.dci.intellij.dbn.common.ui.form.DBNHintForm;
 import com.dci.intellij.dbn.common.ui.dialog.DBNDialog;
 import com.dci.intellij.dbn.object.common.DBSchemaObject;
 import com.intellij.openapi.vfs.VirtualFile;
@@ -12,7 +12,7 @@ import javax.swing.*;
 import java.awt.*;
 import java.util.List;
 
-public class SelectDDLFileForm extends DBNFormImpl {
+public class SelectDDLFileForm extends DBNFormBase {
     private JPanel mainPanel;
     private JList<VirtualFile> filesList;
     private JPanel headerPanel;

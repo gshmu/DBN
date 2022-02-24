@@ -1,7 +1,7 @@
 package com.dci.intellij.dbn.common.color;
 
 import com.dci.intellij.dbn.common.event.ApplicationEvents;
-import com.dci.intellij.dbn.common.ui.LookAndFeel;
+import com.dci.intellij.dbn.common.ui.util.LookAndFeel;
 import com.dci.intellij.dbn.common.util.Cancellable;
 import com.dci.intellij.dbn.data.grid.color.DataGridTextAttributesKeys;
 import com.intellij.openapi.Disposable;
@@ -14,8 +14,8 @@ import com.intellij.util.ui.UIUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import javax.swing.UIManager;
-import java.awt.Color;
+import javax.swing.*;
+import java.awt.*;
 import java.util.Objects;
 
 import static com.dci.intellij.dbn.common.color.ColorCache.cached;

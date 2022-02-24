@@ -4,7 +4,7 @@ import com.dci.intellij.dbn.common.action.DumbAwareProjectAction;
 import com.dci.intellij.dbn.common.action.Lookup;
 import com.dci.intellij.dbn.common.util.Messages;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
-import com.dci.intellij.dbn.connection.ConnectionHandlerRef;
+import com.dci.intellij.dbn.connection.ConnectionRef;
 import com.dci.intellij.dbn.connection.config.ConnectionDetailSettings;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.editor.Editor;
@@ -14,7 +14,7 @@ import org.jetbrains.annotations.NotNull;
 import static com.dci.intellij.dbn.common.message.MessageCallback.when;
 
 public class DatabaseSessionDisableAction extends DumbAwareProjectAction {
-    private final ConnectionHandlerRef connection;
+    private final ConnectionRef connection;
 
     DatabaseSessionDisableAction(ConnectionHandler connection) {
         super("Disable Session Support...");

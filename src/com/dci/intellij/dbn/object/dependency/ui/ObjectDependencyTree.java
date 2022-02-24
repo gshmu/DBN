@@ -5,8 +5,8 @@ import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.common.dispose.SafeDisposer;
 import com.dci.intellij.dbn.common.load.LoadInProgressRegistry;
 import com.dci.intellij.dbn.common.thread.Dispatch;
-import com.dci.intellij.dbn.common.ui.GUIUtil;
-import com.dci.intellij.dbn.common.ui.Mouse;
+import com.dci.intellij.dbn.common.ui.util.UserInterface;
+import com.dci.intellij.dbn.common.ui.util.Mouse;
 import com.dci.intellij.dbn.common.ui.component.DBNComponent;
 import com.dci.intellij.dbn.common.ui.tree.DBNTree;
 import com.dci.intellij.dbn.common.util.Actions;
@@ -56,7 +56,7 @@ public class ObjectDependencyTree extends DBNTree{
         getSelectionModel().setSelectionMode(TreeSelectionModel.SINGLE_TREE_SELECTION);
 
         setCellRenderer(new ObjectDependencyTreeCellRenderer());
-        addTreeSelectionListener((TreeSelectionEvent e) -> GUIUtil.repaint(ObjectDependencyTree.this));
+        addTreeSelectionListener((TreeSelectionEvent e) -> UserInterface.repaint(ObjectDependencyTree.this));
 
         speedSearch = new ObjectDependencyTreeSpeedSearch(this);
         addMouseListener(Mouse.listener().onRelease(e -> releaseEvent(e)));

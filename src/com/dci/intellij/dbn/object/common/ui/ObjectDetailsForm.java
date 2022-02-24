@@ -1,6 +1,6 @@
 package com.dci.intellij.dbn.object.common.ui;
 
-import com.dci.intellij.dbn.common.ui.Fonts;
+import com.dci.intellij.dbn.common.ui.util.Fonts;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.object.common.DBObject;
 

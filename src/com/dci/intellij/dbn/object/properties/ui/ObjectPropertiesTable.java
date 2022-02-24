@@ -1,8 +1,8 @@
 package com.dci.intellij.dbn.object.properties.ui;
 
-import com.dci.intellij.dbn.common.ui.Borders;
-import com.dci.intellij.dbn.common.ui.DBNForm;
-import com.dci.intellij.dbn.common.ui.Mouse;
+import com.dci.intellij.dbn.common.ui.util.Borders;
+import com.dci.intellij.dbn.common.ui.form.DBNForm;
+import com.dci.intellij.dbn.common.ui.util.Mouse;
 import com.dci.intellij.dbn.common.ui.table.DBNTable;
 import com.dci.intellij.dbn.common.ui.table.DBNTableModel;
 import com.dci.intellij.dbn.object.properties.PresentableProperty;

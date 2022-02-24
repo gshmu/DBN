@@ -1,6 +1,6 @@
 package com.dci.intellij.dbn.diagnostics.ui;
 
-import com.dci.intellij.dbn.common.ui.Borders;
+import com.dci.intellij.dbn.common.ui.util.Borders;
 import com.dci.intellij.dbn.common.ui.Presentable;
 import com.dci.intellij.dbn.common.ui.component.DBNComponent;
 import com.dci.intellij.dbn.common.ui.table.DBNColoredTableCellRenderer;

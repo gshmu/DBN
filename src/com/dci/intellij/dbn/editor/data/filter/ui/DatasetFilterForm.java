@@ -2,8 +2,8 @@ package com.dci.intellij.dbn.editor.data.filter.ui;
 
 import com.dci.intellij.dbn.common.dispose.DisposableContainers;
 import com.dci.intellij.dbn.common.options.ui.ConfigurationEditorForm;
-import com.dci.intellij.dbn.common.ui.DBNHeaderForm;
-import com.dci.intellij.dbn.common.ui.Fonts;
+import com.dci.intellij.dbn.common.ui.form.DBNHeaderForm;
+import com.dci.intellij.dbn.common.ui.util.Fonts;
 import com.dci.intellij.dbn.common.util.Actions;
 import com.dci.intellij.dbn.editor.data.filter.DatasetFilter;
 import com.dci.intellij.dbn.editor.data.filter.DatasetFilterGroup;
@@ -20,13 +20,10 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Disposer;
 import org.jetbrains.annotations.NotNull;
 
-import javax.swing.JComponent;
-import javax.swing.JList;
-import javax.swing.JPanel;
+import javax.swing.*;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
-import java.awt.BorderLayout;
-import java.awt.CardLayout;
+import java.awt.*;
 import java.util.List;
 import java.util.Map;
 

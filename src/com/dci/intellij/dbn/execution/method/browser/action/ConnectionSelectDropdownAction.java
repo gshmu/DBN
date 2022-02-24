@@ -1,7 +1,7 @@
 package com.dci.intellij.dbn.execution.method.browser.action;
 
 import com.dci.intellij.dbn.common.action.Lookup;
-import com.dci.intellij.dbn.common.ui.DBNComboBoxAction;
+import com.dci.intellij.dbn.common.ui.misc.DBNComboBoxAction;
 import com.dci.intellij.dbn.connection.ConnectionBundle;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.ConnectionManager;
@@ -13,8 +13,7 @@ import com.intellij.openapi.actionSystem.Presentation;
 import com.intellij.openapi.project.Project;
 import org.jetbrains.annotations.NotNull;
 
-import javax.swing.Icon;
-import javax.swing.JComponent;
+import javax.swing.*;
 
 public class ConnectionSelectDropdownAction extends DBNComboBoxAction {
     private final MethodExecutionBrowserForm browserComponent;

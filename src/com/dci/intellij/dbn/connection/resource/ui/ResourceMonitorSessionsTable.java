@@ -1,6 +1,6 @@
 package com.dci.intellij.dbn.connection.resource.ui;
 
-import com.dci.intellij.dbn.common.ui.Borders;
+import com.dci.intellij.dbn.common.ui.util.Borders;
 import com.dci.intellij.dbn.common.ui.component.DBNComponent;
 import com.dci.intellij.dbn.common.ui.table.DBNColoredTableCellRenderer;
 import com.dci.intellij.dbn.common.ui.table.DBNTable;

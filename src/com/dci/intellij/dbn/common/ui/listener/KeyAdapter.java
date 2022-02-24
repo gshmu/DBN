@@ -23,7 +23,7 @@
  * questions.
  */
 
-package com.dci.intellij.dbn.common.ui;
+package com.dci.intellij.dbn.common.ui.listener;
 
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;

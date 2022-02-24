@@ -4,10 +4,10 @@ import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.common.color.Colors;
 import com.dci.intellij.dbn.common.dispose.DisposableContainers;
 import com.dci.intellij.dbn.common.options.ui.ConfigurationEditorForm;
-import com.dci.intellij.dbn.common.ui.Borders;
-import com.dci.intellij.dbn.common.ui.GUIUtil;
 import com.dci.intellij.dbn.common.ui.ValueSelector;
 import com.dci.intellij.dbn.common.ui.ValueSelectorOption;
+import com.dci.intellij.dbn.common.ui.util.Borders;
+import com.dci.intellij.dbn.common.ui.util.UserInterface;
 import com.dci.intellij.dbn.common.util.Documents;
 import com.dci.intellij.dbn.common.util.Editors;
 import com.dci.intellij.dbn.editor.data.filter.ConditionJoinType;
@@ -32,13 +32,8 @@ import com.intellij.util.PlatformIcons;
 import com.intellij.util.ui.UIUtil;
 import org.jetbrains.annotations.NotNull;
 
-import javax.swing.BoxLayout;
-import javax.swing.JComboBox;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.JScrollPane;
-import javax.swing.JTextField;
-import java.awt.BorderLayout;
+import javax.swing.*;
+import java.awt.*;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
@@ -47,7 +42,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import static com.dci.intellij.dbn.common.ui.ComboBoxUtil.*;
+import static com.dci.intellij.dbn.common.ui.util.ComboBoxes.*;
 
 public class DatasetBasicFilterForm extends ConfigurationEditorForm<DatasetBasicFilter> {
     private JPanel conditionsPanel;
@@ -234,7 +229,7 @@ public class DatasetBasicFilterForm extends ConfigurationEditorForm<DatasetBasic
             conditionForms.add(conditionForm);
             conditionsPanel.add(conditionForm.getComponent());
 
-            GUIUtil.repaint(conditionsPanel);
+            UserInterface.repaint(conditionsPanel);
             conditionForm.focus();
         }
     }
@@ -252,7 +247,7 @@ public class DatasetBasicFilterForm extends ConfigurationEditorForm<DatasetBasic
         conditionForms.remove(conditionForm);
         conditionsPanel.remove(conditionForm.getComponent());
         Disposer.dispose(conditionForm);
-        GUIUtil.repaint(conditionsPanel);
+        UserInterface.repaint(conditionsPanel);
         updateNameAndPreview();
     }
 

@@ -4,7 +4,7 @@ import com.dci.intellij.dbn.common.Constants;
 import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.common.dispose.SafeDisposer;
 import com.dci.intellij.dbn.common.project.ProjectRef;
-import com.dci.intellij.dbn.common.ui.DBNForm;
+import com.dci.intellij.dbn.common.ui.form.DBNForm;
 import com.dci.intellij.dbn.common.ui.component.DBNComponent;
 import com.dci.intellij.dbn.diagnostics.Diagnostics;
 import com.intellij.openapi.Disposable;

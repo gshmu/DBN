@@ -3,7 +3,7 @@ package com.dci.intellij.dbn.language.editor.action;
 import com.dci.intellij.dbn.common.action.DumbAwareProjectAction;
 import com.dci.intellij.dbn.common.action.Lookup;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
-import com.dci.intellij.dbn.connection.ConnectionHandlerRef;
+import com.dci.intellij.dbn.connection.ConnectionRef;
 import com.dci.intellij.dbn.connection.mapping.FileConnectionContextManager;
 import com.dci.intellij.dbn.connection.session.DatabaseSessionManager;
 import com.intellij.openapi.actionSystem.AnActionEvent;
@@ -12,7 +12,7 @@ import com.intellij.openapi.project.Project;
 import org.jetbrains.annotations.NotNull;
 
 public class DatabaseSessionCreateAction extends DumbAwareProjectAction {
-    private final ConnectionHandlerRef connection;
+    private final ConnectionRef connection;
 
     DatabaseSessionCreateAction(ConnectionHandler connection) {
         super("New Session...");
