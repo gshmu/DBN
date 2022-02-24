@@ -3,8 +3,8 @@ package com.dci.intellij.dbn.data.preview;
 import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.common.action.Lookup;
 import com.dci.intellij.dbn.common.color.Colors;
-import com.dci.intellij.dbn.common.ui.Borders;
-import com.dci.intellij.dbn.common.ui.DBNFormImpl;
+import com.dci.intellij.dbn.common.ui.util.Borders;
+import com.dci.intellij.dbn.common.ui.form.DBNFormBase;
 import com.dci.intellij.dbn.common.ui.listener.PopupCloseListener;
 import com.dci.intellij.dbn.common.ui.table.Tables;
 import com.dci.intellij.dbn.common.util.Actions;
@@ -45,7 +45,7 @@ import java.sql.SQLException;
 
 import static com.dci.intellij.dbn.common.dispose.SafeDisposer.replace;
 
-public class LargeValuePreviewPopup extends DBNFormImpl {
+public class LargeValuePreviewPopup extends DBNFormBase {
     public static final int INITIAL_MAX_SIZE = 4000;
     private JPanel mainPanel;
     private JTextArea valueTextArea;

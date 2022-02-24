@@ -1,6 +1,6 @@
 package com.dci.intellij.dbn.data.find.action;
 
-import com.dci.intellij.dbn.common.ui.DBNCheckboxAction;
+import com.dci.intellij.dbn.common.ui.misc.DBNCheckboxAction;
 import com.dci.intellij.dbn.data.find.DataSearchComponent;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.actionSystem.Presentation;

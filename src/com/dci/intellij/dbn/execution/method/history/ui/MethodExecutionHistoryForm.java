@@ -6,9 +6,9 @@ import com.dci.intellij.dbn.common.action.Lookup;
 import com.dci.intellij.dbn.common.dispose.DisposableContainers;
 import com.dci.intellij.dbn.common.thread.Dispatch;
 import com.dci.intellij.dbn.common.thread.Progress;
-import com.dci.intellij.dbn.common.ui.Borders;
-import com.dci.intellij.dbn.common.ui.DBNFormImpl;
-import com.dci.intellij.dbn.common.ui.GUIUtil;
+import com.dci.intellij.dbn.common.ui.util.Borders;
+import com.dci.intellij.dbn.common.ui.form.DBNFormBase;
+import com.dci.intellij.dbn.common.ui.util.UserInterface;
 import com.dci.intellij.dbn.common.util.Actions;
 import com.dci.intellij.dbn.connection.ConnectionAction;
 import com.dci.intellij.dbn.database.DatabaseFeature;
@@ -36,7 +36,7 @@ import java.awt.BorderLayout;
 import java.util.List;
 import java.util.Map;
 
-public class MethodExecutionHistoryForm extends DBNFormImpl {
+public class MethodExecutionHistoryForm extends DBNFormBase {
     private JPanel mainPanel;
     private JTree executionInputsTree;
     private JPanel actionsPanel;
@@ -116,7 +116,7 @@ public class MethodExecutionHistoryForm extends DBNFormImpl {
             argumentsPanel.add(methodExecutionInputForm.getComponent(), BorderLayout.CENTER);
         }
 
-        GUIUtil.repaint(argumentsPanel);
+        UserInterface.repaint(argumentsPanel);
     }
 
     private ChangeListener getChangeListener() {

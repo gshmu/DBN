@@ -9,14 +9,9 @@ import com.dci.intellij.dbn.common.event.ProjectEvents;
 import com.dci.intellij.dbn.common.project.ProjectRef;
 import com.dci.intellij.dbn.common.thread.Background;
 import com.dci.intellij.dbn.common.thread.Dispatch;
-import com.dci.intellij.dbn.common.ui.GUIUtil;
+import com.dci.intellij.dbn.common.ui.util.UserInterface;
 import com.dci.intellij.dbn.common.util.Messages;
-import com.dci.intellij.dbn.connection.ConnectionAction;
-import com.dci.intellij.dbn.connection.ConnectionHandler;
-import com.dci.intellij.dbn.connection.ConnectionHandlerRef;
-import com.dci.intellij.dbn.connection.ConnectionStatusListener;
-import com.dci.intellij.dbn.connection.SchemaId;
-import com.dci.intellij.dbn.connection.SessionId;
+import com.dci.intellij.dbn.connection.*;
 import com.dci.intellij.dbn.connection.context.ConnectionContextProvider;
 import com.dci.intellij.dbn.connection.context.ConnectionProvider;
 import com.dci.intellij.dbn.connection.jdbc.DBNConnection;
@@ -50,11 +45,7 @@ import com.intellij.openapi.actionSystem.DataContext;
 import com.intellij.openapi.actionSystem.DataProvider;
 import com.intellij.openapi.actionSystem.PlatformDataKeys;
 import com.intellij.openapi.editor.Editor;
-import com.intellij.openapi.fileEditor.FileEditor;
-import com.intellij.openapi.fileEditor.FileEditorLocation;
-import com.intellij.openapi.fileEditor.FileEditorManager;
-import com.intellij.openapi.fileEditor.FileEditorState;
-import com.intellij.openapi.fileEditor.FileEditorStateLevel;
+import com.intellij.openapi.fileEditor.*;
 import com.intellij.openapi.progress.ProcessCanceledException;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
@@ -63,7 +54,7 @@ import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import javax.swing.JComponent;
+import javax.swing.*;
 import java.beans.PropertyChangeListener;
 import java.sql.SQLException;
 import java.util.List;
@@ -89,7 +80,7 @@ public class DatasetEditor extends DisposableUserDataHolderBase implements
     private final DBEditableObjectVirtualFile databaseFile;
     private final DatasetEditorForm editorForm;
     private final DatasetEditorStatusHolder status;
-    private final ConnectionHandlerRef connection;
+    private final ConnectionRef connection;
     private final DataEditorSettings settings;
     private StructureViewModel structureViewModel;
     private String dataLoadError;
@@ -103,7 +94,7 @@ public class DatasetEditor extends DisposableUserDataHolderBase implements
         this.dataset = DBObjectRef.of(dataset);
         this.settings = DataEditorSettings.getInstance(project);
 
-        connection = ConnectionHandlerRef.of(dataset.getConnection());
+        connection = ConnectionRef.of(dataset.getConnection());
         status = new DatasetEditorStatusHolder();
         status.set(CONNECTED, true);
         editorForm = new DatasetEditorForm(this);
@@ -415,7 +406,7 @@ public class DatasetEditor extends DisposableUserDataHolderBase implements
         if (status.set(LOADING, loading)) {
             DatasetEditorTable editorTable = getEditorTable();
             editorTable.setLoading(loading);
-            GUIUtil.repaint(editorTable);
+            UserInterface.repaint(editorTable);
         }
 
     }
@@ -553,14 +544,14 @@ public class DatasetEditor extends DisposableUserDataHolderBase implements
                     DatasetEditorTable editorTable = getEditorTable();
                     if (connected) {
                         editorTable.updateBackground(false);
-                        GUIUtil.repaint(editorTable);
+                        UserInterface.repaint(editorTable);
                         if (!isReadonlyData()) {
                             loadData(CON_STATUS_CHANGE_LOAD_INSTRUCTIONS);
                         }
                     } else {
                         editorTable.cancelEditing();
                         editorTable.updateBackground(true);
-                        GUIUtil.repaint(editorTable);
+                        UserInterface.repaint(editorTable);
                     }
                 });
             }
@@ -612,7 +603,7 @@ public class DatasetEditor extends DisposableUserDataHolderBase implements
                 if (action == TransactionAction.DISCONNECT) {
                     editorTable.stopCellEditing();
                     model.revertChanges();
-                    GUIUtil.repaint(editorTable);
+                    UserInterface.repaint(editorTable);
                 }
             }
         }

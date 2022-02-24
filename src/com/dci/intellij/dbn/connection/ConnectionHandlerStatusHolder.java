@@ -17,7 +17,7 @@ import java.util.List;
 @Getter
 @Setter
 public class ConnectionHandlerStatusHolder extends PropertyHolderBase.IntStore<ConnectionHandlerStatus> {
-    private final ConnectionHandlerRef connection;
+    private final ConnectionRef connection;
 
     private AuthenticationError authenticationError;
     private Throwable connectionException;

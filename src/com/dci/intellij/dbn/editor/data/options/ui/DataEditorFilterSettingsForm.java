@@ -6,12 +6,10 @@ import com.dci.intellij.dbn.editor.data.options.DataEditorFilterSettings;
 import com.intellij.openapi.options.ConfigurationException;
 import org.jetbrains.annotations.NotNull;
 
-import javax.swing.JCheckBox;
-import javax.swing.JComboBox;
-import javax.swing.JPanel;
+import javax.swing.*;
 import java.awt.event.ActionListener;
 
-import static com.dci.intellij.dbn.common.ui.ComboBoxUtil.*;
+import static com.dci.intellij.dbn.common.ui.util.ComboBoxes.*;
 
 public class DataEditorFilterSettingsForm extends ConfigurationEditorForm<DataEditorFilterSettings> {
     private JPanel mainPanel;

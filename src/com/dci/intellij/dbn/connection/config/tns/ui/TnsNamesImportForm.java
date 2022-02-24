@@ -2,7 +2,7 @@ package com.dci.intellij.dbn.connection.config.tns.ui;
 
 import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.common.color.Colors;
-import com.dci.intellij.dbn.common.ui.DBNFormImpl;
+import com.dci.intellij.dbn.common.ui.form.DBNFormBase;
 import com.dci.intellij.dbn.common.util.Strings;
 import com.dci.intellij.dbn.connection.config.tns.TnsName;
 import com.dci.intellij.dbn.connection.config.tns.TnsNamesParser;
@@ -20,7 +20,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-public class TnsNamesImportForm extends DBNFormImpl{
+public class TnsNamesImportForm extends DBNFormBase {
     private TextFieldWithBrowseButton tnsNamesFileTextField;
     private JBScrollPane tnsNamesScrollPanel;
     private JPanel mainPanel;

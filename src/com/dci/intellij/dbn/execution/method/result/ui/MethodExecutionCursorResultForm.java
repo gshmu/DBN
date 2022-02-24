@@ -5,8 +5,8 @@ import com.dci.intellij.dbn.common.action.DataProviders;
 import com.dci.intellij.dbn.common.color.Colors;
 import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.common.latent.Latent;
-import com.dci.intellij.dbn.common.ui.DBNFormImpl;
-import com.dci.intellij.dbn.common.ui.GUIUtil;
+import com.dci.intellij.dbn.common.ui.form.DBNFormBase;
+import com.dci.intellij.dbn.common.ui.util.UserInterface;
 import com.dci.intellij.dbn.common.util.Actions;
 import com.dci.intellij.dbn.data.find.DataSearchComponent;
 import com.dci.intellij.dbn.data.find.SearchableDataComponent;
@@ -28,7 +28,7 @@ import javax.swing.JTextField;
 import java.awt.BorderLayout;
 import java.awt.Dimension;
 
-public class MethodExecutionCursorResultForm extends DBNFormImpl implements SearchableDataComponent {
+public class MethodExecutionCursorResultForm extends DBNFormBase implements SearchableDataComponent {
     private JPanel actionsPanel;
     private JScrollPane resultScrollPane;
     private JPanel mainPanel;
@@ -107,7 +107,7 @@ public class MethodExecutionCursorResultForm extends DBNFormImpl implements Sear
     public void hideSearchHeader() {
         getSearchComponent().resetFindModel();
         searchPanel.setVisible(false);
-        GUIUtil.repaintAndFocus(resultTable);
+        UserInterface.repaintAndFocus(resultTable);
     }
 
     @Override

@@ -2,7 +2,7 @@ package com.dci.intellij.dbn.common.options.ui;
 
 import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.common.options.BasicConfiguration;
-import com.dci.intellij.dbn.common.ui.DBNFormImpl;
+import com.dci.intellij.dbn.common.ui.form.DBNFormBase;
 import com.dci.intellij.dbn.common.ui.list.CheckBoxList;
 import com.intellij.openapi.options.ConfigurationException;
 import com.intellij.ui.DocumentAdapter;
@@ -16,7 +16,7 @@ import java.awt.*;
 import java.awt.event.ActionListener;
 import java.awt.event.ItemListener;
 
-public abstract class ConfigurationEditorForm<E extends BasicConfiguration> extends DBNFormImpl {
+public abstract class ConfigurationEditorForm<E extends BasicConfiguration> extends DBNFormBase {
     public static final String DBN_REGISTERED = "DBN_REGISTERED";
     private ItemListener itemListener;
     private ActionListener actionListener;

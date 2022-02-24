@@ -1,6 +1,6 @@
 package com.dci.intellij.dbn.execution.method.browser.action;
 
-import com.dci.intellij.dbn.common.ui.DBNComboBoxAction;
+import com.dci.intellij.dbn.common.ui.misc.DBNComboBoxAction;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.execution.method.browser.ui.MethodExecutionBrowserForm;
 import com.dci.intellij.dbn.object.DBSchema;

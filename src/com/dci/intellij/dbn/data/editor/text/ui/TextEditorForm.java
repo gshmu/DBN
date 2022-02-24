@@ -1,6 +1,6 @@
 package com.dci.intellij.dbn.data.editor.text.ui;
 
-import com.dci.intellij.dbn.common.ui.DBNFormImpl;
+import com.dci.intellij.dbn.common.ui.form.DBNFormBase;
 import com.dci.intellij.dbn.common.util.Actions;
 import com.dci.intellij.dbn.common.util.Commons;
 import com.dci.intellij.dbn.common.util.Documents;
@@ -35,7 +35,7 @@ import javax.swing.JPanel;
 import java.awt.BorderLayout;
 import java.sql.SQLException;
 
-public class TextEditorForm extends DBNFormImpl {
+public class TextEditorForm extends DBNFormBase {
     private JPanel mainPanel;
     private JPanel editorPanel;
     private JPanel actionsPanel;

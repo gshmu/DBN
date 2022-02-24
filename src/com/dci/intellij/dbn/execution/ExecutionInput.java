@@ -6,7 +6,7 @@ import com.dci.intellij.dbn.common.options.PersistentConfiguration;
 import com.dci.intellij.dbn.common.options.setting.SettingsSupport;
 import com.dci.intellij.dbn.common.project.ProjectRef;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
-import com.dci.intellij.dbn.connection.ConnectionHandlerRef;
+import com.dci.intellij.dbn.connection.ConnectionRef;
 import com.dci.intellij.dbn.connection.ConnectionId;
 import com.dci.intellij.dbn.connection.SchemaId;
 import com.dci.intellij.dbn.connection.context.ConnectionProvider;
@@ -23,7 +23,7 @@ public abstract class ExecutionInput extends StatefulDisposable.Base implements 
     private final ExecutionTarget executionTarget;
 
     private final ProjectRef project;
-    protected ConnectionHandlerRef targetConnection;
+    protected ConnectionRef targetConnection;
     protected SchemaId targetSchemaId;
 
     private final Latent<ExecutionContext> executionContext = Latent.basic(() -> createExecutionContext());
@@ -69,11 +69,11 @@ public abstract class ExecutionInput extends StatefulDisposable.Base implements 
 
     @Nullable
     public final ConnectionHandler getTargetConnection() {
-        return ConnectionHandlerRef.get(targetConnection);
+        return ConnectionRef.get(targetConnection);
     }
 
     public void setTargetConnection(@Nullable ConnectionHandler connection) {
-        this.targetConnection = ConnectionHandlerRef.of(connection);
+        this.targetConnection = ConnectionRef.of(connection);
     }
 
     @NotNull

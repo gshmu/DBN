@@ -7,7 +7,7 @@ import com.dci.intellij.dbn.common.dispose.SafeDisposer;
 import com.dci.intellij.dbn.common.latent.Latent;
 import com.dci.intellij.dbn.common.thread.Dispatch;
 import com.dci.intellij.dbn.common.thread.Read;
-import com.dci.intellij.dbn.common.ui.GUIUtil;
+import com.dci.intellij.dbn.common.ui.util.UserInterface;
 import com.dci.intellij.dbn.common.util.Actions;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.SessionId;
@@ -135,7 +135,7 @@ public class StatementExecutionResultForm extends ExecutionResultFormBase<Statem
     public void highlightLoading(boolean loading) {
         ResultSetTable<?> resultTable = getResultTable();
         resultTable.setLoading(loading);
-        GUIUtil.repaint(resultTable);
+        UserInterface.repaint(resultTable);
     }
 
     /*********************************************************
@@ -164,7 +164,7 @@ public class StatementExecutionResultForm extends ExecutionResultFormBase<Statem
     public void hideSearchHeader() {
         getSearchComponent().resetFindModel();
         searchPanel.setVisible(false);
-        GUIUtil.repaintAndFocus(getResultTable());
+        UserInterface.repaintAndFocus(getResultTable());
     }
 
     @Override

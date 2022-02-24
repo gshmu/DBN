@@ -6,7 +6,7 @@ import com.dci.intellij.dbn.common.compatibility.CompatibilityUtil;
 import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.common.event.ProjectEvents;
 import com.dci.intellij.dbn.common.thread.Dispatch;
-import com.dci.intellij.dbn.common.ui.GUIUtil;
+import com.dci.intellij.dbn.common.ui.util.UserInterface;
 import com.dci.intellij.dbn.common.util.MathResult;
 import com.dci.intellij.dbn.common.util.Safe;
 import com.dci.intellij.dbn.editor.data.DatasetEditor;
@@ -23,10 +23,8 @@ import com.intellij.util.Alarm;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import javax.swing.JComponent;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import java.awt.BorderLayout;
+import javax.swing.*;
+import java.awt.*;
 
 public class DatasetEditorStatusBarWidget extends AbstractProjectComponent implements CustomStatusBarWidget, FileEditorManagerListener {
     private static final String WIDGET_ID = DatasetEditorStatusBarWidget.class.getName();
@@ -107,7 +105,7 @@ public class DatasetEditorStatusBarWidget extends AbstractProjectComponent imple
                         "Average " + mathResult.getAverage());
                 textLabel.setIcon(Icons.COMMON_DATA_GRID);
             }
-            GUIUtil.repaint(getComponent());
+            UserInterface.repaint(getComponent());
         });
     }
 

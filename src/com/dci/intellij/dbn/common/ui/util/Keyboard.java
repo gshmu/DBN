@@ -1,4 +1,4 @@
-package com.dci.intellij.dbn.common.ui;
+package com.dci.intellij.dbn.common.ui.util;
 
 import com.intellij.openapi.actionSystem.CustomShortcutSet;
 import com.intellij.openapi.actionSystem.KeyboardShortcut;
@@ -12,7 +12,7 @@ import org.jetbrains.annotations.Nullable;
 import javax.swing.*;
 import java.awt.event.KeyEvent;
 
-public class KeyUtil {
+public class Keyboard {
     public static boolean match(Shortcut[] shortcuts, KeyEvent e) {
         for (Shortcut shortcut : shortcuts) {
             if (shortcut instanceof KeyboardShortcut) {

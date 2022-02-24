@@ -3,8 +3,8 @@ package com.dci.intellij.dbn.data.editor.ui;
 import com.dci.intellij.dbn.common.color.Colors;
 import com.dci.intellij.dbn.common.dispose.DisposableContainers;
 import com.dci.intellij.dbn.common.project.ProjectRef;
-import com.dci.intellij.dbn.common.ui.KeyUtil;
-import com.dci.intellij.dbn.common.ui.Mouse;
+import com.dci.intellij.dbn.common.ui.util.Keyboard;
+import com.dci.intellij.dbn.common.ui.util.Mouse;
 import com.dci.intellij.dbn.common.ui.panel.DBNPanelImpl;
 import com.intellij.openapi.actionSystem.Shortcut;
 import com.intellij.openapi.project.Project;
@@ -260,7 +260,7 @@ public class TextFieldWithPopup<T extends JComponent> extends DBNPanelImpl imple
     public TextFieldPopupProvider getPopupProvider(KeyEvent keyEvent) {
         for (TextFieldPopupProvider popupProvider : popupProviders) {
             Shortcut[] shortcuts = popupProvider.getShortcuts();
-            if (KeyUtil.match(shortcuts, keyEvent)) {
+            if (Keyboard.match(shortcuts, keyEvent)) {
                 return popupProvider;
             }
         }

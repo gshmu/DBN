@@ -7,7 +7,7 @@ import com.dci.intellij.dbn.common.dispose.StatefulDisposable;
 import com.dci.intellij.dbn.common.project.ProjectRef;
 import com.dci.intellij.dbn.common.util.Cancellable;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
-import com.dci.intellij.dbn.connection.ConnectionHandlerRef;
+import com.dci.intellij.dbn.connection.ConnectionRef;
 import com.dci.intellij.dbn.navigation.options.ObjectsLookupSettings;
 import com.dci.intellij.dbn.object.DBSchema;
 import com.dci.intellij.dbn.object.common.DBObject;
@@ -32,7 +32,7 @@ public class DBObjectLookupModel extends StatefulDisposable.Base implements Choo
     private static final String[] EMPTY_STRING_ARRAY = new String[0];
 
     private final ProjectRef project;
-    private final ConnectionHandlerRef selectedConnection;
+    private final ConnectionRef selectedConnection;
     private final DBObjectRef<DBSchema> selectedSchema;
     private final @Getter ObjectsLookupSettings settings;
     private final @Getter SetCollector<DBObject> data = ConcurrentSetCollector.create();
@@ -42,7 +42,7 @@ public class DBObjectLookupModel extends StatefulDisposable.Base implements Choo
 
     public DBObjectLookupModel(@NotNull Project project, @Nullable ConnectionHandler selectedConnection, DBSchema selectedSchema) {
         this.project = ProjectRef.of(project);
-        this.selectedConnection = ConnectionHandlerRef.of(selectedConnection);
+        this.selectedConnection = ConnectionRef.of(selectedConnection);
         this.selectedSchema = DBObjectRef.of(selectedSchema);
         settings = ProjectSettingsManager.getSettings(project).getNavigationSettings().getObjectsLookupSettings();
     }

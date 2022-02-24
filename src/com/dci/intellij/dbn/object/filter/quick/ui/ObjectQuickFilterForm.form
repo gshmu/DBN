@@ -74,7 +74,7 @@
               <text value="&amp;Join Type"/>
             </properties>
           </component>
-          <component id="a45ba" class="com.dci.intellij.dbn.common.ui.DBNComboBox" binding="joinTypeComboBox">
+          <component id="a45ba" class="com.dci.intellij.dbn.common.ui.misc.DBNComboBox" binding="joinTypeComboBox">
             <constraints>
               <grid row="0" column="1" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="0" indent="0" use-parent-layout="false"/>
             </constraints>

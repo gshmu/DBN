@@ -5,7 +5,7 @@ import com.dci.intellij.dbn.common.action.DataKeys;
 import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.common.util.Commons;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
-import com.dci.intellij.dbn.connection.ConnectionHandlerRef;
+import com.dci.intellij.dbn.connection.ConnectionRef;
 import com.dci.intellij.dbn.connection.ConnectionId;
 import com.dci.intellij.dbn.connection.ResultSets;
 import com.dci.intellij.dbn.connection.SchemaId;
@@ -39,7 +39,7 @@ public class ExplainPlanResult extends ExecutionResultBase<ExplainPlanResultForm
     private String planId;
     private Date timestamp;
     private ExplainPlanEntry root;
-    private final ConnectionHandlerRef connection;
+    private final ConnectionRef connection;
     private final VirtualFile virtualFile;
     private final SchemaId currentSchema;
     private final String errorMessage;
@@ -87,7 +87,7 @@ public class ExplainPlanResult extends ExecutionResultBase<ExplainPlanResultForm
     @Override
     @NotNull
     public ConnectionHandler getConnection() {
-        return ConnectionHandlerRef.ensure(connection);
+        return ConnectionRef.ensure(connection);
     }
 
     @Override

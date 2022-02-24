@@ -2,7 +2,7 @@ package com.dci.intellij.dbn.data.grid.ui.table.basic;
 
 import com.dci.intellij.dbn.common.color.Colors;
 import com.dci.intellij.dbn.common.thread.Dispatch;
-import com.dci.intellij.dbn.common.ui.Fonts;
+import com.dci.intellij.dbn.common.ui.util.Fonts;
 import com.dci.intellij.dbn.data.grid.options.DataGridSettings;
 import com.intellij.ide.IdeTooltip;
 import com.intellij.ide.IdeTooltipManager;
@@ -11,11 +11,8 @@ import com.intellij.ui.border.CustomLineBorder;
 import com.intellij.ui.components.JBScrollPane;
 import com.intellij.util.Alarm;
 
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.ScrollPaneConstants;
-import java.awt.Component;
-import java.awt.Font;
+import javax.swing.*;
+import java.awt.*;
 import java.awt.event.MouseWheelEvent;
 
 public class BasicTableScrollPane extends JBScrollPane{

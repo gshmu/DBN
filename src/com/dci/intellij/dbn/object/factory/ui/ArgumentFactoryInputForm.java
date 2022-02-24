@@ -1,7 +1,7 @@
 package com.dci.intellij.dbn.object.factory.ui;
 
 import com.dci.intellij.dbn.common.Icons;
-import com.dci.intellij.dbn.common.ui.DBNForm;
+import com.dci.intellij.dbn.common.ui.form.DBNForm;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.data.type.ui.DataTypeEditor;
 import com.dci.intellij.dbn.object.factory.ArgumentFactoryInput;
@@ -10,11 +10,7 @@ import com.dci.intellij.dbn.object.factory.ui.common.ObjectFactoryInputForm;
 import com.dci.intellij.dbn.object.type.DBObjectType;
 import org.jetbrains.annotations.NotNull;
 
-import javax.swing.Icon;
-import javax.swing.JCheckBox;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.JTextField;
+import javax.swing.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 

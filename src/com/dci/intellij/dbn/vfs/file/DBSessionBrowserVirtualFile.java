@@ -2,7 +2,7 @@ package com.dci.intellij.dbn.vfs.file;
 
 import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
-import com.dci.intellij.dbn.connection.ConnectionHandlerRef;
+import com.dci.intellij.dbn.connection.ConnectionRef;
 import com.dci.intellij.dbn.connection.ConnectionId;
 import com.dci.intellij.dbn.connection.SchemaId;
 import com.dci.intellij.dbn.connection.session.DatabaseSession;
@@ -24,13 +24,13 @@ import java.nio.charset.Charset;
 import java.util.Objects;
 
 public class DBSessionBrowserVirtualFile extends DBVirtualFileImpl implements Comparable<DBSessionBrowserVirtualFile> {
-    private final ConnectionHandlerRef connectionHandlerRef;
+    private final ConnectionRef connection;
     private long modificationTimestamp = LocalTimeCounter.currentTime();
     private CharSequence content = "";
 
     public DBSessionBrowserVirtualFile(ConnectionHandler connection) {
         super(connection.getProject());
-        this.connectionHandlerRef = connection.ref();
+        this.connection = connection.ref();
         this.name = connection.getName() + " Sessions";
         setCharset(connection.getSettings().getDetailSettings().getCharset());
     }
@@ -43,13 +43,13 @@ public class DBSessionBrowserVirtualFile extends DBVirtualFileImpl implements Co
     @NotNull
     @Override
     public ConnectionId getConnectionId() {
-        return connectionHandlerRef.getConnectionId();
+        return connection.getConnectionId();
     }
 
     @Override
     @NotNull
     public ConnectionHandler getConnection() {
-        return connectionHandlerRef.ensure();
+        return connection.ensure();
     }
 
     @Nullable
@@ -66,7 +66,7 @@ public class DBSessionBrowserVirtualFile extends DBVirtualFileImpl implements Co
 
     @Override
     public boolean isValid() {
-        return super.isValid() && connectionHandlerRef.isValid();
+        return super.isValid() && connection.isValid();
     }    
 
     @Override

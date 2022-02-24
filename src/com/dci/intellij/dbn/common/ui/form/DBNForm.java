@@ -1,4 +1,4 @@
-package com.dci.intellij.dbn.common.ui;
+package com.dci.intellij.dbn.common.ui.form;
 
 import com.dci.intellij.dbn.common.ui.component.DBNComponent;
 import com.intellij.openapi.actionSystem.DataProvider;

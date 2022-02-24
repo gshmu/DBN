@@ -1,7 +1,7 @@
 package com.dci.intellij.dbn.common.properties.ui;
 
-import com.dci.intellij.dbn.common.ui.DBNForm;
-import com.dci.intellij.dbn.common.ui.DBNFormImpl;
+import com.dci.intellij.dbn.common.ui.form.DBNForm;
+import com.dci.intellij.dbn.common.ui.form.DBNFormBase;
 import com.intellij.openapi.util.Disposer;
 import com.intellij.ui.ToolbarDecorator;
 import org.jetbrains.annotations.NotNull;
@@ -10,7 +10,7 @@ import javax.swing.*;
 import java.awt.*;
 import java.util.Map;
 
-public class PropertiesEditorForm extends DBNFormImpl {
+public class PropertiesEditorForm extends DBNFormBase {
     private JPanel mainPanel;
     private final PropertiesEditorTable table;
 

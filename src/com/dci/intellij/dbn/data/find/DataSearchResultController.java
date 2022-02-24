@@ -3,7 +3,7 @@ package com.dci.intellij.dbn.data.find;
 import com.dci.intellij.dbn.common.dispose.AlreadyDisposedException;
 import com.dci.intellij.dbn.common.thread.Background;
 import com.dci.intellij.dbn.common.thread.Dispatch;
-import com.dci.intellij.dbn.common.ui.GUIUtil;
+import com.dci.intellij.dbn.common.ui.util.UserInterface;
 import com.dci.intellij.dbn.data.grid.ui.table.basic.BasicTable;
 import com.dci.intellij.dbn.data.model.DataModel;
 import com.dci.intellij.dbn.data.model.DataModelCell;
@@ -15,7 +15,7 @@ import com.intellij.find.FindResult;
 import com.intellij.openapi.util.text.StringUtil;
 import org.jetbrains.annotations.NotNull;
 
-import java.awt.Rectangle;
+import java.awt.*;
 import java.util.ArrayList;
 import java.util.ConcurrentModificationException;
 import java.util.List;
@@ -128,7 +128,7 @@ public class DataSearchResultController {
                 getSearchableComponent().cancelEditActions();
 
                 table.clearSelection();
-                GUIUtil.repaint(table);
+                UserInterface.repaint(table);
 
                 selectFirst(selectedRowIndex, selectedColumnIndex);
                 searchResult.notifyListeners();

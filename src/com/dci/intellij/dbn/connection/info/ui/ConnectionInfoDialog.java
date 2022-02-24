@@ -3,15 +3,15 @@ package com.dci.intellij.dbn.connection.info.ui;
 import com.dci.intellij.dbn.common.environment.EnvironmentType;
 import com.dci.intellij.dbn.common.ui.dialog.DBNDialog;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
-import com.dci.intellij.dbn.connection.ConnectionHandlerRef;
+import com.dci.intellij.dbn.connection.ConnectionRef;
 import com.dci.intellij.dbn.connection.info.ConnectionInfo;
 import com.intellij.openapi.project.Project;
 import org.jetbrains.annotations.NotNull;
 
-import javax.swing.Action;
+import javax.swing.*;
 
 public class ConnectionInfoDialog extends DBNDialog<ConnectionInfoForm> {
-    private ConnectionHandlerRef connection;
+    private ConnectionRef connection;
     private ConnectionInfo connectionInfo;
     private String connectionName;
     private EnvironmentType environmentType;

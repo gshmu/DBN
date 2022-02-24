@@ -3,7 +3,7 @@ package com.dci.intellij.dbn.data.type;
 import com.dci.intellij.dbn.common.dispose.StatefulDisposable;
 import com.dci.intellij.dbn.common.latent.Latent;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
-import com.dci.intellij.dbn.connection.ConnectionHandlerRef;
+import com.dci.intellij.dbn.connection.ConnectionRef;
 import com.dci.intellij.dbn.database.DatabaseInterfaceProvider;
 import com.dci.intellij.dbn.object.DBPackage;
 import com.dci.intellij.dbn.object.DBSchema;
@@ -18,7 +18,7 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 public final class DBDataTypeBundle extends StatefulDisposable.Base {
-    private final ConnectionHandlerRef connection;
+    private final ConnectionRef connection;
 
     private final Latent<Map<String, DBNativeDataType>> nativeDataTypes = Latent.basic(() -> createNativeDataTypes());
     private final Map<DBDataTypeDefinition, DBDataType> dataTypes = new ConcurrentHashMap<>();
@@ -29,7 +29,7 @@ public final class DBDataTypeBundle extends StatefulDisposable.Base {
 
     @NotNull
     public ConnectionHandler getConnection() {
-        return ConnectionHandlerRef.ensure(connection);
+        return ConnectionRef.ensure(connection);
     }
 
     private Map<String, DBNativeDataType> getNativeDataTypes() {

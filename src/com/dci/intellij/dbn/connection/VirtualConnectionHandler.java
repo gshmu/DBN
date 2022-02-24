@@ -47,7 +47,7 @@ public class VirtualConnectionHandler extends StatefulDisposable.Base implements
     private final ProjectRef project;
     private final ConnectionHandlerStatusHolder connectionStatus;
     private final Map<String, String> properties = new HashMap<>();
-    private final ConnectionHandlerRef ref;
+    private final ConnectionRef ref;
     private final DBObjectBundle objectBundle;
     private final ConnectionInstructions instructions = new ConnectionInstructions();
     private final DatabaseCompatibility compatibility = DatabaseCompatibility.noFeatures();
@@ -66,7 +66,7 @@ public class VirtualConnectionHandler extends StatefulDisposable.Base implements
         this.project = ProjectRef.of(project);
         this.databaseType = databaseType;
         this.databaseVersion = databaseVersion;
-        this.ref = ConnectionHandlerRef.of(this);
+        this.ref = ConnectionRef.of(this);
         this.connectionStatus = new ConnectionHandlerStatusHolder(this);
         this.objectBundle = new DBVirtualObjectBundle(this);
     }
@@ -78,7 +78,7 @@ public class VirtualConnectionHandler extends StatefulDisposable.Base implements
     }
 
     @Override
-    public ConnectionHandlerRef ref() {
+    public ConnectionRef ref() {
         return ref;
     }
 

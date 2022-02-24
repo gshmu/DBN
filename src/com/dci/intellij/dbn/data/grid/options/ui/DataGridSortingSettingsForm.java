@@ -7,12 +7,9 @@ import com.dci.intellij.dbn.data.grid.options.NullSortingOption;
 import com.intellij.openapi.options.ConfigurationException;
 import org.jetbrains.annotations.NotNull;
 
-import javax.swing.JCheckBox;
-import javax.swing.JComboBox;
-import javax.swing.JPanel;
-import javax.swing.JTextField;
+import javax.swing.*;
 
-import static com.dci.intellij.dbn.common.ui.ComboBoxUtil.*;
+import static com.dci.intellij.dbn.common.ui.util.ComboBoxes.*;
 
 public class DataGridSortingSettingsForm extends ConfigurationEditorForm<DataGridSortingSettings> {
     private JPanel mainPanel;

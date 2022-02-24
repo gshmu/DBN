@@ -2,16 +2,16 @@ package com.dci.intellij.dbn.connection.session.ui;
 
 import com.dci.intellij.dbn.common.ui.dialog.DBNDialog;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
-import com.dci.intellij.dbn.connection.ConnectionHandlerRef;
+import com.dci.intellij.dbn.connection.ConnectionRef;
 import com.dci.intellij.dbn.connection.session.DatabaseSession;
 import com.dci.intellij.dbn.connection.session.DatabaseSessionManager;
 import com.dci.intellij.dbn.language.common.WeakRef;
 import org.jetbrains.annotations.NotNull;
 
-import javax.swing.Action;
+import javax.swing.*;
 
 public class CreateRenameSessionDialog extends DBNDialog<CreateRenameSessionForm> {
-    private final ConnectionHandlerRef connection;
+    private final ConnectionRef connection;
     private WeakRef<DatabaseSession> session;
 
     public CreateRenameSessionDialog(@NotNull ConnectionHandler connection) {

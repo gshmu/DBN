@@ -1,8 +1,8 @@
 package com.dci.intellij.dbn.object.dependency.ui;
 
 import com.dci.intellij.dbn.common.Icons;
-import com.dci.intellij.dbn.common.ui.DBNFormImpl;
-import com.dci.intellij.dbn.common.ui.DBNHeaderForm;
+import com.dci.intellij.dbn.common.ui.form.DBNFormBase;
+import com.dci.intellij.dbn.common.ui.form.DBNHeaderForm;
 import com.dci.intellij.dbn.common.ui.tree.TreeUtil;
 import com.dci.intellij.dbn.common.util.Actions;
 import com.dci.intellij.dbn.object.common.DBObject;
@@ -23,9 +23,9 @@ import javax.swing.JPanel;
 import javax.swing.tree.TreeModel;
 import java.awt.BorderLayout;
 
-import static com.dci.intellij.dbn.common.ui.ComboBoxUtil.*;
+import static com.dci.intellij.dbn.common.ui.util.ComboBoxes.*;
 
-public class ObjectDependencyTreeForm extends DBNFormImpl{
+public class ObjectDependencyTreeForm extends DBNFormBase {
     private JPanel mainPanel;
     private JPanel actionsPanel;
     private JPanel contentPanel;

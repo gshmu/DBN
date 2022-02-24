@@ -1,8 +1,8 @@
 package com.dci.intellij.dbn.common.ui.dialog;
 
 import com.dci.intellij.dbn.common.thread.Dispatch;
-import com.dci.intellij.dbn.common.ui.Borders;
-import com.dci.intellij.dbn.common.ui.DBNFormImpl;
+import com.dci.intellij.dbn.common.ui.util.Borders;
+import com.dci.intellij.dbn.common.ui.form.DBNFormBase;
 import com.dci.intellij.dbn.common.util.TimeUtil;
 import com.intellij.ui.JBColor;
 import org.jetbrains.annotations.NotNull;
@@ -10,7 +10,7 @@ import org.jetbrains.annotations.NotNull;
 import javax.swing.*;
 import java.awt.*;
 
-public class DialogWithTimeoutForm extends DBNFormImpl {
+public class DialogWithTimeoutForm extends DBNFormBase {
     private JPanel mainPanel;
     private JPanel contentPanel;
     private JLabel timeLeftLabel;

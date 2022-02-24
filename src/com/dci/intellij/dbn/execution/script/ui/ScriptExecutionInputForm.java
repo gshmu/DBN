@@ -1,10 +1,10 @@
 package com.dci.intellij.dbn.execution.script.ui;
 
 import com.dci.intellij.dbn.common.routine.ParametricRunnable;
-import com.dci.intellij.dbn.common.ui.DBNComboBox;
-import com.dci.intellij.dbn.common.ui.DBNFormImpl;
-import com.dci.intellij.dbn.common.ui.DBNHeaderForm;
-import com.dci.intellij.dbn.common.ui.DBNHintForm;
+import com.dci.intellij.dbn.common.ui.misc.DBNComboBox;
+import com.dci.intellij.dbn.common.ui.form.DBNFormBase;
+import com.dci.intellij.dbn.common.ui.form.DBNHeaderForm;
+import com.dci.intellij.dbn.common.ui.form.DBNHintForm;
 import com.dci.intellij.dbn.common.ui.PresentableFactory;
 import com.dci.intellij.dbn.common.ui.ValueSelectorOption;
 import com.dci.intellij.dbn.common.util.Commons;
@@ -30,7 +30,7 @@ import javax.swing.JPanel;
 import java.awt.BorderLayout;
 import java.util.List;
 
-public class ScriptExecutionInputForm extends DBNFormImpl{
+public class ScriptExecutionInputForm extends DBNFormBase {
     private JPanel headerPanel;
     private JPanel mainPanel;
     private DBNComboBox<ConnectionHandler> connectionComboBox;

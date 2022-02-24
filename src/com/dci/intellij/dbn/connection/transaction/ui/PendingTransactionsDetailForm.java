@@ -4,11 +4,11 @@ import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.common.color.Colors;
 import com.dci.intellij.dbn.common.event.ProjectEvents;
 import com.dci.intellij.dbn.common.thread.Dispatch;
-import com.dci.intellij.dbn.common.ui.DBNFormImpl;
-import com.dci.intellij.dbn.common.ui.DBNHeaderForm;
+import com.dci.intellij.dbn.common.ui.form.DBNFormBase;
+import com.dci.intellij.dbn.common.ui.form.DBNHeaderForm;
 import com.dci.intellij.dbn.common.ui.component.DBNComponent;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
-import com.dci.intellij.dbn.connection.ConnectionHandlerRef;
+import com.dci.intellij.dbn.connection.ConnectionRef;
 import com.dci.intellij.dbn.connection.jdbc.DBNConnection;
 import com.dci.intellij.dbn.connection.transaction.DatabaseTransactionManager;
 import com.dci.intellij.dbn.connection.transaction.TransactionAction;
@@ -27,7 +27,7 @@ import java.util.List;
 import static com.dci.intellij.dbn.connection.transaction.TransactionAction.actions;
 
 
-public class PendingTransactionsDetailForm extends DBNFormImpl {
+public class PendingTransactionsDetailForm extends DBNFormBase {
     private final PendingTransactionsTable pendingTransactionsTable;
     private JPanel mainPanel;
     private JPanel headerPanel;
@@ -36,7 +36,7 @@ public class PendingTransactionsDetailForm extends DBNFormImpl {
     private JButton rollbackButton;
     private JPanel transactionActionsPanel;
 
-    private final ConnectionHandlerRef connection;
+    private final ConnectionRef connection;
 
     PendingTransactionsDetailForm(@NotNull DBNComponent parent, @NotNull ConnectionHandler connection, TransactionAction additionalOperation, boolean showActions) {
         super(parent);

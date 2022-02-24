@@ -1,6 +1,6 @@
 package com.dci.intellij.dbn.common.ui.list;
 
-import com.dci.intellij.dbn.common.ui.DBNFormImpl;
+import com.dci.intellij.dbn.common.ui.form.DBNFormBase;
 import com.dci.intellij.dbn.common.ui.component.DBNComponent;
 import com.intellij.ui.ToolbarDecorator;
 import org.jetbrains.annotations.NotNull;
@@ -11,7 +11,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
-public class EditableStringListForm extends DBNFormImpl{
+public class EditableStringListForm extends DBNFormBase {
     private JPanel component;
     private JLabel titleLabel;
     private JPanel listPanel;

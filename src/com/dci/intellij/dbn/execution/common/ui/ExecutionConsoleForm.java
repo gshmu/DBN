@@ -9,9 +9,9 @@ import com.dci.intellij.dbn.common.event.ProjectEvents;
 import com.dci.intellij.dbn.common.latent.Latent;
 import com.dci.intellij.dbn.common.message.MessageType;
 import com.dci.intellij.dbn.common.navigation.NavigationInstructions;
-import com.dci.intellij.dbn.common.ui.DBNFormImpl;
-import com.dci.intellij.dbn.common.ui.GUIUtil;
-import com.dci.intellij.dbn.common.ui.Mouse;
+import com.dci.intellij.dbn.common.ui.form.DBNFormBase;
+import com.dci.intellij.dbn.common.ui.util.UserInterface;
+import com.dci.intellij.dbn.common.ui.util.Mouse;
 import com.dci.intellij.dbn.common.ui.tab.TabbedPane;
 import com.dci.intellij.dbn.common.util.Documents;
 import com.dci.intellij.dbn.common.util.Strings;
@@ -65,7 +65,7 @@ import java.util.List;
 
 import static com.dci.intellij.dbn.common.navigation.NavigationInstruction.*;
 
-public class ExecutionConsoleForm extends DBNFormImpl{
+public class ExecutionConsoleForm extends DBNFormBase {
     private JPanel mainPanel;
     private TabbedPane resultTabs;
     private final Latent<ExecutionMessagesPanel> executionMessagesPanel = Latent.basic(() -> new ExecutionMessagesPanel(this));
@@ -144,7 +144,7 @@ public class ExecutionConsoleForm extends DBNFormImpl{
 
                     if (executionMessagesPanel.loaded()) {
                         JComponent messagePanelComponent = getMessagesPanel().getComponent();
-                        GUIUtil.repaint(messagePanelComponent);
+                        UserInterface.repaint(messagePanelComponent);
                     }
                 }
             } catch (ProcessCanceledException ignore) {}

@@ -1,14 +1,9 @@
 package com.dci.intellij.dbn.data.find.action;
 
-import com.dci.intellij.dbn.common.ui.KeyUtil;
+import com.dci.intellij.dbn.common.ui.util.Keyboard;
 import com.dci.intellij.dbn.common.util.Context;
 import com.dci.intellij.dbn.data.find.DataSearchComponent;
-import com.intellij.openapi.actionSystem.ActionManager;
-import com.intellij.openapi.actionSystem.AnActionEvent;
-import com.intellij.openapi.actionSystem.CustomShortcutSet;
-import com.intellij.openapi.actionSystem.DataContext;
-import com.intellij.openapi.actionSystem.KeyboardShortcut;
-import com.intellij.openapi.actionSystem.Shortcut;
+import com.intellij.openapi.actionSystem.*;
 import com.intellij.openapi.project.DumbAware;
 import org.jetbrains.annotations.NotNull;
 
@@ -23,7 +18,7 @@ public class CloseOnESCAction extends DataSearchHeaderAction implements DumbAwar
         super(searchComponent);
 
         ArrayList<Shortcut> shortcuts = new ArrayList<>();
-        if (KeyUtil.isEmacsKeymap()) {
+        if (Keyboard.isEmacsKeymap()) {
             shortcuts.add(new KeyboardShortcut(KeyStroke.getKeyStroke(KeyEvent.VK_G, InputEvent.CTRL_MASK), null));
             ActionListener actionListener = e -> {
                 DataContext dataContext = Context.getDataContext(searchComponent);

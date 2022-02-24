@@ -2,19 +2,14 @@ package com.dci.intellij.dbn.data.find;
 
 import com.dci.intellij.dbn.common.color.Colors;
 import com.dci.intellij.dbn.common.compatibility.CompatibilityUtil;
-import com.dci.intellij.dbn.common.ui.DBNFormImpl;
-import com.dci.intellij.dbn.common.ui.Fonts;
-import com.dci.intellij.dbn.common.ui.GUIUtil;
-import com.dci.intellij.dbn.common.ui.Mouse;
+import com.dci.intellij.dbn.common.ui.form.DBNFormBase;
+import com.dci.intellij.dbn.common.ui.util.Fonts;
+import com.dci.intellij.dbn.common.ui.util.Mouse;
+import com.dci.intellij.dbn.common.ui.util.Popups;
+import com.dci.intellij.dbn.common.ui.util.UserInterface;
 import com.dci.intellij.dbn.common.util.Actions;
 import com.dci.intellij.dbn.common.util.Strings;
-import com.dci.intellij.dbn.data.find.action.CloseOnESCAction;
-import com.dci.intellij.dbn.data.find.action.NextOccurrenceAction;
-import com.dci.intellij.dbn.data.find.action.PrevOccurrenceAction;
-import com.dci.intellij.dbn.data.find.action.ShowHistoryAction;
-import com.dci.intellij.dbn.data.find.action.ToggleMatchCase;
-import com.dci.intellij.dbn.data.find.action.ToggleRegex;
-import com.dci.intellij.dbn.data.find.action.ToggleWholeWordsOnlyAction;
+import com.dci.intellij.dbn.data.find.action.*;
 import com.dci.intellij.dbn.data.grid.ui.table.basic.BasicTable;
 import com.dci.intellij.dbn.data.model.DataModel;
 import com.dci.intellij.dbn.data.model.DataModelListener;
@@ -36,17 +31,10 @@ import com.intellij.util.ArrayUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import javax.swing.JComponent;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.JTextField;
-import javax.swing.KeyStroke;
-import javax.swing.SwingConstants;
+import javax.swing.*;
 import javax.swing.event.DocumentListener;
 import javax.swing.text.JTextComponent;
-import java.awt.BorderLayout;
-import java.awt.Component;
-import java.awt.Font;
+import java.awt.*;
 import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
 import java.awt.event.KeyAdapter;
@@ -54,7 +42,7 @@ import java.awt.event.KeyEvent;
 import java.util.Objects;
 import java.util.regex.Pattern;
 
-public class DataSearchComponent extends DBNFormImpl implements SelectionListener, DataSearchResultListener, DataModelListener {
+public class DataSearchComponent extends DBNFormBase implements SelectionListener, DataSearchResultListener, DataModelListener {
     private static final int MATCHES_LIMIT = 10000;
 
     private JPanel mainPanel;
@@ -223,7 +211,7 @@ public class DataSearchComponent extends DBNFormImpl implements SelectionListene
                 //requestFocus(myEditor.getContentComponent());
                 addTextToRecent(DataSearchComponent.this.searchField);
             }
-        }, KeyStroke.getKeyStroke(KeyEvent.VK_ENTER, GUIUtil.ctrlDownMask()),
+        }, KeyStroke.getKeyStroke(KeyEvent.VK_ENTER, UserInterface.ctrlDownMask()),
                 JComponent.WHEN_FOCUSED);
 
         final String initialText = findModel.getStringToFind();
@@ -320,7 +308,7 @@ public class DataSearchComponent extends DBNFormImpl implements SelectionListene
         FindInProjectSettings settings = getFindSettings();
         String[] recent = textField == searchField ? settings.getRecentFindStrings() : settings.getRecentReplaceStrings();
         JBList<String> list = new JBList<>(ArrayUtil.reverseArray(recent));
-        GUIUtil.showCompletionPopup(byClickingToolbarButton ? actionsPanel : null, list, "Recent Searches", textField, null);
+        Popups.showCompletionPopup(byClickingToolbarButton ? actionsPanel : null, list, "Recent Searches", textField, null);
     }
 
     private void initTextField() {
@@ -332,12 +320,12 @@ public class DataSearchComponent extends DBNFormImpl implements SelectionListene
         searchField.addFocusListener(new FocusListener() {
             @Override
             public void focusGained(final FocusEvent e) {
-                GUIUtil.repaint(searchField);
+                UserInterface.repaint(searchField);
             }
 
             @Override
             public void focusLost(final FocusEvent e) {
-                GUIUtil.repaint(searchField);
+                UserInterface.repaint(searchField);
             }
         });
         new CloseOnESCAction(this, searchField);
@@ -424,7 +412,7 @@ public class DataSearchComponent extends DBNFormImpl implements SelectionListene
             searchableComponent.cancelEditActions();
             BasicTable table = getSearchableComponent().getTable();
             table.clearSelection();
-            GUIUtil.repaint(table);
+            UserInterface.repaint(table);
         } else {
 
             if (findModel.isRegularExpressions()) {

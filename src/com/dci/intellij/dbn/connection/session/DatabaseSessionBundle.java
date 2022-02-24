@@ -6,7 +6,7 @@ import com.dci.intellij.dbn.common.dispose.StatefulDisposable;
 import com.dci.intellij.dbn.common.index.IdentifiableMap;
 import com.dci.intellij.dbn.common.util.CollectionUtil;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
-import com.dci.intellij.dbn.connection.ConnectionHandlerRef;
+import com.dci.intellij.dbn.connection.ConnectionRef;
 import com.dci.intellij.dbn.connection.ConnectionType;
 import com.dci.intellij.dbn.connection.SessionId;
 import com.dci.intellij.dbn.database.DatabaseFeature;
@@ -14,11 +14,7 @@ import com.intellij.openapi.Disposable;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.List;
-import java.util.Objects;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import static com.dci.intellij.dbn.common.dispose.SafeDisposer.replace;
@@ -27,7 +23,7 @@ import static com.dci.intellij.dbn.common.util.Lists.filtered;
 import static com.dci.intellij.dbn.common.util.Lists.first;
 
 public class DatabaseSessionBundle extends StatefulDisposable.Base implements Disposable{
-    private final ConnectionHandlerRef connection;
+    private final ConnectionRef connection;
     private DatabaseSession mainSession;
     private DatabaseSession debugSession;
     private DatabaseSession debuggerSession;

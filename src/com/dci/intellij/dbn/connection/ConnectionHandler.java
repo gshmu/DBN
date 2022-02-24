@@ -33,7 +33,7 @@ import org.jetbrains.annotations.Nullable;
 import java.sql.SQLException;
 import java.util.List;
 
-public interface ConnectionHandler extends StatefulDisposable, EnvironmentTypeProvider, ConnectionProvider, Presentable, ConnectionIdProvider, Referenceable<ConnectionHandlerRef> {
+public interface ConnectionHandler extends StatefulDisposable, EnvironmentTypeProvider, ConnectionProvider, Presentable, ConnectionIdProvider, Referenceable<ConnectionRef> {
     @NotNull
     Project getProject();
     DBNConnection getTestConnection() throws SQLException;
@@ -150,7 +150,7 @@ public interface ConnectionHandler extends StatefulDisposable, EnvironmentTypePr
 
     boolean isConnected(SessionId sessionId);
 
-    ConnectionHandlerRef ref();
+    ConnectionRef ref();
 
     DatabaseInfo getDatabaseInfo();
 

@@ -1,10 +1,10 @@
 package com.dci.intellij.dbn.connection.ui;
 
 import com.dci.intellij.dbn.common.database.AuthenticationInfo;
-import com.dci.intellij.dbn.common.ui.ComboBoxUtil;
-import com.dci.intellij.dbn.common.ui.DBNFormImpl;
-import com.dci.intellij.dbn.common.ui.DBNHeaderForm;
-import com.dci.intellij.dbn.common.ui.DBNHintForm;
+import com.dci.intellij.dbn.common.ui.form.DBNFormBase;
+import com.dci.intellij.dbn.common.ui.form.DBNHeaderForm;
+import com.dci.intellij.dbn.common.ui.form.DBNHintForm;
+import com.dci.intellij.dbn.common.ui.util.ComboBoxes;
 import com.dci.intellij.dbn.common.util.Strings;
 import com.dci.intellij.dbn.connection.AuthenticationType;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
@@ -13,18 +13,14 @@ import com.intellij.ui.DocumentAdapter;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import javax.swing.JComponent;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.JPasswordField;
-import javax.swing.JTextField;
+import javax.swing.*;
 import javax.swing.event.DocumentEvent;
-import java.awt.BorderLayout;
+import java.awt.*;
 
-import static com.dci.intellij.dbn.common.ui.ComboBoxUtil.initComboBox;
-import static com.dci.intellij.dbn.common.ui.ComboBoxUtil.setSelection;
+import static com.dci.intellij.dbn.common.ui.util.ComboBoxes.initComboBox;
+import static com.dci.intellij.dbn.common.ui.util.ComboBoxes.setSelection;
 
-public class ConnectionAuthenticationForm extends DBNFormImpl {
+public class ConnectionAuthenticationForm extends DBNFormBase {
     private JPanel mainPanel;
     private JPanel headerPanel;
     private JPasswordField passwordField;
@@ -92,14 +88,14 @@ public class ConnectionAuthenticationForm extends DBNFormImpl {
         });
 
         authTypeComboBox.addActionListener(e -> {
-            authenticationInfo.setType(ComboBoxUtil.getSelection(authTypeComboBox));
+            authenticationInfo.setType(ComboBoxes.getSelection(authTypeComboBox));
             updateAuthenticationFields();
             parentComponent.updateConnectButton();
         });
     }
 
     private void updateAuthenticationFields() {
-        AuthenticationType authType = ComboBoxUtil.getSelection(authTypeComboBox);
+        AuthenticationType authType = ComboBoxes.getSelection(authTypeComboBox);
 
         boolean showUser = authType.isOneOf(
                 AuthenticationType.USER,

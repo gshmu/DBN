@@ -5,17 +5,17 @@ import com.dci.intellij.dbn.common.index.Identifiable;
 import com.dci.intellij.dbn.common.ui.Presentable;
 import com.dci.intellij.dbn.common.util.Cancellable;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
-import com.dci.intellij.dbn.connection.ConnectionHandlerRef;
+import com.dci.intellij.dbn.connection.ConnectionRef;
 import com.dci.intellij.dbn.connection.ConnectionType;
 import com.dci.intellij.dbn.connection.SessionId;
 import com.dci.intellij.dbn.connection.jdbc.DBNConnection;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import javax.swing.Icon;
+import javax.swing.*;
 
 public class DatabaseSession implements Comparable<DatabaseSession>, Presentable, Identifiable<SessionId> {
-    private final ConnectionHandlerRef connection;
+    private final ConnectionRef connection;
     private final ConnectionType connectionType;
     private final SessionId id;
     private String name;

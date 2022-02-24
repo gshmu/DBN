@@ -1,6 +1,6 @@
 package com.dci.intellij.dbn.data.grid.ui.table.resultSet;
 
-import com.dci.intellij.dbn.common.ui.Mouse;
+import com.dci.intellij.dbn.common.ui.util.Mouse;
 import com.dci.intellij.dbn.common.ui.component.DBNComponent;
 import com.dci.intellij.dbn.data.grid.ui.table.resultSet.record.ResultSetRecordViewerDialog;
 import com.dci.intellij.dbn.data.grid.ui.table.sortable.SortableTable;

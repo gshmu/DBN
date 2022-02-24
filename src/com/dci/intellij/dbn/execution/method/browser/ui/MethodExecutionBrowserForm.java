@@ -2,8 +2,8 @@ package com.dci.intellij.dbn.execution.method.browser.ui;
 
 import com.dci.intellij.dbn.common.thread.Dispatch;
 import com.dci.intellij.dbn.common.thread.Progress;
-import com.dci.intellij.dbn.common.ui.DBNFormImpl;
-import com.dci.intellij.dbn.common.ui.GUIUtil;
+import com.dci.intellij.dbn.common.ui.form.DBNFormBase;
+import com.dci.intellij.dbn.common.ui.util.UserInterface;
 import com.dci.intellij.dbn.common.ui.tree.DBNTree;
 import com.dci.intellij.dbn.common.util.Actions;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
@@ -28,7 +28,7 @@ import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.TreePath;
 import java.awt.BorderLayout;
 
-public class MethodExecutionBrowserForm extends DBNFormImpl {
+public class MethodExecutionBrowserForm extends DBNFormBase {
 
     private JPanel actionsPanel;
     private JPanel mainPanel;
@@ -108,7 +108,7 @@ public class MethodExecutionBrowserForm extends DBNFormImpl {
             ObjectTreeModel model = new ObjectTreeModel(settings.getSchema(), settings.getVisibleObjectTypes(), null);
             Dispatch.run(() -> {
                 methodsTree.setModel(model);
-                GUIUtil.repaint(methodsTree);
+                UserInterface.repaint(methodsTree);
             });
         });
     }

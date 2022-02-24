@@ -2,16 +2,16 @@ package com.dci.intellij.dbn.connection.console.ui;
 
 import com.dci.intellij.dbn.common.ui.dialog.DBNDialog;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
-import com.dci.intellij.dbn.connection.ConnectionHandlerRef;
+import com.dci.intellij.dbn.connection.ConnectionRef;
 import com.dci.intellij.dbn.connection.console.DatabaseConsoleManager;
 import com.dci.intellij.dbn.object.DBConsole;
 import com.dci.intellij.dbn.vfs.DBConsoleType;
 import org.jetbrains.annotations.NotNull;
 
-import javax.swing.Action;
+import javax.swing.*;
 
 public class CreateRenameConsoleDialog extends DBNDialog<CreateRenameConsoleForm> {
-    private final ConnectionHandlerRef connection;
+    private final ConnectionRef connection;
     private DBConsole console;
     private DBConsoleType consoleType;
 

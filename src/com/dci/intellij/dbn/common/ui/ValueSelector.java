@@ -3,6 +3,9 @@ package com.dci.intellij.dbn.common.ui;
 import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.common.color.Colors;
 import com.dci.intellij.dbn.common.property.PropertyHolder;
+import com.dci.intellij.dbn.common.ui.util.Mouse;
+import com.dci.intellij.dbn.common.ui.util.Popups;
+import com.dci.intellij.dbn.common.ui.util.UserInterface;
 import com.dci.intellij.dbn.common.util.Actions;
 import com.dci.intellij.dbn.common.util.Commons;
 import com.dci.intellij.dbn.common.util.Context;
@@ -141,7 +144,7 @@ public abstract class ValueSelector<T extends Presentable> extends JPanel{
                     innerPanel.setBorder(focusBorder);
                     innerPanel.setBackground(new JBColor(Gray._210, Gray._75));
 
-                    GUIUtil.repaint(ValueSelector.this);
+                    UserInterface.repaint(ValueSelector.this);
                 }}).
             onExit(e -> {
                 if (popup == null) {
@@ -149,7 +152,7 @@ public abstract class ValueSelector<T extends Presentable> extends JPanel{
                     innerPanel.setBorder(defaultBorder);
                     innerPanel.setBackground(Colors.getPanelBackground());
 
-                    GUIUtil.repaint(ValueSelector.this);
+                    UserInterface.repaint(ValueSelector.this);
                 }}).
             onPress(e -> {
                 if (getValues().size() == 0) {
@@ -189,7 +192,7 @@ public abstract class ValueSelector<T extends Presentable> extends JPanel{
                     label.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
 
                     innerPanel.requestFocus();
-                    GUIUtil.repaint(ValueSelector.this);
+                    UserInterface.repaint(ValueSelector.this);
                 },
                 10,
                 preselect -> {
@@ -201,7 +204,7 @@ public abstract class ValueSelector<T extends Presentable> extends JPanel{
 */
                     return false;
                 });
-        GUIUtil.showUnderneathOf(popup, this, 3, 200);
+        Popups.showUnderneathOf(popup, this, 3, 200);
     }
 
     public void clearValues() {

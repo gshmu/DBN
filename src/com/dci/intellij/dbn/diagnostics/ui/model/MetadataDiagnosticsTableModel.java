@@ -1,7 +1,7 @@
 package com.dci.intellij.dbn.diagnostics.ui.model;
 
 import com.dci.intellij.dbn.connection.ConnectionHandler;
-import com.dci.intellij.dbn.connection.ConnectionHandlerRef;
+import com.dci.intellij.dbn.connection.ConnectionRef;
 import com.dci.intellij.dbn.diagnostics.DiagnosticsManager;
 import com.dci.intellij.dbn.diagnostics.data.DiagnosticBundle;
 import com.dci.intellij.dbn.diagnostics.data.DiagnosticEntry;
@@ -9,7 +9,7 @@ import com.intellij.openapi.project.Project;
 import org.jetbrains.annotations.NotNull;
 
 public class MetadataDiagnosticsTableModel extends AbstractDiagnosticsTableModel<String> {
-    private final ConnectionHandlerRef connection;
+    private final ConnectionRef connection;
 
     private static final String[] COLUMN_NAMES = new String[] {
             "Identifier",

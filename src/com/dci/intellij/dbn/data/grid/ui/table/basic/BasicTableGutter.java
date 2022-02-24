@@ -1,16 +1,13 @@
 package com.dci.intellij.dbn.data.grid.ui.table.basic;
 
-import com.dci.intellij.dbn.common.ui.GUIUtil;
 import com.dci.intellij.dbn.common.ui.table.DBNTableGutter;
+import com.dci.intellij.dbn.common.ui.util.UserInterface;
 import org.jetbrains.annotations.NotNull;
 
-import javax.swing.ListCellRenderer;
-import javax.swing.ListSelectionModel;
+import javax.swing.*;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.table.TableCellEditor;
-import java.awt.Component;
-import java.awt.Font;
-import java.awt.Rectangle;
+import java.awt.*;
 import java.awt.event.FocusEvent;
 import java.util.Objects;
 
@@ -99,7 +96,7 @@ public class BasicTableGutter<T extends BasicTable> extends DBNTableGutter<T> {
     };
 
     private ListSelectionListener tableSelectionListener = e -> {
-        GUIUtil.repaint(BasicTableGutter.this);
+        UserInterface.repaint(BasicTableGutter.this);
     };
 
     @Override

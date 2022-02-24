@@ -2,12 +2,12 @@ package com.dci.intellij.dbn.object.factory.ui.common;
 
 import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.common.dispose.DisposableContainers;
-import com.dci.intellij.dbn.common.ui.DBNFormImpl;
-import com.dci.intellij.dbn.common.ui.GUIUtil;
+import com.dci.intellij.dbn.common.ui.form.DBNFormBase;
+import com.dci.intellij.dbn.common.ui.util.UserInterface;
 import com.dci.intellij.dbn.common.ui.component.DBNComponent;
 import com.dci.intellij.dbn.common.util.Actions;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
-import com.dci.intellij.dbn.connection.ConnectionHandlerRef;
+import com.dci.intellij.dbn.connection.ConnectionRef;
 import com.dci.intellij.dbn.object.factory.ObjectFactoryInput;
 import com.dci.intellij.dbn.object.type.DBObjectType;
 import com.intellij.openapi.actionSystem.ActionToolbar;
@@ -22,12 +22,12 @@ import java.awt.BorderLayout;
 import java.util.ArrayList;
 import java.util.List;
 
-public abstract class ObjectListForm<T extends ObjectFactoryInput> extends DBNFormImpl {
+public abstract class ObjectListForm<T extends ObjectFactoryInput> extends DBNFormBase {
     private JPanel mainPanel;
     private JPanel listPanel;
     private JPanel actionsPanel;
     private JLabel newLabel;
-    private final ConnectionHandlerRef connection;
+    private final ConnectionRef connection;
 
     private final List<ObjectFactoryInputForm<T>> inputForms = DisposableContainers.list(this);
 
@@ -63,7 +63,7 @@ public abstract class ObjectListForm<T extends ObjectFactoryInput> extends DBNFo
         ObjectListItemForm listItemForm = new ObjectListItemForm(this, inputForm);
         listPanel.add(listItemForm.getComponent());
 
-        GUIUtil.repaint(mainPanel);
+        UserInterface.repaint(mainPanel);
         inputForm.focus();
     }
 
@@ -71,7 +71,7 @@ public abstract class ObjectListForm<T extends ObjectFactoryInput> extends DBNFo
         inputForms.remove(child.getObjectDetailsPanel());
         listPanel.remove(child.getComponent());
 
-        GUIUtil.repaint(mainPanel);
+        UserInterface.repaint(mainPanel);
         // rebuild indexes
         for (int i=0; i< inputForms.size(); i++) {
             inputForms.get(i).setIndex(i);

@@ -1,8 +1,8 @@
 package com.dci.intellij.dbn.diagnostics.options.ui;
 
 import com.dci.intellij.dbn.common.Icons;
-import com.dci.intellij.dbn.common.ui.DBNFormImpl;
-import com.dci.intellij.dbn.common.ui.DBNHintForm;
+import com.dci.intellij.dbn.common.ui.form.DBNFormBase;
+import com.dci.intellij.dbn.common.ui.form.DBNHintForm;
 import com.dci.intellij.dbn.diagnostics.Diagnostics;
 import com.intellij.openapi.Disposable;
 import com.intellij.openapi.options.ConfigurationException;
@@ -17,7 +17,7 @@ import java.awt.event.ActionEvent;
 
 import static com.dci.intellij.dbn.common.options.ui.ConfigurationEditorUtil.validateIntegerValue;
 
-public class DiagnosticSettingsForm extends DBNFormImpl {
+public class DiagnosticSettingsForm extends DBNFormBase {
     private JPanel mainPanel;
     private JCheckBox developerModeCheckBox;
     private JCheckBox databaseResourcesCheckBox;

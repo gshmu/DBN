@@ -1,6 +1,6 @@
 package com.dci.intellij.dbn.debugger.jdwp.config.ui;
 
-import com.dci.intellij.dbn.common.ui.DBNHintForm;
+import com.dci.intellij.dbn.common.ui.form.DBNHintForm;
 import com.dci.intellij.dbn.debugger.DatabaseDebuggerManager;
 import com.dci.intellij.dbn.debugger.common.config.DBRunConfigCategory;
 import com.dci.intellij.dbn.debugger.common.config.ui.DBProgramRunConfigurationEditorForm;

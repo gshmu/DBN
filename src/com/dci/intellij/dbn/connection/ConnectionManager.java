@@ -15,11 +15,7 @@ import com.dci.intellij.dbn.common.routine.ParametricRunnable;
 import com.dci.intellij.dbn.common.thread.Background;
 import com.dci.intellij.dbn.common.thread.Dispatch;
 import com.dci.intellij.dbn.common.thread.Progress;
-import com.dci.intellij.dbn.common.util.Editors;
-import com.dci.intellij.dbn.common.util.InternalApi;
-import com.dci.intellij.dbn.common.util.Lists;
-import com.dci.intellij.dbn.common.util.Strings;
-import com.dci.intellij.dbn.common.util.TimeUtil;
+import com.dci.intellij.dbn.common.util.*;
 import com.dci.intellij.dbn.connection.config.ConnectionConfigListener;
 import com.dci.intellij.dbn.connection.config.ConnectionDatabaseSettings;
 import com.dci.intellij.dbn.connection.config.ConnectionSettings;
@@ -75,7 +71,7 @@ public class ConnectionManager extends AbstractProjectComponent implements Persi
 
     private Timer idleConnectionCleaner;
     private final ConnectionBundle connectionBundle;
-    private static ConnectionHandlerRef lastUsedConnection;
+    private static ConnectionRef lastUsedConnection;
 
     public static ConnectionManager getInstance(@NotNull Project project) {
         return getComponent(project);

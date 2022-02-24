@@ -2,8 +2,8 @@ package com.dci.intellij.dbn.editor.code.ui;
 
 import com.dci.intellij.dbn.common.event.ProjectEvents;
 import com.dci.intellij.dbn.common.thread.Dispatch;
-import com.dci.intellij.dbn.common.ui.Borders;
-import com.dci.intellij.dbn.common.ui.DBNFormImpl;
+import com.dci.intellij.dbn.common.ui.util.Borders;
+import com.dci.intellij.dbn.common.ui.form.DBNFormBase;
 import com.dci.intellij.dbn.common.util.Actions;
 import com.dci.intellij.dbn.editor.code.SourceCodeEditor;
 import com.dci.intellij.dbn.editor.code.SourceCodeManagerAdapter;
@@ -21,7 +21,7 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import java.awt.BorderLayout;
 
-public class SourceCodeEditorActionsPanel extends DBNFormImpl{
+public class SourceCodeEditorActionsPanel extends DBNFormBase {
     private JPanel mainPanel;
     private JPanel actionsPanel;
     private JPanel loadingDataPanel;

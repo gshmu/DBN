@@ -1,6 +1,6 @@
 package com.dci.intellij.dbn.editor.session.ui.table;
 
-import com.dci.intellij.dbn.common.ui.Mouse;
+import com.dci.intellij.dbn.common.ui.util.Mouse;
 import com.dci.intellij.dbn.data.grid.ui.table.basic.BasicTableGutter;
 import com.dci.intellij.dbn.data.grid.ui.table.basic.BasicTableGutterCellRenderer;
 

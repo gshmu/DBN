@@ -1,4 +1,4 @@
-package com.dci.intellij.dbn.common.ui;
+package com.dci.intellij.dbn.common.ui.form;
 
 import com.dci.intellij.dbn.common.ui.dialog.DBNDialog;
 import com.intellij.openapi.util.Disposer;
@@ -7,7 +7,7 @@ import org.jetbrains.annotations.NotNull;
 import javax.swing.*;
 import java.awt.*;
 
-public abstract class DBNContentWithHeaderForm extends DBNFormImpl{
+public abstract class DBNContentWithHeaderForm extends DBNFormBase {
     private JPanel mainPanel;
     private JPanel headerPanel;
     private JPanel contentPanel;

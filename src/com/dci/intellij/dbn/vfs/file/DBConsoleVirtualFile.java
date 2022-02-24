@@ -36,12 +36,8 @@ import lombok.Getter;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import javax.swing.Icon;
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
+import javax.swing.*;
+import java.io.*;
 import java.nio.charset.Charset;
 import java.util.List;
 import java.util.Objects;
@@ -133,7 +129,7 @@ public class DBConsoleVirtualFile extends DBObjectVirtualFile<DBConsole> impleme
 
     @Override
     public boolean isValid() {
-        return super.isValid() /*&& connectionHandlerRef.isValid()*/;
+        return super.isValid() /*&& connection.isValid()*/;
     }
 
     @Override

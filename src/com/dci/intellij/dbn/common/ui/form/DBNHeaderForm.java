@@ -1,7 +1,8 @@
-package com.dci.intellij.dbn.common.ui;
+package com.dci.intellij.dbn.common.ui.form;
 
 import com.dci.intellij.dbn.common.color.Colors;
 import com.dci.intellij.dbn.common.event.ProjectEvents;
+import com.dci.intellij.dbn.common.ui.Presentable;
 import com.dci.intellij.dbn.common.util.Commons;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.ConnectionHandlerStatusListener;
@@ -20,7 +21,7 @@ import javax.swing.JPanel;
 import javax.swing.border.LineBorder;
 import java.awt.Color;
 
-public class DBNHeaderForm extends DBNFormImpl{
+public class DBNHeaderForm extends DBNFormBase {
     public static final LineBorder BORDER = new LineBorder(UIUtil.getBoundsColor());
     private JLabel objectLabel;
     private JPanel mainPanel;

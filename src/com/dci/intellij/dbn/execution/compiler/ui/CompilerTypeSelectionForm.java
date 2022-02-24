@@ -1,8 +1,8 @@
 package com.dci.intellij.dbn.execution.compiler.ui;
 
-import com.dci.intellij.dbn.common.ui.DBNFormImpl;
-import com.dci.intellij.dbn.common.ui.DBNHeaderForm;
-import com.dci.intellij.dbn.common.ui.DBNHintForm;
+import com.dci.intellij.dbn.common.ui.form.DBNFormBase;
+import com.dci.intellij.dbn.common.ui.form.DBNHeaderForm;
+import com.dci.intellij.dbn.common.ui.form.DBNHintForm;
 import com.dci.intellij.dbn.object.common.DBSchemaObject;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -10,7 +10,7 @@ import org.jetbrains.annotations.Nullable;
 import javax.swing.*;
 import java.awt.*;
 
-public class CompilerTypeSelectionForm extends DBNFormImpl {
+public class CompilerTypeSelectionForm extends DBNFormBase {
     private JPanel mainPanel;
     private JPanel headerPanel;
     private JCheckBox rememberSelectionCheckBox;

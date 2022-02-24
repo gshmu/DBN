@@ -8,7 +8,7 @@ import com.dci.intellij.dbn.common.thread.Read;
 import com.dci.intellij.dbn.common.thread.ThreadPool;
 import com.dci.intellij.dbn.common.util.Strings;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
-import com.dci.intellij.dbn.connection.ConnectionHandlerRef;
+import com.dci.intellij.dbn.connection.ConnectionRef;
 import com.dci.intellij.dbn.language.common.DBLanguage;
 import com.dci.intellij.dbn.language.common.DBLanguageDialect;
 import com.dci.intellij.dbn.language.common.DBLanguagePsiFile;
@@ -47,7 +47,7 @@ public class CodeCompletionContext {
 
     private boolean extended;
     private final PsiFileRef<DBLanguagePsiFile> file;
-    private final ConnectionHandlerRef connection;
+    private final ConnectionRef connection;
     private final ProjectCodeStyleSettings codeStyleSettings;
     private final CodeCompletionSettings codeCompletionSettings;
     private final CompletionParameters parameters;
@@ -70,7 +70,7 @@ public class CodeCompletionContext {
         this.parameters = parameters;
         this.result = result;
         this.extended = parameters.getCompletionType() == CompletionType.SMART;
-        this.connection = ConnectionHandlerRef.of(file.getConnection());
+        this.connection = ConnectionRef.of(file.getConnection());
 
         PsiElement position = parameters.getPosition();
         if (position instanceof PsiComment) {
@@ -116,7 +116,7 @@ public class CodeCompletionContext {
 
     @Nullable
     public ConnectionHandler getConnection() {
-        return ConnectionHandlerRef.get(connection);
+        return ConnectionRef.get(connection);
     }
 
     public CodeCompletionFilterSettings getCodeCompletionFilterSettings() {

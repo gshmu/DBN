@@ -3,7 +3,7 @@ package com.dci.intellij.dbn.connection.mapping.ui;
 import com.dci.intellij.dbn.common.color.Colors;
 import com.dci.intellij.dbn.common.thread.Dispatch;
 import com.dci.intellij.dbn.common.thread.Progress;
-import com.dci.intellij.dbn.common.ui.Borders;
+import com.dci.intellij.dbn.common.ui.util.Borders;
 import com.dci.intellij.dbn.common.ui.Presentable;
 import com.dci.intellij.dbn.common.ui.component.DBNComponent;
 import com.dci.intellij.dbn.common.ui.table.DBNColoredTableCellRenderer;
@@ -14,7 +14,7 @@ import com.dci.intellij.dbn.common.util.Context;
 import com.dci.intellij.dbn.common.util.Safe;
 import com.dci.intellij.dbn.connection.ConnectionBundle;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
-import com.dci.intellij.dbn.connection.ConnectionHandlerRef;
+import com.dci.intellij.dbn.connection.ConnectionRef;
 import com.dci.intellij.dbn.connection.ConnectionId;
 import com.dci.intellij.dbn.connection.ConnectionManager;
 import com.dci.intellij.dbn.connection.SchemaId;
@@ -223,13 +223,13 @@ public class FileConnectionMappingTable extends DBNTable<FileConnectionMappingTa
 
     private class ConnectionAction extends AnAction implements DumbAware {
         private final VirtualFile virtualFile;
-        private final ConnectionHandlerRef connection;
+        private final ConnectionRef connection;
         private ConnectionAction(VirtualFile virtualFile, ConnectionHandler connection) {
             super(
                 Safe.call(connection, c -> c.getName(), "No Connection"), null,
                 Safe.call(connection, c -> c.getIcon()));
             this.virtualFile = virtualFile;
-            this.connection = ConnectionHandlerRef.of(connection);
+            this.connection = ConnectionRef.of(connection);
         }
 
         @Override
@@ -241,7 +241,7 @@ public class FileConnectionMappingTable extends DBNTable<FileConnectionMappingTa
 
         @Nullable
         private ConnectionHandler getConnection() {
-            return ConnectionHandlerRef.get(connection);
+            return ConnectionRef.get(connection);
         }
 
         public ConnectionId getConnectionId() {

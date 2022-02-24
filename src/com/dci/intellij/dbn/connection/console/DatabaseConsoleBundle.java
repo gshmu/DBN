@@ -5,21 +5,17 @@ import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.common.dispose.SafeDisposer;
 import com.dci.intellij.dbn.common.dispose.StatefulDisposable;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
-import com.dci.intellij.dbn.connection.ConnectionHandlerRef;
+import com.dci.intellij.dbn.connection.ConnectionRef;
 import com.dci.intellij.dbn.object.DBConsole;
 import com.dci.intellij.dbn.object.impl.DBConsoleImpl;
 import com.dci.intellij.dbn.vfs.DBConsoleType;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Objects;
-import java.util.Set;
+import java.util.*;
 
 public class DatabaseConsoleBundle extends StatefulDisposable.Base {
-    private final ConnectionHandlerRef connection;
+    private final ConnectionRef connection;
 
     private final List<DBConsole> consoles = DisposableContainers.concurrentList(this);
 

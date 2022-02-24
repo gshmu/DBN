@@ -1,7 +1,7 @@
 package com.dci.intellij.dbn.connection.config.file.ui;
 
-import com.dci.intellij.dbn.common.ui.DBNFormImpl;
-import com.dci.intellij.dbn.common.ui.GUIUtil;
+import com.dci.intellij.dbn.common.ui.form.DBNFormBase;
+import com.dci.intellij.dbn.common.ui.util.UserInterface;
 import com.dci.intellij.dbn.connection.config.file.DatabaseFile;
 import com.dci.intellij.dbn.connection.config.file.DatabaseFiles;
 import com.dci.intellij.dbn.connection.config.ui.ConnectionDatabaseSettingsForm;
@@ -11,7 +11,7 @@ import org.jetbrains.annotations.NotNull;
 import javax.swing.*;
 import java.awt.*;
 
-public class DatabaseFileSettingsForm extends DBNFormImpl {
+public class DatabaseFileSettingsForm extends DBNFormBase {
     private JPanel mainPanel;
     private DatabaseFiles databaseFiles;
     private final DatabaseFilesTable table;
@@ -48,7 +48,7 @@ public class DatabaseFileSettingsForm extends DBNFormImpl {
     }
 
     public DatabaseFiles getDatabaseFiles() {
-        GUIUtil.stopTableCellEditing(table);
+        UserInterface.stopTableCellEditing(table);
         return table.getModel().getDatabaseFiles();
     }
 

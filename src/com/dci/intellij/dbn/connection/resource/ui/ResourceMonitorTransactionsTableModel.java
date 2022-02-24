@@ -2,7 +2,7 @@ package com.dci.intellij.dbn.connection.resource.ui;
 
 import com.dci.intellij.dbn.common.ui.table.DBNReadonlyTableModel;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
-import com.dci.intellij.dbn.connection.ConnectionHandlerRef;
+import com.dci.intellij.dbn.connection.ConnectionRef;
 import com.dci.intellij.dbn.connection.jdbc.DBNConnection;
 import com.dci.intellij.dbn.connection.transaction.PendingTransaction;
 import com.dci.intellij.dbn.connection.transaction.PendingTransactionBundle;
@@ -12,7 +12,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 public class ResourceMonitorTransactionsTableModel implements DBNReadonlyTableModel, Disposable {
-    private final ConnectionHandlerRef connection;
+    private final ConnectionRef connection;
     private DBNConnection conn;
 
     public ResourceMonitorTransactionsTableModel(ConnectionHandler connection, @Nullable DBNConnection conn) {
