@@ -9,11 +9,11 @@ import com.intellij.openapi.fileEditor.FileEditorStateLevel;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
+import lombok.val;
 import org.jdom.Element;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.HashMap;
-import java.util.Map;
 
 import static com.dci.intellij.dbn.common.options.setting.SettingsSupport.*;
 
@@ -72,7 +72,7 @@ public class DatasetEditorState extends SortableDataModelState implements FileEd
         Element contentTypesElement = new Element("content-types");
         targetElement.addContent(contentTypesElement);
         if (contentTypesMap != null && contentTypesMap.size() > 0) {
-            for (Map.Entry<String, String> entry : contentTypesMap.entrySet()) {
+            for (val entry : contentTypesMap.entrySet()) {
                 String columnName = entry.getKey();
                 String contentTypeName = entry.getValue();
 
