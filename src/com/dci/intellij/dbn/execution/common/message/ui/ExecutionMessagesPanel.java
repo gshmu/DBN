@@ -3,7 +3,7 @@ package com.dci.intellij.dbn.execution.common.message.ui;
 import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.common.event.ProjectEvents;
 import com.dci.intellij.dbn.common.navigation.NavigationInstructions;
-import com.dci.intellij.dbn.common.ui.DBNFormImpl;
+import com.dci.intellij.dbn.common.ui.form.DBNFormBase;
 import com.dci.intellij.dbn.common.util.Actions;
 import com.dci.intellij.dbn.connection.config.ConnectionConfigListener;
 import com.dci.intellij.dbn.execution.common.message.action.ExecutedStatementViewAction;
@@ -24,7 +24,7 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.tree.TreePath;
 
-public class ExecutionMessagesPanel extends DBNFormImpl{
+public class ExecutionMessagesPanel extends DBNFormBase {
     private JPanel mainPanel;
     private JPanel actionsPanel;
     private JPanel statusPanel;

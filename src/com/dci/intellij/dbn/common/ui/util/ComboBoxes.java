@@ -1,16 +1,13 @@
-package com.dci.intellij.dbn.common.ui;
+package com.dci.intellij.dbn.common.ui.util;
 
+import com.dci.intellij.dbn.common.ui.Presentable;
 import com.intellij.ui.ColoredListCellRenderer;
 import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.List;
-import java.util.Vector;
+import java.util.*;
 
-public class ComboBoxUtil {
+public class ComboBoxes {
     public static void addItems(JComboBox comboBox, Iterable items) {
         for (Object item : items) {
             comboBox.addItem(item);

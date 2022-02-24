@@ -3,7 +3,7 @@ package com.dci.intellij.dbn.editor.session.action;
 import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.common.action.DataKeys;
 import com.dci.intellij.dbn.common.action.Lookup;
-import com.dci.intellij.dbn.common.ui.DBNComboBoxAction;
+import com.dci.intellij.dbn.common.ui.misc.DBNComboBoxAction;
 import com.dci.intellij.dbn.common.util.Context;
 import com.dci.intellij.dbn.editor.session.SessionBrowser;
 import com.intellij.openapi.actionSystem.AnAction;

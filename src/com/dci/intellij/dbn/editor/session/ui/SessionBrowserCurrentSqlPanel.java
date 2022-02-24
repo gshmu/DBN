@@ -5,8 +5,8 @@ import com.dci.intellij.dbn.common.color.Colors;
 import com.dci.intellij.dbn.common.dispose.AlreadyDisposedException;
 import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.common.thread.Background;
-import com.dci.intellij.dbn.common.ui.Borders;
-import com.dci.intellij.dbn.common.ui.DBNFormImpl;
+import com.dci.intellij.dbn.common.ui.util.Borders;
+import com.dci.intellij.dbn.common.ui.form.DBNFormBase;
 import com.dci.intellij.dbn.common.ui.component.DBNComponent;
 import com.dci.intellij.dbn.common.util.Actions;
 import com.dci.intellij.dbn.common.util.Documents;
@@ -41,7 +41,7 @@ import javax.swing.JScrollPane;
 import java.awt.BorderLayout;
 import java.util.concurrent.atomic.AtomicReference;
 
-public class SessionBrowserCurrentSqlPanel extends DBNFormImpl {
+public class SessionBrowserCurrentSqlPanel extends DBNFormBase {
     private JPanel actionsPanel;
     private JPanel viewerPanel;
     private JPanel mainPanel;

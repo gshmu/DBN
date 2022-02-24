@@ -10,10 +10,10 @@ import com.dci.intellij.dbn.common.dispose.SafeDisposer;
 import com.dci.intellij.dbn.common.event.ProjectEvents;
 import com.dci.intellij.dbn.common.thread.Dispatch;
 import com.dci.intellij.dbn.common.thread.Progress;
-import com.dci.intellij.dbn.common.ui.Borders;
-import com.dci.intellij.dbn.common.ui.DBNForm;
-import com.dci.intellij.dbn.common.ui.DBNFormImpl;
-import com.dci.intellij.dbn.common.ui.GUIUtil;
+import com.dci.intellij.dbn.common.ui.util.Borders;
+import com.dci.intellij.dbn.common.ui.form.DBNForm;
+import com.dci.intellij.dbn.common.ui.form.DBNFormBase;
+import com.dci.intellij.dbn.common.ui.util.UserInterface;
 import com.dci.intellij.dbn.common.ui.table.DBNTable;
 import com.dci.intellij.dbn.common.util.Naming;
 import com.dci.intellij.dbn.object.common.DBObject;
@@ -30,7 +30,7 @@ import javax.swing.JTable;
 import java.util.Objects;
 import java.util.concurrent.atomic.AtomicReference;
 
-public class ObjectPropertiesForm extends DBNFormImpl {
+public class ObjectPropertiesForm extends DBNFormBase {
     private JPanel mainPanel;
     private JLabel objectLabel;
     private JLabel objectTypeLabel;
@@ -102,7 +102,7 @@ public class ObjectPropertiesForm extends DBNFormImpl {
                     objectPropertiesTable.setModel(tableModel);
                     ((DBNTable<?>) objectPropertiesTable).accommodateColumnsSize();
 
-                    GUIUtil.repaint(mainPanel);
+                    UserInterface.repaint(mainPanel);
                     SafeDisposer.dispose(oldTableModel, false);
                 });
 

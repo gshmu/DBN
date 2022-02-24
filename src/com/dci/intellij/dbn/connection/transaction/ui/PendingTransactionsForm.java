@@ -3,9 +3,9 @@ package com.dci.intellij.dbn.connection.transaction.ui;
 import com.dci.intellij.dbn.common.dispose.DisposableContainers;
 import com.dci.intellij.dbn.common.event.ProjectEvents;
 import com.dci.intellij.dbn.common.thread.Dispatch;
-import com.dci.intellij.dbn.common.ui.Borders;
-import com.dci.intellij.dbn.common.ui.DBNFormImpl;
-import com.dci.intellij.dbn.common.ui.GUIUtil;
+import com.dci.intellij.dbn.common.ui.util.Borders;
+import com.dci.intellij.dbn.common.ui.form.DBNFormBase;
+import com.dci.intellij.dbn.common.ui.util.UserInterface;
 import com.dci.intellij.dbn.connection.ConnectionBundle;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.ConnectionId;
@@ -27,7 +27,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-public class PendingTransactionsForm extends DBNFormImpl {
+public class PendingTransactionsForm extends DBNFormBase {
     private JPanel mainPanel;
     private JPanel actionsPanel;
     private JPanel detailsPanel;
@@ -100,7 +100,7 @@ public class PendingTransactionsForm extends DBNFormImpl {
             detailsPanel.add(pendingTransactionsForm.getComponent(), BorderLayout.CENTER);
         }
 
-        GUIUtil.repaint(detailsPanel);
+        UserInterface.repaint(detailsPanel);
     }
 
     private static class ListCellRenderer extends ColoredListCellRenderer<Object> {

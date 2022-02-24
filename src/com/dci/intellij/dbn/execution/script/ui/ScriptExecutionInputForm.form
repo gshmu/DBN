@@ -76,19 +76,19 @@
         <border type="none"/>
         <children/>
       </grid>
-      <component id="436bb" class="com.dci.intellij.dbn.common.ui.DBNComboBox" binding="schemaComboBox">
+      <component id="436bb" class="com.dci.intellij.dbn.common.ui.misc.DBNComboBox" binding="schemaComboBox">
         <constraints>
           <grid row="3" column="1" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
         </constraints>
         <properties/>
       </component>
-      <component id="987aa" class="com.dci.intellij.dbn.common.ui.DBNComboBox" binding="connectionComboBox">
+      <component id="987aa" class="com.dci.intellij.dbn.common.ui.misc.DBNComboBox" binding="connectionComboBox">
         <constraints>
           <grid row="2" column="1" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
         </constraints>
         <properties/>
       </component>
-      <component id="c0f3a" class="com.dci.intellij.dbn.common.ui.DBNComboBox" binding="cmdLineExecutableComboBox">
+      <component id="c0f3a" class="com.dci.intellij.dbn.common.ui.misc.DBNComboBox" binding="cmdLineExecutableComboBox">
         <constraints>
           <grid row="4" column="1" row-span="1" col-span="2" vsize-policy="3" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
         </constraints>

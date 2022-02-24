@@ -3,10 +3,10 @@ package com.dci.intellij.dbn.data.editor.ui;
 import com.dci.intellij.dbn.common.event.ProjectEvents;
 import com.dci.intellij.dbn.common.thread.Dispatch;
 import com.dci.intellij.dbn.common.thread.Progress;
-import com.dci.intellij.dbn.common.ui.Borders;
-import com.dci.intellij.dbn.common.ui.DBNFormImpl;
-import com.dci.intellij.dbn.common.ui.KeyAdapter;
-import com.dci.intellij.dbn.common.ui.KeyUtil;
+import com.dci.intellij.dbn.common.ui.util.Borders;
+import com.dci.intellij.dbn.common.ui.form.DBNFormBase;
+import com.dci.intellij.dbn.common.ui.listener.KeyAdapter;
+import com.dci.intellij.dbn.common.ui.util.Keyboard;
 import com.dci.intellij.dbn.common.util.Context;
 import com.dci.intellij.dbn.language.common.WeakRef;
 import com.intellij.openapi.actionSystem.ActionManager;
@@ -35,7 +35,7 @@ import java.util.Set;
 
 @Getter
 @Setter
-public abstract class TextFieldPopupProviderForm extends DBNFormImpl implements KeyAdapter, TextFieldPopupProvider {
+public abstract class TextFieldPopupProviderForm extends DBNFormBase implements KeyAdapter, TextFieldPopupProvider {
     private final WeakRef<TextFieldWithPopup> editorComponent;
     private final boolean autoPopup;
     private final boolean buttonVisible;
@@ -84,7 +84,7 @@ public abstract class TextFieldPopupProviderForm extends DBNFormImpl implements 
 
     @Override
     public final Shortcut[] getShortcuts() {
-        return KeyUtil.getShortcuts(getKeyShortcutName());
+        return Keyboard.getShortcuts(getKeyShortcutName());
     }
 
     protected abstract String getKeyShortcutName();
@@ -97,7 +97,7 @@ public abstract class TextFieldPopupProviderForm extends DBNFormImpl implements 
     public void keyPressed(KeyEvent e) {
         if (!e.isConsumed()) {
             for (AnAction action : actions) {
-                if (KeyUtil.match(action.getShortcutSet().getShortcuts(), e)) {
+                if (Keyboard.match(action.getShortcutSet().getShortcuts(), e)) {
                     DataContext dataContext = Context.getDataContext(this);
                     ActionManager actionManager = ActionManager.getInstance();
                     AnActionEvent actionEvent = new AnActionEvent(null, dataContext, "", action.getTemplatePresentation(), actionManager, 2);

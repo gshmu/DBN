@@ -3,11 +3,7 @@ package com.dci.intellij.dbn.data.editor.ui;
 import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.common.color.Colors;
 import com.dci.intellij.dbn.common.locale.Formatter;
-import com.dci.intellij.dbn.common.ui.Borders;
-import com.dci.intellij.dbn.common.ui.Fonts;
-import com.dci.intellij.dbn.common.ui.GUIUtil;
-import com.dci.intellij.dbn.common.ui.KeyUtil;
-import com.dci.intellij.dbn.common.ui.Mouse;
+import com.dci.intellij.dbn.common.ui.util.*;
 import com.dci.intellij.dbn.common.util.Actions;
 import com.intellij.openapi.actionSystem.ActionToolbar;
 import com.intellij.openapi.actionSystem.AnAction;
@@ -21,12 +17,7 @@ import com.intellij.util.ui.JBUI;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import javax.swing.Icon;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.JTable;
-import javax.swing.JTextField;
-import javax.swing.ListSelectionModel;
+import javax.swing.*;
 import javax.swing.border.Border;
 import javax.swing.border.CompoundBorder;
 import javax.swing.border.LineBorder;
@@ -35,21 +26,13 @@ import javax.swing.event.TableModelListener;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.TableCellRenderer;
 import javax.swing.table.TableModel;
-import java.awt.BorderLayout;
-import java.awt.Color;
-import java.awt.Component;
-import java.awt.Cursor;
-import java.awt.KeyboardFocusManager;
+import java.awt.*;
 import java.awt.event.FocusEvent;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
 import java.sql.Timestamp;
 import java.text.ParseException;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.GregorianCalendar;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.*;
 
 public class CalendarPopupProviderForm extends TextFieldPopupProviderForm implements TableModelListener {
     private static final TableCellRenderer CELL_RENDERER = new CalendarTableCellRenderer();
@@ -131,7 +114,7 @@ public class CalendarPopupProviderForm extends TextFieldPopupProviderForm implem
         Color labelForeground = Colors.getLabelForeground();
         Color tableBackground = Colors.getTableBackground();
 
-        GUIUtil.setPanelBackground(mainPanel, panelBackground);
+        UserInterface.changePanelBackground(mainPanel, panelBackground);
         timeLabel.setForeground(labelForeground);
         monthYearLabel.setForeground(labelForeground);
         daysTable.setBackground(tableBackground);
@@ -481,7 +464,7 @@ public class CalendarPopupProviderForm extends TextFieldPopupProviderForm implem
     private class NextMonthAction extends AnAction {
         private NextMonthAction() {
             super("Next Month", null, Icons.CALENDAR_CELL_EDIT_NEXT_MONTH);
-            setShortcutSet(KeyUtil.createShortcutSet(KeyEvent.VK_RIGHT, GUIUtil.ctrlDownMask()));
+            setShortcutSet(Keyboard.createShortcutSet(KeyEvent.VK_RIGHT, UserInterface.ctrlDownMask()));
             registerAction(this);
         }
         @Override
@@ -494,7 +477,7 @@ public class CalendarPopupProviderForm extends TextFieldPopupProviderForm implem
     private class NextYearAction extends AnAction {
         private NextYearAction() {
             super("Next Year", null, Icons.CALENDAR_CELL_EDIT_NEXT_YEAR);
-            setShortcutSet(KeyUtil.createShortcutSet(KeyEvent.VK_UP, GUIUtil.ctrlDownMask()));
+            setShortcutSet(Keyboard.createShortcutSet(KeyEvent.VK_UP, UserInterface.ctrlDownMask()));
             registerAction(this);
         }
         @Override
@@ -507,7 +490,7 @@ public class CalendarPopupProviderForm extends TextFieldPopupProviderForm implem
     private class PreviousMonthAction extends AnAction {
         private PreviousMonthAction() {
             super("Previous Month", null, Icons.CALENDAR_CELL_EDIT_PREVIOUS_MONTH);
-            setShortcutSet(KeyUtil.createShortcutSet(KeyEvent.VK_LEFT, GUIUtil.ctrlDownMask()));
+            setShortcutSet(Keyboard.createShortcutSet(KeyEvent.VK_LEFT, UserInterface.ctrlDownMask()));
             registerAction(this);
 
         }
@@ -521,7 +504,7 @@ public class CalendarPopupProviderForm extends TextFieldPopupProviderForm implem
     private class PreviousYearAction extends AnAction {
         private PreviousYearAction() {
             super("Previous Year", null, Icons.CALENDAR_CELL_EDIT_PREVIOUS_YEAR);
-            setShortcutSet(KeyUtil.createShortcutSet(KeyEvent.VK_DOWN, GUIUtil.ctrlDownMask()));
+            setShortcutSet(Keyboard.createShortcutSet(KeyEvent.VK_DOWN, UserInterface.ctrlDownMask()));
             registerAction(this);
         }
         @Override

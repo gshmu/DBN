@@ -2,8 +2,8 @@ package com.dci.intellij.dbn.common.ui.table;
 
 import com.dci.intellij.dbn.common.color.Colors;
 import com.dci.intellij.dbn.common.latent.Latent;
-import com.dci.intellij.dbn.common.ui.Borders;
-import com.dci.intellij.dbn.common.ui.Fonts;
+import com.dci.intellij.dbn.common.ui.util.Borders;
+import com.dci.intellij.dbn.common.ui.util.Fonts;
 import com.intellij.ui.border.CustomLineBorder;
 import org.apache.commons.lang.StringUtils;
 

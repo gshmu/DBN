@@ -1,10 +1,11 @@
-package com.dci.intellij.dbn.common.ui;
+package com.dci.intellij.dbn.common.ui.form;
 
 import com.dci.intellij.dbn.common.action.DataProviders;
 import com.dci.intellij.dbn.common.dispose.ComponentDisposer;
 import com.dci.intellij.dbn.common.environment.options.EnvironmentSettings;
 import com.dci.intellij.dbn.common.notification.NotificationSupport;
-import com.dci.intellij.dbn.common.ui.component.DBNComponent;
+import com.dci.intellij.dbn.common.ui.component.DBNComponentBase;
+import com.dci.intellij.dbn.common.ui.util.UserInterface;
 import com.dci.intellij.dbn.options.general.GeneralProjectSettings;
 import com.intellij.ide.DataManager;
 import com.intellij.openapi.Disposable;
@@ -16,17 +17,17 @@ import org.jetbrains.annotations.Nullable;
 import javax.swing.JComponent;
 import javax.swing.JPanel;
 
-public abstract class DBNFormImpl
-        extends DBNComponent.Base
+public abstract class DBNFormBase
+        extends DBNComponentBase
         implements DBNForm, NotificationSupport {
 
     private boolean initialised;
 
-    public DBNFormImpl(@Nullable Disposable parent) {
+    public DBNFormBase(@Nullable Disposable parent) {
         super(parent);
     }
 
-    public DBNFormImpl(@Nullable Disposable parent, @Nullable Project project) {
+    public DBNFormBase(@Nullable Disposable parent, @Nullable Project project) {
         super(parent, project);
     }
 
@@ -44,17 +45,17 @@ public abstract class DBNFormImpl
         initialised = true;
         JComponent mainComponent = getMainComponent();
         DataProviders.register(mainComponent, this);
-        GUIUtil.visitRecursively(mainComponent, component -> {
+        UserInterface.visitRecursively(mainComponent, component -> {
             if (component instanceof JPanel) {
                 JPanel panel = (JPanel) component;
-                GUIUtil.updateTitledBorders(panel);
+                UserInterface.updateTitledBorders(panel);
             }
         });
 
-        GUIUtil.visitRecursively(mainComponent, component -> {
+        UserInterface.visitRecursively(mainComponent, component -> {
             if (component instanceof JPanel) {
                 JPanel panel = (JPanel) component;
-                GUIUtil.updateTitledBorders(panel);
+                UserInterface.updateTitledBorders(panel);
             }
         });
         GuiUtils.replaceJSplitPaneWithIDEASplitter(mainComponent);

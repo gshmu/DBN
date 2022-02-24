@@ -213,19 +213,19 @@
           </grid>
         </constraints>
       </hspacer>
-      <component id="1029" class="com.dci.intellij.dbn.common.ui.DBNComboBox" binding="localeComboBox">
+      <component id="1029" class="com.dci.intellij.dbn.common.ui.misc.DBNComboBox" binding="localeComboBox">
         <constraints>
           <grid row="0" column="1" row-span="1" col-span="2" vsize-policy="3" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
         </constraints>
         <properties/>
       </component>
-      <component id="52e77" class="com.dci.intellij.dbn.common.ui.DBNComboBox" binding="numberFormatComboBox">
+      <component id="52e77" class="com.dci.intellij.dbn.common.ui.misc.DBNComboBox" binding="numberFormatComboBox">
         <constraints>
           <grid row="2" column="2" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
         </constraints>
         <properties/>
       </component>
-      <component id="5458b" class="com.dci.intellij.dbn.common.ui.DBNComboBox" binding="dateFormatComboBox">
+      <component id="5458b" class="com.dci.intellij.dbn.common.ui.misc.DBNComboBox" binding="dateFormatComboBox">
         <constraints>
           <grid row="3" column="2" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
         </constraints>

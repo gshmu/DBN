@@ -3,8 +3,8 @@
  import com.dci.intellij.dbn.common.color.Colors;
  import com.dci.intellij.dbn.common.thread.Background;
  import com.dci.intellij.dbn.common.thread.Dispatch;
- import com.dci.intellij.dbn.common.ui.Borders;
- import com.dci.intellij.dbn.common.ui.Mouse;
+ import com.dci.intellij.dbn.common.ui.util.Borders;
+ import com.dci.intellij.dbn.common.ui.util.Mouse;
  import com.dci.intellij.dbn.data.editor.ui.BasicDataEditorComponent;
  import com.dci.intellij.dbn.data.editor.ui.DataEditorComponent;
  import com.dci.intellij.dbn.data.model.ColumnInfo;
@@ -19,13 +19,11 @@
  import com.intellij.ui.SimpleTextAttributes;
  import org.jetbrains.annotations.NotNull;
 
- import javax.swing.JTextField;
+ import javax.swing.*;
  import javax.swing.border.Border;
  import javax.swing.border.LineBorder;
  import javax.swing.text.Document;
- import java.awt.Cursor;
- import java.awt.MouseInfo;
- import java.awt.Point;
+ import java.awt.*;
  import java.awt.event.KeyEvent;
  import java.awt.event.KeyListener;
  import java.awt.event.MouseEvent;

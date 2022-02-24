@@ -2,7 +2,7 @@ package com.dci.intellij.dbn.language.editor.action;
 
 import com.dci.intellij.dbn.common.action.Lookup;
 import com.dci.intellij.dbn.common.dispose.Failsafe;
-import com.dci.intellij.dbn.common.ui.DBNComboBoxAction;
+import com.dci.intellij.dbn.common.ui.misc.DBNComboBoxAction;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.ConnectionType;
 import com.dci.intellij.dbn.connection.mapping.FileConnectionContextManager;
@@ -18,8 +18,7 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
 import org.jetbrains.annotations.NotNull;
 
-import javax.swing.Icon;
-import javax.swing.JComponent;
+import javax.swing.*;
 import java.util.List;
 
 public class DatabaseSessionSelectDropdownAction extends DBNComboBoxAction implements DumbAware {

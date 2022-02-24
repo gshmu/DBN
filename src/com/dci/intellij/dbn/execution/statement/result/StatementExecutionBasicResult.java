@@ -5,7 +5,7 @@ import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.common.message.MessageType;
 import com.dci.intellij.dbn.common.navigation.NavigationInstructions;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
-import com.dci.intellij.dbn.connection.ConnectionHandlerRef;
+import com.dci.intellij.dbn.connection.ConnectionRef;
 import com.dci.intellij.dbn.connection.ConnectionId;
 import com.dci.intellij.dbn.connection.SchemaId;
 import com.dci.intellij.dbn.execution.ExecutionContext;
@@ -35,7 +35,7 @@ public class StatementExecutionBasicResult extends ExecutionResultBase<Statement
     private boolean loggingActive;
 
     private StatementExecutionProcessor executionProcessor;
-    private final ConnectionHandlerRef connection;
+    private final ConnectionRef connection;
     private final SchemaId databaseSchema;
 
     public StatementExecutionBasicResult(

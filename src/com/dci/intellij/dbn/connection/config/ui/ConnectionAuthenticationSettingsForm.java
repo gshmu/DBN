@@ -1,21 +1,17 @@
 package com.dci.intellij.dbn.connection.config.ui;
 
 import com.dci.intellij.dbn.common.database.AuthenticationInfo;
-import com.dci.intellij.dbn.common.ui.DBNFormImpl;
+import com.dci.intellij.dbn.common.ui.form.DBNFormBase;
 import com.dci.intellij.dbn.common.util.Strings;
 import com.dci.intellij.dbn.connection.AuthenticationType;
 import org.jetbrains.annotations.NotNull;
 
-import javax.swing.JComboBox;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.JPasswordField;
-import javax.swing.JTextField;
+import javax.swing.*;
 import java.awt.event.ActionListener;
 
-import static com.dci.intellij.dbn.common.ui.ComboBoxUtil.*;
+import static com.dci.intellij.dbn.common.ui.util.ComboBoxes.*;
 
-public class ConnectionAuthenticationSettingsForm extends DBNFormImpl {
+public class ConnectionAuthenticationSettingsForm extends DBNFormBase {
     private JComboBox<AuthenticationType> authTypeComboBox;
     private JTextField userTextField;
     private JPasswordField passwordField;

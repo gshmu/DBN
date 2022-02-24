@@ -3,7 +3,7 @@ package com.dci.intellij.dbn.connection.transaction.ui;
 import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.common.ui.dialog.DBNDialog;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
-import com.dci.intellij.dbn.connection.ConnectionHandlerRef;
+import com.dci.intellij.dbn.connection.ConnectionRef;
 import com.dci.intellij.dbn.connection.jdbc.DBNConnection;
 import com.dci.intellij.dbn.connection.transaction.DatabaseTransactionManager;
 import com.dci.intellij.dbn.connection.transaction.TransactionAction;
@@ -18,7 +18,7 @@ import java.util.List;
 import static com.dci.intellij.dbn.connection.transaction.TransactionAction.*;
 
 public class PendingTransactionsDetailDialog extends DBNDialog<PendingTransactionsDetailForm> {
-    private final ConnectionHandlerRef connection;
+    private final ConnectionRef connection;
     private final TransactionAction additionalOperation;
     private final boolean showActions;
 

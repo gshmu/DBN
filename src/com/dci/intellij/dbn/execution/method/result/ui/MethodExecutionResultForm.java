@@ -2,7 +2,7 @@ package com.dci.intellij.dbn.execution.method.result.ui;
 
 import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.common.thread.Dispatch;
-import com.dci.intellij.dbn.common.ui.GUIUtil;
+import com.dci.intellij.dbn.common.ui.util.UserInterface;
 import com.dci.intellij.dbn.common.ui.tab.TabbedPane;
 import com.dci.intellij.dbn.common.util.Actions;
 import com.dci.intellij.dbn.common.util.Strings;
@@ -159,7 +159,7 @@ public class MethodExecutionResultForm extends ExecutionResultFormBase<MethodExe
 
         }
 
-        GUIUtil.repaint(outputTabs);
+        UserInterface.repaint(outputTabs);
     }
 
     void selectArgumentOutputTab(DBArgument argument) {

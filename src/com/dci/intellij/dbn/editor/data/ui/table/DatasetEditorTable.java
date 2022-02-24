@@ -3,10 +3,10 @@ package com.dci.intellij.dbn.editor.data.ui.table;
 import com.dci.intellij.dbn.common.thread.Background;
 import com.dci.intellij.dbn.common.thread.Dispatch;
 import com.dci.intellij.dbn.common.thread.Progress;
-import com.dci.intellij.dbn.common.ui.DBNForm;
-import com.dci.intellij.dbn.common.ui.GUIUtil;
-import com.dci.intellij.dbn.common.ui.Mouse;
+import com.dci.intellij.dbn.common.ui.form.DBNForm;
 import com.dci.intellij.dbn.common.ui.table.DBNTableGutter;
+import com.dci.intellij.dbn.common.ui.util.Mouse;
+import com.dci.intellij.dbn.common.ui.util.UserInterface;
 import com.dci.intellij.dbn.common.util.Actions;
 import com.dci.intellij.dbn.common.util.Messages;
 import com.dci.intellij.dbn.data.grid.options.DataGridTrackingColumnSettings;
@@ -48,19 +48,12 @@ import lombok.Getter;
 import lombok.Setter;
 import org.jetbrains.annotations.NotNull;
 
-import javax.swing.JPopupMenu;
+import javax.swing.*;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.TableColumnModelEvent;
-import javax.swing.table.JTableHeader;
-import javax.swing.table.TableCellEditor;
-import javax.swing.table.TableCellRenderer;
-import javax.swing.table.TableColumn;
-import javax.swing.table.TableColumnModel;
-import java.awt.Component;
-import java.awt.Cursor;
-import java.awt.Point;
-import java.awt.Rectangle;
+import javax.swing.table.*;
+import java.awt.*;
 import java.awt.event.MouseEvent;
 import java.sql.SQLException;
 import java.util.EventObject;
@@ -184,8 +177,8 @@ public class DatasetEditorTable extends ResultSetTable<DatasetEditorModel> {
                 model.set(UPDATING, false);
                 Dispatch.run(() -> {
                     DBNTableGutter tableGutter = getTableGutter();
-                    GUIUtil.repaint(tableGutter);
-                    GUIUtil.repaint(DatasetEditorTable.this);
+                    UserInterface.repaint(tableGutter);
+                    UserInterface.repaint(DatasetEditorTable.this);
                 });
             }
         });
@@ -226,7 +219,7 @@ public class DatasetEditorTable extends ResultSetTable<DatasetEditorModel> {
     public void updateTableGutter() {
         Dispatch.run(() -> {
             DBNTableGutter tableGutter = getTableGutter();
-            GUIUtil.repaint(tableGutter);
+            UserInterface.repaint(tableGutter);
         });
     }
 

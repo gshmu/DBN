@@ -1,4 +1,4 @@
-package com.dci.intellij.dbn.common.ui;
+package com.dci.intellij.dbn.common.ui.misc;
 
 import com.dci.intellij.dbn.common.thread.Dispatch;
 import com.intellij.util.ui.TimerUtil;

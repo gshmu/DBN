@@ -4,13 +4,13 @@ import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.common.color.Colors;
 import com.dci.intellij.dbn.common.event.ProjectEvents;
 import com.dci.intellij.dbn.common.thread.Dispatch;
-import com.dci.intellij.dbn.common.ui.DBNFormImpl;
-import com.dci.intellij.dbn.common.ui.DBNHeaderForm;
+import com.dci.intellij.dbn.common.ui.form.DBNFormBase;
+import com.dci.intellij.dbn.common.ui.form.DBNHeaderForm;
 import com.dci.intellij.dbn.common.ui.component.DBNComponent;
 import com.dci.intellij.dbn.common.ui.table.DBNTable;
 import com.dci.intellij.dbn.common.util.Messages;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
-import com.dci.intellij.dbn.connection.ConnectionHandlerRef;
+import com.dci.intellij.dbn.connection.ConnectionRef;
 import com.dci.intellij.dbn.connection.ConnectionPool;
 import com.dci.intellij.dbn.connection.jdbc.DBNConnection;
 import com.dci.intellij.dbn.connection.session.DatabaseSession;
@@ -39,7 +39,7 @@ import static com.dci.intellij.dbn.common.message.MessageCallback.when;
 import static com.dci.intellij.dbn.connection.transaction.TransactionAction.actions;
 
 
-public class ResourceMonitorDetailForm extends DBNFormImpl {
+public class ResourceMonitorDetailForm extends DBNFormBase {
     private final DBNTable<ResourceMonitorSessionsTableModel> sessionsTable;
     private final DBNTable<ResourceMonitorTransactionsTableModel> transactionsTable;
     private JPanel mainPanel;
@@ -51,7 +51,7 @@ public class ResourceMonitorDetailForm extends DBNFormImpl {
     private JButton commitButton;
     private JButton rollbackButton;
 
-    private final ConnectionHandlerRef connection;
+    private final ConnectionRef connection;
 
     ResourceMonitorDetailForm(@NotNull DBNComponent parent, ConnectionHandler connection) {
         super(parent);

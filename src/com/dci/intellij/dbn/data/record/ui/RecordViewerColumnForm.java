@@ -2,7 +2,7 @@ package com.dci.intellij.dbn.data.record.ui;
 
 import com.dci.intellij.dbn.common.color.Colors;
 import com.dci.intellij.dbn.common.locale.Formatter;
-import com.dci.intellij.dbn.common.ui.DBNFormImpl;
+import com.dci.intellij.dbn.common.ui.form.DBNFormBase;
 import com.dci.intellij.dbn.data.record.DatasetRecord;
 import com.dci.intellij.dbn.data.type.DBDataType;
 import com.dci.intellij.dbn.object.DBColumn;
@@ -21,7 +21,7 @@ import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 
-public class RecordViewerColumnForm extends DBNFormImpl {
+public class RecordViewerColumnForm extends DBNFormBase {
     private JLabel columnLabel;
     private JPanel valueFieldPanel;
     private JLabel dataTypeLabel;

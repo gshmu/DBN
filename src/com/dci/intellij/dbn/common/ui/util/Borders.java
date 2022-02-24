@@ -1,4 +1,4 @@
-package com.dci.intellij.dbn.common.ui;
+package com.dci.intellij.dbn.common.ui.util;
 
 import com.dci.intellij.dbn.common.color.Colors;
 import com.intellij.ui.JBColor;
@@ -8,8 +8,7 @@ import com.intellij.util.ui.JBUI;
 import javax.swing.border.Border;
 import javax.swing.border.EmptyBorder;
 import javax.swing.border.LineBorder;
-import java.awt.Color;
-import java.awt.Insets;
+import java.awt.*;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 

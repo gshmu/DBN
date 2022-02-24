@@ -3,7 +3,7 @@ package com.dci.intellij.dbn.code.common.completion.options.filter.ui;
 import com.dci.intellij.dbn.code.common.completion.options.filter.CodeCompletionFilterSettings;
 import com.dci.intellij.dbn.code.common.completion.options.filter.CodeCompletionFiltersSettings;
 import com.dci.intellij.dbn.common.options.ui.CompositeConfigurationEditorForm;
-import com.dci.intellij.dbn.common.ui.KeyUtil;
+import com.dci.intellij.dbn.common.ui.util.Keyboard;
 import com.intellij.openapi.actionSystem.IdeActions;
 import com.intellij.openapi.actionSystem.Shortcut;
 import com.intellij.openapi.keymap.KeymapUtil;
@@ -28,8 +28,8 @@ public class CodeCompletionFiltersSettingsForm extends CompositeConfigurationEdi
         basicFilterPanel.add(basicFilterSettings.createComponent(), BorderLayout.CENTER);
         extendedFilterPanel.add(extendedFilterSettings.createComponent(), BorderLayout.CENTER);
 
-        Shortcut[] basicShortcuts = KeyUtil.getShortcuts(IdeActions.ACTION_CODE_COMPLETION);
-        Shortcut[] extendedShortcuts = KeyUtil.getShortcuts(IdeActions.ACTION_SMART_TYPE_COMPLETION);
+        Shortcut[] basicShortcuts = Keyboard.getShortcuts(IdeActions.ACTION_CODE_COMPLETION);
+        Shortcut[] extendedShortcuts = Keyboard.getShortcuts(IdeActions.ACTION_SMART_TYPE_COMPLETION);
 
         basicCompletionLabel.setText("Basic (" + KeymapUtil.getShortcutsText(basicShortcuts) + ')');
         extendedCompletionLabel.setText("Extended (" + KeymapUtil.getShortcutsText(extendedShortcuts) + ')');

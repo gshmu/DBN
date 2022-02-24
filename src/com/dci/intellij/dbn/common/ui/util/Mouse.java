@@ -1,4 +1,4 @@
-package com.dci.intellij.dbn.common.ui;
+package com.dci.intellij.dbn.common.ui.util;
 
 import com.dci.intellij.dbn.common.util.Consumer;
 import org.jetbrains.annotations.Nullable;
@@ -38,7 +38,7 @@ public class Mouse {
     }
 
     public static void removeMouseListeners(JComponent root) {
-        GUIUtil.visitRecursively(root, component -> {
+        UserInterface.visitRecursively(root, component -> {
             MouseListener[] mouseListeners = component.getMouseListeners();
             for (MouseListener mouseListener : mouseListeners) {
                 root.removeMouseListener(mouseListener);

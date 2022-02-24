@@ -2,10 +2,10 @@ package com.dci.intellij.dbn.data.editor.ui;
 
 import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.common.color.Colors;
-import com.dci.intellij.dbn.common.ui.Borders;
-import com.dci.intellij.dbn.common.ui.GUIUtil;
-import com.dci.intellij.dbn.common.ui.KeyUtil;
 import com.dci.intellij.dbn.common.ui.list.EditableStringList;
+import com.dci.intellij.dbn.common.ui.util.Borders;
+import com.dci.intellij.dbn.common.ui.util.Keyboard;
+import com.dci.intellij.dbn.common.ui.util.UserInterface;
 import com.dci.intellij.dbn.common.util.Actions;
 import com.dci.intellij.dbn.common.util.Messages;
 import com.dci.intellij.dbn.common.util.TextAttributes;
@@ -79,7 +79,7 @@ public class ArrayEditorPopupProviderForm extends TextFieldPopupProviderForm {
     }
 
     private void updateComponentColors() {
-        GUIUtil.setPanelBackground(mainPanel, Colors.getPanelBackground());
+        UserInterface.changePanelBackground(mainPanel, Colors.getPanelBackground());
 
         SimpleTextAttributes textAttributes = TextAttributes.getSimpleTextAttributes(DataGridTextAttributesKeys.DEFAULT_PLAIN_DATA);
     }
@@ -199,7 +199,7 @@ public class ArrayEditorPopupProviderForm extends TextFieldPopupProviderForm {
     private class AcceptAction extends DumbAwareAction {
         private AcceptAction() {
             super("Accept Changes", null, Icons.TEXT_CELL_EDIT_ACCEPT);
-            setShortcutSet(KeyUtil.createShortcutSet(KeyEvent.VK_ENTER, InputEvent.ALT_DOWN_MASK));
+            setShortcutSet(Keyboard.createShortcutSet(KeyEvent.VK_ENTER, InputEvent.ALT_DOWN_MASK));
             registerAction(this);
         }
 
@@ -231,7 +231,7 @@ public class ArrayEditorPopupProviderForm extends TextFieldPopupProviderForm {
     private class RevertAction extends DumbAwareAction{
         private RevertAction() {
             super("Revert Changes", null, Icons.TEXT_CELL_EDIT_REVERT);
-            setShortcutSet(KeyUtil.createShortcutSet(KeyEvent.VK_ESCAPE, 0));
+            setShortcutSet(Keyboard.createShortcutSet(KeyEvent.VK_ESCAPE, 0));
             registerAction(this);
         }
 
@@ -249,7 +249,7 @@ public class ArrayEditorPopupProviderForm extends TextFieldPopupProviderForm {
     private class DeleteAction extends AnAction {
         private DeleteAction() {
             super("Delete Content", null, Icons.TEXT_CELL_EDIT_DELETE);
-            setShortcutSet(KeyUtil.createShortcutSet(KeyEvent.VK_DELETE, GUIUtil.ctrlDownMask()));
+            setShortcutSet(Keyboard.createShortcutSet(KeyEvent.VK_DELETE, UserInterface.ctrlDownMask()));
             registerAction(this);
         }
 
@@ -264,8 +264,8 @@ public class ArrayEditorPopupProviderForm extends TextFieldPopupProviderForm {
     private class AddAction extends AnAction {
         private AddAction() {
             super("Add Value", null, Icons.ARRAY_CELL_EDIT_ADD);
-            setShortcutSet(KeyUtil.createShortcutSet(KeyEvent.VK_PLUS, GUIUtil.ctrlDownMask()));
-            setShortcutSet(KeyUtil.createShortcutSet(KeyEvent.VK_ADD, GUIUtil.ctrlDownMask()));
+            setShortcutSet(Keyboard.createShortcutSet(KeyEvent.VK_PLUS, UserInterface.ctrlDownMask()));
+            setShortcutSet(Keyboard.createShortcutSet(KeyEvent.VK_ADD, UserInterface.ctrlDownMask()));
             registerAction(this);
         }
 
@@ -278,8 +278,8 @@ public class ArrayEditorPopupProviderForm extends TextFieldPopupProviderForm {
     private class RemoveAction extends AnAction {
         private RemoveAction() {
             super("Remove Value", null, Icons.ARRAY_CELL_EDIT_REMOVE);
-            setShortcutSet(KeyUtil.createShortcutSet(KeyEvent.VK_MINUS, GUIUtil.ctrlDownMask()));
-            setShortcutSet(KeyUtil.createShortcutSet(KeyEvent.VK_SUBTRACT, GUIUtil.ctrlDownMask()));
+            setShortcutSet(Keyboard.createShortcutSet(KeyEvent.VK_MINUS, UserInterface.ctrlDownMask()));
+            setShortcutSet(Keyboard.createShortcutSet(KeyEvent.VK_SUBTRACT, UserInterface.ctrlDownMask()));
             registerAction(this);
         }
 

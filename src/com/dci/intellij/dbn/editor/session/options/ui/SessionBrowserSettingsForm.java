@@ -10,7 +10,7 @@ import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JPanel;
 
-import static com.dci.intellij.dbn.common.ui.ComboBoxUtil.*;
+import static com.dci.intellij.dbn.common.ui.util.ComboBoxes.*;
 
 public class SessionBrowserSettingsForm extends ConfigurationEditorForm<SessionBrowserSettings> {
     private JPanel mainPanel;

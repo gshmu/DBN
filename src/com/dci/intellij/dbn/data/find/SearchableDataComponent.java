@@ -1,6 +1,6 @@
 package com.dci.intellij.dbn.data.find;
 
-import com.dci.intellij.dbn.common.ui.DBNForm;
+import com.dci.intellij.dbn.common.ui.form.DBNForm;
 import com.dci.intellij.dbn.data.grid.ui.table.basic.BasicTable;
 import org.jetbrains.annotations.NotNull;
 

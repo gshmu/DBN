@@ -6,9 +6,9 @@ import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.common.dispose.SafeDisposer;
 import com.dci.intellij.dbn.common.latent.Latent;
 import com.dci.intellij.dbn.common.thread.Dispatch;
-import com.dci.intellij.dbn.common.ui.Borders;
-import com.dci.intellij.dbn.common.ui.DBNFormImpl;
-import com.dci.intellij.dbn.common.ui.GUIUtil;
+import com.dci.intellij.dbn.common.ui.util.Borders;
+import com.dci.intellij.dbn.common.ui.form.DBNFormBase;
+import com.dci.intellij.dbn.common.ui.util.UserInterface;
 import com.dci.intellij.dbn.common.util.Actions;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.data.find.DataSearchComponent;
@@ -34,7 +34,7 @@ import javax.swing.JTextField;
 import javax.swing.table.TableCellEditor;
 import java.awt.BorderLayout;
 
-public class SessionBrowserForm extends DBNFormImpl implements SearchableDataComponent {
+public class SessionBrowserForm extends DBNFormBase implements SearchableDataComponent {
     private JPanel actionsPanel;
     private JPanel mainPanel;
     private JPanel searchPanel;
@@ -170,7 +170,7 @@ public class SessionBrowserForm extends DBNFormImpl implements SearchableDataCom
         getSearchComponent().resetFindModel();
         searchPanel.setVisible(false);
         SessionBrowserTable editorTable = getBrowserTable();
-        GUIUtil.repaintAndFocus(editorTable);
+        UserInterface.repaintAndFocus(editorTable);
     }
 
     @Override

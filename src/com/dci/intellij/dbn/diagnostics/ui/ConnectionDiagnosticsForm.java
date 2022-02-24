@@ -2,9 +2,9 @@ package com.dci.intellij.dbn.diagnostics.ui;
 
 import com.dci.intellij.dbn.common.dispose.DisposableContainers;
 import com.dci.intellij.dbn.common.event.ProjectEvents;
-import com.dci.intellij.dbn.common.ui.Borders;
-import com.dci.intellij.dbn.common.ui.DBNFormImpl;
-import com.dci.intellij.dbn.common.ui.GUIUtil;
+import com.dci.intellij.dbn.common.ui.form.DBNFormBase;
+import com.dci.intellij.dbn.common.ui.util.Borders;
+import com.dci.intellij.dbn.common.ui.util.UserInterface;
 import com.dci.intellij.dbn.connection.ConnectionBundle;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.ConnectionId;
@@ -15,15 +15,12 @@ import com.intellij.ui.ColoredListCellRenderer;
 import com.intellij.ui.SimpleTextAttributes;
 import org.jetbrains.annotations.NotNull;
 
-import javax.swing.DefaultListModel;
-import javax.swing.JList;
-import javax.swing.JPanel;
-import javax.swing.ListModel;
-import java.awt.BorderLayout;
+import javax.swing.*;
+import java.awt.*;
 import java.util.List;
 import java.util.Map;
 
-public class ConnectionDiagnosticsForm extends DBNFormImpl {
+public class ConnectionDiagnosticsForm extends DBNFormBase {
     private JPanel mainPanel;
     private JPanel actionsPanel;
     private JPanel detailsPanel;
@@ -81,7 +78,7 @@ public class ConnectionDiagnosticsForm extends DBNFormImpl {
             detailForm.selectTab(tabSelectionIndex);
         }
 
-        GUIUtil.repaint(detailsPanel);
+        UserInterface.repaint(detailsPanel);
     }
 
     public void setTabSelectionIndex(int tabSelectionIndex) {

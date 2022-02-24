@@ -6,7 +6,7 @@ import com.dci.intellij.dbn.common.thread.Dispatch;
 import com.dci.intellij.dbn.common.thread.Progress;
 import com.dci.intellij.dbn.common.util.Commons;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
-import com.dci.intellij.dbn.connection.ConnectionHandlerRef;
+import com.dci.intellij.dbn.connection.ConnectionRef;
 import com.dci.intellij.dbn.connection.Resources;
 import com.dci.intellij.dbn.connection.SchemaId;
 import com.dci.intellij.dbn.connection.jdbc.DBNConnection;
@@ -35,12 +35,7 @@ import com.dci.intellij.dbn.object.DBProgram;
 import com.dci.intellij.dbn.object.DBSchema;
 import com.dci.intellij.dbn.vfs.file.DBEditableObjectVirtualFile;
 import com.intellij.debugger.DebuggerManager;
-import com.intellij.debugger.engine.DebugProcessImpl;
-import com.intellij.debugger.engine.DebugProcessListener;
-import com.intellij.debugger.engine.JavaDebugProcess;
-import com.intellij.debugger.engine.JavaStackFrame;
-import com.intellij.debugger.engine.SuspendContext;
-import com.intellij.debugger.engine.SuspendContextImpl;
+import com.intellij.debugger.engine.*;
 import com.intellij.debugger.impl.DebuggerSession;
 import com.intellij.debugger.impl.PrioritizedTask;
 import com.intellij.execution.process.ProcessHandler;
@@ -71,7 +66,7 @@ public abstract class DBJdwpDebugProcess<T extends ExecutionInput>
         implements DBDebugProcess {
 
     public static final Key<DBJdwpDebugProcess> KEY = new Key<>("DBNavigator.JdwpDebugProcess");
-    private final ConnectionHandlerRef connection;
+    private final ConnectionRef connection;
     private final DBDebugProcessStatusHolder status = new DBDebugProcessStatusHolder();
     private final DBBreakpointHandler<DBJdwpDebugProcess>[] breakpointHandlers;
     private final DBDebugConsoleLogger console;
@@ -84,7 +79,7 @@ public abstract class DBJdwpDebugProcess<T extends ExecutionInput>
     protected DBJdwpDebugProcess(@NotNull final XDebugSession session, DebuggerSession debuggerSession, ConnectionHandler connection, int tcpPort) {
         super(session, debuggerSession);
         this.console = new DBDebugConsoleLogger(session);
-        this.connection = ConnectionHandlerRef.of(connection);
+        this.connection = ConnectionRef.of(connection);
 
         Project project = session.getProject();
         DatabaseDebuggerManager debuggerManager = DatabaseDebuggerManager.getInstance(project);

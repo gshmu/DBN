@@ -6,9 +6,9 @@ import com.dci.intellij.dbn.common.action.GroupPopupAction;
 import com.dci.intellij.dbn.common.color.Colors;
 import com.dci.intellij.dbn.common.thread.Dispatch;
 import com.dci.intellij.dbn.common.thread.Progress;
-import com.dci.intellij.dbn.common.ui.DBNHeaderForm;
-import com.dci.intellij.dbn.common.ui.DBNHintForm;
-import com.dci.intellij.dbn.common.ui.GUIUtil;
+import com.dci.intellij.dbn.common.ui.form.DBNHeaderForm;
+import com.dci.intellij.dbn.common.ui.form.DBNHintForm;
+import com.dci.intellij.dbn.common.ui.util.UserInterface;
 import com.dci.intellij.dbn.common.util.Actions;
 import com.dci.intellij.dbn.debugger.DBDebuggerType;
 import com.dci.intellij.dbn.debugger.DatabaseDebuggerManager;
@@ -29,12 +29,8 @@ import com.intellij.util.Range;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import javax.swing.Icon;
-import javax.swing.JCheckBox;
-import javax.swing.JPanel;
-import javax.swing.JTextField;
-import java.awt.BorderLayout;
-import java.awt.Color;
+import javax.swing.*;
+import java.awt.*;
 
 import static com.dci.intellij.dbn.common.dispose.SafeDisposer.replace;
 
@@ -188,7 +184,7 @@ public class DBMethodJdwpRunConfigEditorForm extends DBProgramRunConfigurationEd
                 headerPanel.removeAll();
                 headerPanel.add(headerForm.getComponent(), BorderLayout.CENTER);
 
-                GUIUtil.repaint(mainPanel);
+                UserInterface.repaint(mainPanel);
             });
         });
     }

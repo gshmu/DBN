@@ -8,9 +8,9 @@ import com.dci.intellij.dbn.common.dispose.SafeDisposer;
 import com.dci.intellij.dbn.common.latent.Latent;
 import com.dci.intellij.dbn.common.thread.Dispatch;
 import com.dci.intellij.dbn.common.ui.AutoCommitLabel;
-import com.dci.intellij.dbn.common.ui.Borders;
-import com.dci.intellij.dbn.common.ui.DBNFormImpl;
-import com.dci.intellij.dbn.common.ui.GUIUtil;
+import com.dci.intellij.dbn.common.ui.form.DBNFormBase;
+import com.dci.intellij.dbn.common.ui.util.Borders;
+import com.dci.intellij.dbn.common.ui.util.UserInterface;
 import com.dci.intellij.dbn.common.util.Actions;
 import com.dci.intellij.dbn.common.util.Messages;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
@@ -38,17 +38,14 @@ import com.intellij.util.ui.AsyncProcessIcon;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.JScrollPane;
-import javax.swing.JTextField;
+import javax.swing.*;
 import javax.swing.table.TableColumn;
-import java.awt.BorderLayout;
+import java.awt.*;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
-public class DatasetEditorForm extends DBNFormImpl implements SearchableDataComponent {
+public class DatasetEditorForm extends DBNFormBase implements SearchableDataComponent {
     private JPanel actionsPanel;
     private JPanel mainPanel;
     private JLabel loadingLabel;
@@ -223,7 +220,7 @@ public class DatasetEditorForm extends DBNFormImpl implements SearchableDataComp
         searchPanel.setVisible(false);
         DatasetEditorTable editorTable = getEditorTable();
 
-        GUIUtil.repaintAndFocus(editorTable);
+        UserInterface.repaintAndFocus(editorTable);
     }
 
     @Override

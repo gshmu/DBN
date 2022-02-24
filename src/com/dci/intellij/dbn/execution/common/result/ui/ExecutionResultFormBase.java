@@ -2,13 +2,13 @@ package com.dci.intellij.dbn.execution.common.result.ui;
 
 import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.common.dispose.SafeDisposer;
-import com.dci.intellij.dbn.common.ui.DBNFormImpl;
+import com.dci.intellij.dbn.common.ui.form.DBNFormBase;
 import com.dci.intellij.dbn.execution.ExecutionResult;
 import com.intellij.openapi.util.Disposer;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-public abstract class ExecutionResultFormBase<T extends ExecutionResult<?>> extends DBNFormImpl implements ExecutionResultForm<T>{
+public abstract class ExecutionResultFormBase<T extends ExecutionResult<?>> extends DBNFormBase implements ExecutionResultForm<T>{
     private T executionResult;
 
     public ExecutionResultFormBase(@NotNull T executionResult) {

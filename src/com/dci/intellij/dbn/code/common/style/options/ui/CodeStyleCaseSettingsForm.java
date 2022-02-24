@@ -3,18 +3,16 @@ package com.dci.intellij.dbn.code.common.style.options.ui;
 import com.dci.intellij.dbn.code.common.style.options.CodeStyleCase;
 import com.dci.intellij.dbn.code.common.style.options.CodeStyleCaseSettings;
 import com.dci.intellij.dbn.common.options.ui.ConfigurationEditorForm;
-import com.dci.intellij.dbn.common.ui.KeyUtil;
+import com.dci.intellij.dbn.common.ui.util.Keyboard;
 import com.intellij.openapi.actionSystem.IdeActions;
 import com.intellij.openapi.actionSystem.Shortcut;
 import com.intellij.openapi.keymap.KeymapUtil;
 import com.intellij.openapi.options.ConfigurationException;
 import org.jetbrains.annotations.NotNull;
 
-import javax.swing.JCheckBox;
-import javax.swing.JComboBox;
-import javax.swing.JPanel;
+import javax.swing.*;
 
-import static com.dci.intellij.dbn.common.ui.ComboBoxUtil.*;
+import static com.dci.intellij.dbn.common.ui.util.ComboBoxes.*;
 
 public class CodeStyleCaseSettingsForm extends ConfigurationEditorForm<CodeStyleCaseSettings> {
     private JPanel mainPanel;
@@ -46,7 +44,7 @@ public class CodeStyleCaseSettingsForm extends ConfigurationEditorForm<CodeStyle
         resetFormChanges();
         enableDisableOptions();
 
-        Shortcut[] codeFormat = KeyUtil.getShortcuts(IdeActions.ACTION_EDITOR_REFORMAT);
+        Shortcut[] codeFormat = Keyboard.getShortcuts(IdeActions.ACTION_EDITOR_REFORMAT);
 
         enableCheckBox.setText("Allow case auto-format (" + KeymapUtil.getShortcutsText(codeFormat) + ')');
 

@@ -1,7 +1,7 @@
 package com.dci.intellij.dbn.navigation.options.ui;
 
 import com.dci.intellij.dbn.common.options.ui.ConfigurationEditorForm;
-import com.dci.intellij.dbn.common.ui.KeyUtil;
+import com.dci.intellij.dbn.common.ui.util.Keyboard;
 import com.dci.intellij.dbn.common.ui.Presentable;
 import com.dci.intellij.dbn.common.ui.list.CheckBoxList;
 import com.dci.intellij.dbn.navigation.options.ObjectsLookupSettings;
@@ -17,7 +17,7 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.border.TitledBorder;
 
-import static com.dci.intellij.dbn.common.ui.ComboBoxUtil.*;
+import static com.dci.intellij.dbn.common.ui.util.ComboBoxes.*;
 
 public class ObjectsLookupSettingsForm extends ConfigurationEditorForm<ObjectsLookupSettings> {
     private JPanel mainPanel;
@@ -28,7 +28,7 @@ public class ObjectsLookupSettingsForm extends ConfigurationEditorForm<ObjectsLo
 
     public ObjectsLookupSettingsForm(ObjectsLookupSettings configuration) {
         super(configuration);
-        Shortcut[] shortcuts = KeyUtil.getShortcuts("DBNavigator.Actions.Navigation.GotoDatabaseObject");
+        Shortcut[] shortcuts = Keyboard.getShortcuts("DBNavigator.Actions.Navigation.GotoDatabaseObject");
         TitledBorder border = (TitledBorder) mainPanel.getBorder();
         border.setTitle("Lookup Objects (" + KeymapUtil.getShortcutsText(shortcuts) + ")");
 

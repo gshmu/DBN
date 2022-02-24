@@ -5,7 +5,7 @@ import com.dci.intellij.dbn.common.action.ProjectAction;
 import com.dci.intellij.dbn.common.file.VirtualFileRef;
 import com.dci.intellij.dbn.common.project.ProjectRef;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
-import com.dci.intellij.dbn.connection.ConnectionHandlerRef;
+import com.dci.intellij.dbn.connection.ConnectionRef;
 import com.dci.intellij.dbn.connection.SchemaId;
 import com.dci.intellij.dbn.connection.action.AbstractConnectionAction;
 import com.dci.intellij.dbn.connection.session.DatabaseSession;
@@ -174,7 +174,7 @@ public class ConnectionContextActions {
 
     static class SessionCreateAction extends DumbAwareAction {
         private final VirtualFileRef file;
-        private final ConnectionHandlerRef connection;
+        private final ConnectionRef connection;
 
         SessionCreateAction(VirtualFile file, ConnectionHandler connection) {
             super("New Session...");

@@ -1,7 +1,7 @@
 package com.dci.intellij.dbn.data.editor.text.actions;
 
 import com.dci.intellij.dbn.common.action.Lookup;
-import com.dci.intellij.dbn.common.ui.DBNComboBoxAction;
+import com.dci.intellij.dbn.common.ui.misc.DBNComboBoxAction;
 import com.dci.intellij.dbn.data.editor.text.TextContentType;
 import com.dci.intellij.dbn.data.editor.text.ui.TextEditorForm;
 import com.dci.intellij.dbn.editor.data.options.DataEditorQualifiedEditorSettings;

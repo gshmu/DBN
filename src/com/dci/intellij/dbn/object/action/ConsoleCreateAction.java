@@ -2,7 +2,7 @@ package com.dci.intellij.dbn.object.action;
 
 import com.dci.intellij.dbn.common.action.DumbAwareProjectAction;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
-import com.dci.intellij.dbn.connection.ConnectionHandlerRef;
+import com.dci.intellij.dbn.connection.ConnectionRef;
 import com.dci.intellij.dbn.connection.console.DatabaseConsoleManager;
 import com.dci.intellij.dbn.vfs.DBConsoleType;
 import com.intellij.openapi.actionSystem.AnActionEvent;
@@ -11,7 +11,7 @@ import org.jetbrains.annotations.NotNull;
 
 public class ConsoleCreateAction extends DumbAwareProjectAction {
     private final DBConsoleType consoleType;
-    private final ConnectionHandlerRef connection;
+    private final ConnectionRef connection;
 
     ConsoleCreateAction(ConnectionHandler connection, DBConsoleType consoleType) {
         super("New " + consoleType.getName() + "...");

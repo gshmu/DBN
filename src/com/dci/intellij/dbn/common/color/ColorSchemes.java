@@ -1,7 +1,7 @@
 package com.dci.intellij.dbn.common.color;
 
 import com.dci.intellij.dbn.common.latent.Latent;
-import com.dci.intellij.dbn.common.ui.LookAndFeel;
+import com.dci.intellij.dbn.common.ui.util.LookAndFeel;
 import com.intellij.openapi.editor.colors.ColorKey;
 import com.intellij.openapi.editor.colors.EditorColorsManager;
 import com.intellij.openapi.editor.colors.EditorColorsScheme;

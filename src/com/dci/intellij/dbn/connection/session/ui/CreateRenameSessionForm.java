@@ -1,34 +1,31 @@
 package com.dci.intellij.dbn.connection.session.ui;
 
 import com.dci.intellij.dbn.common.Icons;
-import com.dci.intellij.dbn.common.ui.DBNFormImpl;
-import com.dci.intellij.dbn.common.ui.DBNHeaderForm;
+import com.dci.intellij.dbn.common.ui.form.DBNFormBase;
+import com.dci.intellij.dbn.common.ui.form.DBNHeaderForm;
 import com.dci.intellij.dbn.common.util.Naming;
 import com.dci.intellij.dbn.common.util.Strings;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
-import com.dci.intellij.dbn.connection.ConnectionHandlerRef;
+import com.dci.intellij.dbn.connection.ConnectionRef;
 import com.dci.intellij.dbn.connection.session.DatabaseSession;
 import com.intellij.ui.DocumentAdapter;
 import com.intellij.ui.JBColor;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import javax.swing.JComponent;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.JTextField;
+import javax.swing.*;
 import javax.swing.event.DocumentEvent;
-import java.awt.BorderLayout;
+import java.awt.*;
 import java.util.Objects;
 import java.util.Set;
 
-public class CreateRenameSessionForm extends DBNFormImpl{
+public class CreateRenameSessionForm extends DBNFormBase {
     private JPanel headerPanel;
     private JPanel mainPanel;
     private JTextField sessionNameTextField;
     private JLabel errorLabel;
 
-    private final ConnectionHandlerRef connection;
+    private final ConnectionRef connection;
     private DatabaseSession session;
 
     CreateRenameSessionForm(final CreateRenameSessionDialog parent, @NotNull ConnectionHandler connection, @Nullable final DatabaseSession session) {

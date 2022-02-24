@@ -1,7 +1,7 @@
 package com.dci.intellij.dbn.object.factory.ui.common;
 
 import com.dci.intellij.dbn.common.Icons;
-import com.dci.intellij.dbn.common.ui.DBNFormImpl;
+import com.dci.intellij.dbn.common.ui.form.DBNFormBase;
 import com.dci.intellij.dbn.common.util.Actions;
 import com.intellij.openapi.actionSystem.ActionToolbar;
 import com.intellij.openapi.actionSystem.AnAction;
@@ -11,7 +11,7 @@ import org.jetbrains.annotations.NotNull;
 import javax.swing.JPanel;
 import java.awt.BorderLayout;
 
-public class ObjectListItemForm extends DBNFormImpl {
+public class ObjectListItemForm extends DBNFormBase {
     private JPanel mainPanel;
     private JPanel removeActionPanel;
     private JPanel objectDetailsComponent;

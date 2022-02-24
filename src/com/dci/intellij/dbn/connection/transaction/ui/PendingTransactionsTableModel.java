@@ -4,7 +4,7 @@ import com.dci.intellij.dbn.common.dispose.StatefulDisposable;
 import com.dci.intellij.dbn.common.ui.table.DBNReadonlyTableModel;
 import com.dci.intellij.dbn.common.util.Lists;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
-import com.dci.intellij.dbn.connection.ConnectionHandlerRef;
+import com.dci.intellij.dbn.connection.ConnectionRef;
 import com.dci.intellij.dbn.connection.ConnectionType;
 import com.dci.intellij.dbn.connection.jdbc.DBNConnection;
 import com.dci.intellij.dbn.connection.transaction.PendingTransaction;
@@ -17,7 +17,7 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 public class PendingTransactionsTableModel extends StatefulDisposable.Base implements DBNReadonlyTableModel {
-    private final ConnectionHandlerRef connection;
+    private final ConnectionRef connection;
     private final List<DBNConnection> connections;
 
     PendingTransactionsTableModel(ConnectionHandler connection) {

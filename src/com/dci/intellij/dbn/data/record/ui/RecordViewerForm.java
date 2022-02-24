@@ -3,9 +3,9 @@ package com.dci.intellij.dbn.data.record.ui;
 import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.common.color.Colors;
 import com.dci.intellij.dbn.common.dispose.DisposableContainers;
-import com.dci.intellij.dbn.common.ui.DBNFormImpl;
-import com.dci.intellij.dbn.common.ui.DBNHeaderForm;
-import com.dci.intellij.dbn.common.ui.GUIUtil;
+import com.dci.intellij.dbn.common.ui.form.DBNFormBase;
+import com.dci.intellij.dbn.common.ui.form.DBNHeaderForm;
+import com.dci.intellij.dbn.common.ui.util.UserInterface;
 import com.dci.intellij.dbn.common.util.Actions;
 import com.dci.intellij.dbn.data.record.ColumnSortingType;
 import com.dci.intellij.dbn.data.record.DatasetRecord;
@@ -30,7 +30,7 @@ import java.awt.Dimension;
 import java.util.Comparator;
 import java.util.List;
 
-public class RecordViewerForm extends DBNFormImpl {
+public class RecordViewerForm extends DBNFormBase {
     private JPanel actionsPanel;
     private JPanel columnsPanel;
     private JPanel mainPanel;
@@ -128,7 +128,7 @@ public class RecordViewerForm extends DBNFormImpl {
             for (RecordViewerColumnForm columnForm : columnForms) {
                 columnsPanel.add(columnForm.getComponent());
             }
-            GUIUtil.repaint(columnsPanel);
+            UserInterface.repaint(columnsPanel);
         }
     }
 

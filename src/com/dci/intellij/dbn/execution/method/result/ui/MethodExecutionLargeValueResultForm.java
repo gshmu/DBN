@@ -2,8 +2,8 @@ package com.dci.intellij.dbn.execution.method.result.ui;
 
 import com.dci.intellij.dbn.common.action.DumbAwareProjectAction;
 import com.dci.intellij.dbn.common.action.Lookup;
-import com.dci.intellij.dbn.common.ui.DBNComboBoxAction;
-import com.dci.intellij.dbn.common.ui.DBNFormImpl;
+import com.dci.intellij.dbn.common.ui.misc.DBNComboBoxAction;
+import com.dci.intellij.dbn.common.ui.form.DBNFormBase;
 import com.dci.intellij.dbn.common.util.Actions;
 import com.dci.intellij.dbn.common.util.Editors;
 import com.dci.intellij.dbn.common.util.Messages;
@@ -32,7 +32,7 @@ import javax.swing.JPanel;
 import java.awt.BorderLayout;
 import java.sql.SQLException;
 
-public class MethodExecutionLargeValueResultForm extends DBNFormImpl {
+public class MethodExecutionLargeValueResultForm extends DBNFormBase {
     private JPanel actionsPanel;
     private JPanel mainPanel;
     private JPanel largeValuePanel;

@@ -27,7 +27,7 @@ import com.dci.intellij.dbn.common.util.Consumer;
 import com.dci.intellij.dbn.common.util.Strings;
 import com.dci.intellij.dbn.common.util.Unsafe;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
-import com.dci.intellij.dbn.connection.ConnectionHandlerRef;
+import com.dci.intellij.dbn.connection.ConnectionRef;
 import com.dci.intellij.dbn.connection.ConnectionId;
 import com.dci.intellij.dbn.connection.DatabaseEntity;
 import com.dci.intellij.dbn.connection.DatabaseType;
@@ -84,7 +84,7 @@ public abstract class DBObjectImpl<M extends DBObjectMetadata> extends BrowserTr
 
     public static final List<BrowserTreeNode> EMPTY_TREE_NODE_LIST = Collections.unmodifiableList(new ArrayList<>(0));
 
-    private final ConnectionHandlerRef connection;
+    private final ConnectionRef connection;
     protected DBObjectRef<?> objectRef;
     protected DBObjectRef<?> parentObjectRef;
     protected DBObjectProperties properties = new DBObjectProperties();
@@ -98,18 +98,18 @@ public abstract class DBObjectImpl<M extends DBObjectMetadata> extends BrowserTr
     };
 
     protected DBObjectImpl(@NotNull DBObject parentObject, M metadata) throws SQLException {
-        this.connection = ConnectionHandlerRef.of(parentObject.getConnection());
+        this.connection = ConnectionRef.of(parentObject.getConnection());
         this.parentObjectRef = DBObjectRef.of(parentObject);
         init(metadata);
     }
 
     protected DBObjectImpl(@NotNull ConnectionHandler connection, M metadata) throws SQLException {
-        this.connection = ConnectionHandlerRef.of(connection);
+        this.connection = ConnectionRef.of(connection);
         init(metadata);
     }
 
     protected DBObjectImpl(@Nullable ConnectionHandler connection, DBObjectType objectType, String name) {
-        this.connection = ConnectionHandlerRef.of(connection);
+        this.connection = ConnectionRef.of(connection);
         objectRef = new DBObjectRef<>(this, objectType, name);
     }
 
@@ -327,7 +327,7 @@ public abstract class DBObjectImpl<M extends DBObjectMetadata> extends BrowserTr
     @Override
     @NotNull
     public ConnectionHandler getConnection() {
-        return ConnectionHandlerRef.ensure(connection);
+        return ConnectionRef.ensure(connection);
     }
 
     @NotNull

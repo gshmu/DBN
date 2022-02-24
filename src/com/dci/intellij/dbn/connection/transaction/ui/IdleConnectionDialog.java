@@ -4,7 +4,7 @@ import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.common.ui.dialog.DialogWithTimeout;
 import com.dci.intellij.dbn.common.util.TimeUtil;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
-import com.dci.intellij.dbn.connection.ConnectionHandlerRef;
+import com.dci.intellij.dbn.connection.ConnectionRef;
 import com.dci.intellij.dbn.connection.jdbc.DBNConnection;
 import com.dci.intellij.dbn.connection.jdbc.ResourceStatus;
 import com.dci.intellij.dbn.connection.transaction.DatabaseTransactionManager;
@@ -22,7 +22,7 @@ import static com.dci.intellij.dbn.connection.transaction.TransactionAction.*;
 
 public class IdleConnectionDialog extends DialogWithTimeout {
     private final IdleConnectionDialogForm idleConnectionDialogForm;
-    private final ConnectionHandlerRef connection;
+    private final ConnectionRef connection;
     private final DBNConnection conn;
 
     public IdleConnectionDialog(ConnectionHandler targetConnection, DBNConnection conn) {

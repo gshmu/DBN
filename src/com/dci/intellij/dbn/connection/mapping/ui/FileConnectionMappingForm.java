@@ -1,7 +1,7 @@
 package com.dci.intellij.dbn.connection.mapping.ui;
 
 import com.dci.intellij.dbn.common.color.Colors;
-import com.dci.intellij.dbn.common.ui.DBNFormImpl;
+import com.dci.intellij.dbn.common.ui.form.DBNFormBase;
 import com.dci.intellij.dbn.common.ui.table.DBNTable;
 import com.dci.intellij.dbn.connection.mapping.FileConnectionContext;
 import com.dci.intellij.dbn.connection.mapping.FileConnectionContextManager;
@@ -14,7 +14,7 @@ import javax.swing.*;
 import java.util.ArrayList;
 import java.util.List;
 
-public class FileConnectionMappingForm extends DBNFormImpl {
+public class FileConnectionMappingForm extends DBNFormBase {
     private JBScrollPane mappingsTableScrollPane;
     private JPanel mainPanel;
 

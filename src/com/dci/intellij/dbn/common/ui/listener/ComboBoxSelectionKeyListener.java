@@ -1,4 +1,6 @@
-package com.dci.intellij.dbn.common.ui;
+package com.dci.intellij.dbn.common.ui.listener;
+
+import com.dci.intellij.dbn.common.ui.util.UserInterface;
 
 import javax.swing.*;
 import java.awt.event.InputEvent;
@@ -28,13 +30,13 @@ public class ComboBoxSelectionKeyListener extends KeyAdapter {
                 if (e.getKeyCode() == 38) {//UP
                     if (operatorSelectionIndex > 0) {
                         comboBox.setSelectedIndex(operatorSelectionIndex - 1);
-                        GUIUtil.repaint(comboBox);
+                        UserInterface.repaint(comboBox);
                     }
                     e.consume();
                 } else if (e.getKeyCode() == 40) { // DOWN
                     if (operatorSelectionIndex < comboBox.getItemCount() - 1) {
                         comboBox.setSelectedIndex(operatorSelectionIndex + 1);
-                        GUIUtil.repaint(comboBox);
+                        UserInterface.repaint(comboBox);
                     }
                     e.consume();
                 }

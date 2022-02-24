@@ -1,6 +1,6 @@
 package com.dci.intellij.dbn.code.common.completion;
 
-import com.dci.intellij.dbn.common.ui.KeyUtil;
+import com.dci.intellij.dbn.common.ui.util.Keyboard;
 import com.dci.intellij.dbn.language.common.DBLanguage;
 import com.intellij.codeInsight.completion.CompletionContributor;
 import com.intellij.codeInsight.completion.CompletionInitializationContext;
@@ -35,7 +35,7 @@ public class CodeCompletionContributor extends CompletionContributor {
     @Override
     public String handleEmptyLookup(@NotNull CompletionParameters parameters, Editor editor) {
         if (parameters.getCompletionType() == CompletionType.BASIC && parameters.getInvocationCount() == 1) {
-            Shortcut[] basicShortcuts = KeyUtil.getShortcuts(IdeActions.ACTION_CODE_COMPLETION);
+            Shortcut[] basicShortcuts = Keyboard.getShortcuts(IdeActions.ACTION_CODE_COMPLETION);
 
             return "No suggestions. Press " + KeymapUtil.getShortcutsText(basicShortcuts) + " again to invoke extended completion";
         }

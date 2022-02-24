@@ -1,7 +1,7 @@
 package com.dci.intellij.dbn.editor.session.ui.table;
 
 import com.dci.intellij.dbn.common.thread.Dispatch;
-import com.dci.intellij.dbn.common.ui.GUIUtil;
+import com.dci.intellij.dbn.common.ui.util.UserInterface;
 import com.dci.intellij.dbn.common.ui.component.DBNComponent;
 import com.dci.intellij.dbn.common.ui.table.DBNTableGutter;
 import com.dci.intellij.dbn.common.util.Actions;
@@ -100,7 +100,7 @@ public class SessionBrowserTable extends ResultSetTable<SessionBrowserModel> {
     public void updateTableGutter() {
         Dispatch.run(() -> {
             DBNTableGutter<?> tableGutter = getTableGutter();
-            GUIUtil.repaint(tableGutter);
+            UserInterface.repaint(tableGutter);
         });
     }
 

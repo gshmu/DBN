@@ -5,7 +5,7 @@ import com.dci.intellij.dbn.common.util.Editors;
 import com.dci.intellij.dbn.common.util.Strings;
 import com.dci.intellij.dbn.connection.ConnectionBundle;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
-import com.dci.intellij.dbn.connection.ConnectionHandlerRef;
+import com.dci.intellij.dbn.connection.ConnectionRef;
 import com.dci.intellij.dbn.connection.ConnectionId;
 import com.dci.intellij.dbn.connection.ConnectionManager;
 import com.dci.intellij.dbn.navigation.object.DBObjectLookupModel;
@@ -133,11 +133,11 @@ public class GoToDatabaseObjectAction extends GotoActionBase implements DumbAwar
 
 
     private class SelectConnectionAction extends ActionGroup {
-        private final ConnectionHandlerRef connection;
+        private final ConnectionRef connection;
 
         private SelectConnectionAction(ConnectionHandler connection) {
             super();
-            this.connection = ConnectionHandlerRef.of(connection);
+            this.connection = ConnectionRef.of(connection);
             Presentation presentation = getTemplatePresentation();
             presentation.setText(connection.getName(), false);
             presentation.setIcon(connection.getIcon());

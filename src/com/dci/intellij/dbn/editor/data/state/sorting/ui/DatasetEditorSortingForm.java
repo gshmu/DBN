@@ -1,11 +1,11 @@
 package com.dci.intellij.dbn.editor.data.state.sorting.ui;
 
 import com.dci.intellij.dbn.common.dispose.DisposableContainers;
-import com.dci.intellij.dbn.common.ui.DBNFormImpl;
-import com.dci.intellij.dbn.common.ui.DBNHeaderForm;
-import com.dci.intellij.dbn.common.ui.GUIUtil;
 import com.dci.intellij.dbn.common.ui.ValueSelector;
 import com.dci.intellij.dbn.common.ui.ValueSelectorOption;
+import com.dci.intellij.dbn.common.ui.form.DBNFormBase;
+import com.dci.intellij.dbn.common.ui.form.DBNHeaderForm;
+import com.dci.intellij.dbn.common.ui.util.UserInterface;
 import com.dci.intellij.dbn.common.util.Strings;
 import com.dci.intellij.dbn.data.sorting.SortDirection;
 import com.dci.intellij.dbn.data.sorting.SortingInstruction;
@@ -18,14 +18,13 @@ import com.intellij.openapi.util.Disposer;
 import com.intellij.util.PlatformIcons;
 import org.jetbrains.annotations.NotNull;
 
-import javax.swing.BoxLayout;
-import javax.swing.JPanel;
-import java.awt.BorderLayout;
+import javax.swing.*;
+import java.awt.*;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-public class DatasetEditorSortingForm extends DBNFormImpl{
+public class DatasetEditorSortingForm extends DBNFormBase {
     private JPanel mainPanel;
     private JPanel sortingInstructionsPanel;
     private JPanel actionsPanel;
@@ -123,7 +122,7 @@ public class DatasetEditorSortingForm extends DBNFormImpl{
         sortingInstructionForms.add(sortingInstructionForm);
         sortingInstructionsPanel.add(sortingInstructionForm.getComponent());
         updateIndexes();
-        GUIUtil.repaint(sortingInstructionsPanel);
+        UserInterface.repaint(sortingInstructionsPanel);
     }
 
     private void updateIndexes() {
@@ -139,7 +138,7 @@ public class DatasetEditorSortingForm extends DBNFormImpl{
         updateIndexes();
         Disposer.dispose(sortingInstructionForm);
 
-        GUIUtil.repaint(sortingInstructionsPanel);
+        UserInterface.repaint(sortingInstructionsPanel);
     }
 
     public void applyChanges() {

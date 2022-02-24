@@ -3,25 +3,25 @@ package com.dci.intellij.dbn.connection.ui;
 import com.dci.intellij.dbn.common.database.AuthenticationInfo;
 import com.dci.intellij.dbn.common.ui.dialog.DBNDialog;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
-import com.dci.intellij.dbn.connection.ConnectionHandlerRef;
+import com.dci.intellij.dbn.connection.ConnectionRef;
 import com.dci.intellij.dbn.language.common.WeakRef;
 import com.intellij.openapi.project.Project;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import javax.swing.Action;
+import javax.swing.*;
 
 public class ConnectionAuthenticationDialog extends DBNDialog<ConnectionAuthenticationForm> {
     private boolean rememberCredentials;
     private final WeakRef<AuthenticationInfo> authenticationInfo; // TODO dialog result - Disposable.nullify(...)
-    private final ConnectionHandlerRef connection;
+    private final ConnectionRef connection;
 
     public ConnectionAuthenticationDialog(Project project, @Nullable ConnectionHandler connection, @NotNull AuthenticationInfo authenticationInfo) {
         super(project, "Enter password", true);
         this.authenticationInfo = WeakRef.of(authenticationInfo);
         setModal(true);
         setResizable(false);
-        this.connection = ConnectionHandlerRef.of(connection);
+        this.connection = ConnectionRef.of(connection);
         Action okAction = getOKAction();
         renameAction(okAction, "Connect");
         okAction.setEnabled(false);
@@ -62,7 +62,7 @@ public class ConnectionAuthenticationDialog extends DBNDialog<ConnectionAuthenti
     @NotNull
     @Override
     protected ConnectionAuthenticationForm createForm() {
-        ConnectionHandler connection = ConnectionHandlerRef.get(this.connection);
+        ConnectionHandler connection = ConnectionRef.get(this.connection);
         return new ConnectionAuthenticationForm(this, connection);
     }
 

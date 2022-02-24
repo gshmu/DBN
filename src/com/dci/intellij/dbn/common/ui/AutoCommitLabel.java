@@ -4,8 +4,9 @@ import com.dci.intellij.dbn.common.dispose.AlreadyDisposedException;
 import com.dci.intellij.dbn.common.event.ProjectEvents;
 import com.dci.intellij.dbn.common.thread.Dispatch;
 import com.dci.intellij.dbn.common.ui.panel.DBNPanelImpl;
+import com.dci.intellij.dbn.common.ui.util.Fonts;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
-import com.dci.intellij.dbn.connection.ConnectionHandlerRef;
+import com.dci.intellij.dbn.connection.ConnectionRef;
 import com.dci.intellij.dbn.connection.ConnectionStatusListener;
 import com.dci.intellij.dbn.connection.SessionId;
 import com.dci.intellij.dbn.connection.jdbc.DBNConnection;
@@ -21,9 +22,8 @@ import com.intellij.ui.JBColor;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import javax.swing.JLabel;
-import java.awt.BorderLayout;
-import java.awt.Color;
+import javax.swing.*;
+import java.awt.*;
 
 import static com.dci.intellij.dbn.common.util.Commons.nvl;
 
@@ -32,7 +32,7 @@ public class AutoCommitLabel extends DBNPanelImpl implements Disposable {
         Color DISCONNECTED = new JBColor(new Color(0x454545), new Color(0x808080));
         Color CONNECTED = new JBColor(new Color(0x454545), new Color(0x808080));
     }
-    private ConnectionHandlerRef connection;
+    private ConnectionRef connection;
     private WeakRef<VirtualFile> virtualFile;
     private SessionId sessionId;
     private boolean subscribed = false;
@@ -60,7 +60,7 @@ public class AutoCommitLabel extends DBNPanelImpl implements Disposable {
 
     public void init(Project project, VirtualFile file, ConnectionHandler connection, SessionId sessionId) {
         this.virtualFile = WeakRef.of(file);
-        this.connection = ConnectionHandlerRef.of(connection);
+        this.connection = ConnectionRef.of(connection);
         this.sessionId = nvl(sessionId, SessionId.MAIN);
         if (!subscribed) {
             subscribed = true;
@@ -108,7 +108,7 @@ public class AutoCommitLabel extends DBNPanelImpl implements Disposable {
     @Nullable
     private ConnectionHandler getConnection() {
         try {
-            return ConnectionHandlerRef.get(connection);
+            return ConnectionRef.get(connection);
         } catch (AlreadyDisposedException e) {
             this.connection = null;
             return null;
@@ -127,7 +127,7 @@ public class AutoCommitLabel extends DBNPanelImpl implements Disposable {
         public void connectionChanged(Project project, VirtualFile file, ConnectionHandler connection) {
             VirtualFile localVirtualFile = getVirtualFile();
             if (file.equals(localVirtualFile)) {
-                AutoCommitLabel.this.connection = ConnectionHandlerRef.of(connection);
+                AutoCommitLabel.this.connection = ConnectionRef.of(connection);
                 update();
             }
         }
@@ -151,7 +151,7 @@ public class AutoCommitLabel extends DBNPanelImpl implements Disposable {
             if (action.isOneOf(
                     TransactionAction.TURN_AUTO_COMMIT_ON,
                     TransactionAction.TURN_AUTO_COMMIT_OFF) &&
-                    ConnectionHandlerRef.get(AutoCommitLabel.this.connection) == connection) {
+                    ConnectionRef.get(AutoCommitLabel.this.connection) == connection) {
 
                 update();
             }

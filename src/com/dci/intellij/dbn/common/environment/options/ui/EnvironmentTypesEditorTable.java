@@ -1,7 +1,7 @@
 package com.dci.intellij.dbn.common.environment.options.ui;
 
 import com.dci.intellij.dbn.common.environment.EnvironmentTypeBundle;
-import com.dci.intellij.dbn.common.ui.Mouse;
+import com.dci.intellij.dbn.common.ui.util.Mouse;
 import com.dci.intellij.dbn.common.ui.component.DBNComponent;
 import com.dci.intellij.dbn.common.ui.table.DBNEditableTable;
 import com.intellij.openapi.project.Project;

@@ -5,7 +5,7 @@ import com.dci.intellij.dbn.common.latent.Latent;
 import com.dci.intellij.dbn.common.thread.Read;
 import com.dci.intellij.dbn.common.util.Commons;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
-import com.dci.intellij.dbn.connection.ConnectionHandlerRef;
+import com.dci.intellij.dbn.connection.ConnectionRef;
 import com.dci.intellij.dbn.connection.ConnectionId;
 import com.dci.intellij.dbn.connection.SchemaId;
 import com.dci.intellij.dbn.connection.session.DatabaseSession;
@@ -76,7 +76,7 @@ public class StatementExecutionInput extends LocalExecutionInput {
         SchemaId currentSchema = executionProcessor.getTargetSchema();
         DatabaseSession targetSession = executionProcessor.getTargetSession();
 
-        this.targetConnection = ConnectionHandlerRef.of(connection);
+        this.targetConnection = ConnectionRef.of(connection);
         this.targetSchemaId = currentSchema;
         this.setTargetSession(targetSession);
         this.originalStatementText = originalStatementText;
@@ -168,7 +168,7 @@ public class StatementExecutionInput extends LocalExecutionInput {
     @Override
     @Nullable
     public ConnectionHandler getConnection() {
-        return ConnectionHandlerRef.get(targetConnection);
+        return ConnectionRef.get(targetConnection);
     }
 
     @Override

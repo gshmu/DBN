@@ -7,7 +7,7 @@ import com.dci.intellij.dbn.common.util.Actions;
 import com.dci.intellij.dbn.common.util.Messages;
 import com.dci.intellij.dbn.connection.ConnectionBundle;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
-import com.dci.intellij.dbn.connection.ConnectionHandlerRef;
+import com.dci.intellij.dbn.connection.ConnectionRef;
 import com.dci.intellij.dbn.connection.ConnectionManager;
 import com.dci.intellij.dbn.connection.console.DatabaseConsoleManager;
 import com.dci.intellij.dbn.database.DatabaseFeature;
@@ -93,11 +93,11 @@ public class SQLConsoleOpenAction extends DumbAwareProjectAction {
     }
 
     private class SelectConnectionAction extends ActionGroup {
-        private ConnectionHandlerRef connection;
+        private ConnectionRef connection;
 
         private SelectConnectionAction(ConnectionHandler connection) {
             super(connection.getName(), null, connection.getIcon());
-            this.connection = ConnectionHandlerRef.of(connection);
+            this.connection = ConnectionRef.of(connection);
             setPopup(true);
         }
 /*
@@ -127,14 +127,14 @@ public class SQLConsoleOpenAction extends DumbAwareProjectAction {
     }
 
     private static class SelectConsoleAction extends AnAction{
-        private ConnectionHandlerRef connectionHandlerRef;
+        private ConnectionRef connection;
         private DBConsole console;
         private DBConsoleType consoleType;
 
 
         SelectConsoleAction(ConnectionHandler connection, DBConsoleType consoleType) {
             super("New " + consoleType.getName() + "...");
-            this.connectionHandlerRef = ConnectionHandlerRef.of(connection);
+            this.connection = ConnectionRef.of(connection);
             this.consoleType = consoleType;
         }
 
@@ -146,7 +146,7 @@ public class SQLConsoleOpenAction extends DumbAwareProjectAction {
         @Override
         public void actionPerformed(@NotNull AnActionEvent e) {
             if (console == null) {
-                ConnectionHandler connection = connectionHandlerRef.ensure();
+                ConnectionHandler connection = this.connection.ensure();
                 DatabaseConsoleManager consoleManager = DatabaseConsoleManager.getInstance(connection.getProject());
                 consoleManager.showCreateConsoleDialog(connection, consoleType);
             } else {

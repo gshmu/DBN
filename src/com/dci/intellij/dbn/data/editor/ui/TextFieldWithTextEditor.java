@@ -3,8 +3,8 @@ package com.dci.intellij.dbn.data.editor.ui;
 import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.common.project.ProjectRef;
 import com.dci.intellij.dbn.common.thread.Dispatch;
-import com.dci.intellij.dbn.common.ui.KeyUtil;
-import com.dci.intellij.dbn.common.ui.Mouse;
+import com.dci.intellij.dbn.common.ui.util.Keyboard;
+import com.dci.intellij.dbn.common.ui.util.Mouse;
 import com.dci.intellij.dbn.common.ui.panel.DBNPanelImpl;
 import com.dci.intellij.dbn.common.util.Strings;
 import com.dci.intellij.dbn.data.editor.text.TextEditorAdapter;
@@ -61,7 +61,7 @@ public class TextFieldWithTextEditor extends DBNPanelImpl implements DataEditorC
         button.setBorder(BUTTON_BORDER);
         button.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
         button.addMouseListener(mouseListener);
-        Shortcut[] shortcuts = KeyUtil.getShortcuts(IdeActions.ACTION_SHOW_INTENTION_ACTIONS);
+        Shortcut[] shortcuts = Keyboard.getShortcuts(IdeActions.ACTION_SHOW_INTENTION_ACTIONS);
         String shortcutText = KeymapUtil.getShortcutsText(shortcuts);
 
         button.setToolTipText("Open editor (" + shortcutText + ')');
@@ -155,8 +155,8 @@ public class TextFieldWithTextEditor extends DBNPanelImpl implements DataEditorC
     private final KeyListener keyListener = new KeyAdapter() {
         @Override
         public void keyPressed(KeyEvent keyEvent) {
-            Shortcut[] shortcuts = KeyUtil.getShortcuts(IdeActions.ACTION_SHOW_INTENTION_ACTIONS);
-            if (!keyEvent.isConsumed() && KeyUtil.match(shortcuts, keyEvent)) {
+            Shortcut[] shortcuts = Keyboard.getShortcuts(IdeActions.ACTION_SHOW_INTENTION_ACTIONS);
+            if (!keyEvent.isConsumed() && Keyboard.match(shortcuts, keyEvent)) {
                 keyEvent.consume();
                 openEditor();
             }

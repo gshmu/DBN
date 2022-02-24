@@ -3,12 +3,12 @@ package com.dci.intellij.dbn.object.filter.quick.ui;
 import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.common.dispose.DisposableContainers;
 import com.dci.intellij.dbn.common.filter.Filter;
-import com.dci.intellij.dbn.common.ui.Borders;
-import com.dci.intellij.dbn.common.ui.DBNComboBox;
-import com.dci.intellij.dbn.common.ui.DBNFormImpl;
-import com.dci.intellij.dbn.common.ui.DBNHeaderForm;
-import com.dci.intellij.dbn.common.ui.DBNHintForm;
-import com.dci.intellij.dbn.common.ui.GUIUtil;
+import com.dci.intellij.dbn.common.ui.util.Borders;
+import com.dci.intellij.dbn.common.ui.misc.DBNComboBox;
+import com.dci.intellij.dbn.common.ui.form.DBNFormBase;
+import com.dci.intellij.dbn.common.ui.form.DBNHeaderForm;
+import com.dci.intellij.dbn.common.ui.form.DBNHintForm;
+import com.dci.intellij.dbn.common.ui.util.UserInterface;
 import com.dci.intellij.dbn.common.ui.ValueSelector;
 import com.dci.intellij.dbn.common.ui.ValueSelectorOption;
 import com.dci.intellij.dbn.common.util.Naming;
@@ -35,7 +35,7 @@ import java.awt.Color;
 import java.util.Arrays;
 import java.util.List;
 
-public class ObjectQuickFilterForm extends DBNFormImpl {
+public class ObjectQuickFilterForm extends DBNFormBase {
     private JPanel mainPanel;
     private JPanel headerPanel;
     private JPanel conditionsPanel;
@@ -114,7 +114,7 @@ public class ObjectQuickFilterForm extends DBNFormImpl {
             }
         }
         joinTypeComboBox.setEnabled(conditionForms.size() > 1);
-        GUIUtil.repaint(mainPanel);
+        UserInterface.repaint(mainPanel);
     }
 
     private class NewFilterSelector extends ValueSelector<ConditionOperator> {
@@ -131,7 +131,7 @@ public class ObjectQuickFilterForm extends DBNFormImpl {
                 quickFilterManager.setLastUsedOperator(newValue);
                 ObjectQuickFilterCondition condition = filter.addNewCondition(newValue);
                 addConditionPanel(condition);
-                GUIUtil.repaint(mainPanel);
+                UserInterface.repaint(mainPanel);
             });
 
         }

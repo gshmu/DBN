@@ -1,8 +1,8 @@
 package com.dci.intellij.dbn.debugger.jdwp;
 
 import com.dci.intellij.dbn.connection.ConnectionHandler;
-import com.dci.intellij.dbn.connection.ConnectionHandlerRef;
 import com.dci.intellij.dbn.connection.ConnectionId;
+import com.dci.intellij.dbn.connection.ConnectionRef;
 import com.dci.intellij.dbn.debugger.common.breakpoint.DBBreakpointProperties;
 import com.intellij.util.xmlb.annotations.Attribute;
 import org.jetbrains.annotations.NotNull;
@@ -12,14 +12,13 @@ import org.jetbrains.java.debugger.breakpoints.properties.JavaBreakpointProperti
 public class DBJdwpBreakpointProperties extends JavaBreakpointProperties<DBJdwpBreakpointProperties> implements DBBreakpointProperties {
     @Attribute(value = "connection-id", converter = ConnectionId.Converter.class)
     private ConnectionId connectionId;
-
-    private ConnectionHandlerRef connectionHandlerRef;
+    private ConnectionRef connection;
 
     public DBJdwpBreakpointProperties() {
     }
 
     public DBJdwpBreakpointProperties(ConnectionHandler connection) {
-        this.connectionHandlerRef = ConnectionHandlerRef.of(connection);
+        this.connection = ConnectionRef.of(connection);
         if (connection != null) {
             connectionId = connection.getConnectionId();
         }
@@ -33,10 +32,10 @@ public class DBJdwpBreakpointProperties extends JavaBreakpointProperties<DBJdwpB
     @Nullable
     @Override
     public ConnectionHandler getConnection() {
-        if (connectionHandlerRef == null && connectionId != null) {
-            connectionHandlerRef = ConnectionHandlerRef.of(connectionId);
+        if (connection == null && connectionId != null) {
+            connection = ConnectionRef.of(connectionId);
         }
-        return ConnectionHandlerRef.get(connectionHandlerRef);
+        return ConnectionRef.get(connection);
     }
 
     @Nullable
@@ -49,6 +48,6 @@ public class DBJdwpBreakpointProperties extends JavaBreakpointProperties<DBJdwpB
     public void loadState(@NotNull DBJdwpBreakpointProperties state) {
         super.loadState(state);
         connectionId = state.connectionId;
-        connectionHandlerRef = state.connectionHandlerRef;
+        connection = state.connection;
     }
 }
