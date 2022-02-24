@@ -8,6 +8,7 @@ import com.dci.intellij.dbn.object.DBMethod;
 import com.dci.intellij.dbn.object.DBSchema;
 import com.dci.intellij.dbn.object.lookup.DBObjectRef;
 import com.dci.intellij.dbn.object.type.DBObjectType;
+import lombok.val;
 import org.jdom.Element;
 import org.jetbrains.annotations.Nullable;
 
@@ -45,7 +46,7 @@ public class MethodBrowserSettings implements PersistentConfiguration {
     public Set<DBObjectType> getVisibleObjectTypes() {
         Set<DBObjectType> objectTypes = EnumSet.noneOf(DBObjectType.class);
 
-        for (Map.Entry<DBObjectType, Boolean> entry : objectVisibility.entrySet()) {
+        for (val entry : objectVisibility.entrySet()) {
             DBObjectType objectType = entry.getKey();
             Boolean visible = entry.getValue();
 

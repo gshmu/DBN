@@ -36,6 +36,7 @@ import com.intellij.openapi.fileEditor.FileEditorManagerListener;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.util.containers.ContainerUtil;
+import lombok.val;
 import org.jdom.Element;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
@@ -170,7 +171,7 @@ public class SessionBrowserManager extends AbstractProjectComponent implements P
                         (provider, conn) -> {
                             Map<Object, SQLException> errors = new HashMap<>();
                             DatabaseMetadataInterface metadataInterface = provider.getMetadataInterface();
-                            for (Map.Entry<Object, Object> entry : sessionIds.entrySet()) {
+                            for (val entry : sessionIds.entrySet()) {
                                 Object sessionId = entry.getKey();
                                 Object serialNumber = entry.getValue();
 

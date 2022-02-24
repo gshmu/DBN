@@ -22,6 +22,7 @@ import com.intellij.openapi.diagnostic.IdeaLoggingEvent;
 import com.intellij.openapi.diagnostic.SubmittedReportInfo;
 import com.intellij.openapi.project.Project;
 import lombok.extern.slf4j.Slf4j;
+import lombok.val;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -212,7 +213,7 @@ abstract class IssueReportSubmitter extends ErrorReportSubmitter {
 
     static byte[] join(Map<String, String> params) throws UnsupportedEncodingException {
         StringBuilder builder = new StringBuilder();
-        for (Map.Entry<String, String> param : params.entrySet()) {
+        for (val param : params.entrySet()) {
             if (Strings.isEmpty(param.getKey())) {
                 throw new IllegalArgumentException(param.toString());
             }

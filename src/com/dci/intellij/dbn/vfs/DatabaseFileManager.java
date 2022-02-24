@@ -35,6 +35,7 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.startup.StartupManager;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.util.containers.ContainerUtil;
+import lombok.val;
 import org.jdom.Element;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -271,9 +272,9 @@ public class DatabaseFileManager extends AbstractProjectComponent implements Per
             this.pendingOpenFiles = null;
 
             ConnectionManager connectionManager = ConnectionManager.getInstance(project);
-            for (Map.Entry<ConnectionId, List<DBObjectRef<DBSchemaObject>>> entry : pendingOpenFiles.entrySet()) {
+            for (val entry : pendingOpenFiles.entrySet()) {
                 ConnectionId connectionId = entry.getKey();
-                List<DBObjectRef<DBSchemaObject>> objectRefs = entry.getValue();
+                val objectRefs = entry.getValue();
 
                 ConnectionHandler connection = connectionManager.getConnection(connectionId);
                 if (connection != null) {

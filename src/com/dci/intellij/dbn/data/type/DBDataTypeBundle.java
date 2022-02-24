@@ -9,6 +9,7 @@ import com.dci.intellij.dbn.object.DBPackage;
 import com.dci.intellij.dbn.object.DBSchema;
 import com.dci.intellij.dbn.object.DBType;
 import com.dci.intellij.dbn.object.common.DBObjectBundle;
+import lombok.val;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.HashMap;
@@ -46,7 +47,7 @@ public final class DBDataTypeBundle extends StatefulDisposable.Base {
                 return dataType;
             }
 
-            for (Map.Entry<String, DBNativeDataType> entry : dataTypes.entrySet()) {
+            for (val entry : dataTypes.entrySet()) {
                 String key = entry.getKey();
                 DBNativeDataType value = entry.getValue();
                 if (key.startsWith(upperCaseName)) {
