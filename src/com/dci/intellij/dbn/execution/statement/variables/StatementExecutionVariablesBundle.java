@@ -21,13 +21,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.text.ParseException;
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
+import java.util.*;
 
 public class StatementExecutionVariablesBundle extends StatefulDisposable.Base implements StatefulDisposable {
     public static final Comparator<StatementExecutionVariable> NAME_COMPARATOR = (o1, o2) -> o1.getName().compareToIgnoreCase(o2.getName());
@@ -65,7 +59,7 @@ public class StatementExecutionVariablesBundle extends StatefulDisposable.Base i
     }
 
     private void uniqueAddVariable(List<StatementExecutionVariable> variables, StatementExecutionVariable variable) {
-        if (Lists.noneMatch(variables, var -> Objects.equals(var.getName(), variable.getName()))) {
+        if (Lists.noneMatch(variables, v -> Objects.equals(v.getName(), variable.getName()))) {
             variables.add(variable);
         }
     }

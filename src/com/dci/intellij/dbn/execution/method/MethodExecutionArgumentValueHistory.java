@@ -3,7 +3,6 @@ package com.dci.intellij.dbn.execution.method;
 import com.dci.intellij.dbn.common.state.PersistentStateElement;
 import com.dci.intellij.dbn.common.util.Strings;
 import com.dci.intellij.dbn.connection.ConnectionId;
-import lombok.var;
 import org.jdom.Element;
 
 import java.util.HashMap;
@@ -71,14 +70,14 @@ public class MethodExecutionArgumentValueHistory implements PersistentStateEleme
         Element argumentValuesElement = new Element("argument-values-cache");
         element.addContent(argumentValuesElement);
 
-        for (var entry : argumentValues.entrySet()) {
+        for (Map.Entry<ConnectionId, Map<String, MethodExecutionArgumentValue>> entry : argumentValues.entrySet()) {
             ConnectionId connectionId = entry.getKey();
             Map<String, MethodExecutionArgumentValue> argumentValues = entry.getValue();
             Element connectionElement = new Element("connection");
             connectionElement.setAttribute("connection-id", connectionId.id());
             argumentValuesElement.addContent(connectionElement);
 
-            for (var argumentEntry : argumentValues.entrySet()) {
+            for (Map.Entry<String, MethodExecutionArgumentValue> argumentEntry : argumentValues.entrySet()) {
                 MethodExecutionArgumentValue argumentValue = argumentEntry.getValue();
                 if (argumentValue.getValueHistory().size() > 0) {
                     Element argumentElement = new Element("argument");

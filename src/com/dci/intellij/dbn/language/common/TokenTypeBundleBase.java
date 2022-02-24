@@ -10,7 +10,6 @@ import com.intellij.psi.tree.IElementType;
 import com.intellij.psi.tree.TokenSet;
 import gnu.trove.THashMap;
 import lombok.extern.slf4j.Slf4j;
-import lombok.var;
 import org.jdom.Document;
 import org.jdom.Element;
 import org.jetbrains.annotations.NotNull;
@@ -208,7 +207,7 @@ public abstract class TokenTypeBundleBase {
     }
     
     private void createTokenSets(Map<String, Set<String>> tokenSetIds) {
-        for (var entry : tokenSetIds.entrySet()) {
+        for (Map.Entry<String, Set<String>> entry : tokenSetIds.entrySet()) {
             String tokenSetId = entry.getKey();
             Set<String> tokenIds = entry.getValue();
 
