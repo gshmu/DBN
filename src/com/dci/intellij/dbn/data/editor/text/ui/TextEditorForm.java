@@ -92,7 +92,7 @@ public class TextEditorForm extends DBNFormBase {
             LanguageFileType languageFileType = (LanguageFileType) fileType;
 
             VirtualFile virtualFile = new LightVirtualFile("text_editor_file", fileType, text);
-            virtualFile.putUserData(UserDataKeys.EXECUTABLE_DATABASE_CONTENT, false);
+            virtualFile.putUserData(UserDataKeys.HAS_CONNECTIVITY_CONTEXT, false);
 
             FileManager fileManager = ((PsiManagerEx)PsiManager.getInstance(project)).getFileManager();
             FileViewProvider viewProvider = fileManager.createFileViewProvider(virtualFile, true);

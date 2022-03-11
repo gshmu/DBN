@@ -48,7 +48,7 @@ public class ExecuteStatementIntentionAction extends GenericIntentionAction impl
                 FileType fileType = virtualFile.getFileType();
 
                 if (fileType instanceof DBLanguageFileType) {
-                    if (FileConnectionContextManager.hasExecutableContent(virtualFile)) {
+                    if (FileConnectionContextManager.hasHasConnectivityContext(virtualFile)) {
                         ExecutablePsiElement executable = PsiUtil.lookupExecutableAtCaret(editor, true);
                         FileEditor fileEditor = Editors.getFileEditor(editor);
                         if (executable != null && fileEditor != null) {
