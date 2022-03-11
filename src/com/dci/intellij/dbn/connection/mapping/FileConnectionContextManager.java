@@ -91,9 +91,9 @@ public class FileConnectionContextManager extends AbstractProjectComponent imple
         return Failsafe.getComponent(project, FileConnectionContextManager.class);
     }
 
-    public static boolean hasExecutableContent(VirtualFile file) {
-        Boolean executableContent = file.getUserData(UserDataKeys.EXECUTABLE_DATABASE_CONTENT);
-        return executableContent == null || executableContent;
+    public static boolean hasHasConnectivityContext(VirtualFile file) {
+        Boolean hasConnectivityContext = file.getUserData(UserDataKeys.HAS_CONNECTIVITY_CONTEXT);
+        return hasConnectivityContext == null || hasConnectivityContext;
     }
 
     @Override
@@ -211,7 +211,7 @@ public class FileConnectionContextManager extends AbstractProjectComponent imple
             }
 
             if (file instanceof LightVirtualFile) {
-                return hasExecutableContent(file);
+                return hasHasConnectivityContext(file);
             }
         }
 
@@ -228,7 +228,7 @@ public class FileConnectionContextManager extends AbstractProjectComponent imple
                 return true;
 
             } else if (file instanceof LightVirtualFile) {
-                return hasExecutableContent(file);
+                return hasHasConnectivityContext(file);
             }
 
         }
