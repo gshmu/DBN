@@ -1,5 +1,6 @@
 package com.dci.intellij.dbn.data.editor.text.ui;
 
+import com.dci.intellij.dbn.common.action.UserDataKeys;
 import com.dci.intellij.dbn.common.ui.form.DBNFormBase;
 import com.dci.intellij.dbn.common.util.Actions;
 import com.dci.intellij.dbn.common.util.Commons;
@@ -91,6 +92,7 @@ public class TextEditorForm extends DBNFormBase {
             LanguageFileType languageFileType = (LanguageFileType) fileType;
 
             VirtualFile virtualFile = new LightVirtualFile("text_editor_file", fileType, text);
+            virtualFile.putUserData(UserDataKeys.EXECUTABLE_DATABASE_CONTENT, false);
 
             FileManager fileManager = ((PsiManagerEx)PsiManager.getInstance(project)).getFileManager();
             FileViewProvider viewProvider = fileManager.createFileViewProvider(virtualFile, true);

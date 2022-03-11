@@ -3,6 +3,7 @@ package com.dci.intellij.dbn.code.common.intention;
 import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.common.util.Context;
 import com.dci.intellij.dbn.common.util.Editors;
+import com.dci.intellij.dbn.connection.mapping.FileConnectionContextManager;
 import com.dci.intellij.dbn.debugger.DatabaseDebuggerManager;
 import com.dci.intellij.dbn.execution.statement.StatementExecutionManager;
 import com.dci.intellij.dbn.execution.statement.processor.StatementExecutionProcessor;
@@ -13,6 +14,7 @@ import com.intellij.codeInsight.intention.HighPriorityAction;
 import com.intellij.openapi.actionSystem.DataContext;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.fileEditor.FileEditor;
+import com.intellij.openapi.fileTypes.FileType;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiFile;
@@ -42,19 +44,26 @@ public class ExecuteStatementIntentionAction extends GenericIntentionAction impl
             if (DatabaseDebuggerManager.isDebugConsole(virtualFile)) {
                 return false;
             }
-            if (virtualFile != null && virtualFile.getFileType() instanceof DBLanguageFileType) {
-                ExecutablePsiElement executable = PsiUtil.lookupExecutableAtCaret(editor, true);
-                FileEditor fileEditor = Editors.getFileEditor(editor);
-                if (executable != null && fileEditor != null) {
-                    return true;
-/*
-                    StatementExecutionManager executionManager = StatementExecutionManager.getInstance(project);
-                    StatementExecutionProcessor executionProcessor = executionManager.getExecutionProcessor(fileEditor, executable, true);
-                    if (executionProcessor != null) {
-                        StatementExecutionResult executionResult = executionProcessor.getExecutionResult();
-                        return executionResult != null;
+            if (virtualFile != null) {
+                FileType fileType = virtualFile.getFileType();
+
+                if (fileType instanceof DBLanguageFileType) {
+                    if (FileConnectionContextManager.hasExecutableContent(virtualFile)) {
+                        ExecutablePsiElement executable = PsiUtil.lookupExecutableAtCaret(editor, true);
+                        FileEditor fileEditor = Editors.getFileEditor(editor);
+                        if (executable != null && fileEditor != null) {
+                            return true;
+    /*
+                            StatementExecutionManager executionManager = StatementExecutionManager.getInstance(project);
+                            StatementExecutionProcessor executionProcessor = executionManager.getExecutionProcessor(fileEditor, executable, true);
+                            if (executionProcessor != null) {
+                                StatementExecutionResult executionResult = executionProcessor.getExecutionResult();
+                                return executionResult != null;
+                            }
+    */
+                        }
                     }
-*/
+
                 }
             }
         }
