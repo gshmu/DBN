@@ -43,7 +43,7 @@ public class ExecuteScriptIntentionAction extends GenericIntentionAction impleme
                 return false;
             }
 
-            if (!FileConnectionContextManager.hasExecutableContent(virtualFile)) {
+            if (!FileConnectionContextManager.hasHasConnectivityContext(virtualFile)) {
                 return false;
             }
 
