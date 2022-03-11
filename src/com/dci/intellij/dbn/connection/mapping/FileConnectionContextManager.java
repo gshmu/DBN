@@ -2,6 +2,7 @@ package com.dci.intellij.dbn.connection.mapping;
 
 import com.dci.intellij.dbn.DatabaseNavigator;
 import com.dci.intellij.dbn.common.AbstractProjectComponent;
+import com.dci.intellij.dbn.common.action.UserDataKeys;
 import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.common.dispose.SafeDisposer;
 import com.dci.intellij.dbn.common.event.ProjectEvents;
@@ -34,6 +35,7 @@ import com.intellij.openapi.components.Storage;
 import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.fileEditor.FileDocumentManager;
+import com.intellij.openapi.fileTypes.FileType;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.popup.JBPopupFactory;
 import com.intellij.openapi.ui.popup.ListPopup;
@@ -87,6 +89,11 @@ public class FileConnectionContextManager extends AbstractProjectComponent imple
     @NotNull
     public static FileConnectionContextManager getInstance(@NotNull Project project) {
         return Failsafe.getComponent(project, FileConnectionContextManager.class);
+    }
+
+    public static boolean hasExecutableContent(VirtualFile file) {
+        Boolean executableContent = file.getUserData(UserDataKeys.EXECUTABLE_DATABASE_CONTENT);
+        return executableContent == null || executableContent;
     }
 
     @Override
@@ -195,19 +202,44 @@ public class FileConnectionContextManager extends AbstractProjectComponent imple
     public boolean isConnectionSelectable(VirtualFile file) {
         if (file == null) return false;
         if (VirtualFiles.isLocalFileSystem(file)) return true;
-        return file instanceof LightVirtualFile && file.getFileType() instanceof DBLanguageFileType;
+
+        FileType fileType = file.getFileType();
+        if (fileType instanceof DBLanguageFileType) {
+            if (file instanceof DBConsoleVirtualFile) {
+                // consoles are tightly bound to connections
+                return false;
+            }
+
+            if (file instanceof LightVirtualFile) {
+                return hasExecutableContent(file);
+            }
+        }
+
+        return false;
     }
 
     public boolean isSchemaSelectable(VirtualFile file) {
         if (file == null) return false;
         if (VirtualFiles.isLocalFileSystem(file)) return true;
-        return (file instanceof LightVirtualFile || file instanceof DBConsoleVirtualFile) && file.getFileType() instanceof DBLanguageFileType;
+
+        FileType fileType = file.getFileType();
+        if (fileType instanceof DBLanguageFileType) {
+            if (file instanceof DBConsoleVirtualFile) {
+                return true;
+
+            } else if (file instanceof LightVirtualFile) {
+                return hasExecutableContent(file);
+            }
+
+        }
+        return false;
     }
 
     public boolean isSessionSelectable(VirtualFile file) {
         if (file == null) return false;
         //if (VirtualFiles.isLocalFileSystem(file)) return true;
-        return (file instanceof LightVirtualFile || file instanceof DBConsoleVirtualFile) && file.getFileType() instanceof DBLanguageFileType;
+        FileType fileType = file.getFileType();
+        return (file instanceof LightVirtualFile || file instanceof DBConsoleVirtualFile) && fileType instanceof DBLanguageFileType;
     }
 
 

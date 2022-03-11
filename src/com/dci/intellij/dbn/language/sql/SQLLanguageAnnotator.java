@@ -5,7 +5,6 @@ import com.dci.intellij.dbn.common.thread.ThreadMonitor;
 import com.dci.intellij.dbn.common.thread.ThreadProperty;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.ConnectionHandlerStatus;
-import com.dci.intellij.dbn.debugger.DatabaseDebuggerManager;
 import com.dci.intellij.dbn.execution.statement.StatementGutterRenderer;
 import com.dci.intellij.dbn.language.common.DBLanguagePsiFile;
 import com.dci.intellij.dbn.language.common.TokenTypeCategory;
@@ -21,6 +20,9 @@ import com.intellij.lang.annotation.HighlightSeverity;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiElement;
 import org.jetbrains.annotations.NotNull;
+
+import static com.dci.intellij.dbn.connection.mapping.FileConnectionContextManager.hasExecutableContent;
+import static com.dci.intellij.dbn.debugger.DatabaseDebuggerManager.isDebugConsole;
 
 public class SQLLanguageAnnotator implements Annotator {
     public static final SQLLanguageAnnotator INSTANCE = new SQLLanguageAnnotator();
@@ -139,8 +141,8 @@ public class SQLLanguageAnnotator implements Annotator {
 
         if (executablePsiElement.isValid() && !executablePsiElement.isNestedExecutable()) {
             DBLanguagePsiFile psiFile = executablePsiElement.getFile();
-            VirtualFile virtualFile = psiFile.getVirtualFile();
-            if (!DatabaseDebuggerManager.isDebugConsole(virtualFile)) {
+            VirtualFile file = psiFile.getVirtualFile();
+            if (!isDebugConsole(file) && hasExecutableContent(file)) {
                 holder.newSilentAnnotation(HighlightSeverity.INFORMATION)
                         .gutterIconRenderer(new StatementGutterRenderer(executablePsiElement))
                         .create();
