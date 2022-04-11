@@ -96,8 +96,9 @@ public interface DBObject extends
     @Nullable
     DBObject getChildObject(String name, short overload, boolean lookupHidden);
 
+    @Nullable
     default DBObject getChildObject(String name, short overload, boolean lookupHidden, Node<DBObject> lookupPath) {
-        throw new UnsupportedOperationException();
+        return null;
     }
 
     List<String> getChildObjectNames(DBObjectType objectType);
