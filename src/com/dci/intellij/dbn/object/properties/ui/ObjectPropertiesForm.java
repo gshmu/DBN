@@ -6,15 +6,15 @@ import com.dci.intellij.dbn.browser.model.BrowserTreeEventListener;
 import com.dci.intellij.dbn.browser.model.BrowserTreeNode;
 import com.dci.intellij.dbn.browser.ui.DatabaseBrowserTree;
 import com.dci.intellij.dbn.common.color.Colors;
+import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.common.dispose.SafeDisposer;
 import com.dci.intellij.dbn.common.event.ProjectEvents;
 import com.dci.intellij.dbn.common.thread.Dispatch;
 import com.dci.intellij.dbn.common.thread.Progress;
-import com.dci.intellij.dbn.common.ui.util.Borders;
 import com.dci.intellij.dbn.common.ui.form.DBNForm;
 import com.dci.intellij.dbn.common.ui.form.DBNFormBase;
+import com.dci.intellij.dbn.common.ui.util.Borders;
 import com.dci.intellij.dbn.common.ui.util.UserInterface;
-import com.dci.intellij.dbn.common.ui.table.DBNTable;
 import com.dci.intellij.dbn.common.util.Naming;
 import com.dci.intellij.dbn.object.common.DBObject;
 import com.dci.intellij.dbn.object.lookup.DBObjectRef;
@@ -98,9 +98,10 @@ public class ObjectPropertiesForm extends DBNFormBase {
                     objectLabel.setIcon(object.getIcon());
                     objectTypeLabel.setText(Naming.capitalize(object.getTypeName()) + ":");
 
+                    ObjectPropertiesTable objectPropertiesTable = getObjectPropertiesTable();
                     ObjectPropertiesTableModel oldTableModel = (ObjectPropertiesTableModel) objectPropertiesTable.getModel();
                     objectPropertiesTable.setModel(tableModel);
-                    ((DBNTable<?>) objectPropertiesTable).accommodateColumnsSize();
+                    objectPropertiesTable.accommodateColumnsSize();
 
                     UserInterface.repaint(mainPanel);
                     SafeDisposer.dispose(oldTableModel, false);
@@ -108,6 +109,10 @@ public class ObjectPropertiesForm extends DBNFormBase {
 
             });
         }
+    }
+
+    public ObjectPropertiesTable getObjectPropertiesTable() {
+        return (ObjectPropertiesTable) Failsafe.nn(objectPropertiesTable);
     }
 
     private void createUIComponents() {
