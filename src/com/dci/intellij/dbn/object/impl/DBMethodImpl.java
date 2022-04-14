@@ -188,8 +188,8 @@ public abstract class DBMethodImpl<M extends DBMethodMetadata> extends DBSchemaO
                     @Override
                     public ResultSet createResultSet(DynamicContent<DBArgument> dynamicContent, DBNConnection connection) throws SQLException {
                         DatabaseMetadataInterface metadataInterface = dynamicContent.getMetadataInterface();
-                        DBMethod method = (DBMethod) dynamicContent.getParentEntity();
-                        String ownerName = method.getSchema().getName();
+                        DBMethod method = dynamicContent.getParentEntity();
+                        String ownerName = getSchemaName(method);
                         short overload = method.getOverload();
                         DBProgram program = method.getProgram();
                         if (program == null) {
@@ -211,8 +211,8 @@ public abstract class DBMethodImpl<M extends DBMethodMetadata> extends DBSchemaO
 
                     @Override
                     public DBArgument createElement(DynamicContent<DBArgument> content, DBArgumentMetadata metadata, LoaderCache cache) throws SQLException {
-                        DBMethod method = (DBMethod) content.getParentEntity();
-                        return new DBArgumentImpl(method, metadata);
+                        DBMethod method = content.getParentEntity();
+                        return method == null ? null : new DBArgumentImpl(method, metadata);
                     }
                 };
             }
