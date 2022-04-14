@@ -12,7 +12,7 @@ public class Exceptions {
         if (e instanceof SQLException) {
             return (SQLException) e;
         } else {
-            return new SQLException(e.getMessage(), e);
+            return new SQLException(Commons.nvl(e.getMessage(), e.getClass().getSimpleName()), e);
         }
     }
 
