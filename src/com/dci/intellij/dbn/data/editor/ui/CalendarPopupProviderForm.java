@@ -150,21 +150,17 @@ public class CalendarPopupProviderForm extends TextFieldPopupProviderForm implem
     }
 
     private Date getDateForPopup() {
-        TextFieldWithPopup<?> editorComponent = getEditorComponent();
-        if (editorComponent != null) {
-            if (editorComponent.getUserValueHolder() == null) {
-                String dateString = editorComponent.getTextField().getText();
-                try {
-                    return getFormatter().parseDateTime(dateString);
-                } catch (ParseException e) {
-                    return new Date();
-                }
-            } else {
-                Object userValue = editorComponent.getUserValueHolder().getUserValue();
-                return userValue instanceof Date ? (Date) userValue : new Date();
+        if (getEditorComponent().getUserValueHolder() == null) {
+            String dateString = getEditorComponent().getTextField().getText();
+            try {
+                return getFormatter().parseDateTime(dateString);
+            } catch (ParseException e) {
+                return new Date();
             }
+        } else {
+            Object userValue = getEditorComponent().getUserValueHolder().getUserValue();
+            return userValue instanceof Date ? (Date) userValue : new Date();
         }
-        return new Date();
     }
 
     @Override

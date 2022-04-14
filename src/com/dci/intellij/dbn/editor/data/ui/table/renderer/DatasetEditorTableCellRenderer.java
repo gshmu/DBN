@@ -13,7 +13,7 @@ import com.dci.intellij.dbn.editor.data.ui.table.DatasetEditorTable;
 import com.intellij.ui.SimpleTextAttributes;
 
 import javax.swing.border.Border;
-import java.awt.*;
+import java.awt.Color;
 
 import static com.dci.intellij.dbn.editor.data.model.RecordStatus.*;
 
@@ -32,33 +32,35 @@ public class DatasetEditorTableCellRenderer extends BasicTableCellRenderer {
             boolean isLoading = datasetEditorTable.isLoading();
             boolean isInserting = datasetEditorTable.isInserting();
 
-            boolean isDeletedRow = row.is(DELETED);
-            boolean isInsertRow = row.is(INSERTING);
-            boolean isCaretRow = !isInsertRow && table.getCellSelectionEnabled() && table.getSelectedRow() == rowIndex && table.getSelectedRowCount() == 1;
-            boolean isModified = cell.is(MODIFIED);
-            boolean isTrackingColumn = columnInfo.isTrackingColumn();
-            boolean isConnected = Failsafe.nn(datasetEditorTable.getDatasetEditor().getConnection()).isConnected();
+            boolean deletedRow = row.is(DELETED);
+            boolean insertRow = row.is(INSERTING);
+            boolean caretRow = !insertRow && table.getCellSelectionEnabled() && table.getSelectedRow() == rowIndex && table.getSelectedRowCount() == 1;
+            boolean modified = cell.is(MODIFIED);
+            boolean trackingColumn = columnInfo != null && columnInfo.isTrackingColumn();
+            boolean primaryKey = columnInfo != null && columnInfo.isPrimaryKey();
+            boolean foreignKey = columnInfo != null && columnInfo.isForeignKey();
+            boolean connected = Failsafe.nn(datasetEditorTable.getDatasetEditor().getConnection()).isConnected();
 
             BasicTableTextAttributes attributes = (BasicTableTextAttributes) getAttributes();
-            SimpleTextAttributes textAttributes = attributes.getPlainData(isModified, isCaretRow);
+            SimpleTextAttributes textAttributes = attributes.getPlainData(modified, caretRow);
 
             if (isSelected) {
                 textAttributes = attributes.getSelection();
             } else {
-                if (isLoading || isDirty || !isConnected) {
-                    textAttributes = attributes.getLoadingData(isCaretRow);
-                } else if (isDeletedRow) {
+                if (isLoading || isDirty || !connected) {
+                    textAttributes = attributes.getLoadingData(caretRow);
+                } else if (deletedRow) {
                     textAttributes = attributes.getDeletedData();
-                } else if ((isInserting && !isInsertRow)) {
-                    textAttributes = attributes.getReadonlyData(isModified, isCaretRow);
-                } else if (columnInfo.isPrimaryKey()) {
-                    textAttributes = attributes.getPrimaryKey(isModified, isCaretRow);
-                } else if (columnInfo.isForeignKey()) {
-                    textAttributes = attributes.getForeignKey(isModified, isCaretRow);
+                } else if ((isInserting && !insertRow)) {
+                    textAttributes = attributes.getReadonlyData(modified, caretRow);
+                } else if (primaryKey) {
+                    textAttributes = attributes.getPrimaryKey(modified, caretRow);
+                } else if (foreignKey) {
+                    textAttributes = attributes.getForeignKey(modified, caretRow);
                 } else if (cell.isLobValue() || cell.isArrayValue()) {
-                    textAttributes = attributes.getReadonlyData(isModified, isCaretRow);
-                } else if (isTrackingColumn) {
-                    textAttributes = attributes.getTrackingData(isModified, isCaretRow);
+                    textAttributes = attributes.getReadonlyData(modified, caretRow);
+                } else if (trackingColumn) {
+                    textAttributes = attributes.getTrackingData(modified, caretRow);
                 }
             }
 
@@ -68,14 +70,14 @@ public class DatasetEditorTableCellRenderer extends BasicTableCellRenderer {
 
             Border border = Borders.lineBorder(background);
 
-            if (cell.hasError() && isConnected) {
+            if (cell.hasError() && connected) {
                 border = Borders.lineBorder(SimpleTextAttributes.ERROR_ATTRIBUTES.getFgColor());
                 SimpleTextAttributes errorData = attributes.getErrorData();
                 background = errorData.getBgColor();
                 foreground = errorData.getFgColor();
                 textAttributes = textAttributes.derive(errorData.getStyle(), foreground, background, null);
-            } else if (isTrackingColumn && !isSelected) {
-                SimpleTextAttributes trackingDataAttr = attributes.getTrackingData(isModified, isCaretRow);
+            } else if (trackingColumn && !isSelected) {
+                SimpleTextAttributes trackingDataAttr = attributes.getTrackingData(modified, caretRow);
                 foreground = Commons.nvl(trackingDataAttr.getFgColor(), foreground);
                 textAttributes = textAttributes.derive(textAttributes.getStyle(), foreground, background, null);
             }
