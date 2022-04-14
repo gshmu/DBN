@@ -243,7 +243,7 @@ public class BasicTable<T extends BasicDataModel<?, ?>> extends DBNTableWithGutt
 
     public void selectRow(int index) {
         T model = getModel();
-        int rowCount = model.getRowount();
+        int rowCount = model.getRowCount();
         int columnCount = model.getColumnCount();
         if (rowCount > index && columnCount > 0) {
             clearSelection();
