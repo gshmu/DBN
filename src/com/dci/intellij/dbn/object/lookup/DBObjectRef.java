@@ -364,9 +364,10 @@ public class DBObjectRef<T extends DBObject> implements Comparable<DBObjectRef<?
     }
 
     private void clearReference() {
+        WeakRef<T> reference = this.reference;
         if (reference != null) {
             reference.clear();
-            reference = null;
+            this.reference = null;
         }
     }
 
