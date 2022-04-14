@@ -43,7 +43,12 @@ import javax.swing.event.TableModelEvent;
 import javax.swing.table.JTableHeader;
 import javax.swing.table.TableCellRenderer;
 import javax.swing.table.TableColumn;
-import java.awt.*;
+import java.awt.Color;
+import java.awt.Component;
+import java.awt.Font;
+import java.awt.MouseInfo;
+import java.awt.Point;
+import java.awt.Rectangle;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseMotionAdapter;
 import java.math.BigDecimal;
@@ -237,8 +242,10 @@ public class BasicTable<T extends BasicDataModel<?, ?>> extends DBNTableWithGutt
     }
 
     public void selectRow(int index) {
-        int columnCount = getModel().getColumnCount();
-        if (columnCount > 0) {
+        T model = getModel();
+        int rowCount = model.getRowount();
+        int columnCount = model.getColumnCount();
+        if (rowCount > index && columnCount > 0) {
             clearSelection();
             int lastColumnIndex = Math.max(0, columnCount - 1);
             setColumnSelectionInterval(0, lastColumnIndex);
