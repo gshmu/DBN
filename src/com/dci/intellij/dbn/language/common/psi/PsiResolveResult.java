@@ -66,7 +66,8 @@ public class PsiResolveResult extends PropertyHolderBase.IntStore<PsiResolveStat
     public void postResolve(boolean cancelled) {
         set(NEW, false);
         if (!cancelled) {
-            PsiElement referencedElement = this.referencedElement == null ? null : this.referencedElement.get();
+            PsiElementRef referencedElementRef = this.referencedElement;
+            PsiElement referencedElement = referencedElementRef == null ? null : referencedElementRef.get();
             this.resolveAttempts = referencedElement == null ? resolveAttempts + 1 : 0;
             this.lastResolveInvocation = System.currentTimeMillis();
         }
