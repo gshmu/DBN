@@ -3,7 +3,11 @@ package com.dci.intellij.dbn.data.editor.ui;
 import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.common.color.Colors;
 import com.dci.intellij.dbn.common.locale.Formatter;
-import com.dci.intellij.dbn.common.ui.util.*;
+import com.dci.intellij.dbn.common.ui.util.Borders;
+import com.dci.intellij.dbn.common.ui.util.Fonts;
+import com.dci.intellij.dbn.common.ui.util.Keyboard;
+import com.dci.intellij.dbn.common.ui.util.Mouse;
+import com.dci.intellij.dbn.common.ui.util.UserInterface;
 import com.dci.intellij.dbn.common.util.Actions;
 import com.intellij.openapi.actionSystem.ActionToolbar;
 import com.intellij.openapi.actionSystem.AnAction;
@@ -17,7 +21,12 @@ import com.intellij.util.ui.JBUI;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import javax.swing.*;
+import javax.swing.Icon;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JTable;
+import javax.swing.JTextField;
+import javax.swing.ListSelectionModel;
 import javax.swing.border.Border;
 import javax.swing.border.CompoundBorder;
 import javax.swing.border.LineBorder;
@@ -26,13 +35,21 @@ import javax.swing.event.TableModelListener;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.TableCellRenderer;
 import javax.swing.table.TableModel;
-import java.awt.*;
+import java.awt.BorderLayout;
+import java.awt.Color;
+import java.awt.Component;
+import java.awt.Cursor;
+import java.awt.KeyboardFocusManager;
 import java.awt.event.FocusEvent;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
 import java.sql.Timestamp;
 import java.text.ParseException;
-import java.util.*;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.GregorianCalendar;
+import java.util.HashSet;
+import java.util.Set;
 
 public class CalendarPopupProviderForm extends TextFieldPopupProviderForm implements TableModelListener {
     private static final TableCellRenderer CELL_RENDERER = new CalendarTableCellRenderer();
@@ -133,17 +150,21 @@ public class CalendarPopupProviderForm extends TextFieldPopupProviderForm implem
     }
 
     private Date getDateForPopup() {
-        if (getEditorComponent().getUserValueHolder() == null) {
-            String dateString = getEditorComponent().getTextField().getText();
-            try {
-                return getFormatter().parseDateTime(dateString);
-            } catch (ParseException e) {
-                return new Date();
+        TextFieldWithPopup<?> editorComponent = getEditorComponent();
+        if (editorComponent != null) {
+            if (editorComponent.getUserValueHolder() == null) {
+                String dateString = editorComponent.getTextField().getText();
+                try {
+                    return getFormatter().parseDateTime(dateString);
+                } catch (ParseException e) {
+                    return new Date();
+                }
+            } else {
+                Object userValue = editorComponent.getUserValueHolder().getUserValue();
+                return userValue instanceof Date ? (Date) userValue : new Date();
             }
-        } else {
-            Object userValue = getEditorComponent().getUserValueHolder().getUserValue();
-            return userValue instanceof Date ? (Date) userValue : new Date();
         }
+        return new Date();
     }
 
     @Override
