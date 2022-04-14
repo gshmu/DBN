@@ -3,6 +3,7 @@ package com.dci.intellij.dbn.navigation.object;
 import com.dci.intellij.dbn.common.consumer.ConcurrentSetCollector;
 import com.dci.intellij.dbn.common.consumer.SetCollector;
 import com.dci.intellij.dbn.common.dispose.AlreadyDisposedException;
+import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.common.dispose.StatefulDisposable;
 import com.dci.intellij.dbn.common.project.ProjectRef;
 import com.dci.intellij.dbn.common.util.Cancellable;
@@ -34,7 +35,7 @@ public class DBObjectLookupModel extends StatefulDisposable.Base implements Choo
     private final ProjectRef project;
     private final ConnectionRef selectedConnection;
     private final DBObjectRef<DBSchema> selectedSchema;
-    private final @Getter ObjectsLookupSettings settings;
+    private final ObjectsLookupSettings settings;
     private final @Getter SetCollector<DBObject> data = ConcurrentSetCollector.create();
 
     private final ProgressIndicator progressIndicator = getProgressIndicator();
@@ -79,7 +80,7 @@ public class DBObjectLookupModel extends StatefulDisposable.Base implements Choo
 
     @Override
     public String getCheckBoxName() {
-        return settings.getForceDatabaseLoad().value() ? "Load database objects" : null;
+        return getSettings().getForceDatabaseLoad().value() ? "Load database objects" : null;
     }
 
     @Override
@@ -116,7 +117,7 @@ public class DBObjectLookupModel extends StatefulDisposable.Base implements Choo
     @NotNull
     public String[] getNames(boolean checkBoxState) {
         return Cancellable.call(EMPTY_STRING_ARRAY, () -> {
-            boolean databaseLoadActive = settings.getForceDatabaseLoad().value();
+            boolean databaseLoadActive = getSettings().getForceDatabaseLoad().value();
             boolean forceLoad = checkBoxState && databaseLoadActive;
 
             if (!forceLoad && selectedSchema != null) {
@@ -165,9 +166,13 @@ public class DBObjectLookupModel extends StatefulDisposable.Base implements Choo
     }
 
     protected boolean isObjectLookupEnabled(DBObjectType objectType) {
-        return settings.isEnabled(objectType);
+        return getSettings().isEnabled(objectType);
     }
 
+    @NotNull
+    public ObjectsLookupSettings getSettings() {
+        return Failsafe.nn(settings);
+    }
 
     @Override
     public String getElementName(@NotNull Object element) {
