@@ -228,7 +228,7 @@ public class DBTypeImpl
 
             @Override
             public boolean match(DBTypeAttribute typeAttribute, DynamicContent dynamicContent) {
-                DBType type = (DBType) dynamicContent.getParentEntity();
+                DBType type = dynamicContent.getParentEntity();
                 return Commons.match(typeAttribute.getType(), type);
             }
 
@@ -239,13 +239,16 @@ public class DBTypeImpl
                     @Override
                     public ResultSet createResultSet(DynamicContent<DBTypeAttribute> dynamicContent, DBNConnection connection) throws SQLException {
                         DatabaseMetadataInterface metadataInterface = dynamicContent.getMetadataInterface();
-                        DBType type = (DBType) dynamicContent.getParentEntity();
-                        return metadataInterface.loadTypeAttributes(type.getSchema().getName(), type.getName(), connection);
+                        DBType type = dynamicContent.getParentEntity();
+                        return metadataInterface.loadTypeAttributes(
+                                getSchemaName(type),
+                                getObjectName(type),
+                                connection);
                     }
 
                     @Override
                     public DBTypeAttribute createElement(DynamicContent<DBTypeAttribute> content, DBTypeAttributeMetadata metadata, LoaderCache cache) throws SQLException {
-                        DBTypeImpl type = (DBTypeImpl) content.getParentEntity();
+                        DBTypeImpl type = content.getParentEntity();
                         return new DBTypeAttributeImpl(type, metadata);
                     }
                 };
@@ -257,7 +260,7 @@ public class DBTypeImpl
 
             @Override
             public boolean match(DBTypeFunction function, DynamicContent dynamicContent) {
-                DBType type = (DBType) dynamicContent.getParentEntity();
+                DBType type = dynamicContent.getParentEntity();
                 return Commons.match(function.getType(), type);
             }
 
@@ -268,13 +271,16 @@ public class DBTypeImpl
                     @Override
                     public ResultSet createResultSet(DynamicContent<DBTypeFunction> dynamicContent, DBNConnection connection) throws SQLException {
                         DatabaseMetadataInterface metadataInterface = dynamicContent.getMetadataInterface();
-                        DBType type = (DBType) dynamicContent.getParentEntity();
-                        return metadataInterface.loadTypeFunctions(type.getSchema().getName(), type.getName(), connection);
+                        DBType type = dynamicContent.getParentEntity();
+                        return metadataInterface.loadTypeFunctions(
+                                getSchemaName(type),
+                                getObjectName(type),
+                                connection);
                     }
 
                     @Override
                     public DBTypeFunction createElement(DynamicContent<DBTypeFunction> content, DBFunctionMetadata metadata, LoaderCache cache) throws SQLException {
-                        DBType type = (DBType) content.getParentEntity();
+                        DBType type = content.getParentEntity();
                         return new DBTypeFunctionImpl(type, metadata);
                     }
                 };
@@ -285,7 +291,7 @@ public class DBTypeImpl
 
             @Override
             public boolean match(DBTypeProcedure procedure, DynamicContent dynamicContent) {
-                DBType type = (DBType) dynamicContent.getParentEntity();
+                DBType type = dynamicContent.getParentEntity();
                 return Commons.match(procedure.getType(), type);
             }
 
@@ -296,13 +302,16 @@ public class DBTypeImpl
                     @Override
                     public ResultSet createResultSet(DynamicContent<DBTypeProcedure> dynamicContent, DBNConnection connection) throws SQLException {
                         DatabaseMetadataInterface metadataInterface = dynamicContent.getMetadataInterface();
-                        DBType type = (DBType) dynamicContent.getParentEntity();
-                        return metadataInterface.loadTypeProcedures(type.getSchema().getName(), type.getName(), connection);
+                        DBType type = dynamicContent.getParentEntity();
+                        return metadataInterface.loadTypeProcedures(
+                                getSchemaName(type),
+                                getObjectName(type),
+                                connection);
                     }
 
                     @Override
                     public DBTypeProcedure createElement(DynamicContent<DBTypeProcedure> content, DBProcedureMetadata metadata, LoaderCache cache) throws SQLException {
-                        DBType type = (DBType) content.getParentEntity();
+                        DBType type = content.getParentEntity();
                         return new DBTypeProcedureImpl(type, metadata);
                     }
                 };
@@ -314,10 +323,11 @@ public class DBTypeImpl
             @Override
             public boolean match(DBType type, DynamicContent dynamicContent) {
                 DBType superType = type.getSuperType();
-                DBType thisType = (DBType) dynamicContent.getParentEntity();
+                DBType thisType = dynamicContent.getParentEntity();
                 return Commons.match(superType, thisType);
             }
 
+            @Nullable
             @Override
             public DynamicContentLoader<DBType, DBTypeMetadata> createAlternativeLoader() {
                 return null;

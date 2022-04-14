@@ -9,7 +9,11 @@ import com.dci.intellij.dbn.common.content.dependency.SubcontentDependencyAdapte
 import com.dci.intellij.dbn.common.thread.ThreadMonitor;
 import com.dci.intellij.dbn.common.thread.ThreadProperty;
 import com.dci.intellij.dbn.common.util.CollectionUtil;
+import com.dci.intellij.dbn.common.util.Safe;
 import com.dci.intellij.dbn.database.common.metadata.DBObjectMetadata;
+import com.dci.intellij.dbn.object.DBSchema;
+import com.dci.intellij.dbn.object.common.DBObject;
+import com.dci.intellij.dbn.object.common.DBSchemaObject;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -103,8 +107,19 @@ public abstract class DynamicSubcontentLoader<
         return alternativeLoader;
     }
 
-    @org.jetbrains.annotations.Nullable
+    @Nullable
     protected DynamicContentLoader<T, M> createAlternativeLoader() {
         return null;
+    }
+
+    @Nullable
+    protected static String getObjectName(DBObject object) {
+        return Safe.call(object, o -> o.getName());
+    }
+
+    @Nullable
+    protected static String getSchemaName(DBSchemaObject object) {
+        DBSchema schema = Safe.call(object, o -> o.getSchema());
+        return Safe.call(schema, s -> s.getName());
     }
 }
