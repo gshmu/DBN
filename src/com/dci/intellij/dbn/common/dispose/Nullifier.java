@@ -2,7 +2,6 @@ package com.dci.intellij.dbn.common.dispose;
 
 import com.dci.intellij.dbn.common.latent.Latent;
 import com.dci.intellij.dbn.common.options.Configuration;
-import com.dci.intellij.dbn.common.util.Unsafe;
 import com.dci.intellij.dbn.connection.DatabaseEntity;
 import com.intellij.openapi.components.NamedComponent;
 import com.intellij.openapi.editor.Document;
@@ -21,6 +20,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
+
+import static com.dci.intellij.dbn.common.util.Unsafe.silent;
 
 @Slf4j
 public final class Nullifier {
@@ -43,11 +44,22 @@ public final class Nullifier {
     };
 
     public static void clearCollection(Collection<?> collection) {
-        Unsafe.silent(() -> collection.clear());
+        if (collection != null && !collection.isEmpty()) {
+            boolean cleared = silent(() -> collection.clear());
+            if (!cleared && collection instanceof List) {
+                silent(() -> nullify((List<?>) collection));
+            }
+        }
     }
 
     public static void clearMap(Map<?, ?> map) {
-        Unsafe.silent(() -> map.clear());
+        silent(() -> map.clear());
+    }
+
+    private static void nullify(List<?> collection) {
+        for (int i = 0; i<collection.size(); i++) {
+            collection.set(i, null);
+        }
     }
 
     public static void nullify(Object object) {
