@@ -6,6 +6,12 @@ import com.dci.intellij.dbn.object.common.DBObject;
 public interface SearchAdapter<T> {
     int compare(T element);
 
+    static <O extends DBObject> SearchAdapter<O> forObject(String name) {
+        return object -> {
+            String objName = object.getName();
+            return objName.compareToIgnoreCase(name);
+        };
+    }
 
     static <O extends DBObject> SearchAdapter<O> forObject(String name, short overload) {
         return object -> {
