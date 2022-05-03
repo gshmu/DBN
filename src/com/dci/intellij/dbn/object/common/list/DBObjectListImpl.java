@@ -16,7 +16,6 @@ import com.dci.intellij.dbn.common.event.ProjectEvents;
 import com.dci.intellij.dbn.common.filter.CompoundFilter;
 import com.dci.intellij.dbn.common.filter.Filter;
 import com.dci.intellij.dbn.common.ui.tree.TreeEventType;
-import com.dci.intellij.dbn.common.util.Search;
 import com.dci.intellij.dbn.common.util.SearchAdapter;
 import com.dci.intellij.dbn.common.util.Strings;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
@@ -24,6 +23,7 @@ import com.dci.intellij.dbn.connection.DatabaseEntity;
 import com.dci.intellij.dbn.connection.config.ConnectionFilterSettings;
 import com.dci.intellij.dbn.database.common.metadata.DBObjectMetadata;
 import com.dci.intellij.dbn.navigation.psi.DBObjectListPsiDirectory;
+import com.dci.intellij.dbn.object.DBColumn;
 import com.dci.intellij.dbn.object.DBSchema;
 import com.dci.intellij.dbn.object.common.DBObject;
 import com.dci.intellij.dbn.object.common.DBObjectBundle;
@@ -49,6 +49,8 @@ import java.util.List;
 import java.util.function.Consumer;
 
 import static com.dci.intellij.dbn.common.content.DynamicContentStatus.*;
+import static com.dci.intellij.dbn.common.util.Search.binarySearch;
+import static com.dci.intellij.dbn.common.util.Search.linearSearch;
 import static com.dci.intellij.dbn.object.type.DBObjectType.*;
 
 public class DBObjectListImpl<T extends DBObject> extends DynamicContentImpl<T> implements DBObjectList<T> {
@@ -182,29 +184,50 @@ public class DBObjectListImpl<T extends DBObject> extends DynamicContentImpl<T> 
         if (name != null) {
             List<T> elements = getAllElements();
             if (!elements.isEmpty()) {
-                if (objectType == COLUMN ||
-                        objectType == ARGUMENT ||
-                        objectType == TYPE_ATTRIBUTE) {
-
+                if (objectType == ARGUMENT || objectType == TYPE_ATTRIBUTE) {
                     // arguments and type attributes are sorted by position (linear search)
-                    // TODO columns are sorted by PK first, then by name - split binary search possible
                     return super.getElement(name, overload);
 
                 } else if (objectType == TYPE) {
-                    T element = Search.binarySearch(elements, SearchAdapter.forType(name, overload, false));
+                    SearchAdapter<T> searchAdapter = SearchAdapter.forType(name, overload, false);
+                    T element = binarySearch(elements, searchAdapter);
                     if (element == null) {
-                        element = Search.binarySearch(elements, SearchAdapter.forType(name, overload, true));
+                        searchAdapter = SearchAdapter.forType(name, overload, true);
+                        element = binarySearch(elements, searchAdapter);
                     }
                     return element;
 
-                } else if (is(SCANNABLE)) {
-                    return Search.binarySearch(elements, SearchAdapter.forObject(name, overload));
+                } else if (isSearchable()) {
+                    if (objectType == COLUMN) {
+                        SearchAdapter<T> searchAdapter = SearchAdapter.forObject(name);
+                        T element = binarySearch(elements, searchAdapter);
+                        if (element == null) {
+                            // primary key columns are sorted by position at beginning ot the list of elements
+                            element = linearSearch(elements,
+                                    e -> e.getName().equalsIgnoreCase(name),
+                                    e -> ((DBColumn) e).isPrimaryKey());
+                        }
+                        return element;
+
+                    } else if (objectType.isOverloadable()) {
+                        SearchAdapter<T> searchAdapter = SearchAdapter.forObject(name, overload);
+                        return binarySearch(elements, searchAdapter);
+
+                    } else {
+                        SearchAdapter<T> searchAdapter = SearchAdapter.forObject(name);
+                        return binarySearch(elements, searchAdapter);
+
+                    }
                 } else {
                     super.getElement(name, overload);
                 }
             }
         }
         return null;
+    }
+
+    private boolean isSearchable() {
+        return is(SEARCHABLE);
     }
 
     @Override
@@ -229,10 +252,10 @@ public class DBObjectListImpl<T extends DBObject> extends DynamicContentImpl<T> 
 
         if (comparator != null) {
             elements.sort(comparator);
-            set(SCANNABLE, comparator.getSortingType() == SortingType.NAME);
+            set(SEARCHABLE, comparator.getSortingType() == SortingType.NAME);
         } else {
             super.sortElements(elements);
-            set(SCANNABLE, true);
+            set(SEARCHABLE, true);
         }
     }
 

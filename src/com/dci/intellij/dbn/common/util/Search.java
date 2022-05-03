@@ -1,6 +1,7 @@
 package com.dci.intellij.dbn.common.util;
 
 import java.util.List;
+import java.util.function.Function;
 
 public final class Search {
     private Search() {}
@@ -23,6 +24,20 @@ public final class Search {
 
                 right = mid - 1;
             }
+        }
+        return null;
+    }
+
+
+    public static <T> T linearSearch(List<T> list, Function<T, Boolean> match, Function<T, Boolean> condition) {
+        int index = 0;
+        T element = list.get(index);
+        while (condition.apply(element)) {
+            if (match.apply(element)) {
+                return element;
+            }
+            index++;
+            element = list.get(index);
         }
         return null;
     }
