@@ -1,11 +1,13 @@
 package com.dci.intellij.dbn.common.list;
 
+import com.dci.intellij.dbn.common.collections.FixedArrayList;
 import com.dci.intellij.dbn.common.filter.Filter;
 import com.dci.intellij.dbn.common.latent.Latent;
 import com.dci.intellij.dbn.common.util.Compactables;
 import com.dci.intellij.dbn.common.util.Lists;
 import lombok.SneakyThrows;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -15,10 +17,22 @@ import java.util.List;
 import java.util.ListIterator;
 import java.util.concurrent.Callable;
 
+import static com.dci.intellij.dbn.common.util.Unsafe.cast;
+
 final class StatefulFilteredList<T> extends FilteredListBase<T> {
     private final Latent<List<T>> inner = Latent.mutable(
             () -> filterSignature(),
-            () -> filter == null  || filter.isEmpty() ? null : Lists.filtered(base, t -> filter.accepts(t)));
+            () -> createInner());
+
+    @Nullable
+    private List<T> createInner() {
+        if (filter == null || filter.isEmpty()) {
+            return null;
+        }
+
+        List<T> filtered = cast(Lists.filtered(base, t -> filter.accepts(t)));
+        return FixedArrayList.from(filtered);
+    }
 
 
     StatefulFilteredList(Filter<T> filter, List<T> base) {
