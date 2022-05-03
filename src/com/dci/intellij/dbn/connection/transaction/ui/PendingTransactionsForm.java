@@ -3,8 +3,8 @@ package com.dci.intellij.dbn.connection.transaction.ui;
 import com.dci.intellij.dbn.common.dispose.DisposableContainers;
 import com.dci.intellij.dbn.common.event.ProjectEvents;
 import com.dci.intellij.dbn.common.thread.Dispatch;
-import com.dci.intellij.dbn.common.ui.util.Borders;
 import com.dci.intellij.dbn.common.ui.form.DBNFormBase;
+import com.dci.intellij.dbn.common.ui.util.Borders;
 import com.dci.intellij.dbn.common.ui.util.UserInterface;
 import com.dci.intellij.dbn.connection.ConnectionBundle;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
@@ -32,7 +32,7 @@ public class PendingTransactionsForm extends DBNFormBase {
     private JPanel actionsPanel;
     private JPanel detailsPanel;
     private JList<ConnectionHandler> connectionsList;
-    private final List<ConnectionHandler> connectionHandlers = new ArrayList<>();
+    private final List<ConnectionHandler> connections = new ArrayList<>();
 
     private final Map<ConnectionId, PendingTransactionsDetailForm> uncommittedChangeForms = DisposableContainers.map(this);
 
@@ -59,7 +59,7 @@ public class PendingTransactionsForm extends DBNFormBase {
         ConnectionBundle connectionBundle = connectionManager.getConnectionBundle();
         for (ConnectionHandler connection : connectionBundle.getConnections()) {
             if (connection.hasUncommittedChanges()) {
-                connectionHandlers.add(connection);
+                connections.add(connection);
                 model.addElement(connection);
             }
         }
@@ -70,7 +70,7 @@ public class PendingTransactionsForm extends DBNFormBase {
     }
 
     boolean hasUncommittedChanges() {
-        for (ConnectionHandler connection : connectionHandlers) {
+        for (ConnectionHandler connection : connections) {
             if (connection.hasUncommittedChanges()) {
                 return true;
             }
@@ -84,8 +84,8 @@ public class PendingTransactionsForm extends DBNFormBase {
         return mainPanel;
     }
 
-    public List<ConnectionHandler> getConnectionHandlers (){
-        return connectionHandlers;
+    public List<ConnectionHandler> getConnections(){
+        return connections;
     }
 
     public void showChangesForm(ConnectionHandler connection) {
@@ -137,7 +137,7 @@ public class PendingTransactionsForm extends DBNFormBase {
 
     @Override
     public void disposeInner() {
-        connectionHandlers.clear();
+        connections.clear();
         super.disposeInner();
     }
 

@@ -92,10 +92,10 @@ public class PendingTransactionsDialog extends DBNDialog<PendingTransactionsForm
 
     private void executeActions(List<TransactionAction> actions) {
         DatabaseTransactionManager transactionManager = getTransactionManager();
-        List<ConnectionHandler> connectionHandlers = new ArrayList<>(getForm().getConnectionHandlers());
-        for (ConnectionHandler connection : connectionHandlers) {
-            List<DBNConnection> connections = connection.getConnections(ConnectionType.MAIN, ConnectionType.SESSION);
-            for (DBNConnection conn : connections) {
+        List<ConnectionHandler> connections = new ArrayList<>(getForm().getConnections());
+        for (ConnectionHandler connection : connections) {
+            List<DBNConnection> conns = connection.getConnections(ConnectionType.MAIN, ConnectionType.SESSION);
+            for (DBNConnection conn : conns) {
                 transactionManager.execute(connection, conn, actions, true, null);
             }
 

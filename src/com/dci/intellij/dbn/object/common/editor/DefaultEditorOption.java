@@ -2,21 +2,15 @@ package com.dci.intellij.dbn.object.common.editor;
 
 
 import com.dci.intellij.dbn.object.type.DBObjectType;
+import lombok.Getter;
 
+@Getter
 public class DefaultEditorOption {
-    private DBObjectType objectType;
-    private DefaultEditorType editorType;
+    private final DBObjectType objectType;
+    private final DefaultEditorType editorType;
 
     public DefaultEditorOption(DBObjectType objectType, DefaultEditorType editorType) {
         this.objectType = objectType;
         this.editorType = editorType;
-    }
-
-    public DBObjectType getObjectType() {
-        return objectType;
-    }
-
-    public DefaultEditorType getEditorType() {
-        return editorType;
     }
 }

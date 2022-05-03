@@ -7,9 +7,8 @@ import lombok.Getter;
 import lombok.Setter;
 import org.jdom.Element;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
+import java.util.LinkedHashMap;
+import java.util.Map;
 
 import static com.dci.intellij.dbn.common.options.setting.SettingsSupport.stringAttribute;
 
@@ -17,7 +16,7 @@ import static com.dci.intellij.dbn.common.options.setting.SettingsSupport.string
 @Setter
 @EqualsAndHashCode
 public class CodeStyleFormattingOption implements PersistentConfiguration {
-    private final List<CodeStylePreset> presets = new ArrayList<>();
+    private final Map<String, CodeStylePreset> presets = new LinkedHashMap<>();
     private String name;
     private String displayName;
     private CodeStylePreset preset;
@@ -28,19 +27,20 @@ public class CodeStyleFormattingOption implements PersistentConfiguration {
     }
 
     public void addPreset(CodeStylePreset preset) {
-        presets.add(preset);
+        presets.put(preset.getId(), preset);
     }
 
     public void addPreset(CodeStylePreset preset, boolean makeDefault) {
-        presets.add(preset);
+        presets.put(preset.getId(), preset);
         if (makeDefault) this.preset = preset;
     }
 
-    private CodeStylePreset getCodeStylePreset(String id) {
-        for (CodeStylePreset preset : presets) {
-            if (Objects.equals(preset.getId(), id)) return preset;
-        }
-        return null;
+    public CodeStylePreset[] getPresets() {
+        return presets.values().toArray(new CodeStylePreset[0]);
+    }
+
+    private CodeStylePreset getPreset(String id) {
+        return presets.get(id);
     }
 
     /*********************************************************
@@ -50,7 +50,7 @@ public class CodeStyleFormattingOption implements PersistentConfiguration {
     public void readConfiguration(Element element) {
         name = stringAttribute(element, "name");
         String presetId = stringAttribute(element, "value");
-        CodeStylePreset newPreset = getCodeStylePreset(presetId);
+        CodeStylePreset newPreset = getPreset(presetId);
         if (newPreset != null) preset = newPreset;
     }
 

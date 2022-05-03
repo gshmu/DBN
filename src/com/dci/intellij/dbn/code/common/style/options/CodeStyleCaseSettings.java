@@ -8,9 +8,8 @@ import lombok.Setter;
 import org.jdom.Element;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
+import java.util.LinkedHashMap;
+import java.util.Map;
 
 import static com.dci.intellij.dbn.common.options.setting.SettingsSupport.*;
 
@@ -18,16 +17,20 @@ import static com.dci.intellij.dbn.common.options.setting.SettingsSupport.*;
 @Setter
 @EqualsAndHashCode(callSuper = false)
 public abstract class CodeStyleCaseSettings extends BasicConfiguration<CodeStyleCustomSettings, CodeStyleCaseSettingsForm> {
-    private final List<CodeStyleCaseOption> options = new ArrayList<>();
+    private final Map<String, CodeStyleCaseOption> options = new LinkedHashMap<>();
     private boolean enabled = true;
 
     public CodeStyleCaseSettings(CodeStyleCustomSettings parent) {
         super(parent);
-        options.add(new CodeStyleCaseOption("KEYWORD_CASE", CodeStyleCase.LOWER, false));
-        options.add(new CodeStyleCaseOption("FUNCTION_CASE", CodeStyleCase.LOWER, false));
-        options.add(new CodeStyleCaseOption("PARAMETER_CASE", CodeStyleCase.LOWER, false));
-        options.add(new CodeStyleCaseOption("DATATYPE_CASE", CodeStyleCase.LOWER, false));
-        options.add(new CodeStyleCaseOption("OBJECT_CASE", CodeStyleCase.PRESERVE, true));
+        addOption("KEYWORD_CASE", CodeStyleCase.LOWER, false);
+        addOption("FUNCTION_CASE", CodeStyleCase.LOWER, false);
+        addOption("PARAMETER_CASE", CodeStyleCase.LOWER, false);
+        addOption("DATATYPE_CASE", CodeStyleCase.LOWER, false);
+        addOption("OBJECT_CASE", CodeStyleCase.PRESERVE, true);
+    }
+
+    private void addOption(String id, CodeStyleCase option, boolean ignoreMixedCase) {
+        options.put(id, new CodeStyleCaseOption(id, option, ignoreMixedCase));
     }
 
 
@@ -58,10 +61,7 @@ public abstract class CodeStyleCaseSettings extends BasicConfiguration<CodeStyle
     }
 
     private CodeStyleCaseOption getCodeStyleCaseOption(String name) {
-        for (CodeStyleCaseOption option : options) {
-            if (Objects.equals(option.getName(), name)) return option;
-        }
-        return null;
+        return options.get(name);
     }
 
     /*********************************************************
@@ -93,7 +93,7 @@ public abstract class CodeStyleCaseSettings extends BasicConfiguration<CodeStyle
     @Override
     public void writeConfiguration(Element element) {
         setBooleanAttribute(element, "enabled", enabled);
-        for (CodeStyleCaseOption option : options) {
+        for (CodeStyleCaseOption option : options.values()) {
             Element optionElement = new Element("option");
             option.writeConfiguration(optionElement);
             element.addContent(optionElement);
