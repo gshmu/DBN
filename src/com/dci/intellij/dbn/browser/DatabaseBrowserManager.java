@@ -353,8 +353,8 @@ public class DatabaseBrowserManager extends AbstractProjectComponent implements 
         element.addContent(nodesElement);
 
         ConnectionManager connectionManager = ConnectionManager.getInstance(getProject());
-        List<ConnectionHandler> connectionHandlers = connectionManager.getConnections();
-        for (ConnectionHandler connection : connectionHandlers) {
+        List<ConnectionHandler> connections = connectionManager.getConnections();
+        for (ConnectionHandler connection : connections) {
             ConnectionDetailSettings settings = connection.getSettings().getDetailSettings();
             if (settings.isRestoreWorkspaceDeep()) {
                 Element connectionElement = new Element("connection");

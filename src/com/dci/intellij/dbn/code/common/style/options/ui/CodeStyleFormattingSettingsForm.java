@@ -11,9 +11,13 @@ import com.intellij.uiDesigner.core.GridConstraints;
 import com.intellij.uiDesigner.core.GridLayoutManager;
 import com.intellij.uiDesigner.core.Spacer;
 import com.intellij.util.ui.JBUI;
+import lombok.val;
 import org.jetbrains.annotations.NotNull;
 
-import javax.swing.*;
+import javax.swing.JCheckBox;
+import javax.swing.JComboBox;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -27,10 +31,10 @@ public class CodeStyleFormattingSettingsForm extends ConfigurationEditorForm<Cod
 
     public CodeStyleFormattingSettingsForm(CodeStyleFormattingSettings settings) {
         super(settings);
-        List<CodeStyleFormattingOption> options = settings.getOptions();
-        settingsPanel.setLayout(new GridLayoutManager(options.size() + 1, 2, JBUI.insets(4), -1, -1));
-        for (int i=0; i< options.size(); i++) {
-            CodeStyleFormattingOption option = options.get(i);
+        CodeStyleFormattingOption[] options = settings.getOptions();
+        settingsPanel.setLayout(new GridLayoutManager(options.length + 1, 2, JBUI.insets(4), -1, -1));
+        for (int i=0; i< options.length; i++) {
+            CodeStyleFormattingOption option = options[i];
             JLabel label = new JLabel(option.getDisplayName());
             settingsPanel.add(label,
                     new GridConstraints(i, 0, 1, 1,
@@ -40,7 +44,7 @@ public class CodeStyleFormattingSettingsForm extends ConfigurationEditorForm<Cod
                             GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
 
             JComboBox<CodeStylePreset> comboBox = new ComboBox<>();
-            initComboBox(comboBox, option.getPresets().toArray(new CodeStylePreset[0]));
+            initComboBox(comboBox, option.getPresets());
             label.setLabelFor(comboBox);
 
             settingsPanel.add(comboBox,
@@ -57,7 +61,7 @@ public class CodeStyleFormattingSettingsForm extends ConfigurationEditorForm<Cod
         enableDisableOptions();
         
         settingsPanel.add(new Spacer(),
-                new GridConstraints(options.size(), 1, 1, 1,
+                new GridConstraints(options.length, 1, 1, 1,
                         GridConstraints.ANCHOR_CENTER,
                         GridConstraints.FILL_VERTICAL, 1,
                         GridConstraints.SIZEPOLICY_WANT_GROW, null, null, null, 0, false));
@@ -84,7 +88,7 @@ public class CodeStyleFormattingSettingsForm extends ConfigurationEditorForm<Cod
 
     @Override
     public void applyFormChanges() throws ConfigurationException {
-        for (Pair<CodeStyleFormattingOption, JComboBox<CodeStylePreset>> mapping : mappings) {
+        for (val mapping : mappings) {
             CodeStyleFormattingOption option = mapping.first();
             JComboBox<CodeStylePreset> comboBox = mapping.second();
             option.setPreset(getSelection(comboBox));
@@ -95,7 +99,7 @@ public class CodeStyleFormattingSettingsForm extends ConfigurationEditorForm<Cod
 
     @Override
     public void resetFormChanges() {
-        for (Pair<CodeStyleFormattingOption, JComboBox<CodeStylePreset>> mapping : mappings) {
+        for (val mapping : mappings) {
             CodeStyleFormattingOption option = mapping.first();
             JComboBox<CodeStylePreset> comboBox = mapping.second();
             setSelection(comboBox, option.getPreset());

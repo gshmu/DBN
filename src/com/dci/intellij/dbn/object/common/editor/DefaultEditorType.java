@@ -2,8 +2,9 @@ package com.dci.intellij.dbn.object.common.editor;
 
 import com.dci.intellij.dbn.common.ui.Presentable;
 import com.dci.intellij.dbn.object.type.DBObjectType;
-import org.jetbrains.annotations.NotNull;
+import lombok.Getter;
 
+@Getter
 public enum DefaultEditorType implements Presentable{
     CODE("Code"),
     DATA("Data"),
@@ -11,7 +12,7 @@ public enum DefaultEditorType implements Presentable{
     BODY("Body"),
     SELECTION("Last Selection");
 
-    private String name;
+    private final String name;
 
     DefaultEditorType(String name) {
         this.name = name;
@@ -24,12 +25,6 @@ public enum DefaultEditorType implements Presentable{
             case TYPE: return new DefaultEditorType[]{SPEC, BODY, SELECTION};
         }
         return new DefaultEditorType[0];
-    }
-
-    @NotNull
-    @Override
-    public String getName() {
-        return name;
     }
 
     @Override

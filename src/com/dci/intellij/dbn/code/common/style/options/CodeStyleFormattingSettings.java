@@ -1,16 +1,18 @@
 package com.dci.intellij.dbn.code.common.style.options;
 
 import com.dci.intellij.dbn.code.common.style.options.ui.CodeStyleFormattingSettingsForm;
+import com.dci.intellij.dbn.code.common.style.presets.CodeStylePreset;
 import com.dci.intellij.dbn.common.options.BasicConfiguration;
+import com.dci.intellij.dbn.language.common.psi.BasePsiElement;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
 import org.jdom.Element;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
+import java.util.LinkedHashMap;
+import java.util.Map;
 
 import static com.dci.intellij.dbn.common.options.setting.SettingsSupport.*;
 
@@ -18,7 +20,7 @@ import static com.dci.intellij.dbn.common.options.setting.SettingsSupport.*;
 @Setter
 @EqualsAndHashCode(callSuper = false)
 public abstract class CodeStyleFormattingSettings extends BasicConfiguration<CodeStyleCustomSettings, CodeStyleFormattingSettingsForm> {
-    private final List<CodeStyleFormattingOption> options = new ArrayList<>();
+    private final Map<String, CodeStyleFormattingOption> options = new LinkedHashMap<>();
     private boolean enabled = false;
 
     public CodeStyleFormattingSettings(CodeStyleCustomSettings parent) {
@@ -31,13 +33,23 @@ public abstract class CodeStyleFormattingSettings extends BasicConfiguration<Cod
     }
 
     protected void addOption(CodeStyleFormattingOption option) {
-        options.add(option);
+        options.put(option.getName(), option);
     }
 
     private CodeStyleFormattingOption getCodeStyleCaseOption(String name) {
-        for (CodeStyleFormattingOption option : options) {
-            if (Objects.equals(option.getName(), name)) {
-                return option;
+        return options.get(name);
+    }
+
+    public CodeStyleFormattingOption[] getOptions() {
+        return options.values().toArray(new CodeStyleFormattingOption[0]);
+    }
+
+    @Nullable
+    public CodeStylePreset getPreset(BasePsiElement element) {
+        for (CodeStyleFormattingOption option : options.values()) {
+            CodeStylePreset preset = option.getPreset();
+            if (preset.accepts(element)) {
+                return preset;
             }
         }
         return null;
@@ -72,7 +84,7 @@ public abstract class CodeStyleFormattingSettings extends BasicConfiguration<Cod
     @Override
     public void writeConfiguration(Element element) {
         setBooleanAttribute(element, "enabled", enabled);
-        for (CodeStyleFormattingOption option : options) {
+        for (CodeStyleFormattingOption option : options.values()) {
             Element optionElement = new Element("option");
             option.writeConfiguration(optionElement);
             element.addContent(optionElement);
