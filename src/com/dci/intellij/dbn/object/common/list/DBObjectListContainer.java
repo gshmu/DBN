@@ -196,10 +196,10 @@ public final class DBObjectListContainer implements StatefulDisposable {
         if (objects != null) {
             for (DBObjectList<?> objectList : objects) {
                 if (check(objectList) && objectList.isLoaded() && !objectList.isDirty()) {
-                    DBObject object = objectList.getObject(name, overload);
-                    if (object != null) {
-                        DatabaseEntity owner = getOwner();
-                        if (owner instanceof DBObject) {
+                    DatabaseEntity owner = getOwner();
+                    if (owner instanceof DBObject) {
+                        DBObject object = objectList.getObject(name, overload);
+                        if (object != null) {
                             DBObject ownerObject = (DBObject) owner;
                             if (ownerObject.isParentOf(object)) {
                                 return object;

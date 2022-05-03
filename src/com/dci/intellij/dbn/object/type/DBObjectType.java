@@ -19,6 +19,7 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 import java.util.StringTokenizer;
+import java.util.concurrent.ConcurrentHashMap;
 
 @Getter
 public enum DBObjectType implements DynamicContentType<DBObjectType> {
@@ -141,6 +142,8 @@ public enum DBObjectType implements DynamicContentType<DBObjectType> {
 
     private Map<DBContentType, Icon> icons;
     private Map<DBContentType, DDLFileTypeId> ddlFileTypeIds;
+
+    private static final Map<String, DBObjectType> CACHE = new ConcurrentHashMap<>(200);
 
     DBObjectType(DatabaseObjectTypeId typeId, String name, String listName, Icon icon, Icon disabledIcon, Icon listIcon, boolean generic) {
         this.typeId = typeId;
@@ -420,18 +423,21 @@ public enum DBObjectType implements DynamicContentType<DBObjectType> {
             return null;
         }
 
-        try {
-            return valueOf(typeName);
-        } catch (IllegalArgumentException e) {
-            typeName = typeName.replace('_', ' ');
-            for (DBObjectType objectType: values()) {
-                if (Strings.equalsIgnoreCase(objectType.name, typeName)) {
-                    return objectType;
+        return CACHE.computeIfAbsent(typeName, n -> {
+            n = n.toLowerCase();
+            try {
+                return valueOf(n);
+            } catch (IllegalArgumentException e) {
+                n = n.replace('_', ' ');
+                for (DBObjectType objectType: values()) {
+                    if (Strings.equalsIgnoreCase(objectType.name, n)) {
+                        return objectType;
+                    }
                 }
+                System.out.println("ERROR - [UNKNOWN] undefined object type: " + n);
+                return UNKNOWN;
             }
-            System.out.println("ERROR - [UNKNOWN] undefined object type: " + typeName);
-            return UNKNOWN;
-        }
+        });
     }
 
     public static String toCsv(List<DBObjectType> objectTypes) {

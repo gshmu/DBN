@@ -7,7 +7,12 @@ import lombok.extern.slf4j.Slf4j;
 import java.io.Serializable;
 import java.lang.reflect.Array;
 import java.lang.reflect.Constructor;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
 import static com.dci.intellij.dbn.common.util.Unsafe.cast;
@@ -27,7 +32,7 @@ public abstract class PseudoConstant<T extends PseudoConstant<T>> implements Con
     }
 
     private static <T extends PseudoConstant<T>> Map<String, T> getRegistry(Class<T> clazz) {
-        return cast(REGISTRY.computeIfAbsent(clazz, c -> new ConcurrentHashMap<>()));
+        return cast(REGISTRY.computeIfAbsent(clazz, c -> new ConcurrentHashMap<>(100)));
     }
 
     @Override
