@@ -1,7 +1,7 @@
 package com.dci.intellij.dbn.code.common.style.formatting;
 
 import com.dci.intellij.dbn.code.common.style.options.CodeStyleCustomSettings;
-import com.dci.intellij.dbn.code.common.style.options.CodeStyleFormattingOption;
+import com.dci.intellij.dbn.code.common.style.options.CodeStyleFormattingSettings;
 import com.dci.intellij.dbn.code.common.style.presets.CodeStyleDefaultPresets;
 import com.dci.intellij.dbn.code.common.style.presets.CodeStylePreset;
 import com.dci.intellij.dbn.language.common.DBLanguage;
@@ -173,11 +173,11 @@ public class FormattingBlock implements Block {
                 return wrap;
             }*/
 
-            for (CodeStyleFormattingOption option : codeStyleCustomSettings.getFormattingSettings().getOptions()) {
-                CodeStylePreset preset = option.getPreset();
-                if (preset.accepts(basePsiElement)) {
-                    return preset.getWrap(basePsiElement, codeStyleSettings);
-                }
+
+            CodeStyleFormattingSettings formattingSettings = codeStyleCustomSettings.getFormattingSettings();
+            CodeStylePreset codeStylePreset = formattingSettings.getPreset(basePsiElement);
+            if (codeStylePreset != null) {
+                return codeStylePreset.getWrap(basePsiElement, codeStyleSettings);
             }
 
             for (CodeStylePreset preset : CodeStyleDefaultPresets.PRESETS) {
@@ -248,12 +248,10 @@ public class FormattingBlock implements Block {
             }
 
 
-            List<CodeStyleFormattingOption> formattingOptions = codeStyleCustomSettings.getFormattingSettings().getOptions();
-            for (CodeStyleFormattingOption formattingOption : formattingOptions) {
-                CodeStylePreset preset = formattingOption.getPreset();
-                if (preset.accepts(rightBasePsiElement)) {
-                    return preset.getSpacing(rightBasePsiElement, codeStyleSettings);
-                }
+            CodeStyleFormattingSettings formattingSettings = codeStyleCustomSettings.getFormattingSettings();
+            CodeStylePreset codeStylePreset = formattingSettings.getPreset(rightBasePsiElement);
+            if (codeStylePreset != null) {
+                return codeStylePreset.getSpacing(rightBasePsiElement, codeStyleSettings);
             }
 
             for (CodeStylePreset preset : CodeStyleDefaultPresets.PRESETS) {

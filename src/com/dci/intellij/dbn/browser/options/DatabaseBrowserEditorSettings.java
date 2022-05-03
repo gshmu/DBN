@@ -19,8 +19,7 @@ import static com.dci.intellij.dbn.common.options.setting.SettingsSupport.string
 @Getter
 @Setter
 @EqualsAndHashCode(callSuper = false)
-public class DatabaseBrowserEditorSettings
-        extends BasicProjectConfiguration<DatabaseBrowserSettings, DatabaseBrowserEditorSettingsForm> {
+public class DatabaseBrowserEditorSettings extends BasicProjectConfiguration<DatabaseBrowserSettings, DatabaseBrowserEditorSettingsForm> {
 
     private List<DefaultEditorOption> options = new ArrayList<>();
 

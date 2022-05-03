@@ -127,8 +127,8 @@ public class DatabaseSessionManager extends AbstractProjectComponent implements 
     public Element getState() {
         Element element = new Element("state");
         ConnectionManager connectionManager = ConnectionManager.getInstance(getProject());
-        List<ConnectionHandler> connectionHandlers = connectionManager.getConnectionBundle().getAllConnections();
-        for (ConnectionHandler connection : connectionHandlers) {
+        List<ConnectionHandler> connections = connectionManager.getConnectionBundle().getAllConnections();
+        for (ConnectionHandler connection : connections) {
             Element connectionElement = new Element("connection");
             element.addContent(connectionElement);
             connectionElement.setAttribute("id", connection.getConnectionId().id());
