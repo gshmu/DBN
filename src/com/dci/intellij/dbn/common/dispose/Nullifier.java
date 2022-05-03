@@ -26,7 +26,7 @@ import java.util.stream.Collectors;
 public final class Nullifier {
     private Nullifier() {}
 
-    private static final Map<Class<?>, List<Field>> NULLIFIABLE_FIELDS = new ConcurrentHashMap<>();
+    private static final Map<Class<?>, List<Field>> NULLIFIABLE_FIELDS = new ConcurrentHashMap<>(100);
     private static final Class[] NULLIFIABLE_CLASSES = new Class[] {
             Map.class,
             Collection.class,

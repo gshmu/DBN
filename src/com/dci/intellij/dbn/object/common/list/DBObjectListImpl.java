@@ -189,18 +189,21 @@ public class DBObjectListImpl<T extends DBObject> extends DynamicContentImpl<T> 
                     return super.getElement(name, overload);
 
                 } else if (objectType == TYPE) {
-                    SearchAdapter<T> searchAdapter = SearchAdapter.forType(name, overload, false);
-                    T element = binarySearch(elements, searchAdapter);
+                    SearchAdapter<T> adapter = SearchAdapter.forType(name, overload, false);
+                    T element = binarySearch(elements, adapter);
                     if (element == null) {
-                        searchAdapter = SearchAdapter.forType(name, overload, true);
-                        element = binarySearch(elements, searchAdapter);
+                        adapter = SearchAdapter.forType(name, overload, true);
+                        element = binarySearch(elements, adapter);
                     }
                     return element;
 
                 } else if (isSearchable()) {
+                    SearchAdapter<T> adapter = objectType.isOverloadable() ?
+                            SearchAdapter.forObject(name, overload) :
+                            SearchAdapter.forObject(name);
+
                     if (objectType == COLUMN) {
-                        SearchAdapter<T> searchAdapter = SearchAdapter.forObject(name);
-                        T element = binarySearch(elements, searchAdapter);
+                        T element = binarySearch(elements, adapter);
                         if (element == null) {
                             // primary key columns are sorted by position at beginning ot the list of elements
                             element = linearSearch(elements,
@@ -209,13 +212,8 @@ public class DBObjectListImpl<T extends DBObject> extends DynamicContentImpl<T> 
                         }
                         return element;
 
-                    } else if (objectType.isOverloadable()) {
-                        SearchAdapter<T> searchAdapter = SearchAdapter.forObject(name, overload);
-                        return binarySearch(elements, searchAdapter);
-
-                    } else {
-                        SearchAdapter<T> searchAdapter = SearchAdapter.forObject(name);
-                        return binarySearch(elements, searchAdapter);
+                    }  else {
+                        return binarySearch(elements, adapter);
 
                     }
                 } else {

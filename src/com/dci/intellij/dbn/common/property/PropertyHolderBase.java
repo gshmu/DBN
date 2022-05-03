@@ -8,7 +8,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import static com.dci.intellij.dbn.common.util.Unsafe.cast;
 
 public abstract class PropertyHolderBase<T extends Property> implements PropertyHolder<T> {
-    private static final Map<Class<? extends PropertyHolder>, Property[]> REGISTRY = new ConcurrentHashMap<>();
+    private static final Map<Class<? extends PropertyHolder>, Property[]> REGISTRY = new ConcurrentHashMap<>(32);
 
     protected abstract T[] properties();
     protected abstract void change(T property, boolean value);
