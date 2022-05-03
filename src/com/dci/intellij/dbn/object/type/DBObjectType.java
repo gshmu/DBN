@@ -423,21 +423,29 @@ public enum DBObjectType implements DynamicContentType<DBObjectType> {
             return null;
         }
 
-        return CACHE.computeIfAbsent(typeName, n -> {
-            n = n.toLowerCase();
+        return CACHE.computeIfAbsent(typeName, name -> {
+            name = name.toUpperCase();
             try {
-                return valueOf(n);
+                return valueOf(name);
             } catch (IllegalArgumentException e) {
-                n = n.replace('_', ' ');
                 for (DBObjectType objectType: values()) {
-                    if (Strings.equalsIgnoreCase(objectType.name, n)) {
+                    if (objectType.matches(name)) {
                         return objectType;
                     }
                 }
-                System.out.println("ERROR - [UNKNOWN] undefined object type: " + n);
+                System.out.println("ERROR - [UNKNOWN] undefined object type: " + name);
                 return UNKNOWN;
             }
         });
+    }
+
+    private boolean matches(String name) {
+        String typeName = this.name();
+        String typeIdName = getTypeId().name();
+        String presentableName = this.name;
+        return Strings.equalsIgnoreCase(typeName, name) ||
+                Strings.equalsIgnoreCase(typeIdName, name) ||
+                Strings.equalsIgnoreCase(presentableName, name.replace('_', ' '));
     }
 
     public static String toCsv(List<DBObjectType> objectTypes) {

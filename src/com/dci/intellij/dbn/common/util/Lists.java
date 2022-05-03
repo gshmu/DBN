@@ -17,7 +17,7 @@ public class Lists {
     }
 
     public static <T> List<T> filtered(@NotNull List<T> list, Predicate<T> predicate) {
-        ArrayList<T> result = new ArrayList<>();
+        List<T> result = new ArrayList<>();
         for (T element : list) {
             if (predicate.test(element)) {
                 result.add(element);

@@ -13,10 +13,12 @@ public final class Unsafe {
         return (T) o;
     }
 
-    public static void silent(ThrowableRunnable<Throwable> runnable) {
+    public static boolean silent(ThrowableRunnable<Throwable> runnable) {
         try {
             runnable.run();
+            return true;
         } catch (Throwable ignore) {
+            return false;
         }
     }
 
