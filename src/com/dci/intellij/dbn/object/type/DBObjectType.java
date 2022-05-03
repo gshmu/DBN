@@ -217,7 +217,8 @@ public enum DBObjectType implements DynamicContentType<DBObjectType> {
 
     public boolean isOverloadable() {
         // TODO confirm no other object type can be overloadable
-        return getGenericType() == METHOD;
+        DBObjectType genericType = getGenericType();
+        return genericType == METHOD || genericType == TYPE;
     }
 
     public boolean hasChild(DBObjectType objectType) {
