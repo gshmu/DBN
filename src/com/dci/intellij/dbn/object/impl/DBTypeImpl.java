@@ -102,12 +102,12 @@ public class DBTypeImpl
     protected void initLists() {
         super.initLists();
         if (!isCollection()) {
-            DBObjectListContainer container = initChildObjects();
+            DBObjectListContainer childObjects = ensureChildObjects();
             DBSchema schema = getSchema();
-            attributes = container.createSubcontentObjectList(TYPE_ATTRIBUTE, this, schema);
-            procedures = container.createSubcontentObjectList(TYPE_PROCEDURE, this, schema);
-            functions = container.createSubcontentObjectList(TYPE_FUNCTION, this, schema);
-            subTypes = container.createSubcontentObjectList(TYPE, this, schema);
+            attributes = childObjects.createSubcontentObjectList(TYPE_ATTRIBUTE, this, schema);
+            procedures = childObjects.createSubcontentObjectList(TYPE_PROCEDURE, this, schema);
+            functions =  childObjects.createSubcontentObjectList(TYPE_FUNCTION, this, schema);
+            subTypes =   childObjects.createSubcontentObjectList(TYPE, this, schema);
         }
     }
 

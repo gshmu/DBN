@@ -22,7 +22,6 @@ import com.dci.intellij.dbn.object.properties.DBObjectPresentableProperty;
 import com.dci.intellij.dbn.object.properties.PresentableProperty;
 import com.dci.intellij.dbn.object.properties.SimplePresentableProperty;
 import com.dci.intellij.dbn.object.type.DBConstraintType;
-import com.dci.intellij.dbn.object.type.DBObjectRelationType;
 import com.dci.intellij.dbn.object.type.DBObjectType;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -36,6 +35,7 @@ import java.util.Objects;
 
 import static com.dci.intellij.dbn.object.common.property.DBObjectProperty.DISABLEABLE;
 import static com.dci.intellij.dbn.object.common.property.DBObjectProperty.SCHEMA_OBJECT;
+import static com.dci.intellij.dbn.object.type.DBObjectRelationType.CONSTRAINT_COLUMN;
 import static com.dci.intellij.dbn.object.type.DBObjectType.COLUMN;
 import static com.dci.intellij.dbn.object.type.DBObjectType.CONSTRAINT;
 
@@ -84,11 +84,11 @@ public class DBConstraintImpl extends DBSchemaObjectImpl<DBConstraintMetadata> i
     @Override
     protected void initLists() {
         super.initLists();
-        DBObjectListContainer childObjects = initChildObjects();
+        DBObjectListContainer childObjects = ensureChildObjects();
         columns = childObjects.createSubcontentObjectList(
                 COLUMN, this,
                 getDataset(),
-                DBObjectRelationType.CONSTRAINT_COLUMN);
+                CONSTRAINT_COLUMN);
     }
 
     @Override
@@ -154,7 +154,7 @@ public class DBConstraintImpl extends DBSchemaObjectImpl<DBConstraintMetadata> i
     public short getColumnPosition(DBColumn column) {
         DBObjectListContainer childObjects = getDataset().getChildObjects();
         if (childObjects != null) {
-            DBObjectRelationList<DBConstraintColumnRelation> relations = childObjects.getRelations(DBObjectRelationType.CONSTRAINT_COLUMN);
+            DBObjectRelationList<DBConstraintColumnRelation> relations = childObjects.getRelations(CONSTRAINT_COLUMN);
             if (relations != null) {
                 for (DBConstraintColumnRelation relation : relations.getObjectRelations()) {
                     if (relation.getConstraint().equals(this) && relation.getColumn().equals(column)) {
@@ -171,7 +171,7 @@ public class DBConstraintImpl extends DBSchemaObjectImpl<DBConstraintMetadata> i
     public DBColumn getColumnForPosition(short position) {
         DBObjectListContainer childObjectRelations = getDataset().getChildObjects();
         if (childObjectRelations != null) {
-            DBObjectRelationList<DBConstraintColumnRelation> relations = childObjectRelations.getRelations(DBObjectRelationType.CONSTRAINT_COLUMN);
+            DBObjectRelationList<DBConstraintColumnRelation> relations = childObjectRelations.getRelations(CONSTRAINT_COLUMN);
             if (relations != null) {
                 for (DBConstraintColumnRelation relation : relations.getObjectRelations()) {
                     DBConstraint constraint = relation.getConstraint();

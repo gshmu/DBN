@@ -22,7 +22,6 @@ import com.dci.intellij.dbn.object.common.list.DBObjectListContainer;
 import com.dci.intellij.dbn.object.common.list.DBObjectNavigationList;
 import com.dci.intellij.dbn.object.common.list.loader.DBObjectListFromRelationListLoader;
 import com.dci.intellij.dbn.object.common.property.DBObjectProperty;
-import com.dci.intellij.dbn.object.type.DBObjectRelationType;
 import com.dci.intellij.dbn.object.type.DBObjectType;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -34,6 +33,8 @@ import java.util.List;
 
 import static com.dci.intellij.dbn.object.common.property.DBObjectProperty.ROOT_OBJECT;
 import static com.dci.intellij.dbn.object.common.property.DBObjectProperty.SESSION_USER;
+import static com.dci.intellij.dbn.object.type.DBObjectRelationType.USER_PRIVILEGE;
+import static com.dci.intellij.dbn.object.type.DBObjectRelationType.USER_ROLE;
 import static com.dci.intellij.dbn.object.type.DBObjectType.*;
 
 public class DBUserImpl extends DBObjectImpl<DBUserMetadata> implements DBUser {
@@ -61,10 +62,10 @@ public class DBUserImpl extends DBObjectImpl<DBUserMetadata> implements DBUser {
 
     @Override
     protected void initLists() {
-        DBObjectListContainer childObjects = initChildObjects();
-        DBObjectBundle sourceContentHolder = this.getConnection().getObjectBundle();
-        roles = childObjects.createSubcontentObjectList(GRANTED_ROLE, this, sourceContentHolder, DBObjectRelationType.USER_ROLE);
-        privileges = childObjects.createSubcontentObjectList(GRANTED_PRIVILEGE, this, sourceContentHolder, DBObjectRelationType.USER_PRIVILEGE);
+        DBObjectListContainer childObjects = ensureChildObjects();
+        DBObjectBundle objectBundle = getObjectBundle();
+        roles =      childObjects.createSubcontentObjectList(GRANTED_ROLE, this, objectBundle, USER_ROLE);
+        privileges = childObjects.createSubcontentObjectList(GRANTED_PRIVILEGE, this, objectBundle, USER_PRIVILEGE);
     }
 
     @Override

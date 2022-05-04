@@ -7,10 +7,10 @@ import com.dci.intellij.dbn.object.DBDataset;
 import com.dci.intellij.dbn.object.DBIndex;
 import com.dci.intellij.dbn.object.common.DBSchemaObjectImpl;
 import com.dci.intellij.dbn.object.common.list.DBObjectList;
+import com.dci.intellij.dbn.object.common.list.DBObjectListContainer;
 import com.dci.intellij.dbn.object.common.list.DBObjectNavigationList;
 import com.dci.intellij.dbn.object.common.list.loader.DBObjectListFromRelationListLoader;
 import com.dci.intellij.dbn.object.common.status.DBObjectStatus;
-import com.dci.intellij.dbn.object.type.DBObjectRelationType;
 import com.dci.intellij.dbn.object.type.DBObjectType;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -21,6 +21,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 import static com.dci.intellij.dbn.object.common.property.DBObjectProperty.*;
+import static com.dci.intellij.dbn.object.type.DBObjectRelationType.INDEX_COLUMN;
 import static com.dci.intellij.dbn.object.type.DBObjectType.COLUMN;
 import static com.dci.intellij.dbn.object.type.DBObjectType.INDEX;
 
@@ -55,7 +56,8 @@ public class DBIndexImpl extends DBSchemaObjectImpl<DBIndexMetadata> implements 
         super.initLists();
         DBDataset dataset = getDataset();
         if (dataset != null) {
-            columns = initChildObjects().createSubcontentObjectList(COLUMN, this, dataset, DBObjectRelationType.INDEX_COLUMN);
+            DBObjectListContainer childObjects = ensureChildObjects();
+            columns = childObjects.createSubcontentObjectList(COLUMN, this, dataset, INDEX_COLUMN);
         }
     }
 

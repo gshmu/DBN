@@ -53,7 +53,7 @@ public class DBPackageImpl
     protected void initLists() {
         super.initLists();
         DBSchema schema = getSchema();
-        DBObjectListContainer childObjects = initChildObjects();
+        DBObjectListContainer childObjects = ensureChildObjects();
         functions = childObjects.createSubcontentObjectList(PACKAGE_FUNCTION, this, schema);
         procedures = childObjects.createSubcontentObjectList(PACKAGE_PROCEDURE, this, schema);
         types = childObjects.createSubcontentObjectList(PACKAGE_TYPE, this, schema);
