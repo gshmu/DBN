@@ -8,7 +8,7 @@ public class DualContentDependencyAdapter extends BasicDependencyAdapter impleme
     private ContentDependency first;
     private ContentDependency second;
 
-    public DualContentDependencyAdapter(DynamicContent firstContent, DynamicContent secondContent) {
+    private DualContentDependencyAdapter(DynamicContent firstContent, DynamicContent secondContent) {
         first = dependency(firstContent);
 
         if (firstContent == secondContent) {
@@ -17,6 +17,10 @@ public class DualContentDependencyAdapter extends BasicDependencyAdapter impleme
         } else {
             second = dependency(secondContent);
         }
+    }
+
+    public static DualContentDependencyAdapter create(DynamicContent firstContent, DynamicContent secondContent) {
+        return new DualContentDependencyAdapter(firstContent, secondContent);
     }
 
     @Override

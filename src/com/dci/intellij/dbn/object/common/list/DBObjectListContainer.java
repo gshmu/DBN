@@ -377,7 +377,7 @@ public final class DBObjectListContainer implements StatefulDisposable {
             DBObjectList firstContent,
             DBObjectList secondContent) {
         if (isSupported(type)) {
-            ContentDependencyAdapter dependencyAdapter = new DualContentDependencyAdapter(firstContent, secondContent);
+            ContentDependencyAdapter dependencyAdapter = DualContentDependencyAdapter.create(firstContent, secondContent);
             createObjectRelationList(type, parent, dependencyAdapter);
         }
     }
