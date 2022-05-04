@@ -16,7 +16,6 @@ import com.dci.intellij.dbn.object.common.list.DBObjectList;
 import com.dci.intellij.dbn.object.common.list.DBObjectListContainer;
 import com.dci.intellij.dbn.object.common.list.DBObjectNavigationList;
 import com.dci.intellij.dbn.object.common.list.loader.DBObjectListFromRelationListLoader;
-import com.dci.intellij.dbn.object.type.DBObjectRelationType;
 import com.dci.intellij.dbn.object.type.DBObjectType;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -27,6 +26,8 @@ import java.util.LinkedList;
 import java.util.List;
 
 import static com.dci.intellij.dbn.object.common.property.DBObjectProperty.ROOT_OBJECT;
+import static com.dci.intellij.dbn.object.type.DBObjectRelationType.ROLE_PRIVILEGE;
+import static com.dci.intellij.dbn.object.type.DBObjectRelationType.ROLE_ROLE;
 import static com.dci.intellij.dbn.object.type.DBObjectType.*;
 
 public class DBRoleImpl extends DBObjectImpl<DBRoleMetadata> implements DBRole {
@@ -44,10 +45,10 @@ public class DBRoleImpl extends DBObjectImpl<DBRoleMetadata> implements DBRole {
 
     @Override
     protected void initLists() {
-        DBObjectListContainer ol = initChildObjects();
-        DBObjectBundle sourceContentHolder = this.getConnection().getObjectBundle();
-        privileges = ol.createSubcontentObjectList(GRANTED_PRIVILEGE, this, sourceContentHolder, DBObjectRelationType.ROLE_PRIVILEGE);
-        grantedRoles = ol.createSubcontentObjectList(GRANTED_ROLE, this, sourceContentHolder, DBObjectRelationType.ROLE_ROLE);
+        DBObjectBundle objectBundle = getObjectBundle();
+        DBObjectListContainer childObjects = ensureChildObjects();
+        privileges = childObjects.createSubcontentObjectList(GRANTED_PRIVILEGE, this, objectBundle, ROLE_PRIVILEGE);
+        grantedRoles = childObjects.createSubcontentObjectList(GRANTED_ROLE, this, objectBundle, ROLE_ROLE);
     }
 
     @Override

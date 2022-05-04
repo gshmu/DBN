@@ -27,8 +27,8 @@ import com.dci.intellij.dbn.common.util.Consumer;
 import com.dci.intellij.dbn.common.util.Strings;
 import com.dci.intellij.dbn.common.util.Unsafe;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
-import com.dci.intellij.dbn.connection.ConnectionRef;
 import com.dci.intellij.dbn.connection.ConnectionId;
+import com.dci.intellij.dbn.connection.ConnectionRef;
 import com.dci.intellij.dbn.connection.DatabaseEntity;
 import com.dci.intellij.dbn.connection.DatabaseType;
 import com.dci.intellij.dbn.connection.PooledConnection;
@@ -354,13 +354,9 @@ public abstract class DBObjectImpl<M extends DBObjectMetadata> extends BrowserTr
     }
 
     @NotNull
-    public DBObjectListContainer initChildObjects() {
+    public DBObjectListContainer ensureChildObjects() {
         if (childObjects == null) {
-            synchronized (this) {
-                if (childObjects == null) {
-                    childObjects = new DBObjectListContainer(this);
-                }
-            }
+            childObjects = new DBObjectListContainer(this);
         }
         return childObjects;
     }

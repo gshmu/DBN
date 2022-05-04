@@ -60,8 +60,8 @@ public class DBTableImpl extends DBDatasetImpl<DBTableMetadata> implements DBTab
     protected void initLists() {
         super.initLists();
         DBSchema schema = getSchema();
-        DBObjectListContainer childObjects = initChildObjects();
-        indexes = childObjects.createSubcontentObjectList(INDEX, this, schema);
+        DBObjectListContainer childObjects = ensureChildObjects();
+        indexes =      childObjects.createSubcontentObjectList(INDEX, this, schema);
         nestedTables = childObjects.createSubcontentObjectList(NESTED_TABLE, this, schema);
 
         childObjects.createSubcontentObjectRelationList(INDEX_COLUMN, this, schema);

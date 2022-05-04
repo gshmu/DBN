@@ -119,7 +119,7 @@ public abstract class DynamicSubcontentLoader<
 
     @Nullable
     protected static String getSchemaName(DBSchemaObject object) {
-        DBSchema schema = Safe.call(object, o -> o.getSchema());
-        return Safe.call(schema, s -> s.getName());
+        DBSchema schema = object == null ? null : object.getSchema();
+        return schema == null ? null : schema.getName();
     }
 }

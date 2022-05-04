@@ -28,7 +28,7 @@ public class DBMaterializedViewImpl extends DBViewImpl implements DBMaterialized
     protected void initLists() {
         super.initLists();
         DBSchema schema = getSchema();
-        DBObjectListContainer childObjects = initChildObjects();
+        DBObjectListContainer childObjects = ensureChildObjects();
         indexes = childObjects.createSubcontentObjectList(DBObjectType.INDEX, this, schema);
 
         childObjects.createSubcontentObjectRelationList(INDEX_COLUMN, this, schema);
