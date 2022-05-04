@@ -5,29 +5,40 @@ import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.common.load.ProgressMonitor;
 import com.dci.intellij.dbn.data.type.DBDataType;
 import com.dci.intellij.dbn.database.common.metadata.def.DBColumnMetadata;
-import com.dci.intellij.dbn.object.*;
+import com.dci.intellij.dbn.object.DBColumn;
+import com.dci.intellij.dbn.object.DBConstraint;
+import com.dci.intellij.dbn.object.DBDataset;
+import com.dci.intellij.dbn.object.DBIndex;
+import com.dci.intellij.dbn.object.DBSchema;
+import com.dci.intellij.dbn.object.DBTable;
+import com.dci.intellij.dbn.object.DBType;
 import com.dci.intellij.dbn.object.common.DBObject;
 import com.dci.intellij.dbn.object.common.DBObjectImpl;
-import com.dci.intellij.dbn.object.common.list.*;
+import com.dci.intellij.dbn.object.common.list.DBObjectList;
+import com.dci.intellij.dbn.object.common.list.DBObjectListContainer;
+import com.dci.intellij.dbn.object.common.list.DBObjectNavigationList;
+import com.dci.intellij.dbn.object.common.list.DBObjectRelationList;
+import com.dci.intellij.dbn.object.common.list.ObjectListProvider;
 import com.dci.intellij.dbn.object.common.list.loader.DBObjectListFromRelationListLoader;
 import com.dci.intellij.dbn.object.properties.DBDataTypePresentableProperty;
 import com.dci.intellij.dbn.object.properties.DBObjectPresentableProperty;
 import com.dci.intellij.dbn.object.properties.PresentableProperty;
 import com.dci.intellij.dbn.object.properties.SimplePresentableProperty;
-import com.dci.intellij.dbn.object.type.DBObjectRelationType;
 import com.dci.intellij.dbn.object.type.DBObjectType;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import javax.swing.*;
+import javax.swing.Icon;
 import java.sql.SQLException;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 
 import static com.dci.intellij.dbn.object.common.property.DBObjectProperty.*;
+import static com.dci.intellij.dbn.object.type.DBObjectRelationType.CONSTRAINT_COLUMN;
+import static com.dci.intellij.dbn.object.type.DBObjectRelationType.INDEX_COLUMN;
 import static com.dci.intellij.dbn.object.type.DBObjectType.*;
+import static java.util.Collections.emptyList;
 
 public class DBColumnImpl extends DBObjectImpl<DBColumnMetadata> implements DBColumn {
     private DBDataType dataType;
@@ -56,9 +67,10 @@ public class DBColumnImpl extends DBObjectImpl<DBColumnMetadata> implements DBCo
 
     @Override
     protected void initLists() {
-        DBObjectListContainer childObjects = initChildObjects();
-        constraints = childObjects.createSubcontentObjectList(CONSTRAINT, this, getDataset(), DBObjectRelationType.CONSTRAINT_COLUMN);
-        indexes = childObjects.createSubcontentObjectList(INDEX, this, getDataset(), DBObjectRelationType.INDEX_COLUMN);
+        DBObjectListContainer childObjects = ensureChildObjects();
+        DBDataset dataset = getDataset();
+        constraints = childObjects.createSubcontentObjectList(CONSTRAINT, this, dataset, CONSTRAINT_COLUMN);
+        indexes = childObjects.createSubcontentObjectList(INDEX, this, dataset, INDEX_COLUMN);
 
         DBType declaredType = dataType.getDeclaredType();
         if (declaredType != null) {
@@ -170,12 +182,12 @@ public class DBColumnImpl extends DBObjectImpl<DBColumnMetadata> implements DBCo
 
     @Override
     public List<DBIndex> getIndexes() {
-        return indexes == null ? Collections.emptyList() : indexes.getObjects();
+        return indexes == null ? emptyList() : indexes.getObjects();
     }
 
     @Override
     public List<DBConstraint> getConstraints() {
-        return constraints == null ? Collections.emptyList() : constraints.getObjects();
+        return constraints == null ? emptyList() : constraints.getObjects();
     }
 
     @Override
@@ -183,7 +195,7 @@ public class DBColumnImpl extends DBObjectImpl<DBColumnMetadata> implements DBCo
         DBObjectListContainer childObjects = getDataset().getChildObjects();
         if (childObjects != null) {
             DBObjectRelationList<DBConstraintColumnRelation> constraintColumnRelations =
-                    childObjects.getRelations(DBObjectRelationType.CONSTRAINT_COLUMN);
+                    childObjects.getRelations(CONSTRAINT_COLUMN);
             if (constraintColumnRelations != null) {
                 for (DBConstraintColumnRelation relation : constraintColumnRelations.getObjectRelations()) {
                     DBColumn relationColumn = relation.getColumn();
@@ -201,7 +213,7 @@ public class DBColumnImpl extends DBObjectImpl<DBColumnMetadata> implements DBCo
         DBObjectListContainer childObjects = getDataset().getChildObjects();
         if (childObjects != null) {
             DBObjectRelationList<DBConstraintColumnRelation> constraintColumnRelations =
-                    childObjects.getRelations(DBObjectRelationType.CONSTRAINT_COLUMN);
+                    childObjects.getRelations(CONSTRAINT_COLUMN);
             if (constraintColumnRelations != null) {
                 for (DBConstraintColumnRelation relation : constraintColumnRelations.getObjectRelations()) {
                     DBColumn relationColumn = relation.getColumn();

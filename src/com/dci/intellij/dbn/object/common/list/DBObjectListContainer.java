@@ -30,6 +30,7 @@ import java.util.Set;
 import static com.dci.intellij.dbn.common.dispose.Failsafe.check;
 import static com.dci.intellij.dbn.common.util.Search.binarySearch;
 import static com.dci.intellij.dbn.common.util.Unsafe.cast;
+import static java.util.Collections.emptyList;
 
 @Getter
 public final class DBObjectListContainer implements StatefulDisposable {
@@ -76,9 +77,9 @@ public final class DBObjectListContainer implements StatefulDisposable {
                 getInternalObjects(objectType) :
                 getObjects(objectType);
         if (objects == null) {
-            return java.util.Collections.emptyList();
+            return emptyList();
         } else {
-            return (List<T>) objects.getObjects();
+            return cast(objects.getObjects());
         }
     }
 
@@ -363,39 +364,36 @@ public final class DBObjectListContainer implements StatefulDisposable {
         if (relations != null) {
             for (DBObjectRelationList objectRelations : relations) {
                 if (objectRelations.getObjectRelationType() == relationType) {
-                    return objectRelations;
+                    return cast(objectRelations);
                 }
             }
         }
         return null;
     }
 
-    @Nullable
-    public DBObjectRelationList createObjectRelationList(
+    public void createObjectRelationList(
             DBObjectRelationType type,
             DatabaseEntity parent,
             DBObjectList firstContent,
             DBObjectList secondContent) {
         if (isSupported(type)) {
             ContentDependencyAdapter dependencyAdapter = new DualContentDependencyAdapter(firstContent, secondContent);
-            return createObjectRelationList(type, parent, dependencyAdapter);
+            createObjectRelationList(type, parent, dependencyAdapter);
         }
-        return null;
     }
 
-    public DBObjectRelationList createSubcontentObjectRelationList(
+    public void createSubcontentObjectRelationList(
             DBObjectRelationType relationType,
             DatabaseEntity parent,
             DBObject sourceContentObject) {
         if (isSupported(relationType)) {
             ContentDependencyAdapter dependencyAdapter = SubcontentDependencyAdapter.create(sourceContentObject, relationType);
-            return createObjectRelationList(relationType, parent, dependencyAdapter);
+            createObjectRelationList(relationType, parent, dependencyAdapter);
         }
-        return null;
     }
 
 
-    private DBObjectRelationList createObjectRelationList(
+    private void createObjectRelationList(
             DBObjectRelationType type,
             DatabaseEntity parent,
             ContentDependencyAdapter dependencyAdapter) {
@@ -407,9 +405,7 @@ public final class DBObjectListContainer implements StatefulDisposable {
                 relations =  Arrays.copyOf(relations, relations.length + 1);
 
             relations[relations.length-1] = objectRelationList;
-            return objectRelationList;
         }
-        return null;
     }
 
     /*****************************************************************

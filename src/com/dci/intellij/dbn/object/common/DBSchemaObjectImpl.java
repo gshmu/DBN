@@ -59,7 +59,7 @@ public abstract class DBSchemaObjectImpl<M extends DBObjectMetadata> extends DBO
     @Override
     protected void initLists() {
         if (is(REFERENCEABLE)) {
-            DBObjectListContainer childObjects = initChildObjects();
+            DBObjectListContainer childObjects = ensureChildObjects();
             referencedObjects = childObjects.createObjectList(INCOMING_DEPENDENCY, this, DynamicContentStatus.INTERNAL);
             referencingObjects = childObjects.createObjectList(OUTGOING_DEPENDENCY, this, DynamicContentStatus.INTERNAL);
         }

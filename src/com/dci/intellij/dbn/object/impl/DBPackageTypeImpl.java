@@ -13,6 +13,7 @@ import com.dci.intellij.dbn.object.DBPackage;
 import com.dci.intellij.dbn.object.DBPackageType;
 import com.dci.intellij.dbn.object.DBType;
 import com.dci.intellij.dbn.object.DBTypeAttribute;
+import com.dci.intellij.dbn.object.common.list.DBObjectListContainer;
 import com.dci.intellij.dbn.object.type.DBObjectType;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -47,7 +48,8 @@ public class DBPackageTypeImpl extends DBTypeImpl implements DBPackageType {
 
     @Override
     protected void initLists() {
-        attributes = initChildObjects().createObjectList(TYPE_ATTRIBUTE, this);
+        DBObjectListContainer childObjects = ensureChildObjects();
+        attributes = childObjects.createObjectList(TYPE_ATTRIBUTE, this);
     }
 
     @Override

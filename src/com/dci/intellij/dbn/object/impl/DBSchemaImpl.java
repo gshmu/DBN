@@ -58,13 +58,13 @@ import org.jetbrains.annotations.Nullable;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
-import java.util.Comparator;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 
 import static com.dci.intellij.dbn.common.content.DynamicContentStatus.INTERNAL;
+import static com.dci.intellij.dbn.common.util.Unsafe.cast;
 import static com.dci.intellij.dbn.object.common.property.DBObjectProperty.*;
 import static com.dci.intellij.dbn.object.type.DBObjectRelationType.CONSTRAINT_COLUMN;
 import static com.dci.intellij.dbn.object.type.DBObjectRelationType.INDEX_COLUMN;
@@ -101,46 +101,39 @@ public class DBSchemaImpl extends DBObjectImpl<DBSchemaMetadata> implements DBSc
 
     @Override
     protected void initLists() {
-        DBObjectListContainer objectLists = initChildObjects();
+        DBObjectListContainer childObjects = ensureChildObjects();
 
-        tables = objectLists.createObjectList(TABLE, this);
-        views = objectLists.createObjectList(VIEW, this);
-        materializedViews = objectLists.createObjectList(MATERIALIZED_VIEW, this);
-        synonyms = objectLists.createObjectList(SYNONYM, this);
-        sequences = objectLists.createObjectList(SEQUENCE, this);
-        procedures = objectLists.createObjectList(PROCEDURE, this);
-        functions = objectLists.createObjectList(FUNCTION, this);
-        packages = objectLists.createObjectList(PACKAGE, this);
-        types = objectLists.createObjectList(TYPE, this);
-        databaseTriggers = objectLists.createObjectList(DATABASE_TRIGGER, this);
-        dimensions = objectLists.createObjectList(DIMENSION, this);
-        clusters = objectLists.createObjectList(CLUSTER, this);
-        databaseLinks = objectLists.createObjectList(DBLINK, this);
+        tables =            childObjects.createObjectList(TABLE, this);
+        views =             childObjects.createObjectList(VIEW, this);
+        materializedViews = childObjects.createObjectList(MATERIALIZED_VIEW, this);
+        synonyms =          childObjects.createObjectList(SYNONYM, this);
+        sequences =         childObjects.createObjectList(SEQUENCE, this);
+        procedures =        childObjects.createObjectList(PROCEDURE, this);
+        functions =         childObjects.createObjectList(FUNCTION, this);
+        packages =          childObjects.createObjectList(PACKAGE, this);
+        types =             childObjects.createObjectList(TYPE, this);
+        databaseTriggers =  childObjects.createObjectList(DATABASE_TRIGGER, this);
+        dimensions =        childObjects.createObjectList(DIMENSION, this);
+        clusters =          childObjects.createObjectList(CLUSTER, this);
+        databaseLinks =     childObjects.createObjectList(DBLINK, this);
 
-        DBObjectList constraints = objectLists.createObjectList(CONSTRAINT, this, INTERNAL);
-        DBObjectList indexes = objectLists.createObjectList(INDEX, this, INTERNAL);
-        DBObjectList columns = objectLists.createObjectList(COLUMN, this, INTERNAL);
-        objectLists.createObjectList(DATASET_TRIGGER, this, INTERNAL);
-        objectLists.createObjectList(NESTED_TABLE, this, INTERNAL);
-        objectLists.createObjectList(PACKAGE_FUNCTION, this, INTERNAL);
-        objectLists.createObjectList(PACKAGE_PROCEDURE, this, INTERNAL);
-        objectLists.createObjectList(PACKAGE_TYPE, this, INTERNAL);
-        objectLists.createObjectList(TYPE_ATTRIBUTE, this, INTERNAL);
-        objectLists.createObjectList(TYPE_FUNCTION, this, INTERNAL);
-        objectLists.createObjectList(TYPE_PROCEDURE, this, INTERNAL);
-        objectLists.createObjectList(ARGUMENT, this, INTERNAL);
+        DBObjectList constraints = childObjects.createObjectList(CONSTRAINT, this, INTERNAL);
+        DBObjectList indexes =     childObjects.createObjectList(INDEX, this, INTERNAL);
+        DBObjectList columns =     childObjects.createObjectList(COLUMN, this, INTERNAL);
+        childObjects.createObjectList(DATASET_TRIGGER, this, INTERNAL);
+        childObjects.createObjectList(NESTED_TABLE, this, INTERNAL);
+        childObjects.createObjectList(PACKAGE_FUNCTION, this, INTERNAL);
+        childObjects.createObjectList(PACKAGE_PROCEDURE, this, INTERNAL);
+        childObjects.createObjectList(PACKAGE_TYPE, this, INTERNAL);
+        childObjects.createObjectList(TYPE_ATTRIBUTE, this, INTERNAL);
+        childObjects.createObjectList(TYPE_FUNCTION, this, INTERNAL);
+        childObjects.createObjectList(TYPE_PROCEDURE, this, INTERNAL);
+        childObjects.createObjectList(ARGUMENT, this, INTERNAL);
 
         //ol.createHiddenObjectList(DBObjectType.TYPE_METHOD, this, TYPE_METHODS_LOADER);
 
-        objectLists.createObjectRelationList(
-                CONSTRAINT_COLUMN, this,
-                constraints,
-                columns);
-
-        objectLists.createObjectRelationList(
-                INDEX_COLUMN, this,
-                indexes,
-                columns);
+        childObjects.createObjectRelationList(CONSTRAINT_COLUMN, this, constraints, columns);
+        childObjects.createObjectRelationList(INDEX_COLUMN, this, indexes, columns);
     }
 
     @Override
@@ -216,18 +209,6 @@ public class DBSchemaImpl extends DBObjectImpl<DBSchemaMetadata> implements DBSc
         return null;
     }
 
-    private class ConstraintColumnComparator implements Comparator<DBColumn> {
-        private final DBConstraint constraint;
-        ConstraintColumnComparator(DBConstraint constraint) {
-            this.constraint = constraint;
-        }
-        @Override
-        public int compare(DBColumn column1, DBColumn column2) {
-            return column1.getConstraintPosition(constraint)-
-                    column2.getConstraintPosition(constraint);
-        }
-    }
-
     @Override
     public List<DBTable> getTables() {
         return tables.getObjects();
@@ -245,7 +226,7 @@ public class DBSchemaImpl extends DBObjectImpl<DBSchemaMetadata> implements DBSc
 
     @Override
     public List<DBIndex> getIndexes() {
-        return initChildObjects().getObjects(INDEX, true);
+        return ensureChildObjects().getObjects(INDEX, true);
     }
 
     @Override
@@ -275,12 +256,12 @@ public class DBSchemaImpl extends DBObjectImpl<DBSchemaMetadata> implements DBSc
 
     @Override
     public List<DBDatasetTrigger> getDatasetTriggers() {
-        return initChildObjects().getObjects(DATASET_TRIGGER, true);
+        return ensureChildObjects().getObjects(DATASET_TRIGGER, true);
     }
 
     @Override
     public List<DBDatabaseTrigger> getDatabaseTriggers() {
-        return initChildObjects().getObjects(DATABASE_TRIGGER, false);
+        return ensureChildObjects().getObjects(DATABASE_TRIGGER, false);
     }
 
     @Override
@@ -321,7 +302,7 @@ public class DBSchemaImpl extends DBObjectImpl<DBSchemaMetadata> implements DBSc
 
     @Override
     public DBIndex getIndex(String name) {
-        DBObjectList indexList = initChildObjects().getObjects(INDEX);
+        DBObjectList indexList = getChildObjectList(INDEX);
         return indexList == null ? null : (DBIndex) indexList.getObject(name);
     }
 
@@ -518,7 +499,7 @@ public class DBSchemaImpl extends DBObjectImpl<DBSchemaMetadata> implements DBSc
 
     private Set<BrowserTreeNode> resetObjectsStatus() {
         ObjectStatusUpdater updater = new ObjectStatusUpdater();
-        initChildObjects().visitObjects(updater, true);
+        ensureChildObjects().visitObjects(updater, true);
         return updater.getRefreshNodes();
     }
 
@@ -529,7 +510,7 @@ public class DBSchemaImpl extends DBObjectImpl<DBSchemaMetadata> implements DBSc
         @Override
         public void visit(DBObjectList<?> objectList) {
             if (objectList.isLoaded() && !objectList.isDirty() && !objectList.isLoading()) {
-                List<DBObject> objects = (List<DBObject>) objectList.getObjects();
+                List<DBObject> objects = cast(objectList.getObjects());
                 for (DBObject object : objects) {
                     checkDisposed();
                     ProgressMonitor.checkCancelled();
