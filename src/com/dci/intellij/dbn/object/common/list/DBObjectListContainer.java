@@ -6,7 +6,7 @@ import com.dci.intellij.dbn.common.content.DynamicContentType;
 import com.dci.intellij.dbn.common.content.dependency.BasicDependencyAdapter;
 import com.dci.intellij.dbn.common.content.dependency.ContentDependencyAdapter;
 import com.dci.intellij.dbn.common.content.dependency.DualContentDependencyAdapter;
-import com.dci.intellij.dbn.common.content.dependency.SubcontentDependencyAdapterImpl;
+import com.dci.intellij.dbn.common.content.dependency.SubcontentDependencyAdapter;
 import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.common.dispose.SafeDisposer;
 import com.dci.intellij.dbn.common.dispose.StatefulDisposable;
@@ -28,6 +28,8 @@ import java.util.List;
 import java.util.Set;
 
 import static com.dci.intellij.dbn.common.dispose.Failsafe.check;
+import static com.dci.intellij.dbn.common.util.Search.binarySearch;
+import static com.dci.intellij.dbn.common.util.Unsafe.cast;
 
 @Getter
 public final class DBObjectListContainer implements StatefulDisposable {
@@ -82,14 +84,7 @@ public final class DBObjectListContainer implements StatefulDisposable {
 
     @Nullable
     private <T extends DBObject> DBObjectList<T> findObjects(DBObjectType objectType) {
-        if (objects != null) {
-            for (DBObjectList<?> objectList : objects) {
-                if (objectList.getObjectType() == objectType) {
-                    return (DBObjectList<T>) objectList;
-                }
-            }
-        }
-        return null;
+        return cast(binarySearch(objects, o -> o.getObjectType().compareTo(objectType)));
     }
 
     @Nullable
@@ -238,10 +233,9 @@ public final class DBObjectListContainer implements StatefulDisposable {
         if (isSupported(objectType)) {
             if (sourceContentHolder != null && sourceContentHolder.getDynamicContent(sourceContentType) != null) {
                 ContentDependencyAdapter dependencyAdapter =
-                        new SubcontentDependencyAdapterImpl(
+                        SubcontentDependencyAdapter.create(
                                 sourceContentHolder,
-                                sourceContentType
-                        );
+                                sourceContentType);
                 return createObjectList(objectType, treeParent, dependencyAdapter, statuses);
             }
         }
@@ -257,10 +251,9 @@ public final class DBObjectListContainer implements StatefulDisposable {
         if (isSupported(objectType)) {
             if (sourceContentHolder.getDynamicContent(objectType) != null) {
                 ContentDependencyAdapter dependencyAdapter =
-                        new SubcontentDependencyAdapterImpl(
+                        SubcontentDependencyAdapter.create(
                                 sourceContentHolder,
-                                objectType
-                        );
+                                objectType);
                 return createObjectList(objectType, treeParent, dependencyAdapter, statuses);
             }
         }
@@ -280,12 +273,37 @@ public final class DBObjectListContainer implements StatefulDisposable {
 
     public void addObjectList(DBObjectList<?> objectList) {
         if (objectList != null) {
-            // enum map holds an array of all enum elements!!
-            if (objects == null)
-                objects = new DBObjectList[1]; else
-                objects =  Arrays.copyOf(objects, objects.length + 1);
+            if (objects == null) {
+                objects = new DBObjectList[]{objectList};
+            } else {
+                DBObjectList[] objects = new DBObjectList[this.objects.length + 1];
+                int ordinal = objectList.getObjectType().ordinal();
+                if (ordinal < this.objects[0].getObjectType().ordinal()) {
+                    System.arraycopy(this.objects, 0, objects, 1, this.objects.length);
+                    objects[0] = objectList;
 
-            objects[objects.length-1] = objectList;
+                } else if (ordinal > this.objects[this.objects.length-1].getObjectType().ordinal()) {
+                    System.arraycopy(this.objects, 0, objects, 0, this.objects.length);
+                    objects[objects.length - 1] = objectList;
+
+                } else {
+                    boolean inserted = false;
+                    for (int i = 0; i < this.objects.length; i++) {
+                        int localOrdinal = this.objects[i].getObjectType().ordinal();
+                        if (localOrdinal < ordinal) {
+                            objects[i] = this.objects[i];
+                        } else {
+                            if (!inserted) {
+                                objects[i] = objectList;
+                                inserted = true;
+                            }
+                            objects[i + 1] = this.objects[i];
+                        }
+                    }
+                }
+
+                this.objects = objects;
+            }
         }
     }
 
@@ -370,7 +388,7 @@ public final class DBObjectListContainer implements StatefulDisposable {
             DatabaseEntity parent,
             DBObject sourceContentObject) {
         if (isSupported(relationType)) {
-            ContentDependencyAdapter dependencyAdapter = new SubcontentDependencyAdapterImpl(sourceContentObject, relationType);
+            ContentDependencyAdapter dependencyAdapter = SubcontentDependencyAdapter.create(sourceContentObject, relationType);
             return createObjectRelationList(relationType, parent, dependencyAdapter);
         }
         return null;
