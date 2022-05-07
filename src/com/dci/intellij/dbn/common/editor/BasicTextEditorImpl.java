@@ -16,6 +16,7 @@ import com.intellij.openapi.fileEditor.FileEditorState;
 import com.intellij.openapi.fileEditor.FileEditorStateLevel;
 import com.intellij.openapi.fileEditor.TextEditor;
 import com.intellij.openapi.fileEditor.impl.text.TextEditorProvider;
+import com.intellij.openapi.progress.ProcessCanceledException;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Disposer;
 import com.intellij.openapi.util.Key;
@@ -25,7 +26,7 @@ import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import javax.swing.JComponent;
+import javax.swing.*;
 import java.beans.PropertyChangeListener;
 
 public abstract class BasicTextEditorImpl<T extends VirtualFile> extends StatefulDisposable.Base implements BasicTextEditor<T>, StatefulDisposable, DataProvider {
@@ -160,10 +161,12 @@ public abstract class BasicTextEditorImpl<T extends VirtualFile> extends Statefu
 
     @Override
     public void setState(@NotNull FileEditorState fileEditorState) {
-        if (fileEditorState instanceof BasicTextEditorState) {
-            BasicTextEditorState state = (BasicTextEditorState) fileEditorState;
-            state.applyToEditor(getTextEditor());
-        }
+        try {
+            if (fileEditorState instanceof BasicTextEditorState) {
+                BasicTextEditorState state = (BasicTextEditorState) fileEditorState;
+                state.applyToEditor(getTextEditor());
+            }
+        } catch (ProcessCanceledException ignore){}
     }
 
     @Override
