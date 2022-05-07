@@ -16,13 +16,7 @@ import java.io.File;
 import java.net.URL;
 import java.sql.Driver;
 import java.sql.DriverManager;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Enumeration;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
@@ -151,7 +145,7 @@ public class DatabaseDriverManager implements ApplicationComponent {
                     try {
                         Class<?> clazz = classLoader.loadClass(className);
                         if (Driver.class.isAssignableFrom(clazz)) {
-                            Driver driver = (Driver)clazz.newInstance();
+                            Driver driver = (Driver) clazz.getDeclaredConstructor().newInstance();
                             drivers.add(driver);
                         }
                     } catch (Throwable t) {
@@ -170,7 +164,7 @@ public class DatabaseDriverManager implements ApplicationComponent {
         try {
             Class<Driver> driverClass = (Class<Driver>) Class.forName(className);
             if (internal || driverClass.getClassLoader() instanceof DriverClassLoader) {
-                return driverClass.newInstance();
+                return driverClass.getDeclaredConstructor().newInstance();
             }
 
         } catch (Throwable ignore) {}
