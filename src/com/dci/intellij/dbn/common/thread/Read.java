@@ -21,7 +21,7 @@ public final class Read {
         return getApplication().runReadAction((Computable<T>) () -> {
             try {
                 return callable.call();
-            } catch (ProcessCanceledException ignore) {
+            } catch (ProcessCanceledException | UnsupportedOperationException ignore) {
                 return defaultValue;
             } catch (Throwable e) {
                 log.error("Failed to perform read action. Returning default", e);
@@ -45,7 +45,7 @@ public final class Read {
         if (getApplication().isReadAccessAllowed()) {
             try {
                 return callable.call();
-            } catch (ProcessCanceledException e) {
+            } catch (ProcessCanceledException | UnsupportedOperationException e) {
                 return defaultValue;
             }
         } else {
@@ -58,7 +58,7 @@ public final class Read {
         application.runReadAction(() -> {
             try {
                 runnable.run();
-            } catch (ProcessCanceledException ignore) {}
+            } catch (ProcessCanceledException | UnsupportedOperationException ignore) {}
         });
     }
 

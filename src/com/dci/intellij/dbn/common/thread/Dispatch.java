@@ -25,7 +25,7 @@ public final class Dispatch {
         if (ThreadMonitor.isDispatchThread()) {
             try {
                 runnable.run();
-            } catch (ProcessCanceledException ignore) {}
+            } catch (ProcessCanceledException | UnsupportedOperationException ignore) {}
         } else {
             run(null, runnable);
         }
