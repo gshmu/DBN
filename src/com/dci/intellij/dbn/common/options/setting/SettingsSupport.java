@@ -188,7 +188,7 @@ public final class SettingsSupport {
 
     public static  <T extends Enum<T>> void setEnum(Element parent, String childName, T value) {
         Element element = new Element(childName);
-        element.setAttribute("value",value.name());
+        element.setAttribute("value",value == null ? "" : value.name());
         parent.addContent(element);
     }
 
