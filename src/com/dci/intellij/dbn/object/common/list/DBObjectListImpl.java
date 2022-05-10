@@ -225,7 +225,7 @@ public class DBObjectListImpl<T extends DBObject> extends DynamicContentImpl<T> 
     }
 
     private boolean isSearchable() {
-        return is(SEARCHABLE);
+        return !isInternal() && is(SEARCHABLE);
     }
 
     @Override

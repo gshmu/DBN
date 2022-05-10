@@ -18,12 +18,16 @@ import com.intellij.ui.SimpleTextAttributes;
 import com.intellij.ui.components.JBScrollPane;
 import org.jetbrains.annotations.NotNull;
 
-import javax.swing.*;
+import javax.swing.JPanel;
+import javax.swing.JTable;
+import javax.swing.ListSelectionModel;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
-import java.awt.*;
+import java.awt.Cursor;
+import java.awt.Point;
 import java.awt.event.MouseEvent;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 public class DatabaseBrowserSortingSettingsForm extends ConfigurationEditorForm<DatabaseBrowserSortingSettings> {
@@ -58,9 +62,9 @@ public class DatabaseBrowserSortingSettingsForm extends ConfigurationEditorForm<
         return mainPanel;
     }
 
-    public class SortingTypeTable extends DBNEditableTable<SortingTypeTableModel> {
+    public static class SortingTypeTable extends DBNEditableTable<SortingTypeTableModel> {
 
-        public SortingTypeTable(DBNForm parent, List<DBObjectComparator> comparators) {
+        public SortingTypeTable(DBNForm parent, Collection<DBObjectComparator> comparators) {
             super(parent, new SortingTypeTableModel(comparators), true);
             setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
             adjustRowHeight(3);
@@ -115,11 +119,11 @@ public class DatabaseBrowserSortingSettingsForm extends ConfigurationEditorForm<
         }
     }
 
-    public class SortingTypeTableModel extends DBNEditableTableModel {
-        private List<DBObjectComparator> comparators = new ArrayList<DBObjectComparator>();
+    public static class SortingTypeTableModel extends DBNEditableTableModel {
+        private final List<DBObjectComparator> comparators;
 
-        public SortingTypeTableModel(List<DBObjectComparator> comparators) {
-            this.comparators = new ArrayList<DBObjectComparator>(comparators);
+        public SortingTypeTableModel(Collection<DBObjectComparator> comparators) {
+            this.comparators = new ArrayList<>(comparators);
         }
 
         @Override
