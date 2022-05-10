@@ -24,7 +24,7 @@ public class DBColumnNameComparator extends DBObjectComparator<DBColumn> {
             } else if (column2.isPrimaryKey()){
                 return 1;
             } else {
-                return name1.compareTo(name2);
+                return name1.compareToIgnoreCase(name2);
             }
         }
         return dataset1.compareTo(dataset2);
