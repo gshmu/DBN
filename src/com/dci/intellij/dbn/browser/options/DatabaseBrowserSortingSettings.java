@@ -12,8 +12,10 @@ import lombok.Setter;
 import org.jdom.Element;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.ArrayList;
+import java.util.Collection;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 
 import static com.dci.intellij.dbn.common.options.setting.SettingsSupport.stringAttribute;
 
@@ -23,32 +25,31 @@ import static com.dci.intellij.dbn.common.options.setting.SettingsSupport.string
 public class DatabaseBrowserSortingSettings
         extends BasicProjectConfiguration<DatabaseBrowserSettings, DatabaseBrowserSortingSettingsForm> {
 
-    private List<DBObjectComparator> comparators = new ArrayList<>();
+    private Map<DBObjectType, DBObjectComparator> comparators = new LinkedHashMap<>();
 
     DatabaseBrowserSortingSettings(DatabaseBrowserSettings parent) {
         super(parent);
-        comparators.add(DBObjectComparator.get(DBObjectType.COLUMN, SortingType.NAME));
-        comparators.add(DBObjectComparator.get(DBObjectType.FUNCTION, SortingType.NAME));
-        comparators.add(DBObjectComparator.get(DBObjectType.PROCEDURE, SortingType.NAME));
-        comparators.add(DBObjectComparator.get(DBObjectType.ARGUMENT, SortingType.POSITION));
+        comparators.put(DBObjectType.COLUMN, DBObjectComparator.get(DBObjectType.COLUMN, SortingType.NAME));
+        comparators.put(DBObjectType.FUNCTION, DBObjectComparator.get(DBObjectType.FUNCTION, SortingType.NAME));
+        comparators.put(DBObjectType.PROCEDURE, DBObjectComparator.get(DBObjectType.PROCEDURE, SortingType.NAME));
+        comparators.put(DBObjectType.ARGUMENT, DBObjectComparator.get(DBObjectType.ARGUMENT, SortingType.POSITION));
     }
 
     public <T extends DBObject> DBObjectComparator<T> getComparator(DBObjectType objectType) {
-        for (DBObjectComparator comparator : comparators) {
-            if (comparator.getObjectType().matches(objectType)) {
-                return comparator;
-            }
-        }
-        return null;
+        return comparators.get(objectType.getGenericType());
     }
 
-    private static boolean contains(List<DBObjectComparator> comparators, DBObjectType objectType) {
+    public Collection<DBObjectComparator> getComparators() {
+        return comparators.values();
+    }
+
+    public void setComparators(Collection<DBObjectComparator> comparators) {
+        Map<DBObjectType, DBObjectComparator> newComparators = new LinkedHashMap<>();
         for (DBObjectComparator comparator : comparators) {
-            if (comparator.getObjectType() == objectType){
-                return true;
-            }
+            newComparators.put(comparator.getObjectType(), comparator);
         }
-        return false;
+
+        this.comparators = newComparators;
     }
 
     @NotNull
@@ -78,7 +79,7 @@ public class DatabaseBrowserSortingSettings
 
     @Override
     public void readConfiguration(Element element) {
-        List<DBObjectComparator> newComparators = new ArrayList<DBObjectComparator>();
+        Map<DBObjectType, DBObjectComparator> newComparators = new LinkedHashMap<>();
         List<Element> children = element.getChildren();
         for (Element child : children) {
             String objectTypeName = stringAttribute(child, "name");
@@ -87,12 +88,13 @@ public class DatabaseBrowserSortingSettings
             SortingType sortingType = SortingType.valueOf(sortingTypeName);
             DBObjectComparator comparator = DBObjectComparator.get(objectType, sortingType);
             if (comparator != null) {
-                newComparators.add(comparator);
+                newComparators.put(comparator.getObjectType(), comparator);
             }
         }
-        for (DBObjectComparator comparator : comparators) {
-            if (!contains(newComparators, comparator.getObjectType())) {
-                newComparators.add(comparator);
+        for (DBObjectComparator comparator : comparators.values()) {
+            DBObjectType objectType = comparator.getObjectType();
+            if (!newComparators.containsKey(objectType)) {
+                newComparators.put(objectType, comparator);
             }
         }
         comparators = newComparators;
@@ -100,7 +102,7 @@ public class DatabaseBrowserSortingSettings
 
     @Override
     public void writeConfiguration(Element element) {
-        for (DBObjectComparator comparator : comparators) {
+        for (DBObjectComparator comparator : comparators.values()) {
             Element child = new Element("object-type");
             child.setAttribute("name", comparator.getObjectType().getName().toUpperCase());
             child.setAttribute("sorting-type", comparator.getSortingType().name());
