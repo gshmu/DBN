@@ -11,6 +11,7 @@ import com.dci.intellij.dbn.connection.session.DatabaseSession;
 import com.dci.intellij.dbn.object.common.DBObject;
 import com.dci.intellij.dbn.object.common.list.DBObjectList;
 import com.dci.intellij.dbn.object.lookup.DBObjectRef;
+import com.dci.intellij.dbn.object.type.DBObjectType;
 import com.dci.intellij.dbn.vfs.DBVirtualFileImpl;
 import com.intellij.ide.navigationToolbar.NavBarPresentation;
 import com.intellij.openapi.fileTypes.FileType;
@@ -34,6 +35,10 @@ public class DBObjectVirtualFile<T extends DBObject> extends DBVirtualFileImpl {
         super(project);
         this.object = object;
         this.name = object.getFileName();
+    }
+
+    public DBObjectType getObjectType() {
+        return object.getObjectType();
     }
 
     public DBObjectRef<T> getObjectRef() {
