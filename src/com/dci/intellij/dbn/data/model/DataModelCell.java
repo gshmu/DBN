@@ -1,6 +1,7 @@
 package com.dci.intellij.dbn.data.model;
 
 import com.dci.intellij.dbn.data.editor.ui.UserValueHolder;
+import com.dci.intellij.dbn.data.value.LargeObjectValue;
 import com.intellij.openapi.Disposable;
 import org.jetbrains.annotations.NotNull;
 
@@ -18,4 +19,8 @@ public interface DataModelCell<
 
     @NotNull
     R getRow();
+
+    default boolean isLargeValue() {
+        return getUserValue() instanceof LargeObjectValue;
+    }
 }

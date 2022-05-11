@@ -13,7 +13,6 @@ import com.dci.intellij.dbn.data.grid.options.DataGridTrackingColumnSettings;
 import com.dci.intellij.dbn.data.grid.ui.table.sortable.SortableTable;
 import com.dci.intellij.dbn.data.model.DataModel;
 import com.dci.intellij.dbn.data.model.DataModelCell;
-import com.dci.intellij.dbn.data.value.LargeObjectValue;
 import com.intellij.ui.SimpleTextAttributes;
 
 import javax.swing.border.Border;
@@ -32,9 +31,7 @@ public class BasicTableCellRenderer extends DBNColoredTableCellRenderer {
         DataModelCell cell = (DataModelCell) value;
         if (Failsafe.check(cell)) {
             SortableTable sortableTable = (SortableTable) table;
-            boolean isLoading = sortableTable.isLoading();
             boolean isCaretRow = table.getCellSelectionEnabled() && table.getSelectedRow() == rowIndex && table.getSelectedRowCount() == 1;
-            boolean isLargeValue = cell.getUserValue() instanceof LargeObjectValue;
 
             BasicTableTextAttributes attributes = (BasicTableTextAttributes) getAttributes();
             SimpleTextAttributes textAttributes = null;
@@ -42,10 +39,13 @@ public class BasicTableCellRenderer extends DBNColoredTableCellRenderer {
 
             if (isSelected) {
                 textAttributes = attributes.getSelection();
-            } else if (isLoading) {
+
+            } else if (sortableTable.isLoading()) {
                 textAttributes = attributes.getLoadingData(isCaretRow);
-            } else if (isLargeValue) {
+
+            } else if (cell.isLargeValue()) {
                 textAttributes = attributes.getReadonlyData(false, isCaretRow);
+
             } else {
                 DataGridTrackingColumnSettings trackingColumnSettings = sortableTable.getDataGridSettings().getTrackingColumnSettings();
                 boolean trackingColumn = trackingColumnSettings.isTrackingColumn(cell.getColumnInfo().getName());
