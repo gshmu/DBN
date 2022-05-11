@@ -17,7 +17,7 @@ import com.dci.intellij.dbn.data.value.LargeObjectValue;
 import com.intellij.ui.SimpleTextAttributes;
 
 import javax.swing.border.Border;
-import java.awt.*;
+import java.awt.Color;
 import java.util.Iterator;
 
 
@@ -29,27 +29,22 @@ public class BasicTableCellRenderer extends DBNColoredTableCellRenderer {
 
     @Override
     protected void customizeCellRenderer(DBNTable table, Object value, boolean isSelected, boolean hasFocus, int rowIndex, int columnIndex) {
-
-        SortableTable sortableTable = (SortableTable) table;
-        boolean isLoading = sortableTable.isLoading();
-
-        boolean isCaretRow = table.getCellSelectionEnabled() && table.getSelectedRow() == rowIndex && table.getSelectedRowCount() == 1;
-
-
-
         DataModelCell cell = (DataModelCell) value;
         if (Failsafe.check(cell)) {
-            boolean isLazyValue = cell.getUserValue() instanceof LargeObjectValue;
+            SortableTable sortableTable = (SortableTable) table;
+            boolean isLoading = sortableTable.isLoading();
+            boolean isCaretRow = table.getCellSelectionEnabled() && table.getSelectedRow() == rowIndex && table.getSelectedRowCount() == 1;
+            boolean isLargeValue = cell.getUserValue() instanceof LargeObjectValue;
 
             BasicTableTextAttributes attributes = (BasicTableTextAttributes) getAttributes();
-            SimpleTextAttributes textAttributes = attributes.getPlainData(false, isCaretRow);
+            SimpleTextAttributes textAttributes = null;
 
 
             if (isSelected) {
                 textAttributes = attributes.getSelection();
             } else if (isLoading) {
                 textAttributes = attributes.getLoadingData(isCaretRow);
-            } else if (isLazyValue) {
+            } else if (isLargeValue) {
                 textAttributes = attributes.getReadonlyData(false, isCaretRow);
             } else {
                 DataGridTrackingColumnSettings trackingColumnSettings = sortableTable.getDataGridSettings().getTrackingColumnSettings();
@@ -57,6 +52,9 @@ public class BasicTableCellRenderer extends DBNColoredTableCellRenderer {
                 if (trackingColumn) {
                     textAttributes = attributes.getTrackingData(false, isCaretRow);
                 }
+            }
+            if (textAttributes == null) {
+                textAttributes = attributes.getPlainData(false, isCaretRow);
             }
 
             Color background = Commons.nvl(textAttributes.getBgColor(), table.getBackground());
