@@ -21,6 +21,7 @@ import com.dci.intellij.dbn.editor.code.options.CodeEditorSettings;
 import com.dci.intellij.dbn.object.common.DBObject;
 import com.dci.intellij.dbn.object.common.DBSchemaObject;
 import com.dci.intellij.dbn.object.lookup.DBObjectRef;
+import com.dci.intellij.dbn.object.type.DBObjectType;
 import com.dci.intellij.dbn.vfs.file.DBEditableObjectVirtualFile;
 import com.dci.intellij.dbn.vfs.file.DBObjectVirtualFile;
 import com.dci.intellij.dbn.vfs.file.DBSourceCodeVirtualFile;
@@ -40,7 +41,12 @@ import org.jdom.Element;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.UUID;
 
 import static com.dci.intellij.dbn.common.util.Commons.list;
 import static com.dci.intellij.dbn.vfs.VirtualFileStatus.MODIFIED;
@@ -198,7 +204,9 @@ public class DatabaseFileManager extends AbstractProjectComponent implements Per
         public void fileOpened(@NotNull FileEditorManager source, @NotNull VirtualFile file) {
             if (file instanceof DBObjectVirtualFile) {
                 DBObjectVirtualFile databaseFile = (DBObjectVirtualFile) file;
-                openFiles.add(databaseFile);
+                if (databaseFile.getObjectType() != DBObjectType.CONSOLE) {
+                    openFiles.add(databaseFile);
+                }
             }
         }
 
@@ -206,7 +214,9 @@ public class DatabaseFileManager extends AbstractProjectComponent implements Per
         public void fileClosed(@NotNull FileEditorManager source, @NotNull VirtualFile file) {
             if (file instanceof DBObjectVirtualFile) {
                 DBObjectVirtualFile databaseFile = (DBObjectVirtualFile) file;
-                openFiles.remove(databaseFile);
+                if (databaseFile.getObjectType() != DBObjectType.CONSOLE) {
+                    openFiles.remove(databaseFile);
+                }
             }
         }
 
@@ -255,10 +265,9 @@ public class DatabaseFileManager extends AbstractProjectComponent implements Per
             List<Element> fileElements = openFilesElement.getChildren();
             for (Element fileElement : fileElements) {
                 DBObjectRef<DBSchemaObject> objectRef = DBObjectRef.from(fileElement);
-                if (objectRef != null) {
+                if (objectRef != null && objectRef.getObjectType() != DBObjectType.CONSOLE) {
                     ConnectionId connectionId = objectRef.getConnectionId();
-                    List<DBObjectRef<DBSchemaObject>> objectRefs =
-                            pendingOpenFiles.computeIfAbsent(connectionId, id -> new ArrayList<>());
+                    val objectRefs = pendingOpenFiles.computeIfAbsent(connectionId, id -> new ArrayList<>());
                     objectRefs.add(objectRef);
                 }
             }

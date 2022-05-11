@@ -43,10 +43,9 @@ import static com.dci.intellij.dbn.vfs.DatabaseFileSystem.PS;
 public class DBObjectRef<T extends DBObject> implements Comparable<DBObjectRef<?>>, Reference<T>, PersistentStateElement, ConnectionProvider {
     private static final String QUOTE = "'";
 
-    protected ConnectionId connectionId;
+    private Object parent; // can hold connection id or an actual DBObjectRef (memory optimisation)
     private String objectName;
     private short overload;
-    private DBObjectRef<?> parent;
     private DBObjectType objectType;
 
     private WeakRef<T> reference;
@@ -69,7 +68,7 @@ public class DBObjectRef<T extends DBObject> implements Comparable<DBObjectRef<?
         if (parentObj != null) {
             this.parent = parentObj.ref();
         } else if (!(object instanceof DBVirtualObject)){
-            this.connectionId = object.getConnectionId();
+            this.parent = object.getConnectionId();
         }
     }
 
@@ -80,7 +79,7 @@ public class DBObjectRef<T extends DBObject> implements Comparable<DBObjectRef<?
     }
 
     public DBObjectRef(ConnectionId connectionId, DBObjectType objectType, String objectName) {
-        this.connectionId = connectionId;
+        this.parent = connectionId;
         this.objectType = objectType;
         this.objectName = objectName.intern();
     }
@@ -100,9 +99,15 @@ public class DBObjectRef<T extends DBObject> implements Comparable<DBObjectRef<?
             if (element.objectType.matches(objectType)) {
                 return element;
             }
-            element = element.parent;
+
+            element = element.getParentRef();
+
         }
         return null;
+    }
+
+    private DBObjectRef<?> getParentRef() {
+        return parent instanceof DBObjectRef ? (DBObjectRef) parent : null;
     }
 
     public static <T extends DBObject> DBObjectRef<T> from(Element element) {
@@ -159,7 +164,7 @@ public class DBObjectRef<T extends DBObject> implements Comparable<DBObjectRef<?
                                 new DBObjectRef<>(connectionId, objectType, token) :
                                 new DBObjectRef<>(objectRef, objectType, token);
                     } else {
-                        this.parent = objectRef;
+                        this.parent = objectRef == null ? connectionId :  objectRef;
                         this.objectType = objectType;
                         this.objectName = token.intern();
                     }
@@ -199,13 +204,13 @@ public class DBObjectRef<T extends DBObject> implements Comparable<DBObjectRef<?
         builder.append(PS);
         builder.append(quotePathElement(objectName));
 
-        DBObjectRef<?> parent = this.parent;
+        DBObjectRef<?> parent = getParentRef();
         while (parent != null) {
             builder.insert(0, PS);
             builder.insert(0, quotePathElement(parent.objectName));
             builder.insert(0, PS);
             builder.insert(0, parent.objectType.getListName());
-            parent = parent.parent;
+            parent = parent.getParentRef();
         }
 
         if (overload > 0) {
@@ -218,7 +223,7 @@ public class DBObjectRef<T extends DBObject> implements Comparable<DBObjectRef<?
 
 
     public String getPath() {
-        DBObjectRef<?> parent = this.parent;
+        DBObjectRef<?> parent = getParentRef();
         if (parent == null) {
             return objectName;
         } else {
@@ -226,7 +231,7 @@ public class DBObjectRef<T extends DBObject> implements Comparable<DBObjectRef<?
             while(parent != null) {
                 buffer.insert(0, ".");
                 buffer.insert(0, parent.objectName);
-                parent = parent.parent;
+                parent = parent.getParentRef();
             }
             return buffer.toString();
         }
@@ -240,7 +245,7 @@ public class DBObjectRef<T extends DBObject> implements Comparable<DBObjectRef<?
      * qualified object name without schema (e.g. PROGRAM.METHOD)
      */
     public String getQualifiedObjectName() {
-        DBObjectRef<?> parent = this.parent;
+        DBObjectRef<?> parent = getParentRef();
         if (parent == null || parent.objectType == DBObjectType.SCHEMA) {
             return objectName;
         } else {
@@ -248,7 +253,7 @@ public class DBObjectRef<T extends DBObject> implements Comparable<DBObjectRef<?
             while(parent != null && parent.objectType != DBObjectType.SCHEMA) {
                 buffer.insert(0, '.');
                 buffer.insert(0, parent.objectName);
-                parent = parent.parent;
+                parent = parent.getParentRef();
             }
             return buffer.toString();
         }    }
@@ -258,7 +263,7 @@ public class DBObjectRef<T extends DBObject> implements Comparable<DBObjectRef<?
     }
 
     public String getTypePath() {
-        DBObjectRef<?> parent = this.parent;
+        DBObjectRef<?> parent = getParentRef();
         if (parent == null) {
             return objectType.getName();
         } else {
@@ -266,7 +271,7 @@ public class DBObjectRef<T extends DBObject> implements Comparable<DBObjectRef<?
             while(parent != null) {
                 buffer.insert(0, '.');
                 buffer.insert(0, parent.objectType.getName());
-                parent = parent.parent;
+                parent = parent.getParentRef();
             }
             return buffer.toString();
         }
@@ -274,7 +279,14 @@ public class DBObjectRef<T extends DBObject> implements Comparable<DBObjectRef<?
 
 
     public ConnectionId getConnectionId() {
-        return parent == null ? connectionId : parent.getConnectionId();
+        if (parent instanceof ConnectionId) {
+            return (ConnectionId) parent;
+
+        } else if (parent instanceof DBObjectRef)  {
+            DBObjectRef parentRef = (DBObjectRef) parent;
+            return parentRef.getConnectionId();
+        }
+        return null;
     }
 
     public boolean is(@NotNull DBObject object) {
@@ -375,6 +387,7 @@ public class DBObjectRef<T extends DBObject> implements Comparable<DBObjectRef<?
     @Nullable
     private T lookup(@NotNull ConnectionHandler connection) {
         DBObject object = null;
+        DBObjectRef parent = getParentRef();
         if (parent == null) {
             DBObjectBundle objectBundle = connection.getObjectBundle();
             object = objectBundle.getObject(objectType, objectName, overload);
@@ -433,6 +446,7 @@ public class DBObjectRef<T extends DBObject> implements Comparable<DBObjectRef<?
     }
 
     public boolean isLoaded() {
+        DBObjectRef<?> parent = getParentRef();
         return (parent == null || parent.isLoaded()) && reference != null;
     }
 
@@ -474,7 +488,7 @@ public class DBObjectRef<T extends DBObject> implements Comparable<DBObjectRef<?
             return false;
         }
 
-        return deepEqual(local.getParent(), remote.getParent());
+        return deepEqual(local.getParentRef(), remote.getParentRef());
     }
 
     @Override
@@ -490,24 +504,26 @@ public class DBObjectRef<T extends DBObject> implements Comparable<DBObjectRef<?
         int result = this.getConnectionId().id().compareTo(that.getConnectionId().id());
         if (result != 0) return result;
 
-        if (this.parent != null && that.parent != null) {
-            if (Objects.equals(this.parent, that.parent)) {
+        DBObjectRef<?> thisParent = this.getParentRef();
+        DBObjectRef<?> thatParent = that.getParentRef();
+        if (thisParent != null && thatParent != null) {
+            if (Objects.equals(thisParent, thatParent)) {
                 result = this.objectType.compareTo(that.objectType);
                 if (result != 0) return result;
 
                 int nameCompare = this.objectName.compareToIgnoreCase(that.objectName);
                 return nameCompare == 0 ? this.overload - that.overload : nameCompare;
             } else {
-                return this.parent.compareTo(that.parent);
+                return thisParent.compareTo(thatParent);
             }
-        } else if(this.parent == null && that.parent == null) {
+        } else if(thisParent == null && thatParent == null) {
             result = this.objectType.compareTo(that.objectType);
             if (result != 0) return result;
 
             return this.objectName.compareToIgnoreCase(that.objectName);
-        } else if (this.parent == null) {
+        } else if (thisParent == null) {
             return -1;
-        } else if (that.parent == null) {
+        } else if (thatParent == null) {
             return 1;
         }
         return 0;
