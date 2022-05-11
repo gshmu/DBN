@@ -2,6 +2,7 @@ package com.dci.intellij.dbn.database.sqlite.adapter;
 
 import com.dci.intellij.dbn.common.util.Commons;
 import com.dci.intellij.dbn.database.common.util.ResultSetReader;
+import lombok.Getter;
 import org.jetbrains.annotations.NotNull;
 
 import java.sql.ResultSet;
@@ -22,6 +23,7 @@ public class SqliteRawMetaData {
             return new Row(resultSet);
         }
 
+        @Getter
         public static class Row {
             int id;
             short seq;
@@ -35,26 +37,6 @@ public class SqliteRawMetaData {
                 table = resultSet.getString("table");
                 from = resultSet.getString("from");
                 to = resultSet.getString("to");
-            }
-
-            public int getId() {
-                return id;
-            }
-
-            public short getSeq() {
-                return seq;
-            }
-
-            public String getTable() {
-                return table;
-            }
-
-            public String getFrom() {
-                return from;
-            }
-
-            public String getTo() {
-                return to;
             }
         }
     }
@@ -70,6 +52,7 @@ public class SqliteRawMetaData {
             return new Row(resultSet);
         }
 
+        @Getter
         public static class Row {
             int seq;
             int unique;
@@ -83,26 +66,6 @@ public class SqliteRawMetaData {
                 try {unique = resultSet.getInt("unique");} catch (SQLException ignore) {}
                 try {partial = resultSet.getInt("partial");} catch (SQLException ignore) {}
                 try {origin = resultSet.getString("origin");} catch (SQLException ignore) {}
-            }
-
-            public int getSeq() {
-                return seq;
-            }
-
-            public int getUnique() {
-                return unique;
-            }
-
-            public int getPartial() {
-                return partial;
-            }
-
-            public String getName() {
-                return name;
-            }
-
-            public String getOrigin() {
-                return origin;
             }
         }
     }
@@ -118,6 +81,7 @@ public class SqliteRawMetaData {
             return new Row(resultSet);
         }
 
+        @Getter
         public static class Row {
             short seqno;
             int cid;
@@ -134,30 +98,6 @@ public class SqliteRawMetaData {
                 desc = resultSet.getInt("desc");
                 coll = resultSet.getString("coll");
             }
-
-            public short getSeqno() {
-                return seqno;
-            }
-
-            public int getCid() {
-                return cid;
-            }
-
-            public int getDesc() {
-                return desc;
-            }
-
-            public int getKey() {
-                return key;
-            }
-
-            public String getName() {
-                return name;
-            }
-
-            public String getColl() {
-                return coll;
-            }
         }
     }
 
@@ -172,6 +112,7 @@ public class SqliteRawMetaData {
             return new Row(resultSet);
         }
 
+        @Getter
         public static class Row {
             int cid;
             String name;
@@ -185,26 +126,6 @@ public class SqliteRawMetaData {
                 type = resultSet.getString("type");
                 notnull = resultSet.getInt("notnull");
                 pk = resultSet.getInt("pk");
-            }
-
-            public int getCid() {
-                return cid;
-            }
-
-            public String getName() {
-                return name;
-            }
-
-            public String getType() {
-                return type;
-            }
-
-            public int getNotnull() {
-                return notnull;
-            }
-
-            public int getPk() {
-                return pk;
             }
         }
     }
