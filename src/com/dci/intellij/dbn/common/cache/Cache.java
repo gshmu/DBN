@@ -1,14 +1,13 @@
 package com.dci.intellij.dbn.common.cache;
 
 import com.dci.intellij.dbn.common.routine.ThrowableCallable;
-import com.dci.intellij.dbn.common.thread.Synchronized;
 import com.dci.intellij.dbn.common.util.TimeUtil;
 import com.dci.intellij.dbn.language.common.WeakRef;
 import com.intellij.openapi.Disposable;
 import com.intellij.openapi.util.Disposer;
 import com.intellij.util.containers.ContainerUtil;
+import lombok.SneakyThrows;
 import lombok.val;
-import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 import java.util.Map;
@@ -16,36 +15,23 @@ import java.util.Timer;
 import java.util.TimerTask;
 import java.util.concurrent.ConcurrentHashMap;
 
+import static com.dci.intellij.dbn.common.util.Unsafe.cast;
+
 public class Cache {
     private final Map<String, CacheValue> elements = new ConcurrentHashMap<>();
-    private final String qualifier;
     private final long expiryMillis;
 
 
-    public Cache(String qualifier, long expiryMillis) {
-        this.qualifier = qualifier;
+    public Cache(long expiryMillis) {
         this.expiryMillis = expiryMillis;
         CACHE_CLEANUP_TASK.register(this);
-    }
-
-    @Nullable
-    private <T> T get(String key) {
-        CacheValue<T> cacheValue = elements.get(key);
-        if (isValid(cacheValue)) {
-            return cacheValue.getValue();
-        }
-        return null;
-    }
-
-    private <T> void set(String key, T value) {
-        elements.put(key, new CacheValue<T>(value));
     }
 
     private boolean isValid(CacheValue cacheValue) {
         return cacheValue != null && !cacheValue.isOlderThan(expiryMillis);
     }
 
-    public void cleanup() {
+    private void cleanup() {
         if (!elements.isEmpty()) {
             for (val entry : elements.entrySet()) {
                 String key = entry.getKey();
@@ -68,15 +54,19 @@ public class Cache {
     }
 
     public <T, E extends Throwable> T get(String key, ThrowableCallable<T, E> loader) throws E {
-        String syncKey = qualifier + "." + key;
-        return Synchronized.call(syncKey, () -> {
-            T value = get(key);
-            if (value == null) {
-                value = loader.call();
-                set(key, value);
+        CacheValue cacheValue = elements.compute(key, (k, v) -> {
+            if (!isValid(v)) {
+                T value = load(loader);
+                v = new CacheValue<T>(value);
             }
-            return value;
+            return v;
         });
+        return cast(cacheValue.getValue());
+    }
+
+    @SneakyThrows
+    private <T, E extends Throwable> T load(ThrowableCallable<T, E> loader) {
+        return loader.call();
     }
 
     private static class ConnectionCacheCleanupTask extends TimerTask {

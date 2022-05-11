@@ -23,7 +23,11 @@ import com.dci.intellij.dbn.connection.info.ConnectionInfo;
 import com.dci.intellij.dbn.connection.jdbc.DBNConnection;
 import com.dci.intellij.dbn.connection.session.DatabaseSession;
 import com.dci.intellij.dbn.connection.session.DatabaseSessionBundle;
-import com.dci.intellij.dbn.database.*;
+import com.dci.intellij.dbn.database.DatabaseCompatibility;
+import com.dci.intellij.dbn.database.DatabaseFeature;
+import com.dci.intellij.dbn.database.DatabaseInterface;
+import com.dci.intellij.dbn.database.DatabaseInterfaceProvider;
+import com.dci.intellij.dbn.database.DatabaseMetadataInterface;
 import com.dci.intellij.dbn.execution.statement.StatementExecutionQueue;
 import com.dci.intellij.dbn.language.common.DBLanguage;
 import com.dci.intellij.dbn.language.common.DBLanguageDialect;
@@ -41,7 +45,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import javax.swing.*;
+import javax.swing.Icon;
 import java.sql.SQLException;
 import java.util.Comparator;
 import java.util.List;
@@ -69,7 +73,7 @@ public class ConnectionHandlerImpl extends StatefulDisposable.Base implements Co
             Latent.basic(() -> new DBSessionBrowserVirtualFile(this));
 
     private final Latent<Cache> metaDataCache =
-            Latent.basic(() -> new Cache(getConnectionId().id(), TimeUtil.Millis.ONE_MINUTE));
+            Latent.basic(() -> new Cache(TimeUtil.Millis.ONE_MINUTE));
 
     private final Latent<AuthenticationInfo> temporaryAuthenticationInfo =
             Latent.basic(() -> {
