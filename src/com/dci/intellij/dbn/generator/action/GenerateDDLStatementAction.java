@@ -12,11 +12,11 @@ import org.jetbrains.annotations.Nullable;
 import java.sql.SQLException;
 
 public class GenerateDDLStatementAction extends GenerateStatementAction {
-    private DBObjectRef objectRef;
+    private final DBObjectRef object;
 
     GenerateDDLStatementAction(DBObject object) {
         super("DDL Statement");
-        objectRef = DBObjectRef.of(object);
+        this.object = DBObjectRef.of(object);
 
     }
 
@@ -28,7 +28,7 @@ public class GenerateDDLStatementAction extends GenerateStatementAction {
 
     @NotNull
     public DBObject getObject() {
-        return DBObjectRef.ensure(objectRef);
+        return DBObjectRef.ensure(object);
     }
 
     @Override
