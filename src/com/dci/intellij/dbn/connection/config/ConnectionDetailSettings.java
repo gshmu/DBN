@@ -122,6 +122,7 @@ public class ConnectionDetailSettings extends BasicProjectConfiguration<Connecti
     }
 
     public ConnectionId getConnectionId() {
-        return getParent().getConnectionId();
+        ConnectionSettings parent = getParent();
+        return parent == null ? null : parent.getConnectionId();
     }
 }

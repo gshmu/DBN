@@ -14,14 +14,18 @@ import com.dci.intellij.dbn.common.options.ui.ConfigurationEditorUtil;
 import com.dci.intellij.dbn.common.ui.form.DBNHintForm;
 import com.dci.intellij.dbn.common.util.Commons;
 import com.dci.intellij.dbn.connection.ConnectionHandlerStatusListener;
+import com.dci.intellij.dbn.connection.ConnectionId;
 import com.dci.intellij.dbn.connection.config.ConnectionDetailSettings;
 import com.dci.intellij.dbn.options.general.GeneralProjectSettings;
 import com.intellij.openapi.options.ConfigurationException;
 import com.intellij.openapi.project.Project;
 import org.jetbrains.annotations.NotNull;
 
-import javax.swing.*;
-import java.awt.*;
+import javax.swing.JCheckBox;
+import javax.swing.JComboBox;
+import javax.swing.JPanel;
+import javax.swing.JTextField;
+import java.awt.Color;
 import java.awt.event.ActionListener;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
@@ -76,10 +80,11 @@ public class ConnectionDetailSettingsForm extends ConfigurationEditorForm<Connec
         Project project = getConfiguration().getProject();
         EnvironmentType environmentType = getSelection(environmentTypesComboBox);
         Color color = environmentType == null ? null : environmentType.getColor();
+        ConnectionId connectionId = getConfiguration().getConnectionId();
 
         ProjectEvents.notify(project,
                 ConnectionPresentationChangeListener.TOPIC,
-                (listener) -> listener.presentationChanged(null, null, color, getConfiguration().getConnectionId(), null));
+                (listener) -> listener.presentationChanged(null, null, color, connectionId, null));
     }
 
     public EnvironmentType getSelectedEnvironmentType() {
@@ -142,8 +147,9 @@ public class ConnectionDetailSettingsForm extends ConfigurationEditorForm<Connec
             }
 
             if (settingsChanged) {
+                ConnectionId connectionId = configuration.getConnectionId();
                 ProjectEvents.notify(project, ConnectionHandlerStatusListener.TOPIC,
-                        (listener) -> listener.statusChanged(configuration.getConnectionId()));
+                        (listener) -> listener.statusChanged(connectionId));
             }
         });
     }

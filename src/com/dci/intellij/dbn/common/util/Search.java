@@ -57,14 +57,17 @@ public final class Search {
 
 
     public static <T> T linearSearch(List<T> list, Function<T, Boolean> match, Function<T, Boolean> condition) {
-        int index = 0;
-        T element = list.get(index);
-        while (condition.apply(element)) {
-            if (match.apply(element)) {
-                return element;
+        if (list != null && !list.isEmpty()) {
+            for (T element : list) {
+                if (condition.apply(element)) {
+                    if (match.apply(element)) {
+                        return element;
+                    }
+                } else {
+                    return null;
+                }
+
             }
-            index++;
-            element = list.get(index);
         }
         return null;
     }
