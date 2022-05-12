@@ -232,7 +232,9 @@ public class DBNConnection extends DBNConnectionBase {
     @Override
     public void closeInner() throws SQLException {
         try {
-            inner.rollback();
+            if (!isAutoCommit()) {
+                inner.rollback();
+            }
         } finally {
             inner.close();
         }
@@ -304,6 +306,10 @@ public class DBNConnection extends DBNConnectionBase {
     @Override
     public boolean getAutoCommit() {
         return autoCommit.get();
+    }
+
+    public boolean isAutoCommit() {
+        return getAutoCommit();
     }
 
     @Override
