@@ -7,6 +7,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Objects;
 
+import static com.dci.intellij.dbn.common.cache.CacheKey.key;
 import static com.dci.intellij.dbn.database.sqlite.adapter.SqliteRawMetaData.RawForeignKeyInfo;
 import static com.dci.intellij.dbn.database.sqlite.adapter.SqliteRawMetaData.RawTableInfo;
 
@@ -67,13 +68,13 @@ public abstract class SqliteColumnsResultSet extends SqliteDatasetInfoResultSetS
 
     private RawForeignKeyInfo getForeignKeyInfo(final String datasetName) throws SQLException {
         return cache().get(
-                ownerName + "." + datasetName + ".FOREIGN_KEY_INFO",
+                key(ownerName, datasetName, "FOREIGN_KEY_INFO"),
                 () -> new RawForeignKeyInfo(loadForeignKeyInfo(datasetName)));
     }
 
     private RawTableInfo getTableInfo(final String datasetName) throws SQLException {
         return cache().get(
-                ownerName + "." + datasetName + ".TABLE_INFO",
+                key(ownerName, datasetName, "TABLE_INFO"),
                 () -> new RawTableInfo(loadTableInfo(datasetName)));
     }
 

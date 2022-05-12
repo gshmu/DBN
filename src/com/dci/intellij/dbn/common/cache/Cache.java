@@ -3,11 +3,8 @@ package com.dci.intellij.dbn.common.cache;
 import com.dci.intellij.dbn.common.routine.ThrowableCallable;
 import com.dci.intellij.dbn.common.util.TimeUtil;
 import com.dci.intellij.dbn.language.common.WeakRef;
-import com.intellij.openapi.Disposable;
-import com.intellij.openapi.util.Disposer;
 import com.intellij.util.containers.ContainerUtil;
 import lombok.SneakyThrows;
-import lombok.val;
 
 import java.util.List;
 import java.util.Map;
@@ -17,8 +14,11 @@ import java.util.concurrent.ConcurrentHashMap;
 
 import static com.dci.intellij.dbn.common.util.Unsafe.cast;
 
+/**
+ * Dynamic multi level cache
+ */
 public class Cache {
-    private final Map<String, CacheValue> elements = new ConcurrentHashMap<>();
+    private final Map<String, Map<String, ?>> data = new ConcurrentHashMap<>(30);
     private final long expiryMillis;
 
 
@@ -32,36 +32,50 @@ public class Cache {
     }
 
     private void cleanup() {
-        if (!elements.isEmpty()) {
-            for (val entry : elements.entrySet()) {
-                String key = entry.getKey();
-                CacheValue cacheValue = entry.getValue();
-                if (!isValid(cacheValue)) {
-                    cacheValue = elements.remove(key);
-                    Object value = cacheValue.getValue();
-                    if (value instanceof Disposable) {
-                        Disposable disposable = (Disposable) value;
-                        Disposer.dispose(disposable);
-                    }
+        cleanup(data);
+    }
 
+    private void cleanup(Object data) {
+        if (data instanceof Map) {
+            Map<String, ?> cache = cast(data);
+            for (String key : cache.keySet()) {
+                Object value = cache.get(key);
+                if (value instanceof CacheValue) {
+                    CacheValue cacheValue = (CacheValue) value;
+                    if (!isValid(cacheValue)) {
+                        cache.remove(key);
+                    }
+                } else {
+                    cleanup(cast(value));
                 }
             }
         }
     }
 
     public void reset() {
-        elements.clear();
+        data.clear();
     }
 
-    public <T, E extends Throwable> T get(String key, ThrowableCallable<T, E> loader) throws E {
-        CacheValue cacheValue = elements.compute(key, (k, v) -> {
+    public <T, E extends Throwable> T get(CacheKey<T> key, ThrowableCallable<T, E> loader) throws E {
+        Map<String, CacheValue<T>> elements = elements(key);
+        CacheValue<T> cacheValue = elements.compute(key.getKey(), (k, v) -> {
             if (!isValid(v)) {
                 T value = load(loader);
                 v = new CacheValue<T>(value);
             }
             return v;
         });
-        return cast(cacheValue.getValue());
+        return cacheValue.getValue();
+    }
+
+    private <T> Map<String, CacheValue<T>> elements(CacheKey<T> key) {
+        Map<String, Map<String, ?>> cache = data;
+        String[] path = key.getPath();
+        for (String token : path) {
+            cache = cast(cache.computeIfAbsent(token, k -> new ConcurrentHashMap<>()));
+        }
+
+        return cast(cache);
     }
 
     @SneakyThrows

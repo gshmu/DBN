@@ -20,6 +20,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Objects;
 
+import static com.dci.intellij.dbn.common.cache.CacheKey.key;
 import static com.dci.intellij.dbn.database.common.util.CachedResultSet.Condition;
 import static com.dci.intellij.dbn.database.generic.GenericMetadataLoaders.*;
 import static com.dci.intellij.dbn.database.generic.GenericMetadataTranslators.*;
@@ -367,7 +368,7 @@ public class GenericMetadataInterface extends DatabaseMetadataInterfaceImpl {
         switch (methodType) {
             case "FUNCTION":
                 return DatabaseInterface.cached(
-                        "UNSCRAMBLED_FUNCTIONS." + ownerName,
+                        key("UNSCRAMBLED_FUNCTIONS", ownerName),
                         () -> {
                             CachedResultSet functionsRs = loadFunctionsRaw(ownerName, connection);
                             functionsRs = functionsRs.filter(IS_FUNCTION);
@@ -384,7 +385,7 @@ public class GenericMetadataInterface extends DatabaseMetadataInterfaceImpl {
 
             case "PROCEDURE":
                 return DatabaseInterface.cached(
-                        "UNSCRAMBLED_PROCEDURES." + ownerName,
+                        key("UNSCRAMBLED_PROCEDURES", ownerName),
                         () -> {
                             CachedResultSet proceduresRs = loadProceduresRaw(ownerName, connection);
                             proceduresRs = proceduresRs.filter(IS_PROCEDURE);
