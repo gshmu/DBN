@@ -75,7 +75,7 @@ public class DBNConnection extends DBNConnectionBase {
             new ResourceStatusAdapterImpl<DBNConnection>(this,
                     ResourceStatus.VALID,
                     ResourceStatus.CHANGING_VALID,
-                    ResourceStatus.CHECKING_VALID,
+                    ResourceStatus.EVALUATING_VALID,
                     TimeUtil.Millis.TEN_SECONDS,
                     Boolean.TRUE,
                     Boolean.FALSE) { // false is terminal status
@@ -93,7 +93,7 @@ public class DBNConnection extends DBNConnectionBase {
             new ResourceStatusAdapterImpl<DBNConnection>(this,
                     ResourceStatus.AUTO_COMMIT,
                     ResourceStatus.CHANGING_AUTO_COMMIT,
-                    ResourceStatus.CHECKING_AUTO_COMMIT,
+                    ResourceStatus.EVALUATING_AUTO_COMMIT,
                     TimeUtil.Millis.TEN_SECONDS,
                     Boolean.FALSE,
                     null) { // no terminal status
@@ -120,7 +120,7 @@ public class DBNConnection extends DBNConnectionBase {
             new ResourceStatusAdapterImpl<DBNConnection>(this,
                     ResourceStatus.READ_ONLY,
                     ResourceStatus.CHANGING_READ_ONLY,
-                    ResourceStatus.CHECKING_READ_ONLY,
+                    ResourceStatus.EVALUATING_READ_ONLY,
                     TimeUtil.Millis.TEN_SECONDS,
                     Boolean.FALSE,
                     null) { // no terminal status

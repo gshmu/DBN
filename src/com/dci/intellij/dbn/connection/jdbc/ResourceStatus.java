@@ -13,11 +13,11 @@ public enum ResourceStatus implements Property.IntBase {
     READ_ONLY,
     AUTO_COMMIT,
 
-    CHECKING_VALID(true),
-    CHECKING_CLOSED(true),
-    CHECKING_CANCELLED(true),
-    CHECKING_READ_ONLY(true),
-    CHECKING_AUTO_COMMIT(true),
+    EVALUATING_VALID(true),
+    EVALUATING_CLOSED(true),
+    EVALUATING_CANCELLED(true),
+    EVALUATING_READ_ONLY(true),
+    EVALUATING_AUTO_COMMIT(true),
 
     CHANGING_VALID(true),
     CHANGING_CLOSED(true),

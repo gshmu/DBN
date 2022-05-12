@@ -23,18 +23,20 @@ public abstract class ResourceStatusAdapterImpl<T extends Resource> implements R
     private final WeakRef<T> resource;
     private final ResourceStatus subject;
     private final ResourceStatus changing;
-    private final ResourceStatus checking;
+    private final ResourceStatus evaluating;
     private final Boolean terminalStatus;
     private final long checkInterval;
     private long checkTimestamp;
 
     private final ReadWriteLock lock = new ReentrantReadWriteLock();
+    private final Lock readLock = lock.readLock();
+    private final Lock writeLock = lock.writeLock();
 
-    ResourceStatusAdapterImpl(T resource, ResourceStatus subject, ResourceStatus changing, ResourceStatus checking, long checkInterval, @NotNull Boolean initialStatus, @Nullable Boolean terminalStatus) {
+    ResourceStatusAdapterImpl(T resource, ResourceStatus subject, ResourceStatus changing, ResourceStatus evaluating, long checkInterval, @NotNull Boolean initialStatus, @Nullable Boolean terminalStatus) {
         this.resource = WeakRef.of(resource);
         this.subject = subject;
         this.changing = changing;
-        this.checking = checking;
+        this.evaluating = evaluating;
         this.checkInterval = checkInterval;
         this.terminalStatus = terminalStatus;
         set(subject, initialStatus);
@@ -42,11 +44,10 @@ public abstract class ResourceStatusAdapterImpl<T extends Resource> implements R
 
     @Override
     public final boolean get() {
-        Lock readLock = this.lock.readLock();
         if (readLock.tryLock()) {
             try {
-                if (canCheck()) {
-                    check();
+                if (canEvaluate()) {
+                    evaluate();
                 }
             } finally {
                 readLock.unlock();
@@ -57,7 +58,6 @@ public abstract class ResourceStatusAdapterImpl<T extends Resource> implements R
 
     @Override
     public final void set(boolean value) throws SQLException {
-        Lock writeLock = this.lock.writeLock();
         if (writeLock.tryLock()) {
             try {
                 if (canChange(value)) {
@@ -92,17 +92,17 @@ public abstract class ResourceStatusAdapterImpl<T extends Resource> implements R
         return is(subject);
     }
 
-    private boolean isChecking() {
-        return is(checking);
+    private boolean isEvaluating() {
+        return is(evaluating);
     }
 
     private boolean isChanging() {
         return is(changing);
     }
 
-    private void check() {
+    private void evaluate() {
         try {
-            set(checking, true);
+            set(evaluating, true);
             if (checkInterval == 0) {
                 set(subject, checkControlled());
             } else {
@@ -118,7 +118,7 @@ public abstract class ResourceStatusAdapterImpl<T extends Resource> implements R
             log.warn("Failed to check resource " + subject + " status", e);
             fail();
         } finally {
-            set(checking, false);
+            set(evaluating, false);
         }
     }
 
@@ -134,8 +134,8 @@ public abstract class ResourceStatusAdapterImpl<T extends Resource> implements R
         }
     }
 
-    private boolean canCheck() {
-        if (isChecking() || isChanging() || isTerminal()) {
+    private boolean canEvaluate() {
+        if (isEvaluating() || isChanging() || isTerminal()) {
             return false;
         } else {
             return true;
