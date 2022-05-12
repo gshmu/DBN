@@ -1,6 +1,7 @@
 package com.dci.intellij.dbn.database;
 
 import com.dci.intellij.dbn.common.cache.Cache;
+import com.dci.intellij.dbn.common.cache.CacheKey;
 import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.common.routine.ParametricCallable;
 import com.dci.intellij.dbn.common.routine.ParametricRunnable;
@@ -49,7 +50,7 @@ public interface DatabaseInterface {
         return Failsafe.nd(CONNECTION_HANDLER.get());
     }
 
-    static <T, E extends Throwable> T cached(String key, ThrowableCallable<T, E> loader) throws E{
+    static <T, E extends Throwable> T cached(CacheKey<T> key, ThrowableCallable<T, E> loader) throws E{
         return cache().get(key, loader);
     }
 
