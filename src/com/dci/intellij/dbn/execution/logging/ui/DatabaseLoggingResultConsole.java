@@ -1,6 +1,7 @@
 package com.dci.intellij.dbn.execution.logging.ui;
 
 import com.dci.intellij.dbn.common.util.Strings;
+import com.dci.intellij.dbn.common.util.Unsafe;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.execution.logging.LogOutput;
 import com.dci.intellij.dbn.execution.logging.LogOutputContext;
@@ -46,6 +47,6 @@ public class DatabaseLoggingResultConsole extends LogConsoleBase{
 
     @Override
     public void dispose() {
-        super.dispose();
+        Unsafe.silent(() -> super.dispose());
     }
 }

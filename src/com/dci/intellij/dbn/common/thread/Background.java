@@ -22,7 +22,7 @@ public final class Background {
                             threadInfo,
                             ThreadProperty.BACKGROUND,
                             runnable);
-                } catch (ProcessCanceledException | InterruptedException ignore) {
+                } catch (ProcessCanceledException | UnsupportedOperationException| InterruptedException ignore) {
                 } catch (Throwable e) {
                     log.error("Error executing background task", e);
                 }
@@ -51,7 +51,7 @@ public final class Background {
                     } finally {
                         handle.set(null);
                     }
-                } catch (ProcessCanceledException | InterruptedException ignore) {
+                } catch (ProcessCanceledException | UnsupportedOperationException | InterruptedException ignore) {
                 } catch (Throwable e) {
                     log.error("Error executing background task", e);
                 }

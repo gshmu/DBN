@@ -25,7 +25,9 @@ public final class Projects {
                 new ProjectManagerListener() {
                     @Override
                     public void projectOpened(@NotNull Project project) {
-                        runnable.run(project);
+                        try {
+                            runnable.run(project);
+                        } catch (ProcessCanceledException | UnsupportedOperationException ignore) {}
                     }
                 });
     }
@@ -35,7 +37,9 @@ public final class Projects {
                 new ProjectManagerListener() {
                     @Override
                     public void projectClosing(@NotNull Project project) {
-                        runnable.run(project);
+                        try {
+                            runnable.run(project);
+                        } catch (ProcessCanceledException | UnsupportedOperationException ignore) {}
                     }
                 });
 
@@ -48,7 +52,7 @@ public final class Projects {
                     public void projectClosed(@NotNull Project project) {
                         try {
                             runnable.run(project);
-                        } catch (ProcessCanceledException ignore) {}
+                        } catch (ProcessCanceledException | UnsupportedOperationException ignore) {}
                     }
                 });
 

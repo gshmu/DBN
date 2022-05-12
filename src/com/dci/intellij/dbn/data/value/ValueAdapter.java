@@ -6,11 +6,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
-import java.sql.CallableStatement;
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
+import java.sql.*;
 import java.util.EnumMap;
 import java.util.Map;
 
@@ -39,7 +35,7 @@ public abstract class ValueAdapter<T> {
     public static <T> ValueAdapter<T> create(GenericDataType genericDataType) throws SQLException {
         try {
             Class<? extends ValueAdapter> valueAdapterClass = REGISTRY.get(genericDataType);
-            return valueAdapterClass.newInstance();
+            return valueAdapterClass.getDeclaredConstructor().newInstance();
         } catch (Throwable e) {
             handleException(e, genericDataType);
         }

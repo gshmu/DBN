@@ -59,9 +59,10 @@ public class DataExportInstructions implements PersistentStateElement, Cloneable
         setString(child, "value-separator", valueSeparator);
         setString(child, "file-name", fileName);
         setString(child, "file-location", fileLocation);
-        setString(child, "scope", scope.name());
-        setString(child, "destination", destination.name());
-        setString(child, "format", format.name());
+        setEnum(child, "scope", scope);
+        setEnum(child, "destination", destination);
+        setEnum(child, "format", format);
+        setString(child, "charset", charset.name());
         setString(child, "charset", charset.name());
     }
 
@@ -76,9 +77,9 @@ public class DataExportInstructions implements PersistentStateElement, Cloneable
             valueSeparator = getString(child, "value-separator", valueSeparator);
             fileName = getString(child, "file-name", fileName);
             fileLocation = getString(child, "file-location", fileLocation);
-            scope = Scope.valueOf(getString(child, "scope", scope.name()));
-            destination = Destination.valueOf(getString(child, "destination", destination.name()));
-            format = DataExportFormat.valueOf(getString(child, "format", format.name()));
+            scope = getEnum(child, "scope", scope);
+            destination = getEnum(child, "destination", destination);
+            format = getEnum(child, "format", format);
             charset = Charset.forName(getString(element, "charset", charset.name()));
         }
     }

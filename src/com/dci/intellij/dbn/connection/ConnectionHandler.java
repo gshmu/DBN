@@ -159,7 +159,7 @@ public interface ConnectionHandler extends StatefulDisposable, EnvironmentTypePr
     @Deprecated
     boolean hasUncommittedChanges();
 
-    @NotNull
+    @Nullable
     StatementExecutionQueue getExecutionQueue(SessionId sessionId);
 
     @NotNull

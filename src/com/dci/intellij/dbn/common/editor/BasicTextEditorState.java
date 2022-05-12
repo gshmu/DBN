@@ -5,11 +5,7 @@ import com.dci.intellij.dbn.common.thread.Read;
 import com.dci.intellij.dbn.common.thread.Write;
 import com.dci.intellij.dbn.common.util.Documents;
 import com.intellij.codeInsight.folding.CodeFoldingManager;
-import com.intellij.openapi.editor.Document;
-import com.intellij.openapi.editor.Editor;
-import com.intellij.openapi.editor.LogicalPosition;
-import com.intellij.openapi.editor.ScrollType;
-import com.intellij.openapi.editor.SelectionModel;
+import com.intellij.openapi.editor.*;
 import com.intellij.openapi.editor.ex.util.EditorUtil;
 import com.intellij.openapi.fileEditor.FileEditorState;
 import com.intellij.openapi.fileEditor.FileEditorStateLevel;
@@ -117,7 +113,7 @@ public class BasicTextEditorState implements FileEditorState {
     }
 
     public void applyToEditor(@NotNull TextEditor textEditor) {
-        final Editor editor = textEditor.getEditor();
+        Editor editor = Failsafe.nd(textEditor.getEditor());
         SelectionModel selectionModel = editor.getSelectionModel();
 
         LogicalPosition logicalPosition = new LogicalPosition(line, column);
