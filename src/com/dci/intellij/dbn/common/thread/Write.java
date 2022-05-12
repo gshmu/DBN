@@ -19,7 +19,7 @@ public final class Write {
                     () -> {
                         try {
                             runnable.run();
-                        } catch (ProcessCanceledException ignore) {}
+                        } catch (ProcessCanceledException | UnsupportedOperationException ignore) {}
                     });
         });
     }
@@ -30,7 +30,7 @@ public final class Write {
                 try {
                     Failsafe.nd(project);
                     runnable.run();
-                } catch (ProcessCanceledException  ignore) {}
+                } catch (ProcessCanceledException | UnsupportedOperationException ignore) {}
             });
         });
     }

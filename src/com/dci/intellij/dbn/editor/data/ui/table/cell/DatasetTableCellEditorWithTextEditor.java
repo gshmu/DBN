@@ -68,7 +68,10 @@ public class DatasetTableCellEditorWithTextEditor extends DatasetTableCellEditor
             if (dataType.getNativeType().isLargeObject()) {
                 setEditable(false);
             } else {
-                String userValue = (String) cell.getUserValue();
+                Object object = cell.getUserValue();
+                String userValue = object == null ? null :
+                        object instanceof String ? (String) object
+                        : object.toString();
                 setEditable(userValue == null || (userValue.length() < 1000 && userValue.indexOf('\n') == -1));
             }
             selectText(textField);

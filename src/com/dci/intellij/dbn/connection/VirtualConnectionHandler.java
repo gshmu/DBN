@@ -31,7 +31,7 @@ import lombok.Getter;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import javax.swing.Icon;
+import javax.swing.*;
 import java.sql.SQLException;
 import java.util.Collections;
 import java.util.HashMap;
@@ -406,10 +406,10 @@ public class VirtualConnectionHandler extends StatefulDisposable.Base implements
         return false;
     }
 
-    @NotNull
+    @Nullable
     @Override
     public StatementExecutionQueue getExecutionQueue(SessionId sessionId) {
-        throw new UnsupportedOperationException();
+        return null;
     }
 
     @Override
