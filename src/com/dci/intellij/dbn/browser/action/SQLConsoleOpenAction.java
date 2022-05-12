@@ -80,6 +80,7 @@ public class SQLConsoleOpenAction extends GroupPopupAction {
 
         @Override
         protected void actionPerformed(@NotNull AnActionEvent e, @NotNull Project project, @NotNull ConnectionHandler connection) {
+            DBConsole console = this.console;
             if (console == null) {
                 DatabaseConsoleManager databaseConsoleManager = DatabaseConsoleManager.getInstance(project);
                 databaseConsoleManager.showCreateConsoleDialog(connection, consoleType);

@@ -48,7 +48,7 @@ public final class ProjectEvents {
         try {
             T publisher = publisher(project, topic);
             callback.run(publisher);
-        } catch (ProcessCanceledException ignore){}
+        } catch (ProcessCanceledException | UnsupportedOperationException ignore){}
     }
 
     @NotNull

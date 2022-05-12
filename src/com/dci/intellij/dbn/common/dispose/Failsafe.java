@@ -3,6 +3,7 @@ package com.dci.intellij.dbn.common.dispose;
 import com.dci.intellij.dbn.common.routine.ParametricRunnable;
 import com.intellij.mock.MockProject;
 import com.intellij.openapi.application.ApplicationManager;
+import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.testFramework.LightVirtualFile;
@@ -55,6 +56,9 @@ public class Failsafe {
             Project project = (Project) object;
             return project != DUMMY_PROJECT && !project.isDisposed();
 
+        } else if (object instanceof Editor) {
+            Editor editor = (Editor) object;
+            return !editor.isDisposed();
         }
         return true;
     }
