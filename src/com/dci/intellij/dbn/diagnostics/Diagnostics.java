@@ -133,7 +133,8 @@ public final class Diagnostics {
             if (miscellaneous != null) {
                 dialogSizingReset = booleanAttribute(miscellaneous, "dialog-sizing-reset", dialogSizingReset);
                 bulkActionsEnabled = booleanAttribute(miscellaneous, "bulk-actions-enabled", bulkActionsEnabled);
-                alternativeParserEnabled = booleanAttribute(miscellaneous, "alternative-parser-enabled", alternativeParserEnabled);
+                // TODO too early to activate alternative parser
+                //alternativeParserEnabled = booleanAttribute(miscellaneous, "alternative-parser-enabled", alternativeParserEnabled);
             }
         }
 

@@ -231,7 +231,11 @@ public class DBNConnection extends DBNConnectionBase {
 
     @Override
     public void closeInner() throws SQLException {
-        inner.close();
+        try {
+            inner.rollback();
+        } finally {
+            inner.close();
+        }
     }
 
     public boolean isPoolConnection() {
@@ -334,11 +338,11 @@ public class DBNConnection extends DBNConnectionBase {
     public void close() throws SQLException {
         try {
             super.close();
-            updateLastAccess();
             List<DBNPreparedStatement> statements = new ArrayList<>(cachedStatements.values());
             cachedStatements.clear();
             Resources.close(statements);
         } finally {
+            updateLastAccess();
             resetDataChanges();
             notifyStatusChange();
         }
