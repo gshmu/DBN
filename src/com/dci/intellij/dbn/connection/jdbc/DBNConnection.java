@@ -37,6 +37,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
+import static com.dci.intellij.dbn.common.util.Unsafe.cast;
 import static com.dci.intellij.dbn.connection.jdbc.ResourceStatus.ACTIVE;
 import static com.dci.intellij.dbn.connection.jdbc.ResourceStatus.RESERVED;
 
@@ -168,22 +169,22 @@ public class DBNConnection extends DBNConnectionBase {
     }
 
     @Override
-    protected <S extends Statement> S wrap(S statement) {
+    protected <S extends Statement> S wrap(Statement statement) {
         updateLastAccess();
         if (statement instanceof CallableStatement) {
             CallableStatement callableStatement = (CallableStatement) statement;
-            statement = (S) new DBNCallableStatement(callableStatement, this);
+            statement = new DBNCallableStatement(callableStatement, this);
 
         } else  if (statement instanceof PreparedStatement) {
             PreparedStatement preparedStatement = (PreparedStatement) statement;
-            statement = (S) new DBNPreparedStatement(preparedStatement, this);
+            statement = new DBNPreparedStatement(preparedStatement, this);
 
         } else {
-            statement = (S) new DBNStatement<Statement>(statement, this);
+            statement = new DBNStatement<>(statement, this);
         }
 
         activeStatements.add((DBNStatement) statement);
-        return statement;
+        return cast(statement);
     }
 
     protected void park(DBNStatement statement) {

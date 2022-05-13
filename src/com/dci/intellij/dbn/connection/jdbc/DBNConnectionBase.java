@@ -26,25 +26,25 @@ abstract class DBNConnectionBase extends DBNResource<Connection> implements Conn
         super(inner, ResourceType.CONNECTION);
     }
 
-    protected abstract <S extends Statement> S wrap(S statement);
+    protected abstract <S extends Statement> S wrap(Statement statement);
 
     /********************************************************************
      *                            Wrapped calls                         *
      ********************************************************************/
     @Override
     public DBNStatement createStatement() throws SQLException {
-        return (DBNStatement) wrap(inner.createStatement());
+        return wrap(inner.createStatement());
     }
 
     @Override
     @SneakyThrows
     public DBNPreparedStatement prepareStatement(String sql) {
-        return (DBNPreparedStatement) wrap(inner.prepareStatement(sql));
+        return wrap(inner.prepareStatement(sql));
     }
 
     @Override
     public DBNCallableStatement prepareCall(String sql) throws SQLException {
-        return (DBNCallableStatement) wrap(inner.prepareCall(sql));
+        return wrap(inner.prepareCall(sql));
     }
 
     @Override
@@ -79,7 +79,7 @@ abstract class DBNConnectionBase extends DBNResource<Connection> implements Conn
 
     @Override
     public DBNStatement createStatement(int resultSetType, int resultSetConcurrency) throws SQLException {
-        return (DBNStatement) wrap(inner.createStatement(resultSetType, resultSetConcurrency));
+        return wrap(inner.createStatement(resultSetType, resultSetConcurrency));
     }
 
     @Override
