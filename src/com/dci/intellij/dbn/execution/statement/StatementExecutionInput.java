@@ -5,8 +5,8 @@ import com.dci.intellij.dbn.common.latent.Latent;
 import com.dci.intellij.dbn.common.thread.Read;
 import com.dci.intellij.dbn.common.util.Commons;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
-import com.dci.intellij.dbn.connection.ConnectionRef;
 import com.dci.intellij.dbn.connection.ConnectionId;
+import com.dci.intellij.dbn.connection.ConnectionRef;
 import com.dci.intellij.dbn.connection.SchemaId;
 import com.dci.intellij.dbn.connection.session.DatabaseSession;
 import com.dci.intellij.dbn.database.DatabaseFeature;
@@ -26,6 +26,8 @@ import com.dci.intellij.dbn.language.common.psi.ExecutablePsiElement;
 import com.dci.intellij.dbn.language.sql.SQLLanguage;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
+import lombok.Getter;
+import lombok.Setter;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -33,12 +35,16 @@ import java.util.List;
 
 import static com.dci.intellij.dbn.common.dispose.SafeDisposer.replace;
 
+@Getter
+@Setter
 public class StatementExecutionInput extends LocalExecutionInput {
     private StatementExecutionProcessor executionProcessor;
     private StatementExecutionVariablesBundle executionVariables;
 
     private String originalStatementText;
     private String executableStatementText;
+    private boolean bulkExecution = false;
+
     private final Latent<ExecutablePsiElement> executablePsiElement = Latent.basic(() -> {
         ConnectionHandler connection = getConnection();
         SchemaId currentSchema = getTargetSchemaId();
@@ -67,7 +73,7 @@ public class StatementExecutionInput extends LocalExecutionInput {
         }
         return null;
     });
-    private boolean bulkExecution = false;
+
 
     public StatementExecutionInput(String originalStatementText, String executableStatementText, StatementExecutionProcessor executionProcessor) {
         super(executionProcessor.getProject(), ExecutionTarget.STATEMENT);
@@ -115,30 +121,14 @@ public class StatementExecutionInput extends LocalExecutionInput {
         return executionProcessor == null ? 0 : executionProcessor.getExecutableLineNumber();
     }
 
-    public String getOriginalStatementText() {
-        return originalStatementText;
-    }
-
     public void setOriginalStatementText(String originalStatementText) {
         this.originalStatementText = originalStatementText;
         executablePsiElement.reset();
     }
 
-    public void setExecutableStatementText(String executableStatementText) {
-        this.executableStatementText = executableStatementText;
-    }
-
-    public String getExecutableStatementText() {
-        return executableStatementText;
-    }
-
     @Nullable
     public ExecutablePsiElement getExecutablePsiElement() {
         return executablePsiElement.get();
-    }
-
-    public StatementExecutionVariablesBundle getExecutionVariables() {
-        return executionVariables;
     }
 
     public void setExecutionVariables(StatementExecutionVariablesBundle executionVariables) {
@@ -159,10 +149,6 @@ public class StatementExecutionInput extends LocalExecutionInput {
                 executableStatementText,
                 connection,
                 schema);
-    }
-
-    public StatementExecutionProcessor getExecutionProcessor() {
-        return executionProcessor;
     }
 
     @Override
@@ -195,14 +181,6 @@ public class StatementExecutionInput extends LocalExecutionInput {
 
     public ConnectionId getConnectionId() {
         return targetConnection == null ? null : targetConnection.getConnectionId();
-    }
-
-    public boolean isBulkExecution() {
-        return bulkExecution;
-    }
-
-    public void setBulkExecution(boolean isBulkExecution) {
-        this.bulkExecution = isBulkExecution;
     }
 
     public String getStatementDescription() {

@@ -41,10 +41,6 @@ public class StatementExecutionMessage extends ConsoleMessage {
         return super.isNew()/* && !isOrphan()*/;
     }
 
-    public String getCauseMessage() {
-        return causeMessage;
-    }
-
     public void createStatementViewer() {
         
     }
