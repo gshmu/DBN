@@ -7,11 +7,20 @@ import com.dci.intellij.dbn.common.database.DatabaseInfo;
 import com.dci.intellij.dbn.common.dispose.DisposableContainers;
 import com.dci.intellij.dbn.common.options.ui.ConfigurationEditorForm;
 import com.dci.intellij.dbn.common.ui.util.Fonts;
-import com.dci.intellij.dbn.common.util.*;
+import com.dci.intellij.dbn.common.util.Actions;
+import com.dci.intellij.dbn.common.util.Clipboard;
+import com.dci.intellij.dbn.common.util.Messages;
+import com.dci.intellij.dbn.common.util.Naming;
+import com.dci.intellij.dbn.common.util.Strings;
+import com.dci.intellij.dbn.common.util.XmlContents;
 import com.dci.intellij.dbn.connection.ConnectionId;
 import com.dci.intellij.dbn.connection.DatabaseType;
 import com.dci.intellij.dbn.connection.DatabaseUrlType;
-import com.dci.intellij.dbn.connection.config.*;
+import com.dci.intellij.dbn.connection.config.ConnectionBundleSettings;
+import com.dci.intellij.dbn.connection.config.ConnectionConfigListCellRenderer;
+import com.dci.intellij.dbn.connection.config.ConnectionConfigType;
+import com.dci.intellij.dbn.connection.config.ConnectionDatabaseSettings;
+import com.dci.intellij.dbn.connection.config.ConnectionSettings;
 import com.dci.intellij.dbn.connection.config.tns.TnsName;
 import com.dci.intellij.dbn.driver.DriverSource;
 import com.intellij.openapi.actionSystem.ActionToolbar;
@@ -30,10 +39,14 @@ import org.jdom.output.XMLOutputter;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import javax.swing.*;
+import javax.swing.JComponent;
+import javax.swing.JList;
+import javax.swing.JPanel;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
-import java.awt.*;
+import java.awt.BorderLayout;
+import java.awt.CardLayout;
+import java.awt.Dimension;
 import java.awt.datatransfer.StringSelection;
 import java.io.ByteArrayInputStream;
 import java.util.ArrayList;
@@ -202,6 +215,7 @@ public class ConnectionBundleSettingsForm extends ConfigurationEditorForm<Connec
                 try {
                     ConnectionSettings duplicate = settingsEditor.getTemporaryConfig();
                     duplicate.setNew(true);
+                    duplicate.setSigned(true);
                     String name = duplicate.getDatabaseSettings().getName();
                     ConnectionListModel model = (ConnectionListModel) connectionsList.getModel();
                     while (model.getConnectionConfig(name) != null) {

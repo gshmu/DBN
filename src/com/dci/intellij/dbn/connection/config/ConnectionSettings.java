@@ -26,7 +26,7 @@ public class ConnectionSettings extends CompositeProjectConfiguration<Connection
 
     private ConnectionId connectionId;
 
-    private final PropertyHolderBase<ConnectionSettingsStatus> status = new PropertyHolderBase.IntStore<ConnectionSettingsStatus>(ACTIVE) {
+    private final PropertyHolderBase<ConnectionSettingsStatus> status = new PropertyHolderBase.IntStore<ConnectionSettingsStatus>(ACTIVE, SIGNED) {
         @Override
         protected ConnectionSettingsStatus[] properties() {
             return ConnectionSettingsStatus.values();
