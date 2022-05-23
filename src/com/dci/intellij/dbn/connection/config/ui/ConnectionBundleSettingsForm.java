@@ -281,38 +281,35 @@ public class ConnectionBundleSettingsForm extends ConfigurationEditorForm<Connec
         String clipboardData = Clipboard.getStringContent();
         if (clipboardData != null) {
             try (ByteArrayInputStream inputStream = new ByteArrayInputStream(clipboardData.getBytes())) {
-                Document xmlDocument = XmlContents.createXmlDocument(inputStream);
+                Element rootElement = XmlContents.loadXmlContent(inputStream);
                 boolean configurationsFound = false;
-                if (xmlDocument != null) {
-                    Element rootElement = xmlDocument.getRootElement();
-                    List<Element> configElements = rootElement.getChildren();
-                    ConnectionListModel model = (ConnectionListModel) connectionsList.getModel();
-                    int index = connectionsList.getModel().getSize();
-                    List<Integer> selectedIndices = new ArrayList<>();
-                    ConnectionBundleSettings configuration = getConfiguration();
-                    for (Element configElement : configElements) {
-                        ConnectionSettings clone = new ConnectionSettings(configuration);
-                        clone.readConfiguration(configElement);
-                        clone.setNew(true);
-                        clone.generateNewId();
+                List<Element> configElements = rootElement.getChildren();
+                ConnectionListModel model = (ConnectionListModel) connectionsList.getModel();
+                int index = connectionsList.getModel().getSize();
+                List<Integer> selectedIndices = new ArrayList<>();
+                ConnectionBundleSettings configuration = getConfiguration();
+                for (Element configElement : configElements) {
+                    ConnectionSettings clone = new ConnectionSettings(configuration);
+                    clone.readConfiguration(configElement);
+                    clone.setNew(true);
+                    clone.generateNewId();
 
-                        ConnectionDatabaseSettings databaseSettings = clone.getDatabaseSettings();
-                        String name = databaseSettings.getName();
-                        while (model.getConnectionConfig(name) != null) {
-                            name = Naming.nextNumberedIdentifier(name, true);
-                        }
-                        databaseSettings.setName(name);
-                        model.add(index, clone);
-                        selectedIndices.add(index);
-                        configuration.setModified(true);
-                        index++;
-                        configurationsFound = true;
+                    ConnectionDatabaseSettings databaseSettings = clone.getDatabaseSettings();
+                    String name = databaseSettings.getName();
+                    while (model.getConnectionConfig(name) != null) {
+                        name = Naming.nextNumberedIdentifier(name, true);
                     }
+                    databaseSettings.setName(name);
+                    model.add(index, clone);
+                    selectedIndices.add(index);
+                    configuration.setModified(true);
+                    index++;
+                    configurationsFound = true;
+                }
 
-                    if (configurationsFound) {
-                        int[] indices = ArrayUtils.toPrimitive(selectedIndices.toArray(new Integer[0]));
-                        connectionsList.setSelectedIndices(indices);
-                    }
+                if (configurationsFound) {
+                    int[] indices = ArrayUtils.toPrimitive(selectedIndices.toArray(new Integer[0]));
+                    connectionsList.setSelectedIndices(indices);
                 }
 
                 if (!configurationsFound) {

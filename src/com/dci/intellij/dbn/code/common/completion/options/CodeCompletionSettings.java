@@ -16,7 +16,6 @@ import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.SneakyThrows;
-import org.jdom.Document;
 import org.jdom.Element;
 import org.jetbrains.annotations.NotNull;
 
@@ -60,14 +59,13 @@ public class CodeCompletionSettings extends CompositeProjectConfiguration<Projec
     }
 
     private void loadDefaults() {
-        Document document = loadDefinition();
-        Element root = document.getRootElement();
-        readConfiguration(root);
+        Element element = loadDefinition();
+        readConfiguration(element);
     }
 
     @SneakyThrows
-    private Document loadDefinition() {
-        return XmlContents.loadXmlFile(getClass(), "default-settings.xml");
+    private Element loadDefinition() {
+        return XmlContents.loadXmlContent(getClass(), "default-settings.xml");
     }
 
     /*********************************************************

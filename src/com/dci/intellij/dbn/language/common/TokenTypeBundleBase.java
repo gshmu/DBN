@@ -11,11 +11,14 @@ import com.intellij.psi.tree.TokenSet;
 import gnu.trove.THashMap;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
-import org.jdom.Document;
 import org.jdom.Element;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import static com.dci.intellij.dbn.common.options.setting.SettingsSupport.stringAttribute;
@@ -50,9 +53,9 @@ public abstract class TokenTypeBundleBase {
         return tokenTypes;
     }
 
-    public TokenTypeBundleBase(Language language, Document document) {
+    public TokenTypeBundleBase(Language language, Element element) {
         this.language = language;
-        loadDefinition(language, document);
+        loadDefinition(language, element);
     }
 
     public Language getLanguage() {
@@ -79,11 +82,10 @@ public abstract class TokenTypeBundleBase {
         return tokenRegistry.get(index);
     }
 
-    private void loadDefinition(Language language, Document document) {
+    private void loadDefinition(Language language, Element element) {
         try {
-            Element root = document.getRootElement();
-            Element tokensElement = root.getChild("tokens");
-            Element tokenSetsElement = root.getChild("token-sets");
+            Element tokensElement = element.getChild("tokens");
+            Element tokenSetsElement = element.getChild("token-sets");
 
             Measured.run("building token-type bundle for " + language.getID(), () -> {
                 Map<String, Set<String>> tokenSetIds = parseTokenSets(tokenSetsElement);
