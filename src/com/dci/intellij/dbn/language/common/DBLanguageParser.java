@@ -12,7 +12,7 @@ import com.intellij.lang.PsiParser;
 import com.intellij.psi.tree.IElementType;
 import lombok.Getter;
 import lombok.SneakyThrows;
-import org.jdom.Document;
+import org.jdom.Element;
 import org.jetbrains.annotations.NotNull;
 
 @Getter
@@ -26,16 +26,16 @@ public abstract class DBLanguageParser implements PsiParser {
         this.languageDialect = languageDialect;
         this.defaultParseRootId = defaultParseRootId;
 
-        Document document = loadDefinition(tokenTypesFile);
-        this.tokenTypes = new TokenTypeBundle(languageDialect, document);
+        Element element = loadDefinition(tokenTypesFile);
+        this.tokenTypes = new TokenTypeBundle(languageDialect, element);
 
-        document = loadDefinition(elementTypesFile);
-        this.elementTypes = new ElementTypeBundle(languageDialect, tokenTypes, document);
+        element = loadDefinition(elementTypesFile);
+        this.elementTypes = new ElementTypeBundle(languageDialect, tokenTypes, element);
     }
 
     @SneakyThrows
-    private Document loadDefinition(String tokenTypesFile) {
-        return XmlContents.loadXmlFile(getResourceLookupClass(), tokenTypesFile);
+    private Element loadDefinition(String tokenTypesFile) {
+        return XmlContents.loadXmlContent(getResourceLookupClass(), tokenTypesFile);
     }
 
     protected Class getResourceLookupClass() {

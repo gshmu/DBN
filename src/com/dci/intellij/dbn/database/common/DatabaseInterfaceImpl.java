@@ -9,7 +9,6 @@ import com.dci.intellij.dbn.database.DatabaseInterfaceProvider;
 import com.dci.intellij.dbn.database.common.statement.CallableStatementOutput;
 import com.dci.intellij.dbn.database.common.statement.StatementExecutionProcessor;
 import lombok.SneakyThrows;
-import org.jdom.Document;
 import org.jdom.Element;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -34,8 +33,7 @@ public class DatabaseInterfaceImpl implements DatabaseInterface{
     @Override
     public void reset() {
         processors.clear();
-        Document document = loadDefinition();
-        Element root = document.getRootElement();
+        Element root = loadDefinition();
         for (Element child : root.getChildren()) {
             StatementExecutionProcessor executionProcessor = new StatementExecutionProcessor(child, provider);
             String id = executionProcessor.getId();
@@ -44,8 +42,8 @@ public class DatabaseInterfaceImpl implements DatabaseInterface{
     }
 
     @SneakyThrows
-    private Document loadDefinition() {
-        return XmlContents.loadXmlFile(getClass(), fileName);
+    private Element loadDefinition() {
+        return XmlContents.loadXmlContent(getClass(), fileName);
     }
 
     protected ResultSet executeQuery(@NotNull DBNConnection connection, String loaderId, @Nullable Object... arguments) throws SQLException {

@@ -5,7 +5,7 @@ import com.intellij.psi.tree.TokenSet;
 import gnu.trove.THashSet;
 import lombok.Getter;
 import lombok.SneakyThrows;
-import org.jdom.Document;
+import org.jdom.Element;
 
 import java.util.Set;
 
@@ -63,8 +63,8 @@ public class SharedTokenTypeBundle extends TokenTypeBundleBase {
     }
 
     @SneakyThrows
-    private static Document loadDefinition() {
-        return XmlContents.loadXmlFile(SharedTokenTypeBundle.class, "db_language_common_tokens.xml");
+    private static Element loadDefinition() {
+        return XmlContents.loadXmlContent(SharedTokenTypeBundle.class, "db_language_common_tokens.xml");
     }
 
 

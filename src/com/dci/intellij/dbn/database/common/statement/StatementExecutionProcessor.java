@@ -54,12 +54,13 @@ public class StatementExecutionProcessor {
             timeout = Integer.parseInt(customTimeout);
         }
 
-        if (element.getChildren().isEmpty()) {
-            String statementText = element.getContent(0).getValue().trim();
+        List<Element> children = element.getChildren();
+        if (children.isEmpty()) {
+            String statementText = element.getTextTrim();
             readStatements(statementText, null);
         } else {
-            for (Element child : element.getChildren()) {
-                String statementText = child.getContent(0).getValue().trim();
+            for (Element child : children) {
+                String statementText = child.getTextTrim();
                 String prefixes = child.getAttributeValue("prefixes");
                 readStatements(statementText, prefixes);
             }
