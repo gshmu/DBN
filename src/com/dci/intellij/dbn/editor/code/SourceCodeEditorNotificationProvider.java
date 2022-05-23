@@ -12,7 +12,9 @@ import com.dci.intellij.dbn.editor.code.ui.SourceCodeLoadErrorNotificationPanel;
 import com.dci.intellij.dbn.editor.code.ui.SourceCodeOutdatedNotificationPanel;
 import com.dci.intellij.dbn.editor.code.ui.SourceCodeReadonlyNotificationPanel;
 import com.dci.intellij.dbn.execution.script.ScriptExecutionListener;
+import com.dci.intellij.dbn.object.common.DBObject;
 import com.dci.intellij.dbn.object.common.DBSchemaObject;
+import com.dci.intellij.dbn.vfs.DBVirtualFile;
 import com.dci.intellij.dbn.vfs.file.DBContentVirtualFile;
 import com.dci.intellij.dbn.vfs.file.DBEditableObjectVirtualFile;
 import com.dci.intellij.dbn.vfs.file.DBSourceCodeVirtualFile;
@@ -109,27 +111,28 @@ public class SourceCodeEditorNotificationProvider extends EditorNotificationProv
     @Nullable
     @Override
     public SourceCodeEditorNotificationPanel createNotificationPanel(@NotNull VirtualFile virtualFile, @NotNull FileEditor fileEditor, @NotNull Project project) {
-        SourceCodeEditorNotificationPanel notificationPanel = null;
-        if (virtualFile instanceof DBEditableObjectVirtualFile) {
+        if (virtualFile instanceof DBVirtualFile) {
             if (fileEditor instanceof SourceCodeEditor && Failsafe.check(fileEditor)) {
-                DBEditableObjectVirtualFile editableObjectFile = (DBEditableObjectVirtualFile) virtualFile;
-                DBSchemaObject editableObject = editableObjectFile.getObject();
-                SourceCodeEditor sourceCodeEditor = (SourceCodeEditor) fileEditor;
-                DBSourceCodeVirtualFile sourceCodeFile = sourceCodeEditor.getVirtualFile();
-                String sourceLoadError = sourceCodeFile.getSourceLoadError();
-                if (Strings.isNotEmpty(sourceLoadError)) {
-                    notificationPanel = new SourceCodeLoadErrorNotificationPanel(editableObject, sourceLoadError);
+                DBVirtualFile databaseFile = (DBVirtualFile) virtualFile;
 
-                } else if (sourceCodeFile.isChangedInDatabase(false)) {
-                    notificationPanel = new SourceCodeOutdatedNotificationPanel(sourceCodeFile, sourceCodeEditor);
+                DBObject object = databaseFile.getObject();
+                if (object instanceof DBSchemaObject) {
+                    DBSchemaObject schemaObject = (DBSchemaObject) object;
+                    SourceCodeEditor sourceCodeEditor = (SourceCodeEditor) fileEditor;
+                    DBSourceCodeVirtualFile sourceCodeFile = sourceCodeEditor.getVirtualFile();
+                    String sourceLoadError = sourceCodeFile.getSourceLoadError();
+                    if (Strings.isNotEmpty(sourceLoadError)) {
+                        return new SourceCodeLoadErrorNotificationPanel(schemaObject, sourceLoadError);
 
-                } else if (sourceCodeFile.getEnvironmentType().isReadonlyCode()) {
-                    notificationPanel = new SourceCodeReadonlyNotificationPanel(editableObject, sourceCodeEditor);
+                    } else if (sourceCodeFile.isChangedInDatabase(false)) {
+                        return new SourceCodeOutdatedNotificationPanel(sourceCodeFile, sourceCodeEditor);
 
+                    } else if (sourceCodeFile.getEnvironmentType().isReadonlyCode()) {
+                        return new SourceCodeReadonlyNotificationPanel(schemaObject, sourceCodeEditor);
+                    }
                 }
-
             }
         }
-        return notificationPanel;
+        return null;
     }
 }

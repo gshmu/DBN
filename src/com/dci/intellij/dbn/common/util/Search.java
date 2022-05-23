@@ -17,15 +17,13 @@ public final class Search {
             while (left <= right) {
                 int mid = left + right >>> 1;
                 T midVal = list.get(mid);
-                int comparison = adapter.compare(midVal);
-                if (comparison < 0) {
+                int result = adapter.compare(midVal);
+                if (result < 0) {
                     left = mid + 1;
-                } else {
-                    if (comparison == 0) {
-                        return list.get(mid);
-                    }
-
+                } else if (result > 0){
                     right = mid - 1;
+                } else {
+                    return list.get(mid);
                 }
             }
         }
@@ -40,15 +38,13 @@ public final class Search {
             while (left <= right) {
                 int mid = left + right >>> 1;
                 T midVal = array[mid];
-                int comparison = adapter.compare(midVal);
-                if (comparison < 0) {
+                int result = adapter.compare(midVal);
+                if (result < 0) {
                     left = mid + 1;
-                } else {
-                    if (comparison == 0) {
-                        return array[mid];
-                    }
-
+                } else if (result > 0){
                     right = mid - 1;
+                } else {
+                    return array[mid];
                 }
             }
         }
