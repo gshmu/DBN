@@ -30,9 +30,7 @@ import com.dci.intellij.dbn.object.common.DBObjectBundle;
 import com.dci.intellij.dbn.object.common.list.DBObjectList;
 import com.dci.intellij.dbn.object.common.list.DBObjectListContainer;
 import com.dci.intellij.dbn.object.type.DBObjectType;
-import com.dci.intellij.dbn.vfs.DBVirtualFileImpl;
-import com.dci.intellij.dbn.vfs.file.DBConsoleVirtualFile;
-import com.dci.intellij.dbn.vfs.file.DBEditableObjectVirtualFile;
+import com.dci.intellij.dbn.vfs.DBVirtualFile;
 import com.intellij.openapi.components.PersistentStateComponent;
 import com.intellij.openapi.components.State;
 import com.intellij.openapi.components.Storage;
@@ -244,19 +242,15 @@ public class DatabaseBrowserManager extends AbstractProjectComponent implements 
         @Override
         public void fileOpened(@NotNull FileEditorManager source, @NotNull VirtualFile file) {
             if (scroll()) {
-                if (file instanceof DBEditableObjectVirtualFile) {
-                    DBEditableObjectVirtualFile databaseFile = (DBEditableObjectVirtualFile) file;
-                    navigateToElement(databaseFile.getObject(), true);
-
-                } else if (file instanceof DBConsoleVirtualFile) {
-                    DBConsoleVirtualFile consoleVirtualFile = (DBConsoleVirtualFile) file;
-                    navigateToElement(consoleVirtualFile.getObject(), true);
-
-                }
-                else  if (file instanceof DBVirtualFileImpl) {
-                    DBVirtualFileImpl databaseVirtualFile = (DBVirtualFileImpl) file;
-                    ConnectionHandler connection = databaseVirtualFile.getConnection();
-                    navigateToElement(connection.getObjectBundle(), false);
+                if (file instanceof DBVirtualFile) {
+                    DBVirtualFile databaseVirtualFile = (DBVirtualFile) file;
+                    DBObject object = databaseVirtualFile.getObject();
+                    if (object != null) {
+                        navigateToElement(object, true);
+                    } else {
+                        ConnectionHandler connection = databaseVirtualFile.getConnection();
+                        navigateToElement(connection.getObjectBundle(), false);
+                    }
                 }
             }
         }
@@ -268,32 +262,29 @@ public class DatabaseBrowserManager extends AbstractProjectComponent implements 
                 VirtualFile newFile = event.getNewFile();
 
                 if (oldFile == null || !oldFile.equals(newFile)) {
-                    if (newFile instanceof DBEditableObjectVirtualFile) {
-                        DBEditableObjectVirtualFile databaseFile = (DBEditableObjectVirtualFile) newFile;
-                        navigateToElement(databaseFile.getObject(), true);
+                    if (newFile instanceof DBVirtualFile) {
+                        DBVirtualFile virtualFile = (DBVirtualFile) newFile;
+                        DBObject object = virtualFile.getObject();
+                        if (object != null) {
+                            navigateToElement(object, true);
+                        } else {
+                            ConnectionHandler connection = virtualFile.getConnection();
+                            FileEditor oldEditor = event.getOldEditor();
+                            SchemaId schemaId = virtualFile.getSchemaId();
+                            boolean scroll = oldEditor != null && oldEditor.isValid();
 
-                    } else if (newFile instanceof DBConsoleVirtualFile) {
-                        DBConsoleVirtualFile consoleVirtualFile = (DBConsoleVirtualFile) newFile;
-                        navigateToElement(consoleVirtualFile.getObject(), true);
+                            Progress.background(
+                                    getProject(),
+                                    connection.getMetaLoadTitle(),
+                                    false,
+                                    progress -> {
+                                        BrowserTreeNode treeNode = schemaId == null ?
+                                                connection.getObjectBundle() :
+                                                connection.getSchema(schemaId);
 
-                    } else if (newFile instanceof DBVirtualFileImpl) {
-                        DBVirtualFileImpl databaseVirtualFile = (DBVirtualFileImpl) newFile;
-                        ConnectionHandler connection = databaseVirtualFile.getConnection();
-                        FileEditor oldEditor = event.getOldEditor();
-                        SchemaId schemaId = databaseVirtualFile.getSchemaId();
-                        boolean scroll = oldEditor != null && oldEditor.isValid();
-
-                        Progress.background(
-                                getProject(),
-                                connection.getMetaLoadTitle(),
-                                false,
-                                progress -> {
-                                    BrowserTreeNode treeNode = schemaId == null ?
-                                            connection.getObjectBundle() :
-                                            connection.getSchema(schemaId);
-
-                                    navigateToElement(treeNode, scroll);
-                                });
+                                        navigateToElement(treeNode, scroll);
+                                    });
+                        }
                     }
                 }
             }
