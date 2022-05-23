@@ -16,10 +16,10 @@ import com.intellij.util.text.DateFormatUtil;
 import static com.dci.intellij.dbn.vfs.VirtualFileStatus.MODIFIED;
 
 public class SourceCodeOutdatedNotificationPanel extends SourceCodeEditorNotificationPanel{
-    public SourceCodeOutdatedNotificationPanel(final DBSourceCodeVirtualFile sourceCodeFile, final SourceCodeEditor sourceCodeEditor) {
+    public SourceCodeOutdatedNotificationPanel(DBSourceCodeVirtualFile sourceCodeFile, SourceCodeEditor sourceCodeEditor) {
         super(MessageType.WARNING);
-        final DBSchemaObject editableObject = sourceCodeFile.getObject();
-        final Project project = editableObject.getProject();
+        DBSchemaObject editableObject = sourceCodeFile.getObject();
+        Project project = editableObject.getProject();
         String presentableChangeTime =
                 DatabaseFeature.OBJECT_CHANGE_TRACING.isSupported(editableObject) ?
                         DateFormatUtil.formatPrettyDateTime(sourceCodeFile.getDatabaseChangeTimestamp()).toLowerCase() : "";
@@ -63,13 +63,10 @@ public class SourceCodeOutdatedNotificationPanel extends SourceCodeEditorNotific
             });
         }
 
-        createActionLabel(sourceCodeFile.is(MODIFIED) ? "Revert local changes" : "Reload", new Runnable() {
-            @Override
-            public void run() {
-                if (!project.isDisposed()) {
-                    SourceCodeManager sourceCodeManager = SourceCodeManager.getInstance(project);
-                    sourceCodeManager.loadSourceCode(sourceCodeFile, true);
-                }
+        createActionLabel(sourceCodeFile.is(MODIFIED) ? "Revert local changes" : "Reload", () -> {
+            if (!project.isDisposed()) {
+                SourceCodeManager sourceCodeManager = SourceCodeManager.getInstance(project);
+                sourceCodeManager.loadSourceCode(sourceCodeFile, true);
             }
         });
     }
