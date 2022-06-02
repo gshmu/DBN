@@ -23,9 +23,9 @@ public class BasicDataModelCell<
         implements DataModelCell<R, M> {
 
     protected R row;
-    protected Object userValue;
-    private String formattedUserValue;
     protected int index;
+    protected Object userValue;
+    private String presentableValue;
 
     public BasicDataModelCell(Object userValue, R row, int index) {
         this.userValue = userValue;
@@ -74,7 +74,7 @@ public class BasicDataModelCell<
     @Override
     public void setUserValue(Object userValue) {
         this.userValue = userValue;
-        this.formattedUserValue = null;
+        this.presentableValue = null;
     }
 
     @Override
@@ -95,10 +95,13 @@ public class BasicDataModelCell<
     }
 
     @Override
-    public String getFormattedUserValue() {
+    public String getPresentableValue() {
         if (userValue != null) {
-            Formatter formatter = getFormatter();
-            return formatter.formatObject(userValue);
+            if (presentableValue == null) {
+                Formatter formatter = getFormatter();
+                presentableValue = formatter.formatObject(userValue);
+            }
+            return presentableValue;
         }
         return null;
     }
@@ -136,7 +139,7 @@ public class BasicDataModelCell<
 
     public String toString() {
         // IMPORTANT return user value for copy to clipboard support
-        return getFormattedUserValue();
+        return getPresentableValue();
     }
 
     @NotNull
