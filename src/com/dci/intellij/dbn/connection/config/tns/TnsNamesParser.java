@@ -31,14 +31,26 @@ public class TnsNamesParser {
         int start = 0;
         while (matcher.find(start)) {
             String schema         = matcher.group("schema");
-            String protocol       = coalesce(() -> matcher.group("protocol1"), () -> matcher.group("protocol2"), () -> matcher.group("protocol3"));
-            String host           = coalesce(() -> matcher.group("host1"), () -> matcher.group("host2"), () -> matcher.group("host3"));
-            String port           = coalesce(() -> matcher.group("port1"), () -> matcher.group("port2"), () -> matcher.group("port3"));
+            String protocol = coalesce(
+                    () -> matcher.group("protocol1"),
+                    () -> matcher.group("protocol2"),
+                    () -> matcher.group("protocol3"));
+
+            String host = coalesce(
+                    () -> matcher.group("host1"),
+                    () -> matcher.group("host2"),
+                    () -> matcher.group("host3"));
+
+            String port = coalesce(
+                    () -> matcher.group("port1"),
+                    () -> matcher.group("port2"),
+                    () -> matcher.group("port3"));
+
             String server         = matcher.group("server");
             String sid            = matcher.group("sid");
             String serviceName    = matcher.group("servicename");
             String globalName     = matcher.group("globalname");
-            String failover   = matcher.group("failover");
+            String failover       = matcher.group("failover");
             String failoverType   = matcher.group("failovertype");
             String failoverMethod = matcher.group("failovermethod");
             start = matcher.end();
