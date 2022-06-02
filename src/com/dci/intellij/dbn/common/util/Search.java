@@ -3,7 +3,6 @@ package com.dci.intellij.dbn.common.util;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
-import java.util.function.Function;
 
 public final class Search {
     private Search() {}
@@ -11,13 +10,17 @@ public final class Search {
 
     public static <T> T binarySearch(@Nullable List<T> list, SearchAdapter<T> adapter) {
         if (list != null && list.size() > 0) {
-            int left = 0;
-            int right = list.size() - 1;
+            return binarySearch(list, 0, list.size() - 1, adapter);
+        }
+        return null;
+    }
 
+    public static <T> T binarySearch(@Nullable List<T> list, int left, int right, SearchAdapter<T> adapter) {
+        if (list != null && list.size() > 0) {
             while (left <= right) {
                 int mid = left + right >>> 1;
                 T midVal = list.get(mid);
-                int result = adapter.compare(midVal);
+                int result = adapter.evaluate(midVal);
                 if (result < 0) {
                     left = mid + 1;
                 } else if (result > 0){
@@ -38,7 +41,7 @@ public final class Search {
             while (left <= right) {
                 int mid = left + right >>> 1;
                 T midVal = array[mid];
-                int result = adapter.compare(midVal);
+                int result = adapter.evaluate(midVal);
                 if (result < 0) {
                     left = mid + 1;
                 } else if (result > 0){
@@ -52,11 +55,12 @@ public final class Search {
     }
 
 
-    public static <T> T linearSearch(List<T> list, Function<T, Boolean> match, Function<T, Boolean> condition) {
+    public static <T> T linearSearch(List<T> list, SearchAdapter<T> adapter) {
         if (list != null && !list.isEmpty()) {
             for (T element : list) {
-                if (condition.apply(element)) {
-                    if (match.apply(element)) {
+                int result = adapter.evaluate(element);
+                if (result >= 0) {
+                    if (result == 0) {
                         return element;
                     }
                 } else {
@@ -64,6 +68,27 @@ public final class Search {
                 }
 
             }
+        }
+        return null;
+    }
+
+    public static <T> T comboSearch(List<T> list, SearchAdapter<T> linear, SearchAdapter<T> binary) {
+        if (list != null && !list.isEmpty()) {
+            int index = 0;
+
+            while (index < list.size()) {
+                T element = list.get(index);
+                int result = linear.evaluate(element);
+                if (result >= 0) {
+                    if (result == 0) {
+                        return element;
+                    }
+                    index++;
+                } else {
+                    break;
+                }
+            }
+            return binarySearch(list, index, list.size() - 1, binary);
         }
         return null;
     }

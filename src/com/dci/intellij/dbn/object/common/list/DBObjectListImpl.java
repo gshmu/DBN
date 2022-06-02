@@ -16,6 +16,7 @@ import com.dci.intellij.dbn.common.event.ProjectEvents;
 import com.dci.intellij.dbn.common.filter.CompoundFilter;
 import com.dci.intellij.dbn.common.filter.Filter;
 import com.dci.intellij.dbn.common.ui.tree.TreeEventType;
+import com.dci.intellij.dbn.common.util.Commons;
 import com.dci.intellij.dbn.common.util.SearchAdapter;
 import com.dci.intellij.dbn.common.util.Strings;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
@@ -50,7 +51,9 @@ import java.util.function.Consumer;
 
 import static com.dci.intellij.dbn.common.content.DynamicContentStatus.*;
 import static com.dci.intellij.dbn.common.util.Search.binarySearch;
-import static com.dci.intellij.dbn.common.util.Search.linearSearch;
+import static com.dci.intellij.dbn.common.util.Search.comboSearch;
+import static com.dci.intellij.dbn.common.util.SearchAdapter.binary;
+import static com.dci.intellij.dbn.common.util.SearchAdapter.linear;
 import static com.dci.intellij.dbn.object.type.DBObjectType.*;
 
 public class DBObjectListImpl<T extends DBObject> extends DynamicContentImpl<T> implements DBObjectList<T> {
@@ -189,31 +192,22 @@ public class DBObjectListImpl<T extends DBObject> extends DynamicContentImpl<T> 
                     return super.getElement(name, overload);
 
                 } else if (objectType == TYPE) {
-                    SearchAdapter<T> adapter = SearchAdapter.forType(name, overload, false);
-                    T element = binarySearch(elements, adapter);
-                    if (element == null) {
-                        adapter = SearchAdapter.forType(name, overload, true);
-                        element = binarySearch(elements, adapter);
-                    }
-                    return element;
+                    return Commons.coalesce(
+                            () -> binarySearch(elements, binary(name, overload, false)),
+                            () -> binarySearch(elements, binary(name, overload, true)));
 
                 } else if (isSearchable()) {
-                    SearchAdapter<T> adapter = objectType.isOverloadable() ?
-                            SearchAdapter.forObject(name, overload) :
-                            SearchAdapter.forObject(name);
-
                     if (objectType == COLUMN) {
-                        T element = binarySearch(elements, adapter);
-                        if (element == null) {
-                            // primary key columns are sorted by position at beginning ot the list of elements
-                            element = linearSearch(elements,
-                                    e -> e.getName().equalsIgnoreCase(name),
-                                    e -> ((DBColumn) e).isPrimaryKey());
-                        }
-                        return element;
-
+                        // primary key columns are sorted by position at beginning ot the list of elements
+                        SearchAdapter<T> linear = linear(name, c -> ((DBColumn) c).isPrimaryKey());
+                        SearchAdapter<T> binary = binary(name);
+                        return comboSearch(elements, linear, binary);
                     }  else {
-                        return binarySearch(elements, adapter);
+                        SearchAdapter<T> binary = objectType.isOverloadable() ?
+                                binary(name, overload) :
+                                binary(name);
+
+                        return binarySearch(elements, binary);
 
                     }
                 } else {
