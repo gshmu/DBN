@@ -11,7 +11,7 @@ public interface UserValueHolder<T> {
     TextContentType getContentType();
     void setContentType(TextContentType contentType);
     T getUserValue();
-    String getFormattedUserValue();
+    String getPresentableValue();
     String getName();
     DBDataType getDataType();
     DBObjectType getObjectType();

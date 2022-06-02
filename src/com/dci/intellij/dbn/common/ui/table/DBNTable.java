@@ -7,8 +7,8 @@ import com.dci.intellij.dbn.common.dispose.StatefulDisposable;
 import com.dci.intellij.dbn.common.latent.Latent;
 import com.dci.intellij.dbn.common.thread.Dispatch;
 import com.dci.intellij.dbn.common.ui.FontMetrics;
-import com.dci.intellij.dbn.common.ui.util.Mouse;
 import com.dci.intellij.dbn.common.ui.component.DBNComponent;
+import com.dci.intellij.dbn.common.ui.util.Mouse;
 import com.dci.intellij.dbn.common.util.Strings;
 import com.dci.intellij.dbn.data.grid.ui.table.basic.BasicTableHeaderRenderer;
 import com.dci.intellij.dbn.language.common.WeakRef;
@@ -223,12 +223,13 @@ public abstract class DBNTable<T extends DBNTableModel> extends JTable implement
      *                    Cell metrics                       *
      *********************************************************/
     public void accommodateColumnsSize() {
-        for (int columnIndex = 0; columnIndex < getColumnCount(); columnIndex++){
-            accommodateColumnSize(columnIndex, getColumnWidthSpan());
+        int buffer = getColumnWidthBuffer();
+        for (int c = 0; c < getColumnCount(); c++){
+            accommodateColumnSize(c, buffer);
         }
     }
 
-    public int getColumnWidthSpan() {
+    public int getColumnWidthBuffer() {
         return 22;
     }
 
@@ -251,40 +252,45 @@ public abstract class DBNTable<T extends DBNTableModel> extends JTable implement
     public void accommodateColumnSize(int columnIndex, int span) {
         TableColumnModel columnModel = getColumnModel();
         if (columnIndex < columnModel.getColumnCount()) {
+
+            T model = getModel();
             TableColumn column = columnModel.getColumn(columnIndex);
+
+            int minWidth = getMinColumnWidth();
+            int maxWidth = getMaxColumnWidth();
             int preferredWidth = 0;
 
             // header
             JTableHeader tableHeader = getTableHeader();
             if (tableHeader != null) {
                 Object headerValue = column.getHeaderValue();
-                TableCellRenderer headerCellRenderer = column.getHeaderRenderer();
-                if (headerCellRenderer == null) headerCellRenderer = tableHeader.getDefaultRenderer();
-                Component headerComponent = headerCellRenderer.getTableCellRendererComponent(this, headerValue, false, false, 0, columnIndex);
-                if (headerComponent.getPreferredSize().width > preferredWidth)
-                    preferredWidth = headerComponent.getPreferredSize().width;
+                TableCellRenderer renderer = column.getHeaderRenderer();
+                if (renderer == null) renderer = tableHeader.getDefaultRenderer();
+                Component headerComponent = renderer.getTableCellRendererComponent(this, headerValue, false, false, 0, columnIndex);
+                int width = (int) headerComponent.getPreferredSize().getWidth();
+                if (width > preferredWidth)
+                    preferredWidth = width;
             }
 
             // rows
-            T model = getModel();
+            String columnName = model.getColumnName(columnIndex);
             int rowCount = model.getRowCount();
-            for (int rowIndex = 0; rowIndex < rowCount; rowIndex++) {
-                if (preferredWidth > MAX_COLUMN_WIDTH) {
-                    break;
-                }
+            for (int r = 0; r < rowCount; r++) {
+                if (preferredWidth >= maxWidth) break;
 
-                Object value = model.getValueAt(rowIndex, column.getModelIndex());
+                int c = column.getModelIndex();
+                Object value = model.getValueAt(r, c);
                 if (value != null) {
-                    String displayValue = model.getPresentableValue(value, column.getModelIndex());
+                    String displayValue = model.getPresentableValue(value, c);
                     if (displayValue != null && displayValue.length() < 100) {
-                        int cellWidth = metricsCache.getTextWidth(displayValue);
+                        int cellWidth = metricsCache.getTextWidth(columnName, displayValue);
                         preferredWidth = Math.max(preferredWidth, cellWidth);
                     }
                 }
             }
 
-            preferredWidth = Math.min(preferredWidth, getMaxColumnWidth());
-            preferredWidth = Math.max(preferredWidth, getMinColumnWidth());
+            preferredWidth = Math.min(preferredWidth, maxWidth);
+            preferredWidth = Math.max(preferredWidth, minWidth);
             preferredWidth = preferredWidth + span;
 
             if (column.getPreferredWidth() != preferredWidth)  {

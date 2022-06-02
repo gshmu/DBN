@@ -69,15 +69,15 @@ public class BasicTableCellRenderer extends DBNColoredTableCellRenderer {
     }
 
     protected void writeUserValue(DataModelCell cell, SimpleTextAttributes textAttributes, DataGridTextAttributes configTextAttributes) {
-         String formattedUserValue;
+         String presentableValue;
          if (cell.getUserValue() instanceof String) {
-             formattedUserValue = (String) cell.getUserValue();
-             if (formattedUserValue.indexOf('\n') > -1) {
-                 formattedUserValue = formattedUserValue.replace('\n', ' ');
+             presentableValue = (String) cell.getUserValue();
+             if (presentableValue.indexOf('\n') > -1) {
+                 presentableValue = presentableValue.replace('\n', ' ');
              }
 
          } else {
-             formattedUserValue = Commons.nvl(cell.getFormattedUserValue(), "");
+             presentableValue = Commons.nvl(cell.getPresentableValue(), "");
          }
 
          DataModel model = cell.getModel();
@@ -93,30 +93,29 @@ public class BasicTableCellRenderer extends DBNColoredTableCellRenderer {
                     searchResultAttributes = configTextAttributes.getSelection();
                  }
 
-                 int valueLength = formattedUserValue.length();
-                 int lastOffset = valueLength;
+                 int valueLength = presentableValue.length();
                  while (matches.hasNext()) {
                      DataSearchResultMatch match = matches.next();
                      if (match.getStartOffset() > lastEndOffset) {
-                         int startOffset = Math.min(lastOffset, lastEndOffset);
-                         int endOffset = Math.min(lastOffset, match.getStartOffset());
-                         append(formattedUserValue.substring(startOffset, endOffset), textAttributes);
+                         int startOffset = Math.min(valueLength, lastEndOffset);
+                         int endOffset = Math.min(valueLength, match.getStartOffset());
+                         append(presentableValue.substring(startOffset, endOffset), textAttributes);
                      }
-                     int startOffset = Math.min(lastOffset, match.getStartOffset());
-                     int endOffset = Math.min(lastOffset, match.getEndOffset());
-                     append(formattedUserValue.substring(startOffset, endOffset), searchResultAttributes);
+                     int startOffset = Math.min(valueLength, match.getStartOffset());
+                     int endOffset = Math.min(valueLength, match.getEndOffset());
+                     append(presentableValue.substring(startOffset, endOffset), searchResultAttributes);
                      lastEndOffset = match.getEndOffset();
 
                  }
                  if (lastEndOffset < valueLength) {
-                     append(formattedUserValue.substring(lastEndOffset), textAttributes);
+                     append(presentableValue.substring(lastEndOffset), textAttributes);
                  }
              } else {
-                 append(formattedUserValue, textAttributes);
+                 append(presentableValue, textAttributes);
              }
 
          } else {
-             append(formattedUserValue, textAttributes);
+             append(presentableValue, textAttributes);
          }
      }
 

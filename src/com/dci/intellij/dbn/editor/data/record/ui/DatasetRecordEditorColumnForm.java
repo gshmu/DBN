@@ -3,7 +3,13 @@ package com.dci.intellij.dbn.editor.data.record.ui;
 import com.dci.intellij.dbn.common.color.Colors;
 import com.dci.intellij.dbn.common.locale.Formatter;
 import com.dci.intellij.dbn.common.ui.form.DBNFormBase;
-import com.dci.intellij.dbn.data.editor.ui.*;
+import com.dci.intellij.dbn.data.editor.ui.BasicDataEditorComponent;
+import com.dci.intellij.dbn.data.editor.ui.DataEditorComponent;
+import com.dci.intellij.dbn.data.editor.ui.ListPopupValuesProvider;
+import com.dci.intellij.dbn.data.editor.ui.ListPopupValuesProviderImpl;
+import com.dci.intellij.dbn.data.editor.ui.TextFieldWithPopup;
+import com.dci.intellij.dbn.data.editor.ui.TextFieldWithTextEditor;
+import com.dci.intellij.dbn.data.editor.ui.UserValueHolder;
 import com.dci.intellij.dbn.data.type.DBDataType;
 import com.dci.intellij.dbn.data.type.DBNativeDataType;
 import com.dci.intellij.dbn.data.type.DataTypeDefinition;
@@ -22,11 +28,23 @@ import com.intellij.ui.JBColor;
 import com.intellij.util.ui.UIUtil;
 import org.jetbrains.annotations.NotNull;
 
-import javax.swing.*;
+import javax.swing.JComponent;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JTextField;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
-import java.awt.*;
-import java.awt.event.*;
+import java.awt.BorderLayout;
+import java.awt.Component;
+import java.awt.Cursor;
+import java.awt.Dimension;
+import java.awt.Rectangle;
+import java.awt.event.FocusAdapter;
+import java.awt.event.FocusEvent;
+import java.awt.event.FocusListener;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
 import java.text.ParseException;
 import java.util.List;
 
@@ -146,10 +164,11 @@ public class DatasetRecordEditorColumnForm extends DBNFormBase {
             }
             editorComponent.setText(userValue);
         } else {
-            editable = editable && !(cell.getUserValue() instanceof LargeObjectValue);
+            Object userValue = cell.getUserValue();
+            editable = editable && !(userValue instanceof LargeObjectValue);
             editorComponent.setEditable(editable);
-            String formattedUserValue = formatter.formatObject(cell.getUserValue());
-            editorComponent.setText(formattedUserValue);
+            String presentableValue = formatter.formatObject(userValue);
+            editorComponent.setText(presentableValue);
         }
         JTextField valueTextField = editorComponent.getTextField();
         valueTextField.setBackground(Colors.getTextFieldBackground());
