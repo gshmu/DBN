@@ -73,8 +73,8 @@ public class RecordViewerColumnForm extends DBNFormBase {
             }
             valueTextField.setText(userValue);
         } else {
-            String formattedUserValue = formatter.formatObject(value);
-            valueTextField.setText(formattedUserValue);
+            String presentableValue = formatter.formatObject(value);
+            valueTextField.setText(presentableValue);
         }
     }
 

@@ -15,7 +15,7 @@ import com.intellij.find.FindResult;
 import com.intellij.openapi.util.text.StringUtil;
 import org.jetbrains.annotations.NotNull;
 
-import java.awt.*;
+import java.awt.Rectangle;
 import java.util.ArrayList;
 import java.util.ConcurrentModificationException;
 import java.util.List;
@@ -92,7 +92,7 @@ public class DataSearchResultController {
                     DataModelRow row = (DataModelRow) r;
                     for (Object c : row.getCells()) {
                         DataModelCell cell = (DataModelCell) c;
-                        String userValue = cell.getFormattedUserValue();
+                        String userValue = cell.getPresentableValue();
                         if (StringUtil.isNotEmpty(userValue)) {
                             int findOffset = 0;
                             while (true) {

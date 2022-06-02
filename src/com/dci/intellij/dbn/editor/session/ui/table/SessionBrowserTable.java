@@ -1,9 +1,9 @@
 package com.dci.intellij.dbn.editor.session.ui.table;
 
 import com.dci.intellij.dbn.common.thread.Dispatch;
-import com.dci.intellij.dbn.common.ui.util.UserInterface;
 import com.dci.intellij.dbn.common.ui.component.DBNComponent;
 import com.dci.intellij.dbn.common.ui.table.DBNTableGutter;
+import com.dci.intellij.dbn.common.ui.util.UserInterface;
 import com.dci.intellij.dbn.common.util.Actions;
 import com.dci.intellij.dbn.data.grid.ui.table.basic.BasicTableCellRenderer;
 import com.dci.intellij.dbn.data.grid.ui.table.basic.BasicTableGutter;
@@ -115,8 +115,8 @@ public class SessionBrowserTable extends ResultSetTable<SessionBrowserModel> {
     }
 
     @Override
-    public int getColumnWidthSpan() {
-        return 10;
+    public int getColumnWidthBuffer() {
+        return 22;
     }
 
     @NotNull

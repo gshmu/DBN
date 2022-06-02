@@ -27,7 +27,7 @@ public class UserValueHolderImpl<T> implements UserValueHolder<T>{
     }
 
     @Override
-    public String getFormattedUserValue() {
+    public String getPresentableValue() {
         throw new UnsupportedOperationException();
     }
 
