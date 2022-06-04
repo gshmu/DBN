@@ -47,7 +47,7 @@ public class SessionBrowserModelRow
     }
 
     public Object getSerialNumber() {
-        return getCellValue("SERIAL_NUMBER");
+        return getCellValue("SERIAL");
     }
 
     public String getSchema() {
