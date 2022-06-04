@@ -19,7 +19,7 @@ public class SessionBrowserSettings extends BasicConfiguration<OperationSettings
 
     private boolean reloadOnFilterChange = false;
     private final InteractiveOptionBroker<SessionInterruptionOption> disconnectSession =
-            new InteractiveOptionBroker<SessionInterruptionOption>(
+            new InteractiveOptionBroker<>(
                     "disconnect-session",
                     "Disconnect Sessions",
                     "Are you sure you want to disconnect the {0} from connection {1}?\nPlease select your disconnect option." +
@@ -30,7 +30,7 @@ public class SessionBrowserSettings extends BasicConfiguration<OperationSettings
                     SessionInterruptionOption.CANCEL);
 
     private final InteractiveOptionBroker<SessionInterruptionOption> killSession =
-            new InteractiveOptionBroker<SessionInterruptionOption>(
+            new InteractiveOptionBroker<>(
                     "kill-session",
                     "Kill Sessions",
                     "Are you sure you want to kill the {0} from connection {1}?\nPlease select your kill option." +
