@@ -433,7 +433,7 @@ public abstract class DatabaseMetadataInterfaceImpl extends DatabaseInterfaceImp
     }
 
     @Override
-    public void killSession(Object sessionId, Object serialNumber, boolean immediate, DBNConnection connection) throws SQLException {
+    public void terminateSession(Object sessionId, Object serialNumber, boolean immediate, DBNConnection connection) throws SQLException {
         String loaderId = immediate ? "kill-session-immediate" : "kill-session";
         executeStatement(connection, loaderId, sessionId, serialNumber);
     }

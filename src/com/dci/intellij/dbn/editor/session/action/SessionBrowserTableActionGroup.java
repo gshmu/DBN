@@ -103,7 +103,7 @@ public class SessionBrowserTableActionGroup extends DefaultActionGroup {
                 getSessionBrowser().interruptSession(
                         row.getSessionId(),
                         row.getSerialNumber(),
-                        SessionInterruptionType.KILL);
+                        SessionInterruptionType.TERMINATE);
             }
 
         }

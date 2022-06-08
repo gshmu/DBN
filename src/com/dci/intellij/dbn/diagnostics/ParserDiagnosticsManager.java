@@ -78,7 +78,7 @@ public class ParserDiagnosticsManager extends AbstractProjectComponent implement
                 VirtualFile file = files[i];
                 Progress.check(progress);
                 String filePath = file.getPath();
-                progress.setText2(filePath);
+                progress.setText(filePath);
                 progress.setFraction(Progress.progressOf(i, files.length));
 
                 DBLanguagePsiFile psiFile = ensureFileParsed(file);
@@ -112,7 +112,7 @@ public class ParserDiagnosticsManager extends AbstractProjectComponent implement
             VirtualFile file = files[i];
             Progress.check(progress);
             String filePath = file.getPath();
-            progress.setText2(filePath);
+            progress.setText(filePath);
             progress.setFraction(Progress.progressOf(i, files.length));
 
             DBLanguagePsiFile psiFile = ensureFileParsed(file);

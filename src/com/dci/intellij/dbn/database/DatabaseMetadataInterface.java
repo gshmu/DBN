@@ -644,7 +644,7 @@ public interface DatabaseMetadataInterface extends DatabaseInterface{
 
     ResultSet loadSessionCurrentSql(Object sessionId, DBNConnection connection) throws SQLException;
 
-    void killSession(Object sessionId, Object serialNumber, boolean immediate, DBNConnection connection) throws SQLException;
+    void terminateSession(Object sessionId, Object serialNumber, boolean immediate, DBNConnection connection) throws SQLException;
 
     void disconnectSession(Object sessionId, Object serialNumber, boolean postTransaction, boolean immediate, DBNConnection connection) throws SQLException;
 
