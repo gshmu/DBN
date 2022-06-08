@@ -5,7 +5,6 @@ import com.dci.intellij.dbn.common.AbstractProjectComponent;
 import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.common.dispose.SafeDisposer;
 import com.dci.intellij.dbn.common.event.ProjectEvents;
-import com.dci.intellij.dbn.common.load.ProgressMonitor;
 import com.dci.intellij.dbn.common.notification.NotificationGroup;
 import com.dci.intellij.dbn.common.option.InteractiveOptionBroker;
 import com.dci.intellij.dbn.common.thread.Dispatch;
@@ -13,6 +12,7 @@ import com.dci.intellij.dbn.common.thread.Progress;
 import com.dci.intellij.dbn.common.thread.Read;
 import com.dci.intellij.dbn.common.util.Lists;
 import com.dci.intellij.dbn.common.util.Messages;
+import com.dci.intellij.dbn.common.util.Strings;
 import com.dci.intellij.dbn.common.util.TimeUtil;
 import com.dci.intellij.dbn.connection.ConnectionAction;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
@@ -44,7 +44,12 @@ import org.jetbrains.annotations.Nullable;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Timer;
+import java.util.TimerTask;
 
 import static com.dci.intellij.dbn.common.util.Commons.list;
 
@@ -138,7 +143,7 @@ public class SessionBrowserManager extends AbstractProjectComponent implements P
 
             SessionBrowserSettings sessionBrowserSettings = getSessionBrowserSettings();
             InteractiveOptionBroker<SessionInterruptionOption> disconnect =
-                    type == SessionInterruptionType.KILL ? sessionBrowserSettings.getKillSession() :
+                    type == SessionInterruptionType.TERMINATE ? sessionBrowserSettings.getKillSession() :
                     type == SessionInterruptionType.DISCONNECT  ? sessionBrowserSettings.getDisconnectSession() : null;
 
             if (disconnect != null) {
@@ -152,14 +157,15 @@ public class SessionBrowserManager extends AbstractProjectComponent implements P
                         });
             }
         } else {
-            doInterruptSessions(sessionBrowser, sessionIds, SessionInterruptionType.KILL, SessionInterruptionOption.NORMAL);
+            doInterruptSessions(sessionBrowser, sessionIds, SessionInterruptionType.TERMINATE, SessionInterruptionOption.NORMAL);
         }
     }
 
     private void doInterruptSessions(@NotNull SessionBrowser sessionBrowser, Map<Object, Object> sessionIds, SessionInterruptionType type, SessionInterruptionOption option) {
-        String disconnectedAction = type == SessionInterruptionType.KILL ? "killed" : "disconnected";
-        String disconnectingAction = type == SessionInterruptionType.KILL? "killing" : "disconnecting";
-        String taskAction = (type == SessionInterruptionType.KILL? "Killing" : "Disconnecting") + (sessionIds.size() == 1 ? " Session" : " Sessions");
+        int sessionCount = sessionIds.size();
+        String disconnectedAction = type == SessionInterruptionType.TERMINATE ? "killed" : "disconnected";
+        String disconnectingAction = type == SessionInterruptionType.TERMINATE ? "killing" : "disconnecting";
+        String taskAction = (type == SessionInterruptionType.TERMINATE ? "Killing" : "Disconnecting") + (sessionCount == 1 ? " Session" : " Sessions");
 
         Project project = getProject();
         Progress.prompt(project, taskAction, true, progress -> {
@@ -169,33 +175,34 @@ public class SessionBrowserManager extends AbstractProjectComponent implements P
                 DatabaseInterface.run(true,
                         connection,
                         (provider, conn) -> {
+                            progress.setIndeterminate(false);
                             Map<Object, SQLException> errors = new HashMap<>();
                             DatabaseMetadataInterface metadataInterface = provider.getMetadataInterface();
+                            int index = 0;
                             for (val entry : sessionIds.entrySet()) {
                                 Object sessionId = entry.getKey();
                                 Object serialNumber = entry.getValue();
 
                                 checkDisposed();
-                                ProgressMonitor.checkCancelled();
+                                progress.checkCanceled();
+                                progress.setText(Strings.capitalize(disconnectingAction) + " session id " + sessionId + " (serial " + serialNumber + ")");
+                                progress.setFraction(Progress.progressOf(index, sessionCount));
 
                                 try {
                                     boolean immediate = option == SessionInterruptionOption.IMMEDIATE;
                                     boolean postTransaction = option == SessionInterruptionOption.POST_TRANSACTION;
                                     switch (type) {
-                                        case DISCONNECT:
-                                            metadataInterface.disconnectSession(sessionId, serialNumber, postTransaction, immediate, conn);
-                                            break;
-                                        case KILL:
-                                            metadataInterface.killSession(sessionId, serialNumber, immediate, conn);
-                                            break;
+                                        case DISCONNECT: metadataInterface.disconnectSession(sessionId, serialNumber, postTransaction, immediate, conn); break;
+                                        case TERMINATE:  metadataInterface.terminateSession(sessionId, serialNumber, immediate, conn);  break;
                                     }
                                 } catch (SQLException e) {
                                     errors.put(sessionId, e);
                                 }
+                                index++;
                             }
 
                             DatabaseMessageParserInterface messageParserInterface = connection.getInterfaceProvider().getMessageParserInterface();
-                            if (sessionIds.size() == 1) {
+                            if (sessionCount == 1) {
                                 Object sessionId = sessionIds.keySet().iterator().next();
                                 if (errors.size() == 0) {
                                     Messages.showInfoDialog(project, "Info", "Session " + sessionId + " " + disconnectedAction + ".");
@@ -210,12 +217,12 @@ public class SessionBrowserManager extends AbstractProjectComponent implements P
                                 }
                             } else {
                                 if (errors.size() == 0) {
-                                    Messages.showInfoDialog(project, "Info", sessionIds.size() + " sessions " + disconnectedAction + ".");
+                                    Messages.showInfoDialog(project, "Info", sessionCount + " sessions " + disconnectedAction + ".");
                                 } else {
                                     StringBuilder message = new StringBuilder();
                                     boolean success = Lists.allMatch(errors.values(), error -> messageParserInterface.isSuccessException(error));
                                     if (success) {
-                                        message.append(sessionIds.size());
+                                        message.append(sessionCount);
                                         message.append(" sessions ");
                                         message.append(disconnectingAction);
                                         message.append(" requested:");

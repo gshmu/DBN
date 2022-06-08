@@ -257,31 +257,31 @@ public class DatabaseCompilerManager extends AbstractProjectComponent {
                 });
     }
 
-    private void doCompileInvalidObjects(List<? extends DBSchemaObject> objects, String description, ProgressIndicator progressIndicator, CompileType compileType) {
-        if (progressIndicator.isCanceled()) return;
+    private void doCompileInvalidObjects(List<? extends DBSchemaObject> objects, String description, ProgressIndicator progress, CompileType compileType) {
+        if (progress.isCanceled()) return;
 
-        progressIndicator.setText("Compiling invalid " + description + "...");
+        progress.setText("Compiling invalid " + description + "...");
         int count = objects.size();
         for (int i=0; i< count; i++) {
-            if (progressIndicator.isCanceled() || objects.size() == 0 /* may be disposed meanwhile*/) {
+            if (progress.isCanceled() || objects.size() == 0 /* may be disposed meanwhile*/) {
                 break;
             } else {
                 DBSchemaObject object = objects.get(i);
-                progressIndicator.setFraction(Progress.progressOf(i, count));
+                progress.setFraction(Progress.progressOf(i, count));
                 DBObjectStatusHolder objectStatus = object.getStatus();
                 if (object.getContentType().isBundle()) {
                     for (DBContentType contentType : object.getContentType().getSubContentTypes()) {
                         if (objectStatus.isNot(contentType, DBObjectStatus.VALID)) {
                             CompilerAction compilerAction = new CompilerAction(CompilerActionSource.BULK_COMPILE, contentType);
                             doCompileObject(object, compileType, compilerAction);
-                            progressIndicator.setText2("Compiling " + object.getQualifiedNameWithType());
+                            progress.setText("Compiling " + object.getQualifiedNameWithType());
                         }
                     }
                 } else {
                     if (objectStatus.isNot(DBObjectStatus.VALID)) {
                         CompilerAction compilerAction = new CompilerAction(CompilerActionSource.BULK_COMPILE, object.getContentType());
                         doCompileObject(object, compileType, compilerAction);
-                        progressIndicator.setText2("Compiling " + object.getQualifiedNameWithType());
+                        progress.setText("Compiling " + object.getQualifiedNameWithType());
                     }
                 }
             }
