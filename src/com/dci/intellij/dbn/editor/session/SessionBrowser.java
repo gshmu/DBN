@@ -163,7 +163,7 @@ public class SessionBrowser extends DisposableUserDataHolderBase implements File
     }
 
     public void killSelectedSessions() {
-        interruptSessions(SessionInterruptionType.KILL);
+        interruptSessions(SessionInterruptionType.TERMINATE);
     }
 
     public void interruptSession(Object sessionId, Object serialNumber, SessionInterruptionType type) {

@@ -18,7 +18,6 @@ import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.common.dispose.SafeDisposer;
 import com.dci.intellij.dbn.common.event.ProjectEvents;
 import com.dci.intellij.dbn.common.filter.Filter;
-import com.dci.intellij.dbn.common.load.ProgressMonitor;
 import com.dci.intellij.dbn.common.notification.NotificationGroup;
 import com.dci.intellij.dbn.common.notification.NotificationSupport;
 import com.dci.intellij.dbn.common.thread.Background;
@@ -29,9 +28,9 @@ import com.dci.intellij.dbn.common.util.Commons;
 import com.dci.intellij.dbn.common.util.Consumer;
 import com.dci.intellij.dbn.common.util.Lists;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
-import com.dci.intellij.dbn.connection.ConnectionRef;
 import com.dci.intellij.dbn.connection.ConnectionId;
 import com.dci.intellij.dbn.connection.ConnectionPool;
+import com.dci.intellij.dbn.connection.ConnectionRef;
 import com.dci.intellij.dbn.connection.SchemaId;
 import com.dci.intellij.dbn.connection.jdbc.DBNConnection;
 import com.dci.intellij.dbn.data.type.DBDataTypeBundle;
@@ -674,13 +673,12 @@ public class DBObjectBundleImpl extends BrowserTreeNodeBase implements DBObjectB
 
                     int size = schemas.size();
                     for (int i = 0; i < size; i++) {
-                        ProgressMonitor.checkCancelled();
-
-                        DBSchema schema = schemas.get(i);
+                        progress.checkCanceled();
                         if (size > 3) {
                             progress.setIndeterminate(false);
                             progress.setFraction(Progress.progressOf(i, size));
                         }
+                        DBSchema schema = schemas.get(i);
                         progress.setText("Updating object status in schema " + schema.getName() + "... ");
                         schema.refreshObjectsStatus();
                     }

@@ -301,7 +301,7 @@ public class DatabaseFileManager extends AbstractProjectComponent implements Per
         ConnectionAction.invoke("opening database editors", false, connection, action ->
                 Progress.background(project, "Opening database editors (" + connection.getQualifiedName() + ")", true, progress -> {
                     progress.setIndeterminate(true);
-                    progress.setText2(connection.getQualifiedName());
+                    progress.setText(connection.getQualifiedName());
                     DatabaseFileSystem databaseFileSystem = DatabaseFileSystem.getInstance();
 
                     for (DBObjectRef<DBSchemaObject> objectRef : objectRefs) {
@@ -309,7 +309,7 @@ public class DatabaseFileManager extends AbstractProjectComponent implements Per
                         if (connection.canConnect()) {
                             DBSchemaObject object = objectRef.get(project);
                             if (object != null) {
-                                progress.setText2(connection.getQualifiedName() + " - " + objectRef.getQualifiedNameWithType());
+                                progress.setText(connection.getQualifiedName() + " - " + objectRef.getQualifiedNameWithType());
                                 object.initChildren();
                                 databaseFileSystem.openEditor(object, null, false, false);
                             }

@@ -28,7 +28,7 @@ public class PostgresMetadataInterface extends DatabaseMetadataInterfaceImpl {
     }
 
     @Override
-    public void killSession(Object sessionId, Object serialNumber, boolean immediate, DBNConnection connection) throws SQLException {
+    public void terminateSession(Object sessionId, Object serialNumber, boolean immediate, DBNConnection connection) throws SQLException {
         executeStatement(connection, "kill-session", sessionId);
     }
 
