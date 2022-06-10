@@ -1,5 +1,6 @@
 package com.dci.intellij.dbn.language.sql.dialect.iso92;
 
+import com.dci.intellij.dbn.language.common.SharedTokenTypeBundle;
 import com.dci.intellij.dbn.language.common.TokenTypeBundle;
 import com.intellij.lexer.FlexLexer;
 import com.intellij.psi.tree.IElementType;
@@ -19,8 +20,10 @@ import com.intellij.psi.tree.IElementType;
 
 %{
     private TokenTypeBundle tt;
+    private SharedTokenTypeBundle stt;
     public Iso92SQLParserFlexLexer(TokenTypeBundle tt) {
         this.tt = tt;
+        this.stt = tt.getSharedTokenTypes();
     }
 %}
 
@@ -54,15 +57,15 @@ VARIABLE = ":"{wso}({IDENTIFIER}|{INTEGER})
 %state DIV
 %%
 
-{WHITE_SPACE}+   { return tt.getSharedTokenTypes().getWhiteSpace(); }
+{WHITE_SPACE}+     { return stt.getWhiteSpace(); }
 
-{BLOCK_COMMENT}      { return tt.getSharedTokenTypes().getBlockComment(); }
-{LINE_COMMENT}       { return tt.getSharedTokenTypes().getLineComment(); }
+{BLOCK_COMMENT}    { return stt.getBlockComment(); }
+{LINE_COMMENT}     { return stt.getLineComment(); }
 
-{VARIABLE}    { return tt.getSharedTokenTypes().getVariable(); }      
-{INTEGER}     { return tt.getSharedTokenTypes().getInteger(); }
-{NUMBER}      { return tt.getSharedTokenTypes().getNumber(); }
-{STRING}      { return tt.getSharedTokenTypes().getString(); }
+{VARIABLE}         { return stt.getVariable(); }
+{INTEGER}          { return stt.getInteger(); }
+{NUMBER}           { return stt.getNumber(); }
+{STRING}           { return stt.getString(); }
 
 "("{wso}"+"{wso}")"  {return tt.getTokenType("CT_OUTER_JOIN");}
 
@@ -370,7 +373,7 @@ VARIABLE = ":"{wso}({IDENTIFIER}|{INTEGER})
 "bit_length" {return tt.getFunctionTokenType(15);}
 "bit_or" {return tt.getFunctionTokenType(16);}
 "bit_xor" {return tt.getFunctionTokenType(17);}
-"boolean"{wso}"(" { yybegin(YYINITIAL); yypushback(1); return tt.getFunctionTokenType(18);}
+"boolean"{wso}"(" { yypushback(1); return tt.getFunctionTokenType(18);}
 "ceil" {return tt.getFunctionTokenType(19);}
 "ceiling" {return tt.getFunctionTokenType(20);}
 "char" {return tt.getFunctionTokenType(21);}
@@ -393,15 +396,15 @@ VARIABLE = ":"{wso}({IDENTIFIER}|{INTEGER})
 "current_date" {return tt.getFunctionTokenType(38);}
 "current_time" {return tt.getFunctionTokenType(39);}
 "current_timestamp" {return tt.getFunctionTokenType(40);}
-"current_user"{wso}"(" { yybegin(YYINITIAL); yypushback(1); return tt.getFunctionTokenType(41);}
+"current_user"{wso}"(" { yypushback(1); return tt.getFunctionTokenType(41);}
 "curtime" {return tt.getFunctionTokenType(42);}
-"database"{wso}"(" { yybegin(YYINITIAL); yypushback(1); return tt.getFunctionTokenType(43);}
-"date"{wso}"(" { yybegin(YYINITIAL); yypushback(1); return tt.getFunctionTokenType(44);}
+"database"{wso}"(" { yypushback(1); return tt.getFunctionTokenType(43);}
+"date"{wso}"(" { yypushback(1); return tt.getFunctionTokenType(44);}
 "date_add" {return tt.getFunctionTokenType(45);}
 "date_format" {return tt.getFunctionTokenType(46);}
 "date_sub" {return tt.getFunctionTokenType(47);}
 "datediff" {return tt.getFunctionTokenType(48);}
-"day"{wso}"(" { yybegin(YYINITIAL); yypushback(1); return tt.getFunctionTokenType(49);}
+"day"{wso}"(" { yypushback(1); return tt.getFunctionTokenType(49);}
 "day_hour" {return tt.getFunctionTokenType(50);}
 "day_microsecond" {return tt.getFunctionTokenType(51);}
 "day_minute" {return tt.getFunctionTokenType(52);}
@@ -411,7 +414,7 @@ VARIABLE = ":"{wso}({IDENTIFIER}|{INTEGER})
 "dayofweek" {return tt.getFunctionTokenType(56);}
 "dayofyear" {return tt.getFunctionTokenType(57);}
 "decode" {return tt.getFunctionTokenType(58);}
-"default"{wso}"(" { yybegin(YYINITIAL); yypushback(1); return tt.getFunctionTokenType(59);}
+"default"{wso}"(" { yypushback(1); return tt.getFunctionTokenType(59);}
 "degrees" {return tt.getFunctionTokenType(60);}
 "des_decrypt" {return tt.getFunctionTokenType(61);}
 "des_encrypt" {return tt.getFunctionTokenType(62);}
@@ -419,7 +422,7 @@ VARIABLE = ":"{wso}({IDENTIFIER}|{INTEGER})
 "encode" {return tt.getFunctionTokenType(64);}
 "encrypt" {return tt.getFunctionTokenType(65);}
 "exp" {return tt.getFunctionTokenType(66);}
-"expansion"{wso}"(" { yybegin(YYINITIAL); yypushback(1); return tt.getFunctionTokenType(67);}
+"expansion"{wso}"(" { yypushback(1); return tt.getFunctionTokenType(67);}
 "export_set" {return tt.getFunctionTokenType(68);}
 "extract" {return tt.getFunctionTokenType(69);}
 "field" {return tt.getFunctionTokenType(70);}
@@ -438,21 +441,21 @@ VARIABLE = ":"{wso}({IDENTIFIER}|{INTEGER})
 "hour_microsecond" {return tt.getFunctionTokenType(83);}
 "hour_minute" {return tt.getFunctionTokenType(84);}
 "hour_second" {return tt.getFunctionTokenType(85);}
-"if"{wso}"(" { yybegin(YYINITIAL); yypushback(1); return tt.getFunctionTokenType(86);}
+"if"{wso}"(" { yypushback(1); return tt.getFunctionTokenType(86);}
 "ifnull" {return tt.getFunctionTokenType(87);}
 "inet_aton" {return tt.getFunctionTokenType(88);}
 "inet_ntoa" {return tt.getFunctionTokenType(89);}
-"insert"{wso}"(" { yybegin(YYINITIAL); yypushback(1); return tt.getFunctionTokenType(90);}
+"insert"{wso}"(" { yypushback(1); return tt.getFunctionTokenType(90);}
 "instr" {return tt.getFunctionTokenType(91);}
 "is_free_lock" {return tt.getFunctionTokenType(92);}
 "is_used_lock" {return tt.getFunctionTokenType(93);}
-"language"{wso}"(" { yybegin(YYINITIAL); yypushback(1); return tt.getFunctionTokenType(94);}
+"language"{wso}"(" { yypushback(1); return tt.getFunctionTokenType(94);}
 "last_day" {return tt.getFunctionTokenType(95);}
 "last_insert_id" {return tt.getFunctionTokenType(96);}
 "lcase" {return tt.getFunctionTokenType(97);}
-"left"{wso}"(" { yybegin(YYINITIAL); yypushback(1); return tt.getFunctionTokenType(98);}
+"left"{wso}"(" { yypushback(1); return tt.getFunctionTokenType(98);}
 "length" {return tt.getFunctionTokenType(99);}
-"like"{wso}"(" { yybegin(YYINITIAL); yypushback(1); return tt.getFunctionTokenType(100);}
+"like"{wso}"(" { yypushback(1); return tt.getFunctionTokenType(100);}
 "ln" {return tt.getFunctionTokenType(101);}
 "load_file" {return tt.getFunctionTokenType(102);}
 "localtime" {return tt.getFunctionTokenType(103);}
@@ -468,16 +471,16 @@ VARIABLE = ":"{wso}({IDENTIFIER}|{INTEGER})
 "makedate" {return tt.getFunctionTokenType(113);}
 "maketime" {return tt.getFunctionTokenType(114);}
 "master_pos_wait" {return tt.getFunctionTokenType(115);}
-"match"{wso}"(" { yybegin(YYINITIAL); yypushback(1); return tt.getFunctionTokenType(116);}
+"match"{wso}"(" { yypushback(1); return tt.getFunctionTokenType(116);}
 "max" {return tt.getFunctionTokenType(117);}
 "md5" {return tt.getFunctionTokenType(118);}
-"microsecond"{wso}"(" { yybegin(YYINITIAL); yypushback(1); return tt.getFunctionTokenType(119);}
+"microsecond"{wso}"(" { yypushback(1); return tt.getFunctionTokenType(119);}
 "mid" {return tt.getFunctionTokenType(120);}
 "min" {return tt.getFunctionTokenType(121);}
 "minute" {return tt.getFunctionTokenType(122);}
 "minute_microsecond" {return tt.getFunctionTokenType(123);}
 "minute_second" {return tt.getFunctionTokenType(124);}
-"mod"{wso}"(" { yybegin(YYINITIAL); yypushback(1); return tt.getFunctionTokenType(125);}
+"mod"{wso}"(" { yypushback(1); return tt.getFunctionTokenType(125);}
 "month" {return tt.getFunctionTokenType(126);}
 "monthname" {return tt.getFunctionTokenType(127);}
 "name_const" {return tt.getFunctionTokenType(128);}
@@ -497,22 +500,22 @@ VARIABLE = ":"{wso}({IDENTIFIER}|{INTEGER})
 "pow" {return tt.getFunctionTokenType(142);}
 "power" {return tt.getFunctionTokenType(143);}
 "quarter" {return tt.getFunctionTokenType(144);}
-"query"{wso}"(" { yybegin(YYINITIAL); yypushback(1); return tt.getFunctionTokenType(145);}
+"query"{wso}"(" { yypushback(1); return tt.getFunctionTokenType(145);}
 "quote" {return tt.getFunctionTokenType(146);}
 "radians" {return tt.getFunctionTokenType(147);}
 "rand" {return tt.getFunctionTokenType(148);}
-"regexp"{wso}"(" { yybegin(YYINITIAL); yypushback(1); return tt.getFunctionTokenType(149);}
+"regexp"{wso}"(" { yypushback(1); return tt.getFunctionTokenType(149);}
 "release_lock" {return tt.getFunctionTokenType(150);}
-"repeat"{wso}"(" { yybegin(YYINITIAL); yypushback(1); return tt.getFunctionTokenType(151);}
-"replace"{wso}"(" { yybegin(YYINITIAL); yypushback(1); return tt.getFunctionTokenType(152);}
-"reverse"{wso}"(" { yybegin(YYINITIAL); yypushback(1); return tt.getFunctionTokenType(153);}
-"right"{wso}"(" { yybegin(YYINITIAL); yypushback(1); return tt.getFunctionTokenType(154);}
-"rlike"{wso}"(" { yybegin(YYINITIAL); yypushback(1); return tt.getFunctionTokenType(155);}
+"repeat"{wso}"(" { yypushback(1); return tt.getFunctionTokenType(151);}
+"replace"{wso}"(" { yypushback(1); return tt.getFunctionTokenType(152);}
+"reverse"{wso}"(" { yypushback(1); return tt.getFunctionTokenType(153);}
+"right"{wso}"(" { yypushback(1); return tt.getFunctionTokenType(154);}
+"rlike"{wso}"(" { yypushback(1); return tt.getFunctionTokenType(155);}
 "round" {return tt.getFunctionTokenType(156);}
 "row_count" {return tt.getFunctionTokenType(157);}
 "rpad" {return tt.getFunctionTokenType(158);}
 "rtrim" {return tt.getFunctionTokenType(159);}
-"schema"{wso}"(" { yybegin(YYINITIAL); yypushback(1); return tt.getFunctionTokenType(160);}
+"schema"{wso}"(" { yypushback(1); return tt.getFunctionTokenType(160);}
 "sec_to_time" {return tt.getFunctionTokenType(161);}
 "second" {return tt.getFunctionTokenType(162);}
 "second_microsecond" {return tt.getFunctionTokenType(163);}
@@ -542,16 +545,16 @@ VARIABLE = ":"{wso}({IDENTIFIER}|{INTEGER})
 "sysdate" {return tt.getFunctionTokenType(187);}
 "system_user" {return tt.getFunctionTokenType(188);}
 "tan" {return tt.getFunctionTokenType(189);}
-"time"{wso}"(" { yybegin(YYINITIAL); yypushback(1); return tt.getFunctionTokenType(190);}
+"time"{wso}"(" { yypushback(1); return tt.getFunctionTokenType(190);}
 "time_format" {return tt.getFunctionTokenType(191);}
 "time_to_sec" {return tt.getFunctionTokenType(192);}
 "timediff" {return tt.getFunctionTokenType(193);}
-"timestamp"{wso}"(" { yybegin(YYINITIAL); yypushback(1); return tt.getFunctionTokenType(194);}
+"timestamp"{wso}"(" { yypushback(1); return tt.getFunctionTokenType(194);}
 "timestampadd" {return tt.getFunctionTokenType(195);}
 "timestampdiff" {return tt.getFunctionTokenType(196);}
 "to_days" {return tt.getFunctionTokenType(197);}
 "trim" {return tt.getFunctionTokenType(198);}
-"truncate"{wso}"(" { yybegin(YYINITIAL); yypushback(1); return tt.getFunctionTokenType(199);}
+"truncate"{wso}"(" { yypushback(1); return tt.getFunctionTokenType(199);}
 "ucase" {return tt.getFunctionTokenType(200);}
 "uncompress" {return tt.getFunctionTokenType(201);}
 "uncompressed_length" {return tt.getFunctionTokenType(202);}
@@ -572,15 +575,13 @@ VARIABLE = ":"{wso}({IDENTIFIER}|{INTEGER})
 "weekday" {return tt.getFunctionTokenType(217);}
 "weekofyear" {return tt.getFunctionTokenType(218);}
 "weight_string" {return tt.getFunctionTokenType(219);}
-"year"{wso}"(" { yybegin(YYINITIAL); yypushback(1); return tt.getFunctionTokenType(220);}
+"year"{wso}"(" { yypushback(1); return tt.getFunctionTokenType(220);}
 "year_month" {return tt.getFunctionTokenType(221);}
 "yearweek" {return tt.getFunctionTokenType(222);}
 
 
 
-{IDENTIFIER}           { yybegin(YYINITIAL); return tt.getSharedTokenTypes().getIdentifier(); }
-{QUOTED_IDENTIFIER}    { yybegin(YYINITIAL); return tt.getSharedTokenTypes().getQuotedIdentifier(); }
+{IDENTIFIER}           { return stt.getIdentifier(); }
+{QUOTED_IDENTIFIER}    { return stt.getQuotedIdentifier(); }
+.                      { return stt.getIdentifier(); }
 
-<YYINITIAL> {
-    .                  { yybegin(YYINITIAL); return tt.getSharedTokenTypes().getIdentifier(); }
-}

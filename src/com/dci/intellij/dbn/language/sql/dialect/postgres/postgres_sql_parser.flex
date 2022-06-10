@@ -1,6 +1,7 @@
 package com.dci.intellij.dbn.language.sql.dialect.postgres;
 
 import com.dci.intellij.dbn.language.common.DBLanguageDialectIdentifier;
+import com.dci.intellij.dbn.language.common.SharedTokenTypeBundle;
 import com.dci.intellij.dbn.language.common.TokenTypeBundle;
 import com.intellij.lexer.FlexLexer;
 import com.intellij.psi.tree.IElementType;
@@ -20,9 +21,11 @@ import com.intellij.psi.tree.IElementType;
 
 %{
     private TokenTypeBundle tt;
+    private SharedTokenTypeBundle stt;
 
     public PostgresSQLParserFlexLexer(TokenTypeBundle tt) {
         this.tt = tt;
+        this.stt = tt.getSharedTokenTypes();
     }
 
     private int blockNesting = 0;
@@ -84,18 +87,18 @@ VARIABLE = ":"{wso}({IDENTIFIER}|{INTEGER})
 
 <YYINITIAL> {
 
-    {WHITE_SPACE}+   { return tt.getSharedTokenTypes().getWhiteSpace(); }
+    {WHITE_SPACE}+   { return stt.getWhiteSpace(); }
 
-    {BLOCK_COMMENT}  { return tt.getSharedTokenTypes().getBlockComment(); }
-    {LINE_COMMENT}   { return tt.getSharedTokenTypes().getLineComment(); }
+    {BLOCK_COMMENT}  { return stt.getBlockComment(); }
+    {LINE_COMMENT}   { return stt.getLineComment(); }
 
     "declare" { startPsqlBlock(false); }
     "begin"   { startPsqlBlock(true); }
 
-    {VARIABLE}    { return tt.getSharedTokenTypes().getVariable(); }
-    {INTEGER}     { return tt.getSharedTokenTypes().getInteger(); }
-    {NUMBER}      { return tt.getSharedTokenTypes().getNumber(); }
-    {STRING}      { return tt.getSharedTokenTypes().getString(); }
+    {VARIABLE}    { return stt.getVariable(); }
+    {INTEGER}     { return stt.getInteger(); }
+    {NUMBER}      { return stt.getNumber(); }
+    {STRING}      { return stt.getString(); }
 
     "="{wso}"=" {return tt.getOperatorTokenType(0);}
     "|"{wso}"|" {return tt.getOperatorTokenType(1);}
@@ -1225,7 +1228,7 @@ VARIABLE = ":"{wso}({IDENTIFIER}|{INTEGER})
     "security_barrier" {return tt.getParameterTokenType(1);}
 
 
-    {IDENTIFIER}           {return tt.getSharedTokenTypes().getIdentifier(); }
-    {QUOTED_IDENTIFIER}    {return tt.getSharedTokenTypes().getQuotedIdentifier(); }
-    .                      {return tt.getSharedTokenTypes().getIdentifier(); }
+    {IDENTIFIER}           {return stt.getIdentifier(); }
+    {QUOTED_IDENTIFIER}    {return stt.getQuotedIdentifier(); }
+    .                      {return stt.getIdentifier(); }
 }

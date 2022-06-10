@@ -1,5 +1,6 @@
 package com.dci.intellij.dbn.language.psql.dialect.postgres;
 
+import com.dci.intellij.dbn.language.common.SharedTokenTypeBundle;
 import com.dci.intellij.dbn.language.common.TokenTypeBundle;
 import com.intellij.lexer.FlexLexer;
 import com.intellij.psi.tree.IElementType;
@@ -19,8 +20,10 @@ import com.intellij.psi.tree.IElementType;
 
 %{
     private TokenTypeBundle tt;
+    private SharedTokenTypeBundle stt;
     public PostgresPSQLParserFlexLexer(TokenTypeBundle tt) {
         this.tt = tt;
+        this.stt = tt.getSharedTokenTypes();
     }
 %}
 
@@ -50,25 +53,25 @@ NUMBER = {INTEGER}?"."{digit}+(("e"{sign}?{digit}+)|(("f"|"d"){ws}))?
 %state DIV
 %%
 
-{WHITE_SPACE}+   { return tt.getSharedTokenTypes().getWhiteSpace(); }
+{WHITE_SPACE}+     { return stt.getWhiteSpace(); }
 
-{BLOCK_COMMENT}      { return tt.getSharedTokenTypes().getBlockComment(); }
-{LINE_COMMENT}       { return tt.getSharedTokenTypes().getLineComment(); }
+{BLOCK_COMMENT}    { return stt.getBlockComment(); }
+{LINE_COMMENT}     { return stt.getLineComment(); }
 
-{INTEGER}     { return tt.getSharedTokenTypes().getInteger(); }
-{NUMBER}      { return tt.getSharedTokenTypes().getNumber(); }
-{STRING}      { return tt.getSharedTokenTypes().getString(); }
+{INTEGER}          { return stt.getInteger(); }
+{NUMBER}           { return stt.getNumber(); }
+{STRING}           { return stt.getString(); }
 
-"="{wso}"=" {return tt.getOperatorTokenType(0);}
-"|"{wso}"|" {return tt.getOperatorTokenType(1);}
-"<"{wso}"=" {return tt.getOperatorTokenType(2);}
-">"{wso}"=" {return tt.getOperatorTokenType(3);}
-"<"{wso}">" {return tt.getOperatorTokenType(4);}
-"!"{wso}"=" {return tt.getOperatorTokenType(5);}
-":"{wso}"=" {return tt.getOperatorTokenType(6);}
-"="{wso}">" {return tt.getOperatorTokenType(7);}
-".."        {return tt.getOperatorTokenType(8);}
-"::"        {return tt.getOperatorTokenType(9);}
+"="{wso}"="        { return tt.getOperatorTokenType(0); }
+"|"{wso}"|"        { return tt.getOperatorTokenType(1); }
+"<"{wso}"="        { return tt.getOperatorTokenType(2); }
+">"{wso}"="        { return tt.getOperatorTokenType(3); }
+"<"{wso}">"        { return tt.getOperatorTokenType(4); }
+"!"{wso}"="        { return tt.getOperatorTokenType(5); }
+":"{wso}"="        { return tt.getOperatorTokenType(6); }
+"="{wso}">"        { return tt.getOperatorTokenType(7); }
+".."               { return tt.getOperatorTokenType(8); }
+"::"               { return tt.getOperatorTokenType(9); }
 
 
 
@@ -96,9 +99,6 @@ NUMBER = {INTEGER}?"."{digit}+(("e"{sign}?{digit}+)|(("f"|"d"){ws}))?
 "|" {return tt.getCharacterTokenType(21);}
 
 
-{IDENTIFIER}           { yybegin(YYINITIAL); return tt.getSharedTokenTypes().getIdentifier(); }
-{QUOTED_IDENTIFIER}    { yybegin(YYINITIAL); return tt.getSharedTokenTypes().getQuotedIdentifier(); }
-
-<YYINITIAL> {
-    .                  { yybegin(YYINITIAL); return tt.getSharedTokenTypes().getIdentifier(); }
-}
+{IDENTIFIER}           { return stt.getIdentifier(); }
+{QUOTED_IDENTIFIER}    { return stt.getQuotedIdentifier(); }
+.                      { return stt.getIdentifier(); }

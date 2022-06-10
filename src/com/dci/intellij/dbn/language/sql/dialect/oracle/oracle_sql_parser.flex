@@ -1,5 +1,6 @@
 package com.dci.intellij.dbn.language.sql.dialect.oracle;
 
+import com.dci.intellij.dbn.language.common.SharedTokenTypeBundle;
 import com.dci.intellij.dbn.language.common.DBLanguageDialectIdentifier;
 import com.dci.intellij.dbn.language.common.TokenTypeBundle;
 import com.dci.intellij.dbn.language.sql.dialect.oracle.OraclePLSQLBlockMonitor.Marker;
@@ -20,28 +21,30 @@ import com.intellij.psi.tree.IElementType;
 
 %{
     private TokenTypeBundle tt;
-            public OracleSQLParserFlexLexer(TokenTypeBundle tt) {
-                this.tt = tt;
-            }
+    private SharedTokenTypeBundle stt;
+    public OracleSQLParserFlexLexer(TokenTypeBundle tt) {
+        this.tt = tt;
+        this.stt = tt.getSharedTokenTypes();
+    }
 
-            private int blockNesting = 0;
-            private int blockStartPos = 0;
+    private int blockNesting = 0;
+    private int blockStartPos = 0;
 
-            public IElementType getChameleon() {
-                return tt.getChameleon(DBLanguageDialectIdentifier.ORACLE_PLSQL);
-            }
+    public IElementType getChameleon() {
+        return tt.getChameleon(DBLanguageDialectIdentifier.ORACLE_PLSQL);
+    }
 
-            OraclePLSQLBlockMonitor plsqlBlockMonitor = new OraclePLSQLBlockMonitor() {
-                @Override protected void lexerStart() {
-                    //yypushback(yylength());
-                    yybegin(PSQL_BLOCK);
-                    blockStartPos = zzStartRead;
-                }
-                @Override protected void lexerEnd() {
-                    yybegin(YYINITIAL);
-                    zzStartRead = blockStartPos;
-                }
-            };
+    OraclePLSQLBlockMonitor plsqlBlockMonitor = new OraclePLSQLBlockMonitor() {
+        @Override protected void lexerStart() {
+            //yypushback(yylength());
+            yybegin(PSQL_BLOCK);
+            blockStartPos = zzStartRead;
+        }
+        @Override protected void lexerEnd() {
+            yybegin(YYINITIAL);
+            zzStartRead = blockStartPos;
+        }
+    };
 
 %}
 
@@ -155,12 +158,12 @@ CT_SIZE_CLAUSE = {INTEGER}{wso}("k"|"m"|"g"|"t"|"p"|"e"){ws}
 
 <YYINITIAL, NON_PSQL_BLOCK> {
 
-{BLOCK_COMMENT}      { return tt.getSharedTokenTypes().getBlockComment(); }
-{LINE_COMMENT}       { return tt.getSharedTokenTypes().getLineComment(); }
+{BLOCK_COMMENT}      { return stt.getBlockComment(); }
+{LINE_COMMENT}       { return stt.getLineComment(); }
 
-{VARIABLE}             { return tt.getSharedTokenTypes().getVariable(); }
-{VARIABLE_IDENTIFIER}  { return tt.getSharedTokenTypes().getIdentifier(); }
-{SQLP_VARIABLE}        { return tt.getSharedTokenTypes().getVariable(); }
+{VARIABLE}             { return stt.getVariable(); }
+{VARIABLE_IDENTIFIER}  { return stt.getIdentifier(); }
+{SQLP_VARIABLE}        { return stt.getVariable(); }
 
 "("{wso}"+"{wso}")"  {return tt.getTokenType("CT_OUTER_JOIN");}
 
@@ -1429,13 +1432,13 @@ CT_SIZE_CLAUSE = {INTEGER}{wso}("k"|"m"|"g"|"t"|"p"|"e"){ws}
 
 {CT_SIZE_CLAUSE} {return tt.getTokenType("CT_SIZE_CLAUSE");}
 
-{INTEGER}     { return tt.getSharedTokenTypes().getInteger(); }
-{NUMBER}      { return tt.getSharedTokenTypes().getNumber(); }
-{STRING}      { return tt.getSharedTokenTypes().getString(); }
+{INTEGER}     { return stt.getInteger(); }
+{NUMBER}      { return stt.getNumber(); }
+{STRING}      { return stt.getString(); }
 
-{IDENTIFIER}         { return tt.getSharedTokenTypes().getIdentifier(); }
-{QUOTED_IDENTIFIER}  { return tt.getSharedTokenTypes().getQuotedIdentifier(); }
+{IDENTIFIER}         { return stt.getIdentifier(); }
+{QUOTED_IDENTIFIER}  { return stt.getQuotedIdentifier(); }
 
-{WHITE_SPACE}        { return tt.getSharedTokenTypes().getWhiteSpace(); }
-.                    { return tt.getSharedTokenTypes().getIdentifier(); }
+{WHITE_SPACE}        { return stt.getWhiteSpace(); }
+.                    { return stt.getIdentifier(); }
 }
