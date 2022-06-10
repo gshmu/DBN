@@ -1,5 +1,6 @@
 package com.dci.intellij.dbn.language.sql.dialect.sqlite;
 
+import com.dci.intellij.dbn.language.common.SharedTokenTypeBundle;
 import com.dci.intellij.dbn.language.common.TokenTypeBundle;
 import com.intellij.lexer.FlexLexer;
 import com.intellij.psi.tree.IElementType;
@@ -20,8 +21,10 @@ import com.intellij.psi.tree.IElementType;
 
 %{
     private TokenTypeBundle tt;
+    private SharedTokenTypeBundle stt;
     public SqliteSQLHighlighterFlexLexer(TokenTypeBundle tt) {
         this.tt = tt;
+        this.stt = tt.getSharedTokenTypes();
     }
 %}
 
@@ -69,32 +72,30 @@ PARAMETER = "application_id"|"auto_vacuum"|"automatic_index"|"busy_timeout"|"cac
 %state DIV
 %%
 
-{VARIABLE}   { return tt.getTokenType("VARIABLE"); }
+{VARIABLE}           { return tt.getTokenType("VARIABLE"); }
 
-{WHITE_SPACE}+   { return tt.getSharedTokenTypes().getWhiteSpace(); }
+{WHITE_SPACE}+       { return stt.getWhiteSpace(); }
 
-{BLOCK_COMMENT}      { return tt.getSharedTokenTypes().getBlockComment(); }
-{LINE_COMMENT}       { return tt.getSharedTokenTypes().getLineComment(); }
+{BLOCK_COMMENT}      { return stt.getBlockComment(); }
+{LINE_COMMENT}       { return stt.getLineComment(); }
 
-{INTEGER}     { return tt.getTokenType("INTEGER"); }
-{NUMBER}      { return tt.getTokenType("NUMBER"); }
-{STRING}      { return tt.getTokenType("STRING"); }
+{INTEGER}            { return stt.getInteger(); }
+{NUMBER}             { return stt.getNumber(); }
+{STRING}             { return stt.getString(); }
 
-{FUNCTION}             { yybegin(YYINITIAL); return tt.getTokenType("FUNCTION");}
-{PARAMETER}            { yybegin(YYINITIAL); return tt.getTokenType("PARAMETER"); }
-{DATA_TYPE}            { yybegin(YYINITIAL); return tt.getTokenType("DATA_TYPE"); }
-{KEYWORD}              { yybegin(YYINITIAL); return tt.getTokenType("KEYWORD"); }
-{OPERATOR}             { yybegin(YYINITIAL); return tt.getTokenType("OPERATOR"); }
-
-
-
-{IDENTIFIER}           { yybegin(YYINITIAL); return tt.getSharedTokenTypes().getIdentifier(); }
-{QUOTED_IDENTIFIER}    { yybegin(YYINITIAL); return tt.getSharedTokenTypes().getQuotedIdentifier(); }
+{FUNCTION}           { return tt.getTokenType("FUNCTION");}
+{PARAMETER}          { return tt.getTokenType("PARAMETER"); }
+{DATA_TYPE}          { return tt.getTokenType("DATA_TYPE"); }
+{KEYWORD}            { return tt.getTokenType("KEYWORD"); }
+{OPERATOR}           { return tt.getTokenType("OPERATOR"); }
 
 
-"("                    { return tt.getTokenType("CHR_LEFT_PARENTHESIS"); }
-")"                    { return tt.getTokenType("CHR_RIGHT_PARENTHESIS"); }
 
-<YYINITIAL> {
-    .                  { yybegin(YYINITIAL); return tt.getSharedTokenTypes().getIdentifier(); }
-}
+{IDENTIFIER}         { return stt.getIdentifier(); }
+{QUOTED_IDENTIFIER}  { return stt.getQuotedIdentifier(); }
+
+
+"("                  { return stt.getChrLeftParenthesis(); }
+")"                  { return stt.getChrRightParenthesis(); }
+
+.                    { return stt.getIdentifier(); }
