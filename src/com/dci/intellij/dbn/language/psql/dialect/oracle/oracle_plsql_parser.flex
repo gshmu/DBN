@@ -1,5 +1,6 @@
 package com.dci.intellij.dbn.language.psql.dialect.oracle;
 
+import com.dci.intellij.dbn.language.common.SharedTokenTypeBundle;
 import com.dci.intellij.dbn.language.common.TokenTypeBundle;
 import com.intellij.lexer.FlexLexer;
 import com.intellij.psi.tree.IElementType;
@@ -18,8 +19,10 @@ import com.intellij.psi.tree.IElementType;
 
 %{
     private TokenTypeBundle tt;
+    private SharedTokenTypeBundle stt;
     public OraclePLSQLParserFlexLexer(TokenTypeBundle tt) {
         this.tt = tt;
+        this.stt = tt.getSharedTokenTypes();
     }
 %}
 
@@ -75,22 +78,22 @@ SQLP_VARIABLE = "&""&"?{IDENTIFIER}
 %%
 
 <WRAPPED> {
-    .*           { return tt.getSharedTokenTypes().getLineComment(); }
-    .            { return tt.getSharedTokenTypes().getLineComment(); }
+    .*           { return stt.getLineComment(); }
+    .            { return stt.getLineComment(); }
 }
 
-{BLOCK_COMMENT}  { return tt.getSharedTokenTypes().getBlockComment(); }
-{LINE_COMMENT}   { return tt.getSharedTokenTypes().getLineComment(); }
+{BLOCK_COMMENT}  { return stt.getBlockComment(); }
+{LINE_COMMENT}   { return stt.getLineComment(); }
 
 "wrapped"        { yybegin(WRAPPED); return tt.getTokenType("KW_WRAPPED");}
 
-{VARIABLE}       {return tt.getSharedTokenTypes().getVariable(); }
-{SQLP_VARIABLE}  {return tt.getSharedTokenTypes().getVariable(); }
+{VARIABLE}       {return stt.getVariable(); }
+{SQLP_VARIABLE}  {return stt.getVariable(); }
 
 
-{INTEGER}     { return tt.getSharedTokenTypes().getInteger(); }
-{NUMBER}      { return tt.getSharedTokenTypes().getNumber(); }
-{STRING}      { return tt.getSharedTokenTypes().getString(); }
+{INTEGER}     { return stt.getInteger(); }
+{NUMBER}      { return stt.getNumber(); }
+{STRING}      { return stt.getString(); }
 
 "("{wso}"+"{wso}")"  {return tt.getTokenType("CT_OUTER_JOIN");}
 
@@ -913,9 +916,9 @@ SQLP_VARIABLE = "&""&"?{IDENTIFIER}
 
 
 
-{IDENTIFIER}           { return tt.getSharedTokenTypes().getIdentifier(); }
-{QUOTED_IDENTIFIER}    { return tt.getSharedTokenTypes().getQuotedIdentifier(); }
-{WHITE_SPACE}          { return tt.getSharedTokenTypes().getWhiteSpace(); }
-.                      { return tt.getSharedTokenTypes().getIdentifier(); }
+{IDENTIFIER}           { return stt.getIdentifier(); }
+{QUOTED_IDENTIFIER}    { return stt.getQuotedIdentifier(); }
+{WHITE_SPACE}          { return stt.getWhiteSpace(); }
+.                      { return stt.getIdentifier(); }
 
 

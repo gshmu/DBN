@@ -1,5 +1,6 @@
 package com.dci.intellij.dbn.language.psql.dialect.oracle;
 
+import com.dci.intellij.dbn.language.common.SharedTokenTypeBundle;
 import com.dci.intellij.dbn.language.common.TokenTypeBundle;
 import com.intellij.lexer.FlexLexer;
 import com.intellij.psi.tree.IElementType;
@@ -19,8 +20,10 @@ import com.intellij.psi.tree.IElementType;
 
 %{
     private TokenTypeBundle tt;
+    private SharedTokenTypeBundle stt;
     public OraclePLSQLHighlighterFlexLexer(TokenTypeBundle tt) {
         this.tt = tt;
+        this.stt = tt.getSharedTokenTypes();
     }
 %}
 
@@ -85,23 +88,23 @@ SQLP_VARIABLE = "&""&"?{IDENTIFIER}
 %%
 
 <WRAPPED> {
-    .*               { return tt.getSharedTokenTypes().getLineComment(); }
-    .                { return tt.getSharedTokenTypes().getLineComment(); }
+    .*               { return stt.getLineComment(); }
+    .                { return stt.getLineComment(); }
 }
 
 
-//{VARIABLE}           {return tt.getSharedTokenTypes().getVariable(); }
-{SQLP_VARIABLE}      {return tt.getSharedTokenTypes().getVariable(); }
+//{VARIABLE}           {return stt.getVariable(); }
+{SQLP_VARIABLE}      { return stt.getVariable(); }
 
 
-{BLOCK_COMMENT}      { return tt.getSharedTokenTypes().getBlockComment(); }
-{LINE_COMMENT}       { return tt.getSharedTokenTypes().getLineComment(); }
+{BLOCK_COMMENT}      { return stt.getBlockComment(); }
+{LINE_COMMENT}       { return stt.getLineComment(); }
 
 "wrapped"            { yybegin(WRAPPED); return tt.getTokenType("KEYWORD");}
 
-{INTEGER}            { return tt.getTokenType("INTEGER"); }
-{NUMBER}             { return tt.getTokenType("NUMBER"); }
-{STRING}             { return tt.getTokenType("STRING"); }
+{INTEGER}            { return stt.getInteger(); }
+{NUMBER}             { return stt.getNumber(); }
+{STRING}             { return stt.getString(); }
 
 {FUNCTION}           { return tt.getTokenType("FUNCTION");}
 {PARAMETER}          { return tt.getTokenType("PARAMETER");}
@@ -113,15 +116,15 @@ SQLP_VARIABLE = "&""&"?{IDENTIFIER}
 
 
 
-{IDENTIFIER}         { return tt.getSharedTokenTypes().getIdentifier(); }
-{QUOTED_IDENTIFIER}  { return tt.getSharedTokenTypes().getQuotedIdentifier(); }
+{IDENTIFIER}         { return stt.getIdentifier(); }
+{QUOTED_IDENTIFIER}  { return stt.getQuotedIdentifier(); }
 
 
-"("                  { return tt.getSharedTokenTypes().getChrLeftParenthesis(); }
-")"                  { return tt.getSharedTokenTypes().getChrRightParenthesis(); }
-"["                  { return tt.getTokenType("CHR_LEFT_BRACKET"); }
-"]"                  { return tt.getTokenType("CHR_RIGHT_BRACKET"); }
+"("                  { return stt.getChrLeftParenthesis(); }
+")"                  { return stt.getChrRightParenthesis(); }
+"["                  { return stt.getChrLeftBracket(); }
+"]"                  { return stt.getChrRightBracket(); }
 
-{WHITE_SPACE}        { return tt.getSharedTokenTypes().getWhiteSpace(); }
-.                    { return tt.getSharedTokenTypes().getIdentifier(); }
+{WHITE_SPACE}        { return stt.getWhiteSpace(); }
+.                    { return stt.getIdentifier(); }
 

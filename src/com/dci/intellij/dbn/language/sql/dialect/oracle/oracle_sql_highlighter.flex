@@ -1,5 +1,6 @@
 package com.dci.intellij.dbn.language.sql.dialect.oracle;
 
+import com.dci.intellij.dbn.language.common.SharedTokenTypeBundle;
 import com.dci.intellij.dbn.language.common.TokenTypeBundle;
 import com.intellij.lexer.FlexLexer;
 import com.intellij.psi.tree.IElementType;
@@ -18,8 +19,10 @@ import com.intellij.psi.tree.IElementType;
 
 %{
     private TokenTypeBundle tt;
+    private SharedTokenTypeBundle stt;
     public OracleSQLHighlighterFlexLexer(TokenTypeBundle tt) {
         this.tt = tt;
+        this.stt = tt.getSharedTokenTypes();
     }
 %}
 
@@ -95,72 +98,72 @@ PLSQL_EXCEPTION   = "access_into_null"|"case_not_found"|"collection_is_null"|"cu
 
 
 <YYINITIAL> {
-    {BLOCK_COMMENT}       { return tt.getSharedTokenTypes().getBlockComment(); }
-    {LINE_COMMENT}        { return tt.getSharedTokenTypes().getLineComment(); }
+    {BLOCK_COMMENT}       { return stt.getBlockComment(); }
+    {LINE_COMMENT}        { return stt.getLineComment(); }
 
-    {VARIABLE}            { return tt.getSharedTokenTypes().getVariable(); }
-    {VARIABLE_IDENTIFIER} { return tt.getSharedTokenTypes().getIdentifier(); }
-    {SQLP_VARIABLE}       { return tt.getSharedTokenTypes().getVariable(); }
+    {VARIABLE}            { return stt.getVariable(); }
+    {VARIABLE_IDENTIFIER} { return stt.getIdentifier(); }
+    {SQLP_VARIABLE}       { return stt.getVariable(); }
 
-    {PLSQL_BLOCK_START}  { yybegin(PLSQL); return tt.getTokenType("KEYWORD");}
+    {PLSQL_BLOCK_START}   { yybegin(PLSQL); return tt.getTokenType("KEYWORD");}
 
-    {INTEGER}            { return tt.getTokenType("INTEGER"); }
-    {NUMBER}             { return tt.getTokenType("NUMBER"); }
-    {STRING}             { return tt.getTokenType("STRING"); }
+    {INTEGER}             { return tt.getTokenType("INTEGER"); }
+    {NUMBER}              { return tt.getTokenType("NUMBER"); }
+    {STRING}              { return tt.getTokenType("STRING"); }
 
-    {SQL_FUNCTION}       { return tt.getTokenType("FUNCTION");}
-    {SQL_PARAMETER}      { return tt.getTokenType("PARAMETER");}
+    {SQL_FUNCTION}        { return tt.getTokenType("FUNCTION");}
+    {SQL_PARAMETER}       { return tt.getTokenType("PARAMETER");}
 
-    {SQL_DATA_TYPE}      { return tt.getTokenType("DATA_TYPE"); }
-    {SQL_KEYWORD}        { return tt.getTokenType("KEYWORD"); }
-    {OPERATOR}           { return tt.getTokenType("OPERATOR"); }
+    {SQL_DATA_TYPE}       { return tt.getTokenType("DATA_TYPE"); }
+    {SQL_KEYWORD}         { return tt.getTokenType("KEYWORD"); }
+    {OPERATOR}            { return tt.getTokenType("OPERATOR"); }
 
 
-    {IDENTIFIER}         { return tt.getSharedTokenTypes().getIdentifier(); }
-    {QUOTED_IDENTIFIER}  { return tt.getSharedTokenTypes().getQuotedIdentifier(); }
+    {IDENTIFIER}          { return stt.getIdentifier(); }
+    {QUOTED_IDENTIFIER}   { return stt.getQuotedIdentifier(); }
 
-    {WHITE_SPACE}        { return tt.getSharedTokenTypes().getWhiteSpace(); }
+    {WHITE_SPACE}         { return stt.getWhiteSpace(); }
 
-    "("                  { return tt.getSharedTokenTypes().getChrLeftParenthesis(); }
-    ")"                  { return tt.getSharedTokenTypes().getChrRightParenthesis(); }
-    "["                  { return tt.getTokenType("CHR_LEFT_BRACKET"); }
-    "]"                  { return tt.getTokenType("CHR_RIGHT_BRACKET"); }
+    "("                   { return stt.getChrLeftParenthesis(); }
+    ")"                   { return stt.getChrRightParenthesis(); }
+    "["                   { return stt.getChrLeftBracket(); }
+    "]"                   { return stt.getChrRightBracket(); }
 
-    .                    { return tt.getSharedTokenTypes().getIdentifier(); }
+    .                     { return stt.getIdentifier(); }
 }
 
 <PLSQL> {
-    {BLOCK_COMMENT}     { return tt.getSharedTokenTypes().getBlockComment(); }
-    {LINE_COMMENT}      { return tt.getSharedTokenTypes().getLineComment(); }
-    //{VARIABLE}           {return tt.getSharedTokenTypes().getVariable(); }
-    {SQLP_VARIABLE}     {return tt.getSharedTokenTypes().getVariable(); }
+    {BLOCK_COMMENT}       { return stt.getBlockComment(); }
+    {LINE_COMMENT}        { return stt.getLineComment(); }
+ //{VARIABLE}             { return stt.getVariable(); }
+    {SQLP_VARIABLE}       { return stt.getVariable(); }
 
 
 
-    {PLSQL_BLOCK_END}   { yybegin(YYINITIAL); return tt.getSharedTokenTypes().getIdentifier(); }
+    {PLSQL_BLOCK_END}     { yybegin(YYINITIAL); return stt.getIdentifier(); }
 
-    {INTEGER}           { return tt.getTokenType("INTEGER"); }
-    {NUMBER}            { return tt.getTokenType("NUMBER"); }
-    {STRING}            { return tt.getTokenType("STRING"); }
+    {INTEGER}             { return tt.getTokenType("INTEGER"); }
+    {NUMBER}              { return tt.getTokenType("NUMBER"); }
+    {STRING}              { return tt.getTokenType("STRING"); }
 
-    {PLSQL_FUNCTION}    { return tt.getTokenType("FUNCTION");}
-    {PLSQL_PARAMETER}   { return tt.getTokenType("PARAMETER");}
-    {PLSQL_EXCEPTION}   { return tt.getTokenType("EXCEPTION");}
+    {PLSQL_FUNCTION}      { return tt.getTokenType("FUNCTION");}
+    {PLSQL_PARAMETER}     { return tt.getTokenType("PARAMETER");}
+    {PLSQL_EXCEPTION}     { return tt.getTokenType("EXCEPTION");}
 
-    {PLSQL_DATA_TYPE}   { return tt.getTokenType("DATA_TYPE"); }
-    {PLSQL_KEYWORD}     { return tt.getTokenType("KEYWORD"); }
-    {OPERATOR}          { return tt.getTokenType("OPERATOR"); }
+    {PLSQL_DATA_TYPE}     { return tt.getTokenType("DATA_TYPE"); }
+    {PLSQL_KEYWORD}       { return tt.getTokenType("KEYWORD"); }
+    {OPERATOR}            { return tt.getTokenType("OPERATOR"); }
 
 
-    {IDENTIFIER}        { return tt.getSharedTokenTypes().getIdentifier(); }
-    {QUOTED_IDENTIFIER} { return tt.getSharedTokenTypes().getQuotedIdentifier(); }
+    {IDENTIFIER}          { return stt.getIdentifier(); }
+    {QUOTED_IDENTIFIER}   { return stt.getQuotedIdentifier(); }
 
-    {WHITE_SPACE}       { return tt.getSharedTokenTypes().getWhiteSpace(); }
+    {WHITE_SPACE}         { return stt.getWhiteSpace(); }
 
-    "("                 { return tt.getSharedTokenTypes().getChrLeftParenthesis(); }
-    ")"                 { return tt.getSharedTokenTypes().getChrRightParenthesis(); }
-    "["                 { return tt.getTokenType("CHR_LEFT_BRACKET"); }
-    "]"                 { return tt.getTokenType("CHR_RIGHT_BRACKET"); }
+    "("                   { return stt.getChrLeftParenthesis(); }
+    ")"                   { return stt.getChrRightParenthesis(); }
+    "["                   { return stt.getChrLeftBracket(); }
+    "]"                   { return stt.getChrRightBracket(); }
 
-    .                   { return tt.getSharedTokenTypes().getIdentifier(); }
+    .                     { return stt.getIdentifier(); }
 }

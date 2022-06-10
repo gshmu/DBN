@@ -1,5 +1,6 @@
 package com.dci.intellij.dbn.language.sql.dialect.mysql;
 
+import com.dci.intellij.dbn.language.common.SharedTokenTypeBundle;
 import com.dci.intellij.dbn.language.common.TokenTypeBundle;
 import com.intellij.lexer.FlexLexer;
 import com.intellij.psi.tree.IElementType;
@@ -19,8 +20,10 @@ import com.intellij.psi.tree.IElementType;
 
 %{
     private TokenTypeBundle tt;
+    private SharedTokenTypeBundle stt;
     public MysqlSQLParserFlexLexer(TokenTypeBundle tt) {
         this.tt = tt;
+        this.stt = tt.getSharedTokenTypes();
     }
 %}
 
@@ -54,15 +57,15 @@ VARIABLE = ":"{wso}({IDENTIFIER}|{INTEGER})
 %state DIV
 %%
 
-{WHITE_SPACE}+   { return tt.getSharedTokenTypes().getWhiteSpace(); }
+{WHITE_SPACE}+   { return stt.getWhiteSpace(); }
 
-{BLOCK_COMMENT}      { return tt.getSharedTokenTypes().getBlockComment(); }
-{LINE_COMMENT}       { return tt.getSharedTokenTypes().getLineComment(); }
+{BLOCK_COMMENT}  { return stt.getBlockComment(); }
+{LINE_COMMENT}   { return stt.getLineComment(); }
 
-{VARIABLE}    { return tt.getSharedTokenTypes().getVariable(); }      
-{INTEGER}     { return tt.getSharedTokenTypes().getInteger(); }
-{NUMBER}      { return tt.getSharedTokenTypes().getNumber(); }
-{STRING}      { return tt.getSharedTokenTypes().getString(); }
+{VARIABLE}       { return stt.getVariable(); }
+{INTEGER}        { return stt.getInteger(); }
+{NUMBER}         { return stt.getNumber(); }
+{STRING}         { return stt.getString(); }
 
 "="{wso}"=" {return tt.getOperatorTokenType(0);}
 "|"{wso}"|" {return tt.getOperatorTokenType(1);}
@@ -574,9 +577,6 @@ VARIABLE = ":"{wso}({IDENTIFIER}|{INTEGER})
 
 
 
-{IDENTIFIER}           { yybegin(YYINITIAL); return tt.getSharedTokenTypes().getIdentifier(); }
-{QUOTED_IDENTIFIER}    { yybegin(YYINITIAL); return tt.getSharedTokenTypes().getQuotedIdentifier(); }
-
-<YYINITIAL> {
-    .                  { yybegin(YYINITIAL); return tt.getSharedTokenTypes().getIdentifier(); }
-}
+{IDENTIFIER}           { return stt.getIdentifier(); }
+{QUOTED_IDENTIFIER}    { return stt.getQuotedIdentifier(); }
+.                      { return stt.getIdentifier(); }
