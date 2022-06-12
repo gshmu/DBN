@@ -7,12 +7,7 @@ import com.intellij.debugger.DebuggerContext;
 import com.intellij.debugger.engine.DebugProcess;
 import com.intellij.debugger.engine.evaluation.EvaluateException;
 import com.intellij.debugger.engine.evaluation.EvaluationContext;
-import com.intellij.debugger.ui.impl.watch.ArgumentValueDescriptorImpl;
-import com.intellij.debugger.ui.impl.watch.DebuggerTreeNodeImpl;
-import com.intellij.debugger.ui.impl.watch.FieldDescriptorImpl;
-import com.intellij.debugger.ui.impl.watch.LocalVariableDescriptorImpl;
-import com.intellij.debugger.ui.impl.watch.NodeManagerImpl;
-import com.intellij.debugger.ui.impl.watch.ValueDescriptorImpl;
+import com.intellij.debugger.ui.impl.watch.*;
 import com.intellij.debugger.ui.tree.DebuggerTreeNode;
 import com.intellij.debugger.ui.tree.NodeDescriptor;
 import com.intellij.debugger.ui.tree.ValueDescriptor;
@@ -20,17 +15,12 @@ import com.intellij.debugger.ui.tree.render.ChildrenBuilder;
 import com.intellij.debugger.ui.tree.render.DescriptorLabelListener;
 import com.intellij.debugger.ui.tree.render.NodeRendererImpl;
 import com.intellij.psi.PsiExpression;
-import com.sun.jdi.ClassNotLoadedException;
-import com.sun.jdi.Field;
-import com.sun.jdi.ObjectReference;
-import com.sun.jdi.ReferenceType;
-import com.sun.jdi.Type;
-import com.sun.jdi.Value;
+import com.sun.jdi.*;
 import com.sun.tools.jdi.ObjectReferenceImpl;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import javax.swing.Icon;
+import javax.swing.*;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -189,7 +179,7 @@ public class DBJdwpNodeRenderer extends NodeRendererImpl {
 
     @NotNull
     private static String adjustIdLabel(@NotNull String label) {
-        int index = label.indexOf("@");
+        int index = label.indexOf('@');
         if (index > -1) {
             label = label.substring(0, index);
         }
