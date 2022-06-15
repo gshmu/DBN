@@ -6,34 +6,21 @@ import com.dci.intellij.dbn.common.util.Measured;
 import com.dci.intellij.dbn.language.common.DBLanguage;
 import com.dci.intellij.dbn.language.common.DBLanguageDialect;
 import com.dci.intellij.dbn.language.common.TokenTypeBundle;
-import com.dci.intellij.dbn.language.common.element.impl.BasicElementType;
-import com.dci.intellij.dbn.language.common.element.impl.BlockElementType;
-import com.dci.intellij.dbn.language.common.element.impl.ElementTypeBase;
-import com.dci.intellij.dbn.language.common.element.impl.ExecVariableElementType;
-import com.dci.intellij.dbn.language.common.element.impl.IdentifierElementType;
-import com.dci.intellij.dbn.language.common.element.impl.IterationElementType;
-import com.dci.intellij.dbn.language.common.element.impl.LeafElementType;
-import com.dci.intellij.dbn.language.common.element.impl.NamedElementType;
-import com.dci.intellij.dbn.language.common.element.impl.OneOfElementType;
-import com.dci.intellij.dbn.language.common.element.impl.QualifiedIdentifierElementType;
-import com.dci.intellij.dbn.language.common.element.impl.SequenceElementType;
-import com.dci.intellij.dbn.language.common.element.impl.TokenElementType;
-import com.dci.intellij.dbn.language.common.element.impl.UnknownElementType;
-import com.dci.intellij.dbn.language.common.element.impl.WrapperElementType;
+import com.dci.intellij.dbn.language.common.element.impl.*;
 import com.dci.intellij.dbn.language.common.element.util.ElementTypeAttribute;
 import com.dci.intellij.dbn.language.common.element.util.ElementTypeDefinition;
 import com.dci.intellij.dbn.language.common.element.util.ElementTypeDefinitionException;
 import com.dci.intellij.dbn.object.type.DBObjectType;
 import com.intellij.openapi.ide.CopyPasteManager;
-import com.intellij.openapi.util.JDOMUtil;
 import gnu.trove.THashSet;
 import lombok.extern.slf4j.Slf4j;
 import org.jdom.Document;
 import org.jdom.Element;
+import org.jdom.output.XMLOutputter;
 import org.jetbrains.annotations.NotNull;
 
 import java.awt.datatransfer.StringSelection;
-import java.io.ByteArrayOutputStream;
+import java.io.StringWriter;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
@@ -104,10 +91,16 @@ public class ElementTypeBundle {
             }
 
             if (builder.rewriteIds) {
+/*
                 ByteArrayOutputStream stringWriter = new ByteArrayOutputStream();
                 JDOMUtil.write(document, stringWriter);
 
                 String data = stringWriter.toString();
+*/
+                StringWriter stringWriter = new StringWriter();
+                new XMLOutputter().output(document, stringWriter);
+
+                String data = stringWriter.getBuffer().toString();
                 System.out.println(data);
 
                 CopyPasteManager copyPasteManager = CopyPasteManager.getInstance();
