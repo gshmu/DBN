@@ -17,6 +17,16 @@ import static com.dci.intellij.dbn.common.util.Unsafe.cast;
 @Getter
 public abstract class DBObjectComparator<T extends DBObject> implements Comparator<T> {
     private static final Map<Key, DBObjectComparator<?>> REGISTRY = new ConcurrentHashMap<>();
+    static {
+        new DBColumnNameComparator();
+        new DBColumnPositionComparator();
+        new DBProcedureNameComparator();
+        new DBProcedurePositionComparator();
+        new DBFunctionNameComparator();
+        new DBFunctionPositionComparator();
+        new DBArgumentNameComparator();
+        new DBArgumentPositionComparator();
+    }
 
     @Delegate
     private final Key key;
