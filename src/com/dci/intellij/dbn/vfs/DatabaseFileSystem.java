@@ -13,12 +13,7 @@ import com.dci.intellij.dbn.common.thread.Read;
 import com.dci.intellij.dbn.common.util.Editors;
 import com.dci.intellij.dbn.common.util.Messages;
 import com.dci.intellij.dbn.common.util.Safe;
-import com.dci.intellij.dbn.connection.ConnectionAction;
-import com.dci.intellij.dbn.connection.ConnectionCache;
-import com.dci.intellij.dbn.connection.ConnectionHandler;
-import com.dci.intellij.dbn.connection.ConnectionId;
-import com.dci.intellij.dbn.connection.ConnectionManager;
-import com.dci.intellij.dbn.connection.DatabaseEntity;
+import com.dci.intellij.dbn.connection.*;
 import com.dci.intellij.dbn.connection.config.ConnectionDetailSettings;
 import com.dci.intellij.dbn.database.DatabaseFeature;
 import com.dci.intellij.dbn.ddl.DDLFileAttachmentManager;
@@ -38,17 +33,7 @@ import com.dci.intellij.dbn.object.common.DBSchemaObject;
 import com.dci.intellij.dbn.object.common.list.DBObjectList;
 import com.dci.intellij.dbn.object.common.property.DBObjectProperty;
 import com.dci.intellij.dbn.object.lookup.DBObjectRef;
-import com.dci.intellij.dbn.vfs.file.DBConnectionVirtualFile;
-import com.dci.intellij.dbn.vfs.file.DBConsoleVirtualFile;
-import com.dci.intellij.dbn.vfs.file.DBContentVirtualFile;
-import com.dci.intellij.dbn.vfs.file.DBDatasetFilterVirtualFile;
-import com.dci.intellij.dbn.vfs.file.DBEditableObjectVirtualFile;
-import com.dci.intellij.dbn.vfs.file.DBFileOpenHandle;
-import com.dci.intellij.dbn.vfs.file.DBLooseContentVirtualFile;
-import com.dci.intellij.dbn.vfs.file.DBObjectListVirtualFile;
-import com.dci.intellij.dbn.vfs.file.DBObjectVirtualFile;
-import com.dci.intellij.dbn.vfs.file.DBSessionBrowserVirtualFile;
-import com.dci.intellij.dbn.vfs.file.DBSessionStatementVirtualFile;
+import com.dci.intellij.dbn.vfs.file.*;
 import com.intellij.openapi.components.NamedComponent;
 import com.intellij.openapi.fileEditor.FileEditor;
 import com.intellij.openapi.fileEditor.FileEditorManager;
@@ -76,7 +61,8 @@ import static com.dci.intellij.dbn.common.navigation.NavigationInstruction.*;
 import static com.dci.intellij.dbn.vfs.DatabaseFileSystem.FilePathType.*;
 
 public class DatabaseFileSystem extends VirtualFileSystem implements /*NonPhysicalFileSystem, */NamedComponent {
-    public static final String PS = "/";
+    public static final char PS = '/';
+    public static final String PSS = "" + '/';
     private static final String PROTOCOL = "db";
     private static final String PROTOCOL_PREFIX = PROTOCOL + "://";
 
@@ -236,7 +222,7 @@ public class DatabaseFileSystem extends VirtualFileSystem implements /*NonPhysic
                 path = path.replace(value.urlToken, value.presentableUrlToken);
             }
 
-            path = path.replace(PS, File.separator);
+            path = path.replace(PSS, File.separator);
         }
 
         return path;
@@ -288,7 +274,7 @@ public class DatabaseFileSystem extends VirtualFileSystem implements /*NonPhysic
 
             if (virtualFile instanceof DBConsoleVirtualFile) {
                 DBConsoleVirtualFile file = (DBConsoleVirtualFile) virtualFile;
-                return connectionId + PS + CONSOLES + file.getName();
+                return connectionId + PSS + CONSOLES + file.getName();
             }
 
             if (virtualFile instanceof DBConnectionVirtualFile) {
@@ -299,7 +285,7 @@ public class DatabaseFileSystem extends VirtualFileSystem implements /*NonPhysic
             if (virtualFile instanceof DBObjectVirtualFile) {
                 DBObjectVirtualFile<?> file = (DBObjectVirtualFile<?>) virtualFile;
                 DBObjectRef<?> objectRef = file.getObjectRef();
-                return objectRef.getConnectionId() + PS + OBJECTS + objectRef.serialize();
+                return objectRef.getConnectionId() + PSS + OBJECTS + objectRef.serialize();
 
             }
 
@@ -307,7 +293,7 @@ public class DatabaseFileSystem extends VirtualFileSystem implements /*NonPhysic
                 DBContentVirtualFile file = (DBContentVirtualFile) virtualFile;
                 DBObjectRef<?> objectRef = file.getObject().ref();
                 DBContentType contentType = file.getContentType();
-                return objectRef.getConnectionId() + PS + OBJECT_CONTENTS + contentType.name() + PS + objectRef.serialize();
+                return objectRef.getConnectionId() + PSS + OBJECT_CONTENTS + contentType.name() + PS + objectRef.serialize();
             }
 
             if (virtualFile instanceof DBObjectListVirtualFile) {
@@ -319,30 +305,30 @@ public class DatabaseFileSystem extends VirtualFileSystem implements /*NonPhysic
                 if (parentElement instanceof DBObject) {
                     DBObject object = (DBObject) parentElement;
                     DBObjectRef<?> objectRef = object.ref();
-                    return connectionPath + PS + objectRef.serialize() + PS + listName;
+                    return connectionPath + PSS + objectRef.serialize() + PSS + listName;
                 } else {
-                    return connectionPath + PS + listName; }
+                    return connectionPath + PSS + listName; }
             }
 
             if (virtualFile instanceof DBDatasetFilterVirtualFile) {
                 DBDatasetFilterVirtualFile file = (DBDatasetFilterVirtualFile) virtualFile;
-                return connectionId + PS + DATASET_FILTERS + PS + file.getDataset().ref().serialize();
+                return connectionId + PSS + DATASET_FILTERS + PSS + file.getDataset().ref().serialize();
             }
 
             if (virtualFile instanceof DBSessionBrowserVirtualFile) {
                 DBSessionBrowserVirtualFile file = (DBSessionBrowserVirtualFile) virtualFile;
-                return connectionId + PS + SESSION_BROWSERS + PS + file.getName();
+                return connectionId + PSS + SESSION_BROWSERS + PSS + file.getName();
 
             }
 
             if (virtualFile instanceof DBSessionStatementVirtualFile) {
                 DBSessionStatementVirtualFile file = (DBSessionStatementVirtualFile) virtualFile;
-                return connectionId + PS + SESSION_STATEMENTS + PS + file.getName();
+                return connectionId + PSS + SESSION_STATEMENTS + PSS + file.getName();
             }
 
             if (virtualFile instanceof DBLooseContentVirtualFile) {
                 DBLooseContentVirtualFile file = (DBLooseContentVirtualFile) virtualFile;
-                return connectionId + PS + LOOSE_CONTENTS + PS + file.getObject().ref().serialize();
+                return connectionId + PSS + LOOSE_CONTENTS + PSS + DBObjectRef.serialised(file.getObject());
             }
 
             throw new IllegalArgumentException("File of type " + virtualFile.getClass() + " is not supported");

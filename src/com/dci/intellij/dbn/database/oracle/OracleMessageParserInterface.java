@@ -48,8 +48,8 @@ public class OracleMessageParserInterface implements DatabaseMessageParserInterf
     }
 
     private DatabaseObjectIdentifier identifyColumn(String message) {
-        int startOffset = message.indexOf("\"");
-        int endOffset = message.lastIndexOf("\"");
+        int startOffset = message.indexOf('"');
+        int endOffset = message.lastIndexOf('"');
         StringTokenizer tokenizer = new StringTokenizer(message.substring(startOffset, endOffset + 1), ".");
         DBObjectType[] objectTypeId = new DBObjectType[]{DBObjectType.SCHEMA, DBObjectType.DATASET, DBObjectType.COLUMN};
         String[] objectName = new String[objectTypeId.length];
@@ -60,8 +60,8 @@ public class OracleMessageParserInterface implements DatabaseMessageParserInterf
     }
 
     private DatabaseObjectIdentifier identifyConstraint(String message) {
-        int startOffset = message.indexOf("(");
-        int endOffset = message.lastIndexOf(")");
+        int startOffset = message.indexOf('(');
+        int endOffset = message.lastIndexOf(')');
         StringTokenizer tokenizer = new StringTokenizer(message.substring(startOffset + 1, endOffset), ".");
         DBObjectType[] objectType = new DBObjectType[]{DBObjectType.SCHEMA, DBObjectType.CONSTRAINT};
         String[] objectName = new String[objectType.length];
