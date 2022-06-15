@@ -65,7 +65,7 @@ public class CodeCompletionSettings extends CompositeProjectConfiguration<Projec
 
     @SneakyThrows
     private Element loadDefinition() {
-        return XmlContents.loadXmlContent(getClass(), "default-settings.xml");
+        return XmlContents.fileToElement(getClass(), "default-settings.xml");
     }
 
     /*********************************************************

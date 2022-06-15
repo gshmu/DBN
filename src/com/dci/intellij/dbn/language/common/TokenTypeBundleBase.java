@@ -11,6 +11,7 @@ import com.intellij.psi.tree.TokenSet;
 import gnu.trove.THashMap;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
+import org.jdom.Document;
 import org.jdom.Element;
 import org.jetbrains.annotations.NotNull;
 
@@ -53,9 +54,9 @@ public abstract class TokenTypeBundleBase {
         return tokenTypes;
     }
 
-    public TokenTypeBundleBase(Language language, Element element) {
+    public TokenTypeBundleBase(Language language, Document document) {
         this.language = language;
-        loadDefinition(language, element);
+        loadDefinition(language, document);
     }
 
     public Language getLanguage() {
@@ -82,8 +83,9 @@ public abstract class TokenTypeBundleBase {
         return tokenRegistry.get(index);
     }
 
-    private void loadDefinition(Language language, Element element) {
+    private void loadDefinition(Language language, Document document) {
         try {
+            Element element = document.getRootElement();
             Element tokensElement = element.getChild("tokens");
             Element tokenSetsElement = element.getChild("token-sets");
 
