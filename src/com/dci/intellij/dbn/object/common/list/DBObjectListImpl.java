@@ -498,7 +498,9 @@ public class DBObjectListImpl<T extends DBObject> extends DynamicContentImpl<T> 
 
     @Override
     public void sort(DBObjectComparator<T> comparator) {
-        elements.sort(comparator);
-        set(SEARCHABLE, comparator.getSortingType() == SortingType.NAME);
+        if (elements.size() > 1) {
+            elements.sort(comparator);
+            set(SEARCHABLE, comparator.getSortingType() == SortingType.NAME);
+        }
     }
 }
