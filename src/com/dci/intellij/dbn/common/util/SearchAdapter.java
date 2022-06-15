@@ -27,7 +27,7 @@ public interface SearchAdapter<T> {
 
     static <O extends DBObject> SearchAdapter<O> binary(String name, short overload, boolean collection) {
         return object -> {
-            if (((DBType) object).isCollection() == collection) {
+            if (object instanceof DBType && ((DBType) object).isCollection() == collection) {
                 int result = object.getName().compareToIgnoreCase(name);
                 return result == 0 ? object.getOverload() - overload : result;
             } else {
