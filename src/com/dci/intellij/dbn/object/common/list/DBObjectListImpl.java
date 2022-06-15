@@ -18,7 +18,6 @@ import com.dci.intellij.dbn.common.filter.Filter;
 import com.dci.intellij.dbn.common.ui.tree.TreeEventType;
 import com.dci.intellij.dbn.common.util.Commons;
 import com.dci.intellij.dbn.common.util.SearchAdapter;
-import com.dci.intellij.dbn.common.util.Strings;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.DatabaseEntity;
 import com.dci.intellij.dbn.connection.config.ConnectionFilterSettings;
@@ -38,6 +37,8 @@ import com.intellij.navigation.ItemPresentation;
 import com.intellij.openapi.progress.ProcessCanceledException;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiDirectory;
+import lombok.Getter;
+import lombok.Setter;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -56,6 +57,8 @@ import static com.dci.intellij.dbn.common.util.SearchAdapter.binary;
 import static com.dci.intellij.dbn.common.util.SearchAdapter.linear;
 import static com.dci.intellij.dbn.object.type.DBObjectType.*;
 
+@Getter
+@Setter
 public class DBObjectListImpl<T extends DBObject> extends DynamicContentImpl<T> implements DBObjectList<T> {
     private final DBObjectType objectType;
     private ObjectQuickFilter<T> quickFilter;
@@ -119,17 +122,6 @@ public class DBObjectListImpl<T extends DBObject> extends DynamicContentImpl<T> 
         } else {
             return this.quickFilter;
         }
-    }
-
-    @Override
-    public void setQuickFilter(ObjectQuickFilter<T> quickFilter) {
-        this.quickFilter = quickFilter;
-    }
-
-    @Nullable
-    @Override
-    public ObjectQuickFilter<T> getQuickFilter() {
-        return this.quickFilter;
     }
 
     @Override
@@ -199,7 +191,7 @@ public class DBObjectListImpl<T extends DBObject> extends DynamicContentImpl<T> 
                 } else if (isSearchable()) {
                     if (objectType == COLUMN) {
                         // primary key columns are sorted by position at beginning ot the list of elements
-                        SearchAdapter<T> linear = linear(name, c -> ((DBColumn) c).isPrimaryKey());
+                        SearchAdapter<T> linear = linear(name, c -> c instanceof DBColumn && ((DBColumn) c).isPrimaryKey());
                         SearchAdapter<T> binary = binary(name);
                         return comboSearch(elements, linear, binary);
                     }  else {
@@ -211,7 +203,7 @@ public class DBObjectListImpl<T extends DBObject> extends DynamicContentImpl<T> 
 
                     }
                 } else {
-                    super.getElement(name, overload);
+                    return super.getElement(name, overload);
                 }
             }
         }
@@ -223,21 +215,7 @@ public class DBObjectListImpl<T extends DBObject> extends DynamicContentImpl<T> 
     }
 
     @Override
-    public T getObject(String name, String parentName) {
-        for (T element : elements) {
-            String elementName = element.getName();
-            String elementParentName = element.getParentObject().getName();
-
-            if (Strings.equalsIgnoreCase(elementName, name) &&
-                    Strings.equalsIgnoreCase(elementParentName, parentName)) {
-                return element;
-            }
-        }
-        return null;
-    }
-
-    @Override
-    public void sortElements(List<T> elements) {
+    protected void sortElements(List<T> elements) {
         DatabaseBrowserSettings browserSettings = DatabaseBrowserSettings.getInstance(getProject());
         DatabaseBrowserSortingSettings sortingSettings = browserSettings.getSortingSettings();
         DBObjectComparator<T> comparator = objectType == ANY ? null : sortingSettings.getComparator(objectType);
@@ -423,12 +401,6 @@ public class DBObjectListImpl<T extends DBObject> extends DynamicContentImpl<T> 
         return getChildren().indexOf(child);
     }
 
-
-    @Override
-    public DBObjectType getObjectType() {
-        return objectType;
-    }
-
     @Override
     public DynamicContentType getContentType() {
         return objectType;
@@ -522,5 +494,11 @@ public class DBObjectListImpl<T extends DBObject> extends DynamicContentImpl<T> 
     public void disposeInner() {
         psiDirectory = null;
         super.disposeInner();
+    }
+
+    @Override
+    public void sort(DBObjectComparator<T> comparator) {
+        elements.sort(comparator);
+        set(SEARCHABLE, comparator.getSortingType() == SortingType.NAME);
     }
 }

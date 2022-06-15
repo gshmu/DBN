@@ -356,7 +356,11 @@ public abstract class DBObjectImpl<M extends DBObjectMetadata> extends BrowserTr
     @NotNull
     public DBObjectListContainer ensureChildObjects() {
         if (childObjects == null) {
-            childObjects = new DBObjectListContainer(this);
+            synchronized (this) {
+                if (childObjects == null) {
+                    childObjects = new DBObjectListContainer(this);
+                }
+            }
         }
         return childObjects;
     }
