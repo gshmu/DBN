@@ -7,7 +7,7 @@ import com.intellij.openapi.fileTypes.SyntaxHighlighterBase;
 import com.intellij.psi.tree.IElementType;
 import lombok.Getter;
 import lombok.SneakyThrows;
-import org.jdom.Element;
+import org.jdom.Document;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.HashMap;
@@ -22,14 +22,14 @@ public abstract class DBLanguageSyntaxHighlighter extends SyntaxHighlighterBase 
     private final TokenTypeBundle tokenTypes;
 
     public DBLanguageSyntaxHighlighter(DBLanguageDialect languageDialect, String tokenTypesFile) {
-        Element element = loadDefinition(tokenTypesFile);
-        tokenTypes = new TokenTypeBundle(languageDialect, element);
+        Document document = loadDefinition(tokenTypesFile);
+        tokenTypes = new TokenTypeBundle(languageDialect, document);
         this.languageDialect = languageDialect;
     }
 
     @SneakyThrows
-    private Element loadDefinition(String tokenTypesFile) {
-        return XmlContents.loadXmlContent(getResourceLookupClass(), tokenTypesFile);
+    private Document loadDefinition(String tokenTypesFile) {
+        return XmlContents.fileToDocument(getResourceLookupClass(), tokenTypesFile);
     }
 
     protected Class getResourceLookupClass() {

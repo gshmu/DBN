@@ -25,14 +25,15 @@ import com.dci.intellij.dbn.language.common.element.util.ElementTypeDefinition;
 import com.dci.intellij.dbn.language.common.element.util.ElementTypeDefinitionException;
 import com.dci.intellij.dbn.object.type.DBObjectType;
 import com.intellij.openapi.ide.CopyPasteManager;
+import com.intellij.openapi.util.JDOMUtil;
 import gnu.trove.THashSet;
 import lombok.extern.slf4j.Slf4j;
+import org.jdom.Document;
 import org.jdom.Element;
-import org.jdom.output.XMLOutputter;
 import org.jetbrains.annotations.NotNull;
 
 import java.awt.datatransfer.StringSelection;
-import java.io.StringWriter;
+import java.io.ByteArrayOutputStream;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
@@ -71,14 +72,15 @@ public class ElementTypeBundle {
     }
 
 
-    public ElementTypeBundle(DBLanguageDialect languageDialect, TokenTypeBundle tokenTypeBundle, Element elementTypesDef) {
+    public ElementTypeBundle(DBLanguageDialect languageDialect, TokenTypeBundle tokenTypeBundle, Document document) {
         this.languageDialect = languageDialect;
         this.tokenTypeBundle = tokenTypeBundle;
-        Measured.run("building element-type bundle for " + languageDialect.getID(), () -> build(elementTypesDef));
+        Measured.run("building element-type bundle for " + languageDialect.getID(), () -> build(document));
     }
 
-    private void build(Element root) {
+    private void build(Document document) {
         try {
+            Element root = document.getRootElement();
             for (Element child : root.getChildren()) {
                 createNamedElementType(child);
             }
@@ -102,10 +104,10 @@ public class ElementTypeBundle {
             }
 
             if (builder.rewriteIds) {
-                StringWriter stringWriter = new StringWriter();
-                new XMLOutputter().output(root, stringWriter);
+                ByteArrayOutputStream stringWriter = new ByteArrayOutputStream();
+                JDOMUtil.write(document, stringWriter);
 
-                String data = stringWriter.getBuffer().toString();
+                String data = stringWriter.toString();
                 System.out.println(data);
 
                 CopyPasteManager copyPasteManager = CopyPasteManager.getInstance();
