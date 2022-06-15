@@ -229,6 +229,7 @@ public abstract class IdentifierPsiElement extends LeafPsiElement<IdentifierElem
         DBObject object = DBObjectRef.get(underlyingObject.get());
         if (object == null || !underlyingObject.isValid(getChars())) {
             underlyingObject.capture(getChars(), () -> DBObjectRef.of(loadUnderlyingObject()));
+            object = DBObjectRef.get(underlyingObject.get());
         }
         return object;
     }
