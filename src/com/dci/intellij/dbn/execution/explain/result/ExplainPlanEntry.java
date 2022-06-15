@@ -8,6 +8,7 @@ import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.object.lookup.DBObjectRef;
 import com.dci.intellij.dbn.object.type.DBObjectType;
 import lombok.Getter;
+import lombok.Setter;
 
 import java.math.BigDecimal;
 import java.sql.ResultSet;
@@ -16,6 +17,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Getter
+@Setter
 public class ExplainPlanEntry extends StatefulDisposable.Base {
     private DBObjectRef<?> objectRef;
     private Integer parentId;
@@ -80,24 +82,11 @@ public class ExplainPlanEntry extends StatefulDisposable.Base {
         }
     }
 
-    public ExplainPlanEntry getParent() {
-        return parent;
-    }
-
-    public void setParent(ExplainPlanEntry parent) {
-        this.parent = parent;
-    }
-
     public void addChild(ExplainPlanEntry child) {
         if (children == null) {
             children = new ArrayList<>();
         }
         children.add(child);
-    }
-
-    @Override
-    public String toString() {
-        return super.toString();
     }
 
     @Override
