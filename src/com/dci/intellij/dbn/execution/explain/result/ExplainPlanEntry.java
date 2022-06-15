@@ -15,23 +15,24 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
+@Getter
 public class ExplainPlanEntry extends StatefulDisposable.Base {
     private DBObjectRef<?> objectRef;
-    private @Getter Integer parentId;
-    private final @Getter String operation;
-    private final @Getter String operationOptions;
-    private final @Getter String optimizer;
-    private final @Getter Integer id;
-    private final @Getter BigDecimal depth;
-    private final @Getter BigDecimal position;
-    private final @Getter BigDecimal cost;
-    private final @Getter BigDecimal cardinality;
-    private final @Getter BigDecimal bytes;
-    private final @Getter BigDecimal cpuCost;
-    private final @Getter BigDecimal ioCost;
-    private final @Getter String accessPredicates;
-    private final @Getter String filterPredicates;
-    private final @Getter String projection;
+    private Integer parentId;
+    private final String operation;
+    private final String operationOptions;
+    private final String optimizer;
+    private final Integer id;
+    private final BigDecimal depth;
+    private final BigDecimal position;
+    private final BigDecimal cost;
+    private final BigDecimal cardinality;
+    private final BigDecimal bytes;
+    private final BigDecimal cpuCost;
+    private final BigDecimal ioCost;
+    private final String accessPredicates;
+    private final String filterPredicates;
+    private final String projection;
 
     private ExplainPlanEntry parent;
     private List<ExplainPlanEntry> children;
@@ -92,14 +93,6 @@ public class ExplainPlanEntry extends StatefulDisposable.Base {
             children = new ArrayList<>();
         }
         children.add(child);
-    }
-
-    public List<ExplainPlanEntry> getChildren() {
-        return children;
-    }
-
-    public DBObjectRef<?> getObjectRef() {
-        return objectRef;
     }
 
     @Override
