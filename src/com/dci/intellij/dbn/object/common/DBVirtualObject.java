@@ -330,10 +330,10 @@ public class DBVirtualObject extends DBObjectImpl implements PsiReference {
                     }
                     objectList.addObject(object);
                 }
-
+                objectList.sort(DBObjectComparator.virtual(objectType, SortingType.NAME));
             });
 
-            objectList.sort(DBObjectComparator.virtual(objectType, SortingType.NAME));
+
         }
     }
 
