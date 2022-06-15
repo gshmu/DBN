@@ -217,6 +217,16 @@
         <component><implementation-class>com.dci.intellij.dbn.connection.ssl.SslConnectionManager</implementation-class></component>
         <component><implementation-class>com.dci.intellij.dbn.options.DefaultProjectSettingsManager</implementation-class></component>
         <component><implementation-class>com.dci.intellij.dbn.credentials.DatabaseCredentialManager</implementation-class></component>
+
+        <!--Object sorters-->
+        <component><implementation-class>com.dci.intellij.dbn.object.common.sorting.DBColumnNameComparator</implementation-class></component>
+        <component><implementation-class>com.dci.intellij.dbn.object.common.sorting.DBColumnPositionComparator</implementation-class></component>
+        <component><implementation-class>com.dci.intellij.dbn.object.common.sorting.DBProcedureNameComparator</implementation-class></component>
+        <component><implementation-class>com.dci.intellij.dbn.object.common.sorting.DBProcedurePositionComparator</implementation-class></component>
+        <component><implementation-class>com.dci.intellij.dbn.object.common.sorting.DBFunctionNameComparator</implementation-class></component>
+        <component><implementation-class>com.dci.intellij.dbn.object.common.sorting.DBFunctionPositionComparator</implementation-class></component>
+        <component><implementation-class>com.dci.intellij.dbn.object.common.sorting.DBArgumentNameComparator</implementation-class></component>
+        <component><implementation-class>com.dci.intellij.dbn.object.common.sorting.DBArgumentPositionComparator</implementation-class></component>
     </application-components>
     <project-components>
         <!--<component><implementation-class>com.dci.intellij.dbn.options.GlobalProjectSettings</implementation-class></component>-->

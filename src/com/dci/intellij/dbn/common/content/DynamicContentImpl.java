@@ -347,7 +347,7 @@ public abstract class DynamicContentImpl<T extends DynamicContentElement>
         }
     }
 
-    public void sortElements(List<T> elements) {
+    protected void sortElements(List<T> elements) {
         elements.sort(null);
     }
 
