@@ -299,12 +299,12 @@ public class DBObjectRef<T extends DBObject> implements Comparable<DBObjectRef<?
     }
 
     @Nullable
-    public static <T extends DBObject> T get(DBObjectRef<T> objectRef) {
+    public static <T extends DBObject> T get(@Nullable DBObjectRef<T> objectRef) {
         return objectRef == null ? null : objectRef.get();
     }
 
     @NotNull
-    public static <T extends DBObject> T ensure(DBObjectRef<T> objectRef) {
+    public static <T extends DBObject> T ensure(@Nullable DBObjectRef<T> objectRef) {
         T object = get(objectRef);
         return Failsafe.nn(object);
     }
