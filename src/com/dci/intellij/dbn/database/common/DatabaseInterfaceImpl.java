@@ -43,7 +43,7 @@ public class DatabaseInterfaceImpl implements DatabaseInterface{
 
     @SneakyThrows
     private Element loadDefinition() {
-        return XmlContents.loadXmlContent(getClass(), fileName);
+        return XmlContents.fileToElement(getClass(), fileName);
     }
 
     protected ResultSet executeQuery(@NotNull DBNConnection connection, String loaderId, @Nullable Object... arguments) throws SQLException {

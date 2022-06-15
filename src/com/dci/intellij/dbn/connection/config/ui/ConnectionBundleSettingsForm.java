@@ -281,7 +281,7 @@ public class ConnectionBundleSettingsForm extends ConfigurationEditorForm<Connec
         String clipboardData = Clipboard.getStringContent();
         if (clipboardData != null) {
             try (ByteArrayInputStream inputStream = new ByteArrayInputStream(clipboardData.getBytes())) {
-                Element rootElement = XmlContents.loadXmlContent(inputStream);
+                Element rootElement = XmlContents.streamToElement(inputStream);
                 boolean configurationsFound = false;
                 List<Element> configElements = rootElement.getChildren();
                 ConnectionListModel model = (ConnectionListModel) connectionsList.getModel();
