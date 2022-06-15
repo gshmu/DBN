@@ -53,8 +53,8 @@ import java.util.function.Consumer;
 import static com.dci.intellij.dbn.common.content.DynamicContentStatus.*;
 import static com.dci.intellij.dbn.common.util.Search.binarySearch;
 import static com.dci.intellij.dbn.common.util.Search.comboSearch;
-import static com.dci.intellij.dbn.common.util.SearchAdapter.binary;
-import static com.dci.intellij.dbn.common.util.SearchAdapter.linear;
+import static com.dci.intellij.dbn.object.common.DBObjectSearchAdapters.binary;
+import static com.dci.intellij.dbn.object.common.DBObjectSearchAdapters.linear;
 import static com.dci.intellij.dbn.object.type.DBObjectType.*;
 
 @Getter
