@@ -1,7 +1,6 @@
 package com.dci.intellij.dbn.object.common;
 
 import com.dci.intellij.dbn.common.content.DynamicContent;
-import com.dci.intellij.dbn.common.content.DynamicContentStatus;
 import com.dci.intellij.dbn.common.content.loader.DynamicContentResultSetLoader;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.PooledConnection;
@@ -32,6 +31,8 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import static com.dci.intellij.dbn.common.content.DynamicContentStatus.DEPENDENCY;
+import static com.dci.intellij.dbn.common.content.DynamicContentStatus.INTERNAL;
 import static com.dci.intellij.dbn.object.common.property.DBObjectProperty.*;
 import static com.dci.intellij.dbn.object.type.DBObjectType.*;
 
@@ -60,8 +61,8 @@ public abstract class DBSchemaObjectImpl<M extends DBObjectMetadata> extends DBO
     protected void initLists() {
         if (is(REFERENCEABLE)) {
             DBObjectListContainer childObjects = ensureChildObjects();
-            referencedObjects = childObjects.createObjectList(INCOMING_DEPENDENCY, this, DynamicContentStatus.INTERNAL);
-            referencingObjects = childObjects.createObjectList(OUTGOING_DEPENDENCY, this, DynamicContentStatus.INTERNAL);
+            referencedObjects = childObjects.createObjectList(INCOMING_DEPENDENCY, this, INTERNAL, DEPENDENCY);
+            referencingObjects = childObjects.createObjectList(OUTGOING_DEPENDENCY, this, INTERNAL, DEPENDENCY);
         }
     }
 
@@ -175,7 +176,7 @@ public abstract class DBSchemaObjectImpl<M extends DBObjectMetadata> extends DBO
             @Override
             public ResultSet createResultSet(DynamicContent<DBObject> dynamicContent, DBNConnection connection) throws SQLException {
                 DatabaseMetadataInterface metadataInterface = dynamicContent.getMetadataInterface();
-                DBSchemaObject schemaObject = dynamicContent.getParentEntity();
+                DBSchemaObject schemaObject = dynamicContent.ensureParentEntity();
                 return metadataInterface.loadReferencedObjects(schemaObject.getSchema().getName(), schemaObject.getName(), connection);
             }
 
@@ -191,7 +192,7 @@ public abstract class DBSchemaObjectImpl<M extends DBObjectMetadata> extends DBO
                 DBSchema schema = (DBSchema) cache.getObject(objectOwner);
 
                 if (schema == null) {
-                    DBSchemaObject schemaObject = content.getParentEntity();
+                    DBSchemaObject schemaObject = content.ensureParentEntity();
                     ConnectionHandler connection = schemaObject.getConnection();
                     schema = connection.getObjectBundle().getSchema(objectOwner);
                     cache.setObject(objectOwner,  schema);
@@ -205,7 +206,7 @@ public abstract class DBSchemaObjectImpl<M extends DBObjectMetadata> extends DBO
             @Override
             public ResultSet createResultSet(DynamicContent<DBObject> dynamicContent, DBNConnection connection) throws SQLException {
                 DatabaseMetadataInterface metadataInterface = dynamicContent.getMetadataInterface();
-                DBSchemaObject schemaObject = dynamicContent.getParentEntity();
+                DBSchemaObject schemaObject = dynamicContent.ensureParentEntity();
                 return metadataInterface.loadReferencingObjects(schemaObject.getSchema().getName(), schemaObject.getName(), connection);
             }
 
@@ -220,7 +221,7 @@ public abstract class DBSchemaObjectImpl<M extends DBObjectMetadata> extends DBO
 
                 DBSchema schema = (DBSchema) cache.getObject(objectOwner);
                 if (schema == null) {
-                    DBSchemaObject schemaObject = content.getParentEntity();
+                    DBSchemaObject schemaObject = content.ensureParentEntity();
                     ConnectionHandler connection = schemaObject.getConnection();
                     schema = connection.getObjectBundle().getSchema(objectOwner);
                     cache.setObject(objectOwner,  schema);

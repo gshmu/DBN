@@ -76,7 +76,7 @@ public class DBColumnImpl extends DBObjectImpl<DBColumnMetadata> implements DBCo
         if (declaredType != null) {
             DBObjectListContainer typeChildObjects = declaredType.getChildObjects();
             if (typeChildObjects != null) {
-                DBObjectList typeAttributes = typeChildObjects.getObjects(TYPE_ATTRIBUTE);
+                DBObjectList typeAttributes = typeChildObjects.getObjectList(TYPE_ATTRIBUTE);
                 childObjects.addObjectList(typeAttributes);
             }
         }
@@ -254,7 +254,8 @@ public class DBColumnImpl extends DBObjectImpl<DBColumnMetadata> implements DBCo
             if (schema.isSystemSchema() == isSystemSchema) {
                 DBObjectListContainer childObjects = schema.getChildObjects();
                 if (childObjects != null) {
-                    DBObjectList internalColumns = childObjects.getInternalObjects(COLUMN);
+                    // TODO terrible linear scan
+                    DBObjectList internalColumns = childObjects.getObjectList(COLUMN, true);
                     if (internalColumns != null) {
                         List<DBColumn> columns = (List<DBColumn>) internalColumns.getObjects();
                         for (DBColumn column : columns){

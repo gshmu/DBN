@@ -16,7 +16,6 @@ import com.dci.intellij.dbn.common.thread.ThreadMonitor;
 import com.dci.intellij.dbn.common.thread.ThreadProperty;
 import com.dci.intellij.dbn.common.util.Lists;
 import com.dci.intellij.dbn.common.util.Strings;
-import com.dci.intellij.dbn.common.util.Unsafe;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.ConnectionId;
 import com.dci.intellij.dbn.connection.DatabaseEntity;
@@ -73,7 +72,7 @@ public abstract class DynamicContentImpl<T extends DynamicContentElement>
     @Override
     @NotNull
     public <E extends DatabaseEntity> E getParentEntity() {
-        return Unsafe.cast(Failsafe.nn(parent));
+        return cast(Failsafe.nn(parent));
     }
 
     @NotNull

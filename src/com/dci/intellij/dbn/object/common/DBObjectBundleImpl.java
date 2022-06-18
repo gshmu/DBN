@@ -18,6 +18,7 @@ import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.common.dispose.SafeDisposer;
 import com.dci.intellij.dbn.common.event.ProjectEvents;
 import com.dci.intellij.dbn.common.filter.Filter;
+import com.dci.intellij.dbn.common.latent.Latent;
 import com.dci.intellij.dbn.common.notification.NotificationGroup;
 import com.dci.intellij.dbn.common.notification.NotificationSupport;
 import com.dci.intellij.dbn.common.thread.Background;
@@ -135,6 +136,8 @@ public class DBObjectBundleImpl extends BrowserTreeNodeBase implements DBObjectB
 
     private final PsiFile fakeObjectFile;
 
+    private final Latent<List<DBSchema>> publicSchemas;
+
     public DBObjectBundleImpl(ConnectionHandler connection, BrowserTreeNode treeParent) {
         this.connection = ConnectionRef.of(connection);
         this.dataTypes = new DBDataTypeBundle(connection);
@@ -158,6 +161,11 @@ public class DBObjectBundleImpl extends BrowserTreeNodeBase implements DBObjectB
         Project project = connection.getProject();
         PsiFileFactory psiFileFactory = PsiFileFactory.getInstance(project);
         this.fakeObjectFile = Read.call(() -> psiFileFactory.createFileFromText("object", SQLLanguage.INSTANCE, ""));
+
+
+        this.publicSchemas = Latent.mutable(
+                () -> Failsafe.nd(schemas).getSignature(),
+                () -> Lists.filter(getSchemas(), s -> s.isPublicSchema()));
 
         ProjectEvents.subscribe(project, this, DataDefinitionChangeListener.TOPIC, dataDefinitionChangeListener);
         ProjectEvents.subscribe(project, this, SourceCodeManagerListener.TOPIC, sourceCodeManagerListener);
@@ -254,6 +262,11 @@ public class DBObjectBundleImpl extends BrowserTreeNodeBase implements DBObjectB
     @Override
     public List<DBSchema> getSchemas() {
         return Failsafe.nn(schemas).getAllElements();
+    }
+
+    @Override
+    public List<DBSchema> getPublicSchemas() {
+        return publicSchemas.get();
     }
 
     @Override
@@ -590,8 +603,9 @@ public class DBObjectBundleImpl extends BrowserTreeNodeBase implements DBObjectB
         if (objectType == ROLE) return getRole(name);
         if (objectType == CHARSET) return getCharset(name);
         if (objectType == SYSTEM_PRIVILEGE) return getSystemPrivilege(name);
-        for (DBSchema schema : getSchemas()) {
-            if (schema.isPublicSchema() && objectType.isSchemaObject()) {
+
+        if (objectType.isSchemaObject()) {
+            for (DBSchema schema : getPublicSchemas()) {
                 DBObject childObject = schema.getChildObject(objectType, name, overload, true);
                 if (childObject != null) {
                     return childObject;
@@ -701,7 +715,7 @@ public class DBObjectBundleImpl extends BrowserTreeNodeBase implements DBObjectB
 
     @Override
     public <T extends DBObject> DBObjectList<T> getObjectList(DBObjectType objectType) {
-        return getObjectLists().getObjects(objectType);
+        return getObjectLists().getObjectList(objectType);
     }
 
     @Override
@@ -715,9 +729,9 @@ public class DBObjectBundleImpl extends BrowserTreeNodeBase implements DBObjectB
     public DynamicContent<?> getDynamicContent(DynamicContentType<?> dynamicContentType) {
         if(dynamicContentType instanceof DBObjectType) {
             DBObjectType objectType = (DBObjectType) dynamicContentType;
-            DynamicContent<?> dynamicContent = objectLists.getObjects(objectType);
-            if (dynamicContent == null) dynamicContent = objectLists.getInternalObjects(objectType);
-            return dynamicContent;
+            return Commons.coalesce(
+                    () -> objectLists.getObjectList(objectType, false),
+                    () -> objectLists.getObjectList(objectType, true));
         }
 
         if (dynamicContentType instanceof DBObjectRelationType) {
@@ -841,7 +855,7 @@ public class DBObjectBundleImpl extends BrowserTreeNodeBase implements DBObjectB
             public DBUserRoleRelation createElement(DynamicContent<DBUserRoleRelation> content, DBGrantedRoleMetadata metadata, LoaderCache cache) throws SQLException {
                 String userName = metadata.getUserName();
 
-                DBObjectBundle objectBundle = content.getParentEntity();
+                DBObjectBundle objectBundle = content.ensureParentEntity();
                 DBUser user = objectBundle.getUser(userName);
                 if (user != null) {
                     DBGrantedRole role = new DBGrantedRoleImpl(user, metadata);
@@ -862,7 +876,7 @@ public class DBObjectBundleImpl extends BrowserTreeNodeBase implements DBObjectB
             public DBUserPrivilegeRelation createElement(DynamicContent<DBUserPrivilegeRelation> content, DBGrantedPrivilegeMetadata metadata, LoaderCache cache) throws SQLException {
                 String userName = metadata.getUserName();
 
-                DBObjectBundle objectBundle = content.getParentEntity();
+                DBObjectBundle objectBundle = content.ensureParentEntity();
                 DBUser user = objectBundle.getUser(userName);
                 if (user != null) {
                     DBGrantedPrivilege privilege = new DBGrantedPrivilegeImpl(user, metadata);
@@ -883,7 +897,7 @@ public class DBObjectBundleImpl extends BrowserTreeNodeBase implements DBObjectB
             public DBRoleRoleRelation createElement(DynamicContent<DBRoleRoleRelation> content, DBGrantedRoleMetadata metadata, LoaderCache cache) throws SQLException {
                 String roleName = metadata.getRoleName();
 
-                DBObjectBundle objectBundle = content.getParentEntity();
+                DBObjectBundle objectBundle = content.ensureParentEntity();
                 DBRole role = objectBundle.getRole(roleName);
                 if (role != null) {
                     DBGrantedRole grantedRole = new DBGrantedRoleImpl(role, metadata);
@@ -904,7 +918,7 @@ public class DBObjectBundleImpl extends BrowserTreeNodeBase implements DBObjectB
             public DBRolePrivilegeRelation createElement(DynamicContent<DBRolePrivilegeRelation> content, DBGrantedPrivilegeMetadata metadata, LoaderCache cache) throws SQLException {
                 String userName = metadata.getRoleName();
 
-                DBObjectBundle objectBundle = content.getParentEntity();
+                DBObjectBundle objectBundle = content.ensureParentEntity();
                 DBRole role = objectBundle.getRole(userName);
                 if (role != null) {
                     DBGrantedPrivilege privilege = new DBGrantedPrivilegeImpl(role, metadata);

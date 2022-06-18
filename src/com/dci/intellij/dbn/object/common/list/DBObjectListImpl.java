@@ -39,6 +39,7 @@ import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiDirectory;
 import lombok.Getter;
 import lombok.Setter;
+import lombok.val;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -87,11 +88,6 @@ public class DBObjectListImpl<T extends DBObject> extends DynamicContentImpl<T> 
             DynamicContentType parentContentType = parent.getDynamicContentType();
             return DynamicContentLoaderImpl.resolve(parentContentType, objectType);
         }
-    }
-
-    @Override
-    public boolean isInternal() {
-        return is(INTERNAL);
     }
 
     @Nullable
@@ -210,22 +206,50 @@ public class DBObjectListImpl<T extends DBObject> extends DynamicContentImpl<T> 
         return null;
     }
 
+
+    @Override
+    public boolean isInternal() {
+        return is(INTERNAL);
+    }
+
+    @Override
+    public boolean isHidden() {
+        return is(HIDDEN);
+    }
+
+    @Override
+    public boolean isDependency() {
+        return is(DEPENDENCY);
+    }
+
     private boolean isSearchable() {
-        return !isInternal() && is(SEARCHABLE);
+        return is(SEARCHABLE);
     }
 
     @Override
     protected void sortElements(List<T> elements) {
-        DatabaseBrowserSettings browserSettings = DatabaseBrowserSettings.getInstance(getProject());
-        DatabaseBrowserSortingSettings sortingSettings = browserSettings.getSortingSettings();
-        DBObjectComparator<T> comparator = objectType == ANY ? null : sortingSettings.getComparator(objectType);
-
-        if (comparator != null) {
-            elements.sort(comparator);
-            set(SEARCHABLE, comparator.getSortingType() == SortingType.NAME);
+        if (isInternal()) {
+            if (is(GROUPED) || true ) { // TODO binary search on grouped elements
+                super.sortElements(elements);
+            } else {
+                val comparator = DBObjectComparator.basic(objectType);
+                elements.sort(comparator);
+                set(SEARCHABLE, true);
+            }
         } else {
-            super.sortElements(elements);
-            set(SEARCHABLE, true);
+            DatabaseBrowserSettings browserSettings = DatabaseBrowserSettings.getInstance(getProject());
+            DatabaseBrowserSortingSettings sortingSettings = browserSettings.getSortingSettings();
+            val comparator = objectType == ANY ? null : sortingSettings.getComparator(objectType);
+
+            if (comparator != null) {
+                elements.sort(comparator);
+                boolean searchable = comparator.getSortingType() == SortingType.NAME;
+                set(SEARCHABLE, searchable);
+            } else {
+                super.sortElements(elements);
+                set(SEARCHABLE, true);
+            }
+
         }
     }
 
@@ -269,7 +293,7 @@ public class DBObjectListImpl<T extends DBObject> extends DynamicContentImpl<T> 
         try {
             Project project = getProject();
             BrowserTreeNode treeParent = getParent();
-            if (isNot(INTERNAL) && isTouched() && Failsafe.check(project) && treeParent.isTreeStructureLoaded()) {
+            if (!isInternal() && isTouched() && Failsafe.check(project) && treeParent.isTreeStructureLoaded()) {
                 ProjectEvents.notify(project,
                         BrowserTreeEventListener.TOPIC,
                         (listener) -> listener.nodeChanged(this, TreeEventType.STRUCTURE_CHANGED));
@@ -474,7 +498,7 @@ public class DBObjectListImpl<T extends DBObject> extends DynamicContentImpl<T> 
     }
 
     public String toString() {
-        if (is(DISPOSED)) {
+        if (isDisposed()) {
             return getName() + " - " + super.toString();
         }
 
