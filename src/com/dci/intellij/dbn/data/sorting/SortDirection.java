@@ -5,8 +5,8 @@ public enum SortDirection {
     ASCENDING(1, "asc"),
     DESCENDING(-1, "desc");
 
-    private int compareAdj;
-    private String sqlToken;
+    private final int compareAdj;
+    private final String sqlToken;
 
     SortDirection(int compareAdj, String sqlToken) {
         this.compareAdj = compareAdj;

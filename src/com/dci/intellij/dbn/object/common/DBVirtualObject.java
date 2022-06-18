@@ -34,7 +34,6 @@ import com.dci.intellij.dbn.language.common.psi.lookup.VirtualObjectLookupAdapte
 import com.dci.intellij.dbn.object.common.list.DBObjectList;
 import com.dci.intellij.dbn.object.common.list.DBObjectListContainer;
 import com.dci.intellij.dbn.object.common.sorting.DBObjectComparator;
-import com.dci.intellij.dbn.object.common.sorting.SortingType;
 import com.dci.intellij.dbn.object.lookup.DBObjectRef;
 import com.dci.intellij.dbn.object.type.DBObjectType;
 import com.dci.intellij.dbn.vfs.file.DBContentVirtualFile;
@@ -259,7 +258,7 @@ public class DBVirtualObject extends DBObjectImpl implements PsiReference {
 
     private DBObjectList<DBObject> loadChildObjectList(DBObjectType objectType) {
         DBObjectListContainer childObjects = ensureChildObjects();
-        DBObjectList<DBObject> objectList = childObjects.getObjects(objectType);
+        DBObjectList<DBObject> objectList = childObjects.getObjectList(objectType);
         if (objectList != null) {
             for (DBObject object : objectList.getObjects()) {
                 if (!object.isValid()) {
@@ -330,7 +329,7 @@ public class DBVirtualObject extends DBObjectImpl implements PsiReference {
                     }
                     objectList.addObject(object);
                 }
-                objectList.sort(DBObjectComparator.virtual(objectType, SortingType.NAME));
+                objectList.sort(DBObjectComparator.basic(objectType));
             });
 
 

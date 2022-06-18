@@ -32,6 +32,8 @@ public interface DBObjectBundle extends BrowserTreeNode, StatefulDisposable {
 
     List<DBSchema> getSchemas();
 
+    List<DBSchema> getPublicSchemas();
+
     List<SchemaId> getSchemaIds();
 
     @Nullable

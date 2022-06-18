@@ -22,7 +22,7 @@ public class CreateObjectAction extends AnAction {
     @Override
     public void actionPerformed(@NotNull AnActionEvent e) {
         DBObjectList objectList = getObjectList();
-        DBSchema schema = Failsafe.nn(objectList.getParentEntity());
+        DBSchema schema = objectList.ensureParentEntity();
         Project project = schema.getProject();
         DatabaseObjectFactory factory = DatabaseObjectFactory.getInstance(project);
         factory.openFactoryInputDialog(schema, objectList.getObjectType());

@@ -12,6 +12,7 @@ import org.jetbrains.annotations.Nullable;
 import javax.swing.Icon;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.EnumMap;
 import java.util.HashSet;
 import java.util.List;
@@ -131,13 +132,14 @@ public enum DBObjectType implements DynamicContentType<DBObjectType> {
     private final Icon listIcon;
     private final boolean generic;
 
-    private DBObjectType genericType;
     private DBContentType contentType = DBContentType.NONE;
+
+    private DBObjectType inheritedType;
+    private final Set<DBObjectType> inheritingTypes = new HashSet<>();
     private final Set<DBObjectType> parents = new HashSet<>();
     private final Set<DBObjectType> genericParents = new HashSet<>();
     private final Set<DBObjectType> children = new HashSet<>();
-    private final Set<DBObjectType> inheritingTypes = new HashSet<>();
-    private final Set<DBObjectType> thisAsSet = new HashSet<>();
+    private final Set<DBObjectType> thisAsSet;
     private Set<DBObjectType> familyTypes;
 
     private Map<DBContentType, Icon> icons;
@@ -155,7 +157,7 @@ public enum DBObjectType implements DynamicContentType<DBObjectType> {
         this.generic = generic;
         this.presentableListName = listName == null ? null :
                 Character.toUpperCase(listName.charAt(0)) + listName.substring(1).replace('_', ' ');
-        thisAsSet.add(this);
+        thisAsSet = Collections.singleton(this);
     }
 
     public boolean isSchemaObject() {
@@ -193,7 +195,7 @@ public enum DBObjectType implements DynamicContentType<DBObjectType> {
 
     @Override
     public DBObjectType getGenericType() {
-        return genericType == null ? this : genericType.getGenericType();
+        return inheritedType == null ? this : inheritedType.getGenericType();
     }
 
     @Nullable
@@ -246,20 +248,27 @@ public enum DBObjectType implements DynamicContentType<DBObjectType> {
 
     @Override
     public boolean matches(DBObjectType objectType) {
+        if (this == objectType) {
+            return true;
+        }
         if (this == ANY || objectType == ANY) {
             return true;
         }
 
-        DBObjectType thisObjectType = this;
-        while (thisObjectType != null) {
-            if (thisObjectType == objectType) return true;
-            thisObjectType = thisObjectType.genericType;
+        DBObjectType local = this.inheritedType;
+        while (local != null) {
+            if (local == objectType) {
+                return true;
+            }
+            local = local.inheritedType;
         }
 
-        DBObjectType thatObjectType = objectType.genericType;
-        while (thatObjectType != null) {
-            if (thatObjectType == this) return true;
-            thatObjectType = thatObjectType.genericType;
+        DBObjectType remote = objectType.inheritedType;
+        while (remote != null) {
+            if (remote == this) {
+                return true;
+            }
+            remote = remote.inheritedType;
         }
 
         return false;
@@ -277,28 +286,28 @@ public enum DBObjectType implements DynamicContentType<DBObjectType> {
 
     static {
         // Generic type
-        TABLE.setGenericType(DATASET);
-        VIEW.setGenericType(DATASET);
-        CURSOR.setGenericType(DATASET);
-        MATERIALIZED_VIEW.setGenericType(DATASET);
-        PROCEDURE.setGenericType(METHOD);
-        FUNCTION.setGenericType(METHOD);
-        TYPE.setGenericType(PROGRAM);
-        TYPE_PROCEDURE.setGenericType(PROCEDURE);
-        TYPE_FUNCTION.setGenericType(FUNCTION);
-        TYPE_ATTRIBUTE.setGenericType(ATTRIBUTE);
-        PACKAGE.setGenericType(PROGRAM);
-        PACKAGE_PROCEDURE.setGenericType(PROCEDURE);
-        PACKAGE_FUNCTION.setGenericType(FUNCTION);
-        PACKAGE_TYPE.setGenericType(TYPE);
-        DATASET_TRIGGER.setGenericType(TRIGGER);
-        DATABASE_TRIGGER.setGenericType(TRIGGER);
-        XMLTYPE.setGenericType(TYPE);
+        TABLE.setInheritedType(DATASET);
+        VIEW.setInheritedType(DATASET);
+        CURSOR.setInheritedType(DATASET);
+        MATERIALIZED_VIEW.setInheritedType(DATASET);
+        PROCEDURE.setInheritedType(METHOD);
+        FUNCTION.setInheritedType(METHOD);
+        TYPE.setInheritedType(PROGRAM);
+        TYPE_PROCEDURE.setInheritedType(PROCEDURE);
+        TYPE_FUNCTION.setInheritedType(FUNCTION);
+        TYPE_ATTRIBUTE.setInheritedType(ATTRIBUTE);
+        PACKAGE.setInheritedType(PROGRAM);
+        PACKAGE_PROCEDURE.setInheritedType(PROCEDURE);
+        PACKAGE_FUNCTION.setInheritedType(FUNCTION);
+        PACKAGE_TYPE.setInheritedType(TYPE);
+        DATASET_TRIGGER.setInheritedType(TRIGGER);
+        DATABASE_TRIGGER.setInheritedType(TRIGGER);
+        XMLTYPE.setInheritedType(TYPE);
 
-        SYSTEM_PRIVILEGE.setGenericType(PRIVILEGE);
-        OBJECT_PRIVILEGE.setGenericType(PRIVILEGE);
-        GRANTED_PRIVILEGE.setGenericType(PRIVILEGE);
-        GRANTED_ROLE.setGenericType(ROLE);
+        SYSTEM_PRIVILEGE.setInheritedType(PRIVILEGE);
+        OBJECT_PRIVILEGE.setInheritedType(PRIVILEGE);
+        GRANTED_PRIVILEGE.setInheritedType(PRIVILEGE);
+        GRANTED_ROLE.setInheritedType(ROLE);
 
         // Parent relations
         ARGUMENT.addParent(FUNCTION);
@@ -365,8 +374,8 @@ public enum DBObjectType implements DynamicContentType<DBObjectType> {
         PACKAGE.addIcon(DBContentType.CODE_SPEC, Icons.DBO_PACKAGE_SPEC);
         PACKAGE.addIcon(DBContentType.CODE_BODY, Icons.DBO_PACKAGE_BODY);
 
-        INCOMING_DEPENDENCY.setGenericType(ANY);
-        OUTGOING_DEPENDENCY.setGenericType(ANY);
+        //INCOMING_DEPENDENCY.setGenericType(ANY);
+        //OUTGOING_DEPENDENCY.setGenericType(ANY);
 
         // Content types
         FUNCTION.contentType = DBContentType.CODE;
@@ -512,9 +521,9 @@ public enum DBObjectType implements DynamicContentType<DBObjectType> {
         parent.children.add(this);
     }
 
-    private void setGenericType(DBObjectType genericType) {
-        this.genericType = genericType;
-        genericType.inheritingTypes.add(this);
+    private void setInheritedType(DBObjectType inheritedType) {
+        this.inheritedType = inheritedType;
+        this.inheritedType.inheritingTypes.add(this);
     }
 
 }

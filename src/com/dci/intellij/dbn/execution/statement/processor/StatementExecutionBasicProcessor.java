@@ -795,7 +795,7 @@ public class StatementExecutionBasicProcessor extends StatefulDisposable.Base im
                     if (schemaObject != null) {
                         DBObjectListContainer childObjects = schemaObject.getChildObjects();
                         if (childObjects != null) {
-                            DBObjectList objectList = childObjects.getObjects(subjectPsiElement.getObjectType());
+                            DBObjectList objectList = childObjects.getObjectList(subjectPsiElement.getObjectType());
                             if (objectList != null) {
                                 return (DBSchemaObject) objectList.getObject(subjectPsiElement.getText());
                             }

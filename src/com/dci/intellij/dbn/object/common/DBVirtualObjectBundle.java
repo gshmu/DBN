@@ -60,6 +60,11 @@ public class DBVirtualObjectBundle extends BrowserTreeNodeBase implements DBObje
     }
 
     @Override
+    public List<DBSchema> getPublicSchemas() {
+        return Collections.emptyList();
+    }
+
+    @Override
     public List<SchemaId> getSchemaIds() {
         return Collections.emptyList();
     }

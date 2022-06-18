@@ -384,7 +384,7 @@ public abstract class DBObjectImpl<M extends DBObjectMetadata> extends BrowserTr
     @Override
     public List<String> getChildObjectNames(DBObjectType objectType) {
         if (childObjects != null) {
-            DBObjectList objectList = childObjects.getObjects(objectType);
+            DBObjectList objectList = childObjects.getObjectList(objectType);
             if (objectList != null) {
                 List<String> objectNames = new ArrayList<>();
                 List<DBObject> objects = objectList.getObjects();
@@ -447,7 +447,7 @@ public abstract class DBObjectImpl<M extends DBObjectMetadata> extends BrowserTr
                 if (objectType != childObjectType) {
                     collectChildObjects(childObjectType, consumer);
                 } else {
-                    DBObjectList<?> objectList = childObjects == null ? null : childObjects.getObjects(objectType);
+                    DBObjectList<?> objectList = childObjects == null ? null : childObjects.getObjectList(objectType);
                     if (objectList != null) {
                         objectList.collectObjects(consumer);
                     }
@@ -465,10 +465,10 @@ public abstract class DBObjectImpl<M extends DBObjectMetadata> extends BrowserTr
                     }
                 }
             } else {
-                DBObjectList<?> objectList = childObjects.getObjects(objectType);
-                if (objectList == null) {
-                    objectList = childObjects.getInternalObjects(objectType);
-                }
+                DBObjectList<?> objectList = Commons.coalesce(
+                        () -> childObjects.getObjectList(objectType, false),
+                        () -> childObjects.getObjectList(objectType, true));
+
                 if (objectList != null) objectList.collectObjects(consumer);
             }
         }
@@ -479,7 +479,7 @@ public abstract class DBObjectImpl<M extends DBObjectMetadata> extends BrowserTr
     @Nullable
     @Override
     public DBObjectList<? extends DBObject> getChildObjectList(DBObjectType objectType) {
-        return childObjects == null ? null : childObjects.getObjects(objectType);
+        return childObjects == null ? null : childObjects.getObjectList(objectType);
     }
 
     @Override
@@ -554,9 +554,9 @@ public abstract class DBObjectImpl<M extends DBObjectMetadata> extends BrowserTr
         if (childObjects != null) {
             if(dynamicContentType instanceof DBObjectType) {
                 DBObjectType objectType = (DBObjectType) dynamicContentType;
-                DynamicContent dynamicContent = childObjects.getObjects(objectType);
-                if (dynamicContent == null) dynamicContent = childObjects.getInternalObjects(objectType);
-                return dynamicContent;
+                return Commons.coalesce(
+                        () -> childObjects.getObjectList(objectType, false),
+                        () -> childObjects.getObjectList(objectType, true));
             }
 
             else if (dynamicContentType instanceof DBObjectRelationType) {
@@ -660,7 +660,7 @@ public abstract class DBObjectImpl<M extends DBObjectMetadata> extends BrowserTr
             if (object != null) {
                 DBObjectListContainer childObjects = object.getChildObjects();
                 if (childObjects != null) {
-                    DBObjectList parentObjectList = childObjects.getObjects(objectType);
+                    DBObjectList parentObjectList = childObjects.getObjectList(objectType);
                     return Failsafe.nn(parentObjectList);
                 }
             }

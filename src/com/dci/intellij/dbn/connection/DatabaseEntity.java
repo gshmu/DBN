@@ -2,6 +2,7 @@ package com.dci.intellij.dbn.connection;
 
 import com.dci.intellij.dbn.common.content.DynamicContent;
 import com.dci.intellij.dbn.common.content.DynamicContentType;
+import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.common.dispose.StatefulDisposable;
 import com.dci.intellij.dbn.common.ui.Presentable;
 import com.dci.intellij.dbn.common.util.Unsafe;
@@ -23,6 +24,11 @@ public interface DatabaseEntity extends ConnectionProvider, StatefulDisposable, 
     @Nullable
     default <E extends DatabaseEntity> E getParentEntity() {
         return null;
+    }
+
+    //@NotNull
+    default <E extends DatabaseEntity> E ensureParentEntity() {
+        return Failsafe.nn(getParentEntity());
     }
 
     @Nullable
