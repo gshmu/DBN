@@ -1,7 +1,6 @@
 package com.dci.intellij.dbn.object.common.sorting;
 
 import com.dci.intellij.dbn.object.common.DBObject;
-import com.dci.intellij.dbn.object.common.DBVirtualObject;
 import com.dci.intellij.dbn.object.type.DBObjectType;
 import lombok.Getter;
 import lombok.Value;
@@ -54,11 +53,11 @@ public abstract class DBObjectComparator<T extends DBObject> implements Comparat
         return cast(REGISTRY.get(key));
     }
 
-    public static <T extends DBObject> DBObjectComparator<T> virtual(DBObjectType objectType, SortingType sortingType) {
-        Key key = Key.of(objectType, sortingType, true);
-        return cast(REGISTRY.computeIfAbsent(key, k -> new DBObjectComparator<DBVirtualObject>(k) {
+    public static <T extends DBObject> DBObjectComparator<T> basic(DBObjectType objectType) {
+        Key key = Key.of(objectType, SortingType.NAME, true);
+        return cast(REGISTRY.computeIfAbsent(key, k -> new DBObjectComparator<DBObject>(k) {
             @Override
-            public int compare(DBVirtualObject o1, DBVirtualObject o2) {
+            public int compare(DBObject o1, DBObject o2) {
                 return o1.getName().compareToIgnoreCase(o2.getName());
             }
         }));

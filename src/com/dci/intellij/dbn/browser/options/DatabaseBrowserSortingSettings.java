@@ -36,7 +36,12 @@ public class DatabaseBrowserSortingSettings
     }
 
     public <T extends DBObject> DBObjectComparator<T> getComparator(DBObjectType objectType) {
-        return comparators.get(objectType.getGenericType());
+        for (DBObjectType key : comparators.keySet()) {
+            if (key.matches(objectType)) {
+                return comparators.get(key);
+            }
+        }
+        return null;
     }
 
     public Collection<DBObjectComparator> getComparators() {

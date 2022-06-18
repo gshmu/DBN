@@ -93,7 +93,12 @@ public class PsiResolveResult extends PropertyHolderBase.IntStore<PsiResolveStat
         PsiElement referencedElement = getReferencedElement();
         if (referencedElement == null) {
             if (resolveAttempts > 0) {
-                return lastResolveInvocation < System.currentTimeMillis() - (resolveAttempts * 5000L);
+                if (resolveAttempts > 8) {
+                    return false;
+                }
+                // 4 -> 16 -> 64 -> 256 -> 1024 seconds... (give up at some point)
+                long delay = (long) Math.pow(2, resolveAttempts * 2) * 1000;
+                return lastResolveInvocation < System.currentTimeMillis() - delay;
             } else {
                 return true;
             }

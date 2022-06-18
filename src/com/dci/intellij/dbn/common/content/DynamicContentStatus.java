@@ -6,7 +6,10 @@ public enum DynamicContentStatus implements Property.IntBase {
     MASTER,
     MUTABLE,
     INTERNAL,
+    HIDDEN,
     PASSIVE,
+    GROUPED,
+    DEPENDENCY,
 
     DIRTY,
     ERROR,

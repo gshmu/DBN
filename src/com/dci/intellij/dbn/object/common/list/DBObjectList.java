@@ -24,6 +24,10 @@ public interface DBObjectList<T extends DBObject> extends BrowserTreeNode, Dynam
 
     boolean isInternal();
 
+    boolean isHidden();
+
+    boolean isDependency();
+
     @Nullable
     Filter<T> getConfigFilter();
 
