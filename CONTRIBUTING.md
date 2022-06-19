@@ -6,9 +6,9 @@ Your contributions are welcome and appreciated! There are multiple ways to contr
 For defects or feature requests, please file a JIRA ticket under [DBN Issue Tracking Repository][ITR]
 
 Repository areas: 
- - **DBN** (DBN Main) - Main repository for defects and feature requests
- - **DBNE** (DBN Exceptions) - Repository for exceptions reported from within the IDE (using built-in error submission feature)
- - **DBNB** (DBN Backlog) - Old deprecated or outdated requests subject of review (reconsideration or blind closure) - DO NOT USE
+- **DBN** (DBN Main) - Main repository for defects and feature requests
+- **DBNE** (DBN Exceptions) - Repository for exceptions reported from within the IDE (using built-in error submission feature)
+- **DBNB** (DBN Backlog) - Old deprecated or outdated requests subject of review (reconsideration or blind closure) - DO NOT USE
 
 When filing a bug report, remember that the more detailed the bug is described,
 the more likely it is to be reproduced and fixed. The same applies to usability issues and feature requirements.
