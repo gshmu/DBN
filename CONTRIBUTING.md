@@ -23,7 +23,7 @@ Code is open source and licensed under [Apache License version 2.0][APL2]
 
 The code repository is located here: [DBN Bitbucket Source Code Repository][SCR]
 
-Contributors (both individual or corporate) must agree on the contribution terms before being granted pull requests to the code repository 
+Contributors (both individual and corporate) must agree on the contribution terms before being granted pull requests to the code repository 
 
 - [Individual Contributor License Agreement][ICLA] - (ICLA v1.0 from 2022)
 - [Corporate Contributor License Agreement][CCLA] - (CCLA v1.0 from 2022) 
