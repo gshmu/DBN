@@ -2,7 +2,7 @@ package com.dci.intellij.dbn.editor.code.action;
 
 import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.common.action.GroupPopupAction;
-import com.dci.intellij.dbn.common.action.Lookup;
+import com.dci.intellij.dbn.common.action.Lookups;
 import com.dci.intellij.dbn.ddl.action.DDLFileAttachAction;
 import com.dci.intellij.dbn.ddl.action.DDLFileCreateAction;
 import com.dci.intellij.dbn.ddl.action.DDLFileDetachAction;
@@ -48,7 +48,7 @@ public class CodeEditorDDLFileAction extends GroupPopupAction {
     }
 
     protected static DBSourceCodeVirtualFile getSourcecodeFile(AnActionEvent e) {
-        VirtualFile virtualFile = Lookup.getVirtualFile(e);
+        VirtualFile virtualFile = Lookups.getVirtualFile(e);
         return virtualFile instanceof DBSourceCodeVirtualFile ? (DBSourceCodeVirtualFile) virtualFile : null;
     }
 

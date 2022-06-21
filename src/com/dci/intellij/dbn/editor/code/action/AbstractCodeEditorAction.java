@@ -1,7 +1,7 @@
 package com.dci.intellij.dbn.editor.code.action;
 
 import com.dci.intellij.dbn.common.action.DumbAwareProjectAction;
-import com.dci.intellij.dbn.common.action.Lookup;
+import com.dci.intellij.dbn.common.action.Lookups;
 import com.dci.intellij.dbn.common.util.Editors;
 import com.dci.intellij.dbn.editor.code.SourceCodeEditor;
 import com.dci.intellij.dbn.vfs.file.DBSourceCodeVirtualFile;
@@ -20,7 +20,7 @@ public abstract class AbstractCodeEditorAction extends DumbAwareProjectAction {
 
     @Nullable
     protected Editor getEditor(AnActionEvent e) {
-        return Lookup.getEditor(e);
+        return Lookups.getEditor(e);
     }
 
     @Override
@@ -46,7 +46,7 @@ public abstract class AbstractCodeEditorAction extends DumbAwareProjectAction {
 
     @Nullable
     private DBSourceCodeVirtualFile getSourcecodeFile(AnActionEvent e) {
-        VirtualFile virtualFile = Lookup.getVirtualFile(e);
+        VirtualFile virtualFile = Lookups.getVirtualFile(e);
         return virtualFile instanceof DBSourceCodeVirtualFile ? (DBSourceCodeVirtualFile) virtualFile : null;
     }
 

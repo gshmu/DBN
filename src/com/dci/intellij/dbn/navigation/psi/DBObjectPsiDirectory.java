@@ -126,7 +126,7 @@ public class DBObjectPsiDirectory implements PsiDirectory, Disposable{
     @NotNull
     public PsiElement[] getChildren() {
         DBObject object = getObject();
-        List<PsiElement> children = new ArrayList<PsiElement>();
+        List<PsiElement> children = new ArrayList<>();
         DBObjectListContainer childObjects = object.getChildObjects();
         if (childObjects != null) {
             DBObjectList[] objectLists = childObjects.getObjects();

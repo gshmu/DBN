@@ -1,7 +1,7 @@
 package com.dci.intellij.dbn.editor.data.action;
 
 import com.dci.intellij.dbn.common.Icons;
-import com.dci.intellij.dbn.common.action.Lookup;
+import com.dci.intellij.dbn.common.action.Lookups;
 import com.dci.intellij.dbn.editor.data.DatasetEditor;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.actionSystem.Presentation;
@@ -47,7 +47,7 @@ public class DataEditingLockToggleAction extends ToggleAction implements DumbAwa
     }
 
     private static DatasetEditor getDatasetEditor(AnActionEvent e) {
-        FileEditor fileEditor = Lookup.getFileEditor(e);
+        FileEditor fileEditor = Lookups.getFileEditor(e);
         return fileEditor instanceof DatasetEditor ? (DatasetEditor) fileEditor : null;
     }
 }

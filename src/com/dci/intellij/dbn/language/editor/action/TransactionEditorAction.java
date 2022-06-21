@@ -1,7 +1,7 @@
 package com.dci.intellij.dbn.language.editor.action;
 
 import com.dci.intellij.dbn.common.action.DumbAwareProjectAction;
-import com.dci.intellij.dbn.common.action.Lookup;
+import com.dci.intellij.dbn.common.action.Lookups;
 import com.dci.intellij.dbn.common.environment.EnvironmentManager;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.jdbc.DBNConnection;
@@ -27,7 +27,7 @@ public abstract class TransactionEditorAction extends DumbAwareProjectAction {
 
     @Override
     protected void update(@NotNull AnActionEvent e, @NotNull Project project) {
-        VirtualFile virtualFile = Lookup.getVirtualFile(e);
+        VirtualFile virtualFile = Lookups.getVirtualFile(e);
         boolean enabled = false;
         boolean visible = false;
         ConnectionHandler connection = getConnection(e);
@@ -63,8 +63,8 @@ public abstract class TransactionEditorAction extends DumbAwareProjectAction {
 
     @Nullable
     protected ConnectionHandler getConnection(@NotNull AnActionEvent e) {
-        Project project = Lookup.getProject(e);
-        VirtualFile virtualFile = Lookup.getVirtualFile(e);
+        Project project = Lookups.getProject(e);
+        VirtualFile virtualFile = Lookups.getVirtualFile(e);
         if (project != null && virtualFile != null) {
             FileConnectionContextManager contextManager = FileConnectionContextManager.getInstance(project);
             return contextManager.getConnection(virtualFile);
@@ -74,8 +74,8 @@ public abstract class TransactionEditorAction extends DumbAwareProjectAction {
 
     @Nullable
     protected DatabaseSession getDatabaseSession(@NotNull AnActionEvent e) {
-        Project project = Lookup.getProject(e);
-        VirtualFile virtualFile = Lookup.getVirtualFile(e);
+        Project project = Lookups.getProject(e);
+        VirtualFile virtualFile = Lookups.getVirtualFile(e);
         if (project != null && virtualFile != null) {
             FileConnectionContextManager contextManager = FileConnectionContextManager.getInstance(project);
             return contextManager.getDatabaseSession(virtualFile);

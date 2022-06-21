@@ -1,6 +1,6 @@
 package com.dci.intellij.dbn.common.ui.component;
 
-import com.dci.intellij.dbn.common.action.Lookup;
+import com.dci.intellij.dbn.common.action.Lookups;
 import com.dci.intellij.dbn.common.dispose.SafeDisposer;
 import com.dci.intellij.dbn.common.dispose.StatefulDisposable;
 import com.dci.intellij.dbn.common.project.ProjectRef;
@@ -57,6 +57,6 @@ public abstract class DBNComponentBase extends StatefulDisposable.Base implement
             }
         }
 
-        return Lookup.getProject(getComponent());
+        return Lookups.getProject(getComponent());
     }
 }

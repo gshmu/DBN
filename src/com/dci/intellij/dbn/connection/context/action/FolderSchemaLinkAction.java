@@ -1,6 +1,6 @@
 package com.dci.intellij.dbn.connection.context.action;
 
-import com.dci.intellij.dbn.common.action.Lookup;
+import com.dci.intellij.dbn.common.action.Lookups;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.mapping.FileConnectionContext;
 import com.dci.intellij.dbn.connection.mapping.FileConnectionContextManager;
@@ -15,7 +15,7 @@ public class FolderSchemaLinkAction extends AbstractFolderContextAction {
 
     @Override
     protected void actionPerformed(@NotNull AnActionEvent e, @NotNull Project project) {
-        VirtualFile file = Lookup.getVirtualFile(e);
+        VirtualFile file = Lookups.getVirtualFile(e);
         if (isAvailableFor(file, project)) {
             DataContext dataContext = e.getDataContext();
             FileConnectionContextManager contextManager = getContextManager(project);
@@ -35,7 +35,7 @@ public class FolderSchemaLinkAction extends AbstractFolderContextAction {
     @Override
     protected void update(@NotNull AnActionEvent e, @NotNull Project project) {
         Presentation presentation = e.getPresentation();
-        VirtualFile file = Lookup.getVirtualFile(e);
+        VirtualFile file = Lookups.getVirtualFile(e);
         String text = "Associate Schema...";
 
         boolean visible = isAvailableFor(file, project);

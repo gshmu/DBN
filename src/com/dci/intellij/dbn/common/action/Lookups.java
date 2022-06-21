@@ -15,45 +15,52 @@ import org.jetbrains.annotations.Nullable;
 
 import java.awt.Component;
 
-public interface Lookup {
+public class Lookups {
+    protected Lookups(){};
+
     @Nullable
-    static Project getProject(AnActionEvent e) {
+    public static Project getProject(AnActionEvent e) {
         return e.getData(PlatformDataKeys.PROJECT);
     }
 
     @NotNull
-    static Project ensureProject(AnActionEvent e) {
+    public static Project ensureProject(AnActionEvent e) {
         return Failsafe.nn(e.getData(PlatformDataKeys.PROJECT));
     }
 
     @Nullable
-    static VirtualFile getVirtualFile(@NotNull AnActionEvent e) {
+    public static VirtualFile getVirtualFile(@NotNull AnActionEvent e) {
         return e.getData(PlatformDataKeys.VIRTUAL_FILE);
     }
 
     @Nullable
-    static VirtualFile getVirtualFile(@NotNull Component component) {
+    public static VirtualFile getVirtualFile(@NotNull Component component) {
         DataContext dataContext = Context.getDataContext(component);
+        return getVirtualFile(dataContext);
+    }
+
+    @Nullable
+    public static VirtualFile getVirtualFile(@NotNull DataContext dataContext) {
         return PlatformDataKeys.VIRTUAL_FILE.getData(dataContext);
     }
 
     @Nullable
-    static Editor getEditor(@NotNull AnActionEvent e) {
+    public static Editor getEditor(@NotNull AnActionEvent e) {
         return e.getData(PlatformDataKeys.EDITOR);
     }
 
     @Nullable
-    static FileEditor getFileEditor(@NotNull AnActionEvent e) {
+    public static FileEditor getFileEditor(@NotNull AnActionEvent e) {
         return e.getData(PlatformDataKeys.FILE_EDITOR);
     }
 
-    static Project getProject(Component component){
+    public static Project getProject(Component component){
         DataContext dataContext = Context.getDataContext(component);
         return PlatformDataKeys.PROJECT.getData(dataContext);
     }
 
     @Nullable
-    static Object getData(String dataId, DataProvider... dataProviders) {
+    public static Object getData(String dataId, DataProvider... dataProviders) {
         for (DataProvider dataProvider : dataProviders) {
             if (dataProvider != null) {
                 Object data = dataProvider.getData(dataId);

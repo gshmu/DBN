@@ -2,7 +2,7 @@ package com.dci.intellij.dbn.execution.explain.action;
 
 import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.common.action.DumbAwareProjectAction;
-import com.dci.intellij.dbn.common.action.Lookup;
+import com.dci.intellij.dbn.common.action.Lookups;
 import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.common.util.Editors;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
@@ -26,7 +26,7 @@ public class ExplainPlanEditorAction extends DumbAwareProjectAction {
 
     @Override
     protected void actionPerformed(@NotNull AnActionEvent e, @NotNull Project project) {
-        Editor editor = Lookup.getEditor(e);
+        Editor editor = Lookups.getEditor(e);
         if (Failsafe.check(editor)) {
             FileEditor fileEditor = Editors.getFileEditor(editor);
             ExecutablePsiElement executable = PsiUtil.lookupExecutableAtCaret(editor, true);
@@ -46,7 +46,7 @@ public class ExplainPlanEditorAction extends DumbAwareProjectAction {
         boolean visible = false;
         boolean enabled = false;
 
-        Editor editor = Lookup.getEditor(e);
+        Editor editor = Lookups.getEditor(e);
         if (editor != null) {
             PsiFile psiFile = PsiUtil.getPsiFile(project, editor.getDocument());
             if (psiFile instanceof DBLanguagePsiFile) {
@@ -68,7 +68,7 @@ public class ExplainPlanEditorAction extends DumbAwareProjectAction {
     }
 
     public static boolean isVisible(AnActionEvent e) {
-        VirtualFile virtualFile = Lookup.getVirtualFile(e);
+        VirtualFile virtualFile = Lookups.getVirtualFile(e);
         return !DatabaseDebuggerManager.isDebugConsole(virtualFile);
     }
 }

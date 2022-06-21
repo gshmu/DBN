@@ -2,7 +2,7 @@ package com.dci.intellij.dbn.execution.statement.action;
 
 import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.common.action.DumbAwareProjectAction;
-import com.dci.intellij.dbn.common.action.Lookup;
+import com.dci.intellij.dbn.common.action.Lookups;
 import com.dci.intellij.dbn.common.util.Editors;
 import com.dci.intellij.dbn.debugger.DatabaseDebuggerManager;
 import com.dci.intellij.dbn.execution.statement.StatementExecutionManager;
@@ -21,7 +21,7 @@ public class ExecuteStatementEditorAction extends DumbAwareProjectAction {
 
     @Override
     protected void actionPerformed(@NotNull AnActionEvent e, @NotNull Project project) {
-        Editor editor = Lookup.getEditor(e);
+        Editor editor = Lookups.getEditor(e);
         if (editor != null) {
             FileEditor fileEditor = Editors.getFileEditor(editor);
             if (fileEditor != null) {
@@ -41,8 +41,8 @@ public class ExecuteStatementEditorAction extends DumbAwareProjectAction {
     }
 
     private static boolean isEnabled(AnActionEvent e) {
-        Project project = Lookup.getProject(e);
-        Editor editor = Lookup.getEditor(e);
+        Project project = Lookups.getProject(e);
+        Editor editor = Lookups.getEditor(e);
         if (project == null || editor == null) {
             return false;
         } else {
@@ -52,7 +52,7 @@ public class ExecuteStatementEditorAction extends DumbAwareProjectAction {
     }
 
     public static boolean isVisible(AnActionEvent e) {
-        VirtualFile virtualFile = Lookup.getVirtualFile(e);
+        VirtualFile virtualFile = Lookups.getVirtualFile(e);
         return !DatabaseDebuggerManager.isDebugConsole(virtualFile);
     }
 }

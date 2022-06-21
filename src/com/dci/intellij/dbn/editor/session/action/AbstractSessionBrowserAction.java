@@ -1,14 +1,14 @@
 package com.dci.intellij.dbn.editor.session.action;
 
 import com.dci.intellij.dbn.common.action.DataKeys;
-import com.dci.intellij.dbn.common.action.Lookup;
+import com.dci.intellij.dbn.common.action.Lookups;
 import com.dci.intellij.dbn.editor.session.SessionBrowser;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.fileEditor.FileEditor;
 import com.intellij.openapi.project.DumbAwareAction;
 import org.jetbrains.annotations.Nullable;
 
-import javax.swing.*;
+import javax.swing.Icon;
 
 public abstract class AbstractSessionBrowserAction extends DumbAwareAction {
     public AbstractSessionBrowserAction(String text) {
@@ -23,7 +23,7 @@ public abstract class AbstractSessionBrowserAction extends DumbAwareAction {
     public static SessionBrowser getSessionBrowser(AnActionEvent e) {
         SessionBrowser sessionBrowser = e.getData((DataKeys.SESSION_BROWSER));
         if (sessionBrowser == null) {
-            FileEditor fileEditor = Lookup.getFileEditor(e);
+            FileEditor fileEditor = Lookups.getFileEditor(e);
             if (fileEditor instanceof SessionBrowser) {
                 return (SessionBrowser) fileEditor;
             }

@@ -3,7 +3,7 @@ package com.dci.intellij.dbn.browser.action;
 import com.dci.intellij.dbn.browser.DatabaseBrowserManager;
 import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.common.action.DumbAwareProjectAction;
-import com.dci.intellij.dbn.common.action.Lookup;
+import com.dci.intellij.dbn.common.action.Lookups;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.database.DatabaseFeature;
 import com.dci.intellij.dbn.editor.session.SessionBrowserManager;
@@ -18,7 +18,7 @@ public class SessionBrowserOpenAction extends DumbAwareProjectAction {
     }
 
     private static ConnectionHandler getConnection(@NotNull AnActionEvent e) {
-        Project project = Lookup.getProject(e);
+        Project project = Lookups.getProject(e);
         if (project != null) {
             DatabaseBrowserManager browserManager = DatabaseBrowserManager.getInstance(project);
             return browserManager.getActiveConnection();

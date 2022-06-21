@@ -1,6 +1,6 @@
 package com.dci.intellij.dbn.execution.method.browser.action;
 
-import com.dci.intellij.dbn.common.action.Lookup;
+import com.dci.intellij.dbn.common.action.Lookups;
 import com.dci.intellij.dbn.common.ui.misc.DBNComboBoxAction;
 import com.dci.intellij.dbn.connection.ConnectionBundle;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
@@ -13,7 +13,8 @@ import com.intellij.openapi.actionSystem.Presentation;
 import com.intellij.openapi.project.Project;
 import org.jetbrains.annotations.NotNull;
 
-import javax.swing.*;
+import javax.swing.Icon;
+import javax.swing.JComponent;
 
 public class ConnectionSelectDropdownAction extends DBNComboBoxAction {
     private final MethodExecutionBrowserForm browserComponent;
@@ -28,7 +29,7 @@ public class ConnectionSelectDropdownAction extends DBNComboBoxAction {
     @NotNull
     protected DefaultActionGroup createPopupActionGroup(JComponent component) {
         DefaultActionGroup actionGroup = new DefaultActionGroup();
-        Project project = Lookup.getProject(component);
+        Project project = Lookups.getProject(component);
         ConnectionManager connectionManager = ConnectionManager.getInstance(project);
         ConnectionBundle connectionBundle = connectionManager.getConnectionBundle();
 /*        for (ConnectionHandler virtualConnectionHandler : connectionBundle.getVirtualConnections()) {
