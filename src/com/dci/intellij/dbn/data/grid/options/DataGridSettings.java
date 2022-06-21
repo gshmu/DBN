@@ -19,7 +19,7 @@ import org.jetbrains.annotations.NotNull;
 public class DataGridSettings extends CompositeProjectConfiguration<ProjectSettings, DataGridSettingsForm> implements TopLevelConfig {
     private final DataGridGeneralSettings generalSettings               = new DataGridGeneralSettings(this);
     private final DataGridSortingSettings sortingSettings               = new DataGridSortingSettings(this);
-    private final DataGridTrackingColumnSettings trackingColumnSettings = new DataGridTrackingColumnSettings(this);
+    private final DataGridAuditColumnSettings auditColumnSettings = new DataGridAuditColumnSettings(this);
 
     public DataGridSettings(ProjectSettings parent) {
         super(parent);
@@ -75,7 +75,7 @@ public class DataGridSettings extends CompositeProjectConfiguration<ProjectSetti
         return new Configuration[] {
                 generalSettings,
                 sortingSettings,
-                trackingColumnSettings
+                auditColumnSettings
         };
     }
 }

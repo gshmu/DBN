@@ -2,7 +2,7 @@ package com.dci.intellij.dbn.data.grid.options;
 
 import com.dci.intellij.dbn.common.options.BasicProjectConfiguration;
 import com.dci.intellij.dbn.common.options.setting.SettingsSupport;
-import com.dci.intellij.dbn.data.grid.options.ui.DataGridTrackingColumnSettingsForm;
+import com.dci.intellij.dbn.data.grid.options.ui.DataGridAuditColumnSettingsForm;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
@@ -19,7 +19,7 @@ import java.util.StringTokenizer;
 @Getter
 @Setter
 @EqualsAndHashCode(callSuper = false)
-public class DataGridTrackingColumnSettings extends BasicProjectConfiguration<DataGridSettings, DataGridTrackingColumnSettingsForm> {
+public class DataGridAuditColumnSettings extends BasicProjectConfiguration<DataGridSettings, DataGridAuditColumnSettingsForm> {
     private final List<String> columnNames = new ArrayList<>();
     private boolean showColumns = true;
     private boolean allowEditing = false;
@@ -28,7 +28,7 @@ public class DataGridTrackingColumnSettings extends BasicProjectConfiguration<Da
     private Set<String> lookupCache = new HashSet<>();
 
 
-    DataGridTrackingColumnSettings(DataGridSettings parent) {
+    DataGridAuditColumnSettings(DataGridSettings parent) {
         super(parent);
     }
 
@@ -49,7 +49,7 @@ public class DataGridTrackingColumnSettings extends BasicProjectConfiguration<Da
         }
     }
 
-    public boolean isTrackingColumn(String columnName) {
+    public boolean isAuditColumn(String columnName) {
         return columnName!= null && lookupCache.size() > 0 && lookupCache.contains(columnName.toUpperCase());
     }
 
@@ -62,19 +62,19 @@ public class DataGridTrackingColumnSettings extends BasicProjectConfiguration<Da
      ****************************************************/
     @Override
     @NotNull
-    public DataGridTrackingColumnSettingsForm createConfigurationEditor() {
-        return new DataGridTrackingColumnSettingsForm(this);
+    public DataGridAuditColumnSettingsForm createConfigurationEditor() {
+        return new DataGridAuditColumnSettingsForm(this);
     }
 
     @Override
     public String getConfigElementName() {
-        return "tracking-columns";
+        return "audit-columns";
     }
 
     @Override
     public void readConfiguration(Element element) {
         this.columnNames.clear();
-        StringTokenizer columnNames = new StringTokenizer(SettingsSupport.getString(element, "columnNames", ""), ",");
+        StringTokenizer columnNames = new StringTokenizer(SettingsSupport.getString(element, "column-names", ""), ",");
         while (columnNames.hasMoreTokens()) {
             String columnName = columnNames.nextToken().trim().toUpperCase();
             this.columnNames.add(columnName);
@@ -94,7 +94,7 @@ public class DataGridTrackingColumnSettings extends BasicProjectConfiguration<Da
             }
             buffer.append(columnName);
         }
-        SettingsSupport.setString(element, "columnNames", buffer.toString());
+        SettingsSupport.setString(element, "column-names", buffer.toString());
         SettingsSupport.setBoolean(element, "visible", showColumns);
         SettingsSupport.setBoolean(element, "editable", allowEditing);
 

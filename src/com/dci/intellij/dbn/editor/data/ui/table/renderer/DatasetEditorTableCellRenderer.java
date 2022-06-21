@@ -28,15 +28,15 @@ public class DatasetEditorTableCellRenderer extends BasicTableCellRenderer {
         if (Failsafe.check(cell, datasetEditorTable, datasetEditorTable.getProject())) {
             DatasetEditorModelRow row = cell.getRow();
             DatasetEditorColumnInfo columnInfo = cell.getColumnInfo();
-            boolean isDirty = datasetEditorTable.getModel().isDirty();
-            boolean isLoading = datasetEditorTable.isLoading();
-            boolean isInserting = datasetEditorTable.isInserting();
+            boolean dirty = datasetEditorTable.getModel().isDirty();
+            boolean loading = datasetEditorTable.isLoading();
+            boolean inserting = datasetEditorTable.isInserting();
 
             boolean deletedRow = row.is(DELETED);
             boolean insertRow = row.is(INSERTING);
             boolean caretRow = !insertRow && table.getCellSelectionEnabled() && table.getSelectedRow() == rowIndex && table.getSelectedRowCount() == 1;
             boolean modified = cell.is(MODIFIED);
-            boolean trackingColumn = columnInfo != null && columnInfo.isTrackingColumn();
+            boolean auditColumn = columnInfo != null && columnInfo.isAuditColumn();
             boolean primaryKey = columnInfo != null && columnInfo.isPrimaryKey();
             boolean foreignKey = columnInfo != null && columnInfo.isForeignKey();
             boolean connected = Failsafe.nn(datasetEditorTable.getDatasetEditor().getConnection()).isConnected();
@@ -47,11 +47,11 @@ public class DatasetEditorTableCellRenderer extends BasicTableCellRenderer {
             if (isSelected) {
                 textAttributes = attributes.getSelection();
             } else {
-                if (isLoading || isDirty || !connected) {
+                if (loading || dirty || !connected) {
                     textAttributes = attributes.getLoadingData(caretRow);
                 } else if (deletedRow) {
                     textAttributes = attributes.getDeletedData();
-                } else if ((isInserting && !insertRow)) {
+                } else if ((inserting && !insertRow)) {
                     textAttributes = attributes.getReadonlyData(modified, caretRow);
                 } else if (primaryKey) {
                     textAttributes = attributes.getPrimaryKey(modified, caretRow);
@@ -59,8 +59,8 @@ public class DatasetEditorTableCellRenderer extends BasicTableCellRenderer {
                     textAttributes = attributes.getForeignKey(modified, caretRow);
                 } else if (cell.isLobValue() || cell.isArrayValue()) {
                     textAttributes = attributes.getReadonlyData(modified, caretRow);
-                } else if (trackingColumn) {
-                    textAttributes = attributes.getTrackingData(modified, caretRow);
+                } else if (auditColumn) {
+                    textAttributes = attributes.getAuditData(modified, caretRow);
                 }
             }
 
@@ -76,9 +76,9 @@ public class DatasetEditorTableCellRenderer extends BasicTableCellRenderer {
                 background = errorData.getBgColor();
                 foreground = errorData.getFgColor();
                 textAttributes = textAttributes.derive(errorData.getStyle(), foreground, background, null);
-            } else if (trackingColumn && !isSelected) {
-                SimpleTextAttributes trackingDataAttr = attributes.getTrackingData(modified, caretRow);
-                foreground = Commons.nvl(trackingDataAttr.getFgColor(), foreground);
+            } else if (auditColumn && !isSelected) {
+                SimpleTextAttributes auditDataAttr = attributes.getAuditData(modified, caretRow);
+                foreground = Commons.nvl(auditDataAttr.getFgColor(), foreground);
                 textAttributes = textAttributes.derive(textAttributes.getStyle(), foreground, background, null);
             }
 

@@ -9,7 +9,7 @@ import com.dci.intellij.dbn.data.find.DataSearchResult;
 import com.dci.intellij.dbn.data.find.DataSearchResultMatch;
 import com.dci.intellij.dbn.data.grid.color.BasicTableTextAttributes;
 import com.dci.intellij.dbn.data.grid.color.DataGridTextAttributes;
-import com.dci.intellij.dbn.data.grid.options.DataGridTrackingColumnSettings;
+import com.dci.intellij.dbn.data.grid.options.DataGridAuditColumnSettings;
 import com.dci.intellij.dbn.data.grid.ui.table.sortable.SortableTable;
 import com.dci.intellij.dbn.data.model.DataModel;
 import com.dci.intellij.dbn.data.model.DataModelCell;
@@ -47,10 +47,10 @@ public class BasicTableCellRenderer extends DBNColoredTableCellRenderer {
                 textAttributes = attributes.getReadonlyData(false, isCaretRow);
 
             } else {
-                DataGridTrackingColumnSettings trackingColumnSettings = sortableTable.getDataGridSettings().getTrackingColumnSettings();
-                boolean trackingColumn = trackingColumnSettings.isTrackingColumn(cell.getColumnInfo().getName());
-                if (trackingColumn) {
-                    textAttributes = attributes.getTrackingData(false, isCaretRow);
+                DataGridAuditColumnSettings auditColumnSettings = sortableTable.getDataGridSettings().getAuditColumnSettings();
+                boolean auditColumn = auditColumnSettings.isAuditColumn(cell.getColumnInfo().getName());
+                if (auditColumn) {
+                    textAttributes = attributes.getAuditData(false, isCaretRow);
                 }
             }
             if (textAttributes == null) {
