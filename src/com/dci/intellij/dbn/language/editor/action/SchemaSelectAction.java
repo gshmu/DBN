@@ -1,6 +1,6 @@
 package com.dci.intellij.dbn.language.editor.action;
 
-import com.dci.intellij.dbn.common.action.Lookup;
+import com.dci.intellij.dbn.common.action.Lookups;
 import com.dci.intellij.dbn.connection.SchemaId;
 import com.dci.intellij.dbn.connection.mapping.FileConnectionContextManager;
 import com.dci.intellij.dbn.language.common.DBLanguagePsiFile;
@@ -28,7 +28,7 @@ public class SchemaSelectAction extends AnObjectAction<DBSchema> {
             @NotNull Project project,
             @NotNull DBSchema object) {
 
-        Editor editor = Lookup.getEditor(e);
+        Editor editor = Lookups.getEditor(e);
         if (editor != null) {
             FileConnectionContextManager contextManager = FileConnectionContextManager.getInstance(project);
             contextManager.setDatabaseSchema(editor, SchemaId.from(object));
@@ -44,7 +44,7 @@ public class SchemaSelectAction extends AnObjectAction<DBSchema> {
 
         super.update(e, presentation, project, target);
         boolean enabled = false;
-        VirtualFile virtualFile = Lookup.getVirtualFile(e);
+        VirtualFile virtualFile = Lookups.getVirtualFile(e);
         if (virtualFile instanceof DBEditableObjectVirtualFile) {
             enabled = false;//objectFile.getObject().getSchema() == schema;
         } else if (virtualFile != null){

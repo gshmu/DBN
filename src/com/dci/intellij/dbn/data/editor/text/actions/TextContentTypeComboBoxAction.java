@@ -1,6 +1,6 @@
 package com.dci.intellij.dbn.data.editor.text.actions;
 
-import com.dci.intellij.dbn.common.action.Lookup;
+import com.dci.intellij.dbn.common.action.Lookups;
 import com.dci.intellij.dbn.common.ui.misc.DBNComboBoxAction;
 import com.dci.intellij.dbn.data.editor.text.TextContentType;
 import com.dci.intellij.dbn.data.editor.text.ui.TextEditorForm;
@@ -12,7 +12,7 @@ import com.intellij.openapi.actionSystem.Presentation;
 import com.intellij.openapi.project.Project;
 import org.jetbrains.annotations.NotNull;
 
-import javax.swing.*;
+import javax.swing.JComponent;
 
 public class TextContentTypeComboBoxAction extends DBNComboBoxAction {
     private TextEditorForm editorForm;
@@ -28,7 +28,7 @@ public class TextContentTypeComboBoxAction extends DBNComboBoxAction {
     @Override
     @NotNull
     protected DefaultActionGroup createPopupActionGroup(JComponent button) {
-        Project project = Lookup.getProject(button);
+        Project project = Lookups.getProject(button);
         DataEditorQualifiedEditorSettings qualifiedEditorSettings = DataEditorSettings.getInstance(project).getQualifiedEditorSettings();
         
         DefaultActionGroup actionGroup = new DefaultActionGroup();

@@ -1,13 +1,19 @@
 package com.dci.intellij.dbn.common.util;
 
-import com.dci.intellij.dbn.common.action.Lookup;
-import com.intellij.openapi.actionSystem.*;
+import com.dci.intellij.dbn.common.action.Lookups;
+import com.intellij.openapi.actionSystem.ActionGroup;
+import com.intellij.openapi.actionSystem.ActionManager;
+import com.intellij.openapi.actionSystem.ActionPopupMenu;
+import com.intellij.openapi.actionSystem.ActionToolbar;
+import com.intellij.openapi.actionSystem.AnAction;
+import com.intellij.openapi.actionSystem.DefaultActionGroup;
+import com.intellij.openapi.actionSystem.Separator;
 import org.jetbrains.annotations.NotNull;
 
-import javax.swing.*;
+import javax.swing.JComponent;
 import java.util.UUID;
 
-public class Actions implements Lookup {
+public class Actions extends Lookups {
     public static final AnAction SEPARATOR = Separator.getInstance();
 
     public static ActionToolbar createActionToolbar(@NotNull JComponent component, String place, boolean horizontal, String actionGroupName){

@@ -1,7 +1,7 @@
 package com.dci.intellij.dbn.language.editor.action;
 
 import com.dci.intellij.dbn.common.Icons;
-import com.dci.intellij.dbn.common.action.Lookup;
+import com.dci.intellij.dbn.common.action.Lookups;
 import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.common.ui.misc.DBNComboBoxAction;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
@@ -12,6 +12,7 @@ import com.dci.intellij.dbn.object.DBSchema;
 import com.dci.intellij.dbn.object.common.DBSchemaObject;
 import com.dci.intellij.dbn.vfs.DatabaseFileSystem;
 import com.intellij.openapi.actionSystem.AnActionEvent;
+import com.intellij.openapi.actionSystem.DataContext;
 import com.intellij.openapi.actionSystem.DefaultActionGroup;
 import com.intellij.openapi.actionSystem.Presentation;
 import com.intellij.openapi.project.DumbAware;
@@ -28,12 +29,23 @@ public class SchemaSelectDropdownAction extends DBNComboBoxAction implements Dum
     @Override
     @NotNull
     protected DefaultActionGroup createPopupActionGroup(JComponent component) {
-        DefaultActionGroup actionGroup = new DefaultActionGroup();
+        Project project = Lookups.getProject(component);
+        VirtualFile virtualFile = Lookups.getVirtualFile(component);
+        return createActionGroup(project, virtualFile);
+    }
 
-        Project project = Lookup.getProject(component);
-        VirtualFile virtualFile = Lookup.getVirtualFile(component);
+    @Override
+    protected @NotNull DefaultActionGroup createPopupActionGroup(@NotNull JComponent button, @NotNull DataContext dataContext) {
+        Project project = Lookups.getProject(button);
+        VirtualFile virtualFile = Lookups.getVirtualFile(dataContext);
+        return createActionGroup(project, virtualFile);
+    }
+
+    private static DefaultActionGroup createActionGroup(Project project, VirtualFile virtualFile) {
+        DefaultActionGroup actionGroup = new DefaultActionGroup();
         if (virtualFile != null) {
-            ConnectionHandler activeConnection = FileConnectionContextManager.getInstance(project).getConnection(virtualFile);
+            FileConnectionContextManager contextManager = FileConnectionContextManager.getInstance(project);
+            ConnectionHandler activeConnection = contextManager.getConnection(virtualFile);
             if (Failsafe.check(activeConnection) && !activeConnection.isVirtual()) {
                 for (DBSchema schema : activeConnection.getObjectBundle().getSchemas()){
                     actionGroup.add(new SchemaSelectAction(schema));
@@ -45,8 +57,8 @@ public class SchemaSelectDropdownAction extends DBNComboBoxAction implements Dum
 
     @Override
     public void update(@NotNull AnActionEvent e) {
-        Project project = Lookup.getProject(e);
-        VirtualFile virtualFile = Lookup.getVirtualFile(e);
+        Project project = Lookups.getProject(e);
+        VirtualFile virtualFile = Lookups.getVirtualFile(e);
         String text = NAME;
 
         Icon icon = null;

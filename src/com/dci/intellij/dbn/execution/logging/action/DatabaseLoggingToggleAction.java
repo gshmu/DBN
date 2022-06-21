@@ -1,7 +1,7 @@
 package com.dci.intellij.dbn.execution.logging.action;
 
 import com.dci.intellij.dbn.common.Icons;
-import com.dci.intellij.dbn.common.action.Lookup;
+import com.dci.intellij.dbn.common.action.Lookups;
 import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.common.util.Strings;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
@@ -32,8 +32,8 @@ public class DatabaseLoggingToggleAction extends ToggleAction implements DumbAwa
 
     @Nullable
     private static ConnectionHandler getConnectionHandler(AnActionEvent e) {
-        Project project = Lookup.getProject(e);
-        VirtualFile virtualFile = Lookup.getVirtualFile(e);
+        Project project = Lookups.getProject(e);
+        VirtualFile virtualFile = Lookups.getVirtualFile(e);
         if (project != null && virtualFile != null) {
             FileConnectionContextManager contextManager = FileConnectionContextManager.getInstance(project);
             ConnectionHandler activeConnection = contextManager.getConnection(virtualFile);
@@ -75,7 +75,7 @@ public class DatabaseLoggingToggleAction extends ToggleAction implements DumbAwa
     }
 
     public static boolean isVisible(AnActionEvent e) {
-        VirtualFile virtualFile = Lookup.getVirtualFile(e);
+        VirtualFile virtualFile = Lookups.getVirtualFile(e);
         return !DatabaseDebuggerManager.isDebugConsole(virtualFile);
     }
 }

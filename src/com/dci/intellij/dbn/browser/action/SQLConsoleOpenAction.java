@@ -3,7 +3,7 @@ package com.dci.intellij.dbn.browser.action;
 import com.dci.intellij.dbn.browser.DatabaseBrowserManager;
 import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.common.action.GroupPopupAction;
-import com.dci.intellij.dbn.common.action.Lookup;
+import com.dci.intellij.dbn.common.action.Lookups;
 import com.dci.intellij.dbn.common.util.Actions;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.action.AbstractConnectionAction;
@@ -29,7 +29,7 @@ public class SQLConsoleOpenAction extends GroupPopupAction {
     }
 
     private static ConnectionHandler getConnection(@NotNull AnActionEvent e) {
-        Project project = Lookup.getProject(e);
+        Project project = Lookups.getProject(e);
         if (project != null) {
             DatabaseBrowserManager browserManager = DatabaseBrowserManager.getInstance(project);
             return browserManager.getActiveConnection();

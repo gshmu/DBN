@@ -2,7 +2,7 @@ package com.dci.intellij.dbn.editor.code.action;
 
 import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.common.action.GroupPopupAction;
-import com.dci.intellij.dbn.common.action.Lookup;
+import com.dci.intellij.dbn.common.action.Lookups;
 import com.dci.intellij.dbn.database.DatabaseFeature;
 import com.dci.intellij.dbn.debugger.DatabaseDebuggerManager;
 import com.dci.intellij.dbn.execution.method.MethodExecutionManager;
@@ -68,7 +68,7 @@ public class ProgramMethodDebugAction extends GroupPopupAction {
 
     @Nullable
     private DBSourceCodeVirtualFile getSourcecodeFile(AnActionEvent e) {
-        VirtualFile virtualFile = Lookup.getVirtualFile(e);
+        VirtualFile virtualFile = Lookups.getVirtualFile(e);
         return virtualFile instanceof DBSourceCodeVirtualFile ? (DBSourceCodeVirtualFile) virtualFile : null;
     }
 

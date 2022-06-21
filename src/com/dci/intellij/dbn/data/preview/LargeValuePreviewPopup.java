@@ -1,12 +1,12 @@
 package com.dci.intellij.dbn.data.preview;
 
 import com.dci.intellij.dbn.common.Icons;
-import com.dci.intellij.dbn.common.action.Lookup;
+import com.dci.intellij.dbn.common.action.Lookups;
 import com.dci.intellij.dbn.common.color.Colors;
-import com.dci.intellij.dbn.common.ui.util.Borders;
 import com.dci.intellij.dbn.common.ui.form.DBNFormBase;
 import com.dci.intellij.dbn.common.ui.listener.PopupCloseListener;
 import com.dci.intellij.dbn.common.ui.table.Tables;
+import com.dci.intellij.dbn.common.ui.util.Borders;
 import com.dci.intellij.dbn.common.util.Actions;
 import com.dci.intellij.dbn.common.util.Commons;
 import com.dci.intellij.dbn.common.util.Strings;
@@ -370,7 +370,7 @@ public class LargeValuePreviewPopup extends DBNFormBase {
 
     @Nullable
     private static DatasetEditorManager getDataEditorManager(AnActionEvent e) {
-        Project project = Lookup.getProject(e);
+        Project project = Lookups.getProject(e);
         return project == null ? null : DatasetEditorManager.getInstance(project);
     }
 

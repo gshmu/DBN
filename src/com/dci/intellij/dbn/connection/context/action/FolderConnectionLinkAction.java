@@ -1,6 +1,6 @@
 package com.dci.intellij.dbn.connection.context.action;
 
-import com.dci.intellij.dbn.common.action.Lookup;
+import com.dci.intellij.dbn.common.action.Lookups;
 import com.dci.intellij.dbn.connection.ConnectionSelectorOptions;
 import com.dci.intellij.dbn.connection.mapping.FileConnectionContext;
 import com.dci.intellij.dbn.connection.mapping.FileConnectionContextManager;
@@ -17,7 +17,7 @@ public class FolderConnectionLinkAction extends AbstractFolderContextAction {
 
     @Override
     protected void actionPerformed(@NotNull AnActionEvent e, @NotNull Project project) {
-        VirtualFile file = Lookup.getVirtualFile(e);
+        VirtualFile file = Lookups.getVirtualFile(e);
         if (isAvailableFor(file)) {
             DataContext dataContext = e.getDataContext();
             ConnectionSelectorOptions options = ConnectionSelectorOptions.options(SHOW_VIRTUAL_CONNECTIONS);
@@ -34,7 +34,7 @@ public class FolderConnectionLinkAction extends AbstractFolderContextAction {
     @Override
     protected void update(@NotNull AnActionEvent e, @NotNull Project project) {
         Presentation presentation = e.getPresentation();
-        VirtualFile file = Lookup.getVirtualFile(e);
+        VirtualFile file = Lookups.getVirtualFile(e);
         presentation.setVisible(isAvailableFor(file));
         String text = "Associate Connection...";
 

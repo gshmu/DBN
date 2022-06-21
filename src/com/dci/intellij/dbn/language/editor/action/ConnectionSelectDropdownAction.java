@@ -1,6 +1,6 @@
 package com.dci.intellij.dbn.language.editor.action;
 
-import com.dci.intellij.dbn.common.action.Lookup;
+import com.dci.intellij.dbn.common.action.Lookups;
 import com.dci.intellij.dbn.common.ui.misc.DBNComboBoxAction;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.mapping.FileConnectionContextManager;
@@ -16,7 +16,8 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
 import org.jetbrains.annotations.NotNull;
 
-import javax.swing.*;
+import javax.swing.Icon;
+import javax.swing.JComponent;
 
 public class ConnectionSelectDropdownAction extends DBNComboBoxAction implements DumbAware {
     private static final String NAME = "DB Connections";
@@ -24,7 +25,7 @@ public class ConnectionSelectDropdownAction extends DBNComboBoxAction implements
     @Override
     @NotNull
     protected DefaultActionGroup createPopupActionGroup(JComponent component) {
-        Project project = Lookup.getProject(component);
+        Project project = Lookups.getProject(component);
         return new ConnectionSelectActionGroup(project);
     }
 
@@ -34,8 +35,8 @@ public class ConnectionSelectDropdownAction extends DBNComboBoxAction implements
         String text = NAME;
         Icon icon = null;
 
-        Project project = Lookup.getProject(e);
-        VirtualFile virtualFile = Lookup.getVirtualFile(e);
+        Project project = Lookups.getProject(e);
+        VirtualFile virtualFile = Lookups.getVirtualFile(e);
         if (project != null && virtualFile != null) {
             FileConnectionContextManager contextManager = FileConnectionContextManager.getInstance(project);
             ConnectionHandler activeConnection = contextManager.getConnection(virtualFile);
