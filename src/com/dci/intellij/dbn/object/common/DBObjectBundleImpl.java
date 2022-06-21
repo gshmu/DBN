@@ -10,7 +10,6 @@ import com.dci.intellij.dbn.browser.ui.HtmlToolTipBuilder;
 import com.dci.intellij.dbn.code.common.lookup.LookupItemBuilder;
 import com.dci.intellij.dbn.code.common.lookup.ObjectLookupItemBuilder;
 import com.dci.intellij.dbn.common.content.DynamicContent;
-import com.dci.intellij.dbn.common.content.DynamicContentStatus;
 import com.dci.intellij.dbn.common.content.DynamicContentType;
 import com.dci.intellij.dbn.common.content.loader.DynamicContentLoaderImpl;
 import com.dci.intellij.dbn.common.content.loader.DynamicContentResultSetLoader;
@@ -106,6 +105,7 @@ import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
 import static com.dci.intellij.dbn.browser.DatabaseBrowserUtils.treeVisibilityChanged;
+import static com.dci.intellij.dbn.common.content.DynamicContentProperty.*;
 import static com.dci.intellij.dbn.object.type.DBObjectRelationType.*;
 import static com.dci.intellij.dbn.object.type.DBObjectType.*;
 
@@ -145,7 +145,7 @@ public class DBObjectBundleImpl extends BrowserTreeNodeBase implements DBObjectB
         this.configSignature = connection.getSettings().getDatabaseSettings().getSignature();
 
         this.objectLists = new DBObjectListContainer(this);
-        this.consoles = objectLists.createObjectList(CONSOLE, this, DynamicContentStatus.PASSIVE);
+        this.consoles = objectLists.createObjectList(CONSOLE, this, PASSIVE);
         this.users = objectLists.createObjectList(USER, this);
         this.schemas = objectLists.createObjectList(SCHEMA, this);
         this.roles = objectLists.createObjectList(ROLE, this);
@@ -153,10 +153,10 @@ public class DBObjectBundleImpl extends BrowserTreeNodeBase implements DBObjectB
         this.charsets = objectLists.createObjectList(CHARSET, this);
         this.allPossibleTreeChildren = DatabaseBrowserUtils.createList(consoles, schemas, users, roles, systemPrivileges, charsets);
 
-        this.objectLists.createObjectRelationList(USER_ROLE, this, users, roles);
-        this.objectLists.createObjectRelationList(USER_PRIVILEGE, this, users, systemPrivileges);
-        this.objectLists.createObjectRelationList(ROLE_ROLE, this, roles, roles);
-        this.objectLists.createObjectRelationList(ROLE_PRIVILEGE, this, roles, systemPrivileges);
+        this.objectLists.createObjectRelationList(USER_ROLE, this, users, roles, INTERNAL, GROUPED);
+        this.objectLists.createObjectRelationList(USER_PRIVILEGE, this, users, systemPrivileges, INTERNAL, GROUPED);
+        this.objectLists.createObjectRelationList(ROLE_ROLE, this, roles, roles, INTERNAL, GROUPED);
+        this.objectLists.createObjectRelationList(ROLE_PRIVILEGE, this, roles, systemPrivileges, INTERNAL, GROUPED);
 
         Project project = connection.getProject();
         PsiFileFactory psiFileFactory = PsiFileFactory.getInstance(project);
@@ -759,10 +759,10 @@ public class DBObjectBundleImpl extends BrowserTreeNodeBase implements DBObjectB
         new DynamicContentLoaderImpl<DBConsole, DBObjectMetadata>(null, CONSOLE, true){
 
             @Override
-            public void loadContent(DynamicContent<DBConsole> dynamicContent, boolean forceReload) {
-                ConnectionHandler connection = dynamicContent.getConnection();
+            public void loadContent(DynamicContent<DBConsole> content, boolean forceReload) {
+                ConnectionHandler connection = content.getConnection();
                 List<DBConsole> consoles = connection.getConsoleBundle().getConsoles();
-                dynamicContent.setElements(consoles);
+                content.setElements(consoles);
             }
         };
 

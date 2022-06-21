@@ -2,7 +2,7 @@ package com.dci.intellij.dbn.common.content.loader;
 
 import com.dci.intellij.dbn.common.content.DynamicContent;
 import com.dci.intellij.dbn.common.content.DynamicContentElement;
-import com.dci.intellij.dbn.common.content.DynamicContentStatus;
+import com.dci.intellij.dbn.common.content.DynamicContentProperty;
 import com.dci.intellij.dbn.common.content.DynamicContentType;
 import com.dci.intellij.dbn.common.load.ProgressMonitor;
 import com.dci.intellij.dbn.common.util.CollectionUtil;
@@ -82,25 +82,25 @@ public abstract class DynamicContentResultSetLoader<
     }
 
     @Override
-    public void loadContent(DynamicContent<T> dynamicContent, boolean forceReload) throws SQLException {
-        ProgressMonitor.setTaskDescription("Loading " + dynamicContent.getContentDescription());
+    public void loadContent(DynamicContent<T> content, boolean forceReload) throws SQLException {
+        ProgressMonitor.setTaskDescription("Loading " + content.getContentDescription());
 
-        ConnectionHandler connection = dynamicContent.getConnection();
+        ConnectionHandler connection = content.getConnection();
         DatabaseInterface.run(true,
                 connection,
                 (provider, conn) -> {
-                    DebugInfo debugInfo = preLoadContent(dynamicContent);
+                    DebugInfo debugInfo = preLoadContent(content);
                     IncrementalStatusAdapter loading = connection.getConnectionStatus().getLoading();
                     try {
                         loading.set(true);
-                        dynamicContent.checkDisposed();
+                        content.checkDisposed();
                         ResultSet resultSet = null;
                         List<T> list = null;
                         try {
-                            dynamicContent.checkDisposed();
-                            resultSet = createResultSet(dynamicContent, conn);
+                            content.checkDisposed();
+                            resultSet = createResultSet(content, conn);
 
-                            DynamicContentType<?> contentType = dynamicContent.getContentType();
+                            DynamicContentType<?> contentType = content.getContentType();
                             M metadata = DBObjectMetadataFactory.INSTANCE.create(contentType, resultSet);
 
                             Diagnostics.introduceDatabaseLag(Diagnostics.getQueryingLag());
@@ -109,21 +109,21 @@ public abstract class DynamicContentResultSetLoader<
 
                             while (resultSet != null && resultSet.next()) {
                                 Diagnostics.introduceDatabaseLag(Diagnostics.getFetchingLag());
-                                dynamicContent.checkDisposed();
+                                content.checkDisposed();
 
                                 T element = null;
                                 try {
-                                    element = createElement(dynamicContent, metadata, loaderCache);
+                                    element = createElement(content, metadata, loaderCache);
                                 } catch (ProcessCanceledException e) {
                                     return;
                                 } catch (RuntimeException e) {
                                     log.warn("Failed to create element", e);
                                 }
 
-                                dynamicContent.checkDisposed();
+                                content.checkDisposed();
                                 if (element != null) {
                                     if (list == null) {
-                                        list = dynamicContent.isMutable() ?
+                                        list = content.isMutable() ?
                                                 CollectionUtil.createConcurrentList() :
                                                 new ArrayList<>();
                                     }
@@ -139,11 +139,11 @@ public abstract class DynamicContentResultSetLoader<
                         } finally {
                             Resources.close(resultSet);
                         }
-                        dynamicContent.checkDisposed();
-                        dynamicContent.setElements(list);
-                        dynamicContent.set(DynamicContentStatus.MASTER, master);
+                        content.checkDisposed();
+                        content.setElements(list);
+                        content.set(DynamicContentProperty.MASTER, master);
 
-                        postLoadContent(dynamicContent, debugInfo);
+                        postLoadContent(content, debugInfo);
 
                     } catch (ProcessCanceledException e) {
                         throw new SQLTimeoutException(e);

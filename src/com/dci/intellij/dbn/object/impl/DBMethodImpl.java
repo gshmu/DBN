@@ -3,10 +3,8 @@ package com.dci.intellij.dbn.object.impl;
 import com.dci.intellij.dbn.browser.DatabaseBrowserUtils;
 import com.dci.intellij.dbn.browser.model.BrowserTreeNode;
 import com.dci.intellij.dbn.common.content.DynamicContent;
-import com.dci.intellij.dbn.common.content.loader.DynamicContentLoader;
 import com.dci.intellij.dbn.common.content.loader.DynamicContentResultSetLoader;
 import com.dci.intellij.dbn.common.content.loader.DynamicSubcontentLoader;
-import com.dci.intellij.dbn.common.util.Commons;
 import com.dci.intellij.dbn.connection.jdbc.DBNConnection;
 import com.dci.intellij.dbn.database.DatabaseMetadataInterface;
 import com.dci.intellij.dbn.database.common.metadata.def.DBArgumentMetadata;
@@ -175,17 +173,8 @@ public abstract class DBMethodImpl<M extends DBMethodMetadata> extends DBSchemaO
      *********************************************************/
 
     static {
-        new DynamicSubcontentLoader<DBArgument, DBArgumentMetadata>(METHOD, ARGUMENT, true) {
-            @Override
-            public boolean match(DBArgument argument, DynamicContent dynamicContent) {
-                DBMethod method = dynamicContent.getParentEntity();
-                DBMethod argumentMethod = argument.getMethod();
-                return Commons.match(argumentMethod, method) && argument.getOverload() == method.getOverload();
-            }
-
-            @Override
-            public DynamicContentLoader<DBArgument, DBArgumentMetadata> createAlternativeLoader() {
-                return new DynamicContentResultSetLoader<DBArgument, DBArgumentMetadata>(METHOD, ARGUMENT, false, true) {
+        DynamicSubcontentLoader.create(METHOD, ARGUMENT, () ->
+                new DynamicContentResultSetLoader<DBArgument, DBArgumentMetadata>(METHOD, ARGUMENT, false, true) {
                     @Override
                     public ResultSet createResultSet(DynamicContent<DBArgument> dynamicContent, DBNConnection connection) throws SQLException {
                         DatabaseMetadataInterface metadataInterface = dynamicContent.getMetadataInterface();
@@ -215,8 +204,6 @@ public abstract class DBMethodImpl<M extends DBMethodMetadata> extends DBSchemaO
                         DBMethod method = content.getParentEntity();
                         return method == null ? null : new DBArgumentImpl(method, metadata);
                     }
-                };
-            }
-        };
+                });
     }
 }

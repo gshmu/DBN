@@ -2,89 +2,69 @@ package com.dci.intellij.dbn.common.content.loader;
 
 import com.dci.intellij.dbn.common.content.DynamicContent;
 import com.dci.intellij.dbn.common.content.DynamicContentElement;
-import com.dci.intellij.dbn.common.content.DynamicContentStatus;
+import com.dci.intellij.dbn.common.content.DynamicContentProperty;
 import com.dci.intellij.dbn.common.content.DynamicContentType;
+import com.dci.intellij.dbn.common.content.GroupedDynamicContent;
 import com.dci.intellij.dbn.common.content.dependency.ContentDependencyAdapter;
 import com.dci.intellij.dbn.common.content.dependency.SubcontentDependencyAdapter;
 import com.dci.intellij.dbn.common.thread.ThreadMonitor;
 import com.dci.intellij.dbn.common.thread.ThreadProperty;
-import com.dci.intellij.dbn.common.util.CollectionUtil;
-import com.dci.intellij.dbn.common.util.Safe;
 import com.dci.intellij.dbn.database.common.metadata.DBObjectMetadata;
-import com.dci.intellij.dbn.object.DBSchema;
-import com.dci.intellij.dbn.object.common.DBObject;
-import com.dci.intellij.dbn.object.common.DBSchemaObject;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.sql.SQLException;
-import java.util.ArrayList;
 import java.util.List;
+import java.util.function.Supplier;
 
 /**
  * This loader is to be used from building the elements of a dynamic content, based on a source content.
  * e.g. Constraints of a table are loaded from the complete actions of constraints of a Schema.
  */
-public abstract class DynamicSubcontentLoader<
-                T extends DynamicContentElement,
-                M extends DBObjectMetadata>
+public abstract class DynamicSubcontentLoader<T extends DynamicContentElement, M extends DBObjectMetadata>
         extends DynamicContentLoaderImpl<T, M>
         implements DynamicContentLoader<T, M> {
 
     private final DynamicContentLoader<T, M> alternativeLoader = createAlternativeLoader();
-    private final boolean optimized;
 
-    protected DynamicSubcontentLoader(@Nullable DynamicContentType parentContentType, @NotNull DynamicContentType contentType, boolean optimized) {
+    private DynamicSubcontentLoader(@NotNull DynamicContentType parentContentType, @NotNull DynamicContentType contentType) {
         super(parentContentType, contentType, true);
-        this.optimized = optimized;
     }
 
-    /**
-     * Check if the source element matches the criteria of the dynamic content.
-     * If it matches, it will be added as
-     */
-    public abstract boolean match(T sourceElement, DynamicContent dynamicContent);
+    public static <T extends DynamicContentElement, M extends DBObjectMetadata> DynamicSubcontentLoader<T, M> create(
+            @NotNull DynamicContentType parentContentType,
+            @NotNull DynamicContentType contentType,
+            @NotNull Supplier<DynamicContentLoader<T, M>> loader) {
+        return new DynamicSubcontentLoader<T, M>(parentContentType, contentType) {
+            @Nullable
+            @Override
+            protected DynamicContentLoader<T, M> createAlternativeLoader() {
+                return loader.get();
+            }
+        };
+    }
 
     @Override
-    public void loadContent(DynamicContent<T> dynamicContent, boolean force) throws SQLException {
-        ContentDependencyAdapter dependency = dynamicContent.getDependencyAdapter();
+    public void loadContent(DynamicContent<T> content, boolean force) throws SQLException {
+        ContentDependencyAdapter dependency = content.getDependencyAdapter();
         if (dependency instanceof SubcontentDependencyAdapter) {
             SubcontentDependencyAdapter subcontentDependency = (SubcontentDependencyAdapter) dependency;
 
-            DynamicContent<?> sourceContent = subcontentDependency.getSourceContent();
+            DynamicContent<T> sourceContent = subcontentDependency.getSourceContent();
             DynamicContentLoader<T, M> alternativeLoader = getAlternativeLoader();
 
             if (alternativeLoader != null && useAlternativeLoader(subcontentDependency)) {
                 sourceContent.loadInBackground();
-                alternativeLoader.loadContent(dynamicContent, false);
+                alternativeLoader.loadContent(content, false);
 
+            } else if (sourceContent instanceof GroupedDynamicContent) {
+                GroupedDynamicContent groupedContent = (GroupedDynamicContent) sourceContent;
+                String parentName = content.ensureParentEntity().getName();
+                List<T> list = groupedContent.getChildElements(parentName);
+                content.setElements(list);
+                content.set(DynamicContentProperty.MASTER, false);
             } else {
-                //load from sub-content
-                boolean matchedOnce = false;
-                List<T> list = null;
-                for (Object object : sourceContent.getAllElements()) {
-                    dynamicContent.checkDisposed();
-
-                    T element = (T) object;
-                    if (match(element, dynamicContent)) {
-                        matchedOnce = true;
-                        if (list == null) {
-                            list = dynamicContent.isMutable() ?
-                                    CollectionUtil.createConcurrentList() :
-                                    new ArrayList<T>();
-                        }
-                        list.add(element);
-                    }
-                    else if (matchedOnce && optimized) {
-                        // the optimization check assumes that source content is sorted
-                        // such as all matching elements are building a consecutive segment in the source content.
-                        // If at least one match occurred and current element does not match any more,
-                        // => there are no matching elements left in the source content, hence break the loop
-                        break;
-                    }
-                }
-                dynamicContent.setElements(list);
-                dynamicContent.set(DynamicContentStatus.MASTER, false);
+                throw new UnsupportedOperationException();
             }
         }
 
@@ -108,18 +88,5 @@ public abstract class DynamicSubcontentLoader<
     }
 
     @Nullable
-    protected DynamicContentLoader<T, M> createAlternativeLoader() {
-        return null;
-    }
-
-    @Nullable
-    protected static String getObjectName(DBObject object) {
-        return Safe.call(object, o -> o.getName());
-    }
-
-    @Nullable
-    protected static String getSchemaName(DBSchemaObject object) {
-        DBSchema schema = object == null ? null : object.getSchema();
-        return schema == null ? null : schema.getName();
-    }
+    protected abstract DynamicContentLoader<T, M> createAlternativeLoader();
 }

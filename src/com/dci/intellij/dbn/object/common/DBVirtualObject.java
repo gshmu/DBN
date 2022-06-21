@@ -2,7 +2,7 @@ package com.dci.intellij.dbn.object.common;
 
 import com.dci.intellij.dbn.code.common.lookup.LookupItemBuilder;
 import com.dci.intellij.dbn.code.common.lookup.ObjectLookupItemBuilder;
-import com.dci.intellij.dbn.common.content.DynamicContentStatus;
+import com.dci.intellij.dbn.common.content.DynamicContentProperty;
 import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.common.latent.Latent;
 import com.dci.intellij.dbn.common.path.Node;
@@ -269,16 +269,16 @@ public class DBVirtualObject extends DBObjectImpl implements PsiReference {
         }
 
         if (objectList == null) {
-            objectList = childObjects.createObjectList(objectType, this, DynamicContentStatus.MUTABLE);
+            objectList = childObjects.createObjectList(objectType, this, DynamicContentProperty.MUTABLE);
             if (objectList != null) {
                 // mark as loaded so default loading mechanism does not kick in.
-                objectList.set(DynamicContentStatus.LOADED, true);
+                objectList.set(DynamicContentProperty.LOADED, true);
             }
         }
 
         if (objectList != null && objectList.isEmpty()) {
             loadChildObjects(objectType, objectList);
-            objectList.set(DynamicContentStatus.LOADED, true);
+            objectList.set(DynamicContentProperty.LOADED, true);
         }
         return objectList;
     }

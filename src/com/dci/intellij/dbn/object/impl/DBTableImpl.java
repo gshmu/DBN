@@ -4,10 +4,8 @@ import com.dci.intellij.dbn.browser.DatabaseBrowserUtils;
 import com.dci.intellij.dbn.browser.model.BrowserTreeNode;
 import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.common.content.DynamicContent;
-import com.dci.intellij.dbn.common.content.loader.DynamicContentLoader;
 import com.dci.intellij.dbn.common.content.loader.DynamicContentResultSetLoader;
 import com.dci.intellij.dbn.common.content.loader.DynamicSubcontentLoader;
-import com.dci.intellij.dbn.common.util.Commons;
 import com.dci.intellij.dbn.connection.jdbc.DBNConnection;
 import com.dci.intellij.dbn.database.DatabaseMetadataInterface;
 import com.dci.intellij.dbn.database.common.metadata.def.DBNestedTableMetadata;
@@ -193,17 +191,8 @@ public class DBTableImpl extends DBDatasetImpl<DBTableMetadata> implements DBTab
      *                         Loaders                       *
      *********************************************************/
     static {
-        new DynamicSubcontentLoader<DBNestedTable, DBNestedTableMetadata>(TABLE, NESTED_TABLE, true) {
-
-            @Override
-            public boolean match(DBNestedTable nestedTable, DynamicContent dynamicContent) {
-                DBTable table = dynamicContent.getParentEntity();
-                return Commons.match(nestedTable.getTable(), table);
-            }
-
-            @Override
-            public DynamicContentLoader<DBNestedTable, DBNestedTableMetadata> createAlternativeLoader() {
-                return new DynamicContentResultSetLoader<DBNestedTable, DBNestedTableMetadata>(TABLE, NESTED_TABLE, false, true) {
+        DynamicSubcontentLoader.create(TABLE, NESTED_TABLE, () ->
+                new DynamicContentResultSetLoader<DBNestedTable, DBNestedTableMetadata>(TABLE, NESTED_TABLE, false, true) {
 
                     @Override
                     public ResultSet createResultSet(DynamicContent<DBNestedTable> dynamicContent, DBNConnection connection) throws SQLException {
@@ -220,8 +209,6 @@ public class DBTableImpl extends DBDatasetImpl<DBTableMetadata> implements DBTab
                         DBTable table = content.getParentEntity();
                         return new DBNestedTableImpl(table, metadata);
                     }
-                };
-            }
-        };
+                });
     }
 }

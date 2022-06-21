@@ -2,11 +2,8 @@ package com.dci.intellij.dbn.object.impl;
 
 import com.dci.intellij.dbn.browser.ui.HtmlToolTipBuilder;
 import com.dci.intellij.dbn.common.content.DynamicContent;
-import com.dci.intellij.dbn.common.content.DynamicContentElement;
-import com.dci.intellij.dbn.common.content.loader.DynamicContentLoader;
 import com.dci.intellij.dbn.common.content.loader.DynamicContentResultSetLoader;
 import com.dci.intellij.dbn.common.content.loader.DynamicSubcontentLoader;
-import com.dci.intellij.dbn.common.util.Commons;
 import com.dci.intellij.dbn.common.util.Safe;
 import com.dci.intellij.dbn.connection.jdbc.DBNConnection;
 import com.dci.intellij.dbn.data.type.DBDataType;
@@ -131,18 +128,8 @@ public abstract class DBDatasetImpl<M extends DBObjectMetadata> extends DBSchema
      *********************************************************/
 
     static {
-        new DynamicSubcontentLoader<DBColumn, DBColumnMetadata>(DATASET, COLUMN, true) {
-
-            @Override
-            public boolean match(DBColumn column, DynamicContent dynamicContent) {
-                DBDataset dataset = dynamicContent.getParentEntity();
-                return Commons.match(column.getDataset(), dataset);
-            }
-
-            @Override
-            public DynamicContentLoader<DBColumn, DBColumnMetadata> createAlternativeLoader() {
-                return new DynamicContentResultSetLoader<DBColumn, DBColumnMetadata>(DATASET, COLUMN, false, true) {
-
+        DynamicSubcontentLoader.create(DATASET, COLUMN, () ->
+                new DynamicContentResultSetLoader<DBColumn, DBColumnMetadata>(DATASET, COLUMN, false, true) {
                     @Override
                     public ResultSet createResultSet(DynamicContent<DBColumn> dynamicContent, DBNConnection connection) throws SQLException {
                         DatabaseMetadataInterface metadataInterface = dynamicContent.getMetadataInterface();
@@ -158,23 +145,10 @@ public abstract class DBDatasetImpl<M extends DBObjectMetadata> extends DBSchema
                         DBDataset dataset = content.getParentEntity();
                         return dataset == null ? null : new DBColumnImpl(dataset, metadata);
                     }
-                };
-            }
-        };
+                });
 
-        new DynamicSubcontentLoader<DBConstraint, DBConstraintMetadata>(DATASET, CONSTRAINT, true) {
-
-            @Override
-            public boolean match(DBConstraint constraint, DynamicContent dynamicContent) {
-                DBDataset dataset = dynamicContent.getParentEntity();
-                DBDataset constraintDataset = constraint.getDataset();
-                return Commons.match(constraintDataset, dataset);
-            }
-
-            @Override
-            public DynamicContentLoader<DBConstraint, DBConstraintMetadata> createAlternativeLoader() {
-                return new DynamicContentResultSetLoader<DBConstraint, DBConstraintMetadata>(DATASET, CONSTRAINT, false, true) {
-
+        DynamicSubcontentLoader.create(DATASET, CONSTRAINT, () ->
+                new DynamicContentResultSetLoader<DBConstraint, DBConstraintMetadata>(DATASET, CONSTRAINT, false, true) {
                     @Override
                     public ResultSet createResultSet(DynamicContent<DBConstraint> dynamicContent, DBNConnection connection) throws SQLException {
                         DatabaseMetadataInterface metadataInterface = dynamicContent.getMetadataInterface();
@@ -190,22 +164,10 @@ public abstract class DBDatasetImpl<M extends DBObjectMetadata> extends DBSchema
                         DBDataset dataset = content.getParentEntity();
                         return new DBConstraintImpl(dataset, metadata);
                     }
-                };
+                });
 
-            }
-        };
-
-        new DynamicSubcontentLoader<DBDatasetTrigger, DBTriggerMetadata>(DATASET, DATASET_TRIGGER, true) {
-
-            @Override
-            public boolean match(DBDatasetTrigger trigger, DynamicContent dynamicContent) {
-                DBDataset dataset = dynamicContent.getParentEntity();
-                return Commons.match(trigger.getDataset(), dataset);
-            }
-
-            @Override
-            public DynamicContentLoader<DBDatasetTrigger, DBTriggerMetadata> createAlternativeLoader() {
-                return new DynamicContentResultSetLoader<DBDatasetTrigger, DBTriggerMetadata>(DATASET, DATASET_TRIGGER, false, true) {
+        DynamicSubcontentLoader.create(DATASET, DATASET_TRIGGER, () ->
+                new DynamicContentResultSetLoader<DBDatasetTrigger, DBTriggerMetadata>(DATASET, DATASET_TRIGGER, false, true) {
 
                     @Override
                     public ResultSet createResultSet(DynamicContent<DBDatasetTrigger> dynamicContent, DBNConnection connection) throws SQLException {
@@ -222,22 +184,10 @@ public abstract class DBDatasetImpl<M extends DBObjectMetadata> extends DBSchema
                         DBDataset dataset = content.getParentEntity();
                         return new DBDatasetTriggerImpl(dataset, metadata);
                     }
-                };
-            }
-        };
+                });
 
-        new DynamicSubcontentLoader<DBIndex, DBIndexMetadata>(DATASET, INDEX, true) {
-
-            @Override
-            public boolean match(DBIndex index, DynamicContent dynamicContent) {
-                DBDataset dataset = dynamicContent.getParentEntity();
-                DBDataset indexDataset = index.getDataset();
-                return Commons.match(indexDataset, dataset);
-            }
-
-            @Override
-            public DynamicContentLoader<DBIndex, DBIndexMetadata> createAlternativeLoader() {
-                return new DynamicContentResultSetLoader<DBIndex, DBIndexMetadata>(DATASET, INDEX, false, true) {
+        DynamicSubcontentLoader.create(DATASET, INDEX, () ->
+                new DynamicContentResultSetLoader<DBIndex, DBIndexMetadata>(DATASET, INDEX, false, true) {
 
                     @Override
                     public ResultSet createResultSet(DynamicContent<DBIndex> dynamicContent, DBNConnection connection) throws SQLException {
@@ -254,22 +204,11 @@ public abstract class DBDatasetImpl<M extends DBObjectMetadata> extends DBSchema
                         DBDataset dataset = content.getParentEntity();
                         return new DBIndexImpl(dataset, provider);
                     }
-                };
-            }
-        };
+                });
 
-        new DynamicSubcontentLoader(DATASET, INDEX_COLUMN, true) {
-            @Override
-            public boolean match(DynamicContentElement sourceElement, DynamicContent dynamicContent) {
-                DBIndexColumnRelation indexColumnRelation = (DBIndexColumnRelation) sourceElement;
-                DBDataset dataset = dynamicContent.getParentEntity();
-                DBDataset columnDataset = indexColumnRelation.getColumn().getDataset();
-                return Commons.match(columnDataset, dataset);
-            }
 
-            @Override
-            public DynamicContentLoader<DBIndexColumnRelation, DBIndexColumnMetadata> createAlternativeLoader() {
-                return new DynamicContentResultSetLoader<DBIndexColumnRelation, DBIndexColumnMetadata>(DATASET, INDEX_COLUMN, false, false) {
+        DynamicSubcontentLoader.create(DATASET, INDEX_COLUMN, () ->
+                new DynamicContentResultSetLoader<DBIndexColumnRelation, DBIndexColumnMetadata>(DATASET, INDEX_COLUMN, false, false) {
 
                     @Override
                     public ResultSet createResultSet(DynamicContent<DBIndexColumnRelation> dynamicContent, DBNConnection connection) throws SQLException {
@@ -294,25 +233,10 @@ public abstract class DBDatasetImpl<M extends DBObjectMetadata> extends DBSchema
                         }
                         return null;
                     }
-                };
+                });
 
-            }
-        };
-
-        new DynamicSubcontentLoader(DATASET, CONSTRAINT_COLUMN, true) {
-
-            @Override
-            public boolean match(DynamicContentElement sourceElement, DynamicContent dynamicContent) {
-                DBConstraintColumnRelation constraintColumnRelation = (DBConstraintColumnRelation) sourceElement;
-                DBDataset dataset = dynamicContent.getParentEntity();
-                DBColumn column = constraintColumnRelation.getColumn();
-                DBDataset columnDataset = Safe.call(column, c -> c.getDataset());
-                return Commons.match(columnDataset, dataset);
-            }
-
-            @Override
-            public DynamicContentLoader<DBConstraintColumnRelation, DBConstraintColumnMetadata> createAlternativeLoader() {
-                return new DynamicContentResultSetLoader<DBConstraintColumnRelation, DBConstraintColumnMetadata>(DATASET, CONSTRAINT_COLUMN, false, false) {
+        DynamicSubcontentLoader.create(DATASET, CONSTRAINT_COLUMN, () ->
+                new DynamicContentResultSetLoader<DBConstraintColumnRelation, DBConstraintColumnMetadata>(DATASET, CONSTRAINT_COLUMN, false, false) {
 
                     @Override
                     public ResultSet createResultSet(
@@ -345,9 +269,6 @@ public abstract class DBDatasetImpl<M extends DBObjectMetadata> extends DBSchema
                         }
                         return null;
                     }
-                };
-            }
-
-        };
+                });
     }
 }

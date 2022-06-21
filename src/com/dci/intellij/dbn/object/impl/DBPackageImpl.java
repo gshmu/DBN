@@ -5,10 +5,8 @@ import com.dci.intellij.dbn.browser.model.BrowserTreeNode;
 import com.dci.intellij.dbn.browser.ui.HtmlToolTipBuilder;
 import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.common.content.DynamicContent;
-import com.dci.intellij.dbn.common.content.loader.DynamicContentLoader;
 import com.dci.intellij.dbn.common.content.loader.DynamicContentResultSetLoader;
 import com.dci.intellij.dbn.common.content.loader.DynamicSubcontentLoader;
-import com.dci.intellij.dbn.common.util.Commons;
 import com.dci.intellij.dbn.connection.jdbc.DBNConnection;
 import com.dci.intellij.dbn.database.DatabaseMetadataInterface;
 import com.dci.intellij.dbn.database.common.metadata.def.DBFunctionMetadata;
@@ -114,11 +112,8 @@ public class DBPackageImpl
      *                         Loaders                       *
      *********************************************************/
     static {
-        new DynamicSubcontentLoader<DBPackageFunction, DBFunctionMetadata>(PACKAGE, PACKAGE_FUNCTION, true) {
-
-            @Override
-            public DynamicContentLoader<DBPackageFunction, DBFunctionMetadata> createAlternativeLoader() {
-                return new DynamicContentResultSetLoader<DBPackageFunction, DBFunctionMetadata>(PACKAGE, PACKAGE_FUNCTION, false, true) {
+        DynamicSubcontentLoader.create(PACKAGE, PACKAGE_FUNCTION, () ->
+                new DynamicContentResultSetLoader<DBPackageFunction, DBFunctionMetadata>(PACKAGE, PACKAGE_FUNCTION, false, true) {
 
                     @Override
                     public ResultSet createResultSet(DynamicContent<DBPackageFunction> dynamicContent, DBNConnection connection) throws SQLException {
@@ -135,27 +130,10 @@ public class DBPackageImpl
                         DBPackageImpl packagee = content.getParentEntity();
                         return new DBPackageFunctionImpl(packagee, metadata);
                     }
-                };
-            }
+                });
 
-            @Override
-            public boolean match(DBPackageFunction function, DynamicContent dynamicContent) {
-                DBPackage packagee = dynamicContent.getParentEntity();
-                return Commons.match(function.getPackage(), packagee);
-            }
-        };
-
-        new DynamicSubcontentLoader<DBPackageProcedure, DBProcedureMetadata>(PACKAGE, PACKAGE_PROCEDURE, true) {
-
-            @Override
-            public boolean match(DBPackageProcedure procedure, DynamicContent dynamicContent) {
-                DBPackage packagee = dynamicContent.getParentEntity();
-                return Commons.match(procedure.getPackage(), packagee);
-            }
-
-            @Override
-            public DynamicContentLoader<DBPackageProcedure, DBProcedureMetadata> createAlternativeLoader() {
-                return new DynamicContentResultSetLoader<DBPackageProcedure, DBProcedureMetadata>(PACKAGE, PACKAGE_PROCEDURE, false, true) {
+        DynamicSubcontentLoader.create(PACKAGE, PACKAGE_PROCEDURE, () ->
+                new DynamicContentResultSetLoader<DBPackageProcedure, DBProcedureMetadata>(PACKAGE, PACKAGE_PROCEDURE, false, true) {
 
                     @Override
                     public ResultSet createResultSet(DynamicContent<DBPackageProcedure> dynamicContent, DBNConnection connection) throws SQLException {
@@ -172,21 +150,10 @@ public class DBPackageImpl
                         DBPackageImpl packagee = content.getParentEntity();
                         return new DBPackageProcedureImpl(packagee, metadata);
                     }
-                };
-            }
-        };
+                });
 
-        new DynamicSubcontentLoader<DBPackageType, DBTypeMetadata>(PACKAGE, PACKAGE_TYPE, true) {
-
-            @Override
-            public boolean match(DBPackageType type, DynamicContent dynamicContent) {
-                DBPackage packagee = dynamicContent.getParentEntity();
-                return Commons.match(type.getPackage(), packagee);
-            }
-
-            @Override
-            public DynamicContentLoader<DBPackageType, DBTypeMetadata> createAlternativeLoader() {
-                return new DynamicContentResultSetLoader<DBPackageType, DBTypeMetadata>(PACKAGE, PACKAGE_TYPE, false, true) {
+        DynamicSubcontentLoader.create(PACKAGE, PACKAGE_TYPE, () ->
+                new DynamicContentResultSetLoader<DBPackageType, DBTypeMetadata>(PACKAGE, PACKAGE_TYPE, false, true) {
 
                     @Override
                     public ResultSet createResultSet(DynamicContent<DBPackageType> dynamicContent, DBNConnection connection) throws SQLException {
@@ -203,9 +170,7 @@ public class DBPackageImpl
                         DBPackageImpl packagee = content.getParentEntity();
                         return new DBPackageTypeImpl(packagee, metadata);
                     }
-                };
-            }
-        };
+                });
     }
 
     @Override
