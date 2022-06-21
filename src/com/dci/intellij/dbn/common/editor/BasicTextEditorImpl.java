@@ -1,6 +1,5 @@
 package com.dci.intellij.dbn.common.editor;
 
-import com.dci.intellij.dbn.common.action.DataProviders;
 import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.common.dispose.StatefulDisposable;
 import com.dci.intellij.dbn.common.project.ProjectRef;
@@ -9,7 +8,6 @@ import com.dci.intellij.dbn.language.common.WeakRef;
 import com.dci.intellij.dbn.vfs.DatabaseOpenFileDescriptor;
 import com.intellij.codeHighlighting.BackgroundEditorHighlighter;
 import com.intellij.ide.structureView.StructureViewBuilder;
-import com.intellij.openapi.actionSystem.DataProvider;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.fileEditor.FileEditorLocation;
 import com.intellij.openapi.fileEditor.FileEditorState;
@@ -26,10 +24,10 @@ import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import javax.swing.*;
+import javax.swing.JComponent;
 import java.beans.PropertyChangeListener;
 
-public abstract class BasicTextEditorImpl<T extends VirtualFile> extends StatefulDisposable.Base implements BasicTextEditor<T>, StatefulDisposable, DataProvider {
+public abstract class BasicTextEditorImpl<T extends VirtualFile> extends StatefulDisposable.Base implements BasicTextEditor<T>, StatefulDisposable {
     protected TextEditor textEditor;
     private final WeakRef<T> virtualFile;
     private final ProjectRef project;
@@ -45,7 +43,6 @@ public abstract class BasicTextEditorImpl<T extends VirtualFile> extends Statefu
 
         TextEditorProvider textEditorProvider = TextEditorProvider.getInstance();
         textEditor = (TextEditor) textEditorProvider.createEditor(project, virtualFile);
-        DataProviders.register(textEditor.getComponent(), this);
 
         Disposer.register(this, textEditor);
     }
@@ -196,12 +193,6 @@ public abstract class BasicTextEditorImpl<T extends VirtualFile> extends Statefu
     public String toString() {
         T virtualFile = this.virtualFile.get();
         return virtualFile == null ? super.toString() : virtualFile.getPath();
-    }
-
-    @Nullable
-    @Override
-    public Object getData(@NotNull String dataId) {
-        return null;
     }
 
     @Override
