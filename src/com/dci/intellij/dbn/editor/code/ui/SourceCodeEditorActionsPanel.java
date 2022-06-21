@@ -2,8 +2,8 @@ package com.dci.intellij.dbn.editor.code.ui;
 
 import com.dci.intellij.dbn.common.event.ProjectEvents;
 import com.dci.intellij.dbn.common.thread.Dispatch;
-import com.dci.intellij.dbn.common.ui.util.Borders;
 import com.dci.intellij.dbn.common.ui.form.DBNFormBase;
+import com.dci.intellij.dbn.common.ui.util.Borders;
 import com.dci.intellij.dbn.common.util.Actions;
 import com.dci.intellij.dbn.editor.code.SourceCodeEditor;
 import com.dci.intellij.dbn.editor.code.SourceCodeManagerAdapter;
@@ -15,7 +15,6 @@ import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.util.Disposer;
 import com.intellij.util.ui.AsyncProcessIcon;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 import javax.swing.JLabel;
 import javax.swing.JPanel;
@@ -72,15 +71,5 @@ public class SourceCodeEditorActionsPanel extends DBNFormBase {
     @Override
     public JPanel getMainComponent() {
         return mainPanel;
-    }
-
-    @Nullable
-    @Override
-    public Object getData(@NotNull String dataId) {
-        Object data = super.getData(dataId);
-        if (data == null) {
-            return getSourceCodeEditor().getData(dataId);
-        }
-        return data;
     }
 }

@@ -1,6 +1,5 @@
 package com.dci.intellij.dbn.editor.code;
 
-import com.dci.intellij.dbn.common.action.DataProviders;
 import com.dci.intellij.dbn.common.dispose.AlreadyDisposedException;
 import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.common.editor.BasicTextEditor;
@@ -128,8 +127,6 @@ abstract class SourceCodeEditorProviderBase extends BasicTextEditorProvider impl
         Editor editor = sourceCodeEditor.getEditor();
         JComponent editorComponent = editor.getComponent();
         SourceCodeEditorActionsPanel actionsPanel = new SourceCodeEditorActionsPanel(sourceCodeEditor);
-        DataProviders.register(actionsPanel.getComponent(), sourceCodeEditor);
-        //FileEditorManager.getInstance(editor.getProject()).addTopComponent(fileEditor, actionToolbar.getComponent());
         editorComponent.getParent().add(actionsPanel.getComponent(), BorderLayout.NORTH);
     }
 
