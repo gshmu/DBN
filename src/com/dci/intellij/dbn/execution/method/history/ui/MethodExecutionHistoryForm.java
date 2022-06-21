@@ -2,12 +2,12 @@ package com.dci.intellij.dbn.execution.method.history.ui;
 
 import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.common.action.DumbAwareProjectAction;
-import com.dci.intellij.dbn.common.action.Lookup;
+import com.dci.intellij.dbn.common.action.Lookups;
 import com.dci.intellij.dbn.common.dispose.DisposableContainers;
 import com.dci.intellij.dbn.common.thread.Dispatch;
 import com.dci.intellij.dbn.common.thread.Progress;
-import com.dci.intellij.dbn.common.ui.util.Borders;
 import com.dci.intellij.dbn.common.ui.form.DBNFormBase;
+import com.dci.intellij.dbn.common.ui.util.Borders;
 import com.dci.intellij.dbn.common.ui.util.UserInterface;
 import com.dci.intellij.dbn.common.util.Actions;
 import com.dci.intellij.dbn.connection.ConnectionAction;
@@ -185,7 +185,7 @@ public class MethodExecutionHistoryForm extends DBNFormBase {
             MethodExecutionHistoryTree historyTree = getTree();
             List<MethodExecutionInput> executionInputs = historyTree.getModel().getExecutionInputs();
             historyTree.init(executionInputs, state);
-            Project project = Lookup.getProject(e);
+            Project project = Lookups.getProject(e);
             if (project != null) {
                 MethodExecutionManager executionManager = MethodExecutionManager.getInstance(project);
                 executionManager.getExecutionHistory().setGroupEntries(state);

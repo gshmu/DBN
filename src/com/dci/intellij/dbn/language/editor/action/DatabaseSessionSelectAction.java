@@ -1,7 +1,7 @@
 package com.dci.intellij.dbn.language.editor.action;
 
 import com.dci.intellij.dbn.common.action.DumbAwareProjectAction;
-import com.dci.intellij.dbn.common.action.Lookup;
+import com.dci.intellij.dbn.common.action.Lookups;
 import com.dci.intellij.dbn.connection.mapping.FileConnectionContextManager;
 import com.dci.intellij.dbn.connection.session.DatabaseSession;
 import com.dci.intellij.dbn.vfs.file.DBEditableObjectVirtualFile;
@@ -28,7 +28,7 @@ public class DatabaseSessionSelectAction extends DumbAwareProjectAction {
 
     @Override
     protected void actionPerformed(@NotNull AnActionEvent e, @NotNull Project project) {
-        Editor editor = Lookup.getEditor(e);
+        Editor editor = Lookups.getEditor(e);
         if (editor != null) {
             FileConnectionContextManager contextManager = FileConnectionContextManager.getInstance(project);
             contextManager.setDatabaseSession(editor, session);
@@ -38,7 +38,7 @@ public class DatabaseSessionSelectAction extends DumbAwareProjectAction {
     @Override
     protected void update(@NotNull AnActionEvent e, @NotNull Project project) {
         boolean enabled = false;
-        VirtualFile virtualFile = Lookup.getVirtualFile(e);
+        VirtualFile virtualFile = Lookups.getVirtualFile(e);
         if (virtualFile != null) {
             if (virtualFile instanceof DBEditableObjectVirtualFile) {
                 enabled = false;

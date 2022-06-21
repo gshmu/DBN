@@ -2,7 +2,7 @@ package com.dci.intellij.dbn.debugger.common.action;
 
 import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.common.action.DumbAwareProjectAction;
-import com.dci.intellij.dbn.common.action.Lookup;
+import com.dci.intellij.dbn.common.action.Lookups;
 import com.dci.intellij.dbn.common.util.Documents;
 import com.dci.intellij.dbn.common.util.Editors;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
@@ -34,7 +34,7 @@ public class DebugStatementEditorAction extends DumbAwareProjectAction {
 
     @Override
     protected void actionPerformed(@NotNull AnActionEvent e, @NotNull Project project) {
-        Editor editor = Lookup.getEditor(e);
+        Editor editor = Lookups.getEditor(e);
         if (editor != null) {
             VirtualFile virtualFile = Documents.getVirtualFile(editor);
             ExecutablePsiElement executablePsiElement = null;
@@ -74,7 +74,7 @@ public class DebugStatementEditorAction extends DumbAwareProjectAction {
         Presentation presentation = e.getPresentation();
         presentation.setIcon(Icons.STMT_EXECUTION_DEBUG);
         presentation.setText("Debug Statement");
-        Editor editor = Lookup.getEditor(e);
+        Editor editor = Lookups.getEditor(e);
         boolean enabled = false;
         boolean visible = false;
         if (editor != null) {

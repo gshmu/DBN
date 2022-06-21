@@ -1,7 +1,7 @@
 package com.dci.intellij.dbn.language.editor.action;
 
 import com.dci.intellij.dbn.common.action.DumbAwareProjectAction;
-import com.dci.intellij.dbn.common.action.Lookup;
+import com.dci.intellij.dbn.common.action.Lookups;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.ConnectionRef;
 import com.dci.intellij.dbn.connection.mapping.FileConnectionContextManager;
@@ -21,7 +21,7 @@ public class DatabaseSessionCreateAction extends DumbAwareProjectAction {
 
     @Override
     protected void actionPerformed(@NotNull AnActionEvent e, @NotNull Project project) {
-        Editor editor = Lookup.getEditor(e);
+        Editor editor = Lookups.getEditor(e);
         if (editor != null) {
             DatabaseSessionManager sessionManager = DatabaseSessionManager.getInstance(project);
             ConnectionHandler connection = this.connection.ensure();

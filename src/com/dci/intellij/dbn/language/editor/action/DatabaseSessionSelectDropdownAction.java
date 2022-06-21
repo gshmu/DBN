@@ -1,6 +1,6 @@
 package com.dci.intellij.dbn.language.editor.action;
 
-import com.dci.intellij.dbn.common.action.Lookup;
+import com.dci.intellij.dbn.common.action.Lookups;
 import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.common.ui.misc.DBNComboBoxAction;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
@@ -18,7 +18,8 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
 import org.jetbrains.annotations.NotNull;
 
-import javax.swing.*;
+import javax.swing.Icon;
+import javax.swing.JComponent;
 import java.util.List;
 
 public class DatabaseSessionSelectDropdownAction extends DBNComboBoxAction implements DumbAware {
@@ -27,9 +28,9 @@ public class DatabaseSessionSelectDropdownAction extends DBNComboBoxAction imple
     @Override
     @NotNull
     protected DefaultActionGroup createPopupActionGroup(JComponent component) {
-        Project project = Lookup.getProject(component);
+        Project project = Lookups.getProject(component);
         DefaultActionGroup actionGroup = new DefaultActionGroup();
-        VirtualFile virtualFile = Lookup.getVirtualFile(component);
+        VirtualFile virtualFile = Lookups.getVirtualFile(component);
         if (virtualFile != null) {
             ConnectionHandler connection = FileConnectionContextManager.getInstance(project).getConnection(virtualFile);
             if (Failsafe.check(connection) && !connection.isVirtual()) {
@@ -69,8 +70,8 @@ public class DatabaseSessionSelectDropdownAction extends DBNComboBoxAction imple
 
     @Override
     public void update(@NotNull AnActionEvent e) {
-        Project project = Lookup.getProject(e);
-        VirtualFile virtualFile = Lookup.getVirtualFile(e);
+        Project project = Lookups.getProject(e);
+        VirtualFile virtualFile = Lookups.getVirtualFile(e);
         String text = NAME;
 
         Icon icon = null;

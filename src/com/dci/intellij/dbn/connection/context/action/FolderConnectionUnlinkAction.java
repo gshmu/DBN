@@ -1,6 +1,6 @@
 package com.dci.intellij.dbn.connection.context.action;
 
-import com.dci.intellij.dbn.common.action.Lookup;
+import com.dci.intellij.dbn.common.action.Lookups;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.mapping.FileConnectionContext;
 import com.dci.intellij.dbn.connection.mapping.FileConnectionContextManager;
@@ -14,7 +14,7 @@ public class FolderConnectionUnlinkAction extends AbstractFolderContextAction {
 
     @Override
     protected void actionPerformed(@NotNull AnActionEvent e, @NotNull Project project) {
-        VirtualFile file = Lookup.getVirtualFile(e);
+        VirtualFile file = Lookups.getVirtualFile(e);
         if (isAvailableFor(file, project)) {
             FileConnectionContextManager contextManager = getContextManager(project);
             contextManager.removeMapping(file);
@@ -28,7 +28,7 @@ public class FolderConnectionUnlinkAction extends AbstractFolderContextAction {
     @Override
     protected void update(@NotNull AnActionEvent e, @NotNull Project project) {
         Presentation presentation = e.getPresentation();
-        VirtualFile file = Lookup.getVirtualFile(e);
+        VirtualFile file = Lookups.getVirtualFile(e);
         boolean visible = isAvailableFor(file, project);
         presentation.setVisible(visible);
         String text = "Remove Connection Association";

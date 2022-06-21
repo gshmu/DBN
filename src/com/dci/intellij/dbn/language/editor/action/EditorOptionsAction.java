@@ -2,7 +2,7 @@ package com.dci.intellij.dbn.language.editor.action;
 
 import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.common.action.GroupPopupAction;
-import com.dci.intellij.dbn.common.action.Lookup;
+import com.dci.intellij.dbn.common.action.Lookups;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.database.DatabaseFeature;
 import com.dci.intellij.dbn.options.ConfigId;
@@ -28,7 +28,7 @@ public class EditorOptionsAction extends GroupPopupAction {
     @Override
     protected AnAction[] getActions(AnActionEvent e) {
         List<AnAction> actions = new ArrayList<>();
-        VirtualFile virtualFile = Lookup.getVirtualFile(e);
+        VirtualFile virtualFile = Lookups.getVirtualFile(e);
         if (virtualFile instanceof DBConsoleVirtualFile) {
             actions.add(new ConsoleRenameAction());
             actions.add(new ConsoleDeleteAction());
@@ -54,7 +54,7 @@ public class EditorOptionsAction extends GroupPopupAction {
     @Override
     protected void update(@NotNull AnActionEvent e, @NotNull Project project) {
         Presentation presentation = e.getPresentation();
-        VirtualFile virtualFile = Lookup.getVirtualFile(e);
+        VirtualFile virtualFile = Lookups.getVirtualFile(e);
         presentation.setVisible(virtualFile instanceof DBConsoleVirtualFile);
     }
 }

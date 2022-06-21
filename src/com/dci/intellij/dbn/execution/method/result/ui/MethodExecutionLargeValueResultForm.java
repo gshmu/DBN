@@ -1,9 +1,9 @@
 package com.dci.intellij.dbn.execution.method.result.ui;
 
 import com.dci.intellij.dbn.common.action.DumbAwareProjectAction;
-import com.dci.intellij.dbn.common.action.Lookup;
-import com.dci.intellij.dbn.common.ui.misc.DBNComboBoxAction;
+import com.dci.intellij.dbn.common.action.Lookups;
 import com.dci.intellij.dbn.common.ui.form.DBNFormBase;
+import com.dci.intellij.dbn.common.ui.misc.DBNComboBoxAction;
 import com.dci.intellij.dbn.common.util.Actions;
 import com.dci.intellij.dbn.common.util.Editors;
 import com.dci.intellij.dbn.common.util.Messages;
@@ -109,7 +109,7 @@ public class MethodExecutionLargeValueResultForm extends DBNFormBase {
         @Override
         @NotNull
         protected DefaultActionGroup createPopupActionGroup(JComponent button) {
-            Project project = Lookup.getProject(button);
+            Project project = Lookups.getProject(button);
             DataEditorQualifiedEditorSettings qualifiedEditorSettings = DataEditorSettings.getInstance(project).getQualifiedEditorSettings();
 
             DefaultActionGroup actionGroup = new DefaultActionGroup();

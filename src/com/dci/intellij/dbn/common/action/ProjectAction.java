@@ -30,7 +30,7 @@ public abstract class ProjectAction extends AnAction {
         try {
             Project project = Commons.coalesce(
                     () -> getProject(),
-                    () -> Lookup.getProject(e));
+                    () -> Lookups.getProject(e));
             if (Failsafe.check(project)) {
                 actionPerformed(e, project);
             }
@@ -48,7 +48,7 @@ public abstract class ProjectAction extends AnAction {
     @Override
     public final void update(@NotNull AnActionEvent e) {
         try {
-            Project project = Lookup.getProject(e);
+            Project project = Lookups.getProject(e);
             if (Failsafe.check(project)) {
                 Cancellable.run(() -> update(e, project));
             }

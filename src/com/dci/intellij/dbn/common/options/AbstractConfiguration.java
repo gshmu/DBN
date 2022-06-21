@@ -1,6 +1,6 @@
 package com.dci.intellij.dbn.common.options;
 
-import com.dci.intellij.dbn.common.action.Lookup;
+import com.dci.intellij.dbn.common.action.Lookups;
 import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.common.options.ui.ConfigurationEditorForm;
 import com.dci.intellij.dbn.common.project.ProjectSupplier;
@@ -61,7 +61,7 @@ public abstract class AbstractConfiguration<P extends Configuration, E extends C
 
         ConfigurationEditorForm settingsEditor = this.getSettingsEditor();
         if (Failsafe.check(settingsEditor)) {
-            return Lookup.getProject(settingsEditor.getComponent());
+            return Lookups.getProject(settingsEditor.getComponent());
         }
         return null;
     }

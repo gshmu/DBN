@@ -2,7 +2,7 @@ package com.dci.intellij.dbn.execution.script.action;
 
 import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.common.action.DumbAwareProjectAction;
-import com.dci.intellij.dbn.common.action.Lookup;
+import com.dci.intellij.dbn.common.action.Lookups;
 import com.dci.intellij.dbn.common.util.Documents;
 import com.dci.intellij.dbn.debugger.DatabaseDebuggerManager;
 import com.dci.intellij.dbn.execution.script.ScriptExecutionManager;
@@ -21,7 +21,7 @@ public class ExecuteScriptEditorAction extends DumbAwareProjectAction {
 
     @Override
     protected void actionPerformed(@NotNull AnActionEvent e, @NotNull Project project) {
-        Editor editor = Lookup.getEditor(e);
+        Editor editor = Lookups.getEditor(e);
         if (editor != null) {
             FileDocumentManager.getInstance().saveDocument(editor.getDocument());
             ScriptExecutionManager scriptExecutionManager = ScriptExecutionManager.getInstance(project);
@@ -40,13 +40,13 @@ public class ExecuteScriptEditorAction extends DumbAwareProjectAction {
     }
 
     private static boolean isVisible(AnActionEvent e) {
-        VirtualFile virtualFile = Lookup.getVirtualFile(e);
+        VirtualFile virtualFile = Lookups.getVirtualFile(e);
         return !DatabaseDebuggerManager.isDebugConsole(virtualFile);
     }
 
     private static boolean isEnabled(AnActionEvent e) {
-        Project project = Lookup.getProject(e);
-        Editor editor = Lookup.getEditor(e);
+        Project project = Lookups.getProject(e);
+        Editor editor = Lookups.getEditor(e);
         if (project == null || editor == null) {
             return false;
         } else {

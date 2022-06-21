@@ -1,6 +1,6 @@
 package com.dci.intellij.dbn.language.editor.action;
 
-import com.dci.intellij.dbn.common.action.Lookup;
+import com.dci.intellij.dbn.common.action.Lookups;
 import com.dci.intellij.dbn.options.ConfigId;
 import com.dci.intellij.dbn.options.action.ProjectSettingsOpenAction;
 import com.dci.intellij.dbn.vfs.file.DBConsoleVirtualFile;
@@ -19,7 +19,7 @@ public class EditorSettingsOpenAction extends ProjectSettingsOpenAction {
     protected void update(@NotNull AnActionEvent e, @NotNull Project project) {
         super.update(e, project);
         Presentation presentation = e.getPresentation();
-        VirtualFile virtualFile = Lookup.getVirtualFile(e);
+        VirtualFile virtualFile = Lookups.getVirtualFile(e);
         presentation.setVisible(!(virtualFile instanceof DBConsoleVirtualFile));
     }
 }
