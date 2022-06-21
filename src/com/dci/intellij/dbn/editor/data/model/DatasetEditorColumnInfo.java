@@ -33,12 +33,12 @@ public class DatasetEditorColumnInfo extends ResultSetColumnInfo {
     private volatile List<String> possibleValues;
 
     @EqualsAndHashCode.Exclude
-    private final RefreshableValue<Boolean> trackingColumn = new RefreshableValue<Boolean>(2000) {
+    private final RefreshableValue<Boolean> auditColumn = new RefreshableValue<Boolean>(2000) {
         @Override
         protected Boolean load() {
             DBColumn column = getColumn();
             Project project = column.getProject();
-            return DataGridSettings.getInstance(project).getTrackingColumnSettings().isTrackingColumn(column.getName());
+            return DataGridSettings.getInstance(project).getAuditColumnSettings().isAuditColumn(column.getName());
         }
     };
 
@@ -54,8 +54,8 @@ public class DatasetEditorColumnInfo extends ResultSetColumnInfo {
         return DBObjectRef.ensure(columnRef);
     }
 
-    public boolean isTrackingColumn() {
-        return trackingColumn.get();
+    public boolean isAuditColumn() {
+        return auditColumn.get();
     }
 
     public List<String> getPossibleValues() {

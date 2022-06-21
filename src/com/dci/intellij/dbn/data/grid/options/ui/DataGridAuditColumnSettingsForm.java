@@ -4,8 +4,8 @@ import com.dci.intellij.dbn.common.event.ProjectEvents;
 import com.dci.intellij.dbn.common.options.SettingsChangeNotifier;
 import com.dci.intellij.dbn.common.options.ui.ConfigurationEditorForm;
 import com.dci.intellij.dbn.common.ui.list.EditableStringListForm;
+import com.dci.intellij.dbn.data.grid.options.DataGridAuditColumnSettings;
 import com.dci.intellij.dbn.data.grid.options.DataGridSettingsChangeListener;
-import com.dci.intellij.dbn.data.grid.options.DataGridTrackingColumnSettings;
 import com.intellij.openapi.options.ConfigurationException;
 import com.intellij.openapi.project.Project;
 import org.jetbrains.annotations.NotNull;
@@ -17,7 +17,7 @@ import java.awt.BorderLayout;
 import java.awt.event.ActionListener;
 import java.util.Collection;
 
-public class DataGridTrackingColumnSettingsForm extends ConfigurationEditorForm<DataGridTrackingColumnSettings> {
+public class DataGridAuditColumnSettingsForm extends ConfigurationEditorForm<DataGridAuditColumnSettings> {
     private JPanel mainPanel;
     private JCheckBox visibleCheckBox;
     private JCheckBox editableCheckBox;
@@ -25,9 +25,9 @@ public class DataGridTrackingColumnSettingsForm extends ConfigurationEditorForm<
 
     private EditableStringListForm editableStringListForm;
 
-    public DataGridTrackingColumnSettingsForm(DataGridTrackingColumnSettings settings) {
+    public DataGridAuditColumnSettingsForm(DataGridAuditColumnSettings settings) {
         super(settings);
-        editableStringListForm = new EditableStringListForm(this, "Tracking column names", true);
+        editableStringListForm = new EditableStringListForm(this, "Audit column names", true);
         JComponent listComponent = editableStringListForm.getComponent();
         columnNameListPanel.add(listComponent, BorderLayout.CENTER);
 
@@ -54,10 +54,10 @@ public class DataGridTrackingColumnSettingsForm extends ConfigurationEditorForm<
 
     @Override
     public void applyFormChanges() throws ConfigurationException {
-        DataGridTrackingColumnSettings configuration = getConfiguration();
-        boolean trackingColumnsVisible = visibleCheckBox.isSelected();
-        boolean visibilityChanged = configuration.isShowColumns() != trackingColumnsVisible;
-        configuration.setShowColumns(trackingColumnsVisible);
+        DataGridAuditColumnSettings configuration = getConfiguration();
+        boolean auditColumnsVisible = visibleCheckBox.isSelected();
+        boolean visibilityChanged = configuration.isShowColumns() != auditColumnsVisible;
+        configuration.setShowColumns(auditColumnsVisible);
         configuration.setAllowEditing(editableCheckBox.isSelected());
 
         configuration.setColumnNames(editableStringListForm.getStringValues());
@@ -67,14 +67,14 @@ public class DataGridTrackingColumnSettingsForm extends ConfigurationEditorForm<
             if (visibilityChanged) {
                 ProjectEvents.notify(project,
                         DataGridSettingsChangeListener.TOPIC,
-                        (listener) -> listener.trackingColumnsVisibilityChanged(trackingColumnsVisible));
+                        (listener) -> listener.auditDataVisibilityChanged(auditColumnsVisible));
             }
         });
     }
 
     @Override
     public void resetFormChanges() {
-        DataGridTrackingColumnSettings settings = getConfiguration();
+        DataGridAuditColumnSettings settings = getConfiguration();
         visibleCheckBox.setSelected(settings.isShowColumns());
         editableCheckBox.setSelected(settings.isAllowEditing());
         Collection<String> columnNamesSet = settings.getColumnNames();

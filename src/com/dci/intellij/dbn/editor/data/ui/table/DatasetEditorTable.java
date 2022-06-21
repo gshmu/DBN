@@ -9,7 +9,7 @@ import com.dci.intellij.dbn.common.ui.util.Mouse;
 import com.dci.intellij.dbn.common.ui.util.UserInterface;
 import com.dci.intellij.dbn.common.util.Actions;
 import com.dci.intellij.dbn.common.util.Messages;
-import com.dci.intellij.dbn.data.grid.options.DataGridTrackingColumnSettings;
+import com.dci.intellij.dbn.data.grid.options.DataGridAuditColumnSettings;
 import com.dci.intellij.dbn.data.grid.ui.table.basic.BasicTableCellRenderer;
 import com.dci.intellij.dbn.data.grid.ui.table.basic.BasicTableGutter;
 import com.dci.intellij.dbn.data.grid.ui.table.resultSet.ResultSetTable;
@@ -276,10 +276,10 @@ public class DatasetEditorTable extends ResultSetTable<DatasetEditorModel> {
         int modelColumnIndex = getModelColumnIndex(columnIndex);
         ColumnInfo columnInfo = getModel().getColumnInfo(modelColumnIndex);
 
-        DataGridTrackingColumnSettings trackingColumnSettings = getDataGridSettings().getTrackingColumnSettings();
-        if (!trackingColumnSettings.isAllowEditing()) {
-            boolean isTrackingColumn = trackingColumnSettings.isTrackingColumn(columnInfo.getName());
-            if (isTrackingColumn) return null;
+        DataGridAuditColumnSettings auditColumnSettings = getDataGridSettings().getAuditColumnSettings();
+        if (!auditColumnSettings.isAllowEditing()) {
+            boolean auditColumn = auditColumnSettings.isAuditColumn(columnInfo.getName());
+            if (auditColumn) return null;
         }
 
         return cellEditorFactory.getCellEditor(columnInfo, this);

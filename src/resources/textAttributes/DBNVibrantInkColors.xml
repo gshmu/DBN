@@ -10,7 +10,7 @@
             <option name="BACKGROUND" value="323232"/>
         </value>
     </option>
-    <option name="DBNavigator.DefaultTextAttributes.DataEditor.TrackingData">
+    <option name="DBNavigator.DefaultTextAttributes.DataEditor.AuditData">
         <value>
             <option name="FOREGROUND" value="6A6A6A"/>
             <option name="BACKGROUND" value="000000"/>

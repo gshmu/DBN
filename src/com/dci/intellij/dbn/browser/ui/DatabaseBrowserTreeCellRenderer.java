@@ -112,7 +112,7 @@ public class DatabaseBrowserTreeCellRenderer implements TreeCellRenderer {
                     if (!showGrey && treeNode instanceof DBColumn) {
                         DBColumn column = (DBColumn) treeNode;
                         DataGridSettings dataGridSettings = DataGridSettings.getInstance(treeNode.getProject());
-                        showGrey = dataGridSettings.getTrackingColumnSettings().isTrackingColumn(column.getName());
+                        showGrey = dataGridSettings.getAuditColumnSettings().isAuditColumn(column.getName());
                     }
 
                     SimpleTextAttributes textAttributes =

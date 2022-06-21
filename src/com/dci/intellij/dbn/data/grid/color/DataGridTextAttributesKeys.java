@@ -6,12 +6,12 @@ import com.intellij.openapi.editor.colors.EditorColorsManager;
 import com.intellij.openapi.editor.colors.TextAttributesKey;
 import com.intellij.ui.JBColor;
 
-import java.awt.*;
+import java.awt.Color;
 
 public interface DataGridTextAttributesKeys {
     TextAttributesKey DEFAULT_PLAIN_DATA     = TextAttributesKey.createTextAttributesKey("DBNavigator.DefaultTextAttributes.DataEditor.PlainData");
     TextAttributesKey DEFAULT_CARET_ROW      = TextAttributesKey.createTextAttributesKey("DBNavigator.DefaultTextAttributes.DataEditor.CaretRow");
-    TextAttributesKey DEFAULT_TRACKING_DATA  = TextAttributesKey.createTextAttributesKey("DBNavigator.DefaultTextAttributes.DataEditor.TrackingData");
+    TextAttributesKey DEFAULT_AUDIT_DATA = TextAttributesKey.createTextAttributesKey("DBNavigator.DefaultTextAttributes.DataEditor.AuditData");
     TextAttributesKey DEFAULT_MODIFIED_DATA  = TextAttributesKey.createTextAttributesKey("DBNavigator.DefaultTextAttributes.DataEditor.ModifiedData");
     TextAttributesKey DEFAULT_DELETED_DATA   = TextAttributesKey.createTextAttributesKey("DBNavigator.DefaultTextAttributes.DataEditor.DeletedData");
     TextAttributesKey DEFAULT_ERROR_DATA     = TextAttributesKey.createTextAttributesKey("DBNavigator.DefaultTextAttributes.DataEditor.ErrorData");
@@ -35,7 +35,7 @@ public interface DataGridTextAttributesKeys {
     }
     TextAttributesKey PLAIN_DATA     = TextAttributesKey.createTextAttributesKey("DBNavigator.TextAttributes.DataEditor.PlainData",    DEFAULT_PLAIN_DATA);
     TextAttributesKey CARET_ROW      = TextAttributesKey.createTextAttributesKey("DBNavigator.TextAttributes.DataEditor.CaretRow",     DEFAULT_CARET_ROW);
-    TextAttributesKey TRACKING_DATA  = TextAttributesKey.createTextAttributesKey("DBNavigator.TextAttributes.DataEditor.TrackingData", DEFAULT_TRACKING_DATA);
+    TextAttributesKey AUDIT_DATA     = TextAttributesKey.createTextAttributesKey("DBNavigator.TextAttributes.DataEditor.AuditData",    DEFAULT_AUDIT_DATA);
     TextAttributesKey MODIFIED_DATA  = TextAttributesKey.createTextAttributesKey("DBNavigator.TextAttributes.DataEditor.ModifiedData", DEFAULT_MODIFIED_DATA);
     TextAttributesKey DELETED_DATA   = TextAttributesKey.createTextAttributesKey("DBNavigator.TextAttributes.DataEditor.DeletedData",  DEFAULT_DELETED_DATA);
     TextAttributesKey ERROR_DATA     = TextAttributesKey.createTextAttributesKey("DBNavigator.TextAttributes.DataEditor.ErrorData",    DEFAULT_ERROR_DATA);
