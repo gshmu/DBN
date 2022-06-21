@@ -14,7 +14,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 
-public interface DynamicContent<T extends DynamicContentElement> extends StatefulDisposable, PropertyHolder<DynamicContentStatus>, DatabaseEntity {
+public interface DynamicContent<T extends DynamicContentElement> extends StatefulDisposable, PropertyHolder<DynamicContentProperty>, DatabaseEntity {
 
     /**
      * Loads the content. It is typically called every time the content is queried.

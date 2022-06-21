@@ -1,6 +1,8 @@
 package com.dci.intellij.dbn.common.content;
 
-public interface DynamicContentType<T extends DynamicContentType<T>> {
+import com.dci.intellij.dbn.common.constant.Constant;
+
+public interface DynamicContentType<T extends DynamicContentType<T>> extends Constant<T> {
     default boolean matches(T contentType) {
         return false;
     }

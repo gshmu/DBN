@@ -138,9 +138,8 @@ public final class FixedArrayList<T> implements List<T>, RandomAccess, Serializa
 
     @NotNull
     @Override
-    public List<T> subList(int i, int i1) {
-        // TODO support
-        throw new UnsupportedOperationException();
+    public List<T> subList(int from, int to) {
+        return cast(Arrays.asList(Arrays.copyOfRange(elements, from, to)));
     }
 
 

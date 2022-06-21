@@ -4,30 +4,27 @@ import com.dci.intellij.dbn.common.dispose.StatefulDisposable;
 import com.dci.intellij.dbn.object.common.DBObject;
 import com.dci.intellij.dbn.object.lookup.DBObjectRef;
 import com.dci.intellij.dbn.object.type.DBObjectRelationType;
+import lombok.Getter;
 import org.jetbrains.annotations.NotNull;
 
 import static com.dci.intellij.dbn.common.util.Commons.nvl;
 
+@Getter
 public abstract class DBObjectRelationImpl<S extends DBObject, T extends DBObject> extends StatefulDisposable.Base implements DBObjectRelation<S, T> {
 
-    private final DBObjectRelationType objectRelationType;
+    private final DBObjectRelationType relationType;
     private final DBObjectRef<S> sourceObject;
     private final DBObjectRef<T> targetObject;
 
-    public DBObjectRelationImpl(DBObjectRelationType objectRelationType, S sourceObject, T targetObject) {
-        this.objectRelationType = objectRelationType;
-        assert sourceObject.getObjectType() == objectRelationType.getSourceType();
-        assert targetObject.getObjectType() == objectRelationType.getTargetType();
+    public DBObjectRelationImpl(DBObjectRelationType relationType, S sourceObject, T targetObject) {
+        this.relationType = relationType;
+        assert sourceObject.getObjectType() == relationType.getSourceType();
+        assert targetObject.getObjectType() == relationType.getTargetType();
         this.sourceObject = DBObjectRef.of(sourceObject);
         this.targetObject = DBObjectRef.of(targetObject);
     }
 
 
-
-    @Override
-    public DBObjectRelationType getObjectRelationType() {
-        return objectRelationType;
-    }
 
     @Override
     public S getSourceObject() {
