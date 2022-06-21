@@ -17,10 +17,10 @@ public class BasicTableTextAttributes implements DataGridTextAttributes {
     private final SimpleTextAttributes plainDataModified;
     private final SimpleTextAttributes plainDataAtCaretRow;
     private final SimpleTextAttributes plainDataAtCaretRowModified;
-    private final SimpleTextAttributes trackingData;
-    private final SimpleTextAttributes trackingDataModified;
-    private final SimpleTextAttributes trackingDataAtCaretRow;
-    private final SimpleTextAttributes trackingDataAtCaretRowModified;
+    private final SimpleTextAttributes auditData;
+    private final SimpleTextAttributes auditDataModified;
+    private final SimpleTextAttributes auditDataAtCaretRow;
+    private final SimpleTextAttributes auditDataAtCaretRowModified;
     private final SimpleTextAttributes modifiedData;
     private final SimpleTextAttributes modifiedDataAtCaretRow;
     private final SimpleTextAttributes deletedData;
@@ -68,13 +68,13 @@ public class BasicTableTextAttributes implements DataGridTextAttributes {
                 modifiedData.getFontStyle());
 
 
-        trackingData = TextAttributes.getSimpleTextAttributes(DataGridTextAttributesKeys.TRACKING_DATA);
-        trackingDataModified = new SimpleTextAttributes(
-                nvln(modifiedData.getBgColor(), trackingData.getBgColor()),
+        auditData = TextAttributes.getSimpleTextAttributes(DataGridTextAttributesKeys.AUDIT_DATA);
+        auditDataModified = new SimpleTextAttributes(
+                nvln(modifiedData.getBgColor(), auditData.getBgColor()),
                 nvln(modifiedData.getFgColor(), plainData.getFgColor()), null,
                 modifiedData.getFontStyle());
-        trackingDataAtCaretRow = new SimpleTextAttributes(caretRowBgColor, trackingData.getFgColor(), null, trackingData.getFontStyle());
-        trackingDataAtCaretRowModified = new SimpleTextAttributes(
+        auditDataAtCaretRow = new SimpleTextAttributes(caretRowBgColor, auditData.getFgColor(), null, auditData.getFontStyle());
+        auditDataAtCaretRowModified = new SimpleTextAttributes(
                 caretRowBgColor,
                 nvln(modifiedData.getFgColor(), plainData.getFgColor()), null,
                 modifiedData.getFontStyle());
@@ -176,11 +176,11 @@ public class BasicTableTextAttributes implements DataGridTextAttributes {
             modified ? foreignKeyModified : foreignKey;
     }
 
-    public SimpleTextAttributes getTrackingData(boolean modified, boolean atCaretRow) {
+    public SimpleTextAttributes getAuditData(boolean modified, boolean atCaretRow) {
         return
-            modified && atCaretRow ? trackingDataAtCaretRowModified :
-            atCaretRow ? trackingDataAtCaretRow :
-            modified ? trackingDataModified : trackingData;
+            modified && atCaretRow ? auditDataAtCaretRowModified :
+            atCaretRow ? auditDataAtCaretRow :
+            modified ? auditDataModified : auditData;
     }
 
     public SimpleTextAttributes getPrimaryKeyAtCaretRow() {

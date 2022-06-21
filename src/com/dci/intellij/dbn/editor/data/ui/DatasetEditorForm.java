@@ -17,8 +17,8 @@ import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.SessionId;
 import com.dci.intellij.dbn.data.find.DataSearchComponent;
 import com.dci.intellij.dbn.data.find.SearchableDataComponent;
+import com.dci.intellij.dbn.data.grid.options.DataGridAuditColumnSettings;
 import com.dci.intellij.dbn.data.grid.options.DataGridSettings;
-import com.dci.intellij.dbn.data.grid.options.DataGridTrackingColumnSettings;
 import com.dci.intellij.dbn.data.grid.ui.table.basic.BasicTable;
 import com.dci.intellij.dbn.data.grid.ui.table.basic.BasicTableScrollPane;
 import com.dci.intellij.dbn.editor.DBContentType;
@@ -38,9 +38,12 @@ import com.intellij.util.ui.AsyncProcessIcon;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import javax.swing.*;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JTextField;
 import javax.swing.table.TableColumn;
-import java.awt.*;
+import java.awt.BorderLayout;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
@@ -119,12 +122,12 @@ public class DatasetEditorForm extends DBNFormBase implements SearchableDataComp
 
 
         DataGridSettings dataGridSettings = DataGridSettings.getInstance(project);
-        DataGridTrackingColumnSettings trackingColumnSettings = dataGridSettings.getTrackingColumnSettings();
+        DataGridAuditColumnSettings auditColumnSettings = dataGridSettings.getAuditColumnSettings();
 
         List<TableColumn> hiddenColumns = new ArrayList<>();
         for (DatasetColumnState columnState : datasetEditor.getColumnSetup().getColumnStates()) {
 
-            if (!columnState.isVisible() || !trackingColumnSettings.isColumnVisible(columnState.getName())) {
+            if (!columnState.isVisible() || !auditColumnSettings.isColumnVisible(columnState.getName())) {
                 String columnName = columnState.getName();
                 TableColumn tableColumn = datasetEditorTable.getColumnByName(columnName);
                 if (tableColumn != null) {
