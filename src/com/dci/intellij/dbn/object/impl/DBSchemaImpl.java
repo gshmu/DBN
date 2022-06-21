@@ -63,8 +63,8 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 
-import static com.dci.intellij.dbn.common.content.DynamicContentStatus.HIDDEN;
-import static com.dci.intellij.dbn.common.content.DynamicContentStatus.*;
+import static com.dci.intellij.dbn.common.content.DynamicContentProperty.HIDDEN;
+import static com.dci.intellij.dbn.common.content.DynamicContentProperty.*;
 import static com.dci.intellij.dbn.common.util.Unsafe.cast;
 import static com.dci.intellij.dbn.object.common.property.DBObjectProperty.*;
 import static com.dci.intellij.dbn.object.type.DBObjectRelationType.CONSTRAINT_COLUMN;
@@ -134,8 +134,8 @@ public class DBSchemaImpl extends DBObjectImpl<DBSchemaMetadata> implements DBSc
 
         //ol.createHiddenObjectList(DBObjectType.TYPE_METHOD, this, TYPE_METHODS_LOADER);
 
-        childObjects.createObjectRelationList(CONSTRAINT_COLUMN, this, constraints, columns);
-        childObjects.createObjectRelationList(INDEX_COLUMN, this, indexes, columns);
+        childObjects.createObjectRelationList(CONSTRAINT_COLUMN, this, constraints, columns, INTERNAL, GROUPED);
+        childObjects.createObjectRelationList(INDEX_COLUMN, this, indexes, columns, INTERNAL, GROUPED);
     }
 
     @Override

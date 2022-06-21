@@ -7,7 +7,7 @@ import org.jetbrains.annotations.NotNull;
 import java.util.List;
 
 public interface DBObjectRelationList<T extends DBObjectRelation> extends DynamicContent<T> {
-    DBObjectRelationType getObjectRelationType();
+    DBObjectRelationType getRelationType();
     @NotNull List<T> getObjectRelations();
     List<DBObjectRelation> getRelationBySourceName(String sourceName);
     List<DBObjectRelation> getRelationByTargetName(String targetName);

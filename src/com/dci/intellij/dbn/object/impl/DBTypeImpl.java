@@ -5,10 +5,8 @@ import com.dci.intellij.dbn.browser.model.BrowserTreeNode;
 import com.dci.intellij.dbn.browser.ui.HtmlToolTipBuilder;
 import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.common.content.DynamicContent;
-import com.dci.intellij.dbn.common.content.loader.DynamicContentLoader;
 import com.dci.intellij.dbn.common.content.loader.DynamicContentResultSetLoader;
 import com.dci.intellij.dbn.common.content.loader.DynamicSubcontentLoader;
-import com.dci.intellij.dbn.common.util.Commons;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.jdbc.DBNConnection;
 import com.dci.intellij.dbn.data.type.DBDataType;
@@ -224,17 +222,8 @@ public class DBTypeImpl
      *                         Loaders                       *
      *********************************************************/
     static {
-        new DynamicSubcontentLoader<DBTypeAttribute, DBTypeAttributeMetadata>(TYPE, TYPE_ATTRIBUTE, true) {
-
-            @Override
-            public boolean match(DBTypeAttribute typeAttribute, DynamicContent dynamicContent) {
-                DBType type = dynamicContent.getParentEntity();
-                return Commons.match(typeAttribute.getType(), type);
-            }
-
-            @Override
-            public DynamicContentLoader<DBTypeAttribute, DBTypeAttributeMetadata> createAlternativeLoader() {
-                return new DynamicContentResultSetLoader<DBTypeAttribute, DBTypeAttributeMetadata>(TYPE, TYPE_ATTRIBUTE, false, true) {
+        DynamicSubcontentLoader.create(TYPE, TYPE_ATTRIBUTE, () ->
+                new DynamicContentResultSetLoader<DBTypeAttribute, DBTypeAttributeMetadata>(TYPE, TYPE_ATTRIBUTE, false, true) {
 
                     @Override
                     public ResultSet createResultSet(DynamicContent<DBTypeAttribute> dynamicContent, DBNConnection connection) throws SQLException {
@@ -251,23 +240,10 @@ public class DBTypeImpl
                         DBTypeImpl type = content.getParentEntity();
                         return new DBTypeAttributeImpl(type, metadata);
                     }
-                };
+                });
 
-            }
-        };
-
-        new DynamicSubcontentLoader<DBTypeFunction, DBFunctionMetadata>(TYPE, TYPE_FUNCTION, true) {
-
-            @Override
-            public boolean match(DBTypeFunction function, DynamicContent dynamicContent) {
-                DBType type = dynamicContent.getParentEntity();
-                return Commons.match(function.getType(), type);
-            }
-
-            @Override
-            public DynamicContentLoader<DBTypeFunction, DBFunctionMetadata> createAlternativeLoader() {
-                return new DynamicContentResultSetLoader<DBTypeFunction, DBFunctionMetadata>(TYPE, TYPE_FUNCTION, false, true) {
-
+        DynamicSubcontentLoader.create(TYPE, TYPE_FUNCTION, () ->
+                new DynamicContentResultSetLoader<DBTypeFunction, DBFunctionMetadata>(TYPE, TYPE_FUNCTION, false, true) {
                     @Override
                     public ResultSet createResultSet(DynamicContent<DBTypeFunction> dynamicContent, DBNConnection connection) throws SQLException {
                         DatabaseMetadataInterface metadataInterface = dynamicContent.getMetadataInterface();
@@ -283,22 +259,10 @@ public class DBTypeImpl
                         DBType type = content.getParentEntity();
                         return new DBTypeFunctionImpl(type, metadata);
                     }
-                };
-            }
-        };
+                });
 
-        new DynamicSubcontentLoader<DBTypeProcedure, DBProcedureMetadata>(TYPE, TYPE_PROCEDURE, true) {
-
-            @Override
-            public boolean match(DBTypeProcedure procedure, DynamicContent dynamicContent) {
-                DBType type = dynamicContent.getParentEntity();
-                return Commons.match(procedure.getType(), type);
-            }
-
-            @Override
-            public DynamicContentLoader<DBTypeProcedure, DBProcedureMetadata> createAlternativeLoader() {
-                return new DynamicContentResultSetLoader<DBTypeProcedure, DBProcedureMetadata>(TYPE, TYPE_PROCEDURE, false, true) {
-
+        DynamicSubcontentLoader.create(TYPE, TYPE_PROCEDURE, () ->
+                new DynamicContentResultSetLoader<DBTypeProcedure, DBProcedureMetadata>(TYPE, TYPE_PROCEDURE, false, true) {
                     @Override
                     public ResultSet createResultSet(DynamicContent<DBTypeProcedure> dynamicContent, DBNConnection connection) throws SQLException {
                         DatabaseMetadataInterface metadataInterface = dynamicContent.getMetadataInterface();
@@ -314,25 +278,9 @@ public class DBTypeImpl
                         DBType type = content.getParentEntity();
                         return new DBTypeProcedureImpl(type, metadata);
                     }
-                };
-            }
-        };
+                });
 
-        new DynamicSubcontentLoader<DBType, DBTypeMetadata>(TYPE, TYPE, false) {
-
-            @Override
-            public boolean match(DBType type, DynamicContent dynamicContent) {
-                DBType superType = type.getSuperType();
-                DBType thisType = dynamicContent.getParentEntity();
-                return Commons.match(superType, thisType);
-            }
-
-            @Nullable
-            @Override
-            public DynamicContentLoader<DBType, DBTypeMetadata> createAlternativeLoader() {
-                return null;
-            }
-        };
+        DynamicSubcontentLoader.create(TYPE, TYPE, () -> null/*TODO*/);
     }
 
     @Override

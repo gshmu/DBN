@@ -6,12 +6,12 @@ import com.dci.intellij.dbn.object.common.DBObject;
 import com.dci.intellij.dbn.object.type.DBObjectRelationType;
 
 public interface DBObjectRelation<S extends DBObject, T extends DBObject> extends DynamicContentElement {
-    DBObjectRelationType getObjectRelationType();
+    DBObjectRelationType getRelationType();
     S getSourceObject();
     T getTargetObject();
 
     @Override
     default DynamicContentType getDynamicContentType() {
-        return getObjectRelationType();
+        return getRelationType();
     }
 }

@@ -30,12 +30,12 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import static com.dci.intellij.dbn.common.content.DynamicContentStatus.*;
+import static com.dci.intellij.dbn.common.content.DynamicContentProperty.*;
 import static com.dci.intellij.dbn.common.util.Unsafe.cast;
 
 @Slf4j
 public abstract class DynamicContentImpl<T extends DynamicContentElement>
-        extends DisposablePropertyHolder<DynamicContentStatus>
+        extends DisposablePropertyHolder<DynamicContentProperty>
         implements DynamicContent<T>,
                    NotificationSupport {
 
@@ -53,20 +53,20 @@ public abstract class DynamicContentImpl<T extends DynamicContentElement>
     protected DynamicContentImpl(
             @NotNull DatabaseEntity parent,
             ContentDependencyAdapter dependencyAdapter,
-            DynamicContentStatus ... statuses) {
+            DynamicContentProperty... properties) {
 
         this.parent = parent;
         this.dependencyAdapter = dependencyAdapter;
-        if (statuses != null && statuses.length > 0) {
-            for (DynamicContentStatus status : statuses) {
+        if (properties != null && properties.length > 0) {
+            for (DynamicContentProperty status : properties) {
                 set(status, true);
             }
         }
     }
 
     @Override
-    protected DynamicContentStatus[] properties() {
-        return DynamicContentStatus.values();
+    protected DynamicContentProperty[] properties() {
+        return DynamicContentProperty.values();
     }
 
     @Override
@@ -330,6 +330,7 @@ public abstract class DynamicContentImpl<T extends DynamicContentElement>
     }
 
     private void replaceElements(List<T> elements) {
+        beforeUpdate();
         if (isDisposed() || elements == null || elements.size() == 0) {
             elements = cast(EMPTY_CONTENT);
         } else {
@@ -338,6 +339,8 @@ public abstract class DynamicContentImpl<T extends DynamicContentElement>
         }
         List<T> oldElements = this.elements;
         this.elements = FilteredList.stateful((FilterDelegate<T>) () -> getFilter(), elements);
+
+        afterUpdate();
         if (oldElements.size() != 0 || elements.size() != 0 ){
             notifyChangeListeners();
         }
@@ -345,6 +348,9 @@ public abstract class DynamicContentImpl<T extends DynamicContentElement>
             SafeDisposer.disposeCollection(oldElements);
         }
     }
+
+    protected void beforeUpdate() {}
+    protected void afterUpdate() {}
 
     protected void sortElements(List<T> elements) {
         elements.sort(null);
@@ -433,7 +439,7 @@ public abstract class DynamicContentImpl<T extends DynamicContentElement>
     }
 
     @Override
-    protected DynamicContentStatus getDisposedProperty() {
+    protected DynamicContentProperty getDisposedProperty() {
         return DISPOSED;
     }
 }

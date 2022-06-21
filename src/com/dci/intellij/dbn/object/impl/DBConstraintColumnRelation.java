@@ -4,16 +4,15 @@ import com.dci.intellij.dbn.object.DBColumn;
 import com.dci.intellij.dbn.object.DBConstraint;
 import com.dci.intellij.dbn.object.common.list.DBObjectRelationImpl;
 import com.dci.intellij.dbn.object.type.DBObjectRelationType;
+import lombok.Getter;
 
+@Getter
 public class DBConstraintColumnRelation extends DBObjectRelationImpl<DBConstraint, DBColumn> {
-    private short position;
+    private final short position;
+
     DBConstraintColumnRelation(DBConstraint constraint, DBColumn column, short position) {
         super(DBObjectRelationType.CONSTRAINT_COLUMN, constraint, column);
         this.position = position;
-    }
-
-    public short getPosition() {
-        return position;
     }
 
     public DBConstraint getConstraint() {

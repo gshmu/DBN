@@ -2,7 +2,7 @@ package com.dci.intellij.dbn.object.common.list;
 
 import com.dci.intellij.dbn.browser.model.BrowserTreeNode;
 import com.dci.intellij.dbn.common.Direction;
-import com.dci.intellij.dbn.common.content.DynamicContentStatus;
+import com.dci.intellij.dbn.common.content.DynamicContentProperty;
 import com.dci.intellij.dbn.common.content.DynamicContentType;
 import com.dci.intellij.dbn.common.content.dependency.BasicDependencyAdapter;
 import com.dci.intellij.dbn.common.content.dependency.ContentDependencyAdapter;
@@ -227,9 +227,9 @@ public final class DBObjectListContainer implements StatefulDisposable {
     public <T extends DBObject> DBObjectList<T>  createObjectList(
             @NotNull DBObjectType objectType,
             @NotNull BrowserTreeNode treeParent,
-            DynamicContentStatus... statuses) {
+            DynamicContentProperty... properties) {
         if (isSupported(objectType)) {
-            return createObjectList(objectType, treeParent, BasicDependencyAdapter.INSTANCE, statuses);
+            return createObjectList(objectType, treeParent, BasicDependencyAdapter.INSTANCE, properties);
         }
         return null;
     }
@@ -240,14 +240,14 @@ public final class DBObjectListContainer implements StatefulDisposable {
             @NotNull BrowserTreeNode treeParent,
             DatabaseEntity sourceContentHolder,
             DynamicContentType<?> sourceContentType,
-            DynamicContentStatus... statuses) {
+            DynamicContentProperty... properties) {
         if (isSupported(objectType)) {
             if (sourceContentHolder != null && sourceContentHolder.getDynamicContent(sourceContentType) != null) {
                 ContentDependencyAdapter dependencyAdapter =
                         SubcontentDependencyAdapter.create(
                                 sourceContentHolder,
                                 sourceContentType);
-                return createObjectList(objectType, treeParent, dependencyAdapter, statuses);
+                return createObjectList(objectType, treeParent, dependencyAdapter, properties);
             }
         }
         return null;
@@ -258,14 +258,14 @@ public final class DBObjectListContainer implements StatefulDisposable {
             @NotNull DBObjectType objectType,
             @NotNull BrowserTreeNode treeParent,
             DBObject sourceContentHolder,
-            DynamicContentStatus... statuses) {
+            DynamicContentProperty... properties) {
         if (isSupported(objectType)) {
             if (sourceContentHolder.getDynamicContent(objectType) != null) {
                 ContentDependencyAdapter dependencyAdapter =
                         SubcontentDependencyAdapter.create(
                                 sourceContentHolder,
                                 objectType);
-                return createObjectList(objectType, treeParent, dependencyAdapter, statuses);
+                return createObjectList(objectType, treeParent, dependencyAdapter, properties);
             }
         }
         return null;
@@ -273,10 +273,14 @@ public final class DBObjectListContainer implements StatefulDisposable {
 
     private <T extends DBObject> DBObjectList<T> createObjectList(
             @NotNull DBObjectType objectType,
-            @NotNull BrowserTreeNode treeParent,
+            @NotNull DatabaseEntity parent,
             ContentDependencyAdapter dependencyAdapter,
-            DynamicContentStatus... statuses) {
-        DBObjectList<T> objectList = new DBObjectListImpl<>(objectType, treeParent, dependencyAdapter, statuses);
+            DynamicContentProperty... properties) {
+
+        boolean grouped = Commons.isOneOf(DynamicContentProperty.GROUPED, properties);
+        DBObjectList<T> objectList = grouped ?
+                new DBObjectListImpl.Grouped<>(objectType, parent, dependencyAdapter, properties):
+                new DBObjectListImpl<>(objectType, parent, dependencyAdapter, properties);
         addObjectList(objectList);
 
         return objectList;
@@ -375,7 +379,7 @@ public final class DBObjectListContainer implements StatefulDisposable {
     public <T extends DBObjectRelation> DBObjectRelationList<T> getRelations(DBObjectRelationType relationType) {
         if (relations != null) {
             for (DBObjectRelationList objectRelations : relations) {
-                if (objectRelations.getObjectRelationType() == relationType) {
+                if (objectRelations.getRelationType() == relationType) {
                     return cast(objectRelations);
                 }
             }
@@ -387,20 +391,22 @@ public final class DBObjectListContainer implements StatefulDisposable {
             DBObjectRelationType type,
             DatabaseEntity parent,
             DBObjectList firstContent,
-            DBObjectList secondContent) {
+            DBObjectList secondContent,
+            DynamicContentProperty... properties) {
         if (isSupported(type)) {
             ContentDependencyAdapter dependencyAdapter = DualContentDependencyAdapter.create(firstContent, secondContent);
-            createObjectRelationList(type, parent, dependencyAdapter);
+            createObjectRelationList(type, parent, dependencyAdapter, properties);
         }
     }
 
     public void createSubcontentObjectRelationList(
             DBObjectRelationType relationType,
             DatabaseEntity parent,
-            DBObject sourceContentObject) {
+            DBObject sourceContentObject,
+            DynamicContentProperty... properties) {
         if (isSupported(relationType)) {
             ContentDependencyAdapter dependencyAdapter = SubcontentDependencyAdapter.create(sourceContentObject, relationType);
-            createObjectRelationList(relationType, parent, dependencyAdapter);
+            createObjectRelationList(relationType, parent, dependencyAdapter, properties);
         }
     }
 
@@ -408,9 +414,14 @@ public final class DBObjectListContainer implements StatefulDisposable {
     private void createObjectRelationList(
             DBObjectRelationType type,
             DatabaseEntity parent,
-            ContentDependencyAdapter dependencyAdapter) {
+            ContentDependencyAdapter dependencyAdapter,
+            DynamicContentProperty... properties) {
         if (isSupported(type)) {
-            DBObjectRelationList objectRelationList = new DBObjectRelationListImpl(type, parent, dependencyAdapter);
+            boolean grouped = Commons.isOneOf(DynamicContentProperty.GROUPED, properties);
+
+            DBObjectRelationList objectRelationList = grouped ?
+                    new DBObjectRelationListImpl.Grouped(type, parent, dependencyAdapter, properties) :
+                    new DBObjectRelationListImpl(type, parent, dependencyAdapter, properties);
 
             if (relations == null)
                 relations = new DBObjectRelationList[1]; else

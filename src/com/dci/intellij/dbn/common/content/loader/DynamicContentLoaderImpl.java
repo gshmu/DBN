@@ -3,7 +3,11 @@ package com.dci.intellij.dbn.common.content.loader;
 import com.dci.intellij.dbn.common.content.DynamicContentElement;
 import com.dci.intellij.dbn.common.content.DynamicContentType;
 import com.dci.intellij.dbn.common.util.Commons;
+import com.dci.intellij.dbn.common.util.Safe;
 import com.dci.intellij.dbn.database.common.metadata.DBObjectMetadata;
+import com.dci.intellij.dbn.object.DBSchema;
+import com.dci.intellij.dbn.object.common.DBObject;
+import com.dci.intellij.dbn.object.common.DBSchemaObject;
 import lombok.extern.slf4j.Slf4j;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -70,5 +74,16 @@ public abstract class DynamicContentLoaderImpl<
         }
 
         throw new UnsupportedOperationException("No entry found for content type "+ lookupParentContentType + " / " + contentType);
+    }
+
+    @Nullable
+    protected static String getObjectName(DBObject object) {
+        return Safe.call(object, o -> o.getName());
+    }
+
+    @Nullable
+    protected static String getSchemaName(DBSchemaObject object) {
+        DBSchema schema = object == null ? null : object.getSchema();
+        return schema == null ? null : schema.getName();
     }
 }
