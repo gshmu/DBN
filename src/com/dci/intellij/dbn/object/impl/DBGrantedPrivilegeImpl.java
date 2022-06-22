@@ -16,7 +16,7 @@ import java.sql.SQLException;
 import static com.dci.intellij.dbn.object.common.property.DBObjectProperty.ADMIN_OPTION;
 
 public class DBGrantedPrivilegeImpl extends DBObjectImpl<DBGrantedPrivilegeMetadata> implements DBGrantedPrivilege {
-    private DBObjectRef<DBPrivilege> privilegeRef;
+    private DBObjectRef<DBPrivilege> privilege;
 
     public DBGrantedPrivilegeImpl(DBPrivilegeGrantee grantee, DBGrantedPrivilegeMetadata metadata) throws SQLException {
         super(grantee, metadata);
@@ -25,7 +25,7 @@ public class DBGrantedPrivilegeImpl extends DBObjectImpl<DBGrantedPrivilegeMetad
     @Override
     protected String initObject(DBGrantedPrivilegeMetadata metadata) throws SQLException {
         String name = metadata.getGrantedPrivilegeName();
-        privilegeRef = DBObjectRef.of(this.getConnection().getObjectBundle().getPrivilege(name));
+        privilege = DBObjectRef.of(getConnection().getObjectBundle().getPrivilege(name));
         set(ADMIN_OPTION, metadata.isAdminOption());
         return name;
     }
@@ -43,7 +43,7 @@ public class DBGrantedPrivilegeImpl extends DBObjectImpl<DBGrantedPrivilegeMetad
 
     @Override
     public DBPrivilege getPrivilege() {
-        return DBObjectRef.get(privilegeRef);
+        return DBObjectRef.get(privilege);
     }
 
     @Override
