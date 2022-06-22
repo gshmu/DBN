@@ -105,7 +105,8 @@ import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
 import static com.dci.intellij.dbn.browser.DatabaseBrowserUtils.treeVisibilityChanged;
-import static com.dci.intellij.dbn.common.content.DynamicContentProperty.*;
+import static com.dci.intellij.dbn.common.content.DynamicContentProperty.GROUPED;
+import static com.dci.intellij.dbn.common.content.DynamicContentProperty.PASSIVE;
 import static com.dci.intellij.dbn.object.type.DBObjectRelationType.*;
 import static com.dci.intellij.dbn.object.type.DBObjectType.*;
 
@@ -153,10 +154,10 @@ public class DBObjectBundleImpl extends BrowserTreeNodeBase implements DBObjectB
         this.charsets = objectLists.createObjectList(CHARSET, this);
         this.allPossibleTreeChildren = DatabaseBrowserUtils.createList(consoles, schemas, users, roles, systemPrivileges, charsets);
 
-        this.objectLists.createObjectRelationList(USER_ROLE, this, users, roles, INTERNAL, GROUPED);
-        this.objectLists.createObjectRelationList(USER_PRIVILEGE, this, users, systemPrivileges, INTERNAL, GROUPED);
-        this.objectLists.createObjectRelationList(ROLE_ROLE, this, roles, roles, INTERNAL, GROUPED);
-        this.objectLists.createObjectRelationList(ROLE_PRIVILEGE, this, roles, systemPrivileges, INTERNAL, GROUPED);
+        this.objectLists.createObjectRelationList(USER_ROLE, this, users, roles, GROUPED);
+        this.objectLists.createObjectRelationList(USER_PRIVILEGE, this, users, systemPrivileges, GROUPED);
+        this.objectLists.createObjectRelationList(ROLE_ROLE, this, roles, roles, GROUPED);
+        this.objectLists.createObjectRelationList(ROLE_PRIVILEGE, this, roles, systemPrivileges, GROUPED);
 
         Project project = connection.getProject();
         PsiFileFactory psiFileFactory = PsiFileFactory.getInstance(project);

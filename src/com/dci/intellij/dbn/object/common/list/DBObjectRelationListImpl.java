@@ -9,6 +9,7 @@ import com.dci.intellij.dbn.common.content.loader.DynamicContentLoader;
 import com.dci.intellij.dbn.common.content.loader.DynamicContentLoaderImpl;
 import com.dci.intellij.dbn.common.filter.Filter;
 import com.dci.intellij.dbn.common.range.Range;
+import com.dci.intellij.dbn.common.util.Commons;
 import com.dci.intellij.dbn.connection.DatabaseEntity;
 import com.dci.intellij.dbn.database.common.metadata.DBObjectMetadata;
 import com.dci.intellij.dbn.object.common.DBObject;
@@ -124,8 +125,8 @@ class DBObjectRelationListImpl<T extends DBObjectRelation> extends DynamicConten
 
     public static class Grouped<T extends DBObjectRelation> extends DBObjectRelationListImpl<T> implements GroupedDynamicContent<T> {
 
-        private Map<DBObjectType, Range> parentTypeRanges;
-        private Map<String, Range> parentNameRanges;
+        private Map<DBObjectType, Range> typeRanges;
+        private Map<String, Range> nameRanges;
 
         Grouped(
                 @NotNull DBObjectRelationType relationType,
@@ -139,50 +140,51 @@ class DBObjectRelationListImpl<T extends DBObjectRelation> extends DynamicConten
 
         @Override
         protected void afterUpdate() {
-            parentTypeRanges = new HashMap<>();
-            parentNameRanges = new HashMap<>();
+            typeRanges = new HashMap<>();
+            nameRanges = new HashMap<>();
 
             List<T> elements = getAllElements();
             if (!elements.isEmpty()) {
-                DBObjectType currentParentType = null;
-                String currentParentName = null;
+                DBObjectType currentGroupType = null;
+                String currentGroupName = null;
                 int currentTypeOffset = 0;
                 int currentNameOffset = 0;
                 for (int i = 0; i < elements.size(); i++) {
                     T objectRelation = elements.get(i);
-                    DBObject parentObject = objectRelation.getSourceObject().getParentObject();
-                    DBObjectType parentType = parentObject.getObjectType();
-                    String parentName = parentObject.getName();
+                    DBObject groupObject = Commons.nvl(objectRelation.getSourceObject().getParentObject(), objectRelation.getSourceObject());
+                    DBObjectType groupType = groupObject.getObjectType();
+                    String groupName = groupObject.getName();
 
-                    currentParentType = nvl(currentParentType, parentType);
-                    currentParentName = nvl(currentParentName, parentName);
+                    currentGroupType = nvl(currentGroupType, groupType);
+                    currentGroupName = nvl(currentGroupName, groupName);
 
-                    if (currentParentType != parentType) {
-                        parentTypeRanges.put(currentParentType, new Range(currentTypeOffset, i - 1));
-                        currentParentType = parentType;
+                    if (currentGroupType != groupType) {
+                        typeRanges.put(currentGroupType, new Range(currentTypeOffset, i - 1));
+                        currentGroupType = groupType;
                         currentTypeOffset = i;
                     }
 
-                    if (!Objects.equals(currentParentName, parentName)) {
-                        parentNameRanges.put(currentParentName, new Range(currentNameOffset, i - 1));
-                        currentParentName = parentName;
+                    if (!Objects.equals(currentGroupName, groupName)) {
+                        nameRanges.put(currentGroupName, new Range(currentNameOffset, i - 1));
+                        currentGroupName = groupName;
                         currentNameOffset = i;
                     }
 
 
                     if (i == elements.size() - 1) {
-                        parentTypeRanges.put(currentParentType, new Range(currentTypeOffset, i));
-                        parentNameRanges.put(currentParentName, new Range(currentNameOffset, i));
+                        typeRanges.put(currentGroupType, new Range(currentTypeOffset, i));
+                        nameRanges.put(currentGroupName, new Range(currentNameOffset, i));
                     }
                 }
             }
         }
 
         public List<T> getChildElements(String parentName) {
-            if (parentNameRanges != null) {
-                Range range = parentNameRanges.get(parentName);
+            List<T> elements = getAllElements();
+            if (nameRanges != null) {
+                Range range = nameRanges.get(parentName);
                 if (range != null) {
-                    return getAllElements().subList(range.getLeft(), range.getRight() + 1);
+                    return elements.subList(range.getLeft(), range.getRight() + 1);
                 }
             }
             return Collections.emptyList();

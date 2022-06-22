@@ -17,7 +17,7 @@ import static com.dci.intellij.dbn.object.common.property.DBObjectProperty.ADMIN
 import static com.dci.intellij.dbn.object.common.property.DBObjectProperty.DEFAULT_ROLE;
 
 public class DBGrantedRoleImpl extends DBObjectImpl<DBGrantedRoleMetadata> implements DBGrantedRole {
-    private DBObjectRef<DBRole> roleRef;
+    private DBObjectRef<DBRole> role;
 
     public DBGrantedRoleImpl(DBRoleGrantee grantee, DBGrantedRoleMetadata metadata) throws SQLException {
         super(grantee, metadata);
@@ -26,7 +26,7 @@ public class DBGrantedRoleImpl extends DBObjectImpl<DBGrantedRoleMetadata> imple
     @Override
     protected String initObject(DBGrantedRoleMetadata metadata) throws SQLException {
         String name = metadata.getGrantedRoleName();
-        this.roleRef = DBObjectRef.of(this.getConnection().getObjectBundle().getRole(name));
+        this.role = DBObjectRef.of(this.getConnection().getObjectBundle().getRole(name));
         set(ADMIN_OPTION, metadata.isAdminOption());
         set(DEFAULT_ROLE, metadata.isDefaultRole());
         return name;
@@ -45,7 +45,7 @@ public class DBGrantedRoleImpl extends DBObjectImpl<DBGrantedRoleMetadata> imple
 
     @Override
     public DBRole getRole() {
-        return DBObjectRef.get(roleRef);
+        return DBObjectRef.get(role);
     }
 
     @Override
