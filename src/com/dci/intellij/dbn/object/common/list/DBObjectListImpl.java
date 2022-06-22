@@ -193,7 +193,7 @@ public class DBObjectListImpl<T extends DBObject> extends DynamicContentImpl<T> 
 
                 } else if (isSearchable()) {
                     if (objectType == COLUMN) {
-                        // primary key columns are sorted by position at beginning ot the list of elements
+                        // primary key columns are sorted by position at beginning of the list of elements
                         SearchAdapter<T> linear = linear(name, c -> c instanceof DBColumn && ((DBColumn) c).isPrimaryKey());
                         SearchAdapter<T> binary = binary(name);
                         return comboSearch(elements, linear, binary);
@@ -591,10 +591,11 @@ public class DBObjectListImpl<T extends DBObject> extends DynamicContentImpl<T> 
         }
 
         public List<T> getChildElements(String parentName) {
+            List<T> elements = getAllElements();
             if (parentNameRanges != null) {
                 Range range = parentNameRanges.get(parentName);
                 if (range != null) {
-                    return getAllElements().subList(range.getLeft(), range.getRight() + 1);
+                    return elements.subList(range.getLeft(), range.getRight() + 1);
                 }
             }
             return Collections.emptyList();

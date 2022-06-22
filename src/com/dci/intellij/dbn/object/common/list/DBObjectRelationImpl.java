@@ -1,6 +1,7 @@
 package com.dci.intellij.dbn.object.common.list;
 
 import com.dci.intellij.dbn.common.dispose.StatefulDisposable;
+import com.dci.intellij.dbn.object.DBCastedObject;
 import com.dci.intellij.dbn.object.common.DBObject;
 import com.dci.intellij.dbn.object.lookup.DBObjectRef;
 import com.dci.intellij.dbn.object.type.DBObjectRelationType;
@@ -13,32 +14,37 @@ import static com.dci.intellij.dbn.common.util.Commons.nvl;
 public abstract class DBObjectRelationImpl<S extends DBObject, T extends DBObject> extends StatefulDisposable.Base implements DBObjectRelation<S, T> {
 
     private final DBObjectRelationType relationType;
-    private final DBObjectRef<S> sourceObject;
-    private final DBObjectRef<T> targetObject;
+    private final DBObjectRef<S> sourceObjectRef;
+    private final DBObjectRef<T> targetObjectRef;
+
+    private final S sourceObject;
+    private final T targetObject;
 
     public DBObjectRelationImpl(DBObjectRelationType relationType, S sourceObject, T targetObject) {
         this.relationType = relationType;
         assert sourceObject.getObjectType() == relationType.getSourceType();
         assert targetObject.getObjectType() == relationType.getTargetType();
-        this.sourceObject = DBObjectRef.of(sourceObject);
-        this.targetObject = DBObjectRef.of(targetObject);
+        this.sourceObjectRef = DBObjectRef.of(sourceObject);
+        this.targetObjectRef = DBObjectRef.of(targetObject);
+
+        // hold strong reference to objects of type DBCastedObject (no strong references in place)
+        this.sourceObject = sourceObject instanceof DBCastedObject ? sourceObject : null;
+        this.targetObject = targetObject instanceof DBCastedObject ? targetObject : null;
     }
 
 
 
-    @Override
     public S getSourceObject() {
-        return DBObjectRef.get(sourceObject);
+        return DBObjectRef.get(sourceObjectRef);
     }
 
-    @Override
     public T getTargetObject() {
-        return DBObjectRef.get(targetObject);
+        return DBObjectRef.get(targetObjectRef);
     }
 
     public String toString() {
-        String sourceObjectName = sourceObject.getQualifiedNameWithType();
-        String targetObjectName = targetObject.getQualifiedNameWithType();
+        String sourceObjectName = sourceObjectRef.getQualifiedNameWithType();
+        String targetObjectName = targetObjectRef.getQualifiedNameWithType();
         return nvl(sourceObjectName, "UNKNOWN") + " => " + nvl(targetObjectName, "UNKNOWN");
     }
 
@@ -48,8 +54,8 @@ public abstract class DBObjectRelationImpl<S extends DBObject, T extends DBObjec
     @NotNull
     @Override
     public String getName() {
-        String sourceObjectName = sourceObject.getQualifiedNameWithType();
-        String targetObjectName = targetObject.getQualifiedNameWithType();
+        String sourceObjectName = sourceObjectRef.getQualifiedNameWithType();
+        String targetObjectName = targetObjectRef.getQualifiedNameWithType();
         return nvl(sourceObjectName, "UNKNOWN") + "." + nvl(targetObjectName, "UNKNOWN");
     }
 
@@ -75,7 +81,7 @@ public abstract class DBObjectRelationImpl<S extends DBObject, T extends DBObjec
     @Override
     public int compareTo(@NotNull Object o) {
         DBObjectRelationImpl remote = (DBObjectRelationImpl) o;
-        return sourceObject.compareTo(remote.sourceObject);
+        return sourceObjectRef.compareTo(remote.sourceObjectRef);
     }
 
 
