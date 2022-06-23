@@ -502,9 +502,9 @@ public abstract class DBObjectImpl<M extends DBObjectMetadata> extends BrowserTr
 
     @Override
     @NotNull
-    public DBObjectPsiFacade getPsiFacade() {
+    public DBObjectPsiCache getPsiCache() {
         DBObjectBundle objectBundle = Failsafe.nn(getObjectBundle());
-        return objectBundle.getObjectPsiFacade(ref());
+        return objectBundle.getObjectPsiCache(ref());
     }
 
     @Override
@@ -892,7 +892,7 @@ public abstract class DBObjectImpl<M extends DBObjectMetadata> extends BrowserTr
 
     //@Override
     public PsiFile getContainingFile() throws PsiInvalidElementAccessException {
-        return DBObjectPsiFacade.asPsiFile(this);
+        return DBObjectPsiCache.asPsiFile(this);
     }
 
     @Override

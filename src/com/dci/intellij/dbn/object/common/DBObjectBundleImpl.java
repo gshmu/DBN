@@ -27,7 +27,11 @@ import com.dci.intellij.dbn.common.ui.tree.TreeEventType;
 import com.dci.intellij.dbn.common.util.Commons;
 import com.dci.intellij.dbn.common.util.Consumer;
 import com.dci.intellij.dbn.common.util.Lists;
-import com.dci.intellij.dbn.connection.*;
+import com.dci.intellij.dbn.connection.ConnectionHandler;
+import com.dci.intellij.dbn.connection.ConnectionId;
+import com.dci.intellij.dbn.connection.ConnectionPool;
+import com.dci.intellij.dbn.connection.ConnectionRef;
+import com.dci.intellij.dbn.connection.SchemaId;
 import com.dci.intellij.dbn.connection.jdbc.DBNConnection;
 import com.dci.intellij.dbn.data.type.DBDataTypeBundle;
 import com.dci.intellij.dbn.data.type.DBNativeDataType;
@@ -36,7 +40,13 @@ import com.dci.intellij.dbn.database.DatabaseFeature;
 import com.dci.intellij.dbn.database.DatabaseMetadataInterface;
 import com.dci.intellij.dbn.database.DatabaseObjectIdentifier;
 import com.dci.intellij.dbn.database.common.metadata.DBObjectMetadata;
-import com.dci.intellij.dbn.database.common.metadata.def.*;
+import com.dci.intellij.dbn.database.common.metadata.def.DBCharsetMetadata;
+import com.dci.intellij.dbn.database.common.metadata.def.DBGrantedPrivilegeMetadata;
+import com.dci.intellij.dbn.database.common.metadata.def.DBGrantedRoleMetadata;
+import com.dci.intellij.dbn.database.common.metadata.def.DBPrivilegeMetadata;
+import com.dci.intellij.dbn.database.common.metadata.def.DBRoleMetadata;
+import com.dci.intellij.dbn.database.common.metadata.def.DBSchemaMetadata;
+import com.dci.intellij.dbn.database.common.metadata.def.DBUserMetadata;
 import com.dci.intellij.dbn.editor.code.SourceCodeEditor;
 import com.dci.intellij.dbn.editor.code.SourceCodeManagerAdapter;
 import com.dci.intellij.dbn.editor.code.SourceCodeManagerListener;
@@ -45,28 +55,58 @@ import com.dci.intellij.dbn.execution.statement.DataDefinitionChangeListener;
 import com.dci.intellij.dbn.language.common.DBLanguage;
 import com.dci.intellij.dbn.language.psql.PSQLLanguage;
 import com.dci.intellij.dbn.language.sql.SQLLanguage;
-import com.dci.intellij.dbn.object.*;
+import com.dci.intellij.dbn.navigation.psi.DBObjectListPsiDirectory;
+import com.dci.intellij.dbn.object.DBCharset;
+import com.dci.intellij.dbn.object.DBConsole;
+import com.dci.intellij.dbn.object.DBGrantedPrivilege;
+import com.dci.intellij.dbn.object.DBGrantedRole;
+import com.dci.intellij.dbn.object.DBObjectPrivilege;
+import com.dci.intellij.dbn.object.DBPrivilege;
+import com.dci.intellij.dbn.object.DBRole;
+import com.dci.intellij.dbn.object.DBSchema;
+import com.dci.intellij.dbn.object.DBSynonym;
+import com.dci.intellij.dbn.object.DBSystemPrivilege;
+import com.dci.intellij.dbn.object.DBUser;
 import com.dci.intellij.dbn.object.common.list.DBObjectList;
 import com.dci.intellij.dbn.object.common.list.DBObjectListContainer;
 import com.dci.intellij.dbn.object.common.list.DBObjectListImpl;
-import com.dci.intellij.dbn.object.impl.*;
+import com.dci.intellij.dbn.object.impl.DBCharsetImpl;
+import com.dci.intellij.dbn.object.impl.DBGrantedPrivilegeImpl;
+import com.dci.intellij.dbn.object.impl.DBGrantedRoleImpl;
+import com.dci.intellij.dbn.object.impl.DBObjectPrivilegeImpl;
+import com.dci.intellij.dbn.object.impl.DBRoleImpl;
+import com.dci.intellij.dbn.object.impl.DBRolePrivilegeRelation;
+import com.dci.intellij.dbn.object.impl.DBRoleRoleRelation;
+import com.dci.intellij.dbn.object.impl.DBSchemaImpl;
+import com.dci.intellij.dbn.object.impl.DBSystemPrivilegeImpl;
+import com.dci.intellij.dbn.object.impl.DBUserImpl;
+import com.dci.intellij.dbn.object.impl.DBUserPrivilegeRelation;
+import com.dci.intellij.dbn.object.impl.DBUserRoleRelation;
 import com.dci.intellij.dbn.object.lookup.DBObjectRef;
 import com.dci.intellij.dbn.object.type.DBObjectRelationType;
 import com.dci.intellij.dbn.object.type.DBObjectType;
 import com.dci.intellij.dbn.vfs.file.DBObjectVirtualFile;
 import com.dci.intellij.dbn.vfs.file.DBSourceCodeVirtualFile;
+import com.google.common.cache.Cache;
+import com.google.common.cache.CacheBuilder;
 import com.intellij.navigation.ItemPresentation;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Disposer;
+import com.intellij.psi.PsiDirectory;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiFileFactory;
+import lombok.SneakyThrows;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import javax.swing.*;
+import javax.swing.Icon;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
 import static com.dci.intellij.dbn.browser.DatabaseBrowserUtils.treeVisibilityChanged;
@@ -97,8 +137,10 @@ public class DBObjectBundleImpl extends BrowserTreeNodeBase implements DBObjectB
 
     private final Map<DBObjectRef<?>, LookupItemBuilder> sqlLookupItemBuilders = new ConcurrentHashMap<>();
     private final Map<DBObjectRef<?>, LookupItemBuilder> psqlLookupItemBuilders = new ConcurrentHashMap<>();
-    private final Map<DBObjectRef<?>, DBObjectPsiFacade> objectPsiFacades = new ConcurrentHashMap<>();
+    private final Map<DBObjectRef<?>, DBObjectPsiCache> objectPsiCache = new ConcurrentHashMap<>();
     private final Map<DBObjectRef<?>, DBObjectVirtualFile<?>> virtualFiles = new ConcurrentHashMap<>();
+    //private final Map<String, PsiDirectory> objectListPsiCache = new ConcurrentHashMap<>();
+    private final Cache<String, PsiDirectory> objectListPsiCache = CacheBuilder.newBuilder().maximumSize(50).build();
 
     private final PsiFile fakeObjectFile;
 
@@ -189,8 +231,14 @@ public class DBObjectBundleImpl extends BrowserTreeNodeBase implements DBObjectB
     }
 
     @Override
-    public DBObjectPsiFacade getObjectPsiFacade(DBObjectRef<?> objectRef) {
-        return objectPsiFacades.computeIfAbsent(objectRef, r -> new DBObjectPsiFacade(r));
+    public DBObjectPsiCache getObjectPsiCache(DBObjectRef<?> objectRef) {
+        return objectPsiCache.computeIfAbsent(objectRef, r -> new DBObjectPsiCache(r));
+    }
+
+    @SneakyThrows
+    public PsiDirectory getObjectListPsiDirectory(DBObjectList objectList) {
+        //return objectListPsiCache.computeIfAbsent(objectList.getQualifiedName(), k -> new DBObjectListPsiDirectory(objectList));
+        return objectListPsiCache.get(objectList.getQualifiedName(), () -> new DBObjectListPsiDirectory(objectList));
     }
 
     @Override
