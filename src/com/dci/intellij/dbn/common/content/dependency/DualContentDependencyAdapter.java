@@ -34,7 +34,7 @@ public class DualContentDependencyAdapter extends BasicDependencyAdapter impleme
     }
 
     @Override
-    public boolean areDependenciesDirty() {
+    public boolean isDependencyDirty() {
         return
             content(first).isDirty() ||
             content(second).isDirty();

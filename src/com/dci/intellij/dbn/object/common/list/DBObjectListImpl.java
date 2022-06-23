@@ -33,6 +33,7 @@ import com.dci.intellij.dbn.object.common.sorting.DBObjectComparator;
 import com.dci.intellij.dbn.object.common.sorting.SortingType;
 import com.dci.intellij.dbn.object.filter.quick.ObjectQuickFilter;
 import com.dci.intellij.dbn.object.filter.quick.ObjectQuickFilterManager;
+import com.dci.intellij.dbn.object.lookup.DBObjectRef;
 import com.dci.intellij.dbn.object.type.DBObjectType;
 import com.intellij.navigation.ItemPresentation;
 import com.intellij.openapi.progress.ProcessCanceledException;
@@ -541,8 +542,7 @@ public class DBObjectListImpl<T extends DBObject> extends DynamicContentImpl<T> 
     }
 
     public static class Grouped<T extends DBObject> extends DBObjectListImpl<T> implements GroupedDynamicContent<T> {
-        private Map<DBObjectType, Range> parentTypeRanges;
-        private Map<String, Range> parentNameRanges;
+        private Map<DBObjectRef, Range> ranges;
 
         Grouped(
                 @NotNull DBObjectType objectType,
@@ -556,52 +556,37 @@ public class DBObjectListImpl<T extends DBObject> extends DynamicContentImpl<T> 
 
         @Override
         protected void afterUpdate() {
-            Map<DBObjectType, Range> parentTypeRanges = new HashMap<>();
-            Map<String, Range> parentNameRanges = new HashMap<>();
-
             List<T> elements = getAllElements();
             if (!elements.isEmpty()) {
-                DBObjectType currentParentType = null;
-                String currentParentName = null;
-                int currentTypeOffset = 0;
-                int currentNameOffset = 0;
+                Map<DBObjectRef, Range> ranges = new HashMap<>();
+
+                DBObjectRef currentParent = null;
+                int currentOffset = 0;
                 for (int i = 0; i < elements.size(); i++) {
                     T object = elements.get(i);
-                    DBObject parentObject = object.getParentObject();
-                    DBObjectType parentType = parentObject.getObjectType();
-                    String parentName = parentObject.getName();
+                    DBObjectRef parent = object.getParentObject().ref();
+                    currentParent = nvl(currentParent, parent);
 
-                    currentParentType = nvl(currentParentType, parentType);
-                    currentParentName = nvl(currentParentName, parentName);
-
-                    if (currentParentType != parentType) {
-                        parentTypeRanges.put(currentParentType, new Range(currentTypeOffset, i - 1));
-                        currentParentType = parentType;
-                        currentTypeOffset = i;
+                    if (!Objects.equals(currentParent, parent)) {
+                        ranges.put(currentParent, new Range(currentOffset, i - 1));
+                        currentParent = parent;
+                        currentOffset = i;
                     }
-
-                    if (!Objects.equals(currentParentName, parentName)) {
-                        parentNameRanges.put(currentParentName, new Range(currentNameOffset, i - 1));
-                        currentParentName = parentName;
-                        currentNameOffset = i;
-                    }
-
 
                     if (i == elements.size() - 1) {
-                        parentTypeRanges.put(currentParentType, new Range(currentTypeOffset, i));
-                        parentNameRanges.put(currentParentName, new Range(currentNameOffset, i));
+                        ranges.put(currentParent, new Range(currentOffset, i));
                     }
                 }
-            }
-            this.parentTypeRanges = parentTypeRanges;
-            this.parentNameRanges = parentNameRanges;
 
+                this.ranges = ranges;
+            }
         }
 
-        public List<T> getChildElements(String parentName) {
+        public List<T> getChildElements(DatabaseEntity parent) {
             List<T> elements = getAllElements();
-            if (parentNameRanges != null) {
-                Range range = parentNameRanges.get(parentName);
+            if (ranges != null && parent instanceof DBObject) {
+                DBObject object = (DBObject) parent;
+                Range range = ranges.get(object.ref());
                 if (range != null) {
                     return elements.subList(range.getLeft(), range.getRight() + 1);
                 }
@@ -611,11 +596,11 @@ public class DBObjectListImpl<T extends DBObject> extends DynamicContentImpl<T> 
 
         @Override
         public T getElement(String name, short overload) {
-            if (parentNameRanges != null) {
+            if (ranges != null) {
                 SearchAdapter<T> adapter = getObjectType().isOverloadable() ?
                         binary(name, overload) :
                         binary(name);
-                Collection<Range> ranges = parentNameRanges.values();
+                Collection<Range> ranges = this.ranges.values();
                 for (Range range : ranges) {
                     T element = binarySearch(elements, range.getLeft(), range.getRight(), adapter);
                     if (element != null) {
