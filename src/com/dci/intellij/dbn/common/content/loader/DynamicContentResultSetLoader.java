@@ -5,7 +5,6 @@ import com.dci.intellij.dbn.common.content.DynamicContentElement;
 import com.dci.intellij.dbn.common.content.DynamicContentProperty;
 import com.dci.intellij.dbn.common.content.DynamicContentType;
 import com.dci.intellij.dbn.common.load.ProgressMonitor;
-import com.dci.intellij.dbn.common.util.CollectionUtil;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.Resources;
 import com.dci.intellij.dbn.connection.jdbc.DBNConnection;
@@ -123,9 +122,7 @@ public abstract class DynamicContentResultSetLoader<
                                 content.checkDisposed();
                                 if (element != null) {
                                     if (list == null) {
-                                        list = content.isMutable() ?
-                                                CollectionUtil.createConcurrentList() :
-                                                new ArrayList<>();
+                                        list = new ArrayList<T>();
                                     }
                                     list.add(element);
                                     if (count % 10 == 0) {

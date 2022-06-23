@@ -5,6 +5,7 @@ import com.dci.intellij.dbn.common.property.Property;
 public enum DynamicContentProperty implements Property.IntBase {
     MASTER,
     MUTABLE,
+    VIRTUAL,
     INTERNAL,
     HIDDEN,
     PASSIVE,

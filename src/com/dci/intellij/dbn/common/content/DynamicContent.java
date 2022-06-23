@@ -65,8 +65,6 @@ public interface DynamicContent<T extends DynamicContentElement> extends Statefu
 
     boolean isEmpty();
 
-    boolean isMutable();
-
     boolean isPassive();
 
     void markDirty();

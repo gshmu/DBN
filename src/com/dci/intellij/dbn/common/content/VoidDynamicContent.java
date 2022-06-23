@@ -70,11 +70,6 @@ public class VoidDynamicContent extends StatefulDisposable.Base implements Dynam
     }
 
     @Override
-    public boolean isMutable() {
-        return false;
-    }
-
-    @Override
     public boolean isPassive() {
         return false;
     }
