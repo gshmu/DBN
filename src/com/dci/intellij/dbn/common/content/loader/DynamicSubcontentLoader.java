@@ -9,6 +9,7 @@ import com.dci.intellij.dbn.common.content.dependency.ContentDependencyAdapter;
 import com.dci.intellij.dbn.common.content.dependency.SubcontentDependencyAdapter;
 import com.dci.intellij.dbn.common.thread.ThreadMonitor;
 import com.dci.intellij.dbn.common.thread.ThreadProperty;
+import com.dci.intellij.dbn.connection.DatabaseEntity;
 import com.dci.intellij.dbn.database.common.metadata.DBObjectMetadata;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -59,8 +60,8 @@ public abstract class DynamicSubcontentLoader<T extends DynamicContentElement, M
 
             } else if (sourceContent instanceof GroupedDynamicContent) {
                 GroupedDynamicContent groupedContent = (GroupedDynamicContent) sourceContent;
-                String parentName = content.ensureParentEntity().getName();
-                List<T> list = groupedContent.getChildElements(parentName);
+                DatabaseEntity parent = content.ensureParentEntity();
+                List<T> list = groupedContent.getChildElements(parent);
                 content.setElements(list);
                 content.set(DynamicContentProperty.MASTER, false);
             } else {

@@ -13,8 +13,8 @@ import com.dci.intellij.dbn.common.util.Commons;
 import com.dci.intellij.dbn.connection.DatabaseEntity;
 import com.dci.intellij.dbn.database.common.metadata.DBObjectMetadata;
 import com.dci.intellij.dbn.object.common.DBObject;
+import com.dci.intellij.dbn.object.lookup.DBObjectRef;
 import com.dci.intellij.dbn.object.type.DBObjectRelationType;
-import com.dci.intellij.dbn.object.type.DBObjectType;
 import com.intellij.openapi.project.Project;
 import lombok.Getter;
 import org.jetbrains.annotations.NotNull;
@@ -124,9 +124,7 @@ class DBObjectRelationListImpl<T extends DBObjectRelation> extends DynamicConten
     public void notifyChangeListeners() {}
 
     public static class Grouped<T extends DBObjectRelation> extends DBObjectRelationListImpl<T> implements GroupedDynamicContent<T> {
-
-        private Map<DBObjectType, Range> typeRanges;
-        private Map<String, Range> nameRanges;
+        private Map<DBObjectRef, Range> ranges;
 
         Grouped(
                 @NotNull DBObjectRelationType relationType,
@@ -140,49 +138,37 @@ class DBObjectRelationListImpl<T extends DBObjectRelation> extends DynamicConten
 
         @Override
         protected void afterUpdate() {
-            typeRanges = new HashMap<>();
-            nameRanges = new HashMap<>();
-
             List<T> elements = getAllElements();
             if (!elements.isEmpty()) {
-                DBObjectType currentGroupType = null;
-                String currentGroupName = null;
-                int currentTypeOffset = 0;
+                Map<DBObjectRef, Range> ranges = new HashMap<>();
+
+                DBObjectRef currentObject = null;
                 int currentNameOffset = 0;
                 for (int i = 0; i < elements.size(); i++) {
                     T objectRelation = elements.get(i);
-                    DBObject groupObject = Commons.nvl(objectRelation.getSourceObject().getParentObject(), objectRelation.getSourceObject());
-                    DBObjectType groupType = groupObject.getObjectType();
-                    String groupName = groupObject.getName();
+                    DBObject sourceObject = objectRelation.getSourceObject();
+                    DBObject object = Commons.nvl(sourceObject.getParentObject(), sourceObject);
+                    currentObject = nvl(currentObject, object.ref());
 
-                    currentGroupType = nvl(currentGroupType, groupType);
-                    currentGroupName = nvl(currentGroupName, groupName);
-
-                    if (currentGroupType != groupType) {
-                        typeRanges.put(currentGroupType, new Range(currentTypeOffset, i - 1));
-                        currentGroupType = groupType;
-                        currentTypeOffset = i;
-                    }
-
-                    if (!Objects.equals(currentGroupName, groupName)) {
-                        nameRanges.put(currentGroupName, new Range(currentNameOffset, i - 1));
-                        currentGroupName = groupName;
+                    if (!Objects.equals(currentObject, object.ref())) {
+                        ranges.put(currentObject, new Range(currentNameOffset, i - 1));
+                        currentObject = object.ref();
                         currentNameOffset = i;
                     }
 
-
                     if (i == elements.size() - 1) {
-                        typeRanges.put(currentGroupType, new Range(currentTypeOffset, i));
-                        nameRanges.put(currentGroupName, new Range(currentNameOffset, i));
+                        ranges.put(currentObject, new Range(currentNameOffset, i));
                     }
                 }
+
+                this.ranges = ranges;
             }
         }
 
-        public List<T> getChildElements(String parentName) {
+        public List<T> getChildElements(DatabaseEntity parentName) {
             List<T> elements = getAllElements();
-            if (nameRanges != null) {
-                Range range = nameRanges.get(parentName);
+            if (ranges != null) {
+                Range range = ranges.get(parentName);
                 if (range != null) {
                     return elements.subList(range.getLeft(), range.getRight() + 1);
                 }

@@ -41,7 +41,7 @@ public abstract class DynamicSubcontentCustomLoader<
             DynamicContent sourceContent = dependencyAdapter.getSourceContent();
             if (sourceContent instanceof GroupedDynamicContent) {
                 GroupedDynamicContent groupedContent = (GroupedDynamicContent) sourceContent;
-                List<DynamicContentElement> childElements = groupedContent.getChildElements(content.ensureParentEntity().getName());
+                List<DynamicContentElement> childElements = groupedContent.getChildElements(content.ensureParentEntity());
                 list = childElements.stream().map(e -> resolveElement(content, e)).filter(e -> e != null).collect(Collectors.toList());
             } else {
                 List elements = sourceContent.getAllElements();
