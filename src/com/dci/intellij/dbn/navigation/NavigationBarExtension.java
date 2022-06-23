@@ -5,7 +5,7 @@ import com.dci.intellij.dbn.navigation.psi.DBConnectionPsiDirectory;
 import com.dci.intellij.dbn.navigation.psi.DBObjectPsiDirectory;
 import com.dci.intellij.dbn.navigation.psi.DBObjectPsiFile;
 import com.dci.intellij.dbn.object.common.DBObject;
-import com.dci.intellij.dbn.object.common.DBObjectPsiFacade;
+import com.dci.intellij.dbn.object.common.DBObjectPsiCache;
 import com.dci.intellij.dbn.vfs.DBVirtualFileImpl;
 import com.intellij.ide.navigationToolbar.AbstractNavBarModelExtension;
 import com.intellij.openapi.project.Project;
@@ -43,7 +43,7 @@ public class NavigationBarExtension extends AbstractNavBarModelExtension {
             if (virtualFile instanceof DBVirtualFileImpl) {
                 DBObject object = databaseFile.getUnderlyingObject();
                 if (object != null) {
-                    return DBObjectPsiFacade.asPsiFile(object);
+                    return DBObjectPsiCache.asPsiFile(object);
                 }
             }
         }

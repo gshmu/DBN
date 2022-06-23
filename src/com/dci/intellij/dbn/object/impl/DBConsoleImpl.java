@@ -5,7 +5,7 @@ import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.database.common.metadata.DBObjectMetadata;
 import com.dci.intellij.dbn.object.DBConsole;
 import com.dci.intellij.dbn.object.common.DBObjectImpl;
-import com.dci.intellij.dbn.object.common.DBObjectPsiFacade;
+import com.dci.intellij.dbn.object.common.DBObjectPsiCache;
 import com.dci.intellij.dbn.object.type.DBObjectType;
 import com.dci.intellij.dbn.vfs.DBConsoleType;
 import com.dci.intellij.dbn.vfs.file.DBConsoleVirtualFile;
@@ -50,8 +50,8 @@ public class DBConsoleImpl extends DBObjectImpl<DBObjectMetadata> implements DBC
 
     @NotNull
     @Override
-    public DBObjectPsiFacade getPsiFacade() {
-        return super.getPsiFacade();
+    public DBObjectPsiCache getPsiCache() {
+        return super.getPsiCache();
     }
 
     @Override

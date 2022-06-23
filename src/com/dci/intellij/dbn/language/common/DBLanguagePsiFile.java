@@ -26,7 +26,7 @@ import com.dci.intellij.dbn.language.common.psi.lookup.PsiLookupAdapter;
 import com.dci.intellij.dbn.language.sql.SQLLanguage;
 import com.dci.intellij.dbn.object.DBSchema;
 import com.dci.intellij.dbn.object.common.DBObject;
-import com.dci.intellij.dbn.object.common.DBObjectPsiFacade;
+import com.dci.intellij.dbn.object.common.DBObjectPsiCache;
 import com.dci.intellij.dbn.object.common.DBSchemaObject;
 import com.dci.intellij.dbn.object.lookup.DBObjectRef;
 import com.dci.intellij.dbn.object.type.DBObjectType;
@@ -47,7 +47,18 @@ import com.intellij.openapi.editor.EditorFactory;
 import com.intellij.openapi.fileEditor.OpenFileDescriptor;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
-import com.intellij.psi.*;
+import com.intellij.psi.FileViewProvider;
+import com.intellij.psi.PsiComment;
+import com.intellij.psi.PsiDirectory;
+import com.intellij.psi.PsiElement;
+import com.intellij.psi.PsiElementVisitor;
+import com.intellij.psi.PsiErrorElement;
+import com.intellij.psi.PsiFile;
+import com.intellij.psi.PsiFileFactory;
+import com.intellij.psi.PsiManager;
+import com.intellij.psi.PsiRecursiveElementVisitor;
+import com.intellij.psi.PsiWhiteSpace;
+import com.intellij.psi.SingleRootFileViewProvider;
 import com.intellij.psi.impl.source.PsiFileImpl;
 import com.intellij.psi.impl.source.tree.LeafPsiElement;
 import com.intellij.psi.tree.IElementType;
@@ -57,7 +68,7 @@ import lombok.Getter;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import javax.swing.*;
+import javax.swing.Icon;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
@@ -332,7 +343,7 @@ public abstract class DBLanguagePsiFile extends PsiFileImpl implements Connectio
         DBObject underlyingObject = getUnderlyingObject();
         if (underlyingObject != null) {
             DBObject parentObject = underlyingObject.getParentObject();
-            return DBObjectPsiFacade.asPsiDirectory(parentObject);
+            return DBObjectPsiCache.asPsiDirectory(parentObject);
 
         }
         return Read.conditional(() -> DBLanguagePsiFile.super.getParent());

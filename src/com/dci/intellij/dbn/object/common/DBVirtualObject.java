@@ -80,7 +80,7 @@ public class DBVirtualObject extends DBObjectImpl implements PsiReference {
 
     private volatile boolean loadingChildren;
     private PsiElementRef<BasePsiElement> relevantPsiElement;
-    private final DBObjectPsiFacade psiFacade;
+    private final DBObjectPsiCache psiCache;
     private final Map<String, ObjectLookupItemBuilder> lookupItemBuilder = new ConcurrentHashMap<>();
 
     private final Latent<Boolean> valid = Latent.basic(() -> Read.conditional(() -> {
@@ -105,7 +105,7 @@ public class DBVirtualObject extends DBObjectImpl implements PsiReference {
     public DBVirtualObject(@NotNull DBObjectType objectType, @NotNull BasePsiElement psiElement) {
         super(psiElement.getConnection(), objectType, psiElement.getText());
 
-        psiFacade = new DBObjectPsiFacade(psiElement);
+        psiCache = new DBObjectPsiCache(psiElement);
         relevantPsiElement = PsiElementRef.from(psiElement);
         String name = "";
 
@@ -174,8 +174,8 @@ public class DBVirtualObject extends DBObjectImpl implements PsiReference {
 
     @NotNull
     @Override
-    public DBObjectPsiFacade getPsiFacade() {
-        return psiFacade;
+    public DBObjectPsiCache getPsiCache() {
+        return psiCache;
     }
 
     @NotNull
@@ -424,7 +424,7 @@ public class DBVirtualObject extends DBObjectImpl implements PsiReference {
 
     @Nullable
     public BasePsiElement getUnderlyingPsiElement() {
-        return (BasePsiElement) getPsiFacade().getPsiElement();
+        return (BasePsiElement) getPsiCache().getPsiElement();
     }
 
     @NotNull
