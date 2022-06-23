@@ -12,7 +12,7 @@ import com.intellij.psi.PsiFile;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-public final class DBObjectPsiFacade {
+public final class DBObjectPsiCache {
     private DBObjectRef<?> objectRef;
     private PsiElementRef<PsiElement> psiElementRef;
 
@@ -20,14 +20,14 @@ public final class DBObjectPsiFacade {
     private final Latent<PsiElement> psiElement = Latent.basic(() -> new DBObjectPsiElement(objectRef));
     private final Latent<PsiDirectory> psiDirectory = Latent.basic(() -> new DBObjectPsiDirectory(objectRef));
 
-    public DBObjectPsiFacade() {
+    public DBObjectPsiCache() {
     }
 
-    public DBObjectPsiFacade(@NotNull PsiElement psiElement) {
+    public DBObjectPsiCache(@NotNull PsiElement psiElement) {
         psiElementRef = PsiElementRef.from(psiElement);
     }
 
-    public DBObjectPsiFacade(DBObjectRef<?> objectRef) {
+    public DBObjectPsiCache(DBObjectRef<?> objectRef) {
         this.objectRef = objectRef;
     }
 
@@ -45,17 +45,17 @@ public final class DBObjectPsiFacade {
     }
 
     public static PsiDirectory asPsiDirectory(@Nullable DBObject object) {
-        return object == null ? null : Failsafe.nn(object).getPsiFacade().getPsiDirectory();
+        return object == null ? null : Failsafe.nn(object).getPsiCache().getPsiDirectory();
     }
 
     @Nullable
     public static PsiElement asPsiElement(@Nullable DBObject object) {
-        return object == null ? null : Failsafe.nn(object).getPsiFacade().getPsiElement();
+        return object == null ? null : Failsafe.nn(object).getPsiCache().getPsiElement();
     }
 
     @Nullable
     public static PsiFile asPsiFile(@Nullable DBObject object) {
-        return object == null ? null : Failsafe.nn(object).getPsiFacade().getPsiFile();
+        return object == null ? null : Failsafe.nn(object).getPsiCache().getPsiFile();
     }
 
 }

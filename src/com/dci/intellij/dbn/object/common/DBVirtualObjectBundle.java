@@ -26,6 +26,7 @@ import com.dci.intellij.dbn.object.type.DBObjectType;
 import com.dci.intellij.dbn.vfs.file.DBObjectVirtualFile;
 import com.intellij.navigation.ItemPresentation;
 import com.intellij.openapi.project.Project;
+import com.intellij.psi.PsiDirectory;
 import com.intellij.psi.PsiFile;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -196,7 +197,12 @@ public class DBVirtualObjectBundle extends BrowserTreeNodeBase implements DBObje
     }
 
     @Override
-    public DBObjectPsiFacade getObjectPsiFacade(DBObjectRef<?> objectRef) {
+    public DBObjectPsiCache getObjectPsiCache(DBObjectRef<?> objectRef) {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public PsiDirectory getObjectListPsiDirectory(DBObjectList objectList) {
         throw new UnsupportedOperationException();
     }
 

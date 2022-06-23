@@ -7,7 +7,7 @@ import com.dci.intellij.dbn.connection.DatabaseEntity;
 import com.dci.intellij.dbn.language.common.psi.EmptySearchScope;
 import com.dci.intellij.dbn.object.common.DBObject;
 import com.dci.intellij.dbn.object.common.DBObjectBundle;
-import com.dci.intellij.dbn.object.common.DBObjectPsiFacade;
+import com.dci.intellij.dbn.object.common.DBObjectPsiCache;
 import com.dci.intellij.dbn.object.common.DBSchemaObject;
 import com.dci.intellij.dbn.object.common.list.DBObjectList;
 import com.dci.intellij.dbn.vfs.file.DBObjectListVirtualFile;
@@ -19,7 +19,14 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Key;
 import com.intellij.openapi.util.TextRange;
 import com.intellij.openapi.vcs.FileStatus;
-import com.intellij.psi.*;
+import com.intellij.psi.PsiDirectory;
+import com.intellij.psi.PsiElement;
+import com.intellij.psi.PsiElementVisitor;
+import com.intellij.psi.PsiFile;
+import com.intellij.psi.PsiInvalidElementAccessException;
+import com.intellij.psi.PsiManager;
+import com.intellij.psi.PsiReference;
+import com.intellij.psi.ResolveState;
 import com.intellij.psi.scope.PsiScopeProcessor;
 import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.psi.search.PsiElementProcessor;
@@ -28,7 +35,7 @@ import com.intellij.util.IncorrectOperationException;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import javax.swing.*;
+import javax.swing.Icon;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -92,7 +99,7 @@ public class DBObjectListPsiDirectory implements PsiDirectory, Disposable {
         DatabaseEntity parent = getObjectList().getParent();
         if (parent instanceof DBObject) {
             DBObject parentObject = (DBObject) parent;
-            return DBObjectPsiFacade.asPsiDirectory(parentObject);
+            return DBObjectPsiCache.asPsiDirectory(parentObject);
         }
 
         if (parent instanceof DBObjectBundle) {
@@ -135,9 +142,9 @@ public class DBObjectListPsiDirectory implements PsiDirectory, Disposable {
         for (Object obj : getObjectList().getObjects()) {
             DBObject object = (DBObject) obj;
             if (object instanceof DBSchemaObject) {
-                children.add(DBObjectPsiFacade.asPsiFile(object));
+                children.add(DBObjectPsiCache.asPsiFile(object));
             } else {
-                children.add(DBObjectPsiFacade.asPsiDirectory(object));
+                children.add(DBObjectPsiCache.asPsiDirectory(object));
             }
         }
         return children.toArray(new PsiElement[0]);

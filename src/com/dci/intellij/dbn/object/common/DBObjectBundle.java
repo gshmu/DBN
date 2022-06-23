@@ -21,6 +21,7 @@ import com.dci.intellij.dbn.object.common.list.DBObjectListContainer;
 import com.dci.intellij.dbn.object.lookup.DBObjectRef;
 import com.dci.intellij.dbn.object.type.DBObjectType;
 import com.dci.intellij.dbn.vfs.file.DBObjectVirtualFile;
+import com.intellij.psi.PsiDirectory;
 import com.intellij.psi.PsiFile;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -99,7 +100,9 @@ public interface DBObjectBundle extends BrowserTreeNode, StatefulDisposable {
 
     LookupItemBuilder getLookupItemBuilder(DBObjectRef<?> objectRef, DBLanguage<?> language);
 
-    DBObjectPsiFacade getObjectPsiFacade(DBObjectRef<?> objectRef);
+    PsiDirectory getObjectListPsiDirectory(DBObjectList objectList);
+
+    DBObjectPsiCache getObjectPsiCache(DBObjectRef<?> objectRef);
 
     DBObjectVirtualFile<?> getObjectVirtualFile(DBObjectRef<?> objectRef);
 

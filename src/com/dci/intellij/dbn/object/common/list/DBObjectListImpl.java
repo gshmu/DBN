@@ -24,7 +24,6 @@ import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.DatabaseEntity;
 import com.dci.intellij.dbn.connection.config.ConnectionFilterSettings;
 import com.dci.intellij.dbn.database.common.metadata.DBObjectMetadata;
-import com.dci.intellij.dbn.navigation.psi.DBObjectListPsiDirectory;
 import com.dci.intellij.dbn.object.DBColumn;
 import com.dci.intellij.dbn.object.DBSchema;
 import com.dci.intellij.dbn.object.common.DBObject;
@@ -45,9 +44,16 @@ import lombok.val;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import javax.swing.*;
+import javax.swing.Icon;
 import javax.swing.tree.TreeNode;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Enumeration;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
 import java.util.function.Consumer;
 
 import static com.dci.intellij.dbn.common.content.DynamicContentProperty.*;
@@ -63,7 +69,6 @@ import static com.dci.intellij.dbn.object.type.DBObjectType.*;
 public class DBObjectListImpl<T extends DBObject> extends DynamicContentImpl<T> implements DBObjectList<T> {
     private final DBObjectType objectType;
     private ObjectQuickFilter<T> quickFilter;
-    private volatile PsiDirectory psiDirectory;
 
     DBObjectListImpl(
             @NotNull DBObjectType objectType,
@@ -135,6 +140,25 @@ public class DBObjectListImpl<T extends DBObject> extends DynamicContentImpl<T> 
     @NotNull
     public List<T> getObjects() {
         return getAllElements();
+    }
+
+    @NotNull
+    @Override
+    public String getQualifiedName() {
+        // TODO is StringBulder insert(0...) better than this?
+        String path = getName();
+        DatabaseEntity parent = getParent();
+        while(parent != null) {
+            path = parent.getName() + "." + path;
+            if (parent instanceof DBObject) {
+                DBObject object = (DBObject) parent;
+                parent = object.getParent();
+            } else {
+                parent = parent.getParentEntity();
+            }
+
+        }
+        return path;
     }
 
     @Override
@@ -232,8 +256,7 @@ public class DBObjectListImpl<T extends DBObject> extends DynamicContentImpl<T> 
             if (is(GROUPED) || true ) { // TODO binary search on grouped elements
                 super.sortElements(elements);
             } else {
-                val comparator = DBObjectComparator.basic(objectType);
-                elements.sort(comparator);
+                elements.sort(DBObjectComparator.basic(objectType));
                 set(SEARCHABLE, true);
             }
         } else {
@@ -275,18 +298,8 @@ public class DBObjectListImpl<T extends DBObject> extends DynamicContentImpl<T> 
 
     @Override
     public PsiDirectory getPsiDirectory() {
-        if (psiDirectory == null) {
-            synchronized (this) {
-                if (psiDirectory == null) {
-                    Failsafe.nd(this);
-                    psiDirectory = new DBObjectListPsiDirectory(this);
-                }
-            }
-        }
-        return psiDirectory;
+        return getConnection().getObjectBundle().getObjectListPsiDirectory(this);
     }
-
-
 
     @Override
     public void notifyChangeListeners() {
@@ -516,7 +529,6 @@ public class DBObjectListImpl<T extends DBObject> extends DynamicContentImpl<T> 
 
     @Override
     public void disposeInner() {
-        psiDirectory = null;
         super.disposeInner();
     }
 

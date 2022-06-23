@@ -128,7 +128,7 @@ public interface DBObject extends
     boolean isParentOf(DBObject object);
 
     @NotNull
-    DBObjectPsiFacade getPsiFacade();
+    DBObjectPsiCache getPsiCache();
 
     void refresh(DBObjectType objectType);
 

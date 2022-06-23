@@ -25,8 +25,8 @@ import com.dci.intellij.dbn.object.DBSchema;
 import com.dci.intellij.dbn.object.DBSynonym;
 import com.dci.intellij.dbn.object.common.DBObject;
 import com.dci.intellij.dbn.object.common.DBObjectBundle;
+import com.dci.intellij.dbn.object.common.DBObjectPsiCache;
 import com.dci.intellij.dbn.object.common.DBObjectPsiElement;
-import com.dci.intellij.dbn.object.common.DBObjectPsiFacade;
 import com.dci.intellij.dbn.object.common.DBVirtualObject;
 import com.dci.intellij.dbn.object.lookup.DBObjectRef;
 import com.dci.intellij.dbn.object.type.DBObjectType;
@@ -451,7 +451,7 @@ public abstract class IdentifierPsiElement extends LeafPsiElement<IdentifierElem
     private boolean updateReference(@Nullable BasePsiElement parent, IdentifierElementType elementType, DBObject referenceObject) {
         if (isValidReference(referenceObject)) {
             ref.setParent(parent);
-            ref.setReferencedElement(DBObjectPsiFacade.asPsiElement(referenceObject));
+            ref.setReferencedElement(DBObjectPsiCache.asPsiElement(referenceObject));
             this.setElementType(elementType);
             return true;
         }
@@ -553,7 +553,7 @@ public abstract class IdentifierPsiElement extends LeafPsiElement<IdentifierElem
         ref = nvl(ref, () -> new PsiResolveResult(this));
         try {
             ref.preResolve(this);
-            ref.setReferencedElement(DBObjectPsiFacade.asPsiElement(object));
+            ref.setReferencedElement(DBObjectPsiCache.asPsiElement(object));
         } finally {
             ref.postResolve(false);
         }

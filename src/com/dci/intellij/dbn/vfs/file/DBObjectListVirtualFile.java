@@ -8,9 +8,10 @@ import com.dci.intellij.dbn.connection.ConnectionId;
 import com.dci.intellij.dbn.connection.DatabaseEntity;
 import com.dci.intellij.dbn.connection.SchemaId;
 import com.dci.intellij.dbn.connection.session.DatabaseSession;
+import com.dci.intellij.dbn.language.common.WeakRef;
 import com.dci.intellij.dbn.object.common.DBObject;
 import com.dci.intellij.dbn.object.common.DBObjectBundle;
-import com.dci.intellij.dbn.object.common.DBObjectPsiFacade;
+import com.dci.intellij.dbn.object.common.DBObjectPsiCache;
 import com.dci.intellij.dbn.object.common.list.DBObjectList;
 import com.dci.intellij.dbn.vfs.DBVirtualFileImpl;
 import com.intellij.openapi.fileTypes.FileType;
@@ -19,41 +20,42 @@ import com.intellij.openapi.vfs.VirtualFile;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import javax.swing.*;
+import javax.swing.Icon;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 
 public class DBObjectListVirtualFile<T extends DBObjectList> extends DBVirtualFileImpl {
     private static final byte[] EMPTY_BYTE_CONTENT = new byte[0];
-    protected T objectList;
+    private final WeakRef<T> objectList;
 
     public DBObjectListVirtualFile(T objectList) {
         super(objectList.getProject());
-        this.objectList = objectList;
+        this.objectList = WeakRef.of(objectList);
         this.name = Naming.capitalize(objectList.getName());
     }
 
+    @NotNull
     public T getObjectList() {
-        return objectList;
+        return objectList.ensure();
     }
 
     @NotNull
     @Override
     public ConnectionId getConnectionId() {
-        return objectList.getConnectionId();
+        return getObjectList().getConnectionId();
     }
 
     @Override
     @NotNull
     public ConnectionHandler getConnection() {
-        return objectList.getConnection();
+        return getObjectList().getConnection();
     }
 
     @Nullable
     @Override
     public SchemaId getSchemaId() {
-        DatabaseEntity parent = objectList.getParentEntity();
+        DatabaseEntity parent = getObjectList().getParentEntity();
         if (parent instanceof DBObject) {
             DBObject object = (DBObject) parent;
             return SchemaId.from(object.getSchema());
@@ -96,11 +98,11 @@ public class DBObjectListVirtualFile<T extends DBObjectList> extends DBVirtualFi
     @Override
     @Nullable
     public VirtualFile getParent() {
-        if (Failsafe.check(objectList)) {
-            DatabaseEntity parent = objectList.getParentEntity();
+        if (Failsafe.check(objectList.get())) {
+            DatabaseEntity parent = getObjectList().getParentEntity();
             if (parent instanceof DBObject) {
                 DBObject parentObject = (DBObject) parent;
-                return DBObjectPsiFacade.asPsiDirectory(parentObject).getVirtualFile();
+                return DBObjectPsiCache.asPsiDirectory(parentObject).getVirtualFile();
             }
 
             if (parent instanceof DBObjectBundle) {
@@ -114,7 +116,7 @@ public class DBObjectListVirtualFile<T extends DBObjectList> extends DBVirtualFi
 
     @Override
     public boolean isValid() {
-        return super.isValid() && Failsafe.check(objectList);
+        return super.isValid() && Failsafe.check(objectList.get());
     }
 
     @Override
