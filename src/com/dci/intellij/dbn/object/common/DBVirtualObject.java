@@ -2,7 +2,6 @@ package com.dci.intellij.dbn.object.common;
 
 import com.dci.intellij.dbn.code.common.lookup.LookupItemBuilder;
 import com.dci.intellij.dbn.code.common.lookup.ObjectLookupItemBuilder;
-import com.dci.intellij.dbn.common.content.DynamicContentProperty;
 import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.common.latent.Latent;
 import com.dci.intellij.dbn.common.path.Node;
@@ -59,6 +58,8 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
+
+import static com.dci.intellij.dbn.common.content.DynamicContentProperty.*;
 
 public class DBVirtualObject extends DBObjectImpl implements PsiReference {
     private static final PsiLookupAdapter CHR_STAR_LOOKUP_ADAPTER = new PsiLookupAdapter() {
@@ -259,26 +260,20 @@ public class DBVirtualObject extends DBObjectImpl implements PsiReference {
     private DBObjectList<DBObject> loadChildObjectList(DBObjectType objectType) {
         DBObjectListContainer childObjects = ensureChildObjects();
         DBObjectList<DBObject> objectList = childObjects.getObjectList(objectType);
-        if (objectList != null) {
-            for (DBObject object : objectList.getObjects()) {
-                if (!object.isValid()) {
-                    objectList = null;
-                    break;
-                }
-            }
-        }
 
         if (objectList == null) {
-            objectList = childObjects.createObjectList(objectType, this, DynamicContentProperty.MUTABLE);
+            objectList = childObjects.createObjectList(objectType, this, MUTABLE, VIRTUAL);
             if (objectList != null) {
-                // mark as loaded so default loading mechanism does not kick in.
-                objectList.set(DynamicContentProperty.LOADED, true);
+                loadChildObjects(objectType, objectList);
+                objectList.set(LOADED, true);
             }
-        }
-
-        if (objectList != null && objectList.isEmpty()) {
-            loadChildObjects(objectType, objectList);
-            objectList.set(DynamicContentProperty.LOADED, true);
+        } else {
+            boolean invalid = objectList.getObjects().stream().anyMatch(o -> !o.isValid());
+            if (invalid) {
+                objectList.setElements(Collections.emptyList());
+                loadChildObjects(objectType, objectList);
+                objectList.set(LOADED, true);
+            }
         }
         return objectList;
     }
@@ -287,6 +282,7 @@ public class DBVirtualObject extends DBObjectImpl implements PsiReference {
         VirtualObjectLookupAdapter lookupAdapter = new VirtualObjectLookupAdapter(getObjectType(), objectType);
         BasePsiElement underlyingPsiElement = getUnderlyingPsiElement();
         if (underlyingPsiElement != null) {
+            List<DBObject> objects = new ArrayList<>();
             underlyingPsiElement.collectPsiElements(lookupAdapter, 100, element -> {
                 BasePsiElement child = (BasePsiElement) element;
                 // handle STAR column
@@ -302,7 +298,7 @@ public class DBVirtualObject extends DBObjectImpl implements PsiReference {
                                 if (object != null && object.getObjectType().matches(DBObjectType.DATASET)) {
                                     List<DBObject> columns = object.getChildObjects(DBObjectType.COLUMN);
                                     for (DBObject column : columns) {
-                                        objectList.addObject(column);
+                                        objects.add(column);
                                     }
                                 }
                             }
@@ -312,7 +308,7 @@ public class DBVirtualObject extends DBObjectImpl implements PsiReference {
                                 if (object != null && object != this && object.getObjectType().matches(DBObjectType.DATASET)) {
                                     List<DBObject> columns = object.getChildObjects(DBObjectType.COLUMN);
                                     for (DBObject column : columns) {
-                                        objectList.addObject(column);
+                                        objects.add(column);
                                     }
                                 }
                             });
@@ -322,17 +318,18 @@ public class DBVirtualObject extends DBObjectImpl implements PsiReference {
                 }
 
                 DBObject object = child.getUnderlyingObject();
-                if (object != null && object.getObjectType().isChildOf(getObjectType()) && !objectList.getAllElements().contains(object)) {
+                if (object != null && Strings.isNotEmpty(object.getName()) && object.getObjectType().isChildOf(getObjectType()) && !objectList.getAllElements().contains(object)) {
                     if (object instanceof DBVirtualObject) {
                         DBVirtualObject virtualObject = (DBVirtualObject) object;
                         virtualObject.setParentObject(this);
                     }
-                    objectList.addObject(object);
+                    objects.add(object);
                 }
-                objectList.sort(DBObjectComparator.basic(objectType));
+
             });
 
-
+            objectList.setElements(objects);
+            objectList.sort(DBObjectComparator.basic(objectType));
         }
     }
 
@@ -468,5 +465,15 @@ public class DBVirtualObject extends DBObjectImpl implements PsiReference {
     @Override
     public boolean canNavigateToSource() {
         return false;
+    }
+
+    @Override
+    public int compareTo(@NotNull Object o) {
+        DBVirtualObject that = (DBVirtualObject) o;
+        int result = this.getObjectType().compareTo(that.getObjectType());
+        if (result == 0) {
+            return this.getName().compareToIgnoreCase(that.getName());
+        }
+        return result;
     }
 }

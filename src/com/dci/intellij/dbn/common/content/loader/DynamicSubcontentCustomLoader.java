@@ -7,7 +7,6 @@ import com.dci.intellij.dbn.common.content.DynamicContentType;
 import com.dci.intellij.dbn.common.content.GroupedDynamicContent;
 import com.dci.intellij.dbn.common.content.dependency.ContentDependencyAdapter;
 import com.dci.intellij.dbn.common.content.dependency.SubcontentDependencyAdapter;
-import com.dci.intellij.dbn.common.util.CollectionUtil;
 import com.dci.intellij.dbn.database.common.metadata.DBObjectMetadata;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -52,9 +51,7 @@ public abstract class DynamicSubcontentCustomLoader<
                     if (element != null) {
                         content.checkDisposed();
                         if (list == null) {
-                            list = content.isMutable() ?
-                                    CollectionUtil.createConcurrentList() :
-                                    new ArrayList<T>();
+                            list = new ArrayList<T>();
                         }
                         list.add(element);
                     }

@@ -5,6 +5,7 @@ import org.jetbrains.annotations.NotNull;
 import java.io.Serializable;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Comparator;
 import java.util.Iterator;
 import java.util.List;
 import java.util.ListIterator;
@@ -142,6 +143,10 @@ public final class FixedArrayList<T> implements List<T>, RandomAccess, Serializa
         return cast(Arrays.asList(Arrays.copyOfRange(elements, from, to)));
     }
 
+    @Override
+    public void sort(Comparator c) {
+        Arrays.sort(elements, c);
+    }
 
     /*************************************************************
      *           unsupported update operations                   *
