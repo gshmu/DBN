@@ -124,7 +124,7 @@ public abstract class DynamicContentImpl<T extends DynamicContentElement>
 
     @Override
     public boolean isDirty() {
-        return is(DIRTY);
+        return is(DIRTY) || getDependencyAdapter().isDependencyDirty();
     }
 
     @Override
@@ -151,13 +151,12 @@ public abstract class DynamicContentImpl<T extends DynamicContentElement>
             return true;
         }
 
-        ConnectionHandler connection = this.getConnection();
         if (!isLoaded()) {
-            return dependencyAdapter.canConnect(connection);
+            return dependencyAdapter.canConnect(getConnection());
         }
 
-        if (isDirty() || dependencyAdapter.areDependenciesDirty()) {
-            return dependencyAdapter.canLoad(connection);
+        if (isDirty()) {
+            return dependencyAdapter.canLoad(getConnection());
         }
 
         return false;
