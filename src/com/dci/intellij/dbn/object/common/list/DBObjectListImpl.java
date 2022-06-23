@@ -45,16 +45,9 @@ import lombok.val;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import javax.swing.Icon;
+import javax.swing.*;
 import javax.swing.tree.TreeNode;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Enumeration;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
+import java.util.*;
 import java.util.function.Consumer;
 
 import static com.dci.intellij.dbn.common.content.DynamicContentProperty.*;
@@ -589,10 +582,10 @@ public class DBObjectListImpl<T extends DBObject> extends DynamicContentImpl<T> 
             }
         }
 
-        public List<T> getChildElements(DatabaseEntity parent) {
+        public List<T> getChildElements(DatabaseEntity entity) {
             List<T> elements = getAllElements();
-            if (ranges != null && parent instanceof DBObject) {
-                DBObject object = (DBObject) parent;
+            if (ranges != null && entity instanceof DBObject) {
+                DBObject object = (DBObject) entity;
                 Range range = ranges.get(object.ref());
                 if (range != null) {
                     return elements.subList(range.getLeft(), range.getRight() + 1);

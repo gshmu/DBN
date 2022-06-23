@@ -20,12 +20,7 @@ import lombok.Getter;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
+import java.util.*;
 
 import static com.dci.intellij.dbn.common.util.Commons.nvl;
 
@@ -165,10 +160,11 @@ class DBObjectRelationListImpl<T extends DBObjectRelation> extends DynamicConten
             }
         }
 
-        public List<T> getChildElements(DatabaseEntity parentName) {
+        public List<T> getChildElements(DatabaseEntity entity) {
             List<T> elements = getAllElements();
-            if (ranges != null) {
-                Range range = ranges.get(parentName);
+            if (ranges != null && entity instanceof DBObject) {
+                DBObject object = (DBObject) entity;
+                Range range = ranges.get(object.ref());
                 if (range != null) {
                     return elements.subList(range.getLeft(), range.getRight() + 1);
                 }
