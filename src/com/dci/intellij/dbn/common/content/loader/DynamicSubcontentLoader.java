@@ -15,6 +15,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.sql.SQLException;
+import java.util.Collections;
 import java.util.List;
 import java.util.function.Supplier;
 
@@ -65,7 +66,8 @@ public abstract class DynamicSubcontentLoader<T extends DynamicContentElement, M
                 content.setElements(list);
                 content.set(DynamicContentProperty.MASTER, false);
             } else {
-                throw new UnsupportedOperationException();
+                content.setElements(Collections.emptyList());
+                content.set(DynamicContentProperty.MASTER, false);
             }
         }
 

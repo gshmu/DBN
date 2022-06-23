@@ -253,7 +253,10 @@ public class DBObjectListImpl<T extends DBObject> extends DynamicContentImpl<T> 
 
     @Override
     protected void sortElements(List<T> elements) {
-        if (isInternal()) {
+        if (is(VIRTUAL)) {
+            super.sortElements(elements);
+
+        } else if (isInternal()) {
             if (is(GROUPED) || true ) { // TODO binary search on grouped elements
                 super.sortElements(elements);
             } else {
@@ -388,8 +391,12 @@ public class DBObjectListImpl<T extends DBObject> extends DynamicContentImpl<T> 
             if (!isLoading() && !isDisposed()) {
                 boolean scroll = !isTouched();
                 if (!isLoaded() || isDirty()) {
-                    loadInBackground();
-                    scroll = false;
+                    if (isPassive() || canLoadFast()) {
+                        ensure();
+                    } else {
+                        loadInBackground();
+                        scroll = false;
+                    }
                 }
 
                 if (scroll) {

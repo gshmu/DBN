@@ -128,11 +128,6 @@ public abstract class DynamicContentImpl<T extends DynamicContentElement>
     }
 
     @Override
-    public boolean isMutable() {
-        return is(MUTABLE);
-    }
-
-    @Override
     public boolean isPassive() {
         return is(PASSIVE);
     }
@@ -337,7 +332,11 @@ public abstract class DynamicContentImpl<T extends DynamicContentElement>
             elements = FixedArrayList.from(elements);
         }
         List<T> oldElements = this.elements;
-        this.elements = FilteredList.stateful((FilterDelegate<T>) () -> getFilter(), elements);
+        if (elements != EMPTY_CONTENT && isNot(INTERNAL) && isNot(VIRTUAL)) {
+            elements = FilteredList.stateful((FilterDelegate<T>) () -> getFilter(), elements);
+        }
+
+        this.elements = elements;
 
         afterUpdate();
         if (oldElements.size() != 0 || elements.size() != 0 ){
