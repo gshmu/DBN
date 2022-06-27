@@ -6,7 +6,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 
-public interface DBColumn extends DBObject {
+public interface DBColumn extends DBObject, DBOrderedObject {
     DBDataType getDataType();
     boolean isPrimaryKey();
     boolean isSinglePrimaryKey();
@@ -15,7 +15,6 @@ public interface DBColumn extends DBObject {
     boolean isNullable();
     boolean isHidden();
     DBDataset getDataset();
-    short getPosition();
 
     @Nullable
     DBColumn getForeignKeyColumn();

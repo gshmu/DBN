@@ -5,7 +5,6 @@ import com.dci.intellij.dbn.common.content.dependency.VoidContentDependencyAdapt
 import com.dci.intellij.dbn.common.content.loader.DynamicContentLoader;
 import com.dci.intellij.dbn.common.content.loader.VoidDynamicContentLoader;
 import com.dci.intellij.dbn.common.dispose.StatefulDisposable;
-import com.dci.intellij.dbn.common.filter.Filter;
 import com.dci.intellij.dbn.common.property.Property;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.DatabaseEntity;
@@ -115,12 +114,6 @@ public class VoidDynamicContent extends StatefulDisposable.Base implements Dynam
         return getElements();
     }
 
-    @Nullable
-    @Override
-    public Filter getFilter() {
-        return null;
-    }
-
     @Override
     public DynamicContentElement getElement(String name, short overload) {
         return null;
@@ -159,7 +152,7 @@ public class VoidDynamicContent extends StatefulDisposable.Base implements Dynam
     }
 
     @Override
-    public void updateSignature() {}
+    public void changeSignature() {}
 
     @NotNull
     @Override

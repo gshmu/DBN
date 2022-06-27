@@ -96,12 +96,8 @@ public class SessionBrowserModel extends ResultSetDataModel<SessionBrowserModelR
     }
 
     private List<String> getDistinctValues(String columnName, String selectedValue) {
-        ArrayList<String> values = new ArrayList<String>();
-        List<SessionBrowserModelRow> rows = getRows();
-        if (rows instanceof FilteredList) {
-            FilteredList<SessionBrowserModelRow> filteredList = (FilteredList<SessionBrowserModelRow>) rows;
-            rows  = filteredList.getBase();
-        }
+        ArrayList<String> values = new ArrayList<>();
+        List<SessionBrowserModelRow> rows = FilteredList.unwrap(getRows());
         for (SessionBrowserModelRow row : rows) {
             String value = (String) row.getCellValue(columnName);
             if (Strings.isNotEmpty(value) && !values.contains(value)) {

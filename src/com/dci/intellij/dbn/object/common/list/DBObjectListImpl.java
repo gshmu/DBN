@@ -41,13 +41,19 @@ import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiDirectory;
 import lombok.Getter;
 import lombok.Setter;
-import lombok.val;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import javax.swing.*;
+import javax.swing.Icon;
 import javax.swing.tree.TreeNode;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Enumeration;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
 import java.util.function.Consumer;
 
 import static com.dci.intellij.dbn.common.content.DynamicContentProperty.*;
@@ -247,29 +253,26 @@ public class DBObjectListImpl<T extends DBObject> extends DynamicContentImpl<T> 
     @Override
     protected void sortElements(List<T> elements) {
         if (is(VIRTUAL)) {
-            super.sortElements(elements);
+            elements.sort(DBObjectComparator.classic());
 
         } else if (isInternal()) {
             if (is(GROUPED) || true ) { // TODO binary search on grouped elements
-                super.sortElements(elements);
+                elements.sort(DBObjectComparator.grouped());
             } else {
                 elements.sort(DBObjectComparator.basic(objectType));
                 set(SEARCHABLE, true);
             }
         } else {
-            DatabaseBrowserSettings browserSettings = DatabaseBrowserSettings.getInstance(getProject());
-            DatabaseBrowserSortingSettings sortingSettings = browserSettings.getSortingSettings();
-            val comparator = objectType == ANY ? null : sortingSettings.getComparator(objectType);
-
-            if (comparator != null) {
-                elements.sort(comparator);
-                boolean searchable = comparator.getSortingType() == SortingType.NAME;
-                set(SEARCHABLE, searchable);
-            } else {
-                super.sortElements(elements);
-                set(SEARCHABLE, true);
+            DBObjectComparator<T> comparator = DBObjectComparator.classic();
+            if (objectType != ANY) {
+                DatabaseBrowserSettings browserSettings = DatabaseBrowserSettings.getInstance(getProject());
+                DatabaseBrowserSortingSettings sortingSettings = browserSettings.getSortingSettings();
+                comparator = nvl(sortingSettings.getComparator(objectType), comparator);
             }
 
+            elements.sort(comparator);
+            boolean searchable = comparator.getSortingType() == SortingType.NAME;
+            set(SEARCHABLE, searchable);
         }
     }
 
@@ -531,14 +534,6 @@ public class DBObjectListImpl<T extends DBObject> extends DynamicContentImpl<T> 
     @Override
     public void disposeInner() {
         super.disposeInner();
-    }
-
-    @Override
-    public void sort(DBObjectComparator<T> comparator) {
-        if (elements.size() > 1) {
-            elements.sort(comparator);
-            set(SEARCHABLE, comparator.getSortingType() == SortingType.NAME);
-        }
     }
 
     public static class Grouped<T extends DBObject> extends DBObjectListImpl<T> implements GroupedDynamicContent<T> {

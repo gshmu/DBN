@@ -21,7 +21,7 @@ import static com.dci.intellij.dbn.common.util.Unsafe.cast;
  * Use this "constant" if the possible values are variable (i.e. cannot be implemented with enum).
  */
 @Slf4j
-public abstract class PseudoConstant<T extends PseudoConstant<T>> implements Constant<T>, Serializable {
+public abstract class PseudoConstant<T extends PseudoConstant<T>> implements Constant<T>, Serializable, Comparable<T> {
     private static final Map<Class<? extends PseudoConstant<?>>, Map<String, PseudoConstant<?>>> REGISTRY = new ConcurrentHashMap<>();
     private static final ThreadLocal<Set<?>> INTERNAL = new ThreadLocal<>();
 
@@ -101,6 +101,11 @@ public abstract class PseudoConstant<T extends PseudoConstant<T>> implements Con
             }
         }
         return constants.toArray((T[]) Array.newInstance(clazz, constants.size()));
+    }
+
+    @Override
+    public int compareTo(T that) {
+        return this.id.compareTo(that.id());
     }
 
     @Override

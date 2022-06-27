@@ -2,7 +2,6 @@ package com.dci.intellij.dbn.common.content.dependency;
 
 import com.dci.intellij.dbn.common.content.DynamicContent;
 import com.dci.intellij.dbn.common.content.DynamicContentType;
-import com.dci.intellij.dbn.common.thread.ThreadMonitor;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.DatabaseEntity;
 import com.intellij.openapi.util.Disposer;
@@ -59,7 +58,7 @@ class SubcontentDependencyAdapterImpl extends BasicDependencyAdapter implements 
 
     @Override
     public boolean canLoadFast() {
-        return getSourceContent().isLoaded() && !ThreadMonitor.isDispatchThread();
+        return getSourceContent().isLoaded()/* && !ThreadMonitor.isDispatchThread()*/;
     }
 
     @Override
