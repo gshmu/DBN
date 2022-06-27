@@ -96,8 +96,8 @@ public class PsiResolveResult extends PropertyHolderBase.IntStore<PsiResolveStat
                 if (resolveAttempts > 8) {
                     return false;
                 }
-                // 4 -> 16 -> 64 -> 256 -> 1024 seconds... (give up at some point)
-                long delay = (long) Math.pow(2, resolveAttempts * 2) * 1000;
+                //  2 -> 4 -> 8 -> 16 -> 32 seconds... (give up at some point)
+                long delay = (long) Math.pow(2, resolveAttempts) * 1000;
                 return lastResolveInvocation < System.currentTimeMillis() - delay;
             } else {
                 return true;
