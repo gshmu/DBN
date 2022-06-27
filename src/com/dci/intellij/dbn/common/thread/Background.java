@@ -8,6 +8,8 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.RejectedExecutionException;
 import java.util.concurrent.atomic.AtomicReference;
 
+import static com.dci.intellij.dbn.common.thread.ThreadProperty.BACKGROUND;
+
 @Slf4j
 public final class Background {
     private Background() {}
@@ -20,7 +22,7 @@ public final class Background {
                 try {
                     ThreadMonitor.run(
                             threadInfo,
-                            ThreadProperty.BACKGROUND,
+                            BACKGROUND,
                             runnable);
                 } catch (ProcessCanceledException | UnsupportedOperationException| InterruptedException ignore) {
                 } catch (Throwable e) {
@@ -46,7 +48,7 @@ public final class Background {
                         handle.set(Thread.currentThread());
                         ThreadMonitor.run(
                                 threadInfo,
-                                ThreadProperty.BACKGROUND,
+                                BACKGROUND,
                                 runnable);
                     } finally {
                         handle.set(null);

@@ -28,11 +28,19 @@ public interface FilteredList<T> extends List<T> {
         return new StatefulFilteredList<>(filter, base);
     }
 
-    public static <T> StatelessFilteredList<T> stateless(Filter<T> filter) {
+    static <T> StatelessFilteredList<T> stateless(Filter<T> filter) {
         return new StatelessFilteredList<>(filter);
     }
 
-    public static <T> StatelessFilteredList<T> stateless(Filter<T> filter, List<T> base) {
+    static <T> StatelessFilteredList<T> stateless(Filter<T> filter, List<T> base) {
         return new StatelessFilteredList<>(filter, base);
+    }
+
+    static <T> List<T> unwrap(List<T> list) {
+        if (list instanceof FilteredList) {
+            FilteredList<T> filteredList = (FilteredList<T>) list;
+            return filteredList.getBase();
+        }
+        return list;
     }
 }

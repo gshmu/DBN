@@ -14,7 +14,8 @@ public class DBArgumentNameComparator extends DBObjectComparator<DBArgument> {
     public int compare(DBArgument argument1, DBArgument argument2) {
         DBMethod method1 = argument1.getMethod();
         DBMethod method2 = argument2.getMethod();
-        if (method1.equals(method2)) {
+        int result = compareObject(method1, method2);
+        if (result == 0) {
             if (method1 instanceof DBFunction) {
                 if (method1.getPosition() == 1) {
                     return -1;
@@ -23,9 +24,9 @@ public class DBArgumentNameComparator extends DBObjectComparator<DBArgument> {
                     return 1;
                 }
             }
-            return argument1.getName().compareToIgnoreCase(argument2.getName());
-        } else {
-            return method1.compareTo(method2);
+            return compareName(argument1, argument2);
         }
+
+        return result;
     }
 }

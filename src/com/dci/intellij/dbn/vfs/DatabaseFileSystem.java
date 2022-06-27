@@ -446,10 +446,12 @@ public class DatabaseFileSystem extends VirtualFileSystem implements /*NonPhysic
 
     public void openEditor(@NotNull DBObject object, @Nullable EditorProviderId editorProviderId, boolean scrollBrowser, boolean focusEditor) {
         if (isEditable(object) && !DBFileOpenHandle.isFileOpening(object)) {
+            NavigationInstructions editorInstructions = NavigationInstructions.create().with(OPEN).with(SCROLL).with(FOCUS, focusEditor);
+            NavigationInstructions browserInstructions = NavigationInstructions.create().with(SCROLL, scrollBrowser);
             DBFileOpenHandle<?> handle = DBFileOpenHandle.create(object).
                     withEditorProviderId(editorProviderId).
-                    withEditorInstructions(NavigationInstructions.create().with(OPEN).with(SCROLL).with(FOCUS, focusEditor)).
-                    withBrowserInstructions(NavigationInstructions.create().with(SCROLL, scrollBrowser));
+                    withEditorInstructions(editorInstructions).
+                    withBrowserInstructions(browserInstructions);
 
             try {
                 handle.init();
@@ -464,7 +466,7 @@ public class DatabaseFileSystem extends VirtualFileSystem implements /*NonPhysic
                         openChildObject(handle);
                     }
                 }
-            } catch (Throwable e) {
+            } finally {
                 handle.release();
             }
         }
