@@ -7,7 +7,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 
-public interface DBMethod extends DBSchemaObject {
+public interface DBMethod extends DBSchemaObject, DBOrderedObject {
     List<DBArgument> getArguments();
     DBArgument getArgument(String name);
     DBArgument getReturnArgument();

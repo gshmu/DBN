@@ -11,6 +11,8 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicInteger;
 
+import static com.dci.intellij.dbn.common.thread.ThreadProperty.*;
+
 public class ThreadMonitor {
     private static final ThreadLocal<ThreadInfo> THREAD_PROPERTIES = new ThreadLocal<>();
     private static final Map<ThreadProperty, AtomicInteger> PROCESS_COUNTERS = new ConcurrentHashMap<>();
@@ -70,31 +72,20 @@ public class ThreadMonitor {
         }
     }
 
-    public static boolean is(ThreadProperty ... properties) {
-        ThreadInfo threadInfo = current();
-        for (ThreadProperty property : properties) {
-            if (threadInfo.is(property)) {
-                return true;
-            }
-        }
-        return false;
+    public static boolean isTimeoutProcess() {
+        return current().is(TIMEOUT);
     }
 
-
     public static boolean isProgressProcess() {
-        return current().is(ThreadProperty.PROGRESS);
+        return current().is(PROGRESS);
     }
 
     public static boolean isBackgroundProcess() {
-        return current().is(ThreadProperty.BACKGROUND);
-    }
-
-    public static boolean isTimeoutProcess() {
-        return current().is(ThreadProperty.TIMEOUT);
+        return current().is(BACKGROUND);
     }
 
     public static boolean isDisposerProcess() {
-        return current().is(ThreadProperty.DISPOSER);
+        return current().is(DISPOSER);
     }
 
     public static boolean isDispatchThread() {

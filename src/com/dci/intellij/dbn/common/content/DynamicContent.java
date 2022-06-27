@@ -80,7 +80,9 @@ public interface DynamicContent<T extends DynamicContentElement> extends Statefu
     @NotNull List<T> getAllElements();
 
     @Nullable
-    Filter<T> getFilter();
+    default Filter<T> getFilter() {
+        return null;
+    }
 
 
     T getElement(String name, short overload);
@@ -101,5 +103,5 @@ public interface DynamicContent<T extends DynamicContentElement> extends Statefu
 
     void loadInBackground();
 
-    void updateSignature();
+    void changeSignature();
 }

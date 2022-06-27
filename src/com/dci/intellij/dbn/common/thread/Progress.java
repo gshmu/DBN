@@ -13,6 +13,8 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.concurrent.atomic.AtomicReference;
 
+import static com.dci.intellij.dbn.common.thread.ThreadProperty.MODAL;
+import static com.dci.intellij.dbn.common.thread.ThreadProperty.PROGRESS;
 import static com.intellij.openapi.progress.PerformInBackgroundOption.ALWAYS_BACKGROUND;
 import static com.intellij.openapi.progress.PerformInBackgroundOption.DEAF;
 
@@ -28,7 +30,7 @@ public final class Progress {
                 public void run(@NotNull ProgressIndicator indicator) {
                     ThreadMonitor.run(
                             invoker,
-                            ThreadProperty.PROGRESS,
+                            PROGRESS,
                             () -> Cancellable.run(() -> runnable.run(indicator)));
                 }
             });
@@ -47,7 +49,7 @@ public final class Progress {
                 public void run(@NotNull ProgressIndicator indicator) {
                     ThreadMonitor.run(
                             invoker,
-                            ThreadProperty.PROGRESS,
+                            PROGRESS,
                             () -> Cancellable.run(() -> {
                                 try {
                                     handle.set(Thread.currentThread());
@@ -70,7 +72,7 @@ public final class Progress {
                 public void run(@NotNull ProgressIndicator indicator) {
                     ThreadMonitor.run(
                             invoker,
-                            ThreadProperty.PROGRESS,
+                            PROGRESS,
                             () -> Cancellable.run(() -> runnable.run(indicator)));
                 }
             });
@@ -85,7 +87,7 @@ public final class Progress {
                 public void run(@NotNull ProgressIndicator indicator) {
                     ThreadMonitor.run(
                             invoker,
-                            ThreadProperty.MODAL,
+                            MODAL,
                             () -> Cancellable.run(() -> runnable.run(indicator)));
 
                 }

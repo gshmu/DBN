@@ -5,7 +5,6 @@ import com.dci.intellij.dbn.common.content.DynamicContent;
 import com.dci.intellij.dbn.common.filter.Filter;
 import com.dci.intellij.dbn.connection.context.ConnectionProvider;
 import com.dci.intellij.dbn.object.common.DBObject;
-import com.dci.intellij.dbn.object.common.sorting.DBObjectComparator;
 import com.dci.intellij.dbn.object.filter.quick.ObjectQuickFilter;
 import com.dci.intellij.dbn.object.type.DBObjectType;
 import com.intellij.psi.PsiDirectory;
@@ -45,6 +44,4 @@ public interface DBObjectList<T extends DBObject> extends BrowserTreeNode, Dynam
     T getObject(String name, short overload);
 
     void collectObjects(Consumer<? super DBObject> consumer);
-
-    void sort(DBObjectComparator<T> comparator);
 }

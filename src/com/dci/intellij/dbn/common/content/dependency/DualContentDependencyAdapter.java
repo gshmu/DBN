@@ -1,7 +1,6 @@
 package com.dci.intellij.dbn.common.content.dependency;
 
 import com.dci.intellij.dbn.common.content.DynamicContent;
-import com.dci.intellij.dbn.common.thread.ThreadMonitor;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import org.jetbrains.annotations.NotNull;
 
@@ -52,8 +51,8 @@ public class DualContentDependencyAdapter extends BasicDependencyAdapter impleme
     public boolean canLoadFast() {
         return
             content(first).isLoaded() &&
-            content(second).isLoaded() &&
-            !ThreadMonitor.isDispatchThread();
+            content(second).isLoaded() /*&&
+            !ThreadMonitor.isDispatchThread()*/;
     }
 
     @Override

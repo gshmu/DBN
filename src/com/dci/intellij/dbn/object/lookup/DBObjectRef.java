@@ -507,7 +507,7 @@ public class DBObjectRef<T extends DBObject> implements Comparable<DBObjectRef<?
 
     @Override
     public int compareTo(@NotNull DBObjectRef<?> that) {
-        int result = this.getConnectionId().id().compareTo(that.getConnectionId().id());
+        int result = this.getConnectionId().compareTo(that.getConnectionId());
         if (result != 0) return result;
 
         DBObjectRef<?> thisParent = this.getParentRef();

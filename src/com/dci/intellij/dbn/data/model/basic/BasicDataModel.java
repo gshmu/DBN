@@ -135,10 +135,7 @@ public class BasicDataModel<
     public void setFilter(Filter<R> filter) {
         List<R> rows = getRows();
         if (filter == null) {
-            if (rows instanceof FilteredList) {
-                FilteredList<R> filteredList = (FilteredList<R>) rows;
-                this.rows = filteredList.getBase();
-            }
+            this.rows = FilteredList.unwrap(rows);
         }
         else {
             FilteredList<R> filteredList;

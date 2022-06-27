@@ -14,9 +14,10 @@ public class DBColumnPositionComparator extends DBObjectComparator<DBColumn> {
     public int compare(DBColumn column1, DBColumn column2) {
         DBDataset dataset1 = column1.getDataset();
         DBDataset dataset2 = column2.getDataset();
-        if (dataset1.equals(dataset2)) {
-            return column1.getPosition()-column2.getPosition();
+        int result = compareObject(dataset1, dataset2);
+        if (result == 0) {
+            return comparePosition(column1, column2);
         }
-        return dataset1.compareTo(dataset2);
+        return result;
     }
 }

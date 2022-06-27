@@ -14,19 +14,22 @@ public class DBColumnNameComparator extends DBObjectComparator<DBColumn> {
     public int compare(DBColumn column1, DBColumn column2) {
         DBDataset dataset1 = column1.getDataset();
         DBDataset dataset2 = column2.getDataset();
-        if (dataset1.equals(dataset2)) {
-            String name2 = column2.getName();
-            String name1 = column1.getName();
-            if (column1.isPrimaryKey() && column2.isPrimaryKey()) {
-                return name1.compareToIgnoreCase(name2);
-            } else if (column1.isPrimaryKey()) {
+        int result = compareObject(dataset1, dataset2);
+        if (result == 0) {
+            boolean primaryKey1 = column1.isPrimaryKey();
+            boolean primaryKey2 = column2.isPrimaryKey();
+
+            if (primaryKey1 && primaryKey2) {
+                return compareName(column1, column2);
+            } else if (primaryKey1) {
                 return -1;
-            } else if (column2.isPrimaryKey()){
+            } else if (primaryKey2){
                 return 1;
             } else {
-                return name1.compareToIgnoreCase(name2);
+                return compareName(column1, column2);
             }
         }
-        return dataset1.compareTo(dataset2);
+
+        return result;
     }
 }

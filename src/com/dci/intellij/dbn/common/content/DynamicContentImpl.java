@@ -13,7 +13,7 @@ import com.dci.intellij.dbn.common.notification.NotificationSupport;
 import com.dci.intellij.dbn.common.property.DisposablePropertyHolder;
 import com.dci.intellij.dbn.common.thread.Progress;
 import com.dci.intellij.dbn.common.thread.ThreadMonitor;
-import com.dci.intellij.dbn.common.thread.ThreadProperty;
+import com.dci.intellij.dbn.common.thread.Timeout;
 import com.dci.intellij.dbn.common.util.Lists;
 import com.dci.intellij.dbn.common.util.Strings;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
@@ -185,7 +185,7 @@ public abstract class DynamicContentImpl<T extends DynamicContentElement>
                 performLoad(false);
             } finally {
                 set(LOADING, false);
-                updateSignature();
+                changeSignature();
             }
         }
     }
@@ -198,7 +198,7 @@ public abstract class DynamicContentImpl<T extends DynamicContentElement>
                 performLoad(true);
             } finally {
                 set(LOADING, false);
-                updateSignature();
+                changeSignature();
             }
 
             for (T element : elements) {
@@ -308,7 +308,7 @@ public abstract class DynamicContentImpl<T extends DynamicContentElement>
     }
 
     @Override
-    public void updateSignature() {
+    public void changeSignature() {
         signature++;
     }
 
@@ -350,47 +350,36 @@ public abstract class DynamicContentImpl<T extends DynamicContentElement>
     protected void beforeUpdate() {}
     protected void afterUpdate() {}
 
-    protected void sortElements(List<T> elements) {
-        elements.sort(null);
-    }
+    protected abstract void sortElements(List<T> elements);
 
     @Override
     @NotNull
     public List<T> getElements() {
-        if (getDependencyAdapter().canLoadFast() ||
-                ThreadMonitor.is(
-                        ThreadProperty.PROGRESS,
-                        ThreadProperty.BACKGROUND,
-                        ThreadProperty.TIMEOUT/*,
-                        ThreadProperty.CODE_ANNOTATING*/)) {
-            ensure();
+        if (canLoadFast() ||
+                ThreadMonitor.isTimeoutProcess() ||
+                ThreadMonitor.isBackgroundProcess() ||
+                ThreadMonitor.isProgressProcess()) {
+
+            if (!isLoaded() && ThreadMonitor.isDispatchThread()) {
+                Timeout.run(1, true, () -> ensure());
+            } else {
+                ensure();
+            }
+
         } else{
             loadInBackground();
         }
         return elements;
     }
 
-    public List<T> getElementsNoLoad() {
-        return elements;
-    }
-
     @NotNull
     @Override
     public List<T> getAllElements() {
-        List<T> elements = getElements();
-        if (elements instanceof FilteredList) {
-            FilteredList<T> filteredElements = (FilteredList<T>) elements;
-            return filteredElements.getBase();
-        }
-        return elements;
+        return FilteredList.unwrap(getElements());
     }
 
     public List<T> getAllElementsNoLoad() {
-        if (elements instanceof FilteredList) {
-            FilteredList<T> filteredElements = (FilteredList<T>) elements;
-            return filteredElements.getBase();
-        }
-        return elements;
+        return FilteredList.unwrap(elements);
     }
 
     @Override
