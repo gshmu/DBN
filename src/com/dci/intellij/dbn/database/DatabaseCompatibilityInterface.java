@@ -14,14 +14,22 @@ import org.jetbrains.annotations.Nullable;
 
 import java.sql.SQLException;
 import java.sql.SQLFeatureNotSupportedException;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 @Slf4j
 public abstract class DatabaseCompatibilityInterface implements DatabaseInterface{
     private final DatabaseInterfaceProvider provider;
+    private final Set<DatabaseObjectTypeId> supportedObjectTypes = new HashSet<>(getSupportedObjectTypes());
+    private final Set<DatabaseFeature> supportedFeatures = new HashSet<>(getSupportedFeatures());
 
     public DatabaseCompatibilityInterface(DatabaseInterfaceProvider parent) {
         this.provider = parent;
     }
+
+    protected abstract List<DatabaseObjectTypeId> getSupportedObjectTypes();
+    protected abstract List<DatabaseFeature> getSupportedFeatures();
 
     @NotNull
     public static DatabaseCompatibilityInterface getInstance(DBObject object) {
@@ -33,9 +41,13 @@ public abstract class DatabaseCompatibilityInterface implements DatabaseInterfac
         return connection.getInterfaceProvider().getCompatibilityInterface();
     }
 
-    public abstract boolean supportsObjectType(DatabaseObjectTypeId objectTypeId);
+    public boolean supportsObjectType(DatabaseObjectTypeId objectTypeId) {
+        return supportedObjectTypes.contains(objectTypeId);
+    }
 
-    public abstract boolean supportsFeature(DatabaseFeature feature);
+    public boolean supportsFeature(DatabaseFeature feature) {
+        return supportedFeatures.contains(feature);
+    }
 
     public abstract QuoteDefinition getIdentifierQuotes();
     public QuotePair getDefaultIdentifierQuotes() {

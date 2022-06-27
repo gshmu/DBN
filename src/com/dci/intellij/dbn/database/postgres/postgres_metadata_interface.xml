@@ -60,6 +60,8 @@
         <statement>
             select
                 CHARACTER_SET_NAME as CHARSET_NAME,
+                CHARACTER_SET_NAME as DISPLAY_NAME,
+                'N' as IS_DEPRECATED,
                 -1 as MAX_LENGTH
             from INFORMATION_SCHEMA.CHARACTER_SETS
             order by CHARACTER_SET_NAME asc

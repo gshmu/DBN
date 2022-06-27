@@ -9,6 +9,12 @@ import com.dci.intellij.dbn.language.common.QuoteDefinition;
 import com.dci.intellij.dbn.language.common.QuotePair;
 import lombok.extern.slf4j.Slf4j;
 
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
+
+import static com.dci.intellij.dbn.database.DatabaseFeature.*;
+
 @Slf4j
 public class OracleCompatibilityInterface extends DatabaseCompatibilityInterface {
     public static final QuoteDefinition IDENTIFIER_QUOTE_DEFINITION = new QuoteDefinition(new QuotePair('"', '"'));
@@ -19,36 +25,39 @@ public class OracleCompatibilityInterface extends DatabaseCompatibilityInterface
 
     @Override
     public boolean supportsObjectType(DatabaseObjectTypeId objectTypeId) {
-        return objectTypeId != DatabaseObjectTypeId.CHARSET;
+        return true;
     }
 
     @Override
-    public boolean supportsFeature(DatabaseFeature feature) {
-        switch (feature) {
-            case OBJECT_INVALIDATION: return true;
-            case OBJECT_DEPENDENCIES: return true;
-            case OBJECT_REPLACING: return true;
-            case OBJECT_DDL_EXTRACTION: return true;
-            case OBJECT_DISABLING: return true;
-            case OBJECT_CHANGE_TRACING: return true;
-            case OBJECT_SOURCE_EDITING: return true;
-            case AUTHID_METHOD_EXECUTION: return true;
-            case FUNCTION_OUT_ARGUMENTS: return true;
-            case DEBUGGING: return true;
-            case EXPLAIN_PLAN: return true;
-            case DATABASE_LOGGING: return true;
-            case SESSION_BROWSING: return true;
-            case SESSION_INTERRUPTION_TIMING: return true;
-            case SESSION_DISCONNECT: return true;
-            case SESSION_KILL: return true;
-            case SESSION_CURRENT_SQL: return true;
-            case CONNECTION_ERROR_RECOVERY: return true;
-            case UPDATABLE_RESULT_SETS: return true;
-            case CURRENT_SCHEMA: return true;
-            case CONSTRAINT_MANIPULATION: return true;
-            case READONLY_CONNECTIVITY: return true;
-            default: return false;
-        }
+    protected List<DatabaseObjectTypeId> getSupportedObjectTypes() {
+        return Collections.emptyList(); // default implementation not used (all object types are supported)
+    }
+
+    @Override
+    protected List<DatabaseFeature> getSupportedFeatures() {
+        return Arrays.asList(
+                OBJECT_INVALIDATION,
+                OBJECT_DEPENDENCIES,
+                OBJECT_REPLACING,
+                OBJECT_DDL_EXTRACTION,
+                OBJECT_DISABLING,
+                OBJECT_CHANGE_TRACING,
+                OBJECT_SOURCE_EDITING,
+                AUTHID_METHOD_EXECUTION,
+                FUNCTION_OUT_ARGUMENTS,
+                DEBUGGING,
+                EXPLAIN_PLAN,
+                DATABASE_LOGGING,
+                SESSION_BROWSING,
+                SESSION_INTERRUPTION_TIMING,
+                SESSION_DISCONNECT,
+                SESSION_KILL,
+                SESSION_CURRENT_SQL,
+                CONNECTION_ERROR_RECOVERY,
+                UPDATABLE_RESULT_SETS,
+                CURRENT_SCHEMA,
+                CONSTRAINT_MANIPULATION,
+                READONLY_CONNECTIVITY);
     }
 
     @Override

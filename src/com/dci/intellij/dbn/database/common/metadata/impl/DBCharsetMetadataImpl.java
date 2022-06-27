@@ -18,7 +18,19 @@ public class DBCharsetMetadataImpl extends DBObjectMetadataBase implements DBCha
     }
 
     @Override
+    public String getDisplayName() throws SQLException {
+        return getString("DISPLAY_NAME");
+    }
+
+    @Override
+    public boolean isDeprecated() throws SQLException {
+        return resultSet.getBoolean("IS_DEPRECATED");
+    }
+
+    @Override
     public short getMaxLength() throws SQLException {
         return resultSet.getShort("MAX_LENGTH");
     }
+
+
 }

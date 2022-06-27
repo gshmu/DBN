@@ -5,18 +5,25 @@ import com.dci.intellij.dbn.database.common.metadata.def.DBCharsetMetadata;
 import com.dci.intellij.dbn.object.DBCharset;
 import com.dci.intellij.dbn.object.common.DBObjectImpl;
 import com.dci.intellij.dbn.object.type.DBObjectType;
+import lombok.Getter;
 import org.jetbrains.annotations.NotNull;
 
 import java.sql.SQLException;
 
+@Getter
 public class DBCharsetImpl extends DBObjectImpl<DBCharsetMetadata> implements DBCharset {
+    private String displayName;
+    private boolean deprecated;
     private int maxLength;
+
     public DBCharsetImpl(ConnectionHandler connection, DBCharsetMetadata resultSet) throws SQLException {
         super(connection, resultSet);
     }
 
     @Override
     protected String initObject(DBCharsetMetadata metadata) throws SQLException {
+        displayName = metadata.getDisplayName();
+        deprecated = metadata.isDeprecated();
         maxLength = metadata.getMaxLength();
         return metadata.getCharsetName();
     }
@@ -25,10 +32,5 @@ public class DBCharsetImpl extends DBObjectImpl<DBCharsetMetadata> implements DB
     @Override
     public DBObjectType getObjectType() {
         return DBObjectType.CHARSET;
-    }
-
-    @Override
-    public int getMaxLength() {
-        return maxLength;
     }
 }

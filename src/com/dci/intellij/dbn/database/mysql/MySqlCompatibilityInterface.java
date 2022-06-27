@@ -10,6 +10,12 @@ import com.dci.intellij.dbn.editor.session.SessionStatus;
 import com.dci.intellij.dbn.language.common.QuoteDefinition;
 import com.dci.intellij.dbn.language.common.QuotePair;
 
+import java.util.Arrays;
+import java.util.List;
+
+import static com.dci.intellij.dbn.database.DatabaseFeature.*;
+import static com.dci.intellij.dbn.database.DatabaseObjectTypeId.*;
+
 public class MySqlCompatibilityInterface extends DatabaseCompatibilityInterface {
     private static final QuoteDefinition IDENTIFIER_QUOTE_DEFINITION = new QuoteDefinition(new QuotePair('`', '`'));
 
@@ -19,38 +25,36 @@ public class MySqlCompatibilityInterface extends DatabaseCompatibilityInterface 
     }
 
     @Override
-    public boolean supportsObjectType(DatabaseObjectTypeId objectTypeId) {
-        return
-            objectTypeId == DatabaseObjectTypeId.CONSOLE ||
-            objectTypeId == DatabaseObjectTypeId.CHARSET ||
-            objectTypeId == DatabaseObjectTypeId.USER ||
-            objectTypeId == DatabaseObjectTypeId.SCHEMA ||
-            objectTypeId == DatabaseObjectTypeId.TABLE ||
-            objectTypeId == DatabaseObjectTypeId.VIEW ||
-            objectTypeId == DatabaseObjectTypeId.COLUMN ||
-            objectTypeId == DatabaseObjectTypeId.CONSTRAINT ||
-            objectTypeId == DatabaseObjectTypeId.INDEX ||
-            objectTypeId == DatabaseObjectTypeId.DATASET_TRIGGER ||
-            objectTypeId == DatabaseObjectTypeId.FUNCTION ||
-            objectTypeId == DatabaseObjectTypeId.PROCEDURE ||
-            objectTypeId == DatabaseObjectTypeId.ARGUMENT ||
-            objectTypeId == DatabaseObjectTypeId.SYSTEM_PRIVILEGE ||
-            objectTypeId == DatabaseObjectTypeId.GRANTED_PRIVILEGE;
+    protected List<DatabaseObjectTypeId> getSupportedObjectTypes() {
+        return Arrays.asList(
+                CONSOLE,
+                CHARSET,
+                USER,
+                SCHEMA,
+                TABLE,
+                VIEW,
+                COLUMN,
+                CONSTRAINT,
+                INDEX,
+                DATASET_TRIGGER,
+                FUNCTION,
+                PROCEDURE,
+                ARGUMENT,
+                SYSTEM_PRIVILEGE,
+                GRANTED_PRIVILEGE);
     }
 
     @Override
-    public boolean supportsFeature(DatabaseFeature feature) {
-        switch (feature) {
-            case SESSION_BROWSING: return true;
-            case SESSION_KILL: return true;
-            case OBJECT_CHANGE_TRACING: return true;
-            case OBJECT_SOURCE_EDITING: return true;
-            case UPDATABLE_RESULT_SETS: return true;
-            case CURRENT_SCHEMA: return true;
-            case CONSTRAINT_MANIPULATION: return true;
-            case READONLY_CONNECTIVITY: return true;
-            default: return false;
-        }
+    protected List<DatabaseFeature> getSupportedFeatures() {
+        return Arrays.asList(
+                SESSION_BROWSING,
+                SESSION_KILL,
+                OBJECT_CHANGE_TRACING,
+                OBJECT_SOURCE_EDITING,
+                UPDATABLE_RESULT_SETS,
+                CURRENT_SCHEMA,
+                CONSTRAINT_MANIPULATION,
+                READONLY_CONNECTIVITY);
     }
 
     @Override
