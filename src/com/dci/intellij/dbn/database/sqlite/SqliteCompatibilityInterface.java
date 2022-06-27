@@ -15,6 +15,12 @@ import org.jetbrains.annotations.Nullable;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.Arrays;
+import java.util.List;
+
+import static com.dci.intellij.dbn.database.DatabaseFeature.CONNECTION_ERROR_RECOVERY;
+import static com.dci.intellij.dbn.database.DatabaseFeature.OBJECT_SOURCE_EDITING;
+import static com.dci.intellij.dbn.database.DatabaseObjectTypeId.*;
 
 class SqliteCompatibilityInterface extends DatabaseCompatibilityInterface {
 
@@ -28,26 +34,24 @@ class SqliteCompatibilityInterface extends DatabaseCompatibilityInterface {
     }
 
     @Override
-    public boolean supportsObjectType(DatabaseObjectTypeId objectTypeId) {
-        return
-            objectTypeId == DatabaseObjectTypeId.CONSOLE ||
-            objectTypeId == DatabaseObjectTypeId.SCHEMA ||
-            objectTypeId == DatabaseObjectTypeId.TABLE ||
-            objectTypeId == DatabaseObjectTypeId.VIEW ||
-            objectTypeId == DatabaseObjectTypeId.COLUMN ||
-            objectTypeId == DatabaseObjectTypeId.CONSTRAINT ||
-            objectTypeId == DatabaseObjectTypeId.INDEX ||
-            objectTypeId == DatabaseObjectTypeId.SAVEPOINT ||
-            objectTypeId == DatabaseObjectTypeId.DATASET_TRIGGER;
+    protected List<DatabaseObjectTypeId> getSupportedObjectTypes() {
+        return Arrays.asList(
+                CONSOLE,
+                SCHEMA,
+                TABLE,
+                VIEW,
+                COLUMN,
+                CONSTRAINT,
+                INDEX,
+                SAVEPOINT,
+                DATASET_TRIGGER);
     }
 
     @Override
-    public boolean supportsFeature(DatabaseFeature feature) {
-        switch (feature) {
-            case CONNECTION_ERROR_RECOVERY: return true;
-            case OBJECT_SOURCE_EDITING: return true;
-            default: return false;
-        }
+    protected List<DatabaseFeature> getSupportedFeatures() {
+        return Arrays.asList(
+                CONNECTION_ERROR_RECOVERY,
+                OBJECT_SOURCE_EDITING);
     }
 
     @Override

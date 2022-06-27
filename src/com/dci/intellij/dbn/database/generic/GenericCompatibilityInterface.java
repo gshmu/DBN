@@ -9,6 +9,12 @@ import com.dci.intellij.dbn.editor.session.SessionStatus;
 import com.dci.intellij.dbn.language.common.QuoteDefinition;
 import com.dci.intellij.dbn.language.common.QuotePair;
 
+import java.util.Arrays;
+import java.util.List;
+
+import static com.dci.intellij.dbn.database.DatabaseFeature.*;
+import static com.dci.intellij.dbn.database.DatabaseObjectTypeId.*;
+
 public class GenericCompatibilityInterface extends DatabaseCompatibilityInterface {
     private static final QuoteDefinition IDENTIFIER_QUOTE_DEFINITION = new QuoteDefinition(new QuotePair('"', '"'));
 
@@ -17,34 +23,32 @@ public class GenericCompatibilityInterface extends DatabaseCompatibilityInterfac
     }
 
     @Override
-    public boolean supportsObjectType(DatabaseObjectTypeId objectTypeId) {
-        return
-            objectTypeId == DatabaseObjectTypeId.CONSOLE ||
-            objectTypeId == DatabaseObjectTypeId.SCHEMA ||
-            objectTypeId == DatabaseObjectTypeId.TABLE ||
-            objectTypeId == DatabaseObjectTypeId.VIEW ||
-            objectTypeId == DatabaseObjectTypeId.COLUMN ||
-            objectTypeId == DatabaseObjectTypeId.CONSTRAINT ||
-            objectTypeId == DatabaseObjectTypeId.INDEX ||
-            objectTypeId == DatabaseObjectTypeId.TRIGGER ||
-            objectTypeId == DatabaseObjectTypeId.FUNCTION ||
-            objectTypeId == DatabaseObjectTypeId.PROCEDURE ||
-            objectTypeId == DatabaseObjectTypeId.ARGUMENT;
+    protected List<DatabaseFeature> getSupportedFeatures() {
+        return Arrays.asList(
+                OBJECT_SOURCE_EDITING,
+                OBJECT_CHANGE_TRACING,
+                SESSION_CURRENT_SQL,
+                CONNECTION_ERROR_RECOVERY,
+                UPDATABLE_RESULT_SETS,
+                CURRENT_SCHEMA,
+                CONSTRAINT_MANIPULATION,
+                READONLY_CONNECTIVITY);
     }
 
     @Override
-    public boolean supportsFeature(DatabaseFeature feature) {
-        switch (feature) {
-            case OBJECT_INVALIDATION: return false;
-            case OBJECT_DEPENDENCIES: return false;
-            case OBJECT_REPLACING: return false;
-            case OBJECT_DDL_EXTRACTION: return false;
-            case OBJECT_DISABLING: return false;
-            case AUTHID_METHOD_EXECUTION: return false;
-            case FUNCTION_OUT_ARGUMENTS: return false;
-            case DEBUGGING: return false;
-            default: return false;
-        }
+    protected List<DatabaseObjectTypeId> getSupportedObjectTypes() {
+        return Arrays.asList(
+                CONSOLE,
+                SCHEMA,
+                TABLE,
+                VIEW,
+                COLUMN,
+                CONSTRAINT,
+                INDEX,
+                TRIGGER,
+                FUNCTION,
+                PROCEDURE,
+                ARGUMENT);
     }
 
     @Override
