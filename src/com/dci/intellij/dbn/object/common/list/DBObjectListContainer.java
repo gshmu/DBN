@@ -18,6 +18,7 @@ import com.dci.intellij.dbn.connection.DatabaseEntity;
 import com.dci.intellij.dbn.database.DatabaseCompatibilityInterface;
 import com.dci.intellij.dbn.database.DatabaseObjectTypeId;
 import com.dci.intellij.dbn.object.common.DBObject;
+import com.dci.intellij.dbn.object.common.DBObjectBundle;
 import com.dci.intellij.dbn.object.type.DBObjectRelationType;
 import com.dci.intellij.dbn.object.type.DBObjectType;
 import com.intellij.openapi.progress.ProcessCanceledException;
@@ -39,6 +40,9 @@ import static java.util.Collections.emptyList;
 
 @Getter
 public final class DBObjectListContainer implements StatefulDisposable {
+    private static final DynamicContentTypeIndex<DBObjectType, DBObjectType> OBJECT_INDEX = new DynamicContentTypeIndex<>(DBObjectType.class);
+    private static final DynamicContentTypeIndex<DBObjectType, DBObjectRelationType> RELATION_INDEX = new DynamicContentTypeIndex<>(DBObjectType.class);
+
     private static final DBObjectList<?>[] DISPOSED_OBJECTS = new DBObjectList[0];
     private static final DBObjectRelationList[] DISPOSED_RELATIONS = new DBObjectRelationList[0];
 
@@ -86,9 +90,16 @@ public final class DBObjectListContainer implements StatefulDisposable {
         }
     }
 
-    @Nullable
-    private <T extends DBObject> DBObjectList<T> findObjects(DBObjectType objectType) {
-        return cast(binarySearch(objects, o -> o.getObjectType().compareTo(objectType)));
+    private DBObjectType getOwnerType() {
+        if (owner instanceof DBObject) {
+            DBObject object = (DBObject) owner;
+            return object.getObjectType();
+        } else if (owner instanceof DBObjectBundle) {
+            return DBObjectType.BUNDLE;
+        }
+
+        throw new IllegalArgumentException();
+
     }
 
     @Nullable
@@ -97,7 +108,7 @@ public final class DBObjectListContainer implements StatefulDisposable {
     }
 
     public <T extends DBObject> DBObjectList<T> getObjectList(DBObjectType objectType, boolean internal) {
-        DBObjectList<T> objectList = findObjects(objectType);
+        DBObjectList<T> objectList = objects(objectType);
         if (check(objectList) && internal == objectList.isInternal()) {
             return objectList;
         }
@@ -288,6 +299,9 @@ public final class DBObjectListContainer implements StatefulDisposable {
 
     public void addObjectList(DBObjectList<?> objectList) {
         if (objectList != null) {
+            addObjects(objectList);
+
+/*
             if (objects == null) {
                 objects = new DBObjectList[]{objectList};
             } else {
@@ -319,6 +333,7 @@ public final class DBObjectListContainer implements StatefulDisposable {
 
                 this.objects = objects;
             }
+*/
         }
     }
 
@@ -419,16 +434,68 @@ public final class DBObjectListContainer implements StatefulDisposable {
         if (isSupported(type)) {
             boolean grouped = Commons.isOneOf(DynamicContentProperty.GROUPED, properties);
 
-            DBObjectRelationList objectRelationList = grouped ?
+            DBObjectRelationList relations = grouped ?
                     new DBObjectRelationListImpl.Grouped(type, parent, dependencyAdapter, properties) :
                     new DBObjectRelationListImpl(type, parent, dependencyAdapter, properties);
 
-            if (relations == null)
-                relations = new DBObjectRelationList[1]; else
-                relations =  Arrays.copyOf(relations, relations.length + 1);
-
-            relations[relations.length-1] = objectRelationList;
+            addRelations(relations);
         }
+    }
+
+    private void addObjects(DBObjectList objects) {
+        int index = objectsIndex(objects.getObjectType());
+        int length = index + 1;
+
+        if (this.objects == null)
+            this.objects = new DBObjectList[length]; else
+            this.objects = Arrays.copyOf(this.objects, length);
+
+        this.objects[index] = objects;
+    }
+
+    private void addRelations(DBObjectRelationList relations) {
+        int index = relationsIndex(relations.getRelationType());
+        int length = index + 1;
+
+        if (this.relations == null)
+            this.relations = new DBObjectRelationList[length]; else
+            this.relations = Arrays.copyOf(this.relations, length);
+
+        this.relations[index] = relations;
+    }
+
+    private int objectsIndex(DBObjectType objectType) {
+        DBObjectType ownerType = getOwnerType();
+        return OBJECT_INDEX.index(ownerType, objectType);
+    }
+
+    private int relationsIndex(DBObjectRelationType relationType) {
+        DBObjectType ownerType = getOwnerType();
+        return RELATION_INDEX.index(ownerType, relationType);
+    }
+
+    @Nullable
+    private <T extends DBObject> DBObjectList<T> objects(DBObjectType objectType) {
+        if (objects != null && objects != DISPOSED_OBJECTS) {
+            int index = objectsIndex(objectType);
+            if (index < objects.length) {
+                return cast(objects[index]);
+            }
+        }
+
+        return null;
+    }
+
+    @Nullable
+    private <T extends DBObjectRelation> DBObjectRelationList<T> relations(DBObjectRelationType relationType, boolean create) {
+        if (relations != null && relations != DISPOSED_RELATIONS) {
+            int index = relationsIndex(relationType);
+            if (index < relations.length) {
+                return cast(relations[index]);
+            }
+        }
+
+        return null;
     }
 
     /*****************************************************************

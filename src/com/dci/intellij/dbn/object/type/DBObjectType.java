@@ -11,16 +11,18 @@ import org.jetbrains.annotations.Nullable;
 
 import javax.swing.Icon;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.EnumMap;
-import java.util.HashSet;
+import java.util.EnumSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 import java.util.StringTokenizer;
 import java.util.concurrent.ConcurrentHashMap;
+
+import static com.dci.intellij.dbn.common.util.Commons.nvl;
 
 @Getter
 public enum DBObjectType implements DynamicContentType<DBObjectType> {
@@ -115,7 +117,9 @@ public enum DBObjectType implements DynamicContentType<DBObjectType> {
     CONSOLE(DatabaseObjectTypeId.CONSOLE, "console", "consoles", Icons.DBO_CONSOLE, null, Icons.DBO_CONSOLES, false),
     UNKNOWN(DatabaseObjectTypeId.UNKNOWN, "unknown", null, null, null, null, true),
     NONE(DatabaseObjectTypeId.NONE, "none", null, null, null, null, true),
-    ANY(DatabaseObjectTypeId.ANY, "any", "dependencies", null, null, null, true),
+    ANY(DatabaseObjectTypeId.ANY, "any", "any", null, null, null, true),
+
+    BUNDLE(DatabaseObjectTypeId.BUNDLE, "bundle", "bundles", null, null, null, true),
 
     // from oracle synonym to dropped object (??)
     NON_EXISTENT(DatabaseObjectTypeId.NON_EXISTENT, "non-existent", null, null, null, null, true),
@@ -135,11 +139,11 @@ public enum DBObjectType implements DynamicContentType<DBObjectType> {
     private DBContentType contentType = DBContentType.NONE;
 
     private DBObjectType inheritedType;
-    private final Set<DBObjectType> inheritingTypes = new HashSet<>();
-    private final Set<DBObjectType> parents = new HashSet<>();
-    private final Set<DBObjectType> genericParents = new HashSet<>();
-    private final Set<DBObjectType> children = new HashSet<>();
-    private final Set<DBObjectType> thisAsSet;
+    private Set<DBObjectType> inheritingTypes;
+    private Set<DBObjectType> parents;
+    private Set<DBObjectType> genericParents;
+    private Set<DBObjectType> children;
+    private Set<DBObjectType> thisAsSet;
     private Set<DBObjectType> familyTypes;
 
     private Map<DBContentType, Icon> icons;
@@ -157,7 +161,18 @@ public enum DBObjectType implements DynamicContentType<DBObjectType> {
         this.generic = generic;
         this.presentableListName = listName == null ? null :
                 Character.toUpperCase(listName.charAt(0)) + listName.substring(1).replace('_', ' ');
-        thisAsSet = Collections.singleton(this);
+    }
+
+    public static Set<DBObjectType> emptySet() {
+        return EnumSet.noneOf(DBObjectType.class);
+    }
+
+    private void init() {
+        this.inheritingTypes = emptySet();
+        this.parents = emptySet();
+        this.genericParents = emptySet();
+        this.children = emptySet();
+        this.thisAsSet = EnumSet.of(this);
     }
 
     public boolean isSchemaObject() {
@@ -177,7 +192,7 @@ public enum DBObjectType implements DynamicContentType<DBObjectType> {
     }
 
     public Icon getDisabledIcon() {
-        return disabledIcon != null ? disabledIcon : icon;
+        return nvl(disabledIcon, icon);
     }
 
     public boolean isLeaf() {
@@ -186,7 +201,7 @@ public enum DBObjectType implements DynamicContentType<DBObjectType> {
 
     public Set<DBObjectType> getFamilyTypes() {
         if (familyTypes == null) {
-            familyTypes = new HashSet<>();
+            familyTypes = emptySet();
             familyTypes.addAll(inheritingTypes);
             familyTypes.add(this);
         }
@@ -285,6 +300,7 @@ public enum DBObjectType implements DynamicContentType<DBObjectType> {
     }
 
     static {
+        Arrays.stream(DBObjectType.values()).forEach(ot -> ot.init());
         // Generic type
         TABLE.setInheritedType(DATASET);
         VIEW.setInheritedType(DATASET);

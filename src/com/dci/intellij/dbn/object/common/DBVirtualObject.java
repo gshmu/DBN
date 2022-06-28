@@ -263,10 +263,12 @@ public class DBVirtualObject extends DBObjectImpl implements PsiReference {
         DBObjectList<DBObject> objectList = childObjects.getObjectList(objectType);
 
         if (objectList == null) {
-            objectList = childObjects.createObjectList(objectType, this, MUTABLE, VIRTUAL);
-            if (objectList != null) {
-                loadChildObjects(objectType, objectList);
-                objectList.set(LOADED, true);
+            if (objectType.isChildOf(getObjectType())) {
+                objectList = childObjects.createObjectList(objectType, this, MUTABLE, VIRTUAL);
+                if (objectList != null) {
+                    loadChildObjects(objectType, objectList);
+                    objectList.set(LOADED, true);
+                }
             }
         } else {
             boolean invalid = objectList.getObjects().stream().anyMatch(o -> !o.isValid());
