@@ -94,6 +94,7 @@ public enum DatabaseObjectTypeId {
     UNKNOWN,
     NONE,
     ANY,
+    BUNDLE,
     NON_EXISTENT,
     INCOMING_DEPENDENCY,
     OUTGOING_DEPENDENCY;
