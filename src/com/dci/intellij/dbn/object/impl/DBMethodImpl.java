@@ -173,7 +173,7 @@ public abstract class DBMethodImpl<M extends DBMethodMetadata> extends DBSchemaO
      *********************************************************/
 
     static {
-        DynamicSubcontentLoader.create(METHOD, ARGUMENT, () ->
+        DynamicSubcontentLoader.create(METHOD, ARGUMENT,
                 new DynamicContentResultSetLoader<DBArgument, DBArgumentMetadata>(METHOD, ARGUMENT, false, true) {
                     @Override
                     public ResultSet createResultSet(DynamicContent<DBArgument> dynamicContent, DBNConnection connection) throws SQLException {
