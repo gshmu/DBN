@@ -8,6 +8,8 @@ import com.dci.intellij.dbn.object.common.list.DBObjectListVisitor;
 
 import java.util.List;
 
+import static com.dci.intellij.dbn.common.util.Unsafe.cast;
+
 public class DBObjectRecursiveLoaderVisitor extends StatefulDisposable.Base implements DBObjectListVisitor{
     public static final DBObjectRecursiveLoaderVisitor INSTANCE = new DBObjectRecursiveLoaderVisitor();
 
@@ -16,8 +18,8 @@ public class DBObjectRecursiveLoaderVisitor extends StatefulDisposable.Base impl
 
     @Override
     public void visit(DBObjectList<?> objectList) {
-        if (!objectList.getDependencyAdapter().isSubContent()) {
-            List<DBObject> objects = (List<DBObject>) objectList.getObjects();
+        if (!objectList.isSubContent()) {
+            List<DBObject> objects = cast(objectList.getObjects());
             for (DBObject object : objects) {
                 ProgressMonitor.checkCancelled();
                 checkDisposed();
