@@ -124,7 +124,7 @@ public abstract class DynamicContentImpl<T extends DynamicContentElement>
 
     @Override
     public boolean isDirty() {
-        return is(DIRTY) || getDependencyAdapter().isDependencyDirty();
+        return is(DIRTY) || dependencyAdapter.isDependencyDirty();
     }
 
     @Override
@@ -414,7 +414,7 @@ public abstract class DynamicContentImpl<T extends DynamicContentElement>
     @Override
     public void disposeInner() {
         if (elements != EMPTY_CONTENT && elements != EMPTY_UNTOUCHED_CONTENT) {
-            if (!dependencyAdapter.isSubContent()) {
+            if (!isSubContent()) {
                 SafeDisposer.disposeCollection(elements);
             }
             elements = cast(EMPTY_DISPOSED_CONTENT);
