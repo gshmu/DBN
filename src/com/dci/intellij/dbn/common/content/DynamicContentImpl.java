@@ -1,6 +1,6 @@
 package com.dci.intellij.dbn.common.content;
 
-import com.dci.intellij.dbn.common.collections.FixedArrayList;
+import com.dci.intellij.dbn.common.collections.CompactArrayList;
 import com.dci.intellij.dbn.common.content.dependency.ContentDependencyAdapter;
 import com.dci.intellij.dbn.common.content.dependency.VoidContentDependencyAdapter;
 import com.dci.intellij.dbn.common.content.loader.DynamicContentLoader;
@@ -329,7 +329,7 @@ public abstract class DynamicContentImpl<T extends DynamicContentElement>
             elements = cast(EMPTY_CONTENT);
         } else {
             sortElements(elements);
-            elements = FixedArrayList.from(elements);
+            elements = CompactArrayList.from(elements);
         }
         List<T> oldElements = this.elements;
         if (elements != EMPTY_CONTENT && isNot(INTERNAL) && isNot(VIRTUAL)) {
