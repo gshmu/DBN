@@ -15,6 +15,7 @@ import com.dci.intellij.dbn.common.load.ProgressMonitor;
 import com.dci.intellij.dbn.common.util.Commons;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.DatabaseEntity;
+import com.dci.intellij.dbn.connection.DatabaseType;
 import com.dci.intellij.dbn.database.DatabaseCompatibilityInterface;
 import com.dci.intellij.dbn.database.DatabaseObjectTypeId;
 import com.dci.intellij.dbn.object.common.DBObject;
@@ -33,7 +34,6 @@ import java.util.Set;
 import static com.dci.intellij.dbn.common.Direction.DOWN;
 import static com.dci.intellij.dbn.common.Direction.UP;
 import static com.dci.intellij.dbn.common.dispose.Failsafe.check;
-import static com.dci.intellij.dbn.common.util.Search.binarySearch;
 import static com.dci.intellij.dbn.common.util.Unsafe.cast;
 import static com.dci.intellij.dbn.object.type.DBObjectType.ANY;
 import static java.util.Collections.emptyList;
@@ -99,7 +99,10 @@ public final class DBObjectListContainer implements StatefulDisposable {
         }
 
         throw new IllegalArgumentException();
+    }
 
+    private DatabaseType getDatabaseType() {
+        return owner.getConnection().getDatabaseType();
     }
 
     @Nullable
@@ -465,13 +468,17 @@ public final class DBObjectListContainer implements StatefulDisposable {
     }
 
     private int objectsIndex(DBObjectType objectType) {
-        DBObjectType ownerType = getOwnerType();
-        return OBJECT_INDEX.index(ownerType, objectType);
+        return OBJECT_INDEX.index(
+                getDatabaseType(),
+                getOwnerType(),
+                objectType);
     }
 
     private int relationsIndex(DBObjectRelationType relationType) {
-        DBObjectType ownerType = getOwnerType();
-        return RELATION_INDEX.index(ownerType, relationType);
+        return RELATION_INDEX.index(
+                getDatabaseType(),
+                getOwnerType(),
+                relationType);
     }
 
     @Nullable
