@@ -1,6 +1,6 @@
 package com.dci.intellij.dbn.common.options;
 
-import com.dci.intellij.dbn.common.util.ThreadLocalFlag;
+import com.dci.intellij.dbn.common.thread.ThreadLocalFlag;
 import com.intellij.openapi.progress.ProcessCanceledException;
 import lombok.extern.slf4j.Slf4j;
 
