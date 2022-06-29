@@ -12,7 +12,6 @@ import com.dci.intellij.dbn.database.common.metadata.DBObjectMetadata;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -33,7 +32,7 @@ public abstract class DynamicSubcontentCustomLoader<
     protected abstract T resolveElement(DynamicContent<T> dynamicContent, DynamicContentElement sourceElement);
 
     @Override
-    public void loadContent(DynamicContent<T> content, boolean forceReload) throws SQLException {
+    public void loadContent(DynamicContent<T> content, boolean forceReload) {
         List<T> list = null;
         ContentDependencyAdapter adapter = content.getDependencyAdapter();
         if (adapter instanceof SubcontentDependencyAdapter) {
