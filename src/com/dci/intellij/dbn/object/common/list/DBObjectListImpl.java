@@ -18,6 +18,7 @@ import com.dci.intellij.dbn.common.filter.CompoundFilter;
 import com.dci.intellij.dbn.common.filter.Filter;
 import com.dci.intellij.dbn.common.range.Range;
 import com.dci.intellij.dbn.common.search.SearchAdapter;
+import com.dci.intellij.dbn.common.string.StringDeBuilder;
 import com.dci.intellij.dbn.common.ui.tree.TreeEventType;
 import com.dci.intellij.dbn.common.util.Commons;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
@@ -145,20 +146,21 @@ public class DBObjectListImpl<T extends DBObject> extends DynamicContentImpl<T> 
     @NotNull
     @Override
     public String getQualifiedName() {
-        // TODO is StringBulder insert(0...) better than this?
-        String path = getName();
+        StringDeBuilder builder = new StringDeBuilder();
+        builder.append(getName());
+
         DatabaseEntity parent = getParent();
         while(parent != null) {
-            path = parent.getName() + "." + path;
+            builder.prepend('.');
+            builder.prepend(parent.getName());
             if (parent instanceof DBObject) {
                 DBObject object = (DBObject) parent;
                 parent = object.getParent();
             } else {
                 parent = parent.getParentEntity();
             }
-
         }
-        return path;
+        return builder.toString();
     }
 
     @Override
