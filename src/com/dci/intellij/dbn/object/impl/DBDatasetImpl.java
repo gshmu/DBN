@@ -128,7 +128,7 @@ public abstract class DBDatasetImpl<M extends DBObjectMetadata> extends DBSchema
      *********************************************************/
 
     static {
-        DynamicSubcontentLoader.create(DATASET, COLUMN, () ->
+        DynamicSubcontentLoader.create(DATASET, COLUMN,
                 new DynamicContentResultSetLoader<DBColumn, DBColumnMetadata>(DATASET, COLUMN, false, true) {
                     @Override
                     public ResultSet createResultSet(DynamicContent<DBColumn> dynamicContent, DBNConnection connection) throws SQLException {
@@ -147,7 +147,7 @@ public abstract class DBDatasetImpl<M extends DBObjectMetadata> extends DBSchema
                     }
                 });
 
-        DynamicSubcontentLoader.create(DATASET, CONSTRAINT, () ->
+        DynamicSubcontentLoader.create(DATASET, CONSTRAINT,
                 new DynamicContentResultSetLoader<DBConstraint, DBConstraintMetadata>(DATASET, CONSTRAINT, false, true) {
                     @Override
                     public ResultSet createResultSet(DynamicContent<DBConstraint> dynamicContent, DBNConnection connection) throws SQLException {
@@ -166,7 +166,7 @@ public abstract class DBDatasetImpl<M extends DBObjectMetadata> extends DBSchema
                     }
                 });
 
-        DynamicSubcontentLoader.create(DATASET, DATASET_TRIGGER, () ->
+        DynamicSubcontentLoader.create(DATASET, DATASET_TRIGGER,
                 new DynamicContentResultSetLoader<DBDatasetTrigger, DBTriggerMetadata>(DATASET, DATASET_TRIGGER, false, true) {
 
                     @Override
@@ -186,7 +186,7 @@ public abstract class DBDatasetImpl<M extends DBObjectMetadata> extends DBSchema
                     }
                 });
 
-        DynamicSubcontentLoader.create(DATASET, INDEX, () ->
+        DynamicSubcontentLoader.create(DATASET, INDEX,
                 new DynamicContentResultSetLoader<DBIndex, DBIndexMetadata>(DATASET, INDEX, false, true) {
 
                     @Override
@@ -207,7 +207,7 @@ public abstract class DBDatasetImpl<M extends DBObjectMetadata> extends DBSchema
                 });
 
 
-        DynamicSubcontentLoader.create(DATASET, INDEX_COLUMN, () ->
+        DynamicSubcontentLoader.create(DATASET, INDEX_COLUMN,
                 new DynamicContentResultSetLoader<DBIndexColumnRelation, DBIndexColumnMetadata>(DATASET, INDEX_COLUMN, false, false) {
 
                     @Override
@@ -235,7 +235,7 @@ public abstract class DBDatasetImpl<M extends DBObjectMetadata> extends DBSchema
                     }
                 });
 
-        DynamicSubcontentLoader.create(DATASET, CONSTRAINT_COLUMN, () ->
+        DynamicSubcontentLoader.create(DATASET, CONSTRAINT_COLUMN,
                 new DynamicContentResultSetLoader<DBConstraintColumnRelation, DBConstraintColumnMetadata>(DATASET, CONSTRAINT_COLUMN, false, false) {
 
                     @Override

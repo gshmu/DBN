@@ -38,7 +38,6 @@ class DBObjectRelationListImpl<T extends DBObjectRelation> extends DynamicConten
             DynamicContentProperty... properties) {
         super(parent, dependencyAdapter, properties);
         this.relationType = type;
-        //DBObjectListLoaderRegistry.register(parent, type, loader);
     }
 
     @Override

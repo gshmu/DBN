@@ -191,7 +191,7 @@ public class DBTableImpl extends DBDatasetImpl<DBTableMetadata> implements DBTab
      *                         Loaders                       *
      *********************************************************/
     static {
-        DynamicSubcontentLoader.create(TABLE, NESTED_TABLE, () ->
+        DynamicSubcontentLoader.create(TABLE, NESTED_TABLE,
                 new DynamicContentResultSetLoader<DBNestedTable, DBNestedTableMetadata>(TABLE, NESTED_TABLE, false, true) {
 
                     @Override

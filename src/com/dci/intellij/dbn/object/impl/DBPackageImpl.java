@@ -112,7 +112,7 @@ public class DBPackageImpl
      *                         Loaders                       *
      *********************************************************/
     static {
-        DynamicSubcontentLoader.create(PACKAGE, PACKAGE_FUNCTION, () ->
+        DynamicSubcontentLoader.create(PACKAGE, PACKAGE_FUNCTION,
                 new DynamicContentResultSetLoader<DBPackageFunction, DBFunctionMetadata>(PACKAGE, PACKAGE_FUNCTION, false, true) {
 
                     @Override
@@ -132,7 +132,7 @@ public class DBPackageImpl
                     }
                 });
 
-        DynamicSubcontentLoader.create(PACKAGE, PACKAGE_PROCEDURE, () ->
+        DynamicSubcontentLoader.create(PACKAGE, PACKAGE_PROCEDURE,
                 new DynamicContentResultSetLoader<DBPackageProcedure, DBProcedureMetadata>(PACKAGE, PACKAGE_PROCEDURE, false, true) {
 
                     @Override
@@ -152,7 +152,7 @@ public class DBPackageImpl
                     }
                 });
 
-        DynamicSubcontentLoader.create(PACKAGE, PACKAGE_TYPE, () ->
+        DynamicSubcontentLoader.create(PACKAGE, PACKAGE_TYPE,
                 new DynamicContentResultSetLoader<DBPackageType, DBTypeMetadata>(PACKAGE, PACKAGE_TYPE, false, true) {
 
                     @Override

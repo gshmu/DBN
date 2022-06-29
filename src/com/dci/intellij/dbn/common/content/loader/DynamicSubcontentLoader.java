@@ -11,23 +11,24 @@ import com.dci.intellij.dbn.common.thread.ThreadMonitor;
 import com.dci.intellij.dbn.common.thread.ThreadProperty;
 import com.dci.intellij.dbn.connection.DatabaseEntity;
 import com.dci.intellij.dbn.database.common.metadata.DBObjectMetadata;
+import lombok.Getter;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.sql.SQLException;
 import java.util.Collections;
 import java.util.List;
-import java.util.function.Supplier;
 
 /**
  * This loader is to be used from building the elements of a dynamic content, based on a source content.
  * e.g. Constraints of a table are loaded from the complete actions of constraints of a Schema.
  */
-public abstract class DynamicSubcontentLoader<T extends DynamicContentElement, M extends DBObjectMetadata>
+@Getter
+public class DynamicSubcontentLoader<T extends DynamicContentElement, M extends DBObjectMetadata>
         extends DynamicContentLoaderImpl<T, M>
         implements DynamicContentLoader<T, M> {
 
-    private final DynamicContentLoader<T, M> alternativeLoader = createAlternativeLoader();
+    private DynamicContentLoader<T, M> alternativeLoader;
 
     private DynamicSubcontentLoader(@NotNull DynamicContentType parentContentType, @NotNull DynamicContentType contentType) {
         super(parentContentType, contentType, true);
@@ -36,14 +37,11 @@ public abstract class DynamicSubcontentLoader<T extends DynamicContentElement, M
     public static <T extends DynamicContentElement, M extends DBObjectMetadata> DynamicSubcontentLoader<T, M> create(
             @NotNull DynamicContentType parentContentType,
             @NotNull DynamicContentType contentType,
-            @NotNull Supplier<DynamicContentLoader<T, M>> loader) {
-        return new DynamicSubcontentLoader<T, M>(parentContentType, contentType) {
-            @Nullable
-            @Override
-            protected DynamicContentLoader<T, M> createAlternativeLoader() {
-                return loader.get();
-            }
-        };
+            @Nullable DynamicContentLoader<T, M> alternativeLoader) {
+
+        DynamicSubcontentLoader<T, M> loader = new DynamicSubcontentLoader<>(parentContentType, contentType);
+        loader.alternativeLoader = alternativeLoader;
+        return loader;
     }
 
     @Override
@@ -85,11 +83,4 @@ public abstract class DynamicSubcontentLoader<T extends DynamicContentElement, M
             }
         }
     }
-
-    public final DynamicContentLoader<T, M> getAlternativeLoader() {
-        return alternativeLoader;
-    }
-
-    @Nullable
-    protected abstract DynamicContentLoader<T, M> createAlternativeLoader();
 }
