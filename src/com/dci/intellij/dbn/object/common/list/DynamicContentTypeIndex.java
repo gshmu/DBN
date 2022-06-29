@@ -1,26 +1,29 @@
 package com.dci.intellij.dbn.object.common.list;
 
 import com.dci.intellij.dbn.common.content.DynamicContentType;
+import com.dci.intellij.dbn.connection.DatabaseType;
 
 import java.util.Arrays;
+import java.util.EnumMap;
+import java.util.Map;
 
 public class DynamicContentTypeIndex<O extends DynamicContentType, T extends DynamicContentType> {
 
     private final Class<O> ownerType;
-    private final Entry<T>[] entries;
+    private final Map<DatabaseType, Entry<T>[]> entries = new EnumMap<>(DatabaseType.class);
 
     public DynamicContentTypeIndex(Class<O> ownerType) {
         this.ownerType = ownerType;
-        this.entries = new Entry[ownerType.getEnumConstants().length];
     }
 
-    public int index(O ownerType, T type) {
-        Entry<T> entry = entry(ownerType, (Class<T>) type.getClass());
+    public int index(DatabaseType databaseType, O ownerType, T type) {
+        Entry<T> entry = entry(databaseType, ownerType, (Class<T>) type.getClass());
         return entry.index(type);
     }
 
-    private Entry<T> entry(O ownerType, Class<T> type) {
+    private Entry<T> entry(DatabaseType databaseType, O ownerType, Class<T> type) {
         int position = position(ownerType);
+        Entry<T>[] entries = entries(databaseType);
         if (entries[position] == null) {
             synchronized (this) {
                 if (entries[position] == null) {
@@ -29,6 +32,20 @@ public class DynamicContentTypeIndex<O extends DynamicContentType, T extends Dyn
             }
         }
         return entries[position];
+    }
+
+    private Entry<T>[] entries(DatabaseType databaseType) {
+        Entry<T>[] entries = this.entries.get(databaseType);
+        if (entries == null) {
+            synchronized (this) {
+                entries = this.entries.get(databaseType);
+                if (entries == null) {
+                    entries = new Entry[ownerType.getEnumConstants().length];
+                    this.entries.put(databaseType, entries);
+                }
+            }
+        }
+        return entries;
     }
 
     private static class Entry<T extends DynamicContentType> {

@@ -29,6 +29,8 @@ public interface DBSchema extends DBObject {
     List<DBDimension> getDimensions();
     List<DBCluster> getClusters();
     List<DBDatabaseLink> getDatabaseLinks();
+    List<DBColumn> getPrimaryKeyColumns();
+    List<DBColumn> getForeignKeyColumns();
 
     DBDataset getDataset(String name);
     DBTable getTable(String name);

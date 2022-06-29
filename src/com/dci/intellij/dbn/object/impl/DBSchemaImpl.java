@@ -7,8 +7,10 @@ import com.dci.intellij.dbn.browser.ui.HtmlToolTipBuilder;
 import com.dci.intellij.dbn.common.content.DynamicContent;
 import com.dci.intellij.dbn.common.content.loader.DynamicContentResultSetLoader;
 import com.dci.intellij.dbn.common.event.ProjectEvents;
+import com.dci.intellij.dbn.common.latent.Latent;
 import com.dci.intellij.dbn.common.load.ProgressMonitor;
 import com.dci.intellij.dbn.common.ui.tree.TreeEventType;
+import com.dci.intellij.dbn.common.util.Lists;
 import com.dci.intellij.dbn.common.util.Strings;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.Resources;
@@ -17,28 +19,7 @@ import com.dci.intellij.dbn.connection.jdbc.DBNConnection;
 import com.dci.intellij.dbn.database.DatabaseCompatibilityInterface;
 import com.dci.intellij.dbn.database.DatabaseInterface;
 import com.dci.intellij.dbn.database.DatabaseMetadataInterface;
-import com.dci.intellij.dbn.database.common.metadata.def.DBArgumentMetadata;
-import com.dci.intellij.dbn.database.common.metadata.def.DBClusterMetadata;
-import com.dci.intellij.dbn.database.common.metadata.def.DBColumnMetadata;
-import com.dci.intellij.dbn.database.common.metadata.def.DBConstraintColumnMetadata;
-import com.dci.intellij.dbn.database.common.metadata.def.DBConstraintMetadata;
-import com.dci.intellij.dbn.database.common.metadata.def.DBDatabaseLinkMetadata;
-import com.dci.intellij.dbn.database.common.metadata.def.DBDimensionMetadata;
-import com.dci.intellij.dbn.database.common.metadata.def.DBFunctionMetadata;
-import com.dci.intellij.dbn.database.common.metadata.def.DBIndexColumnMetadata;
-import com.dci.intellij.dbn.database.common.metadata.def.DBIndexMetadata;
-import com.dci.intellij.dbn.database.common.metadata.def.DBMaterializedViewMetadata;
-import com.dci.intellij.dbn.database.common.metadata.def.DBNestedTableMetadata;
-import com.dci.intellij.dbn.database.common.metadata.def.DBPackageMetadata;
-import com.dci.intellij.dbn.database.common.metadata.def.DBProcedureMetadata;
-import com.dci.intellij.dbn.database.common.metadata.def.DBSchemaMetadata;
-import com.dci.intellij.dbn.database.common.metadata.def.DBSequenceMetadata;
-import com.dci.intellij.dbn.database.common.metadata.def.DBSynonymMetadata;
-import com.dci.intellij.dbn.database.common.metadata.def.DBTableMetadata;
-import com.dci.intellij.dbn.database.common.metadata.def.DBTriggerMetadata;
-import com.dci.intellij.dbn.database.common.metadata.def.DBTypeAttributeMetadata;
-import com.dci.intellij.dbn.database.common.metadata.def.DBTypeMetadata;
-import com.dci.intellij.dbn.database.common.metadata.def.DBViewMetadata;
+import com.dci.intellij.dbn.database.common.metadata.def.*;
 import com.dci.intellij.dbn.editor.DBContentType;
 import com.dci.intellij.dbn.object.*;
 import com.dci.intellij.dbn.object.common.DBObject;
@@ -57,14 +38,12 @@ import org.jetbrains.annotations.Nullable;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 import static com.dci.intellij.dbn.common.content.DynamicContentProperty.HIDDEN;
 import static com.dci.intellij.dbn.common.content.DynamicContentProperty.*;
+import static com.dci.intellij.dbn.common.dispose.Failsafe.nd;
+import static com.dci.intellij.dbn.common.util.Commons.nvl;
 import static com.dci.intellij.dbn.common.util.Unsafe.cast;
 import static com.dci.intellij.dbn.object.common.property.DBObjectProperty.*;
 import static com.dci.intellij.dbn.object.type.DBObjectRelationType.CONSTRAINT_COLUMN;
@@ -85,6 +64,9 @@ public class DBSchemaImpl extends DBObjectImpl<DBSchemaMetadata> implements DBSc
     private DBObjectList<DBDimension> dimensions;
     private DBObjectList<DBCluster> clusters;
     private DBObjectList<DBDatabaseLink> databaseLinks;
+
+    private Latent<List<DBColumn>> primaryKeyColumns;
+    private Latent<List<DBColumn>> foreignKeyColumns;
 
     public DBSchemaImpl(ConnectionHandler connection, DBSchemaMetadata metadata) throws SQLException {
         super(connection, metadata);
@@ -118,9 +100,9 @@ public class DBSchemaImpl extends DBObjectImpl<DBSchemaMetadata> implements DBSc
         clusters           = childObjects.createObjectList(CLUSTER,           this);
         databaseLinks      = childObjects.createObjectList(DBLINK,            this);
 
-        DBObjectList constraints = childObjects.createObjectList(CONSTRAINT, this, INTERNAL, GROUPED);
-        DBObjectList indexes     = childObjects.createObjectList(INDEX,      this, INTERNAL, GROUPED);
-        DBObjectList columns     = childObjects.createObjectList(COLUMN,     this, INTERNAL, GROUPED, HIDDEN);
+        DBObjectList<DBConstraint> constraints = childObjects.createObjectList(CONSTRAINT, this, INTERNAL, GROUPED);
+        DBObjectList<DBIndex> indexes          = childObjects.createObjectList(INDEX,      this, INTERNAL, GROUPED);
+        DBObjectList<DBColumn> columns         = childObjects.createObjectList(COLUMN,     this, INTERNAL, GROUPED, HIDDEN);
 
         childObjects.createObjectList(DATASET_TRIGGER,   this, INTERNAL, GROUPED);
         childObjects.createObjectList(NESTED_TABLE,      this, INTERNAL, GROUPED, HIDDEN);
@@ -136,6 +118,14 @@ public class DBSchemaImpl extends DBObjectImpl<DBSchemaMetadata> implements DBSc
 
         childObjects.createObjectRelationList(CONSTRAINT_COLUMN, this, constraints, columns, INTERNAL, GROUPED);
         childObjects.createObjectRelationList(INDEX_COLUMN, this, indexes, columns, INTERNAL, GROUPED);
+
+        this.primaryKeyColumns = Latent.mutable(
+                () -> nd(columns).getSignature(),
+                () -> nvl(Lists.filter(nd(columns).getObjects(), c -> c.isPrimaryKey()), Collections.emptyList()));
+
+        this.foreignKeyColumns = Latent.mutable(
+                () -> nd(columns).getSignature(),
+                () -> nvl(Lists.filter(nd(columns).getObjects(), c -> c.isForeignKey()), Collections.emptyList()));
     }
 
     @Override
@@ -254,6 +244,14 @@ public class DBSchemaImpl extends DBObjectImpl<DBSchemaMetadata> implements DBSc
     @Override
     public List<DBPackage> getPackages() {
         return packages.getObjects();
+    }
+
+    public List<DBColumn> getPrimaryKeyColumns() {
+        return primaryKeyColumns.get();
+    }
+
+    public List<DBColumn> getForeignKeyColumns() {
+        return foreignKeyColumns.get();
     }
 
     @Override
