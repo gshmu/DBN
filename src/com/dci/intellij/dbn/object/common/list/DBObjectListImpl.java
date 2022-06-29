@@ -82,7 +82,6 @@ public class DBObjectListImpl<T extends DBObject> extends DynamicContentImpl<T> 
             ObjectQuickFilterManager quickFilterManager = ObjectQuickFilterManager.getInstance(getProject());
             quickFilterManager.restoreQuickFilter(this);
         }
-        //DBObjectListLoaderRegistry.register(treeParent, objectType, loader);
     }
 
     @Override

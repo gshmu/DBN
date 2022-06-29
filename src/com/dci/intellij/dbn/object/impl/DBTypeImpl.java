@@ -222,7 +222,7 @@ public class DBTypeImpl
      *                         Loaders                       *
      *********************************************************/
     static {
-        DynamicSubcontentLoader.create(TYPE, TYPE_ATTRIBUTE, () ->
+        DynamicSubcontentLoader.create(TYPE, TYPE_ATTRIBUTE,
                 new DynamicContentResultSetLoader<DBTypeAttribute, DBTypeAttributeMetadata>(TYPE, TYPE_ATTRIBUTE, false, true) {
 
                     @Override
@@ -242,7 +242,7 @@ public class DBTypeImpl
                     }
                 });
 
-        DynamicSubcontentLoader.create(TYPE, TYPE_FUNCTION, () ->
+        DynamicSubcontentLoader.create(TYPE, TYPE_FUNCTION,
                 new DynamicContentResultSetLoader<DBTypeFunction, DBFunctionMetadata>(TYPE, TYPE_FUNCTION, false, true) {
                     @Override
                     public ResultSet createResultSet(DynamicContent<DBTypeFunction> dynamicContent, DBNConnection connection) throws SQLException {
@@ -261,7 +261,7 @@ public class DBTypeImpl
                     }
                 });
 
-        DynamicSubcontentLoader.create(TYPE, TYPE_PROCEDURE, () ->
+        DynamicSubcontentLoader.create(TYPE, TYPE_PROCEDURE,
                 new DynamicContentResultSetLoader<DBTypeProcedure, DBProcedureMetadata>(TYPE, TYPE_PROCEDURE, false, true) {
                     @Override
                     public ResultSet createResultSet(DynamicContent<DBTypeProcedure> dynamicContent, DBNConnection connection) throws SQLException {
@@ -280,7 +280,7 @@ public class DBTypeImpl
                     }
                 });
 
-        DynamicSubcontentLoader.create(TYPE, TYPE, () -> null/*TODO*/);
+        DynamicSubcontentLoader.create(TYPE, TYPE, null/*TODO*/);
     }
 
     @Override
