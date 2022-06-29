@@ -3,6 +3,7 @@ package com.dci.intellij.dbn.object.lookup;
 import com.dci.intellij.dbn.common.Reference;
 import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.common.state.PersistentStateElement;
+import com.dci.intellij.dbn.common.string.StringDeBuilder;
 import com.dci.intellij.dbn.common.thread.Timeout;
 import com.dci.intellij.dbn.common.util.Lists;
 import com.dci.intellij.dbn.common.util.Strings;
@@ -198,7 +199,7 @@ public class DBObjectRef<T extends DBObject> implements Comparable<DBObjectRef<?
         return pathElement;
     }
 
-    @NotNull
+/*    @NotNull
     public String serialize() {
         StringBuilder builder = new StringBuilder();
         builder.append(objectType.getListName());
@@ -219,24 +220,67 @@ public class DBObjectRef<T extends DBObject> implements Comparable<DBObjectRef<?
             builder.append(overload);
         }
 
+        String newValue = serializeNew();
+        return builder.toString();
+    }*/
+
+    @NotNull
+    public String serialize() {
+        StringDeBuilder builder = new StringDeBuilder();
+        builder.append(objectType.getListName());
+        builder.append(PS);
+        builder.append(quotePathElement(objectName));
+
+        DBObjectRef<?> parent = getParentRef();
+        while (parent != null) {
+            builder.prepend(PS);
+            builder.prepend(quotePathElement(parent.objectName));
+            builder.prepend(PS);
+            builder.prepend(parent.objectType.getListName());
+            parent = parent.getParentRef();
+        }
+
+        if (overload > 0) {
+            builder.append(PS);
+            builder.append(overload);
+        }
+
         return builder.toString();
     }
 
+
+/*    public String getPath() {
+        DBObjectRef<?> parent = getParentRef();
+        if (parent == null) {
+            return objectName;
+        } else {
+            StringBuilder builder = new StringBuilder(objectName);
+            while(parent != null) {
+                builder.insert(0, ".");
+                builder.insert(0, parent.objectName);
+                parent = parent.getParentRef();
+            }
+
+            String newValue = getPathNew();
+            return builder.toString();
+        }
+    }*/
 
     public String getPath() {
         DBObjectRef<?> parent = getParentRef();
         if (parent == null) {
             return objectName;
         } else {
-            StringBuilder buffer = new StringBuilder(objectName);
+            StringDeBuilder builder = new StringDeBuilder();
+            builder.append(objectName);
             while(parent != null) {
-                buffer.insert(0, ".");
-                buffer.insert(0, parent.objectName);
+                builder.prepend('.');
+                builder.prepend(parent.objectName);
                 parent = parent.getParentRef();
             }
-            return buffer.toString();
+            return builder.toString();
         }
-    }
+    }    
 
     public String getQualifiedName() {
         return getPath();
@@ -245,39 +289,42 @@ public class DBObjectRef<T extends DBObject> implements Comparable<DBObjectRef<?
     /**
      * qualified object name without schema (e.g. PROGRAM.METHOD)
      */
+/*    public String getQualifiedObjectName() {
+        DBObjectRef<?> parent = getParentRef();
+        if (parent == null || parent.objectType == DBObjectType.SCHEMA) {
+            return objectName;
+        } else {
+            StringBuilder builder = new StringBuilder(objectName);
+            while(parent != null && parent.objectType != DBObjectType.SCHEMA) {
+                builder.insert(0, '.');
+                builder.insert(0, parent.objectName);
+                parent = parent.getParentRef();
+            }
+            String newValue = getQualifiedObjectNameNew();
+            return builder.toString();
+        }
+    }*/
+
     public String getQualifiedObjectName() {
         DBObjectRef<?> parent = getParentRef();
         if (parent == null || parent.objectType == DBObjectType.SCHEMA) {
             return objectName;
         } else {
-            StringBuilder buffer = new StringBuilder(objectName);
+            StringDeBuilder builder = new StringDeBuilder();
+            builder.append(objectName);
             while(parent != null && parent.objectType != DBObjectType.SCHEMA) {
-                buffer.insert(0, '.');
-                buffer.insert(0, parent.objectName);
+                builder.prepend('.');
+                builder.prepend(parent.objectName);
                 parent = parent.getParentRef();
             }
-            return buffer.toString();
-        }    }
+            return builder.toString();
+        }
+    }
+    
 
     public String getQualifiedNameWithType() {
         return objectType.getName() + " \"" + getPath() + "\"";
     }
-
-    public String getTypePath() {
-        DBObjectRef<?> parent = getParentRef();
-        if (parent == null) {
-            return objectType.getName();
-        } else {
-            StringBuilder buffer = new StringBuilder(objectType.getName());
-            while(parent != null) {
-                buffer.insert(0, '.');
-                buffer.insert(0, parent.objectType.getName());
-                parent = parent.getParentRef();
-            }
-            return buffer.toString();
-        }
-    }
-
 
     public ConnectionId getConnectionId() {
         if (parent instanceof ConnectionId) {
