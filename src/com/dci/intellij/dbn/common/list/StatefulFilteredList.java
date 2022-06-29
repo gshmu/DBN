@@ -1,6 +1,6 @@
 package com.dci.intellij.dbn.common.list;
 
-import com.dci.intellij.dbn.common.collections.FixedArrayList;
+import com.dci.intellij.dbn.common.collections.CompactArrayList;
 import com.dci.intellij.dbn.common.filter.Filter;
 import com.dci.intellij.dbn.common.latent.Latent;
 import com.dci.intellij.dbn.common.util.Compactables;
@@ -31,7 +31,7 @@ final class StatefulFilteredList<T> extends FilteredListBase<T> {
         }
 
         List<T> filtered = cast(Lists.filtered(base, t -> filter.accepts(t)));
-        return FixedArrayList.from(filtered);
+        return CompactArrayList.from(filtered);
     }
 
 

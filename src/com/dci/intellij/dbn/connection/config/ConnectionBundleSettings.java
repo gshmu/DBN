@@ -1,7 +1,7 @@
 package com.dci.intellij.dbn.connection.config;
 
 import com.dci.intellij.dbn.common.options.BasicProjectConfiguration;
-import com.dci.intellij.dbn.common.util.ThreadLocalFlag;
+import com.dci.intellij.dbn.common.thread.ThreadLocalFlag;
 import com.dci.intellij.dbn.connection.ConnectionBundle;
 import com.dci.intellij.dbn.connection.ConnectionId;
 import com.dci.intellij.dbn.connection.ConnectionManager;

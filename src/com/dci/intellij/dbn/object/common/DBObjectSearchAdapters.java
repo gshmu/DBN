@@ -1,6 +1,6 @@
 package com.dci.intellij.dbn.object.common;
 
-import com.dci.intellij.dbn.common.util.SearchAdapter;
+import com.dci.intellij.dbn.common.search.SearchAdapter;
 import com.dci.intellij.dbn.object.DBType;
 
 import java.util.function.Predicate;

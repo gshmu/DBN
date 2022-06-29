@@ -13,19 +13,19 @@ import java.util.RandomAccess;
 
 import static com.dci.intellij.dbn.common.util.Unsafe.cast;
 
-public final class FixedArrayList<T> implements List<T>, RandomAccess, Serializable {
+public final class CompactArrayList<T> implements List<T>, RandomAccess, Serializable {
     private Object[] elements;
 
-    private FixedArrayList(List<T> elements) {
+    private CompactArrayList(List<T> elements) {
         this.elements = elements.toArray();
     }
 
-    private FixedArrayList(Object[] elements) {
+    private CompactArrayList(Object[] elements) {
         this.elements = elements;
     }
 
     public static <T> List<T> from(List<T> list) {
-        return new FixedArrayList<T>(list);
+        return new CompactArrayList<T>(list);
     }
 
     @Override
