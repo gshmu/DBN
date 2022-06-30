@@ -27,6 +27,7 @@ import static com.dci.intellij.dbn.database.sqlite.adapter.SqliteRawMetaData.Raw
  * IS_PRIMARY_KEY
  * IS_FOREIGN_KEY
  * IS_UNIQUE_KEY
+ * IS_IDENTITY
  */
 
 public abstract class SqliteColumnsResultSet extends SqliteDatasetInfoResultSetStub<SqliteColumnsResultSet.Column> {
@@ -90,6 +91,7 @@ public abstract class SqliteColumnsResultSet extends SqliteDatasetInfoResultSetS
                 Objects.equals(columnLabel, "DATA_TYPE_NAME") ? element.dataTypeName :
                 Objects.equals(columnLabel, "IS_FOREIGN_KEY") ? toFlag(element.foreignKey) :
                 Objects.equals(columnLabel, "IS_UNIQUE_KEY") ? toFlag(element.uniqueKey) :
+                Objects.equals(columnLabel, "IS_IDENTITY") ? "N" :
                 Objects.equals(columnLabel, "IS_HIDDEN") ? "N" :
                 Objects.equals(columnLabel, "IS_SET") ? "N" :
                 Objects.equals(columnLabel, "IS_NULLABLE") ? toFlag(element.nullable) :

@@ -214,6 +214,7 @@ public class GenericMetadataTranslators {
                     return literalBoolean(nullable);
                 }
                 case "IS_HIDDEN": return literalBoolean(false);
+                case "IS_IDENTITY": return literalBoolean(false);
                 default: return super.getString(columnLabel);
             }
         }
