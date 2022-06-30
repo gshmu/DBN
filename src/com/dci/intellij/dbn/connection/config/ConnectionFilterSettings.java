@@ -40,37 +40,39 @@ public class ConnectionFilterSettings extends CompositeProjectConfiguration<Conn
 
     private final Latent<Filter<DBSchema>> schemaFilter = Latent.mutable(
             () -> hideEmptySchemas,
-            () -> {
-                Filter<DBObject> filter = getObjectNameFilterSettings().getFilter(DBObjectType.SCHEMA);
-                if (filter == null) {
-                    return hideEmptySchemas ? NonEmptySchemaFilter.INSTANCE : null; // return null filter for optimization
-                } else {
-                    return schema -> {
-                        if (hideEmptySchemas) {
-                            return NonEmptySchemaFilter.INSTANCE.accepts(schema) && filter.accepts(schema);
-                        } else {
-                            return filter.accepts(schema);
-                        }
-                    };
-                }
-            });
+            () -> loadSchemaFilter());
 
     private final Latent<Filter<DBColumn>> columnFilter = Latent.mutable(
         () -> hidePseudoColumns,
-        () -> {
-            Filter<DBObject> filter = getObjectNameFilterSettings().getFilter(DBObjectType.COLUMN);
-            if (filter == null) {
-                return NonHiddenColumnsFilter.INSTANCE;
+        () -> loadColumnFilter());
+
+    @Nullable
+    private Filter<DBSchema> loadSchemaFilter() {
+        Filter<DBSchema> filter = getObjectNameFilterSettings().getFilter(DBObjectType.SCHEMA);
+        if (filter == null) {
+            return hideEmptySchemas ? NonEmptySchemaFilter.INSTANCE : null;
+        } else {
+            if (hideEmptySchemas) {
+                return schema -> NonEmptySchemaFilter.INSTANCE.accepts(schema) && filter.accepts(schema);
             } else {
-                return column -> {
-                    if (hidePseudoColumns) {
-                        return NonHiddenColumnsFilter.INSTANCE.accepts(column) && filter.accepts(column);
-                    } else {
-                        return filter.accepts(column);
-                    }
-                };
+                return filter;
             }
-        });
+        }
+    }
+
+    @Nullable
+    private Filter<DBColumn> loadColumnFilter() {
+        Filter<DBColumn> filter = getObjectNameFilterSettings().getFilter(DBObjectType.COLUMN);
+        if (filter == null) {
+            return hidePseudoColumns ? NonHiddenColumnsFilter.INSTANCE : null;
+        } else {
+            if (hidePseudoColumns) {
+                return column -> NonHiddenColumnsFilter.INSTANCE.accepts(column) && filter.accepts(column);
+            } else {
+                return filter;
+            }
+        }
+    }
 
     ConnectionFilterSettings(ConnectionSettings connectionSettings) {
         super(connectionSettings.getProject());

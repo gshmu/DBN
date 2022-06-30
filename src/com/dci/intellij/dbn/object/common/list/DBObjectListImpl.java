@@ -257,7 +257,7 @@ public class DBObjectListImpl<T extends DBObject> extends DynamicContentImpl<T> 
             elements.sort(DBObjectComparator.classic());
 
         } else if (isInternal()) {
-            if (is(GROUPED) || true ) { // TODO binary search on grouped elements
+            if (is(GROUPED)) {
                 elements.sort(DBObjectComparator.grouped());
             } else {
                 elements.sort(DBObjectComparator.basic(objectType));
