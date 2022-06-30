@@ -20,7 +20,7 @@ public interface ExecutionResult<F extends ExecutionResultForm> extends Stateful
 
     @Nullable
     default F getForm() {
-        return Dispatch.callConditional(() -> {
+        return Dispatch.call(true, () -> {
             Project project = getProject();
             ExecutionManager executionManager = ExecutionManager.getInstance(project);
             return (F) executionManager.getExecutionResultForm(this);

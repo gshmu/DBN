@@ -4,6 +4,7 @@ import com.dci.intellij.dbn.browser.options.ObjectFilterChangeListener;
 import com.dci.intellij.dbn.common.event.ProjectEvents;
 import com.dci.intellij.dbn.common.options.SettingsChangeNotifier;
 import com.dci.intellij.dbn.common.options.ui.ConfigurationEditorForm;
+import com.dci.intellij.dbn.common.ui.util.Keyboard;
 import com.dci.intellij.dbn.common.ui.util.Mouse;
 import com.dci.intellij.dbn.common.util.Actions;
 import com.dci.intellij.dbn.object.filter.name.FilterCondition;
@@ -89,13 +90,14 @@ public class ObjectNameFilterSettingsForm extends ConfigurationEditorForm<Object
         filtersTree.addKeyListener(new KeyAdapter() {
             @Override
             public void keyTyped(KeyEvent e) {
-                if (e.getKeyChar() == 10) {  // ENTER
+                char key = e.getKeyChar();
+                if (key == Keyboard.Key.ENTER) {
                     Object selection = getSelection();
                     if (selection instanceof SimpleNameFilterCondition) {
                         SimpleNameFilterCondition condition = (SimpleNameFilterCondition) selection;
                         getManager().editFilterCondition(condition, ObjectNameFilterSettingsForm.this);
                     }
-                } else if (e.getKeyChar() == 127) { //DEL
+                } else if (key == Keyboard.Key.DELETE) {
                     Object selection = getSelection();
                     if (selection instanceof FilterCondition) {
                         FilterCondition condition = (FilterCondition) selection;

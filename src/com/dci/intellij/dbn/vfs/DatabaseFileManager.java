@@ -133,7 +133,7 @@ public class DatabaseFileManager extends AbstractProjectComponent implements Per
 
     public void closeFile(@NotNull VirtualFile file) {
         FileEditorManager editorManager = FileEditorManager.getInstance(getProject());
-        Dispatch.runConditional(() -> editorManager.closeFile(file));
+        Dispatch.run(true, () -> editorManager.closeFile(file));
     }
 
 

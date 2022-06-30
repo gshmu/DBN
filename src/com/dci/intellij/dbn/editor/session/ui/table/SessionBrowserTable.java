@@ -2,8 +2,6 @@ package com.dci.intellij.dbn.editor.session.ui.table;
 
 import com.dci.intellij.dbn.common.thread.Dispatch;
 import com.dci.intellij.dbn.common.ui.component.DBNComponent;
-import com.dci.intellij.dbn.common.ui.table.DBNTableGutter;
-import com.dci.intellij.dbn.common.ui.util.UserInterface;
 import com.dci.intellij.dbn.common.util.Actions;
 import com.dci.intellij.dbn.data.grid.ui.table.basic.BasicTableCellRenderer;
 import com.dci.intellij.dbn.data.grid.ui.table.basic.BasicTableGutter;
@@ -90,18 +88,6 @@ public class SessionBrowserTable extends ResultSetTable<SessionBrowserModel> {
     @Override
     public void clearSelection() {
         Dispatch.run(() -> SessionBrowserTable.super.clearSelection());
-    }
-
-    @Override
-    public void removeEditor() {
-        Dispatch.run(() -> SessionBrowserTable.super.removeEditor());
-    }
-
-    public void updateTableGutter() {
-        Dispatch.run(() -> {
-            DBNTableGutter<?> tableGutter = getTableGutter();
-            UserInterface.repaint(tableGutter);
-        });
     }
 
     @Override

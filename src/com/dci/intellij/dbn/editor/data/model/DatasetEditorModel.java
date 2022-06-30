@@ -574,6 +574,13 @@ public class DatasetEditorModel
             return row.is(INSERTING);
         }
 
+        DatasetEditorModelCell cell = row.getCellAtIndex(columnIndex);
+        if (cell == null) {
+            return false;
+        } else if (cell.is(UPDATING)) {
+            return false;
+        }
+
         return true;
     }
 

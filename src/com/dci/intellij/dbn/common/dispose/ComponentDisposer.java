@@ -58,7 +58,7 @@ public final class ComponentDisposer {
 
     public static void dispose(@Nullable Component component) {
         if (component != null) {
-            Dispatch.runConditional(() -> {
+            Dispatch.run(true, () -> {
                 UIUtil.dispose(component);
                 removeListeners(component);
                 if (component instanceof Container) {

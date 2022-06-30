@@ -268,7 +268,7 @@ public class Editors {
             EditorEx editorEx = (EditorEx) editor;
             editorEx.setViewer(readonly);
             EditorColorsScheme scheme = editor.getColorsScheme();
-            Dispatch.runConditional(() -> {
+            Dispatch.run(true, () -> {
                 Color background = readonly ?
                         Colors.getReadonlyEditorBackground() :
                         Colors.getEditorBackground();
@@ -462,7 +462,7 @@ public class Editors {
 
     public static void releaseEditor(@Nullable Editor editor) {
         if (editor != null) {
-            Dispatch.runConditional(() -> {
+            Dispatch.run(true, () -> {
                 EditorFactory editorFactory = EditorFactory.getInstance();
                 editorFactory.releaseEditor(editor);
             });

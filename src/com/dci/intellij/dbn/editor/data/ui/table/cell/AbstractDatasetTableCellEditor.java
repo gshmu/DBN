@@ -179,7 +179,7 @@ public abstract class AbstractDatasetTableCellEditor extends AbstractCellEditor 
         return null;
     }
 
-    public Object getCellEditorValueLenient() {
+    public String getCellEditorTextValue() {
         return getEditorComponent().getText().trim();
     }
 
