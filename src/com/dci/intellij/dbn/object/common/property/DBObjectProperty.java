@@ -29,6 +29,7 @@ public enum DBObjectProperty implements Property.LongBase {
     PRIMARY_KEY,
     FOREIGN_KEY,
     UNIQUE_KEY,
+    IDENTITY,
     NULLABLE,
     HIDDEN,
     UNIQUE,

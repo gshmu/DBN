@@ -25,6 +25,7 @@ public class DatasetEditorColumnInfo extends ResultSetColumnInfo {
     private static final List<String> EMPTY_LIST = new ArrayList<>(0);
     private final boolean primaryKey;
     private final boolean foreignKey;
+    private final boolean identity;
 
     @EqualsAndHashCode.Exclude
     private final DBObjectRef<DBColumn> columnRef;
@@ -47,6 +48,7 @@ public class DatasetEditorColumnInfo extends ResultSetColumnInfo {
         this.columnRef = DBObjectRef.of(column);
         this.primaryKey = column.isPrimaryKey();
         this.foreignKey = column.isForeignKey();
+        this.identity = column.isIdentity();
     }
 
     @NotNull

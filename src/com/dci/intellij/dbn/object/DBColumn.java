@@ -12,6 +12,7 @@ public interface DBColumn extends DBObject, DBOrderedObject {
     boolean isSinglePrimaryKey();
     boolean isForeignKey();
     boolean isUniqueKey();
+    boolean isIdentity();
     boolean isNullable();
     boolean isHidden();
     DBDataset getDataset();
