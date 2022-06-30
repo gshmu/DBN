@@ -72,8 +72,9 @@ public class DatasetEditorTableCellRenderer extends BasicTableCellRenderer {
             Border border = Borders.lineBorder(background);
 
             if (cell.hasError() && connected) {
-                border = Borders.lineBorder(SimpleTextAttributes.ERROR_ATTRIBUTES.getFgColor());
                 SimpleTextAttributes errorData = attributes.getErrorData();
+                //border = Borders.lineBorder(SimpleTextAttributes.ERROR_ATTRIBUTES.getFgColor());
+                border = Borders.lineBorder(errorData.getBgColor());
                 background = errorData.getBgColor();
                 foreground = errorData.getFgColor();
                 textAttributes = textAttributes.derive(errorData.getStyle(), foreground, background, null);
