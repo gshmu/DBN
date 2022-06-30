@@ -25,6 +25,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import static com.dci.intellij.dbn.common.util.Unsafe.cast;
+
 @Getter
 @Setter
 @EqualsAndHashCode(callSuper = false)
@@ -71,8 +73,8 @@ public class ObjectNameFilterSettings
         return objectFilterMap.containsKey(objectType);
     }
 
-    public Filter<DBObject> getFilter(DBObjectType objectType) {
-        Filter<DBObject> filter = objectFilterMap.get(objectType);
+    public <T extends DBObject> Filter<T> getFilter(DBObjectType objectType) {
+        Filter<?> filter = objectFilterMap.get(objectType);
         if (filter == null) {
             DBObjectType genericObjectType = objectType.getGenericType();
             while (filter == null && genericObjectType != objectType) {
@@ -81,7 +83,7 @@ public class ObjectNameFilterSettings
                 genericObjectType = objectType.getGenericType();
             }
         }
-        return filter;
+        return cast(filter);
     }
 
     /*********************************************************
