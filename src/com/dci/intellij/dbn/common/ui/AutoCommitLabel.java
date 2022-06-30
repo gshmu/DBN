@@ -22,8 +22,9 @@ import com.intellij.ui.JBColor;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import javax.swing.*;
-import java.awt.*;
+import javax.swing.JLabel;
+import java.awt.BorderLayout;
+import java.awt.Color;
 
 import static com.dci.intellij.dbn.common.util.Commons.nvl;
 
@@ -72,7 +73,7 @@ public class AutoCommitLabel extends DBNPanelImpl implements Disposable {
     }
 
     private void update() {
-        Dispatch.runConditional(() -> {
+        Dispatch.run(true, () -> {
             ConnectionHandler connection = getConnection();
             if (connection != null && !connection.isVirtual()) {
                 setVisible(true);

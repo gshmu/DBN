@@ -21,8 +21,8 @@ public final class Dispatch {
         run(null, runnable);
     }
 
-    public static void runConditional(Runnable runnable) {
-        if (ThreadMonitor.isDispatchThread()) {
+    public static void run(boolean conditional, Runnable runnable) {
+        if (conditional && ThreadMonitor.isDispatchThread()) {
             try {
                 runnable.run();
             } catch (ProcessCanceledException | UnsupportedOperationException ignore) {}
@@ -37,12 +37,8 @@ public final class Dispatch {
         application.invokeLater(() -> Cancellable.run(runnable), modalityState/*, ModalityState.NON_MODAL*/);
     }
 
-    public static void invokeNonModal(Runnable runnable) {
-        run(ModalityState.NON_MODAL, runnable);
-    }
-
-    public static <T, E extends Throwable> T callConditional(ThrowableCallable<T, E> callable) throws E{
-        if (ThreadMonitor.isDispatchThread()) {
+    public static <T, E extends Throwable> T call(boolean conditional, ThrowableCallable<T, E> callable) throws E{
+        if (conditional && ThreadMonitor.isDispatchThread()) {
             return callable.call();
         } else {
             return call(callable);
@@ -79,7 +75,7 @@ public final class Dispatch {
     }
 
     public static void alarmRequest(@NotNull Alarm alarm, int delayMillis, boolean cancelRequests, @NotNull Runnable runnable) {
-        runConditional(() -> {
+        run(true, () -> {
             if (!alarm.isDisposed()) {
                 if (cancelRequests) {
                     alarm.cancelAllRequests();

@@ -1,6 +1,7 @@
 package com.dci.intellij.dbn.editor.data.ui.table.listener;
 
 import com.dci.intellij.dbn.common.dispose.Failsafe;
+import com.dci.intellij.dbn.common.ui.util.Keyboard.Key;
 import com.dci.intellij.dbn.common.util.Messages;
 import com.dci.intellij.dbn.data.type.DBDataType;
 import com.dci.intellij.dbn.editor.data.model.DatasetEditorModel;
@@ -30,10 +31,10 @@ public class DatasetEditorKeyListener extends KeyAdapter {
                 int keyChar = e.getKeyChar();
                 if (model.is(INSERTING)) {
                     switch (keyChar) {
-                        case 27:  // escape
+                        case Key.ESCAPE:
                             model.cancelInsert(true);
                             break;
-                        case 10:  // enter
+                        case Key.ENTER:
                             int index = model.getInsertRowIndex();
                             try {
                                 model.postInsertRecord(false, true, false);
@@ -46,10 +47,10 @@ public class DatasetEditorKeyListener extends KeyAdapter {
                             e.consume();
                     }
                 } else if (!table.isEditing()){
-                    if (keyChar == 127) {
+                    if (keyChar == Key.DELETE) {
                         int[] selectedRows = table.getSelectedRows();
                         int[] selectedColumns = table.getSelectedColumns();
-                        table.performUpdate(() -> {
+                        table.performUpdate(-1, -1, () -> {
                             for (int rowIndex : selectedRows) {
                                 for (int columnIndex : selectedColumns) {
                                     DatasetEditorModelCell cell = model.getCellAt(rowIndex, columnIndex);

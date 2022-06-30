@@ -9,10 +9,16 @@ import com.intellij.openapi.keymap.KeymapManager;
 import com.intellij.openapi.keymap.KeymapUtil;
 import org.jetbrains.annotations.Nullable;
 
-import javax.swing.*;
+import javax.swing.KeyStroke;
 import java.awt.event.KeyEvent;
 
 public class Keyboard {
+    public interface Key {
+        int ENTER = 10;
+        int ESCAPE = 27;
+        int DELETE = 127;
+    }
+
     public static boolean match(Shortcut[] shortcuts, KeyEvent e) {
         for (Shortcut shortcut : shortcuts) {
             if (shortcut instanceof KeyboardShortcut) {

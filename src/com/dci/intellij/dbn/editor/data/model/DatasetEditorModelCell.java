@@ -35,6 +35,7 @@ public class DatasetEditorModelCell
         implements ChangeListener {
 
     private Object originalUserValue;
+    private String temporaryUserValue;
     private DatasetEditorError error;
 
     public DatasetEditorModelCell(DatasetEditorModelRow row, ResultSet resultSet, DatasetEditorColumnInfo columnInfo) throws SQLException {
@@ -49,6 +50,15 @@ public class DatasetEditorModelCell
 
     @Override
     public void updateUserValue(Object newUserValue, boolean bulk) {
+        try {
+            set(UPDATING, true);
+            updateValue(newUserValue, bulk);
+        } finally {
+            set(UPDATING, false);
+        }
+    }
+
+    private void updateValue(Object newUserValue, boolean bulk) {
         getConnection().updateLastAccess();
 
         boolean valueChanged = userValueChanged(newUserValue);
@@ -205,7 +215,7 @@ public class DatasetEditorModelCell
     }
 
     public void edit() {
-        Dispatch.runConditional(() -> {
+        Dispatch.run(true, () -> {
             int index = getEditorTable().convertColumnIndexToView(getIndex());
             if (index > 0) {
                 DatasetEditorTable table = getEditorTable();
@@ -215,7 +225,7 @@ public class DatasetEditorModelCell
     }
 
     public void editPrevious() {
-        Dispatch.runConditional(() -> {
+        Dispatch.run(true, () -> {
             int index = getEditorTable().convertColumnIndexToView(getIndex());
             if (index > 0) {
                 DatasetEditorTable table = getEditorTable();
@@ -226,7 +236,7 @@ public class DatasetEditorModelCell
     }
 
     public void editNext(){
-        Dispatch.runConditional(() -> {
+        Dispatch.run(true, () -> {
             int index = getEditorTable().convertColumnIndexToView(getIndex());
             DatasetEditorModelRow row = getRow();
             if (index < row.getCells().size()-1) {
@@ -255,6 +265,10 @@ public class DatasetEditorModelCell
             set(MODIFIED, !originalUserValue.equals(value));
         }
         this.originalUserValue = value;
+    }
+
+    public void setTemporaryUserValue(String temporaryUserValue) {
+        this.temporaryUserValue = temporaryUserValue;
     }
 
     public boolean isEditing() {

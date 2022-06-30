@@ -23,4 +23,8 @@ public interface DataModelCell<
     default boolean isLargeValue() {
         return getUserValue() instanceof LargeObjectValue;
     }
+
+    default String getTemporaryUserValue() {
+        return null;
+    }
 }

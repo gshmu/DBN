@@ -1,5 +1,7 @@
 package com.dci.intellij.dbn.editor.data.ui.table;
 
+import com.dci.intellij.dbn.common.Pair;
+import com.dci.intellij.dbn.common.property.PropertyHolder;
 import com.dci.intellij.dbn.common.thread.Background;
 import com.dci.intellij.dbn.common.thread.Dispatch;
 import com.dci.intellij.dbn.common.thread.Progress;
@@ -9,6 +11,7 @@ import com.dci.intellij.dbn.common.ui.util.Mouse;
 import com.dci.intellij.dbn.common.ui.util.UserInterface;
 import com.dci.intellij.dbn.common.util.Actions;
 import com.dci.intellij.dbn.common.util.Messages;
+import com.dci.intellij.dbn.common.util.Strings;
 import com.dci.intellij.dbn.data.grid.options.DataGridAuditColumnSettings;
 import com.dci.intellij.dbn.data.grid.ui.table.basic.BasicTableCellRenderer;
 import com.dci.intellij.dbn.data.grid.ui.table.basic.BasicTableGutter;
@@ -27,6 +30,7 @@ import com.dci.intellij.dbn.editor.data.DatasetLoadInstructions;
 import com.dci.intellij.dbn.editor.data.action.DatasetEditorTableActionGroup;
 import com.dci.intellij.dbn.editor.data.model.DatasetEditorModel;
 import com.dci.intellij.dbn.editor.data.model.DatasetEditorModelCell;
+import com.dci.intellij.dbn.editor.data.model.RecordStatus;
 import com.dci.intellij.dbn.editor.data.options.DataEditorGeneralSettings;
 import com.dci.intellij.dbn.editor.data.ui.DatasetEditorErrorForm;
 import com.dci.intellij.dbn.editor.data.ui.table.cell.DatasetTableCellEditor;
@@ -47,6 +51,7 @@ import com.intellij.ui.awt.RelativePoint;
 import lombok.Getter;
 import lombok.Setter;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import javax.swing.JPopupMenu;
 import javax.swing.event.ChangeEvent;
@@ -160,35 +165,66 @@ public class DatasetEditorTable extends ResultSetTable<DatasetEditorModel> {
         if (cellEditor != null && cellEditor.isEditable()) {
             int rowIndex = editingRow;
             int columnIndex = editingColumn;
-            performUpdate(() -> {
-                try {
-                    Object value = cellEditor.getCellEditorValue();
-                    setValueAt(value, rowIndex, columnIndex);
-                } catch (Throwable t) {
-                    Object value = cellEditor.getCellEditorValueLenient();
-                    setValueAt(value, t.getMessage(), rowIndex, columnIndex);
+
+            DatasetEditorModelCell cell = cellEditor.getCell();
+            if (cell != null) {
+                String textUserValue = cellEditor.getCellEditorTextValue();
+                if (Strings.isNotEmpty(textUserValue)) {
+                    cell.setTemporaryUserValue(textUserValue);
                 }
 
-            });
-        }
-        removeEditor();
-    }
+                Pair<Object, Throwable> result = Pair.create();
+                try {
+                    result.first(cellEditor.getCellEditorValue());
+                } catch (Throwable t) {
+                    result.first(textUserValue);
+                    result.second(t);
+                }
+                removeEditor();
 
-    public void performUpdate(Runnable runnable) {
-        DatasetEditorModel model = getModel();
-        model.set(UPDATING, true);
-        Background.run(() -> {
-            try {
-                runnable.run();
-            } finally {
-                model.set(UPDATING, false);
-                Dispatch.run(() -> {
-                    DBNTableGutter tableGutter = getTableGutter();
-                    UserInterface.repaint(tableGutter);
-                    UserInterface.repaint(DatasetEditorTable.this);
+                performUpdate(rowIndex, columnIndex, () -> {
+                    Throwable exception = result.second();
+                    Object value = result.first();
+                    if (exception == null) {
+                        setValueAt(value, rowIndex, columnIndex);
+                    } else {
+                        setValueAt(value, exception.getMessage(), rowIndex, columnIndex);
+                    }
+                    cell.setTemporaryUserValue(null);
                 });
             }
-        });
+        }
+    }
+
+    public void performUpdate(int rowIndex, int columnIndex, Runnable runnable) {
+        PropertyHolder<RecordStatus> scope = getUpdateScope(rowIndex, columnIndex);
+        if (scope != null) {
+            scope.set(UPDATING, true);
+            Background.run(() -> {
+                try {
+                    Thread.sleep(5000);
+                    runnable.run();
+                } finally {
+                    scope.set(UPDATING, false);
+                    Dispatch.run(() -> {
+                        DBNTableGutter tableGutter = getTableGutter();
+                        UserInterface.repaint(tableGutter);
+                        UserInterface.repaint(DatasetEditorTable.this);
+                    });
+                }
+            });
+        }
+    }
+
+    @Nullable
+    private PropertyHolder<RecordStatus> getUpdateScope(int rowIndex, int columnIndex) {
+        DatasetEditorModel model = getModel();
+        if (rowIndex != -1 && columnIndex != -1) {
+            return model.getCellAt(rowIndex, columnIndex);
+        } else if (rowIndex > -1) {
+            return model.getRowAtIndex(rowIndex);
+        }
+        return model;
     }
 
     public void showErrorPopup(@NotNull DatasetEditorModelCell cell) {
@@ -215,16 +251,16 @@ public class DatasetEditorTable extends ResultSetTable<DatasetEditorModel> {
 
     @Override
     public void clearSelection() {
-        Dispatch.run(() -> DatasetEditorTable.super.clearSelection());
+        Dispatch.run(true, () -> DatasetEditorTable.super.clearSelection());
     }
 
     @Override
     public void removeEditor() {
-        Dispatch.run(() -> DatasetEditorTable.super.removeEditor());
+        Dispatch.run(true, () -> DatasetEditorTable.super.removeEditor());
     }
 
     public void updateTableGutter() {
-        Dispatch.run(() -> {
+        Dispatch.run(true, () -> {
             DBNTableGutter tableGutter = getTableGutter();
             UserInterface.repaint(tableGutter);
         });
@@ -359,7 +395,7 @@ public class DatasetEditorTable extends ResultSetTable<DatasetEditorModel> {
 
     public void fireEditingCancel() {
         if (isEditing()) {
-            Dispatch.run(() -> cancelEditing());
+            Dispatch.run(true, () -> cancelEditing());
         }
     }
 
@@ -452,9 +488,8 @@ public class DatasetEditorTable extends ResultSetTable<DatasetEditorModel> {
     @Override
     public void valueChanged(ListSelectionEvent e) {
         super.valueChanged(e);
-        DatasetEditorModel model = getModel();
-
         if (!e.getValueIsAdjusting()) {
+            DatasetEditorModel model = getModel();
             if (model.is(INSERTING)) {
                 int insertRowIndex = getModel().getInsertRowIndex();
                 if (insertRowIndex != -1 && (insertRowIndex == e.getFirstIndex() || insertRowIndex == e.getLastIndex()) && getSelectedRow() != insertRowIndex) {

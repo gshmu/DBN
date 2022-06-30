@@ -3,20 +3,20 @@ package com.dci.intellij.dbn.connection.mapping.ui;
 import com.dci.intellij.dbn.common.color.Colors;
 import com.dci.intellij.dbn.common.thread.Dispatch;
 import com.dci.intellij.dbn.common.thread.Progress;
-import com.dci.intellij.dbn.common.ui.util.Borders;
 import com.dci.intellij.dbn.common.ui.Presentable;
 import com.dci.intellij.dbn.common.ui.component.DBNComponent;
 import com.dci.intellij.dbn.common.ui.table.DBNColoredTableCellRenderer;
 import com.dci.intellij.dbn.common.ui.table.DBNTable;
 import com.dci.intellij.dbn.common.ui.table.DBNTableTransferHandler;
+import com.dci.intellij.dbn.common.ui.util.Borders;
 import com.dci.intellij.dbn.common.util.Actions;
 import com.dci.intellij.dbn.common.util.Context;
 import com.dci.intellij.dbn.common.util.Safe;
 import com.dci.intellij.dbn.connection.ConnectionBundle;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
-import com.dci.intellij.dbn.connection.ConnectionRef;
 import com.dci.intellij.dbn.connection.ConnectionId;
 import com.dci.intellij.dbn.connection.ConnectionManager;
+import com.dci.intellij.dbn.connection.ConnectionRef;
 import com.dci.intellij.dbn.connection.SchemaId;
 import com.dci.intellij.dbn.connection.mapping.FileConnectionContext;
 import com.dci.intellij.dbn.connection.mapping.FileConnectionContextManager;
@@ -193,7 +193,7 @@ public class FileConnectionMappingTable extends DBNTable<FileConnectionMappingTa
     }
 
     private void promptSelector(ActionGroup actionGroup, Condition<AnAction> preselectCondition) {
-        Dispatch.runConditional(() -> {
+        Dispatch.run(true, () -> {
             ListPopup popupBuilder = JBPopupFactory.getInstance().createActionGroupPopup(
                     null,
                     actionGroup,
