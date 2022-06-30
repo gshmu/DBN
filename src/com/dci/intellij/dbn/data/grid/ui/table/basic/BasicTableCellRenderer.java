@@ -5,7 +5,6 @@ import com.dci.intellij.dbn.common.ui.table.DBNColoredTableCellRenderer;
 import com.dci.intellij.dbn.common.ui.table.DBNTable;
 import com.dci.intellij.dbn.common.ui.util.Borders;
 import com.dci.intellij.dbn.common.util.Commons;
-import com.dci.intellij.dbn.common.util.Strings;
 import com.dci.intellij.dbn.data.find.DataSearchResult;
 import com.dci.intellij.dbn.data.find.DataSearchResultMatch;
 import com.dci.intellij.dbn.data.grid.color.BasicTableTextAttributes;
@@ -72,7 +71,7 @@ public class BasicTableCellRenderer extends DBNColoredTableCellRenderer {
     protected void writeUserValue(DataModelCell cell, SimpleTextAttributes textAttributes, DataGridTextAttributes configTextAttributes) {
         String presentableValue;
         String temporaryValue = cell.getTemporaryUserValue();
-        if (Strings.isNotEmpty(temporaryValue)) {
+        if (temporaryValue != null) {
             presentableValue = temporaryValue;
 
         } else if (cell.getUserValue() instanceof String) {

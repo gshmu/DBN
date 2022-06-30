@@ -11,7 +11,6 @@ import com.dci.intellij.dbn.common.ui.util.Mouse;
 import com.dci.intellij.dbn.common.ui.util.UserInterface;
 import com.dci.intellij.dbn.common.util.Actions;
 import com.dci.intellij.dbn.common.util.Messages;
-import com.dci.intellij.dbn.common.util.Strings;
 import com.dci.intellij.dbn.data.grid.options.DataGridAuditColumnSettings;
 import com.dci.intellij.dbn.data.grid.ui.table.basic.BasicTableCellRenderer;
 import com.dci.intellij.dbn.data.grid.ui.table.basic.BasicTableGutter;
@@ -168,21 +167,18 @@ public class DatasetEditorTable extends ResultSetTable<DatasetEditorModel> {
 
             DatasetEditorModelCell cell = cellEditor.getCell();
             if (cell != null) {
-                String textUserValue = cellEditor.getCellEditorTextValue();
-                if (Strings.isNotEmpty(textUserValue)) {
-                    cell.setTemporaryUserValue(textUserValue);
-                }
-
+                String editorTextValue = cellEditor.getCellEditorTextValue();
                 Pair<Object, Throwable> result = Pair.create();
                 try {
                     result.first(cellEditor.getCellEditorValue());
                 } catch (Throwable t) {
-                    result.first(textUserValue);
+                    result.first(editorTextValue);
                     result.second(t);
                 }
                 removeEditor();
 
                 performUpdate(rowIndex, columnIndex, () -> {
+                    cell.setTemporaryUserValue(editorTextValue);
                     Throwable exception = result.second();
                     Object value = result.first();
                     if (exception == null) {
@@ -190,7 +186,6 @@ public class DatasetEditorTable extends ResultSetTable<DatasetEditorModel> {
                     } else {
                         setValueAt(value, exception.getMessage(), rowIndex, columnIndex);
                     }
-                    cell.setTemporaryUserValue(null);
                 });
             }
         }

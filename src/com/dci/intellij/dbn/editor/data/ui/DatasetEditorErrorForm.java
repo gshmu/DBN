@@ -1,27 +1,27 @@
 package com.dci.intellij.dbn.editor.data.ui;
 
-import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.common.dispose.Failsafe;
-import com.dci.intellij.dbn.common.thread.Dispatch;
 import com.dci.intellij.dbn.common.ui.form.DBNFormBase;
-import com.dci.intellij.dbn.common.ui.listener.PopupCloseListener;
+import com.dci.intellij.dbn.common.ui.util.Fonts;
 import com.dci.intellij.dbn.common.util.Strings;
 import com.dci.intellij.dbn.editor.data.DatasetEditorError;
 import com.dci.intellij.dbn.editor.data.model.DatasetEditorModelCell;
 import com.dci.intellij.dbn.editor.data.model.DatasetEditorModelRow;
 import com.dci.intellij.dbn.editor.data.ui.table.DatasetEditorTable;
 import com.dci.intellij.dbn.language.common.WeakRef;
-import com.intellij.openapi.ui.popup.ComponentPopupBuilder;
-import com.intellij.openapi.ui.popup.JBPopup;
-import com.intellij.openapi.ui.popup.JBPopupFactory;
-import com.intellij.openapi.util.Disposer;
+import com.intellij.ide.IdeTooltip;
+import com.intellij.ide.IdeTooltipManager;
 import com.intellij.ui.JBColor;
 import org.jetbrains.annotations.NotNull;
 
-import javax.swing.*;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JTextArea;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
-import java.awt.*;
+import java.awt.Color;
+import java.awt.Point;
+import java.awt.Rectangle;
 
 public class DatasetEditorErrorForm extends DBNFormBase implements ChangeListener {
     public static final Color BACKGROUND_COLOR = new JBColor(
@@ -32,24 +32,20 @@ public class DatasetEditorErrorForm extends DBNFormBase implements ChangeListene
     private JTextArea errorMessageTextArea;
 
     private final WeakRef<DatasetEditorModelCell> cell;
-    private final JBPopup popup;
 
     public DatasetEditorErrorForm(@NotNull DatasetEditorModelCell cell) {
         super(null, cell.getProject());
         this.cell = WeakRef.of(cell);
         DatasetEditorError error = Failsafe.nd(cell.getError());
         error.addChangeListener(this);
-        errorIconLabel.setIcon(Icons.EXEC_MESSAGES_ERROR);
+        //errorIconLabel.setIcon(Icons.EXEC_MESSAGES_ERROR);
         errorIconLabel.setText("");
         errorMessageTextArea.setText(Strings.textWrap(error.getMessage(), 60, ": ,."));
         Color backgroundColor = BACKGROUND_COLOR;
         errorMessageTextArea.setBackground(backgroundColor);
         errorMessageTextArea.setFont(mainPanel.getFont());
+        errorMessageTextArea.setFont(Fonts.deriveFont(Fonts.REGULAR, (float) 14));
         mainPanel.setBackground(backgroundColor);
-
-        ComponentPopupBuilder popupBuilder = JBPopupFactory.getInstance().createComponentPopupBuilder(mainPanel, mainPanel);
-        popup = popupBuilder.createPopup();
-        popup.addListener(PopupCloseListener.create(this));
     }
 
     @NotNull
@@ -64,16 +60,16 @@ public class DatasetEditorErrorForm extends DBNFormBase implements ChangeListene
         Rectangle rectangle = table.getCellRect(row.getIndex(), cell.getIndex(), false);
 
         if (table.isShowing()) {
-            Point tableLocation = table.getLocationOnScreen();
-            int x = (int) (tableLocation.getX() + rectangle.getLocation().getX() + 4);
-            int y = (int) (tableLocation.getY() + rectangle.getLocation().getY() + 20);
+            Point location = rectangle.getLocation();
+            int x = (int) (location.getX() + rectangle.getWidth() / 4);
+            int y = (int) (location.getY() - 2);
             Point cellLocation = new Point(x, y);
-            popup.showInScreenCoordinates(table, cellLocation);
-        }
-    }
 
-    public JBPopup getPopup() {
-        return popup;
+            JPanel component = this.getMainComponent();
+            IdeTooltip tooltip = new IdeTooltip(table, cellLocation, component);
+            tooltip.setTextBackground(BACKGROUND_COLOR);
+            IdeTooltipManager.getInstance().show(tooltip, true);
+        }
     }
 
     @NotNull
@@ -84,13 +80,5 @@ public class DatasetEditorErrorForm extends DBNFormBase implements ChangeListene
 
     @Override
     public void stateChanged(ChangeEvent e) {
-        Dispatch.run(() -> {
-            if (popup.isVisible()) popup.cancel();
-        });
-    }
-
-    @Override
-    public void disposeInner() {
-        Disposer.dispose(popup);
     }
 }
