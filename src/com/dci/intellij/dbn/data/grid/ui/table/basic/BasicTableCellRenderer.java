@@ -5,6 +5,7 @@ import com.dci.intellij.dbn.common.ui.table.DBNColoredTableCellRenderer;
 import com.dci.intellij.dbn.common.ui.table.DBNTable;
 import com.dci.intellij.dbn.common.ui.util.Borders;
 import com.dci.intellij.dbn.common.util.Commons;
+import com.dci.intellij.dbn.common.util.Strings;
 import com.dci.intellij.dbn.data.find.DataSearchResult;
 import com.dci.intellij.dbn.data.find.DataSearchResultMatch;
 import com.dci.intellij.dbn.data.grid.color.BasicTableTextAttributes;
@@ -69,55 +70,59 @@ public class BasicTableCellRenderer extends DBNColoredTableCellRenderer {
     }
 
     protected void writeUserValue(DataModelCell cell, SimpleTextAttributes textAttributes, DataGridTextAttributes configTextAttributes) {
-         String presentableValue;
-         if (cell.getUserValue() instanceof String) {
-             presentableValue = (String) cell.getUserValue();
-             if (presentableValue.indexOf('\n') > -1) {
-                 presentableValue = presentableValue.replace('\n', ' ');
-             }
+        String presentableValue;
+        String temporaryValue = cell.getTemporaryUserValue();
+        if (Strings.isNotEmpty(temporaryValue)) {
+            presentableValue = temporaryValue;
 
-         } else {
-             presentableValue = Commons.nvl(cell.getPresentableValue(), "");
-         }
+        } else if (cell.getUserValue() instanceof String) {
+            presentableValue = (String) cell.getUserValue();
+            if (presentableValue.indexOf('\n') > -1) {
+                presentableValue = presentableValue.replace('\n', ' ');
+            }
 
-         DataModel model = cell.getModel();
-         if (model.hasSearchResult()) {
-             DataSearchResult searchResult = model.getSearchResult();
+        } else {
+            presentableValue = Commons.nvl(cell.getPresentableValue(), "");
+        }
 
-             Iterator<DataSearchResultMatch> matches = searchResult.getMatches(cell);
-             if (matches != null) {
-                 int lastEndOffset = 0;
-                 SimpleTextAttributes searchResultAttributes = configTextAttributes.getSearchResult();
-                 DataSearchResultMatch selectedMatch = searchResult.getSelectedMatch();
-                 if (selectedMatch != null && selectedMatch.getCell() == cell) {
+        DataModel model = cell.getModel();
+        if (model.hasSearchResult()) {
+            DataSearchResult searchResult = model.getSearchResult();
+
+            Iterator<DataSearchResultMatch> matches = searchResult.getMatches(cell);
+            if (matches != null) {
+                int lastEndOffset = 0;
+                SimpleTextAttributes searchResultAttributes = configTextAttributes.getSearchResult();
+                DataSearchResultMatch selectedMatch = searchResult.getSelectedMatch();
+                if (selectedMatch != null && selectedMatch.getCell() == cell) {
                     searchResultAttributes = configTextAttributes.getSelection();
-                 }
+                }
 
-                 int valueLength = presentableValue.length();
-                 while (matches.hasNext()) {
-                     DataSearchResultMatch match = matches.next();
-                     if (match.getStartOffset() > lastEndOffset) {
-                         int startOffset = Math.min(valueLength, lastEndOffset);
-                         int endOffset = Math.min(valueLength, match.getStartOffset());
-                         append(presentableValue.substring(startOffset, endOffset), textAttributes);
-                     }
-                     int startOffset = Math.min(valueLength, match.getStartOffset());
-                     int endOffset = Math.min(valueLength, match.getEndOffset());
-                     append(presentableValue.substring(startOffset, endOffset), searchResultAttributes);
-                     lastEndOffset = match.getEndOffset();
+                int valueLength = presentableValue.length();
+                while (matches.hasNext()) {
+                    DataSearchResultMatch match = matches.next();
+                    if (match.getStartOffset() > lastEndOffset) {
+                        int startOffset = Math.min(valueLength, lastEndOffset);
+                        int endOffset = Math.min(valueLength, match.getStartOffset());
+                        append(presentableValue.substring(startOffset, endOffset), textAttributes);
+                    }
+                    int startOffset = Math.min(valueLength, match.getStartOffset());
+                    int endOffset = Math.min(valueLength, match.getEndOffset());
+                    append(presentableValue.substring(startOffset, endOffset), searchResultAttributes);
+                    lastEndOffset = match.getEndOffset();
 
-                 }
-                 if (lastEndOffset < valueLength) {
-                     append(presentableValue.substring(lastEndOffset), textAttributes);
-                 }
-             } else {
-                 append(presentableValue, textAttributes);
-             }
+                }
+                if (lastEndOffset < valueLength) {
+                    append(presentableValue.substring(lastEndOffset), textAttributes);
+                }
+            } else {
+                append(presentableValue, textAttributes);
+            }
 
-         } else {
-             append(presentableValue, textAttributes);
-         }
-     }
+        } else {
+            append(presentableValue, textAttributes);
+        }
+    }
 
     protected static boolean match(int[] indexes, int index) {
         for (int idx : indexes) {

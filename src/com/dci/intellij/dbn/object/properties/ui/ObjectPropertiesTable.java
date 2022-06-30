@@ -1,10 +1,11 @@
 package com.dci.intellij.dbn.object.properties.ui;
 
-import com.dci.intellij.dbn.common.ui.util.Borders;
 import com.dci.intellij.dbn.common.ui.form.DBNForm;
-import com.dci.intellij.dbn.common.ui.util.Mouse;
 import com.dci.intellij.dbn.common.ui.table.DBNTable;
 import com.dci.intellij.dbn.common.ui.table.DBNTableModel;
+import com.dci.intellij.dbn.common.ui.util.Borders;
+import com.dci.intellij.dbn.common.ui.util.Keyboard.Key;
+import com.dci.intellij.dbn.common.ui.util.Mouse;
 import com.dci.intellij.dbn.object.properties.PresentableProperty;
 import com.intellij.openapi.progress.ProcessCanceledException;
 import com.intellij.pom.Navigatable;
@@ -49,7 +50,7 @@ public class ObjectPropertiesTable extends DBNTable<DBNTableModel> {
     private final KeyListener keyListener = new KeyAdapter() {
         @Override
         public void keyTyped(KeyEvent e) {
-            if (e.getKeyChar() == 10) {  // ENTER
+            if (e.getKeyChar() == Key.ENTER) {
                 navigateInBrowser();
             }
         }
