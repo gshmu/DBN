@@ -29,7 +29,7 @@ public interface Property {
 
             public LongMasks(LongBase property) {
                 int shift = property.ordinal();
-                assert shift < 32;
+                assert shift < 63;
                 this.on = 1L << shift;
                 this.off = ~this.on;
             }
@@ -55,7 +55,7 @@ public interface Property {
 
             public IntMasks(IntBase property) {
                 int shift = property.ordinal();
-                assert shift < 63;
+                assert shift < 32;
                 this.on = 1 << shift;
                 this.off = ~this.on;
            }

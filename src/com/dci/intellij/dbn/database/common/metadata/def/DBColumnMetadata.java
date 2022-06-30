@@ -16,6 +16,8 @@ public interface DBColumnMetadata extends DBObjectMetadata {
 
     boolean isUniqueKey() throws SQLException;
 
+    boolean isIdentity() throws SQLException;
+
     boolean isNullable() throws SQLException;
 
     boolean isHidden() throws SQLException;

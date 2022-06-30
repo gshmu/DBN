@@ -6,7 +6,6 @@ import com.dci.intellij.dbn.common.property.PropertyHolder;
 import com.dci.intellij.dbn.common.util.Strings;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.data.model.ColumnInfo;
-import com.dci.intellij.dbn.data.model.DataModelCell;
 import com.dci.intellij.dbn.data.model.DataModelRow;
 import com.dci.intellij.dbn.data.model.resultSet.ResultSetDataModelRow;
 import com.dci.intellij.dbn.editor.data.DatasetEditorError;
@@ -64,12 +63,15 @@ public class DatasetEditorModelRow
         }
     }
 
-    void updateDataFromRow(DataModelRow oldRow) {
+    void updateDataFromRow(DatasetEditorModelRow oldRow) {
         for (int i=0; i<getCells().size(); i++) {
-            DataModelCell oldCell = oldRow.getCellAtIndex(i);
+            DatasetEditorModelCell oldCell = oldRow.getCellAtIndex(i);
             DatasetEditorModelCell newCell = getCellAtIndex(i);
             if (oldCell != null && newCell != null) {
-                newCell.updateUserValue(oldCell.getUserValue(), false);
+                DatasetEditorColumnInfo columnInfo = oldCell.getColumnInfo();
+                if (!columnInfo.isIdentity() && !columnInfo.isAuditColumn()) {
+                    newCell.updateUserValue(oldCell.getUserValue(), false);
+                }
             }
         }
     }
@@ -93,6 +95,7 @@ public class DatasetEditorModelRow
         if (model.getDataset() instanceof DBTable) {
             DBTable table = (DBTable) model.getDataset();
             List<DBColumn> uniqueColumns = table.getPrimaryKeyColumns();
+            uniqueColumns.removeIf(c -> c.isIdentity());
             if (uniqueColumns.size() == 0) {
                 uniqueColumns = table.getUniqueKeyColumns();
             }
@@ -119,8 +122,11 @@ public class DatasetEditorModelRow
             /*if (!localCell.equals(remoteCell) && (localCell.getUserValue()!= null || !ignoreNulls)) {
                 return false;
             }*/
-            if (localCell != null && remoteCell != null && !localCell.matches(remoteCell, lenient)) {
-                return false;
+            if (localCell != null && remoteCell != null) {
+                DatasetEditorColumnInfo columnInfo = localCell.getColumnInfo();
+                if (!columnInfo.isAuditColumn() && !localCell.matches(remoteCell, lenient)) {
+                    return false;
+                }
             }
         }
         return true;

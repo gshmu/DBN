@@ -3,12 +3,14 @@ package com.dci.intellij.dbn.database.common.metadata.impl;
 import com.dci.intellij.dbn.database.common.metadata.DBObjectMetadataBase;
 import com.dci.intellij.dbn.database.common.metadata.def.DBColumnMetadata;
 import com.dci.intellij.dbn.database.common.metadata.def.DBDataTypeMetadata;
+import lombok.Getter;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
+@Getter
 public class DBColumnMetadataImpl extends DBObjectMetadataBase implements DBColumnMetadata {
-    private DBDataTypeMetadata dataType;
+    private final DBDataTypeMetadata dataType;
 
     public DBColumnMetadataImpl(ResultSet resultSet) {
         super(resultSet);
@@ -35,6 +37,10 @@ public class DBColumnMetadataImpl extends DBObjectMetadataBase implements DBColu
         return isYesFlag("IS_UNIQUE_KEY");
     }
 
+    public boolean isIdentity() throws SQLException {
+        return isYesFlag("IS_IDENTITY");
+    }
+
     public boolean isNullable() throws SQLException {
         return isYesFlag("IS_NULLABLE");
     }
@@ -46,9 +52,4 @@ public class DBColumnMetadataImpl extends DBObjectMetadataBase implements DBColu
     public short getPosition() throws SQLException {
         return resultSet.getShort("POSITION");
     }
-
-    public DBDataTypeMetadata getDataType() {
-        return dataType;
-    }
-
 }

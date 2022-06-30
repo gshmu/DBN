@@ -235,7 +235,8 @@
                 decode (col.HIDDEN_COLUMN, 'YES', 'Y', 'N' ) as IS_HIDDEN,
                 decode (pk.CONSTRAINT_NAME, null, 'N', 'Y') as IS_PRIMARY_KEY,
                 decode (fk.CONSTRAINT_NAME, null, 'N', 'Y') as IS_FOREIGN_KEY,
-                decode (uk.CONSTRAINT_NAME, null, 'N', 'Y') as IS_UNIQUE_KEY
+                decode (uk.CONSTRAINT_NAME, null, 'N', 'Y') as IS_UNIQUE_KEY,
+                decode (col.IDENTITY_COLUMN, 'YES', 'Y', 'N' ) as IS_IDENTITY
             from [PREFIX]_TAB_COLS col
                  inner join [PREFIX]_OBJECTS o
                          on o.OWNER = col.OWNER
@@ -277,7 +278,8 @@
                 'N' as IS_HIDDEN,
                 decode (pk.CONSTRAINT_NAME, null, 'N', 'Y') as IS_PRIMARY_KEY,
                 decode (fk.CONSTRAINT_NAME, null, 'N', 'Y') as IS_FOREIGN_KEY,
-                decode (uk.CONSTRAINT_NAME, null, 'N', 'Y') as IS_UNIQUE_KEY
+                decode (uk.CONSTRAINT_NAME, null, 'N', 'Y') as IS_UNIQUE_KEY,
+                'N' as IS_IDENTITY
             from [PREFIX]_TAB_COLUMNS col,
                 (select
                      cc.OWNER,
@@ -371,7 +373,8 @@
                 decode (col.HIDDEN_COLUMN, 'YES', 'Y', 'N' ) as IS_HIDDEN,
                 decode (pk.CONSTRAINT_NAME, null, 'N', 'Y') as IS_PRIMARY_KEY,
                 decode (fk.CONSTRAINT_NAME, null, 'N', 'Y') as IS_FOREIGN_KEY,
-                decode (uk.CONSTRAINT_NAME, null, 'N', 'Y') as IS_UNIQUE_KEY
+                decode (uk.CONSTRAINT_NAME, null, 'N', 'Y') as IS_UNIQUE_KEY,
+                decode (col.IDENTITY_COLUMN, 'YES', 'Y', 'N' ) as IS_IDENTITY
             from [PREFIX]_TAB_COLS col
                  inner join [PREFIX]_OBJECTS o
                          on o.OWNER = col.OWNER
@@ -419,7 +422,8 @@
                 'N' as IS_HIDDEN,
                 decode (pk.CONSTRAINT_NAME, null, 'N', 'Y') as IS_PRIMARY_KEY,
                 decode (fk.CONSTRAINT_NAME, null, 'N', 'Y') as IS_FOREIGN_KEY,
-                decode (uk.CONSTRAINT_NAME, null, 'N', 'Y') as IS_UNIQUE_KEY
+                decode (uk.CONSTRAINT_NAME, null, 'N', 'Y') as IS_UNIQUE_KEY,
+                'N' as IS_IDENTITY
             from [PREFIX]_TAB_COLUMNS col, obj,
                 (select
                      cc.OWNER,
