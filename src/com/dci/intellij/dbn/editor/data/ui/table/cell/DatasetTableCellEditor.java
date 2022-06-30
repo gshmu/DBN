@@ -19,11 +19,13 @@
  import com.intellij.ui.SimpleTextAttributes;
  import org.jetbrains.annotations.NotNull;
 
- import javax.swing.*;
+ import javax.swing.JTextField;
  import javax.swing.border.Border;
  import javax.swing.border.LineBorder;
  import javax.swing.text.Document;
- import java.awt.*;
+ import java.awt.Cursor;
+ import java.awt.MouseInfo;
+ import java.awt.Point;
  import java.awt.event.KeyEvent;
  import java.awt.event.KeyListener;
  import java.awt.event.MouseEvent;
@@ -97,7 +99,7 @@
         switch (type) {
             case HIGHLIGHT_TYPE_NONE:  editorComponent.setBorder(Borders.EMPTY_BORDER); break;
             case HIGHLIGHT_TYPE_POPUP: editorComponent.setBorder(POPUP_BORDER); break;
-            case HIGHLIGHT_TYPE_ERROR: editorComponent.setBorder(ERROR_BORDER); break;
+            case HIGHLIGHT_TYPE_ERROR: editorComponent.setBorder(Borders.EMPTY_BORDER/*ERROR_BORDER*/); break;
         }
     }
 
