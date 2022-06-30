@@ -54,6 +54,7 @@ public class DatasetEditorModelCell
             set(UPDATING, true);
             updateValue(newUserValue, bulk);
         } finally {
+            setTemporaryUserValue(null);
             set(UPDATING, false);
         }
     }

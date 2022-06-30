@@ -12,8 +12,11 @@ import com.dci.intellij.dbn.language.common.WeakRef;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
 
 import static com.dci.intellij.dbn.editor.data.model.RecordStatus.INSERTING;
+import static com.dci.intellij.dbn.editor.data.model.RecordStatus.UPDATING;
 
 public class DatasetEditorKeyListener extends KeyAdapter {
     private final WeakRef<DatasetEditorTable> table;
@@ -51,17 +54,24 @@ public class DatasetEditorKeyListener extends KeyAdapter {
                         int[] selectedRows = table.getSelectedRows();
                         int[] selectedColumns = table.getSelectedColumns();
                         table.performUpdate(-1, -1, () -> {
+                            List<DatasetEditorModelCell> cells = new ArrayList<>();
                             for (int rowIndex : selectedRows) {
                                 for (int columnIndex : selectedColumns) {
                                     DatasetEditorModelCell cell = model.getCellAt(rowIndex, columnIndex);
                                     if (cell != null) {
                                         DBDataType dataType = cell.getColumnInfo().getDataType();
                                         if (dataType.isNative() && !dataType.getNativeType().isLargeObject()) {
-                                            cell.updateUserValue(null, true);
+                                            cell.setTemporaryUserValue("");
+                                            cell.set(UPDATING, true);
+                                            cells.add(cell);
                                         }
                                     }
                                 }
                             }
+                            for (DatasetEditorModelCell cell : cells) {
+                                cell.updateUserValue(null, true);
+                            }
+
                         });
                     }
                 }
