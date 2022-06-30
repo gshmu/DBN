@@ -202,7 +202,6 @@ public class DatasetEditorTable extends ResultSetTable<DatasetEditorModel> {
             scope.set(UPDATING, true);
             Background.run(() -> {
                 try {
-                    Thread.sleep(5000);
                     runnable.run();
                 } finally {
                     scope.set(UPDATING, false);
