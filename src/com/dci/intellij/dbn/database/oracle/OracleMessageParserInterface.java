@@ -17,6 +17,8 @@ public class OracleMessageParserInterface implements DatabaseMessageParserInterf
         String message = exception.getMessage();
         if (message != null) {
             if (message.startsWith("ORA-01400")) return identifyColumn(message);
+            if (message.startsWith("ORA-01401")) return identifyColumn(message);
+            if (message.startsWith("ORA-01407")) return identifyColumn(message);
             if (message.startsWith("ORA-12899")) return identifyColumn(message);
             if (message.startsWith("ORA-00001")) return identifyConstraint(message);
             if (message.startsWith("ORA-02291")) return identifyConstraint(message);
