@@ -6,7 +6,6 @@ import com.dci.intellij.dbn.database.common.DatabaseNativeDataTypes;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.sql.Blob;
-import java.sql.Clob;
 import java.sql.Timestamp;
 import java.sql.Types;
 
@@ -20,6 +19,12 @@ class MySqlNativeDataTypes extends DatabaseNativeDataTypes {
         createBasicDefinition("NATIONAL VARCHAR", String.class, Types.VARCHAR, GenericDataType.LITERAL);
         createBasicDefinition("ENUM", String.class, Types.CHAR, GenericDataType.LITERAL);
         createBasicDefinition("SET", String.class, Types.CHAR, GenericDataType.LITERAL);
+
+        createBasicDefinition("TINYTEXT", String.class, Types.VARCHAR, GenericDataType.LITERAL);
+        createBasicDefinition("TEXT", String.class, Types.VARCHAR, GenericDataType.LITERAL);
+        createBasicDefinition("MEDIUMTEXT", String.class, Types.VARCHAR, GenericDataType.LITERAL);
+        createBasicDefinition("LONGTEXT", String.class, Types.VARCHAR, GenericDataType.LITERAL);
+
 
         createNumericDefinition("BIT", Short.class, Types.BIT);
         createNumericDefinition("TINYINT", Short.class, Types.TINYINT);
@@ -44,12 +49,8 @@ class MySqlNativeDataTypes extends DatabaseNativeDataTypes {
         createDateTimeDefinition("YEAR", Timestamp.class, Types.DATE);
 
         createLargeValueDefinition("TINYBLOB", Blob.class, Types.BLOB, GenericDataType.BLOB);
-        createLargeValueDefinition("TINYTEXT", Blob.class, Types.CLOB, GenericDataType.CLOB);
         createLargeValueDefinition("BLOB", Blob.class, Types.BLOB, GenericDataType.BLOB);
-        createLargeValueDefinition("TEXT", Clob.class, Types.CLOB, GenericDataType.CLOB);
         createLargeValueDefinition("MEDIUMBLOB", Blob.class, Types.BLOB, GenericDataType.BLOB);
-        createLargeValueDefinition("MEDIUMTEXT", Blob.class, Types.CLOB, GenericDataType.CLOB);
         createLargeValueDefinition("LONGBLOB", Blob.class, Types.BLOB, GenericDataType.BLOB);
-        createLargeValueDefinition("LONGTEXT", Blob.class, Types.CLOB, GenericDataType.CLOB);
     }
 }

@@ -146,10 +146,8 @@ public class DatasetEditor extends DisposableUserDataHolderBase implements
         return getEditorTable().getModel();
     }
 
-
-
     public DBEditableObjectVirtualFile getDatabaseFile() {
-        return databaseFile;
+        return Failsafe.nd(databaseFile);
     }
 
     @Override
@@ -290,7 +288,7 @@ public class DatasetEditor extends DisposableUserDataHolderBase implements
             Project project = getProject();
             ProjectEvents.notify(project,
                     DatasetLoadListener.TOPIC,
-                    (listener) -> listener.datasetLoaded(databaseFile));
+                    (listener) -> listener.datasetLoaded(getDatabaseFile()));
         }
     }
 
@@ -302,7 +300,7 @@ public class DatasetEditor extends DisposableUserDataHolderBase implements
                         Project project = getProject();
                         ProjectEvents.notify(project,
                                 DatasetLoadListener.TOPIC,
-                                (listener) -> listener.datasetLoading(databaseFile));
+                                (listener) -> listener.datasetLoading(getDatabaseFile()));
 
                         Background.run(() -> {
                             DatasetEditorForm editorForm = getEditorForm();
@@ -334,7 +332,7 @@ public class DatasetEditor extends DisposableUserDataHolderBase implements
                                 setLoading(false);
                                 ProjectEvents.notify(project,
                                         DatasetLoadListener.TOPIC,
-                                        (listener) -> listener.datasetLoaded(databaseFile));
+                                        (listener) -> listener.datasetLoaded(getDatabaseFile()));
                             }
                         });
                     });
@@ -408,7 +406,7 @@ public class DatasetEditor extends DisposableUserDataHolderBase implements
 
     private void focusEditor() {
         FileEditorManager fileEditorManager = FileEditorManager.getInstance(getProject());
-        fileEditorManager.openFile(databaseFile, true);
+        fileEditorManager.openFile(getDatabaseFile(), true);
     }
 
     protected void setLoading(boolean loading) {
