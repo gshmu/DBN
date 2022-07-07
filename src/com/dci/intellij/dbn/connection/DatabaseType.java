@@ -4,12 +4,14 @@ import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.common.constant.Constant;
 import com.dci.intellij.dbn.common.constant.ConstantUtil;
 import com.dci.intellij.dbn.common.ui.Presentable;
+import lombok.Getter;
 import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
 
 import static com.dci.intellij.dbn.common.constant.Constant.array;
 
+@Getter
 public enum DatabaseType implements Constant<DatabaseType>, Presentable{
     ORACLE(
             "Oracle",
@@ -85,29 +87,6 @@ public enum DatabaseType implements Constant<DatabaseType>, Presentable{
         this.driverClassName = driverClassName;
     }
 
-    @Override
-    @NotNull
-    public String getName() {
-        return name;
-    }
-
-    @Override
-    public Icon getIcon() {
-        return icon;
-    }
-
-    public Icon getLargeIcon() {
-        return largeIcon;
-    }
-
-    public DatabaseUrlPattern[] getUrlPatterns() {
-        return urlPatterns;
-    }
-
-    public AuthenticationType[] getAuthTypes() {
-        return authTypes;
-    }
-
     public boolean hasUrlPattern(DatabaseUrlPattern pattern) {
         for (DatabaseUrlPattern urlPattern : urlPatterns) {
             if (urlPattern == pattern) {
@@ -158,10 +137,5 @@ public enum DatabaseType implements Constant<DatabaseType>, Presentable{
             return DatabaseType.SQLITE;
         }
         return GENERIC;
-    }
-
-
-    public String getDriverClassName() {
-        return driverClassName;
     }
 }

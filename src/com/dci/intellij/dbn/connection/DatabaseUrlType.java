@@ -1,8 +1,9 @@
 package com.dci.intellij.dbn.connection;
 
 import com.dci.intellij.dbn.common.ui.Presentable;
-import org.jetbrains.annotations.NotNull;
+import lombok.Getter;
 
+@Getter
 public enum DatabaseUrlType implements Presentable{
     SID("SID"),
     SERVICE("Service name"),
@@ -11,15 +12,10 @@ public enum DatabaseUrlType implements Presentable{
     DATABASE("Database"),
     FILE("File");
 
-    private String name;
+    private final String name;
 
     DatabaseUrlType(String name) {
         this.name = name;
     }
 
-    @Override
-    @NotNull
-    public String getName() {
-        return name;
-    }
 }

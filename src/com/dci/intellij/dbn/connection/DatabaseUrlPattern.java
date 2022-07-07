@@ -3,11 +3,13 @@ package com.dci.intellij.dbn.connection;
 import com.dci.intellij.dbn.common.database.DatabaseInfo;
 import com.dci.intellij.dbn.common.util.Commons;
 import com.dci.intellij.dbn.common.util.Strings;
+import lombok.Getter;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+@Getter
 public enum DatabaseUrlPattern {
 
     ORACLE_SID(
@@ -65,10 +67,10 @@ public enum DatabaseUrlPattern {
             DatabaseUrlType.DATABASE),
     ;
 
-    private DatabaseUrlType urlType;
-    private String urlPattern;
-    private String urlRegex;
-    private DatabaseInfo defaultInfo;
+    private final DatabaseUrlType urlType;
+    private final String urlPattern;
+    private final String urlRegex;
+    private final DatabaseInfo defaultInfo;
 
     public static DatabaseUrlPattern get(@NotNull DatabaseType databaseType, @NotNull DatabaseUrlType urlType) {
         for (DatabaseUrlPattern urlPattern : values()) {
@@ -100,10 +102,6 @@ public enum DatabaseUrlPattern {
 
     public String getDefaultUrl() {
         return getUrl(defaultInfo);
-    }
-
-    public DatabaseUrlType getUrlType() {
-        return urlType;
     }
 
     DatabaseUrlPattern(String urlPattern, String urlRegex, DatabaseInfo defaultInfo, DatabaseUrlType urlType) {
