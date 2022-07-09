@@ -26,7 +26,7 @@ import com.dci.intellij.dbn.object.type.DBObjectType;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import javax.swing.Icon;
+import javax.swing.*;
 import java.sql.SQLException;
 import java.util.Collections;
 import java.util.LinkedList;
@@ -169,14 +169,17 @@ public class DBConstraintImpl extends DBSchemaObjectImpl<DBConstraintMetadata> i
     @Override
     @Nullable
     public DBColumn getColumnForPosition(short position) {
-        DBObjectListContainer childObjectRelations = getDataset().getChildObjects();
-        if (childObjectRelations != null) {
-            DBObjectRelationList<DBConstraintColumnRelation> relations = childObjectRelations.getRelations(CONSTRAINT_COLUMN);
-            if (relations != null) {
-                for (DBConstraintColumnRelation relation : relations.getObjectRelations()) {
-                    DBConstraint constraint = relation.getConstraint();
-                    if (constraint != null && constraint.equals(this) && relation.getPosition() == position)
-                        return relation.getColumn();
+        DBDataset dataset = getDataset();
+        if (dataset != null) {
+            DBObjectListContainer childObjects = dataset.getChildObjects();
+            if (childObjects != null) {
+                DBObjectRelationList<DBConstraintColumnRelation> relations = childObjects.getRelations(CONSTRAINT_COLUMN);
+                if (relations != null) {
+                    for (DBConstraintColumnRelation relation : relations.getObjectRelations()) {
+                        DBConstraint constraint = relation.getConstraint();
+                        if (constraint != null && constraint.equals(this) && relation.getPosition() == position)
+                            return relation.getColumn();
+                    }
                 }
             }
         }
