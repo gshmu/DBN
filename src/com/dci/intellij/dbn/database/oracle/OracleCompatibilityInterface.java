@@ -41,7 +41,7 @@ public class OracleCompatibilityInterface extends DatabaseCompatibilityInterface
                 OBJECT_REPLACING,
                 OBJECT_DDL_EXTRACTION,
                 OBJECT_DISABLING,
-                OBJECT_CHANGE_TRACING,
+                OBJECT_CHANGE_MONITORING,
                 OBJECT_SOURCE_EDITING,
                 AUTHID_METHOD_EXECUTION,
                 FUNCTION_OUT_ARGUMENTS,

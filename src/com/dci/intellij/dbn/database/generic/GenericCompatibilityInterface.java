@@ -26,7 +26,7 @@ public class GenericCompatibilityInterface extends DatabaseCompatibilityInterfac
     protected List<DatabaseFeature> getSupportedFeatures() {
         return Arrays.asList(
                 OBJECT_SOURCE_EDITING,
-                OBJECT_CHANGE_TRACING,
+                OBJECT_CHANGE_MONITORING,
                 SESSION_CURRENT_SQL,
                 CONNECTION_ERROR_RECOVERY,
                 UPDATABLE_RESULT_SETS,
