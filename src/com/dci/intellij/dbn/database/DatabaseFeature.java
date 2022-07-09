@@ -15,7 +15,7 @@ public enum DatabaseFeature {
     OBJECT_INVALIDATION("Object invalidation"),
     OBJECT_DISABLING("Disabling objects"),
     OBJECT_SOURCE_EDITING("Editing object sources"),
-    OBJECT_CHANGE_TRACING("Tracing objects changes"),
+    OBJECT_CHANGE_MONITORING("Monitoring objects changes"),
     AUTHID_METHOD_EXECUTION("AUDHID method execution (execution on different schema)"),
     FUNCTION_OUT_ARGUMENTS("OUT arguments for functions"),
     DEBUGGING("Program execution debugging"),
