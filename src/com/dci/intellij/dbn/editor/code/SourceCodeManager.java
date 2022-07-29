@@ -11,11 +11,7 @@ import com.dci.intellij.dbn.common.load.ProgressMonitor;
 import com.dci.intellij.dbn.common.navigation.NavigationInstructions;
 import com.dci.intellij.dbn.common.notification.NotificationGroup;
 import com.dci.intellij.dbn.common.thread.Progress;
-import com.dci.intellij.dbn.common.util.ChangeTimestamp;
-import com.dci.intellij.dbn.common.util.Documents;
-import com.dci.intellij.dbn.common.util.Editors;
-import com.dci.intellij.dbn.common.util.InternalApi;
-import com.dci.intellij.dbn.common.util.Strings;
+import com.dci.intellij.dbn.common.util.*;
 import com.dci.intellij.dbn.connection.ConnectionAction;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.Resources;
@@ -232,7 +228,7 @@ public class SourceCodeManager extends AbstractProjectComponent implements Persi
                     boolean isChangedInDatabase = sourceCodeFile.isChangedInDatabase(true);
                     if (isChangedInDatabase && sourceCodeFile.isMergeRequired()) {
                         String presentableChangeTime =
-                                DatabaseFeature.OBJECT_CHANGE_TRACING.isSupported(object) ?
+                                DatabaseFeature.OBJECT_CHANGE_MONITORING.isSupported(object) ?
                                     DateFormatUtil.formatPrettyDateTime(sourceCodeFile.getDatabaseChangeTimestamp()).toLowerCase() : "";
                         String message =
                                 "The " + object.getQualifiedNameWithType() +
@@ -406,7 +402,7 @@ public class SourceCodeManager extends AbstractProjectComponent implements Persi
 
     @NotNull
     public ChangeTimestamp loadChangeTimestamp(@NotNull DBSchemaObject object, DBContentType contentType) throws SQLException{
-        if (DatabaseFeature.OBJECT_CHANGE_TRACING.isSupported(object)) {
+        if (DatabaseFeature.OBJECT_CHANGE_MONITORING.isSupported(object)) {
             ProgressMonitor.setTaskDescription("Loading timestamp for " + object.getQualifiedNameWithType());
             ConnectionHandler connection = object.getConnection();
 

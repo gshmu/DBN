@@ -49,7 +49,7 @@ public class MySqlCompatibilityInterface extends DatabaseCompatibilityInterface 
         return Arrays.asList(
                 SESSION_BROWSING,
                 SESSION_KILL,
-                OBJECT_CHANGE_TRACING,
+                OBJECT_CHANGE_MONITORING,
                 OBJECT_SOURCE_EDITING,
                 UPDATABLE_RESULT_SETS,
                 CURRENT_SCHEMA,

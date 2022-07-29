@@ -3,6 +3,7 @@ package com.dci.intellij.dbn.connection;
 import com.dci.intellij.dbn.common.util.Enumerations;
 import lombok.Getter;
 
+@Getter
 public enum ConnectionType{
     MAIN("Main", 0),
     POOL("Pool", 1),
@@ -12,8 +13,8 @@ public enum ConnectionType{
     TEST("Test", 5)
     ;
 
-    private final @Getter String name;
-    private final @Getter int priority;
+    private final String name;
+    private final int priority;
 
     ConnectionType(String name, int priority) {
         this.name = name;
