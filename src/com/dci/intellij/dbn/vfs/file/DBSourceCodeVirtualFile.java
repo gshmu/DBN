@@ -110,7 +110,7 @@ public class DBSourceCodeVirtualFile extends DBContentVirtualFile implements DBP
                     SourceCodeManager sourceCodeManager = SourceCodeManager.getInstance(project);
 
                     ChangeTimestamp latestTimestamp = new ChangeTimestamp();
-                    if (isChangeTracingSupported()) {
+                    if (isChangeMonitoringSupported()) {
                         latestTimestamp = sourceCodeManager.loadChangeTimestamp(object, contentType);
                         checkSources = databaseTimestamp.isOlderThan(latestTimestamp);
                         databaseTimestamp = latestTimestamp;
@@ -238,8 +238,8 @@ public class DBSourceCodeVirtualFile extends DBContentVirtualFile implements DBP
         });
     }
 
-    private boolean isChangeTracingSupported() {
-        return DatabaseFeature.OBJECT_CHANGE_TRACING.isSupported(getObject());
+    private boolean isChangeMonitoringSupported() {
+        return DatabaseFeature.OBJECT_CHANGE_MONITORING.isSupported(getObject());
     }
 
     @Override

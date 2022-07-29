@@ -21,7 +21,7 @@ public class SourceCodeOutdatedNotificationPanel extends SourceCodeEditorNotific
         DBSchemaObject editableObject = sourceCodeFile.getObject();
         Project project = editableObject.getProject();
         String presentableChangeTime =
-                DatabaseFeature.OBJECT_CHANGE_TRACING.isSupported(editableObject) ?
+                DatabaseFeature.OBJECT_CHANGE_MONITORING.isSupported(editableObject) ?
                         DateFormatUtil.formatPrettyDateTime(sourceCodeFile.getDatabaseChangeTimestamp()).toLowerCase() : "";
 
 
