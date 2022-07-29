@@ -1308,7 +1308,26 @@
     </statement-execution-processor>
 
     <statement-execution-processor id="program-type-attributes" is-query="true" is-prepared-statement="true">
-        <statement  prefixes="DBA, ALL">
+        <statement prefixes="DBA, ALL">
+            select distinct
+                ATTR_NAME as ATTRIBUTE_NAME,
+                ATTR_NO as POSITION,
+                ATTR_TYPE_NAME as DATA_TYPE_NAME,
+                ATTR_TYPE_OWNER as DECL_TYPE_OWNER,
+                PACKAGE_NAME as DECL_TYPE_PROGRAM,
+                TYPE_NAME as DECL_TYPE_NAME,
+                LENGTH as DATA_LENGTH,
+                PRECISION as DATA_PRECISION,
+                SCALE as DATA_SCALE,
+                'N' as IS_SET
+            from [PREFIX]_PLSQL_TYPE_ATTRS aa1
+            where
+                OWNER = {0} and
+                PACKAGE_NAME = {1} and
+                TYPE_NAME = {2}
+            order by ATTR_NO
+        </statement>
+        <statement prefixes="DBA, ALL">
             select distinct
                 ARGUMENT_NAME as ATTRIBUTE_NAME,
                 POSITION,
