@@ -85,7 +85,7 @@ public class DBPackageTypeImpl extends DBTypeImpl implements DBPackageType {
             @Override
             public ResultSet createResultSet(DynamicContent<DBTypeAttribute> dynamicContent, DBNConnection connection) throws SQLException {
                 DatabaseMetadataInterface metadataInterface = dynamicContent.getMetadataInterface();
-                DBPackageType type = (DBPackageType) dynamicContent.getParentEntity();
+                DBPackageType type = dynamicContent.getParentEntity();
                 return metadataInterface.loadProgramTypeAttributes(
                         type.getSchema().getName(),
                         type.getPackage().getName(),

@@ -27,6 +27,8 @@ public abstract class DBObjectComparator<T extends DBObject> implements Comparat
         new DBFunctionPositionComparator();
         new DBArgumentNameComparator();
         new DBArgumentPositionComparator();
+        new DBTypeAttributeNameComparator();
+        new DBTypeAttributePositionComparator();
     }
 
     private static final Latent<DBObjectComparator> classic = Latent.basic(() -> new Classic());
