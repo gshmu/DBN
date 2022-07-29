@@ -33,6 +33,7 @@ public class DatabaseBrowserSortingSettings
         comparators.put(DBObjectType.FUNCTION, DBObjectComparator.get(DBObjectType.FUNCTION, SortingType.NAME));
         comparators.put(DBObjectType.PROCEDURE, DBObjectComparator.get(DBObjectType.PROCEDURE, SortingType.NAME));
         comparators.put(DBObjectType.ARGUMENT, DBObjectComparator.get(DBObjectType.ARGUMENT, SortingType.POSITION));
+        comparators.put(DBObjectType.TYPE_ATTRIBUTE, DBObjectComparator.get(DBObjectType.TYPE_ATTRIBUTE, SortingType.POSITION));
     }
 
     public <T extends DBObject> DBObjectComparator<T> getComparator(DBObjectType objectType) {

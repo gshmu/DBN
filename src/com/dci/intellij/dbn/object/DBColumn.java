@@ -1,12 +1,11 @@
 package com.dci.intellij.dbn.object;
 
 import com.dci.intellij.dbn.data.type.DBDataType;
-import com.dci.intellij.dbn.object.common.DBObject;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 
-public interface DBColumn extends DBObject, DBOrderedObject {
+public interface DBColumn extends DBOrderedObject {
     DBDataType getDataType();
     boolean isPrimaryKey();
     boolean isSinglePrimaryKey();

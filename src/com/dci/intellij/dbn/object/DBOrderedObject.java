@@ -1,5 +1,7 @@
 package com.dci.intellij.dbn.object;
 
-public interface DBOrderedObject {
+import com.dci.intellij.dbn.object.common.DBObject;
+
+public interface DBOrderedObject extends DBObject {
     short getPosition();
 }
