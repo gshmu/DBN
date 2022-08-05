@@ -1,6 +1,7 @@
 package com.dci.intellij.dbn.database.generic;
 
 import com.dci.intellij.dbn.common.util.Commons;
+import com.dci.intellij.dbn.common.util.Unsafe;
 import com.dci.intellij.dbn.connection.jdbc.DBNConnection;
 import com.dci.intellij.dbn.database.DatabaseCompatibility;
 import com.dci.intellij.dbn.database.DatabaseInterface;
@@ -100,6 +101,11 @@ public class GenericMetadataInterface extends DatabaseMetadataInterfaceImpl {
     @Override
     public boolean isValid(DBNConnection connection) {
         return false;
+    }
+
+    @Override
+    public void setCurrentSchema(String schemaName, DBNConnection connection) {
+        Unsafe.silent(() -> connection.setSchema(schemaName));
     }
 
     @Override
