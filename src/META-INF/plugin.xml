@@ -2,7 +2,7 @@
     <name>Database Navigator</name>
     <id>DBN</id>
     <!--3050 -->
-    <version>3.3.1923.0</version>
+    <version>3.3.2100.0</version>
     <category>Database</category>
     <depends>com.intellij.modules.platform</depends>
     <depends>com.intellij.modules.lang</depends>
@@ -31,6 +31,12 @@
     ]]></description>
     <change-notes><![CDATA[
         <ul>
+            <li><b>3.3.2100</b>
+            <ul>
+                <li>Built-in driver upgrades
+                <li>Database families - language support MySQL and PostgreSQL offsprings
+                <li>Bug fixes
+            </ul>
             <li><b>3.3.1923</b>
             <ul>
                 <li>Data Editor improvements
