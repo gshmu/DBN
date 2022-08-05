@@ -5,12 +5,7 @@ import com.dci.intellij.dbn.common.database.DatabaseInfo;
 import com.dci.intellij.dbn.common.options.BasicConfiguration;
 import com.dci.intellij.dbn.common.util.Files;
 import com.dci.intellij.dbn.common.util.Strings;
-import com.dci.intellij.dbn.connection.AuthenticationType;
-import com.dci.intellij.dbn.connection.ConnectionId;
-import com.dci.intellij.dbn.connection.ConnectivityStatus;
-import com.dci.intellij.dbn.connection.DatabaseType;
-import com.dci.intellij.dbn.connection.DatabaseUrlPattern;
-import com.dci.intellij.dbn.connection.DatabaseUrlType;
+import com.dci.intellij.dbn.connection.*;
 import com.dci.intellij.dbn.connection.config.file.DatabaseFiles;
 import com.dci.intellij.dbn.connection.config.ui.ConnectionDatabaseSettingsForm;
 import com.dci.intellij.dbn.driver.DriverSource;
@@ -39,7 +34,8 @@ public class ConnectionDatabaseSettings extends BasicConfiguration<ConnectionSet
     private String name;
     private String description;
     private DatabaseType databaseType;
-    private DatabaseType resolvedDatabaseType = DatabaseType.GENERIC;
+    private DatabaseType derivedDatabaseType = DatabaseType.GENERIC;
+    private DatabaseType confirmedDatabaseType = DatabaseType.GENERIC;
     private DatabaseUrlPattern urlPattern;
     private double databaseVersion = 9999;
 
@@ -79,6 +75,16 @@ public class ConnectionDatabaseSettings extends BasicConfiguration<ConnectionSet
         authenticationInfo.setType(authenticationType);
     }
 
+    private void deriveDatabaseType() {
+        String driver = getDriver();
+        derivedDatabaseType = databaseType;
+        confirmedDatabaseType = databaseType;
+        if (databaseType == DatabaseType.GENERIC && Strings.isNotEmptyOrSpaces(driver)) {
+            derivedDatabaseType = DatabaseType.derive(driver);
+            confirmedDatabaseType = DatabaseType.resolve(driver);
+        }
+    }
+
     @Override
     @NotNull
     public ConnectionDatabaseSettingsForm createConfigurationEditor() {
@@ -93,6 +99,11 @@ public class ConnectionDatabaseSettings extends BasicConfiguration<ConnectionSet
         return driverSource == DriverSource.BUILTIN ? databaseType.getDriverClassName() : driver;
     }
 
+    public void setDriver(String driver) {
+        this.driver = driver;
+        deriveDatabaseType();
+    }
+
     @Override
     public String getDisplayName() {
         return name;
@@ -103,8 +114,14 @@ public class ConnectionDatabaseSettings extends BasicConfiguration<ConnectionSet
             this.databaseType = databaseType;
             urlPattern = databaseType.getDefaultUrlPattern();
             databaseInfo.setUrlType(urlPattern.getUrlType());
+            deriveDatabaseType();
         }
         initAuthType(databaseType);
+    }
+
+    public void setConfirmedDatabaseType(DatabaseType confirmedDatabaseType) {
+        this.confirmedDatabaseType = confirmedDatabaseType;
+        this.derivedDatabaseType = confirmedDatabaseType;
     }
 
     @Override
@@ -276,6 +293,7 @@ public class ConnectionDatabaseSettings extends BasicConfiguration<ConnectionSet
                         stringAttribute(propertyElement, "value"));
             }
         }
+        deriveDatabaseType();
         updateSignature();
     }
 

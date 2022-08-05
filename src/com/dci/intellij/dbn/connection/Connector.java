@@ -180,7 +180,7 @@ class Connector {
 
             DatabaseMetaData metaData = connection.getMetaData();
             databaseType = ConnectionUtil.getDatabaseType(metaData);
-            databaseSettings.setResolvedDatabaseType(databaseType);
+            databaseSettings.setConfirmedDatabaseType(databaseType);
             databaseSettings.setDatabaseVersion(ConnectionUtil.getDatabaseVersion(metaData));
             databaseSettings.setConnectivityStatus(ConnectivityStatus.VALID);
             DBNConnection conn = DBNConnection.wrap(
@@ -204,8 +204,8 @@ class Connector {
                 }
             }
 
-            DatabaseType databaseType = ConnectionUtil.getDatabaseType(databaseSettings.getDriver());
-            databaseSettings.setResolvedDatabaseType(databaseType);
+            DatabaseType databaseType = DatabaseType.resolve(databaseSettings.getDriver());
+            databaseSettings.setConfirmedDatabaseType(databaseType);
             databaseSettings.setConnectivityStatus(ConnectivityStatus.INVALID);
             if (connectionStatus != null) {
                 connectionStatus.setConnectionException(e);

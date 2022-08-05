@@ -27,7 +27,7 @@ public class ConnectionInfo {
         url = metaData.getURL();
         userName = metaData.getUserName();
         driverJdbcType = resolveDriverType(metaData);
-        databaseType = DatabaseType.resolve( productName.toLowerCase());
+        databaseType = DatabaseType.resolve(productName.toLowerCase());
     }
 
     @NotNull
