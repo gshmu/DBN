@@ -38,9 +38,9 @@ public class DatabaseDriverManager implements ApplicationComponent {
 
     private static final Map<DatabaseType, String> BUNDLED_LIBS = new HashMap<>();
     static {
-        BUNDLED_LIBS.put(DatabaseType.MYSQL, "mysql-connector-java-8.0.19.jar");
-        BUNDLED_LIBS.put(DatabaseType.SQLITE, "sqlite-jdbc-3.30.1.jar");
-        BUNDLED_LIBS.put(DatabaseType.POSTGRES, "postgresql-42.2.12.jar");
+        BUNDLED_LIBS.put(DatabaseType.MYSQL, "mysql-connector-java-8.0.30.jar");
+        BUNDLED_LIBS.put(DatabaseType.SQLITE, "sqlite-jdbc-3.39.2.0.jar");
+        BUNDLED_LIBS.put(DatabaseType.POSTGRES, "postgresql-42.4.1.jar");
     }
 
 
