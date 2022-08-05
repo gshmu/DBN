@@ -8,6 +8,7 @@ import lombok.Getter;
 import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
+import java.util.Arrays;
 
 import static com.dci.intellij.dbn.common.constant.Constant.array;
 
@@ -27,7 +28,8 @@ public enum DatabaseType implements Constant<DatabaseType>, Presentable{
             Icons.DB_MYSQL_LARGE,
             "com.mysql.cj.jdbc.Driver",
             AuthenticationType.values(),
-            array(DatabaseUrlPattern.MYSQL)),
+            array(DatabaseUrlPattern.MYSQL),
+            array("MARIADB", "PERCONA", "OURDELTA", "DRIZZLE", "MAXDB")),
 
     POSTGRES(
             "PostgreSQL",
@@ -35,7 +37,8 @@ public enum DatabaseType implements Constant<DatabaseType>, Presentable{
             Icons.DB_POSTGRESQL_LARGE,
             "org.postgresql.Driver",
             AuthenticationType.values(),
-            array(DatabaseUrlPattern.POSTGRES)),
+            array(DatabaseUrlPattern.POSTGRES),
+            array("REDSHIFT", "BITNINE", "NCLUSTER", "GREENPLUM", "HADOOPDB", "NETEZZA", "PARACCEL", "PGPOOL", "REDHAT", "TORODB", "TERADATA", "YUGABYTE")),
 
     SQLITE(
             "SQLite",
@@ -69,7 +72,7 @@ public enum DatabaseType implements Constant<DatabaseType>, Presentable{
     private final DatabaseUrlPattern[] urlPatterns;
     private final String driverClassName;
     private String internalLibraryPath;
-
+    private final String[] derivedDbs;
 
     DatabaseType(
             String name,
@@ -78,6 +81,17 @@ public enum DatabaseType implements Constant<DatabaseType>, Presentable{
             String driverClassName,
             AuthenticationType[] authTypes,
             DatabaseUrlPattern[] urlPatterns) {
+        this(name, icon, largeIcon, driverClassName, authTypes, urlPatterns, array());
+    }
+
+    DatabaseType(
+            String name,
+            Icon icon,
+            Icon largeIcon,
+            String driverClassName,
+            AuthenticationType[] authTypes,
+            DatabaseUrlPattern[] urlPatterns,
+            String[] derivedDbs) {
 
         this.name = name;
         this.icon = icon;
@@ -85,6 +99,11 @@ public enum DatabaseType implements Constant<DatabaseType>, Presentable{
         this.urlPatterns = urlPatterns;
         this.authTypes = authTypes;
         this.driverClassName = driverClassName;
+        this.derivedDbs = derivedDbs;
+    }
+
+    private boolean isDerivedDb(String identifier) {
+        return Arrays.stream(derivedDbs).anyMatch(s -> identifier.contains(s));
     }
 
     public boolean hasUrlPattern(DatabaseUrlPattern pattern) {
@@ -137,8 +156,16 @@ public enum DatabaseType implements Constant<DatabaseType>, Presentable{
     }
 
     public static DatabaseType derive(String ... identifiers) {
-        // TODO derived database registry
-        return resolve(identifiers);
+        DatabaseType databaseType = resolve(identifiers);
+        if (databaseType == GENERIC) {
+            for (String identifier : identifiers) {
+                databaseType = softMatch(identifier);
+                if (databaseType != GENERIC) {
+                    return databaseType;
+                }
+            }
+        }
+        return GENERIC;
     }
 
     private static DatabaseType strongMatch(String identifier) {
@@ -151,6 +178,15 @@ public enum DatabaseType implements Constant<DatabaseType>, Presentable{
             return DatabaseType.POSTGRES;
         } else if (identifier.contains("SQLITE")) {
             return DatabaseType.SQLITE;
+        }
+        return GENERIC;
+    }
+
+
+    private static DatabaseType softMatch(String identifier) {
+        identifier = identifier == null ? "" : identifier.toUpperCase();
+        for (DatabaseType databaseType : values()) {
+            if (databaseType.isDerivedDb(identifier)) return databaseType;
         }
         return GENERIC;
     }
