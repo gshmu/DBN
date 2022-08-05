@@ -9,9 +9,12 @@ import com.dci.intellij.dbn.database.postgres.PostgresInterfaceProvider;
 import com.dci.intellij.dbn.database.sqlite.SqliteInterfaceProvider;
 import org.jetbrains.annotations.NotNull;
 
-import java.sql.SQLException;
+import java.util.EnumMap;
+import java.util.Map;
 
-public class DatabaseInterfaceProviderFactory {
+public class DatabaseInterfaceProviders {
+    private static final Map<DatabaseType, DatabaseInterfaceProvider> REGISTRY = new EnumMap<>(DatabaseType.class);
+
     // fixme replace with generic data dictionary
     static final DatabaseInterfaceProvider GENERIC_INTERFACE_PROVIDER = new GenericInterfaceProvider();
     private static final DatabaseInterfaceProvider ORACLE_INTERFACE_PROVIDER = new OracleInterfaceProvider();
@@ -19,7 +22,15 @@ public class DatabaseInterfaceProviderFactory {
     private static final DatabaseInterfaceProvider POSTGRES_INTERFACE_PROVIDER = new PostgresInterfaceProvider();
     private static final DatabaseInterfaceProvider SQLITE_INTERFACE_PROVIDER = new SqliteInterfaceProvider();
 
-    public static DatabaseInterfaceProvider getInterfaceProvider(@NotNull ConnectionHandler connection) throws SQLException {
+    static {
+        REGISTRY.put(DatabaseType.GENERIC, GENERIC_INTERFACE_PROVIDER);
+        REGISTRY.put(DatabaseType.ORACLE, ORACLE_INTERFACE_PROVIDER);
+        REGISTRY.put(DatabaseType.MYSQL, MYSQL_INTERFACE_PROVIDER);
+        REGISTRY.put(DatabaseType.POSTGRES, POSTGRES_INTERFACE_PROVIDER);
+        REGISTRY.put(DatabaseType.SQLITE, SQLITE_INTERFACE_PROVIDER);
+    }
+
+    public static DatabaseInterfaceProvider get(@NotNull ConnectionHandler connection) {
         DatabaseType databaseType;
         if (connection.isVirtual()) {
             databaseType = connection.getDatabaseType();
@@ -46,13 +57,8 @@ public class DatabaseInterfaceProviderFactory {
 
     @NotNull
     public static DatabaseInterfaceProvider get(DatabaseType databaseType) {
-        switch (databaseType) {
-            case ORACLE: return ORACLE_INTERFACE_PROVIDER;
-            case MYSQL: return MYSQL_INTERFACE_PROVIDER;
-            case POSTGRES: return POSTGRES_INTERFACE_PROVIDER;
-            case SQLITE: return SQLITE_INTERFACE_PROVIDER;
-            default: return GENERIC_INTERFACE_PROVIDER;
-        }
+        DatabaseInterfaceProvider interfaceProvider = REGISTRY.get(databaseType);
+        return interfaceProvider == null ? GENERIC_INTERFACE_PROVIDER : interfaceProvider;
     }
 
     public static void reset() {

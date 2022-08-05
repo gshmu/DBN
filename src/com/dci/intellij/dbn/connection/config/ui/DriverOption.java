@@ -1,21 +1,19 @@
 package com.dci.intellij.dbn.connection.config.ui;
 
 import com.dci.intellij.dbn.common.ui.Presentable;
+import lombok.Getter;
 import org.jetbrains.annotations.NotNull;
 
 import java.sql.Driver;
 import java.util.List;
 import java.util.Objects;
 
+@Getter
 public class DriverOption implements Presentable {
-    private Driver driver;
+    private final Driver driver;
 
     public DriverOption(Driver driver) {
         this.driver = driver;
-    }
-
-    public Driver getDriver() {
-        return driver;
     }
 
     @NotNull

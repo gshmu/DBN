@@ -125,17 +125,35 @@ public enum DatabaseType implements Constant<DatabaseType>, Presentable{
     }
 
     @NotNull
-    public static DatabaseType resolve(String name) {
-        name = name == null ? "" : name.toUpperCase();
-        if (name.contains("ORACLE") || name.contains("OJDBC")) {
+    public static DatabaseType resolve(String ... identifiers) {
+        for (String identifier : identifiers) {
+            DatabaseType databaseType = strongMatch(identifier);
+            if (databaseType != GENERIC) {
+                return databaseType;
+            }
+        }
+
+        return GENERIC;
+    }
+
+    public static DatabaseType derive(String ... identifiers) {
+        // TODO derived database registry
+        return resolve(identifiers);
+    }
+
+    private static DatabaseType strongMatch(String identifier) {
+        identifier = identifier == null ? "" : identifier.toUpperCase();
+        if (identifier.contains("ORACLE") || identifier.contains("OJDBC")) {
             return DatabaseType.ORACLE;
-        } else if (name.contains("MYSQL")) {
+        } else if (identifier.contains("MYSQL")) {
             return DatabaseType.MYSQL;
-        } else if (name.contains("POSTGRESQL") || name.contains("REDSHIFT")) {
+        } else if (identifier.contains("POSTGRESQL") || identifier.contains("REDSHIFT")) {
             return DatabaseType.POSTGRES;
-        } else if (name.contains("SQLITE")) {
+        } else if (identifier.contains("SQLITE")) {
             return DatabaseType.SQLITE;
         }
         return GENERIC;
     }
+
+
 }

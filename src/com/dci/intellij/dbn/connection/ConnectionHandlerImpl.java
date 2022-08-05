@@ -23,11 +23,7 @@ import com.dci.intellij.dbn.connection.info.ConnectionInfo;
 import com.dci.intellij.dbn.connection.jdbc.DBNConnection;
 import com.dci.intellij.dbn.connection.session.DatabaseSession;
 import com.dci.intellij.dbn.connection.session.DatabaseSessionBundle;
-import com.dci.intellij.dbn.database.DatabaseCompatibility;
-import com.dci.intellij.dbn.database.DatabaseFeature;
-import com.dci.intellij.dbn.database.DatabaseInterface;
-import com.dci.intellij.dbn.database.DatabaseInterfaceProvider;
-import com.dci.intellij.dbn.database.DatabaseMetadataInterface;
+import com.dci.intellij.dbn.database.*;
 import com.dci.intellij.dbn.execution.statement.StatementExecutionQueue;
 import com.dci.intellij.dbn.language.common.DBLanguage;
 import com.dci.intellij.dbn.language.common.DBLanguageDialect;
@@ -45,7 +41,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import javax.swing.Icon;
+import javax.swing.*;
 import java.sql.SQLException;
 import java.util.Comparator;
 import java.util.List;
@@ -56,7 +52,8 @@ import java.util.concurrent.ConcurrentHashMap;
 public class ConnectionHandlerImpl extends StatefulDisposable.Base implements ConnectionHandler, NotificationSupport {
 
     private ConnectionSettings connectionSettings;
-    private volatile DatabaseInterfaceProvider interfaceProvider;
+
+    private final ConnectionRef ref;
     private final WeakRef<ConnectionBundle> connectionBundle;
     private final ConnectionHandlerStatusHolder connectionStatus;
     private final ConnectionPool connectionPool;
@@ -64,28 +61,35 @@ public class ConnectionHandlerImpl extends StatefulDisposable.Base implements Co
     private final DatabaseSessionBundle sessionBundle;
     private final ConnectionInstructions instructions = new ConnectionInstructions();
 
+    private final Latent<DatabaseInterfaceProvider> interfaceProvider = Latent.mutable(
+            () -> getDatabaseType(),
+            () -> DatabaseInterfaceProviders.get(this));
+
+    private final Latent<DatabaseInterfaceProvider> derivedInterfaceProvider = Latent.mutable(
+            () -> getDerivedDatabaseType(),
+            () -> DatabaseInterfaceProviders.get(getDerivedDatabaseType()));
+
     private boolean enabled;
-    private final ConnectionRef ref;
     private ConnectionInfo connectionInfo;
     private DatabaseCompatibility compatibility = DatabaseCompatibility.allFeatures();
 
-    private final Latent<DBSessionBrowserVirtualFile> sessionBrowserFile =
-            Latent.basic(() -> new DBSessionBrowserVirtualFile(this));
+    private final Latent<DBSessionBrowserVirtualFile> sessionBrowserFile = Latent.basic(
+            () -> new DBSessionBrowserVirtualFile(this));
 
-    private final Latent<Cache> metaDataCache =
-            Latent.basic(() -> new Cache(TimeUtil.Millis.ONE_MINUTE));
+    private final Latent<Cache> metaDataCache = Latent.basic(
+            () -> new Cache(TimeUtil.Millis.ONE_MINUTE));
 
-    private final Latent<AuthenticationInfo> temporaryAuthenticationInfo =
-            Latent.basic(() -> {
+    private final Latent<AuthenticationInfo> temporaryAuthenticationInfo = Latent.basic(
+            () -> {
                 ConnectionDatabaseSettings databaseSettings = getSettings().getDatabaseSettings();
                 return new AuthenticationInfo(databaseSettings, true);
             });
 
-    private final Latent<DBConnectionPsiDirectory> psiDirectory =
-            Latent.basic(() -> new DBConnectionPsiDirectory(this));
+    private final Latent<DBConnectionPsiDirectory> psiDirectory = Latent.basic(
+            () -> new DBConnectionPsiDirectory(this));
 
-    private final Latent<DBObjectBundle> objectBundle =
-            Latent.basic(() -> new DBObjectBundleImpl(this, getConnectionBundle()));
+    private final Latent<DBObjectBundle> objectBundle = Latent.basic(
+            () -> new DBObjectBundleImpl(this, getConnectionBundle()));
 
     private final Map<SessionId, StatementExecutionQueue> executionQueues = new ConcurrentHashMap<>();
 
@@ -250,6 +254,10 @@ public class ConnectionHandlerImpl extends StatefulDisposable.Base implements Co
     @Override
     public DatabaseType getDatabaseType() {
         return getSettings().getDatabaseSettings().getDatabaseType();
+    }
+
+    public DatabaseType getDerivedDatabaseType() {
+        return getSettings().getDatabaseSettings().getDerivedDatabaseType();
     }
 
     @Override
@@ -525,23 +533,11 @@ public class ConnectionHandlerImpl extends StatefulDisposable.Base implements Co
 
     @Override
     public DatabaseInterfaceProvider getInterfaceProvider() {
-        if (!isValidInterfaceProvider()) {
-            synchronized (this) {
-                if (!isValidInterfaceProvider()) {
-                    try {
-                        interfaceProvider = DatabaseInterfaceProviderFactory.getInterfaceProvider(this);
-                    } catch (SQLException e) {
-                        log.warn("Failed to resolve database interface provider", e);
-                    }
-                }
-            }
-        }
-        // do not initialize
-        return interfaceProvider == null ? DatabaseInterfaceProviderFactory.GENERIC_INTERFACE_PROVIDER : interfaceProvider;
+        return interfaceProvider.get();
     }
 
-    boolean isValidInterfaceProvider() {
-        return interfaceProvider != null && interfaceProvider.getDatabaseType() == getDatabaseType();
+    private DatabaseInterfaceProvider getDerivedInterfaceProvider() {
+        return derivedInterfaceProvider.get();
     }
 
     @Override
@@ -566,7 +562,13 @@ public class ConnectionHandlerImpl extends StatefulDisposable.Base implements Co
 
     @Override
     public DBLanguageDialect getLanguageDialect(DBLanguage language) {
-        return getInterfaceProvider().getLanguageDialect(language);
+        DatabaseInterfaceProvider interfaceProvider = getInterfaceProvider();
+        DatabaseType databaseType = interfaceProvider.getDatabaseType();
+        if (databaseType == DatabaseType.GENERIC) {
+            return getDerivedInterfaceProvider().getLanguageDialect(language);
+        }
+
+        return interfaceProvider.getLanguageDialect(language);
     }
 
     public static Comparator<ConnectionHandler> getComparator(boolean asc) {
