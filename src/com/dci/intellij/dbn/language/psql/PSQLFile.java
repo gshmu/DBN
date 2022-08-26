@@ -8,12 +8,11 @@ import com.dci.intellij.dbn.language.common.psi.lookup.PsiLookupAdapter;
 import com.dci.intellij.dbn.object.type.DBObjectType;
 import com.intellij.psi.FileViewProvider;
 import com.intellij.psi.PsiElement;
-import org.jetbrains.annotations.NotNull;
 
 public class PSQLFile extends DBLanguagePsiFile {
 
-    PSQLFile(FileViewProvider fileViewProvider, @NotNull PSQLLanguage language) {
-        super(fileViewProvider, PSQLFileType.INSTANCE, language);
+    PSQLFile(FileViewProvider fileViewProvider) {
+        super(fileViewProvider, PSQLFileType.INSTANCE, PSQLLanguage.INSTANCE);
     }
 
     public BasePsiElement lookupObjectSpecification(DBObjectType objectType, CharSequence objectName) {
