@@ -13,10 +13,12 @@ import com.dci.intellij.dbn.common.util.Documents;
 import com.dci.intellij.dbn.connection.ConnectionAction;
 import com.dci.intellij.dbn.connection.ConnectionBundle;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
+import com.dci.intellij.dbn.connection.ConnectionId;
 import com.dci.intellij.dbn.connection.ConnectionManager;
 import com.dci.intellij.dbn.connection.ConnectionSelectorOptions;
 import com.dci.intellij.dbn.connection.SchemaId;
 import com.dci.intellij.dbn.connection.SessionId;
+import com.dci.intellij.dbn.connection.config.ConnectionConfigListener;
 import com.dci.intellij.dbn.connection.mapping.ConnectionContextActions.ConnectionSetupAction;
 import com.dci.intellij.dbn.connection.mapping.ConnectionContextActions.SchemaSelectAction;
 import com.dci.intellij.dbn.connection.mapping.ConnectionContextActions.SessionCreateAction;
@@ -84,12 +86,20 @@ public class FileConnectionContextManager extends AbstractProjectComponent imple
         //VirtualFileManager.getInstance().addVirtualFileListener(virtualFileListener);
         ProjectEvents.subscribe(project, this, VirtualFileManager.VFS_CHANGES, bulkFileListener);
         ProjectEvents.subscribe(project, this, SessionManagerListener.TOPIC, sessionManagerListener);
+        ProjectEvents.subscribe(project, this, ConnectionConfigListener.TOPIC, connectionConfigListener);
     }
 
     @NotNull
     public static FileConnectionContextManager getInstance(@NotNull Project project) {
         return Failsafe.getComponent(project, FileConnectionContextManager.class);
     }
+
+    private final ConnectionConfigListener connectionConfigListener = new ConnectionConfigListener() {
+        @Override
+        public void connectionRemoved(ConnectionId connectionId) {
+            registry.connectionRemoved(connectionId);
+        }
+    };
 
     public static boolean hasHasConnectivityContext(VirtualFile file) {
         Boolean hasConnectivityContext = file.getUserData(UserDataKeys.HAS_CONNECTIVITY_CONTEXT);

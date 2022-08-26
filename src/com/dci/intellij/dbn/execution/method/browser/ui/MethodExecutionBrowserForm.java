@@ -3,8 +3,8 @@ package com.dci.intellij.dbn.execution.method.browser.ui;
 import com.dci.intellij.dbn.common.thread.Dispatch;
 import com.dci.intellij.dbn.common.thread.Progress;
 import com.dci.intellij.dbn.common.ui.form.DBNFormBase;
-import com.dci.intellij.dbn.common.ui.util.UserInterface;
 import com.dci.intellij.dbn.common.ui.tree.DBNTree;
+import com.dci.intellij.dbn.common.ui.util.UserInterface;
 import com.dci.intellij.dbn.common.util.Actions;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.execution.method.MethodExecutionManager;
@@ -52,7 +52,7 @@ public class MethodExecutionBrowserForm extends DBNFormBase {
     }
 
     public MethodBrowserSettings getSettings() {
-        MethodExecutionManager methodExecutionManager = MethodExecutionManager.getInstance(getProject());
+        MethodExecutionManager methodExecutionManager = MethodExecutionManager.getInstance(ensureProject());
         return methodExecutionManager.getBrowserSettings();
     }
 
@@ -65,9 +65,9 @@ public class MethodExecutionBrowserForm extends DBNFormBase {
     public void setConnectionHandler(ConnectionHandler connection) {
         MethodBrowserSettings settings = getSettings();
         if (settings.getConnection() != connection) {
-            settings.setConnection(connection);
-            if (settings.getSchema() != null) {
-                DBSchema schema  = connection.getObjectBundle().getSchema(settings.getSchema().getName());
+            settings.setSelectedConnection(connection);
+            if (settings.getSelectedSchema() != null) {
+                DBSchema schema  = connection.getObjectBundle().getSchema(settings.getSelectedSchema().getName());
                 setSchema(schema);
             }
             updateTree();
@@ -76,8 +76,8 @@ public class MethodExecutionBrowserForm extends DBNFormBase {
 
     public void setSchema(final DBSchema schema) {
         MethodBrowserSettings settings = getSettings();
-        if (settings.getSchema() != schema) {
-            settings.setSchema(schema);
+        if (settings.getSelectedSchema() != schema) {
+            settings.setSelectedSchema(schema);
             updateTree();
         }
     }
@@ -105,7 +105,7 @@ public class MethodExecutionBrowserForm extends DBNFormBase {
     private void updateTree() {
         Progress.prompt(getProject(), "Loading executable components", false, progress -> {
             MethodBrowserSettings settings = getSettings();
-            ObjectTreeModel model = new ObjectTreeModel(settings.getSchema(), settings.getVisibleObjectTypes(), null);
+            ObjectTreeModel model = new ObjectTreeModel(settings.getSelectedSchema(), settings.getVisibleObjectTypes(), null);
             Dispatch.run(() -> {
                 methodsTree.setModel(model);
                 UserInterface.repaint(methodsTree);

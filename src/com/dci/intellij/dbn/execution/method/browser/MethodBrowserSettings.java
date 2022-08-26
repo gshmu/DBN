@@ -4,6 +4,7 @@ import com.dci.intellij.dbn.common.options.PersistentConfiguration;
 import com.dci.intellij.dbn.connection.ConnectionCache;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.ConnectionId;
+import com.dci.intellij.dbn.connection.config.ConnectionConfigListener;
 import com.dci.intellij.dbn.object.DBMethod;
 import com.dci.intellij.dbn.object.DBSchema;
 import com.dci.intellij.dbn.object.lookup.DBObjectRef;
@@ -20,10 +21,10 @@ import java.util.Set;
 import static com.dci.intellij.dbn.common.options.setting.SettingsSupport.connectionIdAttribute;
 import static com.dci.intellij.dbn.common.options.setting.SettingsSupport.stringAttribute;
 
-public class MethodBrowserSettings implements PersistentConfiguration {
-    private ConnectionId connectionId;
-    private String schemaName;
-    private DBObjectRef<DBMethod> method;
+public class MethodBrowserSettings implements PersistentConfiguration, ConnectionConfigListener {
+    private DBObjectRef<DBMethod> selectedMethod;
+    private ConnectionId selectedConnectionId;
+    private String selectedSchema;
     private final Map<DBObjectType, Boolean> objectVisibility = new EnumMap<>(DBObjectType.class);
 
     public MethodBrowserSettings() {
@@ -32,15 +33,15 @@ public class MethodBrowserSettings implements PersistentConfiguration {
     }
 
     public ConnectionHandler getConnection() {
-        return ConnectionCache.resolveConnection(connectionId);
+        return ConnectionCache.resolveConnection(selectedConnectionId);
     }
 
-    public void setConnection(ConnectionHandler connection) {
-        this.connectionId = connection == null ? null : connection.getConnectionId();
+    public void setSelectedConnection(ConnectionHandler connection) {
+        this.selectedConnectionId = connection == null ? null : connection.getConnectionId();
     }
 
-    public DBSchema getSchema() {
-        return getConnection() == null || schemaName == null ? null : getConnection().getObjectBundle().getSchema(schemaName);
+    public DBSchema getSelectedSchema() {
+        return getConnection() == null || selectedSchema == null ? null : getConnection().getObjectBundle().getSchema(selectedSchema);
     }
 
     public Set<DBObjectType> getVisibleObjectTypes() {
@@ -69,28 +70,38 @@ public class MethodBrowserSettings implements PersistentConfiguration {
         return false;        
     }
 
-    public void setSchema(DBSchema schema) {
-        this.schemaName = schema == null ? null : schema.getName();
+    public void setSelectedSchema(DBSchema schema) {
+        this.selectedSchema = schema == null ? null : schema.getName();
     }
 
     @Nullable
-    public DBMethod getMethod() {
-        return method == null ? null : method.get();
+    public DBMethod getSelectedMethod() {
+        return selectedMethod == null ? null : selectedMethod.get();
     }
 
-    public void setMethod(DBMethod method) {
-        this.method = DBObjectRef.of(method);
+    public void setSelectedMethod(DBMethod method) {
+        this.selectedMethod = DBObjectRef.of(method);
+    }
+
+    public void connectionRemoved(ConnectionId connectionId) {
+        if (connectionId.equals(selectedConnectionId)) {
+            selectedConnectionId = null;
+            selectedSchema = null;
+        }
+        if (selectedMethod != null && selectedMethod.getConnectionId().equals(connectionId)) {
+            selectedMethod = null;
+        }
     }
 
     @Override
     public void readConfiguration(Element element) {
-        connectionId = connectionIdAttribute(element, "connection-id");
-        schemaName = stringAttribute(element, "schema");
+        selectedConnectionId = connectionIdAttribute(element, "connection-id");
+        selectedSchema = stringAttribute(element, "schema");
 
         Element methodElement = element.getChild("selected-method");
         if (methodElement != null) {
-            method = new DBObjectRef<>();
-            method.readState(methodElement);
+            selectedMethod = new DBObjectRef<>();
+            selectedMethod.readState(methodElement);
         }
     }
 
@@ -98,10 +109,10 @@ public class MethodBrowserSettings implements PersistentConfiguration {
     public void writeConfiguration(Element element) {
         ConnectionHandler connection = getConnection();
         if (connection != null) element.setAttribute("connection-id", connection.getConnectionId().id());
-        if (schemaName != null) element.setAttribute("schema", schemaName);
-        if(method != null) {
+        if (selectedSchema != null) element.setAttribute("schema", selectedSchema);
+        if(selectedMethod != null) {
             Element methodElement = new Element("selected-method");
-            method.writeState(methodElement);
+            selectedMethod.writeState(methodElement);
             element.addContent(methodElement);
         }
     }
