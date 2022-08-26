@@ -175,7 +175,6 @@ public class DatasetEditorTable extends ResultSetTable<DatasetEditorModel> {
                     result.first(editorTextValue);
                     result.second(t);
                 }
-                removeEditor();
 
                 performUpdate(rowIndex, columnIndex, () -> {
                     cell.setTemporaryUserValue(editorTextValue);
@@ -189,6 +188,7 @@ public class DatasetEditorTable extends ResultSetTable<DatasetEditorModel> {
                 });
             }
         }
+        removeEditor();
     }
 
     public void performUpdate(int rowIndex, int columnIndex, Runnable runnable) {
