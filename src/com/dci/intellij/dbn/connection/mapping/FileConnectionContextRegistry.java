@@ -7,6 +7,7 @@ import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.ConnectionId;
 import com.dci.intellij.dbn.connection.SchemaId;
 import com.dci.intellij.dbn.connection.SessionId;
+import com.dci.intellij.dbn.connection.config.ConnectionConfigListener;
 import com.dci.intellij.dbn.connection.context.ConnectionContextProvider;
 import com.dci.intellij.dbn.connection.session.DatabaseSession;
 import com.dci.intellij.dbn.ddl.DDLFileAttachmentManager;
@@ -31,7 +32,7 @@ import static com.dci.intellij.dbn.common.action.UserDataKeys.FILE_CONNECTION_MA
 import static com.dci.intellij.dbn.common.util.Commons.coalesce;
 
 @Getter
-public class FileConnectionContextRegistry extends StatefulDisposable.Base {
+public class FileConnectionContextRegistry extends StatefulDisposable.Base implements ConnectionConfigListener {
     private final ProjectRef project;
     private final Map<String, FileConnectionContext> mappings = new ConcurrentHashMap<>();
 
@@ -42,6 +43,11 @@ public class FileConnectionContextRegistry extends StatefulDisposable.Base {
     @NotNull
     public Project getProject() {
         return project.ensure();
+    }
+
+    @Override
+    public void connectionRemoved(ConnectionId connectionId) {
+
     }
 
     public boolean setConnectionHandler(@NotNull VirtualFile file, @Nullable ConnectionHandler connection) {

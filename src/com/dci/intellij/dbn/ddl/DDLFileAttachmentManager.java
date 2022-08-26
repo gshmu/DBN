@@ -13,6 +13,7 @@ import com.dci.intellij.dbn.common.util.Messages;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.ConnectionId;
 import com.dci.intellij.dbn.connection.ConnectionManager;
+import com.dci.intellij.dbn.connection.config.ConnectionConfigListener;
 import com.dci.intellij.dbn.connection.mapping.FileConnectionContextManager;
 import com.dci.intellij.dbn.ddl.options.DDLFileSettings;
 import com.dci.intellij.dbn.ddl.ui.AttachDDLFileDialog;
@@ -53,10 +54,15 @@ import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import javax.swing.*;
+import javax.swing.JList;
+import javax.swing.ListSelectionModel;
 import java.io.File;
 import java.io.IOException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 import static com.dci.intellij.dbn.common.message.MessageCallback.when;
 import static com.dci.intellij.dbn.common.options.setting.SettingsSupport.stringAttribute;
@@ -77,6 +83,7 @@ public class DDLFileAttachmentManager extends AbstractProjectComponent implement
         //VirtualFileManager.getInstance().addVirtualFileListener(virtualFileListener);
         ProjectEvents.subscribe(project, this, VirtualFileManager.VFS_CHANGES, bulkFileListener);
         ProjectEvents.subscribe(project, this, SourceCodeManagerListener.TOPIC, sourceCodeManagerListener);
+        ProjectEvents.subscribe(project, this, ConnectionConfigListener.TOPIC, connectionConfigListener);
     }
 
     private final SourceCodeManagerListener sourceCodeManagerListener = new SourceCodeManagerAdapter() {
@@ -90,6 +97,18 @@ public class DDLFileAttachmentManager extends AbstractProjectComponent implement
         @Override
         public void sourceCodeSaved(@NotNull DBSourceCodeVirtualFile sourceCodeFile, @Nullable SourceCodeEditor fileEditor) {
             updateDDLFiles(sourceCodeFile.getMainDatabaseFile());
+        }
+    };
+
+    private final ConnectionConfigListener connectionConfigListener = new ConnectionConfigListener() {
+        @Override
+        public void connectionRemoved(ConnectionId connectionId) {
+            mappings
+                .entrySet()
+                .stream()
+                .filter(m -> m.getValue().getConnectionId().equals(connectionId))
+                .map(m -> m.getKey())
+                .forEach(k -> mappings.remove(k));
         }
     };
 
@@ -292,7 +311,7 @@ public class DDLFileAttachmentManager extends AbstractProjectComponent implement
                     if (fileContentType.isBundle()) {
                         DBContentType[] contentTypes = fileContentType.getSubContentTypes();
                         for (DBContentType contentType : contentTypes) {
-                            DBSourceCodeVirtualFile sourceCodeFile = (DBSourceCodeVirtualFile) databaseFile.getContentFile(contentType);
+                            DBSourceCodeVirtualFile sourceCodeFile = databaseFile.getContentFile(contentType);
                             if (sourceCodeFile != null) {
                                 String statement = ddlFileManager.createDDLStatement(sourceCodeFile, contentType);
                                 if (statement.trim().length() > 0) {
@@ -303,7 +322,7 @@ public class DDLFileAttachmentManager extends AbstractProjectComponent implement
                             }
                         }
                     } else {
-                        DBSourceCodeVirtualFile sourceCodeFile = (DBSourceCodeVirtualFile) databaseFile.getContentFile(fileContentType);
+                        DBSourceCodeVirtualFile sourceCodeFile = databaseFile.getContentFile(fileContentType);
                         if (sourceCodeFile != null) {
                             buffer.append(ddlFileManager.createDDLStatement(sourceCodeFile, fileContentType));
                             buffer.append('\n');

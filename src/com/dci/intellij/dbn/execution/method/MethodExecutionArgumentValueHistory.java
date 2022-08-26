@@ -3,17 +3,19 @@ package com.dci.intellij.dbn.execution.method;
 import com.dci.intellij.dbn.common.state.PersistentStateElement;
 import com.dci.intellij.dbn.common.util.Strings;
 import com.dci.intellij.dbn.connection.ConnectionId;
+import com.dci.intellij.dbn.connection.config.ConnectionConfigListener;
 import lombok.val;
 import org.jdom.Element;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 import static com.dci.intellij.dbn.common.options.setting.SettingsSupport.connectionIdAttribute;
 import static com.dci.intellij.dbn.common.options.setting.SettingsSupport.stringAttribute;
 
-public class MethodExecutionArgumentValueHistory implements PersistentStateElement {
-    private final Map<ConnectionId, Map<String, MethodExecutionArgumentValue>> argumentValues = new HashMap<>();
+public class MethodExecutionArgumentValueHistory implements PersistentStateElement, ConnectionConfigListener {
+    private final Map<ConnectionId, Map<String, MethodExecutionArgumentValue>> argumentValues = new ConcurrentHashMap<>();
 
     public MethodExecutionArgumentValue getArgumentValue(ConnectionId connectionId, String name, boolean create) {
         Map<String, MethodExecutionArgumentValue> argumentValues = this.argumentValues.get(connectionId);
@@ -45,6 +47,10 @@ public class MethodExecutionArgumentValueHistory implements PersistentStateEleme
             MethodExecutionArgumentValue argumentValue = getArgumentValue(connectionId, name, true);
             argumentValue.setValue(value);
         }
+    }
+
+    public void connectionRemoved(ConnectionId connectionId) {
+        argumentValues.remove(connectionId);
     }
 
     /*********************************************

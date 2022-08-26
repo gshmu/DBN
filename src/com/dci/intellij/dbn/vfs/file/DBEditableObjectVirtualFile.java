@@ -112,10 +112,10 @@ public class DBEditableObjectVirtualFile extends DBObjectVirtualFile<DBSchemaObj
     }
 
     @Nullable
-    public DBContentVirtualFile getContentFile(DBContentType contentType) {
+    public <T extends DBContentVirtualFile> T getContentFile(DBContentType contentType) {
         for (DBContentVirtualFile contentFile : getContentFiles()) {
             if (contentFile.getContentType() == contentType) {
-                return contentFile;
+                return (T) contentFile;
             }
         }
         return null;
