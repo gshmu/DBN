@@ -119,13 +119,13 @@ public class DatabaseCompilerManager extends AbstractProjectComponent {
                     if (databaseFile != null && databaseFile.isContentLoaded()) {
                         if (contentType.isBundle()) {
                             for (DBContentType subContentType : contentType.getSubContentTypes()) {
-                                DBSourceCodeVirtualFile sourceCodeFile = (DBSourceCodeVirtualFile) databaseFile.getContentFile(subContentType);
+                                DBSourceCodeVirtualFile sourceCodeFile = databaseFile.getContentFile(subContentType);
                                 if (sourceCodeFile != null) {
                                     sourceCodeFile.refreshContentState();
                                 }
                             }
                         } else {
-                            DBSourceCodeVirtualFile sourceCodeFile = (DBSourceCodeVirtualFile) databaseFile.getContentFile(contentType);
+                            DBSourceCodeVirtualFile sourceCodeFile = databaseFile.getContentFile(contentType);
                             if (sourceCodeFile != null) {
                                 sourceCodeFile.refreshContentState();
                             }

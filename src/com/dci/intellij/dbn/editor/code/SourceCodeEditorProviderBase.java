@@ -114,7 +114,7 @@ abstract class SourceCodeEditorProviderBase extends BasicTextEditorProvider impl
 
     @Nullable
     private DBSourceCodeVirtualFile getSourceCodeFile(DBEditableObjectVirtualFile databaseFile) {
-        return (DBSourceCodeVirtualFile) databaseFile.getContentFile(getContentType());
+        return databaseFile.getContentFile(getContentType());
     }
 
     public abstract DBContentType getContentType();

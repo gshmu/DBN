@@ -53,7 +53,7 @@ public class MethodExecutionArgumentValue implements PersistentStateElement, Clo
     @Override
     public void readState(Element element) {
         name = stringAttribute(element, "name");
-        List<String> values = new ArrayList<String>();
+        List<String> values = new ArrayList<>();
         String value = Commons.nullIfEmpty(element.getAttributeValue("value"));
         if (Strings.isNotEmpty(value)) {
             values.add(0, value);

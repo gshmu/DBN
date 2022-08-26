@@ -39,7 +39,7 @@ public class SchemaSelectDropdownAction extends DBNComboBoxAction {
         String text = "Schema";
         Icon icon = null;
 
-        DBSchema schema = browserComponent.getSettings().getSchema();
+        DBSchema schema = browserComponent.getSettings().getSelectedSchema();
         if (schema != null) {
             text = schema.getName();
             icon = schema.getIcon();

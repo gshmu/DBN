@@ -8,6 +8,7 @@ import com.dci.intellij.dbn.common.state.PersistentStateElement;
 import com.dci.intellij.dbn.common.util.CollectionUtil;
 import com.dci.intellij.dbn.common.util.Unsafe;
 import com.dci.intellij.dbn.connection.ConnectionId;
+import com.dci.intellij.dbn.connection.config.ConnectionConfigListener;
 import com.dci.intellij.dbn.execution.method.MethodExecutionInput;
 import com.dci.intellij.dbn.object.DBFunction;
 import com.dci.intellij.dbn.object.DBMethod;
@@ -16,6 +17,8 @@ import com.dci.intellij.dbn.object.DBProgram;
 import com.dci.intellij.dbn.object.lookup.DBObjectRef;
 import com.intellij.openapi.Disposable;
 import com.intellij.openapi.project.Project;
+import lombok.Getter;
+import lombok.Setter;
 import org.jdom.Element;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -26,7 +29,9 @@ import java.util.List;
 
 import static com.dci.intellij.dbn.common.dispose.SafeDisposer.replace;
 
-public class MethodExecutionHistory implements PersistentStateElement, Disposable{
+@Getter
+@Setter
+public class MethodExecutionHistory implements PersistentStateElement, ConnectionConfigListener, Disposable{
     private final ProjectRef project;
     private boolean groupEntries = true;
     private DBObjectRef<DBMethod> selection;
@@ -51,24 +56,15 @@ public class MethodExecutionHistory implements PersistentStateElement, Disposabl
         this.executionInputs.addAll(executionInputs);
     }
 
-    public boolean isGroupEntries() {
-        return groupEntries;
-    }
-
-    public void setGroupEntries(boolean groupEntries) {
-        this.groupEntries = groupEntries;
-    }
-
-    public DBObjectRef<DBMethod> getSelection() {
-        return selection;
-    }
-
-    public void setSelection(DBObjectRef<DBMethod> selection) {
-        this.selection = selection;
-    }
-
     public void cleanupHistory(List<ConnectionId> connectionIds) {
         executionInputs.removeIf(executionInput -> connectionIds.contains(executionInput.getConnectionId()));
+    }
+
+    public void connectionRemoved(ConnectionId connectionId) {
+        executionInputs.removeIf(executionInput -> connectionId.equals(executionInput.getConnectionId()));
+        if (selection != null && selection.getConnectionId().equals(connectionId)) {
+            selection = null;
+        }
     }
 
     @Nullable
