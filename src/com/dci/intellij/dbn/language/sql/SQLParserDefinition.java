@@ -44,6 +44,6 @@ public class SQLParserDefinition extends DBLanguageParserDefinition {
     @NotNull
     @Override
     public PsiFile createPsiFile(FileViewProvider viewProvider) {
-        return new SQLFile(viewProvider, SQLLanguage.INSTANCE);
+        return new SQLFile(viewProvider);
     }
 }
