@@ -1,0 +1,59 @@
+<database-types>
+    <database-type id="ORACLE" name="Oracle" support="DEDICATED">
+        <url type="SID">
+            <pattern><![CDATA[jdbc:oracle:thin:@<HOST>:<PORT>:<DATABASE>]]></pattern>
+            <regex><![CDATA[^(jdbc:oracle:(?:thin|oci):@)(?<HOST>[._\-a-z0-9]{1,1000})(?<PORT>:[0-9]{1,100})(?<DATABASE>:[.\-$_a-z0-9]{1,1000})$]]></regex>
+        </url>
+        <url type="SERVICE">
+            <pattern><![CDATA[jdbc:oracle:thin:@<HOST>:<PORT>:<DATABASE>]]></pattern>
+            <regex><![CDATA[^(jdbc:oracle:(?:thin|oci):@)(?<HOST>[._\-a-z0-9]{1,1000})(?<PORT>:[0-9]{1,100})(?<DATABASE>:[.\-$_a-z0-9]{1,1000})$]]></regex>
+        </url>
+        <url type="LDAP">
+            <pattern><![CDATA[jdbc:oracle:thin:@ldap://<HOST>:<PORT>/<DATABASE>]]></pattern>
+            <regex><![CDATA[^(jdbc:oracle:(?:thin|oci):@ldap\/\/)(?<HOST>[._\-a-z0-9]{1,1000})(?<PORT>:[0-9]{1,100})(?<DATABASE>\/[.\-$_a-z0-9]{1,1000})$]]></regex>
+        </url>
+        <url type="LDAP">
+            <pattern><![CDATA[jdbc:oracle:thin:@ldaps://<HOST>:<PORT>/<DATABASE>]]></pattern>
+            <regex><![CDATA[^(jdbc:oracle:(?:thin|oci):@ldaps\/\/)(?<HOST>[._\-a-z0-9]{1,1000})(?<PORT>:[0-9]{1,100})(?<DATABASE>\/[.\-$_a-z0-9]{1,1000})$]]></regex>
+        </url>
+        <default-url>jdbc:oracle:thin:@localhost:1521:XE</default-url>
+    </database-type>
+    <database-type id="MYSQL" name="MySQL" support="DEDICATED">
+        <url type="BASIC">
+            <pattern><![CDATA[jdbc:mysql://<HOST>:<PORT>/<DATABASE>]]></pattern>
+            <regex><![CDATA[^(jdbc:mysql:\/\/)(?<HOST>[._\-a-z0-9]{1,1000})(?<PORT>:[0-9]{1,100})?(?<DATABASE>\/[\.\-$_a-z0-9]{0,1000})?$]]></regex>
+        </url>
+        <default-url>jdbc:mysql://localhost:3306:mysql</default-url>
+    </database-type>
+    <database-type id="POSTGRES" name="PostgreSQL" support="DEDICATED">
+        <url type="BASIC">
+            <pattern><![CDATA[jdbc:postgresql://<HOST>:<PORT>/<DATABASE>]]></pattern>
+            <regex><![CDATA[^(jdbc:postgresql:\/\/)(?<HOST>[._\-a-z0-9]{1,1000})(?<PORT>:[0-9]{1,100})?(?<DATABASE>\/[.\-$_a-z0-9]{0,1000})?$]]></regex>
+        </url>
+        <default-url>jdbc:postgresql://localhost:5432:postgres</default-url>
+    </database-type>
+    <database-type id="REDSHIFT" name="REDSHIFT" support="DEDICATED">
+        <url type="BASIC">
+            <pattern><![CDATA[jdbc:redshift://<HOST>:<PORT>/<DATABASE>]]></pattern>
+            <regex><![CDATA[^(jdbc:redshift:\/\/)(?<HOST>[._\-a-z0-9]{1,1000})(?<PORT>:[0-9]{1,100})?(?<DATABASE>\/[.\-$_a-z0-9]{0,1000})?$]]></regex>
+        </url>
+        <default-url>jdbc:redshift://localhost:5432:redshift</default-url>
+    </database-type>
+    <database-type id="SQLITE" name="SQLite" support="DEDICATED">
+        <url type="FILE">
+            <pattern><![CDATA[jdbc:sqlite:sqlite.db<FILE>]]></pattern>
+            <regex><![CDATA[^(jdbc:sqlite:)(?<FILE>([a-zA-Z]:)?((\\|\/)[a-zA-Z0-9\s\/_\.-]{1,2000}){1,2000})$]]></regex>
+        </url>
+        <default-url>jdbc:sqlite:</default-url>
+    </database-type>
+
+
+
+    <database-type id="GENERIC" name="Generic" support="GENERIC">
+        <url type="FILE">
+            <pattern><![CDATA[jdbc:<VENDOR>://<HOST>:<PORT>/<DATABASE>]]></pattern>
+            <regex><![CDATA[^(jdbc:(?<VENDOR>[._\-a-z0-9]{1,1000}):\/\/)(?<HOST>[._\-a-z0-9]{1,1000})(?<PORT>:[0-9]{1,100})?(?<DATABASE>\/[\-$_a-z0-9]{0,1000})?$]]></regex>
+        </url>
+        <default-url>jdbc:dbtype://localhost:5432:redshift</default-url>
+    </database-type>
+</database-types>

@@ -2,8 +2,9 @@ package com.dci.intellij.dbn.connection;
 
 import com.dci.intellij.dbn.common.constant.Constant;
 import com.dci.intellij.dbn.common.ui.Presentable;
-import org.jetbrains.annotations.NotNull;
+import lombok.Getter;
 
+@Getter
 public enum AuthenticationType implements Constant<AuthenticationType>, Presentable {
     NONE("None"),
     USER("User"),
@@ -14,11 +15,5 @@ public enum AuthenticationType implements Constant<AuthenticationType>, Presenta
 
     AuthenticationType(String name) {
         this.name = name;
-    }
-
-    @NotNull
-    @Override
-    public String getName() {
-        return name;
     }
 }

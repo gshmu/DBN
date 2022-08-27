@@ -112,6 +112,7 @@ public class ConnectionDatabaseSettingsForm extends ConfigurationEditorForm<Conn
 
         if (configType == ConnectionConfigType.CUSTOM) {
             databaseTypeComboBox.addActionListener(e -> databaseTypeChanged());
+            driverSettingsForm.getDriverComboBox().addActionListener(e -> updateNativeSupportDatabaseHint());
             updateNativeSupportDatabaseHint();
         }
     }
