@@ -1,6 +1,6 @@
 package com.dci.intellij.dbn.menu.action;
 
-import com.dci.intellij.dbn.connection.DatabaseInterfaceProviderFactory;
+import com.dci.intellij.dbn.connection.DatabaseInterfaceProviders;
 import com.dci.intellij.dbn.diagnostics.Diagnostics;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.actionSystem.Presentation;
@@ -11,7 +11,7 @@ public class MetaDataDefinitionReloadAction extends DumbAwareAction {
 
     @Override
     public void actionPerformed(@NotNull AnActionEvent e) {
-        DatabaseInterfaceProviderFactory.reset();
+        DatabaseInterfaceProviders.reset();
     }
 
     @Override
