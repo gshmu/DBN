@@ -150,15 +150,10 @@ public class ConnectionUtil {
         return driver;
     }
 
-    protected static DatabaseType getDatabaseType(String driver) {
-        return DatabaseType.resolve(driver);
-
-    }
-
     public static double getDatabaseVersion(DatabaseMetaData databaseMetaData) throws SQLException {
         int majorVersion = databaseMetaData.getDatabaseMajorVersion();
         int minorVersion = databaseMetaData.getDatabaseMinorVersion();
-        return new Double(majorVersion + "." + minorVersion);
+        return Double.parseDouble(majorVersion + "." + minorVersion);
     }
 
     public static DatabaseType getDatabaseType(DatabaseMetaData databaseMetaData) throws SQLException {

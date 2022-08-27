@@ -32,7 +32,6 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
-import java.sql.SQLException;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -179,12 +178,7 @@ public class VirtualConnectionHandler extends StatefulDisposable.Base implements
     @Override
     public DatabaseInterfaceProvider getInterfaceProvider() {
         if (interfaceProvider == null) {
-            try {
-                interfaceProvider = DatabaseInterfaceProviderFactory.getInterfaceProvider(this);
-            } catch (SQLException e) {
-                // do not initialize
-                return DatabaseInterfaceProviderFactory.GENERIC_INTERFACE_PROVIDER;
-            }
+            interfaceProvider = DatabaseInterfaceProviders.get(this);
         }
         return interfaceProvider;
     }
