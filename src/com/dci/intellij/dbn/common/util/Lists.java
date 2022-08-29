@@ -13,7 +13,7 @@ import java.util.function.Predicate;
 
 public class Lists {
     public static <T> boolean isLast(@NotNull List<T> list, @NotNull T element) {
-        return list.indexOf(element) == list.size() - 1;
+        return list.size() > 0 && list.indexOf(element) == list.size() - 1;
     }
 
     public static <T> List<T> filtered(@NotNull List<T> list, Predicate<T> predicate) {
