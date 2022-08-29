@@ -49,6 +49,9 @@ public abstract class SqliteColumnsResultSet extends SqliteDatasetInfoResultSetS
             element.datasetName =  datasetName;
             element.columnName = row.getName();
             element.dataTypeName = row.getType();
+            element.dataLength = row.getLength();
+            element.dataPrecision = row.getPrecision();
+            element.dataScale = row.getScale();
             element.nullable = row.getNotnull() == 0;
             element.primaryKey = row.getPk() > 0;
             element.position = row.getCid() + 1;

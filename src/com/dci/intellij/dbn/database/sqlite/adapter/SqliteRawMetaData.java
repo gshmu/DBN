@@ -3,6 +3,7 @@ package com.dci.intellij.dbn.database.sqlite.adapter;
 import com.dci.intellij.dbn.common.util.Commons;
 import com.dci.intellij.dbn.database.common.util.ResultSetReader;
 import lombok.Getter;
+import lombok.extern.slf4j.Slf4j;
 import org.jetbrains.annotations.NotNull;
 
 import java.sql.ResultSet;
@@ -11,6 +12,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+@Slf4j
 public class SqliteRawMetaData {
     public static class RawForeignKeyInfo extends RawMetaData<RawForeignKeyInfo.Row> {
 
@@ -117,6 +119,9 @@ public class SqliteRawMetaData {
             int cid;
             String name;
             String type;
+            int length;
+            int precision;
+            int scale;
             int notnull;
             int pk;
 
@@ -124,6 +129,22 @@ public class SqliteRawMetaData {
                 cid = resultSet.getInt("cid");
                 name = resultSet.getString("name");
                 type = resultSet.getString("type");
+
+                String[] typeTokens = type.split("[(,)]");
+                if (typeTokens.length > 1) {
+                    try {
+                        if (typeTokens.length > 2) {
+                            precision = Integer.parseInt(typeTokens[1]);
+                            scale = Integer.parseInt(typeTokens[2]);
+                        } else {
+                            length = Integer.parseInt(typeTokens[1]);
+                        }
+                    } catch (Throwable ignore) {
+                        log.warn("Failed to parse type " + type);
+                    }
+                    type = typeTokens[0];
+                }
+
                 notnull = resultSet.getInt("notnull");
                 pk = resultSet.getInt("pk");
             }
@@ -141,15 +162,12 @@ public class SqliteRawMetaData {
             return new Row(resultSet);
         }
 
+        @Getter
         public static class Row {
             String name;
 
             Row (ResultSet resultSet) throws SQLException {
                 name = resultSet.getString("DATASET_NAME");
-            }
-
-            public String getName() {
-                return name;
             }
         }
     }
