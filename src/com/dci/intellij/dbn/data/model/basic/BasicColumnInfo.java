@@ -28,7 +28,6 @@ public class BasicColumnInfo implements ColumnInfo {
 
     @Override
     public void dispose() {
-        dataType = null;
     }
 
     @Override
