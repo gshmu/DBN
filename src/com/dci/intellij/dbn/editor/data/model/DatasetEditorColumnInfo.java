@@ -15,14 +15,13 @@ import lombok.Getter;
 import lombok.Setter;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 @Getter
 @Setter
 @EqualsAndHashCode(callSuper = true)
 public class DatasetEditorColumnInfo extends ResultSetColumnInfo {
-    private static final List<String> EMPTY_LIST = new ArrayList<>(0);
     private final boolean primaryKey;
     private final boolean foreignKey;
     private final boolean identity;
@@ -64,7 +63,7 @@ public class DatasetEditorColumnInfo extends ResultSetColumnInfo {
         if (possibleValues == null) {
             synchronized (this) {
                 if (possibleValues == null) {
-                    possibleValues = EMPTY_LIST;
+                    possibleValues = Collections.emptyList();
                     List<String> values = null;
                     DBColumn column = getColumn();
                     if (column.isForeignKey()) {
@@ -86,10 +85,6 @@ public class DatasetEditorColumnInfo extends ResultSetColumnInfo {
             }
         }
         return possibleValues;
-    }
-
-    public void setPossibleValues(List<String> possibleValues) {
-        this.possibleValues = possibleValues;
     }
 
     @Override
