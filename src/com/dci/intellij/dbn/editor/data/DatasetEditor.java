@@ -87,16 +87,16 @@ public class DatasetEditor extends DisposableUserDataHolderBase implements
     private final ProjectRef project;
     private final DBObjectRef<DBDataset> dataset;
     private final DBEditableObjectVirtualFile databaseFile;
-    private final DatasetEditorForm editorForm;
     private final DatasetEditorStatusHolder status;
     private final ConnectionRef connection;
     private final DataEditorSettings settings;
+    private DatasetEditorForm editorForm;
     private StructureViewModel structureViewModel;
     private String dataLoadError;
 
     private DatasetEditorState editorState = new DatasetEditorState();
 
-    public DatasetEditor(DBEditableObjectVirtualFile databaseFile, DBDataset dataset) {
+    public DatasetEditor(@NotNull DBEditableObjectVirtualFile databaseFile, DBDataset dataset) {
         Project project = dataset.getProject();
         this.project = ProjectRef.of(project);
         this.databaseFile = databaseFile;
@@ -146,8 +146,9 @@ public class DatasetEditor extends DisposableUserDataHolderBase implements
         return getEditorTable().getModel();
     }
 
+    @NotNull
     public DBEditableObjectVirtualFile getDatabaseFile() {
-        return Failsafe.nd(databaseFile);
+        return databaseFile;
     }
 
     @Override
@@ -170,7 +171,7 @@ public class DatasetEditor extends DisposableUserDataHolderBase implements
     @Override
     @Nullable
     public JComponent getPreferredFocusedComponent() {
-        return editorForm.getComponent();
+        return getEditorForm().getComponent();
     }
 
     @Override
@@ -634,7 +635,7 @@ public class DatasetEditor extends DisposableUserDataHolderBase implements
     @Nullable
     @Override
     public VirtualFile getFile() {
-        return getDatabaseFile();
+        return databaseFile;
     }
 
     /*******************************************************
@@ -677,7 +678,12 @@ public class DatasetEditor extends DisposableUserDataHolderBase implements
 
     @Override
     public String toString() {
-        return databaseFile == null ? super.toString() : databaseFile.getPath();
+        return databaseFile.getPath();
     }
 
+    @Override
+    public void dispose() {
+        super.dispose();
+        editorForm = null;
+    }
 }
