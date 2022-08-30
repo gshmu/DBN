@@ -262,15 +262,8 @@ public class DatabaseFileSystem extends VirtualFileSystem implements /*NonPhysic
 
     @NotNull
     public DBEditableObjectVirtualFile findOrCreateDatabaseFile(@NotNull Project project, @NotNull DBObjectRef<?> objectRef) {
-        DBEditableObjectVirtualFile databaseFile = filesCache.get(objectRef);
-        if (!Failsafe.check(databaseFile)){
-            databaseFile = filesCache.get(objectRef);
-            if (!Failsafe.check(databaseFile)){
-                databaseFile = Read.conditional(() -> new DBEditableObjectVirtualFile(project, objectRef));
-                filesCache.put(objectRef, databaseFile);
-            }
-        }
-        return databaseFile;
+        return filesCache.compute(objectRef, (ref, file) ->
+                Failsafe.check(file) && file.getProject() == project ? file : Read.conditional(() -> new DBEditableObjectVirtualFile(project, ref)));
     }
 
     public static boolean isFileOpened(DBObject object) {

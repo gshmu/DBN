@@ -1,13 +1,10 @@
 package com.dci.intellij.dbn.editor.data;
 
-import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.common.dispose.SafeDisposer;
 import com.dci.intellij.dbn.editor.DBContentType;
 import com.dci.intellij.dbn.editor.EditorProviderId;
 import com.dci.intellij.dbn.editor.data.state.DatasetEditorState;
 import com.dci.intellij.dbn.object.DBDataset;
-import com.dci.intellij.dbn.object.common.DBSchemaObject;
-import com.dci.intellij.dbn.object.lookup.DBObjectRef;
 import com.dci.intellij.dbn.object.type.DBObjectType;
 import com.dci.intellij.dbn.vfs.file.DBDatasetVirtualFile;
 import com.dci.intellij.dbn.vfs.file.DBEditableObjectVirtualFile;
@@ -22,6 +19,8 @@ import com.intellij.openapi.vfs.VirtualFile;
 import org.jdom.Element;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
+
+import static com.dci.intellij.dbn.common.dispose.Failsafe.nn;
 
 public class DatasetEditorProvider implements FileEditorProvider, NamedComponent, DumbAware {
     /*********************************************************
@@ -43,8 +42,7 @@ public class DatasetEditorProvider implements FileEditorProvider, NamedComponent
     @NotNull
     public FileEditor createEditor(@NotNull Project project, @NotNull VirtualFile file) {
         DBEditableObjectVirtualFile databaseFile = (DBEditableObjectVirtualFile) file;
-        DBDatasetVirtualFile datasetFile = databaseFile.getContentFile(DBContentType.DATA);
-        datasetFile = Failsafe.nn(datasetFile);
+        DBDatasetVirtualFile datasetFile = nn(databaseFile.getContentFile(DBContentType.DATA));
         DBDataset dataset = datasetFile.getObject();
         return new DatasetEditor(databaseFile, dataset);
     }
@@ -60,8 +58,7 @@ public class DatasetEditorProvider implements FileEditorProvider, NamedComponent
     public FileEditorState readState(@NotNull Element sourceElement, @NotNull Project project, @NotNull VirtualFile virtualFile) {
         if (virtualFile instanceof DBEditableObjectVirtualFile) {
             DBEditableObjectVirtualFile editableObjectFile = (DBEditableObjectVirtualFile) virtualFile;
-            DBObjectRef<DBSchemaObject> objectRef = editableObjectFile.getObjectRef();
-            DBObjectType objectType = objectRef.getObjectType();
+            DBObjectType objectType = editableObjectFile.getObjectType();
             if (objectType.isInheriting(DBObjectType.DATASET)) {
                 DatasetEditorState editorState = new DatasetEditorState();
                 editorState.readState(sourceElement);
