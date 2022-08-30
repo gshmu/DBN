@@ -199,30 +199,6 @@ public class DBObjectRef<T extends DBObject> implements Comparable<DBObjectRef<?
         return pathElement;
     }
 
-/*    @NotNull
-    public String serialize() {
-        StringBuilder builder = new StringBuilder();
-        builder.append(objectType.getListName());
-        builder.append(PS);
-        builder.append(quotePathElement(objectName));
-
-        DBObjectRef<?> parent = getParentRef();
-        while (parent != null) {
-            builder.insert(0, PS);
-            builder.insert(0, quotePathElement(parent.objectName));
-            builder.insert(0, PS);
-            builder.insert(0, parent.objectType.getListName());
-            parent = parent.getParentRef();
-        }
-
-        if (overload > 0) {
-            builder.append(PS);
-            builder.append(overload);
-        }
-
-        String newValue = serializeNew();
-        return builder.toString();
-    }*/
 
     @NotNull
     public String serialize() {
@@ -248,24 +224,6 @@ public class DBObjectRef<T extends DBObject> implements Comparable<DBObjectRef<?
         return builder.toString();
     }
 
-
-/*    public String getPath() {
-        DBObjectRef<?> parent = getParentRef();
-        if (parent == null) {
-            return objectName;
-        } else {
-            StringBuilder builder = new StringBuilder(objectName);
-            while(parent != null) {
-                builder.insert(0, ".");
-                builder.insert(0, parent.objectName);
-                parent = parent.getParentRef();
-            }
-
-            String newValue = getPathNew();
-            return builder.toString();
-        }
-    }*/
-
     public String getPath() {
         DBObjectRef<?> parent = getParentRef();
         if (parent == null) {
@@ -285,25 +243,6 @@ public class DBObjectRef<T extends DBObject> implements Comparable<DBObjectRef<?
     public String getQualifiedName() {
         return getPath();
     }
-
-    /**
-     * qualified object name without schema (e.g. PROGRAM.METHOD)
-     */
-/*    public String getQualifiedObjectName() {
-        DBObjectRef<?> parent = getParentRef();
-        if (parent == null || parent.objectType == DBObjectType.SCHEMA) {
-            return objectName;
-        } else {
-            StringBuilder builder = new StringBuilder(objectName);
-            while(parent != null && parent.objectType != DBObjectType.SCHEMA) {
-                builder.insert(0, '.');
-                builder.insert(0, parent.objectName);
-                parent = parent.getParentRef();
-            }
-            String newValue = getQualifiedObjectNameNew();
-            return builder.toString();
-        }
-    }*/
 
     public String getQualifiedObjectName() {
         DBObjectRef<?> parent = getParentRef();
