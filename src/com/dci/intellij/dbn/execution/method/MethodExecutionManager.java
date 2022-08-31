@@ -107,32 +107,30 @@ public class MethodExecutionManager extends AbstractProjectComponent implements 
                         progress -> {
                             Project project = getProject();
                             ConnectionHandler connection = action.getConnection();
+                            String methodIdentifier = executionInput.getMethodRef().getPath();
                             if (connection.isValid()) {
                                 DBMethod method = executionInput.getMethod();
                                 if (method == null) {
                                     String message =
-                                            "Can not execute method " +
-                                                    executionInput.getMethodRef().getPath() + ".\nMethod not found!";
+                                            "Can not execute method " + methodIdentifier + ".\nMethod not found!";
                                     Messages.showErrorDialog(project, message);
                                 } else {
-                                    // load the arguments in background
+                                    // load the arguments while in background
                                     executionInput.getMethod().getArguments();
-                                    Dispatch.run(() -> {
-                                        MethodExecutionInputDialog executionDialog = new MethodExecutionInputDialog(executionInput, debuggerType);
-                                        executionDialog.show();
-                                        if (executionDialog.getExitCode() == DialogWrapper.OK_EXIT_CODE) {
-                                            callback.run();
-                                        }
-                                    });
+                                    showInputDialog(executionInput, debuggerType, callback);
                                 }
                             } else {
                                 String message =
-                                        "Can not execute method " + executionInput.getMethodRef().getPath() + ".\n" +
+                                        "Can not execute method " + methodIdentifier + ".\n" +
                                                 "No connectivity to '" + connection.getQualifiedName() + "'. " +
                                                 "Please check your connection settings and try again.";
                                 Messages.showErrorDialog(project, message);
                             }
                         }));
+    }
+
+    private void showInputDialog(@NotNull MethodExecutionInput executionInput, @NotNull DBDebuggerType debuggerType, @NotNull Runnable executor) {
+        MethodExecutionInputDialog.open(executionInput, debuggerType, executor);
     }
 
 
