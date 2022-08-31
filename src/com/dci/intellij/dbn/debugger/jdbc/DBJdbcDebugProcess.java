@@ -17,7 +17,11 @@ import com.dci.intellij.dbn.database.DatabaseDebuggerInterface;
 import com.dci.intellij.dbn.database.common.debug.DebuggerRuntimeInfo;
 import com.dci.intellij.dbn.database.common.debug.DebuggerSessionInfo;
 import com.dci.intellij.dbn.database.common.debug.ExecutionBacktraceInfo;
-import com.dci.intellij.dbn.debugger.*;
+import com.dci.intellij.dbn.debugger.DBDebugConsoleLogger;
+import com.dci.intellij.dbn.debugger.DBDebugOperation;
+import com.dci.intellij.dbn.debugger.DBDebugTabLayouter;
+import com.dci.intellij.dbn.debugger.DBDebugUtil;
+import com.dci.intellij.dbn.debugger.DatabaseDebuggerManager;
 import com.dci.intellij.dbn.debugger.common.breakpoint.DBBreakpointHandler;
 import com.dci.intellij.dbn.debugger.common.breakpoint.DBBreakpointUtil;
 import com.dci.intellij.dbn.debugger.common.config.DBRunConfig;
@@ -445,7 +449,7 @@ public abstract class DBJdbcDebugProcess<T extends ExecutionInput> extends XDebu
                                 NotificationGroup.DEBUGGER,
                                 "Session terminated with code {0} ({1})", reasonCode, reason);
                     }
-                    if (!runtimeInfo.equals(topRuntimeInfo)) {
+                    if (!runtimeInfo.isSameLocation(topRuntimeInfo)) {
                         runtimeInfo = topRuntimeInfo;
                         resume();
                         return;
