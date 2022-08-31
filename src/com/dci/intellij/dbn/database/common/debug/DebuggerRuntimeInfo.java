@@ -7,6 +7,7 @@ import lombok.Setter;
 import java.sql.CallableStatement;
 import java.sql.SQLException;
 import java.sql.Types;
+import java.util.Objects;
 
 @Getter
 @Setter
@@ -52,6 +53,14 @@ public class DebuggerRuntimeInfo extends BasicOperationInfo {
         breakpointId = statement.getInt(6);
         reason = statement.getInt(7);
         error = statement.getString(8);
+    }
+
+    public boolean isSameLocation(DebuggerRuntimeInfo runtimeInfo) {
+        return
+            Objects.equals(this.ownerName, runtimeInfo.ownerName) &&
+            Objects.equals(this.programName, runtimeInfo.programName) &&
+            Objects.equals(this.lineNumber, runtimeInfo.lineNumber);
+
     }
 }
 
