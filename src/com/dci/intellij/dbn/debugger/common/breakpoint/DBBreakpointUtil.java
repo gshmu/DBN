@@ -99,10 +99,14 @@ public class DBBreakpointUtil {
     @NotNull
     public static String getBreakpointDesc(@NotNull XLineBreakpoint<XBreakpointProperties> breakpoint) {
         DBSchemaObject object = getDatabaseObject(breakpoint);
-        final VirtualFile virtualFile = getVirtualFile(breakpoint);
-        return object == null ?
-                virtualFile == null ? "unknown" : virtualFile.getName() + ":" + (breakpoint.getLine() + 1) :
-                object.getQualifiedName() + ":" + (breakpoint.getLine() + 1);
+        VirtualFile virtualFile = getVirtualFile(breakpoint);
+        int line = breakpoint.getLine() + 1;
+        Integer breakpointId = getBreakpointId(breakpoint);
+        String base = object == null ?
+                virtualFile == null ? "unknown" : virtualFile.getName():
+                object.getQualifiedName();
+
+        return base + ":" + line + " (id=" + breakpointId + ")";
     }
 
     public static List<XLineBreakpoint<XBreakpointProperties>> getDatabaseBreakpoints(final ConnectionHandler connection) {

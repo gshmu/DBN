@@ -58,8 +58,6 @@ public class DBJdbcBreakpointHandler extends DBBreakpointHandler<DBJdbcDebugProc
             XDebuggerManager debuggerManager = XDebuggerManager.getInstance(project);
             debuggerManager.getBreakpointManager().removeBreakpoint(breakpoint);
         } else {
-            String breakpointDesc = DBBreakpointUtil.getBreakpointDesc(breakpoint);
-
             try {
                 if (getBreakpointId(breakpoint) != null) {
                     enableBreakpoint(breakpoint);
@@ -82,6 +80,7 @@ public class DBJdbcBreakpointHandler extends DBBreakpointHandler<DBJdbcDebugProc
                             }
 
                         }
+                        String breakpointDesc = DBBreakpointUtil.getBreakpointDesc(breakpoint);
                         console.system("Breakpoint added: " + breakpointDesc);
                     }
                 }
