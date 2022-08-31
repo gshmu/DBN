@@ -7,14 +7,14 @@ import com.intellij.openapi.project.Project;
 import org.jetbrains.annotations.NotNull;
 
 public class ExecutionTimeout {
-    private ProjectRef projectRef;
-    private ExecutionTarget executionTarget;
-    private boolean debug;
+    private final ProjectRef project;
+    private final ExecutionTarget executionTarget;
+    private final boolean debug;
     private int customValue;
     private int settingsValue;
 
     ExecutionTimeout(@NotNull Project project, ExecutionTarget executionTarget, boolean debug) {
-        this.projectRef = ProjectRef.of(project);
+        this.project = ProjectRef.of(project);
         this.executionTarget = executionTarget;
         this.debug = debug;
         this.settingsValue = getSettingsExecutionTimeout();
@@ -37,7 +37,7 @@ public class ExecutionTimeout {
     }
 
     private int getSettingsExecutionTimeout() {
-        Project project = projectRef.ensure();
+        Project project = this.project.ensure();
         ExecutionEngineSettings executionEngineSettings = ExecutionEngineSettings.getInstance(project);
         ExecutionTimeoutSettings timeoutSettings = executionEngineSettings.getExecutionTimeoutSettings(executionTarget);
         return debug ?

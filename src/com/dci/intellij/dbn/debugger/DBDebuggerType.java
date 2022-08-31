@@ -1,27 +1,21 @@
 package com.dci.intellij.dbn.debugger;
 
 import com.dci.intellij.dbn.common.ui.Presentable;
-import org.jetbrains.annotations.NotNull;
+import lombok.Getter;
 
 import java.util.Objects;
 
+@Getter
 public enum DBDebuggerType implements Presentable {
     JDBC("Classic (over JDBC)"),
     JDWP("JDWP (over TCP)"),
     NONE("None");
 
-    private String name;
+    private final String name;
 
     DBDebuggerType(String name) {
         this.name = name;
     }
-
-    @NotNull
-    @Override
-    public String getName() {
-        return name;
-    }
-
 
     public boolean isDebug() {
         return this != NONE;

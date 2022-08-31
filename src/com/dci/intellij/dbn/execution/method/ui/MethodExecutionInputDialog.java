@@ -1,9 +1,13 @@
 package com.dci.intellij.dbn.execution.method.ui;
 
 import com.dci.intellij.dbn.common.Icons;
+import com.dci.intellij.dbn.common.Pair;
+import com.dci.intellij.dbn.common.thread.Dispatch;
 import com.dci.intellij.dbn.common.ui.dialog.DBNDialog;
+import com.dci.intellij.dbn.common.ui.dialog.DBNDialogRegistry;
 import com.dci.intellij.dbn.debugger.DBDebuggerType;
 import com.dci.intellij.dbn.execution.method.MethodExecutionInput;
+import lombok.val;
 import org.jetbrains.annotations.NotNull;
 
 import javax.swing.AbstractAction;
@@ -13,15 +17,25 @@ import java.awt.event.ActionEvent;
 public class MethodExecutionInputDialog extends DBNDialog<MethodExecutionInputForm> {
     private final MethodExecutionInput executionInput;
     private final DBDebuggerType debuggerType;
+    private final Runnable executor;
 
-    public MethodExecutionInputDialog(@NotNull MethodExecutionInput executionInput, @NotNull DBDebuggerType debuggerType) {
+    private MethodExecutionInputDialog(@NotNull MethodExecutionInput executionInput, @NotNull DBDebuggerType debuggerType, @NotNull Runnable executor) {
         super(executionInput.getProject(), (debuggerType.isDebug() ? "Debug" : "Execute") + " method", true);
         this.executionInput = executionInput;
         this.debuggerType = debuggerType;
-        setModal(true);
+        this.executor = executor;
+        setModal(false);
         setResizable(true);
         setDefaultSize(800, 600);
         init();
+    }
+
+    public static void open(@NotNull MethodExecutionInput executionInput, @NotNull DBDebuggerType debuggerType, @NotNull Runnable executor) {
+        Dispatch.run(true, () -> {
+            val key = Pair.of(executionInput.getMethodRef(), debuggerType);
+            MethodExecutionInputDialog dialog = DBNDialogRegistry.ensure(key, () -> new MethodExecutionInputDialog(executionInput, debuggerType, executor));
+            dialog.show();
+        });
     }
 
     @NotNull
@@ -56,6 +70,7 @@ public class MethodExecutionInputDialog extends DBNDialog<MethodExecutionInputFo
         public void actionPerformed(ActionEvent e) {
             try {
                 getForm().updateExecutionInput();
+                executor.run();
             } finally {
                 doOKAction();
             }
