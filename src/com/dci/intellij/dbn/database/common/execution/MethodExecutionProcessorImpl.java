@@ -14,10 +14,8 @@ import com.dci.intellij.dbn.debugger.DBDebuggerType;
 import com.dci.intellij.dbn.execution.ExecutionContext;
 import com.dci.intellij.dbn.execution.ExecutionOption;
 import com.dci.intellij.dbn.execution.ExecutionOptions;
-import com.dci.intellij.dbn.execution.common.options.ExecutionEngineSettings;
 import com.dci.intellij.dbn.execution.logging.DatabaseLoggingManager;
 import com.dci.intellij.dbn.execution.method.MethodExecutionInput;
-import com.dci.intellij.dbn.execution.method.options.MethodExecutionSettings;
 import com.dci.intellij.dbn.execution.method.result.MethodExecutionResult;
 import com.dci.intellij.dbn.object.DBArgument;
 import com.dci.intellij.dbn.object.DBMethod;
@@ -101,10 +99,9 @@ public abstract class MethodExecutionProcessorImpl implements MethodExecutionPro
 
             bindParameters(executionInput, statement);
 
-            MethodExecutionSettings methodExecutionSettings = ExecutionEngineSettings.getInstance(project).getMethodExecutionSettings();
             int timeout = debuggerType.isDebug() ?
-                    methodExecutionSettings.getDebugExecutionTimeout() :
-                    methodExecutionSettings.getExecutionTimeout();
+                    executionInput.getDebugExecutionTimeout() :
+                    executionInput.getExecutionTimeout();
 
             statement.setQueryTimeout(timeout);
             MethodExecutionResult executionResult = new CancellableDatabaseCall<MethodExecutionResult>(connection, conn, timeout, TimeUnit.SECONDS) {

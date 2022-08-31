@@ -10,9 +10,9 @@ import com.dci.intellij.dbn.common.latent.Latent;
 import com.dci.intellij.dbn.common.message.MessageType;
 import com.dci.intellij.dbn.common.navigation.NavigationInstructions;
 import com.dci.intellij.dbn.common.ui.form.DBNFormBase;
-import com.dci.intellij.dbn.common.ui.util.UserInterface;
-import com.dci.intellij.dbn.common.ui.util.Mouse;
 import com.dci.intellij.dbn.common.ui.tab.TabbedPane;
+import com.dci.intellij.dbn.common.ui.util.Mouse;
+import com.dci.intellij.dbn.common.ui.util.UserInterface;
 import com.dci.intellij.dbn.common.util.Documents;
 import com.dci.intellij.dbn.common.util.Strings;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
@@ -301,7 +301,7 @@ public class ExecutionConsoleForm extends DBNFormBase {
     @Nullable
     private static ExecutionResult<?> getExecutionResult(TabInfo tabInfo) {
         ExecutionResultForm<?> executionResultForm = (ExecutionResultForm<?>) tabInfo.getObject();
-        return executionResultForm == null ? null : executionResultForm.getExecutionResult();
+        return Failsafe.check(executionResultForm) ? executionResultForm.getExecutionResult() : null;
     }
 
     /*********************************************************
@@ -433,6 +433,7 @@ public class ExecutionConsoleForm extends DBNFormBase {
                 executionResultForm = getExecutionResultForm(previousExecutionResult);
                 if (executionResultForm != null) {
                     executionResultForm.setExecutionResult(executionResult);
+                    selectResultTab(executionResult);
                 }
             }
 
