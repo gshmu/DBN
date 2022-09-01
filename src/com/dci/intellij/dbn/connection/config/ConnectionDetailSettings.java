@@ -31,10 +31,10 @@ public class ConnectionDetailSettings extends BasicProjectConfiguration<Connecti
     private boolean connectAutomatically = true;
     private boolean restoreWorkspace = true;
     private boolean restoreWorkspaceDeep = false;
-    private int connectivityTimeout = 5;
-    private int idleTimeToDisconnect = 30;
-    private int idleTimeToDisconnectPool = 5;
-    private int credentialExpiryTime = 10;
+    private int connectivityTimeoutSeconds = 10;
+    private int idleMinutesToDisconnect = 30;
+    private int idleMinutesToDisconnectPool = 5;
+    private int credentialExpiryMinutes = 10;
     private int maxConnectionPoolSize = 7;
 
 
@@ -94,10 +94,10 @@ public class ConnectionDetailSettings extends BasicProjectConfiguration<Connecti
         restoreWorkspace = getBoolean(element, "restore-workspace", restoreWorkspace);
         restoreWorkspaceDeep = getBoolean(element, "restore-workspace-deep", restoreWorkspaceDeep);
         environmentTypeId = EnvironmentTypeId.get(getString(element, "environment-type", EnvironmentTypeId.DEFAULT.id()));
-        connectivityTimeout = getInteger(element, "connectivity-timeout", connectivityTimeout);
-        idleTimeToDisconnect = getInteger(element, "idle-time-to-disconnect", idleTimeToDisconnect);
-        idleTimeToDisconnectPool = getInteger(element, "idle-time-to-disconnect-pool", idleTimeToDisconnectPool);
-        credentialExpiryTime = getInteger(element, "credential-expiry-time", credentialExpiryTime);
+        connectivityTimeoutSeconds = getInteger(element, "connectivity-timeout", connectivityTimeoutSeconds);
+        idleMinutesToDisconnect = getInteger(element, "idle-time-to-disconnect", idleMinutesToDisconnect);
+        idleMinutesToDisconnectPool = getInteger(element, "idle-time-to-disconnect-pool", idleMinutesToDisconnectPool);
+        credentialExpiryMinutes = getInteger(element, "credential-expiry-time", credentialExpiryMinutes);
         maxConnectionPoolSize = getInteger(element, "max-connection-pool-size", maxConnectionPoolSize);
         alternativeStatementDelimiter = getString(element, "alternative-statement-delimiter", null);
     }
@@ -113,10 +113,10 @@ public class ConnectionDetailSettings extends BasicProjectConfiguration<Connecti
         setBoolean(element, "restore-workspace", restoreWorkspace);
         setBoolean(element, "restore-workspace-deep", restoreWorkspaceDeep);
         setString(element, "environment-type", environmentTypeId.id());
-        setInteger(element, "connectivity-timeout", connectivityTimeout);
-        setInteger(element, "idle-time-to-disconnect", idleTimeToDisconnect);
-        setInteger(element, "idle-time-to-disconnect-pool", idleTimeToDisconnectPool);
-        setInteger(element, "credential-expiry-time", credentialExpiryTime);
+        setInteger(element, "connectivity-timeout", connectivityTimeoutSeconds);
+        setInteger(element, "idle-time-to-disconnect", idleMinutesToDisconnect);
+        setInteger(element, "idle-time-to-disconnect-pool", idleMinutesToDisconnectPool);
+        setInteger(element, "credential-expiry-time", credentialExpiryMinutes);
         setInteger(element, "max-connection-pool-size", maxConnectionPoolSize);
         setString(element, "alternative-statement-delimiter", Commons.nvl(alternativeStatementDelimiter, ""));
     }

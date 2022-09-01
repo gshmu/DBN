@@ -354,7 +354,7 @@ public final class ConnectionPool extends StatefulDisposable.Base implements Not
 
                         ConnectionDetailSettings detailSettings = connection.getSettings().getDetailSettings();
                         long lastAccessTimestamp = getLastAccessTimestamp();
-                        if (lastAccessTimestamp > 0 && TimeUtil.isOlderThan(lastAccessTimestamp, detailSettings.getIdleTimeToDisconnectPool(), TimeUnit.MINUTES)) {
+                        if (lastAccessTimestamp > 0 && TimeUtil.isOlderThan(lastAccessTimestamp, detailSettings.getIdleMinutesToDisconnectPool(), TimeUnit.MINUTES)) {
                             // close connections only if pool is passive
                             for (DBNConnection conn : poolConnections) {
                                 if (!conn.isIdle()) return;
