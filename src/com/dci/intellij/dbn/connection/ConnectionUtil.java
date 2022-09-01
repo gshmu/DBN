@@ -109,7 +109,7 @@ public class ConnectionUtil {
                 attachmentHandler,
                 autoCommit);
 
-        int connectTimeout = connectionSettings.getDetailSettings().getConnectivityTimeout();
+        int connectTimeout = connectionSettings.getDetailSettings().getConnectivityTimeoutSeconds();
         DBNConnection connection = Timeout.call(connectTimeout, null, true, () -> connector.connect());
 
         SQLException exception = connector.getException();
