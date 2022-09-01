@@ -1,8 +1,8 @@
 package com.dci.intellij.dbn.connection.transaction.ui;
 
+import com.dci.intellij.dbn.common.ui.dialog.DBNDialog;
 import com.dci.intellij.dbn.common.ui.form.DBNFormBase;
 import com.dci.intellij.dbn.common.ui.form.DBNHeaderForm;
-import com.dci.intellij.dbn.common.ui.dialog.DBNDialog;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.jdbc.DBNConnection;
 import org.jetbrains.annotations.NotNull;
@@ -19,7 +19,7 @@ public class IdleConnectionDialogForm extends DBNFormBase {
     public IdleConnectionDialogForm(DBNDialog parent, ConnectionHandler connection, DBNConnection conn, int timeoutMinutes) {
         super(parent);
         int idleMinutes = conn.getIdleMinutes();
-        int idleMinutesToDisconnect = connection.getSettings().getDetailSettings().getIdleTimeToDisconnect();
+        int idleMinutesToDisconnect = connection.getSettings().getDetailSettings().getIdleMinutesToDisconnect();
 
         String text = "The connection \"" + connection.getConnectionName(conn) + "\" is been idle for more than " + idleMinutes + " minutes. You have uncommitted changes on this connection. " +
                 "Please specify whether to commit or rollback the changes. You can choose to keep the connection alive for another " + idleMinutesToDisconnect + " more minutes. \n\n" +

@@ -13,9 +13,13 @@ import com.intellij.ui.DocumentAdapter;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import javax.swing.*;
+import javax.swing.JComponent;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JPasswordField;
+import javax.swing.JTextField;
 import javax.swing.event.DocumentEvent;
-import java.awt.*;
+import java.awt.BorderLayout;
 
 import static com.dci.intellij.dbn.common.ui.util.ComboBoxes.initComboBox;
 import static com.dci.intellij.dbn.common.ui.util.ComboBoxes.setSelection;
@@ -50,7 +54,7 @@ public class ConnectionAuthenticationForm extends DBNFormBase {
             DBNHeaderForm headerForm = new DBNHeaderForm(this, connection);
             headerPanel.add(headerForm.getComponent(), BorderLayout.CENTER);
 
-            int passwordExpiryTime = connection.getSettings().getDetailSettings().getCredentialExpiryTime();
+            int passwordExpiryTime = connection.getSettings().getDetailSettings().getCredentialExpiryMinutes();
             String expiryTimeText = passwordExpiryTime == 0 ? "0 - no expiry" :
                     passwordExpiryTime == 1 ? "1 minute" : passwordExpiryTime + " minutes";
 
