@@ -181,12 +181,12 @@ public class DatasetRecordEditorColumnForm extends DBNFormBase {
     protected int[] getMetrics(int[] metrics) {
         return new int[] {
             (int) Math.max(metrics[0], columnLabel.getPreferredSize().getWidth()),
-            (int) Math.max(metrics[1], valueFieldPanel.getPreferredSize().getWidth())};
+            (int) Math.max(metrics[1], dataTypeLabel.getPreferredSize().getWidth())};
     }
 
     protected void adjustMetrics(int[] metrics) {
         columnLabel.setPreferredSize(new Dimension(metrics[0], columnLabel.getHeight()));
-        valueFieldPanel.setPreferredSize(new Dimension(metrics[1], valueFieldPanel.getHeight()));
+        dataTypeLabel.setPreferredSize(new Dimension(metrics[1], valueFieldPanel.getHeight()));
     }
 
     public JComponent getEditorComponent() {
