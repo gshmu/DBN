@@ -593,6 +593,7 @@ public class DBObjectListImpl<T extends DBObject> extends DynamicContentImpl<T> 
 
         @Override
         public T getElement(String name, short overload) {
+            getElements();
             if (ranges != null) {
                 SearchAdapter<T> adapter = getObjectType().isOverloadable() ?
                         binary(name, overload) :
