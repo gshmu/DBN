@@ -38,7 +38,7 @@ public abstract class DBNTableGutter<T extends DBNTableWithGutter> extends JList
     }
 
     @Override
-    public String getToolTipText(MouseEvent event) {
+    public String getToolTipText(MouseEvent e) {
         return null;
     }
 

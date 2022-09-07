@@ -2,36 +2,35 @@ package com.dci.intellij.dbn.editor.data.filter;
 
 import com.dci.intellij.dbn.object.DBColumn;
 import com.dci.intellij.dbn.object.DBDataset;
+import com.dci.intellij.dbn.object.lookup.DBObjectRef;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 public class DatasetFilterInput {
-    private final DBDataset dataset;
-    private final List<DBColumn> columns = new ArrayList<>();
-    private final Map<DBColumn, Object> values = new HashMap<>();
+    private final DBObjectRef<DBDataset> dataset;
+    private final Map<DBObjectRef<DBColumn>, Object> values = new LinkedHashMap<>();
 
     public DatasetFilterInput(DBDataset dataset) {
-        this.dataset = dataset;
+        this.dataset = DBObjectRef.of(dataset);
     }
 
     public DBDataset getDataset() {
-        return dataset;
+        return dataset.get();
     }
 
     public List<DBColumn> getColumns() {
-        return columns;
+        return values.keySet().stream().map(ref -> ref.get()).collect(Collectors.toList());
     }
 
     public void setColumnValue(@NotNull DBColumn column, Object value) {
-        columns.add(column);
-        values.put(column, value);
+        values.put(DBObjectRef.of(column), value);
     }
 
     public Object getColumnValue(DBColumn column) {
-        return values.get(column);
+        return values.get(DBObjectRef.of(column));
     }
 }

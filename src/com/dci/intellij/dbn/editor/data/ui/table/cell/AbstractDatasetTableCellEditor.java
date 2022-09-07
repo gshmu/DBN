@@ -75,6 +75,10 @@ public abstract class AbstractDatasetTableCellEditor extends AbstractCellEditor 
         return table.ensure();
     }
 
+    @NotNull
+    public Project getProject() {
+        return getTable().getProject();
+    }
 
 
     @NotNull
@@ -96,9 +100,9 @@ public abstract class AbstractDatasetTableCellEditor extends AbstractCellEditor 
     }
 
     @Override
-    public boolean isCellEditable(EventObject event) {
-        if (event instanceof MouseEvent) {
-            MouseEvent mouseEvent = (MouseEvent) event;
+    public boolean isCellEditable(EventObject e) {
+        if (e instanceof MouseEvent) {
+            MouseEvent mouseEvent = (MouseEvent) e;
             return mouseEvent.getClickCount() >= clickCountToStart;
         }
         return true;
