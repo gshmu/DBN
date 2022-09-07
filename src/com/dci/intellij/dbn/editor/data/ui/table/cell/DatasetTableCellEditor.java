@@ -3,6 +3,7 @@
  import com.dci.intellij.dbn.common.color.Colors;
  import com.dci.intellij.dbn.common.thread.Background;
  import com.dci.intellij.dbn.common.thread.Dispatch;
+ import com.dci.intellij.dbn.common.thread.Progress;
  import com.dci.intellij.dbn.common.ui.util.Borders;
  import com.dci.intellij.dbn.common.ui.util.Mouse;
  import com.dci.intellij.dbn.data.editor.ui.BasicDataEditorComponent;
@@ -200,14 +201,18 @@
                 if (Mouse.isNavigationEvent(e)) {
                     DatasetEditorModelCell cell = getCell();
                     if (cell != null && cell.isNavigable()) {
-                        DatasetEditorTable table = getTable();
-                        DatasetFilterInput filterInput = table.getModel().resolveForeignKeyRecord(cell);
-                        if (filterInput != null) {
-                            DatasetEditorManager datasetEditorManager = DatasetEditorManager.getInstance(table.getProject());
-                            datasetEditorManager.navigateToRecord(filterInput, e);
-                            e.consume();
-                        }
+                        Progress.prompt(getProject(), "Opening record details", true, progress -> {
+                            DatasetEditorTable table = getTable();
+                            DatasetFilterInput filterInput = table.getModel().resolveForeignKeyRecord(cell);
+                            if (filterInput != null) {
+                                Dispatch.run(() -> {
+                                    DatasetEditorManager datasetEditorManager = DatasetEditorManager.getInstance(table.getProject());
+                                    datasetEditorManager.navigateToRecord(filterInput, e);
+                                });
+                            }
+                        });
                     }
+                    e.consume();
                 }
             }).
             onRelease(e -> {

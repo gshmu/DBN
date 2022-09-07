@@ -32,9 +32,9 @@ public class Mouse {
         }
     }
 
-    public static boolean isNavigationEvent(MouseEvent event) {
-        int button = event.getButton();
-        return button == MouseEvent.BUTTON2 || (event.isControlDown() && button == MouseEvent.BUTTON1);
+    public static boolean isNavigationEvent(MouseEvent e) {
+        int button = e.getButton();
+        return button == MouseEvent.BUTTON2 || (e.isControlDown() && button == MouseEvent.BUTTON1);
     }
 
     public static void removeMouseListeners(JComponent root) {

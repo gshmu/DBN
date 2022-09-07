@@ -22,10 +22,10 @@ public class SortableTableHeaderMouseListener extends MouseAdapter {
     }
 
     @Override
-    public void mouseClicked(MouseEvent event) {
+    public void mouseClicked(MouseEvent e) {
         SortableTable table = getTable();
-        if (event.getButton() == MouseEvent.BUTTON1) {
-            Point mousePoint = event.getPoint();
+        if (e.getButton() == MouseEvent.BUTTON1) {
+            Point mousePoint = e.getPoint();
             mousePoint.setLocation(mousePoint.getX() - 4, mousePoint.getX());
             JTableHeader tableHeader = table.getTableHeader();
             int columnIndex = tableHeader.columnAtPoint(mousePoint);
@@ -33,11 +33,11 @@ public class SortableTableHeaderMouseListener extends MouseAdapter {
                 Rectangle colRect = tableHeader.getHeaderRect(columnIndex);
                 boolean isEdgeClick = colRect.getMaxX() - 8 < mousePoint.getX();
                 if (isEdgeClick) {
-                    if (event.getClickCount() == 2) {
+                    if (e.getClickCount() == 2) {
                         table.accommodateColumnSize(columnIndex, table.getColumnWidthBuffer());
                     }
                 } else {
-                    boolean keepExisting = event.isControlDown();
+                    boolean keepExisting = e.isControlDown();
                     table.sort(columnIndex, SortDirection.INDEFINITE, keepExisting);
                 }
             }
