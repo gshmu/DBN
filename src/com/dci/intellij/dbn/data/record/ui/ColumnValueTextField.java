@@ -1,8 +1,8 @@
 package com.dci.intellij.dbn.data.record.ui;
 
+import com.dci.intellij.dbn.common.thread.Dispatch;
+import com.dci.intellij.dbn.common.thread.Progress;
 import com.dci.intellij.dbn.common.ui.util.Mouse;
-import com.dci.intellij.dbn.common.util.TextAttributes;
-import com.dci.intellij.dbn.data.grid.color.DataGridTextAttributesKeys;
 import com.dci.intellij.dbn.data.record.DatasetRecord;
 import com.dci.intellij.dbn.editor.data.DatasetEditorManager;
 import com.dci.intellij.dbn.editor.data.filter.DatasetFilterInput;
@@ -10,14 +10,21 @@ import com.dci.intellij.dbn.object.DBColumn;
 import com.dci.intellij.dbn.object.DBConstraint;
 import com.dci.intellij.dbn.object.DBDataset;
 import com.dci.intellij.dbn.object.lookup.DBObjectRef;
+import com.intellij.openapi.project.Project;
 import com.intellij.ui.SimpleTextAttributes;
 import lombok.Getter;
 import org.jetbrains.annotations.Nullable;
 
-import javax.swing.*;
-import java.awt.*;
+import javax.swing.JTextField;
+import java.awt.Color;
+import java.awt.Cursor;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
+
+import static com.dci.intellij.dbn.common.util.Commons.nvl;
+import static com.dci.intellij.dbn.common.util.TextAttributes.getSimpleTextAttributes;
+import static com.dci.intellij.dbn.data.grid.color.DataGridTextAttributesKeys.FOREIGN_KEY;
+import static com.dci.intellij.dbn.data.grid.color.DataGridTextAttributesKeys.PRIMARY_KEY;
 
 @Getter
 class ColumnValueTextField extends JTextField {
@@ -27,16 +34,11 @@ class ColumnValueTextField extends JTextField {
     ColumnValueTextField(DatasetRecord record, DBColumn column) {
         this.record = record;
         this.column = DBObjectRef.of(column);
-        if (column.isPrimaryKey()) {
-            SimpleTextAttributes textAttributes = TextAttributes.getSimpleTextAttributes(DataGridTextAttributesKeys.PRIMARY_KEY);
-            setForeground(textAttributes.getFgColor());
-            Color background = textAttributes.getBgColor();
-            if (background != null) {
-                setBackground(background);
-            }
-        } else if (column.isForeignKey()) {
-            addMouseListener(mouseListener);
-            SimpleTextAttributes textAttributes = TextAttributes.getSimpleTextAttributes(DataGridTextAttributesKeys.FOREIGN_KEY);
+        SimpleTextAttributes textAttributes =
+                column.isPrimaryKey() ? getSimpleTextAttributes(PRIMARY_KEY) :
+                column.isForeignKey() ? getSimpleTextAttributes(FOREIGN_KEY) : null;
+
+        if (textAttributes != null) {
             setForeground(textAttributes.getFgColor());
             Color background = textAttributes.getBgColor();
             if (background != null) {
@@ -44,6 +46,9 @@ class ColumnValueTextField extends JTextField {
             }
         }
 
+        if (column.isForeignKey()) {
+            addMouseListener(mouseListener);
+        }
     }
 
     @Override
@@ -71,21 +76,20 @@ class ColumnValueTextField extends JTextField {
         DBColumn column = getColumn();
         if (column != null) {
             for (DBConstraint constraint : column.getConstraints()) {
-                if (constraint.isForeignKey()) {
-                    DBConstraint foreignKeyConstraint = constraint.getForeignKeyConstraint();
-                    if (foreignKeyConstraint != null) {
-                        DBDataset foreignKeyDataset = foreignKeyConstraint.getDataset();
+                constraint = constraint.getUndisposedEntity();
+                if (constraint != null && constraint.isForeignKey()) {
+                    DBConstraint fkConstraint = constraint.getForeignKeyConstraint();
+                    if (fkConstraint != null) {
+                        DBDataset fkDataset = fkConstraint.getDataset();
                         DatasetFilterInput filterInput = null;
 
                         for (DBColumn constraintColumn : constraint.getColumns()) {
-                            DBColumn constraintCol = constraintColumn.getUndisposedEntity();
-                            if (constraintCol != null) {
-                                DBColumn foreignKeyColumn = constraintCol.getForeignKeyColumn();
+                            constraintColumn = constraintColumn.getUndisposedEntity();
+                            if (constraintColumn != null) {
+                                DBColumn foreignKeyColumn = constraintColumn.getForeignKeyColumn();
                                 if (foreignKeyColumn != null) {
-                                    Object value = record.getColumnValue(column);
-                                    if (filterInput == null) {
-                                        filterInput = new DatasetFilterInput(foreignKeyDataset);
-                                    }
+                                    Object value = record.getColumnValue(constraintColumn);
+                                    filterInput = nvl(filterInput, () -> new DatasetFilterInput(fkDataset));
                                     filterInput.setColumnValue(foreignKeyColumn, value);
                                 }
                             }
@@ -107,9 +111,16 @@ class ColumnValueTextField extends JTextField {
         DBColumn column = getColumn();
         if (column != null && Mouse.isNavigationEvent(e)) {
             if (column.isForeignKey() && getRecord().getColumnValue(column) != null) {
-                DatasetFilterInput filterInput = resolveForeignKeyRecord();
-                DatasetEditorManager datasetEditorManager = DatasetEditorManager.getInstance(column.getProject());
-                datasetEditorManager.navigateToRecord(filterInput, e);
+                Project project = column.getProject();
+                Progress.prompt(project, "Opening record details", true, progress -> {
+                    DatasetFilterInput filterInput = resolveForeignKeyRecord();
+                    if (filterInput != null && filterInput.getColumns().size() > 0) {
+                        Dispatch.run(() -> {
+                            DatasetEditorManager datasetEditorManager = DatasetEditorManager.getInstance(project);
+                            datasetEditorManager.navigateToRecord(filterInput, e);
+                        });
+                    }
+                });
                 e.consume();
             }
         }

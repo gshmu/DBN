@@ -132,7 +132,7 @@ public abstract class DBNTable<T extends DBNTableModel> extends JTable implement
     }
 
     @Override
-    public String getToolTipText(@NotNull MouseEvent event) {
+    public String getToolTipText(@NotNull MouseEvent e) {
         return null;
     }
 

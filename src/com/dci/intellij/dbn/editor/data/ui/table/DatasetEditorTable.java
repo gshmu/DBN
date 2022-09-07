@@ -337,8 +337,8 @@ public class DatasetEditorTable extends ResultSetTable<DatasetEditorModel> {
     }
 
     @Override
-    public String getToolTipText(@NotNull MouseEvent event) {
-        DataModelCell cell = getCellAtLocation(event.getPoint());
+    public String getToolTipText(@NotNull MouseEvent e) {
+        DataModelCell cell = getCellAtLocation(e.getPoint());
         if (cell instanceof DatasetEditorModelCell) {
             DatasetEditorModelCell editorTableCell = (DatasetEditorModelCell) cell;
 /*            if (event.isControlDown() && isNavigableCellAtMousePosition()) {
@@ -373,7 +373,7 @@ public class DatasetEditorTable extends ResultSetTable<DatasetEditorModel> {
                 return text.toString();
             }
 
-            if (editorTableCell.is(MODIFIED) && !event.isControlDown()) {
+            if (editorTableCell.is(MODIFIED) && !e.isControlDown()) {
                 if (editorTableCell.getUserValue() instanceof ArrayValue) {
                     return "Array value has changed";
                 } else  if (editorTableCell.getUserValue() instanceof LargeObjectValue) {
@@ -384,7 +384,7 @@ public class DatasetEditorTable extends ResultSetTable<DatasetEditorModel> {
 
             }
         }
-        return super.getToolTipText(event);
+        return super.getToolTipText(e);
     }
 
     public void fireEditingCancel() {
@@ -540,7 +540,7 @@ public class DatasetEditorTable extends ResultSetTable<DatasetEditorModel> {
      *                        Popup                         *
      ********************************************************/
     public void showPopupMenu(
-            MouseEvent event,
+            MouseEvent e,
             DatasetEditorModelCell cell,
             ColumnInfo columnInfo) {
 
@@ -551,10 +551,10 @@ public class DatasetEditorTable extends ResultSetTable<DatasetEditorModel> {
             ActionPopupMenu actionPopupMenu = Actions.createActionPopupMenu(DatasetEditorTable.this, "", actionGroup);
             JPopupMenu popupMenu = actionPopupMenu.getComponent();
             Dispatch.run(() -> {
-                Component component = (Component) event.getSource();
+                Component component = (Component) e.getSource();
                 if (component.isShowing()) {
-                    int x = event.getX();
-                    int y = event.getY();
+                    int x = e.getX();
+                    int y = e.getY();
                     if (x >= 0 && x < component.getWidth() && y >= 0 && y < component.getHeight()) {
                         popupMenu.show(component, x, y);
                     }

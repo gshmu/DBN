@@ -1,28 +1,36 @@
 package com.dci.intellij.dbn.editor.session.ui.table;
 
 import com.dci.intellij.dbn.editor.session.model.SessionBrowserColumnInfo;
+import com.dci.intellij.dbn.language.common.WeakRef;
+import org.jetbrains.annotations.NotNull;
 
-import java.awt.*;
+import java.awt.Point;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 
 public class SessionBrowserTableHeaderMouseListener extends MouseAdapter {
-    private SessionBrowserTable table;
+    private final WeakRef<SessionBrowserTable> table;
 
     public SessionBrowserTableHeaderMouseListener(SessionBrowserTable table) {
-        this.table = table;
+        this.table = WeakRef.of(table);
+    }
+
+    @NotNull
+    public SessionBrowserTable getTable() {
+        return table.ensure();
     }
 
     @Override
-    public void mouseReleased(final MouseEvent event) {
-        if (event.getButton() == MouseEvent.BUTTON3) {
-            Point mousePoint = event.getPoint();
+    public void mouseReleased(MouseEvent e) {
+        if (e.getButton() == MouseEvent.BUTTON3) {
+            SessionBrowserTable table = getTable();
+            Point mousePoint = e.getPoint();
             int tableColumnIndex = table.getTableHeader().columnAtPoint(mousePoint);
             if (tableColumnIndex > -1) {
                 int modelColumnIndex = table.convertColumnIndexToModel(tableColumnIndex);
                 if (modelColumnIndex > -1) {
                     SessionBrowserColumnInfo columnInfo = (SessionBrowserColumnInfo) table.getModel().getColumnInfo(modelColumnIndex);
-                    table.showPopupMenu(event, null, columnInfo);
+                    table.showPopupMenu(e, null, columnInfo);
                 }
             }
         }

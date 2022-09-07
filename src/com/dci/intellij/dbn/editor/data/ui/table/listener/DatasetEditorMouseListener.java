@@ -1,5 +1,7 @@
 package com.dci.intellij.dbn.editor.data.ui.table.listener;
 
+import com.dci.intellij.dbn.common.thread.Dispatch;
+import com.dci.intellij.dbn.common.thread.Progress;
 import com.dci.intellij.dbn.common.ui.util.Mouse;
 import com.dci.intellij.dbn.editor.data.DatasetEditorManager;
 import com.dci.intellij.dbn.editor.data.filter.DatasetFilterInput;
@@ -9,7 +11,7 @@ import com.dci.intellij.dbn.language.common.WeakRef;
 import com.dci.intellij.dbn.object.DBColumn;
 import org.jetbrains.annotations.NotNull;
 
-import java.awt.*;
+import java.awt.Point;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 
@@ -31,9 +33,9 @@ public class DatasetEditorMouseListener extends MouseAdapter {
     }
 
     @Override
-    public void mouseReleased(final MouseEvent event) {
-        if (event.getButton() == MouseEvent.BUTTON3) {
-            Point mousePoint = event.getPoint();
+    public void mouseReleased(MouseEvent e) {
+        if (e.getButton() == MouseEvent.BUTTON3) {
+            Point mousePoint = e.getPoint();
             DatasetEditorTable table = getTable();
             DatasetEditorModelCell cell = (DatasetEditorModelCell) table.getCellAtLocation(mousePoint);
             if (cell != null) {
@@ -46,29 +48,33 @@ public class DatasetEditorMouseListener extends MouseAdapter {
                     table.setEditingEnabled(oldEditingStatus);
                 }
 
-                table.showPopupMenu(event, cell, cell.getColumnInfo());
+                table.showPopupMenu(e, cell, cell.getColumnInfo());
             }
         }
     }
 
     @Override
-    public void mouseClicked(MouseEvent event) {
-        if (Mouse.isNavigationEvent(event)) {
+    public void mouseClicked(MouseEvent e) {
+        if (Mouse.isNavigationEvent(e)) {
             DatasetEditorTable table = getTable();
-            DatasetEditorModelCell cell = (DatasetEditorModelCell) table.getCellAtLocation(event.getPoint());
+            DatasetEditorModelCell cell = (DatasetEditorModelCell) table.getCellAtLocation(e.getPoint());
             if (cell != null){
                 DBColumn column = cell.getColumnInfo().getColumn();
 
                 if (column.isForeignKey() && cell.getUserValue() != null) {
                     table.clearSelection();
-                    DatasetFilterInput filterInput = table.getModel().resolveForeignKeyRecord(cell);
-                    if (filterInput != null && filterInput.getColumns().size() > 0) {
-                        DatasetEditorManager datasetEditorManager = DatasetEditorManager.getInstance(column.getProject());
-                        datasetEditorManager.navigateToRecord(filterInput, event);
-                        event.consume();
-                    }
+                    Progress.prompt(table.getProject(), "Opening record details", true, progress -> {
+                        DatasetFilterInput filterInput = table.getModel().resolveForeignKeyRecord(cell);
+                        if (filterInput != null && filterInput.getColumns().size() > 0) {
+                            Dispatch.run(() -> {
+                                DatasetEditorManager datasetEditorManager = DatasetEditorManager.getInstance(column.getProject());
+                                datasetEditorManager.navigateToRecord(filterInput, e);
+                            });
+                        }
+                    });
                 }
             }
+            e.consume();
         }
     }
 }
