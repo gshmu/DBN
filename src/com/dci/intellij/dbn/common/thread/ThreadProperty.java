@@ -14,6 +14,8 @@ public enum ThreadProperty implements Property.IntBase {
     DISPOSER   (false)
 
 ;
+    public static final ThreadProperty[] VALUES = values();
+
     private final IntMasks masks = new IntMasks(this);
     private final boolean propagatable;
 

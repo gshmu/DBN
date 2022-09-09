@@ -5,9 +5,10 @@ import com.dci.intellij.dbn.common.property.PropertyHolderBase;
 import org.jetbrains.annotations.Nullable;
 
 public class ThreadInfo extends PropertyHolderBase.IntStore<ThreadProperty> {
+
     @Override
     protected ThreadProperty[] properties() {
-        return ThreadProperty.values();
+        return ThreadProperty.VALUES;
     }
 
     @Override

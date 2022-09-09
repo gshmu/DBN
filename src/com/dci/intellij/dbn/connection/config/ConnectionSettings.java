@@ -29,7 +29,7 @@ public class ConnectionSettings extends CompositeProjectConfiguration<Connection
     private final PropertyHolderBase<ConnectionSettingsStatus> status = new PropertyHolderBase.IntStore<ConnectionSettingsStatus>(ACTIVE, SIGNED) {
         @Override
         protected ConnectionSettingsStatus[] properties() {
-            return ConnectionSettingsStatus.values();
+            return ConnectionSettingsStatus.VALUES;
         }
     };
 

@@ -19,7 +19,7 @@ public class DatasetLoadInstructions extends PropertyHolderBase.IntStore<Dataset
 
     @Override
     protected DatasetLoadInstruction[] properties() {
-        return DatasetLoadInstruction.values();
+        return DatasetLoadInstruction.VALUES;
     }
 
     public boolean isUseCurrentFilter() {

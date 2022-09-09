@@ -48,7 +48,7 @@ public class DatabaseCompatibility extends PropertyHolderBase.IntStore<JdbcPrope
 
     @Override
     protected JdbcProperty[] properties() {
-        return JdbcProperty.values();
+        return JdbcProperty.VALUES;
     }
 
     public void read(DatabaseMetaData metaData) throws SQLException {

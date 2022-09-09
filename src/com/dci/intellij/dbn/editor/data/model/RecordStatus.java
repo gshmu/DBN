@@ -15,6 +15,8 @@ public enum RecordStatus implements Property.IntBase {
     DISPOSED,
     ;
 
+    public static final RecordStatus[] VALUES = values();
+
     private final IntMasks masks = new IntMasks(this);
 
     @Override

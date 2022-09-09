@@ -9,6 +9,8 @@ public enum DisposeInstruction implements Property.IntBase {
     CLEAR,
     NULLIFY;
 
+    public static final DisposeInstruction[] VALUES = values();
+
     private final IntMasks masks = new IntMasks(this);
 
     @Override
@@ -25,7 +27,7 @@ public enum DisposeInstruction implements Property.IntBase {
 
         @Override
         protected DisposeInstruction[] properties() {
-            return values();
+            return VALUES;
         }
     }
 

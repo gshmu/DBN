@@ -9,7 +9,7 @@ public class ElementTypeAttributeHolder extends PropertyHolderBase.LongStore<Ele
 
     @Override
     protected ElementTypeAttribute[] properties() {
-        return ElementTypeAttribute.values();
+        return ElementTypeAttribute.VALUES;
     }
 
     public ElementTypeAttributeHolder(String definition) throws ElementTypeDefinitionException {
