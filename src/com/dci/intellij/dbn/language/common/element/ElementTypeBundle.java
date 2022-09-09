@@ -3,6 +3,7 @@ package com.dci.intellij.dbn.language.common.element;
 import com.dci.intellij.dbn.common.index.IndexRegistry;
 import com.dci.intellij.dbn.common.thread.Background;
 import com.dci.intellij.dbn.common.util.Measured;
+import com.dci.intellij.dbn.common.util.Unsafe;
 import com.dci.intellij.dbn.language.common.DBLanguage;
 import com.dci.intellij.dbn.language.common.DBLanguageDialect;
 import com.dci.intellij.dbn.language.common.TokenTypeBundle;
@@ -91,21 +92,22 @@ public class ElementTypeBundle {
             }
 
             if (builder.rewriteIds) {
+                Unsafe.warned(() -> {
 /*
-                ByteArrayOutputStream stringWriter = new ByteArrayOutputStream();
-                JDOMUtil.write(document, stringWriter);
+                    ByteArrayOutputStream stringWriter = new ByteArrayOutputStream();
+                    JDOMUtil.write(document, stringWriter);
 
-                String data = stringWriter.toString();
+                    String data = stringWriter.toString();
 */
-                StringWriter stringWriter = new StringWriter();
-                new XMLOutputter().output(document, stringWriter);
+                    StringWriter stringWriter = new StringWriter();
+                    new XMLOutputter().output(document, stringWriter);
 
-                String data = stringWriter.getBuffer().toString();
-                System.out.println(data);
+                    String data = stringWriter.getBuffer().toString();
+                    System.out.println(data);
 
-                CopyPasteManager copyPasteManager = CopyPasteManager.getInstance();
-                copyPasteManager.setContents(new StringSelection(data));
-            } else {
+                    CopyPasteManager copyPasteManager = CopyPasteManager.getInstance();
+                    copyPasteManager.setContents(new StringSelection(data));
+                });
             }
 
             Set<ElementType> allElementTypes = builder.allElementTypes;
