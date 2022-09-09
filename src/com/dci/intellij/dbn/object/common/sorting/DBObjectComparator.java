@@ -19,16 +19,16 @@ import static com.dci.intellij.dbn.common.util.Unsafe.cast;
 public abstract class DBObjectComparator<T extends DBObject> implements Comparator<T> {
     private static final Map<Key, DBObjectComparator<?>> REGISTRY = new ConcurrentHashMap<>();
     static {
-        new DBColumnNameComparator();
-        new DBColumnPositionComparator();
-        new DBProcedureNameComparator();
-        new DBProcedurePositionComparator();
-        new DBFunctionNameComparator();
-        new DBFunctionPositionComparator();
-        new DBArgumentNameComparator();
-        new DBArgumentPositionComparator();
-        new DBTypeAttributeNameComparator();
-        new DBTypeAttributePositionComparator();
+        register(new DBColumnNameComparator());
+        register(new DBColumnPositionComparator());
+        register(new DBProcedureNameComparator());
+        register(new DBProcedurePositionComparator());
+        register(new DBFunctionNameComparator());
+        register(new DBFunctionPositionComparator());
+        register(new DBArgumentNameComparator());
+        register(new DBArgumentPositionComparator());
+        register(new DBTypeAttributeNameComparator());
+        register(new DBTypeAttributePositionComparator());
     }
 
     private static final Latent<DBObjectComparator> classic = Latent.basic(() -> new Classic());
@@ -44,14 +44,17 @@ public abstract class DBObjectComparator<T extends DBObject> implements Comparat
 
     private DBObjectComparator(DBObjectType objectType, SortingType sortingType, boolean virtual) {
         this(Key.of(objectType, sortingType, virtual));
-
-        if (!virtual) {
-            REGISTRY.putIfAbsent(Key.of(objectType, sortingType), this);
-        }
     }
 
     private DBObjectComparator(Key key) {
         this.key = key;
+    }
+
+    private static void register(DBObjectComparator comparator) {
+        Key key = Key.of(
+                comparator.getObjectType(),
+                comparator.getSortingType());
+        REGISTRY.put(key, comparator);
     }
 
     @Nullable
