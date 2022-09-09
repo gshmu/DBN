@@ -25,6 +25,8 @@ public enum DynamicContentProperty implements Property.IntBase {
     SEARCHABLE
     ;
 
+    public static final DynamicContentProperty[] VALUES = values();
+
     private final IntMasks masks = new IntMasks(this);
 
     @Override

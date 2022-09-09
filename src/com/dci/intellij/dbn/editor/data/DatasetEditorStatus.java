@@ -7,6 +7,8 @@ public enum DatasetEditorStatus implements Property.IntBase {
     LOADING,
     LOADED;
 
+    public static final DatasetEditorStatus[] VALUES = values();
+
     private final IntMasks masks = new IntMasks(this);
 
     @Override

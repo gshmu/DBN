@@ -17,6 +17,6 @@ public class ConnectionProperties extends PropertyHolderBase.IntStore<Connection
 
     @Override
     protected ConnectionProperty[] properties() {
-        return ConnectionProperty.values();
+        return ConnectionProperty.VALUES;
     }
 }

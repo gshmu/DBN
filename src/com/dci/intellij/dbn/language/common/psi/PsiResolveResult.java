@@ -39,7 +39,7 @@ public class PsiResolveResult extends PropertyHolderBase.IntStore<PsiResolveStat
 
     @Override
     protected PsiResolveStatus[] properties() {
-        return PsiResolveStatus.values();
+        return VALUES;
     }
 
     public void accept(IdentifierPsiElement element) {

@@ -24,7 +24,7 @@ public class ConnectionHandlerStatusHolder extends PropertyHolderBase.IntStore<C
 
     @Override
     protected ConnectionHandlerStatus[] properties() {
-        return ConnectionHandlerStatus.values();
+        return ConnectionHandlerStatus.VALUES;
     }
 
     private final LatentConnectionStatus active = new LatentConnectionStatus(ConnectionHandlerStatus.ACTIVE, true, TimeUtil.Millis.ONE_SECOND) {

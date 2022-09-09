@@ -74,7 +74,7 @@ public class BasicDataModel<
 
     @Override
     protected RecordStatus[] properties() {
-        return RecordStatus.values();
+        return RecordStatus.VALUES;
     }
 
     public boolean isEnvironmentReadonly() {

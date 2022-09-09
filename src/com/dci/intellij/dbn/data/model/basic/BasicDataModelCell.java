@@ -35,7 +35,7 @@ public class BasicDataModelCell<
 
     @Override
     protected RecordStatus[] properties() {
-        return RecordStatus.values();
+        return RecordStatus.VALUES;
     }
 
     @Override

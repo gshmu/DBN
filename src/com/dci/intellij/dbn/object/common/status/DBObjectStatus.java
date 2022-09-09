@@ -10,6 +10,8 @@ public enum DBObjectStatus implements Property.IntBase {
     DEBUG(true, true),
     COMPILING(false, false);
 
+    public static final DBObjectStatus[] VALUES = values();
+
     private final IntMasks masks = new IntMasks(this);
     private final boolean propagable;
     private final boolean defaultValue;

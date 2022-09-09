@@ -40,6 +40,8 @@ public enum ElementTypeAttribute implements Property.LongBase {
     SCHEMA_CHANGE("SCHEMA_CHANGE", "Schema change clause"),
     ;
 
+    public static final ElementTypeAttribute[] VALUES = values();
+
     private final LongMasks masks = new LongMasks(this);
     private final String name;
     private final String description;

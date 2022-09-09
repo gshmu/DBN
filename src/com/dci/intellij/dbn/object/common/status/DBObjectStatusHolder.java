@@ -109,7 +109,7 @@ public class DBObjectStatusHolder {
 
         @Override
         protected DBObjectStatus[] properties() {
-            return DBObjectStatus.values();
+            return DBObjectStatus.VALUES;
         }
 
         Entry(DBContentType contentType) {

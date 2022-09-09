@@ -6,6 +6,8 @@ public enum ValueSelectorOption implements Property.IntBase {
     HIDE_ICON,
     HIDE_DESCRIPTION;
 
+    public static final ValueSelectorOption[] VALUES = values();
+
     private final IntMasks masks = new IntMasks(this);
 
     @Override

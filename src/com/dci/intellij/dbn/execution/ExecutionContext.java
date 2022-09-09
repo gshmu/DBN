@@ -24,7 +24,7 @@ public abstract class ExecutionContext extends PropertyHolderBase.IntStore<Execu
 
     @Override
     protected ExecutionStatus[] properties() {
-        return ExecutionStatus.values();
+        return VALUES;
     }
 
     @NotNull

@@ -7,6 +7,8 @@ enum ConnectionSettingsStatus implements Property.IntBase {
     ACTIVE,
     SIGNED;
 
+    static final ConnectionSettingsStatus[] VALUES = values();
+
     private final IntMasks masks = new IntMasks(this);
 
     @Override

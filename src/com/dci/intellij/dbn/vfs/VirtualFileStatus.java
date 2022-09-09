@@ -14,6 +14,8 @@ public enum VirtualFileStatus implements Property.IntBase {
     SAVING,
     REFRESHING;
 
+    public static final VirtualFileStatus[] VALUES = values();
+
     private final IntMasks masks = new IntMasks(this);
     private final boolean implicit;
     private final PropertyGroup group;

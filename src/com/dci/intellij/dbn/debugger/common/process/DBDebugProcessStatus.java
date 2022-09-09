@@ -13,6 +13,8 @@ public enum DBDebugProcessStatus implements Property.IntBase {
     PROCESS_STOPPED_NORMALLY,
     DEBUGGER_STOPPING;
 
+    public static final DBDebugProcessStatus[] VALUES = values();
+
     private final IntMasks masks = new IntMasks(this);
 
     @Override

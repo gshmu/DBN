@@ -9,13 +9,15 @@ public class ConnectionSelectorOptions extends PropertyHolderBase.IntStore<Conne
 
     @Override
     protected Option[] properties() {
-        return Option.values();
+        return Option.VALUES;
     }
 
     public enum Option implements Property.IntBase {
         SHOW_VIRTUAL_CONNECTIONS,
         SHOW_CREATE_CONNECTION,
         PROMPT_SCHEMA_SELECTION;
+
+        public static final Option[] VALUES = values();
 
         private final IntMasks masks = new IntMasks(this);
 

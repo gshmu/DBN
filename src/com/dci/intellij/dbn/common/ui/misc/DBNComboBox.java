@@ -26,13 +26,22 @@ import com.intellij.ui.ColoredListCellRenderer;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import javax.swing.*;
-import java.awt.*;
+import javax.swing.ComboBoxEditor;
+import javax.swing.ComboBoxModel;
+import javax.swing.JComboBox;
+import javax.swing.JList;
+import java.awt.Color;
+import java.awt.Component;
 import java.awt.event.MouseListener;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.HashSet;
 import java.util.List;
-import java.util.*;
+import java.util.Set;
 
 public class DBNComboBox<T extends Presentable> extends JComboBox<T> implements PropertyHolder<ValueSelectorOption> {
+
     private final Set<ValueSelectorListener<T>> listeners = new HashSet<>();
     private ListPopup popup;
     private PresentableFactory<T> valueFactory;
@@ -41,7 +50,7 @@ public class DBNComboBox<T extends Presentable> extends JComboBox<T> implements 
     private final PropertyHolder<ValueSelectorOption> options = new PropertyHolderBase.IntStore<ValueSelectorOption>() {
         @Override
         protected ValueSelectorOption[] properties() {
-            return ValueSelectorOption.values();
+            return ValueSelectorOption.VALUES;
         }
     };
 

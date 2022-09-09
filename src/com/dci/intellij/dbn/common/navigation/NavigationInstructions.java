@@ -49,6 +49,6 @@ public class NavigationInstructions extends PropertyHolderBase.IntStore<Navigati
 
     @Override
     protected NavigationInstruction[] properties() {
-        return NavigationInstruction.values();
+        return NavigationInstruction.VALUES;
     }
 }
