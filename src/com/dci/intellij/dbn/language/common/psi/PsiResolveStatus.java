@@ -9,6 +9,7 @@ public enum PsiResolveStatus implements Property.IntBase {
     CONNECTION_VALID,
     CONNECTION_ACTIVE;
 
+    public static final PsiResolveStatus[] VALUES = values();
     private final IntMasks masks = new IntMasks(this);
 
     @Override

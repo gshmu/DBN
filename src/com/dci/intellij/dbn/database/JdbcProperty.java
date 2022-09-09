@@ -26,6 +26,8 @@ public enum JdbcProperty implements Property.IntBase {
     CATALOG_AS_OWNER("Catalog as owner", false),
     ;
 
+    public static final JdbcProperty[] VALUES = values();
+
     private final String description;
     private final boolean feature;
     private final IntMasks masks = new IntMasks(this);

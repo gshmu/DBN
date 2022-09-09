@@ -32,7 +32,7 @@ public class BasicDataModelRow<
 
     @Override
     protected RecordStatus[] properties() {
-        return RecordStatus.values();
+        return RecordStatus.VALUES;
     }
 
     protected void addCell(C cell) {

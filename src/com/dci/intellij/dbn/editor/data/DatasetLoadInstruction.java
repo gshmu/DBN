@@ -8,6 +8,8 @@ public enum DatasetLoadInstruction implements Property.IntBase {
     DELIBERATE_ACTION,
     REBUILD;
 
+    public static final DatasetLoadInstruction[] VALUES = values();
+
     private final IntMasks masks = new IntMasks(this);
 
     @Override

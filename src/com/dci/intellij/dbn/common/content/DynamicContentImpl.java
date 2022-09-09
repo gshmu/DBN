@@ -66,7 +66,7 @@ public abstract class DynamicContentImpl<T extends DynamicContentElement>
 
     @Override
     protected DynamicContentProperty[] properties() {
-        return DynamicContentProperty.values();
+        return DynamicContentProperty.VALUES;
     }
 
     @Override

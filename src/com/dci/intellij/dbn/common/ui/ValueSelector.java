@@ -3,6 +3,7 @@ package com.dci.intellij.dbn.common.ui;
 import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.common.color.Colors;
 import com.dci.intellij.dbn.common.property.PropertyHolder;
+import com.dci.intellij.dbn.common.property.PropertyHolderBase;
 import com.dci.intellij.dbn.common.ui.util.Mouse;
 import com.dci.intellij.dbn.common.ui.util.Popups;
 import com.dci.intellij.dbn.common.ui.util.UserInterface;
@@ -43,7 +44,12 @@ import java.util.Set;
 
 public abstract class ValueSelector<T extends Presentable> extends JPanel{
     private final Set<ValueSelectorListener<T>> listeners = new HashSet<>();
-    private final PropertyHolder<ValueSelectorOption> options = PropertyHolder.integerBase(ValueSelectorOption.class);
+    private final PropertyHolder<ValueSelectorOption> options = new PropertyHolderBase.IntStore<ValueSelectorOption>() {
+        @Override
+        protected ValueSelectorOption[] properties() {
+            return ValueSelectorOption.VALUES;
+        }
+    };
 
     private final JLabel label;
     private final JPanel innerPanel;

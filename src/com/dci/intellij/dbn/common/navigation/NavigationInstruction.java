@@ -9,6 +9,8 @@ public enum NavigationInstruction implements Property.IntBase {
     SELECT,
     RESET;
 
+    public static final NavigationInstruction[] VALUES = values();
+
     private final IntMasks masks = new IntMasks(this);
 
     @Override

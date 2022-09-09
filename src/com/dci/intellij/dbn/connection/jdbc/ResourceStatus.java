@@ -38,6 +38,8 @@ public enum ResourceStatus implements Property.IntBase {
 
     RESOLVING_TRANSACTION(true);
 
+    public static final ResourceStatus[] VALUES = values();
+
     private final boolean transitory;
     private final IntMasks masks = new IntMasks(this);
 

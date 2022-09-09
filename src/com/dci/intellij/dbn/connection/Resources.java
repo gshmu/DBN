@@ -274,18 +274,20 @@ public final class Resources {
     }
 
     private static <E extends Throwable> void invokeResourceAction(
-            @NotNull DBNResource<?> targetResource,
+            @NotNull DBNResource<?> resource,
             @NotNull ResourceStatus transientStatus,
             @NotNull ThrowableRunnable<E> action,
             @NotNull Supplier<String> startMessage,
             @NotNull Supplier<String> successMessage,
             @NotNull Supplier<String> errorMessage) throws E{
 
-        try {
-            targetResource.set(transientStatus, true);
-            invokeResourceAction(action, startMessage, successMessage, errorMessage);
-        } finally {
-            targetResource.set(transientStatus, false);
+        if (!resource.is(transientStatus)) {
+            try {
+                resource.set(transientStatus, true);
+                invokeResourceAction(action, startMessage, successMessage, errorMessage);
+            } finally {
+                resource.set(transientStatus, false);
+            }
         }
     }
 
