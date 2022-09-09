@@ -98,7 +98,11 @@ public abstract class DBObjectComparator<T extends DBObject> implements Comparat
 
         @Override
         public int compare(DBObject o1, DBObject o2) {
-            return compareName(o1, o2);
+            int result = compareType(o1, o2);
+            if (result == 0) {
+                return compareName(o1, o2);
+            }
+            return result;
         }
     }
 
