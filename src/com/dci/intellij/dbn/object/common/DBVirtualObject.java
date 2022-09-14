@@ -234,7 +234,7 @@ public class DBVirtualObject extends DBObjectImpl implements PsiReference {
         super.collectChildObjects(objectType, consumer);
         BasePsiElement relevantPsiElement = getRelevantPsiElement();
         DBObject underlyingObject = relevantPsiElement.getUnderlyingObject();
-        if (underlyingObject != null) {
+        if (underlyingObject != null && underlyingObject != this) {
             underlyingObject.collectChildObjects(objectType, consumer);
         }
 
