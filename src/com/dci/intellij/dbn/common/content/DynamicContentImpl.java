@@ -150,7 +150,7 @@ public abstract class DynamicContentImpl<T extends DynamicContentElement>
             return dependencyAdapter.canConnect(getConnection());
         }
 
-        if (isDirty()) {
+        if (isDirty() && !ThreadMonitor.isDispatchThread()) {
             return dependencyAdapter.canLoad(getConnection());
         }
 

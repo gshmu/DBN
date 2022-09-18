@@ -8,7 +8,6 @@ import com.dci.intellij.dbn.common.event.ProjectEvents;
 import com.dci.intellij.dbn.common.util.Editors;
 import com.dci.intellij.dbn.editor.DBContentType;
 import com.dci.intellij.dbn.object.common.DBSchemaObject;
-import com.dci.intellij.dbn.object.common.status.DBObjectStatus;
 import com.dci.intellij.dbn.object.common.status.DBObjectStatusHolder;
 import com.dci.intellij.dbn.vfs.file.DBContentVirtualFile;
 import com.intellij.openapi.Disposable;
@@ -23,6 +22,8 @@ import org.jdom.Element;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+
+import static com.dci.intellij.dbn.object.common.status.DBObjectStatus.EDITABLE;
 
 @State(
     name = EnvironmentManager.COMPONENT_NAME,
@@ -49,14 +50,14 @@ public class EnvironmentManager extends AbstractProjectComponent implements Pers
         EnvironmentType environmentType = schemaObject.getEnvironmentType();
         DBObjectStatusHolder objectStatus = schemaObject.getStatus();
         if (contentType == DBContentType.DATA) {
-            return environmentType.isReadonlyData() && objectStatus.isNot(contentType, DBObjectStatus.EDITABLE);
+            return environmentType.isReadonlyData() && objectStatus.isNot(contentType, EDITABLE);
         } else {
-            return environmentType.isReadonlyCode() && objectStatus.isNot(contentType, DBObjectStatus.EDITABLE);
+            return environmentType.isReadonlyCode() && objectStatus.isNot(contentType, EDITABLE);
         }
     }
 
     public void enableEditing(@NotNull DBSchemaObject schemaObject, @NotNull DBContentType contentType) {
-        schemaObject.getStatus().set(contentType, DBObjectStatus.EDITABLE, true);
+        schemaObject.getStatus().set(contentType, EDITABLE, true);
         DBContentVirtualFile contentFile = schemaObject.getEditableVirtualFile().getContentFile(contentType);
         if (contentFile != null) {
             Editors.setEditorsReadonly(contentFile, false);
@@ -69,7 +70,7 @@ public class EnvironmentManager extends AbstractProjectComponent implements Pers
     }
 
     public void disableEditing(@NotNull DBSchemaObject schemaObject, @NotNull DBContentType contentType) {
-        schemaObject.getStatus().set(contentType, DBObjectStatus.EDITABLE, false);
+        schemaObject.getStatus().set(contentType, EDITABLE, false);
         boolean readonly = isReadonly(schemaObject, contentType);
         DBContentVirtualFile contentFile = schemaObject.getEditableVirtualFile().getContentFile(contentType);
         if (contentFile != null) {
