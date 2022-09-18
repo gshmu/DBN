@@ -56,7 +56,7 @@ public enum DatabaseUrlPattern {
 
     SQLITE(
             "jdbc:sqlite:<FILE>",
-            "^(jdbc:sqlite:)(?<FILE>([a-zA-Z]:)?((\\\\|\\/)[a-zA-Z0-9\\s\\/_\\.-]{1,2000}){1,2000})$",
+            "^(jdbc:sqlite:)(?<FILE>([a-zA-Z]:)?((\\\\|\\/)[a-zA-Z0-9\\s\\/_\\.-']{1,2000}){1,2000})$",
             DatabaseInfo.Default.SQLITE,
             DatabaseUrlType.FILE),
 

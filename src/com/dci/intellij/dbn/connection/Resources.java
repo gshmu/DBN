@@ -37,7 +37,7 @@ public final class Resources {
         }
     }
     public static void cancel(DBNStatement statement) {
-        if (statement != null) {
+        if (statement != null && !statement.isClosed()) {
             try {
                 invokeResourceAction(
                         statement,
@@ -70,7 +70,7 @@ public final class Resources {
     }
 
     private static <T extends DBNResource> void close(T resource) {
-        if (resource != null) {
+        if (resource != null && !resource.isClosed()) {
             try {
                 invokeResourceAction(
                         resource,
@@ -95,7 +95,7 @@ public final class Resources {
 
     public static void commit(DBNConnection connection) throws SQLException {
         try {
-            if (connection != null) {
+            if (connection != null && !connection.isClosed() && !connection.getAutoCommit()) {
                 invokeResourceAction(
                         connection,
                         ResourceStatus.COMMITTING,
