@@ -1511,7 +1511,7 @@
                 <one-of id="00812" optional="true">
                     <token id="00813" optional="true" type-id="CHR_STAR" />
                     <wrapper id="00814" template="PARENTHESES">
-                        <element ref-id="expression_list" />
+                        <element ref-id="expression_list" optional="true" />
                     </wrapper>
                 </one-of>
             </sequence>
@@ -1916,327 +1916,328 @@
             <token id="01025" type-id="FN_CHAR_LENGTH" />
             <token id="01026" type-id="FN_CHR" />
             <token id="01027" type-id="FN_CLOCK_TIMESTAMP" />
-            <token id="01028" type-id="FN_COL_DESCRIPTION" />
-            <token id="01029" type-id="FN_CONCAT" />
-            <token id="01030" type-id="FN_CONCAT_WS" />
-            <token id="01031" type-id="FN_CONVERT" />
-            <token id="01032" type-id="FN_CONVERT_FROM" />
-            <token id="01033" type-id="FN_CONVERT_TO" />
-            <token id="01034" type-id="FN_COS" />
-            <token id="01035" type-id="FN_COT" />
-            <token id="01036" type-id="FN_COUNT" />
-            <token id="01037" type-id="FN_CUME_DIST" />
-            <token id="01038" type-id="FN_CURRENT_CATALOG" />
-            <token id="01039" type-id="FN_CURRENT_DATABASE" />
-            <token id="01040" type-id="FN_CURRENT_DATE" />
-            <token id="01041" type-id="FN_CURRENT_QUERY" />
-            <token id="01042" type-id="FN_CURRENT_SCHEMA" />
-            <token id="01043" type-id="FN_CURRENT_SCHEMAS" />
-            <token id="01044" type-id="FN_CURRENT_SETTING" />
-            <token id="01045" type-id="FN_CURRENT_TIME" />
-            <token id="01046" type-id="FN_CURRENT_TIMESTAMP" />
-            <token id="01047" type-id="FN_CURRENT_USER" />
-            <token id="01048" type-id="FN_CURRVAL" />
-            <token id="01049" type-id="FN_CURSOR_TO_XML" />
-            <token id="01050" type-id="FN_DATE_PART" />
-            <token id="01051" type-id="FN_DATE_TRUNC" />
-            <token id="01052" type-id="FN_DECODE" />
-            <token id="01053" type-id="FN_DEGREES" />
-            <token id="01054" type-id="FN_DENSE_RANK" />
-            <token id="01055" type-id="FN_DIAMETER" />
-            <token id="01056" type-id="FN_DIV" />
-            <token id="01057" type-id="FN_ENCODE" />
-            <token id="01058" type-id="FN_ENUM_FIRST" />
-            <token id="01059" type-id="FN_ENUM_LAST" />
-            <token id="01060" type-id="FN_ENUM_RANGE" />
-            <token id="01061" type-id="FN_EVERY" />
-            <token id="01062" type-id="FN_EXP" />
-            <token id="01063" type-id="FN_EXTRACT" />
-            <token id="01064" type-id="FN_FAMILY" />
-            <token id="01065" type-id="FN_FIRST_VALUE" />
-            <token id="01066" type-id="FN_FLOOR" />
-            <token id="01067" type-id="FN_FORMAT" />
-            <token id="01068" type-id="FN_FORMAT_TYPE" />
-            <token id="01069" type-id="FN_GENERATE_SERIES" />
-            <token id="01070" type-id="FN_GENERATE_SUBSCRIPTS" />
-            <token id="01071" type-id="FN_GET_BIT" />
-            <token id="01072" type-id="FN_GET_BYTE" />
-            <token id="01073" type-id="FN_GET_CURRENT_TS_CONFIG" />
-            <token id="01074" type-id="FN_HAS_ANY_COLUMN_PRIVILEGE" />
-            <token id="01075" type-id="FN_HAS_COLUMN_PRIVILEGE" />
-            <token id="01076" type-id="FN_HAS_DATABASE_PRIVILEGE" />
-            <token id="01077" type-id="FN_HAS_FOREIGN_DATA_WRAPPER_PRIVILEGE" />
-            <token id="01078" type-id="FN_HAS_FUNCTION_PRIVILEGE" />
-            <token id="01079" type-id="FN_HAS_LANGUAGE_PRIVILEGE" />
-            <token id="01080" type-id="FN_HAS_SCHEMA_PRIVILEGE" />
-            <token id="01081" type-id="FN_HAS_SEQUENCE_PRIVILEGE" />
-            <token id="01082" type-id="FN_HAS_SERVER_PRIVILEGE" />
-            <token id="01083" type-id="FN_HAS_TABLESPACE_PRIVILEGE" />
-            <token id="01084" type-id="FN_HAS_TABLE_PRIVILEGE" />
-            <token id="01085" type-id="FN_HEIGHT" />
-            <token id="01086" type-id="FN_HOST" />
-            <token id="01087" type-id="FN_HOSTMASK" />
-            <token id="01088" type-id="FN_INET_CLIENT_ADDR" />
-            <token id="01089" type-id="FN_INET_CLIENT_PORT" />
-            <token id="01090" type-id="FN_INET_SERVER_ADDR" />
-            <token id="01091" type-id="FN_INET_SERVER_PORT" />
-            <token id="01092" type-id="FN_INITCAP" />
-            <token id="01093" type-id="FN_ISCLOSED" />
-            <token id="01094" type-id="FN_ISEMPTY" />
-            <token id="01095" type-id="FN_ISFINITE" />
-            <token id="01096" type-id="FN_ISOPEN" />
-            <token id="01097" type-id="FN_JSON_AGG" />
-            <token id="01098" type-id="FN_JSON_ARRAY_ELEMENTS" />
-            <token id="01099" type-id="FN_JSON_ARRAY_LENGTH" />
-            <token id="01100" type-id="FN_JSON_EACH" />
-            <token id="01101" type-id="FN_JSON_EACH_TEXT" />
-            <token id="01102" type-id="FN_JSON_EXTRACT_PATH" />
-            <token id="01103" type-id="FN_JSON_EXTRACT_PATH_TEXT" />
-            <token id="01104" type-id="FN_JSON_OBJECT_KEYS" />
-            <token id="01105" type-id="FN_JSON_POPULATE_RECORD" />
-            <token id="01106" type-id="FN_JSON_POPULATE_RECORDSET" />
-            <token id="01107" type-id="FN_JUSTIFY_DAYS" />
-            <token id="01108" type-id="FN_JUSTIFY_HOURS" />
-            <token id="01109" type-id="FN_JUSTIFY_INTERVAL" />
-            <token id="01110" type-id="FN_LAG" />
-            <token id="01111" type-id="FN_LASTVAL" />
-            <token id="01112" type-id="FN_LAST_VALUE" />
-            <token id="01113" type-id="FN_LEAD" />
-            <token id="01114" type-id="FN_LEFT" />
-            <token id="01115" type-id="FN_LENGTH" />
-            <token id="01116" type-id="FN_LN" />
-            <token id="01117" type-id="FN_LOCALTIME" />
-            <token id="01118" type-id="FN_LOCALTIMESTAMP" />
-            <token id="01119" type-id="FN_LOG" />
-            <token id="01120" type-id="FN_LOWER" />
-            <token id="01121" type-id="FN_LOWER_INC" />
-            <token id="01122" type-id="FN_LOWER_INF" />
-            <token id="01123" type-id="FN_LPAD" />
-            <token id="01124" type-id="FN_LTRIM" />
-            <token id="01125" type-id="FN_MASKLEN" />
-            <token id="01126" type-id="FN_MAX" />
-            <token id="01127" type-id="FN_MD5" />
-            <token id="01128" type-id="FN_MIN" />
-            <token id="01129" type-id="FN_MOD" />
-            <token id="01130" type-id="FN_NETMASK" />
-            <token id="01131" type-id="FN_NETWORK" />
-            <token id="01132" type-id="FN_NEXTVAL" />
-            <token id="01133" type-id="FN_NOW" />
-            <token id="01134" type-id="FN_NPOINTS" />
-            <token id="01135" type-id="FN_NTH_VALUE" />
-            <token id="01136" type-id="FN_NTILE" />
-            <token id="01137" type-id="FN_NUMNODE" />
-            <token id="01138" type-id="FN_OBJ_DESCRIPTION" />
-            <token id="01139" type-id="FN_OCTET_LENGTH" />
-            <token id="01140" type-id="FN_OVERLAY" />
-            <token id="01141" type-id="FN_PCLOSE" />
-            <token id="01142" type-id="FN_PERCENT_RANK" />
-            <token id="01143" type-id="FN_PG_ADVISORY_LOCK" />
-            <token id="01144" type-id="FN_PG_ADVISORY_LOCK_SHARED" />
-            <token id="01145" type-id="FN_PG_ADVISORY_UNLOCK" />
-            <token id="01146" type-id="FN_PG_ADVISORY_UNLOCK_ALL" />
-            <token id="01147" type-id="FN_PG_ADVISORY_UNLOCK_SHARED" />
-            <token id="01148" type-id="FN_PG_ADVISORY_XACT_LOCK" />
-            <token id="01149" type-id="FN_PG_ADVISORY_XACT_LOCK_SHARED" />
-            <token id="01150" type-id="FN_PG_BACKEND_PID" />
-            <token id="01151" type-id="FN_PG_BACKUP_START_TIME" />
-            <token id="01152" type-id="FN_PG_CANCEL_BACKEND" />
-            <token id="01153" type-id="FN_PG_CLIENT_ENCODING" />
-            <token id="01154" type-id="FN_PG_COLLATION_IS_VISIBLE" />
-            <token id="01155" type-id="FN_PG_COLUMN_SIZE" />
-            <token id="01156" type-id="FN_PG_CONF_LOAD_TIME" />
-            <token id="01157" type-id="FN_PG_CONVERSION_IS_VISIBLE" />
-            <token id="01158" type-id="FN_PG_CREATE_RESTORE_POINT" />
-            <token id="01159" type-id="FN_PG_CURRENT_XLOG_INSERT_LOCATION" />
-            <token id="01160" type-id="FN_PG_CURRENT_XLOG_LOCATION" />
-            <token id="01161" type-id="FN_PG_DATABASE_SIZE" />
-            <token id="01162" type-id="FN_PG_DESCRIBE_OBJECT" />
-            <token id="01163" type-id="FN_PG_EXPORT_SNAPSHOT" />
-            <token id="01164" type-id="FN_PG_FUNCTION_IS_VISIBLE" />
-            <token id="01165" type-id="FN_PG_GET_CONSTRAINTDEF" />
-            <token id="01166" type-id="FN_PG_GET_EXPR" />
-            <token id="01167" type-id="FN_PG_GET_FUNCTIONDEF" />
-            <token id="01168" type-id="FN_PG_GET_FUNCTION_ARGUMENTS" />
-            <token id="01169" type-id="FN_PG_GET_FUNCTION_IDENTITY_ARGUMENTS" />
-            <token id="01170" type-id="FN_PG_GET_FUNCTION_RESULT" />
-            <token id="01171" type-id="FN_PG_GET_INDEXDEF" />
-            <token id="01172" type-id="FN_PG_GET_KEYWORDS" />
-            <token id="01173" type-id="FN_PG_GET_RULEDEF" />
-            <token id="01174" type-id="FN_PG_GET_SERIAL_SEQUENCE" />
-            <token id="01175" type-id="FN_PG_GET_TRIGGERDEF" />
-            <token id="01176" type-id="FN_PG_GET_USERBYID" />
-            <token id="01177" type-id="FN_PG_GET_VIEWDEF" />
-            <token id="01178" type-id="FN_PG_HAS_ROLE" />
-            <token id="01179" type-id="FN_PG_IDENTIFY_OBJECT" />
-            <token id="01180" type-id="FN_PG_INDEXES_SIZE" />
-            <token id="01181" type-id="FN_PG_IS_IN_BACKUP" />
-            <token id="01182" type-id="FN_PG_IS_IN_RECOVERY" />
-            <token id="01183" type-id="FN_PG_IS_OTHER_TEMP_SCHEMA" />
-            <token id="01184" type-id="FN_PG_IS_XLOG_REPLAY_PAUSED" />
-            <token id="01185" type-id="FN_PG_LAST_XACT_REPLAY_TIMESTAMP" />
-            <token id="01186" type-id="FN_PG_LAST_XLOG_RECEIVE_LOCATION" />
-            <token id="01187" type-id="FN_PG_LAST_XLOG_REPLAY_LOCATION" />
-            <token id="01188" type-id="FN_PG_LISTENING_CHANNELS" />
-            <token id="01189" type-id="FN_PG_LS_DIR" />
-            <token id="01190" type-id="FN_PG_MY_TEMP_SCHEMA" />
-            <token id="01191" type-id="FN_PG_OPCLASS_IS_VISIBLE" />
-            <token id="01192" type-id="FN_PG_OPERATOR_IS_VISIBLE" />
-            <token id="01193" type-id="FN_PG_OPFAMILY_IS_VISIBLE" />
-            <token id="01194" type-id="FN_PG_OPTIONS_TO_TABLE" />
-            <token id="01195" type-id="FN_PG_POSTMASTER_START_TIME" />
-            <token id="01196" type-id="FN_PG_READ_BINARY_FILE" />
-            <token id="01197" type-id="FN_PG_READ_FILE" />
-            <token id="01198" type-id="FN_PG_RELATION_FILENODE" />
-            <token id="01199" type-id="FN_PG_RELATION_FILEPATH" />
-            <token id="01200" type-id="FN_PG_RELATION_SIZE" />
-            <token id="01201" type-id="FN_PG_RELOAD_CONF" />
-            <token id="01202" type-id="FN_PG_ROTATE_LOGFILE" />
-            <token id="01203" type-id="FN_PG_SIZE_PRETTY" />
-            <token id="01204" type-id="FN_PG_START_BACKUP" />
-            <token id="01205" type-id="FN_PG_STAT_FILE" />
-            <token id="01206" type-id="FN_PG_STOP_BACKUP" />
-            <token id="01207" type-id="FN_PG_SWITCH_XLOG" />
-            <token id="01208" type-id="FN_PG_TABLESPACE_DATABASES" />
-            <token id="01209" type-id="FN_PG_TABLESPACE_LOCATION" />
-            <token id="01210" type-id="FN_PG_TABLESPACE_SIZE" />
-            <token id="01211" type-id="FN_PG_TABLE_IS_VISIBLE" />
-            <token id="01212" type-id="FN_PG_TABLE_SIZE" />
-            <token id="01213" type-id="FN_PG_TERMINATE_BACKEND" />
-            <token id="01214" type-id="FN_PG_TOTAL_RELATION_SIZE" />
-            <token id="01215" type-id="FN_PG_TRIGGER_DEPTH" />
-            <token id="01216" type-id="FN_PG_TRY_ADVISORY_LOCK" />
-            <token id="01217" type-id="FN_PG_TRY_ADVISORY_LOCK_SHARED" />
-            <token id="01218" type-id="FN_PG_TRY_ADVISORY_XACT_LOCK" />
-            <token id="01219" type-id="FN_PG_TRY_ADVISORY_XACT_LOCK_SHARED" />
-            <token id="01220" type-id="FN_PG_TS_CONFIG_IS_VISIBLE" />
-            <token id="01221" type-id="FN_PG_TS_DICT_IS_VISIBLE" />
-            <token id="01222" type-id="FN_PG_TS_PARSER_IS_VISIBLE" />
-            <token id="01223" type-id="FN_PG_TS_TEMPLATE_IS_VISIBLE" />
-            <token id="01224" type-id="FN_PG_TYPEOF" />
-            <token id="01225" type-id="FN_PG_TYPE_IS_VISIBLE" />
-            <token id="01226" type-id="FN_PG_XLOGFILE_NAME" />
-            <token id="01227" type-id="FN_PG_XLOGFILE_NAME_OFFSET" />
-            <token id="01228" type-id="FN_PG_XLOG_LOCATION_DIFF" />
-            <token id="01229" type-id="FN_PG_XLOG_REPLAY_PAUSE" />
-            <token id="01230" type-id="FN_PG_XLOG_REPLAY_RESUME" />
-            <token id="01231" type-id="FN_PI" />
-            <token id="01232" type-id="FN_PLAINTO_TSQUERY" />
-            <token id="01233" type-id="FN_POPEN" />
-            <token id="01234" type-id="FN_POSITION" />
-            <token id="01235" type-id="FN_POWER" />
-            <token id="01236" type-id="FN_QUERYTREE" />
-            <token id="01237" type-id="FN_QUERY_TO_XML" />
-            <token id="01238" type-id="FN_QUOTE_IDENT" />
-            <token id="01239" type-id="FN_QUOTE_LITERAL" />
-            <token id="01240" type-id="FN_QUOTE_NULLABLE" />
-            <token id="01241" type-id="FN_RADIANS" />
-            <token id="01242" type-id="FN_RADIUS" />
-            <token id="01243" type-id="FN_RANDOM" />
-            <token id="01244" type-id="FN_RANK" />
-            <token id="01245" type-id="FN_REGEXP_MATCHES" />
-            <token id="01246" type-id="FN_REGEXP_REPLACE" />
-            <token id="01247" type-id="FN_REGEXP_SPLIT_TO_ARRAY" />
-            <token id="01248" type-id="FN_REGEXP_SPLIT_TO_TABLE" />
-            <token id="01249" type-id="FN_REPEAT" />
-            <token id="01250" type-id="FN_REPLACE" />
-            <token id="01251" type-id="FN_REVERSE" />
-            <token id="01252" type-id="FN_RIGHT" />
-            <token id="01253" type-id="FN_ROUND" />
-            <token id="01254" type-id="FN_ROW_NUMBER" />
-            <token id="01255" type-id="FN_ROW_TO_JSON" />
-            <token id="01256" type-id="FN_RPAD" />
-            <token id="01257" type-id="FN_RTRIM" />
-            <token id="01258" type-id="FN_SESSION_USER" />
-            <token id="01259" type-id="FN_SETSEED" />
-            <token id="01260" type-id="FN_SETVAL" />
-            <token id="01261" type-id="FN_SETWEIGHT" />
-            <token id="01262" type-id="FN_SET_BIT" />
-            <token id="01263" type-id="FN_SET_BYTE" />
-            <token id="01264" type-id="FN_SET_CONFIG" />
-            <token id="01265" type-id="FN_SET_MASKLEN" />
-            <token id="01266" type-id="FN_SHOBJ_DESCRIPTION" />
-            <token id="01267" type-id="FN_SIGN" />
-            <token id="01268" type-id="FN_SIN" />
-            <token id="01269" type-id="FN_SPLIT_PART" />
-            <token id="01270" type-id="FN_SQRT" />
-            <token id="01271" type-id="FN_STATEMENT_TIMESTAMP" />
-            <token id="01272" type-id="FN_STRING_AGG" />
-            <token id="01273" type-id="FN_STRING_TO_ARRAY" />
-            <token id="01274" type-id="FN_STRIP" />
-            <token id="01275" type-id="FN_STRPOS" />
-            <token id="01276" type-id="FN_SUBSTR" />
-            <token id="01277" type-id="FN_SUBSTRING" />
-            <token id="01278" type-id="FN_SUM" />
-            <token id="01279" type-id="FN_TABLE_TO_XML" />
-            <token id="01280" type-id="FN_TAN" />
-            <token id="01281" type-id="FN_TIMEOFDAY" />
-            <token id="01282" type-id="FN_TO_ASCII" />
-            <token id="01283" type-id="FN_TO_CHAR" />
-            <token id="01284" type-id="FN_TO_DATE" />
-            <token id="01285" type-id="FN_TO_HEX" />
-            <token id="01286" type-id="FN_TO_JSON" />
-            <token id="01287" type-id="FN_TO_NUMBER" />
-            <token id="01288" type-id="FN_TO_TIMESTAMP" />
-            <token id="01289" type-id="FN_TO_TSQUERY" />
-            <token id="01290" type-id="FN_TO_TSVECTOR" />
-            <token id="01291" type-id="FN_TRANSACTION_TIMESTAMP" />
-            <token id="01292" type-id="FN_TRANSLATE" />
-            <token id="01293" type-id="FN_TRIM" />
-            <token id="01294" type-id="FN_TRUNC" />
-            <token id="01295" type-id="FN_TSVECTOR_UPDATE_TRIGGER" />
-            <token id="01296" type-id="FN_TSVECTOR_UPDATE_TRIGGER_COLUMN" />
-            <token id="01297" type-id="FN_TS_HEADLINE" />
-            <token id="01298" type-id="FN_TS_RANK" />
-            <token id="01299" type-id="FN_TS_RANK_CD" />
-            <token id="01300" type-id="FN_TS_REWRITE" />
-            <token id="01301" type-id="FN_TXID_CURRENT" />
-            <token id="01302" type-id="FN_TXID_CURRENT_SNAPSHOT" />
-            <token id="01303" type-id="FN_TXID_SNAPSHOT_XIP" />
-            <token id="01304" type-id="FN_TXID_SNAPSHOT_XMAX" />
-            <token id="01305" type-id="FN_TXID_SNAPSHOT_XMIN" />
-            <token id="01306" type-id="FN_TXID_VISIBLE_IN_SNAPSHOT" />
-            <token id="01307" type-id="FN_UNNEST" />
-            <token id="01308" type-id="FN_UPPER" />
-            <token id="01309" type-id="FN_UPPER_INC" />
-            <token id="01310" type-id="FN_UPPER_INF" />
-            <token flavor="function" id="01311" type-id="KW_USER" />
-            <token id="01312" type-id="FN_VERSION" />
-            <token id="01313" type-id="FN_WIDTH" />
-            <token id="01314" type-id="FN_WIDTH_BUCKET" />
-            <token id="01315" type-id="FN_XIP_LIST" />
-            <token id="01316" type-id="FN_XMAX" />
-            <token id="01317" type-id="FN_XMIN" />
-            <token id="01318" type-id="FN_XMLAGG" />
-            <token id="01319" type-id="FN_XMLCOMMENT" />
-            <token id="01320" type-id="FN_XMLCONCAT" />
-            <token id="01321" type-id="FN_XMLELEMENT" />
-            <token id="01322" type-id="FN_XMLEXISTS" />
-            <token id="01323" type-id="FN_XMLFOREST" />
-            <token id="01324" type-id="FN_XMLPI" />
-            <token id="01325" type-id="FN_XMLROOT" />
-            <token id="01326" type-id="FN_XML_IS_WELL_FORMED" />
-            <token id="01327" type-id="FN_XPATH" />
-            <token id="01328" type-id="FN_XPATH_EXISTS" />
+            <token id="01028" type-id="KW_COALESCE" flavor="function" />
+            <token id="01029" type-id="FN_COL_DESCRIPTION" />
+            <token id="01030" type-id="FN_CONCAT" />
+            <token id="01031" type-id="FN_CONCAT_WS" />
+            <token id="01032" type-id="FN_CONVERT" />
+            <token id="01033" type-id="FN_CONVERT_FROM" />
+            <token id="01034" type-id="FN_CONVERT_TO" />
+            <token id="01035" type-id="FN_COS" />
+            <token id="01036" type-id="FN_COT" />
+            <token id="01037" type-id="FN_COUNT" />
+            <token id="01038" type-id="FN_CUME_DIST" />
+            <token id="01039" type-id="FN_CURRENT_CATALOG" />
+            <token id="01040" type-id="FN_CURRENT_DATABASE" />
+            <token id="01041" type-id="FN_CURRENT_DATE" />
+            <token id="01042" type-id="FN_CURRENT_QUERY" />
+            <token id="01043" type-id="FN_CURRENT_SCHEMA" />
+            <token id="01044" type-id="FN_CURRENT_SCHEMAS" />
+            <token id="01045" type-id="FN_CURRENT_SETTING" />
+            <token id="01046" type-id="FN_CURRENT_TIME" />
+            <token id="01047" type-id="FN_CURRENT_TIMESTAMP" />
+            <token id="01048" type-id="FN_CURRENT_USER" />
+            <token id="01049" type-id="FN_CURRVAL" />
+            <token id="01050" type-id="FN_CURSOR_TO_XML" />
+            <token id="01051" type-id="FN_DATE_PART" />
+            <token id="01052" type-id="FN_DATE_TRUNC" />
+            <token id="01053" type-id="FN_DECODE" />
+            <token id="01054" type-id="FN_DEGREES" />
+            <token id="01055" type-id="FN_DENSE_RANK" />
+            <token id="01056" type-id="FN_DIAMETER" />
+            <token id="01057" type-id="FN_DIV" />
+            <token id="01058" type-id="FN_ENCODE" />
+            <token id="01059" type-id="FN_ENUM_FIRST" />
+            <token id="01060" type-id="FN_ENUM_LAST" />
+            <token id="01061" type-id="FN_ENUM_RANGE" />
+            <token id="01062" type-id="FN_EVERY" />
+            <token id="01063" type-id="FN_EXP" />
+            <token id="01064" type-id="FN_EXTRACT" />
+            <token id="01065" type-id="FN_FAMILY" />
+            <token id="01066" type-id="FN_FIRST_VALUE" />
+            <token id="01067" type-id="FN_FLOOR" />
+            <token id="01068" type-id="FN_FORMAT" />
+            <token id="01069" type-id="FN_FORMAT_TYPE" />
+            <token id="01070" type-id="FN_GENERATE_SERIES" />
+            <token id="01071" type-id="FN_GENERATE_SUBSCRIPTS" />
+            <token id="01072" type-id="FN_GET_BIT" />
+            <token id="01073" type-id="FN_GET_BYTE" />
+            <token id="01074" type-id="FN_GET_CURRENT_TS_CONFIG" />
+            <token id="01075" type-id="FN_HAS_ANY_COLUMN_PRIVILEGE" />
+            <token id="01076" type-id="FN_HAS_COLUMN_PRIVILEGE" />
+            <token id="01077" type-id="FN_HAS_DATABASE_PRIVILEGE" />
+            <token id="01078" type-id="FN_HAS_FOREIGN_DATA_WRAPPER_PRIVILEGE" />
+            <token id="01079" type-id="FN_HAS_FUNCTION_PRIVILEGE" />
+            <token id="01080" type-id="FN_HAS_LANGUAGE_PRIVILEGE" />
+            <token id="01081" type-id="FN_HAS_SCHEMA_PRIVILEGE" />
+            <token id="01082" type-id="FN_HAS_SEQUENCE_PRIVILEGE" />
+            <token id="01083" type-id="FN_HAS_SERVER_PRIVILEGE" />
+            <token id="01084" type-id="FN_HAS_TABLESPACE_PRIVILEGE" />
+            <token id="01085" type-id="FN_HAS_TABLE_PRIVILEGE" />
+            <token id="01086" type-id="FN_HEIGHT" />
+            <token id="01087" type-id="FN_HOST" />
+            <token id="01088" type-id="FN_HOSTMASK" />
+            <token id="01089" type-id="FN_INET_CLIENT_ADDR" />
+            <token id="01090" type-id="FN_INET_CLIENT_PORT" />
+            <token id="01091" type-id="FN_INET_SERVER_ADDR" />
+            <token id="01092" type-id="FN_INET_SERVER_PORT" />
+            <token id="01093" type-id="FN_INITCAP" />
+            <token id="01094" type-id="FN_ISCLOSED" />
+            <token id="01095" type-id="FN_ISEMPTY" />
+            <token id="01096" type-id="FN_ISFINITE" />
+            <token id="01097" type-id="FN_ISOPEN" />
+            <token id="01098" type-id="FN_JSON_AGG" />
+            <token id="01099" type-id="FN_JSON_ARRAY_ELEMENTS" />
+            <token id="01100" type-id="FN_JSON_ARRAY_LENGTH" />
+            <token id="01101" type-id="FN_JSON_EACH" />
+            <token id="01102" type-id="FN_JSON_EACH_TEXT" />
+            <token id="01103" type-id="FN_JSON_EXTRACT_PATH" />
+            <token id="01104" type-id="FN_JSON_EXTRACT_PATH_TEXT" />
+            <token id="01105" type-id="FN_JSON_OBJECT_KEYS" />
+            <token id="01106" type-id="FN_JSON_POPULATE_RECORD" />
+            <token id="01107" type-id="FN_JSON_POPULATE_RECORDSET" />
+            <token id="01108" type-id="FN_JUSTIFY_DAYS" />
+            <token id="01109" type-id="FN_JUSTIFY_HOURS" />
+            <token id="01110" type-id="FN_JUSTIFY_INTERVAL" />
+            <token id="01111" type-id="FN_LAG" />
+            <token id="01112" type-id="FN_LASTVAL" />
+            <token id="01113" type-id="FN_LAST_VALUE" />
+            <token id="01114" type-id="FN_LEAD" />
+            <token id="01115" type-id="FN_LEFT" />
+            <token id="01116" type-id="FN_LENGTH" />
+            <token id="01117" type-id="FN_LN" />
+            <token id="01118" type-id="FN_LOCALTIME" />
+            <token id="01119" type-id="FN_LOCALTIMESTAMP" />
+            <token id="01120" type-id="FN_LOG" />
+            <token id="01121" type-id="FN_LOWER" />
+            <token id="01122" type-id="FN_LOWER_INC" />
+            <token id="01123" type-id="FN_LOWER_INF" />
+            <token id="01124" type-id="FN_LPAD" />
+            <token id="01125" type-id="FN_LTRIM" />
+            <token id="01126" type-id="FN_MASKLEN" />
+            <token id="01127" type-id="FN_MAX" />
+            <token id="01128" type-id="FN_MD5" />
+            <token id="01129" type-id="FN_MIN" />
+            <token id="01130" type-id="FN_MOD" />
+            <token id="01131" type-id="FN_NETMASK" />
+            <token id="01132" type-id="FN_NETWORK" />
+            <token id="01133" type-id="FN_NEXTVAL" />
+            <token id="01134" type-id="FN_NOW" />
+            <token id="01135" type-id="FN_NPOINTS" />
+            <token id="01136" type-id="FN_NTH_VALUE" />
+            <token id="01137" type-id="FN_NTILE" />
+            <token id="01138" type-id="FN_NUMNODE" />
+            <token id="01139" type-id="FN_OBJ_DESCRIPTION" />
+            <token id="01140" type-id="FN_OCTET_LENGTH" />
+            <token id="01141" type-id="FN_OVERLAY" />
+            <token id="01142" type-id="FN_PCLOSE" />
+            <token id="01143" type-id="FN_PERCENT_RANK" />
+            <token id="01144" type-id="FN_PG_ADVISORY_LOCK" />
+            <token id="01145" type-id="FN_PG_ADVISORY_LOCK_SHARED" />
+            <token id="01146" type-id="FN_PG_ADVISORY_UNLOCK" />
+            <token id="01147" type-id="FN_PG_ADVISORY_UNLOCK_ALL" />
+            <token id="01148" type-id="FN_PG_ADVISORY_UNLOCK_SHARED" />
+            <token id="01149" type-id="FN_PG_ADVISORY_XACT_LOCK" />
+            <token id="01150" type-id="FN_PG_ADVISORY_XACT_LOCK_SHARED" />
+            <token id="01151" type-id="FN_PG_BACKEND_PID" />
+            <token id="01152" type-id="FN_PG_BACKUP_START_TIME" />
+            <token id="01153" type-id="FN_PG_CANCEL_BACKEND" />
+            <token id="01154" type-id="FN_PG_CLIENT_ENCODING" />
+            <token id="01155" type-id="FN_PG_COLLATION_IS_VISIBLE" />
+            <token id="01156" type-id="FN_PG_COLUMN_SIZE" />
+            <token id="01157" type-id="FN_PG_CONF_LOAD_TIME" />
+            <token id="01158" type-id="FN_PG_CONVERSION_IS_VISIBLE" />
+            <token id="01159" type-id="FN_PG_CREATE_RESTORE_POINT" />
+            <token id="01160" type-id="FN_PG_CURRENT_XLOG_INSERT_LOCATION" />
+            <token id="01161" type-id="FN_PG_CURRENT_XLOG_LOCATION" />
+            <token id="01162" type-id="FN_PG_DATABASE_SIZE" />
+            <token id="01163" type-id="FN_PG_DESCRIBE_OBJECT" />
+            <token id="01164" type-id="FN_PG_EXPORT_SNAPSHOT" />
+            <token id="01165" type-id="FN_PG_FUNCTION_IS_VISIBLE" />
+            <token id="01166" type-id="FN_PG_GET_CONSTRAINTDEF" />
+            <token id="01167" type-id="FN_PG_GET_EXPR" />
+            <token id="01168" type-id="FN_PG_GET_FUNCTIONDEF" />
+            <token id="01169" type-id="FN_PG_GET_FUNCTION_ARGUMENTS" />
+            <token id="01170" type-id="FN_PG_GET_FUNCTION_IDENTITY_ARGUMENTS" />
+            <token id="01171" type-id="FN_PG_GET_FUNCTION_RESULT" />
+            <token id="01172" type-id="FN_PG_GET_INDEXDEF" />
+            <token id="01173" type-id="FN_PG_GET_KEYWORDS" />
+            <token id="01174" type-id="FN_PG_GET_RULEDEF" />
+            <token id="01175" type-id="FN_PG_GET_SERIAL_SEQUENCE" />
+            <token id="01176" type-id="FN_PG_GET_TRIGGERDEF" />
+            <token id="01177" type-id="FN_PG_GET_USERBYID" />
+            <token id="01178" type-id="FN_PG_GET_VIEWDEF" />
+            <token id="01179" type-id="FN_PG_HAS_ROLE" />
+            <token id="01180" type-id="FN_PG_IDENTIFY_OBJECT" />
+            <token id="01181" type-id="FN_PG_INDEXES_SIZE" />
+            <token id="01182" type-id="FN_PG_IS_IN_BACKUP" />
+            <token id="01183" type-id="FN_PG_IS_IN_RECOVERY" />
+            <token id="01184" type-id="FN_PG_IS_OTHER_TEMP_SCHEMA" />
+            <token id="01185" type-id="FN_PG_IS_XLOG_REPLAY_PAUSED" />
+            <token id="01186" type-id="FN_PG_LAST_XACT_REPLAY_TIMESTAMP" />
+            <token id="01187" type-id="FN_PG_LAST_XLOG_RECEIVE_LOCATION" />
+            <token id="01188" type-id="FN_PG_LAST_XLOG_REPLAY_LOCATION" />
+            <token id="01189" type-id="FN_PG_LISTENING_CHANNELS" />
+            <token id="01190" type-id="FN_PG_LS_DIR" />
+            <token id="01191" type-id="FN_PG_MY_TEMP_SCHEMA" />
+            <token id="01192" type-id="FN_PG_OPCLASS_IS_VISIBLE" />
+            <token id="01193" type-id="FN_PG_OPERATOR_IS_VISIBLE" />
+            <token id="01194" type-id="FN_PG_OPFAMILY_IS_VISIBLE" />
+            <token id="01195" type-id="FN_PG_OPTIONS_TO_TABLE" />
+            <token id="01196" type-id="FN_PG_POSTMASTER_START_TIME" />
+            <token id="01197" type-id="FN_PG_READ_BINARY_FILE" />
+            <token id="01198" type-id="FN_PG_READ_FILE" />
+            <token id="01199" type-id="FN_PG_RELATION_FILENODE" />
+            <token id="01200" type-id="FN_PG_RELATION_FILEPATH" />
+            <token id="01201" type-id="FN_PG_RELATION_SIZE" />
+            <token id="01202" type-id="FN_PG_RELOAD_CONF" />
+            <token id="01203" type-id="FN_PG_ROTATE_LOGFILE" />
+            <token id="01204" type-id="FN_PG_SIZE_PRETTY" />
+            <token id="01205" type-id="FN_PG_START_BACKUP" />
+            <token id="01206" type-id="FN_PG_STAT_FILE" />
+            <token id="01207" type-id="FN_PG_STOP_BACKUP" />
+            <token id="01208" type-id="FN_PG_SWITCH_XLOG" />
+            <token id="01209" type-id="FN_PG_TABLESPACE_DATABASES" />
+            <token id="01210" type-id="FN_PG_TABLESPACE_LOCATION" />
+            <token id="01211" type-id="FN_PG_TABLESPACE_SIZE" />
+            <token id="01212" type-id="FN_PG_TABLE_IS_VISIBLE" />
+            <token id="01213" type-id="FN_PG_TABLE_SIZE" />
+            <token id="01214" type-id="FN_PG_TERMINATE_BACKEND" />
+            <token id="01215" type-id="FN_PG_TOTAL_RELATION_SIZE" />
+            <token id="01216" type-id="FN_PG_TRIGGER_DEPTH" />
+            <token id="01217" type-id="FN_PG_TRY_ADVISORY_LOCK" />
+            <token id="01218" type-id="FN_PG_TRY_ADVISORY_LOCK_SHARED" />
+            <token id="01219" type-id="FN_PG_TRY_ADVISORY_XACT_LOCK" />
+            <token id="01220" type-id="FN_PG_TRY_ADVISORY_XACT_LOCK_SHARED" />
+            <token id="01221" type-id="FN_PG_TS_CONFIG_IS_VISIBLE" />
+            <token id="01222" type-id="FN_PG_TS_DICT_IS_VISIBLE" />
+            <token id="01223" type-id="FN_PG_TS_PARSER_IS_VISIBLE" />
+            <token id="01224" type-id="FN_PG_TS_TEMPLATE_IS_VISIBLE" />
+            <token id="01225" type-id="FN_PG_TYPEOF" />
+            <token id="01226" type-id="FN_PG_TYPE_IS_VISIBLE" />
+            <token id="01227" type-id="FN_PG_XLOGFILE_NAME" />
+            <token id="01228" type-id="FN_PG_XLOGFILE_NAME_OFFSET" />
+            <token id="01229" type-id="FN_PG_XLOG_LOCATION_DIFF" />
+            <token id="01230" type-id="FN_PG_XLOG_REPLAY_PAUSE" />
+            <token id="01231" type-id="FN_PG_XLOG_REPLAY_RESUME" />
+            <token id="01232" type-id="FN_PI" />
+            <token id="01233" type-id="FN_PLAINTO_TSQUERY" />
+            <token id="01234" type-id="FN_POPEN" />
+            <token id="01235" type-id="FN_POSITION" />
+            <token id="01236" type-id="FN_POWER" />
+            <token id="01237" type-id="FN_QUERYTREE" />
+            <token id="01238" type-id="FN_QUERY_TO_XML" />
+            <token id="01239" type-id="FN_QUOTE_IDENT" />
+            <token id="01240" type-id="FN_QUOTE_LITERAL" />
+            <token id="01241" type-id="FN_QUOTE_NULLABLE" />
+            <token id="01242" type-id="FN_RADIANS" />
+            <token id="01243" type-id="FN_RADIUS" />
+            <token id="01244" type-id="FN_RANDOM" />
+            <token id="01245" type-id="FN_RANK" />
+            <token id="01246" type-id="FN_REGEXP_MATCHES" />
+            <token id="01247" type-id="FN_REGEXP_REPLACE" />
+            <token id="01248" type-id="FN_REGEXP_SPLIT_TO_ARRAY" />
+            <token id="01249" type-id="FN_REGEXP_SPLIT_TO_TABLE" />
+            <token id="01250" type-id="FN_REPEAT" />
+            <token id="01251" type-id="FN_REPLACE" />
+            <token id="01252" type-id="FN_REVERSE" />
+            <token id="01253" type-id="FN_RIGHT" />
+            <token id="01254" type-id="FN_ROUND" />
+            <token id="01255" type-id="FN_ROW_NUMBER" />
+            <token id="01256" type-id="FN_ROW_TO_JSON" />
+            <token id="01257" type-id="FN_RPAD" />
+            <token id="01258" type-id="FN_RTRIM" />
+            <token id="01259" type-id="FN_SESSION_USER" />
+            <token id="01260" type-id="FN_SETSEED" />
+            <token id="01261" type-id="FN_SETVAL" />
+            <token id="01262" type-id="FN_SETWEIGHT" />
+            <token id="01263" type-id="FN_SET_BIT" />
+            <token id="01264" type-id="FN_SET_BYTE" />
+            <token id="01265" type-id="FN_SET_CONFIG" />
+            <token id="01266" type-id="FN_SET_MASKLEN" />
+            <token id="01267" type-id="FN_SHOBJ_DESCRIPTION" />
+            <token id="01268" type-id="FN_SIGN" />
+            <token id="01269" type-id="FN_SIN" />
+            <token id="01270" type-id="FN_SPLIT_PART" />
+            <token id="01271" type-id="FN_SQRT" />
+            <token id="01272" type-id="FN_STATEMENT_TIMESTAMP" />
+            <token id="01273" type-id="FN_STRING_AGG" />
+            <token id="01274" type-id="FN_STRING_TO_ARRAY" />
+            <token id="01275" type-id="FN_STRIP" />
+            <token id="01276" type-id="FN_STRPOS" />
+            <token id="01277" type-id="FN_SUBSTR" />
+            <token id="01278" type-id="FN_SUBSTRING" />
+            <token id="01279" type-id="FN_SUM" />
+            <token id="01280" type-id="FN_TABLE_TO_XML" />
+            <token id="01281" type-id="FN_TAN" />
+            <token id="01282" type-id="FN_TIMEOFDAY" />
+            <token id="01283" type-id="FN_TO_ASCII" />
+            <token id="01284" type-id="FN_TO_CHAR" />
+            <token id="01285" type-id="FN_TO_DATE" />
+            <token id="01286" type-id="FN_TO_HEX" />
+            <token id="01287" type-id="FN_TO_JSON" />
+            <token id="01288" type-id="FN_TO_NUMBER" />
+            <token id="01289" type-id="FN_TO_TIMESTAMP" />
+            <token id="01290" type-id="FN_TO_TSQUERY" />
+            <token id="01291" type-id="FN_TO_TSVECTOR" />
+            <token id="01292" type-id="FN_TRANSACTION_TIMESTAMP" />
+            <token id="01293" type-id="FN_TRANSLATE" />
+            <token id="01294" type-id="FN_TRIM" />
+            <token id="01295" type-id="FN_TRUNC" />
+            <token id="01296" type-id="FN_TSVECTOR_UPDATE_TRIGGER" />
+            <token id="01297" type-id="FN_TSVECTOR_UPDATE_TRIGGER_COLUMN" />
+            <token id="01298" type-id="FN_TS_HEADLINE" />
+            <token id="01299" type-id="FN_TS_RANK" />
+            <token id="01300" type-id="FN_TS_RANK_CD" />
+            <token id="01301" type-id="FN_TS_REWRITE" />
+            <token id="01302" type-id="FN_TXID_CURRENT" />
+            <token id="01303" type-id="FN_TXID_CURRENT_SNAPSHOT" />
+            <token id="01304" type-id="FN_TXID_SNAPSHOT_XIP" />
+            <token id="01305" type-id="FN_TXID_SNAPSHOT_XMAX" />
+            <token id="01306" type-id="FN_TXID_SNAPSHOT_XMIN" />
+            <token id="01307" type-id="FN_TXID_VISIBLE_IN_SNAPSHOT" />
+            <token id="01308" type-id="FN_UNNEST" />
+            <token id="01309" type-id="FN_UPPER" />
+            <token id="01310" type-id="FN_UPPER_INC" />
+            <token id="01311" type-id="FN_UPPER_INF" />
+            <token id="01312" type-id="KW_USER" flavor="function" />
+            <token id="01313" type-id="FN_VERSION" />
+            <token id="01314" type-id="FN_WIDTH" />
+            <token id="01315" type-id="FN_WIDTH_BUCKET" />
+            <token id="01316" type-id="FN_XIP_LIST" />
+            <token id="01317" type-id="FN_XMAX" />
+            <token id="01318" type-id="FN_XMIN" />
+            <token id="01319" type-id="FN_XMLAGG" />
+            <token id="01320" type-id="FN_XMLCOMMENT" />
+            <token id="01321" type-id="FN_XMLCONCAT" />
+            <token id="01322" type-id="FN_XMLELEMENT" />
+            <token id="01323" type-id="FN_XMLEXISTS" />
+            <token id="01324" type-id="FN_XMLFOREST" />
+            <token id="01325" type-id="FN_XMLPI" />
+            <token id="01326" type-id="FN_XMLROOT" />
+            <token id="01327" type-id="FN_XML_IS_WELL_FORMED" />
+            <token id="01328" type-id="FN_XPATH" />
+            <token id="01329" type-id="FN_XPATH_EXISTS" />
         </one-of>
-        <wrapper id="01329" optional="true" template="PARENTHESES">
-            <sequence id="01330">
-                <token id="01331" optional="true" type-id="KW_DISTINCT" />
+        <wrapper id="01330" optional="true" template="PARENTHESES">
+            <sequence id="01331" optional="true">
+                <token id="01332" optional="true" type-id="KW_DISTINCT" />
                 <element optional="true" ref-id="expression_list" />
             </sequence>
         </wrapper>
     </element-def>
 
     <element-def description="Function expression" id="function_expression">
-        <one-of id="01332">
-            <sequence id="01333">
-                <qualified-identifier id="01334" separator="CHR_DOT">
+        <one-of id="01333">
+            <sequence id="01334">
+                <qualified-identifier id="01335" separator="CHR_DOT">
                     <variant>
-                        <object-ref id="01335" optional="true" type="SCHEMA" />
-                        <object-ref id="01336" type="FUNCTION" />
+                        <object-ref id="01336" optional="true" type="SCHEMA" />
+                        <object-ref id="01337" type="FUNCTION" />
                     </variant>
                 </qualified-identifier>
-                <wrapper attributes="METHOD_PARAMETER_HANDLER" exit="true" id="01337" template="PARENTHESES">
-                    <iteration id="01338" optional="true" separator="CHR_COMMA">
+                <wrapper attributes="METHOD_PARAMETER_HANDLER" exit="true" id="01338" template="PARENTHESES">
+                    <iteration id="01339" optional="true" separator="CHR_COMMA">
                         <element ref-id="expression" />
                     </iteration>
                 </wrapper>
@@ -2245,7 +2246,7 @@
     </element-def>
 
     <element-def description="Expression list" id="expression_list">
-        <iteration id="01339" optional-wrapping="PARENTHESES" separator="CHR_COMMA">
+        <iteration id="01340" optional-wrapping="PARENTHESES" separator="CHR_COMMA">
             <element ref-id="expression" />
         </iteration>
     </element-def>
@@ -2253,26 +2254,26 @@
 
     <!-- ========= CONDITIONS ========= -->
     <element-def description="Condition" id="condition" optional-wrapping="PARENTHESES">
-        <one-of id="01340">
-            <iteration formatting-indent="NORMAL" id="01341" separator="KW_AND, KW_OR">
+        <one-of id="01341">
+            <iteration formatting-indent="NORMAL" id="01342" separator="KW_AND, KW_OR">
                 <element ref-id="condition" />
             </iteration>
-            <sequence id="01342" optional-wrapping="PARENTHESES">
+            <sequence id="01343" optional-wrapping="PARENTHESES">
                 <element ref-id="expression_list" />
-                <one-of id="01343" optional="true">
-                    <sequence id="01344">
+                <one-of id="01344" optional="true">
+                    <sequence id="01345">
                         <element ref-id="comparison_operator" />
-                        <one-of id="01345">
-                            <wrapper id="01346" template="PARENTHESES">
+                        <one-of id="01346">
+                            <wrapper id="01347" template="PARENTHESES">
                                 <element ref-id="subquery" />
                             </wrapper>
                             <element ref-id="expression_list" />
                         </one-of>
                     </sequence>
-                    <sequence id="01347">
-                        <token id="01348" type-id="KW_IS" />
-                        <token id="01349" optional="true" type-id="KW_NOT" />
-                        <token id="01350" type-id="KW_NULL" />
+                    <sequence id="01348">
+                        <token id="01349" type-id="KW_IS" />
+                        <token id="01350" optional="true" type-id="KW_NOT" />
+                        <token id="01351" type-id="KW_NULL" />
                     </sequence>
                 </one-of>
             </sequence>
@@ -2282,138 +2283,138 @@
 
     <!-- ========= DATA_TYPES ========= -->
     <element-def description="Data type" id="data_type">
-        <one-of id="01351">
-            <token id="01352" type-id="DT_ARRAY" />
-            <token id="01353" type-id="DT_BIGINT" />
-            <token id="01354" type-id="DT_BIGSERIAL" />
-            <token id="01355" type-id="DT_BOOL" />
-            <token id="01356" type-id="DT_BOOLEAN" />
-            <token id="01357" type-id="DT_BOX" />
-            <token id="01358" type-id="DT_BYTEA" />
-            <token id="01359" type-id="DT_CHAR" />
-            <token id="01360" type-id="DT_BPCHAR" />
-            <sequence id="01361">
-                <one-of id="01362">
-                    <token id="01363" type-id="DT_CHARACTER" />
-                    <token flavor="datatype" id="01364" type-id="FN_BIT" />
+        <one-of id="01352">
+            <token id="01353" type-id="DT_ARRAY" />
+            <token id="01354" type-id="DT_BIGINT" />
+            <token id="01355" type-id="DT_BIGSERIAL" />
+            <token id="01356" type-id="DT_BOOL" />
+            <token id="01357" type-id="DT_BOOLEAN" />
+            <token id="01358" type-id="DT_BOX" />
+            <token id="01359" type-id="DT_BYTEA" />
+            <token id="01360" type-id="DT_CHAR" />
+            <token id="01361" type-id="DT_BPCHAR" />
+            <sequence id="01362">
+                <one-of id="01363">
+                    <token id="01364" type-id="DT_CHARACTER" />
+                    <token flavor="datatype" id="01365" type-id="FN_BIT" />
                 </one-of>
-                <token flavor="datatype" id="01365" optional="true" type-id="KW_VARYING" />
+                <token flavor="datatype" id="01366" optional="true" type-id="KW_VARYING" />
             </sequence>
-            <token id="01366" type-id="DT_CID" />
-            <token id="01367" type-id="DT_CIDR" />
-            <token id="01368" type-id="DT_CIRCLE" />
-            <token id="01369" type-id="DT_DATE" />
-            <token id="01370" type-id="DT_DECIMAL" />
-            <token id="01371" type-id="DT_DOUBLE_PRECISION" />
-            <token id="01372" type-id="DT_INET" />
-            <token id="01373" type-id="DT_INT" />
-            <token id="01374" type-id="DT_INT2" />
-            <token id="01375" type-id="DT_INT2VECTOR" />
-            <token id="01376" type-id="DT_INT4" />
-            <token id="01377" type-id="DT_INT8" />
-            <token id="01378" type-id="DT_INTEGER" />
-            <sequence id="01379">
-                <token id="01380" type-id="DT_INTERVAL" />
-                <one-of id="01381" optional="true">
-                    <sequence id="01382">
-                        <token flavor="datatype" id="01383" type-id="KW_YEAR" />
-                        <sequence id="01384" optional="true">
-                            <token flavor="datatype" id="01385" type-id="KW_TO" />
-                            <token flavor="datatype" id="01386" type-id="KW_MONTH" />
+            <token id="01367" type-id="DT_CID" />
+            <token id="01368" type-id="DT_CIDR" />
+            <token id="01369" type-id="DT_CIRCLE" />
+            <token id="01370" type-id="DT_DATE" />
+            <token id="01371" type-id="DT_DECIMAL" />
+            <token id="01372" type-id="DT_DOUBLE_PRECISION" />
+            <token id="01373" type-id="DT_INET" />
+            <token id="01374" type-id="DT_INT" />
+            <token id="01375" type-id="DT_INT2" />
+            <token id="01376" type-id="DT_INT2VECTOR" />
+            <token id="01377" type-id="DT_INT4" />
+            <token id="01378" type-id="DT_INT8" />
+            <token id="01379" type-id="DT_INTEGER" />
+            <sequence id="01380">
+                <token id="01381" type-id="DT_INTERVAL" />
+                <one-of id="01382" optional="true">
+                    <sequence id="01383">
+                        <token flavor="datatype" id="01384" type-id="KW_YEAR" />
+                        <sequence id="01385" optional="true">
+                            <token flavor="datatype" id="01386" type-id="KW_TO" />
+                            <token flavor="datatype" id="01387" type-id="KW_MONTH" />
                         </sequence>
                     </sequence>
-                    <token flavor="datatype" id="01387" type-id="KW_MONTH" />
-                    <sequence id="01388">
-                        <token flavor="datatype" id="01389" type-id="KW_DAY" />
-                        <sequence id="01390" optional="true">
-                            <token flavor="datatype" id="01391" type-id="KW_TO" />
-                            <one-of id="01392">
-                                <token flavor="datatype" id="01393" type-id="KW_HOUR" />
-                                <token flavor="datatype" id="01394" type-id="KW_MINUTE" />
-                                <token flavor="datatype" id="01395" type-id="KW_SECOND" />
+                    <token flavor="datatype" id="01388" type-id="KW_MONTH" />
+                    <sequence id="01389">
+                        <token flavor="datatype" id="01390" type-id="KW_DAY" />
+                        <sequence id="01391" optional="true">
+                            <token flavor="datatype" id="01392" type-id="KW_TO" />
+                            <one-of id="01393">
+                                <token flavor="datatype" id="01394" type-id="KW_HOUR" />
+                                <token flavor="datatype" id="01395" type-id="KW_MINUTE" />
+                                <token flavor="datatype" id="01396" type-id="KW_SECOND" />
                             </one-of>
                         </sequence>
                     </sequence>
-                    <sequence id="01396">
-                        <token flavor="datatype" id="01397" type-id="KW_HOUR" />
-                        <sequence id="01398" optional="true">
-                            <token flavor="datatype" id="01399" type-id="KW_TO" />
-                            <one-of id="01400">
-                                <token flavor="datatype" id="01401" type-id="KW_MINUTE" />
-                                <token flavor="datatype" id="01402" type-id="KW_SECOND" />
+                    <sequence id="01397">
+                        <token flavor="datatype" id="01398" type-id="KW_HOUR" />
+                        <sequence id="01399" optional="true">
+                            <token flavor="datatype" id="01400" type-id="KW_TO" />
+                            <one-of id="01401">
+                                <token flavor="datatype" id="01402" type-id="KW_MINUTE" />
+                                <token flavor="datatype" id="01403" type-id="KW_SECOND" />
                             </one-of>
                         </sequence>
                     </sequence>
-                    <sequence id="01403">
-                        <token flavor="datatype" id="01404" type-id="KW_MINUTE" />
-                        <sequence id="01405" optional="true">
-                            <token flavor="datatype" id="01406" type-id="KW_TO" />
-                            <token flavor="datatype" id="01407" type-id="KW_SECOND" />
+                    <sequence id="01404">
+                        <token flavor="datatype" id="01405" type-id="KW_MINUTE" />
+                        <sequence id="01406" optional="true">
+                            <token flavor="datatype" id="01407" type-id="KW_TO" />
+                            <token flavor="datatype" id="01408" type-id="KW_SECOND" />
                         </sequence>
                     </sequence>
-                    <token flavor="datatype" id="01408" type-id="KW_SECOND" />
+                    <token flavor="datatype" id="01409" type-id="KW_SECOND" />
                     <element ref-id="expression" />
                 </one-of>
             </sequence>
-            <token id="01409" type-id="DT_JSON" />
-            <token id="01410" type-id="DT_LINE" />
-            <token id="01411" type-id="DT_LSEG" />
-            <token id="01412" type-id="DT_MACADDR" />
-            <token id="01413" type-id="DT_MONEY" />
-            <token id="01414" type-id="DT_NAME" />
-            <token id="01415" type-id="DT_NUMERIC" />
-            <token id="01416" type-id="DT_OID" />
-            <token id="01417" type-id="DT_PATH" />
-            <token id="01418" type-id="DT_POINT" />
-            <token id="01419" type-id="DT_POLYGON" />
-            <token id="01420" type-id="DT_REAL" />
-            <token id="01421" type-id="DT_SERIAL" />
-            <token id="01422" type-id="DT_SERIAL8" />
-            <token id="01423" type-id="DT_SMALLINT" />
-            <token id="01424" type-id="DT_SMALLSERIAL" />
-            <token id="01425" type-id="DT_TEXT" />
-            <token id="01426" type-id="DT_TID" />
-            <sequence id="01427">
-                <one-of id="01428">
-                    <token id="01429" type-id="DT_TIME" />
-                    <token id="01430" type-id="DT_TIMESTAMP" />
+            <token id="01410" type-id="DT_JSON" />
+            <token id="01411" type-id="DT_LINE" />
+            <token id="01412" type-id="DT_LSEG" />
+            <token id="01413" type-id="DT_MACADDR" />
+            <token id="01414" type-id="DT_MONEY" />
+            <token id="01415" type-id="DT_NAME" />
+            <token id="01416" type-id="DT_NUMERIC" />
+            <token id="01417" type-id="DT_OID" />
+            <token id="01418" type-id="DT_PATH" />
+            <token id="01419" type-id="DT_POINT" />
+            <token id="01420" type-id="DT_POLYGON" />
+            <token id="01421" type-id="DT_REAL" />
+            <token id="01422" type-id="DT_SERIAL" />
+            <token id="01423" type-id="DT_SERIAL8" />
+            <token id="01424" type-id="DT_SMALLINT" />
+            <token id="01425" type-id="DT_SMALLSERIAL" />
+            <token id="01426" type-id="DT_TEXT" />
+            <token id="01427" type-id="DT_TID" />
+            <sequence id="01428">
+                <one-of id="01429">
+                    <token id="01430" type-id="DT_TIME" />
+                    <token id="01431" type-id="DT_TIMESTAMP" />
                 </one-of>
                 <element optional="true" ref-id="data_type_parameter_list" />
-                <sequence id="01431" optional="true">
-                    <one-of id="01432">
-                        <token flavor="datatype" id="01433" type-id="KW_WITH" />
-                        <token flavor="datatype" id="01434" type-id="KW_WITHOUT" />
+                <sequence id="01432" optional="true">
+                    <one-of id="01433">
+                        <token flavor="datatype" id="01434" type-id="KW_WITH" />
+                        <token flavor="datatype" id="01435" type-id="KW_WITHOUT" />
                     </one-of>
-                    <token id="01435" type-id="DT_TIME" />
-                    <token flavor="datatype" id="01436" type-id="KW_ZONE" />
+                    <token id="01436" type-id="DT_TIME" />
+                    <token flavor="datatype" id="01437" type-id="KW_ZONE" />
                 </sequence>
             </sequence>
-            <token id="01437" type-id="DT_TSQUERY" />
-            <token id="01438" type-id="DT_TSVECTOR" />
-            <token id="01439" type-id="DT_UUID" />
-            <token id="01440" type-id="DT_VARBIT" />
-            <token id="01441" type-id="DT_VARCHAR" />
-            <token id="01442" type-id="DT_XID" />
-            <token id="01443" type-id="DT_XML" />
+            <token id="01438" type-id="DT_TSQUERY" />
+            <token id="01439" type-id="DT_TSVECTOR" />
+            <token id="01440" type-id="DT_UUID" />
+            <token id="01441" type-id="DT_VARBIT" />
+            <token id="01442" type-id="DT_VARCHAR" />
+            <token id="01443" type-id="DT_XID" />
+            <token id="01444" type-id="DT_XML" />
         </one-of>
         <element optional="true" ref-id="data_type_parameter_list" />
-        <token id="01444" optional="true" type-id="DT_ARRAY" />
-        <iteration id="01445" optional="true">
-            <sequence id="01446">
-                <token id="01447" type-id="CHR_LEFT_BRACKET" />
-                <iteration id="01448" optional="true" separator="CHR_COMMA">
+        <token id="01445" optional="true" type-id="DT_ARRAY" />
+        <iteration id="01446" optional="true">
+            <sequence id="01447">
+                <token id="01448" type-id="CHR_LEFT_BRACKET" />
+                <iteration id="01449" optional="true" separator="CHR_COMMA">
                     <element ref-id="expression" />
                 </iteration>
-                <token id="01449" type-id="CHR_RIGHT_BRACKET" />
+                <token id="01450" type-id="CHR_RIGHT_BRACKET" />
             </sequence>
         </iteration>
     </element-def>
     <element-def description="Data type parameter list" id="data_type_parameter_list">
-        <wrapper id="01450" template="PARENTHESES">
-            <iteration id="01451" separator="CHR_COMMA">
-                <one-of id="01452">
+        <wrapper id="01451" template="PARENTHESES">
+            <iteration id="01452" separator="CHR_COMMA">
+                <one-of id="01453">
                     <element ref-id="number" />
-                    <token id="01453" type-id="STRING" />
+                    <token id="01454" type-id="STRING" />
                 </one-of>
             </iteration>
         </wrapper>
@@ -2421,63 +2422,63 @@
 
     <!-- ========= OPERATORS ========= -->
     <element-def description="COMPARISON operator" id="comparison_operator">
-        <one-of id="01454">
-            <token id="01455" type-id="CHR_EQUAL" />
-            <token id="01456" type-id="CHR_LESS" />
-            <token id="01457" type-id="CHR_GREATER" />
-            <token id="01458" type-id="OPR_NOT_EQUAL" />
-            <token id="01459" type-id="OPR_LESS_GREATER" />
-            <token id="01460" type-id="OPR_LESS_EQUAL" />
-            <token id="01461" type-id="OPR_GREATER_EQUAL" />
+        <one-of id="01455">
+            <token id="01456" type-id="CHR_EQUAL" />
+            <token id="01457" type-id="CHR_LESS" />
+            <token id="01458" type-id="CHR_GREATER" />
+            <token id="01459" type-id="OPR_NOT_EQUAL" />
+            <token id="01460" type-id="OPR_LESS_GREATER" />
+            <token id="01461" type-id="OPR_LESS_EQUAL" />
+            <token id="01462" type-id="OPR_GREATER_EQUAL" />
         </one-of>
     </element-def>
 
     <!-- ========= MISCELLANEOUS ========= -->
     <element-def description="Integer" id="integer">
-        <one-of id="01462" optional="true">
-            <token id="01463" type-id="CHR_MINUS" />
-            <token id="01464" type-id="CHR_PLUS" />
+        <one-of id="01463" optional="true">
+            <token id="01464" type-id="CHR_MINUS" />
+            <token id="01465" type-id="CHR_PLUS" />
         </one-of>
-        <token id="01465" type-id="INTEGER" />
+        <token id="01466" type-id="INTEGER" />
     </element-def>
 
     <element-def description="Number" id="number">
-        <one-of id="01466" optional="true">
-            <token id="01467" type-id="CHR_MINUS" />
-            <token id="01468" type-id="CHR_PLUS" />
+        <one-of id="01467" optional="true">
+            <token id="01468" type-id="CHR_MINUS" />
+            <token id="01469" type-id="CHR_PLUS" />
         </one-of>
-        <one-of id="01469">
-            <token id="01470" type-id="NUMBER" />
-            <token id="01471" type-id="INTEGER" />
+        <one-of id="01470">
+            <token id="01471" type-id="NUMBER" />
+            <token id="01472" type-id="INTEGER" />
         </one-of>
     </element-def>
 
     <element-def description="Boolean" id="boolean">
-        <one-of id="01472">
-            <token id="01473" type-id="KW_TRUE" />
-            <token id="01474" type-id="KW_FALSE" />
-            <token id="01475" type-id="KW_ON" />
-            <token id="01476" type-id="KW_OFF" />
-            <token id="01477" type-id="INTEGER" />
+        <one-of id="01473">
+            <token id="01474" type-id="KW_TRUE" />
+            <token id="01475" type-id="KW_FALSE" />
+            <token id="01476" type-id="KW_ON" />
+            <token id="01477" type-id="KW_OFF" />
+            <token id="01478" type-id="INTEGER" />
         </one-of>
     </element-def>
 
     <!-- CUSTOM -->
     <element-def description="IF EXISTS clause" id="if_exists_clause">
-        <token id="01478" type-id="KW_IF" />
-        <token id="01479" type-id="KW_EXISTS" />
+        <token id="01479" type-id="KW_IF" />
+        <token id="01480" type-id="KW_EXISTS" />
     </element-def>
     <element-def description="IF NOT EXISTS clause" id="if_not_exists_clause">
-        <token id="01480" type-id="KW_IF" />
-        <token id="01481" type-id="KW_NOT" />
-        <token id="01482" type-id="KW_EXISTS" />
+        <token id="01481" type-id="KW_IF" />
+        <token id="01482" type-id="KW_NOT" />
+        <token id="01483" type-id="KW_EXISTS" />
     </element-def>
 
     <element-def description="Unknown identifier" id="custom_undefined">
-        <token id="01483" type-id="IDENTIFIER" />
+        <token id="01484" type-id="IDENTIFIER" />
     </element-def>
 
     <element-def description="Statement end" formatting-spacing-before="NO_SPACE" id="end" truncate-on-execution="true">
-        <token id="01484" type-id="CHR_SEMICOLON" />
+        <token id="01485" type-id="CHR_SEMICOLON" />
     </element-def>
 </element-defs>
