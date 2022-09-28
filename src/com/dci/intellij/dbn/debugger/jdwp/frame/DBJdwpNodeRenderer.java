@@ -7,7 +7,12 @@ import com.intellij.debugger.DebuggerContext;
 import com.intellij.debugger.engine.DebugProcess;
 import com.intellij.debugger.engine.evaluation.EvaluateException;
 import com.intellij.debugger.engine.evaluation.EvaluationContext;
-import com.intellij.debugger.ui.impl.watch.*;
+import com.intellij.debugger.ui.impl.watch.ArgumentValueDescriptorImpl;
+import com.intellij.debugger.ui.impl.watch.DebuggerTreeNodeImpl;
+import com.intellij.debugger.ui.impl.watch.FieldDescriptorImpl;
+import com.intellij.debugger.ui.impl.watch.LocalVariableDescriptorImpl;
+import com.intellij.debugger.ui.impl.watch.NodeManagerImpl;
+import com.intellij.debugger.ui.impl.watch.ValueDescriptorImpl;
 import com.intellij.debugger.ui.tree.DebuggerTreeNode;
 import com.intellij.debugger.ui.tree.NodeDescriptor;
 import com.intellij.debugger.ui.tree.ValueDescriptor;
@@ -15,8 +20,12 @@ import com.intellij.debugger.ui.tree.render.ChildrenBuilder;
 import com.intellij.debugger.ui.tree.render.DescriptorLabelListener;
 import com.intellij.debugger.ui.tree.render.NodeRendererImpl;
 import com.intellij.psi.PsiExpression;
-import com.sun.jdi.*;
-import com.sun.tools.jdi.ObjectReferenceImpl;
+import com.sun.jdi.ClassNotLoadedException;
+import com.sun.jdi.Field;
+import com.sun.jdi.ObjectReference;
+import com.sun.jdi.ReferenceType;
+import com.sun.jdi.Type;
+import com.sun.jdi.Value;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -34,9 +43,9 @@ public class DBJdwpNodeRenderer extends NodeRendererImpl {
 
     @Override
     public void buildChildren(Value value, ChildrenBuilder builder, EvaluationContext evaluationContext) {
-        if (value instanceof ObjectReferenceImpl) {
-            List<DebuggerTreeNode> nodes = new ArrayList<DebuggerTreeNode>();
-            ObjectReferenceImpl objectReference = (ObjectReferenceImpl) value;
+        if (value instanceof ObjectReference) {
+            List<DebuggerTreeNode> nodes = new ArrayList<>();
+            ObjectReference objectReference = (ObjectReference) value;
 
             List<Field> fields = getFields(value);
             for (Field field : fields) {
@@ -60,7 +69,7 @@ public class DBJdwpNodeRenderer extends NodeRendererImpl {
     }
 
     @Override
-    public PsiExpression getChildValueExpression(DebuggerTreeNode node, DebuggerContext context) throws EvaluateException {
+    public PsiExpression getChildValueExpression(DebuggerTreeNode node, DebuggerContext context) {
         return null;
     }
 
@@ -76,7 +85,7 @@ public class DBJdwpNodeRenderer extends NodeRendererImpl {
     }
 
     @Override
-    public String calcLabel(ValueDescriptor descriptor, EvaluationContext evaluationContext, DescriptorLabelListener listener) throws EvaluateException {
+    public String calcLabel(ValueDescriptor descriptor, EvaluationContext evaluationContext, DescriptorLabelListener listener) {
         ObjectReference value = (ObjectReference) descriptor.getValue();
         List<Field> fields = ((ReferenceType) value.type()).fields();
         String stringValue = "";
@@ -150,10 +159,10 @@ public class DBJdwpNodeRenderer extends NodeRendererImpl {
     }
 
     @Nullable
-    @Override
+    //@Override
     @Compatibility
     public String getIdLabel(Value value, DebugProcess process) {
-        String label = super.getIdLabel(value, process);
+        String label = null;//super.getIdLabel(value, process);
         if (label != null && !label.toLowerCase().startsWith("deprecated")) {
             label = adjustIdLabel(label);
         }
