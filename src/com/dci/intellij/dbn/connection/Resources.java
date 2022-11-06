@@ -298,12 +298,12 @@ public final class Resources {
             @NotNull Supplier<String> errorMessage) throws E{
 
         long start = System.currentTimeMillis();
-        if (isDatabaseResourceDebug()) log.info(startMessage.get() + "...");
+        if (isDatabaseResourceDebug()) log.info("{}...", startMessage.get());
         try {
             action.run();
-            if (isDatabaseResourceDebug()) log.info(successMessage.get() + " - " + (System.currentTimeMillis() - start) + "ms");
+            if (isDatabaseResourceDebug()) log.info("{} - {}ms", successMessage.get(), System.currentTimeMillis() - start);
         } catch (Throwable t) {
-            log.warn(errorMessage.get() + " Cause: " + t.getMessage());
+            log.warn("{} Cause: {}", errorMessage.get(),  t.getMessage());
             throw t;
         }
     }

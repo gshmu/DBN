@@ -6,16 +6,7 @@ import com.dci.intellij.dbn.common.project.ProjectRef;
 import com.dci.intellij.dbn.common.routine.ThrowableCallable;
 import com.dci.intellij.dbn.common.routine.ThrowableRunnable;
 import com.dci.intellij.dbn.common.util.TimeUtil;
-import com.dci.intellij.dbn.connection.ConnectionCache;
-import com.dci.intellij.dbn.connection.ConnectionHandler;
-import com.dci.intellij.dbn.connection.ConnectionHandlerStatusHolder;
-import com.dci.intellij.dbn.connection.ConnectionId;
-import com.dci.intellij.dbn.connection.ConnectionProperties;
-import com.dci.intellij.dbn.connection.ConnectionStatusListener;
-import com.dci.intellij.dbn.connection.ConnectionType;
-import com.dci.intellij.dbn.connection.Resources;
-import com.dci.intellij.dbn.connection.SchemaId;
-import com.dci.intellij.dbn.connection.SessionId;
+import com.dci.intellij.dbn.connection.*;
 import com.dci.intellij.dbn.connection.transaction.PendingTransactionBundle;
 import com.intellij.openapi.progress.ProcessCanceledException;
 import com.intellij.openapi.project.Project;
@@ -25,12 +16,7 @@ import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import org.jetbrains.annotations.NotNull;
 
-import java.sql.CallableStatement;
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.SQLException;
-import java.sql.Savepoint;
-import java.sql.Statement;
+import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -413,7 +399,7 @@ public class DBNConnection extends DBNConnectionBase {
     }
 
 
-    public synchronized <T> T withSavepoint(ThrowableCallable<T, SQLException> callable) throws SQLException{
+    public <T> T withSavepoint(ThrowableCallable<T, SQLException> callable) throws SQLException{
         Savepoint savepoint = Resources.createSavepoint(this);
         try {
             return callable.call();
@@ -425,7 +411,7 @@ public class DBNConnection extends DBNConnectionBase {
         }
     }
 
-    public synchronized void withSavepoint(ThrowableRunnable<SQLException> runnable) throws SQLException{
+    public void withSavepoint(ThrowableRunnable<SQLException> runnable) throws SQLException{
         Savepoint savepoint = Resources.createSavepoint(this);
         try {
             runnable.run();

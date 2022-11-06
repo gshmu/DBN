@@ -51,7 +51,7 @@ public class PSQLStructureViewModel extends DBLanguageStructureViewModel {
 
     @NotNull
     @Override
-    public Collection<NodeProvider> getNodeProviders() {
+    public Collection getNodeProviders() {
         return Collections.emptyList();//NODE_PROVIDERS;
     }
 }
