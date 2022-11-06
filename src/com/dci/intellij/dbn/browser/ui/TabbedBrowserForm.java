@@ -20,10 +20,8 @@ import com.intellij.ui.tabs.TabInfo;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import javax.swing.JComponent;
-import javax.swing.JPanel;
-import java.awt.BorderLayout;
-import java.awt.Component;
+import javax.swing.*;
+import java.awt.*;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -34,6 +32,8 @@ public class TabbedBrowserForm extends DatabaseBrowserForm{
     TabbedBrowserForm(@NotNull Project project, @Nullable TabbedBrowserForm previous) {
         super(project);
         connectionTabs = new TabbedPane(this);
+        //connectionTabs.setSingleRow(false);
+        connectionTabs.setAutoscrolls(true);
         //connectionTabs.setBackground(GUIUtil.getListBackground());
         //mainPanel.add(connectionTabs, BorderLayout.CENTER);
         initTabs(previous);
