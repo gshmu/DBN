@@ -19,17 +19,10 @@ import lombok.Getter;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import javax.swing.AbstractCellEditor;
-import javax.swing.JTable;
-import javax.swing.JTextField;
+import javax.swing.*;
 import javax.swing.table.TableCellEditor;
-import java.awt.Component;
-import java.awt.Font;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.ItemEvent;
-import java.awt.event.ItemListener;
-import java.awt.event.MouseEvent;
+import java.awt.*;
+import java.awt.event.*;
 import java.io.Serializable;
 import java.text.ParseException;
 import java.util.EventObject;
@@ -41,13 +34,6 @@ public abstract class AbstractDatasetTableCellEditor extends AbstractCellEditor 
     private int clickCountToStart = 1;
     protected DataEditorSettings settings;
 
-
-    private final DatasetEditorModelCellValueListener cellValueListener = cell -> {
-        if (cell == getCell()) {
-            Dispatch.run(() -> setCellValueToEditor());
-        }
-    };
-
     AbstractDatasetTableCellEditor(@NotNull DatasetEditorTable table, DataEditorComponent editorComponent) {
         this.table = WeakRef.of(table);
         this.editorComponent = WeakRef.of(editorComponent);
@@ -57,7 +43,7 @@ public abstract class AbstractDatasetTableCellEditor extends AbstractCellEditor 
 
         this.clickCountToStart = 2;
         editorComponent.getTextField().addActionListener(new EditorDelegate());
-        ProjectEvents.subscribe(project, this, DatasetEditorModelCellValueListener.TOPIC, cellValueListener);
+        ProjectEvents.subscribe(project, this, DatasetEditorModelCellValueListener.TOPIC, cellValueListener());
 
         table.addPropertyChangeListener(evt -> {
             Object newValue = evt.getNewValue();
@@ -69,6 +55,15 @@ public abstract class AbstractDatasetTableCellEditor extends AbstractCellEditor 
 
         Disposer.register(table, this);
         Disposer.register(this, editorComponent);
+    }
+
+    @NotNull
+    private DatasetEditorModelCellValueListener cellValueListener() {
+        return cell -> {
+            if (cell == getCell()) {
+                Dispatch.run(() -> setCellValueToEditor());
+            }
+        };
     }
 
     public DatasetEditorTable getTable() {

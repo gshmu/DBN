@@ -18,8 +18,7 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
 import org.jetbrains.annotations.NotNull;
 
-import javax.swing.Icon;
-import javax.swing.JComponent;
+import javax.swing.*;
 import java.util.List;
 
 public class DatabaseSessionSelectDropdownAction extends DBNComboBoxAction implements DumbAware {

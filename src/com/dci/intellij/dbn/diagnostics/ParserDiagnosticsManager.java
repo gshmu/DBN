@@ -1,8 +1,8 @@
 package com.dci.intellij.dbn.diagnostics;
 
 import com.dci.intellij.dbn.DatabaseNavigator;
-import com.dci.intellij.dbn.common.AbstractProjectComponent;
-import com.dci.intellij.dbn.common.dispose.Failsafe;
+import com.dci.intellij.dbn.common.component.PersistentState;
+import com.dci.intellij.dbn.common.component.ProjectComponentBase;
 import com.dci.intellij.dbn.common.file.util.FileSearchRequest;
 import com.dci.intellij.dbn.common.file.util.VirtualFiles;
 import com.dci.intellij.dbn.common.notification.NotificationGroup;
@@ -21,7 +21,6 @@ import com.dci.intellij.dbn.language.common.psi.PsiUtil;
 import com.dci.intellij.dbn.language.common.psi.scrambler.DBLLanguageFileScrambler;
 import com.dci.intellij.dbn.language.psql.PSQLFileType;
 import com.dci.intellij.dbn.language.sql.SQLFileType;
-import com.intellij.openapi.components.PersistentStateComponent;
 import com.intellij.openapi.components.State;
 import com.intellij.openapi.components.Storage;
 import com.intellij.openapi.fileTypes.ExtensionFileNameMatcher;
@@ -35,7 +34,6 @@ import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.FileUtils;
 import org.jdom.Element;
-import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -44,13 +42,15 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+import static com.dci.intellij.dbn.common.component.Components.projectService;
+
 @Slf4j
 @Getter
 @State(
     name = ParserDiagnosticsManager.COMPONENT_NAME,
     storages = @Storage(DatabaseNavigator.STORAGE_FILE)
 )
-public class ParserDiagnosticsManager extends AbstractProjectComponent implements PersistentStateComponent<Element> {
+public class ParserDiagnosticsManager extends ProjectComponentBase implements PersistentState {
     public static final String COMPONENT_NAME = "DBNavigator.Project.ParserDiagnosticsManager";
 
     private final List<ParserDiagnosticsResult> resultHistory = new ArrayList<>();
@@ -58,11 +58,11 @@ public class ParserDiagnosticsManager extends AbstractProjectComponent implement
     private boolean running;
 
     private ParserDiagnosticsManager(@NotNull Project project) {
-        super(project);
+        super(project, COMPONENT_NAME);
     }
 
     public static ParserDiagnosticsManager get(@NotNull Project project) {
-        return Failsafe.getComponent(project, ParserDiagnosticsManager.class);
+        return projectService(project, ParserDiagnosticsManager.class);
     }
 
     @NotNull
@@ -213,13 +213,6 @@ public class ParserDiagnosticsManager extends AbstractProjectComponent implement
     private DBLanguagePsiFile ensureFileParsed(VirtualFile file) {
         PsiFile psiFile = Read.call(() -> PsiUtil.getPsiFile(getProject(), file));
         return psiFile instanceof DBLanguagePsiFile ? (DBLanguagePsiFile) psiFile : null;
-    }
-
-    @Override
-    @NonNls
-    @NotNull
-    public String getComponentName() {
-        return COMPONENT_NAME;
     }
 
     /*********************************************

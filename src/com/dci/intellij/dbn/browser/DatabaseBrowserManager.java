@@ -10,7 +10,8 @@ import com.dci.intellij.dbn.browser.options.ObjectFilterChangeListener;
 import com.dci.intellij.dbn.browser.ui.BrowserToolWindowForm;
 import com.dci.intellij.dbn.browser.ui.DatabaseBrowserForm;
 import com.dci.intellij.dbn.browser.ui.DatabaseBrowserTree;
-import com.dci.intellij.dbn.common.AbstractProjectComponent;
+import com.dci.intellij.dbn.common.component.PersistentState;
+import com.dci.intellij.dbn.common.component.ProjectComponentBase;
 import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.common.event.ProjectEvents;
 import com.dci.intellij.dbn.common.filter.Filter;
@@ -18,11 +19,7 @@ import com.dci.intellij.dbn.common.latent.Latent;
 import com.dci.intellij.dbn.common.options.setting.BooleanSetting;
 import com.dci.intellij.dbn.common.thread.Dispatch;
 import com.dci.intellij.dbn.common.thread.Progress;
-import com.dci.intellij.dbn.connection.ConnectionBundle;
-import com.dci.intellij.dbn.connection.ConnectionHandler;
-import com.dci.intellij.dbn.connection.ConnectionId;
-import com.dci.intellij.dbn.connection.ConnectionManager;
-import com.dci.intellij.dbn.connection.SchemaId;
+import com.dci.intellij.dbn.connection.*;
 import com.dci.intellij.dbn.connection.config.ConnectionDetailSettings;
 import com.dci.intellij.dbn.object.DBSchema;
 import com.dci.intellij.dbn.object.common.DBObject;
@@ -31,7 +28,6 @@ import com.dci.intellij.dbn.object.common.list.DBObjectList;
 import com.dci.intellij.dbn.object.common.list.DBObjectListContainer;
 import com.dci.intellij.dbn.object.type.DBObjectType;
 import com.dci.intellij.dbn.vfs.DBVirtualFile;
-import com.intellij.openapi.components.PersistentStateComponent;
 import com.intellij.openapi.components.State;
 import com.intellij.openapi.components.Storage;
 import com.intellij.openapi.fileEditor.FileEditor;
@@ -46,7 +42,6 @@ import com.intellij.openapi.wm.ToolWindowManager;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
 import org.jdom.Element;
-import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -54,6 +49,7 @@ import javax.swing.tree.TreePath;
 import java.util.ArrayList;
 import java.util.List;
 
+import static com.dci.intellij.dbn.common.component.Components.projectService;
 import static com.dci.intellij.dbn.common.options.setting.SettingsSupport.connectionIdAttribute;
 import static com.dci.intellij.dbn.common.options.setting.SettingsSupport.stringAttribute;
 
@@ -61,7 +57,7 @@ import static com.dci.intellij.dbn.common.options.setting.SettingsSupport.string
     name = DatabaseBrowserManager.COMPONENT_NAME,
     storages = @Storage(DatabaseNavigator.STORAGE_FILE)
 )
-public class DatabaseBrowserManager extends AbstractProjectComponent implements PersistentStateComponent<Element> {
+public class DatabaseBrowserManager extends ProjectComponentBase implements PersistentState {
     public static final String COMPONENT_NAME = "DBNavigator.Project.DatabaseBrowserManager";
     public static final String TOOL_WINDOW_ID = "DB Browser";
 
@@ -80,10 +76,14 @@ public class DatabaseBrowserManager extends AbstractProjectComponent implements 
     });
 
     private DatabaseBrowserManager(Project project) {
-        super(project);
+        super(project, COMPONENT_NAME);
 
-        ProjectEvents.subscribe(project, this, FileEditorManagerListener.FILE_EDITOR_MANAGER, fileEditorManagerListener);
-        ProjectEvents.subscribe(project, this, ObjectFilterChangeListener.TOPIC, filterChangeListener);
+        ProjectEvents.subscribe(project, this, FileEditorManagerListener.FILE_EDITOR_MANAGER, fileEditorManagerListener());
+        ProjectEvents.subscribe(project, this, ObjectFilterChangeListener.TOPIC, objectFilterChangeListener());
+    }
+
+    public static DatabaseBrowserManager getInstance(@NotNull Project project) {
+        return projectService(project, DatabaseBrowserManager.class);
     }
 
     @Nullable
@@ -171,19 +171,6 @@ public class DatabaseBrowserManager extends AbstractProjectComponent implements 
         return autoscrollFromEditor.value() && (AUTOSCROLL_FROM_EDITOR.get() == null || AUTOSCROLL_FROM_EDITOR.get());
     }
 
-    /***************************************
-     *            ProjectComponent         *
-     ***************************************/
-    public static DatabaseBrowserManager getInstance(@NotNull Project project) {
-        return Failsafe.getComponent(project, DatabaseBrowserManager.class);
-    }
-
-    @Override
-    @NonNls @NotNull
-    public String getComponentName() {
-        return COMPONENT_NAME;
-    }
-
     public static void scrollToSelectedElement(ConnectionHandler connection) {
         Dispatch.run(() -> {
             Project project = connection.getProject();
@@ -205,27 +192,30 @@ public class DatabaseBrowserManager extends AbstractProjectComponent implements 
     /**********************************************************
      *                       Listeners                        *
      **********************************************************/
-    private final ObjectFilterChangeListener filterChangeListener = new ObjectFilterChangeListener() {
-        @Override
-        public void typeFiltersChanged(ConnectionId connectionId) {
-            if (toolWindowForm.loaded()) {
-                ConnectionHandler connection = getConnection(connectionId);
-                if (connection == null) {
-                    getBrowserForm().rebuildTree();
-                } else {
-                    connection.getObjectBundle().rebuildTreeChildren();
+    @NotNull
+    private ObjectFilterChangeListener objectFilterChangeListener() {
+        return new ObjectFilterChangeListener() {
+            @Override
+            public void typeFiltersChanged(ConnectionId connectionId) {
+                if (toolWindowForm.loaded()) {
+                    ConnectionHandler connection = getConnection(connectionId);
+                    if (connection == null) {
+                        getBrowserForm().rebuildTree();
+                    } else {
+                        connection.getObjectBundle().rebuildTreeChildren();
+                    }
                 }
             }
-        }
 
-        @Override
-        public void nameFiltersChanged(ConnectionId connectionId, @NotNull DBObjectType... objectTypes) {
-            ConnectionHandler connection = getConnection(connectionId);
-            if (toolWindowForm.loaded() && connection != null && objectTypes.length > 0) {
-                connection.getObjectBundle().refreshTreeChildren(objectTypes);
+            @Override
+            public void nameFiltersChanged(ConnectionId connectionId, @NotNull DBObjectType... objectTypes) {
+                ConnectionHandler connection = getConnection(connectionId);
+                if (toolWindowForm.loaded() && connection != null && objectTypes.length > 0) {
+                    connection.getObjectBundle().refreshTreeChildren(objectTypes);
+                }
             }
-        }
-    };
+        };
+    }
 
     @Nullable
     private ConnectionHandler getConnection(ConnectionId connectionId) {
@@ -238,58 +228,61 @@ public class DatabaseBrowserManager extends AbstractProjectComponent implements 
         return browserSettings.getFilterSettings().getObjectTypeFilterSettings().getElementFilter();
     }
 
-    private final FileEditorManagerListener fileEditorManagerListener = new FileEditorManagerListener() {
-        @Override
-        public void fileOpened(@NotNull FileEditorManager source, @NotNull VirtualFile file) {
-            if (scroll()) {
-                if (file instanceof DBVirtualFile) {
-                    DBVirtualFile databaseVirtualFile = (DBVirtualFile) file;
-                    DBObject object = databaseVirtualFile.getObject();
-                    if (object != null) {
-                        navigateToElement(object, true);
-                    } else {
-                        ConnectionHandler connection = databaseVirtualFile.getConnection();
-                        navigateToElement(connection.getObjectBundle(), false);
-                    }
-                }
-            }
-        }
-
-        @Override
-        public void selectionChanged(@NotNull FileEditorManagerEvent event) {
-            if (scroll()) {
-                VirtualFile oldFile = event.getOldFile();
-                VirtualFile newFile = event.getNewFile();
-
-                if (oldFile == null || !oldFile.equals(newFile)) {
-                    if (newFile instanceof DBVirtualFile) {
-                        DBVirtualFile virtualFile = (DBVirtualFile) newFile;
-                        DBObject object = virtualFile.getObject();
+    @NotNull
+    private FileEditorManagerListener fileEditorManagerListener() {
+        return new FileEditorManagerListener() {
+            @Override
+            public void fileOpened(@NotNull FileEditorManager source, @NotNull VirtualFile file) {
+                if (scroll()) {
+                    if (file instanceof DBVirtualFile) {
+                        DBVirtualFile databaseVirtualFile = (DBVirtualFile) file;
+                        DBObject object = databaseVirtualFile.getObject();
                         if (object != null) {
                             navigateToElement(object, true);
                         } else {
-                            ConnectionHandler connection = virtualFile.getConnection();
-                            FileEditor oldEditor = event.getOldEditor();
-                            SchemaId schemaId = virtualFile.getSchemaId();
-                            boolean scroll = oldEditor != null && oldEditor.isValid();
-
-                            Progress.background(
-                                    getProject(),
-                                    connection.getMetaLoadTitle(),
-                                    false,
-                                    progress -> {
-                                        BrowserTreeNode treeNode = schemaId == null ?
-                                                connection.getObjectBundle() :
-                                                connection.getSchema(schemaId);
-
-                                        navigateToElement(treeNode, scroll);
-                                    });
+                            ConnectionHandler connection = databaseVirtualFile.getConnection();
+                            navigateToElement(connection.getObjectBundle(), false);
                         }
                     }
                 }
             }
-        }
-    };
+
+            @Override
+            public void selectionChanged(@NotNull FileEditorManagerEvent event) {
+                if (scroll()) {
+                    VirtualFile oldFile = event.getOldFile();
+                    VirtualFile newFile = event.getNewFile();
+
+                    if (oldFile == null || !oldFile.equals(newFile)) {
+                        if (newFile instanceof DBVirtualFile) {
+                            DBVirtualFile virtualFile = (DBVirtualFile) newFile;
+                            DBObject object = virtualFile.getObject();
+                            if (object != null) {
+                                navigateToElement(object, true);
+                            } else {
+                                ConnectionHandler connection = virtualFile.getConnection();
+                                FileEditor oldEditor = event.getOldEditor();
+                                SchemaId schemaId = virtualFile.getSchemaId();
+                                boolean scroll = oldEditor != null && oldEditor.isValid();
+
+                                Progress.background(
+                                        getProject(),
+                                        connection.getMetaLoadTitle(),
+                                        false,
+                                        progress -> {
+                                            BrowserTreeNode treeNode = schemaId == null ?
+                                                    connection.getObjectBundle() :
+                                                    connection.getSchema(schemaId);
+
+                                            navigateToElement(treeNode, scroll);
+                                        });
+                            }
+                        }
+                    }
+                }
+            }
+        };
+    }
 
     public void showObjectProperties(boolean visible) {
         BrowserToolWindowForm toolWindowForm = getToolWindowForm();

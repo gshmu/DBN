@@ -1,8 +1,8 @@
 package com.dci.intellij.dbn.editor.session.ui.table;
 
 import com.dci.intellij.dbn.common.dispose.Failsafe;
-import com.dci.intellij.dbn.common.ui.util.Borders;
 import com.dci.intellij.dbn.common.ui.table.DBNTable;
+import com.dci.intellij.dbn.common.ui.util.Borders;
 import com.dci.intellij.dbn.common.util.Commons;
 import com.dci.intellij.dbn.data.grid.ui.table.basic.BasicTableCellRenderer;
 import com.dci.intellij.dbn.editor.session.color.SessionBrowserTextAttributes;
@@ -11,7 +11,7 @@ import com.dci.intellij.dbn.editor.session.model.SessionBrowserModelRow;
 import com.intellij.ui.SimpleTextAttributes;
 
 import javax.swing.border.Border;
-import java.awt.Color;
+import java.awt.*;
 
 public class SessionBrowserTableCellRenderer extends BasicTableCellRenderer {
 

@@ -1,7 +1,6 @@
 package com.dci.intellij.dbn.generator;
 
-import com.dci.intellij.dbn.common.AbstractProjectComponent;
-import com.dci.intellij.dbn.common.dispose.Failsafe;
+import com.dci.intellij.dbn.common.component.ProjectComponentBase;
 import com.dci.intellij.dbn.object.DBTable;
 import com.dci.intellij.dbn.object.common.DBObject;
 import com.intellij.openapi.project.Project;
@@ -9,14 +8,18 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 
-public class StatementGenerationManager extends AbstractProjectComponent {
+import static com.dci.intellij.dbn.common.component.Components.projectService;
+
+public class StatementGenerationManager extends ProjectComponentBase {
+
+    public static final String COMPONENT_NAME = "DBNavigator.Project.StatementGenerationManager";
 
     private StatementGenerationManager(Project project) {
-        super(project);
+        super(project, COMPONENT_NAME);
     }
 
     public static StatementGenerationManager getInstance(@NotNull Project project) {
-        return Failsafe.getComponent(project, StatementGenerationManager.class);
+        return projectService(project, StatementGenerationManager.class);
     }
 
     public StatementGeneratorResult generateSelectStatement(List<DBObject> objects, boolean enforceAliasUsage) {
@@ -27,11 +30,5 @@ public class StatementGenerationManager extends AbstractProjectComponent {
     public StatementGeneratorResult generateInsert(DBTable table) {
         InsertStatementGenerator generator = new InsertStatementGenerator(table);
         return generator.generateStatement(getProject());
-    }
-
-    @NotNull
-    @Override
-    public String getComponentName() {
-        return "DBNavigator.Project.StatementGenerationManager";
     }
 }

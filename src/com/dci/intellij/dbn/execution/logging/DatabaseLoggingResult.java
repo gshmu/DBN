@@ -18,7 +18,7 @@ import com.intellij.psi.PsiFile;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import javax.swing.Icon;
+import javax.swing.*;
 
 public class DatabaseLoggingResult extends ExecutionResultBase<DatabaseLoggingResultForm> {
 

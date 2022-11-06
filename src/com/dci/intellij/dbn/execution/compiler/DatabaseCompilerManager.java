@@ -1,7 +1,6 @@
 package com.dci.intellij.dbn.execution.compiler;
 
-import com.dci.intellij.dbn.common.AbstractProjectComponent;
-import com.dci.intellij.dbn.common.dispose.Failsafe;
+import com.dci.intellij.dbn.common.component.ProjectComponentBase;
 import com.dci.intellij.dbn.common.event.ProjectEvents;
 import com.dci.intellij.dbn.common.routine.ParametricRunnable;
 import com.dci.intellij.dbn.common.thread.Progress;
@@ -14,7 +13,6 @@ import com.dci.intellij.dbn.database.DatabaseMetadataInterface;
 import com.dci.intellij.dbn.debugger.DatabaseDebuggerManager;
 import com.dci.intellij.dbn.editor.DBContentType;
 import com.dci.intellij.dbn.editor.code.SourceCodeEditor;
-import com.dci.intellij.dbn.editor.code.SourceCodeManagerAdapter;
 import com.dci.intellij.dbn.editor.code.SourceCodeManagerListener;
 import com.dci.intellij.dbn.execution.ExecutionManager;
 import com.dci.intellij.dbn.execution.compiler.ui.CompilerTypeSelectionDialog;
@@ -28,51 +26,55 @@ import com.dci.intellij.dbn.vfs.file.DBSourceCodeVirtualFile;
 import com.intellij.openapi.progress.ProgressIndicator;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.DialogWrapper;
-import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.sql.SQLException;
 import java.util.List;
 
-public class DatabaseCompilerManager extends AbstractProjectComponent {
-    private DatabaseCompilerManager(@NotNull Project project) {
-        super(project);
+import static com.dci.intellij.dbn.common.component.Components.projectService;
 
-        ProjectEvents.subscribe(project, this, SourceCodeManagerListener.TOPIC, sourceCodeManagerListener);
+public class DatabaseCompilerManager extends ProjectComponentBase {
+    private DatabaseCompilerManager(@NotNull Project project) {
+        super(project, "DBNavigator.Project.CompilerManager");
+
+        ProjectEvents.subscribe(project, this, SourceCodeManagerListener.TOPIC, sourceCodeManagerListener());
     }
 
     public static DatabaseCompilerManager getInstance(@NotNull Project project) {
-        return Failsafe.getComponent(project, DatabaseCompilerManager.class);
+        return projectService(project, DatabaseCompilerManager.class);
     }
 
-    private final SourceCodeManagerListener sourceCodeManagerListener = new SourceCodeManagerAdapter() {
-        @Override
-        public void sourceCodeSaved(@NotNull DBSourceCodeVirtualFile sourceCodeFile, @Nullable SourceCodeEditor fileEditor) {
-            Project project = getProject();
-            DBSchemaObject object = sourceCodeFile.getObject();
-            DBContentType contentType = sourceCodeFile.getContentType();
+    @NotNull
+    private SourceCodeManagerListener sourceCodeManagerListener() {
+        return new SourceCodeManagerListener() {
+            @Override
+            public void sourceCodeSaved(@NotNull DBSourceCodeVirtualFile sourceCodeFile, @Nullable SourceCodeEditor fileEditor) {
+                Project project = getProject();
+                DBSchemaObject object = sourceCodeFile.getObject();
+                DBContentType contentType = sourceCodeFile.getContentType();
 
-            if (DatabaseFeature.OBJECT_INVALIDATION.isSupported(object)) {
-                boolean isCompilable = object.is(DBObjectProperty.COMPILABLE);
+                if (DatabaseFeature.OBJECT_INVALIDATION.isSupported(object)) {
+                    boolean isCompilable = object.is(DBObjectProperty.COMPILABLE);
 
-                if (isCompilable) {
-                    CompileType compileType = getCompileType(object, contentType);
+                    if (isCompilable) {
+                        CompileType compileType = getCompileType(object, contentType);
 
-                    CompilerAction compilerAction = new CompilerAction(CompilerActionSource.SAVE, contentType, sourceCodeFile, fileEditor);
-                    if (compileType == CompileType.DEBUG) {
-                        compileObject(object, compileType, compilerAction);
+                        CompilerAction compilerAction = new CompilerAction(CompilerActionSource.SAVE, contentType, sourceCodeFile, fileEditor);
+                        if (compileType == CompileType.DEBUG) {
+                            compileObject(object, compileType, compilerAction);
+                        }
+                        ConnectionHandler connection = object.getConnection();
+                        ProjectEvents.notify(project,
+                                CompileManagerListener.TOPIC,
+                                (listener) -> listener.compileFinished(connection, object));
+
+                        createCompilerResult(object, compilerAction);
                     }
-                    ConnectionHandler connection = object.getConnection();
-                    ProjectEvents.notify(project,
-                            CompileManagerListener.TOPIC,
-                            (listener) -> listener.compileFinished(connection, object));
-
-                    createCompilerResult(object, compilerAction);
                 }
             }
-        }
-    };
+        };
+    }
 
     private void createCompilerResult(DBSchemaObject object, CompilerAction compilerAction) {
         Project project = object.getProject();
@@ -319,15 +321,5 @@ public class DatabaseCompilerManager extends AbstractProjectComponent {
         } else {
             callback.run(compileType);
         }
-    }
-
-    /***************************************
-     *            ProjectComponent         *
-     ***************************************/
-    @Override
-    @NonNls
-    @NotNull
-    public String getComponentName() {
-        return "DBNavigator.Project.CompilerManager";
     }
 }

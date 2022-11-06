@@ -1,25 +1,24 @@
 package com.dci.intellij.dbn.object.filter.name;
 
 import com.dci.intellij.dbn.DatabaseNavigator;
-import com.dci.intellij.dbn.common.AbstractProjectComponent;
-import com.dci.intellij.dbn.common.dispose.Failsafe;
+import com.dci.intellij.dbn.common.component.Components;
+import com.dci.intellij.dbn.common.component.PersistentState;
+import com.dci.intellij.dbn.common.component.ProjectComponentBase;
 import com.dci.intellij.dbn.common.ui.util.UserInterface;
 import com.dci.intellij.dbn.object.filter.ConditionJoinType;
 import com.dci.intellij.dbn.object.filter.name.ui.ObjectNameFilterConditionDialog;
 import com.dci.intellij.dbn.object.filter.name.ui.ObjectNameFilterConditionForm;
 import com.dci.intellij.dbn.object.filter.name.ui.ObjectNameFilterSettingsForm;
 import com.dci.intellij.dbn.object.type.DBObjectType;
-import com.intellij.openapi.components.PersistentStateComponent;
 import com.intellij.openapi.components.State;
 import com.intellij.openapi.components.Storage;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.DialogWrapper;
 import org.jdom.Element;
-import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import javax.swing.JTree;
+import javax.swing.*;
 import javax.swing.tree.TreePath;
 import java.util.List;
 
@@ -27,12 +26,12 @@ import java.util.List;
     name = ObjectNameFilterManager.COMPONENT_NAME,
     storages = @Storage(DatabaseNavigator.STORAGE_FILE)
 )
-public class ObjectNameFilterManager extends AbstractProjectComponent implements PersistentStateComponent<Element> {
+public class ObjectNameFilterManager extends ProjectComponentBase implements PersistentState {
 
     public static final String COMPONENT_NAME = "DBNavigator.Project.ObjectNameFilterManager";
 
     private ObjectNameFilterManager(Project project) {
-        super(project);
+        super(project, COMPONENT_NAME);
     }
 
     public void createFilter(DBObjectType objectType, ObjectNameFilterSettingsForm settingsForm) {
@@ -212,14 +211,7 @@ public class ObjectNameFilterManager extends AbstractProjectComponent implements
      *            ProjectComponent         *
      ***************************************/
     public static ObjectNameFilterManager getInstance(@NotNull Project project) {
-        return Failsafe.getComponent(project, ObjectNameFilterManager.class);
-    }
-
-    @Override
-    @NonNls
-    @NotNull
-    public String getComponentName() {
-        return COMPONENT_NAME;
+        return Components.projectService(project, ObjectNameFilterManager.class);
     }
 
     /*********************************************

@@ -2,7 +2,8 @@ package com.dci.intellij.dbn.connection;
 
 import com.dci.intellij.dbn.DatabaseNavigator;
 import com.dci.intellij.dbn.browser.DatabaseBrowserManager;
-import com.dci.intellij.dbn.common.AbstractProjectComponent;
+import com.dci.intellij.dbn.common.component.PersistentState;
+import com.dci.intellij.dbn.common.component.ProjectComponentBase;
 import com.dci.intellij.dbn.common.database.AuthenticationInfo;
 import com.dci.intellij.dbn.common.database.DatabaseInfo;
 import com.dci.intellij.dbn.common.dispose.Failsafe;
@@ -15,11 +16,7 @@ import com.dci.intellij.dbn.common.routine.ParametricRunnable;
 import com.dci.intellij.dbn.common.thread.Background;
 import com.dci.intellij.dbn.common.thread.Dispatch;
 import com.dci.intellij.dbn.common.thread.Progress;
-import com.dci.intellij.dbn.common.util.Editors;
-import com.dci.intellij.dbn.common.util.InternalApi;
-import com.dci.intellij.dbn.common.util.Lists;
-import com.dci.intellij.dbn.common.util.Strings;
-import com.dci.intellij.dbn.common.util.TimeUtil;
+import com.dci.intellij.dbn.common.util.*;
 import com.dci.intellij.dbn.connection.config.ConnectionConfigListener;
 import com.dci.intellij.dbn.connection.config.ConnectionDatabaseSettings;
 import com.dci.intellij.dbn.connection.config.ConnectionSettings;
@@ -37,7 +34,6 @@ import com.dci.intellij.dbn.connection.ui.ConnectionAuthenticationDialog;
 import com.dci.intellij.dbn.execution.ExecutionManager;
 import com.dci.intellij.dbn.execution.method.MethodExecutionManager;
 import com.dci.intellij.dbn.vfs.DatabaseFileManager;
-import com.intellij.openapi.components.PersistentStateComponent;
 import com.intellij.openapi.components.State;
 import com.intellij.openapi.components.Storage;
 import com.intellij.openapi.options.ConfigurationException;
@@ -48,7 +44,6 @@ import com.intellij.openapi.util.Disposer;
 import com.intellij.openapi.vfs.VirtualFile;
 import lombok.extern.slf4j.Slf4j;
 import org.jdom.Element;
-import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -58,6 +53,7 @@ import java.util.Timer;
 import java.util.TimerTask;
 import java.util.function.Predicate;
 
+import static com.dci.intellij.dbn.common.component.Components.projectService;
 import static com.dci.intellij.dbn.common.message.MessageCallback.when;
 import static com.dci.intellij.dbn.common.util.Commons.list;
 import static com.dci.intellij.dbn.common.util.Lists.isLast;
@@ -69,7 +65,7 @@ import static com.dci.intellij.dbn.connection.transaction.TransactionAction.acti
     storages = @Storage(DatabaseNavigator.STORAGE_FILE)
 )
 @Slf4j
-public class ConnectionManager extends AbstractProjectComponent implements PersistentStateComponent<Element> {
+public class ConnectionManager extends ProjectComponentBase implements PersistentState {
 
     public static final String COMPONENT_NAME = "DBNavigator.Project.ConnectionManager";
 
@@ -78,15 +74,11 @@ public class ConnectionManager extends AbstractProjectComponent implements Persi
     private static ConnectionRef lastUsedConnection;
 
     public static ConnectionManager getInstance(@NotNull Project project) {
-        return getComponent(project);
-    }
-
-    private static ConnectionManager getComponent(@NotNull Project project) {
-        return Failsafe.getComponent(project, ConnectionManager.class);
+        return projectService(project, ConnectionManager.class);
     }
 
     private ConnectionManager(@NotNull Project project) {
-        super(project);
+        super(project, COMPONENT_NAME);
         connectionBundle = new ConnectionBundle(project);
 
         ProjectEvents.subscribe(project, this,
@@ -98,7 +90,6 @@ public class ConnectionManager extends AbstractProjectComponent implements Persi
 
     @Override
     public void initializeComponent() {
-        super.initComponent();
         idleConnectionCleaner = new Timer("DBN - Idle Connection Cleaner");
         idleConnectionCleaner.schedule(new CloseIdleConnectionTask(), TimeUtil.Millis.ONE_MINUTE, TimeUtil.Millis.ONE_MINUTE);
     }
@@ -539,16 +530,6 @@ public class ConnectionManager extends AbstractProjectComponent implements Persi
             return false;
         }
         return true;
-    }
-
-    /**********************************************
-    *                ProjectComponent             *
-    ***********************************************/
-    @Override
-    @NonNls
-    @NotNull
-    public String getComponentName() {
-        return COMPONENT_NAME;
     }
 
     /*********************************************************

@@ -3,8 +3,8 @@ package com.dci.intellij.dbn.code.common.style;
 import com.dci.intellij.dbn.DatabaseNavigator;
 import com.dci.intellij.dbn.code.common.style.options.CodeStyleCaseOption;
 import com.dci.intellij.dbn.code.common.style.options.CodeStyleCaseSettings;
-import com.dci.intellij.dbn.common.AbstractProjectComponent;
-import com.dci.intellij.dbn.common.dispose.Failsafe;
+import com.dci.intellij.dbn.common.component.PersistentState;
+import com.dci.intellij.dbn.common.component.ProjectComponentBase;
 import com.dci.intellij.dbn.common.util.Documents;
 import com.dci.intellij.dbn.language.common.DBLanguage;
 import com.dci.intellij.dbn.language.common.TokenType;
@@ -13,7 +13,6 @@ import com.dci.intellij.dbn.language.common.psi.LeafPsiElement;
 import com.dci.intellij.dbn.language.common.psi.PsiUtil;
 import com.dci.intellij.dbn.language.common.psi.TokenPsiElement;
 import com.intellij.lang.Language;
-import com.intellij.openapi.components.PersistentStateComponent;
 import com.intellij.openapi.components.State;
 import com.intellij.openapi.components.Storage;
 import com.intellij.openapi.editor.Document;
@@ -25,26 +24,27 @@ import com.intellij.openapi.util.TextRange;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import org.jdom.Element;
-import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Objects;
 
+import static com.dci.intellij.dbn.common.component.Components.projectService;
+
 @State(
     name = DBLCodeStyleManager.COMPONENT_NAME,
     storages = @Storage(DatabaseNavigator.STORAGE_FILE)
 )
-public class DBLCodeStyleManager extends AbstractProjectComponent implements PersistentStateComponent<Element> {
+public class DBLCodeStyleManager extends ProjectComponentBase implements PersistentState {
 
     public static final String COMPONENT_NAME = "DBNavigator.Project.CodeStyleManager";
 
     private DBLCodeStyleManager(Project project) {
-        super(project);
+        super(project, COMPONENT_NAME);
     }
 
     public static DBLCodeStyleManager getInstance(@NotNull Project project) {
-        return Failsafe.getComponent(project, DBLCodeStyleManager.class);
+        return projectService(project, DBLCodeStyleManager.class);
     }
 
     public void formatCase(@NotNull PsiFile file) {
@@ -110,16 +110,6 @@ public class DBLCodeStyleManager extends AbstractProjectComponent implements Per
                 child = child.getNextSibling();
             }
         }
-    }
-
-    /****************************************
-    *            ProjectComponent           *
-    *****************************************/
-    @Override
-    @NonNls
-    @NotNull
-    public String getComponentName() {
-        return COMPONENT_NAME;
     }
 
     /*********************************************

@@ -9,6 +9,7 @@ import com.dci.intellij.dbn.connection.ConnectionRef;
 import com.dci.intellij.dbn.object.DBConsole;
 import com.dci.intellij.dbn.object.impl.DBConsoleImpl;
 import com.dci.intellij.dbn.vfs.DBConsoleType;
+import com.intellij.openapi.project.Project;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -33,6 +34,11 @@ public class DatabaseConsoleBundle extends StatefulDisposable.Base {
             }
         }
         return consoles;
+    }
+
+    @NotNull
+    private Project getProject() {
+        return getConnection().getProject();
     }
 
     public Set<String> getConsoleNames() {

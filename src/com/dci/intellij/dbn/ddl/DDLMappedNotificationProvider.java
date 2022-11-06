@@ -28,72 +28,81 @@ public class DDLMappedNotificationProvider extends LegacyEditorNotificationsProv
     private static final Key<DDLMappedNotificationPanel> KEY = Key.create("DBNavigator.DDLMappedNotificationPanel");
 
     public DDLMappedNotificationProvider() {
-        ProjectEvents.subscribe(DDLFileSettingsChangeListener.TOPIC, ddlFileSettingsChangeListener);
-        ProjectEvents.subscribe(DDLFileAttachmentManagerListener.TOPIC, ddlFileAttachmentManagerListener);
-        ProjectEvents.subscribe(FileEditorManagerListener.FILE_EDITOR_MANAGER, fileEditorManagerListener);
+        ProjectEvents.subscribe(DDLFileSettingsChangeListener.TOPIC, ddlFileSettingsChangeListener());
+        ProjectEvents.subscribe(DDLFileAttachmentManagerListener.TOPIC, ddlFileAttachmentManagerListener());
+        ProjectEvents.subscribe(FileEditorManagerListener.FILE_EDITOR_MANAGER, fileEditorManagerListener());
     }
 
     @Deprecated
     public DDLMappedNotificationProvider(@NotNull Project project) {
         super(project);
 
-        ProjectEvents.subscribe(project, this, DDLFileSettingsChangeListener.TOPIC, ddlFileSettingsChangeListener);
-        ProjectEvents.subscribe(project, this, DDLFileAttachmentManagerListener.TOPIC, ddlFileAttachmentManagerListener);
-        ProjectEvents.subscribe(project, this, FileEditorManagerListener.FILE_EDITOR_MANAGER, fileEditorManagerListener);
+        ProjectEvents.subscribe(project, this, DDLFileSettingsChangeListener.TOPIC, ddlFileSettingsChangeListener());
+        ProjectEvents.subscribe(project, this, DDLFileAttachmentManagerListener.TOPIC, ddlFileAttachmentManagerListener());
+        ProjectEvents.subscribe(project, this, FileEditorManagerListener.FILE_EDITOR_MANAGER, fileEditorManagerListener());
     }
 
 
-    private final DDLFileAttachmentManagerListener ddlFileAttachmentManagerListener = new DDLFileAttachmentManagerListener() {
-        @Override
-        public void ddlFileDetached(Project project, VirtualFile virtualFile) {
-            if (!project.isDisposed()) {
-                EditorNotifications notifications = EditorNotifications.getInstance(project);
-                notifications.updateNotifications(virtualFile);
+    @NotNull
+    private static DDLFileAttachmentManagerListener ddlFileAttachmentManagerListener() {
+        return new DDLFileAttachmentManagerListener() {
+            @Override
+            public void ddlFileDetached(Project project, VirtualFile virtualFile) {
+                if (!project.isDisposed()) {
+                    EditorNotifications notifications = EditorNotifications.getInstance(project);
+                    notifications.updateNotifications(virtualFile);
+                }
             }
-        }
 
-        @Override
-        public void ddlFileAttached(Project project, VirtualFile virtualFile) {
-            if (!project.isDisposed()) {
-                EditorNotifications notifications = EditorNotifications.getInstance(project);
-                notifications.updateNotifications(virtualFile);
+            @Override
+            public void ddlFileAttached(Project project, VirtualFile virtualFile) {
+                if (!project.isDisposed()) {
+                    EditorNotifications notifications = EditorNotifications.getInstance(project);
+                    notifications.updateNotifications(virtualFile);
+                }
             }
-        }
-    };
+        };
+    }
 
-    private final FileEditorManagerListener fileEditorManagerListener = new FileEditorManagerListener() {
-        @Override
-        public void fileOpened(@NotNull FileEditorManager source, @NotNull VirtualFile file) {
-            updateDdlFileHeaders(source.getProject(), file);
-        }
+    @NotNull
+    private static FileEditorManagerListener fileEditorManagerListener() {
+        return new FileEditorManagerListener() {
+            @Override
+            public void fileOpened(@NotNull FileEditorManager source, @NotNull VirtualFile file) {
+                updateDdlFileHeaders(source.getProject(), file);
+            }
 
-        @Override
-        public void fileClosed(@NotNull FileEditorManager source, @NotNull VirtualFile file) {
-            updateDdlFileHeaders(source.getProject(), file);
-        }
+            @Override
+            public void fileClosed(@NotNull FileEditorManager source, @NotNull VirtualFile file) {
+                updateDdlFileHeaders(source.getProject(), file);
+            }
 
-        private void updateDdlFileHeaders(Project project, VirtualFile file) {
-            if (!project.isDisposed() && file instanceof DBEditableObjectVirtualFile) {
-                DBEditableObjectVirtualFile editableObjectFile = (DBEditableObjectVirtualFile) file;
-                if (editableObjectFile.isValid()) {
-                    DBObjectRef<DBSchemaObject> objectRef = editableObjectFile.getObjectRef();
-                    DDLFileAttachmentManager attachmentManager = DDLFileAttachmentManager.getInstance(project);
-                    List<VirtualFile> attachedDDLFiles = attachmentManager.getAttachedDDLFiles(objectRef);
-                    if (attachedDDLFiles != null) {
-                        EditorNotifications notifications = EditorNotifications.getInstance(project);
-                        for (VirtualFile virtualFile : attachedDDLFiles) {
-                            notifications.updateNotifications(virtualFile);
+            private void updateDdlFileHeaders(Project project, VirtualFile file) {
+                if (!project.isDisposed() && file instanceof DBEditableObjectVirtualFile) {
+                    DBEditableObjectVirtualFile editableObjectFile = (DBEditableObjectVirtualFile) file;
+                    if (editableObjectFile.isValid()) {
+                        DBObjectRef<DBSchemaObject> objectRef = editableObjectFile.getObjectRef();
+                        DDLFileAttachmentManager attachmentManager = DDLFileAttachmentManager.getInstance(project);
+                        List<VirtualFile> attachedDDLFiles = attachmentManager.getAttachedDDLFiles(objectRef);
+                        if (attachedDDLFiles != null) {
+                            EditorNotifications notifications = EditorNotifications.getInstance(project);
+                            for (VirtualFile virtualFile : attachedDDLFiles) {
+                                notifications.updateNotifications(virtualFile);
+                            }
                         }
                     }
                 }
             }
-        }
-    };
+        };
+    }
 
-    private final DDLFileSettingsChangeListener ddlFileSettingsChangeListener = (Project project) -> {
-        EditorNotifications notifications = EditorNotifications.getInstance(project);
-        notifications.updateAllNotifications();
-    };
+    @NotNull
+    private static DDLFileSettingsChangeListener ddlFileSettingsChangeListener() {
+        return (Project project) -> {
+            EditorNotifications notifications = EditorNotifications.getInstance(project);
+            notifications.updateAllNotifications();
+        };
+    }
 
     @NotNull
     @Override

@@ -1,9 +1,8 @@
 package com.dci.intellij.dbn.editor.data.statusbar;
 
-import com.dci.intellij.dbn.common.AbstractProjectComponent;
 import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.common.compatibility.CompatibilityUtil;
-import com.dci.intellij.dbn.common.dispose.Failsafe;
+import com.dci.intellij.dbn.common.component.ProjectComponentBase;
 import com.dci.intellij.dbn.common.event.ProjectEvents;
 import com.dci.intellij.dbn.common.thread.Dispatch;
 import com.dci.intellij.dbn.common.ui.util.UserInterface;
@@ -26,7 +25,9 @@ import org.jetbrains.annotations.Nullable;
 import javax.swing.*;
 import java.awt.*;
 
-public class DatasetEditorStatusBarWidget extends AbstractProjectComponent implements CustomStatusBarWidget, FileEditorManagerListener {
+import static com.dci.intellij.dbn.common.component.Components.projectService;
+
+public class DatasetEditorStatusBarWidget extends ProjectComponentBase implements CustomStatusBarWidget {
     private static final String WIDGET_ID = DatasetEditorStatusBarWidget.class.getName();
     public static final String COMPONENT_NAME = "DBNavigator.Project.DatasetEditorStatusBarWidget";
 
@@ -35,15 +36,34 @@ public class DatasetEditorStatusBarWidget extends AbstractProjectComponent imple
     private final JPanel component = new JPanel(new BorderLayout());
 
     DatasetEditorStatusBarWidget(@NotNull Project project) {
-        super(project);
+        super(project, COMPONENT_NAME);
         textLabel = new JLabel();
         component.add(textLabel, BorderLayout.WEST);
 
-        ProjectEvents.subscribe(project, this, FileEditorManagerListener.FILE_EDITOR_MANAGER, this);
+        ProjectEvents.subscribe(project, this, FileEditorManagerListener.FILE_EDITOR_MANAGER, fileEditorManagerListener());
     }
 
     public static DatasetEditorStatusBarWidget getInstance(@NotNull Project project) {
-        return Failsafe.getComponent(project, DatasetEditorStatusBarWidget.class);
+        return projectService(project, DatasetEditorStatusBarWidget.class);
+    }
+
+    FileEditorManagerListener fileEditorManagerListener() {
+        return new FileEditorManagerListener() {
+            @Override
+            public void selectionChanged(@NotNull FileEditorManagerEvent event) {
+                update();
+            }
+
+            @Override
+            public void fileOpened(@NotNull FileEditorManager source, @NotNull VirtualFile file) {
+                update();
+            }
+
+            @Override
+            public void fileClosed(@NotNull FileEditorManager source, @NotNull VirtualFile file) {
+                update();
+            }
+        };
     }
 
 
@@ -51,12 +71,6 @@ public class DatasetEditorStatusBarWidget extends AbstractProjectComponent imple
     @Override
     public String ID() {
         return WIDGET_ID;
-    }
-
-    @NotNull
-    @Override
-    public String getComponentName() {
-        return COMPONENT_NAME;
     }
 
     @Nullable
@@ -67,21 +81,6 @@ public class DatasetEditorStatusBarWidget extends AbstractProjectComponent imple
             return (DatasetEditor) selectedEditor;
         }
         return null;
-    }
-
-    @Override
-    public void selectionChanged(@NotNull FileEditorManagerEvent event) {
-        update();
-    }
-
-    @Override
-    public void fileOpened(@NotNull FileEditorManager source, @NotNull VirtualFile file) {
-        update();
-    }
-
-    @Override
-    public void fileClosed(@NotNull FileEditorManager source, @NotNull VirtualFile file) {
-        update();
     }
 
     @Nullable

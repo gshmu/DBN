@@ -29,7 +29,19 @@ public abstract class BrowserTreeModel extends StatefulDisposable.Base implement
 
     BrowserTreeModel(BrowserTreeNode root) {
         this.root = WeakRef.of(root);
-        ProjectEvents.subscribe(getProject(), this, BrowserTreeEventListener.TOPIC, browserTreeEventListener);
+        ProjectEvents.subscribe(getProject(), this, BrowserTreeEventListener.TOPIC, browserTreeEventListener());
+    }
+
+    @NotNull
+    private BrowserTreeEventListener browserTreeEventListener() {
+        return new BrowserTreeEventListener() {
+            @Override
+            public void nodeChanged(BrowserTreeNode node, TreeEventType eventType) {
+                if (contains(node)) {
+                    notifyListeners(node, eventType);
+                }
+            }
+        };
     }
 
     @Override
@@ -99,15 +111,5 @@ public abstract class BrowserTreeModel extends StatefulDisposable.Base implement
         nullify();
     }
 
-    /********************************************************
-     *                       Listeners                      *
-     ********************************************************/
-    private final BrowserTreeEventListener browserTreeEventListener = new BrowserTreeEventAdapter() {
-        @Override
-        public void nodeChanged(BrowserTreeNode node, TreeEventType eventType) {
-            if (contains(node)) {
-                notifyListeners(node, eventType);
-            }
-        }
-    };
+
 }

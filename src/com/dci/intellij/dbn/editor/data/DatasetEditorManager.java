@@ -1,8 +1,8 @@
 package com.dci.intellij.dbn.editor.data;
 
 import com.dci.intellij.dbn.DatabaseNavigator;
-import com.dci.intellij.dbn.common.AbstractProjectComponent;
-import com.dci.intellij.dbn.common.dispose.Failsafe;
+import com.dci.intellij.dbn.common.component.PersistentState;
+import com.dci.intellij.dbn.common.component.ProjectComponentBase;
 import com.dci.intellij.dbn.common.event.ProjectEvents;
 import com.dci.intellij.dbn.common.options.setting.SettingsSupport;
 import com.dci.intellij.dbn.common.util.Context;
@@ -23,7 +23,6 @@ import com.dci.intellij.dbn.object.common.DBSchemaObject;
 import com.dci.intellij.dbn.vfs.DatabaseFileSystem;
 import com.dci.intellij.dbn.vfs.file.DBEditableObjectVirtualFile;
 import com.intellij.openapi.actionSystem.ActionGroup;
-import com.intellij.openapi.components.PersistentStateComponent;
 import com.intellij.openapi.components.State;
 import com.intellij.openapi.components.Storage;
 import com.intellij.openapi.fileEditor.FileEditor;
@@ -34,23 +33,27 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.popup.JBPopupFactory;
 import com.intellij.openapi.ui.popup.ListPopup;
 import com.intellij.openapi.vfs.VirtualFile;
+import lombok.Getter;
+import lombok.Setter;
 import org.jdom.Element;
-import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.awt.Component;
+import java.awt.*;
 import java.awt.event.InputEvent;
 import java.awt.event.MouseEvent;
 import java.sql.SQLException;
 
+import static com.dci.intellij.dbn.common.component.Components.projectService;
 import static com.dci.intellij.dbn.editor.data.DatasetLoadInstruction.*;
 
 @State(
     name = DatasetEditorManager.COMPONENT_NAME,
     storages = @Storage(DatabaseNavigator.STORAGE_FILE)
 )
-public class DatasetEditorManager extends AbstractProjectComponent implements PersistentStateComponent<Element> {
+@Getter
+@Setter
+public class DatasetEditorManager extends ProjectComponentBase implements PersistentState {
     public static final String COMPONENT_NAME = "DBNavigator.Project.DataEditorManager";
 
     private static final DatasetLoadInstructions INITIAL_LOAD_INSTRUCTIONS = new DatasetLoadInstructions(USE_CURRENT_FILTER, PRESERVE_CHANGES, REBUILD);
@@ -61,13 +64,50 @@ public class DatasetEditorManager extends AbstractProjectComponent implements Pe
     private boolean valuePreviewPinned = false;
 
     private DatasetEditorManager(Project project) {
-        super(project);
-
-        ProjectEvents.subscribe(project, this, FileEditorManagerListener.FILE_EDITOR_MANAGER, fileEditorListener);
+        super(project, COMPONENT_NAME);
+        ProjectEvents.subscribe(project, this, FileEditorManagerListener.FILE_EDITOR_MANAGER, fileEditorManagerListener());
     }
 
     public static DatasetEditorManager getInstance(@NotNull Project project) {
-        return Failsafe.getComponent(project, DatasetEditorManager.class);
+        return projectService(project, DatasetEditorManager.class);
+    }
+
+    @NotNull
+    private static FileEditorManagerListener fileEditorManagerListener() {
+        return new FileEditorManagerListener() {
+            @Override
+            public void fileOpened(@NotNull FileEditorManager source, @NotNull VirtualFile file) {
+                if (file instanceof DBEditableObjectVirtualFile) {
+                    DBEditableObjectVirtualFile editableObjectFile = (DBEditableObjectVirtualFile) file;
+                    DBSchemaObject object = editableObjectFile.getObject();
+                    if (object instanceof DBDataset) {
+                        FileEditor[] fileEditors = source.getEditors(file);
+                        for (FileEditor fileEditor : fileEditors) {
+                            if (fileEditor instanceof DatasetEditor) {
+                                DatasetEditor datasetEditor = (DatasetEditor) fileEditor;
+                                if (object instanceof DBTable || editableObjectFile.getSelectedEditorProviderId() == EditorProviderId.DATA) {
+                                    datasetEditor.loadData(INITIAL_LOAD_INSTRUCTIONS);
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+
+            @Override
+            public void selectionChanged(@NotNull FileEditorManagerEvent event) {
+                FileEditor newEditor = event.getNewEditor();
+                if (newEditor instanceof DatasetEditor) {
+                    DatasetEditor datasetEditor = (DatasetEditor) newEditor;
+                    DBDataset dataset = datasetEditor.getDataset();
+                    if (dataset instanceof DBView) {
+                        if (!datasetEditor.isLoaded() && !datasetEditor.isLoading()) {
+                            datasetEditor.loadData(INITIAL_LOAD_INSTRUCTIONS);
+                        }
+                    }
+                }
+            }
+        };
     }
 
     public void reloadEditorData(DBDataset dataset) {
@@ -128,76 +168,6 @@ public class DatasetEditorManager extends AbstractProjectComponent implements Pe
             }
         }
     }
-
-    public void setRecordViewColumnSortingType(ColumnSortingType columnSorting) {
-        recordViewColumnSortingType = columnSorting;
-    }
-
-    public ColumnSortingType getRecordViewColumnSortingType() {
-        return recordViewColumnSortingType;
-    }
-
-    public boolean isValuePreviewTextWrapping() {
-        return valuePreviewTextWrapping;
-    }
-
-    public void setValuePreviewTextWrapping(boolean valuePreviewTextWrapping) {
-        this.valuePreviewTextWrapping = valuePreviewTextWrapping;
-    }
-
-    public boolean isValuePreviewPinned() {
-        return valuePreviewPinned;
-    }
-
-    public void setValuePreviewPinned(boolean valuePreviewPinned) {
-        this.valuePreviewPinned = valuePreviewPinned;
-    }
-
-    /****************************************
-    *             ProjectComponent          *
-    *****************************************/
-    @Override
-    @NonNls
-    @NotNull
-    public String getComponentName() {
-        return COMPONENT_NAME;
-    }
-
-    private FileEditorManagerListener fileEditorListener = new FileEditorManagerListener() {
-        @Override
-        public void fileOpened(@NotNull FileEditorManager source, @NotNull VirtualFile file) {
-            if (file instanceof DBEditableObjectVirtualFile) {
-                DBEditableObjectVirtualFile editableObjectFile = (DBEditableObjectVirtualFile) file;
-                DBSchemaObject object = editableObjectFile.getObject();
-                if (object instanceof DBDataset) {
-                    FileEditor[] fileEditors = source.getEditors(file);
-                    for (FileEditor fileEditor : fileEditors) {
-                        if (fileEditor instanceof DatasetEditor) {
-                            DatasetEditor datasetEditor = (DatasetEditor) fileEditor;
-                            if (object instanceof DBTable || editableObjectFile.getSelectedEditorProviderId() == EditorProviderId.DATA) {
-                                datasetEditor.loadData(INITIAL_LOAD_INSTRUCTIONS);
-                            }
-                        }
-                    }
-                }
-            }
-        }
-
-        @Override
-        public void selectionChanged(@NotNull FileEditorManagerEvent event) {
-            FileEditor newEditor = event.getNewEditor();
-            if (newEditor instanceof DatasetEditor) {
-                DatasetEditor datasetEditor = (DatasetEditor) newEditor;
-                DBDataset dataset = datasetEditor.getDataset();
-                if (dataset instanceof DBView) {
-                    if (!datasetEditor.isLoaded() && !datasetEditor.isLoading()) {
-                        datasetEditor.loadData(INITIAL_LOAD_INSTRUCTIONS);
-                    }
-                }
-            }
-        }
-    };
-
     /****************************************
      *       PersistentStateComponent       *
      *****************************************/

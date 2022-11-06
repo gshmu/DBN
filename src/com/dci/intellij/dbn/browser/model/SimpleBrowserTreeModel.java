@@ -18,7 +18,7 @@ public class SimpleBrowserTreeModel extends BrowserTreeModel {
 
     public SimpleBrowserTreeModel(@NotNull Project project, @Nullable ConnectionBundle connectionBundle) {
         super(new SimpleBrowserTreeRoot(project, connectionBundle));
-        ProjectEvents.subscribe(project, this, ConnectionHandlerStatusListener.TOPIC, connectionHandlerStatusListener);
+        ProjectEvents.subscribe(project, this, ConnectionHandlerStatusListener.TOPIC, connectionHandlerStatusListener());
     }
 
     @Override
@@ -26,10 +26,13 @@ public class SimpleBrowserTreeModel extends BrowserTreeModel {
         return true;
     }
 
-    private final ConnectionHandlerStatusListener connectionHandlerStatusListener = (connectionId) -> {
-        ConnectionHandler connection = ConnectionCache.resolveConnection(connectionId);
-        if (connection != null) {
-            notifyListeners(connection.getObjectBundle(), TreeEventType.NODES_CHANGED);
-        }
-    };
+    @NotNull
+    private ConnectionHandlerStatusListener connectionHandlerStatusListener() {
+        return (connectionId) -> {
+            ConnectionHandler connection = ConnectionCache.resolveConnection(connectionId);
+            if (connection != null) {
+                notifyListeners(connection.getObjectBundle(), TreeEventType.NODES_CHANGED);
+            }
+        };
+    }
 }

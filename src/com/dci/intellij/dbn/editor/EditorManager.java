@@ -1,16 +1,17 @@
 package com.dci.intellij.dbn.editor;
 
-import com.dci.intellij.dbn.common.component.ApplicationComponent;
-import com.intellij.openapi.application.ApplicationManager;
-import org.jetbrains.annotations.NotNull;
+import com.dci.intellij.dbn.common.component.ApplicationComponentBase;
 
-public class EditorManager implements ApplicationComponent {
+import static com.dci.intellij.dbn.common.component.Components.applicationService;
+
+public class EditorManager extends ApplicationComponentBase {
 
     public static EditorManager getInstance() {
-        return ApplicationManager.getApplication().getComponent(EditorManager.class);
+        return applicationService(EditorManager.class);
     }
 
     public EditorManager() {
+        super("DBNavigator.EditorManager");
     }
 
 /*    @Override
@@ -30,10 +31,4 @@ public class EditorManager implements ApplicationComponent {
         intentionManager.addAction(new ToggleDatabaseLoggingIntentionAction());
         //intentionManager.addAction(new SetupCodeCompletionIntentionAction());
     }*/
-
-    @NotNull
-    @Override
-    public String getComponentName() {
-        return "DBNavigator.EditorManager";
-    }
 }

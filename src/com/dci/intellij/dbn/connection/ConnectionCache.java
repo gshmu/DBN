@@ -1,6 +1,6 @@
 package com.dci.intellij.dbn.connection;
 
-import com.dci.intellij.dbn.common.component.ApplicationComponent;
+import com.dci.intellij.dbn.common.component.ApplicationComponentBase;
 import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.common.event.ProjectEvents;
 import com.dci.intellij.dbn.common.project.Projects;
@@ -15,12 +15,14 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
-public class ConnectionCache implements ApplicationComponent {
+public class ConnectionCache extends ApplicationComponentBase {
     private static final Map<ConnectionId, ConnectionHandler> cache = new ConcurrentHashMap<>();
 
     private static final ProcessCanceledException CANCELED_EXCEPTION = new ProcessCanceledException();
 
     public ConnectionCache() {
+        super("DBNavigator.ConnectionCache");
+
         Projects.projectOpened(project -> initializeCache(project));
         Projects.projectClosed(project -> releaseCache(project));
 
@@ -48,13 +50,6 @@ public class ConnectionCache implements ApplicationComponent {
 
         return null;
     }
-
-    @NotNull
-    @Override
-    public String getComponentName() {
-        return "DBNavigator.ConnectionCache";
-    }
-
 
     private static void initializeCache(@NotNull Project project) {
         if (!project.isDefault()) {

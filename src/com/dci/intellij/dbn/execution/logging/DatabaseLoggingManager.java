@@ -1,7 +1,6 @@
 package com.dci.intellij.dbn.execution.logging;
 
-import com.dci.intellij.dbn.common.AbstractProjectComponent;
-import com.dci.intellij.dbn.common.dispose.Failsafe;
+import com.dci.intellij.dbn.common.component.ProjectComponentBase;
 import com.dci.intellij.dbn.common.notification.NotificationGroup;
 import com.dci.intellij.dbn.common.util.Strings;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
@@ -12,20 +11,24 @@ import com.dci.intellij.dbn.database.DatabaseInterfaceProvider;
 import com.dci.intellij.dbn.database.DatabaseMetadataInterface;
 import com.intellij.openapi.project.Project;
 import lombok.extern.slf4j.Slf4j;
-import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.sql.SQLException;
 
+import static com.dci.intellij.dbn.common.component.Components.projectService;
+
 @Slf4j
-public class DatabaseLoggingManager extends AbstractProjectComponent {
+public class DatabaseLoggingManager extends ProjectComponentBase {
+
+    public static final String COMPONENT_NAME = "DBNavigator.Project.DatabaseLoggingManager";
+
     private DatabaseLoggingManager(Project project) {
-        super(project);
+        super(project, COMPONENT_NAME);
     }
 
     public static DatabaseLoggingManager getInstance(@NotNull Project project) {
-        return Failsafe.getComponent(project, DatabaseLoggingManager.class);
+        return projectService(project, DatabaseLoggingManager.class);
     }
 
     /*********************************************************
@@ -101,14 +104,4 @@ public class DatabaseLoggingManager extends AbstractProjectComponent {
         return DatabaseFeature.DATABASE_LOGGING.isSupported(connection);
     }
 
-
-    /*********************************************************
-     *                    ProjectComponent                   *
-     *********************************************************/
-    @Override
-    @NotNull
-    @NonNls
-    public String getComponentName() {
-        return "DBNavigator.Project.DatabaseLoggingManager";
-    }
 }

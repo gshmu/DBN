@@ -1,8 +1,9 @@
 package com.dci.intellij.dbn.connection.mapping;
 
 import com.dci.intellij.dbn.DatabaseNavigator;
-import com.dci.intellij.dbn.common.AbstractProjectComponent;
 import com.dci.intellij.dbn.common.action.UserDataKeys;
+import com.dci.intellij.dbn.common.component.PersistentState;
+import com.dci.intellij.dbn.common.component.ProjectComponentBase;
 import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.common.dispose.SafeDisposer;
 import com.dci.intellij.dbn.common.event.ProjectEvents;
@@ -10,14 +11,7 @@ import com.dci.intellij.dbn.common.file.util.VirtualFiles;
 import com.dci.intellij.dbn.common.thread.Dispatch;
 import com.dci.intellij.dbn.common.thread.Progress;
 import com.dci.intellij.dbn.common.util.Documents;
-import com.dci.intellij.dbn.connection.ConnectionAction;
-import com.dci.intellij.dbn.connection.ConnectionBundle;
-import com.dci.intellij.dbn.connection.ConnectionHandler;
-import com.dci.intellij.dbn.connection.ConnectionId;
-import com.dci.intellij.dbn.connection.ConnectionManager;
-import com.dci.intellij.dbn.connection.ConnectionSelectorOptions;
-import com.dci.intellij.dbn.connection.SchemaId;
-import com.dci.intellij.dbn.connection.SessionId;
+import com.dci.intellij.dbn.connection.*;
 import com.dci.intellij.dbn.connection.config.ConnectionConfigListener;
 import com.dci.intellij.dbn.connection.mapping.ConnectionContextActions.ConnectionSetupAction;
 import com.dci.intellij.dbn.connection.mapping.ConnectionContextActions.SchemaSelectAction;
@@ -31,7 +25,6 @@ import com.dci.intellij.dbn.object.DBSchema;
 import com.dci.intellij.dbn.vfs.file.DBConsoleVirtualFile;
 import com.intellij.openapi.actionSystem.DataContext;
 import com.intellij.openapi.actionSystem.DefaultActionGroup;
-import com.intellij.openapi.components.PersistentStateComponent;
 import com.intellij.openapi.components.State;
 import com.intellij.openapi.components.Storage;
 import com.intellij.openapi.editor.Document;
@@ -62,6 +55,7 @@ import java.util.Map;
 import java.util.concurrent.Callable;
 import java.util.function.Consumer;
 
+import static com.dci.intellij.dbn.common.component.Components.projectService;
 import static com.dci.intellij.dbn.common.message.MessageCallback.when;
 import static com.dci.intellij.dbn.common.util.Messages.options;
 import static com.dci.intellij.dbn.common.util.Messages.showWarningDialog;
@@ -73,14 +67,14 @@ import static com.dci.intellij.dbn.connection.mapping.ConnectionContextActions.C
     storages = @Storage(DatabaseNavigator.STORAGE_FILE)
 )
 @Slf4j
-public class FileConnectionContextManager extends AbstractProjectComponent implements PersistentStateComponent<Element> {
+public class FileConnectionContextManager extends ProjectComponentBase implements PersistentState {
     public static final String COMPONENT_NAME = "DBNavigator.Project.FileConnectionMappingManager";
 
     @Getter
     private final FileConnectionContextRegistry registry;
 
     private FileConnectionContextManager(@NotNull Project project) {
-        super(project);
+        super(project, COMPONENT_NAME);
         this.registry = new FileConnectionContextRegistry(project);
         SafeDisposer.register(this, this.registry);
         //VirtualFileManager.getInstance().addVirtualFileListener(virtualFileListener);
@@ -91,7 +85,7 @@ public class FileConnectionContextManager extends AbstractProjectComponent imple
 
     @NotNull
     public static FileConnectionContextManager getInstance(@NotNull Project project) {
-        return Failsafe.getComponent(project, FileConnectionContextManager.class);
+        return projectService(project, FileConnectionContextManager.class);
     }
 
     private final ConnectionConfigListener connectionConfigListener = new ConnectionConfigListener() {
@@ -104,12 +98,6 @@ public class FileConnectionContextManager extends AbstractProjectComponent imple
     public static boolean hasHasConnectivityContext(VirtualFile file) {
         Boolean hasConnectivityContext = file.getUserData(UserDataKeys.HAS_CONNECTIVITY_CONTEXT);
         return hasConnectivityContext == null || hasConnectivityContext;
-    }
-
-    @Override
-    @NotNull
-    public String getComponentName() {
-        return COMPONENT_NAME;
     }
 
     public void openFileConnectionMappings() {

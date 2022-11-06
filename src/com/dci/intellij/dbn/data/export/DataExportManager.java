@@ -1,49 +1,41 @@
 package com.dci.intellij.dbn.data.export;
 
 import com.dci.intellij.dbn.DatabaseNavigator;
-import com.dci.intellij.dbn.common.AbstractProjectComponent;
-import com.dci.intellij.dbn.common.dispose.Failsafe;
+import com.dci.intellij.dbn.common.component.PersistentState;
+import com.dci.intellij.dbn.common.component.ProjectComponentBase;
 import com.dci.intellij.dbn.common.notification.NotificationGroup;
 import com.dci.intellij.dbn.common.util.Messages;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
-import com.dci.intellij.dbn.data.export.processor.CSVDataExportProcessor;
-import com.dci.intellij.dbn.data.export.processor.CustomDataExportProcessor;
-import com.dci.intellij.dbn.data.export.processor.DataExportProcessor;
-import com.dci.intellij.dbn.data.export.processor.ExcelDataExportProcessor;
-import com.dci.intellij.dbn.data.export.processor.ExcelXDataExportProcessor;
-import com.dci.intellij.dbn.data.export.processor.HTMLDataExportProcessor;
-import com.dci.intellij.dbn.data.export.processor.JIRAMarkupDataExportProcessor;
-import com.dci.intellij.dbn.data.export.processor.SQLDataExportProcessor;
-import com.dci.intellij.dbn.data.export.processor.XMLDataExportProcessor;
+import com.dci.intellij.dbn.data.export.processor.*;
 import com.dci.intellij.dbn.data.grid.ui.table.sortable.SortableTable;
-import com.intellij.openapi.components.PersistentStateComponent;
 import com.intellij.openapi.components.State;
 import com.intellij.openapi.components.Storage;
 import com.intellij.openapi.project.Project;
 import org.jdom.Element;
-import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.awt.Desktop;
+import java.awt.*;
 import java.io.File;
 import java.io.IOException;
+
+import static com.dci.intellij.dbn.common.component.Components.projectService;
 
 @State(
     name = DataExportManager.COMPONENT_NAME,
     storages = @Storage(DatabaseNavigator.STORAGE_FILE)
 )
-public class DataExportManager extends AbstractProjectComponent implements PersistentStateComponent<Element> {
+public class DataExportManager extends ProjectComponentBase implements PersistentState {
     public static final String COMPONENT_NAME = "DBNavigator.Project.DataExportManager";
 
     private DataExportInstructions exportInstructions = new DataExportInstructions();
 
     private DataExportManager(Project project) {
-        super(project);
+        super(project, COMPONENT_NAME);
     }
 
     public static DataExportManager getInstance(@NotNull Project project) {
-        return Failsafe.getComponent(project, DataExportManager.class);
+        return projectService(project, DataExportManager.class);
     }
 
     private static final DataExportProcessor[] PROCESSORS =  new DataExportProcessor[] {
@@ -137,16 +129,6 @@ public class DataExportManager extends AbstractProjectComponent implements Persi
 
     public void setExportInstructions(DataExportInstructions exportInstructions) {
         this.exportInstructions = exportInstructions;
-    }
-
-    /****************************************
-    *            ProjectComponent           *
-    *****************************************/
-    @Override
-    @NonNls
-    @NotNull
-    public String getComponentName() {
-        return COMPONENT_NAME;
     }
 
     /****************************************

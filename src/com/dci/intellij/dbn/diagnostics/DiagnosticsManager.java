@@ -1,8 +1,8 @@
 package com.dci.intellij.dbn.diagnostics;
 
 import com.dci.intellij.dbn.DatabaseNavigator;
-import com.dci.intellij.dbn.common.AbstractProjectComponent;
-import com.dci.intellij.dbn.common.dispose.Failsafe;
+import com.dci.intellij.dbn.common.component.PersistentState;
+import com.dci.intellij.dbn.common.component.ProjectComponentBase;
 import com.dci.intellij.dbn.common.dispose.SafeDisposer;
 import com.dci.intellij.dbn.common.ui.form.DBNForm;
 import com.dci.intellij.dbn.connection.ConnectionId;
@@ -12,7 +12,6 @@ import com.dci.intellij.dbn.diagnostics.data.DiagnosticCategory;
 import com.dci.intellij.dbn.diagnostics.data.DiagnosticType;
 import com.dci.intellij.dbn.diagnostics.options.ui.DiagnosticSettingsDialog;
 import com.dci.intellij.dbn.diagnostics.ui.ConnectionDiagnosticsForm;
-import com.intellij.openapi.components.PersistentStateComponent;
 import com.intellij.openapi.components.State;
 import com.intellij.openapi.components.Storage;
 import com.intellij.openapi.project.Project;
@@ -24,33 +23,33 @@ import com.intellij.ui.content.ContentFactory;
 import com.intellij.ui.content.ContentManager;
 import com.intellij.util.Producer;
 import org.jdom.Element;
-import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
+import static com.dci.intellij.dbn.common.component.Components.projectService;
+
 @State(
     name = DiagnosticsManager.COMPONENT_NAME,
     storages = @Storage(DatabaseNavigator.STORAGE_FILE)
 )
-public class DiagnosticsManager extends AbstractProjectComponent implements PersistentStateComponent<Element> {
+public class DiagnosticsManager extends ProjectComponentBase implements PersistentState {
     public static final String COMPONENT_NAME = "DBNavigator.Project.DiagnosticsManager";
     public static final String TOOL_WINDOW_ID = "DB Diagnostics";
     private static final Key<DiagnosticCategory> CONTENT_CATEGORY_KEY = Key.create("CONTENT_TYPE");
     private static final Key<DBNForm> CONTENT_FORM_KEY = Key.create("CONTENT_FORM");
 
-
     private final Map<ConnectionId, DiagnosticBundle<String>> metadataInterfaceDiagnostics = new ConcurrentHashMap<>();
     private final Map<ConnectionId, DiagnosticBundle<SessionId>> connectivityDiagnostics = new ConcurrentHashMap<>();
 
-    public static DiagnosticsManager getInstance(@NotNull Project project) {
-        return Failsafe.getComponent(project, DiagnosticsManager.class);
+    private DiagnosticsManager(@NotNull Project project) {
+        super(project, COMPONENT_NAME);
     }
 
-    private DiagnosticsManager(@NotNull Project project) {
-        super(project);
+    public static DiagnosticsManager getInstance(@NotNull Project project) {
+        return projectService(project, DiagnosticsManager.class);
     }
 
     public DiagnosticBundle<String> getMetadataInterfaceDiagnostics(ConnectionId connectionId) {
@@ -148,13 +147,6 @@ public class DiagnosticsManager extends AbstractProjectComponent implements Pers
         Project project = getProject();
         ToolWindowManager toolWindowManager = ToolWindowManager.getInstance(project);
         return toolWindowManager.getToolWindow(TOOL_WINDOW_ID);
-    }
-
-    @Override
-    @NonNls
-    @NotNull
-    public String getComponentName() {
-        return COMPONENT_NAME;
     }
 
     /*********************************************

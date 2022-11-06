@@ -2,11 +2,7 @@ package com.dci.intellij.dbn.code.common.completion.options.sorting;
 
 import com.dci.intellij.dbn.code.common.completion.options.CodeCompletionSettings;
 import com.dci.intellij.dbn.code.common.completion.options.sorting.ui.CodeCompletionSortingSettingsForm;
-import com.dci.intellij.dbn.code.common.lookup.AliasLookupItemBuilder;
-import com.dci.intellij.dbn.code.common.lookup.LookupItemBuilder;
-import com.dci.intellij.dbn.code.common.lookup.ObjectLookupItemBuilder;
-import com.dci.intellij.dbn.code.common.lookup.TokenLookupItemBuilder;
-import com.dci.intellij.dbn.code.common.lookup.VariableLookupItemBuilder;
+import com.dci.intellij.dbn.code.common.lookup.*;
 import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.common.options.BasicConfiguration;
 import com.dci.intellij.dbn.language.common.TokenTypeCategory;
