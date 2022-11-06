@@ -1,26 +1,17 @@
 package com.dci.intellij.dbn.execution.statement;
 
 import com.dci.intellij.dbn.DatabaseNavigator;
-import com.dci.intellij.dbn.common.AbstractProjectComponent;
 import com.dci.intellij.dbn.common.action.UserDataKeys;
+import com.dci.intellij.dbn.common.component.PersistentState;
+import com.dci.intellij.dbn.common.component.ProjectComponentBase;
 import com.dci.intellij.dbn.common.consumer.ListCollector;
 import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.common.event.ProjectEvents;
 import com.dci.intellij.dbn.common.notification.NotificationGroup;
 import com.dci.intellij.dbn.common.thread.Dispatch;
 import com.dci.intellij.dbn.common.thread.Progress;
-import com.dci.intellij.dbn.common.util.CollectionUtil;
-import com.dci.intellij.dbn.common.util.Context;
-import com.dci.intellij.dbn.common.util.Documents;
-import com.dci.intellij.dbn.common.util.Editors;
-import com.dci.intellij.dbn.common.util.Messages;
-import com.dci.intellij.dbn.common.util.UserDataUtil;
-import com.dci.intellij.dbn.connection.ConnectionAction;
-import com.dci.intellij.dbn.connection.ConnectionHandler;
-import com.dci.intellij.dbn.connection.ConnectionId;
-import com.dci.intellij.dbn.connection.ConnectionManager;
-import com.dci.intellij.dbn.connection.SchemaId;
-import com.dci.intellij.dbn.connection.SessionId;
+import com.dci.intellij.dbn.common.util.*;
+import com.dci.intellij.dbn.connection.*;
 import com.dci.intellij.dbn.connection.jdbc.DBNConnection;
 import com.dci.intellij.dbn.connection.mapping.FileConnectionContextManager;
 import com.dci.intellij.dbn.debugger.DBDebuggerType;
@@ -39,13 +30,8 @@ import com.dci.intellij.dbn.execution.statement.variables.StatementExecutionVari
 import com.dci.intellij.dbn.execution.statement.variables.ui.StatementExecutionInputsDialog;
 import com.dci.intellij.dbn.language.common.DBLanguagePsiFile;
 import com.dci.intellij.dbn.language.common.psi.BasePsiElement.MatchType;
-import com.dci.intellij.dbn.language.common.psi.ChameleonPsiElement;
-import com.dci.intellij.dbn.language.common.psi.ExecVariablePsiElement;
-import com.dci.intellij.dbn.language.common.psi.ExecutablePsiElement;
-import com.dci.intellij.dbn.language.common.psi.PsiUtil;
-import com.dci.intellij.dbn.language.common.psi.RootPsiElement;
+import com.dci.intellij.dbn.language.common.psi.*;
 import com.intellij.openapi.actionSystem.DataContext;
-import com.intellij.openapi.components.PersistentStateComponent;
 import com.intellij.openapi.components.State;
 import com.intellij.openapi.components.Storage;
 import com.intellij.openapi.editor.Document;
@@ -59,27 +45,24 @@ import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.impl.PsiDocumentTransactionListener;
+import lombok.Getter;
 import org.jdom.Element;
-import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
 
+import static com.dci.intellij.dbn.common.component.Components.projectService;
 import static com.dci.intellij.dbn.execution.ExecutionStatus.*;
 
 @State(
     name = StatementExecutionManager.COMPONENT_NAME,
     storages = @Storage(DatabaseNavigator.STORAGE_FILE)
 )
-public class StatementExecutionManager extends AbstractProjectComponent implements PersistentStateComponent<Element> {
+@Getter
+public class StatementExecutionManager extends ProjectComponentBase implements PersistentState {
     public static final String COMPONENT_NAME = "DBNavigator.Project.StatementExecutionManager";
 
     private static final String[] OPTIONS_MULTIPLE_STATEMENT_EXEC = new String[]{"Execute All", "Execute All from Caret", "Cancel"};
@@ -89,11 +72,44 @@ public class StatementExecutionManager extends AbstractProjectComponent implemen
     private static final AtomicInteger RESULT_SEQUENCE = new AtomicInteger(0);
 
     private StatementExecutionManager(@NotNull Project project) {
-        super(project);
+        super(project, COMPONENT_NAME);
         variablesCache = new StatementExecutionVariablesCache(project);
 
-        ProjectEvents.subscribe(project, this, PsiDocumentTransactionListener.TOPIC, psiDocumentTransactionListener);
+        ProjectEvents.subscribe(project, this, PsiDocumentTransactionListener.TOPIC, psiDocumentTransactionListener());
     }
+
+    @NotNull
+    private PsiDocumentTransactionListener psiDocumentTransactionListener() {
+        return new PsiDocumentTransactionListener() {
+            @Override
+            public void transactionStarted(@NotNull Document document, @NotNull PsiFile file) {
+            }
+
+            @Override
+            public void transactionCompleted(@NotNull Document document, @NotNull PsiFile file) {
+                try {
+                    Project project = file.getProject();
+                    VirtualFile virtualFile = file.getVirtualFile();
+                    if (virtualFile.isInLocalFileSystem()) {
+                        List<FileEditor> scriptFileEditors = Editors.getScriptFileEditors(project, virtualFile);
+                        for (FileEditor scriptFileEditor : scriptFileEditors) {
+                            refreshEditorExecutionProcessors(scriptFileEditor);
+                        }
+                    } else {
+                        FileEditorManager fileEditorManager = FileEditorManager.getInstance(project);
+                        FileEditor[] fileEditors = fileEditorManager.getAllEditors(virtualFile);
+                        for (FileEditor fileEditor : fileEditors) {
+                            if (fileEditor instanceof DDLFileEditor || fileEditor instanceof SQLConsoleEditor) {
+                                refreshEditorExecutionProcessors(fileEditor);
+                            }
+                        }
+                    }
+                } catch (ProcessCanceledException ignore) {
+                }
+            }
+        };
+    }
+
 
     @Nullable
     public StatementExecutionQueue getExecutionQueue(ConnectionId connectionId, SessionId sessionId) {
@@ -103,43 +119,12 @@ public class StatementExecutionManager extends AbstractProjectComponent implemen
     }
 
     public static StatementExecutionManager getInstance(@NotNull Project project) {
-        return Failsafe.getComponent(project, StatementExecutionManager.class);
+        return projectService(project, StatementExecutionManager.class);
     }
 
     public void cacheVariable(VirtualFile virtualFile, StatementExecutionVariable variable) {
         variablesCache.cacheVariable(virtualFile, variable);
     }
-
-    public StatementExecutionVariablesCache getVariablesCache() {
-        return variablesCache;
-    }
-
-    private final PsiDocumentTransactionListener psiDocumentTransactionListener = new PsiDocumentTransactionListener() {
-        @Override
-        public void transactionStarted(@NotNull Document document, @NotNull PsiFile file) {}
-
-        @Override
-        public void transactionCompleted(@NotNull Document document, @NotNull PsiFile file) {
-            try {
-                Project project = file.getProject();
-                VirtualFile virtualFile = file.getVirtualFile();
-                if (virtualFile.isInLocalFileSystem()) {
-                    List<FileEditor> scriptFileEditors = Editors.getScriptFileEditors(project, virtualFile);
-                    for (FileEditor scriptFileEditor : scriptFileEditors) {
-                        refreshEditorExecutionProcessors(scriptFileEditor);
-                    }
-                } else {
-                    FileEditorManager fileEditorManager = FileEditorManager.getInstance(project);
-                    FileEditor[] fileEditors = fileEditorManager.getAllEditors(virtualFile);
-                    for (FileEditor fileEditor : fileEditors) {
-                        if (fileEditor instanceof DDLFileEditor || fileEditor instanceof SQLConsoleEditor) {
-                            refreshEditorExecutionProcessors(fileEditor);
-                        }
-                    }
-                }
-            } catch (ProcessCanceledException ignore) {}
-        }
-    };
 
     private void refreshEditorExecutionProcessors(@NotNull FileEditor textEditor) {
         Collection<StatementExecutionProcessor> executionProcessors = getExecutionProcessors(textEditor);
@@ -503,17 +488,6 @@ public class StatementExecutionManager extends AbstractProjectComponent implemen
         executablePsiElement.setExecutionProcessor(executionProcessor);
         return executionProcessor;
     }
-
-    /*********************************************************
-     *                    ProjectComponent                   *
-     *********************************************************/
-    @Override
-    @NotNull
-    @NonNls
-    public String getComponentName() {
-        return COMPONENT_NAME;
-    }
-
 
     /*********************************************
      *            PersistentStateComponent       *

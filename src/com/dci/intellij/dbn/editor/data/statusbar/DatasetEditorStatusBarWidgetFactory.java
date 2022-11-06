@@ -1,6 +1,5 @@
 package com.dci.intellij.dbn.editor.data.statusbar;
 
-import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Disposer;
 import com.intellij.openapi.wm.StatusBar;
@@ -8,6 +7,8 @@ import com.intellij.openapi.wm.StatusBarWidget;
 import com.intellij.openapi.wm.StatusBarWidgetFactory;
 import org.jetbrains.annotations.Nls;
 import org.jetbrains.annotations.NotNull;
+
+import static com.dci.intellij.dbn.common.component.Components.projectService;
 
 public class DatasetEditorStatusBarWidgetFactory implements StatusBarWidgetFactory {
     @NotNull
@@ -31,7 +32,7 @@ public class DatasetEditorStatusBarWidgetFactory implements StatusBarWidgetFacto
     @NotNull
     @Override
     public StatusBarWidget createWidget(@NotNull Project project) {
-        return Failsafe.getComponent(project, DatasetEditorStatusBarWidget.class);
+        return projectService(project, DatasetEditorStatusBarWidget.class);
     }
 
     @Override

@@ -1,7 +1,6 @@
 package com.dci.intellij.dbn.object.properties.ui;
 
 import com.dci.intellij.dbn.browser.DatabaseBrowserManager;
-import com.dci.intellij.dbn.browser.model.BrowserTreeEventAdapter;
 import com.dci.intellij.dbn.browser.model.BrowserTreeEventListener;
 import com.dci.intellij.dbn.browser.model.BrowserTreeNode;
 import com.dci.intellij.dbn.browser.ui.DatabaseBrowserTree;
@@ -23,10 +22,7 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Disposer;
 import org.jetbrains.annotations.NotNull;
 
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.JScrollPane;
-import javax.swing.JTable;
+import javax.swing.*;
 import java.util.Objects;
 import java.util.concurrent.atomic.AtomicReference;
 
@@ -53,7 +49,28 @@ public class ObjectPropertiesForm extends DBNFormBase {
         objectLabel.setText("(no object selected)");
 
         Project project = ensureProject();
-        ProjectEvents.subscribe(project, this, BrowserTreeEventListener.TOPIC, browserTreeEventListener);
+        ProjectEvents.subscribe(project, this, BrowserTreeEventListener.TOPIC, browserTreeEventListener());
+    }
+
+    @NotNull
+    private BrowserTreeEventListener browserTreeEventListener() {
+        return new BrowserTreeEventListener() {
+            @Override
+            public void selectionChanged() {
+                Project project = ensureProject();
+                DatabaseBrowserManager browserManager = DatabaseBrowserManager.getInstance(project);
+                if (browserManager.getShowObjectProperties().value()) {
+                    DatabaseBrowserTree activeBrowserTree = browserManager.getActiveBrowserTree();
+                    if (activeBrowserTree != null) {
+                        BrowserTreeNode treeNode = activeBrowserTree.getSelectedNode();
+                        if (treeNode instanceof DBObject) {
+                            DBObject object = (DBObject) treeNode;
+                            setObject(object);
+                        }
+                    }
+                }
+            }
+        };
     }
 
     @NotNull
@@ -61,24 +78,6 @@ public class ObjectPropertiesForm extends DBNFormBase {
     public JPanel getMainComponent() {
         return mainPanel;
     }
-
-    private final BrowserTreeEventListener browserTreeEventListener = new BrowserTreeEventAdapter() {
-        @Override
-        public void selectionChanged() {
-            Project project = ensureProject();
-            DatabaseBrowserManager browserManager = DatabaseBrowserManager.getInstance(project);
-            if (browserManager.getShowObjectProperties().value()) {
-                DatabaseBrowserTree activeBrowserTree = browserManager.getActiveBrowserTree();
-                if (activeBrowserTree != null) {
-                    BrowserTreeNode treeNode = activeBrowserTree.getSelectedNode();
-                    if (treeNode instanceof DBObject) {
-                        DBObject object = (DBObject) treeNode;
-                        setObject(object);
-                    }
-                }
-            }
-        }
-    };
 
     public DBObject getObject() {
         return DBObjectRef.get(object);

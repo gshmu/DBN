@@ -38,7 +38,6 @@ import com.dci.intellij.dbn.database.DatabaseObjectIdentifier;
 import com.dci.intellij.dbn.database.common.metadata.DBObjectMetadata;
 import com.dci.intellij.dbn.database.common.metadata.def.*;
 import com.dci.intellij.dbn.editor.code.SourceCodeEditor;
-import com.dci.intellij.dbn.editor.code.SourceCodeManagerAdapter;
 import com.dci.intellij.dbn.editor.code.SourceCodeManagerListener;
 import com.dci.intellij.dbn.execution.compiler.CompileManagerListener;
 import com.dci.intellij.dbn.execution.statement.DataDefinitionChangeListener;
@@ -140,49 +139,58 @@ public class DBObjectBundleImpl extends BrowserTreeNodeBase implements DBObjectB
                 () -> Failsafe.nd(schemas).getSignature(),
                 () -> Commons.nvl(Lists.filter(getSchemas(), s -> s.isPublicSchema()), Collections.emptyList()));
 
-        ProjectEvents.subscribe(project, this, DataDefinitionChangeListener.TOPIC, dataDefinitionChangeListener);
-        ProjectEvents.subscribe(project, this, SourceCodeManagerListener.TOPIC, sourceCodeManagerListener);
-        ProjectEvents.subscribe(project, this, CompileManagerListener.TOPIC, compileManagerListener);
+        ProjectEvents.subscribe(project, this, DataDefinitionChangeListener.TOPIC, dataDefinitionChangeListener());
+        ProjectEvents.subscribe(project, this, SourceCodeManagerListener.TOPIC, sourceCodeManagerListener());
+        ProjectEvents.subscribe(project, this, CompileManagerListener.TOPIC, compileManagerListener());
 
         Disposer.register(connection, this);
     }
 
-    private final DataDefinitionChangeListener dataDefinitionChangeListener = new DataDefinitionChangeListener() {
-        @Override
-        public void dataDefinitionChanged(DBSchema schema, DBObjectType objectType) {
-            if (schema.getConnection() == DBObjectBundleImpl.this.getConnection()) {
-                schema.refresh(objectType);
-                for (DBObjectType childObjectType : objectType.getChildren()) {
-                    schema.refresh(childObjectType);
+    @NotNull
+    private DataDefinitionChangeListener dataDefinitionChangeListener() {
+        return new DataDefinitionChangeListener() {
+            @Override
+            public void dataDefinitionChanged(DBSchema schema, DBObjectType objectType) {
+                if (schema.getConnection() == DBObjectBundleImpl.this.getConnection()) {
+                    schema.refresh(objectType);
+                    for (DBObjectType childObjectType : objectType.getChildren()) {
+                        schema.refresh(childObjectType);
+                    }
                 }
             }
-        }
 
-        @Override
-        public void dataDefinitionChanged(@NotNull DBSchemaObject schemaObject) {
-            if (schemaObject.getConnection() == DBObjectBundleImpl.this.getConnection()) {
-                schemaObject.refresh();
+            @Override
+            public void dataDefinitionChanged(@NotNull DBSchemaObject schemaObject) {
+                if (schemaObject.getConnection() == DBObjectBundleImpl.this.getConnection()) {
+                    schemaObject.refresh();
+                }
             }
-        }
-    };
+        };
+    }
 
-    private final SourceCodeManagerListener sourceCodeManagerListener = new SourceCodeManagerAdapter() {
-        @Override
-        public void sourceCodeSaved(@NotNull DBSourceCodeVirtualFile sourceCodeFile, @Nullable SourceCodeEditor fileEditor) {
-            if (sourceCodeFile.getConnectionId() == getConnectionId()) {
-                Progress.background(getProject(), "Reloading database object", false, progress -> {
-                    DBObject object = sourceCodeFile.getObject();
-                    object.refresh();
-                });
+    @NotNull
+    private SourceCodeManagerListener sourceCodeManagerListener() {
+        return new SourceCodeManagerListener() {
+            @Override
+            public void sourceCodeSaved(@NotNull DBSourceCodeVirtualFile sourceCodeFile, @Nullable SourceCodeEditor fileEditor) {
+                if (sourceCodeFile.getConnectionId() == getConnectionId()) {
+                    Progress.background(getProject(), "Reloading database object", false, progress -> {
+                        DBObject object = sourceCodeFile.getObject();
+                        object.refresh();
+                    });
+                }
             }
-        }
-    };
+        };
+    }
 
-    private final CompileManagerListener compileManagerListener = (connection, object) -> {
-        if (this.getConnection().equals(connection)) {
-            refreshObjectsStatus(object);
-        }
-    };
+    @NotNull
+    private CompileManagerListener compileManagerListener() {
+        return (connection, object) -> {
+            if (this.getConnection().equals(connection)) {
+                refreshObjectsStatus(object);
+            }
+        };
+    }
 
     @Override
     public LookupItemBuilder getLookupItemBuilder(DBObjectRef<?> objectRef, DBLanguage<?> language) {

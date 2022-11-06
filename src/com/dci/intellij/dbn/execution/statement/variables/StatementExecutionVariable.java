@@ -1,9 +1,9 @@
 package com.dci.intellij.dbn.execution.statement.variables;
 
+import com.dci.intellij.dbn.common.component.PersistentState;
 import com.dci.intellij.dbn.common.list.MostRecentStack;
 import com.dci.intellij.dbn.data.type.GenericDataType;
 import com.dci.intellij.dbn.language.common.psi.ExecVariablePsiElement;
-import com.intellij.openapi.components.PersistentStateComponent;
 import lombok.Getter;
 import lombok.Setter;
 import org.jdom.Element;
@@ -17,7 +17,7 @@ import static com.dci.intellij.dbn.common.options.setting.SettingsSupport.string
 
 @Getter
 @Setter
-public class StatementExecutionVariable extends VariableValueProvider implements Comparable<StatementExecutionVariable>, PersistentStateComponent<Element>{
+public class StatementExecutionVariable extends VariableValueProvider implements Comparable<StatementExecutionVariable>, PersistentState {
     private GenericDataType dataType;
     private String name;
     private int offset;

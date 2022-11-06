@@ -1,14 +1,12 @@
 package com.dci.intellij.dbn.driver;
 
-import com.dci.intellij.dbn.common.component.ApplicationComponent;
+import com.dci.intellij.dbn.common.component.ApplicationComponentBase;
 import com.dci.intellij.dbn.common.load.ProgressMonitor;
 import com.dci.intellij.dbn.common.util.Files;
 import com.dci.intellij.dbn.common.util.Strings;
 import com.dci.intellij.dbn.connection.DatabaseType;
-import com.intellij.openapi.application.ApplicationManager;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
-import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -20,6 +18,8 @@ import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
+
+import static com.dci.intellij.dbn.common.component.Components.applicationService;
 
 /**
  * JDBC Driver loader.
@@ -34,7 +34,7 @@ import java.util.jar.JarFile;
  * </ol>
  */
 @Slf4j
-public class DatabaseDriverManager implements ApplicationComponent {
+public class DatabaseDriverManager extends ApplicationComponentBase {
 
     private static final Map<DatabaseType, String> BUNDLED_LIBS = new HashMap<>();
     static {
@@ -47,19 +47,13 @@ public class DatabaseDriverManager implements ApplicationComponent {
     private final Map<File, List<Driver>> driversCache = new ConcurrentHashMap<>();
 
     public static DatabaseDriverManager getInstance() {
-        return ApplicationManager.getApplication().getComponent(DatabaseDriverManager.class);
+        return applicationService(DatabaseDriverManager.class);
     }
 
     public DatabaseDriverManager() {
+        super("DBNavigator.DatabaseDriverManager");
         //TODO make this configurable
         DriverManager.setLoginTimeout(30);
-    }
-
-    @Override
-    @NonNls
-    @NotNull
-    public String getComponentName() {
-        return "DBNavigator.DatabaseDriverManager";
     }
 
     public List<Driver> loadDrivers(File libraryFile, boolean force) throws Exception{

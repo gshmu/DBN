@@ -1,7 +1,8 @@
 package com.dci.intellij.dbn.execution.method;
 
 import com.dci.intellij.dbn.DatabaseNavigator;
-import com.dci.intellij.dbn.common.AbstractProjectComponent;
+import com.dci.intellij.dbn.common.component.PersistentState;
+import com.dci.intellij.dbn.common.component.ProjectComponentBase;
 import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.common.event.ProjectEvents;
 import com.dci.intellij.dbn.common.routine.ParametricRunnable;
@@ -29,7 +30,6 @@ import com.dci.intellij.dbn.object.DBMethod;
 import com.dci.intellij.dbn.object.DBSchema;
 import com.dci.intellij.dbn.object.common.ui.ObjectTreeModel;
 import com.dci.intellij.dbn.object.lookup.DBObjectRef;
-import com.intellij.openapi.components.PersistentStateComponent;
 import com.intellij.openapi.components.State;
 import com.intellij.openapi.components.Storage;
 import com.intellij.openapi.project.Project;
@@ -38,13 +38,13 @@ import com.intellij.openapi.util.Disposer;
 import lombok.Getter;
 import lombok.val;
 import org.jdom.Element;
-import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.sql.SQLException;
 import java.util.List;
 
+import static com.dci.intellij.dbn.common.component.Components.projectService;
 import static com.dci.intellij.dbn.common.message.MessageCallback.when;
 import static com.dci.intellij.dbn.execution.ExecutionStatus.CANCELLED;
 import static com.dci.intellij.dbn.execution.ExecutionStatus.EXECUTING;
@@ -54,7 +54,7 @@ import static com.dci.intellij.dbn.execution.ExecutionStatus.EXECUTING;
     storages = @Storage(DatabaseNavigator.STORAGE_FILE)
 )
 @Getter
-public class MethodExecutionManager extends AbstractProjectComponent implements PersistentStateComponent<Element> {
+public class MethodExecutionManager extends ProjectComponentBase implements PersistentState {
     public static final String COMPONENT_NAME = "DBNavigator.Project.MethodExecutionManager";
 
     private final MethodBrowserSettings browserSettings = new MethodBrowserSettings();
@@ -62,21 +62,24 @@ public class MethodExecutionManager extends AbstractProjectComponent implements 
     private final MethodExecutionArgumentValueHistory argumentValuesHistory = new MethodExecutionArgumentValueHistory();
 
     private MethodExecutionManager(Project project) {
-        super(project);
-        ProjectEvents.subscribe(project, this, ConnectionConfigListener.TOPIC, connectionConfigListener);
+        super(project, COMPONENT_NAME);
+        ProjectEvents.subscribe(project, this, ConnectionConfigListener.TOPIC, connectionConfigListener());
     }
 
-    private final ConnectionConfigListener connectionConfigListener = new ConnectionConfigListener() {
-        @Override
-        public void connectionRemoved(ConnectionId connectionId) {
-            browserSettings.connectionRemoved(connectionId);
-            executionHistory.connectionRemoved(connectionId);
-            argumentValuesHistory.connectionRemoved(connectionId);
-        }
-    };
+    @NotNull
+    private ConnectionConfigListener connectionConfigListener() {
+        return new ConnectionConfigListener() {
+            @Override
+            public void connectionRemoved(ConnectionId connectionId) {
+                browserSettings.connectionRemoved(connectionId);
+                executionHistory.connectionRemoved(connectionId);
+                argumentValuesHistory.connectionRemoved(connectionId);
+            }
+        };
+    }
 
     public static MethodExecutionManager getInstance(@NotNull Project project) {
-        return Failsafe.getComponent(project, MethodExecutionManager.class);
+        return projectService(project, MethodExecutionManager.class);
     }
 
     public MethodExecutionInput getExecutionInput(DBMethod method) {
@@ -293,16 +296,6 @@ public class MethodExecutionManager extends AbstractProjectComponent implements 
 
     public void cleanupExecutionHistory(List<ConnectionId> connectionIds) {
         executionHistory.cleanupHistory(connectionIds);
-    }
-
-    /*********************************************************
-     *                    ProjectComponent                   *
-     *********************************************************/
-    @Override
-    @NotNull
-    @NonNls
-    public String getComponentName() {
-        return COMPONENT_NAME;
     }
 
     /****************************************

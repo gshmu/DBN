@@ -1,8 +1,8 @@
 package com.dci.intellij.dbn.editor.code.diff;
 
 import com.dci.intellij.dbn.DatabaseNavigator;
-import com.dci.intellij.dbn.common.AbstractProjectComponent;
-import com.dci.intellij.dbn.common.dispose.Failsafe;
+import com.dci.intellij.dbn.common.component.PersistentState;
+import com.dci.intellij.dbn.common.component.ProjectComponentBase;
 import com.dci.intellij.dbn.common.event.ProjectEvents;
 import com.dci.intellij.dbn.common.thread.Dispatch;
 import com.dci.intellij.dbn.common.thread.Progress;
@@ -20,7 +20,6 @@ import com.intellij.diff.InvalidDiffRequestException;
 import com.intellij.diff.contents.DiffContent;
 import com.intellij.diff.merge.MergeRequest;
 import com.intellij.diff.requests.SimpleDiffRequest;
-import com.intellij.openapi.components.PersistentStateComponent;
 import com.intellij.openapi.components.State;
 import com.intellij.openapi.components.Storage;
 import com.intellij.openapi.fileTypes.FileType;
@@ -29,21 +28,23 @@ import org.jdom.Element;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import static com.dci.intellij.dbn.common.component.Components.projectService;
 import static com.dci.intellij.dbn.vfs.VirtualFileStatus.SAVING;
 
 @State(
     name = SourceCodeDiffManager.COMPONENT_NAME,
     storages = @Storage(DatabaseNavigator.STORAGE_FILE)
 )
-public class SourceCodeDiffManager extends AbstractProjectComponent implements PersistentStateComponent<Element> {
+public class SourceCodeDiffManager extends ProjectComponentBase implements PersistentState {
 
     public static final String COMPONENT_NAME = "DBNavigator.Project.SourceCodeDiffManager";
 
     protected SourceCodeDiffManager(Project project) {
-        super(project);
+        super(project, COMPONENT_NAME);
     }
+
     public static SourceCodeDiffManager getInstance(@NotNull Project project) {
-        return Failsafe.getComponent(project, SourceCodeDiffManager.class);
+        return projectService(project, SourceCodeDiffManager.class);
     }
 
     public void openCodeMergeDialog(String databaseContent, DBSourceCodeVirtualFile sourceCodeFile, SourceCodeEditor fileEditor, MergeAction action) {
@@ -148,12 +149,6 @@ public class SourceCodeDiffManager extends AbstractProjectComponent implements P
                         }));
     }
 
-
-    @NotNull
-    @Override
-    public String getComponentName() {
-        return COMPONENT_NAME;
-    }
 
     @Nullable
     @Override

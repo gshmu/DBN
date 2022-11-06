@@ -21,12 +21,6 @@ public class Failsafe {
         return object;
     }
 
-    public static <T> T getComponent(@NotNull Project project, @NotNull Class<T> interfaceClass) {
-        Project prj = nd(project);
-        T component = prj.getComponent(interfaceClass);
-        return nn(component);
-    }
-
     @NotNull
     public static <T> T nd(@Nullable T object) {
         if (!check(object)) {

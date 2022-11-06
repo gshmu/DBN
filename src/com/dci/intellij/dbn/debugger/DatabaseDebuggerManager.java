@@ -1,8 +1,10 @@
 package com.dci.intellij.dbn.debugger;
 
 import com.dci.intellij.dbn.DatabaseNavigator;
-import com.dci.intellij.dbn.common.AbstractProjectComponent;
+import com.dci.intellij.dbn.common.component.PersistentState;
+import com.dci.intellij.dbn.common.component.ProjectComponentBase;
 import com.dci.intellij.dbn.common.dispose.Failsafe;
+import com.dci.intellij.dbn.common.event.ProjectEvents;
 import com.dci.intellij.dbn.common.notification.NotificationGroup;
 import com.dci.intellij.dbn.common.routine.ParametricRunnable;
 import com.dci.intellij.dbn.common.util.Lists;
@@ -48,23 +50,22 @@ import com.intellij.execution.executors.DefaultDebugExecutor;
 import com.intellij.execution.runners.ExecutionEnvironment;
 import com.intellij.execution.runners.ProgramRunner;
 import com.intellij.openapi.application.ApplicationInfo;
-import com.intellij.openapi.components.PersistentStateComponent;
 import com.intellij.openapi.components.State;
 import com.intellij.openapi.components.Storage;
 import com.intellij.openapi.extensions.Extensions;
-import com.intellij.openapi.fileEditor.FileEditorManager;
+import com.intellij.openapi.fileEditor.FileEditorManagerListener;
 import com.intellij.openapi.progress.ProgressIndicator;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.util.containers.ContainerUtil;
 import org.jdom.Element;
-import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.sql.SQLException;
 import java.util.*;
 
+import static com.dci.intellij.dbn.common.component.Components.projectService;
 import static com.dci.intellij.dbn.common.message.MessageCallback.when;
 import static com.dci.intellij.dbn.common.util.Commons.list;
 
@@ -72,7 +73,7 @@ import static com.dci.intellij.dbn.common.util.Commons.list;
     name = DatabaseDebuggerManager.COMPONENT_NAME,
     storages = @Storage(DatabaseNavigator.STORAGE_FILE)
 )
-public class DatabaseDebuggerManager extends AbstractProjectComponent implements PersistentStateComponent<Element> {
+public class DatabaseDebuggerManager extends ProjectComponentBase implements PersistentState {
     public static final String COMPONENT_NAME = "DBNavigator.Project.DebuggerManager";
 
     public static final String GENERIC_METHOD_RUNNER_HINT =
@@ -88,8 +89,13 @@ public class DatabaseDebuggerManager extends AbstractProjectComponent implements
     private final Set<ConnectionRef> activeDebugSessions = new HashSet<>();
 
     private DatabaseDebuggerManager(Project project) {
-        super(project);
-        FileEditorManager.getInstance(project).addFileEditorManagerListener(new DBBreakpointUpdaterFileEditorListener());
+        super(project, COMPONENT_NAME);
+
+        ProjectEvents.subscribe(project, this, FileEditorManagerListener.FILE_EDITOR_MANAGER, new DBBreakpointUpdaterFileEditorListener());
+    }
+
+    public static DatabaseDebuggerManager getInstance(@NotNull Project project) {
+        return projectService(project, DatabaseDebuggerManager.class);
     }
 
     public void registerDebugSession(ConnectionHandler connection) {
@@ -415,21 +421,6 @@ public class DatabaseDebuggerManager extends AbstractProjectComponent implements
             }
         }
         return "Unknown";
-    }
-
-
-    /***************************************
-     *            ProjectComponent         *
-     ***************************************/
-    public static DatabaseDebuggerManager getInstance(@NotNull Project project) {
-        return Failsafe.getComponent(project, DatabaseDebuggerManager.class);
-    }
-
-    @Override
-    @NonNls
-    @NotNull
-    public String getComponentName() {
-        return COMPONENT_NAME;
     }
 
     /*********************************************

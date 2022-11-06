@@ -18,24 +18,27 @@ public class SessionBrowserNotificationProvider extends LegacyEditorNotification
     private static final Key<SessionBrowserErrorNotificationPanel> KEY = Key.create("DBNavigator.SessionBrowserErrorNotificationPanel");
 
     public SessionBrowserNotificationProvider() {
-        ProjectEvents.subscribe(SessionBrowserLoadListener.TOPIC, sessionsLoadListener);
+        ProjectEvents.subscribe(SessionBrowserLoadListener.TOPIC, sessionBrowserLoadListener());
     }
 
     @Deprecated
     public SessionBrowserNotificationProvider(@NotNull Project project) {
         super(project);
-        ProjectEvents.subscribe(project, this, SessionBrowserLoadListener.TOPIC, sessionsLoadListener);
+        ProjectEvents.subscribe(project, this, SessionBrowserLoadListener.TOPIC, sessionBrowserLoadListener());
 
     }
 
-    SessionBrowserLoadListener sessionsLoadListener = virtualFile -> {
-        if (virtualFile instanceof DBSessionBrowserVirtualFile) {
-            DBSessionBrowserVirtualFile databaseFile = (DBSessionBrowserVirtualFile) virtualFile;
-            Project project = databaseFile.getProject();
-            EditorNotifications notifications = EditorNotifications.getInstance(project);
-            notifications.updateNotifications(virtualFile);
-        }
-    };
+    @NotNull
+    private static SessionBrowserLoadListener sessionBrowserLoadListener() {
+        return virtualFile -> {
+            if (virtualFile instanceof DBSessionBrowserVirtualFile) {
+                DBSessionBrowserVirtualFile databaseFile = (DBSessionBrowserVirtualFile) virtualFile;
+                Project project = databaseFile.getProject();
+                EditorNotifications notifications = EditorNotifications.getInstance(project);
+                notifications.updateNotifications(virtualFile);
+            }
+        };
+    }
 
     @NotNull
     @Override

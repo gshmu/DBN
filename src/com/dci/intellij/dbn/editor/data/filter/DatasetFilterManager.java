@@ -1,7 +1,8 @@
 package com.dci.intellij.dbn.editor.data.filter;
 
 import com.dci.intellij.dbn.DatabaseNavigator;
-import com.dci.intellij.dbn.common.AbstractProjectComponent;
+import com.dci.intellij.dbn.common.component.PersistentState;
+import com.dci.intellij.dbn.common.component.ProjectComponentBase;
 import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.ConnectionId;
@@ -11,31 +12,31 @@ import com.dci.intellij.dbn.editor.data.DatasetEditorManager;
 import com.dci.intellij.dbn.editor.data.filter.ui.DatasetFilterDialog;
 import com.dci.intellij.dbn.object.DBColumn;
 import com.dci.intellij.dbn.object.DBDataset;
-import com.intellij.openapi.components.PersistentStateComponent;
 import com.intellij.openapi.components.State;
 import com.intellij.openapi.components.Storage;
 import com.intellij.openapi.project.Project;
 import lombok.val;
 import org.jdom.Element;
-import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.HashMap;
 import java.util.Map;
 
+import static com.dci.intellij.dbn.common.component.Components.projectService;
+
 @State(
     name = DatasetFilterManager.COMPONENT_NAME,
     storages = @Storage(DatabaseNavigator.STORAGE_FILE)
 )
-public class DatasetFilterManager extends AbstractProjectComponent implements PersistentStateComponent<Element> {
+public class DatasetFilterManager extends ProjectComponentBase implements PersistentState {
     public static final String COMPONENT_NAME = "DBNavigator.Project.DatasetFilterManager";
 
     public static final DatasetFilter EMPTY_FILTER = new DatasetEmptyFilter();
     private final Map<ConnectionId, Map<String, DatasetFilterGroup>> filters = new HashMap<>();
 
     private DatasetFilterManager(Project project) {
-        super(project);
+        super(project, COMPONENT_NAME);
     }
 
     public void switchActiveFilter(DBDataset dataset, DatasetFilter filter){
@@ -160,17 +161,7 @@ public class DatasetFilterManager extends AbstractProjectComponent implements Pe
     }
 
     public static DatasetFilterManager getInstance(@NotNull Project project) {
-        return Failsafe.getComponent(project, DatasetFilterManager.class);
-    }
-
-    /***************************************
-    *            ProjectComponent           *
-    ****************************************/
-    @Override
-    @NonNls
-    @NotNull
-    public String getComponentName() {
-        return COMPONENT_NAME;
+        return projectService(project, DatasetFilterManager.class);
     }
 
     /****************************************

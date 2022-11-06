@@ -1,7 +1,8 @@
 package com.dci.intellij.dbn.editor.session;
 
 import com.dci.intellij.dbn.DatabaseNavigator;
-import com.dci.intellij.dbn.common.AbstractProjectComponent;
+import com.dci.intellij.dbn.common.component.PersistentState;
+import com.dci.intellij.dbn.common.component.ProjectComponentBase;
 import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.common.dispose.SafeDisposer;
 import com.dci.intellij.dbn.common.event.ProjectEvents;
@@ -27,7 +28,6 @@ import com.dci.intellij.dbn.editor.session.options.SessionBrowserSettings;
 import com.dci.intellij.dbn.editor.session.options.SessionInterruptionOption;
 import com.dci.intellij.dbn.options.ProjectSettingsManager;
 import com.dci.intellij.dbn.vfs.file.DBSessionBrowserVirtualFile;
-import com.intellij.openapi.components.PersistentStateComponent;
 import com.intellij.openapi.components.State;
 import com.intellij.openapi.components.Storage;
 import com.intellij.openapi.fileEditor.FileEditor;
@@ -38,26 +38,21 @@ import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.util.containers.ContainerUtil;
 import lombok.val;
 import org.jdom.Element;
-import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Timer;
-import java.util.TimerTask;
+import java.util.*;
 
+import static com.dci.intellij.dbn.common.component.Components.projectService;
 import static com.dci.intellij.dbn.common.util.Commons.list;
 
 @State(
     name = SessionBrowserManager.COMPONENT_NAME,
     storages = @Storage(DatabaseNavigator.STORAGE_FILE)
 )
-public class SessionBrowserManager extends AbstractProjectComponent implements PersistentStateComponent<Element> {
+public class SessionBrowserManager extends ProjectComponentBase implements PersistentState {
 
     public static final String COMPONENT_NAME = "DBNavigator.Project.SessionEditorManager";
 
@@ -65,14 +60,45 @@ public class SessionBrowserManager extends AbstractProjectComponent implements P
     private Timer timestampUpdater;
 
     private SessionBrowserManager(Project project) {
-        super(project);
+        super(project, COMPONENT_NAME);
 
-        ProjectEvents.subscribe(project, this, FileEditorManagerListener.FILE_EDITOR_MANAGER, fileEditorManagerListener);
+        ProjectEvents.subscribe(project, this, FileEditorManagerListener.FILE_EDITOR_MANAGER, fileEditorManagerListener());
     }
 
     public static SessionBrowserManager getInstance(@NotNull Project project) {
-        return Failsafe.getComponent(project, SessionBrowserManager.class);
+        return projectService(project, SessionBrowserManager.class);
     }
+
+    private FileEditorManagerListener fileEditorManagerListener() {
+        return new FileEditorManagerListener() {
+            @Override
+            public void fileOpened(@NotNull FileEditorManager source, @NotNull VirtualFile file) {
+                if (file instanceof DBSessionBrowserVirtualFile) {
+                    boolean schedule = openFiles.size() == 0;
+                    DBSessionBrowserVirtualFile sessionBrowserFile = (DBSessionBrowserVirtualFile) file;
+                    openFiles.add(sessionBrowserFile);
+
+                    if (schedule) {
+                        timestampUpdater = new Timer("DBN - Session Browser (timestamp update timer)");
+                        timestampUpdater.schedule(new UpdateTimestampTask(), TimeUtil.Millis.ONE_SECOND, TimeUtil.Millis.ONE_SECOND);
+                    }
+                }
+            }
+
+            @Override
+            public void fileClosed(@NotNull FileEditorManager source, @NotNull VirtualFile file) {
+                if (file instanceof DBSessionBrowserVirtualFile) {
+                    DBSessionBrowserVirtualFile sessionBrowserFile = (DBSessionBrowserVirtualFile) file;
+                    openFiles.remove(sessionBrowserFile);
+
+                    if (openFiles.size() == 0 && timestampUpdater != null) {
+                        SafeDisposer.dispose(timestampUpdater);
+                    }
+                }
+            }
+        };
+    }
+
 
     public SessionBrowserSettings getSessionBrowserSettings() {
         return ProjectSettingsManager.getInstance(getProject()).getOperationSettings().getSessionBrowserSettings();
@@ -286,44 +312,6 @@ public class SessionBrowserManager extends AbstractProjectComponent implements P
             }
         }
     }
-
-    /****************************************
-    *             ProjectComponent          *
-    *****************************************/
-    @Override
-    @NonNls
-    @NotNull
-    public String getComponentName() {
-        return COMPONENT_NAME;
-    }
-
-    private final FileEditorManagerListener fileEditorManagerListener = new FileEditorManagerListener() {
-        @Override
-        public void fileOpened(@NotNull FileEditorManager source, @NotNull VirtualFile file) {
-            if (file instanceof DBSessionBrowserVirtualFile) {
-                boolean schedule = openFiles.size() == 0;
-                DBSessionBrowserVirtualFile sessionBrowserFile = (DBSessionBrowserVirtualFile) file;
-                openFiles.add(sessionBrowserFile);
-
-                if (schedule) {
-                    timestampUpdater = new Timer("DBN - Session Browser (timestamp update timer)");
-                    timestampUpdater.schedule(new UpdateTimestampTask(), TimeUtil.Millis.ONE_SECOND, TimeUtil.Millis.ONE_SECOND);
-                }
-            }
-        }
-
-        @Override
-        public void fileClosed(@NotNull FileEditorManager source, @NotNull VirtualFile file) {
-            if (file instanceof DBSessionBrowserVirtualFile) {
-                DBSessionBrowserVirtualFile sessionBrowserFile = (DBSessionBrowserVirtualFile) file;
-                openFiles.remove(sessionBrowserFile);
-
-                if (openFiles.size() == 0 && timestampUpdater != null) {
-                    SafeDisposer.dispose(timestampUpdater);
-                }
-            }
-        }
-    };
 
     @Override
     public void disposeInner() {

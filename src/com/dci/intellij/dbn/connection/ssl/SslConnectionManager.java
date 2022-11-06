@@ -1,21 +1,25 @@
 package com.dci.intellij.dbn.connection.ssl;
 
-import com.dci.intellij.dbn.common.component.ApplicationComponent;
+import com.dci.intellij.dbn.common.component.ApplicationComponentBase;
 import com.dci.intellij.dbn.common.util.Strings;
 import com.dci.intellij.dbn.connection.config.ConnectionSettings;
 import com.dci.intellij.dbn.connection.config.ConnectionSslSettings;
-import com.intellij.openapi.application.ApplicationManager;
-import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
 import java.util.HashMap;
 import java.util.Map;
 
-public class SslConnectionManager implements ApplicationComponent {
+import static com.dci.intellij.dbn.common.component.Components.applicationService;
+
+public class SslConnectionManager extends ApplicationComponentBase {
     private final Map<String, SslConnection> sslConnectors = new HashMap<>();
 
+    public SslConnectionManager() {
+        super("DBNavigator.SslConnectionManager");
+    }
+
     public static SslConnectionManager getInstance() {
-        return ApplicationManager.getApplication().getComponent(SslConnectionManager.class);
+        return applicationService(SslConnectionManager.class);
     }
 
     public SslConnection ensureSslConnection(ConnectionSettings connectionSettings) {
@@ -49,11 +53,5 @@ public class SslConnectionManager implements ApplicationComponent {
 
     private String createKey(File certificateAuthorityFile, File clientCertificateFile, File clientKeyFile) {
         return certificateAuthorityFile + "#" + clientCertificateFile + "#" + clientKeyFile;
-    }
-
-    @NotNull
-    @Override
-    public String getComponentName() {
-        return "DBNavigator.SslConnectionManager";
     }
 }

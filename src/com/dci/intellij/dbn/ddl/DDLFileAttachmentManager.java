@@ -1,7 +1,8 @@
 package com.dci.intellij.dbn.ddl;
 
 import com.dci.intellij.dbn.DatabaseNavigator;
-import com.dci.intellij.dbn.common.AbstractProjectComponent;
+import com.dci.intellij.dbn.common.component.PersistentState;
+import com.dci.intellij.dbn.common.component.ProjectComponentBase;
 import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.common.event.ProjectEvents;
 import com.dci.intellij.dbn.common.file.util.FileSearchRequest;
@@ -21,7 +22,6 @@ import com.dci.intellij.dbn.ddl.ui.DDLFileNameListCellRenderer;
 import com.dci.intellij.dbn.ddl.ui.DetachDDLFileDialog;
 import com.dci.intellij.dbn.editor.DBContentType;
 import com.dci.intellij.dbn.editor.code.SourceCodeEditor;
-import com.dci.intellij.dbn.editor.code.SourceCodeManagerAdapter;
 import com.dci.intellij.dbn.editor.code.SourceCodeManagerListener;
 import com.dci.intellij.dbn.object.common.DBSchemaObject;
 import com.dci.intellij.dbn.object.lookup.DBObjectRef;
@@ -31,7 +31,6 @@ import com.dci.intellij.dbn.options.ProjectSettingsManager;
 import com.dci.intellij.dbn.vfs.DatabaseFileSystem;
 import com.dci.intellij.dbn.vfs.file.DBEditableObjectVirtualFile;
 import com.dci.intellij.dbn.vfs.file.DBSourceCodeVirtualFile;
-import com.intellij.openapi.components.PersistentStateComponent;
 import com.intellij.openapi.components.State;
 import com.intellij.openapi.components.Storage;
 import com.intellij.openapi.editor.Document;
@@ -50,20 +49,15 @@ import com.intellij.openapi.vfs.newvfs.events.VFileDeleteEvent;
 import com.intellij.openapi.vfs.newvfs.events.VFileEvent;
 import lombok.val;
 import org.jdom.Element;
-import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import javax.swing.JList;
-import javax.swing.ListSelectionModel;
+import javax.swing.*;
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
+import static com.dci.intellij.dbn.common.component.Components.projectService;
 import static com.dci.intellij.dbn.common.message.MessageCallback.when;
 import static com.dci.intellij.dbn.common.options.setting.SettingsSupport.stringAttribute;
 import static com.dci.intellij.dbn.common.util.Messages.options;
@@ -72,45 +66,72 @@ import static com.dci.intellij.dbn.common.util.Messages.options;
     name = DDLFileAttachmentManager.COMPONENT_NAME,
     storages = @Storage(DatabaseNavigator.STORAGE_FILE)
 )
-public class DDLFileAttachmentManager extends AbstractProjectComponent implements PersistentStateComponent<Element> {
+public class DDLFileAttachmentManager extends ProjectComponentBase implements PersistentState {
 
     public static final String COMPONENT_NAME = "DBNavigator.Project.DDLFileAttachmentManager";
 
     private final Map<String, DBObjectRef<DBSchemaObject>> mappings = new HashMap<>();
     private DDLFileAttachmentManager(@NotNull Project project) {
-        super(project);
+        super(project, COMPONENT_NAME);
 
         //VirtualFileManager.getInstance().addVirtualFileListener(virtualFileListener);
-        ProjectEvents.subscribe(project, this, VirtualFileManager.VFS_CHANGES, bulkFileListener);
-        ProjectEvents.subscribe(project, this, SourceCodeManagerListener.TOPIC, sourceCodeManagerListener);
-        ProjectEvents.subscribe(project, this, ConnectionConfigListener.TOPIC, connectionConfigListener);
+        ProjectEvents.subscribe(project, this, VirtualFileManager.VFS_CHANGES, bulkFileListener());
+        ProjectEvents.subscribe(project, this, SourceCodeManagerListener.TOPIC, sourceCodeManagerListener());
+        ProjectEvents.subscribe(project, this, ConnectionConfigListener.TOPIC, connectionConfigListener());
     }
 
-    private final SourceCodeManagerListener sourceCodeManagerListener = new SourceCodeManagerAdapter() {
-        @Override
-        public void sourceCodeLoaded(@NotNull DBSourceCodeVirtualFile sourceCodeFile, boolean initialLoad) {
-            if (!initialLoad && DatabaseFileSystem.isFileOpened(sourceCodeFile.getObject())) {
+    public static DDLFileAttachmentManager getInstance(@NotNull Project project) {
+        return projectService(project, DDLFileAttachmentManager.class);
+    }
+
+    @NotNull
+    private BulkFileListener bulkFileListener() {
+        return new BulkFileListener() {
+            @Override
+            public void after(@NotNull List<? extends VFileEvent> events) {
+                for (VFileEvent event : events) {
+                    VirtualFile file = event.getFile();
+                    if (file != null) {
+                        if (event instanceof VFileDeleteEvent) {
+                            processFileDeletedEvent(file);
+                        }
+                    }
+                }
+            }
+        };
+    }
+
+    @NotNull
+    private SourceCodeManagerListener sourceCodeManagerListener() {
+        return new SourceCodeManagerListener() {
+            @Override
+            public void sourceCodeLoaded(@NotNull DBSourceCodeVirtualFile sourceCodeFile, boolean initialLoad) {
+                if (!initialLoad && DatabaseFileSystem.isFileOpened(sourceCodeFile.getObject())) {
+                    updateDDLFiles(sourceCodeFile.getMainDatabaseFile());
+                }
+            }
+
+            @Override
+            public void sourceCodeSaved(@NotNull DBSourceCodeVirtualFile sourceCodeFile, @Nullable SourceCodeEditor fileEditor) {
                 updateDDLFiles(sourceCodeFile.getMainDatabaseFile());
             }
-        }
+        };
+    }
 
-        @Override
-        public void sourceCodeSaved(@NotNull DBSourceCodeVirtualFile sourceCodeFile, @Nullable SourceCodeEditor fileEditor) {
-            updateDDLFiles(sourceCodeFile.getMainDatabaseFile());
-        }
-    };
-
-    private final ConnectionConfigListener connectionConfigListener = new ConnectionConfigListener() {
-        @Override
-        public void connectionRemoved(ConnectionId connectionId) {
-            mappings
-                .entrySet()
-                .stream()
-                .filter(m -> m.getValue().getConnectionId().equals(connectionId))
-                .map(m -> m.getKey())
-                .forEach(k -> mappings.remove(k));
-        }
-    };
+    @NotNull
+    private ConnectionConfigListener connectionConfigListener() {
+        return new ConnectionConfigListener() {
+            @Override
+            public void connectionRemoved(ConnectionId connectionId) {
+                mappings
+                        .entrySet()
+                        .stream()
+                        .filter(m -> m.getValue().getConnectionId().equals(connectionId))
+                        .map(m -> m.getKey())
+                        .forEach(k -> mappings.remove(k));
+            }
+        };
+    }
 
     @Nullable
     public List<VirtualFile> getAttachedDDLFiles(DBObjectRef<DBSchemaObject> objectRef) {
@@ -445,20 +466,6 @@ public class DDLFileAttachmentManager extends AbstractProjectComponent implement
         return fileUrls;
     }
 
-    /***************************************
-     *            ProjectComponent         *
-     ***************************************/
-    public static DDLFileAttachmentManager getInstance(@NotNull Project project) {
-        return Failsafe.getComponent(project, DDLFileAttachmentManager.class);
-    }
-
-    @Override
-    @NonNls
-    @NotNull
-    public String getComponentName() {
-        return COMPONENT_NAME;
-    }
-
     /************************************************
      *               VirtualFileListener            *
      ************************************************/
@@ -470,19 +477,6 @@ public class DDLFileAttachmentManager extends AbstractProjectComponent implement
         }
     };
 
-    private final BulkFileListener bulkFileListener = new BulkFileListener() {
-        @Override
-        public void after(@NotNull List<? extends VFileEvent> events) {
-            for (VFileEvent event : events) {
-                VirtualFile file = event.getFile();
-                if (file != null) {
-                    if (event instanceof VFileDeleteEvent) {
-                        processFileDeletedEvent(file);
-                    }
-                }
-            }
-        }
-    };
 
     private void processFileDeletedEvent(@NotNull VirtualFile file) {
         DBObjectRef<DBSchemaObject> objectRef = mappings.get(file.getUrl());

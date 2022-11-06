@@ -13,7 +13,7 @@ import com.dci.intellij.dbn.editor.data.ui.table.DatasetEditorTable;
 import com.intellij.ui.SimpleTextAttributes;
 
 import javax.swing.border.Border;
-import java.awt.Color;
+import java.awt.*;
 
 import static com.dci.intellij.dbn.editor.data.model.RecordStatus.*;
 

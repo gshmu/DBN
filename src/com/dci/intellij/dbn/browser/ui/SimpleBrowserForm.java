@@ -13,9 +13,7 @@ import com.intellij.util.ui.JBUI;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import javax.swing.JPanel;
-import javax.swing.JScrollPane;
-import javax.swing.ToolTipManager;
+import javax.swing.*;
 
 public class SimpleBrowserForm extends DatabaseBrowserForm{
     private JPanel mainPanel;
@@ -39,10 +37,14 @@ public class SimpleBrowserForm extends DatabaseBrowserForm{
         browserScrollPane.setBorder(JBUI.Borders.emptyTop(1));
         ToolTipManager.sharedInstance().registerComponent(browserTree);
 
-        ProjectEvents.subscribe(ensureProject(), this, ObjectDetailSettingsListener.TOPIC, objectDetailSettingsListener);
+        ProjectEvents.subscribe(ensureProject(), this, ObjectDetailSettingsListener.TOPIC, objectDetailSettingsListener());
         return browserTree;
     }
 
+    @NotNull
+    private ObjectDetailSettingsListener objectDetailSettingsListener() {
+        return () -> UserInterface.repaint(browserTree);
+    }
 
     @Nullable
     public ConnectionId getConnectionId(){
@@ -82,13 +84,4 @@ public class SimpleBrowserForm extends DatabaseBrowserForm{
         getBrowserTree().getModel().getRoot().rebuildTreeChildren();
     }
 
-    /********************************************************
-     *                       Listeners                      *
-     ********************************************************/
-    private final ObjectDetailSettingsListener objectDetailSettingsListener = new ObjectDetailSettingsListener() {
-        @Override
-        public void displayDetailsChanged() {
-            UserInterface.repaint(browserTree);
-        }
-    };
 }

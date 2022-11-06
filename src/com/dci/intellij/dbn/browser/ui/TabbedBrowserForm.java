@@ -37,8 +37,34 @@ public class TabbedBrowserForm extends DatabaseBrowserForm{
         //connectionTabs.setBackground(GUIUtil.getListBackground());
         //mainPanel.add(connectionTabs, BorderLayout.CENTER);
         initTabs(previous);
-        ProjectEvents.subscribe(project, this, EnvironmentManagerListener.TOPIC, environmentManagerListener);
+        ProjectEvents.subscribe(project, this, EnvironmentManagerListener.TOPIC, environmentManagerListener());
     }
+
+    @NotNull
+    private EnvironmentManagerListener environmentManagerListener() {
+        return new EnvironmentManagerListener() {
+            @Override
+            public void configurationChanged(Project project) {
+                EnvironmentVisibilitySettings visibilitySettings = getEnvironmentSettings(project).getVisibilitySettings();
+                for (TabInfo tabInfo : listTabs()) {
+                    try {
+                        SimpleBrowserForm browserForm = (SimpleBrowserForm) tabInfo.getObject();
+                        ConnectionHandler connection = browserForm.getConnection();
+                        if (connection != null) {
+                            JBColor environmentColor = connection.getEnvironmentType().getColor();
+                            if (visibilitySettings.getConnectionTabs().value()) {
+                                tabInfo.setTabColor(environmentColor);
+                            } else {
+                                tabInfo.setTabColor(null);
+                            }
+                        }
+                    } catch (ProcessCanceledException ignore) {
+                    }
+                }
+            }
+        };
+    }
+
 
 
     private void initTabs(@Nullable TabbedBrowserForm previous) {
@@ -159,30 +185,6 @@ public class TabbedBrowserForm extends DatabaseBrowserForm{
     public TabbedPane getConnectionTabs() {
         return Failsafe.nn(connectionTabs);
     }
-
-    /********************************************************
-     *                       Listeners                      *
-     ********************************************************/
-    private final EnvironmentManagerListener environmentManagerListener = new EnvironmentManagerListener() {
-        @Override
-        public void configurationChanged(Project project) {
-            EnvironmentVisibilitySettings visibilitySettings = getEnvironmentSettings(project).getVisibilitySettings();
-            for (TabInfo tabInfo : listTabs()) {
-                try {
-                    SimpleBrowserForm browserForm = (SimpleBrowserForm) tabInfo.getObject();
-                    ConnectionHandler connection = browserForm.getConnection();
-                    if (connection != null) {
-                        JBColor environmentColor = connection.getEnvironmentType().getColor();
-                        if (visibilitySettings.getConnectionTabs().value()) {
-                            tabInfo.setTabColor(environmentColor);
-                        } else {
-                            tabInfo.setTabColor(null);
-                        }
-                    }
-                } catch (ProcessCanceledException ignore) {}
-            }
-        }
-    };
 
     void refreshTabInfo(ConnectionId connectionId) {
         for (TabInfo tabInfo : listTabs()) {

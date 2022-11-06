@@ -1,25 +1,27 @@
 package com.dci.intellij.dbn.object.common.operation;
 
-import com.dci.intellij.dbn.common.AbstractProjectComponent;
-import com.dci.intellij.dbn.common.dispose.Failsafe;
+import com.dci.intellij.dbn.common.component.Components;
+import com.dci.intellij.dbn.common.component.ProjectComponentBase;
 import com.dci.intellij.dbn.database.DatabaseInterface;
 import com.dci.intellij.dbn.database.DatabaseMetadataInterface;
 import com.dci.intellij.dbn.object.DBConstraint;
 import com.dci.intellij.dbn.object.DBTrigger;
 import com.dci.intellij.dbn.object.common.status.DBObjectStatus;
 import com.intellij.openapi.project.Project;
-import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 
 import java.sql.SQLException;
 
-public class DatabaseOperationManager extends AbstractProjectComponent {
+public class DatabaseOperationManager extends ProjectComponentBase {
+
+    public static final String COMPONENT_NAME = "DBNavigator.Project.OperationManager";
+
     private DatabaseOperationManager(Project project) {
-        super(project);
+        super(project, COMPONENT_NAME);
     }
 
     public static DatabaseOperationManager getInstance(@NotNull Project project) {
-        return Failsafe.getComponent(project, DatabaseOperationManager.class);
+        return Components.projectService(project, DatabaseOperationManager.class);
     }
 
     public void enableConstraint(DBConstraint constraint) throws SQLException {
@@ -74,15 +76,5 @@ public class DatabaseOperationManager extends AbstractProjectComponent {
                             connection);
                     trigger.getStatus().set(DBObjectStatus.ENABLED, true);
                 });
-    }
-
-    /***************************************
-     *            ProjectComponent         *
-     ***************************************/
-    @Override
-    @NonNls
-    @NotNull
-    public String getComponentName() {
-        return "DBNavigator.Project.OperationManager";
     }
 }
