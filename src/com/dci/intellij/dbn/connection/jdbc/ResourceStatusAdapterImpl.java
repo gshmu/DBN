@@ -1,5 +1,6 @@
 package com.dci.intellij.dbn.connection.jdbc;
 
+import com.dci.intellij.dbn.common.thread.Background;
 import com.dci.intellij.dbn.common.thread.ThreadMonitor;
 import com.dci.intellij.dbn.common.thread.Timeout;
 import com.dci.intellij.dbn.common.util.Exceptions;
@@ -16,6 +17,8 @@ import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReadWriteLock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 
+import static com.dci.intellij.dbn.common.util.Commons.nvl;
+import static com.dci.intellij.dbn.common.util.TimeUtil.isOlderThan;
 import static com.dci.intellij.dbn.diagnostics.Diagnostics.isDatabaseResourceDebug;
 
 @Slf4j
@@ -61,8 +64,7 @@ public abstract class ResourceStatusAdapterImpl<T extends Resource> implements R
         if (writeLock.tryLock()) {
             try {
                 if (canChange(value)) {
-                    set(changing, true);
-                    changeControlled(value);
+                    change(value);
                 }
             } finally {
                 writeLock.unlock();
@@ -101,24 +103,53 @@ public abstract class ResourceStatusAdapterImpl<T extends Resource> implements R
     }
 
     private void evaluate() {
+        set(evaluating, true);
+
+        if (ThreadMonitor.isDispatchThread()) {
+            Background.run(() -> evaluate());
+            return;
+        }
+
         try {
-            set(evaluating, true);
-            if (checkInterval == 0) {
-                set(subject, checkControlled());
-            } else {
-                long currentTimeMillis = System.currentTimeMillis();
-                if (TimeUtil.isOlderThan(checkTimestamp, checkInterval) && !ThreadMonitor.isDispatchThread()) {
-                    checkTimestamp = currentTimeMillis;
-                    set(subject, checkControlled());
-                }
+            if (preEvaluate()) {
+                boolean value = checkControlled();
+                set(subject, value);
             }
         } catch (SQLRecoverableException e){
             fail();
         } catch (Exception e){
-            log.warn("Failed to check resource " + subject + " status", e);
+            log.warn("[DBN] Failed to check resource {} status", subject, e);
             fail();
         } finally {
             set(evaluating, false);
+        }
+    }
+
+    private boolean preEvaluate() {
+        boolean check = false;
+        if (checkInterval == 0) {
+            check = true;
+        } else {
+            if (isOlderThan(checkTimestamp, checkInterval)) {
+                checkTimestamp = System.currentTimeMillis();
+                check = true;
+            }
+        }
+        return check;
+    }
+
+    private void change(boolean value) throws SQLException {
+        set(changing, true);
+
+        if (ThreadMonitor.isDispatchThread()) {
+            Background.run(() -> change(value));
+            return;
+        }
+
+        try {
+            changeControlled(value);
+        } finally {
+            set(changing, false);
         }
     }
 
@@ -146,7 +177,7 @@ public abstract class ResourceStatusAdapterImpl<T extends Resource> implements R
         if (isChanging() || isTerminal()) {
             return false;
         } else {
-            return get() != value;
+            return value() != value;
         }
     }
 
@@ -161,14 +192,14 @@ public abstract class ResourceStatusAdapterImpl<T extends Resource> implements R
                 return checkInner();
             } catch (SQLException e) {
                 exception.set(e);
-                return terminalStatus == null ? value() : terminalStatus;
+                return nvl(terminalStatus, () -> value());
             } catch (AbstractMethodError | NoSuchMethodError e) {
                 // not implemented (??) TODO suggest using built in drivers
-                log.warn("Functionality not supported by jdbc driver", e);
+                log.warn("[DBN] Functionality not supported by jdbc driver", e);
                 return value();
             } catch (RuntimeException t){
-                log.warn("Failed to invoke jdbc utility", t);
-                return terminalStatus == null ? value() : terminalStatus;
+                log.warn("[DBN] Failed to invoke jdbc utility", t);
+                return nvl(terminalStatus, () -> value());
             }
         });
         if (exception.get() != null) {
@@ -189,19 +220,15 @@ public abstract class ResourceStatusAdapterImpl<T extends Resource> implements R
         SQLException exception = Timeout.call(10, null, daemon, () -> {
             try {
                 if (isDatabaseResourceDebug())
-                    log.info("[DBN] Applying status " +  subject + " = " + value + " for " + resource);
-
+                    log.info("[DBN] Applying status {} = {} for {}", subject, value, resource);
                 changeInner(value);
                 set(subject, value);
+                if (isDatabaseResourceDebug())
+                    log.info("[DBN] Done applying status {} = {} for {}", subject, value, resource);
             } catch (Throwable e) {
-                log.warn("[DBN] Failed to apply status " + subject + " = " + value + " for " + resource + ": " + e.getMessage());
+                log.warn("[DBN] Failed to apply status {} = {} for {}: {}", subject, value, resource, e.getMessage());
                 fail();
                 return Exceptions.toSqlException(e);
-            } finally {
-                set(changing, false);
-
-                if (isDatabaseResourceDebug())
-                    log.info("[DBN] Done applying status " + subject + " = "  + value +  " for " + resource);
             }
             return null;
         });

@@ -1,11 +1,14 @@
 package com.dci.intellij.dbn.connection.jdbc;
 
 import com.dci.intellij.dbn.common.property.Property;
+import com.dci.intellij.dbn.common.property.PropertyHolder;
 import com.dci.intellij.dbn.language.common.WeakRef;
+import lombok.Getter;
 
 import java.util.concurrent.atomic.AtomicInteger;
 
-public abstract class IncrementalStatusAdapter<T, P extends Property.IntBase> {
+@Getter
+public abstract class IncrementalStatusAdapter<T extends PropertyHolder<P>, P extends Property.IntBase> {
     private final P status;
     private final WeakRef<T> resource;
     private final AtomicInteger count = new AtomicInteger();
