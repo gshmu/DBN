@@ -2,10 +2,10 @@ package com.dci.intellij.dbn.execution.explain.result.ui;
 
 import com.dci.intellij.dbn.common.dispose.StatefulDisposable;
 import com.dci.intellij.dbn.common.project.ProjectRef;
-import com.dci.intellij.dbn.common.ui.util.Borders;
 import com.dci.intellij.dbn.common.ui.form.DBNForm;
-import com.dci.intellij.dbn.common.ui.util.Mouse;
 import com.dci.intellij.dbn.common.ui.tree.TreeUtil;
+import com.dci.intellij.dbn.common.ui.util.Borders;
+import com.dci.intellij.dbn.common.ui.util.Mouse;
 import com.dci.intellij.dbn.common.util.Strings;
 import com.dci.intellij.dbn.data.editor.ui.UserValueHolder;
 import com.dci.intellij.dbn.data.editor.ui.UserValueHolderImpl;
@@ -35,21 +35,14 @@ import com.intellij.ui.treeStructure.treetable.TreeTableTree;
 import lombok.Getter;
 import org.jetbrains.annotations.NotNull;
 
-import javax.swing.JTable;
-import javax.swing.JTree;
-import javax.swing.ListSelectionModel;
-import javax.swing.SwingConstants;
+import javax.swing.*;
 import javax.swing.event.TreeExpansionEvent;
 import javax.swing.event.TreeExpansionListener;
 import javax.swing.table.JTableHeader;
 import javax.swing.table.TableCellRenderer;
 import javax.swing.table.TableColumn;
 import javax.swing.tree.TreePath;
-import java.awt.Component;
-import java.awt.Cursor;
-import java.awt.Font;
-import java.awt.Point;
-import java.awt.Rectangle;
+import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.font.FontRenderContext;
@@ -280,6 +273,17 @@ public class ExplainPlanTreeTable extends TreeTable implements StatefulDisposabl
             column.setPreferredWidth(preferredWidth);
         }
 
+    }
+
+    @Override
+    public Object getValueAt(int row, int column) {
+        // TODO "copy row" (CTRL-C) uses toString of this for g
+        return super.getValueAt(row, column);
+    }
+
+    @Override
+    public String toString() {
+        return "OPERATION";
     }
 
     /********************************************************
