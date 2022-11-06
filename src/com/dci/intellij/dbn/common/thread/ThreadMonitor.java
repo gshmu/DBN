@@ -11,7 +11,10 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicInteger;
 
-import static com.dci.intellij.dbn.common.thread.ThreadProperty.*;
+import static com.dci.intellij.dbn.common.thread.ThreadProperty.BACKGROUND;
+import static com.dci.intellij.dbn.common.thread.ThreadProperty.DISPOSER;
+import static com.dci.intellij.dbn.common.thread.ThreadProperty.PROGRESS;
+import static com.dci.intellij.dbn.common.thread.ThreadProperty.TIMEOUT;
 
 public class ThreadMonitor {
     private static final ThreadLocal<ThreadInfo> THREAD_PROPERTIES = new ThreadLocal<>();

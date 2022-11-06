@@ -23,15 +23,19 @@ public abstract class LatentResourceStatus<T extends Property.IntBase> {
         this.resource = WeakRef.of(resource);
     }
 
-    public synchronized boolean check() {
+    public boolean check() {
         if (!checking) {
-            checking = true;
-            long currentTimeMillis = System.currentTimeMillis();
-            if (TimeUtil.isOlderThan(lastCheck, interval) || dirty) {
-                lastCheck = currentTimeMillis;
-                checkControlled();
-            } else {
-                checking = false;
+            synchronized (this) {
+                if (!checking) {
+                    checking = true;
+                    long currentTimeMillis = System.currentTimeMillis();
+                    if (TimeUtil.isOlderThan(lastCheck, interval) || dirty) {
+                        lastCheck = currentTimeMillis;
+                        checkControlled();
+                    } else {
+                        checking = false;
+                    }
+                }
             }
         }
         return get();

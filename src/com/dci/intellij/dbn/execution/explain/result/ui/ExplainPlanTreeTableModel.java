@@ -131,10 +131,11 @@ public class ExplainPlanTreeTableModel implements TreeTableModel, Disposable {
     @Override public void addTreeModelListener(TreeModelListener l) {}
     @Override public void removeTreeModelListener(TreeModelListener l) {}
 
+    @Getter
     private static abstract class Column {
-        @Getter private final String name;
-        @Getter private final Class<?> clazz;
-        @Getter private boolean large;
+        private final String name;
+        private final Class<?> clazz;
+        private boolean large;
 
         public Column(String name, Class<?> clazz) {
             this.name = name;
