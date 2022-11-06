@@ -16,7 +16,7 @@ import com.dci.intellij.dbn.data.model.DataModelCell;
 import com.intellij.ui.SimpleTextAttributes;
 
 import javax.swing.border.Border;
-import java.awt.Color;
+import java.awt.*;
 import java.util.Iterator;
 
 

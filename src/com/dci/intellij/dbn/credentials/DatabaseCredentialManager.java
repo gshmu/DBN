@@ -1,20 +1,25 @@
 package com.dci.intellij.dbn.credentials;
 
+import com.dci.intellij.dbn.common.component.ApplicationComponentBase;
 import com.dci.intellij.dbn.common.util.Strings;
 import com.dci.intellij.dbn.connection.ConnectionId;
 import com.intellij.credentialStore.CredentialAttributes;
 import com.intellij.credentialStore.Credentials;
 import com.intellij.ide.passwordSafe.PasswordSafe;
-import com.intellij.openapi.application.ApplicationManager;
-import com.intellij.openapi.components.NamedComponent;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-public class DatabaseCredentialManager implements NamedComponent {
+import static com.dci.intellij.dbn.common.component.Components.applicationService;
+
+public class DatabaseCredentialManager extends ApplicationComponentBase {
     public static boolean USE = false;
 
+    public DatabaseCredentialManager() {
+        super("DBNavigator.DatabaseCredentialManager");
+    }
+
     public static DatabaseCredentialManager getInstance() {
-        return ApplicationManager.getApplication().getComponent(DatabaseCredentialManager.class);
+        return applicationService(DatabaseCredentialManager.class);
     }
 
 
@@ -47,11 +52,5 @@ public class DatabaseCredentialManager implements NamedComponent {
 
     private boolean isMemoryStorage() {
         return PasswordSafe.getInstance().isMemoryOnly();
-    }
-
-    @NotNull
-    @Override
-    public String getComponentName() {
-        return "DBNavigator.DatabaseCredentialManager";
     }
 }

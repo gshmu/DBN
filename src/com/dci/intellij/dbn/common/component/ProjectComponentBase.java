@@ -1,30 +1,37 @@
-package com.dci.intellij.dbn.common;
+package com.dci.intellij.dbn.common.component;
 
-import com.dci.intellij.dbn.common.component.LegacyComponent;
 import com.dci.intellij.dbn.common.dispose.StatefulDisposable;
 import com.dci.intellij.dbn.common.notification.NotificationSupport;
 import com.dci.intellij.dbn.common.project.ProjectRef;
 import com.dci.intellij.dbn.common.project.Projects;
 import com.intellij.openapi.application.ApplicationManager;
-import com.intellij.openapi.components.ProjectComponent;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.project.ProjectManager;
 import com.intellij.openapi.project.ProjectManagerListener;
+import lombok.Getter;
 import org.jetbrains.annotations.NotNull;
 
-public abstract class AbstractProjectComponent extends StatefulDisposable.Base implements
+@Getter
+public abstract class ProjectComponentBase extends StatefulDisposable.Base implements
         ProjectComponent,
         ProjectManagerListener,
         StatefulDisposable,
         NotificationSupport,
-        LegacyComponent {
+        Service {
 
     private final ProjectRef project;
+    private final String componentName;
 
-    protected AbstractProjectComponent(@NotNull Project project) {
+    protected ProjectComponentBase(@NotNull Project project, String componentName) {
         this.project = ProjectRef.of(project);
+        this.componentName = componentName;
         ProjectManager projectManager = ProjectManager.getInstance();
         projectManager.addProjectManagerListener(project, this);
+    }
+
+    @NotNull
+    public final String getComponentName() {
+        return componentName;
     }
 
     @Override
@@ -36,12 +43,6 @@ public abstract class AbstractProjectComponent extends StatefulDisposable.Base i
     public boolean canCloseProject() {
         return true;
     }
-
-    @Deprecated
-    public final void projectOpened() {}
-
-    @Deprecated
-    public final void projectClosed() {}
 
     /***********************************************
      *            ProjectManagerListener           *

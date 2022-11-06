@@ -1,7 +1,6 @@
 package com.dci.intellij.dbn.execution.explain;
 
-import com.dci.intellij.dbn.common.AbstractProjectComponent;
-import com.dci.intellij.dbn.common.dispose.Failsafe;
+import com.dci.intellij.dbn.common.component.ProjectComponentBase;
 import com.dci.intellij.dbn.common.routine.ParametricRunnable;
 import com.dci.intellij.dbn.common.thread.Progress;
 import com.dci.intellij.dbn.connection.ConnectionAction;
@@ -18,7 +17,6 @@ import com.dci.intellij.dbn.language.common.DBLanguagePsiFile;
 import com.dci.intellij.dbn.language.common.psi.ExecutablePsiElement;
 import com.intellij.openapi.actionSystem.DataContext;
 import com.intellij.openapi.project.Project;
-import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -26,14 +24,18 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 
-public class ExplainPlanManager extends AbstractProjectComponent {
+import static com.dci.intellij.dbn.common.component.Components.projectService;
+
+public class ExplainPlanManager extends ProjectComponentBase {
+    public static final String COMPONENT_NAME = "DBNavigator.Project.ExplainPlanManager";
+
     private ExplainPlanManager(Project project) {
-        super(project);
+        super(project, COMPONENT_NAME);
         //EventManager.subscribe(project, PsiDocumentTransactionListener.TOPIC, psiDocumentTransactionListener);
     }
 
     public static ExplainPlanManager getInstance(@NotNull Project project) {
-        return Failsafe.getComponent(project, ExplainPlanManager.class);
+        return projectService(project, ExplainPlanManager.class);
     }
 
     @Override
@@ -105,15 +107,4 @@ public class ExplainPlanManager extends AbstractProjectComponent {
                                     }
                                 })));
     }
-
-    /*********************************************************
-     *                    ProjectComponent                   *
-     *********************************************************/
-    @Override
-    @NotNull
-    @NonNls
-    public String getComponentName() {
-        return "DBNavigator.Project.ExplainPlanManager";
-    }
-
 }

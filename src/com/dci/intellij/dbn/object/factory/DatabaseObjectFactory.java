@@ -1,6 +1,7 @@
 package com.dci.intellij.dbn.object.factory;
 
-import com.dci.intellij.dbn.common.AbstractProjectComponent;
+import com.dci.intellij.dbn.common.component.Components;
+import com.dci.intellij.dbn.common.component.ProjectComponentBase;
 import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.common.event.ProjectEvents;
 import com.dci.intellij.dbn.common.thread.Progress;
@@ -23,7 +24,6 @@ import com.dci.intellij.dbn.object.type.DBObjectType;
 import com.dci.intellij.dbn.vfs.DatabaseFileManager;
 import com.dci.intellij.dbn.vfs.DatabaseFileSystem;
 import com.intellij.openapi.project.Project;
-import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 
 import java.sql.SQLException;
@@ -32,14 +32,16 @@ import java.util.List;
 
 import static com.dci.intellij.dbn.common.message.MessageCallback.when;
 
-public class DatabaseObjectFactory extends AbstractProjectComponent {
+public class DatabaseObjectFactory extends ProjectComponentBase {
+
+    public static final String COMPONENT_NAME = "DBNavigator.Project.DatabaseObjectFactoryManager";
 
     private DatabaseObjectFactory(Project project) {
-        super(project);
+        super(project, COMPONENT_NAME);
     }
 
     public static DatabaseObjectFactory getInstance(@NotNull Project project) {
-        return Failsafe.getComponent(project, DatabaseObjectFactory.class);
+        return Components.projectService(project, DatabaseObjectFactory.class);
     }
 
     private void notifyFactoryEvent(ObjectFactoryEvent event) {
@@ -155,13 +157,5 @@ public class DatabaseObjectFactory extends AbstractProjectComponent {
             Project project = getProject();
             Messages.showErrorDialog(project, message, e);
         }
-    }
-
-
-    @Override
-    @NonNls
-    @NotNull
-    public String getComponentName() {
-        return "DBNavigator.Project.DatabaseObjectFactoryManager";
     }
 }

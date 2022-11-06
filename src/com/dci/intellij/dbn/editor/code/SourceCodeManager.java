@@ -1,7 +1,8 @@
 package com.dci.intellij.dbn.editor.code;
 
 import com.dci.intellij.dbn.DatabaseNavigator;
-import com.dci.intellij.dbn.common.AbstractProjectComponent;
+import com.dci.intellij.dbn.common.component.PersistentState;
+import com.dci.intellij.dbn.common.component.ProjectComponentBase;
 import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.common.editor.BasicTextEditor;
 import com.dci.intellij.dbn.common.editor.document.OverrideReadonlyFragmentModificationHandler;
@@ -41,7 +42,6 @@ import com.dci.intellij.dbn.object.type.DBObjectType;
 import com.dci.intellij.dbn.vfs.file.DBContentVirtualFile;
 import com.dci.intellij.dbn.vfs.file.DBEditableObjectVirtualFile;
 import com.dci.intellij.dbn.vfs.file.DBSourceCodeVirtualFile;
-import com.intellij.openapi.components.PersistentStateComponent;
 import com.intellij.openapi.components.State;
 import com.intellij.openapi.components.Storage;
 import com.intellij.openapi.editor.Document;
@@ -55,7 +55,6 @@ import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiElement;
 import com.intellij.util.text.DateFormatUtil;
 import org.jdom.Element;
-import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -65,6 +64,7 @@ import java.sql.Timestamp;
 import java.util.List;
 import java.util.Objects;
 
+import static com.dci.intellij.dbn.common.component.Components.projectService;
 import static com.dci.intellij.dbn.common.message.MessageCallback.when;
 import static com.dci.intellij.dbn.common.navigation.NavigationInstruction.*;
 import static com.dci.intellij.dbn.common.util.Commons.list;
@@ -76,78 +76,87 @@ import static com.dci.intellij.dbn.vfs.VirtualFileStatus.*;
     name = SourceCodeManager.COMPONENT_NAME,
     storages = @Storage(DatabaseNavigator.STORAGE_FILE)
 )
-public class SourceCodeManager extends AbstractProjectComponent implements PersistentStateComponent<Element> {
+public class SourceCodeManager extends ProjectComponentBase implements PersistentState {
     public static final String COMPONENT_NAME = "DBNavigator.Project.SourceCodeManager";
 
     public static SourceCodeManager getInstance(@NotNull Project project) {
-        return Failsafe.getComponent(project, SourceCodeManager.class);
+        return projectService(project, SourceCodeManager.class);
     }
 
     private SourceCodeManager(@NotNull Project project) {
-        super(project);
+        super(project, COMPONENT_NAME);
         EditorActionManager.getInstance().setReadonlyFragmentModificationHandler(OverrideReadonlyFragmentModificationHandler.INSTANCE);
 
-        ProjectEvents.subscribe(project, this, DataDefinitionChangeListener.TOPIC, dataDefinitionChangeListener);
-        ProjectEvents.subscribe(project, this, EnvironmentManagerListener.TOPIC, environmentManagerListener);
-        ProjectEvents.subscribe(project, this, FileEditorManagerListener.FILE_EDITOR_MANAGER, fileEditorManagerListener);
+        ProjectEvents.subscribe(project, this, DataDefinitionChangeListener.TOPIC, dataDefinitionChangeListener());
+        ProjectEvents.subscribe(project, this, EnvironmentManagerListener.TOPIC, environmentManagerListener());
+        ProjectEvents.subscribe(project, this, FileEditorManagerListener.FILE_EDITOR_MANAGER, fileEditorManagerListener());
         ProjectEvents.subscribe(project, this, FileEditorManagerListener.FILE_EDITOR_MANAGER, new DBLanguageFileEditorListener());
     }
 
 
-    private final DataDefinitionChangeListener dataDefinitionChangeListener = new DataDefinitionChangeListener() {
-        @Override
-        public void dataDefinitionChanged(DBSchema schema, DBObjectType objectType) {
-        }
-
-        @Override
-        public void dataDefinitionChanged(@NotNull DBSchemaObject schemaObject) {
-            DBEditableObjectVirtualFile databaseFile = schemaObject.getCachedVirtualFile();
-            if (databaseFile != null) {
-                if (databaseFile.isModified()) {
-                    showQuestionDialog(
-                            getProject(), "Unsaved changes",
-                            "The " + schemaObject.getQualifiedNameWithType() + " has been updated in database. You have unsaved changes in the object editor.\n" +
-                                    "Do you want to discard the changes and reload the updated database version?",
-                            new String[]{"Reload", "Keep changes"}, 0,
-                            option -> when(option == 0, () ->
-                                    reloadAndUpdateEditors(databaseFile, false)));
-                } else {
-                    reloadAndUpdateEditors(databaseFile, true);
-                }
-
+    @NotNull
+    private DataDefinitionChangeListener dataDefinitionChangeListener() {
+        return new DataDefinitionChangeListener() {
+            @Override
+            public void dataDefinitionChanged(DBSchema schema, DBObjectType objectType) {
             }
-        }
-    };
 
-    private final EnvironmentManagerListener environmentManagerListener = new EnvironmentManagerListener() {
-        @Override
-        public void editModeChanged(Project project, DBContentVirtualFile databaseContentFile) {
-            if (databaseContentFile instanceof DBSourceCodeVirtualFile) {
-                DBSourceCodeVirtualFile sourceCodeFile = (DBSourceCodeVirtualFile) databaseContentFile;
-                if (sourceCodeFile.is(MODIFIED)) {
-                    loadSourceCode(sourceCodeFile, true);
+            @Override
+            public void dataDefinitionChanged(@NotNull DBSchemaObject schemaObject) {
+                DBEditableObjectVirtualFile databaseFile = schemaObject.getCachedVirtualFile();
+                if (databaseFile != null) {
+                    if (databaseFile.isModified()) {
+                        showQuestionDialog(
+                                getProject(), "Unsaved changes",
+                                "The " + schemaObject.getQualifiedNameWithType() + " has been updated in database. You have unsaved changes in the object editor.\n" +
+                                        "Do you want to discard the changes and reload the updated database version?",
+                                new String[]{"Reload", "Keep changes"}, 0,
+                                option -> when(option == 0, () ->
+                                        reloadAndUpdateEditors(databaseFile, false)));
+                    } else {
+                        reloadAndUpdateEditors(databaseFile, true);
+                    }
+
                 }
             }
-        }
-    };
+        };
+    }
 
-    private final FileEditorManagerListener fileEditorManagerListener = new FileEditorManagerListener() {
-        @Override
-        public void selectionChanged(@NotNull FileEditorManagerEvent event) {
-            FileEditor newEditor = event.getNewEditor();
-            if (newEditor instanceof SourceCodeEditor) {
-                SourceCodeEditor sourceCodeEditor = (SourceCodeEditor) newEditor;
-                DBEditableObjectVirtualFile databaseFile = sourceCodeEditor.getVirtualFile().getMainDatabaseFile();
-                for (DBSourceCodeVirtualFile sourceCodeFile : databaseFile.getSourceCodeFiles()) {
-                    if (!sourceCodeFile.isLoaded()) {
-                        loadSourceCode(sourceCodeFile, false);
+    @NotNull
+    private EnvironmentManagerListener environmentManagerListener() {
+        return new EnvironmentManagerListener() {
+            @Override
+            public void editModeChanged(Project project, DBContentVirtualFile databaseContentFile) {
+                if (databaseContentFile instanceof DBSourceCodeVirtualFile) {
+                    DBSourceCodeVirtualFile sourceCodeFile = (DBSourceCodeVirtualFile) databaseContentFile;
+                    if (sourceCodeFile.is(MODIFIED)) {
+                        loadSourceCode(sourceCodeFile, true);
                     }
                 }
+            }
+        };
+    }
+
+    @NotNull
+    private FileEditorManagerListener fileEditorManagerListener() {
+        return new FileEditorManagerListener() {
+            @Override
+            public void selectionChanged(@NotNull FileEditorManagerEvent event) {
+                FileEditor newEditor = event.getNewEditor();
+                if (newEditor instanceof SourceCodeEditor) {
+                    SourceCodeEditor sourceCodeEditor = (SourceCodeEditor) newEditor;
+                    DBEditableObjectVirtualFile databaseFile = sourceCodeEditor.getVirtualFile().getMainDatabaseFile();
+                    for (DBSourceCodeVirtualFile sourceCodeFile : databaseFile.getSourceCodeFiles()) {
+                        if (!sourceCodeFile.isLoaded()) {
+                            loadSourceCode(sourceCodeFile, false);
+                        }
+                    }
+
+                }
 
             }
-
-        }
-    };
+        };
+    }
 
     private void reloadAndUpdateEditors(DBEditableObjectVirtualFile databaseFile, boolean startInBackground) {
         Project project = getProject();
@@ -656,13 +665,6 @@ public class SourceCodeManager extends AbstractProjectComponent implements Persi
                                 }
                             }
                         }));
-    }
-
-    @Override
-    @NonNls
-    @NotNull
-    public String getComponentName() {
-        return COMPONENT_NAME;
     }
 
     /*********************************************

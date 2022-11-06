@@ -1,6 +1,6 @@
 package com.dci.intellij.dbn.connection.transaction;
 
-import com.dci.intellij.dbn.common.AbstractProjectComponent;
+import com.dci.intellij.dbn.common.component.ProjectComponentBase;
 import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.common.event.ProjectEvents;
 import com.dci.intellij.dbn.common.load.ProgressMonitor;
@@ -25,7 +25,6 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.project.ProjectManagerListener;
 import com.intellij.openapi.ui.DialogWrapper;
 import com.intellij.openapi.vfs.VirtualFile;
-import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -34,19 +33,22 @@ import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
 
+import static com.dci.intellij.dbn.common.component.Components.projectService;
 import static com.dci.intellij.dbn.common.message.MessageCallback.when;
 import static com.dci.intellij.dbn.common.util.Commons.list;
 import static com.dci.intellij.dbn.common.util.Lists.isLast;
 import static com.dci.intellij.dbn.connection.transaction.TransactionAction.*;
 
-public class DatabaseTransactionManager extends AbstractProjectComponent implements ProjectManagerListener{
+public class DatabaseTransactionManager extends ProjectComponentBase implements ProjectManagerListener{
+
+    public static final String COMPONENT_NAME = "DBNavigator.Project.TransactionManager";
 
     private DatabaseTransactionManager(Project project) {
-        super(project);
+        super(project, COMPONENT_NAME);
     }
 
     public static DatabaseTransactionManager getInstance(@NotNull Project project) {
-        return Failsafe.getComponent(project, DatabaseTransactionManager.class);
+        return projectService(project, DatabaseTransactionManager.class);
     }
 
     public void rollback(ConnectionHandler connection, @NotNull DBNConnection conn) {
@@ -330,15 +332,5 @@ public class DatabaseTransactionManager extends AbstractProjectComponent impleme
                 execute(connection, conn, actions(DISCONNECT), false, null);
             }
         }
-    }
-
-   /**********************************************
-    *                ProjectComponent             *
-    ***********************************************/
-    @Override
-    @NonNls
-    @NotNull
-    public String getComponentName() {
-        return "DBNavigator.Project.TransactionManager";
     }
 }

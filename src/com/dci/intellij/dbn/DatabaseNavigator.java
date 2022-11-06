@@ -1,9 +1,8 @@
 package com.dci.intellij.dbn;
 
-import com.dci.intellij.dbn.common.component.ApplicationComponent;
+import com.dci.intellij.dbn.common.component.ApplicationComponentBase;
+import com.dci.intellij.dbn.common.component.PersistentState;
 import com.dci.intellij.dbn.diagnostics.Diagnostics;
-import com.intellij.openapi.application.ApplicationManager;
-import com.intellij.openapi.components.PersistentStateComponent;
 import com.intellij.openapi.components.State;
 import com.intellij.openapi.components.Storage;
 import com.intellij.openapi.extensions.PluginId;
@@ -11,6 +10,7 @@ import org.jdom.Element;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import static com.dci.intellij.dbn.common.component.Components.applicationService;
 import static com.dci.intellij.dbn.common.options.setting.SettingsSupport.getBoolean;
 import static com.dci.intellij.dbn.common.options.setting.SettingsSupport.setBoolean;
 
@@ -18,7 +18,7 @@ import static com.dci.intellij.dbn.common.options.setting.SettingsSupport.setBoo
     name = DatabaseNavigator.COMPONENT_NAME,
     storages = @Storage(DatabaseNavigator.STORAGE_FILE)
 )
-public class DatabaseNavigator implements ApplicationComponent, PersistentStateComponent<Element> {
+public class DatabaseNavigator extends ApplicationComponentBase implements PersistentState {
     public static final String COMPONENT_NAME = "DBNavigator.Application.Settings";
     public static final String STORAGE_FILE = "dbnavigator.xml";
 
@@ -30,15 +30,10 @@ public class DatabaseNavigator implements ApplicationComponent, PersistentStateC
                 registerExtension(new SQLCodeStyleSettingsProvider());
     }*/
 
-    @Override
-    @NotNull
-    public String getComponentName() {
-        return COMPONENT_NAME;
-    }
-
     private boolean showPluginConflictDialog;
 
     public DatabaseNavigator() {
+        super(COMPONENT_NAME);
         //new NotificationGroup("Database Navigator", NotificationDisplayType.TOOL_WINDOW, true, ExecutionManager.TOOL_WINDOW_ID);
     }
 
@@ -54,7 +49,7 @@ public class DatabaseNavigator implements ApplicationComponent, PersistentStateC
 */
 
     public static DatabaseNavigator getInstance() {
-        return ApplicationManager.getApplication().getComponent(DatabaseNavigator.class);
+        return applicationService(DatabaseNavigator.class);
     }
 
     public String getName() {

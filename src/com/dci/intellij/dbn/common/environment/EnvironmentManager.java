@@ -1,8 +1,8 @@
 package com.dci.intellij.dbn.common.environment;
 
 import com.dci.intellij.dbn.DatabaseNavigator;
-import com.dci.intellij.dbn.common.AbstractProjectComponent;
-import com.dci.intellij.dbn.common.dispose.Failsafe;
+import com.dci.intellij.dbn.common.component.PersistentState;
+import com.dci.intellij.dbn.common.component.ProjectComponentBase;
 import com.dci.intellij.dbn.common.environment.options.listener.EnvironmentManagerListener;
 import com.dci.intellij.dbn.common.event.ProjectEvents;
 import com.dci.intellij.dbn.common.util.Editors;
@@ -10,8 +10,6 @@ import com.dci.intellij.dbn.editor.DBContentType;
 import com.dci.intellij.dbn.object.common.DBSchemaObject;
 import com.dci.intellij.dbn.object.common.status.DBObjectStatusHolder;
 import com.dci.intellij.dbn.vfs.file.DBContentVirtualFile;
-import com.intellij.openapi.Disposable;
-import com.intellij.openapi.components.PersistentStateComponent;
 import com.intellij.openapi.components.State;
 import com.intellij.openapi.components.Storage;
 import com.intellij.openapi.fileEditor.FileEditorManager;
@@ -19,27 +17,41 @@ import com.intellij.openapi.fileEditor.impl.FileEditorManagerImpl;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
 import org.jdom.Element;
-import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import static com.dci.intellij.dbn.common.component.Components.projectService;
 import static com.dci.intellij.dbn.object.common.status.DBObjectStatus.EDITABLE;
 
 @State(
     name = EnvironmentManager.COMPONENT_NAME,
     storages = @Storage(DatabaseNavigator.STORAGE_FILE)
 )
-public class EnvironmentManager extends AbstractProjectComponent implements PersistentStateComponent<Element>, Disposable {
+public class EnvironmentManager extends ProjectComponentBase implements PersistentState {
 
     public static final String COMPONENT_NAME = "DBNavigator.Project.EnvironmentManager";
 
     private EnvironmentManager(@NotNull Project project) {
-        super(project);
-        ProjectEvents.subscribe(project, this, EnvironmentManagerListener.TOPIC, environmentManagerListener);
+        super(project, COMPONENT_NAME);
+        ProjectEvents.subscribe(project, this, EnvironmentManagerListener.TOPIC, environmentManagerListener());
     }
 
     public static EnvironmentManager getInstance(@NotNull Project project) {
-        return Failsafe.getComponent(project, EnvironmentManager.class);
+        return projectService(project, EnvironmentManager.class);
+    }
+
+    @NotNull
+    private EnvironmentManagerListener environmentManagerListener() {
+        return new EnvironmentManagerListener() {
+            @Override
+            public void configurationChanged(Project project) {
+                FileEditorManagerImpl fileEditorManager = (FileEditorManagerImpl) FileEditorManager.getInstance(getProject());
+                VirtualFile[] openFiles = fileEditorManager.getOpenFiles();
+                for (VirtualFile virtualFile : openFiles) {
+                    fileEditorManager.updateFilePresentation(virtualFile);
+                }
+            }
+        };
     }
 
     public boolean isReadonly(@NotNull DBContentVirtualFile contentFile) {
@@ -82,25 +94,6 @@ public class EnvironmentManager extends AbstractProjectComponent implements Pers
                     (listener) -> listener.editModeChanged(project, contentFile));
         }
     }
-
-
-    @Override
-    @NonNls
-    @NotNull
-    public String getComponentName() {
-        return COMPONENT_NAME;
-    }
-
-    private final EnvironmentManagerListener environmentManagerListener = new EnvironmentManagerListener() {
-        @Override
-        public void configurationChanged(Project project) {
-            FileEditorManagerImpl fileEditorManager = (FileEditorManagerImpl) FileEditorManager.getInstance(getProject());
-            VirtualFile[] openFiles = fileEditorManager.getOpenFiles();
-            for (VirtualFile virtualFile : openFiles) {
-                fileEditorManager.updateFilePresentation(virtualFile);
-            }
-        }
-    };
 
     /*********************************************
      *            PersistentStateComponent       *

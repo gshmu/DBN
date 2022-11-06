@@ -11,8 +11,7 @@ import org.jetbrains.annotations.Nls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import javax.swing.Icon;
-import javax.swing.JComponent;
+import javax.swing.*;
 
 public abstract class BasicConfiguration<P extends Configuration, E extends ConfigurationEditorForm>
         extends AbstractConfiguration<P, E> {

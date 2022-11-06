@@ -52,12 +52,9 @@ import com.intellij.ui.tabs.impl.TabLabel;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import javax.swing.Icon;
-import javax.swing.JComponent;
-import javax.swing.JPanel;
+import javax.swing.*;
 import javax.swing.tree.TreePath;
-import java.awt.BorderLayout;
-import java.awt.Component;
+import java.awt.*;
 import java.awt.event.MouseListener;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -74,9 +71,72 @@ public class ExecutionConsoleForm extends DBNFormBase {
 
     public ExecutionConsoleForm(Disposable parent, Project project) {
         super(parent, project);
-        ProjectEvents.subscribe(project, this, EnvironmentManagerListener.TOPIC, environmentManagerListener);
-        ProjectEvents.subscribe(project, this, PsiDocumentTransactionListener.TOPIC, psiDocumentTransactionListener);
+        ProjectEvents.subscribe(project, this, EnvironmentManagerListener.TOPIC, environmentManagerListener());
+        ProjectEvents.subscribe(project, this, PsiDocumentTransactionListener.TOPIC, psiDocumentTransactionListener());
     }
+
+    @NotNull
+    private EnvironmentManagerListener environmentManagerListener() {
+        return new EnvironmentManagerListener() {
+            @Override
+            public void configurationChanged(Project project) {
+                EnvironmentVisibilitySettings visibilitySettings = getEnvironmentSettings(getProject()).getVisibilitySettings();
+                TabbedPane resultTabs = getResultTabs();
+                for (TabInfo tabInfo : resultTabs.getTabs()) {
+                    updateTab(visibilitySettings, tabInfo);
+                }
+            }
+
+            private void updateTab(EnvironmentVisibilitySettings visibilitySettings, TabInfo tabInfo) {
+                ExecutionResult<?> executionResult = getExecutionResult(tabInfo);
+                if (executionResult != null) {
+                    ConnectionHandler connection = executionResult.getConnection();
+                    EnvironmentType environmentType = connection.getEnvironmentType();
+                    if (visibilitySettings.getExecutionResultTabs().value()) {
+                        tabInfo.setTabColor(environmentType.getColor());
+                    } else {
+                        tabInfo.setTabColor(null);
+                    }
+                }
+            }
+        };
+    }
+
+    @NotNull
+    private PsiDocumentTransactionListener psiDocumentTransactionListener() {
+        return new PsiDocumentTransactionListener() {
+
+            @Override
+            public void transactionStarted(@NotNull Document document, @NotNull PsiFile file) {
+
+            }
+
+            @Override
+            public void transactionCompleted(@NotNull Document document, @NotNull PsiFile file) {
+                try {
+                    TabbedPane resultTabs = getResultTabs();
+                    for (TabInfo tabInfo : resultTabs.getTabs()) {
+                        ExecutionResult<?> executionResult = getExecutionResult(tabInfo);
+                        if (executionResult instanceof StatementExecutionResult) {
+                            StatementExecutionResult statementExecutionResult = (StatementExecutionResult) executionResult;
+                            StatementExecutionProcessor executionProcessor = statementExecutionResult.getExecutionProcessor();
+                            if (Failsafe.check(executionProcessor) && file.equals(executionProcessor.getPsiFile())) {
+                                Icon icon = executionProcessor.isDirty() ? Icons.STMT_EXEC_RESULTSET_ORPHAN : Icons.STMT_EXEC_RESULTSET;
+                                tabInfo.setIcon(icon);
+                            }
+                        }
+
+                        if (executionMessagesPanel.loaded()) {
+                            JComponent messagePanelComponent = getMessagesPanel().getComponent();
+                            UserInterface.repaint(messagePanelComponent);
+                        }
+                    }
+                } catch (ProcessCanceledException ignore) {
+                }
+            }
+        };
+    }
+
 
     private TabbedPane getResultTabs() {
         if (!isDisposed() && !Failsafe.check(resultTabs)) {
@@ -99,58 +159,6 @@ public class ExecutionConsoleForm extends DBNFormBase {
     private int getTabCount() {
         return getResultTabs().getTabCount();
     }
-
-    private final EnvironmentManagerListener environmentManagerListener = new EnvironmentManagerListener() {
-        @Override
-        public void configurationChanged(Project project) {
-            EnvironmentVisibilitySettings visibilitySettings = getEnvironmentSettings(getProject()).getVisibilitySettings();
-            TabbedPane resultTabs = getResultTabs();
-            for (TabInfo tabInfo : resultTabs.getTabs()) {
-                ExecutionResult<?> executionResult = getExecutionResult(tabInfo);
-                if (executionResult != null) {
-                    ConnectionHandler connection = executionResult.getConnection();
-                    EnvironmentType environmentType = connection.getEnvironmentType();
-                    if (visibilitySettings.getExecutionResultTabs().value()){
-                        tabInfo.setTabColor(environmentType.getColor());
-                    } else {
-                        tabInfo.setTabColor(null);
-                    }
-                }
-            }
-        }
-    };
-
-    private final PsiDocumentTransactionListener psiDocumentTransactionListener = new PsiDocumentTransactionListener() {
-
-        @Override
-        public void transactionStarted(@NotNull Document document, @NotNull PsiFile file) {
-
-        }
-
-        @Override
-        public void transactionCompleted(@NotNull Document document, @NotNull PsiFile file) {
-            try {
-                TabbedPane resultTabs = getResultTabs();
-                for (TabInfo tabInfo : resultTabs.getTabs()) {
-                    ExecutionResult<?> executionResult = getExecutionResult(tabInfo);
-                    if (executionResult instanceof StatementExecutionResult) {
-                        StatementExecutionResult statementExecutionResult = (StatementExecutionResult) executionResult;
-                        StatementExecutionProcessor executionProcessor = statementExecutionResult.getExecutionProcessor();
-                        if (Failsafe.check(executionProcessor) && file.equals(executionProcessor.getPsiFile())) {
-                            Icon icon = executionProcessor.isDirty() ? Icons.STMT_EXEC_RESULTSET_ORPHAN : Icons.STMT_EXEC_RESULTSET;
-                            tabInfo.setIcon(icon);
-                        }
-                    }
-
-                    if (executionMessagesPanel.loaded()) {
-                        JComponent messagePanelComponent = getMessagesPanel().getComponent();
-                        UserInterface.repaint(messagePanelComponent);
-                    }
-                }
-            } catch (ProcessCanceledException ignore) {}
-        }
-    };
-
 
     private final MouseListener mouseListener = Mouse.listener().onClick(e -> {
         if (e.isShiftDown() && (16 & e.getModifiers()) > 0 || ((8 & e.getModifiers()) > 0)) {

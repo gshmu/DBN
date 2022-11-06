@@ -2,8 +2,9 @@ package com.dci.intellij.dbn.object.filter.quick;
 
 import com.dci.intellij.dbn.DatabaseNavigator;
 import com.dci.intellij.dbn.browser.model.BrowserTreeEventListener;
-import com.dci.intellij.dbn.common.AbstractProjectComponent;
-import com.dci.intellij.dbn.common.dispose.Failsafe;
+import com.dci.intellij.dbn.common.component.Components;
+import com.dci.intellij.dbn.common.component.PersistentState;
+import com.dci.intellij.dbn.common.component.ProjectComponentBase;
 import com.dci.intellij.dbn.common.event.ProjectEvents;
 import com.dci.intellij.dbn.common.options.setting.SettingsSupport;
 import com.dci.intellij.dbn.common.ui.tree.TreeEventType;
@@ -11,13 +12,11 @@ import com.dci.intellij.dbn.connection.ConnectionManager;
 import com.dci.intellij.dbn.object.common.list.DBObjectList;
 import com.dci.intellij.dbn.object.filter.ConditionOperator;
 import com.dci.intellij.dbn.object.filter.quick.ui.ObjectQuickFilterDialog;
-import com.intellij.openapi.components.PersistentStateComponent;
 import com.intellij.openapi.components.State;
 import com.intellij.openapi.components.Storage;
 import com.intellij.openapi.project.Project;
 import lombok.val;
 import org.jdom.Element;
-import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -30,14 +29,18 @@ import static com.dci.intellij.dbn.common.util.Unsafe.cast;
     name = ObjectQuickFilterManager.COMPONENT_NAME,
     storages = @Storage(DatabaseNavigator.STORAGE_FILE)
 )
-public class ObjectQuickFilterManager extends AbstractProjectComponent implements PersistentStateComponent<Element> {
+public class ObjectQuickFilterManager extends ProjectComponentBase implements PersistentState {
     public static final String COMPONENT_NAME = "DBNavigator.Project.ObjectQuickFilterManager";
 
     private final Map<ObjectQuickFilterKey, ObjectQuickFilter<?>> quickFilters = new HashMap<>();
     private ConditionOperator lastUsedOperator = ConditionOperator.EQUAL;
 
     private ObjectQuickFilterManager(Project project) {
-        super(project);
+        super(project, COMPONENT_NAME);
+    }
+
+    public static ObjectQuickFilterManager getInstance(@NotNull Project project) {
+        return Components.projectService(project, ObjectQuickFilterManager.class);
     }
 
     public void openFilterDialog(DBObjectList<?> objectList) {
@@ -72,19 +75,6 @@ public class ObjectQuickFilterManager extends AbstractProjectComponent implement
         this.lastUsedOperator = lastUsedOperator;
     }
 
-    /***************************************
-     *            ProjectComponent         *
-     ***************************************/
-    public static ObjectQuickFilterManager getInstance(@NotNull Project project) {
-        return Failsafe.getComponent(project, ObjectQuickFilterManager.class);
-    }
-
-    @Override
-    @NonNls
-    @NotNull
-    public String getComponentName() {
-        return COMPONENT_NAME;
-    }
 
     /*********************************************
      *            PersistentStateComponent       *

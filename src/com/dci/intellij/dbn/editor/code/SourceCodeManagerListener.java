@@ -10,9 +10,9 @@ import java.util.EventListener;
 public interface SourceCodeManagerListener extends EventListener {
     Topic<SourceCodeManagerListener> TOPIC = Topic.create("Source Code Manager Event", SourceCodeManagerListener.class);
 
-    void sourceCodeLoading(@NotNull DBSourceCodeVirtualFile sourceCodeFile);
+    default void sourceCodeLoading(@NotNull DBSourceCodeVirtualFile sourceCodeFile) {};
 
-    void sourceCodeLoaded(@NotNull DBSourceCodeVirtualFile sourceCodeFile, boolean initialLoad);
+    default void sourceCodeLoaded(@NotNull DBSourceCodeVirtualFile sourceCodeFile, boolean initialLoad) {};
 
-    void sourceCodeSaved(@NotNull DBSourceCodeVirtualFile sourceCodeFile, @Nullable SourceCodeEditor fileEditor);
+    default void sourceCodeSaved(@NotNull DBSourceCodeVirtualFile sourceCodeFile, @Nullable SourceCodeEditor fileEditor) {};
 }

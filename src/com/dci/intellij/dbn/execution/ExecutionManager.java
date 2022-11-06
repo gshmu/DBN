@@ -1,8 +1,8 @@
 package com.dci.intellij.dbn.execution;
 
 import com.dci.intellij.dbn.DatabaseNavigator;
-import com.dci.intellij.dbn.common.AbstractProjectComponent;
-import com.dci.intellij.dbn.common.dispose.Failsafe;
+import com.dci.intellij.dbn.common.component.PersistentState;
+import com.dci.intellij.dbn.common.component.ProjectComponentBase;
 import com.dci.intellij.dbn.common.latent.Latent;
 import com.dci.intellij.dbn.common.navigation.NavigationInstructions;
 import com.dci.intellij.dbn.common.thread.Dispatch;
@@ -18,7 +18,6 @@ import com.dci.intellij.dbn.execution.logging.LogOutputContext;
 import com.dci.intellij.dbn.execution.method.result.MethodExecutionResult;
 import com.dci.intellij.dbn.execution.statement.options.StatementExecutionSettings;
 import com.dci.intellij.dbn.execution.statement.result.StatementExecutionResult;
-import com.intellij.openapi.components.PersistentStateComponent;
 import com.intellij.openapi.components.State;
 import com.intellij.openapi.components.Storage;
 import com.intellij.openapi.project.Project;
@@ -31,12 +30,12 @@ import com.intellij.ui.content.ContentManager;
 import lombok.Getter;
 import lombok.Setter;
 import org.jdom.Element;
-import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 
+import static com.dci.intellij.dbn.common.component.Components.projectService;
 import static com.dci.intellij.dbn.common.navigation.NavigationInstruction.*;
 import static com.dci.intellij.dbn.common.options.setting.SettingsSupport.getBoolean;
 import static com.dci.intellij.dbn.common.options.setting.SettingsSupport.setBoolean;
@@ -45,11 +44,13 @@ import static com.dci.intellij.dbn.common.options.setting.SettingsSupport.setBoo
     name = ExecutionManager.COMPONENT_NAME,
     storages = @Storage(DatabaseNavigator.STORAGE_FILE)
 )
-public class ExecutionManager extends AbstractProjectComponent implements PersistentStateComponent<Element> {
-    private @Getter @Setter boolean retainStickyNames = false;
-
+@Getter
+@Setter
+public class ExecutionManager extends ProjectComponentBase implements PersistentState {
     public static final String COMPONENT_NAME = "DBNavigator.Project.ExecutionManager";
     public static final String TOOL_WINDOW_ID = "DB Execution Console";
+
+    private boolean retainStickyNames = false;
 
     private final Latent<ExecutionConsoleForm> executionConsoleForm =
             Latent.basic(() -> {
@@ -59,11 +60,11 @@ public class ExecutionManager extends AbstractProjectComponent implements Persis
             });
 
     private ExecutionManager(Project project) {
-        super(project);
+        super(project, COMPONENT_NAME);
     }
 
     public static ExecutionManager getInstance(@NotNull Project project) {
-        return Failsafe.getComponent(project, ExecutionManager.class);
+        return projectService(project, ExecutionManager.class);
     }
 
     private void showExecutionConsole() {
@@ -207,13 +208,6 @@ public class ExecutionManager extends AbstractProjectComponent implements Persis
     public void closeExecutionResults(List<ConnectionId> connectionIds){
         ExecutionConsoleForm executionConsoleForm = getExecutionConsoleForm();
         executionConsoleForm.closeExecutionResults(connectionIds);
-    }
-
-    @Override
-    @NonNls
-    @NotNull
-    public String getComponentName() {
-        return COMPONENT_NAME;
     }
 
     @Nullable

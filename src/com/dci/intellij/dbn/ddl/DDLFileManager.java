@@ -1,11 +1,10 @@
 package com.dci.intellij.dbn.ddl;
 
 import com.dci.intellij.dbn.DatabaseNavigator;
-import com.dci.intellij.dbn.common.AbstractProjectComponent;
-import com.dci.intellij.dbn.common.dispose.Failsafe;
+import com.dci.intellij.dbn.common.component.PersistentState;
+import com.dci.intellij.dbn.common.component.ProjectComponentBase;
 import com.dci.intellij.dbn.common.event.ProjectEvents;
 import com.dci.intellij.dbn.common.notification.NotificationGroup;
-import com.dci.intellij.dbn.common.notification.NotificationSupport;
 import com.dci.intellij.dbn.common.thread.Dispatch;
 import com.dci.intellij.dbn.common.thread.Write;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
@@ -17,14 +16,9 @@ import com.dci.intellij.dbn.language.common.DBLanguageFileType;
 import com.dci.intellij.dbn.object.common.DBSchemaObject;
 import com.dci.intellij.dbn.object.type.DBObjectType;
 import com.dci.intellij.dbn.vfs.file.DBSourceCodeVirtualFile;
-import com.intellij.openapi.components.PersistentStateComponent;
 import com.intellij.openapi.components.State;
 import com.intellij.openapi.components.Storage;
-import com.intellij.openapi.fileTypes.ExtensionFileNameMatcher;
-import com.intellij.openapi.fileTypes.FileNameMatcher;
-import com.intellij.openapi.fileTypes.FileTypeEvent;
-import com.intellij.openapi.fileTypes.FileTypeListener;
-import com.intellij.openapi.fileTypes.FileTypeManager;
+import com.intellij.openapi.fileTypes.*;
 import com.intellij.openapi.project.DumbAwareRunnable;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.startup.StartupManager;
@@ -38,16 +32,18 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
+import static com.dci.intellij.dbn.common.component.Components.projectService;
+
 @State(
     name = DDLFileManager.COMPONENT_NAME,
     storages = @Storage(DatabaseNavigator.STORAGE_FILE)
 )
-public class DDLFileManager extends AbstractProjectComponent implements PersistentStateComponent<Element>, NotificationSupport {
+public class DDLFileManager extends ProjectComponentBase implements PersistentState {
 
     public static final String COMPONENT_NAME = "DBNavigator.Project.DDLFileManager";
 
     private DDLFileManager(@NotNull Project project) {
-        super(project);
+        super(project, COMPONENT_NAME);
 
         ProjectEvents.subscribe(project, this, FileTypeManager.TOPIC, fileTypeListener);
 
@@ -71,7 +67,7 @@ public class DDLFileManager extends AbstractProjectComponent implements Persiste
     }
 
     public static DDLFileManager getInstance(@NotNull Project project) {
-        return Failsafe.getComponent(project, DDLFileManager.class);
+        return projectService(project, DDLFileManager.class);
     }
 
     private DDLFileExtensionSettings getExtensionSettings() {
@@ -171,15 +167,6 @@ public class DDLFileManager extends AbstractProjectComponent implements Persiste
 
         }
     };
-
-    /***************************************
-     *            ProjectComponent         *
-     ***************************************/
-    @Override
-    @NotNull
-    public String getComponentName() {
-        return COMPONENT_NAME;
-    }
 
     /*********************************************
      *            PersistentStateComponent       *

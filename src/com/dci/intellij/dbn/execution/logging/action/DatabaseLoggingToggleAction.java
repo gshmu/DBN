@@ -26,19 +26,19 @@ public class DatabaseLoggingToggleAction extends ToggleAction implements DumbAwa
 
     @Override
     public boolean isSelected(@NotNull AnActionEvent e) {
-        ConnectionHandler activeConnection = getConnectionHandler(e);
+        ConnectionHandler activeConnection = getConnection(e);
         return activeConnection != null && activeConnection.isLoggingEnabled();
     }
 
     @Nullable
-    private static ConnectionHandler getConnectionHandler(AnActionEvent e) {
+    private static ConnectionHandler getConnection(AnActionEvent e) {
         Project project = Lookups.getProject(e);
         VirtualFile virtualFile = Lookups.getVirtualFile(e);
         if (project != null && virtualFile != null) {
             FileConnectionContextManager contextManager = FileConnectionContextManager.getInstance(project);
-            ConnectionHandler activeConnection = contextManager.getConnection(virtualFile);
-            if (Failsafe.check(activeConnection) && !activeConnection.isVirtual()) {
-                return activeConnection ;
+            ConnectionHandler connection = contextManager.getConnection(virtualFile);
+            if (Failsafe.check(connection) && !connection.isVirtual()) {
+                return connection ;
             }
 
         }
@@ -47,14 +47,14 @@ public class DatabaseLoggingToggleAction extends ToggleAction implements DumbAwa
 
     @Override
     public void setSelected(@NotNull AnActionEvent e, boolean selected) {
-        ConnectionHandler activeConnection = getConnectionHandler(e);
-        if (activeConnection != null) activeConnection.setLoggingEnabled(selected);
+        ConnectionHandler connection = getConnection(e);
+        if (connection != null) connection.setLoggingEnabled(selected);
     }
 
     @Override
     public void update(@NotNull AnActionEvent e) {
         super.update(e);
-        ConnectionHandler activeConnection = getConnectionHandler(e);
+        ConnectionHandler activeConnection = getConnection(e);
         Presentation presentation = e.getPresentation();
 
         boolean visible = false;

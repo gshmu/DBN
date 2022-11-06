@@ -5,7 +5,7 @@ import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.common.ui.table.DBNTable;
 import com.dci.intellij.dbn.common.ui.table.DBNTableGutterRendererBase;
 
-import javax.swing.JList;
+import javax.swing.*;
 
 public class BasicTableGutterCellRenderer extends DBNTableGutterRendererBase {
 

@@ -25,43 +25,49 @@ public class DatasetEditorNotificationProvider extends EditorNotificationProvide
     private static final Key<DatasetEditorNotificationPanel> KEY = Key.create("DBNavigator.DatasetEditorNotificationPanel");
 
     public DatasetEditorNotificationProvider() {
-        ProjectEvents.subscribe(DatasetLoadListener.TOPIC, datasetLoadListener);
-        ProjectEvents.subscribe(EnvironmentManagerListener.TOPIC, environmentManagerListener);
+        ProjectEvents.subscribe(DatasetLoadListener.TOPIC, datasetLoadListener());
+        ProjectEvents.subscribe(EnvironmentManagerListener.TOPIC, environmentManagerListener());
     }
 
     @Deprecated
     public DatasetEditorNotificationProvider(@NotNull Project project) {
         super(project);
-        ProjectEvents.subscribe(project, this, DatasetLoadListener.TOPIC, datasetLoadListener);
-        ProjectEvents.subscribe(project, this, EnvironmentManagerListener.TOPIC, environmentManagerListener);
+        ProjectEvents.subscribe(project, this, DatasetLoadListener.TOPIC, datasetLoadListener());
+        ProjectEvents.subscribe(project, this, EnvironmentManagerListener.TOPIC, environmentManagerListener());
     }
 
-    private final DatasetLoadListener datasetLoadListener = new DatasetLoadListener() {
-        @Override
-        public void datasetLoaded(@NotNull DBVirtualFile virtualFile) {
-            EditorNotifications notifications = EditorNotifications.getInstance(virtualFile.getProject());
-            notifications.updateNotifications((VirtualFile) virtualFile);
-        }
-
-        @Override
-        public void datasetLoading(@NotNull DBVirtualFile virtualFile) {
-            datasetLoaded(virtualFile);
-        }
-    };
-
-    private final EnvironmentManagerListener environmentManagerListener = new EnvironmentManagerListener() {
-        @Override
-        public void configurationChanged(Project project) {
-            updateEditorNotification(project, null);
-        }
-
-        @Override
-        public void editModeChanged(Project project, DBContentVirtualFile databaseContentFile) {
-            if (databaseContentFile instanceof DBDatasetVirtualFile) {
-                updateEditorNotification(project, databaseContentFile);
+    @NotNull
+    private static DatasetLoadListener datasetLoadListener() {
+        return new DatasetLoadListener() {
+            @Override
+            public void datasetLoaded(@NotNull DBVirtualFile virtualFile) {
+                EditorNotifications notifications = EditorNotifications.getInstance(virtualFile.getProject());
+                notifications.updateNotifications((VirtualFile) virtualFile);
             }
-        }
-    };
+
+            @Override
+            public void datasetLoading(@NotNull DBVirtualFile virtualFile) {
+                datasetLoaded(virtualFile);
+            }
+        };
+    }
+
+    @NotNull
+    private EnvironmentManagerListener environmentManagerListener() {
+        return new EnvironmentManagerListener() {
+            @Override
+            public void configurationChanged(Project project) {
+                updateEditorNotification(project, null);
+            }
+
+            @Override
+            public void editModeChanged(Project project, DBContentVirtualFile databaseContentFile) {
+                if (databaseContentFile instanceof DBDatasetVirtualFile) {
+                    updateEditorNotification(project, databaseContentFile);
+                }
+            }
+        };
+    }
 
     @NotNull
     @Override

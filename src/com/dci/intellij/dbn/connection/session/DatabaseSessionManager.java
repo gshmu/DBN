@@ -1,8 +1,8 @@
 package com.dci.intellij.dbn.connection.session;
 
 import com.dci.intellij.dbn.DatabaseNavigator;
-import com.dci.intellij.dbn.common.AbstractProjectComponent;
-import com.dci.intellij.dbn.common.dispose.Failsafe;
+import com.dci.intellij.dbn.common.component.PersistentState;
+import com.dci.intellij.dbn.common.component.ProjectComponentBase;
 import com.dci.intellij.dbn.common.event.ProjectEvents;
 import com.dci.intellij.dbn.common.routine.ParametricRunnable;
 import com.dci.intellij.dbn.common.thread.Dispatch;
@@ -12,17 +12,16 @@ import com.dci.intellij.dbn.connection.ConnectionId;
 import com.dci.intellij.dbn.connection.ConnectionManager;
 import com.dci.intellij.dbn.connection.SessionId;
 import com.dci.intellij.dbn.connection.session.ui.CreateRenameSessionDialog;
-import com.intellij.openapi.components.PersistentStateComponent;
 import com.intellij.openapi.components.State;
 import com.intellij.openapi.components.Storage;
 import com.intellij.openapi.project.Project;
 import org.jdom.Element;
-import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 
+import static com.dci.intellij.dbn.common.component.Components.projectService;
 import static com.dci.intellij.dbn.common.message.MessageCallback.when;
 import static com.dci.intellij.dbn.common.options.setting.SettingsSupport.connectionIdAttribute;
 import static com.dci.intellij.dbn.common.options.setting.SettingsSupport.stringAttribute;
@@ -31,15 +30,15 @@ import static com.dci.intellij.dbn.common.options.setting.SettingsSupport.string
     name = DatabaseSessionManager.COMPONENT_NAME,
     storages = @Storage(DatabaseNavigator.STORAGE_FILE)
 )
-public class DatabaseSessionManager extends AbstractProjectComponent implements PersistentStateComponent<Element> {
+public class DatabaseSessionManager extends ProjectComponentBase implements PersistentState {
     public static final String COMPONENT_NAME = "DBNavigator.Project.DatabaseSessionManager";
 
     private DatabaseSessionManager(final Project project) {
-        super(project);
+        super(project, COMPONENT_NAME);
     }
 
     public static DatabaseSessionManager getInstance(@NotNull Project project) {
-        return Failsafe.getComponent(project, DatabaseSessionManager.class);
+        return projectService(project, DatabaseSessionManager.class);
     }
 
     public void showCreateSessionDialog(
@@ -89,13 +88,6 @@ public class DatabaseSessionManager extends AbstractProjectComponent implements 
         ProjectEvents.notify(getProject(),
                 SessionManagerListener.TOPIC,
                 (listener) -> listener.sessionChanged(session));
-    }
-
-    @Override
-    @NonNls
-    @NotNull
-    public String getComponentName() {
-        return COMPONENT_NAME;
     }
 
     public void deleteSession(final DatabaseSession session, boolean confirm) {

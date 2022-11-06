@@ -1,6 +1,6 @@
 package com.dci.intellij.dbn.object.common.loader;
 
-import com.dci.intellij.dbn.common.AbstractProjectComponent;
+import com.dci.intellij.dbn.common.component.ProjectComponentBase;
 import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.common.dispose.SafeDisposer;
 import com.dci.intellij.dbn.common.event.ProjectEvents;
@@ -15,48 +15,48 @@ import com.intellij.openapi.fileEditor.FileEditor;
 import com.intellij.openapi.fileEditor.FileEditorManager;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
-import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 
-public class DatabaseLoaderManager extends AbstractProjectComponent {
+import static com.dci.intellij.dbn.common.component.Components.projectService;
+
+public class DatabaseLoaderManager extends ProjectComponentBase {
+    public static final String COMPONENT_NAME = "DBNavigator.Project.DatabaseLoaderManager";
+
     private DatabaseLoaderQueue loaderQueue;
 
     private DatabaseLoaderManager(Project project) {
-        super(project);
-        ProjectEvents.subscribe(project, this, ConnectionLoadListener.TOPIC,
-                connection -> Dispatch.run(() -> {
-                    checkDisposed();
-                    Failsafe.nn(project);
-                    FileEditorManager fileEditorManager = FileEditorManager.getInstance(project);
-                    FileConnectionContextManager contextManager = FileConnectionContextManager.getInstance(project);
-                    VirtualFile[] openFiles = fileEditorManager.getOpenFiles();
-                    for (VirtualFile openFile : openFiles) {
-
-                        checkDisposed();
-                        ConnectionHandler activeConnection = contextManager.getConnection(openFile);
-                        if (activeConnection == connection) {
-                            FileEditor[] fileEditors = fileEditorManager.getEditors(openFile);
-                            for (FileEditor fileEditor : fileEditors) {
-
-                                checkDisposed();
-                                Editor editor = Editors.getEditor(fileEditor);
-                                Documents.refreshEditorAnnotations(editor);
-                            }
-
-                        }
-                    }
-                }));
+        super(project, COMPONENT_NAME);
+        ProjectEvents.subscribe(project, this, ConnectionLoadListener.TOPIC, connectionLoadListener(project));
     }
 
     public static DatabaseLoaderManager getInstance(@NotNull Project project) {
-        return Failsafe.getComponent(project, DatabaseLoaderManager.class);
+        return projectService(project, DatabaseLoaderManager.class);
     }
 
-    @Override
-    @NonNls
     @NotNull
-    public String getComponentName() {
-        return "DBNavigator.Project.DatabaseLoaderManager";
+    private ConnectionLoadListener connectionLoadListener(Project project) {
+        return connection -> Dispatch.run(() -> {
+            checkDisposed();
+            Failsafe.nn(project);
+            FileEditorManager fileEditorManager = FileEditorManager.getInstance(project);
+            FileConnectionContextManager contextManager = FileConnectionContextManager.getInstance(project);
+            VirtualFile[] openFiles = fileEditorManager.getOpenFiles();
+            for (VirtualFile openFile : openFiles) {
+
+                checkDisposed();
+                ConnectionHandler activeConnection = contextManager.getConnection(openFile);
+                if (activeConnection == connection) {
+                    FileEditor[] fileEditors = fileEditorManager.getEditors(openFile);
+                    for (FileEditor fileEditor : fileEditors) {
+
+                        checkDisposed();
+                        Editor editor = Editors.getEditor(fileEditor);
+                        Documents.refreshEditorAnnotations(editor);
+                    }
+
+                }
+            }
+        });
     }
 
     @Override

@@ -1,8 +1,8 @@
 package com.dci.intellij.dbn.connection.console;
 
 import com.dci.intellij.dbn.DatabaseNavigator;
-import com.dci.intellij.dbn.common.AbstractProjectComponent;
-import com.dci.intellij.dbn.common.dispose.Failsafe;
+import com.dci.intellij.dbn.common.component.PersistentState;
+import com.dci.intellij.dbn.common.component.ProjectComponentBase;
 import com.dci.intellij.dbn.common.event.ProjectEvents;
 import com.dci.intellij.dbn.common.thread.Dispatch;
 import com.dci.intellij.dbn.common.util.Commons;
@@ -23,7 +23,6 @@ import com.dci.intellij.dbn.object.type.DBObjectType;
 import com.dci.intellij.dbn.vfs.DBConsoleType;
 import com.dci.intellij.dbn.vfs.DatabaseFileManager;
 import com.dci.intellij.dbn.vfs.file.DBConsoleVirtualFile;
-import com.intellij.openapi.components.PersistentStateComponent;
 import com.intellij.openapi.components.State;
 import com.intellij.openapi.components.Storage;
 import com.intellij.openapi.fileEditor.FileEditorManager;
@@ -31,13 +30,13 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.newvfs.events.VFileEvent;
 import org.jdom.CDATA;
 import org.jdom.Element;
-import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 import java.util.Objects;
 
+import static com.dci.intellij.dbn.common.component.Components.projectService;
 import static com.dci.intellij.dbn.common.file.util.VirtualFiles.*;
 import static com.dci.intellij.dbn.common.message.MessageCallback.when;
 import static com.dci.intellij.dbn.common.options.setting.SettingsSupport.*;
@@ -46,16 +45,16 @@ import static com.dci.intellij.dbn.common.options.setting.SettingsSupport.*;
     name = DatabaseConsoleManager.COMPONENT_NAME,
     storages = @Storage(DatabaseNavigator.STORAGE_FILE)
 )
-public class DatabaseConsoleManager extends AbstractProjectComponent implements PersistentStateComponent<Element> {
+public class DatabaseConsoleManager extends ProjectComponentBase implements PersistentState {
     public static final String COMPONENT_NAME = "DBNavigator.Project.DatabaseConsoleManager";
 
     private DatabaseConsoleManager(@NotNull Project project) {
-        super(project);
+        super(project, COMPONENT_NAME);
         ProjectEvents.subscribe(project, this, SessionManagerListener.TOPIC, sessionManagerListener);
     }
 
     public static DatabaseConsoleManager getInstance(@NotNull Project project) {
-        return Failsafe.getComponent(project, DatabaseConsoleManager.class);
+        return projectService(project, DatabaseConsoleManager.class);
     }
 
     public void showCreateConsoleDialog(ConnectionHandler connection, DBConsoleType consoleType) {
@@ -79,13 +78,6 @@ public class DatabaseConsoleManager extends AbstractProjectComponent implements 
             createConsoleDialog.setModal(true);
             createConsoleDialog.show();
         });
-    }
-
-    @Override
-    @NonNls
-    @NotNull
-    public String getComponentName() {
-        return COMPONENT_NAME;
     }
 
     public void createConsole(ConnectionHandler connection, String name, DBConsoleType type) {

@@ -1,7 +1,8 @@
 package com.dci.intellij.dbn.execution.script;
 
 import com.dci.intellij.dbn.DatabaseNavigator;
-import com.dci.intellij.dbn.common.AbstractProjectComponent;
+import com.dci.intellij.dbn.common.component.PersistentState;
+import com.dci.intellij.dbn.common.component.ProjectComponentBase;
 import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.common.event.ProjectEvents;
 import com.dci.intellij.dbn.common.routine.ParametricRunnable;
@@ -25,7 +26,6 @@ import com.dci.intellij.dbn.execution.script.options.ScriptExecutionSettings;
 import com.dci.intellij.dbn.execution.script.ui.CmdLineInterfaceInputDialog;
 import com.dci.intellij.dbn.execution.script.ui.ScriptExecutionInputDialog;
 import com.intellij.openapi.application.PathManager;
-import com.intellij.openapi.components.PersistentStateComponent;
 import com.intellij.openapi.components.State;
 import com.intellij.openapi.components.Storage;
 import com.intellij.openapi.fileChooser.FileChooser;
@@ -40,7 +40,6 @@ import com.intellij.util.text.LineReader;
 import lombok.val;
 import org.jdesktop.swingx.util.OS;
 import org.jdom.Element;
-import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -57,6 +56,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicReference;
 
+import static com.dci.intellij.dbn.common.component.Components.projectService;
 import static com.dci.intellij.dbn.common.message.MessageCallback.when;
 import static com.dci.intellij.dbn.common.options.setting.SettingsSupport.*;
 import static com.dci.intellij.dbn.execution.ExecutionStatus.EXECUTING;
@@ -65,7 +65,7 @@ import static com.dci.intellij.dbn.execution.ExecutionStatus.EXECUTING;
     name = ScriptExecutionManager.COMPONENT_NAME,
     storages = @Storage(DatabaseNavigator.STORAGE_FILE)
 )
-public class ScriptExecutionManager extends AbstractProjectComponent implements PersistentStateComponent<Element>{
+public class ScriptExecutionManager extends ProjectComponentBase implements PersistentState {
     public static final String COMPONENT_NAME = "DBNavigator.Project.ScriptExecutionManager";
 
     private static final SecureRandom TMP_FILE_RANDOMIZER = new SecureRandom();
@@ -75,12 +75,12 @@ public class ScriptExecutionManager extends AbstractProjectComponent implements 
     private boolean clearOutputOption = true;
 
     private ScriptExecutionManager(Project project) {
-        super(project);
+        super(project, COMPONENT_NAME);
         executionManager = ExecutionManager.getInstance(project);
     }
 
     public static ScriptExecutionManager getInstance(@NotNull Project project) {
-        return Failsafe.getComponent(project, ScriptExecutionManager.class);
+        return projectService(project, ScriptExecutionManager.class);
     }
 
     public List<CmdLineInterface> getAvailableInterfaces(DatabaseType databaseType) {
@@ -405,15 +405,5 @@ public class ScriptExecutionManager extends AbstractProjectComponent implements 
             }
 
         }
-    }
-
-    /*********************************************************
-     *                    ProjectComponent                   *
-     *********************************************************/
-    @Override
-    @NotNull
-    @NonNls
-    public String getComponentName() {
-        return COMPONENT_NAME;
     }
 }
