@@ -43,12 +43,7 @@ import javax.swing.event.TableModelEvent;
 import javax.swing.table.JTableHeader;
 import javax.swing.table.TableCellRenderer;
 import javax.swing.table.TableColumn;
-import java.awt.Color;
-import java.awt.Component;
-import java.awt.Font;
-import java.awt.MouseInfo;
-import java.awt.Point;
-import java.awt.Rectangle;
+import java.awt.*;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseMotionAdapter;
 import java.math.BigDecimal;
@@ -128,7 +123,8 @@ public class BasicTable<T extends BasicDataModel<?, ?>> extends DBNTableWithGutt
                         }
                     }
                     if (count.compareTo(BigDecimal.ZERO) > 0) {
-                        BigDecimal average = total.divide(count, total.scale(), RoundingMode.HALF_UP);
+                        BigDecimal average = total.divide(count, 9, RoundingMode.HALF_UP);
+                        average = average.stripTrailingZeros();
                         selectionMath = new MathResult(total, count, average);
                         showSelectionTooltip();
                     }
