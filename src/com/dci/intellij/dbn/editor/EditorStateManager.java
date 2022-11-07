@@ -32,12 +32,14 @@ import org.jdom.Element;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 import static com.dci.intellij.dbn.common.component.Components.projectService;
-import static com.dci.intellij.dbn.common.options.setting.SettingsSupport.*;
+import static com.dci.intellij.dbn.common.options.setting.SettingsSupport.enumAttribute;
+import static com.dci.intellij.dbn.common.options.setting.SettingsSupport.setEnumAttribute;
+import static com.dci.intellij.dbn.common.options.setting.SettingsSupport.stringAttribute;
 
 @State(
     name = EditorStateManager.COMPONENT_NAME,
@@ -46,7 +48,8 @@ import static com.dci.intellij.dbn.common.options.setting.SettingsSupport.*;
 public class EditorStateManager extends ProjectComponentBase implements PersistentState {
     public static final String COMPONENT_NAME = "DBNavigator.Project.EditorStateManager";
 
-    private final Map<DBObjectType, EditorProviderId> lastUsedEditorProviders = new HashMap<>();
+    private final Map<DBObjectType, EditorProviderId> lastUsedEditorProviders = new ConcurrentHashMap<>();
+
     private EditorStateManager(Project project) {
         super(project, COMPONENT_NAME);
 
