@@ -2,7 +2,6 @@ package com.dci.intellij.dbn.code.common.completion;
 
 import com.dci.intellij.dbn.code.common.completion.options.CodeCompletionSettings;
 import com.dci.intellij.dbn.code.common.completion.options.filter.CodeCompletionFilterSettings;
-import com.dci.intellij.dbn.code.common.style.options.ProjectCodeStyleSettings;
 import com.dci.intellij.dbn.common.routine.AsyncTaskExecutor;
 import com.dci.intellij.dbn.common.thread.Read;
 import com.dci.intellij.dbn.common.thread.ThreadPool;
@@ -48,7 +47,6 @@ public class CodeCompletionContext {
     private boolean extended;
     private final PsiFileRef<DBLanguagePsiFile> file;
     private final ConnectionRef connection;
-    private final ProjectCodeStyleSettings codeStyleSettings;
     private final CodeCompletionSettings codeCompletionSettings;
     private final CompletionParameters parameters;
     private final CompletionResultSet result;
@@ -80,7 +78,6 @@ public class CodeCompletionContext {
         userInput = calcUserInput(position, offset);
 
         ProjectSettings projectSettings = ProjectSettingsManager.getSettings(file.getProject());
-        codeStyleSettings = projectSettings.getCodeStyleSettings();
         codeCompletionSettings = projectSettings.getCodeCompletionSettings();
 
         elementAtCaret = calcElementAtCaret(file, position);

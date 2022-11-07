@@ -2,7 +2,7 @@ package com.dci.intellij.dbn.language.common.parameter;
 
 import com.dci.intellij.dbn.code.common.style.options.CodeStyleCaseOption;
 import com.dci.intellij.dbn.code.common.style.options.CodeStyleCaseSettings;
-import com.dci.intellij.dbn.code.psql.style.options.PSQLCodeStyleSettings;
+import com.dci.intellij.dbn.code.psql.style.PSQLCodeStyle;
 import com.dci.intellij.dbn.common.compatibility.Compatibility;
 import com.dci.intellij.dbn.language.common.element.ElementType;
 import com.dci.intellij.dbn.language.common.element.impl.IterationElementType;
@@ -26,6 +26,7 @@ import com.intellij.lang.parameterInfo.ParameterInfoContext;
 import com.intellij.lang.parameterInfo.ParameterInfoHandler;
 import com.intellij.lang.parameterInfo.ParameterInfoUIContext;
 import com.intellij.lang.parameterInfo.UpdateParameterInfoContext;
+import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import org.jetbrains.annotations.NotNull;
@@ -204,8 +205,8 @@ public class MethodParameterInfoHandler implements ParameterInfoHandler<BasePsiE
 
     @Override
     public void updateUI(DBMethod method, @NotNull ParameterInfoUIContext context) {
-        PSQLCodeStyleSettings codeStyleSettings = PSQLCodeStyleSettings.getInstance(method.getProject());
-        CodeStyleCaseSettings caseSettings = codeStyleSettings.getCaseSettings();
+        Project project = method.getProject();
+        CodeStyleCaseSettings caseSettings = PSQLCodeStyle.caseSettings(project);
         CodeStyleCaseOption datatypeCaseOption = caseSettings.getDatatypeCaseOption();
         CodeStyleCaseOption objectCaseOption = caseSettings.getObjectCaseOption();
 

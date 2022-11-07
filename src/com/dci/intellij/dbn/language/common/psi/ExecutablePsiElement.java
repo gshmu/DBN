@@ -16,7 +16,7 @@ import com.intellij.openapi.editor.colors.TextAttributesKey;
 import com.intellij.psi.PsiElement;
 import org.jetbrains.annotations.Nullable;
 
-import javax.swing.Icon;
+import javax.swing.*;
 
 import static com.dci.intellij.dbn.language.common.element.util.ElementTypeAttribute.*;
 
@@ -182,7 +182,7 @@ public class ExecutablePsiElement extends NamedPsiElement implements Cloneable<E
             subject = createSubjectList();
         }
         if (subject != null && isValid()) {
-            CodeStyleCaseSettings caseSettings = getLanguage().getCodeStyleSettings(getProject()).getCaseSettings();
+            CodeStyleCaseSettings caseSettings = getLanguage().codeStyleSettings(getProject()).getCaseSettings();
             CodeStyleCaseOption keywordCaseOption = caseSettings.getKeywordCaseOption();
             CodeStyleCaseOption objectCaseOption = caseSettings.getObjectCaseOption();
             action = keywordCaseOption.format(action);

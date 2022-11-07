@@ -1,6 +1,6 @@
 package com.dci.intellij.dbn.language.common;
 
-import com.dci.intellij.dbn.code.common.style.options.CodeStyleCustomSettings;
+import com.dci.intellij.dbn.code.common.style.options.DBLCodeStyleSettings;
 import com.dci.intellij.dbn.common.latent.Latent;
 import com.dci.intellij.dbn.common.util.Unsafe;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
@@ -13,6 +13,7 @@ import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.tree.IFileElementType;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.Objects;
 
@@ -64,7 +65,7 @@ public abstract class DBLanguage<D extends DBLanguageDialect> extends Language i
         return null;
     }
 
-    public abstract CodeStyleCustomSettings getCodeStyleSettings(Project project);
+    public abstract DBLCodeStyleSettings codeStyleSettings(@Nullable Project project);
 
     public DBLanguageParserDefinition getParserDefinition(ConnectionHandler connection) {
         return connection.getLanguageDialect(this).getParserDefinition();

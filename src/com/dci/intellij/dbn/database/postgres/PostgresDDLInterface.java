@@ -2,7 +2,7 @@ package com.dci.intellij.dbn.database.postgres;
 
 import com.dci.intellij.dbn.code.common.style.options.CodeStyleCaseOption;
 import com.dci.intellij.dbn.code.common.style.options.CodeStyleCaseSettings;
-import com.dci.intellij.dbn.code.psql.style.options.PSQLCodeStyleSettings;
+import com.dci.intellij.dbn.code.psql.style.PSQLCodeStyle;
 import com.dci.intellij.dbn.connection.jdbc.DBNConnection;
 import com.dci.intellij.dbn.database.DatabaseInterfaceProvider;
 import com.dci.intellij.dbn.database.DatabaseObjectTypeId;
@@ -78,7 +78,8 @@ public class PostgresDDLInterface extends DatabaseDDLInterfaceImpl {
      *********************************************************/
     @Override
     public void createMethod(MethodFactoryInput method, DBNConnection connection) throws SQLException {
-        CodeStyleCaseSettings styleCaseSettings = PSQLCodeStyleSettings.getInstance(method.getSchema().getProject()).getCaseSettings();
+        Project project = method.getSchema().getProject();
+        CodeStyleCaseSettings styleCaseSettings = PSQLCodeStyle.caseSettings(project);
         CodeStyleCaseOption keywordCaseOption = styleCaseSettings.getKeywordCaseOption();
         CodeStyleCaseOption objectCaseOption = styleCaseSettings.getObjectCaseOption();
         CodeStyleCaseOption dataTypeCaseOption = styleCaseSettings.getDatatypeCaseOption();

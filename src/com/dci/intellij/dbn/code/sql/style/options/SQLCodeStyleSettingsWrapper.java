@@ -1,4 +1,4 @@
-package com.dci.intellij.dbn.code.psql.style.options;
+package com.dci.intellij.dbn.code.sql.style.options;
 
 import com.intellij.openapi.util.InvalidDataException;
 import com.intellij.openapi.util.WriteExternalException;
@@ -11,21 +11,21 @@ import org.jetbrains.annotations.NotNull;
 
 @Getter
 @EqualsAndHashCode(callSuper = false)
-public class PSQLCustomCodeStyleSettings extends CustomCodeStyleSettings {
-    private final PSQLCodeStyleSettings codeStyleSettings;
+public class SQLCodeStyleSettingsWrapper extends CustomCodeStyleSettings {
+    private final SQLCodeStyleSettings settings;
 
-    PSQLCustomCodeStyleSettings(CodeStyleSettings container) {
-        super("PSQLCodeStyleSettings", container);
-        codeStyleSettings = new PSQLCodeStyleSettings(null);
+    SQLCodeStyleSettingsWrapper(CodeStyleSettings container) {
+        super("SQLCodeStyleSettings", container);
+        settings = new SQLCodeStyleSettings(null);
     }
 
     @Override
     public void readExternal(Element parentElement) throws InvalidDataException {
-        codeStyleSettings.readConfiguration(parentElement);
+        settings.readConfiguration(parentElement);
     }
 
     @Override
     public void writeExternal(Element parentElement, @NotNull CustomCodeStyleSettings parentSettings) throws WriteExternalException {
-        codeStyleSettings.writeConfiguration(parentElement);
+        settings.writeConfiguration(parentElement);
     }
 }

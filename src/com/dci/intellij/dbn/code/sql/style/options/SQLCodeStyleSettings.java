@@ -1,26 +1,20 @@
 package com.dci.intellij.dbn.code.sql.style.options;
 
 import com.dci.intellij.dbn.code.common.style.options.CodeStyleCaseSettings;
-import com.dci.intellij.dbn.code.common.style.options.CodeStyleCustomSettings;
 import com.dci.intellij.dbn.code.common.style.options.CodeStyleFormattingSettings;
-import com.dci.intellij.dbn.code.common.style.options.ProjectCodeStyleSettings;
+import com.dci.intellij.dbn.code.common.style.options.DBLCodeStyleSettings;
 import com.dci.intellij.dbn.code.sql.style.options.ui.SQLCodeStyleSettingsEditorForm;
 import com.dci.intellij.dbn.common.Icons;
-import com.intellij.openapi.project.Project;
 import org.jetbrains.annotations.Nls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
 
-public class SQLCodeStyleSettings extends CodeStyleCustomSettings<CodeStyleCustomSettings, SQLCodeStyleSettingsEditorForm> {
+public class SQLCodeStyleSettings extends DBLCodeStyleSettings<DBLCodeStyleSettings, SQLCodeStyleSettingsEditorForm> {
 
-    SQLCodeStyleSettings(CodeStyleCustomSettings parent) {
+    SQLCodeStyleSettings(DBLCodeStyleSettings parent) {
         super(parent);
-    }
-
-    public static SQLCodeStyleSettings getInstance(@NotNull Project project) {
-        return ProjectCodeStyleSettings.getInstance(project).getSQLCodeStyleSettings();
     }
 
     @Override
@@ -36,12 +30,12 @@ public class SQLCodeStyleSettings extends CodeStyleCustomSettings<CodeStyleCusto
     }
 
     @Override
-    protected CodeStyleCaseSettings createCaseSettings(CodeStyleCustomSettings parent) {
+    protected CodeStyleCaseSettings createCaseSettings(DBLCodeStyleSettings parent) {
         return new SQLCodeStyleCaseSettings(parent);
     }
 
     @Override
-    protected CodeStyleFormattingSettings createAttributeSettings(CodeStyleCustomSettings parent) {
+    protected CodeStyleFormattingSettings createAttributeSettings(DBLCodeStyleSettings parent) {
         return new SQLCodeStyleFormattingSettings(parent);
     }
 

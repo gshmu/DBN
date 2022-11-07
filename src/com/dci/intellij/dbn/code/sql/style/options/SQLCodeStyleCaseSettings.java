@@ -1,10 +1,10 @@
 package com.dci.intellij.dbn.code.sql.style.options;
 
 import com.dci.intellij.dbn.code.common.style.options.CodeStyleCaseSettings;
-import com.dci.intellij.dbn.code.common.style.options.CodeStyleCustomSettings;
+import com.dci.intellij.dbn.code.common.style.options.DBLCodeStyleSettings;
 
 class SQLCodeStyleCaseSettings extends CodeStyleCaseSettings {
-    SQLCodeStyleCaseSettings(CodeStyleCustomSettings parent) {
+    SQLCodeStyleCaseSettings(DBLCodeStyleSettings parent) {
         super(parent);
     }
 }

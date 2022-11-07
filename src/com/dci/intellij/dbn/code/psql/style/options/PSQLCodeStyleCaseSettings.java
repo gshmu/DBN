@@ -1,11 +1,11 @@
 package com.dci.intellij.dbn.code.psql.style.options;
 
 import com.dci.intellij.dbn.code.common.style.options.CodeStyleCaseSettings;
-import com.dci.intellij.dbn.code.common.style.options.CodeStyleCustomSettings;
+import com.dci.intellij.dbn.code.common.style.options.DBLCodeStyleSettings;
 
-public class PSQLCodeStyleCaseSettings extends CodeStyleCaseSettings {
+class PSQLCodeStyleCaseSettings extends CodeStyleCaseSettings {
 
-    PSQLCodeStyleCaseSettings(CodeStyleCustomSettings parent) {
+    PSQLCodeStyleCaseSettings(DBLCodeStyleSettings parent) {
         super(parent);
     }
 }

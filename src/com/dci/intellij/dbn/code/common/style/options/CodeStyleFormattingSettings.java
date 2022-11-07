@@ -14,16 +14,18 @@ import org.jetbrains.annotations.Nullable;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
-import static com.dci.intellij.dbn.common.options.setting.SettingsSupport.*;
+import static com.dci.intellij.dbn.common.options.setting.SettingsSupport.booleanAttribute;
+import static com.dci.intellij.dbn.common.options.setting.SettingsSupport.setBooleanAttribute;
+import static com.dci.intellij.dbn.common.options.setting.SettingsSupport.stringAttribute;
 
 @Getter
 @Setter
 @EqualsAndHashCode(callSuper = false)
-public abstract class CodeStyleFormattingSettings extends BasicConfiguration<CodeStyleCustomSettings, CodeStyleFormattingSettingsForm> {
+public abstract class CodeStyleFormattingSettings extends BasicConfiguration<DBLCodeStyleSettings, CodeStyleFormattingSettingsForm> {
     private final Map<String, CodeStyleFormattingOption> options = new LinkedHashMap<>();
     private boolean enabled = false;
 
-    public CodeStyleFormattingSettings(CodeStyleCustomSettings parent) {
+    public CodeStyleFormattingSettings(DBLCodeStyleSettings parent) {
         super(parent);
     }
 
