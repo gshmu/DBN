@@ -10,8 +10,7 @@ public class Components {
 
 
     public static <T extends ProjectComponent> T projectService(@NotNull Project project, @NotNull Class<T> interfaceClass) {
-        Project prj = Failsafe.nd(project);
-        T service = prj.getService(interfaceClass);
+        T service = Failsafe.nd(project).getService(interfaceClass);
         return Failsafe.nn(service);
     }
 
