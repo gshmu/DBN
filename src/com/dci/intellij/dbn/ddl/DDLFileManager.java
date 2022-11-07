@@ -19,9 +19,7 @@ import com.dci.intellij.dbn.vfs.file.DBSourceCodeVirtualFile;
 import com.intellij.openapi.components.State;
 import com.intellij.openapi.components.Storage;
 import com.intellij.openapi.fileTypes.*;
-import com.intellij.openapi.project.DumbAwareRunnable;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.startup.StartupManager;
 import com.intellij.util.Alarm;
 import org.jdom.Element;
 import org.jetbrains.annotations.NotNull;
@@ -44,11 +42,7 @@ public class DDLFileManager extends ProjectComponentBase implements PersistentSt
 
     private DDLFileManager(@NotNull Project project) {
         super(project, COMPONENT_NAME);
-
         ProjectEvents.subscribe(project, this, FileTypeManager.TOPIC, fileTypeListener);
-
-        StartupManager startupManager = StartupManager.getInstance(project);
-        startupManager.registerPostStartupActivity((DumbAwareRunnable) () -> registerExtensions(getExtensionSettings()));
     }
 
     private final Alarm extensionRegisterer = Dispatch.alarm(DDLFileManager.this);
@@ -180,5 +174,10 @@ public class DDLFileManager extends ProjectComponentBase implements PersistentSt
     @Override
     public void loadState(@NotNull Element element) {
 
+    }
+
+    @Override
+    public void initializeComponent() {
+        PersistentState.super.initializeComponent();
     }
 }
