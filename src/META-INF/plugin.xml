@@ -252,10 +252,10 @@
         <projectService serviceImplementation="com.dci.intellij.dbn.debugger.DatabaseDebuggerManager"/>
         <projectService serviceImplementation="com.dci.intellij.dbn.ddl.DDLFileManager"/>
         <projectService serviceImplementation="com.dci.intellij.dbn.ddl.DDLFileAttachmentManager"/>
-        <projectService serviceImplementation="com.dci.intellij.dbn.editor.EditorStateManager"/>
-        <projectService serviceImplementation="com.dci.intellij.dbn.editor.code.SourceCodeManager"/>
+        <projectService serviceImplementation="com.dci.intellij.dbn.editor.EditorStateManager" preload="true"/>
+        <projectService serviceImplementation="com.dci.intellij.dbn.editor.code.SourceCodeManager" preload="true"/>
         <projectService serviceImplementation="com.dci.intellij.dbn.editor.code.diff.SourceCodeDiffManager"/>
-        <projectService serviceImplementation="com.dci.intellij.dbn.editor.data.DatasetEditorManager"/>
+        <projectService serviceImplementation="com.dci.intellij.dbn.editor.data.DatasetEditorManager" preload="true"/>
         <projectService serviceImplementation="com.dci.intellij.dbn.editor.data.filter.DatasetFilterManager"/>
         <projectService serviceImplementation="com.dci.intellij.dbn.editor.data.state.DatasetEditorStateManager"/>
         <projectService serviceImplementation="com.dci.intellij.dbn.editor.data.statusbar.DatasetEditorStatusBarWidget"/>
