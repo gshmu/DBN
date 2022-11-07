@@ -69,7 +69,7 @@ public class ConnectionManager extends ProjectComponentBase implements Persisten
 
     public static final String COMPONENT_NAME = "DBNavigator.Project.ConnectionManager";
 
-    private Timer idleConnectionCleaner;
+    private final Timer idleConnectionCleaner;
     private final ConnectionBundle connectionBundle;
     private static ConnectionRef lastUsedConnection;
 
@@ -85,13 +85,10 @@ public class ConnectionManager extends ProjectComponentBase implements Persisten
                 ConnectionConfigListener.TOPIC,
                 ConnectionConfigListener.whenChanged(id -> refreshObjects(id)));
 
-        Disposer.register(this, connectionBundle);
-    }
-
-    @Override
-    public void initializeComponent() {
         idleConnectionCleaner = new Timer("DBN - Idle Connection Cleaner");
         idleConnectionCleaner.schedule(new CloseIdleConnectionTask(), TimeUtil.Millis.ONE_MINUTE, TimeUtil.Millis.ONE_MINUTE);
+
+        Disposer.register(this, connectionBundle);
     }
 
     @Override
