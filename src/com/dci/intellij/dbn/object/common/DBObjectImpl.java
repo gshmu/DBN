@@ -215,7 +215,7 @@ public abstract class DBObjectImpl<M extends DBObjectMetadata> extends BrowserTr
             } else {
                 DatabaseCompatibilityInterface compatibilityInterface = DatabaseCompatibilityInterface.getInstance(this);
                 QuotePair quotes = compatibilityInterface.getDefaultIdentifierQuotes();
-                return quotes.beginChar() + name + quotes.endChar();
+                return quotes.quote(name);
             }
         } else {
             return name;
