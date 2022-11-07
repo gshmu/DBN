@@ -9,18 +9,18 @@ import org.jdom.Element;
 
 @Getter
 @EqualsAndHashCode(callSuper = false)
-public abstract class CodeStyleCustomSettings<P extends CodeStyleCustomSettings, T extends CompositeConfigurationEditorForm>
+public abstract class DBLCodeStyleSettings<P extends DBLCodeStyleSettings, T extends CompositeConfigurationEditorForm>
         extends CompositeConfiguration<P, T>{
 
     private final CodeStyleCaseSettings caseSettings = createCaseSettings(this);
     private final CodeStyleFormattingSettings formattingSettings = createAttributeSettings(this);
 
-    protected CodeStyleCustomSettings(P parent) {
+    protected DBLCodeStyleSettings(P parent) {
         super(parent);
     }
 
-    protected abstract CodeStyleCaseSettings createCaseSettings(CodeStyleCustomSettings parent);
-    protected abstract CodeStyleFormattingSettings createAttributeSettings(CodeStyleCustomSettings parent);
+    protected abstract CodeStyleCaseSettings createCaseSettings(DBLCodeStyleSettings parent);
+    protected abstract CodeStyleFormattingSettings createAttributeSettings(DBLCodeStyleSettings parent);
 
     /*********************************************************
     *                     Configuration                     *

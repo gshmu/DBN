@@ -2,7 +2,7 @@ package com.dci.intellij.dbn.language.common.parameter;
 
 import com.dci.intellij.dbn.code.common.style.options.CodeStyleCaseOption;
 import com.dci.intellij.dbn.code.common.style.options.CodeStyleCaseSettings;
-import com.dci.intellij.dbn.code.sql.style.options.SQLCodeStyleSettings;
+import com.dci.intellij.dbn.code.psql.style.PSQLCodeStyle;
 import com.dci.intellij.dbn.common.compatibility.Compatibility;
 import com.dci.intellij.dbn.language.common.element.ElementType;
 import com.dci.intellij.dbn.language.common.element.impl.IterationElementType;
@@ -12,7 +12,6 @@ import com.dci.intellij.dbn.language.common.element.util.ElementTypeAttribute;
 import com.dci.intellij.dbn.language.common.psi.BasePsiElement;
 import com.dci.intellij.dbn.language.common.psi.PsiUtil;
 import com.dci.intellij.dbn.language.common.psi.lookup.ObjectReferenceLookupAdapter;
-import com.dci.intellij.dbn.language.sql.SQLLanguage;
 import com.dci.intellij.dbn.object.DBColumn;
 import com.dci.intellij.dbn.object.common.DBObject;
 import com.dci.intellij.dbn.object.type.DBObjectType;
@@ -216,8 +215,7 @@ public class ColumnParameterInfoHandler implements ParameterInfoHandler<BasePsiE
     public void updateUI(BasePsiElement handlerPsiElement, @NotNull ParameterInfoUIContext context) {
         if (handlerPsiElement.isValid()) {
             Project project = handlerPsiElement.getProject();
-            SQLCodeStyleSettings codeStyleSettings = SQLLanguage.INSTANCE.getCodeStyleSettings(project);
-            CodeStyleCaseSettings caseSettings = codeStyleSettings.getCaseSettings();
+            CodeStyleCaseSettings caseSettings = PSQLCodeStyle.caseSettings(project);
             CodeStyleCaseOption datatypeCaseOption = caseSettings.getDatatypeCaseOption();
             CodeStyleCaseOption objectCaseOption = caseSettings.getObjectCaseOption();
 

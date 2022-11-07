@@ -1,20 +1,18 @@
 package com.dci.intellij.dbn.code.common.style.formatting;
 
 import com.dci.intellij.dbn.code.common.style.DBLCodeStyleManager;
-import com.dci.intellij.dbn.code.common.style.options.CodeStyleCustomSettings;
+import com.dci.intellij.dbn.code.common.style.options.DBLCodeStyleSettings;
 import com.dci.intellij.dbn.common.compatibility.Compatibility;
 import com.dci.intellij.dbn.common.dispose.AlreadyDisposedException;
 import com.dci.intellij.dbn.common.util.Documents;
 import com.dci.intellij.dbn.common.util.Traces;
 import com.dci.intellij.dbn.language.common.DBLanguage;
-import com.dci.intellij.dbn.language.common.DBLanguageDialect;
 import com.dci.intellij.dbn.language.common.psi.PsiUtil;
 import com.intellij.formatting.Block;
 import com.intellij.formatting.FormattingModel;
 import com.intellij.formatting.FormattingModelBuilder;
 import com.intellij.formatting.FormattingModelProvider;
 import com.intellij.lang.ASTNode;
-import com.intellij.lang.Language;
 import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.TextRange;
@@ -40,34 +38,18 @@ public class DBLFormattingModelBuilder implements FormattingModelBuilder {
         }
 
 
-        CodeStyleCustomSettings settings = language.getCodeStyleSettings(element.getProject());
+        Project project = element.getProject();
+        DBLCodeStyleSettings settings = language.codeStyleSettings(project);
 
         boolean deliberate = Traces.isCalledThrough(CodeFormatterFacade.class);
         if (deliberate && settings.getCaseSettings().isEnabled()) {
-            DBLCodeStyleManager.getInstance(element.getProject()).formatCase(element.getContainingFile());
+            DBLCodeStyleManager.getInstance(project).formatCase(element.getContainingFile());
         }
 
         Block rootBlock = deliberate && settings.getFormattingSettings().isEnabled() ?
                 new FormattingBlock(codeStyleSettings, settings, element, null, 0) :
                 new PassiveFormattingBlock(element);
         return FormattingModelProvider.createFormattingModelForPsiFile(psiFile, rootBlock, codeStyleSettings);
-    }
-
-    /**
-     * @deprecated
-     */
-    private static CodeStyleCustomSettings getCodeStyleSettings(PsiFile psiFile) {
-        Language language = psiFile.getLanguage();
-        Project project = psiFile.getProject();
-        if (language instanceof DBLanguage) {
-            DBLanguage dbLanguage = (DBLanguage) language;
-            return dbLanguage.getCodeStyleSettings(project);
-        } else if (language instanceof DBLanguageDialect) {
-            DBLanguageDialect languageDialect = (DBLanguageDialect) language;
-            DBLanguage dbLanguage = languageDialect.getBaseLanguage();
-            return dbLanguage.getCodeStyleSettings(project);
-        }
-        return null;
     }
 
     @Override

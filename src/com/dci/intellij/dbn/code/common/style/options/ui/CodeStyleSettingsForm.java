@@ -8,10 +8,8 @@ import com.dci.intellij.dbn.common.ui.tab.TabbedPane;
 import com.intellij.ui.tabs.TabInfo;
 import org.jetbrains.annotations.NotNull;
 
-import javax.swing.Icon;
-import javax.swing.JComponent;
-import javax.swing.JPanel;
-import java.awt.BorderLayout;
+import javax.swing.*;
+import java.awt.*;
 
 public class CodeStyleSettingsForm extends CompositeConfigurationEditorForm<ProjectCodeStyleSettings> {
     private JPanel mainPanel;
@@ -22,8 +20,8 @@ public class CodeStyleSettingsForm extends CompositeConfigurationEditorForm<Proj
         languageTabs = new TabbedPane(this);
         //languageTabs.setAdjustBorders(false);
         mainPanel.add(languageTabs, BorderLayout.CENTER);
-        addSettingsPanel(getConfiguration().getSQLCodeStyleSettings(), Icons.FILE_SQL);
-        addSettingsPanel(getConfiguration().getPSQLCodeStyleSettings(), Icons.FILE_PLSQL);
+        addSettingsPanel(settings.getSQLCodeStyleSettings(), Icons.FILE_SQL);
+        addSettingsPanel(settings.getPSQLCodeStyleSettings(), Icons.FILE_PLSQL);
     }
 
     private void addSettingsPanel(Configuration configuration, Icon icon) {

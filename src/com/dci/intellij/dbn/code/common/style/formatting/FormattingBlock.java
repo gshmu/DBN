@@ -1,7 +1,7 @@
 package com.dci.intellij.dbn.code.common.style.formatting;
 
-import com.dci.intellij.dbn.code.common.style.options.CodeStyleCustomSettings;
 import com.dci.intellij.dbn.code.common.style.options.CodeStyleFormattingSettings;
+import com.dci.intellij.dbn.code.common.style.options.DBLCodeStyleSettings;
 import com.dci.intellij.dbn.code.common.style.presets.CodeStyleDefaultPresets;
 import com.dci.intellij.dbn.code.common.style.presets.CodeStylePreset;
 import com.dci.intellij.dbn.language.common.DBLanguage;
@@ -40,7 +40,7 @@ import java.util.List;
 public class FormattingBlock implements Block {
     private final PsiElementRef psiElementRef;
     private final CodeStyleSettings codeStyleSettings;
-    private final CodeStyleCustomSettings codeStyleCustomSettings;
+    private final DBLCodeStyleSettings codeStyleCustomSettings;
     private static final List<Block> EMPTY_LIST = new ArrayList<>(0);
     private volatile List<Block> childBlocks;
     private final FormattingBlock parentBlock;
@@ -48,7 +48,7 @@ public class FormattingBlock implements Block {
 
     public FormattingBlock(
             CodeStyleSettings codeStyleSettings,
-            CodeStyleCustomSettings codeStyleCustomSettings,
+            DBLCodeStyleSettings codeStyleCustomSettings,
             PsiElement psiElement,
             FormattingBlock parentBlock,
             int index) {
@@ -342,7 +342,7 @@ public class FormattingBlock implements Block {
         while (child != null) {
             if (!(child instanceof PsiWhiteSpace) /*&& !(child instanceof PsiErrorElement)*/ && child.getTextLength() > 0) {
                 if (childBlocks == null) childBlocks = new ArrayList<>();
-                CodeStyleCustomSettings codeStyleCustomSettings = getCodeStyleSettings(child);
+                DBLCodeStyleSettings codeStyleCustomSettings = getCodeStyleSettings(child);
                 FormattingBlock childBlock = new FormattingBlock(codeStyleSettings, codeStyleCustomSettings, child, this, index);
                 childBlocks.add(childBlock);
             }
@@ -352,13 +352,13 @@ public class FormattingBlock implements Block {
         if (childBlocks == null) childBlocks = EMPTY_LIST;
     }
 
-    private CodeStyleCustomSettings getCodeStyleSettings(PsiElement child) {
-        CodeStyleCustomSettings codeStyleCustomSettings = this.codeStyleCustomSettings;
+    private DBLCodeStyleSettings getCodeStyleSettings(PsiElement child) {
+        DBLCodeStyleSettings codeStyleCustomSettings = this.codeStyleCustomSettings;
         if (child instanceof ChameleonPsiElement) {
             ChameleonPsiElement element = (ChameleonPsiElement) child;
             DBLanguage language = (DBLanguage) PsiUtil.getLanguage(element);
             PsiElement psiElement = getPsiElement();
-            codeStyleCustomSettings = language.getCodeStyleSettings(psiElement.getProject());
+            codeStyleCustomSettings = language.codeStyleSettings(psiElement.getProject());
         }
         return codeStyleCustomSettings;
     }

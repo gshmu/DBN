@@ -3,7 +3,7 @@ package com.dci.intellij.dbn.database.oracle;
 import com.dci.intellij.dbn.code.common.style.DBLCodeStyleManager;
 import com.dci.intellij.dbn.code.common.style.options.CodeStyleCaseOption;
 import com.dci.intellij.dbn.code.common.style.options.CodeStyleCaseSettings;
-import com.dci.intellij.dbn.code.psql.style.options.PSQLCodeStyleSettings;
+import com.dci.intellij.dbn.code.psql.style.PSQLCodeStyle;
 import com.dci.intellij.dbn.connection.jdbc.DBNConnection;
 import com.dci.intellij.dbn.database.DatabaseInterfaceProvider;
 import com.dci.intellij.dbn.database.DatabaseObjectTypeId;
@@ -102,7 +102,8 @@ public class OracleDDLInterface extends DatabaseDDLInterfaceImpl {
      *********************************************************/
     @Override
     public void createMethod(MethodFactoryInput method, DBNConnection connection) throws SQLException {
-        CodeStyleCaseSettings styleCaseSettings = PSQLCodeStyleSettings.getInstance(method.getSchema().getProject()).getCaseSettings();
+        Project project = method.getSchema().getProject();
+        CodeStyleCaseSettings styleCaseSettings = PSQLCodeStyle.caseSettings(project);
         CodeStyleCaseOption kco = styleCaseSettings.getKeywordCaseOption();
         CodeStyleCaseOption oco = styleCaseSettings.getObjectCaseOption();
         CodeStyleCaseOption dco = styleCaseSettings.getDatatypeCaseOption();

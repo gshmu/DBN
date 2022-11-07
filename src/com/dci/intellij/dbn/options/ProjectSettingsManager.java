@@ -3,7 +3,6 @@ package com.dci.intellij.dbn.options;
 import com.dci.intellij.dbn.DatabaseNavigator;
 import com.dci.intellij.dbn.browser.options.DatabaseBrowserSettings;
 import com.dci.intellij.dbn.code.common.completion.options.CodeCompletionSettings;
-import com.dci.intellij.dbn.code.common.style.options.ProjectCodeStyleSettings;
 import com.dci.intellij.dbn.common.action.UserDataKeys;
 import com.dci.intellij.dbn.common.component.Components;
 import com.dci.intellij.dbn.common.component.PersistentState;
@@ -105,10 +104,6 @@ public class ProjectSettingsManager extends ProjectComponentBase implements Pers
 
     public CodeCompletionSettings getCodeCompletionSettings() {
         return getProjectSettings().getCodeCompletionSettings();
-    }
-
-    public ProjectCodeStyleSettings getCodeStyleSettings() {
-        return getProjectSettings().getCodeStyleSettings();
     }
 
     public OperationSettings getOperationSettings() {

@@ -3,7 +3,7 @@ package com.dci.intellij.dbn.database.mysql;
 import com.dci.intellij.dbn.code.common.style.DBLCodeStyleManager;
 import com.dci.intellij.dbn.code.common.style.options.CodeStyleCaseOption;
 import com.dci.intellij.dbn.code.common.style.options.CodeStyleCaseSettings;
-import com.dci.intellij.dbn.code.psql.style.options.PSQLCodeStyleSettings;
+import com.dci.intellij.dbn.code.psql.style.PSQLCodeStyle;
 import com.dci.intellij.dbn.connection.jdbc.DBNConnection;
 import com.dci.intellij.dbn.database.DatabaseInterfaceProvider;
 import com.dci.intellij.dbn.database.DatabaseObjectTypeId;
@@ -146,10 +146,11 @@ public class MySqlDDLInterface extends DatabaseDDLInterfaceImpl {
      *********************************************************/
     @Override
     public void createMethod(MethodFactoryInput method, DBNConnection connection) throws SQLException {
-        CodeStyleCaseSettings styleCaseSettings = PSQLCodeStyleSettings.getInstance(method.getSchema().getProject()).getCaseSettings();
-        CodeStyleCaseOption keywordCaseOption = styleCaseSettings.getKeywordCaseOption();
-        CodeStyleCaseOption objectCaseOption = styleCaseSettings.getObjectCaseOption();
-        CodeStyleCaseOption dataTypeCaseOption = styleCaseSettings.getDatatypeCaseOption();
+        Project project = method.getSchema().getProject();
+        CodeStyleCaseSettings caseSettings = PSQLCodeStyle.caseSettings(project);
+        CodeStyleCaseOption keywordCaseOption = caseSettings.getKeywordCaseOption();
+        CodeStyleCaseOption objectCaseOption = caseSettings.getObjectCaseOption();
+        CodeStyleCaseOption dataTypeCaseOption = caseSettings.getDatatypeCaseOption();
 
         StringBuilder buffer = new StringBuilder();
         String methodType = method.isFunction() ? "function " : "procedure ";
