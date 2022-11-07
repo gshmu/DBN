@@ -30,6 +30,6 @@ public class DBLCodeStyle {
     protected static DBLCodeStyleSettings settings(Project project, Language language) {
         if (language == SQLLanguage.INSTANCE) return SQLCodeStyle.settings(project);
         if (language == PSQLLanguage.INSTANCE) return PSQLCodeStyle.settings(project);
-        throw new IllegalArgumentException("Language " + language.get() + " mot supported");
+        throw new IllegalArgumentException("Language " + language.getID() + " mot supported");
     }
 }
