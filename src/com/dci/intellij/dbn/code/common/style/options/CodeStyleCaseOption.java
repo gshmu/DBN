@@ -67,4 +67,9 @@ public class CodeStyleCaseOption implements PersistentConfiguration {
         element.setAttribute("name", name);
         element.setAttribute("value", value);
     }
+
+    @Override
+    public String toString() {
+        return name + "=" + styleCase.name();
+    }
 }

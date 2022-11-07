@@ -62,7 +62,7 @@ public class DBLCodeStyleManager extends ProjectComponentBase implements Persist
     }
 
     public CodeStyleCaseSettings getCodeStyleCaseSettings(DBLanguage language) {
-        return language.getCodeStyleSettings(getProject()).getCaseSettings();
+        return language.codeStyleSettings(getProject()).getCaseSettings();
     }
 
     private void format(Document document, PsiElement psiElement, int startOffset, int endOffset){

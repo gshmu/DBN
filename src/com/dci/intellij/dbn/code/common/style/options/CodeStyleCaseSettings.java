@@ -11,16 +11,18 @@ import org.jetbrains.annotations.NotNull;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
-import static com.dci.intellij.dbn.common.options.setting.SettingsSupport.*;
+import static com.dci.intellij.dbn.common.options.setting.SettingsSupport.booleanAttribute;
+import static com.dci.intellij.dbn.common.options.setting.SettingsSupport.setBooleanAttribute;
+import static com.dci.intellij.dbn.common.options.setting.SettingsSupport.stringAttribute;
 
 @Getter
 @Setter
 @EqualsAndHashCode(callSuper = false)
-public abstract class CodeStyleCaseSettings extends BasicConfiguration<CodeStyleCustomSettings, CodeStyleCaseSettingsForm> {
+public abstract class CodeStyleCaseSettings extends BasicConfiguration<DBLCodeStyleSettings, CodeStyleCaseSettingsForm> {
     private final Map<String, CodeStyleCaseOption> options = new LinkedHashMap<>();
     private boolean enabled = true;
 
-    public CodeStyleCaseSettings(CodeStyleCustomSettings parent) {
+    public CodeStyleCaseSettings(DBLCodeStyleSettings parent) {
         super(parent);
         addOption("KEYWORD_CASE", CodeStyleCase.LOWER, false);
         addOption("FUNCTION_CASE", CodeStyleCase.LOWER, false);

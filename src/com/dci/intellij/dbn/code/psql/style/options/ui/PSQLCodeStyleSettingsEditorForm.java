@@ -1,14 +1,14 @@
 package com.dci.intellij.dbn.code.psql.style.options.ui;
 
-import com.dci.intellij.dbn.code.common.style.options.CodeStyleCustomSettings;
+import com.dci.intellij.dbn.code.common.style.options.DBLCodeStyleSettings;
 import com.dci.intellij.dbn.code.psql.style.options.PSQLCodeStyleSettings;
 import com.dci.intellij.dbn.common.options.ui.CompositeConfigurationEditorForm;
 import org.jetbrains.annotations.NotNull;
 
-import javax.swing.JPanel;
-import java.awt.BorderLayout;
+import javax.swing.*;
+import java.awt.*;
 
-public class PSQLCodeStyleSettingsEditorForm extends CompositeConfigurationEditorForm<CodeStyleCustomSettings> {
+public class PSQLCodeStyleSettingsEditorForm extends CompositeConfigurationEditorForm<DBLCodeStyleSettings> {
     private JPanel mainPanel;
     private JPanel casePanel;
     private JPanel previewPanel;

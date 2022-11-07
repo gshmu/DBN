@@ -1,7 +1,7 @@
 package com.dci.intellij.dbn.language.sql;
 
+import com.dci.intellij.dbn.code.sql.style.SQLCodeStyle;
 import com.dci.intellij.dbn.code.sql.style.options.SQLCodeStyleSettings;
-import com.dci.intellij.dbn.code.sql.style.options.SQLCustomCodeStyleSettings;
 import com.dci.intellij.dbn.language.common.DBLanguage;
 import com.dci.intellij.dbn.language.sql.dialect.SQLLanguageDialect;
 import com.dci.intellij.dbn.language.sql.dialect.iso92.Iso92SQLLanguageDialect;
@@ -10,9 +10,8 @@ import com.dci.intellij.dbn.language.sql.dialect.oracle.OracleSQLLanguageDialect
 import com.dci.intellij.dbn.language.sql.dialect.postgres.PostgresSQLLanguageDialect;
 import com.dci.intellij.dbn.language.sql.dialect.sqlite.SqliteSQLLanguageDialect;
 import com.intellij.openapi.project.Project;
-import com.intellij.psi.codeStyle.CodeStyleSettings;
-import com.intellij.psi.codeStyle.CodeStyleSettingsManager;
 import com.intellij.psi.tree.IFileElementType;
+import org.jetbrains.annotations.Nullable;
 
 public class SQLLanguage extends DBLanguage<SQLLanguageDialect> {
     public static final SQLLanguage INSTANCE = new SQLLanguage();
@@ -48,9 +47,7 @@ public class SQLLanguage extends DBLanguage<SQLLanguageDialect> {
 
 
     @Override
-    public SQLCodeStyleSettings getCodeStyleSettings(Project project) {
-        CodeStyleSettings codeStyleSettings = CodeStyleSettingsManager.getSettings(project);
-        SQLCustomCodeStyleSettings customCodeStyleSettings = codeStyleSettings.getCustomSettings(SQLCustomCodeStyleSettings.class);
-        return customCodeStyleSettings.getCodeStyleSettings();
+    public SQLCodeStyleSettings codeStyleSettings(@Nullable Project project) {
+        return SQLCodeStyle.settings(project);
     }
 }

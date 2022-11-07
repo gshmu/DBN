@@ -1,8 +1,8 @@
 package com.dci.intellij.dbn.code.sql.style.options;
 
-import com.dci.intellij.dbn.code.common.style.options.CodeStyleCustomSettings;
 import com.dci.intellij.dbn.code.common.style.options.CodeStyleFormattingOption;
 import com.dci.intellij.dbn.code.common.style.options.CodeStyleFormattingSettings;
+import com.dci.intellij.dbn.code.common.style.options.DBLCodeStyleSettings;
 import com.dci.intellij.dbn.code.common.style.presets.clause.ClauseChopDownAlwaysPreset;
 import com.dci.intellij.dbn.code.common.style.presets.clause.ClauseChopDownIfLongPreset;
 import com.dci.intellij.dbn.code.common.style.presets.clause.ClauseChopDownIfLongStatementPreset;
@@ -21,7 +21,7 @@ import com.dci.intellij.dbn.code.common.style.presets.statement.StatementOneLine
 import com.dci.intellij.dbn.code.common.style.presets.statement.StatementOneLineSpacingPreset;
 
 class SQLCodeStyleFormattingSettings extends CodeStyleFormattingSettings {
-    SQLCodeStyleFormattingSettings(CodeStyleCustomSettings parent) {
+    SQLCodeStyleFormattingSettings(DBLCodeStyleSettings parent) {
         super(parent);
 
         CodeStyleFormattingOption statementSpacing =

@@ -13,20 +13,20 @@ public class PSQLCodeStyleSettingsProvider extends CodeStyleSettingsProvider {
 
     @Override
     public CustomCodeStyleSettings createCustomSettings(CodeStyleSettings codeStyleSettings) {
-        return new PSQLCustomCodeStyleSettings(codeStyleSettings);
+        return new PSQLCodeStyleSettingsWrapper(codeStyleSettings);
     }
 
     @Override
     @NotNull
-    public Configurable createSettingsPage(CodeStyleSettings settings, CodeStyleSettings settings1) {
-        PSQLCustomCodeStyleSettings settingsProvider = settings.getCustomSettings(PSQLCustomCodeStyleSettings.class);
-        return settingsProvider.getCodeStyleSettings();
+    public Configurable createSettingsPage(CodeStyleSettings settings, CodeStyleSettings modelSettings) {
+        PSQLCodeStyleSettingsWrapper settingsProvider = settings.getCustomSettings(PSQLCodeStyleSettingsWrapper.class);
+        return settingsProvider.getSettings();
     }
 
     @NotNull
     public Configurable createSettingsPage(CodeStyleSettings settings) {
-        PSQLCustomCodeStyleSettings settingsProvider = settings.getCustomSettings(PSQLCustomCodeStyleSettings.class);
-        return settingsProvider.getCodeStyleSettings();
+        PSQLCodeStyleSettingsWrapper settingsProvider = settings.getCustomSettings(PSQLCodeStyleSettingsWrapper.class);
+        return settingsProvider.getSettings();
     }
 
     @Override
