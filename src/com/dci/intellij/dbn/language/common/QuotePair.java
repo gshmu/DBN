@@ -38,12 +38,21 @@ public class QuotePair {
         return firstChar == beginChar && lastChar == endChar;
     }
 
-    public String replaceQuotes(String string, char character) {
-        return string.replace(beginChar, character).replace(endChar, character);
-    }
-
     public String quote(String identifier) {
         return beginChar + identifier + endChar;
+    }
+
+    public String unquote(String identifier) {
+        int length = identifier.length();
+        if (length < 2) return identifier;
+
+        char firstChar = identifier.charAt(0);
+        char lastChar = identifier.charAt(length - 1);
+
+        if (firstChar == beginChar && lastChar == endChar) {
+            return identifier.substring(1, length - 1);
+        }
+        return identifier;
     }
 
     @Override

@@ -13,6 +13,7 @@ import com.dci.intellij.dbn.database.common.util.CachedResultSet.Columns;
 import com.dci.intellij.dbn.database.common.util.CachedResultSetRow;
 import com.dci.intellij.dbn.database.common.util.MultipartResultSet;
 import com.dci.intellij.dbn.database.common.util.ResultSetCondition;
+import com.dci.intellij.dbn.language.common.QuotePair;
 import org.jetbrains.annotations.NotNull;
 
 import java.sql.ResultSet;
@@ -105,8 +106,20 @@ public class GenericMetadataInterface extends DatabaseMetadataInterfaceImpl {
 
     @Override
     public void setCurrentSchema(String schemaName, DBNConnection connection) {
-        Unsafe.silent(() -> connection.setSchema(schemaName));
+        QuotePair quotePair = getProvider().getCompatibilityInterface().getDefaultIdentifierQuotes();
+        String schema = quotePair.isQuoted(schemaName) ? quotePair.unquote(schemaName) : schemaName;
+        Unsafe.silent(() -> {
+            try {
+                connection.setSchema(schema);
+            } finally {
+                if (!schema.equalsIgnoreCase(connection.getSchema())) {
+                    connection.setCatalog(schema);
+                }
+            }
+        });
     }
+
+
 
     @Override
     public ResultSet loadSchemas(DBNConnection connection) throws SQLException {
