@@ -15,7 +15,6 @@ import com.dci.intellij.dbn.common.util.Messages;
 import com.dci.intellij.dbn.common.util.Safe;
 import com.dci.intellij.dbn.connection.*;
 import com.dci.intellij.dbn.connection.config.ConnectionDetailSettings;
-import com.dci.intellij.dbn.connection.console.DatabaseConsoleManager;
 import com.dci.intellij.dbn.database.DatabaseFeature;
 import com.dci.intellij.dbn.ddl.DDLFileAttachmentManager;
 import com.dci.intellij.dbn.ddl.options.DDLFileGeneralSettings;
@@ -142,7 +141,6 @@ public class DatabaseFileSystem extends VirtualFileSystem implements /*NonPhysic
                     Project project = connection.getProject();
                     String relativePath = path.substring(index + 1);
                     if (CONSOLES.is(relativePath)) {
-                        DatabaseConsoleManager.getInstance(project); // TODO review service initialisation sequence (remove this line)
                         String consoleName = CONSOLES.collate(relativePath);
                         DBConsole console = connection.getConsoleBundle().getConsole(consoleName);
                         return Safe.call(console, target -> target.getVirtualFile());
