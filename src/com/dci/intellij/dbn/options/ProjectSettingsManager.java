@@ -18,14 +18,20 @@ import com.dci.intellij.dbn.connection.config.ConnectionConfigListener;
 import com.dci.intellij.dbn.connection.config.ConnectionConfigType;
 import com.dci.intellij.dbn.connection.config.tns.TnsName;
 import com.dci.intellij.dbn.connection.config.ui.ConnectionBundleSettingsForm;
+import com.dci.intellij.dbn.connection.console.DatabaseConsoleManager;
 import com.dci.intellij.dbn.connection.operation.options.OperationSettings;
 import com.dci.intellij.dbn.data.grid.options.DataGridSettings;
 import com.dci.intellij.dbn.ddl.options.DDLFileSettings;
+import com.dci.intellij.dbn.editor.EditorStateManager;
+import com.dci.intellij.dbn.editor.code.SourceCodeManager;
+import com.dci.intellij.dbn.editor.data.DatasetEditorManager;
 import com.dci.intellij.dbn.editor.data.options.DataEditorSettings;
 import com.dci.intellij.dbn.execution.common.options.ExecutionEngineSettings;
 import com.dci.intellij.dbn.navigation.options.NavigationSettings;
+import com.dci.intellij.dbn.object.common.loader.DatabaseLoaderManager;
 import com.dci.intellij.dbn.options.general.GeneralProjectSettings;
 import com.dci.intellij.dbn.options.ui.ProjectSettingsDialog;
+import com.dci.intellij.dbn.vfs.DatabaseFileManager;
 import com.intellij.openapi.components.State;
 import com.intellij.openapi.components.Storage;
 import com.intellij.openapi.project.Project;
@@ -174,6 +180,18 @@ public class ProjectSettingsManager extends ProjectComponentBase implements Pers
     public void loadState(@NotNull Element element) {
         projectSettings.readConfiguration(element);
         getProject().putUserData(UserDataKeys.PROJECT_SETTINGS_LOADED, true);
+    }
+
+    @Override
+    public void initializeComponent() {
+        // TODO find another way to define "silent" dependencies
+        Project project = getProject();
+        DatabaseConsoleManager.getInstance(project);
+        EditorStateManager.getInstance(project);
+        SourceCodeManager.getInstance(project);
+        DatasetEditorManager.getInstance(project);
+        DatabaseFileManager.getInstance(project);
+        DatabaseLoaderManager.getInstance(project);
     }
 
     public void exportToDefaultSettings() {
