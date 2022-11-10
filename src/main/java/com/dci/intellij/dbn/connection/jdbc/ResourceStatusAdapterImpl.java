@@ -177,7 +177,7 @@ public abstract class ResourceStatusAdapterImpl<T extends Resource> implements R
         if (isChanging() || isTerminal()) {
             return false;
         } else {
-            return value() != value;
+            return get() != value;
         }
     }
 
