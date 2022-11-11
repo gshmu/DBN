@@ -1,7 +1,6 @@
 package com.dci.intellij.dbn.execution.method.browser;
 
 import com.dci.intellij.dbn.common.options.PersistentConfiguration;
-import com.dci.intellij.dbn.connection.ConnectionCache;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.ConnectionId;
 import com.dci.intellij.dbn.connection.config.ConnectionConfigListener;
@@ -32,8 +31,9 @@ public class MethodBrowserSettings implements PersistentConfiguration, Connectio
         objectVisibility.put(DBObjectType.PROCEDURE, true);
     }
 
+    @Nullable
     public ConnectionHandler getConnection() {
-        return ConnectionCache.resolveConnection(selectedConnectionId);
+        return ConnectionHandler.get(selectedConnectionId);
     }
 
     public void setSelectedConnection(ConnectionHandler connection) {

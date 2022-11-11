@@ -47,7 +47,7 @@ public final class ConnectionRef implements Reference<ConnectionHandler>, Identi
                     if (!resolving) {
                         try {
                             resolving = true;
-                            ConnectionHandler connection = ConnectionCache.resolveConnection(connectionId);
+                            ConnectionHandler connection = ConnectionHandler.get(connectionId);
                             reference = WeakRef.of(connection);
                         } finally {
                             resolving = false;
@@ -77,7 +77,7 @@ public final class ConnectionRef implements Reference<ConnectionHandler>, Identi
     public static ConnectionRef of(@Nullable ConnectionHandler connection) {
         if (connection != null) {
             ConnectionRef ref = ConnectionRef.of(connection.getConnectionId());
-            ConnectionHandler local = ref.get();
+            ConnectionHandler local = ref.reference();
             if (local == null || local != connection) {
                 ref.reference = WeakRef.of(connection);
             }

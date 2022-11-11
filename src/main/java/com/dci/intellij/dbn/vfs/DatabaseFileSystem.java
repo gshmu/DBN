@@ -135,7 +135,7 @@ public class DatabaseFileSystem extends VirtualFileSystem implements /*NonPhysic
 
         if (index > -1) {
             ConnectionId connectionId = ConnectionId.get(path.substring(0, index));
-            ConnectionHandler connection = ConnectionCache.resolveConnection(connectionId);
+            ConnectionHandler connection = ConnectionHandler.get(connectionId);
             if (Failsafe.check(connection) && connection.isEnabled()) {
                 if (allowFileLookup(connection)) {
                     Project project = connection.getProject();
@@ -210,7 +210,7 @@ public class DatabaseFileSystem extends VirtualFileSystem implements /*NonPhysic
     public String extractPresentablePath(@NotNull String path) {
         int index = path.indexOf(PS);
         ConnectionId connectionId = ConnectionId.get(index == -1 ? path : path.substring(0, index));
-        ConnectionHandler connection = ConnectionCache.resolveConnection(connectionId);
+        ConnectionHandler connection = ConnectionHandler.get(connectionId);
         if (connection == null) {
             path = path.replace(connectionId.id(), "UNKNOWN");
         } else {

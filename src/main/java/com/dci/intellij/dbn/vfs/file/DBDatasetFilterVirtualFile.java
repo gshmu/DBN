@@ -21,12 +21,8 @@ import com.intellij.util.LocalTimeCounter;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import javax.swing.Icon;
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
+import javax.swing.*;
+import java.io.*;
 import java.nio.charset.Charset;
 
 public class DBDatasetFilterVirtualFile extends DBVirtualFileImpl implements DBParseableVirtualFile {
@@ -70,7 +66,7 @@ public class DBDatasetFilterVirtualFile extends DBVirtualFileImpl implements DBP
     @Override
     @NotNull
     public ConnectionHandler getConnection() {
-        return Failsafe.nn(datasetRef.resolveConnection());
+        return Failsafe.nn(datasetRef.getConnection());
     }
 
     @Nullable

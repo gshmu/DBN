@@ -89,7 +89,7 @@ public class DBNHeaderForm extends DBNFormBase {
     }
 
     public void update(@NotNull DBObjectRef<?> objectRef) {
-        ConnectionHandler connection = objectRef.resolveConnection();
+        ConnectionHandler connection = objectRef.getConnection();
 
         String connectionName = connection == null ? "UNKNOWN" : connection.getName();
         objectLabel.setText("[" + connectionName + "] " + objectRef.getQualifiedName());
