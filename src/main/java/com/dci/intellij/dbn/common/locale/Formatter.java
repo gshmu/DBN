@@ -11,13 +11,7 @@ import lombok.Getter;
 import lombok.Setter;
 import org.jetbrains.annotations.NotNull;
 
-import java.text.DateFormat;
-import java.text.DateFormatSymbols;
-import java.text.DecimalFormat;
-import java.text.DecimalFormatSymbols;
-import java.text.NumberFormat;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
+import java.text.*;
 import java.util.Date;
 import java.util.Locale;
 
@@ -29,8 +23,8 @@ public class Formatter implements Cloneable, Signed {
     private DateFormat dateFormat;
     private DateFormat timeFormat;
     private DateFormat dateTimeFormat;
-    private NumberFormat numberFormat;
-    private NumberFormat integerFormat;
+    private DecimalFormat numberFormat;
+    private DecimalFormat integerFormat;
 
     private String dateFormatPattern;
     private String timeFormatPattern;
@@ -55,18 +49,19 @@ public class Formatter implements Cloneable, Signed {
 
         boolean groupingUsed = numberFormatOption == DBNumberFormat.GROUPED;
 
-        integerFormat = NumberFormat.getIntegerInstance(locale);
+        integerFormat = (DecimalFormat) NumberFormat.getIntegerInstance(locale);
         integerFormat.setGroupingUsed(groupingUsed);
 
-        numberFormat = DecimalFormat.getInstance(locale);
+        numberFormat = (DecimalFormat) DecimalFormat.getInstance(locale);
         numberFormat.setGroupingUsed(groupingUsed);
-        numberFormat.setMaximumFractionDigits(10);
+        numberFormat.setMaximumFractionDigits(20);
+        numberFormat.setParseBigDecimal(true);
 
         dateFormatPattern = ((SimpleDateFormat) dateFormat).toPattern();
         timeFormatPattern = ((SimpleDateFormat) timeFormat).toPattern();
         datetimeFormatPattern = ((SimpleDateFormat) dateTimeFormat).toPattern();
-        numberFormatPattern = ((DecimalFormat) numberFormat).toPattern();
-        integerFormatPattern = ((DecimalFormat) integerFormat).toPattern();
+        numberFormatPattern = numberFormat.toPattern();
+        integerFormatPattern = integerFormat.toPattern();
     }
 
     public Formatter(int signature, @NotNull Locale locale, String dateFormatPattern, String timeFormatPattern, String numberFormatPattern) {
@@ -185,8 +180,8 @@ public class Formatter implements Cloneable, Signed {
         clone.dateFormat = (DateFormat) dateFormat.clone();
         clone.timeFormat = (DateFormat) timeFormat.clone();
         clone.dateTimeFormat = (DateFormat) dateTimeFormat.clone();
-        clone.numberFormat = (NumberFormat) numberFormat.clone();
-        clone.integerFormat = (NumberFormat) integerFormat.clone();
+        clone.numberFormat = (DecimalFormat) numberFormat.clone();
+        clone.integerFormat = (DecimalFormat) integerFormat.clone();
 
         clone.dateFormatPattern = dateFormatPattern;
         clone.timeFormatPattern = timeFormatPattern;
