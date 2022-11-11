@@ -355,7 +355,6 @@
                 <action id="DBNavigator.Actions.MainMenu.Options" class="com.dci.intellij.dbn.menu.action.DiagnosticsSettingsOpenAction" text="Settings.."/>
             </group>
             <action id="DBNavigator.Actions.MainMenu.OpenAbout" class="com.dci.intellij.dbn.menu.action.AboutPageOpenAction" text="About"/>
-            <action id="DBNavigator.Actions.MainMenu.Test" class="com.dci.intellij.dbn.object.action.TestAction" text="Test"/>
             <add-to-group anchor="before" group-id="MainMenu" relative-to-action="HelpMenu"/>
         </group>
         <group id="DBNavigator.ActionGroup.SourceEditor" text="Source Editor Controls">
