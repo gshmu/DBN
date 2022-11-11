@@ -272,9 +272,6 @@
         <projectService serviceImplementation="com.dci.intellij.dbn.connection.session.DatabaseSessionManager"/>
         <projectService serviceImplementation="com.dci.intellij.dbn.connection.console.DatabaseConsoleManager"/>
     </extensions>
-    <module-components>
-        <!--<component><implementation-class>com.dci.intellij.dbn.browser.cache.ModuleBrowserCacheComponent</implementation-class></component>-->
-    </module-components>
 
     <actions>
         <action class="com.dci.intellij.dbn.execution.script.action.ExecuteScriptFileAction" id="DBNavigator.Actions.Editor.ExecuteScript" text="Execute SQL Script" icon="/img/action/ExecuteAsScript.png">

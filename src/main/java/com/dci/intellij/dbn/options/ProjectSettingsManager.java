@@ -10,6 +10,7 @@ import com.dci.intellij.dbn.common.component.ProjectComponentBase;
 import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.common.event.ProjectEvents;
 import com.dci.intellij.dbn.common.util.Messages;
+import com.dci.intellij.dbn.connection.ConnectionCache;
 import com.dci.intellij.dbn.connection.ConnectionId;
 import com.dci.intellij.dbn.connection.DatabaseType;
 import com.dci.intellij.dbn.connection.config.ConnectionBundleSettings;
@@ -180,6 +181,9 @@ public class ProjectSettingsManager extends ProjectComponentBase implements Pers
     @Override
     public void initializeComponent() {
         // TODO find another way to define "silent" dependencies
+
+        ConnectionCache.getInstance();
+
         Project project = getProject();
         DatabaseConsoleManager.getInstance(project);
         EditorStateManager.getInstance(project);

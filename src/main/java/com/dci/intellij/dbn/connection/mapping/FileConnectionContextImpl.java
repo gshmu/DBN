@@ -2,7 +2,6 @@ package com.dci.intellij.dbn.connection.mapping;
 
 import com.dci.intellij.dbn.common.file.util.VirtualFiles;
 import com.dci.intellij.dbn.common.util.Commons;
-import com.dci.intellij.dbn.connection.ConnectionCache;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.ConnectionId;
 import com.dci.intellij.dbn.connection.SchemaId;
@@ -111,7 +110,7 @@ public class FileConnectionContextImpl implements FileConnectionContext {
     @Override
     @Nullable
     public ConnectionHandler getConnection() {
-        return ConnectionCache.resolveConnection(connectionId);
+        return ConnectionHandler.get(connectionId);
     }
 
     @Override
