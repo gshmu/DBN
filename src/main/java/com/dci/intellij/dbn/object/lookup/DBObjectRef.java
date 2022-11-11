@@ -8,7 +8,6 @@ import com.dci.intellij.dbn.common.thread.Timeout;
 import com.dci.intellij.dbn.common.util.Lists;
 import com.dci.intellij.dbn.common.util.Strings;
 import com.dci.intellij.dbn.common.util.Unsafe;
-import com.dci.intellij.dbn.connection.ConnectionCache;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.ConnectionId;
 import com.dci.intellij.dbn.connection.ConnectionManager;
@@ -340,7 +339,7 @@ public class DBObjectRef<T extends DBObject> implements Comparable<DBObjectRef<?
         T object = getObject();
         if (object == null) {
             clearReference();
-            ConnectionHandler connection = resolveConnection(project);
+            ConnectionHandler connection = getConnection();
             if (Failsafe.check(connection) && connection.isEnabled()) {
                 object = lookup(connection);
                 if (object != null) {
@@ -401,19 +400,14 @@ public class DBObjectRef<T extends DBObject> implements Comparable<DBObjectRef<?
     private ConnectionHandler resolveConnection(Project project) {
         ConnectionId connectionId = getConnectionId();
         return project == null || project.isDisposed() ?
-                ConnectionCache.resolveConnection(connectionId) :
+                ConnectionHandler.get(connectionId) :
                 ConnectionManager.getInstance(project).getConnection(connectionId);
-    }
-
-    @Nullable
-    public ConnectionHandler resolveConnection() {
-        return ConnectionCache.resolveConnection(getConnectionId());
     }
 
     @Nullable
     @Override
     public ConnectionHandler getConnection() {
-        return resolveConnection();
+        return ConnectionHandler.get(getConnectionId());
     }
 
     protected DBSchema getSchema() {

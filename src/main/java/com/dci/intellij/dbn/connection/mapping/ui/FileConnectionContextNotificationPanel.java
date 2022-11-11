@@ -2,7 +2,6 @@ package com.dci.intellij.dbn.connection.mapping.ui;
 
 import com.dci.intellij.dbn.common.editor.EditorNotificationPanel;
 import com.dci.intellij.dbn.common.message.MessageType;
-import com.dci.intellij.dbn.connection.ConnectionCache;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.ConnectionId;
 import com.dci.intellij.dbn.connection.mapping.FileConnectionContext;
@@ -20,7 +19,7 @@ public class FileConnectionContextNotificationPanel extends EditorNotificationPa
         super(MessageType.SYSTEM);
 
         ConnectionId connectionId = mapping.getConnectionId();
-        ConnectionHandler connection = ConnectionCache.resolveConnection(connectionId);
+        ConnectionHandler connection = ConnectionHandler.get(connectionId);
         if (connection != null) {
             setText(connection.getPresentableText());
             setIcon(connection.getIcon());

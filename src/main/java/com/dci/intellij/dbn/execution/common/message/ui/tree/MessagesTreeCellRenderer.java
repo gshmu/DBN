@@ -6,15 +6,7 @@ import com.dci.intellij.dbn.common.file.util.VirtualFiles;
 import com.dci.intellij.dbn.common.message.MessageType;
 import com.dci.intellij.dbn.common.util.Commons;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
-import com.dci.intellij.dbn.execution.common.message.ui.tree.node.CompilerMessageNode;
-import com.dci.intellij.dbn.execution.common.message.ui.tree.node.CompilerMessagesNode;
-import com.dci.intellij.dbn.execution.common.message.ui.tree.node.CompilerMessagesObjectNode;
-import com.dci.intellij.dbn.execution.common.message.ui.tree.node.ExplainPlanMessageNode;
-import com.dci.intellij.dbn.execution.common.message.ui.tree.node.ExplainPlanMessagesFileNode;
-import com.dci.intellij.dbn.execution.common.message.ui.tree.node.ExplainPlanMessagesNode;
-import com.dci.intellij.dbn.execution.common.message.ui.tree.node.StatementExecutionMessageNode;
-import com.dci.intellij.dbn.execution.common.message.ui.tree.node.StatementExecutionMessagesFileNode;
-import com.dci.intellij.dbn.execution.common.message.ui.tree.node.StatementExecutionMessagesNode;
+import com.dci.intellij.dbn.execution.common.message.ui.tree.node.*;
 import com.dci.intellij.dbn.execution.compiler.CompilerMessage;
 import com.dci.intellij.dbn.execution.explain.result.ExplainPlanMessage;
 import com.dci.intellij.dbn.execution.statement.StatementExecutionMessage;
@@ -28,9 +20,8 @@ import com.intellij.ui.SimpleTextAttributes;
 import com.intellij.util.ui.UIUtil;
 import org.jetbrains.annotations.NotNull;
 
-import javax.swing.Icon;
-import javax.swing.JTree;
-import java.awt.Color;
+import javax.swing.*;
+import java.awt.*;
 
 public class MessagesTreeCellRenderer extends ColoredTreeCellRenderer {
     public static final JBColor HIGHLIGHT_BACKGROUND = new JBColor(0xE0EFFF, 0x364135);
@@ -88,7 +79,7 @@ public class MessagesTreeCellRenderer extends ColoredTreeCellRenderer {
                     DBObjectRef<DBSchemaObject> objectRef = compilerMessagesObjectNode.getObjectRef();
                     icon = objectRef.getObjectType().getIcon();
                     append(objectRef.getPath(), SimpleTextAttributes.REGULAR_ATTRIBUTES);
-                    connection = objectRef.resolveConnection();
+                    connection = objectRef.getConnection();
                 } else {
                     icon = compilerMessagesObjectNode.hasMessageChildren(MessageType.ERROR) ?
                             object.getIcon() :

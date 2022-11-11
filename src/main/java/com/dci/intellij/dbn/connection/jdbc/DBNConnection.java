@@ -249,7 +249,7 @@ public class DBNConnection extends DBNConnectionBase {
 
     @Override
     public void statusChanged(ResourceStatus status) {
-        ConnectionHandler connection = ConnectionCache.resolveConnection(id);
+        ConnectionHandler connection = ConnectionHandler.get(id);
         if (Failsafe.check(connection)) {
             ConnectionHandlerStatusHolder connectionStatus = connection.getConnectionStatus();
             switch (status) {
