@@ -1,6 +1,7 @@
 package com.dci.intellij.dbn.common.dispose;
 
 import com.dci.intellij.dbn.common.compatibility.Compatibility;
+import com.dci.intellij.dbn.common.event.ApplicationEvents;
 import com.dci.intellij.dbn.common.thread.Background;
 import com.dci.intellij.dbn.common.thread.ThreadMonitor;
 import com.dci.intellij.dbn.common.thread.ThreadProperty;
@@ -29,20 +30,20 @@ public final class BackgroundDisposer {
     private static final BackgroundDisposer INSTANCE = new BackgroundDisposer();
 
     private BackgroundDisposer() {
+        ApplicationEvents.subscribe(null, AppLifecycleListener.TOPIC, new AppLifecycleListener() {
+            @Override
+            public void appWillBeClosed(boolean isRestart) {
+                INSTANCE.setExiting(true);
+            }
+        });
+
         ApplicationManager.getApplication().addApplicationListener(new ApplicationListener() {
             @Override
             @Compatibility
             public void applicationExiting() {
-                exiting = true;
+                INSTANCE.setExiting(true);
             }
         });
-    }
-
-    public static class ApplicationLifecycleListener implements AppLifecycleListener {
-        @Override
-        public void appWillBeClosed(boolean isRestart) {
-            INSTANCE.setExiting(true);
-        }
     }
 
     public static void queue(Runnable runnable) {

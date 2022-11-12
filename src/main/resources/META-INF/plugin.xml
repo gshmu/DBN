@@ -278,10 +278,6 @@
         <projectService serviceImplementation="com.dci.intellij.dbn.connection.console.DatabaseConsoleManager"/>
     </extensions>
 
-    <applicationListeners>
-        <listener class="com.dci.intellij.dbn.common.dispose.BackgroundDisposer$ApplicationLifecycleListener" topic="com.intellij.ide.AppLifecycleListener"/>
-    </applicationListeners>
-
     <actions>
         <action class="com.dci.intellij.dbn.execution.script.action.ExecuteScriptFileAction" id="DBNavigator.Actions.Editor.ExecuteScript" text="Execute SQL Script" icon="/img/action/ExecuteAsScript.png">
             <!--<add-to-group group-id="ProjectViewPopupMenu" relative-to-action="WeighingNewGroup" anchor="before"/>-->
