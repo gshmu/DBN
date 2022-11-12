@@ -1,7 +1,6 @@
 package com.dci.intellij.dbn.common.dispose;
 
 import com.dci.intellij.dbn.common.compatibility.Compatibility;
-import com.dci.intellij.dbn.common.component.ApplicationComponent;
 import com.dci.intellij.dbn.common.thread.Background;
 import com.dci.intellij.dbn.common.thread.ThreadMonitor;
 import com.dci.intellij.dbn.common.thread.ThreadProperty;
@@ -22,7 +21,7 @@ import static com.dci.intellij.dbn.common.thread.ThreadMonitor.isDisposerProcess
 @Slf4j
 @Getter
 @Setter
-public final class BackgroundDisposer implements ApplicationComponent {
+public final class BackgroundDisposer {
     private final BlockingQueue<Runnable> queue = new LinkedBlockingQueue<>();
     private volatile boolean running;
     private volatile boolean exiting = false;
