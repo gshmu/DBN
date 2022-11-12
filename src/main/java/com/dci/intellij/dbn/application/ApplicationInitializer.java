@@ -1,16 +1,18 @@
 package com.dci.intellij.dbn.application;
 
+import com.dci.intellij.dbn.common.compatibility.Todo;
+import com.dci.intellij.dbn.connection.ConnectionCache;
+import com.intellij.ide.ApplicationInitializedListener;
 import com.intellij.openapi.project.DumbAware;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.startup.StartupActivity;
 import org.jetbrains.annotations.NotNull;
 
-public class ApplicationInitializer implements StartupActivity, DumbAware {
+@Todo
+public class ApplicationInitializer implements ApplicationInitializedListener, DumbAware {
 
-    @Override
-    public void runActivity(@NotNull Project project) {
+    public void init(@NotNull Project project) {
 /*
-        ConnectionCache.getInstance();
+
 
         DatabaseConsoleManager.getInstance(project);
         EditorStateManager.getInstance(project);
@@ -19,5 +21,10 @@ public class ApplicationInitializer implements StartupActivity, DumbAware {
         DatabaseFileManager.getInstance(project);
         DatabaseLoaderManager.getInstance(project);
 */
+    }
+
+    @Override
+    public void componentsInitialized() {
+        ConnectionCache.getInstance();
     }
 }
