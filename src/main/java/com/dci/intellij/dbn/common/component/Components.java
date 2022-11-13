@@ -1,5 +1,6 @@
 package com.dci.intellij.dbn.common.component;
 
+import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.project.Project;
 import org.jetbrains.annotations.NotNull;
@@ -10,7 +11,7 @@ public class Components {
 
     @NotNull
     public static <T extends ProjectComponent> T projectService(@NotNull Project project, @NotNull Class<T> interfaceClass) {
-        return project.getService(interfaceClass);
+        return Failsafe.nd(project).getService(interfaceClass);
     }
 
     @NotNull
