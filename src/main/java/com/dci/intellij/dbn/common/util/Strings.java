@@ -3,17 +3,14 @@ package com.dci.intellij.dbn.common.util;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
-import java.util.StringTokenizer;
+import java.util.*;
 
 public class Strings extends com.intellij.openapi.util.text.StringUtil {
     private Strings() {}
 
     @NotNull
     public static List<String> tokenize(@NotNull String string, @NotNull String separator) {
-        List<String> tokens = new ArrayList<String>();
+        List<String> tokens = new ArrayList<>();
         StringTokenizer tokenizer = new StringTokenizer(string, separator);
         while (tokenizer.hasMoreTokens()) {
             tokens.add(tokenizer.nextToken().trim());
@@ -21,16 +18,18 @@ public class Strings extends com.intellij.openapi.util.text.StringUtil {
         return tokens;
     }
 
-    public static String concatenate(List<String> tokens, String separator) {
-        StringBuilder buffer = new StringBuilder();
-        for (int i = 0; i < tokens.size(); i++) {
-            String token = tokens.get(i);
-            buffer.append(token);
-            if (i < tokens.size() - 1) {
-                buffer.append(separator);
+    public static String concatenate(Collection<String> tokens, String separator) {
+        StringBuilder builder = new StringBuilder();
+        int size = tokens.size();
+        int index = 0;
+        for (String token : tokens) {
+            builder.append(token);
+            if (index < size - 1) {
+                builder.append(separator);
             }
+            index++;
         }
-        return buffer.toString();
+        return builder.toString();
     }
 
     public static boolean containsOneOf(String string, String... tokens) {

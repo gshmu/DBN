@@ -7,18 +7,19 @@ import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.Collection;
+import java.util.LinkedHashSet;
+import java.util.Set;
 
 @Getter
 @Setter
 @EqualsAndHashCode
 public class DDLFileType {
     private final DBLanguageFileType languageFileType;
-    private DDLFileTypeId id;
-    private String description;
-    private DBContentType contentType;
-    private List<String> extensions = new ArrayList<>();
+    private final DDLFileTypeId id;
+    private final String description;
+    private final DBContentType contentType;
+    private Set<String> extensions = new LinkedHashSet<>();
 
     public DDLFileType(DDLFileTypeId id, String description, String extension, DBLanguageFileType languageFileType, DBContentType contentType) {
         this.id = id;
@@ -28,12 +29,17 @@ public class DDLFileType {
         this.contentType = contentType;
     }
 
-    public boolean setExtensions(List<String> extensions) {
+    public boolean setExtensions(Collection<String> extensions) {
+        extensions = new LinkedHashSet<>(extensions);
         if (!extensions.containsAll(this.extensions) || !this.extensions.containsAll(extensions)) {
-            this.extensions = extensions;
+            this.extensions = (Set<String>) extensions;
             return true;
         }
         return false;
+    }
+
+    public String getFirstExtension() {
+        return extensions.stream().findFirst().orElse(null);
     }
 
     public String getExtensionsAsString() {

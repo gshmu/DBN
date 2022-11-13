@@ -84,7 +84,8 @@ public class DDLFileExtensionSettings extends BasicProjectConfiguration<DDLFileS
             String extensions = child.getAttributeValue("extensions");
 
             DDLFileType fileType = getFileType(fileTypeId);
-            fileType.setExtensions(Strings.tokenize(extensions, ","));
+            List<String> tokens = Strings.tokenize(extensions, ",");
+            fileType.setExtensions(tokens);
         }
     }
 

@@ -3,6 +3,7 @@ package com.dci.intellij.dbn.editor.data;
 import com.dci.intellij.dbn.common.editor.EditorNotificationProvider;
 import com.dci.intellij.dbn.common.environment.options.listener.EnvironmentManagerListener;
 import com.dci.intellij.dbn.common.event.ProjectEvents;
+import com.dci.intellij.dbn.common.util.Editors;
 import com.dci.intellij.dbn.common.util.Strings;
 import com.dci.intellij.dbn.editor.data.ui.DatasetEditorLoadErrorNotificationPanel;
 import com.dci.intellij.dbn.editor.data.ui.DatasetEditorNotificationPanel;
@@ -41,7 +42,8 @@ public class DatasetEditorNotificationProvider extends EditorNotificationProvide
         return new DatasetLoadListener() {
             @Override
             public void datasetLoaded(@NotNull DBVirtualFile virtualFile) {
-                EditorNotifications notifications = EditorNotifications.getInstance(virtualFile.getProject());
+                Project project = virtualFile.getProject();
+                EditorNotifications notifications = Editors.getNotifications(project);
                 notifications.updateNotifications((VirtualFile) virtualFile);
             }
 
