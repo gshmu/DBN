@@ -56,6 +56,7 @@ import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 
+import static com.dci.intellij.dbn.common.dispose.Failsafe.invalid;
 import static com.dci.intellij.dbn.common.message.MessageCallback.when;
 import static com.dci.intellij.dbn.common.navigation.NavigationInstruction.*;
 import static com.dci.intellij.dbn.vfs.DatabaseFileSystem.FilePathType.*;
@@ -132,40 +133,40 @@ public class DatabaseFileSystem extends VirtualFileSystem implements /*NonPhysic
         }
 
         int index = path.indexOf(PS);
+        if (index < 0) return null;
 
-        if (index > -1) {
-            ConnectionId connectionId = ConnectionId.get(path.substring(0, index));
-            ConnectionHandler connection = ConnectionHandler.get(connectionId);
-            if (Failsafe.check(connection) && connection.isEnabled()) {
-                if (allowFileLookup(connection)) {
-                    Project project = connection.getProject();
-                    String relativePath = path.substring(index + 1);
-                    if (CONSOLES.is(relativePath)) {
-                        String consoleName = CONSOLES.collate(relativePath);
-                        DBConsole console = connection.getConsoleBundle().getConsole(consoleName);
-                        return Safe.call(console, target -> target.getVirtualFile());
+        ConnectionId connectionId = ConnectionId.get(path.substring(0, index));
+        ConnectionHandler connection = ConnectionHandler.get(connectionId);
 
-                    } else if (SESSION_BROWSERS.is(relativePath)) {
-                        return connection.getSessionBrowserFile();
+        if (!Failsafe.check(connection) || !connection.isEnabled())  return null;
+        if (!allowFileLookup(connection)) return null;
 
-                    } else if (OBJECTS.is(relativePath)) {
-                        String objectIdentifier = OBJECTS.collate(relativePath);
-                        DBObjectRef<DBSchemaObject> objectRef = new DBObjectRef<>(connectionId, objectIdentifier);
-                        return findOrCreateDatabaseFile(project, objectRef);
-                    } else if (OBJECT_CONTENTS.is(relativePath)) {
-                        String contentIdentifier = OBJECT_CONTENTS.collate(relativePath);
-                        int contentTypeEndIndex = contentIdentifier.indexOf(PS);
-                        String contentTypeStr = contentIdentifier.substring(0, contentTypeEndIndex);
-                        DBContentType contentType = DBContentType.valueOf(contentTypeStr.toUpperCase());
+        Project project = connection.getProject();
+        String relativePath = path.substring(index + 1);
+        if (CONSOLES.is(relativePath)) {
+            String consoleName = CONSOLES.collate(relativePath);
+            DBConsole console = connection.getConsoleBundle().getConsole(consoleName);
+            return Safe.call(console, target -> target.getVirtualFile());
 
-                        String objectIdentifier = contentIdentifier.substring(contentTypeEndIndex + 1);
-                        DBObjectRef<DBSchemaObject> objectRef = new DBObjectRef<>(connectionId, objectIdentifier);
-                        DBEditableObjectVirtualFile virtualFile = findOrCreateDatabaseFile(project, objectRef);
-                        return virtualFile.getContentFile(contentType);
-                    }
-                }
-            }
+        } else if (SESSION_BROWSERS.is(relativePath)) {
+            return connection.getSessionBrowserFile();
+
+        } else if (OBJECTS.is(relativePath)) {
+            String objectIdentifier = OBJECTS.collate(relativePath);
+            DBObjectRef<DBSchemaObject> objectRef = new DBObjectRef<>(connectionId, objectIdentifier);
+            return findOrCreateDatabaseFile(project, objectRef);
+        } else if (OBJECT_CONTENTS.is(relativePath)) {
+            String contentIdentifier = OBJECT_CONTENTS.collate(relativePath);
+            int contentTypeEndIndex = contentIdentifier.indexOf(PS);
+            String contentTypeStr = contentIdentifier.substring(0, contentTypeEndIndex);
+            DBContentType contentType = DBContentType.valueOf(contentTypeStr.toUpperCase());
+
+            String objectIdentifier = contentIdentifier.substring(contentTypeEndIndex + 1);
+            DBObjectRef<DBSchemaObject> objectRef = new DBObjectRef<>(connectionId, objectIdentifier);
+            DBEditableObjectVirtualFile virtualFile = findOrCreateDatabaseFile(project, objectRef);
+            return virtualFile.getContentFile(contentType);
         }
+
         return null;
     }
 
@@ -173,24 +174,21 @@ public class DatabaseFileSystem extends VirtualFileSystem implements /*NonPhysic
         if (path.startsWith(PROTOCOL_PREFIX)) {
             path = path.substring(PROTOCOL_PREFIX.length());
         }
-        if (path.startsWith("null")) {
-            return false;
-        }
+
+        if (path.startsWith("null")) return false;
 
         int index = path.indexOf(PS);
-        if (index > -1) {
-            ConnectionId connectionId = ConnectionId.get(path.substring(0, index));
-            ConnectionManager connectionManager = ConnectionManager.getInstance(project);
-            ConnectionHandler connection = connectionManager.getConnection(connectionId);
-            //ConnectionHandler connection = ConnectionCache.findConnectionHandler(connectionId);
-            if (connection != null || !project.isInitialized()) {
-                String relativePath = path.substring(index + 1);
-                for (FilePathType pathType : FilePathType.values()) {
-                    if (pathType.is(relativePath)) {
-                        return true;
-                    }
-                }
+        if (index < 0) return false;
 
+        ConnectionId connectionId = ConnectionId.get(path.substring(0, index));
+        ConnectionManager connectionManager = ConnectionManager.getInstance(project);
+        ConnectionHandler connection = connectionManager.getConnection(connectionId);
+        if (project.isInitialized() && connection == null) return false;
+
+        String relativePath = path.substring(index + 1);
+        for (FilePathType pathType : FilePathType.values()) {
+            if (pathType.is(relativePath)) {
+                return true;
             }
         }
 
@@ -407,66 +405,67 @@ public class DatabaseFileSystem extends VirtualFileSystem implements /*NonPhysic
      *              FileEditorManagerListener                *
      *********************************************************/
     public void connectAndOpenEditor(@NotNull DBObject object, @Nullable EditorProviderId editorProviderId, boolean scrollBrowser, boolean focusEditor) {
-        if (isEditable(object)) {
-            ConnectionAction.invoke(
-                    "opening the object editor", false, object,
-                    (action) -> {
-                        Project project = object.getProject();
-                        String title = "Opening editor (" + object.getQualifiedName() + ")";
-                        ProgressRunnable runnable = progress -> openEditor(object, editorProviderId, scrollBrowser, focusEditor);
+        if (!isEditable(object)) return;
 
-                        if (focusEditor)
-                            Progress.prompt(project, title, true, runnable); else
-                            Progress.background( project, title, true, runnable);
-                    });
-        }
+        ConnectionAction.invoke(
+                "opening the object editor", false, object,
+                (action) -> {
+                    Project project = object.getProject();
+                    String title = "Opening editor (" + object.getQualifiedName() + ")";
+                    ProgressRunnable runnable = progress -> openEditor(object, editorProviderId, scrollBrowser, focusEditor);
+
+                    if (focusEditor)
+                        Progress.prompt(project, title, true, runnable); else
+                        Progress.background( project, title, true, runnable);
+                });
     }
 
     public void openEditor(@NotNull DBObject object, @Nullable EditorProviderId editorProviderId, boolean scrollBrowser, boolean focusEditor) {
-        if (isEditable(object) && !DBFileOpenHandle.isFileOpening(object)) {
-            NavigationInstructions editorInstructions = NavigationInstructions.create().with(OPEN).with(SCROLL).with(FOCUS, focusEditor);
-            NavigationInstructions browserInstructions = NavigationInstructions.create().with(SCROLL, scrollBrowser);
-            DBFileOpenHandle<?> handle = DBFileOpenHandle.create(object).
-                    withEditorProviderId(editorProviderId).
-                    withEditorInstructions(editorInstructions).
-                    withBrowserInstructions(browserInstructions);
+        if (!isEditable(object)) return;
+        if (DBFileOpenHandle.isFileOpening(object)) return;
 
-            try {
-                handle.init();
-                if (object.is(DBObjectProperty.SCHEMA_OBJECT)) {
-                    object.initChildren();
-                    openSchemaObject((DBFileOpenHandle<DBSchemaObject>) handle);
 
-                } else {
-                    DBObject parentObject = object.getParentObject();
-                    if (parentObject.is(DBObjectProperty.SCHEMA_OBJECT)) {
-                        parentObject.initChildren();
-                        openChildObject(handle);
-                    }
+        NavigationInstructions editorInstructions = NavigationInstructions.create().with(OPEN).with(SCROLL).with(FOCUS, focusEditor);
+        NavigationInstructions browserInstructions = NavigationInstructions.create().with(SCROLL, scrollBrowser);
+        DBFileOpenHandle<?> handle = DBFileOpenHandle.create(object).
+                withEditorProviderId(editorProviderId).
+                withEditorInstructions(editorInstructions).
+                withBrowserInstructions(browserInstructions);
+
+        try {
+            handle.init();
+            if (object.is(DBObjectProperty.SCHEMA_OBJECT)) {
+                object.initChildren();
+                openSchemaObject((DBFileOpenHandle<DBSchemaObject>) handle);
+
+            } else {
+                DBObject parentObject = object.getParentObject();
+                if (parentObject.is(DBObjectProperty.SCHEMA_OBJECT)) {
+                    parentObject.initChildren();
+                    openChildObject(handle);
                 }
-            } finally {
-                handle.release();
             }
+        } finally {
+            handle.release();
         }
     }
 
     private boolean isEditable(DBObject object) {
-        if (Failsafe.check(object)) {
-            DBContentType contentType = object.getContentType();
-            boolean editable =
-                    object.is(DBObjectProperty.SCHEMA_OBJECT) &&
-                            (contentType.has(DBContentType.DATA) ||
-                                    DatabaseFeature.OBJECT_SOURCE_EDITING.isSupported(object));
+        if (invalid(object)) return false;
 
-            if (!editable) {
-                DBObject parentObject = object.getParentObject();
-                if (parentObject instanceof DBSchemaObject) {
-                    return isEditable(parentObject);
-                }
+        DBContentType contentType = object.getContentType();
+        boolean editable =
+                object.is(DBObjectProperty.SCHEMA_OBJECT) &&
+                        (contentType.has(DBContentType.DATA) ||
+                                DatabaseFeature.OBJECT_SOURCE_EDITING.isSupported(object));
+
+        if (!editable) {
+            DBObject parentObject = object.getParentObject();
+            if (parentObject instanceof DBSchemaObject) {
+                return isEditable(parentObject);
             }
-            return editable;
         }
-        return false;
+        return editable;
     }
 
     private void openSchemaObject(@NotNull DBFileOpenHandle<DBSchemaObject> handle) {

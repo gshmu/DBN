@@ -24,7 +24,7 @@ public final class Background {
                             threadInfo,
                             BACKGROUND,
                             runnable);
-                } catch (ProcessCanceledException | UnsupportedOperationException| InterruptedException ignore) {
+                } catch (ProcessCanceledException | UnsupportedOperationException | InterruptedException ignore) {
                 } catch (Throwable e) {
                     log.error("Error executing background task", e);
                 }

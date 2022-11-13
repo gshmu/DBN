@@ -498,35 +498,34 @@ public class ConnectionManager extends ProjectComponentBase implements Persisten
 
     @Override
     public boolean canCloseProject() {
-        if (hasUncommittedChanges()) {
-            boolean exitApp = InternalApi.isAppExitInProgress();
-            Project project = getProject();
-            DatabaseTransactionManager transactionManager = DatabaseTransactionManager.getInstance(project);
-            TransactionManagerSettings transactionManagerSettings = transactionManager.getSettings();
-            InteractiveOptionBroker<TransactionOption> closeProjectOptionHandler = transactionManagerSettings.getCloseProject();
+        if (!hasUncommittedChanges()) return true;
 
-            closeProjectOptionHandler.resolve(
-                    list(project.getName()),
-                    option -> {
-                        switch (option) {
-                            case COMMIT: {
-                                commitAll(() -> closeProject(exitApp));
-                                break;
-                            }
-                            case ROLLBACK: {
-                                rollbackAll(() -> closeProject(exitApp));
-                                break;
-                            }
-                            case REVIEW_CHANGES: {
-                                transactionManager.showPendingTransactionsOverviewDialog(null);
-                                break;
-                            }
+        boolean exitApp = InternalApi.isAppExitInProgress();
+        Project project = getProject();
+        DatabaseTransactionManager transactionManager = DatabaseTransactionManager.getInstance(project);
+        TransactionManagerSettings transactionManagerSettings = transactionManager.getSettings();
+        InteractiveOptionBroker<TransactionOption> closeProjectOptionHandler = transactionManagerSettings.getCloseProject();
+
+        closeProjectOptionHandler.resolve(
+                list(project.getName()),
+                option -> {
+                    switch (option) {
+                        case COMMIT: {
+                            commitAll(() -> closeProject(exitApp));
+                            break;
                         }
-                    });
+                        case ROLLBACK: {
+                            rollbackAll(() -> closeProject(exitApp));
+                            break;
+                        }
+                        case REVIEW_CHANGES: {
+                            transactionManager.showPendingTransactionsOverviewDialog(null);
+                            break;
+                        }
+                    }
+                });
 
-            return false;
-        }
-        return true;
+        return false;
     }
 
     /*********************************************************
