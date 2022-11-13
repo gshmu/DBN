@@ -1,9 +1,9 @@
 package com.dci.intellij.dbn.execution.statement.variables.ui;
 
 import com.dci.intellij.dbn.common.Icons;
+import com.dci.intellij.dbn.common.ui.form.DBNFormBase;
 import com.dci.intellij.dbn.common.ui.listener.ComboBoxSelectionKeyListener;
 import com.dci.intellij.dbn.common.ui.misc.DBNComboBox;
-import com.dci.intellij.dbn.common.ui.form.DBNFormBase;
 import com.dci.intellij.dbn.common.util.Strings;
 import com.dci.intellij.dbn.data.editor.ui.ListPopupValuesProvider;
 import com.dci.intellij.dbn.data.editor.ui.TextFieldPopupType;
@@ -21,20 +21,12 @@ import com.intellij.ui.DocumentAdapter;
 import com.intellij.util.ui.UIUtil;
 import org.jetbrains.annotations.NotNull;
 
-import javax.swing.JCheckBox;
-import javax.swing.JComponent;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.JTextField;
+import javax.swing.*;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
-import java.awt.BorderLayout;
-import java.awt.Dimension;
-import java.util.ArrayList;
-import java.util.Collections;
+import java.awt.*;
 import java.util.List;
-import java.util.Objects;
-import java.util.Set;
+import java.util.*;
 
 
 public class StatementExecutionVariableValueForm extends DBNFormBase {
@@ -205,8 +197,8 @@ public class StatementExecutionVariableValueForm extends DBNFormBase {
 
     protected int[] getMetrics(int[] metrics) {
         return new int[] {
-            (int) Math.max(metrics[0], variableNameLabel.getPreferredSize().getWidth()),
-            (int) Math.max(metrics[1], valueFieldPanel.getPreferredSize().getWidth())};
+            Math.max(metrics[0], (int) variableNameLabel.getPreferredSize().getWidth()),
+            Math.max(metrics[1], (int) valueFieldPanel.getPreferredSize().getWidth())};
     }
 
     protected void adjustMetrics(int[] metrics) {

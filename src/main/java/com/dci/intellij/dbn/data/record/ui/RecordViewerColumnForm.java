@@ -11,12 +11,8 @@ import com.intellij.openapi.project.Project;
 import com.intellij.util.ui.UIUtil;
 import org.jetbrains.annotations.NotNull;
 
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.JTextField;
-import java.awt.BorderLayout;
-import java.awt.Cursor;
-import java.awt.Dimension;
+import javax.swing.*;
+import java.awt.*;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
@@ -85,8 +81,8 @@ public class RecordViewerColumnForm extends DBNFormBase {
 
     protected int[] getMetrics(@NotNull int[] metrics) {
         return new int[] {
-            (int) Math.max(metrics[0], columnLabel.getPreferredSize().getWidth()),
-            (int) Math.max(metrics[1], dataTypeLabel.getPreferredSize().getWidth())};
+                Math.max(metrics[0], (int) columnLabel.getPreferredSize().getWidth()),
+                Math.max(metrics[1], (int) dataTypeLabel.getPreferredSize().getWidth())};
     }
 
     protected void adjustMetrics(@NotNull int[] metrics) {
@@ -117,7 +113,7 @@ public class RecordViewerColumnForm extends DBNFormBase {
         @Override
         public void keyPressed(KeyEvent e) {
             if (!e.isConsumed()) {
-                RecordViewerForm parentForm = (RecordViewerForm) ensureParent();
+                RecordViewerForm parentForm = ensureParent();
                 if (e.getKeyCode() == 38) {//UP
                     parentForm.focusPreviousColumnPanel(RecordViewerColumnForm.this);
                     e.consume();
