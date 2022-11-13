@@ -5,7 +5,6 @@ import com.dci.intellij.dbn.common.component.PersistentState;
 import com.dci.intellij.dbn.common.component.ProjectComponentBase;
 import com.dci.intellij.dbn.common.event.ProjectEvents;
 import com.dci.intellij.dbn.common.notification.NotificationGroup;
-import com.dci.intellij.dbn.common.thread.Dispatch;
 import com.dci.intellij.dbn.common.thread.Write;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.database.DatabaseDDLInterface;
@@ -20,7 +19,6 @@ import com.intellij.openapi.components.State;
 import com.intellij.openapi.components.Storage;
 import com.intellij.openapi.fileTypes.*;
 import com.intellij.openapi.project.Project;
-import com.intellij.util.Alarm;
 import org.jdom.Element;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -29,6 +27,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import static com.dci.intellij.dbn.common.component.Components.projectService;
 
@@ -45,19 +44,12 @@ public class DDLFileManager extends ProjectComponentBase implements PersistentSt
         ProjectEvents.subscribe(project, this, FileTypeManager.TOPIC, fileTypeListener);
     }
 
-    private final Alarm extensionRegisterer = Dispatch.alarm(DDLFileManager.this);
-
     public void registerExtensions(DDLFileExtensionSettings settings) {
-        Dispatch.alarmRequest(extensionRegisterer, 0, false, () ->
-                Write.run(getProject(), () -> {
-                    FileTypeManager fileTypeManager = FileTypeManager.getInstance();
-                    List<DDLFileType> ddlFileTypeList = settings.getFileTypes();
-                    for (DDLFileType ddlFileType : ddlFileTypeList) {
-                        for (String extension : ddlFileType.getExtensions()) {
-                            fileTypeManager.associateExtension(ddlFileType.getLanguageFileType(), extension);
-                        }
-                    }
-                }));
+        Write.run(getProject(), () -> {
+            FileTypeManager fileTypeManager = FileTypeManager.getInstance();
+            List<DDLFileType> fileTypes = settings.getFileTypes();
+            fileTypes.forEach(ft -> ft.getExtensions().forEach(e -> fileTypeManager.associateExtension(ft.getLanguageFileType(), e)));
+        });
     }
 
     public static DDLFileManager getInstance(@NotNull Project project) {
@@ -79,20 +71,19 @@ public class DDLFileManager extends ProjectComponentBase implements PersistentSt
     String createDDLStatement(DBSourceCodeVirtualFile sourceCodeFile, DBContentType contentType) {
         DBSchemaObject object = sourceCodeFile.getObject();
         String content = sourceCodeFile.getOriginalContent().toString().trim();
-        if (content.length() > 0) {
-            ConnectionHandler connection = object.getConnection();
-            String alternativeStatementDelimiter = connection.getSettings().getDetailSettings().getAlternativeStatementDelimiter();
-            DatabaseDDLInterface ddlInterface = connection.getInterfaceProvider().getDdlInterface();
-            return ddlInterface.createDDLStatement(getProject(),
-                    object.getObjectType().getTypeId(),
-                    connection.getUserName(),
-                    object.getSchema().getName(),
-                    object.getName(),
-                    contentType,
-                    content,
-                    alternativeStatementDelimiter);
-        }
-        return "";
+        if (content.length() == 0) return "";
+
+        ConnectionHandler connection = object.getConnection();
+        String alternativeStatementDelimiter = connection.getSettings().getDetailSettings().getAlternativeStatementDelimiter();
+        DatabaseDDLInterface ddlInterface = connection.getInterfaceProvider().getDdlInterface();
+        return ddlInterface.createDDLStatement(getProject(),
+                object.getObjectType().getTypeId(),
+                connection.getUserName(),
+                object.getSchema().getName(),
+                object.getName(),
+                contentType,
+                content,
+                alternativeStatementDelimiter);
     }
 
 
@@ -105,14 +96,9 @@ public class DDLFileManager extends ProjectComponentBase implements PersistentSt
     @NotNull
     List<DDLFileType> getDDLFileTypes(DBObjectType objectType) {
         Collection<DDLFileTypeId> typeIds = objectType.getDdlFileTypeIds();
-        if (typeIds != null) {
-            List<DDLFileType> ddlFileTypes = new ArrayList<>();
-            for (DDLFileTypeId typeId : typeIds) {
-                ddlFileTypes.add(getDDLFileType(typeId));
-            }
-            return ddlFileTypes;
-        }
-        return Collections.emptyList();
+        if (typeIds == null) return Collections.emptyList();
+
+        return typeIds.stream().map(id -> getDDLFileType(id)).collect(Collectors.toList());
     }
 
 
@@ -173,6 +159,10 @@ public class DDLFileManager extends ProjectComponentBase implements PersistentSt
 
     @Override
     public void loadState(@NotNull Element element) {
+    }
 
+    @Override
+    public void initializeComponent() {
+        registerExtensions(getExtensionSettings());
     }
 }

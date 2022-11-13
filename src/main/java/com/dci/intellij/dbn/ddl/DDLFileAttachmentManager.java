@@ -428,7 +428,8 @@ public class DDLFileAttachmentManager extends ProjectComponentBase implements Pe
 
         } else if (ddlFileTypes.size() == 1 && ddlFileTypes.get(0).getExtensions().size() == 1) {
             DDLFileType ddlFileType = ddlFileTypes.get(0);
-            return new DDLFileNameProvider(objectRef, ddlFileType, ddlFileType.getExtensions().get(0));
+            String extension = ddlFileType.getFirstExtension();
+            return new DDLFileNameProvider(objectRef, ddlFileType, extension);
         } else if (ddlFileTypes.size() > 1) {
             List<DDLFileNameProvider> fileNameProviders = new ArrayList<>();
             for (DDLFileType ddlFileType : ddlFileTypes) {

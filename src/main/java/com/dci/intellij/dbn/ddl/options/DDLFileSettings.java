@@ -2,15 +2,12 @@ package com.dci.intellij.dbn.ddl.options;
 
 import com.dci.intellij.dbn.common.options.CompositeProjectConfiguration;
 import com.dci.intellij.dbn.common.options.Configuration;
-import com.dci.intellij.dbn.ddl.DDLFileManager;
 import com.dci.intellij.dbn.ddl.options.ui.DDFileSettingsForm;
 import com.dci.intellij.dbn.options.ConfigId;
 import com.dci.intellij.dbn.options.ProjectSettings;
 import com.dci.intellij.dbn.options.ProjectSettingsManager;
 import com.dci.intellij.dbn.options.TopLevelConfig;
-import com.intellij.openapi.project.DumbAwareRunnable;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.startup.StartupManager;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import org.jetbrains.annotations.NotNull;
@@ -19,14 +16,10 @@ import org.jetbrains.annotations.NotNull;
 @EqualsAndHashCode(callSuper = false)
 public class DDLFileSettings extends CompositeProjectConfiguration<ProjectSettings, DDFileSettingsForm> implements TopLevelConfig {
     private final DDLFileExtensionSettings extensionSettings = new DDLFileExtensionSettings(this);
-    private final DDLFileGeneralSettings generalSettings     = new DDLFileGeneralSettings(this);
+    private final DDLFileGeneralSettings generalSettings = new DDLFileGeneralSettings(this);
 
     public DDLFileSettings(ProjectSettings parent) {
         super(parent);
-        Project project = parent.getProject();
-        DDLFileManager ddlFileManager = DDLFileManager.getInstance(project);
-        StartupManager startupManager = StartupManager.getInstance(project);
-        startupManager.registerPostStartupActivity((DumbAwareRunnable) () -> ddlFileManager.registerExtensions(getExtensionSettings()));
     }
 
     public static DDLFileSettings getInstance(@NotNull Project project) {
