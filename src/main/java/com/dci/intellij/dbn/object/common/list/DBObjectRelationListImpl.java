@@ -18,12 +18,7 @@ import com.intellij.openapi.project.Project;
 import lombok.Getter;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
+import java.util.*;
 
 import static com.dci.intellij.dbn.common.util.Commons.nvl;
 
@@ -134,30 +129,30 @@ class DBObjectRelationListImpl<T extends DBObjectRelation> extends DynamicConten
         @Override
         protected void afterUpdate() {
             List<T> elements = getAllElements();
-            if (!elements.isEmpty()) {
-                Map<DBObjectRef, Range> ranges = new HashMap<>();
+            if (elements.isEmpty()) return;
 
-                DBObjectRef currentObject = null;
-                int currentNameOffset = 0;
-                for (int i = 0; i < elements.size(); i++) {
-                    T objectRelation = elements.get(i);
-                    DBObject sourceObject = objectRelation.getSourceObject();
-                    DBObject object = Commons.nvl(sourceObject.getParentObject(), sourceObject);
-                    currentObject = nvl(currentObject, object.ref());
+            Map<DBObjectRef, Range> ranges = new HashMap<>();
 
-                    if (!Objects.equals(currentObject, object.ref())) {
-                        ranges.put(currentObject, new Range(currentNameOffset, i - 1));
-                        currentObject = object.ref();
-                        currentNameOffset = i;
-                    }
+            DBObjectRef currentObject = null;
+            int rangeStart = 0;
+            for (int i = 0; i < elements.size(); i++) {
+                T objectRelation = elements.get(i);
+                DBObject sourceObject = objectRelation.getSourceObject();
+                DBObject object = Commons.nvl(sourceObject.getParentObject(), sourceObject);
+                currentObject = nvl(currentObject, object.ref());
 
-                    if (i == elements.size() - 1) {
-                        ranges.put(currentObject, new Range(currentNameOffset, i));
-                    }
+                if (!Objects.equals(currentObject, object.ref())) {
+                    ranges.put(currentObject, new Range(rangeStart, i - 1));
+                    currentObject = object.ref();
+                    rangeStart = i;
                 }
 
-                this.ranges = ranges;
+                if (i == elements.size() - 1) {
+                    ranges.put(currentObject, new Range(rangeStart, i));
+                }
             }
+
+            this.ranges = ranges;
         }
 
         public List<T> getChildElements(DatabaseEntity entity) {

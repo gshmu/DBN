@@ -1,10 +1,6 @@
 package com.dci.intellij.dbn.common.content.loader;
 
-import com.dci.intellij.dbn.common.content.DynamicContent;
-import com.dci.intellij.dbn.common.content.DynamicContentElement;
-import com.dci.intellij.dbn.common.content.DynamicContentProperty;
-import com.dci.intellij.dbn.common.content.DynamicContentType;
-import com.dci.intellij.dbn.common.content.GroupedDynamicContent;
+import com.dci.intellij.dbn.common.content.*;
 import com.dci.intellij.dbn.common.content.dependency.ContentDependencyAdapter;
 import com.dci.intellij.dbn.common.content.dependency.SubcontentDependencyAdapter;
 import com.dci.intellij.dbn.common.thread.ThreadMonitor;
@@ -58,7 +54,7 @@ public class DynamicSubcontentLoader<T extends DynamicContentElement, M extends 
                 alternativeLoader.loadContent(content, false);
 
             } else if (sourceContent instanceof GroupedDynamicContent) {
-                GroupedDynamicContent groupedContent = (GroupedDynamicContent) sourceContent;
+                GroupedDynamicContent<T> groupedContent = (GroupedDynamicContent<T>) sourceContent;
                 DatabaseEntity parent = content.ensureParentEntity();
                 List<T> list = groupedContent.getChildElements(parent);
                 content.setElements(list);
