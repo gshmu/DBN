@@ -22,12 +22,9 @@ import com.intellij.openapi.project.Project;
 import com.intellij.util.ui.UIUtil;
 import org.jetbrains.annotations.NotNull;
 
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.JTextField;
+import javax.swing.*;
 import javax.swing.event.DocumentListener;
-import java.awt.BorderLayout;
-import java.awt.Dimension;
+import java.awt.*;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -186,15 +183,17 @@ public class MethodExecutionInputTypeAttributeForm extends DBNFormBase {
     }
 
     protected int[] getMetrics(int[] metrics) {
-        if (metrics == null) metrics = new int[]{0, 0};
+        if (metrics == null) metrics = new int[]{0, 0, 0};
         return new int[] {
-                (int) Math.max(metrics[0], attributePanel.getPreferredSize().getWidth()),
-                (int) Math.max(metrics[1], inputFieldPanel.getPreferredSize().getWidth())};
+                Math.max(metrics[0], (int) attributePanel.getPreferredSize().getWidth()),
+                Math.max(metrics[1], (int) inputFieldPanel.getPreferredSize().getWidth()),
+                Math.max(metrics[2], (int) attributeTypeLabel.getPreferredSize().getWidth())};
     }
 
     protected void adjustMetrics(int[] metrics) {
         attributePanel.setPreferredSize(new Dimension(metrics[0], attributePanel.getHeight()));
         inputFieldPanel.setPreferredSize(new Dimension(metrics[1], inputFieldPanel.getHeight()));
+        attributeTypeLabel.setPreferredSize(new Dimension(metrics[2], attributeTypeLabel.getHeight()));
     }
 
     public void addDocumentListener(DocumentListener documentListener){

@@ -162,8 +162,8 @@ public class DatasetRecordEditorColumnForm extends DBNFormBase {
 
     protected int[] getMetrics(int[] metrics) {
         return new int[] {
-            (int) Math.max(metrics[0], columnLabel.getPreferredSize().getWidth()),
-            (int) Math.max(metrics[1], dataTypeLabel.getPreferredSize().getWidth())};
+            Math.max(metrics[0], (int) columnLabel.getPreferredSize().getWidth()),
+            Math.max(metrics[1], (int) dataTypeLabel.getPreferredSize().getWidth())};
     }
 
     protected void adjustMetrics(int[] metrics) {
