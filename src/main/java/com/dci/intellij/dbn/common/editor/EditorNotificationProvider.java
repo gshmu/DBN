@@ -2,6 +2,7 @@ package com.dci.intellij.dbn.common.editor;
 
 import com.dci.intellij.dbn.common.compatibility.LegacyEditorNotificationsProvider;
 import com.dci.intellij.dbn.common.thread.Dispatch;
+import com.dci.intellij.dbn.common.util.Editors;
 import com.dci.intellij.dbn.vfs.file.DBContentVirtualFile;
 import com.intellij.openapi.project.Project;
 import com.intellij.ui.EditorNotifications;
@@ -19,7 +20,7 @@ public abstract class EditorNotificationProvider<T extends EditorNotificationPan
 
     public void updateEditorNotification(@NotNull Project project, @Nullable DBContentVirtualFile databaseContentFile) {
         Dispatch.run(() -> {
-            EditorNotifications notifications = EditorNotifications.getInstance(project);
+            EditorNotifications notifications = Editors.getNotifications(project);
             if (databaseContentFile ==  null) {
                 notifications.updateAllNotifications();
             } else {

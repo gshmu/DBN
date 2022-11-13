@@ -2,6 +2,7 @@ package com.dci.intellij.dbn.editor.session;
 
 import com.dci.intellij.dbn.common.compatibility.LegacyEditorNotificationsProvider;
 import com.dci.intellij.dbn.common.event.ProjectEvents;
+import com.dci.intellij.dbn.common.util.Editors;
 import com.dci.intellij.dbn.common.util.Strings;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.editor.session.ui.SessionBrowserErrorNotificationPanel;
@@ -34,7 +35,7 @@ public class SessionBrowserNotificationProvider extends LegacyEditorNotification
             if (virtualFile instanceof DBSessionBrowserVirtualFile) {
                 DBSessionBrowserVirtualFile databaseFile = (DBSessionBrowserVirtualFile) virtualFile;
                 Project project = databaseFile.getProject();
-                EditorNotifications notifications = EditorNotifications.getInstance(project);
+                EditorNotifications notifications = Editors.getNotifications(project);;
                 notifications.updateNotifications(virtualFile);
             }
         };

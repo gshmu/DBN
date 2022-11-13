@@ -2,6 +2,7 @@ package com.dci.intellij.dbn.connection.mapping;
 
 import com.dci.intellij.dbn.common.editor.EditorNotificationProvider;
 import com.dci.intellij.dbn.common.event.ProjectEvents;
+import com.dci.intellij.dbn.common.util.Editors;
 import com.dci.intellij.dbn.connection.mapping.ui.FileConnectionContextNotificationPanel;
 import com.dci.intellij.dbn.language.psql.PSQLFileType;
 import com.dci.intellij.dbn.language.sql.SQLFileType;
@@ -56,7 +57,7 @@ public class FileConnectionContextNotificationProvider extends EditorNotificatio
                 VirtualFileWindow fileWindow = (VirtualFileWindow) file;
                 file = fileWindow.getDelegate();
             }
-            EditorNotifications notifications = EditorNotifications.getInstance(project);
+            EditorNotifications notifications = Editors.getNotifications(project);;
             notifications.updateNotifications(file);
         }
     };
