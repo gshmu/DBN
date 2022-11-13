@@ -1,8 +1,8 @@
 package com.dci.intellij.dbn.common.thread;
 
 import com.dci.intellij.dbn.common.dispose.Failsafe;
+import com.dci.intellij.dbn.common.routine.GuardedRunnable;
 import com.dci.intellij.dbn.common.routine.ThrowableCallable;
-import com.dci.intellij.dbn.common.util.Cancellable;
 import com.dci.intellij.dbn.common.util.Commons;
 import com.intellij.openapi.Disposable;
 import com.intellij.openapi.application.Application;
@@ -34,7 +34,7 @@ public final class Dispatch {
     public static void run(ModalityState modalityState, Runnable runnable) {
         Application application = ApplicationManager.getApplication();
         modalityState = Commons.nvl(modalityState, application.getDefaultModalityState());
-        application.invokeLater(() -> Cancellable.run(runnable), modalityState/*, ModalityState.NON_MODAL*/);
+        application.invokeLater(GuardedRunnable.of(runnable), modalityState/*, ModalityState.NON_MODAL*/);
     }
 
     public static <T, E extends Throwable> T call(boolean conditional, ThrowableCallable<T, E> callable) throws E{
