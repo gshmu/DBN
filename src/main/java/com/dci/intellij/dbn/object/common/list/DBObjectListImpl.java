@@ -547,29 +547,29 @@ public class DBObjectListImpl<T extends DBObject> extends DynamicContentImpl<T> 
         @Override
         protected void afterUpdate() {
             List<T> elements = getAllElements();
-            if (!elements.isEmpty()) {
-                Map<DBObjectRef, Range> ranges = new HashMap<>();
+            if (elements.isEmpty()) return;
 
-                DBObjectRef currentParent = null;
-                int currentOffset = 0;
-                for (int i = 0; i < elements.size(); i++) {
-                    T object = elements.get(i);
-                    DBObjectRef parent = object.getParentObject().ref();
-                    currentParent = nvl(currentParent, parent);
+            Map<DBObjectRef, Range> ranges = new HashMap<>();
 
-                    if (!Objects.equals(currentParent, parent)) {
-                        ranges.put(currentParent, new Range(currentOffset, i - 1));
-                        currentParent = parent;
-                        currentOffset = i;
-                    }
+            DBObjectRef currentParent = null;
+            int rangeStart = 0;
+            for (int i = 0; i < elements.size(); i++) {
+                T object = elements.get(i);
+                DBObjectRef parent = object.getParentObject().ref();
+                currentParent = nvl(currentParent, parent);
 
-                    if (i == elements.size() - 1) {
-                        ranges.put(currentParent, new Range(currentOffset, i));
-                    }
+                if (!Objects.equals(currentParent, parent)) {
+                    ranges.put(currentParent, new Range(rangeStart, i - 1));
+                    currentParent = parent;
+                    rangeStart = i;
                 }
 
-                this.ranges = ranges;
+                if (i == elements.size() - 1) {
+                    ranges.put(currentParent, new Range(rangeStart, i));
+                }
             }
+
+            this.ranges = ranges;
         }
 
         public List<T> getChildElements(DatabaseEntity entity) {
