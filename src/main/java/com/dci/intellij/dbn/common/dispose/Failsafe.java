@@ -38,6 +38,10 @@ public class Failsafe {
         return true;
     }
 
+    public static boolean invalid(Object object) {
+        return !check(object);
+    }
+
     public static boolean check(Object object) {
         if (object == null) {
             return false;

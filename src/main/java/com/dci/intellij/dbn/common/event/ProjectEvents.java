@@ -20,14 +20,15 @@ public final class ProjectEvents {
 
     public static <T> void subscribe(@NotNull Project project, @Nullable Disposable parentDisposable, Topic<T> topic, T handler) {
         try {
-            if (Failsafe.check(project)) {
-                MessageBus messageBus = messageBus(project);
-                MessageBusConnection connection = parentDisposable == null ?
-                        messageBus.connect() :
-                        messageBus.connect(Failsafe.nd(parentDisposable));
+            Failsafe.nd(project);
+            if (project.isDefault()) return;;
 
-                connection.subscribe(topic, handler);
-            }
+            MessageBus messageBus = messageBus(project);
+            MessageBusConnection connection = parentDisposable == null ?
+                    messageBus.connect() :
+                    messageBus.connect(Failsafe.nd(parentDisposable));
+
+            connection.subscribe(topic, handler);
         } catch (ProcessCanceledException ignore) {}
     }
 

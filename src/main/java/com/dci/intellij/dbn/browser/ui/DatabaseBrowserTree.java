@@ -207,12 +207,12 @@ public final class DatabaseBrowserTree extends DBNTree {
     }
 
     public void expand(BrowserTreeNode treeNode) {
-        if (treeNode.canExpand()) {
-            expandPath(DatabaseBrowserUtils.createTreePath(treeNode));
-            for (int i = 0; i < treeNode.getChildCount(); i++) {
-                BrowserTreeNode childTreeNode = treeNode.getChildAt(i);
-                expand(childTreeNode);
-            }
+        if (!treeNode.canExpand()) return;
+
+        expandPath(DatabaseBrowserUtils.createTreePath(treeNode));
+        for (int i = 0; i < treeNode.getChildCount(); i++) {
+            BrowserTreeNode childTreeNode = treeNode.getChildAt(i);
+            expand(childTreeNode);
         }
     }
 
@@ -232,42 +232,42 @@ public final class DatabaseBrowserTree extends DBNTree {
     }
 
     private void processSelectEvent(InputEvent event, TreePath path, boolean deliberate) {
-        if (path != null) {
-            Object lastPathEntity = path.getLastPathComponent();
-            if (lastPathEntity instanceof DBObject) {
-                DBObject object = (DBObject) lastPathEntity;
-                DatabaseFileSystem databaseFileSystem = DatabaseFileSystem.getInstance();
-                Project project = ensureProject();
-                if (object instanceof DBConsole) {
-                    DBConsole console = (DBConsole) object;
-                    FileEditorManager fileEditorManager = FileEditorManager.getInstance(project);
-                    fileEditorManager.openFile(console.getVirtualFile(), true);
-                    event.consume();
-                } else if (object.is(DBObjectProperty.EDITABLE)) {
-                    DBSchemaObject schemaObject = (DBSchemaObject) object;
-                    databaseFileSystem.connectAndOpenEditor(schemaObject, null, false, deliberate);
-                    event.consume();
+        if (path == null) return;
 
-                } else if (object.is(DBObjectProperty.NAVIGABLE)) {
-                    databaseFileSystem.connectAndOpenEditor(object, null, false, deliberate);
-                    event.consume();
+        Object lastPathEntity = path.getLastPathComponent();
+        if (lastPathEntity instanceof DBObject) {
+            DBObject object = (DBObject) lastPathEntity;
+            DatabaseFileSystem databaseFileSystem = DatabaseFileSystem.getInstance();
+            Project project = ensureProject();
+            if (object instanceof DBConsole) {
+                DBConsole console = (DBConsole) object;
+                FileEditorManager fileEditorManager = FileEditorManager.getInstance(project);
+                fileEditorManager.openFile(console.getVirtualFile(), true);
+                event.consume();
+            } else if (object.is(DBObjectProperty.EDITABLE)) {
+                DBSchemaObject schemaObject = (DBSchemaObject) object;
+                databaseFileSystem.connectAndOpenEditor(schemaObject, null, false, deliberate);
+                event.consume();
 
-                } else if (deliberate) {
-                    Progress.prompt(project, "Loading object reference", true, progress -> {
-                        DBObject navigationObject = object.getDefaultNavigationObject();
-                        if (navigationObject != null) {
-                            Progress.check(progress);
-                            Dispatch.run(() -> navigationObject.navigate(true));
-                        }
-                    });
-                }
-            } else if (lastPathEntity instanceof DBObjectBundle) {
-                DBObjectBundle objectBundle = (DBObjectBundle) lastPathEntity;
-                ConnectionHandler connection = objectBundle.getConnection();
-                FileEditorManager fileEditorManager = FileEditorManager.getInstance(connection.getProject());
-                DBConsole defaultConsole = connection.getConsoleBundle().getDefaultConsole();
-                fileEditorManager.openFile(defaultConsole.getVirtualFile(), deliberate);
+            } else if (object.is(DBObjectProperty.NAVIGABLE)) {
+                databaseFileSystem.connectAndOpenEditor(object, null, false, deliberate);
+                event.consume();
+
+            } else if (deliberate) {
+                Progress.prompt(project, "Loading object reference", true, progress -> {
+                    DBObject navigationObject = object.getDefaultNavigationObject();
+                    if (navigationObject != null) {
+                        Progress.check(progress);
+                        Dispatch.run(() -> navigationObject.navigate(true));
+                    }
+                });
             }
+        } else if (lastPathEntity instanceof DBObjectBundle) {
+            DBObjectBundle objectBundle = (DBObjectBundle) lastPathEntity;
+            ConnectionHandler connection = objectBundle.getConnection();
+            FileEditorManager fileEditorManager = FileEditorManager.getInstance(connection.getProject());
+            DBConsole defaultConsole = connection.getConsoleBundle().getDefaultConsole();
+            fileEditorManager.openFile(defaultConsole.getVirtualFile(), deliberate);
         }
     }
     

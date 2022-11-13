@@ -1,7 +1,6 @@
 package com.dci.intellij.dbn.common.action;
 
 import com.dci.intellij.dbn.common.dispose.Failsafe;
-import com.dci.intellij.dbn.common.util.Cancellable;
 import com.dci.intellij.dbn.common.util.Commons;
 import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.AnActionEvent;
@@ -31,9 +30,9 @@ public abstract class ProjectAction extends AnAction {
             Project project = Commons.coalesce(
                     () -> getProject(),
                     () -> Lookups.getProject(e));
-            if (Failsafe.check(project)) {
-                actionPerformed(e, project);
-            }
+
+            Failsafe.nd(project);
+            actionPerformed(e, project);
         } catch (ProcessCanceledException ignore) {}
     }
 
@@ -49,14 +48,14 @@ public abstract class ProjectAction extends AnAction {
     public final void update(@NotNull AnActionEvent e) {
         try {
             Project project = Lookups.getProject(e);
-            if (Failsafe.check(project)) {
-                Cancellable.run(() -> update(e, project));
-            }
+            Failsafe.nd(project);
+            update(e, project);
         } catch (ProcessCanceledException ignore){}
     }
 
     protected void update(@NotNull AnActionEvent e, @NotNull Project project) {
-    };
+    }
 
     protected abstract void actionPerformed(@NotNull AnActionEvent e, @NotNull Project project);
 }
+

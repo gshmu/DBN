@@ -11,13 +11,14 @@ import org.jetbrains.annotations.NotNull;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
+@Getter
 public final class DBFileOpenHandle<T extends DBObject> {
     private static final Set<DBObjectRef<?>> REGISTRY = ConcurrentHashMap.newKeySet();
 
     private final DBObjectRef<T> object;
     private EditorProviderId editorProviderId;
-    private @Getter NavigationInstructions browserInstructions = NavigationInstructions.NONE;
-    private @Getter NavigationInstructions editorInstructions = NavigationInstructions.NONE;
+    private NavigationInstructions browserInstructions = NavigationInstructions.NONE;
+    private NavigationInstructions editorInstructions = NavigationInstructions.NONE;
 
     private DBFileOpenHandle(@NotNull T object) {
         this.object = DBObjectRef.of(object);
