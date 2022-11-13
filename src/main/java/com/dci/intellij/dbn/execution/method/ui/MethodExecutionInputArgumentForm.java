@@ -27,13 +27,9 @@ import com.intellij.openapi.project.Project;
 import com.intellij.util.ui.UIUtil;
 import org.jetbrains.annotations.NotNull;
 
-import javax.swing.BoxLayout;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.JTextField;
+import javax.swing.*;
 import javax.swing.event.DocumentListener;
-import java.awt.BorderLayout;
-import java.awt.Dimension;
+import java.awt.*;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -218,9 +214,9 @@ public class MethodExecutionInputArgumentForm extends DBNFormBase {
         }
 
         return new int[] {
-            (int) Math.max(metrics[0], argumentLabel.getPreferredSize().getWidth()),
-            (int) Math.max(metrics[1], inputFieldPanel.getPreferredSize().getWidth()),
-            (int) Math.max(metrics[2], argumentTypeLabel.getPreferredSize().getWidth())};
+                Math.max(metrics[0], (int) argumentLabel.getPreferredSize().getWidth()),
+                Math.max(metrics[1], (int) inputFieldPanel.getPreferredSize().getWidth()),
+                Math.max(metrics[2], (int) argumentTypeLabel.getPreferredSize().getWidth())};
     }
 
     protected void adjustMetrics(int[] metrics) {
