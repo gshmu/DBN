@@ -1,84 +1,81 @@
 package com.dci.intellij.dbn.connection;
 
-import com.dci.intellij.dbn.common.component.ApplicationComponentBase;
-import com.dci.intellij.dbn.common.component.Components;
-import com.dci.intellij.dbn.common.dispose.Failsafe;
-import com.dci.intellij.dbn.common.event.ProjectEvents;
 import com.dci.intellij.dbn.common.project.Projects;
-import com.dci.intellij.dbn.connection.config.ConnectionConfigListener;
-import com.intellij.openapi.progress.ProcessCanceledException;
+import com.dci.intellij.dbn.language.common.WeakRef;
 import com.intellij.openapi.project.Project;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
+import static com.dci.intellij.dbn.common.dispose.Failsafe.invalid;
 
-public class ConnectionCache extends ApplicationComponentBase {
-    private static final Map<ConnectionId, ConnectionHandler> cache = new ConcurrentHashMap<>();
+final class ConnectionCache {
+    private static Wrapper[] data = new Wrapper[50];
 
-    private static final ProcessCanceledException CANCELED_EXCEPTION = new ProcessCanceledException();
-
-    public ConnectionCache() {
-        super("DBNavigator.ConnectionCache");
-
-        Projects.projectOpened(project -> initializeCache(project));
-        Projects.projectClosed(project -> releaseCache(project));
-
-        ProjectEvents.subscribe(
-                ConnectionConfigListener.TOPIC,
-                ConnectionConfigListener.whenRemoved(id -> cache.remove(id)));
-    }
-
-    public static ConnectionCache getInstance() {
-        return Components.applicationService(ConnectionCache.class);
-    }
+    private ConnectionCache() {}
 
     @Nullable
-    public static ConnectionHandler resolveConnection(@Nullable ConnectionId connectionId) {
+    public static ConnectionHandler resolve(@Nullable ConnectionId connectionId) {
         if (connectionId == null) return null;
 
-        try {
-            return cache.computeIfAbsent(connectionId, id -> {
-                for (Project project : Projects.getOpenProjects()) {
-                    ConnectionManager connectionManager = ConnectionManager.getInstance(project);
-                    ConnectionHandler connection = connectionManager.getConnection(id);
-                    if (Failsafe.check(connection)) {
-                        return connection;
+        int index = connectionId.index();
+
+        if (data.length <= index || data[index] == null) {
+            synchronized (ConnectionCache.class) {
+                if (data.length <= index || data[index] == null) {
+
+                    // ensure capacity
+                    if (data.length <= index) {
+                        Wrapper[] oldCache = data;
+                        data = new Wrapper[data.length * 2];
+                        System.arraycopy(oldCache, 0, data, 0, oldCache.length);
+                    }
+
+                    // ensure entry
+                    for (Project project : Projects.getOpenProjects()) {
+                        ConnectionManager connectionManager = ConnectionManager.getInstance(project);
+                        ConnectionHandler connection = connectionManager.getConnection(connectionId);
+
+                        // cache as null if disposed
+                        if (invalid(connection)) connection = null;
+
+                        data[index] = new Wrapper(connection);
                     }
                 }
-                throw CANCELED_EXCEPTION;
-            });
-        } catch (ProcessCanceledException ignore) {}
+            }
+        }
 
-        return null;
+        Wrapper wrapper = data[index];
+        return wrapper == null ? null : wrapper.get();
     }
 
-    private static void initializeCache(@NotNull Project project) {
+    public static void releaseCache(@NotNull Project project) {
         if (project.isDefault()) return;
 
-        ConnectionManager connectionManager = ConnectionManager.getInstance(project);
-        List<ConnectionHandler> connections = connectionManager.getConnections();
-        connections.forEach(c -> cache.put(c.getConnectionId(), c));
+        for (int i = 0; i < data.length; i++) {
+            Wrapper wrapper = data[i];
+            if (wrapper == null) continue;
 
-    }
-
-    private static void releaseCache(@NotNull Project project) {
-        if (project.isDefault()) return;
-
-        Iterator<ConnectionId> connectionIds = cache.keySet().iterator();
-        while (connectionIds.hasNext()) {
-            ConnectionId connectionId = connectionIds.next();
-            ConnectionHandler connection = cache.get(connectionId);
-            if (connection.isDisposed() || connection.getProject() == project) {
-                connectionIds.remove();
+            ConnectionHandler connectionHandler = wrapper.get();
+            if (connectionHandler == null || connectionHandler.isDisposed() || connectionHandler.getProject() == project) {
+                data[i] = null;
             }
         }
     }
 
     private static void refreshConnections(@NotNull Project project) {
 
+    }
+
+
+    private static class Wrapper extends WeakRef<ConnectionHandler> {
+        protected Wrapper(ConnectionHandler referent) {
+            super(referent);
+        }
+
+        @Override
+        public String toString() {
+            ConnectionHandler connection = get();
+            return connection == null ? "null" : connection.getName();
+        }
     }
 }

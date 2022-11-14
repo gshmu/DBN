@@ -21,7 +21,7 @@ public final class ProjectEvents {
     public static <T> void subscribe(@NotNull Project project, @Nullable Disposable parentDisposable, Topic<T> topic, T handler) {
         try {
             Failsafe.nd(project);
-            if (project.isDefault()) return;;
+            if (project.isDefault()) return;
 
             MessageBus messageBus = messageBus(project);
             MessageBusConnection connection = parentDisposable == null ?
