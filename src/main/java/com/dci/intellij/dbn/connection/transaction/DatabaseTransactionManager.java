@@ -1,18 +1,17 @@
 package com.dci.intellij.dbn.connection.transaction;
 
 import com.dci.intellij.dbn.common.component.ProjectComponentBase;
+import com.dci.intellij.dbn.common.component.ProjectManagerListener;
 import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.common.event.ProjectEvents;
 import com.dci.intellij.dbn.common.load.ProgressMonitor;
+import com.dci.intellij.dbn.common.option.InteractiveOptionBroker;
 import com.dci.intellij.dbn.common.routine.ProgressRunnable;
 import com.dci.intellij.dbn.common.thread.Progress;
 import com.dci.intellij.dbn.common.util.Editors;
 import com.dci.intellij.dbn.common.util.InternalApi;
 import com.dci.intellij.dbn.common.util.Messages;
-import com.dci.intellij.dbn.connection.ConnectionHandler;
-import com.dci.intellij.dbn.connection.ConnectionHandlerStatusListener;
-import com.dci.intellij.dbn.connection.ConnectionId;
-import com.dci.intellij.dbn.connection.ConnectionType;
+import com.dci.intellij.dbn.connection.*;
 import com.dci.intellij.dbn.connection.jdbc.DBNConnection;
 import com.dci.intellij.dbn.connection.resource.ui.ResourceMonitorDialog;
 import com.dci.intellij.dbn.connection.session.DatabaseSession;
@@ -22,7 +21,6 @@ import com.dci.intellij.dbn.connection.transaction.ui.PendingTransactionsDialog;
 import com.dci.intellij.dbn.options.ProjectSettingsManager;
 import com.intellij.openapi.progress.ProcessCanceledException;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.project.ProjectManagerListener;
 import com.intellij.openapi.ui.DialogWrapper;
 import com.intellij.openapi.vfs.VirtualFile;
 import org.jetbrains.annotations.NotNull;
@@ -39,7 +37,7 @@ import static com.dci.intellij.dbn.common.util.Commons.list;
 import static com.dci.intellij.dbn.common.util.Lists.isLast;
 import static com.dci.intellij.dbn.connection.transaction.TransactionAction.*;
 
-public class DatabaseTransactionManager extends ProjectComponentBase implements ProjectManagerListener{
+public class DatabaseTransactionManager extends ProjectComponentBase implements ProjectManagerListener {
 
     public static final String COMPONENT_NAME = "DBNavigator.Project.TransactionManager";
 
@@ -331,6 +329,62 @@ public class DatabaseTransactionManager extends ProjectComponentBase implements 
             } else {
                 execute(connection, conn, actions(DISCONNECT), false, null);
             }
+        }
+    }
+
+    public boolean canCloseProject() {
+        Project project = getProject();
+        ConnectionManager connectionManager = ConnectionManager.getInstance(project);
+        if (!connectionManager.hasUncommittedChanges()) return true;
+
+        boolean exitApp = InternalApi.isAppExitInProgress();
+
+        TransactionManagerSettings transactionManagerSettings = getSettings();
+        InteractiveOptionBroker<TransactionOption> closeProjectOptionHandler = transactionManagerSettings.getCloseProject();
+
+        closeProjectOptionHandler.resolve(
+                list(project.getName()),
+                option -> {
+                    switch (option) {
+                        case COMMIT: {
+                            commitAll(() -> closeProject(exitApp));
+                            break;
+                        }
+                        case ROLLBACK: {
+                            rollbackAll(() -> closeProject(exitApp));
+                            break;
+                        }
+                        case REVIEW_CHANGES: {
+                            showPendingTransactionsOverviewDialog(null);
+                            break;
+                        }
+                    }
+                });
+
+        return false;
+    }
+
+    private void commitAll(@Nullable Runnable callback) {
+        Project project = getProject();
+        ConnectionManager connectionManager = ConnectionManager.getInstance(project);
+        List<ConnectionHandler> connections = connectionManager.getConnections(
+                connection -> connection.hasUncommittedChanges());
+
+        for (ConnectionHandler connection : connections) {
+            Runnable commitCallback = isLast(connections, connection) ? callback : null;
+            commit(connection, null, false, false, commitCallback);
+        }
+    }
+
+    private void rollbackAll(@Nullable Runnable callback) {
+        Project project = getProject();
+        ConnectionManager connectionManager = ConnectionManager.getInstance(project);
+        List<ConnectionHandler> connections = connectionManager.getConnections(
+                connection -> connection.hasUncommittedChanges());
+
+        for (ConnectionHandler connection : connections) {
+            Runnable rollbackCallback = isLast(connections, connection) ? callback : null;
+            rollback(connection, null, false, false, rollbackCallback);
         }
     }
 }

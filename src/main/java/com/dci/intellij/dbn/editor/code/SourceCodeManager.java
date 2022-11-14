@@ -3,6 +3,7 @@ package com.dci.intellij.dbn.editor.code;
 import com.dci.intellij.dbn.DatabaseNavigator;
 import com.dci.intellij.dbn.common.component.PersistentState;
 import com.dci.intellij.dbn.common.component.ProjectComponentBase;
+import com.dci.intellij.dbn.common.component.ProjectManagerListener;
 import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.common.editor.BasicTextEditor;
 import com.dci.intellij.dbn.common.editor.document.OverrideReadonlyFragmentModificationHandler;
@@ -76,7 +77,7 @@ import static com.dci.intellij.dbn.vfs.VirtualFileStatus.*;
     name = SourceCodeManager.COMPONENT_NAME,
     storages = @Storage(DatabaseNavigator.STORAGE_FILE)
 )
-public class SourceCodeManager extends ProjectComponentBase implements PersistentState {
+public class SourceCodeManager extends ProjectComponentBase implements PersistentState, ProjectManagerListener {
     public static final String COMPONENT_NAME = "DBNavigator.Project.SourceCodeManager";
 
     public static SourceCodeManager getInstance(@NotNull Project project) {
