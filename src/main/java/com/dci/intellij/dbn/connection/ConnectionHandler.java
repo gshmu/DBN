@@ -36,7 +36,7 @@ import java.util.List;
 public interface ConnectionHandler extends StatefulDisposable, EnvironmentTypeProvider, ConnectionProvider, Presentable, ConnectionIdProvider, Referenceable<ConnectionRef> {
     @Nullable
     static ConnectionHandler get(ConnectionId connectionId) {
-        return ConnectionCache.resolveConnection(connectionId);
+        return ConnectionCache.resolve(connectionId);
     }
 
     @NotNull

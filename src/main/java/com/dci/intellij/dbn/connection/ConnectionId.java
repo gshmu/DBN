@@ -14,8 +14,15 @@ public final class ConnectionId extends PseudoConstant<ConnectionId> {
     public static final ConnectionId UNKNOWN = get("unknown-connection");
     public static final ConnectionId DISPOSED = get("disposed-connection");
 
+    private final int index;
+
     private ConnectionId(String id) {
         super(id);
+        this.index = ConnectionIdIndex.next();
+    }
+
+    public int index() {
+        return index;
     }
 
     public static ConnectionId get(String id) {
