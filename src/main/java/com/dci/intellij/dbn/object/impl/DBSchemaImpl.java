@@ -17,7 +17,7 @@ import com.dci.intellij.dbn.connection.Resources;
 import com.dci.intellij.dbn.connection.SchemaId;
 import com.dci.intellij.dbn.connection.jdbc.DBNConnection;
 import com.dci.intellij.dbn.database.common.metadata.def.*;
-import com.dci.intellij.dbn.database.interfaces.DatabaseInterface;
+import com.dci.intellij.dbn.database.interfaces.DatabaseInterfaceInvoker;
 import com.dci.intellij.dbn.database.interfaces.DatabaseMetadataInterface;
 import com.dci.intellij.dbn.editor.DBContentType;
 import com.dci.intellij.dbn.object.*;
@@ -424,7 +424,7 @@ public class DBSchemaImpl extends DBObjectImpl<DBSchemaMetadata> implements DBSc
         Set<BrowserTreeNode> refreshNodes = resetObjectsStatus();
         ConnectionHandler connection = this.getConnection();
 
-        DatabaseInterface.run(true, connection, conn -> {
+        DatabaseInterfaceInvoker.run(connection.context(), conn -> {
             refreshValidStatus(refreshNodes, conn);
             refreshDebugStatus(refreshNodes, conn);
         });

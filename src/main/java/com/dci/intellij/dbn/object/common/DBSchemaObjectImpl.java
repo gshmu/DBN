@@ -3,13 +3,12 @@ package com.dci.intellij.dbn.object.common;
 import com.dci.intellij.dbn.common.content.DynamicContent;
 import com.dci.intellij.dbn.common.content.loader.DynamicContentResultSetLoader;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
-import com.dci.intellij.dbn.connection.PooledConnection;
 import com.dci.intellij.dbn.connection.Resources;
 import com.dci.intellij.dbn.connection.jdbc.DBNConnection;
 import com.dci.intellij.dbn.database.common.metadata.DBObjectMetadata;
 import com.dci.intellij.dbn.database.common.metadata.def.DBObjectDependencyMetadata;
 import com.dci.intellij.dbn.database.interfaces.DatabaseDataDefinitionInterface;
-import com.dci.intellij.dbn.database.interfaces.DatabaseInterface;
+import com.dci.intellij.dbn.database.interfaces.DatabaseInterfaceInvoker;
 import com.dci.intellij.dbn.database.interfaces.DatabaseMetadataInterface;
 import com.dci.intellij.dbn.editor.DBContentType;
 import com.dci.intellij.dbn.language.common.DBLanguage;
@@ -130,12 +129,12 @@ public abstract class DBSchemaObjectImpl<M extends DBObjectMetadata> extends DBO
 
     @Override
     public List<DBSchema> getReferencingSchemas() throws SQLException {
-        ConnectionHandler connection = getConnection();
-        return DatabaseInterface.call(true, connection, conn -> {
+        return DatabaseInterfaceInvoker.call(context(), conn -> {
             List<DBSchema> schemas = new ArrayList<>();
             ResultSet resultSet = null;
             try {
                 DBSchema schema = getSchema();
+                ConnectionHandler connection = getConnection();
                 DatabaseMetadataInterface metadataInterface = connection.getMetadataInterface();
                 resultSet = metadataInterface.loadReferencingSchemas(schema.getName(), getName(), conn);
                 DBObjectBundle objectBundle = connection.getObjectBundle();
@@ -159,8 +158,8 @@ public abstract class DBSchemaObjectImpl<M extends DBObjectMetadata> extends DBO
 
     @Override
     public void executeUpdateDDL(DBContentType contentType, String oldCode, String newCode) throws SQLException {
-        ConnectionHandler connection = this.getConnection();
-        PooledConnection.run(false, connection, getSchemaId(), conn -> {
+        DatabaseInterfaceInvoker.run(context(), conn -> {
+            ConnectionHandler connection = getConnection();
             DatabaseDataDefinitionInterface dataDefinition = connection.getDataDefinitionInterface();
             dataDefinition.updateObject(getName(), getObjectType().getName(), oldCode,  newCode, conn);
         });

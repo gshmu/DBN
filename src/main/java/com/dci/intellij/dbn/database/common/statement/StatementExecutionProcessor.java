@@ -3,6 +3,7 @@ package com.dci.intellij.dbn.database.common.statement;
 import com.dci.intellij.dbn.common.util.Commons;
 import com.dci.intellij.dbn.common.util.Compactables;
 import com.dci.intellij.dbn.common.util.Strings;
+import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.Resources;
 import com.dci.intellij.dbn.connection.jdbc.DBNConnection;
 import com.dci.intellij.dbn.connection.jdbc.DBNPreparedStatement;
@@ -10,7 +11,6 @@ import com.dci.intellij.dbn.connection.jdbc.DBNStatement;
 import com.dci.intellij.dbn.database.DatabaseActivityTrace;
 import com.dci.intellij.dbn.database.DatabaseCompatibility;
 import com.dci.intellij.dbn.database.common.statement.StatementExecutor.Context;
-import com.dci.intellij.dbn.database.interfaces.DatabaseInterface;
 import com.dci.intellij.dbn.database.interfaces.DatabaseInterfaces;
 import com.dci.intellij.dbn.diagnostics.DiagnosticsManager;
 import com.dci.intellij.dbn.diagnostics.data.DiagnosticBundle;
@@ -110,7 +110,7 @@ public class StatementExecutionProcessor {
             Object... arguments) throws SQLException {
 
         boolean hasFallback = statementDefinition.hasFallback();
-        DatabaseCompatibility compatibility = DatabaseInterface.getConnection().getCompatibility();
+        DatabaseCompatibility compatibility = ConnectionHandler.local().getCompatibility();
         DatabaseActivityTrace activityTrace = compatibility.getActivityTrace(statementDefinition.getId());
 
         if (forceExecution || activityTrace.canExecute(hasFallback)) {

@@ -5,13 +5,13 @@ import com.dci.intellij.dbn.common.util.Commons;
 import com.dci.intellij.dbn.common.util.Strings;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.jdbc.DBNConnection;
-import com.dci.intellij.dbn.connection.util.Jdbc.Callable;
 import com.dci.intellij.dbn.database.DatabaseCompatibility;
 import com.dci.intellij.dbn.database.JdbcProperty;
 import com.dci.intellij.dbn.database.common.util.CachedResultSet;
 import com.dci.intellij.dbn.database.common.util.CachedResultSetRow;
 import com.dci.intellij.dbn.database.interfaces.DatabaseCompatibilityInterface;
-import com.dci.intellij.dbn.database.interfaces.DatabaseInterface;
+import com.dci.intellij.dbn.database.interfaces.DatabaseInterface.Callable;
+import com.dci.intellij.dbn.database.interfaces.DatabaseInterfaceInvoker;
 
 import java.sql.DatabaseMetaData;
 import java.sql.ResultSet;
@@ -243,7 +243,7 @@ public interface GenericMetadataLoaders {
 
 
     static String[] lookupOwner(String ownerName, DBNConnection connection) throws SQLException {
-        return DatabaseInterface.cached(
+        return DatabaseInterfaceInvoker.cached(
                 key("CATALOG_SCHEMA", ownerName),
                 () -> {
                     if (is(JdbcProperty.CATALOG_AS_OWNER)) {
@@ -258,8 +258,8 @@ public interface GenericMetadataLoaders {
     }
 
     static CachedResultSet attemptCached(JdbcProperty feature, CacheKey<CachedResultSet> key, Callable<CachedResultSet> loader) throws SQLException{
-        return DatabaseInterface.cached(key, () -> {
-            ConnectionHandler connection = DatabaseInterface.getConnection();
+        return DatabaseInterfaceInvoker.cached(key, () -> {
+            ConnectionHandler connection = ConnectionHandler.local();
             DatabaseCompatibilityInterface compatibilityInterface = connection.getCompatibilityInterface();
             CachedResultSet resultSet = compatibilityInterface.attempt(feature, loader);
             return Commons.nvl(resultSet, CachedResultSet.EMPTY);
@@ -267,7 +267,7 @@ public interface GenericMetadataLoaders {
     }
 
     static DatabaseCompatibility getCompatibility() {
-        return DatabaseInterface.getConnection().getCompatibility();
+        return ConnectionHandler.local().getCompatibility();
     }
 
     static boolean is(JdbcProperty property) {

@@ -3,7 +3,7 @@ package com.dci.intellij.dbn.debugger;
 import com.dci.intellij.dbn.common.notification.NotificationGroup;
 import com.dci.intellij.dbn.common.notification.NotificationSupport;
 import com.dci.intellij.dbn.common.thread.ThreadPool;
-import com.dci.intellij.dbn.connection.util.Jdbc.Runnable;
+import com.dci.intellij.dbn.database.interfaces.DatabaseInterface.Runnable;
 import com.intellij.openapi.project.Project;
 import org.jetbrains.annotations.NotNull;
 

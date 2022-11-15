@@ -2,7 +2,6 @@ package com.dci.intellij.dbn.database.interfaces;
 
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.DatabaseAttachmentHandler;
-import com.dci.intellij.dbn.connection.util.Jdbc.Callable;
 import com.dci.intellij.dbn.data.sorting.SortDirection;
 import com.dci.intellij.dbn.database.DatabaseCompatibility;
 import com.dci.intellij.dbn.database.DatabaseFeature;
@@ -75,7 +74,7 @@ public abstract class DatabaseCompatibilityInterface implements DatabaseInterfac
     };
 
     public  <T> T attempt(JdbcProperty feature, Callable<T> loader) throws SQLException {
-        ConnectionHandler connection = DatabaseInterface.getConnection();
+        ConnectionHandler connection = ConnectionHandler.local();
         DatabaseCompatibility compatibility = connection.getCompatibility();
         try {
             if (compatibility.isSupported(feature)) {

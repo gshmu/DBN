@@ -20,7 +20,7 @@ import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.Resources;
 import com.dci.intellij.dbn.connection.jdbc.DBNResultSet;
 import com.dci.intellij.dbn.database.DatabaseFeature;
-import com.dci.intellij.dbn.database.interfaces.DatabaseInterface;
+import com.dci.intellij.dbn.database.interfaces.DatabaseInterfaceInvoker;
 import com.dci.intellij.dbn.database.interfaces.DatabaseMessageParserInterface;
 import com.dci.intellij.dbn.database.interfaces.DatabaseMetadataInterface;
 import com.dci.intellij.dbn.editor.session.model.SessionBrowserModel;
@@ -55,6 +55,7 @@ import static com.dci.intellij.dbn.common.util.Commons.list;
 public class SessionBrowserManager extends ProjectComponentBase implements PersistentState {
 
     public static final String COMPONENT_NAME = "DBNavigator.Project.SessionEditorManager";
+    public static final String EMPTY_CONTENT = "";
 
     private final List<DBSessionBrowserVirtualFile> openFiles = ContainerUtil.createConcurrentList();
     private Timer timestampUpdater;
@@ -116,9 +117,8 @@ public class SessionBrowserManager extends ProjectComponentBase implements Persi
 
     public SessionBrowserModel loadSessions(DBSessionBrowserVirtualFile sessionBrowserFile) {
         ConnectionHandler connection = sessionBrowserFile.getConnection();
-
         try {
-            return DatabaseInterface.call(true, connection, conn -> {
+            return DatabaseInterfaceInvoker.call(connection.context(), conn -> {
                         DBNResultSet resultSet = null;
                         try {
                             DatabaseMetadataInterface metadata = connection.getMetadataInterface();
@@ -137,28 +137,29 @@ public class SessionBrowserManager extends ProjectComponentBase implements Persi
     }
 
     public String loadSessionCurrentSql(ConnectionHandler connection, Object sessionId) {
-        if (DatabaseFeature.SESSION_CURRENT_SQL.isSupported(connection)) {
-            try {
-                return DatabaseInterface.call(true, connection, conn -> {
-                    ResultSet resultSet = null;
-                    try {
-                        DatabaseMetadataInterface metadata = connection.getMetadataInterface();
-                        resultSet = metadata.loadSessionCurrentSql(sessionId, conn);
-                        if (resultSet.next()) {
-                            return resultSet.getString(1);
-                        }
-                    } finally {
-                        Resources.close(resultSet);
+        if (!DatabaseFeature.SESSION_CURRENT_SQL.isSupported(connection)) return EMPTY_CONTENT;
+
+        try {
+            return DatabaseInterfaceInvoker.call(connection.context(), conn -> {
+                ResultSet resultSet = null;
+                try {
+                    DatabaseMetadataInterface metadata = connection.getMetadataInterface();
+                    resultSet = metadata.loadSessionCurrentSql(sessionId, conn);
+                    if (resultSet.next()) {
+                        return resultSet.getString(1);
                     }
-                    return "";
-                });
-            } catch (SQLException e) {
-                sendWarningNotification(
-                        NotificationGroup.SESSION_BROWSER,
-                        "Could not load current session SQL: {0}", e);
-            }
+                } finally {
+                    Resources.close(resultSet);
+                }
+                return EMPTY_CONTENT;
+            });
+        } catch (SQLException e) {
+            sendWarningNotification(
+                    NotificationGroup.SESSION_BROWSER,
+                    "Could not load current session SQL: {0}", e);
         }
-        return "";
+
+        return EMPTY_CONTENT;
     }
 
     public void interruptSessions(@NotNull SessionBrowser sessionBrowser, Map<Object, Object> sessionIds, SessionInterruptionType type) {
@@ -195,8 +196,7 @@ public class SessionBrowserManager extends ProjectComponentBase implements Persi
         Progress.prompt(project, taskAction, true, progress -> {
             try {
                 ConnectionHandler connection = sessionBrowser.getConnection();
-
-                DatabaseInterface.run(true, connection, conn -> {
+                DatabaseInterfaceInvoker.run(connection.context(), conn -> {
                     progress.setIndeterminate(false);
                     Map<Object, SQLException> errors = new HashMap<>();
                     DatabaseMetadataInterface metadata = connection.getMetadataInterface();

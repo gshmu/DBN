@@ -300,7 +300,7 @@ public class VirtualConnectionHandler extends StatefulDisposable.Base implements
     }
 
     @Override
-    public boolean hasPendingTransactions(@NotNull DBNConnection connection) {
+    public boolean hasPendingTransactions(@NotNull DBNConnection conn) {
         return false;
     }
 
