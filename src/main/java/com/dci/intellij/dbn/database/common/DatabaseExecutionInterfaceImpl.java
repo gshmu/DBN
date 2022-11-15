@@ -1,9 +1,9 @@
 package com.dci.intellij.dbn.database.common;
 
-import com.dci.intellij.dbn.database.DatabaseExecutionInterface;
 import com.dci.intellij.dbn.database.common.execution.MethodExecutionProcessor;
 import com.dci.intellij.dbn.database.common.execution.SimpleFunctionExecutionProcessor;
 import com.dci.intellij.dbn.database.common.execution.SimpleProcedureExecutionProcessor;
+import com.dci.intellij.dbn.database.interfaces.DatabaseExecutionInterface;
 import com.dci.intellij.dbn.object.DBFunction;
 import com.dci.intellij.dbn.object.DBMethod;
 import com.dci.intellij.dbn.object.DBProcedure;

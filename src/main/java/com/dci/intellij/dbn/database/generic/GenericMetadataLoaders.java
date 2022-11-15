@@ -1,17 +1,17 @@
 package com.dci.intellij.dbn.database.generic;
 
 import com.dci.intellij.dbn.common.cache.CacheKey;
-import com.dci.intellij.dbn.common.routine.ThrowableCallable;
 import com.dci.intellij.dbn.common.util.Commons;
 import com.dci.intellij.dbn.common.util.Strings;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.jdbc.DBNConnection;
+import com.dci.intellij.dbn.connection.util.Jdbc.Callable;
 import com.dci.intellij.dbn.database.DatabaseCompatibility;
-import com.dci.intellij.dbn.database.DatabaseCompatibilityInterface;
-import com.dci.intellij.dbn.database.DatabaseInterface;
 import com.dci.intellij.dbn.database.JdbcProperty;
 import com.dci.intellij.dbn.database.common.util.CachedResultSet;
 import com.dci.intellij.dbn.database.common.util.CachedResultSetRow;
+import com.dci.intellij.dbn.database.interfaces.DatabaseCompatibilityInterface;
+import com.dci.intellij.dbn.database.interfaces.DatabaseInterface;
 
 import java.sql.DatabaseMetaData;
 import java.sql.ResultSet;
@@ -19,7 +19,6 @@ import java.sql.SQLException;
 import java.util.Objects;
 
 import static com.dci.intellij.dbn.common.cache.CacheKey.key;
-import static com.dci.intellij.dbn.database.DatabaseInterface.cached;
 import static com.dci.intellij.dbn.database.generic.GenericMetadataTranslators.resolve;
 
 public interface GenericMetadataLoaders {
@@ -244,7 +243,7 @@ public interface GenericMetadataLoaders {
 
 
     static String[] lookupOwner(String ownerName, DBNConnection connection) throws SQLException {
-        return cached(
+        return DatabaseInterface.cached(
                 key("CATALOG_SCHEMA", ownerName),
                 () -> {
                     if (is(JdbcProperty.CATALOG_AS_OWNER)) {
@@ -258,10 +257,10 @@ public interface GenericMetadataLoaders {
                 });
     }
 
-    static CachedResultSet attemptCached(JdbcProperty feature, CacheKey<CachedResultSet> key, ThrowableCallable<CachedResultSet, SQLException> loader) throws SQLException{
-        return cached(key, () -> {
+    static CachedResultSet attemptCached(JdbcProperty feature, CacheKey<CachedResultSet> key, Callable<CachedResultSet> loader) throws SQLException{
+        return DatabaseInterface.cached(key, () -> {
             ConnectionHandler connection = DatabaseInterface.getConnection();
-            DatabaseCompatibilityInterface compatibilityInterface = connection.getInterfaceProvider().getCompatibilityInterface();
+            DatabaseCompatibilityInterface compatibilityInterface = connection.getCompatibilityInterface();
             CachedResultSet resultSet = compatibilityInterface.attempt(feature, loader);
             return Commons.nvl(resultSet, CachedResultSet.EMPTY);
         });

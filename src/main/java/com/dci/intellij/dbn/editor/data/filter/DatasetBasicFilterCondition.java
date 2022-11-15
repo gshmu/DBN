@@ -7,7 +7,7 @@ import com.dci.intellij.dbn.common.util.Strings;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.data.type.DBDataType;
 import com.dci.intellij.dbn.data.type.GenericDataType;
-import com.dci.intellij.dbn.database.DatabaseMetadataInterface;
+import com.dci.intellij.dbn.database.interfaces.DatabaseMetadataInterface;
 import com.dci.intellij.dbn.editor.data.filter.ui.DatasetBasicFilterConditionForm;
 import com.dci.intellij.dbn.object.DBColumn;
 import com.dci.intellij.dbn.object.DBDataset;
@@ -105,15 +105,15 @@ public class DatasetBasicFilterCondition extends BasicConfiguration<DatasetBasic
                 if (genericDataType == GenericDataType.LITERAL || genericDataType == GenericDataType.CLOB) {
                     value = quoteValue(value);
                 } else if (genericDataType == GenericDataType.DATE_TIME) {
-                    DatabaseMetadataInterface metadataInterface = connection.getInterfaceProvider().getMetadataInterface();
+                    DatabaseMetadataInterface metadata = connection.getMetadataInterface();
                     Formatter formatter = Formatter.getInstance(dataset.getProject());
                     try {
                         Date date = formatter.parseDateTime(value);
-                        value = metadataInterface.createDateString(date);
+                        value = metadata.createDateString(date);
                     } catch (ParseException e) {
                         try {
                             Date date = formatter.parseDate(value);
-                            value = metadataInterface.createDateString(date);
+                            value = metadata.createDateString(date);
                         } catch (ParseException e1) {
                             // value can be something like "sysdate" => not parseable
                             //e1.printStackTrace();

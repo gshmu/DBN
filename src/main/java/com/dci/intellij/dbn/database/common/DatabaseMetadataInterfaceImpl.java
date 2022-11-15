@@ -3,20 +3,20 @@ package com.dci.intellij.dbn.database.common;
 import com.dci.intellij.dbn.common.latent.Latent;
 import com.dci.intellij.dbn.connection.Resources;
 import com.dci.intellij.dbn.connection.jdbc.DBNConnection;
-import com.dci.intellij.dbn.database.DatabaseInterfaceProvider;
-import com.dci.intellij.dbn.database.DatabaseMetadataInterface;
 import com.dci.intellij.dbn.database.common.logging.ExecutionLogOutput;
+import com.dci.intellij.dbn.database.interfaces.DatabaseInterfaces;
+import com.dci.intellij.dbn.database.interfaces.DatabaseMetadataInterface;
 import org.jetbrains.annotations.NotNull;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.text.SimpleDateFormat;
 
-public abstract class DatabaseMetadataInterfaceImpl extends DatabaseInterfaceImpl implements DatabaseMetadataInterface {
+public abstract class DatabaseMetadataInterfaceImpl extends DatabaseInterfaceBase implements DatabaseMetadataInterface {
     protected static final Latent<SimpleDateFormat> META_DATE_FORMAT = Latent.thread(() -> new SimpleDateFormat("yyyy-MM-dd HH:mm:ss"));
 
-    public DatabaseMetadataInterfaceImpl(String fileName, DatabaseInterfaceProvider provider) {
-        super(fileName, provider);
+    public DatabaseMetadataInterfaceImpl(String fileName, DatabaseInterfaces interfaces) {
+        super(fileName, interfaces);
     }
 
     @Override

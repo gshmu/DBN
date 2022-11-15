@@ -6,9 +6,9 @@ import com.dci.intellij.dbn.common.util.Documents;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.jdbc.DBNConnection;
 import com.dci.intellij.dbn.connection.mapping.FileConnectionContextManager;
-import com.dci.intellij.dbn.database.DatabaseDebuggerInterface;
 import com.dci.intellij.dbn.database.common.debug.BreakpointInfo;
 import com.dci.intellij.dbn.database.common.debug.BreakpointOperationInfo;
+import com.dci.intellij.dbn.database.interfaces.DatabaseDebuggerInterface;
 import com.dci.intellij.dbn.debugger.DBDebugConsoleLogger;
 import com.dci.intellij.dbn.debugger.DBDebugUtil;
 import com.dci.intellij.dbn.debugger.common.breakpoint.DBBreakpointHandler;
@@ -171,7 +171,7 @@ public class DBJdbcBreakpointHandler extends DBBreakpointHandler<DBJdbcDebugProc
 
     private BreakpointInfo addBreakpoint(@NotNull XLineBreakpoint<XBreakpointProperties> breakpoint) throws Exception {
         ConnectionHandler connection = getConnection();
-        DatabaseDebuggerInterface debuggerInterface = connection.getInterfaceProvider().getDebuggerInterface();
+        DatabaseDebuggerInterface debuggerInterface = connection.getDebuggerInterface();
         DBNConnection debugConnection = getDebugConnection();
         DBSchemaObject object = getDatabaseObject(breakpoint);
         return object == null ?
@@ -189,7 +189,7 @@ public class DBJdbcBreakpointHandler extends DBBreakpointHandler<DBJdbcDebugProc
     private void removeBreakpoint(boolean temporary, Integer breakpointId) throws SQLException {
         ConnectionHandler connection = getConnection();
         DBNConnection debugConnection = getDebugConnection();
-        DatabaseDebuggerInterface debuggerInterface = connection.getInterfaceProvider().getDebuggerInterface();
+        DatabaseDebuggerInterface debuggerInterface = connection.getDebuggerInterface();
         if (temporary) {
             debuggerInterface.disableBreakpoint(breakpointId, debugConnection);
         } else {
@@ -203,7 +203,7 @@ public class DBJdbcBreakpointHandler extends DBBreakpointHandler<DBJdbcDebugProc
             ConnectionHandler connection = getConnection();
             DBNConnection debugConnection = getDebugConnection();
 
-            DatabaseDebuggerInterface debuggerInterface = connection.getInterfaceProvider().getDebuggerInterface();
+            DatabaseDebuggerInterface debuggerInterface = connection.getDebuggerInterface();
             BreakpointOperationInfo breakpointOperationInfo = debuggerInterface.enableBreakpoint(breakpointId, debugConnection);
             String error = breakpointOperationInfo.getError();
             if (error != null) {
@@ -217,7 +217,7 @@ public class DBJdbcBreakpointHandler extends DBBreakpointHandler<DBJdbcDebugProc
 
     private String disableBreakpoint(Integer breakpointId) throws SQLException {
         ConnectionHandler connection = getConnection();
-        DatabaseDebuggerInterface debuggerInterface = connection.getInterfaceProvider().getDebuggerInterface();
+        DatabaseDebuggerInterface debuggerInterface = connection.getDebuggerInterface();
         DBNConnection debugConnection = getDebugConnection();
         BreakpointOperationInfo breakpointOperationInfo = debuggerInterface.disableBreakpoint(breakpointId, debugConnection);
         return breakpointOperationInfo.getError();

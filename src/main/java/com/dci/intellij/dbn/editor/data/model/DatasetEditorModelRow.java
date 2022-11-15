@@ -186,7 +186,7 @@ public class DatasetEditorModelRow
 
     @NotNull
     ConnectionHandler getConnectionHandler() {
-        return getModel().getConnectionHandler();
+        return getModel().getConnection();
     }
 
     public boolean isResultSetUpdatable() {

@@ -16,10 +16,9 @@ import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.Resources;
 import com.dci.intellij.dbn.connection.SchemaId;
 import com.dci.intellij.dbn.connection.jdbc.DBNConnection;
-import com.dci.intellij.dbn.database.DatabaseCompatibilityInterface;
-import com.dci.intellij.dbn.database.DatabaseInterface;
-import com.dci.intellij.dbn.database.DatabaseMetadataInterface;
 import com.dci.intellij.dbn.database.common.metadata.def.*;
+import com.dci.intellij.dbn.database.interfaces.DatabaseInterface;
+import com.dci.intellij.dbn.database.interfaces.DatabaseMetadataInterface;
 import com.dci.intellij.dbn.editor.DBContentType;
 import com.dci.intellij.dbn.object.*;
 import com.dci.intellij.dbn.object.common.DBObject;
@@ -331,7 +330,7 @@ public class DBSchemaImpl extends DBObjectImpl<DBSchemaMetadata> implements DBSc
         DBDataset dataset = getTable(name);
         if (dataset == null) {
             dataset = getView(name);
-            if (dataset == null && DatabaseCompatibilityInterface.getInstance(this).supportsObjectType(MATERIALIZED_VIEW.getTypeId())) {
+            if (dataset == null && MATERIALIZED_VIEW.isSupported(this)) {
                 dataset = getMaterializedView(name);
             }
         }
@@ -344,7 +343,7 @@ public class DBSchemaImpl extends DBObjectImpl<DBSchemaMetadata> implements DBSc
     @Nullable
     private <T extends DBSchemaObject> T getObjectFallbackOnSynonym(DBObjectList<T> objects, String name) {
         T object = objects.getObject(name);
-        if (object == null && DatabaseCompatibilityInterface.getInstance(this).supportsObjectType(SYNONYM.getTypeId())) {
+        if (object == null && SYNONYM.isSupported(this)) {
             DBSynonym synonym = synonyms.getObject(name);
             if (synonym != null) {
                 DBObject underlyingObject = synonym.getUnderlyingObject();
@@ -425,64 +424,10 @@ public class DBSchemaImpl extends DBObjectImpl<DBSchemaMetadata> implements DBSc
         Set<BrowserTreeNode> refreshNodes = resetObjectsStatus();
         ConnectionHandler connection = this.getConnection();
 
-        DatabaseInterface.run(true,
-                connection,
-                (provider, conn) -> {
-
-                    ResultSet resultSet = null;
-                    DatabaseMetadataInterface metadataInterface = provider.getMetadataInterface();
-                    try {
-                        resultSet = metadataInterface.loadInvalidObjects(getName(), conn);
-                        while (resultSet != null && resultSet.next()) {
-                            String objectName = resultSet.getString("OBJECT_NAME");
-                            DBSchemaObject schemaObject = (DBSchemaObject) getChildObjectNoLoad(objectName);
-                            if (schemaObject != null && schemaObject.is(INVALIDABLE)) {
-                                DBObjectStatusHolder objectStatus = schemaObject.getStatus();
-                                boolean statusChanged;
-
-                                if (schemaObject.getContentType().isBundle()) {
-                                    String objectType = resultSet.getString("OBJECT_TYPE");
-                                    statusChanged = objectType.contains("BODY") ?
-                                            objectStatus.set(DBContentType.CODE_BODY, DBObjectStatus.VALID, false) :
-                                            objectStatus.set(DBContentType.CODE_SPEC, DBObjectStatus.VALID, false);
-                                } else {
-                                    statusChanged = objectStatus.set(DBObjectStatus.VALID, false);
-                                }
-                                if (statusChanged) {
-                                    refreshNodes.add(schemaObject.getParent());
-                                }
-                            }
-                        }
-                    } finally {
-                        Resources.close(resultSet);
-                    }
-
-                    try {
-                        resultSet = metadataInterface.loadDebugObjects(getName(), conn);
-                        while (resultSet != null && resultSet.next()) {
-                            String objectName = resultSet.getString("OBJECT_NAME");
-                            DBSchemaObject schemaObject = (DBSchemaObject) getChildObjectNoLoad(objectName);
-                            if (schemaObject != null && schemaObject.is(DEBUGABLE)) {
-                                DBObjectStatusHolder objectStatus = schemaObject.getStatus();
-                                boolean statusChanged;
-
-                                if (schemaObject.getContentType().isBundle()) {
-                                    String objectType = resultSet.getString("OBJECT_TYPE");
-                                    statusChanged = objectType.contains("BODY") ?
-                                            objectStatus.set(DBContentType.CODE_BODY, DBObjectStatus.DEBUG, true) :
-                                            objectStatus.set(DBContentType.CODE_SPEC, DBObjectStatus.DEBUG, true);
-                                } else {
-                                    statusChanged = objectStatus.set(DBObjectStatus.DEBUG, true);
-                                }
-                                if (statusChanged) {
-                                    refreshNodes.add(schemaObject.getParent());
-                                }
-                            }
-                        }
-                    } finally {
-                        Resources.close(resultSet);
-                    }
-                });
+        DatabaseInterface.run(true, connection, conn -> {
+            refreshValidStatus(refreshNodes, conn);
+            refreshDebugStatus(refreshNodes, conn);
+        });
 
         for (BrowserTreeNode treeNode : refreshNodes) {
             ProjectEvents.notify(getProject(),
@@ -490,6 +435,66 @@ public class DBSchemaImpl extends DBObjectImpl<DBSchemaMetadata> implements DBSc
                     (listener) -> listener.nodeChanged(treeNode, TreeEventType.NODES_CHANGED));
         }
 
+    }
+
+    private void refreshValidStatus(Set<BrowserTreeNode> refreshNodes, DBNConnection c) throws SQLException {
+        ResultSet resultSet = null;
+        try {
+            DatabaseMetadataInterface metadata = getMetadataInterface();
+            resultSet = metadata.loadInvalidObjects(getName(), c);
+            while (resultSet != null && resultSet.next()) {
+                String objectName = resultSet.getString("OBJECT_NAME");
+                DBSchemaObject schemaObject = (DBSchemaObject) getChildObjectNoLoad(objectName);
+                if (schemaObject != null && schemaObject.is(INVALIDABLE)) {
+                    DBObjectStatusHolder objectStatus = schemaObject.getStatus();
+                    boolean statusChanged;
+
+                    if (schemaObject.getContentType().isBundle()) {
+                        String objectType = resultSet.getString("OBJECT_TYPE");
+                        statusChanged = objectType.contains("BODY") ?
+                                objectStatus.set(DBContentType.CODE_BODY, DBObjectStatus.VALID, false) :
+                                objectStatus.set(DBContentType.CODE_SPEC, DBObjectStatus.VALID, false);
+                    } else {
+                        statusChanged = objectStatus.set(DBObjectStatus.VALID, false);
+                    }
+                    if (statusChanged) {
+                        refreshNodes.add(schemaObject.getParent());
+                    }
+                }
+            }
+        } finally {
+            Resources.close(resultSet);
+        }
+    }
+
+    private void refreshDebugStatus(Set<BrowserTreeNode> refreshNodes, DBNConnection c) throws SQLException {
+        ResultSet resultSet = null;
+        try {
+            DatabaseMetadataInterface metadata = getMetadataInterface();
+            resultSet = metadata.loadDebugObjects(getName(), c);
+            while (resultSet != null && resultSet.next()) {
+                String objectName = resultSet.getString("OBJECT_NAME");
+                DBSchemaObject schemaObject = (DBSchemaObject) getChildObjectNoLoad(objectName);
+                if (schemaObject != null && schemaObject.is(DEBUGABLE)) {
+                    DBObjectStatusHolder objectStatus = schemaObject.getStatus();
+                    boolean statusChanged;
+
+                    if (schemaObject.getContentType().isBundle()) {
+                        String objectType = resultSet.getString("OBJECT_TYPE");
+                        statusChanged = objectType.contains("BODY") ?
+                                objectStatus.set(DBContentType.CODE_BODY, DBObjectStatus.DEBUG, true) :
+                                objectStatus.set(DBContentType.CODE_SPEC, DBObjectStatus.DEBUG, true);
+                    } else {
+                        statusChanged = objectStatus.set(DBObjectStatus.DEBUG, true);
+                    }
+                    if (statusChanged) {
+                        refreshNodes.add(schemaObject.getParent());
+                    }
+                }
+            }
+        } finally {
+            Resources.close(resultSet);
+        }
     }
 
     @Override
@@ -577,9 +582,9 @@ public class DBSchemaImpl extends DBObjectImpl<DBSchemaMetadata> implements DBSc
         new DynamicContentResultSetLoader<DBTable, DBTableMetadata>(SCHEMA, TABLE, true, true) {
             @Override
             public ResultSet createResultSet(DynamicContent<DBTable> content, DBNConnection connection) throws SQLException {
-                DatabaseMetadataInterface metadataInterface = content.getMetadataInterface();
+                DatabaseMetadataInterface metadata = content.getMetadataInterface();
                 DBSchema schema = content.ensureParentEntity();
-                return metadataInterface.loadTables(schema.getName(), connection);
+                return metadata.loadTables(schema.getName(), connection);
             }
 
             @Override
@@ -592,9 +597,9 @@ public class DBSchemaImpl extends DBObjectImpl<DBSchemaMetadata> implements DBSc
         new DynamicContentResultSetLoader<DBView, DBViewMetadata>(SCHEMA, VIEW, true, true){
             @Override
             public ResultSet createResultSet(DynamicContent<DBView> content, DBNConnection connection) throws SQLException {
-                DatabaseMetadataInterface metadataInterface = content.getMetadataInterface();
+                DatabaseMetadataInterface metadata = content.getMetadataInterface();
                 DBSchema schema = content.ensureParentEntity();
-                return metadataInterface.loadViews(schema.getName(), connection);
+                return metadata.loadViews(schema.getName(), connection);
             }
 
             @Override
@@ -607,9 +612,9 @@ public class DBSchemaImpl extends DBObjectImpl<DBSchemaMetadata> implements DBSc
         new DynamicContentResultSetLoader<DBMaterializedView, DBMaterializedViewMetadata>(SCHEMA, MATERIALIZED_VIEW, true, true){
             @Override
             public ResultSet createResultSet(DynamicContent<DBMaterializedView> content, DBNConnection connection) throws SQLException {
-                DatabaseMetadataInterface metadataInterface = content.getMetadataInterface();
+                DatabaseMetadataInterface metadata = content.getMetadataInterface();
                 DBSchema schema = content.ensureParentEntity();
-                return metadataInterface.loadMaterializedViews(schema.getName(), connection);
+                return metadata.loadMaterializedViews(schema.getName(), connection);
             }
 
             @Override
@@ -622,9 +627,9 @@ public class DBSchemaImpl extends DBObjectImpl<DBSchemaMetadata> implements DBSc
         new DynamicContentResultSetLoader<DBSynonym, DBSynonymMetadata>(SCHEMA, SYNONYM, true, true) {
             @Override
             public ResultSet createResultSet(DynamicContent<DBSynonym> content, DBNConnection connection) throws SQLException {
-                DatabaseMetadataInterface metadataInterface = content.getMetadataInterface();
+                DatabaseMetadataInterface metadata = content.getMetadataInterface();
                 DBSchema schema = content.ensureParentEntity();
-                return metadataInterface.loadSynonyms(schema.getName(), connection);
+                return metadata.loadSynonyms(schema.getName(), connection);
             }
 
             @Override
@@ -637,9 +642,9 @@ public class DBSchemaImpl extends DBObjectImpl<DBSchemaMetadata> implements DBSc
         new DynamicContentResultSetLoader<DBSequence, DBSequenceMetadata>(SCHEMA, SEQUENCE, true, true) {
             @Override
             public ResultSet createResultSet(DynamicContent<DBSequence> content, DBNConnection connection) throws SQLException {
-                DatabaseMetadataInterface metadataInterface = content.getMetadataInterface();
+                DatabaseMetadataInterface metadata = content.getMetadataInterface();
                 DBSchema schema = content.ensureParentEntity();
-                return metadataInterface.loadSequences(schema.getName(), connection);
+                return metadata.loadSequences(schema.getName(), connection);
             }
 
             @Override
@@ -652,9 +657,9 @@ public class DBSchemaImpl extends DBObjectImpl<DBSchemaMetadata> implements DBSc
         new DynamicContentResultSetLoader<DBProcedure, DBProcedureMetadata>(SCHEMA, PROCEDURE, true, true) {
             @Override
             public ResultSet createResultSet(DynamicContent<DBProcedure> content, DBNConnection connection) throws SQLException {
-                DatabaseMetadataInterface metadataInterface = content.getMetadataInterface();
+                DatabaseMetadataInterface metadata = content.getMetadataInterface();
                 DBSchema schema = content.ensureParentEntity();
-                return metadataInterface.loadProcedures(schema.getName(), connection);
+                return metadata.loadProcedures(schema.getName(), connection);
             }
 
             @Override
@@ -667,9 +672,9 @@ public class DBSchemaImpl extends DBObjectImpl<DBSchemaMetadata> implements DBSc
         new DynamicContentResultSetLoader<DBFunction, DBFunctionMetadata>(SCHEMA, FUNCTION, true, true) {
             @Override
             public ResultSet createResultSet(DynamicContent<DBFunction> content, DBNConnection connection) throws SQLException {
-                DatabaseMetadataInterface metadataInterface = content.getMetadataInterface();
+                DatabaseMetadataInterface metadata = content.getMetadataInterface();
                 DBSchema schema = content.ensureParentEntity();
-                return metadataInterface.loadFunctions(schema.getName(), connection);
+                return metadata.loadFunctions(schema.getName(), connection);
             }
             @Override
             public DBFunction createElement(DynamicContent<DBFunction> content, DBFunctionMetadata metadata, LoaderCache cache) throws SQLException {
@@ -681,9 +686,9 @@ public class DBSchemaImpl extends DBObjectImpl<DBSchemaMetadata> implements DBSc
         new DynamicContentResultSetLoader<DBPackage, DBPackageMetadata>(SCHEMA, PACKAGE, true, true) {
             @Override
             public ResultSet createResultSet(DynamicContent<DBPackage> content, DBNConnection connection) throws SQLException {
-                DatabaseMetadataInterface metadataInterface = content.getMetadataInterface();
+                DatabaseMetadataInterface metadata = content.getMetadataInterface();
                 DBSchema schema = content.ensureParentEntity();
-                return metadataInterface.loadPackages(schema.getName(), connection);
+                return metadata.loadPackages(schema.getName(), connection);
             }
 
             @Override
@@ -696,9 +701,9 @@ public class DBSchemaImpl extends DBObjectImpl<DBSchemaMetadata> implements DBSc
         new DynamicContentResultSetLoader<DBType, DBTypeMetadata>(SCHEMA, TYPE, true, true) {
             @Override
             public ResultSet createResultSet(DynamicContent<DBType> content, DBNConnection connection) throws SQLException {
-                DatabaseMetadataInterface metadataInterface = content.getMetadataInterface();
+                DatabaseMetadataInterface metadata = content.getMetadataInterface();
                 DBSchema schema = content.ensureParentEntity();
-                return metadataInterface.loadTypes(schema.getName(), connection);
+                return metadata.loadTypes(schema.getName(), connection);
             }
 
             @Override
@@ -711,9 +716,9 @@ public class DBSchemaImpl extends DBObjectImpl<DBSchemaMetadata> implements DBSc
         new DynamicContentResultSetLoader<DBDatabaseTrigger, DBTriggerMetadata>(SCHEMA, DATABASE_TRIGGER, true, true) {
             @Override
             public ResultSet createResultSet(DynamicContent<DBDatabaseTrigger> content, DBNConnection connection) throws SQLException {
-                DatabaseMetadataInterface metadataInterface = content.getMetadataInterface();
+                DatabaseMetadataInterface metadata = content.getMetadataInterface();
                 DBSchema schema = content.ensureParentEntity();
-                return metadataInterface.loadDatabaseTriggers(schema.getName(), connection);
+                return metadata.loadDatabaseTriggers(schema.getName(), connection);
             }
 
             @Override
@@ -726,9 +731,9 @@ public class DBSchemaImpl extends DBObjectImpl<DBSchemaMetadata> implements DBSc
         new DynamicContentResultSetLoader<DBDimension, DBDimensionMetadata>(SCHEMA, DIMENSION, true, true) {
             @Override
             public ResultSet createResultSet(DynamicContent<DBDimension> content, DBNConnection connection) throws SQLException {
-                DatabaseMetadataInterface metadataInterface = content.getMetadataInterface();
+                DatabaseMetadataInterface metadata = content.getMetadataInterface();
                 DBSchema schema = content.ensureParentEntity();
-                return metadataInterface.loadDimensions(schema.getName(), connection);
+                return metadata.loadDimensions(schema.getName(), connection);
             }
 
             @Override
@@ -741,9 +746,9 @@ public class DBSchemaImpl extends DBObjectImpl<DBSchemaMetadata> implements DBSc
         new DynamicContentResultSetLoader<DBCluster, DBClusterMetadata>(SCHEMA, CLUSTER, true, true) {
             @Override
             public ResultSet createResultSet(DynamicContent<DBCluster> content, DBNConnection connection) throws SQLException {
-                DatabaseMetadataInterface metadataInterface = content.getMetadataInterface();
+                DatabaseMetadataInterface metadata = content.getMetadataInterface();
                 DBSchema schema = content.ensureParentEntity();
-                return metadataInterface.loadClusters(schema.getName(), connection);
+                return metadata.loadClusters(schema.getName(), connection);
             }
 
             @Override
@@ -756,9 +761,9 @@ public class DBSchemaImpl extends DBObjectImpl<DBSchemaMetadata> implements DBSc
         new DynamicContentResultSetLoader<DBDatabaseLink, DBDatabaseLinkMetadata>(SCHEMA, DBLINK, true, true) {
             @Override
             public ResultSet createResultSet(DynamicContent<DBDatabaseLink> content, DBNConnection connection) throws SQLException {
-                DatabaseMetadataInterface metadataInterface = content.getMetadataInterface();
+                DatabaseMetadataInterface metadata = content.getMetadataInterface();
                 DBSchema schema = content.ensureParentEntity();
-                return metadataInterface.loadDatabaseLinks(schema.getName(), connection);
+                return metadata.loadDatabaseLinks(schema.getName(), connection);
             }
 
             @Override
@@ -771,9 +776,9 @@ public class DBSchemaImpl extends DBObjectImpl<DBSchemaMetadata> implements DBSc
         new DynamicContentResultSetLoader<DBColumn, DBColumnMetadata>(SCHEMA, COLUMN, true, true) {
             @Override
             public ResultSet createResultSet(DynamicContent<DBColumn> content, DBNConnection connection) throws SQLException {
-                DatabaseMetadataInterface metadataInterface = content.getMetadataInterface();
+                DatabaseMetadataInterface metadata = content.getMetadataInterface();
                 DBSchema schema = content.ensureParentEntity();
-                return metadataInterface.loadAllColumns(schema.getName(), connection);
+                return metadata.loadAllColumns(schema.getName(), connection);
             }
 
             @Override
@@ -795,9 +800,9 @@ public class DBSchemaImpl extends DBObjectImpl<DBSchemaMetadata> implements DBSc
         new DynamicContentResultSetLoader<DBConstraint, DBConstraintMetadata>(SCHEMA, CONSTRAINT, true, true) {
             @Override
             public ResultSet createResultSet(DynamicContent<DBConstraint> content, DBNConnection connection) throws SQLException {
-                DatabaseMetadataInterface metadataInterface = content.getMetadataInterface();
+                DatabaseMetadataInterface metadata = content.getMetadataInterface();
                 DBSchema schema = content.ensureParentEntity();
-                return metadataInterface.loadAllConstraints(schema.getName(), connection);
+                return metadata.loadAllConstraints(schema.getName(), connection);
             }
 
             @Override
@@ -818,9 +823,9 @@ public class DBSchemaImpl extends DBObjectImpl<DBSchemaMetadata> implements DBSc
         new DynamicContentResultSetLoader<DBIndex, DBIndexMetadata>(SCHEMA, INDEX, true, true) {
             @Override
             public ResultSet createResultSet(DynamicContent<DBIndex> content, DBNConnection connection) throws SQLException {
-                DatabaseMetadataInterface metadataInterface = content.getMetadataInterface();
+                DatabaseMetadataInterface metadata = content.getMetadataInterface();
                 DBSchema schema = content.ensureParentEntity();
-                return metadataInterface.loadAllIndexes(schema.getName(), connection);
+                return metadata.loadAllIndexes(schema.getName(), connection);
             }
 
             @Override
@@ -841,9 +846,9 @@ public class DBSchemaImpl extends DBObjectImpl<DBSchemaMetadata> implements DBSc
         new DynamicContentResultSetLoader<DBDatasetTrigger, DBTriggerMetadata>(SCHEMA, DATASET_TRIGGER, true, true) {
             @Override
             public ResultSet createResultSet(DynamicContent<DBDatasetTrigger> content, DBNConnection connection) throws SQLException {
-                DatabaseMetadataInterface metadataInterface = content.getMetadataInterface();
+                DatabaseMetadataInterface metadata = content.getMetadataInterface();
                 DBSchema schema = content.ensureParentEntity();
-                return metadataInterface.loadAllDatasetTriggers(schema.getName(), connection);
+                return metadata.loadAllDatasetTriggers(schema.getName(), connection);
             }
 
             @Override
@@ -862,9 +867,9 @@ public class DBSchemaImpl extends DBObjectImpl<DBSchemaMetadata> implements DBSc
         new DynamicContentResultSetLoader<DBNestedTable, DBNestedTableMetadata>(SCHEMA, NESTED_TABLE, true, true) {
             @Override
             public ResultSet createResultSet(DynamicContent<DBNestedTable> content, DBNConnection connection) throws SQLException {
-                DatabaseMetadataInterface metadataInterface = content.getMetadataInterface();
+                DatabaseMetadataInterface metadata = content.getMetadataInterface();
                 DBSchema schema = content.ensureParentEntity();
-                return metadataInterface.loadAllNestedTables(schema.getName(), connection);
+                return metadata.loadAllNestedTables(schema.getName(), connection);
             }
 
             @Override
@@ -883,9 +888,9 @@ public class DBSchemaImpl extends DBObjectImpl<DBSchemaMetadata> implements DBSc
         new DynamicContentResultSetLoader<DBPackageFunction, DBFunctionMetadata>(SCHEMA, PACKAGE_FUNCTION, true, true) {
             @Override
             public ResultSet createResultSet(DynamicContent<DBPackageFunction> content, DBNConnection connection) throws SQLException {
-                DatabaseMetadataInterface metadataInterface = content.getMetadataInterface();
+                DatabaseMetadataInterface metadata = content.getMetadataInterface();
                 DBSchema schema = content.ensureParentEntity();
-                return metadataInterface.loadAllPackageFunctions(schema.getName(), connection);
+                return metadata.loadAllPackageFunctions(schema.getName(), connection);
             }
 
             @Override
@@ -904,9 +909,9 @@ public class DBSchemaImpl extends DBObjectImpl<DBSchemaMetadata> implements DBSc
         new DynamicContentResultSetLoader<DBPackageProcedure, DBProcedureMetadata>(SCHEMA, PACKAGE_PROCEDURE, true, true) {
             @Override
             public ResultSet createResultSet(DynamicContent<DBPackageProcedure> content, DBNConnection connection) throws SQLException {
-                DatabaseMetadataInterface metadataInterface = content.getMetadataInterface();
+                DatabaseMetadataInterface metadata = content.getMetadataInterface();
                 DBSchema schema = content.ensureParentEntity();
-                return metadataInterface.loadAllPackageProcedures(schema.getName(), connection);
+                return metadata.loadAllPackageProcedures(schema.getName(), connection);
             }
 
             @Override
@@ -925,9 +930,9 @@ public class DBSchemaImpl extends DBObjectImpl<DBSchemaMetadata> implements DBSc
         new DynamicContentResultSetLoader<DBPackageType, DBTypeMetadata>(SCHEMA, PACKAGE_TYPE, true, true) {
             @Override
             public ResultSet createResultSet(DynamicContent<DBPackageType> content, DBNConnection connection) throws SQLException {
-                DatabaseMetadataInterface metadataInterface = content.getMetadataInterface();
+                DatabaseMetadataInterface metadata = content.getMetadataInterface();
                 DBSchema schema = content.ensureParentEntity();
-                return metadataInterface.loadAllPackageTypes(schema.getName(), connection);
+                return metadata.loadAllPackageTypes(schema.getName(), connection);
             }
 
             @Override
@@ -946,9 +951,9 @@ public class DBSchemaImpl extends DBObjectImpl<DBSchemaMetadata> implements DBSc
         new DynamicContentResultSetLoader<DBTypeAttribute, DBTypeAttributeMetadata>(SCHEMA, TYPE_ATTRIBUTE, true, true) {
             @Override
             public ResultSet createResultSet(DynamicContent<DBTypeAttribute> content, DBNConnection connection) throws SQLException {
-                DatabaseMetadataInterface metadataInterface = content.getMetadataInterface();
+                DatabaseMetadataInterface metadata = content.getMetadataInterface();
                 DBSchema schema = content.ensureParentEntity();
-                return metadataInterface.loadAllTypeAttributes(schema.getName(), connection);
+                return metadata.loadAllTypeAttributes(schema.getName(), connection);
             }
 
             @Override
@@ -967,9 +972,9 @@ public class DBSchemaImpl extends DBObjectImpl<DBSchemaMetadata> implements DBSc
         new DynamicContentResultSetLoader<DBTypeFunction, DBFunctionMetadata>(SCHEMA, TYPE_FUNCTION, true, true) {
             @Override
             public ResultSet createResultSet(DynamicContent<DBTypeFunction> content, DBNConnection connection) throws SQLException {
-                DatabaseMetadataInterface metadataInterface = content.getMetadataInterface();
+                DatabaseMetadataInterface metadata = content.getMetadataInterface();
                 DBSchema schema = content.ensureParentEntity();
-                return metadataInterface.loadAllTypeFunctions(schema.getName(), connection);
+                return metadata.loadAllTypeFunctions(schema.getName(), connection);
             }
 
             @Override
@@ -988,9 +993,9 @@ public class DBSchemaImpl extends DBObjectImpl<DBSchemaMetadata> implements DBSc
         new DynamicContentResultSetLoader<DBTypeProcedure, DBProcedureMetadata>(SCHEMA, TYPE_PROCEDURE, true, true) {
             @Override
             public ResultSet createResultSet(DynamicContent<DBTypeProcedure> content, DBNConnection connection) throws SQLException {
-                DatabaseMetadataInterface metadataInterface = content.getMetadataInterface();
+                DatabaseMetadataInterface metadata = content.getMetadataInterface();
                 DBSchema schema = content.ensureParentEntity();
-                return metadataInterface.loadAllTypeProcedures(schema.getName(), connection);
+                return metadata.loadAllTypeProcedures(schema.getName(), connection);
             }
 
             @Override
@@ -1009,9 +1014,9 @@ public class DBSchemaImpl extends DBObjectImpl<DBSchemaMetadata> implements DBSc
         new DynamicContentResultSetLoader<DBArgument, DBArgumentMetadata>(SCHEMA, ARGUMENT, true, true) {
             @Override
             public ResultSet createResultSet(DynamicContent<DBArgument> content, DBNConnection connection) throws SQLException {
-                DatabaseMetadataInterface metadataInterface = content.getMetadataInterface();
+                DatabaseMetadataInterface metadata = content.getMetadataInterface();
                 DBSchema schema = content.ensureParentEntity();
-                return metadataInterface.loadAllMethodArguments(schema.getName(), connection);
+                return metadata.loadAllMethodArguments(schema.getName(), connection);
             }
 
             @Override
@@ -1042,9 +1047,9 @@ public class DBSchemaImpl extends DBObjectImpl<DBSchemaMetadata> implements DBSc
         new DynamicContentResultSetLoader<DBConstraintColumnRelation, DBConstraintColumnMetadata>(SCHEMA, CONSTRAINT_COLUMN, true, false) {
             @Override
             public ResultSet createResultSet(DynamicContent<DBConstraintColumnRelation> content, DBNConnection connection) throws SQLException {
-                DatabaseMetadataInterface metadataInterface = content.getMetadataInterface();
+                DatabaseMetadataInterface metadata = content.getMetadataInterface();
                 DBSchema schema = content.ensureParentEntity();
-                return metadataInterface.loadAllConstraintRelations(schema.getName(), connection);
+                return metadata.loadAllConstraintRelations(schema.getName(), connection);
             }
 
             @Override
@@ -1090,9 +1095,9 @@ public class DBSchemaImpl extends DBObjectImpl<DBSchemaMetadata> implements DBSc
         new DynamicContentResultSetLoader<DBIndexColumnRelation, DBIndexColumnMetadata>(SCHEMA, INDEX_COLUMN, true, false) {
             @Override
             public ResultSet createResultSet(DynamicContent<DBIndexColumnRelation> content, DBNConnection connection) throws SQLException {
-                DatabaseMetadataInterface metadataInterface = content.getMetadataInterface();
+                DatabaseMetadataInterface metadata = content.getMetadataInterface();
                 DBSchema schema = content.ensureParentEntity();
-                return metadataInterface.loadAllIndexRelations(schema.getName(), connection);
+                return metadata.loadAllIndexRelations(schema.getName(), connection);
             }
 
             @Override

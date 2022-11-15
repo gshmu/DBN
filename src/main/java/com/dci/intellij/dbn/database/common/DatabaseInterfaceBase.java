@@ -4,10 +4,10 @@ import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.common.util.XmlContents;
 import com.dci.intellij.dbn.connection.DatabaseType;
 import com.dci.intellij.dbn.connection.jdbc.DBNConnection;
-import com.dci.intellij.dbn.database.DatabaseInterface;
-import com.dci.intellij.dbn.database.DatabaseInterfaceProvider;
 import com.dci.intellij.dbn.database.common.statement.CallableStatementOutput;
 import com.dci.intellij.dbn.database.common.statement.StatementExecutionProcessor;
+import com.dci.intellij.dbn.database.interfaces.DatabaseInterface;
+import com.dci.intellij.dbn.database.interfaces.DatabaseInterfaces;
 import lombok.SneakyThrows;
 import org.jdom.Element;
 import org.jetbrains.annotations.NotNull;
@@ -19,14 +19,14 @@ import java.sql.SQLFeatureNotSupportedException;
 import java.util.HashMap;
 import java.util.Map;
 
-public class DatabaseInterfaceImpl implements DatabaseInterface{
+public abstract class DatabaseInterfaceBase implements DatabaseInterface{
     private final String fileName;
-    private final DatabaseInterfaceProvider provider;
+    private final DatabaseInterfaces interfaces;
     protected Map<String, StatementExecutionProcessor> processors = new HashMap<>();
 
-    public DatabaseInterfaceImpl(String fileName, DatabaseInterfaceProvider provider) {
+    public DatabaseInterfaceBase(String fileName, DatabaseInterfaces interfaces) {
         this.fileName = fileName;
-        this.provider = provider;
+        this.interfaces = interfaces;
         reset();
     }
 
@@ -35,7 +35,7 @@ public class DatabaseInterfaceImpl implements DatabaseInterface{
         processors.clear();
         Element root = loadDefinition();
         for (Element child : root.getChildren()) {
-            StatementExecutionProcessor executionProcessor = new StatementExecutionProcessor(child, provider);
+            StatementExecutionProcessor executionProcessor = new StatementExecutionProcessor(child, interfaces);
             String id = executionProcessor.getId();
             processors.put(id, executionProcessor);
         }
@@ -81,17 +81,17 @@ public class DatabaseInterfaceImpl implements DatabaseInterface{
     private StatementExecutionProcessor getExecutionProcessor(String loaderId) throws SQLException {
         StatementExecutionProcessor executionProcessor = processors.get(loaderId);
         if (executionProcessor == null) {
-            DatabaseType databaseType = provider.getDatabaseType();
+            DatabaseType databaseType = interfaces.getDatabaseType();
             throw new SQLFeatureNotSupportedException("Feature [" + loaderId + "] not implemented / supported for " + databaseType.getName() + " database type");
         }
         return executionProcessor;
     }
 
-    private void checkDisposed(DBNConnection connection) throws SQLException {
+    private void checkDisposed(DBNConnection connection) {
         Failsafe.nd(connection.getProject());
     }
 
-    public DatabaseInterfaceProvider getProvider() {
-        return provider;
+    public DatabaseInterfaces getInterfaces() {
+        return interfaces;
     }
 }

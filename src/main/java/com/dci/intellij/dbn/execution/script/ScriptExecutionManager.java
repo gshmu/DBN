@@ -16,7 +16,7 @@ import com.dci.intellij.dbn.connection.DatabaseType;
 import com.dci.intellij.dbn.connection.SchemaId;
 import com.dci.intellij.dbn.connection.mapping.FileConnectionContextManager;
 import com.dci.intellij.dbn.database.CmdLineExecutionInput;
-import com.dci.intellij.dbn.database.DatabaseExecutionInterface;
+import com.dci.intellij.dbn.database.interfaces.DatabaseExecutionInterface;
 import com.dci.intellij.dbn.execution.ExecutionContext;
 import com.dci.intellij.dbn.execution.ExecutionManager;
 import com.dci.intellij.dbn.execution.common.options.ExecutionEngineSettings;
@@ -161,7 +161,7 @@ public class ScriptExecutionManager extends ProjectComponentBase implements Pers
                     executionManager.writeLogOutput(outputContext, LogOutput.createSysOutput("Creating temporary script file " + temporaryScriptFile));
                     tempScriptFile.set(temporaryScriptFile);
 
-                    DatabaseExecutionInterface executionInterface = connection.getInterfaceProvider().getExecutionInterface();
+                    DatabaseExecutionInterface executionInterface = connection.getInterfaces().getExecutionInterface();
                     CmdLineInterface cmdLineInterface = input.getCmdLineInterface();
                     CmdLineExecutionInput executionInput = executionInterface.createScriptExecutionInput(cmdLineInterface,
                             temporaryScriptFile.getPath(),

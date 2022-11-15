@@ -4,8 +4,6 @@ import com.dci.intellij.dbn.common.util.Commons;
 import com.dci.intellij.dbn.common.util.Unsafe;
 import com.dci.intellij.dbn.connection.jdbc.DBNConnection;
 import com.dci.intellij.dbn.database.DatabaseCompatibility;
-import com.dci.intellij.dbn.database.DatabaseInterface;
-import com.dci.intellij.dbn.database.DatabaseInterfaceProvider;
 import com.dci.intellij.dbn.database.JdbcProperty;
 import com.dci.intellij.dbn.database.common.DatabaseMetadataInterfaceImpl;
 import com.dci.intellij.dbn.database.common.util.CachedResultSet;
@@ -13,6 +11,8 @@ import com.dci.intellij.dbn.database.common.util.CachedResultSet.Columns;
 import com.dci.intellij.dbn.database.common.util.CachedResultSetRow;
 import com.dci.intellij.dbn.database.common.util.MultipartResultSet;
 import com.dci.intellij.dbn.database.common.util.ResultSetCondition;
+import com.dci.intellij.dbn.database.interfaces.DatabaseInterface;
+import com.dci.intellij.dbn.database.interfaces.DatabaseInterfaces;
 import com.dci.intellij.dbn.language.common.QuotePair;
 import org.jetbrains.annotations.NotNull;
 
@@ -83,7 +83,7 @@ public class GenericMetadataInterface extends DatabaseMetadataInterfaceImpl {
             "SPECIFIC_NAME",
             "COLUMN_NAME"};
 
-    GenericMetadataInterface(DatabaseInterfaceProvider provider) {
+    GenericMetadataInterface(DatabaseInterfaces provider) {
         super("generic_metadata_interface.xml", provider);
     }
 
@@ -106,7 +106,7 @@ public class GenericMetadataInterface extends DatabaseMetadataInterfaceImpl {
 
     @Override
     public void setCurrentSchema(String schemaName, DBNConnection connection) {
-        QuotePair quotePair = getProvider().getCompatibilityInterface().getDefaultIdentifierQuotes();
+        QuotePair quotePair = getInterfaces().getCompatibilityInterface().getDefaultIdentifierQuotes();
         String schema = quotePair.isQuoted(schemaName) ? quotePair.unquote(schemaName) : schemaName;
         Unsafe.silent(() -> {
             try {

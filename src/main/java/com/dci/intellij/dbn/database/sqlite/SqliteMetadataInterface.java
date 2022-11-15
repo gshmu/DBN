@@ -1,18 +1,10 @@
 package com.dci.intellij.dbn.database.sqlite;
 
 import com.dci.intellij.dbn.connection.jdbc.DBNConnection;
-import com.dci.intellij.dbn.database.DatabaseInterfaceProvider;
 import com.dci.intellij.dbn.database.common.DatabaseMetadataInterfaceImpl;
 import com.dci.intellij.dbn.database.common.util.WrappedResultSet;
-import com.dci.intellij.dbn.database.sqlite.adapter.rs.SqliteColumnConstraintsResultSet;
-import com.dci.intellij.dbn.database.sqlite.adapter.rs.SqliteColumnIndexesResultSet;
-import com.dci.intellij.dbn.database.sqlite.adapter.rs.SqliteColumnsResultSet;
-import com.dci.intellij.dbn.database.sqlite.adapter.rs.SqliteConstraintsResultSet;
-import com.dci.intellij.dbn.database.sqlite.adapter.rs.SqliteDatasetNamesResultSet;
-import com.dci.intellij.dbn.database.sqlite.adapter.rs.SqliteIndexesResultSet;
-import com.dci.intellij.dbn.database.sqlite.adapter.rs.SqliteTriggerSourceResultSet;
-import com.dci.intellij.dbn.database.sqlite.adapter.rs.SqliteTriggersResultSet;
-import com.dci.intellij.dbn.database.sqlite.adapter.rs.SqliteViewSourceResultSet;
+import com.dci.intellij.dbn.database.interfaces.DatabaseInterfaces;
+import com.dci.intellij.dbn.database.sqlite.adapter.rs.*;
 import org.jetbrains.annotations.NotNull;
 
 import java.sql.ResultSet;
@@ -22,7 +14,7 @@ import java.util.Date;
 
 class SqliteMetadataInterface extends DatabaseMetadataInterfaceImpl {
 
-    SqliteMetadataInterface(DatabaseInterfaceProvider provider) {
+    SqliteMetadataInterface(DatabaseInterfaces provider) {
         super("sqlite_metadata_interface.xml", provider);
     }
 

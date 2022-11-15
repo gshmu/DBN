@@ -3,23 +3,16 @@ package com.dci.intellij.dbn.object.type;
 import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.common.content.DynamicContentType;
 import com.dci.intellij.dbn.common.util.Strings;
+import com.dci.intellij.dbn.connection.context.ConnectionProvider;
 import com.dci.intellij.dbn.database.DatabaseObjectTypeId;
+import com.dci.intellij.dbn.database.interfaces.DatabaseCompatibilityInterface;
 import com.dci.intellij.dbn.ddl.DDLFileTypeId;
 import com.dci.intellij.dbn.editor.DBContentType;
 import lombok.Getter;
 import org.jetbrains.annotations.Nullable;
 
-import javax.swing.Icon;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.EnumMap;
-import java.util.EnumSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Set;
-import java.util.StringTokenizer;
+import javax.swing.*;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
 import static com.dci.intellij.dbn.common.util.Commons.nvl;
@@ -514,6 +507,13 @@ public enum DBObjectType implements DynamicContentType<DBObjectType> {
         throw new IllegalArgumentException("No ObjectType found for name '" + name + "'");
     }
 
+    public boolean isSupported(@Nullable ConnectionProvider connectionProvider) {
+        if (connectionProvider == null) return false;
+
+        DatabaseCompatibilityInterface compatibility = connectionProvider.getCompatibilityInterface();
+        return compatibility.supportsObjectType(getTypeId());
+    }
+
     /*************************************************************************
      *                   Initialization utilities                             *
      *************************************************************************/
@@ -541,5 +541,7 @@ public enum DBObjectType implements DynamicContentType<DBObjectType> {
         this.inheritedType = inheritedType;
         this.inheritedType.inheritingTypes.add(this);
     }
+
+
 
 }

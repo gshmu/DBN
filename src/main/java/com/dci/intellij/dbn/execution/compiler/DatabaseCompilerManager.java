@@ -8,8 +8,8 @@ import com.dci.intellij.dbn.connection.ConnectionAction;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.operation.options.OperationSettings;
 import com.dci.intellij.dbn.database.DatabaseFeature;
-import com.dci.intellij.dbn.database.DatabaseInterface;
-import com.dci.intellij.dbn.database.DatabaseMetadataInterface;
+import com.dci.intellij.dbn.database.interfaces.DatabaseInterface;
+import com.dci.intellij.dbn.database.interfaces.DatabaseMetadataInterface;
 import com.dci.intellij.dbn.debugger.DatabaseDebuggerManager;
 import com.dci.intellij.dbn.editor.DBContentType;
 import com.dci.intellij.dbn.editor.code.SourceCodeEditor;
@@ -165,48 +165,46 @@ public class DatabaseCompilerManager extends ProjectComponentBase {
         if (objectStatus.isNot(contentType, DBObjectStatus.COMPILING)) {
             objectStatus.set(contentType, DBObjectStatus.COMPILING, true);
             try {
-                DatabaseInterface.run(true,
-                        object.getConnection(),
-                        (provider, connection) -> {
-                            DatabaseMetadataInterface metadataInterface = provider.getMetadataInterface();
+                ConnectionHandler connection = object.getConnection();
+                DatabaseInterface.run(true, connection, conn -> {
+                    DatabaseMetadataInterface metadata = connection.getMetadataInterface();
 
-                            boolean isDebug = compileType == CompileType.DEBUG;
+                    boolean isDebug = compileType == CompileType.DEBUG;
 
-                            if (compileType == CompileType.KEEP) {
-                                isDebug = objectStatus.is(DBObjectStatus.DEBUG);
-                            }
+                    if (compileType == CompileType.KEEP) {
+                        isDebug = objectStatus.is(DBObjectStatus.DEBUG);
+                    }
 
-                            if (contentType == DBContentType.CODE_SPEC || contentType == DBContentType.CODE) {
-                                metadataInterface.compileObject(
-                                        object.getSchema().getName(),
-                                        object.getName(),
-                                        object.getTypeName().toUpperCase(),
-                                        isDebug,
-                                        connection);
-                            }
-                            else if (contentType == DBContentType.CODE_BODY){
-                                metadataInterface.compileObjectBody(
-                                        object.getSchema().getName(),
-                                        object.getName(),
-                                        object.getTypeName().toUpperCase(),
-                                        isDebug,
-                                        connection);
+                    if (contentType == DBContentType.CODE_SPEC || contentType == DBContentType.CODE) {
+                        metadata.compileObject(
+                                object.getSchema().getName(),
+                                object.getName(),
+                                object.getTypeName().toUpperCase(),
+                                isDebug,
+                                conn);
+                    } else if (contentType == DBContentType.CODE_BODY) {
+                        metadata.compileObjectBody(
+                                object.getSchema().getName(),
+                                object.getName(),
+                                object.getTypeName().toUpperCase(),
+                                isDebug,
+                                conn);
 
-                            } else if (contentType == DBContentType.CODE_SPEC_AND_BODY) {
-                                metadataInterface.compileObject(
-                                        object.getSchema().getName(),
-                                        object.getName(),
-                                        object.getTypeName().toUpperCase(),
-                                        isDebug,
-                                        connection);
-                                metadataInterface.compileObjectBody(
-                                        object.getSchema().getName(),
-                                        object.getName(),
-                                        object.getTypeName().toUpperCase(),
-                                        isDebug,
-                                        connection);
-                            }
-                        });
+                    } else if (contentType == DBContentType.CODE_SPEC_AND_BODY) {
+                        metadata.compileObject(
+                                object.getSchema().getName(),
+                                object.getName(),
+                                object.getTypeName().toUpperCase(),
+                                isDebug,
+                                conn);
+                        metadata.compileObjectBody(
+                                object.getSchema().getName(),
+                                object.getName(),
+                                object.getTypeName().toUpperCase(),
+                                isDebug,
+                                conn);
+                    }
+                });
 
                 createCompilerResult(object, compilerAction);
             } catch (SQLException e) {

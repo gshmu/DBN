@@ -1,9 +1,9 @@
 package com.dci.intellij.dbn.connection;
 
-import com.dci.intellij.dbn.common.routine.ParametricCallable;
-import com.dci.intellij.dbn.common.routine.ParametricRunnable;
 import com.dci.intellij.dbn.connection.jdbc.DBNConnection;
 import com.dci.intellij.dbn.connection.jdbc.ResourceStatus;
+import com.dci.intellij.dbn.connection.util.Jdbc.ConnectionCallable;
+import com.dci.intellij.dbn.connection.util.Jdbc.ConnectionRunnable;
 import com.intellij.openapi.progress.ProcessCanceledException;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -16,7 +16,7 @@ public final class PooledConnection {
     public static void run(
             boolean readonly,
             @NotNull ConnectionHandler connection,
-            @NotNull ParametricRunnable<DBNConnection, SQLException> runnable) throws SQLException {
+            @NotNull ConnectionRunnable runnable) throws SQLException {
         run(readonly, connection, null, runnable);
     }
 
@@ -24,7 +24,7 @@ public final class PooledConnection {
             boolean readonly,
             @NotNull ConnectionHandler connection,
             @Nullable SchemaId schemaId,
-            @NotNull ParametricRunnable<DBNConnection, SQLException> runnable) throws SQLException {
+            @NotNull ConnectionRunnable runnable) throws SQLException {
 
         DBNConnection conn = null;
         try {
@@ -49,7 +49,7 @@ public final class PooledConnection {
     public static <R> R call(
             boolean readonly,
             @NotNull ConnectionHandler connection,
-            @NotNull ParametricCallable<DBNConnection, R, SQLException> callable) throws SQLException{
+            @NotNull ConnectionCallable<R> callable) throws SQLException{
         return call(readonly, connection, null, callable);
     }
 
@@ -57,23 +57,23 @@ public final class PooledConnection {
             boolean readonly,
             @NotNull ConnectionHandler connection,
             @Nullable SchemaId schemaId,
-            @NotNull ParametricCallable<DBNConnection, R, SQLException> callable) throws SQLException{
+            @NotNull ConnectionCallable<R> callable) throws SQLException{
 
-        DBNConnection conn = null;
+        DBNConnection c = null;
         try {
             connection.checkDisposed();
-            conn = schemaId == null ?
+            c = schemaId == null ?
                     connection.getPoolConnection(readonly) :
                     connection.getPoolConnection(schemaId, readonly);
 
             connection.checkDisposed();
-            conn.set(ResourceStatus.ACTIVE, true);
-            return callable.call(conn);
+            c.set(ResourceStatus.ACTIVE, true);
+            return callable.call(c);
 
         } finally {
-            if (conn != null) {
-                connection.freePoolConnection(conn);
-                conn.set(ResourceStatus.ACTIVE, false);
+            if (c != null) {
+                connection.freePoolConnection(c);
+                c.set(ResourceStatus.ACTIVE, false);
             }
         }
     }

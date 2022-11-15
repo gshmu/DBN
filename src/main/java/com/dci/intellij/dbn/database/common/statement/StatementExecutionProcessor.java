@@ -9,9 +9,9 @@ import com.dci.intellij.dbn.connection.jdbc.DBNPreparedStatement;
 import com.dci.intellij.dbn.connection.jdbc.DBNStatement;
 import com.dci.intellij.dbn.database.DatabaseActivityTrace;
 import com.dci.intellij.dbn.database.DatabaseCompatibility;
-import com.dci.intellij.dbn.database.DatabaseInterface;
-import com.dci.intellij.dbn.database.DatabaseInterfaceProvider;
 import com.dci.intellij.dbn.database.common.statement.StatementExecutor.Context;
+import com.dci.intellij.dbn.database.interfaces.DatabaseInterface;
+import com.dci.intellij.dbn.database.interfaces.DatabaseInterfaces;
 import com.dci.intellij.dbn.diagnostics.DiagnosticsManager;
 import com.dci.intellij.dbn.diagnostics.data.DiagnosticBundle;
 import lombok.extern.slf4j.Slf4j;
@@ -19,11 +19,7 @@ import org.jdom.Element;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.sql.CallableStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.SQLFeatureNotSupportedException;
-import java.sql.Statement;
+import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.StringTokenizer;
@@ -36,7 +32,7 @@ import static com.dci.intellij.dbn.diagnostics.Diagnostics.isDatabaseAccessDebug
 public class StatementExecutionProcessor {
     public static final SQLFeatureNotSupportedException NO_STATEMENT_DEFINITION_EXCEPTION = new SQLFeatureNotSupportedException("No statement definition found");
 
-    private final DatabaseInterfaceProvider interfaceProvider;
+    private final DatabaseInterfaces interfaces;
     private final String id;
     private final boolean query;
     private final boolean prepared;
@@ -44,8 +40,8 @@ public class StatementExecutionProcessor {
     private List<StatementDefinition> statementDefinitions = new ArrayList<>();
 
 
-    public StatementExecutionProcessor(Element element, DatabaseInterfaceProvider interfaceProvider) {
-        this.interfaceProvider = interfaceProvider;
+    public StatementExecutionProcessor(Element element, DatabaseInterfaces interfaces) {
+        this.interfaces = interfaces;
         this.id = stringAttribute(element, "id");
         this.query = booleanAttribute(element, "is-query", false);
         this.prepared = booleanAttribute(element, "is-prepared-statement", false);
@@ -83,8 +79,8 @@ public class StatementExecutionProcessor {
         }
     }
 
-    public DatabaseInterfaceProvider getInterfaceProvider() {
-        return interfaceProvider;
+    public DatabaseInterfaces getInterfaces() {
+        return interfaces;
     }
 
     public String getId() {
@@ -163,7 +159,7 @@ public class StatementExecutionProcessor {
                             String message = exception.getMessage();
                             if (isDatabaseAccessDebug()) log.warn("[DBN] Error executing statement: " + statementText + "\nCause: " + message);
 
-                            boolean isModelException = interfaceProvider.getMessageParserInterface().isModelException(exception);
+                            boolean isModelException = interfaces.getMessageParserInterface().isModelException(exception);
                             SQLException traceException =
                                     isModelException ?
                                             new SQLException("Model exception received while executing query '" + id +"'. " + message) :

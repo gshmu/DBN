@@ -4,9 +4,9 @@ import com.dci.intellij.dbn.code.common.style.options.CodeStyleCaseOption;
 import com.dci.intellij.dbn.code.common.style.options.CodeStyleCaseSettings;
 import com.dci.intellij.dbn.code.psql.style.PSQLCodeStyle;
 import com.dci.intellij.dbn.connection.jdbc.DBNConnection;
-import com.dci.intellij.dbn.database.DatabaseInterfaceProvider;
 import com.dci.intellij.dbn.database.DatabaseObjectTypeId;
-import com.dci.intellij.dbn.database.common.DatabaseDDLInterfaceImpl;
+import com.dci.intellij.dbn.database.common.DatabaseDataDefinitionInterfaceImpl;
+import com.dci.intellij.dbn.database.interfaces.DatabaseInterfaces;
 import com.dci.intellij.dbn.editor.DBContentType;
 import com.dci.intellij.dbn.object.factory.ArgumentFactoryInput;
 import com.dci.intellij.dbn.object.factory.MethodFactoryInput;
@@ -15,8 +15,8 @@ import com.intellij.openapi.util.text.StringUtil;
 
 import java.sql.SQLException;
 
-public class PostgresDDLInterface extends DatabaseDDLInterfaceImpl {
-    public PostgresDDLInterface(DatabaseInterfaceProvider provider) {
+public class PostgresDataDefinitionInterface extends DatabaseDataDefinitionInterfaceImpl {
+    public PostgresDataDefinitionInterface(DatabaseInterfaces provider) {
         super("postgres_ddl_interface.xml", provider);
     }
 

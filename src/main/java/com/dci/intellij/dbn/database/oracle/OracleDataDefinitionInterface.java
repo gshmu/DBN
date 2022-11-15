@@ -5,9 +5,9 @@ import com.dci.intellij.dbn.code.common.style.options.CodeStyleCaseOption;
 import com.dci.intellij.dbn.code.common.style.options.CodeStyleCaseSettings;
 import com.dci.intellij.dbn.code.psql.style.PSQLCodeStyle;
 import com.dci.intellij.dbn.connection.jdbc.DBNConnection;
-import com.dci.intellij.dbn.database.DatabaseInterfaceProvider;
 import com.dci.intellij.dbn.database.DatabaseObjectTypeId;
-import com.dci.intellij.dbn.database.common.DatabaseDDLInterfaceImpl;
+import com.dci.intellij.dbn.database.common.DatabaseDataDefinitionInterfaceImpl;
+import com.dci.intellij.dbn.database.interfaces.DatabaseInterfaces;
 import com.dci.intellij.dbn.ddl.options.DDLFileSettings;
 import com.dci.intellij.dbn.editor.DBContentType;
 import com.dci.intellij.dbn.editor.code.content.SourceCodeContent;
@@ -19,8 +19,8 @@ import com.intellij.openapi.util.text.StringUtil;
 
 import java.sql.SQLException;
 
-public class OracleDDLInterface extends DatabaseDDLInterfaceImpl {
-    public OracleDDLInterface(DatabaseInterfaceProvider provider) {
+public class OracleDataDefinitionInterface extends DatabaseDataDefinitionInterfaceImpl {
+    public OracleDataDefinitionInterface(DatabaseInterfaces provider) {
         super("oracle_ddl_interface.xml", provider);
     }
 

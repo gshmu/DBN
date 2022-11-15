@@ -4,9 +4,9 @@ import com.dci.intellij.dbn.browser.DatabaseBrowserUtils;
 import com.dci.intellij.dbn.browser.model.BrowserTreeNode;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.PooledConnection;
-import com.dci.intellij.dbn.database.DatabaseDDLInterface;
-import com.dci.intellij.dbn.database.DatabaseInterface;
 import com.dci.intellij.dbn.database.common.metadata.def.DBViewMetadata;
+import com.dci.intellij.dbn.database.interfaces.DatabaseDataDefinitionInterface;
+import com.dci.intellij.dbn.database.interfaces.DatabaseInterface;
 import com.dci.intellij.dbn.editor.DBContentType;
 import com.dci.intellij.dbn.language.common.DBLanguage;
 import com.dci.intellij.dbn.language.sql.SQLLanguage;
@@ -98,9 +98,9 @@ public class DBViewImpl extends DBDatasetImpl<DBViewMetadata> implements DBView 
         ConnectionHandler connection = getConnection();
         DatabaseInterface.run(
                 connection,
-                provider -> PooledConnection.run(false, connection, getSchemaId(), conn -> {
-                    DatabaseDDLInterface ddlInterface = provider.getDdlInterface();
-                    ddlInterface.updateView(getName(), newCode, conn);
+                () -> PooledConnection.run(false, connection, getSchemaId(), conn -> {
+                    DatabaseDataDefinitionInterface dataDefinition = connection.getDataDefinitionInterface();
+                    dataDefinition.updateView(getName(), newCode, conn);
                 }));
     }
 

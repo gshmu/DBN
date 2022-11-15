@@ -1,8 +1,8 @@
 package com.dci.intellij.dbn.debugger.jdbc.frame;
 
 import com.dci.intellij.dbn.common.Icons;
-import com.dci.intellij.dbn.database.DatabaseDebuggerInterface;
 import com.dci.intellij.dbn.database.common.debug.DebuggerRuntimeInfo;
+import com.dci.intellij.dbn.database.interfaces.DatabaseDebuggerInterface;
 import com.intellij.xdebugger.frame.XValueNode;
 import com.intellij.xdebugger.frame.XValuePlace;
 import org.jetbrains.annotations.NotNull;

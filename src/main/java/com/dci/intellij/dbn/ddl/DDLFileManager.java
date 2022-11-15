@@ -7,7 +7,7 @@ import com.dci.intellij.dbn.common.event.ProjectEvents;
 import com.dci.intellij.dbn.common.notification.NotificationGroup;
 import com.dci.intellij.dbn.common.thread.Write;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
-import com.dci.intellij.dbn.database.DatabaseDDLInterface;
+import com.dci.intellij.dbn.database.interfaces.DatabaseDataDefinitionInterface;
 import com.dci.intellij.dbn.ddl.options.DDLFileExtensionSettings;
 import com.dci.intellij.dbn.ddl.options.DDLFileSettings;
 import com.dci.intellij.dbn.editor.DBContentType;
@@ -75,8 +75,8 @@ public class DDLFileManager extends ProjectComponentBase implements PersistentSt
 
         ConnectionHandler connection = object.getConnection();
         String alternativeStatementDelimiter = connection.getSettings().getDetailSettings().getAlternativeStatementDelimiter();
-        DatabaseDDLInterface ddlInterface = connection.getInterfaceProvider().getDdlInterface();
-        return ddlInterface.createDDLStatement(getProject(),
+        DatabaseDataDefinitionInterface dataDefinition = connection.getDataDefinitionInterface();
+        return dataDefinition.createDDLStatement(getProject(),
                 object.getObjectType().getTypeId(),
                 connection.getUserName(),
                 object.getSchema().getName(),

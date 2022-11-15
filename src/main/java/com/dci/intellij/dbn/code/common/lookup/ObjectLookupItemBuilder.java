@@ -9,7 +9,7 @@ import com.dci.intellij.dbn.code.common.style.options.CodeStyleCaseOption;
 import com.dci.intellij.dbn.code.common.style.options.CodeStyleCaseSettings;
 import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.common.util.Strings;
-import com.dci.intellij.dbn.database.DatabaseCompatibilityInterface;
+import com.dci.intellij.dbn.database.interfaces.DatabaseCompatibilityInterface;
 import com.dci.intellij.dbn.language.common.DBLanguage;
 import com.dci.intellij.dbn.language.common.QuotePair;
 import com.dci.intellij.dbn.object.DBSynonym;
@@ -36,9 +36,9 @@ public class ObjectLookupItemBuilder extends LookupItemBuilder {
         DBObject object = getObject();
         if (Failsafe.check(object)) {
             if (object.needsNameQuoting()) {
-                DatabaseCompatibilityInterface compatibilityInterface = DatabaseCompatibilityInterface.getInstance(object);
+                DatabaseCompatibilityInterface compatibility = object.getCompatibilityInterface();
                 String lookupString = object.getName();
-                QuotePair quotes = compatibilityInterface.getDefaultIdentifierQuotes();
+                QuotePair quotes = compatibility.getDefaultIdentifierQuotes();
                 lookupString = quotes.quote(lookupString);
                 lookupItem.setLookupString(lookupString);
             }

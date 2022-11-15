@@ -1,8 +1,8 @@
 package com.dci.intellij.dbn.database.oracle;
 
 import com.dci.intellij.dbn.connection.jdbc.DBNConnection;
-import com.dci.intellij.dbn.database.DatabaseInterfaceProvider;
 import com.dci.intellij.dbn.database.common.DatabaseMetadataInterfaceImpl;
+import com.dci.intellij.dbn.database.interfaces.DatabaseInterfaces;
 import oracle.sql.converter.CharacterSetMetaData;
 
 import java.sql.ResultSet;
@@ -12,7 +12,7 @@ import java.util.Locale;
 
 public class OracleMetadataInterface extends DatabaseMetadataInterfaceImpl {
 
-    public OracleMetadataInterface(DatabaseInterfaceProvider provider) {
+    public OracleMetadataInterface(DatabaseInterfaces provider) {
         super("oracle_metadata_interface.xml", provider);
     }
 
