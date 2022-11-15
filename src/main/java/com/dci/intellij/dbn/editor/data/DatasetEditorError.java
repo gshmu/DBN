@@ -1,8 +1,8 @@
 package com.dci.intellij.dbn.editor.data;
 
 import com.dci.intellij.dbn.connection.ConnectionHandler;
-import com.dci.intellij.dbn.database.DatabaseMessageParserInterface;
 import com.dci.intellij.dbn.database.DatabaseObjectIdentifier;
+import com.dci.intellij.dbn.database.interfaces.DatabaseMessageParserInterface;
 import com.dci.intellij.dbn.object.common.DBObject;
 import com.dci.intellij.dbn.object.lookup.DBObjectRef;
 import lombok.EqualsAndHashCode;
@@ -42,7 +42,7 @@ public class DatasetEditorError {
     private static DBObject resolveMessageObject(ConnectionHandler connection, Exception exception) {
         DBObject messageObject = null;
         if (exception instanceof SQLException) {
-            DatabaseMessageParserInterface messageParserInterface = connection.getInterfaceProvider().getMessageParserInterface();
+            DatabaseMessageParserInterface messageParserInterface = connection.getMessageParserInterface();
             DatabaseObjectIdentifier objectIdentifier = messageParserInterface.identifyObject((SQLException) exception);
             if (objectIdentifier != null) {
                 messageObject = connection.getObjectBundle().getObject(objectIdentifier);

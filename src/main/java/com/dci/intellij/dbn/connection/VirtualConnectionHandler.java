@@ -16,7 +16,8 @@ import com.dci.intellij.dbn.connection.info.ConnectionInfo;
 import com.dci.intellij.dbn.connection.jdbc.DBNConnection;
 import com.dci.intellij.dbn.connection.session.DatabaseSessionBundle;
 import com.dci.intellij.dbn.database.DatabaseCompatibility;
-import com.dci.intellij.dbn.database.DatabaseInterfaceProvider;
+import com.dci.intellij.dbn.database.interfaces.DatabaseInterfaceQueue;
+import com.dci.intellij.dbn.database.interfaces.DatabaseInterfaces;
 import com.dci.intellij.dbn.execution.statement.StatementExecutionQueue;
 import com.dci.intellij.dbn.language.common.DBLanguage;
 import com.dci.intellij.dbn.language.common.DBLanguageDialect;
@@ -52,7 +53,7 @@ public class VirtualConnectionHandler extends StatefulDisposable.Base implements
     private final DatabaseCompatibility compatibility = DatabaseCompatibility.noFeatures();
     private final DatabaseSessionBundle sessionBundle = new DatabaseSessionBundle(this);
 
-    private DatabaseInterfaceProvider interfaceProvider;
+    private DatabaseInterfaces interfaces;
 
     private final Latent<ConnectionSettings> connectionSettings = Latent.basic(() -> {
         ConnectionBundleSettings connectionBundleSettings = ConnectionBundleSettings.getInstance(getProject());
@@ -105,7 +106,7 @@ public class VirtualConnectionHandler extends StatefulDisposable.Base implements
 
     @Override
     public DBLanguageDialect getLanguageDialect(DBLanguage language) {
-        return getInterfaceProvider().getLanguageDialect(language);
+        return getInterfaces().getLanguageDialect(language);
     }
 
     @Override
@@ -175,12 +176,18 @@ public class VirtualConnectionHandler extends StatefulDisposable.Base implements
         return false;
     }
 
+    @NotNull
     @Override
-    public DatabaseInterfaceProvider getInterfaceProvider() {
-        if (interfaceProvider == null) {
-            interfaceProvider = DatabaseInterfaceProviders.get(this);
+    public DatabaseInterfaces getInterfaces() {
+        if (interfaces == null) {
+            interfaces = DatabaseInterfacesBundle.get(this);
         }
-        return interfaceProvider;
+        return interfaces;
+    }
+
+    @Override
+    public DatabaseInterfaceQueue getInterfaceQueue() {
+        throw new UnsupportedOperationException();
     }
 
     @Nullable

@@ -1,8 +1,9 @@
-package com.dci.intellij.dbn.database;
+package com.dci.intellij.dbn.database.interfaces;
 
 import com.dci.intellij.dbn.common.database.AuthenticationInfo;
 import com.dci.intellij.dbn.common.database.DatabaseInfo;
 import com.dci.intellij.dbn.connection.SchemaId;
+import com.dci.intellij.dbn.database.CmdLineExecutionInput;
 import com.dci.intellij.dbn.database.common.execution.MethodExecutionProcessor;
 import com.dci.intellij.dbn.execution.script.CmdLineInterface;
 import com.dci.intellij.dbn.object.DBMethod;

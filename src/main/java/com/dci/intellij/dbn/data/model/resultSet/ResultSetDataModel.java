@@ -28,7 +28,7 @@ public class ResultSetDataModel<
         C extends ResultSetDataModelCell<R, ? extends ResultSetDataModel<R, C>>>
         extends SortableDataModel<R, C> {
 
-    private final ConnectionRef connectionHandler;
+    private final ConnectionRef connection;
     private DBNResultSet resultSet;
 
     @Getter
@@ -44,12 +44,12 @@ public class ResultSetDataModel<
 
     public ResultSetDataModel(@NotNull ConnectionHandler connection) {
         super(connection.getProject());
-        this.connectionHandler = connection.ref();
+        this.connection = connection.ref();
     }
 
     public ResultSetDataModel(DBNResultSet resultSet, @NotNull ConnectionHandler connection, int maxRecords) throws SQLException {
         super(connection.getProject());
-        this.connectionHandler = connection.ref();
+        this.connection = connection.ref();
         this.resultSet = resultSet;
         DBNStatement<?> statement = resultSet.getStatement();
         this.executeDuration = statement == null ? 0 : statement.getExecuteDuration();
@@ -69,7 +69,7 @@ public class ResultSetDataModel<
     }
 
     @NotNull
-    public DBNConnection getConnection() {
+    public DBNConnection getResultConnection() {
         return getResultSet().getConnection();
     }
 
@@ -162,8 +162,8 @@ public class ResultSetDataModel<
     }
 
     @NotNull
-    public ConnectionHandler getConnectionHandler() {
-        return connectionHandler.ensure();
+    public ConnectionHandler getConnection() {
+        return connection.ensure();
     }
 
     @Override

@@ -6,8 +6,8 @@ import com.dci.intellij.dbn.data.sorting.SortDirection;
 import com.dci.intellij.dbn.data.sorting.SortingInstruction;
 import com.dci.intellij.dbn.data.sorting.SortingState;
 import com.dci.intellij.dbn.database.DatabaseCompatibility;
-import com.dci.intellij.dbn.database.DatabaseCompatibilityInterface;
 import com.dci.intellij.dbn.database.JdbcProperty;
+import com.dci.intellij.dbn.database.interfaces.DatabaseCompatibilityInterface;
 import com.dci.intellij.dbn.object.DBColumn;
 import com.dci.intellij.dbn.object.DBDataset;
 
@@ -26,8 +26,8 @@ public class DatasetFilterUtil {
                 SortDirection sortDirection = sortingInstruction.getDirection();
                 DBColumn column = dataset.getColumn(sortingInstruction.getColumnName());
                 if (Failsafe.check(column) && !sortDirection.isIndefinite()) {
-                    DatabaseCompatibilityInterface compatibilityInterface = DatabaseCompatibilityInterface.getInstance(column);
-                    String orderByClause = compatibilityInterface.getOrderByClause(column.getQuotedName(false), sortDirection, nullsFirst);
+                    DatabaseCompatibilityInterface compatibility = column.getCompatibilityInterface();
+                    String orderByClause = compatibility.getOrderByClause(column.getQuotedName(false), sortDirection, nullsFirst);
                     buffer.append(instructionAdded ? ", " : "");
                     buffer.append(orderByClause);
                     instructionAdded = true;

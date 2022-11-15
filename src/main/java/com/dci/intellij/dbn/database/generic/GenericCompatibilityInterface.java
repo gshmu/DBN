@@ -1,10 +1,10 @@
 package com.dci.intellij.dbn.database.generic;
 
 import com.dci.intellij.dbn.common.util.Strings;
-import com.dci.intellij.dbn.database.DatabaseCompatibilityInterface;
 import com.dci.intellij.dbn.database.DatabaseFeature;
-import com.dci.intellij.dbn.database.DatabaseInterfaceProvider;
 import com.dci.intellij.dbn.database.DatabaseObjectTypeId;
+import com.dci.intellij.dbn.database.interfaces.DatabaseCompatibilityInterface;
+import com.dci.intellij.dbn.database.interfaces.DatabaseInterfaces;
 import com.dci.intellij.dbn.editor.session.SessionStatus;
 import com.dci.intellij.dbn.language.common.QuoteDefinition;
 import com.dci.intellij.dbn.language.common.QuotePair;
@@ -18,7 +18,7 @@ import static com.dci.intellij.dbn.database.DatabaseObjectTypeId.*;
 public class GenericCompatibilityInterface extends DatabaseCompatibilityInterface {
     private static final QuoteDefinition IDENTIFIER_QUOTE_DEFINITION = new QuoteDefinition(new QuotePair('"', '"'));
 
-    GenericCompatibilityInterface(DatabaseInterfaceProvider parent) {
+    GenericCompatibilityInterface(DatabaseInterfaces parent) {
         super(parent);
     }
 

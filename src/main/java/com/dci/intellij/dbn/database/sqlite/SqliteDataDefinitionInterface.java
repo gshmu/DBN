@@ -4,9 +4,9 @@ import com.dci.intellij.dbn.code.common.style.DBLCodeStyleManager;
 import com.dci.intellij.dbn.code.common.style.options.CodeStyleCaseOption;
 import com.dci.intellij.dbn.code.common.style.options.CodeStyleCaseSettings;
 import com.dci.intellij.dbn.connection.jdbc.DBNConnection;
-import com.dci.intellij.dbn.database.DatabaseInterfaceProvider;
 import com.dci.intellij.dbn.database.DatabaseObjectTypeId;
-import com.dci.intellij.dbn.database.common.DatabaseDDLInterfaceImpl;
+import com.dci.intellij.dbn.database.common.DatabaseDataDefinitionInterfaceImpl;
+import com.dci.intellij.dbn.database.interfaces.DatabaseInterfaces;
 import com.dci.intellij.dbn.ddl.options.DDLFileSettings;
 import com.dci.intellij.dbn.editor.DBContentType;
 import com.dci.intellij.dbn.editor.code.content.SourceCodeContent;
@@ -17,8 +17,8 @@ import com.intellij.openapi.util.text.StringUtil;
 
 import java.sql.SQLException;
 
-public class SqliteDDLInterface extends DatabaseDDLInterfaceImpl {
-    SqliteDDLInterface(DatabaseInterfaceProvider provider) {
+public class SqliteDataDefinitionInterface extends DatabaseDataDefinitionInterfaceImpl {
+    SqliteDataDefinitionInterface(DatabaseInterfaces provider) {
         super("sqlite_ddl_interface.xml", provider);
     }
 
@@ -26,7 +26,7 @@ public class SqliteDDLInterface extends DatabaseDDLInterfaceImpl {
     @Override
     public String createDDLStatement(Project project, DatabaseObjectTypeId objectTypeId, String userName, String schemaName, String objectName, DBContentType contentType, String code, String alternativeDelimiter) {
         if (StringUtil.isEmpty(alternativeDelimiter)) {
-            alternativeDelimiter = getProvider().getCompatibilityInterface().getDefaultAlternativeStatementDelimiter();
+            alternativeDelimiter = getInterfaces().getCompatibilityInterface().getDefaultAlternativeStatementDelimiter();
         }
 
         DDLFileSettings ddlFileSettings = DDLFileSettings.getInstance(project);

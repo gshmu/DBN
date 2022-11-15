@@ -2,7 +2,7 @@ package com.dci.intellij.dbn.connection;
 
 import com.dci.intellij.dbn.common.dispose.StatefulDisposable;
 import com.dci.intellij.dbn.common.routine.ThrowableConsumer;
-import com.dci.intellij.dbn.common.routine.ThrowableRunnable;
+import com.dci.intellij.dbn.connection.util.Jdbc.Runnable;
 
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
@@ -79,7 +79,7 @@ public class ResultSets extends StatefulDisposable.Base {
         return columnNames;
     }
 
-    public static void forEachRow(ResultSet resultSet, ThrowableRunnable<SQLException> consumer) throws SQLException {
+    public static void forEachRow(ResultSet resultSet, Runnable consumer) throws SQLException {
         try {
             if (resultSet != null && !Resources.isClosed(resultSet)) {
                 while (resultSet.next()) {

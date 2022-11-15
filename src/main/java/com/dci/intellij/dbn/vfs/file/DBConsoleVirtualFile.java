@@ -10,7 +10,7 @@ import com.dci.intellij.dbn.connection.SessionId;
 import com.dci.intellij.dbn.connection.mapping.FileConnectionContext;
 import com.dci.intellij.dbn.connection.mapping.FileConnectionContextProvider;
 import com.dci.intellij.dbn.connection.session.DatabaseSession;
-import com.dci.intellij.dbn.database.DatabaseDebuggerInterface;
+import com.dci.intellij.dbn.database.interfaces.DatabaseDebuggerInterface;
 import com.dci.intellij.dbn.editor.code.content.SourceCodeContent;
 import com.dci.intellij.dbn.language.common.DBLanguageDialect;
 import com.dci.intellij.dbn.language.psql.PSQLLanguage;
@@ -64,7 +64,7 @@ public class DBConsoleVirtualFile extends DBObjectVirtualFile<DBConsole> impleme
             ConnectionHandler connection = getConnection();
             Project project = connection.getProject();
 
-            DatabaseDebuggerInterface debuggerInterface = connection.getInterfaceProvider().getDebuggerInterface();
+            DatabaseDebuggerInterface debuggerInterface = connection.getDebuggerInterface();
             CodeStyleCaseSettings styleCaseSettings = DBLCodeStyleManager.getInstance(project).getCodeStyleCaseSettings(PSQLLanguage.INSTANCE);
             text = debuggerInterface.getDebugConsoleTemplate(styleCaseSettings);
         }

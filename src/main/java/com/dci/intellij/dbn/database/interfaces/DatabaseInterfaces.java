@@ -1,4 +1,4 @@
-package com.dci.intellij.dbn.database;
+package com.dci.intellij.dbn.database.interfaces;
 
 import com.dci.intellij.dbn.connection.DatabaseType;
 import com.dci.intellij.dbn.database.common.DatabaseNativeDataTypes;
@@ -6,7 +6,7 @@ import com.dci.intellij.dbn.language.common.DBLanguage;
 import com.dci.intellij.dbn.language.common.DBLanguageDialect;
 import org.jetbrains.annotations.Nullable;
 
-public interface DatabaseInterfaceProvider {
+public interface DatabaseInterfaces {
 
     DatabaseType getDatabaseType();
 
@@ -23,7 +23,7 @@ public interface DatabaseInterfaceProvider {
 
     DatabaseDebuggerInterface getDebuggerInterface();
 
-    DatabaseDDLInterface getDdlInterface();
+    DatabaseDataDefinitionInterface getDataDefinitionInterface();
 
     DatabaseExecutionInterface getExecutionInterface();
 

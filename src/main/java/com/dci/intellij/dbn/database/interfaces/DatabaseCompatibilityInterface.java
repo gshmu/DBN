@@ -1,15 +1,17 @@
-package com.dci.intellij.dbn.database;
+package com.dci.intellij.dbn.database.interfaces;
 
-import com.dci.intellij.dbn.common.routine.ThrowableCallable;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.DatabaseAttachmentHandler;
+import com.dci.intellij.dbn.connection.util.Jdbc.Callable;
 import com.dci.intellij.dbn.data.sorting.SortDirection;
+import com.dci.intellij.dbn.database.DatabaseCompatibility;
+import com.dci.intellij.dbn.database.DatabaseFeature;
+import com.dci.intellij.dbn.database.DatabaseObjectTypeId;
+import com.dci.intellij.dbn.database.JdbcProperty;
 import com.dci.intellij.dbn.editor.session.SessionStatus;
 import com.dci.intellij.dbn.language.common.QuoteDefinition;
 import com.dci.intellij.dbn.language.common.QuotePair;
-import com.dci.intellij.dbn.object.common.DBObject;
 import lombok.extern.slf4j.Slf4j;
-import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.sql.SQLException;
@@ -20,26 +22,16 @@ import java.util.Set;
 
 @Slf4j
 public abstract class DatabaseCompatibilityInterface implements DatabaseInterface{
-    private final DatabaseInterfaceProvider provider;
+    private final DatabaseInterfaces interfaces;
     private final Set<DatabaseObjectTypeId> supportedObjectTypes = new HashSet<>(getSupportedObjectTypes());
     private final Set<DatabaseFeature> supportedFeatures = new HashSet<>(getSupportedFeatures());
 
-    public DatabaseCompatibilityInterface(DatabaseInterfaceProvider parent) {
-        this.provider = parent;
+    public DatabaseCompatibilityInterface(DatabaseInterfaces parent) {
+        this.interfaces = parent;
     }
 
     protected abstract List<DatabaseObjectTypeId> getSupportedObjectTypes();
     protected abstract List<DatabaseFeature> getSupportedFeatures();
-
-    @NotNull
-    public static DatabaseCompatibilityInterface getInstance(DBObject object) {
-        ConnectionHandler connection = object.getConnection();
-        return getInstance(connection);
-    }
-
-    public static DatabaseCompatibilityInterface getInstance(@NotNull ConnectionHandler connection) {
-        return connection.getInterfaceProvider().getCompatibilityInterface();
-    }
 
     public boolean supportsObjectType(DatabaseObjectTypeId objectTypeId) {
         return supportedObjectTypes.contains(objectTypeId);
@@ -82,7 +74,7 @@ public abstract class DatabaseCompatibilityInterface implements DatabaseInterfac
         return null;
     };
 
-    public  <T> T attempt(JdbcProperty feature, ThrowableCallable<T, SQLException> loader) throws SQLException {
+    public  <T> T attempt(JdbcProperty feature, Callable<T> loader) throws SQLException {
         ConnectionHandler connection = DatabaseInterface.getConnection();
         DatabaseCompatibility compatibility = connection.getCompatibility();
         try {

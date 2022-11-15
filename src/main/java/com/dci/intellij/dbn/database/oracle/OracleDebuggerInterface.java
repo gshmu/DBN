@@ -3,18 +3,10 @@ package com.dci.intellij.dbn.database.oracle;
 import com.dci.intellij.dbn.code.common.style.options.CodeStyleCaseOption;
 import com.dci.intellij.dbn.code.common.style.options.CodeStyleCaseSettings;
 import com.dci.intellij.dbn.connection.jdbc.DBNConnection;
-import com.dci.intellij.dbn.database.DatabaseDebuggerInterface;
-import com.dci.intellij.dbn.database.DatabaseInterfaceProvider;
 import com.dci.intellij.dbn.database.common.DatabaseDebuggerInterfaceImpl;
-import com.dci.intellij.dbn.database.common.debug.BasicOperationInfo;
-import com.dci.intellij.dbn.database.common.debug.BreakpointInfo;
-import com.dci.intellij.dbn.database.common.debug.BreakpointOperationInfo;
-import com.dci.intellij.dbn.database.common.debug.DebuggerRuntimeInfo;
-import com.dci.intellij.dbn.database.common.debug.DebuggerSessionInfo;
-import com.dci.intellij.dbn.database.common.debug.DebuggerVersionInfo;
-import com.dci.intellij.dbn.database.common.debug.ExecutionBacktraceInfo;
-import com.dci.intellij.dbn.database.common.debug.ExecutionStatusInfo;
-import com.dci.intellij.dbn.database.common.debug.VariableInfo;
+import com.dci.intellij.dbn.database.common.debug.*;
+import com.dci.intellij.dbn.database.interfaces.DatabaseDebuggerInterface;
+import com.dci.intellij.dbn.database.interfaces.DatabaseInterfaces;
 import com.dci.intellij.dbn.editor.DBContentType;
 import com.dci.intellij.dbn.object.type.DBObjectType;
 
@@ -25,7 +17,7 @@ import static com.dci.intellij.dbn.editor.code.content.GuardedBlockMarker.END_OF
 import static com.dci.intellij.dbn.editor.code.content.GuardedBlockMarker.START_OFFSET_IDENTIFIER;
 
 public class OracleDebuggerInterface extends DatabaseDebuggerInterfaceImpl implements DatabaseDebuggerInterface {
-    public OracleDebuggerInterface(DatabaseInterfaceProvider provider) {
+    public OracleDebuggerInterface(DatabaseInterfaces provider) {
         super("oracle_debug_interface.xml", provider);
     }
 

@@ -119,7 +119,7 @@ public class DatasetEditorModelCell
                 if (!error.isNotified()) notifyError(error, !bulk);
             } finally {
                 if (valueChanged) {
-                    DBNConnection conn = getModel().getConnection();
+                    DBNConnection conn = getModel().getResultConnection();
                     conn.notifyDataChanges(getDataset().getVirtualFile());
                     ProjectEvents.notify(getProject(),
                             DatasetEditorModelCellValueListener.TOPIC,
@@ -203,7 +203,7 @@ public class DatasetEditorModelCell
     }
 
     public ConnectionHandler getConnectionHandler() {
-        return getEditorModel().getConnectionHandler();
+        return getEditorModel().getConnection();
     }
 
     private DatasetEditorTable getEditorTable() {

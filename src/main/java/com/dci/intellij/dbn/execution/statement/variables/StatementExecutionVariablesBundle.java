@@ -7,7 +7,7 @@ import com.dci.intellij.dbn.common.util.Strings;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.data.type.DBDataType;
 import com.dci.intellij.dbn.data.type.GenericDataType;
-import com.dci.intellij.dbn.database.DatabaseMetadataInterface;
+import com.dci.intellij.dbn.database.interfaces.DatabaseMetadataInterface;
 import com.dci.intellij.dbn.language.common.element.util.ElementTypeAttribute;
 import com.dci.intellij.dbn.language.common.element.util.IdentifierCategory;
 import com.dci.intellij.dbn.language.common.psi.BasePsiElement;
@@ -140,14 +140,14 @@ public class StatementExecutionVariablesBundle extends StatefulDisposable.Base i
                         value = '\'' + value + '\'';
                     } else {
                         if (genericDataType == GenericDataType.DATE_TIME){
-                            DatabaseMetadataInterface metadataInterface = connection.getInterfaceProvider().getMetadataInterface();
+                            DatabaseMetadataInterface dmi = connection.getMetadataInterface();
                             try {
                                 Date date = formatter.parseDateTime(value);
-                                value = metadataInterface.createDateString(date);
+                                value = dmi.createDateString(date);
                             } catch (ParseException e) {
                                 try {
                                     Date date = formatter.parseDate(value);
-                                    value = metadataInterface.createDateString(date);
+                                    value = dmi.createDateString(date);
                                 } catch (ParseException e1) {
                                     addError(variable, "Invalid date");
                                 }

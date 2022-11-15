@@ -1,7 +1,7 @@
 package com.dci.intellij.dbn.database.mysql;
 
-import com.dci.intellij.dbn.database.DatabaseMessageParserInterface;
 import com.dci.intellij.dbn.database.DatabaseObjectIdentifier;
+import com.dci.intellij.dbn.database.interfaces.DatabaseMessageParserInterface;
 import org.jetbrains.annotations.Nullable;
 
 import java.sql.SQLException;

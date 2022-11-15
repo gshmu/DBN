@@ -6,9 +6,9 @@ import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.common.content.DynamicContent;
 import com.dci.intellij.dbn.common.content.loader.DynamicContentResultSetLoader;
 import com.dci.intellij.dbn.connection.jdbc.DBNConnection;
-import com.dci.intellij.dbn.database.DatabaseMetadataInterface;
 import com.dci.intellij.dbn.database.common.metadata.def.DBTypeAttributeMetadata;
 import com.dci.intellij.dbn.database.common.metadata.def.DBTypeMetadata;
+import com.dci.intellij.dbn.database.interfaces.DatabaseMetadataInterface;
 import com.dci.intellij.dbn.object.DBPackage;
 import com.dci.intellij.dbn.object.DBPackageType;
 import com.dci.intellij.dbn.object.DBType;
@@ -18,7 +18,7 @@ import com.dci.intellij.dbn.object.type.DBObjectType;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import javax.swing.Icon;
+import javax.swing.*;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.List;
@@ -84,9 +84,9 @@ public class DBPackageTypeImpl extends DBTypeImpl implements DBPackageType {
         new DynamicContentResultSetLoader<DBTypeAttribute, DBTypeAttributeMetadata>(PACKAGE_TYPE, TYPE_ATTRIBUTE, true, true) {
             @Override
             public ResultSet createResultSet(DynamicContent<DBTypeAttribute> dynamicContent, DBNConnection connection) throws SQLException {
-                DatabaseMetadataInterface metadataInterface = dynamicContent.getMetadataInterface();
+                DatabaseMetadataInterface metadata = dynamicContent.getMetadataInterface();
                 DBPackageType type = dynamicContent.getParentEntity();
-                return metadataInterface.loadProgramTypeAttributes(
+                return metadata.loadProgramTypeAttributes(
                         type.getSchema().getName(),
                         type.getPackage().getName(),
                         type.getName(), connection);

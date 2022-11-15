@@ -19,7 +19,7 @@ import com.dci.intellij.dbn.connection.session.DatabaseSession;
 import com.dci.intellij.dbn.connection.transaction.TransactionAction;
 import com.dci.intellij.dbn.connection.transaction.TransactionListener;
 import com.dci.intellij.dbn.data.grid.options.DataGridSettingsChangeListener;
-import com.dci.intellij.dbn.database.DatabaseMessageParserInterface;
+import com.dci.intellij.dbn.database.interfaces.DatabaseMessageParserInterface;
 import com.dci.intellij.dbn.editor.data.filter.DatasetFilter;
 import com.dci.intellij.dbn.editor.data.filter.DatasetFilterManager;
 import com.dci.intellij.dbn.editor.data.filter.DatasetFilterType;
@@ -337,7 +337,7 @@ public class DatasetEditor extends DisposableUserDataHolderBase implements
             checkDisposed();
             focusEditor();
             ConnectionHandler connection = getConnection();
-            DatabaseMessageParserInterface messageParserInterface = connection.getInterfaceProvider().getMessageParserInterface();
+            DatabaseMessageParserInterface messageParserInterface = connection.getMessageParserInterface();
             Project project = getProject();
             DatasetFilterManager filterManager = DatasetFilterManager.getInstance(project);
 
@@ -508,7 +508,7 @@ public class DatasetEditor extends DisposableUserDataHolderBase implements
 
     public boolean isEditable() {
         DatasetEditorModel tableModel = getTableModel();
-        ConnectionHandler connection = tableModel.getConnectionHandler();
+        ConnectionHandler connection = tableModel.getConnection();
         return tableModel.isEditable() && connection.isConnected(SessionId.MAIN);
     }
 

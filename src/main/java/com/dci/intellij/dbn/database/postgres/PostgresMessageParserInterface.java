@@ -1,8 +1,8 @@
 package com.dci.intellij.dbn.database.postgres;
 
 import com.dci.intellij.dbn.common.util.Strings;
-import com.dci.intellij.dbn.database.DatabaseMessageParserInterface;
 import com.dci.intellij.dbn.database.DatabaseObjectIdentifier;
+import com.dci.intellij.dbn.database.interfaces.DatabaseMessageParserInterface;
 import lombok.extern.slf4j.Slf4j;
 import org.jetbrains.annotations.Nullable;
 

@@ -10,7 +10,7 @@ import com.dci.intellij.dbn.connection.ConnectionRef;
 import com.dci.intellij.dbn.connection.Resources;
 import com.dci.intellij.dbn.connection.SchemaId;
 import com.dci.intellij.dbn.connection.jdbc.DBNConnection;
-import com.dci.intellij.dbn.database.DatabaseDebuggerInterface;
+import com.dci.intellij.dbn.database.interfaces.DatabaseDebuggerInterface;
 import com.dci.intellij.dbn.debugger.DBDebugConsoleLogger;
 import com.dci.intellij.dbn.debugger.DBDebugOperation;
 import com.dci.intellij.dbn.debugger.DBDebugUtil;
@@ -90,7 +90,7 @@ public abstract class DBJdwpDebugProcess<T extends ExecutionInput>
         localTcpPort = tcpPort;
         debuggerSession.getProcess().putUserData(KEY, this);
 
-        DatabaseDebuggerInterface debuggerInterface = connection.getInterfaceProvider().getDebuggerInterface();
+        DatabaseDebuggerInterface debuggerInterface = connection.getDebuggerInterface();
         declaredBlockIdentifier = debuggerInterface.getJdwpBlockIdentifier().replace(".", "\\");
     }
 
@@ -145,7 +145,7 @@ public abstract class DBJdwpDebugProcess<T extends ExecutionInput>
 
     @Override
     public DatabaseDebuggerInterface getDebuggerInterface() {
-        return getConnection().getInterfaceProvider().getDebuggerInterface();
+        return getConnection().getDebuggerInterface();
     }
 
     @NotNull

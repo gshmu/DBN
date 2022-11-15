@@ -24,14 +24,8 @@ import com.intellij.openapi.actionSystem.ToggleAction;
 import com.intellij.openapi.project.Project;
 import org.jetbrains.annotations.NotNull;
 
-import javax.swing.BoxLayout;
-import javax.swing.Icon;
-import javax.swing.JComponent;
-import javax.swing.JPanel;
-import javax.swing.JScrollPane;
-import java.awt.BorderLayout;
-import java.awt.Color;
-import java.awt.Dimension;
+import javax.swing.*;
+import java.awt.*;
 import java.util.Comparator;
 import java.util.List;
 
@@ -60,7 +54,7 @@ public class ResultSetRecordViewerForm extends DBNFormBase {
         Color headerBackground = Colors.getPanelBackground();
         Project project = ensureProject();
         if (getEnvironmentSettings(project).getVisibilitySettings().getDialogHeaders().value()) {
-            headerBackground = model.getConnectionHandler().getEnvironmentType().getColor();
+            headerBackground = model.getConnection().getEnvironmentType().getColor();
         }
         DBNHeaderForm headerForm = new DBNHeaderForm(
                 this, headerTitle,

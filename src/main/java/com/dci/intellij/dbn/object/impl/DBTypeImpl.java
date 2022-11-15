@@ -12,18 +12,10 @@ import com.dci.intellij.dbn.connection.jdbc.DBNConnection;
 import com.dci.intellij.dbn.data.type.DBDataType;
 import com.dci.intellij.dbn.data.type.DBDataTypeDefinition;
 import com.dci.intellij.dbn.data.type.DBNativeDataType;
-import com.dci.intellij.dbn.database.DatabaseMetadataInterface;
-import com.dci.intellij.dbn.database.common.metadata.def.DBDataTypeMetadata;
-import com.dci.intellij.dbn.database.common.metadata.def.DBFunctionMetadata;
-import com.dci.intellij.dbn.database.common.metadata.def.DBProcedureMetadata;
-import com.dci.intellij.dbn.database.common.metadata.def.DBTypeAttributeMetadata;
-import com.dci.intellij.dbn.database.common.metadata.def.DBTypeMetadata;
+import com.dci.intellij.dbn.database.common.metadata.def.*;
+import com.dci.intellij.dbn.database.interfaces.DatabaseMetadataInterface;
 import com.dci.intellij.dbn.editor.DBContentType;
-import com.dci.intellij.dbn.object.DBSchema;
-import com.dci.intellij.dbn.object.DBType;
-import com.dci.intellij.dbn.object.DBTypeAttribute;
-import com.dci.intellij.dbn.object.DBTypeFunction;
-import com.dci.intellij.dbn.object.DBTypeProcedure;
+import com.dci.intellij.dbn.object.*;
 import com.dci.intellij.dbn.object.common.DBObject;
 import com.dci.intellij.dbn.object.common.DBSchemaObject;
 import com.dci.intellij.dbn.object.common.list.DBObjectList;
@@ -38,7 +30,7 @@ import com.dci.intellij.dbn.object.type.DBObjectType;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import javax.swing.Icon;
+import javax.swing.*;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -227,9 +219,9 @@ public class DBTypeImpl
 
                     @Override
                     public ResultSet createResultSet(DynamicContent<DBTypeAttribute> dynamicContent, DBNConnection connection) throws SQLException {
-                        DatabaseMetadataInterface metadataInterface = dynamicContent.getMetadataInterface();
+                        DatabaseMetadataInterface metadata = dynamicContent.getMetadataInterface();
                         DBType type = dynamicContent.getParentEntity();
-                        return metadataInterface.loadTypeAttributes(
+                        return metadata.loadTypeAttributes(
                                 getSchemaName(type),
                                 getObjectName(type),
                                 connection);
@@ -246,9 +238,9 @@ public class DBTypeImpl
                 new DynamicContentResultSetLoader<DBTypeFunction, DBFunctionMetadata>(TYPE, TYPE_FUNCTION, false, true) {
                     @Override
                     public ResultSet createResultSet(DynamicContent<DBTypeFunction> dynamicContent, DBNConnection connection) throws SQLException {
-                        DatabaseMetadataInterface metadataInterface = dynamicContent.getMetadataInterface();
+                        DatabaseMetadataInterface metadata = dynamicContent.getMetadataInterface();
                         DBType type = dynamicContent.getParentEntity();
-                        return metadataInterface.loadTypeFunctions(
+                        return metadata.loadTypeFunctions(
                                 getSchemaName(type),
                                 getObjectName(type),
                                 connection);
@@ -265,9 +257,9 @@ public class DBTypeImpl
                 new DynamicContentResultSetLoader<DBTypeProcedure, DBProcedureMetadata>(TYPE, TYPE_PROCEDURE, false, true) {
                     @Override
                     public ResultSet createResultSet(DynamicContent<DBTypeProcedure> dynamicContent, DBNConnection connection) throws SQLException {
-                        DatabaseMetadataInterface metadataInterface = dynamicContent.getMetadataInterface();
+                        DatabaseMetadataInterface metadata = dynamicContent.getMetadataInterface();
                         DBType type = dynamicContent.getParentEntity();
-                        return metadataInterface.loadTypeProcedures(
+                        return metadata.loadTypeProcedures(
                                 getSchemaName(type),
                                 getObjectName(type),
                                 connection);

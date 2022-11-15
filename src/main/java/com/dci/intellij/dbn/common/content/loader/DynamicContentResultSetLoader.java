@@ -9,10 +9,10 @@ import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.Resources;
 import com.dci.intellij.dbn.connection.jdbc.DBNConnection;
 import com.dci.intellij.dbn.connection.jdbc.IncrementalStatusAdapter;
-import com.dci.intellij.dbn.database.DatabaseInterface;
-import com.dci.intellij.dbn.database.DatabaseMessageParserInterface;
 import com.dci.intellij.dbn.database.common.metadata.DBObjectMetadata;
 import com.dci.intellij.dbn.database.common.metadata.DBObjectMetadataFactory;
+import com.dci.intellij.dbn.database.interfaces.DatabaseInterface;
+import com.dci.intellij.dbn.database.interfaces.DatabaseMessageParserInterface;
 import com.dci.intellij.dbn.diagnostics.Diagnostics;
 import com.dci.intellij.dbn.object.common.DBObject;
 import com.intellij.openapi.progress.ProcessCanceledException;
@@ -20,12 +20,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.SQLFeatureNotSupportedException;
-import java.sql.SQLNonTransientConnectionException;
-import java.sql.SQLTimeoutException;
-import java.sql.SQLTransientConnectionException;
+import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -85,86 +80,84 @@ public abstract class DynamicContentResultSetLoader<
         ProgressMonitor.setTaskDescription("Loading " + content.getContentDescription());
 
         ConnectionHandler connection = content.getConnection();
-        DatabaseInterface.run(true,
-                connection,
-                (provider, conn) -> {
-                    DebugInfo debugInfo = preLoadContent(content);
-                    IncrementalStatusAdapter loading = connection.getConnectionStatus().getLoading();
-                    try {
-                        loading.set(true);
+        DatabaseInterface.run(true, connection, conn -> {
+            DebugInfo debugInfo = preLoadContent(content);
+            IncrementalStatusAdapter loading = connection.getConnectionStatus().getLoading();
+            try {
+                loading.set(true);
+                content.checkDisposed();
+                ResultSet resultSet = null;
+                List<T> list = null;
+                try {
+                    content.checkDisposed();
+                    resultSet = createResultSet(content, conn);
+
+                    DynamicContentType<?> contentType = content.getContentType();
+                    M metadata = DBObjectMetadataFactory.INSTANCE.create(contentType, resultSet);
+
+                    Diagnostics.introduceDatabaseLag(Diagnostics.getQueryingLag());
+                    LoaderCache loaderCache = new LoaderCache();
+                    int count = 0;
+
+                    while (resultSet != null && resultSet.next()) {
+                        Diagnostics.introduceDatabaseLag(Diagnostics.getFetchingLag());
                         content.checkDisposed();
-                        ResultSet resultSet = null;
-                        List<T> list = null;
+
+                        T element = null;
                         try {
-                            content.checkDisposed();
-                            resultSet = createResultSet(content, conn);
-
-                            DynamicContentType<?> contentType = content.getContentType();
-                            M metadata = DBObjectMetadataFactory.INSTANCE.create(contentType, resultSet);
-
-                            Diagnostics.introduceDatabaseLag(Diagnostics.getQueryingLag());
-                            LoaderCache loaderCache = new LoaderCache();
-                            int count = 0;
-
-                            while (resultSet != null && resultSet.next()) {
-                                Diagnostics.introduceDatabaseLag(Diagnostics.getFetchingLag());
-                                content.checkDisposed();
-
-                                T element = null;
-                                try {
-                                    element = createElement(content, metadata, loaderCache);
-                                } catch (ProcessCanceledException e) {
-                                    return;
-                                } catch (RuntimeException e) {
-                                    log.warn("Failed to create element", e);
-                                }
-
-                                content.checkDisposed();
-                                if (element != null) {
-                                    if (list == null) {
-                                        list = new ArrayList<T>();
-                                    }
-                                    list.add(element);
-                                    if (count % 10 == 0) {
-                                        String description = element.getDescription();
-                                        if (description != null)
-                                            ProgressMonitor.setSubtaskDescription(description);
-                                    }
-                                    count++;
-                                }
-                            }
-                        } finally {
-                            Resources.close(resultSet);
+                            element = createElement(content, metadata, loaderCache);
+                        } catch (ProcessCanceledException e) {
+                            return;
+                        } catch (RuntimeException e) {
+                            log.warn("Failed to create element", e);
                         }
+
                         content.checkDisposed();
-                        content.setElements(list);
-                        content.set(DynamicContentProperty.MASTER, master);
-
-                        postLoadContent(content, debugInfo);
-
-                    } catch (ProcessCanceledException e) {
-                        throw new SQLTimeoutException(e);
-
-                    } catch (SQLTimeoutException |
-                            SQLFeatureNotSupportedException |
-                            SQLTransientConnectionException |
-                            SQLNonTransientConnectionException e) {
-                        throw e;
-
-                    } catch (SQLException e) {
-                        DatabaseMessageParserInterface messageParserInterface = provider.getMessageParserInterface();
-                        boolean modelException = messageParserInterface.isModelException(e);
-                        if (modelException) {
-                            throw new SQLFeatureNotSupportedException(e);
+                        if (element != null) {
+                            if (list == null) {
+                                list = new ArrayList<>();
+                            }
+                            list.add(element);
+                            if (count % 10 == 0) {
+                                String description = element.getDescription();
+                                if (description != null)
+                                    ProgressMonitor.setSubtaskDescription(description);
+                            }
+                            count++;
                         }
-                        throw e;
-                    } catch (Throwable e) {
-                        throw new SQLException(e);
-
-                    } finally {
-                        loading.set(false);
                     }
-                });
+                } finally {
+                    Resources.close(resultSet);
+                }
+                content.checkDisposed();
+                content.setElements(list);
+                content.set(DynamicContentProperty.MASTER, master);
+
+                postLoadContent(content, debugInfo);
+
+            } catch (ProcessCanceledException e) {
+                throw new SQLTimeoutException(e);
+
+            } catch (SQLTimeoutException |
+                     SQLFeatureNotSupportedException |
+                     SQLTransientConnectionException |
+                     SQLNonTransientConnectionException e) {
+                throw e;
+
+            } catch (SQLException e) {
+                DatabaseMessageParserInterface messageParserInterface = connection.getMessageParserInterface();
+                boolean modelException = messageParserInterface.isModelException(e);
+                if (modelException) {
+                    throw new SQLFeatureNotSupportedException(e);
+                }
+                throw e;
+            } catch (Throwable e) {
+                throw new SQLException(e);
+
+            } finally {
+                loading.set(false);
+            }
+        });
     }
 
     public static class LoaderCache {

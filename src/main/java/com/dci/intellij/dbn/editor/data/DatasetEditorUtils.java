@@ -1,8 +1,9 @@
 package com.dci.intellij.dbn.editor.data;
 
+import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.Resources;
-import com.dci.intellij.dbn.database.DatabaseInterface;
-import com.dci.intellij.dbn.database.DatabaseMetadataInterface;
+import com.dci.intellij.dbn.database.interfaces.DatabaseInterface;
+import com.dci.intellij.dbn.database.interfaces.DatabaseMetadataInterface;
 import com.dci.intellij.dbn.object.DBColumn;
 import com.dci.intellij.dbn.object.DBDataset;
 import org.jetbrains.annotations.NotNull;
@@ -15,10 +16,8 @@ import java.util.List;
 public class DatasetEditorUtils {
     public static List<String> loadDistinctColumnValues(@NotNull DBColumn column) {
         try {
-            return DatabaseInterface.call(
-                    true,
-                    column.getConnection(),
-                    (provider, connection) -> {
+            ConnectionHandler connection = column.getConnection();
+            return DatabaseInterface.call(true, connection, conn -> {
                         List<String> list = new ArrayList<>();
                         ResultSet resultSet = null;
                         try {
@@ -27,12 +26,12 @@ public class DatasetEditorUtils {
                             String datasetName = dataset.getName();
                             String columnName = column.getName();
 
-                            DatabaseMetadataInterface metadataInterface = provider.getMetadataInterface();
-                            resultSet = metadataInterface.getDistinctValues(
+                            DatabaseMetadataInterface metadata = connection.getMetadataInterface();
+                            resultSet = metadata.getDistinctValues(
                                     schemaName,
                                     datasetName,
                                     columnName,
-                                    connection);
+                                    conn);
 
                             while (resultSet.next()) {
                                 String value = resultSet.getString(1);

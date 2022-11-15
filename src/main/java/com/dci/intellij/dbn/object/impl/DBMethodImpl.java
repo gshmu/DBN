@@ -6,9 +6,9 @@ import com.dci.intellij.dbn.common.content.DynamicContent;
 import com.dci.intellij.dbn.common.content.loader.DynamicContentResultSetLoader;
 import com.dci.intellij.dbn.common.content.loader.DynamicSubcontentLoader;
 import com.dci.intellij.dbn.connection.jdbc.DBNConnection;
-import com.dci.intellij.dbn.database.DatabaseMetadataInterface;
 import com.dci.intellij.dbn.database.common.metadata.def.DBArgumentMetadata;
 import com.dci.intellij.dbn.database.common.metadata.def.DBMethodMetadata;
+import com.dci.intellij.dbn.database.interfaces.DatabaseMetadataInterface;
 import com.dci.intellij.dbn.editor.DBContentType;
 import com.dci.intellij.dbn.language.common.DBLanguage;
 import com.dci.intellij.dbn.object.DBArgument;
@@ -177,20 +177,20 @@ public abstract class DBMethodImpl<M extends DBMethodMetadata> extends DBSchemaO
                 new DynamicContentResultSetLoader<DBArgument, DBArgumentMetadata>(METHOD, ARGUMENT, false, true) {
                     @Override
                     public ResultSet createResultSet(DynamicContent<DBArgument> dynamicContent, DBNConnection connection) throws SQLException {
-                        DatabaseMetadataInterface metadataInterface = dynamicContent.getMetadataInterface();
+                        DatabaseMetadataInterface metadata = dynamicContent.getMetadataInterface();
                         DBMethod method = dynamicContent.getParentEntity();
                         String ownerName = getSchemaName(method);
                         short overload = method.getOverload();
                         DBProgram program = method.getProgram();
                         if (program == null) {
-                            return metadataInterface.loadMethodArguments(
+                            return metadata.loadMethodArguments(
                                     ownerName,
                                     method.getName(),
                                     method.getMethodType().id(),
                                     overload,
                                     connection);
                         } else {
-                            return metadataInterface.loadProgramMethodArguments(
+                            return metadata.loadProgramMethodArguments(
                                     ownerName,
                                     program.getName(),
                                     method.getName(),

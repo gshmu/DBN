@@ -1,8 +1,8 @@
 package com.dci.intellij.dbn.database.generic;
 
 import com.dci.intellij.dbn.common.latent.Latent;
-import com.dci.intellij.dbn.common.routine.ThrowableCallable;
 import com.dci.intellij.dbn.common.util.Strings;
+import com.dci.intellij.dbn.connection.util.Jdbc.Callable;
 import com.dci.intellij.dbn.database.common.util.CachedResultSet;
 import com.dci.intellij.dbn.database.common.util.CachedResultSetRow;
 import com.dci.intellij.dbn.database.common.util.WrappedCachedResultSet;
@@ -599,9 +599,9 @@ public class GenericMetadataTranslators {
 
 
     @SafeVarargs
-    static <T> T resolve(ThrowableCallable<T, SQLException> ... resolvers) throws SQLException {
+    static <T> T resolve(Callable<T>... resolvers) throws SQLException {
         for (int i = 0; i < resolvers.length; i++) {
-            ThrowableCallable<T, SQLException> resolver = resolvers[i];
+            Callable<T> resolver = resolvers[i];
             try {
                 T value = resolver.call();
                 if (value != null) {

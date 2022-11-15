@@ -18,10 +18,10 @@ import com.dci.intellij.dbn.connection.ConnectionAction;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.Resources;
 import com.dci.intellij.dbn.connection.jdbc.DBNConnection;
-import com.dci.intellij.dbn.database.DatabaseDDLInterface;
 import com.dci.intellij.dbn.database.DatabaseFeature;
-import com.dci.intellij.dbn.database.DatabaseInterface;
-import com.dci.intellij.dbn.database.DatabaseMetadataInterface;
+import com.dci.intellij.dbn.database.interfaces.DatabaseDataDefinitionInterface;
+import com.dci.intellij.dbn.database.interfaces.DatabaseInterface;
+import com.dci.intellij.dbn.database.interfaces.DatabaseMetadataInterface;
 import com.dci.intellij.dbn.debugger.DatabaseDebuggerManager;
 import com.dci.intellij.dbn.editor.DBContentType;
 import com.dci.intellij.dbn.editor.EditorProviderId;
@@ -288,40 +288,38 @@ public class SourceCodeManager extends ProjectComponentBase implements Persisten
         ConnectionHandler connection = object.getConnection();
         boolean optionalContent = contentType == DBContentType.CODE_BODY;
 
-        String sourceCode = DatabaseInterface.call(true,
-                connection,
-                (provider, conn) -> {
-                    ResultSet resultSet = null;
-                    try {
-                        DatabaseMetadataInterface metadataInterface = provider.getMetadataInterface();
-                        resultSet = loadSourceFromDatabase(
-                                object,
-                                contentType,
-                                metadataInterface,
-                                conn);
+        String sourceCode = DatabaseInterface.call(true, connection, conn -> {
+            ResultSet resultSet = null;
+            try {
+                DatabaseMetadataInterface metadata = connection.getMetadataInterface();
+                resultSet = loadSourceFromDatabase(
+                        object,
+                        contentType,
+                        metadata,
+                        conn);
 
-                        StringBuilder buffer = new StringBuilder();
-                        while (resultSet != null && resultSet.next()) {
-                            String codeLine = resultSet.getString("SOURCE_CODE");
-                            buffer.append(codeLine);
-                        }
+                StringBuilder buffer = new StringBuilder();
+                while (resultSet != null && resultSet.next()) {
+                    String codeLine = resultSet.getString("SOURCE_CODE");
+                    buffer.append(codeLine);
+                }
 
-                        if (buffer.length() == 0 && !optionalContent)
-                            throw new SQLException("Source lookup returned empty");
+                if (buffer.length() == 0 && !optionalContent)
+                    throw new SQLException("Source lookup returned empty");
 
-                        return Strings.removeCharacter(buffer.toString(), '\r');
-                    } finally {
-                        Resources.close(resultSet);
-                    }
-                });
+                return Strings.removeCharacter(buffer.toString(), '\r');
+            } finally {
+                Resources.close(resultSet);
+            }
+        });
 
         SourceCodeContent sourceCodeContent = new SourceCodeContent(sourceCode);
 
         String objectName = object.getName();
         DBObjectType objectType = object.getObjectType();
 
-        DatabaseDDLInterface ddlInterface = connection.getInterfaceProvider().getDdlInterface();
-        ddlInterface.computeSourceCodeOffsets(sourceCodeContent, objectType.getTypeId(), objectName);
+        DatabaseDataDefinitionInterface dataDefinition = connection.getDataDefinitionInterface();
+        dataDefinition.computeSourceCodeOffsets(sourceCodeContent, objectType.getTypeId(), objectName);
         return sourceCodeContent;
     }
 
@@ -329,7 +327,7 @@ public class SourceCodeManager extends ProjectComponentBase implements Persisten
     private static ResultSet loadSourceFromDatabase(
             @NotNull DBSchemaObject object,
             DBContentType contentType,
-            DatabaseMetadataInterface metadataInterface,
+            DatabaseMetadataInterface metadata,
             @NotNull DBNConnection connection) throws SQLException {
 
         DBObjectType objectType = object.getObjectType();
@@ -339,19 +337,19 @@ public class SourceCodeManager extends ProjectComponentBase implements Persisten
 
         switch (objectType) {
             case VIEW:
-                return metadataInterface.loadViewSourceCode(
+                return metadata.loadViewSourceCode(
                         schemaName,
                         objectName,
                         connection);
 
             case MATERIALIZED_VIEW:
-                return metadataInterface.loadMaterializedViewSourceCode(
+                return metadata.loadMaterializedViewSourceCode(
                         schemaName,
                         objectName,
                         connection);
 
             case DATABASE_TRIGGER:
-                return metadataInterface.loadDatabaseTriggerSourceCode(
+                return metadata.loadDatabaseTriggerSourceCode(
                         schemaName,
                         objectName,
                         connection);
@@ -360,7 +358,7 @@ public class SourceCodeManager extends ProjectComponentBase implements Persisten
                 DBDatasetTrigger trigger = (DBDatasetTrigger) object;
                 String datasetSchemaName = trigger.getDataset().getSchema().getName();
                 String datasetName = trigger.getDataset().getName();
-                return metadataInterface.loadDatasetTriggerSourceCode(
+                return metadata.loadDatasetTriggerSourceCode(
                         datasetSchemaName,
                         datasetName,
                         schemaName,
@@ -368,7 +366,7 @@ public class SourceCodeManager extends ProjectComponentBase implements Persisten
                         connection);
 
             case FUNCTION:
-                return metadataInterface.loadObjectSourceCode(
+                return metadata.loadObjectSourceCode(
                         schemaName,
                         objectName,
                         "FUNCTION",
@@ -376,7 +374,7 @@ public class SourceCodeManager extends ProjectComponentBase implements Persisten
                         connection);
 
             case PROCEDURE:
-                return metadataInterface.loadObjectSourceCode(
+                return metadata.loadObjectSourceCode(
                         schemaName,
                         objectName,
                         "PROCEDURE",
@@ -388,7 +386,7 @@ public class SourceCodeManager extends ProjectComponentBase implements Persisten
                         contentType == DBContentType.CODE_SPEC ? "TYPE" :
                         contentType == DBContentType.CODE_BODY ? "TYPE BODY" : null;
 
-                return metadataInterface.loadObjectSourceCode(
+                return metadata.loadObjectSourceCode(
                         schemaName,
                         objectName,
                         typeContent,
@@ -399,7 +397,7 @@ public class SourceCodeManager extends ProjectComponentBase implements Persisten
                         contentType == DBContentType.CODE_SPEC ? "PACKAGE" :
                         contentType == DBContentType.CODE_BODY ? "PACKAGE BODY" : null;
 
-                return metadataInterface.loadObjectSourceCode(
+                return metadata.loadObjectSourceCode(
                         schemaName,
                         objectName,
                         packageContent,
@@ -416,26 +414,25 @@ public class SourceCodeManager extends ProjectComponentBase implements Persisten
             ProgressMonitor.setTaskDescription("Loading timestamp for " + object.getQualifiedNameWithType());
             ConnectionHandler connection = object.getConnection();
 
-            Timestamp timestamp = DatabaseInterface.call(true,
-                    connection,
-                    (provider, conn) -> {
-                        ResultSet resultSet = null;
-                        try {
-                            String schemaName = object.getSchema().getName();
-                            String objectName = object.getName();
-                            String contentQualifier = getContentQualifier(object.getObjectType(), contentType);
+            Timestamp timestamp = DatabaseInterface.call(true, connection, conn -> {
+                ResultSet resultSet = null;
+                try {
+                    String schemaName = object.getSchema().getName();
+                    String objectName = object.getName();
+                    String contentQualifier = getContentQualifier(object.getObjectType(), contentType);
 
-                            resultSet = provider.getMetadataInterface().loadObjectChangeTimestamp(
-                                    schemaName,
-                                    objectName,
-                                    contentQualifier,
-                                    conn);
+                    DatabaseMetadataInterface metadata = connection.getMetadataInterface();
+                    resultSet = metadata.loadObjectChangeTimestamp(
+                            schemaName,
+                            objectName,
+                            contentQualifier,
+                            conn);
 
-                            return resultSet.next() ? resultSet.getTimestamp(1) : null;
-                        } finally {
-                            Resources.close(resultSet);
-                        }
-                    });
+                    return resultSet.next() ? resultSet.getTimestamp(1) : null;
+                } finally {
+                    Resources.close(resultSet);
+                }
+            });
 
             if (timestamp != null) {
                 return new ChangeTimestamp(timestamp);
@@ -466,8 +463,8 @@ public class SourceCodeManager extends ProjectComponentBase implements Persisten
 
     private boolean isValidObjectTypeAndName(@NotNull DBLanguagePsiFile psiFile, @NotNull DBSchemaObject object, DBContentType contentType) {
         ConnectionHandler connection = object.getConnection();
-        DatabaseDDLInterface ddlInterface = connection.getInterfaceProvider().getDdlInterface();
-        if (ddlInterface.includesTypeAndNameInSourceContent(object.getObjectType().getTypeId())) {
+        DatabaseDataDefinitionInterface dataDefinition = connection.getDataDefinitionInterface();
+        if (dataDefinition.includesTypeAndNameInSourceContent(object.getObjectType().getTypeId())) {
             PsiElement psiElement = PsiUtil.getFirstLeaf(psiFile);
 
             String typeName = object.getTypeName();

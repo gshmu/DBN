@@ -18,7 +18,7 @@ public class DataTypeEditor extends TextFieldWithPopup {
         CodeStyleCaseSettings caseSettings = PSQLCodeStyle.caseSettings(getProject());
         CodeStyleCaseOption caseOption = caseSettings.getObjectCaseOption();
 
-        List<DataTypeDefinition> nativeDataTypes = connection.getInterfaceProvider().getNativeDataTypes().list();
+        List<DataTypeDefinition> nativeDataTypes = connection.getInterfaces().getNativeDataTypes().list();
         List<String> nativeDataTypeNames = new ArrayList<>();
         for (DataTypeDefinition nativeDataType : nativeDataTypes) {
             String typeName = nativeDataType.getName();

@@ -8,17 +8,13 @@ import com.dci.intellij.dbn.common.content.DynamicContent;
 import com.dci.intellij.dbn.common.content.loader.DynamicContentResultSetLoader;
 import com.dci.intellij.dbn.common.content.loader.DynamicSubcontentLoader;
 import com.dci.intellij.dbn.connection.jdbc.DBNConnection;
-import com.dci.intellij.dbn.database.DatabaseMetadataInterface;
 import com.dci.intellij.dbn.database.common.metadata.def.DBFunctionMetadata;
 import com.dci.intellij.dbn.database.common.metadata.def.DBPackageMetadata;
 import com.dci.intellij.dbn.database.common.metadata.def.DBProcedureMetadata;
 import com.dci.intellij.dbn.database.common.metadata.def.DBTypeMetadata;
+import com.dci.intellij.dbn.database.interfaces.DatabaseMetadataInterface;
 import com.dci.intellij.dbn.editor.DBContentType;
-import com.dci.intellij.dbn.object.DBPackage;
-import com.dci.intellij.dbn.object.DBPackageFunction;
-import com.dci.intellij.dbn.object.DBPackageProcedure;
-import com.dci.intellij.dbn.object.DBPackageType;
-import com.dci.intellij.dbn.object.DBSchema;
+import com.dci.intellij.dbn.object.*;
 import com.dci.intellij.dbn.object.common.list.DBObjectList;
 import com.dci.intellij.dbn.object.common.list.DBObjectListContainer;
 import com.dci.intellij.dbn.object.common.status.DBObjectStatus;
@@ -26,7 +22,7 @@ import com.dci.intellij.dbn.object.type.DBObjectType;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import javax.swing.Icon;
+import javax.swing.*;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.List;
@@ -117,9 +113,9 @@ public class DBPackageImpl
 
                     @Override
                     public ResultSet createResultSet(DynamicContent<DBPackageFunction> dynamicContent, DBNConnection connection) throws SQLException {
-                        DatabaseMetadataInterface metadataInterface = dynamicContent.getMetadataInterface();
+                        DatabaseMetadataInterface metadata = dynamicContent.getMetadataInterface();
                         DBPackage packagee = dynamicContent.getParentEntity();
-                        return metadataInterface.loadPackageFunctions(
+                        return metadata.loadPackageFunctions(
                                 getSchemaName(packagee),
                                 getObjectName(packagee),
                                 connection);
@@ -137,9 +133,9 @@ public class DBPackageImpl
 
                     @Override
                     public ResultSet createResultSet(DynamicContent<DBPackageProcedure> dynamicContent, DBNConnection connection) throws SQLException {
-                        DatabaseMetadataInterface metadataInterface = dynamicContent.getMetadataInterface();
+                        DatabaseMetadataInterface metadata = dynamicContent.getMetadataInterface();
                         DBPackage packagee = dynamicContent.getParentEntity();
-                        return metadataInterface.loadPackageProcedures(
+                        return metadata.loadPackageProcedures(
                                 getSchemaName(packagee),
                                 getObjectName(packagee),
                                 connection);
@@ -157,9 +153,9 @@ public class DBPackageImpl
 
                     @Override
                     public ResultSet createResultSet(DynamicContent<DBPackageType> dynamicContent, DBNConnection connection) throws SQLException {
-                        DatabaseMetadataInterface metadataInterface = dynamicContent.getMetadataInterface();
+                        DatabaseMetadataInterface metadata = dynamicContent.getMetadataInterface();
                         DBPackage packagee = dynamicContent.getParentEntity();
-                        return metadataInterface.loadPackageTypes(
+                        return metadata.loadPackageTypes(
                                 getSchemaName(packagee),
                                 getObjectName(packagee),
                                 connection);

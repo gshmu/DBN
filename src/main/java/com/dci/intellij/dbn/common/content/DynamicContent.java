@@ -2,13 +2,10 @@ package com.dci.intellij.dbn.common.content;
 
 import com.dci.intellij.dbn.common.content.dependency.ContentDependencyAdapter;
 import com.dci.intellij.dbn.common.content.loader.DynamicContentLoader;
-import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.common.dispose.StatefulDisposable;
 import com.dci.intellij.dbn.common.filter.Filter;
 import com.dci.intellij.dbn.common.property.PropertyHolder;
-import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.DatabaseEntity;
-import com.dci.intellij.dbn.database.DatabaseMetadataInterface;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -94,12 +91,6 @@ public interface DynamicContent<T extends DynamicContentElement> extends Statefu
     DynamicContentLoader getLoader();
 
     ContentDependencyAdapter getDependencyAdapter();
-
-    @NotNull
-    default DatabaseMetadataInterface getMetadataInterface() {
-        ConnectionHandler connection = getConnection();
-        return Failsafe.nn(connection).getInterfaceProvider().getMetadataInterface();
-    }
 
     void loadInBackground();
 

@@ -1,8 +1,8 @@
 package com.dci.intellij.dbn.database.postgres;
 
 import com.dci.intellij.dbn.connection.jdbc.DBNConnection;
-import com.dci.intellij.dbn.database.DatabaseInterfaceProvider;
 import com.dci.intellij.dbn.database.common.DatabaseMetadataInterfaceImpl;
+import com.dci.intellij.dbn.database.interfaces.DatabaseInterfaces;
 import org.jetbrains.annotations.NotNull;
 
 import java.sql.ResultSet;
@@ -12,7 +12,7 @@ import java.util.Date;
 
 public class PostgresMetadataInterface extends DatabaseMetadataInterfaceImpl {
 
-    public PostgresMetadataInterface(DatabaseInterfaceProvider provider) {
+    public PostgresMetadataInterface(DatabaseInterfaces provider) {
         super("postgres_metadata_interface.xml", provider);
     }
 

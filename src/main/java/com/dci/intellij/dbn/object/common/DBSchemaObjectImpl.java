@@ -6,11 +6,11 @@ import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.PooledConnection;
 import com.dci.intellij.dbn.connection.Resources;
 import com.dci.intellij.dbn.connection.jdbc.DBNConnection;
-import com.dci.intellij.dbn.database.DatabaseDDLInterface;
-import com.dci.intellij.dbn.database.DatabaseInterface;
-import com.dci.intellij.dbn.database.DatabaseMetadataInterface;
 import com.dci.intellij.dbn.database.common.metadata.DBObjectMetadata;
 import com.dci.intellij.dbn.database.common.metadata.def.DBObjectDependencyMetadata;
+import com.dci.intellij.dbn.database.interfaces.DatabaseDataDefinitionInterface;
+import com.dci.intellij.dbn.database.interfaces.DatabaseInterface;
+import com.dci.intellij.dbn.database.interfaces.DatabaseMetadataInterface;
 import com.dci.intellij.dbn.editor.DBContentType;
 import com.dci.intellij.dbn.language.common.DBLanguage;
 import com.dci.intellij.dbn.language.psql.PSQLLanguage;
@@ -130,41 +130,39 @@ public abstract class DBSchemaObjectImpl<M extends DBObjectMetadata> extends DBO
 
     @Override
     public List<DBSchema> getReferencingSchemas() throws SQLException {
-        return DatabaseInterface.call(
-                true,
-                getConnection(),
-                (provider, connection) -> {
-                    List<DBSchema> schemas = new ArrayList<>();
-                    ResultSet resultSet = null;
-                    try {
-                        DBSchema schema1 = getSchema();
-                        DatabaseMetadataInterface metadataInterface = provider.getMetadataInterface();
-                        resultSet = metadataInterface.loadReferencingSchemas(schema1.getName(), getName(), connection);
-                        DBObjectBundle objectBundle = getConnection().getObjectBundle();
-                        while (resultSet.next()) {
-                            String schemaName = resultSet.getString("SCHEMA_NAME");
-                            DBSchema schema = objectBundle.getSchema(schemaName);
-                            if (schema != null)  {
-                                schemas.add(schema);
-                            }
-                        }
-                        if (schemas.isEmpty()) {
-                            schemas.add(schema1);
-                        }
-
-                    } finally {
-                        Resources.close(resultSet);
+        ConnectionHandler connection = getConnection();
+        return DatabaseInterface.call(true, connection, conn -> {
+            List<DBSchema> schemas = new ArrayList<>();
+            ResultSet resultSet = null;
+            try {
+                DBSchema schema = getSchema();
+                DatabaseMetadataInterface metadataInterface = connection.getMetadataInterface();
+                resultSet = metadataInterface.loadReferencingSchemas(schema.getName(), getName(), conn);
+                DBObjectBundle objectBundle = connection.getObjectBundle();
+                while (resultSet.next()) {
+                    String schemaName = resultSet.getString("SCHEMA_NAME");
+                    DBSchema sch = objectBundle.getSchema(schemaName);
+                    if (sch != null) {
+                        schemas.add(sch);
                     }
-                    return schemas;
-                });
+                }
+                if (schemas.isEmpty()) {
+                    schemas.add(schema);
+                }
+
+            } finally {
+                Resources.close(resultSet);
+            }
+            return schemas;
+        });
     }
 
     @Override
     public void executeUpdateDDL(DBContentType contentType, String oldCode, String newCode) throws SQLException {
         ConnectionHandler connection = this.getConnection();
         PooledConnection.run(false, connection, getSchemaId(), conn -> {
-            DatabaseDDLInterface ddlInterface = connection.getInterfaceProvider().getDdlInterface();
-            ddlInterface.updateObject(getName(), getObjectType().getName(), oldCode,  newCode, conn);
+            DatabaseDataDefinitionInterface dataDefinition = connection.getDataDefinitionInterface();
+            dataDefinition.updateObject(getName(), getObjectType().getName(), oldCode,  newCode, conn);
         });
     }
 

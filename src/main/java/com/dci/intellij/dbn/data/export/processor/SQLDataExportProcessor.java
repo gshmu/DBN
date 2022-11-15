@@ -9,7 +9,7 @@ import com.dci.intellij.dbn.data.export.DataExportFormat;
 import com.dci.intellij.dbn.data.export.DataExportInstructions;
 import com.dci.intellij.dbn.data.export.DataExportModel;
 import com.dci.intellij.dbn.data.type.GenericDataType;
-import com.dci.intellij.dbn.database.DatabaseMetadataInterface;
+import com.dci.intellij.dbn.database.interfaces.DatabaseMetadataInterface;
 import com.dci.intellij.dbn.language.sql.SQLLanguage;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.text.StringUtil;
@@ -92,8 +92,8 @@ public class SQLDataExportProcessor extends DataExportProcessor{
                             buffer.append(value);
                         } else if (genericDataType == GenericDataType.DATE_TIME) {
                             Date date = (Date) object;
-                            DatabaseMetadataInterface metadataInterface = connection.getInterfaceProvider().getMetadataInterface();
-                            String dateString = metadataInterface.createDateString(date);
+                            DatabaseMetadataInterface metadata = connection.getMetadataInterface();
+                            String dateString = metadata.createDateString(date);
                             buffer.append(dateString);
                         }
                     }

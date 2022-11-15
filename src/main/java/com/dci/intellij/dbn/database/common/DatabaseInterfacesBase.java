@@ -1,7 +1,7 @@
 package com.dci.intellij.dbn.database.common;
 
-import com.dci.intellij.dbn.database.DatabaseDebuggerInterface;
-import com.dci.intellij.dbn.database.DatabaseInterfaceProvider;
+import com.dci.intellij.dbn.database.interfaces.DatabaseDebuggerInterface;
+import com.dci.intellij.dbn.database.interfaces.DatabaseInterfaces;
 import com.dci.intellij.dbn.language.common.DBLanguage;
 import com.dci.intellij.dbn.language.common.DBLanguageDialect;
 import com.dci.intellij.dbn.language.psql.PSQLLanguage;
@@ -10,11 +10,11 @@ import com.dci.intellij.dbn.language.sql.SQLLanguage;
 import com.dci.intellij.dbn.language.sql.dialect.SQLLanguageDialect;
 import org.jetbrains.annotations.Nullable;
 
-public abstract class DatabaseInterfaceProviderImpl implements DatabaseInterfaceProvider {
+public abstract class DatabaseInterfacesBase implements DatabaseInterfaces {
     private final SQLLanguageDialect sqlLanguageDialect;
     private final PSQLLanguageDialect psqlLanguageDialect;
 
-    protected DatabaseInterfaceProviderImpl(SQLLanguageDialect sqlLanguageDialect, @Nullable PSQLLanguageDialect psqlLanguageDialect) {
+    protected DatabaseInterfacesBase(SQLLanguageDialect sqlLanguageDialect, @Nullable PSQLLanguageDialect psqlLanguageDialect) {
         this.sqlLanguageDialect = sqlLanguageDialect;
         this.psqlLanguageDialect = psqlLanguageDialect;
     }
@@ -30,7 +30,7 @@ public abstract class DatabaseInterfaceProviderImpl implements DatabaseInterface
     @Override
     public void reset() {
         getMetadataInterface().reset();
-        getDdlInterface().reset();
+        getDataDefinitionInterface().reset();
         DatabaseDebuggerInterface debuggerInterface = getDebuggerInterface();
         if (debuggerInterface != null) debuggerInterface.reset();
     }

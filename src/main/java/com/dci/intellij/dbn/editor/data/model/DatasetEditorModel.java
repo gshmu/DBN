@@ -74,7 +74,7 @@ public class DatasetEditorModel
         this.dataset = DBObjectRef.of(dataset);
         this.settings =  DataEditorSettings.getInstance(project);
         setHeader(new DatasetEditorModelHeader(datasetEditor, null));
-        this.isResultSetUpdatable = DatabaseFeature.UPDATABLE_RESULT_SETS.isSupported(getConnectionHandler());
+        this.isResultSetUpdatable = DatabaseFeature.UPDATABLE_RESULT_SETS.isSupported(getConnection());
 
         EnvironmentManager environmentManager = EnvironmentManager.getInstance(project);
         boolean readonly = environmentManager.isReadonly(dataset, DBContentType.DATA);
@@ -87,7 +87,7 @@ public class DatasetEditorModel
         closeResultSet();
         int timeout = getSettings().getGeneralSettings().getFetchTimeout().value();
         AtomicReference<DBNStatement> statementRef = new AtomicReference<>();
-        ConnectionHandler connection = getConnectionHandler();
+        ConnectionHandler connection = getConnection();
         DBNConnection conn = connection.getMainConnection();
 
         loaderCall = new CancellableDatabaseCall<Object>(connection, conn, timeout, TimeUnit.SECONDS) {
@@ -127,7 +127,7 @@ public class DatasetEditorModel
     public void setResultSet(DBNResultSet resultSet) throws SQLException {
         super.setResultSet(resultSet);
 
-        ConnectionHandler connection = getConnectionHandler();
+        ConnectionHandler connection = getConnection();
         resultSetAdapter = SafeDisposer.replace(resultSetAdapter,
                 DatabaseFeature.UPDATABLE_RESULT_SETS.isSupported(connection) ?
                     new EditableResultSetAdapter(this, resultSet) :
@@ -158,7 +158,7 @@ public class DatasetEditorModel
 
     private DBNResultSet loadResultSet(boolean useCurrentFilter, AtomicReference<DBNStatement> statementRef) throws SQLException {
         int timeout = getSettings().getGeneralSettings().getFetchTimeout().value();
-        ConnectionHandler connection = getConnectionHandler();
+        ConnectionHandler connection = getConnection();
         DBNConnection conn = connection.getMainConnection();
         DBDataset dataset = getDataset();
         Project project = dataset.getProject();
@@ -374,7 +374,7 @@ public class DatasetEditorModel
                 set(MODIFIED, true);
             }
             DBDataset dataset = getDataset();
-            DBNConnection connection = getConnection();
+            DBNConnection connection = getResultConnection();
             connection.notifyDataChanges(dataset.getVirtualFile());
         });
     }
@@ -396,7 +396,7 @@ public class DatasetEditorModel
 
             editorTable.selectCell(rowIndex, editorTable.getSelectedColumn() == -1 ? 0 : editorTable.getSelectedColumn());
 
-            DBNConnection connection = getConnection();
+            DBNConnection connection = getResultConnection();
             connection.notifyDataChanges(dataset.getVirtualFile());
         } catch (SQLException e) {
             set(INSERTING, false);
@@ -423,7 +423,7 @@ public class DatasetEditorModel
             notifyRowsInserted(insertIndex, insertIndex);
 
             editorTable.selectCell(insertIndex, editorTable.getSelectedColumn());
-            DBNConnection connection = getConnection();
+            DBNConnection connection = getResultConnection();
             connection.notifyDataChanges(dataset.getVirtualFile());
         } catch (SQLException e) {
             set(INSERTING, false);
@@ -449,7 +449,7 @@ public class DatasetEditorModel
                 set(INSERTING, false);
                 if (rebuild) load(true, true);
             } catch (SQLException e) {
-                DatasetEditorError error = new DatasetEditorError(getConnectionHandler(), e);
+                DatasetEditorError error = new DatasetEditorError(getConnection(), e);
                 if (reset) {
                     set(INSERTING, false);
                 } else {
@@ -556,7 +556,7 @@ public class DatasetEditorModel
         } else if (editorTable.getSelectedColumnCount() > 1 || editorTable.getSelectedRowCount() > 1) {
             return false;
 
-        } else if (!getConnectionHandler().isConnected(SessionId.MAIN)) {
+        } else if (!getConnection().isConnected(SessionId.MAIN)) {
             return false;
         }
 
