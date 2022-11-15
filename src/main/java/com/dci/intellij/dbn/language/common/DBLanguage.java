@@ -19,9 +19,9 @@ import java.util.Objects;
 
 public abstract class DBLanguage<D extends DBLanguageDialect> extends Language implements DBFileElementTypeProvider {
 
-    private final Latent<D[]> languageDialects = Latent.basic(() -> createLanguageDialects());
-    private final Latent<IFileElementType> fileElementType = Latent.basic(() -> createFileElementType(DBLanguage.this));
-    private final Latent<SharedTokenTypeBundle> sharedTokenTypes = Latent.basic(() -> new SharedTokenTypeBundle(this));
+    private final transient Latent<D[]> languageDialects = Latent.basic(DBLanguage.this::createLanguageDialects);
+    private final transient Latent<IFileElementType> fileElementType = Latent.basic(DBLanguage.this::createFileElementType);
+    private final transient Latent<SharedTokenTypeBundle> sharedTokenTypes = Latent.basic(DBLanguage.this::createSharedTokenTypes);
 
     protected DBLanguage(final @NonNls String id, final @NonNls String... mimeTypes){
         super(id, mimeTypes);
@@ -32,8 +32,11 @@ public abstract class DBLanguage<D extends DBLanguageDialect> extends Language i
         return fileElementType.get();
     }
 
-    protected abstract IFileElementType createFileElementType(DBLanguage<D> language);
+    protected abstract IFileElementType createFileElementType();
 
+    private SharedTokenTypeBundle createSharedTokenTypes() {
+        return new SharedTokenTypeBundle(this);
+    }
 
     public SharedTokenTypeBundle getSharedTokenTypes() {
         return sharedTokenTypes.get();

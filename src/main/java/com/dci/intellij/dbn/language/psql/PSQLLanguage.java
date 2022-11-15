@@ -34,7 +34,7 @@ public class PSQLLanguage extends DBLanguage<PSQLLanguageDialect> {
     }
 
     @Override
-    protected IFileElementType createFileElementType(DBLanguage<PSQLLanguageDialect> language) {
+    protected IFileElementType createFileElementType() {
         return new PSQLFileElementType(this);
     }
 

@@ -37,7 +37,7 @@ public class SQLLanguage extends DBLanguage<SQLLanguageDialect> {
     }
 
     @Override
-    protected IFileElementType createFileElementType(DBLanguage<SQLLanguageDialect> language) {
+    protected IFileElementType createFileElementType() {
         return new SQLFileElementType(this);
     }
 

@@ -53,6 +53,8 @@ import com.intellij.psi.*;
 import com.intellij.psi.impl.source.tree.SharedImplUtil;
 import com.intellij.psi.search.LocalSearchScope;
 import com.intellij.psi.search.SearchScope;
+import lombok.Getter;
+import lombok.Setter;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -60,22 +62,15 @@ import javax.swing.*;
 import java.util.Set;
 import java.util.function.Consumer;
 
+@Getter
+@Setter
 public abstract class BasePsiElement<T extends ElementTypeBase> extends ASTDelegatePsiElement implements ItemPresentation, FormattingProviderPsiElement {
     private T elementType;
     private FormattingAttributes formattingAttributes;
     private volatile DBVirtualObject underlyingObject;
 
     public final ASTNode node;
-
-    private final Latent<BasePsiElement> enclosingScopePsiElement = Latent.weak(() -> findEnclosingScopePsiElement());
-
-    public T getElementType() {
-        return elementType;
-    }
-
-    public void setElementType(T elementType) {
-        this.elementType = elementType;
-    }
+    private final transient Latent<BasePsiElement> enclosingScopePsiElement = Latent.weak(() -> findEnclosingScopePsiElement());
 
     public enum MatchType {
         STRONG,
@@ -83,7 +78,7 @@ public abstract class BasePsiElement<T extends ElementTypeBase> extends ASTDeleg
         SOFT,
     }
 
-    public BasePsiElement(ASTNode node, T elementType) {
+    protected BasePsiElement(ASTNode node, T elementType) {
         this.node = node;
         this.elementType = elementType;
     }
@@ -92,13 +87,6 @@ public abstract class BasePsiElement<T extends ElementTypeBase> extends ASTDeleg
     public PsiElement getParent() {
         return SharedImplUtil.getParent(node);
     }
-
-    @Override
-    @NotNull
-    public ASTNode getNode() {
-        return node;
-    }
-
 
     @Override
     public FormattingAttributes getFormattingAttributes() {
