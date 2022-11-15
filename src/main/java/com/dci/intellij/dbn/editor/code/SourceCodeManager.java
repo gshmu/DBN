@@ -20,7 +20,7 @@ import com.dci.intellij.dbn.connection.Resources;
 import com.dci.intellij.dbn.connection.jdbc.DBNConnection;
 import com.dci.intellij.dbn.database.DatabaseFeature;
 import com.dci.intellij.dbn.database.interfaces.DatabaseDataDefinitionInterface;
-import com.dci.intellij.dbn.database.interfaces.DatabaseInterface;
+import com.dci.intellij.dbn.database.interfaces.DatabaseInterfaceInvoker;
 import com.dci.intellij.dbn.database.interfaces.DatabaseMetadataInterface;
 import com.dci.intellij.dbn.debugger.DatabaseDebuggerManager;
 import com.dci.intellij.dbn.editor.DBContentType;
@@ -285,10 +285,11 @@ public class SourceCodeManager extends ProjectComponentBase implements Persisten
 
     public SourceCodeContent loadSourceFromDatabase(@NotNull DBSchemaObject object, DBContentType contentType) throws SQLException {
         ProgressMonitor.setTaskDescription("Loading source code of " + object.getQualifiedNameWithType());
+
         ConnectionHandler connection = object.getConnection();
         boolean optionalContent = contentType == DBContentType.CODE_BODY;
 
-        String sourceCode = DatabaseInterface.call(true, connection, conn -> {
+        String sourceCode = DatabaseInterfaceInvoker.call(connection.context(), conn -> {
             ResultSet resultSet = null;
             try {
                 DatabaseMetadataInterface metadata = connection.getMetadataInterface();
@@ -414,7 +415,7 @@ public class SourceCodeManager extends ProjectComponentBase implements Persisten
             ProgressMonitor.setTaskDescription("Loading timestamp for " + object.getQualifiedNameWithType());
             ConnectionHandler connection = object.getConnection();
 
-            Timestamp timestamp = DatabaseInterface.call(true, connection, conn -> {
+            Timestamp timestamp = DatabaseInterfaceInvoker.call(connection.context(), conn -> {
                 ResultSet resultSet = null;
                 try {
                     String schemaName = object.getSchema().getName();

@@ -3,8 +3,8 @@ package com.dci.intellij.dbn.database.sqlite.adapter;
 import com.dci.intellij.dbn.common.cache.Cache;
 import com.dci.intellij.dbn.common.dispose.StatefulDisposable;
 import com.dci.intellij.dbn.common.util.Strings;
+import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.database.common.util.ResultSetStub;
-import com.dci.intellij.dbn.database.interfaces.DatabaseInterface;
 
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -57,7 +57,7 @@ public class SqliteMetadataResultSet<T extends SqliteMetadataResultSetRow>
     }
 
     protected static Cache cache() {
-        return DatabaseInterface.getConnection().getMetaDataCache();
+        return ConnectionHandler.local().getMetaDataCache();
     }
 
     @Override

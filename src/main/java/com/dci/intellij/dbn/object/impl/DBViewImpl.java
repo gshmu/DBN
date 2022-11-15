@@ -3,10 +3,9 @@ package com.dci.intellij.dbn.object.impl;
 import com.dci.intellij.dbn.browser.DatabaseBrowserUtils;
 import com.dci.intellij.dbn.browser.model.BrowserTreeNode;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
-import com.dci.intellij.dbn.connection.PooledConnection;
 import com.dci.intellij.dbn.database.common.metadata.def.DBViewMetadata;
 import com.dci.intellij.dbn.database.interfaces.DatabaseDataDefinitionInterface;
-import com.dci.intellij.dbn.database.interfaces.DatabaseInterface;
+import com.dci.intellij.dbn.database.interfaces.DatabaseInterfaceInvoker;
 import com.dci.intellij.dbn.editor.DBContentType;
 import com.dci.intellij.dbn.language.common.DBLanguage;
 import com.dci.intellij.dbn.language.sql.SQLLanguage;
@@ -95,13 +94,11 @@ public class DBViewImpl extends DBDatasetImpl<DBViewMetadata> implements DBView 
 
     @Override
     public void executeUpdateDDL(DBContentType contentType, String oldCode, String newCode) throws SQLException {
-        ConnectionHandler connection = getConnection();
-        DatabaseInterface.run(
-                connection,
-                () -> PooledConnection.run(false, connection, getSchemaId(), conn -> {
-                    DatabaseDataDefinitionInterface dataDefinition = connection.getDataDefinitionInterface();
-                    dataDefinition.updateView(getName(), newCode, conn);
-                }));
+        DatabaseInterfaceInvoker.run(context(), conn -> {
+            ConnectionHandler connection = getConnection();
+            DatabaseDataDefinitionInterface dataDefinition = connection.getDataDefinitionInterface();
+            dataDefinition.updateView(getName(), newCode, conn);
+        });
     }
 
     @Override

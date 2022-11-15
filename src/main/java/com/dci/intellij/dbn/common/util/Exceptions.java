@@ -3,8 +3,11 @@ package com.dci.intellij.dbn.common.util;
 import org.jetbrains.annotations.NotNull;
 
 import java.sql.SQLException;
+import java.sql.SQLNonTransientConnectionException;
 
 public class Exceptions {
+    public static final SQLNonTransientConnectionException DBN_NOT_CONNECTED_EXCEPTION = new SQLNonTransientConnectionException("Not connected to database");
+
     private Exceptions() {}
 
     @NotNull

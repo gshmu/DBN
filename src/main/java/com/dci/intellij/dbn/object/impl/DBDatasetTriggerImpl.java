@@ -2,14 +2,12 @@ package com.dci.intellij.dbn.object.impl;
 
 import com.dci.intellij.dbn.browser.ui.HtmlToolTipBuilder;
 import com.dci.intellij.dbn.common.Icons;
-import com.dci.intellij.dbn.connection.PooledConnection;
-import com.dci.intellij.dbn.connection.SchemaId;
 import com.dci.intellij.dbn.database.common.metadata.def.DBTriggerMetadata;
 import com.dci.intellij.dbn.database.interfaces.DatabaseDataDefinitionInterface;
+import com.dci.intellij.dbn.database.interfaces.DatabaseInterfaceInvoker;
 import com.dci.intellij.dbn.editor.DBContentType;
 import com.dci.intellij.dbn.object.DBDataset;
 import com.dci.intellij.dbn.object.DBDatasetTrigger;
-import com.dci.intellij.dbn.object.DBSchema;
 import com.dci.intellij.dbn.object.common.status.DBObjectStatus;
 import com.dci.intellij.dbn.object.common.status.DBObjectStatusHolder;
 import com.dci.intellij.dbn.object.type.DBObjectType;
@@ -94,8 +92,7 @@ public class DBDatasetTriggerImpl extends DBTriggerImpl implements DBDatasetTrig
 
     @Override
     public void executeUpdateDDL(DBContentType contentType, String oldCode, String newCode) throws SQLException {
-        DBSchema schema = getSchema();
-        PooledConnection.run(false, getConnection(), SchemaId.from(schema), conn -> {
+        DatabaseInterfaceInvoker.run(context(), conn -> {
             DatabaseDataDefinitionInterface dataDefinition = getConnection().getDataDefinitionInterface();
             DBDataset dataset = getDataset();
             dataDefinition.updateTrigger(

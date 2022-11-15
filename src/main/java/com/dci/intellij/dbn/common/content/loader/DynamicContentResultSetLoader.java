@@ -11,7 +11,7 @@ import com.dci.intellij.dbn.connection.jdbc.DBNConnection;
 import com.dci.intellij.dbn.connection.jdbc.IncrementalStatusAdapter;
 import com.dci.intellij.dbn.database.common.metadata.DBObjectMetadata;
 import com.dci.intellij.dbn.database.common.metadata.DBObjectMetadataFactory;
-import com.dci.intellij.dbn.database.interfaces.DatabaseInterface;
+import com.dci.intellij.dbn.database.interfaces.DatabaseInterfaceInvoker;
 import com.dci.intellij.dbn.database.interfaces.DatabaseMessageParserInterface;
 import com.dci.intellij.dbn.diagnostics.Diagnostics;
 import com.dci.intellij.dbn.object.common.DBObject;
@@ -79,9 +79,9 @@ public abstract class DynamicContentResultSetLoader<
     public void loadContent(DynamicContent<T> content, boolean forceReload) throws SQLException {
         ProgressMonitor.setTaskDescription("Loading " + content.getContentDescription());
 
-        ConnectionHandler connection = content.getConnection();
-        DatabaseInterface.run(true, connection, conn -> {
+        DatabaseInterfaceInvoker.run(content.context(), conn -> {
             DebugInfo debugInfo = preLoadContent(content);
+            ConnectionHandler connection = content.getConnection();
             IncrementalStatusAdapter loading = connection.getConnectionStatus().getLoading();
             try {
                 loading.set(true);

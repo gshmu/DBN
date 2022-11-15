@@ -1,58 +1,29 @@
 package com.dci.intellij.dbn.database.interfaces;
 
-import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
-import com.dci.intellij.dbn.connection.util.Jdbc.Callable;
-import com.dci.intellij.dbn.connection.util.Jdbc.Runnable;
-import com.intellij.openapi.progress.ProcessCanceledException;
+import com.dci.intellij.dbn.connection.ConnectionId;
+import com.dci.intellij.dbn.connection.SchemaId;
+import lombok.Getter;
 import org.jetbrains.annotations.NotNull;
 
-import java.sql.SQLException;
+@Getter
+public class DatabaseInterfaceContext {
+    private final ConnectionId connectionId;
+    private final SchemaId schemaId;
+    private final boolean readonly;
 
-class DatabaseInterfaceContext {
-    private static final ThreadLocal<ConnectionHandler> CONNECTION = new ThreadLocal<>();
+    private DatabaseInterfaceContext(ConnectionId connectionId, SchemaId schemaId, boolean readonly) {
+        this.connectionId = connectionId;
+        this.schemaId = schemaId;
+        this.readonly = readonly;
+    }
 
     @NotNull
-    public static ConnectionHandler getConnection() {
-        return Failsafe.nd(CONNECTION.get());
+    public ConnectionHandler getConnection() {
+        return ConnectionHandler.ensure(connectionId);
     }
 
-    static <T> T surround(ConnectionHandler connection, Callable<T> callable) throws SQLException {
-        boolean initialised = init(connection);
-        try {
-            return callable.call();
-            //} catch (ProcessCanceledException ignore){ // TODO
-        } finally {
-            release(initialised);
-        }
-    }
-
-    static void surround(@NotNull ConnectionHandler connection, @NotNull Runnable runnable) throws SQLException {
-        boolean initialised = init(connection);
-        try {
-            runnable.run();
-        } catch (ProcessCanceledException ignore){
-        } finally {
-            release(initialised);
-        }
-    }
-
-    private static boolean init(ConnectionHandler connection) {
-        ConnectionHandler localConnection = CONNECTION.get();
-        if (localConnection == null) {
-            CONNECTION.set(connection);
-            return true;
-        }
-
-        if (connection != localConnection) {
-            throw new IllegalStateException("Already initialized for another connection");
-        }
-
-        return false;
-    }
-
-    private static void release(boolean initialised) {
-        if (!initialised) return;
-        CONNECTION.set(null);
+    public static DatabaseInterfaceContext create(ConnectionId connectionId, SchemaId schemaId, boolean readonly) {
+        return new DatabaseInterfaceContext(connectionId, schemaId, readonly);
     }
 }

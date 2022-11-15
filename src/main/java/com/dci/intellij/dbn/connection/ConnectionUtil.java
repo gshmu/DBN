@@ -8,7 +8,7 @@ import com.dci.intellij.dbn.connection.config.ConnectionSettings;
 import com.dci.intellij.dbn.connection.info.ConnectionInfo;
 import com.dci.intellij.dbn.connection.jdbc.DBNConnection;
 import com.dci.intellij.dbn.database.interfaces.DatabaseCompatibilityInterface;
-import com.dci.intellij.dbn.database.interfaces.DatabaseInterface;
+import com.dci.intellij.dbn.database.interfaces.DatabaseInterfaceInvoker;
 import com.dci.intellij.dbn.database.interfaces.DatabaseMessageParserInterface;
 import com.dci.intellij.dbn.diagnostics.DiagnosticsManager;
 import com.dci.intellij.dbn.diagnostics.data.DiagnosticBundle;
@@ -23,68 +23,73 @@ import java.sql.Driver;
 import java.sql.SQLException;
 import java.sql.SQLTimeoutException;
 
+import static com.dci.intellij.dbn.common.util.TimeUtil.millisSince;
+
 public class ConnectionUtil {
     private ConnectionUtil() {}
 
 
     public static DBNConnection connect(ConnectionHandler connection, SessionId sessionId) throws SQLException {
-        ConnectionHandlerStatusHolder connectionStatus = connection.getConnectionStatus();
-        ConnectionSettings connectionSettings = connection.getSettings();
-        ConnectionPropertiesSettings propertiesSettings = connectionSettings.getPropertiesSettings();
-
-        DiagnosticsManager diagnosticsManager = DiagnosticsManager.getInstance(connection.getProject());
-        DiagnosticBundle<SessionId> diagnostics = diagnosticsManager.getConnectivityDiagnostics(connection.getConnectionId());
-
-
-        // do not retry connection on authentication error unless
-        // credentials changed (account can be locked on several invalid trials)
-        AuthenticationError authenticationError = connectionStatus.getAuthenticationError();
         AuthenticationInfo authenticationInfo = ensureAuthenticationInfo(connection);
+
+        return DatabaseInterfaceInvoker.call(connection.context(), () -> {
+            long start = System.currentTimeMillis();
+            ConnectionHandlerStatusHolder connectionStatus = connection.getConnectionStatus();
+
+            DiagnosticsManager diagnosticsManager = DiagnosticsManager.getInstance(connection.getProject());
+            DiagnosticBundle<SessionId> diagnostics = diagnosticsManager.getConnectivityDiagnostics(connection.getConnectionId());
+            try {
+                DatabaseCompatibilityInterface compatibility = connection.getCompatibilityInterface();
+                DatabaseAttachmentHandler attachmentHandler = compatibility.getDatabaseAttachmentHandler();
+                ConnectionSettings connectionSettings = connection.getSettings();
+                ConnectionPropertiesSettings propertiesSettings = connectionSettings.getPropertiesSettings();
+
+
+                DBNConnection conn = connect(
+                        connectionSettings,
+                        connectionStatus,
+                        connection.getTemporaryAuthenticationInfo(),
+                        sessionId,
+                        propertiesSettings.isEnableAutoCommit(),
+                        attachmentHandler);
+                ConnectionInfo connectionInfo = new ConnectionInfo(conn.getMetaData());
+                connection.setConnectionInfo(connectionInfo);
+                connectionStatus.setAuthenticationError(null);
+                connection.getCompatibility().read(conn.getMetaData());
+                diagnostics.log(sessionId, false, false, millisSince(start));
+                return conn;
+            } catch (SQLTimeoutException e) {
+                diagnostics.log(sessionId, false, true, millisSince(start));
+                throw e;
+            } catch (SQLException e) {
+                diagnostics.log(sessionId, true, false, millisSince(start));
+                DatabaseMessageParserInterface messageParser = connection.getMessageParserInterface();
+                if (messageParser.isAuthenticationException(e)) {
+                    authenticationInfo.setPassword(null);
+                    connectionStatus.setAuthenticationError(new AuthenticationError(authenticationInfo, e));
+                }
+                throw e;
+            }
+        });
+    }
+
+    @NotNull
+    private static AuthenticationInfo ensureAuthenticationInfo(ConnectionHandler connection) throws SQLException {
+        // do not retry connection on authentication error unless
+        // credentials changed (account can be locked on several invalid attempts)
+
+        ConnectionHandlerStatusHolder statusHolder = connection.getConnectionStatus();
+        AuthenticationError authenticationError = statusHolder.getAuthenticationError();
+        AuthenticationInfo authenticationInfo = initAuthenticationInfo(connection);
 
         if (authenticationError != null && authenticationError.getAuthenticationInfo().isSame(authenticationInfo) && !authenticationError.isExpired()) {
             throw authenticationError.getException();
         }
-
-        return DatabaseInterface.call(connection, () -> {
-                    long start = System.currentTimeMillis();
-                    try {
-
-                        DatabaseCompatibilityInterface compatibility = connection.getCompatibilityInterface();
-                        DatabaseAttachmentHandler attachmentHandler = compatibility.getDatabaseAttachmentHandler();
-                        DBNConnection conn = connect(
-                                connectionSettings,
-                                connectionStatus,
-                                connection.getTemporaryAuthenticationInfo(),
-                                sessionId,
-                                propertiesSettings.isEnableAutoCommit(),
-                                attachmentHandler);
-                        ConnectionInfo connectionInfo = new ConnectionInfo(conn.getMetaData());
-                        connection.setConnectionInfo(connectionInfo);
-                        connectionStatus.setAuthenticationError(null);
-                        connection.getCompatibility().read(conn.getMetaData());
-                        diagnostics.log(sessionId, false, false, millisSince(start));
-                        return conn;
-                    } catch (SQLTimeoutException e) {
-                        diagnostics.log(sessionId, false, true, millisSince(start));
-                        throw e;
-                    } catch (SQLException e) {
-                        diagnostics.log(sessionId, true, false, millisSince(start));
-                        DatabaseMessageParserInterface messageParser = connection.getMessageParserInterface();
-                        if (messageParser.isAuthenticationException(e)){
-                            authenticationInfo.setPassword(null);
-                            connectionStatus.setAuthenticationError(new AuthenticationError(authenticationInfo, e));
-                        }
-                        throw e;
-                    }
-                });
-    }
-
-    private static long millisSince(long start) {
-        return System.currentTimeMillis() - start;
+        return authenticationInfo;
     }
 
     @NotNull
-    private static AuthenticationInfo ensureAuthenticationInfo(ConnectionHandler connection) {
+    private static AuthenticationInfo initAuthenticationInfo(ConnectionHandler connection) {
         ConnectionSettings connectionSettings = connection.getSettings();
         ConnectionDatabaseSettings databaseSettings = connectionSettings.getDatabaseSettings();
         AuthenticationInfo authenticationInfo = databaseSettings.getAuthenticationInfo();

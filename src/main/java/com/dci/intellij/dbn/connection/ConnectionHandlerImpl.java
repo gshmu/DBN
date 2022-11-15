@@ -13,6 +13,7 @@ import com.dci.intellij.dbn.common.latent.Latent;
 import com.dci.intellij.dbn.common.notification.NotificationGroup;
 import com.dci.intellij.dbn.common.notification.NotificationSupport;
 import com.dci.intellij.dbn.common.util.Commons;
+import com.dci.intellij.dbn.common.util.Exceptions;
 import com.dci.intellij.dbn.common.util.Strings;
 import com.dci.intellij.dbn.common.util.TimeUtil;
 import com.dci.intellij.dbn.connection.config.ConnectionDatabaseSettings;
@@ -26,7 +27,7 @@ import com.dci.intellij.dbn.connection.session.DatabaseSessionBundle;
 import com.dci.intellij.dbn.database.DatabaseCompatibility;
 import com.dci.intellij.dbn.database.DatabaseFeature;
 import com.dci.intellij.dbn.database.interfaces.DatabaseCompatibilityInterface;
-import com.dci.intellij.dbn.database.interfaces.DatabaseInterface;
+import com.dci.intellij.dbn.database.interfaces.DatabaseInterfaceInvoker;
 import com.dci.intellij.dbn.database.interfaces.DatabaseInterfaceQueue;
 import com.dci.intellij.dbn.database.interfaces.DatabaseInterfaces;
 import com.dci.intellij.dbn.execution.statement.StatementExecutionQueue;
@@ -341,9 +342,9 @@ public class ConnectionHandlerImpl extends StatefulDisposable.Base implements Co
     }
 
     @Override
-    public boolean hasPendingTransactions(@NotNull DBNConnection connection) {
+    public boolean hasPendingTransactions(@NotNull DBNConnection conn) {
         try {
-            return DatabaseInterface.call(this, () -> getMetadataInterface().hasPendingTransactions(connection));
+            return DatabaseInterfaceInvoker.call(context(), () -> getMetadataInterface().hasPendingTransactions(conn));
         } catch (SQLException e) {
             sendErrorNotification(
                     NotificationGroup.TRANSACTION,
@@ -497,28 +498,27 @@ public class ConnectionHandlerImpl extends StatefulDisposable.Base implements Co
     }
 
     @Override
-    public void setCurrentSchema(DBNConnection connection, @Nullable SchemaId schema) throws SQLException {
+    public void setCurrentSchema(DBNConnection conn, @Nullable SchemaId schema) throws SQLException {
         if (schema == null) return;
         //if (schema.isPublic()) return;
         if (!DatabaseFeature.CURRENT_SCHEMA.isSupported(this)) return;
-        if (Objects.equals(schema, connection.getCurrentSchema())) return;
+        if (Objects.equals(schema, conn.getCurrentSchema())) return;
 
-
-        DatabaseInterface.run(this, () -> {
+        DatabaseInterfaceInvoker.run(context(), () -> {
             String schemaName = schema.getName();
 
             DatabaseCompatibilityInterface compatibility = getCompatibilityInterface();
             QuotePair quotePair = compatibility.getDefaultIdentifierQuotes();
 
-            getMetadataInterface().setCurrentSchema(quotePair.quote(schemaName), connection);
-            connection.setCurrentSchema(schema);
+            getMetadataInterface().setCurrentSchema(quotePair.quote(schemaName), conn);
+            conn.setCurrentSchema(schema);
         });
     }
 
 
     private void assertCanConnect() throws SQLException {
         if (!canConnect()) {
-            throw DatabaseInterface.DBN_NOT_CONNECTED_EXCEPTION;
+            throw Exceptions.DBN_NOT_CONNECTED_EXCEPTION;
         }
     }
 

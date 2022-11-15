@@ -5,6 +5,7 @@ import com.dci.intellij.dbn.common.Referenceable;
 import com.dci.intellij.dbn.common.cache.Cache;
 import com.dci.intellij.dbn.common.database.AuthenticationInfo;
 import com.dci.intellij.dbn.common.database.DatabaseInfo;
+import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.common.dispose.StatefulDisposable;
 import com.dci.intellij.dbn.common.environment.EnvironmentTypeProvider;
 import com.dci.intellij.dbn.common.filter.Filter;
@@ -35,10 +36,6 @@ import java.sql.SQLException;
 import java.util.List;
 
 public interface ConnectionHandler extends StatefulDisposable, EnvironmentTypeProvider, ConnectionProvider, Presentable, ConnectionIdProvider, Referenceable<ConnectionRef> {
-    @Nullable
-    static ConnectionHandler get(ConnectionId connectionId) {
-        return ConnectionCache.resolve(connectionId);
-    }
 
     @NotNull
     Project getProject();
@@ -154,7 +151,7 @@ public interface ConnectionHandler extends StatefulDisposable, EnvironmentTypePr
 
     boolean isLoggingEnabled();
 
-    boolean hasPendingTransactions(@NotNull DBNConnection connection);
+    boolean hasPendingTransactions(@NotNull DBNConnection conn);
 
     void setAutoCommit(boolean autoCommit);
 
@@ -213,5 +210,20 @@ public interface ConnectionHandler extends StatefulDisposable, EnvironmentTypePr
 
     default String getMetaLoadTitle() {
         return "Loading data dictionary (" + getName() + ")";
+    }
+
+    @Nullable
+    static ConnectionHandler get(ConnectionId connectionId) {
+        return ConnectionCache.resolve(connectionId);
+    }
+
+    @NotNull
+    static ConnectionHandler ensure(ConnectionId connectionId) {
+        return Failsafe.nd(get(connectionId));
+    }
+
+    @NotNull
+    static ConnectionHandler local() {
+        return ConnectionLocalContext.getConnection();
     }
 }

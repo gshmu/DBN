@@ -9,7 +9,7 @@ import com.dci.intellij.dbn.connection.Resources;
 import com.dci.intellij.dbn.connection.SchemaId;
 import com.dci.intellij.dbn.connection.mapping.FileConnectionContextManager;
 import com.dci.intellij.dbn.database.interfaces.DatabaseCompatibilityInterface;
-import com.dci.intellij.dbn.database.interfaces.DatabaseInterface;
+import com.dci.intellij.dbn.database.interfaces.DatabaseInterfaceInvoker;
 import com.dci.intellij.dbn.database.interfaces.DatabaseMetadataInterface;
 import com.dci.intellij.dbn.execution.ExecutionManager;
 import com.dci.intellij.dbn.execution.explain.result.ExplainPlanResult;
@@ -67,7 +67,7 @@ public class ExplainPlanManager extends ProjectComponentBase {
                                     ConnectionHandler connection = action.getConnection();
                                     ExplainPlanResult explainPlanResult;
                                     try {
-                                        explainPlanResult = DatabaseInterface.call(true, connection, conn -> {
+                                        explainPlanResult = DatabaseInterfaceInvoker.call(connection.context(), conn -> {
                                             SchemaId currentSchema = executable.getFile().getSchemaId();
                                             connection.setCurrentSchema(conn, currentSchema);
                                             Statement statement = null;
