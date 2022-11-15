@@ -8,7 +8,6 @@ import com.dci.intellij.dbn.common.routine.ParametricRunnable;
 import com.dci.intellij.dbn.common.thread.Dispatch;
 import com.dci.intellij.dbn.common.util.Commons;
 import com.dci.intellij.dbn.connection.context.ConnectionProvider;
-import com.intellij.openapi.progress.ProgressIndicator;
 import com.intellij.openapi.project.Project;
 import org.jetbrains.annotations.NotNull;
 
@@ -35,8 +34,7 @@ public abstract class ConnectionAction implements Runnable{
         if (cancelled) {
             return true;
         } else {
-            ProgressIndicator progressIndicator = ProgressMonitor.getProgressIndicator();
-            return progressIndicator != null && progressIndicator.isCanceled();
+            return ProgressMonitor.isCancelled();
         }
     }
 
@@ -140,7 +138,7 @@ public abstract class ConnectionAction implements Runnable{
         }.start();
     }
 
-    public static <T extends Throwable> void invoke(
+    public static void invoke(
             String description,
             boolean interactive,
             ConnectionProvider connectionProvider,

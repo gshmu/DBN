@@ -10,16 +10,9 @@ import com.dci.intellij.dbn.data.export.DataExportModel;
 import com.intellij.openapi.project.Project;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.poi.hssf.usermodel.HSSFFont;
+import org.apache.poi.hssf.usermodel.HSSFRichTextString;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
-import org.apache.poi.ss.usermodel.Cell;
-import org.apache.poi.ss.usermodel.CellStyle;
-import org.apache.poi.ss.usermodel.CreationHelper;
-import org.apache.poi.ss.usermodel.DataFormat;
-import org.apache.poi.ss.usermodel.Font;
-import org.apache.poi.ss.usermodel.IndexedColors;
-import org.apache.poi.ss.usermodel.Row;
-import org.apache.poi.ss.usermodel.Sheet;
-import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.xssf.streaming.SXSSFWorkbook;
 
 import java.io.File;
@@ -61,57 +54,17 @@ public class ExcelDataExportProcessor extends DataExportProcessor{
         try {
             workbook = createWorkbook();
             String sheetName = model.getTableName();
-            Sheet sheet = Strings.isEmpty(sheetName) ? workbook.createSheet() : workbook.createSheet(sheetName);
+            Sheet sheet = createSheet(workbook, sheetName);
 
-            if (instructions.isCreateHeader()) {
-                Row headerRow = sheet.createRow(0);
-
-                for (int columnIndex = 0; columnIndex < model.getColumnCount(); columnIndex++) {
-                    String columnName = getColumnName(model, instructions, columnIndex);
-
-                    Cell cell = headerRow.createCell(columnIndex);
-                    cell.setCellValue(columnName);
-
-                    CellStyle cellStyle = workbook.createCellStyle();
-                    Font tableHeadingFont = workbook.createFont();
-                    tableHeadingFont.setBoldweight(HSSFFont.BOLDWEIGHT_BOLD);
-                    cellStyle.setFillBackgroundColor(IndexedColors.GREY_25_PERCENT.getIndex());
-                    cellStyle.setFont(tableHeadingFont);
-                    cell.setCellStyle(cellStyle);
-                }
-            }
+            createHeader(model, instructions, workbook, sheet);
             sheet.createFreezePane(0, 1);
 
             Formatter formatter = getFormatter(connection.getProject());
             CellStyleCache cellStyleCache = new CellStyleCache(workbook, model.getProject());
-            for (short rowIndex = 0; rowIndex < model.getRowCount(); rowIndex++) {
-                Row row = sheet.createRow(rowIndex + 1);
-                for (int columnIndex = 0; columnIndex < model.getColumnCount(); columnIndex++) {
-                    checkCancelled();
-                    Cell cell = row.createCell(columnIndex);
-                    Object value = model.getValue(rowIndex, columnIndex);
-                    if (value != null) {
-                        if (value instanceof Number) {
-                            Number number = (Number) value;
-                            double doubleValue = number.doubleValue();
-                            cell.setCellValue(doubleValue);
-                            cell.setCellStyle(
-                                    doubleValue % 1 == 0 ?
-                                            cellStyleCache.getIntegerStyle() :
-                                            cellStyleCache.getNumberStyle());
-
-                        } else if (value instanceof Date) {
-                            Date date = (Date) value;
-                            boolean hasTime = hasTimeComponent(date);
-                            cell.setCellValue(date);
-                            cell.setCellStyle(hasTime ?
-                                    cellStyleCache.getDatetimeStyle() :
-                                    cellStyleCache.getDateStyle());
-                        } else {
-                            String stringValue = formatValue(formatter, value);
-                            cell.setCellValue(stringValue);
-                        }
-                    }
+            for (int r = 0; r < model.getRowCount(); r++) {
+                Row row = sheet.createRow(r + 1);
+                for (int c = 0; c < model.getColumnCount(); c++) {
+                    createDataCell(model, formatter, cellStyleCache, row, r, c);
                 }
             }
 
@@ -119,20 +72,10 @@ public class ExcelDataExportProcessor extends DataExportProcessor{
                 sheet.autoSizeColumn(columnIndex);
             }
 
-            File file = instructions.getFile();
-            try {
-                FileOutputStream fileOutputStream = new FileOutputStream(file);
-                workbook.write(fileOutputStream);
-                fileOutputStream.flush();
-                fileOutputStream.close();
-            } catch (Throwable e) {
-                log.warn("Failed to export data", e);
-                throw new DataExportException(
-                        "Could not write file " + file.getPath() + ".\nCause: " + e.getMessage());
-            }
+            createFile(workbook, instructions);
         } catch (DataExportException e) {
             throw e;
-        } catch (Throwable e) {
+        } catch (Exception e) {
             throw new DataExportException("Failed to export data. Cause: " + e.getMessage());
         } finally {
             if (workbook instanceof SXSSFWorkbook) {
@@ -143,8 +86,75 @@ public class ExcelDataExportProcessor extends DataExportProcessor{
 
     }
 
+    private static void createFile(Workbook workbook, DataExportInstructions instructions) throws DataExportException {
+        File file = instructions.getFile();
+        try (FileOutputStream fileOutputStream = new FileOutputStream(file)){
+            workbook.write(fileOutputStream);
+            fileOutputStream.flush();
+        } catch (Exception e) {
+            log.warn("Failed to export data", e);
+            throw new DataExportException("Could not write file " + file.getPath() + ".\nCause: " + e.getMessage());
+        }
+    }
+
+    private static Sheet createSheet(Workbook workbook, String sheetName) {
+        return Strings.isEmpty(sheetName) ? workbook.createSheet() : workbook.createSheet(sheetName);
+    }
+
+    private static void createDataCell(DataExportModel model, Formatter formatter, CellStyleCache cellStyleCache, Row row, int r, int c) throws DataExportException {
+        checkCancelled();
+        Cell cell = row.createCell(c);
+        Object value = model.getValue(r, c);
+        if (value == null)  return;
+
+        if (value instanceof Number) {
+            Number number = (Number) value;
+            double doubleValue = number.doubleValue();
+            cell.setCellValue(doubleValue);
+            cell.setCellStyle(
+                    doubleValue % 1 == 0 ?
+                            cellStyleCache.getIntegerStyle() :
+                            cellStyleCache.getNumberStyle());
+
+        } else if (value instanceof Date) {
+            Date date = (Date) value;
+            boolean hasTime = hasTimeComponent(date);
+            cell.setCellValue(date);
+            cell.setCellStyle(hasTime ?
+                    cellStyleCache.getDatetimeStyle() :
+                    cellStyleCache.getDateStyle());
+        } else {
+            String stringValue = formatValue(formatter, value);
+            cell.setCellValue(stringValue);
+        }
+    }
+
+    private void createHeader(DataExportModel model, DataExportInstructions instructions, Workbook workbook, Sheet sheet) {
+        if (!instructions.isCreateHeader()) return;
+
+        Row headerRow = sheet.createRow(0);
+
+        for (int columnIndex = 0; columnIndex < model.getColumnCount(); columnIndex++) {
+            String columnName = getColumnName(model, instructions, columnIndex);
+
+            Cell cell = headerRow.createCell(columnIndex);
+            cell.setCellValue(columnName);
+
+            CellStyle cellStyle = workbook.createCellStyle();
+            Font tableHeadingFont = workbook.createFont();
+            tableHeadingFont.setBoldweight(HSSFFont.BOLDWEIGHT_BOLD);
+            cellStyle.setFillBackgroundColor(IndexedColors.GREY_25_PERCENT.getIndex());
+            cellStyle.setFont(tableHeadingFont);
+            cell.setCellStyle(cellStyle);
+        }
+    }
+
     protected Workbook createWorkbook() {
         return new HSSFWorkbook();
+    }
+
+    protected RichTextString createRichText(String string) {
+        return new HSSFRichTextString(string);
     }
 
     private class CellStyleCache {
