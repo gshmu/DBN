@@ -2,10 +2,10 @@ package com.dci.intellij.dbn.database.generic;
 
 import com.dci.intellij.dbn.common.latent.Latent;
 import com.dci.intellij.dbn.common.util.Strings;
-import com.dci.intellij.dbn.connection.util.Jdbc.Callable;
 import com.dci.intellij.dbn.database.common.util.CachedResultSet;
 import com.dci.intellij.dbn.database.common.util.CachedResultSetRow;
 import com.dci.intellij.dbn.database.common.util.WrappedCachedResultSet;
+import com.dci.intellij.dbn.database.interfaces.DatabaseInterface.Callable;
 import lombok.SneakyThrows;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;

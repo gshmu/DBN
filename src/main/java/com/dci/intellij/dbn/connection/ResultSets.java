@@ -2,7 +2,7 @@ package com.dci.intellij.dbn.connection;
 
 import com.dci.intellij.dbn.common.dispose.StatefulDisposable;
 import com.dci.intellij.dbn.common.routine.ThrowableConsumer;
-import com.dci.intellij.dbn.connection.util.Jdbc.Runnable;
+import com.dci.intellij.dbn.database.interfaces.DatabaseInterface.Runnable;
 
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;

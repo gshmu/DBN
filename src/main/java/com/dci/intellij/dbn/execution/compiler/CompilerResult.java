@@ -6,7 +6,7 @@ import com.dci.intellij.dbn.common.notification.NotificationSupport;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.ConnectionId;
 import com.dci.intellij.dbn.connection.Resources;
-import com.dci.intellij.dbn.database.interfaces.DatabaseInterface;
+import com.dci.intellij.dbn.database.interfaces.DatabaseInterfaceInvoker;
 import com.dci.intellij.dbn.database.interfaces.DatabaseMetadataInterface;
 import com.dci.intellij.dbn.editor.DBContentType;
 import com.dci.intellij.dbn.object.DBSchema;
@@ -15,6 +15,7 @@ import com.dci.intellij.dbn.object.lookup.DBObjectRef;
 import com.dci.intellij.dbn.object.type.DBObjectType;
 import com.intellij.openapi.Disposable;
 import com.intellij.openapi.project.Project;
+import lombok.Getter;
 import org.jetbrains.annotations.Nullable;
 
 import java.sql.ResultSet;
@@ -23,8 +24,8 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+@Getter
 public class CompilerResult implements Disposable, NotificationSupport {
-
     private final DBObjectRef<DBSchemaObject> object;
     private final List<CompilerMessage> compilerMessages = new ArrayList<>();
     private CompilerAction compilerAction;
@@ -52,7 +53,7 @@ public class CompilerResult implements Disposable, NotificationSupport {
         DBContentType contentType = compilerAction.getContentType();
 
         try {
-            DatabaseInterface.run(true, connection, conn -> {
+            DatabaseInterfaceInvoker.run(connection.context(), conn -> {
                 ResultSet resultSet = null;
                 try {
                     DatabaseMetadataInterface metadata = connection.getMetadataInterface();
@@ -92,21 +93,8 @@ public class CompilerResult implements Disposable, NotificationSupport {
         }
     }
 
-    public CompilerAction getCompilerAction() {
-        return compilerAction;
-    }
-
-    public boolean isError() {
-        return error;
-    }
-
     public boolean isSingleMessage() {
         return compilerMessages.size() == 1;
-    }
-
-
-    public List<CompilerMessage> getCompilerMessages() {
-        return compilerMessages;
     }
 
     @Nullable

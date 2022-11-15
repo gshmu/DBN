@@ -2,6 +2,7 @@ package com.dci.intellij.dbn.database.generic;
 
 import com.dci.intellij.dbn.common.util.Commons;
 import com.dci.intellij.dbn.common.util.Unsafe;
+import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.jdbc.DBNConnection;
 import com.dci.intellij.dbn.database.DatabaseCompatibility;
 import com.dci.intellij.dbn.database.JdbcProperty;
@@ -11,7 +12,7 @@ import com.dci.intellij.dbn.database.common.util.CachedResultSet.Columns;
 import com.dci.intellij.dbn.database.common.util.CachedResultSetRow;
 import com.dci.intellij.dbn.database.common.util.MultipartResultSet;
 import com.dci.intellij.dbn.database.common.util.ResultSetCondition;
-import com.dci.intellij.dbn.database.interfaces.DatabaseInterface;
+import com.dci.intellij.dbn.database.interfaces.DatabaseInterfaceInvoker;
 import com.dci.intellij.dbn.database.interfaces.DatabaseInterfaces;
 import com.dci.intellij.dbn.language.common.QuotePair;
 import org.jetbrains.annotations.NotNull;
@@ -386,7 +387,7 @@ public class GenericMetadataInterface extends DatabaseMetadataInterfaceImpl {
     private static CachedResultSet loadMethodsRaw(String ownerName, DBNConnection connection, String methodType) throws SQLException {
         switch (methodType) {
             case "FUNCTION":
-                return DatabaseInterface.cached(
+                return DatabaseInterfaceInvoker.cached(
                         key("UNSCRAMBLED_FUNCTIONS", ownerName),
                         () -> {
                             CachedResultSet functionsRs = loadFunctionsRaw(ownerName, connection);
@@ -403,7 +404,7 @@ public class GenericMetadataInterface extends DatabaseMetadataInterfaceImpl {
                         });
 
             case "PROCEDURE":
-                return DatabaseInterface.cached(
+                return DatabaseInterfaceInvoker.cached(
                         key("UNSCRAMBLED_PROCEDURES", ownerName),
                         () -> {
                             CachedResultSet proceduresRs = loadProceduresRaw(ownerName, connection);
@@ -437,7 +438,7 @@ public class GenericMetadataInterface extends DatabaseMetadataInterfaceImpl {
     }
 
     static DatabaseCompatibility getCompatibility() {
-        return DatabaseInterface.getConnection().getCompatibility();
+        return ConnectionHandler.local().getCompatibility();
     }
 
     private static boolean match(Object value1, Object value2) {

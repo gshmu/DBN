@@ -2,8 +2,8 @@ package com.dci.intellij.dbn.connection;
 
 import com.dci.intellij.dbn.connection.jdbc.DBNConnection;
 import com.dci.intellij.dbn.connection.jdbc.DBNResultSet;
-import com.dci.intellij.dbn.connection.util.Jdbc.Callable;
-import com.dci.intellij.dbn.connection.util.Jdbc.Runnable;
+import com.dci.intellij.dbn.database.interfaces.DatabaseInterface.Callable;
+import com.dci.intellij.dbn.database.interfaces.DatabaseInterface.Runnable;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 

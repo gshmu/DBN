@@ -11,7 +11,7 @@ import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.SchemaId;
 import com.dci.intellij.dbn.connection.jdbc.DBNConnection;
 import com.dci.intellij.dbn.database.interfaces.DatabaseDataDefinitionInterface;
-import com.dci.intellij.dbn.database.interfaces.DatabaseInterface;
+import com.dci.intellij.dbn.database.interfaces.DatabaseInterfaceInvoker;
 import com.dci.intellij.dbn.editor.DBContentType;
 import com.dci.intellij.dbn.object.DBMethod;
 import com.dci.intellij.dbn.object.DBSchema;
@@ -129,7 +129,7 @@ public class DatabaseObjectFactory extends ProjectComponentBase {
     private void doDropObject(DBSchemaObject object) {
         try {
             ConnectionHandler connection = object.getConnection();
-            DatabaseInterface.run(false, connection, conn -> {
+            DatabaseInterfaceInvoker.run(connection.context(), conn -> {
                 DBContentType contentType = object.getContentType();
 
                 String objectName = object.getQualifiedName();
