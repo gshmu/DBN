@@ -11,7 +11,7 @@ public interface DatabaseInterfaces {
     DatabaseType getDatabaseType();
 
     @Nullable
-    DBLanguageDialect getLanguageDialect(DBLanguage language);
+    DBLanguageDialect getLanguageDialect(DBLanguage<?> language);
 
     DatabaseNativeDataTypes getNativeDataTypes();
 
@@ -21,11 +21,13 @@ public interface DatabaseInterfaces {
 
     DatabaseMetadataInterface getMetadataInterface();
 
-    DatabaseDebuggerInterface getDebuggerInterface();
-
     DatabaseDataDefinitionInterface getDataDefinitionInterface();
 
     DatabaseExecutionInterface getExecutionInterface();
+
+    default DatabaseDebuggerInterface getDebuggerInterface() {
+        return null;
+    }
 
     void reset();
 }

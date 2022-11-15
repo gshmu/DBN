@@ -16,7 +16,6 @@ public final class GenericDatabaseInterfaces extends DatabaseInterfacesBase {
     private final DatabaseDataDefinitionInterface dataDefinitionInterface = new GenericDataDefinitionInterface(this);
     private final DatabaseExecutionInterface executionInterface = new GenericExecutionInterface();
     private final DatabaseNativeDataTypes nativeDataTypes = new GenericNativeDataTypes();
-    private final DatabaseDebuggerInterface debuggerInterface = null;
 
     public GenericDatabaseInterfaces() {
         //super(SQLLanguage.INSTANCE.getLanguageDialect(DBLanguageDialectIdentifier.ISO92_SQL), null);

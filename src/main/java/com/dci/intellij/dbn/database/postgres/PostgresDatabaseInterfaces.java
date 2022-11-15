@@ -17,7 +17,6 @@ public class PostgresDatabaseInterfaces extends DatabaseInterfacesBase {
     private final DatabaseDataDefinitionInterface dataDefinitionInterface = new PostgresDataDefinitionInterface(this);
     private final DatabaseExecutionInterface executionInterface = new PostgresExecutionInterface();
     private final DatabaseNativeDataTypes nativeDataTypes = new PostgresNativeDataTypes();
-    private final DatabaseDebuggerInterface debuggerInterface = null;
 
     public PostgresDatabaseInterfaces() {
         super(

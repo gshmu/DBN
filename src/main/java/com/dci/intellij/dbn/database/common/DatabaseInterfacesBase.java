@@ -21,7 +21,7 @@ public abstract class DatabaseInterfacesBase implements DatabaseInterfaces {
 
     @Nullable
     @Override
-    public DBLanguageDialect getLanguageDialect(DBLanguage language) {
+    public DBLanguageDialect getLanguageDialect(DBLanguage<?> language) {
         if (language == SQLLanguage.INSTANCE) return sqlLanguageDialect;
         if (language == PSQLLanguage.INSTANCE) return psqlLanguageDialect;
         return null;

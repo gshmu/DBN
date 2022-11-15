@@ -17,7 +17,6 @@ public final class MySqlDatabaseInterfaces extends DatabaseInterfacesBase {
     private final DatabaseDataDefinitionInterface dataDefinitionInterface = new MySqlDataDefinitionInterface(this);
     private final DatabaseExecutionInterface executionInterface = new MySqlExecutionInterface();
     private final DatabaseNativeDataTypes nativeDataTypes = new MySqlNativeDataTypes();
-    private final DatabaseDebuggerInterface debuggerInterface = null;
 
     public MySqlDatabaseInterfaces() {
         super(SQLLanguage.INSTANCE.getLanguageDialect(DBLanguageDialectIdentifier.MYSQL_SQL),

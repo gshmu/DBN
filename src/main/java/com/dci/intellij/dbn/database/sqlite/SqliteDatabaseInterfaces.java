@@ -17,7 +17,6 @@ public class SqliteDatabaseInterfaces extends DatabaseInterfacesBase {
     private final DatabaseDataDefinitionInterface dataDefinitionInterface = new SqliteDataDefinitionInterface(this);
     private final DatabaseExecutionInterface executionInterface = new SqliteExecutionInterface();
     private final DatabaseNativeDataTypes nativeDataTypes = new SqliteNativeDataTypes();
-    private final DatabaseDebuggerInterface debuggerInterface = null;
 
     public SqliteDatabaseInterfaces() {
         super(SQLLanguage.INSTANCE.getLanguageDialect(DBLanguageDialectIdentifier.SQLITE_SQL),
