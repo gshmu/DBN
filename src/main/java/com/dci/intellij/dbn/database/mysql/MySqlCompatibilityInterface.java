@@ -2,10 +2,10 @@ package com.dci.intellij.dbn.database.mysql;
 
 import com.dci.intellij.dbn.common.util.Strings;
 import com.dci.intellij.dbn.data.sorting.SortDirection;
-import com.dci.intellij.dbn.database.DatabaseCompatibilityInterface;
 import com.dci.intellij.dbn.database.DatabaseFeature;
-import com.dci.intellij.dbn.database.DatabaseInterfaceProvider;
 import com.dci.intellij.dbn.database.DatabaseObjectTypeId;
+import com.dci.intellij.dbn.database.interfaces.DatabaseCompatibilityInterface;
+import com.dci.intellij.dbn.database.interfaces.DatabaseInterfaces;
 import com.dci.intellij.dbn.editor.session.SessionStatus;
 import com.dci.intellij.dbn.language.common.QuoteDefinition;
 import com.dci.intellij.dbn.language.common.QuotePair;
@@ -20,7 +20,7 @@ public class MySqlCompatibilityInterface extends DatabaseCompatibilityInterface 
     private static final QuoteDefinition IDENTIFIER_QUOTE_DEFINITION = new QuoteDefinition(new QuotePair('`', '`'));
 
 
-    MySqlCompatibilityInterface(DatabaseInterfaceProvider parent) {
+    MySqlCompatibilityInterface(DatabaseInterfaces parent) {
         super(parent);
     }
 

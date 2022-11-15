@@ -1,4 +1,4 @@
-package com.dci.intellij.dbn.database;
+package com.dci.intellij.dbn.database.interfaces;
 
 import com.dci.intellij.dbn.code.common.style.options.CodeStyleCaseSettings;
 import com.dci.intellij.dbn.connection.jdbc.DBNConnection;
@@ -13,6 +13,7 @@ public interface DatabaseDebuggerInterface extends DatabaseInterface{
     DebuggerSessionInfo initializeSession(DBNConnection connection) throws SQLException;
 
     void initializeJdwpSession(DBNConnection connection, String host, String port) throws SQLException;
+
     void disconnectJdwpSession(DBNConnection connection) throws SQLException;
 
     DebuggerVersionInfo getDebuggerVersion(DBNConnection connection) throws SQLException;

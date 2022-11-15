@@ -1,5 +1,6 @@
-package com.dci.intellij.dbn.database;
+package com.dci.intellij.dbn.database.interfaces;
 
+import com.dci.intellij.dbn.database.DatabaseObjectIdentifier;
 import org.jetbrains.annotations.Nullable;
 
 import java.sql.SQLException;

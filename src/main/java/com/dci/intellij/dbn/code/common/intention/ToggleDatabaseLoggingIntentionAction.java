@@ -5,8 +5,8 @@ import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.common.thread.Read;
 import com.dci.intellij.dbn.common.util.Strings;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
-import com.dci.intellij.dbn.database.DatabaseCompatibilityInterface;
 import com.dci.intellij.dbn.database.DatabaseFeature;
+import com.dci.intellij.dbn.database.interfaces.DatabaseCompatibilityInterface;
 import com.dci.intellij.dbn.debugger.DatabaseDebuggerManager;
 import com.dci.intellij.dbn.language.common.DBLanguagePsiFile;
 import com.dci.intellij.dbn.language.common.PsiFileRef;
@@ -30,8 +30,8 @@ public class ToggleDatabaseLoggingIntentionAction extends GenericIntentionAction
     public String getText() {
         ConnectionHandler connection = getLastCheckedConnection();
         if (Failsafe.check(connection)) {
-            DatabaseCompatibilityInterface compatibilityInterface = connection.getInterfaceProvider().getCompatibilityInterface();
-            String databaseLogName = compatibilityInterface.getDatabaseLogName();
+            DatabaseCompatibilityInterface compatibility = connection.getCompatibilityInterface();
+            String databaseLogName = compatibility.getDatabaseLogName();
             boolean loggingEnabled = connection.isLoggingEnabled();
             if (Strings.isEmpty(databaseLogName)) {
                 return loggingEnabled ? "Disable database logging" : "Enable database logging";
@@ -90,7 +90,7 @@ public class ToggleDatabaseLoggingIntentionAction extends GenericIntentionAction
     @Override
     public void invoke(@NotNull final Project project, Editor editor, PsiFile psiFile) throws IncorrectOperationException {
         ConnectionHandler connection = getConnection(psiFile);
-        if (connection != null && DatabaseFeature.DATABASE_LOGGING.isSupported(connection)) {
+        if (DatabaseFeature.DATABASE_LOGGING.isSupported(connection)) {
             connection.setLoggingEnabled(!connection.isLoggingEnabled());
         }
     }

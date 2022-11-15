@@ -1,6 +1,7 @@
 package com.dci.intellij.dbn.data.record;
 
 
+import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.PooledConnection;
 import com.dci.intellij.dbn.connection.Resources;
 import com.dci.intellij.dbn.connection.jdbc.DBNPreparedStatement;
@@ -57,43 +58,42 @@ public class DatasetRecord implements Disposable {
             }
         }
 
-        PooledConnection.run(true,
-                dataset.getConnection(),
-                connection -> {
-                    DBNPreparedStatement statement = null;
-                    DBNResultSet resultSet = null;
-                    try {
-                        statement = connection.prepareStatement(selectStatement.toString());
+        ConnectionHandler connection = dataset.getConnection();
+        PooledConnection.run(true, connection, conn -> {
+            DBNPreparedStatement statement = null;
+            DBNResultSet resultSet = null;
+            try {
+                statement = conn.prepareStatement(selectStatement.toString());
 
-                        int index = 1;
+                int index = 1;
 
-                        for (DBColumn column : filterColumns) {
-                            Object value = filterInput.getColumnValue(column);
+                for (DBColumn column : filterColumns) {
+                    Object value = filterInput.getColumnValue(column);
+                    DBDataType dataType = column.getDataType();
+                    dataType.setValueToPreparedStatement(statement, index, value);
+                    index++;
+                }
+
+                resultSet = statement.executeQuery();
+                try {
+                    if (resultSet.next()) {
+                        index = 1;
+
+                        for (DBColumn column : dataset.getColumns()) {
                             DBDataType dataType = column.getDataType();
-                            dataType.setValueToPreparedStatement(statement, index, value);
+                            Object value = dataType.getValueFromResultSet(resultSet, index);
+                            values.put(column.getName(), value);
                             index++;
                         }
-
-                        resultSet = statement.executeQuery();
-                        try {
-                            if (resultSet.next()) {
-                                index = 1;
-
-                                for (DBColumn column : dataset.getColumns()) {
-                                    DBDataType dataType = column.getDataType();
-                                    Object value = dataType.getValueFromResultSet(resultSet, index);
-                                    values.put(column.getName(), value);
-                                    index++;
-                                }
-                            }
-                        } finally {
-                            connection.updateLastAccess();
-                        }
-                    }  finally {
-                        Resources.close(resultSet);
-                        Resources.close(statement);
                     }
-                });
+                } finally {
+                    conn.updateLastAccess();
+                }
+            } finally {
+                Resources.close(resultSet);
+                Resources.close(statement);
+            }
+        });
     }
 
     public DBDataset getDataset() {

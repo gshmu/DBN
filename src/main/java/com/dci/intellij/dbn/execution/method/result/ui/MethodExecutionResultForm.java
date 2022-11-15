@@ -2,13 +2,13 @@ package com.dci.intellij.dbn.execution.method.result.ui;
 
 import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.common.thread.Dispatch;
-import com.dci.intellij.dbn.common.ui.util.UserInterface;
 import com.dci.intellij.dbn.common.ui.tab.TabbedPane;
+import com.dci.intellij.dbn.common.ui.util.UserInterface;
 import com.dci.intellij.dbn.common.util.Actions;
 import com.dci.intellij.dbn.common.util.Strings;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.SessionId;
-import com.dci.intellij.dbn.database.DatabaseCompatibilityInterface;
+import com.dci.intellij.dbn.database.interfaces.DatabaseCompatibilityInterface;
 import com.dci.intellij.dbn.execution.common.result.ui.ExecutionResultFormBase;
 import com.dci.intellij.dbn.execution.logging.LogOutput;
 import com.dci.intellij.dbn.execution.logging.LogOutputContext;
@@ -25,10 +25,8 @@ import com.intellij.ui.tabs.TabInfo;
 import com.intellij.util.ui.tree.TreeUtil;
 import org.jetbrains.annotations.NotNull;
 
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.JTree;
-import java.awt.BorderLayout;
+import javax.swing.*;
+import java.awt.*;
 import java.util.List;
 
 public class MethodExecutionResultForm extends ExecutionResultFormBase<MethodExecutionResult> {
@@ -96,8 +94,8 @@ public class MethodExecutionResultForm extends ExecutionResultFormBase<MethodExe
         String logOutput = executionResult.getLogOutput();
         String logConsoleName = "Output";
         ConnectionHandler connection = executionResult.getConnection();
-        DatabaseCompatibilityInterface compatibilityInterface = connection.getInterfaceProvider().getCompatibilityInterface();
-        String databaseLogName = compatibilityInterface.getDatabaseLogName();
+        DatabaseCompatibilityInterface compatibility = connection.getCompatibilityInterface();
+        String databaseLogName = compatibility.getDatabaseLogName();
         if (databaseLogName != null) {
             logConsoleName = databaseLogName;
         }

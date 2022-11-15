@@ -4,9 +4,9 @@ import com.dci.intellij.dbn.code.common.style.options.CodeStyleCaseOption;
 import com.dci.intellij.dbn.code.common.style.options.CodeStyleCaseSettings;
 import com.dci.intellij.dbn.connection.Resources;
 import com.dci.intellij.dbn.connection.jdbc.DBNConnection;
-import com.dci.intellij.dbn.database.DatabaseDDLInterface;
-import com.dci.intellij.dbn.database.DatabaseInterfaceProvider;
 import com.dci.intellij.dbn.database.DatabaseObjectTypeId;
+import com.dci.intellij.dbn.database.interfaces.DatabaseDataDefinitionInterface;
+import com.dci.intellij.dbn.database.interfaces.DatabaseInterfaces;
 import com.dci.intellij.dbn.editor.code.content.GuardedBlockMarker;
 import com.dci.intellij.dbn.editor.code.content.SourceCodeContent;
 import com.dci.intellij.dbn.language.common.QuotePair;
@@ -18,14 +18,14 @@ import java.text.MessageFormat;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public abstract class DatabaseDDLInterfaceImpl extends DatabaseInterfaceImpl implements DatabaseDDLInterface {
+public abstract class DatabaseDataDefinitionInterfaceImpl extends DatabaseInterfaceBase implements DatabaseDataDefinitionInterface {
     public static final String TEMP_OBJECT_NAME = "DBN_TEMPORARY_{0}_0001";
 
     public static String getTempObjectName(String objectType) {
         return MessageFormat.format(TEMP_OBJECT_NAME, objectType.toUpperCase());
     }
 
-    public DatabaseDDLInterfaceImpl(String fileName, DatabaseInterfaceProvider provider) {
+    public DatabaseDataDefinitionInterfaceImpl(String fileName, DatabaseInterfaces provider) {
         super(fileName, provider);
     }
 
@@ -95,7 +95,7 @@ public abstract class DatabaseDDLInterfaceImpl extends DatabaseInterfaceImpl imp
         CodeStyleCaseOption oco = caseSettings.getObjectCaseOption();
 
         StringBuffer buffer = new StringBuffer();
-        QuotePair quotes = getProvider().getCompatibilityInterface().getDefaultIdentifierQuotes();
+        QuotePair quotes = getInterfaces().getCompatibilityInterface().getDefaultIdentifierQuotes();
         String bq = "\\" + quotes.beginChar() + "?";
         String eq = "\\" + quotes.endChar() + "?";
         String regex = objectType + "\\s+(" + bq + schemaName + eq + "\\s*\\.)?\\s*" + bq + objectName + eq;

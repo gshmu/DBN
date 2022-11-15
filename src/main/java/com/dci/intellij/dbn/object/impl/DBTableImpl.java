@@ -7,15 +7,11 @@ import com.dci.intellij.dbn.common.content.DynamicContent;
 import com.dci.intellij.dbn.common.content.loader.DynamicContentResultSetLoader;
 import com.dci.intellij.dbn.common.content.loader.DynamicSubcontentLoader;
 import com.dci.intellij.dbn.connection.jdbc.DBNConnection;
-import com.dci.intellij.dbn.database.DatabaseMetadataInterface;
 import com.dci.intellij.dbn.database.common.metadata.def.DBNestedTableMetadata;
 import com.dci.intellij.dbn.database.common.metadata.def.DBTableMetadata;
+import com.dci.intellij.dbn.database.interfaces.DatabaseMetadataInterface;
 import com.dci.intellij.dbn.editor.DBContentType;
-import com.dci.intellij.dbn.object.DBColumn;
-import com.dci.intellij.dbn.object.DBIndex;
-import com.dci.intellij.dbn.object.DBNestedTable;
-import com.dci.intellij.dbn.object.DBSchema;
-import com.dci.intellij.dbn.object.DBTable;
+import com.dci.intellij.dbn.object.*;
 import com.dci.intellij.dbn.object.common.list.DBObjectList;
 import com.dci.intellij.dbn.object.common.list.DBObjectListContainer;
 import com.dci.intellij.dbn.object.common.list.DBObjectNavigationList;
@@ -25,7 +21,7 @@ import com.dci.intellij.dbn.object.type.DBObjectType;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import javax.swing.Icon;
+import javax.swing.*;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -196,9 +192,9 @@ public class DBTableImpl extends DBDatasetImpl<DBTableMetadata> implements DBTab
 
                     @Override
                     public ResultSet createResultSet(DynamicContent<DBNestedTable> dynamicContent, DBNConnection connection) throws SQLException {
-                        DatabaseMetadataInterface metadataInterface = dynamicContent.getMetadataInterface();
+                        DatabaseMetadataInterface metadata = dynamicContent.getMetadataInterface();
                         DBTable table = dynamicContent.getParentEntity();
-                        return metadataInterface.loadNestedTables(
+                        return metadata.loadNestedTables(
                                 getSchemaName(table),
                                 getObjectName(table),
                                 connection);

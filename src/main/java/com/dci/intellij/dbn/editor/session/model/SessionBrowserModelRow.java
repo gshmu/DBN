@@ -4,7 +4,7 @@ import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.data.model.ColumnInfo;
 import com.dci.intellij.dbn.data.model.resultSet.ResultSetColumnInfo;
 import com.dci.intellij.dbn.data.model.resultSet.ResultSetDataModelRow;
-import com.dci.intellij.dbn.database.DatabaseCompatibilityInterface;
+import com.dci.intellij.dbn.database.interfaces.DatabaseCompatibilityInterface;
 import com.dci.intellij.dbn.editor.session.SessionStatus;
 import org.jetbrains.annotations.NotNull;
 
@@ -55,9 +55,9 @@ public class SessionBrowserModelRow
     }
 
     public SessionStatus getSessionStatus() {
-        ConnectionHandler connection = getModel().getConnectionHandler();
-        DatabaseCompatibilityInterface compatibilityInterface = connection.getInterfaceProvider().getCompatibilityInterface();
-        return compatibilityInterface.getSessionStatus(getStatus());
+        ConnectionHandler connection = getModel().getConnection();
+        DatabaseCompatibilityInterface compatibility = connection.getCompatibilityInterface();
+        return compatibility.getSessionStatus(getStatus());
     }
 
 }

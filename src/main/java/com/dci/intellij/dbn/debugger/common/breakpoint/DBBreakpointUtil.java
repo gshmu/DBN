@@ -2,7 +2,7 @@ package com.dci.intellij.dbn.debugger.common.breakpoint;
 
 import com.dci.intellij.dbn.common.thread.Read;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
-import com.dci.intellij.dbn.database.DatabaseDebuggerInterface;
+import com.dci.intellij.dbn.database.interfaces.DatabaseDebuggerInterface;
 import com.dci.intellij.dbn.editor.DBContentType;
 import com.dci.intellij.dbn.object.common.DBSchemaObject;
 import com.dci.intellij.dbn.vfs.DatabaseFileSystem;
@@ -90,7 +90,7 @@ public class DBBreakpointUtil {
 
     @Nullable
     public static String getProgramIdentifier(@NotNull ConnectionHandler connection, DBSchemaObject object, DBContentType contentType) {
-        DatabaseDebuggerInterface debuggerInterface = connection.getInterfaceProvider().getDebuggerInterface();
+        DatabaseDebuggerInterface debuggerInterface = connection.getDebuggerInterface();
         return object == null ?
                 debuggerInterface.getJdwpBlockIdentifier() :
                 debuggerInterface.getJdwpProgramIdentifier(object.getObjectType(), contentType, object.getQualifiedName());

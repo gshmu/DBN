@@ -2,7 +2,7 @@ package com.dci.intellij.dbn.editor.session.model;
 
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.data.model.resultSet.ResultSetColumnInfo;
-import com.dci.intellij.dbn.database.DatabaseCompatibilityInterface;
+import com.dci.intellij.dbn.database.interfaces.DatabaseCompatibilityInterface;
 import com.dci.intellij.dbn.editor.session.SessionBrowserFilterType;
 
 import java.sql.ResultSet;
@@ -15,8 +15,8 @@ public class SessionBrowserColumnInfo extends ResultSetColumnInfo{
 
     @Override
     public String translateName(String columnName, ConnectionHandler connection) {
-        DatabaseCompatibilityInterface compatibilityInterface = connection.getInterfaceProvider().getCompatibilityInterface();
-        return compatibilityInterface.getSessionBrowserColumnName(columnName);
+        DatabaseCompatibilityInterface compatibility = connection.getCompatibilityInterface();
+        return compatibility.getSessionBrowserColumnName(columnName);
     }
 
     public SessionBrowserFilterType getFilterType() {

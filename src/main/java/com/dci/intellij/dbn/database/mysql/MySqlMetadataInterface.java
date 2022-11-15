@@ -1,8 +1,8 @@
 package com.dci.intellij.dbn.database.mysql;
 
 import com.dci.intellij.dbn.connection.jdbc.DBNConnection;
-import com.dci.intellij.dbn.database.DatabaseInterfaceProvider;
 import com.dci.intellij.dbn.database.common.DatabaseMetadataInterfaceImpl;
+import com.dci.intellij.dbn.database.interfaces.DatabaseInterfaces;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -11,7 +11,7 @@ import java.util.Date;
 
 public class MySqlMetadataInterface extends DatabaseMetadataInterfaceImpl {
 
-    MySqlMetadataInterface(DatabaseInterfaceProvider provider) {
+    MySqlMetadataInterface(DatabaseInterfaces provider) {
         super("mysql_metadata_interface.xml", provider);
     }
 

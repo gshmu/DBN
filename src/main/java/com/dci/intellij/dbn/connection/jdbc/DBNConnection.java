@@ -3,11 +3,11 @@ package com.dci.intellij.dbn.connection.jdbc;
 import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.common.event.ProjectEvents;
 import com.dci.intellij.dbn.common.project.ProjectRef;
-import com.dci.intellij.dbn.common.routine.ThrowableCallable;
-import com.dci.intellij.dbn.common.routine.ThrowableRunnable;
 import com.dci.intellij.dbn.common.util.TimeUtil;
 import com.dci.intellij.dbn.connection.*;
 import com.dci.intellij.dbn.connection.transaction.PendingTransactionBundle;
+import com.dci.intellij.dbn.connection.util.Jdbc.Callable;
+import com.dci.intellij.dbn.connection.util.Jdbc.Runnable;
 import com.intellij.openapi.progress.ProcessCanceledException;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
@@ -399,7 +399,7 @@ public class DBNConnection extends DBNConnectionBase {
     }
 
 
-    public <T> T withSavepoint(ThrowableCallable<T, SQLException> callable) throws SQLException{
+    public <T> T withSavepoint(Callable<T> callable) throws SQLException{
         Savepoint savepoint = Resources.createSavepoint(this);
         try {
             return callable.call();
@@ -411,7 +411,7 @@ public class DBNConnection extends DBNConnectionBase {
         }
     }
 
-    public void withSavepoint(ThrowableRunnable<SQLException> runnable) throws SQLException{
+    public void withSavepoint(Runnable runnable) throws SQLException{
         Savepoint savepoint = Resources.createSavepoint(this);
         try {
             runnable.run();

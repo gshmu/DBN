@@ -37,7 +37,7 @@ public class SessionBrowserModelCell
     }
 
     public ConnectionHandler getConnectionHandler() {
-        return getRow().getModel().getConnectionHandler();
+        return getRow().getModel().getConnection();
     }
 
     /*********************************************************

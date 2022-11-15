@@ -12,7 +12,7 @@ import com.dci.intellij.dbn.common.util.Editors;
 import com.dci.intellij.dbn.common.util.Strings;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.SchemaId;
-import com.dci.intellij.dbn.database.DatabaseCompatibilityInterface;
+import com.dci.intellij.dbn.database.interfaces.DatabaseCompatibilityInterface;
 import com.dci.intellij.dbn.editor.ddl.DDLFileEditor;
 import com.dci.intellij.dbn.editor.session.SessionBrowser;
 import com.dci.intellij.dbn.editor.session.ui.SessionBrowserForm;
@@ -744,9 +744,10 @@ public abstract class BasePsiElement<T extends ElementTypeBase> extends ASTDeleg
     }
 
     public QuoteDefinition getIdentifierQuotes() {
-        ConnectionHandler activeConnection = getConnection();
-        if (activeConnection != null) {
-            return DatabaseCompatibilityInterface.getInstance(activeConnection).getIdentifierQuotes();
+        ConnectionHandler connection = getConnection();
+        if (connection != null) {
+            DatabaseCompatibilityInterface compatibility = connection.getCompatibilityInterface();
+            return compatibility.getIdentifierQuotes();
         }
         return QuoteDefinition.DEFAULT_IDENTIFIER_QUOTE_DEFINITION;
     }

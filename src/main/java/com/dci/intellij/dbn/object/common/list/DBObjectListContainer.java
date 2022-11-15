@@ -13,11 +13,8 @@ import com.dci.intellij.dbn.common.dispose.SafeDisposer;
 import com.dci.intellij.dbn.common.dispose.StatefulDisposable;
 import com.dci.intellij.dbn.common.load.ProgressMonitor;
 import com.dci.intellij.dbn.common.util.Commons;
-import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.DatabaseEntity;
 import com.dci.intellij.dbn.connection.DatabaseType;
-import com.dci.intellij.dbn.database.DatabaseCompatibilityInterface;
-import com.dci.intellij.dbn.database.DatabaseObjectTypeId;
 import com.dci.intellij.dbn.object.common.DBObject;
 import com.dci.intellij.dbn.object.common.DBObjectBundle;
 import com.dci.intellij.dbn.object.type.DBObjectRelationType;
@@ -206,9 +203,7 @@ public final class DBObjectListContainer implements StatefulDisposable {
 
     private boolean isSupported(DBObjectType objectType) {
         DatabaseEntity owner = getOwner();
-        ConnectionHandler connection = owner.getConnection();
-        DatabaseCompatibilityInterface compatibilityInterface = DatabaseCompatibilityInterface.getInstance(connection);
-        return compatibilityInterface.supportsObjectType(objectType.getTypeId());
+        return objectType.isSupported(owner);
     }
 
     public DBObject getObjectNoLoad(String name, short overload) {
@@ -383,13 +378,9 @@ public final class DBObjectListContainer implements StatefulDisposable {
     /*****************************************************************
      *                      Object Relation Lists                    *
      *****************************************************************/
-    private boolean isSupported(DBObjectRelationType objectRelationType) {
-        ConnectionHandler connection = getOwner().getConnection();
-        DatabaseCompatibilityInterface compatibilityInterface = DatabaseCompatibilityInterface.getInstance(connection);
-        DatabaseObjectTypeId sourceTypeId = objectRelationType.getSourceType().getTypeId();
-        DatabaseObjectTypeId targetTypeId = objectRelationType.getTargetType().getTypeId();
-        return compatibilityInterface.supportsObjectType(sourceTypeId) &&
-                compatibilityInterface.supportsObjectType(targetTypeId);
+    private boolean isSupported(DBObjectRelationType relationType) {
+        return isSupported(relationType.getSourceType()) &&
+                isSupported(relationType.getTargetType());
     }
 
     @Nullable

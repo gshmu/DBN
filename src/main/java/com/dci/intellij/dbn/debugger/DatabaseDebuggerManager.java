@@ -14,10 +14,10 @@ import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.ConnectionRef;
 import com.dci.intellij.dbn.connection.context.ConnectionProvider;
 import com.dci.intellij.dbn.connection.operation.options.OperationSettings;
-import com.dci.intellij.dbn.database.DatabaseDebuggerInterface;
 import com.dci.intellij.dbn.database.DatabaseFeature;
-import com.dci.intellij.dbn.database.DatabaseInterface;
 import com.dci.intellij.dbn.database.common.debug.DebuggerVersionInfo;
+import com.dci.intellij.dbn.database.interfaces.DatabaseDebuggerInterface;
+import com.dci.intellij.dbn.database.interfaces.DatabaseInterface;
 import com.dci.intellij.dbn.debugger.common.breakpoint.DBBreakpointUpdaterFileEditorListener;
 import com.dci.intellij.dbn.debugger.common.config.*;
 import com.dci.intellij.dbn.debugger.common.process.DBProgramRunner;
@@ -385,7 +385,7 @@ public class DatabaseDebuggerManager extends ProjectComponentBase implements Per
         DBUser user = objectBundle.getUser(userName);
 
         if (user != null) {
-            String[] privilegeNames = connection.getInterfaceProvider().getDebuggerInterface().getRequiredPrivilegeNames();
+            String[] privilegeNames = connection.getDebuggerInterface().getRequiredPrivilegeNames();
 
             for (String privilegeName : privilegeNames) {
                 DBSystemPrivilege systemPrivilege = objectBundle.getSystemPrivilege(privilegeName);
@@ -407,13 +407,11 @@ public class DatabaseDebuggerManager extends ProjectComponentBase implements Per
     public String getDebuggerVersion(@NotNull ConnectionHandler connection) {
         if (DatabaseFeature.DEBUGGING.isSupported(connection)) {
             try {
-                return DatabaseInterface.call(true,
-                        connection,
-                        (provider, conn) -> {
-                            DatabaseDebuggerInterface debuggerInterface = provider.getDebuggerInterface();
-                            DebuggerVersionInfo debuggerVersion = debuggerInterface.getDebuggerVersion(conn);
-                            return debuggerVersion.getVersion();
-                        });
+                return DatabaseInterface.call(true, connection, conn -> {
+                    DatabaseDebuggerInterface debuggerInterface = connection.getDebuggerInterface();
+                    DebuggerVersionInfo debuggerVersion = debuggerInterface.getDebuggerVersion(conn);
+                    return debuggerVersion.getVersion();
+                });
             } catch (SQLException e) {
                 sendErrorNotification(
                         NotificationGroup.DEBUGGER,

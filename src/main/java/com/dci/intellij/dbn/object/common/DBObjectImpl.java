@@ -25,8 +25,8 @@ import com.dci.intellij.dbn.common.util.*;
 import com.dci.intellij.dbn.connection.*;
 import com.dci.intellij.dbn.connection.config.ConnectionDatabaseSettings;
 import com.dci.intellij.dbn.connection.jdbc.DBNCallableStatement;
-import com.dci.intellij.dbn.database.DatabaseCompatibilityInterface;
 import com.dci.intellij.dbn.database.common.metadata.DBObjectMetadata;
+import com.dci.intellij.dbn.database.interfaces.DatabaseCompatibilityInterface;
 import com.dci.intellij.dbn.editor.DBContentType;
 import com.dci.intellij.dbn.language.common.DBLanguage;
 import com.dci.intellij.dbn.language.common.DBLanguageDialect;
@@ -213,8 +213,8 @@ public abstract class DBObjectImpl<M extends DBObjectMetadata> extends BrowserTr
                 String identifierQuotes = connection.getCompatibility().getIdentifierQuote();
                 return identifierQuotes + name + identifierQuotes;
             } else {
-                DatabaseCompatibilityInterface compatibilityInterface = DatabaseCompatibilityInterface.getInstance(this);
-                QuotePair quotes = compatibilityInterface.getDefaultIdentifierQuotes();
+                DatabaseCompatibilityInterface compatibility = getCompatibilityInterface();
+                QuotePair quotes = compatibility.getDefaultIdentifierQuotes();
                 return quotes.quote(name);
             }
         } else {
@@ -506,29 +506,28 @@ public abstract class DBObjectImpl<M extends DBObjectMetadata> extends BrowserTr
     @Override
     public String extractDDL() throws SQLException {
         // TODO move to database interface (ORACLE)
-        return PooledConnection.call(true,
-                getConnection(),
-                connection -> {
-                    DBNCallableStatement statement = null;
-                    try {
-                        DBObjectType objectType = getObjectType();
-                        DBObjectType genericType = objectType.getGenericType();
-                        objectType = genericType == DBObjectType.TRIGGER ? genericType : objectType;
-                        String objectTypeName = objectType.getName().toUpperCase();
+        ConnectionHandler connection = getConnection();
+        return PooledConnection.call(true, connection, conn -> {
+            DBNCallableStatement statement = null;
+            try {
+                DBObjectType objectType = getObjectType();
+                DBObjectType genericType = objectType.getGenericType();
+                objectType = genericType == DBObjectType.TRIGGER ? genericType : objectType;
+                String objectTypeName = objectType.getName().toUpperCase();
 
-                        statement = connection.prepareCall("{? = call DBMS_METADATA.GET_DDL(?, ?, ?)}");
-                        statement.registerOutParameter(1, Types.CLOB);
-                        statement.setString(2, objectTypeName);
-                        statement.setString(3, getName());
-                        statement.setString(4, getSchema().getName());
+                statement = conn.prepareCall("{? = call DBMS_METADATA.GET_DDL(?, ?, ?)}");
+                statement.registerOutParameter(1, Types.CLOB);
+                statement.setString(2, objectTypeName);
+                statement.setString(3, getName());
+                statement.setString(4, getSchema().getName());
 
-                        statement.execute();
-                        String ddl = statement.getString(1);
-                        return ddl == null ? null : ddl.trim();
-                    } finally{
-                        Resources.close(statement);
-                    }
-                });
+                statement.execute();
+                String ddl = statement.getString(1);
+                return ddl == null ? null : ddl.trim();
+            } finally {
+                Resources.close(statement);
+            }
+        });
     }
 
     @Override

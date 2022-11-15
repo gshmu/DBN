@@ -29,7 +29,7 @@ public class RunMethodIntentionAction extends AbstractMethodExecutionIntentionAc
     public boolean isAvailable(@NotNull Project project, Editor editor, PsiFile psiFile) {
         if (psiFile != null) {
             DBMethod method = resolveMethod(editor, psiFile);
-            return method != null && DatabaseFeature.DEBUGGING.isSupported(method);
+            return DatabaseFeature.DEBUGGING.isSupported(method);
         }
         return false;
     }

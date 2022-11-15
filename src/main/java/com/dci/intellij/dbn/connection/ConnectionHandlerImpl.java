@@ -23,7 +23,12 @@ import com.dci.intellij.dbn.connection.info.ConnectionInfo;
 import com.dci.intellij.dbn.connection.jdbc.DBNConnection;
 import com.dci.intellij.dbn.connection.session.DatabaseSession;
 import com.dci.intellij.dbn.connection.session.DatabaseSessionBundle;
-import com.dci.intellij.dbn.database.*;
+import com.dci.intellij.dbn.database.DatabaseCompatibility;
+import com.dci.intellij.dbn.database.DatabaseFeature;
+import com.dci.intellij.dbn.database.interfaces.DatabaseCompatibilityInterface;
+import com.dci.intellij.dbn.database.interfaces.DatabaseInterface;
+import com.dci.intellij.dbn.database.interfaces.DatabaseInterfaceQueue;
+import com.dci.intellij.dbn.database.interfaces.DatabaseInterfaces;
 import com.dci.intellij.dbn.execution.statement.StatementExecutionQueue;
 import com.dci.intellij.dbn.language.common.DBLanguage;
 import com.dci.intellij.dbn.language.common.DBLanguageDialect;
@@ -46,6 +51,7 @@ import java.sql.SQLException;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.concurrent.ConcurrentHashMap;
 
 @Slf4j
@@ -61,13 +67,16 @@ public class ConnectionHandlerImpl extends StatefulDisposable.Base implements Co
     private final DatabaseSessionBundle sessionBundle;
     private final ConnectionInstructions instructions = new ConnectionInstructions();
 
-    private final Latent<DatabaseInterfaceProvider> interfaceProvider = Latent.mutable(
+    private final Latent<DatabaseInterfaces> interfaces = Latent.mutable(
             () -> getDatabaseType(),
-            () -> DatabaseInterfaceProviders.get(this));
+            () -> DatabaseInterfacesBundle.get(this));
 
-    private final Latent<DatabaseInterfaceProvider> derivedInterfaceProvider = Latent.mutable(
+    private final Latent<DatabaseInterfaces> derivedInterfaces = Latent.mutable(
             () -> getDerivedDatabaseType(),
-            () -> DatabaseInterfaceProviders.get(getDerivedDatabaseType()));
+            () -> DatabaseInterfacesBundle.get(getDerivedDatabaseType()));
+
+    private final Latent<DatabaseInterfaceQueue> interfaceQueue = Latent.basic(
+            () -> new DatabaseInterfaceQueue());
 
     private boolean enabled;
     private ConnectionInfo connectionInfo;
@@ -334,11 +343,7 @@ public class ConnectionHandlerImpl extends StatefulDisposable.Base implements Co
     @Override
     public boolean hasPendingTransactions(@NotNull DBNConnection connection) {
         try {
-            return DatabaseInterface.call(
-                    this, provider -> {
-                        DatabaseMetadataInterface metadataInterface = provider.getMetadataInterface();
-                        return metadataInterface.hasPendingTransactions(connection);
-                    });
+            return DatabaseInterface.call(this, () -> getMetadataInterface().hasPendingTransactions(connection));
         } catch (SQLException e) {
             sendErrorNotification(
                     NotificationGroup.TRANSACTION,
@@ -493,16 +498,21 @@ public class ConnectionHandlerImpl extends StatefulDisposable.Base implements Co
 
     @Override
     public void setCurrentSchema(DBNConnection connection, @Nullable SchemaId schema) throws SQLException {
-        if (schema != null && /*!schema.isPublicSchema() && */DatabaseFeature.CURRENT_SCHEMA.isSupported(this) && !schema.equals(connection.getCurrentSchema())) {
-            DatabaseInterface.run(this,
-                    (provider) -> {
-                        String schemaName = schema.getName();
-                        DatabaseMetadataInterface metadataInterface = provider.getMetadataInterface();
-                        QuotePair quotePair = provider.getCompatibilityInterface().getDefaultIdentifierQuotes();
-                        metadataInterface.setCurrentSchema(quotePair.quote(schemaName), connection);
-                        connection.setCurrentSchema(schema);
-                    });
-        }
+        if (schema == null) return;
+        //if (schema.isPublic()) return;
+        if (!DatabaseFeature.CURRENT_SCHEMA.isSupported(this)) return;
+        if (Objects.equals(schema, connection.getCurrentSchema())) return;
+
+
+        DatabaseInterface.run(this, () -> {
+            String schemaName = schema.getName();
+
+            DatabaseCompatibilityInterface compatibility = getCompatibilityInterface();
+            QuotePair quotePair = compatibility.getDefaultIdentifierQuotes();
+
+            getMetadataInterface().setCurrentSchema(quotePair.quote(schemaName), connection);
+            connection.setCurrentSchema(schema);
+        });
     }
 
 
@@ -531,13 +541,18 @@ public class ConnectionHandlerImpl extends StatefulDisposable.Base implements Co
         return Failsafe.nn(connectionPool);
     }
 
+    @NotNull
     @Override
-    public DatabaseInterfaceProvider getInterfaceProvider() {
-        return interfaceProvider.get();
+    public DatabaseInterfaces getInterfaces() {
+        return interfaces.get();
     }
 
-    private DatabaseInterfaceProvider getDerivedInterfaceProvider() {
-        return derivedInterfaceProvider.get();
+    private DatabaseInterfaces getDerivedInterfaces() {
+        return derivedInterfaces.get();
+    }
+
+    public DatabaseInterfaceQueue getInterfaceQueue() {
+        return interfaceQueue.get();
     }
 
     @Override
@@ -562,13 +577,13 @@ public class ConnectionHandlerImpl extends StatefulDisposable.Base implements Co
 
     @Override
     public DBLanguageDialect getLanguageDialect(DBLanguage language) {
-        DatabaseInterfaceProvider interfaceProvider = getInterfaceProvider();
-        DatabaseType databaseType = interfaceProvider.getDatabaseType();
+        DatabaseInterfaces interfaces = getInterfaces();
+        DatabaseType databaseType = interfaces.getDatabaseType();
         if (databaseType == DatabaseType.GENERIC) {
-            return getDerivedInterfaceProvider().getLanguageDialect(language);
+            return getDerivedInterfaces().getLanguageDialect(language);
         }
 
-        return interfaceProvider.getLanguageDialect(language);
+        return interfaces.getLanguageDialect(language);
     }
 
     public static Comparator<ConnectionHandler> getComparator(boolean asc) {

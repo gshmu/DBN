@@ -6,7 +6,8 @@ import com.dci.intellij.dbn.common.notification.NotificationSupport;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.ConnectionId;
 import com.dci.intellij.dbn.connection.Resources;
-import com.dci.intellij.dbn.database.DatabaseInterface;
+import com.dci.intellij.dbn.database.interfaces.DatabaseInterface;
+import com.dci.intellij.dbn.database.interfaces.DatabaseMetadataInterface;
 import com.dci.intellij.dbn.editor.DBContentType;
 import com.dci.intellij.dbn.object.DBSchema;
 import com.dci.intellij.dbn.object.common.DBSchemaObject;
@@ -51,27 +52,26 @@ public class CompilerResult implements Disposable, NotificationSupport {
         DBContentType contentType = compilerAction.getContentType();
 
         try {
-            DatabaseInterface.run(true,
-                    connection,
-                    (provider, conn) -> {
-                        ResultSet resultSet = null;
-                        try {
-                            resultSet = provider.getMetadataInterface().loadCompileObjectErrors(
-                                    schema.getName(),
-                                    objectName,
-                                    conn);
+            DatabaseInterface.run(true, connection, conn -> {
+                ResultSet resultSet = null;
+                try {
+                    DatabaseMetadataInterface metadata = connection.getMetadataInterface();
+                    resultSet = metadata.loadCompileObjectErrors(
+                            schema.getName(),
+                            objectName,
+                            conn);
 
-                            while (resultSet != null && resultSet.next()) {
-                                CompilerMessage errorMessage = new CompilerMessage(this, resultSet);
-                                error = true;
-                                if (/*!compilerAction.isDDL() || */contentType.isBundle() || contentType == errorMessage.getContentType()) {
-                                    compilerMessages.add(errorMessage);
-                                }
-                            }
-                        } finally{
-                            Resources.close(resultSet);
+                    while (resultSet != null && resultSet.next()) {
+                        CompilerMessage errorMessage = new CompilerMessage(this, resultSet);
+                        error = true;
+                        if (/*!compilerAction.isDDL() || */contentType.isBundle() || contentType == errorMessage.getContentType()) {
+                            compilerMessages.add(errorMessage);
                         }
-                    });
+                    }
+                } finally {
+                    Resources.close(resultSet);
+                }
+            });
         } catch (SQLException e) {
             sendErrorNotification(
                     NotificationGroup.COMPILER,

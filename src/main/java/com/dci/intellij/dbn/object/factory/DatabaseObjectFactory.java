@@ -10,8 +10,8 @@ import com.dci.intellij.dbn.connection.ConnectionAction;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.SchemaId;
 import com.dci.intellij.dbn.connection.jdbc.DBNConnection;
-import com.dci.intellij.dbn.database.DatabaseDDLInterface;
-import com.dci.intellij.dbn.database.DatabaseInterface;
+import com.dci.intellij.dbn.database.interfaces.DatabaseDataDefinitionInterface;
+import com.dci.intellij.dbn.database.interfaces.DatabaseInterface;
 import com.dci.intellij.dbn.editor.DBContentType;
 import com.dci.intellij.dbn.object.DBMethod;
 import com.dci.intellij.dbn.object.DBSchema;
@@ -88,8 +88,9 @@ public class DatabaseObjectFactory extends ProjectComponentBase {
             DBSchema schema = methodFactoryInput.getSchema();
             try {
                 ConnectionHandler connection = schema.getConnection();
-                DBNConnection mainConnection = connection.getMainConnection(SchemaId.from(schema));
-                connection.getInterfaceProvider().getDdlInterface().createMethod(methodFactoryInput, mainConnection);
+                DBNConnection conn = connection.getMainConnection(SchemaId.from(schema));
+                DatabaseDataDefinitionInterface dataDefinition = connection.getDataDefinitionInterface();
+                dataDefinition.createMethod(methodFactoryInput, conn);
                 DBObjectType objectType = methodFactoryInput.isFunction() ? DBObjectType.FUNCTION : DBObjectType.PROCEDURE;
                 Failsafe.nn(schema.getChildObjectList(objectType)).reload();
 
@@ -127,31 +128,31 @@ public class DatabaseObjectFactory extends ProjectComponentBase {
 
     private void doDropObject(DBSchemaObject object) {
         try {
-            DatabaseInterface.run(false, object.getConnection(),
-                    (provider, connection) -> {
-                        DBContentType contentType = object.getContentType();
+            ConnectionHandler connection = object.getConnection();
+            DatabaseInterface.run(false, connection, conn -> {
+                DBContentType contentType = object.getContentType();
 
-                        String objectName = object.getQualifiedName();
-                        String objectTypeName = object.getTypeName();
-                        DatabaseDDLInterface ddlInterface = provider.getDdlInterface();
-                        DBObjectList<?> objectList = (DBObjectList<?>) object.getParent();
-                        if (contentType == DBContentType.CODE_SPEC_AND_BODY) {
-                            DBObjectStatusHolder objectStatus = object.getStatus();
-                            if (objectStatus.is(DBContentType.CODE_BODY, DBObjectStatus.PRESENT)) {
-                                ddlInterface.dropObjectBody(objectTypeName, objectName, connection);
-                            }
+                String objectName = object.getQualifiedName();
+                String objectTypeName = object.getTypeName();
+                DatabaseDataDefinitionInterface dataDefinition = object.getDataDefinitionInterface();
+                DBObjectList<?> objectList = (DBObjectList<?>) object.getParent();
+                if (contentType == DBContentType.CODE_SPEC_AND_BODY) {
+                    DBObjectStatusHolder objectStatus = object.getStatus();
+                    if (objectStatus.is(DBContentType.CODE_BODY, DBObjectStatus.PRESENT)) {
+                        dataDefinition.dropObjectBody(objectTypeName, objectName, conn);
+                    }
 
-                            if (objectStatus.is(DBContentType.CODE_SPEC, DBObjectStatus.PRESENT)) {
-                                ddlInterface.dropObject(objectTypeName, objectName, connection);
-                            }
+                    if (objectStatus.is(DBContentType.CODE_SPEC, DBObjectStatus.PRESENT)) {
+                        dataDefinition.dropObject(objectTypeName, objectName, conn);
+                    }
 
-                        } else {
-                            ddlInterface.dropObject(objectTypeName, objectName, connection);
-                        }
+                } else {
+                    dataDefinition.dropObject(objectTypeName, objectName, conn);
+                }
 
-                        objectList.reload();
-                        notifyFactoryEvent(new ObjectFactoryEvent(object, ObjectFactoryEvent.EVENT_TYPE_DROP));
-                    });
+                objectList.reload();
+                notifyFactoryEvent(new ObjectFactoryEvent(object, ObjectFactoryEvent.EVENT_TYPE_DROP));
+            });
         } catch (SQLException e) {
             String message = "Could not drop " + object.getQualifiedNameWithType() + ".";
             Project project = getProject();

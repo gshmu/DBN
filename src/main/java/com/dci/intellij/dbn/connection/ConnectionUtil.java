@@ -7,8 +7,9 @@ import com.dci.intellij.dbn.connection.config.ConnectionPropertiesSettings;
 import com.dci.intellij.dbn.connection.config.ConnectionSettings;
 import com.dci.intellij.dbn.connection.info.ConnectionInfo;
 import com.dci.intellij.dbn.connection.jdbc.DBNConnection;
-import com.dci.intellij.dbn.database.DatabaseInterface;
-import com.dci.intellij.dbn.database.DatabaseMessageParserInterface;
+import com.dci.intellij.dbn.database.interfaces.DatabaseCompatibilityInterface;
+import com.dci.intellij.dbn.database.interfaces.DatabaseInterface;
+import com.dci.intellij.dbn.database.interfaces.DatabaseMessageParserInterface;
 import com.dci.intellij.dbn.diagnostics.DiagnosticsManager;
 import com.dci.intellij.dbn.diagnostics.data.DiagnosticBundle;
 import com.dci.intellij.dbn.driver.DatabaseDriverManager;
@@ -44,12 +45,12 @@ public class ConnectionUtil {
             throw authenticationError.getException();
         }
 
-        return DatabaseInterface.call(
-                connection,
-                (interfaceProvider) -> {
+        return DatabaseInterface.call(connection, () -> {
                     long start = System.currentTimeMillis();
                     try {
-                        DatabaseAttachmentHandler attachmentHandler = interfaceProvider.getCompatibilityInterface().getDatabaseAttachmentHandler();
+
+                        DatabaseCompatibilityInterface compatibility = connection.getCompatibilityInterface();
+                        DatabaseAttachmentHandler attachmentHandler = compatibility.getDatabaseAttachmentHandler();
                         DBNConnection conn = connect(
                                 connectionSettings,
                                 connectionStatus,
@@ -68,8 +69,8 @@ public class ConnectionUtil {
                         throw e;
                     } catch (SQLException e) {
                         diagnostics.log(sessionId, true, false, millisSince(start));
-                        DatabaseMessageParserInterface messageParserInterface = interfaceProvider.getMessageParserInterface();
-                        if (messageParserInterface.isAuthenticationException(e)){
+                        DatabaseMessageParserInterface messageParser = connection.getMessageParserInterface();
+                        if (messageParser.isAuthenticationException(e)){
                             authenticationInfo.setPassword(null);
                             connectionStatus.setAuthenticationError(new AuthenticationError(authenticationInfo, e));
                         }

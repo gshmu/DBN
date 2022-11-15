@@ -3,7 +3,7 @@ package com.dci.intellij.dbn.debugger.common.breakpoint;
 import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.common.notification.NotificationSupport;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
-import com.dci.intellij.dbn.database.DatabaseDebuggerInterface;
+import com.dci.intellij.dbn.database.interfaces.DatabaseDebuggerInterface;
 import com.dci.intellij.dbn.debugger.DBDebugConsoleLogger;
 import com.dci.intellij.dbn.debugger.common.process.DBDebugProcess;
 import com.dci.intellij.dbn.object.DBMethod;
@@ -100,7 +100,7 @@ public abstract class DBBreakpointHandler<T extends DBDebugProcess> extends XBre
     }
 
     protected DatabaseDebuggerInterface getDebuggerInterface() {
-        return getConnection().getInterfaceProvider().getDebuggerInterface();
+        return getConnection().getDebuggerInterface();
     }
 
     public abstract void registerDefaultBreakpoint(DBMethod method);

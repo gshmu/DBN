@@ -6,7 +6,7 @@ import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.common.util.Commons;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.ConnectionId;
-import com.dci.intellij.dbn.database.DatabaseCompatibilityInterface;
+import com.dci.intellij.dbn.database.interfaces.DatabaseCompatibilityInterface;
 import com.dci.intellij.dbn.execution.ExecutionResultBase;
 import com.dci.intellij.dbn.execution.logging.ui.DatabaseLoggingResultConsole;
 import com.dci.intellij.dbn.execution.logging.ui.DatabaseLoggingResultForm;
@@ -45,8 +45,8 @@ public class DatabaseLoggingResult extends ExecutionResultBase<DatabaseLoggingRe
         ConnectionHandler connection = getConnection();
         VirtualFile sourceFile = context.getSourceFile();
         if (sourceFile == null) {
-            DatabaseCompatibilityInterface compatibilityInterface = connection.getInterfaceProvider().getCompatibilityInterface();
-            String databaseLogName = compatibilityInterface.getDatabaseLogName();
+            DatabaseCompatibilityInterface compatibility = connection.getCompatibilityInterface();
+            String databaseLogName = compatibility.getDatabaseLogName();
 
             return connection.getName() + " - " + Commons.nvl(databaseLogName, "Log Output");
         } else {

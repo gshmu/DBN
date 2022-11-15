@@ -4,7 +4,7 @@ import com.dci.intellij.dbn.common.dispose.StatefulDisposable;
 import com.dci.intellij.dbn.common.latent.Latent;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.ConnectionRef;
-import com.dci.intellij.dbn.database.DatabaseInterfaceProvider;
+import com.dci.intellij.dbn.database.interfaces.DatabaseInterfaces;
 import com.dci.intellij.dbn.object.DBPackage;
 import com.dci.intellij.dbn.object.DBSchema;
 import com.dci.intellij.dbn.object.DBType;
@@ -63,8 +63,8 @@ public final class DBDataTypeBundle extends StatefulDisposable.Base {
     private Map<String, DBNativeDataType> createNativeDataTypes() {
         Map<String, DBNativeDataType> nativeDataTypes = new HashMap<>();
 
-        DatabaseInterfaceProvider interfaceProvider = getConnection().getInterfaceProvider();
-        List<DataTypeDefinition> dataTypeDefinitions = interfaceProvider.getNativeDataTypes().list();
+        DatabaseInterfaces interfaces = getConnection().getInterfaces();
+        List<DataTypeDefinition> dataTypeDefinitions = interfaces.getNativeDataTypes().list();
         for (DataTypeDefinition dataTypeDefinition : dataTypeDefinitions) {
             DBNativeDataType dataType = new DBNativeDataType(dataTypeDefinition);
             nativeDataTypes.put(dataType.getName().toUpperCase(), dataType);

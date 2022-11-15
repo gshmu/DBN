@@ -4,10 +4,10 @@ import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.common.dispose.SafeDisposer;
 import com.dci.intellij.dbn.common.ui.AutoCommitLabel;
-import com.dci.intellij.dbn.common.ui.misc.DBNComboBox;
+import com.dci.intellij.dbn.common.ui.ValueSelectorOption;
 import com.dci.intellij.dbn.common.ui.form.DBNForm;
 import com.dci.intellij.dbn.common.ui.form.DBNFormBase;
-import com.dci.intellij.dbn.common.ui.ValueSelectorOption;
+import com.dci.intellij.dbn.common.ui.misc.DBNComboBox;
 import com.dci.intellij.dbn.common.util.Strings;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.ConnectionType;
@@ -15,20 +15,18 @@ import com.dci.intellij.dbn.connection.SchemaId;
 import com.dci.intellij.dbn.connection.SessionId;
 import com.dci.intellij.dbn.connection.session.DatabaseSession;
 import com.dci.intellij.dbn.connection.session.DatabaseSessionBundle;
-import com.dci.intellij.dbn.database.DatabaseCompatibilityInterface;
 import com.dci.intellij.dbn.database.DatabaseFeature;
+import com.dci.intellij.dbn.database.interfaces.DatabaseCompatibilityInterface;
 import com.dci.intellij.dbn.debugger.DBDebuggerType;
 import com.dci.intellij.dbn.execution.ExecutionOption;
 import com.dci.intellij.dbn.execution.ExecutionOptions;
 import com.dci.intellij.dbn.execution.LocalExecutionInput;
 import org.jetbrains.annotations.NotNull;
 
-import javax.swing.JCheckBox;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
+import javax.swing.*;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
-import java.awt.BorderLayout;
+import java.awt.*;
 import java.awt.event.ActionListener;
 import java.util.HashSet;
 import java.util.List;
@@ -112,8 +110,8 @@ public class ExecutionOptionsForm extends DBNFormBase {
         if (DatabaseFeature.DATABASE_LOGGING.isSupported(connection) && executionInput.isDatabaseLogProducer()) {
             enableLoggingCheckBox.setEnabled(!debuggerType.isDebug());
             enableLoggingCheckBox.setSelected(!debuggerType.isDebug() && options.is(ExecutionOption.ENABLE_LOGGING));
-            DatabaseCompatibilityInterface compatibilityInterface = DatabaseCompatibilityInterface.getInstance(connection);
-            String databaseLogName = compatibilityInterface == null ? null : compatibilityInterface.getDatabaseLogName();
+            DatabaseCompatibilityInterface compatibility = connection.getCompatibilityInterface();
+            String databaseLogName = compatibility.getDatabaseLogName();
             if (Strings.isNotEmpty(databaseLogName)) {
                 enableLoggingCheckBox.setText("Enable logging (" + databaseLogName + ")");
             }
