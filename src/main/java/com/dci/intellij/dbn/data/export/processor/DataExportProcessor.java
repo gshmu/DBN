@@ -8,17 +8,23 @@ import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.data.export.DataExportException;
 import com.dci.intellij.dbn.data.export.DataExportFormat;
 import com.dci.intellij.dbn.data.export.DataExportInstructions;
+import com.dci.intellij.dbn.data.export.DataExportInstructions.Scope;
 import com.dci.intellij.dbn.data.export.DataExportModel;
 import com.dci.intellij.dbn.data.value.ValueAdapter;
 import com.intellij.openapi.ide.CopyPasteManager;
 import com.intellij.openapi.progress.ProcessCanceledException;
-import com.intellij.openapi.progress.ProgressIndicator;
 import com.intellij.openapi.project.Project;
+import org.jetbrains.annotations.NotNull;
 
 import java.awt.datatransfer.StringSelection;
 import java.awt.datatransfer.Transferable;
-import java.io.*;
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.IOException;
+import java.io.OutputStreamWriter;
 import java.nio.charset.Charset;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.sql.SQLException;
 import java.util.Calendar;
 import java.util.Date;
@@ -38,8 +44,10 @@ public abstract class DataExportProcessor {
     public void export(DataExportModel model, DataExportInstructions instructions, ConnectionHandler connection)
             throws DataExportException {
         try {
-            if ((model.getColumnCount() == 0 || model.getRowCount() == 0) &&
-                    instructions.getScope() == DataExportInstructions.Scope.SELECTION) {
+            int cols = model.getColumnCount();
+            int rows = model.getRowCount();
+            boolean selectionScope = instructions.getScope() == Scope.SELECTION;
+            if ((cols == 0 || rows == 0) && selectionScope) {
                 throw new DataExportException("No content selected for export. Uncheck the Scope \"Selection\" if you want to export the entire content.");
             }
             String fileName = adjustFileName(instructions.getFileName());
@@ -49,7 +57,6 @@ public abstract class DataExportProcessor {
         } catch (DataExportException e) {
             throw e;
         } catch (Exception e) {
-            e.printStackTrace();
             throw new DataExportException(e.getMessage());
         }
     }
@@ -65,15 +72,20 @@ public abstract class DataExportProcessor {
     }
 
     private void writeToFile(File file, String content, Charset charset) throws DataExportException {
-        try {
-            BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(file), charset));
-            writer.write(content);
-            writer.flush();
-            writer.close();
+        // TODO (java 11+) Files.writeString(file.toPath(), content, charset);
+        Path filePath = file.toPath();
+        try (BufferedWriter writer = createFileWriter(filePath, charset)){
+                writer.write(content);
+                writer.flush();
         } catch (IOException e) {
             e.printStackTrace();
             throw new DataExportException("Could not write file " + file.getPath() + ".\nCause: " + e.getMessage());
         }
+    }
+
+    @NotNull
+    private static BufferedWriter createFileWriter(Path path, Charset charset) throws IOException {
+        return new BufferedWriter(new OutputStreamWriter(Files.newOutputStream(path), charset));
     }
 
     private void writeToClipboard(String content) {
@@ -102,16 +114,13 @@ public abstract class DataExportProcessor {
             calendar.get(Calendar.MILLISECOND) != 0;
     }
 
-    void checkCancelled() throws ProcessCanceledException {
-        ProgressIndicator progressIndicator = ProgressMonitor.getProgressIndicator();
-        if (progressIndicator != null) {
-            if (progressIndicator.isCanceled()) {
-                throw AlreadyDisposedException.INSTANCE;
-            }
+    static void checkCancelled() throws ProcessCanceledException {
+        if (ProgressMonitor.isCancelled()) {
+            throw AlreadyDisposedException.INSTANCE;
         }
     }
 
-    protected String formatValue(Formatter formatter, Object value) throws DataExportException {
+    protected static String formatValue(Formatter formatter, Object value) throws DataExportException {
         if (value != null) {
             if (value instanceof Number) {
                 Number number = (Number) value;

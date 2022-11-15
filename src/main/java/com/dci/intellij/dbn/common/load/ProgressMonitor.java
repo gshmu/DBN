@@ -4,7 +4,9 @@ import com.dci.intellij.dbn.common.dispose.AlreadyDisposedException;
 import com.intellij.openapi.progress.ProgressIndicator;
 import com.intellij.openapi.progress.ProgressManager;
 
-public class ProgressMonitor {
+public final class ProgressMonitor {
+    private ProgressMonitor() {}
+
     public static ProgressIndicator getProgressIndicator() {
         return ProgressManager.getInstance().getProgressIndicator();
     }
