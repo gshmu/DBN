@@ -24,6 +24,15 @@ public class Counter {
         return count.get();
     }
 
+    public void reset() {
+        count.set(0);
+    }
+
+    @Override
+    public String toString() {
+        return count.toString();
+    }
+
     public void addListener(Listener listener) {
         listeners.add(listener);
     }

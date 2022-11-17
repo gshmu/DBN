@@ -1,4 +1,4 @@
-package com.dci.intellij.dbn.database.interfaces;
+package com.dci.intellij.dbn.database.interfaces.queue;
 
 import com.dci.intellij.dbn.common.Priority;
 import com.dci.intellij.dbn.common.thread.Threads;
@@ -21,18 +21,18 @@ import java.util.function.Consumer;
 
 public class DatabaseInterfaceQueueTest {
     private static final Random random = new Random();
-    private DatabaseInterfaceQueue queue;
+    private InterfaceQueue queue;
 
     @Before
     public void setUp() throws Exception {
-        queue = new DatabaseInterfaceQueueImpl(null, task -> Threads.backgroundExecutor().submit(queue.callableOf(task)));
+        queue = new InterfaceQueue(null, task -> Threads.backgroundExecutor().submit(() -> queue.executeTask(task)));
     }
 
     @Test
     public void scheduleAndWait() {
         invoke(100, task -> {
             try {
-                queue.scheduleAndWait(task.priority, () -> {
+                queue.scheduleAndWait("test", task.priority, () -> {
                     System.out.println("Executing " + task);
                     Unsafe.silent(() -> Thread.sleep(task.time));
                     System.out.println("Done executing "  + task);
@@ -49,7 +49,7 @@ public class DatabaseInterfaceQueueTest {
     public void scheduleAndForget() {
         invoke(100, task -> {
             try {
-                queue.scheduleAndForget(task.priority, () -> {
+                queue.scheduleAndForget("test", task.priority, () -> {
                     System.out.println("Executing " + task);
                     Unsafe.silent(() -> Thread.sleep(task.time));
                     System.out.println("Done executing "  + task);
@@ -78,7 +78,7 @@ public class DatabaseInterfaceQueueTest {
         }
 
         Thread invoker = Thread.currentThread();
-        queue.activeTasks().addListener(value -> {
+        queue.counters().running().addListener(value -> {
             if (value == 0 && queue.size() == 0) {
                 LockSupport.unpark(invoker);
                 System.out.println("UNPARKED");
@@ -91,7 +91,7 @@ public class DatabaseInterfaceQueueTest {
         System.out.println("DONE " + TimeUnit.MILLISECONDS.toSeconds(TimeUtil.millisSince(sleepStart)));
 
         executorService.shutdown();
-        Assert.assertEquals(times, queue.finishedTasks().get());
+        Assert.assertEquals(times, queue.counters().finished().get());
         long elapsedTime = TimeUtil.millisSince(start);
         long activeTime = totalTime.get() / queue.maxActiveTasks();
         long difference = Math.abs(activeTime - elapsedTime);

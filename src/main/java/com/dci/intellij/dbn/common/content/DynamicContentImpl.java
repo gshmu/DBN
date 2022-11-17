@@ -11,7 +11,7 @@ import com.dci.intellij.dbn.common.list.FilteredList;
 import com.dci.intellij.dbn.common.notification.NotificationGroup;
 import com.dci.intellij.dbn.common.notification.NotificationSupport;
 import com.dci.intellij.dbn.common.property.DisposablePropertyHolder;
-import com.dci.intellij.dbn.common.thread.Progress;
+import com.dci.intellij.dbn.common.thread.Background;
 import com.dci.intellij.dbn.common.thread.ThreadMonitor;
 import com.dci.intellij.dbn.common.thread.Timeout;
 import com.dci.intellij.dbn.common.util.Lists;
@@ -242,6 +242,16 @@ public abstract class DynamicContentImpl<T extends DynamicContentElement>
     public final void loadInBackground() {
         if (shouldLoadInBackground()) {
             set(LOADING_IN_BACKGROUND, true);
+            Background.run(() -> {
+                try{
+                    ensure();
+                } finally {
+                    set(LOADING_IN_BACKGROUND, false);
+                }
+            });
+
+
+/*
             ConnectionHandler connection = this.getConnection();
             Progress.background(
                     getProject(),
@@ -254,6 +264,7 @@ public abstract class DynamicContentImpl<T extends DynamicContentElement>
                             set(LOADING_IN_BACKGROUND, false);
                         }
                     });
+*/
         }
     }
 
@@ -320,7 +331,7 @@ public abstract class DynamicContentImpl<T extends DynamicContentElement>
 
     @Override
     public void setElements(List<T> elements) {
-        sync(CHANGING, () -> replaceElements(elements));
+        conditional(CHANGING, () -> replaceElements(elements));
     }
 
     private void replaceElements(List<T> elements) {
