@@ -49,7 +49,10 @@ public interface ConnectionHandler extends StatefulDisposable, EnvironmentTypePr
     DBNConnection getMainConnection(@Nullable SchemaId schemaId) throws SQLException;
 
     @NotNull
-    DBNConnection getConnection(SessionId sessionId, @Nullable SchemaId schemaId) throws SQLException;
+    DBNConnection getConnection(@NotNull SessionId sessionId) throws SQLException;
+
+    @NotNull
+    DBNConnection getConnection(@NotNull SessionId sessionId, @Nullable SchemaId schemaId) throws SQLException;
 
     @NotNull
     DBNConnection getDebugConnection(@Nullable SchemaId schemaId) throws SQLException;

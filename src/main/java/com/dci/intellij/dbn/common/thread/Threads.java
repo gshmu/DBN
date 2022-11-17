@@ -5,16 +5,11 @@ import lombok.extern.slf4j.Slf4j;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.SynchronousQueue;
-import java.util.concurrent.ThreadFactory;
-import java.util.concurrent.ThreadPoolExecutor;
-import java.util.concurrent.TimeUnit;
+import java.util.concurrent.*;
 import java.util.concurrent.atomic.AtomicInteger;
 
 @Slf4j
-public final class ThreadPool {
+public final class Threads {
     private static final Map<String, AtomicInteger> THREAD_COUNTERS = new ConcurrentHashMap<>();
 
     private static final ExecutorService DATABASE_INTERFACE_EXECUTOR = newThreadPool("DBN - Database Interface Thread", true,  5, 100);
@@ -26,10 +21,10 @@ public final class ThreadPool {
     private static final ExecutorService CODE_COMPLETION_EXECUTOR    = newThreadPool("DBN - Code Completion Thread",    true,  5, 100);
     private static final ExecutorService OBJECT_LOOKUP_EXECUTOR      = newThreadPool("DBN - Object Lookup Thread",      true,  5, 100);
 
-    private ThreadPool() {}
+    private Threads() {}
 
     @NotNull
-    private static ThreadFactory createThreadFactory(String name, boolean daemon) {
+    public static ThreadFactory createThreadFactory(String name, boolean daemon) {
         return runnable -> {
             AtomicInteger index = THREAD_COUNTERS.computeIfAbsent(name, n -> new AtomicInteger(0));
             String indexedName = name + " (" + index.incrementAndGet() + ")";
@@ -48,10 +43,15 @@ public final class ThreadPool {
         };
     }
 
+    public static ExecutorService newCachedThreadPool(String name, boolean daemon) {
+        ThreadFactory threadFactory = createThreadFactory(name, daemon);
+        return Executors.newCachedThreadPool(threadFactory);
+    }
+
     private static ExecutorService newThreadPool(String name, boolean daemon, int corePoolSize, int maximumPoolSize) {
         ThreadFactory threadFactory = createThreadFactory(name, daemon);
         SynchronousQueue<Runnable> queue = new SynchronousQueue<>();
-        return new ThreadPoolExecutor(corePoolSize, maximumPoolSize, 60L, TimeUnit.SECONDS, queue, threadFactory);
+        return new ThreadPoolExecutor(corePoolSize, maximumPoolSize, 1L, TimeUnit.MINUTES, queue, threadFactory);
     }
 
 

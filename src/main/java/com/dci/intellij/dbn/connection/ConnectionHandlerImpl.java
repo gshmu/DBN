@@ -14,7 +14,6 @@ import com.dci.intellij.dbn.common.notification.NotificationGroup;
 import com.dci.intellij.dbn.common.notification.NotificationSupport;
 import com.dci.intellij.dbn.common.util.Commons;
 import com.dci.intellij.dbn.common.util.Exceptions;
-import com.dci.intellij.dbn.common.util.Strings;
 import com.dci.intellij.dbn.common.util.TimeUtil;
 import com.dci.intellij.dbn.connection.config.ConnectionDatabaseSettings;
 import com.dci.intellij.dbn.connection.config.ConnectionDetailSettings;
@@ -27,8 +26,8 @@ import com.dci.intellij.dbn.connection.session.DatabaseSessionBundle;
 import com.dci.intellij.dbn.database.DatabaseCompatibility;
 import com.dci.intellij.dbn.database.DatabaseFeature;
 import com.dci.intellij.dbn.database.interfaces.DatabaseCompatibilityInterface;
-import com.dci.intellij.dbn.database.interfaces.DatabaseInterfaceInvoker;
 import com.dci.intellij.dbn.database.interfaces.DatabaseInterfaceQueue;
+import com.dci.intellij.dbn.database.interfaces.DatabaseInterfaceQueueImpl;
 import com.dci.intellij.dbn.database.interfaces.DatabaseInterfaces;
 import com.dci.intellij.dbn.execution.statement.StatementExecutionQueue;
 import com.dci.intellij.dbn.language.common.DBLanguage;
@@ -55,6 +54,8 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.concurrent.ConcurrentHashMap;
 
+import static com.intellij.openapi.util.text.StringUtil.isNotEmpty;
+
 @Slf4j
 public class ConnectionHandlerImpl extends StatefulDisposable.Base implements ConnectionHandler, NotificationSupport {
 
@@ -77,7 +78,7 @@ public class ConnectionHandlerImpl extends StatefulDisposable.Base implements Co
             () -> DatabaseInterfacesBundle.get(getDerivedDatabaseType()));
 
     private final Latent<DatabaseInterfaceQueue> interfaceQueue = Latent.basic(
-            () -> new DatabaseInterfaceQueue());
+            () -> new DatabaseInterfaceQueueImpl(this));
 
     private boolean enabled;
     private ConnectionInfo connectionInfo;
@@ -344,7 +345,7 @@ public class ConnectionHandlerImpl extends StatefulDisposable.Base implements Co
     @Override
     public boolean hasPendingTransactions(@NotNull DBNConnection conn) {
         try {
-            return DatabaseInterfaceInvoker.call(context(), () -> getMetadataInterface().hasPendingTransactions(conn));
+            return ConnectionLocalContext.surround(context(), () -> getMetadataInterface().hasPendingTransactions(conn));
         } catch (SQLException e) {
             sendErrorNotification(
                     NotificationGroup.TRANSACTION,
@@ -402,13 +403,13 @@ public class ConnectionHandlerImpl extends StatefulDisposable.Base implements Co
         SchemaId schemaId = getUserSchema();
         if (schemaId == null) {
             String databaseName = getSettings().getDatabaseSettings().getDatabaseInfo().getDatabase();
-            if (Strings.isNotEmpty(databaseName)) {
+            if (isNotEmpty(databaseName)) {
                 DBSchema schema = getObjectBundle().getSchema(databaseName);
                 schemaId = SchemaId.from(schema);
             }
             if (schemaId == null) {
                 List<DBSchema> schemas = getObjectBundle().getSchemas();
-                if (schemas.size() > 0) {
+                if (!schemas.isEmpty()) {
                     schemaId = SchemaId.from(schemas.get(0));
                 }
             }
@@ -489,12 +490,17 @@ public class ConnectionHandlerImpl extends StatefulDisposable.Base implements Co
     @Override
     @NotNull
     public DBNConnection getConnection(@NotNull SessionId sessionId, @Nullable SchemaId schemaId) throws SQLException {
-        DBNConnection connection =
-                sessionId == SessionId.MAIN ? getMainConnection() :
-                sessionId == SessionId.POOL ? getPoolConnection(false) :
-                getConnectionPool().ensureSessionConnection(sessionId);
+        DBNConnection connection = getConnection(sessionId);
         setCurrentSchema(connection, schemaId);
         return connection;
+    }
+
+    @Override
+    @NotNull
+    public DBNConnection getConnection(@NotNull SessionId sessionId) throws SQLException {
+        if (sessionId == SessionId.MAIN) return getMainConnection();
+        if (sessionId == SessionId.POOL) return getPoolConnection(false);
+        return getConnectionPool().ensureSessionConnection(sessionId);
     }
 
     @Override
@@ -504,7 +510,7 @@ public class ConnectionHandlerImpl extends StatefulDisposable.Base implements Co
         if (!DatabaseFeature.CURRENT_SCHEMA.isSupported(this)) return;
         if (Objects.equals(schema, conn.getCurrentSchema())) return;
 
-        DatabaseInterfaceInvoker.run(context(), () -> {
+        ConnectionLocalContext.surround(context(), () -> {
             String schemaName = schema.getName();
 
             DatabaseCompatibilityInterface compatibility = getCompatibilityInterface();

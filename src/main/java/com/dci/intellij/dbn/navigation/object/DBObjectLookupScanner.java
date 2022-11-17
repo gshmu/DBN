@@ -3,7 +3,7 @@ package com.dci.intellij.dbn.navigation.object;
 import com.dci.intellij.dbn.browser.model.BrowserTreeNode;
 import com.dci.intellij.dbn.common.dispose.StatefulDisposable;
 import com.dci.intellij.dbn.common.routine.AsyncTaskExecutor;
-import com.dci.intellij.dbn.common.thread.ThreadPool;
+import com.dci.intellij.dbn.common.thread.Threads;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.ConnectionManager;
 import com.dci.intellij.dbn.object.DBSchema;
@@ -20,7 +20,7 @@ class DBObjectLookupScanner extends StatefulDisposable.Base implements DBObjectL
     private final DBObjectLookupModel model;
     private final boolean forceLoad;
     private final AsyncTaskExecutor asyncScanner = new AsyncTaskExecutor(
-            ThreadPool.objectLookupExecutor(), 3, TimeUnit.SECONDS);
+            Threads.objectLookupExecutor(), 3, TimeUnit.SECONDS);
 
     DBObjectLookupScanner(DBObjectLookupModel model, boolean forceLoad) {
         this.model = model;
