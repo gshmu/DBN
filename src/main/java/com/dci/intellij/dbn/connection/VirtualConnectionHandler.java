@@ -33,10 +33,13 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
+import java.sql.SQLException;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import static com.dci.intellij.dbn.common.util.Exceptions.unsupported;
 
 @Getter
 public class VirtualConnectionHandler extends StatefulDisposable.Base implements ConnectionHandler {
@@ -187,7 +190,7 @@ public class VirtualConnectionHandler extends StatefulDisposable.Base implements
 
     @Override
     public DatabaseInterfaceQueue getInterfaceQueue() {
-        throw new UnsupportedOperationException();
+        return unsupported();
     }
 
     @Nullable
@@ -209,13 +212,13 @@ public class VirtualConnectionHandler extends StatefulDisposable.Base implements
     @NotNull
     @Override
     public DBNConnection getPoolConnection(boolean readonly) {
-        throw new UnsupportedOperationException();
+        return unsupported();
     }
 
     @NotNull
     @Override
     public DBNConnection getPoolConnection(@Nullable SchemaId schemaId, boolean readonly) {
-        throw new UnsupportedOperationException();
+        return unsupported();
     }
 
     @Override
@@ -225,31 +228,37 @@ public class VirtualConnectionHandler extends StatefulDisposable.Base implements
     @NotNull
     @Override
     public DBNConnection getMainConnection() {
-        throw new UnsupportedOperationException();
+        return unsupported();
     }
 
     @NotNull
     @Override
     public DBNConnection getDebugConnection(SchemaId schemaId) {
-        throw new UnsupportedOperationException();
+        return unsupported();
     }
 
     @NotNull
     @Override
     public DBNConnection getDebuggerConnection() {
-        throw new UnsupportedOperationException();
+        return unsupported();
     }
 
     @NotNull
     @Override
-    public DBNConnection getConnection(SessionId sessionId, @Nullable SchemaId schemaId) {
-        throw new UnsupportedOperationException();
+    public DBNConnection getConnection(@NotNull SessionId sessionId, @Nullable SchemaId schemaId) {
+        return unsupported();
+    }
+
+    @NotNull
+    @Override
+    public DBNConnection getConnection(@NotNull SessionId sessionId) throws SQLException {
+        return unsupported();
     }
 
     @NotNull
     @Override
     public DBNConnection getMainConnection(@Nullable SchemaId schemaId) {
-        throw new UnsupportedOperationException();
+        return unsupported();
     }
 
     @Override
@@ -307,7 +316,7 @@ public class VirtualConnectionHandler extends StatefulDisposable.Base implements
     @NotNull
     @Override
     public AuthenticationInfo getTemporaryAuthenticationInfo() {
-        throw new UnsupportedOperationException();
+        return unsupported();
     }
 
     @Override
@@ -323,13 +332,13 @@ public class VirtualConnectionHandler extends StatefulDisposable.Base implements
     @Override
     @NotNull
     public ConnectionBundle getConnectionBundle() {
-        throw new UnsupportedOperationException();
+        return unsupported();
     }
 
     @Override
     @NotNull
     public ConnectionPool getConnectionPool() {
-        throw new UnsupportedOperationException();
+        return unsupported();
     }
 
     @Override
@@ -363,25 +372,25 @@ public class VirtualConnectionHandler extends StatefulDisposable.Base implements
     @Override
     @NotNull
     public DBSessionBrowserVirtualFile getSessionBrowserFile() {
-        throw new UnsupportedOperationException();
+        return unsupported();
     }
 
     @NotNull
     @Override
     public PsiDirectory getPsiDirectory() {
-        throw new UnsupportedOperationException();
+        return unsupported();
     }
 
     @NotNull
     @Override
     public DatabaseConsoleBundle getConsoleBundle() {
-        throw new UnsupportedOperationException();
+        return unsupported();
     }
 
     @NotNull
     @Override
     public DatabaseSessionBundle getSessionBundle() {
-        throw new UnsupportedOperationException();
+        return unsupported();
     }
 
     @Override

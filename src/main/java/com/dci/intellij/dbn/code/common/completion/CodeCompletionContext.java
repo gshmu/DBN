@@ -4,7 +4,7 @@ import com.dci.intellij.dbn.code.common.completion.options.CodeCompletionSetting
 import com.dci.intellij.dbn.code.common.completion.options.filter.CodeCompletionFilterSettings;
 import com.dci.intellij.dbn.common.routine.AsyncTaskExecutor;
 import com.dci.intellij.dbn.common.thread.Read;
-import com.dci.intellij.dbn.common.thread.ThreadPool;
+import com.dci.intellij.dbn.common.thread.Threads;
 import com.dci.intellij.dbn.common.util.Strings;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.ConnectionRef;
@@ -60,7 +60,7 @@ public class CodeCompletionContext {
 
     private final Map<String, LeafElementType> completionCandidates = new HashMap<>();
     private final AsyncTaskExecutor queue = new AsyncTaskExecutor(
-            ThreadPool.getCodeCompletionExecutor(),
+            Threads.getCodeCompletionExecutor(),
             200, TimeUnit.MILLISECONDS);
 
     public CodeCompletionContext(DBLanguagePsiFile file, CompletionParameters parameters, CompletionResultSet result) {

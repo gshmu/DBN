@@ -127,7 +127,7 @@ public abstract class CancellableDatabaseCall<T> implements Callable<T> {
             cancelCheckTimer.schedule(cancelCheckTask, 100, 100);
 
             try {
-                ExecutorService executorService = ThreadPool.cancellableExecutor();
+                ExecutorService executorService = Threads.cancellableExecutor();
                 future = executorService.submit(this);
                 return timeout == 0 ?  future.get() : future.get(timeout, timeUnit);
             } finally {

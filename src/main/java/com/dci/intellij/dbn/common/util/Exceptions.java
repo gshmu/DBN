@@ -34,4 +34,8 @@ public class Exceptions {
             return new RuntimeException(e.getMessage(), e);
         }
     }
+
+    public static <T> T unsupported() {
+        throw new UnsupportedOperationException();
+    }
 }
