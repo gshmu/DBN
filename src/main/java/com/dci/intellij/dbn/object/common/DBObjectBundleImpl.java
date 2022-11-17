@@ -192,6 +192,11 @@ public class DBObjectBundleImpl extends BrowserTreeNodeBase implements DBObjectB
     }
 
     @Override
+    public DynamicContentType<?> getDynamicContentType() {
+        return CONNECTION;
+    }
+
+    @Override
     public LookupItemBuilder getLookupItemBuilder(DBObjectRef<?> objectRef, DBLanguage<?> language) {
         if (language == SQLLanguage.INSTANCE) {
             return sqlLookupItemBuilders.computeIfAbsent(objectRef, r ->  new ObjectLookupItemBuilder(r, SQLLanguage.INSTANCE));

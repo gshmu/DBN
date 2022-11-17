@@ -11,6 +11,7 @@ public enum DatabaseObjectTypeId {
     CLUSTER,
     COLLATION,
     CONTEXT,
+    CONNECTION,
     COLUMN,
     CONSTRAINT,
     DATABASE,

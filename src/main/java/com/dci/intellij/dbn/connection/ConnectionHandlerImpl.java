@@ -27,8 +27,8 @@ import com.dci.intellij.dbn.database.DatabaseCompatibility;
 import com.dci.intellij.dbn.database.DatabaseFeature;
 import com.dci.intellij.dbn.database.interfaces.DatabaseCompatibilityInterface;
 import com.dci.intellij.dbn.database.interfaces.DatabaseInterfaceQueue;
-import com.dci.intellij.dbn.database.interfaces.DatabaseInterfaceQueueImpl;
 import com.dci.intellij.dbn.database.interfaces.DatabaseInterfaces;
+import com.dci.intellij.dbn.database.interfaces.queue.InterfaceQueue;
 import com.dci.intellij.dbn.execution.statement.StatementExecutionQueue;
 import com.dci.intellij.dbn.language.common.DBLanguage;
 import com.dci.intellij.dbn.language.common.DBLanguageDialect;
@@ -78,7 +78,7 @@ public class ConnectionHandlerImpl extends StatefulDisposable.Base implements Co
             () -> DatabaseInterfacesBundle.get(getDerivedDatabaseType()));
 
     private final Latent<DatabaseInterfaceQueue> interfaceQueue = Latent.basic(
-            () -> new DatabaseInterfaceQueueImpl(this));
+            () -> new InterfaceQueue(this));
 
     private boolean enabled;
     private ConnectionInfo connectionInfo;

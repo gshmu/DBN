@@ -1,5 +1,6 @@
 package com.dci.intellij.dbn.database.interfaces;
 
+import com.dci.intellij.dbn.common.Priority;
 import com.dci.intellij.dbn.common.cache.CacheKey;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.ConnectionLocalContext;
@@ -22,7 +23,10 @@ public final class DatabaseInterfaceInvoker {
      * @throws SQLException if jdbc call fails
      */
     public static void run(DatabaseInterfaceContext context, ConnectionRunnable runnable) throws SQLException {
-        ConnectionLocalContext.surround(context, () -> PooledConnection.run(context, runnable));
+        DatabaseInterfaceQueue interfaceQueue = context.getConnection().getInterfaceQueue();
+        interfaceQueue.scheduleAndWait("DBN background task", Priority.MEDIUM,
+                () -> ConnectionLocalContext.surround(context,
+                        () -> PooledConnection.run(context, runnable)));
     }
 
     /**
@@ -35,7 +39,10 @@ public final class DatabaseInterfaceInvoker {
      * @throws SQLException if jdbc call fails
      */
     public static <T> T call(DatabaseInterfaceContext context, ConnectionCallable<T> callable) throws SQLException {
-        return ConnectionLocalContext.surround(context, () -> PooledConnection.call(context, callable));
+        DatabaseInterfaceQueue interfaceQueue = context.getConnection().getInterfaceQueue();
+        return interfaceQueue.scheduleAndReturn("DBN background task", Priority.MEDIUM,
+                () -> ConnectionLocalContext.surround(context,
+                        () -> PooledConnection.call(context, callable)));
     }
 
     public static <T> T cached(CacheKey<T> key, Callable<T> loader) throws SQLException{

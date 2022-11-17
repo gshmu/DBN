@@ -1,28 +1,28 @@
 package com.dci.intellij.dbn.database.interfaces;
 
-import com.dci.intellij.dbn.common.Counter;
 import com.dci.intellij.dbn.common.Priority;
 import com.dci.intellij.dbn.common.dispose.StatefulDisposable;
 import com.dci.intellij.dbn.common.routine.ThrowableCallable;
 import com.dci.intellij.dbn.common.routine.ThrowableRunnable;
+import com.dci.intellij.dbn.connection.ConnectionHandler;
+import com.dci.intellij.dbn.database.interfaces.queue.Counters;
+import org.jetbrains.annotations.NotNull;
 
 import java.sql.SQLException;
-import java.util.concurrent.Callable;
 
 public interface DatabaseInterfaceQueue extends StatefulDisposable {
+    @NotNull
+    ConnectionHandler getConnection();
+
     int size();
 
     int maxActiveTasks();
 
-    Counter activeTasks();
+    Counters counters();
 
-    Counter finishedTasks();
+    <R> R scheduleAndReturn(String title, Priority priority, ThrowableCallable<R, SQLException> callable) throws SQLException;
 
-    <R> Callable<R> callableOf(DatabaseInterfaceQueueImpl.InterfaceTask<R> task);
+    void scheduleAndWait(String title, Priority priority, ThrowableRunnable<SQLException> runnable) throws SQLException;
 
-    <R> R scheduleAndReturn(Priority priority, ThrowableCallable<R, SQLException> callable) throws SQLException;
-
-    void scheduleAndWait(Priority priority, ThrowableRunnable<SQLException> runnable) throws SQLException;
-
-    void scheduleAndForget(Priority priority, ThrowableRunnable<SQLException> runnable) throws SQLException;
+    void scheduleAndForget(String title, Priority priority, ThrowableRunnable<SQLException> runnable) throws SQLException;
 }

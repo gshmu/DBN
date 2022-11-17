@@ -108,7 +108,7 @@ public abstract class PropertyHolderBase<T extends Property> implements Property
     }
 
     public abstract static class IntStore<T extends Property.IntBase> extends PropertyHolderBase<T> {
-        private volatile int computed;
+        private int computed;
 
         @SafeVarargs
         public IntStore(T ... properties) {
@@ -123,7 +123,7 @@ public abstract class PropertyHolderBase<T extends Property> implements Property
             return (computed & property.maskOn()) != 0;
         }
 
-        protected synchronized void change(T property, boolean value) {
+        protected void change(T property, boolean value) {
             this.computed = value ?
                     this.computed | property.maskOn() :
                     this.computed & property.maskOff();
@@ -136,7 +136,7 @@ public abstract class PropertyHolderBase<T extends Property> implements Property
     }
 
     public abstract static class LongStore<T extends Property.LongBase> extends PropertyHolderBase<T> {
-        private volatile long computed;
+        private long computed;
 
         @SafeVarargs
         public LongStore(T ... properties) {
@@ -152,7 +152,7 @@ public abstract class PropertyHolderBase<T extends Property> implements Property
         }
 
 
-        protected synchronized void change(T property, boolean value) {
+        protected void change(T property, boolean value) {
             this.computed = value ?
                     this.computed | property.maskOn() :
                     this.computed & property.maskOff();

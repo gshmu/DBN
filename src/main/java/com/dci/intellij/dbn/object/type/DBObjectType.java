@@ -26,6 +26,7 @@ public enum DBObjectType implements DynamicContentType<DBObjectType> {
     CHARSET(DatabaseObjectTypeId.CHARSET, "charset", "charsets", null, null, null, false),
     CLUSTER(DatabaseObjectTypeId.CLUSTER, "cluster", "clusters", Icons.DBO_CLUSTER, null, Icons.DBO_CLUSTERS, false),
     COLLATION(DatabaseObjectTypeId.COLLATION, "collation", "collations", null, null, Icons.DBO_CLUSTERS, false),
+    CONNECTION(DatabaseObjectTypeId.CONNECTION, "connection", "connections", Icons.CONNECTION_CONNECTED, Icons.CONNECTION_DISABLED, Icons.CONNECTIONS, false),
     CONTEXT(DatabaseObjectTypeId.CONTEXT, "context", "contexts", null, null, null, false),
     COLUMN(DatabaseObjectTypeId.COLUMN, "column", "columns", Icons.DBO_COLUMN, null, Icons.DBO_COLUMNS, false),
     CONSTRAINT(DatabaseObjectTypeId.CONSTRAINT, "constraint", "constraints", Icons.DBO_CONSTRAINT, Icons.DBO_CONSTRAINT_DISABLED, Icons.DBO_CONSTRAINTS, false),

@@ -9,17 +9,13 @@ public interface PropertyHolder<T extends Property> {
         return !is(status);
     };
 
-    default void sync(T property, Runnable runnable) {
+    default void conditional(T property, Runnable runnable) {
         if(isNot(property)) {
-            synchronized (this) {
-                if (isNot(property)) {
-                    try {
-                        set(property, true);
-                        runnable.run();
-                    } finally {
-                        set(property, false);
-                    }
-                }
+            try {
+                set(property, true);
+                runnable.run();
+            } finally {
+                set(property, false);
             }
         }
     }
