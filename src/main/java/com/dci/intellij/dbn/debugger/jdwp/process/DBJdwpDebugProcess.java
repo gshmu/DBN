@@ -311,7 +311,7 @@ public abstract class DBJdwpDebugProcess<T extends ExecutionInput>
 
     @Override
     public void stop() {
-        sync(DEBUGGER_STOPPING, () -> {
+        conditional(DEBUGGER_STOPPING, () -> {
             set(BREAKPOINT_SETTING_ALLOWED, false);
             console.system("Stopping debugger...");
             getSession().stop();
