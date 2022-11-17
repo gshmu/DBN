@@ -5,7 +5,6 @@ import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.ConnectionLocalContext;
 import com.dci.intellij.dbn.connection.PooledConnection;
 import com.dci.intellij.dbn.database.interfaces.DatabaseInterface.Callable;
-import com.dci.intellij.dbn.database.interfaces.DatabaseInterface.Runnable;
 
 import java.sql.SQLException;
 
@@ -15,18 +14,26 @@ import static com.dci.intellij.dbn.database.interfaces.DatabaseInterface.Connect
 public final class DatabaseInterfaceInvoker {
     private DatabaseInterfaceInvoker() {}
 
-    public static <T> T call(DatabaseInterfaceContext context, Callable<T> callable) throws SQLException {
-        return ConnectionLocalContext.surround(context, callable);
-    }
-
-    public static void run(DatabaseInterfaceContext context, Runnable runnable) throws SQLException {
-        ConnectionLocalContext.surround(context, runnable);
-    }
-
+    /**
+     * Database Interface invocation against a pool connection
+     *
+     * @param context the connectivity context
+     * @param runnable the task to be executed
+     * @throws SQLException if jdbc call fails
+     */
     public static void run(DatabaseInterfaceContext context, ConnectionRunnable runnable) throws SQLException {
         ConnectionLocalContext.surround(context, () -> PooledConnection.run(context, runnable));
     }
 
+    /**
+     * Database Interface invocation against a pool connection
+     *
+     * @return an entity returned by the callable
+     * @param context the connectivity context
+     * @param callable the task to be executed
+     * @param <T> type of the entity returned by the invocation
+     * @throws SQLException if jdbc call fails
+     */
     public static <T> T call(DatabaseInterfaceContext context, ConnectionCallable<T> callable) throws SQLException {
         return ConnectionLocalContext.surround(context, () -> PooledConnection.call(context, callable));
     }

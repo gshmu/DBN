@@ -17,7 +17,7 @@ public final class Background {
     public static void run(ThrowableRunnable<Throwable> runnable) {
         try {
             ThreadInfo threadInfo = ThreadMonitor.current();
-            ExecutorService executorService = ThreadPool.backgroundExecutor();
+            ExecutorService executorService = Threads.backgroundExecutor();
             executorService.submit(() -> {
                 try {
                     ThreadMonitor.run(
@@ -41,7 +41,7 @@ public final class Background {
                 current.interrupt();
             }
             ThreadInfo threadInfo = ThreadMonitor.current();
-            ExecutorService executorService = ThreadPool.backgroundExecutor();
+            ExecutorService executorService = Threads.backgroundExecutor();
             executorService.submit(() -> {
                 try {
                     try {

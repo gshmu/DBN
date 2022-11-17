@@ -8,7 +8,6 @@ import com.dci.intellij.dbn.connection.config.ConnectionSettings;
 import com.dci.intellij.dbn.connection.info.ConnectionInfo;
 import com.dci.intellij.dbn.connection.jdbc.DBNConnection;
 import com.dci.intellij.dbn.database.interfaces.DatabaseCompatibilityInterface;
-import com.dci.intellij.dbn.database.interfaces.DatabaseInterfaceInvoker;
 import com.dci.intellij.dbn.database.interfaces.DatabaseMessageParserInterface;
 import com.dci.intellij.dbn.diagnostics.DiagnosticsManager;
 import com.dci.intellij.dbn.diagnostics.data.DiagnosticBundle;
@@ -32,7 +31,7 @@ public class ConnectionUtil {
     public static DBNConnection connect(ConnectionHandler connection, SessionId sessionId) throws SQLException {
         AuthenticationInfo authenticationInfo = ensureAuthenticationInfo(connection);
 
-        return DatabaseInterfaceInvoker.call(connection.context(), () -> {
+        return ConnectionLocalContext.surround(connection.context(), () -> {
             long start = System.currentTimeMillis();
             ConnectionHandlerStatusHolder connectionStatus = connection.getConnectionStatus();
 

@@ -5,6 +5,7 @@ import org.jetbrains.annotations.NotNull;
 import java.io.Serializable;
 import java.util.*;
 
+import static com.dci.intellij.dbn.common.util.Exceptions.unsupported;
 import static com.dci.intellij.dbn.common.util.Unsafe.cast;
 
 public final class CompactArrayList<T> implements List<T>, RandomAccess, Serializable {
@@ -121,14 +122,14 @@ public final class CompactArrayList<T> implements List<T>, RandomAccess, Seriali
     @Override
     public ListIterator<T> listIterator() {
         // TODO support
-        throw new UnsupportedOperationException();
+        return unsupported();
     }
 
     @NotNull
     @Override
     public ListIterator<T> listIterator(int i) {
         // TODO support
-        throw new UnsupportedOperationException();
+        return unsupported();
     }
 
     @NotNull
@@ -148,41 +149,41 @@ public final class CompactArrayList<T> implements List<T>, RandomAccess, Seriali
 
     @Override
     public boolean add(T t) {
-        throw new UnsupportedOperationException();
+        return unsupported();
     }
 
     @Override
     public boolean remove(Object o) {
-        throw new UnsupportedOperationException();
+        return unsupported();
     }
 
     @Override
     public boolean addAll(@NotNull Collection<? extends T> collection) {
-        throw new UnsupportedOperationException();
+        return unsupported();
     }
 
     @Override
     public boolean addAll(int i, @NotNull Collection<? extends T> collection) {
-        throw new UnsupportedOperationException();
+        return unsupported();
     }
 
     @Override
     public boolean removeAll(@NotNull Collection<?> collection) {
-        throw new UnsupportedOperationException();
+        return unsupported();
     }
 
     @Override
     public boolean retainAll(@NotNull Collection<?> collection) {
-        throw new UnsupportedOperationException();
+        return unsupported();
     }
 
     @Override
     public void add(int i, T t) {
-        throw new UnsupportedOperationException();
+        unsupported();
     }
 
     @Override
     public T remove(int i) {
-        throw new UnsupportedOperationException();
+        return unsupported();
     }
 }

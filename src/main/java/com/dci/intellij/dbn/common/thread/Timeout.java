@@ -5,12 +5,7 @@ import com.dci.intellij.dbn.common.routine.ThrowableRunnable;
 import com.dci.intellij.dbn.common.util.Commons;
 import lombok.extern.slf4j.Slf4j;
 
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Future;
-import java.util.concurrent.RejectedExecutionException;
-import java.util.concurrent.TimeUnit;
-import java.util.concurrent.TimeoutException;
+import java.util.concurrent.*;
 
 @Slf4j
 public final class Timeout {
@@ -19,7 +14,7 @@ public final class Timeout {
     public static <T> T call(long seconds, T defaultValue, boolean daemon, ThrowableCallable<T, Throwable> callable) {
         try {
             ThreadInfo invoker = ThreadMonitor.current();
-            ExecutorService executorService = ThreadPool.timeoutExecutor(daemon);
+            ExecutorService executorService = Threads.timeoutExecutor(daemon);
             Future<T> future = executorService.submit(
                     () -> {
                         try {
@@ -49,7 +44,7 @@ public final class Timeout {
     public static void run(long seconds, boolean daemon, ThrowableRunnable<Throwable> runnable) {
         try {
             ThreadInfo invoker = ThreadMonitor.current();
-            ExecutorService executorService = ThreadPool.timeoutExecutor(daemon);
+            ExecutorService executorService = Threads.timeoutExecutor(daemon);
             Future<?> future = executorService.submit(
                     () -> {
                         try {

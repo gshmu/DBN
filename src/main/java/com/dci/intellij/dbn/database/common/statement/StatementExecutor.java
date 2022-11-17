@@ -1,6 +1,6 @@
 package com.dci.intellij.dbn.database.common.statement;
 
-import com.dci.intellij.dbn.common.thread.ThreadPool;
+import com.dci.intellij.dbn.common.thread.Threads;
 import com.dci.intellij.dbn.common.thread.Timeout;
 import com.dci.intellij.dbn.connection.Resources;
 import com.dci.intellij.dbn.diagnostics.data.DiagnosticBundle;
@@ -10,13 +10,7 @@ import lombok.Setter;
 import java.sql.SQLException;
 import java.sql.SQLTimeoutException;
 import java.sql.Statement;
-import java.util.concurrent.Callable;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Future;
-import java.util.concurrent.RejectedExecutionException;
-import java.util.concurrent.TimeUnit;
-import java.util.concurrent.TimeoutException;
+import java.util.concurrent.*;
 
 public final class StatementExecutor {
     private StatementExecutor() {}
@@ -27,7 +21,7 @@ public final class StatementExecutor {
         int timeout = context.getTimeout();
         DiagnosticBundle<String> diagnostics = context.getDiagnostics();
         try {
-            ExecutorService executorService = ThreadPool.databaseInterfaceExecutor();
+            ExecutorService executorService = Threads.databaseInterfaceExecutor();
             Future<T> future = executorService.submit(callable);
             T result = Timeout.waitFor(future, timeout, TimeUnit.SECONDS);
 
