@@ -211,10 +211,6 @@ public interface ConnectionHandler extends StatefulDisposable, EnvironmentTypePr
     default void resetCompatibilityMonitor() {
     }
 
-    default String getMetaLoadTitle() {
-        return "Loading data dictionary (" + getName() + ")";
-    }
-
     @Nullable
     static ConnectionHandler get(ConnectionId connectionId) {
         return ConnectionCache.resolve(connectionId);

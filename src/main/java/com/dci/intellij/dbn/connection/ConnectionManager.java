@@ -11,6 +11,7 @@ import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.common.dispose.SafeDisposer;
 import com.dci.intellij.dbn.common.environment.EnvironmentType;
 import com.dci.intellij.dbn.common.event.ProjectEvents;
+import com.dci.intellij.dbn.common.load.ProgressMonitor;
 import com.dci.intellij.dbn.common.message.MessageCallback;
 import com.dci.intellij.dbn.common.routine.ParametricRunnable;
 import com.dci.intellij.dbn.common.thread.Background;
@@ -118,22 +119,21 @@ public class ConnectionManager extends ProjectComponentBase implements Persisten
 
     private void refreshObjects(ConnectionId connectionId) {
         ConnectionHandler connection = getConnection(connectionId);
-        if (connection != null) {
+        if (connection == null) return;
+
+        Background.run(() -> {
+            connection.resetCompatibilityMonitor();
+            List<TransactionAction> actions = actions(TransactionAction.DISCONNECT);
+
             Project project = getProject();
-            Progress.background(project, "Refreshing database objects", true, progress -> {
-                connection.resetCompatibilityMonitor();
-                List<TransactionAction> actions = actions(TransactionAction.DISCONNECT);
-
-                DatabaseTransactionManager transactionManager = DatabaseTransactionManager.getInstance(project);
-                List<DBNConnection> connections = connection.getConnections();
-                for (DBNConnection conn : connections) {
-                    Progress.check(progress);
-                    transactionManager.execute(connection, conn, actions, false, null);
-                }
-                connection.getObjectBundle().getObjectLists().refreshObjects();
-
-            });
-        }
+            DatabaseTransactionManager transactionManager = DatabaseTransactionManager.getInstance(project);
+            List<DBNConnection> connections = connection.getConnections();
+            for (DBNConnection conn : connections) {
+                ProgressMonitor.checkCancelled();
+                transactionManager.execute(connection, conn, actions, false, null);
+            }
+            connection.getObjectBundle().getObjectLists().refreshObjects();
+        });
     }
 
     /*********************************************************

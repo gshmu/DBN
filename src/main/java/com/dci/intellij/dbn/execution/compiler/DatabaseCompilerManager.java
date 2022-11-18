@@ -1,15 +1,19 @@
 package com.dci.intellij.dbn.execution.compiler;
 
+import com.dci.intellij.dbn.common.Priority;
 import com.dci.intellij.dbn.common.component.ProjectComponentBase;
 import com.dci.intellij.dbn.common.event.ProjectEvents;
 import com.dci.intellij.dbn.common.routine.ParametricRunnable;
+import com.dci.intellij.dbn.common.thread.Background;
 import com.dci.intellij.dbn.common.thread.Progress;
+import com.dci.intellij.dbn.common.util.Naming;
 import com.dci.intellij.dbn.connection.ConnectionAction;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.operation.options.OperationSettings;
 import com.dci.intellij.dbn.database.DatabaseFeature;
 import com.dci.intellij.dbn.database.interfaces.DatabaseInterfaceInvoker;
 import com.dci.intellij.dbn.database.interfaces.DatabaseMetadataInterface;
+import com.dci.intellij.dbn.database.interfaces.queue.InterfaceTaskDefinition;
 import com.dci.intellij.dbn.debugger.DatabaseDebuggerManager;
 import com.dci.intellij.dbn.editor.DBContentType;
 import com.dci.intellij.dbn.editor.code.SourceCodeEditor;
@@ -114,44 +118,39 @@ public class DatabaseCompilerManager extends ProjectComponentBase {
     }
 
     private void updateFilesContentState(DBSchemaObject object, DBContentType contentType) {
-        Progress.background(
-                getProject(),
-                "Refreshing local content state", false,
-                progress -> {
-                    DBEditableObjectVirtualFile databaseFile = object.getCachedVirtualFile();
-                    if (databaseFile != null && databaseFile.isContentLoaded()) {
-                        if (contentType.isBundle()) {
-                            for (DBContentType subContentType : contentType.getSubContentTypes()) {
-                                DBSourceCodeVirtualFile sourceCodeFile = databaseFile.getContentFile(subContentType);
-                                if (sourceCodeFile != null) {
-                                    sourceCodeFile.refreshContentState();
-                                }
-                            }
-                        } else {
-                            DBSourceCodeVirtualFile sourceCodeFile = databaseFile.getContentFile(contentType);
-                            if (sourceCodeFile != null) {
-                                sourceCodeFile.refreshContentState();
-                            }
+        Background.run(() -> {
+            DBEditableObjectVirtualFile databaseFile = object.getCachedVirtualFile();
+            if (databaseFile != null && databaseFile.isContentLoaded()) {
+                if (contentType.isBundle()) {
+                    for (DBContentType subContentType : contentType.getSubContentTypes()) {
+                        DBSourceCodeVirtualFile sourceCodeFile = databaseFile.getContentFile(subContentType);
+                        if (sourceCodeFile != null) {
+                            sourceCodeFile.refreshContentState();
                         }
                     }
-                });
+                } else {
+                    DBSourceCodeVirtualFile sourceCodeFile = databaseFile.getContentFile(contentType);
+                    if (sourceCodeFile != null) {
+                        sourceCodeFile.refreshContentState();
+                    }
+                }
+            }
+        });
     }
 
     public void compileInBackground(DBSchemaObject object, CompileType compileType, CompilerAction compilerAction) {
         Project project = getProject();
         ConnectionAction.invoke("compiling the object", false, object,
-                action -> promptCompileTypeSelection(compileType, object,
-                        selectedCompileType -> Progress.background(project, "Compiling " + object.getObjectType().getName(), false,
-                                progress -> {
-                                    doCompileObject(object, selectedCompileType, compilerAction);
-                                    ConnectionHandler connection = object.getConnection();
-                                    ProjectEvents.notify(project,
-                                            CompileManagerListener.TOPIC,
-                                            (listener) -> listener.compileFinished(connection, object));
+                action -> promptCompileTypeSelection(compileType, object, ct -> Background.run(() -> {
+                    doCompileObject(object, ct, compilerAction);
+                    ConnectionHandler connection = object.getConnection();
+                    ProjectEvents.notify(project,
+                            CompileManagerListener.TOPIC,
+                            (listener) -> listener.compileFinished(connection, object));
 
-                                    DBContentType contentType = compilerAction.getContentType();
-                                    updateFilesContentState(object, contentType);
-                                })),
+                    DBContentType contentType = compilerAction.getContentType();
+                    updateFilesContentState(object, contentType);
+                })),
                 null,
                 action -> {
                     ConnectionHandler connection = action.getConnection();
@@ -168,7 +167,13 @@ public class DatabaseCompilerManager extends ProjectComponentBase {
         try {
             objectStatus.set(contentType, COMPILING, true);
             ConnectionHandler connection = object.getConnection();
-            DatabaseInterfaceInvoker.run(connection.context(), conn -> {
+            InterfaceTaskDefinition taskDefinition = InterfaceTaskDefinition.create(
+                    "Compiling object",
+                    "Compiling object " + Naming.getQualifiedObjectName(object),
+                    Priority.HIGH,
+                    connection.context());
+
+            DatabaseInterfaceInvoker.execute(taskDefinition, conn -> {
                 DatabaseMetadataInterface metadata = connection.getMetadataInterface();
 
                 boolean isDebug = compileType == CompileType.DEBUG;

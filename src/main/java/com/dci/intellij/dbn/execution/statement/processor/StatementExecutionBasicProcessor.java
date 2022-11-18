@@ -291,7 +291,7 @@ public class StatementExecutionBasicProcessor extends StatefulDisposable.Base im
 
     @Override
     public void execute(@Nullable DBNConnection connection, boolean debug) throws SQLException {
-        ProgressMonitor.setTaskDescription("Executing " + getStatementName());
+        ProgressMonitor.setProgressText("Executing " + getStatementName());
         try {
             ExecutionContext context = initExecutionContext();
             context.set(EXECUTING, true);

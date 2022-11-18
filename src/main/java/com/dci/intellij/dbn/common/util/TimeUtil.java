@@ -28,8 +28,8 @@ public class TimeUtil {
         return System.currentTimeMillis() - millis > timestamp;
     }
 
-    public static boolean isOlderThan(long timestamp, long time, TimeUnit timeUnit) {
-        return System.currentTimeMillis() - timeUnit.toMillis(time) > timestamp;
+    public static boolean isOlderThan(long timestamp, long duration, TimeUnit timeUnit) {
+        return System.currentTimeMillis() - timeUnit.toMillis(duration) > timestamp;
     }
 
     public static long millisSince(long start) {

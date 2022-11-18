@@ -5,7 +5,7 @@ import com.dci.intellij.dbn.common.options.ui.ConfigurationEditorForm;
 import com.dci.intellij.dbn.common.util.Cloneable;
 import com.dci.intellij.dbn.common.util.Commons;
 import com.dci.intellij.dbn.common.util.Strings;
-import com.dci.intellij.dbn.common.util.TimeUtil;
+import com.dci.intellij.dbn.common.util.TimeAware;
 import com.dci.intellij.dbn.connection.AuthenticationType;
 import com.dci.intellij.dbn.connection.ConnectionId;
 import com.dci.intellij.dbn.connection.config.ConnectionDatabaseSettings;
@@ -21,7 +21,7 @@ import static com.dci.intellij.dbn.common.options.setting.SettingsSupport.*;
 @Getter
 @Setter
 @EqualsAndHashCode(callSuper = false)
-public class AuthenticationInfo extends BasicConfiguration<ConnectionDatabaseSettings, ConfigurationEditorForm> implements Cloneable<AuthenticationInfo>{
+public class AuthenticationInfo extends BasicConfiguration<ConnectionDatabaseSettings, ConfigurationEditorForm> implements Cloneable<AuthenticationInfo>, TimeAware {
     @Deprecated // TODO move to keychain
     private static final String OLD_PWD_ATTRIBUTE = "password";
     @Deprecated // TODO move to keychain
@@ -55,10 +55,6 @@ public class AuthenticationInfo extends BasicConfiguration<ConnectionDatabaseSet
             case OS_CREDENTIALS: return true;
         }
         return true;
-    }
-
-    public boolean isOlderThan(long millis) {
-        return TimeUtil.isOlderThan(timestamp, millis);
     }
 
     public boolean isSame(AuthenticationInfo authenticationInfo) {

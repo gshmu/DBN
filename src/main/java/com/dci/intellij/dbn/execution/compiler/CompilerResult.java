@@ -1,13 +1,16 @@
 package com.dci.intellij.dbn.execution.compiler;
 
+import com.dci.intellij.dbn.common.Priority;
 import com.dci.intellij.dbn.common.message.MessageType;
 import com.dci.intellij.dbn.common.notification.NotificationGroup;
 import com.dci.intellij.dbn.common.notification.NotificationSupport;
+import com.dci.intellij.dbn.common.util.Naming;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.ConnectionId;
 import com.dci.intellij.dbn.connection.Resources;
 import com.dci.intellij.dbn.database.interfaces.DatabaseInterfaceInvoker;
 import com.dci.intellij.dbn.database.interfaces.DatabaseMetadataInterface;
+import com.dci.intellij.dbn.database.interfaces.queue.InterfaceTaskDefinition;
 import com.dci.intellij.dbn.editor.DBContentType;
 import com.dci.intellij.dbn.object.DBSchema;
 import com.dci.intellij.dbn.object.common.DBSchemaObject;
@@ -33,12 +36,12 @@ public class CompilerResult implements Disposable, NotificationSupport {
 
     public CompilerResult(CompilerAction compilerAction, ConnectionHandler connection, DBSchema schema, DBObjectType objectType, String objectName) {
         object = new DBObjectRef<>(schema.ref(), objectType, objectName);
-        init(connection, schema, objectName, compilerAction);
+        init(connection, schema, objectName, objectType, compilerAction);
     }
 
     public CompilerResult(CompilerAction compilerAction, DBSchemaObject object) {
         this.object = DBObjectRef.of(object);
-        init(object.getConnection(), object.getSchema(), object.getName(), compilerAction);
+        init(object.getConnection(), object.getSchema(), object.getName(), object.getObjectType(), compilerAction);
     }
 
     public CompilerResult(CompilerAction compilerAction, DBSchemaObject object, DBContentType contentType, String errorMessage) {
@@ -48,12 +51,18 @@ public class CompilerResult implements Disposable, NotificationSupport {
         compilerMessages.add(compilerMessage);
     }
 
-    private void init(ConnectionHandler connection, DBSchema schema, String objectName, CompilerAction compilerAction) {
+    private void init(ConnectionHandler connection, DBSchema schema, String objectName, DBObjectType objectType, CompilerAction compilerAction) {
         this.compilerAction = compilerAction;
         DBContentType contentType = compilerAction.getContentType();
 
         try {
-            DatabaseInterfaceInvoker.run(connection.context(), conn -> {
+            InterfaceTaskDefinition taskDefinition = InterfaceTaskDefinition.create(
+                    "Loading compiler data",
+                    "Loading compile results for " + Naming.getQualifiedObjectName(objectType, objectName, schema),
+                    Priority.HIGH,
+                    connection.context());
+
+            DatabaseInterfaceInvoker.execute(taskDefinition, conn -> {
                 ResultSet resultSet = null;
                 try {
                     DatabaseMetadataInterface metadata = connection.getMetadataInterface();

@@ -4,11 +4,13 @@ import com.dci.intellij.dbn.browser.DatabaseBrowserUtils;
 import com.dci.intellij.dbn.browser.model.BrowserTreeEventListener;
 import com.dci.intellij.dbn.browser.model.BrowserTreeNode;
 import com.dci.intellij.dbn.browser.ui.HtmlToolTipBuilder;
+import com.dci.intellij.dbn.common.Priority;
 import com.dci.intellij.dbn.common.content.DynamicContent;
 import com.dci.intellij.dbn.common.content.loader.DynamicContentResultSetLoader;
 import com.dci.intellij.dbn.common.event.ProjectEvents;
 import com.dci.intellij.dbn.common.latent.Latent;
 import com.dci.intellij.dbn.common.load.ProgressMonitor;
+import com.dci.intellij.dbn.common.thread.Background;
 import com.dci.intellij.dbn.common.ui.tree.TreeEventType;
 import com.dci.intellij.dbn.common.util.Lists;
 import com.dci.intellij.dbn.common.util.Strings;
@@ -19,6 +21,7 @@ import com.dci.intellij.dbn.connection.jdbc.DBNConnection;
 import com.dci.intellij.dbn.database.common.metadata.def.*;
 import com.dci.intellij.dbn.database.interfaces.DatabaseInterfaceInvoker;
 import com.dci.intellij.dbn.database.interfaces.DatabaseMetadataInterface;
+import com.dci.intellij.dbn.database.interfaces.queue.InterfaceTaskDefinition;
 import com.dci.intellij.dbn.editor.DBContentType;
 import com.dci.intellij.dbn.object.*;
 import com.dci.intellij.dbn.object.common.DBObject;
@@ -424,16 +427,20 @@ public class DBSchemaImpl extends DBObjectImpl<DBSchemaMetadata> implements DBSc
         Set<BrowserTreeNode> refreshNodes = resetObjectsStatus();
         ConnectionHandler connection = this.getConnection();
 
-        DatabaseInterfaceInvoker.run(connection.context(), conn -> {
+        InterfaceTaskDefinition taskDefinition = InterfaceTaskDefinition.create(
+                "Refreshing object status",
+                "Refreshing object status for " + getQualifiedNameWithType(),
+                Priority.LOW,
+                connection.context());
+
+        DatabaseInterfaceInvoker.schedule(taskDefinition, conn -> {
             refreshValidStatus(refreshNodes, conn);
             refreshDebugStatus(refreshNodes, conn);
+            Background.run(() ->
+                    refreshNodes.forEach(n -> ProjectEvents.notify(getProject(), BrowserTreeEventListener.TOPIC,
+                            l -> l.nodeChanged(n, TreeEventType.NODES_CHANGED))));
         });
 
-        for (BrowserTreeNode treeNode : refreshNodes) {
-            ProjectEvents.notify(getProject(),
-                    BrowserTreeEventListener.TOPIC,
-                    (listener) -> listener.nodeChanged(treeNode, TreeEventType.NODES_CHANGED));
-        }
 
     }
 

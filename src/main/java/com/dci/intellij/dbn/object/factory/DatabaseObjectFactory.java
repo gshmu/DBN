@@ -1,5 +1,6 @@
 package com.dci.intellij.dbn.object.factory;
 
+import com.dci.intellij.dbn.common.Priority;
 import com.dci.intellij.dbn.common.component.Components;
 import com.dci.intellij.dbn.common.component.ProjectComponentBase;
 import com.dci.intellij.dbn.common.dispose.Failsafe;
@@ -12,6 +13,7 @@ import com.dci.intellij.dbn.connection.SchemaId;
 import com.dci.intellij.dbn.connection.jdbc.DBNConnection;
 import com.dci.intellij.dbn.database.interfaces.DatabaseDataDefinitionInterface;
 import com.dci.intellij.dbn.database.interfaces.DatabaseInterfaceInvoker;
+import com.dci.intellij.dbn.database.interfaces.queue.InterfaceTaskDefinition;
 import com.dci.intellij.dbn.editor.DBContentType;
 import com.dci.intellij.dbn.object.DBMethod;
 import com.dci.intellij.dbn.object.DBSchema;
@@ -129,7 +131,13 @@ public class DatabaseObjectFactory extends ProjectComponentBase {
     private void doDropObject(DBSchemaObject object) {
         try {
             ConnectionHandler connection = object.getConnection();
-            DatabaseInterfaceInvoker.run(connection.context(), conn -> {
+            InterfaceTaskDefinition taskDefinition = InterfaceTaskDefinition.create(
+                    "Dropping database object",
+                    "Dropping " + object.getQualifiedNameWithType(),
+                    Priority.HIGHEST,
+                    connection.context());
+
+            DatabaseInterfaceInvoker.execute(taskDefinition, conn -> {
                 DBContentType contentType = object.getContentType();
 
                 String objectName = object.getQualifiedName();

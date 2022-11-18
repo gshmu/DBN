@@ -51,6 +51,7 @@ import java.util.*;
 import java.util.function.Consumer;
 
 import static com.dci.intellij.dbn.common.content.DynamicContentProperty.*;
+import static com.dci.intellij.dbn.common.list.FilteredList.unwrap;
 import static com.dci.intellij.dbn.common.search.Search.binarySearch;
 import static com.dci.intellij.dbn.common.search.Search.comboSearch;
 import static com.dci.intellij.dbn.common.util.Commons.nvl;
@@ -547,7 +548,7 @@ public class DBObjectListImpl<T extends DBObject> extends DynamicContentImpl<T> 
 
         @Override
         protected void afterUpdate() {
-            List<T> elements = getAllElements();
+            List<T> elements = unwrap(this.elements);
             if (elements.isEmpty()) return;
 
             Map<DBObjectRef, Range> ranges = new HashMap<>();
