@@ -1,12 +1,12 @@
 package com.dci.intellij.dbn.language.editor.action;
 
-import com.dci.intellij.dbn.common.Constants;
 import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.common.action.DumbAwareProjectAction;
 import com.dci.intellij.dbn.common.action.Lookups;
 import com.dci.intellij.dbn.common.thread.Write;
 import com.dci.intellij.dbn.common.util.Documents;
 import com.dci.intellij.dbn.common.util.Messages;
+import com.dci.intellij.dbn.common.util.Titles;
 import com.dci.intellij.dbn.connection.mapping.FileConnectionContextManager;
 import com.dci.intellij.dbn.debugger.DatabaseDebuggerManager;
 import com.dci.intellij.dbn.vfs.file.DBConsoleVirtualFile;
@@ -36,7 +36,7 @@ public class ConsoleSaveToFileAction extends DumbAwareProjectAction {
             final DBConsoleVirtualFile consoleVirtualFile = (DBConsoleVirtualFile) virtualFile;
 
             FileSaverDescriptor fileSaverDescriptor = new FileSaverDescriptor(
-                    Constants.DBN_TITLE_DIALOG_SUFFIX + "Save Console to File",
+                    Titles.signed("Save Console to File"),
                     "Save content of the console \"" + consoleVirtualFile.getName() + "\" to file", "sql");
 
             FileSaverDialog fileSaverDialog = FileChooserFactory.getInstance().createSaveFileDialog(fileSaverDescriptor, project);

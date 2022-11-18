@@ -1,6 +1,5 @@
 package com.dci.intellij.dbn.common.content.loader;
 
-import com.dci.intellij.dbn.common.Priority;
 import com.dci.intellij.dbn.common.content.DynamicContent;
 import com.dci.intellij.dbn.common.content.DynamicContentElement;
 import com.dci.intellij.dbn.common.content.DynamicContentProperty;
@@ -28,6 +27,9 @@ import java.util.List;
 import java.util.Objects;
 import java.util.UUID;
 
+import static com.dci.intellij.dbn.common.Priority.LOW;
+import static com.dci.intellij.dbn.common.Priority.MEDIUM;
+import static com.dci.intellij.dbn.common.content.DynamicContentProperty.INTERNAL;
 import static com.dci.intellij.dbn.diagnostics.Diagnostics.isDatabaseAccessDebug;
 
 @Slf4j
@@ -80,10 +82,10 @@ public abstract class DynamicContentResultSetLoader<
     @Override
     public void loadContent(DynamicContent<T> content, boolean forceReload) throws SQLException {
         InterfaceTaskDefinition taskDefinition = InterfaceTaskDefinition.create(
+                content.is(INTERNAL) ? LOW : MEDIUM,
                 "Loading data dictionary",
                 "Loading " + content.getContentDescription(),
-                content.is(DynamicContentProperty.LOADING_IN_BACKGROUND) ? Priority.LOW : Priority.MEDIUM,
-                content.context());
+                content.getInterfaceContext());
 
         DatabaseInterfaceInvoker.execute(taskDefinition, conn -> {
             DebugInfo debugInfo = preLoadContent(content);

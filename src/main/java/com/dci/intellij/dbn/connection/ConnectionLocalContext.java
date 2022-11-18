@@ -3,7 +3,7 @@ package com.dci.intellij.dbn.connection;
 import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.database.interfaces.DatabaseInterface.Callable;
 import com.dci.intellij.dbn.database.interfaces.DatabaseInterface.Runnable;
-import com.dci.intellij.dbn.database.interfaces.queue.InterfaceContext;
+import com.dci.intellij.dbn.database.interfaces.DatabaseInterfaceContext;
 import org.jetbrains.annotations.NotNull;
 
 import java.sql.SQLException;
@@ -23,7 +23,7 @@ public final class ConnectionLocalContext {
         return Failsafe.nd(connection);
     }
 
-    public static <T> T surround(@NotNull InterfaceContext context, @NotNull Callable<T> callable) throws SQLException {
+    public static <T> T surround(@NotNull DatabaseInterfaceContext context, @NotNull Callable<T> callable) throws SQLException {
         boolean initialised = init(context.getConnection());
         try {
             return callable.call();
@@ -32,7 +32,7 @@ public final class ConnectionLocalContext {
         }
     }
 
-    public static void surround(@NotNull InterfaceContext context, @NotNull Runnable runnable) throws SQLException {
+    public static void surround(@NotNull DatabaseInterfaceContext context, @NotNull Runnable runnable) throws SQLException {
         boolean initialised = init(context.getConnection());
         try {
             runnable.run();

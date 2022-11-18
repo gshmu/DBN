@@ -1,13 +1,13 @@
 package com.dci.intellij.dbn.common.option;
 
 
-import com.dci.intellij.dbn.common.Constants;
 import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.common.options.PersistentConfiguration;
 import com.dci.intellij.dbn.common.options.setting.SettingsSupport;
 import com.dci.intellij.dbn.common.routine.ParametricRunnable;
 import com.dci.intellij.dbn.common.thread.Dispatch;
 import com.dci.intellij.dbn.common.util.Commons;
+import com.dci.intellij.dbn.common.util.Titles;
 import com.intellij.openapi.ui.Messages;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
@@ -93,7 +93,7 @@ public class InteractiveOptionBroker<T extends InteractiveOption> implements DoN
 
                 int optionIndex = Messages.showDialog(
                         MessageFormat.format(message, messageArgs),
-                        Constants.DBN_TITLE_DIALOG_SUFFIX + title,
+                        Titles.signed(title),
                         toStringOptions(options), lastUsedOptionIndex, Icons.DIALOG_QUESTION, this);
 
                 option = getOption(optionIndex);

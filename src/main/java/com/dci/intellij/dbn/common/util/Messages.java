@@ -1,6 +1,5 @@
 package com.dci.intellij.dbn.common.util;
 
-import com.dci.intellij.dbn.common.Constants;
 import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.common.message.Message;
 import com.dci.intellij.dbn.common.message.MessageBundle;
@@ -11,7 +10,7 @@ import com.intellij.openapi.progress.ProcessCanceledException;
 import com.intellij.openapi.project.Project;
 import org.jetbrains.annotations.Nullable;
 
-import javax.swing.Icon;
+import javax.swing.*;
 
 public class Messages {
 
@@ -101,7 +100,7 @@ public class Messages {
             @Nullable DoNotAskOption doNotAskOption) {
 
         Dispatch.run(() -> {
-            int option = com.intellij.openapi.ui.Messages.showDialog(project, message, Constants.DBN_TITLE_DIALOG_SUFFIX + title, options, defaultOptionIndex, icon, doNotAskOption);
+            int option = com.intellij.openapi.ui.Messages.showDialog(project, message, Titles.signed(title), options, defaultOptionIndex, icon, doNotAskOption);
             if (callback != null) {
                 callback.run(option);
             }

@@ -1,7 +1,6 @@
 package com.dci.intellij.dbn.debugger;
 
 import com.dci.intellij.dbn.DatabaseNavigator;
-import com.dci.intellij.dbn.common.Priority;
 import com.dci.intellij.dbn.common.component.PersistentState;
 import com.dci.intellij.dbn.common.component.ProjectComponentBase;
 import com.dci.intellij.dbn.common.dispose.Failsafe;
@@ -66,6 +65,7 @@ import org.jetbrains.annotations.Nullable;
 import java.sql.SQLException;
 import java.util.*;
 
+import static com.dci.intellij.dbn.common.Priority.HIGHEST;
 import static com.dci.intellij.dbn.common.component.Components.projectService;
 import static com.dci.intellij.dbn.common.message.MessageCallback.when;
 import static com.dci.intellij.dbn.common.util.Commons.list;
@@ -391,7 +391,7 @@ public class DatabaseDebuggerManager extends ProjectComponentBase implements Per
 
             for (String privilegeName : privilegeNames) {
                 DBSystemPrivilege systemPrivilege = objectBundle.getSystemPrivilege(privilegeName);
-                if (systemPrivilege == null || !user.hasSystemPrivilege(systemPrivilege))  {
+                if (systemPrivilege == null || !user.hasPrivilege(systemPrivilege))  {
                     missingPrivileges.add(privilegeName);
                 }
             }
@@ -410,11 +410,10 @@ public class DatabaseDebuggerManager extends ProjectComponentBase implements Per
         if (!DEBUGGING.isSupported(connection)) return "Unknown";
 
         try {
-            InterfaceTaskDefinition taskDefinition = InterfaceTaskDefinition.create(
+            InterfaceTaskDefinition taskDefinition = InterfaceTaskDefinition.create(HIGHEST,
                     "Loading metadata",
                     "Loading debugger version",
-                    Priority.HIGHEST,
-                    connection.context());
+                    connection.getInterfaceContext());
 
             return DatabaseInterfaceInvoker.load(taskDefinition, conn -> {
                 DatabaseDebuggerInterface debuggerInterface = connection.getDebuggerInterface();

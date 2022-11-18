@@ -1,6 +1,5 @@
 package com.dci.intellij.dbn.execution.compiler;
 
-import com.dci.intellij.dbn.common.Priority;
 import com.dci.intellij.dbn.common.message.MessageType;
 import com.dci.intellij.dbn.common.notification.NotificationGroup;
 import com.dci.intellij.dbn.common.notification.NotificationSupport;
@@ -26,6 +25,8 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+
+import static com.dci.intellij.dbn.common.Priority.HIGH;
 
 @Getter
 public class CompilerResult implements Disposable, NotificationSupport {
@@ -56,11 +57,10 @@ public class CompilerResult implements Disposable, NotificationSupport {
         DBContentType contentType = compilerAction.getContentType();
 
         try {
-            InterfaceTaskDefinition taskDefinition = InterfaceTaskDefinition.create(
+            InterfaceTaskDefinition taskDefinition = InterfaceTaskDefinition.create(HIGH,
                     "Loading compiler data",
                     "Loading compile results for " + Naming.getQualifiedObjectName(objectType, objectName, schema),
-                    Priority.HIGH,
-                    connection.context());
+                    connection.getInterfaceContext());
 
             DatabaseInterfaceInvoker.execute(taskDefinition, conn -> {
                 ResultSet resultSet = null;

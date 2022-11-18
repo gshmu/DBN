@@ -1,6 +1,5 @@
 package com.dci.intellij.dbn.object.common.operation;
 
-import com.dci.intellij.dbn.common.Priority;
 import com.dci.intellij.dbn.common.component.Components;
 import com.dci.intellij.dbn.common.component.ProjectComponentBase;
 import com.dci.intellij.dbn.database.interfaces.DatabaseInterfaceInvoker;
@@ -14,6 +13,8 @@ import com.intellij.openapi.project.Project;
 import org.jetbrains.annotations.NotNull;
 
 import java.sql.SQLException;
+
+import static com.dci.intellij.dbn.common.Priority.HIGHEST;
 
 public class DatabaseOperationManager extends ProjectComponentBase {
 
@@ -79,11 +80,10 @@ public class DatabaseOperationManager extends ProjectComponentBase {
 
     @NotNull
     private static InterfaceTaskDefinition taskInfo(String action, DBObject object) {
-        InterfaceTaskDefinition taskDefinition = InterfaceTaskDefinition.create(
+        InterfaceTaskDefinition taskDefinition = InterfaceTaskDefinition.create(HIGHEST,
                 action + " " + object.getTypeName(),
                 action + " " + object.getQualifiedNameWithType(),
-                Priority.HIGHEST,
-                object.getConnection().context());
+                object.getConnection().getInterfaceContext());
         return taskDefinition;
     }
 }

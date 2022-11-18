@@ -1,6 +1,5 @@
 package com.dci.intellij.dbn.object.factory;
 
-import com.dci.intellij.dbn.common.Priority;
 import com.dci.intellij.dbn.common.component.Components;
 import com.dci.intellij.dbn.common.component.ProjectComponentBase;
 import com.dci.intellij.dbn.common.dispose.Failsafe;
@@ -32,6 +31,7 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
+import static com.dci.intellij.dbn.common.Priority.HIGHEST;
 import static com.dci.intellij.dbn.common.message.MessageCallback.when;
 
 public class DatabaseObjectFactory extends ProjectComponentBase {
@@ -131,11 +131,10 @@ public class DatabaseObjectFactory extends ProjectComponentBase {
     private void doDropObject(DBSchemaObject object) {
         try {
             ConnectionHandler connection = object.getConnection();
-            InterfaceTaskDefinition taskDefinition = InterfaceTaskDefinition.create(
+            InterfaceTaskDefinition taskDefinition = InterfaceTaskDefinition.create(HIGHEST,
                     "Dropping database object",
                     "Dropping " + object.getQualifiedNameWithType(),
-                    Priority.HIGHEST,
-                    connection.context());
+                    connection.getInterfaceContext());
 
             DatabaseInterfaceInvoker.execute(taskDefinition, conn -> {
                 DBContentType contentType = object.getContentType();

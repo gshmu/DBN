@@ -1,11 +1,16 @@
 package com.dci.intellij.dbn.object.impl;
 
+import com.dci.intellij.dbn.common.content.DynamicContent;
+import com.dci.intellij.dbn.common.content.loader.DynamicContentLoaderImpl;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
+import com.dci.intellij.dbn.database.common.metadata.DBObjectMetadata;
 import com.dci.intellij.dbn.database.common.metadata.def.DBPrivilegeMetadata;
 import com.dci.intellij.dbn.object.DBPrivilege;
 import com.dci.intellij.dbn.object.DBRole;
 import com.dci.intellij.dbn.object.DBUser;
 import com.dci.intellij.dbn.object.common.DBObjectImpl;
+import com.dci.intellij.dbn.object.common.list.DBObjectList;
+import com.dci.intellij.dbn.object.common.list.DBObjectListContainer;
 import com.dci.intellij.dbn.object.common.list.DBObjectNavigationList;
 import org.jetbrains.annotations.Nullable;
 
@@ -14,9 +19,12 @@ import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
-import static com.dci.intellij.dbn.object.type.DBObjectType.ROLE;
+import static com.dci.intellij.dbn.object.type.DBObjectType.*;
 
 public abstract class DBPrivilegeImpl<M extends DBPrivilegeMetadata> extends DBObjectImpl<M> implements DBPrivilege {
+    private DBObjectList<DBUser> userGrantees;
+    private DBObjectList<DBRole> roleGrantees;
+
     DBPrivilegeImpl(ConnectionHandler connection, M metadata) throws SQLException {
         super(connection, metadata);
     }
@@ -27,21 +35,19 @@ public abstract class DBPrivilegeImpl<M extends DBPrivilegeMetadata> extends DBO
     }
 
     @Override
+    protected void initLists() {
+        DBObjectListContainer childObjects = ensureChildObjects();
+        userGrantees = childObjects.createSubcontentObjectList(USER, this, getObjectBundle(), USER);
+        roleGrantees = childObjects.createSubcontentObjectList(ROLE, this, getObjectBundle(), ROLE);
+    }
+
+    @Override
     public List<DBUser> getUserGrantees() {
-        return new ArrayList<>();
+        return userGrantees.getObjects();
     }
 
     public List<DBRole> getRoleGrantees() {
-        List<DBRole> grantees = new ArrayList<>();
-        List<DBRole> roles = this.getConnection().getObjectBundle().getRoles();
-        if (roles != null) {
-            for (DBRole role : roles) {
-                if (role.hasPrivilege(this)) {
-                    grantees.add(role);
-                }
-            }
-        }
-        return grantees;
+        return roleGrantees.getObjects();
     }
 
     @Override
@@ -63,4 +69,42 @@ public abstract class DBPrivilegeImpl<M extends DBPrivilegeMetadata> extends DBO
         return true;
     }
 
+
+    static {
+        new DynamicContentLoaderImpl<DBUser, DBObjectMetadata>(PRIVILEGE, USER, true) {
+
+            @Override
+            public void loadContent(DynamicContent<DBUser> content, boolean forceReload) {
+                DBPrivilege privilege = content.ensureParentEntity();
+                List<DBUser> users = privilege.getObjectBundle().getUsers();
+                if (users == null) return;
+
+                List<DBUser> grantees = new ArrayList<>();
+                for (DBUser user : users) {
+                    if (user.hasPrivilege(privilege)) {
+                        grantees.add(user);
+                    }
+                }
+                content.setElements(grantees);
+            }
+        };
+
+        new DynamicContentLoaderImpl<DBRole, DBObjectMetadata>(PRIVILEGE, ROLE, true) {
+
+            @Override
+            public void loadContent(DynamicContent<DBRole> content, boolean forceReload) {
+                DBPrivilege privilege = content.ensureParentEntity();
+                List<DBRole> roles = privilege.getObjectBundle().getRoles();
+                if (roles == null) return;
+
+                List<DBRole> grantees = new ArrayList<>();
+                for (DBRole role : roles) {
+                    if (role.hasPrivilege(privilege)) {
+                        grantees.add(role);
+                    }
+                }
+                content.setElements(grantees);
+            }
+        };
+    }
 }

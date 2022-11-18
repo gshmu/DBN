@@ -2,7 +2,6 @@ package com.dci.intellij.dbn.object.impl;
 
 import com.dci.intellij.dbn.browser.DatabaseBrowserUtils;
 import com.dci.intellij.dbn.browser.model.BrowserTreeNode;
-import com.dci.intellij.dbn.common.Priority;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.database.common.metadata.def.DBViewMetadata;
 import com.dci.intellij.dbn.database.interfaces.DatabaseDataDefinitionInterface;
@@ -26,6 +25,8 @@ import java.sql.SQLException;
 import java.util.LinkedList;
 import java.util.List;
 
+import static com.dci.intellij.dbn.common.Priority.HIGHEST;
+
 public class DBViewImpl extends DBDatasetImpl<DBViewMetadata> implements DBView {
     private DBObjectRef<DBType> type;
     DBViewImpl(DBSchema schema, DBViewMetadata metadata) throws SQLException {
@@ -39,7 +40,7 @@ public class DBViewImpl extends DBDatasetImpl<DBViewMetadata> implements DBView 
         String typeOwner = metadata.getViewTypeOwner();
         String typeName = metadata.getViewType();
         if (typeOwner != null && typeName != null) {
-            DBObjectBundle objectBundle = getConnection().getObjectBundle();
+            DBObjectBundle objectBundle = getObjectBundle();
             DBSchema typeSchema = objectBundle.getSchema(typeOwner);
             type = DBObjectRef.of(typeSchema == null ? null : typeSchema.getType(typeName));
         }
@@ -96,11 +97,10 @@ public class DBViewImpl extends DBDatasetImpl<DBViewMetadata> implements DBView 
 
     @Override
     public void executeUpdateDDL(DBContentType contentType, String oldCode, String newCode) throws SQLException {
-        InterfaceTaskDefinition taskDefinition = InterfaceTaskDefinition.create(
+        InterfaceTaskDefinition taskDefinition = InterfaceTaskDefinition.create(HIGHEST,
                 "Updating source code",
                 "Updating sources of " + getQualifiedNameWithType(),
-                Priority.HIGHEST,
-                context());
+                getInterfaceContext());
 
         DatabaseInterfaceInvoker.execute(taskDefinition, conn -> {
             ConnectionHandler connection = getConnection();

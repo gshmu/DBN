@@ -4,7 +4,6 @@ import com.dci.intellij.dbn.browser.DatabaseBrowserUtils;
 import com.dci.intellij.dbn.browser.model.BrowserTreeEventListener;
 import com.dci.intellij.dbn.browser.model.BrowserTreeNode;
 import com.dci.intellij.dbn.browser.ui.HtmlToolTipBuilder;
-import com.dci.intellij.dbn.common.Priority;
 import com.dci.intellij.dbn.common.content.DynamicContent;
 import com.dci.intellij.dbn.common.content.loader.DynamicContentResultSetLoader;
 import com.dci.intellij.dbn.common.event.ProjectEvents;
@@ -42,6 +41,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.*;
 
+import static com.dci.intellij.dbn.common.Priority.LOW;
 import static com.dci.intellij.dbn.common.content.DynamicContentProperty.HIDDEN;
 import static com.dci.intellij.dbn.common.content.DynamicContentProperty.*;
 import static com.dci.intellij.dbn.common.dispose.Failsafe.nd;
@@ -427,11 +427,10 @@ public class DBSchemaImpl extends DBObjectImpl<DBSchemaMetadata> implements DBSc
         Set<BrowserTreeNode> refreshNodes = resetObjectsStatus();
         ConnectionHandler connection = this.getConnection();
 
-        InterfaceTaskDefinition taskDefinition = InterfaceTaskDefinition.create(
+        InterfaceTaskDefinition taskDefinition = InterfaceTaskDefinition.create(LOW,
                 "Refreshing object status",
                 "Refreshing object status for " + getQualifiedNameWithType(),
-                Priority.LOW,
-                connection.context());
+                connection.getInterfaceContext());
 
         DatabaseInterfaceInvoker.schedule(taskDefinition, conn -> {
             refreshValidStatus(refreshNodes, conn);

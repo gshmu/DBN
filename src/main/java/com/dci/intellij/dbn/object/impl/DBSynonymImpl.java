@@ -2,7 +2,6 @@ package com.dci.intellij.dbn.object.impl;
 
 import com.dci.intellij.dbn.browser.ui.HtmlToolTipBuilder;
 import com.dci.intellij.dbn.common.Icons;
-import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.database.common.metadata.def.DBSynonymMetadata;
 import com.dci.intellij.dbn.object.DBSchema;
 import com.dci.intellij.dbn.object.DBSynonym;
@@ -17,7 +16,7 @@ import com.dci.intellij.dbn.object.type.DBObjectType;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import javax.swing.Icon;
+import javax.swing.*;
 import java.sql.SQLException;
 import java.util.LinkedList;
 import java.util.List;
@@ -38,8 +37,7 @@ public class DBSynonymImpl extends DBSchemaObjectImpl<DBSynonymMetadata> impleme
         String objectName = metadata.getUnderlyingObjectName();
         DBObjectType objectType = DBObjectType.get(metadata.getUnderlyingObjectType(), DBObjectType.ANY);
 
-        ConnectionHandler connection = this.getConnection();
-        DBSchema schema = connection.getObjectBundle().getSchema(schemaName);
+        DBSchema schema = getObjectBundle().getSchema(schemaName);
         if (schema != null) {
             DBObjectRef schemaRef = schema.ref();
             underlyingObject = new DBObjectRef<>(schemaRef, objectType, objectName);

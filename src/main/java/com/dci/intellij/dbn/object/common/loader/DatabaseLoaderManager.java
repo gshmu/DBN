@@ -1,8 +1,6 @@
 package com.dci.intellij.dbn.object.common.loader;
 
 import com.dci.intellij.dbn.common.component.ProjectComponentBase;
-import com.dci.intellij.dbn.common.dispose.Failsafe;
-import com.dci.intellij.dbn.common.dispose.SafeDisposer;
 import com.dci.intellij.dbn.common.event.ProjectEvents;
 import com.dci.intellij.dbn.common.thread.Dispatch;
 import com.dci.intellij.dbn.common.util.Documents;
@@ -22,8 +20,6 @@ import static com.dci.intellij.dbn.common.component.Components.projectService;
 public class DatabaseLoaderManager extends ProjectComponentBase {
     public static final String COMPONENT_NAME = "DBNavigator.Project.DatabaseLoaderManager";
 
-    private DatabaseLoaderQueue loaderQueue;
-
     private DatabaseLoaderManager(Project project) {
         super(project, COMPONENT_NAME);
         ProjectEvents.subscribe(project, this, ConnectionLoadListener.TOPIC, connectionLoadListener(project));
@@ -37,23 +33,19 @@ public class DatabaseLoaderManager extends ProjectComponentBase {
     private ConnectionLoadListener connectionLoadListener(Project project) {
         return connection -> Dispatch.run(() -> {
             checkDisposed();
-            Failsafe.nn(project);
             FileEditorManager fileEditorManager = FileEditorManager.getInstance(project);
             FileConnectionContextManager contextManager = FileConnectionContextManager.getInstance(project);
             VirtualFile[] openFiles = fileEditorManager.getOpenFiles();
             for (VirtualFile openFile : openFiles) {
-
                 checkDisposed();
                 ConnectionHandler activeConnection = contextManager.getConnection(openFile);
                 if (activeConnection == connection) {
                     FileEditor[] fileEditors = fileEditorManager.getEditors(openFile);
                     for (FileEditor fileEditor : fileEditors) {
-
                         checkDisposed();
                         Editor editor = Editors.getEditor(fileEditor);
                         Documents.refreshEditorAnnotations(editor);
                     }
-
                 }
             }
         });
@@ -61,7 +53,6 @@ public class DatabaseLoaderManager extends ProjectComponentBase {
 
     @Override
     public void disposeInner() {
-        SafeDisposer.dispose(loaderQueue);
         super.disposeInner();
     }
 }

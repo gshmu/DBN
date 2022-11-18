@@ -1,4 +1,4 @@
-package com.dci.intellij.dbn.database.interfaces.queue;
+package com.dci.intellij.dbn.database.interfaces;
 
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.ConnectionRef;
@@ -7,12 +7,12 @@ import lombok.Getter;
 import org.jetbrains.annotations.NotNull;
 
 @Getter
-public class InterfaceContext {
+public class DatabaseInterfaceContext {
     private final ConnectionRef connection;
     private final SchemaId schemaId;
     private final boolean readonly;
 
-    private InterfaceContext(ConnectionHandler connection, SchemaId schemaId, boolean readonly) {
+    private DatabaseInterfaceContext(ConnectionHandler connection, SchemaId schemaId, boolean readonly) {
         this.connection = ConnectionRef.of(connection);
         this.schemaId = schemaId;
         this.readonly = readonly;
@@ -23,7 +23,7 @@ public class InterfaceContext {
         return connection.ensure();
     }
 
-    public static InterfaceContext create(ConnectionHandler connection, SchemaId schemaId, boolean readonly) {
-        return new InterfaceContext(connection, schemaId, readonly);
+    public static DatabaseInterfaceContext create(ConnectionHandler connection, SchemaId schemaId, boolean readonly) {
+        return new DatabaseInterfaceContext(connection, schemaId, readonly);
     }
 }
