@@ -18,6 +18,7 @@ import com.dci.intellij.dbn.common.dispose.SafeDisposer;
 import com.dci.intellij.dbn.common.event.ProjectEvents;
 import com.dci.intellij.dbn.common.filter.Filter;
 import com.dci.intellij.dbn.common.latent.Latent;
+import com.dci.intellij.dbn.common.load.ProgressMonitor;
 import com.dci.intellij.dbn.common.notification.NotificationGroup;
 import com.dci.intellij.dbn.common.notification.NotificationSupport;
 import com.dci.intellij.dbn.common.thread.Background;
@@ -173,10 +174,7 @@ public class DBObjectBundleImpl extends BrowserTreeNodeBase implements DBObjectB
             @Override
             public void sourceCodeSaved(@NotNull DBSourceCodeVirtualFile sourceCodeFile, @Nullable SourceCodeEditor fileEditor) {
                 if (sourceCodeFile.getConnectionId() == getConnectionId()) {
-                    Progress.background(getProject(), "Reloading database object", false, progress -> {
-                        DBObject object = sourceCodeFile.getObject();
-                        object.refresh();
-                    });
+                    Background.run(() -> sourceCodeFile.getObject().refresh());
                 }
             }
         };
@@ -406,11 +404,7 @@ public class DBObjectBundleImpl extends BrowserTreeNodeBase implements DBObjectB
         treeChildren = Commons.nvl(treeChildren, Collections.emptyList());
 
         for (BrowserTreeNode objectList : treeChildren) {
-            Progress.background(
-                    getProject(),
-                    this.getConnection().getMetaLoadTitle(),
-                    true,
-                    progress -> objectList.initTreeElement());
+            Background.run(() -> objectList.initTreeElement());
             checkDisposed();
         }
 
@@ -671,20 +665,20 @@ public class DBObjectBundleImpl extends BrowserTreeNodeBase implements DBObjectB
     public void refreshObjectsStatus(final @Nullable DBSchemaObject requester) {
         ConnectionHandler connection = this.getConnection();
         if (DatabaseFeature.OBJECT_INVALIDATION.isSupported(connection)) {
-            Project project = getProject();
-            Progress.background(project, "Updating objects status", true, progress -> {
+            Background.run(() -> {
                 try {
                     List<DBSchema> schemas = requester == null ? getSchemas() : requester.getReferencingSchemas();
 
                     int size = schemas.size();
                     for (int i = 0; i < size; i++) {
-                        progress.checkCanceled();
+                        ProgressMonitor.checkCancelled();
                         if (size > 3) {
-                            progress.setIndeterminate(false);
-                            progress.setFraction(Progress.progressOf(i, size));
+
+                            ProgressMonitor.setProgressIndeterminate(false);
+                            ProgressMonitor.setProgressFraction(Progress.progressOf(i, size));
                         }
                         DBSchema schema = schemas.get(i);
-                        progress.setText("Updating object status in schema " + schema.getName() + "... ");
+                        ProgressMonitor.setProgressText("Updating object status in schema " + schema.getName() + "... ");
                         schema.refreshObjectsStatus();
                     }
                 } catch (IndexOutOfBoundsException ignore) {

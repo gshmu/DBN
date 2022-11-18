@@ -16,9 +16,10 @@ import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.common.event.ProjectEvents;
 import com.dci.intellij.dbn.common.filter.Filter;
 import com.dci.intellij.dbn.common.latent.Latent;
+import com.dci.intellij.dbn.common.load.ProgressMonitor;
 import com.dci.intellij.dbn.common.options.setting.BooleanSetting;
+import com.dci.intellij.dbn.common.thread.Background;
 import com.dci.intellij.dbn.common.thread.Dispatch;
-import com.dci.intellij.dbn.common.thread.Progress;
 import com.dci.intellij.dbn.connection.*;
 import com.dci.intellij.dbn.connection.config.ConnectionDetailSettings;
 import com.dci.intellij.dbn.object.DBSchema;
@@ -265,17 +266,13 @@ public class DatabaseBrowserManager extends ProjectComponentBase implements Pers
                                 SchemaId schemaId = virtualFile.getSchemaId();
                                 boolean scroll = oldEditor != null && oldEditor.isValid();
 
-                                Progress.background(
-                                        getProject(),
-                                        connection.getMetaLoadTitle(),
-                                        false,
-                                        progress -> {
-                                            BrowserTreeNode treeNode = schemaId == null ?
-                                                    connection.getObjectBundle() :
-                                                    connection.getSchema(schemaId);
+                                Background.run(() -> {
+                                    BrowserTreeNode treeNode = schemaId == null ?
+                                            connection.getObjectBundle() :
+                                            connection.getSchema(schemaId);
 
-                                            navigateToElement(treeNode, scroll);
-                                        });
+                                    navigateToElement(treeNode, scroll);
+                                });
                             }
                         }
                     }
@@ -381,43 +378,42 @@ public class DatabaseBrowserManager extends ProjectComponentBase implements Pers
 
     private void initTouchedNodes(Element element) {
         Element nodesElement = element.getChild("loaded-nodes");
-        if (nodesElement != null) {
-            Project project = getProject();
-            List<Element> connectionElements = nodesElement.getChildren();
-            ConnectionManager connectionManager = ConnectionManager.getInstance(project);
+        if (nodesElement == null) return;
 
-            for (Element connectionElement : connectionElements) {
-                ConnectionId connectionId = connectionIdAttribute(connectionElement, "connection-id");
-                ConnectionHandler connection = connectionManager.getConnection(connectionId);
-                if (connection != null) {
-                    ConnectionDetailSettings settings = connection.getSettings().getDetailSettings();
-                    if (settings.isRestoreWorkspaceDeep()) {
-                        DBObjectBundle objectBundle = connection.getObjectBundle();
-                        List<Element> schemaElements = connectionElement.getChildren();
+        Project project = getProject();
+        List<Element> connectionElements = nodesElement.getChildren();
+        ConnectionManager connectionManager = ConnectionManager.getInstance(project);
 
-                        for (Element schemaElement : schemaElements) {
-                            String schemaName = stringAttribute(schemaElement, "name");
-                            DBSchema schema = objectBundle.getSchema(schemaName);
-                            if (schema != null) {
-                                Progress.background(project,
-                                        connection.getMetaLoadTitle(), true,
-                                        progress -> {
-                                            String objectTypesAttr = stringAttribute(schemaElement, "object-types");
-                                            List<DBObjectType> objectTypes = DBObjectType.fromCsv(objectTypesAttr);
+        for (Element connectionElement : connectionElements) {
+            ConnectionId connectionId = connectionIdAttribute(connectionElement, "connection-id");
+            ConnectionHandler connection = connectionManager.getConnection(connectionId);
+            if (connection == null) continue;
 
-                                            for (DBObjectType objectType : objectTypes) {
-                                                DBObjectListContainer childObjects = schema.getChildObjects();
-                                                if (childObjects != null) {
-                                                    Progress.check(progress);
-                                                    childObjects.loadObjects(objectType);
-                                                }
-                                            }
-                                        });
-                            }
+            ConnectionDetailSettings settings = connection.getSettings().getDetailSettings();
+            if (!settings.isRestoreWorkspaceDeep())
+                continue;
+
+            DBObjectBundle objectBundle = connection.getObjectBundle();
+            List<Element> schemaElements = connectionElement.getChildren();
+
+            for (Element schemaElement : schemaElements) {
+                String schemaName = stringAttribute(schemaElement, "name");
+                DBSchema schema = objectBundle.getSchema(schemaName);
+                if (schema == null) continue;
+
+                Background.run(() -> {
+                    String objectTypesAttr = stringAttribute(schemaElement, "object-types");
+                    List<DBObjectType> objectTypes = DBObjectType.fromCsv(objectTypesAttr);
+
+                    for (DBObjectType objectType : objectTypes) {
+                        ProgressMonitor.checkCancelled();
+                        DBObjectListContainer childObjects = schema.getChildObjects();
+                        if (childObjects != null) {
+                            ProgressMonitor.checkCancelled();
+                            childObjects.loadObjects(objectType);
                         }
                     }
-                }
-
+                });
             }
         }
     }

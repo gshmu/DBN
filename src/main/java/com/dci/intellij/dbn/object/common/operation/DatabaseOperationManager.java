@@ -1,12 +1,14 @@
 package com.dci.intellij.dbn.object.common.operation;
 
+import com.dci.intellij.dbn.common.Priority;
 import com.dci.intellij.dbn.common.component.Components;
 import com.dci.intellij.dbn.common.component.ProjectComponentBase;
-import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.database.interfaces.DatabaseInterfaceInvoker;
 import com.dci.intellij.dbn.database.interfaces.DatabaseMetadataInterface;
+import com.dci.intellij.dbn.database.interfaces.queue.InterfaceTaskDefinition;
 import com.dci.intellij.dbn.object.DBConstraint;
 import com.dci.intellij.dbn.object.DBTrigger;
+import com.dci.intellij.dbn.object.common.DBObject;
 import com.dci.intellij.dbn.object.common.status.DBObjectStatus;
 import com.intellij.openapi.project.Project;
 import org.jetbrains.annotations.NotNull;
@@ -26,9 +28,9 @@ public class DatabaseOperationManager extends ProjectComponentBase {
     }
 
     public void enableConstraint(DBConstraint constraint) throws SQLException {
-        ConnectionHandler connection = constraint.getConnection();
-        DatabaseInterfaceInvoker.run(connection.context(), conn -> {
-            DatabaseMetadataInterface metadata = connection.getMetadataInterface();
+        InterfaceTaskDefinition info = taskInfo("Enabling", constraint);
+        DatabaseInterfaceInvoker.execute(info, conn -> {
+            DatabaseMetadataInterface metadata = constraint.getMetadataInterface();
             metadata.enableConstraint(
                     constraint.getSchema().getName(),
                     constraint.getDataset().getName(),
@@ -39,9 +41,9 @@ public class DatabaseOperationManager extends ProjectComponentBase {
     }
 
     public void disableConstraint(DBConstraint constraint) throws SQLException {
-        ConnectionHandler connection = constraint.getConnection();
-        DatabaseInterfaceInvoker.run(connection.context(), conn -> {
-            DatabaseMetadataInterface metadata = connection.getMetadataInterface();
+        InterfaceTaskDefinition info = taskInfo("Disabling", constraint);
+        DatabaseInterfaceInvoker.execute(info, conn -> {
+            DatabaseMetadataInterface metadata = constraint.getMetadataInterface();
             metadata.disableConstraint(
                     constraint.getSchema().getName(),
                     constraint.getDataset().getName(),
@@ -52,9 +54,9 @@ public class DatabaseOperationManager extends ProjectComponentBase {
     }
 
     public void enableTrigger(DBTrigger trigger) throws SQLException {
-        ConnectionHandler connection = trigger.getConnection();
-        DatabaseInterfaceInvoker.run(connection.context(), conn -> {
-            DatabaseMetadataInterface metadata = connection.getMetadataInterface();
+        InterfaceTaskDefinition info = taskInfo("Enabling", trigger);
+        DatabaseInterfaceInvoker.execute(info, conn -> {
+            DatabaseMetadataInterface metadata = trigger.getMetadataInterface();
             metadata.enableTrigger(
                     trigger.getSchema().getName(),
                     trigger.getName(),
@@ -64,14 +66,24 @@ public class DatabaseOperationManager extends ProjectComponentBase {
     }
 
     public void disableTrigger(DBTrigger trigger) throws SQLException {
-        ConnectionHandler connection = trigger.getConnection();
-        DatabaseInterfaceInvoker.run(connection.context(), conn -> {
-            DatabaseMetadataInterface metadata = connection.getMetadataInterface();
+        InterfaceTaskDefinition info = taskInfo("Enabling", trigger);
+        DatabaseInterfaceInvoker.execute(info, conn -> {
+            DatabaseMetadataInterface metadata = trigger.getMetadataInterface();
             metadata.disableTrigger(
                     trigger.getSchema().getName(),
                     trigger.getName(),
                     conn);
             trigger.getStatus().set(DBObjectStatus.ENABLED, true);
         });
+    }
+
+    @NotNull
+    private static InterfaceTaskDefinition taskInfo(String action, DBObject object) {
+        InterfaceTaskDefinition taskDefinition = InterfaceTaskDefinition.create(
+                action + " " + object.getTypeName(),
+                action + " " + object.getQualifiedNameWithType(),
+                Priority.HIGHEST,
+                object.getConnection().context());
+        return taskDefinition;
     }
 }

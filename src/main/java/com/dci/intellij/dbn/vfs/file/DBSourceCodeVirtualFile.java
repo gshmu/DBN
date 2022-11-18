@@ -1,6 +1,8 @@
 package com.dci.intellij.dbn.vfs.file;
 
 import com.dci.intellij.dbn.common.DevNullStreams;
+import com.dci.intellij.dbn.common.thread.Background;
+import com.dci.intellij.dbn.common.thread.ThreadMonitor;
 import com.dci.intellij.dbn.common.thread.Write;
 import com.dci.intellij.dbn.common.util.ChangeTimestamp;
 import com.dci.intellij.dbn.common.util.Documents;
@@ -144,7 +146,12 @@ public class DBSourceCodeVirtualFile extends DBContentVirtualFile implements DBP
     public boolean isChangedInDatabase(boolean reload) {
         if (isNot(REFRESHING) && isLoaded()) {
             if (reload || databaseTimestamp.isDirty()) {
-                refreshContentState();
+                if (ThreadMonitor.isDispatchThread()) {
+                    Background.run(() -> refreshContentState());
+                } else {
+                    refreshContentState();
+                }
+
             }
             return isNot(REFRESHING) && (is(OUTDATED) || is(MERGED));
         }

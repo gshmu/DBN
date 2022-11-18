@@ -1,5 +1,6 @@
 package com.dci.intellij.dbn.common.content.loader;
 
+import com.dci.intellij.dbn.common.Priority;
 import com.dci.intellij.dbn.common.content.DynamicContent;
 import com.dci.intellij.dbn.common.content.DynamicContentElement;
 import com.dci.intellij.dbn.common.content.DynamicContentProperty;
@@ -13,6 +14,7 @@ import com.dci.intellij.dbn.database.common.metadata.DBObjectMetadata;
 import com.dci.intellij.dbn.database.common.metadata.DBObjectMetadataFactory;
 import com.dci.intellij.dbn.database.interfaces.DatabaseInterfaceInvoker;
 import com.dci.intellij.dbn.database.interfaces.DatabaseMessageParserInterface;
+import com.dci.intellij.dbn.database.interfaces.queue.InterfaceTaskDefinition;
 import com.dci.intellij.dbn.diagnostics.Diagnostics;
 import com.dci.intellij.dbn.object.common.DBObject;
 import com.intellij.openapi.progress.ProcessCanceledException;
@@ -77,9 +79,13 @@ public abstract class DynamicContentResultSetLoader<
 
     @Override
     public void loadContent(DynamicContent<T> content, boolean forceReload) throws SQLException {
-        ProgressMonitor.setTaskDescription("Loading " + content.getContentDescription());
+        InterfaceTaskDefinition taskDefinition = InterfaceTaskDefinition.create(
+                "Loading data dictionary",
+                "Loading " + content.getContentDescription(),
+                content.is(DynamicContentProperty.LOADING_IN_BACKGROUND) ? Priority.LOW : Priority.MEDIUM,
+                content.context());
 
-        DatabaseInterfaceInvoker.run(content.context(), conn -> {
+        DatabaseInterfaceInvoker.execute(taskDefinition, conn -> {
             DebugInfo debugInfo = preLoadContent(content);
             ConnectionHandler connection = content.getConnection();
             IncrementalStatusAdapter loading = connection.getConnectionStatus().getLoading();
@@ -113,18 +119,17 @@ public abstract class DynamicContentResultSetLoader<
                         }
 
                         content.checkDisposed();
-                        if (element != null) {
-                            if (list == null) {
-                                list = new ArrayList<>();
-                            }
-                            list.add(element);
-                            if (count % 10 == 0) {
-                                String description = element.getDescription();
-                                if (description != null)
-                                    ProgressMonitor.setSubtaskDescription(description);
-                            }
-                            count++;
+                        if (element == null) continue;
+
+                        if (list == null) list = new ArrayList<>();
+                        list.add(element);
+
+                        if (count % 10 == 0) {
+                            String description = element.getDescription();
+                            if (description != null)
+                                ProgressMonitor.setProgressDetail(description);
                         }
+                        count++;
                     }
                 } finally {
                     Resources.close(resultSet);

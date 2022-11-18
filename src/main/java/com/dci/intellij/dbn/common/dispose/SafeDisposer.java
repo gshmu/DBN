@@ -56,7 +56,7 @@ public final class SafeDisposer {
 
     public static void dispose(@Nullable Disposable disposable, boolean registered) {
         try {
-            Failsafe.nd(disposable);
+            if (Failsafe.invalid(disposable)) return;
 
             if (isDispatchCandidate(disposable) && !isDispatchThread()) {
                 Dispatch.run(() -> dispose(disposable, registered));

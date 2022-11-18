@@ -1,6 +1,6 @@
 package com.dci.intellij.dbn.object.action;
 
-import com.dci.intellij.dbn.common.thread.Progress;
+import com.dci.intellij.dbn.common.thread.Background;
 import com.dci.intellij.dbn.connection.ConnectionAction;
 import com.dci.intellij.dbn.object.common.list.DBObjectList;
 import com.intellij.openapi.actionSystem.AnActionEvent;
@@ -21,11 +21,14 @@ public class ObjectsReloadAction extends DumbAwareAction {
         String listName = objectList.getName();
         boolean loaded = objectList.isLoaded();
 
-        ConnectionAction.invoke(loaded ? "reloading the " + listName : "loading the " + listName, true, objectList,
-                action -> Progress.background(objectList.getProject(), "Reloading " + objectList.getObjectType().getListName(), true,
-                        progress -> {
-                            objectList.getConnection().getMetaDataCache().reset();
-                            objectList.reload();
-                        }));
+        String description = loaded ? "reloading the " + listName : "loading the " + listName;
+        ConnectionAction.invoke(description, true, objectList, action -> reloadObjectList());
+    }
+
+    private void reloadObjectList() {
+        Background.run(() -> {
+            objectList.getConnection().getMetaDataCache().reset();
+            objectList.reload();
+        });
     }
 }

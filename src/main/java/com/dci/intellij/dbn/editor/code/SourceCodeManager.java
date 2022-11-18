@@ -1,6 +1,7 @@
 package com.dci.intellij.dbn.editor.code;
 
 import com.dci.intellij.dbn.DatabaseNavigator;
+import com.dci.intellij.dbn.common.Priority;
 import com.dci.intellij.dbn.common.component.PersistentState;
 import com.dci.intellij.dbn.common.component.ProjectComponentBase;
 import com.dci.intellij.dbn.common.component.ProjectManagerListener;
@@ -12,16 +13,17 @@ import com.dci.intellij.dbn.common.event.ProjectEvents;
 import com.dci.intellij.dbn.common.load.ProgressMonitor;
 import com.dci.intellij.dbn.common.navigation.NavigationInstructions;
 import com.dci.intellij.dbn.common.notification.NotificationGroup;
+import com.dci.intellij.dbn.common.thread.Background;
 import com.dci.intellij.dbn.common.thread.Progress;
 import com.dci.intellij.dbn.common.util.*;
 import com.dci.intellij.dbn.connection.ConnectionAction;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.Resources;
 import com.dci.intellij.dbn.connection.jdbc.DBNConnection;
-import com.dci.intellij.dbn.database.DatabaseFeature;
 import com.dci.intellij.dbn.database.interfaces.DatabaseDataDefinitionInterface;
 import com.dci.intellij.dbn.database.interfaces.DatabaseInterfaceInvoker;
 import com.dci.intellij.dbn.database.interfaces.DatabaseMetadataInterface;
+import com.dci.intellij.dbn.database.interfaces.queue.InterfaceTaskDefinition;
 import com.dci.intellij.dbn.debugger.DatabaseDebuggerManager;
 import com.dci.intellij.dbn.editor.DBContentType;
 import com.dci.intellij.dbn.editor.EditorProviderId;
@@ -71,6 +73,7 @@ import static com.dci.intellij.dbn.common.navigation.NavigationInstruction.*;
 import static com.dci.intellij.dbn.common.util.Commons.list;
 import static com.dci.intellij.dbn.common.util.Messages.*;
 import static com.dci.intellij.dbn.common.util.Naming.unquote;
+import static com.dci.intellij.dbn.database.DatabaseFeature.OBJECT_CHANGE_MONITORING;
 import static com.dci.intellij.dbn.vfs.VirtualFileStatus.*;
 
 @State(
@@ -160,11 +163,12 @@ public class SourceCodeManager extends ProjectComponentBase implements Persisten
     }
 
     private void reloadAndUpdateEditors(DBEditableObjectVirtualFile databaseFile, boolean startInBackground) {
-        Project project = getProject();
-        if (databaseFile.isContentLoaded()) {
-            if (startInBackground)
-                Progress.background(project, "Reloading object source code", false, progress -> reloadAndUpdateEditors(databaseFile)); else
-                Progress.prompt(project, "Reloading object source code", false, progress -> reloadAndUpdateEditors(databaseFile));
+        if (!databaseFile.isContentLoaded()) return;
+
+        if (startInBackground){
+            Background.run(() -> reloadAndUpdateEditors(databaseFile));
+        } else {
+            Progress.prompt(getProject(), "Reloading object source code", false, progress -> reloadAndUpdateEditors(databaseFile));
         }
     }
 
@@ -217,79 +221,83 @@ public class SourceCodeManager extends ProjectComponentBase implements Persisten
     }
 
     private void saveSourceToDatabase(@NotNull DBSourceCodeVirtualFile sourceCodeFile, @Nullable SourceCodeEditor fileEditor, @Nullable Runnable successCallback) {
-        DBSchemaObject object = sourceCodeFile.getObject();
-        DBContentType contentType = sourceCodeFile.getContentType();
+        if (!sourceCodeFile.isNot(SAVING)) return;
 
-        if (sourceCodeFile.isNot(SAVING)) {
-            DatabaseDebuggerManager debuggerManager = DatabaseDebuggerManager.getInstance(getProject());
-            if (!debuggerManager.checkForbiddenOperation(sourceCodeFile.getConnection())) {
+        DatabaseDebuggerManager debuggerManager = DatabaseDebuggerManager.getInstance(getProject());
+        if (!debuggerManager.checkForbiddenOperation(sourceCodeFile.getConnection())) return;
+
+        sourceCodeFile.set(SAVING, true);
+        Project project = getProject();
+        try {
+            Document document = Failsafe.nn(Documents.getDocument(sourceCodeFile));
+            Documents.saveDocument(document);
+
+            DBSchemaObject object = sourceCodeFile.getObject();
+            DBContentType contentType = sourceCodeFile.getContentType();
+            DBLanguagePsiFile psiFile = sourceCodeFile.getPsiFile();
+
+            if (psiFile != null && psiFile.getFirstChild() != null && !isValidObjectTypeAndName(psiFile, object, contentType)) {
+                String message = "You are not allowed to change the name or the type of the object";
+                sourceCodeFile.set(SAVING, false);
+                showErrorDialog(project, "Illegal action", message);
+
                 return;
             }
 
-            sourceCodeFile.set(SAVING, true);
-            Project project = getProject();
-            try {
-                Document document = Failsafe.nn(Documents.getDocument(sourceCodeFile));
-                Documents.saveDocument(document);
+            ProgressMonitor.setProgressDetail("Checking for third party changes on " + object.getQualifiedNameWithType());
+            boolean isChangedInDatabase = sourceCodeFile.isChangedInDatabase(true);
+            if (isChangedInDatabase && sourceCodeFile.isMergeRequired()) {
+                String presentableChangeTime =
+                        OBJECT_CHANGE_MONITORING.isSupported(object) ?
+                                DateFormatUtil.formatPrettyDateTime(sourceCodeFile.getDatabaseChangeTimestamp()).toLowerCase() : "";
+                String message =
+                        "The " + object.getQualifiedNameWithType() +
+                                " was changed in database by another user " + presentableChangeTime + "." +
+                                "\nYou must merge the changes before saving.";
 
-                DBLanguagePsiFile psiFile = sourceCodeFile.getPsiFile();
-                if (psiFile == null || psiFile.getFirstChild() == null || isValidObjectTypeAndName(psiFile, object, contentType)) {
-                    ProgressMonitor.setTaskDescription("Checking for third party changes on " + object.getQualifiedNameWithType());
-                    boolean isChangedInDatabase = sourceCodeFile.isChangedInDatabase(true);
-                    if (isChangedInDatabase && sourceCodeFile.isMergeRequired()) {
-                        String presentableChangeTime =
-                                DatabaseFeature.OBJECT_CHANGE_MONITORING.isSupported(object) ?
-                                    DateFormatUtil.formatPrettyDateTime(sourceCodeFile.getDatabaseChangeTimestamp()).toLowerCase() : "";
-                        String message =
-                                "The " + object.getQualifiedNameWithType() +
-                                        " was changed in database by another user " + presentableChangeTime + "." +
-                                        "\nYou must merge the changes before saving.";
+                showWarningDialog(project, "Version conflict", message,
+                        options("Merge Changes", "Cancel"), 0,
+                        option -> {
+                            if (option == 0) {
+                                Progress.prompt(project,
+                                        "Loading database source code", false,
+                                        progress -> {
+                                            try {
+                                                SourceCodeContent sourceCodeContent = loadSourceFromDatabase(object, contentType);
+                                                String databaseContent = sourceCodeContent.getText().toString();
+                                                SourceCodeDiffManager diffManager = SourceCodeDiffManager.getInstance(project);
+                                                diffManager.openCodeMergeDialog(databaseContent, sourceCodeFile, fileEditor, MergeAction.SAVE);
+                                            } catch (SQLException e) {
+                                                showErrorDialog(project, "Could not load database sources.", e);
+                                            }
+                                        });
 
-                        showWarningDialog(project,"Version conflict",message,
-                                options("Merge Changes", "Cancel"), 0,
-                                option -> {
-                                    if (option == 0) {
-                                        Progress.prompt(project,
-                                                "Loading database source code", false,
-                                                progress -> {
-                                                    try {
-                                                        SourceCodeContent sourceCodeContent = loadSourceFromDatabase(object, contentType);
-                                                        String databaseContent = sourceCodeContent.getText().toString();
-                                                        SourceCodeDiffManager diffManager = SourceCodeDiffManager.getInstance(project);
-                                                        diffManager.openCodeMergeDialog(databaseContent, sourceCodeFile, fileEditor, MergeAction.SAVE);
-                                                    } catch (SQLException e) {
-                                                        showErrorDialog(project, "Could not load database sources.", e);
-                                                    }
-                                                });
+                            } else {
+                                sourceCodeFile.set(SAVING, false);
+                            }
+                        });
 
-                                    } else {
-                                        sourceCodeFile.set(SAVING, false);
-                                    }
-                                });
-
-                    } else {
-                        storeSourceToDatabase(sourceCodeFile, fileEditor, successCallback);
-                    }
-
-                } else {
-                    String message = "You are not allowed to change the name or the type of the object";
-                    sourceCodeFile.set(SAVING, false);
-                    showErrorDialog(project, "Illegal action", message);
-                }
-            } catch (Exception ex) {
-                showErrorDialog(project, "Could not save changes to database.", ex);
-                sourceCodeFile.set(SAVING, false);
+            } else {
+                storeSourceToDatabase(sourceCodeFile, fileEditor, successCallback);
             }
+
+        } catch (Exception ex) {
+            showErrorDialog(project, "Could not save changes to database.", ex);
+            sourceCodeFile.set(SAVING, false);
         }
     }
 
     public SourceCodeContent loadSourceFromDatabase(@NotNull DBSchemaObject object, DBContentType contentType) throws SQLException {
-        ProgressMonitor.setTaskDescription("Loading source code of " + object.getQualifiedNameWithType());
-
         ConnectionHandler connection = object.getConnection();
         boolean optionalContent = contentType == DBContentType.CODE_BODY;
 
-        String sourceCode = DatabaseInterfaceInvoker.call(connection.context(), conn -> {
+        InterfaceTaskDefinition taskDefinition = InterfaceTaskDefinition.create(
+                "Loading source code",
+                "Loading source code of " + object.getQualifiedNameWithType(),
+                Priority.HIGH,
+                connection.context());
+
+        String sourceCode = DatabaseInterfaceInvoker.load(taskDefinition, conn -> {
             ResultSet resultSet = null;
             try {
                 DatabaseMetadataInterface metadata = connection.getMetadataInterface();
@@ -411,36 +419,40 @@ public class SourceCodeManager extends ProjectComponentBase implements Persisten
 
     @NotNull
     public ChangeTimestamp loadChangeTimestamp(@NotNull DBSchemaObject object, DBContentType contentType) throws SQLException{
-        if (DatabaseFeature.OBJECT_CHANGE_MONITORING.isSupported(object)) {
-            ProgressMonitor.setTaskDescription("Loading timestamp for " + object.getQualifiedNameWithType());
-            ConnectionHandler connection = object.getConnection();
+        if (OBJECT_CHANGE_MONITORING.isNotSupported(object)) return ChangeTimestamp.now();
 
-            Timestamp timestamp = DatabaseInterfaceInvoker.call(connection.context(), conn -> {
-                ResultSet resultSet = null;
-                try {
-                    String schemaName = object.getSchema().getName();
-                    String objectName = object.getName();
-                    String contentQualifier = getContentQualifier(object.getObjectType(), contentType);
 
-                    DatabaseMetadataInterface metadata = connection.getMetadataInterface();
-                    resultSet = metadata.loadObjectChangeTimestamp(
-                            schemaName,
-                            objectName,
-                            contentQualifier,
-                            conn);
+        ConnectionHandler connection = object.getConnection();
+        InterfaceTaskDefinition taskDefinition = InterfaceTaskDefinition.create(
+                "Loading object details",
+                "Loading change timestamp for " + object.getQualifiedNameWithType(),
+                Priority.HIGHEST,
+                connection.context());
 
-                    return resultSet.next() ? resultSet.getTimestamp(1) : null;
-                } finally {
-                    Resources.close(resultSet);
-                }
-            });
+        Timestamp timestamp = DatabaseInterfaceInvoker.load(taskDefinition, conn -> {
+            ResultSet resultSet = null;
+            try {
+                String schemaName = object.getSchema().getName();
+                String objectName = object.getName();
+                String contentQualifier = getContentQualifier(object.getObjectType(), contentType);
 
-            if (timestamp != null) {
-                return new ChangeTimestamp(timestamp);
+                DatabaseMetadataInterface metadata = connection.getMetadataInterface();
+                resultSet = metadata.loadObjectChangeTimestamp(
+                        schemaName,
+                        objectName,
+                        contentQualifier,
+                        conn);
+
+                return resultSet.next() ? resultSet.getTimestamp(1) : null;
+            } finally {
+                Resources.close(resultSet);
             }
-        }
+        });
 
-        return new ChangeTimestamp(new Timestamp(System.currentTimeMillis()));
+        if (timestamp != null) return ChangeTimestamp.of(timestamp);
+
+
+        return ChangeTimestamp.now();
     }
 
     private static String getContentQualifier(DBObjectType objectType, DBContentType contentType) {
@@ -608,10 +620,8 @@ public class SourceCodeManager extends ProjectComponentBase implements Persisten
     }
 
     public void loadSourceCode(@NotNull DBSourceCodeVirtualFile sourceCodeFile, boolean force) {
-        String objectDescription = sourceCodeFile.getObject().getQualifiedNameWithType();
         ConnectionAction.invoke("loading the source code", false, sourceCodeFile,
-                action -> Progress.background(getProject(), "Loading source code for " + objectDescription, false,
-                        progress -> loadSourceFromDatabase(sourceCodeFile, force, false)));
+                action -> Background.run(() -> loadSourceFromDatabase(sourceCodeFile, force, false)));
     }
 
     public void saveSourceCode(@NotNull DBSourceCodeVirtualFile sourceCodeFile, @Nullable SourceCodeEditor fileEditor, Runnable successCallback) {

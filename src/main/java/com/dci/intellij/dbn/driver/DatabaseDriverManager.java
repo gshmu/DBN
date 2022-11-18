@@ -85,37 +85,30 @@ public class DatabaseDriverManager extends ApplicationComponentBase {
     }
 
     private List<Driver> loadDrivers(File libraryFile) {
-        String taskDescription = ProgressMonitor.getTaskDescription();
-        try {
-            ProgressMonitor.setTaskDescription("Loading jdbc drivers from " + libraryFile);
+        ProgressMonitor.setProgressText("Loading jdbc drivers from " + libraryFile);
+        ClassLoader parentClassLoader = getClass().getClassLoader();
+        if (libraryFile.isDirectory()) {
+            List<Driver> drivers = new ArrayList<>();
+            File[] files = libraryFile.listFiles();
+            if (files != null) {
+                URL[] urls = Arrays.
+                        stream(files).
+                        filter(file -> file.getName().endsWith(".jar")).
+                        map(file -> getFileUrl(file)).
+                        toArray(URL[]::new);
 
-            ClassLoader parentClassLoader = getClass().getClassLoader();
-            if (libraryFile.isDirectory()) {
-                List<Driver> drivers = new ArrayList<>();
-                File[] files = libraryFile.listFiles();
-                if (files != null) {
-                    URL[] urls = Arrays.
-                            stream(files).
-                            filter(file -> file.getName().endsWith(".jar")).
-                            map(file -> getFileUrl(file)).
-                            toArray(URL[]::new);
-
-                    ClassLoader classLoader = new DriverClassLoader(urls, parentClassLoader);
-                    for (File file : files) {
-                        drivers.addAll(loadDrivers(file, classLoader));
-                    }
-                }
-
-                return drivers;
-            } else {
-                URL[] urls = new URL[]{getFileUrl(libraryFile)};
                 ClassLoader classLoader = new DriverClassLoader(urls, parentClassLoader);
-                return loadDrivers(libraryFile, classLoader);
+                for (File file : files) {
+                    drivers.addAll(loadDrivers(file, classLoader));
+                }
             }
-
-        } finally {
-            ProgressMonitor.setTaskDescription(taskDescription);
+            return drivers;
+        } else {
+            URL[] urls = new URL[]{getFileUrl(libraryFile)};
+            ClassLoader classLoader = new DriverClassLoader(urls, parentClassLoader);
+            return loadDrivers(libraryFile, classLoader);
         }
+
     }
 
     @NotNull

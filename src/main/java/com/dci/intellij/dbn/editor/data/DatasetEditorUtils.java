@@ -1,10 +1,12 @@
 package com.dci.intellij.dbn.editor.data;
 
+import com.dci.intellij.dbn.common.Priority;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.Resources;
 import com.dci.intellij.dbn.connection.jdbc.DBNConnection;
 import com.dci.intellij.dbn.database.interfaces.DatabaseInterfaceInvoker;
 import com.dci.intellij.dbn.database.interfaces.DatabaseMetadataInterface;
+import com.dci.intellij.dbn.database.interfaces.queue.InterfaceTaskDefinition;
 import com.dci.intellij.dbn.object.DBColumn;
 import com.dci.intellij.dbn.object.DBDataset;
 import org.jetbrains.annotations.NotNull;
@@ -19,7 +21,12 @@ public class DatasetEditorUtils {
     public static List<String> loadDistinctColumnValues(@NotNull DBColumn column) {
         try {
             ConnectionHandler connection = column.getConnection();
-            return DatabaseInterfaceInvoker.call(connection.context(), conn -> loadDistinctColumnValues(column, connection, conn));
+            InterfaceTaskDefinition taskDefinition = InterfaceTaskDefinition.create(
+                    "Loading data",
+                    "Loading possible values for " + column.getQualifiedNameWithType(),
+                    Priority.HIGH,
+                    connection.context());
+            return DatabaseInterfaceInvoker.load(taskDefinition, conn -> loadDistinctColumnValues(column, connection, conn));
         } catch (Exception e) {
             return Collections.emptyList();
         }

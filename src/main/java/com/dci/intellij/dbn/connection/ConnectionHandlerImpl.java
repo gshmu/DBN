@@ -54,7 +54,9 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.concurrent.ConcurrentHashMap;
 
+import static com.dci.intellij.dbn.common.util.TimeUtil.isOlderThan;
 import static com.intellij.openapi.util.text.StringUtil.isNotEmpty;
+import static java.util.concurrent.TimeUnit.MINUTES;
 
 @Slf4j
 public class ConnectionHandlerImpl extends StatefulDisposable.Base implements ConnectionHandler, NotificationSupport {
@@ -165,9 +167,11 @@ public class ConnectionHandlerImpl extends StatefulDisposable.Base implements Co
     public AuthenticationInfo getTemporaryAuthenticationInfo() {
         AuthenticationInfo authenticationInfo = temporaryAuthenticationInfo.get();
         if (authenticationInfo.isProvided()) {
-            int passwordExpiryTime = getSettings().getDetailSettings().getCredentialExpiryMinutes() * 60000;
+            int expiryMinutes = getSettings().getDetailSettings().getCredentialExpiryMinutes() * 60000;
             long lastAccessTimestamp = getConnectionPool().getLastAccessTimestamp();
-            if (lastAccessTimestamp > 0 && authenticationInfo.isOlderThan(passwordExpiryTime) && TimeUtil.isOlderThan(lastAccessTimestamp, passwordExpiryTime)) {
+            if (lastAccessTimestamp > 0 &&
+                    authenticationInfo.isOlderThan(expiryMinutes, MINUTES) &&
+                    isOlderThan(lastAccessTimestamp, expiryMinutes, MINUTES)) {
                 temporaryAuthenticationInfo.reset();
             }
         }

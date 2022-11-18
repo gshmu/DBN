@@ -4,7 +4,7 @@ import com.dci.intellij.dbn.connection.jdbc.DBNConnection;
 import com.dci.intellij.dbn.connection.jdbc.ResourceStatus;
 import com.dci.intellij.dbn.database.interfaces.DatabaseInterface.ConnectionCallable;
 import com.dci.intellij.dbn.database.interfaces.DatabaseInterface.ConnectionRunnable;
-import com.dci.intellij.dbn.database.interfaces.DatabaseInterfaceContext;
+import com.dci.intellij.dbn.database.interfaces.queue.InterfaceContext;
 import com.intellij.openapi.progress.ProcessCanceledException;
 import org.jetbrains.annotations.NotNull;
 
@@ -13,7 +13,7 @@ import java.sql.SQLException;
 public final class PooledConnection {
     private PooledConnection() {}
 
-    public static void run(@NotNull DatabaseInterfaceContext context, @NotNull ConnectionRunnable runnable) throws SQLException {
+    public static void run(@NotNull InterfaceContext context, @NotNull ConnectionRunnable runnable) throws SQLException {
         ConnectionHandler connection = context.getConnection();
         SchemaId schemaId = context.getSchemaId();
         boolean readonly = context.isReadonly();
@@ -37,7 +37,7 @@ public final class PooledConnection {
         }
     }
 
-    public static <T> T call(@NotNull DatabaseInterfaceContext context, @NotNull ConnectionCallable<T> callable) throws SQLException {
+    public static <T> T call(@NotNull InterfaceContext context, @NotNull ConnectionCallable<T> callable) throws SQLException {
         ConnectionHandler connection = context.getConnection();
         SchemaId schemaId = context.getSchemaId();
         boolean readonly = context.isReadonly();

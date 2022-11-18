@@ -8,8 +8,8 @@ import com.dci.intellij.dbn.common.color.Colors;
 import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.common.dispose.SafeDisposer;
 import com.dci.intellij.dbn.common.event.ProjectEvents;
+import com.dci.intellij.dbn.common.thread.Background;
 import com.dci.intellij.dbn.common.thread.Dispatch;
-import com.dci.intellij.dbn.common.thread.Progress;
 import com.dci.intellij.dbn.common.ui.form.DBNForm;
 import com.dci.intellij.dbn.common.ui.form.DBNFormBase;
 import com.dci.intellij.dbn.common.ui.util.Borders;
@@ -87,8 +87,7 @@ public class ObjectPropertiesForm extends DBNFormBase {
         DBObject localObject = getObject();
         if (!Objects.equals(object, localObject)) {
             this.object = DBObjectRef.of(object);
-            Project project = object.getProject();
-            Progress.background(project, "Rendering object properties", refreshHandle, progress -> {
+            Background.run(refreshHandle, () -> {
                 ObjectPropertiesTableModel tableModel = new ObjectPropertiesTableModel(object.getPresentableProperties());
                 Disposer.register(ObjectPropertiesForm.this, tableModel);
 
@@ -105,7 +104,6 @@ public class ObjectPropertiesForm extends DBNFormBase {
                     UserInterface.repaint(mainPanel);
                     SafeDisposer.dispose(oldTableModel, false);
                 });
-
             });
         }
     }

@@ -25,6 +25,7 @@ public class InterfaceQueueConsumer implements Consumer<InterfaceTask<?>>{
         Task.Backgroundable backgroundable = new Task.Backgroundable(project, task.getTitle(), true, ALWAYS_BACKGROUND) {
             @Override
             public void run(@NotNull ProgressIndicator indicator) {
+                indicator.setText(task.getDescription());
                 queue.executeTask(task);
             }
         };
