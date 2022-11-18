@@ -80,7 +80,7 @@ public class DBObjectListImpl<T extends DBObject> extends DynamicContentImpl<T> 
 
     @Override
     public DynamicContentLoader<T, DBObjectMetadata> getLoader() {
-        BrowserTreeNode parent = getParent();
+        DatabaseEntity parent = getParent();
         if (parent instanceof DBVirtualObject) {
             return DynamicContentLoader.VOID_CONTENT_LOADER;
         } else {
@@ -293,7 +293,7 @@ public class DBObjectListImpl<T extends DBObject> extends DynamicContentImpl<T> 
 
     @Override
     public PsiDirectory getPsiDirectory() {
-        return getConnection().getObjectBundle().getObjectListPsiDirectory(this);
+        return getObjectBundle().getObjectListPsiDirectory(this);
     }
 
     @Override

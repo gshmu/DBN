@@ -10,6 +10,6 @@ public interface DBUser extends DBRoleGrantee, DBPrivilegeGrantee {
     List<DBGrantedPrivilege> getPrivileges();
     List<DBGrantedRole> getRoles();
 
-    boolean hasSystemPrivilege(DBSystemPrivilege systemPrivilege);
+    boolean hasPrivilege(DBPrivilege privilege);
     boolean hasRole(DBRole role);
 }

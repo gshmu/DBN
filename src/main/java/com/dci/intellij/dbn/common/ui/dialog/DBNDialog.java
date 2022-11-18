@@ -1,11 +1,11 @@
 package com.dci.intellij.dbn.common.ui.dialog;
 
-import com.dci.intellij.dbn.common.Constants;
 import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.common.dispose.SafeDisposer;
 import com.dci.intellij.dbn.common.project.ProjectRef;
 import com.dci.intellij.dbn.common.ui.component.DBNComponent;
 import com.dci.intellij.dbn.common.ui.form.DBNForm;
+import com.dci.intellij.dbn.common.util.Titles;
 import com.dci.intellij.dbn.diagnostics.Diagnostics;
 import com.intellij.openapi.Disposable;
 import com.intellij.openapi.project.Project;
@@ -32,7 +32,7 @@ public abstract class DBNDialog<F extends DBNForm> extends DialogWrapper impleme
     protected DBNDialog(Project project, String title, boolean canBeParent) {
         super(project, canBeParent);
         this.project = ProjectRef.of(project);
-        setTitle(Constants.DBN_TITLE_DIALOG_SUFFIX + title);
+        setTitle(Titles.signed(title));
         getHelpAction().setEnabled(false);
     }
 

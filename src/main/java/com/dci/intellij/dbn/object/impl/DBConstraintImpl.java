@@ -2,7 +2,6 @@ package com.dci.intellij.dbn.object.impl;
 
 import com.dci.intellij.dbn.browser.ui.HtmlToolTipBuilder;
 import com.dci.intellij.dbn.common.Icons;
-import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.database.common.metadata.def.DBConstraintMetadata;
 import com.dci.intellij.dbn.object.DBColumn;
 import com.dci.intellij.dbn.object.DBConstraint;
@@ -71,8 +70,7 @@ public class DBConstraintImpl extends DBSchemaObjectImpl<DBConstraintMetadata> i
             String fkOwner = metadata.getFkConstraintOwner();
             String fkName = metadata.getFkConstraintName();
 
-            ConnectionHandler connection = this.getConnection();
-            DBSchema schema = connection.getObjectBundle().getSchema(fkOwner);
+            DBSchema schema = getObjectBundle().getSchema(fkOwner);
             if (schema != null) {
                 DBObjectRef<DBSchema> schemaRef = schema.ref();
                 foreignKeyConstraint = new DBObjectRef<>(schemaRef, CONSTRAINT, fkName);

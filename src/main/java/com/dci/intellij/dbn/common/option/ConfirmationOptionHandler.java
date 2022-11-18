@@ -1,10 +1,10 @@
 package com.dci.intellij.dbn.common.option;
 
 
-import com.dci.intellij.dbn.common.Constants;
 import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.common.options.PersistentConfiguration;
 import com.dci.intellij.dbn.common.options.setting.SettingsSupport;
+import com.dci.intellij.dbn.common.util.Titles;
 import com.intellij.openapi.ui.Messages;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
@@ -60,7 +60,7 @@ public class ConfirmationOptionHandler implements DoNotAskOption, PersistentConf
         if (confirm) {
             int optionIndex = Messages.showDialog(
                     MessageFormat.format(message, messageArgs),
-                    Constants.DBN_TITLE_DIALOG_SUFFIX + title,
+                    Titles.signed(title),
                     new String[]{"Yes", "No"}, 0, Icons.DIALOG_QUESTION, this);
             return optionIndex == 0;
         }

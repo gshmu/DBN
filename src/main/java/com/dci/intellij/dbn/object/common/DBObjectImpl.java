@@ -301,14 +301,6 @@ public abstract class DBObjectImpl<M extends DBObjectMetadata> extends BrowserTr
 
     @NotNull
     @Override
-    public DBObjectBundle getObjectBundle() {
-        ConnectionHandler connection = this.getConnection();
-        return connection.getObjectBundle();
-    }
-
-
-    @NotNull
-    @Override
     public ConnectionId getConnectionId() {
         return connection.getConnectionId();
     }
@@ -485,29 +477,26 @@ public abstract class DBObjectImpl<M extends DBObjectMetadata> extends BrowserTr
     @Override
     @NotNull
     public LookupItemBuilder getLookupItemBuilder(DBLanguage language) {
-        DBObjectBundle objectBundle = Failsafe.nn(getObjectBundle());
-        return objectBundle.getLookupItemBuilder(objectRef, language);
+        return getObjectBundle().getLookupItemBuilder(objectRef, language);
     }
 
     @Override
     @NotNull
     public DBObjectPsiCache getPsiCache() {
-        DBObjectBundle objectBundle = Failsafe.nn(getObjectBundle());
-        return objectBundle.getObjectPsiCache(ref());
+        return getObjectBundle().getObjectPsiCache(ref());
     }
 
     @Override
     @NotNull
     public DBObjectVirtualFile<?> getVirtualFile() {
-        DBObjectBundle objectBundle = Failsafe.nn(getObjectBundle());
-        return objectBundle.getObjectVirtualFile(ref());
+        return getObjectBundle().getObjectVirtualFile(ref());
     }
 
     @Override
     public String extractDDL() throws SQLException {
         // TODO move to database interface (ORACLE)
         ConnectionHandler connection = getConnection();
-        return PooledConnection.call(connection.context(), conn -> {
+        return PooledConnection.call(connection.getInterfaceContext(), conn -> {
             DBNCallableStatement statement = null;
             try {
                 DBObjectType objectType = getObjectType();
@@ -653,8 +642,7 @@ public abstract class DBObjectImpl<M extends DBObjectMetadata> extends BrowserTr
                 }
             }
         } else {
-            DBObjectBundle objectBundle = getObjectBundle();
-            DBObjectList<?> parentObjectList = objectBundle.getObjectList(objectType);
+            DBObjectList<?> parentObjectList = getObjectBundle().getObjectList(objectType);
             return Failsafe.nn(parentObjectList);
         }
         throw AlreadyDisposedException.INSTANCE;

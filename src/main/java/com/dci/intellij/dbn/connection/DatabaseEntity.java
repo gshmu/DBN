@@ -7,6 +7,8 @@ import com.dci.intellij.dbn.common.dispose.StatefulDisposable;
 import com.dci.intellij.dbn.common.ui.Presentable;
 import com.dci.intellij.dbn.common.util.Unsafe;
 import com.dci.intellij.dbn.connection.context.ConnectionProvider;
+import com.dci.intellij.dbn.object.common.DBObject;
+import com.dci.intellij.dbn.object.common.DBObjectBundle;
 import com.intellij.openapi.project.Project;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -55,4 +57,12 @@ public interface DatabaseEntity extends ConnectionProvider, StatefulDisposable, 
     default ConnectionHandler getConnection() {
         throw new UnsupportedOperationException();
     };
+
+    default boolean isObject() {
+        return this instanceof DBObject;
+    }
+
+    default boolean isObjectBundle() {
+        return this instanceof DBObjectBundle;
+    }
 }

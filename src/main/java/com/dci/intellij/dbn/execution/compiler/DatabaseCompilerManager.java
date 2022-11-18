@@ -1,6 +1,5 @@
 package com.dci.intellij.dbn.execution.compiler;
 
-import com.dci.intellij.dbn.common.Priority;
 import com.dci.intellij.dbn.common.component.ProjectComponentBase;
 import com.dci.intellij.dbn.common.event.ProjectEvents;
 import com.dci.intellij.dbn.common.routine.ParametricRunnable;
@@ -36,6 +35,7 @@ import org.jetbrains.annotations.Nullable;
 import java.sql.SQLException;
 import java.util.List;
 
+import static com.dci.intellij.dbn.common.Priority.HIGH;
 import static com.dci.intellij.dbn.common.component.Components.projectService;
 import static com.dci.intellij.dbn.object.common.status.DBObjectStatus.COMPILING;
 
@@ -167,11 +167,10 @@ public class DatabaseCompilerManager extends ProjectComponentBase {
         try {
             objectStatus.set(contentType, COMPILING, true);
             ConnectionHandler connection = object.getConnection();
-            InterfaceTaskDefinition taskDefinition = InterfaceTaskDefinition.create(
+            InterfaceTaskDefinition taskDefinition = InterfaceTaskDefinition.create(HIGH,
                     "Compiling object",
                     "Compiling object " + Naming.getQualifiedObjectName(object),
-                    Priority.HIGH,
-                    connection.context());
+                    connection.getInterfaceContext());
 
             DatabaseInterfaceInvoker.execute(taskDefinition, conn -> {
                 DatabaseMetadataInterface metadata = connection.getMetadataInterface();

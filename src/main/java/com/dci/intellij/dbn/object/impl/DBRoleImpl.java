@@ -70,7 +70,7 @@ public class DBRoleImpl extends DBObjectImpl<DBRoleMetadata> implements DBRole {
     @Override
     public List<DBUser> getUserGrantees() {
         List<DBUser> grantees = new ArrayList<>();
-        List<DBUser> users = this.getConnection().getObjectBundle().getUsers();
+        List<DBUser> users = getObjectBundle().getUsers();
         if (users != null) {
             for (DBUser user : users) {
                 if (user.hasRole(this)) {
@@ -84,7 +84,7 @@ public class DBRoleImpl extends DBObjectImpl<DBRoleMetadata> implements DBRole {
     @Override
     public List<DBRole> getRoleGrantees() {
         List<DBRole> grantees = new ArrayList<>();
-        List<DBRole> roles = this.getConnection().getObjectBundle().getRoles();
+        List<DBRole> roles = getObjectBundle().getRoles();
         if (roles != null) {
             for (DBRole role : roles) {
                 if (role.hasRole(this)) {

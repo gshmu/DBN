@@ -26,7 +26,7 @@ public class DBGrantedRoleImpl extends DBObjectImpl<DBGrantedRoleMetadata> imple
     @Override
     protected String initObject(DBGrantedRoleMetadata metadata) throws SQLException {
         String name = metadata.getGrantedRoleName();
-        this.role = DBObjectRef.of(this.getConnection().getObjectBundle().getRole(name));
+        this.role = DBObjectRef.of(getObjectBundle().getRole(name));
         set(ADMIN_OPTION, metadata.isAdminOption());
         set(DEFAULT_ROLE, metadata.isDefaultRole());
         return name;
