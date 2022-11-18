@@ -1,7 +1,6 @@
 package com.dci.intellij.dbn.editor.code;
 
 import com.dci.intellij.dbn.DatabaseNavigator;
-import com.dci.intellij.dbn.common.Priority;
 import com.dci.intellij.dbn.common.component.PersistentState;
 import com.dci.intellij.dbn.common.component.ProjectComponentBase;
 import com.dci.intellij.dbn.common.component.ProjectManagerListener;
@@ -67,6 +66,8 @@ import java.sql.Timestamp;
 import java.util.List;
 import java.util.Objects;
 
+import static com.dci.intellij.dbn.common.Priority.HIGH;
+import static com.dci.intellij.dbn.common.Priority.HIGHEST;
 import static com.dci.intellij.dbn.common.component.Components.projectService;
 import static com.dci.intellij.dbn.common.message.MessageCallback.when;
 import static com.dci.intellij.dbn.common.navigation.NavigationInstruction.*;
@@ -291,11 +292,10 @@ public class SourceCodeManager extends ProjectComponentBase implements Persisten
         ConnectionHandler connection = object.getConnection();
         boolean optionalContent = contentType == DBContentType.CODE_BODY;
 
-        InterfaceTaskDefinition taskDefinition = InterfaceTaskDefinition.create(
+        InterfaceTaskDefinition taskDefinition = InterfaceTaskDefinition.create(HIGH,
                 "Loading source code",
                 "Loading source code of " + object.getQualifiedNameWithType(),
-                Priority.HIGH,
-                connection.context());
+                connection.getInterfaceContext());
 
         String sourceCode = DatabaseInterfaceInvoker.load(taskDefinition, conn -> {
             ResultSet resultSet = null;
@@ -423,11 +423,10 @@ public class SourceCodeManager extends ProjectComponentBase implements Persisten
 
 
         ConnectionHandler connection = object.getConnection();
-        InterfaceTaskDefinition taskDefinition = InterfaceTaskDefinition.create(
+        InterfaceTaskDefinition taskDefinition = InterfaceTaskDefinition.create(HIGHEST,
                 "Loading object details",
                 "Loading change timestamp for " + object.getQualifiedNameWithType(),
-                Priority.HIGHEST,
-                connection.context());
+                connection.getInterfaceContext());
 
         Timestamp timestamp = DatabaseInterfaceInvoker.load(taskDefinition, conn -> {
             ResultSet resultSet = null;

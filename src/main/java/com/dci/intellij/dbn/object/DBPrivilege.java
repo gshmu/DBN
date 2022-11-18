@@ -7,4 +7,6 @@ import java.util.List;
 public interface DBPrivilege extends DBObject {
 
     List<DBUser> getUserGrantees();
+
+    List<DBRole> getRoleGrantees();
 }

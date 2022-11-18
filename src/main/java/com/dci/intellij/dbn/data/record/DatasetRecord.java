@@ -59,7 +59,7 @@ public class DatasetRecord implements Disposable {
         }
 
         ConnectionHandler connection = dataset.getConnection();
-        PooledConnection.run(connection.context(), conn -> {
+        PooledConnection.run(connection.getInterfaceContext(), conn -> {
             DBNPreparedStatement statement = null;
             DBNResultSet resultSet = null;
             try {

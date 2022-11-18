@@ -28,7 +28,7 @@ public class DBNestedTableImpl extends DBObjectImpl<DBNestedTableMetadata> imple
 
         String typeOwner = metadata.getDeclaredTypeOwner();
         String typeName = metadata.getDeclaredTypeName();
-        DBSchema schema = this.getConnection().getObjectBundle().getSchema(typeOwner);
+        DBSchema schema = getObjectBundle().getSchema(typeOwner);
         typeRef = DBObjectRef.of(schema == null ? null : schema.getType(typeName));
         // todo !!!
         return name;

@@ -24,6 +24,7 @@ import javax.swing.*;
 import java.sql.SQLException;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Objects;
 
 import static com.dci.intellij.dbn.object.common.property.DBObjectProperty.ROOT_OBJECT;
 import static com.dci.intellij.dbn.object.common.property.DBObjectProperty.SESSION_USER;
@@ -118,15 +119,15 @@ public class DBUserImpl extends DBObjectImpl<DBUserMetadata> implements DBUser {
     }
 
     @Override
-    public boolean hasSystemPrivilege(DBSystemPrivilege systemPrivilege) {
+    public boolean hasPrivilege(DBPrivilege privilege) {
         for (DBGrantedPrivilege grantedPrivilege : getPrivileges()) {
-            if (grantedPrivilege.getPrivilege().equals(systemPrivilege)) {
+            if (Objects.equals(grantedPrivilege.getPrivilege(), privilege)) {
                 return true;
             }
         }
         if (GRANTED_ROLE.isSupported(this)) {
             for (DBGrantedRole grantedRole : getRoles()) {
-                if (grantedRole.getRole().hasPrivilege(systemPrivilege)) {
+                if (grantedRole.getRole().hasPrivilege(privilege)) {
                     return true;
                 }
             }

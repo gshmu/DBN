@@ -1,6 +1,5 @@
 package com.dci.intellij.dbn.execution.explain;
 
-import com.dci.intellij.dbn.common.Priority;
 import com.dci.intellij.dbn.common.component.ProjectComponentBase;
 import com.dci.intellij.dbn.common.routine.ParametricRunnable;
 import com.dci.intellij.dbn.common.thread.Progress;
@@ -26,6 +25,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 
+import static com.dci.intellij.dbn.common.Priority.HIGH;
 import static com.dci.intellij.dbn.common.component.Components.projectService;
 
 public class ExplainPlanManager extends ProjectComponentBase {
@@ -80,11 +80,10 @@ public class ExplainPlanManager extends ProjectComponentBase {
 
     private static ExplainPlanResult createExplainPlan(@NotNull ExecutablePsiElement executable, ConnectionHandler connection) {
         try {
-            InterfaceTaskDefinition taskDefinition = InterfaceTaskDefinition.create(
+            InterfaceTaskDefinition taskDefinition = InterfaceTaskDefinition.create(HIGH,
                     "Creating explain plan",
                     "Running explain plan for SQL statement",
-                    Priority.HIGH,
-                    connection.context());
+                    connection.getInterfaceContext());
             return DatabaseInterfaceInvoker.load(taskDefinition, conn -> {
                 SchemaId currentSchema = executable.getFile().getSchemaId();
                 connection.setCurrentSchema(conn, currentSchema);

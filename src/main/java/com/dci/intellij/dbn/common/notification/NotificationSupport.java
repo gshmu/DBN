@@ -1,7 +1,7 @@
 package com.dci.intellij.dbn.common.notification;
 
-import com.dci.intellij.dbn.common.Constants;
 import com.dci.intellij.dbn.common.project.ProjectSupplier;
+import com.dci.intellij.dbn.common.util.Titles;
 import com.intellij.notification.Notification;
 import com.intellij.notification.NotificationType;
 import com.intellij.notification.Notifications;
@@ -57,7 +57,7 @@ public interface NotificationSupport extends ProjectSupplier {
             message = MessageFormat.format(message, args);
             Notification notification = new Notification(
                     "DBNavigator.NotificationGroup",
-                    Constants.DBN_TITLE_NOTIFICATION_SUFFIX + " - " + group + "",
+                    Titles.signed(group.toString()),
                     message,
                     type);
             notification.setImportant(false);

@@ -5,7 +5,6 @@ import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.ConnectionLocalContext;
 import com.dci.intellij.dbn.connection.PooledConnection;
 import com.dci.intellij.dbn.database.interfaces.DatabaseInterface.Callable;
-import com.dci.intellij.dbn.database.interfaces.queue.InterfaceContext;
 import com.dci.intellij.dbn.database.interfaces.queue.InterfaceTaskDefinition;
 
 import java.sql.SQLException;
@@ -26,7 +25,7 @@ public final class DatabaseInterfaceInvoker {
      * @throws SQLException if jdbc call fails
      */
     public static void schedule(InterfaceTaskDefinition taskDefinition, ConnectionRunnable runnable) throws SQLException {
-        InterfaceContext context = taskDefinition.getContext();
+        DatabaseInterfaceContext context = taskDefinition.getContext();
         DatabaseInterfaceQueue interfaceQueue = context.getConnection().getInterfaceQueue();
         interfaceQueue.scheduleAndForget(
                 taskDefinition, () -> ConnectionLocalContext.surround(context,
@@ -42,7 +41,7 @@ public final class DatabaseInterfaceInvoker {
      * @throws SQLException if jdbc call fails
      */
     public static void execute(InterfaceTaskDefinition taskDefinition, ConnectionRunnable runnable) throws SQLException {
-        InterfaceContext context = taskDefinition.getContext();
+        DatabaseInterfaceContext context = taskDefinition.getContext();
         DatabaseInterfaceQueue interfaceQueue = context.getConnection().getInterfaceQueue();
         interfaceQueue.scheduleAndWait(
                 taskDefinition, () -> ConnectionLocalContext.surround(context,
@@ -59,7 +58,7 @@ public final class DatabaseInterfaceInvoker {
      * @throws SQLException if jdbc call fails
      */
     public static <T> T load(InterfaceTaskDefinition definition, ConnectionCallable<T> callable) throws SQLException {
-        InterfaceContext context = definition.getContext();
+        DatabaseInterfaceContext context = definition.getContext();
         DatabaseInterfaceQueue interfaceQueue = context.getConnection().getInterfaceQueue();
         return interfaceQueue.scheduleAndReturn(
                 definition, () -> ConnectionLocalContext.surround(context,

@@ -1,6 +1,5 @@
 package com.dci.intellij.dbn.editor.data;
 
-import com.dci.intellij.dbn.common.Priority;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.Resources;
 import com.dci.intellij.dbn.connection.jdbc.DBNConnection;
@@ -17,15 +16,16 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import static com.dci.intellij.dbn.common.Priority.HIGH;
+
 public class DatasetEditorUtils {
     public static List<String> loadDistinctColumnValues(@NotNull DBColumn column) {
         try {
             ConnectionHandler connection = column.getConnection();
-            InterfaceTaskDefinition taskDefinition = InterfaceTaskDefinition.create(
+            InterfaceTaskDefinition taskDefinition = InterfaceTaskDefinition.create(HIGH,
                     "Loading data",
                     "Loading possible values for " + column.getQualifiedNameWithType(),
-                    Priority.HIGH,
-                    connection.context());
+                    connection.getInterfaceContext());
             return DatabaseInterfaceInvoker.load(taskDefinition, conn -> loadDistinctColumnValues(column, connection, conn));
         } catch (Exception e) {
             return Collections.emptyList();

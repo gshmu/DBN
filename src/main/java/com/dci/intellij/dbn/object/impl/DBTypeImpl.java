@@ -7,7 +7,6 @@ import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.common.content.DynamicContent;
 import com.dci.intellij.dbn.common.content.loader.DynamicContentResultSetLoader;
 import com.dci.intellij.dbn.common.content.loader.DynamicSubcontentLoader;
-import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.jdbc.DBNConnection;
 import com.dci.intellij.dbn.data.type.DBDataType;
 import com.dci.intellij.dbn.data.type.DBDataTypeDefinition;
@@ -78,8 +77,7 @@ public class DBTypeImpl
         boolean collection = metadata.isCollection();
         set(DBObjectProperty.COLLECTION, collection);
 
-        ConnectionHandler connection = this.getConnection();
-        nativeDataType = connection.getObjectBundle().getNativeDataType(typeCode);
+        nativeDataType = getObjectBundle().getNativeDataType(typeCode);
         if (collection) {
             DBDataTypeMetadata collectionMetadata = metadata.getDataType().collection();
             collectionElementTypeRef = new DBDataTypeDefinition(collectionMetadata);
@@ -133,9 +131,8 @@ public class DBTypeImpl
 
     @Override
     public DBType getSuperType() {
-        ConnectionHandler connection = this.getConnection();
         if (superType == null && superTypeOwner != null && superTypeName != null) {
-            DBSchema schema = connection.getObjectBundle().getSchema(superTypeOwner);
+            DBSchema schema = getObjectBundle().getSchema(superTypeOwner);
             DBType type = schema == null ? null : schema.getType(superTypeName);
             superType = DBObjectRef.of(type);
             superTypeOwner = null;
@@ -146,9 +143,8 @@ public class DBTypeImpl
 
     @Override
     public DBDataType getCollectionElementType() {
-        ConnectionHandler connection = this.getConnection();
         if (collectionElementType == null && collectionElementTypeRef != null) {
-            collectionElementType = connection.getObjectBundle().getDataTypes().getDataType(collectionElementTypeRef);
+            collectionElementType = getObjectBundle().getDataTypes().getDataType(collectionElementTypeRef);
             collectionElementTypeRef = null;
         }
         return collectionElementType;
