@@ -20,6 +20,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
 
+import static com.dci.intellij.dbn.common.list.FilteredList.unwrap;
 import static com.dci.intellij.dbn.common.util.Commons.nvl;
 
 @Getter
@@ -128,7 +129,7 @@ class DBObjectRelationListImpl<T extends DBObjectRelation> extends DynamicConten
 
         @Override
         protected void afterUpdate() {
-            List<T> elements = getAllElements();
+            List<T> elements = unwrap(this.elements);
             if (elements.isEmpty()) return;
 
             Map<DBObjectRef, Range> ranges = new HashMap<>();

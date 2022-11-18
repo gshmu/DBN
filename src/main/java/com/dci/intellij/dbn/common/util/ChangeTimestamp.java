@@ -17,6 +17,14 @@ public class ChangeTimestamp {
         this.captureTime = System.currentTimeMillis();
     }
 
+    public static ChangeTimestamp of(@NotNull Timestamp value) {
+        return new ChangeTimestamp(value);
+    }
+
+    public static ChangeTimestamp now() {
+        return new ChangeTimestamp(new Timestamp(System.currentTimeMillis()));
+    }
+
     @NotNull
     public Timestamp value() {
         return value;

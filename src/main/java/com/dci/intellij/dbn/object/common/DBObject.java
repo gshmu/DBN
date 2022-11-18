@@ -11,7 +11,7 @@ import com.dci.intellij.dbn.common.property.PropertyHolder;
 import com.dci.intellij.dbn.common.util.Consumer;
 import com.dci.intellij.dbn.connection.PresentableConnectionProvider;
 import com.dci.intellij.dbn.connection.SchemaId;
-import com.dci.intellij.dbn.database.interfaces.DatabaseInterfaceContext;
+import com.dci.intellij.dbn.database.interfaces.queue.InterfaceContext;
 import com.dci.intellij.dbn.editor.DBContentType;
 import com.dci.intellij.dbn.language.common.DBLanguage;
 import com.dci.intellij.dbn.language.common.DBLanguageDialect;
@@ -138,7 +138,7 @@ public interface DBObject extends
         return getObjectType();
     }
 
-    default DatabaseInterfaceContext context() {
-        return DatabaseInterfaceContext.create(getConnectionId(), getSchemaId(), true);
+    default InterfaceContext context() {
+        return InterfaceContext.create(getConnection(), getSchemaId(), true);
     }
 }

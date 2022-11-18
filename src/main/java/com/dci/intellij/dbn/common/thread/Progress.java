@@ -11,8 +11,6 @@ import com.intellij.openapi.progress.Task.Backgroundable;
 import com.intellij.openapi.project.Project;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.concurrent.atomic.AtomicReference;
-
 import static com.dci.intellij.dbn.common.thread.ThreadProperty.MODAL;
 import static com.dci.intellij.dbn.common.thread.ThreadProperty.PROGRESS;
 import static com.intellij.openapi.progress.PerformInBackgroundOption.ALWAYS_BACKGROUND;
@@ -32,33 +30,6 @@ public final class Progress {
                             invoker,
                             PROGRESS,
                             () -> Cancellable.run(() -> runnable.run(indicator)));
-                }
-            });
-        }
-    }
-
-    public static void background(Project project, String title, AtomicReference<Thread> handle, ProgressRunnable runnable) {
-        if (Failsafe.check(project)) {
-            Thread current = handle.get();
-            if (current != null) {
-                current.interrupt();
-            }
-            ThreadInfo invoker = ThreadMonitor.current();
-            start(new Backgroundable(Failsafe.nd(project), title, false, ALWAYS_BACKGROUND) {
-                @Override
-                public void run(@NotNull ProgressIndicator indicator) {
-                    ThreadMonitor.run(
-                            invoker,
-                            PROGRESS,
-                            () -> Cancellable.run(() -> {
-                                try {
-                                    handle.set(Thread.currentThread());
-                                    runnable.run(indicator);
-                                } finally {
-                                    handle.set(null);
-                                }
-
-                            }));
                 }
             });
         }

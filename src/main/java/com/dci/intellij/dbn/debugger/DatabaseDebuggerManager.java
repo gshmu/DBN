@@ -1,6 +1,7 @@
 package com.dci.intellij.dbn.debugger;
 
 import com.dci.intellij.dbn.DatabaseNavigator;
+import com.dci.intellij.dbn.common.Priority;
 import com.dci.intellij.dbn.common.component.PersistentState;
 import com.dci.intellij.dbn.common.component.ProjectComponentBase;
 import com.dci.intellij.dbn.common.dispose.Failsafe;
@@ -17,6 +18,7 @@ import com.dci.intellij.dbn.connection.operation.options.OperationSettings;
 import com.dci.intellij.dbn.database.common.debug.DebuggerVersionInfo;
 import com.dci.intellij.dbn.database.interfaces.DatabaseDebuggerInterface;
 import com.dci.intellij.dbn.database.interfaces.DatabaseInterfaceInvoker;
+import com.dci.intellij.dbn.database.interfaces.queue.InterfaceTaskDefinition;
 import com.dci.intellij.dbn.debugger.common.breakpoint.DBBreakpointUpdaterFileEditorListener;
 import com.dci.intellij.dbn.debugger.common.config.*;
 import com.dci.intellij.dbn.debugger.common.process.DBProgramRunner;
@@ -408,7 +410,13 @@ public class DatabaseDebuggerManager extends ProjectComponentBase implements Per
         if (!DEBUGGING.isSupported(connection)) return "Unknown";
 
         try {
-            return DatabaseInterfaceInvoker.call(connection.context(), conn -> {
+            InterfaceTaskDefinition taskDefinition = InterfaceTaskDefinition.create(
+                    "Loading metadata",
+                    "Loading debugger version",
+                    Priority.HIGHEST,
+                    connection.context());
+
+            return DatabaseInterfaceInvoker.load(taskDefinition, conn -> {
                 DatabaseDebuggerInterface debuggerInterface = connection.getDebuggerInterface();
                 DebuggerVersionInfo debuggerVersion = debuggerInterface.getDebuggerVersion(conn);
                 return debuggerVersion.getVersion();

@@ -1,6 +1,7 @@
 package com.dci.intellij.dbn.editor.session;
 
 import com.dci.intellij.dbn.DatabaseNavigator;
+import com.dci.intellij.dbn.common.Priority;
 import com.dci.intellij.dbn.common.component.PersistentState;
 import com.dci.intellij.dbn.common.component.ProjectComponentBase;
 import com.dci.intellij.dbn.common.dispose.Failsafe;
@@ -23,6 +24,7 @@ import com.dci.intellij.dbn.database.DatabaseFeature;
 import com.dci.intellij.dbn.database.interfaces.DatabaseInterfaceInvoker;
 import com.dci.intellij.dbn.database.interfaces.DatabaseMessageParserInterface;
 import com.dci.intellij.dbn.database.interfaces.DatabaseMetadataInterface;
+import com.dci.intellij.dbn.database.interfaces.queue.InterfaceTaskDefinition;
 import com.dci.intellij.dbn.editor.session.model.SessionBrowserModel;
 import com.dci.intellij.dbn.editor.session.options.SessionBrowserSettings;
 import com.dci.intellij.dbn.editor.session.options.SessionInterruptionOption;
@@ -118,7 +120,12 @@ public class SessionBrowserManager extends ProjectComponentBase implements Persi
     public SessionBrowserModel loadSessions(DBSessionBrowserVirtualFile sessionBrowserFile) {
         ConnectionHandler connection = sessionBrowserFile.getConnection();
         try {
-            return DatabaseInterfaceInvoker.call(connection.context(), conn -> {
+            InterfaceTaskDefinition taskDefinition = InterfaceTaskDefinition.create(
+                    "Loading sessions",
+                    "Loading database sessions",
+                    Priority.MEDIUM,
+                    connection.context());
+            return DatabaseInterfaceInvoker.load(taskDefinition, conn -> {
                         DBNResultSet resultSet = null;
                         try {
                             DatabaseMetadataInterface metadata = connection.getMetadataInterface();
@@ -140,7 +147,12 @@ public class SessionBrowserManager extends ProjectComponentBase implements Persi
         if (!DatabaseFeature.SESSION_CURRENT_SQL.isSupported(connection)) return EMPTY_CONTENT;
 
         try {
-            return DatabaseInterfaceInvoker.call(connection.context(), conn -> {
+            InterfaceTaskDefinition taskDefinition = InterfaceTaskDefinition.create(
+                    "Loading session details",
+                    "Loading current session details",
+                    Priority.MEDIUM,
+                    connection.context());
+            return DatabaseInterfaceInvoker.load(taskDefinition, conn -> {
                 ResultSet resultSet = null;
                 try {
                     DatabaseMetadataInterface metadata = connection.getMetadataInterface();
@@ -196,7 +208,13 @@ public class SessionBrowserManager extends ProjectComponentBase implements Persi
         Progress.prompt(project, taskAction, true, progress -> {
             try {
                 ConnectionHandler connection = sessionBrowser.getConnection();
-                DatabaseInterfaceInvoker.run(connection.context(), conn -> {
+                InterfaceTaskDefinition taskDefinition = InterfaceTaskDefinition.create(
+                        "Terminating sessions",
+                        taskAction,
+                        Priority.MEDIUM,
+                        connection.context());
+
+                DatabaseInterfaceInvoker.execute(taskDefinition, conn -> {
                     progress.setIndeterminate(false);
                     Map<Object, SQLException> errors = new HashMap<>();
                     DatabaseMetadataInterface metadata = connection.getMetadataInterface();

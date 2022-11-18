@@ -32,7 +32,8 @@ public class DatabaseInterfaceQueueTest {
     public void scheduleAndWait() {
         invoke(100, task -> {
             try {
-                queue.scheduleAndWait("test", task.priority, () -> {
+                InterfaceTaskDefinition taskDefinition = InterfaceTaskDefinition.create("test", "test", task.priority, null);
+                queue.scheduleAndWait(taskDefinition, () -> {
                     System.out.println("Executing " + task);
                     Unsafe.silent(() -> Thread.sleep(task.time));
                     System.out.println("Done executing "  + task);
@@ -49,7 +50,8 @@ public class DatabaseInterfaceQueueTest {
     public void scheduleAndForget() {
         invoke(100, task -> {
             try {
-                queue.scheduleAndForget("test", task.priority, () -> {
+                InterfaceTaskDefinition taskDefinition = InterfaceTaskDefinition.create("test", "test", task.priority, null);
+                queue.scheduleAndForget(taskDefinition, () -> {
                     System.out.println("Executing " + task);
                     Unsafe.silent(() -> Thread.sleep(task.time));
                     System.out.println("Done executing "  + task);
@@ -95,11 +97,12 @@ public class DatabaseInterfaceQueueTest {
         long elapsedTime = TimeUtil.millisSince(start);
         long activeTime = totalTime.get() / queue.maxActiveTasks();
         long difference = Math.abs(activeTime - elapsedTime);
-        Assert.assertTrue(difference < 500);
 
         System.out.println("Execution time " + activeTime);
         System.out.println("Elapsed time " + elapsedTime);
         System.out.println("Difference " + difference);
+
+        Assert.assertTrue(difference < 500);
     }
 
     @AllArgsConstructor

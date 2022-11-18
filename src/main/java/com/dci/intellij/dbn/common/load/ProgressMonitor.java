@@ -3,44 +3,46 @@ package com.dci.intellij.dbn.common.load;
 import com.dci.intellij.dbn.common.dispose.AlreadyDisposedException;
 import com.intellij.openapi.progress.ProgressIndicator;
 import com.intellij.openapi.progress.ProgressManager;
+import org.jetbrains.annotations.Nullable;
 
 public final class ProgressMonitor {
     private ProgressMonitor() {}
 
+    @Nullable
     public static ProgressIndicator getProgressIndicator() {
         return ProgressManager.getInstance().getProgressIndicator();
     }
 
-    public static String getTaskDescription() {
+    private static ProgressIndicator progress() {
         ProgressIndicator progressIndicator = getProgressIndicator();
-        if (progressIndicator != null) {
-            return progressIndicator.getText();
-        }
-        return null;
-    }
-
-    public static void setTaskDescription(String description) {
-        ProgressIndicator progressIndicator = getProgressIndicator();
-        if (progressIndicator != null) {
-            progressIndicator.setText(description);
-        }
-    }
-
-    public static void setSubtaskDescription(String subtaskDescription) {
-        ProgressIndicator progressIndicator = getProgressIndicator();
-        if (progressIndicator != null) {
-            progressIndicator.setText2(subtaskDescription);
-        }
-    }
-
-    public static boolean isCancelled() {
-        ProgressIndicator progressIndicator = getProgressIndicator();
-        return progressIndicator != null && progressIndicator.isCanceled();
+        return progressIndicator == null ? DevNullProgressIndicator.INSTANCE : progressIndicator;
     }
 
     public static void checkCancelled() {
+        //ProgressManager.checkCanceled();
         if (isCancelled()) {
             throw AlreadyDisposedException.INSTANCE;
         }
     }
+
+    public static boolean isCancelled() {
+        return progress().isCanceled();
+    }
+
+    public static void setProgressIndeterminate(boolean indeterminate) {
+        progress().setIndeterminate(indeterminate);
+    }
+
+    public static void setProgressFraction(double fraction) {
+        progress().setFraction(fraction);
+    }
+
+    public static void setProgressText(String text) {
+        progress().setText(text);
+    }
+
+    public static void setProgressDetail(String subtext) {
+        progress().setText2(subtext);
+    }
+
 }

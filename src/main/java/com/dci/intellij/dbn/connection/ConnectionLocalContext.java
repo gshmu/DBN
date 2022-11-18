@@ -1,8 +1,9 @@
 package com.dci.intellij.dbn.connection;
 
+import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.database.interfaces.DatabaseInterface.Callable;
 import com.dci.intellij.dbn.database.interfaces.DatabaseInterface.Runnable;
-import com.dci.intellij.dbn.database.interfaces.DatabaseInterfaceContext;
+import com.dci.intellij.dbn.database.interfaces.queue.InterfaceContext;
 import org.jetbrains.annotations.NotNull;
 
 import java.sql.SQLException;
@@ -11,19 +12,19 @@ import java.sql.SQLException;
  * Thread local connection context
  */
 public final class ConnectionLocalContext {
-    private static final ThreadLocal<ConnectionId> CONNECTION = new ThreadLocal<>();
+    private static final ThreadLocal<ConnectionHandler> CONNECTION = new ThreadLocal<>();
 
     private ConnectionLocalContext() {}
 
     @NotNull
     public static ConnectionHandler getConnection() {
-        ConnectionId connectionId = CONNECTION.get();
-        if (connectionId == null) throw new IllegalStateException("Connection context not initialised");
-        return ConnectionHandler.ensure(connectionId);
+        ConnectionHandler connection = CONNECTION.get();
+        if (connection == null) throw new IllegalStateException("Connection context not initialised");
+        return Failsafe.nd(connection);
     }
 
-    public static <T> T surround(@NotNull DatabaseInterfaceContext context, @NotNull Callable<T> callable) throws SQLException {
-        boolean initialised = init(context.getConnectionId());
+    public static <T> T surround(@NotNull InterfaceContext context, @NotNull Callable<T> callable) throws SQLException {
+        boolean initialised = init(context.getConnection());
         try {
             return callable.call();
         } finally {
@@ -31,8 +32,8 @@ public final class ConnectionLocalContext {
         }
     }
 
-    public static void surround(@NotNull DatabaseInterfaceContext context, @NotNull Runnable runnable) throws SQLException {
-        boolean initialised = init(context.getConnectionId());
+    public static void surround(@NotNull InterfaceContext context, @NotNull Runnable runnable) throws SQLException {
+        boolean initialised = init(context.getConnection());
         try {
             runnable.run();
         } finally {
@@ -40,8 +41,8 @@ public final class ConnectionLocalContext {
         }
     }
 
-    private static boolean init(ConnectionId connection) {
-        ConnectionId localConnection = CONNECTION.get();
+    private static boolean init(ConnectionHandler connection) {
+        ConnectionHandler localConnection = CONNECTION.get();
         if (localConnection == null) {
             CONNECTION.set(connection);
             return true;

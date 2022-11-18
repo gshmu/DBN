@@ -140,7 +140,7 @@ public class DatabaseTransactionManager extends ProjectComponentBase implements 
                     TransactionListener.TOPIC,
                     (listener) -> listener.beforeAction(connection, conn, action));
 
-            ProgressMonitor.setTaskDescription("Performing " + action.getName() + " on connection " + connectionName);
+            ProgressMonitor.setProgressDetail("Performing " + action.getName() + " on connection " + connectionName);
 
             action.execute(connection, conn);
             if (action.getNotificationType() != null) {

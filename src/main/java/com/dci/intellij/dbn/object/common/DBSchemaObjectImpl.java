@@ -1,5 +1,6 @@
 package com.dci.intellij.dbn.object.common;
 
+import com.dci.intellij.dbn.common.Priority;
 import com.dci.intellij.dbn.common.content.DynamicContent;
 import com.dci.intellij.dbn.common.content.loader.DynamicContentResultSetLoader;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
@@ -10,6 +11,7 @@ import com.dci.intellij.dbn.database.common.metadata.def.DBObjectDependencyMetad
 import com.dci.intellij.dbn.database.interfaces.DatabaseDataDefinitionInterface;
 import com.dci.intellij.dbn.database.interfaces.DatabaseInterfaceInvoker;
 import com.dci.intellij.dbn.database.interfaces.DatabaseMetadataInterface;
+import com.dci.intellij.dbn.database.interfaces.queue.InterfaceTaskDefinition;
 import com.dci.intellij.dbn.editor.DBContentType;
 import com.dci.intellij.dbn.language.common.DBLanguage;
 import com.dci.intellij.dbn.language.psql.PSQLLanguage;
@@ -129,7 +131,13 @@ public abstract class DBSchemaObjectImpl<M extends DBObjectMetadata> extends DBO
 
     @Override
     public List<DBSchema> getReferencingSchemas() throws SQLException {
-        return DatabaseInterfaceInvoker.call(context(), conn -> {
+        InterfaceTaskDefinition taskDefinition = InterfaceTaskDefinition.create(
+                "Loading data dictionary",
+                "Loading schema references for " + getQualifiedNameWithType(),
+                Priority.HIGHEST,
+                context());
+
+        return DatabaseInterfaceInvoker.load(taskDefinition, conn -> {
             List<DBSchema> schemas = new ArrayList<>();
             ResultSet resultSet = null;
             try {
@@ -158,7 +166,13 @@ public abstract class DBSchemaObjectImpl<M extends DBObjectMetadata> extends DBO
 
     @Override
     public void executeUpdateDDL(DBContentType contentType, String oldCode, String newCode) throws SQLException {
-        DatabaseInterfaceInvoker.run(context(), conn -> {
+        InterfaceTaskDefinition taskDefinition = InterfaceTaskDefinition.create(
+                "Updating source code",
+                "Updating sources of " + getQualifiedNameWithType(),
+                Priority.HIGHEST,
+                context());
+
+        DatabaseInterfaceInvoker.execute(taskDefinition, conn -> {
             ConnectionHandler connection = getConnection();
             DatabaseDataDefinitionInterface dataDefinition = connection.getDataDefinitionInterface();
             dataDefinition.updateObject(getName(), getObjectType().getName(), oldCode,  newCode, conn);

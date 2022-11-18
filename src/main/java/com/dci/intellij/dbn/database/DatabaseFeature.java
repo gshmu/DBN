@@ -37,6 +37,10 @@ public enum DatabaseFeature {
         this.description = description;
     }
 
+    public boolean isNotSupported(@Nullable ConnectionProvider connectionProvider) {
+        return !isSupported(connectionProvider);
+    }
+
     public boolean isSupported(@Nullable ConnectionProvider connectionProvider) {
         if (connectionProvider == null) return false;
 

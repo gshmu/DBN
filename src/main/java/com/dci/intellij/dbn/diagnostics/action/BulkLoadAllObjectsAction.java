@@ -2,6 +2,7 @@ package com.dci.intellij.dbn.diagnostics.action;
 
 import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.common.thread.Progress;
+import com.dci.intellij.dbn.common.util.Naming;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.action.AbstractConnectionAction;
 import com.dci.intellij.dbn.diagnostics.Diagnostics;
@@ -22,7 +23,7 @@ public class BulkLoadAllObjectsAction extends AbstractConnectionAction {
     protected void actionPerformed(@NotNull AnActionEvent e, @NotNull Project project, @NotNull ConnectionHandler connection) {
         Progress.prompt(
                 project,
-                connection.getMetaLoadTitle(), true,
+                Naming.getMetaLoadTitle(connection), true,
                 progress -> {
                     DBObjectListContainer objectListContainer = connection.getObjectBundle().getObjectLists();
                     objectListContainer.visitObjects(DBObjectRecursiveLoaderVisitor.INSTANCE, false);

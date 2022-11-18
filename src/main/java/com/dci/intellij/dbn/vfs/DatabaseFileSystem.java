@@ -6,7 +6,7 @@ import com.dci.intellij.dbn.common.dispose.SafeDisposer;
 import com.dci.intellij.dbn.common.load.ProgressMonitor;
 import com.dci.intellij.dbn.common.navigation.NavigationInstructions;
 import com.dci.intellij.dbn.common.project.Projects;
-import com.dci.intellij.dbn.common.routine.ProgressRunnable;
+import com.dci.intellij.dbn.common.thread.Background;
 import com.dci.intellij.dbn.common.thread.Dispatch;
 import com.dci.intellij.dbn.common.thread.Progress;
 import com.dci.intellij.dbn.common.thread.Read;
@@ -412,11 +412,11 @@ public class DatabaseFileSystem extends VirtualFileSystem implements /*NonPhysic
                 (action) -> {
                     Project project = object.getProject();
                     String title = "Opening editor (" + object.getQualifiedName() + ")";
-                    ProgressRunnable runnable = progress -> openEditor(object, editorProviderId, scrollBrowser, focusEditor);
-
-                    if (focusEditor)
-                        Progress.prompt(project, title, true, runnable); else
-                        Progress.background( project, title, true, runnable);
+                    if (focusEditor) {
+                        Progress.prompt(project, title, true, i -> openEditor(object, editorProviderId, scrollBrowser, true));
+                    } else {
+                        Background.run(() -> openEditor(object, editorProviderId, scrollBrowser, false));
+                    }
                 });
     }
 

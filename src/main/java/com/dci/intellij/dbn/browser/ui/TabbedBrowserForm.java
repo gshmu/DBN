@@ -33,6 +33,7 @@ public class TabbedBrowserForm extends DatabaseBrowserForm{
         super(project);
         connectionTabs = new TabbedPane(this);
         //connectionTabs.setSingleRow(false);
+        connectionTabs.setHideTabs(false);
         connectionTabs.setAutoscrolls(true);
         //connectionTabs.setBackground(GUIUtil.getListBackground());
         //mainPanel.add(connectionTabs, BorderLayout.CENTER);
