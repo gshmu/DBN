@@ -45,6 +45,7 @@ import java.sql.SQLException;
 import java.util.List;
 
 import static com.dci.intellij.dbn.common.component.Components.projectService;
+import static com.dci.intellij.dbn.common.dispose.Checks.isValid;
 import static com.dci.intellij.dbn.common.message.MessageCallback.when;
 import static com.dci.intellij.dbn.execution.ExecutionStatus.CANCELLED;
 import static com.dci.intellij.dbn.execution.ExecutionStatus.EXECUTING;
@@ -114,8 +115,7 @@ public class MethodExecutionManager extends ProjectComponentBase implements Pers
                             if (connection.isValid()) {
                                 DBMethod method = executionInput.getMethod();
                                 if (method == null) {
-                                    String message =
-                                            "Can not execute method " + methodIdentifier + ".\nMethod not found!";
+                                    String message = "Can not execute method " + methodIdentifier + ".\nMethod not found!";
                                     Messages.showErrorDialog(project, message);
                                 } else {
                                     // load the arguments while in background
@@ -149,7 +149,7 @@ public class MethodExecutionManager extends ProjectComponentBase implements Pers
             if (selectedInput != null) {
                 // initialize method arguments while in background
                 DBMethod method = selectedInput.getMethod();
-                if (Failsafe.check(method)) {
+                if (isValid(method)) {
                     method.getArguments();
                 }
             }

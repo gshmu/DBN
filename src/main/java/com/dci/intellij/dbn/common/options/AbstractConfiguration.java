@@ -1,13 +1,14 @@
 package com.dci.intellij.dbn.common.options;
 
 import com.dci.intellij.dbn.common.action.Lookups;
-import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.common.options.ui.ConfigurationEditorForm;
 import com.dci.intellij.dbn.common.project.ProjectSupplier;
 import com.intellij.openapi.project.Project;
 import lombok.extern.slf4j.Slf4j;
 import org.jdom.Element;
 import org.jetbrains.annotations.NotNull;
+
+import static com.dci.intellij.dbn.common.dispose.Checks.isValid;
 
 @Slf4j
 public abstract class AbstractConfiguration<P extends Configuration, E extends ConfigurationEditorForm> implements Configuration<P, E> {
@@ -62,7 +63,7 @@ public abstract class AbstractConfiguration<P extends Configuration, E extends C
         }
 
         ConfigurationEditorForm settingsEditor = this.getSettingsEditor();
-        if (Failsafe.check(settingsEditor)) {
+        if (isValid(settingsEditor)) {
             return Lookups.getProject(settingsEditor.getComponent());
         }
         return null;

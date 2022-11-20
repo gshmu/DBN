@@ -1,7 +1,6 @@
 package com.dci.intellij.dbn.editor.code.action;
 
 import com.dci.intellij.dbn.common.Icons;
-import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.common.environment.EnvironmentManager;
 import com.dci.intellij.dbn.editor.code.SourceCodeEditor;
 import com.dci.intellij.dbn.vfs.file.DBSourceCodeVirtualFile;
@@ -11,6 +10,7 @@ import com.intellij.openapi.project.Project;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import static com.dci.intellij.dbn.common.dispose.Checks.isValid;
 import static com.dci.intellij.dbn.vfs.VirtualFileStatus.MODIFIED;
 
 public class CompareWithOriginalAction extends AbstractCodeEditorDiffAction {
@@ -28,7 +28,7 @@ public class CompareWithOriginalAction extends AbstractCodeEditorDiffAction {
     protected void update(@NotNull AnActionEvent e, @NotNull Project project, @Nullable SourceCodeEditor fileEditor, @Nullable DBSourceCodeVirtualFile sourceCodeFile) {
         Presentation presentation = e.getPresentation();
         presentation.setText("Compare with Original");
-        if (Failsafe.check(sourceCodeFile)) {
+        if (isValid(sourceCodeFile)) {
             EnvironmentManager environmentManager = EnvironmentManager.getInstance(project);
             boolean readonly = environmentManager.isReadonly(sourceCodeFile);
             presentation.setVisible(!readonly);

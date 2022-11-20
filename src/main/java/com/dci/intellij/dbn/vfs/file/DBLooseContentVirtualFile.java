@@ -31,11 +31,10 @@ public class DBLooseContentVirtualFile extends DBVirtualFileImpl implements DBPa
     private final FileType fileType;
 
     public DBLooseContentVirtualFile(DBSchemaObject object, String content, FileType fileType) {
-        super(object.getProject());
+        super(object.getProject(), object.getName());
         this.object = DBObjectRef.of(object);
         this.content = content;
         this.fileType = fileType;
-        name = object.getName();
         ConnectionHandler connection = Failsafe.nn(getConnection());
         setCharset(connection.getSettings().getDetailSettings().getCharset());
     }

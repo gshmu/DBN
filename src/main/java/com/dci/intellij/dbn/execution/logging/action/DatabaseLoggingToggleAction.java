@@ -2,7 +2,6 @@ package com.dci.intellij.dbn.execution.logging.action;
 
 import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.common.action.Lookups;
-import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.common.util.Strings;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.mapping.FileConnectionContextManager;
@@ -17,6 +16,8 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+
+import static com.dci.intellij.dbn.common.dispose.Checks.isValid;
 
 public class DatabaseLoggingToggleAction extends ToggleAction implements DumbAware {
 
@@ -37,7 +38,7 @@ public class DatabaseLoggingToggleAction extends ToggleAction implements DumbAwa
         if (project != null && virtualFile != null) {
             FileConnectionContextManager contextManager = FileConnectionContextManager.getInstance(project);
             ConnectionHandler connection = contextManager.getConnection(virtualFile);
-            if (Failsafe.check(connection) && !connection.isVirtual()) {
+            if (isValid(connection) && !connection.isVirtual()) {
                 return connection ;
             }
 

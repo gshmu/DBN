@@ -1,5 +1,6 @@
 package com.dci.intellij.dbn.navigation.psi;
 
+import com.dci.intellij.dbn.common.dispose.Checks;
 import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.common.dispose.SafeDisposer;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
@@ -111,7 +112,7 @@ public class DBConnectionPsiDirectory implements PsiDirectory, Disposable {
         DBObjectList[] objectLists = virtualFile.getConnection().getObjectBundle().getObjectLists().getObjects();
         if (objectLists != null) {
             for (DBObjectList objectList : objectLists) {
-                if (!objectList.isInternal() && Failsafe.check(objectList)) {
+                if (!objectList.isInternal() && Checks.isValid(objectList)) {
                     PsiDirectory psiDirectory = objectList.getPsiDirectory();
                     children.add(psiDirectory);
                 }

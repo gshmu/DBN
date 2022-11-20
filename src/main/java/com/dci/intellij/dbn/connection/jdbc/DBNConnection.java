@@ -1,6 +1,5 @@
 package com.dci.intellij.dbn.connection.jdbc;
 
-import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.common.event.ProjectEvents;
 import com.dci.intellij.dbn.common.project.ProjectRef;
 import com.dci.intellij.dbn.common.util.TimeUtil;
@@ -23,6 +22,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
+import static com.dci.intellij.dbn.common.dispose.Checks.isNotValid;
 import static com.dci.intellij.dbn.common.util.Unsafe.cast;
 import static com.dci.intellij.dbn.connection.jdbc.ResourceStatus.ACTIVE;
 import static com.dci.intellij.dbn.connection.jdbc.ResourceStatus.RESERVED;
@@ -250,7 +250,7 @@ public class DBNConnection extends DBNConnectionBase {
     @Override
     public void statusChanged(ResourceStatus status) {
         ConnectionHandler connection = ConnectionHandler.get(id);
-        if (Failsafe.invalid(connection)) return;
+        if (isNotValid(connection)) return;
 
         ConnectionHandlerStatusHolder connectionStatus = connection.getConnectionStatus();
         switch (status) {

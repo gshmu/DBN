@@ -1,7 +1,7 @@
 package com.dci.intellij.dbn.editor.data.action;
 
 import com.dci.intellij.dbn.common.Icons;
-import com.dci.intellij.dbn.common.dispose.Failsafe;
+import com.dci.intellij.dbn.common.dispose.Checks;
 import com.dci.intellij.dbn.editor.data.DatasetEditor;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.actionSystem.Presentation;
@@ -25,7 +25,7 @@ public class RecordEditAction extends AbstractDataEditorAction {
         presentation.setText("Edit Record");
 
         boolean enabled =
-                Failsafe.check(datasetEditor) &&
+                Checks.isValid(datasetEditor) &&
                 datasetEditor.getConnection().isConnected() &&
                 datasetEditor.getEditorTable().getSelectedRow() != -1 &&
                 !datasetEditor.isInserting() &&

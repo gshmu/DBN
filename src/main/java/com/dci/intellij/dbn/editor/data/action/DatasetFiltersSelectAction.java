@@ -1,7 +1,6 @@
 package com.dci.intellij.dbn.editor.data.action;
 
 import com.dci.intellij.dbn.common.Icons;
-import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.common.ui.misc.DBNComboBoxAction;
 import com.dci.intellij.dbn.common.util.Context;
 import com.dci.intellij.dbn.editor.data.DatasetEditor;
@@ -16,6 +15,8 @@ import com.intellij.openapi.actionSystem.Presentation;
 import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
+
+import static com.dci.intellij.dbn.common.dispose.Checks.isValid;
 
 public class DatasetFiltersSelectAction extends DBNComboBoxAction {
     public DatasetFiltersSelectAction() {
@@ -63,10 +64,11 @@ public class DatasetFiltersSelectAction extends DBNComboBoxAction {
 
         Presentation presentation = e.getPresentation();
         boolean enabled =
-                Failsafe.check(datasetEditor) &&
+                isValid(datasetEditor) &&
                 !datasetEditor.isInserting() &&
                 !datasetEditor.isLoading();
-        if (Failsafe.check(datasetEditor)) {
+
+        if (isValid(datasetEditor)) {
             DBDataset dataset = datasetEditor.getDataset();
 
             DatasetFilterManager filterManager = DatasetFilterManager.getInstance(dataset.getProject());

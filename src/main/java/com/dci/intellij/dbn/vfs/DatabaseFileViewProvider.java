@@ -1,6 +1,5 @@
 package com.dci.intellij.dbn.vfs;
 
-import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.common.project.ProjectRef;
 import com.dci.intellij.dbn.common.util.Documents;
 import com.dci.intellij.dbn.language.common.DBLanguage;
@@ -22,6 +21,8 @@ import com.intellij.psi.SingleRootFileViewProvider;
 import com.intellij.testFramework.LightVirtualFile;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+
+import static com.dci.intellij.dbn.common.dispose.Checks.isValid;
 
 public class DatabaseFileViewProvider extends SingleRootFileViewProvider {
     public static final Key<DatabaseFileViewProvider> CACHED_VIEW_PROVIDER = new Key<DatabaseFileViewProvider>("CACHED_VIEW_PROVIDER");
@@ -91,7 +92,7 @@ public class DatabaseFileViewProvider extends SingleRootFileViewProvider {
             file = (DBLanguagePsiFile) parserDefinition.createFile(this);
             forceCachedPsi(file);
             Document document = Documents.getDocument(file);// cache hard reference to document (??)
-            if (Failsafe.check(document)) {
+            if (isValid(document)) {
                 // TODO non-physical fs assertion
                 //FileDocumentManagerImpl.registerDocument(document, getVirtualFile());
             }

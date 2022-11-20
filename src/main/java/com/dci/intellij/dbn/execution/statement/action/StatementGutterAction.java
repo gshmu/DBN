@@ -1,7 +1,7 @@
 package com.dci.intellij.dbn.execution.statement.action;
 
 import com.dci.intellij.dbn.common.Icons;
-import com.dci.intellij.dbn.common.dispose.Failsafe;
+import com.dci.intellij.dbn.common.dispose.Checks;
 import com.dci.intellij.dbn.common.thread.Read;
 import com.dci.intellij.dbn.common.util.Documents;
 import com.dci.intellij.dbn.common.util.Editors;
@@ -167,7 +167,7 @@ public class StatementGutterAction extends AnAction {
     @Nullable
     public String getTooltipText() {
         StatementExecutionProcessor executionProcessor = getExecutionProcessor(false);
-        if (Failsafe.check(executionProcessor)) {
+        if (Checks.isValid(executionProcessor)) {
             StatementExecutionResult executionResult = executionProcessor.getExecutionResult();
             if (executionResult == null) {
                 ExecutionContext context = executionProcessor.getExecutionContext();

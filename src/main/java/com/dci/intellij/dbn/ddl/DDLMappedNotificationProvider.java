@@ -25,6 +25,9 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 
+import static com.dci.intellij.dbn.common.dispose.Checks.allValid;
+import static com.dci.intellij.dbn.common.dispose.Checks.isValid;
+
 public class DDLMappedNotificationProvider extends LegacyEditorNotificationsProvider<DDLMappedNotificationPanel> {
     private static final Key<DDLMappedNotificationPanel> KEY = Key.create("DBNavigator.DDLMappedNotificationPanel");
 
@@ -79,17 +82,15 @@ public class DDLMappedNotificationProvider extends LegacyEditorNotificationsProv
             }
 
             private void updateDdlFileHeaders(Project project, VirtualFile file) {
-                if (!project.isDisposed() && file instanceof DBEditableObjectVirtualFile) {
+                if (allValid(project, file) && file instanceof DBEditableObjectVirtualFile) {
                     DBEditableObjectVirtualFile editableObjectFile = (DBEditableObjectVirtualFile) file;
-                    if (editableObjectFile.isValid()) {
-                        DBObjectRef<DBSchemaObject> objectRef = editableObjectFile.getObjectRef();
-                        DDLFileAttachmentManager attachmentManager = DDLFileAttachmentManager.getInstance(project);
-                        List<VirtualFile> attachedDDLFiles = attachmentManager.getAttachedDDLFiles(objectRef);
-                        if (attachedDDLFiles != null) {
-                            EditorNotifications notifications = Editors.getNotifications(project);;
-                            for (VirtualFile virtualFile : attachedDDLFiles) {
-                                notifications.updateNotifications(virtualFile);
-                            }
+                    DBObjectRef<DBSchemaObject> object = editableObjectFile.getObjectRef();
+                    DDLFileAttachmentManager attachmentManager = DDLFileAttachmentManager.getInstance(project);
+                    List<VirtualFile> attachedDDLFiles = attachmentManager.getAttachedDDLFiles(object);
+                    if (attachedDDLFiles != null) {
+                        EditorNotifications notifications = Editors.getNotifications(project);;
+                        for (VirtualFile virtualFile : attachedDDLFiles) {
+                            notifications.updateNotifications(virtualFile);
                         }
                     }
                 }
@@ -116,7 +117,7 @@ public class DDLMappedNotificationProvider extends LegacyEditorNotificationsProv
         DDLFileSettings ddlFileSettings = DDLFileSettings.getInstance(project);
 
         DDLFileGeneralSettings generalSettings = ddlFileSettings.getGeneralSettings();
-        if (generalSettings.isSynchronizeDDLFilesEnabled() && Failsafe.check(fileEditor)) {
+        if (generalSettings.isSynchronizeDDLFilesEnabled() && isValid(fileEditor)) {
             if (virtualFile instanceof DBEditableObjectVirtualFile) {
                 if (fileEditor instanceof DDLFileEditor) {
                     DBEditableObjectVirtualFile editableObjectFile = (DBEditableObjectVirtualFile) virtualFile;

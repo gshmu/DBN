@@ -1,11 +1,11 @@
 package com.dci.intellij.dbn.database;
 
-import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.common.property.Property;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.context.ConnectionProvider;
-import com.dci.intellij.dbn.object.common.DBObject;
 import org.jetbrains.annotations.Nullable;
+
+import static com.dci.intellij.dbn.common.dispose.Checks.isValid;
 
 public enum JdbcProperty implements Property.IntBase {
     MD_CATALOGS("Catalogs", true),
@@ -50,17 +50,11 @@ public enum JdbcProperty implements Property.IntBase {
         return feature;
     }
 
-    public boolean isSupported(@Nullable ConnectionProvider connectionProvider) {
-        return connectionProvider != null && isSupported(connectionProvider.getConnection());
+    public boolean isSupported(@Nullable ConnectionHandler connection) {
+        return isValid(connection) && connection.getCompatibility().is(this);
     }
 
-    public boolean isSupported(@Nullable DBObject object) {
-        return Failsafe.check(object) && isSupported(object.getConnection());
-    }
-    public boolean isSupported(@Nullable ConnectionHandler connection) {
-        if (Failsafe.check(connection)) {
-            return connection.getCompatibility().is(this);
-        }
-        return false;
+    public boolean isSupported(@Nullable ConnectionProvider connectionProvider) {
+        return isValid(connectionProvider) && isSupported(connectionProvider.getConnection());
     }
 }

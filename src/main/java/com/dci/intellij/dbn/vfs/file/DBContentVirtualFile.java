@@ -40,12 +40,11 @@ public abstract class DBContentVirtualFile extends DBVirtualFileImpl implements 
     protected DBContentType contentType;
 
     public DBContentVirtualFile(@NotNull DBEditableObjectVirtualFile mainDatabaseFile, DBContentType contentType) {
-        super(mainDatabaseFile.getProject());
+        super(mainDatabaseFile.getProject(), mainDatabaseFile.getObjectRef().getObjectName());
         this.mainDatabaseFile = WeakRef.of(mainDatabaseFile);
         this.contentType = contentType;
 
         DBObjectRef<DBSchemaObject> objectRef = mainDatabaseFile.getObjectRef();
-        this.name = objectRef.getObjectName();
 
         Project project = getProject();
         DDLFileManager ddlFileManager = DDLFileManager.getInstance(project);

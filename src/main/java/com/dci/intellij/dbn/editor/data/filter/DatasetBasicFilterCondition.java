@@ -21,6 +21,7 @@ import java.text.ParseException;
 import java.util.Date;
 import java.util.StringTokenizer;
 
+import static com.dci.intellij.dbn.common.dispose.Checks.isValid;
 import static com.dci.intellij.dbn.common.options.setting.SettingsSupport.booleanAttribute;
 import static com.dci.intellij.dbn.common.options.setting.SettingsSupport.stringAttribute;
 
@@ -71,7 +72,7 @@ public class DatasetBasicFilterCondition extends BasicConfiguration<DatasetBasic
         ConditionOperator operator = this.operator;
         String value = this.value;
 
-        if (Failsafe.check(editorForm)) {
+        if (isValid(editorForm)) {
             operator = editorForm.getSelectedOperator();
             DBColumn selectedColumn = editorForm.getSelectedColumn();
             if (selectedColumn != null) {

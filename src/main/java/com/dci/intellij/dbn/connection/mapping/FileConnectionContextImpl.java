@@ -14,6 +14,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.jdom.Element;
 import org.jetbrains.annotations.Nullable;
 
+import static com.dci.intellij.dbn.common.dispose.Checks.isValid;
 import static com.dci.intellij.dbn.common.options.setting.SettingsSupport.*;
 
 @Slf4j
@@ -98,7 +99,7 @@ public class FileConnectionContextImpl implements FileConnectionContext {
         try {
             VirtualFileManager virtualFileManager = VirtualFileManager.getInstance();
             VirtualFile file = virtualFileManager.findFileByUrl(fileUrl);
-            if (file != null && file.isValid()) {
+            if (isValid(file)) {
                 return file;
             }
         } catch (Exception e) {

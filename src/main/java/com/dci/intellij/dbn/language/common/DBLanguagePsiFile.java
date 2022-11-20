@@ -1,5 +1,6 @@
 package com.dci.intellij.dbn.language.common;
 
+import com.dci.intellij.dbn.common.dispose.Checks;
 import com.dci.intellij.dbn.common.dispose.StatefulDisposable;
 import com.dci.intellij.dbn.common.environment.EnvironmentType;
 import com.dci.intellij.dbn.common.thread.Read;
@@ -341,9 +342,11 @@ public abstract class DBLanguagePsiFile extends PsiFileImpl implements Connectio
     @Override
     public boolean isValid() {
         VirtualFile virtualFile = getViewProvider().getVirtualFile();
-        return virtualFile.getFileSystem() instanceof DatabaseFileSystem ?
-                virtualFile.isValid() :
-                Read.conditional(() -> super.isValid(), false);
+        if (virtualFile.getFileSystem() instanceof DatabaseFileSystem) {
+            return Checks.isValid(virtualFile);
+        } else {
+            return Read.conditional(() -> super.isValid(), false);
+        }
     }
 
     public String getParseRootId() {

@@ -1,7 +1,6 @@
 package com.dci.intellij.dbn.editor.data.action;
 
 import com.dci.intellij.dbn.common.Icons;
-import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.editor.data.DatasetEditor;
 import com.dci.intellij.dbn.editor.data.filter.DatasetFilter;
 import com.dci.intellij.dbn.editor.data.filter.DatasetFilterManager;
@@ -13,6 +12,8 @@ import com.intellij.openapi.actionSystem.Presentation;
 import com.intellij.openapi.project.Project;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+
+import static com.dci.intellij.dbn.common.dispose.Checks.isValid;
 
 public class DatasetFilterCreateEditAction extends AbstractDataEditorAction {
     public DatasetFilterCreateEditAction() {
@@ -41,7 +42,7 @@ public class DatasetFilterCreateEditAction extends AbstractDataEditorAction {
 
     @Override
     protected void update(@NotNull AnActionEvent e, @NotNull Presentation presentation, @NotNull Project project, @Nullable DatasetEditor datasetEditor) {
-        if (Failsafe.check(datasetEditor) && datasetEditor.getConnection().isConnected()) {
+        if (isValid(datasetEditor) && datasetEditor.getConnection().isConnected()) {
             DBDataset dataset = datasetEditor.getDataset();
             boolean enabled = !datasetEditor.isInserting() && !datasetEditor.isLoading();
 

@@ -1,6 +1,7 @@
 package com.dci.intellij.dbn.object.lookup;
 
 import com.dci.intellij.dbn.common.Reference;
+import com.dci.intellij.dbn.common.dispose.Checks;
 import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.common.state.PersistentStateElement;
 import com.dci.intellij.dbn.common.string.StringDeBuilder;
@@ -340,7 +341,7 @@ public class DBObjectRef<T extends DBObject> implements Comparable<DBObjectRef<?
         if (object == null) {
             clearReference();
             ConnectionHandler connection = getConnection();
-            if (Failsafe.check(connection) && connection.isEnabled()) {
+            if (Checks.isValid(connection) && connection.isEnabled()) {
                 object = lookup(connection);
                 if (object != null) {
                     reference = WeakRef.of(object);

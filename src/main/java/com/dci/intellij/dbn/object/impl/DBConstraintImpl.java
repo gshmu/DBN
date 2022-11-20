@@ -155,7 +155,8 @@ public class DBConstraintImpl extends DBSchemaObjectImpl<DBConstraintMetadata> i
             DBObjectRelationList<DBConstraintColumnRelation> relations = childObjects.getRelations(CONSTRAINT_COLUMN);
             if (relations != null) {
                 for (DBConstraintColumnRelation relation : relations.getObjectRelations()) {
-                    if (relation.getConstraint().equals(this) && relation.getColumn().equals(column)) {
+                    if (Objects.equals(relation.getConstraint(), this) &&
+                            Objects.equals(relation.getColumn(), column)) {
                         return relation.getPosition();
                     }
                 }
@@ -175,7 +176,7 @@ public class DBConstraintImpl extends DBSchemaObjectImpl<DBConstraintMetadata> i
                 if (relations != null) {
                     for (DBConstraintColumnRelation relation : relations.getObjectRelations()) {
                         DBConstraint constraint = relation.getConstraint();
-                        if (constraint != null && constraint.equals(this) && relation.getPosition() == position)
+                        if (Objects.equals(constraint, this) && relation.getPosition() == position)
                             return relation.getColumn();
                     }
                 }

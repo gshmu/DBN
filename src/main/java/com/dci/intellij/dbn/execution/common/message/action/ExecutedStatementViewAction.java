@@ -1,7 +1,6 @@
 package com.dci.intellij.dbn.execution.common.message.action;
 
 import com.dci.intellij.dbn.common.Icons;
-import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.execution.common.message.ui.tree.MessagesTree;
 import com.dci.intellij.dbn.execution.common.message.ui.tree.node.StatementExecutionMessageNode;
 import com.dci.intellij.dbn.execution.common.ui.StatementViewerPopup;
@@ -13,6 +12,8 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.awt.*;
+
+import static com.dci.intellij.dbn.common.dispose.Checks.isValid;
 
 public class ExecutedStatementViewAction extends AbstractExecutionMessagesAction {
     public ExecutedStatementViewAction(MessagesTree messagesTree) {
@@ -42,7 +43,7 @@ public class ExecutedStatementViewAction extends AbstractExecutionMessagesAction
             @Nullable MessagesTree target) {
 
         boolean enabled =
-                Failsafe.check(target) &&
+                isValid(target) &&
                 target.getSelectionPath() != null &&
                 target.getSelectionPath().getLastPathComponent() instanceof StatementExecutionMessageNode;
         presentation.setEnabled(enabled);

@@ -1,9 +1,10 @@
 package com.dci.intellij.dbn.connection.transaction.ui;
 
-import com.dci.intellij.dbn.common.ui.util.Borders;
-import com.dci.intellij.dbn.common.ui.util.Mouse;
+import com.dci.intellij.dbn.common.dispose.Checks;
 import com.dci.intellij.dbn.common.ui.table.DBNColoredTableCellRenderer;
 import com.dci.intellij.dbn.common.ui.table.DBNTable;
+import com.dci.intellij.dbn.common.ui.util.Borders;
+import com.dci.intellij.dbn.common.ui.util.Mouse;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.jdbc.DBNConnection;
 import com.dci.intellij.dbn.connection.session.DatabaseSession;
@@ -13,16 +14,11 @@ import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.ui.SimpleTextAttributes;
 import org.jetbrains.annotations.NotNull;
 
-import javax.swing.ListSelectionModel;
-import java.awt.Cursor;
-import java.awt.MouseInfo;
-import java.awt.Point;
+import javax.swing.*;
+import java.awt.*;
 import java.awt.event.MouseEvent;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.LinkedHashSet;
 import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 public class PendingTransactionsTable extends DBNTable<PendingTransactionsTableModel> {
     public PendingTransactionsTable(@NotNull PendingTransactionsDetailForm parent, @NotNull PendingTransactionsTableModel model) {
@@ -41,7 +37,7 @@ public class PendingTransactionsTable extends DBNTable<PendingTransactionsTableM
             int selectedRow = getSelectedRow();
             PendingTransaction transaction = getModel().getValueAt(selectedRow, 0);
             VirtualFile virtualFile = transaction.getFile();
-            if (virtualFile != null && virtualFile.isValid()) {
+            if (Checks.isValid(virtualFile)) {
                 FileEditorManager editorManager = FileEditorManager.getInstance(getProject());
                 editorManager.openFile(virtualFile, true);
             }

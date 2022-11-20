@@ -9,16 +9,15 @@ import com.dci.intellij.dbn.execution.statement.variables.StatementExecutionVari
 import com.intellij.openapi.project.Project;
 import org.jetbrains.annotations.NotNull;
 
-import javax.swing.AbstractAction;
-import javax.swing.Action;
+import javax.swing.*;
 import java.awt.event.ActionEvent;
 
 public class StatementExecutionInputsDialog extends DBNDialog<StatementExecutionInputForm> {
-    private StatementExecutionProcessor executionProcessor;
-    private ExecuteAction executeAction;
-    private DBDebuggerType debuggerType;
+    private final StatementExecutionProcessor executionProcessor;
+    private final ExecuteAction executeAction;
+    private final DBDebuggerType debuggerType;
+    private final boolean bulkExecution;
     private boolean reuseVariables = false;
-    private boolean bulkExecution;
 
     public StatementExecutionInputsDialog(StatementExecutionProcessor executionProcessor, DBDebuggerType debuggerType, boolean bulkExecution) {
         super(executionProcessor.getProject(), (debuggerType.isDebug() ? "Debug" : "Execute") + " statement", true);
@@ -50,10 +49,6 @@ public class StatementExecutionInputsDialog extends DBNDialog<StatementExecution
                 getCancelAction(),
                 getHelpAction()
         };
-    }
-
-    public void setActionEnabled(boolean enabled) {
-        executeAction.setEnabled(enabled);
     }
 
     private class ExecuteAction extends AbstractAction {

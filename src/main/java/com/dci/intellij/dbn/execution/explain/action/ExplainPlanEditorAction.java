@@ -3,7 +3,6 @@ package com.dci.intellij.dbn.execution.explain.action;
 import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.common.action.DumbAwareProjectAction;
 import com.dci.intellij.dbn.common.action.Lookups;
-import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.common.util.Editors;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.database.DatabaseFeature;
@@ -22,12 +21,14 @@ import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiFile;
 import org.jetbrains.annotations.NotNull;
 
+import static com.dci.intellij.dbn.common.dispose.Checks.isValid;
+
 public class ExplainPlanEditorAction extends DumbAwareProjectAction {
 
     @Override
     protected void actionPerformed(@NotNull AnActionEvent e, @NotNull Project project) {
         Editor editor = Lookups.getEditor(e);
-        if (Failsafe.check(editor)) {
+        if (isValid(editor)) {
             FileEditor fileEditor = Editors.getFileEditor(editor);
             ExecutablePsiElement executable = PsiUtil.lookupExecutableAtCaret(editor, true);
             if (fileEditor != null && executable != null && executable.is(ElementTypeAttribute.DATA_MANIPULATION)) {

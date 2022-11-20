@@ -423,6 +423,11 @@ public class VirtualConnectionHandler extends StatefulDisposable.Base implements
     }
 
     @Override
+    public String getDebuggerVersion() {
+        return "Unknown";
+    }
+
+    @Override
     protected void disposeInner() {
         nullify();
     }

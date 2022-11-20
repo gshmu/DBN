@@ -1,6 +1,5 @@
 package com.dci.intellij.dbn.vfs;
 
-import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.common.environment.EnvironmentType;
 import com.dci.intellij.dbn.common.project.ProjectRef;
 import com.dci.intellij.dbn.common.ui.Presentable;
@@ -19,7 +18,7 @@ import lombok.Setter;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import javax.swing.Icon;
+import javax.swing.*;
 import java.io.IOException;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -32,20 +31,20 @@ public abstract class DBVirtualFileImpl extends VirtualFile implements DBVirtual
     private final ProjectRef project;
     private final WeakRef<DatabaseFileSystem> fileSystem;
 
-    protected String name;
     protected volatile String path;
     protected volatile String url;
-    private int documentSignature;
-    private boolean valid = true;
+    private volatile boolean valid = true;
+    private volatile int documentSignature;
 
-    public DBVirtualFileImpl(@NotNull Project project) {
+
+    private String name;
+    public DBVirtualFileImpl(@NotNull Project project, @NotNull String name) {
         this.id = ID_STORE.incrementAndGet();
+        this.name = name;
         //id = DummyFileIdGenerator.next();
         this.project = ProjectRef.of(project);
         this.fileSystem = WeakRef.of(DatabaseFileSystem.getInstance());
     }
-
-
 
     @NotNull
     @Override
@@ -66,7 +65,7 @@ public abstract class DBVirtualFileImpl extends VirtualFile implements DBVirtual
     @NotNull
     @Override
     public DatabaseFileSystem getFileSystem() {
-        return Failsafe.nn(WeakRef.get(fileSystem));
+        return fileSystem.ensure();
     }
 
     @Override
@@ -87,13 +86,8 @@ public abstract class DBVirtualFileImpl extends VirtualFile implements DBVirtual
     @NotNull
     @Override
     public final String getPath() {
-        if (path == null) {
-            synchronized (this) {
-                if (path == null) {
-                    path = createPath();
-                }
-            }
-        }
+        if (path == null)
+            path = DatabaseFileSystem.createFilePath(this);
         return path;
     }
 
@@ -111,13 +105,8 @@ public abstract class DBVirtualFileImpl extends VirtualFile implements DBVirtual
     @NotNull
     @Override
     public final String getUrl() {
-        if (url == null) {
-            synchronized (this) {
-                if (url == null) {
-                    url = createUrl();
-                }
-            }
-        }
+        if (url == null)
+            url = DatabaseFileSystem.createFileUrl(this);
         return url;
     }
 
@@ -142,15 +131,6 @@ public abstract class DBVirtualFileImpl extends VirtualFile implements DBVirtual
         throw DatabaseFileSystem.READONLY_FILE_SYSTEM;
     }
 
-    @NotNull
-    private String createPath() {
-        return DatabaseFileSystem.createPath(this);
-    }
-    @NotNull
-    private String createUrl() {
-        return DatabaseFileSystem.createUrl(this);
-    }
-
     @Override
     public void setCachedViewProvider(@Nullable DatabaseFileViewProvider viewProvider) {
         putUserData(DatabaseFileViewProvider.CACHED_VIEW_PROVIDER, viewProvider);
@@ -163,23 +143,23 @@ public abstract class DBVirtualFileImpl extends VirtualFile implements DBVirtual
     }
 
     public void invalidate() {
-        if (valid) {
-            valid = false;
-            DatabaseFileViewProvider cachedViewProvider = getCachedViewProvider();
-            if (cachedViewProvider != null) {
-                DebugUtil.performPsiModification("disposing database view provider", () -> cachedViewProvider.markInvalidated());
-                List<PsiFile> cachedPsiFiles = cachedViewProvider.getCachedPsiFiles();
-                for (PsiFile cachedPsiFile: cachedPsiFiles) {
-                    if (cachedPsiFile instanceof DBLanguagePsiFile) {
-                        DBLanguagePsiFile languagePsiFile = (DBLanguagePsiFile) cachedPsiFile;
-                        Disposer.dispose(languagePsiFile);
-                    }
-                }
+        if (!valid) return;
 
-                setCachedViewProvider(null);
+        valid = false;
+        DatabaseFileViewProvider cachedViewProvider = getCachedViewProvider();
+        if (cachedViewProvider != null) {
+            DebugUtil.performPsiModification("disposing database view provider", () -> cachedViewProvider.markInvalidated());
+            List<PsiFile> cachedPsiFiles = cachedViewProvider.getCachedPsiFiles();
+            for (PsiFile cachedPsiFile: cachedPsiFiles) {
+                if (cachedPsiFile instanceof DBLanguagePsiFile) {
+                    DBLanguagePsiFile languagePsiFile = (DBLanguagePsiFile) cachedPsiFile;
+                    Disposer.dispose(languagePsiFile);
+                }
             }
-            putUserData(FileDocumentManagerImpl.HARD_REF_TO_DOCUMENT_KEY, null);
+
+            setCachedViewProvider(null);
         }
+        putUserData(FileDocumentManagerImpl.HARD_REF_TO_DOCUMENT_KEY, null);
     }
 
 }

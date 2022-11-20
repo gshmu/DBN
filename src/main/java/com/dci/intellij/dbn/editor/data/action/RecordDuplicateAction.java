@@ -1,7 +1,7 @@
 package com.dci.intellij.dbn.editor.data.action;
 
 import com.dci.intellij.dbn.common.Icons;
-import com.dci.intellij.dbn.common.dispose.Failsafe;
+import com.dci.intellij.dbn.common.dispose.Checks;
 import com.dci.intellij.dbn.common.environment.EnvironmentManager;
 import com.dci.intellij.dbn.editor.DBContentType;
 import com.dci.intellij.dbn.editor.data.DatasetEditor;
@@ -26,7 +26,7 @@ public class RecordDuplicateAction extends AbstractDataEditorAction {
     @Override
     protected void update(@NotNull AnActionEvent e, @NotNull Presentation presentation, @NotNull Project project, @Nullable DatasetEditor datasetEditor) {
         presentation.setText("Duplicate Record");
-        if (Failsafe.check(datasetEditor) && datasetEditor.getConnection().isConnected()) {
+        if (Checks.isValid(datasetEditor) && datasetEditor.getConnection().isConnected()) {
             presentation.setEnabled(true);
             EnvironmentManager environmentManager = EnvironmentManager.getInstance(project);
             boolean isEnvironmentReadonlyData = environmentManager.isReadonly(datasetEditor.getDataset(), DBContentType.DATA);

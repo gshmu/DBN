@@ -1,7 +1,6 @@
 package com.dci.intellij.dbn.editor.data.action;
 
 import com.dci.intellij.dbn.common.Icons;
-import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.editor.data.DatasetEditor;
 import com.dci.intellij.dbn.editor.data.state.DatasetEditorStateManager;
 import com.dci.intellij.dbn.object.DBDataset;
@@ -10,6 +9,8 @@ import com.intellij.openapi.actionSystem.Presentation;
 import com.intellij.openapi.project.Project;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+
+import static com.dci.intellij.dbn.common.dispose.Checks.isValid;
 
 public class DataSortingOpenAction extends AbstractDataEditorAction {
 
@@ -29,7 +30,7 @@ public class DataSortingOpenAction extends AbstractDataEditorAction {
         presentation.setText("Data Sorting...");
 
         boolean enabled =
-                Failsafe.check(datasetEditor) &&
+                isValid(datasetEditor) &&
                 !datasetEditor.isInserting() &&
                 !datasetEditor.isLoading();
         presentation.setEnabled(enabled);

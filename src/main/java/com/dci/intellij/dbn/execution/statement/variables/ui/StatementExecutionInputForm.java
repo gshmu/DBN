@@ -4,16 +4,17 @@ import com.dci.intellij.dbn.common.color.Colors;
 import com.dci.intellij.dbn.common.dispose.DisposableContainers;
 import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.common.environment.EnvironmentType;
-import com.dci.intellij.dbn.common.ui.util.Borders;
+import com.dci.intellij.dbn.common.thread.Dispatch;
 import com.dci.intellij.dbn.common.ui.form.DBNFormBase;
 import com.dci.intellij.dbn.common.ui.form.DBNHeaderForm;
+import com.dci.intellij.dbn.common.ui.util.Borders;
 import com.dci.intellij.dbn.common.util.Documents;
 import com.dci.intellij.dbn.common.util.Editors;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.SchemaId;
 import com.dci.intellij.dbn.debugger.DBDebuggerType;
-import com.dci.intellij.dbn.debugger.DatabaseDebuggerManager;
 import com.dci.intellij.dbn.execution.common.ui.ExecutionOptionsForm;
+import com.dci.intellij.dbn.execution.statement.StatementExecutionInput;
 import com.dci.intellij.dbn.execution.statement.processor.StatementExecutionProcessor;
 import com.dci.intellij.dbn.execution.statement.variables.StatementExecutionVariable;
 import com.dci.intellij.dbn.execution.statement.variables.StatementExecutionVariablesBundle;
@@ -29,17 +30,9 @@ import com.intellij.ui.DocumentAdapter;
 import com.intellij.ui.JBColor;
 import org.jetbrains.annotations.NotNull;
 
-import javax.swing.BoxLayout;
-import javax.swing.Icon;
-import javax.swing.JCheckBox;
-import javax.swing.JComponent;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.JScrollPane;
-import javax.swing.JSplitPane;
+import javax.swing.*;
 import javax.swing.event.DocumentEvent;
-import java.awt.BorderLayout;
-import java.awt.Dimension;
+import java.awt.*;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -70,18 +63,19 @@ public class StatementExecutionInputForm extends DBNFormBase {
             @NotNull DBDebuggerType debuggerType, boolean isBulkExecution) {
         super(parent);
         this.executionProcessor = executionProcessor;
-        this.statementText = executionProcessor.getExecutionInput().getExecutableStatementText();
+        StatementExecutionInput executionInput = executionProcessor.getExecutionInput();
+        this.statementText = executionInput.getExecutableStatementText();
 
         variablesPanel.setLayout(new BoxLayout(variablesPanel, BoxLayout.Y_AXIS));
 
-        ConnectionHandler connection = executionProcessor.getConnection();
         if (debuggerType.isDebug()) {
             debuggerVersionPanel.setVisible(true);
             debuggerVersionPanel.setBorder(Borders.BOTTOM_LINE_BORDER);
-            DatabaseDebuggerManager debuggerManager = DatabaseDebuggerManager.getInstance(ensureProject());
-            String debuggerVersion = debuggerManager.getDebuggerVersion(connection);
-            debuggerVersionLabel.setText(debuggerVersion);
             debuggerTypeLabel.setText(debuggerType.name());
+            debuggerVersionLabel.setText("...");
+            Dispatch.background(
+                    () -> executionInput.getDebuggerVersion(),
+                    v -> debuggerVersionLabel.setText(v));
         } else {
             debuggerVersionPanel.setVisible(false);
         }
@@ -132,7 +126,7 @@ public class StatementExecutionInputForm extends DBNFormBase {
             mainPanel.remove(splitPanel);
         }
 
-        executionOptionsForm = new ExecutionOptionsForm(this, executionProcessor.getExecutionInput(), debuggerType);
+        executionOptionsForm = new ExecutionOptionsForm(this, executionInput, debuggerType);
         executionOptionsPanel.add(executionOptionsForm.getComponent());
 
         updatePreview();

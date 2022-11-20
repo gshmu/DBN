@@ -26,9 +26,11 @@ import com.dci.intellij.dbn.connection.session.DatabaseSessionBundle;
 import com.dci.intellij.dbn.database.DatabaseCompatibility;
 import com.dci.intellij.dbn.database.DatabaseFeature;
 import com.dci.intellij.dbn.database.interfaces.DatabaseCompatibilityInterface;
+import com.dci.intellij.dbn.database.interfaces.DatabaseInterfaceCall;
 import com.dci.intellij.dbn.database.interfaces.DatabaseInterfaceQueue;
 import com.dci.intellij.dbn.database.interfaces.DatabaseInterfaces;
 import com.dci.intellij.dbn.database.interfaces.queue.InterfaceQueue;
+import com.dci.intellij.dbn.debugger.DatabaseDebuggerManager;
 import com.dci.intellij.dbn.execution.statement.StatementExecutionQueue;
 import com.dci.intellij.dbn.language.common.DBLanguage;
 import com.dci.intellij.dbn.language.common.DBLanguageDialect;
@@ -48,7 +50,6 @@ import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
 import java.sql.SQLException;
-import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -96,6 +97,12 @@ public class ConnectionHandlerImpl extends StatefulDisposable.Base implements Co
             () -> {
                 ConnectionDatabaseSettings databaseSettings = getSettings().getDatabaseSettings();
                 return new AuthenticationInfo(databaseSettings, true);
+            });
+
+    private final Latent<String> debuggerVersion = Latent.basic(
+            () -> {
+                DatabaseDebuggerManager debuggerManager = DatabaseDebuggerManager.getInstance(getProject());
+                return debuggerManager.getDebuggerVersion(this);
             });
 
     private final Latent<DBConnectionPsiDirectory> psiDirectory = Latent.basic(
@@ -596,12 +603,11 @@ public class ConnectionHandlerImpl extends StatefulDisposable.Base implements Co
         return interfaces.getLanguageDialect(language);
     }
 
-    public static Comparator<ConnectionHandler> getComparator(boolean asc) {
-        return asc ? ASC_COMPARATOR : DESC_COMPARATOR;
+    @Override
+    @DatabaseInterfaceCall
+    public String getDebuggerVersion() {
+        return debuggerVersion.get();
     }
-
-    private static final Comparator<ConnectionHandler> ASC_COMPARATOR = Comparator.comparing(connection -> connection.getPresentableText().toLowerCase());
-    private static final Comparator<ConnectionHandler> DESC_COMPARATOR = (connection1, connection2) -> connection2.getPresentableText().toLowerCase().compareTo(connection1.getPresentableText().toLowerCase());
 
     /*********************************************************
      *                       TreeElement                     *

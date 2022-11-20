@@ -2,8 +2,8 @@ package com.dci.intellij.dbn.vfs.file;
 
 import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
-import com.dci.intellij.dbn.connection.ConnectionRef;
 import com.dci.intellij.dbn.connection.ConnectionId;
+import com.dci.intellij.dbn.connection.ConnectionRef;
 import com.dci.intellij.dbn.connection.SchemaId;
 import com.dci.intellij.dbn.connection.session.DatabaseSession;
 import com.dci.intellij.dbn.language.sql.SQLFileType;
@@ -14,14 +14,9 @@ import com.intellij.util.LocalTimeCounter;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import javax.swing.Icon;
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
+import javax.swing.*;
+import java.io.*;
 import java.nio.charset.Charset;
-import java.util.Objects;
 
 public class DBSessionBrowserVirtualFile extends DBVirtualFileImpl implements Comparable<DBSessionBrowserVirtualFile> {
     private final ConnectionRef connection;
@@ -29,9 +24,8 @@ public class DBSessionBrowserVirtualFile extends DBVirtualFileImpl implements Co
     private CharSequence content = "";
 
     public DBSessionBrowserVirtualFile(ConnectionHandler connection) {
-        super(connection.getProject());
+        super(connection.getProject(), connection.getName() + " Sessions");
         this.connection = connection.ref();
-        this.name = connection.getName() + " Sessions";
         setCharset(connection.getSettings().getDetailSettings().getCharset());
     }
 
@@ -78,8 +72,6 @@ public class DBSessionBrowserVirtualFile extends DBVirtualFileImpl implements Co
     public boolean isDirectory() {
         return false;
     }
-
-    public boolean isDefault() {return Objects.equals(name, getConnection().getName());}
 
     @Override
     public VirtualFile getParent() {
@@ -149,7 +141,7 @@ public class DBSessionBrowserVirtualFile extends DBVirtualFileImpl implements Co
 
     @Override
     public int compareTo(@NotNull DBSessionBrowserVirtualFile o) {
-        return name.compareTo(o.name);
+        return getName().compareTo(o.getName());
     }
 
 }

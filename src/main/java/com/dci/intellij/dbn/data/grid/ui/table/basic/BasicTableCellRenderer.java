@@ -1,6 +1,6 @@
 package com.dci.intellij.dbn.data.grid.ui.table.basic;
 
-import com.dci.intellij.dbn.common.dispose.Failsafe;
+import com.dci.intellij.dbn.common.dispose.Checks;
 import com.dci.intellij.dbn.common.ui.table.DBNColoredTableCellRenderer;
 import com.dci.intellij.dbn.common.ui.table.DBNTable;
 import com.dci.intellij.dbn.common.ui.util.Borders;
@@ -29,7 +29,7 @@ public class BasicTableCellRenderer extends DBNColoredTableCellRenderer {
     @Override
     protected void customizeCellRenderer(DBNTable table, Object value, boolean isSelected, boolean hasFocus, int rowIndex, int columnIndex) {
         DataModelCell cell = (DataModelCell) value;
-        if (Failsafe.check(cell)) {
+        if (Checks.isValid(cell)) {
             SortableTable sortableTable = (SortableTable) table;
             boolean isCaretRow = table.getCellSelectionEnabled() && table.getSelectedRow() == rowIndex && table.getSelectedRowCount() == 1;
 

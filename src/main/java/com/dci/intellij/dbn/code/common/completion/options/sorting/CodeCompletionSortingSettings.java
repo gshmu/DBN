@@ -3,7 +3,6 @@ package com.dci.intellij.dbn.code.common.completion.options.sorting;
 import com.dci.intellij.dbn.code.common.completion.options.CodeCompletionSettings;
 import com.dci.intellij.dbn.code.common.completion.options.sorting.ui.CodeCompletionSortingSettingsForm;
 import com.dci.intellij.dbn.code.common.lookup.*;
-import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.common.options.BasicConfiguration;
 import com.dci.intellij.dbn.language.common.TokenTypeCategory;
 import com.dci.intellij.dbn.object.common.DBObject;
@@ -17,6 +16,7 @@ import org.jetbrains.annotations.NotNull;
 import java.util.ArrayList;
 import java.util.List;
 
+import static com.dci.intellij.dbn.common.dispose.Checks.isValid;
 import static com.dci.intellij.dbn.common.options.setting.SettingsSupport.booleanAttribute;
 import static com.dci.intellij.dbn.common.options.setting.SettingsSupport.setBooleanAttribute;
 
@@ -42,7 +42,7 @@ public class CodeCompletionSortingSettings extends BasicConfiguration<CodeComple
         if (lookupItemBuilder instanceof ObjectLookupItemBuilder) {
             ObjectLookupItemBuilder objectLookupItemBuilder = (ObjectLookupItemBuilder) lookupItemBuilder;
             DBObject object = objectLookupItemBuilder.getObject();
-            if (Failsafe.check(object)) {
+            if (isValid(object)) {
                 DBObjectType objectType = object.getObjectType();
                 return getSortingIndexFor(objectType);
             }

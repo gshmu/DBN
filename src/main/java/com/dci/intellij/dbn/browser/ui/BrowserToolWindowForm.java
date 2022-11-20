@@ -5,7 +5,6 @@ import com.dci.intellij.dbn.browser.model.BrowserTreeNode;
 import com.dci.intellij.dbn.browser.options.BrowserDisplayMode;
 import com.dci.intellij.dbn.browser.options.DatabaseBrowserSettings;
 import com.dci.intellij.dbn.browser.options.listener.DisplayModeSettingsListener;
-import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.common.dispose.SafeDisposer;
 import com.dci.intellij.dbn.common.event.ProjectEvents;
 import com.dci.intellij.dbn.common.ui.form.DBNFormBase;
@@ -25,6 +24,8 @@ import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
 import java.awt.*;
+
+import static com.dci.intellij.dbn.common.dispose.Checks.isValid;
 
 public class BrowserToolWindowForm extends DBNFormBase {
     private JPanel mainPanel;
@@ -140,7 +141,7 @@ public class BrowserToolWindowForm extends DBNFormBase {
     }
 
     private void refreshTabs(ConnectionId connectionId) {
-        if (browserForm instanceof TabbedBrowserForm && Failsafe.check(browserForm)) {
+        if (browserForm instanceof TabbedBrowserForm && isValid(browserForm)) {
             TabbedBrowserForm tabbedBrowserForm = (TabbedBrowserForm) browserForm;
             tabbedBrowserForm.refreshTabInfo(connectionId);
         }

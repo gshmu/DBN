@@ -1,6 +1,7 @@
 package com.dci.intellij.dbn.execution.statement.result;
 
 import com.dci.intellij.dbn.common.action.DataKeys;
+import com.dci.intellij.dbn.common.dispose.Checks;
 import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.common.thread.Progress;
 import com.dci.intellij.dbn.common.util.Messages;
@@ -65,7 +66,7 @@ public class StatementExecutionCursorResult extends StatementExecutionBasicResul
         ConnectionAction.invoke("Reload data", false, executionProcessor, (action) -> {
             Progress.background(getProject(), "Reloading data", false, progress -> {
                 StatementExecutionResultForm resultForm = getForm();
-                if (Failsafe.check(resultForm)) {
+                if (Checks.isValid(resultForm)) {
                     progress.setText("Reloading results for " + executionProcessor.getStatementName());
                     ExecutionContext context = executionProcessor.initExecutionContext();
                     context.set(EXECUTING, true);
@@ -100,7 +101,7 @@ public class StatementExecutionCursorResult extends StatementExecutionBasicResul
 
     public void loadResultSet(DBNResultSet resultSet) throws SQLException {
         StatementExecutionResultForm resultForm = getForm();
-        if (Failsafe.check(resultForm)) {
+        if (Checks.isValid(resultForm)) {
             int rowCount = Math.max(dataModel == null ? 0 : dataModel.getRowCount() + 1, 100);
             dataModel = new ResultSetDataModel<>(resultSet, getConnection(), rowCount);
             resultForm.rebuildForm();
@@ -120,7 +121,7 @@ public class StatementExecutionCursorResult extends StatementExecutionBasicResul
         Project project = getProject();
         Progress.background(project, "Loading data", false, progress -> {
             StatementExecutionResultForm resultForm = getForm();
-            if (Failsafe.check(resultForm)) {
+            if (Checks.isValid(resultForm)) {
                 progress.setText("Loading next records for " + getExecutionProcessor().getStatementName());
                 resultForm.highlightLoading(true);
                 try {
@@ -150,7 +151,7 @@ public class StatementExecutionCursorResult extends StatementExecutionBasicResul
     @Nullable
     public ResultSetTable<?> getResultTable() {
         StatementExecutionResultForm resultForm = getForm();
-        return Failsafe.check(resultForm) ? resultForm.getResultTable() : null;
+        return Checks.isValid(resultForm) ? resultForm.getResultTable() : null;
     }
 
     public boolean hasResult() {
@@ -159,7 +160,7 @@ public class StatementExecutionCursorResult extends StatementExecutionBasicResul
 
     public void navigateToResult() {
         StatementExecutionResultForm resultForm = getForm();
-        if (Failsafe.check(resultForm)) {
+        if (Checks.isValid(resultForm)) {
             resultForm.show();
         }
     }

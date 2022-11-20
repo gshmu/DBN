@@ -1,6 +1,5 @@
 package com.dci.intellij.dbn.object.action;
 
-import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.common.thread.Progress;
 import com.dci.intellij.dbn.common.util.Messages;
 import com.dci.intellij.dbn.object.common.DBSchemaObject;
@@ -14,6 +13,8 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.sql.SQLException;
+
+import static com.dci.intellij.dbn.common.dispose.Checks.isValid;
 
 public class ObjectEnableDisableAction extends AnObjectAction<DBSchemaObject> {
     ObjectEnableDisableAction(DBSchemaObject object) {
@@ -50,7 +51,7 @@ public class ObjectEnableDisableAction extends AnObjectAction<DBSchemaObject> {
             @Nullable DBSchemaObject target) {
 
         super.update(e, presentation, project, target);
-        if (Failsafe.check(target)) {
+        if (isValid(target)) {
             boolean enabled = target.getStatus().is(DBObjectStatus.ENABLED);
             presentation.setText(!enabled ? "Enable" : "Disable");
             presentation.setVisible(true);

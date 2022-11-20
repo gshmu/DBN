@@ -1,7 +1,6 @@
 package com.dci.intellij.dbn.vfs;
 
 import com.dci.intellij.dbn.browser.DatabaseBrowserManager;
-import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.common.dispose.SafeDisposer;
 import com.dci.intellij.dbn.common.load.ProgressMonitor;
 import com.dci.intellij.dbn.common.navigation.NavigationInstructions;
@@ -56,7 +55,7 @@ import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 
-import static com.dci.intellij.dbn.common.dispose.Failsafe.invalid;
+import static com.dci.intellij.dbn.common.dispose.Checks.*;
 import static com.dci.intellij.dbn.common.message.MessageCallback.when;
 import static com.dci.intellij.dbn.common.navigation.NavigationInstruction.*;
 import static com.dci.intellij.dbn.vfs.DatabaseFileSystem.FilePathType.*;
@@ -138,7 +137,7 @@ public class DatabaseFileSystem extends VirtualFileSystem implements /*NonPhysic
         ConnectionId connectionId = ConnectionId.get(path.substring(0, index));
         ConnectionHandler connection = ConnectionHandler.get(connectionId);
 
-        if (!Failsafe.check(connection) || !connection.isEnabled())  return null;
+        if (isNotValid(connection) || !connection.isEnabled())  return null;
         if (!allowFileLookup(connection)) return null;
 
         Project project = connection.getProject();
@@ -246,7 +245,7 @@ public class DatabaseFileSystem extends VirtualFileSystem implements /*NonPhysic
     @NotNull
     public DBEditableObjectVirtualFile findOrCreateDatabaseFile(@NotNull Project project, @NotNull DBObjectRef<?> objectRef) {
         return filesCache.compute(objectRef, (ref, file) ->
-                Failsafe.check(file) && file.getProject() == project ? file : Read.conditional(() -> new DBEditableObjectVirtualFile(project, ref)));
+                isValid(file) && file.getProject() == project ? file : Read.conditional(() -> new DBEditableObjectVirtualFile(project, ref)));
     }
 
     public static boolean isFileOpened(DBObject object) {
@@ -259,7 +258,7 @@ public class DatabaseFileSystem extends VirtualFileSystem implements /*NonPhysic
      *                    GENERIC                           *
      ********************************************************/
     @NotNull
-    public static String createPath(DBVirtualFile virtualFile) {
+    public static String createFilePath(DBVirtualFile virtualFile) {
         try {
             ConnectionId connectionId = virtualFile.getConnectionId();
 
@@ -276,8 +275,7 @@ public class DatabaseFileSystem extends VirtualFileSystem implements /*NonPhysic
             if (virtualFile instanceof DBObjectVirtualFile) {
                 DBObjectVirtualFile<?> file = (DBObjectVirtualFile<?>) virtualFile;
                 DBObjectRef<?> objectRef = file.getObjectRef();
-                return objectRef.getConnectionId() + PSS + OBJECTS + objectRef.serialize();
-
+                return createObjectPath(objectRef);
             }
 
             if (virtualFile instanceof DBContentVirtualFile) {
@@ -329,9 +327,20 @@ public class DatabaseFileSystem extends VirtualFileSystem implements /*NonPhysic
     }
 
     @NotNull
-    static String createUrl(DBVirtualFile virtualFile) {
-        return PROTOCOL_PREFIX + createPath(virtualFile);
+    public static String createObjectPath(DBObjectRef<?> object) {
+        return object.getConnectionId() + PSS + OBJECTS + object.serialize();
     }
+
+    @NotNull
+    public static String createFileUrl(DBVirtualFile virtualFile) {
+        return PROTOCOL_PREFIX + createFilePath(virtualFile);
+    }
+
+    @NotNull
+    public static String createObjectUrl(DBObjectRef<?> object) {
+        return PROTOCOL_PREFIX + createObjectPath(object);
+    }
+
 
     /*********************************************************
      *                  VirtualFileSystem                    *
@@ -451,7 +460,7 @@ public class DatabaseFileSystem extends VirtualFileSystem implements /*NonPhysic
     }
 
     private boolean isEditable(DBObject object) {
-        if (invalid(object)) return false;
+        if (isNotValid(object)) return false;
 
         DBContentType contentType = object.getContentType();
         boolean editable =
@@ -480,7 +489,7 @@ public class DatabaseFileSystem extends VirtualFileSystem implements /*NonPhysic
         databaseFile.setSelectedEditorProviderId(editorProviderId);
 
         invokeFileOpen(handle, () -> {
-            if (Failsafe.check(object) && databaseFile.isValid()) {
+            if (allValid(object, databaseFile)) {
                 // open / reopen (select) the file
                 if (isFileOpened(object) || promptFileOpen(databaseFile)) {
                     boolean focusEditor = handle.getEditorInstructions().isFocus();
@@ -507,24 +516,24 @@ public class DatabaseFileSystem extends VirtualFileSystem implements /*NonPhysic
         sourceCodeManager.ensureSourcesLoaded(schemaObject, false);
 
         invokeFileOpen(handle, () -> {
-            if (Failsafe.check(schemaObject)) {
-                // open / reopen (select) the file
-                if (isFileOpened(schemaObject) || promptFileOpen(databaseFile)) {
-                    boolean focusEditor = handle.getEditorInstructions().isFocus();
+            if (isNotValid(schemaObject)) return;
 
-                    FileEditorManager fileEditorManager = FileEditorManager.getInstance(project);
-                    FileEditor[] fileEditors = fileEditorManager.openFile(databaseFile, focusEditor);
-                    for (FileEditor fileEditor : fileEditors) {
-                        if (fileEditor instanceof SourceCodeMainEditor) {
-                            SourceCodeMainEditor sourceCodeEditor = (SourceCodeMainEditor) fileEditor;
-                            NavigationInstructions instructions = NavigationInstructions.create().
-                                    with(SCROLL).
-                                    with(FOCUS, focusEditor);
+            // open / reopen (select) the file
+            if (isFileOpened(schemaObject) || promptFileOpen(databaseFile)) {
+                boolean focusEditor = handle.getEditorInstructions().isFocus();
 
-                            Editors.selectEditor(project, fileEditor, databaseFile, editorProviderId, instructions);
-                            sourceCodeEditor.navigateTo(object);
-                            break;
-                        }
+                FileEditorManager fileEditorManager = FileEditorManager.getInstance(project);
+                FileEditor[] fileEditors = fileEditorManager.openFile(databaseFile, focusEditor);
+                for (FileEditor fileEditor : fileEditors) {
+                    if (fileEditor instanceof SourceCodeMainEditor) {
+                        SourceCodeMainEditor sourceCodeEditor = (SourceCodeMainEditor) fileEditor;
+                        NavigationInstructions instructions = NavigationInstructions.create().
+                                with(SCROLL).
+                                with(FOCUS, focusEditor);
+
+                        Editors.selectEditor(project, fileEditor, databaseFile, editorProviderId, instructions);
+                        sourceCodeEditor.navigateTo(object);
+                        break;
                     }
                 }
             }

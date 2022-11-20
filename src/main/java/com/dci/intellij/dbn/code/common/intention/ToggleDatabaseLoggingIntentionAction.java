@@ -1,7 +1,7 @@
 package com.dci.intellij.dbn.code.common.intention;
 
 import com.dci.intellij.dbn.common.Icons;
-import com.dci.intellij.dbn.common.dispose.Failsafe;
+import com.dci.intellij.dbn.common.dispose.Checks;
 import com.dci.intellij.dbn.common.thread.Read;
 import com.dci.intellij.dbn.common.util.Strings;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
@@ -29,7 +29,7 @@ public class ToggleDatabaseLoggingIntentionAction extends GenericIntentionAction
     @NotNull
     public String getText() {
         ConnectionHandler connection = getLastCheckedConnection();
-        if (Failsafe.check(connection)) {
+        if (Checks.isValid(connection)) {
             DatabaseCompatibilityInterface compatibility = connection.getCompatibilityInterface();
             String databaseLogName = compatibility.getDatabaseLogName();
             boolean loggingEnabled = connection.isLoggingEnabled();
@@ -82,7 +82,7 @@ public class ToggleDatabaseLoggingIntentionAction extends GenericIntentionAction
     }
 
     private static boolean supportsLogging(ConnectionHandler connection) {
-        return Failsafe.check(connection) &&
+        return Checks.isValid(connection) &&
                 !connection.isVirtual() &&
                 DatabaseFeature.DATABASE_LOGGING.isSupported(connection);
     }

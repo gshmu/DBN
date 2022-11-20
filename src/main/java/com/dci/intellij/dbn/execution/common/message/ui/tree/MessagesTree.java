@@ -1,6 +1,5 @@
 package com.dci.intellij.dbn.execution.common.message.ui.tree;
 
-import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.common.navigation.NavigationInstructions;
 import com.dci.intellij.dbn.common.thread.Dispatch;
 import com.dci.intellij.dbn.common.ui.component.DBNComponent;
@@ -49,6 +48,7 @@ import javax.swing.tree.TreeSelectionModel;
 import java.awt.*;
 import java.awt.event.*;
 
+import static com.dci.intellij.dbn.common.dispose.Checks.isNotValid;
 import static com.dci.intellij.dbn.common.navigation.NavigationInstruction.*;
 
 public class MessagesTree extends DBNTree implements Disposable {
@@ -278,37 +278,37 @@ public class MessagesTree extends DBNTree implements Disposable {
 
     private void navigateInObjectEditor(CompilerMessage compilerMessage, NavigationInstructions instructions) {
         DBEditableObjectVirtualFile databaseFile = compilerMessage.getDatabaseFile();
-        if (Failsafe.check(databaseFile)) {
-            DBContentVirtualFile contentFile = compilerMessage.getContentFile();
-            if (contentFile instanceof DBSourceCodeVirtualFile) {
-                CompilerAction compilerAction = compilerMessage.getCompilerResult().getCompilerAction();
-                FileEditor objectFileEditor = compilerAction.getFileEditor();
-                EditorProviderId editorProviderId = compilerAction.getEditorProviderId();
-                if (editorProviderId == null) {
-                    DBContentType contentType = compilerMessage.getContentType();
-                    switch (contentType) {
-                        case CODE: editorProviderId = EditorProviderId.CODE; break;
-                        case CODE_SPEC: editorProviderId = EditorProviderId.CODE_SPEC;  break;
-                        case CODE_BODY: editorProviderId = EditorProviderId.CODE_BODY; break;
-                    }
-                }
-                Project project = ensureProject();
-                objectFileEditor = Editors.selectEditor(project, objectFileEditor, databaseFile, editorProviderId, instructions);
+        if (isNotValid(databaseFile)) return;
 
-                if (objectFileEditor instanceof SourceCodeEditor) {
-                    SourceCodeEditor codeEditor = (SourceCodeEditor) objectFileEditor;
-                    Editor editor = Editors.getEditor(codeEditor);
-                    if (editor != null) {
-                        if (instructions.isScroll()) {
-                            Document document = editor.getDocument();
-                            int lineShifting = document.getLineNumber(codeEditor.getHeaderEndOffset());
-                            navigateInEditor(editor, compilerMessage, lineShifting);
-                        }
-                        VirtualFile virtualFile = Documents.getVirtualFile(editor);
-                        if (virtualFile != null) {
-                            OpenFileDescriptor openFileDescriptor = new OpenFileDescriptor(project, virtualFile);
-                            codeEditor.navigateTo(openFileDescriptor);
-                        }
+        DBContentVirtualFile contentFile = compilerMessage.getContentFile();
+        if (contentFile instanceof DBSourceCodeVirtualFile) {
+            CompilerAction compilerAction = compilerMessage.getCompilerResult().getCompilerAction();
+            FileEditor objectFileEditor = compilerAction.getFileEditor();
+            EditorProviderId editorProviderId = compilerAction.getEditorProviderId();
+            if (editorProviderId == null) {
+                DBContentType contentType = compilerMessage.getContentType();
+                switch (contentType) {
+                    case CODE: editorProviderId = EditorProviderId.CODE; break;
+                    case CODE_SPEC: editorProviderId = EditorProviderId.CODE_SPEC;  break;
+                    case CODE_BODY: editorProviderId = EditorProviderId.CODE_BODY; break;
+                }
+            }
+            Project project = ensureProject();
+            objectFileEditor = Editors.selectEditor(project, objectFileEditor, databaseFile, editorProviderId, instructions);
+
+            if (objectFileEditor instanceof SourceCodeEditor) {
+                SourceCodeEditor codeEditor = (SourceCodeEditor) objectFileEditor;
+                Editor editor = Editors.getEditor(codeEditor);
+                if (editor != null) {
+                    if (instructions.isScroll()) {
+                        Document document = editor.getDocument();
+                        int lineShifting = document.getLineNumber(codeEditor.getHeaderEndOffset());
+                        navigateInEditor(editor, compilerMessage, lineShifting);
+                    }
+                    VirtualFile virtualFile = Documents.getVirtualFile(editor);
+                    if (virtualFile != null) {
+                        OpenFileDescriptor openFileDescriptor = new OpenFileDescriptor(project, virtualFile);
+                        codeEditor.navigateTo(openFileDescriptor);
                     }
                 }
             }

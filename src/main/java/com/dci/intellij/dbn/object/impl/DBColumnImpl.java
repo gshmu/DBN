@@ -23,6 +23,7 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Objects;
 
 import static com.dci.intellij.dbn.object.common.property.DBObjectProperty.*;
 import static com.dci.intellij.dbn.object.type.DBObjectRelationType.CONSTRAINT_COLUMN;
@@ -196,7 +197,7 @@ public class DBColumnImpl extends DBObjectImpl<DBColumnMetadata> implements DBCo
                 for (DBConstraintColumnRelation relation : constraintColumnRelations.getObjectRelations()) {
                     DBColumn relationColumn = relation.getColumn();
                     DBConstraint relationConstraint = relation.getConstraint();
-                    if (relationColumn != null && relationConstraint != null && relationColumn.equals(this) && relationConstraint.equals(constraint))
+                    if (Objects.equals(relationColumn, this) && Objects.equals(relationConstraint, constraint))
                         return relation.getPosition();
                 }
             }
@@ -207,16 +208,15 @@ public class DBColumnImpl extends DBObjectImpl<DBColumnMetadata> implements DBCo
     @Override
     public DBConstraint getConstraintForPosition(short position) {
         DBObjectListContainer childObjects = getDataset().getChildObjects();
-        if (childObjects != null) {
-            DBObjectRelationList<DBConstraintColumnRelation> constraintColumnRelations =
-                    childObjects.getRelations(CONSTRAINT_COLUMN);
-            if (constraintColumnRelations != null) {
-                for (DBConstraintColumnRelation relation : constraintColumnRelations.getObjectRelations()) {
-                    DBColumn relationColumn = relation.getColumn();
-                    if (relationColumn != null && relationColumn.equals(this) && relation.getPosition() == position) {
-                        return relation.getConstraint();
-                    }
-                }
+        if (childObjects == null) return null;
+
+        DBObjectRelationList<DBConstraintColumnRelation> relations = childObjects.getRelations(CONSTRAINT_COLUMN);
+        if (relations == null) return null;
+
+        for (DBConstraintColumnRelation relation : relations.getObjectRelations()) {
+            DBColumn relationColumn = relation.getColumn();
+            if (Objects.equals(relationColumn, this) && relation.getPosition() == position) {
+                return relation.getConstraint();
             }
         }
         return null;
@@ -340,7 +340,7 @@ public class DBColumnImpl extends DBObjectImpl<DBColumnMetadata> implements DBCo
     public int compareTo(@NotNull Object o) {
         if (o instanceof DBColumn)  {
             DBColumn column = (DBColumn) o;
-            if (getDataset().equals(column.getDataset())) {
+            if (Objects.equals(getDataset(), column.getDataset())) {
                 if (isPrimaryKey() && column.isPrimaryKey()) {
                     return super.compareTo(o);
                 } else if (isPrimaryKey()) {

@@ -20,6 +20,8 @@ import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
 
+import static com.dci.intellij.dbn.common.dispose.Checks.isNotValid;
+
 public class DatabaseLoggingResult extends ExecutionResultBase<DatabaseLoggingResultForm> {
 
     private LogOutputContext context;
@@ -93,20 +95,20 @@ public class DatabaseLoggingResult extends ExecutionResultBase<DatabaseLoggingRe
     public void write(LogOutputContext context, LogOutput output) {
         this.context = context;
         DatabaseLoggingResultForm resultForm = getForm();
-        if (Failsafe.check(resultForm)) {
-            DatabaseLoggingResultConsole console = resultForm.getConsole();
-            if (output.isClearBuffer()) {
-                console.clear();
-            }
-            if (output.isScrollToEnd()) {
-                ConsoleView consoleView = console.getConsole();
-                if (consoleView instanceof ConsoleViewImpl) {
-                    ConsoleViewImpl consoleViewImpl = (ConsoleViewImpl) consoleView;
-                    consoleViewImpl.requestScrollingToEnd();
-                }
-            }
-            console.writeToConsole(context, output);
+        if (isNotValid(resultForm)) return;
+
+        DatabaseLoggingResultConsole console = resultForm.getConsole();
+        if (output.isClearBuffer()) {
+            console.clear();
         }
+        if (output.isScrollToEnd()) {
+            ConsoleView consoleView = console.getConsole();
+            if (consoleView instanceof ConsoleViewImpl) {
+                ConsoleViewImpl consoleViewImpl = (ConsoleViewImpl) consoleView;
+                consoleViewImpl.requestScrollingToEnd();
+            }
+        }
+        console.writeToConsole(context, output);
     }
 
     /********************************************************

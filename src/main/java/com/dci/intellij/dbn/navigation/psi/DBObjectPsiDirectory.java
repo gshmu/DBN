@@ -1,5 +1,6 @@
 package com.dci.intellij.dbn.navigation.psi;
 
+import com.dci.intellij.dbn.common.dispose.Checks;
 import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.connection.DatabaseEntity;
 import com.dci.intellij.dbn.language.common.psi.EmptySearchScope;
@@ -125,7 +126,7 @@ public class DBObjectPsiDirectory implements PsiDirectory, Disposable{
             DBObjectList[] objectLists = childObjects.getObjects();
             if (objectLists != null) {
                 for (DBObjectList objectList : objectLists) {
-                    if (!objectList.isInternal() && Failsafe.check(objectList)) {
+                    if (!objectList.isInternal() && Checks.isValid(objectList)) {
                         children.add(objectList.getPsiDirectory());
                     }
                 }

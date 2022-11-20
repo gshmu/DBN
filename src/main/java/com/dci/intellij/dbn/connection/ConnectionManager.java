@@ -7,7 +7,6 @@ import com.dci.intellij.dbn.common.component.ProjectComponentBase;
 import com.dci.intellij.dbn.common.component.ProjectManagerListener;
 import com.dci.intellij.dbn.common.database.AuthenticationInfo;
 import com.dci.intellij.dbn.common.database.DatabaseInfo;
-import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.common.dispose.SafeDisposer;
 import com.dci.intellij.dbn.common.environment.EnvironmentType;
 import com.dci.intellij.dbn.common.event.ProjectEvents;
@@ -56,6 +55,7 @@ import java.util.TimerTask;
 import java.util.function.Predicate;
 
 import static com.dci.intellij.dbn.common.component.Components.projectService;
+import static com.dci.intellij.dbn.common.dispose.Checks.isNotValid;
 import static com.dci.intellij.dbn.common.message.MessageCallback.when;
 import static com.dci.intellij.dbn.common.util.Messages.*;
 import static com.dci.intellij.dbn.connection.transaction.TransactionAction.actions;
@@ -409,8 +409,8 @@ public class ConnectionManager extends ProjectComponentBase implements Persisten
         @Override
         public void run() {
             try {
-                List<ConnectionHandler> connections = getConnections();
-                for (ConnectionHandler connection : connections) {
+                if (isNotValid(ConnectionManager.this.getProject())) return;
+                for (ConnectionHandler connection : getConnections()) {
                     resolveIdleStatus(connection);
                 }
             } catch (Exception e){
@@ -420,9 +420,9 @@ public class ConnectionManager extends ProjectComponentBase implements Persisten
 
         private void resolveIdleStatus(ConnectionHandler connection) {
             try {
-                List<TransactionAction> actions = actions(TransactionAction.DISCONNECT_IDLE);
+                if (isNotValid(connection) || isNotValid(connection.getProject())) return;
 
-                Failsafe.nd(connection);
+                List<TransactionAction> actions = actions(TransactionAction.DISCONNECT_IDLE);
                 DatabaseTransactionManager transactionManager = DatabaseTransactionManager.getInstance(getProject());
                 List<DBNConnection> connections = connection.getConnections(ConnectionType.MAIN, ConnectionType.SESSION);
 

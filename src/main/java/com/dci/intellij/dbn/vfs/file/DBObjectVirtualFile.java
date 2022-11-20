@@ -21,7 +21,7 @@ import com.intellij.openapi.vfs.VirtualFile;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import javax.swing.Icon;
+import javax.swing.*;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
@@ -32,9 +32,8 @@ public class DBObjectVirtualFile<T extends DBObject> extends DBVirtualFileImpl {
     protected DBObjectRef<T> object;
 
     public DBObjectVirtualFile(@NotNull Project project, @NotNull DBObjectRef<T> object) {
-        super(project);
+        super(project, object.getFileName());
         this.object = object;
-        this.name = object.getFileName();
     }
 
     public DBObjectType getObjectType() {

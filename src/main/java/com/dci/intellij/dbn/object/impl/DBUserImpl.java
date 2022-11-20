@@ -127,7 +127,7 @@ public class DBUserImpl extends DBObjectImpl<DBUserMetadata> implements DBUser {
         }
         if (GRANTED_ROLE.isSupported(this)) {
             for (DBGrantedRole grantedRole : getRoles()) {
-                if (grantedRole.getRole().hasPrivilege(privilege)) {
+                if (grantedRole.hasPrivilege(privilege)) {
                     return true;
                 }
             }
@@ -138,7 +138,7 @@ public class DBUserImpl extends DBObjectImpl<DBUserMetadata> implements DBUser {
     @Override
     public boolean hasRole(DBRole role) {
         for (DBGrantedRole grantedRole : getRoles()) {
-            if (grantedRole.getRole().equals(role)) {
+            if (Objects.equals(grantedRole.getRole(), role)) {
                 return true;
             }
         }
