@@ -73,7 +73,7 @@ class InterfaceTask<R> implements TimeAware {
 
             if (dispatchThread) {
                 log.error("Interface loads not allowed from event dispatch thread",
-                        new IllegalCallerException("Illegal database interface invocation"));
+                        new RuntimeException("Illegal database interface invocation"));
 
                 break;
             }
