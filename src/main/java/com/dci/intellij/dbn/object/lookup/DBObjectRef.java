@@ -1,7 +1,6 @@
 package com.dci.intellij.dbn.object.lookup;
 
 import com.dci.intellij.dbn.common.Reference;
-import com.dci.intellij.dbn.common.dispose.Checks;
 import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.common.state.PersistentStateElement;
 import com.dci.intellij.dbn.common.string.StringDeBuilder;
@@ -34,6 +33,7 @@ import java.util.Objects;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import static com.dci.intellij.dbn.common.dispose.Checks.isValid;
 import static com.dci.intellij.dbn.common.options.setting.SettingsSupport.connectionIdAttribute;
 import static com.dci.intellij.dbn.common.options.setting.SettingsSupport.stringAttribute;
 import static com.dci.intellij.dbn.vfs.DatabaseFileSystem.PS;
@@ -341,7 +341,12 @@ public class DBObjectRef<T extends DBObject> implements Comparable<DBObjectRef<?
         if (object == null) {
             clearReference();
             ConnectionHandler connection = getConnection();
-            if (Checks.isValid(connection) && connection.isEnabled()) {
+            if (connection == null && isValid(project)) {
+                ConnectionManager connectionManager = ConnectionManager.getInstance(project);
+                connection = connectionManager.getConnection(getConnectionId());
+            }
+
+            if (isValid(connection) && connection.isEnabled()) {
                 object = lookup(connection);
                 if (object != null) {
                     reference = WeakRef.of(object);
