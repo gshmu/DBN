@@ -32,9 +32,7 @@ import com.intellij.openapi.components.Storage;
 import com.intellij.openapi.fileEditor.FileEditorManager;
 import com.intellij.openapi.fileEditor.FileEditorManagerEvent;
 import com.intellij.openapi.fileEditor.FileEditorManagerListener;
-import com.intellij.openapi.project.DumbAwareRunnable;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.startup.StartupManager;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.util.containers.ContainerUtil;
 import lombok.Getter;
@@ -60,7 +58,6 @@ public class DatabaseFileManager extends ProjectComponentBase implements Persist
 
     private final Set<DBObjectVirtualFile<?>> openFiles = ContainerUtil.newConcurrentSet();
     private Map<ConnectionId, List<DBObjectRef<DBSchemaObject>>> pendingOpenFiles = new HashMap<>();
-    private boolean projectInitialized = false;
     private final String sessionId;
 
     private DatabaseFileManager(@NotNull Project project) {
@@ -73,11 +70,6 @@ public class DatabaseFileManager extends ProjectComponentBase implements Persist
                 ConnectionConfigListener.TOPIC,
                 ConnectionConfigListener.whenChangedOrRemoved(id -> closeFiles(id)));
 
-
-        // TODO SERVICES
-        StartupManager startupManager = StartupManager.getInstance(project);
-        startupManager.registerPostStartupActivity((DumbAwareRunnable) () -> projectInitialized = true);
-        startupManager.registerPostStartupActivity((DumbAwareRunnable) () -> reopenDatabaseEditors());
     }
 
     public static DatabaseFileManager getInstance(@NotNull Project project) {
@@ -222,8 +214,8 @@ public class DatabaseFileManager extends ProjectComponentBase implements Persist
         Element stateElement = new Element("state");
         Element openFilesElement = new Element("open-files");
         stateElement.addContent(openFilesElement);
-        for (DBObjectVirtualFile openFile : openFiles) {
-            DBObjectRef<DBSchemaObject> objectRef = openFile.getObjectRef();
+        for (DBObjectVirtualFile<?> openFile : openFiles) {
+            DBObjectRef<?> objectRef = openFile.getObjectRef();
             Element fileElement = new Element("object");
             objectRef.writeState(fileElement);
             openFilesElement.addContent(fileElement);
@@ -249,23 +241,23 @@ public class DatabaseFileManager extends ProjectComponentBase implements Persist
     }
 
     public void reopenDatabaseEditors() {
-        Project project = getProject();
-        if (pendingOpenFiles != null && !pendingOpenFiles.isEmpty()) {
-            Map<ConnectionId, List<DBObjectRef<DBSchemaObject>>> pendingOpenFiles = this.pendingOpenFiles;
-            this.pendingOpenFiles = null;
+        if (pendingOpenFiles == null || pendingOpenFiles.isEmpty()) return;
 
-            ConnectionManager connectionManager = ConnectionManager.getInstance(project);
-            for (val entry : pendingOpenFiles.entrySet()) {
-                ConnectionId connectionId = entry.getKey();
-                ConnectionHandler connection = connectionManager.getConnection(connectionId);
-                if (connection != null) {
-                    ConnectionDetailSettings connectionDetailSettings = connection.getSettings().getDetailSettings();
-                    if (connectionDetailSettings.isRestoreWorkspace()) {
-                        val objectRefs = entry.getValue();
-                        reopenDatabaseEditors(objectRefs, connection);
-                    }
-                }
-            }
+        // overwrite and nullify
+        val pendingOpenFiles = this.pendingOpenFiles;
+        this.pendingOpenFiles = null;
+
+        Project project = getProject();
+        ConnectionManager connectionManager = ConnectionManager.getInstance(project);
+        for (val entry : pendingOpenFiles.entrySet()) {
+            ConnectionId connectionId = entry.getKey();
+            ConnectionHandler connection = connectionManager.getConnection(connectionId);
+            if (connection == null) continue;
+
+            ConnectionDetailSettings connectionDetailSettings = connection.getSettings().getDetailSettings();
+            if (!connectionDetailSettings.isRestoreWorkspace()) continue;
+
+            reopenDatabaseEditors(entry.getValue(), connection);
         }
     }
 

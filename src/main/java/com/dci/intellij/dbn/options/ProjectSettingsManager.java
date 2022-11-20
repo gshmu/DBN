@@ -56,6 +56,7 @@ public class ProjectSettingsManager extends ProjectComponentBase implements Pers
 
     private final ProjectSettings projectSettings;
     private ConfigId lastConfigId;
+    private boolean initialised;
 
     private ProjectSettingsManager(Project project) {
         super(project, COMPONENT_NAME);
@@ -179,16 +180,19 @@ public class ProjectSettingsManager extends ProjectComponentBase implements Pers
 
     @Override
     public void initializeComponent() {
+        // TODO SERVICES
         // TODO find another way to define "silent" dependencies
 
-        // TODO SERVICES
         Project project = getProject();
         DatabaseConsoleManager.getInstance(project);
         EditorStateManager.getInstance(project);
         SourceCodeManager.getInstance(project);
         DatasetEditorManager.getInstance(project);
-        DatabaseFileManager.getInstance(project);
         DatabaseLoaderManager.getInstance(project);
+        DatabaseFileManager fileManager = DatabaseFileManager.getInstance(project);
+
+        fileManager.reopenDatabaseEditors();
+        initialised = true;
     }
 
     public void exportToDefaultSettings() {
