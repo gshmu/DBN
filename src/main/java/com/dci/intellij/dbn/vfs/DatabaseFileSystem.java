@@ -32,6 +32,7 @@ import com.dci.intellij.dbn.object.common.DBSchemaObject;
 import com.dci.intellij.dbn.object.common.list.DBObjectList;
 import com.dci.intellij.dbn.object.common.property.DBObjectProperty;
 import com.dci.intellij.dbn.object.lookup.DBObjectRef;
+import com.dci.intellij.dbn.options.ProjectSettingsManager;
 import com.dci.intellij.dbn.vfs.file.*;
 import com.intellij.openapi.components.NamedComponent;
 import com.intellij.openapi.fileEditor.FileEditor;
@@ -231,8 +232,8 @@ public class DatabaseFileSystem extends VirtualFileSystem implements /*NonPhysic
             return true;
         } else {
             Project project = connection.getProject();
-            DatabaseFileManager databaseFileManager = DatabaseFileManager.getInstance(project);
-            return databaseFileManager.isProjectInitialized();
+            ProjectSettingsManager settingsManager = ProjectSettingsManager.getInstance(project);
+            return settingsManager.isInitialised();
         }
     }
 
