@@ -19,7 +19,7 @@ public class SQLFileType extends DBLanguageFileType {
     @Override
     @NotNull
     public String getName() {
-        return "DBN-SQL";
+        return SQLLanguage.ID;
     }
 
     @Override
