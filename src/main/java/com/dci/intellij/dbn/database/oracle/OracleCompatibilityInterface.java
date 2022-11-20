@@ -56,6 +56,7 @@ public class OracleCompatibilityInterface extends DatabaseCompatibilityInterface
                 CONNECTION_ERROR_RECOVERY,
                 UPDATABLE_RESULT_SETS,
                 CURRENT_SCHEMA,
+                USER_SCHEMA,
                 CONSTRAINT_MANIPULATION,
                 READONLY_CONNECTIVITY);
     }
