@@ -41,9 +41,7 @@ import javax.swing.event.TreeExpansionListener;
 import javax.swing.table.JTableHeader;
 import javax.swing.table.TableCellRenderer;
 import javax.swing.table.TableColumn;
-import javax.swing.tree.TreePath;
 import java.awt.*;
-import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.font.FontRenderContext;
 import java.awt.font.LineMetrics;
@@ -99,16 +97,6 @@ public class ExplainPlanTreeTable extends TreeTable implements StatefulDisposabl
         });
         accommodateColumnsSize();
         TreeUtil.expandAll(tree);
-        tree.addMouseListener(new MouseAdapter() {
-            @Override
-            public void mouseMoved(MouseEvent e) {
-                TreePath pathAtMousePosition = TreeUtil.getPathAtMousePosition(tree);
-                if (pathAtMousePosition != null) {
-                    Object lastPathComponent = pathAtMousePosition.getLastPathComponent();
-                }
-            }
-        });
-
         addMouseListener(Mouse.listener().onClick(e -> showCellValuePopup()));
 
         Disposer.register(parent, this);

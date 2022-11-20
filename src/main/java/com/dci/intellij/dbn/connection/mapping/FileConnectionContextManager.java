@@ -4,7 +4,6 @@ import com.dci.intellij.dbn.DatabaseNavigator;
 import com.dci.intellij.dbn.common.action.UserDataKeys;
 import com.dci.intellij.dbn.common.component.PersistentState;
 import com.dci.intellij.dbn.common.component.ProjectComponentBase;
-import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.common.dispose.SafeDisposer;
 import com.dci.intellij.dbn.common.event.ProjectEvents;
 import com.dci.intellij.dbn.common.file.util.VirtualFiles;
@@ -56,6 +55,7 @@ import java.util.concurrent.Callable;
 import java.util.function.Consumer;
 
 import static com.dci.intellij.dbn.common.component.Components.projectService;
+import static com.dci.intellij.dbn.common.dispose.Checks.isValid;
 import static com.dci.intellij.dbn.common.message.MessageCallback.when;
 import static com.dci.intellij.dbn.common.util.Messages.options;
 import static com.dci.intellij.dbn.common.util.Messages.showWarningDialog;
@@ -367,7 +367,7 @@ public class FileConnectionContextManager extends ProjectComponentBase implement
                             DefaultActionGroup actionGroup = new DefaultActionGroup();
 
                             ConnectionHandler connection = action.getConnection();
-                            if (Failsafe.check(connection) && !connection.isVirtual()) {
+                            if (isValid(connection) && !connection.isVirtual()) {
                                 List<DBSchema> schemas = connection.getObjectBundle().getSchemas();
                                 for (DBSchema schema : schemas) {
                                     SchemaSelectAction schemaAction = new SchemaSelectAction(file, schema, callback);
@@ -410,7 +410,7 @@ public class FileConnectionContextManager extends ProjectComponentBase implement
                 (action) -> {
                     DefaultActionGroup actionGroup = new DefaultActionGroup();
                     ConnectionHandler connection = action.getConnection();
-                    if (Failsafe.check(connection) && !connection.isVirtual()) {
+                    if (isValid(connection) && !connection.isVirtual()) {
                         List<DatabaseSession> sessions = connection.getSessionBundle().getSessions();
                         for (DatabaseSession session : sessions) {
                             SessionSelectAction sessionAction = new SessionSelectAction(file, session, callback);

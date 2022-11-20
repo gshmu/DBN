@@ -30,6 +30,8 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
+import static com.dci.intellij.dbn.common.dispose.Checks.isNotValid;
+
 public class ConnectionSettingsForm extends CompositeConfigurationEditorForm<ConnectionSettings> {
     private JPanel mainPanel;
     private JPanel contentPanel;
@@ -223,6 +225,8 @@ public class ConnectionSettingsForm extends CompositeConfigurationEditorForm<Con
         @Override
         public void presentationChanged(String name, Icon icon, Color color, ConnectionId connectionId, DatabaseType databaseType) {
             Dispatch.run(() -> {
+                if (isNotValid(ConnectionSettingsForm.this)) return;
+
                 ConnectionSettings configuration = getConfiguration();
                 if (configuration.getConnectionId().equals(connectionId)) {
                     if (name != null) headerForm.setTitle(name);

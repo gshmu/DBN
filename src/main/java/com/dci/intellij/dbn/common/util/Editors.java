@@ -50,6 +50,8 @@ import java.awt.*;
 import java.util.ArrayList;
 import java.util.List;
 
+import static com.dci.intellij.dbn.common.dispose.Checks.isValid;
+
 public class Editors {
     public static FileEditor selectEditor(@NotNull Project project, @Nullable FileEditor fileEditor, @NotNull VirtualFile virtualFile, EditorProviderId editorProviderId, NavigationInstructions instructions) {
         FileEditorManager fileEditorManager = FileEditorManager.getInstance(project);
@@ -83,7 +85,7 @@ public class Editors {
                 }
             }
 
-            if (file != null && file.isValid()) {
+            if (isValid(file)) {
                 FileEditor[] fileEditors = instructions.isOpen() ?
                         fileEditorManager.openFile(file, instructions.isFocus()) :
                         fileEditorManager.getEditors(file);
@@ -101,7 +103,6 @@ public class Editors {
                         }
                     }
                 }
-
             }
         } else if (virtualFile.isInLocalFileSystem()) {
             FileEditor[] fileEditors = instructions.isOpen() ?

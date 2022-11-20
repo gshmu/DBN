@@ -17,6 +17,8 @@ import com.dci.intellij.dbn.object.DBTypeAttribute;
 import com.dci.intellij.dbn.object.lookup.DBObjectRef;
 import com.dci.intellij.dbn.object.type.DBObjectType;
 import com.intellij.openapi.project.Project;
+import lombok.Getter;
+import lombok.Setter;
 import org.jdom.Element;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -25,6 +27,8 @@ import java.util.*;
 
 import static com.dci.intellij.dbn.common.options.setting.SettingsSupport.stringAttribute;
 
+@Getter
+@Setter
 public class MethodExecutionInput extends LocalExecutionInput implements Comparable<MethodExecutionInput>, Cloneable<MethodExecutionInput> {
     private DBObjectRef<DBMethod> method;
 
@@ -47,7 +51,8 @@ public class MethodExecutionInput extends LocalExecutionInput implements Compara
         DBObjectRef<?> schema = method.getParentRef(DBObjectType.SCHEMA);
 
         if (schema != null) {
-            this.targetSchemaId = SchemaId.get(schema.getObjectName());
+            SchemaId objectSchema = SchemaId.get(schema.getObjectName());
+            setTargetSchemaId(objectSchema);
         }
 
 
@@ -233,7 +238,7 @@ public class MethodExecutionInput extends LocalExecutionInput implements Compara
     public void readConfiguration(Element element) {
         super.readConfiguration(element);
         method.readState(element);
-        targetSchemaId = SchemaId.get(stringAttribute(element, "execution-schema"));;
+        setTargetSchemaId(SchemaId.get(stringAttribute(element, "execution-schema")));
         Element argumentsElement = element.getChild("argument-actions");
         if (argumentsElement != null) {
             for (Element valueElement : argumentsElement.getChildren()) {
@@ -247,7 +252,7 @@ public class MethodExecutionInput extends LocalExecutionInput implements Compara
     public void writeConfiguration(Element element) {
         super.writeConfiguration(element);
         method.writeState(element);
-        element.setAttribute("execution-schema", targetSchemaId == null ? "" : targetSchemaId.id());
+        element.setAttribute("execution-schema", getTargetSchemaId() == null ? "" : getTargetSchemaId().id());
 
         Element argumentsElement = new Element("argument-actions");
         element.addContent(argumentsElement);
@@ -270,7 +275,7 @@ public class MethodExecutionInput extends LocalExecutionInput implements Compara
     public MethodExecutionInput clone() {
         MethodExecutionInput clone = new MethodExecutionInput(getProject());
         clone.method = method;
-        clone.targetSchemaId = targetSchemaId;
+        clone.setTargetSchemaId(getTargetSchemaId());
         clone.setOptions(ExecutionOptions.clone(getOptions()));
         clone.argumentValueHistory = new HashMap<>();
         for (MethodExecutionArgumentValue executionVariable : argumentValueHistory.values()) {

@@ -1,6 +1,7 @@
 package com.dci.intellij.dbn.connection;
 
 import com.dci.intellij.dbn.common.Reference;
+import com.dci.intellij.dbn.common.dispose.Checks;
 import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.common.index.Identifiable;
 import com.dci.intellij.dbn.language.common.WeakRef;
@@ -60,7 +61,7 @@ public final class ConnectionRef implements Reference<ConnectionHandler>, Identi
     }
 
     public boolean isValid() {
-        return Failsafe.check(reference());
+        return Checks.isValid(reference());
     }
 
     @Nullable

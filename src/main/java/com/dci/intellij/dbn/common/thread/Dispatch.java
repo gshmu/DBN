@@ -4,6 +4,7 @@ import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.common.routine.GuardedRunnable;
 import com.dci.intellij.dbn.common.routine.ThrowableCallable;
 import com.dci.intellij.dbn.common.util.Commons;
+import com.dci.intellij.dbn.common.util.Consumer;
 import com.intellij.openapi.Disposable;
 import com.intellij.openapi.application.Application;
 import com.intellij.openapi.application.ApplicationManager;
@@ -13,6 +14,7 @@ import com.intellij.util.Alarm;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.concurrent.atomic.AtomicReference;
+import java.util.function.Supplier;
 
 public final class Dispatch {
     private Dispatch() {}
@@ -43,6 +45,14 @@ public final class Dispatch {
         } else {
             return call(callable);
         }
+    }
+
+    public static <T> void background(Supplier<T> supplier, Consumer<T> consumer) {
+        Background.run(() -> {
+            T value = supplier.get();
+            run(() -> consumer.accept(value));
+        });
+
     }
 
 

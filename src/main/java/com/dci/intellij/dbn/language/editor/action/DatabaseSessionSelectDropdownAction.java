@@ -1,7 +1,6 @@
 package com.dci.intellij.dbn.language.editor.action;
 
 import com.dci.intellij.dbn.common.action.Lookups;
-import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.common.ui.misc.DBNComboBoxAction;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.ConnectionType;
@@ -21,6 +20,8 @@ import org.jetbrains.annotations.NotNull;
 import javax.swing.*;
 import java.util.List;
 
+import static com.dci.intellij.dbn.common.dispose.Checks.isValid;
+
 public class DatabaseSessionSelectDropdownAction extends DBNComboBoxAction implements DumbAware {
     private static final String NAME = "Session";
 
@@ -32,7 +33,7 @@ public class DatabaseSessionSelectDropdownAction extends DBNComboBoxAction imple
         VirtualFile virtualFile = Lookups.getVirtualFile(component);
         if (virtualFile != null) {
             ConnectionHandler connection = FileConnectionContextManager.getInstance(project).getConnection(virtualFile);
-            if (Failsafe.check(connection) && !connection.isVirtual()) {
+            if (isValid(connection) && !connection.isVirtual()) {
                 DatabaseSessionBundle sessionBundle = connection.getSessionBundle();
 
                 if (isDebugConsole(virtualFile)) {

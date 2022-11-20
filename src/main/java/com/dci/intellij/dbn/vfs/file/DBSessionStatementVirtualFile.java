@@ -21,12 +21,8 @@ import com.intellij.util.LocalTimeCounter;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import javax.swing.Icon;
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
+import javax.swing.*;
+import java.io.*;
 import java.nio.charset.Charset;
 
 public class DBSessionStatementVirtualFile extends DBVirtualFileImpl implements DBParseableVirtualFile {
@@ -37,12 +33,10 @@ public class DBSessionStatementVirtualFile extends DBVirtualFileImpl implements 
 
 
     public DBSessionStatementVirtualFile(SessionBrowser sessionBrowser, String content) {
-        super(sessionBrowser.getProject());
+        super(sessionBrowser.getProject(), sessionBrowser.getConnection().getName());
         this.sessionBrowser = WeakRef.of(sessionBrowser);
         this.content = content;
-        ConnectionHandler connection = Failsafe.nn(sessionBrowser.getConnection());
-        name = connection.getName();
-        setCharset(connection.getSettings().getDetailSettings().getCharset());
+        setCharset(sessionBrowser.getConnection().getSettings().getDetailSettings().getCharset());
         //putUserData(PARSE_ROOT_ID_KEY, "subquery");
     }
 

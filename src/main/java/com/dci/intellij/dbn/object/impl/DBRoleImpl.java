@@ -19,6 +19,7 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Objects;
 
 import static com.dci.intellij.dbn.object.common.property.DBObjectProperty.ROOT_OBJECT;
 import static com.dci.intellij.dbn.object.type.DBObjectRelationType.ROLE_PRIVILEGE;
@@ -98,12 +99,12 @@ public class DBRoleImpl extends DBObjectImpl<DBRoleMetadata> implements DBRole {
     @Override
     public boolean hasPrivilege(DBPrivilege privilege) {
         for (DBGrantedPrivilege rolePrivilege : getPrivileges()) {
-            if (rolePrivilege.getPrivilege().equals(privilege)) {
+            if (Objects.equals(rolePrivilege.getPrivilege(), privilege)) {
                 return true;
             }
         }
         for (DBGrantedRole inheritedRole : getGrantedRoles()) {
-            if (inheritedRole.getRole().hasPrivilege(privilege)) {
+            if (inheritedRole.hasPrivilege(privilege)) {
                 return true;
             }
         }
@@ -113,7 +114,7 @@ public class DBRoleImpl extends DBObjectImpl<DBRoleMetadata> implements DBRole {
     @Override
     public boolean hasRole(DBRole role) {
         for (DBGrantedRole inheritedRole : getGrantedRoles()) {
-            if (inheritedRole.getRole().equals(role)) {
+            if (Objects.equals(inheritedRole.getRole(), role)) {
                 return true;
             }
         }

@@ -1,7 +1,7 @@
 package com.dci.intellij.dbn.language.common.psi;
 
 import com.dci.intellij.dbn.common.consumer.SetCollector;
-import com.dci.intellij.dbn.common.dispose.Failsafe;
+import com.dci.intellij.dbn.common.dispose.Checks;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.language.common.TokenType;
 import com.dci.intellij.dbn.language.common.element.ElementType;
@@ -147,7 +147,7 @@ public abstract class LeafPsiElement<T extends LeafElementType> extends BasePsiE
     }
 
     private static void collectObject(Consumer<DBObject> objects, DBObject object) {
-        if (Failsafe.check(object)) {
+        if (Checks.isValid(object)) {
             objects.accept(object);
         }
     }

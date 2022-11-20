@@ -26,15 +26,14 @@ import java.io.*;
 import java.nio.charset.Charset;
 
 public class DBDatasetFilterVirtualFile extends DBVirtualFileImpl implements DBParseableVirtualFile {
-    private final DBObjectRef<DBDataset> datasetRef;
+    private final DBObjectRef<DBDataset> dataset;
     private long modificationTimestamp = LocalTimeCounter.currentTime();
     private CharSequence content = "";
 
     public DBDatasetFilterVirtualFile(DBDataset dataset, String content) {
-        super(dataset.getProject());
-        this.datasetRef = DBObjectRef.of(dataset);
+        super(dataset.getProject(), dataset.getName());
+        this.dataset = DBObjectRef.of(dataset);
         this.content = content;
-        name = dataset.getName();
         ConnectionHandler connection = Failsafe.nn(getConnection());
         setCharset(connection.getSettings().getDetailSettings().getCharset());
         putUserData(PARSE_ROOT_ID_KEY, "subquery");
@@ -48,7 +47,7 @@ public class DBDatasetFilterVirtualFile extends DBVirtualFileImpl implements DBP
     }
 
     public DBDataset getDataset() {
-        return DBObjectRef.get(datasetRef);
+        return DBObjectRef.get(dataset);
     }
 
     @Override
@@ -60,13 +59,13 @@ public class DBDatasetFilterVirtualFile extends DBVirtualFileImpl implements DBP
     @NotNull
     @Override
     public ConnectionId getConnectionId() {
-        return datasetRef.getConnectionId();
+        return dataset.getConnectionId();
     }
 
     @Override
     @NotNull
     public ConnectionHandler getConnection() {
-        return Failsafe.nn(datasetRef.getConnection());
+        return Failsafe.nn(dataset.getConnection());
     }
 
     @Nullable

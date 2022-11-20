@@ -35,7 +35,7 @@ public final class SafeDisposer {
     public static void register(@Nullable Disposable parent, @NotNull Disposable disposable) {
         if (parent == null) return;
 
-        if (Failsafe.check(parent)) {
+        if (Checks.isValid(parent)) {
             Disposer.register(parent, disposable);
         } else {
             // dispose if parent already disposed
@@ -56,7 +56,7 @@ public final class SafeDisposer {
 
     public static void dispose(@Nullable Disposable disposable, boolean registered) {
         try {
-            if (Failsafe.invalid(disposable)) return;
+            if (Checks.isNotValid(disposable)) return;
 
             if (isDispatchCandidate(disposable) && !isDispatchThread()) {
                 Dispatch.run(() -> dispose(disposable, registered));

@@ -79,7 +79,7 @@ public class DBConsoleVirtualFile extends DBObjectVirtualFile<DBConsole> impleme
     }
 
     public void setName(String name) {
-        this.name = name;
+        super.setName(name);
         this.path = null;
         this.url = null;
    }
@@ -152,7 +152,7 @@ public class DBConsoleVirtualFile extends DBObjectVirtualFile<DBConsole> impleme
         return false;
     }
 
-    public boolean isDefault() {return Objects.equals(name, getConnection().getName());}
+    public boolean isDefault() {return Objects.equals(getName(), getConnection().getName());}
 
     @Override
     public VirtualFile getParent() {
@@ -220,7 +220,7 @@ public class DBConsoleVirtualFile extends DBObjectVirtualFile<DBConsole> impleme
 
     @Override
     public int compareTo(@NotNull DBConsoleVirtualFile o) {
-        return name.compareTo(o.name);
+        return getName().compareTo(o.getName());
     }
 
     @Override

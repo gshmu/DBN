@@ -4,6 +4,8 @@ import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.intellij.openapi.Disposable;
 import com.intellij.openapi.util.Disposer;
 
+import static com.dci.intellij.dbn.common.dispose.Checks.isValid;
+
 public abstract class DisposableLatentImpl<T extends Disposable, P extends Disposable> extends BasicLatentImpl<T> {
     private final P parent;
 
@@ -14,7 +16,7 @@ public abstract class DisposableLatentImpl<T extends Disposable, P extends Dispo
 
     @Override
     protected boolean shouldLoad(){
-        return Failsafe.check(parent) && super.shouldLoad();
+        return isValid(parent) && super.shouldLoad();
     }
 
     @Override

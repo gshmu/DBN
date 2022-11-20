@@ -14,14 +14,15 @@ import com.intellij.util.messages.Topic;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import static com.dci.intellij.dbn.common.dispose.Checks.isNotValid;
+
 
 public final class ProjectEvents {
     private ProjectEvents() {}
 
     public static <T> void subscribe(@NotNull Project project, @Nullable Disposable parentDisposable, Topic<T> topic, T handler) {
         try {
-            Failsafe.nd(project);
-            if (project.isDefault()) return;
+            if (isNotValid(project) || project.isDefault()) return;
 
             MessageBus messageBus = messageBus(project);
             MessageBusConnection connection = parentDisposable == null ?
@@ -47,6 +48,7 @@ public final class ProjectEvents {
 
     public static <T> void notify(@Nullable Project project, Topic<T> topic, ParametricRunnable.Basic<T> callback) {
         try {
+            if (isNotValid(project) || project.isDefault()) return;
             T publisher = publisher(project, topic);
             callback.run(publisher);
         } catch (ProcessCanceledException | UnsupportedOperationException ignore){}

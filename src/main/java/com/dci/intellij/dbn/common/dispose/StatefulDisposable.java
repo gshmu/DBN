@@ -26,7 +26,7 @@ public interface StatefulDisposable extends com.intellij.openapi.Disposable {
         }
 
         public Base(@NotNull Disposable parent) {
-            if (Failsafe.check(parent)) {
+            if (Checks.isValid(parent)) {
                 Disposer.register(parent, this);
             }
         }

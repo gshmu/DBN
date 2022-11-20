@@ -1,7 +1,6 @@
 package com.dci.intellij.dbn.execution.statement.result.action;
 
 import com.dci.intellij.dbn.common.Icons;
-import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.common.notification.NotificationGroup;
 import com.dci.intellij.dbn.common.notification.NotificationSupport;
 import com.dci.intellij.dbn.common.thread.Progress;
@@ -17,6 +16,8 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.sql.SQLException;
+
+import static com.dci.intellij.dbn.common.dispose.Checks.isValid;
 
 public class ExecutionResultVariablesDialogAction extends AbstractExecutionResultAction {
     public ExecutionResultVariablesDialogAction() {
@@ -47,9 +48,9 @@ public class ExecutionResultVariablesDialogAction extends AbstractExecutionResul
     @Override
     protected void update(@NotNull AnActionEvent e, @NotNull Presentation presentation, @NotNull Project project, @Nullable StatementExecutionCursorResult executionResult) {
         boolean visible = false;
-        if (Failsafe.check(executionResult)) {
+        if (isValid(executionResult)) {
             StatementExecutionCursorProcessor executionProcessor = executionResult.getExecutionProcessor();
-            if (Failsafe.check(executionProcessor)) {
+            if (isValid(executionProcessor)) {
                 StatementExecutionVariablesBundle executionVariables = executionProcessor.getExecutionVariables();
                 visible = executionVariables != null && executionVariables.getVariables().size() > 0;
             }

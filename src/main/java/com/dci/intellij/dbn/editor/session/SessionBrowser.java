@@ -1,6 +1,7 @@
 package com.dci.intellij.dbn.editor.session;
 
 import com.dci.intellij.dbn.common.action.DataKeys;
+import com.dci.intellij.dbn.common.dispose.Checks;
 import com.dci.intellij.dbn.common.dispose.DisposableUserDataHolderBase;
 import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.common.dispose.SafeDisposer;
@@ -151,7 +152,7 @@ public class SessionBrowser extends DisposableUserDataHolderBase implements File
     }
 
     void refreshLoadTimestamp() {
-        if (Failsafe.check(browserForm)) {
+        if (Checks.isValid(browserForm)) {
             browserForm.refreshLoadTimestamp();
         }
     }

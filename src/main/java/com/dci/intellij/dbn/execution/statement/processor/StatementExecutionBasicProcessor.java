@@ -1,6 +1,7 @@
 package com.dci.intellij.dbn.execution.statement.processor;
 
 import com.dci.intellij.dbn.common.dispose.AlreadyDisposedException;
+import com.dci.intellij.dbn.common.dispose.Checks;
 import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.common.dispose.StatefulDisposable;
 import com.dci.intellij.dbn.common.editor.BasicTextEditor;
@@ -263,7 +264,7 @@ public class StatementExecutionBasicProcessor extends StatefulDisposable.Base im
     @Nullable
     @Override
     public StatementExecutionResult getExecutionResult() {
-        if (!Failsafe.check(executionResult)) {
+        if (!Checks.isValid(executionResult)) {
             executionResult = null;
         }
         return executionResult;

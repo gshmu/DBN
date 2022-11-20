@@ -1,7 +1,7 @@
 package com.dci.intellij.dbn.vfs.file;
 
 import com.dci.intellij.dbn.common.DevNullStreams;
-import com.dci.intellij.dbn.common.dispose.Failsafe;
+import com.dci.intellij.dbn.common.dispose.Checks;
 import com.dci.intellij.dbn.common.util.Naming;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.ConnectionId;
@@ -30,9 +30,8 @@ public class DBObjectListVirtualFile<T extends DBObjectList> extends DBVirtualFi
     private final WeakRef<T> objectList;
 
     public DBObjectListVirtualFile(T objectList) {
-        super(objectList.getProject());
+        super(objectList.getProject(), Naming.capitalize(objectList.getName()));
         this.objectList = WeakRef.of(objectList);
-        this.name = Naming.capitalize(objectList.getName());
     }
 
     @NotNull
@@ -76,7 +75,7 @@ public class DBObjectListVirtualFile<T extends DBObjectList> extends DBVirtualFi
     @NotNull
     @Override
     public String getPresentableName() {
-        return name;
+        return getName();
     }
 
     @Override
@@ -98,7 +97,7 @@ public class DBObjectListVirtualFile<T extends DBObjectList> extends DBVirtualFi
     @Override
     @Nullable
     public VirtualFile getParent() {
-        if (Failsafe.check(objectList.get())) {
+        if (Checks.isValid(objectList.get())) {
             DatabaseEntity parent = getObjectList().getParentEntity();
             if (parent instanceof DBObject) {
                 DBObject parentObject = (DBObject) parent;
@@ -116,7 +115,7 @@ public class DBObjectListVirtualFile<T extends DBObjectList> extends DBVirtualFi
 
     @Override
     public boolean isValid() {
-        return super.isValid() && Failsafe.check(objectList.get());
+        return super.isValid() && Checks.isValid(objectList.get());
     }
 
     @Override

@@ -1,7 +1,7 @@
 package com.dci.intellij.dbn.editor.data.action;
 
 import com.dci.intellij.dbn.common.Icons;
-import com.dci.intellij.dbn.common.dispose.Failsafe;
+import com.dci.intellij.dbn.common.dispose.Checks;
 import com.dci.intellij.dbn.editor.data.DatasetEditor;
 import com.dci.intellij.dbn.editor.data.options.DataEditorSettings;
 import com.intellij.openapi.actionSystem.AnActionEvent;
@@ -30,7 +30,7 @@ public class RecordsFetchNextAction extends AbstractDataEditorAction {
         presentation.setText("Fetch Next " + settings.getGeneralSettings().getFetchBlockSize().value() + " Records");
 
         boolean enabled =
-                Failsafe.check(datasetEditor) &&
+                Checks.isValid(datasetEditor) &&
                         datasetEditor.isLoaded() &&
                         datasetEditor.getConnection().isConnected() &&
                         !datasetEditor.isInserting() &&

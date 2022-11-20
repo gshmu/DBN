@@ -1,9 +1,10 @@
 package com.dci.intellij.dbn.common.ui.util;
 
 import com.dci.intellij.dbn.common.util.Consumer;
+import com.intellij.openapi.progress.ProcessCanceledException;
 import org.jetbrains.annotations.Nullable;
 
-import javax.swing.JComponent;
+import javax.swing.*;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
@@ -131,9 +132,11 @@ public class Mouse {
         }
 
         private void consume(MouseEvent e, @Nullable Consumer<MouseEvent> consumer) {
-            if (consumer != null) {
+            if (consumer == null) return;
+
+            try {
                 consumer.accept(e);
-            }
+            } catch (ProcessCanceledException ignore) {}
         }
     }
 }

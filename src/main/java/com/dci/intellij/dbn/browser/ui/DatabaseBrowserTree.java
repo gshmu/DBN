@@ -4,7 +4,7 @@ import com.dci.intellij.dbn.browser.DatabaseBrowserManager;
 import com.dci.intellij.dbn.browser.DatabaseBrowserUtils;
 import com.dci.intellij.dbn.browser.TreeNavigationHistory;
 import com.dci.intellij.dbn.browser.model.*;
-import com.dci.intellij.dbn.common.dispose.Failsafe;
+import com.dci.intellij.dbn.common.dispose.Checks;
 import com.dci.intellij.dbn.common.event.ProjectEvents;
 import com.dci.intellij.dbn.common.filter.Filter;
 import com.dci.intellij.dbn.common.thread.Background;
@@ -44,6 +44,8 @@ import javax.swing.event.TreeSelectionListener;
 import javax.swing.tree.TreePath;
 import java.awt.*;
 import java.awt.event.*;
+
+import static com.dci.intellij.dbn.common.dispose.Checks.isNotValid;
 
 @Getter
 public final class DatabaseBrowserTree extends DBNTree {
@@ -119,7 +121,7 @@ public final class DatabaseBrowserTree extends DBNTree {
                         if (treePath != null) {
                             for (Object object : treePath.getPath()) {
                                 BrowserTreeNode treeNode = (BrowserTreeNode) object;
-                                if (!Failsafe.check(treeNode)) {
+                                if (isNotValid(treeNode)) {
                                     this.targetSelection = null;
                                     return;
                                 }
@@ -235,6 +237,8 @@ public final class DatabaseBrowserTree extends DBNTree {
         if (path == null) return;
 
         Object lastPathEntity = path.getLastPathComponent();
+        if (isNotValid(lastPathEntity)) return;
+
         if (lastPathEntity instanceof DBObject) {
             DBObject object = (DBObject) lastPathEntity;
             DatabaseFileSystem databaseFileSystem = DatabaseFileSystem.getInstance();
@@ -300,7 +304,7 @@ public final class DatabaseBrowserTree extends DBNTree {
         return new TreeSelectionListener() {
             @Override
             public void valueChanged(TreeSelectionEvent e) {
-                if (Failsafe.check(this) && listenersEnabled) {
+                if (Checks.isValid(this) && listenersEnabled) {
                     Object object = e.getPath().getLastPathComponent();
                     if (object instanceof BrowserTreeNode) {
                         BrowserTreeNode treeNode = (BrowserTreeNode) object;

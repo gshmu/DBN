@@ -6,25 +6,29 @@ import com.dci.intellij.dbn.common.options.PersistentConfiguration;
 import com.dci.intellij.dbn.common.options.setting.SettingsSupport;
 import com.dci.intellij.dbn.common.project.ProjectRef;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
-import com.dci.intellij.dbn.connection.ConnectionRef;
 import com.dci.intellij.dbn.connection.ConnectionId;
+import com.dci.intellij.dbn.connection.ConnectionRef;
 import com.dci.intellij.dbn.connection.SchemaId;
 import com.dci.intellij.dbn.connection.context.ConnectionProvider;
 import com.dci.intellij.dbn.execution.common.options.ExecutionEngineSettings;
 import com.dci.intellij.dbn.execution.common.options.ExecutionTimeoutSettings;
 import com.intellij.openapi.project.Project;
+import lombok.Getter;
+import lombok.Setter;
 import org.jdom.Element;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+@Getter
+@Setter
 public abstract class ExecutionInput extends StatefulDisposable.Base implements StatefulDisposable, ConnectionProvider, PersistentConfiguration {
     private final ExecutionTimeout executionTimeout;
     private final ExecutionTimeout debugExecutionTimeout;
     private final ExecutionTarget executionTarget;
 
     private final ProjectRef project;
-    protected ConnectionRef targetConnection;
-    protected SchemaId targetSchemaId;
+    private ConnectionRef targetConnection;
+    private SchemaId targetSchemaId;
 
     private final Latent<ExecutionContext> executionContext = Latent.basic(() -> createExecutionContext());
 
@@ -56,15 +60,6 @@ public abstract class ExecutionInput extends StatefulDisposable.Base implements 
     @NotNull
     public final Project getProject() {
         return project.ensure();
-    }
-
-    @Nullable
-    public final SchemaId getTargetSchemaId() {
-        return targetSchemaId;
-    }
-
-    public final void setTargetSchemaId(@Nullable SchemaId schema){
-        targetSchemaId = schema;
     }
 
     @Nullable
@@ -121,5 +116,10 @@ public abstract class ExecutionInput extends StatefulDisposable.Base implements 
     @Override
     protected void disposeInner() {
         nullify();
+    }
+
+    public String getDebuggerVersion() {
+        ConnectionHandler connection = getConnection();
+        return connection == null ? "Unknown" :connection.getDebuggerVersion();
     }
 }

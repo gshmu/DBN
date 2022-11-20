@@ -1,5 +1,6 @@
 package com.dci.intellij.dbn.editor.session.ui.table;
 
+import com.dci.intellij.dbn.common.dispose.Checks;
 import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.common.ui.table.DBNTable;
 import com.dci.intellij.dbn.common.ui.util.Borders;
@@ -26,7 +27,7 @@ public class SessionBrowserTableCellRenderer extends BasicTableCellRenderer {
         SessionBrowserModelCell cell = (SessionBrowserModelCell) value;
         SessionBrowserTable sessionBrowserTable = (SessionBrowserTable) table;
 
-        if (Failsafe.check(cell, sessionBrowserTable)) {
+        if (Checks.allValid(cell, sessionBrowserTable)) {
             SessionBrowserModelRow row = cell.getRow();
             boolean isLoading = sessionBrowserTable.isLoading();
 

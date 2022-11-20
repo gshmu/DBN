@@ -1,7 +1,6 @@
 package com.dci.intellij.dbn.code.common.intention;
 
 import com.dci.intellij.dbn.common.Icons;
-import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.connection.*;
 import com.dci.intellij.dbn.connection.session.DatabaseSession;
 import com.dci.intellij.dbn.language.common.DBLanguagePsiFile;
@@ -13,6 +12,8 @@ import com.intellij.util.IncorrectOperationException;
 import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
+
+import static com.dci.intellij.dbn.common.dispose.Checks.isValid;
 
 public class DatabaseConnectIntentionAction extends GenericIntentionAction implements LowPriorityAction{
     @Override
@@ -32,7 +33,7 @@ public class DatabaseConnectIntentionAction extends GenericIntentionAction imple
         if (psiFile instanceof DBLanguagePsiFile) {
             DBLanguagePsiFile dbLanguagePsiFile = (DBLanguagePsiFile) psiFile;
             ConnectionHandler connection = dbLanguagePsiFile.getConnection();
-            if (Failsafe.check(connection) && !connection.isVirtual() && !connection.canConnect() && !connection.isConnected()) {
+            if (isValid(connection) && !connection.isVirtual() && !connection.canConnect() && !connection.isConnected()) {
                 return true;
             }
         }
@@ -44,7 +45,7 @@ public class DatabaseConnectIntentionAction extends GenericIntentionAction imple
         if (psiFile instanceof DBLanguagePsiFile) {
             DBLanguagePsiFile dbLanguagePsiFile = (DBLanguagePsiFile) psiFile;
             ConnectionHandler connection = dbLanguagePsiFile.getConnection();
-            if (Failsafe.check(connection) && !connection.isVirtual()) {
+            if (isValid(connection) && !connection.isVirtual()) {
                 connection.getInstructions().setAllowAutoConnect(true);
 
                 DatabaseSession databaseSession = dbLanguagePsiFile.getSession();

@@ -5,4 +5,6 @@ public interface DBGrantedRole extends DBCastedObject{
     DBRole getRole();
     boolean isAdminOption();
     boolean isDefaultRole();
+
+    boolean hasPrivilege(DBPrivilege privilege);
 }

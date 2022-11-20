@@ -1,7 +1,6 @@
 package com.dci.intellij.dbn.editor.data.action;
 
 import com.dci.intellij.dbn.common.Icons;
-import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.common.environment.EnvironmentManager;
 import com.dci.intellij.dbn.common.util.Messages;
 import com.dci.intellij.dbn.editor.DBContentType;
@@ -11,6 +10,8 @@ import com.intellij.openapi.actionSystem.Presentation;
 import com.intellij.openapi.project.Project;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+
+import static com.dci.intellij.dbn.common.dispose.Checks.isValid;
 
 public class DataImportAction extends AbstractDataEditorAction {
 
@@ -26,7 +27,7 @@ public class DataImportAction extends AbstractDataEditorAction {
     @Override
     protected void update(@NotNull AnActionEvent e, @NotNull Presentation presentation, @NotNull Project project, @Nullable DatasetEditor datasetEditor) {
         presentation.setText("Import Data");
-        if (Failsafe.check(datasetEditor)) {
+        if (isValid(datasetEditor)) {
             EnvironmentManager environmentManager = EnvironmentManager.getInstance(project);
             boolean isEnvironmentReadonlyData = environmentManager.isReadonly(datasetEditor.getDataset(), DBContentType.DATA);
             presentation.setVisible(!isEnvironmentReadonlyData && !datasetEditor.isReadonlyData());

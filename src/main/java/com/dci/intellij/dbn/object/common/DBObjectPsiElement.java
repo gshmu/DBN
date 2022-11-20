@@ -1,6 +1,6 @@
 package com.dci.intellij.dbn.object.common;
 
-import com.dci.intellij.dbn.common.dispose.Failsafe;
+import com.dci.intellij.dbn.common.dispose.Checks;
 import com.dci.intellij.dbn.language.common.psi.EmptySearchScope;
 import com.dci.intellij.dbn.language.sql.SQLLanguage;
 import com.dci.intellij.dbn.object.lookup.DBObjectRef;
@@ -152,7 +152,7 @@ public class DBObjectPsiElement implements PsiNamedElement, NavigationItem {
     @Override
     public boolean isValid() {
         DBObject object = getObject();
-        return Failsafe.check(object) && Failsafe.check(object.getParentObject());
+        return Checks.isValid(object) && Checks.isValid(object.getParentObject());
     }
 
     @Override

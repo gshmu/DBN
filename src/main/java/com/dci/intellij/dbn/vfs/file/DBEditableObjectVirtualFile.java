@@ -38,9 +38,9 @@ public class DBEditableObjectVirtualFile extends DBObjectVirtualFile<DBSchemaObj
     private transient EditorProviderId selectedEditorProviderId;
     private SessionId databaseSessionId;
 
-    public DBEditableObjectVirtualFile(Project project, DBObjectRef objectRef) {
-        super(project, objectRef);
-        if (objectRef.getObjectType() == DBObjectType.TABLE) {
+    public DBEditableObjectVirtualFile(Project project, DBObjectRef object) {
+        super(project, object);
+        if (object.getObjectType() == DBObjectType.TABLE) {
             databaseSessionId = SessionId.MAIN;
         }
     }

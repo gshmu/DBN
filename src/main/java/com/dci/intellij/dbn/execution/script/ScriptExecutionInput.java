@@ -68,11 +68,11 @@ public class ScriptExecutionInput extends RemoteExecutionInput {
     }
 
     public SchemaId getSchema() {
-        return targetSchemaId;
+        return getTargetSchemaId();
     }
 
     public void setSchema(SchemaId schema) {
-        this.targetSchemaId = schema;
+        setTargetSchemaId(schema);
     }
 
     public boolean isClearOutput() {

@@ -13,6 +13,8 @@ import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
 
+import static com.dci.intellij.dbn.common.dispose.Checks.isValid;
+
 public abstract class BasicConfiguration<P extends Configuration, E extends ConfigurationEditorForm>
         extends AbstractConfiguration<P, E> {
 
@@ -97,7 +99,7 @@ public abstract class BasicConfiguration<P extends Configuration, E extends Conf
     @Override
     public void apply() throws ConfigurationException {
         E editorForm = getSettingsEditor();
-        if (Failsafe.check(editorForm)) {
+        if (isValid(editorForm)) {
             editorForm.applyFormChanges();
         }
         modified = false;

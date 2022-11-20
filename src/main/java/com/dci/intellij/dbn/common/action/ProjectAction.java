@@ -11,6 +11,8 @@ import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
 
+import static com.dci.intellij.dbn.common.dispose.Checks.isValid;
+
 public abstract class ProjectAction extends AnAction {
 
     public ProjectAction() {
@@ -48,8 +50,8 @@ public abstract class ProjectAction extends AnAction {
     public final void update(@NotNull AnActionEvent e) {
         try {
             Project project = Lookups.getProject(e);
-            Failsafe.nd(project);
-            update(e, project);
+            if (isValid(project)) update(e, project);
+
         } catch (ProcessCanceledException ignore){}
     }
 

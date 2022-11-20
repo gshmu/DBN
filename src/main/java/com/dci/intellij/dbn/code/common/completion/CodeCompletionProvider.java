@@ -1,7 +1,6 @@
 package com.dci.intellij.dbn.code.common.completion;
 
 import com.dci.intellij.dbn.code.common.completion.options.filter.CodeCompletionFilterSettings;
-import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.common.util.Consumer;
 import com.dci.intellij.dbn.common.util.Naming;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
@@ -35,6 +34,8 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.Collection;
 import java.util.Set;
+
+import static com.dci.intellij.dbn.common.dispose.Checks.isValid;
 
 public class CodeCompletionProvider extends CompletionProvider<CompletionParameters> {
     public static final CodeCompletionProvider INSTANCE = new CodeCompletionProvider();
@@ -309,7 +310,7 @@ public class CodeCompletionProvider extends CompletionProvider<CompletionParamet
         PsiElement sourceElement = context.getElementAtCaret();
         ConnectionHandler connection = context.getConnection();
 
-        if (Failsafe.check(connection) && !connection.isVirtual()) {
+        if (isValid(connection) && !connection.isVirtual()) {
             DBObjectBundle objectBundle = connection.getObjectBundle();
             if (sourceElement.getParent() instanceof QualifiedIdentifierPsiElement && sourceElement.getParent().getFirstChild() != sourceElement) {
                 QualifiedIdentifierPsiElement qualifiedIdentifierPsiElement = (QualifiedIdentifierPsiElement) sourceElement.getOriginalElement().getParent();

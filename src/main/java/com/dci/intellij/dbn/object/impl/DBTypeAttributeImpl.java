@@ -16,6 +16,7 @@ import org.jetbrains.annotations.Nullable;
 import java.sql.SQLException;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Objects;
 
 public class DBTypeAttributeImpl extends DBObjectImpl<DBTypeAttributeMetadata> implements DBTypeAttribute {
     private DBDataType dataType;
@@ -91,7 +92,7 @@ public class DBTypeAttributeImpl extends DBObjectImpl<DBTypeAttributeMetadata> i
     public int compareTo(@NotNull Object o) {
         if (o instanceof DBTypeAttribute) {
             DBTypeAttribute typeAttribute = (DBTypeAttribute) o;
-            if (getType().equals(typeAttribute.getType())) {
+            if (Objects.equals(getType(), typeAttribute.getType())) {
                 return position - typeAttribute.getPosition();
             }
         }
