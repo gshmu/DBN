@@ -2,7 +2,7 @@
     <name>Database Navigator</name>
     <id>DBN</id>
     <!--3050 -->
-    <version>3.3.2480.0</version>
+    <version>3.3.2571.0</version>
     <category>Database</category>
     <depends>com.intellij.modules.platform</depends>
     <depends>com.intellij.modules.lang</depends>
@@ -31,10 +31,11 @@
     ]]></description>
     <change-notes><![CDATA[
         <ul>
-            <li><b>3.3.2480</b>
+            <li><b>3.3.2571</b>
             <ul>
                 <li>Architectural changes (components - move to services)
-                <li>Bug fixes
+                <li>Resources allocation redesign (background operations optimisation)
+                <li>Bug fixes and performance improvements
             </ul>
             <li><b>3.3.2160</b>
             <ul>
