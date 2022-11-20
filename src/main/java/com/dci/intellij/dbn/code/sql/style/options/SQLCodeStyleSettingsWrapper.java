@@ -1,5 +1,6 @@
 package com.dci.intellij.dbn.code.sql.style.options;
 
+import com.dci.intellij.dbn.language.sql.SQLLanguage;
 import com.intellij.openapi.util.InvalidDataException;
 import com.intellij.openapi.util.WriteExternalException;
 import com.intellij.psi.codeStyle.CodeStyleSettings;
@@ -15,7 +16,7 @@ public class SQLCodeStyleSettingsWrapper extends CustomCodeStyleSettings {
     private final SQLCodeStyleSettings settings;
 
     SQLCodeStyleSettingsWrapper(CodeStyleSettings container) {
-        super("SQLCodeStyleSettings", container);
+        super(SQLLanguage.ID, container);
         settings = new SQLCodeStyleSettings(null);
     }
 

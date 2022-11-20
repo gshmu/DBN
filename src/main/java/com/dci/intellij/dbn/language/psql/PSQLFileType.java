@@ -19,7 +19,7 @@ public class PSQLFileType extends DBLanguageFileType {
     @Override
     @NotNull
     public String getName() {
-        return "DBN-PSQL";
+        return PSQLLanguage.ID;
     }
 
     @Override
