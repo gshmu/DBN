@@ -1,5 +1,6 @@
 package com.dci.intellij.dbn.code.psql.style.options;
 
+import com.dci.intellij.dbn.language.psql.PSQLLanguage;
 import com.intellij.openapi.util.InvalidDataException;
 import com.intellij.openapi.util.WriteExternalException;
 import com.intellij.psi.codeStyle.CodeStyleSettings;
@@ -15,7 +16,7 @@ public class PSQLCodeStyleSettingsWrapper extends CustomCodeStyleSettings {
     private final PSQLCodeStyleSettings settings;
 
     PSQLCodeStyleSettingsWrapper(CodeStyleSettings container) {
-        super("PSQLCodeStyleSettings", container);
+        super(PSQLLanguage.ID, container);
         settings = new PSQLCodeStyleSettings(null);
     }
 

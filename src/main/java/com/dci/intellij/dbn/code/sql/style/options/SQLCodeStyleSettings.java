@@ -5,6 +5,7 @@ import com.dci.intellij.dbn.code.common.style.options.CodeStyleFormattingSetting
 import com.dci.intellij.dbn.code.common.style.options.DBLCodeStyleSettings;
 import com.dci.intellij.dbn.code.sql.style.options.ui.SQLCodeStyleSettingsEditorForm;
 import com.dci.intellij.dbn.common.Icons;
+import com.dci.intellij.dbn.language.sql.SQLLanguage;
 import org.jetbrains.annotations.Nls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -41,7 +42,7 @@ public class SQLCodeStyleSettings extends DBLCodeStyleSettings<DBLCodeStyleSetti
 
     @Override
     protected String getElementName() {
-        return "DBN-SQL";
+        return SQLLanguage.ID;
     }
 
     /*********************************************************

@@ -13,6 +13,7 @@ import com.intellij.psi.tree.IFileElementType;
 import org.jetbrains.annotations.Nullable;
 
 public class PSQLLanguage extends DBLanguage<PSQLLanguageDialect> {
+    public static final String ID = "DBN-PSQL";
     public static final PSQLLanguage INSTANCE = new PSQLLanguage();
 
     @Override
@@ -39,7 +40,7 @@ public class PSQLLanguage extends DBLanguage<PSQLLanguageDialect> {
     }
 
     private PSQLLanguage() {
-        super("DBN-PSQL", "text/plsql");
+        super(ID, "text/plsql");
     }
 
     @Override

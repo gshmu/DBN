@@ -14,6 +14,7 @@ import com.intellij.psi.tree.IFileElementType;
 import org.jetbrains.annotations.Nullable;
 
 public class SQLLanguage extends DBLanguage<SQLLanguageDialect> {
+    public static final String ID = "DBN-SQL";
     public static final SQLLanguage INSTANCE = new SQLLanguage();
 
     @Override
@@ -42,7 +43,7 @@ public class SQLLanguage extends DBLanguage<SQLLanguageDialect> {
     }
 
     private SQLLanguage() {
-        super("DBN-SQL", "text/sql");
+        super(ID, "text/sql");
     }
 
 
