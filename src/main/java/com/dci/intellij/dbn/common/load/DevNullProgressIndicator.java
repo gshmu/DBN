@@ -1,5 +1,6 @@
 package com.dci.intellij.dbn.common.load;
 
+import com.dci.intellij.dbn.common.compatibility.Compatibility;
 import com.intellij.openapi.application.ModalityState;
 import com.intellij.openapi.progress.ProcessCanceledException;
 import com.intellij.openapi.progress.ProgressIndicator;
@@ -115,4 +116,13 @@ class DevNullProgressIndicator implements ProgressIndicator {
     public boolean isShowing() {
         return false;
     }
+
+    @Override
+    @Compatibility
+    public void startNonCancelableSection() {}
+
+    @Override
+    @Compatibility
+    public void finishNonCancelableSection() {}
+
 }
