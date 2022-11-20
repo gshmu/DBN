@@ -21,9 +21,8 @@ public class DBConnectionVirtualFile extends DBVirtualFileImpl {
     private final ConnectionRef connection;
 
     public DBConnectionVirtualFile(ConnectionHandler connection) {
-        super(connection.getProject());
+        super(connection.getProject(), connection.getName());
         this.connection = connection.ref();
-        this.name = connection.getName();
     }
 
     @NotNull

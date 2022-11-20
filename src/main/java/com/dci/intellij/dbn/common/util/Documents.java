@@ -38,6 +38,8 @@ import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
+import static com.dci.intellij.dbn.common.dispose.Checks.isNotValid;
+
 public class Documents {
     private static final Key<Boolean> FOLDING_STATE_KEY = Key.create("FOLDING_STATE_KEY");
     private static final Key<Long> LAST_ANNOTATION_REFRESH_KEY = Key.create("LAST_ANNOTATION_REFRESH");
@@ -200,16 +202,16 @@ public class Documents {
         Write.run(() -> {
             FileDocumentManager fileDocumentManager = FileDocumentManager.getInstance();
             VirtualFile file = fileDocumentManager.getFile(document);
-            if (file != null && file.isValid()) {
-                boolean isReadonly = !document.isWritable();
-                try {
-                    document.setReadOnly(false);
-                    document.setText(text);
-                } finally {
-                    document.setReadOnly(isReadonly);
-                }
+            if (isNotValid(file)) return;
 
+            boolean isReadonly = !document.isWritable();
+            try {
+                document.setReadOnly(false);
+                document.setText(text);
+            } finally {
+                document.setReadOnly(isReadonly);
             }
+
         });
     }
 

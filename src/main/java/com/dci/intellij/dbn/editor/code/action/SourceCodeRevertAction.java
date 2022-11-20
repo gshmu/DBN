@@ -1,7 +1,7 @@
 package com.dci.intellij.dbn.editor.code.action;
 
 import com.dci.intellij.dbn.common.Icons;
-import com.dci.intellij.dbn.common.dispose.Failsafe;
+import com.dci.intellij.dbn.common.dispose.Checks;
 import com.dci.intellij.dbn.common.environment.EnvironmentManager;
 import com.dci.intellij.dbn.common.option.ConfirmationOptionHandler;
 import com.dci.intellij.dbn.editor.code.SourceCodeEditor;
@@ -39,7 +39,7 @@ public class SourceCodeRevertAction extends AbstractCodeEditorAction {
     protected void update(@NotNull AnActionEvent e, @NotNull Project project, @Nullable SourceCodeEditor fileEditor, @Nullable DBSourceCodeVirtualFile sourceCodeFile) {
         Presentation presentation = e.getPresentation();
         presentation.setText("Revert Changes");
-        if (Failsafe.check(sourceCodeFile)) {
+        if (Checks.isValid(sourceCodeFile)) {
             EnvironmentManager environmentManager = EnvironmentManager.getInstance(project);
             boolean readonly = environmentManager.isReadonly(sourceCodeFile);
             presentation.setVisible(!readonly);

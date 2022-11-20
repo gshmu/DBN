@@ -1,7 +1,6 @@
 package com.dci.intellij.dbn.browser.model;
 
 import com.dci.intellij.dbn.browser.DatabaseBrowserUtils;
-import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.common.dispose.StatefulDisposable;
 import com.dci.intellij.dbn.common.event.ProjectEvents;
 import com.dci.intellij.dbn.common.load.LoadInProgressRegistry;
@@ -17,6 +16,8 @@ import javax.swing.tree.TreeModel;
 import javax.swing.tree.TreePath;
 import java.util.HashSet;
 import java.util.Set;
+
+import static com.dci.intellij.dbn.common.dispose.Checks.allValid;
 
 public abstract class BrowserTreeModel extends StatefulDisposable.Base implements TreeModel, StatefulDisposable {
 
@@ -55,7 +56,7 @@ public abstract class BrowserTreeModel extends StatefulDisposable.Base implement
     }
 
     public void notifyListeners(BrowserTreeNode treeNode, final TreeEventType eventType) {
-        if (Failsafe.check(this, treeNode)) {
+        if (allValid(this, treeNode)) {
             TreePath treePath = DatabaseBrowserUtils.createTreePath(treeNode);
             TreeUtil.notifyTreeModelListeners(this, treeModelListeners, treePath, eventType);
         }

@@ -1,6 +1,5 @@
 package com.dci.intellij.dbn.common.action;
 
-import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.actionSystem.Presentation;
 import com.intellij.openapi.project.DumbAware;
@@ -9,6 +8,8 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
+
+import static com.dci.intellij.dbn.common.dispose.Checks.isValid;
 
 public abstract class DumbAwareContextAction<T> extends DumbAwareProjectAction implements DumbAware {
 
@@ -27,7 +28,7 @@ public abstract class DumbAwareContextAction<T> extends DumbAwareProjectAction i
     @Override
     protected final void actionPerformed(@NotNull AnActionEvent e, @NotNull Project project) {
         T context = getTarget(e);
-        if (Failsafe.check(context)) {
+        if (isValid(context)) {
             actionPerformed(e, project, context);
         }
     }
@@ -35,7 +36,7 @@ public abstract class DumbAwareContextAction<T> extends DumbAwareProjectAction i
     @Override
     protected final void update(@NotNull AnActionEvent e, @NotNull Project project) {
         T target = getTarget(e);
-        boolean enabled = Failsafe.check(target);
+        boolean enabled = isValid(target);
 
         Presentation presentation = e.getPresentation();
         presentation.setEnabled(enabled);

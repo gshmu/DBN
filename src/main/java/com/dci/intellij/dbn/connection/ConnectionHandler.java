@@ -208,6 +208,8 @@ public interface ConnectionHandler extends StatefulDisposable, EnvironmentTypePr
 
     DatabaseCompatibility getCompatibility();
 
+    String getDebuggerVersion();
+
     default void resetCompatibilityMonitor() {
     }
 

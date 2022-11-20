@@ -35,6 +35,7 @@ import com.dci.intellij.dbn.editor.data.ui.DatasetEditorForm;
 import com.dci.intellij.dbn.editor.data.ui.table.DatasetEditorTable;
 import com.dci.intellij.dbn.object.DBDataset;
 import com.dci.intellij.dbn.object.lookup.DBObjectRef;
+import com.dci.intellij.dbn.vfs.DatabaseFileSystem;
 import com.dci.intellij.dbn.vfs.file.DBEditableObjectVirtualFile;
 import com.intellij.codeHighlighting.BackgroundEditorHighlighter;
 import com.intellij.ide.structureView.StructureViewBuilder;
@@ -669,6 +670,8 @@ public class DatasetEditor extends DisposableUserDataHolderBase implements
 
     @Override
     public String toString() {
+        DBEditableObjectVirtualFile databaseFile = this.databaseFile;
+        if (databaseFile == null) return DatabaseFileSystem.createObjectPath(dataset);
         return databaseFile.getPath();
     }
 

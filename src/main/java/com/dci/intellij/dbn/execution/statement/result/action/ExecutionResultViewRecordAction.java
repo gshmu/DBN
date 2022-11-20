@@ -1,7 +1,6 @@
 package com.dci.intellij.dbn.execution.statement.result.action;
 
 import com.dci.intellij.dbn.common.Icons;
-import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.data.grid.ui.table.resultSet.ResultSetTable;
 import com.dci.intellij.dbn.execution.statement.result.StatementExecutionCursorResult;
 import com.intellij.openapi.actionSystem.AnActionEvent;
@@ -9,6 +8,8 @@ import com.intellij.openapi.actionSystem.Presentation;
 import com.intellij.openapi.project.Project;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+
+import static com.dci.intellij.dbn.common.dispose.Checks.isValid;
 
 public class ExecutionResultViewRecordAction extends AbstractExecutionResultAction {
     public ExecutionResultViewRecordAction() {
@@ -26,9 +27,9 @@ public class ExecutionResultViewRecordAction extends AbstractExecutionResultActi
     @Override
     protected void update(@NotNull AnActionEvent e, @NotNull Presentation presentation, @NotNull Project project, @Nullable StatementExecutionCursorResult executionResult) {
         boolean enabled = false;
-        if (Failsafe.check(executionResult)) {
+        if (isValid(executionResult)) {
             ResultSetTable resultTable = executionResult.getResultTable();
-            if (Failsafe.check(resultTable)) {
+            if (isValid(resultTable)) {
                 enabled = resultTable.getSelectedColumn() > -1;
             }
         }

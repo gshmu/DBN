@@ -2,7 +2,7 @@ package com.dci.intellij.dbn.language.editor.action;
 
 import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.common.action.Lookups;
-import com.dci.intellij.dbn.common.dispose.Failsafe;
+import com.dci.intellij.dbn.common.dispose.Checks;
 import com.dci.intellij.dbn.common.ui.misc.DBNComboBoxAction;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.SchemaId;
@@ -45,7 +45,7 @@ public class SchemaSelectDropdownAction extends DBNComboBoxAction implements Dum
         if (virtualFile != null) {
             FileConnectionContextManager contextManager = FileConnectionContextManager.getInstance(project);
             ConnectionHandler activeConnection = contextManager.getConnection(virtualFile);
-            if (Failsafe.check(activeConnection) && !activeConnection.isVirtual()) {
+            if (Checks.isValid(activeConnection) && !activeConnection.isVirtual()) {
                 for (DBSchema schema : activeConnection.getObjectBundle().getSchemas()){
                     actionGroup.add(new SchemaSelectAction(schema));
                 }

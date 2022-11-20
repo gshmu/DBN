@@ -1,6 +1,5 @@
 package com.dci.intellij.dbn.debugger.common.config;
 
-import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.common.dispose.SafeDisposer;
 import com.dci.intellij.dbn.debugger.common.config.ui.DBProgramRunConfigurationEditorForm;
 import com.dci.intellij.dbn.execution.ExecutionInput;
@@ -9,6 +8,8 @@ import com.intellij.openapi.options.SettingsEditor;
 import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
+
+import static com.dci.intellij.dbn.common.dispose.Checks.isValid;
 
 public abstract class DBRunConfigEditor<T extends DBRunConfig, F extends DBProgramRunConfigurationEditorForm<T>, I extends ExecutionInput> extends SettingsEditor<T> {
     private T configuration;
@@ -25,7 +26,7 @@ public abstract class DBRunConfigEditor<T extends DBRunConfig, F extends DBProgr
     protected abstract F createConfigurationEditorForm();
 
     public F getConfigurationEditorForm(boolean create) {
-        if (create && !Failsafe.check(configurationEditorForm)) {
+        if (create && !isValid(configurationEditorForm)) {
             configurationEditorForm = createConfigurationEditorForm();
         }
         return configurationEditorForm;

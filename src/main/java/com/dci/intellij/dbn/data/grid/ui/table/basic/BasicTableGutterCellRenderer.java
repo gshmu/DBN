@@ -1,11 +1,12 @@
 package com.dci.intellij.dbn.data.grid.ui.table.basic;
 
 import com.dci.intellij.dbn.common.color.Colors;
-import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.common.ui.table.DBNTable;
 import com.dci.intellij.dbn.common.ui.table.DBNTableGutterRendererBase;
 
 import javax.swing.*;
+
+import static com.dci.intellij.dbn.common.dispose.Checks.isValid;
 
 public class BasicTableGutterCellRenderer extends DBNTableGutterRendererBase {
 
@@ -14,7 +15,7 @@ public class BasicTableGutterCellRenderer extends DBNTableGutterRendererBase {
         BasicTableGutter tableGutter = (BasicTableGutter) list;
 
         DBNTable table = tableGutter.getTable();
-        boolean isCaretRow = Failsafe.check(table) &&
+        boolean isCaretRow = isValid(table) &&
                 table.getCellSelectionEnabled() &&
                 table.getSelectedRow() == index &&
                 table.getSelectedRowCount() == 1;

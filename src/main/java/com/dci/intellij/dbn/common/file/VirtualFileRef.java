@@ -8,6 +8,8 @@ import lombok.EqualsAndHashCode;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import static com.dci.intellij.dbn.common.dispose.Checks.isValid;
+
 @EqualsAndHashCode
 public class VirtualFileRef{
     private final WeakRef<VirtualFile> file;
@@ -19,10 +21,7 @@ public class VirtualFileRef{
     @Nullable
     public VirtualFile get() {
         VirtualFile file = this.file.get();
-        if (file != null && file.isValid()) {
-            return file;
-        }
-        return null;
+        return isValid(file) ? file : null;
     }
 
     public static VirtualFileRef of(@NotNull VirtualFile file) {

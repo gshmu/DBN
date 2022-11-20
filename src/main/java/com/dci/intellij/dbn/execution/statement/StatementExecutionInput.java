@@ -6,7 +6,6 @@ import com.dci.intellij.dbn.common.thread.Read;
 import com.dci.intellij.dbn.common.util.Commons;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.ConnectionId;
-import com.dci.intellij.dbn.connection.ConnectionRef;
 import com.dci.intellij.dbn.connection.SchemaId;
 import com.dci.intellij.dbn.connection.session.DatabaseSession;
 import com.dci.intellij.dbn.database.DatabaseFeature;
@@ -82,13 +81,13 @@ public class StatementExecutionInput extends LocalExecutionInput {
         SchemaId currentSchema = executionProcessor.getTargetSchema();
         DatabaseSession targetSession = executionProcessor.getTargetSession();
 
-        this.targetConnection = ConnectionRef.of(connection);
-        this.targetSchemaId = currentSchema;
+        this.setTargetConnection(connection);
+        this.setTargetSchemaId(currentSchema);
         this.setTargetSession(targetSession);
         this.originalStatementText = originalStatementText;
         this.executableStatementText = executableStatementText;
 
-        if (connection != null && DatabaseFeature.DATABASE_LOGGING.isSupported(connection)) {
+        if (DatabaseFeature.DATABASE_LOGGING.isSupported(connection)) {
             getOptions().set(ExecutionOption.ENABLE_LOGGING, connection.isLoggingEnabled());
         }
     }
@@ -154,7 +153,7 @@ public class StatementExecutionInput extends LocalExecutionInput {
     @Override
     @Nullable
     public ConnectionHandler getConnection() {
-        return ConnectionRef.get(targetConnection);
+        return getTargetConnection();
     }
 
     @Override
@@ -180,7 +179,7 @@ public class StatementExecutionInput extends LocalExecutionInput {
     }
 
     public ConnectionId getConnectionId() {
-        return targetConnection == null ? null : targetConnection.getConnectionId();
+        return getTargetConnection() == null ? null : getTargetConnection().getConnectionId();
     }
 
     public String getStatementDescription() {

@@ -407,6 +407,10 @@ public class DatabaseDebuggerManager extends ProjectComponentBase implements Per
     };
 
     public String getDebuggerVersion(@NotNull ConnectionHandler connection) {
+        return loadDebuggerVersion(connection);
+    }
+
+    private String loadDebuggerVersion(@NotNull ConnectionHandler connection) {
         if (!DEBUGGING.isSupported(connection)) return "Unknown";
 
         try {

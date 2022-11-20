@@ -51,6 +51,7 @@ import java.util.*;
 import java.util.function.Consumer;
 
 import static com.dci.intellij.dbn.common.content.DynamicContentProperty.*;
+import static com.dci.intellij.dbn.common.dispose.Checks.isValid;
 import static com.dci.intellij.dbn.common.list.FilteredList.unwrap;
 import static com.dci.intellij.dbn.common.search.Search.binarySearch;
 import static com.dci.intellij.dbn.common.search.Search.comboSearch;
@@ -123,7 +124,7 @@ public class DBObjectListImpl<T extends DBObject> extends DynamicContentImpl<T> 
     @Nullable
     public Filter<T> getConfigFilter() {
         ConnectionHandler connection = this.getConnection();
-        if (Failsafe.check(connection) && !connection.isVirtual()) {
+        if (isValid(connection) && !connection.isVirtual()) {
             ConnectionFilterSettings filterSettings = connection.getSettings().getFilterSettings();
             return filterSettings.getNameFilter(objectType);
         }
@@ -301,7 +302,7 @@ public class DBObjectListImpl<T extends DBObject> extends DynamicContentImpl<T> 
         try {
             Project project = getProject();
             BrowserTreeNode treeParent = getParent();
-            if (!isInternal() && isTouched() && Failsafe.check(project) && treeParent.isTreeStructureLoaded()) {
+            if (!isInternal() && isTouched() && isValid(project) && treeParent.isTreeStructureLoaded()) {
                 ProjectEvents.notify(project,
                         BrowserTreeEventListener.TOPIC,
                         (listener) -> listener.nodeChanged(this, TreeEventType.STRUCTURE_CHANGED));

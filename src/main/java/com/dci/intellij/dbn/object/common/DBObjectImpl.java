@@ -14,6 +14,7 @@ import com.dci.intellij.dbn.common.consumer.ListCollector;
 import com.dci.intellij.dbn.common.content.DynamicContent;
 import com.dci.intellij.dbn.common.content.DynamicContentType;
 import com.dci.intellij.dbn.common.dispose.AlreadyDisposedException;
+import com.dci.intellij.dbn.common.dispose.Checks;
 import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.common.dispose.SafeDisposer;
 import com.dci.intellij.dbn.common.environment.EnvironmentType;
@@ -440,7 +441,7 @@ public abstract class DBObjectImpl<M extends DBObjectMetadata> extends BrowserTr
                 if (elements != null) {
                     for (DBObjectList<?> objectList : elements) {
                         CancellableConsumer.checkCancelled(consumer);
-                        if (!objectList.isInternal() && Failsafe.check(objectList)) {
+                        if (!objectList.isInternal() && Checks.isValid(objectList)) {
                             objectList.collectObjects(consumer);
                         }
                     }

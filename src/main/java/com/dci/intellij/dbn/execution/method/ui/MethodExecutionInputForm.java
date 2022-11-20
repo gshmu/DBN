@@ -1,13 +1,12 @@
 package com.dci.intellij.dbn.execution.method.ui;
 
 import com.dci.intellij.dbn.common.dispose.DisposableContainers;
-import com.dci.intellij.dbn.common.ui.util.Borders;
+import com.dci.intellij.dbn.common.thread.Dispatch;
+import com.dci.intellij.dbn.common.ui.component.DBNComponent;
 import com.dci.intellij.dbn.common.ui.form.DBNFormBase;
 import com.dci.intellij.dbn.common.ui.form.DBNHeaderForm;
-import com.dci.intellij.dbn.common.ui.component.DBNComponent;
-import com.dci.intellij.dbn.connection.ConnectionHandler;
+import com.dci.intellij.dbn.common.ui.util.Borders;
 import com.dci.intellij.dbn.debugger.DBDebuggerType;
-import com.dci.intellij.dbn.debugger.DatabaseDebuggerManager;
 import com.dci.intellij.dbn.execution.common.ui.ExecutionOptionsForm;
 import com.dci.intellij.dbn.execution.method.MethodExecutionInput;
 import com.dci.intellij.dbn.object.DBArgument;
@@ -16,17 +15,12 @@ import com.dci.intellij.dbn.object.lookup.DBObjectRef;
 import com.intellij.ui.DocumentAdapter;
 import org.jetbrains.annotations.NotNull;
 
-import javax.swing.BoxLayout;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.JScrollPane;
-import javax.swing.ScrollPaneConstants;
+import javax.swing.*;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
-import java.awt.BorderLayout;
-import java.awt.Dimension;
+import java.awt.*;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -61,14 +55,14 @@ public class MethodExecutionInputForm extends DBNFormBase {
         this.executionInput = executionInput;
         DBObjectRef<?> methodRef = executionInput.getMethodRef();
 
-        ConnectionHandler connection = executionInput.getConnection();
-        if (connection != null && debuggerType.isDebug()) {
+        if (debuggerType.isDebug()) {
             versionPanel.setVisible(true);
             versionPanel.setBorder(Borders.BOTTOM_LINE_BORDER);
-            DatabaseDebuggerManager debuggerManager = DatabaseDebuggerManager.getInstance(ensureProject());
-            String debuggerVersion = debuggerManager.getDebuggerVersion(connection);
-            debuggerVersionLabel.setText(debuggerVersion);
             debuggerTypeLabel.setText(debuggerType.name());
+            debuggerVersionLabel.setText("...");
+            Dispatch.background(
+                    () -> executionInput.getDebuggerVersion(),
+                    v -> debuggerVersionLabel.setText(v));
         } else {
             versionPanel.setVisible(false);
         }

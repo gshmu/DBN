@@ -1,12 +1,13 @@
 package com.dci.intellij.dbn.execution.statement.result.action;
 
 import com.dci.intellij.dbn.common.Icons;
-import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.execution.statement.result.StatementExecutionCursorResult;
 import com.dci.intellij.dbn.execution.statement.result.ui.StatementExecutionResultForm;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.project.Project;
 import org.jetbrains.annotations.NotNull;
+
+import static com.dci.intellij.dbn.common.dispose.Checks.isValid;
 
 public class ExecutionResultFindDataAction extends AbstractExecutionResultAction {
     public ExecutionResultFindDataAction() {
@@ -16,7 +17,7 @@ public class ExecutionResultFindDataAction extends AbstractExecutionResultAction
     @Override
     protected void actionPerformed(@NotNull AnActionEvent e, @NotNull Project project, @NotNull StatementExecutionCursorResult executionResult) {
         StatementExecutionResultForm resultForm = executionResult.getForm();
-        if (Failsafe.check(resultForm)) {
+        if (isValid(resultForm)) {
             resultForm.showSearchHeader();
         }
     }

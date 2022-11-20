@@ -32,10 +32,7 @@ import org.jetbrains.annotations.Nullable;
 import javax.swing.*;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.LinkedList;
-import java.util.List;
+import java.util.*;
 
 import static com.dci.intellij.dbn.object.type.DBObjectType.*;
 
@@ -284,7 +281,7 @@ public class DBTypeImpl
     public int compareTo(@NotNull Object o) {
         if (o instanceof DBType) {
             DBType that = (DBType) o;
-            if (this.getParentObject().equals(that.getParentObject())) {
+            if (Objects.equals(this.getParentObject(), that.getParentObject())) {
                 return this.isCollection() == that.isCollection() ?
                         super.compareTo(o) :
                         that.isCollection() ? -1 : 1;

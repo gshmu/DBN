@@ -59,7 +59,9 @@ import java.awt.event.MouseListener;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 
+import static com.dci.intellij.dbn.common.dispose.Checks.isValid;
 import static com.dci.intellij.dbn.common.navigation.NavigationInstruction.*;
 
 public class ExecutionConsoleForm extends DBNFormBase {
@@ -120,8 +122,10 @@ public class ExecutionConsoleForm extends DBNFormBase {
                         if (executionResult instanceof StatementExecutionResult) {
                             StatementExecutionResult statementExecutionResult = (StatementExecutionResult) executionResult;
                             StatementExecutionProcessor executionProcessor = statementExecutionResult.getExecutionProcessor();
-                            if (Failsafe.check(executionProcessor) && file.equals(executionProcessor.getPsiFile())) {
-                                Icon icon = executionProcessor.isDirty() ? Icons.STMT_EXEC_RESULTSET_ORPHAN : Icons.STMT_EXEC_RESULTSET;
+                            if (isValid(executionProcessor) && Objects.equals(file, executionProcessor.getPsiFile())) {
+                                Icon icon = executionProcessor.isDirty() ?
+                                        Icons.STMT_EXEC_RESULTSET_ORPHAN :
+                                        Icons.STMT_EXEC_RESULTSET;
                                 tabInfo.setIcon(icon);
                             }
                         }
@@ -139,7 +143,7 @@ public class ExecutionConsoleForm extends DBNFormBase {
 
 
     private TabbedPane getResultTabs() {
-        if (!isDisposed() && !Failsafe.check(resultTabs)) {
+        if (!isDisposed() && !isValid(resultTabs)) {
             resultTabs = new TabbedPane(this);
             mainPanel.removeAll();
             mainPanel.add(resultTabs, BorderLayout.CENTER);
@@ -309,7 +313,7 @@ public class ExecutionConsoleForm extends DBNFormBase {
     @Nullable
     private static ExecutionResult<?> getExecutionResult(TabInfo tabInfo) {
         ExecutionResultForm<?> executionResultForm = (ExecutionResultForm<?>) tabInfo.getObject();
-        return Failsafe.check(executionResultForm) ? executionResultForm.getExecutionResult() : null;
+        return isValid(executionResultForm) ? executionResultForm.getExecutionResult() : null;
     }
 
     /*********************************************************
@@ -399,7 +403,7 @@ public class ExecutionConsoleForm extends DBNFormBase {
 
         DatabaseLoggingResult logOutput = new DatabaseLoggingResult(context);
         ExecutionResultForm<?> resultForm = ensureResultForm(logOutput);
-        if (Failsafe.check(resultForm)) {
+        if (isValid(resultForm)) {
             JComponent component = resultForm.getComponent();
             TabInfo tabInfo = new TabInfo(component);
             tabInfo.setObject(resultForm);
@@ -453,7 +457,7 @@ public class ExecutionConsoleForm extends DBNFormBase {
 
     private void addResultTab(ExecutionResult<?> executionResult) {
         ExecutionResultForm<?> resultForm = ensureResultForm(executionResult);
-        if (Failsafe.check(resultForm)) {
+        if (isValid(resultForm)) {
             JComponent component = resultForm.getComponent();
             TabInfo tabInfo = new TabInfo(component);
             tabInfo.setObject(resultForm);
@@ -527,7 +531,7 @@ public class ExecutionConsoleForm extends DBNFormBase {
 
     @NotNull
     private List<TabInfo> getExecutionResultTabs() {
-        return Failsafe.check(resultTabs) ? new ArrayList<>(resultTabs.getTabs()) : Collections.emptyList();
+        return isValid(resultTabs) ? new ArrayList<>(resultTabs.getTabs()) : Collections.emptyList();
     }
 
     @Nullable

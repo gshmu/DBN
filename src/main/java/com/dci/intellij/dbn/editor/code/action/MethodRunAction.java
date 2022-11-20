@@ -1,7 +1,6 @@
 package com.dci.intellij.dbn.editor.code.action;
 
 import com.dci.intellij.dbn.common.Icons;
-import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.connection.operation.options.OperationSettings;
 import com.dci.intellij.dbn.debugger.DBDebuggerType;
 import com.dci.intellij.dbn.editor.code.SourceCodeEditor;
@@ -16,6 +15,8 @@ import com.intellij.openapi.actionSystem.Presentation;
 import com.intellij.openapi.project.Project;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+
+import static com.dci.intellij.dbn.common.dispose.Checks.isValid;
 
 public class MethodRunAction extends AbstractCodeEditorAction {
     public MethodRunAction() {
@@ -33,7 +34,7 @@ public class MethodRunAction extends AbstractCodeEditorAction {
     protected void update(@NotNull AnActionEvent e, @NotNull Project project, @Nullable SourceCodeEditor fileEditor, @Nullable DBSourceCodeVirtualFile sourceCodeFile) {
         Presentation presentation = e.getPresentation();
         boolean visible = false;
-        if (Failsafe.check(sourceCodeFile)) {
+        if (isValid(sourceCodeFile)) {
             DBSchemaObject schemaObject = sourceCodeFile.getObject();
             if (schemaObject.getObjectType().matches(DBObjectType.METHOD)) {
                 visible = true;

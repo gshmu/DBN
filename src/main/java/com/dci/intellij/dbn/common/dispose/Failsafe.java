@@ -3,12 +3,14 @@ package com.dci.intellij.dbn.common.dispose;
 import com.dci.intellij.dbn.common.routine.ParametricRunnable;
 import com.intellij.mock.MockProject;
 import com.intellij.openapi.application.ApplicationManager;
-import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.testFramework.LightVirtualFile;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+
+import static com.dci.intellij.dbn.common.dispose.Checks.isNotValid;
+import static com.dci.intellij.dbn.common.dispose.Checks.isValid;
 
 public class Failsafe {
     private static final VirtualFile DUMMY_VIRTUAL_FILE = new LightVirtualFile();
@@ -23,46 +25,14 @@ public class Failsafe {
 
     @NotNull
     public static <T> T nd(@Nullable T object) {
-        if (!check(object)) {
+        if (isNotValid(object)) {
             throw AlreadyDisposedException.INSTANCE;
         }
         return object;
     }
 
-    public static boolean check(Object ... objects) {
-        for (Object object : objects) {
-            if (!check(object)) {
-                return false;
-            }
-        }
-        return true;
-    }
-
-    public static boolean invalid(Object object) {
-        return !check(object);
-    }
-
-    public static boolean check(Object object) {
-        if (object == null) {
-            return false;
-            
-        } else if (object instanceof StatefulDisposable) {
-            StatefulDisposable disposable = (StatefulDisposable) object;
-            return !disposable.isDisposed();
-
-        } else if (object instanceof Project) {
-            Project project = (Project) object;
-            return project != DUMMY_PROJECT && !project.isDisposed();
-
-        } else if (object instanceof Editor) {
-            Editor editor = (Editor) object;
-            return !editor.isDisposed();
-        }
-        return true;
-    }
-
     public static <T, E extends Throwable> void invoke(@Nullable T target, ParametricRunnable<T, E> invoker) throws E {
-        if (check(target)) {
+        if (isValid(target)) {
             invoker.run(target);
         }
     }

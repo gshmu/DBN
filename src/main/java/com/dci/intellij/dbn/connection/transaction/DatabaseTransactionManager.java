@@ -2,7 +2,6 @@ package com.dci.intellij.dbn.connection.transaction;
 
 import com.dci.intellij.dbn.common.component.ProjectComponentBase;
 import com.dci.intellij.dbn.common.component.ProjectManagerListener;
-import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.common.event.ProjectEvents;
 import com.dci.intellij.dbn.common.load.ProgressMonitor;
 import com.dci.intellij.dbn.common.option.InteractiveOptionBroker;
@@ -32,6 +31,7 @@ import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import static com.dci.intellij.dbn.common.component.Components.projectService;
+import static com.dci.intellij.dbn.common.dispose.Checks.isValid;
 import static com.dci.intellij.dbn.common.message.MessageCallback.when;
 import static com.dci.intellij.dbn.common.util.Commons.list;
 import static com.dci.intellij.dbn.common.util.Lists.isLast;
@@ -159,7 +159,7 @@ public class DatabaseTransactionManager extends ProjectComponentBase implements 
                     ex);
             success.set(false);
         } finally {
-            if (Failsafe.check(project)) {
+            if (isValid(project)) {
                 // notify post-action
                 ProjectEvents.notify(project,
                         TransactionListener.TOPIC,

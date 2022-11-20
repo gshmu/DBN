@@ -1,7 +1,6 @@
 package com.dci.intellij.dbn.execution.method.result.action;
 
 import com.dci.intellij.dbn.common.Icons;
-import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.common.thread.Progress;
 import com.dci.intellij.dbn.common.util.Messages;
 import com.dci.intellij.dbn.data.grid.ui.table.resultSet.ResultSetTable;
@@ -14,6 +13,8 @@ import org.jetbrains.annotations.NotNull;
 
 import java.sql.SQLException;
 
+import static com.dci.intellij.dbn.common.dispose.Checks.isNotValid;
+
 public class CursorResultFetchNextRecordsAction extends MethodExecutionCursorResultAction {
     public CursorResultFetchNextRecordsAction() {
         super("Fetch Next Records", Icons.EXEC_RESULT_RESUME);
@@ -22,23 +23,23 @@ public class CursorResultFetchNextRecordsAction extends MethodExecutionCursorRes
     @Override
     protected void actionPerformed(@NotNull AnActionEvent e, @NotNull Project project) {
         ResultSetTable resultSetTable = getResultSetTable(e);
-        if (Failsafe.check(resultSetTable)) {
-            Progress.prompt(project, "Loading cursor result records", false, progress -> {
-                try {
-                    ResultSetDataModel model = resultSetTable.getModel();
-                    if (!model.isResultSetExhausted()) {
-                        ExecutionEngineSettings settings = ExecutionEngineSettings.getInstance(project);
-                        int fetchBlockSize = settings.getStatementExecutionSettings().getResultSetFetchBlockSize();
+        if (isNotValid(resultSetTable)) return;
 
-                        model.fetchNextRecords(fetchBlockSize, false);
-                    }
+        Progress.prompt(project, "Loading cursor result records", false, progress -> {
+            try {
+                ResultSetDataModel model = resultSetTable.getModel();
+                if (!model.isResultSetExhausted()) {
+                    ExecutionEngineSettings settings = ExecutionEngineSettings.getInstance(project);
+                    int fetchBlockSize = settings.getStatementExecutionSettings().getResultSetFetchBlockSize();
 
-                } catch (SQLException ex) {
-                    Messages.showErrorDialog(project, "Could not perform operation.", ex);
+                    model.fetchNextRecords(fetchBlockSize, false);
                 }
 
-            });
-        }
+            } catch (SQLException ex) {
+                Messages.showErrorDialog(project, "Could not perform operation.", ex);
+            }
+
+        });
     }
 
     @Override

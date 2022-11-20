@@ -6,7 +6,7 @@ import com.intellij.openapi.project.Project;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import static com.dci.intellij.dbn.common.dispose.Failsafe.invalid;
+import static com.dci.intellij.dbn.common.dispose.Checks.isNotValid;
 
 final class ConnectionCache {
     private static Wrapper[] data = new Wrapper[50];
@@ -36,7 +36,7 @@ final class ConnectionCache {
                         ConnectionHandler connection = connectionManager.getConnection(connectionId);
 
                         // cache as null if disposed
-                        if (invalid(connection)) connection = null;
+                        if (isNotValid(connection)) connection = null;
 
                         data[index] = new Wrapper(connection);
                     }
