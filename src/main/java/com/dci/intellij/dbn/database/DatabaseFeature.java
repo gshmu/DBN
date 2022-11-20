@@ -27,6 +27,7 @@ public enum DatabaseFeature {
     CONNECTION_ERROR_RECOVERY("Recover connection transaction after error"),
     UPDATABLE_RESULT_SETS("Updatable result sets"),
     CURRENT_SCHEMA("Current schema initializing"),
+    USER_SCHEMA("User dedicated schema"),
     CONSTRAINT_MANIPULATION("Constraint manipulation"),
     READONLY_CONNECTIVITY("Readonly connectivity"),
     ;

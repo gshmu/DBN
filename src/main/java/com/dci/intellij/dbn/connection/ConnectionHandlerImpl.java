@@ -404,9 +404,11 @@ public class ConnectionHandlerImpl extends StatefulDisposable.Base implements Co
 
     @Override
     public SchemaId getUserSchema() {
-        String userName = getUserName().toUpperCase();
-        DBSchema schema = getObjectBundle().getSchema(userName);
-        return SchemaId.from(schema);
+        if (DatabaseFeature.USER_SCHEMA.isSupported(this)) {
+            String userName = getUserName().toUpperCase();
+            return SchemaId.get(userName);
+        }
+        return null;
     }
 
     @Override
@@ -415,8 +417,7 @@ public class ConnectionHandlerImpl extends StatefulDisposable.Base implements Co
         if (schemaId == null) {
             String databaseName = getSettings().getDatabaseSettings().getDatabaseInfo().getDatabase();
             if (isNotEmpty(databaseName)) {
-                DBSchema schema = getObjectBundle().getSchema(databaseName);
-                schemaId = SchemaId.from(schema);
+                schemaId = SchemaId.get(databaseName);
             }
             if (schemaId == null) {
                 List<DBSchema> schemas = getObjectBundle().getSchemas();

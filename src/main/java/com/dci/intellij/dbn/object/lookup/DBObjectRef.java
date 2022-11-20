@@ -402,14 +402,6 @@ public class DBObjectRef<T extends DBObject> implements Comparable<DBObjectRef<?
         return Unsafe.cast(object);
     }
 
-
-    private ConnectionHandler resolveConnection(Project project) {
-        ConnectionId connectionId = getConnectionId();
-        return project == null || project.isDisposed() ?
-                ConnectionHandler.get(connectionId) :
-                ConnectionManager.getInstance(project).getConnection(connectionId);
-    }
-
     @Nullable
     @Override
     public ConnectionHandler getConnection() {
