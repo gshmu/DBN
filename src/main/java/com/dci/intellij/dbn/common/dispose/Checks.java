@@ -1,8 +1,10 @@
 package com.dci.intellij.dbn.common.dispose;
 
 import com.intellij.openapi.editor.Editor;
+import com.intellij.openapi.fileEditor.FileEditor;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
+import com.intellij.psi.PsiElement;
 
 public final class Checks {
     private Checks() {}
@@ -41,9 +43,19 @@ public final class Checks {
             return !editor.isDisposed();
         }
 
+        if (object instanceof FileEditor) {
+            FileEditor editor = (FileEditor) object;
+            return editor.isValid();
+        }
+
         if (object instanceof VirtualFile) {
             VirtualFile virtualFile = (VirtualFile) object;
             return virtualFile.isValid();
+        }
+
+        if (object instanceof PsiElement) {
+            PsiElement psiElement = (PsiElement) object;
+            return psiElement.isValid();
         }
 
         return true;

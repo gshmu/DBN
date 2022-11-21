@@ -1,16 +1,16 @@
 package com.dci.intellij.dbn.common.action;
 
-import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.common.util.Commons;
+import com.dci.intellij.dbn.common.util.Guarded;
 import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.AnActionEvent;
-import com.intellij.openapi.progress.ProcessCanceledException;
 import com.intellij.openapi.project.Project;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
 
+import static com.dci.intellij.dbn.common.dispose.Checks.isNotValid;
 import static com.dci.intellij.dbn.common.dispose.Checks.isValid;
 
 public abstract class ProjectAction extends AnAction {
@@ -28,14 +28,14 @@ public abstract class ProjectAction extends AnAction {
 
     @Override
     public final void actionPerformed(@NotNull AnActionEvent e) {
-        try {
+        Guarded.run(() -> {
             Project project = Commons.coalesce(
                     () -> getProject(),
                     () -> Lookups.getProject(e));
 
-            Failsafe.nd(project);
+            if (isNotValid(project)) return;
             actionPerformed(e, project);
-        } catch (ProcessCanceledException ignore) {}
+        });
     }
 
     /**
@@ -48,11 +48,10 @@ public abstract class ProjectAction extends AnAction {
 
     @Override
     public final void update(@NotNull AnActionEvent e) {
-        try {
+        Guarded.run(() -> {
             Project project = Lookups.getProject(e);
             if (isValid(project)) update(e, project);
-
-        } catch (ProcessCanceledException ignore){}
+        });
     }
 
     protected void update(@NotNull AnActionEvent e, @NotNull Project project) {

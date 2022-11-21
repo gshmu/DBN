@@ -3,6 +3,7 @@ package com.dci.intellij.dbn.common.editor;
 import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.common.dispose.StatefulDisposable;
 import com.dci.intellij.dbn.common.project.ProjectRef;
+import com.dci.intellij.dbn.common.util.Guarded;
 import com.dci.intellij.dbn.editor.EditorProviderId;
 import com.dci.intellij.dbn.language.common.WeakRef;
 import com.dci.intellij.dbn.vfs.DatabaseOpenFileDescriptor;
@@ -14,7 +15,6 @@ import com.intellij.openapi.fileEditor.FileEditorState;
 import com.intellij.openapi.fileEditor.FileEditorStateLevel;
 import com.intellij.openapi.fileEditor.TextEditor;
 import com.intellij.openapi.fileEditor.impl.text.TextEditorProvider;
-import com.intellij.openapi.progress.ProcessCanceledException;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Disposer;
 import com.intellij.openapi.util.Key;
@@ -158,12 +158,12 @@ public abstract class BasicTextEditorImpl<T extends VirtualFile> extends Statefu
 
     @Override
     public void setState(@NotNull FileEditorState fileEditorState) {
-        try {
+        Guarded.run(() -> {
             if (fileEditorState instanceof BasicTextEditorState) {
                 BasicTextEditorState state = (BasicTextEditorState) fileEditorState;
                 state.applyToEditor(getTextEditor());
             }
-        } catch (ProcessCanceledException ignore){}
+        });
     }
 
     @Override

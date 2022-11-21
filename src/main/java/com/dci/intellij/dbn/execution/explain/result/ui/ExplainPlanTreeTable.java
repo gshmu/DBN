@@ -6,6 +6,7 @@ import com.dci.intellij.dbn.common.ui.form.DBNForm;
 import com.dci.intellij.dbn.common.ui.tree.TreeUtil;
 import com.dci.intellij.dbn.common.ui.util.Borders;
 import com.dci.intellij.dbn.common.ui.util.Mouse;
+import com.dci.intellij.dbn.common.util.Guarded;
 import com.dci.intellij.dbn.common.util.Strings;
 import com.dci.intellij.dbn.data.editor.ui.UserValueHolder;
 import com.dci.intellij.dbn.data.editor.ui.UserValueHolderImpl;
@@ -19,7 +20,6 @@ import com.intellij.codeInsight.template.impl.TemplateColors;
 import com.intellij.openapi.editor.colors.EditorColorsManager;
 import com.intellij.openapi.editor.colors.EditorColorsScheme;
 import com.intellij.openapi.editor.markup.TextAttributes;
-import com.intellij.openapi.progress.ProcessCanceledException;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.popup.JBPopup;
 import com.intellij.openapi.ui.popup.JBPopupAdapter;
@@ -115,7 +115,7 @@ public class ExplainPlanTreeTable extends TreeTable implements StatefulDisposabl
 
         @Override
         public void customizeCellRenderer(@NotNull JTree tree, Object value, boolean selected, boolean expanded, boolean leaf, int row, boolean hasFocus) {
-            try {
+            Guarded.run(() -> {
                 ExplainPlanEntry entry = (ExplainPlanEntry) value;
 
                 DBObjectRef<?> objectRef = entry.getObjectRef();
@@ -135,7 +135,7 @@ public class ExplainPlanTreeTable extends TreeTable implements StatefulDisposabl
                     append(" (" + options.toLowerCase() + ")", selected ? selectedCellAttributes : regularAttributes);
                 }
                 setBorder(null);
-            } catch (ProcessCanceledException ignore) {}
+            });
         }
     };
 

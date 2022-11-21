@@ -1,5 +1,7 @@
 package com.dci.intellij.dbn.common.util;
 
+import com.dci.intellij.dbn.language.common.DBLanguageFileType;
+import com.dci.intellij.dbn.language.common.DBLanguagePsiFile;
 import com.dci.intellij.dbn.vfs.DatabaseFileSystem;
 import com.intellij.ide.plugins.IdeaPluginDescriptor;
 import com.intellij.ide.plugins.PluginManagerCore;
@@ -7,6 +9,7 @@ import com.intellij.openapi.extensions.PluginId;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VirtualFile;
+import com.intellij.psi.PsiFile;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
@@ -99,5 +102,13 @@ public final class Files {
     public static File getPluginDeploymentRoot() {
         IdeaPluginDescriptor pluginDescriptor = PluginManagerCore.getPlugin(PluginId.getId("DBN"));
         return Objects.requireNonNull(pluginDescriptor).getPath();
+    }
+
+    public static boolean isDbLanguageFile(VirtualFile file) {
+        return file.getFileType() instanceof DBLanguageFileType;
+    }
+
+    public static boolean isDbLanguagePsiFile(PsiFile psiFile) {
+        return psiFile instanceof DBLanguagePsiFile;
     }
 }

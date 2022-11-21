@@ -1,7 +1,6 @@
 package com.dci.intellij.dbn.code.common.intention;
 
 import com.dci.intellij.dbn.common.Icons;
-import com.dci.intellij.dbn.connection.mapping.FileConnectionContextManager;
 import com.dci.intellij.dbn.debugger.DatabaseDebuggerManager;
 import com.dci.intellij.dbn.execution.script.ScriptExecutionManager;
 import com.dci.intellij.dbn.language.common.DBLanguage;
@@ -16,7 +15,9 @@ import com.intellij.psi.PsiFile;
 import com.intellij.util.IncorrectOperationException;
 import org.jetbrains.annotations.NotNull;
 
-import javax.swing.Icon;
+import javax.swing.*;
+
+import static com.dci.intellij.dbn.connection.mapping.FileConnectionContextManager.hasConnectivityContext;
 
 public class ExecuteScriptIntentionAction extends GenericIntentionAction implements HighPriorityAction {
     @Override
@@ -43,7 +44,7 @@ public class ExecuteScriptIntentionAction extends GenericIntentionAction impleme
                 return false;
             }
 
-            if (!FileConnectionContextManager.hasHasConnectivityContext(virtualFile)) {
+            if (!hasConnectivityContext(virtualFile)) {
                 return false;
             }
 

@@ -16,10 +16,7 @@ import com.dci.intellij.dbn.common.routine.ParametricRunnable;
 import com.dci.intellij.dbn.common.thread.Background;
 import com.dci.intellij.dbn.common.thread.Dispatch;
 import com.dci.intellij.dbn.common.thread.Progress;
-import com.dci.intellij.dbn.common.util.Editors;
-import com.dci.intellij.dbn.common.util.Lists;
-import com.dci.intellij.dbn.common.util.Strings;
-import com.dci.intellij.dbn.common.util.TimeUtil;
+import com.dci.intellij.dbn.common.util.*;
 import com.dci.intellij.dbn.connection.config.ConnectionConfigListener;
 import com.dci.intellij.dbn.connection.config.ConnectionDatabaseSettings;
 import com.dci.intellij.dbn.connection.config.ConnectionSettings;
@@ -38,7 +35,6 @@ import com.dci.intellij.dbn.vfs.DatabaseFileManager;
 import com.intellij.openapi.components.State;
 import com.intellij.openapi.components.Storage;
 import com.intellij.openapi.options.ConfigurationException;
-import com.intellij.openapi.progress.ProcessCanceledException;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.DialogWrapper;
 import com.intellij.openapi.util.Disposer;
@@ -419,7 +415,7 @@ public class ConnectionManager extends ProjectComponentBase implements Persisten
         }
 
         private void resolveIdleStatus(ConnectionHandler connection) {
-            try {
+            Guarded.run(() -> {
                 if (isNotValid(connection) || isNotValid(connection.getProject())) return;
 
                 List<TransactionAction> actions = actions(TransactionAction.DISCONNECT_IDLE);
@@ -443,7 +439,7 @@ public class ConnectionManager extends ProjectComponentBase implements Persisten
                         }
                     }
                 }
-            } catch (ProcessCanceledException ignore) {}
+            });
         }
     }
 

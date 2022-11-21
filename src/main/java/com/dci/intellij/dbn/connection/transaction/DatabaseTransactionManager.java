@@ -8,6 +8,7 @@ import com.dci.intellij.dbn.common.option.InteractiveOptionBroker;
 import com.dci.intellij.dbn.common.routine.ProgressRunnable;
 import com.dci.intellij.dbn.common.thread.Progress;
 import com.dci.intellij.dbn.common.util.Editors;
+import com.dci.intellij.dbn.common.util.Guarded;
 import com.dci.intellij.dbn.common.util.InternalApi;
 import com.dci.intellij.dbn.common.util.Messages;
 import com.dci.intellij.dbn.connection.*;
@@ -18,7 +19,6 @@ import com.dci.intellij.dbn.connection.transaction.options.TransactionManagerSet
 import com.dci.intellij.dbn.connection.transaction.ui.PendingTransactionsDetailDialog;
 import com.dci.intellij.dbn.connection.transaction.ui.PendingTransactionsDialog;
 import com.dci.intellij.dbn.options.ProjectSettingsManager;
-import com.intellij.openapi.progress.ProcessCanceledException;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.DialogWrapper;
 import com.intellij.openapi.vfs.VirtualFile;
@@ -114,7 +114,7 @@ public class DatabaseTransactionManager extends ProjectComponentBase implements 
             @NotNull DBNConnection conn,
             @NotNull List<TransactionAction> actions,
             @Nullable Runnable callback) {
-        try {
+        Guarded.run(() -> {
             Project project = getProject();
             for (TransactionAction action : actions) {
                 executeAction(connection, conn, project, action);
@@ -122,7 +122,7 @@ public class DatabaseTransactionManager extends ProjectComponentBase implements 
             if (callback != null) {
                 callback.run();
             }
-        } catch (ProcessCanceledException ignore) {}
+        });
     }
 
     private void executeAction(

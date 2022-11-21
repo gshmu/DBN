@@ -4,16 +4,15 @@ import com.dci.intellij.dbn.common.load.LoadInProgressIcon;
 import com.dci.intellij.dbn.common.ui.MergedIcon;
 import com.dci.intellij.dbn.common.ui.tree.TreeUtil;
 import com.dci.intellij.dbn.common.util.Commons;
+import com.dci.intellij.dbn.common.util.Guarded;
 import com.dci.intellij.dbn.object.common.DBObject;
-import com.intellij.openapi.progress.ProcessCanceledException;
 import com.intellij.ui.ColoredTreeCellRenderer;
 import com.intellij.ui.JBColor;
 import com.intellij.ui.SimpleTextAttributes;
 import com.intellij.util.ui.UIUtil;
 import org.jetbrains.annotations.NotNull;
 
-import javax.swing.Icon;
-import javax.swing.JTree;
+import javax.swing.*;
 
 public class ObjectDependencyTreeCellRenderer extends ColoredTreeCellRenderer {
 
@@ -21,7 +20,7 @@ public class ObjectDependencyTreeCellRenderer extends ColoredTreeCellRenderer {
 
     @Override
     public void customizeCellRenderer(@NotNull JTree tree, Object value, boolean selected, boolean expanded, boolean leaf, int row, boolean hasFocus) {
-        try {
+        Guarded.run(() -> {
             ObjectDependencyTreeNode node = (ObjectDependencyTreeNode) value;
             DBObject object = node.getObject();
 
@@ -64,7 +63,7 @@ public class ObjectDependencyTreeCellRenderer extends ColoredTreeCellRenderer {
                 setIcon(LoadInProgressIcon.INSTANCE);
                 append("Loading...", SimpleTextAttributes.GRAY_ITALIC_ATTRIBUTES);
             }
-        } catch (ProcessCanceledException ignore) {}
+        });
     }
 
     @Override

@@ -2,7 +2,6 @@ package com.dci.intellij.dbn.common.load;
 
 import com.dci.intellij.dbn.common.compatibility.Compatibility;
 import com.intellij.openapi.application.ModalityState;
-import com.intellij.openapi.progress.ProcessCanceledException;
 import com.intellij.openapi.progress.ProgressIndicator;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -103,7 +102,7 @@ class DevNullProgressIndicator implements ProgressIndicator {
     }
 
     @Override
-    public void checkCanceled() throws ProcessCanceledException {
+    public void checkCanceled() {
 
     }
 

@@ -100,12 +100,11 @@ public class Documents {
     @Nullable
     public static Document getDocument(@NotNull PsiFile file) {
         return Read.conditional(() -> {
-            if (file.isValid()) {
-                Project project = file.getProject();
-                PsiDocumentManager documentManager = PsiDocumentManager.getInstance(project);
-                return documentManager.getDocument(file);
-            }
-            return null;
+            if (isNotValid(file)) return null;
+
+            Project project = file.getProject();
+            PsiDocumentManager documentManager = PsiDocumentManager.getInstance(project);
+            return documentManager.getDocument(file);
         });
     }
 

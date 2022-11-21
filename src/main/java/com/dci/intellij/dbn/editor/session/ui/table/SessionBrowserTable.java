@@ -3,6 +3,7 @@ package com.dci.intellij.dbn.editor.session.ui.table;
 import com.dci.intellij.dbn.common.thread.Dispatch;
 import com.dci.intellij.dbn.common.ui.component.DBNComponent;
 import com.dci.intellij.dbn.common.util.Actions;
+import com.dci.intellij.dbn.common.util.Guarded;
 import com.dci.intellij.dbn.data.grid.ui.table.basic.BasicTableCellRenderer;
 import com.dci.intellij.dbn.data.grid.ui.table.basic.BasicTableGutter;
 import com.dci.intellij.dbn.data.grid.ui.table.basic.BasicTableSelectionRestorer;
@@ -19,15 +20,14 @@ import com.dci.intellij.dbn.editor.session.model.SessionBrowserModelRow;
 import com.dci.intellij.dbn.language.common.WeakRef;
 import com.intellij.openapi.actionSystem.ActionGroup;
 import com.intellij.openapi.actionSystem.ActionPopupMenu;
-import com.intellij.openapi.progress.ProcessCanceledException;
 import com.intellij.ui.PopupMenuListenerAdapter;
 import org.jetbrains.annotations.NotNull;
 
-import javax.swing.JPopupMenu;
+import javax.swing.*;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.event.PopupMenuEvent;
 import javax.swing.table.TableCellRenderer;
-import java.awt.Component;
+import java.awt.*;
 import java.awt.event.MouseEvent;
 import java.util.EventObject;
 
@@ -111,13 +111,13 @@ public class SessionBrowserTable extends ResultSetTable<SessionBrowserModel> {
     }
 
     private final ListSelectionListener listSelectionListener = e -> {
-        try {
-            if (!e.getValueIsAdjusting()) {
-                snapshotSelection();
-                SessionBrowser sessionBrowser = getSessionBrowser();
-                sessionBrowser.updateDetails();
-            }
-        } catch (ProcessCanceledException ignore) {}
+        if (e.getValueIsAdjusting()) return;
+
+        Guarded.run(() -> {
+            snapshotSelection();
+            SessionBrowser sessionBrowser = getSessionBrowser();
+            sessionBrowser.updateDetails();
+        });
     };
 
     @Override

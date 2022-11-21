@@ -4,6 +4,7 @@ import com.dci.intellij.dbn.code.common.completion.options.filter.CodeCompletion
 import com.dci.intellij.dbn.code.common.lookup.*;
 import com.dci.intellij.dbn.common.consumer.CancellableConsumer;
 import com.dci.intellij.dbn.common.dispose.AlreadyDisposedException;
+import com.dci.intellij.dbn.common.util.Guarded;
 import com.dci.intellij.dbn.common.util.Strings;
 import com.dci.intellij.dbn.language.common.DBLanguage;
 import com.dci.intellij.dbn.language.common.TokenType;
@@ -14,7 +15,6 @@ import com.dci.intellij.dbn.language.common.psi.IdentifierPsiElement;
 import com.dci.intellij.dbn.object.common.DBObject;
 import com.dci.intellij.dbn.object.common.DBObjectPsiElement;
 import com.dci.intellij.dbn.object.type.DBObjectType;
-import com.intellij.openapi.progress.ProcessCanceledException;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -30,7 +30,7 @@ public class CodeCompletionLookupConsumer implements CancellableConsumer<Object>
 
     @Override
     public void accept(Object object) {
-        try {
+        Guarded.run(() -> {
             if (object instanceof Object[]) {
                 consumeArray((Object[]) object);
 
@@ -44,8 +44,7 @@ public class CodeCompletionLookupConsumer implements CancellableConsumer<Object>
                 if (object instanceof DBObject) {
                     DBObject dbObject = (DBObject) object;
                     lookupItemBuilder = dbObject.getLookupItemBuilder(language);
-                }
-                else if (object instanceof DBObjectPsiElement) {
+                } else if (object instanceof DBObjectPsiElement) {
                     DBObjectPsiElement objectPsiElement = (DBObjectPsiElement) object;
                     lookupItemBuilder = objectPsiElement.ensureObject().getLookupItemBuilder(language);
 
@@ -91,7 +90,7 @@ public class CodeCompletionLookupConsumer implements CancellableConsumer<Object>
                     lookupItemBuilder.createLookupItem(object, this);
                 }
             }
-        } catch (ProcessCanceledException ignore) {}
+        });
     }
 
     private void consumeArray(Object[] array) {
@@ -114,7 +113,7 @@ public class CodeCompletionLookupConsumer implements CancellableConsumer<Object>
         }
     }
 
-    public void checkCancelled() throws ProcessCanceledException{
+    public void checkCancelled() {
         if (context.getResult().isStopped() || context.getQueue().isFinished()) {
             throw AlreadyDisposedException.INSTANCE;
         }

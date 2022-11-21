@@ -1,9 +1,9 @@
 package com.dci.intellij.dbn.object.properties;
 
-import com.dci.intellij.dbn.common.util.Cancellable;
+import com.dci.intellij.dbn.common.util.Guarded;
 import com.intellij.pom.Navigatable;
 
-import javax.swing.Icon;
+import javax.swing.*;
 
 public abstract class PresentableProperty {
     public abstract String getName();
@@ -13,7 +13,7 @@ public abstract class PresentableProperty {
     public abstract Icon getIcon();
 
     public String toString() {
-        return Cancellable.call("DISPOSED", () -> getName() + ": " + getValue());
+        return Guarded.call("DISPOSED", () -> getName() + ": " + getValue());
     }
 
     public abstract Navigatable getNavigatable();

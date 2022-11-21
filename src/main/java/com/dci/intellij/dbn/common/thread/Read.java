@@ -1,10 +1,9 @@
 package com.dci.intellij.dbn.common.thread;
 
+import com.dci.intellij.dbn.common.util.Guarded;
 import com.intellij.openapi.application.Application;
 import com.intellij.openapi.application.ApplicationManager;
-import com.intellij.openapi.progress.ProcessCanceledException;
 import com.intellij.openapi.util.Computable;
-import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 
 import java.util.concurrent.Callable;
@@ -20,9 +19,7 @@ public final class Read {
     public static <T> T call(Callable<T> callable, T defaultValue) {
         return getApplication().runReadAction((Computable<T>) () -> {
             try {
-                return callable.call();
-            } catch (ProcessCanceledException | UnsupportedOperationException ignore) {
-                return defaultValue;
+                return Guarded.call(defaultValue, callable);
             } catch (Throwable e) {
                 log.error("Failed to perform read action. Returning default", e);
                 return defaultValue;
@@ -30,24 +27,18 @@ public final class Read {
         });
     }
 
-    @SneakyThrows
     public static <T> T conditional(Callable<T> callable) {
-        if (getApplication().isReadAccessAllowed()) {
-            return callable.call();
+        if (isReadAccessAllowed()) {
+            return Guarded.call(null, callable);
         } else {
             return call(callable);
         }
     }
 
 
-    @SneakyThrows
     public static <T> T conditional(Callable<T> callable, T defaultValue) {
-        if (getApplication().isReadAccessAllowed()) {
-            try {
-                return callable.call();
-            } catch (ProcessCanceledException | UnsupportedOperationException e) {
-                return defaultValue;
-            }
+        if (isReadAccessAllowed()) {
+            return Guarded.call(defaultValue, callable);
         } else {
             return call(callable, defaultValue);
         }
@@ -55,13 +46,12 @@ public final class Read {
 
     public static void run(Runnable runnable) {
         Application application = getApplication();
-        application.runReadAction(() -> {
-            try {
-                runnable.run();
-            } catch (ProcessCanceledException | UnsupportedOperationException ignore) {}
-        });
+        application.runReadAction(() -> Guarded.run(runnable));
     }
 
+    private static boolean isReadAccessAllowed() {
+        return getApplication().isReadAccessAllowed();
+    }
 
     private static Application getApplication() {
         return ApplicationManager.getApplication();

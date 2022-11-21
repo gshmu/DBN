@@ -8,11 +8,7 @@ import com.dci.intellij.dbn.connection.ConnectionHandlerStatus;
 import com.dci.intellij.dbn.execution.statement.StatementGutterRenderer;
 import com.dci.intellij.dbn.language.common.DBLanguagePsiFile;
 import com.dci.intellij.dbn.language.common.TokenTypeCategory;
-import com.dci.intellij.dbn.language.common.psi.ChameleonPsiElement;
-import com.dci.intellij.dbn.language.common.psi.ExecutablePsiElement;
-import com.dci.intellij.dbn.language.common.psi.IdentifierPsiElement;
-import com.dci.intellij.dbn.language.common.psi.NamedPsiElement;
-import com.dci.intellij.dbn.language.common.psi.TokenPsiElement;
+import com.dci.intellij.dbn.language.common.psi.*;
 import com.intellij.lang.annotation.AnnotationBuilder;
 import com.intellij.lang.annotation.AnnotationHolder;
 import com.intellij.lang.annotation.Annotator;
@@ -21,7 +17,7 @@ import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiElement;
 import org.jetbrains.annotations.NotNull;
 
-import static com.dci.intellij.dbn.connection.mapping.FileConnectionContextManager.hasHasConnectivityContext;
+import static com.dci.intellij.dbn.connection.mapping.FileConnectionContextManager.hasConnectivityContext;
 import static com.dci.intellij.dbn.debugger.DatabaseDebuggerManager.isDebugConsole;
 
 public class SQLLanguageAnnotator implements Annotator {
@@ -142,7 +138,7 @@ public class SQLLanguageAnnotator implements Annotator {
         if (executablePsiElement.isValid() && !executablePsiElement.isNestedExecutable()) {
             DBLanguagePsiFile psiFile = executablePsiElement.getFile();
             VirtualFile file = psiFile.getVirtualFile();
-            if (!isDebugConsole(file) && hasHasConnectivityContext(file)) {
+            if (!isDebugConsole(file) && hasConnectivityContext(file)) {
                 holder.newSilentAnnotation(HighlightSeverity.INFORMATION)
                         .gutterIconRenderer(new StatementGutterRenderer(executablePsiElement))
                         .create();

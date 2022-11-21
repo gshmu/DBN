@@ -4,6 +4,7 @@ import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.common.color.Colors;
 import com.dci.intellij.dbn.common.ui.tree.DBNTree;
 import com.dci.intellij.dbn.common.ui.util.Mouse;
+import com.dci.intellij.dbn.common.util.Guarded;
 import com.dci.intellij.dbn.common.util.TextAttributes;
 import com.dci.intellij.dbn.data.grid.color.DataGridTextAttributesKeys;
 import com.dci.intellij.dbn.data.type.DBDataType;
@@ -13,7 +14,6 @@ import com.dci.intellij.dbn.object.DBMethod;
 import com.dci.intellij.dbn.object.DBTypeAttribute;
 import com.dci.intellij.dbn.object.lookup.DBObjectRef;
 import com.dci.intellij.dbn.object.type.DBObjectType;
-import com.intellij.openapi.progress.ProcessCanceledException;
 import com.intellij.ui.ColoredTreeCellRenderer;
 import com.intellij.ui.SimpleTextAttributes;
 import org.jetbrains.annotations.NotNull;
@@ -69,7 +69,7 @@ class ArgumentValuesTree extends DBNTree{
     static class CellRenderer extends ColoredTreeCellRenderer {
         @Override
         public void customizeCellRenderer(@NotNull JTree tree, Object value, boolean selected, boolean expanded, boolean leaf, int row, boolean hasFocus) {
-            try {
+            Guarded.run(() -> {
                 ArgumentValuesTreeNode treeNode = (ArgumentValuesTreeNode) value;
                 Object userValue = treeNode.getUserValue();
                 if (userValue instanceof DBMethod) {
@@ -124,7 +124,7 @@ class ArgumentValuesTree extends DBNTree{
                         append(displayValue, SimpleTextAttributes.REGULAR_BOLD_ATTRIBUTES);
                     }
                 }
-            } catch (ProcessCanceledException ignore) {}
+            });
         }
     }
 }
