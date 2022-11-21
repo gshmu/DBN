@@ -3,10 +3,10 @@ package com.dci.intellij.dbn.execution.statement;
 import com.dci.intellij.dbn.common.dispose.StatefulDisposable;
 import com.dci.intellij.dbn.common.project.ProjectRef;
 import com.dci.intellij.dbn.common.thread.Progress;
+import com.dci.intellij.dbn.common.util.Guarded;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.execution.ExecutionContext;
 import com.dci.intellij.dbn.execution.statement.processor.StatementExecutionProcessor;
-import com.intellij.openapi.progress.ProcessCanceledException;
 import com.intellij.openapi.project.Project;
 import org.jetbrains.annotations.NotNull;
 
@@ -67,14 +67,14 @@ public final class StatementExecutionQueue extends StatefulDisposable.Base {
     }
 
     private void execute(StatementExecutionProcessor processor) {
-        try {
+        Guarded.run(() -> {
             Project project = getProject();
             ExecutionContext context = processor.getExecutionContext();
             context.set(QUEUED, false);
             context.set(EXECUTING, true);
             StatementExecutionManager statementExecutionManager = StatementExecutionManager.getInstance(project);
             statementExecutionManager.process(processor);
-        } catch (ProcessCanceledException ignore) {}
+        });
     }
 
     private void cancelExecution() {

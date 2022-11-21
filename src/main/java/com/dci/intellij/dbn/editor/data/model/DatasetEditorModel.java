@@ -6,7 +6,7 @@ import com.dci.intellij.dbn.common.dispose.SafeDisposer;
 import com.dci.intellij.dbn.common.environment.EnvironmentManager;
 import com.dci.intellij.dbn.common.thread.CancellableDatabaseCall;
 import com.dci.intellij.dbn.common.thread.Progress;
-import com.dci.intellij.dbn.common.util.Cancellable;
+import com.dci.intellij.dbn.common.util.Guarded;
 import com.dci.intellij.dbn.common.util.Messages;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.ConnectionProperties;
@@ -268,7 +268,7 @@ public class DatasetEditorModel
     @NotNull
     @Override
     public DatasetEditorState getState() {
-        return Cancellable.call(DatasetEditorState.VOID, () -> getDatasetEditor().getEditorState());
+        return Guarded.call(DatasetEditorState.VOID, () -> getDatasetEditor().getEditorState());
     }
 
     private boolean hasChanges() {

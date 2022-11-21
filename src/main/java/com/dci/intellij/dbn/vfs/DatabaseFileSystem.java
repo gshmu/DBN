@@ -579,7 +579,7 @@ public class DatabaseFileSystem extends VirtualFileSystem implements /*NonPhysic
             DDLFileGeneralSettings ddlFileSettings = DDLFileSettings.getInstance(project).getGeneralSettings();
             ConnectionHandler connection = object.getConnection();
             boolean ddlFileBinding = connection.getSettings().getDetailSettings().isEnableDdlFileBinding();
-            if (ddlFileBinding && ddlFileSettings.isLookupDDLFilesEnabled()) {
+            if (ddlFileBinding && ddlFileSettings.isDdlFilesLookupEnabled()) {
                 List<VirtualFile> attachedDDLFiles = databaseFile.getAttachedDDLFiles();
                 if (attachedDDLFiles == null || attachedDDLFiles.isEmpty()) {
                     DDLFileAttachmentManager fileAttachmentManager = DDLFileAttachmentManager.getInstance(project);
@@ -588,7 +588,7 @@ public class DatabaseFileSystem extends VirtualFileSystem implements /*NonPhysic
                     if (virtualFiles.size() > 0) {
                         int exitCode = fileAttachmentManager.showFileAttachDialog(object, virtualFiles, true);
                         return exitCode != DialogWrapper.CANCEL_EXIT_CODE;
-                    } else if (ddlFileSettings.isCreateDDLFilesEnabled()) {
+                    } else if (ddlFileSettings.isDdlFilesCreationEnabled()) {
                         Messages.showQuestionDialog(
                                 project, "No DDL file found",
                                 "Could not find any DDL file for " + object.getQualifiedNameWithType() + ". Do you want to create one? \n" +

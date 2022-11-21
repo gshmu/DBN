@@ -3,7 +3,7 @@ package com.dci.intellij.dbn.connection.session;
 import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.common.index.Identifiable;
 import com.dci.intellij.dbn.common.ui.Presentable;
-import com.dci.intellij.dbn.common.util.Cancellable;
+import com.dci.intellij.dbn.common.util.Guarded;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.ConnectionRef;
 import com.dci.intellij.dbn.connection.ConnectionType;
@@ -51,7 +51,7 @@ public class DatabaseSession implements Comparable<DatabaseSession>, Presentable
     @Nullable
     @Override
     public Icon getIcon() {
-        return Cancellable.call(Icons.SESSION_CUSTOM, () -> {
+        return Guarded.call(Icons.SESSION_CUSTOM, () -> {
             if (isPool()) {
                 return Icons.SESSION_POOL;
             } else {

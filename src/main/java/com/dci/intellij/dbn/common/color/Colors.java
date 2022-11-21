@@ -1,8 +1,8 @@
 package com.dci.intellij.dbn.common.color;
 
 import com.dci.intellij.dbn.common.event.ApplicationEvents;
-import com.dci.intellij.dbn.common.routine.GuardedRunnable;
 import com.dci.intellij.dbn.common.ui.util.LookAndFeel;
+import com.dci.intellij.dbn.common.util.Guarded;
 import com.dci.intellij.dbn.data.grid.color.DataGridTextAttributesKeys;
 import com.intellij.openapi.Disposable;
 import com.intellij.openapi.editor.HighlighterColors;
@@ -173,7 +173,7 @@ public final class Colors {
 
         UIManager.addPropertyChangeListener(evt -> {
             if (Objects.equals(evt.getPropertyName(), "lookAndFeel")) {
-                GuardedRunnable.of(runnable).run();
+                Guarded.run(runnable);
             }
         });
     }

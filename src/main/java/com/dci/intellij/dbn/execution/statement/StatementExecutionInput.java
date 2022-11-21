@@ -1,6 +1,5 @@
 package com.dci.intellij.dbn.execution.statement;
 
-import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.common.latent.Latent;
 import com.dci.intellij.dbn.common.thread.Read;
 import com.dci.intellij.dbn.common.util.Commons;
@@ -8,7 +7,6 @@ import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.ConnectionId;
 import com.dci.intellij.dbn.connection.SchemaId;
 import com.dci.intellij.dbn.connection.session.DatabaseSession;
-import com.dci.intellij.dbn.database.DatabaseFeature;
 import com.dci.intellij.dbn.execution.ExecutionContext;
 import com.dci.intellij.dbn.execution.ExecutionOption;
 import com.dci.intellij.dbn.execution.ExecutionTarget;
@@ -32,7 +30,9 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 
+import static com.dci.intellij.dbn.common.dispose.Checks.isNotValid;
 import static com.dci.intellij.dbn.common.dispose.SafeDisposer.replace;
+import static com.dci.intellij.dbn.database.DatabaseFeature.DATABASE_LOGGING;
 
 @Getter
 @Setter
@@ -46,31 +46,35 @@ public class StatementExecutionInput extends LocalExecutionInput {
 
     private final Latent<ExecutablePsiElement> executablePsiElement = Latent.basic(() -> {
         ConnectionHandler connection = getConnection();
-        SchemaId currentSchema = getTargetSchemaId();
-        if (connection != null) {
-            return Read.conditional(() -> {
-                DBLanguagePsiFile psiFile = Failsafe.nn(executionProcessor.getPsiFile());
-                DBLanguageDialect languageDialect = psiFile.getLanguageDialect();
-                DBLanguagePsiFile previewFile = DBLanguagePsiFile.createFromText(
-                        getProject(),
-                        "preview",
-                        languageDialect,
-                        originalStatementText,
-                        connection,
-                        currentSchema);
+        if (isNotValid(connection)) return null;
 
-                if (previewFile != null) {
-                    PsiElement firstChild = previewFile.getFirstChild();
-                    if (firstChild instanceof ExecutableBundlePsiElement) {
-                        ExecutableBundlePsiElement rootPsiElement = (ExecutableBundlePsiElement) firstChild;
-                        List<ExecutablePsiElement> executablePsiElements = rootPsiElement.getExecutablePsiElements();
-                        return executablePsiElements.isEmpty() ? null : executablePsiElements.get(0);
-                    }
-                }
-                return null;
-            });
-        }
-        return null;
+        SchemaId currentSchema = getTargetSchemaId();
+        return Read.conditional(() -> {
+            DBLanguagePsiFile psiFile = executionProcessor.getPsiFile();
+            if (isNotValid(psiFile)) return null;
+
+            DBLanguageDialect languageDialect = psiFile.getLanguageDialect();
+            if (languageDialect == null) return null;
+
+            DBLanguagePsiFile previewFile = DBLanguagePsiFile.createFromText(
+                    getProject(),
+                    "preview",
+                    languageDialect,
+                    originalStatementText,
+                    connection,
+                    currentSchema);
+            if (isNotValid(previewFile)) return null;
+
+
+            PsiElement firstChild = previewFile.getFirstChild();
+            if (firstChild instanceof ExecutableBundlePsiElement) {
+                ExecutableBundlePsiElement rootPsiElement = (ExecutableBundlePsiElement) firstChild;
+                List<ExecutablePsiElement> executablePsiElements = rootPsiElement.getExecutablePsiElements();
+                return executablePsiElements.isEmpty() ? null : executablePsiElements.get(0);
+            }
+
+            return null;
+        });
     });
 
 
@@ -87,7 +91,7 @@ public class StatementExecutionInput extends LocalExecutionInput {
         this.originalStatementText = originalStatementText;
         this.executableStatementText = executableStatementText;
 
-        if (DatabaseFeature.DATABASE_LOGGING.isSupported(connection)) {
+        if (DATABASE_LOGGING.isSupported(connection)) {
             getOptions().set(ExecutionOption.ENABLE_LOGGING, connection.isLoggingEnabled());
         }
     }
@@ -173,7 +177,7 @@ public class StatementExecutionInput extends LocalExecutionInput {
 
     public void setTargetConnection(ConnectionHandler connection) {
         super.setTargetConnection(connection);
-        if (DatabaseFeature.DATABASE_LOGGING.isSupported(connection)) {
+        if (DATABASE_LOGGING.isSupported(connection)) {
             getOptions().set(ExecutionOption.ENABLE_LOGGING, connection.isLoggingEnabled());
         }
     }

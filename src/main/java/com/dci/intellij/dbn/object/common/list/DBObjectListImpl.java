@@ -21,6 +21,7 @@ import com.dci.intellij.dbn.common.search.SearchAdapter;
 import com.dci.intellij.dbn.common.string.StringDeBuilder;
 import com.dci.intellij.dbn.common.ui.tree.TreeEventType;
 import com.dci.intellij.dbn.common.util.Commons;
+import com.dci.intellij.dbn.common.util.Guarded;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.DatabaseEntity;
 import com.dci.intellij.dbn.connection.config.ConnectionFilterSettings;
@@ -37,7 +38,6 @@ import com.dci.intellij.dbn.object.filter.quick.ObjectQuickFilterManager;
 import com.dci.intellij.dbn.object.lookup.DBObjectRef;
 import com.dci.intellij.dbn.object.type.DBObjectType;
 import com.intellij.navigation.ItemPresentation;
-import com.intellij.openapi.progress.ProcessCanceledException;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiDirectory;
 import lombok.Getter;
@@ -299,7 +299,7 @@ public class DBObjectListImpl<T extends DBObject> extends DynamicContentImpl<T> 
 
     @Override
     public void notifyChangeListeners() {
-        try {
+        Guarded.run(() -> {
             Project project = getProject();
             BrowserTreeNode treeParent = getParent();
             if (!isInternal() && isTouched() && isValid(project) && treeParent.isTreeStructureLoaded()) {
@@ -307,7 +307,7 @@ public class DBObjectListImpl<T extends DBObject> extends DynamicContentImpl<T> 
                         BrowserTreeEventListener.TOPIC,
                         (listener) -> listener.nodeChanged(this, TreeEventType.STRUCTURE_CHANGED));
             }
-        } catch (ProcessCanceledException ignore) {}
+        });
     }
 
     /*********************************************************
@@ -379,26 +379,25 @@ public class DBObjectListImpl<T extends DBObject> extends DynamicContentImpl<T> 
 
     @Override
     public List<? extends BrowserTreeNode> getChildren() {
-        try {
-            if (!isLoading() && !isDisposed()) {
-                boolean scroll = !isTouched();
-                if (!isLoaded() || isDirty()) {
-                    if (isPassive() || canLoadFast()) {
-                        ensure();
-                    } else {
-                        loadInBackground();
-                        scroll = false;
-                    }
-                }
+        return Guarded.call(elements, () -> {
+            if (isLoading() || isDisposed()) return elements;
 
-                if (scroll) {
-                    ConnectionHandler connection = this.getConnection();
-                    DatabaseBrowserManager.scrollToSelectedElement(connection);
+            boolean scroll = !isTouched();
+            if (!isLoaded() || isDirty()) {
+                if (isPassive() || canLoadFast()) {
+                    ensure();
+                } else {
+                    loadInBackground();
+                    scroll = false;
                 }
             }
-        } catch (ProcessCanceledException ignore) {}
 
-        return elements;
+            if (scroll) {
+                ConnectionHandler connection = this.getConnection();
+                DatabaseBrowserManager.scrollToSelectedElement(connection);
+            }
+            return elements;
+        });
     }
 
     @Override

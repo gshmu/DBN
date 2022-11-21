@@ -41,7 +41,7 @@ public abstract class LoadInProgressRegistry<T extends StatefulDisposable> exten
                     } else {
                         LoadInProgressRegistry.this.notify(node);
                     }
-                } catch (ProcessCanceledException ignore) {
+                } catch (ProcessCanceledException e) {
                     nodes.remove(node);
                 }
             }

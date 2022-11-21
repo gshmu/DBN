@@ -59,4 +59,5 @@ public abstract class DBLanguageFileType extends LanguageFileType implements Fil
         }
         return false;
     }
+
 }

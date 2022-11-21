@@ -13,9 +13,9 @@ import org.jetbrains.annotations.NotNull;
 @Setter
 @EqualsAndHashCode(callSuper = false)
 public class DDLFileGeneralSettings extends BasicProjectConfiguration<DDLFileSettings, DDLFileGeneralSettingsForm> {
-    private final BooleanSetting lookupDDLFilesEnabled = new BooleanSetting("lookup-ddl-files", true);
-    private final BooleanSetting createDDLFilesEnabled = new BooleanSetting("create-ddl-files", false);
-    private final BooleanSetting synchronizeDDLFilesEnabled = new BooleanSetting("synchronize-ddl-files", true);
+    private final BooleanSetting ddlFilesLookupEnabled = new BooleanSetting("lookup-ddl-files", true);
+    private final BooleanSetting ddlFilesCreationEnabled = new BooleanSetting("create-ddl-files", false);
+    private final BooleanSetting ddlFilesSynchronizationEnabled = new BooleanSetting("synchronize-ddl-files", true);
     private final BooleanSetting useQualifiedObjectNames = new BooleanSetting("use-qualified-names", false);
     private final BooleanSetting makeScriptsRerunnable = new BooleanSetting("make-scripts-rerunnable", true);
 
@@ -28,16 +28,16 @@ public class DDLFileGeneralSettings extends BasicProjectConfiguration<DDLFileSet
         return "DDL file general settings";
     }
 
-    public boolean isLookupDDLFilesEnabled() {
-        return lookupDDLFilesEnabled.value();
+    public boolean isDdlFilesLookupEnabled() {
+        return ddlFilesLookupEnabled.value();
     }
 
-    public boolean isCreateDDLFilesEnabled() {
-        return createDDLFilesEnabled.value();
+    public boolean isDdlFilesCreationEnabled() {
+        return ddlFilesCreationEnabled.value();
     }
 
-    public boolean isSynchronizeDDLFilesEnabled() {
-        return synchronizeDDLFilesEnabled.value();
+    public boolean isDdlFilesSynchronizationEnabled() {
+        return ddlFilesSynchronizationEnabled.value();
     }
 
     public boolean isUseQualifiedObjectNames() {
@@ -64,18 +64,18 @@ public class DDLFileGeneralSettings extends BasicProjectConfiguration<DDLFileSet
 
     @Override
     public void readConfiguration(Element element) {
-        lookupDDLFilesEnabled.readConfiguration(element);
-        createDDLFilesEnabled.readConfiguration(element);
-        synchronizeDDLFilesEnabled.readConfiguration(element);
+        ddlFilesLookupEnabled.readConfiguration(element);
+        ddlFilesCreationEnabled.readConfiguration(element);
+        ddlFilesSynchronizationEnabled.readConfiguration(element);
         useQualifiedObjectNames.readConfiguration(element);
         makeScriptsRerunnable.readConfiguration(element);
     }
 
     @Override
     public void writeConfiguration(Element element) {
-        lookupDDLFilesEnabled.writeConfiguration(element);
-        createDDLFilesEnabled.writeConfiguration(element);
-        synchronizeDDLFilesEnabled.writeConfiguration(element);
+        ddlFilesLookupEnabled.writeConfiguration(element);
+        ddlFilesCreationEnabled.writeConfiguration(element);
+        ddlFilesSynchronizationEnabled.writeConfiguration(element);
         useQualifiedObjectNames.writeConfiguration(element);
         makeScriptsRerunnable.writeConfiguration(element);
     }

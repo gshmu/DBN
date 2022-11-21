@@ -2,6 +2,7 @@ package com.dci.intellij.dbn.vfs.file;
 
 import com.dci.intellij.dbn.common.latent.Latent;
 import com.dci.intellij.dbn.common.util.Documents;
+import com.dci.intellij.dbn.common.util.Guarded;
 import com.dci.intellij.dbn.connection.SessionId;
 import com.dci.intellij.dbn.connection.session.DatabaseSession;
 import com.dci.intellij.dbn.connection.session.DatabaseSessionBundle;
@@ -17,7 +18,6 @@ import com.dci.intellij.dbn.object.type.DBObjectType;
 import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.fileEditor.impl.FileDocumentManagerImpl;
 import com.intellij.openapi.fileTypes.FileType;
-import com.intellij.openapi.progress.ProcessCanceledException;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Key;
 import com.intellij.openapi.vfs.VirtualFile;
@@ -135,13 +135,12 @@ public class DBEditableObjectVirtualFile extends DBObjectVirtualFile<DBSchemaObj
     @Override
     @NotNull
     public FileType getFileType() {
-        try {
+        return Guarded.call(SQLFileType.INSTANCE, () -> {
             DBSchemaObject object = getObject();
             DDLFileManager ddlFileManager = DDLFileManager.getInstance(object.getProject());
             DDLFileType type =  ddlFileManager.getDDLFileType(object.getObjectType(), getMainContentType());
             return type == null ? SQLFileType.INSTANCE : type.getLanguageFileType();
-        } catch (ProcessCanceledException ignore) {}
-        return SQLFileType.INSTANCE;
+        });
     }
 
     @Override
@@ -167,8 +166,9 @@ public class DBEditableObjectVirtualFile extends DBObjectVirtualFile<DBSchemaObj
 
     @Override
     public <T> T getUserData(@NotNull Key<T> key) {
+        T userData = super.getUserData(key);
         if (key == FileDocumentManagerImpl.HARD_REF_TO_DOCUMENT_KEY) {
-            try {
+            return Guarded.call(userData, () -> {
                 DBContentType mainContentType = getMainContentType();
                 boolean isCode = mainContentType == DBContentType.CODE || mainContentType == DBContentType.CODE_BODY;
                 if (isCode) {
@@ -178,9 +178,10 @@ public class DBEditableObjectVirtualFile extends DBObjectVirtualFile<DBSchemaObj
                         return (T) document;
                     }
                 }
-            } catch (ProcessCanceledException ignore) {}
+                return userData;
+            });
         }
-        return super.getUserData(key);
+        return userData;
     }
 
     public DBContentType getMainContentType() {

@@ -21,6 +21,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import static com.dci.intellij.dbn.common.component.Components.projectService;
+import static com.dci.intellij.dbn.common.dispose.Checks.isNotValid;
 import static com.dci.intellij.dbn.object.common.status.DBObjectStatus.EDITABLE;
 
 @State(
@@ -71,28 +72,30 @@ public class EnvironmentManager extends ProjectComponentBase implements Persiste
     public void enableEditing(@NotNull DBSchemaObject schemaObject, @NotNull DBContentType contentType) {
         schemaObject.getStatus().set(contentType, EDITABLE, true);
         DBContentVirtualFile contentFile = schemaObject.getEditableVirtualFile().getContentFile(contentType);
-        if (contentFile != null) {
-            Editors.setEditorsReadonly(contentFile, false);
+        if (isNotValid(contentFile)) return;
 
-            Project project = getProject();
-            ProjectEvents.notify(project,
-                    EnvironmentManagerListener.TOPIC,
-                    (listener) -> listener.editModeChanged(project, contentFile));
-        }
+        Editors.setEditorsReadonly(contentFile, false);
+
+        Project project = getProject();
+        ProjectEvents.notify(project,
+                EnvironmentManagerListener.TOPIC,
+                (listener) -> listener.editModeChanged(project, contentFile));
     }
 
     public void disableEditing(@NotNull DBSchemaObject schemaObject, @NotNull DBContentType contentType) {
         schemaObject.getStatus().set(contentType, EDITABLE, false);
-        boolean readonly = isReadonly(schemaObject, contentType);
-        DBContentVirtualFile contentFile = schemaObject.getEditableVirtualFile().getContentFile(contentType);
-        if (contentFile != null) {
-            Editors.setEditorsReadonly(contentFile, readonly);
 
-            Project project = getProject();
-            ProjectEvents.notify(project,
-                    EnvironmentManagerListener.TOPIC,
-                    (listener) -> listener.editModeChanged(project, contentFile));
-        }
+        DBContentVirtualFile contentFile = schemaObject.getEditableVirtualFile().getContentFile(contentType);
+        if (isNotValid(contentFile)) return;
+
+        boolean readonly = isReadonly(schemaObject, contentType);
+        Editors.setEditorsReadonly(contentFile, readonly);
+
+        Project project = getProject();
+        ProjectEvents.notify(project,
+                EnvironmentManagerListener.TOPIC,
+                (listener) -> listener.editModeChanged(project, contentFile));
+
     }
 
     /*********************************************

@@ -321,7 +321,7 @@ public class DDLFileAttachmentManager extends ProjectComponentBase implements Pe
     public void updateDDLFiles(DBEditableObjectVirtualFile databaseFile) {
         Project project = getProject();
         DDLFileSettings ddlFileSettings = DDLFileSettings.getInstance(project);
-        if (ddlFileSettings.getGeneralSettings().isSynchronizeDDLFilesEnabled()) {
+        if (ddlFileSettings.getGeneralSettings().isDdlFilesSynchronizationEnabled()) {
             DDLFileManager ddlFileManager = DDLFileManager.getInstance(project);
             List<VirtualFile> ddlFiles = databaseFile.getAttachedDDLFiles();
             if (ddlFiles != null && !ddlFiles.isEmpty()) {

@@ -45,7 +45,7 @@ public final class ConfigurationHandle {
             for (SettingsChangeNotifier changeNotifier : changeNotifiers) {
                 try {
                     changeNotifier.notifyChanges();
-                } catch (ProcessCanceledException ignore){
+                } catch (ProcessCanceledException | IllegalStateException ignore){
                 } catch (Exception e){
                     log.error("Error notifying configuration changes", e);
                 }
