@@ -6,7 +6,6 @@ import com.dci.intellij.dbn.common.component.PersistentState;
 import com.dci.intellij.dbn.common.component.ProjectComponentBase;
 import com.dci.intellij.dbn.common.dispose.SafeDisposer;
 import com.dci.intellij.dbn.common.event.ProjectEvents;
-import com.dci.intellij.dbn.common.file.util.VirtualFiles;
 import com.dci.intellij.dbn.common.thread.Dispatch;
 import com.dci.intellij.dbn.common.thread.Progress;
 import com.dci.intellij.dbn.common.util.Documents;
@@ -19,7 +18,6 @@ import com.dci.intellij.dbn.connection.mapping.ConnectionContextActions.SessionS
 import com.dci.intellij.dbn.connection.mapping.ui.FileConnectionMappingDialog;
 import com.dci.intellij.dbn.connection.session.DatabaseSession;
 import com.dci.intellij.dbn.connection.session.SessionManagerListener;
-import com.dci.intellij.dbn.language.common.DBLanguageFileType;
 import com.dci.intellij.dbn.object.DBSchema;
 import com.dci.intellij.dbn.vfs.file.DBConsoleVirtualFile;
 import com.intellij.openapi.actionSystem.DataContext;
@@ -29,7 +27,6 @@ import com.intellij.openapi.components.Storage;
 import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.fileEditor.FileDocumentManager;
-import com.intellij.openapi.fileTypes.FileType;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.popup.JBPopupFactory;
 import com.intellij.openapi.ui.popup.ListPopup;
@@ -55,8 +52,11 @@ import java.util.concurrent.Callable;
 import java.util.function.Consumer;
 
 import static com.dci.intellij.dbn.common.component.Components.projectService;
+import static com.dci.intellij.dbn.common.dispose.Checks.isNotValid;
 import static com.dci.intellij.dbn.common.dispose.Checks.isValid;
+import static com.dci.intellij.dbn.common.file.util.VirtualFiles.isLocalFileSystem;
 import static com.dci.intellij.dbn.common.message.MessageCallback.when;
+import static com.dci.intellij.dbn.common.util.Files.isDbLanguageFile;
 import static com.dci.intellij.dbn.common.util.Messages.options;
 import static com.dci.intellij.dbn.common.util.Messages.showWarningDialog;
 import static com.dci.intellij.dbn.connection.ConnectionSelectorOptions.Option.*;
@@ -95,7 +95,7 @@ public class FileConnectionContextManager extends ProjectComponentBase implement
         }
     };
 
-    public static boolean hasHasConnectivityContext(VirtualFile file) {
+    public static boolean hasConnectivityContext(VirtualFile file) {
         Boolean hasConnectivityContext = file.getUserData(UserDataKeys.HAS_CONNECTIVITY_CONTEXT);
         return hasConnectivityContext == null || hasConnectivityContext;
     }
@@ -198,46 +198,41 @@ public class FileConnectionContextManager extends ProjectComponentBase implement
 
 
     public boolean isConnectionSelectable(VirtualFile file) {
-        if (file == null) return false;
-        if (VirtualFiles.isLocalFileSystem(file)) return true;
+        if (isNotValid(file)) return false;
+        if (isLocalFileSystem(file)) return true;
+        if (!isDbLanguageFile(file)) return false;
 
-        FileType fileType = file.getFileType();
-        if (fileType instanceof DBLanguageFileType) {
-            if (file instanceof DBConsoleVirtualFile) {
-                // consoles are tightly bound to connections
-                return false;
-            }
+        if (file instanceof DBConsoleVirtualFile) {
+            // consoles are tightly bound to connections
+            return false;
+        }
 
-            if (file instanceof LightVirtualFile) {
-                return hasHasConnectivityContext(file);
-            }
+        if (file instanceof LightVirtualFile) {
+            return hasConnectivityContext(file);
         }
 
         return false;
     }
 
     public boolean isSchemaSelectable(VirtualFile file) {
-        if (file == null) return false;
-        if (VirtualFiles.isLocalFileSystem(file)) return true;
+        if (isNotValid(file)) return false;
+        if (isLocalFileSystem(file)) return true;
+        if (!isDbLanguageFile(file)) return false;
 
-        FileType fileType = file.getFileType();
-        if (fileType instanceof DBLanguageFileType) {
-            if (file instanceof DBConsoleVirtualFile) {
-                return true;
+        if (file instanceof DBConsoleVirtualFile) {
+            return true;
 
-            } else if (file instanceof LightVirtualFile) {
-                return hasHasConnectivityContext(file);
-            }
-
+        } else if (file instanceof LightVirtualFile) {
+            return hasConnectivityContext(file);
         }
         return false;
     }
 
     public boolean isSessionSelectable(VirtualFile file) {
-        if (file == null) return false;
-        //if (VirtualFiles.isLocalFileSystem(file)) return true;
-        FileType fileType = file.getFileType();
-        return (file instanceof LightVirtualFile || file instanceof DBConsoleVirtualFile) && fileType instanceof DBLanguageFileType;
+        if (isNotValid(file)) return false;
+        if (!isDbLanguageFile(file)) return false;
+
+        return file instanceof LightVirtualFile || file instanceof DBConsoleVirtualFile;
     }
 
 

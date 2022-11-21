@@ -22,6 +22,8 @@ import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
 
+import static com.dci.intellij.dbn.common.dispose.Checks.isNotValid;
+
 public class ToggleDatabaseLoggingIntentionAction extends GenericIntentionAction implements LowPriorityAction {
     private PsiFileRef<?> lastChecked;
 
@@ -55,11 +57,11 @@ public class ToggleDatabaseLoggingIntentionAction extends GenericIntentionAction
 
     ConnectionHandler getLastCheckedConnection() {
         PsiFile psiFile = Read.conditional(() -> PsiFileRef.from(lastChecked));
-        if (psiFile != null) {
-            ConnectionHandler connection = getConnection(psiFile);
-            if (supportsLogging(connection)) {
-                return connection;
-            }
+        if (isNotValid(psiFile)) return null;
+
+        ConnectionHandler connection = getConnection(psiFile);
+        if (supportsLogging(connection)) {
+            return connection;
         }
         return null;
     }

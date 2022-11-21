@@ -7,8 +7,6 @@ import com.dci.intellij.dbn.debugger.DBDebuggerType;
 import com.dci.intellij.dbn.debugger.jdbc.DBJdbcBreakpointProperties;
 import com.dci.intellij.dbn.debugger.jdbc.evaluation.DBJdbcDebuggerEditorsProvider;
 import com.dci.intellij.dbn.editor.DBContentType;
-import com.dci.intellij.dbn.language.common.DBLanguageFileType;
-import com.dci.intellij.dbn.language.common.DBLanguagePsiFile;
 import com.dci.intellij.dbn.language.common.element.util.ElementTypeAttribute;
 import com.dci.intellij.dbn.language.common.psi.BasePsiElement;
 import com.dci.intellij.dbn.language.common.psi.PsiUtil;
@@ -30,6 +28,10 @@ import org.jetbrains.annotations.Nullable;
 
 import java.lang.reflect.Constructor;
 
+import static com.dci.intellij.dbn.common.dispose.Checks.isNotValid;
+import static com.dci.intellij.dbn.common.util.Files.isDbLanguageFile;
+import static com.dci.intellij.dbn.common.util.Files.isDbLanguagePsiFile;
+
 @Slf4j
 public class DBBreakpointType extends XLineBreakpointType<XBreakpointProperties> {
 
@@ -39,23 +41,25 @@ public class DBBreakpointType extends XLineBreakpointType<XBreakpointProperties>
 
     @Override
     public boolean canPutAt(@NotNull VirtualFile file, int line, @NotNull Project project) {
-        if (file.getFileType() instanceof DBLanguageFileType) {
-            PsiFile psiFile = PsiUtil.getPsiFile(project, file);
-            if (psiFile instanceof DBLanguagePsiFile) {
-                if (file instanceof DBSourceCodeVirtualFile) {
-                    DBSourceCodeVirtualFile sourceCodeFile = (DBSourceCodeVirtualFile) file;
-                    DBContentType contentType = sourceCodeFile.getContentType();
-                    if (contentType == DBContentType.CODE || contentType == DBContentType.CODE_BODY) {
-                        BasePsiElement basePsiElement = findPsiElement(psiFile, line);
-                        return basePsiElement != null;
-                    }
-                } else {
-                    BasePsiElement basePsiElement = findPsiElement(psiFile, line);
-                    if (basePsiElement != null) {
-                        BasePsiElement debuggablePsiElement = basePsiElement.findEnclosingPsiElement(ElementTypeAttribute.DEBUGGABLE);
-                        return debuggablePsiElement != null;
-                    }
-                }
+        if (isNotValid(file)) return false;
+        if (!isDbLanguageFile(file)) return false;
+
+        PsiFile psiFile = PsiUtil.getPsiFile(project, file);
+        if (isNotValid(psiFile)) return false;
+        if (!isDbLanguagePsiFile(psiFile)) return false;
+
+        if (file instanceof DBSourceCodeVirtualFile) {
+            DBSourceCodeVirtualFile sourceCodeFile = (DBSourceCodeVirtualFile) file;
+            DBContentType contentType = sourceCodeFile.getContentType();
+            if (contentType == DBContentType.CODE || contentType == DBContentType.CODE_BODY) {
+                BasePsiElement basePsiElement = findPsiElement(psiFile, line);
+                return basePsiElement != null;
+            }
+        } else {
+            BasePsiElement basePsiElement = findPsiElement(psiFile, line);
+            if (basePsiElement != null) {
+                BasePsiElement debuggablePsiElement = basePsiElement.findEnclosingPsiElement(ElementTypeAttribute.DEBUGGABLE);
+                return debuggablePsiElement != null;
             }
         }
         return false;

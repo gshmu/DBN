@@ -4,7 +4,7 @@ import com.dci.intellij.dbn.common.dispose.AlreadyDisposedException;
 import com.dci.intellij.dbn.common.dispose.Checks;
 import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.common.routine.ProgressRunnable;
-import com.dci.intellij.dbn.common.util.Cancellable;
+import com.dci.intellij.dbn.common.util.Guarded;
 import com.intellij.openapi.progress.ProgressIndicator;
 import com.intellij.openapi.progress.ProgressManager;
 import com.intellij.openapi.progress.Task;
@@ -32,7 +32,7 @@ public final class Progress {
                 ThreadMonitor.run(
                         invoker,
                         PROGRESS,
-                        () -> Cancellable.run(() -> runnable.run(indicator)));
+                        () -> Guarded.run(() -> runnable.run(indicator)));
             }
         };
         start(task);
@@ -48,7 +48,7 @@ public final class Progress {
                 ThreadMonitor.run(
                         invoker,
                         PROGRESS,
-                        () -> Cancellable.run(() -> runnable.run(indicator)));
+                        () -> Guarded.run(() -> runnable.run(indicator)));
             }
         };
         start(task);
@@ -64,7 +64,7 @@ public final class Progress {
                 ThreadMonitor.run(
                         invoker,
                         MODAL,
-                        () -> Cancellable.run(() -> runnable.run(indicator)));
+                        () -> Guarded.run(() -> runnable.run(indicator)));
 
             }
         };

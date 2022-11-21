@@ -5,10 +5,10 @@ import com.dci.intellij.dbn.common.event.ApplicationEvents;
 import com.dci.intellij.dbn.common.thread.Background;
 import com.dci.intellij.dbn.common.thread.ThreadMonitor;
 import com.dci.intellij.dbn.common.thread.ThreadProperty;
+import com.dci.intellij.dbn.common.util.Guarded;
 import com.intellij.ide.AppLifecycleListener;
 import com.intellij.openapi.application.ApplicationListener;
 import com.intellij.openapi.application.ApplicationManager;
-import com.intellij.openapi.progress.ProcessCanceledException;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
@@ -75,10 +75,8 @@ public final class BackgroundDisposer {
                     while (!exiting) {
                         Runnable task = queue.poll(10, TimeUnit.SECONDS);
                         if (task == null) continue;
-
                         try {
-                            task.run();
-                        } catch (ProcessCanceledException ignore){
+                            Guarded.run(task);
                         } catch (Exception e) {
                             log.error("Background disposer failed", e);
                         }

@@ -10,31 +10,30 @@ import com.intellij.openapi.vfs.VirtualFile;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import static com.dci.intellij.dbn.common.dispose.Checks.isNotValid;
+import static com.dci.intellij.dbn.common.util.Files.isDbLanguageFile;
+
 public class DBSyntaxHighlighterProvider implements SyntaxHighlighterProvider {
     @Override
     @Nullable
-    public SyntaxHighlighter create(@NotNull FileType fileType, @Nullable Project project, @Nullable VirtualFile virtualFile) {
-        if (virtualFile != null) {
-            fileType = virtualFile.getFileType();
-        }
-        if (fileType instanceof DBLanguageFileType) {
-            DBLanguageFileType dbFileType = (DBLanguageFileType) fileType;
-            DBLanguage language = (DBLanguage) dbFileType.getLanguage();
+    public SyntaxHighlighter create(@NotNull FileType fileType, @Nullable Project project, @Nullable VirtualFile file) {
+        if (isNotValid(project)) return null;
+        if (isNotValid(file)) return null;
+        if (!isDbLanguageFile(file)) return null;
 
-            DBLanguageDialect mainLanguageDialect = language.getMainLanguageDialect();
-            if (project != null && virtualFile != null) {
-                ConnectionHandler connection = FileConnectionContextManager.getInstance(project).getConnection(virtualFile);
-                DBLanguageDialect languageDialect = connection == null ?
-                        mainLanguageDialect :
-                        connection.getLanguageDialect(language);
-                return languageDialect == null ?
-                        mainLanguageDialect.getSyntaxHighlighter() :
-                        languageDialect.getSyntaxHighlighter();
-            }
+        DBLanguageFileType dbFileType = (DBLanguageFileType) fileType;
+        DBLanguage language = (DBLanguage) dbFileType.getLanguage();
+        DBLanguageDialect mainLanguageDialect = language.getMainLanguageDialect();
 
-            return mainLanguageDialect.getSyntaxHighlighter();
-        }
+        FileConnectionContextManager contextManager = FileConnectionContextManager.getInstance(project);
+        ConnectionHandler connection = contextManager.getConnection(file);
 
-        return null;
+        DBLanguageDialect languageDialect = connection == null ?
+                mainLanguageDialect :
+                connection.getLanguageDialect(language);
+
+        return languageDialect == null ?
+                mainLanguageDialect.getSyntaxHighlighter() :
+                languageDialect.getSyntaxHighlighter();
     }
 }

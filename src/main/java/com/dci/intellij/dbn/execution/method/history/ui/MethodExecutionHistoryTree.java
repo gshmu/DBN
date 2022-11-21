@@ -1,12 +1,13 @@
 package com.dci.intellij.dbn.execution.method.history.ui;
 
 import com.dci.intellij.dbn.common.ui.tree.DBNTree;
+import com.dci.intellij.dbn.common.util.Guarded;
 import com.dci.intellij.dbn.execution.method.MethodExecutionInput;
 import com.intellij.openapi.Disposable;
-import com.intellij.openapi.progress.ProcessCanceledException;
 import com.intellij.ui.ColoredTreeCellRenderer;
 import com.intellij.ui.SimpleTextAttributes;
 import com.intellij.util.ui.tree.TreeUtil;
+import lombok.Getter;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -19,6 +20,7 @@ import javax.swing.tree.TreeSelectionModel;
 import java.util.Collections;
 import java.util.List;
 
+@Getter
 public class MethodExecutionHistoryTree extends DBNTree implements Disposable {
     private boolean grouped;
     private final boolean debug;
@@ -63,15 +65,11 @@ public class MethodExecutionHistoryTree extends DBNTree implements Disposable {
         setSelectedInput(selectedExecutionInput);
     }
 
-    boolean isGrouped() {
-        return grouped;
-    }
-
     void setSelectedInput(MethodExecutionInput executionInput) {
-        if (executionInput != null) {
-            MethodExecutionHistoryTreeModel model = getModel();
-            getSelectionModel().setSelectionPath(model.getTreePath(executionInput));
-        }
+        if (executionInput == null) return;
+
+        MethodExecutionHistoryTreeModel model = getModel();
+        getSelectionModel().setSelectionPath(model.getTreePath(executionInput));
     }
 
     @Nullable
@@ -87,7 +85,7 @@ public class MethodExecutionHistoryTree extends DBNTree implements Disposable {
     private static class TreeCellRenderer extends ColoredTreeCellRenderer {
         @Override
         public void customizeCellRenderer(@NotNull JTree tree, Object value, boolean selected, boolean expanded, boolean leaf, int row, boolean hasFocus) {
-            try {
+            Guarded.run(() -> {
                 MethodExecutionHistoryTreeNode node = (MethodExecutionHistoryTreeNode) value;
                 setIcon(node.getIcon());
                 append(node.getName(), SimpleTextAttributes.REGULAR_ATTRIBUTES);
@@ -98,23 +96,23 @@ public class MethodExecutionHistoryTree extends DBNTree implements Disposable {
                         append(" #" + overload, SimpleTextAttributes.GRAY_ATTRIBUTES);
                     }
                 }
-            } catch (ProcessCanceledException ignore) {}
+            });
         }
     }
 
     void removeSelectedEntries() {
         TreePath selectionPath = getSelectionPath();
-        if (selectionPath != null) {
-            MethodExecutionHistoryTreeNode treeNode = (MethodExecutionHistoryTreeNode) selectionPath.getLastPathComponent();
-            MethodExecutionHistoryTreeNode parentTreeNode = (MethodExecutionHistoryTreeNode) treeNode.getParent();
-            while (parentTreeNode != null &&
-                    parentTreeNode.getChildCount() == 1 &&
-                    !parentTreeNode.isRoot()) {
-                getSelectionModel().setSelectionPath(TreeUtil.getPathFromRoot(parentTreeNode));
-                parentTreeNode = (MethodExecutionHistoryTreeNode) parentTreeNode.getParent();
-            }
-            TreeUtil.removeSelected(this);
+        if (selectionPath == null) return;
+
+        MethodExecutionHistoryTreeNode treeNode = (MethodExecutionHistoryTreeNode) selectionPath.getLastPathComponent();
+        MethodExecutionHistoryTreeNode parentTreeNode = (MethodExecutionHistoryTreeNode) treeNode.getParent();
+        while (parentTreeNode != null &&
+                parentTreeNode.getChildCount() == 1 &&
+                !parentTreeNode.isRoot()) {
+            getSelectionModel().setSelectionPath(TreeUtil.getPathFromRoot(parentTreeNode));
+            parentTreeNode = (MethodExecutionHistoryTreeNode) parentTreeNode.getParent();
         }
+        TreeUtil.removeSelected(this);
     }
 
     /**********************************************************

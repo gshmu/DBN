@@ -30,6 +30,8 @@ import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
 
+import static com.dci.intellij.dbn.common.dispose.Checks.isNotValid;
+import static com.dci.intellij.dbn.common.dispose.Checks.isValid;
 import static com.dci.intellij.dbn.execution.ExecutionStatus.EXECUTING;
 import static com.dci.intellij.dbn.execution.ExecutionStatus.QUEUED;
 
@@ -58,21 +60,21 @@ public class StatementGutterAction extends AnAction {
     private ExecutablePsiElement getExecutablePsiElement() {
         return Read.conditional(() -> {
             DBLanguagePsiFile psiFile = getPsiFile();
-            if (psiFile != null) {
-                PsiElement elementAtOffset = psiFile.findElementAt(elementOffset);
-                if (elementAtOffset != null && !(elementAtOffset instanceof BasePsiElement)) {
-                    elementAtOffset = elementAtOffset.getParent();
-                }
-                if (elementAtOffset instanceof ExecutablePsiElement) {
-                    return (ExecutablePsiElement) elementAtOffset;
-                } else if (elementAtOffset instanceof BasePsiElement) {
-                    BasePsiElement basePsiElement = (BasePsiElement) elementAtOffset;
-                    ExecutablePsiElement executablePsiElement = (ExecutablePsiElement)
-                            basePsiElement.findEnclosingPsiElement(ExecutablePsiElement.class);
+            if (isNotValid(psiFile)) return null;
 
-                    if (executablePsiElement != null && executablePsiElement.isValid()) {
-                        return executablePsiElement;
-                    }
+            PsiElement elementAtOffset = psiFile.findElementAt(elementOffset);
+            if (elementAtOffset != null && !(elementAtOffset instanceof BasePsiElement)) {
+                elementAtOffset = elementAtOffset.getParent();
+            }
+            if (elementAtOffset instanceof ExecutablePsiElement) {
+                return (ExecutablePsiElement) elementAtOffset;
+            } else if (elementAtOffset instanceof BasePsiElement) {
+                BasePsiElement basePsiElement = (BasePsiElement) elementAtOffset;
+                ExecutablePsiElement executablePsiElement = (ExecutablePsiElement)
+                        basePsiElement.findEnclosingPsiElement(ExecutablePsiElement.class);
+
+                if (isValid(executablePsiElement)) {
+                    return executablePsiElement;
                 }
             }
             return null;

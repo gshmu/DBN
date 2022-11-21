@@ -14,6 +14,7 @@ import com.dci.intellij.dbn.common.ui.tab.TabbedPane;
 import com.dci.intellij.dbn.common.ui.util.Mouse;
 import com.dci.intellij.dbn.common.ui.util.UserInterface;
 import com.dci.intellij.dbn.common.util.Documents;
+import com.dci.intellij.dbn.common.util.Guarded;
 import com.dci.intellij.dbn.common.util.Strings;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.ConnectionId;
@@ -39,7 +40,6 @@ import com.dci.intellij.dbn.execution.statement.result.StatementExecutionResult;
 import com.dci.intellij.dbn.language.common.DBLanguagePsiFile;
 import com.intellij.openapi.Disposable;
 import com.intellij.openapi.editor.Document;
-import com.intellij.openapi.progress.ProcessCanceledException;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Disposer;
 import com.intellij.openapi.vfs.VirtualFile;
@@ -115,7 +115,7 @@ public class ExecutionConsoleForm extends DBNFormBase {
 
             @Override
             public void transactionCompleted(@NotNull Document document, @NotNull PsiFile file) {
-                try {
+                Guarded.run(() -> {
                     TabbedPane resultTabs = getResultTabs();
                     for (TabInfo tabInfo : resultTabs.getTabs()) {
                         ExecutionResult<?> executionResult = getExecutionResult(tabInfo);
@@ -135,8 +135,7 @@ public class ExecutionConsoleForm extends DBNFormBase {
                             UserInterface.repaint(messagePanelComponent);
                         }
                     }
-                } catch (ProcessCanceledException ignore) {
-                }
+                });
             }
         };
     }

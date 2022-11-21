@@ -6,7 +6,7 @@ import com.dci.intellij.dbn.common.dispose.AlreadyDisposedException;
 import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.common.dispose.StatefulDisposable;
 import com.dci.intellij.dbn.common.project.ProjectRef;
-import com.dci.intellij.dbn.common.util.Cancellable;
+import com.dci.intellij.dbn.common.util.Guarded;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.ConnectionRef;
 import com.dci.intellij.dbn.navigation.options.ObjectsLookupSettings;
@@ -22,7 +22,7 @@ import lombok.Getter;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import javax.swing.ListCellRenderer;
+import javax.swing.*;
 import java.util.Comparator;
 import java.util.Objects;
 
@@ -116,7 +116,7 @@ public class DBObjectLookupModel extends StatefulDisposable.Base implements Choo
     @Override
     @NotNull
     public String[] getNames(boolean checkBoxState) {
-        return Cancellable.call(EMPTY_STRING_ARRAY, () -> {
+        return Guarded.call(EMPTY_STRING_ARRAY, () -> {
             boolean databaseLoadActive = getSettings().getForceDatabaseLoad().value();
             boolean forceLoad = checkBoxState && databaseLoadActive;
 
@@ -146,7 +146,7 @@ public class DBObjectLookupModel extends StatefulDisposable.Base implements Choo
     @Override
     @NotNull
     public Object[] getElementsByName(@NotNull String name, boolean checkBoxState, @NotNull String pattern) {
-        return Cancellable.call(EMPTY_ARRAY, () -> data.elements().
+        return Guarded.call(EMPTY_ARRAY, () -> data.elements().
                 stream().
                 filter(object -> Objects.equals(object.getName(), name)).
                 sorted(Comparator.comparing(DBObject::getQualifiedName)).

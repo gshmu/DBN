@@ -751,7 +751,7 @@ public abstract class DBObjectImpl<M extends DBObjectMetadata> extends BrowserTr
 
     @Override
     public boolean isLeaf() {
-        return Cancellable.call(true, () -> {
+        return Guarded.call(true, () -> {
             if (visibleTreeChildren == null) {
                 ConnectionHandler connection = this.getConnection();
                 Filter<BrowserTreeNode> filter = connection.getObjectTypeFilter();

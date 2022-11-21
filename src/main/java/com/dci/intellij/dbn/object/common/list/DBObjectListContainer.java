@@ -12,13 +12,13 @@ import com.dci.intellij.dbn.common.dispose.SafeDisposer;
 import com.dci.intellij.dbn.common.dispose.StatefulDisposable;
 import com.dci.intellij.dbn.common.load.ProgressMonitor;
 import com.dci.intellij.dbn.common.util.Commons;
+import com.dci.intellij.dbn.common.util.Guarded;
 import com.dci.intellij.dbn.connection.DatabaseEntity;
 import com.dci.intellij.dbn.connection.DatabaseType;
 import com.dci.intellij.dbn.object.common.DBObject;
 import com.dci.intellij.dbn.object.common.DBObjectBundle;
 import com.dci.intellij.dbn.object.type.DBObjectRelationType;
 import com.dci.intellij.dbn.object.type.DBObjectType;
-import com.intellij.openapi.progress.ProcessCanceledException;
 import lombok.Getter;
 import lombok.val;
 import org.jetbrains.annotations.NotNull;
@@ -58,19 +58,20 @@ public final class DBObjectListContainer implements StatefulDisposable {
     }
 
     public void visitObjects(@NotNull DBObjectListVisitor visitor, boolean visitInternal) {
-        if (objects != null) {
-            try {
-                checkDisposed(visitor);
-                for (DBObjectList<?> objectList : objects) {
-                    if (isValid(objectList) && (visitInternal || !objectList.isInternal())) {
-                        checkDisposed(visitor);
-                        ProgressMonitor.checkCancelled();
+        if (objects == null) return;
 
-                        visitor.visit(objectList);
-                    }
-                }
-            } catch (ProcessCanceledException ignore) {}
-        }
+        Guarded.run(() -> {
+            if (isNotValid(visitor)) return;
+            for (DBObjectList<?> objectList : objects) {
+                if (isNotValid(objectList)) continue;;
+                if (isNotValid(visitor)) return;
+
+                if (objectList.isInternal() && !visitInternal) continue;
+
+                ProgressMonitor.checkCancelled();
+                visitor.visit(objectList);
+            }
+        });
     }
 
     private void checkDisposed(DBObjectListVisitor visitor) {

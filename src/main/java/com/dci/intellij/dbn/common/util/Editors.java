@@ -461,7 +461,10 @@ public class Editors {
 
     public static EditorNotifications getNotifications(Project project) {
         return EditorNotifications.getInstance(Failsafe.nd(project));
+    }
 
+    public static boolean isDdlFileEditor(FileEditor fileEditor) {
+        return fileEditor instanceof DDLFileEditor;
     }
 
 }

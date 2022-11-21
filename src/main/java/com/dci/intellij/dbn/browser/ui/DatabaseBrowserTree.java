@@ -4,7 +4,6 @@ import com.dci.intellij.dbn.browser.DatabaseBrowserManager;
 import com.dci.intellij.dbn.browser.DatabaseBrowserUtils;
 import com.dci.intellij.dbn.browser.TreeNavigationHistory;
 import com.dci.intellij.dbn.browser.model.*;
-import com.dci.intellij.dbn.common.dispose.Checks;
 import com.dci.intellij.dbn.common.event.ProjectEvents;
 import com.dci.intellij.dbn.common.filter.Filter;
 import com.dci.intellij.dbn.common.thread.Background;
@@ -304,19 +303,20 @@ public final class DatabaseBrowserTree extends DBNTree {
         return new TreeSelectionListener() {
             @Override
             public void valueChanged(TreeSelectionEvent e) {
-                if (Checks.isValid(this) && listenersEnabled) {
-                    Object object = e.getPath().getLastPathComponent();
-                    if (object instanceof BrowserTreeNode) {
-                        BrowserTreeNode treeNode = (BrowserTreeNode) object;
-                        if (targetSelection == null || treeNode.equals(targetSelection)) {
-                            navigationHistory.add(treeNode);
-                        }
-                    }
+                if (isNotValid(this)) return;
+                if (!listenersEnabled) return;
 
-                    ProjectEvents.notify(ensureProject(),
-                            BrowserTreeEventListener.TOPIC,
-                            (listener) -> listener.selectionChanged());
+                Object object = e.getPath().getLastPathComponent();
+                if (object instanceof BrowserTreeNode) {
+                    BrowserTreeNode treeNode = (BrowserTreeNode) object;
+                    if (targetSelection == null || treeNode.equals(targetSelection)) {
+                        navigationHistory.add(treeNode);
+                    }
                 }
+
+                ProjectEvents.notify(ensureProject(),
+                        BrowserTreeEventListener.TOPIC,
+                        (listener) -> listener.selectionChanged());
             }
         };
     }

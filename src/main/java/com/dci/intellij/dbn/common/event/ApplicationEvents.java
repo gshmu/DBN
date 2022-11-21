@@ -2,9 +2,9 @@ package com.dci.intellij.dbn.common.event;
 
 import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.common.routine.ParametricRunnable;
+import com.dci.intellij.dbn.common.util.Guarded;
 import com.intellij.openapi.Disposable;
 import com.intellij.openapi.application.ApplicationManager;
-import com.intellij.openapi.progress.ProcessCanceledException;
 import com.intellij.util.messages.MessageBus;
 import com.intellij.util.messages.MessageBusConnection;
 import com.intellij.util.messages.Topic;
@@ -16,13 +16,13 @@ public final class ApplicationEvents {
     }
 
     public static <T> void subscribe(@Nullable Disposable parentDisposable, Topic<T> topic, T handler) {
-        try {
+        Guarded.run(() -> {
             MessageBus messageBus = messageBus();
             MessageBusConnection connection = parentDisposable == null ?
                     messageBus.connect() :
                     messageBus.connect(Failsafe.nd(parentDisposable));
             connection.subscribe(topic, handler);
-        } catch (ProcessCanceledException ignore) {}
+        });
     }
 
     public static <T> void notify(Topic<T> topic, ParametricRunnable.Basic<T> callback) {

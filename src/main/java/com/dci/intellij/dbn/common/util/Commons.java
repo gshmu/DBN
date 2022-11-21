@@ -1,6 +1,5 @@
 package com.dci.intellij.dbn.common.util;
 
-import com.intellij.openapi.progress.ProcessCanceledException;
 import lombok.extern.slf4j.Slf4j;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -25,12 +24,10 @@ public final class Commons {
     @Nullable
     public static <T> T coalesce(Supplier<T>... suppliers) {
         for (Supplier<T> supplier : suppliers) {
-            try {
-                T value = supplier.get();
-                if (value != null) {
-                    return value;
-                }
-            } catch (ProcessCanceledException ignore) {}
+            T value = Guarded.call(null, () -> supplier.get());
+            if (value != null) {
+                return value;
+            }
         }
         return null;
     }

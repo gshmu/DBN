@@ -7,7 +7,6 @@ import com.dci.intellij.dbn.connection.*;
 import com.dci.intellij.dbn.connection.transaction.PendingTransactionBundle;
 import com.dci.intellij.dbn.database.interfaces.DatabaseInterface.Callable;
 import com.dci.intellij.dbn.database.interfaces.DatabaseInterface.Runnable;
-import com.intellij.openapi.progress.ProcessCanceledException;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
 import lombok.Getter;
@@ -342,11 +341,9 @@ public class DBNConnection extends DBNConnectionBase {
     }
 
     private void notifyStatusChange() {
-        try {
-            ProjectEvents.notify(getProject(),
-                    ConnectionStatusListener.TOPIC,
-                    (listener) -> listener.statusChanged(id, sessionId));
-        } catch (ProcessCanceledException ignore) {}
+        ProjectEvents.notify(getProject(),
+                ConnectionStatusListener.TOPIC,
+                l -> l.statusChanged(id, sessionId));
     }
 
     /********************************************************************
