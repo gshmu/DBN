@@ -5,7 +5,6 @@ import com.dci.intellij.dbn.common.content.dependency.ContentDependencyAdapter;
 import com.dci.intellij.dbn.common.content.dependency.SubcontentDependencyAdapter;
 import com.dci.intellij.dbn.connection.DatabaseEntity;
 import com.dci.intellij.dbn.database.common.metadata.DBObjectMetadata;
-import com.dci.intellij.dbn.database.interfaces.DatabaseInterfaceQueue;
 import lombok.Getter;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -40,7 +39,7 @@ public class DynamicSubcontentLoader<T extends DynamicContentElement, M extends 
     }
 
     @Override
-    public void loadContent(DynamicContent<T> content, boolean force) throws SQLException {
+    public void loadContent(DynamicContent<T> content) throws SQLException {
         ContentDependencyAdapter dependency = content.getDependencyAdapter();
         if (dependency instanceof SubcontentDependencyAdapter) {
             SubcontentDependencyAdapter subcontentDependency = (SubcontentDependencyAdapter) dependency;
@@ -48,9 +47,11 @@ public class DynamicSubcontentLoader<T extends DynamicContentElement, M extends 
             DynamicContent<T> sourceContent = subcontentDependency.getSourceContent();
             DynamicContentLoader<T, M> alternativeLoader = getAlternativeLoader();
 
-            if (alternativeLoader != null && useAlternativeLoader(subcontentDependency)) {
+            boolean useAlternativeLoader = alternativeLoader != null && !sourceContent.isLoaded() && subcontentDependency.canUseAlternativeLoader();
+
+            if (useAlternativeLoader) {
                 sourceContent.loadInBackground();
-                alternativeLoader.loadContent(content, false);
+                alternativeLoader.loadContent(content);
 
             } else if (sourceContent instanceof GroupedDynamicContent) {
                 GroupedDynamicContent<T> groupedContent = (GroupedDynamicContent<T>) sourceContent;
@@ -64,22 +65,5 @@ public class DynamicSubcontentLoader<T extends DynamicContentElement, M extends 
             }
         }
 
-    }
-
-    private boolean useAlternativeLoader(SubcontentDependencyAdapter dependencyAdapter) {
-        if (dependencyAdapter.isSourceContentReady()) {
-            return false;
-        } else {
-            DatabaseInterfaceQueue interfaceQueue = dependencyAdapter.getSourceContent().getConnection().getInterfaceQueue();
-            int maxActiveTasks = interfaceQueue.maxActiveTasks();
-            int count = interfaceQueue.size() + interfaceQueue.counters().running().get();
-
-            //ThreadInfo thread = ThreadMonitor.current();
-            if (/*thread.is(ThreadProperty.CODE_ANNOTATING) || ThreadMonitor.getProcessCount(ThreadProperty.PROGRESS) > 20 ||*/ count > maxActiveTasks) {
-                return false;
-            } else {
-                return true;
-            }
-        }
     }
 }

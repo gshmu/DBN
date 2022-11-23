@@ -13,18 +13,16 @@ import com.dci.intellij.dbn.common.ui.Presentable;
 import com.dci.intellij.dbn.common.util.Lists;
 import com.dci.intellij.dbn.connection.config.ConnectionSettings;
 import com.dci.intellij.dbn.connection.console.DatabaseConsoleBundle;
-import com.dci.intellij.dbn.connection.context.ConnectionProvider;
+import com.dci.intellij.dbn.connection.context.DatabaseContextBase;
 import com.dci.intellij.dbn.connection.info.ConnectionInfo;
 import com.dci.intellij.dbn.connection.jdbc.DBNConnection;
 import com.dci.intellij.dbn.connection.session.DatabaseSessionBundle;
 import com.dci.intellij.dbn.database.DatabaseCompatibility;
 import com.dci.intellij.dbn.database.interfaces.DatabaseInterfaceQueue;
-import com.dci.intellij.dbn.database.interfaces.DatabaseInterfaces;
 import com.dci.intellij.dbn.execution.statement.StatementExecutionQueue;
 import com.dci.intellij.dbn.language.common.DBLanguage;
 import com.dci.intellij.dbn.language.common.DBLanguageDialect;
 import com.dci.intellij.dbn.object.DBSchema;
-import com.dci.intellij.dbn.object.common.DBObjectBundle;
 import com.dci.intellij.dbn.vfs.file.DBSessionBrowserVirtualFile;
 import com.intellij.lang.Language;
 import com.intellij.openapi.project.Project;
@@ -35,7 +33,7 @@ import org.jetbrains.annotations.Nullable;
 import java.sql.SQLException;
 import java.util.List;
 
-public interface ConnectionHandler extends StatefulDisposable, EnvironmentTypeProvider, ConnectionProvider, Presentable, ConnectionIdProvider, Referenceable<ConnectionRef> {
+public interface ConnectionHandler extends StatefulDisposable, EnvironmentTypeProvider, DatabaseContextBase, Presentable, Referenceable<ConnectionRef> {
 
     @NotNull
     Project getProject();
@@ -123,13 +121,7 @@ public interface ConnectionHandler extends StatefulDisposable, EnvironmentTypePr
     @NotNull
     ConnectionPool getConnectionPool();
 
-    @NotNull
-    DatabaseInterfaces getInterfaces();
-
     DatabaseInterfaceQueue getInterfaceQueue();
-
-    @NotNull
-    DBObjectBundle getObjectBundle();
 
     @Nullable
     SchemaId getUserSchema();
@@ -161,8 +153,6 @@ public interface ConnectionHandler extends StatefulDisposable, EnvironmentTypePr
     void setLoggingEnabled(boolean loggingEnabled);
 
     void disconnect() throws SQLException;
-
-    ConnectionId getConnectionId();
 
     String getUserName();
 
@@ -226,5 +216,9 @@ public interface ConnectionHandler extends StatefulDisposable, EnvironmentTypePr
     @NotNull
     static ConnectionHandler local() {
         return ConnectionLocalContext.getConnection();
+    }
+
+    static boolean canConnect(ConnectionHandler connection) {
+        return connection != null && connection.canConnect() && connection.isValid();
     }
 }

@@ -60,7 +60,7 @@ public class CompilerResult implements Disposable, NotificationSupport {
             InterfaceTaskDefinition taskDefinition = InterfaceTaskDefinition.create(HIGH,
                     "Loading compiler data",
                     "Loading compile results for " + Naming.getQualifiedObjectName(objectType, objectName, schema),
-                    connection.getInterfaceContext());
+                    connection.createInterfaceContext());
 
             DatabaseInterfaceInvoker.execute(taskDefinition, conn -> {
                 ResultSet resultSet = null;

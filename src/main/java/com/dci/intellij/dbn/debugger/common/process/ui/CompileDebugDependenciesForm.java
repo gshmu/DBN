@@ -65,7 +65,7 @@ public class CompileDebugDependenciesForm extends DBNFormBase {
             objectList.ensureIndexIsVisible(selectedIndicesArray.length - 1);
         }
 
-        Presentable source = runConfiguration.getSource();
+        Presentable source = (Presentable) runConfiguration.getSource();
         DBNHeaderForm headerForm = source instanceof DBObject ?
                 new DBNHeaderForm(this, (DBObject) source) :
                 new DBNHeaderForm(this, Commons.nvl(source, Presentable.UNKNOWN));

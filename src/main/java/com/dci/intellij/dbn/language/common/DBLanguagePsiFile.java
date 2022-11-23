@@ -4,15 +4,14 @@ import com.dci.intellij.dbn.common.dispose.Checks;
 import com.dci.intellij.dbn.common.dispose.StatefulDisposable;
 import com.dci.intellij.dbn.common.environment.EnvironmentType;
 import com.dci.intellij.dbn.common.thread.Read;
+import com.dci.intellij.dbn.common.ui.Presentable;
 import com.dci.intellij.dbn.common.util.Commons;
 import com.dci.intellij.dbn.common.util.Documents;
 import com.dci.intellij.dbn.common.util.Editors;
 import com.dci.intellij.dbn.common.util.Lists;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
-import com.dci.intellij.dbn.connection.ConnectionRef;
-import com.dci.intellij.dbn.connection.PresentableConnectionProvider;
 import com.dci.intellij.dbn.connection.SchemaId;
-import com.dci.intellij.dbn.connection.context.ConnectionContextProvider;
+import com.dci.intellij.dbn.connection.context.DatabaseContextBase;
 import com.dci.intellij.dbn.connection.mapping.FileConnectionContextManager;
 import com.dci.intellij.dbn.connection.session.DatabaseSession;
 import com.dci.intellij.dbn.ddl.DDLFileAttachmentManager;
@@ -25,7 +24,6 @@ import com.dci.intellij.dbn.language.common.psi.lookup.IdentifierDefinitionLooku
 import com.dci.intellij.dbn.language.common.psi.lookup.LookupAdapterCache;
 import com.dci.intellij.dbn.language.common.psi.lookup.PsiLookupAdapter;
 import com.dci.intellij.dbn.language.sql.SQLLanguage;
-import com.dci.intellij.dbn.object.DBSchema;
 import com.dci.intellij.dbn.object.common.DBObject;
 import com.dci.intellij.dbn.object.common.DBObjectPsiCache;
 import com.dci.intellij.dbn.object.common.DBSchemaObject;
@@ -65,13 +63,10 @@ import java.util.Set;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Consumer;
 
-public abstract class DBLanguagePsiFile extends PsiFileImpl implements ConnectionContextProvider, PresentableConnectionProvider, StatefulDisposable {
+public abstract class DBLanguagePsiFile extends PsiFileImpl implements DatabaseContextBase, Presentable, StatefulDisposable {
     private final Language language;
     private final DBLanguageFileType fileType;
     private final ParserDefinition parserDefinition;
-    private ConnectionRef connection;
-    private DatabaseSession databaseSession;
-    private DBObjectRef<DBSchema> databaseSchema;
     private DBObjectRef<DBSchemaObject> underlyingObject;
 
     @Override

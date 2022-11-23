@@ -4,10 +4,9 @@ import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.ConnectionId;
 import com.dci.intellij.dbn.connection.ConnectionRef;
-import com.dci.intellij.dbn.connection.SchemaId;
 import com.dci.intellij.dbn.connection.session.DatabaseSession;
 import com.dci.intellij.dbn.language.sql.SQLFileType;
-import com.dci.intellij.dbn.vfs.DBVirtualFileImpl;
+import com.dci.intellij.dbn.vfs.DBVirtualFileBase;
 import com.intellij.openapi.fileTypes.FileType;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.util.LocalTimeCounter;
@@ -18,7 +17,7 @@ import javax.swing.*;
 import java.io.*;
 import java.nio.charset.Charset;
 
-public class DBSessionBrowserVirtualFile extends DBVirtualFileImpl implements Comparable<DBSessionBrowserVirtualFile> {
+public class DBSessionBrowserVirtualFile extends DBVirtualFileBase implements Comparable<DBSessionBrowserVirtualFile> {
     private final ConnectionRef connection;
     private long modificationTimestamp = LocalTimeCounter.currentTime();
     private CharSequence content = "";
@@ -44,12 +43,6 @@ public class DBSessionBrowserVirtualFile extends DBVirtualFileImpl implements Co
     @NotNull
     public ConnectionHandler getConnection() {
         return connection.ensure();
-    }
-
-    @Nullable
-    @Override
-    public SchemaId getSchemaId() {
-        return null;
     }
 
     @Nullable

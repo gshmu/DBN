@@ -8,11 +8,11 @@ import com.dci.intellij.dbn.connection.ConnectionId;
 import com.dci.intellij.dbn.connection.SchemaId;
 import com.dci.intellij.dbn.connection.SessionId;
 import com.dci.intellij.dbn.connection.config.ConnectionConfigListener;
-import com.dci.intellij.dbn.connection.context.ConnectionContextProvider;
 import com.dci.intellij.dbn.connection.session.DatabaseSession;
 import com.dci.intellij.dbn.ddl.DDLFileAttachmentManager;
 import com.dci.intellij.dbn.object.DBSchema;
 import com.dci.intellij.dbn.object.common.DBSchemaObject;
+import com.dci.intellij.dbn.vfs.DBVirtualFile;
 import com.dci.intellij.dbn.vfs.DatabaseFileSystem;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.LocalFileSystem;
@@ -119,11 +119,11 @@ public class FileConnectionContextRegistry extends StatefulDisposable.Base imple
     }
 
     @Nullable
-    private <T> T resolveMappingProvider(@NotNull VirtualFile file, Function<ConnectionContextProvider, T> handler) {
+    private <T> T resolveMappingProvider(@NotNull VirtualFile file, Function<DBVirtualFile, T> handler) {
         if (VirtualFiles.isDatabaseFileSystem(file)) {
-            if (file instanceof ConnectionContextProvider) {
-                ConnectionContextProvider mappingProvider = (ConnectionContextProvider) file;
-                return handler.apply(mappingProvider);
+            if (file instanceof DBVirtualFile) {
+                DBVirtualFile databaseFile = (DBVirtualFile) file;
+                return handler.apply(databaseFile);
             }
         }
         return null;

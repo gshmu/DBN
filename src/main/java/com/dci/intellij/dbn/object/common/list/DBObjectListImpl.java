@@ -5,7 +5,7 @@ import com.dci.intellij.dbn.browser.model.BrowserTreeEventListener;
 import com.dci.intellij.dbn.browser.model.BrowserTreeNode;
 import com.dci.intellij.dbn.browser.options.DatabaseBrowserSettings;
 import com.dci.intellij.dbn.browser.options.DatabaseBrowserSortingSettings;
-import com.dci.intellij.dbn.common.content.DynamicContentImpl;
+import com.dci.intellij.dbn.common.content.DynamicContentBase;
 import com.dci.intellij.dbn.common.content.DynamicContentProperty;
 import com.dci.intellij.dbn.common.content.DynamicContentType;
 import com.dci.intellij.dbn.common.content.GroupedDynamicContent;
@@ -62,7 +62,7 @@ import static com.dci.intellij.dbn.object.type.DBObjectType.*;
 
 @Getter
 @Setter
-public class DBObjectListImpl<T extends DBObject> extends DynamicContentImpl<T> implements DBObjectList<T> {
+public class DBObjectListImpl<T extends DBObject> extends DynamicContentBase<T> implements DBObjectList<T> {
     private final DBObjectType objectType;
     private ObjectQuickFilter<T> quickFilter;
 
@@ -191,39 +191,45 @@ public class DBObjectListImpl<T extends DBObject> extends DynamicContentImpl<T> 
     }
 
     @Override
+    public boolean contains(T object) {
+        return elements.contains(object);
+    }
+
+    @Override
     public T getElement(String name, short overload) {
-        if (name != null) {
-            List<T> elements = getAllElements();
-            if (!elements.isEmpty()) {
-                if (objectType == ARGUMENT || objectType == TYPE_ATTRIBUTE) {
-                    // arguments and type attributes are sorted by position (linear search)
-                    return super.getElement(name, overload);
+        if (name == null) return null;
 
-                } else if (objectType == TYPE) {
-                    return Commons.coalesce(
-                            () -> binarySearch(elements, binary(name, overload, false)),
-                            () -> binarySearch(elements, binary(name, overload, true)));
+        List<T> elements = getAllElements();
+        if (elements.isEmpty()) return null;
 
-                } else if (isSearchable()) {
-                    if (objectType == COLUMN) {
-                        // primary key columns are sorted by position at beginning of the list of elements
-                        SearchAdapter<T> linear = linear(name, c -> c instanceof DBColumn && ((DBColumn) c).isPrimaryKey());
-                        SearchAdapter<T> binary = binary(name);
-                        return comboSearch(elements, linear, binary);
-                    }  else {
-                        SearchAdapter<T> binary = objectType.isOverloadable() ?
-                                binary(name, overload) :
-                                binary(name);
+        if (objectType == ARGUMENT || objectType == TYPE_ATTRIBUTE) {
+            // arguments and type attributes are sorted by position (linear search)
+            return super.getElement(name, overload);
+        }
 
-                        return binarySearch(elements, binary);
+        if (objectType == TYPE) {
+            return Commons.coalesce(
+                    () -> binarySearch(elements, binary(name, overload, false)),
+                    () -> binarySearch(elements, binary(name, overload, true)));
+        }
 
-                    }
-                } else {
-                    return super.getElement(name, overload);
-                }
+        if (isSearchable()) {
+            if (objectType == COLUMN) {
+                // primary key columns are sorted by position at beginning of the list of elements
+                SearchAdapter<T> linear = linear(name, c -> c instanceof DBColumn && ((DBColumn) c).isPrimaryKey());
+                SearchAdapter<T> binary = binary(name);
+                return comboSearch(elements, linear, binary);
+            }  else {
+                SearchAdapter<T> binary = objectType.isOverloadable() ?
+                        binary(name, overload) :
+                        binary(name);
+
+                return binarySearch(elements, binary);
+
             }
         }
-        return null;
+
+        return super.getElement(name, overload);
     }
 
 
@@ -380,19 +386,9 @@ public class DBObjectListImpl<T extends DBObject> extends DynamicContentImpl<T> 
     @Override
     public List<? extends BrowserTreeNode> getChildren() {
         return Guarded.call(elements, () -> {
-            if (isLoading() || isDisposed()) return elements;
-
-            boolean scroll = !isTouched();
-            if (!isLoaded() || isDirty()) {
-                if (isPassive() || canLoadFast()) {
-                    ensure();
-                } else {
-                    loadInBackground();
-                    scroll = false;
-                }
-            }
-
-            if (scroll) {
+            boolean wasUntouched = !isTouched();
+            getElements();
+            if (wasUntouched && isLoaded()) {
                 ConnectionHandler connection = this.getConnection();
                 DatabaseBrowserManager.scrollToSelectedElement(connection);
             }
@@ -455,7 +451,7 @@ public class DBObjectListImpl<T extends DBObject> extends DynamicContentImpl<T> 
     @Override
     public String getPresentableTextDetails() {
         int elementCount = getChildCount();
-        int unfilteredElementCount = getAllElementsNoLoad().size();
+        int unfilteredElementCount = unwrap(elements).size();
         return unfilteredElementCount > 0 ? "(" + elementCount + (elementCount != unfilteredElementCount ? "/"+ unfilteredElementCount : "") + ")" : null;
     }
 
@@ -589,16 +585,16 @@ public class DBObjectListImpl<T extends DBObject> extends DynamicContentImpl<T> 
         @Override
         public T getElement(String name, short overload) {
             getElements();
-            if (ranges != null) {
-                SearchAdapter<T> adapter = getObjectType().isOverloadable() ?
-                        binary(name, overload) :
-                        binary(name);
-                Collection<Range> ranges = this.ranges.values();
-                for (Range range : ranges) {
-                    T element = binarySearch(elements, range.getLeft(), range.getRight(), adapter);
-                    if (element != null) {
-                        return element;
-                    }
+            if (ranges == null) return null;
+
+            SearchAdapter<T> adapter = getObjectType().isOverloadable() ?
+                    binary(name, overload) :
+                    binary(name);
+            Collection<Range> ranges = this.ranges.values();
+            for (Range range : ranges) {
+                T element = binarySearch(elements, range.getLeft(), range.getRight(), adapter);
+                if (element != null) {
+                    return element;
                 }
             }
             return null;

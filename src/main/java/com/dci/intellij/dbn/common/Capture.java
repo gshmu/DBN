@@ -5,11 +5,11 @@ import java.util.function.Supplier;
 
 public class Capture<T> {
     private T value;
-    private Object check;
+    private Object signature;
     protected volatile boolean loading;
 
-    public boolean isValid(Object check) {
-        return Objects.equals(this.check, check);
+    public boolean isOutdated(Object signature) {
+        return !Objects.equals(this.signature, signature);
     }
 
     public T get() {
@@ -17,17 +17,15 @@ public class Capture<T> {
     }
 
     public void capture(Object check, Supplier<T> value) {
-        this.check = check;
-        if (!loading) {
-            synchronized (this) {
-                if (!loading) {
-                    try {
-                        loading = true;
-                        this.value = value.get();
-                    } finally {
-                        loading = false;
-                    }
-                }
+        this.signature = check;
+        if (loading) return;
+        synchronized (this) {
+            if (loading) return;
+            try {
+                loading = true;
+                this.value = value.get();
+            } finally {
+                loading = false;
             }
         }
     }

@@ -74,7 +74,7 @@ public abstract class DBPrivilegeImpl<M extends DBPrivilegeMetadata> extends DBO
         new DynamicContentLoaderImpl<DBUser, DBObjectMetadata>(PRIVILEGE, USER, true) {
 
             @Override
-            public void loadContent(DynamicContent<DBUser> content, boolean forceReload) {
+            public void loadContent(DynamicContent<DBUser> content) {
                 DBPrivilege privilege = content.ensureParentEntity();
                 List<DBUser> users = privilege.getObjectBundle().getUsers();
                 if (users == null) return;
@@ -92,7 +92,7 @@ public abstract class DBPrivilegeImpl<M extends DBPrivilegeMetadata> extends DBO
         new DynamicContentLoaderImpl<DBRole, DBObjectMetadata>(PRIVILEGE, ROLE, true) {
 
             @Override
-            public void loadContent(DynamicContent<DBRole> content, boolean forceReload) {
+            public void loadContent(DynamicContent<DBRole> content) {
                 DBPrivilege privilege = content.ensureParentEntity();
                 List<DBRole> roles = privilege.getObjectBundle().getRoles();
                 if (roles == null) return;

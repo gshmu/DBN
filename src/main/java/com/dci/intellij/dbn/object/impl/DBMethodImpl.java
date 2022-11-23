@@ -21,6 +21,7 @@ import com.dci.intellij.dbn.object.common.list.DBObjectList;
 import com.dci.intellij.dbn.object.common.list.DBObjectListContainer;
 import com.dci.intellij.dbn.object.common.status.DBObjectStatus;
 import com.dci.intellij.dbn.object.common.status.DBObjectStatusHolder;
+import lombok.Getter;
 import org.jetbrains.annotations.NotNull;
 
 import java.sql.ResultSet;
@@ -31,6 +32,7 @@ import static com.dci.intellij.dbn.object.common.property.DBObjectProperty.*;
 import static com.dci.intellij.dbn.object.type.DBObjectType.ARGUMENT;
 import static com.dci.intellij.dbn.object.type.DBObjectType.METHOD;
 
+@Getter
 public abstract class DBMethodImpl<M extends DBMethodMetadata> extends DBSchemaObjectImpl<M> implements DBMethod {
     protected DBObjectList<DBArgument> arguments;
     protected short position;
@@ -79,12 +81,6 @@ public abstract class DBMethodImpl<M extends DBMethodMetadata> extends DBSchemaO
     }
 
     @Override
-    @NotNull
-    public DBLanguage getLanguage() {
-        return language;
-    }
-
-    @Override
     public boolean isEditable(DBContentType contentType) {
         return getContentType() == DBContentType.CODE && contentType == DBContentType.CODE;
     }
@@ -117,16 +113,6 @@ public abstract class DBMethodImpl<M extends DBMethodMetadata> extends DBSchemaO
     @Override
     public DBArgument getArgument(String name) {
         return (DBArgument) getObjectByName(getArguments(), name);
-    }
-
-    @Override
-    public short getOverload() {
-        return overload;
-    }
-
-    @Override
-    public short getPosition() {
-        return position;
     }
 
     @Override
@@ -178,7 +164,7 @@ public abstract class DBMethodImpl<M extends DBMethodMetadata> extends DBSchemaO
                     @Override
                     public ResultSet createResultSet(DynamicContent<DBArgument> dynamicContent, DBNConnection connection) throws SQLException {
                         DatabaseMetadataInterface metadata = dynamicContent.getMetadataInterface();
-                        DBMethod method = dynamicContent.getParentEntity();
+                        DBMethod method = dynamicContent.ensureParentEntity();
                         String ownerName = getSchemaName(method);
                         short overload = method.getOverload();
                         DBProgram program = method.getProgram();

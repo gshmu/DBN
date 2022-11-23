@@ -8,7 +8,7 @@ import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.ConnectionHandlerStatusListener;
 import com.dci.intellij.dbn.connection.ConnectionId;
 import com.dci.intellij.dbn.connection.ConnectionManager;
-import com.dci.intellij.dbn.connection.context.ConnectionProvider;
+import com.dci.intellij.dbn.connection.context.DatabaseContext;
 import com.dci.intellij.dbn.object.common.DBObject;
 import com.dci.intellij.dbn.object.lookup.DBObjectRef;
 import com.intellij.openapi.project.Project;
@@ -98,14 +98,14 @@ public class DBNHeaderForm extends DBNFormBase {
     }
 
     private void updateBorderAndBackground(Presentable presentable) {
-        if (presentable instanceof ConnectionProvider) {
-            ConnectionProvider connectionProvider = (ConnectionProvider) presentable;
+        if (presentable instanceof DatabaseContext) {
+            DatabaseContext connectionProvider = (DatabaseContext) presentable;
             updateBorderAndBackground(connectionProvider);
         }
         mainPanel.setBorder(BORDER);
     }
 
-    private void updateBorderAndBackground(ConnectionProvider connectionProvider) {
+    private void updateBorderAndBackground(DatabaseContext connectionProvider) {
         ConnectionHandler connection = connectionProvider.getConnection();
         Color background = null;
         if (connection != null) {

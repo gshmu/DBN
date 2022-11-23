@@ -12,7 +12,7 @@ import com.dci.intellij.dbn.object.common.DBObject;
 import com.dci.intellij.dbn.object.common.list.DBObjectList;
 import com.dci.intellij.dbn.object.lookup.DBObjectRef;
 import com.dci.intellij.dbn.object.type.DBObjectType;
-import com.dci.intellij.dbn.vfs.DBVirtualFileImpl;
+import com.dci.intellij.dbn.vfs.DBVirtualFileBase;
 import com.intellij.ide.navigationToolbar.NavBarPresentation;
 import com.intellij.openapi.fileTypes.FileType;
 import com.intellij.openapi.fileTypes.UnknownFileType;
@@ -27,7 +27,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 
-public class DBObjectVirtualFile<T extends DBObject> extends DBVirtualFileImpl {
+public class DBObjectVirtualFile<T extends DBObject> extends DBVirtualFileBase {
     private static final byte[] EMPTY_BYTE_CONTENT = new byte[0];
     protected DBObjectRef<T> object;
 

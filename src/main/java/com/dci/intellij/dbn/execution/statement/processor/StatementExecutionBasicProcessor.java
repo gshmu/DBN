@@ -105,7 +105,7 @@ public class StatementExecutionBasicProcessor extends StatefulDisposable.Base im
         this.fileEditor = WeakRef.of(fileEditor);
         this.psiFile = PsiFileRef.of(psiFile);
 
-        this.cachedExecutable = PsiElementRef.from(psiElement);
+        this.cachedExecutable = PsiElementRef.of(psiElement);
         this.name = psiFile.getName();
         this.icon = psiFile.getIcon();
         this.index = index;
@@ -167,7 +167,7 @@ public class StatementExecutionBasicProcessor extends StatefulDisposable.Base im
 
     @Override
     public void bind(ExecutablePsiElement executablePsiElement) {
-        cachedExecutable = PsiElementRef.from(executablePsiElement);
+        cachedExecutable = PsiElementRef.of(executablePsiElement);
         executablePsiElement.setExecutionProcessor(this);
     }
 

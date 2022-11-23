@@ -25,7 +25,7 @@ public class DatasetEditorUtils {
             InterfaceTaskDefinition taskDefinition = InterfaceTaskDefinition.create(HIGH,
                     "Loading data",
                     "Loading possible values for " + column.getQualifiedNameWithType(),
-                    connection.getInterfaceContext());
+                    connection.createInterfaceContext());
             return DatabaseInterfaceInvoker.load(taskDefinition, conn -> loadDistinctColumnValues(column, connection, conn));
         } catch (Exception e) {
             return Collections.emptyList();

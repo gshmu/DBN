@@ -8,7 +8,6 @@ import com.dci.intellij.dbn.common.util.ChangeTimestamp;
 import com.dci.intellij.dbn.common.util.Documents;
 import com.dci.intellij.dbn.common.util.Strings;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
-import com.dci.intellij.dbn.connection.context.ConnectionProvider;
 import com.dci.intellij.dbn.connection.session.DatabaseSession;
 import com.dci.intellij.dbn.database.DatabaseFeature;
 import com.dci.intellij.dbn.editor.DBContentType;
@@ -45,7 +44,7 @@ import java.sql.Timestamp;
 import static com.dci.intellij.dbn.vfs.VirtualFileStatus.*;
 
 @Slf4j
-public class DBSourceCodeVirtualFile extends DBContentVirtualFile implements DBParseableVirtualFile, ConnectionProvider, DocumentListener, BackedVirtualFile {
+public class DBSourceCodeVirtualFile extends DBContentVirtualFile implements DBParseableVirtualFile, DocumentListener, BackedVirtualFile {
 
     private SourceCodeContent originalContent = new SourceCodeContent();
     private SourceCodeContent localContent = new SourceCodeContent();

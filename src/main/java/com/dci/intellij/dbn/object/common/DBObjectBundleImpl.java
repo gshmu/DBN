@@ -75,7 +75,6 @@ import java.util.concurrent.ConcurrentHashMap;
 
 import static com.dci.intellij.dbn.browser.DatabaseBrowserUtils.treeVisibilityChanged;
 import static com.dci.intellij.dbn.common.content.DynamicContentProperty.GROUPED;
-import static com.dci.intellij.dbn.common.content.DynamicContentProperty.PASSIVE;
 import static com.dci.intellij.dbn.object.type.DBObjectRelationType.*;
 import static com.dci.intellij.dbn.object.type.DBObjectType.*;
 
@@ -117,7 +116,7 @@ public class DBObjectBundleImpl extends BrowserTreeNodeBase implements DBObjectB
         this.configSignature = connection.getSettings().getDatabaseSettings().getSignature();
 
         this.objectLists = new DBObjectListContainer(this);
-        this.consoles = objectLists.createObjectList(CONSOLE, this, PASSIVE);
+        this.consoles = objectLists.createObjectList(CONSOLE, this);
         this.users = objectLists.createObjectList(USER, this);
         this.schemas = objectLists.createObjectList(SCHEMA, this);
         this.roles = objectLists.createObjectList(ROLE, this);
@@ -744,7 +743,7 @@ public class DBObjectBundleImpl extends BrowserTreeNodeBase implements DBObjectB
         new DynamicContentLoaderImpl<DBConsole, DBObjectMetadata>(null, CONSOLE, true){
 
             @Override
-            public void loadContent(DynamicContent<DBConsole> content, boolean forceReload) {
+            public void loadContent(DynamicContent<DBConsole> content) {
                 ConnectionHandler connection = content.getConnection();
                 List<DBConsole> consoles = connection.getConsoleBundle().getConsoles();
                 content.setElements(consoles);

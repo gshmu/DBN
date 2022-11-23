@@ -11,7 +11,7 @@ import com.dci.intellij.dbn.language.sql.SQLFileType;
 import com.dci.intellij.dbn.object.DBDataset;
 import com.dci.intellij.dbn.object.lookup.DBObjectRef;
 import com.dci.intellij.dbn.vfs.DBParseableVirtualFile;
-import com.dci.intellij.dbn.vfs.DBVirtualFileImpl;
+import com.dci.intellij.dbn.vfs.DBVirtualFileBase;
 import com.dci.intellij.dbn.vfs.DatabaseFileViewProvider;
 import com.intellij.lang.Language;
 import com.intellij.openapi.fileTypes.FileType;
@@ -25,7 +25,7 @@ import javax.swing.*;
 import java.io.*;
 import java.nio.charset.Charset;
 
-public class DBDatasetFilterVirtualFile extends DBVirtualFileImpl implements DBParseableVirtualFile {
+public class DBDatasetFilterVirtualFile extends DBVirtualFileBase implements DBParseableVirtualFile {
     private final DBObjectRef<DBDataset> dataset;
     private long modificationTimestamp = LocalTimeCounter.currentTime();
     private CharSequence content = "";

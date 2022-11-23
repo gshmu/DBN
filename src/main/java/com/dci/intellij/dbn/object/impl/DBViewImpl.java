@@ -100,7 +100,7 @@ public class DBViewImpl extends DBDatasetImpl<DBViewMetadata> implements DBView 
         InterfaceTaskDefinition taskDefinition = InterfaceTaskDefinition.create(HIGHEST,
                 "Updating source code",
                 "Updating sources of " + getQualifiedNameWithType(),
-                getInterfaceContext());
+                createInterfaceContext());
 
         DatabaseInterfaceInvoker.execute(taskDefinition, conn -> {
             ConnectionHandler connection = getConnection();

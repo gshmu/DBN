@@ -83,7 +83,7 @@ public class DatabaseOperationManager extends ProjectComponentBase {
         InterfaceTaskDefinition taskDefinition = InterfaceTaskDefinition.create(HIGHEST,
                 action + " " + object.getTypeName(),
                 action + " " + object.getQualifiedNameWithType(),
-                object.getConnection().getInterfaceContext());
+                object.getConnection().createInterfaceContext());
         return taskDefinition;
     }
 }

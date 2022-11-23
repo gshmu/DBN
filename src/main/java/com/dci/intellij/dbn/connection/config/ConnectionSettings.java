@@ -5,7 +5,6 @@ import com.dci.intellij.dbn.common.options.Configuration;
 import com.dci.intellij.dbn.common.property.PropertyHolderBase;
 import com.dci.intellij.dbn.common.util.Cloneable;
 import com.dci.intellij.dbn.connection.ConnectionId;
-import com.dci.intellij.dbn.connection.ConnectionIdProvider;
 import com.dci.intellij.dbn.connection.DatabaseType;
 import com.dci.intellij.dbn.connection.config.ui.ConnectionSettingsForm;
 import lombok.EqualsAndHashCode;
@@ -22,7 +21,7 @@ import static com.dci.intellij.dbn.connection.config.ConnectionSettingsStatus.*;
 @Setter
 @EqualsAndHashCode(callSuper = false)
 public class ConnectionSettings extends CompositeProjectConfiguration<ConnectionBundleSettings, ConnectionSettingsForm>
-        implements ConnectionIdProvider, Cloneable<ConnectionSettings> {
+        implements Cloneable<ConnectionSettings> {
 
     private ConnectionId connectionId;
 

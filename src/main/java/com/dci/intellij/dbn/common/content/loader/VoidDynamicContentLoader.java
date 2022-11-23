@@ -13,7 +13,7 @@ public class VoidDynamicContentLoader implements DynamicContentLoader{
     }
 
     @Override
-    public void loadContent(DynamicContent content, boolean forceReload) throws SQLException {
+    public void loadContent(DynamicContent content) throws SQLException {
         // do nothing
     }
 }

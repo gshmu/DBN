@@ -1,7 +1,6 @@
 package com.dci.intellij.dbn.execution;
 
 import com.dci.intellij.dbn.connection.ConnectionHandler;
-import com.dci.intellij.dbn.connection.ConnectionId;
 import com.dci.intellij.dbn.connection.SessionId;
 import com.dci.intellij.dbn.connection.session.DatabaseSession;
 import com.dci.intellij.dbn.database.DatabaseFeature;
@@ -42,12 +41,6 @@ public abstract class LocalExecutionInput extends ExecutionInput{
     public abstract boolean isSessionSelectionAllowed();
 
     public abstract boolean isDatabaseLogProducer();
-
-    @Override
-    public ConnectionId getConnectionId() {
-        ConnectionHandler connection = getConnection();
-        return connection == null ? null : connection.getConnectionId();
-    }
 
     /*********************************************************
      *                 PersistentConfiguration               *

@@ -12,7 +12,7 @@ import com.dci.intellij.dbn.common.ui.util.UserInterface;
 import com.dci.intellij.dbn.connection.ConnectionAction;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.ConnectionId;
-import com.dci.intellij.dbn.connection.context.ConnectionProvider;
+import com.dci.intellij.dbn.connection.context.DatabaseContextBase;
 import com.dci.intellij.dbn.connection.operation.options.OperationSettings;
 import com.dci.intellij.dbn.editor.session.model.SessionBrowserModel;
 import com.dci.intellij.dbn.editor.session.model.SessionBrowserModelRow;
@@ -43,7 +43,7 @@ import java.util.Map;
 import java.util.Timer;
 import java.util.TimerTask;
 
-public class SessionBrowser extends DisposableUserDataHolderBase implements FileEditor, ConnectionProvider, DataProvider {
+public class SessionBrowser extends DisposableUserDataHolderBase implements FileEditor, DatabaseContextBase, DataProvider {
     private final WeakRef<DBSessionBrowserVirtualFile> databaseFile;
 
     private SessionBrowserForm browserForm;
