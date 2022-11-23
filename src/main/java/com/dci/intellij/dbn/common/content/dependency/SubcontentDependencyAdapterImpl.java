@@ -2,8 +2,8 @@ package com.dci.intellij.dbn.common.content.dependency;
 
 import com.dci.intellij.dbn.common.content.DynamicContent;
 import com.dci.intellij.dbn.common.content.DynamicContentType;
-import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.DatabaseEntity;
+import com.dci.intellij.dbn.database.interfaces.DatabaseInterfaceQueue;
 import com.intellij.openapi.util.Disposer;
 import org.jetbrains.annotations.NotNull;
 
@@ -28,8 +28,23 @@ class SubcontentDependencyAdapterImpl extends BasicDependencyAdapter implements 
     }
 
     @Override
-    public boolean canLoad(ConnectionHandler connection) {
-        return canConnect(connection) && getSourceContent().isLoaded();
+    public boolean canUseAlternativeLoader() {
+        DynamicContent sourceContent = getSourceContent();
+        DatabaseInterfaceQueue interfaceQueue = sourceContent.getConnection().getInterfaceQueue();
+        int maxActiveTasks = interfaceQueue.maxActiveTasks();
+        int count = interfaceQueue.size() + interfaceQueue.counters().running().get();
+
+        //ThreadInfo thread = ThreadMonitor.current();
+        if (count > maxActiveTasks /* || thread.is(ThreadProperty.CODE_ANNOTATING) || ThreadMonitor.getProcessCount(ThreadProperty.PROGRESS) > 20*/ ) {
+            return false;
+        } else {
+            return true;
+        }
+    }
+
+    @Override
+    public boolean canLoad() {
+        return getSourceContent().isLoaded();
     }
 
     @Override
@@ -45,10 +60,10 @@ class SubcontentDependencyAdapterImpl extends BasicDependencyAdapter implements 
 
     @Override
     public void beforeLoad(boolean force) {
-        if (force) {
-            DynamicContent sourceContent = getSourceContent();
-            sourceContent.refresh();
-        }
+        if (!force) return;
+
+        DynamicContent sourceContent = getSourceContent();
+        sourceContent.refresh();
     }
 
     @Override
@@ -58,7 +73,18 @@ class SubcontentDependencyAdapterImpl extends BasicDependencyAdapter implements 
 
     @Override
     public boolean canLoadFast() {
-        return getSourceContent().isLoaded()/* && !ThreadMonitor.isDispatchThread()*/;
+        return getSourceContent().isLoaded();
+    }
+
+    @Override
+    public boolean canLoadInBackground() {
+        DynamicContent sourceContent = getSourceContent();
+        if (sourceContent.isLoadingInBackground()) return false;
+
+        ContentDependencyAdapter sourceDependencyAdapter = sourceContent.getDependencyAdapter();
+        if (!sourceDependencyAdapter.canLoadInBackground()) return false;
+
+        return true;
     }
 
     @Override

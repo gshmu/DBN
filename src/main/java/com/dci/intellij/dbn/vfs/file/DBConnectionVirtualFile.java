@@ -1,11 +1,12 @@
 package com.dci.intellij.dbn.vfs.file;
 
 import com.dci.intellij.dbn.common.DevNullStreams;
-import com.dci.intellij.dbn.connection.*;
-import com.dci.intellij.dbn.connection.mapping.FileConnectionContextImpl;
+import com.dci.intellij.dbn.connection.ConnectionHandler;
+import com.dci.intellij.dbn.connection.ConnectionRef;
+import com.dci.intellij.dbn.connection.SchemaId;
 import com.dci.intellij.dbn.connection.session.DatabaseSession;
 import com.dci.intellij.dbn.language.sql.SQLFileType;
-import com.dci.intellij.dbn.vfs.DBVirtualFileImpl;
+import com.dci.intellij.dbn.vfs.DBVirtualFileBase;
 import com.intellij.openapi.fileTypes.FileType;
 import com.intellij.openapi.vfs.VirtualFile;
 import org.jetbrains.annotations.NotNull;
@@ -16,19 +17,13 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 
-public class DBConnectionVirtualFile extends DBVirtualFileImpl {
+public class DBConnectionVirtualFile extends DBVirtualFileBase {
     private static final byte[] EMPTY_CONTENT = new byte[0];
     private final ConnectionRef connection;
 
     public DBConnectionVirtualFile(ConnectionHandler connection) {
         super(connection.getProject(), connection.getName());
         this.connection = connection.ref();
-    }
-
-    @NotNull
-    @Override
-    public ConnectionId getConnectionId() {
-        return connection.getConnectionId();
     }
 
     @Override
@@ -137,26 +132,6 @@ public class DBConnectionVirtualFile extends DBVirtualFileImpl {
     @Override
     public String getExtension() {
         return null;
-    }
-
-    static final class CustomFileConnectionContext extends FileConnectionContextImpl {
-        public CustomFileConnectionContext(
-                @NotNull DBConsoleVirtualFile consoleFile,
-                @Nullable SessionId sessionId,
-                @Nullable SchemaId schemaId) {
-
-            super(consoleFile.getUrl(), consoleFile.getConnectionId(), sessionId, schemaId);
-        }
-
-        @Override
-        public void setFileUrl(String fileUrl) {
-            throw new UnsupportedOperationException();
-        }
-
-        @Override
-        public boolean setConnectionId(ConnectionId connectionId) {
-            throw new UnsupportedOperationException();
-        }
     }
 }
 

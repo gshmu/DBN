@@ -1,7 +1,6 @@
 package com.dci.intellij.dbn.common.content.dependency;
 
 import com.dci.intellij.dbn.common.content.DynamicContent;
-import com.dci.intellij.dbn.connection.ConnectionHandler;
 import org.jetbrains.annotations.NotNull;
 
 public class DualContentDependencyAdapter extends BasicDependencyAdapter implements ContentDependencyAdapter {
@@ -24,20 +23,27 @@ public class DualContentDependencyAdapter extends BasicDependencyAdapter impleme
     }
 
     @Override
-    public boolean canLoad(ConnectionHandler connection) {
-        if (canConnect(connection)) {
-            return
-                content(first).isLoaded() &&
-                content(second).isLoaded();
-        }
-        return false;
+    public boolean canLoad() {
+        if (!content(first).isLoaded()) return false;
+        if (!content(second).isLoaded()) return false;
+
+        return true;
+    }
+
+    @Override
+    public boolean canLoadInBackground() {
+        if (content(first).isLoadingInBackground()) return false;
+        if (content(second).isLoadingInBackground()) return false;
+
+        return true;
     }
 
     @Override
     public boolean isDependencyDirty() {
-        return
-            content(first).isDirty() ||
-            content(second).isDirty();
+        if (content(first).isDirty()) return true;
+        if (content(second).isDirty()) return true;
+
+        return false;
     }
 
     @Override
@@ -57,10 +63,10 @@ public class DualContentDependencyAdapter extends BasicDependencyAdapter impleme
 
     @Override
     public void beforeLoad(boolean force) {
-        if (force) {
-            content(first).refresh();
-            content(second).refresh();
-        }
+        if (!force) return;
+
+        content(first).refresh();
+        content(second).refresh();
     }
 
     @Override
@@ -75,7 +81,8 @@ public class DualContentDependencyAdapter extends BasicDependencyAdapter impleme
 
     @NotNull
     private static ContentDependency dependency(DynamicContent content) {
-        return content == null ? VoidContentDependency.INSTANCE : new BasicContentDependency(content);
+        if (content == null) return VoidContentDependency.INSTANCE;
+        return new BasicContentDependency(content);
     }
 
     @Override

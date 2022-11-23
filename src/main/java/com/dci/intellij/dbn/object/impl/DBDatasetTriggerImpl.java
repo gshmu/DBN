@@ -98,7 +98,7 @@ public class DBDatasetTriggerImpl extends DBTriggerImpl implements DBDatasetTrig
         InterfaceTaskDefinition taskDefinition = InterfaceTaskDefinition.create(HIGHEST,
                 "Updating source code",
                 "Updating sources of " + getQualifiedNameWithType(),
-                getInterfaceContext());
+                createInterfaceContext());
 
         DatabaseInterfaceInvoker.execute(taskDefinition, conn -> {
             DatabaseDataDefinitionInterface dataDefinition = getConnection().getDataDefinitionInterface();

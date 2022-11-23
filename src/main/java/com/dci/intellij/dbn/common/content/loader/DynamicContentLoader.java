@@ -7,7 +7,7 @@ import com.dci.intellij.dbn.database.common.metadata.DBObjectMetadata;
 import java.sql.SQLException;
 
 public interface DynamicContentLoader<T extends DynamicContentElement, M extends DBObjectMetadata> {
-    void loadContent(DynamicContent<T> content, boolean forceReload) throws SQLException;
+    void loadContent(DynamicContent<T> content) throws SQLException;
 
-    DynamicContentLoader VOID_CONTENT_LOADER = (content, forceReload) -> {};
+    DynamicContentLoader VOID_CONTENT_LOADER = (content) -> {};
 }

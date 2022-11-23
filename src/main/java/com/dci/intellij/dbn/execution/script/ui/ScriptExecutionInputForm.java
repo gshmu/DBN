@@ -1,12 +1,12 @@
 package com.dci.intellij.dbn.execution.script.ui;
 
 import com.dci.intellij.dbn.common.routine.ParametricRunnable;
-import com.dci.intellij.dbn.common.ui.misc.DBNComboBox;
+import com.dci.intellij.dbn.common.ui.PresentableFactory;
+import com.dci.intellij.dbn.common.ui.ValueSelectorOption;
 import com.dci.intellij.dbn.common.ui.form.DBNFormBase;
 import com.dci.intellij.dbn.common.ui.form.DBNHeaderForm;
 import com.dci.intellij.dbn.common.ui.form.DBNHintForm;
-import com.dci.intellij.dbn.common.ui.PresentableFactory;
-import com.dci.intellij.dbn.common.ui.ValueSelectorOption;
+import com.dci.intellij.dbn.common.ui.misc.DBNComboBox;
 import com.dci.intellij.dbn.common.util.Commons;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.ConnectionManager;
@@ -23,11 +23,8 @@ import com.intellij.openapi.vfs.VirtualFile;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import javax.swing.Icon;
-import javax.swing.JCheckBox;
-import javax.swing.JComponent;
-import javax.swing.JPanel;
-import java.awt.BorderLayout;
+import javax.swing.*;
+import java.awt.*;
 import java.util.List;
 
 public class ScriptExecutionInputForm extends DBNFormBase {
@@ -105,7 +102,7 @@ public class ScriptExecutionInputForm extends DBNFormBase {
         });
 
         schemaComboBox.addListener((oldValue, newValue) -> {
-            executionInput.setSchema(newValue);
+            executionInput.setTargetSchemaId(newValue);
             updateButtons();
         });
 
@@ -123,7 +120,7 @@ public class ScriptExecutionInputForm extends DBNFormBase {
 
     private void updateControls(ScriptExecutionInput executionInput) {
         ConnectionHandler connection = executionInput.getConnection();
-        SchemaId schema = executionInput.getSchema();
+        SchemaId schema = executionInput.getSchemaId();
         CmdLineInterface cmdLineInterface;
         if (connection != null && !connection.isVirtual()) {
             schema = Commons.nvln(schema, connection.getDefaultSchema());
@@ -147,7 +144,7 @@ public class ScriptExecutionInputForm extends DBNFormBase {
             }
 
             executionInput.setTargetConnection(connection);
-            executionInput.setSchema(schema);
+            executionInput.setTargetSchemaId(schema);
             executionInput.setCmdLineInterface(cmdLineInterface);
         } else {
             schemaComboBox.setEnabled(false);

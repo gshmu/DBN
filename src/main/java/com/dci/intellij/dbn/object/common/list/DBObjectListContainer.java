@@ -323,7 +323,7 @@ public final class DBObjectListContainer implements StatefulDisposable {
         if (objects == null) return;
         for (DBObjectList<?> objectList : objects) {
             if (!objectList.isInternal()) {
-                objectList.ensure();
+                objectList.load();
             }
             checkDisposed();
         }

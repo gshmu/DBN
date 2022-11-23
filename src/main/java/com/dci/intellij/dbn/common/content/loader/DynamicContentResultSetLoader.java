@@ -80,12 +80,12 @@ public abstract class DynamicContentResultSetLoader<
     }
 
     @Override
-    public void loadContent(DynamicContent<T> content, boolean forceReload) throws SQLException {
+    public void loadContent(DynamicContent<T> content) throws SQLException {
         InterfaceTaskDefinition taskDefinition = InterfaceTaskDefinition.create(
                 content.is(INTERNAL) ? LOW : MEDIUM,
                 "Loading data dictionary",
                 "Loading " + content.getContentDescription(),
-                content.getInterfaceContext());
+                content.createInterfaceContext());
 
         DatabaseInterfaceInvoker.execute(taskDefinition, conn -> {
             DebugInfo debugInfo = preLoadContent(content);

@@ -6,7 +6,6 @@ import com.dci.intellij.dbn.common.dispose.StatefulDisposable;
 import com.dci.intellij.dbn.common.filter.Filter;
 import com.dci.intellij.dbn.common.property.PropertyHolder;
 import com.dci.intellij.dbn.connection.DatabaseEntity;
-import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
@@ -14,16 +13,9 @@ import java.util.List;
 public interface DynamicContent<T extends DynamicContentElement> extends StatefulDisposable, PropertyHolder<DynamicContentProperty>, DatabaseEntity {
 
     /**
-     * Loads the content. It is typically called every time the content is queried.
-     * The check shouldLoad() is made before to avoid pointless loads.
+     * Triggering the actual load of the content
      */
     void load();
-
-    /**
-     * Ensures the content is loaded
-     * Calls load() in synchronized block
-     */
-    void ensure();
 
     /**
      * Rebuilds the content. This method is called when reloading the content
@@ -36,6 +28,8 @@ public interface DynamicContent<T extends DynamicContentElement> extends Statefu
      */
     void refresh();
 
+    void loadInBackground();
+
     /**
      * The signature of the last change on the content (incrementing byte).
      */
@@ -46,23 +40,36 @@ public interface DynamicContent<T extends DynamicContentElement> extends Statefu
      */
     boolean isLoaded();
 
-    boolean isSubContent();
-
-    boolean canLoadFast();
-
-    /**
-     * Content is currently loading
-     */
     boolean isLoading();
+
+    boolean isLoadingInBackground();
 
     /**
      * The content has been loaded but with errors (e.g. because of database connectivity problems)
      */
     boolean isDirty();
 
-    boolean isEmpty();
+    default boolean isSubContent() {
+        return getDependencyAdapter().isSubContent();
+    }
 
-    boolean isPassive();
+    default boolean canLoad() {
+        return getDependencyAdapter().canLoad();
+    }
+
+    default boolean canLoadFast() {
+        return getDependencyAdapter().canLoadFast();
+    }
+
+    default boolean canLoadInBackground() {
+        return getDependencyAdapter().canLoadInBackground();
+    }
+
+    default boolean isDependencyDirty() {
+        return getDependencyAdapter().isDependencyDirty();
+    }
+
+    boolean isEmpty();
 
     void markDirty();
 
@@ -70,11 +77,11 @@ public interface DynamicContent<T extends DynamicContentElement> extends Statefu
 
     String getContentDescription();
 
-    @NotNull List<T> getElements();
+    List<T> getElements();
 
-    @Nullable List<T> getElements(String name);
+    List<T> getElements(String name);
 
-    @NotNull List<T> getAllElements();
+    List<T> getAllElements();
 
     @Nullable
     default Filter<T> getFilter() {
@@ -91,8 +98,4 @@ public interface DynamicContent<T extends DynamicContentElement> extends Statefu
     DynamicContentLoader getLoader();
 
     ContentDependencyAdapter getDependencyAdapter();
-
-    void loadInBackground();
-
-    void changeSignature();
 }

@@ -24,7 +24,7 @@ public final class DBObjectPsiCache {
     }
 
     public DBObjectPsiCache(@NotNull PsiElement psiElement) {
-        psiElementRef = PsiElementRef.from(psiElement);
+        psiElementRef = PsiElementRef.of(psiElement);
     }
 
     public DBObjectPsiCache(DBObjectRef<?> objectRef) {

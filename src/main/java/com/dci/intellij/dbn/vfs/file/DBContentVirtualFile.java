@@ -18,7 +18,7 @@ import com.dci.intellij.dbn.object.DBView;
 import com.dci.intellij.dbn.object.common.DBObject;
 import com.dci.intellij.dbn.object.common.DBSchemaObject;
 import com.dci.intellij.dbn.object.lookup.DBObjectRef;
-import com.dci.intellij.dbn.vfs.DBVirtualFileImpl;
+import com.dci.intellij.dbn.vfs.DBVirtualFileBase;
 import com.dci.intellij.dbn.vfs.VirtualFileStatus;
 import com.dci.intellij.dbn.vfs.VirtualFileStatusHolder;
 import com.intellij.openapi.fileTypes.FileType;
@@ -31,7 +31,7 @@ import javax.swing.*;
 import java.io.IOException;
 import java.io.InputStream;
 
-public abstract class DBContentVirtualFile extends DBVirtualFileImpl implements PropertyHolder<VirtualFileStatus>  {
+public abstract class DBContentVirtualFile extends DBVirtualFileBase implements PropertyHolder<VirtualFileStatus>  {
     private final WeakRef<DBEditableObjectVirtualFile> mainDatabaseFile;
     private final FileType fileType;
 

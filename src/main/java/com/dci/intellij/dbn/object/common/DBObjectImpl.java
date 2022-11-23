@@ -200,11 +200,6 @@ public abstract class DBObjectImpl<M extends DBObjectMetadata> extends BrowserTr
     }
 
     @Override
-    public short getOverload() {
-        return 0;
-    }
-
-    @Override
     public String getQuotedName(boolean quoteAlways) {
         String name = getName();
         if (quoteAlways || needsNameQuoting()) {
@@ -497,7 +492,7 @@ public abstract class DBObjectImpl<M extends DBObjectMetadata> extends BrowserTr
     public String extractDDL() throws SQLException {
         // TODO move to database interface (ORACLE)
         ConnectionHandler connection = getConnection();
-        return PooledConnection.call(connection.getInterfaceContext(), conn -> {
+        return PooledConnection.call(connection.createInterfaceContext(), conn -> {
             DBNCallableStatement statement = null;
             try {
                 DBObjectType objectType = getObjectType();

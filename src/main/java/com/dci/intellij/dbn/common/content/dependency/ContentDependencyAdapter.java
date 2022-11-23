@@ -1,19 +1,27 @@
 package com.dci.intellij.dbn.common.content.dependency;
 
-import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.intellij.openapi.Disposable;
 
 public interface ContentDependencyAdapter extends Disposable {
-    boolean canConnect(ConnectionHandler connection);
+    boolean isSubContent();
+
+    default boolean isDependencyDirty() {
+        return false;
+    }
 
     /**
      * This method is typically called when the dynamic content is dirty and
      * the system tries to reload it.
      * e.g. one basic condition for reloading dirty content is valid connectivity
      */
-    boolean canLoad(ConnectionHandler connection);
+    default boolean canLoad() {
+        return true;
+    }
 
-    boolean isDependencyDirty();
+    default boolean canLoadInBackground() {
+        return true;
+    }
+
 
     void refreshSources();
 
@@ -29,7 +37,7 @@ public interface ContentDependencyAdapter extends Disposable {
      */
     default void afterLoad() {};
 
-    boolean isSubContent();
 
     boolean canLoadFast();
+
 }

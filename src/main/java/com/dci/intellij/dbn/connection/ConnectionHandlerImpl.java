@@ -356,7 +356,7 @@ public class ConnectionHandlerImpl extends StatefulDisposable.Base implements Co
     @Override
     public boolean hasPendingTransactions(@NotNull DBNConnection conn) {
         try {
-            return ConnectionLocalContext.surround(getInterfaceContext(), () -> getMetadataInterface().hasPendingTransactions(conn));
+            return ConnectionLocalContext.surround(createInterfaceContext(), () -> getMetadataInterface().hasPendingTransactions(conn));
         } catch (SQLException e) {
             sendErrorNotification(
                     NotificationGroup.TRANSACTION,
@@ -387,6 +387,7 @@ public class ConnectionHandlerImpl extends StatefulDisposable.Base implements Co
     }
 
     @Override
+    @NotNull
     public ConnectionId getConnectionId() {
         return getSettings().getConnectionId();
     }
@@ -522,7 +523,7 @@ public class ConnectionHandlerImpl extends StatefulDisposable.Base implements Co
         if (!DatabaseFeature.CURRENT_SCHEMA.isSupported(this)) return;
         if (Objects.equals(schema, conn.getCurrentSchema())) return;
 
-        ConnectionLocalContext.surround(getInterfaceContext(), () -> {
+        ConnectionLocalContext.surround(createInterfaceContext(), () -> {
             String schemaName = schema.getName();
 
             DatabaseCompatibilityInterface compatibility = getCompatibilityInterface();

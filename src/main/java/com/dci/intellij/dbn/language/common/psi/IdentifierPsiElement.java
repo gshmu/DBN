@@ -12,22 +12,13 @@ import com.dci.intellij.dbn.language.common.element.impl.LeafElementType;
 import com.dci.intellij.dbn.language.common.element.impl.QualifiedIdentifierVariant;
 import com.dci.intellij.dbn.language.common.element.util.ElementTypeAttribute;
 import com.dci.intellij.dbn.language.common.element.util.IdentifierType;
-import com.dci.intellij.dbn.language.common.psi.lookup.AliasDefinitionLookupAdapter;
-import com.dci.intellij.dbn.language.common.psi.lookup.IdentifierLookupAdapter;
-import com.dci.intellij.dbn.language.common.psi.lookup.LookupAdapterCache;
-import com.dci.intellij.dbn.language.common.psi.lookup.ObjectDefinitionLookupAdapter;
-import com.dci.intellij.dbn.language.common.psi.lookup.PsiLookupAdapter;
-import com.dci.intellij.dbn.language.common.psi.lookup.VariableDefinitionLookupAdapter;
+import com.dci.intellij.dbn.language.common.psi.lookup.*;
 import com.dci.intellij.dbn.language.common.resolve.AliasObjectResolver;
 import com.dci.intellij.dbn.language.common.resolve.SurroundingVirtualObjectResolver;
 import com.dci.intellij.dbn.language.common.resolve.UnderlyingObjectResolver;
 import com.dci.intellij.dbn.object.DBSchema;
 import com.dci.intellij.dbn.object.DBSynonym;
-import com.dci.intellij.dbn.object.common.DBObject;
-import com.dci.intellij.dbn.object.common.DBObjectBundle;
-import com.dci.intellij.dbn.object.common.DBObjectPsiCache;
-import com.dci.intellij.dbn.object.common.DBObjectPsiElement;
-import com.dci.intellij.dbn.object.common.DBVirtualObject;
+import com.dci.intellij.dbn.object.common.*;
 import com.dci.intellij.dbn.object.lookup.DBObjectRef;
 import com.dci.intellij.dbn.object.type.DBObjectType;
 import com.intellij.lang.ASTNode;
@@ -38,7 +29,7 @@ import com.intellij.psi.PsiElement;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import javax.swing.Icon;
+import javax.swing.*;
 import java.util.Set;
 import java.util.function.Consumer;
 
@@ -227,11 +218,15 @@ public abstract class IdentifierPsiElement extends LeafPsiElement<IdentifierElem
     @Nullable
     public DBObject getUnderlyingObject() {
         DBObject object = DBObjectRef.get(underlyingObject.get());
-        if (object == null || !underlyingObject.isValid(getChars())) {
-            underlyingObject.capture(getChars(), () -> DBObjectRef.of(loadUnderlyingObject()));
+        if (object == null || underlyingObject.isOutdated(getSignature())) {
+            underlyingObject.capture(getSignature(), () -> DBObjectRef.of(loadUnderlyingObject()));
             object = DBObjectRef.get(underlyingObject.get());
         }
         return object;
+    }
+
+    private Object getSignature() {
+        return ref == null ? getChars() : ref.getSignature();
     }
 
 
@@ -384,14 +379,13 @@ public abstract class IdentifierPsiElement extends LeafPsiElement<IdentifierElem
         }
 
         if (elementType.isObject()) {
-            ConnectionHandler activeConnection = ref.getConnection();
-
             if (!elementType.isDefinition()){
                 PsiLookupAdapter lookupAdapter = new ObjectDefinitionLookupAdapter(this, objectType, refText);
                 PsiElement referencedElement = lookupAdapter.findInParentScopeOf(this);
                 if (updateReference(null, elementType, referencedElement)) return;
             }
 
+            ConnectionHandler activeConnection = getConnection();
             if (!elementType.isLocalReference() && activeConnection != null && !activeConnection.isVirtual()) {
                 String objectName = refText.toString();
                 Set<DBObject> parentObjects = identifyPotentialParentObjects(objectType, null, this, this);
@@ -413,7 +407,7 @@ public abstract class IdentifierPsiElement extends LeafPsiElement<IdentifierElem
                     return;
                 }
 
-                DBSchema schema = getDatabaseSchema();
+                DBSchema schema = getSchema();
                 if (schema != null && objectType.isSchemaObject()) {
                     childObject = schema.getChildObject(objectType, objectName, false);
 
@@ -449,23 +443,21 @@ public abstract class IdentifierPsiElement extends LeafPsiElement<IdentifierElem
     }
 
     private boolean updateReference(@Nullable BasePsiElement parent, IdentifierElementType elementType, DBObject referenceObject) {
-        if (isValidReference(referenceObject)) {
-            ref.setParent(parent);
-            ref.setReferencedElement(DBObjectPsiCache.asPsiElement(referenceObject));
-            this.setElementType(elementType);
-            return true;
-        }
-        return false;
+        if (!isValidReference(referenceObject)) return false;
+
+        ref.setParent(parent);
+        ref.setReference(DBObjectPsiCache.asPsiElement(referenceObject));
+        this.setElementType(elementType);
+        return true;
     }
 
     private boolean updateReference(@Nullable BasePsiElement parent, IdentifierElementType elementType, PsiElement referencedElement) {
-        if (isValidReference(referencedElement)) {
-            ref.setParent(parent);
-            ref.setReferencedElement(referencedElement);
-            this.setElementType(elementType);
-            return true;
-        }
-        return false;
+        if (!isValidReference(referencedElement)) return false;
+
+        ref.setParent(parent);
+        ref.setReference(referencedElement);
+        this.setElementType(elementType);
+        return true;
     }
 
     private boolean isValidReference(DBObject referencedObject) {
@@ -480,17 +472,16 @@ public abstract class IdentifierPsiElement extends LeafPsiElement<IdentifierElem
     }
 
     private boolean isValidReference(PsiElement referencedElement) {
-        if (referencedElement != null && referencedElement != this) {
-            // check if inside same scope
-            if (referencedElement instanceof IdentifierPsiElement) {
-                IdentifierPsiElement identifierPsiElement = (IdentifierPsiElement) referencedElement;
-                if (identifierPsiElement.isReference() && identifierPsiElement.isReferenceable()) {
-                    return identifierPsiElement.getEnclosingScopePsiElement() == getEnclosingScopePsiElement();
-                }
+        if (referencedElement == null || referencedElement == this) return false;
+
+        // check if inside same scope
+        if (referencedElement instanceof IdentifierPsiElement) {
+            IdentifierPsiElement identifierPsiElement = (IdentifierPsiElement) referencedElement;
+            if (identifierPsiElement.isReference() && identifierPsiElement.isReferenceable()) {
+                return identifierPsiElement.getEnclosingScopePsiElement() == getEnclosingScopePsiElement();
             }
-            return true;
         }
-        return false;
+        return true;
     }
 
     @NotNull
@@ -507,7 +498,7 @@ public abstract class IdentifierPsiElement extends LeafPsiElement<IdentifierElem
     @Nullable
     public PsiElement resolve() {
         if (isResolving()) {
-            return ref.getReferencedElement();
+            return ref.getReference();
         }
 
         if (isDefinition() && (isAlias() || (isVariable() && !isSubject()))) {
@@ -524,12 +515,12 @@ public abstract class IdentifierPsiElement extends LeafPsiElement<IdentifierElem
         ref = nvl(ref, () -> new PsiResolveResult(this));
 
         if (ThreadMonitor.isDispatchThread()) {
-            return ref.getReferencedElement();
+            return ref.getReference();
         }
         if (ref.isDirty()) {
             boolean cancelled = false;
             try {
-                ref.preResolve(this);
+                ref.preResolve();
                 CharSequence text = ref.getText();
                 if (text != null && text.length() > 0) {
                     if (getParent() instanceof QualifiedIdentifierPsiElement) {
@@ -541,19 +532,18 @@ public abstract class IdentifierPsiElement extends LeafPsiElement<IdentifierElem
                 }
             } catch (ProcessCanceledException e){
                 cancelled = true;
-                throw e;
             } finally {
                 ref.postResolve(cancelled);
             }
         }
-        return ref.getReferencedElement();
+        return ref.getReference();
     }
 
     public void resolveAs(DBObject object) {
         ref = nvl(ref, () -> new PsiResolveResult(this));
         try {
-            ref.preResolve(this);
-            ref.setReferencedElement(DBObjectPsiCache.asPsiElement(object));
+            ref.preResolve();
+            ref.setReference(DBObjectPsiCache.asPsiElement(object));
         } finally {
             ref.postResolve(false);
         }
@@ -561,7 +551,7 @@ public abstract class IdentifierPsiElement extends LeafPsiElement<IdentifierElem
 
     @Override
     public boolean isReferenceTo(@NotNull PsiElement element) {
-        return element != this && ref != null && element == ref.getReferencedElement();
+        return element != this && ref != null && element == ref.getReference();
     }
 
     public CharSequence getUnquotedText() {
@@ -603,7 +593,7 @@ public abstract class IdentifierPsiElement extends LeafPsiElement<IdentifierElem
     }
 
     public boolean isResolved() {
-        return ref != null && ref.getReferencedElement() != null;
+        return ref != null && ref.getReference() != null;
     }
 
     public boolean isResolving() {

@@ -115,10 +115,10 @@ public class ScriptExecutionManager extends ProjectComponentBase implements Pers
             inputDialog.show();
             if (inputDialog.getExitCode() == DialogWrapper.OK_EXIT_CODE) {
                 ConnectionHandler connection = executionInput.getConnection();
-                SchemaId schema = executionInput.getSchema();
+                SchemaId schemaId = executionInput.getSchemaId();
                 CmdLineInterface cmdLineExecutable = executionInput.getCmdLineInterface();
                 contextManager.setConnection(virtualFile, connection);
-                contextManager.setDatabaseSchema(virtualFile, schema);
+                contextManager.setDatabaseSchema(virtualFile, schemaId);
                 if (connection != null) {
                     recentlyUsedInterfaces.put(connection.getDatabaseType(), cmdLineExecutable.getId());
                 }
@@ -153,7 +153,7 @@ public class ScriptExecutionManager extends ProjectComponentBase implements Pers
             new CancellableDatabaseCall<Object>(connection, null, timeout, TimeUnit.SECONDS) {
                 @Override
                 public Object execute() throws Exception {
-                    SchemaId schema = input.getSchema();
+                    SchemaId schemaId = input.getSchemaId();
 
                     String content = new String(sourceFile.contentsToByteArray());
                     File temporaryScriptFile = createTempScriptFile();
@@ -166,7 +166,7 @@ public class ScriptExecutionManager extends ProjectComponentBase implements Pers
                     CmdLineExecutionInput executionInput = executionInterface.createScriptExecutionInput(cmdLineInterface,
                             temporaryScriptFile.getPath(),
                             content,
-                            schema,
+                            schemaId,
                             connection.getDatabaseInfo(),
                             connection.getAuthenticationInfo()
                     );

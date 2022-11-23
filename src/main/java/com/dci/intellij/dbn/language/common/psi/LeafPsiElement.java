@@ -111,7 +111,7 @@ public abstract class LeafPsiElement<T extends LeafElementType> extends BasePsiE
                     DBObjectBundle objectBundle = connection.getObjectBundle();
 
                     if (filter == null || filter.acceptsCurrentSchemaObject(objectType)) {
-                        DBSchema currentSchema = sourceScope.getDatabaseSchema();
+                        DBSchema currentSchema = sourceScope.getSchema();
                         collectObject(parentObjects, currentSchema);
                     }
 

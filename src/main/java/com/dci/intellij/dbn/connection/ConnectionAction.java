@@ -8,7 +8,7 @@ import com.dci.intellij.dbn.common.routine.ParametricRunnable;
 import com.dci.intellij.dbn.common.thread.Dispatch;
 import com.dci.intellij.dbn.common.util.Commons;
 import com.dci.intellij.dbn.common.util.Guarded;
-import com.dci.intellij.dbn.connection.context.ConnectionProvider;
+import com.dci.intellij.dbn.connection.context.DatabaseContext;
 import com.intellij.openapi.project.Project;
 import org.jetbrains.annotations.NotNull;
 
@@ -17,10 +17,10 @@ public abstract class ConnectionAction implements Runnable{
 
     private final String description;
     private final boolean interactive;
-    private final ConnectionProvider connectionProvider;
+    private final DatabaseContext connectionProvider;
     private boolean cancelled;
 
-    private ConnectionAction(String description, boolean interactive, ConnectionProvider connectionProvider) {
+    private ConnectionAction(String description, boolean interactive, DatabaseContext connectionProvider) {
         this.description = description;
         this.interactive = interactive;
         this.connectionProvider = connectionProvider;
@@ -129,9 +129,9 @@ public abstract class ConnectionAction implements Runnable{
     public static void invoke(
             String description,
             boolean interactive,
-            ConnectionProvider connectionProvider,
+            DatabaseContext databaseContext,
             ParametricRunnable.Basic<ConnectionAction> action) {
-        new ConnectionAction(description, interactive, connectionProvider) {
+        new ConnectionAction(description, interactive, databaseContext) {
             @Override
             public void run() {
                 Guarded.run(() -> action.run(this));
@@ -142,12 +142,12 @@ public abstract class ConnectionAction implements Runnable{
     public static void invoke(
             String description,
             boolean interactive,
-            ConnectionProvider connectionProvider,
+            DatabaseContext databaseContext,
             ParametricRunnable.Basic<ConnectionAction> action,
             ParametricRunnable.Basic<ConnectionAction> cancel,
             ParametricCallable.Basic<ConnectionAction, Boolean> canExecute) {
 
-        new ConnectionAction(description, interactive, connectionProvider) {
+        new ConnectionAction(description, interactive, databaseContext) {
             @Override
             public void run() {
                 if (canExecute == null || canExecute.call(this)) {

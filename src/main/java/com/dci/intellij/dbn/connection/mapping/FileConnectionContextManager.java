@@ -356,7 +356,7 @@ public class FileConnectionContextManager extends ProjectComponentBase implement
         Project project = getProject();
         ConnectionAction.invoke(
                 "selecting the current schema", true,
-                () -> getConnection(file),
+                getConnection(file),
                 action -> Progress.prompt(project, "Loading schemas", true,
                         progress -> {
                             DefaultActionGroup actionGroup = new DefaultActionGroup();
@@ -401,7 +401,7 @@ public class FileConnectionContextManager extends ProjectComponentBase implement
         Project project = getProject();
         ConnectionAction.invoke(
                 "selecting the current session", true,
-                () -> getConnection(file),
+                getConnection(file),
                 (action) -> {
                     DefaultActionGroup actionGroup = new DefaultActionGroup();
                     ConnectionHandler connection = action.getConnection();

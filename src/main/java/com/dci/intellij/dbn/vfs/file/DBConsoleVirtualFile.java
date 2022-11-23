@@ -5,9 +5,11 @@ import com.dci.intellij.dbn.code.common.style.options.CodeStyleCaseSettings;
 import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.common.util.Strings;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
+import com.dci.intellij.dbn.connection.ConnectionId;
 import com.dci.intellij.dbn.connection.SchemaId;
 import com.dci.intellij.dbn.connection.SessionId;
 import com.dci.intellij.dbn.connection.mapping.FileConnectionContext;
+import com.dci.intellij.dbn.connection.mapping.FileConnectionContextImpl;
 import com.dci.intellij.dbn.connection.mapping.FileConnectionContextProvider;
 import com.dci.intellij.dbn.connection.session.DatabaseSession;
 import com.dci.intellij.dbn.database.interfaces.DatabaseDebuggerInterface;
@@ -20,7 +22,6 @@ import com.dci.intellij.dbn.object.lookup.DBObjectRef;
 import com.dci.intellij.dbn.vfs.DBConsoleType;
 import com.dci.intellij.dbn.vfs.DBParseableVirtualFile;
 import com.dci.intellij.dbn.vfs.DatabaseFileViewProvider;
-import com.dci.intellij.dbn.vfs.file.DBConnectionVirtualFile.CustomFileConnectionContext;
 import com.intellij.lang.Language;
 import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.editor.RangeMarker;
@@ -54,7 +55,7 @@ public class DBConsoleVirtualFile extends DBObjectVirtualFile<DBConsole> impleme
         ConnectionHandler connection = console.getConnection();
         SchemaId schemaId = connection.getDefaultSchema();
         SessionId sessionId = connection.getSessionBundle().getMainSession().getId();
-        connectionContext = new CustomFileConnectionContext(this, sessionId, schemaId);
+        connectionContext = createConnectionContext(this, sessionId, schemaId);
 
         setCharset(connection.getSettings().getDetailSettings().getCharset());
     }
@@ -239,5 +240,22 @@ public class DBConsoleVirtualFile extends DBObjectVirtualFile<DBConsole> impleme
                 content.getOffsets().setGuardedBlocks(blocks);
             }
         }
+    }
+
+    private static FileConnectionContext createConnectionContext(
+            DBConsoleVirtualFile consoleFile,
+            SessionId sessionId,
+            SchemaId schemaId) {
+        return new FileConnectionContextImpl(consoleFile.getUrl(), consoleFile.getConnectionId(), sessionId, schemaId) {
+            @Override
+            public void setFileUrl(String fileUrl) {
+                throw new UnsupportedOperationException();
+            }
+
+            @Override
+            public boolean setConnectionId(ConnectionId connectionId) {
+                throw new UnsupportedOperationException();
+            }
+        };
     }
 }

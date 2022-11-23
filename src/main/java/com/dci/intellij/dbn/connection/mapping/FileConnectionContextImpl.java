@@ -9,7 +9,7 @@ import com.dci.intellij.dbn.connection.SessionId;
 import com.dci.intellij.dbn.connection.session.DatabaseSession;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.openapi.vfs.VirtualFileManager;
-import lombok.EqualsAndHashCode;
+import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 import org.jdom.Element;
 import org.jetbrains.annotations.Nullable;
@@ -18,7 +18,7 @@ import static com.dci.intellij.dbn.common.dispose.Checks.isValid;
 import static com.dci.intellij.dbn.common.options.setting.SettingsSupport.*;
 
 @Slf4j
-@EqualsAndHashCode
+@Data
 public class FileConnectionContextImpl implements FileConnectionContext {
     private String fileUrl = "";
     private ConnectionId connectionId;
@@ -36,34 +36,6 @@ public class FileConnectionContextImpl implements FileConnectionContext {
         this.connectionId = connectionId;
         this.sessionId = sessionId;
         this.schemaId = schemaId;
-    }
-
-    @Override
-    public String getFileUrl() {
-        return fileUrl;
-    }
-
-    @Override
-    @Nullable
-    public ConnectionId getConnectionId() {
-        return connectionId;
-    }
-
-    @Override
-    @Nullable
-    public SessionId getSessionId() {
-        return sessionId;
-    }
-
-    @Override
-    @Nullable
-    public SchemaId getSchemaId() {
-        return schemaId;
-    }
-
-    @Override
-    public void setFileUrl(String fileUrl) {
-        this.fileUrl = fileUrl;
     }
 
     @Override

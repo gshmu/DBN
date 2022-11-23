@@ -1,6 +1,9 @@
 package com.dci.intellij.dbn.object.common;
 
 import com.dci.intellij.dbn.common.dispose.Checks;
+import com.dci.intellij.dbn.connection.ConnectionHandler;
+import com.dci.intellij.dbn.connection.SchemaId;
+import com.dci.intellij.dbn.connection.context.DatabaseContextBase;
 import com.dci.intellij.dbn.language.common.psi.EmptySearchScope;
 import com.dci.intellij.dbn.language.sql.SQLLanguage;
 import com.dci.intellij.dbn.object.lookup.DBObjectRef;
@@ -24,17 +27,29 @@ import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
 
-public class DBObjectPsiElement implements PsiNamedElement, NavigationItem {
-    private final DBObjectRef<?> objectRef;
+public class DBObjectPsiElement implements PsiNamedElement, NavigationItem, DatabaseContextBase {
+    private final DBObjectRef<?> object;
 
-    public DBObjectPsiElement(DBObjectRef<?> objectRef) {
-        this.objectRef = objectRef;
+    public DBObjectPsiElement(DBObjectRef<?> object) {
+        this.object = object;
     }
 
     @Nullable
     @Override
     public String getName() {
-        return objectRef.getObjectName();
+        return object.getObjectName();
+    }
+
+    @Nullable
+    @Override
+    public ConnectionHandler getConnection() {
+        return object.getConnection();
+    }
+
+    @Nullable
+    @Override
+    public SchemaId getSchemaId() {
+        return object.getSchemaId();
     }
 
     @Nullable
@@ -260,16 +275,16 @@ public class DBObjectPsiElement implements PsiNamedElement, NavigationItem {
 
     @NotNull
     public DBObject ensureObject() {
-        return DBObjectRef.ensure(objectRef);
+        return DBObjectRef.ensure(object);
     }
 
     @Nullable
     public DBObject getObject() {
-        return DBObjectRef.get(objectRef);
+        return DBObjectRef.get(object);
     }
 
     @NotNull
     public DBObjectType getObjectType() {
-        return objectRef.getObjectType();
+        return object.getObjectType();
     }
 }

@@ -11,13 +11,15 @@ import com.dci.intellij.dbn.language.common.DBLanguageDialect;
 import com.dci.intellij.dbn.language.common.WeakRef;
 import com.dci.intellij.dbn.language.sql.SQLFileType;
 import com.dci.intellij.dbn.vfs.DBParseableVirtualFile;
-import com.dci.intellij.dbn.vfs.DBVirtualFileImpl;
+import com.dci.intellij.dbn.vfs.DBVirtualFileBase;
 import com.dci.intellij.dbn.vfs.DatabaseFileViewProvider;
 import com.intellij.lang.Language;
 import com.intellij.openapi.fileTypes.FileType;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiFile;
 import com.intellij.util.LocalTimeCounter;
+import lombok.Getter;
+import lombok.Setter;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -25,10 +27,12 @@ import javax.swing.*;
 import java.io.*;
 import java.nio.charset.Charset;
 
-public class DBSessionStatementVirtualFile extends DBVirtualFileImpl implements DBParseableVirtualFile {
+@Getter
+@Setter
+public class DBSessionStatementVirtualFile extends DBVirtualFileBase implements DBParseableVirtualFile {
     private long modificationTimestamp = LocalTimeCounter.currentTime();
     private final WeakRef<SessionBrowser> sessionBrowser;
-    private CharSequence content = "";
+    private CharSequence content;
     private SchemaId schemaId;
 
 
@@ -69,20 +73,11 @@ public class DBSessionStatementVirtualFile extends DBVirtualFileImpl implements 
         return getSessionBrowser().getConnection();
     }
 
-    @Nullable
-    @Override
-    public SchemaId getSchemaId() {
-        return schemaId;
-    }
 
     @Nullable
     @Override
     public DatabaseSession getSession() {
         return getConnection().getSessionBundle().getPoolSession();
-    }
-
-    public void setSchemaId(SchemaId schemaId) {
-        this.schemaId = schemaId;
     }
 
     @Override
@@ -113,12 +108,12 @@ public class DBSessionStatementVirtualFile extends DBVirtualFileImpl implements 
 
     @Override
     @NotNull
-    public OutputStream getOutputStream(Object requestor, final long modificationTimestamp, long newTimeStamp) throws IOException {
+    public OutputStream getOutputStream(Object requestor, long modificationTimestamp, long newTimeStamp) throws IOException {
         return new ByteArrayOutputStream() {
             @Override
             public void close() {
-                DBSessionStatementVirtualFile.this.modificationTimestamp = modificationTimestamp;
-                content = toString();
+                setModificationTimestamp(modificationTimestamp);
+                setContent(this.toString());
             }
         };
     }
@@ -127,18 +122,13 @@ public class DBSessionStatementVirtualFile extends DBVirtualFileImpl implements 
     @NotNull
     public byte[] contentsToByteArray() throws IOException {
         Charset charset = getCharset();
-        return content.toString().getBytes(charset.name());
+        return content.toString().getBytes(charset);
     }
 
     @Override
     public long getTimeStamp() {
         return 0;
     }
-
-  @Override
-  public long getModificationStamp() {
-    return modificationTimestamp;
-  }
 
     @Override
     public long getLength() {

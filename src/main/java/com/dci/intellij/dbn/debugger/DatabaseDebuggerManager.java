@@ -12,7 +12,7 @@ import com.dci.intellij.dbn.common.util.Messages;
 import com.dci.intellij.dbn.common.util.Naming;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.ConnectionRef;
-import com.dci.intellij.dbn.connection.context.ConnectionProvider;
+import com.dci.intellij.dbn.connection.context.DatabaseContext;
 import com.dci.intellij.dbn.connection.operation.options.OperationSettings;
 import com.dci.intellij.dbn.database.common.debug.DebuggerVersionInfo;
 import com.dci.intellij.dbn.database.interfaces.DatabaseDebuggerInterface;
@@ -112,7 +112,7 @@ public class DatabaseDebuggerManager extends ProjectComponentBase implements Per
         return checkForbiddenOperation(connection, null);
     }
 
-    public boolean checkForbiddenOperation(ConnectionProvider connection) {
+    public boolean checkForbiddenOperation(DatabaseContext connection) {
         return checkForbiddenOperation(connection.getConnection());
     }
 
@@ -417,7 +417,7 @@ public class DatabaseDebuggerManager extends ProjectComponentBase implements Per
             InterfaceTaskDefinition taskDefinition = InterfaceTaskDefinition.create(HIGHEST,
                     "Loading metadata",
                     "Loading debugger version",
-                    connection.getInterfaceContext());
+                    connection.createInterfaceContext());
 
             return DatabaseInterfaceInvoker.load(taskDefinition, conn -> {
                 DatabaseDebuggerInterface debuggerInterface = connection.getDebuggerInterface();

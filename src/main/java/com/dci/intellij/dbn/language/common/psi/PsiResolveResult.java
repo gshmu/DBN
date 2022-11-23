@@ -1,16 +1,14 @@
 package com.dci.intellij.dbn.language.common.psi;
 
 import com.dci.intellij.dbn.common.property.PropertyHolderBase;
-import com.dci.intellij.dbn.common.util.Commons;
-import com.dci.intellij.dbn.common.util.Safe;
 import com.dci.intellij.dbn.common.util.Strings;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
-import com.dci.intellij.dbn.connection.ConnectionRef;
+import com.dci.intellij.dbn.connection.ConnectionId;
+import com.dci.intellij.dbn.connection.SchemaId;
+import com.dci.intellij.dbn.connection.context.DatabaseContext;
 import com.dci.intellij.dbn.language.common.PsiElementRef;
-import com.dci.intellij.dbn.object.DBSchema;
 import com.dci.intellij.dbn.object.common.DBObject;
 import com.dci.intellij.dbn.object.common.DBObjectPsiElement;
-import com.dci.intellij.dbn.object.lookup.DBObjectRef;
 import com.dci.intellij.dbn.object.type.DBObjectType;
 import com.intellij.psi.PsiElement;
 import org.jetbrains.annotations.NotNull;
@@ -18,22 +16,24 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.Objects;
 
+import static com.dci.intellij.dbn.common.util.Commons.match;
 import static com.dci.intellij.dbn.language.common.psi.PsiResolveStatus.*;
 
-public class PsiResolveResult extends PropertyHolderBase.IntStore<PsiResolveStatus> {
-    private ConnectionRef connection;
-    private DBObjectRef<DBSchema> schema;
+public final class PsiResolveResult extends PropertyHolderBase.IntStore<PsiResolveStatus> {
+    private ConnectionId connectionId;
+    private SchemaId schemaId;
     private PsiElementRef<IdentifierPsiElement> element;
     private PsiElementRef<BasePsiElement> parent;
-    private PsiElementRef referencedElement;
+    private PsiElementRef<?> reference;
     private CharSequence text;
     private long lastResolveInvocation = 0;
     private int scopeTextLength;
     private int resolveAttempts = 0;
+    private short signature;
 
     PsiResolveResult(IdentifierPsiElement element) {
-        this.connection = ConnectionRef.of(element.getConnection());
-        this.element = PsiElementRef.from(element);
+        this.connectionId = element.getConnectionId();
+        this.element = PsiElementRef.of(element);
         set(PsiResolveStatus.NEW, true);
     }
 
@@ -43,20 +43,23 @@ public class PsiResolveResult extends PropertyHolderBase.IntStore<PsiResolveStat
     }
 
     public void accept(IdentifierPsiElement element) {
-        this.element = PsiElementRef.from(element);
+        this.element = PsiElementRef.of(element);
     }
 
-    public void preResolve(IdentifierPsiElement psiElement) {
+    public void preResolve() {
         set(RESOLVING, true);
-        this.text = psiElement.getUnquotedText();
-        ConnectionHandler connection = psiElement.getConnection();
+        IdentifierPsiElement element = getElement();
+        this.text = element.getUnquotedText();
+        this.reference = null;
+        this.parent = null;
+        this.connectionId = element.getConnectionId();
+        this.schemaId = element.getSchemaId();
+
+        ConnectionHandler connection = element.getConnection();
         set(CONNECTION_VALID, connection != null && !connection.isVirtual() && connection.isValid());
         set(CONNECTION_ACTIVE, connection != null && !connection.isVirtual() && connection.canConnect());
-        this.referencedElement = null;
-        this.parent = null;
-        this.connection = ConnectionRef.of(connection);
-        this.schema = DBObjectRef.of(psiElement.getDatabaseSchema());
-        BasePsiElement enclosingScopePsiElement = psiElement.getEnclosingScopePsiElement();
+
+        BasePsiElement enclosingScopePsiElement = element.getEnclosingScopePsiElement();
         this.scopeTextLength = enclosingScopePsiElement == null ? 0 : enclosingScopePsiElement.getTextLength();
         if (Strings.isEmpty(text)) {
             text = "";
@@ -65,13 +68,14 @@ public class PsiResolveResult extends PropertyHolderBase.IntStore<PsiResolveStat
 
     public void postResolve(boolean cancelled) {
         set(NEW, false);
-        if (!cancelled) {
-            PsiElementRef referencedElementRef = this.referencedElement;
-            PsiElement referencedElement = referencedElementRef == null ? null : referencedElementRef.get();
-            this.resolveAttempts = referencedElement == null ? resolveAttempts + 1 : 0;
-            this.lastResolveInvocation = System.currentTimeMillis();
-        }
         set(RESOLVING, false);
+
+        if (cancelled) return;
+
+        PsiElement referencedElement = PsiElementRef.get(this.reference);
+        this.resolveAttempts = referencedElement == null ? resolveAttempts + 1 : 0;
+        this.lastResolveInvocation = System.currentTimeMillis();
+
     }
 
     public boolean isResolving() {
@@ -90,7 +94,7 @@ public class PsiResolveResult extends PropertyHolderBase.IntStore<PsiResolveStat
             return true;
         }
 
-        PsiElement referencedElement = getReferencedElement();
+        PsiElement referencedElement = getReference();
         if (referencedElement == null) {
             if (resolveAttempts > 0) {
                 if (resolveAttempts > 8) {
@@ -143,21 +147,19 @@ public class PsiResolveResult extends PropertyHolderBase.IntStore<PsiResolveStat
         if (connectionChanged() || schemaChanged()) {
             return true;
         }
-        IdentifierPsiElement element = this.element.get();
-        ConnectionHandler activeConnection = element == null ? null : element.getConnection();
-        if (activeConnection == null || activeConnection.isVirtual()) {
-            if (schema != null) return true;
-        } else {
-            if (connectionBecameActive(activeConnection) || connectionBecameValid(activeConnection)) {
-                return true;
-            }
+        ConnectionId currentConnectionId = getCurrentConnectionId();
+        ConnectionHandler currentConnection = ConnectionHandler.get(currentConnectionId);
+        if (currentConnection == null || currentConnection.isVirtual()) {
+            return schemaId != null;
         }
+
+        if (connectionBecameActive(currentConnection) || connectionBecameValid(currentConnection)) {
+            return true;
+        }
+
         return false;
     }
 
-    private BasePsiElement getParent() {
-        return Safe.call(parent, source -> source.get());
-    }
 
     private boolean elementTextChanged() {
         IdentifierPsiElement element = this.element.get();
@@ -165,17 +167,29 @@ public class PsiResolveResult extends PropertyHolderBase.IntStore<PsiResolveStat
     }
 
     private boolean connectionChanged() {
-        IdentifierPsiElement element = this.element.get();
-        return element != null && getConnection() != element.getConnection();
+        ConnectionId currentConnectionId = getCurrentConnectionId();
+        if (!match(currentConnectionId, connectionId)) return true;
+
+        ConnectionId referenceConnectionId = getReferenceConnectionId();
+        ConnectionId parentConnectionId = getParentConnectionId();
+        if (parentConnectionId != null && !match(parentConnectionId, referenceConnectionId)) return true;
+
+        return false;
     }
 
     private boolean schemaChanged() {
-        IdentifierPsiElement element = this.element.get();
-        return element != null && !Commons.match(DBObjectRef.get(schema), element.getDatabaseSchema());
+        SchemaId currentSchemaId = getCurrentSchemaId();
+        if (!match(schemaId, currentSchemaId)) return true;
+
+        SchemaId parentSchemaId = getParentSchemaId();
+        SchemaId referenceSchemaId = getReferenceSchemaId();
+        if (parentSchemaId != null && !match(parentSchemaId, referenceSchemaId)) return true;
+
+        return false;
     }
 
     private boolean connectionBecameValid(ConnectionHandler connection) {
-        return isNot(CONNECTION_VALID) && connection!= null && !connection.isVirtual() && connection.isValid();
+        return isNot(CONNECTION_VALID) && connection != null && !connection.isVirtual() && connection.isValid();
     }
 
     private boolean connectionBecameActive(ConnectionHandler connection) {
@@ -197,7 +211,7 @@ public class PsiResolveResult extends PropertyHolderBase.IntStore<PsiResolveStat
         if (isNot(RESOLVING_OBJECT_TYPE)) {
             set(RESOLVING_OBJECT_TYPE, true);
             try {
-                PsiElement referencedElement = getReferencedElement();
+                PsiElement referencedElement = getReference();
                 if (referencedElement instanceof DBObjectPsiElement) {
                     DBObjectPsiElement objectPsiElement = (DBObjectPsiElement) referencedElement;
                     return objectPsiElement.getObjectType();
@@ -230,24 +244,70 @@ public class PsiResolveResult extends PropertyHolderBase.IntStore<PsiResolveStat
         return text;
     }
 
-    @Nullable
-    public PsiElement getReferencedElement() {
-        return Safe.call(referencedElement, source -> source.get());
+    private IdentifierPsiElement getElement() {
+        return PsiElementRef.get(element);
     }
 
-    public ConnectionHandler getConnection() {
-        return ConnectionRef.get(connection);
+    private BasePsiElement getParent() {
+        return PsiElementRef.get(parent);
+    }
+
+    public PsiElement getReference() {
+        return PsiElementRef.get(reference);
     }
 
     public void setParent(@Nullable BasePsiElement parent) {
-        this.parent = PsiElementRef.from(parent);
+        this.parent = PsiElementRef.of(parent);
     }
 
-    public void setReferencedElement(PsiElement referencedElement) {
-        this.referencedElement = PsiElementRef.from(referencedElement);
+    public void setReference(PsiElement reference) {
+        this.reference = PsiElementRef.of(reference);
+        this.signature++;
+    }
+
+    private ConnectionId getCurrentConnectionId() {
+        IdentifierPsiElement element = getElement();
+        return element == null ? null : element.getConnectionId();
+    }
+
+    private SchemaId getCurrentSchemaId() {
+        IdentifierPsiElement element = getElement();
+        return element == null ? null : element.getSchemaId();
+    }
+
+    private ConnectionId getParentConnectionId() {
+        BasePsiElement parent = getParent();
+        return parent == null ? null : parent.getConnectionId();
+    }
+
+    private SchemaId getParentSchemaId() {
+        BasePsiElement parent = getParent();
+        return parent == null ? null : parent.getSchemaId();
+    }
+
+    private ConnectionId getReferenceConnectionId() {
+        PsiElement reference = getReference();
+        if (reference instanceof DatabaseContext) {
+            DatabaseContext context = (DatabaseContext) reference;
+            return context.getConnectionId();
+        }
+        return null;
+    }
+
+    private SchemaId getReferenceSchemaId() {
+        PsiElement reference = getReference();
+        if (reference instanceof DatabaseContext) {
+            DatabaseContext context = (DatabaseContext) reference;
+            return context.getSchemaId();
+        }
+        return null;
     }
 
     public int getResolveAttempts() {
         return resolveAttempts;
+    }
+
+    public Object getSignature() {
+        return signature;
     }
 }

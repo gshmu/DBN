@@ -21,6 +21,15 @@ public final class ConnectionId extends PseudoConstant<ConnectionId> {
         this.index = ConnectionIdIndex.next();
     }
 
+    public boolean isVirtual() {
+        return
+            this == VIRTUAL_ORACLE ||
+            this == VIRTUAL_MYSQL ||
+            this == VIRTUAL_POSTGRES ||
+            this == VIRTUAL_SQLITE ||
+            this == VIRTUAL_ISO92_SQL;
+    }
+
     public int index() {
         return index;
     }

@@ -26,9 +26,6 @@ public class VoidDynamicContent extends StatefulDisposable.Base implements Dynam
     public void load() {}
 
     @Override
-    public void ensure() {}
-
-    @Override
     public void loadInBackground() {}
 
 
@@ -54,22 +51,17 @@ public class VoidDynamicContent extends StatefulDisposable.Base implements Dynam
     }
 
     @Override
-    public boolean canLoadFast() {
-        return true;
-    }
-
-    @Override
     public boolean isLoading() {
         return false;
     }
 
     @Override
-    public boolean isDirty() {
+    public boolean isLoadingInBackground() {
         return false;
     }
 
     @Override
-    public boolean isPassive() {
+    public boolean isDirty() {
         return false;
     }
 
@@ -97,7 +89,11 @@ public class VoidDynamicContent extends StatefulDisposable.Base implements Dynam
         return "Empty Content";
     }
 
-    @NotNull
+    @Override
+    public List getAllElements() {
+        return elements;
+    }
+
     @Override
     public List getElements() {
         return elements;
@@ -105,13 +101,7 @@ public class VoidDynamicContent extends StatefulDisposable.Base implements Dynam
 
     @Override
     public List getElements(String name) {
-        return null;
-    }
-
-    @NotNull
-    @Override
-    public List getAllElements() {
-        return getElements();
+        return Collections.emptyList();
     }
 
     @Override
@@ -150,9 +140,6 @@ public class VoidDynamicContent extends StatefulDisposable.Base implements Dynam
     public ConnectionHandler getConnection() {
         throw new UnsupportedOperationException();
     }
-
-    @Override
-    public void changeSignature() {}
 
     @NotNull
     @Override

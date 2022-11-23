@@ -2,16 +2,12 @@ package com.dci.intellij.dbn.common.file.util;
 
 import com.dci.intellij.dbn.common.event.ApplicationEvents;
 import com.dci.intellij.dbn.common.thread.Write;
-import com.dci.intellij.dbn.vfs.DBVirtualFileImpl;
+import com.dci.intellij.dbn.vfs.DBVirtualFileBase;
 import com.dci.intellij.dbn.vfs.DatabaseFileSystem;
 import com.intellij.injected.editor.VirtualFileWindow;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.roots.ProjectRootManager;
-import com.intellij.openapi.vfs.LocalFileSystem;
-import com.intellij.openapi.vfs.StandardFileSystems;
-import com.intellij.openapi.vfs.VfsUtilCore;
-import com.intellij.openapi.vfs.VirtualFile;
-import com.intellij.openapi.vfs.VirtualFileManager;
+import com.intellij.openapi.vfs.*;
 import com.intellij.openapi.vfs.newvfs.BulkFileListener;
 import com.intellij.openapi.vfs.newvfs.events.VFileDeleteEvent;
 import com.intellij.openapi.vfs.newvfs.events.VFileEvent;
@@ -22,7 +18,7 @@ import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import javax.swing.Icon;
+import javax.swing.*;
 import java.io.File;
 import java.io.IOException;
 import java.util.Collections;
@@ -32,8 +28,8 @@ public final class VirtualFiles {
     private VirtualFiles() {}
 
     public static Icon getIcon(VirtualFile virtualFile) {
-        if (virtualFile instanceof DBVirtualFileImpl) {
-            DBVirtualFileImpl file = (DBVirtualFileImpl) virtualFile;
+        if (virtualFile instanceof DBVirtualFileBase) {
+            DBVirtualFileBase file = (DBVirtualFileBase) virtualFile;
             return file.getIcon();
         }
         return virtualFile.getFileType().getIcon();

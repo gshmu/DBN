@@ -7,7 +7,7 @@ import com.dci.intellij.dbn.common.thread.Progress;
 import com.dci.intellij.dbn.common.util.Editors;
 import com.dci.intellij.dbn.common.util.Messages;
 import com.dci.intellij.dbn.connection.ConnectionAction;
-import com.dci.intellij.dbn.connection.context.ConnectionProvider;
+import com.dci.intellij.dbn.connection.context.DatabaseContextBase;
 import com.dci.intellij.dbn.generator.StatementGeneratorResult;
 import com.dci.intellij.dbn.language.common.psi.PsiUtil;
 import com.dci.intellij.dbn.language.sql.SQLFileType;
@@ -20,7 +20,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.awt.datatransfer.StringSelection;
 
-public abstract class GenerateStatementAction extends DumbAwareProjectAction implements ConnectionProvider {
+public abstract class GenerateStatementAction extends DumbAwareProjectAction implements DatabaseContextBase {
     GenerateStatementAction(String text) {
         super(text);
     }

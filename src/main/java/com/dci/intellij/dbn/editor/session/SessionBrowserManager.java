@@ -124,7 +124,7 @@ public class SessionBrowserManager extends ProjectComponentBase implements Persi
             InterfaceTaskDefinition taskDefinition = InterfaceTaskDefinition.create(HIGH,
                     "Loading sessions",
                     "Loading database sessions",
-                    connection.getInterfaceContext());
+                    connection.createInterfaceContext());
             return DatabaseInterfaceInvoker.load(taskDefinition, conn -> {
                         DBNResultSet resultSet = null;
                         try {
@@ -150,7 +150,7 @@ public class SessionBrowserManager extends ProjectComponentBase implements Persi
             InterfaceTaskDefinition taskDefinition = InterfaceTaskDefinition.create(HIGH,
                     "Loading session details",
                     "Loading current session details",
-                    connection.getInterfaceContext());
+                    connection.createInterfaceContext());
             return DatabaseInterfaceInvoker.load(taskDefinition, conn -> {
                 ResultSet resultSet = null;
                 try {
@@ -210,7 +210,7 @@ public class SessionBrowserManager extends ProjectComponentBase implements Persi
                 InterfaceTaskDefinition taskDefinition = InterfaceTaskDefinition.create(MEDIUM,
                         "Terminating sessions",
                         taskAction,
-                        connection.getInterfaceContext());
+                        connection.createInterfaceContext());
 
                 DatabaseInterfaceInvoker.execute(taskDefinition, conn -> {
                     progress.setIndeterminate(false);

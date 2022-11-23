@@ -124,6 +124,7 @@ public class VirtualConnectionHandler extends StatefulDisposable.Base implements
     }
 
     @Override
+    @NotNull
     public ConnectionId getConnectionId() {
         return id;
     }
