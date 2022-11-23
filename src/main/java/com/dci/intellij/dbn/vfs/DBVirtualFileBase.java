@@ -3,7 +3,6 @@ package com.dci.intellij.dbn.vfs;
 import com.dci.intellij.dbn.common.environment.EnvironmentType;
 import com.dci.intellij.dbn.common.project.ProjectRef;
 import com.dci.intellij.dbn.common.ui.Presentable;
-import com.dci.intellij.dbn.connection.ConnectionId;
 import com.dci.intellij.dbn.language.common.DBLanguagePsiFile;
 import com.dci.intellij.dbn.language.common.WeakRef;
 import com.intellij.openapi.fileEditor.impl.FileDocumentManagerImpl;
@@ -25,7 +24,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 @Getter
 @Setter
-public abstract class DBVirtualFileImpl extends VirtualFile implements DBVirtualFile, Presentable, VirtualFilePathWrapper {
+public abstract class DBVirtualFileBase extends VirtualFile implements DBVirtualFile, Presentable, VirtualFilePathWrapper {
     private static final AtomicInteger ID_STORE = new AtomicInteger(1000);
     private final int id;
     private final ProjectRef project;
@@ -38,7 +37,7 @@ public abstract class DBVirtualFileImpl extends VirtualFile implements DBVirtual
 
 
     private String name;
-    public DBVirtualFileImpl(@NotNull Project project, @NotNull String name) {
+    public DBVirtualFileBase(@NotNull Project project, @NotNull String name) {
         this.id = ID_STORE.incrementAndGet();
         this.name = name;
         //id = DummyFileIdGenerator.next();
@@ -50,11 +49,6 @@ public abstract class DBVirtualFileImpl extends VirtualFile implements DBVirtual
     @Override
     public EnvironmentType getEnvironmentType() {
         return getConnection().getEnvironmentType();
-    }
-
-    @NotNull
-    public ConnectionId getConnectionId() {
-        return getConnection().getConnectionId();
     }
 
     @Override

@@ -5,7 +5,6 @@ import com.dci.intellij.dbn.common.latent.Latent;
 import com.dci.intellij.dbn.common.options.CompositeProjectConfiguration;
 import com.dci.intellij.dbn.common.options.Configuration;
 import com.dci.intellij.dbn.connection.ConnectionId;
-import com.dci.intellij.dbn.connection.ConnectionIdProvider;
 import com.dci.intellij.dbn.connection.config.ui.ConnectionFilterSettingsForm;
 import com.dci.intellij.dbn.object.DBColumn;
 import com.dci.intellij.dbn.object.DBSchema;
@@ -29,7 +28,7 @@ import static com.dci.intellij.dbn.common.util.Unsafe.cast;
 @Getter
 @Setter
 @EqualsAndHashCode(callSuper = false)
-public class ConnectionFilterSettings extends CompositeProjectConfiguration<ConnectionSettings, ConnectionFilterSettingsForm> implements ConnectionIdProvider {
+public class ConnectionFilterSettings extends CompositeProjectConfiguration<ConnectionSettings, ConnectionFilterSettingsForm> {
     private final ObjectTypeFilterSettings objectTypeFilterSettings;
     private final ObjectNameFilterSettings objectNameFilterSettings;
     private boolean hideEmptySchemas = false;

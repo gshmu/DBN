@@ -29,11 +29,6 @@ public class DBNativeDataType extends StatefulDisposable.Base implements Dynamic
         return definition.getName();
     }
 
-    @Override
-    public short getOverload() {
-        return 0;
-    }
-
     public GenericDataType getGenericDataType() {
         return definition.getGenericDataType();
     }
@@ -231,15 +226,6 @@ public class DBNativeDataType extends StatefulDisposable.Base implements Dynamic
     @Override
     public String getDescription() {
         return null;
-    }
-
-    @Override
-    public void reload() {
-    }
-
-    @Override
-    public void refresh() {
-
     }
 
     @Override

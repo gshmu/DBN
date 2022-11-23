@@ -32,7 +32,7 @@ public class PsiUtil {
         DBSchema currentSchema = null;
         if (psiElement instanceof BasePsiElement) {
             BasePsiElement basePsiElement = (BasePsiElement) psiElement;
-            currentSchema = basePsiElement.getDatabaseSchema();
+            currentSchema = basePsiElement.getSchema();
         }
         if (currentSchema == null) {
             VirtualFile virtualFile = getVirtualFileForElement(psiElement);

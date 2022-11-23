@@ -1,6 +1,6 @@
 package com.dci.intellij.dbn.object.common.list;
 
-import com.dci.intellij.dbn.common.content.DynamicContentImpl;
+import com.dci.intellij.dbn.common.content.DynamicContentBase;
 import com.dci.intellij.dbn.common.content.DynamicContentProperty;
 import com.dci.intellij.dbn.common.content.DynamicContentType;
 import com.dci.intellij.dbn.common.content.GroupedDynamicContent;
@@ -24,7 +24,7 @@ import static com.dci.intellij.dbn.common.list.FilteredList.unwrap;
 import static com.dci.intellij.dbn.common.util.Commons.nvl;
 
 @Getter
-class DBObjectRelationListImpl<T extends DBObjectRelation> extends DynamicContentImpl<T> implements DBObjectRelationList<T>{
+class DBObjectRelationListImpl<T extends DBObjectRelation> extends DynamicContentBase<T> implements DBObjectRelationList<T>{
     private final DBObjectRelationType relationType;
 
     public DBObjectRelationListImpl(

@@ -1,10 +1,6 @@
 package com.dci.intellij.dbn.common.content.loader;
 
-import com.dci.intellij.dbn.common.content.DynamicContent;
-import com.dci.intellij.dbn.common.content.DynamicContentElement;
-import com.dci.intellij.dbn.common.content.DynamicContentProperty;
-import com.dci.intellij.dbn.common.content.DynamicContentType;
-import com.dci.intellij.dbn.common.content.GroupedDynamicContent;
+import com.dci.intellij.dbn.common.content.*;
 import com.dci.intellij.dbn.common.content.dependency.ContentDependencyAdapter;
 import com.dci.intellij.dbn.common.content.dependency.SubcontentDependencyAdapter;
 import com.dci.intellij.dbn.connection.DatabaseEntity;
@@ -32,7 +28,7 @@ public abstract class DynamicSubcontentCustomLoader<
     protected abstract T resolveElement(DynamicContent<T> dynamicContent, DynamicContentElement sourceElement);
 
     @Override
-    public void loadContent(DynamicContent<T> content, boolean forceReload) {
+    public void loadContent(DynamicContent<T> content) {
         List<T> list = null;
         ContentDependencyAdapter adapter = content.getDependencyAdapter();
         if (adapter instanceof SubcontentDependencyAdapter) {

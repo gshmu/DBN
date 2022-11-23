@@ -12,8 +12,8 @@ import com.dci.intellij.dbn.common.notification.NotificationGroup;
 import com.dci.intellij.dbn.common.notification.NotificationSupport;
 import com.dci.intellij.dbn.common.property.DisposablePropertyHolder;
 import com.dci.intellij.dbn.common.thread.Background;
+import com.dci.intellij.dbn.common.thread.Synchronized;
 import com.dci.intellij.dbn.common.thread.ThreadMonitor;
-import com.dci.intellij.dbn.common.thread.Timeout;
 import com.dci.intellij.dbn.common.util.Lists;
 import com.dci.intellij.dbn.common.util.Strings;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
@@ -22,7 +22,6 @@ import com.dci.intellij.dbn.connection.DatabaseEntity;
 import com.intellij.openapi.progress.ProcessCanceledException;
 import lombok.extern.slf4j.Slf4j;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 import java.sql.SQLException;
 import java.sql.SQLFeatureNotSupportedException;
@@ -31,10 +30,11 @@ import java.util.Collections;
 import java.util.List;
 
 import static com.dci.intellij.dbn.common.content.DynamicContentProperty.*;
+import static com.dci.intellij.dbn.common.list.FilteredList.unwrap;
 import static com.dci.intellij.dbn.common.util.Unsafe.cast;
 
 @Slf4j
-public abstract class DynamicContentImpl<T extends DynamicContentElement>
+public abstract class DynamicContentBase<T extends DynamicContentElement>
         extends DisposablePropertyHolder<DynamicContentProperty>
         implements DynamicContent<T>,
                    NotificationSupport {
@@ -43,14 +43,13 @@ public abstract class DynamicContentImpl<T extends DynamicContentElement>
     protected static final List<?> EMPTY_DISPOSED_CONTENT = Collections.unmodifiableList(new ArrayList<>(0));
     protected static final List<?> EMPTY_UNTOUCHED_CONTENT = Collections.unmodifiableList(new ArrayList<>(0));
 
-    private byte signature = 0;
-
-    private DatabaseEntity parent;
     private ContentDependencyAdapter dependencyAdapter;
+    private DatabaseEntity parent;
+    private byte signature = 0;
 
     protected List<T> elements = cast(EMPTY_UNTOUCHED_CONTENT);
 
-    protected DynamicContentImpl(
+    protected DynamicContentBase(
             @NotNull DatabaseEntity parent,
             ContentDependencyAdapter dependencyAdapter,
             DynamicContentProperty... properties) {
@@ -83,7 +82,12 @@ public abstract class DynamicContentImpl<T extends DynamicContentElement>
     @Override
     @NotNull
     public ConnectionHandler getConnection() {
-        return Failsafe.nn(getParentEntity().getConnection());
+        return getParentEntity().getConnection();
+    }
+
+    private boolean canConnect() {
+        ConnectionHandler connection = getConnection();
+        return ConnectionHandler.canConnect(connection);
     }
 
     @Override
@@ -109,28 +113,16 @@ public abstract class DynamicContentImpl<T extends DynamicContentElement>
         return is(LOADING);
     }
 
-    /**
-     * The content can load
-     */
-    @Override
-    public boolean canLoadFast() {
-        return dependencyAdapter.canLoadFast();
-    }
-
-    @Override
-    public boolean isSubContent() {
-        return dependencyAdapter.isSubContent();
+    public boolean isLoadingInBackground() {
+        return is(LOADING_IN_BACKGROUND);
     }
 
     @Override
     public boolean isDirty() {
-        return is(DIRTY) || dependencyAdapter.isDependencyDirty();
+        return is(DIRTY) || isDependencyDirty();
     }
 
-    @Override
-    public boolean isPassive() {
-        return is(PASSIVE);
-    }
+
 
     @Override
     public void markDirty() {
@@ -138,68 +130,73 @@ public abstract class DynamicContentImpl<T extends DynamicContentElement>
     }
 
     private boolean shouldLoad() {
-        if (isDisposed() || isLoading()) {
-            return false;
-        }
-
-        if (isPassive()) {
+        if (!isLoaded()) {
+            if (isDisposed()) return false;
+            if (isLoading()) return false;
+            if (!canConnect()) return false;
             return true;
         }
 
-        if (!isLoaded()) {
-            return dependencyAdapter.canConnect(getConnection());
+        if (isDirty()) {
+            if (isDisposed()) return false;
+            if (isLoading()) return false;
+            if (!canLoad()) return false;
+            if (!canConnect()) return false;
+            return true;
         }
 
-        if (isDirty() && !ThreadMonitor.isDispatchThread()) {
-            return dependencyAdapter.canLoad(getConnection());
+        return false;
+    }
+
+    private boolean shouldLoadInBackground() {
+        if (shouldLoad()) {
+            if (isLoadingInBackground()) return false;
+            if (!canLoadInBackground()) return false;
+            return true;
         }
 
         return false;
     }
 
     private boolean shouldReload() {
-        if (isDisposed() || isLoading()) {
-            return false;
-        }
+        // only allow refresh / reload if already loaded
+        if (isLoaded()) {
+            if (isDisposed()) return false;
+            if (isLoading()) return false;
+            if (isLoadingInBackground()) return false;
 
-        if(isPassive()) {
             return true;
         }
 
-        return isLoaded();
-    }
-
-    private boolean shouldRefresh() {
-        return !isDisposed() && isLoaded() && !isLoading() && !is(REFRESHING);
-    }
-
-    private boolean shouldLoadInBackground() {
-        return shouldLoad() && !is(LOADING_IN_BACKGROUND);
+        return false;
     }
 
     @Override
-    public final void load() {
+    public void load() {
         if (shouldLoad()) {
-            set(LOADING, true);
-            try {
-                performLoad(false);
-            } finally {
-                set(LOADING, false);
-                changeSignature();
-            }
+            ensureLoaded(false);
+        }
+    }
+
+    @Override
+    public final void loadInBackground() {
+        if (shouldLoadInBackground()) {
+            set(LOADING_IN_BACKGROUND, true);
+            Background.run(() -> {
+                try {
+                    ensureLoaded(false);
+                } finally {
+                    set(LOADING_IN_BACKGROUND, false);
+                }
+            });
         }
     }
 
     @Override
     public final void reload() {
         if (shouldReload()) {
-            set(LOADING, true);
-            try {
-                performLoad(true);
-            } finally {
-                set(LOADING, false);
-                changeSignature();
-            }
+            markDirty();
+            ensureLoaded(true);
 
             for (T element : elements) {
                 checkDisposed();
@@ -209,67 +206,40 @@ public abstract class DynamicContentImpl<T extends DynamicContentElement>
     }
 
     @Override
-    public void ensure() {
-        if (!isLoaded() || shouldLoad()) {
-            synchronized (this) {
-                if (!isLoaded() || shouldLoad()) {
-                    load();
+    public void refresh() {
+        if (shouldReload()) {
+            markDirty();
+            dependencyAdapter.refreshSources();
+            if (!is(INTERNAL)){
+                for (T element : elements) {
+                    checkDisposed();
+                    element.refresh();
                 }
             }
         }
     }
 
-    @Override
-    public void refresh() {
-        if (shouldRefresh()) {
-            try {
-                set(REFRESHING, true);
-                markDirty();
-                dependencyAdapter.refreshSources();
-                if (!is(INTERNAL)){
-                    for (T e : elements) {
-                        checkDisposed();
-                        e.refresh();
+
+    /**
+     * Synchronised block making sure the content is loaded before the thread is released
+     */
+    private void ensureLoaded(boolean force) {
+        if (shouldLoad()) {
+            Synchronized.on(this, () -> {
+                if (shouldLoad()) {
+                    set(LOADING, true);
+                    try {
+                        performLoad(force);
+                    } finally {
+                        set(LOADING, false);
+                        changeSignature();
                     }
                 }
-            } finally {
-                set(REFRESHING, false);
-            }
-        }
-    }
-
-    @Override
-    public final void loadInBackground() {
-        if (shouldLoadInBackground()) {
-            set(LOADING_IN_BACKGROUND, true);
-            Background.run(() -> {
-                try{
-                    ensure();
-                } finally {
-                    set(LOADING_IN_BACKGROUND, false);
-                }
             });
-
-
-/*
-            ConnectionHandler connection = this.getConnection();
-            Progress.background(
-                    getProject(),
-                    connection.getMetaLoadTitle(), false,
-                    progress -> {
-                        try{
-                            progress.setText("Loading " + getContentDescription());
-                            ensure();
-                        } finally {
-                            set(LOADING_IN_BACKGROUND, false);
-                        }
-                    });
-*/
         }
     }
 
     private void performLoad(boolean force) {
-        //System.out.println( this + " :invoked by " + ThreadMonitor.current());
         checkDisposed();
         dependencyAdapter.beforeLoad(force);
         checkDisposed();
@@ -279,7 +249,7 @@ public abstract class DynamicContentImpl<T extends DynamicContentElement>
             // become valid due to parallel background load
             set(DIRTY, false);
             DynamicContentLoader<T, ?> loader = getLoader();
-            loader.loadContent(this, force);
+            loader.loadContent(this);
             set(LOADED, true);
 
             // refresh inner elements
@@ -318,8 +288,7 @@ public abstract class DynamicContentImpl<T extends DynamicContentElement>
         dependencyAdapter.afterLoad();
     }
 
-    @Override
-    public void changeSignature() {
+    protected void changeSignature() {
         signature++;
     }
 
@@ -364,33 +333,25 @@ public abstract class DynamicContentImpl<T extends DynamicContentElement>
     protected abstract void sortElements(List<T> elements);
 
     @Override
-    @NotNull
+    public List<T> getAllElements() {
+        return unwrap(getElements());
+    }
+
+    @Override
     public List<T> getElements() {
+        if (isLoaded() && !isDirty()) return elements;
+        if (isDisposed()) return elements;
+
         if (canLoadFast() ||
                 ThreadMonitor.isTimeoutProcess() ||
                 ThreadMonitor.isBackgroundProcess() ||
                 ThreadMonitor.isProgressProcess()) {
 
-            if (!isLoaded() && ThreadMonitor.isDispatchThread()) {
-                Timeout.run(1, true, () -> ensure());
-            } else {
-                ensure();
-            }
-
+            load();
         } else{
             loadInBackground();
         }
         return elements;
-    }
-
-    @NotNull
-    @Override
-    public List<T> getAllElements() {
-        return FilteredList.unwrap(getElements());
-    }
-
-    public List<T> getAllElementsNoLoad() {
-        return FilteredList.unwrap(elements);
     }
 
     @Override
@@ -407,7 +368,6 @@ public abstract class DynamicContentImpl<T extends DynamicContentElement>
     }
 
     @Override
-    @Nullable
     public List<T> getElements(String name) {
         return Lists.filter(getAllElements(), element -> Strings.equalsIgnoreCase(element.getName(), name));
     }

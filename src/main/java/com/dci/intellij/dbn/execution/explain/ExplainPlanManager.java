@@ -83,7 +83,7 @@ public class ExplainPlanManager extends ProjectComponentBase {
             InterfaceTaskDefinition taskDefinition = InterfaceTaskDefinition.create(HIGH,
                     "Creating explain plan",
                     "Running explain plan for SQL statement",
-                    connection.getInterfaceContext());
+                    connection.createInterfaceContext());
             return DatabaseInterfaceInvoker.load(taskDefinition, conn -> {
                 SchemaId currentSchema = executable.getFile().getSchemaId();
                 connection.setCurrentSchema(conn, currentSchema);

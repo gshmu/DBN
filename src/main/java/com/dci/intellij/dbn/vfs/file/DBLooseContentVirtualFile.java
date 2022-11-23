@@ -10,7 +10,7 @@ import com.dci.intellij.dbn.object.common.DBObject;
 import com.dci.intellij.dbn.object.common.DBSchemaObject;
 import com.dci.intellij.dbn.object.lookup.DBObjectRef;
 import com.dci.intellij.dbn.vfs.DBParseableVirtualFile;
-import com.dci.intellij.dbn.vfs.DBVirtualFileImpl;
+import com.dci.intellij.dbn.vfs.DBVirtualFileBase;
 import com.dci.intellij.dbn.vfs.DatabaseFileViewProvider;
 import com.intellij.lang.Language;
 import com.intellij.openapi.fileTypes.FileType;
@@ -24,7 +24,7 @@ import javax.swing.*;
 import java.io.*;
 import java.nio.charset.Charset;
 
-public class DBLooseContentVirtualFile extends DBVirtualFileImpl implements DBParseableVirtualFile {
+public class DBLooseContentVirtualFile extends DBVirtualFileBase implements DBParseableVirtualFile {
     private final DBObjectRef<DBSchemaObject> object;
     private long modificationTimestamp = LocalTimeCounter.currentTime();
     private CharSequence content = "";

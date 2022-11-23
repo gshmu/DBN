@@ -12,6 +12,7 @@ import com.dci.intellij.dbn.common.util.Editors;
 import com.dci.intellij.dbn.common.util.Strings;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.SchemaId;
+import com.dci.intellij.dbn.connection.context.DatabaseContextBase;
 import com.dci.intellij.dbn.database.interfaces.DatabaseCompatibilityInterface;
 import com.dci.intellij.dbn.editor.ddl.DDLFileEditor;
 import com.dci.intellij.dbn.editor.session.SessionBrowser;
@@ -27,9 +28,7 @@ import com.dci.intellij.dbn.language.common.element.util.IdentifierCategory;
 import com.dci.intellij.dbn.language.common.psi.lookup.ObjectLookupAdapter;
 import com.dci.intellij.dbn.language.common.psi.lookup.ObjectReferenceLookupAdapter;
 import com.dci.intellij.dbn.language.common.psi.lookup.PsiLookupAdapter;
-import com.dci.intellij.dbn.object.DBSchema;
 import com.dci.intellij.dbn.object.common.DBObject;
-import com.dci.intellij.dbn.object.common.DBObjectBundle;
 import com.dci.intellij.dbn.object.common.DBObjectPsiElement;
 import com.dci.intellij.dbn.object.common.DBVirtualObject;
 import com.dci.intellij.dbn.object.type.DBObjectType;
@@ -64,7 +63,7 @@ import java.util.function.Consumer;
 
 @Getter
 @Setter
-public abstract class BasePsiElement<T extends ElementTypeBase> extends ASTDelegatePsiElement implements ItemPresentation, FormattingProviderPsiElement {
+public abstract class BasePsiElement<T extends ElementTypeBase> extends ASTDelegatePsiElement implements DatabaseContextBase, ItemPresentation, FormattingProviderPsiElement {
     private T elementType;
     private FormattingAttributes formattingAttributes;
     private volatile DBVirtualObject underlyingObject;
@@ -176,13 +175,14 @@ public abstract class BasePsiElement<T extends ElementTypeBase> extends ASTDeleg
 
     @NotNull
     public DBLanguagePsiFile getFile() {
-        return Read.conditional(() -> {
+        DBLanguagePsiFile file = Read.conditional(() -> {
             PsiElement parent = getParent();
             while (parent != null && !(parent instanceof DBLanguagePsiFile)) {
                 parent = parent.getParent();
             }
-            return Failsafe.nn((DBLanguagePsiFile) parent);
+            return (DBLanguagePsiFile) parent;
         });
+        return Failsafe.nd(file);
     }
 
     @Nullable
@@ -192,16 +192,12 @@ public abstract class BasePsiElement<T extends ElementTypeBase> extends ASTDeleg
     }
 
     @Nullable
-    public DBSchema getDatabaseSchema() {
-        DBLanguagePsiFile file = getFile();
+    public SchemaId getSchemaId() {
         ConnectionHandler connection = getConnection();
-        SchemaId databaseSchema = file.getSchemaId();
-        if (connection != null && databaseSchema != null) {
-            DBObjectBundle objectBundle = connection.getObjectBundle();
-            return objectBundle.getSchema(databaseSchema.id());
-        }
+        if (connection == null) return null;
 
-        return null;
+        DBLanguagePsiFile file = getFile();
+        return file.getSchemaId();
     }
 
     public long getFileModificationStamp() {

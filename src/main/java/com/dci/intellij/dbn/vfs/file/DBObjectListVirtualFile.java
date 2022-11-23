@@ -13,7 +13,7 @@ import com.dci.intellij.dbn.object.common.DBObject;
 import com.dci.intellij.dbn.object.common.DBObjectBundle;
 import com.dci.intellij.dbn.object.common.DBObjectPsiCache;
 import com.dci.intellij.dbn.object.common.list.DBObjectList;
-import com.dci.intellij.dbn.vfs.DBVirtualFileImpl;
+import com.dci.intellij.dbn.vfs.DBVirtualFileBase;
 import com.intellij.openapi.fileTypes.FileType;
 import com.intellij.openapi.fileTypes.UnknownFileType;
 import com.intellij.openapi.vfs.VirtualFile;
@@ -25,7 +25,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 
-public class DBObjectListVirtualFile<T extends DBObjectList> extends DBVirtualFileImpl {
+public class DBObjectListVirtualFile<T extends DBObjectList> extends DBVirtualFileBase {
     private static final byte[] EMPTY_BYTE_CONTENT = new byte[0];
     private final WeakRef<T> objectList;
 

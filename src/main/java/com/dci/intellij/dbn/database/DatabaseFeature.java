@@ -1,6 +1,6 @@
 package com.dci.intellij.dbn.database;
 
-import com.dci.intellij.dbn.connection.context.ConnectionProvider;
+import com.dci.intellij.dbn.connection.context.DatabaseContext;
 import com.dci.intellij.dbn.database.interfaces.DatabaseCompatibilityInterface;
 import lombok.Getter;
 import org.jetbrains.annotations.Nullable;
@@ -38,11 +38,11 @@ public enum DatabaseFeature {
         this.description = description;
     }
 
-    public boolean isNotSupported(@Nullable ConnectionProvider connectionProvider) {
+    public boolean isNotSupported(@Nullable DatabaseContext connectionProvider) {
         return !isSupported(connectionProvider);
     }
 
-    public boolean isSupported(@Nullable ConnectionProvider connectionProvider) {
+    public boolean isSupported(@Nullable DatabaseContext connectionProvider) {
         if (connectionProvider == null) return false;
 
         DatabaseCompatibilityInterface compatibility = connectionProvider.getCompatibilityInterface();

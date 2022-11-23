@@ -4,27 +4,12 @@ import com.dci.intellij.dbn.code.common.style.options.CodeStyleFormattingSetting
 import com.dci.intellij.dbn.code.common.style.options.DBLCodeStyleSettings;
 import com.dci.intellij.dbn.code.common.style.presets.CodeStyleDefaultPresets;
 import com.dci.intellij.dbn.code.common.style.presets.CodeStylePreset;
-import com.dci.intellij.dbn.language.common.DBLanguage;
-import com.dci.intellij.dbn.language.common.DBLanguagePsiFile;
-import com.dci.intellij.dbn.language.common.PsiElementRef;
-import com.dci.intellij.dbn.language.common.SharedTokenTypeBundle;
-import com.dci.intellij.dbn.language.common.SimpleTokenType;
-import com.dci.intellij.dbn.language.common.TokenType;
+import com.dci.intellij.dbn.language.common.*;
 import com.dci.intellij.dbn.language.common.element.ElementType;
 import com.dci.intellij.dbn.language.common.element.impl.WrapperElementType;
 import com.dci.intellij.dbn.language.common.element.util.ElementTypeAttribute;
-import com.dci.intellij.dbn.language.common.psi.BasePsiElement;
-import com.dci.intellij.dbn.language.common.psi.ChameleonPsiElement;
-import com.dci.intellij.dbn.language.common.psi.IdentifierPsiElement;
-import com.dci.intellij.dbn.language.common.psi.NamedPsiElement;
-import com.dci.intellij.dbn.language.common.psi.PsiUtil;
-import com.dci.intellij.dbn.language.common.psi.TokenPsiElement;
-import com.intellij.formatting.Alignment;
-import com.intellij.formatting.Block;
-import com.intellij.formatting.ChildAttributes;
-import com.intellij.formatting.Indent;
-import com.intellij.formatting.Spacing;
-import com.intellij.formatting.Wrap;
+import com.dci.intellij.dbn.language.common.psi.*;
+import com.intellij.formatting.*;
 import com.intellij.openapi.util.TextRange;
 import com.intellij.psi.PsiComment;
 import com.intellij.psi.PsiElement;
@@ -52,7 +37,7 @@ public class FormattingBlock implements Block {
             PsiElement psiElement,
             FormattingBlock parentBlock,
             int index) {
-        this.psiElementRef = PsiElementRef.from(psiElement);
+        this.psiElementRef = PsiElementRef.of(psiElement);
         this.parentBlock = parentBlock;
         this.index = index;
         this.codeStyleSettings = codeStyleSettings;

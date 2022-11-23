@@ -134,7 +134,7 @@ public abstract class DBSchemaObjectImpl<M extends DBObjectMetadata> extends DBO
         InterfaceTaskDefinition taskDefinition = InterfaceTaskDefinition.create(HIGHEST,
                 "Loading data dictionary",
                 "Loading schema references for " + getQualifiedNameWithType(),
-                getInterfaceContext());
+                createInterfaceContext());
 
         return DatabaseInterfaceInvoker.load(taskDefinition, conn -> {
             List<DBSchema> schemas = new ArrayList<>();
@@ -167,7 +167,7 @@ public abstract class DBSchemaObjectImpl<M extends DBObjectMetadata> extends DBO
         InterfaceTaskDefinition taskDefinition = InterfaceTaskDefinition.create(HIGHEST,
                 "Updating source code",
                 "Updating sources of " + getQualifiedNameWithType(),
-                getInterfaceContext());
+                createInterfaceContext());
 
         DatabaseInterfaceInvoker.execute(taskDefinition, conn -> {
             ConnectionHandler connection = getConnection();

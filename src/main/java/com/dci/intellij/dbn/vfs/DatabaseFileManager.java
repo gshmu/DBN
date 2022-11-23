@@ -195,8 +195,8 @@ public class DatabaseFileManager extends ProjectComponentBase implements Persist
     public void closeDatabaseFiles(@NotNull final List<ConnectionId> connectionIds) {
         FileEditorManager fileEditorManager = FileEditorManager.getInstance(getProject());
         for (VirtualFile virtualFile : fileEditorManager.getOpenFiles()) {
-            if (virtualFile instanceof DBVirtualFileImpl) {
-                DBVirtualFileImpl databaseVirtualFile = (DBVirtualFileImpl) virtualFile;
+            if (virtualFile instanceof DBVirtualFileBase) {
+                DBVirtualFileBase databaseVirtualFile = (DBVirtualFileBase) virtualFile;
                 ConnectionId connectionId = databaseVirtualFile.getConnectionId();
                 if (connectionIds.contains(connectionId)) {
                     closeFile(virtualFile);

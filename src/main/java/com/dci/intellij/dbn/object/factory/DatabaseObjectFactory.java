@@ -134,7 +134,7 @@ public class DatabaseObjectFactory extends ProjectComponentBase {
             InterfaceTaskDefinition taskDefinition = InterfaceTaskDefinition.create(HIGHEST,
                     "Dropping database object",
                     "Dropping " + object.getQualifiedNameWithType(),
-                    connection.getInterfaceContext());
+                    connection.createInterfaceContext());
 
             DatabaseInterfaceInvoker.execute(taskDefinition, conn -> {
                 DBContentType contentType = object.getContentType();

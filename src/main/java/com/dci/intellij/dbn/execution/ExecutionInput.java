@@ -6,10 +6,9 @@ import com.dci.intellij.dbn.common.options.PersistentConfiguration;
 import com.dci.intellij.dbn.common.options.setting.SettingsSupport;
 import com.dci.intellij.dbn.common.project.ProjectRef;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
-import com.dci.intellij.dbn.connection.ConnectionId;
 import com.dci.intellij.dbn.connection.ConnectionRef;
 import com.dci.intellij.dbn.connection.SchemaId;
-import com.dci.intellij.dbn.connection.context.ConnectionProvider;
+import com.dci.intellij.dbn.connection.context.DatabaseContextBase;
 import com.dci.intellij.dbn.execution.common.options.ExecutionEngineSettings;
 import com.dci.intellij.dbn.execution.common.options.ExecutionTimeoutSettings;
 import com.intellij.openapi.project.Project;
@@ -21,7 +20,7 @@ import org.jetbrains.annotations.Nullable;
 
 @Getter
 @Setter
-public abstract class ExecutionInput extends StatefulDisposable.Base implements StatefulDisposable, ConnectionProvider, PersistentConfiguration {
+public abstract class ExecutionInput extends StatefulDisposable.Base implements StatefulDisposable, DatabaseContextBase, PersistentConfiguration {
     private final ExecutionTimeout executionTimeout;
     private final ExecutionTimeout debugExecutionTimeout;
     private final ExecutionTarget executionTarget;
@@ -93,8 +92,6 @@ public abstract class ExecutionInput extends StatefulDisposable.Base implements 
     public void setDebugExecutionTimeout(int timeout) {
         debugExecutionTimeout.set(timeout);
     }
-
-    public abstract ConnectionId getConnectionId();
 
     @Override
     public void readConfiguration(Element element) {

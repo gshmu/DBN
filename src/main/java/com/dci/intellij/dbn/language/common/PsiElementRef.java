@@ -13,8 +13,13 @@ public class PsiElementRef<T extends PsiElement> extends WeakRef<T>{
     }
 
     @Contract("null -> null;!null -> !null;")
-    public static <T extends PsiElement> PsiElementRef<T> from(@Nullable T psiElement) {
+    public static <T extends PsiElement> PsiElementRef<T> of(@Nullable T psiElement) {
         return psiElement == null ? null : new PsiElementRef<T>(psiElement);
+    }
+
+    @Nullable
+    public static <T extends PsiElement> T get(@Nullable PsiElementRef<T> ref) {
+        return ref == null ? null : ref.get();
     }
 
     @Nullable
@@ -27,5 +32,11 @@ public class PsiElementRef<T extends PsiElement> extends WeakRef<T>{
     @NotNull
     public T ensure() {
         return Failsafe.nn(get());
+    }
+
+    @Override
+    public String toString() {
+        T element = get();
+        return element == null ? "null" : element.toString();
     }
 }

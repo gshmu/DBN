@@ -3,7 +3,7 @@ package com.dci.intellij.dbn.object.type;
 import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.common.content.DynamicContentType;
 import com.dci.intellij.dbn.common.util.Strings;
-import com.dci.intellij.dbn.connection.context.ConnectionProvider;
+import com.dci.intellij.dbn.connection.context.DatabaseContext;
 import com.dci.intellij.dbn.database.DatabaseObjectTypeId;
 import com.dci.intellij.dbn.database.interfaces.DatabaseCompatibilityInterface;
 import com.dci.intellij.dbn.ddl.DDLFileTypeId;
@@ -508,7 +508,7 @@ public enum DBObjectType implements DynamicContentType<DBObjectType> {
         throw new IllegalArgumentException("No ObjectType found for name '" + name + "'");
     }
 
-    public boolean isSupported(@Nullable ConnectionProvider connectionProvider) {
+    public boolean isSupported(@Nullable DatabaseContext connectionProvider) {
         if (connectionProvider == null) return false;
 
         DatabaseCompatibilityInterface compatibility = connectionProvider.getCompatibilityInterface();

@@ -7,9 +7,13 @@ import com.dci.intellij.dbn.execution.ExecutionTarget;
 import com.dci.intellij.dbn.execution.RemoteExecutionInput;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
+import lombok.Getter;
+import lombok.Setter;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+@Getter
+@Setter
 public class ScriptExecutionInput extends RemoteExecutionInput {
     private CmdLineInterface cmdLineInterface;
     private VirtualFile sourceFile;
@@ -19,7 +23,7 @@ public class ScriptExecutionInput extends RemoteExecutionInput {
         super(project, ExecutionTarget.SCRIPT);
         this.sourceFile = sourceFile;
         setTargetConnection(connection);
-        setSchema(targetSchema);
+        setTargetSchemaId(targetSchema);
         this.clearOutput = clearOutput;
     }
 
@@ -41,25 +45,9 @@ public class ScriptExecutionInput extends RemoteExecutionInput {
             @Nullable
             @Override
             public SchemaId getTargetSchema() {
-                return getSchema();
+                return getSchemaId();
             }
         };
-    }
-
-    public CmdLineInterface getCmdLineInterface() {
-        return cmdLineInterface;
-    }
-
-    public void setCmdLineInterface(CmdLineInterface cmdLineInterface) {
-        this.cmdLineInterface = cmdLineInterface;
-    }
-
-    public VirtualFile getSourceFile() {
-        return sourceFile;
-    }
-
-    public void setSourceFile(VirtualFile sourceFile) {
-        this.sourceFile = sourceFile;
     }
 
     @Override
@@ -67,12 +55,8 @@ public class ScriptExecutionInput extends RemoteExecutionInput {
         return getTargetConnection();
     }
 
-    public SchemaId getSchema() {
+    public SchemaId getSchemaId() {
         return getTargetSchemaId();
-    }
-
-    public void setSchema(SchemaId schema) {
-        setTargetSchemaId(schema);
     }
 
     public boolean isClearOutput() {

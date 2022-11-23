@@ -430,7 +430,7 @@ public class DBSchemaImpl extends DBObjectImpl<DBSchemaMetadata> implements DBSc
         InterfaceTaskDefinition taskDefinition = InterfaceTaskDefinition.create(LOW,
                 "Refreshing object status",
                 "Refreshing object status for " + getQualifiedNameWithType(),
-                connection.getInterfaceContext());
+                connection.createInterfaceContext());
 
         DatabaseInterfaceInvoker.schedule(taskDefinition, conn -> {
             refreshValidStatus(refreshNodes, conn);

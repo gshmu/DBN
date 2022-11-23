@@ -60,25 +60,6 @@ public abstract class DBObjectRelationImpl<S extends DBObject, T extends DBObjec
     }
 
     @Override
-    public short getOverload() {
-        return 0;
-    }
-
-    @Override
-    public String getDescription() {
-        return null;
-    }
-
-    @Override
-    public void reload() {
-    }
-
-    @Override
-    public void refresh() {
-
-    }
-
-    @Override
     public int compareTo(@NotNull Object o) {
         DBObjectRelationImpl remote = (DBObjectRelationImpl) o;
         return sourceObjectRef.compareTo(remote.sourceObjectRef);

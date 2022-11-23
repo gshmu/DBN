@@ -7,7 +7,7 @@ import com.dci.intellij.dbn.common.util.Guarded;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.mapping.FileConnectionContextManager;
 import com.dci.intellij.dbn.options.general.GeneralProjectSettings;
-import com.dci.intellij.dbn.vfs.DBVirtualFileImpl;
+import com.dci.intellij.dbn.vfs.DBVirtualFileBase;
 import com.dci.intellij.dbn.vfs.file.DBConsoleVirtualFile;
 import com.dci.intellij.dbn.vfs.file.DBObjectVirtualFile;
 import com.dci.intellij.dbn.vfs.file.DBSessionBrowserVirtualFile;
@@ -39,7 +39,7 @@ public class DBEditorTabColorProvider implements EditorTabColorProvider, DumbAwa
             EnvironmentSettings environmentSettings = instance.getEnvironmentSettings();
             EnvironmentVisibilitySettings visibilitySettings = environmentSettings.getVisibilitySettings();
             EnvironmentType environmentType = connection.getEnvironmentType();
-            if (file instanceof DBVirtualFileImpl) {
+            if (file instanceof DBVirtualFileBase) {
                 if (visibilitySettings.getObjectEditorTabs().value()) {
                     return environmentType.getColor();
                 }

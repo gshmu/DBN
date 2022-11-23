@@ -8,7 +8,6 @@ public enum DynamicContentProperty implements Property.IntBase {
     VIRTUAL,
     INTERNAL,
     HIDDEN,
-    PASSIVE,
     GROUPED,
     DEPENDENCY,
 
@@ -18,7 +17,6 @@ public enum DynamicContentProperty implements Property.IntBase {
     DISPOSED,
 
     CHANGING,
-    REFRESHING,
     LOADING,
     LOADING_IN_BACKGROUND,
 

@@ -2,7 +2,7 @@ package com.dci.intellij.dbn.database;
 
 import com.dci.intellij.dbn.common.property.Property;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
-import com.dci.intellij.dbn.connection.context.ConnectionProvider;
+import com.dci.intellij.dbn.connection.context.DatabaseContext;
 import org.jetbrains.annotations.Nullable;
 
 import static com.dci.intellij.dbn.common.dispose.Checks.isValid;
@@ -54,7 +54,7 @@ public enum JdbcProperty implements Property.IntBase {
         return isValid(connection) && connection.getCompatibility().is(this);
     }
 
-    public boolean isSupported(@Nullable ConnectionProvider connectionProvider) {
+    public boolean isSupported(@Nullable DatabaseContext connectionProvider) {
         return isValid(connectionProvider) && isSupported(connectionProvider.getConnection());
     }
 }

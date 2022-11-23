@@ -10,10 +10,10 @@ import com.dci.intellij.dbn.common.project.ProjectRef;
 import com.dci.intellij.dbn.common.thread.Background;
 import com.dci.intellij.dbn.common.thread.Dispatch;
 import com.dci.intellij.dbn.common.ui.util.UserInterface;
+import com.dci.intellij.dbn.common.util.Guarded;
 import com.dci.intellij.dbn.common.util.Messages;
 import com.dci.intellij.dbn.connection.*;
-import com.dci.intellij.dbn.connection.context.ConnectionContextProvider;
-import com.dci.intellij.dbn.connection.context.ConnectionProvider;
+import com.dci.intellij.dbn.connection.context.DatabaseContextBase;
 import com.dci.intellij.dbn.connection.jdbc.DBNConnection;
 import com.dci.intellij.dbn.connection.session.DatabaseSession;
 import com.dci.intellij.dbn.connection.transaction.TransactionAction;
@@ -68,8 +68,7 @@ import static com.dci.intellij.dbn.editor.data.model.RecordStatus.MODIFIED;
 @Slf4j
 public class DatasetEditor extends DisposableUserDataHolderBase implements
         FileEditor,
-        ConnectionContextProvider,
-        ConnectionProvider,
+        DatabaseContextBase,
         DataProvider,
         StatefulDisposable {
 
@@ -163,7 +162,7 @@ public class DatasetEditor extends DisposableUserDataHolderBase implements
     @Override
     @Nullable
     public JComponent getPreferredFocusedComponent() {
-        return getEditorForm().getComponent();
+        return Guarded.call(null, () -> getEditorForm().getComponent());
     }
 
     @Override

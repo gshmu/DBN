@@ -2,7 +2,7 @@ package com.dci.intellij.dbn.debugger.common.breakpoint;
 
 import com.dci.intellij.dbn.common.util.Documents;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
-import com.dci.intellij.dbn.connection.context.ConnectionProvider;
+import com.dci.intellij.dbn.connection.context.DatabaseContext;
 import com.dci.intellij.dbn.debugger.DBDebuggerType;
 import com.dci.intellij.dbn.debugger.jdbc.DBJdbcBreakpointProperties;
 import com.dci.intellij.dbn.debugger.jdbc.evaluation.DBJdbcDebuggerEditorsProvider;
@@ -98,8 +98,8 @@ public class DBBreakpointType extends XLineBreakpointType<XBreakpointProperties>
     @Override
     public XBreakpointProperties createBreakpointProperties(@NotNull VirtualFile file, int line) {
         ConnectionHandler connection = null;
-        if (file instanceof ConnectionProvider) {
-            ConnectionProvider connectionProvider = (ConnectionProvider) file;
+        if (file instanceof DatabaseContext) {
+            DatabaseContext connectionProvider = (DatabaseContext) file;
             connection = connectionProvider.getConnection();
         }
 

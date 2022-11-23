@@ -155,6 +155,7 @@ public class DatabaseFileSystem extends VirtualFileSystem implements /*NonPhysic
             String objectIdentifier = OBJECTS.collate(relativePath);
             DBObjectRef<DBSchemaObject> objectRef = new DBObjectRef<>(connectionId, objectIdentifier);
             return findOrCreateDatabaseFile(project, objectRef);
+
         } else if (OBJECT_CONTENTS.is(relativePath)) {
             String contentIdentifier = OBJECT_CONTENTS.collate(relativePath);
             int contentTypeEndIndex = contentIdentifier.indexOf(PS);

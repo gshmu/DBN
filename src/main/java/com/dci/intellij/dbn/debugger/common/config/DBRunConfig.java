@@ -1,7 +1,7 @@
 package com.dci.intellij.dbn.debugger.common.config;
 
 import com.dci.intellij.dbn.connection.ConnectionHandler;
-import com.dci.intellij.dbn.connection.PresentableConnectionProvider;
+import com.dci.intellij.dbn.connection.context.DatabaseContext;
 import com.dci.intellij.dbn.debugger.DBDebuggerType;
 import com.dci.intellij.dbn.execution.ExecutionInput;
 import com.dci.intellij.dbn.object.DBMethod;
@@ -72,11 +72,11 @@ public abstract class DBRunConfig<I extends ExecutionInput> extends RunConfigura
     public abstract List<DBMethod> getMethods();
 
     @Nullable
-    public abstract PresentableConnectionProvider getSource();
+    public abstract DatabaseContext getSource();
 
     @Nullable
     public final ConnectionHandler getConnection() {
-        PresentableConnectionProvider source = getSource();
+        DatabaseContext source = getSource();
         return source == null ? null : source.getConnection();
     }
 

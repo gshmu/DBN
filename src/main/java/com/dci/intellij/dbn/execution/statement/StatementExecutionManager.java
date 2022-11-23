@@ -229,7 +229,7 @@ public class StatementExecutionManager extends ProjectComponentBase implements P
                     dataContext,
                     () -> ConnectionAction.invoke(
                             "the statement execution", false,
-                            () -> contextManager.getConnection(virtualFile),
+                            contextManager.getConnection(virtualFile),
                             action -> promptExecutionDialogs(executionProcessors, DBDebuggerType.NONE,
                                     () -> executeStatements(executionProcessors))));
 

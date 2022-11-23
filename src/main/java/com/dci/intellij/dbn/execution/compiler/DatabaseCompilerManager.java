@@ -170,7 +170,7 @@ public class DatabaseCompilerManager extends ProjectComponentBase {
             InterfaceTaskDefinition taskDefinition = InterfaceTaskDefinition.create(HIGH,
                     "Compiling object",
                     "Compiling object " + Naming.getQualifiedObjectName(object),
-                    connection.getInterfaceContext());
+                    connection.createInterfaceContext());
 
             DatabaseInterfaceInvoker.execute(taskDefinition, conn -> {
                 DatabaseMetadataInterface metadata = connection.getMetadataInterface();
