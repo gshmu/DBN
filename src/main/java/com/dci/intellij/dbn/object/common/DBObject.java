@@ -10,6 +10,7 @@ import com.dci.intellij.dbn.common.path.Node;
 import com.dci.intellij.dbn.common.property.PropertyHolder;
 import com.dci.intellij.dbn.common.ui.Presentable;
 import com.dci.intellij.dbn.common.util.Consumer;
+import com.dci.intellij.dbn.connection.ConnectionId;
 import com.dci.intellij.dbn.database.interfaces.DatabaseInterfaceContext;
 import com.dci.intellij.dbn.editor.DBContentType;
 import com.dci.intellij.dbn.language.common.DBLanguage;
@@ -43,6 +44,10 @@ public interface DBObject extends
     @NotNull
     @Override
     String getName();
+
+    @NotNull
+    @Override
+    ConnectionId getConnectionId();
 
     @NotNull
     DBObjectType getObjectType();

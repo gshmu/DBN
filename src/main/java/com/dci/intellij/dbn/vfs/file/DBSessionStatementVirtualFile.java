@@ -9,15 +9,11 @@ import com.dci.intellij.dbn.connection.session.DatabaseSession;
 import com.dci.intellij.dbn.editor.session.SessionBrowser;
 import com.dci.intellij.dbn.language.common.DBLanguageDialect;
 import com.dci.intellij.dbn.language.common.WeakRef;
-import com.dci.intellij.dbn.language.sql.SQLFileType;
 import com.dci.intellij.dbn.vfs.DBParseableVirtualFile;
 import com.dci.intellij.dbn.vfs.DBVirtualFileBase;
 import com.dci.intellij.dbn.vfs.DatabaseFileViewProvider;
 import com.intellij.lang.Language;
-import com.intellij.openapi.fileTypes.FileType;
-import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiFile;
-import com.intellij.util.LocalTimeCounter;
 import lombok.Getter;
 import lombok.Setter;
 import org.jetbrains.annotations.NotNull;
@@ -30,7 +26,6 @@ import java.nio.charset.Charset;
 @Getter
 @Setter
 public class DBSessionStatementVirtualFile extends DBVirtualFileBase implements DBParseableVirtualFile {
-    private long modificationTimestamp = LocalTimeCounter.currentTime();
     private final WeakRef<SessionBrowser> sessionBrowser;
     private CharSequence content;
     private SchemaId schemaId;
@@ -86,34 +81,16 @@ public class DBSessionStatementVirtualFile extends DBVirtualFileBase implements 
     }
 
     @Override
-    public boolean isDirectory() {
-        return false;
-    }
-
-    @Override
-    public VirtualFile getParent() {
-        return null;
-    }
-
-    @Override
-    public VirtualFile[] getChildren() {
-        return VirtualFile.EMPTY_ARRAY;
-    }
-
     @NotNull
-    @Override
-    public FileType getFileType() {
-        return SQLFileType.INSTANCE;
-    }
-
-    @Override
-    @NotNull
-    public OutputStream getOutputStream(Object requestor, long modificationTimestamp, long newTimeStamp) throws IOException {
+    public OutputStream getOutputStream(Object requestor, long modificationStamp, long timeStamp) throws IOException {
         return new ByteArrayOutputStream() {
             @Override
             public void close() {
-                setModificationTimestamp(modificationTimestamp);
                 setContent(this.toString());
+
+                setTimeStamp(timeStamp);
+                setModificationStamp(modificationStamp);
+
             }
         };
     }
@@ -126,17 +103,8 @@ public class DBSessionStatementVirtualFile extends DBVirtualFileBase implements 
     }
 
     @Override
-    public long getTimeStamp() {
-        return 0;
-    }
-
-    @Override
     public long getLength() {
-        try {
-            return contentsToByteArray().length;
-        } catch (IOException e) {
-            return 0;
-        }
+        return content.length();
     }
 
     @Override

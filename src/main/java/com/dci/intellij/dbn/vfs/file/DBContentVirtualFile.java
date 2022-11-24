@@ -1,6 +1,5 @@
 package com.dci.intellij.dbn.vfs.file;
 
-import com.dci.intellij.dbn.common.DevNullStreams;
 import com.dci.intellij.dbn.common.property.PropertyHolder;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.ConnectionId;
@@ -28,8 +27,6 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
-import java.io.IOException;
-import java.io.InputStream;
 
 public abstract class DBContentVirtualFile extends DBVirtualFileBase implements PropertyHolder<VirtualFileStatus>  {
     private final WeakRef<DBEditableObjectVirtualFile> mainDatabaseFile;
@@ -127,11 +124,6 @@ public abstract class DBContentVirtualFile extends DBVirtualFileBase implements 
     }
 
     @Override
-    public boolean isDirectory() {
-        return false;
-    }
-
-    @Override
     @Nullable
     public VirtualFile getParent() {
         if (isValid()) {
@@ -149,28 +141,7 @@ public abstract class DBContentVirtualFile extends DBVirtualFileBase implements 
     }
 
     @Override
-    public VirtualFile[] getChildren() {
-        return VirtualFile.EMPTY_ARRAY;
-    }
-
-    @Override
-    public long getTimeStamp() {
-        return 0;
-    }
-
-    @Override
     public void refresh(boolean b, boolean b1, Runnable runnable) {
 
-    }
-
-    @NotNull
-    @Override
-    public InputStream getInputStream() throws IOException {
-        return DevNullStreams.INPUT_STREAM;
-    }
-
-    @Override
-    public long getModificationStamp() {
-        return 1;
     }
 }

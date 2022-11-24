@@ -7,17 +7,16 @@ import com.dci.intellij.dbn.connection.ConnectionId;
 import com.dci.intellij.dbn.connection.SchemaId;
 import com.dci.intellij.dbn.connection.session.DatabaseSession;
 import com.dci.intellij.dbn.language.common.DBLanguageDialect;
-import com.dci.intellij.dbn.language.sql.SQLFileType;
 import com.dci.intellij.dbn.object.DBDataset;
 import com.dci.intellij.dbn.object.lookup.DBObjectRef;
 import com.dci.intellij.dbn.vfs.DBParseableVirtualFile;
 import com.dci.intellij.dbn.vfs.DBVirtualFileBase;
 import com.dci.intellij.dbn.vfs.DatabaseFileViewProvider;
 import com.intellij.lang.Language;
-import com.intellij.openapi.fileTypes.FileType;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiFile;
-import com.intellij.util.LocalTimeCounter;
+import lombok.Getter;
+import lombok.Setter;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -25,10 +24,11 @@ import javax.swing.*;
 import java.io.*;
 import java.nio.charset.Charset;
 
+@Getter
+@Setter
 public class DBDatasetFilterVirtualFile extends DBVirtualFileBase implements DBParseableVirtualFile {
     private final DBObjectRef<DBDataset> dataset;
-    private long modificationTimestamp = LocalTimeCounter.currentTime();
-    private CharSequence content = "";
+    private CharSequence content;
 
     public DBDatasetFilterVirtualFile(DBDataset dataset, String content) {
         super(dataset.getProject(), dataset.getName());
@@ -65,7 +65,7 @@ public class DBDatasetFilterVirtualFile extends DBVirtualFileBase implements DBP
     @Override
     @NotNull
     public ConnectionHandler getConnection() {
-        return Failsafe.nn(dataset.getConnection());
+        return dataset.ensureConnection();
     }
 
     @Nullable
@@ -97,24 +97,15 @@ public class DBDatasetFilterVirtualFile extends DBVirtualFileBase implements DBP
     }
 
     @Override
-    public VirtualFile[] getChildren() {
-        return VirtualFile.EMPTY_ARRAY;
-    }
-
     @NotNull
-    @Override
-    public FileType getFileType() {
-        return SQLFileType.INSTANCE;
-    }
-
-    @Override
-    @NotNull
-    public OutputStream getOutputStream(Object requestor, final long modificationTimestamp, long newTimeStamp) throws IOException {
+    public OutputStream getOutputStream(Object requestor, long modificationStamp, long timeStamp) throws IOException {
         return new ByteArrayOutputStream() {
             @Override
             public void close() {
-                DBDatasetFilterVirtualFile.this.modificationTimestamp = modificationTimestamp;
-                content = toString();
+                setContent(this.toString());
+
+                setTimeStamp(timeStamp);
+                setModificationStamp(modificationStamp);
             }
         };
     }
@@ -123,28 +114,12 @@ public class DBDatasetFilterVirtualFile extends DBVirtualFileBase implements DBP
     @NotNull
     public byte[] contentsToByteArray() throws IOException {
         Charset charset = getCharset();
-        return content.toString().getBytes(charset.name());
+        return content.toString().getBytes(charset);
     }
-
-    @Override
-    public long getTimeStamp() {
-        return 0;
-    }
-
-  @Override
-  public long getModificationStamp() {
-    return modificationTimestamp;
-  }
 
     @Override
     public long getLength() {
-        try {
-            return contentsToByteArray().length;
-        } catch (IOException e) {
-            e.printStackTrace();
-            assert false;
-            return 0;
-        }
+        return content.length();
     }
 
     @Override

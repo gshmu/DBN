@@ -1,6 +1,5 @@
 package com.dci.intellij.dbn.vfs.file;
 
-import com.dci.intellij.dbn.common.DevNullStreams;
 import com.dci.intellij.dbn.common.thread.Background;
 import com.dci.intellij.dbn.common.thread.ThreadMonitor;
 import com.dci.intellij.dbn.common.thread.Write;
@@ -37,7 +36,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.io.OutputStream;
 import java.sql.SQLException;
 import java.sql.Timestamp;
 
@@ -246,12 +244,6 @@ public class DBSourceCodeVirtualFile extends DBContentVirtualFile implements DBP
 
     private boolean isChangeMonitoringSupported() {
         return DatabaseFeature.OBJECT_CHANGE_MONITORING.isSupported(getObject());
-    }
-
-    @Override
-    @NotNull
-    public OutputStream getOutputStream(Object o, long l, long l1) {
-        return DevNullStreams.OUTPUT_STREAM;
     }
 
     @Override
