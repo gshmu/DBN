@@ -5,11 +5,10 @@ import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.ConnectionId;
 import com.dci.intellij.dbn.connection.ConnectionRef;
 import com.dci.intellij.dbn.connection.session.DatabaseSession;
-import com.dci.intellij.dbn.language.sql.SQLFileType;
 import com.dci.intellij.dbn.vfs.DBVirtualFileBase;
-import com.intellij.openapi.fileTypes.FileType;
 import com.intellij.openapi.vfs.VirtualFile;
-import com.intellij.util.LocalTimeCounter;
+import lombok.Getter;
+import lombok.Setter;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -17,9 +16,10 @@ import javax.swing.*;
 import java.io.*;
 import java.nio.charset.Charset;
 
+@Getter
+@Setter
 public class DBSessionBrowserVirtualFile extends DBVirtualFileBase implements Comparable<DBSessionBrowserVirtualFile> {
     private final ConnectionRef connection;
-    private long modificationTimestamp = LocalTimeCounter.currentTime();
     private CharSequence content = "";
 
     public DBSessionBrowserVirtualFile(ConnectionHandler connection) {
@@ -62,35 +62,22 @@ public class DBSessionBrowserVirtualFile extends DBVirtualFileBase implements Co
     }
 
     @Override
-    public boolean isDirectory() {
-        return false;
-    }
-
-    @Override
     public VirtualFile getParent() {
         ConnectionHandler connection = getConnection();
         return connection.getPsiDirectory().getVirtualFile();
     }
 
     @Override
-    public VirtualFile[] getChildren() {
-        return VirtualFile.EMPTY_ARRAY;
-    }
-
     @NotNull
-    @Override
-    public FileType getFileType() {
-        return SQLFileType.INSTANCE;
-    }
-
-    @Override
-    @NotNull
-    public OutputStream getOutputStream(Object requestor, final long modificationTimestamp, long newTimeStamp) throws IOException {
+    public OutputStream getOutputStream(Object requestor, long modificationStamp, long timeStamp) throws IOException {
         return new ByteArrayOutputStream() {
             @Override
             public void close() {
-                DBSessionBrowserVirtualFile.this.modificationTimestamp = modificationTimestamp;
-                content = toString();
+                setContent(this.toString());
+
+                setTimeStamp(timeStamp);
+                setModificationStamp(modificationStamp);
+
             }
         };
     }
@@ -101,16 +88,6 @@ public class DBSessionBrowserVirtualFile extends DBVirtualFileBase implements Co
         Charset charset = getCharset();
         return content.toString().getBytes(charset.name());
     }
-
-    @Override
-    public long getTimeStamp() {
-        return 0;
-    }
-
-  @Override
-  public long getModificationStamp() {
-    return modificationTimestamp;
-  }
 
     @Override
     public long getLength() {

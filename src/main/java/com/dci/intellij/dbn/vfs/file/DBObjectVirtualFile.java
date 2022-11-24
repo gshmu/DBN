@@ -24,7 +24,6 @@ import org.jetbrains.annotations.Nullable;
 import javax.swing.*;
 import java.io.File;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.OutputStream;
 
 public class DBObjectVirtualFile<T extends DBObject> extends DBVirtualFileBase {
@@ -97,11 +96,6 @@ public class DBObjectVirtualFile<T extends DBObject> extends DBVirtualFileBase {
     }
 
     @Override
-    public boolean isWritable() {
-        return false;
-    }
-
-    @Override
     public boolean isDirectory() {
         return true;
     }
@@ -128,11 +122,6 @@ public class DBObjectVirtualFile<T extends DBObject> extends DBVirtualFileBase {
     }
 
     @Override
-    public VirtualFile[] getChildren() {
-        return VirtualFile.EMPTY_ARRAY;
-    }
-
-    @Override
     @NotNull
     public OutputStream getOutputStream(Object o, long l, long l1) throws IOException {
         return DevNullStreams.OUTPUT_STREAM;
@@ -145,11 +134,6 @@ public class DBObjectVirtualFile<T extends DBObject> extends DBVirtualFileBase {
     }
 
     @Override
-    public long getTimeStamp() {
-        return 0;
-    }
-
-    @Override
     public long getLength() {
         return 0;
     }
@@ -157,17 +141,6 @@ public class DBObjectVirtualFile<T extends DBObject> extends DBVirtualFileBase {
     @Override
     public void refresh(boolean b, boolean b1, Runnable runnable) {
 
-    }
-
-    @NotNull
-    @Override
-    public InputStream getInputStream() throws IOException {
-        return DevNullStreams.INPUT_STREAM;
-    }
-
-    @Override
-    public long getModificationStamp() {
-        return 1;
     }
 
     @Override

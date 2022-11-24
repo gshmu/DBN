@@ -14,9 +14,9 @@ import com.dci.intellij.dbn.vfs.DBVirtualFileBase;
 import com.dci.intellij.dbn.vfs.DatabaseFileViewProvider;
 import com.intellij.lang.Language;
 import com.intellij.openapi.fileTypes.FileType;
-import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiFile;
-import com.intellij.util.LocalTimeCounter;
+import lombok.Getter;
+import lombok.Setter;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -24,11 +24,12 @@ import javax.swing.*;
 import java.io.*;
 import java.nio.charset.Charset;
 
+@Getter
+@Setter
 public class DBLooseContentVirtualFile extends DBVirtualFileBase implements DBParseableVirtualFile {
     private final DBObjectRef<DBSchemaObject> object;
-    private long modificationTimestamp = LocalTimeCounter.currentTime();
-    private CharSequence content = "";
     private final FileType fileType;
+    private CharSequence content;
 
     public DBLooseContentVirtualFile(DBSchemaObject object, String content, FileType fileType) {
         super(object.getProject(), object.getName());
@@ -46,6 +47,7 @@ public class DBLooseContentVirtualFile extends DBVirtualFileBase implements DBPa
         return languageDialect == null ? null : fileViewProvider.initializePsiFile(languageDialect);
     }
 
+    @NotNull
     public DBObject getObject() {
         return DBObjectRef.ensure(object);
     }
@@ -59,13 +61,13 @@ public class DBLooseContentVirtualFile extends DBVirtualFileBase implements DBPa
     @NotNull
     @Override
     public ConnectionId getConnectionId() {
-        return object.getConnectionId();
+        return getObject().getConnectionId();
     }
 
     @Override
     @NotNull
     public ConnectionHandler getConnection() {
-        return getObject().getConnection();
+        return getObject().ensureConnection();
     }
 
     @Nullable
@@ -80,26 +82,6 @@ public class DBLooseContentVirtualFile extends DBVirtualFileBase implements DBPa
         return getConnection().getSessionBundle().getMainSession();
     }
 
-    @Override
-    public boolean isWritable() {
-        return false;
-    }
-
-    @Override
-    public boolean isDirectory() {
-        return false;
-    }
-
-    @Override
-    public VirtualFile getParent() {
-        return null;
-    }
-
-    @Override
-    public VirtualFile[] getChildren() {
-        return VirtualFile.EMPTY_ARRAY;
-    }
-
     @NotNull
     @Override
     public FileType getFileType() {
@@ -108,12 +90,14 @@ public class DBLooseContentVirtualFile extends DBVirtualFileBase implements DBPa
 
     @Override
     @NotNull
-    public OutputStream getOutputStream(Object requestor, final long modificationTimestamp, long newTimeStamp) throws IOException {
+    public OutputStream getOutputStream(Object requestor, final long modificationStamp, long timeStamp) throws IOException {
         return new ByteArrayOutputStream() {
             @Override
             public void close() {
-                DBLooseContentVirtualFile.this.modificationTimestamp = modificationTimestamp;
-                content = toString();
+                setContent(this.toString());
+
+                setTimeStamp(timeStamp);
+                setModificationStamp(modificationStamp);
             }
         };
     }
@@ -122,28 +106,12 @@ public class DBLooseContentVirtualFile extends DBVirtualFileBase implements DBPa
     @NotNull
     public byte[] contentsToByteArray() throws IOException {
         Charset charset = getCharset();
-        return content.toString().getBytes(charset.name());
+        return content.toString().getBytes(charset);
     }
-
-    @Override
-    public long getTimeStamp() {
-        return 0;
-    }
-
-  @Override
-  public long getModificationStamp() {
-    return modificationTimestamp;
-  }
 
     @Override
     public long getLength() {
-        try {
-            return contentsToByteArray().length;
-        } catch (IOException e) {
-            e.printStackTrace();
-            assert false;
-            return 0;
-        }
+        return content.length();
     }
 
     @Override
