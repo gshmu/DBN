@@ -10,7 +10,6 @@ import com.dci.intellij.dbn.common.project.ProjectRef;
 import com.dci.intellij.dbn.common.thread.Background;
 import com.dci.intellij.dbn.common.thread.Dispatch;
 import com.dci.intellij.dbn.common.ui.util.UserInterface;
-import com.dci.intellij.dbn.common.util.Guarded;
 import com.dci.intellij.dbn.common.util.Messages;
 import com.dci.intellij.dbn.connection.*;
 import com.dci.intellij.dbn.connection.context.DatabaseContextBase;
@@ -162,7 +161,7 @@ public class DatasetEditor extends DisposableUserDataHolderBase implements
     @Override
     @Nullable
     public JComponent getPreferredFocusedComponent() {
-        return Guarded.call(null, () -> getEditorForm().getComponent());
+        return isDisposed() ? null : getEditorForm().getComponent();
     }
 
     @Override

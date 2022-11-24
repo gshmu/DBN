@@ -81,7 +81,7 @@ public class ObjectQuickFilterManager extends ProjectComponentBase implements Pe
      *********************************************/
     @Nullable
     @Override
-    public Element getState() {
+    public Element getComponentState() {
         Element element = new Element("state");
         SettingsSupport.setEnum(element, "last-used-operator", lastUsedOperator);
         Element filtersElement = new Element("filters");
@@ -104,7 +104,7 @@ public class ObjectQuickFilterManager extends ProjectComponentBase implements Pe
     }
 
     @Override
-    public void loadState(Element element) {
+    public void loadComponentState(@NotNull Element element) {
         Element filtersElement = element.getChild("filters");
         lastUsedOperator = SettingsSupport.getEnum(element, "last-used-operator", lastUsedOperator);
         if (filtersElement != null) {

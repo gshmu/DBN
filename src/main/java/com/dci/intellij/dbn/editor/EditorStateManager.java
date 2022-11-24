@@ -37,9 +37,7 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 import static com.dci.intellij.dbn.common.component.Components.projectService;
-import static com.dci.intellij.dbn.common.options.setting.SettingsSupport.enumAttribute;
-import static com.dci.intellij.dbn.common.options.setting.SettingsSupport.setEnumAttribute;
-import static com.dci.intellij.dbn.common.options.setting.SettingsSupport.stringAttribute;
+import static com.dci.intellij.dbn.common.options.setting.SettingsSupport.*;
 
 @State(
     name = EditorStateManager.COMPONENT_NAME,
@@ -160,7 +158,7 @@ public class EditorStateManager extends ProjectComponentBase implements Persiste
      *****************************************/
     @Nullable
     @Override
-    public Element getState() {
+    public Element getComponentState() {
         Element element = new Element("state");
         Element editorProvidersElement = new Element("last-used-providers");
         element.addContent(editorProvidersElement);
@@ -178,7 +176,7 @@ public class EditorStateManager extends ProjectComponentBase implements Persiste
     }
 
     @Override
-    public void loadState(Element element) {
+    public void loadComponentState(@NotNull Element element) {
         lastUsedEditorProviders.clear();
         Element editorProvidersElement = element.getChild("last-used-providers");
         if (editorProvidersElement != null) {

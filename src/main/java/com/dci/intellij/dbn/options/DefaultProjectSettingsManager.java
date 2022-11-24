@@ -51,7 +51,7 @@ public class DefaultProjectSettingsManager extends ApplicationComponentBase impl
      *****************************************/
     @Nullable
     @Override
-    public Element getState() {
+    public Element getComponentState() {
         ProjectSettings projectSettings = attemptLoadProjectSettings();
         if (projectSettings != null) {
             Element element = new Element("state");
@@ -64,7 +64,7 @@ public class DefaultProjectSettingsManager extends ApplicationComponentBase impl
 
 
     @Override
-    public void loadState(@NotNull Element element) {
+    public void loadComponentState(@NotNull Element element) {
         ProjectSettings projectSettings = attemptLoadProjectSettings();
         if (projectSettings != null) {
             projectSettings.readConfiguration(element);

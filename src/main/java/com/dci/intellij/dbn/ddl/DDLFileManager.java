@@ -153,12 +153,12 @@ public class DDLFileManager extends ProjectComponentBase implements PersistentSt
      *********************************************/
     @Nullable
     @Override
-    public Element getState() {
+    public Element getComponentState() {
         return null;
     }
 
     @Override
-    public void loadState(@NotNull Element element) {
+    public void loadComponentState(@NotNull Element element) {
     }
 
     @Override

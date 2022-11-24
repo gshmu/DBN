@@ -494,7 +494,7 @@ public class StatementExecutionManager extends ProjectComponentBase implements P
      *********************************************/
     @Nullable
     @Override
-    public Element getState() {
+    public Element getComponentState() {
         Element element = new Element("state");
         variablesCache.writeState(element);
         return element;
@@ -502,7 +502,7 @@ public class StatementExecutionManager extends ProjectComponentBase implements P
 
     @Override
 
-    public void loadState(@NotNull Element element) {
+    public void loadComponentState(@NotNull Element element) {
         variablesCache.readState(element);
     }
 }

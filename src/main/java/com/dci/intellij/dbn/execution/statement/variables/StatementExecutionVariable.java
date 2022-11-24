@@ -26,7 +26,7 @@ public class StatementExecutionVariable extends VariableValueProvider implements
     private boolean useNull;
 
     public StatementExecutionVariable(Element state) {
-        loadState(state);
+        loadComponentState(state);
     }
 
     public StatementExecutionVariable(StatementExecutionVariable source) {
@@ -74,7 +74,7 @@ public class StatementExecutionVariable extends VariableValueProvider implements
 
     @Nullable
     @Override
-    public Element getState() {
+    public Element getComponentState() {
         Element state = new Element("variable");
         state.setAttribute("name", name);
         state.setAttribute("dataType", dataType.name());
@@ -89,7 +89,7 @@ public class StatementExecutionVariable extends VariableValueProvider implements
     }
 
     @Override
-    public void loadState(Element state) {
+    public void loadComponentState(@NotNull Element state) {
         name = stringAttribute(state, "name");
         dataType = enumAttribute(state, "dataType", GenericDataType.class);
         String variableValues = state.getAttributeValue("values");

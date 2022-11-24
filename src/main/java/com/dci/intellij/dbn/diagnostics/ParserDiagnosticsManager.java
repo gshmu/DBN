@@ -220,7 +220,7 @@ public class ParserDiagnosticsManager extends ProjectComponentBase implements Pe
      *********************************************/
     @Nullable
     @Override
-    public Element getState() {
+    public Element getComponentState() {
         Element element = new Element("state");
         Element historyElement = new Element("diagnostics-history");
         element.addContent(historyElement);
@@ -235,7 +235,7 @@ public class ParserDiagnosticsManager extends ProjectComponentBase implements Pe
     }
 
     @Override
-    public void loadState(@NotNull Element element) {
+    public void loadComponentState(@NotNull Element element) {
         Element historyElement = element.getChild("diagnostics-history");
         resultHistory.clear();
         if (historyElement != null) {
