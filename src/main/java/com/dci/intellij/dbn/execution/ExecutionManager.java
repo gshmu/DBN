@@ -218,14 +218,14 @@ public class ExecutionManager extends ProjectComponentBase implements Persistent
     /*********************************************
      *            PersistentStateComponent       *
      *********************************************/
-    public Element getState() {
+    public Element getComponentState() {
         Element element = new Element("state");
         setBoolean(element, "retain-sticky-names", retainStickyNames);
         return element;
     }
 
     @Override
-    public void loadState(@NotNull Element element) {
+    public void loadComponentState(@NotNull Element element) {
         retainStickyNames = getBoolean(element, "retain-sticky-names", retainStickyNames);
     }
 

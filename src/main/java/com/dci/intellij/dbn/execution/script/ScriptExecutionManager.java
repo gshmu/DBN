@@ -376,7 +376,7 @@ public class ScriptExecutionManager extends ProjectComponentBase implements Pers
      *****************************************/
     @Nullable
     @Override
-    public Element getState() {
+    public Element getComponentState() {
         Element element = new Element("state");
         setBooleanAttribute(element, "clear-outputs", clearOutputOption);
         Element interfacesElement = new Element("recently-used-interfaces");
@@ -393,7 +393,7 @@ public class ScriptExecutionManager extends ProjectComponentBase implements Pers
     }
 
     @Override
-    public void loadState(@NotNull Element element) {
+    public void loadComponentState(@NotNull Element element) {
         recentlyUsedInterfaces.clear();
         clearOutputOption = booleanAttribute(element, "clear-outputs", clearOutputOption);
         Element interfacesElement = element.getChild("recently-used-interfaces");

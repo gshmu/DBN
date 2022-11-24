@@ -210,7 +210,7 @@ public class DatabaseFileManager extends ProjectComponentBase implements Persist
      *********************************************/
     @Nullable
     @Override
-    public Element getState() {
+    public Element getComponentState() {
         Element stateElement = new Element("state");
         Element openFilesElement = new Element("open-files");
         stateElement.addContent(openFilesElement);
@@ -225,7 +225,7 @@ public class DatabaseFileManager extends ProjectComponentBase implements Persist
     }
 
     @Override
-    public void loadState(@NotNull Element element) {
+    public void loadComponentState(@NotNull Element element) {
         Element openFilesElement = element.getChild("open-files");
         if (openFilesElement != null && pendingOpenFiles != null) {
             List<Element> fileElements = openFilesElement.getChildren();

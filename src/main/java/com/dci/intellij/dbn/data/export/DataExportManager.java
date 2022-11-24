@@ -136,14 +136,14 @@ public class DataExportManager extends ProjectComponentBase implements Persisten
      *****************************************/
     @Nullable
     @Override
-    public Element getState() {
+    public Element getComponentState() {
         Element element = new Element("state");
         exportInstructions.writeState(element);
         return element;
     }
 
     @Override
-    public void loadState(@NotNull Element element) {
+    public void loadComponentState(@NotNull Element element) {
         exportInstructions.readState(element);
     }
 }

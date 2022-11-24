@@ -152,12 +152,12 @@ public class SourceCodeDiffManager extends ProjectComponentBase implements Persi
 
     @Nullable
     @Override
-    public Element getState() {
+    public Element getComponentState() {
         return null;
     }
 
     @Override
-    public void loadState(@NotNull Element state) {
+    public void loadComponentState(@NotNull Element state) {
 
     }
 }

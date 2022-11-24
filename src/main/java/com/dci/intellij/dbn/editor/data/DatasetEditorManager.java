@@ -173,7 +173,7 @@ public class DatasetEditorManager extends ProjectComponentBase implements Persis
      *****************************************/
     @Nullable
     @Override
-    public Element getState() {
+    public Element getComponentState() {
         Element element = new Element("state");
         SettingsSupport.setEnum(element, "record-view-column-sorting-type", recordViewColumnSortingType);
         SettingsSupport.setBoolean(element, "value-preview-text-wrapping", valuePreviewTextWrapping);
@@ -182,7 +182,7 @@ public class DatasetEditorManager extends ProjectComponentBase implements Persis
     }
 
     @Override
-    public void loadState(@NotNull Element element) {
+    public void loadComponentState(@NotNull Element element) {
         recordViewColumnSortingType = SettingsSupport.getEnum(element, "record-view-column-sorting-type", recordViewColumnSortingType);
         valuePreviewTextWrapping = SettingsSupport.getBoolean(element, "value-preview-text-wrapping", valuePreviewTextWrapping);
         valuePreviewTextWrapping = SettingsSupport.getBoolean(element, "value-preview-pinned", valuePreviewPinned);
