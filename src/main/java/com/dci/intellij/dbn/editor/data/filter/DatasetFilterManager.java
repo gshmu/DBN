@@ -169,7 +169,7 @@ public class DatasetFilterManager extends ProjectComponentBase implements Persis
      *****************************************/
     @Nullable
     @Override
-    public Element getState() {
+    public Element getComponentState() {
         Element element = new Element("state");
 
         for (val entry : filters.entrySet()) {
@@ -189,7 +189,7 @@ public class DatasetFilterManager extends ProjectComponentBase implements Persis
     }
 
     @Override
-    public void loadState(@NotNull Element element) {
+    public void loadComponentState(@NotNull Element element) {
         for (Element child : element.getChildren()) {
             DatasetFilterGroup filterGroup = new DatasetFilterGroup(getProject());
             filterGroup.readConfiguration(child);

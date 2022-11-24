@@ -49,14 +49,14 @@ public class ObjectDependencyManager extends ProjectComponentBase implements Per
     }
 
     @Override
-    public Element getState() {
+    public Element getComponentState() {
         Element element = new Element("state");
         SettingsSupport.setEnum(element, "last-used-dependency-type", lastUserDependencyType);
         return element;
     }
 
     @Override
-    public void loadState(@NotNull final Element element) {
+    public void loadComponentState(@NotNull final Element element) {
         lastUserDependencyType = SettingsSupport.getEnum(element, "last-used-dependency-type", lastUserDependencyType);
     }
 

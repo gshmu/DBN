@@ -473,10 +473,10 @@ public class ConnectionManager extends ProjectComponentBase implements Persisten
      *********************************************************/
     @Override
     @Nullable
-    public Element getState() {
+    public Element getComponentState() {
         return null;
     }
 
     @Override
-    public void loadState(@NotNull Element element) {}
+    public void loadComponentState(@NotNull Element element) {}
 }

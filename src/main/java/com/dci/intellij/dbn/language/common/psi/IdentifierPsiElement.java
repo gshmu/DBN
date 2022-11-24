@@ -563,7 +563,8 @@ public abstract class IdentifierPsiElement extends LeafPsiElement<IdentifierElem
     }
 
     @Override
-    public boolean textMatches(@NotNull CharSequence text) {
+    public boolean textMatches(@Nullable CharSequence text) {
+        if (text == null) return false;
         CharSequence chars = getChars();
         if (isQuoted())  {
             return chars.length() == text.length() + 2 && Strings.indexOfIgnoreCase(chars, text, 0) == 1;

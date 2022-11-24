@@ -11,13 +11,7 @@ import com.dci.intellij.dbn.object.common.DBObject;
 import com.dci.intellij.dbn.object.lookup.DBObjectRef;
 import com.intellij.openapi.project.Project;
 
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.TreeSet;
+import java.util.*;
 
 public class SelectStatementGenerator extends StatementGenerator {
     private final AliasBundle aliases = new AliasBundle();
@@ -154,15 +148,7 @@ public class SelectStatementGenerator extends StatementGenerator {
     }
 
 
-    private static final Comparator<DBDataset> DATASET_COMPARATOR = Comparator.comparing(DBDataset::getName);
-
-    private static final Comparator<DBColumn> COLUMN_COMPARATOR = (column1, column2) -> {
-        DBDataset dataset1 = column1.getDataset();
-        DBDataset dataset2 = column2.getDataset();
-        if (dataset1.equals(dataset2)) {
-            return column1.getName().compareTo(column2.getName());
-        }
-        return dataset1.getName().compareTo(dataset2.getName());
-    };
+    private static final Comparator<DBDataset> DATASET_COMPARATOR = Comparator.comparing(DBObjectRef::of);
+    private static final Comparator<DBColumn> COLUMN_COMPARATOR = Comparator.comparing(DBObjectRef::of);
 
 }

@@ -495,7 +495,7 @@ public class FileConnectionContextManager extends ProjectComponentBase implement
      *********************************************/
     @Nullable
     @Override
-    public Element getState() {
+    public Element getComponentState() {
         Element element = new Element("state");
         Map<String, FileConnectionContext> mappings = registry.getMappings();
         for (FileConnectionContext mapping : mappings.values()) {
@@ -507,7 +507,7 @@ public class FileConnectionContextManager extends ProjectComponentBase implement
     }
 
     @Override
-    public void loadState(@NotNull Element element) {
+    public void loadComponentState(@NotNull Element element) {
         Map<String, FileConnectionContext> mappings = registry.getMappings();
         for (Element child : element.getChildren()) {
             FileConnectionContext mapping = new FileConnectionContextImpl();

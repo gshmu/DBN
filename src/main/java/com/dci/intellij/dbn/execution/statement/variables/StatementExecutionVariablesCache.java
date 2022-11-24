@@ -98,7 +98,7 @@ public class StatementExecutionVariablesCache implements PersistentStateElement 
                 Element fileElement = new Element("file");
                 fileElement.setAttribute("file-url", fileUrl);
                 for (StatementExecutionVariable executionVariable : entry.getValue()) {
-                    Element variableElement = executionVariable.getState();
+                    Element variableElement = executionVariable.getComponentState();
                     fileElement.addContent(variableElement);
                 }
                 variablesElement.addContent(fileElement);

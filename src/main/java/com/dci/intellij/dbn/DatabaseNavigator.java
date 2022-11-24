@@ -61,7 +61,7 @@ public class DatabaseNavigator extends ApplicationComponentBase implements Persi
      *********************************************/
     @Nullable
     @Override
-    public Element getState() {
+    public Element getComponentState() {
         Element element = new Element("state");
         Diagnostics.getDebugLogging().writeState(element);
         Diagnostics.getDatabaseLag().writeState(element);
@@ -72,7 +72,7 @@ public class DatabaseNavigator extends ApplicationComponentBase implements Persi
     }
 
     @Override
-    public void loadState(@NotNull Element element) {
+    public void loadComponentState(@NotNull Element element) {
         Diagnostics.getDebugLogging().readState(element);
         Diagnostics.getDatabaseLag().readState(element);
         Diagnostics.getMiscellaneous().readState(element);

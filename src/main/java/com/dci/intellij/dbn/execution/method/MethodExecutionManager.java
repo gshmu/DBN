@@ -303,7 +303,7 @@ public class MethodExecutionManager extends ProjectComponentBase implements Pers
      *****************************************/
     @Nullable
     @Override
-    public Element getState() {
+    public Element getComponentState() {
         Element element = new Element("state");
         Element browserSettingsElement = new Element("method-browser");
         element.addContent(browserSettingsElement);
@@ -316,7 +316,7 @@ public class MethodExecutionManager extends ProjectComponentBase implements Pers
     }
 
     @Override
-    public void loadState(@NotNull Element element) {
+    public void loadComponentState(@NotNull Element element) {
         Element browserSettingsElement = element.getChild("method-browser");
         if (browserSettingsElement != null) {
             browserSettings.readConfiguration(browserSettingsElement);

@@ -341,11 +341,11 @@ public class SessionBrowserManager extends ProjectComponentBase implements Persi
      *****************************************/
     @Nullable
     @Override
-    public Element getState() {
+    public Element getComponentState() {
         return new Element("state");
     }
 
     @Override
-    public void loadState(@NotNull Element element) {
+    public void loadComponentState(@NotNull Element element) {
     }
 }

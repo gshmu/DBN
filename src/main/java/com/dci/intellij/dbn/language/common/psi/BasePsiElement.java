@@ -182,7 +182,7 @@ public abstract class BasePsiElement<T extends ElementTypeBase> extends ASTDeleg
             }
             return (DBLanguagePsiFile) parent;
         });
-        return Failsafe.nd(file);
+        return Failsafe.nn(file);
     }
 
     @Nullable

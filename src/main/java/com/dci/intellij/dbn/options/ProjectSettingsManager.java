@@ -166,14 +166,14 @@ public class ProjectSettingsManager extends ProjectComponentBase implements Pers
      *****************************************/
     @Nullable
     @Override
-    public Element getState() {
+    public Element getComponentState() {
         Element element = new Element("state");
         projectSettings.writeConfiguration(element);
         return element;
     }
 
     @Override
-    public void loadState(@NotNull Element element) {
+    public void loadComponentState(@NotNull Element element) {
         projectSettings.readConfiguration(element);
         getProject().putUserData(UserDataKeys.PROJECT_SETTINGS_LOADED, true);
     }
