@@ -121,7 +121,7 @@ public class VoidDynamicContent extends StatefulDisposable.Base implements Dynam
 
     @NotNull
     @Override
-    public DatabaseEntity getParentEntity() {
+    public <E extends DatabaseEntity> E getParentEntity() {
         throw new UnsupportedOperationException();
     }
 

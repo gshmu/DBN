@@ -14,7 +14,7 @@ public final class Guarded {
     public static <R> R call(R defaultValue, @NotNull Callable<R> callable){
         try {
             return callable.call();
-        } catch (ProcessCanceledException | IllegalStateException | UnsupportedOperationException | AbstractMethodError ignore){
+        } catch (ProcessCanceledException | IllegalStateException /*| UnsupportedOperationException*/ | AbstractMethodError ignore){
             return defaultValue;
         }
     }
@@ -22,6 +22,6 @@ public final class Guarded {
     public static void run(@NotNull Runnable runnable){
         try {
             runnable.run();
-        } catch (ProcessCanceledException | IllegalStateException | UnsupportedOperationException | AbstractMethodError ignore){}
+        } catch (ProcessCanceledException | IllegalStateException /*| UnsupportedOperationException*/ | AbstractMethodError ignore){}
     }
 }

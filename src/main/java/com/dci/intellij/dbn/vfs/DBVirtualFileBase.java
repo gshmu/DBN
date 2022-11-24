@@ -1,17 +1,21 @@
 package com.dci.intellij.dbn.vfs;
 
+import com.dci.intellij.dbn.common.DevNullStreams;
 import com.dci.intellij.dbn.common.environment.EnvironmentType;
 import com.dci.intellij.dbn.common.project.ProjectRef;
 import com.dci.intellij.dbn.common.ui.Presentable;
 import com.dci.intellij.dbn.language.common.DBLanguagePsiFile;
 import com.dci.intellij.dbn.language.common.WeakRef;
+import com.dci.intellij.dbn.language.sql.SQLFileType;
 import com.intellij.openapi.fileEditor.impl.FileDocumentManagerImpl;
+import com.intellij.openapi.fileTypes.FileType;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Disposer;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.openapi.vfs.VirtualFilePathWrapper;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.impl.DebugUtil;
+import com.intellij.util.LocalTimeCounter;
 import lombok.Getter;
 import lombok.Setter;
 import org.jetbrains.annotations.NotNull;
@@ -19,6 +23,8 @@ import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -30,19 +36,30 @@ public abstract class DBVirtualFileBase extends VirtualFile implements DBVirtual
     private final ProjectRef project;
     private final WeakRef<DatabaseFileSystem> fileSystem;
 
-    protected volatile String path;
-    protected volatile String url;
+    protected String path;
+    protected String url;
     private volatile boolean valid = true;
     private volatile int documentSignature;
 
+    private long modificationStamp = LocalTimeCounter.currentTime();
+    private long timeStamp = System.currentTimeMillis();
 
     private String name;
+
     public DBVirtualFileBase(@NotNull Project project, @NotNull String name) {
         this.id = ID_STORE.incrementAndGet();
         this.name = name;
         //id = DummyFileIdGenerator.next();
         this.project = ProjectRef.of(project);
         this.fileSystem = WeakRef.of(DatabaseFileSystem.getInstance());
+    }
+
+    public long getModificationStamp() {
+        return modificationStamp;
+    }
+
+    public long getTimeStamp() {
+        return timeStamp;
     }
 
     @NotNull
@@ -77,12 +94,48 @@ public abstract class DBVirtualFileBase extends VirtualFile implements DBVirtual
         return null;
     }
 
+    @Override
+    public VirtualFile[] getChildren() {
+        return VirtualFile.EMPTY_ARRAY;
+    }
+
     @NotNull
     @Override
-    public final String getPath() {
-        if (path == null)
-            path = DatabaseFileSystem.createFilePath(this);
-        return path;
+    public InputStream getInputStream() throws IOException {
+        return DevNullStreams.INPUT_STREAM;
+    }
+
+    @Override
+    @NotNull
+    public OutputStream getOutputStream(Object requestor, long modificationStamp, long timeStamp) throws IOException {
+        return DevNullStreams.OUTPUT_STREAM;
+    }
+
+    @Override
+    public boolean isWritable() {
+        return false;
+    }
+
+    @Override
+    public boolean isDirectory() {
+        return false;
+    }
+
+    @Override
+    public VirtualFile getParent() {
+        return null;
+    }
+
+    @NotNull
+    @Override
+    public FileType getFileType() {
+        return SQLFileType.INSTANCE;
+    }
+
+    @NotNull
+    @Override
+    public String getPresentableName() {
+        return getName();
     }
 
     @NotNull
@@ -94,6 +147,14 @@ public abstract class DBVirtualFileBase extends VirtualFile implements DBVirtual
     @Override
     public boolean enforcePresentableName() {
         return false;
+    }
+
+    @NotNull
+    @Override
+    public final String getPath() {
+        if (path == null)
+            path = DatabaseFileSystem.createFilePath(this);
+        return path;
     }
 
     @NotNull
