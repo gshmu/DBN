@@ -26,10 +26,8 @@ class InterfaceTask<R> implements TimeAware {
 
     @Delegate
     private final InterfaceTaskDefinition info;
-    private final boolean synchronous;
+    private final InterfaceTaskSource source;
     private final ThrowableCallable<R, SQLException> executor;
-    private final Thread thread = Thread.currentThread();
-    private final long timestamp = System.currentTimeMillis();
     private final StatusHolder<InterfaceTaskStatus> status = new StatusHolder<>(NEW);
 
     private R response;
@@ -38,7 +36,12 @@ class InterfaceTask<R> implements TimeAware {
     InterfaceTask(InterfaceTaskDefinition info, boolean synchronous, ThrowableCallable<R, SQLException> executor) {
         this.info = info;
         this.executor = executor;
-        this.synchronous = synchronous;
+        this.source = new InterfaceTaskSource(synchronous);
+    }
+
+    @Override
+    public long getTimestamp() {
+        return source.getTimestamp();
     }
 
     final R execute() {
@@ -49,13 +52,13 @@ class InterfaceTask<R> implements TimeAware {
             this.exception = exception;
         } finally {
             status.change(FINISHED);
-            LockSupport.unpark(thread);
+            LockSupport.unpark(source.getThread());
         }
         return this.response;
     }
 
     final void awaitCompletion() throws SQLException {
-        if (!synchronous) {
+        if (!source.isWaiting()) {
             status.change(RELEASED);
             return;
         }
