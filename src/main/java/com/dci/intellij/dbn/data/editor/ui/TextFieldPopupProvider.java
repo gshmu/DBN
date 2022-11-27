@@ -1,5 +1,6 @@
 package com.dci.intellij.dbn.data.editor.ui;
 
+import com.dci.intellij.dbn.common.ui.util.Keyboard;
 import com.intellij.openapi.Disposable;
 import com.intellij.openapi.actionSystem.Shortcut;
 import org.jetbrains.annotations.Nullable;
@@ -40,8 +41,12 @@ public interface TextFieldPopupProvider extends Disposable{
 
     String getKeyShortcutDescription();
 
-    Shortcut[] getShortcuts();
-
     @Nullable
     Icon getButtonIcon();
+
+    Shortcut[] getShortcuts();
+
+    default boolean matchesKeyEvent(KeyEvent keyEvent) {
+        return Keyboard.match(getShortcuts(), keyEvent);
+    }
 }

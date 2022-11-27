@@ -99,12 +99,11 @@ public class SessionBrowserTableActionGroup extends DefaultActionGroup {
         @Override
         public void actionPerformed(@NotNull AnActionEvent e) {
             SessionBrowserModelRow row = getRow();
-            if (row != null) {
-                getSessionBrowser().interruptSession(
-                        row.getSessionId(),
-                        row.getSerialNumber(),
-                        SessionInterruptionType.TERMINATE);
-            }
+            if (row == null) return;
+
+            getSessionBrowser().interruptSession(
+                    row.getSessionIdentifier(),
+                    SessionInterruptionType.TERMINATE);
 
         }
     }
@@ -117,12 +116,11 @@ public class SessionBrowserTableActionGroup extends DefaultActionGroup {
         @Override
         public void actionPerformed(@NotNull AnActionEvent e) {
             SessionBrowserModelRow row = getRow();
-            if (row != null) {
-                getSessionBrowser().interruptSession(
-                        row.getSessionId(),
-                        row.getSerialNumber(),
-                        SessionInterruptionType.DISCONNECT);
-            }
+            if (row == null) return;
+
+            getSessionBrowser().interruptSession(
+                    row.getSessionIdentifier(),
+                    SessionInterruptionType.DISCONNECT);
         }
     }
 

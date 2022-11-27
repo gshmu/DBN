@@ -108,10 +108,16 @@ class ColumnValueTextField extends JTextField {
 
     private final MouseListener mouseListener = Mouse.listener().onClick(e -> {
         DBColumn column = getColumn();
-        if (column != null && Mouse.isNavigationEvent(e)) {
-            if (column.isForeignKey() && getRecord().getColumnValue(column) != null) {
-                Project project = column.getProject();
-                Progress.prompt(project, "Opening record details", true, progress -> {
+        if (column == null || !Mouse.isNavigationEvent(e)) return;
+        if (!column.isForeignKey()) return;
+        if (getRecord().getColumnValue(column) == null) return;
+
+
+        Project project = column.getProject();
+        Progress.prompt(project, column, true,
+                "Opening record details",
+                "Opening record details for " + column.getQualifiedNameWithType(),
+                progress -> {
                     DatasetFilterInput filterInput = resolveForeignKeyRecord();
                     if (filterInput != null && filterInput.getColumns().size() > 0) {
                         Dispatch.run(() -> {
@@ -120,8 +126,6 @@ class ColumnValueTextField extends JTextField {
                         });
                     }
                 });
-                e.consume();
-            }
-        }
+        e.consume();
     });
 }

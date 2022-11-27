@@ -5,8 +5,9 @@ import com.dci.intellij.dbn.common.component.PersistentState;
 import com.dci.intellij.dbn.common.component.ProjectComponentBase;
 import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.common.event.ProjectEvents;
+import com.dci.intellij.dbn.common.load.ProgressMonitor;
 import com.dci.intellij.dbn.common.notification.NotificationGroup;
-import com.dci.intellij.dbn.common.routine.ParametricRunnable;
+import com.dci.intellij.dbn.common.routine.Consumer;
 import com.dci.intellij.dbn.common.util.Lists;
 import com.dci.intellij.dbn.common.util.Messages;
 import com.dci.intellij.dbn.common.util.Naming;
@@ -54,7 +55,6 @@ import com.intellij.openapi.components.State;
 import com.intellij.openapi.components.Storage;
 import com.intellij.openapi.extensions.Extensions;
 import com.intellij.openapi.fileEditor.FileEditorManagerListener;
-import com.intellij.openapi.progress.ProgressIndicator;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.util.containers.ContainerUtil;
@@ -309,14 +309,14 @@ public class DatabaseDebuggerManager extends ProjectComponentBase implements Per
     }
 
 
-    private void startDebugger(@NotNull ParametricRunnable.Basic<DBDebuggerType> debuggerStarter) {
+    private void startDebugger(@NotNull Consumer<DBDebuggerType> debuggerStarter) {
 
         getDebuggerSettings().getDebuggerType().resolve(list(),
                 debuggerTypeOption -> {
                     DBDebuggerType debuggerType = debuggerTypeOption.getDebuggerType();
                     if (debuggerType != null) {
                         if (debuggerType.isSupported()) {
-                            debuggerStarter.run(debuggerType);
+                            debuggerStarter.accept(debuggerType);
                         } else {
                             ApplicationInfo applicationInfo = ApplicationInfo.getInstance();
                             Messages.showErrorDialog(
@@ -326,7 +326,7 @@ public class DatabaseDebuggerManager extends ProjectComponentBase implements Per
                                             applicationInfo.getFullVersion() + "\".\n" +
                                             "Do you want to use classic debugger over JDBC instead?",
                                     new String[]{"Use " + DBDebuggerType.JDBC.getName(), "Cancel"}, 0,
-                                    option -> when(option == 0, () -> debuggerStarter.run(debuggerType)));
+                                    option -> when(option == 0, () -> debuggerStarter.accept(debuggerType)));
                         }
                     }
                 });
@@ -338,7 +338,7 @@ public class DatabaseDebuggerManager extends ProjectComponentBase implements Per
 
 
 
-    public List<DBSchemaObject> loadCompileDependencies(List<DBMethod> methods, ProgressIndicator progressIndicator) {
+    public List<DBSchemaObject> loadCompileDependencies(List<DBMethod> methods) {
         // TODO improve this logic (currently only drilling one level down in the dependencies)
         List<DBSchemaObject> compileList = new ArrayList<>();
         for (DBMethod method : methods) {
@@ -351,11 +351,11 @@ public class DatabaseDebuggerManager extends ProjectComponentBase implements Per
 
             for (DBObject object : executable.getReferencedObjects()) {
                 if (object instanceof DBSchemaObject && object != executable) {
-                    if (!progressIndicator.isCanceled()) {
+                    if (!ProgressMonitor.isCancelled()) {
                         DBSchemaObject schemaObject = (DBSchemaObject) object;
                         boolean added = addToCompileList(compileList, schemaObject);
                         if (added) {
-                            progressIndicator.setText("Loading dependencies of " + schemaObject.getQualifiedNameWithType());
+                            ProgressMonitor.setProgressDetail("Loading dependencies of " + schemaObject.getQualifiedNameWithType());
                             schemaObject.getReferencedObjects();
                         }
                     }

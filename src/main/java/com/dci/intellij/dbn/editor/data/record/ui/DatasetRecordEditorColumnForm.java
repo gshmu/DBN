@@ -43,8 +43,8 @@ public class DatasetRecordEditorColumnForm extends DBNFormBase {
 
     public DatasetRecordEditorColumnForm(DatasetRecordEditorForm parentForm, DatasetEditorModelCell cell) {
         super(parentForm);
-        final DatasetEditorColumnInfo columnInfo = cell.getColumnInfo();
-        DBColumn column = columnInfo.getColumn();
+        DatasetEditorColumnInfo columnInfo = cell.getColumnInfo();
+        DBColumn column = cell.getColumn();
         DBDataType dataType = column.getDataType();
         Project project = column.getProject();
 
@@ -79,7 +79,7 @@ public class DatasetRecordEditorColumnForm extends DBNFormBase {
                             DataEditorValueListPopupSettings valueListPopupSettings = dataEditorSettings.getValueListPopupSettings();
 
                             if (!column.isPrimaryKey() && !column.isUniqueKey() && dataLength <= valueListPopupSettings.getDataLengthThreshold()) {
-                                ListPopupValuesProvider valuesProvider = new ListPopupValuesProviderImpl("Possible Values List", true) {
+                                ListPopupValuesProvider valuesProvider = new ListPopupValuesProviderBase("Possible Values List", false) {
                                     @Override
                                     public List<String> getValues() {
                                         return columnInfo.getPossibleValues();

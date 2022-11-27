@@ -7,9 +7,9 @@ import com.dci.intellij.dbn.common.util.Naming;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.ConnectionId;
 import com.dci.intellij.dbn.connection.Resources;
+import com.dci.intellij.dbn.connection.jdbc.DBNConnection;
 import com.dci.intellij.dbn.database.interfaces.DatabaseInterfaceInvoker;
 import com.dci.intellij.dbn.database.interfaces.DatabaseMetadataInterface;
-import com.dci.intellij.dbn.database.interfaces.queue.InterfaceTaskDefinition;
 import com.dci.intellij.dbn.editor.DBContentType;
 import com.dci.intellij.dbn.object.DBSchema;
 import com.dci.intellij.dbn.object.common.DBSchemaObject;
@@ -55,33 +55,15 @@ public class CompilerResult implements Disposable, NotificationSupport {
     private void init(ConnectionHandler connection, DBSchema schema, String objectName, DBObjectType objectType, CompilerAction compilerAction) {
         this.compilerAction = compilerAction;
         DBContentType contentType = compilerAction.getContentType();
+        String qualifiedObjectName = Naming.getQualifiedObjectName(objectType, objectName, schema);
 
         try {
-            InterfaceTaskDefinition taskDefinition = InterfaceTaskDefinition.create(HIGH,
+            DatabaseInterfaceInvoker.execute(HIGH,
                     "Loading compiler data",
-                    "Loading compile results for " + Naming.getQualifiedObjectName(objectType, objectName, schema),
-                    connection.createInterfaceContext());
+                    "Loading compile results for " + qualifiedObjectName,
+                    connection.createInterfaceContext(), conn ->
+                            loadCompilerErrors(connection, schema, objectName, contentType, conn));
 
-            DatabaseInterfaceInvoker.execute(taskDefinition, conn -> {
-                ResultSet resultSet = null;
-                try {
-                    DatabaseMetadataInterface metadata = connection.getMetadataInterface();
-                    resultSet = metadata.loadCompileObjectErrors(
-                            schema.getName(),
-                            objectName,
-                            conn);
-
-                    while (resultSet != null && resultSet.next()) {
-                        CompilerMessage errorMessage = new CompilerMessage(this, resultSet);
-                        error = true;
-                        if (/*!compilerAction.isDDL() || */contentType.isBundle() || contentType == errorMessage.getContentType()) {
-                            compilerMessages.add(errorMessage);
-                        }
-                    }
-                } finally {
-                    Resources.close(resultSet);
-                }
-            });
         } catch (SQLException e) {
             sendErrorNotification(
                     NotificationGroup.COMPILER,
@@ -99,6 +81,27 @@ public class CompilerResult implements Disposable, NotificationSupport {
             compilerMessages.add(compilerMessage);
         } else {
             Collections.sort(compilerMessages);
+        }
+    }
+
+    private void loadCompilerErrors(ConnectionHandler connection, DBSchema schema, String objectName, DBContentType contentType, DBNConnection conn) throws SQLException {
+        ResultSet resultSet = null;
+        try {
+            DatabaseMetadataInterface metadata = connection.getMetadataInterface();
+            resultSet = metadata.loadCompileObjectErrors(
+                    schema.getName(),
+                    objectName,
+                    conn);
+
+            while (resultSet != null && resultSet.next()) {
+                CompilerMessage errorMessage = new CompilerMessage(this, resultSet);
+                error = true;
+                if (/*!compilerAction.isDDL() || */contentType.isBundle() || contentType == errorMessage.getContentType()) {
+                    compilerMessages.add(errorMessage);
+                }
+            }
+        } finally {
+            Resources.close(resultSet);
         }
     }
 

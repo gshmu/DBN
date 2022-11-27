@@ -28,19 +28,22 @@ public class ObjectEnableDisableAction extends AnObjectAction<DBSchemaObject> {
             @NotNull DBSchemaObject object) {
 
         boolean enabled = object.getStatus().is(DBObjectStatus.ENABLED);
-        String objectName = object.getQualifiedNameWithType();
-        Progress.prompt(project, enabled ? "Disabling " : "Enabling " + objectName, false, progress -> {
-            try {
-                DBOperationType operationType = enabled ? DBOperationType.DISABLE : DBOperationType.ENABLE;
-                object.getOperationExecutor().executeOperation(operationType);
-            } catch (SQLException e1) {
+        String action = enabled ? "Disabling" : "Enabling";
+        Progress.prompt(project, object, false,
+                action + " object",
+                action + " " + object.getQualifiedNameWithType(),
+                progress -> {
+                    try {
+                        DBOperationType operationType = enabled ? DBOperationType.DISABLE : DBOperationType.ENABLE;
+                        object.getOperationExecutor().executeOperation(operationType);
+                    } catch (SQLException e1) {
 
-                String message = "Error " + (!enabled ? "enabling " : "disabling ") + objectName;
-                Messages.showErrorDialog(project, message, e1);
-            } catch (DBOperationNotSupportedException e1) {
-                Messages.showErrorDialog(project, e1.getMessage());
-            }
-        });
+                        String message = "Error " + (!enabled ? "enabling " : "disabling ") + object.getQualifiedNameWithType();
+                        Messages.showErrorDialog(project, message, e1);
+                    } catch (DBOperationNotSupportedException e1) {
+                        Messages.showErrorDialog(project, e1.getMessage());
+                    }
+                });
     }
 
     @Override

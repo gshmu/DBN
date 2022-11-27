@@ -1,7 +1,7 @@
 package com.dci.intellij.dbn.common.consumer;
 
+import com.dci.intellij.dbn.common.routine.Consumer;
 import com.dci.intellij.dbn.common.util.Commons;
-import com.dci.intellij.dbn.common.util.Consumer;
 
 import java.util.ArrayList;
 import java.util.Collections;

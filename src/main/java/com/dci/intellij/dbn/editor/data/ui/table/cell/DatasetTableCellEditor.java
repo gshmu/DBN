@@ -16,17 +16,16 @@
  import com.dci.intellij.dbn.editor.data.model.DatasetEditorModelCell;
  import com.dci.intellij.dbn.editor.data.ui.table.DatasetEditorTable;
  import com.dci.intellij.dbn.object.DBColumn;
+ import com.dci.intellij.dbn.object.DBDataset;
  import com.intellij.ui.JBColor;
  import com.intellij.ui.SimpleTextAttributes;
  import org.jetbrains.annotations.NotNull;
 
- import javax.swing.JTextField;
+ import javax.swing.*;
  import javax.swing.border.Border;
  import javax.swing.border.LineBorder;
  import javax.swing.text.Document;
- import java.awt.Cursor;
- import java.awt.MouseInfo;
- import java.awt.Point;
+ import java.awt.*;
  import java.awt.event.KeyEvent;
  import java.awt.event.KeyListener;
  import java.awt.event.MouseEvent;
@@ -200,17 +199,23 @@
             onClick(e -> {
                 if (Mouse.isNavigationEvent(e)) {
                     DatasetEditorModelCell cell = getCell();
+                    DatasetEditorTable table = getTable();
                     if (cell != null && cell.isNavigable()) {
-                        Progress.prompt(getProject(), "Opening record details", true, progress -> {
-                            DatasetEditorTable table = getTable();
-                            DatasetFilterInput filterInput = table.getModel().resolveForeignKeyRecord(cell);
-                            if (filterInput != null) {
-                                Dispatch.run(() -> {
-                                    DatasetEditorManager datasetEditorManager = DatasetEditorManager.getInstance(table.getProject());
-                                    datasetEditorManager.navigateToRecord(filterInput, e);
+                        DBDataset dataset = table.getDataset();
+                        DBColumn column = cell.getColumn();
+
+                        Progress.prompt(getProject(), dataset, true,
+                                "Opening record",
+                                "Opening record details for " + column.getQualifiedNameWithType(),
+                                progress -> {
+                                    DatasetFilterInput filterInput = table.getModel().resolveForeignKeyRecord(cell);
+                                    if (filterInput != null) {
+                                        Dispatch.run(() -> {
+                                            DatasetEditorManager datasetEditorManager = DatasetEditorManager.getInstance(table.getProject());
+                                            datasetEditorManager.navigateToRecord(filterInput, e);
+                                        });
+                                    }
                                 });
-                            }
-                        });
                     }
                     e.consume();
                 }
@@ -227,7 +232,7 @@
                     if (e.isControlDown() && cell.isNavigable()) {
 
                         Background.run(() -> {
-                            DBColumn column = cell.getColumnInfo().getColumn();
+                            DBColumn column = cell.getColumn();
                             DBColumn foreignKeyColumn = column.getForeignKeyColumn();
                             if (foreignKeyColumn != null && !e.isConsumed()) {
                                 Dispatch.run(() -> {

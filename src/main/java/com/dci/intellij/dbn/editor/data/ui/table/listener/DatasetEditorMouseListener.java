@@ -9,6 +9,7 @@ import com.dci.intellij.dbn.editor.data.model.DatasetEditorModelCell;
 import com.dci.intellij.dbn.editor.data.ui.table.DatasetEditorTable;
 import com.dci.intellij.dbn.language.common.WeakRef;
 import com.dci.intellij.dbn.object.DBColumn;
+import com.intellij.openapi.project.Project;
 import org.jetbrains.annotations.NotNull;
 
 import java.awt.*;
@@ -58,20 +59,25 @@ public class DatasetEditorMouseListener extends MouseAdapter {
         if (Mouse.isNavigationEvent(e)) {
             DatasetEditorTable table = getTable();
             DatasetEditorModelCell cell = (DatasetEditorModelCell) table.getCellAtLocation(e.getPoint());
-            if (cell != null){
-                DBColumn column = cell.getColumnInfo().getColumn();
+            if (cell != null) {
+                DBColumn column = cell.getColumn();
 
                 if (column.isForeignKey() && cell.getUserValue() != null) {
                     table.clearSelection();
-                    Progress.prompt(table.getProject(), "Opening record details", true, progress -> {
-                        DatasetFilterInput filterInput = table.getModel().resolveForeignKeyRecord(cell);
-                        if (filterInput != null && filterInput.getColumns().size() > 0) {
-                            Dispatch.run(() -> {
-                                DatasetEditorManager datasetEditorManager = DatasetEditorManager.getInstance(column.getProject());
-                                datasetEditorManager.navigateToRecord(filterInput, e);
+
+                    Project project = table.getProject();
+                    Progress.prompt(project, column, true,
+                            "Opening record",
+                            "Opening record details for " + column.getQualifiedNameWithType(),
+                            progress -> {
+                                DatasetFilterInput filterInput = table.getModel().resolveForeignKeyRecord(cell);
+                                if (filterInput != null && filterInput.getColumns().size() > 0) {
+                                    Dispatch.run(() -> {
+                                        DatasetEditorManager datasetEditorManager = DatasetEditorManager.getInstance(column.getProject());
+                                        datasetEditorManager.navigateToRecord(filterInput, e);
+                                    });
+                                }
                             });
-                        }
-                    });
                 }
             }
             e.consume();

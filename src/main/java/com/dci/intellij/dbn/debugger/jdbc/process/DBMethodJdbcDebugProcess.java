@@ -47,7 +47,7 @@ public class DBMethodJdbcDebugProcess extends DBJdbcDebugProcess<MethodExecution
     protected void releaseTargetConnection() {
         // method execution processor is responsible for closing
         // the connection after the result is read
-        targetConnection = null;
+        setTargetConnection(null);
     }
 
     @NotNull

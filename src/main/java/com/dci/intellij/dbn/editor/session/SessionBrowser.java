@@ -38,10 +38,8 @@ import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
 import java.beans.PropertyChangeListener;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.Timer;
-import java.util.TimerTask;
+import java.util.*;
 
 public class SessionBrowser extends DisposableUserDataHolderBase implements FileEditor, DatabaseContextBase, DataProvider {
     private final WeakRef<DBSessionBrowserVirtualFile> databaseFile;
@@ -110,7 +108,7 @@ public class SessionBrowser extends DisposableUserDataHolderBase implements File
                         setLoading(false);
                     }
                 }),
-                cancel -> {
+                action -> {
                     setLoading(false);
                     setRefreshInterval(0);
                 },
@@ -165,28 +163,25 @@ public class SessionBrowser extends DisposableUserDataHolderBase implements File
         interruptSessions(SessionInterruptionType.TERMINATE);
     }
 
-    public void interruptSession(Object sessionId, Object serialNumber, SessionInterruptionType type) {
+    public void interruptSession(SessionIdentifier identifier, SessionInterruptionType type) {
         SessionBrowserManager sessionBrowserManager = SessionBrowserManager.getInstance(getProject());
-        Map<Object, Object> sessionIds = new HashMap<>();
-        sessionIds.put(sessionId, serialNumber);
-        sessionBrowserManager.interruptSessions(this, sessionIds, type);
+        sessionBrowserManager.interruptSessions(this, Collections.singletonList(identifier), type);
         loadSessions(true);
     }
 
     private void interruptSessions(SessionInterruptionType type) {
-        SessionBrowserManager sessionBrowserManager = SessionBrowserManager.getInstance(getProject());
+        List<SessionIdentifier> sessionIds = new ArrayList<>();
+
         SessionBrowserTable editorTable = getBrowserTable();
-        int[] selectedRows = editorTable.getSelectedRows();
-        Map<Object, Object> sessionIds = new HashMap<>();
-        for (int selectedRow : selectedRows) {
-            SessionBrowserModelRow row = editorTable.getModel().getRowAtIndex(selectedRow);
+        SessionBrowserModel model = editorTable.getModel();
+        for (int selectedRow : editorTable.getSelectedRows()) {
+            SessionBrowserModelRow row = model.getRowAtIndex(selectedRow);
             if (row != null) {
-                Object sessionId = row.getSessionId();
-                Object serialNumber = row.getSerialNumber();
-                sessionIds.put(sessionId, serialNumber);
+                sessionIds.add(row.getSessionIdentifier());
             }
         }
 
+        SessionBrowserManager sessionBrowserManager = SessionBrowserManager.getInstance(getProject());
         sessionBrowserManager.interruptSessions(this, sessionIds, type);
         loadSessions(true);
     }

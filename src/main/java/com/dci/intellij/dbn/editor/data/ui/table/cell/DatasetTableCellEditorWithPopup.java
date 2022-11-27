@@ -1,6 +1,7 @@
 package com.dci.intellij.dbn.editor.data.ui.table.cell;
 
 import com.dci.intellij.dbn.common.color.Colors;
+import com.dci.intellij.dbn.common.ui.misc.DBNButton;
 import com.dci.intellij.dbn.common.ui.util.Borders;
 import com.dci.intellij.dbn.data.editor.ui.TextFieldPopupProvider;
 import com.dci.intellij.dbn.data.editor.ui.TextFieldWithPopup;
@@ -12,8 +13,6 @@ import com.intellij.util.ui.JBUI;
 import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
-import javax.swing.border.CompoundBorder;
-import javax.swing.border.EmptyBorder;
 import java.awt.*;
 import java.awt.event.KeyEvent;
 
@@ -122,9 +121,6 @@ public class DatasetTableCellEditorWithPopup extends DatasetTableCellEditor {
      ********************************************************/
 
     private static class CustomTextFieldWithPopup extends TextFieldWithPopup<JTable> {
-        static final EmptyBorder BUTTON_INSIDE_BORDER = JBUI.Borders.empty(0, 2);
-        static final CompoundBorder BUTTON_BORDER = new CompoundBorder(BUTTON_OUTSIDE_BORDER, new CompoundBorder(BUTTON_LINE_BORDER, BUTTON_INSIDE_BORDER));
-
         private CustomTextFieldWithPopup(DatasetEditorTable table) {
             super(table.getProject(), table);
             setBackground(table.getBackground());
@@ -140,23 +136,22 @@ public class DatasetTableCellEditorWithPopup extends DatasetTableCellEditor {
         }
 
         @Override
-        public void customizeButton(final JLabel button) {
+        public void customizeButton(final DBNButton button) {
             JTable table = getTableComponent();
-            if (table != null) {
-                button.setBorder(BUTTON_BORDER);
-                button.setBackground(Colors.getTableBackground());
-                button.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
-                int rowHeight = table.getRowHeight();
-                button.setPreferredSize(new Dimension(Math.max(20, rowHeight), rowHeight - 2));
-                button.getParent().setBackground(getTextField().getBackground());
-                table.addPropertyChangeListener(e -> {
-                    Object newProperty = e.getNewValue();
-                    if (newProperty instanceof Font) {
-                        int rowHeight1 = table.getRowHeight();
-                        button.setPreferredSize(new Dimension(Math.max(20, rowHeight1), table.getRowHeight() - 2));
-                    }
-                });
-            }
+            if (table == null) return;
+
+            button.setBorder(Borders.insetBorder(1));
+            button.setBackground(Colors.getTableBackground());
+            int rowHeight = table.getRowHeight();
+            button.setPreferredSize(new Dimension(Math.max(20, rowHeight), rowHeight - 2));
+            button.getParent().setBackground(getTextField().getBackground());
+            table.addPropertyChangeListener(e -> {
+                Object newProperty = e.getNewValue();
+                if (newProperty instanceof Font) {
+                    int rowHeight1 = table.getRowHeight();
+                    button.setPreferredSize(new Dimension(Math.max(20, rowHeight1), table.getRowHeight() - 2));
+                }
+            });
         }
 
         JTable getTableComponent() {

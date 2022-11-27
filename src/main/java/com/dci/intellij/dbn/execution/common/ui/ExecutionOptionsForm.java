@@ -97,7 +97,7 @@ public class ExecutionOptionsForm extends DBNFormBase {
             targetSessionLabel.setIcon(targetSession.getIcon());
         }
 
-        connectionLabel.setText(connection.getPresentableText());
+        connectionLabel.setText(connection.getName());
         connectionLabel.setIcon(connection.getIcon());
         autoCommitLabel.init(getProject(), null, connection, targetSessionId);
 

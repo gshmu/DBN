@@ -1,19 +1,20 @@
 package com.dci.intellij.dbn.language.common.psi.lookup;
 
 import com.dci.intellij.dbn.common.lookup.Visitor;
-import com.dci.intellij.dbn.common.routine.ParametricCallable;
 import com.dci.intellij.dbn.language.common.psi.BasePsiElement;
 import com.intellij.psi.PsiElement;
+
+import java.util.function.Function;
 
 public abstract class PsiScopeVisitor implements Visitor<BasePsiElement> {
 
     protected PsiScopeVisitor() {}
 
-    public static void visit(BasePsiElement element, ParametricCallable.Basic<BasePsiElement, Boolean> visitor) {
+    public static void visit(BasePsiElement element, Function<BasePsiElement, Boolean> visitor) {
         new PsiScopeVisitor() {
             @Override
             protected boolean visitScope(BasePsiElement scope) {
-                return visitor.call(scope);
+                return visitor.apply(scope);
             }
         }.visit(element);
     }

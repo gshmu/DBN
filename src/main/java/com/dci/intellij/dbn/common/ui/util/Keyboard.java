@@ -1,15 +1,12 @@
 package com.dci.intellij.dbn.common.ui.util;
 
-import com.intellij.openapi.actionSystem.CustomShortcutSet;
-import com.intellij.openapi.actionSystem.KeyboardShortcut;
-import com.intellij.openapi.actionSystem.Shortcut;
-import com.intellij.openapi.actionSystem.ShortcutSet;
+import com.intellij.openapi.actionSystem.*;
 import com.intellij.openapi.keymap.Keymap;
 import com.intellij.openapi.keymap.KeymapManager;
 import com.intellij.openapi.keymap.KeymapUtil;
 import org.jetbrains.annotations.Nullable;
 
-import javax.swing.KeyStroke;
+import javax.swing.*;
 import java.awt.event.KeyEvent;
 
 public class Keyboard {
@@ -31,6 +28,10 @@ public class Keyboard {
             }
         }
         return false;
+    }
+
+    public static boolean match(AnAction action, KeyEvent e) {
+        return match(action.getShortcutSet().getShortcuts(), e);
     }
 
     public static Shortcut[] getShortcuts(String actionId) {

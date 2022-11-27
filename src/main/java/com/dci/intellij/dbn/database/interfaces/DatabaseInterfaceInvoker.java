@@ -1,5 +1,6 @@
 package com.dci.intellij.dbn.database.interfaces;
 
+import com.dci.intellij.dbn.common.Priority;
 import com.dci.intellij.dbn.common.cache.CacheKey;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.ConnectionLocalContext;
@@ -30,6 +31,15 @@ public final class DatabaseInterfaceInvoker {
         interfaceQueue.scheduleAndForget(
                 taskDefinition, () -> ConnectionLocalContext.surround(context,
                         () -> PooledConnection.run(context, runnable)));
+    }
+
+    public static void execute(Priority priority, DatabaseInterfaceContext context, ConnectionRunnable runnable) throws SQLException {
+        execute(priority, null, null, context, runnable);
+    }
+
+    public static void execute(Priority priority, String title, String description, DatabaseInterfaceContext context, ConnectionRunnable runnable) throws SQLException {
+        InterfaceTaskDefinition definition = InterfaceTaskDefinition.create(priority, title, description, context);
+        execute(definition, runnable);
     }
 
     /**
@@ -66,6 +76,6 @@ public final class DatabaseInterfaceInvoker {
     }
 
     public static <T> T cached(CacheKey<T> key, Callable<T> loader) throws SQLException {
-        return ConnectionHandler.local().getMetaDataCache().get(key, loader);
+        return ConnectionHandler.local().getMetaDataCache().get(key, () -> loader.call());
     }
 }

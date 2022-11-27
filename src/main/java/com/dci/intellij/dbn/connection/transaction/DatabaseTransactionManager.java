@@ -5,8 +5,8 @@ import com.dci.intellij.dbn.common.component.ProjectManagerListener;
 import com.dci.intellij.dbn.common.event.ProjectEvents;
 import com.dci.intellij.dbn.common.load.ProgressMonitor;
 import com.dci.intellij.dbn.common.option.InteractiveOptionBroker;
-import com.dci.intellij.dbn.common.routine.ProgressRunnable;
 import com.dci.intellij.dbn.common.thread.Progress;
+import com.dci.intellij.dbn.common.thread.ProgressRunnable;
 import com.dci.intellij.dbn.common.util.Editors;
 import com.dci.intellij.dbn.common.util.Guarded;
 import com.dci.intellij.dbn.common.util.InternalApi;
@@ -98,12 +98,13 @@ public class DatabaseTransactionManager extends ProjectComponentBase implements 
                 String connectionName = connection.getConnectionName(conn);
                 String actionName = actions.get(0).getName();
 
-                String title = "Performing \"" + actionName + "\" on connection " + connectionName;
+                String title = "Transactional activity";
+                String description = "Performing \"" + actionName + "\" on connection " + connectionName;
                 ProgressRunnable executor = progress -> executeActions(connection, conn, actions, callback);
 
                 if (background)
-                    Progress.background(project, title, false, executor); else
-                    Progress.prompt(project, title, false, executor);
+                    Progress.background(project, connection, false, title, description, executor); else
+                    Progress.prompt(project, connection, false, title, description, executor);
             }
         }
     }

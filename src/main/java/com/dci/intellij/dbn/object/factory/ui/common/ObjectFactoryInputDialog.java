@@ -1,7 +1,10 @@
 package com.dci.intellij.dbn.object.factory.ui.common;
 
 import com.dci.intellij.dbn.common.dispose.Failsafe;
+import com.dci.intellij.dbn.common.thread.Callback;
+import com.dci.intellij.dbn.common.thread.Dispatch;
 import com.dci.intellij.dbn.common.ui.dialog.DBNDialog;
+import com.dci.intellij.dbn.common.util.Messages;
 import com.dci.intellij.dbn.object.DBSchema;
 import com.dci.intellij.dbn.object.factory.DatabaseObjectFactory;
 import com.dci.intellij.dbn.object.factory.ObjectFactoryInput;
@@ -20,7 +23,7 @@ public class ObjectFactoryInputDialog extends DBNDialog<ObjectFactoryInputForm<?
         super(project, "Create " + objectType.getName(), true);
         this.schema = DBObjectRef.of(schema);
         this.objectType = objectType;
-        setModal(true);
+        setModal(false);
         setResizable(true);
         init();
     }
@@ -36,12 +39,20 @@ public class ObjectFactoryInputDialog extends DBNDialog<ObjectFactoryInputForm<?
 
     @Override
     public void doOKAction() {
-        Project project = getForm().getConnection().getProject();
+        Project project = getProject();
+
+        ObjectFactoryInputForm form = getForm();
+        ObjectFactoryInput factoryInput = form.createFactoryInput(null);
+        String objectTypeName = factoryInput.getObjectType().getName();
+
+        Callback callback = Callback.create();
+        callback.before(() -> form.freeze());
+        callback.onSuccess(() -> Dispatch.run(() -> super.doOKAction()));
+        callback.onFailure(e -> Messages.showErrorDialog(project, "Could not create " + objectTypeName + ".", e));
+        callback.after(() -> form.unfreeze());
+
         DatabaseObjectFactory factory = DatabaseObjectFactory.getInstance(project);
-        ObjectFactoryInput factoryInput = getForm().createFactoryInput(null);
-        if (factory.createObject(factoryInput)) {
-            super.doOKAction();
-        }
+        factory.createObject(factoryInput, callback);
     }
 
     @Override

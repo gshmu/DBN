@@ -3,9 +3,10 @@ package com.dci.intellij.dbn.data.editor.ui;
 import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.common.project.ProjectRef;
 import com.dci.intellij.dbn.common.thread.Dispatch;
+import com.dci.intellij.dbn.common.ui.misc.DBNButton;
+import com.dci.intellij.dbn.common.ui.panel.DBNPanelImpl;
 import com.dci.intellij.dbn.common.ui.util.Keyboard;
 import com.dci.intellij.dbn.common.ui.util.Mouse;
-import com.dci.intellij.dbn.common.ui.panel.DBNPanelImpl;
 import com.dci.intellij.dbn.common.util.Strings;
 import com.dci.intellij.dbn.data.editor.text.TextEditorAdapter;
 import com.dci.intellij.dbn.data.editor.text.ui.TextEditorDialog;
@@ -20,22 +21,14 @@ import lombok.Getter;
 import lombok.Setter;
 import org.jetbrains.annotations.NotNull;
 
-import javax.swing.JLabel;
-import javax.swing.JTextField;
+import javax.swing.*;
 import javax.swing.text.Document;
-import java.awt.BorderLayout;
-import java.awt.Cursor;
-import java.awt.Dimension;
-import java.awt.Font;
-import java.awt.event.ActionListener;
-import java.awt.event.KeyAdapter;
-import java.awt.event.KeyEvent;
-import java.awt.event.KeyListener;
-import java.awt.event.MouseListener;
+import java.awt.*;
+import java.awt.event.*;
 
 public class TextFieldWithTextEditor extends DBNPanelImpl implements DataEditorComponent, TextEditorAdapter {
     private final JTextField textField;
-    private final JLabel button;
+    private final DBNButton button;
 
     @Getter
     @Setter
@@ -57,9 +50,7 @@ public class TextFieldWithTextEditor extends DBNPanelImpl implements DataEditorC
         textField.setMargin(JBUI.insets(1, 3, 1, 1));
         add(textField, BorderLayout.CENTER);
 
-        button = new JLabel(Icons.DATA_EDITOR_BROWSE);
-        button.setBorder(BUTTON_BORDER);
-        button.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+        button = new DBNButton(Icons.DATA_EDITOR_BROWSE);
         button.addMouseListener(mouseListener);
         Shortcut[] shortcuts = Keyboard.getShortcuts(IdeActions.ACTION_SHOW_INTENTION_ACTIONS);
         String shortcutText = KeymapUtil.getShortcutsText(shortcuts);

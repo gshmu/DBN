@@ -14,7 +14,7 @@ public class ReferencingObjectsListShowAction extends ObjectListShowAction {
     }
 
     @Override
-    public List<? extends DBObject> getObjectList() {
+    public List<DBObject> getObjectList() {
         return ((DBSchemaObject) getSourceObject()).getReferencingObjects();
     }
 

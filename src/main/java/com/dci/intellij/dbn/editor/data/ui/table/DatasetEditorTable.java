@@ -326,7 +326,7 @@ public class DatasetEditorTable extends ResultSetTable<DatasetEditorModel> {
 
     @Override
     public int getColumnWidthBuffer() {
-        return 30;
+        return 36;
     }
 
     @Override
@@ -451,7 +451,7 @@ public class DatasetEditorTable extends ResultSetTable<DatasetEditorModel> {
             setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
             DatasetEditorModelCell cell = (DatasetEditorModelCell) getCellAtMouseLocation();
             if (cell != null) {
-                DBColumn column = cell.getColumnInfo().getColumn();
+                DBColumn column = cell.getColumn();
                 DBColumn foreignKeyColumn = column.getForeignKeyColumn();
                 if (foreignKeyColumn != null) {
                     setToolTipText("<html>Show referenced <b>" + foreignKeyColumn.getDataset().getQualifiedName() + "</b> record<html>");
@@ -480,13 +480,17 @@ public class DatasetEditorTable extends ResultSetTable<DatasetEditorModel> {
             if (model.is(INSERTING)) {
                 int insertRowIndex = getModel().getInsertRowIndex();
                 if (insertRowIndex != -1 && (insertRowIndex == e.getFirstIndex() || insertRowIndex == e.getLastIndex()) && getSelectedRow() != insertRowIndex) {
-                    Progress.prompt(getProject(), "Refreshing data", false, progress -> {
-                        try {
-                            model.postInsertRecord(false, true, false);
-                        } catch (SQLException e1) {
-                            Messages.showErrorDialog(getProject(), "Could not create row in " + getDataset().getQualifiedNameWithType() + ".", e1);
-                        }
-                    });
+                    DBDataset dataset = getDataset();
+                    Progress.prompt(getProject(), dataset, false,
+                            "Refreshing data",
+                            "Refreshing data for " + dataset.getQualifiedNameWithType(),
+                            progress -> {
+                                try {
+                                    model.postInsertRecord(false, true, false);
+                                } catch (SQLException e1) {
+                                    Messages.showErrorDialog(getProject(), "Could not create row in " + dataset.getQualifiedNameWithType() + ".", e1);
+                                }
+                            });
                 }
             }
             startCellEditing(e);
@@ -537,22 +541,26 @@ public class DatasetEditorTable extends ResultSetTable<DatasetEditorModel> {
             DatasetEditorModelCell cell,
             ColumnInfo columnInfo) {
 
-        Progress.modal(getProject(), "Loading column information", true, progress -> {
-            ActionGroup actionGroup = new DatasetEditorTableActionGroup(getDatasetEditor(), cell, columnInfo);
-            Progress.check(progress);
+        DBColumn column = cell.getColumn();
+        Progress.modal(getProject(), column, true,
+                "Loading column information",
+                "Loading details of " + column.getQualifiedNameWithType(),
+                progress -> {
+                    ActionGroup actionGroup = new DatasetEditorTableActionGroup(getDatasetEditor(), cell, columnInfo);
+                    Progress.check(progress);
 
-            ActionPopupMenu actionPopupMenu = Actions.createActionPopupMenu(DatasetEditorTable.this, "", actionGroup);
-            JPopupMenu popupMenu = actionPopupMenu.getComponent();
-            Dispatch.run(() -> {
-                Component component = (Component) e.getSource();
-                if (component.isShowing()) {
-                    int x = e.getX();
-                    int y = e.getY();
-                    if (x >= 0 && x < component.getWidth() && y >= 0 && y < component.getHeight()) {
-                        popupMenu.show(component, x, y);
-                    }
-                }
-            });
-        });
+                    ActionPopupMenu actionPopupMenu = Actions.createActionPopupMenu(DatasetEditorTable.this, "", actionGroup);
+                    JPopupMenu popupMenu = actionPopupMenu.getComponent();
+                    Dispatch.run(() -> {
+                        Component component = (Component) e.getSource();
+                        if (component.isShowing()) {
+                            int x = e.getX();
+                            int y = e.getY();
+                            if (x >= 0 && x < component.getWidth() && y >= 0 && y < component.getHeight()) {
+                                popupMenu.show(component, x, y);
+                            }
+                        }
+                    });
+                });
     }
 }

@@ -264,22 +264,25 @@ public class DatabaseFileManager extends ProjectComponentBase implements Persist
     private static void reopenDatabaseEditors(@NotNull List<DBObjectRef<DBSchemaObject>> objectRefs, @NotNull ConnectionHandler connection) {
         Project project = connection.getProject();
         ConnectionAction.invoke("opening database editors", false, connection, action ->
-                Progress.background(project, "Opening database editors (" + connection.getQualifiedName() + ")", true, progress -> {
-                    progress.setIndeterminate(true);
-                    progress.setText(connection.getQualifiedName());
-                    DatabaseFileSystem databaseFileSystem = DatabaseFileSystem.getInstance();
+                Progress.prompt(project, connection, true,
+                        "Restoring database workspace",
+                        "Opening database editors for connection " + connection.getQualifiedName(),
+                        progress -> {
+                            progress.setIndeterminate(true);
+                            progress.setText(connection.getQualifiedName());
+                            DatabaseFileSystem databaseFileSystem = DatabaseFileSystem.getInstance();
 
-                    for (DBObjectRef<DBSchemaObject> objectRef : objectRefs) {
-                        if (progress.isCanceled()) continue;
-                        if (connection.canConnect()) {
-                            DBSchemaObject object = objectRef.get(project);
-                            if (object != null) {
-                                progress.setText(connection.getQualifiedName() + " - " + objectRef.getQualifiedNameWithType());
-                                object.initChildren();
-                                databaseFileSystem.openEditor(object, null, false, false);
+                            for (DBObjectRef<DBSchemaObject> objectRef : objectRefs) {
+                                if (progress.isCanceled()) continue;
+                                if (connection.canConnect()) {
+                                    DBSchemaObject object = objectRef.get(project);
+                                    if (object != null) {
+                                        progress.setText(connection.getQualifiedName() + " - " + objectRef.getQualifiedNameWithType());
+                                        object.initChildren();
+                                        databaseFileSystem.openEditor(object, null, false, false);
+                                    }
+                                }
                             }
-                        }
-                    }
-                }));
+                        }));
     }
 }

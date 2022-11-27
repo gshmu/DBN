@@ -174,19 +174,19 @@ public class DBSchemaImpl extends DBObjectImpl<DBSchemaMetadata> implements DBSc
     }
 
     @Override
-    public DBObject getChildObject(DBObjectType objectType, String name, short overload, boolean lookupHidden) {
+    public <T extends DBObject> T  getChildObject(DBObjectType objectType, String name, short overload, boolean lookupHidden) {
         if (objectType.isSchemaObject()) {
             DBObject object = super.getChildObject(objectType, name, overload, lookupHidden);
             if (object == null && objectType != SYNONYM) {
-                DBSynonym synonym = (DBSynonym) super.getChildObject(SYNONYM, name, overload, lookupHidden);
+                DBSynonym synonym = super.getChildObject(SYNONYM, name, overload, lookupHidden);
                 if (synonym != null) {
                     DBObject underlyingObject = synonym.getUnderlyingObject();
                     if (underlyingObject != null && underlyingObject.isOfType(objectType)) {
-                        return synonym;
+                        return cast(synonym);
                     }
                 }
             } else {
-                return object;
+                return cast(object);
             }
         }
         return null;

@@ -257,13 +257,16 @@ public final class DatabaseBrowserTree extends DBNTree {
                 event.consume();
 
             } else if (deliberate) {
-                Progress.prompt(project, "Loading object reference", true, progress -> {
-                    DBObject navigationObject = object.getDefaultNavigationObject();
-                    if (navigationObject != null) {
-                        Progress.check(progress);
-                        Dispatch.run(() -> navigationObject.navigate(true));
-                    }
-                });
+                Progress.prompt(project, object, true,
+                        "Loading object references",
+                        "Loading references of " + object.getQualifiedNameWithType(),
+                        progress -> {
+                            DBObject navigationObject = object.getDefaultNavigationObject();
+                            if (navigationObject != null) {
+                                Progress.check(progress);
+                                Dispatch.run(() -> navigationObject.navigate(true));
+                            }
+                        });
             }
         } else if (lastPathEntity instanceof DBObjectBundle) {
             DBObjectBundle objectBundle = (DBObjectBundle) lastPathEntity;

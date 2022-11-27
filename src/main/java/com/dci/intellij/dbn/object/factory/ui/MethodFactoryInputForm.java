@@ -2,9 +2,9 @@ package com.dci.intellij.dbn.object.factory.ui;
 
 import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.common.color.Colors;
-import com.dci.intellij.dbn.common.ui.util.Borders;
-import com.dci.intellij.dbn.common.ui.form.DBNHeaderForm;
 import com.dci.intellij.dbn.common.ui.component.DBNComponent;
+import com.dci.intellij.dbn.common.ui.form.DBNHeaderForm;
+import com.dci.intellij.dbn.common.ui.util.Borders;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.data.type.ui.DataTypeEditor;
 import com.dci.intellij.dbn.database.DatabaseFeature;
@@ -17,13 +17,9 @@ import com.dci.intellij.dbn.object.type.DBObjectType;
 import com.intellij.ui.DocumentAdapter;
 import org.jetbrains.annotations.NotNull;
 
-import javax.swing.Icon;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.JTextField;
+import javax.swing.*;
 import javax.swing.event.DocumentEvent;
-import java.awt.BorderLayout;
-import java.awt.Color;
+import java.awt.*;
 
 public abstract class MethodFactoryInputForm extends ObjectFactoryInputForm<MethodFactoryInput> {
     private JPanel mainPanel;
@@ -52,8 +48,8 @@ public abstract class MethodFactoryInputForm extends ObjectFactoryInputForm<Meth
         returnArgumentPanel.setVisible(hasReturnArgument());
         returnArgumentPanel.setBorder(Borders.BOTTOM_LINE_BORDER);
         argumentListPanel.createObjectPanel();
-        argumentListPanel.createObjectPanel();
-        argumentListPanel.createObjectPanel();
+        //argumentListPanel.createObjectPanel();
+        //argumentListPanel.createObjectPanel();
 
         returnArgumentIconLabel.setText(null);
         returnArgumentIconLabel.setIcon(Icons.DBO_ARGUMENT_OUT);

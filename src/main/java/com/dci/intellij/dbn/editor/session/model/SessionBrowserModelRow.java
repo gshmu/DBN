@@ -5,6 +5,7 @@ import com.dci.intellij.dbn.data.model.ColumnInfo;
 import com.dci.intellij.dbn.data.model.resultSet.ResultSetColumnInfo;
 import com.dci.intellij.dbn.data.model.resultSet.ResultSetDataModelRow;
 import com.dci.intellij.dbn.database.interfaces.DatabaseCompatibilityInterface;
+import com.dci.intellij.dbn.editor.session.SessionIdentifier;
 import com.dci.intellij.dbn.editor.session.SessionStatus;
 import org.jetbrains.annotations.NotNull;
 
@@ -48,6 +49,10 @@ public class SessionBrowserModelRow
 
     public Object getSerialNumber() {
         return getCellValue("SERIAL");
+    }
+
+    public SessionIdentifier getSessionIdentifier() {
+        return new SessionIdentifier(getSessionId(), getSerialNumber());
     }
 
     public String getSchema() {

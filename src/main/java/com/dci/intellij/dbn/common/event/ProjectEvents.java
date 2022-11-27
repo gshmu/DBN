@@ -2,7 +2,7 @@ package com.dci.intellij.dbn.common.event;
 
 import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.common.project.Projects;
-import com.dci.intellij.dbn.common.routine.ParametricRunnable;
+import com.dci.intellij.dbn.common.routine.Consumer;
 import com.dci.intellij.dbn.common.util.Guarded;
 import com.intellij.openapi.Disposable;
 import com.intellij.openapi.application.Application;
@@ -46,11 +46,11 @@ public final class ProjectEvents {
 
     }
 
-    public static <T> void notify(@Nullable Project project, Topic<T> topic, ParametricRunnable.Basic<T> callback) {
+    public static <T> void notify(@Nullable Project project, Topic<T> topic, Consumer<T> consumer) {
         Guarded.run(() -> {
             if (isNotValid(project) || project.isDefault()) return;
             T publisher = publisher(project, topic);
-            callback.run(publisher);
+            consumer.accept(publisher);
         });
     }
 

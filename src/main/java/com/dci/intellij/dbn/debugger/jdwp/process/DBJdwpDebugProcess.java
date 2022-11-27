@@ -37,7 +37,6 @@ import com.dci.intellij.dbn.vfs.file.DBEditableObjectVirtualFile;
 import com.intellij.debugger.DebuggerManager;
 import com.intellij.debugger.engine.*;
 import com.intellij.debugger.impl.DebuggerSession;
-import com.intellij.debugger.impl.PrioritizedTask;
 import com.intellij.execution.process.ProcessHandler;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Key;
@@ -60,6 +59,7 @@ import java.util.List;
 import java.util.Objects;
 
 import static com.dci.intellij.dbn.debugger.common.process.DBDebugProcessStatus.*;
+import static com.intellij.debugger.impl.PrioritizedTask.Priority.LOW;
 
 public abstract class DBJdwpDebugProcess<T extends ExecutionInput>
         extends JavaDebugProcess
@@ -269,7 +269,7 @@ public abstract class DBJdwpDebugProcess<T extends ExecutionInput>
     private void overwriteSuspendContext(final @Nullable XSuspendContext suspendContext) {
         if (suspendContext != null && suspendContext != lastSuspendContext && !(suspendContext instanceof DBJdwpDebugSuspendContext)) {
             DebugProcessImpl debugProcess = getDebuggerSession().getProcess();
-            ManagedThreadCommand.schedule(debugProcess, PrioritizedTask.Priority.LOW, () -> {
+            ManagedThreadCommand.schedule(debugProcess, LOW, () -> {
                 lastSuspendContext = suspendContext;
                 XDebugSession session = getSession();
                 if (shouldSuspend(suspendContext)) {
@@ -284,26 +284,28 @@ public abstract class DBJdwpDebugProcess<T extends ExecutionInput>
     private void startTargetProgram() {
         // trigger in managed thread
         DebugProcessImpl debugProcess = getDebuggerSession().getProcess();
-        ManagedThreadCommand.schedule(debugProcess, PrioritizedTask.Priority.LOW, () -> {
-            Progress.background(getProject(), "Running debugger target program", false, progress -> {
-                T executionInput = getExecutionInput();
-                progress.setText("Executing " + (executionInput == null ? " target program" : executionInput.getExecutionContext().getTargetName()));
-                console.system("Executing target program");
-                if (is(SESSION_INITIALIZATION_THREW_EXCEPTION)) return;
-                try {
-                    set(TARGET_EXECUTION_STARTED, true);
-                    executeTarget();
-                } catch (SQLException e) {
-                    set(TARGET_EXECUTION_THREW_EXCEPTION, true);
-                    if (isNot(DEBUGGER_STOPPING)) {
-                        String message = executionInput == null ? "Error executing target program" : "Error executing " + executionInput.getExecutionContext().getTargetName();
-                        console.error(message + ": " + e.getMessage());
-                    }
-                } finally {
-                    set(TARGET_EXECUTION_TERMINATED, true);
-                    stop();
-                }
-            });
+        T executionInput = getExecutionInput();
+        ManagedThreadCommand.schedule(debugProcess, LOW, () -> {
+            Progress.background(getProject(), getConnection(), false,
+                    "Running debugger target program",
+                    "Executing " + (executionInput == null ? " target program" : executionInput.getExecutionContext().getTargetName()),
+                    progress -> {
+                        console.system("Executing target program");
+                        if (is(SESSION_INITIALIZATION_THREW_EXCEPTION)) return;
+                        try {
+                            set(TARGET_EXECUTION_STARTED, true);
+                            executeTarget();
+                        } catch (SQLException e) {
+                            set(TARGET_EXECUTION_THREW_EXCEPTION, true);
+                            if (isNot(DEBUGGER_STOPPING)) {
+                                String message = executionInput == null ? "Error executing target program" : "Error executing " + executionInput.getExecutionContext().getTargetName();
+                                console.error(message + ": " + e.getMessage());
+                            }
+                        } finally {
+                            set(TARGET_EXECUTION_TERMINATED, true);
+                            stop();
+                        }
+                    });
         });
     }
 
@@ -321,33 +323,36 @@ public abstract class DBJdwpDebugProcess<T extends ExecutionInput>
     }
 
     private void stopDebugger() {
-        Progress.background(getProject(), "Stopping debugger", false, progress -> {
-            T executionInput = getExecutionInput();
-            if (executionInput != null && isNot(TARGET_EXECUTION_TERMINATED)) {
-                ExecutionContext context = executionInput.getExecutionContext();
-                Resources.cancel(context.getStatement());
-            }
+        Progress.background(getProject(), getConnection(), false,
+                "Stopping debugger",
+                "Stopping debugger session",
+                progress -> {
+                    T executionInput = getExecutionInput();
+                    if (executionInput != null && isNot(TARGET_EXECUTION_TERMINATED)) {
+                        ExecutionContext context = executionInput.getExecutionContext();
+                        Resources.cancel(context.getStatement());
+                    }
 
-            ConnectionHandler connection = getConnection();
-            try {
-                DBNConnection targetConnection = getTargetConnection();
-                DatabaseDebuggerInterface debuggerInterface = getDebuggerInterface();
-                debuggerInterface.disconnectJdwpSession(targetConnection);
+                    ConnectionHandler connection = getConnection();
+                    try {
+                        DBNConnection targetConnection = getTargetConnection();
+                        DatabaseDebuggerInterface debuggerInterface = getDebuggerInterface();
+                        debuggerInterface.disconnectJdwpSession(targetConnection);
 
-            } catch (SQLException e) {
-                console.error("Error stopping debugger: " + e.getMessage());
-            } finally {
-                DBRunConfig<T> runProfile = getRunProfile();
-                if (runProfile != null && runProfile.getCategory() != DBRunConfigCategory.CUSTOM) {
-                    runProfile.setCanRun(false);
-                }
+                    } catch (SQLException e) {
+                        console.error("Error stopping debugger: " + e.getMessage());
+                    } finally {
+                        DBRunConfig<T> runProfile = getRunProfile();
+                        if (runProfile != null && runProfile.getCategory() != DBRunConfigCategory.CUSTOM) {
+                            runProfile.setCanRun(false);
+                        }
 
-                DatabaseDebuggerManager debuggerManager = DatabaseDebuggerManager.getInstance(getProject());
-                debuggerManager.unregisterDebugSession(connection);
-                releaseTargetConnection();
-                console.system("Debugger stopped");
-            }
-        });
+                        DatabaseDebuggerManager debuggerManager = DatabaseDebuggerManager.getInstance(getProject());
+                        debuggerManager.unregisterDebugSession(connection);
+                        releaseTargetConnection();
+                        console.system("Debugger stopped");
+                    }
+                });
     }
 
 

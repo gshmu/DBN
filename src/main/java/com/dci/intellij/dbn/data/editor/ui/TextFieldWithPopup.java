@@ -3,10 +3,9 @@ package com.dci.intellij.dbn.data.editor.ui;
 import com.dci.intellij.dbn.common.color.Colors;
 import com.dci.intellij.dbn.common.dispose.DisposableContainers;
 import com.dci.intellij.dbn.common.project.ProjectRef;
-import com.dci.intellij.dbn.common.ui.util.Keyboard;
-import com.dci.intellij.dbn.common.ui.util.Mouse;
+import com.dci.intellij.dbn.common.ui.misc.DBNButton;
 import com.dci.intellij.dbn.common.ui.panel.DBNPanelImpl;
-import com.intellij.openapi.actionSystem.Shortcut;
+import com.dci.intellij.dbn.common.ui.util.Mouse;
 import com.intellij.openapi.project.Project;
 import com.intellij.util.ui.JBUI;
 import lombok.Getter;
@@ -14,26 +13,11 @@ import lombok.Setter;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import javax.swing.Icon;
-import javax.swing.JComponent;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.JTextField;
+import javax.swing.*;
 import javax.swing.border.Border;
 import javax.swing.text.Document;
-import java.awt.BorderLayout;
-import java.awt.Color;
-import java.awt.Cursor;
-import java.awt.Dimension;
-import java.awt.FlowLayout;
-import java.awt.Font;
-import java.awt.event.ActionListener;
-import java.awt.event.FocusAdapter;
-import java.awt.event.FocusEvent;
-import java.awt.event.FocusListener;
-import java.awt.event.KeyAdapter;
-import java.awt.event.KeyEvent;
-import java.awt.event.KeyListener;
+import java.awt.*;
+import java.awt.event.*;
 import java.util.List;
 
 public class TextFieldWithPopup<T extends JComponent> extends DBNPanelImpl implements DataEditorComponent {
@@ -112,7 +96,7 @@ public class TextFieldWithPopup<T extends JComponent> extends DBNPanelImpl imple
                                                                                   
     public void customizeTextField(JTextField textField) {}
 
-    public void customizeButton(JLabel button) {
+    public void customizeButton(DBNButton button) {
         int width = (int) button.getPreferredSize().getWidth();
         int height = (int) textField.getPreferredSize().getHeight();
         button.setPreferredSize(new Dimension(width, height));
@@ -189,9 +173,7 @@ public class TextFieldWithPopup<T extends JComponent> extends DBNPanelImpl imple
 
         if (popupProvider.isButtonVisible()) {
             Icon buttonIcon = popupProvider.getButtonIcon();
-            JLabel button = new JLabel(buttonIcon);
-            button.setBorder(BUTTON_BORDER);
-            button.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+            DBNButton button = new DBNButton(buttonIcon);
 
             String toolTipText = "Open " + popupProvider.getDescription();
             String keyShortcutDescription = popupProvider.getKeyShortcutDescription();
@@ -200,18 +182,22 @@ public class TextFieldWithPopup<T extends JComponent> extends DBNPanelImpl imple
             }
             button.setToolTipText(toolTipText);
 
-            button.addMouseListener(Mouse.listener().onClick(e -> {
-                getTextField().requestFocus();
-                TextFieldPopupProvider activePopupProvider = getActivePopupProvider();
-                if (activePopupProvider == null || activePopupProvider != popupProvider) {
-                    hideActivePopup();
-                    popupProvider.showPopup();
-                }}));
+            button.addMouseListener(Mouse.listener().onClick(e -> showPopup(popupProvider)));
 
-            buttonsPanel.add(button, buttonsPanel.getComponentCount());
+            int index = buttonsPanel.getComponentCount();
+            buttonsPanel.add(button, index);
             customizeButton(button);
             popupProvider.setButton(button);
             Colors.subscribe(this, () -> customizeButton(button));
+        }
+    }
+
+    private void showPopup(TextFieldPopupProvider popupProvider) {
+        getTextField().requestFocus();
+        TextFieldPopupProvider activePopupProvider = getActivePopupProvider();
+        if (activePopupProvider == null || activePopupProvider != popupProvider) {
+            hideActivePopup();
+            popupProvider.showPopup();
         }
     }
 
@@ -236,12 +222,7 @@ public class TextFieldWithPopup<T extends JComponent> extends DBNPanelImpl imple
     }
 
     public TextFieldPopupProvider getAutoPopupProvider() {
-        for (TextFieldPopupProvider popupProvider : popupProviders) {
-            if (popupProvider.isAutoPopup()) {
-                return popupProvider;
-            }
-        }
-        return null;
+        return popupProviders.stream().filter(p -> p.isAutoPopup()).findFirst().orElse(null);
     }
 
     private TextFieldPopupProvider getDefaultPopupProvider() {
@@ -249,22 +230,11 @@ public class TextFieldWithPopup<T extends JComponent> extends DBNPanelImpl imple
     }
 
     public TextFieldPopupProvider getActivePopupProvider() {
-        for (TextFieldPopupProvider popupProvider : popupProviders) {
-            if (popupProvider.isShowingPopup()) {
-                return popupProvider;
-            }
-        }
-        return null;
+        return popupProviders.stream().filter(p -> p.isShowingPopup()).findFirst().orElse(null);
     }
 
     public TextFieldPopupProvider getPopupProvider(KeyEvent keyEvent) {
-        for (TextFieldPopupProvider popupProvider : popupProviders) {
-            Shortcut[] shortcuts = popupProvider.getShortcuts();
-            if (Keyboard.match(shortcuts, keyEvent)) {
-                return popupProvider;
-            }
-        }
-        return null;
+        return popupProviders.stream().filter(p -> p.matchesKeyEvent(keyEvent)).findFirst().orElse(null);
     }
 
     /********************************************************

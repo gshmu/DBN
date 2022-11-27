@@ -20,7 +20,7 @@ public final class Background {
             ExecutorService executorService = Threads.backgroundExecutor();
             executorService.submit(() -> {
                 try {
-                    ThreadMonitor.run(
+                    ThreadMonitor.surround(
                             threadInfo,
                             BACKGROUND,
                             runnable);
@@ -46,7 +46,7 @@ public final class Background {
                 try {
                     try {
                         handle.set(Thread.currentThread());
-                        ThreadMonitor.run(
+                        ThreadMonitor.surround(
                                 threadInfo,
                                 BACKGROUND,
                                 runnable);

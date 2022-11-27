@@ -47,7 +47,6 @@ import java.sql.SQLException;
 import java.util.*;
 
 import static com.dci.intellij.dbn.common.Priority.HIGH;
-import static com.dci.intellij.dbn.common.Priority.MEDIUM;
 import static com.dci.intellij.dbn.common.component.Components.projectService;
 import static com.dci.intellij.dbn.common.util.Commons.list;
 
@@ -173,7 +172,7 @@ public class SessionBrowserManager extends ProjectComponentBase implements Persi
         return EMPTY_CONTENT;
     }
 
-    public void interruptSessions(@NotNull SessionBrowser sessionBrowser, Map<Object, Object> sessionIds, SessionInterruptionType type) {
+    public void interruptSessions(@NotNull SessionBrowser sessionBrowser, List<SessionIdentifier> sessionIds, SessionInterruptionType type) {
         ConnectionHandler connection = Failsafe.nn(sessionBrowser.getConnection());
         if (DatabaseFeature.SESSION_INTERRUPTION_TIMING.isSupported(connection)) {
 
@@ -183,7 +182,7 @@ public class SessionBrowserManager extends ProjectComponentBase implements Persi
                     type == SessionInterruptionType.DISCONNECT  ? sessionBrowserSettings.getDisconnectSession() : null;
 
             if (disconnect != null) {
-                String subject = sessionIds.size() > 1 ? "selected sessions" : "session with id \"" + sessionIds.keySet().iterator().next().toString() + "\"";
+                String subject = sessionIds.size() > 1 ? "selected sessions" : "session with id \"" + sessionIds.iterator().next().toString() + "\"";
                 disconnect.resolve(
                         list(subject, connection.getName()),
                         option -> {
@@ -197,106 +196,107 @@ public class SessionBrowserManager extends ProjectComponentBase implements Persi
         }
     }
 
-    private void doInterruptSessions(@NotNull SessionBrowser sessionBrowser, Map<Object, Object> sessionIds, SessionInterruptionType type, SessionInterruptionOption option) {
-        int sessionCount = sessionIds.size();
-        String disconnectedAction = type == SessionInterruptionType.TERMINATE ? "killed" : "disconnected";
-        String disconnectingAction = type == SessionInterruptionType.TERMINATE ? "killing" : "disconnecting";
-        String taskAction = (type == SessionInterruptionType.TERMINATE ? "Killing" : "Disconnecting") + (sessionCount == 1 ? " Session" : " Sessions");
+    private void doInterruptSessions(SessionBrowser sessionBrowser, List<SessionIdentifier> sessionIds, SessionInterruptionType type, SessionInterruptionOption option) {
+        Progress.prompt(getProject(), sessionBrowser, true,
+                "Interrupting sessions",
+                type.taskAction(sessionIds.size()),
+                progress -> {
+                    try {
+                        ConnectionHandler connection = sessionBrowser.getConnection();
 
-        Project project = getProject();
-        Progress.prompt(project, taskAction, true, progress -> {
-            try {
-                ConnectionHandler connection = sessionBrowser.getConnection();
-                InterfaceTaskDefinition taskDefinition = InterfaceTaskDefinition.create(MEDIUM,
-                        "Terminating sessions",
-                        taskAction,
-                        connection.createInterfaceContext());
+                        progress.setIndeterminate(false);
+                        Map<SessionIdentifier, SQLException> errors = new HashMap<>();
+                        DatabaseMetadataInterface metadata = connection.getMetadataInterface();
+                        int index = 0;
+                        for (val entry : sessionIds) {
+                            Object sessionId = entry.getSessionId();
+                            Object serialNumber = entry.getSerialNumber();
 
-                DatabaseInterfaceInvoker.execute(taskDefinition, conn -> {
-                    progress.setIndeterminate(false);
-                    Map<Object, SQLException> errors = new HashMap<>();
-                    DatabaseMetadataInterface metadata = connection.getMetadataInterface();
-                    int index = 0;
-                    for (val entry : sessionIds.entrySet()) {
-                        Object sessionId = entry.getKey();
-                        Object serialNumber = entry.getValue();
+                            checkDisposed();
+                            progress.checkCanceled();
+                            progress.setText(Strings.capitalize(type.disconnectingAction()) + " session id " + sessionId + " (serial " + serialNumber + ")");
+                            progress.setFraction(Progress.progressOf(index, sessionIds.size()));
 
-                        checkDisposed();
-                        progress.checkCanceled();
-                        progress.setText(Strings.capitalize(disconnectingAction) + " session id " + sessionId + " (serial " + serialNumber + ")");
-                        progress.setFraction(Progress.progressOf(index, sessionCount));
-
-                        try {
-                            boolean immediate = option == SessionInterruptionOption.IMMEDIATE;
-                            boolean postTransaction = option == SessionInterruptionOption.POST_TRANSACTION;
-                            switch (type) {
-                                case DISCONNECT:
-                                    metadata.disconnectSession(sessionId, serialNumber, postTransaction, immediate, conn);
-                                    break;
-                                case TERMINATE:
-                                    metadata.terminateSession(sessionId, serialNumber, immediate, conn);
-                                    break;
+                            try {
+                                boolean immediate = option == SessionInterruptionOption.IMMEDIATE;
+                                boolean postTransaction = option == SessionInterruptionOption.POST_TRANSACTION;
+                                DatabaseInterfaceInvoker.execute(HIGH, connection.createInterfaceContext(), conn -> {
+                                    switch (type) {
+                                        case DISCONNECT:
+                                            metadata.disconnectSession(sessionId, serialNumber, postTransaction, immediate, conn);
+                                            break;
+                                        case TERMINATE:
+                                            metadata.terminateSession(sessionId, serialNumber, immediate, conn);
+                                            break;
+                                    }
+                                });
+                            } catch (SQLException e) {
+                                errors.put(entry, e);
                             }
-                        } catch (SQLException e) {
-                            errors.put(sessionId, e);
-                        }
-                        index++;
-                    }
-
-                    DatabaseMessageParserInterface messageParserInterface = connection.getMessageParserInterface();
-                    if (sessionCount == 1) {
-                        Object sessionId = sessionIds.keySet().iterator().next();
-                        if (errors.size() == 0) {
-                            Messages.showInfoDialog(project, "Info", "Session " + sessionId + " " + disconnectedAction + ".");
-                        } else {
-                            SQLException exception = errors.get(sessionId);
-                            if (messageParserInterface.isSuccessException(exception)) {
-                                Messages.showInfoDialog(project, "Info", "Session " + sessionId + " " + disconnectingAction + " requested.\n" + exception.getMessage());
-                            } else {
-                                Messages.showErrorDialog(project, "Error " + disconnectingAction + " session " + sessionId + ".", exception);
-                            }
-
-                        }
-                    } else {
-                        if (errors.size() == 0) {
-                            Messages.showInfoDialog(project, "Info", sessionCount + " sessions " + disconnectedAction + ".");
-                        } else {
-                            StringBuilder message = new StringBuilder();
-                            boolean success = Lists.allMatch(errors.values(), error -> messageParserInterface.isSuccessException(error));
-                            if (success) {
-                                message.append(sessionCount);
-                                message.append(" sessions ");
-                                message.append(disconnectingAction);
-                                message.append(" requested:");
-                            } else {
-                                message.append("Error ");
-                                message.append(disconnectingAction);
-                                message.append(" one or more of the selected sessions:");
-                            }
-                            for (Object sessionId : sessionIds.keySet()) {
-                                SQLException exception = errors.get(sessionId);
-                                message.append("\n - session id ").append(sessionId).append(": ");
-                                if (exception == null) {
-                                    message.append(disconnectedAction);
-                                } else {
-                                    message.append(exception.getMessage().trim());
-                                }
-                            }
-                            if (success) {
-                                Messages.showInfoDialog(project, "Info", message.toString());
-                            } else {
-                                Messages.showErrorDialog(project, message.toString());
-                            }
+                            index++;
                         }
 
+                        promptInterruptionResult(connection, sessionIds, errors, type);
+                    } finally {
+                        sessionBrowser.loadSessions(false);
                     }
                 });
-            } catch (SQLException e) {
-                Messages.showErrorDialog(project, "Error performing operation", e);
-            } finally {
-                sessionBrowser.loadSessions(false);
+    }
+
+    private void promptInterruptionResult(ConnectionHandler connection, List<SessionIdentifier> idenrifiers, Map<SessionIdentifier, SQLException> errors, SessionInterruptionType type) {
+        DatabaseMessageParserInterface messageParserInterface = connection.getMessageParserInterface();
+
+        Project project = getProject();
+        int sessionCount = idenrifiers.size();
+        String disconnectedAction = type.disconnectedAction();
+        String disconnectingAction = type.disconnectingAction();
+
+        if (sessionCount == 1) {
+            SessionIdentifier identifier = idenrifiers.get(0);
+            Object sessionId = identifier.getSessionId();
+            if (errors.size() == 0) {
+                Messages.showInfoDialog(project, "Info", "Session " + sessionId + " " + disconnectedAction + ".");
+            } else {
+                SQLException exception = errors.get(identifier);
+                if (messageParserInterface.isSuccessException(exception)) {
+                    Messages.showInfoDialog(project, "Info", "Session " + sessionId + " " + disconnectingAction + " requested.\n" + exception.getMessage());
+                } else {
+                    Messages.showErrorDialog(project, "Error " + disconnectingAction + " session " + sessionId + ".", exception);
+                }
+
             }
-        });
+        } else {
+            if (errors.size() == 0) {
+                Messages.showInfoDialog(project, "Info", sessionCount + " sessions " + disconnectedAction + ".");
+            } else {
+                StringBuilder message = new StringBuilder();
+                boolean success = Lists.allMatch(errors.values(), error -> messageParserInterface.isSuccessException(error));
+                if (success) {
+                    message.append(sessionCount);
+                    message.append(" sessions ");
+                    message.append(disconnectingAction);
+                    message.append(" requested:");
+                } else {
+                    message.append("Error ");
+                    message.append(disconnectingAction);
+                    message.append(" one or more of the selected sessions:");
+                }
+                for (SessionIdentifier identifier : idenrifiers) {
+                    SQLException exception = errors.get(identifier);
+                    message.append("\n - session id ").append(identifier).append(": ");
+                    if (exception == null) {
+                        message.append(disconnectedAction);
+                    } else {
+                        message.append(exception.getMessage().trim());
+                    }
+                }
+                if (success) {
+                    Messages.showInfoDialog(project, "Info", message.toString());
+                } else {
+                    Messages.showErrorDialog(project, message.toString());
+                }
+            }
+        }
     }
 
     private class UpdateTimestampTask extends TimerTask {

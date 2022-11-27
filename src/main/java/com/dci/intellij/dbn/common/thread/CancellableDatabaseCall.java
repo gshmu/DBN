@@ -47,7 +47,7 @@ public abstract class CancellableDatabaseCall<T> implements Callable<T> {
 
     @Override
     public T call() throws Exception {
-        return ThreadMonitor.call(
+        return ThreadMonitor.surround(
                 invoker,
                 ThreadProperty.CANCELABLE,
                 null,

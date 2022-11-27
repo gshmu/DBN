@@ -12,12 +12,7 @@ import com.dci.intellij.dbn.common.ui.util.Borders;
 import com.dci.intellij.dbn.common.util.Actions;
 import com.dci.intellij.dbn.common.util.Context;
 import com.dci.intellij.dbn.common.util.Safe;
-import com.dci.intellij.dbn.connection.ConnectionBundle;
-import com.dci.intellij.dbn.connection.ConnectionHandler;
-import com.dci.intellij.dbn.connection.ConnectionId;
-import com.dci.intellij.dbn.connection.ConnectionManager;
-import com.dci.intellij.dbn.connection.ConnectionRef;
-import com.dci.intellij.dbn.connection.SchemaId;
+import com.dci.intellij.dbn.connection.*;
 import com.dci.intellij.dbn.connection.mapping.FileConnectionContext;
 import com.dci.intellij.dbn.connection.mapping.FileConnectionContextManager;
 import com.dci.intellij.dbn.connection.session.DatabaseSession;
@@ -39,14 +34,15 @@ import lombok.Getter;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import javax.swing.ListSelectionModel;
+import javax.swing.*;
 import javax.swing.table.TableModel;
-import java.awt.Point;
-import java.awt.Rectangle;
+import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.Collection;
 import java.util.List;
+
+import static com.dci.intellij.dbn.common.dispose.Checks.isNotValid;
 
 public class FileConnectionMappingTable extends DBNTable<FileConnectionMappingTableModel> {
     private final FileConnectionContextManager manager;
@@ -168,28 +164,32 @@ public class FileConnectionMappingTable extends DBNTable<FileConnectionMappingTa
 
     private void promptSchemaSelector(@NotNull FileConnectionContext mapping) {
         ConnectionHandler connection = mapping.getConnection();
-        if (connection != null && !connection.isVirtual()) {
-            Progress.modal(connection.getProject(), "Loading schemas", true, progress -> {
-                List<DBSchema> schemas = connection.getObjectBundle().getSchemas();
+        if (isNotValid(connection) || connection.isVirtual()) return;
 
-                DefaultActionGroup actionGroup = new DefaultActionGroup();
-                VirtualFile file = mapping.getFile();
-                schemas.stream().map(schema -> new SchemaAction(file, schema.getIdentifier())).forEach(a -> actionGroup.add(a));
-                promptSelector(actionGroup, a -> ((SchemaAction) a).getSchemaId() == mapping.getSchemaId());
-            });
-        }
+        Project project = connection.getProject();
+        Progress.modal(project, connection, true,
+                "Loading data dictionary",
+                "Loading schemas",
+                progress -> {
+                    List<DBSchema> schemas = connection.getObjectBundle().getSchemas();
+
+                    DefaultActionGroup actionGroup = new DefaultActionGroup();
+                    VirtualFile file = mapping.getFile();
+                    schemas.stream().map(schema -> new SchemaAction(file, schema.getIdentifier())).forEach(a -> actionGroup.add(a));
+                    promptSelector(actionGroup, a -> ((SchemaAction) a).getSchemaId() == mapping.getSchemaId());
+                });
     }
 
     private void promptSessionSelector(@NotNull FileConnectionContext mapping) {
         ConnectionHandler connection = mapping.getConnection();
-        if (connection != null && !connection.isVirtual()) {
-            DefaultActionGroup actionGroup = new DefaultActionGroup();
-            VirtualFile file = mapping.getFile();
+        if (isNotValid(connection) || connection.isVirtual())  return;
 
-            List<DatabaseSession> sessions = connection.getSessionBundle().getSessions();
-            sessions.stream().map(session -> new SessionAction(file, session)).forEach(a -> actionGroup.add(a));
-            promptSelector(actionGroup, a -> ((SessionAction) a).getSession() == mapping.getSession());
-        }
+        DefaultActionGroup actionGroup = new DefaultActionGroup();
+        VirtualFile file = mapping.getFile();
+
+        List<DatabaseSession> sessions = connection.getSessionBundle().getSessions();
+        sessions.stream().map(session -> new SessionAction(file, session)).forEach(a -> actionGroup.add(a));
+        promptSelector(actionGroup, a -> ((SessionAction) a).getSession() == mapping.getSession());
     }
 
     private void promptSelector(ActionGroup actionGroup, Condition<AnAction> preselectCondition) {

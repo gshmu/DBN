@@ -12,7 +12,7 @@ import com.dci.intellij.dbn.common.environment.EnvironmentType;
 import com.dci.intellij.dbn.common.event.ProjectEvents;
 import com.dci.intellij.dbn.common.load.ProgressMonitor;
 import com.dci.intellij.dbn.common.message.MessageCallback;
-import com.dci.intellij.dbn.common.routine.ParametricRunnable;
+import com.dci.intellij.dbn.common.routine.Consumer;
 import com.dci.intellij.dbn.common.thread.Background;
 import com.dci.intellij.dbn.common.thread.Dispatch;
 import com.dci.intellij.dbn.common.thread.Progress;
@@ -141,29 +141,32 @@ public class ConnectionManager extends ProjectComponentBase implements Persisten
 
     public static void testConnection(ConnectionHandler connection, SchemaId schemaId, SessionId sessionId, boolean showSuccessMessage, boolean showErrorMessage) {
         Project project = connection.getProject();
-        Progress.prompt(project, "Trying to connect to " + connection.getName(), true, progress -> {
-            ConnectionDatabaseSettings databaseSettings = connection.getSettings().getDatabaseSettings();
-            String connectionName = connection.getName();
-            try {
-                databaseSettings.validate();
-                connection.getConnection(sessionId, schemaId);
-                ConnectionHandlerStatusHolder connectionStatus = connection.getConnectionStatus();
-                connectionStatus.setValid(true);
-                connectionStatus.setConnected(true);
-                if (showSuccessMessage) {
-                    showSuccessfulConnectionMessage(project, connectionName);
-                }
-            } catch (ConfigurationException e) {
-                if (showErrorMessage) {
-                    showInvalidConfigMessage(project, e);
+        Progress.prompt(project, connection, true,
+                "Testing connection",
+                "Trying to connect to " + connection.getQualifiedName(),
+                progress -> {
+                    ConnectionDatabaseSettings databaseSettings = connection.getSettings().getDatabaseSettings();
+                    String connectionName = connection.getName();
+                    try {
+                        databaseSettings.validate();
+                        connection.getConnection(sessionId, schemaId);
+                        ConnectionHandlerStatusHolder connectionStatus = connection.getConnectionStatus();
+                        connectionStatus.setValid(true);
+                        connectionStatus.setConnected(true);
+                        if (showSuccessMessage) {
+                            showSuccessfulConnectionMessage(project, connectionName);
+                        }
+                    } catch (ConfigurationException e) {
+                        if (showErrorMessage) {
+                            showInvalidConfigMessage(project, e);
 
-                }
-            } catch (Exception e) {
-                if (showErrorMessage) {
-                    showErrorConnectionMessage(project, connectionName, e);
-                }
-            }
-        });
+                        }
+                    } catch (Exception e) {
+                        if (showErrorMessage) {
+                            showErrorConnectionMessage(project, connectionName, e);
+                        }
+                    }
+                });
 
     }
 
@@ -202,7 +205,10 @@ public class ConnectionManager extends ProjectComponentBase implements Persisten
         ConnectionDatabaseSettings databaseSettings = connectionSettings.getDatabaseSettings();
         String connectionName = databaseSettings.getName();
 
-        Progress.modal(project, "Connecting to " + connectionName, false, progress -> {
+        Progress.modal(project, null, false,
+                "Connecting to database",
+                "Trying to connecting to " + connectionName,
+                progress -> {
             try {
                 DBNConnection connection = ConnectionUtil.connect(connectionSettings, null, authentication, SessionId.TEST, false, null);
                 Resources.close(connection);
@@ -227,16 +233,19 @@ public class ConnectionManager extends ProjectComponentBase implements Persisten
         try {
             databaseSettings.validate();
             ensureAuthenticationProvided(databaseSettings, (authenticationInfo) ->
-                    Progress.modal(project, "Connecting to " + connectionName, false, (progress) -> {
-                        try {
-                            DBNConnection connection = ConnectionUtil.connect(connectionSettings, null, authenticationInfo, SessionId.TEST, false, null);
-                            ConnectionInfo connectionInfo = new ConnectionInfo(connection.getMetaData());
-                            Resources.close(connection);
-                            showConnectionInfoDialog(connectionInfo, connectionName, environmentType);
-                        } catch (Exception e) {
-                            showErrorConnectionMessage(project, connectionName, e);
-                        }
-                    }));
+                    Progress.modal(project, null, false,
+                            "Connecting to database",
+                            "Connecting to " + connectionName,
+                            progress -> {
+                                try {
+                                    DBNConnection connection = ConnectionUtil.connect(connectionSettings, null, authenticationInfo, SessionId.TEST, false, null);
+                                    ConnectionInfo connectionInfo = new ConnectionInfo(connection.getMetaData());
+                                    Resources.close(connection);
+                                    showConnectionInfoDialog(connectionInfo, connectionName, environmentType);
+                                } catch (Exception e) {
+                                    showErrorConnectionMessage(project, connectionName, e);
+                                }
+                            }));
 
         } catch (ConfigurationException e) {
             showInvalidConfigMessage(project, e);
@@ -245,13 +254,13 @@ public class ConnectionManager extends ProjectComponentBase implements Persisten
 
     private void ensureAuthenticationProvided(
             @NotNull ConnectionDatabaseSettings databaseSettings,
-            @NotNull ParametricRunnable.Basic<AuthenticationInfo> callback) {
+            @NotNull Consumer<AuthenticationInfo> consumer) {
 
         AuthenticationInfo authenticationInfo = databaseSettings.getAuthenticationInfo().clone();
         if (!authenticationInfo.isProvided()) {
-            promptAuthenticationDialog(null, authenticationInfo, callback);
+            promptAuthenticationDialog(null, authenticationInfo, consumer);
         } else {
-            callback.run(authenticationInfo);
+            consumer.accept(authenticationInfo);
         }
     }
 
@@ -328,7 +337,7 @@ public class ConnectionManager extends ProjectComponentBase implements Persisten
     void promptAuthenticationDialog(
             @Nullable ConnectionHandler connection,
             @NotNull AuthenticationInfo authenticationInfo,
-            @NotNull ParametricRunnable.Basic<AuthenticationInfo> callback) {
+            @NotNull Consumer<AuthenticationInfo> consumer) {
 
         ConnectionAuthenticationDialog passwordDialog = new ConnectionAuthenticationDialog(getProject(), connection, authenticationInfo);
         passwordDialog.show();
@@ -353,7 +362,7 @@ public class ConnectionManager extends ProjectComponentBase implements Persisten
                 }
                 connection.getInstructions().setAllowAutoConnect(true);
             }
-            callback.run(newAuthenticationInfo);
+            consumer.accept(newAuthenticationInfo);
         }
     }
 

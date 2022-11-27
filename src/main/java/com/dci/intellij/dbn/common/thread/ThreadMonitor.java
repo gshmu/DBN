@@ -28,7 +28,7 @@ public class ThreadMonitor {
 
 
 
-    public static <E extends Throwable> void run(
+    public static <E extends Throwable> void surround(
             @Nullable ThreadInfo invoker,
             @NotNull ThreadProperty threadProperty,
             ThrowableRunnable<E> runnable) throws E {
@@ -49,7 +49,7 @@ public class ThreadMonitor {
         }
     }
 
-    public static <T, E extends Throwable> T call(
+    public static <T, E extends Throwable> T surround(
             @Nullable ThreadInfo invoker,
             @NotNull ThreadProperty threadProperty,
             T defaultValue,
@@ -82,6 +82,10 @@ public class ThreadMonitor {
 
     public static boolean isBackgroundProcess() {
         return current().is(BACKGROUND);
+    }
+
+    public static boolean isModalProcess() {
+        return current().is(MODAL);
     }
 
     public static boolean isDisposerProcess() {
