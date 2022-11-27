@@ -1,9 +1,9 @@
 package com.dci.intellij.dbn.common.message;
 
-import com.dci.intellij.dbn.common.routine.ParametricRunnable;
+import com.dci.intellij.dbn.common.routine.Consumer;
 import org.jetbrains.annotations.Nullable;
 
-public interface MessageCallback extends ParametricRunnable<Integer, RuntimeException> {
+public interface MessageCallback extends Consumer<Integer> {
 
     static void when(boolean condition, @Nullable Runnable runnable) {
         if (condition && runnable != null) {

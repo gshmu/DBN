@@ -1,7 +1,7 @@
 package com.dci.intellij.dbn.common.event;
 
 import com.dci.intellij.dbn.common.dispose.Failsafe;
-import com.dci.intellij.dbn.common.routine.ParametricRunnable;
+import com.dci.intellij.dbn.common.routine.Consumer;
 import com.dci.intellij.dbn.common.util.Guarded;
 import com.intellij.openapi.Disposable;
 import com.intellij.openapi.application.ApplicationManager;
@@ -25,9 +25,9 @@ public final class ApplicationEvents {
         });
     }
 
-    public static <T> void notify(Topic<T> topic, ParametricRunnable.Basic<T> callback) {
+    public static <T> void notify(Topic<T> topic, Consumer<T> consumer) {
         T publisher = publisher(topic);
-        callback.run(publisher);
+        consumer.accept(publisher);
     }
 
     public static <T> T publisher(Topic<T> topic) {

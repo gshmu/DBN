@@ -5,7 +5,9 @@ import com.intellij.ui.JBColor;
 import com.intellij.ui.border.CustomLineBorder;
 import com.intellij.util.ui.JBUI;
 
+import javax.swing.*;
 import javax.swing.border.Border;
+import javax.swing.border.CompoundBorder;
 import javax.swing.border.EmptyBorder;
 import javax.swing.border.LineBorder;
 import java.awt.*;
@@ -48,4 +50,9 @@ public final class Borders {
         return TOP_INSET_BORDERS.computeIfAbsent(inset, i -> new EmptyBorder(JBUI.insets(i, 0, 0, 0)));
     }
 
+    public static Border buttonBorder() {
+        Border insideBorder = JBUI.Borders.empty(0, 8);
+        Border textFieldBorder = UIManager.getBorder("TextField.border");
+        return new CompoundBorder(textFieldBorder, insideBorder);
+    }
 }

@@ -15,6 +15,7 @@ import com.dci.intellij.dbn.common.thread.CancellableDatabaseCall;
 import com.dci.intellij.dbn.common.thread.Progress;
 import com.dci.intellij.dbn.common.thread.Read;
 import com.dci.intellij.dbn.common.util.Documents;
+import com.dci.intellij.dbn.common.util.Safe;
 import com.dci.intellij.dbn.common.util.Strings;
 import com.dci.intellij.dbn.connection.*;
 import com.dci.intellij.dbn.connection.jdbc.DBNConnection;
@@ -432,7 +433,7 @@ public class StatementExecutionBasicProcessor extends StatefulDisposable.Base im
         statement.setQueryTimeout(timeout);
         assertNotCancelled();
 
-        databaseCall = new CancellableDatabaseCall<StatementExecutionResult>(connection, conn, timeout, TimeUnit.SECONDS) {
+        databaseCall = new CancellableDatabaseCall<>(connection, conn, timeout, TimeUnit.SECONDS) {
             @Override
             public StatementExecutionResult execute() throws Exception {
                 try {
@@ -444,7 +445,7 @@ public class StatementExecutionBasicProcessor extends StatefulDisposable.Base im
             }
 
             @Override
-            public void cancel(){
+            public void cancel() {
                 try {
                     context.set(CANCELLED, true);
                     Resources.cancel(statement);
@@ -467,13 +468,13 @@ public class StatementExecutionBasicProcessor extends StatefulDisposable.Base im
         ConnectionId connectionId = executionInput.getConnectionId();
         StatementExecutionQueue queue = Failsafe.nn(executionManager.getExecutionQueue(connectionId, sessionId));
         queue.cancelExecution(this);
-        CancellableDatabaseCall<StatementExecutionResult> databaseCall = this.databaseCall;
-        if (databaseCall != null) {
-            Progress.background(
-                    getProject(),
-                    "Cancelling statement execution", false,
-                    progress -> databaseCall.cancelSilently());
-        }
+        Progress.background(
+                getProject(),
+                getConnection(),
+                false,
+                "Cancelling execution",
+                "Cancelling statement execution",
+                progress -> Safe.run(databaseCall, call -> call.cancelSilently()));
     }
 
     private void consumeLoggerOutput(ExecutionContext context) {

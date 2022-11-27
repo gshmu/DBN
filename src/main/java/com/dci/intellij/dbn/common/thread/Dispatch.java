@@ -1,9 +1,9 @@
 package com.dci.intellij.dbn.common.thread;
 
 import com.dci.intellij.dbn.common.dispose.Failsafe;
+import com.dci.intellij.dbn.common.routine.Consumer;
 import com.dci.intellij.dbn.common.routine.ThrowableCallable;
 import com.dci.intellij.dbn.common.util.Commons;
-import com.dci.intellij.dbn.common.util.Consumer;
 import com.dci.intellij.dbn.common.util.Guarded;
 import com.intellij.openapi.Disposable;
 import com.intellij.openapi.application.Application;
@@ -49,7 +49,13 @@ public final class Dispatch {
             T value = supplier.get();
             run(() -> consumer.accept(value));
         });
+    }
 
+    public static <T> void background(ModalityState modalityState, Runnable loader, Runnable renderer) {
+        Background.run(() -> {
+            loader.run();
+            run(modalityState, renderer);
+        });
     }
 
 

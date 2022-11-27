@@ -9,7 +9,6 @@ import java.util.List;
 
 @Getter
 public class ArgumentFactoryInput extends ObjectFactoryInput{
-
     private final String dataType;
     private final boolean input;
     private final boolean output;
@@ -23,16 +22,17 @@ public class ArgumentFactoryInput extends ObjectFactoryInput{
 
     @Override
     public void validate(List<String> errors) {
-        if (getObjectName().length() == 0) {
+        String objectName = getObjectName();
+        if (objectName.length() == 0) {
             errors.add("argument name is not specified at index " + getIndex());
 
-        } else if (!Strings.isWord(getObjectName())) {
-            errors.add("invalid argument name specified at index " + getIndex() + ": \"" + getObjectName() + "\"");
+        } else if (!Strings.isWord(objectName)) {
+            errors.add("invalid argument name specified at index " + getIndex() + ": \"" + objectName + "\"");
         }
 
         if (dataType.length() == 0){
-            if (getObjectName().length() > 0) {
-                errors.add("missing data type for argument \"" + getObjectName() + "\"");
+            if (objectName.length() > 0) {
+                errors.add("missing data type for argument \"" + objectName + "\"");
             } else {
                 errors.add("missing data type for argument at index " + getIndex());
             }

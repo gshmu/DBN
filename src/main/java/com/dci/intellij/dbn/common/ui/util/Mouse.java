@@ -1,6 +1,6 @@
 package com.dci.intellij.dbn.common.ui.util;
 
-import com.dci.intellij.dbn.common.util.Consumer;
+import com.dci.intellij.dbn.common.routine.Consumer;
 import com.dci.intellij.dbn.common.util.Guarded;
 import org.jetbrains.annotations.Nullable;
 

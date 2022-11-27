@@ -8,6 +8,8 @@ import com.intellij.openapi.actionSystem.AnAction;
 
 import java.util.List;
 
+import static com.dci.intellij.dbn.common.util.Unsafe.cast;
+
 public class ObjectLazyNavigationListAction extends ObjectListShowAction {
     private final DBObjectRef<DBObject> parentObject;
     private final DBObjectNavigationList<?> navigationList;
@@ -19,10 +21,10 @@ public class ObjectLazyNavigationListAction extends ObjectListShowAction {
     }
 
     @Override
-    public List<? extends DBObject> getObjectList() {
-        return Commons.coalesce(
+    public List<DBObject> getObjectList() {
+        return cast(Commons.coalesce(
                 () -> navigationList.getObjects(),
-                () -> navigationList.getObjectsProvider().getObjects());
+                () -> navigationList.getObjectsProvider().getObjects()));
     }
 
     @Override

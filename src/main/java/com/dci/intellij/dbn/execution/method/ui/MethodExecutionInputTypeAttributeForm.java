@@ -69,7 +69,7 @@ public class MethodExecutionInputTypeAttributeForm extends DBNFormBase {
             }
 
             String typeAttributeName = argument.getName() + "." + typeAttribute.getName();
-            userValueHolder = new UserValueHolderImpl<String>(typeAttributeName, DBObjectType.TYPE_ATTRIBUTE, dataType, project);
+            userValueHolder = new UserValueHolderImpl<>(typeAttributeName, DBObjectType.TYPE_ATTRIBUTE, dataType, project);
             userValueHolder.setUserValue(value);
             userValueHolder.setContentType(contentType);
             inputField.setUserValueHolder(userValueHolder);
@@ -129,17 +129,12 @@ public class MethodExecutionInputTypeAttributeForm extends DBNFormBase {
                             false);
 
                     if (argumentValue != null) {
-                        List<String> cachedValues = new ArrayList<String>(argumentValue.getValueHistory());
+                        List<String> cachedValues = new ArrayList<>(argumentValue.getValueHistory());
                         cachedValues.removeAll(getValues());
                         return cachedValues;
                     }
                 }
                 return Collections.emptyList();
-            }
-
-            @Override
-            public boolean isLongLoading() {
-                return false;
             }
         };
     }

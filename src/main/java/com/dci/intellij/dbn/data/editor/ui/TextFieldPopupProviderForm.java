@@ -2,7 +2,6 @@ package com.dci.intellij.dbn.data.editor.ui;
 
 import com.dci.intellij.dbn.common.event.ProjectEvents;
 import com.dci.intellij.dbn.common.thread.Dispatch;
-import com.dci.intellij.dbn.common.thread.Progress;
 import com.dci.intellij.dbn.common.ui.form.DBNFormBase;
 import com.dci.intellij.dbn.common.ui.listener.KeyAdapter;
 import com.dci.intellij.dbn.common.ui.util.Borders;
@@ -34,7 +33,6 @@ public abstract class TextFieldPopupProviderForm extends DBNFormBase implements 
     private final boolean buttonVisible;
 
     private boolean enabled = true;
-    private boolean preparing = false;
     private JLabel button;
     private JBPopup popup;
     private final Set<AnAction> actions = new HashSet<>();
@@ -91,72 +89,53 @@ public abstract class TextFieldPopupProviderForm extends DBNFormBase implements 
 
     @Override
     public void keyPressed(KeyEvent e) {
-        if (!e.isConsumed()) {
-            for (AnAction action : actions) {
-                if (Keyboard.match(action.getShortcutSet().getShortcuts(), e)) {
-                    DataContext dataContext = Context.getDataContext(this);
-                    ActionManager actionManager = ActionManager.getInstance();
-                    AnActionEvent actionEvent = new AnActionEvent(null, dataContext, "", action.getTemplatePresentation(), actionManager, 2);
-                    action.actionPerformed(actionEvent);
-                    e.consume();
-                    return;
-                }
-            }
+        if (e.isConsumed()) return;
+
+        for (AnAction action : actions) {
+            if (!Keyboard.match(action, e)) continue;
+
+            DataContext dataContext = Context.getDataContext(this);
+            ActionManager actionManager = ActionManager.getInstance();
+            AnActionEvent actionEvent = new AnActionEvent(null, dataContext, "", action.getTemplatePresentation(), actionManager, 2);
+            action.actionPerformed(actionEvent);
+            e.consume();
+            return;
         }
     }
 
-    public void preparePopup() {}
-
     @Override
     public void showPopup() {
-        if (preparing) return;
+        if (isShowingPopup()) return;
 
-        preparing = true;
-        Progress.prompt(getProject(), "Loading " + getDescription(), true, progress -> {
-            preparePopup();
-            if (progress.isCanceled()) {
-                preparing = false;
-                return;
+        TextFieldWithPopup editorComponent = getEditorComponent();
+        popup = createPopup();
+        if (popup != null) {
+            Disposer.register(TextFieldPopupProviderForm.this, popup);
+
+            JPanel panel = (JPanel) popup.getContent();
+            panel.setBorder(Borders.COMPONENT_LINE_BORDER);
+
+            editorComponent.clearSelection();
+
+            if (editorComponent.isShowing()) {
+                Point location = editorComponent.getLocationOnScreen();
+                location.setLocation(location.getX() + 4, location.getY() + editorComponent.getHeight() + 4);
+                popup.showInScreenCoordinates(editorComponent, location);
+                //cellEditor.highlight(TextCellEditor.HIGHLIGHT_TYPE_POPUP);
             }
-
-            Dispatch.run(() -> {
-                try {
-                    if (!isShowingPopup()) {
-                        TextFieldWithPopup editorComponent = getEditorComponent();
-                        popup = createPopup();
-                        if (popup != null) {
-                            Disposer.register(TextFieldPopupProviderForm.this, popup);
-
-                            JPanel panel = (JPanel) popup.getContent();
-                            panel.setBorder(Borders.COMPONENT_LINE_BORDER);
-
-                            editorComponent.clearSelection();
-
-                            if (editorComponent.isShowing()) {
-                                Point location = editorComponent.getLocationOnScreen();
-                                location.setLocation(location.getX() + 4, location.getY() + editorComponent.getHeight() + 4);
-                                popup.showInScreenCoordinates(editorComponent, location);
-                                //cellEditor.highlight(TextCellEditor.HIGHLIGHT_TYPE_POPUP);
-                            }
-                        }
-                    }
-                } finally {
-                    preparing = false;
-                }
-            });
-        });
+        }
     }
 
     @Override
     public void hidePopup() {
-        if (isShowingPopup()) {
-            Dispatch.run(() -> {
-                if (isShowingPopup()) {
-                    popup.cancel();
-                    popup = null;
-                }
-            });
-        }
+        if (!isShowingPopup()) return;
+
+        Dispatch.run(true, () -> {
+            if (isShowingPopup()) {
+                popup.cancel();
+                popup = null;
+            }
+        });
     }
 
     @Override

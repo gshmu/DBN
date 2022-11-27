@@ -10,11 +10,11 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 public class GenerateInsertStatementAction extends GenerateStatementAction {
-    private DBObjectRef<DBTable> tableRef;
+    private DBObjectRef<DBTable> table;
 
     GenerateInsertStatementAction(DBTable table) {
         super("INSERT Statement");
-        tableRef = DBObjectRef.of(table);
+        this.table = DBObjectRef.of(table);
     }
 
     @Override
@@ -26,7 +26,7 @@ public class GenerateInsertStatementAction extends GenerateStatementAction {
 
     @NotNull
     private DBTable getTable() {
-        return DBObjectRef.ensure(tableRef);
+        return DBObjectRef.ensure(table);
     }
 
     @Nullable

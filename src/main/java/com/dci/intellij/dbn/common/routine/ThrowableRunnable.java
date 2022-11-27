@@ -4,10 +4,7 @@ package com.dci.intellij.dbn.common.routine;
 public interface ThrowableRunnable<E extends Throwable> {
     void run() throws E;
 
-    default ThrowableCallable<?, E> asCallable() {
-        return (ThrowableCallable<Object, E>) () -> {
-            run();
-            return null;
-        };
+    static <E extends Throwable> ThrowableRunnable<E> from(ThrowableCallable<?, E> callable) {
+        return () -> callable.call();
     }
 }

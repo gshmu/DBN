@@ -31,7 +31,7 @@ public class DBJdbcDebuggerEvaluator extends DBDebuggerEvaluator<DBJdbcDebugStac
             VariableInfo variableInfo = debugProcess.getDebuggerInterface().getVariableInfo(
                     databaseVariableName.toUpperCase(),
                     debugValue.getStackFrame().getFrameIndex(),
-                    debugProcess.getDebugConnection());
+                    debugProcess.getDebuggerConnection());
             String value = variableInfo.getValue();
             String type = variableInfo.getError();
 

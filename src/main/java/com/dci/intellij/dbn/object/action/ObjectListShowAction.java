@@ -11,7 +11,9 @@ import com.dci.intellij.dbn.object.common.DBObject;
 import com.dci.intellij.dbn.object.lookup.DBObjectRef;
 import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.AnActionEvent;
+import com.intellij.openapi.actionSystem.DataContext;
 import com.intellij.openapi.project.DumbAwareAction;
+import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.popup.ComponentPopupBuilder;
 import com.intellij.openapi.ui.popup.JBPopup;
 import com.intellij.openapi.ui.popup.JBPopupFactory;
@@ -21,11 +23,8 @@ import com.intellij.util.ui.tree.TreeUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.SwingConstants;
-import java.awt.BorderLayout;
-import java.awt.Point;
+import javax.swing.*;
+import java.awt.*;
 import java.util.List;
 
 public abstract class ObjectListShowAction extends DumbAwareAction {
@@ -41,8 +40,8 @@ public abstract class ObjectListShowAction extends DumbAwareAction {
         this.popupLocation = popupLocation;
     }
 
-    public @Nullable List<? extends DBObject> getRecentObjectList() {return null;}
-    public abstract List<? extends DBObject> getObjectList();
+    public @Nullable List<DBObject> getRecentObjectList() {return null;}
+    public abstract List<DBObject> getObjectList();
     public abstract String getTitle();
     public abstract String getEmptyListMessage();
     public abstract String getListName();
@@ -55,39 +54,45 @@ public abstract class ObjectListShowAction extends DumbAwareAction {
     @Override
     public final void actionPerformed(@NotNull AnActionEvent e) {
         DBObject sourceObject = getSourceObject();
+        Project project = sourceObject.getProject();
         String listName = getListName();
         ConnectionAction.invoke("loading " + listName, true, sourceObject,
-                action -> Progress.prompt(sourceObject.getProject(), "Loading " + listName, true,
-                        progress -> {
-                            if (!action.isCancelled()) {
-                                List<? extends DBObject> recentObjectList = getRecentObjectList();
-                                List<? extends DBObject> objects = getObjectList();
-                                if (!action.isCancelled()) {
-                                    Dispatch.run(() -> {
-                                        if (objects.size() > 0) {
-                                            ObjectListActionGroup actionGroup = new ObjectListActionGroup(ObjectListShowAction.this, objects, recentObjectList);
-                                            JBPopup popup = JBPopupFactory.getInstance().createActionGroupPopup(
-                                                    ObjectListShowAction.this.getTitle(),
-                                                    actionGroup,
-                                                    e.getDataContext(),
-                                                    JBPopupFactory.ActionSelectionAid.SPEEDSEARCH,
-                                                    true, null, 10);
+                action -> Progress.prompt(project, sourceObject, true,
+                        "Loading objects",
+                        "Loading " + listName,
+                        progress -> showObjectList(e.getDataContext(), action)));
+    }
 
-                                            popup.getContent().setBackground(Colors.LIGHT_BLUE);
-                                            showPopup(popup);
-                                        } else {
-                                            JLabel label = new JLabel(getEmptyListMessage(), Icons.EXEC_MESSAGES_INFO, SwingConstants.LEFT);
-                                            label.setBorder(JBUI.Borders.empty(3));
-                                            JPanel panel = new JPanel(new BorderLayout());
-                                            panel.add(label);
-                                            panel.setBackground(Colors.LIGHT_BLUE);
-                                            ComponentPopupBuilder popupBuilder = JBPopupFactory.getInstance().createComponentPopupBuilder(panel, null);
-                                            JBPopup popup = popupBuilder.createPopup();
-                                            showPopup(popup);
-                                        }
-                                    });
-                                }
-                            }}));
+    private void showObjectList(DataContext dataContext, ConnectionAction action) {
+        if (!action.isCancelled()) {
+            List<DBObject> recentObjectList = getRecentObjectList();
+            List<DBObject> objects = getObjectList();
+            if (action.isCancelled()) return;
+
+            Dispatch.run(() -> {
+                if (objects.size() > 0) {
+                    ObjectListActionGroup actionGroup = new ObjectListActionGroup(this, objects, recentObjectList);
+                    JBPopup popup = JBPopupFactory.getInstance().createActionGroupPopup(
+                            ObjectListShowAction.this.getTitle(),
+                            actionGroup,
+                            dataContext,
+                            JBPopupFactory.ActionSelectionAid.SPEEDSEARCH,
+                            true, null, 10);
+
+                    popup.getContent().setBackground(Colors.LIGHT_BLUE);
+                    showPopup(popup);
+                } else {
+                    JLabel label = new JLabel(getEmptyListMessage(), Icons.EXEC_MESSAGES_INFO, SwingConstants.LEFT);
+                    label.setBorder(JBUI.Borders.empty(3));
+                    JPanel panel = new JPanel(new BorderLayout());
+                    panel.add(label);
+                    panel.setBackground(Colors.LIGHT_BLUE);
+                    ComponentPopupBuilder popupBuilder = JBPopupFactory.getInstance().createComponentPopupBuilder(panel, null);
+                    JBPopup popup = popupBuilder.createPopup();
+                    showPopup(popup);
+                }
+            });
+        }
     }
 
     private void showPopup(JBPopup popup) {

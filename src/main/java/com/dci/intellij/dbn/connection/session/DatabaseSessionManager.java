@@ -4,7 +4,7 @@ import com.dci.intellij.dbn.DatabaseNavigator;
 import com.dci.intellij.dbn.common.component.PersistentState;
 import com.dci.intellij.dbn.common.component.ProjectComponentBase;
 import com.dci.intellij.dbn.common.event.ProjectEvents;
-import com.dci.intellij.dbn.common.routine.ParametricRunnable;
+import com.dci.intellij.dbn.common.routine.Consumer;
 import com.dci.intellij.dbn.common.thread.Dispatch;
 import com.dci.intellij.dbn.common.util.Messages;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
@@ -43,14 +43,14 @@ public class DatabaseSessionManager extends ProjectComponentBase implements Pers
 
     public void showCreateSessionDialog(
             @NotNull ConnectionHandler connection,
-            @Nullable ParametricRunnable.Basic<DatabaseSession> callback) {
+            @Nullable Consumer<DatabaseSession> callback) {
 
         showCreateRenameSessionDialog(connection, null, callback);
     }
 
     public void showRenameSessionDialog(
             @NotNull DatabaseSession session,
-            @Nullable ParametricRunnable.Basic<DatabaseSession> callback) {
+            @Nullable Consumer<DatabaseSession> callback) {
 
         showCreateRenameSessionDialog(session.getConnection(), session, callback);
     }
@@ -59,7 +59,7 @@ public class DatabaseSessionManager extends ProjectComponentBase implements Pers
     private void showCreateRenameSessionDialog(
             @NotNull ConnectionHandler connection,
             @Nullable DatabaseSession session,
-            @Nullable ParametricRunnable.Basic<DatabaseSession> callback) {
+            @Nullable Consumer<DatabaseSession> consumer) {
 
         Dispatch.run(() -> {
             CreateRenameSessionDialog dialog = session == null ?
@@ -67,8 +67,8 @@ public class DatabaseSessionManager extends ProjectComponentBase implements Pers
                     new CreateRenameSessionDialog(connection, session);
             dialog.setModal(true);
             dialog.show();
-            if (callback != null) {
-                callback.run(dialog.getSession());
+            if (consumer != null) {
+                consumer.accept(dialog.getSession());
             }
         });
     }

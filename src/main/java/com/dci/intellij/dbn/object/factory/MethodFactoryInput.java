@@ -4,54 +4,43 @@ import com.dci.intellij.dbn.common.util.Strings;
 import com.dci.intellij.dbn.object.DBSchema;
 import com.dci.intellij.dbn.object.lookup.DBObjectRef;
 import com.dci.intellij.dbn.object.type.DBObjectType;
+import lombok.Getter;
+import lombok.Setter;
 
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+@Getter
+@Setter
 public class MethodFactoryInput extends ObjectFactoryInput{
-    private List<ArgumentFactoryInput> arguments = new ArrayList<ArgumentFactoryInput>();
+    private List<ArgumentFactoryInput> arguments = new ArrayList<>();
     private ArgumentFactoryInput returnArgument;
-    private DBObjectRef<DBSchema> schemaRef;
+    private final DBObjectRef<DBSchema> schema;
 
     public MethodFactoryInput(DBSchema schema, String objectName, DBObjectType methodType, int index) {
         super(objectName, methodType, null, index);
-        this.schemaRef = DBObjectRef.of(schema);
+        this.schema = DBObjectRef.of(schema);
     }
 
     public DBSchema getSchema() {
-        return DBObjectRef.get(schemaRef);
+        return DBObjectRef.get(schema);
     }
 
     public boolean isFunction() {
         return returnArgument != null;
     }
 
-    public List<ArgumentFactoryInput> getArguments() {
-        return arguments;
-    }
-
-    public ArgumentFactoryInput getReturnArgument() {
-        return returnArgument;
-    }
-
-    public void setReturnArgument(ArgumentFactoryInput returnArgument) {
-        this.returnArgument = returnArgument;
-    }
-
-    public void setArguments(List<ArgumentFactoryInput> arguments) {
-        this.arguments = arguments;
-    }
-
     @Override
     public void validate(List<String> errors) {
-        if (getObjectName().length() == 0) {
+        String objectName = getObjectName();
+        if (objectName.length() == 0) {
             String hint = getParent() == null ? "" : " at index " + getIndex();
             errors.add(getObjectType().getName() + " name is not specified" + hint);
             
-        } else if (!Strings.isWord(getObjectName())) {
-            errors.add("invalid " + getObjectType().getName() +" name specified" + ": \"" + getObjectName() + "\"");
+        } else if (!Strings.isWord(objectName)) {
+            errors.add("invalid " + getObjectType().getName() +" name specified" + ": \"" + objectName + "\"");
         }
 
 
@@ -60,13 +49,13 @@ public class MethodFactoryInput extends ObjectFactoryInput{
                 errors.add("missing data type for return argument");
         }
 
-        Set<String> argumentNames = new HashSet<String>();
+        Set<String> argumentNames = new HashSet<>();
         for (ArgumentFactoryInput argument : arguments) {
             argument.validate(errors);
             String argumentName = argument.getObjectName();
-            if (argumentName.length() > 0 && argumentNames.contains(argumentName)) {
-                String hint = getParent() == null ? "" : " for " + getObjectType().getName() + " \"" + getObjectName() + "\"";
-                errors.add("dupplicate argument name \"" + argumentName + "\"" + hint);
+            if (argumentNames.contains(argumentName)) {
+                String hint = getParent() == null ? "" : " for " + getObjectType().getName() + " \"" + objectName + "\"";
+                errors.add("duplicate argument name \"" + argumentName + "\"" + hint);
             }
             argumentNames.add(argumentName);
         }

@@ -166,7 +166,7 @@ public class DBJdbcBreakpointHandler extends DBBreakpointHandler<DBJdbcDebugProc
 
     private DBNConnection getDebugConnection() {
         DBJdbcDebugProcess debugProcess = getDebugProcess();
-        return debugProcess.getDebugConnection();
+        return debugProcess.getDebuggerConnection();
     }
 
     private BreakpointInfo addBreakpoint(@NotNull XLineBreakpoint<XBreakpointProperties> breakpoint) throws Exception {

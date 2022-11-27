@@ -1,6 +1,6 @@
 package com.dci.intellij.dbn.common.ui;
 
-import com.dci.intellij.dbn.common.routine.ParametricRunnable;
+import com.dci.intellij.dbn.common.routine.Consumer;
 import lombok.Getter;
 
 @Getter
@@ -11,5 +11,5 @@ public abstract class PresentableFactory<T extends Presentable> {
         this.actionName = actionName;
     }
 
-    public abstract void create(ParametricRunnable.Basic<T> callback);
+    public abstract void create(Consumer<T> consumer);
 }

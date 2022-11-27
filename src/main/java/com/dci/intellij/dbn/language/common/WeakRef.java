@@ -24,6 +24,12 @@ public class WeakRef<T> extends WeakReference<T> {
         return ref == null ? null : ref.get();
     }
 
+    @NotNull
+    public static <T> T ensure(@Nullable WeakRef<T> ref) {
+        T object = get(ref);
+        return Failsafe.nd(object);
+    }
+
     @Nullable
     @Override
     public T get() {

@@ -6,19 +6,12 @@ import com.dci.intellij.dbn.common.thread.Dispatch;
 import com.intellij.openapi.util.SystemInfo;
 import org.jetbrains.annotations.Nullable;
 
-import javax.swing.JComponent;
-import javax.swing.JPanel;
-import javax.swing.JTable;
+import javax.swing.*;
 import javax.swing.border.Border;
 import javax.swing.border.CompoundBorder;
 import javax.swing.border.TitledBorder;
 import javax.swing.table.TableCellEditor;
-import java.awt.Color;
-import java.awt.Component;
-import java.awt.IllegalComponentStateException;
-import java.awt.MouseInfo;
-import java.awt.Point;
-import java.awt.PointerInfo;
+import java.awt.*;
 import java.awt.event.InputEvent;
 
 public class UserInterface {
@@ -121,7 +114,7 @@ public class UserInterface {
         return SystemInfo.isMac ? InputEvent.META_DOWN_MASK : InputEvent.CTRL_DOWN_MASK;
     }
 
-    public static void visitRecursively(JComponent component, Visitor<Component> visitor) {
+    public static void visitRecursively(JComponent component, Visitor<JComponent> visitor) {
         visitor.visit(component);
         Component[] childComponents = component.getComponents();
         for (Component childComponent : childComponents) {

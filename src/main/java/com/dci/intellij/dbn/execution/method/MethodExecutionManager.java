@@ -5,7 +5,7 @@ import com.dci.intellij.dbn.common.component.PersistentState;
 import com.dci.intellij.dbn.common.component.ProjectComponentBase;
 import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.common.event.ProjectEvents;
-import com.dci.intellij.dbn.common.routine.ParametricRunnable;
+import com.dci.intellij.dbn.common.routine.Consumer;
 import com.dci.intellij.dbn.common.thread.Dispatch;
 import com.dci.intellij.dbn.common.thread.Progress;
 import com.dci.intellij.dbn.common.util.Commons;
@@ -106,12 +106,16 @@ public class MethodExecutionManager extends ProjectComponentBase implements Pers
     }
 
     public void promptExecutionDialog(MethodExecutionInput executionInput, @NotNull DBDebuggerType debuggerType, Runnable callback) {
+        Project project = executionInput.getProject();
+        DBObjectRef<DBMethod> methodRef = executionInput.getMethodRef();
+
         ConnectionAction.invoke("the method execution", false, executionInput,
-                action -> Progress.prompt(executionInput.getProject(), "Loading method details", true,
+                action -> Progress.prompt(project, action, true,
+                        "Loading method details",
+                        "Loading details of " + methodRef.getQualifiedNameWithType(),
                         progress -> {
-                            Project project = getProject();
                             ConnectionHandler connection = action.getConnection();
-                            String methodIdentifier = executionInput.getMethodRef().getPath();
+                            String methodIdentifier = methodRef.getPath();
                             if (connection.isValid()) {
                                 DBMethod method = executionInput.getMethod();
                                 if (method == null) {
@@ -138,35 +142,38 @@ public class MethodExecutionManager extends ProjectComponentBase implements Pers
 
 
     public void showExecutionHistoryDialog(
-            @Nullable MethodExecutionInput selection,
+            MethodExecutionInput selection,
             boolean editable,
             boolean debug,
-            @Nullable ParametricRunnable<MethodExecutionInput, RuntimeException> callback) {
+            Consumer<MethodExecutionInput> callback) {
 
         Project project = getProject();
-        Progress.modal(project, "Loading method execution history", true, progress -> {
-            MethodExecutionInput selectedInput = Commons.nvln(selection, executionHistory.getLastSelection());
-            if (selectedInput != null) {
-                // initialize method arguments while in background
-                DBMethod method = selectedInput.getMethod();
-                if (isValid(method)) {
-                    method.getArguments();
-                }
-            }
-
-            if (!progress.isCanceled()) {
-                Dispatch.run(() -> {
-                    MethodExecutionHistoryDialog executionHistoryDialog = new MethodExecutionHistoryDialog(project, selectedInput, editable, debug);
-                    executionHistoryDialog.show();
-                    MethodExecutionInput newlySelected = executionHistoryDialog.getSelectedExecutionInput();
-                    if (newlySelected != null && callback != null) {
-                        if (executionHistoryDialog.getExitCode() == DialogWrapper.OK_EXIT_CODE) {
-                            callback.run(newlySelected);
+        Progress.modal(project, selection, true,
+                "Loading data dictionary",
+                "Loading method execution history",
+                progress -> {
+                    MethodExecutionInput selectedInput = Commons.nvln(selection, executionHistory.getLastSelection());
+                    if (selectedInput != null) {
+                        // initialize method arguments while in background
+                        DBMethod method = selectedInput.getMethod();
+                        if (isValid(method)) {
+                            method.getArguments();
                         }
                     }
+
+                    if (!progress.isCanceled()) {
+                        Dispatch.run(() -> {
+                            MethodExecutionHistoryDialog executionHistoryDialog = new MethodExecutionHistoryDialog(project, selectedInput, editable, debug);
+                            executionHistoryDialog.show();
+                            MethodExecutionInput newlySelected = executionHistoryDialog.getSelectedExecutionInput();
+                            if (newlySelected != null && callback != null) {
+                                if (executionHistoryDialog.getExitCode() == DialogWrapper.OK_EXIT_CODE) {
+                                    callback.accept(newlySelected);
+                                }
+                            }
+                        });
+                    }
                 });
-            }
-        });
     }
 
     public void execute(DBMethod method) {
@@ -190,9 +197,11 @@ public class MethodExecutionManager extends ProjectComponentBase implements Pers
             DatabaseExecutionInterface executionInterface = connection.getInterfaces().getExecutionInterface();
             MethodExecutionProcessor executionProcessor = executionInterface.createExecutionProcessor(method);
 
-            Progress.prompt(project, "Executing method", true, progress -> {
+            Progress.prompt(project, method, true,
+                    "Executing method",
+                    "Executing " + method.getQualifiedNameWithType(),
+                    progress -> {
                 try {
-                    progress.setText("Executing " + method.getQualifiedNameWithType());
                     executionProcessor.execute(executionInput, DBDebuggerType.NONE);
                     if (context.isNot(CANCELLED)) {
                         ExecutionManager executionManager = ExecutionManager.getInstance(project);
@@ -254,39 +263,42 @@ public class MethodExecutionManager extends ProjectComponentBase implements Pers
     }
 
     public void promptMethodBrowserDialog(
-            @Nullable MethodExecutionInput executionInput,  boolean debug,
-            @Nullable ParametricRunnable.Basic<MethodExecutionInput> callback) {
+            @Nullable MethodExecutionInput executionInput, boolean debug,
+            @Nullable Consumer<MethodExecutionInput> callback) {
 
         Project project = getProject();
-        Progress.prompt(project, "Loading executable elements", true, progress -> {
-            MethodExecutionManager executionManager = MethodExecutionManager.getInstance(project);
-            MethodBrowserSettings settings = executionManager.getBrowserSettings();
-            DBMethod currentMethod = executionInput == null ? null : executionInput.getMethod();
-            if (currentMethod != null) {
-                currentMethod.getArguments();
-                settings.setSelectedConnection(currentMethod.getConnection());
-                settings.setSelectedSchema(currentMethod.getSchema());
-                settings.setSelectedMethod(currentMethod);
-            }
-
-            DBSchema schema = settings.getSelectedSchema();
-            ObjectTreeModel objectTreeModel = !debug || DatabaseFeature.DEBUGGING.isSupported(schema) ?
-                    new ObjectTreeModel(schema, settings.getVisibleObjectTypes(), settings.getSelectedMethod()) :
-                    new ObjectTreeModel(null, settings.getVisibleObjectTypes(), null);
-
-            Dispatch.run(() -> {
-                Failsafe.nn(project);
-                MethodExecutionBrowserDialog browserDialog = new MethodExecutionBrowserDialog(project, objectTreeModel, true);
-                browserDialog.show();
-                if (browserDialog.getExitCode() == DialogWrapper.OK_EXIT_CODE) {
-                    DBMethod method = browserDialog.getSelectedMethod();
-                    MethodExecutionInput methodExecutionInput = executionManager.getExecutionInput(method);
-                    if (callback != null && methodExecutionInput != null) {
-                        callback.run(methodExecutionInput);
+        Progress.prompt(project, executionInput, true,
+                "Loading data dictionary",
+                "Loading executable elements",
+                progress -> {
+                    MethodExecutionManager executionManager = MethodExecutionManager.getInstance(project);
+                    MethodBrowserSettings settings = executionManager.getBrowserSettings();
+                    DBMethod currentMethod = executionInput == null ? null : executionInput.getMethod();
+                    if (currentMethod != null) {
+                        currentMethod.getArguments();
+                        settings.setSelectedConnection(currentMethod.getConnection());
+                        settings.setSelectedSchema(currentMethod.getSchema());
+                        settings.setSelectedMethod(currentMethod);
                     }
-                }
-            });
-        });
+
+                    DBSchema schema = settings.getSelectedSchema();
+                    ObjectTreeModel objectTreeModel = !debug || DatabaseFeature.DEBUGGING.isSupported(schema) ?
+                            new ObjectTreeModel(schema, settings.getVisibleObjectTypes(), settings.getSelectedMethod()) :
+                            new ObjectTreeModel(null, settings.getVisibleObjectTypes(), null);
+
+                    Dispatch.run(() -> {
+                        Failsafe.nn(project);
+                        MethodExecutionBrowserDialog browserDialog = new MethodExecutionBrowserDialog(project, objectTreeModel, true);
+                        browserDialog.show();
+                        if (browserDialog.getExitCode() == DialogWrapper.OK_EXIT_CODE) {
+                            DBMethod method = browserDialog.getSelectedMethod();
+                            MethodExecutionInput methodExecutionInput = executionManager.getExecutionInput(method);
+                            if (callback != null && methodExecutionInput != null) {
+                                callback.accept(methodExecutionInput);
+                            }
+                        }
+                    });
+                });
     }
 
 

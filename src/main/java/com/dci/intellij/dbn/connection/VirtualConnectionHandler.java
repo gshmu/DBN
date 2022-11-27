@@ -130,13 +130,8 @@ public class VirtualConnectionHandler extends StatefulDisposable.Base implements
     }
 
     @Override
-    public String getPresentableText() {
-        return name;
-    }
-
-    @Override
     public String getQualifiedName() {
-        return name;
+        return "virtual " + ConnectionHandler.super.getQualifiedName();
     }
 
     @Override

@@ -11,7 +11,7 @@ import com.intellij.openapi.editor.event.DocumentListener;
 import com.intellij.openapi.project.Project;
 import org.jetbrains.annotations.NotNull;
 
-import javax.swing.Action;
+import javax.swing.*;
 
 public class TextEditorDialog extends DBNDialog<TextEditorForm> {
     private final TextEditorAdapter textEditorAdapter;
@@ -58,7 +58,10 @@ public class TextEditorDialog extends DBNDialog<TextEditorForm> {
     @Override
     protected void doOKAction() {
         String text = getForm().getText();
-        Progress.modal(getProject(), "Updating value", false, progress -> {
+        Progress.modal(getProject(), null, false,
+                "Updating data",
+                "Updating value value from text editor",
+                progress -> {
             UserValueHolder userValueHolder = textEditorAdapter.getUserValueHolder();
             userValueHolder.updateUserValue(text, false);
             textEditorAdapter.afterUpdate();

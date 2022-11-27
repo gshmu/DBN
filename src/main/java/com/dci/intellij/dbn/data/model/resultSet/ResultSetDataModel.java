@@ -6,6 +6,7 @@ import com.dci.intellij.dbn.common.thread.Background;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.ConnectionRef;
 import com.dci.intellij.dbn.connection.Resources;
+import com.dci.intellij.dbn.connection.context.DatabaseContextBase;
 import com.dci.intellij.dbn.connection.jdbc.DBNConnection;
 import com.dci.intellij.dbn.connection.jdbc.DBNResultSet;
 import com.dci.intellij.dbn.connection.jdbc.DBNStatement;
@@ -26,7 +27,7 @@ import java.util.List;
 public class ResultSetDataModel<
         R extends ResultSetDataModelRow<? extends ResultSetDataModel<R, C>, C>,
         C extends ResultSetDataModelCell<R, ? extends ResultSetDataModel<R, C>>>
-        extends SortableDataModel<R, C> {
+        extends SortableDataModel<R, C> implements DatabaseContextBase {
 
     private final ConnectionRef connection;
     private DBNResultSet resultSet;

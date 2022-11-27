@@ -3,16 +3,18 @@ package com.dci.intellij.dbn.connection;
 import com.dci.intellij.dbn.common.database.AuthenticationInfo;
 import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.common.load.ProgressMonitor;
-import com.dci.intellij.dbn.common.routine.ParametricCallable;
-import com.dci.intellij.dbn.common.routine.ParametricRunnable;
+import com.dci.intellij.dbn.common.routine.Consumer;
 import com.dci.intellij.dbn.common.thread.Dispatch;
 import com.dci.intellij.dbn.common.util.Commons;
 import com.dci.intellij.dbn.common.util.Guarded;
 import com.dci.intellij.dbn.connection.context.DatabaseContext;
+import com.dci.intellij.dbn.connection.context.DatabaseContextBase;
 import com.intellij.openapi.project.Project;
 import org.jetbrains.annotations.NotNull;
 
-public abstract class ConnectionAction implements Runnable{
+import java.util.function.Function;
+
+public abstract class ConnectionAction implements DatabaseContextBase, Runnable{
     static final String[] OPTIONS_CONNECT_CANCEL = Commons.list("Connect", "Cancel");
 
     private final String description;
@@ -130,11 +132,11 @@ public abstract class ConnectionAction implements Runnable{
             String description,
             boolean interactive,
             DatabaseContext databaseContext,
-            ParametricRunnable.Basic<ConnectionAction> action) {
+            Consumer<ConnectionAction> action) {
         new ConnectionAction(description, interactive, databaseContext) {
             @Override
             public void run() {
-                Guarded.run(() -> action.run(this));
+                Guarded.run(() -> action.accept(this));
             }
         }.start();
     }
@@ -143,15 +145,15 @@ public abstract class ConnectionAction implements Runnable{
             String description,
             boolean interactive,
             DatabaseContext databaseContext,
-            ParametricRunnable.Basic<ConnectionAction> action,
-            ParametricRunnable.Basic<ConnectionAction> cancel,
-            ParametricCallable.Basic<ConnectionAction, Boolean> canExecute) {
+            Consumer<ConnectionAction> action,
+            Consumer<ConnectionAction> cancel,
+            Function<ConnectionAction, Boolean> canExecute) {
 
         new ConnectionAction(description, interactive, databaseContext) {
             @Override
             public void run() {
-                if (canExecute == null || canExecute.call(this)) {
-                    Guarded.run(() -> action.run(this));
+                if (canExecute == null || canExecute.apply(this)) {
+                    Guarded.run(() -> action.accept(this));
                 }
             }
 
@@ -159,7 +161,7 @@ public abstract class ConnectionAction implements Runnable{
             protected void cancel() {
                 super.cancel();
                 if (cancel != null){
-                    cancel.run(this);
+                    cancel.accept(this);
                 }
             }
 

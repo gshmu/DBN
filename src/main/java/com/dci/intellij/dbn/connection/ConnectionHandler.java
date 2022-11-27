@@ -156,10 +156,6 @@ public interface ConnectionHandler extends StatefulDisposable, EnvironmentTypePr
 
     String getUserName();
 
-    String getPresentableText();
-
-    String getQualifiedName();
-
     @Nullable
     DBLanguageDialect resolveLanguageDialect(Language language);
 
@@ -221,4 +217,9 @@ public interface ConnectionHandler extends StatefulDisposable, EnvironmentTypePr
     static boolean canConnect(ConnectionHandler connection) {
         return connection != null && connection.canConnect() && connection.isValid();
     }
+
+    default String getQualifiedName() {
+        return getDatabaseType() + " connection " + getName();
+    }
+
 }

@@ -5,22 +5,28 @@ import com.dci.intellij.dbn.common.dispose.ComponentDisposer;
 import com.dci.intellij.dbn.common.environment.options.EnvironmentSettings;
 import com.dci.intellij.dbn.common.notification.NotificationSupport;
 import com.dci.intellij.dbn.common.ui.component.DBNComponentBase;
+import com.dci.intellij.dbn.common.ui.misc.DBNButton;
 import com.dci.intellij.dbn.common.ui.util.UserInterface;
 import com.dci.intellij.dbn.options.general.GeneralProjectSettings;
 import com.intellij.ide.DataManager;
 import com.intellij.openapi.Disposable;
+import com.intellij.openapi.actionSystem.ActionToolbar;
 import com.intellij.openapi.project.Project;
 import com.intellij.ui.GuiUtils;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
+import javax.swing.text.JTextComponent;
+import java.util.HashSet;
+import java.util.Set;
 
 public abstract class DBNFormBase
         extends DBNComponentBase
         implements DBNForm, NotificationSupport {
 
     private boolean initialised;
+    private final Set<JComponent> enabled = new HashSet<>();
 
     public DBNFormBase(@Nullable Disposable parent) {
         super(parent);
@@ -84,5 +90,32 @@ public abstract class DBNFormBase
         DataManager.removeDataProvider(component);
         ComponentDisposer.dispose(component);
         nullify();
+    }
+
+    public void freeze() {
+        UserInterface.visitRecursively(getComponent(), c -> disable(c));
+    }
+
+    public void unfreeze() {
+        UserInterface.visitRecursively(getComponent(), c -> enable(c));
+    }
+
+    private void disable(JComponent c) {
+        if (c instanceof AbstractButton ||
+                c instanceof JTextComponent ||
+                c instanceof ActionToolbar ||
+                c instanceof DBNButton) {
+
+            if (c.isEnabled()) {
+                enabled.add(c);
+                c.setEnabled(false);
+            }
+        }
+    }
+
+    private void enable(JComponent c) {
+        if (enabled.remove(c)) {
+            c.setEnabled(true);
+        }
     }
 }

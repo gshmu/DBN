@@ -20,9 +20,13 @@ import com.dci.intellij.dbn.common.dispose.SafeDisposer;
 import com.dci.intellij.dbn.common.environment.EnvironmentType;
 import com.dci.intellij.dbn.common.event.ProjectEvents;
 import com.dci.intellij.dbn.common.filter.Filter;
+import com.dci.intellij.dbn.common.routine.Consumer;
 import com.dci.intellij.dbn.common.thread.Background;
 import com.dci.intellij.dbn.common.ui.tree.TreeEventType;
-import com.dci.intellij.dbn.common.util.*;
+import com.dci.intellij.dbn.common.util.Commons;
+import com.dci.intellij.dbn.common.util.Guarded;
+import com.dci.intellij.dbn.common.util.Strings;
+import com.dci.intellij.dbn.common.util.Unsafe;
 import com.dci.intellij.dbn.connection.*;
 import com.dci.intellij.dbn.connection.config.ConnectionDatabaseSettings;
 import com.dci.intellij.dbn.connection.jdbc.DBNCallableStatement;
@@ -69,6 +73,7 @@ import java.util.Objects;
 import static com.dci.intellij.dbn.browser.DatabaseBrowserUtils.treeVisibilityChanged;
 import static com.dci.intellij.dbn.common.util.Compactables.compact;
 import static com.dci.intellij.dbn.common.util.Lists.filter;
+import static com.dci.intellij.dbn.common.util.Unsafe.cast;
 
 public abstract class DBObjectImpl<M extends DBObjectMetadata> extends BrowserTreeNodeBase implements DBObject, ToolTipProvider {
 
@@ -185,7 +190,7 @@ public abstract class DBObjectImpl<M extends DBObjectMetadata> extends BrowserTr
     @Nullable
     @Override
     public <E extends DatabaseEntity> E getParentEntity() {
-        return Unsafe.cast(getParentObject());
+        return cast(getParentObject());
     }
 
     @Override
@@ -287,7 +292,7 @@ public abstract class DBObjectImpl<M extends DBObjectMetadata> extends BrowserTr
         ConnectionHandler connection = this.getConnection();
         ttb.append(true, getQualifiedName(), false);
         ttb.append(true, "Connection: ", null, null, false );
-        ttb.append(false, connection.getPresentableText(), false);
+        ttb.append(false, connection.getName(), false);
     }
 
     @Override
@@ -354,8 +359,8 @@ public abstract class DBObjectImpl<M extends DBObjectMetadata> extends BrowserTr
     }
 
     @Override
-    public DBObject getChildObject(DBObjectType objectType, String name, boolean lookupHidden) {
-        return getChildObject(objectType, name, (short) 0, lookupHidden);
+    public <T extends DBObject> T  getChildObject(DBObjectType objectType, String name, boolean lookupHidden) {
+        return cast(getChildObject(objectType, name, (short) 0, lookupHidden));
     }
 
     @Override
@@ -375,7 +380,7 @@ public abstract class DBObjectImpl<M extends DBObjectMetadata> extends BrowserTr
     }
 
     @Override
-    public DBObject getChildObject(DBObjectType objectType, String name, short overload, boolean lookupHidden) {
+    public <T extends DBObject> T  getChildObject(DBObjectType objectType, String name, short overload, boolean lookupHidden) {
         if (childObjects == null) {
             return null;
         } else {
@@ -383,7 +388,7 @@ public abstract class DBObjectImpl<M extends DBObjectMetadata> extends BrowserTr
             if (object == null && lookupHidden) {
                 object = childObjects.getInternalObject(objectType, name, overload);
             }
-            return object;
+            return Unsafe.cast(object);
         }
     }
 

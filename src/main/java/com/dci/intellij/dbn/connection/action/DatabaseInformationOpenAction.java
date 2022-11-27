@@ -18,7 +18,9 @@ public class DatabaseInformationOpenAction extends AbstractConnectionAction {
     @Override
     protected void actionPerformed(@NotNull AnActionEvent e, @NotNull Project project, @NotNull ConnectionHandler connection) {
         ConnectionAction.invoke("showing database information", true, connection,
-                action -> Progress.prompt(project, "Loading database information for " + connection.getName(), false,
+                action -> Progress.prompt(project, connection, false,
+                        "Loading database information",
+                        "Loading database information for " + connection.getQualifiedName(),
                         progress -> ConnectionManager.showConnectionInfoDialog(connection)));
     }
 }

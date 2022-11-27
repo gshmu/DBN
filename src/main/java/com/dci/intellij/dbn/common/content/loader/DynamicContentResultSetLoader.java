@@ -1,5 +1,6 @@
 package com.dci.intellij.dbn.common.content.loader;
 
+import com.dci.intellij.dbn.common.Priority;
 import com.dci.intellij.dbn.common.content.DynamicContent;
 import com.dci.intellij.dbn.common.content.DynamicContentElement;
 import com.dci.intellij.dbn.common.content.DynamicContentProperty;
@@ -13,7 +14,6 @@ import com.dci.intellij.dbn.database.common.metadata.DBObjectMetadata;
 import com.dci.intellij.dbn.database.common.metadata.DBObjectMetadataFactory;
 import com.dci.intellij.dbn.database.interfaces.DatabaseInterfaceInvoker;
 import com.dci.intellij.dbn.database.interfaces.DatabaseMessageParserInterface;
-import com.dci.intellij.dbn.database.interfaces.queue.InterfaceTaskDefinition;
 import com.dci.intellij.dbn.diagnostics.Diagnostics;
 import com.dci.intellij.dbn.object.common.DBObject;
 import com.intellij.openapi.progress.ProcessCanceledException;
@@ -27,8 +27,6 @@ import java.util.List;
 import java.util.Objects;
 import java.util.UUID;
 
-import static com.dci.intellij.dbn.common.Priority.LOW;
-import static com.dci.intellij.dbn.common.Priority.MEDIUM;
 import static com.dci.intellij.dbn.common.content.DynamicContentProperty.INTERNAL;
 import static com.dci.intellij.dbn.diagnostics.Diagnostics.isDatabaseAccessDebug;
 
@@ -81,90 +79,91 @@ public abstract class DynamicContentResultSetLoader<
 
     @Override
     public void loadContent(DynamicContent<T> content) throws SQLException {
-        InterfaceTaskDefinition taskDefinition = InterfaceTaskDefinition.create(
-                content.is(INTERNAL) ? LOW : MEDIUM,
+        Priority priority = content.is(INTERNAL) ? Priority.LOW : Priority.MEDIUM;
+        DatabaseInterfaceInvoker.execute(priority,
                 "Loading data dictionary",
                 "Loading " + content.getContentDescription(),
-                content.createInterfaceContext());
+                content.createInterfaceContext(),
+                conn -> loadContent(content, conn));
+    }
 
-        DatabaseInterfaceInvoker.execute(taskDefinition, conn -> {
-            DebugInfo debugInfo = preLoadContent(content);
-            ConnectionHandler connection = content.getConnection();
-            IncrementalStatusAdapter loading = connection.getConnectionStatus().getLoading();
+    private void loadContent(DynamicContent<T> content, DBNConnection conn) throws SQLException {
+        DebugInfo debugInfo = preLoadContent(content);
+        ConnectionHandler connection = content.getConnection();
+        IncrementalStatusAdapter loading = connection.getConnectionStatus().getLoading();
+        try {
+            loading.set(true);
+            content.checkDisposed();
+            ResultSet resultSet = null;
+            List<T> list = null;
             try {
-                loading.set(true);
                 content.checkDisposed();
-                ResultSet resultSet = null;
-                List<T> list = null;
-                try {
+                resultSet = createResultSet(content, conn);
+
+                DynamicContentType<?> contentType = content.getContentType();
+                M metadata = DBObjectMetadataFactory.INSTANCE.create(contentType, resultSet);
+
+                Diagnostics.introduceDatabaseLag(Diagnostics.getQueryingLag());
+                LoaderCache loaderCache = new LoaderCache();
+                int count = 0;
+
+                while (resultSet != null && resultSet.next()) {
+                    Diagnostics.introduceDatabaseLag(Diagnostics.getFetchingLag());
                     content.checkDisposed();
-                    resultSet = createResultSet(content, conn);
 
-                    DynamicContentType<?> contentType = content.getContentType();
-                    M metadata = DBObjectMetadataFactory.INSTANCE.create(contentType, resultSet);
-
-                    Diagnostics.introduceDatabaseLag(Diagnostics.getQueryingLag());
-                    LoaderCache loaderCache = new LoaderCache();
-                    int count = 0;
-
-                    while (resultSet != null && resultSet.next()) {
-                        Diagnostics.introduceDatabaseLag(Diagnostics.getFetchingLag());
-                        content.checkDisposed();
-
-                        T element = null;
-                        try {
-                            element = createElement(content, metadata, loaderCache);
-                        } catch (ProcessCanceledException e) {
-                            return;
-                        } catch (RuntimeException e) {
-                            log.warn("Failed to create element", e);
-                        }
-
-                        content.checkDisposed();
-                        if (element == null) continue;
-
-                        if (list == null) list = new ArrayList<>();
-                        list.add(element);
-
-                        if (count % 10 == 0) {
-                            String description = element.getDescription();
-                            if (description != null)
-                                ProgressMonitor.setProgressDetail(description);
-                        }
-                        count++;
+                    T element = null;
+                    try {
+                        element = createElement(content, metadata, loaderCache);
+                    } catch (ProcessCanceledException e) {
+                        return;
+                    } catch (RuntimeException e) {
+                        log.warn("Failed to create element", e);
                     }
-                } finally {
-                    Resources.close(resultSet);
+
+                    content.checkDisposed();
+                    if (element == null) continue;
+
+                    if (list == null) list = new ArrayList<>();
+                    list.add(element);
+
+                    if (count % 10 == 0) {
+                        String description = element.getDescription();
+                        if (description != null)
+                            ProgressMonitor.setProgressDetail(description);
+                    }
+                    count++;
                 }
-                content.checkDisposed();
-                content.setElements(list);
-                content.set(DynamicContentProperty.MASTER, master);
-
-                postLoadContent(content, debugInfo);
-
-            } catch (ProcessCanceledException e) {
-                throw new SQLTimeoutException(e);
-
-            } catch (SQLTimeoutException |
-                     SQLFeatureNotSupportedException |
-                     SQLTransientConnectionException |
-                     SQLNonTransientConnectionException e) {
-                throw e;
-
-            } catch (SQLException e) {
-                DatabaseMessageParserInterface messageParserInterface = connection.getMessageParserInterface();
-                boolean modelException = messageParserInterface.isModelException(e);
-                if (modelException) {
-                    throw new SQLFeatureNotSupportedException(e);
-                }
-                throw e;
-            } catch (Throwable e) {
-                throw new SQLException(e);
-
             } finally {
-                loading.set(false);
+                Resources.close(resultSet);
             }
-        });
+            content.checkDisposed();
+            content.setElements(list);
+            content.set(DynamicContentProperty.MASTER, master);
+
+            postLoadContent(content, debugInfo);
+
+        } catch (ProcessCanceledException e) {
+            throw new SQLTimeoutException(e);
+
+        } catch (SQLTimeoutException |
+                 SQLFeatureNotSupportedException |
+                 SQLTransientConnectionException |
+                 SQLNonTransientConnectionException e) {
+            throw e;
+
+        } catch (SQLException e) {
+            DatabaseMessageParserInterface messageParserInterface = connection.getMessageParserInterface();
+            boolean modelException = messageParserInterface.isModelException(e);
+            if (modelException) {
+                throw new SQLFeatureNotSupportedException(e);
+            }
+            throw e;
+        } catch (Throwable e) {
+            throw new SQLException(e);
+
+        } finally {
+            loading.set(false);
+        }
     }
 
     public static class LoaderCache {

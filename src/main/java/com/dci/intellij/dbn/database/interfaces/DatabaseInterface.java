@@ -1,23 +1,28 @@
 package com.dci.intellij.dbn.database.interfaces;
 
-import com.dci.intellij.dbn.common.routine.ParametricCallable;
-import com.dci.intellij.dbn.common.routine.ParametricRunnable;
-import com.dci.intellij.dbn.common.routine.ThrowableCallable;
-import com.dci.intellij.dbn.common.routine.ThrowableRunnable;
 import com.dci.intellij.dbn.connection.jdbc.DBNConnection;
 
 import java.sql.SQLException;
 
 public interface DatabaseInterface {
 
-    default void reset() {}
+    default void reset() {
+    }
 
-    interface Callable<T> extends ThrowableCallable<T, SQLException> {}
+    interface Callable<T> {
+        T call() throws SQLException;
+    }
 
-    interface Runnable extends ThrowableRunnable<SQLException> {}
+    interface Runnable {
+        void run() throws SQLException;
+    }
 
-    interface ConnectionCallable<T> extends ParametricCallable<DBNConnection, T, SQLException> {}
+    interface ConnectionCallable<T> {
+        T call(DBNConnection conn) throws SQLException;
+    }
 
-    interface ConnectionRunnable extends ParametricRunnable<DBNConnection, SQLException> {}
+    interface ConnectionRunnable {
+        void run(DBNConnection conn) throws SQLException;
+    }
 
 }

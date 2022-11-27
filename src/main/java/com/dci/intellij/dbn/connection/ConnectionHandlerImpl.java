@@ -309,7 +309,7 @@ public class ConnectionHandlerImpl extends StatefulDisposable.Base implements Co
     }
 
     public String toString() {
-        return getPresentableText();
+        return getName();
     }
 
     @Override
@@ -614,10 +614,6 @@ public class ConnectionHandlerImpl extends StatefulDisposable.Base implements Co
     /*********************************************************
      *                       TreeElement                     *
      *********************************************************/
-    @Override
-    public String getQualifiedName() {
-        return getPresentableText();
-    }
 
     @Override
     @NotNull
@@ -628,11 +624,6 @@ public class ConnectionHandlerImpl extends StatefulDisposable.Base implements Co
     @Override
     public String getDescription() {
         return getSettings().getDatabaseSettings().getDescription();
-    }
-
-    @Override
-    public String getPresentableText(){
-        return getSettings().getDatabaseSettings().getName();
     }
 
     @Override

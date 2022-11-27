@@ -22,11 +22,11 @@ import com.dci.intellij.dbn.object.type.DBObjectType;
 import com.intellij.openapi.actionSystem.ActionToolbar;
 import org.jetbrains.annotations.NotNull;
 
-import javax.swing.JPanel;
+import javax.swing.*;
 import javax.swing.event.TreeSelectionListener;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.TreePath;
-import java.awt.BorderLayout;
+import java.awt.*;
 
 public class MethodExecutionBrowserForm extends DBNFormBase {
 
@@ -103,14 +103,17 @@ public class MethodExecutionBrowserForm extends DBNFormBase {
     }
 
     private void updateTree() {
-        Progress.prompt(getProject(), "Loading executable components", false, progress -> {
-            MethodBrowserSettings settings = getSettings();
-            ObjectTreeModel model = new ObjectTreeModel(settings.getSelectedSchema(), settings.getVisibleObjectTypes(), null);
-            Dispatch.run(() -> {
-                methodsTree.setModel(model);
-                UserInterface.repaint(methodsTree);
-            });
-        });
+        Progress.prompt(getProject(), null, false,
+                "Loading data dictionary",
+                "Loading executable elements",
+                progress -> {
+                    MethodBrowserSettings settings = getSettings();
+                    ObjectTreeModel model = new ObjectTreeModel(settings.getSelectedSchema(), settings.getVisibleObjectTypes(), null);
+                    Dispatch.run(() -> {
+                        methodsTree.setModel(model);
+                        UserInterface.repaint(methodsTree);
+                    });
+                });
     }
 
     @NotNull

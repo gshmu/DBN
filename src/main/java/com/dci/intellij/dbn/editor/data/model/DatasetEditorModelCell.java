@@ -177,7 +177,7 @@ public class DatasetEditorModelCell
 
         if (!Commons.match(userValue, getUserValue()) || hasError()) {
             DatasetEditorModelRow row = getRow();
-            DatasetEditorError error = new DatasetEditorError(errorMessage, getColumnInfo().getColumn());
+            DatasetEditorError error = new DatasetEditorError(errorMessage, getColumn());
             getRow().notifyError(error, true, true);
             setUserValue(userValue);
             ConnectionHandler connection = getConnectionHandler();
@@ -279,7 +279,7 @@ public class DatasetEditorModelCell
     }
 
     public boolean isNavigable() {
-        DBColumn column = getColumnInfo().getColumn();
+        DBColumn column = getColumn();
         return column.isForeignKey() && getUserValue() != null;
     }
 
@@ -358,5 +358,9 @@ public class DatasetEditorModelCell
             updateUserValue(originalUserValue, false);
             set(MODIFIED, false);
         }
+    }
+
+    public DBColumn getColumn() {
+        return getColumnInfo().getColumn();
     }
 }

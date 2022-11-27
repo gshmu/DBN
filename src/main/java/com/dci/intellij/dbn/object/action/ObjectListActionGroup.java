@@ -8,11 +8,11 @@ import java.util.List;
 
 public class ObjectListActionGroup extends DefaultActionGroup {
 
-    private ObjectListShowAction listShowAction;
-    private List<? extends DBObject> objects;
-    private List<? extends DBObject> recentObjects;
+    private final ObjectListShowAction listShowAction;
+    private final List<DBObject> objects;
+    private final List<DBObject> recentObjects;
 
-    public ObjectListActionGroup(ObjectListShowAction listShowAction, List<? extends DBObject> objects, List<? extends DBObject> recentObjects) {
+    public ObjectListActionGroup(ObjectListShowAction listShowAction, List<DBObject> objects, List<DBObject> recentObjects) {
         super("", true);
         this.objects = objects;
         this.recentObjects = recentObjects;

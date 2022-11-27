@@ -1,13 +1,14 @@
 package com.dci.intellij.dbn.database.interfaces.queue;
 
 import com.dci.intellij.dbn.common.dispose.StatefulDisposable;
+import com.dci.intellij.dbn.common.routine.Consumer;
 import com.dci.intellij.dbn.common.routine.ThrowableCallable;
 import com.dci.intellij.dbn.common.routine.ThrowableRunnable;
 import com.dci.intellij.dbn.common.thread.Threads;
-import com.dci.intellij.dbn.common.util.Consumer;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.ConnectionRef;
 import com.dci.intellij.dbn.database.interfaces.DatabaseInterfaceQueue;
+import com.intellij.openapi.project.Project;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.jetbrains.annotations.NotNull;
@@ -17,12 +18,10 @@ import java.sql.SQLException;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.PriorityBlockingQueue;
-import java.util.concurrent.TimeUnit;
 import java.util.concurrent.locks.LockSupport;
 
 import static com.dci.intellij.dbn.database.interfaces.queue.InterfaceTask.COMPARATOR;
-import static com.dci.intellij.dbn.database.interfaces.queue.InterfaceTaskStatus.QUEUED;
-import static com.dci.intellij.dbn.database.interfaces.queue.InterfaceTaskStatus.SCHEDULED;
+import static com.dci.intellij.dbn.database.interfaces.queue.InterfaceTaskStatus.*;
 
 @Slf4j
 public class InterfaceQueue extends StatefulDisposable.Base implements DatabaseInterfaceQueue {
@@ -79,20 +78,20 @@ public class InterfaceQueue extends StatefulDisposable.Base implements DatabaseI
 
     @Override
     public void scheduleAndWait(InterfaceTaskDefinition info, ThrowableRunnable<SQLException> runnable) throws SQLException {
-        queue(info, true, runnable.asCallable());
+        queue(info, true, ThrowableCallable.from(runnable));
     }
 
     @Override
     public void scheduleAndForget(InterfaceTaskDefinition info, ThrowableRunnable<SQLException> runnable) throws SQLException {
-        queue(info, false, runnable.asCallable());
+        queue(info, false, ThrowableCallable.from(runnable));
     }
 
     @NotNull
     private <T> InterfaceTask<T> queue(InterfaceTaskDefinition info, boolean synchronous, ThrowableCallable<T, SQLException> callable) throws SQLException {
         InterfaceTask<T> task = new InterfaceTask<>(info, synchronous, callable);
         queue.add(task);
-        counters.queued().increment();
-        task.changeStatus(QUEUED);
+        boolean queued = task.changeStatus(QUEUED, () -> counters.queued().increment());
+
         task.awaitCompletion();
         return task;
     }
@@ -111,10 +110,10 @@ public class InterfaceQueue extends StatefulDisposable.Base implements DatabaseI
         while (!stopped) {
             InterfaceTask<?> task = nextTask();
             if (task == null) continue;
-            counters.queued().decrement();
+
+            task.changeStatus(DEQUEUED, () -> counters.queued().decrement());
             consumer.accept(task);
-            counters.running().increment();
-            task.changeStatus(SCHEDULED);
+            task.changeStatus(SCHEDULED, () -> counters.running().increment());
         }
     }
 
@@ -122,10 +121,10 @@ public class InterfaceQueue extends StatefulDisposable.Base implements DatabaseI
     private InterfaceTask<?> nextTask() {
         checkDisposed();
         if (counters.running().get() >= maxActiveTasks()) {
-            LockSupport.park();
+            LockSupport.park(counters);
             return null;
         }
-        return queue.poll(1, TimeUnit.MINUTES);
+        return queue.take();
     }
 
     void executeTask(InterfaceTask<?> task) {
@@ -142,5 +141,9 @@ public class InterfaceQueue extends StatefulDisposable.Base implements DatabaseI
         stopped = true;
         queue.clear();
         counters.queued().reset();
+    }
+
+    public Project getProject() {
+        return getConnection().getProject();
     }
 }

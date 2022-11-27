@@ -317,7 +317,7 @@ public class DatasetEditorModel
 
     @Nullable
     public DatasetFilterInput resolveForeignKeyRecord(DatasetEditorModelCell cell) {
-        DBColumn column = cell.getColumnInfo().getColumn();
+        DBColumn column = cell.getColumn();
         if (!column.isForeignKey()) return null;
 
         for (DBConstraint constraint : column.getConstraints()) {
@@ -356,7 +356,11 @@ public class DatasetEditorModel
     public void deleteRecords(int[] rowIndexes) {
         DatasetEditorTable editorTable = getEditorTable();
         editorTable.fireEditingCancel();
-        Progress.prompt(getProject(), "Deleting records", true, progress -> {
+        DBDataset dataset = getDataset();
+        Progress.prompt(getProject(), dataset, true,
+                "Deleting records",
+                "Deleting records from " + dataset.getQualifiedNameWithType(),
+                progress -> {
             progress.setIndeterminate(false);
             for (int index : rowIndexes) {
                 progress.setFraction(Progress.progressOf(index, rowIndexes.length));
@@ -373,7 +377,6 @@ public class DatasetEditorModel
                 }
                 set(MODIFIED, true);
             }
-            DBDataset dataset = getDataset();
             DBNConnection connection = getResultConnection();
             connection.notifyDataChanges(dataset.getVirtualFile());
         });

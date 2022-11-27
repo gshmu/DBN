@@ -142,7 +142,7 @@ public abstract class DBSchemaObjectImpl<M extends DBObjectMetadata> extends DBO
             try {
                 DBSchema schema = getSchema();
                 DatabaseMetadataInterface metadataInterface = getMetadataInterface();
-                resultSet = metadataInterface.loadReferencingSchemas(schema.getName(), getName(), conn);
+                resultSet = metadataInterface.loadReferencingSchemas(getSchemaName(), getName(), conn);
                 DBObjectBundle objectBundle = getObjectBundle();
                 while (resultSet.next()) {
                     String schemaName = resultSet.getString("SCHEMA_NAME");
@@ -185,7 +185,7 @@ public abstract class DBSchemaObjectImpl<M extends DBObjectMetadata> extends DBO
             public ResultSet createResultSet(DynamicContent<DBObject> dynamicContent, DBNConnection connection) throws SQLException {
                 DatabaseMetadataInterface metadataInterface = dynamicContent.getMetadataInterface();
                 DBSchemaObject schemaObject = dynamicContent.ensureParentEntity();
-                return metadataInterface.loadReferencedObjects(schemaObject.getSchema().getName(), schemaObject.getName(), connection);
+                return metadataInterface.loadReferencedObjects(schemaObject.getSchemaName(), schemaObject.getName(), connection);
             }
 
             @Override
@@ -214,7 +214,7 @@ public abstract class DBSchemaObjectImpl<M extends DBObjectMetadata> extends DBO
             public ResultSet createResultSet(DynamicContent<DBObject> dynamicContent, DBNConnection connection) throws SQLException {
                 DatabaseMetadataInterface metadataInterface = dynamicContent.getMetadataInterface();
                 DBSchemaObject schemaObject = dynamicContent.ensureParentEntity();
-                return metadataInterface.loadReferencingObjects(schemaObject.getSchema().getName(), schemaObject.getName(), connection);
+                return metadataInterface.loadReferencingObjects(schemaObject.getSchemaName(), schemaObject.getName(), connection);
             }
 
             @Override
