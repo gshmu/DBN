@@ -2,7 +2,7 @@ package com.dci.intellij.dbn.common.util;
 
 import com.intellij.openapi.progress.ProcessCanceledException;
 import lombok.SneakyThrows;
-import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.concurrent.Callable;
 
@@ -11,17 +11,17 @@ public final class Guarded {
 
 
     @SneakyThrows
-    public static <R> R call(R defaultValue, @NotNull Callable<R> callable){
+    public static <R> R call(R defaultValue, @Nullable Callable<R> callable){
         try {
-            return callable.call();
+            return callable == null ? defaultValue : callable.call();
         } catch (ProcessCanceledException | IllegalStateException /*| UnsupportedOperationException*/ | AbstractMethodError ignore){
             return defaultValue;
         }
     }
 
-    public static void run(@NotNull Runnable runnable){
+    public static void run(@Nullable Runnable runnable){
         try {
-            runnable.run();
+            if (runnable != null) runnable.run();
         } catch (ProcessCanceledException | IllegalStateException /*| UnsupportedOperationException*/ | AbstractMethodError ignore){}
     }
 }

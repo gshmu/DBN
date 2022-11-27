@@ -1,6 +1,6 @@
 package com.dci.intellij.dbn.connection.config;
 
-import com.dci.intellij.dbn.common.util.Consumer;
+import com.dci.intellij.dbn.common.routine.Consumer;
 import com.dci.intellij.dbn.common.util.Safe;
 import com.dci.intellij.dbn.connection.ConnectionId;
 

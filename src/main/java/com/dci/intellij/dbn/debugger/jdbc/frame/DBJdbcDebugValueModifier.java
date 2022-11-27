@@ -44,7 +44,7 @@ public class DBJdbcDebugValueModifier extends XValueModifier {
                     value.getVariableName(),
                     0,
                     expression,
-                    debugProcess.getDebugConnection());
+                    debugProcess.getDebuggerConnection());
 
             if (operationInfo.getError() != null) {
                 callback.errorOccurred("Could not change value. " + operationInfo.getError());

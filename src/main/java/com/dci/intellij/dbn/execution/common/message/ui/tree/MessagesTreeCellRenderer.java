@@ -89,7 +89,7 @@ public class MessagesTreeCellRenderer extends ColoredTreeCellRenderer {
                 }
 
                 if (connection != null) {
-                    append(" - " + connection.getPresentableText(), SimpleTextAttributes.GRAY_ATTRIBUTES);
+                    append(" - " + connection.getName(), SimpleTextAttributes.GRAY_ATTRIBUTES);
                 }
             }
             else if (value instanceof CompilerMessageNode) {

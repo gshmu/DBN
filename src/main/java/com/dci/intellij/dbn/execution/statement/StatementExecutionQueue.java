@@ -1,10 +1,10 @@
 package com.dci.intellij.dbn.execution.statement;
 
 import com.dci.intellij.dbn.common.dispose.StatefulDisposable;
-import com.dci.intellij.dbn.common.project.ProjectRef;
 import com.dci.intellij.dbn.common.thread.Progress;
 import com.dci.intellij.dbn.common.util.Guarded;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
+import com.dci.intellij.dbn.connection.ConnectionRef;
 import com.dci.intellij.dbn.execution.ExecutionContext;
 import com.dci.intellij.dbn.execution.statement.processor.StatementExecutionProcessor;
 import com.intellij.openapi.project.Project;
@@ -17,12 +17,12 @@ import static com.dci.intellij.dbn.execution.ExecutionStatus.*;
 
 public final class StatementExecutionQueue extends StatefulDisposable.Base {
     private final Queue<StatementExecutionProcessor> processors = new ConcurrentLinkedQueue<>();
-    private final ProjectRef project;
+    private final ConnectionRef connection;
     private volatile boolean executing = false;
 
     public StatementExecutionQueue(ConnectionHandler connection) {
         super(connection);
-        project = ProjectRef.of(connection.getProject());
+        this.connection = connection.ref();
     }
 
     void queue(StatementExecutionProcessor processor) {
@@ -37,33 +37,40 @@ public final class StatementExecutionQueue extends StatefulDisposable.Base {
 
     @NotNull
     public Project getProject() {
-        return project.ensure();
+        return getConnection().getProject();
     }
 
+    public ConnectionHandler getConnection() {
+        return ConnectionRef.ensure(connection);
+    }
 
     private synchronized void execute() {
-        if (!executing) {
-            executing = true;
-            Project project = getProject();
-            Progress.background(project, "Executing statements", true, progress -> {
-                try {
-                    StatementExecutionProcessor processor = processors.poll();
-                    while (processor != null) {
-                        execute(processor);
+        if (executing) return;
+        executing = true;
 
+        Project project = getProject();
+        ConnectionHandler connection = getConnection();
+        Progress.background(project, connection, true,
+                "Executing statements",
+                "Executing SQL statements",
+                progress -> {
+                    try {
+                        StatementExecutionProcessor processor = processors.poll();
+                        while (processor != null) {
+                            execute(processor);
+
+                            if (progress.isCanceled()) {
+                                cancelExecution();
+                            }
+                            processor = processors.poll();
+                        }
+                    } finally {
+                        executing = false;
                         if (progress.isCanceled()) {
                             cancelExecution();
                         }
-                        processor = processors.poll();
                     }
-                } finally {
-                    executing = false;
-                    if (progress.isCanceled()) {
-                        cancelExecution();
-                    }
-                }
-            });
-        }
+                });
     }
 
     private void execute(StatementExecutionProcessor processor) {

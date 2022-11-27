@@ -1,5 +1,6 @@
 package com.dci.intellij.dbn.editor.data.model;
 
+import com.dci.intellij.dbn.common.latent.Latent;
 import com.dci.intellij.dbn.common.util.RefreshableValue;
 import com.dci.intellij.dbn.data.grid.options.DataGridSettings;
 import com.dci.intellij.dbn.data.model.resultSet.ResultSetColumnInfo;
@@ -18,6 +19,8 @@ import org.jetbrains.annotations.NotNull;
 import java.util.Collections;
 import java.util.List;
 
+import static com.dci.intellij.dbn.common.util.Commons.nvl;
+
 @Getter
 @Setter
 @EqualsAndHashCode(callSuper = true)
@@ -30,10 +33,10 @@ public class DatasetEditorColumnInfo extends ResultSetColumnInfo {
     private final DBObjectRef<DBColumn> columnRef;
 
     @EqualsAndHashCode.Exclude
-    private volatile List<String> possibleValues;
+    private Latent<List<String>> possibleValues = Latent.basic(() -> loadPossibleValues());
 
     @EqualsAndHashCode.Exclude
-    private final RefreshableValue<Boolean> auditColumn = new RefreshableValue<Boolean>(2000) {
+    private final RefreshableValue<Boolean> auditColumn = new RefreshableValue<>(2000) {
         @Override
         protected Boolean load() {
             DBColumn column = getColumn();
@@ -60,36 +63,32 @@ public class DatasetEditorColumnInfo extends ResultSetColumnInfo {
     }
 
     public List<String> getPossibleValues() {
-        if (possibleValues == null) {
-            synchronized (this) {
-                if (possibleValues == null) {
-                    possibleValues = Collections.emptyList();
-                    List<String> values = null;
-                    DBColumn column = getColumn();
-                    if (column.isForeignKey()) {
-                        DBColumn foreignKeyColumn = column.getForeignKeyColumn();
-                        if (foreignKeyColumn != null) {
-                            values = DatasetEditorUtils.loadDistinctColumnValues(foreignKeyColumn);
-                        }
-                    } else {
-                        values = DatasetEditorUtils.loadDistinctColumnValues(column);
-                    }
+        return possibleValues.get();
+    }
 
-                    if (values != null) {
-                        DataEditorSettings dataEditorSettings = DataEditorSettings.getInstance(column.getProject());
-                        int maxElementCount = dataEditorSettings.getValueListPopupSettings().getElementCountThreshold();
-                        if (values.size() > maxElementCount) values.clear();
-                        possibleValues = values;
-                    }
-                }
+    private List<String> loadPossibleValues() {
+        List<String> values = null;
+        DBColumn column = getColumn();
+        if (column.isForeignKey()) {
+            DBColumn foreignKeyColumn = column.getForeignKeyColumn();
+            if (foreignKeyColumn != null) {
+                values = DatasetEditorUtils.loadDistinctColumnValues(foreignKeyColumn);
             }
+        } else {
+            values = DatasetEditorUtils.loadDistinctColumnValues(column);
         }
-        return possibleValues;
+
+        if (values != null) {
+            DataEditorSettings dataEditorSettings = DataEditorSettings.getInstance(column.getProject());
+            int maxElementCount = dataEditorSettings.getValueListPopupSettings().getElementCountThreshold();
+            if (values.size() > maxElementCount) values.clear();
+        }
+        return nvl(values, Collections.emptyList());
     }
 
     @Override
     public void dispose() {
-        if (possibleValues != null) possibleValues.clear();
+        possibleValues.reset();
     }
 
     @Override

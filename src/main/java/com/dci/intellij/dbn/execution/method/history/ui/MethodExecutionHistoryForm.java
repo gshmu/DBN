@@ -28,11 +28,10 @@ import com.intellij.openapi.actionSystem.ToggleAction;
 import com.intellij.openapi.project.Project;
 import org.jetbrains.annotations.NotNull;
 
-import javax.swing.JPanel;
-import javax.swing.JTree;
+import javax.swing.*;
 import javax.swing.event.ChangeListener;
 import javax.swing.event.TreeSelectionListener;
-import java.awt.BorderLayout;
+import java.awt.*;
 import java.util.List;
 import java.util.Map;
 
@@ -198,7 +197,9 @@ public class MethodExecutionHistoryForm extends DBNFormBase {
         MethodExecutionInput executionInput = getTree().getSelectedExecutionInput();
         if (executionInput != null) {
             ConnectionAction.invoke("loading the execution history", true, executionInput,
-                    action -> Progress.prompt(getProject(), "Loading method details", false,
+                    action -> Progress.prompt(getProject(), action, false,
+                            "Loading method details",
+                            "Loading details of " + executionInput.getMethodRef().getQualifiedNameWithType(),
                             progress -> {
                                 DBMethod method = executionInput.getMethod();
                                 if (method != null) {

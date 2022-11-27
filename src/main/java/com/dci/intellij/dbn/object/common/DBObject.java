@@ -8,8 +8,8 @@ import com.dci.intellij.dbn.common.content.DynamicContentType;
 import com.dci.intellij.dbn.common.environment.EnvironmentTypeProvider;
 import com.dci.intellij.dbn.common.path.Node;
 import com.dci.intellij.dbn.common.property.PropertyHolder;
+import com.dci.intellij.dbn.common.routine.Consumer;
 import com.dci.intellij.dbn.common.ui.Presentable;
-import com.dci.intellij.dbn.common.util.Consumer;
 import com.dci.intellij.dbn.connection.ConnectionId;
 import com.dci.intellij.dbn.database.interfaces.DatabaseInterfaceContext;
 import com.dci.intellij.dbn.editor.DBContentType;
@@ -85,9 +85,9 @@ public interface DBObject extends
     @Nullable
     DBObjectList<? extends DBObject> getChildObjectList(DBObjectType objectType);
 
-    DBObject getChildObject(DBObjectType objectType, String name, boolean lookupHidden);
+    <T extends DBObject> T getChildObject(DBObjectType objectType, String name, boolean lookupHidden);
 
-    DBObject getChildObject(DBObjectType objectType, String name, short overload, boolean lookupHidden);
+    <T extends DBObject> T  getChildObject(DBObjectType objectType, String name, short overload, boolean lookupHidden);
 
     @Nullable
     DBObject getChildObject(String name, boolean lookupHidden);
@@ -136,6 +136,7 @@ public interface DBObject extends
         return getObjectType();
     }
 
+    @Deprecated // do not use schema aware context
     default DatabaseInterfaceContext createInterfaceContext() {
         return DatabaseInterfaceContext.create(getConnection(), getSchemaId(), true);
     }

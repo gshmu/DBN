@@ -146,7 +146,7 @@ abstract class IssueReportSubmitter extends ErrorReportSubmitter {
         }
 
 
-        Progress.prompt(project, "Submitting issue report", true, progress -> {
+        Progress.prompt(project, null, true, "Submitting issue report", null, progress -> {
             TicketResponse result;
             try {
                 result = submit(events, localPluginVersion, summary, description.toString());

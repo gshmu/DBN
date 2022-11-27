@@ -25,8 +25,10 @@ import javax.swing.*;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import java.awt.*;
+import java.util.ArrayList;
 import java.util.List;
-import java.util.*;
+import java.util.Objects;
+import java.util.Set;
 
 
 public class StatementExecutionVariableValueForm extends DBNFormBase {
@@ -86,16 +88,6 @@ public class StatementExecutionVariableValueForm extends DBNFormBase {
                 }
 
                 return values;
-            }
-
-            @Override
-            public List<String> getSecondaryValues() {
-                return Collections.emptyList();
-            }
-
-            @Override
-            public boolean isLongLoading() {
-                return false;
             }
         }, true);
         editorComponent.setEnabled(!variable.useNull());

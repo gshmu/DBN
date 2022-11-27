@@ -1,7 +1,7 @@
 package com.dci.intellij.dbn.common.project;
 
 import com.dci.intellij.dbn.common.event.ApplicationEvents;
-import com.dci.intellij.dbn.common.routine.ParametricRunnable;
+import com.dci.intellij.dbn.common.routine.Consumer;
 import com.dci.intellij.dbn.common.thread.Dispatch;
 import com.dci.intellij.dbn.common.util.Guarded;
 import com.intellij.openapi.project.Project;
@@ -20,33 +20,33 @@ public final class Projects {
         });
     }
 
-    public static void projectOpened(ParametricRunnable<Project, RuntimeException> runnable) {
+    public static void projectOpened(Consumer<Project> consumer) {
         ApplicationEvents.subscribe(null, ProjectManager.TOPIC,
                 new ProjectManagerListener() {
                     @Override
                     public void projectOpened(@NotNull Project project) {
-                        Guarded.run(() -> runnable.run(project));
+                        Guarded.run(() -> consumer.accept(project));
                     }
                 });
     }
 
-    public static void projectClosing(ParametricRunnable<Project, RuntimeException> runnable) {
+    public static void projectClosing(Consumer<Project> consumer) {
         ApplicationEvents.subscribe(null, ProjectManager.TOPIC,
                 new ProjectManagerListener() {
                     @Override
                     public void projectClosing(@NotNull Project project) {
-                        Guarded.run(() -> runnable.run(project));
+                        Guarded.run(() -> consumer.accept(project));
                     }
                 });
 
     }
 
-    public static void projectClosed(ParametricRunnable<Project, RuntimeException> runnable) {
+    public static void projectClosed(Consumer<Project> runnable) {
         ApplicationEvents.subscribe(null, ProjectManager.TOPIC,
                 new ProjectManagerListener() {
                     @Override
                     public void projectClosed(@NotNull Project project) {
-                        Guarded.run(() -> runnable.run(project));
+                        Guarded.run(() -> runnable.accept(project));
                     }
                 });
 

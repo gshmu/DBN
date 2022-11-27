@@ -1,4 +1,4 @@
-package com.dci.intellij.dbn.common.util;
+package com.dci.intellij.dbn.common.routine;
 
 import org.jetbrains.annotations.Nullable;
 

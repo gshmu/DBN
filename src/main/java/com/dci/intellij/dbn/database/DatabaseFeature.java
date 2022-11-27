@@ -38,14 +38,14 @@ public enum DatabaseFeature {
         this.description = description;
     }
 
-    public boolean isNotSupported(@Nullable DatabaseContext connectionProvider) {
-        return !isSupported(connectionProvider);
+    public boolean isNotSupported(@Nullable DatabaseContext context) {
+        return !isSupported(context);
     }
 
-    public boolean isSupported(@Nullable DatabaseContext connectionProvider) {
-        if (connectionProvider == null) return false;
+    public boolean isSupported(@Nullable DatabaseContext context) {
+        if (context == null) return false;
 
-        DatabaseCompatibilityInterface compatibility = connectionProvider.getCompatibilityInterface();
+        DatabaseCompatibilityInterface compatibility = context.getCompatibilityInterface();
         return compatibility.supportsFeature(this);
     }
 }

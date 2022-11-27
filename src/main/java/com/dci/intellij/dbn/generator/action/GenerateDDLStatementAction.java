@@ -26,6 +26,8 @@ public class GenerateDDLStatementAction extends GenerateStatementAction {
         return getObject().getConnection();
     }
 
+
+
     @NotNull
     public DBObject getObject() {
         return DBObjectRef.ensure(object);

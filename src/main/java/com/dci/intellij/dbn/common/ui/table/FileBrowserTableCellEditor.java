@@ -2,6 +2,7 @@ package com.dci.intellij.dbn.common.ui.table;
 
 import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.common.thread.Dispatch;
+import com.dci.intellij.dbn.common.ui.misc.DBNButton;
 import com.dci.intellij.dbn.common.ui.util.Borders;
 import com.dci.intellij.dbn.common.ui.util.Mouse;
 import com.intellij.openapi.fileChooser.FileChooserDescriptor;
@@ -17,8 +18,6 @@ import java.awt.*;
 import java.awt.event.MouseEvent;
 import java.io.File;
 
-import static com.dci.intellij.dbn.data.editor.ui.DataEditorComponent.BUTTON_BORDER;
-
 public class FileBrowserTableCellEditor extends AbstractCellEditor implements TableCellEditor{
     private final JPanel mainPanel = new JPanel();
     private final JTextField textField = new JTextField();
@@ -28,9 +27,7 @@ public class FileBrowserTableCellEditor extends AbstractCellEditor implements Ta
         this.fileChooserDescriptor = fileChooserDescriptor;
         textField.setBorder(Borders.TEXT_FIELD_INSETS);
 
-        JLabel button = new JLabel(Icons.DATA_EDITOR_BROWSE);
-        button.setBorder(BUTTON_BORDER);
-        button.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+        DBNButton button = new DBNButton(Icons.DATA_EDITOR_BROWSE);
         button.setMaximumSize(new Dimension(10, -1));
         mainPanel.setBackground(UIUtil.getTableBackground());
         button.addMouseListener(Mouse.listener().onClick(e -> openFileChooser(e)));

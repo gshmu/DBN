@@ -14,17 +14,8 @@ import com.dci.intellij.dbn.language.common.DBLanguagePsiFile;
 import com.dci.intellij.dbn.language.common.TokenTypeCategory;
 import com.dci.intellij.dbn.language.common.element.ElementType;
 import com.dci.intellij.dbn.language.common.element.util.ElementTypeAttribute;
-import com.dci.intellij.dbn.language.common.navigation.NavigateToDefinitionAction;
-import com.dci.intellij.dbn.language.common.navigation.NavigateToObjectAction;
-import com.dci.intellij.dbn.language.common.navigation.NavigateToSpecificationAction;
-import com.dci.intellij.dbn.language.common.navigation.NavigationAction;
-import com.dci.intellij.dbn.language.common.navigation.NavigationGutterRenderer;
-import com.dci.intellij.dbn.language.common.psi.BasePsiElement;
-import com.dci.intellij.dbn.language.common.psi.ChameleonPsiElement;
-import com.dci.intellij.dbn.language.common.psi.ExecutablePsiElement;
-import com.dci.intellij.dbn.language.common.psi.IdentifierPsiElement;
-import com.dci.intellij.dbn.language.common.psi.NamedPsiElement;
-import com.dci.intellij.dbn.language.common.psi.TokenPsiElement;
+import com.dci.intellij.dbn.language.common.navigation.*;
+import com.dci.intellij.dbn.language.common.psi.*;
 import com.dci.intellij.dbn.object.common.DBSchemaObject;
 import com.dci.intellij.dbn.object.type.DBObjectType;
 import com.dci.intellij.dbn.options.ProjectSettings;
@@ -42,7 +33,7 @@ public class PSQLLanguageAnnotator implements Annotator {
 
     @Override
     public void annotate(@NotNull final PsiElement psiElement, @NotNull final AnnotationHolder holder) {
-        ThreadMonitor.run(null,
+        ThreadMonitor.surround(null,
                 ThreadProperty.CODE_ANNOTATING,
                 () -> {
                     if (psiElement instanceof BasePsiElement) {

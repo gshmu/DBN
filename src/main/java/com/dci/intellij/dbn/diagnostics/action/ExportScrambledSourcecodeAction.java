@@ -28,11 +28,14 @@ public class ExportScrambledSourcecodeAction extends DumbAwareProjectAction {
     protected void actionPerformed(@NotNull AnActionEvent e, @NotNull Project project) {
         VirtualFile[] virtualFiles = FileChooser.chooseFiles(FILE_CHOOSER_DESCRIPTOR, project, null);
         if (virtualFiles.length == 1) {
-            Progress.modal(project, "Running Project Code Scrambler", true, progress -> {
-                progress.setIndeterminate(false);
-                ParserDiagnosticsManager manager = ParserDiagnosticsManager.get(project);
-                manager.scrambleProjectFiles(progress, new File(virtualFiles[0].getPath()));
-            });
+            Progress.modal(project, null, true,
+                    "Scrambling code",
+                    "Running project code scrambler",
+                    progress -> {
+                        progress.setIndeterminate(false);
+                        ParserDiagnosticsManager manager = ParserDiagnosticsManager.get(project);
+                        manager.scrambleProjectFiles(progress, new File(virtualFiles[0].getPath()));
+                    });
         }
     }
 

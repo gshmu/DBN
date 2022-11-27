@@ -5,7 +5,7 @@ import com.dci.intellij.dbn.common.component.PersistentState;
 import com.dci.intellij.dbn.common.component.ProjectComponentBase;
 import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.common.event.ProjectEvents;
-import com.dci.intellij.dbn.common.routine.ParametricRunnable;
+import com.dci.intellij.dbn.common.routine.Consumer;
 import com.dci.intellij.dbn.common.thread.CancellableDatabaseCall;
 import com.dci.intellij.dbn.common.thread.Progress;
 import com.dci.intellij.dbn.common.util.Messages;
@@ -124,14 +124,17 @@ public class ScriptExecutionManager extends ProjectComponentBase implements Pers
                 }
                 clearOutputOption = executionInput.isClearOutput();
 
-                Progress.prompt(project, "Executing database script", true, progress -> {
-                    try {
-                        doExecuteScript(executionInput);
-                    } catch (Exception e) {
-                        Messages.showErrorDialog(getProject(), "Error",
-                                "Error executing SQL Script \"" + virtualFile.getPath() + "\". " + e.getMessage());
-                    }
-                });
+                Progress.prompt(project, connection, true,
+                        "Executing script",
+                        "Executing database script \"" + virtualFile.getName() + "\"",
+                        progress -> {
+                            try {
+                                doExecuteScript(executionInput);
+                            } catch (Exception e) {
+                                Messages.showErrorDialog(getProject(), "Error",
+                                        "Error executing SQL Script \"" + virtualFile.getPath() + "\". " + e.getMessage());
+                            }
+                        });
             }
         }
     }
@@ -275,7 +278,7 @@ public class ScriptExecutionManager extends ProjectComponentBase implements Pers
     public void createCmdLineInterface(
             @NotNull DatabaseType databaseType,
             @Nullable Set<String> bannedNames,
-            @NotNull ParametricRunnable<CmdLineInterface, RuntimeException> callback) {
+            @NotNull Consumer<CmdLineInterface> consumer) {
 
         boolean updateSettings = false;
         VirtualFile virtualFile = selectCmdLineExecutable(databaseType, null);
@@ -291,7 +294,7 @@ public class ScriptExecutionManager extends ProjectComponentBase implements Pers
             CmdLineInterfaceInputDialog dialog = new CmdLineInterfaceInputDialog(project, cmdLineInterface, bannedNames);
             dialog.show();
             if (dialog.getExitCode() == DialogWrapper.OK_EXIT_CODE) {
-                callback.run(cmdLineInterface);
+                consumer.accept(cmdLineInterface);
                 if (updateSettings) {
                     CmdLineInterfaceBundle commandLineInterfaces = executionEngineSettings.getScriptExecutionSettings().getCommandLineInterfaces();
                     commandLineInterfaces.add(cmdLineInterface);

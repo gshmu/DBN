@@ -13,6 +13,8 @@ import org.jetbrains.annotations.Nullable;
 import java.util.ArrayList;
 import java.util.List;
 
+import static com.dci.intellij.dbn.common.util.Unsafe.cast;
+
 public class ProgramMethodRunAction extends ObjectListShowAction {
     public ProgramMethodRunAction(DBProgram program) {
         super("Run...", program);
@@ -21,18 +23,18 @@ public class ProgramMethodRunAction extends ObjectListShowAction {
 
     @Nullable
     @Override
-    public List<? extends DBObject> getRecentObjectList() {
+    public List<DBObject> getRecentObjectList() {
         DBProgram program = (DBProgram) getSourceObject();
         MethodExecutionManager methodExecutionManager = MethodExecutionManager.getInstance(program.getProject());
         MethodExecutionHistory executionHistory = methodExecutionManager.getExecutionHistory();
-        return executionHistory.getRecentlyExecutedMethods(program);
+        return cast(executionHistory.getRecentlyExecutedMethods(program));
     }
 
 
     @Override
     public List<DBObject> getObjectList() {
         DBProgram program = (DBProgram) getSourceObject();
-        List objects = new ArrayList();
+        List<DBObject> objects = new ArrayList<>();
         objects.addAll(program.getProcedures());
         objects.addAll(program.getFunctions());
         return objects;

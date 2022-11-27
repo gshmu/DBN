@@ -28,7 +28,9 @@ public abstract class GenerateStatementAction extends DumbAwareProjectAction imp
     @Override
     protected void actionPerformed(@NotNull AnActionEvent e, @NotNull Project project) {
         ConnectionAction.invoke("generating the statement", false, this,
-                action -> Progress.prompt(project, "Extracting select statement", true,
+                action -> Progress.prompt(project, getConnection(), true,
+                        "Extracting statement",
+                        "Extracting " + e.getPresentation().getText(),
                         progress -> {
                             StatementGeneratorResult result = generateStatement(project);
                             if (result.getMessages().hasErrors()) {
@@ -38,6 +40,7 @@ public abstract class GenerateStatementAction extends DumbAwareProjectAction imp
                             }
                         }));
     }
+
 
     private void pasteStatement(StatementGeneratorResult result, Project project) {
         Dispatch.run(() -> {

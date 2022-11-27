@@ -1,7 +1,7 @@
 package com.dci.intellij.dbn.execution.explain;
 
 import com.dci.intellij.dbn.common.component.ProjectComponentBase;
-import com.dci.intellij.dbn.common.routine.ParametricRunnable;
+import com.dci.intellij.dbn.common.routine.Consumer;
 import com.dci.intellij.dbn.common.thread.Progress;
 import com.dci.intellij.dbn.connection.ConnectionAction;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
@@ -53,7 +53,7 @@ public class ExplainPlanManager extends ProjectComponentBase {
     public void executeExplainPlan(
             @NotNull ExecutablePsiElement executable,
             @NotNull DataContext dataContext,
-            @Nullable ParametricRunnable.Basic<ExplainPlanResult> callback) {
+            @Nullable Consumer<ExplainPlanResult> callback) {
 
         Project project = getProject();
         String elementDescription = executable.getSpecificElementType().getDescription();
@@ -64,7 +64,9 @@ public class ExplainPlanManager extends ProjectComponentBase {
                 databaseFile.getVirtualFile(),
                 dataContext,
                 ()-> ConnectionAction.invoke("generating the explain plan", false, executable.getFile(),
-                        action -> Progress.prompt(getProject(), "Extracting explain plan for " + elementDescription, true,
+                        action -> Progress.prompt(getProject(), action, true,
+                                "Extracting explain plan",
+                                "Extracting explain plan for " + elementDescription,
                                 progress -> {
                                     ConnectionHandler connection = action.getConnection();
                                     ExplainPlanResult explainPlanResult = createExplainPlan(executable, connection);
@@ -73,7 +75,7 @@ public class ExplainPlanManager extends ProjectComponentBase {
                                         ExecutionManager executionManager = ExecutionManager.getInstance(project);
                                         executionManager.addExplainPlanResult(explainPlanResult);
                                     } else {
-                                        callback.run(explainPlanResult);
+                                        callback.accept(explainPlanResult);
                                     }
                                 })));
     }

@@ -415,7 +415,7 @@ public class DBObjectRef<T extends DBObject> implements Comparable<DBObjectRef<?
     }
 
     public DBSchema getSchema() {
-        return (DBSchema) getParentObject(DBObjectType.SCHEMA);
+        return getParentObject(DBObjectType.SCHEMA);
     }
 
     @Nullable

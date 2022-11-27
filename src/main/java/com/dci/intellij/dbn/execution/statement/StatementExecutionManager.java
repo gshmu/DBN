@@ -244,7 +244,9 @@ public class StatementExecutionManager extends ProjectComponentBase implements P
             ConnectionId connectionId = executionInput.getConnectionId();
             if (context.isNot(EXECUTING) && context.isNot(QUEUED)) {
                 if (sessionId == SessionId.POOL) {
-                    Progress.background(getProject(), "Executing statement", true,
+                    Progress.background(getProject(), executionInput, true,
+                            "Executing statement",
+                            "Executing " + executionInput.getStatementDescription(),
                             progress -> process(executionProcessor));
                 } else {
                     StatementExecutionQueue queue = getExecutionQueue(connectionId, sessionId);

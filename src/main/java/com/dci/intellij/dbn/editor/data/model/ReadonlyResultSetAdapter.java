@@ -101,7 +101,7 @@ public class ReadonlyResultSetAdapter extends ResultSetAdapter {
     public synchronized void deleteRow() throws SQLException {
         if (!isInsertMode())  {
             if (isUseSavePoints()) {
-                Savepoints.run(connection, this::executeDelete);
+                Savepoints.run(connection, () -> executeDelete());
             } else {
                 executeDelete();
             }

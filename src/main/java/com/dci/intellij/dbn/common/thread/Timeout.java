@@ -18,7 +18,7 @@ public final class Timeout {
             Future<T> future = executorService.submit(
                     () -> {
                         try {
-                            return ThreadMonitor.call(
+                            return ThreadMonitor.surround(
                                     invoker,
                                     ThreadProperty.TIMEOUT,
                                     defaultValue,
@@ -48,7 +48,7 @@ public final class Timeout {
             Future<?> future = executorService.submit(
                     () -> {
                         try {
-                            ThreadMonitor.run(
+                            ThreadMonitor.surround(
                                     invoker,
                                     ThreadProperty.TIMEOUT,
                                     runnable);

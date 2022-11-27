@@ -164,11 +164,6 @@ public class MethodExecutionInputArgumentForm extends DBNFormBase {
                 }
                 return Collections.emptyList();
             }
-
-            @Override
-            public boolean isLongLoading() {
-                return false;
-            }
         };
     }
 

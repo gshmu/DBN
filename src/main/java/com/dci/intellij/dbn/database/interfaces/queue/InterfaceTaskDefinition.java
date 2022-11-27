@@ -1,7 +1,6 @@
 package com.dci.intellij.dbn.database.interfaces.queue;
 
 import com.dci.intellij.dbn.common.Priority;
-import com.dci.intellij.dbn.common.util.Titles;
 import com.dci.intellij.dbn.database.interfaces.DatabaseInterfaceContext;
 import lombok.Getter;
 
@@ -13,7 +12,7 @@ public class InterfaceTaskDefinition {
     private final DatabaseInterfaceContext context;
 
     private InterfaceTaskDefinition(String title, String description, Priority priority, DatabaseInterfaceContext context) {
-        this.title = context == null ? Titles.signed(title) : Titles.suffixed(title, context.getConnection());
+        this.title = title;
         this.description = description;
         this.priority = priority;
         this.context = context;

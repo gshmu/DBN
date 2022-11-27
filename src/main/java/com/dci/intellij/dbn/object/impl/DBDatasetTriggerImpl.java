@@ -104,7 +104,7 @@ public class DBDatasetTriggerImpl extends DBTriggerImpl implements DBDatasetTrig
             DatabaseDataDefinitionInterface dataDefinition = getConnection().getDataDefinitionInterface();
             DBDataset dataset = getDataset();
             dataDefinition.updateTrigger(
-                    dataset.getSchema().getName(),
+                    dataset.getSchemaName(),
                     dataset.getName(),
                     getName(),
                     oldCode,

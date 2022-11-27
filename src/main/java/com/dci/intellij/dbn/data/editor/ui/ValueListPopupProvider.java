@@ -2,19 +2,14 @@ package com.dci.intellij.dbn.data.editor.ui;
 
 import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.common.thread.Dispatch;
-import com.dci.intellij.dbn.common.thread.Progress;
 import com.dci.intellij.dbn.common.ui.util.Keyboard;
 import com.dci.intellij.dbn.common.ui.util.Popups;
 import com.dci.intellij.dbn.common.util.Actions;
 import com.dci.intellij.dbn.common.util.Context;
 import com.dci.intellij.dbn.common.util.Strings;
 import com.dci.intellij.dbn.language.common.WeakRef;
-import com.intellij.openapi.actionSystem.AnAction;
-import com.intellij.openapi.actionSystem.AnActionEvent;
-import com.intellij.openapi.actionSystem.DefaultActionGroup;
-import com.intellij.openapi.actionSystem.IdeActions;
-import com.intellij.openapi.actionSystem.Presentation;
-import com.intellij.openapi.actionSystem.Shortcut;
+import com.intellij.openapi.actionSystem.*;
+import com.intellij.openapi.application.ModalityState;
 import com.intellij.openapi.keymap.KeymapUtil;
 import com.intellij.openapi.ui.popup.JBPopup;
 import com.intellij.openapi.ui.popup.JBPopupFactory;
@@ -26,8 +21,7 @@ import lombok.Setter;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import javax.swing.Icon;
-import javax.swing.JLabel;
+import javax.swing.*;
 import java.awt.event.FocusEvent;
 import java.awt.event.KeyEvent;
 import java.util.List;
@@ -71,32 +65,26 @@ public class ValueListPopupProvider implements TextFieldPopupProvider{
 
     @Override
     public void showPopup() {
-        if (valuesProvider.isLongLoading()) {
+        if (!valuesProvider.isLoaded()) {
+            ModalityState modalityState = ModalityState.stateForComponent(getEditorComponent());
             if (preparing) return;
 
-            TextFieldWithPopup editorComponent = getEditorComponent();
             preparing = true;
-            Progress.prompt(
-                    editorComponent.getProject(),
-                    "Loading " + getDescription(), true,
-                    progress -> {
-                        // load the values
+            Dispatch.background(
+                    modalityState,
+                    () -> {
                         getValues();
                         getSecondaryValues();
-                        if (progress.isCanceled()) {
-                            preparing = false;
-                            return;
-                        }
-
-                        Dispatch.run(() -> {
-                            try {
-                                if (!isShowingPopup()) {
-                                    doShowPopup();
-                                }
-                            } finally {
-                                preparing = false;
+                        valuesProvider.setLoaded(true);
+                    },
+                    () -> {
+                        try {
+                            if (!isShowingPopup()) {
+                                doShowPopup();
                             }
-                        });
+                        } finally {
+                            preparing = false;
+                        }
                     });
         } else {
             doShowPopup();

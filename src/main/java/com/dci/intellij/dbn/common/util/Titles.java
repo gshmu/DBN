@@ -1,6 +1,8 @@
 package com.dci.intellij.dbn.common.util;
 
 import com.dci.intellij.dbn.connection.ConnectionHandler;
+import com.dci.intellij.dbn.connection.context.DatabaseContext;
+import org.jetbrains.annotations.Nullable;
 
 public final class Titles {
     public static final String PRODUCT_NAME = "DB Navigator";
@@ -12,7 +14,21 @@ public final class Titles {
         return TITLE_PREFIX + title;
     }
 
-    public static String suffixed(String title, ConnectionHandler connection) {
-        return title + " (" + connection.getName() + ")";
+    public static String suffixed(String title, @Nullable DatabaseContext databaseContext) {
+        if (databaseContext == null) return title;
+
+        ConnectionHandler connection = databaseContext.getConnection();
+        if (connection == null) return title;
+
+        return title + " - " + connection.getName();
+    }
+
+    public static String prefixed(String title, @Nullable DatabaseContext databaseContext) {
+        if (databaseContext == null) return title;
+
+        ConnectionHandler connection = databaseContext.getConnection();
+        if (connection == null) return title;
+
+        return connection.getName()  + " - " + title;
     }
 }

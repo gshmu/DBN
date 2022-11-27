@@ -4,7 +4,7 @@ package com.dci.intellij.dbn.common.option;
 import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.common.options.PersistentConfiguration;
 import com.dci.intellij.dbn.common.options.setting.SettingsSupport;
-import com.dci.intellij.dbn.common.routine.ParametricRunnable;
+import com.dci.intellij.dbn.common.routine.Consumer;
 import com.dci.intellij.dbn.common.thread.Dispatch;
 import com.dci.intellij.dbn.common.util.Commons;
 import com.dci.intellij.dbn.common.util.Titles;
@@ -80,7 +80,7 @@ public class InteractiveOptionBroker<T extends InteractiveOption> implements DoN
         return "Remember option";
     }
 
-    public void resolve(Object[] messageArgs, ParametricRunnable.Basic<T> callback) {
+    public void resolve(Object[] messageArgs, Consumer<T> consumer) {
         Dispatch.run(() -> {
             T option;
             if (selectedOption != null && !selectedOption.isAsk()) {
@@ -102,7 +102,7 @@ public class InteractiveOptionBroker<T extends InteractiveOption> implements DoN
                 }
             }
             if (option != null) {
-                callback.run(option);
+                consumer.accept(option);
             }
         });
     }

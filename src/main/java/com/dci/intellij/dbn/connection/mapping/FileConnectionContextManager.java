@@ -354,14 +354,16 @@ public class FileConnectionContextManager extends ProjectComponentBase implement
      ***************************************************/
     public void promptSchemaSelector(VirtualFile file, DataContext dataContext, Runnable callback) throws IncorrectOperationException {
         Project project = getProject();
-        ConnectionAction.invoke(
-                "selecting the current schema", true,
-                getConnection(file),
-                action -> Progress.prompt(project, "Loading schemas", true,
+        ConnectionHandler connection = getConnection(file);
+        if (connection == null) return;
+
+        ConnectionAction.invoke("selecting the current schema", true, connection,
+                action -> Progress.prompt(project, connection, true,
+                        "Loading schemas",
+                        "Loading schemas for " + connection.getQualifiedName(),
                         progress -> {
                             DefaultActionGroup actionGroup = new DefaultActionGroup();
 
-                            ConnectionHandler connection = action.getConnection();
                             if (isValid(connection) && !connection.isVirtual()) {
                                 List<DBSchema> schemas = connection.getObjectBundle().getSchemas();
                                 for (DBSchema schema : schemas) {

@@ -1,7 +1,7 @@
 package com.dci.intellij.dbn.connection;
 
 import com.dci.intellij.dbn.common.dispose.StatefulDisposable;
-import com.dci.intellij.dbn.common.routine.ThrowableConsumer;
+import com.dci.intellij.dbn.common.routine.Consumer;
 import com.dci.intellij.dbn.database.interfaces.DatabaseInterface.Runnable;
 
 import java.sql.ResultSet;
@@ -91,7 +91,7 @@ public class ResultSets extends StatefulDisposable.Base {
         }
     }
 
-    public static <T> void forEachRow(ResultSet resultSet, String columnName, Class<T> columnType, ThrowableConsumer<T, SQLException> consumer) throws SQLException {
+    public static <T> void forEachRow(ResultSet resultSet, String columnName, Class<T> columnType, Consumer<T> consumer) throws SQLException {
         forEachRow(resultSet, () -> {
             Object object = null;
             if (CharSequence.class.isAssignableFrom(columnType)) {

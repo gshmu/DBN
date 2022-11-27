@@ -102,7 +102,7 @@ public class Messages {
         Dispatch.run(() -> {
             int option = com.intellij.openapi.ui.Messages.showDialog(project, message, Titles.signed(title), options, defaultOptionIndex, icon, doNotAskOption);
             if (callback != null) {
-                callback.run(option);
+                callback.accept(option);
             }
         });
     }

@@ -127,10 +127,12 @@ public class SourceCodeDiffManager extends ProjectComponentBase implements Persi
 
 
     public void opedDatabaseDiffWindow(DBSourceCodeVirtualFile sourceCodeFile) {
+        DBSchemaObject object = sourceCodeFile.getObject();
         ConnectionAction.invoke("comparing changes", false, sourceCodeFile,
-                action -> Progress.prompt(getProject(), "Loading database source code", true,
+                action -> Progress.prompt(getProject(), object, true,
+                        "Loading source code",
+                        "Loading source code of " + object.getQualifiedNameWithType(),
                         progress -> {
-                            DBSchemaObject object = sourceCodeFile.getObject();
                             Project project = getProject();
                             try {
                                 SourceCodeManager sourceCodeManager = SourceCodeManager.getInstance(project);

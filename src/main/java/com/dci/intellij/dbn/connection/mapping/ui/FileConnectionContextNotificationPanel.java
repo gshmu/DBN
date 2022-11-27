@@ -21,7 +21,7 @@ public class FileConnectionContextNotificationPanel extends EditorNotificationPa
         ConnectionId connectionId = mapping.getConnectionId();
         ConnectionHandler connection = ConnectionHandler.get(connectionId);
         if (connection != null) {
-            setText(connection.getPresentableText());
+            setText(connection.getName());
             setIcon(connection.getIcon());
         } else {
             setText("No connection selected");

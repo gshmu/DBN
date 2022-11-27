@@ -2,7 +2,6 @@ package com.dci.intellij.dbn.diagnostics.action;
 
 import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.common.thread.Progress;
-import com.dci.intellij.dbn.common.util.Titles;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.action.AbstractConnectionAction;
 import com.dci.intellij.dbn.diagnostics.Diagnostics;
@@ -21,9 +20,9 @@ public class BulkLoadAllObjectsAction extends AbstractConnectionAction {
 
     @Override
     protected void actionPerformed(@NotNull AnActionEvent e, @NotNull Project project, @NotNull ConnectionHandler connection) {
-        Progress.prompt(
-                project,
-                Titles.suffixed("Loading data dictionary", connection), true,
+        Progress.prompt(project, connection, true,
+                "Loading data dictionary",
+                "Loading all objects of " + connection.getQualifiedName(),
                 progress -> {
                     DBObjectListContainer objectListContainer = connection.getObjectBundle().getObjectLists();
                     objectListContainer.visitObjects(DBObjectRecursiveLoaderVisitor.INSTANCE, false);
