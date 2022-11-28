@@ -7,7 +7,9 @@ public enum ThreadProperty implements Property.IntBase {
     CODE_ANNOTATING (true),
 
     TIMEOUT    (true),
+    PROMPTED   (true),
     CANCELABLE (true),
+
     BACKGROUND (false),
     PROGRESS   (false),
     MODAL      (false),

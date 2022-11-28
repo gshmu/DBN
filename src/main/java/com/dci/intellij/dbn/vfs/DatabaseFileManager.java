@@ -269,19 +269,18 @@ public class DatabaseFileManager extends ProjectComponentBase implements Persist
                         "Opening database editors for connection " + connection.getQualifiedName(),
                         progress -> {
                             progress.setIndeterminate(true);
-                            progress.setText(connection.getQualifiedName());
                             DatabaseFileSystem databaseFileSystem = DatabaseFileSystem.getInstance();
 
                             for (DBObjectRef<DBSchemaObject> objectRef : objectRefs) {
                                 if (progress.isCanceled()) continue;
-                                if (connection.canConnect()) {
-                                    DBSchemaObject object = objectRef.get(project);
-                                    if (object != null) {
-                                        progress.setText(connection.getQualifiedName() + " - " + objectRef.getQualifiedNameWithType());
-                                        object.initChildren();
-                                        databaseFileSystem.openEditor(object, null, false, false);
-                                    }
-                                }
+                                if (!connection.canConnect()) continue;
+
+                                DBSchemaObject object = objectRef.get(project);
+                                if (object == null) continue;
+
+                                progress.setText2(connection.getName() + " - " + objectRef.getQualifiedNameWithType());
+                                object.initChildren();
+                                databaseFileSystem.openEditor(object, null, false, false);
                             }
                         }));
     }

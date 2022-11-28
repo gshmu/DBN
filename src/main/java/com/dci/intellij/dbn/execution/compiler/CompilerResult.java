@@ -61,8 +61,8 @@ public class CompilerResult implements Disposable, NotificationSupport {
             DatabaseInterfaceInvoker.execute(HIGH,
                     "Loading compiler data",
                     "Loading compile results for " + qualifiedObjectName,
-                    connection.createInterfaceContext(), conn ->
-                            loadCompilerErrors(connection, schema, objectName, contentType, conn));
+                    connection.getConnectionId(),
+                    conn -> loadCompilerErrors(connection, schema, objectName, contentType, conn));
 
         } catch (SQLException e) {
             sendErrorNotification(

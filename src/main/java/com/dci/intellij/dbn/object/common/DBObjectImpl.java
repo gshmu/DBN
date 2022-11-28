@@ -497,7 +497,7 @@ public abstract class DBObjectImpl<M extends DBObjectMetadata> extends BrowserTr
     public String extractDDL() throws SQLException {
         // TODO move to database interface (ORACLE)
         ConnectionHandler connection = getConnection();
-        return PooledConnection.call(connection.createInterfaceContext(), conn -> {
+        return PooledConnection.call(connection.createConnectionContext(), conn -> {
             DBNCallableStatement statement = null;
             try {
                 DBObjectType objectType = getObjectType();

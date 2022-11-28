@@ -2,11 +2,9 @@ package com.dci.intellij.dbn.database.interfaces;
 
 import com.dci.intellij.dbn.common.Priority;
 import com.dci.intellij.dbn.common.cache.CacheKey;
-import com.dci.intellij.dbn.connection.ConnectionHandler;
-import com.dci.intellij.dbn.connection.ConnectionLocalContext;
-import com.dci.intellij.dbn.connection.PooledConnection;
+import com.dci.intellij.dbn.connection.*;
 import com.dci.intellij.dbn.database.interfaces.DatabaseInterface.Callable;
-import com.dci.intellij.dbn.database.interfaces.queue.InterfaceTaskDefinition;
+import com.dci.intellij.dbn.database.interfaces.queue.InterfaceTaskRequest;
 
 import java.sql.SQLException;
 
@@ -20,59 +18,69 @@ public final class DatabaseInterfaceInvoker {
     /**
      * Database Interface invocation against a pool connection
      * Schedules the task and returns immediately
-     *
-     * @param taskDefinition information about the task (title, description, priority, connectivity context)
-     * @param runnable       the task to be executed
-     * @throws SQLException if jdbc call fails
      */
-    public static void schedule(InterfaceTaskDefinition taskDefinition, ConnectionRunnable runnable) throws SQLException {
-        DatabaseInterfaceContext context = taskDefinition.getContext();
-        DatabaseInterfaceQueue interfaceQueue = context.getConnection().getInterfaceQueue();
-        interfaceQueue.scheduleAndForget(
-                taskDefinition, () -> ConnectionLocalContext.surround(context,
-                        () -> PooledConnection.run(context, runnable)));
+    public static void schedule(Priority priority, String title, String text, ConnectionId connectionId, ConnectionRunnable runnable) throws SQLException {
+        InterfaceTaskRequest request = InterfaceTaskRequest.create(priority, title, text, connectionId, null);
+        ConnectionHandler connection = request.getConnection();
+        DatabaseInterfaceQueue interfaceQueue = connection.getInterfaceQueue();
+
+        interfaceQueue.scheduleAndForget(request,
+                () -> ConnectionContext.surround(request,
+                        () -> PooledConnection.run(request, runnable)));
     }
 
-    public static void execute(Priority priority, DatabaseInterfaceContext context, ConnectionRunnable runnable) throws SQLException {
-        execute(priority, null, null, context, runnable);
-    }
-
-    public static void execute(Priority priority, String title, String description, DatabaseInterfaceContext context, ConnectionRunnable runnable) throws SQLException {
-        InterfaceTaskDefinition definition = InterfaceTaskDefinition.create(priority, title, description, context);
-        execute(definition, runnable);
-    }
 
     /**
      * Database Interface invocation against a pool connection
      * Schedules the task and waits for the execution
      *
-     * @param taskDefinition information about the task (title, description, priority, connectivity context)
-     * @param runnable       the task to be executed
+     * @param priority the priority of the task
+     * @param connectionId the connection to be invoked against
+     * @param runnable the task to be executed
      * @throws SQLException if jdbc call fails
      */
-    public static void execute(InterfaceTaskDefinition taskDefinition, ConnectionRunnable runnable) throws SQLException {
-        DatabaseInterfaceContext context = taskDefinition.getContext();
-        DatabaseInterfaceQueue interfaceQueue = context.getConnection().getInterfaceQueue();
-        interfaceQueue.scheduleAndWait(
-                taskDefinition, () -> ConnectionLocalContext.surround(context,
-                        () -> PooledConnection.run(context, runnable)));
+    public static void execute(Priority priority, ConnectionId connectionId, ConnectionRunnable runnable) throws SQLException {
+        execute(priority, null, null, connectionId, runnable);
+    }
+
+    public static void execute(Priority priority, String title, String text, ConnectionId connectionId, ConnectionRunnable runnable) throws SQLException {
+        execute(priority, title, text, connectionId, null, runnable);
     }
 
     /**
+     * @deprecated use {@link #execute(Priority, String, String, ConnectionId, ConnectionRunnable)}
+     */
+    public static void execute(Priority priority, String title, String text, ConnectionId connectionId, @Deprecated SchemaId schemaId, ConnectionRunnable runnable) throws SQLException {
+        InterfaceTaskRequest request = InterfaceTaskRequest.create(priority, title, text, connectionId, schemaId);
+        ConnectionHandler connection = request.getConnection();
+        DatabaseInterfaceQueue interfaceQueue = connection.getInterfaceQueue();
+
+        interfaceQueue.scheduleAndWait(request,
+                () -> ConnectionContext.surround(request,
+                        () -> PooledConnection.run(request, runnable)));    }
+
+
+    /**
      * Database Interface invocation against a pool connection
+     * Schedules the task, waits for the execution and returns result
      *
      * @param <T>        type of the entity returned by the invocation
-     * @param definition information about the task (title, description, priority, connectivity context)
+     * @param priority the priority of the task
+     * @param connectionId the connection to be invoked against
      * @param callable   the task to be executed
-     * @return an entity returned by the callable
      * @throws SQLException if jdbc call fails
      */
-    public static <T> T load(InterfaceTaskDefinition definition, ConnectionCallable<T> callable) throws SQLException {
-        DatabaseInterfaceContext context = definition.getContext();
-        DatabaseInterfaceQueue interfaceQueue = context.getConnection().getInterfaceQueue();
-        return interfaceQueue.scheduleAndReturn(
-                definition, () -> ConnectionLocalContext.surround(context,
-                        () -> PooledConnection.call(context, callable)));
+    public static <T> T load(Priority priority, ConnectionId connectionId, ConnectionCallable<T> callable) throws SQLException {
+        return load(priority, null, null, connectionId, callable);
+    }
+
+    public static <T> T load(Priority priority, String title, String text, ConnectionId connectionId, ConnectionCallable<T> callable) throws SQLException {
+        InterfaceTaskRequest request = InterfaceTaskRequest.create(priority, title, text, connectionId, null);
+        ConnectionHandler connection = request.getConnection();
+        DatabaseInterfaceQueue interfaceQueue = connection.getInterfaceQueue();
+        return interfaceQueue.scheduleAndReturn(request,
+                () -> ConnectionContext.surround(request,
+                        () -> PooledConnection.call(request, callable)));
     }
 
     public static <T> T cached(CacheKey<T> key, Callable<T> loader) throws SQLException {

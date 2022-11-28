@@ -1,17 +1,17 @@
 package com.dci.intellij.dbn.diagnostics.ui;
 
-import com.dci.intellij.dbn.common.ui.util.Borders;
 import com.dci.intellij.dbn.common.ui.Presentable;
 import com.dci.intellij.dbn.common.ui.component.DBNComponent;
 import com.dci.intellij.dbn.common.ui.table.DBNColoredTableCellRenderer;
 import com.dci.intellij.dbn.common.ui.table.DBNTable;
 import com.dci.intellij.dbn.common.ui.table.DBNTableTransferHandler;
+import com.dci.intellij.dbn.common.ui.util.Borders;
 import com.dci.intellij.dbn.diagnostics.data.DiagnosticEntry;
 import com.dci.intellij.dbn.diagnostics.ui.model.AbstractDiagnosticsTableModel;
 import com.intellij.ui.SimpleTextAttributes;
 import org.jetbrains.annotations.NotNull;
 
-import javax.swing.ListSelectionModel;
+import javax.swing.*;
 import javax.swing.table.TableModel;
 
 public class DiagnosticsTable<T extends AbstractDiagnosticsTableModel> extends DBNTable<T> {

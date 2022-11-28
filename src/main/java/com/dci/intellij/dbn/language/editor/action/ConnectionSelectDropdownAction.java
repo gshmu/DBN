@@ -40,7 +40,7 @@ public class ConnectionSelectDropdownAction extends DBNComboBoxAction implements
             FileConnectionContextManager contextManager = FileConnectionContextManager.getInstance(project);
             ConnectionHandler activeConnection = contextManager.getConnection(virtualFile);
             if (activeConnection != null) {
-                text = activeConnection.getQualifiedName();
+                text = activeConnection.getName();
                 icon = activeConnection.getIcon();
             }
 

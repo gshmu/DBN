@@ -33,6 +33,7 @@ public interface DatabaseDataDefinitionInterface extends DatabaseInterface{
 
     void updateTrigger(String tableOwner, String tableName, String triggerName, String oldCode, String newCode, DBNConnection connection) throws SQLException;
 
+    @Deprecated // TODO add objectOwner / decommission schema connection context
     void updateObject(String objectName, String objectType, String oldCode, String newCode, DBNConnection connection) throws SQLException;
 
    /*********************************************************

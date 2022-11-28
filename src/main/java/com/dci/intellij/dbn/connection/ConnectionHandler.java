@@ -211,7 +211,7 @@ public interface ConnectionHandler extends StatefulDisposable, EnvironmentTypePr
 
     @NotNull
     static ConnectionHandler local() {
-        return ConnectionLocalContext.getConnection();
+        return ConnectionContext.local().getConnection();
     }
 
     static boolean canConnect(ConnectionHandler connection) {

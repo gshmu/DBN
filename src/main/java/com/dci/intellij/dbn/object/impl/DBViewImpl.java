@@ -6,7 +6,6 @@ import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.database.common.metadata.def.DBViewMetadata;
 import com.dci.intellij.dbn.database.interfaces.DatabaseDataDefinitionInterface;
 import com.dci.intellij.dbn.database.interfaces.DatabaseInterfaceInvoker;
-import com.dci.intellij.dbn.database.interfaces.queue.InterfaceTaskDefinition;
 import com.dci.intellij.dbn.editor.DBContentType;
 import com.dci.intellij.dbn.language.common.DBLanguage;
 import com.dci.intellij.dbn.language.sql.SQLLanguage;
@@ -97,16 +96,17 @@ public class DBViewImpl extends DBDatasetImpl<DBViewMetadata> implements DBView 
 
     @Override
     public void executeUpdateDDL(DBContentType contentType, String oldCode, String newCode) throws SQLException {
-        InterfaceTaskDefinition taskDefinition = InterfaceTaskDefinition.create(HIGHEST,
+
+        DatabaseInterfaceInvoker.execute(HIGHEST,
                 "Updating source code",
                 "Updating sources of " + getQualifiedNameWithType(),
-                createInterfaceContext());
-
-        DatabaseInterfaceInvoker.execute(taskDefinition, conn -> {
-            ConnectionHandler connection = getConnection();
-            DatabaseDataDefinitionInterface dataDefinition = connection.getDataDefinitionInterface();
-            dataDefinition.updateView(getName(), newCode, conn);
-        });
+                getConnectionId(),
+                getSchemaId(),
+                conn -> {
+                    ConnectionHandler connection = getConnection();
+                    DatabaseDataDefinitionInterface dataDefinition = connection.getDataDefinitionInterface();
+                    dataDefinition.updateView(getName(), newCode, conn);
+                });
     }
 
     @Override
