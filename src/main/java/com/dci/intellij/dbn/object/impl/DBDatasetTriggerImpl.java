@@ -5,7 +5,6 @@ import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.database.common.metadata.def.DBTriggerMetadata;
 import com.dci.intellij.dbn.database.interfaces.DatabaseDataDefinitionInterface;
 import com.dci.intellij.dbn.database.interfaces.DatabaseInterfaceInvoker;
-import com.dci.intellij.dbn.database.interfaces.queue.InterfaceTaskDefinition;
 import com.dci.intellij.dbn.editor.DBContentType;
 import com.dci.intellij.dbn.object.DBDataset;
 import com.dci.intellij.dbn.object.DBDatasetTrigger;
@@ -95,21 +94,21 @@ public class DBDatasetTriggerImpl extends DBTriggerImpl implements DBDatasetTrig
 
     @Override
     public void executeUpdateDDL(DBContentType contentType, String oldCode, String newCode) throws SQLException {
-        InterfaceTaskDefinition taskDefinition = InterfaceTaskDefinition.create(HIGHEST,
+        DatabaseInterfaceInvoker.execute(HIGHEST,
                 "Updating source code",
                 "Updating sources of " + getQualifiedNameWithType(),
-                createInterfaceContext());
-
-        DatabaseInterfaceInvoker.execute(taskDefinition, conn -> {
-            DatabaseDataDefinitionInterface dataDefinition = getConnection().getDataDefinitionInterface();
-            DBDataset dataset = getDataset();
-            dataDefinition.updateTrigger(
-                    dataset.getSchemaName(),
-                    dataset.getName(),
-                    getName(),
-                    oldCode,
-                    newCode,
-                    conn);
+                getConnectionId(),
+                getSchemaId(),
+                conn -> {
+                    DatabaseDataDefinitionInterface dataDefinition = getConnection().getDataDefinitionInterface();
+                    DBDataset dataset = getDataset();
+                    dataDefinition.updateTrigger(
+                            dataset.getSchemaName(),
+                            dataset.getName(),
+                            getName(),
+                            oldCode,
+                            newCode,
+                            conn);
         });
     }
 }

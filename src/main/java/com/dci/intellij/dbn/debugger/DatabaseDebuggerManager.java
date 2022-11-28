@@ -18,7 +18,6 @@ import com.dci.intellij.dbn.connection.operation.options.OperationSettings;
 import com.dci.intellij.dbn.database.common.debug.DebuggerVersionInfo;
 import com.dci.intellij.dbn.database.interfaces.DatabaseDebuggerInterface;
 import com.dci.intellij.dbn.database.interfaces.DatabaseInterfaceInvoker;
-import com.dci.intellij.dbn.database.interfaces.queue.InterfaceTaskDefinition;
 import com.dci.intellij.dbn.debugger.common.breakpoint.DBBreakpointUpdaterFileEditorListener;
 import com.dci.intellij.dbn.debugger.common.config.*;
 import com.dci.intellij.dbn.debugger.common.process.DBProgramRunner;
@@ -414,16 +413,15 @@ public class DatabaseDebuggerManager extends ProjectComponentBase implements Per
         if (!DEBUGGING.isSupported(connection)) return "Unknown";
 
         try {
-            InterfaceTaskDefinition taskDefinition = InterfaceTaskDefinition.create(HIGHEST,
+            return DatabaseInterfaceInvoker.load(HIGHEST,
                     "Loading metadata",
                     "Loading debugger version",
-                    connection.createInterfaceContext());
-
-            return DatabaseInterfaceInvoker.load(taskDefinition, conn -> {
-                DatabaseDebuggerInterface debuggerInterface = connection.getDebuggerInterface();
-                DebuggerVersionInfo debuggerVersion = debuggerInterface.getDebuggerVersion(conn);
-                return debuggerVersion.getVersion();
-            });
+                    connection.getConnectionId(),
+                    conn -> {
+                        DatabaseDebuggerInterface debuggerInterface = connection.getDebuggerInterface();
+                        DebuggerVersionInfo debuggerVersion = debuggerInterface.getDebuggerVersion(conn);
+                        return debuggerVersion.getVersion();
+                    });
         } catch (SQLException e) {
             sendErrorNotification(
                     NotificationGroup.DEBUGGER,

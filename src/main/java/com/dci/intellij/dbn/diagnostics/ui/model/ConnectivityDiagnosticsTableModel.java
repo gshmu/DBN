@@ -43,11 +43,11 @@ public class ConnectivityDiagnosticsTableModel extends AbstractDiagnosticsTableM
     public Object getValue(DiagnosticEntry<SessionId> entry, int column) {
         switch (column) {
             case 0: return getSession(entry.getIdentifier());
-            case 1: return entry.getInvocationCount();
-            case 2: return entry.getFailureCount();
-            case 3: return entry.getTimeoutCount();
-            case 4: return entry.getAverageExecutionTime();
-            case 5: return entry.getTotalExecutionTime();
+            case 1: return entry.getInvocations();
+            case 2: return entry.getFailures();
+            case 3: return entry.getTimeouts();
+            case 4: return entry.getAverage();
+            case 5: return entry.getTotal();
         }
         return "";
     }
@@ -61,11 +61,11 @@ public class ConnectivityDiagnosticsTableModel extends AbstractDiagnosticsTableM
     public String getPresentableValue(DiagnosticEntry<SessionId> entry, int column) {
         switch (column) {
             case 0: return getSession(entry.getIdentifier()).getName();
-            case 1: return Long.toString(entry.getInvocationCount());
-            case 2: return Long.toString(entry.getFailureCount());
-            case 3: return Long.toString(entry.getTimeoutCount());
-            case 4: return Long.toString(entry.getAverageExecutionTime());
-            case 5: return Long.toString(entry.getTotalExecutionTime());
+            case 1: return Long.toString(entry.getInvocations());
+            case 2: return Long.toString(entry.getFailures());
+            case 3: return Long.toString(entry.getTimeouts());
+            case 4: return Long.toString(entry.getAverage());
+            case 5: return Long.toString(entry.getTotal());
         }
         return "";
     }

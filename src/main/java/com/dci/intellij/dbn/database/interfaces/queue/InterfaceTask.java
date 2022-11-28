@@ -20,12 +20,12 @@ import static com.dci.intellij.dbn.database.interfaces.queue.InterfaceTaskStatus
 @Slf4j
 @Getter
 class InterfaceTask<R> implements TimeAware {
-    public static final Comparator<InterfaceTask<?>> COMPARATOR = (t1, t2) -> t2.info.getPriority().compareTo(t1.info.getPriority());
+    public static final Comparator<InterfaceTask<?>> COMPARATOR = (t1, t2) -> t2.request.getPriority().compareTo(t1.request.getPriority());
     private static final long TEN_SECONDS = TimeUnit.SECONDS.toNanos(10);
     private static final long ONE_SECOND = TimeUnit.SECONDS.toNanos(1);
 
     @Delegate
-    private final InterfaceTaskDefinition info;
+    private final InterfaceTaskRequest request;
     private final InterfaceTaskSource source;
     private final ThrowableCallable<R, SQLException> executor;
     private final StatusHolder<InterfaceTaskStatus> status = new StatusHolder<>(NEW);
@@ -33,8 +33,8 @@ class InterfaceTask<R> implements TimeAware {
     private R response;
     private Throwable exception;
 
-    InterfaceTask(InterfaceTaskDefinition info, boolean synchronous, ThrowableCallable<R, SQLException> executor) {
-        this.info = info;
+    InterfaceTask(InterfaceTaskRequest request, boolean synchronous, ThrowableCallable<R, SQLException> executor) {
+        this.request = request;
         this.executor = executor;
         this.source = new InterfaceTaskSource(synchronous);
     }

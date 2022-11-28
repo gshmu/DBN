@@ -54,12 +54,12 @@ public class DiagnosticsManager extends ProjectComponentBase implements Persiste
 
     public DiagnosticBundle<String> getMetadataInterfaceDiagnostics(ConnectionId connectionId) {
         return metadataInterfaceDiagnostics.
-                computeIfAbsent(connectionId, id -> new DiagnosticBundle<>(DiagnosticType.METADATA_INTERFACE));
+                computeIfAbsent(connectionId, id -> DiagnosticBundle.composite(DiagnosticType.METADATA_INTERFACE));
     }
 
     public DiagnosticBundle<SessionId> getConnectivityDiagnostics(ConnectionId connectionId) {
         return connectivityDiagnostics.
-                computeIfAbsent(connectionId, id -> new DiagnosticBundle<>(DiagnosticType.DATABASE_CONNECTIVITY));
+                computeIfAbsent(connectionId, id -> DiagnosticBundle.basic(DiagnosticType.DATABASE_CONNECTIVITY));
     }
 
     public void openDiagnosticsSettings() {

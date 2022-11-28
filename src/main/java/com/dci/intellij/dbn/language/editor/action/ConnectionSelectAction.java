@@ -20,7 +20,7 @@ public class ConnectionSelectAction extends DumbAwareProjectAction {
     ConnectionSelectAction(ConnectionHandler connection) {
         super();
         Presentation presentation = getTemplatePresentation();
-        presentation.setText(connection == null ? "No Connection" : connection.getQualifiedName(), false);
+        presentation.setText(connection == null ? "No Connection" : connection.getName(), false);
         presentation.setIcon(connection == null ? Icons.SPACE : connection.getIcon());
         this.connection = connection;
     }

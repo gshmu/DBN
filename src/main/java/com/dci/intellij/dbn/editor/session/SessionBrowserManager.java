@@ -23,7 +23,6 @@ import com.dci.intellij.dbn.database.DatabaseFeature;
 import com.dci.intellij.dbn.database.interfaces.DatabaseInterfaceInvoker;
 import com.dci.intellij.dbn.database.interfaces.DatabaseMessageParserInterface;
 import com.dci.intellij.dbn.database.interfaces.DatabaseMetadataInterface;
-import com.dci.intellij.dbn.database.interfaces.queue.InterfaceTaskDefinition;
 import com.dci.intellij.dbn.editor.session.model.SessionBrowserModel;
 import com.dci.intellij.dbn.editor.session.options.SessionBrowserSettings;
 import com.dci.intellij.dbn.editor.session.options.SessionInterruptionOption;
@@ -49,6 +48,8 @@ import java.util.*;
 import static com.dci.intellij.dbn.common.Priority.HIGH;
 import static com.dci.intellij.dbn.common.component.Components.projectService;
 import static com.dci.intellij.dbn.common.util.Commons.list;
+import static com.dci.intellij.dbn.editor.session.SessionInterruptionType.DISCONNECT;
+import static com.dci.intellij.dbn.editor.session.SessionInterruptionType.TERMINATE;
 
 @State(
     name = SessionBrowserManager.COMPONENT_NAME,
@@ -120,11 +121,11 @@ public class SessionBrowserManager extends ProjectComponentBase implements Persi
     public SessionBrowserModel loadSessions(DBSessionBrowserVirtualFile sessionBrowserFile) {
         ConnectionHandler connection = sessionBrowserFile.getConnection();
         try {
-            InterfaceTaskDefinition taskDefinition = InterfaceTaskDefinition.create(HIGH,
+            return DatabaseInterfaceInvoker.load(HIGH,
                     "Loading sessions",
                     "Loading database sessions",
-                    connection.createInterfaceContext());
-            return DatabaseInterfaceInvoker.load(taskDefinition, conn -> {
+                    connection.getConnectionId(),
+                    conn -> {
                         DBNResultSet resultSet = null;
                         try {
                             DatabaseMetadataInterface metadata = connection.getMetadataInterface();
@@ -146,22 +147,22 @@ public class SessionBrowserManager extends ProjectComponentBase implements Persi
         if (!DatabaseFeature.SESSION_CURRENT_SQL.isSupported(connection)) return EMPTY_CONTENT;
 
         try {
-            InterfaceTaskDefinition taskDefinition = InterfaceTaskDefinition.create(HIGH,
+            return DatabaseInterfaceInvoker.load(HIGH,
                     "Loading session details",
                     "Loading current session details",
-                    connection.createInterfaceContext());
-            return DatabaseInterfaceInvoker.load(taskDefinition, conn -> {
-                ResultSet resultSet = null;
-                try {
-                    DatabaseMetadataInterface metadata = connection.getMetadataInterface();
-                    resultSet = metadata.loadSessionCurrentSql(sessionId, conn);
-                    if (resultSet.next()) {
-                        return resultSet.getString(1);
-                    }
-                } finally {
-                    Resources.close(resultSet);
-                }
-                return EMPTY_CONTENT;
+                    connection.getConnectionId(),
+                    conn -> {
+                        ResultSet resultSet = null;
+                        try {
+                            DatabaseMetadataInterface metadata = connection.getMetadataInterface();
+                            resultSet = metadata.loadSessionCurrentSql(sessionId, conn);
+                            if (resultSet.next()) {
+                                return resultSet.getString(1);
+                            }
+                        } finally {
+                            Resources.close(resultSet);
+                        }
+                        return EMPTY_CONTENT;
             });
         } catch (SQLException e) {
             sendWarningNotification(
@@ -178,8 +179,8 @@ public class SessionBrowserManager extends ProjectComponentBase implements Persi
 
             SessionBrowserSettings sessionBrowserSettings = getSessionBrowserSettings();
             InteractiveOptionBroker<SessionInterruptionOption> disconnect =
-                    type == SessionInterruptionType.TERMINATE ? sessionBrowserSettings.getKillSession() :
-                    type == SessionInterruptionType.DISCONNECT  ? sessionBrowserSettings.getDisconnectSession() : null;
+                    type == TERMINATE ? sessionBrowserSettings.getKillSession() :
+                    type == DISCONNECT  ? sessionBrowserSettings.getDisconnectSession() : null;
 
             if (disconnect != null) {
                 String subject = sessionIds.size() > 1 ? "selected sessions" : "session with id \"" + sessionIds.iterator().next().toString() + "\"";
@@ -192,7 +193,7 @@ public class SessionBrowserManager extends ProjectComponentBase implements Persi
                         });
             }
         } else {
-            doInterruptSessions(sessionBrowser, sessionIds, SessionInterruptionType.TERMINATE, SessionInterruptionOption.NORMAL);
+            doInterruptSessions(sessionBrowser, sessionIds, TERMINATE, SessionInterruptionOption.NORMAL);
         }
     }
 
@@ -220,15 +221,9 @@ public class SessionBrowserManager extends ProjectComponentBase implements Persi
                             try {
                                 boolean immediate = option == SessionInterruptionOption.IMMEDIATE;
                                 boolean postTransaction = option == SessionInterruptionOption.POST_TRANSACTION;
-                                DatabaseInterfaceInvoker.execute(HIGH, connection.createInterfaceContext(), conn -> {
-                                    switch (type) {
-                                        case DISCONNECT:
-                                            metadata.disconnectSession(sessionId, serialNumber, postTransaction, immediate, conn);
-                                            break;
-                                        case TERMINATE:
-                                            metadata.terminateSession(sessionId, serialNumber, immediate, conn);
-                                            break;
-                                    }
+                                DatabaseInterfaceInvoker.execute(HIGH, connection.getConnectionId(), conn -> {
+                                    if (type == DISCONNECT) metadata.disconnectSession(sessionId, serialNumber, postTransaction, immediate, conn); else
+                                    if (type == TERMINATE) metadata.terminateSession(sessionId, serialNumber, immediate, conn);
                                 });
                             } catch (SQLException e) {
                                 errors.put(entry, e);

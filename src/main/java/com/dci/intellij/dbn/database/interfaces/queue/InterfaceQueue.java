@@ -72,23 +72,23 @@ public class InterfaceQueue extends StatefulDisposable.Base implements DatabaseI
     }
 
     @Override
-    public <R> R scheduleAndReturn(InterfaceTaskDefinition info, ThrowableCallable<R, SQLException> callable) throws SQLException {
-        return queue(info, true, callable).getResponse();
+    public <R> R scheduleAndReturn(InterfaceTaskRequest request, ThrowableCallable<R, SQLException> callable) throws SQLException {
+        return queue(request, true, callable).getResponse();
     }
 
     @Override
-    public void scheduleAndWait(InterfaceTaskDefinition info, ThrowableRunnable<SQLException> runnable) throws SQLException {
-        queue(info, true, ThrowableCallable.from(runnable));
+    public void scheduleAndWait(InterfaceTaskRequest request, ThrowableRunnable<SQLException> runnable) throws SQLException {
+        queue(request, true, ThrowableCallable.from(runnable));
     }
 
     @Override
-    public void scheduleAndForget(InterfaceTaskDefinition info, ThrowableRunnable<SQLException> runnable) throws SQLException {
-        queue(info, false, ThrowableCallable.from(runnable));
+    public void scheduleAndForget(InterfaceTaskRequest request, ThrowableRunnable<SQLException> runnable) throws SQLException {
+        queue(request, false, ThrowableCallable.from(runnable));
     }
 
     @NotNull
-    private <T> InterfaceTask<T> queue(InterfaceTaskDefinition info, boolean synchronous, ThrowableCallable<T, SQLException> callable) throws SQLException {
-        InterfaceTask<T> task = new InterfaceTask<>(info, synchronous, callable);
+    private <T> InterfaceTask<T> queue(InterfaceTaskRequest request, boolean synchronous, ThrowableCallable<T, SQLException> callable) throws SQLException {
+        InterfaceTask<T> task = new InterfaceTask<>(request, synchronous, callable);
         queue.add(task);
         boolean queued = task.changeStatus(QUEUED, () -> counters.queued().increment());
 

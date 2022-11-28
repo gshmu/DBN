@@ -16,10 +16,15 @@ public class MetadataDiagnosticsTableModel extends AbstractDiagnosticsTableModel
             "Invocations",
             "Failures",
             "Timeouts",
-            "Best Execution Time (ms)",
-            "Worst Execution Time (ms)",
-            "Average Execution Time (ms)",
-            "Total Execution Time (ms)"};
+            "Best query (ms)",
+            "Worst query (ms)",
+            "Average query (ms)",
+            "Total query (ms)",
+            "Best load (ms)",
+            "Worst load (ms)",
+            "Average load (ms)",
+            "Total load (ms)",
+            "Fetch block size"};
 
     public MetadataDiagnosticsTableModel(ConnectionHandler connection) {
         super(connection.getProject());
@@ -41,32 +46,29 @@ public class MetadataDiagnosticsTableModel extends AbstractDiagnosticsTableModel
 
     @Override
     public Object getValue(DiagnosticEntry<String> entry, int column) {
+        DiagnosticEntry<String> query = entry.getDetail("QUERY");
+        DiagnosticEntry<String> load = entry.getDetail("LOAD");
         switch (column) {
-            case 0: return entry.getIdentifier();
-            case 1: return entry.getInvocationCount();
-            case 2: return entry.getFailureCount();
-            case 3: return entry.getTimeoutCount();
-            case 4: return entry.getBestExecutionTime();
-            case 5: return entry.getWorstExecutionTime();
-            case 6: return entry.getAverageExecutionTime();
-            case 7: return entry.getTotalExecutionTime();
+            case 0: return query.getIdentifier();
+            case 1: return query.getInvocations();
+            case 2: return query.getFailures();
+            case 3: return query.getTimeouts();
+            case 4: return query.getBest();
+            case 5: return query.getWorst();
+            case 6: return query.getAverage();
+            case 7: return query.getTotal();
+            case 8: return load.getBest();
+            case 9: return load.getWorst();
+            case 10: return load.getAverage();
+            case 11: return load.getTotal();
+            case 12: return entry.getDetail("FETCH_BLOCK").getAverage();
         }
         return "";
     }
 
     @Override
     public String getPresentableValue(DiagnosticEntry<String> entry, int column) {
-        switch (column) {
-            case 0: return entry.getIdentifier();
-            case 1: return Long.toString(entry.getInvocationCount());
-            case 2: return Long.toString(entry.getFailureCount());
-            case 3: return Long.toString(entry.getTimeoutCount());
-            case 4: return Long.toString(entry.getBestExecutionTime());
-            case 5: return Long.toString(entry.getWorstExecutionTime());
-            case 6: return Long.toString(entry.getAverageExecutionTime());
-            case 7: return Long.toString(entry.getTotalExecutionTime());
-        }
-        return "";
+        return getValue(entry, column).toString();
     }
 
     public ConnectionHandler getConnection() {
