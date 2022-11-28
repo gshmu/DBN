@@ -129,7 +129,7 @@ public class MethodExecutionManager extends ProjectComponentBase implements Pers
                             } else {
                                 String message =
                                         "Can not execute method " + methodIdentifier + ".\n" +
-                                                "No connectivity to '" + connection.getQualifiedName() + "'. " +
+                                                "No connectivity to '" + connection.getName() + "'. " +
                                                 "Please check your connection settings and try again.";
                                 Messages.showErrorDialog(project, message);
                             }

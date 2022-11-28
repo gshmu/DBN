@@ -8,7 +8,7 @@ import com.dci.intellij.dbn.diagnostics.data.DiagnosticEntry;
 import com.intellij.openapi.project.Project;
 import org.jetbrains.annotations.NotNull;
 
-public abstract class AbstractDiagnosticsTableModel<T> extends DBNMutableTableModel<DiagnosticEntry<T>> {
+public abstract class AbstractDiagnosticsTableModel<T extends Comparable<T>> extends DBNMutableTableModel<DiagnosticEntry<T>> {
     private final ProjectRef project;
     private final Latent<DiagnosticBundle<T>> diagnostics = Latent.weak(() -> resolveDiagnostics());
     private transient int signature = 0;
@@ -40,7 +40,7 @@ public abstract class AbstractDiagnosticsTableModel<T> extends DBNMutableTableMo
 
     @Override
     public final int getRowCount() {
-        return getDiagnostics().getEntries().size();
+        return getDiagnostics().getKeys().size();
     }
 
     @Override
@@ -60,6 +60,8 @@ public abstract class AbstractDiagnosticsTableModel<T> extends DBNMutableTableMo
 
     @Override
     public final Object getValueAt(int rowIndex, int columnIndex) {
-        return getDiagnostics().getEntries().get(rowIndex);
+        DiagnosticBundle<T> bundle = getDiagnostics();
+        T key = bundle.getKeys().get(rowIndex);
+        return bundle.get(key);
     }
 }

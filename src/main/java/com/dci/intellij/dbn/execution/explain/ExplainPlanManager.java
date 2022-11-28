@@ -11,7 +11,6 @@ import com.dci.intellij.dbn.connection.mapping.FileConnectionContextManager;
 import com.dci.intellij.dbn.database.interfaces.DatabaseCompatibilityInterface;
 import com.dci.intellij.dbn.database.interfaces.DatabaseInterfaceInvoker;
 import com.dci.intellij.dbn.database.interfaces.DatabaseMetadataInterface;
-import com.dci.intellij.dbn.database.interfaces.queue.InterfaceTaskDefinition;
 import com.dci.intellij.dbn.execution.ExecutionManager;
 import com.dci.intellij.dbn.execution.explain.result.ExplainPlanResult;
 import com.dci.intellij.dbn.language.common.DBLanguagePsiFile;
@@ -82,35 +81,35 @@ public class ExplainPlanManager extends ProjectComponentBase {
 
     private static ExplainPlanResult createExplainPlan(@NotNull ExecutablePsiElement executable, ConnectionHandler connection) {
         try {
-            InterfaceTaskDefinition taskDefinition = InterfaceTaskDefinition.create(HIGH,
+            return DatabaseInterfaceInvoker.load(HIGH,
                     "Creating explain plan",
                     "Running explain plan for SQL statement",
-                    connection.createInterfaceContext());
-            return DatabaseInterfaceInvoker.load(taskDefinition, conn -> {
-                SchemaId currentSchema = executable.getFile().getSchemaId();
-                connection.setCurrentSchema(conn, currentSchema);
-                Statement statement = null;
-                ResultSet resultSet = null;
-                try {
-                    DatabaseMetadataInterface metadata = connection.getMetadataInterface();
-                    metadata.clearExplainPlanData(conn);
+                    connection.getConnectionId(),
+                    conn -> {
+                        SchemaId currentSchema = executable.getFile().getSchemaId();
+                        connection.setCurrentSchema(conn, currentSchema);
+                        Statement statement = null;
+                        ResultSet resultSet = null;
+                        try {
+                            DatabaseMetadataInterface metadata = connection.getMetadataInterface();
+                            metadata.clearExplainPlanData(conn);
 
-                    DatabaseCompatibilityInterface compatibility = connection.getCompatibilityInterface();
-                    String explainPlanStatementPrefix = compatibility.getExplainPlanStatementPrefix();
-                    String explainPlanQuery = explainPlanStatementPrefix + "\n" + executable.prepareStatementText();
-                    statement = conn.createStatement();
-                    statement.setFetchSize(500);
-                    statement.execute(explainPlanQuery);
+                            DatabaseCompatibilityInterface compatibility = connection.getCompatibilityInterface();
+                            String explainPlanStatementPrefix = compatibility.getExplainPlanStatementPrefix();
+                            String explainPlanQuery = explainPlanStatementPrefix + "\n" + executable.prepareStatementText();
+                            statement = conn.createStatement();
+                            statement.setFetchSize(500);
+                            statement.execute(explainPlanQuery);
 
-                    resultSet = metadata.loadExplainPlan(conn);
-                    return new ExplainPlanResult(executable, resultSet);
+                            resultSet = metadata.loadExplainPlan(conn);
+                            return new ExplainPlanResult(executable, resultSet);
 
-                } finally {
-                    Resources.close(resultSet);
-                    Resources.close(statement);
-                    Resources.rollbackSilently(conn);
-                }
-            });
+                        } finally {
+                            Resources.close(resultSet);
+                            Resources.close(statement);
+                            Resources.rollbackSilently(conn);
+                        }
+                    });
         } catch (SQLException e) {
             return new ExplainPlanResult(executable, e.getMessage());
         }

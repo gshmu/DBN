@@ -20,7 +20,6 @@ import com.dci.intellij.dbn.connection.jdbc.DBNConnection;
 import com.dci.intellij.dbn.database.common.metadata.def.*;
 import com.dci.intellij.dbn.database.interfaces.DatabaseInterfaceInvoker;
 import com.dci.intellij.dbn.database.interfaces.DatabaseMetadataInterface;
-import com.dci.intellij.dbn.database.interfaces.queue.InterfaceTaskDefinition;
 import com.dci.intellij.dbn.editor.DBContentType;
 import com.dci.intellij.dbn.object.*;
 import com.dci.intellij.dbn.object.common.DBObject;
@@ -425,20 +424,18 @@ public class DBSchemaImpl extends DBObjectImpl<DBSchemaMetadata> implements DBSc
     @Override
     public void refreshObjectsStatus() throws SQLException {
         Set<BrowserTreeNode> refreshNodes = resetObjectsStatus();
-        ConnectionHandler connection = this.getConnection();
 
-        InterfaceTaskDefinition taskDefinition = InterfaceTaskDefinition.create(LOW,
+        DatabaseInterfaceInvoker.schedule(LOW,
                 "Refreshing object status",
                 "Refreshing object status for " + getQualifiedNameWithType(),
-                connection.createInterfaceContext());
-
-        DatabaseInterfaceInvoker.schedule(taskDefinition, conn -> {
-            refreshValidStatus(refreshNodes, conn);
-            refreshDebugStatus(refreshNodes, conn);
-            Background.run(() ->
-                    refreshNodes.forEach(n -> ProjectEvents.notify(getProject(), BrowserTreeEventListener.TOPIC,
-                            l -> l.nodeChanged(n, TreeEventType.NODES_CHANGED))));
-        });
+                getConnectionId(),
+                conn -> {
+                    refreshValidStatus(refreshNodes, conn);
+                    refreshDebugStatus(refreshNodes, conn);
+                    Background.run(() ->
+                            refreshNodes.forEach(n -> ProjectEvents.notify(getProject(), BrowserTreeEventListener.TOPIC,
+                                    listener -> listener.nodeChanged(n, TreeEventType.NODES_CHANGED))));
+                });
 
 
     }

@@ -4,6 +4,7 @@ import com.dci.intellij.dbn.code.common.style.formatting.FormattingAttributes;
 import com.dci.intellij.dbn.common.Capture;
 import com.dci.intellij.dbn.common.consumer.ListCollector;
 import com.dci.intellij.dbn.common.thread.ThreadMonitor;
+import com.dci.intellij.dbn.common.util.Guarded;
 import com.dci.intellij.dbn.common.util.Strings;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.language.common.QuotePair;
@@ -497,6 +498,11 @@ public abstract class IdentifierPsiElement extends LeafPsiElement<IdentifierElem
     @Override
     @Nullable
     public PsiElement resolve() {
+        return Guarded.call(null,  () -> doResolve());
+    }
+
+    @Nullable
+    private PsiElement doResolve() {
         if (isResolving()) {
             return ref.getReference();
         }

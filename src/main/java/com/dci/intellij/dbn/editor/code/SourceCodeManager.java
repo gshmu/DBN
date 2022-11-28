@@ -22,7 +22,6 @@ import com.dci.intellij.dbn.connection.jdbc.DBNConnection;
 import com.dci.intellij.dbn.database.interfaces.DatabaseDataDefinitionInterface;
 import com.dci.intellij.dbn.database.interfaces.DatabaseInterfaceInvoker;
 import com.dci.intellij.dbn.database.interfaces.DatabaseMetadataInterface;
-import com.dci.intellij.dbn.database.interfaces.queue.InterfaceTaskDefinition;
 import com.dci.intellij.dbn.debugger.DatabaseDebuggerManager;
 import com.dci.intellij.dbn.editor.DBContentType;
 import com.dci.intellij.dbn.editor.EditorProviderId;
@@ -294,45 +293,43 @@ public class SourceCodeManager extends ProjectComponentBase implements Persisten
     }
 
     public SourceCodeContent loadSourceFromDatabase(@NotNull DBSchemaObject object, DBContentType contentType) throws SQLException {
-        ConnectionHandler connection = object.getConnection();
         boolean optionalContent = contentType == DBContentType.CODE_BODY;
 
-        InterfaceTaskDefinition taskDefinition = InterfaceTaskDefinition.create(HIGH,
+        String sourceCode = DatabaseInterfaceInvoker.load(HIGH,
                 "Loading source code",
                 "Loading source code of " + object.getQualifiedNameWithType(),
-                connection.createInterfaceContext());
+                object.getConnectionId(),
+                conn -> {
+                    ResultSet resultSet = null;
+                    try {
+                        DatabaseMetadataInterface metadata = object.getMetadataInterface();
+                        resultSet = loadSourceFromDatabase(
+                                object,
+                                contentType,
+                                metadata,
+                                conn);
 
-        String sourceCode = DatabaseInterfaceInvoker.load(taskDefinition, conn -> {
-            ResultSet resultSet = null;
-            try {
-                DatabaseMetadataInterface metadata = connection.getMetadataInterface();
-                resultSet = loadSourceFromDatabase(
-                        object,
-                        contentType,
-                        metadata,
-                        conn);
+                        StringBuilder buffer = new StringBuilder();
+                        while (resultSet != null && resultSet.next()) {
+                            String codeLine = resultSet.getString("SOURCE_CODE");
+                            buffer.append(codeLine);
+                        }
 
-                StringBuilder buffer = new StringBuilder();
-                while (resultSet != null && resultSet.next()) {
-                    String codeLine = resultSet.getString("SOURCE_CODE");
-                    buffer.append(codeLine);
-                }
+                        if (buffer.length() == 0 && !optionalContent)
+                            throw new SQLException("Source lookup returned empty");
 
-                if (buffer.length() == 0 && !optionalContent)
-                    throw new SQLException("Source lookup returned empty");
-
-                return Strings.removeCharacter(buffer.toString(), '\r');
-            } finally {
-                Resources.close(resultSet);
-            }
-        });
+                        return Strings.removeCharacter(buffer.toString(), '\r');
+                    } finally {
+                        Resources.close(resultSet);
+                    }
+                });
 
         SourceCodeContent sourceCodeContent = new SourceCodeContent(sourceCode);
 
         String objectName = object.getName();
         DBObjectType objectType = object.getObjectType();
 
-        DatabaseDataDefinitionInterface dataDefinition = connection.getDataDefinitionInterface();
+        DatabaseDataDefinitionInterface dataDefinition = object.getDataDefinitionInterface();
         dataDefinition.computeSourceCodeOffsets(sourceCodeContent, objectType.getTypeId(), objectName);
         return sourceCodeContent;
     }
@@ -426,32 +423,29 @@ public class SourceCodeManager extends ProjectComponentBase implements Persisten
     public ChangeTimestamp loadChangeTimestamp(@NotNull DBSchemaObject object, DBContentType contentType) throws SQLException{
         if (OBJECT_CHANGE_MONITORING.isNotSupported(object)) return ChangeTimestamp.now();
 
-
-        ConnectionHandler connection = object.getConnection();
-        InterfaceTaskDefinition taskDefinition = InterfaceTaskDefinition.create(HIGHEST,
+        Timestamp timestamp = DatabaseInterfaceInvoker.load(HIGHEST,
                 "Loading object details",
                 "Loading change timestamp for " + object.getQualifiedNameWithType(),
-                connection.createInterfaceContext());
+                object.getConnectionId(),
+                conn -> {
+                    ResultSet resultSet = null;
+                    try {
+                        String schemaName = object.getSchemaName();
+                        String objectName = object.getName();
+                        String contentQualifier = getContentQualifier(object.getObjectType(), contentType);
 
-        Timestamp timestamp = DatabaseInterfaceInvoker.load(taskDefinition, conn -> {
-            ResultSet resultSet = null;
-            try {
-                String schemaName = object.getSchema().getName();
-                String objectName = object.getName();
-                String contentQualifier = getContentQualifier(object.getObjectType(), contentType);
+                        DatabaseMetadataInterface metadata = object.getMetadataInterface();
+                        resultSet = metadata.loadObjectChangeTimestamp(
+                                schemaName,
+                                objectName,
+                                contentQualifier,
+                                conn);
 
-                DatabaseMetadataInterface metadata = connection.getMetadataInterface();
-                resultSet = metadata.loadObjectChangeTimestamp(
-                        schemaName,
-                        objectName,
-                        contentQualifier,
-                        conn);
-
-                return resultSet.next() ? resultSet.getTimestamp(1) : null;
-            } finally {
-                Resources.close(resultSet);
-            }
-        });
+                        return resultSet.next() ? resultSet.getTimestamp(1) : null;
+                    } finally {
+                        Resources.close(resultSet);
+                    }
+                });
 
         if (timestamp != null) return ChangeTimestamp.of(timestamp);
 

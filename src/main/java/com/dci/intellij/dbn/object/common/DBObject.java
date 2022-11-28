@@ -10,8 +10,8 @@ import com.dci.intellij.dbn.common.path.Node;
 import com.dci.intellij.dbn.common.property.PropertyHolder;
 import com.dci.intellij.dbn.common.routine.Consumer;
 import com.dci.intellij.dbn.common.ui.Presentable;
+import com.dci.intellij.dbn.connection.ConnectionContext;
 import com.dci.intellij.dbn.connection.ConnectionId;
-import com.dci.intellij.dbn.database.interfaces.DatabaseInterfaceContext;
 import com.dci.intellij.dbn.editor.DBContentType;
 import com.dci.intellij.dbn.language.common.DBLanguage;
 import com.dci.intellij.dbn.language.common.DBLanguageDialect;
@@ -137,7 +137,7 @@ public interface DBObject extends
     }
 
     @Deprecated // do not use schema aware context
-    default DatabaseInterfaceContext createInterfaceContext() {
-        return DatabaseInterfaceContext.create(getConnection(), getSchemaId(), true);
+    default ConnectionContext createConnectionContext() {
+        return new ConnectionContext(getConnectionId(), getSchemaId());
     }
 }

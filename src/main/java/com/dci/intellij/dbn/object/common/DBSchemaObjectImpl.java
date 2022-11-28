@@ -10,7 +10,6 @@ import com.dci.intellij.dbn.database.common.metadata.def.DBObjectDependencyMetad
 import com.dci.intellij.dbn.database.interfaces.DatabaseDataDefinitionInterface;
 import com.dci.intellij.dbn.database.interfaces.DatabaseInterfaceInvoker;
 import com.dci.intellij.dbn.database.interfaces.DatabaseMetadataInterface;
-import com.dci.intellij.dbn.database.interfaces.queue.InterfaceTaskDefinition;
 import com.dci.intellij.dbn.editor.DBContentType;
 import com.dci.intellij.dbn.language.common.DBLanguage;
 import com.dci.intellij.dbn.language.psql.PSQLLanguage;
@@ -131,49 +130,48 @@ public abstract class DBSchemaObjectImpl<M extends DBObjectMetadata> extends DBO
 
     @Override
     public List<DBSchema> getReferencingSchemas() throws SQLException {
-        InterfaceTaskDefinition taskDefinition = InterfaceTaskDefinition.create(HIGHEST,
+        return DatabaseInterfaceInvoker.load(HIGHEST,
                 "Loading data dictionary",
                 "Loading schema references for " + getQualifiedNameWithType(),
-                createInterfaceContext());
+                getConnectionId(),
+                conn -> {
+                    List<DBSchema> schemas = new ArrayList<>();
+                    ResultSet resultSet = null;
+                    try {
+                        DBSchema schema = getSchema();
+                        DatabaseMetadataInterface metadataInterface = getMetadataInterface();
+                        resultSet = metadataInterface.loadReferencingSchemas(getSchemaName(), getName(), conn);
+                        DBObjectBundle objectBundle = getObjectBundle();
+                        while (resultSet.next()) {
+                            String schemaName = resultSet.getString("SCHEMA_NAME");
+                            DBSchema sch = objectBundle.getSchema(schemaName);
+                            if (sch != null) {
+                                schemas.add(sch);
+                            }
+                        }
+                        if (schemas.isEmpty()) {
+                            schemas.add(schema);
+                        }
 
-        return DatabaseInterfaceInvoker.load(taskDefinition, conn -> {
-            List<DBSchema> schemas = new ArrayList<>();
-            ResultSet resultSet = null;
-            try {
-                DBSchema schema = getSchema();
-                DatabaseMetadataInterface metadataInterface = getMetadataInterface();
-                resultSet = metadataInterface.loadReferencingSchemas(getSchemaName(), getName(), conn);
-                DBObjectBundle objectBundle = getObjectBundle();
-                while (resultSet.next()) {
-                    String schemaName = resultSet.getString("SCHEMA_NAME");
-                    DBSchema sch = objectBundle.getSchema(schemaName);
-                    if (sch != null) {
-                        schemas.add(sch);
+                    } finally {
+                        Resources.close(resultSet);
                     }
-                }
-                if (schemas.isEmpty()) {
-                    schemas.add(schema);
-                }
-
-            } finally {
-                Resources.close(resultSet);
-            }
-            return schemas;
-        });
+                    return schemas;
+                });
     }
 
     @Override
     public void executeUpdateDDL(DBContentType contentType, String oldCode, String newCode) throws SQLException {
-        InterfaceTaskDefinition taskDefinition = InterfaceTaskDefinition.create(HIGHEST,
+        DatabaseInterfaceInvoker.execute(HIGHEST,
                 "Updating source code",
                 "Updating sources of " + getQualifiedNameWithType(),
-                createInterfaceContext());
-
-        DatabaseInterfaceInvoker.execute(taskDefinition, conn -> {
-            ConnectionHandler connection = getConnection();
-            DatabaseDataDefinitionInterface dataDefinition = connection.getDataDefinitionInterface();
-            dataDefinition.updateObject(getName(), getObjectType().getName(), oldCode,  newCode, conn);
-        });
+                getConnectionId(),
+                getSchemaId(),
+                conn -> {
+                    ConnectionHandler connection = getConnection();
+                    DatabaseDataDefinitionInterface dataDefinition = connection.getDataDefinitionInterface();
+                    dataDefinition.updateObject(getName(), getObjectType().getName(), oldCode, newCode, conn);
+                });
     }
 
     /*********************************************************

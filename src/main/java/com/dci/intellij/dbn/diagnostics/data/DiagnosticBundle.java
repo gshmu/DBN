@@ -1,52 +1,72 @@
 package com.dci.intellij.dbn.diagnostics.data;
 
-import com.dci.intellij.dbn.common.util.Lists;
-import lombok.Getter;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import com.dci.intellij.dbn.common.latent.Latent;
 
+import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
-import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
-@Getter
-public final class DiagnosticBundle<T> {
+import static com.dci.intellij.dbn.diagnostics.data.DiagnosticEntry.DEFAULT_QUALIFIER;
+
+public final class DiagnosticBundle<T extends Comparable<T>> {
     private final DiagnosticType type;
-    private final List<DiagnosticEntry<T>> entries = new CopyOnWriteArrayList<>();
+    private final boolean composite;
+    private final Map<T, DiagnosticEntry<T>> entries = new ConcurrentHashMap<>();
+    private final Latent<List<T>> keys = Latent.mutable(
+            () -> getSignature(),
+            () -> new ArrayList<>(entries.keySet()));
+
     private transient int signature;
 
-    public DiagnosticBundle(DiagnosticType type) {
+    private DiagnosticBundle(DiagnosticType type, boolean composite) {
         this.type = type;
+        this.composite = composite;
     }
 
-    public void log(T identifier, boolean failure, boolean timeout, long executionTime) {
-        DiagnosticEntry<T> entry = ensure(identifier);
-        entry.log(failure, timeout, executionTime);
-        signature = Objects.hash(entries.toArray());
+    public static <T extends Comparable<T>> DiagnosticBundle<T> basic(DiagnosticType type) {
+        return new DiagnosticBundle<>(type, false);
     }
 
-    @NotNull
-    private DiagnosticEntry<T> ensure(T identifier) {
-        DiagnosticEntry<T> record = find(identifier);
-        if (record == null) {
-            synchronized (this) {
-                record = find(identifier);
-                if (record == null) {
-                    record = new DiagnosticEntry<T>(identifier);
-                    entries.add(record);
-                }
-            }
-        }
-        return record;
+    public static <T extends Comparable<T>> DiagnosticBundle<T> composite(DiagnosticType type) {
+        return new DiagnosticBundle<>(type, true);
     }
 
-    @Nullable
-    private DiagnosticEntry<T> find(T identifier) {
-        return Lists.first(entries, entry -> Objects.equals(entry.getIdentifier(), identifier));
+    public int getSignature() {
+        return signature;
     }
 
     public int size() {
-        return entries.size();
+        return getKeys().size();
+    }
+
+    public List<T> getKeys() {
+        return keys.get();
+    }
+
+    public DiagnosticEntry<T> get(T identifier) {
+        return this.entries.computeIfAbsent(identifier, i -> createEntry(identifier));
+    }
+    public DiagnosticEntry<T> get(T key, String qualifier) {
+        return get(key).getDetail(qualifier);
+    }
+
+    public DiagnosticEntry<T> log(T identifier, boolean failure, boolean timeout, long value) {
+        return log(identifier, DEFAULT_QUALIFIER, failure, timeout, value);
+    }
+
+    public DiagnosticEntry<T> log(T identifier, String qualifier, boolean failure, boolean timeout, long value) {
+        DiagnosticEntry<T> entry = get(identifier, qualifier);
+        entry.log(failure, timeout, value);
+        signature++;
+        return entry;
+    }
+
+
+    private DiagnosticEntry<T> createEntry(T identifier) {
+        return composite ?
+                new DiagnosticEntryComposite<>(identifier) :
+                new DiagnosticEntryBase<>(identifier);
     }
 
     @Override

@@ -1,79 +1,37 @@
 package com.dci.intellij.dbn.diagnostics.data;
 
-import lombok.Getter;
+public interface DiagnosticEntry<T> {
+    String DEFAULT_QUALIFIER = "DEFAULT";
 
-import java.util.Objects;
-import java.util.concurrent.atomic.AtomicLong;
+    T getIdentifier();
 
-@Getter
-public class DiagnosticEntry<T> {
-    private final T identifier;
-    private final AtomicLong invocationCount = new AtomicLong();
-    private final AtomicLong failureCount = new AtomicLong();
-    private final AtomicLong timeoutCount = new AtomicLong();
-    private final AtomicLong totalExecutionTime = new AtomicLong();
-    private final AtomicLong bestExecutionTime = new AtomicLong();
-    private final AtomicLong worstExecutionTime = new AtomicLong();
-    private transient int signature;
+    String getQualifier();
 
-    public DiagnosticEntry(T identifier) {
-        this.identifier = identifier;
-    }
+    boolean isComposite();
 
-    public long getInvocationCount() {
-        return invocationCount.get();
-    }
+    DiagnosticEntry<T> getDetail(String qualifier);
 
-    public long getFailureCount() {
-        return failureCount.get();
-    }
+    long getInvocations();
 
-    public long getTimeoutCount() {
-        return timeoutCount.get();
-    }
+    long getFailures();
 
-    public long getTotalExecutionTime() {
-        return totalExecutionTime.get();
-    }
+    long getTimeouts();
 
-    public long getAverageExecutionTime() {
-        return getTotalExecutionTime() / getInvocationCount();
-    }
+    long getTotal();
 
-    public long getBestExecutionTime() {
-        return bestExecutionTime.get();
-    }
+    long getBest();
 
-    public long getWorstExecutionTime() {
-        return worstExecutionTime.get();
-    }
+    long getWorst();
 
-    public void log(boolean failure, boolean timeout, long executionTime) {
-        invocationCount.incrementAndGet();
-        if (failure) {
-            failureCount.incrementAndGet();
+    long getAverage();
+
+    void log(boolean failure, boolean timeout, long value);
+
+    class Delegate<T> implements DiagnosticEntry<T> {
+
+        @lombok.experimental.Delegate
+        private DiagnosticEntry<T> getDefaultDetail() {
+            return getDetail(DEFAULT_QUALIFIER);
         }
-        if (timeout) {
-            timeoutCount.incrementAndGet();
-        }
-
-        if (bestExecutionTime.get() == 0 || bestExecutionTime.get() > executionTime) {
-            bestExecutionTime.set(executionTime);
-        }
-        if (worstExecutionTime.get() == 0 || worstExecutionTime.get() < executionTime) {
-            worstExecutionTime.set(executionTime);
-        }
-
-        totalExecutionTime.addAndGet(executionTime);
-        signature = Objects.hash(
-                identifier,
-                invocationCount.get(),
-                failureCount.get(),
-                timeoutCount.get(),
-                totalExecutionTime.get(),
-                bestExecutionTime.get(),
-                worstExecutionTime.get());
     }
-
-
 }

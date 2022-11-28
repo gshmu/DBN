@@ -5,21 +5,21 @@ import com.dci.intellij.dbn.common.util.Compactables;
 import com.dci.intellij.dbn.common.util.Strings;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.Resources;
+import com.dci.intellij.dbn.connection.jdbc.DBNCallableStatement;
 import com.dci.intellij.dbn.connection.jdbc.DBNConnection;
 import com.dci.intellij.dbn.connection.jdbc.DBNPreparedStatement;
 import com.dci.intellij.dbn.connection.jdbc.DBNStatement;
 import com.dci.intellij.dbn.database.DatabaseActivityTrace;
 import com.dci.intellij.dbn.database.DatabaseCompatibility;
-import com.dci.intellij.dbn.database.common.statement.StatementExecutor.Context;
 import com.dci.intellij.dbn.database.interfaces.DatabaseInterfaces;
-import com.dci.intellij.dbn.diagnostics.DiagnosticsManager;
-import com.dci.intellij.dbn.diagnostics.data.DiagnosticBundle;
 import lombok.extern.slf4j.Slf4j;
 import org.jdom.Element;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.sql.*;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.SQLFeatureNotSupportedException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.StringTokenizer;
@@ -87,14 +87,15 @@ public class StatementExecutionProcessor {
         return id;
     }
 
-    public ResultSet executeQuery(@NotNull DBNConnection connection, boolean forceExecution, Object... arguments) throws SQLException {
+    public ResultSet executeQuery(DBNConnection connection, boolean forceExecution, Object... arguments) throws SQLException {
+        StatementExecutorContext context = createContext(connection);
         if (statementDefinitions.size() == 1) {
-            return executeQuery(statementDefinitions.get(0), connection, forceExecution, arguments);
+            return executeQuery(statementDefinitions.get(0), context, forceExecution, arguments);
         } else {
             SQLException exception = NO_STATEMENT_DEFINITION_EXCEPTION;
             for (StatementDefinition statementDefinition : statementDefinitions) {
                 try {
-                    return executeQuery(statementDefinition, connection, forceExecution, arguments);
+                    return executeQuery(statementDefinition, context, forceExecution, arguments);
                 } catch (SQLException e){
                     exception = e;
                 }
@@ -104,19 +105,17 @@ public class StatementExecutionProcessor {
     }
 
     private ResultSet executeQuery(
-            @NotNull StatementDefinition statementDefinition,
-            @NotNull DBNConnection connection,
-            boolean forceExecution,
+            @NotNull StatementDefinition definition,
+            @NotNull StatementExecutorContext context,
+            boolean force,
             Object... arguments) throws SQLException {
 
-        boolean hasFallback = statementDefinition.hasFallback();
+        boolean hasFallback = definition.hasFallback();
         DatabaseCompatibility compatibility = ConnectionHandler.local().getCompatibility();
-        DatabaseActivityTrace activityTrace = compatibility.getActivityTrace(statementDefinition.getId());
+        DatabaseActivityTrace activityTrace = compatibility.getActivityTrace(definition.getId());
 
-        if (forceExecution || activityTrace.canExecute(hasFallback)) {
-            Context context = createExecutionContext(connection);
-            return StatementExecutor.execute(
-                    context,
+        if (force || activityTrace.canExecute(hasFallback)) {
+            return StatementExecutor.execute(context,
                     () -> {
                         DBNStatement statement = null;
                         ResultSet resultSet = null;
@@ -124,19 +123,22 @@ public class StatementExecutionProcessor {
                         try {
                             activityTrace.init();
                             if (isDatabaseAccessDebug()) {
-                                statementText = statementDefinition.prepareStatementText(arguments);
+                                statementText = definition.prepareStatementText(arguments);
                                 log.info("[DBN] Executing statement: " + statementText);
                             }
+
+                            DBNConnection connection = context.getConnection();
                             if (prepared) {
-                                DBNPreparedStatement preparedStatement = statementDefinition.prepareStatement(connection, arguments);
+                                DBNPreparedStatement preparedStatement = definition.prepareStatement(connection, arguments);
                                 statement = preparedStatement;
                                 context.setStatement(statement);
                                 preparedStatement.setQueryTimeout(timeout);
                                 resultSet = preparedStatement.executeQuery();
+                                context.log("FETCH_BLOCK", false, false, resultSet.getFetchSize());
                                 return resultSet;
                             } else {
                                 if (statementText == null)
-                                    statementText = statementDefinition.prepareStatementText(arguments);
+                                    statementText = definition.prepareStatementText(arguments);
                                 statement = connection.createStatement();
                                 context.setStatement(statement);
                                 statement.setQueryTimeout(timeout);
@@ -144,6 +146,7 @@ public class StatementExecutionProcessor {
                                 if (query) {
                                     try {
                                         resultSet = statement.getResultSet();
+                                        context.log("FETCH_BLOCK", false, false, resultSet.getFetchSize());
                                         return resultSet;
                                     } catch (SQLException e) {
                                         Resources.close(statement);
@@ -191,13 +194,15 @@ public class StatementExecutionProcessor {
             @Nullable T outputReader,
             Object... arguments) throws SQLException {
 
+        StatementExecutorContext context = createContext(connection);
         if (statementDefinitions.size() == 1) {
-            return executeCall(statementDefinitions.get(0), connection, outputReader, arguments);
+            StatementDefinition definition = statementDefinitions.get(0);
+            return executeCall(definition, context, outputReader, arguments);
         } else {
             SQLException exception = NO_STATEMENT_DEFINITION_EXCEPTION;
-            for (StatementDefinition statementDefinition : statementDefinitions) {
+            for (StatementDefinition definition : statementDefinitions) {
                 try {
-                    return executeCall(statementDefinition, connection, outputReader, arguments);
+                    return executeCall(definition, context, outputReader, arguments);
                 } catch (SQLException e){
                     exception = e;
                 }
@@ -208,19 +213,18 @@ public class StatementExecutionProcessor {
     }
 
     private <T extends CallableStatementOutput> T executeCall(
-            @NotNull StatementDefinition statementDefinition,
-            @NotNull DBNConnection connection,
+            @NotNull StatementDefinition definition,
+            @NotNull StatementExecutorContext context,
             @Nullable T outputReader,
             Object... arguments) throws SQLException {
 
-        Context context = createExecutionContext(connection);
-        return StatementExecutor.execute(
-                context,
+        return StatementExecutor.execute(context,
                 () -> {
-                    String statementText = statementDefinition.prepareStatementText(arguments);
+                    String statementText = definition.prepareStatementText(arguments);
                     if (isDatabaseAccessDebug()) log.info("[DBN] Executing statement: " + statementText);
 
-                    CallableStatement statement = connection.prepareCall(statementText);
+                    DBNConnection connection = context.getConnection();
+                    DBNCallableStatement statement = connection.prepareCall(statementText);
                     context.setStatement(statement);
                     try {
                         if (outputReader != null) outputReader.registerParameters(statement);
@@ -240,13 +244,14 @@ public class StatementExecutionProcessor {
     }
 
     public void executeUpdate(DBNConnection connection, Object... arguments) throws SQLException {
+        StatementExecutorContext context = createContext(connection);
         if (statementDefinitions.size() == 1) {
-            executeUpdate(statementDefinitions.get(0), connection, arguments);
+            executeUpdate(statementDefinitions.get(0), context, arguments);
         } else {
             SQLException exception = NO_STATEMENT_DEFINITION_EXCEPTION;
             for (StatementDefinition statementDefinition : statementDefinitions) {
                 try {
-                    executeUpdate(statementDefinition, connection, arguments);
+                    executeUpdate(statementDefinition, context, arguments);
                     return;
                 } catch (SQLException e){
                     exception = e;
@@ -257,17 +262,16 @@ public class StatementExecutionProcessor {
     }
 
     private void executeUpdate(
-            @NotNull StatementDefinition statementDefinition,
-            @NotNull DBNConnection connection,
+            @NotNull StatementDefinition definition,
+            @NotNull StatementExecutorContext context,
             Object... arguments) throws SQLException {
-        Context context = createExecutionContext(connection);
-        StatementExecutor.execute(
-                context,
+        StatementExecutor.execute(context,
                 () -> {
-                    String statementText = statementDefinition.prepareStatementText(arguments);
+                    String statementText = definition.prepareStatementText(arguments);
                     if (isDatabaseAccessDebug()) log.info("[DBN] Executing statement: " + statementText);
 
-                    Statement statement = connection.createStatement();
+                    DBNConnection connection = context.getConnection();
+                    DBNStatement statement = connection.createStatement();
                     context.setStatement(statement);
                     try {
                         statement.setQueryTimeout(timeout);
@@ -285,13 +289,14 @@ public class StatementExecutionProcessor {
     }
 
     public boolean executeStatement(@NotNull DBNConnection connection, Object... arguments) throws SQLException {
+        StatementExecutorContext context = createContext(connection);
         if (statementDefinitions.size() == 1) {
-            return executeStatement(statementDefinitions.get(0), connection, arguments);
+            return executeStatement(statementDefinitions.get(0), context, arguments);
         } else {
             SQLException exception = NO_STATEMENT_DEFINITION_EXCEPTION;
             for (StatementDefinition statementDefinition : statementDefinitions) {
                 try {
-                    return executeStatement(statementDefinition, connection, arguments);
+                    return executeStatement(statementDefinition, context, arguments);
                 } catch (SQLException e){
                     exception = e;
                 }
@@ -301,17 +306,16 @@ public class StatementExecutionProcessor {
     }
 
     private boolean executeStatement(
-            @NotNull StatementDefinition statementDefinition,
-            @NotNull DBNConnection connection,
+            @NotNull StatementDefinition definition,
+            @NotNull StatementExecutorContext context,
             Object... arguments) throws SQLException {
-
-        Context context = createExecutionContext(connection);
         return StatementExecutor.execute(context,
                 () -> {
-                    String statementText = statementDefinition.prepareStatementText(arguments);
+                    String statementText = definition.prepareStatementText(arguments);
                     if (isDatabaseAccessDebug()) log.info("[DBN] Executing statement: " + statementText);
 
-                    Statement statement = connection.createStatement();
+                    DBNConnection connection = context.getConnection();
+                    DBNStatement statement = connection.createStatement();
                     context.setStatement(statement);
                     try {
                         statement.setQueryTimeout(timeout);
@@ -328,9 +332,7 @@ public class StatementExecutionProcessor {
     }
 
     @NotNull
-    private Context createExecutionContext(@NotNull DBNConnection connection) {
-        DiagnosticsManager diagnosticsManager = DiagnosticsManager.getInstance(connection.getProject());
-        DiagnosticBundle<String> diagnostics =  diagnosticsManager.getMetadataInterfaceDiagnostics(connection.getId());
-        return StatementExecutor.context(diagnostics, id, timeout);
+    public StatementExecutorContext createContext(@NotNull DBNConnection connection) {
+        return new StatementExecutorContext(connection, id, timeout);
     }
 }

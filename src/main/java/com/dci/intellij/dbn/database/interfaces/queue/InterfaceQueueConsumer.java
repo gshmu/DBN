@@ -19,7 +19,7 @@ public class InterfaceQueueConsumer implements Consumer<InterfaceTask<?>>{
         if (task.isProgress()) {
             Progress.background(queue.getProject(), queue.getConnection(), true,
                     task.getTitle(),
-                    task.getDescription(),
+                    task.getText(),
                     indicator -> queue.executeTask(task));
         } else {
             Background.run(() -> queue.executeTask(task));

@@ -31,7 +31,7 @@ public class ConnectionUtil {
     public static DBNConnection connect(ConnectionHandler connection, SessionId sessionId) throws SQLException {
         AuthenticationInfo authenticationInfo = ensureAuthenticationInfo(connection);
 
-        return ConnectionLocalContext.surround(connection.createInterfaceContext(), () -> {
+        return ConnectionContext.surround(connection.createConnectionContext(), () -> {
             long start = System.currentTimeMillis();
             ConnectionHandlerStatusHolder connectionStatus = connection.getConnectionStatus();
 
