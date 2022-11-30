@@ -16,10 +16,10 @@ public class ResultSetDataModelCell<
         extends SortableDataModelCell<R, M> {
 
     public ResultSetDataModelCell(R row, ResultSet resultSet, ResultSetColumnInfo columnInfo) throws SQLException {
-        super(row, null, columnInfo.getColumnIndex());
+        super(row, null, columnInfo.getIndex());
         DBDataType dataType = columnInfo.getDataType();
-        if (!getRow().getModel().is(INSERTING)) {
-            Object userValue = dataType.getValueFromResultSet(resultSet, columnInfo.getResultSetColumnIndex());
+        if (!getModel().is(INSERTING)) {
+            Object userValue = dataType.getValueFromResultSet(resultSet, columnInfo.getResultSetIndex());
             setUserValue(userValue);
         }
     }

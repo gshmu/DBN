@@ -8,19 +8,16 @@ import lombok.Getter;
 import lombok.Setter;
 import org.jetbrains.annotations.NotNull;
 
-import javax.swing.Icon;
+import javax.swing.*;
 
 @Getter
 @Setter
 @EqualsAndHashCode
 public class ObjectTypeFilterSetting implements Selectable<ObjectTypeFilterSetting> {
+    private transient ObjectTypeFilterSettings parent;
+
     private final DBObjectType objectType;
-
-    @EqualsAndHashCode.Exclude
-    private final ObjectTypeFilterSettings parent;
-
-    @EqualsAndHashCode.Exclude
-    private transient boolean selected = true;
+    private boolean selected = true;
 
     ObjectTypeFilterSetting(ObjectTypeFilterSettings parent, DBObjectType objectType) {
         this.parent = parent;

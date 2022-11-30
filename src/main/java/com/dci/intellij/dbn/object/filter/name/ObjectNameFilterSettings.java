@@ -17,13 +17,7 @@ import javax.swing.event.TreeModelEvent;
 import javax.swing.event.TreeModelListener;
 import javax.swing.tree.TreeModel;
 import javax.swing.tree.TreePath;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.EnumMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 import static com.dci.intellij.dbn.common.util.Unsafe.cast;
 
@@ -37,11 +31,8 @@ public class ObjectNameFilterSettings
     private final List<ObjectNameFilter> filters = new ArrayList<>();
     private final Map<DBObjectType, Filter<DBObject>> objectFilterMap = new EnumMap<>(DBObjectType.class);
 
-    @EqualsAndHashCode.Exclude
-    private final ConnectionId connectionId;
-
-    @EqualsAndHashCode.Exclude
-    private final Set<TreeModelListener> listeners = new HashSet<>();
+    private transient final ConnectionId connectionId;
+    private transient final Set<TreeModelListener> listeners = new HashSet<>();
 
 
     public ObjectNameFilterSettings(ConnectionFilterSettings parent, ConnectionId connectionId) {

@@ -13,31 +13,31 @@ import java.sql.SQLException;
 @Getter
 @EqualsAndHashCode(callSuper = true)
 public class ResultSetColumnInfo extends BasicColumnInfo {
-    private final int resultSetColumnIndex;
+    private final int resultSetIndex;
 
-    public ResultSetColumnInfo(ConnectionHandler connection, ResultSet resultSet, int columnIndex) throws SQLException {
-        super(null, null, columnIndex);
-        resultSetColumnIndex = columnIndex + 1;
+    public ResultSetColumnInfo(ConnectionHandler connection, ResultSet resultSet, int index) throws SQLException {
+        super(null, null, index);
+        resultSetIndex = index + 1;
         ResultSetMetaData metaData = resultSet.getMetaData();
-        name = translateName(metaData.getColumnName(resultSetColumnIndex).intern(), connection);
+        name = translateName(metaData.getColumnName(resultSetIndex).intern(), connection);
 
-        String dataTypeName = metaData.getColumnTypeName(resultSetColumnIndex);
+        String dataTypeName = metaData.getColumnTypeName(resultSetIndex);
         int precision = getPrecision(metaData);
-        int scale = metaData.getScale(resultSetColumnIndex);
+        int scale = metaData.getScale(resultSetIndex);
 
         dataType = DBDataType.get(connection, dataTypeName, precision, precision, scale, false);
     }
 
-    public ResultSetColumnInfo(String name, DBDataType dataType, int columnIndex, int resultSetColumnIndex ) {
+    public ResultSetColumnInfo(String name, DBDataType dataType, int columnIndex, int resultSetIndex) {
         super(name, dataType, columnIndex);
-        this.resultSetColumnIndex = resultSetColumnIndex;
+        this.resultSetIndex = resultSetIndex;
     }
 
 
     // lenient approach for oracle bug returning the size of LOBs instead of the precision.
     private int getPrecision(ResultSetMetaData metaData) throws SQLException {
         try {
-            return metaData.getPrecision(resultSetColumnIndex);
+            return metaData.getPrecision(resultSetIndex);
         } catch (NumberFormatException e) {
             return 4000;
         }

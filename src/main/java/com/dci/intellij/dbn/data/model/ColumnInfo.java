@@ -5,7 +5,7 @@ import com.intellij.openapi.Disposable;
 
 public interface ColumnInfo extends Disposable {
     String getName();
-    int getColumnIndex();
+    int getIndex();
     DBDataType getDataType();
 
     boolean isSortable();

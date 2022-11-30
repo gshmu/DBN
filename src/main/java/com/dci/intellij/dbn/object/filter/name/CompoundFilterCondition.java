@@ -21,11 +21,10 @@ import static com.dci.intellij.dbn.common.options.setting.SettingsSupport.string
 @Setter
 @EqualsAndHashCode
 public class CompoundFilterCondition implements Filter<DBObject>, FilterCondition {
-    private final List<FilterCondition> conditions = new ArrayList<>();
     private ConditionJoinType joinType = ConditionJoinType.AND;
+    private final List<FilterCondition> conditions = new ArrayList<>();
 
-    @EqualsAndHashCode.Exclude
-    private CompoundFilterCondition parent;
+    private transient CompoundFilterCondition parent;
 
     public CompoundFilterCondition() {
     }

@@ -29,14 +29,9 @@ public class DatasetEditorColumnInfo extends ResultSetColumnInfo {
     private final boolean foreignKey;
     private final boolean identity;
 
-    @EqualsAndHashCode.Exclude
-    private final DBObjectRef<DBColumn> columnRef;
-
-    @EqualsAndHashCode.Exclude
-    private Latent<List<String>> possibleValues = Latent.basic(() -> loadPossibleValues());
-
-    @EqualsAndHashCode.Exclude
-    private final RefreshableValue<Boolean> auditColumn = new RefreshableValue<>(2000) {
+    private transient final DBObjectRef<DBColumn> column;
+    private transient Latent<List<String>> possibleValues = Latent.basic(() -> loadPossibleValues());
+    private transient final RefreshableValue<Boolean> auditColumn = new RefreshableValue<>(2000) {
         @Override
         protected Boolean load() {
             DBColumn column = getColumn();
@@ -47,7 +42,7 @@ public class DatasetEditorColumnInfo extends ResultSetColumnInfo {
 
     DatasetEditorColumnInfo(DBColumn column, int columnIndex, int resultSetColumnIndex) {
         super(column.getName(), column.getDataType(), columnIndex, resultSetColumnIndex);
-        this.columnRef = DBObjectRef.of(column);
+        this.column = DBObjectRef.of(column);
         this.primaryKey = column.isPrimaryKey();
         this.foreignKey = column.isForeignKey();
         this.identity = column.isIdentity();
@@ -55,7 +50,7 @@ public class DatasetEditorColumnInfo extends ResultSetColumnInfo {
 
     @NotNull
     public DBColumn getColumn() {
-        return DBObjectRef.ensure(columnRef);
+        return DBObjectRef.ensure(column);
     }
 
     public boolean isAuditColumn() {

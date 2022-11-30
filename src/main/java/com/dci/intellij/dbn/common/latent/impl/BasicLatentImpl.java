@@ -13,22 +13,22 @@ public abstract class BasicLatentImpl<T> implements Latent<T> {
 
     @SneakyThrows
     public final T get(){
-        if (shouldLoad()) {
-            synchronized (this) {
-                if (shouldLoad()) {
-                    try {
-                        loading = true;
-                        beforeLoad();
-                        Loader<T> loader = getLoader();
-                        T newValue = loader == null ? null : loader.load();
-                        if (value != newValue) {
-                            value = newValue;
-                        }
-                        afterLoad(newValue);
-                    } finally {
-                        loading = false;
-                    }
+        if (!shouldLoad()) return value;
+
+        synchronized (this) {
+            if (!shouldLoad()) return value;
+
+            try {
+                loading = true;
+                beforeLoad();
+                Loader<T> loader = getLoader();
+                T newValue = loader == null ? null : loader.load();
+                if (value != newValue) {
+                    value = newValue;
                 }
+                afterLoad(newValue);
+            } finally {
+                loading = false;
             }
         }
         return value;

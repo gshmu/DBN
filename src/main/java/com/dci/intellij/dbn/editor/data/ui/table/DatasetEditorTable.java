@@ -326,7 +326,11 @@ public class DatasetEditorTable extends ResultSetTable<DatasetEditorModel> {
 
     @Override
     public int getColumnWidthBuffer() {
-        return 36;
+        return isReadonly() || getModel().isReadonly() ? 22 : 36;
+    }
+
+    private boolean isReadonly() {
+        return datasetEditor != null && getDatasetEditor().isReadonly();
     }
 
     @Override

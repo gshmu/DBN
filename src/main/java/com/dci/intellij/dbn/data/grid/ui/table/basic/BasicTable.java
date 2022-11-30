@@ -152,7 +152,7 @@ public class BasicTable<T extends BasicDataModel<?, ?>> extends DBNTableWithGutt
         DataModelCell<?, ?> cell = getCellAtLocation(point);
         if (cell != null) {
             int rowIndex = cell.getRow().getIndex();
-            int columnIndex = cell.getColumnInfo().getColumnIndex();
+            int columnIndex = cell.getColumnInfo().getIndex();
             return isCellSelected(rowIndex, columnIndex);
         }
         return false;
@@ -262,15 +262,20 @@ public class BasicTable<T extends BasicDataModel<?, ?>> extends DBNTableWithGutt
     @Override
     public void tableChanged(TableModelEvent e) {
         super.tableChanged(e);
-        if (e.getFirstRow() != e.getLastRow()) {
+        int firstRow = e.getFirstRow();
+        int lastRow = e.getLastRow();
+        if (firstRow == -1 && lastRow == -1) return;
+
+        if (firstRow != lastRow) {
             accommodateColumnsSize();
+            resetTableGutter();
         }
 
         DBNTableGutter<?> tableGutter = getTableGutter();
-        if (tableGutter != null) {
-            tableGutter.setFixedCellHeight(rowHeight);
-            tableGutter.setFixedCellWidth(getModel().getRowCount() == 0 ? 10 : -1);
-        }
+        if (tableGutter == null) return;
+
+        tableGutter.setFixedCellHeight(rowHeight);
+        tableGutter.setFixedCellWidth(getModel().getRowCount() == 0 ? 10 : -1);
     }
 
     @Nullable

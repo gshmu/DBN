@@ -1,9 +1,7 @@
 package com.dci.intellij.dbn.code.common.intention;
 
 import com.dci.intellij.dbn.common.Icons;
-import com.dci.intellij.dbn.debugger.DatabaseDebuggerManager;
 import com.dci.intellij.dbn.execution.script.ScriptExecutionManager;
-import com.dci.intellij.dbn.language.common.DBLanguage;
 import com.dci.intellij.dbn.vfs.file.DBSourceCodeVirtualFile;
 import com.intellij.codeInsight.intention.HighPriorityAction;
 import com.intellij.injected.editor.VirtualFileWindow;
@@ -17,7 +15,10 @@ import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
 
+import static com.dci.intellij.dbn.common.dispose.Checks.allValid;
+import static com.dci.intellij.dbn.common.util.Files.isDbLanguagePsiFile;
 import static com.dci.intellij.dbn.connection.mapping.FileConnectionContextManager.hasConnectivityContext;
+import static com.dci.intellij.dbn.debugger.DatabaseDebuggerManager.isDebugConsole;
 
 public class ExecuteScriptIntentionAction extends GenericIntentionAction implements HighPriorityAction {
     @Override
@@ -34,33 +35,26 @@ public class ExecuteScriptIntentionAction extends GenericIntentionAction impleme
 
     @Override
     public boolean isAvailable(@NotNull Project project, Editor editor, PsiFile psiFile) {
-        if (psiFile != null && psiFile.getLanguage() instanceof DBLanguage) {
-            VirtualFile virtualFile = psiFile.getVirtualFile();
-            if (virtualFile instanceof VirtualFileWindow || virtualFile instanceof DBSourceCodeVirtualFile) {
-                return false;
-            }
+        if (!isDbLanguagePsiFile(psiFile)) return false;
 
-            if (DatabaseDebuggerManager.isDebugConsole(virtualFile)) {
-                return false;
-            }
+        VirtualFile file = psiFile.getVirtualFile();
+        if (file instanceof VirtualFileWindow) return false;
+        if (file instanceof DBSourceCodeVirtualFile) return false;
+        if (isDebugConsole(file)) return false;
+        if (!hasConnectivityContext(file)) return false;
 
-            if (!hasConnectivityContext(virtualFile)) {
-                return false;
-            }
-
-            return true;
-
-        }
-        return false;
+        return true;
     }
 
     @Override
     public void invoke(@NotNull Project project, Editor editor, PsiFile psiFile) throws IncorrectOperationException {
-        if (psiFile != null && editor != null && psiFile.getLanguage() instanceof DBLanguage) {
-            FileDocumentManager.getInstance().saveDocument(editor.getDocument());
-            ScriptExecutionManager scriptExecutionManager = ScriptExecutionManager.getInstance(project);
-            scriptExecutionManager.executeScript(psiFile.getVirtualFile());
-        }
+        if (!allValid(project, editor, psiFile)) return;
+        if (!isDbLanguagePsiFile(psiFile)) return;
+
+        FileDocumentManager documentManager = FileDocumentManager.getInstance();
+        documentManager.saveDocument(editor.getDocument());
+        ScriptExecutionManager scriptExecutionManager = ScriptExecutionManager.getInstance(project);
+        scriptExecutionManager.executeScript(psiFile.getVirtualFile());
     }
 
     @Override

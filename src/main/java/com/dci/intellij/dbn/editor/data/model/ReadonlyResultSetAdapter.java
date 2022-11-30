@@ -234,21 +234,11 @@ public class ReadonlyResultSetAdapter extends ResultSetAdapter {
     @EqualsAndHashCode
     private static class Cell {
         private final ColumnInfo columnInfo;
-
-        @EqualsAndHashCode.Exclude
-        private final Object value;
+        private transient final Object value;
 
         Cell(ColumnInfo columnInfo, Object value) {
             this.columnInfo = columnInfo;
             this.value = value;
-        }
-
-        public ColumnInfo getColumnInfo() {
-            return columnInfo;
-        }
-
-        public Object getValue() {
-            return value;
         }
 
         @NotNull

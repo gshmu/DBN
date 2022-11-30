@@ -16,8 +16,8 @@ import org.jetbrains.annotations.Nullable;
 import javax.swing.*;
 import java.awt.event.MouseEvent;
 
+@Getter
 public abstract class DBNTableGutter<T extends DBNTableWithGutter> extends JList implements StatefulDisposable, EditorColorsListener {
-    @Getter
     private boolean disposed;
     private final WeakRef<T> table;
 

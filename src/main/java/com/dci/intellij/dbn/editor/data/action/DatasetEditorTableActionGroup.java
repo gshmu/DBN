@@ -159,7 +159,7 @@ public class DatasetEditorTableActionGroup extends DefaultActionGroup {
         @Override
         public void actionPerformed(@NotNull AnActionEvent e) {
             DatasetEditorTable editorTable = getDatasetEditor().getEditorTable();
-            int columnIndex = columnInfo.getColumnIndex();
+            int columnIndex = columnInfo.getIndex();
             editorTable.hideColumn(columnIndex);
         }
     }
@@ -172,7 +172,7 @@ public class DatasetEditorTableActionGroup extends DefaultActionGroup {
         @Override
         public void actionPerformed(@NotNull AnActionEvent e) {
             DatasetEditorTable editorTable = getDatasetEditor().getEditorTable();
-            int modelColumnIndex = columnInfo.getColumnIndex();
+            int modelColumnIndex = columnInfo.getIndex();
             int tableColumnIndex = editorTable.convertColumnIndexToView(modelColumnIndex);
             editorTable.sort(tableColumnIndex, SortDirection.ASCENDING, false);
         }
@@ -186,7 +186,7 @@ public class DatasetEditorTableActionGroup extends DefaultActionGroup {
         @Override
         public void actionPerformed(@NotNull AnActionEvent e) {
             DatasetEditorTable editorTable = getDatasetEditor().getEditorTable();
-            int modelColumnIndex = columnInfo.getColumnIndex();
+            int modelColumnIndex = columnInfo.getIndex();
             int tableColumnIndex = editorTable.convertColumnIndexToView(modelColumnIndex);
             editorTable.sort(tableColumnIndex, SortDirection.DESCENDING, false);
         }
