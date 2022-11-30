@@ -1,10 +1,10 @@
 package com.dci.intellij.dbn.common.load;
 
+import com.dci.intellij.dbn.common.dispose.Disposer;
 import com.dci.intellij.dbn.common.dispose.StatefulDisposable;
 import com.dci.intellij.dbn.common.util.CollectionUtil;
 import com.intellij.openapi.Disposable;
 import com.intellij.openapi.progress.ProcessCanceledException;
-import com.intellij.openapi.util.Disposer;
 
 import java.util.List;
 import java.util.Timer;

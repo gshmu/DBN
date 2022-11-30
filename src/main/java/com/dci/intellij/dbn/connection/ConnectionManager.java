@@ -7,7 +7,7 @@ import com.dci.intellij.dbn.common.component.ProjectComponentBase;
 import com.dci.intellij.dbn.common.component.ProjectManagerListener;
 import com.dci.intellij.dbn.common.database.AuthenticationInfo;
 import com.dci.intellij.dbn.common.database.DatabaseInfo;
-import com.dci.intellij.dbn.common.dispose.SafeDisposer;
+import com.dci.intellij.dbn.common.dispose.Disposer;
 import com.dci.intellij.dbn.common.environment.EnvironmentType;
 import com.dci.intellij.dbn.common.event.ProjectEvents;
 import com.dci.intellij.dbn.common.load.ProgressMonitor;
@@ -37,7 +37,6 @@ import com.intellij.openapi.components.Storage;
 import com.intellij.openapi.options.ConfigurationException;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.DialogWrapper;
-import com.intellij.openapi.util.Disposer;
 import com.intellij.openapi.vfs.VirtualFile;
 import lombok.extern.slf4j.Slf4j;
 import org.jdom.Element;
@@ -94,7 +93,7 @@ public class ConnectionManager extends ProjectComponentBase implements Persisten
 
     @Override
     public void disposeInner() {
-        SafeDisposer.dispose(idleConnectionCleaner);
+        Disposer.dispose(idleConnectionCleaner);
         super.disposeInner();
     }
 

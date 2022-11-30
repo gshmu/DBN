@@ -1,6 +1,7 @@
 package com.dci.intellij.dbn.editor.data.state.sorting.ui;
 
 import com.dci.intellij.dbn.common.dispose.DisposableContainers;
+import com.dci.intellij.dbn.common.dispose.Disposer;
 import com.dci.intellij.dbn.common.ui.ValueSelector;
 import com.dci.intellij.dbn.common.ui.ValueSelectorOption;
 import com.dci.intellij.dbn.common.ui.form.DBNFormBase;
@@ -14,7 +15,6 @@ import com.dci.intellij.dbn.editor.data.DatasetEditor;
 import com.dci.intellij.dbn.object.DBColumn;
 import com.dci.intellij.dbn.object.DBDataset;
 import com.dci.intellij.dbn.object.lookup.DBObjectRef;
-import com.intellij.openapi.util.Disposer;
 import com.intellij.util.PlatformIcons;
 import org.jetbrains.annotations.NotNull;
 

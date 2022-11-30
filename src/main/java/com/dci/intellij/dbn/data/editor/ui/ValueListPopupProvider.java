@@ -1,6 +1,7 @@
 package com.dci.intellij.dbn.data.editor.ui;
 
 import com.dci.intellij.dbn.common.Icons;
+import com.dci.intellij.dbn.common.dispose.Disposer;
 import com.dci.intellij.dbn.common.thread.Dispatch;
 import com.dci.intellij.dbn.common.ui.util.Keyboard;
 import com.dci.intellij.dbn.common.ui.util.Popups;
@@ -15,7 +16,6 @@ import com.intellij.openapi.ui.popup.JBPopup;
 import com.intellij.openapi.ui.popup.JBPopupFactory;
 import com.intellij.openapi.ui.popup.PopupStep;
 import com.intellij.openapi.ui.popup.util.BaseListPopupStep;
-import com.intellij.openapi.util.Disposer;
 import lombok.Getter;
 import lombok.Setter;
 import org.jetbrains.annotations.NotNull;
@@ -26,7 +26,7 @@ import java.awt.event.FocusEvent;
 import java.awt.event.KeyEvent;
 import java.util.List;
 
-import static com.dci.intellij.dbn.common.dispose.SafeDisposer.replace;
+import static com.dci.intellij.dbn.common.dispose.Disposer.replace;
 
 @Getter
 @Setter

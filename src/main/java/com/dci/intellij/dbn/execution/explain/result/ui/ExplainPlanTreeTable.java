@@ -1,5 +1,6 @@
 package com.dci.intellij.dbn.execution.explain.result.ui;
 
+import com.dci.intellij.dbn.common.dispose.Disposer;
 import com.dci.intellij.dbn.common.dispose.StatefulDisposable;
 import com.dci.intellij.dbn.common.project.ProjectRef;
 import com.dci.intellij.dbn.common.ui.form.DBNForm;
@@ -24,7 +25,6 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.popup.JBPopup;
 import com.intellij.openapi.ui.popup.JBPopupAdapter;
 import com.intellij.openapi.ui.popup.LightweightWindowEvent;
-import com.intellij.openapi.util.Disposer;
 import com.intellij.ui.ColoredTableCellRenderer;
 import com.intellij.ui.ColoredTreeCellRenderer;
 import com.intellij.ui.SimpleTextAttributes;

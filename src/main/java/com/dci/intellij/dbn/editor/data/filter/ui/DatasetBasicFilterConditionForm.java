@@ -1,6 +1,6 @@
 package com.dci.intellij.dbn.editor.data.filter.ui;
 
-import com.dci.intellij.dbn.common.dispose.SafeDisposer;
+import com.dci.intellij.dbn.common.dispose.Disposer;
 import com.dci.intellij.dbn.common.options.ui.ConfigurationEditorForm;
 import com.dci.intellij.dbn.common.ui.ValueSelectorOption;
 import com.dci.intellij.dbn.common.ui.listener.ComboBoxSelectionKeyListener;
@@ -18,7 +18,6 @@ import com.dci.intellij.dbn.object.DBDataset;
 import com.dci.intellij.dbn.object.lookup.DBObjectRef;
 import com.intellij.openapi.actionSystem.ActionToolbar;
 import com.intellij.openapi.options.ConfigurationException;
-import com.intellij.openapi.util.Disposer;
 import com.intellij.ui.ColoredListCellRenderer;
 import com.intellij.ui.DocumentAdapter;
 import com.intellij.ui.SimpleTextAttributes;
@@ -155,7 +154,7 @@ public class DatasetBasicFilterConditionForm extends ConfigurationEditorForm<Dat
     }
 
     public void setBasicFilterPanel(DatasetBasicFilterForm filterForm) {
-        this.filterForm = SafeDisposer.replace(this.filterForm, filterForm, true);
+        this.filterForm = Disposer.replace(this.filterForm, filterForm, true);
     }
 
     @Nullable

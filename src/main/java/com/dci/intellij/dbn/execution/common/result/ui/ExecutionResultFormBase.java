@@ -1,10 +1,9 @@
 package com.dci.intellij.dbn.execution.common.result.ui;
 
+import com.dci.intellij.dbn.common.dispose.Disposer;
 import com.dci.intellij.dbn.common.dispose.Failsafe;
-import com.dci.intellij.dbn.common.dispose.SafeDisposer;
 import com.dci.intellij.dbn.common.ui.form.DBNFormBase;
 import com.dci.intellij.dbn.execution.ExecutionResult;
-import com.intellij.openapi.util.Disposer;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -25,7 +24,7 @@ public abstract class ExecutionResultFormBase<T extends ExecutionResult<?>> exte
     @Override
     public void setExecutionResult(@NotNull T executionResult) {
         if (this.executionResult != executionResult) {
-            this.executionResult = SafeDisposer.replace(this.executionResult, executionResult, true);
+            this.executionResult = Disposer.replace(this.executionResult, executionResult, true);
             this.executionResult.setPrevious(null);
             rebuildForm();
         }

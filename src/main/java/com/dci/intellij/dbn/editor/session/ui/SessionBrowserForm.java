@@ -2,12 +2,12 @@ package com.dci.intellij.dbn.editor.session.ui;
 
 import com.dci.intellij.dbn.common.action.DataProviders;
 import com.dci.intellij.dbn.common.color.Colors;
+import com.dci.intellij.dbn.common.dispose.Disposer;
 import com.dci.intellij.dbn.common.dispose.Failsafe;
-import com.dci.intellij.dbn.common.dispose.SafeDisposer;
 import com.dci.intellij.dbn.common.latent.Latent;
 import com.dci.intellij.dbn.common.thread.Dispatch;
-import com.dci.intellij.dbn.common.ui.util.Borders;
 import com.dci.intellij.dbn.common.ui.form.DBNFormBase;
+import com.dci.intellij.dbn.common.ui.util.Borders;
 import com.dci.intellij.dbn.common.ui.util.UserInterface;
 import com.dci.intellij.dbn.common.util.Actions;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
@@ -27,12 +27,9 @@ import com.intellij.util.ui.AsyncProcessIcon;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.JScrollPane;
-import javax.swing.JTextField;
+import javax.swing.*;
 import javax.swing.table.TableCellEditor;
-import java.awt.BorderLayout;
+import java.awt.*;
 
 public class SessionBrowserForm extends DBNFormBase implements SearchableDataComponent {
     private JPanel actionsPanel;
@@ -77,7 +74,7 @@ public class SessionBrowserForm extends DBNFormBase implements SearchableDataCom
         hideLoadingHint();
 
         DataProviders.register(actionsPanel, this);
-        SafeDisposer.register(this, browserTable);
+        Disposer.register(this, browserTable);
     }
 
     @NotNull

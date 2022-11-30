@@ -12,6 +12,7 @@ import com.dci.intellij.dbn.browser.ui.DatabaseBrowserForm;
 import com.dci.intellij.dbn.browser.ui.DatabaseBrowserTree;
 import com.dci.intellij.dbn.common.component.PersistentState;
 import com.dci.intellij.dbn.common.component.ProjectComponentBase;
+import com.dci.intellij.dbn.common.dispose.Disposer;
 import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.common.event.ProjectEvents;
 import com.dci.intellij.dbn.common.filter.Filter;
@@ -36,12 +37,9 @@ import com.intellij.openapi.fileEditor.FileEditorManager;
 import com.intellij.openapi.fileEditor.FileEditorManagerEvent;
 import com.intellij.openapi.fileEditor.FileEditorManagerListener;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.util.Disposer;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.openapi.wm.ToolWindow;
 import com.intellij.openapi.wm.ToolWindowManager;
-import lombok.EqualsAndHashCode;
-import lombok.ToString;
 import org.jdom.Element;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -68,9 +66,7 @@ public class DatabaseBrowserManager extends ProjectComponentBase implements Pers
 
     public static final ThreadLocal<Boolean> AUTOSCROLL_FROM_EDITOR = new ThreadLocal<>();
 
-    @ToString.Exclude
-    @EqualsAndHashCode.Exclude
-    private final Latent<BrowserToolWindowForm> toolWindowForm = Latent.basic(() -> {
+    private final transient Latent<BrowserToolWindowForm> toolWindowForm = Latent.basic(() -> {
         BrowserToolWindowForm form = new BrowserToolWindowForm(this, getProject());
         Disposer.register(this, form);
         return form;

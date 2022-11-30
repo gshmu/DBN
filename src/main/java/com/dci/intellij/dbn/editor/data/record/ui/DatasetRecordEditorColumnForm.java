@@ -1,6 +1,7 @@
 package com.dci.intellij.dbn.editor.data.record.ui;
 
 import com.dci.intellij.dbn.common.color.Colors;
+import com.dci.intellij.dbn.common.dispose.Disposer;
 import com.dci.intellij.dbn.common.locale.Formatter;
 import com.dci.intellij.dbn.common.ui.form.DBNFormBase;
 import com.dci.intellij.dbn.data.editor.ui.*;
@@ -16,7 +17,6 @@ import com.dci.intellij.dbn.editor.data.options.DataEditorSettings;
 import com.dci.intellij.dbn.editor.data.options.DataEditorValueListPopupSettings;
 import com.dci.intellij.dbn.object.DBColumn;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.util.Disposer;
 import com.intellij.ui.DocumentAdapter;
 import com.intellij.ui.JBColor;
 import com.intellij.util.ui.UIUtil;

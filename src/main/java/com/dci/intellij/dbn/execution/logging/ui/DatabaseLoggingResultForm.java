@@ -1,5 +1,6 @@
 package com.dci.intellij.dbn.execution.logging.ui;
 
+import com.dci.intellij.dbn.common.dispose.Disposer;
 import com.dci.intellij.dbn.common.util.Actions;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.execution.common.result.ui.ExecutionResultFormBase;
@@ -7,7 +8,6 @@ import com.dci.intellij.dbn.execution.logging.DatabaseLoggingResult;
 import com.intellij.ide.actions.NextOccurenceToolbarAction;
 import com.intellij.ide.actions.PreviousOccurenceToolbarAction;
 import com.intellij.openapi.actionSystem.*;
-import com.intellij.openapi.util.Disposer;
 import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;

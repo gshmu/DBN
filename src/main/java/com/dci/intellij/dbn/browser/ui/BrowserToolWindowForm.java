@@ -5,7 +5,7 @@ import com.dci.intellij.dbn.browser.model.BrowserTreeNode;
 import com.dci.intellij.dbn.browser.options.BrowserDisplayMode;
 import com.dci.intellij.dbn.browser.options.DatabaseBrowserSettings;
 import com.dci.intellij.dbn.browser.options.listener.DisplayModeSettingsListener;
-import com.dci.intellij.dbn.common.dispose.SafeDisposer;
+import com.dci.intellij.dbn.common.dispose.Disposer;
 import com.dci.intellij.dbn.common.event.ProjectEvents;
 import com.dci.intellij.dbn.common.ui.form.DBNFormBase;
 import com.dci.intellij.dbn.common.ui.util.UserInterface;
@@ -87,7 +87,7 @@ public class BrowserToolWindowForm extends DBNFormBase {
         browserPanel.add(this.browserForm.getComponent(), BorderLayout.CENTER);
         UserInterface.repaint(browserPanel);
 
-        SafeDisposer.dispose(oldBrowserForm, true);
+        Disposer.dispose(oldBrowserForm, true);
     }
 
     public DatabaseBrowserTree getBrowserTree(ConnectionId connectionId) {
@@ -149,7 +149,7 @@ public class BrowserToolWindowForm extends DBNFormBase {
 
     @Override
     protected void disposeInner() {
-        browserForm = SafeDisposer.replace(browserForm, null, true);
+        browserForm = Disposer.replace(browserForm, null, true);
         super.disposeInner();
     }
 }

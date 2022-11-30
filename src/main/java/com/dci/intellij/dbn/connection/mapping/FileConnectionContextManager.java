@@ -4,7 +4,7 @@ import com.dci.intellij.dbn.DatabaseNavigator;
 import com.dci.intellij.dbn.common.action.UserDataKeys;
 import com.dci.intellij.dbn.common.component.PersistentState;
 import com.dci.intellij.dbn.common.component.ProjectComponentBase;
-import com.dci.intellij.dbn.common.dispose.SafeDisposer;
+import com.dci.intellij.dbn.common.dispose.Disposer;
 import com.dci.intellij.dbn.common.event.ProjectEvents;
 import com.dci.intellij.dbn.common.thread.Dispatch;
 import com.dci.intellij.dbn.common.thread.Progress;
@@ -76,7 +76,7 @@ public class FileConnectionContextManager extends ProjectComponentBase implement
     private FileConnectionContextManager(@NotNull Project project) {
         super(project, COMPONENT_NAME);
         this.registry = new FileConnectionContextRegistry(project);
-        SafeDisposer.register(this, this.registry);
+        Disposer.register(this, this.registry);
         //VirtualFileManager.getInstance().addVirtualFileListener(virtualFileListener);
         ProjectEvents.subscribe(project, this, VirtualFileManager.VFS_CHANGES, bulkFileListener);
         ProjectEvents.subscribe(project, this, SessionManagerListener.TOPIC, sessionManagerListener);

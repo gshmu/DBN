@@ -1,8 +1,8 @@
 package com.dci.intellij.dbn.connection.console;
 
 import com.dci.intellij.dbn.common.dispose.DisposableContainers;
+import com.dci.intellij.dbn.common.dispose.Disposer;
 import com.dci.intellij.dbn.common.dispose.Failsafe;
-import com.dci.intellij.dbn.common.dispose.SafeDisposer;
 import com.dci.intellij.dbn.common.dispose.StatefulDisposable;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.ConnectionRef;
@@ -99,7 +99,7 @@ public class DatabaseConsoleBundle extends StatefulDisposable.Base {
     void removeConsole(String name) {
         DBConsole console = getConsole(name);
         removeConsole(console);
-        SafeDisposer.dispose(console, false);
+        Disposer.dispose(console, false);
     }
 
     void removeConsole(DBConsole console) {

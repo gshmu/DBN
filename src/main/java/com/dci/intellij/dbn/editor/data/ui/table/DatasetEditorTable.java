@@ -1,6 +1,7 @@
 package com.dci.intellij.dbn.editor.data.ui.table;
 
 import com.dci.intellij.dbn.common.Pair;
+import com.dci.intellij.dbn.common.dispose.Disposer;
 import com.dci.intellij.dbn.common.property.PropertyHolder;
 import com.dci.intellij.dbn.common.thread.Background;
 import com.dci.intellij.dbn.common.thread.Dispatch;
@@ -45,7 +46,6 @@ import com.dci.intellij.dbn.object.DBDataset;
 import com.dci.intellij.dbn.vfs.DatabaseFileSystem;
 import com.intellij.openapi.actionSystem.ActionGroup;
 import com.intellij.openapi.actionSystem.ActionPopupMenu;
-import com.intellij.openapi.util.Disposer;
 import com.intellij.ui.awt.RelativePoint;
 import lombok.Getter;
 import lombok.Setter;

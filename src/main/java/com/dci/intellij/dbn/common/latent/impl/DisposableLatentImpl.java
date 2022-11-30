@@ -1,8 +1,8 @@
 package com.dci.intellij.dbn.common.latent.impl;
 
+import com.dci.intellij.dbn.common.dispose.Disposer;
 import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.intellij.openapi.Disposable;
-import com.intellij.openapi.util.Disposer;
 
 import static com.dci.intellij.dbn.common.dispose.Checks.isValid;
 

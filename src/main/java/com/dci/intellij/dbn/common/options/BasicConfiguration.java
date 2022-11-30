@@ -1,7 +1,7 @@
 package com.dci.intellij.dbn.common.options;
 
+import com.dci.intellij.dbn.common.dispose.Disposer;
 import com.dci.intellij.dbn.common.dispose.Failsafe;
-import com.dci.intellij.dbn.common.dispose.SafeDisposer;
 import com.dci.intellij.dbn.common.options.ui.ConfigurationEditorForm;
 import com.dci.intellij.dbn.language.common.WeakRef;
 import com.dci.intellij.dbn.options.TopLevelConfig;
@@ -134,7 +134,7 @@ public abstract class BasicConfiguration<P extends Configuration, E extends Conf
 
     @Override
     public void disposeUIResources() {
-        editorForm = SafeDisposer.replace(editorForm, null, true);
+        editorForm = Disposer.replace(editorForm, null, true);
     }
 
     public String getConfigElementName() {

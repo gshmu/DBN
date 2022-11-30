@@ -3,8 +3,8 @@ package com.dci.intellij.dbn.editor.session;
 import com.dci.intellij.dbn.DatabaseNavigator;
 import com.dci.intellij.dbn.common.component.PersistentState;
 import com.dci.intellij.dbn.common.component.ProjectComponentBase;
+import com.dci.intellij.dbn.common.dispose.Disposer;
 import com.dci.intellij.dbn.common.dispose.Failsafe;
-import com.dci.intellij.dbn.common.dispose.SafeDisposer;
 import com.dci.intellij.dbn.common.event.ProjectEvents;
 import com.dci.intellij.dbn.common.notification.NotificationGroup;
 import com.dci.intellij.dbn.common.option.InteractiveOptionBroker;
@@ -96,7 +96,7 @@ public class SessionBrowserManager extends ProjectComponentBase implements Persi
                     openFiles.remove(sessionBrowserFile);
 
                     if (openFiles.size() == 0 && timestampUpdater != null) {
-                        SafeDisposer.dispose(timestampUpdater);
+                        Disposer.dispose(timestampUpdater);
                     }
                 }
             }
@@ -326,7 +326,7 @@ public class SessionBrowserManager extends ProjectComponentBase implements Persi
 
     @Override
     public void disposeInner() {
-        SafeDisposer.dispose(timestampUpdater);
+        Disposer.dispose(timestampUpdater);
         super.disposeInner();
     }
 

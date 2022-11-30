@@ -5,8 +5,8 @@ import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.common.message.MessageType;
 import com.dci.intellij.dbn.common.navigation.NavigationInstructions;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
-import com.dci.intellij.dbn.connection.ConnectionRef;
 import com.dci.intellij.dbn.connection.ConnectionId;
+import com.dci.intellij.dbn.connection.ConnectionRef;
 import com.dci.intellij.dbn.connection.SchemaId;
 import com.dci.intellij.dbn.execution.ExecutionContext;
 import com.dci.intellij.dbn.execution.ExecutionResultBase;
@@ -20,9 +20,9 @@ import com.intellij.psi.PsiFile;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import javax.swing.Icon;
+import javax.swing.*;
 
-import static com.dci.intellij.dbn.common.dispose.SafeDisposer.replace;
+import static com.dci.intellij.dbn.common.dispose.Disposer.replace;
 
 public class StatementExecutionBasicResult extends ExecutionResultBase<StatementExecutionResultForm> implements StatementExecutionResult{
     private String name;

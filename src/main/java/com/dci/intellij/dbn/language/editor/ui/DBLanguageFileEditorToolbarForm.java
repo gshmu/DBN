@@ -1,5 +1,6 @@
 package com.dci.intellij.dbn.language.editor.ui;
 
+import com.dci.intellij.dbn.common.dispose.Disposer;
 import com.dci.intellij.dbn.common.ui.AutoCommitLabel;
 import com.dci.intellij.dbn.common.ui.form.DBNFormBase;
 import com.dci.intellij.dbn.common.ui.util.Borders;
@@ -10,7 +11,6 @@ import com.dci.intellij.dbn.connection.session.DatabaseSession;
 import com.intellij.openapi.Disposable;
 import com.intellij.openapi.actionSystem.ActionToolbar;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.util.Disposer;
 import com.intellij.openapi.util.Key;
 import com.intellij.openapi.vfs.VirtualFile;
 import org.jetbrains.annotations.NotNull;

@@ -1,5 +1,6 @@
 package com.dci.intellij.dbn.execution.compiler;
 
+import com.dci.intellij.dbn.common.dispose.Disposer;
 import com.dci.intellij.dbn.common.message.MessageType;
 import com.dci.intellij.dbn.connection.ConnectionId;
 import com.dci.intellij.dbn.editor.DBContentType;
@@ -8,7 +9,6 @@ import com.dci.intellij.dbn.object.common.DBSchemaObject;
 import com.dci.intellij.dbn.vfs.file.DBContentVirtualFile;
 import com.dci.intellij.dbn.vfs.file.DBEditableObjectVirtualFile;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.util.Disposer;
 import lombok.Getter;
 import lombok.Setter;
 import org.jetbrains.annotations.Nullable;

@@ -1,13 +1,13 @@
 package com.dci.intellij.dbn.browser.ui;
 
 import com.dci.intellij.dbn.browser.model.BrowserTreeNode;
+import com.dci.intellij.dbn.common.dispose.Disposer;
 import com.dci.intellij.dbn.common.dispose.StatefulDisposable;
 import com.dci.intellij.dbn.common.latent.Latent;
 import com.dci.intellij.dbn.connection.ConnectionBundle;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.object.common.DBObject;
 import com.dci.intellij.dbn.object.common.DBObjectBundle;
-import com.intellij.openapi.util.Disposer;
 import com.intellij.ui.SpeedSearchBase;
 import lombok.Getter;
 import org.jetbrains.annotations.NotNull;
