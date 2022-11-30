@@ -6,7 +6,6 @@ import com.dci.intellij.dbn.common.util.Guarded;
 import com.dci.intellij.dbn.vfs.DBVirtualFile;
 import com.intellij.openapi.Disposable;
 import com.intellij.openapi.ui.popup.JBPopup;
-import com.intellij.openapi.util.Disposer;
 import com.intellij.ui.tabs.JBTabs;
 import lombok.extern.slf4j.Slf4j;
 import org.jetbrains.annotations.NotNull;
@@ -18,13 +17,13 @@ import static com.dci.intellij.dbn.common.dispose.Checks.isNotValid;
 import static com.dci.intellij.dbn.common.thread.ThreadMonitor.isDispatchThread;
 
 @Slf4j
-public final class SafeDisposer {
+public final class Disposer {
     private static final List<Class<?>> DISPATCH_CANDIDATES = Arrays.asList(
             JBPopup.class,
             JBTabs.class
             /*, ...*/);
 
-    private SafeDisposer() {}
+    private Disposer() {}
 
     public static void register(@Nullable Disposable parent, @NotNull Object object) {
         if (object instanceof Disposable) {
@@ -37,10 +36,10 @@ public final class SafeDisposer {
         if (parent == null) return;
 
         if (Checks.isValid(parent)) {
-            Disposer.register(parent, disposable);
+            com.intellij.openapi.util.Disposer.register(parent, disposable);
         } else {
             // dispose if parent already disposed
-            Disposer.dispose(disposable);
+            com.intellij.openapi.util.Disposer.dispose(disposable);
         }
     }
 
@@ -66,7 +65,7 @@ public final class SafeDisposer {
                 }
 
                 if (registered) {
-                    Disposer.dispose(disposable);
+                    com.intellij.openapi.util.Disposer.dispose(disposable);
                 } else {
                     disposable.dispose();
                 }

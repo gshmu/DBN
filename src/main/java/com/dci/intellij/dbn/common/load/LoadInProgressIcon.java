@@ -1,12 +1,11 @@
 package com.dci.intellij.dbn.common.load;
 
-import com.dci.intellij.dbn.common.dispose.SafeDisposer;
+import com.dci.intellij.dbn.common.dispose.Disposer;
 import com.dci.intellij.dbn.common.util.TimeUtil;
 import com.intellij.openapi.util.IconLoader;
 
-import javax.swing.Icon;
-import java.awt.Component;
-import java.awt.Graphics;
+import javax.swing.*;
+import java.awt.*;
 import java.lang.reflect.Field;
 import java.util.Timer;
 import java.util.TimerTask;
@@ -51,7 +50,7 @@ public class LoadInProgressIcon implements Icon{
                 synchronized (IconRollerTimerTask.class) {
                     Timer cachedIconRoller = ICON_ROLLER;
                     ICON_ROLLER = null;
-                    SafeDisposer.dispose(cachedIconRoller);
+                    Disposer.dispose(cachedIconRoller);
                 }
             }
         }

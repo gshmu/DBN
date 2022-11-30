@@ -5,10 +5,9 @@ import com.intellij.openapi.options.Configurable;
 import com.intellij.openapi.options.ConfigurationException;
 import org.jetbrains.annotations.Nls;
 
-import javax.swing.Icon;
-import javax.swing.JComponent;
+import javax.swing.*;
 
-import static com.dci.intellij.dbn.common.dispose.SafeDisposer.replace;
+import static com.dci.intellij.dbn.common.dispose.Disposer.replace;
 
 public class DBProgramDebuggerConfigurable implements Configurable {
 

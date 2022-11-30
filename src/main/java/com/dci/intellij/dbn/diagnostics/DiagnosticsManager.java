@@ -3,7 +3,7 @@ package com.dci.intellij.dbn.diagnostics;
 import com.dci.intellij.dbn.DatabaseNavigator;
 import com.dci.intellij.dbn.common.component.PersistentState;
 import com.dci.intellij.dbn.common.component.ProjectComponentBase;
-import com.dci.intellij.dbn.common.dispose.SafeDisposer;
+import com.dci.intellij.dbn.common.dispose.Disposer;
 import com.dci.intellij.dbn.common.ui.form.DBNForm;
 import com.dci.intellij.dbn.connection.ConnectionId;
 import com.dci.intellij.dbn.connection.SessionId;
@@ -90,7 +90,7 @@ public class DiagnosticsManager extends ProjectComponentBase implements Persiste
             content.setCloseable(true);
             content.setPinnable(true);
             contentManager.addContent(content);
-            SafeDisposer.register(content, form);
+            Disposer.register(content, form);
         }
 
         Content content = getDiagnosticsContent(category);

@@ -1,8 +1,8 @@
 package com.dci.intellij.dbn.data.model.basic;
 
 import com.dci.intellij.dbn.common.dispose.Disposed;
+import com.dci.intellij.dbn.common.dispose.Disposer;
 import com.dci.intellij.dbn.common.dispose.Failsafe;
-import com.dci.intellij.dbn.common.dispose.SafeDisposer;
 import com.dci.intellij.dbn.common.event.ProjectEvents;
 import com.dci.intellij.dbn.common.filter.Filter;
 import com.dci.intellij.dbn.common.latent.Latent;
@@ -101,8 +101,8 @@ public class BasicDataModel<
     }
 
     public void setHeader(@NotNull DataModelHeader<? extends ColumnInfo> header) {
-        this.header = SafeDisposer.replace(this.header, header, false);
-        SafeDisposer.register(this, this.header);
+        this.header = Disposer.replace(this.header, header, false);
+        Disposer.register(this, this.header);
     }
 
     @Override
@@ -186,7 +186,7 @@ public class BasicDataModel<
         updateRowIndexes(index);
         getState().setRowCount(getRowCount());
 
-        SafeDisposer.dispose(row, false);
+        Disposer.dispose(row, false);
     }
 
     @Nullable
@@ -354,7 +354,7 @@ public class BasicDataModel<
      *******************************************************  */
     @Override
     public void disposeInner() {
-        rows = SafeDisposer.replace(rows, Disposed.list(), false);
+        rows = Disposer.replace(rows, Disposed.list(), false);
         nullify();
     }
 

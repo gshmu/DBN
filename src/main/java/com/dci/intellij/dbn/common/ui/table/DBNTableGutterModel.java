@@ -1,6 +1,6 @@
 package com.dci.intellij.dbn.common.ui.table;
 
-import com.dci.intellij.dbn.common.dispose.SafeDisposer;
+import com.dci.intellij.dbn.common.dispose.Disposer;
 import com.dci.intellij.dbn.common.dispose.StatefulDisposable;
 import com.dci.intellij.dbn.language.common.WeakRef;
 import org.jetbrains.annotations.NotNull;
@@ -18,7 +18,7 @@ public class DBNTableGutterModel<T extends DBNTableWithGutterModel> extends Stat
     public DBNTableGutterModel(@NotNull T tableModel) {
         this.tableModel = WeakRef.of(tableModel);
 
-        SafeDisposer.register(tableModel, this);
+        Disposer.register(tableModel, this);
     }
 
     @NotNull

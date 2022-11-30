@@ -7,8 +7,8 @@ import com.dci.intellij.dbn.common.content.dependency.BasicDependencyAdapter;
 import com.dci.intellij.dbn.common.content.dependency.ContentDependencyAdapter;
 import com.dci.intellij.dbn.common.content.dependency.DualContentDependencyAdapter;
 import com.dci.intellij.dbn.common.content.dependency.SubcontentDependencyAdapter;
+import com.dci.intellij.dbn.common.dispose.Disposer;
 import com.dci.intellij.dbn.common.dispose.Failsafe;
-import com.dci.intellij.dbn.common.dispose.SafeDisposer;
 import com.dci.intellij.dbn.common.dispose.StatefulDisposable;
 import com.dci.intellij.dbn.common.load.ProgressMonitor;
 import com.dci.intellij.dbn.common.util.Commons;
@@ -457,8 +457,8 @@ public final class DBObjectListContainer implements StatefulDisposable {
     @Override
     public void dispose() {
         if (!isDisposed()) {
-            this.objects = SafeDisposer.replace(this.objects, DISPOSED_OBJECTS, false);
-            this.relations = SafeDisposer.replace(this.relations, DISPOSED_RELATIONS, false);
+            this.objects = Disposer.replace(this.objects, DISPOSED_OBJECTS, false);
+            this.relations = Disposer.replace(this.relations, DISPOSED_RELATIONS, false);
             this.owner = null;
         }
     }

@@ -26,18 +26,18 @@ public final class DisposableContainers {
 
     private static class DisposableList<T extends Disposable> extends ArrayList<T> implements Disposable{
         public DisposableList(@NotNull Disposable parent) {
-            SafeDisposer.register(parent, this);
+            Disposer.register(parent, this);
         }
 
         @Override
         public void dispose() {
-            SafeDisposer.disposeCollection(this);
+            Disposer.disposeCollection(this);
         }
 
         @Override
         public T remove(int index) {
             T removed = super.remove(index);
-            SafeDisposer.dispose(removed);
+            Disposer.dispose(removed);
             return removed;
         }
 
@@ -46,7 +46,7 @@ public final class DisposableContainers {
             boolean removed = super.remove(o);
             if (removed && o instanceof Disposable) {
                 Disposable disposable = (Disposable) o;
-                SafeDisposer.dispose(disposable);
+                Disposer.dispose(disposable);
             }
             return removed;
         }
@@ -54,18 +54,18 @@ public final class DisposableContainers {
 
     private static class DisposableConcurrentList<T extends Disposable> extends CopyOnWriteArrayList<T> implements Disposable{
         public DisposableConcurrentList(@NotNull Disposable parent) {
-            SafeDisposer.register(parent, this);
+            Disposer.register(parent, this);
         }
 
         @Override
         public void dispose() {
-            SafeDisposer.disposeCollection(this);
+            Disposer.disposeCollection(this);
         }
 
         @Override
         public T remove(int index) {
             T removed = super.remove(index);
-            SafeDisposer.dispose(removed);
+            Disposer.dispose(removed);
             return removed;
         }
 
@@ -74,7 +74,7 @@ public final class DisposableContainers {
             boolean removed = super.remove(o);
             if (removed && o instanceof Disposable) {
                 Disposable disposable = (Disposable) o;
-                SafeDisposer.dispose(disposable);
+                Disposer.dispose(disposable);
             }
             return removed;
         }
@@ -83,12 +83,12 @@ public final class DisposableContainers {
 
     private static class DisposableMap<K, V extends Disposable> extends HashMap<K, V> implements Disposable{
         public DisposableMap(@NotNull Disposable parent) {
-            SafeDisposer.register(parent, this);
+            Disposer.register(parent, this);
         }
 
         @Override
         public void dispose() {
-            SafeDisposer.disposeMap(this);
+            Disposer.disposeMap(this);
         }
 
         @Override
@@ -96,7 +96,7 @@ public final class DisposableContainers {
             boolean removed = super.remove(key, value);
             if (removed && value instanceof Disposable) {
                 Disposable disposable = (Disposable) value;
-                SafeDisposer.dispose(disposable);
+                Disposer.dispose(disposable);
             }
             return removed;
         }
