@@ -39,7 +39,7 @@ public final class Disposer {
             com.intellij.openapi.util.Disposer.register(parent, disposable);
         } else {
             // dispose if parent already disposed
-            com.intellij.openapi.util.Disposer.dispose(disposable);
+            dispose(disposable);
         }
     }
 
