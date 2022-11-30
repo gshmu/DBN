@@ -1,6 +1,7 @@
 package com.dci.intellij.dbn.language.common.element.cache;
 
 import com.dci.intellij.dbn.common.index.IndexContainer;
+import com.dci.intellij.dbn.common.latent.Latent;
 import com.dci.intellij.dbn.language.common.SharedTokenTypeBundle;
 import com.dci.intellij.dbn.language.common.TokenType;
 import com.dci.intellij.dbn.language.common.TokenTypeBundle;
@@ -22,7 +23,7 @@ public abstract class ElementTypeLookupCacheIndexed<T extends ElementTypeBase> e
     private final IndexContainer<TokenType> allPossibleTokens = new IndexContainer<>();
     private final IndexContainer<TokenType> firstPossibleTokens = new IndexContainer<>();
     private final IndexContainer<TokenType> firstRequiredTokens = new IndexContainer<>();
-    private Boolean startsWithIdentifier;
+    private final Latent<Boolean> startsWithIdentifier = Latent.basic(() -> checkStartsWithIdentifier());
 
     ElementTypeLookupCacheIndexed(T elementType) {
         super(elementType);
@@ -156,11 +157,8 @@ public abstract class ElementTypeLookupCacheIndexed<T extends ElementTypeBase> e
     }
 
     @Override
-    public synchronized boolean startsWithIdentifier() {
-        if (startsWithIdentifier == null) {
-            startsWithIdentifier = checkStartsWithIdentifier();
-        }
-        return startsWithIdentifier;
+    public boolean startsWithIdentifier() {
+        return startsWithIdentifier.get();
     }
 
     protected abstract boolean checkStartsWithIdentifier();

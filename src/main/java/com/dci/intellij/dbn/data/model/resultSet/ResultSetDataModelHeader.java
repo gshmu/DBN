@@ -27,7 +27,7 @@ public class ResultSetDataModelHeader<T extends ResultSetColumnInfo> extends Bas
     public T getResultSetColumnInfo(int resultSetColumnIndex) {
         List<T> columnInfos = getColumnInfos();
         for (T columnInfo : columnInfos) {
-            if (columnInfo.getResultSetColumnIndex() == resultSetColumnIndex) {
+            if (columnInfo.getResultSetIndex() == resultSetColumnIndex) {
                 return columnInfo;
             }
         }

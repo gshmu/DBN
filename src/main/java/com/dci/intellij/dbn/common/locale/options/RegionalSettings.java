@@ -35,11 +35,8 @@ public class RegionalSettings extends BasicProjectConfiguration<GeneralProjectSe
     private final StringSetting customDateFormat = new StringSetting("custom-date-format", null);
     private final StringSetting customTimeFormat = new StringSetting("custom-time-format", null);
 
-    @EqualsAndHashCode.Exclude
     private transient int signature = 0;
-
-    @EqualsAndHashCode.Exclude
-    private Formatter baseFormatter = createFormatter();
+    private transient Formatter baseFormatter = createFormatter();
 
     public RegionalSettings(GeneralProjectSettings parent) {
         super(parent);

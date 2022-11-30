@@ -7,7 +7,6 @@ import com.dci.intellij.dbn.common.util.Cloneable;
 import com.dci.intellij.dbn.common.util.Commons;
 import com.dci.intellij.dbn.common.util.Strings;
 import lombok.Data;
-import lombok.EqualsAndHashCode;
 import org.jdom.CDATA;
 import org.jdom.Element;
 
@@ -19,9 +18,7 @@ import static com.dci.intellij.dbn.common.options.setting.SettingsSupport.string
 @Data
 public class MethodExecutionArgumentValue implements PersistentStateElement, Cloneable<MethodExecutionArgumentValue>, ArgumentValueHolder<String> {
     private String name;
-
-    @EqualsAndHashCode.Exclude
-    private MostRecentStack<String> valueHistory = new MostRecentStack<>();
+    private transient MostRecentStack<String> valueHistory = new MostRecentStack<>();
 
     public MethodExecutionArgumentValue(String name) {
         this.name = name;

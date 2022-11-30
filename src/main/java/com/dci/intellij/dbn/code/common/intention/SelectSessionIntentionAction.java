@@ -17,6 +17,8 @@ import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
 
+import static com.dci.intellij.dbn.common.util.Files.isDbLanguagePsiFile;
+
 public class SelectSessionIntentionAction extends GenericIntentionAction implements LowPriorityAction {
     @Override
     @NotNull
@@ -31,20 +33,19 @@ public class SelectSessionIntentionAction extends GenericIntentionAction impleme
 
     @Override
     public boolean isAvailable(@NotNull Project project, Editor editor, PsiFile psiFile) {
-        if (psiFile instanceof DBLanguagePsiFile) {
-            VirtualFile virtualFile = psiFile.getVirtualFile();
-            if (!(virtualFile instanceof VirtualFileWindow)) {
-                FileConnectionContextManager contextManager = FileConnectionContextManager.getInstance(project);
-                if (contextManager.isSessionSelectable(virtualFile)) {
-                    DBLanguagePsiFile file = (DBLanguagePsiFile) psiFile;
-                    ConnectionHandler connection = file.getConnection();
-                    return connection != null &&
-                            !connection.isVirtual() &&
-                            connection.getSettings().getDetailSettings().isEnableSessionManagement();
-                }
-            }
-        }
-        return false;
+        if (!isDbLanguagePsiFile(psiFile)) return false;
+
+        VirtualFile file = psiFile.getVirtualFile();
+        if (file instanceof VirtualFileWindow) return false;
+
+        FileConnectionContextManager contextManager = FileConnectionContextManager.getInstance(project);
+        if (!contextManager.isSessionSelectable(file)) return false;
+
+        DBLanguagePsiFile dbPsiFile = (DBLanguagePsiFile) psiFile;
+        ConnectionHandler connection = dbPsiFile.getConnection();
+        if (connection == null || connection.isVirtual()) return false;
+
+        return connection.getSettings().getDetailSettings().isEnableSessionManagement();
     }
 
     @Override

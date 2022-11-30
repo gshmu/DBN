@@ -19,10 +19,9 @@ import java.util.concurrent.ConcurrentHashMap;
 public final class ConnectionRef implements Reference<ConnectionHandler>, Identifiable<ConnectionId> {
     private static final Map<ConnectionId, ConnectionRef> registry = new ConcurrentHashMap<>();
     private final ConnectionId connectionId;
-    private volatile boolean resolving;
 
-    @EqualsAndHashCode.Exclude
-    private WeakRef<ConnectionHandler> reference;
+    private transient volatile boolean resolving;
+    private transient WeakRef<ConnectionHandler> reference;
 
     private ConnectionRef(ConnectionId connectionId) {
         this.connectionId = connectionId;

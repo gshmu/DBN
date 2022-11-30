@@ -11,12 +11,12 @@ import org.jetbrains.annotations.NotNull;
 @Data
 public class BasicColumnInfo implements ColumnInfo {
     protected String name;
-    protected int columnIndex;
+    protected int index;
     protected DBDataType dataType;
 
-    public BasicColumnInfo(String name, DBDataType dataType, int columnIndex) {
+    public BasicColumnInfo(String name, DBDataType dataType, int index) {
         this.name = Strings.intern(name);
-        this.columnIndex = columnIndex;
+        this.index = index;
         this.dataType = dataType;
     }
 

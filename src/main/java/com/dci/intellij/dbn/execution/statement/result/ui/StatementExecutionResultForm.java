@@ -25,8 +25,6 @@ import com.intellij.openapi.actionSystem.ActionToolbar;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Disposer;
 import com.intellij.ui.IdeBorderFactory;
-import lombok.EqualsAndHashCode;
-import lombok.ToString;
 import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
@@ -43,9 +41,7 @@ public class StatementExecutionResultForm extends ExecutionResultFormBase<Statem
     private ResultSetTable<?> resultTable;
     private final RecordViewInfo recordViewInfo;
 
-    @ToString.Exclude
-    @EqualsAndHashCode.Exclude
-    private final Latent<DataSearchComponent> dataSearchComponent = Latent.basic(() -> {
+    private transient final Latent<DataSearchComponent> dataSearchComponent = Latent.basic(() -> {
         DataSearchComponent dataSearchComponent = new DataSearchComponent(StatementExecutionResultForm.this);
         searchPanel.add(dataSearchComponent.getComponent(), BorderLayout.CENTER);
         DataProviders.register(dataSearchComponent.getSearchField(), this);

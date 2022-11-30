@@ -1,5 +1,6 @@
 package com.dci.intellij.dbn.data.model.resultSet;
 
+import com.dci.intellij.dbn.common.collections.CompactArrayList;
 import com.dci.intellij.dbn.data.model.ColumnInfo;
 import com.dci.intellij.dbn.data.model.sortable.SortableDataModelRow;
 import org.jetbrains.annotations.NotNull;
@@ -7,6 +8,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.List;
 
 
 public class ResultSetDataModelRow<
@@ -19,11 +21,15 @@ public class ResultSetDataModelRow<
     public ResultSetDataModelRow(M model, ResultSet resultSet, int resultSetRowIndex) throws SQLException {
         super(model);
         this.resultSetRowIndex = resultSetRowIndex;
-        for (int i = 0; i < model.getColumnCount(); i++) {
+        int columnCount = model.getColumnCount();
+        List<C> cells = new CompactArrayList<>(columnCount);
+
+        for (int i = 0; i < columnCount; i++) {
             ResultSetColumnInfo columnInfo = (ResultSetColumnInfo) getModel().getColumnInfo(i);
             C cell = createCell(resultSet, columnInfo);
-            addCell(cell);
+            cells.set(i, cell);
         }
+        this.setCells(cells);
     }
 
     @NotNull

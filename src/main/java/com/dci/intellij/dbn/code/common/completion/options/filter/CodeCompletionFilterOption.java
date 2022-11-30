@@ -20,8 +20,7 @@ import static com.dci.intellij.dbn.common.options.setting.SettingsSupport.*;
 @Setter
 @EqualsAndHashCode
 public class CodeCompletionFilterOption implements CheckedTreeNodeProvider, PersistentConfiguration{
-    @EqualsAndHashCode.Exclude
-    private final CodeCompletionFilterSettings filterSettings;
+    private transient final CodeCompletionFilterSettings filterSettings;
 
     private TokenTypeCategory tokenTypeCategory = TokenTypeCategory.UNKNOWN;
     private DBObjectType objectType;

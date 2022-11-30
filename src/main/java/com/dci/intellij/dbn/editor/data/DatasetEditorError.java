@@ -25,8 +25,7 @@ public class DatasetEditorError {
     private boolean dirty;
     private boolean notified;
 
-    @EqualsAndHashCode.Exclude
-    private final Set<ChangeListener> changeListeners = new HashSet<>();
+    private transient final Set<ChangeListener> changeListeners = new HashSet<>();
 
     public DatasetEditorError(ConnectionHandler connection, Exception exception) {
         this.message = exception.getMessage();

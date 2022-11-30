@@ -17,8 +17,7 @@ import java.util.Objects;
 @Setter
 @EqualsAndHashCode(callSuper = false)
 public class CodeCompletionFilterOptionBundle implements CheckedTreeNodeProvider, PersistentConfiguration {
-    @EqualsAndHashCode.Exclude
-    private final CodeCompletionFilterSettings filterSettings;
+    private transient final CodeCompletionFilterSettings filterSettings;
 
     private final List<CodeCompletionFilterOption> options = new ArrayList<>();
     private final String name;

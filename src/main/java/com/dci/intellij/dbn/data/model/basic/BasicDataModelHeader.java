@@ -3,22 +3,25 @@ package com.dci.intellij.dbn.data.model.basic;
 
 import com.dci.intellij.dbn.common.dispose.Disposed;
 import com.dci.intellij.dbn.common.dispose.StatefulDisposable;
-import com.dci.intellij.dbn.common.util.Strings;
 import com.dci.intellij.dbn.data.model.ColumnInfo;
 import com.dci.intellij.dbn.data.model.DataModelHeader;
 import com.dci.intellij.dbn.data.type.DBDataType;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.TreeMap;
 
 import static com.dci.intellij.dbn.common.dispose.SafeDisposer.replace;
 
 public class BasicDataModelHeader<T extends ColumnInfo> extends StatefulDisposable.Base implements DataModelHeader<T> {
-    private List<T> columnInfos = new ArrayList<T>();
+    private List<T> columnInfos = new ArrayList<>();
+    private Map<String, T> nameIndex = new TreeMap<>(String.CASE_INSENSITIVE_ORDER);
 
 
     protected void addColumnInfo(T columnInfo) {
         columnInfos.add(columnInfo);
+        nameIndex.put(columnInfo.getName(), columnInfo);
     }
 
     @Override
@@ -27,29 +30,29 @@ public class BasicDataModelHeader<T extends ColumnInfo> extends StatefulDisposab
     }
 
     @Override
-    public T getColumnInfo(int columnIndex) {
-        return columnInfos.get(columnIndex);
+    public T getColumnInfo(int index) {
+        return columnInfos.get(index);
+    }
+
+    @Override
+    public T getColumnInfo(String name) {
+        return nameIndex.get(name);
     }
 
     @Override
     public int getColumnIndex(String name) {
-        for (int i=0; i<columnInfos.size(); i++) {
-            T columnInfo = columnInfos.get(i);
-            if (Strings.equalsIgnoreCase(columnInfo.getName(), name)) {
-                return i;
-            }
-        }
-        return -1;
+        T columnInfo = getColumnInfo(name);
+        return columnInfo == null ? -1 : columnInfo.getIndex();
     }
 
     @Override
-    public String getColumnName(int columnIndex) {
-        return getColumnInfo(columnIndex).getName();
+    public String getColumnName(int index) {
+        return getColumnInfo(index).getName();
     }
 
     @Override
-    public DBDataType getColumnDataType(int columnIndex) {
-        return getColumnInfo(columnIndex).getDataType();
+    public DBDataType getColumnDataType(int index) {
+        return getColumnInfo(index).getDataType();
     }
 
     @Override
@@ -64,6 +67,7 @@ public class BasicDataModelHeader<T extends ColumnInfo> extends StatefulDisposab
     @Override
     public void disposeInner() {
         columnInfos = replace(columnInfos, Disposed.list(), false);
+        nameIndex = replace(nameIndex, Disposed.map(), false);
         nullify();
     }
 }
