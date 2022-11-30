@@ -1,7 +1,7 @@
 package com.dci.intellij.dbn.vfs;
 
 import com.dci.intellij.dbn.browser.DatabaseBrowserManager;
-import com.dci.intellij.dbn.common.dispose.SafeDisposer;
+import com.dci.intellij.dbn.common.dispose.Disposer;
 import com.dci.intellij.dbn.common.load.ProgressMonitor;
 import com.dci.intellij.dbn.common.navigation.NavigationInstructions;
 import com.dci.intellij.dbn.common.project.Projects;
@@ -12,6 +12,7 @@ import com.dci.intellij.dbn.common.thread.Read;
 import com.dci.intellij.dbn.common.util.Editors;
 import com.dci.intellij.dbn.common.util.Messages;
 import com.dci.intellij.dbn.common.util.Safe;
+import com.dci.intellij.dbn.common.util.Traces;
 import com.dci.intellij.dbn.connection.*;
 import com.dci.intellij.dbn.connection.config.ConnectionDetailSettings;
 import com.dci.intellij.dbn.database.DatabaseFeature;
@@ -37,6 +38,7 @@ import com.dci.intellij.dbn.vfs.file.*;
 import com.intellij.openapi.components.NamedComponent;
 import com.intellij.openapi.fileEditor.FileEditor;
 import com.intellij.openapi.fileEditor.FileEditorManager;
+import com.intellij.openapi.fileEditor.impl.EditorHistoryManager;
 import com.intellij.openapi.progress.ProcessCanceledException;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.DialogWrapper;
@@ -157,6 +159,10 @@ public class DatabaseFileSystem extends VirtualFileSystem implements /*NonPhysic
             return findOrCreateDatabaseFile(project, objectRef);
 
         } else if (OBJECT_CONTENTS.is(relativePath)) {
+            if (Traces.isCalledThrough(EditorHistoryManager.class)) {
+                // database editors with multiple providers (split virtual files)
+                return null;
+            }
             String contentIdentifier = OBJECT_CONTENTS.collate(relativePath);
             int contentTypeEndIndex = contentIdentifier.indexOf(PS);
             String contentTypeStr = contentIdentifier.substring(0, contentTypeEndIndex);
@@ -629,7 +635,7 @@ public class DatabaseFileSystem extends VirtualFileSystem implements /*NonPhysic
             DBEditableObjectVirtualFile file = filesCache.get(objectRef);
             if (file.getProject() == project) {
                 objectRefs.remove();
-                SafeDisposer.dispose(file);
+                Disposer.dispose(file);
             }
         }
     }

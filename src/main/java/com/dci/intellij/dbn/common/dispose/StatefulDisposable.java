@@ -2,7 +2,6 @@ package com.dci.intellij.dbn.common.dispose;
 
 import com.dci.intellij.dbn.common.util.Unsafe;
 import com.intellij.openapi.Disposable;
-import com.intellij.openapi.util.Disposer;
 import lombok.Getter;
 import org.jetbrains.annotations.NotNull;
 

@@ -1,8 +1,8 @@
 package com.dci.intellij.dbn.common.properties.ui;
 
+import com.dci.intellij.dbn.common.dispose.Disposer;
 import com.dci.intellij.dbn.common.ui.form.DBNForm;
 import com.dci.intellij.dbn.common.ui.form.DBNFormBase;
-import com.intellij.openapi.util.Disposer;
 import com.intellij.ui.ToolbarDecorator;
 import org.jetbrains.annotations.NotNull;
 

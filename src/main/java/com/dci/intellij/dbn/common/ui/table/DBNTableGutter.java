@@ -1,6 +1,7 @@
 package com.dci.intellij.dbn.common.ui.table;
 
 import com.dci.intellij.dbn.common.color.Colors;
+import com.dci.intellij.dbn.common.dispose.Disposer;
 import com.dci.intellij.dbn.common.dispose.StatefulDisposable;
 import com.dci.intellij.dbn.common.event.ApplicationEvents;
 import com.dci.intellij.dbn.common.ui.util.Borders;
@@ -8,7 +9,6 @@ import com.dci.intellij.dbn.language.common.WeakRef;
 import com.intellij.openapi.editor.colors.EditorColorsListener;
 import com.intellij.openapi.editor.colors.EditorColorsManager;
 import com.intellij.openapi.editor.colors.EditorColorsScheme;
-import com.intellij.openapi.util.Disposer;
 import lombok.Getter;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;

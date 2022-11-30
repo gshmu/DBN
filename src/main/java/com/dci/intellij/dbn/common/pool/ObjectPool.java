@@ -2,7 +2,7 @@ package com.dci.intellij.dbn.common.pool;
 
 
 import com.dci.intellij.dbn.common.dispose.Disposed;
-import com.dci.intellij.dbn.common.dispose.SafeDisposer;
+import com.dci.intellij.dbn.common.dispose.Disposer;
 import com.dci.intellij.dbn.common.dispose.StatefulDisposable;
 import com.dci.intellij.dbn.common.lookup.Visitor;
 import com.intellij.openapi.Disposable;
@@ -13,7 +13,7 @@ import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.TimeUnit;
 
-import static com.dci.intellij.dbn.common.dispose.SafeDisposer.replace;
+import static com.dci.intellij.dbn.common.dispose.Disposer.replace;
 
 public abstract class ObjectPool<T extends Disposable> extends StatefulDisposable.Base {
     private List<T> objects = new CopyOnWriteArrayList<>();
@@ -51,7 +51,7 @@ public abstract class ObjectPool<T extends Disposable> extends StatefulDisposabl
         if (isValid(object)) {
             available.offer(object);
         } else {
-            SafeDisposer.dispose(object);
+            Disposer.dispose(object);
             objects.remove(object);
         }
     }

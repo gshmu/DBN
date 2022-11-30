@@ -4,11 +4,7 @@ import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.common.action.DataKeys;
 import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.common.util.Commons;
-import com.dci.intellij.dbn.connection.ConnectionHandler;
-import com.dci.intellij.dbn.connection.ConnectionRef;
-import com.dci.intellij.dbn.connection.ConnectionId;
-import com.dci.intellij.dbn.connection.ResultSets;
-import com.dci.intellij.dbn.connection.SchemaId;
+import com.dci.intellij.dbn.connection.*;
 import com.dci.intellij.dbn.execution.ExecutionResultBase;
 import com.dci.intellij.dbn.execution.explain.result.ui.ExplainPlanResultForm;
 import com.dci.intellij.dbn.language.common.DBLanguageDialect;
@@ -23,7 +19,7 @@ import lombok.Setter;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import javax.swing.Icon;
+import javax.swing.*;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Date;
@@ -31,7 +27,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import static com.dci.intellij.dbn.common.dispose.SafeDisposer.replace;
+import static com.dci.intellij.dbn.common.dispose.Disposer.replace;
 
 @Getter
 @Setter

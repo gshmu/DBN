@@ -1,7 +1,7 @@
 package com.dci.intellij.dbn.common.ui.component;
 
 import com.dci.intellij.dbn.common.action.Lookups;
-import com.dci.intellij.dbn.common.dispose.SafeDisposer;
+import com.dci.intellij.dbn.common.dispose.Disposer;
 import com.dci.intellij.dbn.common.dispose.StatefulDisposable;
 import com.dci.intellij.dbn.common.project.ProjectRef;
 import com.dci.intellij.dbn.common.project.ProjectSupplier;
@@ -17,14 +17,14 @@ public abstract class DBNComponentBase extends StatefulDisposable.Base implement
     public DBNComponentBase(@Nullable Disposable parent) {
         this.parent = WeakRef.of(parent);
         this.project = null;
-        SafeDisposer.register(parent, this);
+        Disposer.register(parent, this);
     }
 
     @Deprecated // load project from data context
     public DBNComponentBase(Disposable parent, @Nullable Project project) {
         this.parent = WeakRef.of(parent);
         this.project = ProjectRef.of(project);
-        SafeDisposer.register(parent, this);
+        Disposer.register(parent, this);
     }
 
     @Nullable
@@ -35,7 +35,7 @@ public abstract class DBNComponentBase extends StatefulDisposable.Base implement
 
     public final void setParent(Disposable parent) {
         this.parent = WeakRef.of(parent);
-        SafeDisposer.register(parent, this);
+        Disposer.register(parent, this);
     }
 
     @Override

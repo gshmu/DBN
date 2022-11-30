@@ -1,10 +1,10 @@
 package com.dci.intellij.dbn.execution.explain.result.ui;
 
+import com.dci.intellij.dbn.common.dispose.Disposer;
 import com.dci.intellij.dbn.execution.explain.result.ExplainPlanEntry;
 import com.dci.intellij.dbn.execution.explain.result.ExplainPlanResult;
 import com.intellij.openapi.Disposable;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.util.Disposer;
 import com.intellij.ui.treeStructure.treetable.TreeTableModel;
 import lombok.Getter;
 

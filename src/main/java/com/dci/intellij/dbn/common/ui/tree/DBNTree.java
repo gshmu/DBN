@@ -1,18 +1,17 @@
 package com.dci.intellij.dbn.common.ui.tree;
 
-import com.dci.intellij.dbn.common.dispose.SafeDisposer;
-import com.dci.intellij.dbn.common.ui.util.Fonts;
+import com.dci.intellij.dbn.common.dispose.Disposer;
 import com.dci.intellij.dbn.common.ui.component.DBNComponent;
+import com.dci.intellij.dbn.common.ui.util.Fonts;
 import com.dci.intellij.dbn.language.common.WeakRef;
 import com.intellij.openapi.Disposable;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.util.Disposer;
 import com.intellij.ui.treeStructure.Tree;
 import lombok.Getter;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import javax.swing.JComponent;
+import javax.swing.*;
 import javax.swing.tree.DefaultTreeCellRenderer;
 import javax.swing.tree.TreeModel;
 import javax.swing.tree.TreeNode;
@@ -36,7 +35,7 @@ public class DBNTree extends Tree implements DBNComponent {
         setFont(Fonts.getLabelFont());
 
         Disposer.register(parent, this);
-        SafeDisposer.register(this, treeModel);
+        Disposer.register(this, treeModel);
     }
 
     public DBNTree(@NotNull DBNComponent parent, TreeNode root) {
@@ -45,15 +44,15 @@ public class DBNTree extends Tree implements DBNComponent {
         setTransferHandler(DBNTreeTransferHandler.INSTANCE);
 
         Disposer.register(parent, this);
-        SafeDisposer.register(this, root);
+        Disposer.register(this, root);
     }
 
     @Override
     public void setModel(TreeModel treeModel) {
-        treeModel = SafeDisposer.replace(getModel(), treeModel, false);
+        treeModel = Disposer.replace(getModel(), treeModel, false);
         super.setModel(treeModel);
 
-        SafeDisposer.register(this, treeModel);
+        Disposer.register(this, treeModel);
     }
 
     @Nullable

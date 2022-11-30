@@ -3,8 +3,8 @@ package com.dci.intellij.dbn.editor.session;
 import com.dci.intellij.dbn.common.action.DataKeys;
 import com.dci.intellij.dbn.common.dispose.Checks;
 import com.dci.intellij.dbn.common.dispose.DisposableUserDataHolderBase;
+import com.dci.intellij.dbn.common.dispose.Disposer;
 import com.dci.intellij.dbn.common.dispose.Failsafe;
-import com.dci.intellij.dbn.common.dispose.SafeDisposer;
 import com.dci.intellij.dbn.common.event.ProjectEvents;
 import com.dci.intellij.dbn.common.thread.Background;
 import com.dci.intellij.dbn.common.thread.Dispatch;
@@ -30,7 +30,6 @@ import com.intellij.openapi.fileEditor.FileEditorLocation;
 import com.intellij.openapi.fileEditor.FileEditorState;
 import com.intellij.openapi.fileEditor.FileEditorStateLevel;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.util.Disposer;
 import com.intellij.openapi.vfs.VirtualFile;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
@@ -336,7 +335,7 @@ public class SessionBrowser extends DisposableUserDataHolderBase implements File
     }
 
     private void stopRefreshTimer() {
-        SafeDisposer.dispose(refreshTimer);
+        Disposer.dispose(refreshTimer);
         refreshTimer = null;
     }
 

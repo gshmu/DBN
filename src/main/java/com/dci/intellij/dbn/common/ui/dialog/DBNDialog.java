@@ -1,7 +1,7 @@
 package com.dci.intellij.dbn.common.ui.dialog;
 
+import com.dci.intellij.dbn.common.dispose.Disposer;
 import com.dci.intellij.dbn.common.dispose.Failsafe;
-import com.dci.intellij.dbn.common.dispose.SafeDisposer;
 import com.dci.intellij.dbn.common.project.ProjectRef;
 import com.dci.intellij.dbn.common.ui.component.DBNComponent;
 import com.dci.intellij.dbn.common.ui.form.DBNForm;
@@ -158,8 +158,8 @@ public abstract class DBNDialog<F extends DBNForm> extends DialogWrapper impleme
             disposed = true;
             listeners.forEach(l -> l.onAction(CLOSE));
             super.dispose();
-            SafeDisposer.dispose(form);
-            SafeDisposer.disposeCollection(listeners);
+            Disposer.dispose(form);
+            Disposer.disposeCollection(listeners);
             disposeInner();
             //nullify();
         }

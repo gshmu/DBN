@@ -1,6 +1,7 @@
 package com.dci.intellij.dbn.execution.common.message.ui.tree;
 
 import com.dci.intellij.dbn.common.dispose.Disposed;
+import com.dci.intellij.dbn.common.dispose.Disposer;
 import com.dci.intellij.dbn.common.dispose.StatefulDisposable;
 import com.dci.intellij.dbn.common.ui.tree.TreeEventType;
 import com.dci.intellij.dbn.common.ui.tree.TreeUtil;
@@ -8,7 +9,6 @@ import com.dci.intellij.dbn.connection.ConnectionId;
 import com.dci.intellij.dbn.execution.compiler.CompilerMessage;
 import com.dci.intellij.dbn.execution.explain.result.ExplainPlanMessage;
 import com.dci.intellij.dbn.execution.statement.StatementExecutionMessage;
-import com.intellij.openapi.util.Disposer;
 import org.jetbrains.annotations.Nullable;
 
 import javax.swing.event.TreeModelListener;

@@ -1,8 +1,8 @@
 package com.dci.intellij.dbn.navigation.psi;
 
 import com.dci.intellij.dbn.common.dispose.Checks;
+import com.dci.intellij.dbn.common.dispose.Disposer;
 import com.dci.intellij.dbn.common.dispose.Failsafe;
-import com.dci.intellij.dbn.common.dispose.SafeDisposer;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.language.common.psi.EmptySearchScope;
 import com.dci.intellij.dbn.object.common.list.DBObjectList;
@@ -63,7 +63,7 @@ public class DBConnectionPsiDirectory implements PsiDirectory, Disposable {
 
     @Override
     public void dispose() {
-        SafeDisposer.dispose(virtualFile);
+        Disposer.dispose(virtualFile);
         virtualFile = null;
     }
 

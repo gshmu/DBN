@@ -1,7 +1,6 @@
 package com.dci.intellij.dbn.common.dispose;
 
 import com.intellij.openapi.Disposable;
-import com.intellij.openapi.util.Disposer;
 import com.intellij.openapi.util.UserDataHolderBase;
 import lombok.Getter;
 import org.jetbrains.annotations.Nullable;

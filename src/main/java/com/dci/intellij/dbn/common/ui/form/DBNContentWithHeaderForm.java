@@ -1,7 +1,7 @@
 package com.dci.intellij.dbn.common.ui.form;
 
+import com.dci.intellij.dbn.common.dispose.Disposer;
 import com.dci.intellij.dbn.common.ui.dialog.DBNDialog;
-import com.intellij.openapi.util.Disposer;
 import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;

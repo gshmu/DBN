@@ -1,7 +1,7 @@
 package com.dci.intellij.dbn.editor.data.statusbar;
 
+import com.dci.intellij.dbn.common.dispose.Disposer;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.util.Disposer;
 import com.intellij.openapi.wm.StatusBar;
 import com.intellij.openapi.wm.StatusBarWidget;
 import com.intellij.openapi.wm.StatusBarWidgetFactory;

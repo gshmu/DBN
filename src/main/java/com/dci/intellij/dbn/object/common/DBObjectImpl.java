@@ -15,8 +15,8 @@ import com.dci.intellij.dbn.common.content.DynamicContent;
 import com.dci.intellij.dbn.common.content.DynamicContentType;
 import com.dci.intellij.dbn.common.dispose.AlreadyDisposedException;
 import com.dci.intellij.dbn.common.dispose.Checks;
+import com.dci.intellij.dbn.common.dispose.Disposer;
 import com.dci.intellij.dbn.common.dispose.Failsafe;
-import com.dci.intellij.dbn.common.dispose.SafeDisposer;
 import com.dci.intellij.dbn.common.environment.EnvironmentType;
 import com.dci.intellij.dbn.common.event.ProjectEvents;
 import com.dci.intellij.dbn.common.filter.Filter;
@@ -879,7 +879,7 @@ public abstract class DBObjectImpl<M extends DBObjectMetadata> extends BrowserTr
 
     @Override
     public void disposeInner() {
-        SafeDisposer.dispose(childObjects, false);
+        Disposer.dispose(childObjects, false);
         nullify();
     }
 }

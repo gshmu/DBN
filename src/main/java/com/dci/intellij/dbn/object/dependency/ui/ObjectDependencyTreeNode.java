@@ -13,7 +13,7 @@ import org.jetbrains.annotations.Nullable;
 import java.util.ArrayList;
 import java.util.List;
 
-import static com.dci.intellij.dbn.common.dispose.SafeDisposer.replace;
+import static com.dci.intellij.dbn.common.dispose.Disposer.replace;
 import static java.util.Collections.emptyList;
 
 public class ObjectDependencyTreeNode extends StatefulDisposable.Base implements StatefulDisposable {
