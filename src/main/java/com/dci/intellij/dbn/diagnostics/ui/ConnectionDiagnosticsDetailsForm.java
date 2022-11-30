@@ -1,6 +1,5 @@
 package com.dci.intellij.dbn.diagnostics.ui;
 
-import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.common.ui.form.DBNFormBase;
 import com.dci.intellij.dbn.common.ui.form.DBNHeaderForm;
 import com.dci.intellij.dbn.common.ui.tab.TabbedPane;
@@ -15,6 +14,8 @@ import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
 import java.awt.*;
+
+import static com.dci.intellij.dbn.common.dispose.Failsafe.nd;
 
 public class ConnectionDiagnosticsDetailsForm extends DBNFormBase {
     private final DBNTable<MetadataDiagnosticsTableModel> metadataTable;
@@ -49,7 +50,7 @@ public class ConnectionDiagnosticsDetailsForm extends DBNFormBase {
             @Override
             public void selectionChanged(TabInfo oldSelection, TabInfo newSelection) {
                 int selectedIndex = diagnosticsTabs.getTabs().indexOf(newSelection);
-                ConnectionDiagnosticsForm parent = Failsafe.nd(parent());
+                ConnectionDiagnosticsForm parent = nd(parent());
                 parent.setTabSelectionIndex(selectedIndex);
             }
         });

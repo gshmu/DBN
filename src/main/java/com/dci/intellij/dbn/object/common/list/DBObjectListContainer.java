@@ -32,6 +32,7 @@ import static com.dci.intellij.dbn.common.Direction.DOWN;
 import static com.dci.intellij.dbn.common.Direction.UP;
 import static com.dci.intellij.dbn.common.dispose.Checks.isNotValid;
 import static com.dci.intellij.dbn.common.dispose.Checks.isValid;
+import static com.dci.intellij.dbn.common.dispose.Failsafe.nd;
 import static com.dci.intellij.dbn.common.util.Unsafe.cast;
 import static com.dci.intellij.dbn.object.type.DBObjectType.ANY;
 import static java.util.Collections.emptyList;
@@ -75,8 +76,8 @@ public final class DBObjectListContainer implements StatefulDisposable {
     }
 
     private void checkDisposed(DBObjectListVisitor visitor) {
-        Failsafe.nd(this);
-        Failsafe.nd(visitor);
+        nd(this);
+        nd(visitor);
     }
 
     @NotNull

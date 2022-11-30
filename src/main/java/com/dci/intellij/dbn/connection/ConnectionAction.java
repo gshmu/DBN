@@ -1,7 +1,6 @@
 package com.dci.intellij.dbn.connection;
 
 import com.dci.intellij.dbn.common.database.AuthenticationInfo;
-import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.common.load.ProgressMonitor;
 import com.dci.intellij.dbn.common.routine.Consumer;
 import com.dci.intellij.dbn.common.thread.Dispatch;
@@ -14,18 +13,20 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.function.Function;
 
+import static com.dci.intellij.dbn.common.dispose.Failsafe.nd;
+
 public abstract class ConnectionAction implements DatabaseContextBase, Runnable{
     static final String[] OPTIONS_CONNECT_CANCEL = Commons.list("Connect", "Cancel");
 
     private final String description;
     private final boolean interactive;
-    private final DatabaseContext connectionProvider;
+    private final DatabaseContext context;
     private boolean cancelled;
 
-    private ConnectionAction(String description, boolean interactive, DatabaseContext connectionProvider) {
+    private ConnectionAction(String description, boolean interactive, DatabaseContext context) {
         this.description = description;
         this.interactive = interactive;
-        this.connectionProvider = connectionProvider;
+        this.context = context;
     }
 
     @NotNull
@@ -124,8 +125,7 @@ public abstract class ConnectionAction implements DatabaseContextBase, Runnable{
 
     @NotNull
     public ConnectionHandler getConnection() {
-        ConnectionHandler connection = connectionProvider.getConnection();
-        return Failsafe.nn(connection);
+        return nd(this.context).ensureConnection();
     }
 
     public static void invoke(
