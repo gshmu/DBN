@@ -1,6 +1,5 @@
 package com.dci.intellij.dbn.common.thread;
 
-import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.intellij.openapi.application.Application;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.command.WriteCommandAction;
@@ -28,7 +27,7 @@ public final class Write {
         Dispatch.run(() -> {
             WriteCommandAction.writeCommandAction(nd(project)).run(() -> {
                 try {
-                    Failsafe.nd(project);
+                    nd(project);
                     runnable.run();
                 } catch (ProcessCanceledException | UnsupportedOperationException ignore) {}
             });

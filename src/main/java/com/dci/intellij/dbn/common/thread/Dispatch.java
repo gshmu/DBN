@@ -1,6 +1,5 @@
 package com.dci.intellij.dbn.common.thread;
 
-import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.common.routine.Consumer;
 import com.dci.intellij.dbn.common.routine.ThrowableCallable;
 import com.dci.intellij.dbn.common.util.Commons;
@@ -14,6 +13,8 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Supplier;
+
+import static com.dci.intellij.dbn.common.dispose.Failsafe.nd;
 
 public final class Dispatch {
     private Dispatch() {}
@@ -83,7 +84,7 @@ public final class Dispatch {
 
 
     public static Alarm alarm(Disposable parentDisposable) {
-        Failsafe.nd(parentDisposable);
+        nd(parentDisposable);
         return new Alarm(parentDisposable);
     }
 

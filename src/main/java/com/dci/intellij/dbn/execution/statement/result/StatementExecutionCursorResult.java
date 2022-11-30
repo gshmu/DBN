@@ -2,7 +2,6 @@ package com.dci.intellij.dbn.execution.statement.result;
 
 import com.dci.intellij.dbn.common.action.DataKeys;
 import com.dci.intellij.dbn.common.dispose.Checks;
-import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.common.thread.Progress;
 import com.dci.intellij.dbn.common.util.Messages;
 import com.dci.intellij.dbn.connection.ConnectionAction;
@@ -26,6 +25,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.sql.SQLException;
 
+import static com.dci.intellij.dbn.common.dispose.Failsafe.nd;
 import static com.dci.intellij.dbn.execution.ExecutionStatus.EXECUTING;
 
 public class StatementExecutionCursorResult extends StatementExecutionBasicResult {
@@ -38,7 +38,7 @@ public class StatementExecutionCursorResult extends StatementExecutionBasicResul
             int updateCount) throws SQLException {
         super(executionProcessor, resultName, updateCount);
 
-        ConnectionHandler connection = Failsafe.nd(executionProcessor.getConnection());
+        ConnectionHandler connection = nd(executionProcessor.getConnection());
         int fetchBlockSize = executionProcessor.getExecutionInput().getResultSetFetchBlockSize();
         dataModel = new ResultSetDataModel<>(resultSet, connection, fetchBlockSize);
     }

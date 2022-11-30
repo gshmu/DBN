@@ -1,6 +1,5 @@
 package com.dci.intellij.dbn.common.event;
 
-import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.common.project.Projects;
 import com.dci.intellij.dbn.common.routine.Consumer;
 import com.dci.intellij.dbn.common.util.Guarded;
@@ -15,6 +14,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import static com.dci.intellij.dbn.common.dispose.Checks.isNotValid;
+import static com.dci.intellij.dbn.common.dispose.Failsafe.nd;
 
 
 public final class ProjectEvents {
@@ -27,7 +27,7 @@ public final class ProjectEvents {
             MessageBus messageBus = messageBus(project);
             MessageBusConnection connection = parentDisposable == null ?
                     messageBus.connect() :
-                    messageBus.connect(Failsafe.nd(parentDisposable));
+                    messageBus.connect(nd(parentDisposable));
 
             connection.subscribe(topic, handler);
         });
@@ -62,6 +62,6 @@ public final class ProjectEvents {
 
     @NotNull
     private static MessageBus messageBus(@Nullable Project project) {
-        return Failsafe.nd(project).getMessageBus();
+        return nd(project).getMessageBus();
     }
 }

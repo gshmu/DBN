@@ -3,7 +3,6 @@ package com.dci.intellij.dbn.data.model.basic;
 import com.dci.intellij.dbn.common.collections.CompactArrayList;
 import com.dci.intellij.dbn.common.dispose.Disposed;
 import com.dci.intellij.dbn.common.dispose.Disposer;
-import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.common.property.DisposablePropertyHolder;
 import com.dci.intellij.dbn.data.model.DataModelCell;
 import com.dci.intellij.dbn.data.model.DataModelRow;
@@ -15,6 +14,8 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
+
+import static com.dci.intellij.dbn.common.dispose.Failsafe.nd;
 
 @Getter
 @Setter
@@ -41,7 +42,7 @@ public class BasicDataModelRow<
     @Override
     @NotNull
     public M getModel() {
-        return Failsafe.nd(model);
+        return nd(model);
     }
 
     @Override

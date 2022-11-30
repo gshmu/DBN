@@ -1,9 +1,10 @@
 package com.dci.intellij.dbn.data.find;
 
-import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.data.model.DataModelCell;
 import lombok.Getter;
 import lombok.NonNull;
+
+import static com.dci.intellij.dbn.common.dispose.Failsafe.nd;
 
 @Getter
 public class DataSearchResultMatch {
@@ -19,7 +20,7 @@ public class DataSearchResultMatch {
 
     @NonNull
     public DataModelCell getCell() {
-        return Failsafe.nd(cell);
+        return nd(cell);
     }
 
     public int getColumnIndex() {

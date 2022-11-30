@@ -1,7 +1,6 @@
 package com.dci.intellij.dbn.object.impl;
 
 import com.dci.intellij.dbn.common.Icons;
-import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.database.common.metadata.DBObjectMetadata;
 import com.dci.intellij.dbn.object.DBConsole;
@@ -16,6 +15,8 @@ import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
 import java.sql.SQLException;
+
+import static com.dci.intellij.dbn.common.dispose.Failsafe.nd;
 
 @Getter
 public class DBConsoleImpl extends DBObjectImpl<DBObjectMetadata> implements DBConsole {
@@ -36,7 +37,7 @@ public class DBConsoleImpl extends DBObjectImpl<DBObjectMetadata> implements DBC
 
     @NotNull
     public DBConsoleVirtualFile getVirtualFile() {
-        return Failsafe.nd(virtualFile);
+        return nd(virtualFile);
     }
 
     @Override

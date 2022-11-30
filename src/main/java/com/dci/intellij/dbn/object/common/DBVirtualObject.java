@@ -50,6 +50,7 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 import static com.dci.intellij.dbn.common.content.DynamicContentProperty.*;
+import static com.dci.intellij.dbn.common.dispose.Failsafe.nd;
 import static com.dci.intellij.dbn.object.common.sorting.DBObjectComparator.compareName;
 import static com.dci.intellij.dbn.object.common.sorting.DBObjectComparator.compareType;
 
@@ -336,7 +337,7 @@ public class DBVirtualObject extends DBObjectImpl implements PsiReference {
     @Override
     @NotNull
     public ConnectionHandler getConnection() {
-        BasePsiElement underlyingPsiElement = Failsafe.nd(getUnderlyingPsiElement());
+        BasePsiElement underlyingPsiElement = nd(getUnderlyingPsiElement());
         DBLanguagePsiFile file = underlyingPsiElement.getFile();
         ConnectionHandler connection = file.getConnection();
         if (connection == null) {

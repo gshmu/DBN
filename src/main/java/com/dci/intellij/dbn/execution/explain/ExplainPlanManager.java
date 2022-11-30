@@ -62,7 +62,7 @@ public class ExplainPlanManager extends ProjectComponentBase {
         contextManager.selectConnectionAndSchema(
                 databaseFile.getVirtualFile(),
                 dataContext,
-                ()-> ConnectionAction.invoke("generating the explain plan", false, executable.getFile(),
+                ()-> ConnectionAction.invoke("generating the explain plan", false, executable,
                         action -> Progress.prompt(getProject(), action, true,
                                 "Extracting explain plan",
                                 "Extracting explain plan for " + elementDescription,
