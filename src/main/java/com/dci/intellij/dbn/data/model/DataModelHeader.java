@@ -8,13 +8,15 @@ import java.util.List;
 public interface DataModelHeader<T extends ColumnInfo> extends StatefulDisposable {
     List<T> getColumnInfos();
 
-    T getColumnInfo(int columnIndex);
+    T getColumnInfo(int index);
+
+    T getColumnInfo(String name);
 
     int getColumnIndex(String name);
 
-    String getColumnName(int columnIndex);
+    String getColumnName(int index);
 
-    DBDataType getColumnDataType(int columnIndex);
+    DBDataType getColumnDataType(int index);
 
     int getColumnCount();
 }

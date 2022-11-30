@@ -19,9 +19,7 @@ public class DataGridAuditColumnSettings extends BasicProjectConfiguration<DataG
     private boolean showColumns = true;
     private boolean allowEditing = false;
 
-    @EqualsAndHashCode.Exclude
-    private Set<String> lookupCache = new HashSet<>();
-
+    private transient Set<String> lookupCache = new HashSet<>();
 
     DataGridAuditColumnSettings(DataGridSettings parent) {
         super(parent);

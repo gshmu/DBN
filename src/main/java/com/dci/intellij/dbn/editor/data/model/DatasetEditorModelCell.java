@@ -84,7 +84,7 @@ public class DatasetEditorModelCell
             ConnectionHandler connection = getConnectionHandler();
             try {
                 clearError();
-                int columnIndex = columnInfo.getResultSetColumnIndex();
+                int columnIndex = columnInfo.getResultSetIndex();
                 if (isValueAdapter && userValue == null) {
                     userValue = ValueAdapter.create(genericDataType);
                 }

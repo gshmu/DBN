@@ -44,13 +44,13 @@ public abstract class DBNTable<T extends DBNTableModel> extends JTable implement
 
     private final WeakRef<DBNComponent> parentComponent;
 
-    private DBNTableGutter<?> tableGutter;
     private int rowVerticalPadding;
     private double scrollDistance;
     private KeyFMap userData = KeyFMap.EMPTY_MAP;
 
     private Timer scrollTimer;
     private final Latent<JBScrollPane> scrollPane = Latent.weak(() -> UIUtil.getParentOfType(JBScrollPane.class, DBNTable.this));
+    private final Latent<DBNTableGutter<?>> tableGutter = Latent.weak(() -> createTableGutter());
     private final FontMetrics metricsCache = new FontMetrics(this);
 
     public DBNTable(DBNComponent parent, T tableModel, boolean showHeader) {
@@ -337,20 +337,22 @@ public abstract class DBNTable<T extends DBNTableModel> extends JTable implement
     }
 
     public final DBNTableGutter<?> getTableGutter() {
-        if (tableGutter == null) {
-            tableGutter = createTableGutter();
-        }
-        return tableGutter;
+        return tableGutter.get();
     }
 
     public final void initTableGutter() {
         DBNTableGutter tableGutter = getTableGutter();
-        if (tableGutter != null){
-            JScrollPane scrollPane = UIUtil.getParentOfType(JScrollPane.class, this);
-            if (scrollPane != null) {
-                scrollPane.setRowHeaderView(tableGutter);
-            }
-        }
+        if (tableGutter == null) return;
+
+        JScrollPane scrollPane = UIUtil.getParentOfType(JScrollPane.class, this);
+        if (scrollPane == null) return;
+
+        scrollPane.setRowHeaderView(tableGutter);
+    }
+
+    protected void resetTableGutter() {
+        tableGutter.reset();
+        initTableGutter();
     }
 
     public void stopCellEditing() {

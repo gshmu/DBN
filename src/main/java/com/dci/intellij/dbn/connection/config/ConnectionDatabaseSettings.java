@@ -47,10 +47,7 @@ public class ConnectionDatabaseSettings extends BasicConfiguration<ConnectionSet
     private ConnectionConfigType configType;
     private final AuthenticationInfo authenticationInfo = new AuthenticationInfo(this, false);
 
-    @EqualsAndHashCode.Exclude
     private transient ConnectivityStatus connectivityStatus = ConnectivityStatus.UNKNOWN;
-
-    @EqualsAndHashCode.Exclude
     private transient long signature = 0;
 
     public ConnectionDatabaseSettings(ConnectionSettings parent, @NotNull DatabaseType databaseType, ConnectionConfigType configType) {

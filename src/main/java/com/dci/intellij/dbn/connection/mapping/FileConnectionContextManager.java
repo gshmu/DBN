@@ -175,12 +175,11 @@ public class FileConnectionContextManager extends ProjectComponentBase implement
     }
 
     public boolean setDatabaseSession(VirtualFile file, DatabaseSession session) {
-        if (isSessionSelectable(file)) {
-            return notifiedChange(
-                    () -> registry.setDatabaseSession(file, session),
-                    handler -> handler.sessionChanged(getProject(), file, session));
-        }
-        return false;
+        if (!isSessionSelectable(file)) return false;
+
+        return notifiedChange(
+                () -> registry.setDatabaseSession(file, session),
+                handler -> handler.sessionChanged(getProject(), file, session));
     }
 
     public void setDatabaseSession(@NotNull Editor editor, DatabaseSession session) {
@@ -216,23 +215,24 @@ public class FileConnectionContextManager extends ProjectComponentBase implement
 
     public boolean isSchemaSelectable(VirtualFile file) {
         if (isNotValid(file)) return false;
-        if (isLocalFileSystem(file)) return true;
         if (!isDbLanguageFile(file)) return false;
+        if (isLocalFileSystem(file)) return true;
 
-        if (file instanceof DBConsoleVirtualFile) {
-            return true;
+        if (file instanceof DBConsoleVirtualFile) return true;
+        if (file instanceof LightVirtualFile) return hasConnectivityContext(file);
 
-        } else if (file instanceof LightVirtualFile) {
-            return hasConnectivityContext(file);
-        }
         return false;
     }
 
     public boolean isSessionSelectable(VirtualFile file) {
         if (isNotValid(file)) return false;
         if (!isDbLanguageFile(file)) return false;
+        if (isLocalFileSystem(file)) return true;
 
-        return file instanceof LightVirtualFile || file instanceof DBConsoleVirtualFile;
+        if (file instanceof DBConsoleVirtualFile) return true;
+        if (file instanceof LightVirtualFile) return hasConnectivityContext(file);
+
+        return false;
     }
 
 
@@ -360,7 +360,7 @@ public class FileConnectionContextManager extends ProjectComponentBase implement
         ConnectionAction.invoke("selecting the current schema", true, connection,
                 action -> Progress.prompt(project, connection, true,
                         "Loading schemas",
-                        "Loading schemas for " + connection.getQualifiedName(),
+                        "Loading schemas for connection " + connection.getName(),
                         progress -> {
                             DefaultActionGroup actionGroup = new DefaultActionGroup();
 

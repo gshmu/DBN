@@ -20,7 +20,7 @@ public class DatabaseInformationOpenAction extends AbstractConnectionAction {
         ConnectionAction.invoke("showing database information", true, connection,
                 action -> Progress.prompt(project, connection, false,
                         "Loading database information",
-                        "Loading database information for " + connection.getQualifiedName(),
+                        "Loading database information for connection " + connection.getName(),
                         progress -> ConnectionManager.showConnectionInfoDialog(connection)));
     }
 }

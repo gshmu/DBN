@@ -34,16 +34,14 @@ public class ConnectionFilterSettings extends CompositeProjectConfiguration<Conn
     private boolean hideEmptySchemas = false;
     private boolean hidePseudoColumns = false;
 
-    @EqualsAndHashCode.Exclude
-    private final ConnectionSettings connectionSettings;
-
-    private final Latent<Filter<DBSchema>> schemaFilter = Latent.mutable(
+    private transient final ConnectionSettings connectionSettings;
+    private transient final Latent<Filter<DBSchema>> schemaFilter = Latent.mutable(
             () -> hideEmptySchemas,
             () -> loadSchemaFilter());
 
-    private final Latent<Filter<DBColumn>> columnFilter = Latent.mutable(
-        () -> hidePseudoColumns,
-        () -> loadColumnFilter());
+    private transient final Latent<Filter<DBColumn>> columnFilter = Latent.mutable(
+            () -> hidePseudoColumns,
+            () -> loadColumnFilter());
 
     @Nullable
     private Filter<DBSchema> loadSchemaFilter() {

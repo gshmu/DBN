@@ -56,8 +56,7 @@ public class ObjectTypeFilterSettings extends BasicProjectConfiguration<ProjectC
 
     private final BooleanSetting useMasterSettings = new BooleanSetting("use-master-settings", true);
 
-    @EqualsAndHashCode.Exclude
-    private final ConnectionId connectionId;
+    private transient final ConnectionId connectionId;
 
     public ObjectTypeFilterSettings(ProjectConfiguration parent, @Nullable ConnectionId connectionId) {
         super(parent);

@@ -162,8 +162,8 @@ public class DatasetRecordEditorForm extends DBNFormBase {
     };
 
     private static final Comparator<DatasetRecordEditorColumnForm> INDEXED_COMPARATOR = (columnPanel1, columnPanel2) -> {
-        int index1 = columnPanel1.getCell().getColumnInfo().getColumnIndex();
-        int index2 = columnPanel2.getCell().getColumnInfo().getColumnIndex();
+        int index1 = columnPanel1.getCell().getColumnInfo().getIndex();
+        int index2 = columnPanel2.getCell().getColumnInfo().getIndex();
         return index1-index2;
     };
 

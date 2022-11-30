@@ -57,7 +57,7 @@ public class BasicTableSpeedSearch extends SpeedSearchBase<BasicTable<? extends 
     protected void selectElement(Object o, String s) {
         for(ColumnInfo columnInfo : columnInfos) {
             if (columnInfo == o) {
-                columnIndex = columnInfo.getColumnIndex();
+                columnIndex = columnInfo.getIndex();
                 BasicTable table = getTable();
                 int rowIndex = table.getSelectedRow();
                 if (rowIndex == -1) rowIndex = 0;
