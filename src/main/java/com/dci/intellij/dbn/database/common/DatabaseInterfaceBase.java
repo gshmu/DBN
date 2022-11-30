@@ -1,6 +1,5 @@
 package com.dci.intellij.dbn.database.common;
 
-import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.common.util.XmlContents;
 import com.dci.intellij.dbn.connection.DatabaseType;
 import com.dci.intellij.dbn.connection.jdbc.DBNConnection;
@@ -18,6 +17,8 @@ import java.sql.SQLException;
 import java.sql.SQLFeatureNotSupportedException;
 import java.util.HashMap;
 import java.util.Map;
+
+import static com.dci.intellij.dbn.common.dispose.Failsafe.nd;
 
 public abstract class DatabaseInterfaceBase implements DatabaseInterface{
     private final String fileName;
@@ -88,7 +89,7 @@ public abstract class DatabaseInterfaceBase implements DatabaseInterface{
     }
 
     private void checkDisposed(DBNConnection connection) {
-        Failsafe.nd(connection.getProject());
+        nd(connection.getProject());
     }
 
     public DatabaseInterfaces getInterfaces() {

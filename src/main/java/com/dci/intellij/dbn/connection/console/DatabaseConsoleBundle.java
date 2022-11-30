@@ -2,7 +2,6 @@ package com.dci.intellij.dbn.connection.console;
 
 import com.dci.intellij.dbn.common.dispose.DisposableContainers;
 import com.dci.intellij.dbn.common.dispose.Disposer;
-import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.common.dispose.StatefulDisposable;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.ConnectionRef;
@@ -14,6 +13,8 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
+
+import static com.dci.intellij.dbn.common.dispose.Failsafe.nd;
 
 public class DatabaseConsoleBundle extends StatefulDisposable.Base {
     private final ConnectionRef connection;
@@ -72,7 +73,7 @@ public class DatabaseConsoleBundle extends StatefulDisposable.Base {
     @NotNull
     public DBConsole ensureConsole(String name) {
         DBConsole console = getConsole(name);
-        return Failsafe.nd(console);
+        return nd(console);
     }
 
     public DBConsole getConsole(String name, DBConsoleType type, boolean create) {

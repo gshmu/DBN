@@ -1,6 +1,5 @@
 package com.dci.intellij.dbn.data.model.basic;
 
-import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.common.dispose.Nullifier;
 import com.dci.intellij.dbn.common.locale.Formatter;
 import com.dci.intellij.dbn.common.property.PropertyHolderBase;
@@ -15,6 +14,8 @@ import com.dci.intellij.dbn.editor.data.model.RecordStatus;
 import com.dci.intellij.dbn.object.type.DBObjectType;
 import com.intellij.openapi.project.Project;
 import org.jetbrains.annotations.NotNull;
+
+import static com.dci.intellij.dbn.common.dispose.Failsafe.nd;
 
 public class BasicDataModelCell<
         R extends BasicDataModelRow<M, ? extends BasicDataModelCell<R, M>>,
@@ -68,7 +69,7 @@ public class BasicDataModelCell<
     @Override
     @NotNull
     public R getRow() {
-        return Failsafe.nd(row);
+        return nd(row);
     }
 
     @Override

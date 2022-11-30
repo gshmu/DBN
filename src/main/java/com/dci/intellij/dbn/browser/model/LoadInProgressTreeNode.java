@@ -1,7 +1,6 @@
 package com.dci.intellij.dbn.browser.model;
 
 import com.dci.intellij.dbn.code.sql.color.SQLTextAttributesKeys;
-import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.common.load.LoadInProgressIcon;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.ConnectionId;
@@ -14,8 +13,10 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vcs.FileStatus;
 import org.jetbrains.annotations.NotNull;
 
-import javax.swing.Icon;
+import javax.swing.*;
 import java.util.ArrayList;
+
+import static com.dci.intellij.dbn.common.dispose.Failsafe.nn;
 
 public class LoadInProgressTreeNode extends BrowserTreeNodeBase implements BrowserTreeNode {
     private final WeakRef<BrowserTreeNode> parent;
@@ -107,7 +108,7 @@ public class LoadInProgressTreeNode extends BrowserTreeNodeBase implements Brows
     @Override
     @NotNull
     public ConnectionHandler getConnection() {
-        return Failsafe.nn(getParent().getConnection());
+        return nn(getParent().getConnection());
     }
 
     @Override

@@ -1,6 +1,5 @@
 package com.dci.intellij.dbn.common.editor;
 
-import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.common.thread.Read;
 import com.dci.intellij.dbn.common.thread.Write;
 import com.dci.intellij.dbn.common.util.Documents;
@@ -18,6 +17,7 @@ import lombok.Data;
 import org.jdom.Element;
 import org.jetbrains.annotations.NotNull;
 
+import static com.dci.intellij.dbn.common.dispose.Failsafe.nd;
 import static com.dci.intellij.dbn.common.options.setting.SettingsSupport.integerAttribute;
 import static com.dci.intellij.dbn.common.options.setting.SettingsSupport.stringAttribute;
 
@@ -113,7 +113,7 @@ public class BasicTextEditorState implements FileEditorState {
     }
 
     public void applyToEditor(@NotNull TextEditor textEditor) {
-        Editor editor = Failsafe.nd(textEditor.getEditor());
+        Editor editor = nd(textEditor.getEditor());
         SelectionModel selectionModel = editor.getSelectionModel();
 
         LogicalPosition logicalPosition = new LogicalPosition(line, column);
@@ -134,7 +134,7 @@ public class BasicTextEditorState implements FileEditorState {
 
         if (foldingState != null) {
             Write.run(() -> {
-                Project project = Failsafe.nd(editor.getProject());
+                Project project = nd(editor.getProject());
                 //PsiDocumentManager.getInstance(project).commitDocument(document);
                 editor.getFoldingModel().runBatchFoldingOperation(
                         () -> {

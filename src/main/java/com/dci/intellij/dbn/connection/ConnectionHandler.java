@@ -5,7 +5,6 @@ import com.dci.intellij.dbn.common.Referenceable;
 import com.dci.intellij.dbn.common.cache.Cache;
 import com.dci.intellij.dbn.common.database.AuthenticationInfo;
 import com.dci.intellij.dbn.common.database.DatabaseInfo;
-import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.common.dispose.StatefulDisposable;
 import com.dci.intellij.dbn.common.environment.EnvironmentTypeProvider;
 import com.dci.intellij.dbn.common.filter.Filter;
@@ -32,6 +31,8 @@ import org.jetbrains.annotations.Nullable;
 
 import java.sql.SQLException;
 import java.util.List;
+
+import static com.dci.intellij.dbn.common.dispose.Failsafe.nd;
 
 public interface ConnectionHandler extends StatefulDisposable, EnvironmentTypeProvider, DatabaseContextBase, Presentable, Referenceable<ConnectionRef> {
 
@@ -206,7 +207,7 @@ public interface ConnectionHandler extends StatefulDisposable, EnvironmentTypePr
 
     @NotNull
     static ConnectionHandler ensure(ConnectionId connectionId) {
-        return Failsafe.nd(get(connectionId));
+        return nd(get(connectionId));
     }
 
     @NotNull

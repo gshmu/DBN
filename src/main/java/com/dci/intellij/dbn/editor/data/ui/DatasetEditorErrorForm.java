@@ -1,6 +1,5 @@
 package com.dci.intellij.dbn.editor.data.ui;
 
-import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.common.ui.form.DBNFormBase;
 import com.dci.intellij.dbn.common.ui.util.Fonts;
 import com.dci.intellij.dbn.common.util.Strings;
@@ -19,6 +18,8 @@ import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import java.awt.*;
 
+import static com.dci.intellij.dbn.common.dispose.Failsafe.nd;
+
 public class DatasetEditorErrorForm extends DBNFormBase implements ChangeListener {
     public static final Color BACKGROUND_COLOR = new JBColor(
             new Color(0xFFCCCC),
@@ -32,7 +33,7 @@ public class DatasetEditorErrorForm extends DBNFormBase implements ChangeListene
     public DatasetEditorErrorForm(@NotNull DatasetEditorModelCell cell) {
         super(null, cell.getProject());
         this.cell = WeakRef.of(cell);
-        DatasetEditorError error = Failsafe.nd(cell.getError());
+        DatasetEditorError error = nd(cell.getError());
         error.addChangeListener(this);
         //errorIconLabel.setIcon(Icons.EXEC_MESSAGES_ERROR);
         errorIconLabel.setText("");

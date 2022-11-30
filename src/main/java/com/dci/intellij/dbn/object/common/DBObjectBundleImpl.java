@@ -74,6 +74,8 @@ import java.util.concurrent.ConcurrentHashMap;
 
 import static com.dci.intellij.dbn.browser.DatabaseBrowserUtils.treeVisibilityChanged;
 import static com.dci.intellij.dbn.common.content.DynamicContentProperty.GROUPED;
+import static com.dci.intellij.dbn.common.dispose.Failsafe.nd;
+import static com.dci.intellij.dbn.common.util.Commons.nvl;
 import static com.dci.intellij.dbn.object.type.DBObjectRelationType.*;
 import static com.dci.intellij.dbn.object.type.DBObjectType.*;
 
@@ -134,8 +136,8 @@ public class DBObjectBundleImpl extends BrowserTreeNodeBase implements DBObjectB
 
 
         this.publicSchemas = Latent.mutable(
-                () -> Failsafe.nd(schemas).getSignature(),
-                () -> Commons.nvl(Lists.filter(getSchemas(), s -> s.isPublicSchema()), Collections.emptyList()));
+                () -> nd(schemas).getSignature(),
+                () -> nvl(Lists.filter(getSchemas(), s -> s.isPublicSchema()), Collections.emptyList()));
 
         ProjectEvents.subscribe(project, this, DataDefinitionChangeListener.TOPIC, dataDefinitionChangeListener());
         ProjectEvents.subscribe(project, this, SourceCodeManagerListener.TOPIC, sourceCodeManagerListener());
@@ -399,7 +401,7 @@ public class DBObjectBundleImpl extends BrowserTreeNodeBase implements DBObjectB
         Filter<BrowserTreeNode> objectTypeFilter = connection.getObjectTypeFilter();
 
         List<BrowserTreeNode> treeChildren = Lists.filter(allPossibleTreeChildren, objectTypeFilter);
-        treeChildren = Commons.nvl(treeChildren, Collections.emptyList());
+        treeChildren = nvl(treeChildren, Collections.emptyList());
 
         for (BrowserTreeNode objectList : treeChildren) {
             Background.run(() -> objectList.initTreeElement());
@@ -528,7 +530,7 @@ public class DBObjectBundleImpl extends BrowserTreeNodeBase implements DBObjectB
     @NotNull
     @Override
     public String getName() {
-        return Commons.nvl(getPresentableText(), "Object Bundle");
+        return nvl(getPresentableText(), "Object Bundle");
     }
 
     @Override

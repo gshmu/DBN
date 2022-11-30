@@ -1,9 +1,10 @@
 package com.dci.intellij.dbn.common.project;
 
-import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.intellij.openapi.project.Project;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+
+import static com.dci.intellij.dbn.common.dispose.Failsafe.nd;
 
 public interface ProjectSupplier {
     @Nullable
@@ -12,6 +13,6 @@ public interface ProjectSupplier {
 
     @NotNull
     default Project ensureProject() {
-        return Failsafe.nd(getProject());
+        return nd(getProject());
     }
 }

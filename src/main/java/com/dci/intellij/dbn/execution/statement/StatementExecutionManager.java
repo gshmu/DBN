@@ -56,6 +56,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 import static com.dci.intellij.dbn.common.component.Components.projectService;
 import static com.dci.intellij.dbn.common.dispose.Checks.isNotValid;
+import static com.dci.intellij.dbn.common.dispose.Failsafe.nd;
 import static com.dci.intellij.dbn.execution.ExecutionStatus.*;
 
 @State(
@@ -114,7 +115,7 @@ public class StatementExecutionManager extends ProjectComponentBase implements P
     @Nullable
     public StatementExecutionQueue getExecutionQueue(ConnectionId connectionId, SessionId sessionId) {
         ConnectionManager connectionManager = ConnectionManager.getInstance(getProject());
-        ConnectionHandler connection = Failsafe.nd(connectionManager.getConnection(connectionId));
+        ConnectionHandler connection = nd(connectionManager.getConnection(connectionId));
         return connection.isVirtual() ? null : connection.getExecutionQueue(sessionId);
     }
 
