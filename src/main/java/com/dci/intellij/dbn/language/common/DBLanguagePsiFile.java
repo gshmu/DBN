@@ -331,7 +331,7 @@ public abstract class DBLanguagePsiFile extends PsiFileImpl implements DatabaseC
             return DBObjectPsiCache.asPsiDirectory(parentObject);
 
         }
-        return Read.conditional(() -> DBLanguagePsiFile.super.getParent());
+        return Read.call(() -> DBLanguagePsiFile.super.getParent());
     }
 
     @Override
@@ -340,7 +340,7 @@ public abstract class DBLanguagePsiFile extends PsiFileImpl implements DatabaseC
         if (virtualFile.getFileSystem() instanceof DatabaseFileSystem) {
             return Checks.isValid(virtualFile);
         } else {
-            return Read.conditional(() -> super.isValid(), false);
+            return Read.call(() -> super.isValid());
         }
     }
 

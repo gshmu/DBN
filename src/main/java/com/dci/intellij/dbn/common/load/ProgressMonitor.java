@@ -1,6 +1,6 @@
 package com.dci.intellij.dbn.common.load;
 
-import com.dci.intellij.dbn.common.dispose.AlreadyDisposedException;
+import com.intellij.openapi.progress.ProcessCanceledException;
 import com.intellij.openapi.progress.ProgressIndicator;
 import com.intellij.openapi.progress.ProgressManager;
 import org.jetbrains.annotations.Nullable;
@@ -21,7 +21,7 @@ public final class ProgressMonitor {
     public static void checkCancelled() {
         //ProgressManager.checkCanceled();
         if (isCancelled()) {
-            throw AlreadyDisposedException.INSTANCE;
+            throw new ProcessCanceledException();
         }
     }
 

@@ -314,7 +314,7 @@ public class PsiUtil {
 
     @Nullable
     public static PsiFile getPsiFile(@NotNull Project project, @NotNull VirtualFile virtualFile) {
-        return Read.conditional(() -> {
+        return Read.call(() -> {
             if (isNotValid(project)) return null;
             if (isNotValid(virtualFile)) return null;
 

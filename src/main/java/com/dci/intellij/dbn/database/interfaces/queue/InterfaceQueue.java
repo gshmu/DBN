@@ -41,12 +41,15 @@ public class InterfaceQueue extends StatefulDisposable.Base implements DatabaseI
     InterfaceQueue(@Nullable ConnectionHandler connection, Consumer<InterfaceTask<?>> consumer) {
         this.connection = ConnectionRef.of(connection);
         this.consumer = consumer == null ? new InterfaceQueueConsumer(this) : consumer;
-        this.counters.running().addListener(value -> {
-            if (value > maxActiveTasks()) {
-                log.warn("Active task limit exceeded: {} (expected max {})", value, maxActiveTasks());
-            }
-        });
-        MONITORS.submit(this::monitorQueue);
+        this.counters.running.addListener(value -> warnTaskLimits(value));
+
+        MONITORS.submit(() -> monitorQueue());
+    }
+
+    private void warnTaskLimits(int value) {
+        if (counters.running() > maxActiveTasks()) {
+            log.warn("Active task limit exceeded: {} (expected max {})", counters.running(), maxActiveTasks());
+        }
     }
 
     @Override
@@ -63,6 +66,10 @@ public class InterfaceQueue extends StatefulDisposable.Base implements DatabaseI
     @Override
     public Counters counters() {
         return counters;
+    }
+
+    private boolean maxActiveTasksExceeded() {
+        return counters.running() >= maxActiveTasks();
     }
 
     @Override
@@ -89,50 +96,63 @@ public class InterfaceQueue extends StatefulDisposable.Base implements DatabaseI
     @NotNull
     private <T> InterfaceTask<T> queue(InterfaceTaskRequest request, boolean synchronous, ThrowableCallable<T, SQLException> callable) throws SQLException {
         InterfaceTask<T> task = new InterfaceTask<>(request, synchronous, callable);
-        queue.add(task);
-        boolean queued = task.changeStatus(QUEUED, () -> counters.queued().increment());
+        try {
+            queue.add(task);
+            counters.queued.increment();
+            task.changeStatus(QUEUED);
 
-        task.awaitCompletion();
-        return task;
+            task.awaitCompletion();
+            return task;
+        } finally {
+            task.changeStatus(RELEASED);
+        }
     }
 
     /**
      * Start monitoring the queue
      */
+    @SneakyThrows
     private void monitorQueue() {
         Thread monitor = Thread.currentThread();
-        counters.running().addListener(value -> {
-            if (value < maxActiveTasks()) {
-                LockSupport.unpark(monitor);
-            }
-        });
+        counters.running.addListener(value -> unparkMonitor(monitor));
 
         while (!stopped) {
-            InterfaceTask<?> task = nextTask();
-            if (task == null) continue;
+            checkDisposed();
+            boolean parked = parkMonitor();
+            if (parked) continue;
 
-            task.changeStatus(DEQUEUED, () -> counters.queued().decrement());
+            InterfaceTask<?> task = queue.take();
+
+            counters.queued.decrement();
+            task.changeStatus(DEQUEUED);
+
             consumer.accept(task);
-            task.changeStatus(SCHEDULED, () -> counters.running().increment());
+            counters.running.increment();
+            task.changeStatus(SCHEDULED);
         }
     }
 
-    @SneakyThrows
-    private InterfaceTask<?> nextTask() {
-        checkDisposed();
-        if (counters.running().get() >= maxActiveTasks()) {
-            LockSupport.park(counters);
-            return null;
-        }
-        return queue.take();
+    private boolean parkMonitor() {
+        if (!maxActiveTasksExceeded()) return false;
+
+        LockSupport.park(counters);
+        return true;
+    }
+
+    private boolean unparkMonitor(Thread monitor) {
+        if (maxActiveTasksExceeded()) return false;
+
+        LockSupport.unpark(monitor);
+        return true;
     }
 
     void executeTask(InterfaceTask<?> task) {
         try {
             task.execute();
         } finally {
-            counters.running().decrement();
-            counters.finished().increment();
+            counters.running.decrement();
+            counters.finished.increment();
+            task.changeStatus(FINISHED);
         }
     }
 
@@ -140,7 +160,7 @@ public class InterfaceQueue extends StatefulDisposable.Base implements DatabaseI
     protected void disposeInner() {
         stopped = true;
         queue.clear();
-        counters.queued().reset();
+        counters.queued.reset();
     }
 
     public Project getProject() {

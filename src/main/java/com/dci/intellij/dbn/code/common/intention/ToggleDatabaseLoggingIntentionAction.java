@@ -56,7 +56,7 @@ public class ToggleDatabaseLoggingIntentionAction extends GenericIntentionAction
 
 
     ConnectionHandler getLastCheckedConnection() {
-        PsiFile psiFile = Read.conditional(() -> PsiFileRef.from(lastChecked));
+        PsiFile psiFile = Read.call(() -> PsiFileRef.from(lastChecked));
         if (isNotValid(psiFile)) return null;
 
         ConnectionHandler connection = getConnection(psiFile);

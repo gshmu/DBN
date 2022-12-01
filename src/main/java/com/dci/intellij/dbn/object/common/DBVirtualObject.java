@@ -77,7 +77,7 @@ public class DBVirtualObject extends DBObjectImpl implements PsiReference {
     private final DBObjectPsiCache psiCache;
     private final Map<String, ObjectLookupItemBuilder> lookupItemBuilder = new ConcurrentHashMap<>();
 
-    private final Latent<Boolean> valid = Latent.basic(() -> Read.conditional(() -> {
+    private final Latent<Boolean> valid = Latent.basic(() -> Read.call(() -> {
         BasePsiElement underlyingPsiElement = getUnderlyingPsiElement();
         if (underlyingPsiElement != null && underlyingPsiElement.isValid()) {
             DBObjectType objectType = getObjectType();
@@ -94,7 +94,7 @@ public class DBVirtualObject extends DBObjectImpl implements PsiReference {
             }
         }
         return false;
-    }, false));
+    }));
 
     public DBVirtualObject(@NotNull DBObjectType objectType, @NotNull BasePsiElement psiElement) {
         super(psiElement.getConnection(), objectType, psiElement.getText());
