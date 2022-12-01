@@ -32,7 +32,7 @@ class SubcontentDependencyAdapterImpl extends BasicDependencyAdapter implements 
         DynamicContent sourceContent = getSourceContent();
         DatabaseInterfaceQueue interfaceQueue = sourceContent.getConnection().getInterfaceQueue();
         int maxActiveTasks = interfaceQueue.maxActiveTasks();
-        int count = interfaceQueue.size() + interfaceQueue.counters().running().get();
+        int count = interfaceQueue.size() + interfaceQueue.counters().active();
 
         //ThreadInfo thread = ThreadMonitor.current();
         if (count > maxActiveTasks /* || thread.is(ThreadProperty.CODE_ANNOTATING) || ThreadMonitor.getProcessCount(ThreadProperty.PROGRESS) > 20*/ ) {

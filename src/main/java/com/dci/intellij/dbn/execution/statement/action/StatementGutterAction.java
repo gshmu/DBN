@@ -58,7 +58,7 @@ public class StatementGutterAction extends AnAction {
 
     @Nullable
     private ExecutablePsiElement getExecutablePsiElement() {
-        return Read.conditional(() -> {
+        return Read.call(() -> {
             DBLanguagePsiFile psiFile = getPsiFile();
             if (isNotValid(psiFile)) return null;
 

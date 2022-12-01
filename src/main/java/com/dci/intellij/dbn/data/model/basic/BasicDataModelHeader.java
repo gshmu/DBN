@@ -1,6 +1,7 @@
 package com.dci.intellij.dbn.data.model.basic;
 
 
+import com.dci.intellij.dbn.common.collections.CaseInsensitiveStringKeyMap;
 import com.dci.intellij.dbn.common.dispose.Disposed;
 import com.dci.intellij.dbn.common.dispose.StatefulDisposable;
 import com.dci.intellij.dbn.data.model.ColumnInfo;
@@ -10,13 +11,12 @@ import com.dci.intellij.dbn.data.type.DBDataType;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.TreeMap;
 
 import static com.dci.intellij.dbn.common.dispose.Disposer.replace;
 
 public class BasicDataModelHeader<T extends ColumnInfo> extends StatefulDisposable.Base implements DataModelHeader<T> {
     private List<T> columnInfos = new ArrayList<>();
-    private Map<String, T> nameIndex = new TreeMap<>(String.CASE_INSENSITIVE_ORDER);
+    private Map<String, T> nameIndex = new CaseInsensitiveStringKeyMap<>();
 
 
     protected void addColumnInfo(T columnInfo) {

@@ -1,11 +1,11 @@
 package com.dci.intellij.dbn.common.thread;
 
-import com.dci.intellij.dbn.common.dispose.AlreadyDisposedException;
 import com.dci.intellij.dbn.common.load.ProgressMonitor;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.Savepoints;
 import com.dci.intellij.dbn.connection.jdbc.DBNConnection;
 import com.dci.intellij.dbn.database.DatabaseFeature;
+import com.dci.intellij.dbn.database.interfaces.queue.InterfaceTaskCancelledException;
 import com.intellij.openapi.progress.ProgressIndicator;
 import lombok.extern.slf4j.Slf4j;
 import org.jetbrains.annotations.Nullable;
@@ -138,7 +138,7 @@ public abstract class CancellableDatabaseCall<T> implements Callable<T> {
             }
 
         } catch (CancellationException | InterruptedException e) {
-            throw AlreadyDisposedException.INSTANCE;
+            throw InterfaceTaskCancelledException.INSTANCE;
 
         } catch (ExecutionException e) {
             Throwable cause = e.getCause();
@@ -156,7 +156,7 @@ public abstract class CancellableDatabaseCall<T> implements Callable<T> {
 
     public void handleTimeout() throws SQLTimeoutException {
         if (cancelled) {
-            throw AlreadyDisposedException.INSTANCE;
+            throw InterfaceTaskCancelledException.INSTANCE;
         }
         try {
             cancel();

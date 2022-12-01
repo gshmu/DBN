@@ -86,8 +86,8 @@ public class ParserDiagnosticsManager extends ProjectComponentBase implements Pe
                 if (psiFile == null) {
                     result.addEntry(filePath, 1, 0);
                 } else {
-                    int errors = Read.call(() -> psiFile.countErrors(), 0);
-                    int warnings = Read.call(() -> psiFile.countWarnings(), 0);
+                    int errors = Read.call(() -> psiFile.countErrors());
+                    int warnings = Read.call(() -> psiFile.countWarnings());
                     if (errors > 0 || warnings > 0) {
                         result.addEntry(filePath, errors, warnings);
                     }

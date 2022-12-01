@@ -5,7 +5,7 @@ import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReadWriteLock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 
-public class StatusHolder<T extends Enum<T>> {
+public class StatusHolder<T extends InterfaceTaskStatus> {
     private final Stack<T> history = new Stack<>();
     private final ReadWriteLock lock = new ReentrantReadWriteLock();
     private T status;
@@ -19,39 +19,39 @@ public class StatusHolder<T extends Enum<T>> {
     }
 
     boolean change(T status) {
-        return change(status, null);
-    }
-
-    boolean change(T status, Runnable runnable) {
-        Lock lock = this.lock.writeLock();
+        Lock writeLock = lock.writeLock();
         try {
-            lock.lock();
+            writeLock.lock();
 
-            if (this.status.compareTo(status) >= 0) {
+            if (!status.isAfter(this.status)) {
+                // violation
                 return false;
             }
 
             this.history.push(this.status);
             this.status = status;
-            if (runnable != null) runnable.run();
             return true;
         } finally {
-            lock.unlock();
+            writeLock.unlock();
         }
     }
 
     public T get() {
-        Lock lock = this.lock.readLock();
+        Lock readLock = lock.readLock();
         try {
-            lock.lock();
+            readLock.lock();
             return status;
         } finally {
-            lock.unlock();
+            readLock.unlock();
         }
     }
 
-    public boolean isBefore(T otherStatus) {
-        return status.compareTo(otherStatus) < 0;
+    public boolean is(T status) {
+        return get() == status;
+    }
+
+    public boolean isBefore(T status) {
+        return this.status.compareTo(status) < 0;
     }
 
     @Override

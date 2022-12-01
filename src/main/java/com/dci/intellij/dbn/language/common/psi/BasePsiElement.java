@@ -175,12 +175,13 @@ public abstract class BasePsiElement<T extends ElementTypeBase> extends ASTDeleg
 
     @NotNull
     public DBLanguagePsiFile getFile() {
-        DBLanguagePsiFile file = Read.conditional(() -> {
+        DBLanguagePsiFile file = Read.call(() -> {
             PsiElement parent = getParent();
-            while (parent != null && !(parent instanceof DBLanguagePsiFile)) {
+            while (parent != null) {
+                if (parent instanceof DBLanguagePsiFile) return (DBLanguagePsiFile) parent;
                 parent = parent.getParent();
             }
-            return (DBLanguagePsiFile) parent;
+            return null;
         });
         return Failsafe.nn(file);
     }
@@ -241,7 +242,7 @@ public abstract class BasePsiElement<T extends ElementTypeBase> extends ASTDeleg
 
     @Override
     public String getText() {
-        return Read.conditional(() -> BasePsiElement.super.getText());
+        return Read.call(() -> BasePsiElement.super.getText());
     }
 
 

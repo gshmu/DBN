@@ -99,7 +99,7 @@ public class Documents {
 
     @Nullable
     public static Document getDocument(@NotNull PsiFile file) {
-        return Read.conditional(() -> {
+        return Read.call(() -> {
             if (isNotValid(file)) return null;
 
             Project project = file.getProject();
@@ -170,7 +170,7 @@ public class Documents {
 
     @Nullable
     public static Document getDocument(@NotNull VirtualFile virtualFile) {
-        return Read.conditional(() -> {
+        return Read.call(() -> {
             FileDocumentManager fileDocumentManager = FileDocumentManager.getInstance();
             return fileDocumentManager.getDocument(virtualFile);
         });

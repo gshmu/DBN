@@ -148,7 +148,7 @@ public class StatementExecutionBasicProcessor extends StatefulDisposable.Base im
 
     @Override
     public boolean isDirty(){
-        return Read.conditional(() -> {
+        return Read.call(() -> {
             if (getPsiFile() == null ||
                     getConnection() != executionInput.getConnection() || // connection changed since execution
                     getTargetSchema() != executionInput.getTargetSchemaId()) { // current schema changed since execution)
@@ -163,7 +163,7 @@ public class StatementExecutionBasicProcessor extends StatefulDisposable.Base im
                                 !cachedExecutable.isValid() ||
                                 !cachedExecutable.matches(executablePsiElement, BasePsiElement.MatchType.STRONG);
             }
-        }, true);
+        });
     }
 
     @Override
@@ -645,7 +645,7 @@ public class StatementExecutionBasicProcessor extends StatefulDisposable.Base im
                         return compilerResult.hasErrors();
                     }
                     return false;
-                }, false);
+                });
             }
         }
 
