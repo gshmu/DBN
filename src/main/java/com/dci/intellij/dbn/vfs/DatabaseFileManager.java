@@ -264,7 +264,7 @@ public class DatabaseFileManager extends ProjectComponentBase implements Persist
     private static void reopenDatabaseEditors(@NotNull List<DBObjectRef<DBSchemaObject>> objectRefs, @NotNull ConnectionHandler connection) {
         Project project = connection.getProject();
         ConnectionAction.invoke("opening database editors", false, connection, action ->
-                Progress.prompt(project, connection, true,
+                Progress.background(project, connection, true,
                         "Restoring database workspace",
                         "Opening database editors for connection " + connection.getName(),
                         progress -> {

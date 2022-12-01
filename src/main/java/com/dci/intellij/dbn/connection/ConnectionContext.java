@@ -75,7 +75,11 @@ public class ConnectionContext {
                 return true;
             }
 
-            if (!Objects.equals(context, localContext)) throw new IllegalStateException("Context already initialized for another connection");
+            ConnectionId connectionId = context.getConnectionId();
+            ConnectionId localConnectionId = localContext.getConnectionId();
+            if (!Objects.equals(connectionId, localConnectionId)) {
+                throw new IllegalStateException("Context already initialized for another connection");
+            }
 
             return false;
         }

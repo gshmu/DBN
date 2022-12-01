@@ -15,11 +15,7 @@ import org.jdom.Document;
 import org.jdom.Element;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import static com.dci.intellij.dbn.common.options.setting.SettingsSupport.stringAttribute;
@@ -244,7 +240,8 @@ public abstract class TokenTypeBundleBase {
     }
 
     public boolean isReservedWord(String text) {
-        text = text.toLowerCase();
+        if (Strings.isEmpty(text)) return false;
+
         return
             isKeyword(text) ||
             isFunction(text) ||

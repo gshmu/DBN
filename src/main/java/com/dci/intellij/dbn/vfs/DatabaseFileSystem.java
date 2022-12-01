@@ -8,7 +8,6 @@ import com.dci.intellij.dbn.common.project.Projects;
 import com.dci.intellij.dbn.common.thread.Background;
 import com.dci.intellij.dbn.common.thread.Dispatch;
 import com.dci.intellij.dbn.common.thread.Progress;
-import com.dci.intellij.dbn.common.thread.Read;
 import com.dci.intellij.dbn.common.util.Editors;
 import com.dci.intellij.dbn.common.util.Messages;
 import com.dci.intellij.dbn.common.util.Safe;
@@ -58,7 +57,8 @@ import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 
-import static com.dci.intellij.dbn.common.dispose.Checks.*;
+import static com.dci.intellij.dbn.common.dispose.Checks.allValid;
+import static com.dci.intellij.dbn.common.dispose.Checks.isNotValid;
 import static com.dci.intellij.dbn.common.message.MessageCallback.when;
 import static com.dci.intellij.dbn.common.navigation.NavigationInstruction.*;
 import static com.dci.intellij.dbn.vfs.DatabaseFileSystem.FilePathType.*;
@@ -252,8 +252,7 @@ public class DatabaseFileSystem extends VirtualFileSystem implements /*NonPhysic
 
     @NotNull
     public DBEditableObjectVirtualFile findOrCreateDatabaseFile(@NotNull Project project, @NotNull DBObjectRef<?> objectRef) {
-        return filesCache.compute(objectRef, (ref, file) ->
-                isValid(file) && file.getProject() == project ? file : Read.conditional(() -> new DBEditableObjectVirtualFile(project, ref)));
+        return filesCache.computeIfAbsent(objectRef, ref -> new DBEditableObjectVirtualFile(project, ref));
     }
 
     public static boolean isFileOpened(DBObject object) {

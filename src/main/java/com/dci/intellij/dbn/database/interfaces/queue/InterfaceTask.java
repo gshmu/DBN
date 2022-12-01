@@ -59,7 +59,6 @@ class InterfaceTask<R> implements TimeAware {
 
     final void awaitCompletion() throws SQLException {
         if (!source.isWaiting()) {
-            status.change(RELEASED);
             return;
         }
 
@@ -81,14 +80,17 @@ class InterfaceTask<R> implements TimeAware {
             }
         }
 
-        status.change(RELEASED);
         if (exception == null) return;
 
         throw Exceptions.toSqlException(exception);
     }
 
-    public boolean changeStatus(InterfaceTaskStatus status, Runnable callback) {
-        return this.status.change(status, callback);
+    public boolean is(InterfaceTaskStatus status) {
+        return this.status.is(status);
+    }
+
+    public boolean changeStatus(InterfaceTaskStatus status) {
+        return this.status.change(status);
     }
 
     public boolean isProgress() {

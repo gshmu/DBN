@@ -3,19 +3,20 @@ package com.dci.intellij.dbn.database.interfaces.queue;
 import com.dci.intellij.dbn.common.Counter;
 
 public class Counters {
-    private final Counter queued = new Counter();
-    private final Counter running = new Counter();
-    private final Counter finished = new Counter();
+    public final Counter queued = new Counter();
+    public final Counter running = new Counter();
+    public final Counter finished = new Counter();
 
-    public Counter queued() {
-        return queued;
+    public int active() {
+        return queued.get() + running.get();
     }
 
-    public Counter running() {
-        return running;
+    public int running() {
+        return running.get();
     }
 
-    public Counter finished() {
-        return finished;
+    @Override
+    public String toString() {
+        return "Q=" + queued.get() + " R=" + running.get() + " F=" + finished.get();
     }
 }

@@ -37,7 +37,7 @@ public class PSQLStructureViewBuilderFactory implements PsiStructureViewFactory 
                         // TODO dirty workaround (compatibility issue)
                         return EmptyStructureViewModel.INSTANCE;
                     }
-                }, EmptyStructureViewModel.INSTANCE);
+                });
             }
         };
     }

@@ -49,7 +49,7 @@ public class StatementExecutionInput extends LocalExecutionInput {
         if (isNotValid(connection)) return null;
 
         SchemaId currentSchema = getTargetSchemaId();
-        return Read.conditional(() -> {
+        return Read.call(() -> {
             DBLanguagePsiFile psiFile = executionProcessor.getPsiFile();
             if (isNotValid(psiFile)) return null;
 
