@@ -3,12 +3,13 @@ package com.dci.intellij.dbn.common.project;
 import com.dci.intellij.dbn.common.event.ApplicationEvents;
 import com.dci.intellij.dbn.common.routine.Consumer;
 import com.dci.intellij.dbn.common.thread.Dispatch;
-import com.dci.intellij.dbn.common.util.Guarded;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.project.ProjectManager;
 import com.intellij.openapi.project.ProjectManagerListener;
 import com.intellij.openapi.wm.impl.welcomeScreen.WelcomeFrame;
 import org.jetbrains.annotations.NotNull;
+
+import static com.dci.intellij.dbn.common.dispose.Failsafe.guarded;
 
 public final class Projects {
     private Projects() {}
@@ -25,7 +26,7 @@ public final class Projects {
                 new ProjectManagerListener() {
                     @Override
                     public void projectOpened(@NotNull Project project) {
-                        Guarded.run(() -> consumer.accept(project));
+                        guarded(() -> consumer.accept(project));
                     }
                 });
     }
@@ -35,7 +36,7 @@ public final class Projects {
                 new ProjectManagerListener() {
                     @Override
                     public void projectClosing(@NotNull Project project) {
-                        Guarded.run(() -> consumer.accept(project));
+                        guarded(() -> consumer.accept(project));
                     }
                 });
 
@@ -46,7 +47,7 @@ public final class Projects {
                 new ProjectManagerListener() {
                     @Override
                     public void projectClosed(@NotNull Project project) {
-                        Guarded.run(() -> runnable.accept(project));
+                        guarded(() -> runnable.accept(project));
                     }
                 });
 

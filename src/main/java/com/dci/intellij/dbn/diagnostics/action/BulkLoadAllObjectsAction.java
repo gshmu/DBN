@@ -25,7 +25,7 @@ public class BulkLoadAllObjectsAction extends AbstractConnectionAction {
                 "Loading all objects of " + connection.getName(),
                 progress -> {
                     DBObjectListContainer objectListContainer = connection.getObjectBundle().getObjectLists();
-                    objectListContainer.visitObjects(DBObjectRecursiveLoaderVisitor.INSTANCE, false);
+                    objectListContainer.visit(DBObjectRecursiveLoaderVisitor.INSTANCE, false);
                 });
     }
 

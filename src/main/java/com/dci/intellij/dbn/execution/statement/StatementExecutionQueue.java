@@ -2,7 +2,6 @@ package com.dci.intellij.dbn.execution.statement;
 
 import com.dci.intellij.dbn.common.dispose.StatefulDisposable;
 import com.dci.intellij.dbn.common.thread.Progress;
-import com.dci.intellij.dbn.common.util.Guarded;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.ConnectionRef;
 import com.dci.intellij.dbn.execution.ExecutionContext;
@@ -13,6 +12,7 @@ import org.jetbrains.annotations.NotNull;
 import java.util.Queue;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
+import static com.dci.intellij.dbn.common.dispose.Failsafe.guarded;
 import static com.dci.intellij.dbn.execution.ExecutionStatus.*;
 
 public final class StatementExecutionQueue extends StatefulDisposable.Base {
@@ -74,7 +74,7 @@ public final class StatementExecutionQueue extends StatefulDisposable.Base {
     }
 
     private void execute(StatementExecutionProcessor processor) {
-        Guarded.run(() -> {
+        guarded(() -> {
             Project project = getProject();
             ExecutionContext context = processor.getExecutionContext();
             context.set(QUEUED, false);

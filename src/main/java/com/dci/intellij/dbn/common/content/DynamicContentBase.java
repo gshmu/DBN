@@ -173,7 +173,7 @@ public abstract class DynamicContentBase<T extends DynamicContentElement>
 
     private boolean shouldRefresh() {
         if (shouldReload()) {
-            if (!isDirty()) return false;
+            if (isDirty()) return false;
 
             return true;
         }
@@ -207,11 +207,7 @@ public abstract class DynamicContentBase<T extends DynamicContentElement>
         if (shouldReload()) {
             markDirty();
             ensureLoaded(true);
-
-            for (T element : elements) {
-                checkDisposed();
-                element.refresh();
-            }
+            refreshElements();
         }
     }
 
@@ -219,16 +215,20 @@ public abstract class DynamicContentBase<T extends DynamicContentElement>
     public void refresh() {
         if (shouldRefresh()) {
             markDirty();
-            dependencyAdapter.refreshSources();
+            refreshSources();
             if (!is(INTERNAL)){
-                for (T element : elements) {
-                    checkDisposed();
-                    element.refresh();
-                }
+                refreshElements();
             }
         }
     }
 
+    private void refreshSources() {
+        dependencyAdapter.refreshSources();
+    }
+
+    private void refreshElements() {
+        elements.forEach(e -> e.refresh());
+    }
 
     /**
      * Synchronised block making sure the content is loaded before the thread is released

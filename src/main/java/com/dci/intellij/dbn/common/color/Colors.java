@@ -2,7 +2,6 @@ package com.dci.intellij.dbn.common.color;
 
 import com.dci.intellij.dbn.common.event.ApplicationEvents;
 import com.dci.intellij.dbn.common.ui.util.LookAndFeel;
-import com.dci.intellij.dbn.common.util.Guarded;
 import com.dci.intellij.dbn.data.grid.color.DataGridTextAttributesKeys;
 import com.intellij.openapi.Disposable;
 import com.intellij.openapi.editor.HighlighterColors;
@@ -21,6 +20,7 @@ import java.util.Objects;
 import static com.dci.intellij.dbn.common.color.ColorCache.cached;
 import static com.dci.intellij.dbn.common.color.ColorSchemes.background;
 import static com.dci.intellij.dbn.common.color.ColorSchemes.foreground;
+import static com.dci.intellij.dbn.common.dispose.Failsafe.guarded;
 
 public final class Colors {
     private Colors() {}
@@ -173,7 +173,7 @@ public final class Colors {
 
         UIManager.addPropertyChangeListener(evt -> {
             if (Objects.equals(evt.getPropertyName(), "lookAndFeel")) {
-                Guarded.run(runnable);
+                guarded(runnable);
             }
         });
     }

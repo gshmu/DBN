@@ -56,6 +56,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 import static com.dci.intellij.dbn.common.component.Components.projectService;
 import static com.dci.intellij.dbn.common.dispose.Checks.isNotValid;
+import static com.dci.intellij.dbn.common.dispose.Failsafe.guarded;
 import static com.dci.intellij.dbn.common.dispose.Failsafe.nd;
 import static com.dci.intellij.dbn.execution.ExecutionStatus.*;
 
@@ -89,7 +90,7 @@ public class StatementExecutionManager extends ProjectComponentBase implements P
 
             @Override
             public void transactionCompleted(@NotNull Document document, @NotNull PsiFile file) {
-                Guarded.run(() -> {
+                guarded(() -> {
                     Project project = file.getProject();
                     VirtualFile virtualFile = file.getVirtualFile();
                     if (virtualFile.isInLocalFileSystem()) {
@@ -223,7 +224,7 @@ public class StatementExecutionManager extends ProjectComponentBase implements P
     private void executeStatements(@Nullable VirtualFile virtualFile, List<StatementExecutionProcessor> executionProcessors, DataContext dataContext) {
         if (isNotValid(virtualFile) || executionProcessors.isEmpty()) return;
 
-        Guarded.run(() -> {
+        guarded(() -> {
             FileConnectionContextManager contextManager = FileConnectionContextManager.getInstance(getProject());
             contextManager.selectConnectionAndSchema(
                     virtualFile,

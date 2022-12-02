@@ -8,7 +8,6 @@ import com.dci.intellij.dbn.common.environment.options.listener.EnvironmentManag
 import com.dci.intellij.dbn.common.event.ProjectEvents;
 import com.dci.intellij.dbn.common.ui.tab.TabbedPane;
 import com.dci.intellij.dbn.common.util.Commons;
-import com.dci.intellij.dbn.common.util.Guarded;
 import com.dci.intellij.dbn.connection.ConnectionBundle;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.ConnectionId;
@@ -24,6 +23,8 @@ import javax.swing.*;
 import java.awt.*;
 import java.util.ArrayList;
 import java.util.List;
+
+import static com.dci.intellij.dbn.common.dispose.Failsafe.guarded;
 
 public class TabbedBrowserForm extends DatabaseBrowserForm{
     private final TabbedPane connectionTabs;
@@ -48,7 +49,7 @@ public class TabbedBrowserForm extends DatabaseBrowserForm{
             public void configurationChanged(Project project) {
                 EnvironmentVisibilitySettings visibilitySettings = getEnvironmentSettings(project).getVisibilitySettings();
                 for (TabInfo tabInfo : listTabs()) {
-                    Guarded.run(() -> {
+                    guarded(() -> {
                         SimpleBrowserForm browserForm = (SimpleBrowserForm) tabInfo.getObject();
                         ConnectionHandler connection = browserForm.getConnection();
                         if (connection != null) {

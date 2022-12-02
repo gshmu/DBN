@@ -1,12 +1,10 @@
 package com.dci.intellij.dbn.navigation.psi;
 
-import com.dci.intellij.dbn.common.dispose.Checks;
 import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.connection.DatabaseEntity;
 import com.dci.intellij.dbn.language.common.psi.EmptySearchScope;
 import com.dci.intellij.dbn.object.common.DBObject;
 import com.dci.intellij.dbn.object.common.list.DBObjectList;
-import com.dci.intellij.dbn.object.common.list.DBObjectListContainer;
 import com.dci.intellij.dbn.object.lookup.DBObjectRef;
 import com.intellij.lang.ASTNode;
 import com.intellij.lang.Language;
@@ -119,19 +117,8 @@ public class DBObjectPsiDirectory implements PsiDirectory, Disposable{
     @Override
     @NotNull
     public PsiElement[] getChildren() {
-        DBObject object = getObject();
         List<PsiElement> children = new ArrayList<>();
-        DBObjectListContainer childObjects = object.getChildObjects();
-        if (childObjects != null) {
-            DBObjectList[] objectLists = childObjects.getObjects();
-            if (objectLists != null) {
-                for (DBObjectList objectList : objectLists) {
-                    if (!objectList.isInternal() && Checks.isValid(objectList)) {
-                        children.add(objectList.getPsiDirectory());
-                    }
-                }
-            }
-        }
+        getObject().visitChildObjects(o -> children.add(o.getPsiDirectory()), false);
         return children.toArray(new PsiElement[0]);
     }
 

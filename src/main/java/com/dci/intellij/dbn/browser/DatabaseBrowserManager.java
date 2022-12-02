@@ -342,17 +342,12 @@ public class DatabaseBrowserManager extends ProjectComponentBase implements Pers
                 if (schemas != null && schemas.isLoaded()) {
                     for (DBSchema schema : objectBundle.getSchemas()) {
                         List<DBObjectType> objectTypes = new ArrayList<>();
-                        DBObjectListContainer childObjects = schema.getChildObjects();
-                        if (childObjects != null) {
-                            DBObjectList[] objectLists = childObjects.getObjects();
-                            if (objectLists != null) {
-                                for (DBObjectList objectList : objectLists) {
-                                    if (objectList.isLoaded() || objectList.isLoading()) {
-                                        objectTypes.add(objectList.getObjectType());
-                                    }
-                                }
+                        schema.visitChildObjects(o -> {
+                            if (o.isLoaded() || o.isLoading()) {
+                                objectTypes.add(o.getObjectType());
                             }
-                        }
+                        }, true);
+
                         if (objectTypes.size() > 0) {
                             Element schemaElement = new Element("schema");
                             schemaElement.setAttribute("name", schema.getName());
@@ -404,10 +399,10 @@ public class DatabaseBrowserManager extends ProjectComponentBase implements Pers
                     for (DBObjectType objectType : objectTypes) {
                         ProgressMonitor.checkCancelled();
                         DBObjectListContainer childObjects = schema.getChildObjects();
-                        if (childObjects != null) {
-                            ProgressMonitor.checkCancelled();
-                            childObjects.loadObjects(objectType);
-                        }
+                        if (childObjects == null) continue;
+
+                        ProgressMonitor.checkCancelled();
+                        childObjects.loadObjects(objectType);
                     }
                 });
             }

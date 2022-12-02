@@ -8,7 +8,6 @@ import com.dci.intellij.dbn.common.option.InteractiveOptionBroker;
 import com.dci.intellij.dbn.common.thread.Progress;
 import com.dci.intellij.dbn.common.thread.ProgressRunnable;
 import com.dci.intellij.dbn.common.util.Editors;
-import com.dci.intellij.dbn.common.util.Guarded;
 import com.dci.intellij.dbn.common.util.InternalApi;
 import com.dci.intellij.dbn.common.util.Messages;
 import com.dci.intellij.dbn.connection.*;
@@ -32,6 +31,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 
 import static com.dci.intellij.dbn.common.component.Components.projectService;
 import static com.dci.intellij.dbn.common.dispose.Checks.isValid;
+import static com.dci.intellij.dbn.common.dispose.Failsafe.guarded;
 import static com.dci.intellij.dbn.common.message.MessageCallback.when;
 import static com.dci.intellij.dbn.common.util.Commons.list;
 import static com.dci.intellij.dbn.common.util.Lists.isLast;
@@ -115,7 +115,7 @@ public class DatabaseTransactionManager extends ProjectComponentBase implements 
             @NotNull DBNConnection conn,
             @NotNull List<TransactionAction> actions,
             @Nullable Runnable callback) {
-        Guarded.run(() -> {
+        guarded(() -> {
             Project project = getProject();
             for (TransactionAction action : actions) {
                 executeAction(connection, conn, project, action);

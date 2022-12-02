@@ -2,7 +2,6 @@ package com.dci.intellij.dbn.common.event;
 
 import com.dci.intellij.dbn.common.project.Projects;
 import com.dci.intellij.dbn.common.routine.Consumer;
-import com.dci.intellij.dbn.common.util.Guarded;
 import com.intellij.openapi.Disposable;
 import com.intellij.openapi.application.Application;
 import com.intellij.openapi.application.ApplicationManager;
@@ -14,6 +13,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import static com.dci.intellij.dbn.common.dispose.Checks.isNotValid;
+import static com.dci.intellij.dbn.common.dispose.Failsafe.guarded;
 import static com.dci.intellij.dbn.common.dispose.Failsafe.nd;
 
 
@@ -21,7 +21,7 @@ public final class ProjectEvents {
     private ProjectEvents() {}
 
     public static <T> void subscribe(@NotNull Project project, @Nullable Disposable parentDisposable, Topic<T> topic, T handler) {
-        Guarded.run(() -> {
+        guarded(() -> {
             if (isNotValid(project) || project.isDefault()) return;
 
             MessageBus messageBus = messageBus(project);
@@ -47,7 +47,7 @@ public final class ProjectEvents {
     }
 
     public static <T> void notify(@Nullable Project project, Topic<T> topic, Consumer<T> consumer) {
-        Guarded.run(() -> {
+        guarded(() -> {
             if (isNotValid(project) || project.isDefault()) return;
             T publisher = publisher(project, topic);
             consumer.accept(publisher);
