@@ -5,7 +5,7 @@ import org.jetbrains.annotations.NotNull;
 import java.io.Serializable;
 import java.util.*;
 
-import static com.dci.intellij.dbn.common.util.Exceptions.unsupported;
+import static com.dci.intellij.dbn.common.exception.Exceptions.unsupported;
 import static com.dci.intellij.dbn.common.util.Unsafe.cast;
 
 public final class CompactArrayList<T> implements List<T>, RandomAccess, Serializable {

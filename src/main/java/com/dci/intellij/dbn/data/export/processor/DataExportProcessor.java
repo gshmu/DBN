@@ -1,7 +1,5 @@
 package com.dci.intellij.dbn.data.export.processor;
 
-import com.dci.intellij.dbn.common.dispose.AlreadyDisposedException;
-import com.dci.intellij.dbn.common.load.ProgressMonitor;
 import com.dci.intellij.dbn.common.locale.Formatter;
 import com.dci.intellij.dbn.common.util.Commons;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
@@ -112,12 +110,6 @@ public abstract class DataExportProcessor {
             calendar.get(Calendar.MINUTE) != 0 ||
             calendar.get(Calendar.SECOND) != 0 ||
             calendar.get(Calendar.MILLISECOND) != 0;
-    }
-
-    static void checkCancelled() throws ProcessCanceledException {
-        if (ProgressMonitor.isCancelled()) {
-            throw AlreadyDisposedException.INSTANCE;
-        }
     }
 
     protected static String formatValue(Formatter formatter, Object value) throws DataExportException {

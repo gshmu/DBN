@@ -263,7 +263,7 @@ public final class DatabaseBrowserTree extends DBNTree {
                         progress -> {
                             DBObject navigationObject = object.getDefaultNavigationObject();
                             if (navigationObject != null) {
-                                Progress.check(progress);
+                                progress.checkCanceled();
                                 Dispatch.run(() -> navigationObject.navigate(true));
                             }
                         });

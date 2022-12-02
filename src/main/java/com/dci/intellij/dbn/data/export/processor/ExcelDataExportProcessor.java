@@ -1,5 +1,6 @@
 package com.dci.intellij.dbn.data.export.processor;
 
+import com.dci.intellij.dbn.common.load.ProgressMonitor;
 import com.dci.intellij.dbn.common.locale.Formatter;
 import com.dci.intellij.dbn.common.util.Strings;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
@@ -102,7 +103,7 @@ public class ExcelDataExportProcessor extends DataExportProcessor{
     }
 
     private static void createDataCell(DataExportModel model, Formatter formatter, CellStyleCache cellStyleCache, Row row, int r, int c) throws DataExportException {
-        checkCancelled();
+        ProgressMonitor.checkCancelled();
         Cell cell = row.createCell(c);
         Object value = model.getValue(r, c);
         if (value == null)  return;

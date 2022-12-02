@@ -62,13 +62,13 @@ public final class DBObjectListContainer implements StatefulDisposable {
         if (objects == null) return;
         guarded(() -> {
             if (isNotValid(visitor)) return;
-            for (DBObjectList<?> objectList : objects) {
-                if (objectList.isInternal() && !visitInternal) continue;
-                if (isNotValid(objectList)) continue;
+            for (DBObjectList<?> list : objects) {
+                if (list.isInternal() && !visitInternal) continue;
+                if (isNotValid(list)) continue;
                 if (isNotValid(visitor)) return;
 
                 ProgressMonitor.checkCancelled();
-                visitor.visit(objectList);
+                visitor.visit(list);
             }
         });
     }

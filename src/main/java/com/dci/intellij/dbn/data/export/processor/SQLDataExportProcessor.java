@@ -3,6 +3,7 @@ package com.dci.intellij.dbn.data.export.processor;
 import com.dci.intellij.dbn.code.common.style.DBLCodeStyleManager;
 import com.dci.intellij.dbn.code.common.style.options.CodeStyleCaseOption;
 import com.dci.intellij.dbn.code.common.style.options.CodeStyleCaseSettings;
+import com.dci.intellij.dbn.common.load.ProgressMonitor;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.data.export.DataExportException;
 import com.dci.intellij.dbn.data.export.DataExportFormat;
@@ -72,7 +73,7 @@ public class SQLDataExportProcessor extends DataExportProcessor{
 
             realColumnIndex = 0;
             for (int columnIndex=0; columnIndex < model.getColumnCount(); columnIndex++){
-                checkCancelled();
+                ProgressMonitor.checkCancelled();
                 GenericDataType genericDataType = model.getGenericDataType(columnIndex);
                 if (genericDataType == GenericDataType.LITERAL ||
                         genericDataType == GenericDataType.NUMERIC ||

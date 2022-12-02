@@ -1,7 +1,7 @@
 package com.dci.intellij.dbn.debugger.jdwp.process;
 
-import com.dci.intellij.dbn.common.dispose.AlreadyDisposedException;
 import com.dci.intellij.dbn.common.dispose.Failsafe;
+import com.dci.intellij.dbn.common.exception.ProcessDeferredException;
 import com.dci.intellij.dbn.common.thread.Dispatch;
 import com.dci.intellij.dbn.common.thread.Progress;
 import com.dci.intellij.dbn.common.util.Commons;
@@ -277,7 +277,7 @@ public abstract class DBJdwpDebugProcess<T extends ExecutionInput>
                     session.positionReached(dbSuspendContext);
                 }
             });
-            throw AlreadyDisposedException.INSTANCE;
+            throw new ProcessDeferredException();
         }
     }
 

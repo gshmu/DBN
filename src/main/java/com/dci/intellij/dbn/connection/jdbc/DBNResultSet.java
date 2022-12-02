@@ -1,9 +1,9 @@
 package com.dci.intellij.dbn.connection.jdbc;
 
 import com.dci.intellij.dbn.common.dispose.Failsafe;
+import com.dci.intellij.dbn.common.exception.Exceptions;
 import com.dci.intellij.dbn.common.routine.ThrowableCallable;
 import com.dci.intellij.dbn.common.routine.ThrowableRunnable;
-import com.dci.intellij.dbn.common.util.Exceptions;
 import com.dci.intellij.dbn.connection.Resources;
 import com.dci.intellij.dbn.language.common.WeakRef;
 import org.jetbrains.annotations.Nullable;

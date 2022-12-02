@@ -1,6 +1,5 @@
 package com.dci.intellij.dbn.common.thread;
 
-import com.dci.intellij.dbn.common.dispose.AlreadyDisposedException;
 import com.dci.intellij.dbn.common.util.Titles;
 import com.dci.intellij.dbn.connection.context.DatabaseContext;
 import com.intellij.openapi.progress.ProgressIndicator;
@@ -27,7 +26,7 @@ public final class Progress {
         title = Titles.suffixed(title, context);
 
         ThreadInfo invoker = ThreadMonitor.current();
-        Backgroundable task = new Backgroundable(project, title, cancellable, ALWAYS_BACKGROUND) {
+        Task task = new Backgroundable(project, title, cancellable, ALWAYS_BACKGROUND) {
             @Override
             public void run(@NotNull ProgressIndicator indicator) {
                 ThreadMonitor.surround(invoker, PROGRESS, () -> guarded(() -> {
@@ -45,7 +44,7 @@ public final class Progress {
         title = Titles.suffixed(title, context);
 
         ThreadInfo invoker = ThreadMonitor.current();
-        Backgroundable task = new Backgroundable(project, title, cancellable, DEAF) {
+        Task task = new Task.Backgroundable(project, title, cancellable, DEAF) {
             @Override
             public void run(@NotNull ProgressIndicator indicator) {
                 ThreadMonitor.surround(invoker, PROGRESS, () -> guarded(() -> {
@@ -55,8 +54,14 @@ public final class Progress {
             }
 
             @Override
+            public boolean shouldStartInBackground() {
+                return false;
+            }
+
+            @Override
             public boolean isConditionalModal() {
-                return true;
+                // TODO return true;
+                return false;
             }
         };
         schedule(task);
@@ -68,7 +73,7 @@ public final class Progress {
         title = Titles.suffixed(title, context);
 
         ThreadInfo invoker = ThreadMonitor.current();
-        Task.Modal task = new Task.Modal(project, title, cancellable) {
+        Task task = new Task.Modal(project, title, cancellable) {
             @Override
             public void run(@NotNull ProgressIndicator indicator) {
                 ThreadMonitor.surround(invoker, MODAL, () -> guarded(() -> {
@@ -86,12 +91,6 @@ public final class Progress {
 
         ProgressManager progressManager = ProgressManager.getInstance();
         progressManager.run(task);
-    }
-
-    public static void check(ProgressIndicator progress) {
-        if (progress.isCanceled()) {
-            throw AlreadyDisposedException.INSTANCE;
-        }
     }
 
     public static double progressOf(int is, int should) {

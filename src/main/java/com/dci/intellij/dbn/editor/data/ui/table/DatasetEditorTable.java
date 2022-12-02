@@ -551,7 +551,7 @@ public class DatasetEditorTable extends ResultSetTable<DatasetEditorModel> {
                 "Loading details of " + column.getQualifiedNameWithType(),
                 progress -> {
                     ActionGroup actionGroup = new DatasetEditorTableActionGroup(getDatasetEditor(), cell, columnInfo);
-                    Progress.check(progress);
+                    progress.checkCanceled();
 
                     ActionPopupMenu actionPopupMenu = Actions.createActionPopupMenu(DatasetEditorTable.this, "", actionGroup);
                     JPopupMenu popupMenu = actionPopupMenu.getComponent();

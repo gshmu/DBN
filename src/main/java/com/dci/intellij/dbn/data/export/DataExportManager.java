@@ -57,7 +57,7 @@ public class DataExportManager extends ProjectComponentBase implements Persisten
         return null;
     }
 
-    public void exportSortableTableContent(
+    public void exportTableContent(
             SortableTable table,
             DataExportInstructions instructions,
             ConnectionHandler connection,

@@ -1,8 +1,8 @@
 package com.dci.intellij.dbn.database.interfaces.queue;
 
+import com.dci.intellij.dbn.common.exception.Exceptions;
 import com.dci.intellij.dbn.common.routine.ThrowableCallable;
 import com.dci.intellij.dbn.common.thread.ThreadMonitor;
-import com.dci.intellij.dbn.common.util.Exceptions;
 import com.dci.intellij.dbn.common.util.Strings;
 import com.dci.intellij.dbn.common.util.TimeAware;
 import lombok.Getter;

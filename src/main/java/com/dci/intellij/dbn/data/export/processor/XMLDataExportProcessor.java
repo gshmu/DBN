@@ -1,5 +1,6 @@
 package com.dci.intellij.dbn.data.export.processor;
 
+import com.dci.intellij.dbn.common.load.ProgressMonitor;
 import com.dci.intellij.dbn.common.locale.Formatter;
 import com.dci.intellij.dbn.common.util.Clipboard;
 import com.dci.intellij.dbn.common.util.Strings;
@@ -58,7 +59,7 @@ public class XMLDataExportProcessor extends DataExportProcessor{
             buffer.append(rowIndex);
             buffer.append("\">\n");
             for (int columnIndex=0; columnIndex < model.getColumnCount(); columnIndex++){
-                checkCancelled();
+                ProgressMonitor.checkCancelled();
                 String columnName = getColumnName(model, instructions, columnIndex);
                 GenericDataType genericDataType = model.getGenericDataType(columnIndex);
 

@@ -188,7 +188,7 @@ public abstract class DBProgramRunner<T extends ExecutionInput> extends GenericP
                         DatabaseCompilerManager compilerManager = DatabaseCompilerManager.getInstance(project);
                         for (DBObjectRef<DBSchemaObject> objectRef : selectedDependencies) {
                             DBSchemaObject schemaObject = objectRef.ensure();
-                            Progress.check(progress);
+                            progress.checkCanceled();
 
                             progress.setText2("Compiling " + objectRef.getQualifiedNameWithType());
                             DBContentType contentType = schemaObject.getContentType();
@@ -198,7 +198,7 @@ public abstract class DBProgramRunner<T extends ExecutionInput> extends GenericP
                         ProjectEvents.notify(project,
                                 CompileManagerListener.TOPIC,
                                 (listener) -> listener.compileFinished(connection, null));
-                        Progress.check(progress);
+                                progress.checkCanceled();
 
                         performExecution(
                                 executionInput,

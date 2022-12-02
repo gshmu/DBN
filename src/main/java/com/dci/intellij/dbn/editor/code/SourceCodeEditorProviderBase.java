@@ -1,11 +1,11 @@
 package com.dci.intellij.dbn.editor.code;
 
-import com.dci.intellij.dbn.common.dispose.AlreadyDisposedException;
 import com.dci.intellij.dbn.common.dispose.Disposer;
 import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.common.editor.BasicTextEditor;
 import com.dci.intellij.dbn.common.editor.BasicTextEditorProvider;
 import com.dci.intellij.dbn.common.environment.EnvironmentManager;
+import com.dci.intellij.dbn.common.exception.ProcessDeferredException;
 import com.dci.intellij.dbn.common.util.Editors;
 import com.dci.intellij.dbn.editor.DBContentType;
 import com.dci.intellij.dbn.editor.EditorProviderId;
@@ -53,7 +53,7 @@ abstract class SourceCodeEditorProviderBase extends BasicTextEditorProvider impl
 
             DatabaseFileSystem databaseFileSystem = DatabaseFileSystem.getInstance();
             databaseFileSystem.connectAndOpenEditor(object, editorProviderId, false, true);
-            throw AlreadyDisposedException.INSTANCE;
+            throw new ProcessDeferredException();
         } else {
             databaseFile = (DBEditableObjectVirtualFile) file;
         }
