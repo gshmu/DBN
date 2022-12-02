@@ -171,6 +171,16 @@ public abstract class DynamicContentBase<T extends DynamicContentElement>
         return false;
     }
 
+    private boolean shouldRefresh() {
+        if (shouldReload()) {
+            if (!isDirty()) return false;
+
+            return true;
+        }
+
+        return false;
+    }
+
     @Override
     public void load() {
         if (shouldLoad()) {
@@ -207,7 +217,7 @@ public abstract class DynamicContentBase<T extends DynamicContentElement>
 
     @Override
     public void refresh() {
-        if (shouldReload()) {
+        if (shouldRefresh()) {
             markDirty();
             dependencyAdapter.refreshSources();
             if (!is(INTERNAL)){
