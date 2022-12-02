@@ -507,7 +507,7 @@ public class DBSchemaImpl extends DBObjectImpl<DBSchemaMetadata> implements DBSc
 
     private Set<BrowserTreeNode> resetObjectsStatus() {
         ObjectStatusUpdater updater = new ObjectStatusUpdater();
-        ensureChildObjects().visitObjects(updater, true);
+        ensureChildObjects().visit(updater, true);
         return updater.getRefreshNodes();
     }
 

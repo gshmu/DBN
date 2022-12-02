@@ -3,7 +3,6 @@ package com.dci.intellij.dbn.code.common.completion;
 import com.dci.intellij.dbn.code.common.completion.options.filter.CodeCompletionFilterSettings;
 import com.dci.intellij.dbn.code.common.lookup.*;
 import com.dci.intellij.dbn.common.consumer.CancellableConsumer;
-import com.dci.intellij.dbn.common.util.Guarded;
 import com.dci.intellij.dbn.common.util.Strings;
 import com.dci.intellij.dbn.language.common.DBLanguage;
 import com.dci.intellij.dbn.language.common.TokenType;
@@ -19,6 +18,8 @@ import lombok.Setter;
 
 import java.util.Collection;
 
+import static com.dci.intellij.dbn.common.dispose.Failsafe.guarded;
+
 public class CodeCompletionLookupConsumer implements CancellableConsumer<Object> {
     private final CodeCompletionContext context;
     private @Getter @Setter @Deprecated boolean addParenthesis;
@@ -29,7 +30,7 @@ public class CodeCompletionLookupConsumer implements CancellableConsumer<Object>
 
     @Override
     public void accept(Object object) {
-        Guarded.run(() -> {
+        guarded(() -> {
             if (object instanceof Object[]) {
                 consumeArray((Object[]) object);
 

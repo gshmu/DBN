@@ -1,13 +1,14 @@
 package com.dci.intellij.dbn.common.ui.util;
 
 import com.dci.intellij.dbn.common.routine.Consumer;
-import com.dci.intellij.dbn.common.util.Guarded;
 import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
+
+import static com.dci.intellij.dbn.common.dispose.Failsafe.guarded;
 
 public class Mouse {
     private Mouse() {}
@@ -133,7 +134,7 @@ public class Mouse {
 
         private void consume(MouseEvent e, @Nullable Consumer<MouseEvent> consumer) {
             if (consumer == null) return;
-            Guarded.run(() -> consumer.accept(e));
+            guarded(() -> consumer.accept(e));
         }
     }
 }

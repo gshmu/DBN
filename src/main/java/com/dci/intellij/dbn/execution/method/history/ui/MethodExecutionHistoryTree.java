@@ -1,7 +1,6 @@
 package com.dci.intellij.dbn.execution.method.history.ui;
 
 import com.dci.intellij.dbn.common.ui.tree.DBNTree;
-import com.dci.intellij.dbn.common.util.Guarded;
 import com.dci.intellij.dbn.execution.method.MethodExecutionInput;
 import com.intellij.openapi.Disposable;
 import com.intellij.ui.ColoredTreeCellRenderer;
@@ -19,6 +18,8 @@ import javax.swing.tree.TreePath;
 import javax.swing.tree.TreeSelectionModel;
 import java.util.Collections;
 import java.util.List;
+
+import static com.dci.intellij.dbn.common.dispose.Failsafe.guarded;
 
 @Getter
 public class MethodExecutionHistoryTree extends DBNTree implements Disposable {
@@ -85,7 +86,7 @@ public class MethodExecutionHistoryTree extends DBNTree implements Disposable {
     private static class TreeCellRenderer extends ColoredTreeCellRenderer {
         @Override
         public void customizeCellRenderer(@NotNull JTree tree, Object value, boolean selected, boolean expanded, boolean leaf, int row, boolean hasFocus) {
-            Guarded.run(() -> {
+            guarded(() -> {
                 MethodExecutionHistoryTreeNode node = (MethodExecutionHistoryTreeNode) value;
                 setIcon(node.getIcon());
                 append(node.getName(), SimpleTextAttributes.REGULAR_ATTRIBUTES);

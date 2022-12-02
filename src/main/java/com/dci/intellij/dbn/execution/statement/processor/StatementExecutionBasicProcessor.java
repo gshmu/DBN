@@ -774,26 +774,28 @@ public class StatementExecutionBasicProcessor extends StatefulDisposable.Base im
 
     @Nullable
     private DBSchemaObject getAffectedObject() {
-        if (isDataDefinitionStatement()) {
-            IdentifierPsiElement subjectPsiElement = getSubjectPsiElement();
-            if (subjectPsiElement != null) {
-                SchemaId targetSchema = getTargetSchema();
-                ConnectionHandler connection = getConnection();
-                if (targetSchema != null && connection != null) {
-                    DBObject schemaObject = connection.getSchema(targetSchema);
-                    if (schemaObject != null) {
-                        DBObjectListContainer childObjects = schemaObject.getChildObjects();
-                        if (childObjects != null) {
-                            DBObjectList objectList = childObjects.getObjectList(subjectPsiElement.getObjectType());
-                            if (objectList != null) {
-                                return (DBSchemaObject) objectList.getObject(subjectPsiElement.getText());
-                            }
-                        }
-                    }
-                }
-            }
-        }
-        return null;
+        if (!isDataDefinitionStatement()) return null;
+
+        IdentifierPsiElement subjectPsiElement = getSubjectPsiElement();
+        if (subjectPsiElement == null) return null;
+
+        SchemaId targetSchema = getTargetSchema();
+        if (targetSchema == null) return null;
+
+        ConnectionHandler connection = getConnection();
+        if (connection == null) return null;
+
+        DBObject schemaObject = connection.getSchema(targetSchema);
+        if (schemaObject == null) return null;
+
+        DBObjectListContainer childObjects = schemaObject.getChildObjects();
+        if (childObjects == null) return null;
+
+        DBObjectType objectType = subjectPsiElement.getObjectType();
+        DBObjectList objectList = childObjects.getObjectList(objectType);
+        if (objectList == null) return null;
+
+        return (DBSchemaObject) objectList.getObject(subjectPsiElement.getText());
     }
 
     @Nullable

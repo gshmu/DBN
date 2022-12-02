@@ -2,7 +2,6 @@ package com.dci.intellij.dbn.vfs.file;
 
 import com.dci.intellij.dbn.common.latent.Latent;
 import com.dci.intellij.dbn.common.util.Documents;
-import com.dci.intellij.dbn.common.util.Guarded;
 import com.dci.intellij.dbn.connection.SessionId;
 import com.dci.intellij.dbn.connection.session.DatabaseSession;
 import com.dci.intellij.dbn.connection.session.DatabaseSessionBundle;
@@ -29,6 +28,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import static com.dci.intellij.dbn.common.dispose.Failsafe.guarded;
 import static com.dci.intellij.dbn.vfs.VirtualFileStatus.MODIFIED;
 import static com.dci.intellij.dbn.vfs.VirtualFileStatus.SAVING;
 
@@ -135,7 +135,7 @@ public class DBEditableObjectVirtualFile extends DBObjectVirtualFile<DBSchemaObj
     @Override
     @NotNull
     public FileType getFileType() {
-        return Guarded.call(SQLFileType.INSTANCE, () -> {
+        return guarded(SQLFileType.INSTANCE, () -> {
             DBSchemaObject object = getObject();
             DDLFileManager ddlFileManager = DDLFileManager.getInstance(object.getProject());
             DDLFileType type =  ddlFileManager.getDDLFileType(object.getObjectType(), getMainContentType());
@@ -168,7 +168,7 @@ public class DBEditableObjectVirtualFile extends DBObjectVirtualFile<DBSchemaObj
     public <T> T getUserData(@NotNull Key<T> key) {
         T userData = super.getUserData(key);
         if (key == FileDocumentManagerImpl.HARD_REF_TO_DOCUMENT_KEY) {
-            return Guarded.call(userData, () -> {
+            return guarded(userData, () -> {
                 DBContentType mainContentType = getMainContentType();
                 boolean isCode = mainContentType == DBContentType.CODE || mainContentType == DBContentType.CODE_BODY;
                 if (isCode) {

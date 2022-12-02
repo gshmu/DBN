@@ -11,6 +11,8 @@ import java.io.Reader;
 import java.util.function.Function;
 import java.util.function.Supplier;
 
+import static com.dci.intellij.dbn.common.dispose.Failsafe.guarded;
+
 @Slf4j
 public final class Commons {
     private Commons() {}
@@ -24,7 +26,7 @@ public final class Commons {
     @Nullable
     public static <T> T coalesce(Supplier<T>... suppliers) {
         for (Supplier<T> supplier : suppliers) {
-            T value = Guarded.call(null, () -> supplier.get());
+            T value = guarded(null, () -> supplier.get());
             if (value != null) {
                 return value;
             }

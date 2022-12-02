@@ -18,42 +18,40 @@ public class ObjectTreeModel extends DefaultTreeModel {
 
     public ObjectTreeModel(DBSchema schema, Set<DBObjectType> objectTypes, DBObject selectedObject) {
         super(new DefaultMutableTreeNode(schema == null ? "No schema selected" : schema.ref()));
+        if (schema == null) return;
 
 
+        DefaultMutableTreeNode rootNode = getRoot();
 
-        if (schema != null) {
-            DefaultMutableTreeNode rootNode = getRoot();
-
-            for (DBObjectType objectType : objectTypes) {
-                for (DBObject schemaObject :schema.getChildObjects(objectType)) {
-                    DefaultMutableTreeNode objectNode = new DefaultMutableTreeNode(schemaObject.ref());
-                    rootNode.add(objectNode);
-                    if (selectedObject != null && selectedObject.equals(schemaObject)) {
-                        initialSelection = new TreePath(objectNode.getPath());
-                    }
+        for (DBObjectType objectType : objectTypes) {
+            for (DBObject schemaObject :schema.getChildObjects(objectType)) {
+                DefaultMutableTreeNode objectNode = new DefaultMutableTreeNode(schemaObject.ref());
+                rootNode.add(objectNode);
+                if (selectedObject != null && selectedObject.equals(schemaObject)) {
+                    initialSelection = new TreePath(objectNode.getPath());
                 }
             }
+        }
 
-            for (DBObjectType schemaObjectType : schema.getObjectType().getChildren()) {
-                if (hasChild(schemaObjectType, objectTypes)) {
-                    for (DBObject schemaObject : schema.getChildObjects(schemaObjectType)) {
-                        DefaultMutableTreeNode bundleNode = new DefaultMutableTreeNode(schemaObject.ref());
+        for (DBObjectType schemaObjectType : schema.getObjectType().getChildren()) {
+            if (hasChild(schemaObjectType, objectTypes)) {
+                for (DBObject schemaObject : schema.getChildObjects(schemaObjectType)) {
+                    DefaultMutableTreeNode bundleNode = new DefaultMutableTreeNode(schemaObject.ref());
 
-                        List<DBObject> objects = new ArrayList<DBObject>();
-                        for (DBObjectType objectType : objectTypes) {
-                            objects.addAll(schemaObject.getChildObjects(objectType));
-                        }
+                    List<DBObject> objects = new ArrayList<DBObject>();
+                    for (DBObjectType objectType : objectTypes) {
+                        objects.addAll(schemaObject.getChildObjects(objectType));
+                    }
 
-                        if (objects.size() > 0) {
-                            rootNode.add(bundleNode);
-                            for (DBObject object : objects) {
-                                DefaultMutableTreeNode objectNode = new DefaultMutableTreeNode(object.ref());
-                                bundleNode.add(objectNode);
-                                if (selectedObject != null && selectedObject.equals(object)) {
-                                    initialSelection = new TreePath(objectNode.getPath());
-                                }
-
+                    if (objects.size() > 0) {
+                        rootNode.add(bundleNode);
+                        for (DBObject object : objects) {
+                            DefaultMutableTreeNode objectNode = new DefaultMutableTreeNode(object.ref());
+                            bundleNode.add(objectNode);
+                            if (selectedObject != null && selectedObject.equals(object)) {
+                                initialSelection = new TreePath(objectNode.getPath());
                             }
+
                         }
                     }
                 }

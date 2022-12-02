@@ -7,7 +7,6 @@ import com.dci.intellij.dbn.common.ui.form.DBNForm;
 import com.dci.intellij.dbn.common.ui.tree.TreeUtil;
 import com.dci.intellij.dbn.common.ui.util.Borders;
 import com.dci.intellij.dbn.common.ui.util.Mouse;
-import com.dci.intellij.dbn.common.util.Guarded;
 import com.dci.intellij.dbn.common.util.Strings;
 import com.dci.intellij.dbn.data.editor.ui.UserValueHolder;
 import com.dci.intellij.dbn.data.editor.ui.UserValueHolderImpl;
@@ -47,6 +46,8 @@ import java.awt.font.FontRenderContext;
 import java.awt.font.LineMetrics;
 import java.math.BigDecimal;
 import java.util.Objects;
+
+import static com.dci.intellij.dbn.common.dispose.Failsafe.guarded;
 
 public class ExplainPlanTreeTable extends TreeTable implements StatefulDisposable {
     private static final int MAX_TREE_COLUMN_WIDTH = 900;
@@ -115,7 +116,7 @@ public class ExplainPlanTreeTable extends TreeTable implements StatefulDisposabl
 
         @Override
         public void customizeCellRenderer(@NotNull JTree tree, Object value, boolean selected, boolean expanded, boolean leaf, int row, boolean hasFocus) {
-            Guarded.run(() -> {
+            guarded(() -> {
                 ExplainPlanEntry entry = (ExplainPlanEntry) value;
 
                 DBObjectRef<?> objectRef = entry.getObjectRef();

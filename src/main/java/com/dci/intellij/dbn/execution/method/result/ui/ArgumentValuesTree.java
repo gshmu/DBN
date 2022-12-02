@@ -4,7 +4,6 @@ import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.common.color.Colors;
 import com.dci.intellij.dbn.common.ui.tree.DBNTree;
 import com.dci.intellij.dbn.common.ui.util.Mouse;
-import com.dci.intellij.dbn.common.util.Guarded;
 import com.dci.intellij.dbn.common.util.TextAttributes;
 import com.dci.intellij.dbn.data.grid.color.DataGridTextAttributesKeys;
 import com.dci.intellij.dbn.data.type.DBDataType;
@@ -24,6 +23,8 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.sql.ResultSet;
 import java.util.List;
+
+import static com.dci.intellij.dbn.common.dispose.Failsafe.guarded;
 
 class ArgumentValuesTree extends DBNTree{
 
@@ -69,7 +70,7 @@ class ArgumentValuesTree extends DBNTree{
     static class CellRenderer extends ColoredTreeCellRenderer {
         @Override
         public void customizeCellRenderer(@NotNull JTree tree, Object value, boolean selected, boolean expanded, boolean leaf, int row, boolean hasFocus) {
-            Guarded.run(() -> {
+            guarded(() -> {
                 ArgumentValuesTreeNode treeNode = (ArgumentValuesTreeNode) value;
                 Object userValue = treeNode.getUserValue();
                 if (userValue instanceof DBMethod) {

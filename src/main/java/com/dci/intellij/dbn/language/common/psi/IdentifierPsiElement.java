@@ -4,7 +4,6 @@ import com.dci.intellij.dbn.code.common.style.formatting.FormattingAttributes;
 import com.dci.intellij.dbn.common.Capture;
 import com.dci.intellij.dbn.common.consumer.ListCollector;
 import com.dci.intellij.dbn.common.thread.ThreadMonitor;
-import com.dci.intellij.dbn.common.util.Guarded;
 import com.dci.intellij.dbn.common.util.Strings;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.language.common.QuotePair;
@@ -34,6 +33,7 @@ import javax.swing.*;
 import java.util.Set;
 import java.util.function.Consumer;
 
+import static com.dci.intellij.dbn.common.dispose.Failsafe.guarded;
 import static com.dci.intellij.dbn.common.util.Commons.nvl;
 
 public abstract class IdentifierPsiElement extends LeafPsiElement<IdentifierElementType> {
@@ -498,7 +498,7 @@ public abstract class IdentifierPsiElement extends LeafPsiElement<IdentifierElem
     @Override
     @Nullable
     public PsiElement resolve() {
-        return Guarded.call(null,  () -> doResolve());
+        return guarded(null,  () -> doResolve());
     }
 
     @Nullable

@@ -59,19 +59,23 @@ public class DBColumnImpl extends DBObjectImpl<DBColumnMetadata> implements DBCo
 
     @Override
     protected void initLists() {
-        DBObjectListContainer childObjects = ensureChildObjects();
         DBDataset dataset = getDataset();
+        DBObjectListContainer childObjects = ensureChildObjects();
         constraints = childObjects.createSubcontentObjectList(CONSTRAINT, this, dataset, CONSTRAINT_COLUMN);
         indexes = childObjects.createSubcontentObjectList(INDEX, this, dataset, INDEX_COLUMN);
 
+        DBObjectList typeAttributes = initDeclaredType();
+        childObjects.addObjectList(typeAttributes);
+    }
+
+    private DBObjectList initDeclaredType() {
         DBType declaredType = dataType.getDeclaredType();
-        if (declaredType != null) {
-            DBObjectListContainer typeChildObjects = declaredType.getChildObjects();
-            if (typeChildObjects != null) {
-                DBObjectList typeAttributes = typeChildObjects.getObjectList(TYPE_ATTRIBUTE);
-                childObjects.addObjectList(typeAttributes);
-            }
-        }
+        if (declaredType == null) return null;
+
+        DBObjectListContainer typeChildObjects = declaredType.getChildObjects();
+        if (typeChildObjects == null) return null;
+
+        return typeChildObjects.getObjectList(TYPE_ATTRIBUTE);
     }
 
     @NotNull
@@ -190,16 +194,16 @@ public class DBColumnImpl extends DBObjectImpl<DBColumnMetadata> implements DBCo
     @Override
     public short getConstraintPosition(DBConstraint constraint) {
         DBObjectListContainer childObjects = getDataset().getChildObjects();
-        if (childObjects != null) {
-            DBObjectRelationList<DBConstraintColumnRelation> constraintColumnRelations =
-                    childObjects.getRelations(CONSTRAINT_COLUMN);
-            if (constraintColumnRelations != null) {
-                for (DBConstraintColumnRelation relation : constraintColumnRelations.getObjectRelations()) {
-                    DBColumn relationColumn = relation.getColumn();
-                    DBConstraint relationConstraint = relation.getConstraint();
-                    if (Objects.equals(relationColumn, this) && Objects.equals(relationConstraint, constraint))
-                        return relation.getPosition();
-                }
+        if (childObjects == null) return 0;
+
+        DBObjectRelationList<DBConstraintColumnRelation> relations = childObjects.getRelations(CONSTRAINT_COLUMN);
+        if (relations == null) return 0;
+
+        for (DBConstraintColumnRelation relation : relations.getObjectRelations()) {
+            DBColumn relationColumn = relation.getColumn();
+            DBConstraint relationConstraint = relation.getConstraint();
+            if (Objects.equals(relationColumn, this) && Objects.equals(relationConstraint, constraint)){
+                return relation.getPosition();
             }
         }
         return 0;

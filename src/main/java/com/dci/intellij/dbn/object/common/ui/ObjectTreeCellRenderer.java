@@ -1,7 +1,6 @@
 package com.dci.intellij.dbn.object.common.ui;
 
 import com.dci.intellij.dbn.common.ui.tree.TreeUtil;
-import com.dci.intellij.dbn.common.util.Guarded;
 import com.dci.intellij.dbn.object.DBMethod;
 import com.dci.intellij.dbn.object.common.DBObject;
 import com.dci.intellij.dbn.object.lookup.DBObjectRef;
@@ -12,10 +11,12 @@ import org.jetbrains.annotations.NotNull;
 import javax.swing.*;
 import javax.swing.tree.DefaultMutableTreeNode;
 
+import static com.dci.intellij.dbn.common.dispose.Failsafe.guarded;
+
 public class ObjectTreeCellRenderer extends ColoredTreeCellRenderer {
     @Override
     public void customizeCellRenderer(@NotNull JTree tree, Object value, boolean selected, boolean expanded, boolean leaf, int row, boolean hasFocus) {
-        Guarded.run(() -> {
+        guarded(() -> {
             DefaultMutableTreeNode treeNode = (DefaultMutableTreeNode) value;
             Object userObject = treeNode.getUserObject();
             if (userObject instanceof DBObjectRef) {

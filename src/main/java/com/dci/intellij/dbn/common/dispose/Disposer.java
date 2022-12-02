@@ -2,7 +2,6 @@ package com.dci.intellij.dbn.common.dispose;
 
 import com.dci.intellij.dbn.common.list.FilteredList;
 import com.dci.intellij.dbn.common.thread.Dispatch;
-import com.dci.intellij.dbn.common.util.Guarded;
 import com.dci.intellij.dbn.vfs.DBVirtualFile;
 import com.intellij.openapi.Disposable;
 import com.intellij.openapi.ui.popup.JBPopup;
@@ -14,6 +13,7 @@ import org.jetbrains.annotations.Nullable;
 import java.util.*;
 
 import static com.dci.intellij.dbn.common.dispose.Checks.isNotValid;
+import static com.dci.intellij.dbn.common.dispose.Failsafe.guarded;
 import static com.dci.intellij.dbn.common.thread.ThreadMonitor.isDispatchThread;
 
 @Slf4j
@@ -56,7 +56,7 @@ public final class Disposer {
 
     public static void dispose(@Nullable Disposable disposable, boolean registered) {
         try {
-            Guarded.run(() -> {
+            guarded(() -> {
                 if (isNotValid(disposable)) return;
 
                 if (isDispatchCandidate(disposable) && !isDispatchThread()) {

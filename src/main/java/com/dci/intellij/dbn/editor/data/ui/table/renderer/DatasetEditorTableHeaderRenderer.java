@@ -4,7 +4,6 @@ import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.common.color.Colors;
 import com.dci.intellij.dbn.common.ui.table.DBNTableHeaderRendererBase;
 import com.dci.intellij.dbn.common.ui.util.Borders;
-import com.dci.intellij.dbn.common.util.Guarded;
 import com.dci.intellij.dbn.data.grid.options.DataGridSettings;
 import com.dci.intellij.dbn.data.sorting.SortDirection;
 import com.dci.intellij.dbn.data.sorting.SortingInstruction;
@@ -15,6 +14,8 @@ import com.dci.intellij.dbn.object.DBDataset;
 
 import javax.swing.*;
 import java.awt.*;
+
+import static com.dci.intellij.dbn.common.dispose.Failsafe.guarded;
 
 public class DatasetEditorTableHeaderRenderer extends DBNTableHeaderRendererBase {
     private JPanel mainPanel;
@@ -29,7 +30,7 @@ public class DatasetEditorTableHeaderRenderer extends DBNTableHeaderRendererBase
 
     @Override
     public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int rowIndex, int columnIndex) {
-        return Guarded.call(mainPanel, () -> {
+        return guarded(mainPanel, () -> {
             DatasetEditorModel model = (DatasetEditorModel) table.getModel();
             sortingLabel.setText(null);
             int width = 0;

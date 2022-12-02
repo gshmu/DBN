@@ -59,8 +59,7 @@ class DBObjectLookupScanner extends StatefulDisposable.Base implements DBObjectL
                 model.getData().accept(object);
             }
 
-            DBObjectListContainer childObjects = object.getChildObjects();
-            if (childObjects != null) childObjects.visitObjects(this, true);
+            object.visitChildObjects(this, true);
         }
     }
 
@@ -75,15 +74,15 @@ class DBObjectLookupScanner extends StatefulDisposable.Base implements DBObjectL
                 model.checkCancelled();
 
                 DBObjectListContainer objectListContainer = connection.getObjectBundle().getObjectLists();
-                objectListContainer.visitObjects(this, true);
+                objectListContainer.visit(this, true);
             }
         } else {
-            DBObjectListContainer objectListContainer =
+            DBObjectListContainer objectLists =
                     selectedSchema == null ?
                             selectedConnection.getObjectBundle().getObjectLists() :
                             selectedSchema.getChildObjects();
-            if (objectListContainer != null) {
-                objectListContainer.visitObjects(this, true);
+            if (objectLists != null) {
+                objectLists.visit(this, true);
             }
         }
         asyncScanner.awaitCompletion();

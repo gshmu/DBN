@@ -6,7 +6,6 @@ import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.common.environment.EnvironmentManager;
 import com.dci.intellij.dbn.common.thread.CancellableDatabaseCall;
 import com.dci.intellij.dbn.common.thread.Progress;
-import com.dci.intellij.dbn.common.util.Guarded;
 import com.dci.intellij.dbn.common.util.Messages;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.ConnectionProperties;
@@ -46,6 +45,7 @@ import java.util.List;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicReference;
 
+import static com.dci.intellij.dbn.common.dispose.Failsafe.guarded;
 import static com.dci.intellij.dbn.connection.ConnectionProperty.RS_TYPE_FORWARD_ONLY;
 import static com.dci.intellij.dbn.connection.ConnectionProperty.RS_TYPE_SCROLL_INSENSITIVE;
 import static com.dci.intellij.dbn.editor.data.model.RecordStatus.*;
@@ -267,7 +267,7 @@ public class DatasetEditorModel
     @NotNull
     @Override
     public DatasetEditorState getState() {
-        return Guarded.call(DatasetEditorState.VOID, () -> getDatasetEditor().getEditorState());
+        return guarded(DatasetEditorState.VOID, () -> getDatasetEditor().getEditorState());
     }
 
     private boolean hasChanges() {
