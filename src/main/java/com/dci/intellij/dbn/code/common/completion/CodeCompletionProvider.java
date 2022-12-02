@@ -189,28 +189,29 @@ public class CodeCompletionProvider extends CompletionProvider<CompletionParamet
 
         Collection<LeafElementType> completionCandidates = context.getCompletionCandidates();
         for (LeafElementType elementType : completionCandidates) {
-            if (elementType instanceof IdentifierElementType) {
-                IdentifierElementType identifierElementType = (IdentifierElementType) elementType;
-                if (identifierElementType.isReference()) {
-                    DBObjectType objectType = identifierElementType.getObjectType();
-                    if (parentIdentifierPsiElement == null) {
-                        if (identifierElementType.isObject()) {
-                            context.queue(() -> collectObjectElements(element, consumer, identifierElementType, objectType));
+            if (!(elementType instanceof IdentifierElementType)) continue;
 
-                        } else if (identifierElementType.isAlias()) {
-                            context.queue(() -> collectAliasElements(element, consumer, objectType));
 
-                        } else if (identifierElementType.isVariable()) {
-                            context.queue(() -> collectVariableElements(element, consumer, objectType));
-                        }
+            IdentifierElementType identifier = (IdentifierElementType) elementType;
+            if (identifier.isReference()) {
+                DBObjectType objectType = identifier.getObjectType();
+                if (parentIdentifierPsiElement == null) {
+                    if (identifier.isObject()) {
+                        context.queue(() -> collectObjectElements(element, consumer, identifier, objectType));
+
+                    } else if (identifier.isAlias()) {
+                        context.queue(() -> collectAliasElements(element, consumer, objectType));
+
+                    } else if (identifier.isVariable()) {
+                        context.queue(() -> collectVariableElements(element, consumer, objectType));
                     }
-                    if (parentObject != null && (context.isLiveConnection() || parentObject instanceof DBVirtualObject)) {
-                        context.queue(() -> collectChildObjects(consumer, parentObject, objectType));
-                    }
-                } else if (identifierElementType.isDefinition()) {
-                    if (identifierElementType.isAlias()) {
-                        context.queue(() -> buildAliasDefinitionNames(element, consumer));
-                    }
+                }
+                if (parentObject != null && (context.isLiveConnection() || parentObject instanceof DBVirtualObject)) {
+                    context.queue(() -> parentObject.collectChildObjects(objectType, consumer));
+                }
+            } else if (identifier.isDefinition()) {
+                if (identifier.isAlias()) {
+                    context.queue(() -> buildAliasDefinitionNames(element, consumer));
                 }
             }
         }
@@ -247,10 +248,6 @@ public class CodeCompletionProvider extends CompletionProvider<CompletionParamet
     private static void collectVariableElements(LeafPsiElement<?> scopeElement, CodeCompletionLookupConsumer consumer, DBObjectType objectType) {
         PsiLookupAdapter lookupAdapter = LookupAdapterCache.VARIABLE_DEFINITION.get(objectType);
         lookupAdapter.collectInParentScopeOf(scopeElement, psiElement -> consumer.accept(psiElement));
-    }
-
-    private static void collectChildObjects(CodeCompletionLookupConsumer consumer, DBObject object, DBObjectType objectType) {
-        object.collectChildObjects(objectType, consumer);
     }
 
     @NotNull
