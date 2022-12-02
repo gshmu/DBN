@@ -76,13 +76,13 @@ public class ParserDiagnosticsManager extends ProjectComponentBase implements Pe
 
             for (int i = 0, filesLength = files.length; i < filesLength; i++) {
                 VirtualFile file = files[i];
-                Progress.check(progress);
+                progress.checkCanceled();
                 String filePath = file.getPath();
                 progress.setText(filePath);
                 progress.setFraction(Progress.progressOf(i, files.length));
 
                 DBLanguagePsiFile psiFile = ensureFileParsed(file);
-                Progress.check(progress);
+                progress.checkCanceled();
                 if (psiFile == null) {
                     result.addEntry(filePath, 1, 0);
                 } else {
@@ -110,13 +110,13 @@ public class ParserDiagnosticsManager extends ProjectComponentBase implements Pe
 
         for (int i = 0, filesLength = files.length; i < filesLength; i++) {
             VirtualFile file = files[i];
-            Progress.check(progress);
+            progress.checkCanceled();
             String filePath = file.getPath();
             progress.setText(filePath);
             progress.setFraction(Progress.progressOf(i, files.length));
 
             DBLanguagePsiFile psiFile = ensureFileParsed(file);
-            Progress.check(progress);
+            progress.checkCanceled();
             if (psiFile != null) {
 
                 String scrambled = scrambler.scramble(psiFile);

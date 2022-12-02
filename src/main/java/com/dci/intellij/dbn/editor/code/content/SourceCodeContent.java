@@ -46,8 +46,8 @@ public class SourceCodeContent{
     public boolean matches(SourceCodeContent content, boolean soft) {
         if (soft) {
             try {
-                ProgressIndicator progressIndicator = ProgressMonitor.getProgressIndicator();
-                return ByWord.compare(text, content.text, ComparisonPolicy.IGNORE_WHITESPACES, progressIndicator).isEmpty();
+                ProgressIndicator progress = ProgressMonitor.getProgressIndicator();
+                return ByWord.compare(text, content.text, ComparisonPolicy.IGNORE_WHITESPACES, progress).isEmpty();
             } catch (Exception ignore) {
             }
         }

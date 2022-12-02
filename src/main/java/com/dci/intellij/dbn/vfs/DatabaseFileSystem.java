@@ -440,6 +440,11 @@ public class DatabaseFileSystem extends VirtualFileSystem implements /*NonPhysic
         if (!isEditable(object)) return;
         if (DBFileOpenHandle.isFileOpening(object)) return;
 
+        // TODO native initialisation routine for editable objects
+/*        if (object instanceof DBDataset) {
+            DBDataset dataset = (DBDataset) object;
+            dataset.getColumns();
+        }*/
 
         NavigationInstructions editorInstructions = NavigationInstructions.create().with(OPEN).with(SCROLL).with(FOCUS, focusEditor);
         NavigationInstructions browserInstructions = NavigationInstructions.create().with(SCROLL, scrollBrowser);

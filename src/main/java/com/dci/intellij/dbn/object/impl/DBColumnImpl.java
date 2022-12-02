@@ -230,13 +230,13 @@ public class DBColumnImpl extends DBObjectImpl<DBColumnMetadata> implements DBCo
     @Nullable
     public DBColumn getForeignKeyColumn() {
         for (DBConstraint constraint : getConstraints()) {
-            if (constraint.isForeignKey()) {
-                short position = getConstraintPosition(constraint);
-                DBConstraint foreignKeyConstraint = constraint.getForeignKeyConstraint();
-                if (foreignKeyConstraint != null) {
-                    return foreignKeyConstraint.getColumnForPosition(position);
-                }
-            }
+            if (!constraint.isForeignKey()) continue;
+
+            DBConstraint foreignKeyConstraint = constraint.getForeignKeyConstraint();
+            if (foreignKeyConstraint == null) continue;
+
+            short position = getConstraintPosition(constraint);
+            return foreignKeyConstraint.getColumnForPosition(position);
         }
         return null;
     }

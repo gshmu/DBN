@@ -1,11 +1,13 @@
 package com.dci.intellij.dbn.editor.data;
 
 import com.dci.intellij.dbn.common.dispose.Disposer;
+import com.dci.intellij.dbn.common.exception.ProcessDeferredException;
 import com.dci.intellij.dbn.editor.DBContentType;
 import com.dci.intellij.dbn.editor.EditorProviderId;
 import com.dci.intellij.dbn.editor.data.state.DatasetEditorState;
 import com.dci.intellij.dbn.object.DBDataset;
 import com.dci.intellij.dbn.object.type.DBObjectType;
+import com.dci.intellij.dbn.vfs.DatabaseFileSystem;
 import com.dci.intellij.dbn.vfs.file.DBDatasetVirtualFile;
 import com.dci.intellij.dbn.vfs.file.DBEditableObjectVirtualFile;
 import com.intellij.openapi.components.NamedComponent;
@@ -16,6 +18,7 @@ import com.intellij.openapi.fileEditor.FileEditorState;
 import com.intellij.openapi.project.DumbAware;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
+import lombok.val;
 import org.jdom.Element;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
@@ -42,8 +45,16 @@ public class DatasetEditorProvider implements FileEditorProvider, NamedComponent
     @NotNull
     public FileEditor createEditor(@NotNull Project project, @NotNull VirtualFile file) {
         DBEditableObjectVirtualFile databaseFile = (DBEditableObjectVirtualFile) file;
+
         DBDatasetVirtualFile datasetFile = nn(databaseFile.getContentFile(DBContentType.DATA));
         DBDataset dataset = datasetFile.getObject();
+        val columns = dataset.getChildObjectList(DBObjectType.COLUMN);
+        if (!columns.isLoaded()) {
+            DatabaseFileSystem databaseFileSystem = DatabaseFileSystem.getInstance();
+            databaseFileSystem.connectAndOpenEditor(dataset, null, false, false);
+            throw new ProcessDeferredException();
+        }
+
         return new DatasetEditor(databaseFile, dataset);
     }
 

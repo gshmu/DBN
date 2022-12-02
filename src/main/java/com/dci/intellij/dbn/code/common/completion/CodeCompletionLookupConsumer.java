@@ -115,7 +115,7 @@ public class CodeCompletionLookupConsumer implements CancellableConsumer<Object>
 
     public void checkCancelled() {
         if (context.getResult().isStopped() || context.getQueue().isFinished()) {
-            throw CodeCompletionCancelledException.INSTANCE;
+            throw new CodeCompletionCancelledException();
         }
     }
 
