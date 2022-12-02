@@ -1,5 +1,6 @@
 package com.dci.intellij.dbn.data.export.processor;
 
+import com.dci.intellij.dbn.common.load.ProgressMonitor;
 import com.dci.intellij.dbn.common.locale.Formatter;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.data.export.DataExportException;
@@ -71,7 +72,7 @@ public class CustomDataExportProcessor extends DataExportProcessor{
         Formatter formatter = getFormatter(connection.getProject());
         for (int rowIndex=0; rowIndex < model.getRowCount(); rowIndex++) {
             for (int columnIndex=0; columnIndex < model.getColumnCount(); columnIndex++){
-                checkCancelled();
+                ProgressMonitor.checkCancelled();
                 String columnName = getColumnName(model, instructions, columnIndex);
                 Object object = model.getValue(rowIndex, columnIndex);
                 String value = formatValue(formatter, object);

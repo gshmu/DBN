@@ -1,5 +1,6 @@
-package com.dci.intellij.dbn.common.util;
+package com.dci.intellij.dbn.common.exception;
 
+import com.dci.intellij.dbn.common.util.Commons;
 import org.jetbrains.annotations.NotNull;
 
 import java.sql.SQLException;

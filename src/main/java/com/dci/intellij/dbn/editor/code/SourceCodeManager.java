@@ -236,21 +236,13 @@ public class SourceCodeManager extends ProjectComponentBase implements Persisten
             Document document = Failsafe.nn(Documents.getDocument(sourceCodeFile));
             Documents.saveDocument(document);
 
+            if (!isValidObjectHeader(sourceCodeFile)) return;
+
             DBSchemaObject object = sourceCodeFile.getObject();
-            DBContentType contentType = sourceCodeFile.getContentType();
-            DBLanguagePsiFile psiFile = sourceCodeFile.getPsiFile();
-
-            if (psiFile != null && psiFile.getFirstChild() != null && !isValidObjectTypeAndName(psiFile, object, contentType)) {
-                String message = "You are not allowed to change the name or the type of the object";
-                sourceCodeFile.set(SAVING, false);
-                showErrorDialog(project, "Illegal action", message);
-
-                return;
-            }
-
             ProgressMonitor.setProgressDetail("Checking for third party changes on " + object.getQualifiedNameWithType());
-            boolean isChangedInDatabase = sourceCodeFile.isChangedInDatabase(true);
-            if (isChangedInDatabase && sourceCodeFile.isMergeRequired()) {
+
+            boolean changedInDatabase = sourceCodeFile.isChangedInDatabase(true);
+            if (changedInDatabase && sourceCodeFile.isMergeRequired()) {
                 String presentableChangeTime =
                         OBJECT_CHANGE_MONITORING.isSupported(object) ?
                                 DateFormatUtil.formatPrettyDateTime(sourceCodeFile.getDatabaseChangeTimestamp()).toLowerCase() : "";
@@ -266,17 +258,7 @@ public class SourceCodeManager extends ProjectComponentBase implements Persisten
                                 Progress.prompt(project, object, false,
                                         "Loading source code",
                                         "Loading database source code for " + object.getQualifiedNameWithType(),
-                                        progress -> {
-                                            try {
-                                                SourceCodeContent sourceCodeContent = loadSourceFromDatabase(object, contentType);
-                                                String databaseContent = sourceCodeContent.getText().toString();
-                                                SourceCodeDiffManager diffManager = SourceCodeDiffManager.getInstance(project);
-                                                diffManager.openCodeMergeDialog(databaseContent, sourceCodeFile, fileEditor, MergeAction.SAVE);
-                                            } catch (SQLException e) {
-                                                showErrorDialog(project, "Could not load database sources.", e);
-                                            }
-                                        });
-
+                                        progress -> openCodeMergeDialog(sourceCodeFile, fileEditor));
                             } else {
                                 sourceCodeFile.set(SAVING, false);
                             }
@@ -292,37 +274,40 @@ public class SourceCodeManager extends ProjectComponentBase implements Persisten
         }
     }
 
-    public SourceCodeContent loadSourceFromDatabase(@NotNull DBSchemaObject object, DBContentType contentType) throws SQLException {
-        boolean optionalContent = contentType == DBContentType.CODE_BODY;
+    private void openCodeMergeDialog(@NotNull DBSourceCodeVirtualFile sourceCodeFile, @Nullable SourceCodeEditor fileEditor) {
+        Project project = getProject();
+        try {
+            DBSchemaObject object = sourceCodeFile.getObject();
+            DBContentType contentType = sourceCodeFile.getContentType();
+            SourceCodeContent sourceCodeContent = loadSourceFromDatabase(object, contentType);
+            String databaseContent = sourceCodeContent.getText().toString();
+            SourceCodeDiffManager diffManager = SourceCodeDiffManager.getInstance(project);
+            diffManager.openCodeMergeDialog(databaseContent, sourceCodeFile, fileEditor, MergeAction.SAVE);
+        } catch (SQLException e) {
+            showErrorDialog(project, "Could not load database sources.", e);
+        }
+    }
 
+    private boolean isValidObjectHeader(@NotNull DBSourceCodeVirtualFile sourceCodeFile) {
+        DBSchemaObject object = sourceCodeFile.getObject();
+        DBContentType contentType = sourceCodeFile.getContentType();
+        DBLanguagePsiFile psiFile = sourceCodeFile.getPsiFile();
+
+        if (psiFile != null && psiFile.getFirstChild() != null && !isValidObjectTypeAndName(psiFile, object, contentType)) {
+            String message = "You are not allowed to change the name or the type of the object";
+            sourceCodeFile.set(SAVING, false);
+            showErrorDialog(getProject(), "Illegal action", message);
+            return false;
+        }
+        return true;
+    }
+
+    public SourceCodeContent loadSourceFromDatabase(@NotNull DBSchemaObject object, DBContentType contentType) throws SQLException {
         String sourceCode = DatabaseInterfaceInvoker.load(HIGH,
                 "Loading source code",
                 "Loading source code of " + object.getQualifiedNameWithType(),
                 object.getConnectionId(),
-                conn -> {
-                    ResultSet resultSet = null;
-                    try {
-                        DatabaseMetadataInterface metadata = object.getMetadataInterface();
-                        resultSet = loadSourceFromDatabase(
-                                object,
-                                contentType,
-                                metadata,
-                                conn);
-
-                        StringBuilder buffer = new StringBuilder();
-                        while (resultSet != null && resultSet.next()) {
-                            String codeLine = resultSet.getString("SOURCE_CODE");
-                            buffer.append(codeLine);
-                        }
-
-                        if (buffer.length() == 0 && !optionalContent)
-                            throw new SQLException("Source lookup returned empty");
-
-                        return Strings.removeCharacter(buffer.toString(), '\r');
-                    } finally {
-                        Resources.close(resultSet);
-                    }
-                });
+                conn -> loadSourceFromDatabase(object, contentType, conn));
 
         SourceCodeContent sourceCodeContent = new SourceCodeContent(sourceCode);
 
@@ -334,6 +319,33 @@ public class SourceCodeManager extends ProjectComponentBase implements Persisten
         return sourceCodeContent;
     }
 
+    @NotNull
+    private static String loadSourceFromDatabase(@NotNull DBSchemaObject object, DBContentType contentType, DBNConnection conn) throws SQLException {
+        boolean optionalContent = contentType == DBContentType.CODE_BODY;
+        ResultSet resultSet = null;
+        try {
+            DatabaseMetadataInterface metadata = object.getMetadataInterface();
+            resultSet = loadSourceFromDatabase(
+                    object,
+                    contentType,
+                    metadata,
+                    conn);
+
+            StringBuilder buffer = new StringBuilder();
+            while (resultSet != null && resultSet.next()) {
+                String codeLine = resultSet.getString("SOURCE_CODE");
+                buffer.append(codeLine);
+            }
+
+            if (buffer.length() == 0 && !optionalContent)
+                throw new SQLException("Source lookup returned empty");
+
+            return Strings.removeCharacter(buffer.toString(), '\r');
+        } finally {
+            Resources.close(resultSet);
+        }
+    }
+
     @Nullable
     private static ResultSet loadSourceFromDatabase(
             @NotNull DBSchemaObject object,
@@ -342,7 +354,7 @@ public class SourceCodeManager extends ProjectComponentBase implements Persisten
             @NotNull DBNConnection connection) throws SQLException {
 
         DBObjectType objectType = object.getObjectType();
-        String schemaName = object.getSchema().getName();
+        String schemaName = object.getSchemaName();
         String objectName = object.getName();
         short objectOverload = object.getOverload();
 
@@ -367,7 +379,7 @@ public class SourceCodeManager extends ProjectComponentBase implements Persisten
 
             case DATASET_TRIGGER:
                 DBDatasetTrigger trigger = (DBDatasetTrigger) object;
-                String datasetSchemaName = trigger.getDataset().getSchema().getName();
+                String datasetSchemaName = trigger.getDataset().getSchemaName();
                 String datasetName = trigger.getDataset().getName();
                 return metadata.loadDatasetTriggerSourceCode(
                         datasetSchemaName,
@@ -481,7 +493,7 @@ public class SourceCodeManager extends ProjectComponentBase implements Persisten
             String typeName = object.getTypeName();
             String subtypeName = contentType.getObjectTypeSubname();
             String objectName = object.getName();
-            String schemaName = object.getSchema().getName();
+            String schemaName = object.getSchemaName();
 
             if (psiElement == null || !Strings.equalsIgnoreCase(psiElement.getText(), typeName)) {
                 return false;

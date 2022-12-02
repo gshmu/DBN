@@ -22,7 +22,6 @@ public abstract class CancellableDatabaseCall<T> implements Callable<T> {
 
     private final long startTimestamp = System.currentTimeMillis();
     private final ThreadInfo invoker = ThreadMonitor.current();
-    private final ProgressIndicator progressIndicator = ProgressMonitor.getProgressIndicator();
 
     private final DBNConnection connection;
     private final int timeout;
@@ -82,7 +81,7 @@ public abstract class CancellableDatabaseCall<T> implements Callable<T> {
     public abstract void cancel() throws Exception;
 
     public boolean isCancelRequested() {
-        return cancelRequested || (progressIndicator != null && progressIndicator.isCanceled());
+        return cancelRequested || ProgressMonitor.isCancelled();
     }
 
 
@@ -102,9 +101,9 @@ public abstract class CancellableDatabaseCall<T> implements Callable<T> {
                         }
                         cancelCheckTimer.cancel();
                     } else {
-                        ProgressIndicator progressIndicator = CancellableDatabaseCall.this.progressIndicator;
-                        if (progressIndicator != null && timeout > 0) {
-                            String text = progressIndicator.getText();
+                        ProgressIndicator progress = ProgressMonitor.getProgressIndicator();
+                        if (progress != null && timeout > 0) {
+                            String text = progress.getText();
                             int index = text.indexOf(" (timing out in ");
                             if (index > -1) {
                                 text = text.substring(0, index);
@@ -118,7 +117,7 @@ public abstract class CancellableDatabaseCall<T> implements Callable<T> {
                                 text = text + " (timing out in " + TimeUnit.SECONDS.toMinutes(timingOutIn) + " minutes) ";
 
 
-                            progressIndicator.setText(text);
+                            progress.setText(text);
                         }
                     }
                 }

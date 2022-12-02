@@ -16,7 +16,6 @@ import com.dci.intellij.dbn.common.dispose.Disposer;
 import com.dci.intellij.dbn.common.event.ProjectEvents;
 import com.dci.intellij.dbn.common.filter.Filter;
 import com.dci.intellij.dbn.common.latent.Latent;
-import com.dci.intellij.dbn.common.load.ProgressMonitor;
 import com.dci.intellij.dbn.common.options.setting.BooleanSetting;
 import com.dci.intellij.dbn.common.thread.Background;
 import com.dci.intellij.dbn.common.thread.Dispatch;
@@ -397,11 +396,9 @@ public class DatabaseBrowserManager extends ProjectComponentBase implements Pers
                     List<DBObjectType> objectTypes = DBObjectType.fromCsv(objectTypesAttr);
 
                     for (DBObjectType objectType : objectTypes) {
-                        ProgressMonitor.checkCancelled();
                         DBObjectListContainer childObjects = schema.getChildObjects();
                         if (childObjects == null) continue;
 
-                        ProgressMonitor.checkCancelled();
                         childObjects.loadObjects(objectType);
                     }
                 });

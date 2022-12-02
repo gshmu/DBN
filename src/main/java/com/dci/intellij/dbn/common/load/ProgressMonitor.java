@@ -1,6 +1,5 @@
 package com.dci.intellij.dbn.common.load;
 
-import com.intellij.openapi.progress.ProcessCanceledException;
 import com.intellij.openapi.progress.ProgressIndicator;
 import com.intellij.openapi.progress.ProgressManager;
 import org.jetbrains.annotations.Nullable;
@@ -14,15 +13,12 @@ public final class ProgressMonitor {
     }
 
     private static ProgressIndicator progress() {
-        ProgressIndicator progressIndicator = getProgressIndicator();
-        return progressIndicator == null ? DevNullProgressIndicator.INSTANCE : progressIndicator;
+        ProgressIndicator progress = getProgressIndicator();
+        return progress == null ? DevNullProgressIndicator.INSTANCE : progress;
     }
 
     public static void checkCancelled() {
-        //ProgressManager.checkCanceled();
-        if (isCancelled()) {
-            throw new ProcessCanceledException();
-        }
+        ProgressManager.checkCanceled();
     }
 
     public static boolean isCancelled() {

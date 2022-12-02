@@ -82,7 +82,7 @@ public class ExportDataDialog extends DBNDialog<ExportDataForm> {
                             progress -> {
                                 DataExportManager exportManager = DataExportManager.getInstance(project);
                                 exportManager.setExportInstructions(exportInstructions);
-                                exportManager.exportSortableTableContent(
+                                exportManager.exportTableContent(
                                         table,
                                         exportInstructions,
                                         connection,

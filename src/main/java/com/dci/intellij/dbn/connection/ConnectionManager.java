@@ -10,7 +10,6 @@ import com.dci.intellij.dbn.common.database.DatabaseInfo;
 import com.dci.intellij.dbn.common.dispose.Disposer;
 import com.dci.intellij.dbn.common.environment.EnvironmentType;
 import com.dci.intellij.dbn.common.event.ProjectEvents;
-import com.dci.intellij.dbn.common.load.ProgressMonitor;
 import com.dci.intellij.dbn.common.message.MessageCallback;
 import com.dci.intellij.dbn.common.routine.Consumer;
 import com.dci.intellij.dbn.common.thread.Background;
@@ -128,7 +127,6 @@ public class ConnectionManager extends ProjectComponentBase implements Persisten
             DatabaseTransactionManager transactionManager = DatabaseTransactionManager.getInstance(project);
             List<DBNConnection> connections = connection.getConnections();
             for (DBNConnection conn : connections) {
-                ProgressMonitor.checkCancelled();
                 transactionManager.execute(connection, conn, actions, false, null);
             }
             connection.getObjectBundle().getObjectLists().refreshObjects();

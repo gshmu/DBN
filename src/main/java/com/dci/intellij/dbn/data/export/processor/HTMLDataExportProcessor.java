@@ -1,5 +1,6 @@
 package com.dci.intellij.dbn.data.export.processor;
 
+import com.dci.intellij.dbn.common.load.ProgressMonitor;
 import com.dci.intellij.dbn.common.locale.Formatter;
 import com.dci.intellij.dbn.common.util.Strings;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
@@ -120,7 +121,7 @@ public class HTMLDataExportProcessor extends DataExportProcessor{
             buffer.append("            <tr>\n");
 
             for (int columnIndex=0; columnIndex < model.getColumnCount(); columnIndex++){
-                checkCancelled();
+                ProgressMonitor.checkCancelled();
                 GenericDataType genericDataType = model.getGenericDataType(columnIndex);
                 Object object = model.getValue(rowIndex, columnIndex);
                 String value = formatValue(formatter, object);
