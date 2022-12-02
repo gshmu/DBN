@@ -150,16 +150,19 @@ public class DBConstraintImpl extends DBSchemaObjectImpl<DBConstraintMetadata> i
 
     @Override
     public short getColumnPosition(DBColumn column) {
-        DBObjectListContainer childObjects = getDataset().getChildObjects();
-        if (childObjects != null) {
-            DBObjectRelationList<DBConstraintColumnRelation> relations = childObjects.getRelations(CONSTRAINT_COLUMN);
-            if (relations != null) {
-                for (DBConstraintColumnRelation relation : relations.getObjectRelations()) {
-                    if (Objects.equals(relation.getConstraint(), this) &&
-                            Objects.equals(relation.getColumn(), column)) {
-                        return relation.getPosition();
-                    }
-                }
+        DBDataset dataset = getDataset();
+        if (dataset == null) return 0;
+
+        DBObjectListContainer childObjects = dataset.getChildObjects();
+        if (childObjects == null) return 0;
+
+        DBObjectRelationList<DBConstraintColumnRelation> relations = childObjects.getRelations(CONSTRAINT_COLUMN);
+        if (relations == null) return 0;
+
+        for (DBConstraintColumnRelation relation : relations.getObjectRelations()) {
+            if (Objects.equals(relation.getConstraint(), this) &&
+                    Objects.equals(relation.getColumn(), column)) {
+                return relation.getPosition();
             }
         }
         return 0;
@@ -169,18 +172,18 @@ public class DBConstraintImpl extends DBSchemaObjectImpl<DBConstraintMetadata> i
     @Nullable
     public DBColumn getColumnForPosition(short position) {
         DBDataset dataset = getDataset();
-        if (dataset != null) {
-            DBObjectListContainer childObjects = dataset.getChildObjects();
-            if (childObjects != null) {
-                DBObjectRelationList<DBConstraintColumnRelation> relations = childObjects.getRelations(CONSTRAINT_COLUMN);
-                if (relations != null) {
-                    for (DBConstraintColumnRelation relation : relations.getObjectRelations()) {
-                        DBConstraint constraint = relation.getConstraint();
-                        if (Objects.equals(constraint, this) && relation.getPosition() == position)
-                            return relation.getColumn();
-                    }
-                }
-            }
+        if (dataset == null) return null;
+
+        DBObjectListContainer childObjects = dataset.getChildObjects();
+        if (childObjects == null) return null;
+
+        DBObjectRelationList<DBConstraintColumnRelation> relations = childObjects.getRelations(CONSTRAINT_COLUMN);
+        if (relations == null) return null;
+
+        for (DBConstraintColumnRelation relation : relations.getObjectRelations()) {
+            DBConstraint constraint = relation.getConstraint();
+            if (Objects.equals(constraint, this) && relation.getPosition() == position)
+                return relation.getColumn();
         }
         return null;
     }

@@ -3,7 +3,6 @@ package com.dci.intellij.dbn.common.thread;
 import com.dci.intellij.dbn.common.routine.Consumer;
 import com.dci.intellij.dbn.common.routine.ThrowableCallable;
 import com.dci.intellij.dbn.common.util.Commons;
-import com.dci.intellij.dbn.common.util.Guarded;
 import com.intellij.openapi.Disposable;
 import com.intellij.openapi.application.Application;
 import com.intellij.openapi.application.ApplicationManager;
@@ -14,6 +13,7 @@ import org.jetbrains.annotations.NotNull;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Supplier;
 
+import static com.dci.intellij.dbn.common.dispose.Failsafe.guarded;
 import static com.dci.intellij.dbn.common.dispose.Failsafe.nd;
 
 public final class Dispatch {
@@ -25,7 +25,7 @@ public final class Dispatch {
 
     public static void run(boolean conditional, Runnable runnable) {
         if (conditional && ThreadMonitor.isDispatchThread()) {
-            Guarded.run(runnable);
+            guarded(runnable);
         } else {
             run(null, runnable);
         }
@@ -34,7 +34,7 @@ public final class Dispatch {
     public static void run(ModalityState modalityState, Runnable runnable) {
         Application application = ApplicationManager.getApplication();
         modalityState = Commons.nvl(modalityState, application.getDefaultModalityState());
-        application.invokeLater(() -> Guarded.run(runnable), modalityState/*, ModalityState.NON_MODAL*/);
+        application.invokeLater(() -> guarded(runnable), modalityState/*, ModalityState.NON_MODAL*/);
     }
 
     public static <T, E extends Throwable> T call(boolean conditional, ThrowableCallable<T, E> callable) throws E{

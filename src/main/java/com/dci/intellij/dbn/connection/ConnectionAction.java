@@ -5,7 +5,6 @@ import com.dci.intellij.dbn.common.load.ProgressMonitor;
 import com.dci.intellij.dbn.common.routine.Consumer;
 import com.dci.intellij.dbn.common.thread.Dispatch;
 import com.dci.intellij.dbn.common.util.Commons;
-import com.dci.intellij.dbn.common.util.Guarded;
 import com.dci.intellij.dbn.connection.context.DatabaseContext;
 import com.dci.intellij.dbn.connection.context.DatabaseContextBase;
 import com.intellij.openapi.project.Project;
@@ -13,6 +12,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.function.Function;
 
+import static com.dci.intellij.dbn.common.dispose.Failsafe.guarded;
 import static com.dci.intellij.dbn.common.dispose.Failsafe.nd;
 
 public abstract class ConnectionAction implements DatabaseContextBase, Runnable{
@@ -51,7 +51,7 @@ public abstract class ConnectionAction implements DatabaseContextBase, Runnable{
             ConnectionHandler connection = getConnection();
             if (connection.isVirtual() || connection.canConnect()) {
                 if (interactive || connection.isValid()) {
-                    Guarded.run(() -> run());
+                    guarded(() -> run());
                 } else {
                     String connectionName = connection.getName();
                     Throwable connectionException = connection.getConnectionStatus().getConnectionException();
@@ -81,7 +81,7 @@ public abstract class ConnectionAction implements DatabaseContextBase, Runnable{
                         instructions.setAllowAutoInit(true);
                         instructions.setAllowAutoConnect(true);
                         if (connection.isAuthenticationProvided()) {
-                            Guarded.run(() -> run());
+                            guarded(() -> run());
                         } else {
                             promptAuthenticationDialog();
                         }
@@ -101,7 +101,7 @@ public abstract class ConnectionAction implements DatabaseContextBase, Runnable{
                 temporaryAuthenticationInfo,
                 authenticationInfo -> {
                     if (authenticationInfo != null) {
-                        Guarded.run(() -> run());
+                        guarded(() -> run());
                     } else {
                         cancel();
                     }
@@ -116,7 +116,7 @@ public abstract class ConnectionAction implements DatabaseContextBase, Runnable{
                 option -> {
                     if (option == 0) {
                         connection.getInstructions().setAllowAutoConnect(true);
-                        Guarded.run(() -> run());
+                        guarded(() -> run());
                     } else {
                         cancel();
                     }
@@ -136,7 +136,7 @@ public abstract class ConnectionAction implements DatabaseContextBase, Runnable{
         new ConnectionAction(description, interactive, databaseContext) {
             @Override
             public void run() {
-                Guarded.run(() -> action.accept(this));
+                guarded(() -> action.accept(this));
             }
         }.start();
     }
@@ -153,7 +153,7 @@ public abstract class ConnectionAction implements DatabaseContextBase, Runnable{
             @Override
             public void run() {
                 if (canExecute == null || canExecute.apply(this)) {
-                    Guarded.run(() -> action.accept(this));
+                    guarded(() -> action.accept(this));
                 }
             }
 

@@ -15,7 +15,6 @@ import com.dci.intellij.dbn.common.ui.tab.TabbedPane;
 import com.dci.intellij.dbn.common.ui.util.Mouse;
 import com.dci.intellij.dbn.common.ui.util.UserInterface;
 import com.dci.intellij.dbn.common.util.Documents;
-import com.dci.intellij.dbn.common.util.Guarded;
 import com.dci.intellij.dbn.common.util.Strings;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.ConnectionId;
@@ -62,6 +61,7 @@ import java.util.List;
 import java.util.Objects;
 
 import static com.dci.intellij.dbn.common.dispose.Checks.isValid;
+import static com.dci.intellij.dbn.common.dispose.Failsafe.guarded;
 import static com.dci.intellij.dbn.common.navigation.NavigationInstruction.*;
 
 public class ExecutionConsoleForm extends DBNFormBase {
@@ -115,7 +115,7 @@ public class ExecutionConsoleForm extends DBNFormBase {
 
             @Override
             public void transactionCompleted(@NotNull Document document, @NotNull PsiFile file) {
-                Guarded.run(() -> {
+                guarded(() -> {
                     TabbedPane resultTabs = getResultTabs();
                     for (TabInfo tabInfo : resultTabs.getTabs()) {
                         ExecutionResult<?> executionResult = getExecutionResult(tabInfo);

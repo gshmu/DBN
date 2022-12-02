@@ -3,7 +3,6 @@ package com.dci.intellij.dbn.editor.session.ui.table;
 import com.dci.intellij.dbn.common.thread.Dispatch;
 import com.dci.intellij.dbn.common.ui.component.DBNComponent;
 import com.dci.intellij.dbn.common.util.Actions;
-import com.dci.intellij.dbn.common.util.Guarded;
 import com.dci.intellij.dbn.data.grid.ui.table.basic.BasicTableCellRenderer;
 import com.dci.intellij.dbn.data.grid.ui.table.basic.BasicTableGutter;
 import com.dci.intellij.dbn.data.grid.ui.table.basic.BasicTableSelectionRestorer;
@@ -30,6 +29,8 @@ import javax.swing.table.TableCellRenderer;
 import java.awt.*;
 import java.awt.event.MouseEvent;
 import java.util.EventObject;
+
+import static com.dci.intellij.dbn.common.dispose.Failsafe.guarded;
 
 public class SessionBrowserTable extends ResultSetTable<SessionBrowserModel> {
     private final WeakRef<SessionBrowser> sessionBrowser;
@@ -113,7 +114,7 @@ public class SessionBrowserTable extends ResultSetTable<SessionBrowserModel> {
     private final ListSelectionListener listSelectionListener = e -> {
         if (e.getValueIsAdjusting()) return;
 
-        Guarded.run(() -> {
+        guarded(() -> {
             snapshotSelection();
             SessionBrowser sessionBrowser = getSessionBrowser();
             sessionBrowser.updateDetails();

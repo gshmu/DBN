@@ -21,7 +21,6 @@ import com.dci.intellij.dbn.common.search.SearchAdapter;
 import com.dci.intellij.dbn.common.string.StringDeBuilder;
 import com.dci.intellij.dbn.common.ui.tree.TreeEventType;
 import com.dci.intellij.dbn.common.util.Commons;
-import com.dci.intellij.dbn.common.util.Guarded;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.DatabaseEntity;
 import com.dci.intellij.dbn.connection.config.ConnectionFilterSettings;
@@ -52,6 +51,7 @@ import java.util.function.Consumer;
 
 import static com.dci.intellij.dbn.common.content.DynamicContentProperty.*;
 import static com.dci.intellij.dbn.common.dispose.Checks.isValid;
+import static com.dci.intellij.dbn.common.dispose.Failsafe.guarded;
 import static com.dci.intellij.dbn.common.list.FilteredList.unwrap;
 import static com.dci.intellij.dbn.common.search.Search.binarySearch;
 import static com.dci.intellij.dbn.common.search.Search.comboSearch;
@@ -305,7 +305,7 @@ public class DBObjectListImpl<T extends DBObject> extends DynamicContentBase<T> 
 
     @Override
     public void notifyChangeListeners() {
-        Guarded.run(() -> {
+        guarded(() -> {
             Project project = getProject();
             BrowserTreeNode treeParent = getParent();
             if (!isInternal() && isTouched() && isValid(project) && treeParent.isTreeStructureLoaded()) {
@@ -385,7 +385,7 @@ public class DBObjectListImpl<T extends DBObject> extends DynamicContentBase<T> 
 
     @Override
     public List<? extends BrowserTreeNode> getChildren() {
-        return Guarded.call(elements, () -> {
+        return guarded(elements, () -> {
             boolean wasUntouched = !isTouched();
             getElements();
             if (wasUntouched && isLoaded()) {

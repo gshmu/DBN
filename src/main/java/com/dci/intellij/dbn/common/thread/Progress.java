@@ -1,7 +1,6 @@
 package com.dci.intellij.dbn.common.thread;
 
 import com.dci.intellij.dbn.common.dispose.AlreadyDisposedException;
-import com.dci.intellij.dbn.common.util.Guarded;
 import com.dci.intellij.dbn.common.util.Titles;
 import com.dci.intellij.dbn.connection.context.DatabaseContext;
 import com.intellij.openapi.progress.ProgressIndicator;
@@ -13,6 +12,7 @@ import org.jetbrains.annotations.NotNull;
 
 import static com.dci.intellij.dbn.common.dispose.Checks.allValid;
 import static com.dci.intellij.dbn.common.dispose.Checks.isNotValid;
+import static com.dci.intellij.dbn.common.dispose.Failsafe.guarded;
 import static com.dci.intellij.dbn.common.thread.ThreadProperty.MODAL;
 import static com.dci.intellij.dbn.common.thread.ThreadProperty.PROGRESS;
 import static com.intellij.openapi.progress.PerformInBackgroundOption.ALWAYS_BACKGROUND;
@@ -30,7 +30,7 @@ public final class Progress {
         Backgroundable task = new Backgroundable(project, title, cancellable, ALWAYS_BACKGROUND) {
             @Override
             public void run(@NotNull ProgressIndicator indicator) {
-                ThreadMonitor.surround(invoker, PROGRESS, () -> Guarded.run(() -> {
+                ThreadMonitor.surround(invoker, PROGRESS, () -> guarded(() -> {
                     indicator.setText(text);
                     runnable.run(indicator);
                 }));
@@ -48,7 +48,7 @@ public final class Progress {
         Backgroundable task = new Backgroundable(project, title, cancellable, DEAF) {
             @Override
             public void run(@NotNull ProgressIndicator indicator) {
-                ThreadMonitor.surround(invoker, PROGRESS, () -> Guarded.run(() -> {
+                ThreadMonitor.surround(invoker, PROGRESS, () -> guarded(() -> {
                     indicator.setText(text);
                     runnable.run(indicator);
                 }));
@@ -71,7 +71,7 @@ public final class Progress {
         Task.Modal task = new Task.Modal(project, title, cancellable) {
             @Override
             public void run(@NotNull ProgressIndicator indicator) {
-                ThreadMonitor.surround(invoker, MODAL, () -> Guarded.run(() -> {
+                ThreadMonitor.surround(invoker, MODAL, () -> guarded(() -> {
                     indicator.setText(text);
                     runnable.run(indicator);
                 }));

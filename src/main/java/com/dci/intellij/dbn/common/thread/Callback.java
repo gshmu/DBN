@@ -2,8 +2,9 @@ package com.dci.intellij.dbn.common.thread;
 
 import com.dci.intellij.dbn.common.routine.Consumer;
 import com.dci.intellij.dbn.common.routine.ThrowableRunnable;
-import com.dci.intellij.dbn.common.util.Guarded;
 import com.intellij.openapi.progress.ProcessCanceledException;
+
+import static com.dci.intellij.dbn.common.dispose.Failsafe.guarded;
 
 public class Callback{
     private Runnable before;
@@ -37,14 +38,14 @@ public class Callback{
 
     public void surround(ThrowableRunnable<Exception> action) {
         try {
-            Guarded.run(before);
+            guarded(before);
             action.run();
-            Guarded.run(success);
+            guarded(success);
         } catch (ProcessCanceledException ignore) {
         } catch (Exception e) {
-            if (failure != null) Guarded.run(() -> failure.accept(e));
+            if (failure != null) guarded(() -> failure.accept(e));
         } finally {
-            Guarded.run(after);
+            guarded(after);
         }
     }
 

@@ -3,7 +3,6 @@ package com.dci.intellij.dbn.editor;
 import com.dci.intellij.dbn.common.environment.EnvironmentType;
 import com.dci.intellij.dbn.common.environment.options.EnvironmentSettings;
 import com.dci.intellij.dbn.common.environment.options.EnvironmentVisibilitySettings;
-import com.dci.intellij.dbn.common.util.Guarded;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.mapping.FileConnectionContextManager;
 import com.dci.intellij.dbn.options.general.GeneralProjectSettings;
@@ -21,6 +20,7 @@ import org.jetbrains.annotations.Nullable;
 import java.awt.*;
 
 import static com.dci.intellij.dbn.common.dispose.Checks.isNotValid;
+import static com.dci.intellij.dbn.common.dispose.Failsafe.guarded;
 import static com.dci.intellij.dbn.common.util.Files.isDbLanguageFile;
 
 public class DBEditorTabColorProvider implements EditorTabColorProvider, DumbAware {
@@ -31,7 +31,7 @@ public class DBEditorTabColorProvider implements EditorTabColorProvider, DumbAwa
         if (isNotValid(file)) return null;
         if (!isDbLanguageFile(file)) return null;
 
-        return Guarded.call(null, () -> {
+        return guarded(null, () -> {
             ConnectionHandler connection = getConnection(file, project);
             if (isNotValid(connection)) return null;
 
