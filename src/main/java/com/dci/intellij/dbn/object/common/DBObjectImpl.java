@@ -63,10 +63,7 @@ import org.jetbrains.annotations.Nullable;
 import javax.swing.*;
 import java.sql.SQLException;
 import java.sql.Types;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 
 import static com.dci.intellij.dbn.browser.DatabaseBrowserUtils.treeVisibilityChanged;
 import static com.dci.intellij.dbn.common.dispose.Failsafe.nd;
@@ -427,22 +424,24 @@ public abstract class DBObjectImpl<M extends DBObjectMetadata> extends BrowserTr
 
     @Override
     public void collectChildObjects(DBObjectType objectType, Consumer<? super DBObject> consumer) {
-        if (objectType.getFamilyTypes().size() > 1) {
-            for (DBObjectType childObjectType : objectType.getFamilyTypes()) {
-                CancellableConsumer.checkCancelled(consumer);
-                if (objectType != childObjectType) {
-                    if (getObjectType().isParentOf(childObjectType)) {
-                        collectChildObjects(childObjectType, consumer);
-                    }
+        if (childObjects == null) return;
 
+        Set<DBObjectType> familyTypes = objectType.getFamilyTypes();
+        if (familyTypes.size() > 1) {
+            for (DBObjectType familyType : familyTypes) {
+                CancellableConsumer.checkCancelled(consumer);
+                if (objectType != familyType) {
+                    if (getObjectType().isParentOf(familyType)) {
+                        collectChildObjects(familyType, consumer);
+                    }
                 } else {
-                    DBObjectList<?> objectList = childObjects == null ? null : childObjects.getObjectList(objectType);
+                    DBObjectList<?> objectList = childObjects.getObjectList(objectType);
                     if (objectList != null) {
                         objectList.collectObjects(consumer);
                     }
                 }
             }
-        } else if (childObjects != null) {
+        } else {
             if (objectType == DBObjectType.ANY) {
                 childObjects.visit(o -> o.collectObjects(consumer), false);
             } else {
