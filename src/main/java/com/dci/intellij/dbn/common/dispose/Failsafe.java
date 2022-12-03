@@ -37,7 +37,7 @@ public class Failsafe {
     public static <R> R guarded(R defaultValue, @Nullable Callable<R> callable){
         try {
             return callable == null ? defaultValue : callable.call();
-        } catch (ProcessCanceledException | IllegalStateException /*| UnsupportedOperationException*/ | AbstractMethodError ignore){
+        } catch (ProcessCanceledException | IllegalStateException | AbstractMethodError ignore /*| UnsupportedOperationException*/){
             return defaultValue;
         } catch (Exception e) {
             // DBNE-4876 (????!!)
@@ -53,7 +53,7 @@ public class Failsafe {
     public static void guarded(@Nullable Runnable runnable){
         try {
             if (runnable != null) runnable.run();
-        } catch (ProcessCanceledException | IllegalStateException /*| UnsupportedOperationException*/ | AbstractMethodError ignore){
+        } catch (ProcessCanceledException | IllegalStateException | AbstractMethodError ignore /*| UnsupportedOperationException*/){
         } catch (Exception e) {
             // DBNE-4876 (????!!)
             if (e != AlreadyDisposedException.INSTANCE) {
