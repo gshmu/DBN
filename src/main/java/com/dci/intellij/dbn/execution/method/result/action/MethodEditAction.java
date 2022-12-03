@@ -1,8 +1,8 @@
 package com.dci.intellij.dbn.execution.method.result.action;
 
 import com.dci.intellij.dbn.common.Icons;
+import com.dci.intellij.dbn.editor.DatabaseFileEditorManager;
 import com.dci.intellij.dbn.execution.method.result.MethodExecutionResult;
-import com.dci.intellij.dbn.vfs.DatabaseFileSystem;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.project.Project;
 import org.jetbrains.annotations.NotNull;
@@ -18,7 +18,7 @@ public class MethodEditAction extends AbstractMethodExecutionResultAction {
             @NotNull Project project,
             @NotNull MethodExecutionResult executionResult) {
 
-        DatabaseFileSystem databaseFileSystem = DatabaseFileSystem.getInstance();
-        databaseFileSystem.connectAndOpenEditor(executionResult.getMethod(), null, true, true);
+        DatabaseFileEditorManager editorManager = DatabaseFileEditorManager.getInstance(project);
+        editorManager.connectAndOpenEditor(executionResult.getMethod(), null, true, true);
     }
 }

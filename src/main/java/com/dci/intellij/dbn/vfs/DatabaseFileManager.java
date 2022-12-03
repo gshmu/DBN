@@ -16,6 +16,7 @@ import com.dci.intellij.dbn.connection.ConnectionId;
 import com.dci.intellij.dbn.connection.ConnectionManager;
 import com.dci.intellij.dbn.connection.config.ConnectionConfigListener;
 import com.dci.intellij.dbn.connection.config.ConnectionDetailSettings;
+import com.dci.intellij.dbn.editor.DatabaseFileEditorManager;
 import com.dci.intellij.dbn.editor.code.SourceCodeManager;
 import com.dci.intellij.dbn.editor.code.diff.SourceCodeDiffManager;
 import com.dci.intellij.dbn.editor.code.options.CodeEditorConfirmationSettings;
@@ -269,7 +270,7 @@ public class DatabaseFileManager extends ProjectComponentBase implements Persist
                         "Opening database editors for connection " + connection.getName(),
                         progress -> {
                             progress.setIndeterminate(true);
-                            DatabaseFileSystem databaseFileSystem = DatabaseFileSystem.getInstance();
+                            DatabaseFileEditorManager editorManager = DatabaseFileEditorManager.getInstance(project);
 
                             for (DBObjectRef<DBSchemaObject> objectRef : objectRefs) {
                                 if (progress.isCanceled()) continue;
@@ -280,7 +281,7 @@ public class DatabaseFileManager extends ProjectComponentBase implements Persist
 
                                 progress.setText2(connection.getName() + " - " + objectRef.getQualifiedNameWithType());
                                 object.initChildren();
-                                databaseFileSystem.openEditor(object, null, false, false);
+                                editorManager.openEditor(object, null, false, false);
                             }
                         }));
     }

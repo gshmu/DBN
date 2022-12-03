@@ -2,13 +2,13 @@ package com.dci.intellij.dbn.navigation.psi;
 
 import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.connection.DatabaseEntity;
+import com.dci.intellij.dbn.editor.DatabaseFileEditorManager;
 import com.dci.intellij.dbn.language.common.psi.EmptySearchScope;
 import com.dci.intellij.dbn.object.common.DBObject;
 import com.dci.intellij.dbn.object.common.list.DBObjectList;
 import com.dci.intellij.dbn.object.common.property.DBObjectProperty;
 import com.dci.intellij.dbn.object.lookup.DBObjectRef;
 import com.dci.intellij.dbn.vfs.DBVirtualFile;
-import com.dci.intellij.dbn.vfs.DatabaseFileSystem;
 import com.dci.intellij.dbn.vfs.DatabaseFileViewProvider;
 import com.intellij.lang.FileASTNode;
 import com.intellij.lang.Language;
@@ -100,8 +100,8 @@ public class DBObjectPsiFile extends UserDataHolderBase implements PsiFile, Disp
     public void navigate(boolean requestFocus) {
         DBObject object = getObject();
         if (object.is(DBObjectProperty.EDITABLE)) {
-            DatabaseFileSystem databaseFileSystem = DatabaseFileSystem.getInstance();
-            databaseFileSystem.connectAndOpenEditor(object, null, false, requestFocus);
+            DatabaseFileEditorManager editorManager = DatabaseFileEditorManager.getInstance(getProject());
+            editorManager.connectAndOpenEditor(object, null, false, requestFocus);
         } else {
             object.navigate(requestFocus);
         }

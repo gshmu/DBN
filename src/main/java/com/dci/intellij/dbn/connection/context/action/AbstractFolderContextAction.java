@@ -11,12 +11,12 @@ import org.jetbrains.annotations.Nullable;
 public abstract class AbstractFolderContextAction extends DumbAwareProjectAction {
 
     protected static FileConnectionContext getFileContext(@Nullable VirtualFile file, @NotNull Project project) {
-        if (file != null && file.isDirectory()) {
-            FileConnectionContextManager contextManager = getContextManager(project);
-            FileConnectionContext mapping = contextManager.getMapping(file);
-            if (mapping != null && mapping.isForFile(file)) {
-                return mapping;
-            }
+        if (file == null || !file.isDirectory()) return null;
+
+        FileConnectionContextManager contextManager = getContextManager(project);
+        FileConnectionContext mapping = contextManager.getMapping(file);
+        if (mapping != null && mapping.isForFile(file)) {
+            return mapping;
         }
         return null;
     }

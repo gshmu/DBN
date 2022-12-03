@@ -19,6 +19,7 @@ import com.dci.intellij.dbn.connection.ConnectionBundle;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.ConnectionManager;
 import com.dci.intellij.dbn.connection.action.ConnectionActionGroup;
+import com.dci.intellij.dbn.editor.DatabaseFileEditorManager;
 import com.dci.intellij.dbn.object.DBConsole;
 import com.dci.intellij.dbn.object.action.ObjectActionGroup;
 import com.dci.intellij.dbn.object.common.DBObject;
@@ -27,7 +28,6 @@ import com.dci.intellij.dbn.object.common.DBSchemaObject;
 import com.dci.intellij.dbn.object.common.list.DBObjectList;
 import com.dci.intellij.dbn.object.common.list.action.ObjectListActionGroup;
 import com.dci.intellij.dbn.object.common.property.DBObjectProperty;
-import com.dci.intellij.dbn.vfs.DatabaseFileSystem;
 import com.intellij.openapi.actionSystem.ActionGroup;
 import com.intellij.openapi.actionSystem.ActionPopupMenu;
 import com.intellij.openapi.fileEditor.FileEditorManager;
@@ -240,7 +240,7 @@ public final class DatabaseBrowserTree extends DBNTree {
 
         if (lastPathEntity instanceof DBObject) {
             DBObject object = (DBObject) lastPathEntity;
-            DatabaseFileSystem databaseFileSystem = DatabaseFileSystem.getInstance();
+            DatabaseFileEditorManager editorManager = DatabaseFileEditorManager.getInstance(getProject());
             Project project = ensureProject();
             if (object instanceof DBConsole) {
                 DBConsole console = (DBConsole) object;
@@ -249,11 +249,11 @@ public final class DatabaseBrowserTree extends DBNTree {
                 event.consume();
             } else if (object.is(DBObjectProperty.EDITABLE)) {
                 DBSchemaObject schemaObject = (DBSchemaObject) object;
-                databaseFileSystem.connectAndOpenEditor(schemaObject, null, false, deliberate);
+                editorManager.connectAndOpenEditor(schemaObject, null, false, deliberate);
                 event.consume();
 
             } else if (object.is(DBObjectProperty.NAVIGABLE)) {
-                databaseFileSystem.connectAndOpenEditor(object, null, false, deliberate);
+                editorManager.connectAndOpenEditor(object, null, false, deliberate);
                 event.consume();
 
             } else if (deliberate) {
