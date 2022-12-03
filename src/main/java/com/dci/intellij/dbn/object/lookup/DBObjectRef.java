@@ -444,7 +444,7 @@ public class DBObjectRef<T extends DBObject> implements Comparable<DBObjectRef<?
 
     public boolean isLoaded() {
         DBObjectRef<?> parent = getParentRef();
-        return (parent == null || parent.isLoaded()) && reference != null;
+        return (parent == null || parent.isLoaded()) && reference != null && reference.get() != null;
     }
 
     @Override

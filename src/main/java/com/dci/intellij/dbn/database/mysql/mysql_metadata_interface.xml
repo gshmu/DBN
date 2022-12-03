@@ -650,6 +650,14 @@
                 NAME = {1} and
                 TYPE = {2}
         </statement>
+        <statement>
+            select TIMESTAMP AS MODIFIED
+            from mysql.procs_priv
+            where
+                DB = {0} and
+                ROUTINE_NAME = {1} and
+                ROUTINE_TYPE = {2}
+        </statement>
     </statement-execution-processor>
 
     <statement-execution-processor id="load-distinct-values" is-query="true">

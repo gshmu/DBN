@@ -20,6 +20,8 @@ import com.intellij.openapi.fileTypes.FileType;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Key;
 import com.intellij.openapi.vfs.VirtualFile;
+import lombok.Getter;
+import lombok.Setter;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -32,6 +34,8 @@ import static com.dci.intellij.dbn.common.dispose.Failsafe.guarded;
 import static com.dci.intellij.dbn.vfs.VirtualFileStatus.MODIFIED;
 import static com.dci.intellij.dbn.vfs.VirtualFileStatus.SAVING;
 
+@Getter
+@Setter
 public class DBEditableObjectVirtualFile extends DBObjectVirtualFile<DBSchemaObject>/* implements VirtualFileWindow*/ {
     private static final List<DBContentVirtualFile> EMPTY_CONTENT_FILES = Collections.emptyList();
     private final Latent<List<DBContentVirtualFile>> contentFiles = Latent.basic(() -> computeContentFiles());
@@ -45,6 +49,17 @@ public class DBEditableObjectVirtualFile extends DBObjectVirtualFile<DBSchemaObj
         }
     }
 
+    public boolean isEditorReady() {
+        if (!getObjectRef().isLoaded()) return false;
+        return getObject().isEditorReady();
+    }
+
+    public void makeEditorReady() {
+        DBSchemaObject object = getObject();
+        object.makeEditorReady();
+    }
+
+
     @Override
     public DatabaseSession getSession() {
         if (databaseSessionId != null) {
@@ -52,14 +67,6 @@ public class DBEditableObjectVirtualFile extends DBObjectVirtualFile<DBSchemaObj
             return sessionBundle.getSession(databaseSessionId);
         }
         return super.getSession();
-    }
-
-    public SessionId getDatabaseSessionId() {
-        return databaseSessionId;
-    }
-
-    public void setDatabaseSessionId(SessionId databaseSessionId) {
-        this.databaseSessionId = databaseSessionId;
     }
 
     public List<DBContentVirtualFile> getContentFiles() {
@@ -119,14 +126,6 @@ public class DBEditableObjectVirtualFile extends DBObjectVirtualFile<DBSchemaObj
             }
         }
         return null;
-    }
-
-    public EditorProviderId getSelectedEditorProviderId() {
-        return selectedEditorProviderId;
-    }
-
-    public void setSelectedEditorProviderId(EditorProviderId selectedEditorProviderId) {
-        this.selectedEditorProviderId = selectedEditorProviderId;
     }
 
     /*********************************************************
