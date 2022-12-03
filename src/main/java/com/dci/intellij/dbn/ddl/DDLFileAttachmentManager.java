@@ -21,6 +21,7 @@ import com.dci.intellij.dbn.ddl.ui.AttachDDLFileDialog;
 import com.dci.intellij.dbn.ddl.ui.DDLFileNameListCellRenderer;
 import com.dci.intellij.dbn.ddl.ui.DetachDDLFileDialog;
 import com.dci.intellij.dbn.editor.DBContentType;
+import com.dci.intellij.dbn.editor.DatabaseFileEditorManager;
 import com.dci.intellij.dbn.editor.code.SourceCodeEditor;
 import com.dci.intellij.dbn.editor.code.SourceCodeManagerListener;
 import com.dci.intellij.dbn.object.common.DBSchemaObject;
@@ -307,7 +308,9 @@ public class DDLFileAttachmentManager extends ProjectComponentBase implements Pe
                         attachDDLFile(objectRef, virtualFile);
                         DBEditableObjectVirtualFile editableObjectFile = object.getEditableVirtualFile();
                         updateDDLFiles(editableObjectFile);
-                        DatabaseFileSystem.getInstance().reopenEditor(object);
+
+                        DatabaseFileEditorManager editorManager = DatabaseFileEditorManager.getInstance(project);
+                        editorManager.reopenEditor(object);
                     } catch (IOException e) {
                         Messages.showErrorDialog(project, "Could not create file " + parentDirectory + File.separator + fileName + ".", e);
                     }
@@ -361,39 +364,40 @@ public class DDLFileAttachmentManager extends ProjectComponentBase implements Pe
 
     public void attachDDLFiles(DBObjectRef<DBSchemaObject> objectRef) {
         DDLFileNameProvider ddlFileNameProvider = getDDLFileNameProvider(objectRef);
-        if (ddlFileNameProvider != null) {
-            List<VirtualFile> virtualFiles = lookupDetachedDDLFiles(objectRef);
-            if (virtualFiles.size() == 0) {
-                List<String> fileUrls = getAttachedFileUrls(objectRef);
+        if (ddlFileNameProvider == null) return;
 
-                StringBuilder message = new StringBuilder();
-                message.append(fileUrls.size() == 0 ?
-                        "No DDL Files were found in " :
-                        "No additional DDL Files were found in ");
-                message.append("project scope.");
+        List<VirtualFile> virtualFiles = lookupDetachedDDLFiles(objectRef);
+        if (virtualFiles.size() == 0) {
+            List<String> fileUrls = getAttachedFileUrls(objectRef);
 
-                if (fileUrls.size() > 0) {
-                    message.append("\n\nFollowing files are already attached to ");
-                    message.append(objectRef.getQualifiedNameWithType());
-                    message.append(':');
-                    for (String fileUrl : fileUrls) {
-                        message.append('\n');
-                        message.append(VirtualFiles.ensureFilePath(fileUrl));
-                    }
+            StringBuilder message = new StringBuilder();
+            message.append(fileUrls.size() == 0 ?
+                    "No DDL Files were found in " :
+                    "No additional DDL Files were found in ");
+            message.append("project scope.");
+
+            if (fileUrls.size() > 0) {
+                message.append("\n\nFollowing files are already attached to ");
+                message.append(objectRef.getQualifiedNameWithType());
+                message.append(':');
+                for (String fileUrl : fileUrls) {
+                    message.append('\n');
+                    message.append(VirtualFiles.ensureFilePath(fileUrl));
                 }
+            }
 
-                String[] options = {"Create New...", "Cancel"};
-                Messages.showInfoDialog(getProject(),
-                        "No DDL files found",
-                        message.toString(), options, 0,
-                        option -> when(option == 0, () -> createDDLFile(objectRef)));
-            } else {
-                DBSchemaObject object = objectRef.ensure();
-                int exitCode = showFileAttachDialog(object, virtualFiles, false);
-                if (exitCode != DialogWrapper.CANCEL_EXIT_CODE) {
-                    DatabaseFileSystem databaseFileSystem = DatabaseFileSystem.getInstance();
-                    databaseFileSystem.reopenEditor(object);
-                }
+            String[] options = {"Create New...", "Cancel"};
+            Messages.showInfoDialog(getProject(),
+                    "No DDL files found",
+                    message.toString(), options, 0,
+                    option -> when(option == 0, () -> createDDLFile(objectRef)));
+        } else {
+            DBSchemaObject object = objectRef.ensure();
+            int exitCode = showFileAttachDialog(object, virtualFiles, false);
+            if (exitCode != DialogWrapper.CANCEL_EXIT_CODE) {
+                Project project = object.getProject();
+                DatabaseFileEditorManager editorManager = DatabaseFileEditorManager.getInstance(project);
+                editorManager.reopenEditor(object);
             }
         }
     }
@@ -416,8 +420,9 @@ public class DDLFileAttachmentManager extends ProjectComponentBase implements Pe
         DBSchemaObject object = objectRef.ensure();
         int exitCode = showFileDetachDialog(object, virtualFiles);
         if (exitCode != DialogWrapper.CANCEL_EXIT_CODE) {
-            DatabaseFileSystem databaseFileSystem = DatabaseFileSystem.getInstance();
-            databaseFileSystem.reopenEditor(object);
+            Project project = object.getProject();
+            DatabaseFileEditorManager editorManager = DatabaseFileEditorManager.getInstance(project);
+            editorManager.reopenEditor(object);
         }
     }
 
@@ -483,10 +488,11 @@ public class DDLFileAttachmentManager extends ProjectComponentBase implements Pe
     private void processFileDeletedEvent(@NotNull VirtualFile file) {
         DBObjectRef<DBSchemaObject> objectRef = mappings.get(file.getUrl());
         DBSchemaObject object = DBObjectRef.get(objectRef);
-        if (object != null) {
-            detachDDLFile(file);
-            DatabaseFileSystem.getInstance().reopenEditor(object);
-        }
+        if (object == null) return;
+
+        detachDDLFile(file);
+        DatabaseFileEditorManager editorManager = DatabaseFileEditorManager.getInstance(getProject());
+        editorManager.reopenEditor(object);
     }
 
     /*********************************************

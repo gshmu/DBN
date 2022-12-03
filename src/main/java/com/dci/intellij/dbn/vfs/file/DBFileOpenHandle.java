@@ -1,8 +1,8 @@
 package com.dci.intellij.dbn.vfs.file;
 
 import com.dci.intellij.dbn.common.navigation.NavigationInstructions;
+import com.dci.intellij.dbn.editor.DatabaseEditorStateManager;
 import com.dci.intellij.dbn.editor.EditorProviderId;
-import com.dci.intellij.dbn.editor.EditorStateManager;
 import com.dci.intellij.dbn.object.common.DBObject;
 import com.dci.intellij.dbn.object.lookup.DBObjectRef;
 import lombok.Getter;
@@ -45,7 +45,7 @@ public final class DBFileOpenHandle<T extends DBObject> {
 
     public EditorProviderId getEditorProviderId() {
         if (editorProviderId == null) {
-            EditorStateManager editorStateManager = EditorStateManager.getInstance(getObject().getProject());
+            DatabaseEditorStateManager editorStateManager = DatabaseEditorStateManager.getInstance(getObject().getProject());
             editorProviderId = editorStateManager.getEditorProvider(object.getObjectType());
         }
         return editorProviderId;

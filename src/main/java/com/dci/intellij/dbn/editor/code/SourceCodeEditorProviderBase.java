@@ -8,10 +8,10 @@ import com.dci.intellij.dbn.common.environment.EnvironmentManager;
 import com.dci.intellij.dbn.common.exception.ProcessDeferredException;
 import com.dci.intellij.dbn.common.util.Editors;
 import com.dci.intellij.dbn.editor.DBContentType;
+import com.dci.intellij.dbn.editor.DatabaseFileEditorManager;
 import com.dci.intellij.dbn.editor.EditorProviderId;
 import com.dci.intellij.dbn.editor.code.ui.SourceCodeEditorActionsPanel;
 import com.dci.intellij.dbn.object.common.DBSchemaObject;
-import com.dci.intellij.dbn.vfs.DatabaseFileSystem;
 import com.dci.intellij.dbn.vfs.file.DBEditableObjectVirtualFile;
 import com.dci.intellij.dbn.vfs.file.DBSourceCodeVirtualFile;
 import com.intellij.openapi.editor.Document;
@@ -51,8 +51,8 @@ abstract class SourceCodeEditorProviderBase extends BasicTextEditorProvider impl
             databaseFile = sourceCodeFile.getMainDatabaseFile();
             DBSchemaObject object = databaseFile.getObject();
 
-            DatabaseFileSystem databaseFileSystem = DatabaseFileSystem.getInstance();
-            databaseFileSystem.connectAndOpenEditor(object, editorProviderId, false, true);
+            DatabaseFileEditorManager editorManager = DatabaseFileEditorManager.getInstance(project);
+            editorManager.connectAndOpenEditor(object, editorProviderId, false, true);
             throw new ProcessDeferredException();
         } else {
             databaseFile = (DBEditableObjectVirtualFile) file;

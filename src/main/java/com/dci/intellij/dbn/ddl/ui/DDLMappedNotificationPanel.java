@@ -3,9 +3,9 @@ package com.dci.intellij.dbn.ddl.ui;
 import com.dci.intellij.dbn.common.editor.EditorNotificationPanel;
 import com.dci.intellij.dbn.common.message.MessageType;
 import com.dci.intellij.dbn.ddl.DDLFileAttachmentManager;
+import com.dci.intellij.dbn.editor.DatabaseFileEditorManager;
 import com.dci.intellij.dbn.object.common.DBSchemaObject;
 import com.dci.intellij.dbn.object.lookup.DBObjectRef;
-import com.dci.intellij.dbn.vfs.DatabaseFileSystem;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
 import org.jetbrains.annotations.NotNull;
@@ -24,10 +24,11 @@ public class DDLMappedNotificationPanel extends EditorNotificationPanel {
             if (!project.isDisposed()) {
                 DDLFileAttachmentManager attachmentManager = DDLFileAttachmentManager.getInstance(project);
                 attachmentManager.detachDDLFile(virtualFile);
-                DBSchemaObject editableObject1 = DBObjectRef.get(editableObjectRef);
-                if (editableObject1 != null) {
-                    DatabaseFileSystem.getInstance().reopenEditor(editableObject1);
-                }
+                DBSchemaObject object = DBObjectRef.get(editableObjectRef);
+                if (object == null) return;
+
+                DatabaseFileEditorManager editorManager = DatabaseFileEditorManager.getInstance(project);
+                editorManager.reopenEditor(object);
             }
         });
     }

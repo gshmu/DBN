@@ -12,6 +12,7 @@ import com.dci.intellij.dbn.data.record.DatasetRecord;
 import com.dci.intellij.dbn.data.record.navigation.RecordNavigationTarget;
 import com.dci.intellij.dbn.data.record.navigation.action.RecordNavigationActionGroup;
 import com.dci.intellij.dbn.data.record.ui.RecordViewerDialog;
+import com.dci.intellij.dbn.editor.DatabaseFileEditorManager;
 import com.dci.intellij.dbn.editor.EditorProviderId;
 import com.dci.intellij.dbn.editor.data.filter.DatasetFilterInput;
 import com.dci.intellij.dbn.editor.data.filter.DatasetFilterManager;
@@ -20,7 +21,6 @@ import com.dci.intellij.dbn.object.DBDataset;
 import com.dci.intellij.dbn.object.DBTable;
 import com.dci.intellij.dbn.object.DBView;
 import com.dci.intellij.dbn.object.common.DBSchemaObject;
-import com.dci.intellij.dbn.vfs.DatabaseFileSystem;
 import com.dci.intellij.dbn.vfs.file.DBEditableObjectVirtualFile;
 import com.intellij.openapi.actionSystem.ActionGroup;
 import com.intellij.openapi.components.State;
@@ -124,11 +124,13 @@ public class DatasetEditorManager extends ProjectComponentBase implements Persis
 
     public void openDataEditor(DatasetFilterInput filterInput) {
         DBDataset dataset = filterInput.getDataset();
-        DatasetFilterManager filterManager = DatasetFilterManager.getInstance(dataset.getProject());
+        Project project = dataset.getProject();
+
+        DatasetFilterManager filterManager = DatasetFilterManager.getInstance(project);
         filterManager.createBasicFilter(filterInput);
 
-        DatabaseFileSystem databaseFileSystem = DatabaseFileSystem.getInstance();
-        databaseFileSystem.connectAndOpenEditor(dataset, EditorProviderId.DATA, false, true);
+        DatabaseFileEditorManager editorManager = DatabaseFileEditorManager.getInstance(project);
+        editorManager.connectAndOpenEditor(dataset, EditorProviderId.DATA, false, true);
     }
     
     public void openRecordViewer(DatasetFilterInput filterInput) {

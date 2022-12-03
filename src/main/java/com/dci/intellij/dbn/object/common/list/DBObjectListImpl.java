@@ -41,6 +41,7 @@ import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiDirectory;
 import lombok.Getter;
 import lombok.Setter;
+import lombok.extern.slf4j.Slf4j;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -60,6 +61,7 @@ import static com.dci.intellij.dbn.object.common.DBObjectSearchAdapters.binary;
 import static com.dci.intellij.dbn.object.common.DBObjectSearchAdapters.linear;
 import static com.dci.intellij.dbn.object.type.DBObjectType.*;
 
+@Slf4j
 @Getter
 @Setter
 public class DBObjectListImpl<T extends DBObject> extends DynamicContentBase<T> implements DBObjectList<T> {
@@ -571,19 +573,28 @@ public class DBObjectListImpl<T extends DBObject> extends DynamicContentBase<T> 
         }
 
         public List<T> getChildElements(DatabaseEntity entity) {
+            // "touch" elements first for ranges to become available (fragile...)
             List<T> elements = getAllElements();
-            if (ranges != null && entity instanceof DBObject) {
-                DBObject object = (DBObject) entity;
-                Range range = ranges.get(object.ref());
-                if (range != null) {
-                    return elements.subList(range.getLeft(), range.getRight() + 1);
-                }
+            if (ranges == null || !entity.isObject()) return Collections.emptyList();
+
+            DBObject object = (DBObject) entity;
+            Range range = ranges.get(object.ref());
+            if (range == null) return Collections.emptyList();
+
+            int fromIndex = range.getLeft();
+            int toIndex = range.getRight() + 1;
+            int size = elements.size();
+            if (toIndex > size) {
+                log.error("invalid range {} for elements size {}", range, elements.size(),
+                        new IllegalArgumentException("Invalid range capture"));
+                toIndex = size;
             }
-            return Collections.emptyList();
+            return elements.subList(fromIndex, toIndex);
         }
 
         @Override
         public T getElement(String name, short overload) {
+            // "touch" elements first for ranges to become available (fragile...)
             getElements();
             if (ranges == null) return null;
 
