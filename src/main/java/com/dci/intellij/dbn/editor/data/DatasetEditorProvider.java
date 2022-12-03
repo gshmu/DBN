@@ -3,11 +3,11 @@ package com.dci.intellij.dbn.editor.data;
 import com.dci.intellij.dbn.common.dispose.Disposer;
 import com.dci.intellij.dbn.common.exception.ProcessDeferredException;
 import com.dci.intellij.dbn.editor.DBContentType;
+import com.dci.intellij.dbn.editor.DatabaseFileEditorManager;
 import com.dci.intellij.dbn.editor.EditorProviderId;
 import com.dci.intellij.dbn.editor.data.state.DatasetEditorState;
 import com.dci.intellij.dbn.object.DBDataset;
 import com.dci.intellij.dbn.object.type.DBObjectType;
-import com.dci.intellij.dbn.vfs.DatabaseFileSystem;
 import com.dci.intellij.dbn.vfs.file.DBDatasetVirtualFile;
 import com.dci.intellij.dbn.vfs.file.DBEditableObjectVirtualFile;
 import com.intellij.openapi.components.NamedComponent;
@@ -50,8 +50,8 @@ public class DatasetEditorProvider implements FileEditorProvider, NamedComponent
         DBDataset dataset = datasetFile.getObject();
         val columns = dataset.getChildObjectList(DBObjectType.COLUMN);
         if (!columns.isLoaded()) {
-            DatabaseFileSystem databaseFileSystem = DatabaseFileSystem.getInstance();
-            databaseFileSystem.connectAndOpenEditor(dataset, null, false, false);
+            DatabaseFileEditorManager editorManager = DatabaseFileEditorManager.getInstance(project);
+            editorManager.connectAndOpenEditor(dataset, null, false, false);
             throw new ProcessDeferredException();
         }
 

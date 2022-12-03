@@ -20,7 +20,7 @@ import com.dci.intellij.dbn.connection.console.DatabaseConsoleManager;
 import com.dci.intellij.dbn.connection.operation.options.OperationSettings;
 import com.dci.intellij.dbn.data.grid.options.DataGridSettings;
 import com.dci.intellij.dbn.ddl.options.DDLFileSettings;
-import com.dci.intellij.dbn.editor.EditorStateManager;
+import com.dci.intellij.dbn.editor.DatabaseEditorStateManager;
 import com.dci.intellij.dbn.editor.code.SourceCodeManager;
 import com.dci.intellij.dbn.editor.data.DatasetEditorManager;
 import com.dci.intellij.dbn.editor.data.options.DataEditorSettings;
@@ -185,7 +185,7 @@ public class ProjectSettingsManager extends ProjectComponentBase implements Pers
 
         Project project = getProject();
         DatabaseConsoleManager.getInstance(project);
-        EditorStateManager.getInstance(project);
+        DatabaseEditorStateManager.getInstance(project);
         SourceCodeManager.getInstance(project);
         DatasetEditorManager.getInstance(project);
         DatabaseLoaderManager.getInstance(project);

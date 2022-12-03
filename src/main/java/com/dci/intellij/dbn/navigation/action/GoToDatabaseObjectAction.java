@@ -5,14 +5,15 @@ import com.dci.intellij.dbn.common.util.Clipboard;
 import com.dci.intellij.dbn.common.util.Editors;
 import com.dci.intellij.dbn.common.util.Strings;
 import com.dci.intellij.dbn.connection.*;
+import com.dci.intellij.dbn.editor.DatabaseFileEditorManager;
 import com.dci.intellij.dbn.navigation.object.DBObjectLookupModel;
 import com.dci.intellij.dbn.navigation.options.ObjectsLookupSettings;
 import com.dci.intellij.dbn.object.DBSchema;
 import com.dci.intellij.dbn.object.action.AnObjectAction;
 import com.dci.intellij.dbn.object.common.DBObject;
 import com.dci.intellij.dbn.object.common.property.DBObjectProperty;
+import com.dci.intellij.dbn.options.ProjectSettings;
 import com.dci.intellij.dbn.options.ProjectSettingsManager;
-import com.dci.intellij.dbn.vfs.DatabaseFileSystem;
 import com.intellij.ide.actions.GotoActionBase;
 import com.intellij.ide.util.gotoByName.ChooseByNamePopup;
 import com.intellij.ide.util.gotoByName.ChooseByNamePopupComponent;
@@ -31,6 +32,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
+import static com.dci.intellij.dbn.common.dispose.Checks.isNotValid;
+
 public class GoToDatabaseObjectAction extends GotoActionBase implements DumbAware {
     private ConnectionId latestConnectionId;
     private String latestSchemaName = "";
@@ -43,81 +46,83 @@ public class GoToDatabaseObjectAction extends GotoActionBase implements DumbAwar
 
         //FeatureUsageTracker.getInstance().triggerFeatureUsed("navigation.popup.file");
         Project project = event.getData(PlatformDataKeys.PROJECT);
+        if (isNotValid(project)) return;
 
-        if (project != null) {
-            ObjectsLookupSettings objectsLookupSettings = ProjectSettingsManager.getSettings(project).getNavigationSettings().getObjectsLookupSettings();
-            if (objectsLookupSettings.getPromptConnectionSelection().value()) {
-                ConnectionHandler singleConnectionHandler = null;
-                DefaultActionGroup actionGroup = new DefaultActionGroup();
+        ProjectSettings projectSettings = ProjectSettingsManager.getSettings(project);
+        ObjectsLookupSettings objectsLookupSettings = projectSettings.getNavigationSettings().getObjectsLookupSettings();
+        boolean promptConnectionSelection = objectsLookupSettings.getPromptConnectionSelection().value();
 
-                ConnectionManager connectionManager = ConnectionManager.getInstance(project);
-                ConnectionBundle connectionBundle = connectionManager.getConnectionBundle();
-                if (connectionBundle.getConnections().size() > 0) {
-                    if ((actionGroup.getChildrenCount() > 1)) {
-                        actionGroup.addSeparator();
-                    }
+        if (promptConnectionSelection) {
+            ConnectionHandler singleConnectionHandler = null;
+            DefaultActionGroup actionGroup = new DefaultActionGroup();
 
-                    for (ConnectionHandler connection : connectionBundle.getConnections()) {
-                        SelectConnectionAction connectionAction = new SelectConnectionAction(connection);
-                        actionGroup.add(connectionAction);
-                        singleConnectionHandler = connection;
-                    }
+            ConnectionManager connectionManager = ConnectionManager.getInstance(project);
+            ConnectionBundle connectionBundle = connectionManager.getConnectionBundle();
+            if (connectionBundle.getConnections().size() > 0) {
+                if ((actionGroup.getChildrenCount() > 1)) {
+                    actionGroup.addSeparator();
                 }
 
-                if (actionGroup.getChildrenCount() > 1) {
-                    removeActionLock();
-                    ListPopup popupBuilder = JBPopupFactory.getInstance().createActionGroupPopup(
-                            "Select Connection / Schema for Lookup",
-                            actionGroup,
-                            event.getDataContext(),
-                            //JBPopupFactory.ActionSelectionAid.SPEEDSEARCH,
-                            false,
-                            true,
-                            true,
-                            null,
-                            actionGroup.getChildrenCount(),
-                            preselect -> {
-                                if (preselect instanceof SelectConnectionAction) {
-                                    SelectConnectionAction selectConnectionAction = (SelectConnectionAction) preselect;
-                                    return latestConnectionId == selectConnectionAction.getConnection().getConnectionId();
-                                } else if (preselect instanceof SelectSchemaAction) {
-                                    SelectSchemaAction selectSchemaAction = (SelectSchemaAction) preselect;
-                                    DBSchema object = selectSchemaAction.getTarget();
-                                    return object != null && Objects.equals(latestSchemaName, object.getName());
-                                }
-                                return false;
-                            });
+                for (ConnectionHandler connection : connectionBundle.getConnections()) {
+                    SelectConnectionAction connectionAction = new SelectConnectionAction(connection);
+                    actionGroup.add(connectionAction);
+                    singleConnectionHandler = connection;
+                }
+            }
+
+            if (actionGroup.getChildrenCount() > 1) {
+                removeActionLock();
+                ListPopup popupBuilder = JBPopupFactory.getInstance().createActionGroupPopup(
+                        "Select Connection / Schema for Lookup",
+                        actionGroup,
+                        event.getDataContext(),
+                        //JBPopupFactory.ActionSelectionAid.SPEEDSEARCH,
+                        false,
+                        true,
+                        true,
+                        null,
+                        actionGroup.getChildrenCount(),
+                        preselect -> {
+                            if (preselect instanceof SelectConnectionAction) {
+                                SelectConnectionAction selectConnectionAction = (SelectConnectionAction) preselect;
+                                return latestConnectionId == selectConnectionAction.getConnection().getConnectionId();
+                            } else if (preselect instanceof SelectSchemaAction) {
+                                SelectSchemaAction selectSchemaAction = (SelectSchemaAction) preselect;
+                                DBSchema object = selectSchemaAction.getTarget();
+                                return object != null && Objects.equals(latestSchemaName, object.getName());
+                            }
+                            return false;
+                        });
 
 /*                    if (popupBuilder instanceof ListPopupImpl) {
-                        ListPopupImpl listPopup = (ListPopupImpl) popupBuilder;
-                        listPopup.getList().setCellRenderer(new DefaultListCellRenderer(){
-                            @Override
-                            public Component getListCellRendererComponent(JList<?> actions, Object value, int index, boolean isSelected, boolean cellHasFocus) {
-                                PopupFactoryImpl.ActionItem actionItem  = (PopupFactoryImpl.ActionItem) value;
-                                Component component = super.getListCellRendererComponent(actions, value, index, isSelected, cellHasFocus);
-                                if (component instanceof JLabel) {
-                                    JLabel label = (JLabel) component;
-                                    label.setIcon(actionItem.getIcon());
-                                    label.setText(actionItem.getText().replace("&", ""));
-                                    AnAction action = actionItem.getAction();
-                                    if (!isSelected && action instanceof SelectConnectionAction) {
-                                        SelectConnectionAction selectConnectionAction = (SelectConnectionAction) action;
-                                        label.setBackground(selectConnectionAction.connection.getEnvironmentType().getColor());
-                                    }
+                    ListPopupImpl listPopup = (ListPopupImpl) popupBuilder;
+                    listPopup.getList().setCellRenderer(new DefaultListCellRenderer(){
+                        @Override
+                        public Component getListCellRendererComponent(JList<?> actions, Object value, int index, boolean isSelected, boolean cellHasFocus) {
+                            PopupFactoryImpl.ActionItem actionItem  = (PopupFactoryImpl.ActionItem) value;
+                            Component component = super.getListCellRendererComponent(actions, value, index, isSelected, cellHasFocus);
+                            if (component instanceof JLabel) {
+                                JLabel label = (JLabel) component;
+                                label.setIcon(actionItem.getIcon());
+                                label.setText(actionItem.getText().replace("&", ""));
+                                AnAction action = actionItem.getAction();
+                                if (!isSelected && action instanceof SelectConnectionAction) {
+                                    SelectConnectionAction selectConnectionAction = (SelectConnectionAction) action;
+                                    label.setBackground(selectConnectionAction.connection.getEnvironmentType().getColor());
                                 }
-                                return component;
                             }
-                        });
-                    }*/
-                    popupBuilder.showCenteredInCurrentWindow(project);
-                } else {
-                    showLookupPopup(event, project, singleConnectionHandler, null);
-                }
+                            return component;
+                        }
+                    });
+                }*/
+                popupBuilder.showCenteredInCurrentWindow(project);
             } else {
-                ConnectionManager connectionManager = ConnectionManager.getInstance(project);
-                ConnectionHandler connection = connectionManager.getActiveConnection(project);
-                showLookupPopup(event, project, connection, null);
+                showLookupPopup(event, project, singleConnectionHandler, null);
             }
+        } else {
+            ConnectionManager connectionManager = ConnectionManager.getInstance(project);
+            ConnectionHandler connection = connectionManager.getActiveConnection(project);
+            showLookupPopup(event, project, connection, null);
         }
     }
 
@@ -252,8 +257,9 @@ public class GoToDatabaseObjectAction extends GotoActionBase implements DumbAwar
             if (element instanceof DBObject) {
                 DBObject object = (DBObject) element;
                 if (object.is(DBObjectProperty.EDITABLE)) {
-                    DatabaseFileSystem databaseFileSystem = DatabaseFileSystem.getInstance();
-                    databaseFileSystem.connectAndOpenEditor(object, null, false, true);
+                    Project project = object.getProject();
+                    DatabaseFileEditorManager editorManager = DatabaseFileEditorManager.getInstance(project);
+                    editorManager.connectAndOpenEditor(object, null, false, true);
                 } else {
                     object.navigate(true);
                 }

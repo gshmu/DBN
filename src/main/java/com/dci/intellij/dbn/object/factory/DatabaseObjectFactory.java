@@ -11,6 +11,7 @@ import com.dci.intellij.dbn.connection.ConnectionAction;
 import com.dci.intellij.dbn.database.interfaces.DatabaseDataDefinitionInterface;
 import com.dci.intellij.dbn.database.interfaces.DatabaseInterfaceInvoker;
 import com.dci.intellij.dbn.editor.DBContentType;
+import com.dci.intellij.dbn.editor.DatabaseFileEditorManager;
 import com.dci.intellij.dbn.object.DBMethod;
 import com.dci.intellij.dbn.object.DBSchema;
 import com.dci.intellij.dbn.object.common.DBSchemaObject;
@@ -20,7 +21,6 @@ import com.dci.intellij.dbn.object.common.status.DBObjectStatusHolder;
 import com.dci.intellij.dbn.object.factory.ui.common.ObjectFactoryInputDialog;
 import com.dci.intellij.dbn.object.type.DBObjectType;
 import com.dci.intellij.dbn.vfs.DatabaseFileManager;
-import com.dci.intellij.dbn.vfs.DatabaseFileSystem;
 import com.intellij.openapi.project.Project;
 import lombok.val;
 import org.jetbrains.annotations.NotNull;
@@ -114,8 +114,8 @@ public class DatabaseObjectFactory extends ProjectComponentBase {
             val argumentList = method.getChildObjectList(DBObjectType.ARGUMENT);
             Failsafe.nn(argumentList).reload();
 
-            DatabaseFileSystem databaseFileSystem = DatabaseFileSystem.getInstance();
-            databaseFileSystem.connectAndOpenEditor(method, null, false, true);
+            DatabaseFileEditorManager editorManager = DatabaseFileEditorManager.getInstance(getProject());
+            editorManager.connectAndOpenEditor(method, null, false, true);
             notifyFactoryEvent(new ObjectFactoryEvent(method, ObjectFactoryEvent.EVENT_TYPE_CREATE));
         });
     }

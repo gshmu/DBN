@@ -38,17 +38,18 @@ import java.util.concurrent.ConcurrentHashMap;
 
 import static com.dci.intellij.dbn.common.component.Components.projectService;
 import static com.dci.intellij.dbn.common.options.setting.SettingsSupport.*;
+import static com.dci.intellij.dbn.editor.DatabaseEditorStateManager.COMPONENT_NAME;
 
 @State(
-    name = EditorStateManager.COMPONENT_NAME,
+    name = COMPONENT_NAME,
     storages = @Storage(DatabaseNavigator.STORAGE_FILE)
 )
-public class EditorStateManager extends ProjectComponentBase implements PersistentState {
-    public static final String COMPONENT_NAME = "DBNavigator.Project.EditorStateManager";
+public class DatabaseEditorStateManager extends ProjectComponentBase implements PersistentState {
+    public static final String COMPONENT_NAME = "DBNavigator.Project.DatabaseEditorStateManager";
 
     private final Map<DBObjectType, EditorProviderId> lastUsedEditorProviders = new ConcurrentHashMap<>();
 
-    private EditorStateManager(Project project) {
+    private DatabaseEditorStateManager(Project project) {
         super(project, COMPONENT_NAME);
 
         ProjectEvents.subscribe(project, this, SourceCodeManagerListener.TOPIC, sourceCodeManagerListener());
@@ -56,8 +57,8 @@ public class EditorStateManager extends ProjectComponentBase implements Persiste
         ProjectEvents.subscribe(project, this, EnvironmentManagerListener.TOPIC, environmentManagerListener());
     }
 
-    public static EditorStateManager getInstance(@NotNull Project project) {
-        return projectService(project, EditorStateManager.class);
+    public static DatabaseEditorStateManager getInstance(@NotNull Project project) {
+        return projectService(project, DatabaseEditorStateManager.class);
     }
 
     @NotNull

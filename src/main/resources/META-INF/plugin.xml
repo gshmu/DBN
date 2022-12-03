@@ -230,7 +230,6 @@
     <extensions defaultExtensionNs="com.intellij">
         <applicationService serviceImplementation="com.dci.intellij.dbn.DatabaseNavigator"/>
         <applicationService serviceImplementation="com.dci.intellij.dbn.driver.DatabaseDriverManager"/>
-        <applicationService serviceImplementation="com.dci.intellij.dbn.editor.EditorManager"/>
         <applicationService serviceImplementation="com.dci.intellij.dbn.connection.ssh.SshTunnelManager"/>
         <applicationService serviceImplementation="com.dci.intellij.dbn.connection.ssl.SslConnectionManager"/>
         <applicationService serviceImplementation="com.dci.intellij.dbn.options.DefaultProjectSettingsManager"/>
@@ -257,7 +256,8 @@
         <projectService serviceImplementation="com.dci.intellij.dbn.debugger.DatabaseDebuggerManager"/>
         <projectService serviceImplementation="com.dci.intellij.dbn.ddl.DDLFileManager"/>
         <projectService serviceImplementation="com.dci.intellij.dbn.ddl.DDLFileAttachmentManager"/>
-        <projectService serviceImplementation="com.dci.intellij.dbn.editor.EditorStateManager"/>
+        <projectService serviceImplementation="com.dci.intellij.dbn.editor.DatabaseFileEditorManager"/>
+        <projectService serviceImplementation="com.dci.intellij.dbn.editor.DatabaseEditorStateManager"/>
         <projectService serviceImplementation="com.dci.intellij.dbn.editor.code.SourceCodeManager"/>
         <projectService serviceImplementation="com.dci.intellij.dbn.editor.code.diff.SourceCodeDiffManager"/>
         <projectService serviceImplementation="com.dci.intellij.dbn.editor.data.DatasetEditorManager"/>

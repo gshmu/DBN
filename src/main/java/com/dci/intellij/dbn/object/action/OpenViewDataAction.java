@@ -1,25 +1,38 @@
 package com.dci.intellij.dbn.object.action;
 
 import com.dci.intellij.dbn.common.Icons;
+import com.dci.intellij.dbn.common.action.DumbAwareProjectAction;
+import com.dci.intellij.dbn.editor.DatabaseFileEditorManager;
 import com.dci.intellij.dbn.editor.EditorProviderId;
 import com.dci.intellij.dbn.object.DBView;
-import com.dci.intellij.dbn.vfs.DatabaseFileSystem;
+import com.dci.intellij.dbn.object.lookup.DBObjectRef;
 import com.intellij.openapi.actionSystem.AnActionEvent;
-import com.intellij.openapi.project.DumbAwareAction;
+import com.intellij.openapi.project.Project;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
-public class OpenViewDataAction extends DumbAwareAction {
-    private DBView view;
+public class OpenViewDataAction extends DumbAwareProjectAction {
+    private final DBObjectRef<DBView> view;
 
     public OpenViewDataAction(DBView view) {
         super("View Data", null, Icons.OBEJCT_VIEW_DATA);
-        this.view = view;
+        this.view = DBObjectRef.of(view);
         setDefaultIcon(true);
     }
 
+    public DBView getView() {
+        return DBObjectRef.ensure(view);
+    }
+
+    @Nullable
     @Override
-    public void actionPerformed(@NotNull AnActionEvent e) {
-        DatabaseFileSystem databaseFileSystem = DatabaseFileSystem.getInstance();
-        databaseFileSystem.connectAndOpenEditor(view, EditorProviderId.DATA, false, true);
+    protected Project getProject() {
+        return super.getProject();
+    }
+
+    @Override
+    protected void actionPerformed(@NotNull AnActionEvent e, @NotNull Project project) {
+        DatabaseFileEditorManager editorManager = DatabaseFileEditorManager.getInstance(project);
+        editorManager.connectAndOpenEditor(getView(), EditorProviderId.DATA, false, true);
     }
 }
