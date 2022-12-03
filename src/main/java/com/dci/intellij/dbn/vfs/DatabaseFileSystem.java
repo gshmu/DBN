@@ -2,6 +2,9 @@ package com.dci.intellij.dbn.vfs;
 
 import com.dci.intellij.dbn.common.dispose.Disposer;
 import com.dci.intellij.dbn.common.project.Projects;
+import com.dci.intellij.dbn.common.thread.Background;
+import com.dci.intellij.dbn.common.thread.ThreadMonitor;
+import com.dci.intellij.dbn.common.thread.ThreadProperty;
 import com.dci.intellij.dbn.common.util.Safe;
 import com.dci.intellij.dbn.common.util.Traces;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
@@ -132,7 +135,15 @@ public class DatabaseFileSystem extends VirtualFileSystem implements /*NonPhysic
         } else if (OBJECTS.is(relativePath)) {
             String objectIdentifier = OBJECTS.collate(relativePath);
             DBObjectRef<DBSchemaObject> objectRef = new DBObjectRef<>(connectionId, objectIdentifier);
-            return findOrCreateDatabaseFile(project, objectRef);
+            DBEditableObjectVirtualFile databaseFile = findOrCreateDatabaseFile(project, objectRef);
+
+            if (!ThreadMonitor.current().is(ThreadProperty.EDITOR_READY)) {
+                if (!databaseFile.isEditorReady()) {
+                    Background.run(() -> databaseFile.makeEditorReady());
+                    return null;
+                }
+            }
+            return databaseFile;
 
         } else if (OBJECT_CONTENTS.is(relativePath)) {
             if (Traces.isCalledThrough(EditorHistoryManager.class)) {

@@ -280,7 +280,7 @@ public class DatabaseFileManager extends ProjectComponentBase implements Persist
                                 if (object == null) continue;
 
                                 progress.setText2(connection.getName() + " - " + objectRef.getQualifiedNameWithType());
-                                object.initChildren();
+                                object.makeEditorReady();
                                 editorManager.openEditor(object, null, false, false);
                             }
                         }));
