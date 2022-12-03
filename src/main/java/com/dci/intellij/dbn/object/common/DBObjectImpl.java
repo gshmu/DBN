@@ -330,9 +330,17 @@ public abstract class DBObjectImpl<M extends DBObjectMetadata> extends BrowserTr
         if (childObjects != null) childObjects.visit(visitor, visitInternal);
     }
 
+    @Override
+    public boolean isEditorReady() {
+        if (childObjects == null) return false;
+        for (DBObjectList<?> list : childObjects.getObjects()) {
+            if (list != null && !list.isInternal() && !list.isLoaded()) return false;
+        }
+        return true;
+    }
 
     @Override
-    public void initChildren() {
+    public void makeEditorReady() {
         if (childObjects != null) childObjects.loadObjects();
     }
 

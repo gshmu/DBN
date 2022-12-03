@@ -26,24 +26,49 @@ public class ThreadMonitor {
         return threadInfo;
     }
 
+    public static <E extends Throwable> void surround(
+            @NotNull ThreadProperty property,
+            ThrowableRunnable<E> runnable) throws E {
+        ThreadInfo threadInfo = current();
+
+        try {
+            threadInfo.set(property, true);
+            runnable.run();
+        } finally {
+            threadInfo.set(property, false);
+        }
+    }
+
+    public static <T, E extends Throwable> T surround(
+            @NotNull ThreadProperty property,
+            ThrowableCallable<T, E> callable) throws E {
+        ThreadInfo threadInfo = current();
+
+        try {
+            threadInfo.set(property, true);
+            return callable.call();
+        } finally {
+            threadInfo.set(property, false);
+        }
+    }
 
 
     public static <E extends Throwable> void surround(
             @Nullable ThreadInfo invoker,
-            @NotNull ThreadProperty threadProperty,
+            @NotNull ThreadProperty property,
             ThrowableRunnable<E> runnable) throws E {
 
         ThreadInfo threadInfo = current();
-        boolean originalProperty = threadInfo.is(threadProperty);
-        AtomicInteger processCounter = getProcessCounter(threadProperty);
+        boolean originalProperty = threadInfo.is(property);
+        AtomicInteger processCounter = getProcessCounter(property);
         try {
             processCounter.incrementAndGet();
-            threadInfo.set(threadProperty, true);
+            threadInfo.set(property, true);
             threadInfo.merge(invoker);
             runnable.run();
         } catch (ProcessCanceledException  ignore){
         } finally {
-            threadInfo.set(threadProperty, originalProperty);
+            threadInfo.set(property, originalProperty);
             processCounter.decrementAndGet();
             threadInfo.unmerge(invoker);
         }
@@ -51,22 +76,22 @@ public class ThreadMonitor {
 
     public static <T, E extends Throwable> T surround(
             @Nullable ThreadInfo invoker,
-            @NotNull ThreadProperty threadProperty,
+            @NotNull ThreadProperty property,
             T defaultValue,
-            ThrowableCallable<T, E> callable) throws E{
+            ThrowableCallable<T, E> callable) throws E {
 
         ThreadInfo threadInfo = current();
-        boolean originalProperty = threadInfo.is(threadProperty);
-        AtomicInteger processCounter = getProcessCounter(threadProperty);
+        boolean originalProperty = threadInfo.is(property);
+        AtomicInteger processCounter = getProcessCounter(property);
         try {
             processCounter.incrementAndGet();
-            threadInfo.set(threadProperty, true);
+            threadInfo.set(property, true);
             threadInfo.merge(invoker);
             return callable.call();
         } catch (ProcessCanceledException e) {
             return defaultValue;
         } finally {
-            threadInfo.set(threadProperty, originalProperty);
+            threadInfo.set(property, originalProperty);
             threadInfo.unmerge(invoker);
             processCounter.decrementAndGet();
         }

@@ -105,7 +105,9 @@ public interface DBObject extends
 
     List<DBObjectNavigationList> getNavigationLists();
 
-    void initChildren();
+    boolean isEditorReady();
+
+    void makeEditorReady();
 
     @Nullable
     DBObjectListContainer getChildObjects();
