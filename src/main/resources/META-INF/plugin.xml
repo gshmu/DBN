@@ -1,4 +1,4 @@
-<idea-plugin version="2" url="http://www.jetbrains.net/confluence/display/CONTEST/Database+Navigator">
+<idea-plugin url="https://plugins.jetbrains.com/plugin/1800-database-navigator">
     <name>Database Navigator</name>
     <id>DBN</id>
     <!--3050 -->
