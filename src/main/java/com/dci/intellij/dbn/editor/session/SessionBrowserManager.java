@@ -124,6 +124,7 @@ public class SessionBrowserManager extends ProjectComponentBase implements Persi
             return DatabaseInterfaceInvoker.load(HIGH,
                     "Loading sessions",
                     "Loading database sessions",
+                    connection.getProject(),
                     connection.getConnectionId(),
                     conn -> {
                         DBNResultSet resultSet = null;
@@ -150,6 +151,7 @@ public class SessionBrowserManager extends ProjectComponentBase implements Persi
             return DatabaseInterfaceInvoker.load(HIGH,
                     "Loading session details",
                     "Loading current session details",
+                    connection.getProject(),
                     connection.getConnectionId(),
                     conn -> {
                         ResultSet resultSet = null;
@@ -221,7 +223,7 @@ public class SessionBrowserManager extends ProjectComponentBase implements Persi
                             try {
                                 boolean immediate = option == SessionInterruptionOption.IMMEDIATE;
                                 boolean postTransaction = option == SessionInterruptionOption.POST_TRANSACTION;
-                                DatabaseInterfaceInvoker.execute(HIGH, connection.getConnectionId(), conn -> {
+                                DatabaseInterfaceInvoker.execute(HIGH, connection.getProject(), connection.getConnectionId(), conn -> {
                                     if (type == DISCONNECT) metadata.disconnectSession(sessionId, serialNumber, postTransaction, immediate, conn); else
                                     if (type == TERMINATE) metadata.terminateSession(sessionId, serialNumber, immediate, conn);
                                 });

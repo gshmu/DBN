@@ -38,14 +38,14 @@ public class Callback{
 
     public void surround(ThrowableRunnable<Exception> action) {
         try {
-            guarded(before);
+            guarded(() -> before.run());
             action.run();
-            guarded(success);
+            guarded(() -> success.run());
         } catch (ProcessCanceledException ignore) {
         } catch (Exception e) {
             if (failure != null) guarded(() -> failure.accept(e));
         } finally {
-            guarded(after);
+            guarded(() -> after.run());
         }
     }
 

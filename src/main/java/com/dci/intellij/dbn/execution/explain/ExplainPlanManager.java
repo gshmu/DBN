@@ -84,6 +84,7 @@ public class ExplainPlanManager extends ProjectComponentBase {
             return DatabaseInterfaceInvoker.load(HIGH,
                     "Creating explain plan",
                     "Running explain plan for SQL statement",
+                    connection.getProject(),
                     connection.getConnectionId(),
                     conn -> {
                         SchemaId currentSchema = executable.getFile().getSchemaId();

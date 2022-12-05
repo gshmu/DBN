@@ -74,7 +74,7 @@ public interface DBObject extends
     @Nullable
     DBUser getOwner();
 
-    DBObject getParentObject();
+    <T extends DBObject> T getParentObject();
 
     @Nullable DBObject getDefaultNavigationObject();
 
@@ -143,6 +143,6 @@ public interface DBObject extends
 
     @Deprecated // do not use schema aware context
     default ConnectionContext createConnectionContext() {
-        return new ConnectionContext(getConnectionId(), getSchemaId());
+        return new ConnectionContext(getProject(), getConnectionId(), getSchemaId());
     }
 }

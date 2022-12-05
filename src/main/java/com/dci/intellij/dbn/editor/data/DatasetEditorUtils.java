@@ -22,6 +22,7 @@ public class DatasetEditorUtils {
             return DatabaseInterfaceInvoker.load(HIGH,
                     "Loading data",
                     "Loading possible values for " + column.getQualifiedNameWithType(),
+                    column.getProject(),
                     column.getConnectionId(),
                     conn -> loadDistinctColumnValues(column, conn));
         } catch (Exception e) {

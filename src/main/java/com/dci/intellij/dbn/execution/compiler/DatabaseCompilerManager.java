@@ -165,7 +165,9 @@ public class DatabaseCompilerManager extends ProjectComponentBase {
 
         try {
             objectStatus.set(contentType, COMPILING, true);
-            DatabaseInterfaceInvoker.execute(HIGH, object.getConnectionId(),
+            DatabaseInterfaceInvoker.execute(HIGH,
+                    object.getProject(),
+                    object.getConnectionId(),
                     conn -> doCompileObject(object, compileType, contentType, objectStatus, conn));
 
             createCompilerResult(object, compilerAction);

@@ -44,7 +44,7 @@ public abstract class ProjectAction extends AnAction implements UpdateInBackgrou
      * fallback when project cannot be loaded from the data context (TODO check why)
      */
     @Nullable
-    protected Project getProject() {
+    public Project getProject() {
         return null;
     }
 

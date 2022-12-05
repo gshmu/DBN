@@ -31,6 +31,7 @@ public class DatabaseOperationManager extends ProjectComponentBase {
         DatabaseInterfaceInvoker.execute(HIGHEST,
                 actionTitle("Enabling", constraint),
                 actionText("Enabling", constraint),
+                constraint.getProject(),
                 constraint.getConnectionId(),
                 conn -> {
                     DatabaseMetadataInterface metadata = constraint.getMetadataInterface();
@@ -47,6 +48,7 @@ public class DatabaseOperationManager extends ProjectComponentBase {
         DatabaseInterfaceInvoker.execute(HIGHEST,
                 actionTitle("Disabling", constraint),
                 actionText("Disabling", constraint),
+                constraint.getProject(),
                 constraint.getConnectionId(),
                 conn -> {
                     DatabaseMetadataInterface metadata = constraint.getMetadataInterface();
@@ -63,6 +65,7 @@ public class DatabaseOperationManager extends ProjectComponentBase {
         DatabaseInterfaceInvoker.execute(HIGHEST,
                 actionTitle("Enabling", trigger),
                 actionText("Enabling", trigger),
+                trigger.getProject(),
                 trigger.getConnectionId(),
                 conn -> {
                     DatabaseMetadataInterface metadata = trigger.getMetadataInterface();
@@ -78,6 +81,7 @@ public class DatabaseOperationManager extends ProjectComponentBase {
         DatabaseInterfaceInvoker.execute(HIGHEST,
                 actionTitle("Disabling", trigger),
                 actionText("Disabling", trigger),
+                trigger.getProject(),
                 trigger.getConnectionId(),
                 conn -> {
                     DatabaseMetadataInterface metadata = trigger.getMetadataInterface();

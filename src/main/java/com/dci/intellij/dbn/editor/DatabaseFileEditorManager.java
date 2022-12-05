@@ -62,6 +62,10 @@ public class DatabaseFileEditorManager extends ProjectComponentBase {
         super(project, COMPONENT_NAME);
     }
 
+    public boolean isFileOpen(DBEditableObjectVirtualFile databaseFile) {
+        FileEditorManager editorManager = FileEditorManager.getInstance(getProject());
+        return editorManager.isFileOpen(databaseFile);
+    }
 
     public void connectAndOpenEditor(@NotNull DBObject object, @Nullable EditorProviderId editorProviderId, boolean scrollBrowser, boolean focusEditor) {
         if (!isEditable(object)) return;
@@ -85,7 +89,7 @@ public class DatabaseFileEditorManager extends ProjectComponentBase {
 
         NavigationInstructions editorInstructions = NavigationInstructions.create().with(OPEN).with(SCROLL).with(FOCUS, focusEditor);
         NavigationInstructions browserInstructions = NavigationInstructions.create().with(SCROLL, scrollBrowser);
-        DBFileOpenHandle<?> handle = DBFileOpenHandle.create(object).
+        DBFileOpenHandle handle = DBFileOpenHandle.create(object).
                 withEditorProviderId(editorProviderId).
                 withEditorInstructions(editorInstructions).
                 withBrowserInstructions(browserInstructions);
@@ -93,13 +97,11 @@ public class DatabaseFileEditorManager extends ProjectComponentBase {
         try {
             handle.init();
             if (object.is(DBObjectProperty.SCHEMA_OBJECT)) {
-                object.makeEditorReady();
-                openSchemaObject((DBFileOpenHandle<DBSchemaObject>) handle);
+                openSchemaObject(handle);
 
             } else {
                 DBObject parentObject = object.getParentObject();
                 if (parentObject.is(DBObjectProperty.SCHEMA_OBJECT)) {
-                    parentObject.makeEditorReady();
                     openChildObject(handle);
                 }
             }
@@ -108,15 +110,15 @@ public class DatabaseFileEditorManager extends ProjectComponentBase {
         }
     }
 
-    private void openSchemaObject(@NotNull DBFileOpenHandle<DBSchemaObject> handle) {
+    private void openSchemaObject(@NotNull DBFileOpenHandle handle) {
         DBSchemaObject object = handle.getObject();
-
-        EditorProviderId editorProviderId = handle.getEditorProviderId();
+        object.makeEditorReady();
 
         DBObjectRef<?> objectRef = object.ref();
         Project project = object.getProject();
 
         DBEditableObjectVirtualFile databaseFile = getFileSystem().findOrCreateDatabaseFile(project, objectRef);
+        EditorProviderId editorProviderId = handle.getEditorProviderId();
         databaseFile.setSelectedEditorProviderId(editorProviderId);
 
         invokeFileOpen(handle, () -> {
@@ -127,7 +129,7 @@ public class DatabaseFileEditorManager extends ProjectComponentBase {
 
                     FileEditorManager editorManager = FileEditorManager.getInstance(project);
                     ThreadMonitor.surround(ThreadProperty.EDITOR_READY, () -> editorManager.openFile(databaseFile, focusEditor));
-                    ;
+
                     NavigationInstructions instructions = NavigationInstructions.create().
                             with(SCROLL).
                             with(FOCUS, focusEditor);
@@ -137,11 +139,11 @@ public class DatabaseFileEditorManager extends ProjectComponentBase {
         });
     }
 
-    private void openChildObject(DBFileOpenHandle<?> handle) {
+    private void openChildObject(DBFileOpenHandle handle) {
         DBObject object = handle.getObject();
-        EditorProviderId editorProviderId = handle.getEditorProviderId();
+        DBSchemaObject schemaObject = object.getParentObject();
+        schemaObject.makeEditorReady();
 
-        DBSchemaObject schemaObject = (DBSchemaObject) object.getParentObject();
         Project project = schemaObject.getProject();
         DBEditableObjectVirtualFile databaseFile = getFileSystem().findOrCreateDatabaseFile(project, schemaObject.ref());
         SourceCodeManager sourceCodeManager = SourceCodeManager.getInstance(project);
@@ -165,6 +167,7 @@ public class DatabaseFileEditorManager extends ProjectComponentBase {
                                 with(SCROLL).
                                 with(FOCUS, focusEditor);
 
+                        EditorProviderId editorProviderId = handle.getEditorProviderId();
                         Editors.selectEditor(project, fileEditor, databaseFile, editorProviderId, instructions);
                         sourceCodeEditor.navigateTo(object);
                         break;
@@ -174,7 +177,7 @@ public class DatabaseFileEditorManager extends ProjectComponentBase {
         });
     }
 
-    private static void invokeFileOpen(DBFileOpenHandle<?> handle, Runnable opener) {
+    private static void invokeFileOpen(DBFileOpenHandle handle, Runnable opener) {
         if (ProgressMonitor.isCancelled()) {
             handle.release();
         } else {

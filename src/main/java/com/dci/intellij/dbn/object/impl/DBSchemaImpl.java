@@ -428,6 +428,7 @@ public class DBSchemaImpl extends DBObjectImpl<DBSchemaMetadata> implements DBSc
         DatabaseInterfaceInvoker.schedule(LOW,
                 "Refreshing object status",
                 "Refreshing object status for " + getQualifiedNameWithType(),
+                getProject(),
                 getConnectionId(),
                 conn -> {
                     refreshValidStatus(refreshNodes, conn);

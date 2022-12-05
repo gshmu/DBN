@@ -68,6 +68,6 @@ public interface DatabaseContextBase extends DatabaseContext{
     }
 
     default ConnectionContext createConnectionContext() {
-        return new ConnectionContext(getConnectionId(), null);
+        return new ConnectionContext(getProject(), getConnectionId(), null);
     }
 }

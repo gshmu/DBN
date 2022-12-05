@@ -25,7 +25,7 @@ public final class Dispatch {
 
     public static void run(boolean conditional, Runnable runnable) {
         if (conditional && ThreadMonitor.isDispatchThread()) {
-            guarded(runnable);
+            guarded(() -> runnable.run());
         } else {
             run(null, runnable);
         }
@@ -34,7 +34,7 @@ public final class Dispatch {
     public static void run(ModalityState modalityState, Runnable runnable) {
         Application application = ApplicationManager.getApplication();
         modalityState = Commons.nvl(modalityState, application.getDefaultModalityState());
-        application.invokeLater(() -> guarded(runnable), modalityState/*, ModalityState.NON_MODAL*/);
+        application.invokeLater(() -> guarded(() -> runnable.run()), modalityState/*, ModalityState.NON_MODAL*/);
     }
 
     public static <T, E extends Throwable> T call(boolean conditional, ThrowableCallable<T, E> callable) throws E{

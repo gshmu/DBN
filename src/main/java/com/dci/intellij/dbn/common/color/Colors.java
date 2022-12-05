@@ -173,7 +173,7 @@ public final class Colors {
 
         UIManager.addPropertyChangeListener(evt -> {
             if (Objects.equals(evt.getPropertyName(), "lookAndFeel")) {
-                guarded(runnable);
+                guarded(() -> runnable.run());
             }
         });
     }
