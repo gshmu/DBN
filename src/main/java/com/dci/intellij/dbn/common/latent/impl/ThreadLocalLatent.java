@@ -1,12 +1,13 @@
-package com.dci.intellij.dbn.common.latent;
+package com.dci.intellij.dbn.common.latent.impl;
 
-import lombok.SneakyThrows;
+import com.dci.intellij.dbn.common.latent.Latent;
+import com.dci.intellij.dbn.common.latent.Loader;
 
-abstract class ThreadLocalLatent<T> implements Latent<T>{
+public final class ThreadLocalLatent<T> implements Latent<T> {
     private final Loader<T> loader;
     private final ThreadLocal<T> value = new ThreadLocal<>();
 
-    ThreadLocalLatent(Loader<T> loader) {
+    public ThreadLocalLatent(Loader<T> loader) {
         this.loader = loader;
     }
 
@@ -25,8 +26,7 @@ abstract class ThreadLocalLatent<T> implements Latent<T>{
         return this.value.get() != null;
     }
 
-    @SneakyThrows
-    public final T get(){
+    public T get(){
         T value = this.value.get();
         if (value == null) {
             value = loader.load();

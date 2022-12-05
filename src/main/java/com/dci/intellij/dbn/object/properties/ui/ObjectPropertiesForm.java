@@ -86,7 +86,7 @@ public class ObjectPropertiesForm extends DBNFormBase {
         DBObject localObject = getObject();
         if (!Objects.equals(object, localObject)) {
             this.object = DBObjectRef.of(object);
-            Background.run(refreshHandle, () -> {
+            Background.run(getProject(), refreshHandle, () -> {
                 ObjectPropertiesTableModel tableModel = new ObjectPropertiesTableModel(object.getPresentableProperties());
                 Disposer.register(ObjectPropertiesForm.this, tableModel);
 

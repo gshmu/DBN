@@ -231,7 +231,7 @@
                 if (cell != null) {
                     if (e.isControlDown() && cell.isNavigable()) {
 
-                        Background.run(() -> {
+                        Background.run(getProject(), () -> {
                             DBColumn column = cell.getColumn();
                             DBColumn foreignKeyColumn = column.getForeignKeyColumn();
                             if (foreignKeyColumn != null && !e.isConsumed()) {

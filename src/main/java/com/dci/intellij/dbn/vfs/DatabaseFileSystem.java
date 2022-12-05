@@ -136,9 +136,9 @@ public class DatabaseFileSystem extends VirtualFileSystem implements /*NonPhysic
             DBObjectRef<DBSchemaObject> objectRef = new DBObjectRef<>(connectionId, objectIdentifier);
             DBEditableObjectVirtualFile databaseFile = findOrCreateDatabaseFile(project, objectRef);
 
-            if (!ThreadMonitor.current().is(ThreadProperty.EDITOR_READY)) {
+            if (!ThreadMonitor.current().is(ThreadProperty.EDITOR_LOAD)) {
                 if (!databaseFile.isEditorReady()) {
-                    Background.run(() -> databaseFile.makeEditorReady());
+                    Background.run(project, () -> databaseFile.makeEditorReady());
                     return null;
                 }
             }
@@ -174,7 +174,7 @@ public class DatabaseFileSystem extends VirtualFileSystem implements /*NonPhysic
         if (index < 0) return false;
 
         ConnectionId connectionId = ConnectionId.get(path.substring(0, index));
-        ConnectionHandler connection = ConnectionHandler.get(connectionId, project);
+        ConnectionHandler connection = ConnectionHandler.get(connectionId);
         if (project.isInitialized() && connection == null) return false;
 
         String relativePath = path.substring(index + 1);

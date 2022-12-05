@@ -5,9 +5,11 @@ import com.dci.intellij.dbn.common.Referenceable;
 import com.dci.intellij.dbn.common.cache.Cache;
 import com.dci.intellij.dbn.common.database.AuthenticationInfo;
 import com.dci.intellij.dbn.common.database.DatabaseInfo;
+import com.dci.intellij.dbn.common.dispose.Checks;
 import com.dci.intellij.dbn.common.dispose.StatefulDisposable;
 import com.dci.intellij.dbn.common.environment.EnvironmentTypeProvider;
 import com.dci.intellij.dbn.common.filter.Filter;
+import com.dci.intellij.dbn.common.thread.ThreadMonitor;
 import com.dci.intellij.dbn.common.ui.Presentable;
 import com.dci.intellij.dbn.common.util.Lists;
 import com.dci.intellij.dbn.connection.config.ConnectionSettings;
@@ -202,14 +204,13 @@ public interface ConnectionHandler extends StatefulDisposable, EnvironmentTypePr
 
     @Nullable
     static ConnectionHandler get(ConnectionId connectionId) {
-        return ConnectionCache.resolve(connectionId);
-    }
-
-    static ConnectionHandler get(ConnectionId connectionId, Project project) {
         ConnectionHandler connection = ConnectionCache.resolve(connectionId);
-        if (connection == null && project != null) {
-            ConnectionManager connectionManager = ConnectionManager.getInstance(project);
-            connection = connectionManager.getConnection(connectionId);
+        if (connection == null) {
+            Project project = ThreadMonitor.getProject();
+            if (Checks.isValid(project)) {
+                ConnectionManager connectionManager = ConnectionManager.getInstance(project);
+                connection = connectionManager.getConnection(connectionId);
+            }
         }
         return connection;
     }

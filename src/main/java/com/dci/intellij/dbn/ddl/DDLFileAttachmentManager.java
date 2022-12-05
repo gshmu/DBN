@@ -166,7 +166,7 @@ public class DDLFileAttachmentManager extends ProjectComponentBase implements Pe
         if (objectRef == null) return null;
 
         ConnectionId connectionId = objectRef.getConnectionId();
-        return ConnectionHandler.get(connectionId, getProject());
+        return ConnectionHandler.get(connectionId);
     }
 
 

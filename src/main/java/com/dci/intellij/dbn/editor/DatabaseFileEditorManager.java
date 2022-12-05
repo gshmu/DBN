@@ -78,7 +78,7 @@ public class DatabaseFileEditorManager extends ProjectComponentBase {
                         "Opening editor for " + object.getQualifiedNameWithType(),
                         progress -> openEditor(object, editorProviderId, scrollBrowser, true));
             } else {
-                Background.run(() -> openEditor(object, editorProviderId, scrollBrowser, false));
+                Background.run(getProject(), () -> openEditor(object, editorProviderId, scrollBrowser, false));
             }
         });
     }
@@ -128,7 +128,7 @@ public class DatabaseFileEditorManager extends ProjectComponentBase {
                     boolean focusEditor = handle.getEditorInstructions().isFocus();
 
                     FileEditorManager editorManager = FileEditorManager.getInstance(project);
-                    ThreadMonitor.surround(ThreadProperty.EDITOR_READY, () -> editorManager.openFile(databaseFile, focusEditor));
+                    ThreadMonitor.surround(project, ThreadProperty.EDITOR_LOAD, () -> editorManager.openFile(databaseFile, focusEditor));
 
                     NavigationInstructions instructions = NavigationInstructions.create().
                             with(SCROLL).
@@ -157,7 +157,7 @@ public class DatabaseFileEditorManager extends ProjectComponentBase {
                 boolean focusEditor = handle.getEditorInstructions().isFocus();
 
                 FileEditorManager editorManager = FileEditorManager.getInstance(project);
-                FileEditor[] fileEditors = ThreadMonitor.surround(ThreadProperty.EDITOR_READY,
+                FileEditor[] fileEditors = ThreadMonitor.surround(project, ThreadProperty.EDITOR_LOAD,
                         () -> editorManager.openFile(databaseFile, focusEditor));
 
                 for (FileEditor fileEditor : fileEditors) {
@@ -254,7 +254,7 @@ public class DatabaseFileEditorManager extends ProjectComponentBase {
         if (!editorManager.isFileOpen(virtualFile)) return;
 
         editorManager.closeFile(virtualFile);
-        ThreadMonitor.surround(ThreadProperty.EDITOR_READY,
+        ThreadMonitor.surround(project, ThreadProperty.EDITOR_LOAD,
                 () -> editorManager.openFile(virtualFile, false));
     }
 

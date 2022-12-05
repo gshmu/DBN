@@ -247,10 +247,9 @@ public class DatabaseFileManager extends ProjectComponentBase implements Persist
         val pendingOpenFiles = this.pendingOpenFiles;
         this.pendingOpenFiles = null;
 
-        Project project = getProject();
         for (val entry : pendingOpenFiles.entrySet()) {
             ConnectionId connectionId = entry.getKey();
-            ConnectionHandler connection = ConnectionHandler.get(connectionId, project);
+            ConnectionHandler connection = ConnectionHandler.get(connectionId);
             if (connection == null) continue;
 
             ConnectionDetailSettings connectionDetailSettings = connection.getSettings().getDetailSettings();
@@ -274,7 +273,7 @@ public class DatabaseFileManager extends ProjectComponentBase implements Persist
                                 if (progress.isCanceled()) continue;
                                 if (!connection.canConnect()) continue;
 
-                                DBSchemaObject object = objectRef.get(project);
+                                DBSchemaObject object = objectRef.get();
                                 if (object == null) continue;
 
                                 progress.setText2(connection.getName() + " - " + objectRef.getQualifiedNameWithType());

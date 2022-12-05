@@ -31,7 +31,7 @@ public final class DisposableContainers {
 
         @Override
         public void dispose() {
-            Disposer.disposeCollection(this);
+            BackgroundDisposer.queue(() -> Disposer.disposeCollection(this));
         }
 
         @Override
@@ -59,7 +59,7 @@ public final class DisposableContainers {
 
         @Override
         public void dispose() {
-            Disposer.disposeCollection(this);
+            BackgroundDisposer.queue(() -> Disposer.disposeCollection(this));
         }
 
         @Override

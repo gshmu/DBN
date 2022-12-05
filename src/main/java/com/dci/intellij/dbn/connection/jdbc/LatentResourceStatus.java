@@ -43,7 +43,7 @@ public abstract class LatentResourceStatus<T extends Property.IntBase> {
 
     private void checkControlled() {
         if (ThreadMonitor.isDispatchThread()) {
-            Background.run(() -> checkControlled());
+            Background.run(null, () -> checkControlled());
         } else {
             boolean oldValue = get();
             try {

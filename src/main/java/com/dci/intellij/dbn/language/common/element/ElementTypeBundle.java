@@ -112,7 +112,7 @@ public class ElementTypeBundle {
 
             Set<ElementType> allElementTypes = builder.allElementTypes;
             builder = null;
-            Background.run(() -> Measured.run(
+            Background.run(null, () -> Measured.run(
                     "initialising element-type lookup cache for " + this.languageDialect.getID(),
                     () -> {
                         for (ElementType elementType : allElementTypes) {

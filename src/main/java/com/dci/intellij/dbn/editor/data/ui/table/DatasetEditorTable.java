@@ -188,7 +188,7 @@ public class DatasetEditorTable extends ResultSetTable<DatasetEditorModel> {
         PropertyHolder<RecordStatus> scope = getUpdateScope(rowIndex, columnIndex);
         if (scope != null) {
             scope.set(UPDATING, true);
-            Background.run(() -> {
+            Background.run(getProject(), () -> {
                 try {
                     runnable.run();
                 } finally {
@@ -545,8 +545,9 @@ public class DatasetEditorTable extends ResultSetTable<DatasetEditorModel> {
             DatasetEditorModelCell cell,
             ColumnInfo columnInfo) {
 
-        DBColumn column = cell.getColumn();
-        Progress.modal(getProject(), column, true,
+        DBDataset dataset = getDataset();
+        DBColumn column = dataset.getColumn(columnInfo.getName());
+        Progress.modal(getProject(), dataset, true,
                 "Loading column information",
                 "Loading details of " + column.getQualifiedNameWithType(),
                 progress -> {

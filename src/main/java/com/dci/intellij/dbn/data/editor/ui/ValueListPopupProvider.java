@@ -71,7 +71,7 @@ public class ValueListPopupProvider implements TextFieldPopupProvider{
 
             preparing = true;
             Dispatch.background(
-                    modalityState,
+                    null, modalityState,
                     () -> {
                         getValues();
                         getSecondaryValues();

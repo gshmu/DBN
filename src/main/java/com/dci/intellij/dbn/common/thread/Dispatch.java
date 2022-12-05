@@ -7,6 +7,7 @@ import com.intellij.openapi.Disposable;
 import com.intellij.openapi.application.Application;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.application.ModalityState;
+import com.intellij.openapi.project.Project;
 import com.intellij.util.Alarm;
 import org.jetbrains.annotations.NotNull;
 
@@ -45,15 +46,15 @@ public final class Dispatch {
         }
     }
 
-    public static <T> void background(Supplier<T> supplier, Consumer<T> consumer) {
-        Background.run(() -> {
+    public static <T> void background(Project project, Supplier<T> supplier, Consumer<T> consumer) {
+        Background.run(project, () -> {
             T value = supplier.get();
             run(() -> consumer.accept(value));
         });
     }
 
-    public static <T> void background(ModalityState modalityState, Runnable loader, Runnable renderer) {
-        Background.run(() -> {
+    public static <T> void background(Project project, ModalityState modalityState, Runnable loader, Runnable renderer) {
+        Background.run(project, () -> {
             loader.run();
             run(modalityState, renderer);
         });

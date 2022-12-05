@@ -60,7 +60,7 @@ public class DBObjectVirtualFile<T extends DBObject> extends DBVirtualFileBase {
     public ConnectionHandler getConnection() {
         ConnectionHandler connection = object.getConnection();
         if (connection == null) {
-            connection = ConnectionHandler.get(getConnectionId(), getProject());
+            connection = ConnectionHandler.get(getConnectionId());
         }
         return nd(connection);
     }

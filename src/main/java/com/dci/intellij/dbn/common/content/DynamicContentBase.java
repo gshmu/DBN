@@ -4,6 +4,7 @@ import com.dci.intellij.dbn.common.collections.CompactArrayList;
 import com.dci.intellij.dbn.common.content.dependency.ContentDependencyAdapter;
 import com.dci.intellij.dbn.common.content.dependency.VoidContentDependencyAdapter;
 import com.dci.intellij.dbn.common.content.loader.DynamicContentLoader;
+import com.dci.intellij.dbn.common.dispose.BackgroundDisposer;
 import com.dci.intellij.dbn.common.dispose.Disposer;
 import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.common.filter.FilterDelegate;
@@ -192,7 +193,7 @@ public abstract class DynamicContentBase<T extends DynamicContentElement>
     public final void loadInBackground() {
         if (shouldLoadInBackground()) {
             set(LOADING_IN_BACKGROUND, true);
-            Background.run(() -> {
+            Background.run(getProject(), () -> {
                 try {
                     ensureLoaded(false);
                 } finally {
@@ -333,7 +334,7 @@ public abstract class DynamicContentBase<T extends DynamicContentElement>
             notifyChangeListeners();
         }
         if (is(MASTER)) {
-            Disposer.disposeCollection(oldElements);
+            BackgroundDisposer.queue(() -> Disposer.disposeCollection(oldElements));
         }
     }
 
@@ -396,7 +397,7 @@ public abstract class DynamicContentBase<T extends DynamicContentElement>
     public void disposeInner() {
         if (elements != EMPTY_CONTENT && elements != EMPTY_UNTOUCHED_CONTENT) {
             if (!isSubContent()) {
-                Disposer.disposeCollection(elements);
+                BackgroundDisposer.queue(() -> Disposer.disposeCollection(elements));
             }
             elements = cast(EMPTY_DISPOSED_CONTENT);
         }

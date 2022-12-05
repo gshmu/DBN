@@ -173,8 +173,7 @@ public class DatasetFilterManager extends ProjectComponentBase implements Persis
 
         for (val entry : filters.entrySet()) {
             ConnectionId connectionId = entry.getKey();
-            Project project = getProject();
-            ConnectionHandler connection = ConnectionHandler.get(connectionId, project);
+            ConnectionHandler connection = ConnectionHandler.get(connectionId);
             if (connection == null) continue;
 
             val filterLists = entry.getValue();
