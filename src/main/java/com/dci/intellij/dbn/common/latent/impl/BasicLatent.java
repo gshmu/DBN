@@ -2,39 +2,31 @@ package com.dci.intellij.dbn.common.latent.impl;
 
 import com.dci.intellij.dbn.common.latent.Latent;
 import com.dci.intellij.dbn.common.latent.Loader;
-import lombok.SneakyThrows;
 
-public abstract class BasicLatentImpl<T> implements Latent<T> {
+public class BasicLatent<T> implements Latent<T> {
+    private final Loader<T> loader;
     private T value;
     private volatile boolean loaded;
-    protected volatile boolean loading;
 
-    protected BasicLatentImpl() {}
+    public BasicLatent(Loader<T> loader) {
+        this.loader = loader;
+    }
 
-    @SneakyThrows
     public final T get(){
-        if (!shouldLoad()) return value;
-
-        synchronized (this) {
-            if (!shouldLoad()) return value;
-
-            try {
-                loading = true;
-                beforeLoad();
-                Loader<T> loader = getLoader();
-                T newValue = loader == null ? null : loader.load();
-                if (value != newValue) {
-                    value = newValue;
+        if (shouldLoad()) {
+            synchronized (this) {
+                if (shouldLoad()) {
+                    beforeLoad();
+                    T newValue = loader == null ? null : loader.load();
+                    if (value != newValue) {
+                        value = newValue;
+                    }
+                    afterLoad(newValue);
                 }
-                afterLoad(newValue);
-            } finally {
-                loading = false;
             }
         }
         return value;
     }
-
-    public abstract Loader<T> getLoader();
 
     protected boolean shouldLoad() {
         return !loaded;

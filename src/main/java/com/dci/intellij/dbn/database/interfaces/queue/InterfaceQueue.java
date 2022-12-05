@@ -41,12 +41,12 @@ public class InterfaceQueue extends StatefulDisposable.Base implements DatabaseI
     InterfaceQueue(@Nullable ConnectionHandler connection, Consumer<InterfaceTask<?>> consumer) {
         this.connection = ConnectionRef.of(connection);
         this.consumer = consumer == null ? new InterfaceQueueConsumer(this) : consumer;
-        this.counters.running.addListener(value -> warnTaskLimits(value));
+        this.counters.running.addListener(value -> warnTaskLimits());
 
         MONITORS.submit(() -> monitorQueue());
     }
 
-    private void warnTaskLimits(int value) {
+    private void warnTaskLimits() {
         if (counters.running() > maxActiveTasks()) {
             log.warn("Active task limit exceeded: {} (expected max {})", counters.running(), maxActiveTasks());
         }

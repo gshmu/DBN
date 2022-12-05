@@ -111,7 +111,7 @@ public class DatasetEditor extends DisposableUserDataHolderBase implements
 
     @NotNull
     public DBDataset getDataset() {
-        return Failsafe.nn(dataset.get(getProject()));
+        return dataset.ensure();
     }
 
     public DataEditorSettings getSettings() {
@@ -294,7 +294,7 @@ public class DatasetEditor extends DisposableUserDataHolderBase implements
                                 DatasetLoadListener.TOPIC,
                                 (listener) -> listener.datasetLoading(getDatabaseFile()));
 
-                        Background.run(() -> {
+                        Background.run(project, () -> {
                             DatasetEditorForm editorForm = getEditorForm();
                             try {
                                 editorForm.showLoadingHint();

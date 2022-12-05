@@ -26,7 +26,7 @@ public class ConnectionContext {
 
     @NotNull
     public ConnectionHandler getConnection() {
-        return ConnectionHandler.get(connectionId, getProject());
+        return ConnectionHandler.ensure(connectionId);
     }
 
     @Nullable

@@ -313,21 +313,13 @@ public final class ConnectionPool extends StatefulDisposable.Base implements Not
         return poolConnections.size();
     }
 
-    public List<DBNConnection> getPoolConnections() {
-        return poolConnections;
-    }
-
-    public Map<SessionId, DBNConnection> getDedicatedConnections() {
-        return dedicatedConnections;
-    }
-
     public int getPeakPoolSize() {
         return peakPoolSize;
     }
 
     @Override
     public void disposeInner() {
-        Background.run(() -> closeConnections());
+        Background.run(null, () -> closeConnections());
     }
 
     public boolean isConnected(SessionId sessionId) {

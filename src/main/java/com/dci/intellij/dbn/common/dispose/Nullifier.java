@@ -1,8 +1,10 @@
 package com.dci.intellij.dbn.common.dispose;
 
 import com.dci.intellij.dbn.common.latent.Latent;
+import com.dci.intellij.dbn.common.latent.Loader;
 import com.dci.intellij.dbn.common.options.Configuration;
 import com.dci.intellij.dbn.connection.DatabaseEntity;
+import com.dci.intellij.dbn.data.model.DataModel;
 import com.intellij.openapi.components.NamedComponent;
 import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.editor.Editor;
@@ -11,7 +13,7 @@ import com.intellij.psi.PsiElement;
 import com.intellij.util.ReflectionUtil;
 import lombok.extern.slf4j.Slf4j;
 
-import java.awt.Component;
+import java.awt.*;
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 import java.util.Collection;
@@ -32,6 +34,7 @@ public final class Nullifier {
             Map.class,
             Collection.class,
             Latent.class,
+            Loader.class,
             Editor.class,
             Document.class,
             PsiElement.class,
@@ -41,6 +44,7 @@ public final class Nullifier {
             AutoCloseable.class,
             NamedComponent.class,
             EventListener.class,
+            DataModel.class
     };
 
     public static void clearCollection(Collection<?> collection) {
@@ -64,18 +68,21 @@ public final class Nullifier {
 
     public static void nullify(Object object) {
         if (!(object instanceof Component)) {
-            BackgroundDisposer.queue(() -> {
-                List<Field> fields = nullifiableFields(object.getClass());
-                for (Field field : fields) {
-                    try {
-                        nullifyField(object, field);
-                    } catch (UnsupportedOperationException ignore) {
-                    } catch (Throwable e) {
-                        log.error("Failed to nullify field", e);
-                    }
-                }
-            });
+            BackgroundDisposer.queue(() -> nullifyFields(object));
         }
+    }
+
+    private static void nullifyFields(Object object) {
+        List<Field> fields = nullifiableFields(object.getClass());
+        for (Field field : fields) {
+            try {
+                nullifyField(object, field);
+            } catch (UnsupportedOperationException ignore) {
+            } catch (Throwable e) {
+                log.error("Failed to nullify field", e);
+            }
+        }
+        System.out.print(' ');
     }
 
     private static void nullifyField(Object object, Field field) throws IllegalAccessException {
@@ -91,6 +98,7 @@ public final class Nullifier {
             } else if (fieldValue instanceof Latent){
                 Latent latent = (Latent) fieldValue;
                 latent.reset();
+                nullify(latent);
             } else {
                 field.set(object, null);
             }

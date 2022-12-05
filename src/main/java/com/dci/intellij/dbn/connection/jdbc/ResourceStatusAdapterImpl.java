@@ -106,7 +106,7 @@ public abstract class ResourceStatusAdapterImpl<T extends Resource> implements R
         set(evaluating, true);
 
         if (ThreadMonitor.isDispatchThread()) {
-            Background.run(() -> evaluate());
+            Background.run(null, () -> evaluate());
             return;
         }
 
@@ -142,7 +142,7 @@ public abstract class ResourceStatusAdapterImpl<T extends Resource> implements R
         set(changing, true);
 
         if (ThreadMonitor.isDispatchThread()) {
-            Background.run(() -> change(value));
+            Background.run(null, () -> change(value));
             return;
         }
 

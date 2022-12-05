@@ -19,6 +19,7 @@ public final class Timeout {
                     () -> {
                         try {
                             return ThreadMonitor.surround(
+                                    invoker.getProject(),
                                     invoker,
                                     ThreadProperty.TIMEOUT,
                                     defaultValue,
@@ -49,6 +50,7 @@ public final class Timeout {
                     () -> {
                         try {
                             ThreadMonitor.surround(
+                                    invoker.getProject(),
                                     invoker,
                                     ThreadProperty.TIMEOUT,
                                     runnable);

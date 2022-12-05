@@ -1,10 +1,8 @@
 package com.dci.intellij.dbn.object.lookup;
 
 import com.dci.intellij.dbn.common.Reference;
-import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.common.state.PersistentStateElement;
 import com.dci.intellij.dbn.common.string.StringDeBuilder;
-import com.dci.intellij.dbn.common.thread.Timeout;
 import com.dci.intellij.dbn.common.util.Lists;
 import com.dci.intellij.dbn.common.util.Strings;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
@@ -17,7 +15,6 @@ import com.dci.intellij.dbn.object.common.DBObject;
 import com.dci.intellij.dbn.object.common.DBObjectBundle;
 import com.dci.intellij.dbn.object.common.DBVirtualObject;
 import com.dci.intellij.dbn.object.type.DBObjectType;
-import com.intellij.openapi.project.Project;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
@@ -33,6 +30,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import static com.dci.intellij.dbn.common.dispose.Checks.isValid;
+import static com.dci.intellij.dbn.common.dispose.Failsafe.nn;
 import static com.dci.intellij.dbn.common.options.setting.SettingsSupport.connectionIdAttribute;
 import static com.dci.intellij.dbn.common.options.setting.SettingsSupport.stringAttribute;
 import static com.dci.intellij.dbn.common.util.Commons.nvl;
@@ -296,24 +294,23 @@ public class DBObjectRef<T extends DBObject> implements Comparable<DBObjectRef<?
     }
 
     @Nullable
-    public static <T extends DBObject> T get(@Nullable DBObjectRef<T> objectRef) {
-        return objectRef == null ? null : objectRef.get();
+    public static <T extends DBObject> T get(@Nullable DBObjectRef<T> ref) {
+        return ref == null ? null : ref.get();
     }
 
     @NotNull
-    public static <T extends DBObject> T ensure(@Nullable DBObjectRef<T> objectRef) {
-        T object = get(objectRef);
-        return Failsafe.nn(object);
+    public static <T extends DBObject> T ensure(@Nullable DBObjectRef<T> ref) {
+        return nn(get(ref));
     }
 
     @NotNull
-    public static <T extends DBObject> List<T> get(@NotNull List<DBObjectRef<T>> objectRefs) {
-        return Lists.convert(objectRefs, ref -> get(ref));
+    public static <T extends DBObject> List<T> get(@NotNull List<DBObjectRef<T>> refs) {
+        return Lists.convert(refs, ref -> get(ref));
     }
 
     @NotNull
-    public static <T extends DBObject> List<T> ensure(@NotNull List<DBObjectRef<T>> objectRefs) {
-        return Lists.convert(objectRefs, ref -> ensure(ref));
+    public static <T extends DBObject> List<T> ensure(@NotNull List<DBObjectRef<T>> refs) {
+        return Lists.convert(refs, ref -> ensure(ref));
     }
 
     @NotNull
@@ -324,37 +321,23 @@ public class DBObjectRef<T extends DBObject> implements Comparable<DBObjectRef<?
     @Override
     @Nullable
     public T get() {
-        return load(null);
-    }
-
-    @Nullable
-    public T ensure(long timeoutSeconds) {
-        return Timeout.call(timeoutSeconds, null, true, () -> get());
+        return load();
     }
 
     public T ensure(){
-        return Failsafe.nn(get());
+        return nn(get());
     }
 
-    @Nullable
-    public T get(Project project) {
-        return load(project);
-    }
-
-    private T load(Project project) {
+    private T load() {
         T object = getObject();
-        if (object == null) {
-            clearReference();
-            ConnectionHandler connection = getConnection();
-            if (connection == null && isValid(project)) {
-                connection = ConnectionHandler.get(getConnectionId(), project);
-            }
+        if (object != null) return object;
 
-            if (isValid(connection) && connection.isEnabled()) {
-                object = lookup(connection);
-                if (object != null) {
-                    reference = WeakRef.of(object);
-                }
+        clearReference();
+        ConnectionHandler connection = getConnection();
+        if (isValid(connection) && connection.isEnabled()) {
+            object = lookup(connection);
+            if (object != null) {
+                reference = WeakRef.of(object);
             }
         }
         return object;
@@ -393,8 +376,7 @@ public class DBObjectRef<T extends DBObject> implements Comparable<DBObjectRef<?
             DBObjectBundle objectBundle = connection.getObjectBundle();
             object = objectBundle.getObject(objectType, objectName, overload);
         } else {
-            Project project = connection.getProject();
-            DBObject parentObject = parent.get(project);
+            DBObject parentObject = parent.get();
             if (parentObject != null) {
                 object = parentObject.getChildObject(objectType, objectName, overload, true);
                 DBObjectType genericType = objectType.getGenericType();

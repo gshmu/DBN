@@ -90,18 +90,19 @@ public class SessionBrowser extends DisposableUserDataHolderBase implements File
     public void loadSessions(boolean force) {
         if (!canLoad(force)) return;
 
+        Project project = getProject();
         ConnectionAction.invoke("loading the sessions", false, this,
-                action -> Background.run(() -> {
+                action -> Background.run(project, () -> {
                     if (!canLoad(force)) return;
 
                     DBSessionBrowserVirtualFile databaseFile = getDatabaseFile();
                     try {
                         setLoading(true);
-                        SessionBrowserManager sessionBrowserManager = SessionBrowserManager.getInstance(getProject());
+                        SessionBrowserManager sessionBrowserManager = SessionBrowserManager.getInstance(project);
                         SessionBrowserModel model = sessionBrowserManager.loadSessions(databaseFile);
                         replaceModel(model);
                     } finally {
-                        ProjectEvents.notify(getProject(),
+                        ProjectEvents.notify(project,
                                 SessionBrowserLoadListener.TOPIC,
                                 (listener) -> listener.sessionsLoaded(databaseFile));
                         setLoading(false);
@@ -191,6 +192,7 @@ public class SessionBrowser extends DisposableUserDataHolderBase implements File
         return databaseFile.ensure();
     }
 
+    @NotNull
     public Project getProject() {
         return getDatabaseFile().getProject();
     }

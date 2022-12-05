@@ -170,7 +170,7 @@ public class DBObjectBundleImpl extends BrowserTreeNodeBase implements DBObjectB
             @Override
             public void sourceCodeSaved(@NotNull DBSourceCodeVirtualFile sourceCodeFile, @Nullable SourceCodeEditor fileEditor) {
                 if (sourceCodeFile.getConnectionId() == getConnectionId()) {
-                    Background.run(() -> sourceCodeFile.getObject().refresh());
+                    Background.run(getProject(), () -> sourceCodeFile.getObject().refresh());
                 }
             }
         };
@@ -384,7 +384,7 @@ public class DBObjectBundleImpl extends BrowserTreeNodeBase implements DBObjectB
                     visibleTreeChildren = new ArrayList<>();
                     visibleTreeChildren.add(new LoadInProgressTreeNode(this));
 
-                    Background.run(() -> buildTreeChildren());
+                    Background.run(getProject(), () -> buildTreeChildren());
                 }
             }
         }
@@ -399,8 +399,9 @@ public class DBObjectBundleImpl extends BrowserTreeNodeBase implements DBObjectB
         List<BrowserTreeNode> treeChildren = Lists.filter(allPossibleTreeChildren, objectTypeFilter);
         treeChildren = nvl(treeChildren, Collections.emptyList());
 
+        Project project = getProject();
         for (BrowserTreeNode objectList : treeChildren) {
-            Background.run(() -> objectList.initTreeElement());
+            Background.run(project, () -> objectList.initTreeElement());
             checkDisposed();
         }
 
@@ -411,7 +412,7 @@ public class DBObjectBundleImpl extends BrowserTreeNodeBase implements DBObjectB
         visibleTreeChildren = treeChildren;
         treeChildrenLoaded = true;
 
-        ProjectEvents.notify(getProject(),
+        ProjectEvents.notify(project,
                 BrowserTreeEventListener.TOPIC,
                 (listener) -> listener.nodeChanged(this, TreeEventType.STRUCTURE_CHANGED));
 
@@ -662,7 +663,7 @@ public class DBObjectBundleImpl extends BrowserTreeNodeBase implements DBObjectB
         ConnectionHandler connection = getConnection();
         if (!OBJECT_INVALIDATION.isSupported(connection)) return;
 
-        Background.run(() -> {
+        Background.run(getProject(), () -> {
             try {
                 List<DBSchema> schemas = requester == null ? getSchemas() : requester.getReferencingSchemas();
 

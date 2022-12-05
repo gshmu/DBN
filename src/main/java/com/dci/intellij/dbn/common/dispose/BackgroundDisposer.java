@@ -57,34 +57,36 @@ public final class BackgroundDisposer {
 
     private void push(Runnable runnable) {
         if (exiting) return;
-        queue.offer(runnable);
+        queue.add(runnable);
         
         if (running || exiting) return;
 
         synchronized (this) {
             if (running || exiting) return;
             running = true;
-            startDisposer();
+            start();
         }
     }
 
-    private void startDisposer() {
-        Background.run(() -> {
+    private void start() {
+        Background.run(null, () -> {
             try {
-                ThreadMonitor.wrap(ThreadProperty.DISPOSER, () -> {
-                    while (!exiting) {
-                        Runnable task = queue.poll(10, TimeUnit.SECONDS);
-                        if (task == null) continue;
-                        try {
-                            guarded(() -> task.run());
-                        } catch (Exception e) {
-                            log.error("Background disposer failed", e);
-                        }
-                    }
-                });
+                ThreadMonitor.wrap(ThreadProperty.DISPOSER, () -> dispose());
             } finally {
                 running = false;
             }
         });
+    }
+
+    private void dispose() throws InterruptedException {
+        while (!exiting) {
+            Runnable task = queue.poll(10, TimeUnit.SECONDS);
+            if (task == null) continue;
+            try {
+                guarded(() -> task.run());
+            } catch (Exception e) {
+                log.error("Background disposer failed", e);
+            }
+        }
     }
 }

@@ -35,7 +35,7 @@ public final class Checks {
 
         if (object instanceof Project) {
             Project project = (Project) object;
-            return project != Failsafe.DUMMY_PROJECT && !project.isDisposed();
+            return !project.isDisposed();
         }
 
         if (object instanceof Editor) {

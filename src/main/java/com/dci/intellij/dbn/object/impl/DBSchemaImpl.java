@@ -433,7 +433,7 @@ public class DBSchemaImpl extends DBObjectImpl<DBSchemaMetadata> implements DBSc
                 conn -> {
                     refreshValidStatus(refreshNodes, conn);
                     refreshDebugStatus(refreshNodes, conn);
-                    Background.run(() ->
+                    Background.run(getProject(), () ->
                             refreshNodes.forEach(n -> ProjectEvents.notify(getProject(), BrowserTreeEventListener.TOPIC,
                                     listener -> listener.nodeChanged(n, TreeEventType.NODES_CHANGED))));
                 });

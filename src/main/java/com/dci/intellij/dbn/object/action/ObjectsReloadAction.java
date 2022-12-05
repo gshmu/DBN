@@ -26,7 +26,7 @@ public class ObjectsReloadAction extends DumbAwareAction {
     }
 
     private void reloadObjectList() {
-        Background.run(() -> {
+        Background.run(objectList.getProject(), () -> {
             objectList.getConnection().getMetaDataCache().reset();
             objectList.reload();
         });
