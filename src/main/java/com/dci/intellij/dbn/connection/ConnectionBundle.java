@@ -98,7 +98,7 @@ public class ConnectionBundle extends BrowserTreeNodeBase implements BrowserTree
             ConnectionId connectionId = connectionSetting.getConnectionId();
             ConnectionHandler connection = Lists.first(oldConnections, c -> c.getConnectionId() == connectionId);;
             if (connection == null) {
-                connection = new ConnectionHandlerImpl(this, connectionSetting);
+                connection = new ConnectionHandlerImpl(getProject(), connectionSetting);
                 newConnections.add(connection);
                 Disposer.register(this, connection);
                 listChanged = true;

@@ -26,7 +26,7 @@ public class ObjectEditDataAction extends DumbAwareProjectAction {
 
     @Nullable
     @Override
-    protected Project getProject() {
+    public Project getProject() {
         return getObject().getProject();
     }
 

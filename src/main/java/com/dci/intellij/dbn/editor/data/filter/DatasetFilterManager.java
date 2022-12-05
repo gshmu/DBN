@@ -6,7 +6,6 @@ import com.dci.intellij.dbn.common.component.ProjectComponentBase;
 import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.ConnectionId;
-import com.dci.intellij.dbn.connection.ConnectionManager;
 import com.dci.intellij.dbn.data.model.ColumnInfo;
 import com.dci.intellij.dbn.editor.data.DatasetEditorManager;
 import com.dci.intellij.dbn.editor.data.filter.ui.DatasetFilterDialog;
@@ -174,15 +173,16 @@ public class DatasetFilterManager extends ProjectComponentBase implements Persis
 
         for (val entry : filters.entrySet()) {
             ConnectionId connectionId = entry.getKey();
-            ConnectionManager connectionManager = ConnectionManager.getInstance(getProject());
-            if (connectionManager.getConnection(connectionId) != null) {
-                val filterLists = entry.getValue();
-                for (val groupEntry : filterLists.entrySet()) {
-                    DatasetFilterGroup filterGroup = groupEntry.getValue();
-                    Element filterListElement = new Element("filter-actions");
-                    filterGroup.writeConfiguration(filterListElement);
-                    element.addContent(filterListElement);
-                }
+            Project project = getProject();
+            ConnectionHandler connection = ConnectionHandler.get(connectionId, project);
+            if (connection == null) continue;
+
+            val filterLists = entry.getValue();
+            for (val groupEntry : filterLists.entrySet()) {
+                DatasetFilterGroup filterGroup = groupEntry.getValue();
+                Element filterListElement = new Element("filter-actions");
+                filterGroup.writeConfiguration(filterListElement);
+                element.addContent(filterListElement);
             }
         }
         return element;

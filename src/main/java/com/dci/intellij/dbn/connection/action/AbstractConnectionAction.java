@@ -42,7 +42,7 @@ public abstract class AbstractConnectionAction extends DumbAwareContextAction<Co
 
     @NotNull
     @Override
-    protected Project getProject() {
+    public Project getProject() {
         ConnectionHandler connection = this.connection.ensure();
         return connection.getProject();
     }

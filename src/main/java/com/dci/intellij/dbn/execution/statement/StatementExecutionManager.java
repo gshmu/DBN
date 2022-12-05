@@ -115,8 +115,7 @@ public class StatementExecutionManager extends ProjectComponentBase implements P
 
     @Nullable
     public StatementExecutionQueue getExecutionQueue(ConnectionId connectionId, SessionId sessionId) {
-        ConnectionManager connectionManager = ConnectionManager.getInstance(getProject());
-        ConnectionHandler connection = nd(connectionManager.getConnection(connectionId));
+        ConnectionHandler connection = nd(ConnectionHandler.get(connectionId, getProject()));
         return connection.isVirtual() ? null : connection.getExecutionQueue(sessionId);
     }
 

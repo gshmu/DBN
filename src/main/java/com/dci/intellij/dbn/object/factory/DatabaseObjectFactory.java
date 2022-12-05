@@ -100,6 +100,7 @@ public class DatabaseObjectFactory extends ProjectComponentBase {
             DatabaseInterfaceInvoker.execute(HIGHEST,
                     "Creating " + objectTypeName,
                     "Creating " + objectTypeName + " " + objectName,
+                    schema.getProject(),
                     schema.getConnectionId(),
                     schema.getSchemaId(),
                     conn -> {
@@ -145,6 +146,7 @@ public class DatabaseObjectFactory extends ProjectComponentBase {
             DatabaseInterfaceInvoker.execute(HIGHEST,
                     "Dropping database object",
                     "Dropping " + object.getQualifiedNameWithType(),
+                    object.getProject(),
                     object.getConnectionId(),
                     conn -> {
                         DBContentType contentType = object.getContentType();

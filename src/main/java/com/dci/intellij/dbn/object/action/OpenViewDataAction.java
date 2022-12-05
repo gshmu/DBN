@@ -26,7 +26,7 @@ public class OpenViewDataAction extends DumbAwareProjectAction {
 
     @Nullable
     @Override
-    protected Project getProject() {
+    public  Project getProject() {
         return super.getProject();
     }
 

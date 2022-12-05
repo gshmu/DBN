@@ -1,12 +1,13 @@
 package com.dci.intellij.dbn.common.thread;
 
-import com.intellij.openapi.progress.ProcessCanceledException;
 import lombok.extern.slf4j.Slf4j;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Map;
 import java.util.concurrent.*;
 import java.util.concurrent.atomic.AtomicInteger;
+
+import static com.dci.intellij.dbn.common.dispose.Failsafe.guarded;
 
 @Slf4j
 public final class Threads {
@@ -31,8 +32,7 @@ public final class Threads {
             log.info("Creating thread \"" + indexedName + "\"");
             Thread thread = new Thread(() -> {
                     try {
-                        runnable.run();
-                    } catch (ProcessCanceledException ignore) {
+                        guarded(() -> runnable.run());
                     } catch (Throwable t) {
                         log.error(name + " - Execution failed: " + t.getMessage(), t);
                     }

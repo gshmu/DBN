@@ -416,6 +416,7 @@ public class DatabaseDebuggerManager extends ProjectComponentBase implements Per
             return DatabaseInterfaceInvoker.load(HIGHEST,
                     "Loading metadata",
                     "Loading debugger version",
+                    connection.getProject(),
                     connection.getConnectionId(),
                     conn -> {
                         DatabaseDebuggerInterface debuggerInterface = connection.getDebuggerInterface();

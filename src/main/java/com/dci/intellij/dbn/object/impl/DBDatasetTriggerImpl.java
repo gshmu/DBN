@@ -97,6 +97,7 @@ public class DBDatasetTriggerImpl extends DBTriggerImpl implements DBDatasetTrig
         DatabaseInterfaceInvoker.execute(HIGHEST,
                 "Updating source code",
                 "Updating sources of " + getQualifiedNameWithType(),
+                getProject(),
                 getConnectionId(),
                 getSchemaId(),
                 conn -> {

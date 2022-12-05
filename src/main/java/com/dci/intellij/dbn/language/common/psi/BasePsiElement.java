@@ -14,6 +14,7 @@ import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.SchemaId;
 import com.dci.intellij.dbn.connection.context.DatabaseContextBase;
 import com.dci.intellij.dbn.database.interfaces.DatabaseCompatibilityInterface;
+import com.dci.intellij.dbn.editor.DatabaseFileEditorManager;
 import com.dci.intellij.dbn.editor.ddl.DDLFileEditor;
 import com.dci.intellij.dbn.editor.session.SessionBrowser;
 import com.dci.intellij.dbn.editor.session.ui.SessionBrowserForm;
@@ -30,6 +31,7 @@ import com.dci.intellij.dbn.language.common.psi.lookup.ObjectReferenceLookupAdap
 import com.dci.intellij.dbn.language.common.psi.lookup.PsiLookupAdapter;
 import com.dci.intellij.dbn.object.common.DBObject;
 import com.dci.intellij.dbn.object.common.DBObjectPsiElement;
+import com.dci.intellij.dbn.object.common.DBSchemaObject;
 import com.dci.intellij.dbn.object.common.DBVirtualObject;
 import com.dci.intellij.dbn.object.type.DBObjectType;
 import com.dci.intellij.dbn.vfs.file.DBConsoleVirtualFile;
@@ -323,81 +325,83 @@ public abstract class BasePsiElement<T extends ElementTypeBase> extends ASTDeleg
 
     @Override
     public void navigate(boolean requestFocus) {
-        if (isValid()) {
-            OpenFileDescriptor descriptor = (OpenFileDescriptor) EditSourceUtil.getDescriptor(this);
-            if (descriptor != null) {
-                VirtualFile virtualFile = getFile().getVirtualFile();
-                Project project = getProject();
-                FileEditorManager editorManager = FileEditorManager.getInstance(project);
-                if (virtualFile != null) {
-                    if (virtualFile instanceof DBSourceCodeVirtualFile) {
-                        DBSourceCodeVirtualFile sourceCodeFile = (DBSourceCodeVirtualFile) virtualFile;
-                        DBEditableObjectVirtualFile databaseFile = sourceCodeFile.getMainDatabaseFile();
-                        if (!editorManager.isFileOpen(databaseFile)) {
-                            editorManager.openFile(databaseFile, requestFocus);
-                        }
-                        BasicTextEditor textEditor = Editors.getTextEditor((DBSourceCodeVirtualFile) virtualFile);
-                        if (textEditor != null) {
-                            Editor editor = textEditor.getEditor();
-                            descriptor.navigateIn(editor);
-                            if (requestFocus) Editors.focusEditor(editor);
-                        }
-                        return;
-                    }
+        if (!isValid()) return;
 
-                    if (virtualFile instanceof DBConsoleVirtualFile) {
-                        DBConsoleVirtualFile consoleVirtualFile = (DBConsoleVirtualFile) virtualFile;
-                        BasicTextEditor textEditor = Editors.getTextEditor(consoleVirtualFile);
-                        if (textEditor != null) {
-                            Editor editor = textEditor.getEditor();
-                            descriptor.navigateIn(editor);
-                            if (requestFocus) Editors.focusEditor(editor);
-                        }
-                        return;
-                    }
+        OpenFileDescriptor descriptor = (OpenFileDescriptor) EditSourceUtil.getDescriptor(this);
+        if (descriptor == null) return;
 
-                    if (virtualFile instanceof DBSessionStatementVirtualFile) {
-                        DBSessionStatementVirtualFile sessionBrowserStatementFile = (DBSessionStatementVirtualFile) virtualFile;
-                        SessionBrowser sessionBrowser = sessionBrowserStatementFile.getSessionBrowser();
-                        SessionBrowserForm editorForm = sessionBrowser.getBrowserForm();
-                        EditorEx viewer = editorForm.getDetailsForm().getCurrentSqlPanel().getViewer();
-                        if (viewer != null) {
-                            descriptor.navigateIn(viewer);
-                            if (requestFocus) Editors.focusEditor(viewer);
-                        }
-                        return;
-                    }
+        VirtualFile virtualFile = getFile().getVirtualFile();
+        Project project = getProject();
+        if (virtualFile == null) return;
 
-                    FileEditor[] fileEditors = editorManager.getSelectedEditors();
-                    for (FileEditor fileEditor : fileEditors) {
-                        if (fileEditor instanceof DDLFileEditor) {
-                            DDLFileEditor textEditor = (DDLFileEditor) fileEditor;
-                            if (textEditor.getVirtualFile().equals(virtualFile)) {
-                                Editor editor = textEditor.getEditor();
-                                descriptor.navigateIn(editor);
-                                if (requestFocus) Editors.focusEditor(editor);
-                                return;
-                            }
+        if (virtualFile instanceof DBSourceCodeVirtualFile) {
+            DBSourceCodeVirtualFile sourceCodeFile = (DBSourceCodeVirtualFile) virtualFile;
+            DBEditableObjectVirtualFile databaseFile = sourceCodeFile.getMainDatabaseFile();
+            DatabaseFileEditorManager editorManager = DatabaseFileEditorManager.getInstance(project);
+            if (!editorManager.isFileOpen(databaseFile)) {
+                DBSchemaObject object = databaseFile.getObject();
+                editorManager.openEditor(object, null, false, requestFocus);
+            }
+            BasicTextEditor textEditor = Editors.getTextEditor(sourceCodeFile);
+            if (textEditor != null) {
+                Editor editor = textEditor.getEditor();
+                descriptor.navigateIn(editor);
+                if (requestFocus) Editors.focusEditor(editor);
+            }
+            return;
+        }
 
-                        }
-                    }
+        if (virtualFile instanceof DBConsoleVirtualFile) {
+            DBConsoleVirtualFile consoleVirtualFile = (DBConsoleVirtualFile) virtualFile;
+            BasicTextEditor textEditor = Editors.getTextEditor(consoleVirtualFile);
+            if (textEditor != null) {
+                Editor editor = textEditor.getEditor();
+                descriptor.navigateIn(editor);
+                if (requestFocus) Editors.focusEditor(editor);
+            }
+            return;
+        }
 
-                    super.navigate(requestFocus);
+        if (virtualFile instanceof DBSessionStatementVirtualFile) {
+            DBSessionStatementVirtualFile sessionBrowserStatementFile = (DBSessionStatementVirtualFile) virtualFile;
+            SessionBrowser sessionBrowser = sessionBrowserStatementFile.getSessionBrowser();
+            SessionBrowserForm editorForm = sessionBrowser.getBrowserForm();
+            EditorEx viewer = editorForm.getDetailsForm().getCurrentSqlPanel().getViewer();
+            if (viewer != null) {
+                descriptor.navigateIn(viewer);
+                if (requestFocus) Editors.focusEditor(viewer);
+            }
+            return;
+        }
+
+        FileEditorManager editorManager = FileEditorManager.getInstance(project);
+        FileEditor[] fileEditors = editorManager.getSelectedEditors();
+        for (FileEditor fileEditor : fileEditors) {
+            if (fileEditor instanceof DDLFileEditor) {
+                DDLFileEditor textEditor = (DDLFileEditor) fileEditor;
+                if (textEditor.getVirtualFile().equals(virtualFile)) {
+                    Editor editor = textEditor.getEditor();
+                    descriptor.navigateIn(editor);
+                    if (requestFocus) Editors.focusEditor(editor);
+                    return;
                 }
+
             }
         }
+
+        super.navigate(requestFocus);
     }
 
     public void navigateInEditor(@NotNull FileEditor fileEditor, NavigationInstructions instructions) {
         OpenFileDescriptor descriptor = (OpenFileDescriptor) EditSourceUtil.getDescriptor(this);
-        if (descriptor != null) {
-            Editor editor = Editors.getEditor(fileEditor);
-            if (editor != null) {
-                if (instructions.isScroll()) descriptor.navigateIn(editor);
-                if (instructions.isFocus()) Editors.focusEditor(editor);
-                //TODO instruction.isOpen();
-            }
-        }
+        if (descriptor == null) return;
+
+        Editor editor = Editors.getEditor(fileEditor);
+        if (editor == null) return;
+
+        if (instructions.isScroll()) descriptor.navigateIn(editor);
+        if (instructions.isFocus()) Editors.focusEditor(editor);
+        //TODO instruction.isOpen();
     }
 
     /*********************************************************

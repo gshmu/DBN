@@ -140,10 +140,10 @@ public class DatabaseSessionManager extends ProjectComponentBase implements Pers
 
     @Override
     public void loadComponentState(@NotNull Element element) {
-        ConnectionManager connectionManager = ConnectionManager.getInstance(getProject());
+        Project project = getProject();
         for (Element connectionElement : element.getChildren()) {
             ConnectionId connectionId = connectionIdAttribute(connectionElement, "id");
-            ConnectionHandler connection = connectionManager.getConnection(connectionId);
+            ConnectionHandler connection = ConnectionHandler.get(connectionId, project);
 
             if (connection != null) {
                 DatabaseSessionBundle sessionBundle = connection.getSessionBundle();

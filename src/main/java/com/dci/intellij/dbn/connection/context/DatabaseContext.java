@@ -6,10 +6,14 @@ import com.dci.intellij.dbn.database.interfaces.DatabaseInterfaces;
 import com.dci.intellij.dbn.database.interfaces.DatabaseInterfacesProvider;
 import com.dci.intellij.dbn.object.DBSchema;
 import com.dci.intellij.dbn.object.common.DBObjectBundle;
+import com.intellij.openapi.project.Project;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 public interface DatabaseContext extends DatabaseInterfacesProvider {
+
+    @Nullable
+    default Project getProject() {return null;}
 
     @Nullable
     ConnectionId getConnectionId();

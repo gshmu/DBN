@@ -13,7 +13,6 @@ import com.dci.intellij.dbn.common.util.Documents;
 import com.dci.intellij.dbn.common.util.Messages;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.ConnectionId;
-import com.dci.intellij.dbn.connection.ConnectionManager;
 import com.dci.intellij.dbn.connection.config.ConnectionConfigListener;
 import com.dci.intellij.dbn.connection.mapping.FileConnectionContextManager;
 import com.dci.intellij.dbn.ddl.options.DDLFileSettings;
@@ -164,11 +163,10 @@ public class DDLFileAttachmentManager extends ProjectComponentBase implements Pe
 
     public ConnectionHandler getMappedConnection(VirtualFile ddlFile) {
         DBObjectRef<DBSchemaObject> objectRef = mappings.get(ddlFile.getUrl());
-        if (objectRef != null) {
-            ConnectionId connectionId = objectRef.getConnectionId();
-            return ConnectionManager.getInstance(getProject()).getConnection(connectionId);
-        }
-        return null;
+        if (objectRef == null) return null;
+
+        ConnectionId connectionId = objectRef.getConnectionId();
+        return ConnectionHandler.get(connectionId, getProject());
     }
 
 

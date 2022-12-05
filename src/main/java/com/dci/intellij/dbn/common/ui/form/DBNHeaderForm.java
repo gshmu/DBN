@@ -7,7 +7,6 @@ import com.dci.intellij.dbn.common.util.Commons;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.ConnectionHandlerStatusListener;
 import com.dci.intellij.dbn.connection.ConnectionId;
-import com.dci.intellij.dbn.connection.ConnectionManager;
 import com.dci.intellij.dbn.connection.context.DatabaseContext;
 import com.dci.intellij.dbn.object.common.DBObject;
 import com.dci.intellij.dbn.object.lookup.DBObjectRef;
@@ -70,8 +69,7 @@ public class DBNHeaderForm extends DBNFormBase {
 
         ProjectEvents.subscribe(project, this, ConnectionHandlerStatusListener.TOPIC, (connectionId) -> {
             if (connectionId == id) {
-                ConnectionManager connectionManager = ConnectionManager.getInstance(project);
-                ConnectionHandler connHandler = connectionManager.getConnection(connectionId);
+                ConnectionHandler connHandler = ConnectionHandler.get(connectionId, getProject());
                 if (connHandler != null) {
                     objectLabel.setIcon(connHandler.getIcon());
                 }

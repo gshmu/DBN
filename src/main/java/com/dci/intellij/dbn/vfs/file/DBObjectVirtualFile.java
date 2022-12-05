@@ -2,7 +2,6 @@ package com.dci.intellij.dbn.vfs.file;
 
 import com.dci.intellij.dbn.browser.model.BrowserTreeNode;
 import com.dci.intellij.dbn.common.DevNullStreams;
-import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.common.util.Traces;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.ConnectionId;
@@ -25,6 +24,8 @@ import javax.swing.*;
 import java.io.File;
 import java.io.IOException;
 import java.io.OutputStream;
+
+import static com.dci.intellij.dbn.common.dispose.Failsafe.nd;
 
 public class DBObjectVirtualFile<T extends DBObject> extends DBVirtualFileBase {
     private static final byte[] EMPTY_BYTE_CONTENT = new byte[0];
@@ -57,7 +58,11 @@ public class DBObjectVirtualFile<T extends DBObject> extends DBVirtualFileBase {
     @Override
     @NotNull
     public ConnectionHandler getConnection() {
-        return Failsafe.nn(object.getConnection());
+        ConnectionHandler connection = object.getConnection();
+        if (connection == null) {
+            connection = ConnectionHandler.get(getConnectionId(), getProject());
+        }
+        return nd(connection);
     }
 
     @Nullable
