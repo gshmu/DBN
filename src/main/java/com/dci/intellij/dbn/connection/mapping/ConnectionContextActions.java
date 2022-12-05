@@ -85,7 +85,7 @@ public class ConnectionContextActions {
 
         @Nullable
         @Override
-        protected Project getProject() {
+        public Project getProject() {
             return project.get();
         }
     }

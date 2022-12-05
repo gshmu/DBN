@@ -8,7 +8,6 @@ import com.dci.intellij.dbn.common.ui.util.Lists;
 import com.dci.intellij.dbn.common.util.Naming;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.ConnectionId;
-import com.dci.intellij.dbn.connection.ConnectionManager;
 import com.dci.intellij.dbn.editor.data.filter.ui.DatasetFilterForm;
 import com.dci.intellij.dbn.object.DBDataset;
 import com.dci.intellij.dbn.object.DBSchema;
@@ -175,8 +174,7 @@ public class DatasetFilterGroup extends BasicProjectConfiguration<ProjectConfigu
     @NotNull
     public DBDataset lookupDataset() {
         Project project = getProject();
-        ConnectionManager connectionManager = ConnectionManager.getInstance(project);
-        ConnectionHandler connection = connectionManager.getConnection(connectionId);
+        ConnectionHandler connection = ConnectionHandler.get(connectionId, project);
         if (connection != null) {
             int index = datasetName.lastIndexOf('.');
             String schemaName = datasetName.substring(0, index);

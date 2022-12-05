@@ -13,6 +13,7 @@ import com.dci.intellij.dbn.common.filter.Filter;
 import com.dci.intellij.dbn.common.latent.Latent;
 import com.dci.intellij.dbn.common.notification.NotificationGroup;
 import com.dci.intellij.dbn.common.notification.NotificationSupport;
+import com.dci.intellij.dbn.common.project.ProjectRef;
 import com.dci.intellij.dbn.common.util.Commons;
 import com.dci.intellij.dbn.common.util.TimeUtil;
 import com.dci.intellij.dbn.connection.config.ConnectionDatabaseSettings;
@@ -35,7 +36,6 @@ import com.dci.intellij.dbn.execution.statement.StatementExecutionQueue;
 import com.dci.intellij.dbn.language.common.DBLanguage;
 import com.dci.intellij.dbn.language.common.DBLanguageDialect;
 import com.dci.intellij.dbn.language.common.QuotePair;
-import com.dci.intellij.dbn.language.common.WeakRef;
 import com.dci.intellij.dbn.navigation.psi.DBConnectionPsiDirectory;
 import com.dci.intellij.dbn.object.DBSchema;
 import com.dci.intellij.dbn.object.common.DBObjectBundle;
@@ -64,8 +64,8 @@ public class ConnectionHandlerImpl extends StatefulDisposable.Base implements Co
 
     private ConnectionSettings connectionSettings;
 
+    private final ProjectRef project;
     private final ConnectionRef ref;
-    private final WeakRef<ConnectionBundle> connectionBundle;
     private final ConnectionHandlerStatusHolder connectionStatus;
     private final ConnectionPool connectionPool;
     private final DatabaseConsoleBundle consoleBundle;
@@ -109,12 +109,12 @@ public class ConnectionHandlerImpl extends StatefulDisposable.Base implements Co
             () -> new DBConnectionPsiDirectory(this));
 
     private final Latent<DBObjectBundle> objectBundle = Latent.basic(
-            () -> new DBObjectBundleImpl(this, getConnectionBundle()));
+            () -> new DBObjectBundleImpl(this));
 
     private final Map<SessionId, StatementExecutionQueue> executionQueues = new ConcurrentHashMap<>();
 
-    ConnectionHandlerImpl(ConnectionBundle connectionBundle, ConnectionSettings connectionSettings) {
-        this.connectionBundle = WeakRef.of(connectionBundle);
+    ConnectionHandlerImpl(Project project, ConnectionSettings connectionSettings) {
+        this.project = ProjectRef.of(project);
         this.connectionSettings = connectionSettings;
         this.enabled = connectionSettings.isActive();
         ref = ConnectionRef.of(this);
@@ -217,7 +217,8 @@ public class ConnectionHandlerImpl extends StatefulDisposable.Base implements Co
     @Override
     @NotNull
     public ConnectionBundle getConnectionBundle() {
-        return connectionBundle.ensure();
+        ConnectionManager connectionManager = ConnectionManager.getInstance(getProject());
+        return connectionManager.getConnectionBundle();
     }
 
     @NotNull
@@ -315,7 +316,7 @@ public class ConnectionHandlerImpl extends StatefulDisposable.Base implements Co
     @Override
     @NotNull
     public Project getProject() {
-        return getConnectionBundle().getProject();
+        return ProjectRef.ensure(project);
     }
 
     @Override

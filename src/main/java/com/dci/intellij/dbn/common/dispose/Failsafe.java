@@ -1,19 +1,21 @@
 package com.dci.intellij.dbn.common.dispose;
 
+import com.dci.intellij.dbn.common.routine.ThrowableCallable;
+import com.dci.intellij.dbn.common.routine.ThrowableRunnable;
+import com.dci.intellij.dbn.diagnostics.Diagnostics;
 import com.intellij.mock.MockProject;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.progress.ProcessCanceledException;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.testFramework.LightVirtualFile;
-import lombok.SneakyThrows;
+import lombok.extern.slf4j.Slf4j;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.concurrent.Callable;
-
 import static com.dci.intellij.dbn.common.dispose.Checks.isNotValid;
 
+@Slf4j
 public class Failsafe {
     private static final VirtualFile DUMMY_VIRTUAL_FILE = new LightVirtualFile();
     public static final Project DUMMY_PROJECT = new MockProject(null, ApplicationManager.getApplication());
@@ -33,13 +35,14 @@ public class Failsafe {
         return object;
     }
 
-    @SneakyThrows
-    public static <R> R guarded(R defaultValue, @Nullable Callable<R> callable){
+    public static <R, E extends Throwable> R guarded(R defaultValue, @Nullable ThrowableCallable<R, E> callable) throws E{
         try {
             return callable == null ? defaultValue : callable.call();
         } catch (ProcessCanceledException | IllegalStateException | AbstractMethodError ignore /*| UnsupportedOperationException*/){
+            error(ignore);
             return defaultValue;
         } catch (Exception e) {
+            error(e);
             // DBNE-4876 (????!!)
             if (e != AlreadyDisposedException.INSTANCE) {
                 throw e;
@@ -50,16 +53,22 @@ public class Failsafe {
 
     }
 
-    public static void guarded(@Nullable Runnable runnable){
+    public static <E extends Throwable> void guarded(@Nullable ThrowableRunnable<E> runnable) throws E{
         try {
             if (runnable != null) runnable.run();
         } catch (ProcessCanceledException | IllegalStateException | AbstractMethodError ignore /*| UnsupportedOperationException*/){
+            error(ignore);
         } catch (Exception e) {
+            error(e);
             // DBNE-4876 (????!!)
             if (e != AlreadyDisposedException.INSTANCE) {
                 throw e;
             }
         }
 
+    }
+
+    private static void error(Throwable exception) {
+        if (Diagnostics.isFailsafeLoggingEnabled()) log.warn("Failsafe process failed", exception);
     }
 }

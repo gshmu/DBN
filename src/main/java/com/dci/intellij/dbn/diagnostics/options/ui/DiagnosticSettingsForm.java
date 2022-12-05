@@ -8,11 +8,7 @@ import com.intellij.openapi.Disposable;
 import com.intellij.openapi.options.ConfigurationException;
 import org.jetbrains.annotations.Nullable;
 
-import javax.swing.JCheckBox;
-import javax.swing.JComponent;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.JTextField;
+import javax.swing.*;
 import java.awt.event.ActionEvent;
 
 import static com.dci.intellij.dbn.common.options.ui.ConfigurationEditorUtil.validateIntegerValue;
@@ -29,9 +25,9 @@ public class DiagnosticSettingsForm extends DBNFormBase {
     private JTextField fetchingLagTextField;
     private JCheckBox dialogSizingCheckbox;
     private JCheckBox bulkActionsCheckbox;
+    private JCheckBox failsafeLoggingCheckBox;
     private JPanel hintPanel;
     private JLabel acknowledgementLabel;
-    private JCheckBox alternativeParserCheckbox;
 
     private final DBNHintForm disclaimerForm;
 
@@ -59,7 +55,7 @@ public class DiagnosticSettingsForm extends DBNFormBase {
         Diagnostics.Miscellaneous miscellaneous = Diagnostics.getMiscellaneous();
         dialogSizingCheckbox.setSelected(miscellaneous.isDialogSizingReset());
         bulkActionsCheckbox.setSelected(miscellaneous.isBulkActionsEnabled());
-        alternativeParserCheckbox.setSelected(miscellaneous.isAlternativeParserEnabled());
+        failsafeLoggingCheckBox.setSelected(miscellaneous.isFailsafeLoggingEnabled());
 
         updateFields(null);
 
@@ -74,7 +70,7 @@ public class DiagnosticSettingsForm extends DBNFormBase {
         databaseLaggingCheckBox.setEnabled(developerMode);
         dialogSizingCheckbox.setEnabled(developerMode);
         bulkActionsCheckbox.setEnabled(developerMode);
-        alternativeParserCheckbox.setEnabled(developerMode);
+        failsafeLoggingCheckBox.setEnabled(developerMode);
 
         boolean databaseLaggingEnabled = developerMode && databaseLaggingCheckBox.isSelected();
         connectivityLagTextField.setEnabled(databaseLaggingEnabled);
@@ -103,7 +99,7 @@ public class DiagnosticSettingsForm extends DBNFormBase {
         Diagnostics.Miscellaneous miscellaneous = Diagnostics.getMiscellaneous();
         miscellaneous.setDialogSizingReset(dialogSizingCheckbox.isSelected());
         miscellaneous.setBulkActionsEnabled(bulkActionsCheckbox.isSelected());
-        miscellaneous.setAlternativeParserEnabled(alternativeParserCheckbox.isSelected());
+        miscellaneous.setFailsafeLoggingEnabled(failsafeLoggingCheckBox.isSelected());
 
     }
 

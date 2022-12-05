@@ -205,6 +205,15 @@ public interface ConnectionHandler extends StatefulDisposable, EnvironmentTypePr
         return ConnectionCache.resolve(connectionId);
     }
 
+    static ConnectionHandler get(ConnectionId connectionId, Project project) {
+        ConnectionHandler connection = ConnectionCache.resolve(connectionId);
+        if (connection == null && project != null) {
+            ConnectionManager connectionManager = ConnectionManager.getInstance(project);
+            connection = connectionManager.getConnection(connectionId);
+        }
+        return connection;
+    }
+
     @NotNull
     static ConnectionHandler ensure(ConnectionId connectionId) {
         return nd(get(connectionId));

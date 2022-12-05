@@ -9,7 +9,6 @@ import com.dci.intellij.dbn.common.util.Safe;
 import com.dci.intellij.dbn.common.util.Traces;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.ConnectionId;
-import com.dci.intellij.dbn.connection.ConnectionManager;
 import com.dci.intellij.dbn.connection.DatabaseEntity;
 import com.dci.intellij.dbn.connection.config.ConnectionDetailSettings;
 import com.dci.intellij.dbn.editor.DBContentType;
@@ -175,8 +174,7 @@ public class DatabaseFileSystem extends VirtualFileSystem implements /*NonPhysic
         if (index < 0) return false;
 
         ConnectionId connectionId = ConnectionId.get(path.substring(0, index));
-        ConnectionManager connectionManager = ConnectionManager.getInstance(project);
-        ConnectionHandler connection = connectionManager.getConnection(connectionId);
+        ConnectionHandler connection = ConnectionHandler.get(connectionId, project);
         if (project.isInitialized() && connection == null) return false;
 
         String relativePath = path.substring(index + 1);
@@ -284,29 +282,28 @@ public class DatabaseFileSystem extends VirtualFileSystem implements /*NonPhysic
                 DBObjectList<?> objectList = file.getObjectList();
                 DatabaseEntity parentElement = objectList.getParentEntity();
                 String listName = objectList.getObjectType().getListName();
-                String connectionPath = connectionId.id();
                 if (parentElement instanceof DBObject) {
                     DBObject object = (DBObject) parentElement;
                     DBObjectRef<?> objectRef = object.ref();
-                    return connectionPath + PSS + objectRef.serialize() + PSS + listName;
+                    return connectionId + PSS + objectRef.serialize() + PSS + listName;
                 } else {
-                    return connectionPath + PSS + listName; }
+                    return connectionId + PSS + listName; }
             }
 
             if (virtualFile instanceof DBDatasetFilterVirtualFile) {
                 DBDatasetFilterVirtualFile file = (DBDatasetFilterVirtualFile) virtualFile;
-                return connectionId + PSS + DATASET_FILTERS + PSS + file.getDataset().ref().serialize();
+                return connectionId + PSS + DATASET_FILTERS + file.getDataset().ref().serialize();
             }
 
             if (virtualFile instanceof DBSessionBrowserVirtualFile) {
                 DBSessionBrowserVirtualFile file = (DBSessionBrowserVirtualFile) virtualFile;
-                return connectionId + PSS + SESSION_BROWSERS + PSS + file.getName();
+                return connectionId + PSS + SESSION_BROWSERS + file.getName();
 
             }
 
             if (virtualFile instanceof DBSessionStatementVirtualFile) {
                 DBSessionStatementVirtualFile file = (DBSessionStatementVirtualFile) virtualFile;
-                return connectionId + PSS + SESSION_STATEMENTS + PSS + file.getName();
+                return connectionId + PSS + SESSION_STATEMENTS + file.getName();
             }
 
             if (virtualFile instanceof DBLooseContentVirtualFile) {

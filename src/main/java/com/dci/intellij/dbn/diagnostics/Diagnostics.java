@@ -23,7 +23,11 @@ public final class Diagnostics {
     }
 
     public static boolean isAlternativeParserEnabled() {
-        return developerMode && miscellaneous.alternativeParserEnabled;
+        return false; //developerMode && miscellaneous.alternativeParserEnabled;
+    }
+
+    public static boolean isFailsafeLoggingEnabled() {
+        return developerMode && miscellaneous.failsafeLoggingEnabled;
     }
 
     public static boolean isDatabaseAccessDebug() {
@@ -125,7 +129,7 @@ public final class Diagnostics {
     public static final class Miscellaneous implements PersistentStateElement{
         private boolean dialogSizingReset = false;
         private boolean bulkActionsEnabled = false;
-        private boolean alternativeParserEnabled = false;
+        private boolean failsafeLoggingEnabled = false;
 
         @Override
         public void readState(Element element) {
@@ -133,8 +137,7 @@ public final class Diagnostics {
             if (miscellaneous != null) {
                 dialogSizingReset = booleanAttribute(miscellaneous, "dialog-sizing-reset", dialogSizingReset);
                 bulkActionsEnabled = booleanAttribute(miscellaneous, "bulk-actions-enabled", bulkActionsEnabled);
-                // TODO too early to activate alternative parser
-                //alternativeParserEnabled = booleanAttribute(miscellaneous, "alternative-parser-enabled", alternativeParserEnabled);
+                bulkActionsEnabled = booleanAttribute(miscellaneous, "failsafe-logging-enabled", failsafeLoggingEnabled);
             }
         }
 
@@ -144,7 +147,7 @@ public final class Diagnostics {
             element.addContent(miscellaneous);
             setBooleanAttribute(miscellaneous, "dialog-sizing-reset", dialogSizingReset);
             setBooleanAttribute(miscellaneous, "bulk-actions-enabled", bulkActionsEnabled);
-            setBooleanAttribute(miscellaneous, "alternative-parser-enabled", alternativeParserEnabled);
+            setBooleanAttribute(miscellaneous, "failsafe-logging-enabled", failsafeLoggingEnabled);
         }
     }
 

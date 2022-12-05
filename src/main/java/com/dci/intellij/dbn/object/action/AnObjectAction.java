@@ -36,7 +36,7 @@ public abstract class AnObjectAction<T extends DBObject> extends DumbAwareContex
 
     @NotNull
     @Override
-    protected Project getProject() {
+    public  Project getProject() {
         T object = this.object.ensure();
         return object.getProject();
     }

@@ -9,7 +9,6 @@ import com.dci.intellij.dbn.common.util.Lists;
 import com.dci.intellij.dbn.common.util.Strings;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.ConnectionId;
-import com.dci.intellij.dbn.connection.ConnectionManager;
 import com.dci.intellij.dbn.connection.SchemaId;
 import com.dci.intellij.dbn.connection.context.DatabaseContextBase;
 import com.dci.intellij.dbn.language.common.WeakRef;
@@ -348,8 +347,7 @@ public class DBObjectRef<T extends DBObject> implements Comparable<DBObjectRef<?
             clearReference();
             ConnectionHandler connection = getConnection();
             if (connection == null && isValid(project)) {
-                ConnectionManager connectionManager = ConnectionManager.getInstance(project);
-                connection = connectionManager.getConnection(getConnectionId());
+                connection = ConnectionHandler.get(getConnectionId(), project);
             }
 
             if (isValid(connection) && connection.isEnabled()) {

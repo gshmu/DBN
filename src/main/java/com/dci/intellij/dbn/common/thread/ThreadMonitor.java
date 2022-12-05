@@ -1,5 +1,6 @@
 package com.dci.intellij.dbn.common.thread;
 
+import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.common.routine.ThrowableCallable;
 import com.dci.intellij.dbn.common.routine.ThrowableRunnable;
 import com.intellij.openapi.application.ApplicationManager;
@@ -65,7 +66,7 @@ public class ThreadMonitor {
             processCounter.incrementAndGet();
             threadInfo.set(property, true);
             threadInfo.merge(invoker);
-            runnable.run();
+            Failsafe.guarded(() -> runnable.run());
         } catch (ProcessCanceledException  ignore){
         } finally {
             threadInfo.set(property, originalProperty);

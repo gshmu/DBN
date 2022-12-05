@@ -133,6 +133,7 @@ public abstract class DBSchemaObjectImpl<M extends DBObjectMetadata> extends DBO
         return DatabaseInterfaceInvoker.load(HIGHEST,
                 "Loading data dictionary",
                 "Loading schema references for " + getQualifiedNameWithType(),
+                getProject(),
                 getConnectionId(),
                 conn -> {
                     List<DBSchema> schemas = new ArrayList<>();
@@ -165,6 +166,7 @@ public abstract class DBSchemaObjectImpl<M extends DBObjectMetadata> extends DBO
         DatabaseInterfaceInvoker.execute(HIGHEST,
                 "Updating source code",
                 "Updating sources of " + getQualifiedNameWithType(),
+                getProject(),
                 getConnectionId(),
                 getSchemaId(),
                 conn -> {

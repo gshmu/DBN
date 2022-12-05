@@ -37,6 +37,7 @@ import java.util.List;
 import java.util.Objects;
 
 import static com.dci.intellij.dbn.common.component.Components.projectService;
+import static com.dci.intellij.dbn.common.dispose.Checks.isNotValid;
 import static com.dci.intellij.dbn.common.file.util.VirtualFiles.*;
 import static com.dci.intellij.dbn.common.message.MessageCallback.when;
 import static com.dci.intellij.dbn.common.options.setting.SettingsSupport.*;
@@ -192,37 +193,35 @@ public class DatabaseConsoleManager extends ProjectComponentBase implements Pers
 
     @Override
     public void loadComponentState(@NotNull Element element) {
-        ConnectionManager connectionManager = ConnectionManager.getInstance(getProject());
         for (Element connectionElement : element.getChildren()) {
             ConnectionId connectionId = connectionIdAttribute(connectionElement, "id");
-            ConnectionHandler connection = connectionManager.getConnection(connectionId);
+            ConnectionHandler connection = ConnectionHandler.get(connectionId, getProject());
+            if (isNotValid(connection)) continue;
 
-            if (connection != null) {
-                DatabaseConsoleBundle consoleBundle = connection.getConsoleBundle();
-                for (Element consoleElement : connectionElement.getChildren()) {
-                    String consoleName = stringAttribute(consoleElement, "name");
+            DatabaseConsoleBundle consoleBundle = connection.getConsoleBundle();
+            for (Element consoleElement : connectionElement.getChildren()) {
+                String consoleName = stringAttribute(consoleElement, "name");
 
-                    // schema
-                    String schema = stringAttribute(consoleElement, "schema");
+                // schema
+                String schema = stringAttribute(consoleElement, "schema");
 
-                    // session
-                    String session = stringAttribute(consoleElement, "session");
-                    DatabaseSessionBundle sessionBundle = connection.getSessionBundle();
-                    DatabaseSession databaseSession = Strings.isEmpty(session) ?
-                            sessionBundle.getMainSession() :
-                            sessionBundle.getSession(session);
+                // session
+                String session = stringAttribute(consoleElement, "session");
+                DatabaseSessionBundle sessionBundle = connection.getSessionBundle();
+                DatabaseSession databaseSession = Strings.isEmpty(session) ?
+                        sessionBundle.getMainSession() :
+                        sessionBundle.getSession(session);
 
 
-                    DBConsoleType consoleType = enumAttribute(consoleElement, "type", DBConsoleType.class);
+                DBConsoleType consoleType = enumAttribute(consoleElement, "type", DBConsoleType.class);
 
-                    String consoleText = readCdata(consoleElement);
+                String consoleText = readCdata(consoleElement);
 
-                    DBConsole console = consoleBundle.getConsole(consoleName, consoleType, true);
-                    DBConsoleVirtualFile virtualFile = console.getVirtualFile();
-                    virtualFile.setText(consoleText);
-                    virtualFile.setDatabaseSchemaName(schema);
-                    virtualFile.setDatabaseSession(databaseSession);
-                }
+                DBConsole console = consoleBundle.getConsole(consoleName, consoleType, true);
+                DBConsoleVirtualFile virtualFile = console.getVirtualFile();
+                virtualFile.setText(consoleText);
+                virtualFile.setDatabaseSchemaName(schema);
+                virtualFile.setDatabaseSession(databaseSession);
             }
         }
     }

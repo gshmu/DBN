@@ -83,6 +83,7 @@ public abstract class DynamicContentResultSetLoader<
         DatabaseInterfaceInvoker.execute(priority,
                 "Loading data dictionary",
                 "Loading " + content.getContentDescription(),
+                content.getProject(),
                 content.getConnectionId(),
                 conn -> loadContent(content, conn));
     }

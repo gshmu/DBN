@@ -306,6 +306,7 @@ public class SourceCodeManager extends ProjectComponentBase implements Persisten
         String sourceCode = DatabaseInterfaceInvoker.load(HIGH,
                 "Loading source code",
                 "Loading source code of " + object.getQualifiedNameWithType(),
+                object.getProject(),
                 object.getConnectionId(),
                 conn -> loadSourceFromDatabase(object, contentType, conn));
 
@@ -438,6 +439,7 @@ public class SourceCodeManager extends ProjectComponentBase implements Persisten
         Timestamp timestamp = DatabaseInterfaceInvoker.load(HIGHEST,
                 "Loading object details",
                 "Loading change timestamp for " + object.getQualifiedNameWithType(),
+                object.getProject(),
                 object.getConnectionId(),
                 conn -> {
                     ResultSet resultSet = null;

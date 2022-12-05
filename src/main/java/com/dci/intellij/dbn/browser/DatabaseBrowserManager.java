@@ -194,7 +194,7 @@ public class DatabaseBrowserManager extends ProjectComponentBase implements Pers
             @Override
             public void typeFiltersChanged(ConnectionId connectionId) {
                 if (toolWindowForm.loaded()) {
-                    ConnectionHandler connection = getConnection(connectionId);
+                    ConnectionHandler connection = ConnectionHandler.get(connectionId, getProject());
                     if (connection == null) {
                         getBrowserForm().rebuildTree();
                     } else {
@@ -205,7 +205,7 @@ public class DatabaseBrowserManager extends ProjectComponentBase implements Pers
 
             @Override
             public void nameFiltersChanged(ConnectionId connectionId, @NotNull DBObjectType... objectTypes) {
-                ConnectionHandler connection = getConnection(connectionId);
+                ConnectionHandler connection = ConnectionHandler.get(connectionId, getProject());
                 if (toolWindowForm.loaded() && connection != null && objectTypes.length > 0) {
                     connection.getObjectBundle().refreshTreeChildren(objectTypes);
                 }
@@ -213,11 +213,6 @@ public class DatabaseBrowserManager extends ProjectComponentBase implements Pers
         };
     }
 
-    @Nullable
-    private ConnectionHandler getConnection(ConnectionId connectionId) {
-        ConnectionManager connectionManager = ConnectionManager.getInstance(getProject());
-        return connectionManager.getConnection(connectionId);
-    }
 
     public Filter<BrowserTreeNode> getObjectTypeFilter() {
         DatabaseBrowserSettings browserSettings = DatabaseBrowserSettings.getInstance(getProject());
@@ -372,11 +367,10 @@ public class DatabaseBrowserManager extends ProjectComponentBase implements Pers
 
         Project project = getProject();
         List<Element> connectionElements = nodesElement.getChildren();
-        ConnectionManager connectionManager = ConnectionManager.getInstance(project);
 
         for (Element connectionElement : connectionElements) {
             ConnectionId connectionId = connectionIdAttribute(connectionElement, "connection-id");
-            ConnectionHandler connection = connectionManager.getConnection(connectionId);
+            ConnectionHandler connection = ConnectionHandler.get(connectionId, project);
             if (connection == null) continue;
 
             ConnectionDetailSettings settings = connection.getSettings().getDetailSettings();
