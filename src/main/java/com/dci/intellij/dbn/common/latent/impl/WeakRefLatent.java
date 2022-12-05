@@ -1,20 +1,23 @@
-package com.dci.intellij.dbn.common.latent;
+package com.dci.intellij.dbn.common.latent.impl;
 
+import com.dci.intellij.dbn.common.latent.Latent;
+import com.dci.intellij.dbn.common.latent.Loader;
 import com.dci.intellij.dbn.language.common.WeakRef;
-import lombok.SneakyThrows;
 
-abstract class WeakRefLatent<T> implements Latent<T>{
+public class WeakRefLatent<T> implements Latent<T> {
+    private final Loader<T> loader;
     private WeakRef<T> value;
     private volatile boolean loaded;
 
-    WeakRefLatent() {}
+    public WeakRefLatent(Loader<T> loader) {
+        this.loader = loader;
+    }
 
-    @SneakyThrows
     public final T get() {
         if (!loaded) {
             synchronized (this) {
                 if (!loaded) {
-                    T value = getLoader().load();
+                    T value = loader == null ? null : loader.load();
                     this.value = WeakRef.of(value);
                     loaded = true;
                 }
@@ -22,8 +25,6 @@ abstract class WeakRefLatent<T> implements Latent<T>{
         }
         return WeakRef.get(value);
     }
-
-    public abstract Loader<T> getLoader();
 
     public final void set(T value) {
         this.value = WeakRef.of(value);

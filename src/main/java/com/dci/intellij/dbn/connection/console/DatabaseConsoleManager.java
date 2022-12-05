@@ -195,7 +195,7 @@ public class DatabaseConsoleManager extends ProjectComponentBase implements Pers
     public void loadComponentState(@NotNull Element element) {
         for (Element connectionElement : element.getChildren()) {
             ConnectionId connectionId = connectionIdAttribute(connectionElement, "id");
-            ConnectionHandler connection = ConnectionHandler.get(connectionId, getProject());
+            ConnectionHandler connection = ConnectionHandler.get(connectionId);
             if (isNotValid(connection)) continue;
 
             DatabaseConsoleBundle consoleBundle = connection.getConsoleBundle();

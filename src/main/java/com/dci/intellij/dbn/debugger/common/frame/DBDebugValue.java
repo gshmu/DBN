@@ -5,11 +5,7 @@ import com.dci.intellij.dbn.common.thread.Background;
 import com.dci.intellij.dbn.debugger.common.evaluation.DBDebuggerEvaluator;
 import com.dci.intellij.dbn.debugger.common.process.DBDebugProcess;
 import com.intellij.xdebugger.evaluation.XDebuggerEvaluator;
-import com.intellij.xdebugger.frame.XCompositeNode;
-import com.intellij.xdebugger.frame.XNamedValue;
-import com.intellij.xdebugger.frame.XValueChildrenList;
-import com.intellij.xdebugger.frame.XValueNode;
-import com.intellij.xdebugger.frame.XValuePlace;
+import com.intellij.xdebugger.frame.*;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -42,7 +38,7 @@ public abstract class DBDebugValue<T extends DBDebugStackFrame> extends XNamedVa
     public void computePresentation(@NotNull final XValueNode node, @NotNull final XValuePlace place) {
         // enabling this will show always variables as changed
         //node.setPresentation(icon, null, "", childVariableNames != null);
-        Background.run(() -> {
+        Background.run(null, () -> {
             XDebuggerEvaluator evaluator1 = getStackFrame().getEvaluator();
             DBDebuggerEvaluator<? extends DBDebugStackFrame, DBDebugValue> evaluator = (DBDebuggerEvaluator<? extends DBDebugStackFrame, DBDebugValue>) evaluator1;
             evaluator.computePresentation(DBDebugValue.this, node, place);

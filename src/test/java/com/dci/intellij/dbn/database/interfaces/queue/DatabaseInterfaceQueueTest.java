@@ -41,7 +41,7 @@ public class DatabaseInterfaceQueueTest {
 
                 System.out.println("Finished executing " + task);
             } catch (SQLException e) {
-                throw Exceptions.toRuntimeException(e);
+                throw Exceptions.runtime(e);
             }
         });
     }
@@ -57,7 +57,7 @@ public class DatabaseInterfaceQueueTest {
                     System.out.println("Done executing "  + task);
                 });
             } catch (SQLException e) {
-                throw Exceptions.toRuntimeException(e);
+                throw Exceptions.runtime(e);
             }
         });
     }

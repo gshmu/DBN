@@ -683,7 +683,7 @@ public abstract class DBObjectImpl<M extends DBObjectMetadata> extends BrowserTr
                     visibleTreeChildren = new ArrayList<>();
                     visibleTreeChildren.add(new LoadInProgressTreeNode(this));
 
-                    Background.run(() -> buildTreeChildren());
+                    Background.run(getProject(), () -> buildTreeChildren());
                 }
             }
         }
@@ -699,7 +699,7 @@ public abstract class DBObjectImpl<M extends DBObjectMetadata> extends BrowserTr
         treeChildren = Commons.nvl(treeChildren, Collections.emptyList());
 
         for (BrowserTreeNode objectList : treeChildren) {
-            Background.run(() -> objectList.initTreeElement());
+            Background.run(getProject(), () -> objectList.initTreeElement());
             checkDisposed();
         }
 

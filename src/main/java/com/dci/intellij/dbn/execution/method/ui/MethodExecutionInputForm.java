@@ -61,6 +61,7 @@ public class MethodExecutionInputForm extends DBNFormBase {
             debuggerTypeLabel.setText(debuggerType.name());
             debuggerVersionLabel.setText("...");
             Dispatch.background(
+                    getProject(),
                     () -> executionInput.getDebuggerVersion(),
                     v -> debuggerVersionLabel.setText(v));
         } else {

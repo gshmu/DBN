@@ -8,6 +8,7 @@ import com.dci.intellij.dbn.object.common.DBObject;
 import com.dci.intellij.dbn.object.common.DBSchemaObject;
 import com.dci.intellij.dbn.object.dependency.ObjectDependencyType;
 import com.dci.intellij.dbn.object.lookup.DBObjectRef;
+import com.intellij.openapi.project.Project;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
@@ -39,6 +40,11 @@ public class ObjectDependencyTreeNode extends StatefulDisposable.Base implements
     @Nullable
     DBObject getObject() {
         return DBObjectRef.get(object);
+    }
+
+    Project getProject() {
+        DBObject object = getObject();
+        return object == null ? null : object.getProject();
     }
 
     public ObjectDependencyTreeModel getModel() {
@@ -79,7 +85,7 @@ public class ObjectDependencyTreeNode extends StatefulDisposable.Base implements
             if (loaderCount < 10) {
                 shouldLoad = false;
                 loaderCount++;
-                Background.run(() -> {
+                Background.run(getProject(), () -> {
                     try {
                         DBObject object = getObject();
                         if (object instanceof DBSchemaObject) {

@@ -3,6 +3,7 @@ package com.dci.intellij.dbn.common.thread;
 import com.dci.intellij.dbn.common.routine.Consumer;
 import com.dci.intellij.dbn.common.routine.ThrowableRunnable;
 import com.intellij.openapi.progress.ProcessCanceledException;
+import com.intellij.openapi.project.Project;
 
 import static com.dci.intellij.dbn.common.dispose.Failsafe.guarded;
 
@@ -32,8 +33,8 @@ public class Callback{
         this.after = after;
     }
 
-    public void background(ThrowableRunnable<Exception> action) {
-        Background.run(() -> surround(action));
+    public void background(Project project, ThrowableRunnable<Exception> action) {
+        Background.run(project, () -> surround(action));
     }
 
     public void surround(ThrowableRunnable<Exception> action) {

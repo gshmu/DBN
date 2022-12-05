@@ -29,7 +29,7 @@ public final class Progress {
         Task task = new Backgroundable(project, title, cancellable, ALWAYS_BACKGROUND) {
             @Override
             public void run(@NotNull ProgressIndicator indicator) {
-                ThreadMonitor.surround(invoker, PROGRESS, () -> guarded(() -> {
+                ThreadMonitor.surround(project, invoker, PROGRESS, () -> guarded(() -> {
                     indicator.setText(text);
                     runnable.run(indicator);
                 }));
@@ -47,7 +47,7 @@ public final class Progress {
         Task task = new Task.Backgroundable(project, title, cancellable, DEAF) {
             @Override
             public void run(@NotNull ProgressIndicator indicator) {
-                ThreadMonitor.surround(invoker, PROGRESS, () -> guarded(() -> {
+                ThreadMonitor.surround(project, invoker, PROGRESS, () -> guarded(() -> {
                     indicator.setText(text);
                     runnable.run(indicator);
                 }));
@@ -76,7 +76,7 @@ public final class Progress {
         Task task = new Task.Modal(project, title, cancellable) {
             @Override
             public void run(@NotNull ProgressIndicator indicator) {
-                ThreadMonitor.surround(invoker, MODAL, () -> guarded(() -> {
+                ThreadMonitor.surround(project, invoker, MODAL, () -> guarded(() -> {
                     indicator.setText(text);
                     runnable.run(indicator);
                 }));

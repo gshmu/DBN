@@ -72,6 +72,7 @@ public final class DatabaseBrowserTree extends DBNTree {
 
         Disposer.register(parent, this);
         Disposer.register(this, navigationHistory);
+        Disposer.register(this, getModel());
     }
 
     private static BrowserTreeModel createModel(@NotNull Project project, @Nullable ConnectionHandler connection) {
@@ -110,40 +111,41 @@ public final class DatabaseBrowserTree extends DBNTree {
     }
 
     public void scrollToSelectedElement() {
-        if (ensureProject().isOpen() && targetSelection != null) {
-            Background.run(() -> {
-                BrowserTreeNode targetSelection = this.targetSelection;
-                if (targetSelection != null) {
-                    targetSelection = targetSelection.getUndisposedEntity();
-                    if (targetSelection != null) {
-                        TreePath treePath = DatabaseBrowserUtils.createTreePath(targetSelection);
-                        if (treePath != null) {
-                            for (Object object : treePath.getPath()) {
-                                BrowserTreeNode treeNode = (BrowserTreeNode) object;
-                                if (isNotValid(treeNode)) {
-                                    this.targetSelection = null;
-                                    return;
-                                }
+        Project project = ensureProject();
+        if (!project.isOpen() || targetSelection == null) return;
 
+        Background.run(project, () -> {
+            BrowserTreeNode targetSelection = this.targetSelection;
+            if (targetSelection == null) return;
 
-                                if (treeNode.equals(targetSelection)) {
-                                    break;
-                                }
+            targetSelection = targetSelection.getUndisposedEntity();
+            if (targetSelection == null) return;
 
-                                if (!treeNode.isLeaf() && !treeNode.isTreeStructureLoaded()) {
-                                    selectPath(DatabaseBrowserUtils.createTreePath(treeNode));
-                                    treeNode.getChildren();
-                                    return;
-                                }
-                            }
+            TreePath treePath = DatabaseBrowserUtils.createTreePath(targetSelection);
+            if (treePath == null) return;
 
-                            this.targetSelection = null;
-                            selectPath(treePath);
-                        }
-                    }
+            for (Object object : treePath.getPath()) {
+                BrowserTreeNode treeNode = (BrowserTreeNode) object;
+                if (isNotValid(treeNode)) {
+                    this.targetSelection = null;
+                    return;
                 }
-            });
-        }
+
+
+                if (treeNode.equals(targetSelection)) {
+                    break;
+                }
+
+                if (!treeNode.isLeaf() && !treeNode.isTreeStructureLoaded()) {
+                    selectPath(DatabaseBrowserUtils.createTreePath(treeNode));
+                    treeNode.getChildren();
+                    return;
+                }
+            }
+
+            this.targetSelection = null;
+            selectPath(treePath);
+        });
     }
 
 
@@ -387,7 +389,6 @@ public final class DatabaseBrowserTree extends DBNTree {
      *******************************************************  */
     @Override
     public void disposeInner() {
-        setModel(new SimpleBrowserTreeModel());
         super.disposeInner();
     }
 }

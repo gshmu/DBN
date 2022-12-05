@@ -117,7 +117,7 @@ public class DatabaseCompilerManager extends ProjectComponentBase {
     }
 
     private void updateFilesContentState(DBSchemaObject object, DBContentType contentType) {
-        Background.run(() -> {
+        Background.run(getProject(), () -> {
             DBEditableObjectVirtualFile databaseFile = object.getCachedVirtualFile();
             if (databaseFile != null && databaseFile.isContentLoaded()) {
                 if (contentType.isBundle()) {
@@ -140,7 +140,7 @@ public class DatabaseCompilerManager extends ProjectComponentBase {
     public void compileInBackground(DBSchemaObject object, CompileType compileType, CompilerAction compilerAction) {
         Project project = getProject();
         ConnectionAction.invoke("compiling the object", false, object,
-                action -> promptCompileTypeSelection(compileType, object, type -> Background.run(() -> {
+                action -> promptCompileTypeSelection(compileType, object, type -> Background.run(project, () -> {
                     doCompileObject(object, type, compilerAction);
                     ConnectionHandler connection = object.getConnection();
                     ProjectEvents.notify(project,

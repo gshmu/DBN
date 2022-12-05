@@ -69,7 +69,7 @@ public class DBNHeaderForm extends DBNFormBase {
 
         ProjectEvents.subscribe(project, this, ConnectionHandlerStatusListener.TOPIC, (connectionId) -> {
             if (connectionId == id) {
-                ConnectionHandler connHandler = ConnectionHandler.get(connectionId, getProject());
+                ConnectionHandler connHandler = ConnectionHandler.get(connectionId);
                 if (connHandler != null) {
                     objectLabel.setIcon(connHandler.getIcon());
                 }

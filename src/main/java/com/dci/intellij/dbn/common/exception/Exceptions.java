@@ -5,6 +5,8 @@ import org.jetbrains.annotations.NotNull;
 
 import java.sql.SQLException;
 import java.sql.SQLNonTransientConnectionException;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
 
 public class Exceptions {
     public static final SQLNonTransientConnectionException DBN_NOT_CONNECTED_EXCEPTION = new SQLNonTransientConnectionException("Not connected to database");
@@ -28,7 +30,7 @@ public class Exceptions {
     }
 
     @NotNull
-    public static RuntimeException toRuntimeException(@NotNull Throwable e) {
+    public static RuntimeException runtime(@NotNull Throwable e) {
         if (e instanceof RuntimeException) {
             return (RuntimeException) e;
         } else {
@@ -38,5 +40,9 @@ public class Exceptions {
 
     public static <T> T unsupported() {
         throw new UnsupportedOperationException();
+    }
+
+    public static TimeoutException timeout(long time, TimeUnit timeUnit) {
+        return new TimeoutException("Operation timed out after " + time + " " + timeUnit.name().toLowerCase());
     }
 }

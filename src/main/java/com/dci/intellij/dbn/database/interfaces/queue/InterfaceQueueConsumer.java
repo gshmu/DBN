@@ -5,6 +5,7 @@ import com.dci.intellij.dbn.common.thread.Background;
 import com.dci.intellij.dbn.common.thread.Progress;
 import com.dci.intellij.dbn.language.common.WeakRef;
 import com.intellij.openapi.progress.ProgressManager;
+import com.intellij.openapi.project.Project;
 
 public class InterfaceQueueConsumer implements Consumer<InterfaceTask<?>>{
     private final WeakRef<InterfaceQueue> queue;
@@ -17,13 +18,14 @@ public class InterfaceQueueConsumer implements Consumer<InterfaceTask<?>>{
     public void accept(InterfaceTask<?> task) {
         InterfaceQueue queue = getQueue();
 
+        Project project = queue.getProject();
         if (progressBackgroundSupported(task)) {
-            Progress.background(queue.getProject(), queue.getConnection(), true,
+            Progress.background(project, queue.getConnection(), true,
                     task.getTitle(),
                     task.getText(),
                     indicator -> queue.executeTask(task));
         } else {
-            Background.run(() -> queue.executeTask(task));
+            Background.run(project, () -> queue.executeTask(task));
         }
     }
 

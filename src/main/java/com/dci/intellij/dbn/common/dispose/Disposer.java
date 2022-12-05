@@ -88,13 +88,13 @@ public final class Disposer {
             BackgroundDisposer.queue(() -> dispose(disposable, registered));
 
         } else if (object instanceof Collection) {
-            disposeCollection((Collection<?>) object);
+            BackgroundDisposer.queue(() -> disposeCollection((Collection<?>) object));
 
         } else if (object instanceof Map) {
-            disposeMap((Map) object);
+            BackgroundDisposer.queue(() -> disposeMap((Map) object));
 
         } else if (object.getClass().isArray()) {
-            disposeArray((Object[]) object);
+            BackgroundDisposer.queue(() -> disposeArray((Object[]) object));
         }
     }
 
@@ -108,45 +108,38 @@ public final class Disposer {
 
         if (collection.isEmpty()) return;
 
-        Collection<?> disposeCollection = collection;
-        BackgroundDisposer.queue(() -> {
-            for (Object object : disposeCollection) {
-                if (object instanceof Disposable) {
-                    Disposable disposable = (Disposable) object;
-                    dispose(disposable, false);
-                }
+        for (Object object : collection) {
+            if (object instanceof Disposable) {
+                Disposable disposable = (Disposable) object;
+                dispose(disposable, false);
             }
-            Nullifier.clearCollection(disposeCollection);
-        });
+        }
+        Nullifier.clearCollection(collection);
     }
 
     public static void disposeArray(@Nullable Object[] array) {
         if (array == null || array.length == 0) return;
 
-        BackgroundDisposer.queue(() -> {
-            for (int i = 0; i < array.length; i++) {
-                Object object = array[i];
-                if (object instanceof Disposable) {
-                    Disposable disposable = (Disposable) object;
-                    dispose(disposable, false);
-                }
-                array[i] = null;
+        for (int i = 0; i < array.length; i++) {
+            Object object = array[i];
+            if (object instanceof Disposable) {
+                Disposable disposable = (Disposable) object;
+                dispose(disposable, false);
             }
-        });
+            array[i] = null;
+        }
     }
 
     public static void disposeMap(@Nullable Map<?, ?> map) {
         if (map == null || map.isEmpty()) return;
 
-        BackgroundDisposer.queue(() -> {
-            for (Object object : map.values()) {
-                if (object instanceof Disposable) {
-                    Disposable disposable = (Disposable) object;
-                    dispose(disposable, false);
-                }
+        for (Object object : map.values()) {
+            if (object instanceof Disposable) {
+                Disposable disposable = (Disposable) object;
+                dispose(disposable, false);
             }
-            Nullifier.clearMap(map);
-        });
+        }
+        Nullifier.clearMap(map);
     }
 
     public static void dispose(@Nullable Timer timer) {

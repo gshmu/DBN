@@ -156,7 +156,7 @@ public class MethodExecutionHistory implements PersistentStateElement, Connectio
 
             Element executionInputsElement = historyElement.getChild("execution-inputs");
             for (Element child : executionInputsElement.getChildren()) {
-                Unsafe.silent(() -> {
+                Unsafe.warned(() -> {
                     MethodExecutionInput executionInput = new MethodExecutionInput(getProject());
                     executionInput.readConfiguration(child);
                     if (getExecutionInput(executionInput.getMethodRef(), false) == null) {

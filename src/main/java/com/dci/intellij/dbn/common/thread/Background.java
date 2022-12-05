@@ -2,6 +2,7 @@ package com.dci.intellij.dbn.common.thread;
 
 import com.dci.intellij.dbn.common.routine.ThrowableRunnable;
 import com.intellij.openapi.progress.ProcessCanceledException;
+import com.intellij.openapi.project.Project;
 import lombok.extern.slf4j.Slf4j;
 
 import java.util.concurrent.ExecutorService;
@@ -14,13 +15,14 @@ import static com.dci.intellij.dbn.common.thread.ThreadProperty.BACKGROUND;
 public final class Background {
     private Background() {}
 
-    public static void run(ThrowableRunnable<Throwable> runnable) {
+    public static void run(Project project, ThrowableRunnable<Throwable> runnable) {
         try {
             ThreadInfo threadInfo = ThreadMonitor.current();
             ExecutorService executorService = Threads.backgroundExecutor();
             executorService.submit(() -> {
                 try {
                     ThreadMonitor.surround(
+                            project,
                             threadInfo,
                             BACKGROUND,
                             runnable);
@@ -34,7 +36,7 @@ public final class Background {
         }
     }
 
-    public static void run(AtomicReference<Thread> handle, ThrowableRunnable<Throwable> runnable) {
+    public static void run(Project project, AtomicReference<Thread> handle, ThrowableRunnable<Throwable> runnable) {
         try {
             Thread current = handle.get();
             if (current != null) {
@@ -47,6 +49,7 @@ public final class Background {
                     try {
                         handle.set(Thread.currentThread());
                         ThreadMonitor.surround(
+                                project,
                                 threadInfo,
                                 BACKGROUND,
                                 runnable);

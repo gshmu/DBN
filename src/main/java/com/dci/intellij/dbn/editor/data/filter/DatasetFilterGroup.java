@@ -173,8 +173,7 @@ public class DatasetFilterGroup extends BasicProjectConfiguration<ProjectConfigu
 
     @NotNull
     public DBDataset lookupDataset() {
-        Project project = getProject();
-        ConnectionHandler connection = ConnectionHandler.get(connectionId, project);
+        ConnectionHandler connection = ConnectionHandler.get(connectionId);
         if (connection != null) {
             int index = datasetName.lastIndexOf('.');
             String schemaName = datasetName.substring(0, index);

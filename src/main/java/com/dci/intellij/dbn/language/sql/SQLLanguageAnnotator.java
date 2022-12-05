@@ -13,6 +13,7 @@ import com.intellij.lang.annotation.AnnotationBuilder;
 import com.intellij.lang.annotation.AnnotationHolder;
 import com.intellij.lang.annotation.Annotator;
 import com.intellij.lang.annotation.HighlightSeverity;
+import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiElement;
 import org.jetbrains.annotations.NotNull;
@@ -24,8 +25,9 @@ public class SQLLanguageAnnotator implements Annotator {
     public static final SQLLanguageAnnotator INSTANCE = new SQLLanguageAnnotator();
 
     @Override
-    public void annotate(@NotNull final PsiElement psiElement, @NotNull final AnnotationHolder holder) {
-        ThreadMonitor.surround(null,
+    public void annotate(@NotNull PsiElement psiElement, @NotNull AnnotationHolder holder) {
+        Project project = psiElement.getProject();
+        ThreadMonitor.surround(project, null,
                 ThreadProperty.CODE_ANNOTATING,
                 () -> {
                     if (psiElement instanceof ExecutablePsiElement) {
