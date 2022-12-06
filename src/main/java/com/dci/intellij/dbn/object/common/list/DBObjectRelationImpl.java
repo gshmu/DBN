@@ -1,6 +1,6 @@
 package com.dci.intellij.dbn.object.common.list;
 
-import com.dci.intellij.dbn.common.dispose.StatefulDisposable;
+import com.dci.intellij.dbn.common.dispose.StatefulDisposableBase;
 import com.dci.intellij.dbn.object.DBCastedObject;
 import com.dci.intellij.dbn.object.common.DBObject;
 import com.dci.intellij.dbn.object.lookup.DBObjectRef;
@@ -11,7 +11,7 @@ import org.jetbrains.annotations.NotNull;
 import static com.dci.intellij.dbn.common.util.Commons.nvl;
 
 @Getter
-public abstract class DBObjectRelationImpl<S extends DBObject, T extends DBObject> extends StatefulDisposable.Base implements DBObjectRelation<S, T> {
+public abstract class DBObjectRelationImpl<S extends DBObject, T extends DBObject> extends StatefulDisposableBase implements DBObjectRelation<S, T> {
 
     private final DBObjectRelationType relationType;
     private final DBObjectRef<S> sourceObjectRef;

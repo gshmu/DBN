@@ -3,7 +3,7 @@ package com.dci.intellij.dbn.data.model.basic;
 
 import com.dci.intellij.dbn.common.collections.CaseInsensitiveStringKeyMap;
 import com.dci.intellij.dbn.common.dispose.Disposed;
-import com.dci.intellij.dbn.common.dispose.StatefulDisposable;
+import com.dci.intellij.dbn.common.dispose.StatefulDisposableBase;
 import com.dci.intellij.dbn.data.model.ColumnInfo;
 import com.dci.intellij.dbn.data.model.DataModelHeader;
 import com.dci.intellij.dbn.data.type.DBDataType;
@@ -14,7 +14,7 @@ import java.util.Map;
 
 import static com.dci.intellij.dbn.common.dispose.Disposer.replace;
 
-public class BasicDataModelHeader<T extends ColumnInfo> extends StatefulDisposable.Base implements DataModelHeader<T> {
+public class BasicDataModelHeader<T extends ColumnInfo> extends StatefulDisposableBase implements DataModelHeader<T> {
     private List<T> columnInfos = new ArrayList<>();
     private Map<String, T> nameIndex = new CaseInsensitiveStringKeyMap<>();
 

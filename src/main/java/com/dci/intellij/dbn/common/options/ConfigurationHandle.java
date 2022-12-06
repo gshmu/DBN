@@ -1,7 +1,7 @@
 package com.dci.intellij.dbn.common.options;
 
+import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.common.thread.ThreadLocalFlag;
-import com.intellij.openapi.progress.ProcessCanceledException;
 import lombok.extern.slf4j.Slf4j;
 
 import java.util.ArrayList;
@@ -44,8 +44,7 @@ public final class ConfigurationHandle {
             SETTINGS_CHANGE_NOTIFIERS.set(null);
             for (SettingsChangeNotifier changeNotifier : changeNotifiers) {
                 try {
-                    changeNotifier.notifyChanges();
-                } catch (ProcessCanceledException | IllegalStateException ignore){
+                    Failsafe.guarded(() -> changeNotifier.notifyChanges());
                 } catch (Exception e){
                     log.error("Error notifying configuration changes", e);
                 }

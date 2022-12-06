@@ -2,7 +2,7 @@ package com.dci.intellij.dbn.execution.explain.result;
 
 import com.dci.intellij.dbn.common.dispose.Disposed;
 import com.dci.intellij.dbn.common.dispose.Disposer;
-import com.dci.intellij.dbn.common.dispose.StatefulDisposable;
+import com.dci.intellij.dbn.common.dispose.StatefulDisposableBase;
 import com.dci.intellij.dbn.common.util.Strings;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.object.lookup.DBObjectRef;
@@ -18,7 +18,7 @@ import java.util.List;
 
 @Getter
 @Setter
-public class ExplainPlanEntry extends StatefulDisposable.Base {
+public class ExplainPlanEntry extends StatefulDisposableBase {
     private DBObjectRef<?> objectRef;
     private Integer parentId;
     private final String operation;

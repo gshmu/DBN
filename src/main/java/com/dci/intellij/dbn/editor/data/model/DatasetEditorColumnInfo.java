@@ -19,6 +19,7 @@ import org.jetbrains.annotations.NotNull;
 import java.util.Collections;
 import java.util.List;
 
+import static com.dci.intellij.dbn.common.dispose.Nullifier.nullify;
 import static com.dci.intellij.dbn.common.util.Commons.nvl;
 
 @Getter
@@ -84,6 +85,7 @@ public class DatasetEditorColumnInfo extends ResultSetColumnInfo {
     @Override
     public void dispose() {
         possibleValues.reset();
+        nullify(this);
     }
 
     @Override

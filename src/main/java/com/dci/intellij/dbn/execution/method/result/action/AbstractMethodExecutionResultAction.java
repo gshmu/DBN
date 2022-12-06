@@ -1,7 +1,7 @@
 package com.dci.intellij.dbn.execution.method.result.action;
 
+import com.dci.intellij.dbn.common.action.ContextAction;
 import com.dci.intellij.dbn.common.action.DataKeys;
-import com.dci.intellij.dbn.common.action.DumbAwareContextAction;
 import com.dci.intellij.dbn.execution.ExecutionManager;
 import com.dci.intellij.dbn.execution.ExecutionResult;
 import com.dci.intellij.dbn.execution.method.result.MethodExecutionResult;
@@ -11,7 +11,7 @@ import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
 
-public abstract class AbstractMethodExecutionResultAction extends DumbAwareContextAction<MethodExecutionResult> {
+public abstract class AbstractMethodExecutionResultAction extends ContextAction<MethodExecutionResult> {
     AbstractMethodExecutionResultAction(String text, Icon icon) {
         super(text, null, icon);
     }

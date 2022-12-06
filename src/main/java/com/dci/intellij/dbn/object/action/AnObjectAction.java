@@ -1,6 +1,6 @@
 package com.dci.intellij.dbn.object.action;
 
-import com.dci.intellij.dbn.common.action.DumbAwareContextAction;
+import com.dci.intellij.dbn.common.action.ContextAction;
 import com.dci.intellij.dbn.object.common.DBObject;
 import com.dci.intellij.dbn.object.lookup.DBObjectRef;
 import com.intellij.openapi.actionSystem.AnActionEvent;
@@ -11,7 +11,7 @@ import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
 
-public abstract class AnObjectAction<T extends DBObject> extends DumbAwareContextAction<T> {
+public abstract class AnObjectAction<T extends DBObject> extends ContextAction<T> {
     private final DBObjectRef<T> object;
     private boolean custom;
 

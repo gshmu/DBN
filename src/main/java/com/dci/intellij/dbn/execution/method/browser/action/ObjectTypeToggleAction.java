@@ -1,14 +1,14 @@
 package com.dci.intellij.dbn.execution.method.browser.action;
 
+import com.dci.intellij.dbn.common.action.ToggleAction;
 import com.dci.intellij.dbn.execution.method.browser.ui.MethodExecutionBrowserForm;
 import com.dci.intellij.dbn.object.type.DBObjectType;
 import com.intellij.openapi.actionSystem.AnActionEvent;
-import com.intellij.openapi.actionSystem.ToggleAction;
 import org.jetbrains.annotations.NotNull;
 
 public class ObjectTypeToggleAction extends ToggleAction {
     private MethodExecutionBrowserForm browserComponent;
-    private DBObjectType objectType;
+    private final DBObjectType objectType;
 
     public ObjectTypeToggleAction(MethodExecutionBrowserForm browserComponent, DBObjectType objectType) {
         super("Show " + objectType.getListName(), null, objectType.getIcon());

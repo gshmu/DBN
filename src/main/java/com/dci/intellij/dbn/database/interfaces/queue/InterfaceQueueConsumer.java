@@ -3,6 +3,8 @@ package com.dci.intellij.dbn.database.interfaces.queue;
 import com.dci.intellij.dbn.common.routine.Consumer;
 import com.dci.intellij.dbn.common.thread.Background;
 import com.dci.intellij.dbn.common.thread.Progress;
+import com.dci.intellij.dbn.common.thread.ThreadMonitor;
+import com.dci.intellij.dbn.common.thread.ThreadProperty;
 import com.dci.intellij.dbn.language.common.WeakRef;
 import com.intellij.openapi.progress.ProgressManager;
 import com.intellij.openapi.project.Project;
@@ -16,8 +18,13 @@ public class InterfaceQueueConsumer implements Consumer<InterfaceTask<?>>{
 
     @Override
     public void accept(InterfaceTask<?> task) {
-        InterfaceQueue queue = getQueue();
+        ThreadMonitor.surround(
+                getProject(),
+                ThreadProperty.DATABASE_INTERFACE,
+                () -> schedule(task, getQueue()));
+    }
 
+    private static void schedule(InterfaceTask<?> task, InterfaceQueue queue) {
         Project project = queue.getProject();
         if (progressBackgroundSupported(task)) {
             Progress.background(project, queue.getConnection(), true,
@@ -39,5 +46,9 @@ public class InterfaceQueueConsumer implements Consumer<InterfaceTask<?>>{
 
     public InterfaceQueue getQueue() {
         return WeakRef.ensure(queue);
+    }
+
+    private Project getProject() {
+        return getQueue().getProject();
     }
 }

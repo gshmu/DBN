@@ -1,7 +1,7 @@
 package com.dci.intellij.dbn.common.ui.table;
 
 import com.dci.intellij.dbn.common.dispose.Disposer;
-import com.dci.intellij.dbn.common.dispose.StatefulDisposable;
+import com.dci.intellij.dbn.common.dispose.StatefulDisposableBase;
 import com.dci.intellij.dbn.language.common.WeakRef;
 import org.jetbrains.annotations.NotNull;
 
@@ -11,7 +11,7 @@ import javax.swing.event.ListDataListener;
 import java.util.HashSet;
 import java.util.Set;
 
-public class DBNTableGutterModel<T extends DBNTableWithGutterModel> extends StatefulDisposable.Base implements ListModel {
+public class DBNTableGutterModel<T extends DBNTableWithGutterModel> extends StatefulDisposableBase implements ListModel {
     private final WeakRef<T> tableModel;
     private final Set<ListDataListener> listeners = new HashSet<>();
 

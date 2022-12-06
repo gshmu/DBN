@@ -2,7 +2,6 @@ package com.dci.intellij.dbn.common.action;
 
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.actionSystem.Presentation;
-import com.intellij.openapi.project.DumbAware;
 import com.intellij.openapi.project.Project;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -11,15 +10,15 @@ import javax.swing.*;
 
 import static com.dci.intellij.dbn.common.dispose.Checks.isValid;
 
-public abstract class DumbAwareContextAction<T> extends DumbAwareProjectAction implements DumbAware {
+public abstract class ContextAction<T> extends ProjectAction {
 
-    public DumbAwareContextAction() {}
+    public ContextAction() {}
 
-    public DumbAwareContextAction(@Nullable String text) {
+    public ContextAction(@Nullable String text) {
         super(text);
     }
 
-    public DumbAwareContextAction(@Nullable String text, @Nullable String description, @Nullable Icon icon) {
+    public ContextAction(@Nullable String text, @Nullable String description, @Nullable Icon icon) {
         super(text, description, icon);
     }
 

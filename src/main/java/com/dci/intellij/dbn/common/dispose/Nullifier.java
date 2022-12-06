@@ -82,7 +82,6 @@ public final class Nullifier {
                 log.error("Failed to nullify field", e);
             }
         }
-        System.out.print(' ');
     }
 
     private static void nullifyField(Object object, Field field) throws IllegalAccessException {

@@ -1,6 +1,6 @@
 package com.dci.intellij.dbn.common.ui.table;
 
-import com.dci.intellij.dbn.common.dispose.StatefulDisposable;
+import com.dci.intellij.dbn.common.dispose.StatefulDisposableBase;
 
 import javax.swing.event.TableModelEvent;
 import javax.swing.event.TableModelListener;
@@ -11,7 +11,7 @@ import java.util.Set;
  * Mutable model, not really editable
  * @param <R>
  */
-public abstract class DBNMutableTableModel<R> extends StatefulDisposable.Base implements DBNTableModel<R> {
+public abstract class DBNMutableTableModel<R> extends StatefulDisposableBase implements DBNTableModel<R> {
     private final Set<TableModelListener> listeners = new HashSet<>();
     public boolean isReadonly(){
         return true;

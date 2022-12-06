@@ -1,6 +1,6 @@
 package com.dci.intellij.dbn.generator.action;
 
-import com.dci.intellij.dbn.common.action.DumbAwareProjectAction;
+import com.dci.intellij.dbn.common.action.ProjectAction;
 import com.dci.intellij.dbn.common.thread.Command;
 import com.dci.intellij.dbn.common.thread.Dispatch;
 import com.dci.intellij.dbn.common.thread.Progress;
@@ -20,7 +20,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.awt.datatransfer.StringSelection;
 
-public abstract class GenerateStatementAction extends DumbAwareProjectAction implements DatabaseContextBase {
+public abstract class GenerateStatementAction extends ProjectAction implements DatabaseContextBase {
     GenerateStatementAction(String text) {
         super(text);
     }

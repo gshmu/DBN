@@ -7,6 +7,7 @@ public enum ThreadProperty implements Property.IntBase {
     CODE_ANNOTATING (true),
     EDITOR_LOAD(true),
     COMPONENT_STATE(true),
+    DATABASE_INTERFACE(true),
 
     TIMEOUT    (true),
     PROMPTED   (true),

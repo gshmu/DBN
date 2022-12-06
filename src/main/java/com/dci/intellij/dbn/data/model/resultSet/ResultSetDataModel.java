@@ -1,5 +1,6 @@
 package com.dci.intellij.dbn.data.model.resultSet;
 
+import com.dci.intellij.dbn.common.dispose.BackgroundDisposer;
 import com.dci.intellij.dbn.common.dispose.Disposer;
 import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.common.thread.Background;
@@ -135,7 +136,7 @@ public class ResultSetDataModel<
         setRows(newRows);
 
         if (reset) {
-            disposeRows(oldRows);
+            BackgroundDisposer.queue(() -> Disposer.disposeCollection(oldRows));
         }
 
         int newRowCount = getRowCount();
@@ -147,10 +148,6 @@ public class ResultSetDataModel<
 
 
         return newRowCount;
-    }
-
-    private void disposeRows(final List<R> oldRows) {
-        Disposer.dispose(oldRows);
     }
 
     protected void disposeRow(R row) {

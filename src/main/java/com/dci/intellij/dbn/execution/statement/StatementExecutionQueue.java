@@ -1,6 +1,6 @@
 package com.dci.intellij.dbn.execution.statement;
 
-import com.dci.intellij.dbn.common.dispose.StatefulDisposable;
+import com.dci.intellij.dbn.common.dispose.StatefulDisposableBase;
 import com.dci.intellij.dbn.common.thread.Progress;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.ConnectionRef;
@@ -15,7 +15,7 @@ import java.util.concurrent.ConcurrentLinkedQueue;
 import static com.dci.intellij.dbn.common.dispose.Failsafe.guarded;
 import static com.dci.intellij.dbn.execution.ExecutionStatus.*;
 
-public final class StatementExecutionQueue extends StatefulDisposable.Base {
+public final class StatementExecutionQueue extends StatefulDisposableBase {
     private final Queue<StatementExecutionProcessor> processors = new ConcurrentLinkedQueue<>();
     private final ConnectionRef connection;
     private volatile boolean executing = false;

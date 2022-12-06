@@ -1,12 +1,12 @@
 package com.dci.intellij.dbn.object.filter.name.action;
 
-import com.dci.intellij.dbn.common.action.DumbAwareProjectAction;
+import com.dci.intellij.dbn.common.action.ProjectAction;
 import com.dci.intellij.dbn.object.filter.name.ui.ObjectNameFilterSettingsForm;
 
 import javax.swing.*;
 import javax.swing.tree.TreePath;
 
-public abstract class AbstractObjectFilterAction extends DumbAwareProjectAction {
+public abstract class AbstractObjectFilterAction extends ProjectAction {
     ObjectNameFilterSettingsForm settingsForm;
 
     AbstractObjectFilterAction(String text, Icon icon, ObjectNameFilterSettingsForm settingsForm) {

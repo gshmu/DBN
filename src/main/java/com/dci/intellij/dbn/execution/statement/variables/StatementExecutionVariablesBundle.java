@@ -1,6 +1,7 @@
 package com.dci.intellij.dbn.execution.statement.variables;
 
 import com.dci.intellij.dbn.common.dispose.StatefulDisposable;
+import com.dci.intellij.dbn.common.dispose.StatefulDisposableBase;
 import com.dci.intellij.dbn.common.locale.Formatter;
 import com.dci.intellij.dbn.common.util.Lists;
 import com.dci.intellij.dbn.common.util.Strings;
@@ -23,7 +24,7 @@ import org.jetbrains.annotations.Nullable;
 import java.text.ParseException;
 import java.util.*;
 
-public class StatementExecutionVariablesBundle extends StatefulDisposable.Base implements StatefulDisposable {
+public class StatementExecutionVariablesBundle extends StatefulDisposableBase implements StatefulDisposable {
     public static final Comparator<StatementExecutionVariable> NAME_COMPARATOR = (o1, o2) -> o1.getName().compareToIgnoreCase(o2.getName());
     public static final Comparator<StatementExecutionVariable> NAME_LENGTH_COMPARATOR = (o1, o2) -> o2.getName().length() - o1.getName().length();
     public static final Comparator<StatementExecutionVariable> OFFSET_COMPARATOR = (o1, o2) -> o1.getOffset() - o2.getOffset();

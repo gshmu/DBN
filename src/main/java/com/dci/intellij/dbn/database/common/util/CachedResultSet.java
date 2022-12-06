@@ -1,7 +1,7 @@
 package com.dci.intellij.dbn.database.common.util;
 
 import com.dci.intellij.dbn.common.data.Data;
-import com.dci.intellij.dbn.common.dispose.StatefulDisposable;
+import com.dci.intellij.dbn.common.dispose.StatefulDisposableBase;
 import com.dci.intellij.dbn.common.util.Lists;
 import com.dci.intellij.dbn.connection.Resources;
 import com.dci.intellij.dbn.connection.ResultSets;
@@ -20,7 +20,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import static com.dci.intellij.dbn.common.util.Commons.nvl;
 
 @Slf4j
-public class CachedResultSet extends StatefulDisposable.Base implements ResultSetStub {
+public class CachedResultSet extends StatefulDisposableBase implements ResultSetStub {
     private List<CachedResultSetRow> rows = new ArrayList<>();
     private List<String> columnNames;
 
