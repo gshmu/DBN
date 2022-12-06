@@ -3,7 +3,7 @@ package com.dci.intellij.dbn.execution.statement.processor;
 import com.dci.intellij.dbn.common.dispose.AlreadyDisposedException;
 import com.dci.intellij.dbn.common.dispose.Checks;
 import com.dci.intellij.dbn.common.dispose.Failsafe;
-import com.dci.intellij.dbn.common.dispose.StatefulDisposable;
+import com.dci.intellij.dbn.common.dispose.StatefulDisposableBase;
 import com.dci.intellij.dbn.common.editor.BasicTextEditor;
 import com.dci.intellij.dbn.common.event.ProjectEvents;
 import com.dci.intellij.dbn.common.latent.Latent;
@@ -67,7 +67,7 @@ import static com.dci.intellij.dbn.common.navigation.NavigationInstruction.*;
 import static com.dci.intellij.dbn.execution.ExecutionStatus.*;
 import static com.dci.intellij.dbn.object.common.property.DBObjectProperty.COMPILABLE;
 
-public class StatementExecutionBasicProcessor extends StatefulDisposable.Base implements StatementExecutionProcessor {
+public class StatementExecutionBasicProcessor extends StatefulDisposableBase implements StatementExecutionProcessor {
     private final ProjectRef project;
     private final WeakRef<FileEditor> fileEditor;
     private PsiFileRef<DBLanguagePsiFile> psiFile;

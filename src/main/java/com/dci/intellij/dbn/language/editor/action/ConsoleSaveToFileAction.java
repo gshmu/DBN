@@ -1,8 +1,8 @@
 package com.dci.intellij.dbn.language.editor.action;
 
 import com.dci.intellij.dbn.common.Icons;
-import com.dci.intellij.dbn.common.action.DumbAwareProjectAction;
 import com.dci.intellij.dbn.common.action.Lookups;
+import com.dci.intellij.dbn.common.action.ProjectAction;
 import com.dci.intellij.dbn.common.thread.Write;
 import com.dci.intellij.dbn.common.util.Documents;
 import com.dci.intellij.dbn.common.util.Messages;
@@ -24,7 +24,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;
 
-public class ConsoleSaveToFileAction extends DumbAwareProjectAction {
+public class ConsoleSaveToFileAction extends ProjectAction {
     ConsoleSaveToFileAction() {
         super("Save to File", "Save console to file", Icons.CODE_EDITOR_SAVE_TO_FILE);
     }

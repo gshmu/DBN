@@ -2,8 +2,8 @@ package com.dci.intellij.dbn.browser.action;
 
 import com.dci.intellij.dbn.browser.DatabaseBrowserManager;
 import com.dci.intellij.dbn.common.action.Lookups;
+import com.dci.intellij.dbn.common.action.ToggleAction;
 import com.intellij.openapi.actionSystem.AnActionEvent;
-import com.intellij.openapi.actionSystem.ToggleAction;
 import com.intellij.openapi.project.DumbAware;
 import com.intellij.openapi.project.Project;
 import org.jetbrains.annotations.NotNull;
@@ -39,5 +39,4 @@ public class AutoscrollToEditorAction extends ToggleAction implements DumbAware{
         super.update(e);
         e.getPresentation().setText("Autoscroll to Editor");
     }
-
 }

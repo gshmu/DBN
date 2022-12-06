@@ -2,7 +2,7 @@ package com.dci.intellij.dbn.options.action;
 
 import com.dci.intellij.dbn.browser.DatabaseBrowserManager;
 import com.dci.intellij.dbn.common.Icons;
-import com.dci.intellij.dbn.common.action.DumbAwareProjectAction;
+import com.dci.intellij.dbn.common.action.ProjectAction;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.ConnectionId;
 import com.dci.intellij.dbn.options.ConfigId;
@@ -12,7 +12,7 @@ import com.intellij.openapi.actionSystem.Presentation;
 import com.intellij.openapi.project.Project;
 import org.jetbrains.annotations.NotNull;
 
-public class ProjectSettingsOpenAction extends DumbAwareProjectAction {
+public class ProjectSettingsOpenAction extends ProjectAction {
     private final ConfigId configId;
 
     public ProjectSettingsOpenAction(ConfigId configId, boolean showIcon) {

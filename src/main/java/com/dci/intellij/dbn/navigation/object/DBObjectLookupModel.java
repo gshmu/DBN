@@ -3,7 +3,7 @@ package com.dci.intellij.dbn.navigation.object;
 import com.dci.intellij.dbn.common.consumer.ConcurrentSetCollector;
 import com.dci.intellij.dbn.common.consumer.SetCollector;
 import com.dci.intellij.dbn.common.dispose.Failsafe;
-import com.dci.intellij.dbn.common.dispose.StatefulDisposable;
+import com.dci.intellij.dbn.common.dispose.StatefulDisposableBase;
 import com.dci.intellij.dbn.common.load.ProgressMonitor;
 import com.dci.intellij.dbn.common.project.ProjectRef;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
@@ -26,7 +26,7 @@ import java.util.Objects;
 
 import static com.dci.intellij.dbn.common.dispose.Failsafe.guarded;
 
-public class DBObjectLookupModel extends StatefulDisposable.Base implements ChooseByNameModel {
+public class DBObjectLookupModel extends StatefulDisposableBase implements ChooseByNameModel {
     private static final Object[] EMPTY_ARRAY = new Object[0];
     private static final String[] EMPTY_STRING_ARRAY = new String[0];
 

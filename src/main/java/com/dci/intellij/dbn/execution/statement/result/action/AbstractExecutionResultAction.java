@@ -1,7 +1,7 @@
 package com.dci.intellij.dbn.execution.statement.result.action;
 
+import com.dci.intellij.dbn.common.action.ContextAction;
 import com.dci.intellij.dbn.common.action.DataKeys;
-import com.dci.intellij.dbn.common.action.DumbAwareContextAction;
 import com.dci.intellij.dbn.execution.ExecutionManager;
 import com.dci.intellij.dbn.execution.ExecutionResult;
 import com.dci.intellij.dbn.execution.statement.result.StatementExecutionCursorResult;
@@ -12,7 +12,7 @@ import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
 
-public abstract class AbstractExecutionResultAction extends DumbAwareContextAction<StatementExecutionCursorResult> {
+public abstract class AbstractExecutionResultAction extends ContextAction<StatementExecutionCursorResult> {
     protected AbstractExecutionResultAction(String text, Icon icon) {
         super(text, null, icon);
     }

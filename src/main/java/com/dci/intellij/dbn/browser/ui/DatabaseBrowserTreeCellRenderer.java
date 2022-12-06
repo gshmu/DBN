@@ -3,6 +3,7 @@ package com.dci.intellij.dbn.browser.ui;
 import com.dci.intellij.dbn.browser.model.BrowserTreeNode;
 import com.dci.intellij.dbn.browser.model.LoadInProgressTreeNode;
 import com.dci.intellij.dbn.browser.options.DatabaseBrowserSettings;
+import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.common.ui.tree.TreeUtil;
 import com.dci.intellij.dbn.common.util.Commons;
 import com.dci.intellij.dbn.common.util.Strings;
@@ -14,7 +15,6 @@ import com.dci.intellij.dbn.object.DBSchema;
 import com.dci.intellij.dbn.object.DBUser;
 import com.dci.intellij.dbn.object.common.DBObject;
 import com.dci.intellij.dbn.object.common.list.DBObjectList;
-import com.intellij.openapi.progress.ProcessCanceledException;
 import com.intellij.openapi.project.Project;
 import com.intellij.ui.ColoredTreeCellRenderer;
 import com.intellij.ui.SimpleTextAttributes;
@@ -47,7 +47,7 @@ public class DatabaseBrowserTreeCellRenderer implements TreeCellRenderer {
 
         @Override
         public void customizeCellRenderer(@NotNull JTree tree, Object value, boolean selected, boolean expanded, boolean leaf, int row, boolean hasFocus) {
-            try{
+            Failsafe.guarded(() -> {
                 if (value instanceof LoadInProgressTreeNode) {
                     LoadInProgressTreeNode loadInProgressTreeNode = (LoadInProgressTreeNode) value;
                     setIcon(loadInProgressTreeNode.getIcon(0));
@@ -138,7 +138,7 @@ public class DatabaseBrowserTreeCellRenderer implements TreeCellRenderer {
                     }
 
                 }
-            } catch (ProcessCanceledException ignore) {}
+            });
         }
 
         private boolean hasConnectivity(@NotNull DBObjectList objectsList) {

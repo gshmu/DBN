@@ -26,7 +26,6 @@ import com.intellij.codeInsight.completion.CompletionParameters;
 import com.intellij.codeInsight.completion.CompletionResultSet;
 import com.intellij.codeInsight.completion.CompletionType;
 import com.intellij.openapi.editor.Document;
-import com.intellij.openapi.progress.ProcessCanceledException;
 import com.intellij.openapi.util.TextRange;
 import com.intellij.psi.PsiComment;
 import com.intellij.psi.PsiElement;
@@ -72,7 +71,7 @@ public class CodeCompletionContext {
 
         PsiElement position = parameters.getPosition();
         if (position instanceof PsiComment) {
-            throw new ProcessCanceledException();
+            throw new CodeCompletionCancelledException();
         }
         int offset = parameters.getOffset();
         userInput = calcUserInput(position, offset);

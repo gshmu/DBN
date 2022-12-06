@@ -1,7 +1,7 @@
 package com.dci.intellij.dbn.execution.logging.action;
 
+import com.dci.intellij.dbn.common.action.ContextAction;
 import com.dci.intellij.dbn.common.action.DataKeys;
-import com.dci.intellij.dbn.common.action.DumbAwareContextAction;
 import com.dci.intellij.dbn.execution.logging.DatabaseLoggingResult;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import org.jetbrains.annotations.NotNull;
@@ -9,7 +9,7 @@ import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
 
-abstract class AbstractDatabaseLoggingAction extends DumbAwareContextAction<DatabaseLoggingResult> {
+abstract class AbstractDatabaseLoggingAction extends ContextAction<DatabaseLoggingResult> {
     AbstractDatabaseLoggingAction(String text, Icon icon) {
         super(text, null, icon);
     }

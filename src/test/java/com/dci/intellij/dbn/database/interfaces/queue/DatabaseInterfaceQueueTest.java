@@ -36,12 +36,12 @@ public class DatabaseInterfaceQueueTest {
                 queue.scheduleAndWait(taskDefinition, () -> {
                     System.out.println("Executing " + task);
                     Unsafe.silent(() -> Thread.sleep(task.time));
-                    System.out.println("Done executing "  + task);
+                    System.out.println("Completed "  + task);
                 });
 
                 System.out.println("Finished executing " + task);
             } catch (SQLException e) {
-                throw Exceptions.runtime(e);
+                throw Exceptions.toRuntimeException(e);
             }
         });
     }
@@ -54,10 +54,10 @@ public class DatabaseInterfaceQueueTest {
                 queue.scheduleAndForget(taskDefinition, () -> {
                     System.out.println("Executing " + task);
                     Unsafe.silent(() -> Thread.sleep(task.time));
-                    System.out.println("Done executing "  + task);
+                    System.out.println("Completed "  + task);
                 });
             } catch (SQLException e) {
-                throw Exceptions.runtime(e);
+                throw Exceptions.toRuntimeException(e);
             }
         });
     }

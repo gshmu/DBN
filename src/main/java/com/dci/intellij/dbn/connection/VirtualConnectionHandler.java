@@ -4,7 +4,7 @@ import com.dci.intellij.dbn.browser.model.BrowserTreeNode;
 import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.common.database.AuthenticationInfo;
 import com.dci.intellij.dbn.common.database.DatabaseInfo;
-import com.dci.intellij.dbn.common.dispose.StatefulDisposable;
+import com.dci.intellij.dbn.common.dispose.StatefulDisposableBase;
 import com.dci.intellij.dbn.common.environment.EnvironmentType;
 import com.dci.intellij.dbn.common.filter.Filter;
 import com.dci.intellij.dbn.common.latent.Latent;
@@ -42,7 +42,7 @@ import java.util.Map;
 import static com.dci.intellij.dbn.common.exception.Exceptions.unsupported;
 
 @Getter
-public class VirtualConnectionHandler extends StatefulDisposable.Base implements ConnectionHandler {
+public class VirtualConnectionHandler extends StatefulDisposableBase implements ConnectionHandler {
     private final ConnectionId id;
     private final String name;
     private final DatabaseType databaseType;

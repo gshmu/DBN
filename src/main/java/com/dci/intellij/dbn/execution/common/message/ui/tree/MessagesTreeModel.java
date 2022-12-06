@@ -3,12 +3,14 @@ package com.dci.intellij.dbn.execution.common.message.ui.tree;
 import com.dci.intellij.dbn.common.dispose.Disposed;
 import com.dci.intellij.dbn.common.dispose.Disposer;
 import com.dci.intellij.dbn.common.dispose.StatefulDisposable;
+import com.dci.intellij.dbn.common.dispose.StatefulDisposableBase;
 import com.dci.intellij.dbn.common.ui.tree.TreeEventType;
 import com.dci.intellij.dbn.common.ui.tree.TreeUtil;
 import com.dci.intellij.dbn.connection.ConnectionId;
 import com.dci.intellij.dbn.execution.compiler.CompilerMessage;
 import com.dci.intellij.dbn.execution.explain.result.ExplainPlanMessage;
 import com.dci.intellij.dbn.execution.statement.StatementExecutionMessage;
+import com.intellij.util.containers.ContainerUtil;
 import org.jetbrains.annotations.Nullable;
 
 import javax.swing.event.TreeModelListener;
@@ -16,12 +18,11 @@ import javax.swing.tree.TreeModel;
 import javax.swing.tree.TreeNode;
 import javax.swing.tree.TreePath;
 import java.util.Enumeration;
-import java.util.HashSet;
 import java.util.Set;
 
 
-public class MessagesTreeModel extends StatefulDisposable.Base implements TreeModel, StatefulDisposable {
-    private Set<TreeModelListener> treeModelListeners = new HashSet<>();
+public class MessagesTreeModel extends StatefulDisposableBase implements TreeModel, StatefulDisposable {
+    private Set<TreeModelListener> treeModelListeners = ContainerUtil.newConcurrentSet();
     private MessagesTreeRootNode rootNode = new MessagesTreeRootNode(this);
 
     MessagesTreeModel() {

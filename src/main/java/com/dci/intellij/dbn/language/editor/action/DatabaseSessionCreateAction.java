@@ -1,7 +1,7 @@
 package com.dci.intellij.dbn.language.editor.action;
 
-import com.dci.intellij.dbn.common.action.DumbAwareProjectAction;
 import com.dci.intellij.dbn.common.action.Lookups;
+import com.dci.intellij.dbn.common.action.ProjectAction;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.ConnectionRef;
 import com.dci.intellij.dbn.connection.mapping.FileConnectionContextManager;
@@ -11,7 +11,7 @@ import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.project.Project;
 import org.jetbrains.annotations.NotNull;
 
-public class DatabaseSessionCreateAction extends DumbAwareProjectAction {
+public class DatabaseSessionCreateAction extends ProjectAction {
     private final ConnectionRef connection;
 
     DatabaseSessionCreateAction(ConnectionHandler connection) {

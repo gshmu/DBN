@@ -1,7 +1,7 @@
 package com.dci.intellij.dbn.object.dependency.ui;
 
 import com.dci.intellij.dbn.common.Icons;
-import com.dci.intellij.dbn.common.action.DumbAwareProjectAction;
+import com.dci.intellij.dbn.common.action.ProjectAction;
 import com.dci.intellij.dbn.common.dispose.Disposer;
 import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.common.load.LoadInProgressRegistry;
@@ -190,7 +190,7 @@ public class ObjectDependencyTree extends DBNTree{
         }
     }
 
-    public static class EditObjectAction extends DumbAwareProjectAction {
+    public static class EditObjectAction extends ProjectAction {
         private final DBObjectRef<DBSchemaObject> object;
 
         EditObjectAction(DBSchemaObject object) {

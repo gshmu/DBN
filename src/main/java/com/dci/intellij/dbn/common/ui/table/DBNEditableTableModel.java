@@ -1,6 +1,6 @@
 package com.dci.intellij.dbn.common.ui.table;
 
-import com.dci.intellij.dbn.common.dispose.StatefulDisposable;
+import com.dci.intellij.dbn.common.dispose.StatefulDisposableBase;
 import com.dci.intellij.dbn.common.latent.Latent;
 
 import javax.swing.*;
@@ -10,7 +10,7 @@ import javax.swing.event.TableModelListener;
 import java.util.HashSet;
 import java.util.Set;
 
-public abstract class DBNEditableTableModel extends StatefulDisposable.Base implements DBNTableWithGutterModel {
+public abstract class DBNEditableTableModel extends StatefulDisposableBase implements DBNTableWithGutterModel {
     private final Set<TableModelListener> tableModelListeners = new HashSet<>();
     private final Latent<DBNTableGutterModel<?>> listModel = Latent.basic(() -> new DBNTableGutterModel<>(DBNEditableTableModel.this));
 

@@ -1,7 +1,7 @@
 package com.dci.intellij.dbn.browser.action;
 
 
-import com.dci.intellij.dbn.common.action.DumbAwareProjectAction;
+import com.dci.intellij.dbn.common.action.ProjectAction;
 import com.dci.intellij.dbn.connection.config.tns.TnsNamesParser;
 import com.dci.intellij.dbn.connection.config.tns.ui.TnsNamesImportDialog;
 import com.dci.intellij.dbn.options.ProjectSettingsManager;
@@ -14,7 +14,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
 
-public class TnsNamesImportAction extends DumbAwareProjectAction {
+public class TnsNamesImportAction extends ProjectAction {
     TnsNamesImportAction() {
         super("Import TNS Names", null, null);
     }

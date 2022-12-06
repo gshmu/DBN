@@ -1,7 +1,7 @@
 package com.dci.intellij.dbn.execution.method.result.ui;
 
-import com.dci.intellij.dbn.common.action.DumbAwareProjectAction;
 import com.dci.intellij.dbn.common.action.Lookups;
+import com.dci.intellij.dbn.common.action.ProjectAction;
 import com.dci.intellij.dbn.common.ui.form.DBNFormBase;
 import com.dci.intellij.dbn.common.ui.misc.DBNComboBoxAction;
 import com.dci.intellij.dbn.common.util.Actions;
@@ -27,9 +27,8 @@ import com.intellij.openapi.project.Project;
 import com.intellij.ui.IdeBorderFactory;
 import org.jetbrains.annotations.NotNull;
 
-import javax.swing.JComponent;
-import javax.swing.JPanel;
-import java.awt.BorderLayout;
+import javax.swing.*;
+import java.awt.*;
 import java.sql.SQLException;
 
 public class MethodExecutionLargeValueResultForm extends DBNFormBase {
@@ -130,7 +129,7 @@ public class MethodExecutionLargeValueResultForm extends DBNFormBase {
         }
     }
 
-    public class ContentTypeSelectAction extends DumbAwareProjectAction {
+    public class ContentTypeSelectAction extends ProjectAction {
         private final TextContentType contentType;
 
         ContentTypeSelectAction(TextContentType contentType) {

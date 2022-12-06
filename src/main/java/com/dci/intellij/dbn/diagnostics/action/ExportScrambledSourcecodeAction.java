@@ -1,6 +1,6 @@
 package com.dci.intellij.dbn.diagnostics.action;
 
-import com.dci.intellij.dbn.common.action.DumbAwareProjectAction;
+import com.dci.intellij.dbn.common.action.ProjectAction;
 import com.dci.intellij.dbn.common.thread.Progress;
 import com.dci.intellij.dbn.diagnostics.Diagnostics;
 import com.dci.intellij.dbn.diagnostics.ParserDiagnosticsManager;
@@ -15,7 +15,7 @@ import org.jetbrains.annotations.NotNull;
 import java.io.File;
 
 @Slf4j
-public class ExportScrambledSourcecodeAction extends DumbAwareProjectAction {
+public class ExportScrambledSourcecodeAction extends ProjectAction {
     public static final FileChooserDescriptor FILE_CHOOSER_DESCRIPTOR = new FileChooserDescriptor(false, true, false, false, false, false).
             withTitle("Select Destination Directory").
             withDescription("Select destination directory for the scrambled sources");

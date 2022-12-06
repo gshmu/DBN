@@ -1,7 +1,7 @@
 package com.dci.intellij.dbn.navigation.object;
 
 import com.dci.intellij.dbn.browser.model.BrowserTreeNode;
-import com.dci.intellij.dbn.common.dispose.StatefulDisposable;
+import com.dci.intellij.dbn.common.dispose.StatefulDisposableBase;
 import com.dci.intellij.dbn.common.routine.AsyncTaskExecutor;
 import com.dci.intellij.dbn.common.thread.Threads;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
@@ -16,7 +16,7 @@ import com.dci.intellij.dbn.object.type.DBObjectType;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
-class DBObjectLookupScanner extends StatefulDisposable.Base implements DBObjectListVisitor {
+class DBObjectLookupScanner extends StatefulDisposableBase implements DBObjectListVisitor {
     private final DBObjectLookupModel model;
     private final boolean forceLoad;
     private final AsyncTaskExecutor asyncScanner = new AsyncTaskExecutor(

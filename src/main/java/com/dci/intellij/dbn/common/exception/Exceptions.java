@@ -30,7 +30,7 @@ public class Exceptions {
     }
 
     @NotNull
-    public static RuntimeException runtime(@NotNull Throwable e) {
+    public static RuntimeException toRuntimeException(@NotNull Throwable e) {
         if (e instanceof RuntimeException) {
             return (RuntimeException) e;
         } else {
@@ -42,7 +42,7 @@ public class Exceptions {
         throw new UnsupportedOperationException();
     }
 
-    public static TimeoutException timeout(long time, TimeUnit timeUnit) {
+    public static TimeoutException timeoutException(long time, TimeUnit timeUnit) {
         return new TimeoutException("Operation timed out after " + time + " " + timeUnit.name().toLowerCase());
     }
 }

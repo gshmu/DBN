@@ -1,13 +1,13 @@
 package com.dci.intellij.dbn.browser.model;
 
-import com.dci.intellij.dbn.common.dispose.StatefulDisposable;
+import com.dci.intellij.dbn.common.dispose.StatefulDisposableBase;
 import org.jetbrains.annotations.Nullable;
 
 import javax.swing.tree.TreeNode;
 import java.util.Collections;
 import java.util.Enumeration;
 
-public abstract class BrowserTreeNodeBase extends StatefulDisposable.Base implements BrowserTreeNode{
+public abstract class BrowserTreeNodeBase extends StatefulDisposableBase implements BrowserTreeNode{
 
     @Nullable
     @Override

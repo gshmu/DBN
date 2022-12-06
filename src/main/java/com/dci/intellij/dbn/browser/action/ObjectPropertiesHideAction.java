@@ -2,12 +2,12 @@ package com.dci.intellij.dbn.browser.action;
 
 import com.dci.intellij.dbn.browser.DatabaseBrowserManager;
 import com.dci.intellij.dbn.common.Icons;
-import com.dci.intellij.dbn.common.action.DumbAwareProjectAction;
+import com.dci.intellij.dbn.common.action.ProjectAction;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.project.Project;
 import org.jetbrains.annotations.NotNull;
 
-public class ObjectPropertiesHideAction extends DumbAwareProjectAction {
+public class ObjectPropertiesHideAction extends ProjectAction {
     public ObjectPropertiesHideAction() {
         super("Hide Properties", null, Icons.ACTION_CLOSE);
     }

@@ -23,6 +23,8 @@ import com.intellij.openapi.vfs.VirtualFile;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.Objects;
+
 public class ConnectionContextActions {
     static class ConnectionSelectAction extends AbstractConnectionAction {
         private final VirtualFileRef file;
@@ -63,7 +65,7 @@ public class ConnectionContextActions {
             if (file != null) {
                 FileConnectionContextManager manager = getContextManager(getProject());
                 ConnectionHandler connection = manager.getConnection(file);
-                return connection != null && connection.getConnectionId().equals(getConnectionId());
+                return connection != null && Objects.equals(connection.getConnectionId(), getConnectionId());
             }
             return false;
         }

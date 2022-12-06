@@ -6,6 +6,7 @@ import com.dci.intellij.dbn.browser.model.BrowserTreeNode;
 import com.dci.intellij.dbn.browser.ui.HtmlToolTipBuilder;
 import com.dci.intellij.dbn.common.content.DynamicContent;
 import com.dci.intellij.dbn.common.content.loader.DynamicContentResultSetLoader;
+import com.dci.intellij.dbn.common.dispose.StatefulDisposableBase;
 import com.dci.intellij.dbn.common.event.ProjectEvents;
 import com.dci.intellij.dbn.common.latent.Latent;
 import com.dci.intellij.dbn.common.load.ProgressMonitor;
@@ -513,7 +514,7 @@ public class DBSchemaImpl extends DBObjectImpl<DBSchemaMetadata> implements DBSc
     }
 
     @Getter
-    static class ObjectStatusUpdater extends Base implements DBObjectListVisitor {
+    static class ObjectStatusUpdater extends StatefulDisposableBase implements DBObjectListVisitor {
         private final Set<BrowserTreeNode> refreshNodes = new HashSet<>();
 
         @Override

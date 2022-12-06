@@ -1,14 +1,14 @@
 package com.dci.intellij.dbn.object.action;
 
 import com.dci.intellij.dbn.common.Icons;
-import com.dci.intellij.dbn.common.action.DumbAwareProjectAction;
+import com.dci.intellij.dbn.common.action.ProjectAction;
 import com.dci.intellij.dbn.connection.console.DatabaseConsoleManager;
 import com.dci.intellij.dbn.object.DBConsole;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.project.Project;
 import org.jetbrains.annotations.NotNull;
 
-public class ConsoleRenameAction extends DumbAwareProjectAction {
+public class ConsoleRenameAction extends ProjectAction {
     private DBConsole console;
 
     public ConsoleRenameAction(DBConsole console) {

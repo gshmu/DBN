@@ -1,7 +1,7 @@
 package com.dci.intellij.dbn.database.sqlite.adapter;
 
 import com.dci.intellij.dbn.common.cache.Cache;
-import com.dci.intellij.dbn.common.dispose.StatefulDisposable;
+import com.dci.intellij.dbn.common.dispose.StatefulDisposableBase;
 import com.dci.intellij.dbn.common.util.Strings;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.database.common.util.ResultSetStub;
@@ -12,7 +12,7 @@ import java.util.List;
 
 @Deprecated // replace with com.dci.intellij.dbn.database.common.util.CachedResultSet
 public class SqliteMetadataResultSet<T extends SqliteMetadataResultSetRow>
-        extends StatefulDisposable.Base
+        extends StatefulDisposableBase
         implements ResultSetStub {
 
     private final List<T> rows = new ArrayList<T>();

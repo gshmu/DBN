@@ -10,12 +10,11 @@ import com.intellij.openapi.ui.popup.ListPopup;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import javax.swing.Icon;
-import java.awt.Component;
-import java.awt.Point;
+import javax.swing.*;
+import java.awt.*;
 import java.awt.event.InputEvent;
 
-public abstract class GroupPopupAction extends DumbAwareProjectAction {
+public abstract class GroupPopupAction extends ProjectAction {
     private final String groupTitle;
     public GroupPopupAction(String name, @Nullable String groupTitle, @Nullable Icon icon) {
         super(name, null, icon);

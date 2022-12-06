@@ -3,6 +3,7 @@ package com.dci.intellij.dbn.common.editor;
 import com.dci.intellij.dbn.common.dispose.Disposer;
 import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.common.dispose.StatefulDisposable;
+import com.dci.intellij.dbn.common.dispose.StatefulDisposableBase;
 import com.dci.intellij.dbn.common.project.ProjectRef;
 import com.dci.intellij.dbn.editor.EditorProviderId;
 import com.dci.intellij.dbn.language.common.WeakRef;
@@ -28,7 +29,7 @@ import java.beans.PropertyChangeListener;
 
 import static com.dci.intellij.dbn.common.dispose.Failsafe.guarded;
 
-public abstract class BasicTextEditorImpl<T extends VirtualFile> extends StatefulDisposable.Base implements BasicTextEditor<T>, StatefulDisposable {
+public abstract class BasicTextEditorImpl<T extends VirtualFile> extends StatefulDisposableBase implements BasicTextEditor<T>, StatefulDisposable {
     protected TextEditor textEditor;
     private final WeakRef<T> virtualFile;
     private final ProjectRef project;

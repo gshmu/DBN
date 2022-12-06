@@ -1,8 +1,8 @@
 package com.dci.intellij.dbn.connection.action;
 
+import com.dci.intellij.dbn.common.action.ToggleAction;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.ConnectionRef;
-import com.intellij.openapi.actionSystem.ToggleAction;
 import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;

@@ -1,13 +1,13 @@
 package com.dci.intellij.dbn.editor.data.action;
 
-import com.dci.intellij.dbn.common.action.DumbAwareContextAction;
+import com.dci.intellij.dbn.common.action.ContextAction;
 import com.dci.intellij.dbn.editor.data.DatasetEditor;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
 
-public abstract class AbstractDataEditorAction extends DumbAwareContextAction<DatasetEditor> {
+public abstract class AbstractDataEditorAction extends ContextAction<DatasetEditor> {
     public AbstractDataEditorAction(String text) {
         super(text);
     }

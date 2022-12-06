@@ -1,13 +1,13 @@
 package com.dci.intellij.dbn.data.record.navigation.action;
 
-import com.dci.intellij.dbn.common.action.DumbAwareProjectAction;
+import com.dci.intellij.dbn.common.action.ProjectAction;
 import com.dci.intellij.dbn.editor.data.DatasetEditorManager;
 import com.dci.intellij.dbn.editor.data.filter.DatasetFilterInput;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.project.Project;
 import org.jetbrains.annotations.NotNull;
 
-public class RecordEditorOpenAction extends DumbAwareProjectAction {
+public class RecordEditorOpenAction extends ProjectAction {
     private DatasetFilterInput filterInput;
 
     RecordEditorOpenAction(DatasetFilterInput filterInput) {

@@ -1,7 +1,7 @@
 package com.dci.intellij.dbn.connection.config.action;
 
 import com.dci.intellij.dbn.common.Icons;
-import com.dci.intellij.dbn.common.action.DumbAwareProjectAction;
+import com.dci.intellij.dbn.common.action.ProjectAction;
 import com.dci.intellij.dbn.connection.config.ConnectionBundleSettings;
 import com.dci.intellij.dbn.connection.config.ui.ConnectionListModel;
 import com.dci.intellij.dbn.data.sorting.SortDirection;
@@ -12,7 +12,7 @@ import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
 
-public class ConnectionsSortAction extends DumbAwareProjectAction {
+public class ConnectionsSortAction extends ProjectAction {
     private SortDirection currentSortDirection = SortDirection.ASCENDING;
     private ConnectionBundleSettings connectionBundleSettings;
     private JList list;

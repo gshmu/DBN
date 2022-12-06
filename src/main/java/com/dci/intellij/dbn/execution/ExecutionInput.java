@@ -1,6 +1,7 @@
 package com.dci.intellij.dbn.execution;
 
 import com.dci.intellij.dbn.common.dispose.StatefulDisposable;
+import com.dci.intellij.dbn.common.dispose.StatefulDisposableBase;
 import com.dci.intellij.dbn.common.latent.Latent;
 import com.dci.intellij.dbn.common.options.PersistentConfiguration;
 import com.dci.intellij.dbn.common.options.setting.SettingsSupport;
@@ -20,7 +21,7 @@ import org.jetbrains.annotations.Nullable;
 
 @Getter
 @Setter
-public abstract class ExecutionInput extends StatefulDisposable.Base implements StatefulDisposable, DatabaseContextBase, PersistentConfiguration {
+public abstract class ExecutionInput extends StatefulDisposableBase implements StatefulDisposable, DatabaseContextBase, PersistentConfiguration {
     private final ExecutionTimeout executionTimeout;
     private final ExecutionTimeout debugExecutionTimeout;
     private final ExecutionTarget executionTarget;

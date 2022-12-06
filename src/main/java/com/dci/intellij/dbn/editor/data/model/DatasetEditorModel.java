@@ -100,7 +100,8 @@ public class DatasetEditorModel
 
                     setResultSet(newResultSet);
                     setResultSetExhausted(false);
-                    if (keepChanges) snapshotChanges(); else clearChanges();
+                    if (keepChanges) snapshotChanges();
+                    else clearChanges();
 
                     int rowCount = computeRowCount();
 

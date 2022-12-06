@@ -1,7 +1,7 @@
 package com.dci.intellij.dbn.editor.code.action;
 
-import com.dci.intellij.dbn.common.action.DumbAwareProjectAction;
 import com.dci.intellij.dbn.common.action.Lookups;
+import com.dci.intellij.dbn.common.action.ProjectAction;
 import com.dci.intellij.dbn.common.util.Editors;
 import com.dci.intellij.dbn.editor.code.SourceCodeEditor;
 import com.dci.intellij.dbn.vfs.file.DBSourceCodeVirtualFile;
@@ -13,7 +13,7 @@ import com.intellij.openapi.vfs.VirtualFile;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-public abstract class AbstractCodeEditorAction extends DumbAwareProjectAction {
+public abstract class AbstractCodeEditorAction extends ProjectAction {
     AbstractCodeEditorAction(String text, String description, javax.swing.Icon icon) {
         super(text, description, icon);
     }
