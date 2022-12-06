@@ -2,6 +2,7 @@ package com.dci.intellij.dbn.connection.jdbc;
 
 import com.dci.intellij.dbn.common.event.ProjectEvents;
 import com.dci.intellij.dbn.common.project.ProjectRef;
+import com.dci.intellij.dbn.common.routine.Consumer;
 import com.dci.intellij.dbn.common.util.TimeUtil;
 import com.dci.intellij.dbn.connection.*;
 import com.dci.intellij.dbn.connection.transaction.PendingTransactionBundle;
@@ -249,19 +250,26 @@ public class DBNConnection extends DBNConnectionBase {
 
     @Override
     public void statusChanged(ResourceStatus status) {
-        ConnectionHandler connection = ConnectionHandler.get(id);
-        if (isNotValid(connection)) return;
-
-        ConnectionHandlerStatusHolder connectionStatus = connection.getConnectionStatus();
-        switch (status) {
-            case CLOSED: connectionStatus.getConnected().markDirty(); break;
-            case VALID: connectionStatus.getValid().markDirty(); break;
-            case ACTIVE: connectionStatus.getActive().markDirty(); break;
-        }
+        propagate(connection -> {
+            ConnectionHandlerStatusHolder connectionStatus = connection.getConnectionStatus();
+            switch (status) {
+                case CLOSED: connectionStatus.getConnected().markDirty(); break;
+                case VALID: connectionStatus.getValid().markDirty(); break;
+                case ACTIVE: connectionStatus.getActive().markDirty(); break;
+            }
+        });
     }
 
     public void updateLastAccess() {
         lastAccess = System.currentTimeMillis();
+        propagate(connection -> connection.getConnectionPool().updateLastAccess());
+    }
+
+    private void propagate(Consumer<ConnectionHandler> consumer) {
+        ConnectionHandler connection = ConnectionHandler.get(id);
+        if (isNotValid(connection)) return;
+
+        consumer.accept(connection);
     }
 
     public int getIdleMinutes() {

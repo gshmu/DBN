@@ -2,7 +2,7 @@ package com.dci.intellij.dbn.data.type;
 
 import com.dci.intellij.dbn.common.content.DynamicContentElement;
 import com.dci.intellij.dbn.common.content.DynamicContentType;
-import com.dci.intellij.dbn.common.dispose.StatefulDisposable;
+import com.dci.intellij.dbn.common.dispose.StatefulDisposableBase;
 import com.dci.intellij.dbn.common.util.Strings;
 import com.dci.intellij.dbn.connection.jdbc.DBNCallableStatement;
 import com.dci.intellij.dbn.data.value.ValueAdapter;
@@ -16,7 +16,7 @@ import java.sql.*;
 
 @Slf4j
 @Getter
-public class DBNativeDataType extends StatefulDisposable.Base implements DynamicContentElement{
+public class DBNativeDataType extends StatefulDisposableBase implements DynamicContentElement{
     private final DataTypeDefinition definition;
 
     public DBNativeDataType(DataTypeDefinition definition) {

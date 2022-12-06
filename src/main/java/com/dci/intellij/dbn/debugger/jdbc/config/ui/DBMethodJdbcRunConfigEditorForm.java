@@ -1,8 +1,8 @@
 package com.dci.intellij.dbn.debugger.jdbc.config.ui;
 
 import com.dci.intellij.dbn.common.Icons;
-import com.dci.intellij.dbn.common.action.DumbAwareProjectAction;
 import com.dci.intellij.dbn.common.action.GroupPopupAction;
+import com.dci.intellij.dbn.common.action.ProjectAction;
 import com.dci.intellij.dbn.common.color.Colors;
 import com.dci.intellij.dbn.common.thread.Dispatch;
 import com.dci.intellij.dbn.common.thread.Progress;
@@ -79,7 +79,7 @@ public class DBMethodJdbcRunConfigEditorForm extends DBProgramRunConfigurationEd
         }
     }
 
-    public class MethodBrowserOpenAction extends DumbAwareProjectAction {
+    public class MethodBrowserOpenAction extends ProjectAction {
         MethodBrowserOpenAction() {
             super("Method Browser");
         }
@@ -91,7 +91,7 @@ public class DBMethodJdbcRunConfigEditorForm extends DBProgramRunConfigurationEd
                     (executionInput) -> setExecutionInput(executionInput, true));
         }
     }
-    public class MethodHistoryOpenAction extends DumbAwareProjectAction {
+    public class MethodHistoryOpenAction extends ProjectAction {
         MethodHistoryOpenAction() {
             super("Execution History", null, Icons.METHOD_EXECUTION_HISTORY);
         }

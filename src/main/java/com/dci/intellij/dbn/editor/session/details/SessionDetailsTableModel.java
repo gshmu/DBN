@@ -1,11 +1,11 @@
 package com.dci.intellij.dbn.editor.session.details;
 
-import com.dci.intellij.dbn.common.dispose.StatefulDisposable;
+import com.dci.intellij.dbn.common.dispose.StatefulDisposableBase;
 import com.dci.intellij.dbn.common.ui.table.DBNReadonlyTableModel;
 import com.dci.intellij.dbn.editor.session.model.SessionBrowserModelRow;
 import org.jetbrains.annotations.Nullable;
 
-public class SessionDetailsTableModel extends StatefulDisposable.Base implements DBNReadonlyTableModel {
+public class SessionDetailsTableModel extends StatefulDisposableBase implements DBNReadonlyTableModel {
     private String sessionId = "";
     private String user = "";
     private String schema = "";

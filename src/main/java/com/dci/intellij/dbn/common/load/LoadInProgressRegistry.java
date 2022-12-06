@@ -2,6 +2,7 @@ package com.dci.intellij.dbn.common.load;
 
 import com.dci.intellij.dbn.common.dispose.Disposer;
 import com.dci.intellij.dbn.common.dispose.StatefulDisposable;
+import com.dci.intellij.dbn.common.dispose.StatefulDisposableBase;
 import com.dci.intellij.dbn.common.util.CollectionUtil;
 import com.intellij.openapi.Disposable;
 import com.intellij.openapi.progress.ProcessCanceledException;
@@ -10,7 +11,7 @@ import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
 
-public abstract class LoadInProgressRegistry<T extends StatefulDisposable> extends StatefulDisposable.Base {
+public abstract class LoadInProgressRegistry<T extends StatefulDisposable> extends StatefulDisposableBase {
     private final List<T> nodes = CollectionUtil.createConcurrentList();
 
     private LoadInProgressRegistry(Disposable parentDisposable) {

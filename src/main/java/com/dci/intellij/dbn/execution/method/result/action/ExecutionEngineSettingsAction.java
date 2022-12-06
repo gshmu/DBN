@@ -1,14 +1,14 @@
 package com.dci.intellij.dbn.execution.method.result.action;
 
 import com.dci.intellij.dbn.common.Icons;
-import com.dci.intellij.dbn.common.action.DumbAwareProjectAction;
+import com.dci.intellij.dbn.common.action.ProjectAction;
 import com.dci.intellij.dbn.options.ConfigId;
 import com.dci.intellij.dbn.options.ProjectSettingsManager;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.project.Project;
 import org.jetbrains.annotations.NotNull;
 
-public class ExecutionEngineSettingsAction extends DumbAwareProjectAction {
+public class ExecutionEngineSettingsAction extends ProjectAction {
 
     public ExecutionEngineSettingsAction() {
         super("Settings", null, Icons.EXEC_RESULT_OPTIONS);

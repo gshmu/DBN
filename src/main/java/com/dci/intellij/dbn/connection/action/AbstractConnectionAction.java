@@ -1,6 +1,6 @@
 package com.dci.intellij.dbn.connection.action;
 
-import com.dci.intellij.dbn.common.action.DumbAwareContextAction;
+import com.dci.intellij.dbn.common.action.ContextAction;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.ConnectionId;
 import com.dci.intellij.dbn.connection.ConnectionRef;
@@ -11,7 +11,7 @@ import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
 
-public abstract class AbstractConnectionAction extends DumbAwareContextAction<ConnectionHandler> {
+public abstract class AbstractConnectionAction extends ContextAction<ConnectionHandler> {
     private final ConnectionRef connection;
 
     public AbstractConnectionAction(String text, @NotNull ConnectionHandler connection) {

@@ -1,6 +1,6 @@
 package com.dci.intellij.dbn.browser.action;
 
-import com.dci.intellij.dbn.common.action.DumbAwareProjectAction;
+import com.dci.intellij.dbn.common.action.ProjectAction;
 import com.dci.intellij.dbn.connection.DatabaseType;
 import com.dci.intellij.dbn.connection.config.ConnectionConfigType;
 import com.dci.intellij.dbn.options.ProjectSettingsManager;
@@ -11,7 +11,7 @@ import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
 
-public class ConnectionCreateAction extends DumbAwareProjectAction {
+public class ConnectionCreateAction extends ProjectAction {
     private final DatabaseType databaseType;
 
     ConnectionCreateAction(@Nullable DatabaseType databaseType) {

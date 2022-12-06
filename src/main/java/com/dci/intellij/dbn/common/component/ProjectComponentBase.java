@@ -1,6 +1,7 @@
 package com.dci.intellij.dbn.common.component;
 
 import com.dci.intellij.dbn.common.dispose.StatefulDisposable;
+import com.dci.intellij.dbn.common.dispose.StatefulDisposableBase;
 import com.dci.intellij.dbn.common.notification.NotificationSupport;
 import com.dci.intellij.dbn.common.project.ProjectRef;
 import com.dci.intellij.dbn.common.project.Projects;
@@ -10,7 +11,7 @@ import lombok.Getter;
 import org.jetbrains.annotations.NotNull;
 
 @Getter
-public abstract class ProjectComponentBase extends StatefulDisposable.Base implements
+public abstract class ProjectComponentBase extends StatefulDisposableBase implements
         ProjectComponent,
         StatefulDisposable,
         NotificationSupport,

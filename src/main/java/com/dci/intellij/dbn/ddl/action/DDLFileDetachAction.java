@@ -1,6 +1,6 @@
 package com.dci.intellij.dbn.ddl.action;
 
-import com.dci.intellij.dbn.common.action.DumbAwareProjectAction;
+import com.dci.intellij.dbn.common.action.ProjectAction;
 import com.dci.intellij.dbn.ddl.DDLFileAttachmentManager;
 import com.dci.intellij.dbn.object.common.DBSchemaObject;
 import com.dci.intellij.dbn.object.lookup.DBObjectRef;
@@ -9,7 +9,7 @@ import com.intellij.openapi.actionSystem.Presentation;
 import com.intellij.openapi.project.Project;
 import org.jetbrains.annotations.NotNull;
 
-public class DDLFileDetachAction extends DumbAwareProjectAction {
+public class DDLFileDetachAction extends ProjectAction {
     private DBObjectRef<DBSchemaObject> objectRef;
     public DDLFileDetachAction(DBSchemaObject object) {
         super("Detach files");

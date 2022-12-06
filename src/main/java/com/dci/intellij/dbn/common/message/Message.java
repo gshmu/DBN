@@ -1,6 +1,6 @@
 package com.dci.intellij.dbn.common.message;
 
-import com.dci.intellij.dbn.common.dispose.StatefulDisposable;
+import com.dci.intellij.dbn.common.dispose.StatefulDisposableBase;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
@@ -8,7 +8,7 @@ import lombok.Setter;
 @Getter
 @Setter
 @EqualsAndHashCode(callSuper = false)
-public class Message extends StatefulDisposable.Base {
+public class Message extends StatefulDisposableBase {
     protected MessageType type;
     protected String text;
 

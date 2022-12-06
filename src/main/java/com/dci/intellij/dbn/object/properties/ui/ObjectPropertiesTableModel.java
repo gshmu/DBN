@@ -1,13 +1,13 @@
 package com.dci.intellij.dbn.object.properties.ui;
 
-import com.dci.intellij.dbn.common.dispose.StatefulDisposable;
+import com.dci.intellij.dbn.common.dispose.StatefulDisposableBase;
 import com.dci.intellij.dbn.common.ui.table.DBNReadonlyTableModel;
 import com.dci.intellij.dbn.object.properties.PresentableProperty;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class ObjectPropertiesTableModel extends StatefulDisposable.Base implements DBNReadonlyTableModel {
+public class ObjectPropertiesTableModel extends StatefulDisposableBase implements DBNReadonlyTableModel {
     private List<PresentableProperty> presentableProperties = new ArrayList<>();
 
     ObjectPropertiesTableModel() {}

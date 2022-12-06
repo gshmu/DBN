@@ -1,7 +1,7 @@
 package com.dci.intellij.dbn.diagnostics.action;
 
+import com.dci.intellij.dbn.common.action.ContextAction;
 import com.dci.intellij.dbn.common.action.DataKeys;
-import com.dci.intellij.dbn.common.action.DumbAwareContextAction;
 import com.dci.intellij.dbn.diagnostics.ParserDiagnosticsManager;
 import com.dci.intellij.dbn.diagnostics.ui.ParserDiagnosticsForm;
 import com.intellij.openapi.actionSystem.AnActionEvent;
@@ -10,7 +10,7 @@ import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
 
-public abstract class AbstractParserDiagnosticsAction extends DumbAwareContextAction<ParserDiagnosticsForm> {
+public abstract class AbstractParserDiagnosticsAction extends ContextAction<ParserDiagnosticsForm> {
     public AbstractParserDiagnosticsAction(String text, Icon icon) {
         super(text, null, icon);
     }

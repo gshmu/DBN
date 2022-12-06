@@ -1,52 +1,46 @@
 package com.dci.intellij.dbn.connection;
 
-import com.dci.intellij.dbn.common.dispose.StatefulDisposable;
-import com.dci.intellij.dbn.common.event.ProjectEvents;
-import com.dci.intellij.dbn.common.notification.NotificationGroup;
+import com.dci.intellij.dbn.common.dispose.StatefulDisposableBase;
 import com.dci.intellij.dbn.common.notification.NotificationSupport;
 import com.dci.intellij.dbn.common.thread.Background;
-import com.dci.intellij.dbn.common.thread.ThreadMonitor;
-import com.dci.intellij.dbn.common.util.Commons;
-import com.dci.intellij.dbn.common.util.TimeUtil;
 import com.dci.intellij.dbn.connection.config.ConnectionDetailSettings;
 import com.dci.intellij.dbn.connection.jdbc.DBNConnection;
-import com.dci.intellij.dbn.connection.jdbc.IntervalLoader;
-import com.dci.intellij.dbn.connection.jdbc.ResourceStatus;
+import com.dci.intellij.dbn.connection.jdbc.DBNConnectionCache;
+import com.dci.intellij.dbn.connection.jdbc.DBNConnectionPool;
 import com.intellij.openapi.Disposable;
 import com.intellij.openapi.progress.ProcessCanceledException;
 import com.intellij.openapi.project.Project;
-import com.intellij.util.containers.ContainerUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.sql.SQLException;
-import java.sql.SQLTimeoutException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.TimeUnit;
 
+import static com.dci.intellij.dbn.common.util.TimeUtil.isOlderThan;
+
 @Slf4j
-public final class ConnectionPool extends StatefulDisposable.Base implements NotificationSupport, Disposable {
+public final class ConnectionPool extends StatefulDisposableBase implements NotificationSupport, Disposable {
     static {
         ConnectionPoolCleaner.INSTANCE.start();
     }
 
-    private int peakPoolSize = 0;
-
     private final ConnectionRef connection;
+    private final DBNConnectionPool connectionPool;
+    private final DBNConnectionCache connectionCache;
 
-    private final List<DBNConnection> poolConnections = ContainerUtil.createLockFreeCopyOnWriteList();
-    private final Map<SessionId, DBNConnection> dedicatedConnections = new ConcurrentHashMap<>();
+/*    @Deprecated
+    private final List<DBNConnection> oldConnectionPool = ContainerUtil.createLockFreeCopyOnWriteList();
 
+    @Deprecated
     private final IntervalLoader<Long> lastAccessTimestamp = new IntervalLoader<Long>(TimeUtil.Millis.TEN_SECONDS) {
         @Override
         protected Long load() {
-            if (poolConnections.size() > 0) {
+            if (oldConnectionPool.size() > 0) {
                 long lastAccessTimestamp = 0;
-                for (DBNConnection poolConnection : poolConnections) {
+                for (DBNConnection poolConnection : oldConnectionPool) {
                     if (poolConnection.getLastAccess() > lastAccessTimestamp) {
                         lastAccessTimestamp = poolConnection.getLastAccess();
                     }
@@ -57,11 +51,13 @@ public final class ConnectionPool extends StatefulDisposable.Base implements Not
                 return Commons.nvl(getValue(), 0L);
             }
         }
-    };
+    };*/
 
     ConnectionPool(@NotNull ConnectionHandler connection) {
         super(connection);
         this.connection = connection.ref();
+        this.connectionCache = new DBNConnectionCache(connection);
+        this.connectionPool = new DBNConnectionPool(connection);
     }
 
     DBNConnection ensureTestConnection() throws SQLException {
@@ -85,17 +81,17 @@ public final class ConnectionPool extends StatefulDisposable.Base implements Not
 
     @Nullable
     public DBNConnection getMainConnection() {
-        return dedicatedConnections.get(SessionId.MAIN);
+        return connectionCache.get(SessionId.MAIN);
     }
 
     @Nullable
     public DBNConnection getTestConnection() {
-        return dedicatedConnections.get(SessionId.TEST);
+        return connectionCache.get(SessionId.TEST);
     }
 
     @Nullable
     public DBNConnection getSessionConnection(SessionId sessionId) {
-        return dedicatedConnections.get(sessionId);
+        return connectionCache.get(sessionId);
     }
 
     @NotNull
@@ -107,57 +103,32 @@ public final class ConnectionPool extends StatefulDisposable.Base implements Not
     public List<DBNConnection> getConnections(ConnectionType... connectionTypes) {
         List<DBNConnection> connections = new ArrayList<>();
         if (ConnectionType.POOL.matches(connectionTypes)) {
-            connections.addAll(poolConnections);
+            connectionPool.visit(c -> connections.add(c));
         }
 
-        for (DBNConnection connection : dedicatedConnections.values()) {
-            if (connection != null && connection.getType().matches(connectionTypes)) {
-                connections.add(connection);
-            }
-        }
+        connectionCache.visit(
+                c -> c.getType().matches(connectionTypes),
+                c -> connections.add(c));
         return connections;
     }
 
     @NotNull
     private DBNConnection ensureConnection(SessionId sessionId) throws SQLException {
-        DBNConnection conn = dedicatedConnections.get(sessionId);
         ConnectionHandler connection = getConnection();
         ConnectionManager.setLastUsedConnection(connection);
-
-        if (shouldInit(conn)) {
-            synchronized (this) {
-                if (shouldInit(conn)) {
-                    try {
-                        Resources.close(conn);
-
-                        conn = ConnectionUtil.connect(connection, sessionId);
-                        dedicatedConnections.put(sessionId, conn);
-                        sendInfoNotification(
-                                NotificationGroup.SESSION,
-                                "Connected to database \"{0}\"",
-                                connection.getConnectionName(conn));
-                    } finally {
-                        ProjectEvents.notify(getProject(),
-                                ConnectionStatusListener.TOPIC,
-                                (listener) -> listener.statusChanged(connection.getConnectionId(), sessionId));
-                    }
-                }
-            }
-        }
-
-        return conn;
+        return connectionCache.ensure(sessionId);
     }
 
-    private boolean shouldInit(DBNConnection connection) {
-        return connection == null || connection.isClosed() || !connection.isValid();
+    public void updateLastAccess() {
+        connectionPool.updateLastAccess();
     }
 
-    public long getLastAccessTimestamp() {
-        return lastAccessTimestamp.get();
+    public long getLastAccess() {
+        return connectionPool.getLastAccess();
     }
 
     boolean wasNeverAccessed() {
-        return getLastAccessTimestamp() == 0;
+        return getLastAccess() == 0;
     }
 
     @NotNull
@@ -173,10 +144,13 @@ public final class ConnectionPool extends StatefulDisposable.Base implements Not
 
     @NotNull
     DBNConnection allocateConnection(boolean readonly) throws SQLException {
-        return allocateConnection(readonly, 0);
+        return connectionPool.acquire(readonly);
     }
 
+/*
+    // TODO connection pool replacement
     @NotNull
+    @Deprecated
     private DBNConnection allocateConnection(boolean readonly, int attempts) throws SQLException {
         ConnectionHandler connection = getConnection();
         ConnectionManager.setLastUsedConnection(connection);
@@ -184,7 +158,7 @@ public final class ConnectionPool extends StatefulDisposable.Base implements Not
         DBNConnection conn = lookupConnection();
         if (conn == null)  {
             ConnectionDetailSettings detailSettings = connection.getSettings().getDetailSettings();
-            if (poolConnections.size() >= detailSettings.getMaxConnectionPoolSize() && !ThreadMonitor.isDispatchThread()) {
+            if (oldConnectionPool.size() >= detailSettings.getMaxConnectionPoolSize() && !ThreadMonitor.isDispatchThread()) {
                 try {
                     if (attempts > 10) {
                         throw new SQLTimeoutException("Busy connection pool");
@@ -205,11 +179,12 @@ public final class ConnectionPool extends StatefulDisposable.Base implements Not
     }
 
     @Nullable
+    @Deprecated
     private DBNConnection lookupConnection() {
         ConnectionHandler connection = getConnection();
         ConnectionHandlerStatusHolder statusHolder = connection.getConnectionStatus();
 
-        for (DBNConnection conn : poolConnections) {
+        for (DBNConnection conn : oldConnectionPool) {
             checkDisposed();
             if (!conn.isReserved() && !conn.isActive()) {
                 synchronized (this) {
@@ -220,7 +195,7 @@ public final class ConnectionPool extends StatefulDisposable.Base implements Not
                             statusHolder.setValid(true);
                             return conn;
                         } else {
-                            poolConnections.remove(conn);
+                            oldConnectionPool.remove(conn);
                             Resources.close(conn);
                         }
                     }
@@ -231,6 +206,7 @@ public final class ConnectionPool extends StatefulDisposable.Base implements Not
     }
 
     @NotNull
+    @Deprecated
     private DBNConnection createPoolConnection() throws SQLException {
         checkDisposed();
         ConnectionHandler connection = getConnection();
@@ -251,7 +227,7 @@ public final class ConnectionPool extends StatefulDisposable.Base implements Not
         //connection.getDataDictionary().setTargetSchema(connection.getCurrentSchemaName(), connection);
         conn.set(ResourceStatus.RESERVED, true);
 
-        if (poolConnections.size() == 0) {
+        if (oldConnectionPool.size() == 0) {
             // Notify first pool connection
             sendInfoNotification(
                     NotificationGroup.SESSION,
@@ -259,36 +235,23 @@ public final class ConnectionPool extends StatefulDisposable.Base implements Not
                     connection.getConnectionName(conn));
         }
 
-        poolConnections.add(conn);
-        int size = poolConnections.size();
+        oldConnectionPool.add(conn);
+        int size = oldConnectionPool.size();
         if (size > peakPoolSize) peakPoolSize = size;
         log.debug("[DBN] Pool connection for '" + connectionName + "' created. Pool size = " + getSize());
         return conn;
     }
+*/
 
     void releaseConnection(@Nullable DBNConnection connection) {
-        if (connection != null) {
-            if (connection.isPoolConnection()) {
-                try {
-                    Resources.rollback(connection);
-                    Resources.setAutoCommit(connection, true);
-                    Resources.setReadonly(getConnection(), connection, true);
-                    connection.set(ResourceStatus.RESERVED, false);
-                } catch (SQLException e) {
-                    dropConnection(connection);
-                }
-            } else {
-                log.error("Trying to release non-POOL connection: " + connection.getType(), new IllegalArgumentException("No POOL connection"));
-            }
+        if (connection == null) return;
 
+        if (connection.isPoolConnection()) {
+            connectionPool.release(connection);
+        } else {
+            log.error("Trying to release non-POOL connection: " + connection.getType(), new IllegalArgumentException("No POOL connection"));
         }
-    }
 
-    void dropConnection(DBNConnection connection) {
-        if (connection != null) {
-            poolConnections.remove(connection);
-            Resources.close(connection);
-        }
     }
 
     void closeConnections() {
@@ -301,20 +264,18 @@ public final class ConnectionPool extends StatefulDisposable.Base implements Not
     void closeConnection(DBNConnection connection) {
         SessionId sessionId = connection.getSessionId();
         if (sessionId == SessionId.POOL) {
-            poolConnections.remove(connection);
-            Resources.close(connection);
+            connectionPool.drop(connection);
         } else {
-            dedicatedConnections.remove(sessionId);
-            Resources.close(connection);
+            connectionCache.drop(sessionId);
         }
     }
 
     public int getSize() {
-        return poolConnections.size();
+        return connectionPool.size();
     }
 
     public int getPeakPoolSize() {
-        return peakPoolSize;
+        return connectionPool.peakSize();
     }
 
     @Override
@@ -325,49 +286,39 @@ public final class ConnectionPool extends StatefulDisposable.Base implements Not
     public boolean isConnected(SessionId sessionId) {
 
         if (sessionId == SessionId.POOL) {
-            return poolConnections.size() > 0;
+            return connectionPool.size() > 0;
         }
 
         if (sessionId != null) {
-            DBNConnection connection = dedicatedConnections.get(sessionId);
+            DBNConnection connection = connectionCache.get(sessionId);
             return connection != null && !connection.isClosed() && connection.isValid();
         }
         return false;
     }
 
     void clean() {
-        if (!poolConnections.isEmpty()) {
+        if (connectionPool.isEmpty()) return;
+        try {
+            ConnectionHandler connection = getConnection();
+            ConnectionHandlerStatusHolder status = connection.getConnectionStatus();
+            if (status.is(ConnectionHandlerStatus.CLEANING)) return;
+
             try {
-                ConnectionHandler connection = getConnection();
-                ConnectionHandlerStatusHolder status = connection.getConnectionStatus();
-                if (!status.is(ConnectionHandlerStatus.CLEANING)) {
-                    try {
-                        status.set(ConnectionHandlerStatus.CLEANING, true);
+                status.set(ConnectionHandlerStatus.CLEANING, true);
 
-                        ConnectionDetailSettings detailSettings = connection.getSettings().getDetailSettings();
-                        long lastAccessTimestamp = getLastAccessTimestamp();
-                        if (lastAccessTimestamp > 0 && TimeUtil.isOlderThan(lastAccessTimestamp, detailSettings.getIdleMinutesToDisconnectPool(), TimeUnit.MINUTES)) {
-                            // close connections only if pool is passive
-                            for (DBNConnection conn : poolConnections) {
-                                if (!conn.isIdle()) return;
-                            }
-
-                            List<DBNConnection> poolConnections = new ArrayList<>(this.poolConnections);
-                            this.poolConnections.clear();
-
-                            for (DBNConnection conn : poolConnections) {
-                                Resources.close(conn);
-                            }
-                        }
-
-                    } finally {
-                        status.set(ConnectionHandlerStatus.CLEANING, false);
-                    }
+                long lastAccess = getLastAccess();
+                ConnectionDetailSettings detailSettings = connection.getSettings().getDetailSettings();
+                int minutesToDisconnect = detailSettings.getIdleMinutesToDisconnectPool();
+                if (lastAccess > 0 && isOlderThan(lastAccess, minutesToDisconnect, TimeUnit.MINUTES)) {
+                    connectionPool.clean(conn -> !conn.isActive() && !conn.isReserved());
                 }
-            } catch (ProcessCanceledException ignore) {
-            } catch (Exception e) {
-                log.error("Failed to clean connection pool", e);
+
+            } finally {
+                status.set(ConnectionHandlerStatus.CLEANING, false);
             }
+        } catch (ProcessCanceledException ignore) {
+        } catch (Exception e) {
+            log.error("Failed to clean connection pool", e);
         }
     }
 }

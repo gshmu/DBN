@@ -1,6 +1,6 @@
 package com.dci.intellij.dbn.database.mysql;
 
-import com.dci.intellij.dbn.common.dispose.StatefulDisposable;
+import com.dci.intellij.dbn.common.dispose.StatefulDisposableBase;
 import com.dci.intellij.dbn.common.util.Strings;
 import com.dci.intellij.dbn.common.util.WordTokenizer;
 import com.dci.intellij.dbn.connection.Resources;
@@ -13,7 +13,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Objects;
 
-public class MySqlArgumentsResultSet extends StatefulDisposable.Base implements ResultSetStub {
+public class MySqlArgumentsResultSet extends StatefulDisposableBase implements ResultSetStub {
     private static class Argument {
         private String name;
         private String programName;

@@ -3,13 +3,13 @@ package com.dci.intellij.dbn.browser.action;
 import com.dci.intellij.dbn.browser.DatabaseBrowserManager;
 import com.dci.intellij.dbn.browser.ui.DatabaseBrowserTree;
 import com.dci.intellij.dbn.common.Icons;
-import com.dci.intellij.dbn.common.action.DumbAwareProjectAction;
+import com.dci.intellij.dbn.common.action.ProjectAction;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.actionSystem.Presentation;
 import com.intellij.openapi.project.Project;
 import org.jetbrains.annotations.NotNull;
 
-public class BrowserTreeCollapseAction extends DumbAwareProjectAction {
+public class BrowserTreeCollapseAction extends ProjectAction {
     public BrowserTreeCollapseAction() {
         super("Collapse all", null, Icons.ACTION_COLLAPSE_ALL);
     }

@@ -1,91 +1,42 @@
 package com.dci.intellij.dbn.common.pool;
 
-
-import com.dci.intellij.dbn.common.dispose.Disposed;
-import com.dci.intellij.dbn.common.dispose.Disposer;
-import com.dci.intellij.dbn.common.dispose.StatefulDisposable;
-import com.dci.intellij.dbn.common.lookup.Visitor;
-import com.intellij.openapi.Disposable;
-
-import java.util.List;
-import java.util.concurrent.BlockingQueue;
-import java.util.concurrent.CopyOnWriteArrayList;
-import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.TimeUnit;
 
-import static com.dci.intellij.dbn.common.dispose.Disposer.replace;
+public interface ObjectPool<T, E extends Throwable> {
+    /**
+     * Acquire an object from the pool
+     *
+     * @param timeout time to give up
+     * @param timeUnit the unit of time to give op
+     * @return an object from the pool
+     * @throws E when the pool reached limits or failed to initialise the object
+     */
+    T acquire(long timeout, TimeUnit timeUnit) throws E;
 
-public abstract class ObjectPool<T extends Disposable> extends StatefulDisposable.Base {
-    private List<T> objects = new CopyOnWriteArrayList<>();
-    private final BlockingQueue<T> available = new LinkedBlockingQueue<>();
+    /**
+     * Release the object back to the pool
+     * The object will be made available for the next {@link #acquire(long, TimeUnit)} operation
+     *
+     * @param object the object to be released
+     * @return the released object
+     */
+    T release(T object);
 
-    public final T acquire(long timeout, TimeUnit timeUnit) throws InterruptedException {
-        checkDisposed();
+    /**
+     * Drop an object from the pool
+     *
+     * @param object the object to be removed
+     * @return the removed object
+     */
+    T drop(T object);
 
-        T object = available.poll();
-        if (object == null) {
-            object = initialise();
-            if (object != null) {
-                return object;
-            }
-        }
-        return available.poll(timeout, timeUnit);
-    }
+    int size();
 
-    private T initialise() {
-        if (objects.size() < maxSize()) {
-            synchronized (this) {
-                if (objects.size() < maxSize()) {
-                    checkDisposed();
-                    T object = create();
-                    objects.add(object);
-                    return object;
-                }
-            }
-        }
-        return null;
-    }
+    int maxSize();
 
-    public final void release(T object) {
-        checkDisposed();
-        if (isValid(object)) {
-            available.offer(object);
-        } else {
-            Disposer.dispose(object);
-            objects.remove(object);
-        }
-    }
+    int peakSize();
 
-    public final void remove(T object) {
-        objects.remove(object);
-    }
-
-    public final void visit(Visitor<T> visitor) {
-        for (T object : objects) {
-            visitor.visit(object);
-        }
-    }
-
-    public List<T> getObjects() {
-        return objects;
-    }
-
-    public final int size() {
-        return objects.size();
-    }
-
-    abstract T create();
-
-    abstract boolean isValid(T object);
-
-    abstract int maxSize();
-
-
-
-
-    @Override
-    protected void disposeInner() {
-        objects = replace(objects, Disposed.list(), true);
-        available.clear();
+    default boolean isEmpty() {
+        return size() == 0;
     }
 }

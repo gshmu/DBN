@@ -2,7 +2,6 @@ package com.dci.intellij.dbn.vfs;
 
 import com.dci.intellij.dbn.common.dispose.Disposer;
 import com.dci.intellij.dbn.common.project.Projects;
-import com.dci.intellij.dbn.common.thread.Background;
 import com.dci.intellij.dbn.common.thread.ThreadMonitor;
 import com.dci.intellij.dbn.common.thread.ThreadProperty;
 import com.dci.intellij.dbn.common.util.Safe;
@@ -138,7 +137,8 @@ public class DatabaseFileSystem extends VirtualFileSystem implements /*NonPhysic
 
             if (!ThreadMonitor.current().is(ThreadProperty.EDITOR_LOAD)) {
                 if (!databaseFile.isEditorReady()) {
-                    Background.run(project, () -> databaseFile.makeEditorReady());
+                    // TODO
+                    //Background.run(project, () -> databaseFile.makeEditorReady());
                     return null;
                 }
             }

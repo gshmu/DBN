@@ -2,7 +2,7 @@ package com.dci.intellij.dbn.common.ui.component;
 
 import com.dci.intellij.dbn.common.action.Lookups;
 import com.dci.intellij.dbn.common.dispose.Disposer;
-import com.dci.intellij.dbn.common.dispose.StatefulDisposable;
+import com.dci.intellij.dbn.common.dispose.StatefulDisposableBase;
 import com.dci.intellij.dbn.common.project.ProjectRef;
 import com.dci.intellij.dbn.common.project.ProjectSupplier;
 import com.dci.intellij.dbn.language.common.WeakRef;
@@ -10,7 +10,7 @@ import com.intellij.openapi.Disposable;
 import com.intellij.openapi.project.Project;
 import org.jetbrains.annotations.Nullable;
 
-public abstract class DBNComponentBase extends StatefulDisposable.Base implements DBNComponent {
+public abstract class DBNComponentBase extends StatefulDisposableBase implements DBNComponent {
     private final ProjectRef project;
     private WeakRef<Disposable> parent;
 

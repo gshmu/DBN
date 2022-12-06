@@ -6,7 +6,7 @@ import com.dci.intellij.dbn.common.cache.Cache;
 import com.dci.intellij.dbn.common.database.AuthenticationInfo;
 import com.dci.intellij.dbn.common.database.DatabaseInfo;
 import com.dci.intellij.dbn.common.dispose.Failsafe;
-import com.dci.intellij.dbn.common.dispose.StatefulDisposable;
+import com.dci.intellij.dbn.common.dispose.StatefulDisposableBase;
 import com.dci.intellij.dbn.common.environment.EnvironmentType;
 import com.dci.intellij.dbn.common.exception.Exceptions;
 import com.dci.intellij.dbn.common.filter.Filter;
@@ -60,7 +60,7 @@ import static com.intellij.openapi.util.text.StringUtil.isNotEmpty;
 import static java.util.concurrent.TimeUnit.MINUTES;
 
 @Slf4j
-public class ConnectionHandlerImpl extends StatefulDisposable.Base implements ConnectionHandler, NotificationSupport {
+public class ConnectionHandlerImpl extends StatefulDisposableBase implements ConnectionHandler, NotificationSupport {
 
     private ConnectionSettings connectionSettings;
 
@@ -175,10 +175,10 @@ public class ConnectionHandlerImpl extends StatefulDisposable.Base implements Co
         AuthenticationInfo authenticationInfo = temporaryAuthenticationInfo.get();
         if (authenticationInfo.isProvided()) {
             int expiryMinutes = getSettings().getDetailSettings().getCredentialExpiryMinutes() * 60000;
-            long lastAccessTimestamp = getConnectionPool().getLastAccessTimestamp();
-            if (lastAccessTimestamp > 0 &&
+            long lastAccess = getConnectionPool().getLastAccess();
+            if (lastAccess > 0 &&
                     authenticationInfo.isOlderThan(expiryMinutes, MINUTES) &&
-                    isOlderThan(lastAccessTimestamp, expiryMinutes, MINUTES)) {
+                    isOlderThan(lastAccess, expiryMinutes, MINUTES)) {
                 temporaryAuthenticationInfo.reset();
             }
         }

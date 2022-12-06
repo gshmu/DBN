@@ -1,7 +1,7 @@
 package com.dci.intellij.dbn.language.editor.action;
 
-import com.dci.intellij.dbn.common.action.DumbAwareProjectAction;
 import com.dci.intellij.dbn.common.action.Lookups;
+import com.dci.intellij.dbn.common.action.ProjectAction;
 import com.dci.intellij.dbn.common.util.Messages;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.ConnectionRef;
@@ -13,7 +13,7 @@ import org.jetbrains.annotations.NotNull;
 
 import static com.dci.intellij.dbn.common.message.MessageCallback.when;
 
-public class DatabaseSessionDisableAction extends DumbAwareProjectAction {
+public class DatabaseSessionDisableAction extends ProjectAction {
     private final ConnectionRef connection;
 
     DatabaseSessionDisableAction(ConnectionHandler connection) {

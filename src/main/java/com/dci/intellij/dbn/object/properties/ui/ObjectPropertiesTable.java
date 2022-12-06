@@ -1,5 +1,6 @@
 package com.dci.intellij.dbn.object.properties.ui;
 
+import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.common.ui.form.DBNForm;
 import com.dci.intellij.dbn.common.ui.table.DBNTable;
 import com.dci.intellij.dbn.common.ui.table.DBNTableModel;
@@ -7,20 +8,13 @@ import com.dci.intellij.dbn.common.ui.util.Borders;
 import com.dci.intellij.dbn.common.ui.util.Keyboard.Key;
 import com.dci.intellij.dbn.common.ui.util.Mouse;
 import com.dci.intellij.dbn.object.properties.PresentableProperty;
-import com.intellij.openapi.progress.ProcessCanceledException;
 import com.intellij.pom.Navigatable;
 
-import javax.swing.JTable;
+import javax.swing.*;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.TableCellRenderer;
-import java.awt.Component;
-import java.awt.Cursor;
-import java.awt.Dimension;
-import java.awt.event.KeyAdapter;
-import java.awt.event.KeyEvent;
-import java.awt.event.KeyListener;
-import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
+import java.awt.*;
+import java.awt.event.*;
 
 public class ObjectPropertiesTable extends DBNTable<DBNTableModel> {
     ObjectPropertiesTable(DBNForm parent, DBNTableModel tableModel) {
@@ -90,8 +84,8 @@ public class ObjectPropertiesTable extends DBNTable<DBNTableModel> {
     private final TableCellRenderer cellRenderer = new DefaultTableCellRenderer() {
         @Override
         public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
-            try {
-                Component component = super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
+            Component component = super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
+            return Failsafe.guarded(component, () -> {
                 PresentableProperty property = (PresentableProperty) value;
                 if (property != null) {
                     if (column == 0) {
@@ -112,9 +106,7 @@ public class ObjectPropertiesTable extends DBNTable<DBNTableModel> {
                 setBorder(Borders.TEXT_FIELD_INSETS);
 
                 return component;
-            } catch (ProcessCanceledException e) {
-                return this;
-            }
+            });
         }
 
     };

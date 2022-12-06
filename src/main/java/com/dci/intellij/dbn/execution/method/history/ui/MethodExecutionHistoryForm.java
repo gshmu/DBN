@@ -1,8 +1,9 @@
 package com.dci.intellij.dbn.execution.method.history.ui;
 
 import com.dci.intellij.dbn.common.Icons;
-import com.dci.intellij.dbn.common.action.DumbAwareProjectAction;
 import com.dci.intellij.dbn.common.action.Lookups;
+import com.dci.intellij.dbn.common.action.ProjectAction;
+import com.dci.intellij.dbn.common.action.ToggleAction;
 import com.dci.intellij.dbn.common.dispose.DisposableContainers;
 import com.dci.intellij.dbn.common.thread.Dispatch;
 import com.dci.intellij.dbn.common.thread.Progress;
@@ -24,7 +25,6 @@ import com.dci.intellij.dbn.options.ProjectSettingsManager;
 import com.intellij.openapi.actionSystem.ActionToolbar;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.actionSystem.Presentation;
-import com.intellij.openapi.actionSystem.ToggleAction;
 import com.intellij.openapi.project.Project;
 import org.jetbrains.annotations.NotNull;
 
@@ -135,7 +135,7 @@ public class MethodExecutionHistoryForm extends DBNFormBase {
         getTree().setSelectedInput(selectedExecutionInput);
     }
 
-    public class DeleteHistoryEntryAction extends DumbAwareProjectAction {
+    public class DeleteHistoryEntryAction extends ProjectAction {
         DeleteHistoryEntryAction() {
             super("Delete", null, Icons.ACTION_REMOVE);
         }
@@ -153,7 +153,7 @@ public class MethodExecutionHistoryForm extends DBNFormBase {
         }
     }
 
-    public static class ProjectSettingsOpenAction extends DumbAwareProjectAction {
+    public static class ProjectSettingsOpenAction extends ProjectAction {
         @Override
         protected void actionPerformed(@NotNull AnActionEvent e, @NotNull Project project) {
             ProjectSettingsManager settingsManager = ProjectSettingsManager.getInstance(project);

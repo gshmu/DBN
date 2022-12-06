@@ -1,7 +1,7 @@
 package com.dci.intellij.dbn.language.editor.action;
 
-import com.dci.intellij.dbn.common.action.DumbAwareProjectAction;
 import com.dci.intellij.dbn.common.action.Lookups;
+import com.dci.intellij.dbn.common.action.ProjectAction;
 import com.dci.intellij.dbn.connection.mapping.FileConnectionContextManager;
 import com.dci.intellij.dbn.connection.session.DatabaseSession;
 import com.dci.intellij.dbn.vfs.file.DBEditableObjectVirtualFile;
@@ -12,7 +12,7 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
 import org.jetbrains.annotations.NotNull;
 
-public class DatabaseSessionSelectAction extends DumbAwareProjectAction {
+public class DatabaseSessionSelectAction extends ProjectAction {
     private DatabaseSession session;
     DatabaseSessionSelectAction(DatabaseSession session) {
         super(session.getName(), null, session.getIcon());

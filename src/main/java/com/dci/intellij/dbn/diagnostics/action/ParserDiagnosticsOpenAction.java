@@ -1,6 +1,6 @@
 package com.dci.intellij.dbn.diagnostics.action;
 
-import com.dci.intellij.dbn.common.action.DumbAwareProjectAction;
+import com.dci.intellij.dbn.common.action.ProjectAction;
 import com.dci.intellij.dbn.diagnostics.Diagnostics;
 import com.dci.intellij.dbn.diagnostics.ParserDiagnosticsManager;
 import com.intellij.openapi.actionSystem.AnActionEvent;
@@ -9,7 +9,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.jetbrains.annotations.NotNull;
 
 @Slf4j
-public class ParserDiagnosticsOpenAction extends DumbAwareProjectAction {
+public class ParserDiagnosticsOpenAction extends ProjectAction {
     public ParserDiagnosticsOpenAction() {
         super("Parser Diagnostics...");
     }

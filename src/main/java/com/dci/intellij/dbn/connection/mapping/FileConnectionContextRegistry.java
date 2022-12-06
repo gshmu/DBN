@@ -1,6 +1,6 @@
 package com.dci.intellij.dbn.connection.mapping;
 
-import com.dci.intellij.dbn.common.dispose.StatefulDisposable;
+import com.dci.intellij.dbn.common.dispose.StatefulDisposableBase;
 import com.dci.intellij.dbn.common.file.util.VirtualFiles;
 import com.dci.intellij.dbn.common.project.ProjectRef;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
@@ -32,7 +32,7 @@ import static com.dci.intellij.dbn.common.action.UserDataKeys.FILE_CONNECTION_MA
 import static com.dci.intellij.dbn.common.util.Commons.coalesce;
 
 @Getter
-public class FileConnectionContextRegistry extends StatefulDisposable.Base implements ConnectionConfigListener {
+public class FileConnectionContextRegistry extends StatefulDisposableBase implements ConnectionConfigListener {
     private final ProjectRef project;
     private final Map<String, FileConnectionContext> mappings = new ConcurrentHashMap<>();
 

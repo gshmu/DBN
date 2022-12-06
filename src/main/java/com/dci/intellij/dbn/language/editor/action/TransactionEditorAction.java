@@ -1,7 +1,7 @@
 package com.dci.intellij.dbn.language.editor.action;
 
-import com.dci.intellij.dbn.common.action.DumbAwareProjectAction;
 import com.dci.intellij.dbn.common.action.Lookups;
+import com.dci.intellij.dbn.common.action.ProjectAction;
 import com.dci.intellij.dbn.common.environment.EnvironmentManager;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.jdbc.DBNConnection;
@@ -18,9 +18,9 @@ import com.intellij.openapi.vfs.VirtualFile;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import javax.swing.Icon;
+import javax.swing.*;
 
-public abstract class TransactionEditorAction extends DumbAwareProjectAction {
+public abstract class TransactionEditorAction extends ProjectAction {
     TransactionEditorAction(String text, String description, Icon icon) {
         super(text, description, icon);
     }
