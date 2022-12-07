@@ -17,6 +17,8 @@ import java.util.TimerTask;
 import java.util.concurrent.*;
 import java.util.concurrent.atomic.AtomicReference;
 
+import static com.dci.intellij.dbn.common.exception.Exceptions.causeOf;
+
 @Slf4j
 public abstract class CancellableDatabaseCall<T> implements Callable<T> {
 
@@ -141,7 +143,7 @@ public abstract class CancellableDatabaseCall<T> implements Callable<T> {
             throw InterfaceTaskCancelledException.INSTANCE;
 
         } catch (ExecutionException e) {
-            Throwable cause = e.getCause();
+            Throwable cause = causeOf(e);
             if (cause instanceof SQLTimeoutException) {
                 handleTimeout();
             } else {

@@ -33,6 +33,8 @@ import com.dci.intellij.dbn.connection.transaction.ui.IdleConnectionDialog;
 import com.dci.intellij.dbn.connection.ui.ConnectionAuthenticationDialog;
 import com.dci.intellij.dbn.execution.ExecutionManager;
 import com.dci.intellij.dbn.execution.method.MethodExecutionManager;
+import com.dci.intellij.dbn.options.ConfigId;
+import com.dci.intellij.dbn.options.ProjectSettingsManager;
 import com.dci.intellij.dbn.vfs.DatabaseFileManager;
 import com.intellij.openapi.components.State;
 import com.intellij.openapi.components.Storage;
@@ -253,6 +255,17 @@ public class ConnectionManager extends ProjectComponentBase implements Persisten
         }
     }
 
+    public void promptMissingConnection() {
+        Project project = getProject();
+        showInfoDialog(
+                project, "No connections available.", "No active database connections found. Please setup or activate a connection first",
+                new String[]{"Setup Connection", "Cancel"}, 0,
+                option -> when(option == 0, () -> {
+                    ProjectSettingsManager settingsManager = ProjectSettingsManager.getInstance(project);
+                    settingsManager.openProjectSettings(ConfigId.CONNECTIONS);
+                }));
+    }
+
     private void ensureAuthenticationProvided(
             @NotNull ConnectionDatabaseSettings databaseSettings,
             @NotNull Consumer<AuthenticationInfo> consumer) {
@@ -386,8 +399,9 @@ public class ConnectionManager extends ProjectComponentBase implements Persisten
      public ConnectionHandler getActiveConnection(Project project) {
          ConnectionHandler connection = null;
          VirtualFile virtualFile = Editors.getSelectedFile(project);
-         if (DatabaseBrowserManager.getInstance(project).getBrowserToolWindow().isActive() || virtualFile == null) {
-             connection = DatabaseBrowserManager.getInstance(project).getActiveConnection();
+         DatabaseBrowserManager browserManager = DatabaseBrowserManager.getInstance(project);
+         if (browserManager.getBrowserToolWindow().isActive() || virtualFile == null) {
+             connection = browserManager.getActiveConnection();
          }
 
          if (connection == null && virtualFile != null) {

@@ -20,6 +20,7 @@ import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 
 import static com.dci.intellij.dbn.common.component.Components.applicationService;
+import static com.dci.intellij.dbn.common.util.Unsafe.cast;
 
 /**
  * JDBC Driver loader.
@@ -44,7 +45,7 @@ public class DatabaseDriverManager extends ApplicationComponentBase {
     }
 
 
-    private final Map<File, List<Driver>> driversCache = new ConcurrentHashMap<>();
+    private final Map<File, List<Class<Driver>>> driversCache = new ConcurrentHashMap<>();
 
     public static DatabaseDriverManager getInstance() {
         return applicationService(DatabaseDriverManager.class);
@@ -56,10 +57,10 @@ public class DatabaseDriverManager extends ApplicationComponentBase {
         DriverManager.setLoginTimeout(30);
     }
 
-    public List<Driver> loadDrivers(File libraryFile, boolean force) throws Exception{
+    public List<Class<Driver>> loadDrivers(File libraryFile, boolean force) throws Exception{
         try{
             if (force) {
-                List<Driver> drivers = driversCache.remove(libraryFile);
+                List<Class<Driver>> drivers = driversCache.remove(libraryFile);
                 disposeClassLoader(drivers);
             }
 
@@ -70,10 +71,10 @@ public class DatabaseDriverManager extends ApplicationComponentBase {
         }
     }
 
-    private static void disposeClassLoader(List<Driver> drivers) {
+    private static void disposeClassLoader(List<Class<Driver>> drivers) {
         try {
             if (drivers != null && !drivers.isEmpty()) {
-                ClassLoader classLoader = drivers.get(0).getClass().getClassLoader();
+                ClassLoader classLoader = drivers.get(0).getClassLoader();
                 if (classLoader instanceof DriverClassLoader) {
                     DriverClassLoader driverClassLoader = (DriverClassLoader) classLoader;
                     driverClassLoader.close();
@@ -84,11 +85,11 @@ public class DatabaseDriverManager extends ApplicationComponentBase {
         }
     }
 
-    private List<Driver> loadDrivers(File libraryFile) {
+    private List<Class<Driver>> loadDrivers(File libraryFile) {
         ProgressMonitor.setProgressText("Loading jdbc drivers from " + libraryFile);
         ClassLoader parentClassLoader = getClass().getClassLoader();
         if (libraryFile.isDirectory()) {
-            List<Driver> drivers = new ArrayList<>();
+            List<Class<Driver>> drivers = new ArrayList<>();
             File[] files = libraryFile.listFiles();
             if (files != null) {
                 URL[] urls = Arrays.
@@ -117,8 +118,8 @@ public class DatabaseDriverManager extends ApplicationComponentBase {
         return file.toURI().toURL();
     }
 
-    private static List<Driver> loadDrivers(File libraryFile, ClassLoader classLoader) {
-        List<Driver> drivers = new ArrayList<>();
+    private static List<Class<Driver>> loadDrivers(File libraryFile, ClassLoader classLoader) {
+        List<Class<Driver>> drivers = new ArrayList<>();
         try {
             JarFile jarFile = new JarFile(libraryFile);
             Enumeration<JarEntry> entries = jarFile.entries();
@@ -132,7 +133,7 @@ public class DatabaseDriverManager extends ApplicationComponentBase {
                     try {
                         Class<?> clazz = classLoader.loadClass(className);
                         if (Driver.class.isAssignableFrom(clazz)) {
-                            Driver driver = (Driver) clazz.getDeclaredConstructor().newInstance();
+                            Class<Driver> driver = cast(clazz);
                             drivers.add(driver);
                         }
                     } catch (Throwable t) {
@@ -149,7 +150,7 @@ public class DatabaseDriverManager extends ApplicationComponentBase {
     @Nullable
     public Driver getDriver(String className, boolean internal) {
         try {
-            Class<Driver> driverClass = (Class<Driver>) Class.forName(className);
+            Class<Driver> driverClass = cast(Class.forName(className));
             if (internal || driverClass.getClassLoader() instanceof DriverClassLoader) {
                 return driverClass.getDeclaredConstructor().newInstance();
             }
@@ -172,10 +173,10 @@ public class DatabaseDriverManager extends ApplicationComponentBase {
             throw new Exception("No driver class specified.");
         }
         if (libraryFile.exists()) {
-            List<Driver> drivers = loadDrivers(libraryFile, false);
-            for (Driver driver : drivers) {
-                if (Objects.equals(driver.getClass().getName(), className)) {
-                    return driver;
+            List<Class<Driver>> drivers = loadDrivers(libraryFile, false);
+            for (Class<Driver> driver : drivers) {
+                if (Objects.equals(driver.getName(), className)) {
+                    return driver.getDeclaredConstructor().newInstance();
                 }
             }
         } else {
@@ -187,6 +188,6 @@ public class DatabaseDriverManager extends ApplicationComponentBase {
     public static void main(String[] args) throws Exception {
         DatabaseDriverManager m = new DatabaseDriverManager();
         File file = new File("D:\\Projects\\DBNavigator\\lib\\classes12.jar");
-        List<Driver> drivers = m.loadDrivers(file, false);
+        List<Class<Driver>> drivers = m.loadDrivers(file, false);
     }
 }

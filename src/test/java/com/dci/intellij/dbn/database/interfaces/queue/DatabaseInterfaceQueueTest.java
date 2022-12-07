@@ -93,7 +93,7 @@ public class DatabaseInterfaceQueueTest {
         System.out.println("DONE " + TimeUnit.MILLISECONDS.toSeconds(TimeUtil.millisSince(sleepStart)));
 
         executorService.shutdown();
-        Assert.assertEquals(times, queue.counters().finished().value());
+        Assert.assertEquals(times, queue.counters().finished().get());
         long elapsedTime = TimeUtil.millisSince(start);
         long activeTime = totalTime.get() / queue.maxActiveTasks();
         long difference = Math.abs(activeTime - elapsedTime);

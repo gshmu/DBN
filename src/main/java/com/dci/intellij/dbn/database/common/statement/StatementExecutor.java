@@ -8,6 +8,8 @@ import java.sql.SQLException;
 import java.sql.SQLTimeoutException;
 import java.util.concurrent.*;
 
+import static com.dci.intellij.dbn.common.exception.Exceptions.causeOf;
+
 public final class StatementExecutor {
     private StatementExecutor() {}
 
@@ -30,7 +32,7 @@ public final class StatementExecutor {
         } catch (ExecutionException e) {
             context.log("QUERY", true, false, millisSince(start));
             Resources.close(context.getStatement());
-            Throwable cause = e.getCause();
+            Throwable cause = causeOf(e);
             if (cause instanceof SQLException) {
                 throw (SQLException) cause;
             } else {

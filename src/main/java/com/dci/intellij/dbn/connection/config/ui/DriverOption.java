@@ -10,16 +10,16 @@ import java.util.Objects;
 
 @Getter
 public class DriverOption implements Presentable {
-    private final Driver driver;
+    private final Class<Driver> driver;
 
-    public DriverOption(Driver driver) {
+    public DriverOption(Class<Driver> driver) {
         this.driver = driver;
     }
 
     @NotNull
     @Override
     public String getName() {
-        return driver.getClass().getName();
+        return driver.getName();
     }
 
     public static DriverOption get(List<DriverOption> driverOptions, String name) {

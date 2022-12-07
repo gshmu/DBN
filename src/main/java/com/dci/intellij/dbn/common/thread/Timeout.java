@@ -7,12 +7,20 @@ import lombok.extern.slf4j.Slf4j;
 
 import java.util.concurrent.*;
 
+import static com.dci.intellij.dbn.common.exception.Exceptions.causeOf;
+import static com.dci.intellij.dbn.common.util.TimeUtil.millisSince;
+import static com.dci.intellij.dbn.common.util.TimeUtil.secondsSince;
+
 @Slf4j
 public final class Timeout {
+    private static final Object lock = new Object();
+
     private Timeout() {}
 
     public static <T> T call(long seconds, T defaultValue, boolean daemon, ThrowableCallable<T, Throwable> callable) {
+        long start = System.currentTimeMillis();
         try {
+            Threads.delay(lock);
             ThreadInfo invoker = ThreadMonitor.current();
             ExecutorService executorService = Threads.timeoutExecutor(daemon);
             Future<T> future = executorService.submit(
@@ -25,7 +33,7 @@ public final class Timeout {
                                     defaultValue,
                                     callable);
                         } catch (Throwable e) {
-                            log.error("Timeout operation failed. Returning default " + defaultValue, e);
+                            log.error("Timeout operation. Returning default {}", defaultValue, e);
                             return defaultValue;
 
                         }
@@ -33,17 +41,18 @@ public final class Timeout {
 
             return waitFor(future, seconds, TimeUnit.SECONDS);
         } catch (TimeoutException | InterruptedException | RejectedExecutionException e) {
-            String message = Commons.nvl(e.getMessage(), e.getClass().getName());
-            log.warn("Operation timed out. Returning default " + defaultValue + ". Cause: " + message);
+            String message = Commons.nvl(e.getMessage(), e.getClass().getSimpleName());
+            log.warn("Operation timed out after {} millis (timeout = {} seconds). Returning default {}. Cause: {}", secondsSince(start), seconds, defaultValue, message);
         } catch (ExecutionException e) {
-            Throwable exception = Commons.nvl(e.getCause(), e);
-            log.warn("Timeout operation failed. Returning default " + defaultValue, exception);
+            log.warn("Operation failed after {} millis (timeout = {} seconds). Returning default {}", millisSince(start), seconds, defaultValue, causeOf(e));
         }
         return defaultValue;
     }
 
     public static void run(long seconds, boolean daemon, ThrowableRunnable<Throwable> runnable) {
+        long start = System.currentTimeMillis();
         try {
+            Threads.delay(lock);
             ThreadInfo invoker = ThreadMonitor.current();
             ExecutorService executorService = Threads.timeoutExecutor(daemon);
             Future<?> future = executorService.submit(
@@ -61,11 +70,10 @@ public final class Timeout {
             waitFor(future, seconds, TimeUnit.SECONDS);
 
         } catch (TimeoutException | InterruptedException | RejectedExecutionException e) {
-            String message = Commons.nvl(e.getMessage(), e.getClass().getName());
-            log.warn("Operation timed out. Cause: " + message);
+            String message = Commons.nvl(e.getMessage(), e.getClass().getSimpleName());
+            log.warn("Operation timed out after {} millis (timeout = {} seconds). Cause: {}", millisSince(start), seconds, message);
         } catch (ExecutionException e) {
-            Throwable exception = Commons.nvl(e.getCause(), e);
-            log.warn("Timeout operation failed.", exception);
+            log.warn("Operation failed after {} millis (timeout = {} seconds)", millisSince(start), seconds, causeOf(e));
         }
     }
 

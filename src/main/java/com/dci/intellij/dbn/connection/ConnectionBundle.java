@@ -176,6 +176,14 @@ public class ConnectionBundle extends BrowserTreeNodeBase implements BrowserTree
         return connections.getBase();
     }
 
+    public int size() {
+        return connections.size();
+    }
+
+    public int fullSize() {
+        return getAllConnections().size();
+    }
+
     /*********************************************************
     *                    NavigationItem                      *
     *********************************************************/

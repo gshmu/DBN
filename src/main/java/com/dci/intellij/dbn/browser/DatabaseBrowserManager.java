@@ -85,7 +85,8 @@ public class DatabaseBrowserManager extends ProjectComponentBase implements Pers
 
     @Nullable
     public DatabaseBrowserTree getActiveBrowserTree() {
-        return getToolWindowForm().getActiveBrowserTree();
+        BrowserToolWindowForm toolWindowForm = this.toolWindowForm.value();
+        return toolWindowForm == null ? null : toolWindowForm.getActiveBrowserTree();
     }
 
     @Nullable
@@ -233,7 +234,7 @@ public class DatabaseBrowserManager extends ProjectComponentBase implements Pers
                     if (object != null) {
                         navigateToElement(object, true);
                     } else {
-                        ConnectionHandler connection = databaseVirtualFile.getConnection();
+                        ConnectionHandler connection = databaseVirtualFile.ensureConnection();
                         navigateToElement(connection.getObjectBundle(), false);
                     }
                 }
@@ -254,7 +255,7 @@ public class DatabaseBrowserManager extends ProjectComponentBase implements Pers
                     if (object != null) {
                         navigateToElement(object, true);
                     } else {
-                        ConnectionHandler connection = virtualFile.getConnection();
+                        ConnectionHandler connection = virtualFile.ensureConnection();
                         FileEditor oldEditor = event.getOldEditor();
                         SchemaId schemaId = virtualFile.getSchemaId();
                         boolean scroll = oldEditor != null && oldEditor.isValid();
