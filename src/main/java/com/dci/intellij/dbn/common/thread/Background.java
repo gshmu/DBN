@@ -13,10 +13,13 @@ import static com.dci.intellij.dbn.common.thread.ThreadProperty.BACKGROUND;
 
 @Slf4j
 public final class Background {
+    private static final Object lock = new Object();
+
     private Background() {}
 
     public static void run(Project project, ThrowableRunnable<Throwable> runnable) {
         try {
+            Threads.delay(lock);
             ThreadInfo threadInfo = ThreadMonitor.current();
             ExecutorService executorService = Threads.backgroundExecutor();
             executorService.submit(() -> {
@@ -38,6 +41,7 @@ public final class Background {
 
     public static void run(Project project, AtomicReference<Thread> handle, ThrowableRunnable<Throwable> runnable) {
         try {
+            Threads.delay(lock);
             Thread current = handle.get();
             if (current != null) {
                 current.interrupt();

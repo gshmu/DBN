@@ -11,7 +11,6 @@ import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.TimeUnit;
-import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Predicate;
 
 /**
@@ -22,25 +21,24 @@ import java.util.function.Predicate;
 public abstract class ObjectPoolBase<O, E extends Throwable> extends StatefulDisposableBase implements ObjectPool<O, E> {
     private final List<O> objects = new CopyOnWriteArrayList<>();
     private final BlockingQueue<O> available = new LinkedBlockingQueue<>();
-    private final AtomicInteger production = new AtomicInteger();
-    private final AtomicInteger peakSize = new AtomicInteger();
-    private final AtomicInteger waiting = new AtomicInteger();
-    private final AtomicInteger reserved = new AtomicInteger();
+    private final ObjectPoolCounters counters = new ObjectPoolCounters();
 
     @Override
     public final O acquire(long timeout, TimeUnit timeUnit) throws E {
         try {
-            waiting.incrementAndGet();
+            counters.waiting().increment();
             ensure();
 
             O object = available.poll(timeout, timeUnit);
 
             if (object == null) {
+                counters.rejected().increment();
                 log("rejected", null);
                 return whenNull();
             }
             if (check(object)) {
-                reserved.incrementAndGet();
+                // valid object
+                counters.reserved().increment();
                 log("acquired", object);
                 return whenAcquired(object);
             }
@@ -51,7 +49,7 @@ public abstract class ObjectPoolBase<O, E extends Throwable> extends StatefulDis
         } catch (Throwable e) {
             return whenErrored(e);
         } finally {
-            waiting.decrementAndGet();
+            counters.waiting().decrement();
         }
     }
 
@@ -64,7 +62,7 @@ public abstract class ObjectPoolBase<O, E extends Throwable> extends StatefulDis
 
     private O reuse(O object) {
         try {
-            reserved.decrementAndGet();
+            counters.reserved().decrement();
             whenReleased(object);
             available.add(object);
             log("released", object);
@@ -98,8 +96,13 @@ public abstract class ObjectPoolBase<O, E extends Throwable> extends StatefulDis
         checkDisposed();
 
         synchronized (this) {
-            boolean create = size() < maxSize() && available.peek() == null;
-            if (create) production.incrementAndGet(); else return;
+            boolean belowMax = counters.creating().get() + objects.size() < maxSize();
+            boolean create = available.peek() == null && belowMax;
+            if (create) {
+                counters.creating().increment();
+            } else {
+                return;
+            }
         }
 
         try {
@@ -109,13 +112,11 @@ public abstract class ObjectPoolBase<O, E extends Throwable> extends StatefulDis
             whenCreated(object);
             log("created", object);
         } finally {
-            production.decrementAndGet();
-            if (objects.size() > peakSize()) peakSize.set(objects.size());
+            counters.creating().decrement();
+            if (objects.size() > peakSize()) {
+                counters.peak().set(objects.size());
+            }
         }
-    }
-
-    private void log(String action, O object) {
-        log.info("{}: {} {} - Pool [max={} size={} peak={} waiting={} free={}]", identifier(), action, identifier(object), maxSize(), objects.size(), peakSize(), waiting.get(), available.size());
     }
 
     protected O whenCreated(O object) { return object; }
@@ -135,12 +136,12 @@ public abstract class ObjectPoolBase<O, E extends Throwable> extends StatefulDis
     protected abstract boolean check(O object);
 
     public final int size() {
-        return production.get() + objects.size();
+        return counters.creating().get() + objects.size();
     }
 
     @Override
     public int peakSize() {
-        return peakSize.get();
+        return counters.peak().get();
     }
 
     public final void visit(Visitor<O> visitor) {
@@ -154,4 +155,18 @@ public abstract class ObjectPoolBase<O, E extends Throwable> extends StatefulDis
         available.clear();
         Disposer.disposeCollection(objects);
     }
+
+    private void log(String action, O object) {
+        log.info("{}: {} {} - Pool [max={} size={} peak={} waiting={} free={}]",
+                identifier(),
+                action,
+                identifier(object),
+                maxSize(),
+                objects.size(),
+                counters.peak().get(),
+                counters.waiting().get(),
+                available.size());
+    }
+
+
 }

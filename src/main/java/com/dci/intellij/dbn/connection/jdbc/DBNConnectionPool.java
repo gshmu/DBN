@@ -18,11 +18,13 @@ import static com.dci.intellij.dbn.common.notification.NotificationSupport.sendI
 
 @Slf4j
 public class DBNConnectionPool extends ObjectPoolBase<DBNConnection, SQLException> {
+    private final String identifier;
     private final ConnectionRef connection;
     private final AtomicLong lastAccess = new AtomicLong();
 
     public DBNConnectionPool(ConnectionHandler connection) {
         this.connection = ConnectionRef.of(connection);
+        this.identifier = connection.getName();
     }
 
     @NotNull
@@ -80,7 +82,7 @@ public class DBNConnectionPool extends ObjectPoolBase<DBNConnection, SQLExceptio
 
     @Override
     protected String identifier() {
-        return getConnection().getName();
+        return identifier;
     }
 
     @Override

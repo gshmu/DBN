@@ -12,6 +12,8 @@ import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
 
+import static com.dci.intellij.dbn.common.dispose.Failsafe.nd;
+
 public class Messages {
 
     public static final String[] OPTIONS_OK = options("OK");
@@ -100,6 +102,7 @@ public class Messages {
             @Nullable DoNotAskOption doNotAskOption) {
 
         Dispatch.run(() -> {
+            if (project != null) nd(project);
             int option = com.intellij.openapi.ui.Messages.showDialog(project, message, Titles.signed(title), options, defaultOptionIndex, icon, doNotAskOption);
             if (callback != null) {
                 callback.accept(option);

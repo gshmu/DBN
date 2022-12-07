@@ -68,7 +68,7 @@ public class ConnectionDriverSettingsForm extends DBNFormBase {
             reloadDriversLink.setVisible(false);
             DatabaseDriverManager driverManager = DatabaseDriverManager.getInstance();
             File driverLibrary = new File(driverLibraryTextField.getText());
-            List<Driver> drivers;
+            List<Class<Driver>> drivers;
             try {
                 drivers = driverManager.loadDrivers(driverLibrary, true);
                 if (drivers == null || drivers.isEmpty()) {
@@ -131,7 +131,7 @@ public class ConnectionDriverSettingsForm extends DBNFormBase {
                     setSelection(driverComboBox, null);
                 } else {
                     DatabaseDriverManager driverManager = DatabaseDriverManager.getInstance();
-                    List<Driver> drivers = null;
+                    List<Class<Driver>> drivers = null;
                     try {
                         drivers = driverManager.loadDrivers(new File(driverLibrary), false);
                     } catch (Exception e) {
@@ -143,7 +143,7 @@ public class ConnectionDriverSettingsForm extends DBNFormBase {
                     //driverComboBox.addItem("");
                     if (drivers != null && !drivers.isEmpty()) {
                         List<DriverOption> driverOptions = new ArrayList<>();
-                        for (Driver driver : drivers) {
+                        for (Class<Driver> driver : drivers) {
                             DriverOption driverOption = new DriverOption(driver);
                             driverOptions.add(driverOption);
                             if (selectedOption != null && selectedOption.getDriver().equals(driver)) {

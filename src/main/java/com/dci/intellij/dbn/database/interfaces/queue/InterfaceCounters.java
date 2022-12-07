@@ -7,7 +7,7 @@ import static com.dci.intellij.dbn.common.count.CounterType.*;
 
 public class InterfaceCounters extends Counters {
     public int active() {
-        return queued().value() + running().value();
+        return queued().get() + running().get();
     }
 
     public Counter running() {
@@ -24,6 +24,9 @@ public class InterfaceCounters extends Counters {
 
     @Override
     public String toString() {
-        return "Q=" + queued().value() + " R=" + running().value() + " F=" + finished().value();
+        return
+            "queued=" + queued().get() + " " +
+            "running=" + running().get() + " " +
+            "finished=" + finished().get();
     }
 }
