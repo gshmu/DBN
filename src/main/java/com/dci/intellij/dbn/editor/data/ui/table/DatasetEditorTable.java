@@ -3,6 +3,7 @@ package com.dci.intellij.dbn.editor.data.ui.table;
 import com.dci.intellij.dbn.common.Pair;
 import com.dci.intellij.dbn.common.dispose.Disposer;
 import com.dci.intellij.dbn.common.property.PropertyHolder;
+import com.dci.intellij.dbn.common.ref.WeakRef;
 import com.dci.intellij.dbn.common.thread.Background;
 import com.dci.intellij.dbn.common.thread.Dispatch;
 import com.dci.intellij.dbn.common.thread.Progress;
@@ -41,7 +42,6 @@ import com.dci.intellij.dbn.editor.data.ui.table.listener.DatasetEditorKeyListen
 import com.dci.intellij.dbn.editor.data.ui.table.listener.DatasetEditorMouseListener;
 import com.dci.intellij.dbn.editor.data.ui.table.renderer.DatasetEditorTableCellRenderer;
 import com.dci.intellij.dbn.editor.data.ui.table.renderer.DatasetEditorTableHeaderRenderer;
-import com.dci.intellij.dbn.language.common.WeakRef;
 import com.dci.intellij.dbn.object.DBColumn;
 import com.dci.intellij.dbn.object.DBDataset;
 import com.intellij.openapi.actionSystem.ActionGroup;

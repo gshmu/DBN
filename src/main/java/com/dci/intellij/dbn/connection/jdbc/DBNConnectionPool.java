@@ -51,7 +51,6 @@ public class DBNConnectionPool extends ObjectPoolBase<DBNConnection, SQLExceptio
     protected DBNConnection create() throws SQLException{
         checkDisposed();
         ConnectionHandler connection = getConnection();
-        String connectionName = connection.getName();
         DBNConnection conn = ConnectionUtil.connect(connection, SessionId.POOL);
 
         Resources.setAutoCommit(conn, true);

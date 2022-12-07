@@ -29,7 +29,7 @@ public class InterfaceQueue extends StatefulDisposableBase implements DatabaseIn
 
     private final BlockingQueue<InterfaceTask<?>> queue = new PriorityBlockingQueue<>(11, COMPARATOR);
     private final Consumer<InterfaceTask<?>> consumer;
-    private final Counters counters = new Counters();
+    private final InterfaceCounters counters = new InterfaceCounters();
     private final ConnectionRef connection;
     private volatile boolean stopped;
     private volatile Thread monitor;
@@ -42,13 +42,13 @@ public class InterfaceQueue extends StatefulDisposableBase implements DatabaseIn
     InterfaceQueue(@Nullable ConnectionHandler connection, Consumer<InterfaceTask<?>> consumer) {
         this.connection = ConnectionRef.of(connection);
         this.consumer = consumer == null ? new InterfaceQueueConsumer(this) : consumer;
-        this.counters.running.addListener(value -> warnTaskLimits());
+        this.counters.running().addListener(value -> warnTaskLimits());
 
         MONITORS.submit(() -> monitorQueue());
     }
 
     private void warnTaskLimits() {
-        if (counters.running() > maxActiveTasks()) {
+        if (counters.running().value() > maxActiveTasks()) {
             log.warn("Active task limit exceeded: {} (expected max {})", counters.running(), maxActiveTasks());
         }
     }
@@ -65,12 +65,12 @@ public class InterfaceQueue extends StatefulDisposableBase implements DatabaseIn
     }
 
     @Override
-    public Counters counters() {
+    public InterfaceCounters counters() {
         return counters;
     }
 
     private boolean maxActiveTasksExceeded() {
-        return counters.running() >= maxActiveTasks();
+        return counters.running().value() >= maxActiveTasks();
     }
 
     @Override
@@ -99,7 +99,7 @@ public class InterfaceQueue extends StatefulDisposableBase implements DatabaseIn
         InterfaceTask<T> task = new InterfaceTask<>(request, synchronous, callable);
         try {
             queue.add(task);
-            counters.queued.increment();
+            counters.queued().increment();
             task.changeStatus(QUEUED);
 
             task.awaitCompletion();
@@ -122,11 +122,11 @@ public class InterfaceQueue extends StatefulDisposableBase implements DatabaseIn
 
             InterfaceTask<?> task = queue.take();
 
-            counters.queued.decrement();
+            counters.queued().decrement();
             task.changeStatus(DEQUEUED);
 
             consumer.accept(task);
-            counters.running.increment();
+            counters.running().increment();
             task.changeStatus(SCHEDULED);
         }
     }
@@ -135,8 +135,8 @@ public class InterfaceQueue extends StatefulDisposableBase implements DatabaseIn
         try {
             task.execute();
         } finally {
-            counters.running.decrement();
-            counters.finished.increment();
+            counters.running().decrement();
+            counters.finished().increment();
             task.changeStatus(FINISHED);
             unparkMonitor();
         }
@@ -161,7 +161,7 @@ public class InterfaceQueue extends StatefulDisposableBase implements DatabaseIn
     protected void disposeInner() {
         stopped = true;
         queue.clear();
-        counters.queued.reset();
+        counters.queued().reset();
     }
 
     public Project getProject() {

@@ -24,21 +24,34 @@ public abstract class ObjectPoolBase<O, E extends Throwable> extends StatefulDis
     private final BlockingQueue<O> available = new LinkedBlockingQueue<>();
     private final AtomicInteger production = new AtomicInteger();
     private final AtomicInteger peakSize = new AtomicInteger();
+    private final AtomicInteger waiting = new AtomicInteger();
+    private final AtomicInteger reserved = new AtomicInteger();
 
     @Override
     public final O acquire(long timeout, TimeUnit timeUnit) throws E {
-        ensure();
         try {
+            waiting.incrementAndGet();
+            ensure();
+
             O object = available.poll(timeout, timeUnit);
 
-            if (object == null) return whenNull();
-            if (check(object)) return whenAcquired(object);
+            if (object == null) {
+                log("rejected", null);
+                return whenNull();
+            }
+            if (check(object)) {
+                reserved.incrementAndGet();
+                log("acquired", object);
+                return whenAcquired(object);
+            }
 
             // invalid object - remove and try acquiring again
             drop(object);
             return acquire(timeout, timeUnit);
         } catch (Throwable e) {
             return whenErrored(e);
+        } finally {
+            waiting.decrementAndGet();
         }
     }
 
@@ -51,6 +64,7 @@ public abstract class ObjectPoolBase<O, E extends Throwable> extends StatefulDis
 
     private O reuse(O object) {
         try {
+            reserved.decrementAndGet();
             whenReleased(object);
             available.add(object);
             log("released", object);
@@ -101,7 +115,7 @@ public abstract class ObjectPoolBase<O, E extends Throwable> extends StatefulDis
     }
 
     private void log(String action, O object) {
-        log.info("{}: {} {} - Pool [max={} size={} peak={} free={}]", identifier(), action, identifier(object), maxSize(), objects.size(), peakSize(), available.size());
+        log.info("{}: {} {} - Pool [max={} size={} peak={} waiting={} free={}]", identifier(), action, identifier(object), maxSize(), objects.size(), peakSize(), waiting.get(), available.size());
     }
 
     protected O whenCreated(O object) { return object; }

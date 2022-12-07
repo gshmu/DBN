@@ -1,11 +1,11 @@
 package com.dci.intellij.dbn.editor.session.ui.table;
 
+import com.dci.intellij.dbn.common.ref.WeakRef;
 import com.dci.intellij.dbn.editor.session.model.SessionBrowserColumnInfo;
 import com.dci.intellij.dbn.editor.session.model.SessionBrowserModelCell;
-import com.dci.intellij.dbn.language.common.WeakRef;
 import org.jetbrains.annotations.NotNull;
 
-import java.awt.Point;
+import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 

@@ -1,6 +1,6 @@
 package com.dci.intellij.dbn.common.ui.listener;
 
-import com.dci.intellij.dbn.language.common.WeakRef;
+import com.dci.intellij.dbn.common.ref.WeakRef;
 import lombok.experimental.Delegate;
 
 import javax.swing.event.MenuListener;

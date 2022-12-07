@@ -2,7 +2,7 @@ package com.dci.intellij.dbn.common.latent.impl;
 
 import com.dci.intellij.dbn.common.latent.Latent;
 import com.dci.intellij.dbn.common.latent.Loader;
-import com.dci.intellij.dbn.language.common.WeakRef;
+import com.dci.intellij.dbn.common.ref.WeakRef;
 
 public class WeakRefLatent<T> implements Latent<T> {
     private final Loader<T> loader;
