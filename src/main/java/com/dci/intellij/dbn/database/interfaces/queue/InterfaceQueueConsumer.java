@@ -1,11 +1,11 @@
 package com.dci.intellij.dbn.database.interfaces.queue;
 
+import com.dci.intellij.dbn.common.ref.WeakRef;
 import com.dci.intellij.dbn.common.routine.Consumer;
 import com.dci.intellij.dbn.common.thread.Background;
 import com.dci.intellij.dbn.common.thread.Progress;
 import com.dci.intellij.dbn.common.thread.ThreadMonitor;
 import com.dci.intellij.dbn.common.thread.ThreadProperty;
-import com.dci.intellij.dbn.language.common.WeakRef;
 import com.intellij.openapi.progress.ProgressManager;
 import com.intellij.openapi.project.Project;
 

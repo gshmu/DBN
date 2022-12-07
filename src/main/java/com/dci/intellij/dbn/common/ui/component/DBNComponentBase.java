@@ -5,7 +5,7 @@ import com.dci.intellij.dbn.common.dispose.Disposer;
 import com.dci.intellij.dbn.common.dispose.StatefulDisposableBase;
 import com.dci.intellij.dbn.common.project.ProjectRef;
 import com.dci.intellij.dbn.common.project.ProjectSupplier;
-import com.dci.intellij.dbn.language.common.WeakRef;
+import com.dci.intellij.dbn.common.ref.WeakRef;
 import com.intellij.openapi.Disposable;
 import com.intellij.openapi.project.Project;
 import org.jetbrains.annotations.Nullable;

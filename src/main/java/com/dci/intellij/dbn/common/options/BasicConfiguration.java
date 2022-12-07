@@ -3,7 +3,7 @@ package com.dci.intellij.dbn.common.options;
 import com.dci.intellij.dbn.common.dispose.Disposer;
 import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.common.options.ui.ConfigurationEditorForm;
-import com.dci.intellij.dbn.language.common.WeakRef;
+import com.dci.intellij.dbn.common.ref.WeakRef;
 import com.dci.intellij.dbn.options.TopLevelConfig;
 import com.intellij.openapi.options.ConfigurationException;
 import org.jdom.Element;

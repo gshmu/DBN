@@ -1,6 +1,6 @@
 package com.dci.intellij.dbn.common.action;
 
-import com.dci.intellij.dbn.language.common.WeakRef;
+import com.dci.intellij.dbn.common.ref.WeakRef;
 import com.intellij.ide.DataManager;
 import com.intellij.openapi.actionSystem.DataProvider;
 import org.jetbrains.annotations.NonNls;

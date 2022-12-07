@@ -2,7 +2,7 @@ package com.dci.intellij.dbn.connection.jdbc;
 
 import com.dci.intellij.dbn.common.property.Property;
 import com.dci.intellij.dbn.common.property.PropertyHolder;
-import com.dci.intellij.dbn.language.common.WeakRef;
+import com.dci.intellij.dbn.common.ref.WeakRef;
 import lombok.Getter;
 
 import java.util.concurrent.atomic.AtomicInteger;

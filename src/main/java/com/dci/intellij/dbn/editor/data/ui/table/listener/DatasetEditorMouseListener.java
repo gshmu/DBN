@@ -1,5 +1,6 @@
 package com.dci.intellij.dbn.editor.data.ui.table.listener;
 
+import com.dci.intellij.dbn.common.ref.WeakRef;
 import com.dci.intellij.dbn.common.thread.Dispatch;
 import com.dci.intellij.dbn.common.thread.Progress;
 import com.dci.intellij.dbn.common.ui.util.Mouse;
@@ -7,7 +8,6 @@ import com.dci.intellij.dbn.editor.data.DatasetEditorManager;
 import com.dci.intellij.dbn.editor.data.filter.DatasetFilterInput;
 import com.dci.intellij.dbn.editor.data.model.DatasetEditorModelCell;
 import com.dci.intellij.dbn.editor.data.ui.table.DatasetEditorTable;
-import com.dci.intellij.dbn.language.common.WeakRef;
 import com.dci.intellij.dbn.object.DBColumn;
 import com.intellij.openapi.project.Project;
 import org.jetbrains.annotations.NotNull;

@@ -1,9 +1,9 @@
 package com.dci.intellij.dbn.connection.transaction;
 
 import com.dci.intellij.dbn.common.Icons;
+import com.dci.intellij.dbn.common.ref.WeakRef;
 import com.dci.intellij.dbn.connection.SessionId;
 import com.dci.intellij.dbn.connection.jdbc.DBNConnection;
-import com.dci.intellij.dbn.language.common.WeakRef;
 import com.dci.intellij.dbn.vfs.DBVirtualFile;
 import com.intellij.openapi.vfs.VirtualFile;
 import org.jetbrains.annotations.NotNull;

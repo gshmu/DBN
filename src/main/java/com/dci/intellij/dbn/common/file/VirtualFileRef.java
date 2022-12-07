@@ -1,8 +1,7 @@
 package com.dci.intellij.dbn.common.file;
 
-
 import com.dci.intellij.dbn.common.dispose.Failsafe;
-import com.dci.intellij.dbn.language.common.WeakRef;
+import com.dci.intellij.dbn.common.ref.WeakRef;
 import com.intellij.openapi.vfs.VirtualFile;
 import lombok.EqualsAndHashCode;
 import org.jetbrains.annotations.NotNull;

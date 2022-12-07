@@ -1,7 +1,7 @@
 package com.dci.intellij.dbn.execution.method.browser.action;
 
+import com.dci.intellij.dbn.common.ref.WeakRef;
 import com.dci.intellij.dbn.execution.method.browser.ui.MethodExecutionBrowserForm;
-import com.dci.intellij.dbn.language.common.WeakRef;
 import com.dci.intellij.dbn.object.DBSchema;
 import com.dci.intellij.dbn.object.action.AnObjectAction;
 import com.intellij.openapi.actionSystem.AnActionEvent;

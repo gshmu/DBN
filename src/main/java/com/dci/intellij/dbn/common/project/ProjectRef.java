@@ -1,7 +1,7 @@
 package com.dci.intellij.dbn.common.project;
 
 import com.dci.intellij.dbn.common.action.UserDataKeys;
-import com.dci.intellij.dbn.language.common.WeakRef;
+import com.dci.intellij.dbn.common.ref.WeakRef;
 import com.intellij.openapi.project.Project;
 import org.jetbrains.annotations.NotNull;
 

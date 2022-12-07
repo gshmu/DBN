@@ -1,10 +1,10 @@
 package com.dci.intellij.dbn.execution.logging;
 
+import com.dci.intellij.dbn.common.ref.WeakRef;
 import com.dci.intellij.dbn.common.util.Commons;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
-import com.dci.intellij.dbn.connection.ConnectionRef;
 import com.dci.intellij.dbn.connection.ConnectionId;
-import com.dci.intellij.dbn.language.common.WeakRef;
+import com.dci.intellij.dbn.connection.ConnectionRef;
 import com.intellij.openapi.vfs.VirtualFile;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;

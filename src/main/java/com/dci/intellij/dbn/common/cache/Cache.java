@@ -1,8 +1,8 @@
 package com.dci.intellij.dbn.common.cache;
 
+import com.dci.intellij.dbn.common.ref.WeakRef;
 import com.dci.intellij.dbn.common.routine.ThrowableCallable;
 import com.dci.intellij.dbn.common.util.TimeUtil;
-import com.dci.intellij.dbn.language.common.WeakRef;
 import com.intellij.util.containers.ContainerUtil;
 import lombok.SneakyThrows;
 
