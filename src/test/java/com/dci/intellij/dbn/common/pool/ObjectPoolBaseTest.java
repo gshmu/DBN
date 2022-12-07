@@ -86,7 +86,7 @@ public class ObjectPoolBaseTest {
             executorService.submit(() -> {
                 TestObject object = null;
                 try {
-                    int timeout = random.nextInt(1, 5);
+                    int timeout = random.nextInt(5);
                     object = objectPool.acquire(timeout, TimeUnit.SECONDS);
 
                     int process = random.nextInt(2000);
