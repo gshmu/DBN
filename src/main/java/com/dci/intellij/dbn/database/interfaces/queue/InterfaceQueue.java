@@ -48,7 +48,7 @@ public class InterfaceQueue extends StatefulDisposableBase implements DatabaseIn
     }
 
     private void warnTaskLimits() {
-        if (counters.running().value() > maxActiveTasks()) {
+        if (counters.running().get() > maxActiveTasks()) {
             log.warn("Active task limit exceeded: {} (expected max {})", counters.running(), maxActiveTasks());
         }
     }
@@ -70,7 +70,7 @@ public class InterfaceQueue extends StatefulDisposableBase implements DatabaseIn
     }
 
     private boolean maxActiveTasksExceeded() {
-        return counters.running().value() >= maxActiveTasks();
+        return counters.running().get() >= maxActiveTasks();
     }
 
     @Override

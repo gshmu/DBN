@@ -35,4 +35,8 @@ public class TimeUtil {
     public static long millisSince(long start) {
         return System.currentTimeMillis() - start;
     }
+
+    public static long secondsSince(long start) {
+        return TimeUnit.MILLISECONDS.toSeconds(millisSince(start));
+    }
 }

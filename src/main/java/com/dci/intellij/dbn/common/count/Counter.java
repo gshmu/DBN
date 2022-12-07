@@ -4,7 +4,7 @@ import java.util.HashSet;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicInteger;
 
-public class Counter {
+public final class Counter {
     private final CounterType type;
     private final Set<CounterListener> listeners = new HashSet<>();
     private final AtomicInteger count = new AtomicInteger(0);
@@ -29,12 +29,16 @@ public class Counter {
         return value;
     }
 
-    public int value() {
+    public int get() {
         return count.get();
     }
 
+    public void set(int count) {
+        this.count.set(count);
+    }
+
     public void reset() {
-        count.set(0);
+        set(0);
     }
 
     @Override
@@ -45,5 +49,4 @@ public class Counter {
     public void addListener(CounterListener listener) {
         listeners.add(listener);
     }
-
 }

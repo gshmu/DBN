@@ -41,6 +41,10 @@ final class ConnectionCache {
                 Wrapper[] newData = new Wrapper[oldData.length * 2];
                 System.arraycopy(oldData, 0, newData, 0, oldData.length);
                 data = newData;
+            } else {
+                if (data[index] != null && isNotValid(data[index].get())) {
+                    data[index] = null;
+                }
             }
 
             // ensure entry
