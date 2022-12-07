@@ -27,9 +27,10 @@ import com.intellij.openapi.editor.colors.EditorColors;
 import com.intellij.openapi.editor.colors.EditorColorsScheme;
 import com.intellij.openapi.editor.ex.EditorEx;
 import com.intellij.openapi.editor.highlighter.EditorHighlighter;
-import com.intellij.openapi.fileEditor.*;
-import com.intellij.openapi.fileEditor.ex.FileEditorProviderManager;
-import com.intellij.openapi.fileEditor.impl.EditorHistoryManager;
+import com.intellij.openapi.fileEditor.FileDocumentManager;
+import com.intellij.openapi.fileEditor.FileEditor;
+import com.intellij.openapi.fileEditor.FileEditorManager;
+import com.intellij.openapi.fileEditor.TextEditor;
 import com.intellij.openapi.fileTypes.FileType;
 import com.intellij.openapi.fileTypes.SyntaxHighlighter;
 import com.intellij.openapi.fileTypes.SyntaxHighlighterFactory;
@@ -195,16 +196,16 @@ public class Editors {
     }
 
     public static FileEditor getFileEditor(@Nullable Editor editor) {
-        if (editor != null) {
-            Project project = editor.getProject();
-            if (project != null) {
-                FileEditorManager fileEditorManager = FileEditorManager.getInstance(project);
-                FileEditor[] allEditors = fileEditorManager.getAllEditors();
-                for (FileEditor fileEditor : allEditors) {
-                    if (editor == getEditor(fileEditor)) {
-                        return fileEditor;
-                    }
-                }
+        if (editor == null) return null;
+
+        Project project = editor.getProject();
+        if (project == null) return null;
+
+        FileEditorManager fileEditorManager = FileEditorManager.getInstance(project);
+        FileEditor[] allEditors = fileEditorManager.getAllEditors();
+        for (FileEditor fileEditor : allEditors) {
+            if (editor == getEditor(fileEditor)) {
+                return fileEditor;
             }
         }
         return null;
@@ -361,74 +362,65 @@ public class Editors {
     }
 
     public static Editor getSelectedEditor(Project project) {
-        if (project != null) {
-            FileEditorManager fileEditorManager = FileEditorManager.getInstance(project);
-            FileEditor[] fileEditors = fileEditorManager.getSelectedEditors();
-            if (fileEditors.length == 1) {
-                if (fileEditors[0] instanceof BasicTextEditor) {
-                    BasicTextEditor<?> textEditor = (BasicTextEditor<?>) fileEditors[0];
-                    return textEditor.getEditor();
-                }
+        if (project == null) return null;
+
+        FileEditorManager fileEditorManager = FileEditorManager.getInstance(project);
+        FileEditor[] fileEditors = fileEditorManager.getSelectedEditors();
+        if (fileEditors.length == 1) {
+            if (fileEditors[0] instanceof BasicTextEditor) {
+                BasicTextEditor<?> textEditor = (BasicTextEditor<?>) fileEditors[0];
+                return textEditor.getEditor();
             }
-            return fileEditorManager.getSelectedTextEditor();
         }
-        return null;
+        return fileEditorManager.getSelectedTextEditor();
     }
 
     public static Editor getSelectedEditor(Project project, FileType fileType){
-        final Editor editor = Editors.getSelectedEditor(project);
-        if (editor != null) {
-            VirtualFile virtualFile = Documents.getVirtualFile(editor);
-            if (virtualFile != null && virtualFile.getFileType().equals(fileType)) {
-                return editor;
-            }
+        Editor editor = Editors.getSelectedEditor(project);
+        if (editor == null) return null;
+
+        VirtualFile virtualFile = Documents.getVirtualFile(editor);
+        if (virtualFile != null && virtualFile.getFileType().equals(fileType)) {
+            return editor;
         }
         return null;
     }
 
     private static void focusEditor(@Nullable FileEditor fileEditor) {
-        if (fileEditor != null) {
-            Editor editor = getEditor(fileEditor);
-            focusEditor(editor);
-        }
+        if (fileEditor == null) return;
+
+        Editor editor = getEditor(fileEditor);
+        focusEditor(editor);
     }
     public static void focusEditor(@Nullable Editor editor) {
-        if (editor != null) {
-            Dispatch.run(() -> {
-                Project project = editor.getProject();
-                IdeFocusManager ideFocusManager = IdeFocusManager.getInstance(project);
-                ideFocusManager.requestFocus(editor.getContentComponent(), true);
-            });
-        }
+        if (editor == null) return;
+
+        Dispatch.run(() -> {
+            Project project = editor.getProject();
+            IdeFocusManager ideFocusManager = IdeFocusManager.getInstance(project);
+            ideFocusManager.requestFocus(editor.getContentComponent(), true);
+        });
     }
 
     public static VirtualFile getSelectedFile(Project project) {
-        if (project != null) {
-            FileEditorManager fileEditorManager = FileEditorManager.getInstance(project);
-            FileEditor[] fileEditors = fileEditorManager.getSelectedEditors();
-            if (fileEditors.length > 0) {
-                if (fileEditors[0] instanceof DatasetEditor) {
-                    DatasetEditor datasetEditor = (DatasetEditor) fileEditors[0];
-                    return datasetEditor.getDatabaseFile();
-                } else if (fileEditors[0] instanceof BasicTextEditor) {
-                    BasicTextEditor<?> basicTextEditor = (BasicTextEditor<?>) fileEditors[0];
-                    return basicTextEditor.getVirtualFile();
-                }
-            }
+        if (project == null) return null;
 
-            Editor editor = fileEditorManager.getSelectedTextEditor();
-            if (editor != null) {
-                return Documents.getVirtualFile(editor);
+        FileEditorManager fileEditorManager = FileEditorManager.getInstance(project);
+        FileEditor[] fileEditors = fileEditorManager.getSelectedEditors();
+        if (fileEditors.length > 0) {
+            if (fileEditors[0] instanceof DatasetEditor) {
+                DatasetEditor datasetEditor = (DatasetEditor) fileEditors[0];
+                return datasetEditor.getDatabaseFile();
+            } else if (fileEditors[0] instanceof BasicTextEditor) {
+                BasicTextEditor<?> basicTextEditor = (BasicTextEditor<?>) fileEditors[0];
+                return basicTextEditor.getVirtualFile();
             }
         }
-        return null;
-    }
 
-    public static boolean hasEditingHistory(VirtualFile virtualFile, Project project) {
-        FileEditorProviderManager editorProviderManager = FileEditorProviderManager.getInstance();
-        FileEditorProvider[] providers = editorProviderManager.getProviders(project, virtualFile);
-        FileEditorState editorState = EditorHistoryManager.getInstance(project).getState(virtualFile, providers[0]);
-        return editorState != null;
+        Editor editor = fileEditorManager.getSelectedTextEditor();
+        if (editor == null) return null;
+
+        return Documents.getVirtualFile(editor);
     }
 
     public static Dimension calculatePreferredSize(Editor editor) {
@@ -450,12 +442,12 @@ public class Editors {
     }
 
     public static void releaseEditor(@Nullable Editor editor) {
-        if (editor != null) {
-            Dispatch.run(true, () -> {
-                EditorFactory editorFactory = EditorFactory.getInstance();
-                editorFactory.releaseEditor(editor);
-            });
-        }
+        if (editor == null) return;
+
+        Dispatch.run(true, () -> {
+            EditorFactory editorFactory = EditorFactory.getInstance();
+            editorFactory.releaseEditor(editor);
+        });
 
     }
 
