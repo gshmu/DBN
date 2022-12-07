@@ -1,5 +1,6 @@
 package com.dci.intellij.dbn.execution.method.action;
 
+import com.dci.intellij.dbn.common.action.ComboBoxAction;
 import com.dci.intellij.dbn.common.util.Commons;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.SchemaId;
@@ -8,10 +9,9 @@ import com.dci.intellij.dbn.object.DBSchema;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.actionSystem.DefaultActionGroup;
 import com.intellij.openapi.actionSystem.Presentation;
-import com.intellij.openapi.actionSystem.ex.ComboBoxAction;
 import org.jetbrains.annotations.NotNull;
 
-import javax.swing.JComponent;
+import javax.swing.*;
 
 public class ExecutionSchemasSelectAction extends ComboBoxAction {
     private MethodExecutionInput executionInput;
