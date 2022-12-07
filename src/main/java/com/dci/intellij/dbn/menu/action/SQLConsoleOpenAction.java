@@ -45,8 +45,8 @@ public class SQLConsoleOpenAction extends ProjectAction {
         }
 
         DefaultActionGroup actionGroup = new DefaultActionGroup();
+        actionGroup.addSeparator();
         for (ConnectionHandler connection : connections) {
-            actionGroup.addSeparator();
             actionGroup.add(new SelectConnectionAction(connection));
         }
 
