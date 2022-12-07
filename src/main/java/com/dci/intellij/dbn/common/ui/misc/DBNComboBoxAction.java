@@ -1,7 +1,7 @@
 package com.dci.intellij.dbn.common.ui.misc;
 
+import com.dci.intellij.dbn.common.action.ComboBoxAction;
 import com.intellij.openapi.actionSystem.Presentation;
-import com.intellij.openapi.actionSystem.ex.ComboBoxAction;
 import com.intellij.openapi.project.DumbAware;
 import com.intellij.util.ui.JBUI;
 import org.jetbrains.annotations.NotNull;
