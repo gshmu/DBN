@@ -1,5 +1,6 @@
 package com.dci.intellij.dbn.editor.session.ui.table;
 
+import com.dci.intellij.dbn.common.ref.WeakRef;
 import com.dci.intellij.dbn.common.thread.Dispatch;
 import com.dci.intellij.dbn.common.ui.component.DBNComponent;
 import com.dci.intellij.dbn.common.util.Actions;
@@ -16,7 +17,6 @@ import com.dci.intellij.dbn.editor.session.model.SessionBrowserColumnInfo;
 import com.dci.intellij.dbn.editor.session.model.SessionBrowserModel;
 import com.dci.intellij.dbn.editor.session.model.SessionBrowserModelCell;
 import com.dci.intellij.dbn.editor.session.model.SessionBrowserModelRow;
-import com.dci.intellij.dbn.language.common.WeakRef;
 import com.intellij.openapi.actionSystem.ActionGroup;
 import com.intellij.openapi.actionSystem.ActionPopupMenu;
 import com.intellij.ui.PopupMenuListenerAdapter;

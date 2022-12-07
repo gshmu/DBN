@@ -1,12 +1,12 @@
 package com.dci.intellij.dbn.editor.data.ui.table.listener;
 
+import com.dci.intellij.dbn.common.ref.WeakRef;
 import com.dci.intellij.dbn.common.ui.util.Keyboard.Key;
 import com.dci.intellij.dbn.common.util.Messages;
 import com.dci.intellij.dbn.data.type.DBDataType;
 import com.dci.intellij.dbn.editor.data.model.DatasetEditorModel;
 import com.dci.intellij.dbn.editor.data.model.DatasetEditorModelCell;
 import com.dci.intellij.dbn.editor.data.ui.table.DatasetEditorTable;
-import com.dci.intellij.dbn.language.common.WeakRef;
 
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;

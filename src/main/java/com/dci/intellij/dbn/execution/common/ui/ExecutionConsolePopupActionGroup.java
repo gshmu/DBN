@@ -1,14 +1,10 @@
 package com.dci.intellij.dbn.execution.common.ui;
 
+import com.dci.intellij.dbn.common.ref.WeakRef;
 import com.dci.intellij.dbn.execution.statement.result.StatementExecutionCursorResult;
 import com.dci.intellij.dbn.execution.statement.result.ui.RenameExecutionResultDialog;
 import com.dci.intellij.dbn.execution.statement.result.ui.StatementExecutionResultForm;
-import com.dci.intellij.dbn.language.common.WeakRef;
-import com.intellij.openapi.actionSystem.AnAction;
-import com.intellij.openapi.actionSystem.AnActionEvent;
-import com.intellij.openapi.actionSystem.DataContext;
-import com.intellij.openapi.actionSystem.DefaultActionGroup;
-import com.intellij.openapi.actionSystem.PlatformDataKeys;
+import com.intellij.openapi.actionSystem.*;
 import com.intellij.ui.tabs.TabInfo;
 import com.intellij.ui.tabs.impl.TabLabel;
 import org.jetbrains.annotations.NotNull;

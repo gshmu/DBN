@@ -2,6 +2,7 @@ package com.dci.intellij.dbn.language.common;
 
 
 import com.dci.intellij.dbn.common.dispose.Failsafe;
+import com.dci.intellij.dbn.common.ref.WeakRef;
 import com.dci.intellij.dbn.language.common.psi.PsiUtil;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;

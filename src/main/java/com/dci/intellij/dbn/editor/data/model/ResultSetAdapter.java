@@ -1,12 +1,12 @@
 package com.dci.intellij.dbn.editor.data.model;
 
 import com.dci.intellij.dbn.common.dispose.StatefulDisposable;
+import com.dci.intellij.dbn.common.ref.WeakRef;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.ResultSets;
 import com.dci.intellij.dbn.data.type.DBDataType;
 import com.dci.intellij.dbn.data.value.ValueAdapter;
 import com.dci.intellij.dbn.database.DatabaseFeature;
-import com.dci.intellij.dbn.language.common.WeakRef;
 import lombok.Getter;
 import lombok.Setter;
 import org.jetbrains.annotations.NotNull;

@@ -1,4 +1,4 @@
-package com.dci.intellij.dbn.language.common;
+package com.dci.intellij.dbn.common.ref;
 
 
 import com.dci.intellij.dbn.common.dispose.Failsafe;
