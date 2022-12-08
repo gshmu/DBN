@@ -1,6 +1,5 @@
 package com.dci.intellij.dbn.execution.statement.processor;
 
-import com.dci.intellij.dbn.common.dispose.AlreadyDisposedException;
 import com.dci.intellij.dbn.common.dispose.Checks;
 import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.common.dispose.StatefulDisposableBase;
@@ -354,7 +353,7 @@ public class StatementExecutionBasicProcessor extends StatefulDisposableBase imp
     private void assertNotCancelled() {
         ExecutionContext context = getExecutionContext();
         if (context.is(CANCELLED)) {
-            throw AlreadyDisposedException.INSTANCE;
+            throw new ProcessCanceledException();
         }
     }
 
