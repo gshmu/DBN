@@ -4,6 +4,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 public class Strings extends com.intellij.openapi.util.text.StringUtil {
     private Strings() {}
@@ -248,6 +249,12 @@ public class Strings extends com.intellij.openapi.util.text.StringUtil {
 
     public static String intern(String value) {
         return value == null ? null : value.intern();
+    }
+
+    @NotNull
+    public static List<String> nonEmptyStrings(List<String> values) {
+        if (values == null) return Collections.emptyList();
+        return values.stream().filter(s -> isNotEmptyOrSpaces(s)).collect(Collectors.toList());
     }
 }
 

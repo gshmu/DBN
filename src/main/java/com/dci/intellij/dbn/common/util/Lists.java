@@ -4,10 +4,7 @@ import com.dci.intellij.dbn.common.filter.Filter;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 import java.util.function.Function;
 import java.util.function.Predicate;
 
@@ -119,5 +116,28 @@ public class Lists {
     @Nullable
     public static <T> T firstElement(List<T> list) {
         return list == null || list.size() == 0 ? null : list.get(0);
+    }
+
+
+    public static <T> Iterable<T> reversed(List<T> list) {
+        return () -> {
+            ListIterator<T> i = list.listIterator(list.size());
+            return new Iterator<T>() {
+                @Override
+                public boolean hasNext() {
+                    return i.hasPrevious();
+                }
+
+                @Override
+                public T next() {
+                    return i.previous();
+                }
+
+                @Override
+                public void remove() {
+                    i.remove();
+                }
+            };
+        };
     }
 }
