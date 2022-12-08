@@ -2,7 +2,6 @@ package com.dci.intellij.dbn.data.find;
 
 import com.dci.intellij.dbn.common.dispose.Disposer;
 import com.dci.intellij.dbn.common.exception.OutdatedContentException;
-import com.dci.intellij.dbn.common.list.ReversedList;
 import com.dci.intellij.dbn.common.util.CollectionUtil;
 import com.dci.intellij.dbn.common.util.Lists;
 import com.dci.intellij.dbn.data.model.DataModelCell;
@@ -11,6 +10,9 @@ import lombok.Getter;
 import lombok.Setter;
 
 import java.util.*;
+
+import static com.dci.intellij.dbn.data.find.DataSearchResultScrollPolicy.HORIZONTAL;
+import static com.dci.intellij.dbn.data.find.DataSearchResultScrollPolicy.VERTICAL;
 
 @Getter
 @Setter
@@ -94,7 +96,7 @@ public class DataSearchResult implements Disposable {
 
     public DataSearchResultMatch selectFirst(int fromRowIndex, int fromColumnIndex, DataSearchResultScrollPolicy scrollPolicy) {
         if (updating) return null;
-        return getNext(fromRowIndex, fromColumnIndex, scrollPolicy);
+        return next(fromRowIndex, fromColumnIndex, scrollPolicy);
     }
     
     public DataSearchResultMatch selectNext(DataSearchResultScrollPolicy scrollPolicy) {
@@ -110,7 +112,7 @@ public class DataSearchResult implements Disposable {
                 case HORIZONTAL: fromColumnIndex++; break;
             }
         }
-        selectedMatch = getNext(fromRowIndex, fromColumnIndex, scrollPolicy);
+        selectedMatch = next(fromRowIndex, fromColumnIndex, scrollPolicy);
         return selectedMatch;
     }
 
@@ -127,69 +129,43 @@ public class DataSearchResult implements Disposable {
                 case HORIZONTAL: fromColumnIndex--; break;
             }
         }
-        selectedMatch = getPrevious(fromRowIndex, fromColumnIndex, scrollPolicy);
+        selectedMatch = previous(fromRowIndex, fromColumnIndex, scrollPolicy);
         return selectedMatch;
     }
 
-    private DataSearchResultMatch getNext(int fromRowIndex, int fromColumnIndex, DataSearchResultScrollPolicy scrollPolicy) {
-        if (matches.size() > 0) {
-            for (DataSearchResultMatch match : matches) {
-                int rowIndex = match.getRowIndex();
-                int columnIndex = match.getColumnIndex();
+    private DataSearchResultMatch next(int fromRow, int fromCol, DataSearchResultScrollPolicy scrollPolicy) {
+        if (matches.isEmpty()) return null;
 
-                switch (scrollPolicy) {
-                    case HORIZONTAL: {
-                        if (rowIndex > fromRowIndex || (rowIndex == fromRowIndex && columnIndex >= fromColumnIndex)) {
-                            return match;
-                        }
-                        break;
-                    }
+        for (DataSearchResultMatch match : matches) {
+            int row = match.getRowIndex();
+            int col = match.getColumnIndex();
 
-                    case VERTICAL: {
-                        if (columnIndex > fromColumnIndex || (columnIndex == fromColumnIndex && rowIndex >= fromRowIndex)) {
-                            return match;
-                        }
-                        break;
-                    }
-                }
-
+            if (scrollPolicy == HORIZONTAL) {
+                if (row > fromRow || (row == fromRow && col >= fromCol)) return match;
+            } else if (scrollPolicy == VERTICAL) {
+                if (col > fromCol || (col == fromCol && row >= fromRow)) return match;
             }
-            //reached end of the matches without resolving selection
-            // scroll to the beginning
-            return Lists.firstElement(matches);
         }
-        
-        return null;
+        //reached end of the matches without resolving selection scroll to the beginning
+        return Lists.firstElement(matches);
     }
     
-    private DataSearchResultMatch getPrevious(int fromRowIndex, int fromColumnIndex, DataSearchResultScrollPolicy scrollPolicy) {
-        if (matches.size() > 0) {
-            for (DataSearchResultMatch match : ReversedList.get(matches)) {
-                int rowIndex = match.getRowIndex();
-                int columnIndex = match.getColumnIndex();
-                switch (scrollPolicy) {
-                    case HORIZONTAL: {
-                        if (rowIndex < fromRowIndex || (rowIndex == fromRowIndex && columnIndex <= fromColumnIndex)) {
-                            return match;
-                        }
-                        break;
-                    }
+    private DataSearchResultMatch previous(int fromRow, int fromCol, DataSearchResultScrollPolicy scrollPolicy) {
+        if (matches.isEmpty()) return null;
 
-                    case VERTICAL: {
-                        if (columnIndex < fromColumnIndex || (columnIndex == fromColumnIndex && rowIndex <= fromRowIndex)) {
-                            return match;
-                        }
-                        break;
-                    }
-                }
+        for (DataSearchResultMatch match : Lists.reversed(matches)) {
+            int row = match.getRowIndex();
+            int col = match.getColumnIndex();
+
+            if (scrollPolicy == HORIZONTAL) {
+                if (row < fromRow || (row == fromRow && col <= fromCol)) return match;
+            } else if (scrollPolicy == VERTICAL) {
+                if (col < fromCol || (col == fromCol && row <= fromRow)) return match;
             }
-            //reached beginning of the matches actions without resolving selection
-            // scroll to the end
-            return Lists.lastElement(matches);
         }
-        
-        return null;
-    }    
+        //reached beginning of the matches actions without resolving selection scroll to the end
+        return Lists.lastElement(matches);
+    }
 
 
     @Override

@@ -27,6 +27,7 @@ import java.awt.event.KeyEvent;
 import java.util.List;
 
 import static com.dci.intellij.dbn.common.dispose.Disposer.replace;
+import static com.dci.intellij.dbn.common.util.Strings.nonEmptyStrings;
 
 @Getter
 @Setter
@@ -136,11 +137,11 @@ public class ValueListPopupProvider implements TextFieldPopupProvider{
     }
 
     private List<String> getValues() {
-        return valuesProvider.getValues();
+        return nonEmptyStrings(valuesProvider.getValues());
     }
 
     private List<String> getSecondaryValues() {
-        return valuesProvider.getSecondaryValues();
+        return nonEmptyStrings(valuesProvider.getSecondaryValues());
     }
 
     @Override
