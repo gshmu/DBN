@@ -1,8 +1,8 @@
 package com.dci.intellij.dbn.object.dependency.ui;
 
-import com.dci.intellij.dbn.common.dispose.AlreadyDisposedException;
 import com.dci.intellij.dbn.common.dispose.Disposer;
 import com.dci.intellij.dbn.common.dispose.StatefulDisposableBase;
+import com.dci.intellij.dbn.common.exception.OutdatedContentException;
 import com.dci.intellij.dbn.common.ref.WeakRef;
 import com.dci.intellij.dbn.common.ui.tree.TreeEventType;
 import com.dci.intellij.dbn.common.ui.tree.TreeUtil;
@@ -68,7 +68,7 @@ public class ObjectDependencyTreeModel extends StatefulDisposableBase implements
     @Override
     public Object getChild(Object parent, int index) {
         List<ObjectDependencyTreeNode> children = getChildren(parent);
-        if (children.size() <= index) throw AlreadyDisposedException.INSTANCE;
+        if (children.size() <= index) throw new OutdatedContentException(parent);
         return children.get(index);
     }
 

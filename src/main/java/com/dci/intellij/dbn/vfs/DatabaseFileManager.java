@@ -5,8 +5,8 @@ import com.dci.intellij.dbn.common.component.Components;
 import com.dci.intellij.dbn.common.component.PersistentState;
 import com.dci.intellij.dbn.common.component.ProjectComponentBase;
 import com.dci.intellij.dbn.common.component.ProjectManagerListener;
-import com.dci.intellij.dbn.common.dispose.AlreadyDisposedException;
 import com.dci.intellij.dbn.common.event.ProjectEvents;
+import com.dci.intellij.dbn.common.exception.ProcessDeferredException;
 import com.dci.intellij.dbn.common.thread.Dispatch;
 import com.dci.intellij.dbn.common.thread.Progress;
 import com.dci.intellij.dbn.common.util.Lists;
@@ -120,50 +120,37 @@ public class DatabaseFileManager extends ProjectComponentBase implements Persist
 
             @Override
             public void beforeFileClosed(@NotNull FileEditorManager editorManager, @NotNull VirtualFile file) {
-                if (file instanceof DBEditableObjectVirtualFile) {
-                    DBEditableObjectVirtualFile databaseFile = (DBEditableObjectVirtualFile) file;
-                    if (databaseFile.isModified()) {
-                        DBSchemaObject object = databaseFile.getObject();
-                        String objectDescription = object.getQualifiedNameWithType();
-                        Project project = getProject();
+                if (!(file instanceof DBEditableObjectVirtualFile)) return;
 
-                        CodeEditorConfirmationSettings confirmationSettings = CodeEditorSettings.getInstance(project).getConfirmationSettings();
-                        confirmationSettings.getExitOnChanges().resolve(
-                                list(objectDescription),
-                                option -> {
-                                    SourceCodeManager sourceCodeManager = SourceCodeManager.getInstance(project);
+                DBEditableObjectVirtualFile databaseFile = (DBEditableObjectVirtualFile) file;
+                if (!databaseFile.isModified()) return;
 
-                                    switch (option) {
-                                        case CANCEL:
-                                            break;
-                                        case SAVE: {
-                                            sourceCodeManager.saveSourceCodeChanges(
-                                                    databaseFile,
-                                                    () -> closeFile(file));
-                                            break;
-                                        }
+                DBSchemaObject object = databaseFile.getObject();
+                String objectDescription = object.getQualifiedNameWithType();
+                Project project = getProject();
 
-                                        case DISCARD: {
-                                            sourceCodeManager.revertSourceCodeChanges(
-                                                    databaseFile,
-                                                    () -> closeFile(file));
-                                            break;
-                                        }
-                                        case SHOW: {
-                                            List<DBSourceCodeVirtualFile> sourceCodeFiles = databaseFile.getSourceCodeFiles();
-                                            for (DBSourceCodeVirtualFile sourceCodeFile : sourceCodeFiles) {
-                                                if (sourceCodeFile.is(MODIFIED)) {
-                                                    SourceCodeDiffManager diffManager = SourceCodeDiffManager.getInstance(project);
-                                                    diffManager.opedDatabaseDiffWindow(sourceCodeFile);
-                                                }
-                                            }
+                CodeEditorConfirmationSettings confirmationSettings = CodeEditorSettings.getInstance(project).getConfirmationSettings();
+                confirmationSettings.getExitOnChanges().resolve(
+                        list(objectDescription),
+                        option -> {
+                            SourceCodeManager sourceCodeManager = SourceCodeManager.getInstance(project);
+                            switch (option) {
+                                case CANCEL: break;
+                                case SAVE: sourceCodeManager.saveSourceCodeChanges(databaseFile, () -> closeFile(file)); break;
+                                case DISCARD: sourceCodeManager.revertSourceCodeChanges(databaseFile, () -> closeFile(file)); break;
+                                case SHOW: {
+                                    List<DBSourceCodeVirtualFile> sourceCodeFiles = databaseFile.getSourceCodeFiles();
+                                    for (DBSourceCodeVirtualFile sourceCodeFile : sourceCodeFiles) {
+                                        if (sourceCodeFile.is(MODIFIED)) {
+                                            SourceCodeDiffManager diffManager = SourceCodeDiffManager.getInstance(project);
+                                            diffManager.opedDatabaseDiffWindow(sourceCodeFile);
                                         }
                                     }
-                                });
-                        // TODO this prevents the other files from being closed in a "close all.." bulk action
-                        throw AlreadyDisposedException.INSTANCE;
-                    }
-                }
+                                }
+                            }
+                        });
+                // TODO fix - this prevents the other files from being closed in a "close all.." bulk action
+                throw new ProcessDeferredException();
 
             }
         };

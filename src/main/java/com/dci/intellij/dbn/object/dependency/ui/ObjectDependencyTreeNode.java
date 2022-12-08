@@ -50,7 +50,7 @@ public class ObjectDependencyTreeNode extends StatefulDisposableBase implements 
 
     public ObjectDependencyTreeModel getModel() {
         if (model == null && parent == null) {
-            throw AlreadyDisposedException.INSTANCE;
+            throw new AlreadyDisposedException(this);
         }
         return model == null ? getParent().getModel() : model;
     }

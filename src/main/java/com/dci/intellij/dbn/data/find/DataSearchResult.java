@@ -1,6 +1,7 @@
 package com.dci.intellij.dbn.data.find;
 
-import com.dci.intellij.dbn.common.dispose.AlreadyDisposedException;
+import com.dci.intellij.dbn.common.dispose.Disposer;
+import com.dci.intellij.dbn.common.exception.OutdatedContentException;
 import com.dci.intellij.dbn.common.list.ReversedList;
 import com.dci.intellij.dbn.common.util.CollectionUtil;
 import com.dci.intellij.dbn.common.util.Lists;
@@ -46,7 +47,7 @@ public class DataSearchResult implements Disposable {
 
     public void checkTimestamp(Long updateTimestamp) {
         if (this.updateTimestamp != updateTimestamp) {
-            throw AlreadyDisposedException.INSTANCE;
+            throw new OutdatedContentException(this);
         }
     }
 
@@ -193,7 +194,7 @@ public class DataSearchResult implements Disposable {
 
     @Override
     public void dispose() {
-        CollectionUtil.clear(matches);
+        matches = Disposer.replace(matches, Collections.emptyList(), false);
         CollectionUtil.clear(listeners);
         selectedMatch = null;
     }

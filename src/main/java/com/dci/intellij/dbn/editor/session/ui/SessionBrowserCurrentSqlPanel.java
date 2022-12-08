@@ -3,8 +3,8 @@ package com.dci.intellij.dbn.editor.session.ui;
 import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.common.action.ToggleAction;
 import com.dci.intellij.dbn.common.color.Colors;
-import com.dci.intellij.dbn.common.dispose.AlreadyDisposedException;
 import com.dci.intellij.dbn.common.dispose.Failsafe;
+import com.dci.intellij.dbn.common.exception.OutdatedContentException;
 import com.dci.intellij.dbn.common.ref.WeakRef;
 import com.dci.intellij.dbn.common.thread.Background;
 import com.dci.intellij.dbn.common.ui.component.DBNComponent;
@@ -128,7 +128,7 @@ public class SessionBrowserCurrentSqlPanel extends DBNFormBase {
 
     private void checkCancelled(Object sessionId) {
         if (selectedSessionId == null || !selectedSessionId.equals(sessionId)) {
-            throw AlreadyDisposedException.INSTANCE;
+            throw new OutdatedContentException(this);
         }
     }
 
