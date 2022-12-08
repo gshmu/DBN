@@ -14,7 +14,7 @@ import static com.dci.intellij.dbn.common.dispose.Checks.isNotValid;
 public class Failsafe {
     public static @NotNull <T> T nn(@Nullable T object) {
         if (object == null) {
-            throw AlreadyDisposedException.INSTANCE;
+            throw new AlreadyDisposedException(null);
         }
         return object;
     }
@@ -22,7 +22,7 @@ public class Failsafe {
     @NotNull
     public static <T> T nd(@Nullable T object) {
         if (isNotValid(object)) {
-            throw AlreadyDisposedException.INSTANCE;
+            throw new AlreadyDisposedException(object);
         }
         return object;
     }
@@ -36,7 +36,7 @@ public class Failsafe {
         } catch (Exception e) {
             error(e);
             // DBNE-4876 (????!!)
-            if (e != AlreadyDisposedException.INSTANCE) {
+            if (e.getClass().getName().equals(AlreadyDisposedException.class.getName())) {
                 throw e;
             }
             return defaultValue;
@@ -53,7 +53,7 @@ public class Failsafe {
         } catch (Exception e) {
             error(e);
             // DBNE-4876 (????!!)
-            if (e != AlreadyDisposedException.INSTANCE) {
+            if (e.getClass().getName().equals(AlreadyDisposedException.class.getName())) {
                 throw e;
             }
         }

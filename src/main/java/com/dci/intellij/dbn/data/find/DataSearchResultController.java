@@ -1,6 +1,6 @@
 package com.dci.intellij.dbn.data.find;
 
-import com.dci.intellij.dbn.common.dispose.AlreadyDisposedException;
+import com.dci.intellij.dbn.common.exception.OutdatedContentException;
 import com.dci.intellij.dbn.common.ref.WeakRef;
 import com.dci.intellij.dbn.common.thread.Background;
 import com.dci.intellij.dbn.common.thread.Dispatch;
@@ -115,7 +115,7 @@ public class DataSearchResultController {
                 }
                 searchResult.setMatches(matches);
             } catch (ConcurrentModificationException e){
-                throw AlreadyDisposedException.INSTANCE;
+                throw new OutdatedContentException(this);
             } finally {
                 searchResult.stopUpdating();
             }

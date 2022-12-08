@@ -3,7 +3,7 @@ package com.dci.intellij.dbn.code.common.style.formatting;
 import com.dci.intellij.dbn.code.common.style.DBLCodeStyleManager;
 import com.dci.intellij.dbn.code.common.style.options.DBLCodeStyleSettings;
 import com.dci.intellij.dbn.common.compatibility.Compatibility;
-import com.dci.intellij.dbn.common.dispose.AlreadyDisposedException;
+import com.dci.intellij.dbn.common.exception.OutdatedContentException;
 import com.dci.intellij.dbn.common.util.Documents;
 import com.dci.intellij.dbn.common.util.Traces;
 import com.dci.intellij.dbn.language.common.DBLanguage;
@@ -34,7 +34,7 @@ public class DBLFormattingModelBuilder implements FormattingModelBuilder {
         Document document = Documents.getDocument(psiFile);
         if (document != null && document.getTextLength() != psiFile.getTextLength()) {
             // TODO check why this happens (during startup)
-            throw AlreadyDisposedException.INSTANCE;
+            throw new OutdatedContentException(this);
         }
 
 
