@@ -49,7 +49,7 @@ public class DBNTree extends Tree implements DBNComponent {
 
     @Override
     public void setModel(TreeModel treeModel) {
-        treeModel = Disposer.replace(getModel(), treeModel, false);
+        treeModel = Disposer.replace(getModel(), treeModel);
         super.setModel(treeModel);
 
         Disposer.register(this, treeModel);
@@ -89,5 +89,7 @@ public class DBNTree extends Tree implements DBNComponent {
         }
     }
 
-    public void disposeInner(){};
+    public void disposeInner(){
+        clearToggledPaths();
+    };
 }

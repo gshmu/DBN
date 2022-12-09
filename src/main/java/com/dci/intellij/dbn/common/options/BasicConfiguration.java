@@ -134,7 +134,7 @@ public abstract class BasicConfiguration<P extends Configuration, E extends Conf
 
     @Override
     public void disposeUIResources() {
-        editorForm = Disposer.replace(editorForm, null, true);
+        editorForm = Disposer.replace(editorForm, null);
     }
 
     public String getConfigElementName() {

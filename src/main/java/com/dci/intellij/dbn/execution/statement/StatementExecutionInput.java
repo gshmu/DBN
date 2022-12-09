@@ -135,7 +135,7 @@ public class StatementExecutionInput extends LocalExecutionInput {
     }
 
     public void setExecutionVariables(StatementExecutionVariablesBundle executionVariables) {
-        this.executionVariables = replace(this.executionVariables, executionVariables, false);
+        this.executionVariables = replace(this.executionVariables, executionVariables);
     }
 
     public PsiFile createPreviewFile() {

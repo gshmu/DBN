@@ -131,7 +131,7 @@ public class DatabaseSessionBundle extends StatefulDisposableBase implements Dis
 
     @Override
     public void disposeInner() {
-        sessions = replace(sessions, Disposed.list(), false);
+        sessions = replace(sessions, Disposed.list());
         index.clear();
         nullify();
     }

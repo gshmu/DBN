@@ -76,7 +76,7 @@ public class StatementExecutionResultForm extends ExecutionResultFormBase<Statem
             JScrollBar horizontalScrollBar = resultScrollPane.getHorizontalScrollBar();
             int horizontalScrolling = horizontalScrollBar.getValue();
             ResultSetTable<?> newResultSetTable = new ResultSetTable<>(this, executionResult.getTableModel(), true, recordViewInfo);
-            resultTable = Disposer.replace(resultTable, newResultSetTable, false);
+            resultTable = Disposer.replace(resultTable, newResultSetTable);
             resultScrollPane.setViewportView(resultTable);
             resultTable.initTableGutter();
             resultTable.setName(getExecutionResult().getName());

@@ -22,12 +22,12 @@ public final class Diagnostics {
         return developerMode && miscellaneous.bulkActionsEnabled;
     }
 
-    public static boolean isAlternativeParserEnabled() {
-        return false; //developerMode && miscellaneous.alternativeParserEnabled;
-    }
-
     public static boolean isFailsafeLoggingEnabled() {
         return developerMode && miscellaneous.failsafeLoggingEnabled;
+    }
+
+    public static boolean isBackgroundDisposerDisabled() {
+        return developerMode && miscellaneous.backgroundDisposerDisabled;
     }
 
     public static boolean isDatabaseAccessDebug() {
@@ -130,6 +130,7 @@ public final class Diagnostics {
         private boolean dialogSizingReset = false;
         private boolean bulkActionsEnabled = false;
         private boolean failsafeLoggingEnabled = false;
+        private boolean backgroundDisposerDisabled = false;
 
         @Override
         public void readState(Element element) {
@@ -137,7 +138,8 @@ public final class Diagnostics {
             if (miscellaneous != null) {
                 dialogSizingReset = booleanAttribute(miscellaneous, "dialog-sizing-reset", dialogSizingReset);
                 bulkActionsEnabled = booleanAttribute(miscellaneous, "bulk-actions-enabled", bulkActionsEnabled);
-                bulkActionsEnabled = booleanAttribute(miscellaneous, "failsafe-logging-enabled", failsafeLoggingEnabled);
+                failsafeLoggingEnabled = booleanAttribute(miscellaneous, "failsafe-logging-enabled", failsafeLoggingEnabled);
+                backgroundDisposerDisabled = booleanAttribute(miscellaneous, "background-disposer-disabled", backgroundDisposerDisabled);
             }
         }
 
@@ -148,6 +150,7 @@ public final class Diagnostics {
             setBooleanAttribute(miscellaneous, "dialog-sizing-reset", dialogSizingReset);
             setBooleanAttribute(miscellaneous, "bulk-actions-enabled", bulkActionsEnabled);
             setBooleanAttribute(miscellaneous, "failsafe-logging-enabled", failsafeLoggingEnabled);
+            setBooleanAttribute(miscellaneous, "background-disposer-disabled", backgroundDisposerDisabled);
         }
     }
 

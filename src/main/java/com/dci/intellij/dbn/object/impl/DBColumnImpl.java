@@ -136,7 +136,7 @@ public class DBColumnImpl extends DBObjectImpl<DBColumnMetadata> implements DBCo
 
     @Override
     public DBDataset getDataset() {
-        return (DBDataset) getParentObject();
+        return getParentObject();
     }
 
     @Override

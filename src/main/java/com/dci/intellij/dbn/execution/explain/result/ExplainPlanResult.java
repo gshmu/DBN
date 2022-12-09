@@ -144,7 +144,7 @@ public class ExplainPlanResult extends ExecutionResultBase<ExplainPlanResultForm
      *******************************************************  */
     @Override
     public void disposeInner() {
-        root = replace(root, null, false);
+        root = replace(root, null);
         super.disposeInner();
     }
 }

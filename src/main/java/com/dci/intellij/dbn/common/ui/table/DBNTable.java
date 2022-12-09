@@ -120,7 +120,7 @@ public abstract class DBNTable<T extends DBNTableModel> extends JTable implement
 
     @Override
     public void setModel(@NotNull TableModel dataModel) {
-        dataModel = replace(super.getModel(), dataModel, false);
+        dataModel = replace(super.getModel(), dataModel);
         super.setModel(dataModel);
     }
 
@@ -445,7 +445,7 @@ public abstract class DBNTable<T extends DBNTableModel> extends JTable implement
     public void dispose(){
         if (!disposed) {
             disposed = true;
-            Disposer.dispose(super.getModel(), false);
+            Disposer.dispose(super.getModel());
             listenerList = new EventListenerList();
             columnModel = new DefaultTableColumnModel();
             selectionModel = new DefaultListSelectionModel();

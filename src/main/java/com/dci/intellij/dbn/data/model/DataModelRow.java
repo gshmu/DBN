@@ -1,6 +1,7 @@
 package com.dci.intellij.dbn.data.model;
 
 import com.dci.intellij.dbn.common.dispose.StatefulDisposable;
+import com.dci.intellij.dbn.common.dispose.UnlistedDisposable;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -9,7 +10,7 @@ import java.util.List;
 public interface DataModelRow<
         M extends DataModel<? extends DataModelRow<M, C>, C>,
         C extends DataModelCell<? extends DataModelRow<M, C>, M>>
-        extends StatefulDisposable {
+        extends StatefulDisposable, UnlistedDisposable {
 
     List<C> getCells();
 

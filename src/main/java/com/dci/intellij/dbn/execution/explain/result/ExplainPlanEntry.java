@@ -91,7 +91,7 @@ public class ExplainPlanEntry extends StatefulDisposableBase {
 
     @Override
     public void disposeInner() {
-        children = Disposer.replace(children, Disposed.list(), false);
+        children = Disposer.replace(children, Disposed.list());
         nullify();
     }
 }

@@ -26,6 +26,7 @@ public class DiagnosticSettingsForm extends DBNFormBase {
     private JCheckBox dialogSizingCheckbox;
     private JCheckBox bulkActionsCheckbox;
     private JCheckBox failsafeLoggingCheckBox;
+    private JCheckBox backgroundDisposerCheckBox;
     private JPanel hintPanel;
     private JLabel acknowledgementLabel;
 
@@ -56,6 +57,7 @@ public class DiagnosticSettingsForm extends DBNFormBase {
         dialogSizingCheckbox.setSelected(miscellaneous.isDialogSizingReset());
         bulkActionsCheckbox.setSelected(miscellaneous.isBulkActionsEnabled());
         failsafeLoggingCheckBox.setSelected(miscellaneous.isFailsafeLoggingEnabled());
+        backgroundDisposerCheckBox.setSelected(miscellaneous.isBackgroundDisposerDisabled());
 
         updateFields(null);
 
@@ -71,6 +73,7 @@ public class DiagnosticSettingsForm extends DBNFormBase {
         dialogSizingCheckbox.setEnabled(developerMode);
         bulkActionsCheckbox.setEnabled(developerMode);
         failsafeLoggingCheckBox.setEnabled(developerMode);
+        backgroundDisposerCheckBox.setEnabled(developerMode);
 
         boolean databaseLaggingEnabled = developerMode && databaseLaggingCheckBox.isSelected();
         connectivityLagTextField.setEnabled(databaseLaggingEnabled);
@@ -100,6 +103,7 @@ public class DiagnosticSettingsForm extends DBNFormBase {
         miscellaneous.setDialogSizingReset(dialogSizingCheckbox.isSelected());
         miscellaneous.setBulkActionsEnabled(bulkActionsCheckbox.isSelected());
         miscellaneous.setFailsafeLoggingEnabled(failsafeLoggingCheckBox.isSelected());
+        miscellaneous.setBackgroundDisposerDisabled(backgroundDisposerCheckBox.isSelected());
 
     }
 

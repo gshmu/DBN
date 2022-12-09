@@ -3,7 +3,7 @@ package com.dci.intellij.dbn.common.dispose;
 import com.dci.intellij.dbn.common.util.Unsafe;
 import com.intellij.openapi.Disposable;
 import lombok.Getter;
-import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 public abstract class StatefulDisposableBase implements StatefulDisposable {
     @Getter
@@ -12,7 +12,7 @@ public abstract class StatefulDisposableBase implements StatefulDisposable {
     public StatefulDisposableBase() {
     }
 
-    public StatefulDisposableBase(@NotNull Disposable parent) {
+    public StatefulDisposableBase(@Nullable Disposable parent) {
         if (Checks.isValid(parent)) {
             Disposer.register(parent, this);
         }

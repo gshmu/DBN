@@ -145,7 +145,7 @@ public class DatasetEditorForm extends DBNFormBase implements SearchableDataComp
                 datasetEditorTable.initTableGutter();
                 datasetEditorTable.updateBackground(false);
 
-                Disposer.dispose(oldEditorTable, true);
+                Disposer.dispose(oldEditorTable);
             });
         }
     }

@@ -907,8 +907,8 @@ public class DBObjectBundleImpl extends BrowserTreeNodeBase implements DBObjectB
 
     @Override
     public void disposeInner() {
-        Disposer.dispose(objectLists, false);
-        Disposer.dispose(dataTypes, false);
+        Disposer.dispose(objectLists);
+        Disposer.dispose(dataTypes);
         nullify();
     }
 }

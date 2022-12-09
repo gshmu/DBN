@@ -1,10 +1,12 @@
 package com.dci.intellij.dbn.connection.jdbc;
 
+import com.dci.intellij.dbn.common.event.ProjectEvents;
 import com.dci.intellij.dbn.common.exception.Exceptions;
 import com.dci.intellij.dbn.common.notification.NotificationGroup;
 import com.dci.intellij.dbn.common.pool.ObjectPoolBase;
 import com.dci.intellij.dbn.common.thread.Background;
 import com.dci.intellij.dbn.connection.*;
+import com.dci.intellij.dbn.connection.config.ConnectionConfigListener;
 import lombok.extern.slf4j.Slf4j;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -21,10 +23,26 @@ public class DBNConnectionPool extends ObjectPoolBase<DBNConnection, SQLExceptio
     private final String identifier;
     private final ConnectionRef connection;
     private final AtomicLong lastAccess = new AtomicLong();
+    private int maxSize;
 
     public DBNConnectionPool(ConnectionHandler connection) {
+        super(connection);
         this.connection = ConnectionRef.of(connection);
         this.identifier = connection.getName();
+        this.maxSize = loadMaxPoolSize();
+
+        ProjectEvents.subscribe(connection.getProject(), this,
+                ConnectionConfigListener.TOPIC,
+                ConnectionConfigListener.whenChanged(id -> {
+                    if (id == connection.getConnectionId()) {
+                        maxSize = loadMaxPoolSize();
+                    }
+                }));
+
+    }
+
+    private int loadMaxPoolSize() {
+        return getConnection().getSettings().getDetailSettings().getMaxConnectionPoolSize();
     }
 
     @NotNull
@@ -77,7 +95,7 @@ public class DBNConnectionPool extends ObjectPoolBase<DBNConnection, SQLExceptio
 
     @Override
     public int maxSize() {
-        return getConnection().getSettings().getDetailSettings().getMaxConnectionPoolSize();
+        return maxSize;
     }
 
     @Override

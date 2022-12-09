@@ -66,8 +66,8 @@ public class BasicDataModelHeader<T extends ColumnInfo> extends StatefulDisposab
      *******************************************************  */
     @Override
     public void disposeInner() {
-        columnInfos = replace(columnInfos, Disposed.list(), false);
-        nameIndex = replace(nameIndex, Disposed.map(), false);
+        columnInfos = replace(columnInfos, Disposed.list());
+        nameIndex = replace(nameIndex, Disposed.map());
         nullify();
     }
 }

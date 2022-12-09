@@ -87,7 +87,7 @@ public class BrowserToolWindowForm extends DBNFormBase {
         browserPanel.add(this.browserForm.getComponent(), BorderLayout.CENTER);
         UserInterface.repaint(browserPanel);
 
-        Disposer.dispose(oldBrowserForm, true);
+        Disposer.dispose(oldBrowserForm);
     }
 
     public DatabaseBrowserTree getBrowserTree(ConnectionId connectionId) {
@@ -149,7 +149,7 @@ public class BrowserToolWindowForm extends DBNFormBase {
 
     @Override
     protected void disposeInner() {
-        browserForm = Disposer.replace(browserForm, null, true);
+        browserForm = Disposer.replace(browserForm, null);
         super.disposeInner();
     }
 }
