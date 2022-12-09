@@ -1,9 +1,6 @@
 package com.dci.intellij.dbn.object.dependency.ui;
 
-import com.dci.intellij.dbn.common.dispose.AlreadyDisposedException;
-import com.dci.intellij.dbn.common.dispose.Disposed;
-import com.dci.intellij.dbn.common.dispose.StatefulDisposable;
-import com.dci.intellij.dbn.common.dispose.StatefulDisposableBase;
+import com.dci.intellij.dbn.common.dispose.*;
 import com.dci.intellij.dbn.common.thread.Background;
 import com.dci.intellij.dbn.object.common.DBObject;
 import com.dci.intellij.dbn.object.common.DBSchemaObject;
@@ -18,7 +15,7 @@ import java.util.List;
 import static com.dci.intellij.dbn.common.dispose.Disposer.replace;
 import static java.util.Collections.emptyList;
 
-public class ObjectDependencyTreeNode extends StatefulDisposableBase implements StatefulDisposable {
+public class ObjectDependencyTreeNode extends StatefulDisposableBase implements StatefulDisposable, UnlistedDisposable {
     private final DBObjectRef<DBObject> object;
 
     private List<ObjectDependencyTreeNode> dependencies;
