@@ -18,6 +18,7 @@ public class DBNConnectionCache extends ObjectCacheBase<SessionId, DBNConnection
     private final ConnectionRef connection;
 
     public DBNConnectionCache(ConnectionHandler connection) {
+        super(connection);
         this.connection = ConnectionRef.of(connection);
     }
 

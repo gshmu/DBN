@@ -49,6 +49,6 @@ public class DBProgramDebuggerConfigurable implements Configurable {
 
     @Override
     public void disposeUIResources() {
-        component = replace(component, null, true);
+        component = replace(component, null);
     }
 }

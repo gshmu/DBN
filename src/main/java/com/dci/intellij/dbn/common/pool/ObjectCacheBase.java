@@ -1,7 +1,9 @@
 package com.dci.intellij.dbn.common.pool;
 
 import com.dci.intellij.dbn.common.collections.ConcurrentOptionalValueMap;
+import com.dci.intellij.dbn.common.dispose.StatefulDisposableBase;
 import com.dci.intellij.dbn.common.lookup.Visitor;
+import com.intellij.openapi.Disposable;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -9,8 +11,12 @@ import java.util.Map;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Predicate;
 
-public abstract class ObjectCacheBase<K, O, E extends Throwable> implements ObjectCache<K, O, E> {
+public abstract class ObjectCacheBase<K, O, E extends Throwable> extends StatefulDisposableBase implements ObjectCache<K, O, E> {
     private final Map<K, O> data = new ConcurrentOptionalValueMap<>();
+
+    public ObjectCacheBase(@Nullable Disposable parent) {
+        super(parent);
+    }
 
     @Override
     public O get(K key) {
@@ -25,6 +31,7 @@ public abstract class ObjectCacheBase<K, O, E extends Throwable> implements Obje
     @NotNull
     @Override
     public O ensure(K key) throws E {
+        checkDisposed();
         AtomicReference<Throwable> failure = new AtomicReference<>();
         O object = data.compute(key, (k, o) -> {
             if (check(o)) return whenReused(o);
@@ -77,4 +84,8 @@ public abstract class ObjectCacheBase<K, O, E extends Throwable> implements Obje
     protected abstract boolean check(@Nullable O object);
 
 
+    @Override
+    protected void disposeInner() {
+        data.clear();
+    }
 }

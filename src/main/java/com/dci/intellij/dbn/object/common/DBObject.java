@@ -5,6 +5,7 @@ import com.dci.intellij.dbn.code.common.lookup.LookupItemBuilderProvider;
 import com.dci.intellij.dbn.common.Referenceable;
 import com.dci.intellij.dbn.common.content.DynamicContentElement;
 import com.dci.intellij.dbn.common.content.DynamicContentType;
+import com.dci.intellij.dbn.common.dispose.UnlistedDisposable;
 import com.dci.intellij.dbn.common.environment.EnvironmentTypeProvider;
 import com.dci.intellij.dbn.common.path.Node;
 import com.dci.intellij.dbn.common.property.PropertyHolder;
@@ -40,7 +41,8 @@ public interface DBObject extends
         LookupItemBuilderProvider,
         Referenceable,
         EnvironmentTypeProvider,
-        Presentable {
+        Presentable,
+        UnlistedDisposable {
 
     @NotNull
     @Override

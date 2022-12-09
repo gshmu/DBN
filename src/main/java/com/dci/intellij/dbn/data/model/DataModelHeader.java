@@ -1,11 +1,12 @@
 package com.dci.intellij.dbn.data.model;
 
 import com.dci.intellij.dbn.common.dispose.StatefulDisposable;
+import com.dci.intellij.dbn.common.dispose.UnlistedDisposable;
 import com.dci.intellij.dbn.data.type.DBDataType;
 
 import java.util.List;
 
-public interface DataModelHeader<T extends ColumnInfo> extends StatefulDisposable {
+public interface DataModelHeader<T extends ColumnInfo> extends StatefulDisposable, UnlistedDisposable {
     List<T> getColumnInfos();
 
     T getColumnInfo(int index);

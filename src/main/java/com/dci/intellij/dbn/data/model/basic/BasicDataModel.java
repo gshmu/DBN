@@ -101,7 +101,7 @@ public class BasicDataModel<
     }
 
     public void setHeader(@NotNull DataModelHeader<? extends ColumnInfo> header) {
-        this.header = Disposer.replace(this.header, header, false);
+        this.header = Disposer.replace(this.header, header);
         Disposer.register(this, this.header);
     }
 
@@ -186,7 +186,7 @@ public class BasicDataModel<
         updateRowIndexes(index);
         getState().setRowCount(getRowCount());
 
-        Disposer.dispose(row, false);
+        Disposer.dispose(row);
     }
 
     @Nullable
@@ -354,7 +354,7 @@ public class BasicDataModel<
      *******************************************************  */
     @Override
     public void disposeInner() {
-        rows = Disposer.replace(rows, Disposed.list(), false);
+        rows = Disposer.replace(rows, Disposed.list());
         nullify();
     }
 

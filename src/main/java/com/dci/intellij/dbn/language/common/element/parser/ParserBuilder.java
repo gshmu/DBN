@@ -20,27 +20,20 @@ public final class ParserBuilder {
     private final ParseErrorMonitor errorMonitor;
     private final Cache cache = new Cache();
 
-    @Deprecated
-    private final OldTokenPairMonitor tokenPairMonitorOld;
-
-
     public ParserBuilder(PsiBuilder builder, DBLanguageDialect languageDialect) {
         this.builder = builder;
         this.builder.setDebugMode(false);
         this.tokenPairMonitor = new TokenPairMonitor(this, languageDialect);
         this.errorMonitor = new ParseErrorMonitor(this);
-
-        this.tokenPairMonitorOld = new OldTokenPairMonitor(this, languageDialect);
     }
 
     public ASTNode getTreeBuilt() {
-        tokenPairMonitorOld.cleanup();
+        tokenPairMonitor.cleanup();
         return builder.getTreeBuilt();
     }
 
-    @Deprecated
-    public OldTokenPairMonitor getTokenPairMonitor() {
-        return tokenPairMonitorOld;
+    public TokenPairMonitor getTokenPairMonitor() {
+        return tokenPairMonitor;
     }
 
     public Marker markAndAdvance() {
@@ -50,7 +43,7 @@ public final class ParserBuilder {
     }
 
     public void advance() {
-        tokenPairMonitorOld.acknowledge(true);
+        tokenPairMonitor.acknowledge(true);
         advanceInternally();
     }
 
@@ -138,7 +131,6 @@ public final class ParserBuilder {
 
     public Marker mark(ParserNode node){
         tokenPairMonitor.consumeBeginTokens(node);
-        tokenPairMonitorOld.consumeBeginTokens(node);
         return builder.mark();
     }
 
@@ -154,8 +146,7 @@ public final class ParserBuilder {
         if (marker != null) {
             marker.rollbackTo();
             errorMonitor.reset();
-            tokenPairMonitor.reset();
-            tokenPairMonitorOld.rollback();
+            tokenPairMonitor.rollback();
             cache.reset();
         }
     }
@@ -166,9 +157,8 @@ public final class ParserBuilder {
 
     public void markerDone(Marker marker, ElementType elementType, @Nullable ParserNode node) {
         if (marker != null) {
-            tokenPairMonitorOld.consumeEndTokens(node);
-            marker.done((IElementType) elementType);
             tokenPairMonitor.consumeEndTokens(node);
+            marker.done((IElementType) elementType);
         }
     }
 

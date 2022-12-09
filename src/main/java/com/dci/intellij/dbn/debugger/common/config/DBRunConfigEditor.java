@@ -34,7 +34,7 @@ public abstract class DBRunConfigEditor<T extends DBRunConfig, F extends DBProgr
 
     @Override
     protected void disposeEditor() {
-        configurationEditorForm = Disposer.replace(configurationEditorForm, null, true);
+        configurationEditorForm = Disposer.replace(configurationEditorForm, null);
     }
 
     @Override

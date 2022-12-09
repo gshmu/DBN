@@ -275,7 +275,7 @@ public class DBObjectRef<T extends DBObject> implements Comparable<DBObjectRef<?
             DBObjectRef parentRef = (DBObjectRef) parent;
             return parentRef.getConnectionId();
         }
-        T object = get();
+        T object = getObject();
         return object == null ? null : object.getConnectionId();
     }
 

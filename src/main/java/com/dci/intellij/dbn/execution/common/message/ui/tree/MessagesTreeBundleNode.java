@@ -29,7 +29,7 @@ public abstract class MessagesTreeBundleNode<P extends MessagesTreeNode, C exten
     }
 
     protected void clearChildren() {
-        children = replace(children, CollectionUtil.createConcurrentList(), false);
+        children = replace(children, CollectionUtil.createConcurrentList());
     }
 
     @Override
@@ -108,7 +108,7 @@ public abstract class MessagesTreeBundleNode<P extends MessagesTreeNode, C exten
      *********************************************************/
     @Override
     public void disposeInner() {
-        children = replace(children, Disposed.list(), false);
+        children = replace(children, Disposed.list());
         nullify();
     }
 

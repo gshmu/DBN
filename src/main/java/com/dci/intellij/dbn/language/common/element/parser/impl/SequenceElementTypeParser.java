@@ -7,11 +7,7 @@ import com.dci.intellij.dbn.language.common.element.impl.ElementTypeRef;
 import com.dci.intellij.dbn.language.common.element.impl.IdentifierElementType;
 import com.dci.intellij.dbn.language.common.element.impl.IterationElementType;
 import com.dci.intellij.dbn.language.common.element.impl.SequenceElementType;
-import com.dci.intellij.dbn.language.common.element.parser.ElementTypeParser;
-import com.dci.intellij.dbn.language.common.element.parser.ParseResult;
-import com.dci.intellij.dbn.language.common.element.parser.ParseResultType;
-import com.dci.intellij.dbn.language.common.element.parser.ParserBuilder;
-import com.dci.intellij.dbn.language.common.element.parser.ParserContext;
+import com.dci.intellij.dbn.language.common.element.parser.*;
 import com.dci.intellij.dbn.language.common.element.path.LanguageNode;
 import com.dci.intellij.dbn.language.common.element.path.ParserNode;
 import com.dci.intellij.dbn.language.common.element.util.ElementTypeAttribute;
@@ -29,8 +25,6 @@ public class SequenceElementTypeParser<ET extends SequenceElementType> extends E
 
     @Override
     public ParseResult parse(ParserNode parentNode, ParserContext context) throws ParseException {
-        if (context.isAlternative()) return parseNew(parentNode, context);
-
         ParserBuilder builder = context.getBuilder();
         ParserNode node = stepIn(parentNode, context);
 
@@ -109,21 +103,6 @@ public class SequenceElementTypeParser<ET extends SequenceElementType> extends E
         }
 
         return stepOut(node, context, NO_MATCH, matchedTokens);
-    }
-
-    ParseResult parseNew(ParserNode parentNode, ParserContext context) throws ParseException {
-        ParserBuilder builder = context.getBuilder();
-        ParserNode node = stepIn(parentNode, context);
-
-        ElementTypeRef element = elementType.getFirstChild();
-        while (element != null) {
-
-
-            element = element.getNext();
-        }
-
-
-        return ParseResult.noMatch(); // TODO
     }
 
     @Deprecated // ambiguous

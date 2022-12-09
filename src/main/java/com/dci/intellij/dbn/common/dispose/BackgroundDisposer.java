@@ -5,6 +5,7 @@ import com.dci.intellij.dbn.common.event.ApplicationEvents;
 import com.dci.intellij.dbn.common.thread.Background;
 import com.dci.intellij.dbn.common.thread.ThreadMonitor;
 import com.dci.intellij.dbn.common.thread.ThreadProperty;
+import com.dci.intellij.dbn.diagnostics.Diagnostics;
 import com.intellij.ide.AppLifecycleListener;
 import com.intellij.openapi.application.ApplicationListener;
 import com.intellij.openapi.application.ApplicationManager;
@@ -47,7 +48,7 @@ public final class BackgroundDisposer {
     }
 
     public static void queue(Runnable runnable) {
-        if (isDisposerProcess()) {
+        if (isDisposerProcess() || Diagnostics.isBackgroundDisposerDisabled()) {
             runnable.run();
         } else {
             INSTANCE.push(runnable);

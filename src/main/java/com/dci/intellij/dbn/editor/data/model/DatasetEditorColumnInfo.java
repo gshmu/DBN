@@ -25,7 +25,7 @@ import static com.dci.intellij.dbn.common.util.Commons.nvl;
 @Getter
 @Setter
 @EqualsAndHashCode(callSuper = true)
-public class DatasetEditorColumnInfo extends ResultSetColumnInfo {
+public class DatasetEditorColumnInfo extends ResultSetColumnInfo  {
     private final boolean primaryKey;
     private final boolean foreignKey;
     private final boolean identity;

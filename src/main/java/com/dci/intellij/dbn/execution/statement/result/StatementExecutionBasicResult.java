@@ -136,7 +136,7 @@ public class StatementExecutionBasicResult extends ExecutionResultBase<Statement
 
     @Override
     public void clearExecutionMessage() {
-        executionMessage = replace(executionMessage, null, false);
+        executionMessage = replace(executionMessage, null);
     }
 
     @Override

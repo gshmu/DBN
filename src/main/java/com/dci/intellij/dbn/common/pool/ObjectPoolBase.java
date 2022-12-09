@@ -4,7 +4,9 @@ package com.dci.intellij.dbn.common.pool;
 import com.dci.intellij.dbn.common.dispose.Disposer;
 import com.dci.intellij.dbn.common.dispose.StatefulDisposableBase;
 import com.dci.intellij.dbn.common.lookup.Visitor;
+import com.intellij.openapi.Disposable;
 import lombok.extern.slf4j.Slf4j;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 import java.util.concurrent.BlockingQueue;
@@ -22,6 +24,10 @@ public abstract class ObjectPoolBase<O, E extends Throwable> extends StatefulDis
     private final List<O> objects = new CopyOnWriteArrayList<>();
     private final BlockingQueue<O> available = new LinkedBlockingQueue<>();
     private final ObjectPoolCounters counters = new ObjectPoolCounters();
+
+    public ObjectPoolBase(@Nullable Disposable parent) {
+        super(parent);
+    }
 
     @Override
     public final O acquire(long timeout, TimeUnit timeUnit) throws E {

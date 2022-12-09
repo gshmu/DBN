@@ -200,7 +200,7 @@ public class MethodExecutionHistory implements PersistentStateElement, Connectio
 
     @Override
     public void dispose() {
-        executionInputs = replace(executionInputs, Disposed.list(), false);
+        executionInputs = replace(executionInputs, Disposed.list());
     }
 
 

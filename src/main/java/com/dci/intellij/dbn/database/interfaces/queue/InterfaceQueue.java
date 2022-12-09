@@ -31,7 +31,6 @@ public class InterfaceQueue extends StatefulDisposableBase implements DatabaseIn
     private final Consumer<InterfaceTask<?>> consumer;
     private final InterfaceCounters counters = new InterfaceCounters();
     private final ConnectionRef connection;
-    private volatile boolean stopped;
     private volatile Thread monitor;
 
 
@@ -40,6 +39,7 @@ public class InterfaceQueue extends StatefulDisposableBase implements DatabaseIn
     }
 
     InterfaceQueue(@Nullable ConnectionHandler connection, Consumer<InterfaceTask<?>> consumer) {
+        super(connection);
         this.connection = ConnectionRef.of(connection);
         this.consumer = consumer == null ? new InterfaceQueueConsumer(this) : consumer;
         this.counters.running().addListener(value -> warnTaskLimits());
@@ -75,7 +75,7 @@ public class InterfaceQueue extends StatefulDisposableBase implements DatabaseIn
 
     @Override
     public int maxActiveTasks() {
-        if (connection == null) return 10;
+        if (connection == null || isDisposed()) return 10;
         return getConnection().getSettings().getDetailSettings().getMaxConnectionPoolSize();
     }
 
@@ -116,7 +116,7 @@ public class InterfaceQueue extends StatefulDisposableBase implements DatabaseIn
     private void monitorQueue() {
         monitor = Thread.currentThread();
 
-        while (!stopped) {
+        while (!isDisposed()) {
             checkDisposed();
             parkMonitor();
 
@@ -159,8 +159,10 @@ public class InterfaceQueue extends StatefulDisposableBase implements DatabaseIn
 
     @Override
     protected void disposeInner() {
-        stopped = true;
-        queue.clear();
+        while(queue.peek() != null) {
+            InterfaceTask<?> task = queue.remove();
+            task.changeStatus(CANCELLED);
+        }
         counters.queued().reset();
     }
 

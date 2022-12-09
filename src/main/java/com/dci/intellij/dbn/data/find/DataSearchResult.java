@@ -170,7 +170,7 @@ public class DataSearchResult implements Disposable {
 
     @Override
     public void dispose() {
-        matches = Disposer.replace(matches, Collections.emptyList(), false);
+        matches = Disposer.replace(matches, Collections.emptyList());
         CollectionUtil.clear(listeners);
         selectedMatch = null;
     }

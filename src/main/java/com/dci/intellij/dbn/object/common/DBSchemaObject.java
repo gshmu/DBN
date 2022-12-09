@@ -13,8 +13,14 @@ import java.sql.SQLException;
 import java.util.List;
 
 public interface DBSchemaObject extends DBObject {
+    @NotNull
+    @Override
+    DBSchema getSchema();
+
     List<DBObject> getReferencedObjects();
+
     List<DBObject> getReferencingObjects();
+
     boolean isEditable(DBContentType contentType);
 
     DBLanguage getCodeLanguage(DBContentType contentType);

@@ -179,7 +179,7 @@ public class ValueListPopupProvider implements TextFieldPopupProvider{
 
     @Override
     public void dispose() {
-        popup = replace(popup, null, true);
+        popup = replace(popup, null);
     }
 
     private class ValueSelectAction extends AnAction {

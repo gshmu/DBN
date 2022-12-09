@@ -67,6 +67,10 @@ class InterfaceTask<R> implements TimeAware {
         while (status.isBefore(FINISHED)) {
             LockSupport.parkNanos(this, dispatchThread ? ONE_SECOND : TEN_SECONDS);
 
+            if (is(InterfaceTaskStatus.CANCELLED)) {
+                break;
+            }
+
             if (dispatchThread) {
                 log.error("Interface loads not allowed from event dispatch thread",
                         new RuntimeException("Illegal database interface invocation"));
