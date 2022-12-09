@@ -154,7 +154,7 @@ public class DatasetBasicFilterConditionForm extends ConfigurationEditorForm<Dat
     }
 
     public void setBasicFilterPanel(DatasetBasicFilterForm filterForm) {
-        this.filterForm = Disposer.replace(this.filterForm, filterForm, true);
+        this.filterForm = Disposer.replace(this.filterForm, filterForm);
     }
 
     @Nullable

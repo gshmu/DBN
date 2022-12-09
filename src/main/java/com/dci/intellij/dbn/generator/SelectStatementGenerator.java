@@ -13,6 +13,8 @@ import com.intellij.openapi.project.Project;
 
 import java.util.*;
 
+import static com.dci.intellij.dbn.common.dispose.Failsafe.nd;
+
 public class SelectStatementGenerator extends StatementGenerator {
     private final AliasBundle aliases = new AliasBundle();
     private final List<DBObjectRef<DBObject>> objects;
@@ -80,10 +82,11 @@ public class SelectStatementGenerator extends StatementGenerator {
         statement.append(kco.format("select\n"));
         Iterator<DBColumn> columnIterator = columns.iterator();
         while (columnIterator.hasNext()) {
-            DBColumn column = columnIterator.next();
+            DBColumn column = nd(columnIterator.next());
+            DBDataset dataset = nd(column.getDataset());
             statement.append("    ");
             if (useAliases) {
-                statement.append(aliases.getAlias(column.getDataset()));
+                statement.append(aliases.getAlias(dataset));
                 statement.append(".");
             }
             statement.append(oco.format(column.getQuotedName(false)));

@@ -255,7 +255,7 @@ public class LargeValuePreviewPopup extends DBNFormBase {
             LargeObjectValue largeObjectValue = (LargeObjectValue) userValue;
             largeObjectValue.release();
         }
-        popup = replace(popup, null, true);
+        popup = replace(popup, null);
         super.disposeInner();
     }
 

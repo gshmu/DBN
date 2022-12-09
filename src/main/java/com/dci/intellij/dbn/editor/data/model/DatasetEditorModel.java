@@ -131,7 +131,7 @@ public class DatasetEditorModel
         resultSetAdapter = Disposer.replace(resultSetAdapter,
                 DatabaseFeature.UPDATABLE_RESULT_SETS.isSupported(connection) ?
                     new EditableResultSetAdapter(this, resultSet) :
-                    new ReadonlyResultSetAdapter(this, resultSet), false);
+                    new ReadonlyResultSetAdapter(this, resultSet));
 
         Disposer.register(this, resultSetAdapter);
     }

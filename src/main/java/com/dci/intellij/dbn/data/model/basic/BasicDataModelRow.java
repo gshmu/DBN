@@ -72,7 +72,7 @@ public class BasicDataModelRow<
 
     @Override
     public void disposeInner() {
-        cells = Disposer.replace(cells, Disposed.list(), false);
+        cells = Disposer.replace(cells, Disposed.list());
         nullify();
     }
 

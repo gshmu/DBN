@@ -31,22 +31,22 @@ public final class ConnectionConfigAdapter implements ConnectionConfigListener {
         Safe.run(nameChangeConsumer, c -> c.accept(connectionId));
     }
 
-    public com.dci.intellij.dbn.connection.config.ConnectionConfigAdapter whenSetupChanged(Runnable changesConsumer) {
+    public ConnectionConfigAdapter whenSetupChanged(Runnable changesConsumer) {
         this.changesConsumer = changesConsumer;
         return this;
     }
 
-    public com.dci.intellij.dbn.connection.config.ConnectionConfigAdapter whenRemoved(Consumer<ConnectionId> removeConsumer) {
+    public ConnectionConfigAdapter whenRemoved(Consumer<ConnectionId> removeConsumer) {
         this.removeConsumer = removeConsumer;
         return this;
     }
 
-    public com.dci.intellij.dbn.connection.config.ConnectionConfigAdapter whenChanged(Consumer<ConnectionId> changeConsumer) {
+    public ConnectionConfigAdapter whenChanged(Consumer<ConnectionId> changeConsumer) {
         this.changeConsumer = changeConsumer;
         return this;
     }
 
-    public com.dci.intellij.dbn.connection.config.ConnectionConfigAdapter whenNameChanged(Consumer<ConnectionId> nameChangeConsumer) {
+    public ConnectionConfigAdapter whenNameChanged(Consumer<ConnectionId> nameChangeConsumer) {
         this.nameChangeConsumer = nameChangeConsumer;
         return this;
     }

@@ -20,7 +20,7 @@ public class ObjectPoolBaseTest {
     private final AtomicInteger rejectCounter = new AtomicInteger();
     private final AtomicInteger dropCounter = new AtomicInteger();
 
-    private final ObjectPool<TestObject, Exception> objectPool = new ObjectPoolBase<TestObject, Exception>() {
+    private final ObjectPool<TestObject, Exception> objectPool = new ObjectPoolBase<TestObject, Exception>(null) {
         @Override
         protected TestObject create() {
             TestObject object = new TestObject(counter.incrementAndGet());

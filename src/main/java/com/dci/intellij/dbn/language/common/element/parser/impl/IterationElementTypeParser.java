@@ -7,19 +7,12 @@ import com.dci.intellij.dbn.language.common.element.impl.BasicElementType;
 import com.dci.intellij.dbn.language.common.element.impl.IterationElementType;
 import com.dci.intellij.dbn.language.common.element.impl.SequenceElementType;
 import com.dci.intellij.dbn.language.common.element.impl.TokenElementType;
-import com.dci.intellij.dbn.language.common.element.parser.ElementTypeParser;
-import com.dci.intellij.dbn.language.common.element.parser.ParseResult;
-import com.dci.intellij.dbn.language.common.element.parser.ParseResultType;
-import com.dci.intellij.dbn.language.common.element.parser.ParserBuilder;
-import com.dci.intellij.dbn.language.common.element.parser.ParserContext;
+import com.dci.intellij.dbn.language.common.element.parser.*;
 import com.dci.intellij.dbn.language.common.element.path.ParserNode;
 import com.dci.intellij.dbn.language.common.element.util.ParseBuilderErrorHandler;
 import com.intellij.lang.PsiBuilder;
 
 import java.util.Set;
-
-import static com.dci.intellij.dbn.common.util.Commons.nvl;
-import static com.dci.intellij.dbn.language.common.element.parser.ParseResultType.*;
 
 public class IterationElementTypeParser extends ElementTypeParser<IterationElementType> {
     public IterationElementTypeParser(IterationElementType elementType) {
@@ -28,8 +21,6 @@ public class IterationElementTypeParser extends ElementTypeParser<IterationEleme
 
     @Override
     public ParseResult parse(ParserNode parentNode, ParserContext context) throws ParseException {
-        if (context.isAlternative()) return parseNew(parentNode, context);
-
         ParserBuilder builder = context.getBuilder();
         ParserNode node = stepIn(parentNode, context);
 
@@ -122,72 +113,6 @@ public class IterationElementTypeParser extends ElementTypeParser<IterationEleme
             }
         //}
         return stepOut(node, context, ParseResultType.NO_MATCH, matchedTokens);
-    }
-
-    public ParseResult parseNew(ParserNode parentNode, ParserContext context) throws ParseException {
-        ParserBuilder builder = context.getBuilder();
-        ParserNode node = stepIn(parentNode, context);
-
-        ElementType iteratedElement = elementType.getIteratedElementType();
-        TokenElementType[] separatorTokens = elementType.getSeparatorTokens();
-
-        IterationParseMonitor monitor = new IterationParseMonitor();
-
-        while (true) {
-            ParseResult result = iteratedElement.getParser().parse(node, context);
-            if (result.isMatch()) {
-                monitor.iterations++;
-                monitor.matchedTokens += result.getMatchedTokens();
-                monitor.update(result.getType());
-
-                node.setCurrentOffset(builder.getOffset());
-
-            } else {
-                if (monitor.iterations == 0) {
-                    return stepOut(node, context, NO_MATCH, 0);
-
-                } else if (matchesIterationConstraints(monitor.iterations)) {
-                    monitor.exit = true;
-                    break;
-                }
-
-            }
-
-            if (separatorTokens != null) {
-                ParseResult sepResult = ParseResult.noMatch();
-                for (TokenElementType separatorToken : separatorTokens) {
-                    sepResult = separatorToken.getParser().parse(node, context);
-                    if (sepResult.isMatch()) break;
-                }
-
-                if (sepResult.isMatch()) {
-                    monitor.matchedTokens++;
-                    node.setCurrentOffset(builder.getOffset());
-                } else {
-                    monitor.exit = true;
-                    break;
-                }
-            }
-
-            if (monitor.exit) {
-                return matchesIterationConstraints(monitor.iterations) ?
-                        stepOut(node, context, monitor.lastResultType, monitor.matchedTokens) :
-                        stepOut(node, context, PARTIAL_MATCH, monitor.matchedTokens);
-            }
-        }
-
-        return stepOut(node, context, nvl(monitor.lastResultType, NO_MATCH), monitor.matchedTokens);
-    }
-
-    private static class IterationParseMonitor {
-        private boolean exit;
-        private int iterations = 0;
-        private int matchedTokens = 0;
-        private ParseResultType lastResultType;
-
-        public void update(ParseResultType resultType) {
-            this.lastResultType = ParseResultType.worseOf(nvl(lastResultType, FULL_MATCH), resultType);
-        }
     }
 
     private boolean advanceLexerToNextLandmark(ParserNode parentNode, boolean lenient, ParserContext context) {

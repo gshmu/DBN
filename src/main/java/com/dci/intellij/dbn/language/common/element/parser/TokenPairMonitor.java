@@ -1,6 +1,5 @@
 package com.dci.intellij.dbn.language.common.element.parser;
 
-import com.dci.intellij.dbn.diagnostics.Diagnostics;
 import com.dci.intellij.dbn.language.common.DBLanguageDialect;
 import com.dci.intellij.dbn.language.common.TokenType;
 import com.dci.intellij.dbn.language.common.element.TokenPairTemplate;
@@ -17,8 +16,6 @@ public class TokenPairMonitor {
     private final Map<TokenPairTemplate, TokenPairStack> stacks;
     private final ParserBuilder builder;
 
-    private final boolean effective = Diagnostics.isAlternativeParserEnabled();
-
     public TokenPairMonitor(ParserBuilder builder, DBLanguageDialect languageDialect) {
         this.builder = builder;
 
@@ -29,62 +26,77 @@ public class TokenPairMonitor {
         }
     }
 
-    public void consumeBeginTokens(@Nullable ParserNode node) {
-        if (effective && node != null) {
-            WrappingDefinition wrapping = node.getElement().getWrapping();
-            if (wrapping != null) {
-                TokenElementType beginElement = wrapping.getBeginElementType();
-                TokenType beginToken = beginElement.getTokenType();
-                while(builder.getToken() == beginToken) {
-                    Marker marker = builder.mark();
-                    acknowledgeCurrent();
-                    builder.advanceInternally();
-                    marker.done(beginElement);
-                }
-            }
+    protected void consumeBeginTokens(@Nullable ParserNode node) {
+        if (node == null) return;
+
+        WrappingDefinition wrapping = node.getElement().getWrapping();
+        if (wrapping == null) return;
+
+        TokenElementType beginElement = wrapping.getBeginElementType();
+        TokenType beginToken = beginElement.getTokenType();
+        while(builder.getToken() == beginToken) {
+            Marker beginTokenMarker = builder.mark();
+            acknowledge(false);
+            builder.advanceInternally();
+            beginTokenMarker.done(beginElement);
         }
     }
 
-    public void consumeEndTokens(@Nullable ParserNode node) {
-        if (effective && node != null) {
-            WrappingDefinition wrapping = node.getElement().getWrapping();
-            if (wrapping != null) {
-                TokenElementType endElement = wrapping.getEndElementType();
-                TokenType endToken = endElement.getTokenType();
-                while (builder.getToken() == endToken) {
-                    Marker marker = builder.mark();
-                    acknowledgeCurrent();
-                    builder.advanceInternally();
-                    marker.done(endElement);
-                }
-            }
+    protected void consumeEndTokens(@Nullable ParserNode node) {
+        if (node == null) return;
+
+        WrappingDefinition wrapping = node.getElement().getWrapping();
+        if (wrapping == null) return;
+
+        TokenElementType endElement = wrapping.getEndElementType();
+        TokenType endToken = endElement.getTokenType();
+        while (builder.getToken() == endToken && !isExplicitRange(endToken)) {
+            Marker endTokenMarker = builder.mark();
+            acknowledge(false);
+            builder.advanceInternally();
+            endTokenMarker.done(endElement);
         }
     }
 
-    public void acknowledgeCurrent() {
-        if (effective) {
-            TokenType token = builder.getToken();
-            TokenPairStack tokenPairStack = getStack(token);
-            if (tokenPairStack != null) {
-                tokenPairStack.acknowledge();
-            }
+    protected void acknowledge(boolean explicit) {
+        TokenType token = builder.getToken();
+        TokenPairStack tokenPairStack = getStack(token);
+        if (tokenPairStack != null) {
+            tokenPairStack.acknowledge(explicit);
         }
     }
 
-    public void reset() {
+    public void cleanup() {
         for (TokenPairStack tokenPairStack : stacks.values()) {
-            tokenPairStack.reset();
+            tokenPairStack.cleanup(true);
+        }
+
+    }
+
+    public void rollback() {
+        for (TokenPairStack tokenPairStack : stacks.values()) {
+            tokenPairStack.rollback();
         }
     }
 
     @Nullable
-    private TokenPairStack getStack(@Nullable TokenType tokenType) {
-        if (tokenType != null) {
-            TokenPairTemplate template = tokenType.getTokenPairTemplate();
-            if (template != null) {
-                return stacks.get(template);
-            }
+    private TokenPairStack getStack(TokenType tokenType) {
+        if (tokenType == null) return null;
+
+        TokenPairTemplate template = tokenType.getTokenPairTemplate();
+        if (template != null) {
+            return stacks.get(template);
         }
         return null;
+    }
+
+    public boolean isExplicitRange(TokenType tokenType) {
+        TokenPairStack stack = getStack(tokenType);
+        return stack != null && stack.isExplicitRange();
+    }
+
+    public void setExplicitRange(TokenType tokenType, boolean value) {
+        TokenPairStack stack = getStack(tokenType);
+        if (stack != null) stack.setExplicitRange(value);
     }
 }

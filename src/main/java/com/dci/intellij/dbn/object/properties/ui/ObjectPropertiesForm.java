@@ -101,7 +101,7 @@ public class ObjectPropertiesForm extends DBNFormBase {
                     objectPropertiesTable.accommodateColumnsSize();
 
                     UserInterface.repaint(mainPanel);
-                    Disposer.dispose(oldTableModel, false);
+                    Disposer.dispose(oldTableModel);
                 });
             });
         }

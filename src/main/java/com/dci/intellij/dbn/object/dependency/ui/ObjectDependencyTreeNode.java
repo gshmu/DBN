@@ -104,7 +104,7 @@ public class ObjectDependencyTreeNode extends StatefulDisposableBase implements 
                                 }
                             }
 
-                            dependencies = replace(dependencies, newDependencies, false);
+                            dependencies = replace(dependencies, newDependencies);
                             getModel().notifyNodeLoaded(ObjectDependencyTreeNode.this);
                         }
                     } finally {
@@ -155,7 +155,7 @@ public class ObjectDependencyTreeNode extends StatefulDisposableBase implements 
 
     @Override
     public void disposeInner() {
-        dependencies = replace(dependencies, Disposed.list(), false);
+        dependencies = replace(dependencies, Disposed.list());
         nullify();
     }
 }

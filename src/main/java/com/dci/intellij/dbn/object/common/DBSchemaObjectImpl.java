@@ -2,6 +2,7 @@ package com.dci.intellij.dbn.object.common;
 
 import com.dci.intellij.dbn.common.content.DynamicContent;
 import com.dci.intellij.dbn.common.content.loader.DynamicContentResultSetLoader;
+import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.Resources;
 import com.dci.intellij.dbn.connection.jdbc.DBNConnection;
@@ -64,6 +65,12 @@ public abstract class DBSchemaObjectImpl<M extends DBObjectMetadata> extends DBO
             referencedObjects = childObjects.createObjectList(INCOMING_DEPENDENCY, this, INTERNAL, DEPENDENCY);
             referencingObjects = childObjects.createObjectList(OUTGOING_DEPENDENCY, this, INTERNAL, DEPENDENCY);
         }
+    }
+
+    @Override
+    @NotNull
+    public DBSchema getSchema() {
+        return Failsafe.nd(super.getSchema());
     }
 
     @Override

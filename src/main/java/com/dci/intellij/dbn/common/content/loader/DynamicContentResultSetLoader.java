@@ -31,11 +31,9 @@ import static com.dci.intellij.dbn.common.content.DynamicContentProperty.INTERNA
 import static com.dci.intellij.dbn.diagnostics.Diagnostics.isDatabaseAccessDebug;
 
 @Slf4j
-public abstract class DynamicContentResultSetLoader<
-                T extends DynamicContentElement,
-                M extends DBObjectMetadata>
-        extends DynamicContentLoaderImpl<T, M>
-        implements DynamicContentLoader<T, M> {
+public abstract class DynamicContentResultSetLoader<E extends DynamicContentElement, M extends DBObjectMetadata>
+        extends DynamicContentLoaderImpl<E, M>
+        implements DynamicContentLoader<E, M> {
 
     private final boolean master;
 
@@ -49,15 +47,15 @@ public abstract class DynamicContentResultSetLoader<
         this.master = master;
     }
 
-    public abstract ResultSet createResultSet(DynamicContent<T> dynamicContent, DBNConnection connection) throws SQLException;
-    public abstract T createElement(DynamicContent<T> content, M metadata, LoaderCache cache) throws SQLException;
+    public abstract ResultSet createResultSet(DynamicContent<E> dynamicContent, DBNConnection connection) throws SQLException;
+    public abstract E createElement(DynamicContent<E> content, M metadata, LoaderCache cache) throws SQLException;
 
     private static class DebugInfo {
         private final String id = UUID.randomUUID().toString();
         private final long startTimestamp = System.currentTimeMillis();
     }
 
-    private DebugInfo preLoadContent(DynamicContent<T> dynamicContent) {
+    private DebugInfo preLoadContent(DynamicContent<E> dynamicContent) {
         if (isDatabaseAccessDebug()) {
             DebugInfo debugInfo = new DebugInfo();
             log.info(
@@ -68,7 +66,7 @@ public abstract class DynamicContentResultSetLoader<
         return null;
     }
 
-    private void postLoadContent(DynamicContent<T> dynamicContent, DebugInfo debugInfo) {
+    private void postLoadContent(DynamicContent<E> dynamicContent, DebugInfo debugInfo) {
         if (debugInfo != null) {
             log.info(
                     "[DBN] Done loading " + dynamicContent.getContentDescription() +
@@ -78,7 +76,7 @@ public abstract class DynamicContentResultSetLoader<
     }
 
     @Override
-    public void loadContent(DynamicContent<T> content) throws SQLException {
+    public void loadContent(DynamicContent<E> content) throws SQLException {
         Priority priority = content.is(INTERNAL) ? Priority.LOW : Priority.MEDIUM;
         DatabaseInterfaceInvoker.execute(priority,
                 "Loading data dictionary",
@@ -88,7 +86,7 @@ public abstract class DynamicContentResultSetLoader<
                 conn -> loadContent(content, conn));
     }
 
-    private void loadContent(DynamicContent<T> content, DBNConnection conn) throws SQLException {
+    private void loadContent(DynamicContent<E> content, DBNConnection conn) throws SQLException {
         DebugInfo debugInfo = preLoadContent(content);
         ConnectionHandler connection = content.getConnection();
         IncrementalStatusAdapter loading = connection.getConnectionStatus().getLoading();
@@ -96,7 +94,7 @@ public abstract class DynamicContentResultSetLoader<
             loading.set(true);
             content.checkDisposed();
             ResultSet resultSet = null;
-            List<T> list = null;
+            List<E> list = null;
             try {
                 content.checkDisposed();
                 resultSet = createResultSet(content, conn);
@@ -112,7 +110,7 @@ public abstract class DynamicContentResultSetLoader<
                     Diagnostics.introduceDatabaseLag(Diagnostics.getFetchingLag());
                     content.checkDisposed();
 
-                    T element = null;
+                    E element = null;
                     try {
                         element = createElement(content, metadata, loaderCache);
                     } catch (ProcessCanceledException e) {

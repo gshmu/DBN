@@ -139,7 +139,7 @@ public class DBMethodJdbcRunConfigEditorForm extends DBProgramRunConfigurationEd
 
                     Dispatch.run(() -> {
                         methodArgumentsPanel.removeAll();
-                        inputForm = replace(inputForm, null, true);
+                        inputForm = replace(inputForm, null);
 
                         String headerTitle = "No method selected";
                         Icon headerIcon = null;

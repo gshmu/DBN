@@ -101,9 +101,10 @@ public class DBNativeDataType extends StatefulDisposableBase implements DynamicC
                 } else if (object instanceof Long && Integer.class.isAssignableFrom(clazz)) {
                     // odd jdbc implementations allowing long for data type int java.sql.Types.INTEGER
                     return object;
-                } else if (object instanceof Long && java.util.Date.class.isAssignableFrom(clazz)) {
+                } else if (object instanceof Number && java.util.Date.class.isAssignableFrom(clazz)) {
                     // fallback for dates stored as milliseconds (sqlite?)
-                    long longValue = (long) object;
+                    Number number = (Number) object;
+                    long longValue = number.longValue();
                     return
                         clazz == Date.class ? new Date(longValue) :
                         clazz == Time.class ? new Time(longValue) :

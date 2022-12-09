@@ -7,7 +7,8 @@ public enum InterfaceTaskStatus implements Status{
     SCHEDULED,
     STARTED,
     FINISHED,
-    RELEASED;
+    RELEASED,
+    CANCELLED;
 
     public Status getPair() {
         switch (this) {

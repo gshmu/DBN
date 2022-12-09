@@ -2,12 +2,7 @@ package com.dci.intellij.dbn.data.editor.text.ui;
 
 import com.dci.intellij.dbn.common.action.UserDataKeys;
 import com.dci.intellij.dbn.common.ui.form.DBNFormBase;
-import com.dci.intellij.dbn.common.util.Actions;
-import com.dci.intellij.dbn.common.util.Commons;
-import com.dci.intellij.dbn.common.util.Documents;
-import com.dci.intellij.dbn.common.util.Editors;
-import com.dci.intellij.dbn.common.util.Messages;
-import com.dci.intellij.dbn.common.util.Strings;
+import com.dci.intellij.dbn.common.util.*;
 import com.dci.intellij.dbn.data.editor.text.TextContentType;
 import com.dci.intellij.dbn.data.editor.text.TextEditorAdapter;
 import com.dci.intellij.dbn.data.editor.text.actions.TextContentTypeComboBoxAction;
@@ -31,9 +26,8 @@ import com.intellij.testFramework.LightVirtualFile;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import javax.swing.JComponent;
-import javax.swing.JPanel;
-import java.awt.BorderLayout;
+import javax.swing.*;
+import java.awt.*;
 import java.sql.SQLException;
 
 public class TextEditorForm extends DBNFormBase {
@@ -160,6 +154,7 @@ public class TextEditorForm extends DBNFormBase {
     @Override
     public void disposeInner() {
         Editors.releaseEditor(editor);
+        super.disposeInner();
     }
 
     @Nullable

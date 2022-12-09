@@ -10,6 +10,7 @@ import com.dci.intellij.dbn.common.content.dependency.SubcontentDependencyAdapte
 import com.dci.intellij.dbn.common.dispose.Disposer;
 import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.common.dispose.StatefulDisposable;
+import com.dci.intellij.dbn.common.dispose.UnlistedDisposable;
 import com.dci.intellij.dbn.common.load.ProgressMonitor;
 import com.dci.intellij.dbn.common.util.Commons;
 import com.dci.intellij.dbn.connection.DatabaseEntity;
@@ -38,7 +39,7 @@ import static com.dci.intellij.dbn.object.type.DBObjectType.ANY;
 import static java.util.Collections.emptyList;
 
 @Getter
-public final class DBObjectListContainer implements StatefulDisposable {
+public final class DBObjectListContainer implements StatefulDisposable, UnlistedDisposable {
     private static final DynamicContentTypeIndex<DBObjectType, DBObjectType> OBJECT_INDEX = new DynamicContentTypeIndex<>(DBObjectType.class);
     private static final DynamicContentTypeIndex<DBObjectType, DBObjectRelationType> RELATION_INDEX = new DynamicContentTypeIndex<>(DBObjectType.class);
 
@@ -443,8 +444,8 @@ public final class DBObjectListContainer implements StatefulDisposable {
     @Override
     public void dispose() {
         if (!isDisposed()) {
-            this.objects = Disposer.replace(this.objects, DISPOSED_OBJECTS, false);
-            this.relations = Disposer.replace(this.relations, DISPOSED_RELATIONS, false);
+            this.objects = Disposer.replace(this.objects, DISPOSED_OBJECTS);
+            this.relations = Disposer.replace(this.relations, DISPOSED_RELATIONS);
             this.owner = null;
         }
     }

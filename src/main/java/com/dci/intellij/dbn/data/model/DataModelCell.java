@@ -1,14 +1,14 @@
 package com.dci.intellij.dbn.data.model;
 
+import com.dci.intellij.dbn.common.dispose.UnlistedDisposable;
 import com.dci.intellij.dbn.data.editor.ui.UserValueHolder;
 import com.dci.intellij.dbn.data.value.LargeObjectValue;
-import com.intellij.openapi.Disposable;
 import org.jetbrains.annotations.NotNull;
 
 public interface DataModelCell<
         R extends DataModelRow<M, ? extends DataModelCell<?, ?>>,
         M extends DataModel<R, ? extends DataModelCell<?, ?>>>
-        extends Disposable, UserValueHolder<Object> {
+        extends UnlistedDisposable, UserValueHolder<Object> {
 
     ColumnInfo getColumnInfo();
 
