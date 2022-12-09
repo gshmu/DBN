@@ -58,7 +58,7 @@ public class TabbedPane extends JBTabsImpl implements StatefulDisposable {
         Object object = tabInfo.getObject();
         ActionCallback actionCallback = super.removeTab(tabInfo);
         if (disposeComponent) {
-            Disposer.dispose(object, true);
+            Disposer.dispose(object);
             tabInfo.setObject(null);
         }
         return actionCallback;
@@ -70,7 +70,8 @@ public class TabbedPane extends JBTabsImpl implements StatefulDisposable {
             disposed = true;
             for (TabInfo tabInfo : myInfo2Label.keySet()) {
                 Object object = tabInfo.getObject();
-                Disposer.dispose(object, true);
+                tabInfo.setObject(null);
+                Disposer.dispose(object);
             }
             nullify();
         }
