@@ -36,8 +36,11 @@ public final class Disposer {
     public static void register(@Nullable Disposable parent, @NotNull Disposable disposable) {
         if (parent == null) return;
 
-        if (disposable instanceof UnlistedDisposable)
-            throw new IllegalArgumentException("Unlisted disposable should never be registered");
+        if (disposable instanceof UnlistedDisposable) {
+            log.error("Unlisted disposable {} should not be registered",
+                    disposable.getClass().getName(),
+                    new IllegalArgumentException("Unlisted disposable"));
+        }
 
         if (Checks.isValid(parent)) {
             com.intellij.openapi.util.Disposer.register(parent, disposable);
