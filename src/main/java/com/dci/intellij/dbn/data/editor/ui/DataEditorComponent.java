@@ -18,9 +18,9 @@ public interface DataEditorComponent extends StatefulDisposable {
 
     boolean isEnabled();
 
-    UserValueHolder<?> getUserValueHolder();
+    <T> UserValueHolder<T> getUserValueHolder();
 
-    void setUserValueHolder(UserValueHolder<?> userValueHolder);
+    <T> void setUserValueHolder(UserValueHolder<T> userValueHolder);
 
     String getText();
 
@@ -29,4 +29,6 @@ public interface DataEditorComponent extends StatefulDisposable {
     void setFont(Font font);
 
     void setBorder(Border border);
+
+    default void afterUpdate() {}
 }

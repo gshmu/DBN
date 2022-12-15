@@ -11,7 +11,7 @@ public final class TransientId extends PseudoConstant<TransientId> {
     }
 
     public static TransientId get(String id) {
-        return get(TransientId.class, id);
+        return PseudoConstant.get(TransientId.class, id);
     }
 
     public static TransientId create() {

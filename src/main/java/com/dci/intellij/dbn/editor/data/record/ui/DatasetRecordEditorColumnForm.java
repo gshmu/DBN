@@ -5,6 +5,7 @@ import com.dci.intellij.dbn.common.dispose.Disposer;
 import com.dci.intellij.dbn.common.locale.Formatter;
 import com.dci.intellij.dbn.common.ui.form.DBNFormBase;
 import com.dci.intellij.dbn.data.editor.ui.*;
+import com.dci.intellij.dbn.data.grid.options.DataGridSettings;
 import com.dci.intellij.dbn.data.type.DBDataType;
 import com.dci.intellij.dbn.data.type.DBNativeDataType;
 import com.dci.intellij.dbn.data.type.DataTypeDefinition;
@@ -53,14 +54,20 @@ public class DatasetRecordEditorColumnForm extends DBNFormBase {
         dataTypeLabel.setText(dataType.getQualifiedName());
         dataTypeLabel.setForeground(UIUtil.getInactiveTextColor());
 
+
+        boolean editable = cell.getRow().getModel().isEditable();
+        boolean auditColumn = columnInfo.isAuditColumn();
+        if (editable && auditColumn) {
+            DataGridSettings dataGridSettings = DataGridSettings.getInstance(project);
+            editable = dataGridSettings.getAuditColumnSettings().isAllowEditing();
+        }
+
         DBNativeDataType nativeDataType = dataType.getNativeType();
         if (nativeDataType != null) {
             DataTypeDefinition dataTypeDefinition = nativeDataType.getDefinition();
             GenericDataType genericDataType = dataTypeDefinition.getGenericDataType();
 
             DataEditorSettings dataEditorSettings = DataEditorSettings.getInstance(project);
-
-            long dataLength = dataType.getLength();
 
             if (genericDataType.is(GenericDataType.DATE_TIME, GenericDataType.LITERAL, GenericDataType.ARRAY)) {
                 TextFieldWithPopup textFieldWithPopup = new TextFieldWithPopup(project);
@@ -71,11 +78,12 @@ public class DatasetRecordEditorColumnForm extends DBNFormBase {
                 valueTextField.addKeyListener(keyAdapter);
                 valueTextField.addFocusListener(focusListener);
 
-                if (cell.getRow().getModel().isEditable()) {
+                if (editable) {
                     switch (genericDataType) {
                         case DATE_TIME: textFieldWithPopup.createCalendarPopup(false); break;
                         case ARRAY: textFieldWithPopup.createArrayEditorPopup(false); break;
                         case LITERAL: {
+                            long dataLength = dataType.getLength();
                             DataEditorValueListPopupSettings valueListPopupSettings = dataEditorSettings.getValueListPopupSettings();
 
                             if (!column.isPrimaryKey() && !column.isUniqueKey() && dataLength <= valueListPopupSettings.getDataLengthThreshold()) {
@@ -95,6 +103,8 @@ public class DatasetRecordEditorColumnForm extends DBNFormBase {
                         }
                     }
 
+                } else {
+                    textFieldWithPopup.setEditable(false);
                 }
                 editorComponent = textFieldWithPopup;
             } else if (genericDataType.is(GenericDataType.BLOB, GenericDataType.CLOB)) {
@@ -195,7 +205,7 @@ public class DatasetRecordEditorColumnForm extends DBNFormBase {
             if (valueTextField.isEditable())  {
                 try {
                     Object value = getEditorValue();
-                    UserValueHolder<Object> userValueHolder = (UserValueHolder<Object>) editorComponent.getUserValueHolder();
+                    UserValueHolder<Object> userValueHolder = editorComponent.getUserValueHolder();
                     userValueHolder.updateUserValue(value, false);
                     valueTextField.setForeground(Colors.getTextFieldForeground());
                 } catch (ParseException e1) {

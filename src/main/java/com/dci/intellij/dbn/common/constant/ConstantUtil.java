@@ -94,8 +94,8 @@ public abstract class ConstantUtil {
                 if (id.length() > 0) {
                     T constant;
                     if (isPseudoConstant) {
-                        Class<PseudoConstant> pseudoConstantClass = (Class<PseudoConstant>) clazz;
-                        constant = (T) PseudoConstant.get(pseudoConstantClass, id);
+                        Class<PseudoConstant> constantClass = (Class<PseudoConstant>) clazz;
+                        constant = (T) PseudoConstant.get(constantClass, id);
                     } else {
                         constant = get(enumConstants, id);
                     }
