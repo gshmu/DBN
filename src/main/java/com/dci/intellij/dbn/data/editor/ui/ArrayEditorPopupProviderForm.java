@@ -114,7 +114,7 @@ public class ArrayEditorPopupProviderForm extends TextFieldPopupProviderForm {
         JTextField textField = getTextField();
 
         List<String> stringValues = new ArrayList<>();
-        UserValueHolder<?> userValueHolder = getEditorComponent().getUserValueHolder();
+        UserValueHolder<Object> userValueHolder = getEditorComponent().getUserValueHolder();
         Project project = getProject();
         try {
             Object userValue = userValueHolder.getUserValue();

@@ -1,6 +1,7 @@
 package com.dci.intellij.dbn.common.content;
 
 import com.dci.intellij.dbn.common.constant.Constant;
+import org.jetbrains.annotations.NotNull;
 
 public interface DynamicContentType<T extends DynamicContentType<T>> extends Constant<T> {
     default boolean matches(T contentType) {
@@ -20,6 +21,16 @@ public interface DynamicContentType<T extends DynamicContentType<T>> extends Con
         @Override
         public String toString() {
             return "NULL";
+        }
+
+        @Override
+        public int ordinal() {
+            return 0;
+        }
+
+        @Override
+        public int compareTo(@NotNull Object o) {
+            return 0;
         }
     };
 }

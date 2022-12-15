@@ -3,6 +3,7 @@ package com.dci.intellij.dbn.common.ui.misc;
 import com.dci.intellij.dbn.common.ui.util.Borders;
 
 import javax.swing.*;
+import javax.swing.border.Border;
 import java.awt.*;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
@@ -14,6 +15,11 @@ public class DBNButton extends JLabel {
         super(image);
         setBorder(Borders.buttonBorder());
         setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+    }
+
+    @Override
+    public void setBorder(Border border) {
+        super.setBorder(border);
     }
 
     @Override
