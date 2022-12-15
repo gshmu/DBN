@@ -49,18 +49,16 @@ public abstract class DBNTableGutter<T extends DBNTableWithGutter> extends JList
 
     @Override
     public ListModel<?> getModel() {
-        ListModel<?> cachedModel = super.getModel();
+        ListModel<?> current = super.getModel();
 
         if (this.table != null) {
             // only after initialisation
-            T table = getTable();
-            ListModel<?> listModel = table.getModel().getListModel();
-            if (listModel != null && listModel != cachedModel) {
-                setModel(listModel);
+            ListModel<?> delegate = getTable().getModel().getListModel();
+            if (delegate != null && delegate != current) {
+                setModel(delegate);
             }
-            return listModel;
         }
-        return cachedModel;
+        return super.getModel();
     }
 
     @NotNull
