@@ -4,6 +4,7 @@ import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.common.color.Colors;
 import com.dci.intellij.dbn.common.property.PropertyHolder;
 import com.dci.intellij.dbn.common.property.PropertyHolderBase;
+import com.dci.intellij.dbn.common.ui.util.Listeners;
 import com.dci.intellij.dbn.common.ui.util.Mouse;
 import com.dci.intellij.dbn.common.ui.util.Popups;
 import com.dci.intellij.dbn.common.ui.util.UserInterface;
@@ -25,25 +26,18 @@ import com.intellij.util.ui.UIUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import javax.swing.Icon;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.SwingConstants;
+import javax.swing.*;
 import javax.swing.border.Border;
 import javax.swing.border.CompoundBorder;
-import java.awt.BorderLayout;
-import java.awt.Cursor;
-import java.awt.Dimension;
-import java.awt.Graphics;
+import java.awt.*;
 import java.awt.event.MouseListener;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
 public abstract class ValueSelector<T extends Presentable> extends JPanel{
-    private final Set<ValueSelectorListener<T>> listeners = new HashSet<>();
+    private final Set<ValueSelectorListener<T>> listeners = Listeners.container();
     private final PropertyHolder<ValueSelectorOption> options = new PropertyHolderBase.IntStore<ValueSelectorOption>() {
         @Override
         protected ValueSelectorOption[] properties() {
@@ -101,10 +95,6 @@ public abstract class ValueSelector<T extends Presentable> extends JPanel{
             this.options.set(option, true);
         }
 
-    }
-
-    public void setValueFactory(PresentableFactory<T> valueFactory) {
-        this.valueFactory = valueFactory;
     }
 
     public void addListener(ValueSelectorListener<T> listener) {
@@ -313,8 +303,6 @@ public abstract class ValueSelector<T extends Presentable> extends JPanel{
     }
 
     private void selectValue(T value) {
-        for (ValueSelectorListener<T> listener : listeners) {
-            listener.selectionChanged(null, value);
-        }
+        Listeners.notify(listeners, l -> l.selectionChanged(null, value));
     }
 }

@@ -9,6 +9,7 @@ import com.dci.intellij.dbn.common.ui.Presentable;
 import com.dci.intellij.dbn.common.ui.PresentableFactory;
 import com.dci.intellij.dbn.common.ui.ValueSelectorListener;
 import com.dci.intellij.dbn.common.ui.ValueSelectorOption;
+import com.dci.intellij.dbn.common.ui.util.Listeners;
 import com.dci.intellij.dbn.common.ui.util.Mouse;
 import com.dci.intellij.dbn.common.ui.util.Popups;
 import com.dci.intellij.dbn.common.ui.util.UserInterface;
@@ -34,7 +35,7 @@ import java.util.*;
 
 public class DBNComboBox<T extends Presentable> extends JComboBox<T> implements PropertyHolder<ValueSelectorOption> {
 
-    private final Set<ValueSelectorListener<T>> listeners = new HashSet<>();
+    private final Set<ValueSelectorListener<T>> listeners = Listeners.container();
     private ListPopup popup;
     private PresentableFactory<T> valueFactory;
     private Loader<List<T>> valueLoader;
@@ -272,9 +273,7 @@ public class DBNComboBox<T extends Presentable> extends JComboBox<T> implements 
 
         super.setSelectedItem(anObject);
         T newValue = getSelectedValue();
-        for (ValueSelectorListener<T> listener : listeners) {
-            listener.selectionChanged(oldValue, newValue);
-        }
+        Listeners.notify(listeners, l -> l.selectionChanged(oldValue, newValue));
     }
 
     private void selectValue(T value) {

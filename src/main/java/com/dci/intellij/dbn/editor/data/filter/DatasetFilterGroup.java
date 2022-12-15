@@ -4,6 +4,7 @@ import com.dci.intellij.dbn.common.dispose.AlreadyDisposedException;
 import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.common.options.BasicProjectConfiguration;
 import com.dci.intellij.dbn.common.options.ProjectConfiguration;
+import com.dci.intellij.dbn.common.ui.util.Listeners;
 import com.dci.intellij.dbn.common.ui.util.Lists;
 import com.dci.intellij.dbn.common.util.Naming;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
@@ -22,7 +23,10 @@ import org.jetbrains.annotations.NotNull;
 import javax.swing.*;
 import javax.swing.event.ListDataEvent;
 import javax.swing.event.ListDataListener;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Objects;
+import java.util.Set;
 
 import static com.dci.intellij.dbn.common.options.setting.SettingsSupport.connectionIdAttribute;
 import static com.dci.intellij.dbn.common.options.setting.SettingsSupport.stringAttribute;
@@ -43,7 +47,7 @@ public class DatasetFilterGroup extends BasicProjectConfiguration<ProjectConfigu
     private static class State {
         private boolean changed;
         private final List<DatasetFilter> filtersTemp = new ArrayList<>();
-        private final Set<ListDataListener> listeners = new HashSet<>();
+        private final Set<ListDataListener> listeners = Listeners.container();
     }
 
     public DatasetFilterGroup(@NotNull Project project) {
