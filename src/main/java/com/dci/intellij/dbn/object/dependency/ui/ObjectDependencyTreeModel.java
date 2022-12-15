@@ -6,11 +6,11 @@ import com.dci.intellij.dbn.common.exception.OutdatedContentException;
 import com.dci.intellij.dbn.common.ref.WeakRef;
 import com.dci.intellij.dbn.common.ui.tree.TreeEventType;
 import com.dci.intellij.dbn.common.ui.tree.TreeUtil;
+import com.dci.intellij.dbn.common.ui.util.Listeners;
 import com.dci.intellij.dbn.object.common.DBSchemaObject;
 import com.dci.intellij.dbn.object.dependency.ObjectDependencyType;
 import com.dci.intellij.dbn.object.lookup.DBObjectRef;
 import com.intellij.openapi.project.Project;
-import com.intellij.util.containers.ContainerUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -21,7 +21,7 @@ import java.util.List;
 import java.util.Set;
 
 public class ObjectDependencyTreeModel extends StatefulDisposableBase implements TreeModel {
-    private final Set<TreeModelListener> listeners = ContainerUtil.newConcurrentSet();
+    private final Set<TreeModelListener> listeners = Listeners.container();
 
     private ObjectDependencyTreeNode root;
     private final ObjectDependencyType dependencyType;
