@@ -66,7 +66,7 @@ public abstract class ObjectCacheBase<K, O, E extends Throwable> extends Statefu
     protected O whenCreated(O object) { return object; }
     protected O whenReused(O object) { return object; }
     protected O whenDropped(O object) { return object; }
-    protected O whenErrored(Throwable e) { return null; }
+    protected O whenErrored(Throwable e) throws E { return null; }
     protected O whenNull() throws E { return null; }
 
 
