@@ -2,7 +2,7 @@ package com.dci.intellij.dbn.data.editor.text.ui;
 
 import com.dci.intellij.dbn.common.thread.Progress;
 import com.dci.intellij.dbn.common.ui.dialog.DBNDialog;
-import com.dci.intellij.dbn.data.editor.text.TextEditorAdapter;
+import com.dci.intellij.dbn.data.editor.ui.DataEditorComponent;
 import com.dci.intellij.dbn.data.editor.ui.UserValueHolder;
 import com.dci.intellij.dbn.data.type.DBDataType;
 import com.dci.intellij.dbn.object.type.DBObjectType;
@@ -14,8 +14,8 @@ import org.jetbrains.annotations.NotNull;
 import javax.swing.*;
 
 public class TextEditorDialog extends DBNDialog<TextEditorForm> {
-    private final TextEditorAdapter textEditorAdapter;
-    private TextEditorDialog(Project project, TextEditorAdapter textEditorAdapter){
+    private final DataEditorComponent textEditorAdapter;
+    private TextEditorDialog(Project project, DataEditorComponent textEditorAdapter){
         super(project, getTitle(textEditorAdapter), true);
         this.textEditorAdapter = textEditorAdapter;
         renameAction(getCancelAction(), "Close");
@@ -32,7 +32,7 @@ public class TextEditorDialog extends DBNDialog<TextEditorForm> {
     }
 
     @NotNull
-    private static String getTitle(TextEditorAdapter textEditorAdapter) {
+    private static String getTitle(DataEditorComponent textEditorAdapter) {
         UserValueHolder userValueHolder = textEditorAdapter.getUserValueHolder();
         DBDataType dataType = userValueHolder.getDataType();
         String dataTypeName = dataType == null ? "OBJECT" : dataType.getName();
@@ -40,7 +40,7 @@ public class TextEditorDialog extends DBNDialog<TextEditorForm> {
         return "Edit " + dataTypeName.toUpperCase() + " content (" +objectType.getName().toLowerCase() + " " + userValueHolder.getName().toUpperCase() + ")";
     }
 
-    public static void show(Project project, TextEditorAdapter textEditorAdapter) {
+    public static void show(Project project, DataEditorComponent textEditorAdapter) {
         TextEditorDialog dialog = new TextEditorDialog(project, textEditorAdapter);
         dialog.show();
     }

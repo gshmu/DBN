@@ -136,7 +136,8 @@ public class CalendarPopupProviderForm extends TextFieldPopupProviderForm implem
     }
 
     private Date getDateForPopup() {
-        if (getEditorComponent().getUserValueHolder() == null) {
+        UserValueHolder<?> userValueHolder = getEditorComponent().getUserValueHolder();
+        if (userValueHolder == null) {
             String dateString = getEditorComponent().getTextField().getText();
             try {
                 return getFormatter().parseDateTime(dateString);
@@ -144,7 +145,7 @@ public class CalendarPopupProviderForm extends TextFieldPopupProviderForm implem
                 return new Date();
             }
         } else {
-            Object userValue = getEditorComponent().getUserValueHolder().getUserValue();
+            Object userValue = userValueHolder.getUserValue();
             return userValue instanceof Date ? (Date) userValue : new Date();
         }
     }

@@ -2,31 +2,20 @@ package com.dci.intellij.dbn.data.editor.ui;
 
 import com.dci.intellij.dbn.common.color.Colors;
 import com.dci.intellij.dbn.common.dispose.DisposableContainers;
-import com.dci.intellij.dbn.common.project.ProjectRef;
 import com.dci.intellij.dbn.common.ui.misc.DBNButton;
-import com.dci.intellij.dbn.common.ui.panel.DBNPanelImpl;
 import com.dci.intellij.dbn.common.ui.util.Mouse;
 import com.intellij.openapi.project.Project;
-import com.intellij.util.ui.JBUI;
-import lombok.Getter;
-import lombok.Setter;
-import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
-import javax.swing.border.Border;
-import javax.swing.text.Document;
 import java.awt.*;
 import java.awt.event.*;
 import java.util.List;
 
-public class TextFieldWithPopup<T extends JComponent> extends DBNPanelImpl implements DataEditorComponent {
-    private final JTextField textField;
+public class TextFieldWithPopup<T extends JComponent> extends TextFieldWithButtons {
     private final JPanel buttonsPanel;
 
-    private @Getter @Setter UserValueHolder<?> userValueHolder;
     private final List<TextFieldPopupProvider> popupProviders = DisposableContainers.list(this);
-    private final ProjectRef project;
     private T parentComponent;
 
     public TextFieldWithPopup(Project project) {
@@ -34,18 +23,12 @@ public class TextFieldWithPopup<T extends JComponent> extends DBNPanelImpl imple
 
     }
     public TextFieldWithPopup(Project project, @Nullable T parentComponent) {
-        setLayout(new BorderLayout());
-        this.project = ProjectRef.of(project);
+        super(project);
         this.parentComponent = parentComponent;
 
-        textField = new JTextField();
-        textField.setMargin(JBUI.insets(0, 1));
-
-        Dimension textFieldPreferredSize = textField.getPreferredSize();
-        Dimension maximumSize = new Dimension((int) textFieldPreferredSize.getWidth(), (int) textFieldPreferredSize.getHeight());
-
-        textField.setMaximumSize(maximumSize);
-        add(textField, BorderLayout.CENTER);
+        JTextField textField = getTextField();
+        Dimension preferredSize = textField.getPreferredSize();
+        Dimension maximumSize = new Dimension((int) preferredSize.getWidth(), (int) preferredSize.getHeight());
 
         buttonsPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 2, 0));
         buttonsPanel.setMaximumSize(maximumSize);
@@ -54,29 +37,7 @@ public class TextFieldWithPopup<T extends JComponent> extends DBNPanelImpl imple
         textField.addKeyListener(keyListener);
         textField.addFocusListener(focusListener);
 
-        customizeTextField(textField);
-    }
-
-    @Override
-    public void setBackground(Color color) {
-        super.setBackground(color);
-        if (textField != null) textField.setBackground(color);
-    }
-
-    @Override
-    public void setFont(Font font) {
-        super.setFont(font);
-        if (textField != null) textField.setFont(font);
-    }
-
-    @Override
-    public void setBorder(Border border) {
-        super.setBorder(border);
-    }
-
-    @NotNull
-    public Project getProject() {
-        return project.ensure();
+        customizeTextField(super.getTextField());
     }
 
     @Nullable
@@ -85,64 +46,23 @@ public class TextFieldWithPopup<T extends JComponent> extends DBNPanelImpl imple
     }
 
     @Override
-    public void setEditable(boolean editable){
-        textField.setEditable(editable);
-    }
-
-    @Override
-    public boolean isEditable() {
-        return textField.isEditable();
-    }
-                                                                                  
-    public void customizeTextField(JTextField textField) {}
-
-    public void customizeButton(DBNButton button) {
-        int width = (int) button.getPreferredSize().getWidth();
-        int height = (int) textField.getPreferredSize().getHeight();
-        button.setPreferredSize(new Dimension(width, height));
-        button.setMaximumSize(new Dimension(width, height));
-    }
-
-    public boolean isSelected() {
-        Document document = textField.getDocument();
-        return document.getLength() > 0 &&
-               textField.getSelectionStart() == 0 &&
-               textField.getSelectionEnd() == document.getLength();
-    }
-
-    public void clearSelection() {
-        if (isSelected()) {
-            textField.setSelectionStart(0);
-            textField.setSelectionEnd(0);
-            textField.setCaretPosition(0);
-        }
-    }
-
-    @Override
-    public JTextField getTextField() {
-        return textField;
-    }
-
-    @Override
-    public String getText() {
-        return textField.getText();
-    }
-
-    @Override
-    public void setText(String text) {
-        textField.setText(text);
-    }
-
-    @Override
     public void setEnabled(boolean enabled) {
-        //textField.setEnabled(enabled);
-        textField.setEditable(enabled);
-        for (TextFieldPopupProvider popupProvider : popupProviders) {
-            JLabel button = popupProvider.getButton();
-            if (button != null) {
-                button.setVisible(enabled);
-            }
-        }
+        super.setEnabled(enabled);
+        popupProviders
+                .stream()
+                .map(p -> p.getButton())
+                .filter(b -> b != null)
+                .forEach(b -> b.setVisible(enabled));
+    }
+
+    @Override
+    public void setEditable(boolean editable) {
+        super.setEditable(editable);
+        popupProviders
+                .stream()
+                .map(p -> p.getButton())
+                .filter(b -> b != null)
+                .forEach(b -> b.setVisible(editable));
     }
 
     /******************************************************

@@ -20,7 +20,7 @@ public final class SessionId extends PseudoConstant<SessionId> {
     }
 
     public static SessionId get(String id) {
-        return get(SessionId.class, id);
+        return PseudoConstant.get(SessionId.class, id);
     }
 
     public static SessionId create() {

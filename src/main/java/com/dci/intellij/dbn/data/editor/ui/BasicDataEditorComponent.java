@@ -1,14 +1,14 @@
 package com.dci.intellij.dbn.data.editor.ui;
 
 import lombok.Getter;
-import lombok.Setter;
 
 import javax.swing.*;
 
+import static com.dci.intellij.dbn.common.util.Unsafe.cast;
+
+@Getter
 public class BasicDataEditorComponent extends JTextField implements DataEditorComponent{
-    @Getter
-    @Setter
-    private UserValueHolder<?> userValueHolder;
+    private UserValueHolder userValueHolder;
 
     @Override
     public JTextField getTextField() {
@@ -25,10 +25,17 @@ public class BasicDataEditorComponent extends JTextField implements DataEditorCo
         setEditable(enabled);
     }
 
+    public <T> UserValueHolder<T> getUserValueHolder() {
+        return cast(userValueHolder);
+    }
+
+    public void setUserValueHolder(UserValueHolder userValueHolder) {
+        this.userValueHolder = userValueHolder;
+    }
+
     /********************************************************
      *                    Disposable                        *
      ********************************************************/
-    @Getter
     private boolean disposed;
 
     @Override

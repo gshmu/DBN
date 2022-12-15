@@ -18,7 +18,7 @@ public final class SchemaId extends PseudoConstant<SchemaId> implements Presenta
     }
 
     public static SchemaId get(String id) {
-        return get(SchemaId.class, id);
+        return PseudoConstant.get(SchemaId.class, id);
     }
 
     @NotNull

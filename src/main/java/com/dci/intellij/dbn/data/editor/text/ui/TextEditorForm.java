@@ -4,8 +4,8 @@ import com.dci.intellij.dbn.common.action.UserDataKeys;
 import com.dci.intellij.dbn.common.ui.form.DBNFormBase;
 import com.dci.intellij.dbn.common.util.*;
 import com.dci.intellij.dbn.data.editor.text.TextContentType;
-import com.dci.intellij.dbn.data.editor.text.TextEditorAdapter;
 import com.dci.intellij.dbn.data.editor.text.actions.TextContentTypeComboBoxAction;
+import com.dci.intellij.dbn.data.editor.ui.DataEditorComponent;
 import com.dci.intellij.dbn.data.editor.ui.UserValueHolder;
 import com.dci.intellij.dbn.data.value.LargeObjectValue;
 import com.intellij.openapi.actionSystem.ActionToolbar;
@@ -40,7 +40,7 @@ public class TextEditorForm extends DBNFormBase {
     private String text;
 
     private final UserValueHolder<?> userValueHolder;
-    private final TextEditorAdapter textEditorAdapter;
+    private final DataEditorComponent textEditorAdapter;
     private final DocumentListener documentListener;
 
 
@@ -50,7 +50,7 @@ public class TextEditorForm extends DBNFormBase {
         return mainPanel;
     }
 
-    public TextEditorForm(TextEditorDialog parent, DocumentListener documentListener, UserValueHolder<?> userValueHolder, TextEditorAdapter textEditorAdapter) {
+    public TextEditorForm(TextEditorDialog parent, DocumentListener documentListener, UserValueHolder<?> userValueHolder, DataEditorComponent textEditorAdapter) {
         super(parent);
         this.documentListener = documentListener;
         this.userValueHolder = userValueHolder;

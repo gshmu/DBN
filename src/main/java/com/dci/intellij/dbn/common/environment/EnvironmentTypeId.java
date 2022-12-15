@@ -18,7 +18,7 @@ public final class EnvironmentTypeId extends PseudoConstant<EnvironmentTypeId> {
     }
 
     public static EnvironmentTypeId get(String id) {
-        return get(EnvironmentTypeId.class, id);
+        return PseudoConstant.get(EnvironmentTypeId.class, id);
     }
 
     public static EnvironmentTypeId create() {

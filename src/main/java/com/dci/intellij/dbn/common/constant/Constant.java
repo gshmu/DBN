@@ -1,9 +1,10 @@
 package com.dci.intellij.dbn.common.constant;
 
 
+import java.io.Serializable;
 import java.util.Objects;
 
-public interface Constant<T extends Constant<T>> {
+public interface Constant<T extends Constant<T>> extends Serializable, Comparable<T> {
     default String id() {
         if (this instanceof Enum) {
             Enum enumeration = (Enum) this;
@@ -21,4 +22,11 @@ public interface Constant<T extends Constant<T>> {
     static <T> T[] array(T ... constants) {
         return constants;
     }
+
+    @Override
+    default int compareTo(T o) {
+        return ordinal() - o.ordinal();
+    }
+
+    int ordinal();
 }
