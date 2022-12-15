@@ -32,7 +32,10 @@ import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
 import java.sql.Timestamp;
 import java.text.ParseException;
-import java.util.*;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.GregorianCalendar;
+import java.util.Set;
 
 import static com.dci.intellij.dbn.common.dispose.Failsafe.nd;
 
@@ -292,7 +295,7 @@ public class CalendarPopupProviderForm extends TextFieldPopupProviderForm implem
     }
 
     private class CalendarTableModel implements TableModel {
-        private final Set<TableModelListener> listeners = new HashSet<>();
+        private final Set<TableModelListener> listeners = Listeners.container();
         private final Calendar inputDate = new GregorianCalendar();
         private final Calendar activeMonth = new GregorianCalendar();
         private final Calendar previousMonth = new GregorianCalendar();
@@ -426,9 +429,7 @@ public class CalendarPopupProviderForm extends TextFieldPopupProviderForm implem
 
         private void notifyListeners() {
             TableModelEvent event = new TableModelEvent(this, 0, 5);
-            for (TableModelListener listener : listeners) {
-                listener.tableChanged(event);
-            }
+            Listeners.notify(listeners, l -> l.tableChanged(event));
         }
 
         Timestamp getTimestamp(int rowIndex, int columnIndex) {

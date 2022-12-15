@@ -1,5 +1,7 @@
 package com.dci.intellij.dbn.common.count;
 
-public interface CounterListener {
+import java.util.EventListener;
+
+public interface CounterListener extends EventListener {
     void when(int value);
 }

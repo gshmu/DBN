@@ -1,20 +1,19 @@
 package com.dci.intellij.dbn.common.ui.tree;
 
 import com.dci.intellij.dbn.common.thread.Dispatch;
+import com.dci.intellij.dbn.common.ui.util.Listeners;
 import com.intellij.ui.SimpleColoredComponent;
 import com.intellij.ui.speedSearch.SpeedSearchUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import javax.swing.JComponent;
-import javax.swing.JTree;
+import javax.swing.*;
 import javax.swing.event.TreeModelEvent;
 import javax.swing.event.TreeModelListener;
 import javax.swing.tree.TreeNode;
 import javax.swing.tree.TreePath;
-import java.awt.MouseInfo;
-import java.awt.Point;
+import java.awt.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
@@ -69,27 +68,27 @@ public final class TreeUtil {
         }
     }
 
-    public static void notifyTreeModelListeners(Object source, Set<TreeModelListener> treeModelListeners, @Nullable TreePath path, TreeEventType eventType) {
-        if (path != null) {
-            TreeModelEvent event = new TreeModelEvent(source, path);
-            notifyTreeModelListeners(treeModelListeners, eventType, event);
-        }
+    public static void notifyTreeModelListeners(Object source, Set<TreeModelListener> listeners, @Nullable TreePath path, TreeEventType eventType) {
+        if (path == null) return;
+
+        TreeModelEvent event = new TreeModelEvent(source, path);
+        notifyTreeModelListeners(listeners, eventType, event);
     }
 
-    private static void notifyTreeModelListeners(final Set<TreeModelListener> treeModelListeners, final TreeEventType eventType, final TreeModelEvent event) {
+    private static void notifyTreeModelListeners(Set<TreeModelListener> listeners, final TreeEventType eventType, final TreeModelEvent event) {
         Dispatch.run(() -> {
             try {
                 Object lastPathComponent = event.getTreePath().getLastPathComponent();
-                if (lastPathComponent != null) {
-                    for (TreeModelListener treeModelListener : treeModelListeners) {
-                        switch (eventType) {
-                            case NODES_ADDED:       treeModelListener.treeNodesInserted(event);    break;
-                            case NODES_REMOVED:     treeModelListener.treeNodesRemoved(event);     break;
-                            case NODES_CHANGED:     treeModelListener.treeNodesChanged(event);     break;
-                            case STRUCTURE_CHANGED: treeModelListener.treeStructureChanged(event); break;
-                        }
+                if (lastPathComponent == null) return;
+
+                Listeners.notify(listeners, l -> {
+                    switch (eventType) {
+                        case NODES_ADDED:       l.treeNodesInserted(event);    break;
+                        case NODES_REMOVED:     l.treeNodesRemoved(event);     break;
+                        case NODES_CHANGED:     l.treeNodesChanged(event);     break;
+                        case STRUCTURE_CHANGED: l.treeStructureChanged(event); break;
                     }
-                }
+                });
             } catch (IndexOutOfBoundsException ignore) {
                 // tree may have mutated already
             }
