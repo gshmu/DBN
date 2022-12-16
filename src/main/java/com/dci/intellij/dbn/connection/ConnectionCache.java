@@ -13,7 +13,7 @@ import static com.dci.intellij.dbn.common.dispose.Checks.isNotValid;
 import static com.dci.intellij.dbn.common.dispose.Checks.isValid;
 
 final class ConnectionCache {
-    private static Wrapper[] data = new Wrapper[50];
+    private static volatile Wrapper[] data = new Wrapper[50];
     private static final Lock lock = new ReentrantLock();
 
     private ConnectionCache() {}
@@ -22,9 +22,7 @@ final class ConnectionCache {
     public static ConnectionHandler resolve(@Nullable ConnectionId connectionId) {
         if (connectionId == null) return null;
         ensure(connectionId);
-
-        Wrapper wrapper = data[connectionId.index()];
-        return wrapper == null ? null : wrapper.get();
+        return data(connectionId.index());
     }
 
     private static void ensure(ConnectionId connectionId) {
@@ -42,7 +40,7 @@ final class ConnectionCache {
                 System.arraycopy(oldData, 0, newData, 0, oldData.length);
                 data = newData;
             } else {
-                if (data[index] != null && isNotValid(data[index].get())) {
+                if (data[index] != null && isNotValid(data(index))) {
                     data[index] = null;
                 }
             }
@@ -65,7 +63,13 @@ final class ConnectionCache {
     private static boolean found(int index) {
         return data.length > index &&
                 data[index] != null &&
-                isValid(data[index].get());
+                isValid(data(index));
+    }
+
+    @Nullable
+    private static ConnectionHandler data(int index) {
+        Wrapper[] data = ConnectionCache.data;
+        return data.length <= index || data[index] == null ? null : data[index].get();
     }
 
     public static void releaseCache(@NotNull Project project) {
@@ -81,11 +85,6 @@ final class ConnectionCache {
             }
         }
     }
-
-    private static void refreshConnections(@NotNull Project project) {
-
-    }
-
 
     private static class Wrapper extends WeakRef<ConnectionHandler> {
         protected Wrapper(ConnectionHandler referent) {

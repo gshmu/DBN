@@ -1,10 +1,10 @@
 package com.dci.intellij.dbn.common.ui.table;
 
 import com.dci.intellij.dbn.common.dispose.StatefulDisposableBase;
+import com.dci.intellij.dbn.common.ui.util.Listeners;
 
 import javax.swing.event.TableModelEvent;
 import javax.swing.event.TableModelListener;
-import java.util.HashSet;
 import java.util.Set;
 
 /**
@@ -12,7 +12,7 @@ import java.util.Set;
  * @param <R>
  */
 public abstract class DBNMutableTableModel<R> extends StatefulDisposableBase implements DBNTableModel<R> {
-    private final Set<TableModelListener> listeners = new HashSet<>();
+    private final Set<TableModelListener> listeners = Listeners.container();
     public boolean isReadonly(){
         return true;
     }
@@ -35,12 +35,12 @@ public abstract class DBNMutableTableModel<R> extends StatefulDisposableBase imp
 
     public final void notifyRowChange(int row) {
         TableModelEvent event = new TableModelEvent(this, row);
-        listeners.forEach(listener -> listener.tableChanged(event));
+        Listeners.notify(listeners, l -> l.tableChanged(event));
     }
 
     public final void notifyRowChanges() {
         TableModelEvent event = new TableModelEvent(this);
-        listeners.forEach(listener -> listener.tableChanged(event));
+        Listeners.notify(listeners, l -> l.tableChanged(event));
     }
 
     @Override
