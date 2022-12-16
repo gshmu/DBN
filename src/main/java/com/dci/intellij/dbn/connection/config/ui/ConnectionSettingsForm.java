@@ -10,9 +10,9 @@ import com.dci.intellij.dbn.common.options.ui.CompositeConfigurationEditorForm;
 import com.dci.intellij.dbn.common.thread.Dispatch;
 import com.dci.intellij.dbn.common.ui.form.DBNHeaderForm;
 import com.dci.intellij.dbn.common.ui.tab.TabbedPane;
-import com.dci.intellij.dbn.common.ui.tab.TabbedPaneUtil;
 import com.dci.intellij.dbn.common.ui.util.UserInterface;
 import com.dci.intellij.dbn.common.util.Messages;
+import com.dci.intellij.dbn.common.util.Safe;
 import com.dci.intellij.dbn.connection.ConnectionId;
 import com.dci.intellij.dbn.connection.ConnectionManager;
 import com.dci.intellij.dbn.connection.ConnectivityStatus;
@@ -40,46 +40,46 @@ public class ConnectionSettingsForm extends CompositeConfigurationEditorForm<Con
     private JButton testButton;
     private JCheckBox activeCheckBox;
 
-    private final TabbedPane configTabbedPane;
+    private final TabbedPane tabbedPane;
     private final DBNHeaderForm headerForm;
 
     public ConnectionSettingsForm(ConnectionSettings connectionSettings) {
         super(connectionSettings);
         ConnectionDatabaseSettings databaseSettings = connectionSettings.getDatabaseSettings();
-        configTabbedPane = new TabbedPane(this);
-        contentPanel.add(configTabbedPane, BorderLayout.CENTER);
+        tabbedPane = new TabbedPane(this);
+        contentPanel.add(tabbedPane, BorderLayout.CENTER);
 
 
         TabInfo connectionTabInfo = new TabInfo(new JBScrollPane(databaseSettings.createComponent()));
         connectionTabInfo.setText("Database");
-        configTabbedPane.addTab(connectionTabInfo);
+        tabbedPane.addTab(connectionTabInfo);
 
         if (databaseSettings.getConfigType() == ConnectionConfigType.BASIC) {
             ConnectionSslSettings sslSettings = connectionSettings.getSslSettings();
             TabInfo sslTabInfo = new TabInfo(new JBScrollPane(sslSettings.createComponent()));
             sslTabInfo.setText("SSL");
-            configTabbedPane.addTab(sslTabInfo);
+            tabbedPane.addTab(sslTabInfo);
 
             ConnectionSshTunnelSettings sshTunnelSettings = connectionSettings.getSshTunnelSettings();
             TabInfo sshTunnelTabInfo = new TabInfo(new JBScrollPane(sshTunnelSettings.createComponent()));
             sshTunnelTabInfo.setText("SSH Tunnel");
-            configTabbedPane.addTab(sshTunnelTabInfo);
+            tabbedPane.addTab(sshTunnelTabInfo);
         }
 
         ConnectionPropertiesSettings propertiesSettings = connectionSettings.getPropertiesSettings();
         TabInfo propertiesTabInfo = new TabInfo(new JBScrollPane(propertiesSettings.createComponent()));
         propertiesTabInfo.setText("Properties");
-        configTabbedPane.addTab(propertiesTabInfo);
+        tabbedPane.addTab(propertiesTabInfo);
 
         ConnectionDetailSettings detailSettings = connectionSettings.getDetailSettings();
         TabInfo detailsTabInfo = new TabInfo(new JBScrollPane(detailSettings.createComponent()));
         detailsTabInfo.setText("Details");
-        configTabbedPane.addTab(detailsTabInfo);
+        tabbedPane.addTab(detailsTabInfo);
 
         ConnectionFilterSettings filterSettings = connectionSettings.getFilterSettings();
         TabInfo filtersTabInfo = new TabInfo(new JBScrollPane(filterSettings.createComponent()));
         filtersTabInfo.setText("Filters");
-        configTabbedPane.addTab(filtersTabInfo);
+        tabbedPane.addTab(filtersTabInfo);
 
         ConnectionDatabaseSettingsForm databaseSettingsForm = databaseSettings.getSettingsEditor();
         ConnectionDetailSettingsForm detailSettingsForm = detailSettings.getSettingsEditor();
@@ -208,11 +208,11 @@ public class ConnectionSettingsForm extends CompositeConfigurationEditorForm<Con
     }
 
     public void selectTab(String tabName) {
-        TabbedPaneUtil.selectTab(configTabbedPane, tabName);
+        Safe.run(tabbedPane, t -> t.selectTab(tabName));
     }
 
     public String getSelectedTabName() {
-        return TabbedPaneUtil.getSelectedTabName(configTabbedPane);
+        return Safe.call(tabbedPane, t -> t.getSelectedTabName());
     }
 
     @NotNull
