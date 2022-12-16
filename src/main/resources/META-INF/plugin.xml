@@ -247,6 +247,7 @@
         <applicationService serviceImplementation="com.dci.intellij.dbn.credentials.DatabaseCredentialManager"/>
 
         <!--<projectService serviceImplementation="com.dci.intellij.dbn.options.GlobalProjectSettings"/>-->
+        <projectService serviceImplementation="com.dci.intellij.dbn.project.ProjectStateManager"/>
         <projectService serviceImplementation="com.dci.intellij.dbn.diagnostics.DiagnosticsManager"/>
         <projectService serviceImplementation="com.dci.intellij.dbn.diagnostics.ParserDiagnosticsManager"/>
         <projectService serviceImplementation="com.dci.intellij.dbn.browser.DatabaseBrowserManager"/>
