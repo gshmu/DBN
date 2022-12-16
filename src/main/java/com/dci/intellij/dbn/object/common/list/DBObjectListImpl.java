@@ -584,6 +584,8 @@ public class DBObjectListImpl<T extends DBObject> extends DynamicContentBase<T> 
             int fromIndex = range.getLeft();
             int toIndex = range.getRight() + 1;
             int size = elements.size();
+            if (size == 0) return Collections.emptyList();
+
             if (toIndex > size) {
                 log.error("invalid range {} for elements size {}", range, elements.size(),
                         new IllegalArgumentException("Invalid range capture"));
