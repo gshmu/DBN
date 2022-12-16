@@ -19,12 +19,14 @@ import com.dci.intellij.dbn.connection.config.ui.ConnectionBundleSettingsForm;
 import com.dci.intellij.dbn.connection.console.DatabaseConsoleManager;
 import com.dci.intellij.dbn.connection.operation.options.OperationSettings;
 import com.dci.intellij.dbn.data.grid.options.DataGridSettings;
+import com.dci.intellij.dbn.ddl.DDLFileAttachmentManager;
 import com.dci.intellij.dbn.ddl.options.DDLFileSettings;
 import com.dci.intellij.dbn.editor.DatabaseEditorStateManager;
 import com.dci.intellij.dbn.editor.code.SourceCodeManager;
 import com.dci.intellij.dbn.editor.data.DatasetEditorManager;
 import com.dci.intellij.dbn.editor.data.options.DataEditorSettings;
 import com.dci.intellij.dbn.execution.common.options.ExecutionEngineSettings;
+import com.dci.intellij.dbn.execution.compiler.DatabaseCompilerManager;
 import com.dci.intellij.dbn.navigation.options.NavigationSettings;
 import com.dci.intellij.dbn.object.common.loader.DatabaseLoaderManager;
 import com.dci.intellij.dbn.options.general.GeneralProjectSettings;
@@ -188,6 +190,8 @@ public class ProjectSettingsManager extends ProjectComponentBase implements Pers
         DatabaseEditorStateManager.getInstance(project);
         SourceCodeManager.getInstance(project);
         DatasetEditorManager.getInstance(project);
+        DatabaseCompilerManager.getInstance(project);
+        DDLFileAttachmentManager.getInstance(project);
         DatabaseLoaderManager.getInstance(project);
         DatabaseFileManager fileManager = DatabaseFileManager.getInstance(project);
 
