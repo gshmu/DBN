@@ -1,6 +1,7 @@
 package com.dci.intellij.dbn.common.compatibility;
 
 import com.dci.intellij.dbn.common.project.ProjectRef;
+import com.dci.intellij.dbn.project.ProjectStateManager;
 import com.intellij.openapi.Disposable;
 import com.intellij.openapi.fileEditor.FileEditor;
 import com.intellij.openapi.fileEditor.impl.NonProjectFileWritingAccessExtension;
@@ -12,7 +13,11 @@ import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
 
-public abstract class LegacyEditorNotificationsProvider<T extends JComponent> extends EditorNotifications.Provider<T> implements NonProjectFileWritingAccessExtension, Disposable {
+// TODO com.intellij.ui.EditorNotificationProvider
+@Compatibility
+public abstract class LegacyEditorNotificationsProvider<T extends JComponent>
+        extends EditorNotifications.Provider<T>
+        implements NonProjectFileWritingAccessExtension, Disposable {
     private final ProjectRef project;
 
     public LegacyEditorNotificationsProvider() {
@@ -22,6 +27,8 @@ public abstract class LegacyEditorNotificationsProvider<T extends JComponent> ex
     @Deprecated // constructor injection
     public LegacyEditorNotificationsProvider(Project project) {
         this.project = ProjectRef.of(project);
+
+        ProjectStateManager.registerDisposable(project, this);
     }
 
     @Nullable
@@ -41,6 +48,5 @@ public abstract class LegacyEditorNotificationsProvider<T extends JComponent> ex
 
     @Override
     public void dispose() {
-
     }
 }
