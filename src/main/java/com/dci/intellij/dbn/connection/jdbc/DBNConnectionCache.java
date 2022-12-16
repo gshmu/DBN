@@ -1,6 +1,7 @@
 package com.dci.intellij.dbn.connection.jdbc;
 
 import com.dci.intellij.dbn.common.event.ProjectEvents;
+import com.dci.intellij.dbn.common.exception.Exceptions;
 import com.dci.intellij.dbn.common.notification.NotificationGroup;
 import com.dci.intellij.dbn.common.pool.ObjectCacheBase;
 import com.dci.intellij.dbn.common.thread.Background;
@@ -68,8 +69,8 @@ public class DBNConnectionCache extends ObjectCacheBase<SessionId, DBNConnection
     }
 
     @Override
-    protected DBNConnection whenErrored(Throwable e) {
-        return super.whenErrored(e);
+    protected DBNConnection whenErrored(Throwable e) throws SQLException {
+        throw Exceptions.toSqlException(e);
     }
 
     @Override
