@@ -7,7 +7,7 @@ import com.dci.intellij.dbn.common.util.Strings;
  * Uses a thread local pre-sized empty {@link StringBuilder} starting appending and prepending in the middle
  */
 public final class StringDeBuilder {
-    private static final int playgroundSize = 1000;
+    private static final int playgroundSize = 6000;
     private static final ThreadLocal<StringBuilder> delegate = new ThreadLocal<>();
 
     private int left;

@@ -5,6 +5,7 @@ import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.common.project.ProjectRef;
 import com.dci.intellij.dbn.common.ui.component.DBNComponent;
 import com.dci.intellij.dbn.common.ui.form.DBNForm;
+import com.dci.intellij.dbn.common.ui.util.Listeners;
 import com.dci.intellij.dbn.common.util.Titles;
 import com.dci.intellij.dbn.diagnostics.Diagnostics;
 import com.intellij.openapi.Disposable;
@@ -15,7 +16,6 @@ import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
 import java.awt.*;
-import java.util.HashSet;
 import java.util.Set;
 
 import static com.dci.intellij.dbn.common.ui.dialog.DBNDialogListener.Action.CLOSE;
@@ -27,7 +27,7 @@ public abstract class DBNDialog<F extends DBNForm> extends DialogWrapper impleme
     private boolean rememberSelection;
     private boolean disposed;
     private Dimension defaultSize;
-    private final Set<DBNDialogListener> listeners = new HashSet<>();
+    private final Set<DBNDialogListener> listeners = Listeners.container();
 
     protected DBNDialog(Project project, String title, boolean canBeParent) {
         super(project, canBeParent);
@@ -65,7 +65,7 @@ public abstract class DBNDialog<F extends DBNForm> extends DialogWrapper impleme
     @Override
     public final void show() {
         super.show();
-        listeners.forEach(l -> l.onAction(OPEN));
+        Listeners.notify(listeners, l -> l.onAction(OPEN));
     }
 
     @Override
@@ -156,7 +156,7 @@ public abstract class DBNDialog<F extends DBNForm> extends DialogWrapper impleme
     public final void dispose() {
         if (!disposed) {
             disposed = true;
-            listeners.forEach(l -> l.onAction(CLOSE));
+            Listeners.notify(listeners, l -> l.onAction(CLOSE));
             super.dispose();
             Disposer.dispose(form);
             Disposer.disposeCollection(listeners);

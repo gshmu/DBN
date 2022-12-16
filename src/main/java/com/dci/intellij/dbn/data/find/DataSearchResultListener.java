@@ -1,5 +1,7 @@
 package com.dci.intellij.dbn.data.find;
 
-public interface DataSearchResultListener {
+import java.util.EventListener;
+
+public interface DataSearchResultListener extends EventListener {
     void searchResultUpdated(DataSearchResult searchResult);
 }
