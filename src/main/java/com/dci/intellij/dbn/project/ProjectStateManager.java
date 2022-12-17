@@ -2,6 +2,7 @@ package com.dci.intellij.dbn.project;
 
 import com.dci.intellij.dbn.common.component.Components;
 import com.dci.intellij.dbn.common.component.ProjectComponentBase;
+import com.dci.intellij.dbn.common.dispose.Checks;
 import com.dci.intellij.dbn.common.dispose.Disposer;
 import com.intellij.openapi.Disposable;
 import com.intellij.openapi.project.Project;
@@ -19,6 +20,8 @@ public class ProjectStateManager extends ProjectComponentBase {
     }
 
     public static void registerDisposable(Project project, Disposable child) {
-        Disposer.register(ProjectStateManager.getInstance(project), child);
+        if (Checks.isNotValid(project)) return;
+        ProjectStateManager stateManager = ProjectStateManager.getInstance(project);
+        Disposer.register(stateManager, child);
     }
 }
