@@ -212,7 +212,9 @@ public class ExecutionManager extends ProjectComponentBase implements Persistent
 
     @Nullable
     public ExecutionResult getSelectedExecutionResult() {
-        return executionConsoleForm.loaded() ? getExecutionConsoleForm().getSelectedExecutionResult() : null;
+        if (!executionConsoleForm.loaded()) return null;
+        return Dispatch.call(true, () ->
+                getExecutionConsoleForm().getSelectedExecutionResult());
     }
 
     /*********************************************
