@@ -108,9 +108,9 @@ public class SortableTableExportModel implements DataExportModel{
     private int getRealColumnIndex(int columnIndex) {
         if (selection) {
             int selectedColumnIndex = selectedColumns[columnIndex];
-            return table.getModelColumnIndex(selectedColumnIndex);
+            return table.convertColumnIndexToModel(selectedColumnIndex);
         } else {
-            return table.getModelColumnIndex(columnIndex);
+            return table.convertColumnIndexToModel(columnIndex);
         }
     }
 

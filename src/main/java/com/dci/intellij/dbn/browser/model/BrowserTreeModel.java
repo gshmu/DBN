@@ -8,21 +8,20 @@ import com.dci.intellij.dbn.common.load.LoadInProgressRegistry;
 import com.dci.intellij.dbn.common.ref.WeakRef;
 import com.dci.intellij.dbn.common.ui.tree.TreeEventType;
 import com.dci.intellij.dbn.common.ui.tree.TreeUtil;
+import com.dci.intellij.dbn.common.ui.util.Listeners;
 import com.intellij.openapi.project.Project;
-import com.intellij.util.containers.ContainerUtil;
 import org.jetbrains.annotations.NotNull;
 
 import javax.swing.event.TreeModelListener;
 import javax.swing.tree.TreeModel;
 import javax.swing.tree.TreePath;
-import java.util.Set;
 
 import static com.dci.intellij.dbn.common.dispose.Checks.allValid;
 import static com.dci.intellij.dbn.common.dispose.Failsafe.guarded;
 
 public abstract class BrowserTreeModel extends StatefulDisposableBase implements TreeModel, StatefulDisposable {
 
-    private final Set<TreeModelListener> treeModelListeners = ContainerUtil.newConcurrentSet();
+    private final Listeners<TreeModelListener> listeners = Listeners.create(this);
     private final WeakRef<BrowserTreeNode> root;
 
     private final LoadInProgressRegistry<LoadInProgressTreeNode> loadInProgressRegistry =
@@ -48,18 +47,18 @@ public abstract class BrowserTreeModel extends StatefulDisposableBase implements
 
     @Override
     public void addTreeModelListener(TreeModelListener listener) {
-        treeModelListeners.add(listener);
+        listeners.add(listener);
     }
 
     @Override
     public void removeTreeModelListener(TreeModelListener listener) {
-        treeModelListeners.remove(listener);
+        listeners.remove(listener);
     }
 
     public void notifyListeners(BrowserTreeNode treeNode, final TreeEventType eventType) {
         if (allValid(this, treeNode)) {
             TreePath treePath = DatabaseBrowserUtils.createTreePath(treeNode);
-            TreeUtil.notifyTreeModelListeners(this, treeModelListeners, treePath, eventType);
+            TreeUtil.notifyTreeModelListeners(this, listeners, treePath, eventType);
         }
     }
 

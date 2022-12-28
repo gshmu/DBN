@@ -34,10 +34,9 @@ import java.awt.event.MouseListener;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
-import java.util.Set;
 
 public abstract class ValueSelector<T extends Presentable> extends JPanel{
-    private final Set<ValueSelectorListener<T>> listeners = Listeners.container();
+    private final Listeners<ValueSelectorListener<T>> listeners = Listeners.create();
     private final PropertyHolder<ValueSelectorOption> options = new PropertyHolderBase.IntStore<ValueSelectorOption>() {
         @Override
         protected ValueSelectorOption[] properties() {
@@ -303,6 +302,6 @@ public abstract class ValueSelector<T extends Presentable> extends JPanel{
     }
 
     private void selectValue(T value) {
-        Listeners.notify(listeners, l -> l.selectionChanged(null, value));
+        listeners.notify(l -> l.selectionChanged(null, value));
     }
 }

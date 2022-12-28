@@ -35,6 +35,7 @@ import com.intellij.openapi.ui.popup.JBPopup;
 import com.intellij.ui.components.JBViewport;
 import com.intellij.util.Alarm;
 import com.intellij.util.ui.UIUtil;
+import lombok.Getter;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -49,6 +50,7 @@ import java.awt.event.MouseMotionAdapter;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 
+@Getter
 public class BasicTable<T extends BasicDataModel<?, ?>> extends DBNTableWithGutter<T> implements EditorColorsListener, Disposable {
     private final BasicTableCellRenderer cellRenderer;
     private final RegionalSettings regionalSettings;
@@ -94,42 +96,42 @@ public class BasicTable<T extends BasicDataModel<?, ?>> extends DBNTableWithGutt
         });
 
         getSelectionModel().addListSelectionListener(e -> {
+            if (e.getValueIsAdjusting()) return;
+            selectionMath = null;
+
             BigDecimal total = BigDecimal.ZERO;
             BigDecimal count = BigDecimal.ZERO;
-            if (!e.getValueIsAdjusting()) {
-                selectionMath = null;
-                int rows = getSelectedRowCount();
-                int columns = getSelectedColumnCount();
-                if (columns == 1 && rows > 1 && rows < 100) {
-                    int selectedColumn = getSelectedColumn();
-                    int[] selectedRows = getSelectedRows();
-                    for (int selectedRow : selectedRows) {
-                        Object value = getValueAt(selectedRow, selectedColumn);
-                        if (value instanceof BasicDataModelCell) {
-                            BasicDataModelCell<?, ?> cell = (BasicDataModelCell<?, ?>) value;
-                            Object userValue = cell.getUserValue();
-                            if (userValue == null || userValue instanceof Number) {
-                                if (userValue != null) {
-                                    count = count.add(BigDecimal.ONE);
-                                    Number number = (Number) userValue;
-                                    total = total.add(new BigDecimal(number.toString()));
-                                }
+            int rows = getSelectedRowCount();
+            int columns = getSelectedColumnCount();
+            if (columns != 1 || rows <= 1 || rows >= 200) return;
 
-                            } else {
-                                return;
-                            }
-                        } else {
-                            return;
+            int selectedColumn = getSelectedColumn();
+            int[] selectedRows = getSelectedRows();
+            for (int selectedRow : selectedRows) {
+                Object value = getValueAt(selectedRow, selectedColumn);
+                if (value instanceof BasicDataModelCell) {
+                    BasicDataModelCell<?, ?> cell = (BasicDataModelCell<?, ?>) value;
+                    Object userValue = cell.getUserValue();
+                    if (userValue == null || userValue instanceof Number) {
+                        if (userValue != null) {
+                            count = count.add(BigDecimal.ONE);
+                            Number number = (Number) userValue;
+                            total = total.add(new BigDecimal(number.toString()));
                         }
+
+                    } else {
+                        return;
                     }
-                    if (count.compareTo(BigDecimal.ZERO) > 0) {
-                        BigDecimal average = total.divide(count, 9, RoundingMode.HALF_UP);
-                        average = average.stripTrailingZeros();
-                        selectionMath = new MathResult(total, count, average);
-                        showSelectionTooltip();
-                    }
+                } else {
+                    return;
                 }
             }
+            if (count.compareTo(BigDecimal.ZERO) <= 0) return;
+
+            BigDecimal average = total.divide(count, 9, RoundingMode.HALF_UP);
+            average = average.stripTrailingZeros();
+            selectionMath = new MathResult(total, count, average);
+            showSelectionTooltip();
         });
 
         addMouseMotionListener(new MouseMotionAdapter() {
@@ -150,25 +152,25 @@ public class BasicTable<T extends BasicDataModel<?, ?>> extends DBNTableWithGutt
 
     boolean isCellSelected(Point point) {
         DataModelCell<?, ?> cell = getCellAtLocation(point);
-        if (cell != null) {
-            int rowIndex = cell.getRow().getIndex();
-            int columnIndex = cell.getColumnInfo().getIndex();
-            return isCellSelected(rowIndex, columnIndex);
-        }
-        return false;
+        if (cell == null) return false;
+
+        int rowIndex = cell.getRow().getIndex();
+        int columnIndex = cell.getColumnInfo().getIndex();
+        return isCellSelected(rowIndex, columnIndex);
     }
 
     private void showSelectionTooltip() {
         MathResult mathResult = this.selectionMath;
-        if (mathResult != null) {
-            MathPanel mathPanel = new MathPanel(getProject(), mathResult);
-            Point mousePosition = getMousePosition();
-            if (mousePosition != null && isCellSelected(mousePosition)) {
-                IdeTooltip tooltip = new IdeTooltip(this, mousePosition, mathPanel.getComponent());
-                tooltip.setFont(Fonts.deriveFont(Fonts.REGULAR,  (float) 16));
-                IdeTooltipManager.getInstance().show(tooltip, true);
-            }
-        }
+        if (mathResult == null) return;
+
+        Point mousePosition = getMousePosition();
+        if (mousePosition == null) return;
+        if (!isCellSelected(mousePosition)) return;
+
+        MathPanel mathPanel = new MathPanel(getProject(), mathResult);
+        IdeTooltip tooltip = new IdeTooltip(this, mousePosition, mathPanel.getComponent());
+        tooltip.setFont(Fonts.deriveFont(Fonts.REGULAR,  (float) 16));
+        IdeTooltipManager.getInstance().show(tooltip, true);
     }
 
     private final RegionalSettingsListener regionalSettingsListener = () -> regionalSettingsChanged();
@@ -199,14 +201,6 @@ public class BasicTable<T extends BasicDataModel<?, ?>> extends DBNTableWithGutt
         return new BasicTableGutter<>(this);
     }
 
-    public RegionalSettings getRegionalSettings() {
-        return regionalSettings;
-    }
-
-    public DataGridSettings getDataGridSettings() {
-        return dataGridSettings;
-    }
-
     protected BasicTableCellRenderer createCellRenderer() {
         return new BasicTableCellRenderer();
     }
@@ -233,10 +227,6 @@ public class BasicTable<T extends BasicDataModel<?, ?>> extends DBNTableWithGutt
 
     }
 
-    public boolean isLoading() {
-        return loading;
-    }
-
     public void selectRow(int index) {
         T model = getModel();
         int rowCount = model.getRowCount();
@@ -252,10 +242,6 @@ public class BasicTable<T extends BasicDataModel<?, ?>> extends DBNTableWithGutt
 
     @Override
     public TableCellRenderer getCellRenderer(int i, int i1) {
-        return cellRenderer;
-    }
-
-    public BasicTableCellRenderer getCellRenderer() {
         return cellRenderer;
     }
 
@@ -292,18 +278,12 @@ public class BasicTable<T extends BasicDataModel<?, ?>> extends DBNTableWithGutt
         return getCellAtLocation(location);
     }
 
-    public int getModelColumnIndex(int columnIndex) {
-        return getColumnModel().getColumn(columnIndex).getModelIndex();
-    }
-
     @Nullable
-    protected DataModelCell<?, ?> getCellAtPosition(int rowIndex, int columnIndex) {
-        DataModelRow<?, ?> row = getModel().getRowAtIndex(rowIndex);
-        if (row != null) {
-            int modelColumnIndex = getModelColumnIndex(columnIndex);
-            return row.getCellAtIndex(modelColumnIndex);
-        }
-        return null;
+    protected DataModelCell<?, ?> getCellAtPosition(int modelRowIndex, int modelColumnIndex) {
+        DataModelRow<?, ?> row = getModel().getRowAtIndex(modelRowIndex);
+        if (row == null) return null;
+
+        return row.getCellAtIndex(modelColumnIndex);
     }
     /*********************************************************
      *                EditorColorsListener                  *

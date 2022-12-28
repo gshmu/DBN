@@ -1,6 +1,5 @@
 package com.dci.intellij.dbn.common.ui;
 
-import com.dci.intellij.dbn.common.dispose.AlreadyDisposedException;
 import com.dci.intellij.dbn.common.event.ProjectEvents;
 import com.dci.intellij.dbn.common.ref.WeakRef;
 import com.dci.intellij.dbn.common.thread.Dispatch;
@@ -107,12 +106,7 @@ public class AutoCommitLabel extends DBNPanelImpl implements Disposable {
 
     @Nullable
     private ConnectionHandler getConnection() {
-        try {
-            return ConnectionRef.get(connection);
-        } catch (AlreadyDisposedException e) {
-            this.connection = null;
-            return null;
-        }
+        return ConnectionRef.get(connection);
     }
 
     private final ConnectionStatusListener connectionStatusListener = (connectionId, sessionId) -> {

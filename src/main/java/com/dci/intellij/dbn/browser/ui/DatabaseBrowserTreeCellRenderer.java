@@ -3,7 +3,6 @@ package com.dci.intellij.dbn.browser.ui;
 import com.dci.intellij.dbn.browser.model.BrowserTreeNode;
 import com.dci.intellij.dbn.browser.model.LoadInProgressTreeNode;
 import com.dci.intellij.dbn.browser.options.DatabaseBrowserSettings;
-import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.common.ui.tree.TreeUtil;
 import com.dci.intellij.dbn.common.util.Commons;
 import com.dci.intellij.dbn.common.util.Strings;
@@ -24,6 +23,8 @@ import org.jetbrains.annotations.NotNull;
 import javax.swing.*;
 import javax.swing.tree.TreeCellRenderer;
 import java.awt.*;
+
+import static com.dci.intellij.dbn.common.dispose.Failsafe.guarded;
 
 public class DatabaseBrowserTreeCellRenderer implements TreeCellRenderer {
     private DefaultTreeCellRenderer cellRenderer = new DefaultTreeCellRenderer();
@@ -47,7 +48,7 @@ public class DatabaseBrowserTreeCellRenderer implements TreeCellRenderer {
 
         @Override
         public void customizeCellRenderer(@NotNull JTree tree, Object value, boolean selected, boolean expanded, boolean leaf, int row, boolean hasFocus) {
-            Failsafe.guarded(() -> {
+            guarded(() -> {
                 if (value instanceof LoadInProgressTreeNode) {
                     LoadInProgressTreeNode loadInProgressTreeNode = (LoadInProgressTreeNode) value;
                     setIcon(loadInProgressTreeNode.getIcon(0));

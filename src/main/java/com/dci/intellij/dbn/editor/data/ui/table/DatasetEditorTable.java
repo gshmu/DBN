@@ -277,7 +277,9 @@ public class DatasetEditorTable extends ResultSetTable<DatasetEditorModel> {
 
         if (editor instanceof DatasetTableCellEditor) {
             DatasetTableCellEditor cellEditor = (DatasetTableCellEditor) editor;
-            DatasetEditorModelCell cell = (DatasetEditorModelCell) getCellAtPosition(rowIndex, columnIndex);
+            int modelRowIndex = convertRowIndexToModel(rowIndex);
+            int modelColumnIndex = convertColumnIndexToModel(columnIndex);
+            DatasetEditorModelCell cell = (DatasetEditorModelCell) getCellAtPosition(modelRowIndex, modelColumnIndex);
             if (cell != null) {
                 cellEditor.prepareEditor(cell);
             }
@@ -296,7 +298,7 @@ public class DatasetEditorTable extends ResultSetTable<DatasetEditorModel> {
             return null;
         }
 
-        int modelColumnIndex = getModelColumnIndex(columnIndex);
+        int modelColumnIndex = convertColumnIndexToModel(columnIndex);
         ColumnInfo columnInfo = getModel().getColumnInfo(modelColumnIndex);
 
         DataGridAuditColumnSettings auditColumnSettings = getDataGridSettings().getAuditColumnSettings();

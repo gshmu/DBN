@@ -18,11 +18,10 @@ import static com.dci.intellij.dbn.common.dispose.Checks.isValid;
 public abstract class BasicConfiguration<P extends Configuration, E extends ConfigurationEditorForm>
         extends AbstractConfiguration<P, E> {
 
-    private WeakRef<E> editorForm;
-
-    private boolean modified = false;
-    private final boolean transitory = ConfigurationHandle.isTransitory();
-    private final WeakRef<P> parent;
+    private final transient boolean transitory = ConfigurationHandle.isTransitory();
+    private final transient WeakRef<P> parent;
+    private transient WeakRef<E> editorForm;
+    private transient boolean modified = false;
 
     public BasicConfiguration(P parent) {
         this.parent = WeakRef.of(parent);

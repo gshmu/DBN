@@ -12,6 +12,7 @@ import com.dci.intellij.dbn.common.locale.options.RegionalSettingsListener;
 import com.dci.intellij.dbn.common.project.ProjectRef;
 import com.dci.intellij.dbn.common.property.DisposablePropertyHolder;
 import com.dci.intellij.dbn.common.thread.Dispatch;
+import com.dci.intellij.dbn.common.ui.util.Listeners;
 import com.dci.intellij.dbn.data.find.DataSearchResult;
 import com.dci.intellij.dbn.data.model.*;
 import com.dci.intellij.dbn.editor.data.model.RecordStatus;
@@ -24,9 +25,7 @@ import javax.swing.event.ListDataEvent;
 import javax.swing.event.TableModelEvent;
 import javax.swing.event.TableModelListener;
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 public class BasicDataModel<
         R extends DataModelRow<? extends BasicDataModel<R, C>, C>,
@@ -42,8 +41,8 @@ public class BasicDataModel<
     private boolean environmentReadonly;
     private Latent<Formatter> formatter;
 
-    private final Set<TableModelListener> tableModelListeners = new HashSet<>();
-    private final Set<DataModelListener> dataModelListeners = new HashSet<>();
+    private final Listeners<TableModelListener> tableModelListeners = Listeners.create(this);
+    private final Listeners<DataModelListener> dataModelListeners = Listeners.create(this);
     private final Latent<BasicDataGutterModel> listModel = Latent.basic(() -> new BasicDataGutterModel(BasicDataModel.this));
     private final Latent<DataSearchResult> searchResult = Latent.basic(() -> new DataSearchResult());
 
@@ -266,13 +265,8 @@ public class BasicDataModel<
             }
 
             if (modelEvent != null) {
-                for (TableModelListener tableModelListener: tableModelListeners) {
-                    tableModelListener.tableChanged(modelEvent);
-                }
-
-                for (DataModelListener tableModelListener: dataModelListeners) {
-                    tableModelListener.modelChanged();
-                }
+                tableModelListeners.notify(l -> l.tableChanged(modelEvent));
+                dataModelListeners.notify(l -> l.modelChanged());
             }
         });
     }
