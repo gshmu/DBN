@@ -16,7 +16,6 @@ import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
 import java.awt.*;
-import java.util.Set;
 
 import static com.dci.intellij.dbn.common.ui.dialog.DBNDialogListener.Action.CLOSE;
 import static com.dci.intellij.dbn.common.ui.dialog.DBNDialogListener.Action.OPEN;
@@ -27,7 +26,7 @@ public abstract class DBNDialog<F extends DBNForm> extends DialogWrapper impleme
     private boolean rememberSelection;
     private boolean disposed;
     private Dimension defaultSize;
-    private final Set<DBNDialogListener> listeners = Listeners.container();
+    private final Listeners<DBNDialogListener> listeners = Listeners.create(getDisposable());
 
     protected DBNDialog(Project project, String title, boolean canBeParent) {
         super(project, canBeParent);
@@ -65,7 +64,7 @@ public abstract class DBNDialog<F extends DBNForm> extends DialogWrapper impleme
     @Override
     public final void show() {
         super.show();
-        Listeners.notify(listeners, l -> l.onAction(OPEN));
+        listeners.notify(l -> l.onAction(OPEN));
     }
 
     @Override
@@ -156,10 +155,9 @@ public abstract class DBNDialog<F extends DBNForm> extends DialogWrapper impleme
     public final void dispose() {
         if (!disposed) {
             disposed = true;
-            Listeners.notify(listeners, l -> l.onAction(CLOSE));
+            listeners.notify(l -> l.onAction(CLOSE));
             super.dispose();
             Disposer.dispose(form);
-            Disposer.disposeCollection(listeners);
             disposeInner();
             //nullify();
         }

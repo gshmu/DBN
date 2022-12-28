@@ -30,12 +30,14 @@ import org.jetbrains.annotations.Nullable;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.MouseListener;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
 import java.util.List;
-import java.util.*;
 
 public class DBNComboBox<T extends Presentable> extends JComboBox<T> implements PropertyHolder<ValueSelectorOption> {
 
-    private final Set<ValueSelectorListener<T>> listeners = Listeners.container();
+    private final Listeners<ValueSelectorListener<T>> listeners = Listeners.create();
     private ListPopup popup;
     private PresentableFactory<T> valueFactory;
     private Loader<List<T>> valueLoader;
@@ -273,7 +275,7 @@ public class DBNComboBox<T extends Presentable> extends JComboBox<T> implements 
 
         super.setSelectedItem(anObject);
         T newValue = getSelectedValue();
-        Listeners.notify(listeners, l -> l.selectionChanged(oldValue, newValue));
+        listeners.notify(l -> l.selectionChanged(oldValue, newValue));
     }
 
     private void selectValue(T value) {

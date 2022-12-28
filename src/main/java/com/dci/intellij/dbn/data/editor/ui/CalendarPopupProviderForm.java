@@ -35,7 +35,6 @@ import java.text.ParseException;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
-import java.util.Set;
 
 import static com.dci.intellij.dbn.common.dispose.Failsafe.nd;
 
@@ -296,7 +295,7 @@ public class CalendarPopupProviderForm extends TextFieldPopupProviderForm implem
     }
 
     private class CalendarTableModel implements TableModel {
-        private final Set<TableModelListener> listeners = Listeners.container();
+        private final Listeners<TableModelListener> listeners = Listeners.create(CalendarPopupProviderForm.this);
         private final Calendar inputDate = new GregorianCalendar();
         private final Calendar activeMonth = new GregorianCalendar();
         private final Calendar previousMonth = new GregorianCalendar();
@@ -430,7 +429,7 @@ public class CalendarPopupProviderForm extends TextFieldPopupProviderForm implem
 
         private void notifyListeners() {
             TableModelEvent event = new TableModelEvent(this, 0, 5);
-            Listeners.notify(listeners, l -> l.tableChanged(event));
+            listeners.notify(l -> l.tableChanged(event));
         }
 
         Timestamp getTimestamp(int rowIndex, int columnIndex) {

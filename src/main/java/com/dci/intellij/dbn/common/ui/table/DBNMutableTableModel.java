@@ -5,14 +5,13 @@ import com.dci.intellij.dbn.common.ui.util.Listeners;
 
 import javax.swing.event.TableModelEvent;
 import javax.swing.event.TableModelListener;
-import java.util.Set;
 
 /**
  * Mutable model, not really editable
  * @param <R>
  */
 public abstract class DBNMutableTableModel<R> extends StatefulDisposableBase implements DBNTableModel<R> {
-    private final Set<TableModelListener> listeners = Listeners.container();
+    private final Listeners<TableModelListener> listeners = Listeners.create(this);
     public boolean isReadonly(){
         return true;
     }
@@ -35,16 +34,15 @@ public abstract class DBNMutableTableModel<R> extends StatefulDisposableBase imp
 
     public final void notifyRowChange(int row) {
         TableModelEvent event = new TableModelEvent(this, row);
-        Listeners.notify(listeners, l -> l.tableChanged(event));
+        listeners.notify(l -> l.tableChanged(event));
     }
 
     public final void notifyRowChanges() {
         TableModelEvent event = new TableModelEvent(this);
-        Listeners.notify(listeners, l -> l.tableChanged(event));
+        listeners.notify(l -> l.tableChanged(event));
     }
 
     @Override
     protected void disposeInner() {
-        listeners.clear();
     }
 }

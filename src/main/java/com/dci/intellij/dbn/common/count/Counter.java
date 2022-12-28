@@ -2,12 +2,11 @@ package com.dci.intellij.dbn.common.count;
 
 import com.dci.intellij.dbn.common.ui.util.Listeners;
 
-import java.util.Set;
 import java.util.concurrent.atomic.AtomicInteger;
 
 public final class Counter {
     private final CounterType type;
-    private final Set<CounterListener> listeners = Listeners.container();
+    private final Listeners<CounterListener> listeners = Listeners.create();
     private final AtomicInteger count = new AtomicInteger(0);
 
     public Counter(CounterType type) {
@@ -20,13 +19,13 @@ public final class Counter {
 
     public int increment() {
         int value = count.incrementAndGet();
-        Listeners.notify(listeners, l -> l.when(value));
+        listeners.notify(l -> l.when(value));
         return value;
     }
 
     public int decrement() {
         int value = count.decrementAndGet();
-        Listeners.notify(listeners, l -> l.when(value));
+        listeners.notify(l -> l.when(value));
         return value;
     }
 

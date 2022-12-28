@@ -26,7 +26,6 @@ import javax.swing.event.ListDataListener;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
-import java.util.Set;
 
 import static com.dci.intellij.dbn.common.options.setting.SettingsSupport.connectionIdAttribute;
 import static com.dci.intellij.dbn.common.options.setting.SettingsSupport.stringAttribute;
@@ -46,8 +45,8 @@ public class DatasetFilterGroup extends BasicProjectConfiguration<ProjectConfigu
     @Setter
     private static class State {
         private boolean changed;
-        private final List<DatasetFilter> filtersTemp = new ArrayList<>();
-        private final Set<ListDataListener> listeners = Listeners.container();
+        private final List<DatasetFilter> filtersCapture = new ArrayList<>();
+        private final Listeners<ListDataListener> listeners = Listeners.create();
     }
 
     public DatasetFilterGroup(@NotNull Project project) {
@@ -193,7 +192,7 @@ public class DatasetFilterGroup extends BasicProjectConfiguration<ProjectConfigu
 
     private void initChange() {
         if (!state.changed) {
-            state.filtersTemp.addAll(filters);
+            state.filtersCapture.addAll(filters);
             state.changed = true;
         }
     }
@@ -213,8 +212,8 @@ public class DatasetFilterGroup extends BasicProjectConfiguration<ProjectConfigu
     public void apply() throws ConfigurationException {
         if (state.changed) {
             filters.clear();
-            filters.addAll(state.filtersTemp);
-            state.filtersTemp.clear();
+            filters.addAll(state.filtersCapture);
+            state.filtersCapture.clear();
             state.changed = false;
             if (!filters.contains(activeFilter)) {
                 activeFilter = null;
@@ -228,7 +227,7 @@ public class DatasetFilterGroup extends BasicProjectConfiguration<ProjectConfigu
     @Override
     public void reset() {
         if (state.changed) {
-            state.filtersTemp.clear();
+            state.filtersCapture.clear();
             state.changed = false;
         }
         for (DatasetFilter filter : filters) {
@@ -241,7 +240,7 @@ public class DatasetFilterGroup extends BasicProjectConfiguration<ProjectConfigu
         for (DatasetFilter filter :filters) {
             filter.disposeUIResources();
         }
-        for (DatasetFilter filter :state.filtersTemp) {
+        for (DatasetFilter filter :state.filtersCapture) {
             filter.disposeUIResources();
         }
         state.listeners.clear();
@@ -290,7 +289,7 @@ public class DatasetFilterGroup extends BasicProjectConfiguration<ProjectConfigu
     *                     ListModel                 *
     *************************************************/
    public List<DatasetFilter> getFilters() {
-        return state.changed ? state.filtersTemp : filters;
+        return state.changed ? state.filtersCapture : filters;
    }
 
    @Override

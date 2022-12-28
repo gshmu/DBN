@@ -33,7 +33,7 @@ public class ObjectNameFilterSettings
     private final Map<DBObjectType, Filter<DBObject>> objectFilterMap = new EnumMap<>(DBObjectType.class);
 
     private transient final ConnectionId connectionId;
-    private transient final Set<TreeModelListener> listeners = Listeners.container();
+    private transient final Listeners<TreeModelListener> listeners = Listeners.create(this);
 
 
     public ObjectNameFilterSettings(ConnectionFilterSettings parent, ConnectionId connectionId) {
@@ -160,7 +160,7 @@ public class ObjectNameFilterSettings
         if (listeners.isEmpty()) return;
 
         TreeModelEvent event = createTreeModelEvent(index, condition);
-        Listeners.notify(listeners, l -> l.treeNodesInserted(event));
+        listeners.notify(l -> l.treeNodesInserted(event));
     }
 
     public void notifyNodeRemoved(int index, FilterCondition condition) {
@@ -168,7 +168,7 @@ public class ObjectNameFilterSettings
         if (index < 0) return;
 
         TreeModelEvent event = createTreeModelEvent(index, condition);
-        Listeners.notify(listeners, l -> l.treeNodesRemoved(event));
+        listeners.notify(l -> l.treeNodesRemoved(event));
     }
 
     public void notifyNodeChanged(FilterCondition condition) {
@@ -178,13 +178,13 @@ public class ObjectNameFilterSettings
             ObjectNameFilter filter = (ObjectNameFilter) condition;
             int index = filter.getSettings().filters.indexOf(filter);
             TreeModelEvent event = createTreeModelEvent(index, condition);
-            Listeners.notify(listeners, l -> l.treeNodesChanged(event));
+            listeners.notify(l -> l.treeNodesChanged(event));
         } else {
             CompoundFilterCondition parent = condition.getParent();
             if (parent != null) {
                 int index = parent.getConditions().indexOf(condition);
                 TreeModelEvent event = createTreeModelEvent(index, condition);
-                Listeners.notify(listeners, l -> l.treeNodesChanged(event));
+                listeners.notify(l -> l.treeNodesChanged(event));
             }
         }
 
@@ -199,7 +199,7 @@ public class ObjectNameFilterSettings
         }
 
         TreeModelEvent event = createTreeModelEvent(indexes, parentCondition);
-        Listeners.notify(listeners, l -> l.treeNodesChanged(event));
+        listeners.notify(l -> l.treeNodesChanged(event));
     }
 
     private TreeModelEvent createTreeModelEvent(int index, FilterCondition condition) {

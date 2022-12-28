@@ -9,11 +9,10 @@ import org.jetbrains.annotations.NotNull;
 import javax.swing.*;
 import javax.swing.event.ListDataEvent;
 import javax.swing.event.ListDataListener;
-import java.util.Set;
 
 public class DBNTableGutterModel<T extends DBNTableWithGutterModel> extends StatefulDisposableBase implements ListModel {
     private final WeakRef<T> tableModel;
-    private final Set<ListDataListener> listeners = Listeners.container();
+    private final Listeners<ListDataListener> listeners = Listeners.create(this);
 
     public DBNTableGutterModel(@NotNull T tableModel) {
         this.tableModel = WeakRef.of(tableModel);
@@ -47,7 +46,7 @@ public class DBNTableGutterModel<T extends DBNTableWithGutterModel> extends Stat
     }
 
     public void notifyListeners(ListDataEvent e) {
-        Listeners.notify(listeners, l -> l.contentsChanged(e));
+        listeners.notify(l -> l.contentsChanged(e));
     }
 
     @Override
