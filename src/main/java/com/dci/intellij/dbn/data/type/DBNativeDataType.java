@@ -110,7 +110,7 @@ public class DBNativeDataType extends StatefulDisposableBase implements DynamicC
                         clazz == Time.class ? new Time(longValue) :
                         clazz == Timestamp.class ? new Timestamp(longValue) : null;
                 } else {
-                    log.error("Error resolving result-set value for " + objectClass + " \"" + object + "\". (data type definition " + definition + ')', e);
+                    log.error("Error resolving result-set value for {} '{}'. (data type definition {})", objectClass, object, definition, e);
                     return object;
                 }
             } catch (Throwable e1) {
@@ -168,13 +168,13 @@ public class DBNativeDataType extends StatefulDisposableBase implements DynamicC
         return callableStatement.getObject(parameterIndex);
     }
 
-    public <T> void setValueToStatement(PreparedStatement preparedStatement, int parameterIndex, T value) throws SQLException {
+    public <T> void setValueToStatement(PreparedStatement statement, int parameterIndex, T value) throws SQLException {
         GenericDataType genericDataType = definition.getGenericDataType();
         if (ValueAdapter.supports(genericDataType)) {
             ValueAdapter<T> valueAdapter = ValueAdapter.create(genericDataType);
             if (valueAdapter != null) {
-                Connection connection = preparedStatement.getConnection();
-                valueAdapter.write(connection, preparedStatement, parameterIndex, value);
+                Connection connection = statement.getConnection();
+                valueAdapter.write(connection, statement, parameterIndex, value);
             }
             return;
         }
@@ -183,28 +183,28 @@ public class DBNativeDataType extends StatefulDisposableBase implements DynamicC
         DataTypeParseAdapter<T> parseAdapter = definition.getParseAdapter();
         if (parseAdapter != null) {
             String stringValue =  parseAdapter.toString(value);
-            preparedStatement.setString(parameterIndex, stringValue);
+            statement.setString(parameterIndex, stringValue);
             return;
         }
 
         if (value == null) {
-            preparedStatement.setObject(parameterIndex, null);
+            statement.setObject(parameterIndex, null);
         } else {
             Class clazz = definition.getTypeClass();
             if (value.getClass().isAssignableFrom(clazz)) {
-                if(clazz == String.class) preparedStatement.setString(parameterIndex, (String) value); else
-                if(clazz == Byte.class) preparedStatement.setByte(parameterIndex, (Byte) value); else
-                if(clazz == Short.class) preparedStatement.setShort(parameterIndex, (Short) value); else
-                if(clazz == Integer.class) preparedStatement.setInt(parameterIndex, (Integer) value); else
-                if(clazz == Long.class) preparedStatement.setLong(parameterIndex, (Long) value); else
-                if(clazz == Float.class) preparedStatement.setFloat(parameterIndex, (Float) value); else
-                if(clazz == Double.class) preparedStatement.setDouble(parameterIndex, (Double) value); else
-                if(clazz == BigDecimal.class) preparedStatement.setBigDecimal(parameterIndex, (BigDecimal) value); else
-                if(clazz == Date.class) preparedStatement.setDate(parameterIndex, (Date) value); else
-                if(clazz == Time.class) preparedStatement.setTime(parameterIndex, (Time) value); else
-                if(clazz == Timestamp.class) preparedStatement.setTimestamp(parameterIndex, (Timestamp) value); else
-                if(clazz == Boolean.class) preparedStatement.setBoolean(parameterIndex, (Boolean) value); else
-                        preparedStatement.setObject(parameterIndex, value);
+                if(clazz == String.class) statement.setString(parameterIndex, (String) value); else
+                if(clazz == Byte.class) statement.setByte(parameterIndex, (Byte) value); else
+                if(clazz == Short.class) statement.setShort(parameterIndex, (Short) value); else
+                if(clazz == Integer.class) statement.setInt(parameterIndex, (Integer) value); else
+                if(clazz == Long.class) statement.setLong(parameterIndex, (Long) value); else
+                if(clazz == Float.class) statement.setFloat(parameterIndex, (Float) value); else
+                if(clazz == Double.class) statement.setDouble(parameterIndex, (Double) value); else
+                if(clazz == BigDecimal.class) statement.setBigDecimal(parameterIndex, (BigDecimal) value); else
+                if(clazz == Date.class) statement.setDate(parameterIndex, (Date) value); else
+                if(clazz == Time.class) statement.setTime(parameterIndex, (Time) value); else
+                if(clazz == Timestamp.class) statement.setTimestamp(parameterIndex, (Timestamp) value); else
+                if(clazz == Boolean.class) statement.setBoolean(parameterIndex, (Boolean) value); else
+                        statement.setObject(parameterIndex, value);
             } else {
                 throw new SQLException("Can not convert \"" + value + "\" into " + definition.getName());
             }
