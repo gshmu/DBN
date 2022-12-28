@@ -568,6 +568,33 @@
                 c.R_OWNER as FK_CONSTRAINT_OWNER,
                 c.R_CONSTRAINT_NAME as FK_CONSTRAINT_NAME,
                 decode(c.STATUS, 'ENABLED', 'Y', 'N') as IS_ENABLED,
+                c.SEARCH_CONDITION_VC as CHECK_CONDITION
+            from [PREFIX]_CONSTRAINTS c
+                 inner join [PREFIX]_OBJECTS obj
+                         on obj.OWNER = c.owner
+                        and obj.OBJECT_NAME = c.TABLE_NAME
+                        and obj.OBJECT_TYPE in ('TABLE', 'VIEW', 'MATERIALIZED VIEW')
+            where
+                c.OWNER = {0}
+            order by
+                c.TABLE_NAME,
+                c.CONSTRAINT_NAME asc
+        </statement>
+        <statement prefixes="DBA, ALL">
+            select
+                c.TABLE_NAME as DATASET_NAME,
+                c.CONSTRAINT_NAME,
+                case c.CONSTRAINT_TYPE
+                    when 'C' then 'CHECK'
+                    when 'P' then 'PRIMARY KEY'
+                    when 'U' then 'UNIQUE'
+                    when 'R' then 'FOREIGN KEY'
+                    when 'V' then 'VIEW CHECK'
+                    when 'O' then 'VIEW READONLY'
+                end as CONSTRAINT_TYPE,
+                c.R_OWNER as FK_CONSTRAINT_OWNER,
+                c.R_CONSTRAINT_NAME as FK_CONSTRAINT_NAME,
+                decode(c.STATUS, 'ENABLED', 'Y', 'N') as IS_ENABLED,
                 c.SEARCH_CONDITION as CHECK_CONDITION
             from [PREFIX]_CONSTRAINTS c
                  inner join [PREFIX]_OBJECTS obj
@@ -583,6 +610,33 @@
     </statement-execution-processor>
 
     <statement-execution-processor id="constraints" is-query="true" is-prepared-statement="true">
+        <statement prefixes="DBA, ALL">
+            select
+                c.TABLE_NAME as DATASET_NAME,
+                c.CONSTRAINT_NAME,
+                case c.CONSTRAINT_TYPE
+                    when 'C' then 'CHECK'
+                    when 'P' then 'PRIMARY KEY'
+                    when 'U' then 'UNIQUE'
+                    when 'R' then 'FOREIGN KEY'
+                    when 'V' then 'VIEW CHECK'
+                    when 'O' then 'VIEW READONLY'
+                end as CONSTRAINT_TYPE,
+                c.R_OWNER as FK_CONSTRAINT_OWNER,
+                c.R_CONSTRAINT_NAME as FK_CONSTRAINT_NAME,
+                decode(c.STATUS, 'ENABLED', 'Y', 'N') as IS_ENABLED,
+                c.SEARCH_CONDITION_VC as CHECK_CONDITION
+            from [PREFIX]_CONSTRAINTS c
+                 inner join [PREFIX]_OBJECTS obj
+                         on obj.OWNER = c.owner
+                        and obj.OBJECT_NAME = c.TABLE_NAME
+                        and obj.OBJECT_TYPE in ('TABLE', 'VIEW', 'MATERIALIZED VIEW')
+            where
+                c.OWNER = {0} and
+                c.TABLE_NAME = {1}
+            order by
+                c.CONSTRAINT_NAME asc
+        </statement>	
         <statement prefixes="DBA, ALL">
             select
                 c.TABLE_NAME as DATASET_NAME,
