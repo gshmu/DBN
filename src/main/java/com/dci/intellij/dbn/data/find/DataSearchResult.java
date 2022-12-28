@@ -3,7 +3,6 @@ package com.dci.intellij.dbn.data.find;
 import com.dci.intellij.dbn.common.dispose.Disposer;
 import com.dci.intellij.dbn.common.exception.OutdatedContentException;
 import com.dci.intellij.dbn.common.ui.util.Listeners;
-import com.dci.intellij.dbn.common.util.CollectionUtil;
 import com.dci.intellij.dbn.common.util.Lists;
 import com.dci.intellij.dbn.data.model.DataModelCell;
 import com.intellij.openapi.Disposable;
@@ -13,7 +12,6 @@ import lombok.Setter;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Set;
 
 import static com.dci.intellij.dbn.data.find.DataSearchResultScrollPolicy.HORIZONTAL;
 import static com.dci.intellij.dbn.data.find.DataSearchResultScrollPolicy.VERTICAL;
@@ -21,7 +19,7 @@ import static com.dci.intellij.dbn.data.find.DataSearchResultScrollPolicy.VERTIC
 @Getter
 @Setter
 public class DataSearchResult implements Disposable {
-    private final Set<DataSearchResultListener> listeners = Listeners.container();
+    private final Listeners<DataSearchResultListener> listeners = Listeners.create(this);
     private List<DataSearchResultMatch> matches = Collections.emptyList();
     private DataSearchResultMatch selectedMatch;
     private int matchesLimit;
@@ -46,7 +44,7 @@ public class DataSearchResult implements Disposable {
     }
 
     public void notifyListeners() {
-        Listeners.notify(listeners, l -> l.searchResultUpdated(this));
+        listeners.notify(l -> l.searchResultUpdated(this));
     }
 
     public void checkTimestamp(Long updateTimestamp) {
@@ -173,7 +171,6 @@ public class DataSearchResult implements Disposable {
     @Override
     public void dispose() {
         matches = Disposer.replace(matches, Collections.emptyList());
-        CollectionUtil.clear(listeners);
         selectedMatch = null;
     }
 

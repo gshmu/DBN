@@ -142,7 +142,8 @@ public class ExecutionConsoleForm extends DBNFormBase {
 
 
     private TabbedPane getResultTabs() {
-        if (!isDisposed() && !isValid(resultTabs)) {
+        checkDisposed();
+        if (!isValid(resultTabs)) {
             resultTabs = new TabbedPane(this);
             mainPanel.removeAll();
             mainPanel.add(resultTabs, BorderLayout.CENTER);

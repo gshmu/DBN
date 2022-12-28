@@ -9,7 +9,7 @@ import com.intellij.openapi.project.Project;
 import org.jetbrains.annotations.NotNull;
 
 public class ProjectStateManager extends ProjectComponentBase {
-    public static final String COMPONENT_NAME = "DBNavigator.Project.Initializer";
+    public static final String COMPONENT_NAME = "DBNavigator.Project.StateManager";
 
     protected ProjectStateManager(@NotNull Project project) {
         super(project, COMPONENT_NAME);

@@ -5,16 +5,15 @@ import lombok.extern.slf4j.Slf4j;
 
 import javax.swing.event.ListDataEvent;
 import javax.swing.event.ListDataListener;
-import java.util.Set;
 
 @Slf4j
 public final class Lists {
     private Lists() {}
 
-    public static void notifyListDataListeners(Object source, Set<ListDataListener> listeners, int fromIndex, int toIndex, int eventType) {
+    public static void notifyListDataListeners(Object source, Listeners<ListDataListener> listeners, int fromIndex, int toIndex, int eventType) {
         try {
             ListDataEvent event = new ListDataEvent(source, eventType, fromIndex, toIndex);
-            Listeners.notify(listeners, l -> {
+            listeners.notify(l -> {
                 switch (eventType) {
                     case ListDataEvent.INTERVAL_ADDED:   l.intervalAdded(event); break;
                     case ListDataEvent.INTERVAL_REMOVED: l.intervalRemoved(event); break;

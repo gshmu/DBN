@@ -16,7 +16,6 @@ import javax.swing.tree.TreePath;
 import java.awt.*;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
 
 @Slf4j
 public final class TreeUtil {
@@ -68,20 +67,20 @@ public final class TreeUtil {
         }
     }
 
-    public static void notifyTreeModelListeners(Object source, Set<TreeModelListener> listeners, @Nullable TreePath path, TreeEventType eventType) {
+    public static void notifyTreeModelListeners(Object source, Listeners<TreeModelListener> listeners, @Nullable TreePath path, TreeEventType eventType) {
         if (path == null) return;
 
         TreeModelEvent event = new TreeModelEvent(source, path);
         notifyTreeModelListeners(listeners, eventType, event);
     }
 
-    private static void notifyTreeModelListeners(Set<TreeModelListener> listeners, final TreeEventType eventType, final TreeModelEvent event) {
+    private static void notifyTreeModelListeners(Listeners<TreeModelListener> listeners, final TreeEventType eventType, final TreeModelEvent event) {
         Dispatch.run(() -> {
             try {
                 Object lastPathComponent = event.getTreePath().getLastPathComponent();
                 if (lastPathComponent == null) return;
 
-                Listeners.notify(listeners, l -> {
+                listeners.notify(l -> {
                     switch (eventType) {
                         case NODES_ADDED:       l.treeNodesInserted(event);    break;
                         case NODES_REMOVED:     l.treeNodesRemoved(event);     break;

@@ -17,8 +17,8 @@ import org.jetbrains.annotations.NotNull;
 @Setter
 @EqualsAndHashCode(callSuper = false)
 public class DataGridSettings extends CompositeProjectConfiguration<ProjectSettings, DataGridSettingsForm> implements TopLevelConfig {
-    private final DataGridGeneralSettings generalSettings               = new DataGridGeneralSettings(this);
-    private final DataGridSortingSettings sortingSettings               = new DataGridSortingSettings(this);
+    private final DataGridGeneralSettings generalSettings = new DataGridGeneralSettings(this);
+    private final DataGridSortingSettings sortingSettings = new DataGridSortingSettings(this);
     private final DataGridAuditColumnSettings auditColumnSettings = new DataGridAuditColumnSettings(this);
 
     public DataGridSettings(ProjectSettings parent) {

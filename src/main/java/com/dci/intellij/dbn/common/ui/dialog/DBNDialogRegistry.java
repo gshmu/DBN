@@ -1,5 +1,7 @@
 package com.dci.intellij.dbn.common.ui.dialog;
 
+import com.dci.intellij.dbn.common.dispose.Checks;
+
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Supplier;
@@ -10,7 +12,7 @@ public class DBNDialogRegistry {
     private static final Map<Object, DBNDialog> cache = new ConcurrentHashMap<>();
 
     public static <T extends DBNDialog> T ensure(Object key, Supplier<T> provider) {
-        DBNDialog dialog = cache.computeIfAbsent(key, k -> provider.get());
+        DBNDialog dialog = cache.compute(key, (k, d) -> Checks.isValid(d) ? d : provider.get());
         dialog.addDialogListener(action -> {
             if (action == CLOSE) cache.remove(key);
         });
