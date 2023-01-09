@@ -40,6 +40,8 @@ import java.beans.PropertyChangeListener;
 import java.util.Timer;
 import java.util.*;
 
+import static com.dci.intellij.dbn.common.dispose.Failsafe.guarded;
+
 public class SessionBrowser extends DisposableUserDataHolderBase implements FileEditor, DatabaseContextBase, DataProvider {
     private final WeakRef<DBSessionBrowserVirtualFile> databaseFile;
 
@@ -206,7 +208,7 @@ public class SessionBrowser extends DisposableUserDataHolderBase implements File
     @Override
     @Nullable
     public JComponent getPreferredFocusedComponent() {
-        return isDisposed() ? null : getBrowserTable();
+        return guarded(null, () -> getBrowserTable());
     }
 
     @Override

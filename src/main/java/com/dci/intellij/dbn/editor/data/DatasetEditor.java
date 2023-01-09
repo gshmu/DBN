@@ -59,6 +59,7 @@ import java.beans.PropertyChangeListener;
 import java.sql.SQLException;
 import java.util.List;
 
+import static com.dci.intellij.dbn.common.dispose.Failsafe.guarded;
 import static com.dci.intellij.dbn.common.dispose.Failsafe.nd;
 import static com.dci.intellij.dbn.editor.data.DatasetEditorStatus.*;
 import static com.dci.intellij.dbn.editor.data.DatasetLoadInstruction.*;
@@ -162,7 +163,7 @@ public class DatasetEditor extends DisposableUserDataHolderBase implements
     @Override
     @Nullable
     public JComponent getPreferredFocusedComponent() {
-        return isDisposed() ? null : getEditorForm().getComponent();
+        return guarded(null, () -> getEditorForm().getComponent());
     }
 
     @Override
