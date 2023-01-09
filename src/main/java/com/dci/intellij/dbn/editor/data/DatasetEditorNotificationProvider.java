@@ -79,23 +79,25 @@ public class DatasetEditorNotificationProvider extends EditorNotificationProvide
 
     @Nullable
     @Override
-    public DatasetEditorNotificationPanel createNotificationPanel(@NotNull VirtualFile virtualFile, @NotNull FileEditor fileEditor, @NotNull Project project) {
-        if (virtualFile instanceof DBEditableObjectVirtualFile && fileEditor instanceof DatasetEditor) {
-            DBEditableObjectVirtualFile editableObjectFile = (DBEditableObjectVirtualFile) virtualFile;
-            DatasetEditor datasetEditor = (DatasetEditor) fileEditor;
+    public DatasetEditorNotificationPanel createComponent(@NotNull VirtualFile virtualFile, @NotNull FileEditor fileEditor, @NotNull Project project) {
+        if (!(virtualFile instanceof DBEditableObjectVirtualFile)) return null;
+        if (!(fileEditor instanceof DatasetEditor)) return null;
 
-            DBSchemaObject editableObject = editableObjectFile.getObject();
-            if (datasetEditor.isLoaded()) {
-                String sourceLoadError = datasetEditor.getDataLoadError();
-                if (Strings.isNotEmpty(sourceLoadError)) {
-                    return new DatasetEditorLoadErrorNotificationPanel(editableObject, sourceLoadError);
+        DBEditableObjectVirtualFile editableObjectFile = (DBEditableObjectVirtualFile) virtualFile;
+        DatasetEditor datasetEditor = (DatasetEditor) fileEditor;
 
-                } else if (editableObject instanceof DBTable && editableObjectFile.getEnvironmentType().isReadonlyData()) {
+        DBSchemaObject editableObject = editableObjectFile.getObject();
+        if (!datasetEditor.isLoaded()) return null;
 
-                    return new DatasetEditorReadonlyNotificationPanel(editableObject);
-                }
-            }
+        String sourceLoadError = datasetEditor.getDataLoadError();
+        if (Strings.isNotEmpty(sourceLoadError)) {
+            return new DatasetEditorLoadErrorNotificationPanel(editableObject, sourceLoadError);
         }
+
+        if (editableObject instanceof DBTable && editableObjectFile.getEnvironmentType().isReadonlyData()) {
+            return new DatasetEditorReadonlyNotificationPanel(editableObject);
+        }
+
         return null;
     }
 }

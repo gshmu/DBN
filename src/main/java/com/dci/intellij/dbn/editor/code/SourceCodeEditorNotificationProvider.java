@@ -116,28 +116,28 @@ public class SourceCodeEditorNotificationProvider extends EditorNotificationProv
 
     @Nullable
     @Override
-    public SourceCodeEditorNotificationPanel createNotificationPanel(@NotNull VirtualFile virtualFile, @NotNull FileEditor fileEditor, @NotNull Project project) {
-        if (virtualFile instanceof DBVirtualFile) {
-            if (fileEditor instanceof SourceCodeEditor && Checks.isValid(fileEditor)) {
-                DBVirtualFile databaseFile = (DBVirtualFile) virtualFile;
+    public SourceCodeEditorNotificationPanel createComponent(@NotNull VirtualFile virtualFile, @NotNull FileEditor fileEditor, @NotNull Project project) {
+        if (!(virtualFile instanceof DBVirtualFile)) return null;
+        if (!(fileEditor instanceof SourceCodeEditor) || !Checks.isValid(fileEditor)) return null;
 
-                DBObject object = databaseFile.getObject();
-                if (object instanceof DBSchemaObject) {
-                    DBSchemaObject schemaObject = (DBSchemaObject) object;
-                    SourceCodeEditor sourceCodeEditor = (SourceCodeEditor) fileEditor;
-                    DBSourceCodeVirtualFile sourceCodeFile = sourceCodeEditor.getVirtualFile();
-                    String sourceLoadError = sourceCodeFile.getSourceLoadError();
-                    if (Strings.isNotEmpty(sourceLoadError)) {
-                        return new SourceCodeLoadErrorNotificationPanel(schemaObject, sourceLoadError);
+        DBVirtualFile databaseFile = (DBVirtualFile) virtualFile;
+        DBObject object = databaseFile.getObject();
+        if (!(object instanceof DBSchemaObject)) return null;
 
-                    } else if (sourceCodeFile.isChangedInDatabase(false)) {
-                        return new SourceCodeOutdatedNotificationPanel(sourceCodeFile, sourceCodeEditor);
+        DBSchemaObject schemaObject = (DBSchemaObject) object;
+        SourceCodeEditor sourceCodeEditor = (SourceCodeEditor) fileEditor;
+        DBSourceCodeVirtualFile sourceCodeFile = sourceCodeEditor.getVirtualFile();
+        String sourceLoadError = sourceCodeFile.getSourceLoadError();
+        if (Strings.isNotEmpty(sourceLoadError)) {
+            return new SourceCodeLoadErrorNotificationPanel(schemaObject, sourceLoadError);
+        }
 
-                    } else if (sourceCodeFile.getEnvironmentType().isReadonlyCode()) {
-                        return new SourceCodeReadonlyNotificationPanel(schemaObject, sourceCodeEditor);
-                    }
-                }
-            }
+        if (sourceCodeFile.isChangedInDatabase(false)) {
+            return new SourceCodeOutdatedNotificationPanel(sourceCodeFile, sourceCodeEditor);
+        }
+
+        if (sourceCodeFile.getEnvironmentType().isReadonlyCode()) {
+            return new SourceCodeReadonlyNotificationPanel(schemaObject, sourceCodeEditor);
         }
         return null;
     }
