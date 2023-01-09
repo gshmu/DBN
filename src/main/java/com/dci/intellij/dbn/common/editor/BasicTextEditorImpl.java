@@ -141,7 +141,7 @@ public abstract class BasicTextEditorImpl<T extends VirtualFile> extends Statefu
     @Override
     @Nullable
     public JComponent getPreferredFocusedComponent() {
-        return isDisposed() ? null : getTextEditor().getPreferredFocusedComponent();
+        return guarded(null, () -> getTextEditor().getPreferredFocusedComponent());
     }
 
     protected BasicTextEditorState createEditorState() {
