@@ -13,6 +13,8 @@ import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
 
+import static com.dci.intellij.dbn.common.dispose.Failsafe.guarded;
+
 // TODO com.intellij.ui.EditorNotificationProvider
 @Compatibility
 public abstract class LegacyEditorNotificationsProvider<T extends JComponent>
@@ -37,7 +39,11 @@ public abstract class LegacyEditorNotificationsProvider<T extends JComponent>
         return createNotificationPanel(virtualFile, fileEditor, getProject());
     }
 
-    public abstract T createNotificationPanel(@NotNull VirtualFile virtualFile, @NotNull FileEditor fileEditor, @NotNull Project project);
+    public final T createNotificationPanel(@NotNull VirtualFile virtualFile, @NotNull FileEditor fileEditor, @NotNull Project project) {
+        return guarded(null, () -> createComponent(virtualFile, fileEditor, project));
+    }
+
+    public abstract T createComponent(@NotNull VirtualFile virtualFile, @NotNull FileEditor fileEditor, @NotNull Project project);
 
 
     @NotNull

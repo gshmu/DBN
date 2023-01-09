@@ -36,18 +36,16 @@ public class FileConnectionContextNotificationProvider extends EditorNotificatio
 
     @Nullable
     @Override
-    public FileConnectionContextNotificationPanel createNotificationPanel(@NotNull VirtualFile virtualFile, @NotNull FileEditor fileEditor, @NotNull Project project) {
-        FileConnectionContextNotificationPanel notificationPanel = null;
+    public FileConnectionContextNotificationPanel createComponent(@NotNull VirtualFile virtualFile, @NotNull FileEditor fileEditor, @NotNull Project project) {
 
         FileType fileType = virtualFile.getFileType();
-        if (fileType != SQLFileType.INSTANCE && fileType != PSQLFileType.INSTANCE) {
-            FileConnectionContextManager contextManager = FileConnectionContextManager.getInstance(project);
-            FileConnectionContext connectionMapping = contextManager.getMapping(virtualFile);
-            if (connectionMapping != null) {
-                notificationPanel = new FileConnectionContextNotificationPanel(project, virtualFile, connectionMapping);
-            }
-        }
-        return notificationPanel;
+        if (fileType == SQLFileType.INSTANCE || fileType == PSQLFileType.INSTANCE) return null;
+
+        FileConnectionContextManager contextManager = FileConnectionContextManager.getInstance(project);
+        FileConnectionContext mapping = contextManager.getMapping(virtualFile);
+        if (mapping == null) return null;
+
+        return new FileConnectionContextNotificationPanel(project, virtualFile, mapping);
     }
 
     public static final FileConnectionContextListener mappingListener = new FileConnectionContextListener() {
