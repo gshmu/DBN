@@ -49,19 +49,16 @@ public class SessionBrowserNotificationProvider extends LegacyEditorNotification
 
     @Nullable
     @Override
-    public SessionBrowserErrorNotificationPanel createNotificationPanel(@NotNull VirtualFile virtualFile, @NotNull FileEditor fileEditor, @NotNull Project project) {
-        if (virtualFile instanceof DBSessionBrowserVirtualFile) {
-            if (fileEditor instanceof SessionBrowser) {
-                SessionBrowser sessionBrowser = (SessionBrowser) fileEditor;
-                ConnectionHandler connection = sessionBrowser.getConnection();
-                String sourceLoadError = sessionBrowser.getModelError();
-                if (Strings.isNotEmpty(sourceLoadError)) {
-                    return createPanel(connection, sourceLoadError);
-                }
+    public SessionBrowserErrorNotificationPanel createComponent(@NotNull VirtualFile virtualFile, @NotNull FileEditor fileEditor, @NotNull Project project) {
+        if (!(virtualFile instanceof DBSessionBrowserVirtualFile)) return null;
+        if (!(fileEditor instanceof SessionBrowser)) return null;
 
-            }
-        }
-        return null;
+        SessionBrowser sessionBrowser = (SessionBrowser) fileEditor;
+        ConnectionHandler connection = sessionBrowser.getConnection();
+        String error = sessionBrowser.getModelError();
+        if (Strings.isEmpty(error)) return null;
+
+        return createPanel(connection, error);
     }
 
     private static SessionBrowserErrorNotificationPanel createPanel(ConnectionHandler connection, String sourceLoadError) {

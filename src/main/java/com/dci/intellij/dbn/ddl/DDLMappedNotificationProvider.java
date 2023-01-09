@@ -114,7 +114,7 @@ public class DDLMappedNotificationProvider extends LegacyEditorNotificationsProv
     }
 
     @Override
-    public DDLMappedNotificationPanel createNotificationPanel(@NotNull VirtualFile file, @NotNull FileEditor fileEditor, @NotNull Project project) {
+    public DDLMappedNotificationPanel createComponent(@NotNull VirtualFile file, @NotNull FileEditor fileEditor, @NotNull Project project) {
         if (isNotValid(fileEditor)) return null;
 
         DDLFileSettings fileSettings = DDLFileSettings.getInstance(project);
