@@ -5,7 +5,6 @@ import com.dci.intellij.dbn.code.sql.color.SQLTextAttributesKeys;
 import com.dci.intellij.dbn.common.thread.ThreadMonitor;
 import com.dci.intellij.dbn.common.thread.ThreadProperty;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
-import com.dci.intellij.dbn.debugger.DatabaseDebuggerManager;
 import com.dci.intellij.dbn.editor.DBContentType;
 import com.dci.intellij.dbn.editor.code.SourceCodeManager;
 import com.dci.intellij.dbn.editor.code.options.CodeEditorGeneralSettings;
@@ -28,7 +27,10 @@ import com.intellij.openapi.editor.markup.GutterIconRenderer;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiElement;
+import com.intellij.testFramework.LightVirtualFile;
 import org.jetbrains.annotations.NotNull;
+
+import static com.dci.intellij.dbn.debugger.DatabaseDebuggerManager.isDebugConsole;
 
 public class PSQLLanguageAnnotator implements Annotator {
 
@@ -229,15 +231,16 @@ public class PSQLLanguageAnnotator implements Annotator {
 
     private static void annotateExecutable(@NotNull ExecutablePsiElement executablePsiElement, AnnotationHolder holder) {
         if (executablePsiElement.isInjectedContext()) return;
+        if (executablePsiElement.isNestedExecutable()) return;
+        if (!executablePsiElement.isValid()) return;
 
-        if (executablePsiElement.isValid() && !executablePsiElement.isNestedExecutable()) {
-            DBLanguagePsiFile psiFile = executablePsiElement.getFile();
-            VirtualFile virtualFile = psiFile.getVirtualFile();
-            if (!DatabaseDebuggerManager.isDebugConsole(virtualFile)) {
-                holder.newSilentAnnotation(HighlightSeverity.INFORMATION)
-                        .gutterIconRenderer(new StatementGutterRenderer(executablePsiElement))
-                        .create();
-            }
-        }
+        DBLanguagePsiFile psiFile = executablePsiElement.getFile();
+        VirtualFile file = psiFile.getVirtualFile();
+        if (file instanceof LightVirtualFile) return;
+        if (isDebugConsole(file)) return;
+
+        holder.newSilentAnnotation(HighlightSeverity.INFORMATION)
+                .gutterIconRenderer(new StatementGutterRenderer(executablePsiElement))
+                .create();
     }
 }

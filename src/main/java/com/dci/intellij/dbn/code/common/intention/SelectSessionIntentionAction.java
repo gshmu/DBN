@@ -17,6 +17,7 @@ import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
 
+import static com.dci.intellij.dbn.common.util.Editors.isMainEditor;
 import static com.dci.intellij.dbn.common.util.Files.isDbLanguagePsiFile;
 
 public class SelectSessionIntentionAction extends GenericIntentionAction implements LowPriorityAction {
@@ -34,6 +35,7 @@ public class SelectSessionIntentionAction extends GenericIntentionAction impleme
     @Override
     public boolean isAvailable(@NotNull Project project, Editor editor, PsiFile psiFile) {
         if (!isDbLanguagePsiFile(psiFile)) return false;
+        if (!isMainEditor(editor)) return false;
 
         VirtualFile file = psiFile.getVirtualFile();
         if (file instanceof VirtualFileWindow) return false;

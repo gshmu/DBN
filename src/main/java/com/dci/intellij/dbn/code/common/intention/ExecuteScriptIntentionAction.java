@@ -16,6 +16,7 @@ import org.jetbrains.annotations.NotNull;
 import javax.swing.*;
 
 import static com.dci.intellij.dbn.common.dispose.Checks.allValid;
+import static com.dci.intellij.dbn.common.util.Editors.isMainEditor;
 import static com.dci.intellij.dbn.common.util.Files.isDbLanguagePsiFile;
 import static com.dci.intellij.dbn.connection.mapping.FileConnectionContextManager.hasConnectivityContext;
 import static com.dci.intellij.dbn.debugger.DatabaseDebuggerManager.isDebugConsole;
@@ -42,6 +43,7 @@ public class ExecuteScriptIntentionAction extends GenericIntentionAction impleme
         if (file instanceof DBSourceCodeVirtualFile) return false;
         if (isDebugConsole(file)) return false;
         if (!hasConnectivityContext(file)) return false;
+        if (!isMainEditor(editor)) return false;
 
         return true;
     }

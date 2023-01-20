@@ -16,6 +16,8 @@ import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
 
+import static com.dci.intellij.dbn.common.util.Editors.isMainEditor;
+import static com.dci.intellij.dbn.common.util.Files.isDbLanguagePsiFile;
 import static com.dci.intellij.dbn.connection.ConnectionSelectorOptions.Option.SHOW_CREATE_CONNECTION;
 import static com.dci.intellij.dbn.connection.ConnectionSelectorOptions.Option.SHOW_VIRTUAL_CONNECTIONS;
 import static com.dci.intellij.dbn.connection.ConnectionSelectorOptions.options;
@@ -34,12 +36,12 @@ public class SelectConnectionIntentionAction extends GenericIntentionAction impl
 
     @Override
     public boolean isAvailable(@NotNull Project project, Editor editor, PsiFile psiFile) {
-        if (psiFile instanceof DBLanguagePsiFile) {
-            VirtualFile virtualFile = psiFile.getVirtualFile();
-            FileConnectionContextManager contextManager = FileConnectionContextManager.getInstance(project);
-            return contextManager.isConnectionSelectable(virtualFile);
-        }
-        return false;
+        if (!isDbLanguagePsiFile(psiFile)) return false;
+        if (!isMainEditor(editor)) return false;
+
+        VirtualFile file = psiFile.getVirtualFile();
+        FileConnectionContextManager contextManager = FileConnectionContextManager.getInstance(project);
+        return contextManager.isConnectionSelectable(file);
     }
 
     @Override
