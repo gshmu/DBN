@@ -14,7 +14,10 @@ import com.intellij.psi.PsiFile;
 import com.intellij.util.IncorrectOperationException;
 import org.jetbrains.annotations.NotNull;
 
-import javax.swing.Icon;
+import javax.swing.*;
+
+import static com.dci.intellij.dbn.common.util.Editors.isMainEditor;
+import static com.dci.intellij.dbn.common.util.Files.isDbLanguagePsiFile;
 
 public class SelectSchemaIntentionAction extends GenericIntentionAction implements LowPriorityAction {
     @Override
@@ -30,16 +33,17 @@ public class SelectSchemaIntentionAction extends GenericIntentionAction implemen
 
     @Override
     public boolean isAvailable(@NotNull Project project, Editor editor, PsiFile psiFile) {
-        if (psiFile instanceof DBLanguagePsiFile) {
-            VirtualFile virtualFile = psiFile.getVirtualFile();
-            FileConnectionContextManager contextManager = FileConnectionContextManager.getInstance(project);
-            if (contextManager.isSchemaSelectable(virtualFile)) {
-                DBLanguagePsiFile file = (DBLanguagePsiFile) psiFile;
-                ConnectionHandler connection = file.getConnection();
-                return connection != null && !connection.isVirtual();
-            }
-        }
-        return false;
+        if (!isDbLanguagePsiFile(psiFile)) return false;
+        if (!isMainEditor(editor)) return false;
+
+        VirtualFile file = psiFile.getVirtualFile();
+        FileConnectionContextManager contextManager = FileConnectionContextManager.getInstance(project);
+        if (!contextManager.isSchemaSelectable(file)) return false;
+
+
+        DBLanguagePsiFile dbFile = (DBLanguagePsiFile) psiFile;
+        ConnectionHandler connection = dbFile.getConnection();
+        return connection != null && !connection.isVirtual();
     }
 
     @Override

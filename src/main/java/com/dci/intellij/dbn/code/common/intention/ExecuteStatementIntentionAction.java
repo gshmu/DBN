@@ -20,6 +20,7 @@ import org.jetbrains.annotations.NotNull;
 import javax.swing.*;
 
 import static com.dci.intellij.dbn.common.dispose.Checks.isNotValid;
+import static com.dci.intellij.dbn.common.util.Editors.isMainEditor;
 import static com.dci.intellij.dbn.common.util.Files.isDbLanguageFile;
 import static com.dci.intellij.dbn.connection.mapping.FileConnectionContextManager.hasConnectivityContext;
 import static com.dci.intellij.dbn.debugger.DatabaseDebuggerManager.isDebugConsole;
@@ -46,6 +47,7 @@ public class ExecuteStatementIntentionAction extends GenericIntentionAction impl
         if (isDebugConsole(file)) return false;
         if (!isDbLanguageFile(file)) return false;
         if (!hasConnectivityContext(file)) return false;
+        if (!isMainEditor(editor)) return false;
 
         ExecutablePsiElement executable = PsiUtil.lookupExecutableAtCaret(editor, true);
         if (isNotValid(executable)) return false;
