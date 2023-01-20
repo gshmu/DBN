@@ -7,8 +7,6 @@ import com.dci.intellij.dbn.common.util.Strings;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.database.DatabaseFeature;
 import com.dci.intellij.dbn.database.interfaces.DatabaseCompatibilityInterface;
-import com.dci.intellij.dbn.debugger.DatabaseDebuggerManager;
-import com.dci.intellij.dbn.language.common.DBLanguagePsiFile;
 import com.dci.intellij.dbn.language.common.PsiFileRef;
 import com.dci.intellij.dbn.vfs.file.DBSourceCodeVirtualFile;
 import com.intellij.codeInsight.intention.LowPriorityAction;
@@ -23,6 +21,9 @@ import org.jetbrains.annotations.NotNull;
 import javax.swing.*;
 
 import static com.dci.intellij.dbn.common.dispose.Checks.isNotValid;
+import static com.dci.intellij.dbn.common.util.Editors.isMainEditor;
+import static com.dci.intellij.dbn.common.util.Files.isDbLanguagePsiFile;
+import static com.dci.intellij.dbn.debugger.DatabaseDebuggerManager.isDebugConsole;
 
 public class ToggleDatabaseLoggingIntentionAction extends GenericIntentionAction implements LowPriorityAction {
     private PsiFileRef<?> lastChecked;
@@ -60,27 +61,24 @@ public class ToggleDatabaseLoggingIntentionAction extends GenericIntentionAction
         if (isNotValid(psiFile)) return null;
 
         ConnectionHandler connection = getConnection(psiFile);
-        if (supportsLogging(connection)) {
-            return connection;
-        }
-        return null;
+        if (!supportsLogging(connection)) return null;
+
+        return connection;
     }
 
     @Override
     public boolean isAvailable(@NotNull Project project, Editor editor, PsiFile psiFile) {
-        if (psiFile instanceof DBLanguagePsiFile) {
-            VirtualFile virtualFile = psiFile.getVirtualFile();
-            if (virtualFile instanceof DBSourceCodeVirtualFile ||
-                    virtualFile instanceof VirtualFileWindow ||
-                    DatabaseDebuggerManager.isDebugConsole(virtualFile)) {
-                return false;
-            }
+        if (!isDbLanguagePsiFile(psiFile)) return false;
 
-            lastChecked = PsiFileRef.of(psiFile);
-            ConnectionHandler connection = getConnection(psiFile);
-            return supportsLogging(connection);
-        }
-        return false;
+        VirtualFile file = psiFile.getVirtualFile();
+        if (file instanceof DBSourceCodeVirtualFile) return false;
+        if (file instanceof VirtualFileWindow) return false;
+        if (isDebugConsole(file)) return false;
+        if (!isMainEditor(editor)) return false;
+
+        lastChecked = PsiFileRef.of(psiFile);
+        ConnectionHandler connection = getConnection(psiFile);
+        return supportsLogging(connection);
     }
 
     private static boolean supportsLogging(ConnectionHandler connection) {

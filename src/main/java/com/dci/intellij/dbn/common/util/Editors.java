@@ -459,4 +459,7 @@ public class Editors {
         return fileEditor instanceof DDLFileEditor;
     }
 
+    public static boolean isMainEditor(Editor editor) {
+        return getFileEditor(editor) != null;
+    }
 }
