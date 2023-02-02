@@ -188,7 +188,7 @@ public class StatementExecutionInput extends LocalExecutionInput {
 
     public String getStatementDescription() {
         ExecutablePsiElement executablePsiElement = getExecutablePsiElement();
-        return executablePsiElement == null ? "SQL Statement" : executablePsiElement.getPresentableText();
+        return executablePsiElement == null ? "SQL Statement" : Read.call(() -> executablePsiElement.getPresentableText());
     }
 
     @Override
