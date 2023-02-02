@@ -5,6 +5,8 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.function.BiFunction;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 /**
@@ -39,10 +41,8 @@ public class ConcurrentOptionalValueMap<K, V> implements Map<K, V> {
 
     @Override
     public boolean containsKey(Object key) {
-        if (key != null) {
-            return inner.containsKey(key);
-        }
-        return false;
+        if (key == null) return false;
+        return inner.containsKey(key);
     }
 
     @Override
@@ -52,26 +52,38 @@ public class ConcurrentOptionalValueMap<K, V> implements Map<K, V> {
 
     @Override
     public V get(Object key) {
-        if (key != null) {
-            return unwrap(inner.get(key));
-        }
-        return null;
+        if (key == null) return null;
+        return unwrap(inner.get(key));
     }
 
     @Override
     public V put(K key, V value) {
-        if (key != null) {
-            return unwrap(inner.put(key, wrap(value)));
-        }
-        return null;
+        if (key == null) return null;
+        return unwrap(inner.put(key, wrap(value)));
     }
 
     @Override
     public V remove(Object key) {
-        if (key != null) {
-            return unwrap(inner.remove(key));
-        }
-        return null;
+        if (key == null) return null;
+        return unwrap(inner.remove(key));
+    }
+
+    @Override
+    public V computeIfAbsent(K key, Function<? super K, ? extends V> mapper) {
+        if (key == null) return null;
+        return unwrap(inner.computeIfAbsent(key, k -> wrap(mapper.apply(k))));
+    }
+
+    @Override
+    public V computeIfPresent(K key, BiFunction<? super K, ? super V, ? extends V> remapper) {
+        if (key == null) return null;
+        return unwrap(inner.computeIfPresent(key, (k, v) -> wrap(remapper.apply(k, unwrap(v)))));
+    }
+
+    @Override
+    public V compute(K key, BiFunction<? super K, ? super V, ? extends V> remapper) {
+        if (key == null) return null;
+        return unwrap(inner.compute(key, (k, v) -> wrap(remapper.apply(k, unwrap(v)))));
     }
 
     @Override

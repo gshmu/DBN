@@ -6,6 +6,7 @@ import com.dci.intellij.dbn.common.environment.EnvironmentType;
 import com.dci.intellij.dbn.common.project.ProjectRef;
 import com.dci.intellij.dbn.common.ref.WeakRef;
 import com.dci.intellij.dbn.common.ui.Presentable;
+import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.language.common.DBLanguagePsiFile;
 import com.dci.intellij.dbn.language.sql.SQLFileType;
 import com.intellij.openapi.fileEditor.impl.FileDocumentManagerImpl;
@@ -65,7 +66,8 @@ public abstract class DBVirtualFileBase extends VirtualFile implements DBVirtual
     @NotNull
     @Override
     public EnvironmentType getEnvironmentType() {
-        return getConnection().getEnvironmentType();
+        ConnectionHandler connection = getConnection();
+        return connection == null ? EnvironmentType.DEFAULT : connection.getEnvironmentType();
     }
 
     @Override

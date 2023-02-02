@@ -22,7 +22,7 @@ import java.util.List;
 public class ObjectDependencyTreeModel extends StatefulDisposableBase implements TreeModel {
     private final Listeners<TreeModelListener> listeners = Listeners.create(this);
 
-    private ObjectDependencyTreeNode root;
+    private final ObjectDependencyTreeNode root;
     private final ObjectDependencyType dependencyType;
     private final DBObjectRef<DBSchemaObject> object;
 
@@ -32,8 +32,6 @@ public class ObjectDependencyTreeModel extends StatefulDisposableBase implements
         this.object = DBObjectRef.of(object);
         this.root = new ObjectDependencyTreeNode(this, object);
         this.dependencyType = dependencyType;
-
-        Disposer.register(this, root);
     }
 
     public DBSchemaObject getObject() {
@@ -118,7 +116,7 @@ public class ObjectDependencyTreeModel extends StatefulDisposableBase implements
 
     @Override
     public void disposeInner() {
-        root = null;
+        Disposer.dispose(root);
         listeners.clear();
         nullify();
     }

@@ -56,11 +56,9 @@ public class ObjectDependencyTreeNode extends StatefulDisposableBase implements 
         return parent;
     }
 
-    public synchronized List<ObjectDependencyTreeNode> getChildren(final boolean load) {
-        final ObjectDependencyTreeModel model = getModel();
-        if (object == null || model == null)  {
-            return emptyList();
-        }
+    public synchronized List<ObjectDependencyTreeNode> getChildren(boolean load) {
+        ObjectDependencyTreeModel model = getModel();
+        if (object == null || model == null) return emptyList();
 
         if (dependencies == null && load) {
             DBObject object = getObject();
@@ -127,14 +125,14 @@ public class ObjectDependencyTreeNode extends StatefulDisposableBase implements 
     }
 
     private boolean isRecursive(DBObject object) {
-        if (object != null) {
-            ObjectDependencyTreeNode parent = getParent();
-            while (parent != null) {
-                if (object.equals(parent.getObject())) {
-                    return true;
-                }
-                parent = parent.getParent();
+        if (object == null) return false;
+
+        ObjectDependencyTreeNode parent = getParent();
+        while (parent != null) {
+            if (object.equals(parent.getObject())) {
+                return true;
             }
+            parent = parent.getParent();
         }
         return false;
     }
