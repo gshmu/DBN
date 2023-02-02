@@ -235,9 +235,9 @@ public abstract class DynamicContentBase<T extends DynamicContentElement>
      * Synchronised block making sure the content is loaded before the thread is released
      */
     private void ensureLoaded(boolean force) {
-        if (shouldLoad()) {
-            Synchronized.on(this, () -> {
-                if (shouldLoad()) {
+        Synchronized.on(this,
+                () -> shouldLoad(),
+                () -> {
                     set(LOADING, true);
                     try {
                         performLoad(force);
@@ -245,9 +245,8 @@ public abstract class DynamicContentBase<T extends DynamicContentElement>
                         set(LOADING, false);
                         changeSignature();
                     }
-                }
-            });
-        }
+                });
+
     }
 
     private void performLoad(boolean force) {

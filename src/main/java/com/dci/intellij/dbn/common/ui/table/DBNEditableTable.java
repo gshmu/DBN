@@ -16,6 +16,8 @@ import javax.swing.table.JTableHeader;
 import javax.swing.table.TableCellEditor;
 import java.awt.*;
 
+import static com.dci.intellij.dbn.common.dispose.Failsafe.guarded;
+
 public class DBNEditableTable<T extends DBNEditableTableModel> extends DBNTableWithGutter<T> {
     public static final LineBorder SELECTION_BORDER = new LineBorder(Colors.getTableBackground());
 
@@ -82,14 +84,17 @@ public class DBNEditableTable<T extends DBNEditableTableModel> extends DBNTableW
 
     @Override
     public void editingStopped(ChangeEvent e) {
-        super.editingStopped(e);
-        T model = getModel();
-        model.notifyListeners(0, model.getRowCount(), 0);
+        guarded(() -> {
+            checkDisposed();
+            super.editingStopped(e);
+            T model = getModel();
+            model.notifyListeners(0, model.getRowCount(), 0);
+        });
     }
 
     @Override
     public Component prepareEditor(TableCellEditor editor, int rowIndex, int columnIndex) {
-        final Component component = super.prepareEditor(editor, rowIndex, columnIndex);
+        Component component = super.prepareEditor(editor, rowIndex, columnIndex);
         if (component instanceof JTextField) {
             final JTextField textField = (JTextField) component;
             textField.setBorder(Borders.EMPTY_BORDER);

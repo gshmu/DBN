@@ -1,5 +1,6 @@
 package com.dci.intellij.dbn.common.thread;
 
+import com.dci.intellij.dbn.common.lookup.Condition;
 import com.dci.intellij.dbn.common.routine.ThrowableCallable;
 import com.dci.intellij.dbn.common.routine.ThrowableRunnable;
 
@@ -15,6 +16,16 @@ import static com.dci.intellij.dbn.common.util.Unsafe.cast;
 public class Synchronized {
 	static final Map<Object, SyncObject> LOCKS = new ConcurrentHashMap<>(100);
 
+	public static <E extends Throwable> void on(Object owner, Condition condition, ThrowableRunnable<E> runnable) throws E{
+		if (condition.check()) {
+			on(owner, () -> {
+				if (condition.check()) {
+					runnable.run();
+				}
+				return null;
+			});
+		}
+	}
 	public static <E extends Throwable> void on(Object owner, ThrowableRunnable<E> runnable) throws E{
 		on(owner, () -> {
 			runnable.run();

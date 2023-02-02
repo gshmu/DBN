@@ -11,6 +11,8 @@ import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
 
+import static com.dci.intellij.dbn.common.dispose.Checks.isNotValid;
+
 public abstract class AbstractExplainPlanResultAction extends ContextAction<ExplainPlanResult> {
     AbstractExplainPlanResultAction(String text, Icon icon) {
         super(text, null, icon);
@@ -18,16 +20,16 @@ public abstract class AbstractExplainPlanResultAction extends ContextAction<Expl
 
     protected ExplainPlanResult getTarget(@NotNull AnActionEvent e) {
         ExplainPlanResult result = e.getData(DataKeys.EXPLAIN_PLAN_RESULT);
-        if (result == null) {
-            Project project = e.getProject();
-            if (project != null) {
-                ExecutionManager executionManager = ExecutionManager.getInstance(project);
-                ExecutionResult executionResult = executionManager.getSelectedExecutionResult();
-                if (executionResult instanceof ExplainPlanResult) {
-                    return (ExplainPlanResult) executionResult;
-                }
-            }
+        if (result != null) return result;
+
+        Project project = e.getProject();
+        if (isNotValid(project)) return null;
+
+        ExecutionManager executionManager = ExecutionManager.getInstance(project);
+        ExecutionResult executionResult = executionManager.getSelectedExecutionResult();
+        if (executionResult instanceof ExplainPlanResult) {
+            return (ExplainPlanResult) executionResult;
         }
-        return result;
+        return null;
     }
 }

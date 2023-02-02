@@ -121,11 +121,11 @@ public class ExecutionManager extends ProjectComponentBase implements Persistent
 
     public void writeLogOutput(@NotNull LogOutputContext context, LogOutput output) {
         Dispatch.run(() -> {
-            if (!context.isClosed()) {
-                showExecutionConsole();
-                ExecutionConsoleForm executionConsoleForm = getExecutionConsoleForm();
-                executionConsoleForm.displayLogOutput(context, output);
-            }
+            if (context.isClosed()) return;
+
+            showExecutionConsole();
+            ExecutionConsoleForm executionConsoleForm = getExecutionConsoleForm();
+            executionConsoleForm.displayLogOutput(context, output);
         });
     }
 

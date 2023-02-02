@@ -37,6 +37,8 @@ import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.util.text.LineReader;
+import lombok.Getter;
+import lombok.Setter;
 import lombok.val;
 import org.jdesktop.swingx.util.OS;
 import org.jdom.Element;
@@ -50,7 +52,6 @@ import java.nio.file.Files;
 import java.nio.file.attribute.PosixFileAttributeView;
 import java.nio.file.attribute.PosixFilePermission;
 import java.security.SecureRandom;
-import java.sql.SQLException;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.TimeUnit;
@@ -61,6 +62,8 @@ import static com.dci.intellij.dbn.common.message.MessageCallback.when;
 import static com.dci.intellij.dbn.common.options.setting.SettingsSupport.*;
 import static com.dci.intellij.dbn.execution.ExecutionStatus.EXECUTING;
 
+@Getter
+@Setter
 @State(
     name = ScriptExecutionManager.COMPONENT_NAME,
     storages = @Storage(DatabaseNavigator.STORAGE_FILE)
@@ -239,7 +242,7 @@ public class ScriptExecutionManager extends ProjectComponentBase implements Pers
                 }
 
                 @Override
-                public void handleException(Throwable e) throws SQLException {
+                public void handleException(Throwable e) {
                     Messages.showErrorDialog(project,
                             "Script execution error",
                             "Error executing SQL script \"" + sourceFile.getPath() + "\". \nDetails: " + e.getMessage(),
@@ -331,14 +334,6 @@ public class ScriptExecutionManager extends ProjectComponentBase implements Pers
 
         }
         return null;
-    }
-
-    public boolean getClearOutputOption() {
-        return clearOutputOption;
-    }
-
-    public void setClearOutputOption(boolean clearOutputOption) {
-        this.clearOutputOption = clearOutputOption;
     }
 
     private File createTempScriptFile() throws IOException {
