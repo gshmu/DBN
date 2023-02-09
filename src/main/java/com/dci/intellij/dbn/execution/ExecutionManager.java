@@ -99,7 +99,7 @@ public class ExecutionManager extends ProjectComponentBase implements Persistent
     }
 
     @Nullable
-    ExecutionResultForm getExecutionResultForm(ExecutionResult executionResult) {
+    <T extends ExecutionResultForm> T getExecutionResultForm(ExecutionResult executionResult) {
         return getExecutionConsoleForm().getExecutionResultForm(executionResult);
     }
 

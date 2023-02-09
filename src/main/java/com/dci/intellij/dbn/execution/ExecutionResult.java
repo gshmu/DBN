@@ -1,7 +1,6 @@
 package com.dci.intellij.dbn.execution;
 
 import com.dci.intellij.dbn.common.dispose.StatefulDisposable;
-import com.dci.intellij.dbn.common.thread.Dispatch;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.ConnectionId;
 import com.dci.intellij.dbn.execution.common.result.ui.ExecutionResultForm;
@@ -11,7 +10,7 @@ import com.intellij.psi.PsiFile;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import javax.swing.Icon;
+import javax.swing.*;
 
 public interface ExecutionResult<F extends ExecutionResultForm> extends StatefulDisposable, DataProvider {
 
@@ -20,11 +19,9 @@ public interface ExecutionResult<F extends ExecutionResultForm> extends Stateful
 
     @Nullable
     default F getForm() {
-        return Dispatch.call(true, () -> {
-            Project project = getProject();
-            ExecutionManager executionManager = ExecutionManager.getInstance(project);
-            return (F) executionManager.getExecutionResultForm(this);
-        });
+        Project project = getProject();
+        ExecutionManager executionManager = ExecutionManager.getInstance(project);
+        return executionManager.getExecutionResultForm(this);
     }
 
     @NotNull
