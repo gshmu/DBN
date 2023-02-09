@@ -51,7 +51,6 @@ import com.intellij.openapi.fileEditor.OpenFileDescriptor;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.*;
-import com.intellij.psi.impl.source.tree.SharedImplUtil;
 import com.intellij.psi.search.LocalSearchScope;
 import com.intellij.psi.search.SearchScope;
 import lombok.Getter;
@@ -86,7 +85,8 @@ public abstract class BasePsiElement<T extends ElementTypeBase> extends ASTDeleg
 
     @Override
     public PsiElement getParent() {
-        return SharedImplUtil.getParent(node);
+        ASTNode parentNode = node.getTreeParent();
+        return parentNode == null ? null : parentNode.getPsi();
     }
 
     @Override
