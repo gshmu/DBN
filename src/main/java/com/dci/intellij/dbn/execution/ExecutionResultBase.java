@@ -7,9 +7,9 @@ import lombok.Setter;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+@Getter
+@Setter
 public abstract class ExecutionResultBase<F extends ExecutionResultForm> extends StatefulDisposableBase implements ExecutionResult<F> {
-    @Getter
-    @Setter
     private ExecutionResult<F> previous;
 
     @Nullable
