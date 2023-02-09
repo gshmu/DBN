@@ -4,7 +4,7 @@ import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.fileEditor.FileEditor;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
-import com.intellij.psi.PsiElement;
+import com.intellij.psi.PsiFile;
 
 public final class Checks {
     private Checks() {}
@@ -53,9 +53,9 @@ public final class Checks {
             return virtualFile.isValid();
         }
 
-        if (object instanceof PsiElement) {
-            PsiElement psiElement = (PsiElement) object;
-            return psiElement.isValid();
+        if (object instanceof PsiFile) {
+            PsiFile psiFile = (PsiFile) object;
+            return psiFile.isValid();
         }
 
         return true;
