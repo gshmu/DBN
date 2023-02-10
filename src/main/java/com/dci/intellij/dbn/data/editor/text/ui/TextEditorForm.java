@@ -3,11 +3,14 @@ package com.dci.intellij.dbn.data.editor.text.ui;
 import com.dci.intellij.dbn.common.action.UserDataKeys;
 import com.dci.intellij.dbn.common.ui.form.DBNFormBase;
 import com.dci.intellij.dbn.common.util.*;
+import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.data.editor.text.TextContentType;
 import com.dci.intellij.dbn.data.editor.text.actions.TextContentTypeComboBoxAction;
 import com.dci.intellij.dbn.data.editor.ui.DataEditorComponent;
 import com.dci.intellij.dbn.data.editor.ui.UserValueHolder;
 import com.dci.intellij.dbn.data.value.LargeObjectValue;
+import com.dci.intellij.dbn.language.common.DBLanguage;
+import com.dci.intellij.dbn.language.common.DBLanguageFileType;
 import com.intellij.openapi.actionSystem.ActionToolbar;
 import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.editor.EditorFactory;
@@ -85,7 +88,7 @@ public class TextEditorForm extends DBNFormBase {
         if (fileType instanceof LanguageFileType) {
             LanguageFileType languageFileType = (LanguageFileType) fileType;
 
-            VirtualFile virtualFile = new LightVirtualFile("text_editor_file", fileType, text);
+            VirtualFile virtualFile = new LightVirtualFile("text_editor_file." + fileType.getDefaultExtension(), fileType, text);
             virtualFile.putUserData(UserDataKeys.HAS_CONNECTIVITY_CONTEXT, false);
 
             FileManager fileManager = ((PsiManagerEx)PsiManager.getInstance(project)).getFileManager();
@@ -94,21 +97,30 @@ public class TextEditorForm extends DBNFormBase {
             document = psiFile == null ? null : Documents.getDocument(psiFile);
         }
 
+        EditorFactory editorFactory = EditorFactory.getInstance();
         if (document == null) {
-            document = EditorFactory.getInstance().createDocument(text);
+            document = editorFactory.createDocument(text);
         }
 
         document.addDocumentListener(documentListener);
-        editor = (EditorEx) EditorFactory.getInstance().createEditor(document, project, fileType, false);
+        editor = (EditorEx) editorFactory.createEditor(document, project, fileType, false);
         editor.setEmbeddedIntoDialogWrapper(true);
         editor.getContentComponent().setFocusTraversalKeysEnabled(false);
 
+        if (fileType instanceof DBLanguageFileType) {
+            DBLanguageFileType dbFileType = (DBLanguageFileType) fileType;
+            DBLanguage language = (DBLanguage) dbFileType.getLanguage();
+            Editors.initEditorHighlighter(editor, language, (ConnectionHandler) null);
+        }
+
+        int scrollOffset = 0;
         if (oldEditor!= null) {
+            scrollOffset = oldEditor.getScrollingModel().getVerticalScrollOffset();
             editorPanel.remove(oldEditor.getComponent());
             Editors.releaseEditor(oldEditor);
-
         }
         editorPanel.add(editor.getComponent(), BorderLayout.CENTER);
+        editor.getScrollingModel().scrollVertically(scrollOffset);
     }
 
     public void setContentType(TextContentType contentType){
@@ -116,14 +128,6 @@ public class TextEditorForm extends DBNFormBase {
             userValueHolder.setContentType(contentType);
             initEditor();
         }
-
-/*
-        SyntaxHighlighter syntaxHighlighter = SyntaxHighlighterFactory.getSyntaxHighlighter(contentType.getFileType(), userValueHolder.getProject(), null);
-        EditorColorsScheme colorsScheme = editor.getColorsScheme();
-        editor.setHighlighter(HighlighterFactory.createHighlighter(syntaxHighlighter, colorsScheme));
-*/
-
-
     }
 
     @Nullable
