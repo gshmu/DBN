@@ -1,15 +1,17 @@
 package com.dci.intellij.dbn.language.sql.dialect.oracle;
 
-import com.dci.intellij.dbn.language.common.SharedTokenTypeBundle;
 import com.dci.intellij.dbn.language.common.DBLanguageDialectIdentifier;
+import com.dci.intellij.dbn.language.common.SharedTokenTypeBundle;
 import com.dci.intellij.dbn.language.common.TokenTypeBundle;
+import com.dci.intellij.dbn.language.common.lexer.DBLanguageFlexLexer;
 import com.dci.intellij.dbn.language.sql.dialect.oracle.OraclePLSQLBlockMonitor.Marker;
 import com.intellij.psi.tree.IElementType;
+
 
 %%
 
 %class OracleSQLParserFlexLexer
-%implements FlexLexer
+%implements DBLanguageFlexLexer
 %final
 %unicode
 %ignorecase
@@ -26,16 +28,14 @@ import com.intellij.psi.tree.IElementType;
         this.stt = tt.getSharedTokenTypes();
     }
 
-    private int blockNesting = 0;
     private int blockStartPos = 0;
 
     public IElementType getChameleon() {
         return tt.getChameleon(DBLanguageDialectIdentifier.ORACLE_PLSQL);
     }
 
-    OraclePLSQLBlockMonitor plsqlBlockMonitor = new OraclePLSQLBlockMonitor() {
+    OraclePLSQLBlockMonitor plsqlBlockMonitor = new OraclePLSQLBlockMonitor(this) {
         @Override protected void lexerStart() {
-            //yypushback(yylength());
             yybegin(PSQL_BLOCK);
             blockStartPos = zzStartRead;
         }
@@ -45,72 +45,14 @@ import com.intellij.psi.tree.IElementType;
         }
     };
 
+    public String getCurrentToken() {
+        return ((String) zzBuffer).substring(zzStartRead, zzMarkedPos);
+    }
 %}
 
-NON_PSQL_BLOCK_ENTER = ("grant"|"revoke"){ws}"create"
-NON_PSQL_BLOCK_EXIT = "to"|"from"|";"
-
-PSQL_STUB_OR_REPLACE = ({ws}"or"{ws}"replace")?
-PSQL_STUB_EDITIONABLE = ({ws}("editionable"|"editioning"|'noneditionable'))?
-PSQL_STUB_FORCE = ({ws}("no"{ws})?"force")?
-PSQL_STUB_PUBLIC = ({ws}"public")?
-PSQL_STUB_PROGRAM = {ws}("package"|"trigger"|"function"|"procedure"|"type")
-PSQL_STUB_IDENTIFIER = ({ws}({IDENTIFIER}|{QUOTED_IDENTIFIER}))*
-
-PSQL_BLOCK_START_CREATE = "create"{PSQL_STUB_OR_REPLACE}{PSQL_STUB_FORCE}{PSQL_STUB_EDITIONABLE}{PSQL_STUB_PUBLIC}{PSQL_STUB_PROGRAM}
-PSQL_BLOCK_START_DECLARE = "declare"
-PSQL_BLOCK_START_BEGIN = "begin"
-PSQL_BLOCK_END_IGNORE = "end"{ws}("if"|"loop"|"case"){PSQL_STUB_IDENTIFIER}{wso}";"
-PSQL_BLOCK_END = "end"{PSQL_STUB_IDENTIFIER}({wso}";"({wso}"/")?)?
-
-eol = \r|\n|\r\n
-wsc = [ \t\f]
-wso = ({eol}|{wsc})*
-ws  = ({eol}|{wsc})+
-WHITE_SPACE = {ws}
-
-
-BLOCK_COMMENT="/"{wsc}*"*"(~"*/")?
-LINE_COMMENT = ("--"[^\r\n]*{eol}?) | ("rem"({wsc}+[^\r\n]*{eol}?|{eol}?))
-
-IDENTIFIER = [:jletter:] ([:jletterdigit:]|"#")*
-QUOTED_IDENTIFIER = "\""[^\"]*"\""?
-
-string_simple_quoted      = "'"([^']|"''")*"'"?
-string_alternative_quoted =
-    "q'["(~"]'")? |
-    "q'("(~")'")? |
-    "q'{"(~"}'")? |
-    "q'<"(~">'")? |
-    "q'!"(~"!'")? |
-    "q'?"(~"?'")? |
-    "q'|"(~"|'")? |
-    "q'/"(~"/'")? |
-    "q'\\"(~"\\'")? |
-    "q'+"(~"+'")? |
-    "q'-"(~"-'")? |
-    "q'*"(~"*'")? |
-    "q'="(~"='")? |
-    "q'~"(~"~'")? |
-    "q'^"(~"^'")? |
-    "q'#"(~"#'")? |
-    "q'%"(~"%'")? |
-    "q'$"(~"$'")? |
-    "q'&"(~"&'")? |
-    "q':"(~":'")? |
-    "q';"(~";'")? |
-    "q'."(~".'")? |
-    "q',"(~",'")?
-STRING = "n"?({string_alternative_quoted}|{string_simple_quoted})
-
-sign = "+"|"-"
-digit = [0-9]
-INTEGER = {digit}+("e"{sign}?{digit}+)?
-NUMBER = {INTEGER}?"."{digit}+(("e"{sign}?{digit}+)|(("f"|"d"){ws}))?
-
-VARIABLE = ":"({IDENTIFIER}|{INTEGER})
-SQLP_VARIABLE = "&""&"?({IDENTIFIER}|{INTEGER})
-VARIABLE_IDENTIFIER={IDENTIFIER}"&""&"?({IDENTIFIER}|{INTEGER})|"<"{IDENTIFIER}({ws}{IDENTIFIER})*">"
+%include oracle_psql_block_elements.flext
+%include ../../../common/lexer/shared_elements.flext
+%include ../../../common/lexer/shared_elements_oracle.flext
 
 CT_SIZE_CLAUSE = {INTEGER}{wso}("k"|"m"|"g"|"t"|"p"|"e"){ws}
 
@@ -118,42 +60,7 @@ CT_SIZE_CLAUSE = {INTEGER}{wso}("k"|"m"|"g"|"t"|"p"|"e"){ws}
 %state NON_PSQL_BLOCK
 %%
 
-<PSQL_BLOCK> {
-    {BLOCK_COMMENT}                 {}
-    {LINE_COMMENT}                  {}
-    {STRING}                        {}
-
-    {PSQL_BLOCK_START_CREATE}       { if (blockStartPos < zzCurrentPos) {yypushback(yylength()); plsqlBlockMonitor.end(true); return getChameleon();}}
-    {PSQL_BLOCK_END_IGNORE}         {}
-    {PSQL_BLOCK_END}                { if (plsqlBlockMonitor.end(false)) return getChameleon();}
-
-    "begin"                         { plsqlBlockMonitor.mark(Marker.BEGIN); }
-    "type"{ws}{IDENTIFIER}          { plsqlBlockMonitor.mark(Marker.PROGRAM); }
-    "function"{ws}{IDENTIFIER}      { plsqlBlockMonitor.mark(Marker.PROGRAM); }
-    "procedure"{ws}{IDENTIFIER}     { plsqlBlockMonitor.mark(Marker.PROGRAM); }
-    "case"                          { plsqlBlockMonitor.mark(Marker.CASE); }
-    "end"                           { plsqlBlockMonitor.end(false);}
-
-    {IDENTIFIER}                    {}
-    {INTEGER}                       {}
-    {NUMBER}                        {}
-    {WHITE_SPACE}                   {}
-    .                               {}
-    <<EOF>>                         { plsqlBlockMonitor.end(true); return getChameleon(); }
-}
-
-<NON_PSQL_BLOCK> {
-    {NON_PSQL_BLOCK_EXIT}          { yybegin(YYINITIAL); yypushback(yylength()); }
-}
-
-
-<YYINITIAL> {
-    {NON_PSQL_BLOCK_ENTER}         { yybegin(NON_PSQL_BLOCK); yypushback(yylength()); }
-
-    {PSQL_BLOCK_START_CREATE}      { plsqlBlockMonitor.start(Marker.CREATE); }
-    {PSQL_BLOCK_START_DECLARE}     { plsqlBlockMonitor.start(Marker.DECLARE); }
-    {PSQL_BLOCK_START_BEGIN}       { plsqlBlockMonitor.start(Marker.BEGIN); }
-}
+%include oracle_psql_block_demarcation.flext
 
 <YYINITIAL, NON_PSQL_BLOCK> {
 

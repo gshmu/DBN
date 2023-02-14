@@ -3,6 +3,7 @@ package com.dci.intellij.dbn.language.sql.dialect.oracle;
 import com.dci.intellij.dbn.language.common.SharedTokenTypeBundle;
 import com.dci.intellij.dbn.language.common.TokenTypeBundle;
 import com.intellij.psi.tree.IElementType;
+import com.intellij.lexer.FlexLexer;
 
 %%
 
@@ -29,56 +30,8 @@ import com.intellij.psi.tree.IElementType;
 PLSQL_BLOCK_START = "create"({ws}"or"{ws}"replace")? {ws} ("function"|"procedure"|"type"|"trigger"|"package") | "declare" | "begin"
 PLSQL_BLOCK_END = ";"{wso}"/"[^*]
 
-eol = \r|\n|\r\n
-wsc = [ \t\f]
-wso = ({eol}|{wsc})*
-ws  = ({eol}|{wsc})+
-WHITE_SPACE = {ws}
-
-
-BLOCK_COMMENT="/"{wsc}*"*"(~"*/")?
-LINE_COMMENT = ("--"[^\r\n]*{eol}?) | ("rem"({wsc}+[^\r\n]*{eol}?|{eol}?))
-
-IDENTIFIER = [:jletter:] ([:jletterdigit:]|"#")*
-QUOTED_IDENTIFIER = "\""[^\"]*"\""?
-
-string_simple_quoted      = "'"([^']|"''")*"'"?
-string_alternative_quoted =
-    "q'["(~"]'")? |
-    "q'("(~")'")? |
-    "q'{"(~"}'")? |
-    "q'<"(~">'")? |
-    "q'!"(~"!'")? |
-    "q'?"(~"?'")? |
-    "q'|"(~"|'")? |
-    "q'/"(~"/'")? |
-    "q'\\"(~"\\'")? |
-    "q'+"(~"+'")? |
-    "q'-"(~"-'")? |
-    "q'*"(~"*'")? |
-    "q'="(~"='")? |
-    "q'~"(~"~'")? |
-    "q'^"(~"^'")? |
-    "q'#"(~"#'")? |
-    "q'%"(~"%'")? |
-    "q'$"(~"$'")? |
-    "q'&"(~"&'")? |
-    "q':"(~":'")? |
-    "q';"(~";'")? |
-    "q'."(~".'")? |
-    "q',"(~",'")?
-STRING = "n"?({string_alternative_quoted}|{string_simple_quoted})
-
-sign = "+"|"-"
-digit = [0-9]
-INTEGER = {digit}+("e"{sign}?{digit}+)?
-NUMBER = {INTEGER}?"."{digit}+(("e"{sign}?{digit}+)|(("f"|"d"){ws}))?
-
-VARIABLE = ":"({IDENTIFIER}|{INTEGER})
-SQLP_VARIABLE = "&""&"?{IDENTIFIER}
-VARIABLE_IDENTIFIER={IDENTIFIER}"&""&"?({IDENTIFIER}|{INTEGER})|"<"{IDENTIFIER}({ws}{IDENTIFIER})*">"
-
-OPERATOR = ("!"|"^"|"<"|">"){wso}"="|"<"{wso}">"|"<"|">"|"="
+%include ../../../common/lexer/shared_elements.flext
+%include ../../../common/lexer/shared_elements_oracle.flext
 
 SQL_KEYWORD     = "a set"|"abort"|"absent"|"access"|"accessed"|"account"|"activate"|"active"|"add"|"admin"|"administer"|"advise"|"advisor"|"after"|"alias"|"all"|"allocate"|"allow"|"alter"|"always"|"analyze"|"ancillary"|"and"|"any"|"apply"|"archive"|"archivelog"|"array"|"as"|"asc"|"asynchronous"|"assembly"|"at"|"attribute"|"attributes"|"audit"|"authid"|"authentication"|"auto"|"autoextend"|"automatic"|"availability"|"backup"|"become"|"before"|"begin"|"beginning"|"bequeath"|"between"|"bigfile"|"binding"|"bitmap"|"block"|"body"|"both"|"buffer_cache"|"buffer_pool"|"build"|"by"|"cache"|"cancel"|"canonical"|"capacity"|"cascade"|"case"|"category"|"change"|"char_cs"|"check"|"checkpoint"|"child"|"chisq_df"|"chisq_obs"|"chisq_sig"|"chunk"|"class"|"clear"|"clone"|"close"|"cluster"|"coalesce"|"coarse"|"coefficient"|"cohens_k"|"collation"|"column"|"column_value"|"columns"|"comment"|"commit"|"committed"|"compact"|"compatibility"|"compile"|"complete"|"compress"|"computation"|"compute"|"conditional"|"connect"|"consider"|"consistent"|"constraint"|"constraints"|"cont_coefficient"|"container"|"container_map"|"containers_default"|"content"|"contents"|"context"|"continue"|"controlfile"|"conversion"|"corruption"|"cost"|"cramers_v"|"create"|"creation"|"critical"|"cross"|"cube"|"current"|"current_user"|"currval"|"cursor"|"cycle"|"data"|"database"|"datafile"|"datafiles"|"day"|"days"|"ddl"|"deallocate"|"debug"|"decrement"|"default"|"defaults"|"deferrable"|"deferred"|"definer"|"delay"|"delegate"|"delete"|"demand"|"dense_rank"|"dequeue"|"desc"|"determines"|"df"|"df_between"|"df_den"|"df_num"|"df_within"|"dictionary"|"digest"|"dimension"|"directory"|"disable"|"disconnect"|"disk"|"diskgroup"|"disks"|"dismount"|"distinct"|"distribute"|"distributed"|"dml"|"document"|"downgrade"|"drop"|"dump"|"duplicate"|"edition"|"editions"|"editionable"|"editioning"|"element"|"else"|"empty"|"enable"|"encoding"|"encrypt"|"end"|"enforced"|"entityescaping"|"entry"|"equals_path"|"error"|"errors"|"escape"|"evalname"|"evaluate"|"evaluation"|"exact_prob"|"except"|"exceptions"|"exchange"|"exclude"|"excluding"|"exclusive"|"execute"|"exempt"|"exists"|"expire"|"explain"|"export"|"extended"|"extends"|"extensions"|"extent"|"external"|"externally"|"f_ratio"|"failed"|"failgroup"|"fast"|"fetch"|"file"|"filesystem_like_logging"|"fine"|"finish"|"first"|"flashback"|"flush"|"folder"|"following"|"for"|"force"|"foreign"|"format"|"freelist"|"freelists"|"freepools"|"fresh"|"from"|"full"|"function"|"global"|"global_name"|"globally"|"grant"|"group"|"groups"|"guard"|"hash"|"having"|"heap"|"hide"|"hierarchy"|"high"|"history"|"hour"|"http"|"id"|"identified"|"identifier"|"ignore"|"ilm"|"immediate"|"import"|"in"|"include"|"including"|"increment"|"indent"|"index"|"indexes"|"indexing"|"indextype"|"infinite"|"initial"|"initialized"|"initially"|"initrans"|"inmemory"|"inner"|"insert"|"instance"|"intermediate"|"intersect"|"into"|"invalidate"|"invisible"|"is"|"iterate"|"java"|"job"|"join"|"json"|"keep"|"key"|"keys"|"kill"|"last"|"leading"|"left"|"less"|"level"|"levels"|"library"|"like"|"like2"|"like4"|"likec"|"limit"|"link"|"lob"|"local"|"location"|"locator"|"lock"|"lockdown"|"locked"|"log"|"logfile"|"logging"|"logical"|"low"|"low_cost_tbs"|"main"|"manage"|"managed"|"manager"|"management"|"manual"|"mapping"|"master"|"matched"|"materialized"|"maxextents"|"maximize"|"maxsize"|"maxvalue"|"mean_squares_between"|"mean_squares_within"|"measure"|"measures"|"medium"|"member"|"memcompress"|"memory"|"merge"|"metadata"|"minextents"|"mining"|"minus"|"minute"|"minutes"|"minvalue"|"mirror"|"mismatch"|"mlslabel"|"mode"|"model"|"modification"|"modify"|"monitoring"|"month"|"months"|"mount"|"move"|"multiset"|"multivalue"|"name"|"nan"|"natural"|"nav"|"nchar_cs"|"nested"|"never"|"new"|"next"|"nextval"|"no"|"noarchivelog"|"noaudit"|"nocache"|"nocompress"|"nocycle"|"nodelay"|"noentityescaping"|"noforce"|"nologging"|"nomapping"|"nomaxvalue"|"nominvalue"|"nomonitoring"|"none"|"noneditionable"|"noorder"|"noparallel"|"norely"|"norepair"|"noresetlogs"|"noreverse"|"noschemacheck"|"nosort"|"noswitch"|"not"|"nothing"|"notification"|"notimeout"|"novalidate"|"nowait"|"null"|"nulls"|"object"|"of"|"off"|"offline"|"offset"|"on"|"one_sided_prob_or_less"|"one_sided_prob_or_more"|"one_sided_sig"|"online"|"only"|"open"|"operator"|"optimal"|"optimize"|"option"|"or"|"order"|"ordinality"|"organization"|"outer"|"outline"|"over"|"overflow"|"overlaps"|"package"|"parallel"|"parameters"|"partial"|"partition"|"partitions"|"passing"|"password"|"path"|"pctfree"|"pctincrease"|"pctthreshold"|"pctused"|"pctversion"|"percent"|"performance"|"period"|"phi_coefficient"|"physical"|"pivot"|"plan"|"pluggable"|"policy"|"post_transaction"|"power"|"prebuilt"|"preceding"|"precision"|"prepare"|"present"|"preserve"|"pretty"|"primary"|"prior"|"priority"|"private"|"privilege"|"privileges"|"procedure"|"process"|"profile"|"program"|"protection"|"public"|"purge"|"query"|"queue"|"quiesce"|"quota"|"range"|"read"|"reads"|"rebalance"|"rebuild"|"recover"|"recovery"|"recycle"|"redefine"|"reduced"|"ref"|"reference"|"references"|"refresh"|"regexp_like"|"register"|"reject"|"rely"|"remainder"|"rename"|"repair"|"repeat"|"replace"|"reset"|"resetlogs"|"resize"|"resolve"|"resolver"|"resource"|"restrict"|"restricted"|"resumable"|"resume"|"retention"|"return"|"returning"|"reuse"|"reverse"|"revoke"|"rewrite"|"right"|"role"|"rollback"|"rollover"|"rollup"|"row"|"rownum"|"rows"|"rule"|"rules"|"salt"|"sample"|"savepoint"|"scan"|"scheduler"|"schemacheck"|"scn"|"scope"|"second"|"seed"|"segment"|"select"|"sequence"|"sequential"|"serializable"|"service"|"session"|"set"|"sets"|"settings"|"share"|"shared_pool"|"sharing"|"show"|"shrink"|"shutdown"|"siblings"|"sid"|"sig"|"single"|"size"|"skip"|"smallfile"|"snapshot"|"some"|"sort"|"source"|"space"|"specification"|"spfile"|"split"|"sql"|"standalone"|"standby"|"start"|"statement"|"statistic"|"statistics"|"stop"|"storage"|"store"|"strict"|"submultiset"|"subpartition"|"subpartitions"|"substitutable"|"successful"|"sum_squares_between"|"sum_squares_within"|"supplemental"|"suspend"|"switch"|"switchover"|"synchronous"|"synonym"|"sysbackup"|"sysdba"|"sysdg"|"syskm"|"sysoper"|"system"|"table"|"tables"|"tablespace"|"tempfile"|"template"|"temporary"|"test"|"than"|"then"|"thread"|"through"|"tier"|"ties"|"time"|"time_zone"|"timeout"|"timezone_abbr"|"timezone_hour"|"timezone_minute"|"timezone_region"|"to"|"trace"|"tracking"|"trailing"|"transaction"|"translation"|"trigger"|"truncate"|"trusted"|"tuning"|"two_sided_prob"|"two_sided_sig"|"type"|"u_statistic"|"uid"|"unarchived"|"unbounded"|"unconditional"|"under"|"under_path"|"undrop"|"union"|"unique"|"unlimited"|"unlock"|"unpivot"|"unprotected"|"unquiesce"|"unrecoverable"|"until"|"unusable"|"unused"|"update"|"updated"|"upgrade"|"upsert"|"usage"|"use"|"user"|"using"|"validate"|"validation"|"value"|"values"|"varray"|"version"|"versions"|"view"|"visible"|"wait"|"wellformed"|"when"|"whenever"|"where"|"with"|"within"|"without"|"work"|"wrapper"|"write"|"xml"|"xmlnamespaces"|"xmlschema"|"xmltype"|"year"|"years"|"yes"|"zone"|"false"|"true"
 SQL_FUNCTION    = "abs"|"acos"|"add_months"|"appendchildxml"|"ascii"|"asciistr"|"asin"|"atan"|"atan2"|"avg"|"bfilename"|"bin_to_num"|"bitand"|"cardinality"|"cast"|"ceil"|"chartorowid"|"chr"|"collect"|"compose"|"concat"|"convert"|"corr"|"corr_k"|"corr_s"|"cos"|"cosh"|"count"|"covar_pop"|"covar_samp"|"cume_dist"|"current_date"|"current_timestamp"|"cv"|"dbtimezone"|"dbtmezone"|"decode"|"decompose"|"deletexml"|"depth"|"deref"|"empty_blob"|"empty_clob"|"existsnode"|"exp"|"extract"|"extractvalue"|"first_value"|"floor"|"from_tz"|"greatest"|"group_id"|"grouping"|"grouping_id"|"hextoraw"|"initcap"|"insertchildxml"|"insertchildxmlafter"|"insertchildxmlbefore"|"insertxmlafter"|"insertxmlbefore"|"instr"|"instr2"|"instr4"|"instrb"|"instrc"|"iteration_number"|"json_array"|"json_arrayagg"|"json_dataguide"|"json_object"|"json_objectagg"|"json_query"|"json_table"|"json_value"|"lag"|"last_day"|"last_value"|"lateral"|"lead"|"least"|"length"|"length2"|"length4"|"lengthb"|"lengthc"|"listagg"|"ln"|"lnnvl"|"localtimestamp"|"lower"|"lpad"|"ltrim"|"make_ref"|"max"|"median"|"min"|"mod"|"months_between"|"nanvl"|"nchr"|"new_time"|"next_day"|"nls_charset_decl_len"|"nls_charset_id"|"nls_charset_name"|"nls_initcap"|"nls_lower"|"nls_upper"|"nlssort"|"ntile"|"nullif"|"numtodsinterval"|"numtoyminterval"|"nvl"|"nvl2"|"ora_hash"|"percent_rank"|"percentile_cont"|"percentile_disc"|"powermultiset"|"powermultiset_by_cardinality"|"presentnnv"|"presentv"|"previous"|"rank"|"ratio_to_report"|"rawtohex"|"rawtonhex"|"reftohex"|"regexp_instr"|"regexp_replace"|"regexp_substr"|"regr_avgx"|"regr_avgy"|"regr_count"|"regr_intercept"|"regr_r2"|"regr_slope"|"regr_sxx"|"regr_sxy"|"regr_syy"|"round"|"row_number"|"rowidtochar"|"rowidtonchar"|"rpad"|"rtrim"|"scn_to_timestamp"|"sessiontimezone"|"sign"|"sin"|"sinh"|"soundex"|"sqrt"|"stats_binomial_test"|"stats_crosstab"|"stats_f_test"|"stats_ks_test"|"stats_mode"|"stats_mw_test"|"stats_one_way_anova"|"stats_t_test_indep"|"stats_t_test_indepu"|"stats_t_test_one"|"stats_t_test_paired"|"stats_wsr_test"|"stddev"|"stddev_pop"|"stddev_samp"|"substr"|"substr2"|"substr4"|"substrb"|"substrc"|"sum"|"sys_connect_by_path"|"sys_context"|"sys_dburigen"|"sys_extract_utc"|"sys_guid"|"sys_typeid"|"sys_xmlagg"|"sys_xmlgen"|"sysdate"|"systimestamp"|"tan"|"tanh"|"timestamp_to_scn"|"to_binary_double"|"to_binary_float"|"to_char"|"to_clob"|"to_date"|"to_dsinterval"|"to_lob"|"to_multi_byte"|"to_nchar"|"to_nclob"|"to_number"|"to_single_byte"|"to_timestamp"|"to_timestamp_tz"|"to_yminterval"|"translate"|"treat"|"trim"|"trunc"|"tz_offset"|"unistr"|"updatexml"|"upper"|"userenv"|"validate_conversion"|"var_pop"|"var_samp"|"variance"|"vsize"|"width_bucket"|"xmlagg"|"xmlattributes"|"xmlcast"|"xmlcdata"|"xmlcolattval"|"xmlcomment"|"xmlconcat"|"xmldiff"|"xmlelement"|"xmlforest"|"xmlisvalid"|"xmlparse"|"xmlpatch"|"xmlpi"|"xmlquery"|"xmlroot"|"xmlsequence"|"xmlserialize"|"xmltable"|"xmltransform"
