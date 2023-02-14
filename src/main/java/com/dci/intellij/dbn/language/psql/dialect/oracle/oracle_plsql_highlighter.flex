@@ -3,6 +3,7 @@ package com.dci.intellij.dbn.language.psql.dialect.oracle;
 import com.dci.intellij.dbn.language.common.SharedTokenTypeBundle;
 import com.dci.intellij.dbn.language.common.TokenTypeBundle;
 import com.intellij.psi.tree.IElementType;
+import com.intellij.lexer.FlexLexer;
 
 %%
 
@@ -33,7 +34,7 @@ ws  = ({eol}|{wsc})+
 WHITE_SPACE = {ws}
 
 
-BLOCK_COMMENT="/"{wsc}*"*"(~"*/")?
+BLOCK_COMMENT="/*"(~"*/")?
 LINE_COMMENT = ("--"[^\r\n]*{eol}?) | ("rem"({wsc}+[^\r\n]*{eol}?|{eol}?))
 
 IDENTIFIER = [:jletter:] ([:jletterdigit:]|"#")*
