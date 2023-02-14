@@ -1,0 +1,17 @@
+eol = \r|\n|\r\n
+wsc = [ \t\f]
+wso = ({eol}|{wsc})*
+ws  = ({eol}|{wsc})+
+WHITE_SPACE = {ws}
+
+
+BLOCK_COMMENT="/*"(~"*/")?
+LINE_COMMENT = ("--"[^\r\n]*{eol}?) | ("rem"({wsc}+[^\r\n]*{eol}?|{eol}?))
+
+
+sign = "+"|"-"
+digit = [0-9]
+INTEGER = {digit}+("e"{sign}?{digit}+)?
+NUMBER = {INTEGER}?"."{digit}+(("e"{sign}?{digit}+)|(("f"|"d"){ws}))?
+
+OPERATOR = ("!"|"^"|"<"|">"){wso}"="|"<"{wso}">"|"<"|">"|"="
