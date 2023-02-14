@@ -66,11 +66,11 @@ public class DatabaseBrowserManager extends ProjectComponentBase implements Pers
 
     public static final ThreadLocal<Boolean> AUTOSCROLL_FROM_EDITOR = new ThreadLocal<>();
 
-    private final transient Latent<BrowserToolWindowForm> toolWindowForm = Latent.basic(() -> {
+    private final transient Latent<BrowserToolWindowForm> toolWindowForm = Latent.basic(() -> Dispatch.call(true, () -> {
         BrowserToolWindowForm form = new BrowserToolWindowForm(this, getProject());
         Disposer.register(this, form);
         return form;
-    });
+    }));
 
     private DatabaseBrowserManager(Project project) {
         super(project, COMPONENT_NAME);
