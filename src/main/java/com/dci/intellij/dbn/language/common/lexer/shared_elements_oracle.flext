@@ -27,8 +27,3 @@ string_alternative_quoted =
     "q'."(~".'")? |
     "q',"(~",'")?
 STRING = "n"?({string_alternative_quoted}|{string_simple_quoted})
-
-
-VARIABLE = ":"({IDENTIFIER}|{INTEGER})
-SQLP_VARIABLE = "&""&"?({IDENTIFIER}|{INTEGER})
-VARIABLE_IDENTIFIER={IDENTIFIER}"&""&"?({IDENTIFIER}|{INTEGER})|"<"{IDENTIFIER}({ws}{IDENTIFIER})*">"

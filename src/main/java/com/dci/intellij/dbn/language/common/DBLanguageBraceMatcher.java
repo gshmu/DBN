@@ -18,7 +18,7 @@ public abstract class DBLanguageBraceMatcher implements PairedBraceMatcher {
         SharedTokenTypeBundle tt = language.getSharedTokenTypes();
         bracePairs = new BracePair[]{
             new BracePair(tt.getChrLeftParenthesis(), tt.getChrRightParenthesis(), false),
-            new BracePair(tt.getTokenType("CHR_LEFT_BRACKET"), tt.getTokenType("CHR_RIGHT_BRACKET"), false)};
+            new BracePair(tt.getChrLeftBracket(), tt.getChrRightBracket(), false)};
     }
 
     @NotNull
@@ -33,10 +33,10 @@ public abstract class DBLanguageBraceMatcher implements PairedBraceMatcher {
             SimpleTokenType simpleTokenType = (SimpleTokenType) iElementType1;
             SharedTokenTypeBundle tt = language.getSharedTokenTypes();
             return simpleTokenType == tt.getWhiteSpace() ||
-                    simpleTokenType == tt.getTokenType("CHR_DOT") ||
-                    simpleTokenType == tt.getTokenType("CHR_COMMA") ||
-                    simpleTokenType == tt.getTokenType("CHR_COLON") ||
-                    simpleTokenType == tt.getTokenType("CHR_SEMICOLON");
+                    simpleTokenType == tt.getChrDot() ||
+                    simpleTokenType == tt.getChrComma() ||
+                    simpleTokenType == tt.getChrColon() ||
+                    simpleTokenType == tt.getChrSemicolon();
 
         }
         return iElementType1 == null;
