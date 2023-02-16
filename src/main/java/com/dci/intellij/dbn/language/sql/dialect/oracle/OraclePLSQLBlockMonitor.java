@@ -1,11 +1,11 @@
 package com.dci.intellij.dbn.language.sql.dialect.oracle;
 
-import com.dci.intellij.dbn.language.common.lexer.DBLanguageFlexLexer;
+import com.dci.intellij.dbn.language.common.lexer.DBLanguageCompoundLexer;
 
 import java.util.Deque;
 import java.util.LinkedList;
 
-public abstract class OraclePLSQLBlockMonitor {
+public final class OraclePLSQLBlockMonitor {
     public enum Marker {
         CASE,
         BEGIN,
@@ -13,38 +13,48 @@ public abstract class OraclePLSQLBlockMonitor {
         DECLARE,
         PROGRAM}
 
-    private final DBLanguageFlexLexer lexer;
+    private final DBLanguageCompoundLexer lexer;
     private final Deque<Marker> stack = new LinkedList<>();
+    private final int initialState;
+    private final int psqlBlockState;
+    private boolean log = false;
 
-    public OraclePLSQLBlockMonitor(DBLanguageFlexLexer lexer) {
+    private int blockStart;
+
+    public OraclePLSQLBlockMonitor(DBLanguageCompoundLexer lexer, int initialState, int psqlBlockState) {
         this.lexer = lexer;
+        this.initialState = initialState;
+        this.psqlBlockState = psqlBlockState;
     }
 
     public void ignore() {
-        //System.out.println("ignore:    " + lexer.getCurrentToken());
+        if (log) System.out.println("ignore:    " + lexer.getCurrentToken());
     }
 
 
     public void start(Marker marker) {
-        //System.out.println("start:     " + lexer.getCurrentToken());
+        if (log) System.out.println("start:     " + lexer.getCurrentToken());
         if (!stack.isEmpty()) {
             stack.clear();
         }
         stack.push(marker);
-        lexerStart();
+
+        // PLSQL block start
+        lexer.yybegin(psqlBlockState);
+        blockStart = lexer.getTokenStart();
     }
 
     public void mark(Marker marker) {
-        //System.out.println("mark:      " + lexer.getCurrentToken());
+        if (log) System.out.println("mark:      " + lexer.getCurrentToken());
         stack.push(marker);
     }
 
     public boolean end(boolean force) {
         if (force) {
-            //System.out.println("end force: " + lexer.getCurrentToken());
+            if (log) System.out.println("end force: " + lexer.getCurrentToken());
             stack.clear();
         } else {
-            //System.out.println("end:       " + lexer.getCurrentToken());
+            if (log) System.out.println("end:       " + lexer.getCurrentToken());
             Marker marker = stack.poll();
             if (marker == Marker.BEGIN) {
                 if (!stack.isEmpty()) {
@@ -61,16 +71,23 @@ public abstract class OraclePLSQLBlockMonitor {
         }
 
         if (stack.isEmpty()) {
-            lexerEnd();
+            // PLSQL block end
+            lexer.yybegin(initialState);
+            lexer.setTokenStart(blockStart);
             return true;
         }
 
         return false;
     }
 
+    public void pushBack() {
+        lexer.yypushback(lexer.yylength());
+    }
 
-    protected abstract void lexerStart();
-    protected abstract void lexerEnd();
+    public boolean isBlockStarted() {
+        return blockStart < lexer.getCurrentPosition();
+    }
+
 
     public void reset() {
         stack.clear();

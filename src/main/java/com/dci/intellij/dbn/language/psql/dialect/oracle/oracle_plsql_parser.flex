@@ -2,13 +2,13 @@ package com.dci.intellij.dbn.language.psql.dialect.oracle;
 
 import com.dci.intellij.dbn.language.common.SharedTokenTypeBundle;
 import com.dci.intellij.dbn.language.common.TokenTypeBundle;
+import com.dci.intellij.dbn.language.common.lexer.DBLanguageLexerBase;
 import com.intellij.psi.tree.IElementType;
-import com.intellij.lexer.FlexLexer;
 
 %%
 
 %class OraclePLSQLParserFlexLexer
-%implements FlexLexer
+%extends DBLanguageLexerBase
 %final
 %unicode
 %ignorecase
@@ -18,58 +18,13 @@ import com.intellij.lexer.FlexLexer;
 %eof}
 
 %{
-    private TokenTypeBundle tt;
-    private SharedTokenTypeBundle stt;
     public OraclePLSQLParserFlexLexer(TokenTypeBundle tt) {
-        this.tt = tt;
-        this.stt = tt.getSharedTokenTypes();
-    }
+      super(tt);
+  }
 %}
 
-eol = \r|\n|\r\n
-wsc = [ \t\f]
-wso = ({eol}|{wsc})*
-ws  = ({eol}|{wsc})+
-WHITE_SPACE = {ws}
-
-
-BLOCK_COMMENT="/*"(~"*/")?
-LINE_COMMENT = ("--"[^\r\n]*{eol}?) | ("rem"({wsc}+[^\r\n]*{eol}?|{eol}?))
-
-IDENTIFIER = [:jletter:] ([:jletterdigit:]|"#")*
-QUOTED_IDENTIFIER = "\""[^\"]*"\""?
-
-string_simple_quoted      = "'"([^']|"''")*"'"?
-string_alternative_quoted =
-    "q'["(~"]'")? |
-    "q'("(~")'")? |
-    "q'{"(~"}'")? |
-    "q'<"(~">'")? |
-    "q'!"(~"!'")? |
-    "q'?"(~"?'")? |
-    "q'|"(~"|'")? |
-    "q'/"(~"/'")? |
-    "q'\\"(~"\\'")? |
-    "q'+"(~"+'")? |
-    "q'-"(~"-'")? |
-    "q'*"(~"*'")? |
-    "q'="(~"='")? |
-    "q'~"(~"~'")? |
-    "q'^"(~"^'")? |
-    "q'#"(~"#'")? |
-    "q'%"(~"%'")? |
-    "q'$"(~"$'")? |
-    "q'&"(~"&'")? |
-    "q':"(~":'")? |
-    "q';"(~";'")? |
-    "q'."(~".'")? |
-    "q',"(~",'")?
-STRING = "n"?({string_alternative_quoted}|{string_simple_quoted})
-
-sign = "+"|"-"
-digit = [0-9]
-INTEGER = {digit}+("e"{sign}?{digit}+)?
-NUMBER = {INTEGER}?"."{digit}+(("e"{sign}?{digit}+)|(("f"|"d"){ws}))?
+%include ../../../common/lexer/shared_elements.flext
+%include ../../../common/lexer/shared_elements_oracle.flext
 
 VARIABLE = ":"{INTEGER}
 SQLP_VARIABLE = "&""&"?{IDENTIFIER}
@@ -78,8 +33,9 @@ SQLP_VARIABLE = "&""&"?{IDENTIFIER}
 %%
 
 <WRAPPED> {
-    .*           { return stt.getLineComment(); }
-    .            { return stt.getLineComment(); }
+    {WHITE_SPACE}   { return stt.getWhiteSpace(); }
+    .*              { return stt.getLineComment(); }
+    .               { return stt.getLineComment(); }
 }
 
 {BLOCK_COMMENT}  { return stt.getBlockComment(); }
