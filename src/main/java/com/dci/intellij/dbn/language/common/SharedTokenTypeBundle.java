@@ -28,6 +28,8 @@ public class SharedTokenTypeBundle extends TokenTypeBundleBase {
 
     private final SimpleTokenType chrDot;
     private final SimpleTokenType chrComma;
+    private final SimpleTokenType chrColon;
+    private final SimpleTokenType chrSemicolon;
     private final SimpleTokenType chrStar;
 
     private final TokenSet whitespaceTokens;
@@ -56,6 +58,8 @@ public class SharedTokenTypeBundle extends TokenTypeBundleBase {
 
         chrDot = getTokenType("CHR_DOT");
         chrComma = getTokenType("CHR_COMMA");
+        chrColon = getTokenType("CHR_COLON");
+        chrSemicolon = getTokenType("CHR_SEMICOLON");
         chrStar = getTokenType("CHR_STAR");
 
         whitespaceTokens = getTokenSet("WHITE_SPACES");

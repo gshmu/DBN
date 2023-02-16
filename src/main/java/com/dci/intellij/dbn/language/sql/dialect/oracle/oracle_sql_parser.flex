@@ -1,17 +1,16 @@
 package com.dci.intellij.dbn.language.sql.dialect.oracle;
 
 import com.dci.intellij.dbn.language.common.DBLanguageDialectIdentifier;
-import com.dci.intellij.dbn.language.common.SharedTokenTypeBundle;
 import com.dci.intellij.dbn.language.common.TokenTypeBundle;
-import com.dci.intellij.dbn.language.common.lexer.DBLanguageFlexLexer;
-import com.dci.intellij.dbn.language.sql.dialect.oracle.OraclePLSQLBlockMonitor.Marker;
+import com.dci.intellij.dbn.language.common.lexer.DBLanguageCompoundLexerBase;
 import com.intellij.psi.tree.IElementType;
 
+import static com.dci.intellij.dbn.language.sql.dialect.oracle.OraclePLSQLBlockMonitor.Marker;
 
 %%
 
 %class OracleSQLParserFlexLexer
-%implements DBLanguageFlexLexer
+%extends DBLanguageCompoundLexerBase
 %final
 %unicode
 %ignorecase
@@ -21,51 +20,96 @@ import com.intellij.psi.tree.IElementType;
 %eof}
 
 %{
-    private TokenTypeBundle tt;
-    private SharedTokenTypeBundle stt;
+    private final OraclePLSQLBlockMonitor pbm = new OraclePLSQLBlockMonitor(this, YYINITIAL, PSQL_BLOCK);
+
     public OracleSQLParserFlexLexer(TokenTypeBundle tt) {
-        this.tt = tt;
-        this.stt = tt.getSharedTokenTypes();
+        super(tt, DBLanguageDialectIdentifier.ORACLE_PLSQL);
     }
 
-    private int blockStartPos = 0;
-
-    public IElementType getChameleon() {
-        return tt.getChameleon(DBLanguageDialectIdentifier.ORACLE_PLSQL);
+    public void setTokenStart(int tokenStart) {
+        zzStartRead = tokenStart;
     }
 
-    OraclePLSQLBlockMonitor plsqlBlockMonitor = new OraclePLSQLBlockMonitor(this) {
-        @Override protected void lexerStart() {
-            yybegin(PSQL_BLOCK);
-            blockStartPos = zzStartRead;
-        }
-        @Override protected void lexerEnd() {
-            yybegin(YYINITIAL);
-            zzStartRead = blockStartPos;
-        }
-    };
+    public int getCurrentPosition() {
+        return zzCurrentPos;
+    }
 
     public String getCurrentToken() {
         return ((String) zzBuffer).substring(zzStartRead, zzMarkedPos);
     }
 %}
 
-%include oracle_psql_block_elements.flext
+
 %include ../../../common/lexer/shared_elements.flext
 %include ../../../common/lexer/shared_elements_oracle.flext
 
+NON_PSQL_BLOCK_ENTER = ("grant"|"revoke"){ws}"create"
+NON_PSQL_BLOCK_EXIT = "to"|"from"|";"
+
+PSQL_STUB_OR_REPLACE = ({ws}"or"{ws}"replace")?
+PSQL_STUB_EDITIONABLE = ({ws}("editionable"|"editioning"|'noneditionable'))?
+PSQL_STUB_FORCE = ({ws}("no"{ws})?"force")?
+PSQL_STUB_PUBLIC = ({ws}"public")?
+PSQL_STUB_PROGRAM = {ws}("package"|"trigger"|"function"|"procedure"|"type")
+PSQL_STUB_IDENTIFIER = ({ws}({IDENTIFIER}|{QUOTED_IDENTIFIER}))*
+
+PSQL_BLOCK_START_CREATE = "create"{PSQL_STUB_OR_REPLACE}{PSQL_STUB_FORCE}{PSQL_STUB_EDITIONABLE}{PSQL_STUB_PUBLIC}{PSQL_STUB_PROGRAM}
+PSQL_BLOCK_START_DECLARE = "declare"
+PSQL_BLOCK_START_BEGIN = "begin"
+PSQL_BLOCK_END_IGNORE = "end"{ws}("if"|"loop"|"case"){PSQL_STUB_IDENTIFIER}{wso}";"
+PSQL_BLOCK_END = "end"{PSQL_STUB_IDENTIFIER}({wso}";"({wso}"/")?)?
+
 CT_SIZE_CLAUSE = {INTEGER}{wso}("k"|"m"|"g"|"t"|"p"|"e"){ws}
+
+VARIABLE = ":"({IDENTIFIER}|{INTEGER})
+SQLP_VARIABLE = "&""&"?({IDENTIFIER}|{INTEGER})
+VARIABLE_IDENTIFIER={IDENTIFIER}"&""&"?({IDENTIFIER}|{INTEGER})|"<"{IDENTIFIER}({ws}{IDENTIFIER})*">"
 
 %state PSQL_BLOCK
 %state NON_PSQL_BLOCK
 %%
 
-%include oracle_psql_block_demarcation.flext
+<PSQL_BLOCK> {
+    {BLOCK_COMMENT}                 {}
+    {LINE_COMMENT}                  {}
+
+    {PSQL_BLOCK_START_CREATE}       {if (pbm.isBlockStarted()) { pbm.pushBack(); pbm.end(true); return getChameleon(); }}
+    {PSQL_BLOCK_END_IGNORE}         { pbm.ignore();}
+    {PSQL_BLOCK_END}                { if (pbm.end(false)) return getChameleon();}
+
+    "begin"                         { pbm.mark(Marker.BEGIN); }
+    "type"{ws}{IDENTIFIER}          { pbm.mark(Marker.PROGRAM); }
+    "function"{ws}{IDENTIFIER}      { pbm.mark(Marker.PROGRAM); }
+    "procedure"{ws}{IDENTIFIER}     { pbm.mark(Marker.PROGRAM); }
+    "trigger"{ws}{IDENTIFIER}       { pbm.mark(Marker.PROGRAM); }
+    "case"                          { pbm.mark(Marker.CASE); }
+
+    {IDENTIFIER}                    {}
+    {INTEGER}                       {}
+    {NUMBER}                        {}
+    {STRING}                        {}
+    {WHITE_SPACE}                   {}
+    .                               {}
+    <<EOF>>                         { pbm.end(true); return getChameleon(); }
+}
+
+<NON_PSQL_BLOCK> {
+    {NON_PSQL_BLOCK_EXIT}          { yybegin(YYINITIAL); pbm.pushBack(); }
+}
+
+
+<YYINITIAL> {
+    {NON_PSQL_BLOCK_ENTER}         { yybegin(NON_PSQL_BLOCK); pbm.pushBack(); }
+
+    {PSQL_BLOCK_START_CREATE}      { pbm.start(Marker.CREATE); }
+    {PSQL_BLOCK_START_DECLARE}     { pbm.start(Marker.DECLARE); }
+    {PSQL_BLOCK_START_BEGIN}       { pbm.start(Marker.BEGIN); }
+}
 
 <YYINITIAL, NON_PSQL_BLOCK> {
 
-{BLOCK_COMMENT}      { return stt.getBlockComment(); }
-{LINE_COMMENT}       { return stt.getLineComment(); }
+{BLOCK_COMMENT}        { return stt.getBlockComment(); }
+{LINE_COMMENT}         { return stt.getLineComment(); }
 
 {VARIABLE}             { return stt.getVariable(); }
 {VARIABLE_IDENTIFIER}  { return stt.getIdentifier(); }
