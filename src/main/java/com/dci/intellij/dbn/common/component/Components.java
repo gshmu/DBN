@@ -18,6 +18,12 @@ public class Components {
     }
 
     @NotNull
+    public static <T> T projectComponent(@NotNull Project project, @NotNull Class<T> interfaceClass) {
+        DatabaseNavigator.getInstance();
+        return nd(project).getComponent(interfaceClass);
+    }
+
+    @NotNull
     public static <T extends ApplicationComponent> T applicationService(@NotNull Class<T> interfaceClass) {
         return ApplicationManager.getApplication().getService(interfaceClass);
     }

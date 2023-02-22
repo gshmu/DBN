@@ -186,6 +186,7 @@ public class ProjectSettingsManager extends ProjectComponentBase implements Pers
         // TODO find another way to define "silent" dependencies
 
         Project project = getProject();
+        ProjectSettingsProvider.init(project);
         DatabaseConsoleManager.getInstance(project);
         DatabaseEditorStateManager.getInstance(project);
         SourceCodeManager.getInstance(project);

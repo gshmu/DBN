@@ -1,5 +1,6 @@
 package com.dci.intellij.dbn.execution.statement;
 
+import com.dci.intellij.dbn.common.compatibility.Workaround;
 import com.dci.intellij.dbn.common.util.Traces;
 import com.dci.intellij.dbn.execution.statement.action.StatementGutterAction;
 import com.dci.intellij.dbn.language.common.psi.ExecutablePsiElement;
@@ -10,7 +11,7 @@ import lombok.EqualsAndHashCode;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import javax.swing.Icon;
+import javax.swing.*;
 
 @EqualsAndHashCode(callSuper = false)
 public class StatementGutterRenderer extends GutterIconRenderer {
@@ -33,8 +34,8 @@ public class StatementGutterRenderer extends GutterIconRenderer {
 
     @Override
     @Nullable
+    @Workaround // TODO workaround for Idea 15 bug (showing gutter actions as intentions)
     public AnAction getClickAction() {
-        // TODO workaround for Idea 15 bug (showing gutter actions as intentions)
         return Traces.isCalledThrough(ShowIntentionsPass.class) ? null : action;
     }
 
