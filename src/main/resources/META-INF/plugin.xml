@@ -539,7 +539,7 @@
                 <lang.findUsagesProvider language="DBN-PSQL" implementationClass="com.dci.intellij.dbn.language.psql.PSQLFindUsagesProvider"/>
         -->
 
-        <projectConfigurable provider="com.dci.intellij.dbn.options.ProjectSettingsProvider" bundle="com.dci.intellij.dbn.common.DBNBundle" groupId="tools" dynamic="true" id="DBNavigator.Settings"/>
+        <projectConfigurable provider="com.dci.intellij.dbn.options.ProjectSettingsProvider" groupId="tools" dynamic="true" id="DBNavigator.Settings"/>
 
         <toolWindow id="DB Browser" icon="/img/window/DatabaseBrowser.png" anchor="left" factoryClass="com.dci.intellij.dbn.browser.DatabaseBrowserToolWindowFactory"/>
         <toolWindow id="DB Diagnostics" icon="/img/window/DatabaseDiagnostics.png" anchor="bottom" factoryClass="com.dci.intellij.dbn.diagnostics.DiagnosticsToolWindowFactory" />
