@@ -15,6 +15,7 @@ import com.dci.intellij.dbn.object.*;
 import com.dci.intellij.dbn.object.common.list.DBObjectList;
 import com.dci.intellij.dbn.object.common.list.DBObjectListContainer;
 import com.dci.intellij.dbn.object.common.list.DBObjectNavigationList;
+import com.dci.intellij.dbn.object.filter.type.ObjectTypeFilterSettings;
 import com.dci.intellij.dbn.object.properties.PresentableProperty;
 import com.dci.intellij.dbn.object.properties.SimplePresentableProperty;
 import com.dci.intellij.dbn.object.type.DBObjectType;
@@ -165,13 +166,24 @@ public class DBTableImpl extends DBDatasetImpl<DBTableMetadata> implements DBTab
      *********************************************************/
     @Override
     @NotNull
-    public List<BrowserTreeNode> buildAllPossibleTreeChildren() {
+    public List<BrowserTreeNode> buildPossibleTreeChildren() {
         return DatabaseBrowserUtils.createList(
                 columns,
                 constraints,
                 indexes,
                 triggers,
                 nestedTables);
+    }
+
+    @Override
+    public boolean hasVisibleTreeChildren() {
+        ObjectTypeFilterSettings settings = getObjectTypeFilterSettings();
+        return
+            settings.isVisible(COLUMN) ||
+            settings.isVisible(CONSTRAINT) ||
+            settings.isVisible(INDEX) ||
+            settings.isVisible(DATASET_TRIGGER) ||
+            settings.isVisible(NESTED_TABLE);
     }
 
     @Override

@@ -14,6 +14,7 @@ import com.dci.intellij.dbn.object.DBPackageType;
 import com.dci.intellij.dbn.object.DBType;
 import com.dci.intellij.dbn.object.DBTypeAttribute;
 import com.dci.intellij.dbn.object.common.list.DBObjectListContainer;
+import com.dci.intellij.dbn.object.filter.type.ObjectTypeFilterSettings;
 import com.dci.intellij.dbn.object.type.DBObjectType;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -71,8 +72,14 @@ public class DBPackageTypeImpl extends DBTypeImpl implements DBPackageType {
 
     @Override
     @NotNull
-    public List<BrowserTreeNode> buildAllPossibleTreeChildren() {
+    public List<BrowserTreeNode> buildPossibleTreeChildren() {
         return DatabaseBrowserUtils.createList(attributes);
+    }
+
+    @Override
+    public boolean hasVisibleTreeChildren() {
+        ObjectTypeFilterSettings settings = getObjectTypeFilterSettings();
+        return settings.isVisible(DBObjectType.ATTRIBUTE);
     }
 
     @Override

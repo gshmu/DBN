@@ -2,6 +2,7 @@ package com.dci.intellij.dbn.object.common;
 
 import com.dci.intellij.dbn.code.common.lookup.LookupItemBuilder;
 import com.dci.intellij.dbn.code.common.lookup.ObjectLookupItemBuilder;
+import com.dci.intellij.dbn.common.dispose.Disposer;
 import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.common.latent.Latent;
 import com.dci.intellij.dbn.common.path.Node;
@@ -9,6 +10,7 @@ import com.dci.intellij.dbn.common.path.NodeBase;
 import com.dci.intellij.dbn.common.routine.Consumer;
 import com.dci.intellij.dbn.common.thread.Read;
 import com.dci.intellij.dbn.common.util.Documents;
+import com.dci.intellij.dbn.common.util.Lists;
 import com.dci.intellij.dbn.common.util.Strings;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.ConnectionId;
@@ -48,6 +50,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.TimeUnit;
 
 import static com.dci.intellij.dbn.common.content.DynamicContentProperty.*;
 import static com.dci.intellij.dbn.common.dispose.Failsafe.nd;
@@ -77,24 +80,38 @@ public class DBVirtualObject extends DBObjectImpl implements PsiReference {
     private final DBObjectPsiCache psiCache;
     private final Map<String, ObjectLookupItemBuilder> lookupItemBuilder = new ConcurrentHashMap<>();
 
-    private final Latent<Boolean> valid = Latent.basic(() -> Read.call(() -> {
+    private final Latent<Boolean> valid = Latent.timed(10, TimeUnit.SECONDS, () -> {
+        boolean valid = checkValid();
+        if (!valid) Disposer.dispose(this);
+        return valid;
+    });
+
+    private boolean checkValid() {
+        if (isDisposed()) return false;
+
         BasePsiElement underlyingPsiElement = getUnderlyingPsiElement();
-        if (underlyingPsiElement != null && underlyingPsiElement.isValid()) {
-            DBObjectType objectType = getObjectType();
-            if (objectType == DBObjectType.DATASET) {
-                return true;
-            }
-            BasePsiElement relevantPsiElement = getRelevantPsiElement();
-            if (Strings.equalsIgnoreCase(getName(), relevantPsiElement.getText())) {
-                if (relevantPsiElement instanceof IdentifierPsiElement) {
-                    IdentifierPsiElement identifierPsiElement = (IdentifierPsiElement) relevantPsiElement;
-                    return identifierPsiElement.getObjectType() == objectType;
-                }
-                return true;
-            }
+        if (underlyingPsiElement == null) return false;
+
+        boolean psiElementValid = Read.call(() -> underlyingPsiElement.isValid());
+        if (!psiElementValid) return false;
+
+        DBObjectType objectType = getObjectType();
+        if (objectType.matches(DBObjectType.DATASET) || objectType.matches(DBObjectType.TYPE)) return true; // no special checks
+
+        BasePsiElement relevantPsiElement = getRelevantPsiElement();
+        if (!Strings.equalsIgnoreCase(getName(), relevantPsiElement.getText())) return false;
+
+        if (relevantPsiElement instanceof IdentifierPsiElement) {
+            IdentifierPsiElement identifierPsiElement = (IdentifierPsiElement) relevantPsiElement;
+            return identifierPsiElement.getObjectType() == objectType;
         }
-        return false;
-    }));
+        return true;
+
+    }
+
+    private void terminate() {
+
+    }
 
     public DBVirtualObject(@NotNull DBObjectType objectType, @NotNull BasePsiElement psiElement) {
         super(psiElement.getConnection(), objectType, psiElement.getText());
@@ -263,9 +280,11 @@ public class DBVirtualObject extends DBObjectImpl implements PsiReference {
                 }
             }
         } else {
-            boolean invalid = objectList.getObjects().stream().anyMatch(o -> !o.isValid());
+            boolean invalid = Lists.anyMatch(objectList.getObjects(), o -> !o.isValid());
             if (invalid) {
+                List<DBObject> elements = objectList.getElements();
                 objectList.setElements(Collections.emptyList());
+                Disposer.dispose(elements);
                 loadChildObjects(objectType, objectList);
                 objectList.set(LOADED, true);
             }

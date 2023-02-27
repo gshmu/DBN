@@ -32,6 +32,7 @@ import com.dci.intellij.dbn.object.common.list.DBObjectListVisitor;
 import com.dci.intellij.dbn.object.common.list.DBObjectNavigationList;
 import com.dci.intellij.dbn.object.common.status.DBObjectStatus;
 import com.dci.intellij.dbn.object.common.status.DBObjectStatusHolder;
+import com.dci.intellij.dbn.object.filter.type.ObjectTypeFilterSettings;
 import com.dci.intellij.dbn.object.type.DBObjectType;
 import lombok.Getter;
 import org.jetbrains.annotations.NotNull;
@@ -563,7 +564,7 @@ public class DBSchemaImpl extends DBObjectImpl<DBSchemaMetadata> implements DBSc
      *********************************************************/
     @Override
     @NotNull
-    public List<BrowserTreeNode> buildAllPossibleTreeChildren() {
+    public List<BrowserTreeNode> buildPossibleTreeChildren() {
         return DatabaseBrowserUtils.createList(
                 tables,
                 views,
@@ -578,6 +579,25 @@ public class DBSchemaImpl extends DBObjectImpl<DBSchemaMetadata> implements DBSc
                 dimensions,
                 clusters,
                 databaseLinks);
+    }
+
+    @Override
+    public boolean hasVisibleTreeChildren() {
+        ObjectTypeFilterSettings settings = getObjectTypeFilterSettings();
+        return
+            settings.isVisible(TABLE) ||
+            settings.isVisible(VIEW) ||
+            settings.isVisible(MATERIALIZED_VIEW) ||
+            settings.isVisible(SYNONYM) ||
+            settings.isVisible(SEQUENCE) ||
+            settings.isVisible(PROCEDURE) ||
+            settings.isVisible(FUNCTION) ||
+            settings.isVisible(PACKAGE) ||
+            settings.isVisible(TYPE) ||
+            settings.isVisible(DATABASE_TRIGGER) ||
+            settings.isVisible(DIMENSION) ||
+            settings.isVisible(CLUSTER) ||
+            settings.isVisible(DBLINK);
     }
 
     /*********************************************************

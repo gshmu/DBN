@@ -88,6 +88,8 @@ public interface DBObject extends
     @Nullable
     DBObjectList<? extends DBObject> getChildObjectList(DBObjectType objectType);
 
+    DBObjectList<? extends DBObject> getChildObjectList(DBObjectType objectType, boolean internal);
+
     <T extends DBObject> T getChildObject(DBObjectType objectType, String name, boolean lookupHidden);
 
     <T extends DBObject> T  getChildObject(DBObjectType objectType, String name, short overload, boolean lookupHidden);

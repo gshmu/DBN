@@ -16,6 +16,7 @@ import com.dci.intellij.dbn.object.common.list.DBObjectListContainer;
 import com.dci.intellij.dbn.object.common.list.DBObjectNavigationList;
 import com.dci.intellij.dbn.object.common.list.loader.DBObjectListFromRelationListLoader;
 import com.dci.intellij.dbn.object.common.property.DBObjectProperty;
+import com.dci.intellij.dbn.object.filter.type.ObjectTypeFilterSettings;
 import com.dci.intellij.dbn.object.type.DBObjectType;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -178,8 +179,16 @@ public class DBUserImpl extends DBObjectImpl<DBUserMetadata> implements DBUser {
      *********************************************************/
     @Override
     @NotNull
-    public List<BrowserTreeNode> buildAllPossibleTreeChildren() {
+    public List<BrowserTreeNode> buildPossibleTreeChildren() {
         return DatabaseBrowserUtils.createList(roles, privileges);
+    }
+
+    @Override
+    public boolean hasVisibleTreeChildren() {
+        ObjectTypeFilterSettings settings = getConnection().getSettings().getFilterSettings().getObjectTypeFilterSettings();
+        return
+            settings.isVisible(ROLE) ||
+            settings.isVisible(PRIVILEGE);
     }
 
     /*********************************************************

@@ -8,6 +8,7 @@ import com.dci.intellij.dbn.object.DBMaterializedView;
 import com.dci.intellij.dbn.object.DBSchema;
 import com.dci.intellij.dbn.object.common.list.DBObjectList;
 import com.dci.intellij.dbn.object.common.list.DBObjectListContainer;
+import com.dci.intellij.dbn.object.filter.type.ObjectTypeFilterSettings;
 import com.dci.intellij.dbn.object.type.DBObjectType;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -16,6 +17,7 @@ import java.sql.SQLException;
 import java.util.List;
 
 import static com.dci.intellij.dbn.object.type.DBObjectRelationType.INDEX_COLUMN;
+import static com.dci.intellij.dbn.object.type.DBObjectType.*;
 
 public class DBMaterializedViewImpl extends DBViewImpl implements DBMaterializedView {
     private DBObjectList<DBIndex> indexes;
@@ -29,7 +31,7 @@ public class DBMaterializedViewImpl extends DBViewImpl implements DBMaterialized
         super.initLists();
         DBSchema schema = getSchema();
         DBObjectListContainer childObjects = ensureChildObjects();
-        indexes = childObjects.createSubcontentObjectList(DBObjectType.INDEX, this, schema);
+        indexes = childObjects.createSubcontentObjectList(INDEX, this, schema);
 
         childObjects.createSubcontentObjectRelationList(INDEX_COLUMN, this, schema);
     }
@@ -37,7 +39,7 @@ public class DBMaterializedViewImpl extends DBViewImpl implements DBMaterialized
     @NotNull
     @Override
     public DBObjectType getObjectType() {
-        return DBObjectType.MATERIALIZED_VIEW;
+        return MATERIALIZED_VIEW;
     }
 
     @Override
@@ -57,11 +59,21 @@ public class DBMaterializedViewImpl extends DBViewImpl implements DBMaterialized
      *********************************************************/
     @Override
     @NotNull
-    public List<BrowserTreeNode> buildAllPossibleTreeChildren() {
+    public List<BrowserTreeNode> buildPossibleTreeChildren() {
         return DatabaseBrowserUtils.createList(
                 columns,
                 constraints,
                 indexes,
                 triggers);
+    }
+
+    @Override
+    public boolean hasVisibleTreeChildren() {
+        ObjectTypeFilterSettings settings = getObjectTypeFilterSettings();
+        return
+            settings.isVisible(COLUMN) ||
+            settings.isVisible(CONSTRAINT) ||
+            settings.isVisible(INDEX) ||
+            settings.isVisible(DATASET_TRIGGER);
     }
 }

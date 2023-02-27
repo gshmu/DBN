@@ -15,6 +15,7 @@ import com.dci.intellij.dbn.object.DBView;
 import com.dci.intellij.dbn.object.common.DBObjectBundle;
 import com.dci.intellij.dbn.object.common.list.DBObjectNavigationList;
 import com.dci.intellij.dbn.object.common.property.DBObjectProperty;
+import com.dci.intellij.dbn.object.filter.type.ObjectTypeFilterSettings;
 import com.dci.intellij.dbn.object.lookup.DBObjectRef;
 import com.dci.intellij.dbn.object.type.DBObjectType;
 import org.jetbrains.annotations.NotNull;
@@ -25,6 +26,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 import static com.dci.intellij.dbn.common.Priority.HIGHEST;
+import static com.dci.intellij.dbn.object.type.DBObjectType.*;
 
 public class DBViewImpl extends DBDatasetImpl<DBViewMetadata> implements DBView {
     private DBObjectRef<DBType> type;
@@ -49,7 +51,7 @@ public class DBViewImpl extends DBDatasetImpl<DBViewMetadata> implements DBView 
     @NotNull
     @Override
     public DBObjectType getObjectType() {
-        return DBObjectType.VIEW;
+        return VIEW;
     }
 
     @Override
@@ -62,11 +64,20 @@ public class DBViewImpl extends DBDatasetImpl<DBViewMetadata> implements DBView 
      *********************************************************/
     @Override
     @NotNull
-    public List<BrowserTreeNode> buildAllPossibleTreeChildren() {
+    public List<BrowserTreeNode> buildPossibleTreeChildren() {
         return DatabaseBrowserUtils.createList(
                 columns,
                 constraints,
                 triggers);
+    }
+
+    @Override
+    public boolean hasVisibleTreeChildren() {
+        ObjectTypeFilterSettings settings = getObjectTypeFilterSettings();
+        return
+            settings.isVisible(COLUMN) ||
+            settings.isVisible(CONSTRAINT) ||
+            settings.isVisible(DATASET_TRIGGER);
     }
 
     @Override
