@@ -15,13 +15,13 @@ import com.dci.intellij.dbn.editor.DBContentType;
 import com.dci.intellij.dbn.language.common.DBLanguage;
 import com.dci.intellij.dbn.language.psql.PSQLLanguage;
 import com.dci.intellij.dbn.object.DBSchema;
-import com.dci.intellij.dbn.object.common.list.DBObjectList;
 import com.dci.intellij.dbn.object.common.list.DBObjectListContainer;
 import com.dci.intellij.dbn.object.common.status.DBObjectStatusHolder;
 import com.dci.intellij.dbn.object.type.DBObjectType;
 import com.dci.intellij.dbn.vfs.DatabaseFileSystem;
 import com.dci.intellij.dbn.vfs.file.DBEditableObjectVirtualFile;
 import com.dci.intellij.dbn.vfs.file.DBObjectVirtualFile;
+import lombok.val;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -34,13 +34,12 @@ import java.util.List;
 import static com.dci.intellij.dbn.common.Priority.HIGHEST;
 import static com.dci.intellij.dbn.common.content.DynamicContentProperty.DEPENDENCY;
 import static com.dci.intellij.dbn.common.content.DynamicContentProperty.INTERNAL;
+import static com.dci.intellij.dbn.common.util.Unsafe.cast;
 import static com.dci.intellij.dbn.object.common.property.DBObjectProperty.*;
 import static com.dci.intellij.dbn.object.type.DBObjectType.*;
 
 
 public abstract class DBSchemaObjectImpl<M extends DBObjectMetadata> extends DBObjectImpl<M> implements DBSchemaObject {
-    private DBObjectList<DBObject> referencedObjects;
-    private DBObjectList<DBObject> referencingObjects;
     private volatile DBObjectStatusHolder objectStatus;
 
     public DBSchemaObjectImpl(@NotNull DBSchema schema, M metadata) throws SQLException {
@@ -62,8 +61,8 @@ public abstract class DBSchemaObjectImpl<M extends DBObjectMetadata> extends DBO
     protected void initLists() {
         if (is(REFERENCEABLE)) {
             DBObjectListContainer childObjects = ensureChildObjects();
-            referencedObjects = childObjects.createObjectList(INCOMING_DEPENDENCY, this, INTERNAL, DEPENDENCY);
-            referencingObjects = childObjects.createObjectList(OUTGOING_DEPENDENCY, this, INTERNAL, DEPENDENCY);
+            childObjects.createObjectList(INCOMING_DEPENDENCY, this, INTERNAL, DEPENDENCY);
+            childObjects.createObjectList(OUTGOING_DEPENDENCY, this, INTERNAL, DEPENDENCY);
         }
     }
 
@@ -92,12 +91,14 @@ public abstract class DBSchemaObjectImpl<M extends DBObjectMetadata> extends DBO
 
     @Override
     public List<DBObject> getReferencedObjects() {
-        return referencedObjects == null ? Collections.emptyList() : referencedObjects.getObjects();
+        val referencedObjects = getChildObjectList(INCOMING_DEPENDENCY, true);
+        return referencedObjects == null ? Collections.emptyList() : cast(referencedObjects.getObjects());
     }
 
     @Override
     public List<DBObject> getReferencingObjects() {
-        return referencingObjects == null ? Collections.emptyList() : referencingObjects.getObjects();
+        val referencingObjects = getChildObjectList(OUTGOING_DEPENDENCY, true);
+        return referencingObjects == null ? Collections.emptyList() : cast(referencingObjects.getObjects());
     }
 
     @Override

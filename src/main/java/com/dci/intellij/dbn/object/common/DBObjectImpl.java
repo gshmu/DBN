@@ -1,10 +1,7 @@
 package com.dci.intellij.dbn.object.common;
 
 import com.dci.intellij.dbn.browser.DatabaseBrowserManager;
-import com.dci.intellij.dbn.browser.model.BrowserTreeEventListener;
 import com.dci.intellij.dbn.browser.model.BrowserTreeNode;
-import com.dci.intellij.dbn.browser.model.BrowserTreeNodeBase;
-import com.dci.intellij.dbn.browser.model.LoadInProgressTreeNode;
 import com.dci.intellij.dbn.browser.ui.HtmlToolTipBuilder;
 import com.dci.intellij.dbn.browser.ui.ToolTipProvider;
 import com.dci.intellij.dbn.code.common.lookup.LookupItemBuilder;
@@ -16,11 +13,7 @@ import com.dci.intellij.dbn.common.content.DynamicContentType;
 import com.dci.intellij.dbn.common.dispose.Disposer;
 import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.common.environment.EnvironmentType;
-import com.dci.intellij.dbn.common.event.ProjectEvents;
-import com.dci.intellij.dbn.common.filter.Filter;
 import com.dci.intellij.dbn.common.routine.Consumer;
-import com.dci.intellij.dbn.common.thread.Background;
-import com.dci.intellij.dbn.common.ui.tree.TreeEventType;
 import com.dci.intellij.dbn.common.util.Commons;
 import com.dci.intellij.dbn.common.util.Strings;
 import com.dci.intellij.dbn.connection.*;
@@ -43,6 +36,7 @@ import com.dci.intellij.dbn.object.common.operation.DBOperationExecutor;
 import com.dci.intellij.dbn.object.common.operation.DBOperationNotSupportedException;
 import com.dci.intellij.dbn.object.common.property.DBObjectProperties;
 import com.dci.intellij.dbn.object.common.property.DBObjectProperty;
+import com.dci.intellij.dbn.object.filter.type.ObjectTypeFilterSettings;
 import com.dci.intellij.dbn.object.lookup.DBObjectRef;
 import com.dci.intellij.dbn.object.properties.ConnectionPresentableProperty;
 import com.dci.intellij.dbn.object.properties.DBObjectPresentableProperty;
@@ -63,24 +57,18 @@ import javax.swing.*;
 import java.sql.SQLException;
 import java.sql.Types;
 import java.util.*;
+import java.util.stream.Collectors;
 
-import static com.dci.intellij.dbn.browser.DatabaseBrowserUtils.treeVisibilityChanged;
 import static com.dci.intellij.dbn.common.dispose.Failsafe.nd;
-import static com.dci.intellij.dbn.common.util.Compactables.compact;
-import static com.dci.intellij.dbn.common.util.Lists.filter;
 import static com.dci.intellij.dbn.common.util.Unsafe.cast;
 
-public abstract class DBObjectImpl<M extends DBObjectMetadata> extends BrowserTreeNodeBase implements DBObject, ToolTipProvider {
-
-    public static final List<BrowserTreeNode> EMPTY_TREE_NODE_LIST = Collections.unmodifiableList(new ArrayList<>(0));
+public abstract class DBObjectImpl<M extends DBObjectMetadata> extends DBObjectTreeNodeBase implements DBObject, ToolTipProvider {
 
     private final ConnectionRef connection;
     protected DBObjectRef<?> objectRef;
     protected DBObjectRef<?> parentObjectRef;
     protected DBObjectProperties properties = new DBObjectProperties();
 
-    private volatile List<BrowserTreeNode> allPossibleTreeChildren;
-    private volatile List<BrowserTreeNode> visibleTreeChildren;
     private volatile DBObjectListContainer childObjects;
 
     private static final DBOperationExecutor NULL_OPERATION_EXECUTOR = operationType -> {
@@ -373,31 +361,24 @@ public abstract class DBObjectImpl<M extends DBObjectMetadata> extends BrowserTr
 
     @Override
     public List<String> getChildObjectNames(DBObjectType objectType) {
-        if (childObjects != null) {
-            DBObjectList objectList = childObjects.getObjectList(objectType);
-            if (objectList != null) {
-                List<String> objectNames = new ArrayList<>();
-                List<DBObject> objects = objectList.getObjects();
-                for (DBObject object : objects) {
-                    objectNames.add(object.getName());
-                }
-                return objectNames;
-            }
-        }
-        return java.util.Collections.emptyList();
+        if (childObjects == null) return Collections.emptyList();
+
+        DBObjectList<?> objectList = childObjects.getObjectList(objectType);
+        if (objectList == null || objectList.isEmpty()) return Collections.emptyList();
+
+        return objectList.getObjects().stream().map(o -> o.getName()).collect(Collectors.toList());
     }
 
     @Override
     public <T extends DBObject> T  getChildObject(DBObjectType objectType, String name, short overload, boolean lookupHidden) {
-        if (childObjects == null) {
-            return null;
-        } else {
-            DBObject object = childObjects.getObject(objectType, name, overload);
-            if (object == null && lookupHidden) {
-                object = childObjects.getInternalObject(objectType, name, overload);
-            }
-            return cast(object);
+        if (childObjects == null) return null;
+
+        DBObject object = childObjects.getObject(objectType, name, overload);
+        if (object == null && lookupHidden) {
+            object = childObjects.getInternalObject(objectType, name, overload);
         }
+        return cast(object);
+
     }
 
     @Override
@@ -470,6 +451,11 @@ public abstract class DBObjectImpl<M extends DBObjectMetadata> extends BrowserTr
     }
 
     @Override
+    public DBObjectList<? extends DBObject> getChildObjectList(DBObjectType objectType, boolean internal) {
+        return childObjects == null ? null : childObjects.getObjectList(objectType, internal);
+    }
+
+    @Override
     public List<DBObjectNavigationList> getNavigationLists() {
         // todo consider caching;
         return createNavigationLists();
@@ -527,8 +513,8 @@ public abstract class DBObjectImpl<M extends DBObjectMetadata> extends BrowserTr
 
     @Override
     @Nullable
-    public DBObject getUndisposedEntity() {
-        return objectRef.get();
+    public <E extends DatabaseEntity> E getUndisposedEntity() {
+        return cast(objectRef.get());
     }
 
     @Override
@@ -598,22 +584,6 @@ public abstract class DBObjectImpl<M extends DBObjectMetadata> extends BrowserTr
         return getIcon();
     }
 
-    /*********************************************************
-     *                  BrowserTreeNode                   *
-     *********************************************************/
-    @Override
-    public void initTreeElement() {}
-
-    @Override
-    public boolean isTreeStructureLoaded() {
-        return properties.is(DBObjectProperty.TREE_LOADED);
-    }
-
-    @Override
-    public boolean canExpand() {
-        return !isLeaf() && isTreeStructureLoaded() && getChildAt(0).isTreeStructureLoaded();
-    }
-
     @Override
     public Icon getIcon(int flags) {
         return getIcon();
@@ -652,138 +622,6 @@ public abstract class DBObjectImpl<M extends DBObjectMetadata> extends BrowserTr
     }
 
 
-
-    @Override
-    public int getTreeDepth() {
-        BrowserTreeNode treeParent = getParent();
-        return treeParent.getTreeDepth() + 1;
-    }
-
-
-    @NotNull
-    public List<BrowserTreeNode> getAllPossibleTreeChildren() {
-        if (allPossibleTreeChildren == null) {
-            synchronized (this) {
-                if (allPossibleTreeChildren == null) {
-                    allPossibleTreeChildren = buildAllPossibleTreeChildren();
-                    allPossibleTreeChildren = compact(allPossibleTreeChildren);
-                }
-            }
-        }
-        return allPossibleTreeChildren;
-    }
-
-
-
-    @Override
-    public List<? extends BrowserTreeNode> getChildren() {
-        if (visibleTreeChildren == null) {
-            synchronized (this) {
-                if (visibleTreeChildren == null) {
-                    visibleTreeChildren = new ArrayList<>();
-                    visibleTreeChildren.add(new LoadInProgressTreeNode(this));
-
-                    Background.run(getProject(), () -> buildTreeChildren());
-                }
-            }
-        }
-        return visibleTreeChildren;
-    }
-
-    private void buildTreeChildren() {
-        checkDisposed();
-        ConnectionHandler connection = this.getConnection();
-        Filter<BrowserTreeNode> objectTypeFilter = connection.getObjectTypeFilter();
-
-        List<BrowserTreeNode> treeChildren = filter(getAllPossibleTreeChildren(), objectTypeFilter);
-        treeChildren = Commons.nvl(treeChildren, Collections.emptyList());
-
-        for (BrowserTreeNode objectList : treeChildren) {
-            Background.run(getProject(), () -> objectList.initTreeElement());
-            checkDisposed();
-        }
-
-        if (visibleTreeChildren.size() == 1 && visibleTreeChildren.get(0) instanceof LoadInProgressTreeNode) {
-            visibleTreeChildren.get(0).dispose();
-        }
-
-        visibleTreeChildren = treeChildren;
-        visibleTreeChildren = compact(visibleTreeChildren);
-        set(DBObjectProperty.TREE_LOADED, true);
-
-
-        Project project = Failsafe.nn(getProject());
-        ProjectEvents.notify(project,
-                BrowserTreeEventListener.TOPIC,
-                (listener) -> listener.nodeChanged(this, TreeEventType.STRUCTURE_CHANGED));
-        DatabaseBrowserManager.scrollToSelectedElement(this.getConnection());
-    }
-
-    @Override
-    public void refreshTreeChildren(@NotNull DBObjectType... objectTypes) {
-        if (visibleTreeChildren != null) {
-            for (BrowserTreeNode treeNode : visibleTreeChildren) {
-                treeNode.refreshTreeChildren(objectTypes);
-            }
-        }
-
-    }
-
-    @Override
-    public void rebuildTreeChildren() {
-        if (visibleTreeChildren != null) {
-            ConnectionHandler connection = this.getConnection();
-            Filter<BrowserTreeNode> filter = connection.getObjectTypeFilter();
-
-            if (treeVisibilityChanged(getAllPossibleTreeChildren(), visibleTreeChildren, filter)) {
-                buildTreeChildren();
-            }
-            for (BrowserTreeNode treeNode : visibleTreeChildren) {
-                treeNode.rebuildTreeChildren();
-            }
-        }
-
-
-    }
-
-    @NotNull
-    public List<BrowserTreeNode> buildAllPossibleTreeChildren() {
-        return EMPTY_TREE_NODE_LIST;
-    }
-
-    @Override
-    public boolean isLeaf() {
-        return Failsafe.guarded(true, () -> {
-            if (visibleTreeChildren == null) {
-                ConnectionHandler connection = this.getConnection();
-                Filter<BrowserTreeNode> filter = connection.getObjectTypeFilter();
-                for (BrowserTreeNode treeNode : getAllPossibleTreeChildren() ) {
-                    if (treeNode != null && filter.accepts(treeNode)) {
-                        return false;
-                    }
-                }
-                return true;
-            } else {
-                return visibleTreeChildren.size() == 0;
-            }
-        });
-    }
-
-    @Override
-    public BrowserTreeNode getChildAt(int index) {
-        return getChildren().get(index);
-    }
-
-    @Override
-    public int getChildCount() {
-        return getChildren().size();
-    }
-
-    @Override
-    public int getIndex(BrowserTreeNode child) {
-        return getChildren().indexOf(child);
-    }
-
     @Override
     public boolean equals(Object obj) {
         if (obj == this) return true;
@@ -817,6 +655,10 @@ public abstract class DBObjectImpl<M extends DBObjectMetadata> extends BrowserTr
 
     public String toString() {
         return getName();
+    }
+
+    protected ObjectTypeFilterSettings getObjectTypeFilterSettings() {
+        return getConnection().getSettings().getFilterSettings().getObjectTypeFilterSettings();
     }
 
     @Override

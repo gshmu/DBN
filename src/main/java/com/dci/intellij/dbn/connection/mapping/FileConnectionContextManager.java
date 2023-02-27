@@ -215,8 +215,8 @@ public class FileConnectionContextManager extends ProjectComponentBase implement
 
     public boolean isSchemaSelectable(VirtualFile file) {
         if (isNotValid(file)) return false;
+        if (isLocalFileSystem(file)) return hasConnectivityContext(file);
         if (!isDbLanguageFile(file)) return false;
-        if (isLocalFileSystem(file)) return true;
 
         if (file instanceof DBConsoleVirtualFile) return true;
         if (file instanceof LightVirtualFile) return hasConnectivityContext(file);

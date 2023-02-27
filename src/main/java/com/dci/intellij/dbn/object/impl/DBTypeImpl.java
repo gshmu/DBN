@@ -22,6 +22,7 @@ import com.dci.intellij.dbn.object.common.list.DBObjectListContainer;
 import com.dci.intellij.dbn.object.common.list.DBObjectNavigationList;
 import com.dci.intellij.dbn.object.common.property.DBObjectProperty;
 import com.dci.intellij.dbn.object.common.status.DBObjectStatus;
+import com.dci.intellij.dbn.object.filter.type.ObjectTypeFilterSettings;
 import com.dci.intellij.dbn.object.lookup.DBObjectRef;
 import com.dci.intellij.dbn.object.properties.DBDataTypePresentableProperty;
 import com.dci.intellij.dbn.object.properties.PresentableProperty;
@@ -197,10 +198,21 @@ public class DBTypeImpl
      *********************************************************/
     @Override
     @NotNull
-    public List<BrowserTreeNode> buildAllPossibleTreeChildren() {
+    public List<BrowserTreeNode> buildPossibleTreeChildren() {
         return isCollection() ?
                 EMPTY_TREE_NODE_LIST :
                 DatabaseBrowserUtils.createList(attributes, procedures, functions);
+    }
+
+    @Override
+    public boolean hasVisibleTreeChildren() {
+        if (isCollection()) return false;
+
+        ObjectTypeFilterSettings settings = getObjectTypeFilterSettings();
+        return
+            settings.isVisible(ATTRIBUTE) ||
+            settings.isVisible(PROCEDURE) ||
+            settings.isVisible(FUNCTION);
     }
 
     /*********************************************************

@@ -39,6 +39,7 @@ import com.dci.intellij.dbn.object.type.DBObjectType;
 import com.intellij.navigation.ItemPresentation;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiDirectory;
+import com.intellij.util.containers.ContainerUtil;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
@@ -65,8 +66,9 @@ import static com.dci.intellij.dbn.object.type.DBObjectType.*;
 @Getter
 @Setter
 public class DBObjectListImpl<T extends DBObject> extends DynamicContentBase<T> implements DBObjectList<T> {
+    private static final Map<DBObjectListImpl, ObjectQuickFilter> quickFilterCache = ContainerUtil.createConcurrentWeakMap();
+
     private final DBObjectType objectType;
-    private ObjectQuickFilter<T> quickFilter;
 
     DBObjectListImpl(
             @NotNull DBObjectType objectType,
@@ -111,15 +113,24 @@ public class DBObjectListImpl<T extends DBObject> extends DynamicContentBase<T> 
     @Override
     public Filter<T> getFilter() {
         Filter<T> configFilter = getConfigFilter();
-        if (configFilter != null && this.quickFilter != null) {
-            return CompoundFilter.of(configFilter, this.quickFilter);
+        ObjectQuickFilter<T> quickFilter = getQuickFilter();
 
-        } else if (configFilter != null) {
-            return configFilter;
+        if (configFilter != null && quickFilter != null) return CompoundFilter.of(configFilter, quickFilter);
+        if (configFilter != null) return configFilter;
+        return quickFilter;
+    }
 
-        } else {
-            return this.quickFilter;
-        }
+    @Nullable
+    @Override
+    public ObjectQuickFilter<T> getQuickFilter() {
+        return quickFilterCache.get(this);
+    }
+
+    @Override
+    public void setQuickFilter(@Nullable ObjectQuickFilter<T> quickFilter) {
+        if (quickFilter == null)
+            quickFilterCache.remove(this); else
+            quickFilterCache.put(this, quickFilter);
     }
 
     @Override

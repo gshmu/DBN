@@ -73,30 +73,30 @@ class ColumnValueTextField extends JTextField {
     @Nullable
     private DatasetFilterInput resolveForeignKeyRecord() {
         DBColumn column = getColumn();
-        if (column != null) {
-            for (DBConstraint constraint : column.getConstraints()) {
-                constraint = constraint.getUndisposedEntity();
-                if (constraint != null && constraint.isForeignKey()) {
-                    DBConstraint fkConstraint = constraint.getForeignKeyConstraint();
-                    if (fkConstraint != null) {
-                        DBDataset fkDataset = fkConstraint.getDataset();
-                        DatasetFilterInput filterInput = null;
+        if (column == null) return null;
 
-                        for (DBColumn constraintColumn : constraint.getColumns()) {
-                            constraintColumn = constraintColumn.getUndisposedEntity();
-                            if (constraintColumn != null) {
-                                DBColumn foreignKeyColumn = constraintColumn.getForeignKeyColumn();
-                                if (foreignKeyColumn != null) {
-                                    Object value = record.getColumnValue(constraintColumn);
-                                    filterInput = nvl(filterInput, () -> new DatasetFilterInput(fkDataset));
-                                    filterInput.setColumnValue(foreignKeyColumn, value);
-                                }
-                            }
-                        }
-                        return filterInput;
+        for (DBConstraint constraint : column.getConstraints()) {
+            constraint = constraint.getUndisposedEntity();
+            if (constraint == null || !constraint.isForeignKey()) continue;
+
+            DBConstraint fkConstraint = constraint.getForeignKeyConstraint();
+            if (fkConstraint == null) continue;
+
+            DBDataset fkDataset = fkConstraint.getDataset();
+            DatasetFilterInput filterInput = null;
+
+            for (DBColumn constraintColumn : constraint.getColumns()) {
+                constraintColumn = constraintColumn.getUndisposedEntity();
+                if (constraintColumn != null) {
+                    DBColumn foreignKeyColumn = constraintColumn.getForeignKeyColumn();
+                    if (foreignKeyColumn != null) {
+                        Object value = record.getColumnValue(constraintColumn);
+                        filterInput = nvl(filterInput, () -> new DatasetFilterInput(fkDataset));
+                        filterInput.setColumnValue(foreignKeyColumn, value);
                     }
                 }
             }
+            return filterInput;
         }
 
         return null;
