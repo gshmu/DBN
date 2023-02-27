@@ -2,10 +2,9 @@ package com.dci.intellij.dbn.common.latent;
 
 
 import com.dci.intellij.dbn.common.color.Colors;
-import com.dci.intellij.dbn.common.latent.impl.BasicLatent;
-import com.dci.intellij.dbn.common.latent.impl.MutableLatent;
-import com.dci.intellij.dbn.common.latent.impl.ThreadLocalLatent;
-import com.dci.intellij.dbn.common.latent.impl.WeakRefLatent;
+import com.dci.intellij.dbn.common.latent.impl.*;
+
+import java.util.concurrent.TimeUnit;
 
 public interface Latent<T> {
     T get();
@@ -20,6 +19,10 @@ public interface Latent<T> {
 
     static <T, M> Latent<T> mutable(Loader<M> mutableLoader, Loader<T> loader) {
         return new MutableLatent<>(mutableLoader, loader);
+    }
+
+    static <T, M> Latent<T> timed(long interval, TimeUnit intervalUnit, Loader<T> loader) {
+        return new TimedLatent<>(interval, intervalUnit, loader);
     }
 
     static <T> WeakRefLatent<T> weak(Loader<T> loader) {

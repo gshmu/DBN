@@ -107,12 +107,13 @@ public class ObjectTypeFilterSettings extends BasicProjectConfiguration<ProjectC
 
     private final Filter<DBObjectType> typeFilter = objectType -> objectType != null && isVisible(objectType);
 
-    private boolean isVisible(DBObjectType objectType) {
-        return isProjectLevel() ?
-            isSelected(objectType) :
-            useMasterSettings.value() ?
-                    getMasterSettings().isSelected(objectType) :
-                    getMasterSettings().isSelected(objectType) && isSelected(objectType);
+    public boolean isVisible(DBObjectType objectType) {
+        if (isProjectLevel()) return isSelected(objectType);
+
+        ObjectTypeFilterSettings masterSettings = getMasterSettings();
+        return useMasterSettings.value() ?
+                masterSettings.isSelected(objectType) :
+                masterSettings.isSelected(objectType) && isSelected(objectType);
     }
 
     private boolean isSelected(DBObjectType objectType) {

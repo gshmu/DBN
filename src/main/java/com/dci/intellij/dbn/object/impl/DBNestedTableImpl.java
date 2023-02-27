@@ -81,8 +81,15 @@ public class DBNestedTableImpl extends DBObjectImpl<DBNestedTableMetadata> imple
 
     @Override
     @NotNull
-    public List<BrowserTreeNode> buildAllPossibleTreeChildren() {
+    public List<BrowserTreeNode> buildPossibleTreeChildren() {
         return EMPTY_TREE_NODE_LIST;
         //return getColumns();
+    }
+
+    @Override
+    public boolean hasVisibleTreeChildren() {
+        return false;
+        //ObjectTypeFilterSettings settings = getConnection().getSettings().getFilterSettings().getObjectTypeFilterSettings();
+        //return settings.isVisible(DBObjectType.COLUMN);
     }
 }

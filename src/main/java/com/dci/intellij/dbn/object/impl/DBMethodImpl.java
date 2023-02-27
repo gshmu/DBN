@@ -21,6 +21,7 @@ import com.dci.intellij.dbn.object.common.list.DBObjectList;
 import com.dci.intellij.dbn.object.common.list.DBObjectListContainer;
 import com.dci.intellij.dbn.object.common.status.DBObjectStatus;
 import com.dci.intellij.dbn.object.common.status.DBObjectStatusHolder;
+import com.dci.intellij.dbn.object.filter.type.ObjectTypeFilterSettings;
 import lombok.Getter;
 import org.jetbrains.annotations.NotNull;
 
@@ -150,8 +151,14 @@ public abstract class DBMethodImpl<M extends DBMethodMetadata> extends DBSchemaO
      *********************************************************/
     @Override
     @NotNull
-    public List<BrowserTreeNode> buildAllPossibleTreeChildren() {
+    public List<BrowserTreeNode> buildPossibleTreeChildren() {
         return DatabaseBrowserUtils.createList(arguments);
+    }
+
+    @Override
+    public boolean hasVisibleTreeChildren() {
+        ObjectTypeFilterSettings settings = getObjectTypeFilterSettings();
+        return settings.isVisible(ARGUMENT);
     }
 
     /*********************************************************

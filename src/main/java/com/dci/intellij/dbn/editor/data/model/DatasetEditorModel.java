@@ -322,30 +322,29 @@ public class DatasetEditorModel
 
         for (DBConstraint constraint : column.getConstraints()) {
             constraint = constraint.getUndisposedEntity();
-            if (constraint != null && constraint.isForeignKey()) {
-                DBConstraint fkConstraint = constraint.getForeignKeyConstraint();
-                if (fkConstraint != null) {
-                    DBDataset fkDataset = fkConstraint.getDataset();
-                    DatasetFilterInput filterInput = new DatasetFilterInput(fkDataset);
+            if (constraint == null || !constraint.isForeignKey()) continue;
 
-                    for (DBColumn constraintColumn : constraint.getColumns()) {
-                        constraintColumn = constraintColumn.getUndisposedEntity();
-                        if (constraintColumn != null) {
-                            DBColumn foreignKeyColumn = constraintColumn.getForeignKeyColumn();
-                            if (foreignKeyColumn != null) {
-                                DatasetEditorModelCell constraintCell = cell.getRow().getCellForColumn(constraintColumn);
-                                if (constraintCell != null) {
-                                    Object value = constraintCell.getUserValue();
-                                    filterInput.setColumnValue(foreignKeyColumn, value);
-                                }
-                            }
+            DBConstraint fkConstraint = constraint.getForeignKeyConstraint();
+            if (fkConstraint == null) continue;
+
+            DBDataset fkDataset = fkConstraint.getDataset();
+            DatasetFilterInput filterInput = new DatasetFilterInput(fkDataset);
+
+            for (DBColumn constraintColumn : constraint.getColumns()) {
+                constraintColumn = constraintColumn.getUndisposedEntity();
+                if (constraintColumn != null) {
+                    DBColumn foreignKeyColumn = constraintColumn.getForeignKeyColumn();
+                    if (foreignKeyColumn != null) {
+                        DatasetEditorModelCell constraintCell = cell.getRow().getCellForColumn(constraintColumn);
+                        if (constraintCell != null) {
+                            Object value = constraintCell.getUserValue();
+                            filterInput.setColumnValue(foreignKeyColumn, value);
                         }
                     }
-                    return filterInput;
-
                 }
-
             }
+            return filterInput;
+
         }
         return null;
     }

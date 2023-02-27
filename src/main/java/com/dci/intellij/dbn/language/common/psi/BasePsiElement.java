@@ -5,8 +5,8 @@ import com.dci.intellij.dbn.code.common.style.formatting.FormattingDefinition;
 import com.dci.intellij.dbn.code.common.style.formatting.FormattingProviderPsiElement;
 import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.common.editor.BasicTextEditor;
-import com.dci.intellij.dbn.common.latent.Latent;
 import com.dci.intellij.dbn.common.navigation.NavigationInstructions;
+import com.dci.intellij.dbn.common.ref.WeakRef;
 import com.dci.intellij.dbn.common.thread.Read;
 import com.dci.intellij.dbn.common.util.Editors;
 import com.dci.intellij.dbn.common.util.Strings;
@@ -53,24 +53,27 @@ import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.*;
 import com.intellij.psi.search.LocalSearchScope;
 import com.intellij.psi.search.SearchScope;
+import com.intellij.util.containers.ContainerUtil;
 import lombok.Getter;
 import lombok.Setter;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
+import java.util.Map;
 import java.util.Set;
 import java.util.function.Consumer;
 
 @Getter
 @Setter
 public abstract class BasePsiElement<T extends ElementTypeBase> extends ASTDelegatePsiElement implements DatabaseContextBase, ItemPresentation, FormattingProviderPsiElement {
-    private T elementType;
-    private FormattingAttributes formattingAttributes;
-    private volatile DBVirtualObject underlyingObject;
+    private static final Map<BasePsiElement, DBVirtualObject> underlyingObjectCache = ContainerUtil.createConcurrentWeakKeyWeakValueMap();
+    private static final Map<BasePsiElement, FormattingAttributes> formattingAttributesCache = ContainerUtil.createConcurrentWeakMap();
 
     public final ASTNode node;
-    private final transient Latent<BasePsiElement> enclosingScopePsiElement = Latent.weak(() -> findEnclosingScopePsiElement());
+    private T elementType;
+
+    private transient WeakRef<BasePsiElement> enclosingScopePsiElement;
 
     public enum MatchType {
         STRONG,
@@ -89,14 +92,14 @@ public abstract class BasePsiElement<T extends ElementTypeBase> extends ASTDeleg
         return parentNode == null ? null : parentNode.getPsi();
     }
 
-    @Override
     public FormattingAttributes getFormattingAttributes() {
-        FormattingDefinition formattingDefinition = elementType.getFormatting();
-        if (formattingAttributes == null && formattingDefinition != null) {
-            formattingAttributes = FormattingAttributes.copy(formattingDefinition.getAttributes());
-        }
+        FormattingDefinition definition = elementType.getFormatting();
+        if (definition == null) return null;
 
-        return formattingAttributes;
+        return formattingAttributesCache.computeIfAbsent(this, k -> {
+            FormattingAttributes attributes = definition.getAttributes();
+            return FormattingAttributes.copy(attributes);
+        });
     }
 
     @Override
@@ -570,7 +573,13 @@ public abstract class BasePsiElement<T extends ElementTypeBase> extends ASTDeleg
 
     @Nullable
     public BasePsiElement getEnclosingScopePsiElement() {
-        return enclosingScopePsiElement.get();
+        BasePsiElement psiElement = WeakRef.get(enclosingScopePsiElement);
+        if (psiElement == null) {
+            psiElement = findEnclosingScopePsiElement();
+            enclosingScopePsiElement = WeakRef.of(psiElement);
+        }
+
+        return psiElement;
     }
 
     @Nullable
@@ -675,9 +684,9 @@ public abstract class BasePsiElement<T extends ElementTypeBase> extends ASTDeleg
     }
 
     public boolean is(ElementTypeAttribute attribute) {
-        if (elementType.is(attribute)) {
-            return true;
-        } else if (attribute.isSpecific()) {
+        if (elementType.is(attribute)) return true;
+
+        if (attribute.isSpecific()) {
             ElementType specificElementType = getSpecificElementType();
             if (specificElementType != null) {
                 return specificElementType.is(attribute);
@@ -719,17 +728,15 @@ public abstract class BasePsiElement<T extends ElementTypeBase> extends ASTDeleg
     public abstract boolean matches(@Nullable BasePsiElement basePsiElement, MatchType matchType);
 
     public DBObject getUnderlyingObject() {
-        if (isVirtualObject()) {
-            if (underlyingObject == null || !underlyingObject.isValid()) {
-                synchronized (this) {
-                    if (underlyingObject == null || !underlyingObject.isValid()) {
-                        DBObjectType virtualObjectType = elementType.getVirtualObjectType();
-                        underlyingObject = new DBVirtualObject(virtualObjectType, this);
-                    }
-                }
+        if (!isVirtualObject()) return null;
+
+        return underlyingObjectCache.compute(this, (k, v) -> {
+            if (v == null || !v.isValid()) {
+                DBObjectType virtualObjectType = elementType.getVirtualObjectType();
+                v = new DBVirtualObject(virtualObjectType, this);
             }
-        }
-        return underlyingObject;
+            return v;
+        });
     }
 
     public QuoteDefinition getIdentifierQuotes() {
