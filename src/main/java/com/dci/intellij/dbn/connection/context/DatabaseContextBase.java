@@ -9,6 +9,10 @@ import com.dci.intellij.dbn.object.common.DBObjectBundle;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.Objects;
+
+import static com.dci.intellij.dbn.common.util.Commons.nvl;
+
 public interface DatabaseContextBase extends DatabaseContext{
 
     @Nullable
@@ -17,6 +21,7 @@ public interface DatabaseContextBase extends DatabaseContext{
         return connection == null ? null : connection.getConnectionId();
     }
 
+    @Nullable
     default SessionId getSessionId() {
         return null;
     }
@@ -29,6 +34,14 @@ public interface DatabaseContextBase extends DatabaseContext{
     @Nullable
     default SchemaId getSchemaId() {
         return null;
+    }
+
+    @Override
+    default boolean isSameAs(DatabaseContext context) {
+        return
+            Objects.equals(nvl(getConnectionId(), ConnectionId.NULL), nvl(context.getConnectionId(), ConnectionId.NULL)) &&
+            Objects.equals(nvl(getSessionId(), SessionId.NULL), nvl(context.getSessionId(), SessionId.NULL)) &&
+            Objects.equals(nvl(getSchemaId(), SchemaId.NULL), nvl(context.getSchemaId(), SchemaId.NULL));
     }
 
     @Nullable
@@ -70,4 +83,6 @@ public interface DatabaseContextBase extends DatabaseContext{
     default ConnectionContext createConnectionContext() {
         return new ConnectionContext(getProject(), getConnectionId(), null);
     }
+
+
 }
