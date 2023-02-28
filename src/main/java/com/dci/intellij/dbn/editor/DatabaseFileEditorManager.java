@@ -114,15 +114,14 @@ public class DatabaseFileEditorManager extends ProjectComponentBase {
         DBSchemaObject object = handle.getObject();
         object.makeEditorReady();
 
-        DBObjectRef<?> objectRef = object.ref();
-        Project project = object.getProject();
-
-        DBEditableObjectVirtualFile databaseFile = getFileSystem().findOrCreateDatabaseFile(project, objectRef);
+        DBEditableObjectVirtualFile databaseFile = getFileSystem().findOrCreateDatabaseFile(object);
         EditorProviderId editorProviderId = handle.getEditorProviderId();
         databaseFile.setSelectedEditorProviderId(editorProviderId);
 
         invokeFileOpen(handle, () -> {
             if (allValid(object, databaseFile)) {
+                Project project = object.getProject();
+
                 // open / reopen (select) the file
                 if (DatabaseFileSystem.isFileOpened(object) || promptFileOpen(databaseFile)) {
                     boolean focusEditor = handle.getEditorInstructions().isFocus();
@@ -144,8 +143,9 @@ public class DatabaseFileEditorManager extends ProjectComponentBase {
         DBSchemaObject schemaObject = object.getParentObject();
         schemaObject.makeEditorReady();
 
+        DBEditableObjectVirtualFile databaseFile = getFileSystem().findOrCreateDatabaseFile(schemaObject);
+
         Project project = schemaObject.getProject();
-        DBEditableObjectVirtualFile databaseFile = getFileSystem().findOrCreateDatabaseFile(project, schemaObject.ref());
         SourceCodeManager sourceCodeManager = SourceCodeManager.getInstance(project);
         sourceCodeManager.ensureSourcesLoaded(schemaObject, false);
 
@@ -250,7 +250,7 @@ public class DatabaseFileEditorManager extends ProjectComponentBase {
     public void reopenEditor(DBSchemaObject object) {
         Project project = object.getProject();
         FileEditorManager editorManager = FileEditorManager.getInstance(project);
-        VirtualFile virtualFile = getFileSystem().findOrCreateDatabaseFile(project, object.ref());
+        VirtualFile virtualFile = getFileSystem().findOrCreateDatabaseFile(object);
         if (!editorManager.isFileOpen(virtualFile)) return;
 
         editorManager.closeFile(virtualFile);

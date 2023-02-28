@@ -146,11 +146,11 @@ public class DBNConnection extends DBNConnectionBase {
 
 
     public DBNPreparedStatement prepareStatementCached(String sql) {
-        return cachedStatements.computeIfAbsent(sql, l -> {
-            DBNPreparedStatement preparedStatement = prepareStatement(l);
+        return cachedStatements.computeIfAbsent(sql, s -> {
+            DBNPreparedStatement preparedStatement = prepareStatement(s);
             preparedStatement.setCached(true);
             preparedStatement.setFetchSize(500);
-            preparedStatement.setSql(sql);
+            preparedStatement.setSql(s);
             return preparedStatement;
         });
     }

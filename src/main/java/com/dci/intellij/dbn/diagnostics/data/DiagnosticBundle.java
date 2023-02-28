@@ -45,7 +45,7 @@ public final class DiagnosticBundle<T extends Comparable<T>> {
     }
 
     public DiagnosticEntry<T> get(T identifier) {
-        return this.entries.computeIfAbsent(identifier, i -> createEntry(identifier));
+        return this.entries.computeIfAbsent(identifier, i -> createEntry(i));
     }
     public DiagnosticEntry<T> get(T key, String qualifier) {
         return get(key).getDetail(qualifier);

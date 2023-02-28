@@ -116,7 +116,7 @@ public abstract class DBSchemaObjectImpl<M extends DBObjectMetadata> extends DBO
     public DBObjectVirtualFile<?> getVirtualFile() {
         if (getObjectType().isSchemaObject()) {
             DatabaseFileSystem databaseFileSystem = DatabaseFileSystem.getInstance();
-            return databaseFileSystem.findOrCreateDatabaseFile(getProject(), ref());
+            return databaseFileSystem.findOrCreateDatabaseFile(this);
         }
         return super.getVirtualFile();
     }

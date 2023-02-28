@@ -2,6 +2,7 @@ package com.dci.intellij.dbn.vfs.file;
 
 import com.dci.intellij.dbn.browser.model.BrowserTreeNode;
 import com.dci.intellij.dbn.common.DevNullStreams;
+import com.dci.intellij.dbn.common.ref.WeakRefCache;
 import com.dci.intellij.dbn.common.util.Traces;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.ConnectionId;
@@ -28,12 +29,18 @@ import java.io.OutputStream;
 import static com.dci.intellij.dbn.common.dispose.Failsafe.nd;
 
 public class DBObjectVirtualFile<T extends DBObject> extends DBVirtualFileBase {
+    private static final WeakRefCache<DBObject, DBObjectVirtualFile> virtualFileCache = WeakRefCache.build();
+
     private static final byte[] EMPTY_BYTE_CONTENT = new byte[0];
     protected DBObjectRef<T> object;
 
     public DBObjectVirtualFile(@NotNull Project project, @NotNull DBObjectRef<T> object) {
         super(project, object.getFileName());
         this.object = object;
+    }
+
+    public static DBObjectVirtualFile<?> of(DBObject object) {
+        return virtualFileCache.get(object, o -> new DBObjectVirtualFile(o.getProject(), o.ref()));
     }
 
     public DBObjectType getObjectType() {

@@ -27,8 +27,8 @@ import java.awt.*;
 import static com.dci.intellij.dbn.common.dispose.Failsafe.guarded;
 
 public class DatabaseBrowserTreeCellRenderer implements TreeCellRenderer {
-    private DefaultTreeCellRenderer cellRenderer = new DefaultTreeCellRenderer();
-    private DatabaseBrowserSettings browserSettings;
+    private final DefaultTreeCellRenderer cellRenderer = new DefaultTreeCellRenderer();
+    private final DatabaseBrowserSettings browserSettings;
 
     public DatabaseBrowserTreeCellRenderer(@NotNull Project project) {
         browserSettings = DatabaseBrowserSettings.getInstance(project);

@@ -17,6 +17,7 @@ import com.dci.intellij.dbn.common.event.ProjectEvents;
 import com.dci.intellij.dbn.common.filter.CompoundFilter;
 import com.dci.intellij.dbn.common.filter.Filter;
 import com.dci.intellij.dbn.common.range.Range;
+import com.dci.intellij.dbn.common.ref.WeakRefCache;
 import com.dci.intellij.dbn.common.search.SearchAdapter;
 import com.dci.intellij.dbn.common.string.StringDeBuilder;
 import com.dci.intellij.dbn.common.ui.tree.TreeEventType;
@@ -25,6 +26,7 @@ import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.DatabaseEntity;
 import com.dci.intellij.dbn.connection.config.ConnectionFilterSettings;
 import com.dci.intellij.dbn.database.common.metadata.DBObjectMetadata;
+import com.dci.intellij.dbn.navigation.psi.DBObjectListPsiDirectory;
 import com.dci.intellij.dbn.object.DBColumn;
 import com.dci.intellij.dbn.object.DBSchema;
 import com.dci.intellij.dbn.object.common.DBObject;
@@ -39,7 +41,6 @@ import com.dci.intellij.dbn.object.type.DBObjectType;
 import com.intellij.navigation.ItemPresentation;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiDirectory;
-import com.intellij.util.containers.ContainerUtil;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
@@ -66,7 +67,7 @@ import static com.dci.intellij.dbn.object.type.DBObjectType.*;
 @Getter
 @Setter
 public class DBObjectListImpl<T extends DBObject> extends DynamicContentBase<T> implements DBObjectList<T> {
-    private static final Map<DBObjectListImpl, ObjectQuickFilter> quickFilterCache = ContainerUtil.createConcurrentWeakMap();
+    private static final WeakRefCache<DBObjectList, ObjectQuickFilter> quickFilterCache = WeakRefCache.build();
 
     private final DBObjectType objectType;
 
@@ -128,9 +129,8 @@ public class DBObjectListImpl<T extends DBObject> extends DynamicContentBase<T> 
 
     @Override
     public void setQuickFilter(@Nullable ObjectQuickFilter<T> quickFilter) {
-        if (quickFilter == null)
-            quickFilterCache.remove(this); else
-            quickFilterCache.put(this, quickFilter);
+        quickFilterCache.set(this, quickFilter);
+
     }
 
     @Override
@@ -313,7 +313,7 @@ public class DBObjectListImpl<T extends DBObject> extends DynamicContentBase<T> 
 
     @Override
     public PsiDirectory getPsiDirectory() {
-        return getObjectBundle().getObjectListPsiDirectory(this);
+        return DBObjectListPsiDirectory.of(this);
     }
 
     @Override

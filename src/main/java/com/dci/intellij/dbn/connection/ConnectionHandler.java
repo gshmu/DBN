@@ -5,7 +5,6 @@ import com.dci.intellij.dbn.common.Referenceable;
 import com.dci.intellij.dbn.common.cache.Cache;
 import com.dci.intellij.dbn.common.database.AuthenticationInfo;
 import com.dci.intellij.dbn.common.database.DatabaseInfo;
-import com.dci.intellij.dbn.common.dispose.Checks;
 import com.dci.intellij.dbn.common.dispose.StatefulDisposable;
 import com.dci.intellij.dbn.common.environment.EnvironmentTypeProvider;
 import com.dci.intellij.dbn.common.filter.Filter;
@@ -34,6 +33,7 @@ import org.jetbrains.annotations.Nullable;
 import java.sql.SQLException;
 import java.util.List;
 
+import static com.dci.intellij.dbn.common.dispose.Checks.isNotValid;
 import static com.dci.intellij.dbn.common.dispose.Failsafe.nd;
 
 public interface ConnectionHandler extends StatefulDisposable, EnvironmentTypeProvider, DatabaseContextBase, Presentable, Referenceable<ConnectionRef> {
@@ -204,15 +204,16 @@ public interface ConnectionHandler extends StatefulDisposable, EnvironmentTypePr
 
     @Nullable
     static ConnectionHandler get(ConnectionId connectionId) {
+        if (connectionId == null) return null;
+
         ConnectionHandler connection = ConnectionCache.resolve(connectionId);
-        if (connection == null) {
-            Project project = ThreadMonitor.getProject();
-            if (Checks.isValid(project)) {
-                ConnectionManager connectionManager = ConnectionManager.getInstance(project);
-                connection = connectionManager.getConnection(connectionId);
-            }
-        }
-        return connection;
+        if (connection != null) return connection;
+
+        Project project = ThreadMonitor.getProject();
+        if (isNotValid(project)) return null;
+
+        ConnectionManager connectionManager = ConnectionManager.getInstance(project);
+        return connectionManager.getConnection(connectionId);
     }
 
     @NotNull

@@ -3,10 +3,31 @@ package com.dci.intellij.dbn.code.common.lookup;
 import com.dci.intellij.dbn.code.common.completion.CodeCompletionContext;
 import com.dci.intellij.dbn.code.common.completion.CodeCompletionLookupConsumer;
 import com.dci.intellij.dbn.code.common.completion.options.sorting.CodeCompletionSortingSettings;
+import com.dci.intellij.dbn.common.ref.WeakRefCache;
+import com.dci.intellij.dbn.language.common.DBLanguage;
+import com.dci.intellij.dbn.language.psql.PSQLLanguage;
+import com.dci.intellij.dbn.language.sql.SQLLanguage;
+import com.dci.intellij.dbn.object.common.DBObject;
 
 import javax.swing.*;
 
 public abstract class LookupItemBuilder {
+    private static final WeakRefCache<DBObject, LookupItemBuilder> sqlCache = WeakRefCache.build();
+    private static final WeakRefCache<DBObject, LookupItemBuilder> psqlCache = WeakRefCache.build();
+
+
+    public static LookupItemBuilder of(DBObject object, DBLanguage<?> language) {
+        if (language == SQLLanguage.INSTANCE) {
+            return sqlCache.get(object, o ->  new ObjectLookupItemBuilder(o.ref(), SQLLanguage.INSTANCE));
+        }
+        if (language == PSQLLanguage.INSTANCE) {
+            return psqlCache.get(object, o -> new ObjectLookupItemBuilder(o.ref(), PSQLLanguage.INSTANCE));
+        }
+
+        throw new IllegalArgumentException("Language " + language + " is not supported");
+    }
+
+
     public void createLookupItem(Object source, CodeCompletionLookupConsumer consumer) {
         CodeCompletionContext context = consumer.getContext();
 
