@@ -1,16 +1,11 @@
 package com.dci.intellij.dbn.common.dispose;
 
-import com.dci.intellij.dbn.common.util.Unsafe;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Iterator;
-import java.util.List;
-import java.util.ListIterator;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
+
+import static com.dci.intellij.dbn.common.util.Unsafe.cast;
 
 public final class Disposed {
     private static final DisposedList LIST = new DisposedList();
@@ -20,15 +15,15 @@ public final class Disposed {
     private Disposed() { }
 
     public static <T> List<T> list() {
-        return Unsafe.cast(LIST);
+        return cast(LIST);
     }
 
     public static <E> Set<E> set() {
-        return Unsafe.cast(SET);
+        return cast(SET);
     }
 
     public static <K, V> Map<K, V> map() {
-        return Unsafe.cast(MAP);
+        return cast(MAP);
     }
 
     private static final class DisposedList<T> implements List<T> {
