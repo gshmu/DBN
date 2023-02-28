@@ -498,6 +498,7 @@ public class FileConnectionContextManager extends ProjectComponentBase implement
     @Nullable
     @Override
     public Element getComponentState() {
+        registry.cleanup();
         Element element = new Element("state");
         Map<String, FileConnectionContext> mappings = registry.getMappings();
         for (FileConnectionContext mapping : mappings.values()) {
@@ -510,7 +511,6 @@ public class FileConnectionContextManager extends ProjectComponentBase implement
 
     @Override
     public void loadComponentState(@NotNull Element element) {
-        registry.cleanup();
         Map<String, FileConnectionContext> mappings = registry.getMappings();
         for (Element child : element.getChildren()) {
             FileConnectionContext mapping = new FileConnectionContextImpl();

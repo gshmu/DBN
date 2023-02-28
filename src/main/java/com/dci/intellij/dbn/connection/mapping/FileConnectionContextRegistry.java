@@ -224,7 +224,7 @@ public class FileConnectionContextRegistry extends StatefulDisposableBase implem
                 continue;
             }
 
-            if (context.getConnectionId() == null) {
+            if (context.getConnection() == null) {
                 mappings.remove(url);
                 continue;
             }

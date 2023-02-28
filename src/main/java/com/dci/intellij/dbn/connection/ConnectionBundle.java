@@ -27,12 +27,13 @@ import org.jetbrains.annotations.Nullable;
 import javax.swing.*;
 import java.util.*;
 
+import static com.intellij.util.containers.ContainerUtil.createConcurrentWeakKeyWeakValueMap;
+
 public class ConnectionBundle extends BrowserTreeNodeBase implements BrowserTreeNode, StatefulDisposable {
     private final ProjectRef project;
     private final Map<ConnectionId, ConnectionHandler> virtualConnections = new LinkedHashMap<>();
     private FilteredList<ConnectionHandler> connections = FilteredList.stateful(c -> c.isEnabled());
-
-    private Map<ConnectionId, ConnectionHandler> index = new HashMap<>();
+    private Map<ConnectionId, ConnectionHandler> index = createConcurrentWeakKeyWeakValueMap();
 
     public ConnectionBundle(Project project) {
         this.project = ProjectRef.of(project);
@@ -157,15 +158,12 @@ public class ConnectionBundle extends BrowserTreeNodeBase implements BrowserTree
 
     @Nullable
     public ConnectionHandler getConnection(@Nullable ConnectionId id) {
-        if (id != null) {
-            ConnectionHandler connection = index.get(id);
-            if (connection == null) {
-                connection = virtualConnections.get(id);
-            }
+        if (id == null) return null;
 
-            return connection;
-        }
-        return null;
+        ConnectionHandler connection = index.get(id);
+        if (connection != null) return connection;
+
+        return virtualConnections.get(id);
     }
 
     public List<ConnectionHandler> getConnections() {
