@@ -192,7 +192,7 @@ public class FileConnectionContextManager extends ProjectComponentBase implement
 
     @Nullable
     public FileConnectionContext getMapping(@NotNull VirtualFile file) {
-        return registry.getFileConnectionMapping(file);
+        return registry.getFileConnectionContext(file);
     }
 
 
@@ -510,6 +510,7 @@ public class FileConnectionContextManager extends ProjectComponentBase implement
 
     @Override
     public void loadComponentState(@NotNull Element element) {
+        registry.cleanup();
         Map<String, FileConnectionContext> mappings = registry.getMappings();
         for (Element child : element.getChildren()) {
             FileConnectionContext mapping = new FileConnectionContextImpl();

@@ -14,6 +14,7 @@ public final class SessionId extends PseudoConstant<SessionId> {
     public static final SessionId TEST = get("TEST");
     public static final SessionId DEBUG = get("DEBUG");
     public static final SessionId DEBUGGER = get("DEBUGGER");
+    public static final SessionId NULL = get("NULL");
 
     public SessionId(String id) {
         super(id);

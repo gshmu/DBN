@@ -12,6 +12,7 @@ import javax.swing.*;
 
 public final class SchemaId extends PseudoConstant<SchemaId> implements Presentable {
     public static final SchemaId NONE = get("NONE");
+    public static final SchemaId NULL = get("NULL");
 
     public SchemaId(String id) {
         super(id);
