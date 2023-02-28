@@ -9,6 +9,7 @@ import com.dci.intellij.dbn.database.interfaces.DatabaseCompatibilityInterface;
 import com.dci.intellij.dbn.ddl.DDLFileTypeId;
 import com.dci.intellij.dbn.editor.DBContentType;
 import lombok.Getter;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
@@ -438,24 +439,24 @@ public enum DBObjectType implements DynamicContentType<DBObjectType> {
     }
 
     public static DBObjectType get(String typeName) {
-        if (Strings.isEmpty(typeName)) {
-            return null;
-        }
+        if (Strings.isEmpty(typeName)) return null;
+        return CACHE.computeIfAbsent(typeName, name -> load(name));
+    }
 
-        return CACHE.computeIfAbsent(typeName, name -> {
-            name = name.toUpperCase();
-            try {
-                return valueOf(name);
-            } catch (IllegalArgumentException e) {
-                for (DBObjectType objectType: values()) {
-                    if (objectType.matches(name)) {
-                        return objectType;
-                    }
+    @NotNull
+    private static DBObjectType load(String name) {
+        name = name.toUpperCase();
+        try {
+            return valueOf(name);
+        } catch (IllegalArgumentException e) {
+            for (DBObjectType objectType: values()) {
+                if (objectType.matches(name)) {
+                    return objectType;
                 }
-                System.out.println("ERROR - [UNKNOWN] undefined object type: " + name);
-                return UNKNOWN;
             }
-        });
+            System.out.println("ERROR - [UNKNOWN] undefined object type: " + name);
+            return UNKNOWN;
+        }
     }
 
     private boolean matches(String name) {

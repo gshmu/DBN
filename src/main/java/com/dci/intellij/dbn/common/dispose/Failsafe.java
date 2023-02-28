@@ -36,7 +36,7 @@ public class Failsafe {
         } catch (Exception e) {
             error(e);
             // DBNE-4876 (????!!)
-            if (e.getClass().getName().equals(AlreadyDisposedException.class.getName())) {
+            if (!e.getClass().getName().equals(AlreadyDisposedException.class.getName())) {
                 throw e;
             }
             return defaultValue;
@@ -53,7 +53,7 @@ public class Failsafe {
         } catch (Exception e) {
             error(e);
             // DBNE-4876 (????!!)
-            if (e.getClass().getName().equals(AlreadyDisposedException.class.getName())) {
+            if (!e.getClass().getName().equals(AlreadyDisposedException.class.getName())) {
                 throw e;
             }
         }

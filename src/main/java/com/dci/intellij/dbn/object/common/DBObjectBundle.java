@@ -1,21 +1,16 @@
 package com.dci.intellij.dbn.object.common;
 
 import com.dci.intellij.dbn.browser.model.BrowserTreeNode;
-import com.dci.intellij.dbn.code.common.lookup.LookupItemBuilder;
 import com.dci.intellij.dbn.common.dispose.StatefulDisposable;
 import com.dci.intellij.dbn.common.routine.Consumer;
 import com.dci.intellij.dbn.connection.SchemaId;
 import com.dci.intellij.dbn.data.type.DBDataTypeBundle;
 import com.dci.intellij.dbn.data.type.DBNativeDataType;
 import com.dci.intellij.dbn.database.DatabaseObjectIdentifier;
-import com.dci.intellij.dbn.language.common.DBLanguage;
 import com.dci.intellij.dbn.object.*;
 import com.dci.intellij.dbn.object.common.list.DBObjectList;
 import com.dci.intellij.dbn.object.common.list.DBObjectListContainer;
-import com.dci.intellij.dbn.object.lookup.DBObjectRef;
 import com.dci.intellij.dbn.object.type.DBObjectType;
-import com.dci.intellij.dbn.vfs.file.DBObjectVirtualFile;
-import com.intellij.psi.PsiDirectory;
 import com.intellij.psi.PsiFile;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -91,14 +86,6 @@ public interface DBObjectBundle extends BrowserTreeNode, StatefulDisposable {
     DBObjectListContainer getObjectLists();
 
     <T extends DBObject> DBObjectList<T> getObjectList(DBObjectType objectType);
-
-    LookupItemBuilder getLookupItemBuilder(DBObjectRef<?> objectRef, DBLanguage<?> language);
-
-    PsiDirectory getObjectListPsiDirectory(DBObjectList objectList);
-
-    DBObjectPsiCache getObjectPsiCache(DBObjectRef<?> objectRef);
-
-    DBObjectVirtualFile<?> getObjectVirtualFile(DBObjectRef<?> objectRef);
 
     PsiFile getFakeObjectFile();
 
