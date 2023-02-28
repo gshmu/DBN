@@ -7,6 +7,7 @@ import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.common.editor.BasicTextEditor;
 import com.dci.intellij.dbn.common.navigation.NavigationInstructions;
 import com.dci.intellij.dbn.common.ref.WeakRef;
+import com.dci.intellij.dbn.common.ref.WeakRefCache;
 import com.dci.intellij.dbn.common.thread.Read;
 import com.dci.intellij.dbn.common.util.Editors;
 import com.dci.intellij.dbn.common.util.Strings;
@@ -53,22 +54,20 @@ import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.*;
 import com.intellij.psi.search.LocalSearchScope;
 import com.intellij.psi.search.SearchScope;
-import com.intellij.util.containers.ContainerUtil;
 import lombok.Getter;
 import lombok.Setter;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
-import java.util.Map;
 import java.util.Set;
 import java.util.function.Consumer;
 
 @Getter
 @Setter
 public abstract class BasePsiElement<T extends ElementTypeBase> extends ASTDelegatePsiElement implements DatabaseContextBase, ItemPresentation, FormattingProviderPsiElement {
-    private static final Map<BasePsiElement, DBVirtualObject> underlyingObjectCache = ContainerUtil.createConcurrentWeakKeyWeakValueMap();
-    private static final Map<BasePsiElement, FormattingAttributes> formattingAttributesCache = ContainerUtil.createConcurrentWeakMap();
+    private static final WeakRefCache<BasePsiElement, DBVirtualObject> underlyingObjectCache = WeakRefCache.build();
+    private static final WeakRefCache<BasePsiElement, FormattingAttributes> formattingAttributesCache = WeakRefCache.build();
 
     public final ASTNode node;
     private T elementType;
@@ -93,11 +92,11 @@ public abstract class BasePsiElement<T extends ElementTypeBase> extends ASTDeleg
     }
 
     public FormattingAttributes getFormattingAttributes() {
-        FormattingDefinition definition = elementType.getFormatting();
-        if (definition == null) return null;
+        FormattingDefinition formatting = elementType.getFormatting();
+        if (formatting == null) return null;
 
-        return formattingAttributesCache.computeIfAbsent(this, k -> {
-            FormattingAttributes attributes = definition.getAttributes();
+        return formattingAttributesCache.get(this, e -> {
+            FormattingAttributes attributes = e.getElementType().getFormatting().getAttributes();
             return FormattingAttributes.copy(attributes);
         });
     }
@@ -732,7 +731,7 @@ public abstract class BasePsiElement<T extends ElementTypeBase> extends ASTDeleg
 
         return underlyingObjectCache.compute(this, (k, v) -> {
             if (v == null || !v.isValid()) {
-                DBObjectType virtualObjectType = elementType.getVirtualObjectType();
+                DBObjectType virtualObjectType = k.getElementType().getVirtualObjectType();
                 v = new DBVirtualObject(virtualObjectType, this);
             }
             return v;

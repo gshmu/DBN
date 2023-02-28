@@ -9,6 +9,7 @@ import com.dci.intellij.dbn.browser.ui.ToolTipProvider;
 import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.common.event.ProjectEvents;
 import com.dci.intellij.dbn.common.filter.Filter;
+import com.dci.intellij.dbn.common.ref.WeakRefCache;
 import com.dci.intellij.dbn.common.thread.Background;
 import com.dci.intellij.dbn.common.ui.tree.TreeEventType;
 import com.dci.intellij.dbn.common.util.Commons;
@@ -16,13 +17,11 @@ import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.object.common.property.DBObjectProperty;
 import com.dci.intellij.dbn.object.type.DBObjectType;
 import com.intellij.openapi.project.Project;
-import com.intellij.util.containers.ContainerUtil;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.Map;
 
 import static com.dci.intellij.dbn.browser.DatabaseBrowserUtils.treeVisibilityChanged;
 import static com.dci.intellij.dbn.common.util.Compactables.compact;
@@ -31,8 +30,8 @@ import static com.dci.intellij.dbn.common.util.Lists.filter;
 abstract class DBObjectTreeNodeBase extends BrowserTreeNodeBase implements DBObject, ToolTipProvider {
     protected static final List<BrowserTreeNode> EMPTY_TREE_NODE_LIST = Collections.unmodifiableList(new ArrayList<>(0));
 
-    private static final Map<DBObjectTreeNodeBase, List<BrowserTreeNode>> possibleTreeChildren = ContainerUtil.createConcurrentWeakMap();
-    private static final Map<DBObjectTreeNodeBase, List<BrowserTreeNode>> visibleTreeChildren = ContainerUtil.createConcurrentWeakMap();
+    private static final WeakRefCache<DBObjectTreeNodeBase, List<BrowserTreeNode>> possibleTreeChildren = WeakRefCache.build();
+    private static final WeakRefCache<DBObjectTreeNodeBase, List<BrowserTreeNode>> visibleTreeChildren = WeakRefCache.build();
 
     @Override
     public int getTreeDepth() {
@@ -42,15 +41,15 @@ abstract class DBObjectTreeNodeBase extends BrowserTreeNodeBase implements DBObj
 
     @NotNull
     public List<BrowserTreeNode> getPossibleTreeChildren() {
-        return possibleTreeChildren.computeIfAbsent(this, o -> {
-            List<BrowserTreeNode> children = buildPossibleTreeChildren();
+        return possibleTreeChildren.get(this, o -> {
+            List<BrowserTreeNode> children = o.buildPossibleTreeChildren();
             return compact(children);
         });
     }
 
     @Override
     public List<? extends BrowserTreeNode> getChildren() {
-        return visibleTreeChildren.computeIfAbsent(this, o -> {
+        return visibleTreeChildren.get(this, o -> {
             Background.run(o.getProject(), () -> o.buildTreeChildren());
             return Collections.singletonList(new LoadInProgressTreeNode(o));
         });
@@ -69,7 +68,7 @@ abstract class DBObjectTreeNodeBase extends BrowserTreeNodeBase implements DBObj
             checkDisposed();
         }
 
-        visibleTreeChildren.put(this, compact(treeNodes));
+        visibleTreeChildren.set(this, compact(treeNodes));
         set(DBObjectProperty.TREE_LOADED, true);
 
         Project project = Failsafe.nn(getProject());

@@ -2,6 +2,7 @@ package com.dci.intellij.dbn.navigation.psi;
 
 import com.dci.intellij.dbn.common.dispose.Disposer;
 import com.dci.intellij.dbn.common.dispose.Failsafe;
+import com.dci.intellij.dbn.common.ref.WeakRefCache;
 import com.dci.intellij.dbn.common.util.Naming;
 import com.dci.intellij.dbn.connection.DatabaseEntity;
 import com.dci.intellij.dbn.language.common.psi.EmptySearchScope;
@@ -33,10 +34,16 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class DBObjectListPsiDirectory implements PsiDirectory, Disposable {
-    private DBObjectListVirtualFile virtualFile;
+    private static final WeakRefCache<DBObjectList, DBObjectListPsiDirectory> psiDirectoryCache = WeakRefCache.build();
+
+    private DBObjectListVirtualFile<?> virtualFile;
 
     public DBObjectListPsiDirectory(DBObjectList objectList) {
-        virtualFile = new DBObjectListVirtualFile(objectList);
+        virtualFile = new DBObjectListVirtualFile<>(objectList);
+    }
+
+    public static DBObjectListPsiDirectory of(DBObjectList objectList) {
+        return psiDirectoryCache.get(objectList, ol -> new DBObjectListPsiDirectory(ol));
     }
 
     @NotNull

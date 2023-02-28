@@ -15,6 +15,7 @@ import com.dci.intellij.dbn.object.common.DBObject;
 import com.dci.intellij.dbn.object.common.DBObjectBundle;
 import com.dci.intellij.dbn.object.common.DBVirtualObject;
 import com.dci.intellij.dbn.object.type.DBObjectType;
+import com.intellij.openapi.project.Project;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
@@ -46,8 +47,8 @@ public class DBObjectRef<T extends DBObject> implements Comparable<DBObjectRef<?
 
     private Object parent; // can hold connection id or an actual DBObjectRef (memory optimisation)
     private String objectName;
-    private short overload;
     private DBObjectType objectType;
+    private short overload;
 
     private WeakRef<T> reference;
     private int hashCode = -1;
@@ -87,6 +88,18 @@ public class DBObjectRef<T extends DBObject> implements Comparable<DBObjectRef<?
 
     public DBObjectRef() {
 
+    }
+
+    @Nullable
+    @Override
+    public Project getProject() {
+        T object = reference.get();
+        if (object != null) return object.getProject();
+
+        ConnectionHandler connection = getConnection();
+        if (connection != null) return connection.getProject();
+
+        return null;
     }
 
     @Nullable

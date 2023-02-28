@@ -7,8 +7,6 @@ import com.dci.intellij.dbn.browser.model.BrowserTreeNode;
 import com.dci.intellij.dbn.browser.model.BrowserTreeNodeBase;
 import com.dci.intellij.dbn.browser.model.LoadInProgressTreeNode;
 import com.dci.intellij.dbn.browser.ui.HtmlToolTipBuilder;
-import com.dci.intellij.dbn.code.common.lookup.LookupItemBuilder;
-import com.dci.intellij.dbn.code.common.lookup.ObjectLookupItemBuilder;
 import com.dci.intellij.dbn.common.content.DynamicContent;
 import com.dci.intellij.dbn.common.content.DynamicContentType;
 import com.dci.intellij.dbn.common.content.loader.DynamicContentLoaderImpl;
@@ -38,36 +36,29 @@ import com.dci.intellij.dbn.editor.code.SourceCodeEditor;
 import com.dci.intellij.dbn.editor.code.SourceCodeManagerListener;
 import com.dci.intellij.dbn.execution.compiler.CompileManagerListener;
 import com.dci.intellij.dbn.execution.statement.DataDefinitionChangeListener;
-import com.dci.intellij.dbn.language.common.DBLanguage;
-import com.dci.intellij.dbn.language.psql.PSQLLanguage;
 import com.dci.intellij.dbn.language.sql.SQLLanguage;
-import com.dci.intellij.dbn.navigation.psi.DBObjectListPsiDirectory;
 import com.dci.intellij.dbn.object.*;
 import com.dci.intellij.dbn.object.common.list.DBObjectList;
 import com.dci.intellij.dbn.object.common.list.DBObjectListContainer;
 import com.dci.intellij.dbn.object.common.list.DBObjectListImpl;
 import com.dci.intellij.dbn.object.impl.*;
-import com.dci.intellij.dbn.object.lookup.DBObjectRef;
 import com.dci.intellij.dbn.object.type.DBObjectRelationType;
 import com.dci.intellij.dbn.object.type.DBObjectType;
-import com.dci.intellij.dbn.vfs.file.DBObjectVirtualFile;
 import com.dci.intellij.dbn.vfs.file.DBSourceCodeVirtualFile;
-import com.google.common.cache.Cache;
-import com.google.common.cache.CacheBuilder;
 import com.intellij.navigation.ItemPresentation;
 import com.intellij.openapi.project.Project;
-import com.intellij.psi.PsiDirectory;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiFileFactory;
-import lombok.SneakyThrows;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.*;
-import java.util.concurrent.ConcurrentHashMap;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.Set;
 
 import static com.dci.intellij.dbn.browser.DatabaseBrowserUtils.treeVisibilityChanged;
 import static com.dci.intellij.dbn.common.content.DynamicContentProperty.GROUPED;
@@ -95,14 +86,6 @@ public class DBObjectBundleImpl extends BrowserTreeNodeBase implements DBObjectB
 
     private final DBObjectListContainer objectLists;
     private final long configSignature;
-
-    private final Map<DBObjectRef<?>, LookupItemBuilder> sqlLookupItemBuilders = new ConcurrentHashMap<>();
-    private final Map<DBObjectRef<?>, LookupItemBuilder> psqlLookupItemBuilders = new ConcurrentHashMap<>();
-    private final Map<DBObjectRef<?>, DBObjectPsiCache> objectPsiCache = new ConcurrentHashMap<>();
-    private final Map<DBObjectRef<?>, DBObjectVirtualFile<?>> virtualFiles = new ConcurrentHashMap<>();
-    //private final Map<String, PsiDirectory> objectListPsiCache = new ConcurrentHashMap<>();
-    private final Cache<String, PsiDirectory> objectListPsiCache = CacheBuilder.newBuilder().maximumSize(50).build();
-
     private final PsiFile fakeObjectFile;
 
     private final Latent<List<DBSchema>> publicSchemas;
@@ -188,33 +171,6 @@ public class DBObjectBundleImpl extends BrowserTreeNodeBase implements DBObjectB
     @Override
     public DynamicContentType<?> getDynamicContentType() {
         return CONNECTION;
-    }
-
-    @Override
-    public LookupItemBuilder getLookupItemBuilder(DBObjectRef<?> objectRef, DBLanguage<?> language) {
-        if (language == SQLLanguage.INSTANCE) {
-            return sqlLookupItemBuilders.computeIfAbsent(objectRef, r ->  new ObjectLookupItemBuilder(r, SQLLanguage.INSTANCE));
-        }
-        if (language == PSQLLanguage.INSTANCE) {
-            return psqlLookupItemBuilders.computeIfAbsent(objectRef, r -> new ObjectLookupItemBuilder(r, PSQLLanguage.INSTANCE));
-        }
-        return null;
-    }
-
-    @Override
-    public DBObjectPsiCache getObjectPsiCache(DBObjectRef<?> objectRef) {
-        return objectPsiCache.computeIfAbsent(objectRef, r -> new DBObjectPsiCache(r));
-    }
-
-    @SneakyThrows
-    public PsiDirectory getObjectListPsiDirectory(DBObjectList objectList) {
-        //return objectListPsiCache.computeIfAbsent(objectList.getQualifiedName(), k -> new DBObjectListPsiDirectory(objectList));
-        return objectListPsiCache.get(objectList.getQualifiedName(), () -> new DBObjectListPsiDirectory(objectList));
-    }
-
-    @Override
-    public DBObjectVirtualFile<?> getObjectVirtualFile(DBObjectRef<?> objectRef) {
-        return virtualFiles.computeIfAbsent(objectRef, r -> new DBObjectVirtualFile<>(getProject(), r));
     }
 
     @Override

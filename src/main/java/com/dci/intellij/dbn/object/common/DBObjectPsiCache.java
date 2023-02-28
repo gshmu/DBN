@@ -2,6 +2,7 @@ package com.dci.intellij.dbn.object.common;
 
 import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.common.latent.Latent;
+import com.dci.intellij.dbn.common.ref.WeakRefCache;
 import com.dci.intellij.dbn.language.common.PsiElementRef;
 import com.dci.intellij.dbn.navigation.psi.DBObjectPsiDirectory;
 import com.dci.intellij.dbn.navigation.psi.DBObjectPsiFile;
@@ -13,6 +14,8 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 public final class DBObjectPsiCache {
+    private static final WeakRefCache<DBObject, DBObjectPsiCache> psiCaches = WeakRefCache.build();
+
     private DBObjectRef<?> objectRef;
     private PsiElementRef<PsiElement> psiElementRef;
 
@@ -29,6 +32,10 @@ public final class DBObjectPsiCache {
 
     public DBObjectPsiCache(DBObjectRef<?> objectRef) {
         this.objectRef = objectRef;
+    }
+
+    public static DBObjectPsiCache of(DBObject object) {
+        return psiCaches.get(object, o -> new DBObjectPsiCache(o.ref()));
     }
 
     public PsiFile getPsiFile() {

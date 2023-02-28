@@ -469,19 +469,19 @@ public abstract class DBObjectImpl<M extends DBObjectMetadata> extends DBObjectT
     @Override
     @NotNull
     public LookupItemBuilder getLookupItemBuilder(DBLanguage language) {
-        return getObjectBundle().getLookupItemBuilder(objectRef, language);
+        return LookupItemBuilder.of(this, language);
     }
 
     @Override
     @NotNull
     public DBObjectPsiCache getPsiCache() {
-        return getObjectBundle().getObjectPsiCache(ref());
+        return DBObjectPsiCache.of(this);
     }
 
     @Override
     @NotNull
     public DBObjectVirtualFile<?> getVirtualFile() {
-        return getObjectBundle().getObjectVirtualFile(ref());
+        return DBObjectVirtualFile.of(this);
     }
 
     @Override

@@ -2,7 +2,6 @@ package com.dci.intellij.dbn.object.common;
 
 import com.dci.intellij.dbn.browser.model.BrowserTreeNode;
 import com.dci.intellij.dbn.browser.model.BrowserTreeNodeBase;
-import com.dci.intellij.dbn.code.common.lookup.LookupItemBuilder;
 import com.dci.intellij.dbn.common.routine.Consumer;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.ConnectionId;
@@ -11,16 +10,12 @@ import com.dci.intellij.dbn.connection.VirtualConnectionHandler;
 import com.dci.intellij.dbn.data.type.DBDataTypeBundle;
 import com.dci.intellij.dbn.data.type.DBNativeDataType;
 import com.dci.intellij.dbn.database.DatabaseObjectIdentifier;
-import com.dci.intellij.dbn.language.common.DBLanguage;
 import com.dci.intellij.dbn.object.*;
 import com.dci.intellij.dbn.object.common.list.DBObjectList;
 import com.dci.intellij.dbn.object.common.list.DBObjectListContainer;
-import com.dci.intellij.dbn.object.lookup.DBObjectRef;
 import com.dci.intellij.dbn.object.type.DBObjectType;
-import com.dci.intellij.dbn.vfs.file.DBObjectVirtualFile;
 import com.intellij.navigation.ItemPresentation;
 import com.intellij.openapi.project.Project;
-import com.intellij.psi.PsiDirectory;
 import com.intellij.psi.PsiFile;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -183,26 +178,6 @@ public class DBVirtualObjectBundle extends BrowserTreeNodeBase implements DBObje
     @Override
     public <T extends DBObject> DBObjectList<T> getObjectList(DBObjectType objectType) {
         return null;
-    }
-
-    @Override
-    public LookupItemBuilder getLookupItemBuilder(DBObjectRef<?> objectRef, DBLanguage<?> language) {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public DBObjectPsiCache getObjectPsiCache(DBObjectRef<?> objectRef) {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public PsiDirectory getObjectListPsiDirectory(DBObjectList objectList) {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public DBObjectVirtualFile<?> getObjectVirtualFile(DBObjectRef<?> objectRef) {
-        throw new UnsupportedOperationException();
     }
 
     @Override

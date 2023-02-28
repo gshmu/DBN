@@ -78,7 +78,7 @@ public class SortableTableExportModel implements DataExportModel{
     }
 
     @Nullable
-    private String produceColumnFriendlyName(String key) {
+    private static String produceColumnFriendlyName(String key) {
         if (Strings.isNotEmpty(key)) {
             key = key.trim().toUpperCase();
             if (key.matches("[A-Z][A-Z0-9_]*")) {
