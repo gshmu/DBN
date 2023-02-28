@@ -32,7 +32,7 @@ public class DBModuleBuilder extends ModuleBuilder /*implements SourcePathsBuild
     }
 
     @Override
-    public void setupRootModel(@NotNull ModifiableRootModel rootModel) throws ConfigurationException {
+    public void setupRootModel(@NotNull ModifiableRootModel rootModel) {
         String moduleRootPath = getContentEntryPath();
         if (moduleRootPath != null) {
             LocalFileSystem localFileSystem = LocalFileSystem.getInstance();
@@ -64,7 +64,7 @@ public class DBModuleBuilder extends ModuleBuilder /*implements SourcePathsBuild
 
     public void addSourcePath(Pair<String, String> sourcePathInfo) {
         if (sourcePaths == null) {
-            sourcePaths = new ArrayList<Pair<String, String>>();
+            sourcePaths = new ArrayList<>();
             sourcePaths.add(sourcePathInfo);
         }
     }
@@ -83,7 +83,7 @@ public class DBModuleBuilder extends ModuleBuilder /*implements SourcePathsBuild
 
     private List<Pair<String, String>> getSourcePaths() {
         if (sourcePaths == null) {
-            sourcePaths = new ArrayList<Pair<String, String>>();
+            sourcePaths = new ArrayList<>();
             /*String path = getContentEntryPath();
             new File(path).mkdirs();
             sourcePaths.add(Pair.create(path, ""));

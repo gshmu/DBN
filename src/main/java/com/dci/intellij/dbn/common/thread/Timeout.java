@@ -3,9 +3,11 @@ package com.dci.intellij.dbn.common.thread;
 import com.dci.intellij.dbn.common.routine.ThrowableCallable;
 import com.dci.intellij.dbn.common.routine.ThrowableRunnable;
 import com.dci.intellij.dbn.common.util.Commons;
+import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 
 import java.util.concurrent.*;
+import java.util.concurrent.atomic.AtomicReference;
 
 import static com.dci.intellij.dbn.common.exception.Exceptions.causeOf;
 import static com.dci.intellij.dbn.common.util.TimeUtil.millisSince;
@@ -17,12 +19,14 @@ public final class Timeout {
 
     private Timeout() {}
 
+    @SneakyThrows
     public static <T> T call(long seconds, T defaultValue, boolean daemon, ThrowableCallable<T, Throwable> callable) {
         long start = System.currentTimeMillis();
         try {
             Threads.delay(lock);
             ThreadInfo invoker = ThreadMonitor.current();
             ExecutorService executorService = Threads.timeoutExecutor(daemon);
+            AtomicReference<Throwable> exception = new AtomicReference<>();
             Future<T> future = executorService.submit(
                     () -> {
                         try {
@@ -33,28 +37,35 @@ public final class Timeout {
                                     defaultValue,
                                     callable);
                         } catch (Throwable e) {
-                            log.error("Timeout operation. Returning default {}", defaultValue, e);
-                            return defaultValue;
-
+                            exception.set(e);
+                            return null;
                         }
                     });
 
-            return waitFor(future, seconds, TimeUnit.SECONDS);
+
+            T result = waitFor(future, seconds, TimeUnit.SECONDS);
+            if (exception.get() != null) {
+                throw exception.get();
+            }
+            return result;
         } catch (TimeoutException | InterruptedException | RejectedExecutionException e) {
             String message = Commons.nvl(e.getMessage(), e.getClass().getSimpleName());
             log.warn("Operation timed out after {} millis (timeout = {} seconds). Returning default {}. Cause: {}", secondsSince(start), seconds, defaultValue, message);
         } catch (ExecutionException e) {
             log.warn("Operation failed after {} millis (timeout = {} seconds). Returning default {}", millisSince(start), seconds, defaultValue, causeOf(e));
+            throw e.getCause();
         }
         return defaultValue;
     }
 
+    @SneakyThrows
     public static void run(long seconds, boolean daemon, ThrowableRunnable<Throwable> runnable) {
         long start = System.currentTimeMillis();
         try {
             Threads.delay(lock);
             ThreadInfo invoker = ThreadMonitor.current();
             ExecutorService executorService = Threads.timeoutExecutor(daemon);
+            AtomicReference<Throwable> exception = new AtomicReference<>();
             Future<?> future = executorService.submit(
                     () -> {
                         try {
@@ -64,16 +75,20 @@ public final class Timeout {
                                     ThreadProperty.TIMEOUT,
                                     runnable);
                         } catch (Throwable e) {
-                            log.error("Timeout operation failed.", e);
+                            exception.set(e);
                         }
                     });
             waitFor(future, seconds, TimeUnit.SECONDS);
+            if (exception.get() != null) {
+                throw exception.get();
+            }
 
         } catch (TimeoutException | InterruptedException | RejectedExecutionException e) {
             String message = Commons.nvl(e.getMessage(), e.getClass().getSimpleName());
             log.warn("Operation timed out after {} millis (timeout = {} seconds). Cause: {}", millisSince(start), seconds, message);
         } catch (ExecutionException e) {
             log.warn("Operation failed after {} millis (timeout = {} seconds)", millisSince(start), seconds, causeOf(e));
+            throw e.getCause();
         }
     }
 

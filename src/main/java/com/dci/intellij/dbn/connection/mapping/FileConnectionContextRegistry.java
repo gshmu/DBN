@@ -15,7 +15,6 @@ import com.dci.intellij.dbn.object.common.DBSchemaObject;
 import com.dci.intellij.dbn.vfs.DBVirtualFile;
 import com.dci.intellij.dbn.vfs.DatabaseFileSystem;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.testFramework.LightVirtualFile;
 import lombok.Getter;
@@ -25,6 +24,7 @@ import org.jetbrains.annotations.Nullable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Function;
 
@@ -55,8 +55,8 @@ public class FileConnectionContextRegistry extends StatefulDisposableBase implem
             return false;
         }
 
-        FileConnectionContext mapping = ensureFileConnectionMapping(file);
-        boolean changed = mapping.setConnectionId(connection == null ? null : connection.getConnectionId());
+        FileConnectionContext context = ensureFileConnectionMapping(file);
+        boolean changed = context.setConnectionId(connection == null ? null : connection.getConnectionId());
 
         if (changed) {
             if (connection == null || connection.isVirtual()) {
@@ -64,18 +64,18 @@ public class FileConnectionContextRegistry extends StatefulDisposableBase implem
                 setDatabaseSchema(file, null);
             } else {
                 // restore session if available in new connection
-                SessionId sessionId = mapping.getSessionId();
+                SessionId sessionId = context.getSessionId();
                 boolean match = connection.getSessionBundle().hasSession(sessionId);
                 sessionId = match ? sessionId : SessionId.MAIN;
-                mapping.setSessionId(sessionId);
+                context.setSessionId(sessionId);
 
                 // restore schema if available in new connection
-                SchemaId schemaId = mapping.getSchemaId();
+                SchemaId schemaId = context.getSchemaId();
                 DBSchema schema = schemaId == null ? null : connection.getSchema(schemaId);
                 if (schema == null) {
                     schemaId = connection.getDefaultSchema();
                 }
-                mapping.setSchemaId(schemaId);
+                context.setSchemaId(schemaId);
             }
         }
 
@@ -83,39 +83,39 @@ public class FileConnectionContextRegistry extends StatefulDisposableBase implem
     }
 
     public boolean setDatabaseSchema(VirtualFile file, SchemaId schemaId) {
-        FileConnectionContext mapping = ensureFileConnectionMapping(file);
-        return mapping.setSchemaId(schemaId);
+        FileConnectionContext context = ensureFileConnectionMapping(file);
+        return context.setSchemaId(schemaId);
     }
 
     public boolean setDatabaseSession(VirtualFile file, DatabaseSession session) {
-        FileConnectionContext mapping = ensureFileConnectionMapping(file);
-        return mapping.setSessionId(session == null ? null : session.getId());
+        FileConnectionContext context = ensureFileConnectionMapping(file);
+        return context.setSessionId(session == null ? null : session.getId());
     }
 
     @Nullable
     public ConnectionHandler getDatabaseConnection(@NotNull VirtualFile file) {
         VirtualFile underlyingFile = VirtualFiles.getUnderlyingFile(file);
         return coalesce(
-                () -> resolveDdlAttachment(underlyingFile,   mapping -> mapping.getConnection()),
-                () -> resolveMappingProvider(underlyingFile, mapping -> mapping.getConnection()),
-                () -> resolveFileMapping(underlyingFile,     mapping -> mapping.getConnection()));
+                () -> resolveDdlAttachment(underlyingFile,   context -> context.getConnection()),
+                () -> resolveMappingProvider(underlyingFile, context -> context.getConnection()),
+                () -> resolveFileMapping(underlyingFile,     context -> context.getConnection()));
     }
 
     @Nullable
     public SchemaId getDatabaseSchema(@NotNull VirtualFile file) {
         VirtualFile underlyingFile = VirtualFiles.getUnderlyingFile(file);
         return coalesce(
-                () -> resolveDdlAttachment(underlyingFile,   mapping -> mapping.getSchemaId()),
-                () -> resolveMappingProvider(underlyingFile, mapping -> mapping.getSchemaId()),
-                () -> resolveFileMapping(underlyingFile,     mapping -> mapping.getSchemaId()));
+                () -> resolveDdlAttachment(underlyingFile,   context -> context.getSchemaId()),
+                () -> resolveMappingProvider(underlyingFile, context -> context.getSchemaId()),
+                () -> resolveFileMapping(underlyingFile,     context -> context.getSchemaId()));
     }
 
     @Nullable
     public DatabaseSession getDatabaseSession(@NotNull VirtualFile file) {
         VirtualFile underlyingFile = VirtualFiles.getUnderlyingFile(file);
         return coalesce(
-                () -> resolveMappingProvider(underlyingFile, mapping -> mapping.getSession()),
-                () -> resolveFileMapping(underlyingFile,     mapping -> mapping.getSession()));
+                () -> resolveMappingProvider(underlyingFile, context -> context.getSession()),
+                () -> resolveFileMapping(underlyingFile,     context -> context.getSession()));
     }
 
     @Nullable
@@ -131,7 +131,7 @@ public class FileConnectionContextRegistry extends StatefulDisposableBase implem
 
     @Nullable
     private <T> T resolveFileMapping(@NotNull VirtualFile file, Function<FileConnectionContext, T> handler) {
-        FileConnectionContext connectionMapping = getFileConnectionMapping(file);
+        FileConnectionContext connectionMapping = getFileConnectionContext(file);
         if (connectionMapping != null) {
             return handler.apply(connectionMapping);
         }
@@ -155,15 +155,15 @@ public class FileConnectionContextRegistry extends StatefulDisposableBase implem
 
     @NotNull
     private FileConnectionContext ensureFileConnectionMapping(VirtualFile file) {
-        return getFileConnectionMapping(file, true);
+        return getFileConnectionContext(file, true);
     }
 
     @Nullable
-    public FileConnectionContext getFileConnectionMapping(VirtualFile file) {
-        return getFileConnectionMapping(file, false);
+    public FileConnectionContext getFileConnectionContext(VirtualFile file) {
+        return getFileConnectionContext(file, false);
     }
 
-    private FileConnectionContext getFileConnectionMapping(VirtualFile file, boolean ensure) {
+    private FileConnectionContext getFileConnectionContext(VirtualFile file, boolean ensure) {
         file = VirtualFiles.getUnderlyingFile(file);
 
         if (file instanceof FileConnectionContextProvider) {
@@ -177,59 +177,81 @@ public class FileConnectionContextRegistry extends StatefulDisposableBase implem
             }
         }
 
-        FileConnectionContext mapping = null;
+        FileConnectionContext context = null;
         if (file instanceof LightVirtualFile) {
-            mapping = file.getUserData(FILE_CONNECTION_MAPPING);
+            context = file.getUserData(FILE_CONNECTION_MAPPING);
 
-            if (mapping == null && ensure) {
-                mapping = new FileConnectionContextImpl(file);
-                file.putUserData(FILE_CONNECTION_MAPPING, mapping);
+            if (context == null && ensure) {
+                context = new FileConnectionContextImpl(file);
+                file.putUserData(FILE_CONNECTION_MAPPING, context);
             }
-            return mapping;
+            return context;
         }
 
         if (VirtualFiles.isLocalFileSystem(file)) {
-            mapping = file.getUserData(FILE_CONNECTION_MAPPING);
-            if (mapping == null) {
-                mapping = mappings.get(file.getUrl());
+            context = file.getUserData(FILE_CONNECTION_MAPPING);
+            if (context == null) {
+                context = mappings.get(file.getUrl());
 
-                if (mapping == null && ensure) {
-                    mapping = new FileConnectionContextImpl(file);
-                    mappings.put(file.getUrl(), mapping);
+                if (context == null && ensure) {
+                    context = new FileConnectionContextImpl(file);
+                    mappings.put(file.getUrl(), context);
                 }
 
-                if (mapping != null) {
-                    file.putUserData(FILE_CONNECTION_MAPPING, mapping);
+                if (context != null) {
+                    file.putUserData(FILE_CONNECTION_MAPPING, context);
                 }
             }
-            if (mapping == null) {
+            if (context == null) {
                 VirtualFile parent = file.getParent();
                 if (parent != null) {
-                    return getFileConnectionMapping(parent);
+                    return getFileConnectionContext(parent);
                 }
 
             }
         }
 
-        return mapping;
+        return context;
+    }
+
+    public void cleanup() {
+        Set<String> urls = mappings.keySet();
+        for (String url : urls) {
+            FileConnectionContext context = mappings.get(url);
+            VirtualFile file = context.getFile();
+            if (file == null) {
+                mappings.remove(url);
+                continue;
+            }
+
+            if (context.getConnectionId() == null) {
+                mappings.remove(url);
+                continue;
+            }
+
+            FileConnectionContext parentContext = getFileConnectionContext(file.getParent());
+            if (parentContext != null && parentContext.isSameAs(context)) {
+                mappings.remove(url);
+                continue;
+            }
+        }
     }
 
     public boolean removeMapping(VirtualFile file) {
-        FileConnectionContext mapping = mappings.remove(file.getUrl());
+        FileConnectionContext context = mappings.remove(file.getUrl());
         FileConnectionContext localMapping = file.getUserData(FILE_CONNECTION_MAPPING);
         file.putUserData(FILE_CONNECTION_MAPPING, null);
 
-        return mapping != null || localMapping != null;
+        return context != null || localMapping != null;
     }
 
     public List<VirtualFile> getMappedFiles(ConnectionHandler connection) {
         List<VirtualFile> list = new ArrayList<>();
 
-        LocalFileSystem localFileSystem = LocalFileSystem.getInstance();
-        for (FileConnectionContext mapping : mappings.values()) {
-            ConnectionId connectionId = mapping.getConnectionId();
+        for (FileConnectionContext context : mappings.values()) {
+            ConnectionId connectionId = context.getConnectionId();
             if (connection.getConnectionId() == connectionId) {
-                VirtualFile file = localFileSystem.findFileByPath(mapping.getFileUrl());
+                VirtualFile file = context.getFile();
                 if (file != null) {
                     list.add(file);
                 }

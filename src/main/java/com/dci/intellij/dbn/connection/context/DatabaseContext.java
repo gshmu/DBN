@@ -24,6 +24,8 @@ public interface DatabaseContext extends DatabaseInterfacesProvider {
     @Nullable
     SchemaId getSchemaId();
 
+    boolean isSameAs(DatabaseContext context);
+
     DBSchema getSchema();
 
     @Nullable

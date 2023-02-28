@@ -13,6 +13,7 @@ public final class ConnectionId extends PseudoConstant<ConnectionId> {
     public static final ConnectionId VIRTUAL_ISO92_SQL = get("virtual-iso92-sql-connection");
     public static final ConnectionId UNKNOWN = get("unknown-connection");
     public static final ConnectionId DISPOSED = get("disposed-connection");
+    public static final ConnectionId NULL = get("null-connection");
 
     private final int index;
 
