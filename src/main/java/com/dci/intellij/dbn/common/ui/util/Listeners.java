@@ -33,7 +33,7 @@ public class Listeners<T extends EventListener> {
     }
 
     public void notify(Consumer<T> notifier) {
-        container.stream().filter(l -> l != null).forEach(l -> guarded(() -> notifier.accept(l)));
+        container.stream().filter(l -> l != null).forEach(l -> guarded(notifier, n -> n.accept(l)));
     }
 
     public void clear() {

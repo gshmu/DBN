@@ -52,18 +52,18 @@ public final class Disposer {
 
     public static void dispose(@Nullable Disposable disposable) {
         try {
-            guarded(() -> {
-                if (isNotValid(disposable)) return;
+            guarded(disposable, d -> {
+                if (isNotValid(d)) return;
 
-                if (isDispatchCandidate(disposable) && !isDispatchThread()) {
-                    Dispatch.run(() -> dispose(disposable));
+                if (isDispatchCandidate(d) && !isDispatchThread()) {
+                    Dispatch.run(() -> dispose(d));
                     return;
                 }
 
-                if (disposable instanceof UnlistedDisposable) {
-                    disposable.dispose();
+                if (d instanceof UnlistedDisposable) {
+                    d.dispose();
                 } else {
-                    com.intellij.openapi.util.Disposer.dispose(disposable);
+                    com.intellij.openapi.util.Disposer.dispose(d);
                 }
 
             });

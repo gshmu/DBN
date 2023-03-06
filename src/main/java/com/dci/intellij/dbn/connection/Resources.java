@@ -8,7 +8,6 @@ import com.dci.intellij.dbn.connection.jdbc.DBNConnection;
 import com.dci.intellij.dbn.connection.jdbc.DBNResource;
 import com.dci.intellij.dbn.connection.jdbc.DBNStatement;
 import com.dci.intellij.dbn.connection.jdbc.ResourceStatus;
-import com.dci.intellij.dbn.database.DatabaseFeature;
 import lombok.extern.slf4j.Slf4j;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -22,6 +21,7 @@ import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Supplier;
 
 import static com.dci.intellij.dbn.common.util.Commons.nvl;
+import static com.dci.intellij.dbn.database.DatabaseFeature.READONLY_CONNECTIVITY;
 import static com.dci.intellij.dbn.diagnostics.Diagnostics.isDatabaseResourceDebug;
 
 @Slf4j
@@ -95,7 +95,7 @@ public final class Resources {
 
     public static void commit(DBNConnection connection) throws SQLException {
         try {
-            if (connection != null && !connection.isClosed() && !connection.getAutoCommit()) {
+            if (connection != null && !connection.isAutoCommit()) {
                 invokeResourceAction(
                         connection,
                         ResourceStatus.COMMITTING,
@@ -121,7 +121,7 @@ public final class Resources {
 
     public static void rollback(DBNConnection connection) throws SQLException {
         try {
-            if (connection != null && !connection.isClosed() && !connection.getAutoCommit()) {
+            if (connection != null && !connection.isAutoCommit()) {
                 invokeResourceAction(
                         connection,
                         ResourceStatus.ROLLING_BACK,
@@ -147,16 +147,16 @@ public final class Resources {
 
     public static void rollback(DBNConnection connection, @Nullable Savepoint savepoint) throws SQLException {
         try {
-            if (connection != null && savepoint != null && !connection.isClosed() && !connection.getAutoCommit()) {
-                String savepointId = getSavepointIdentifier(savepoint);
-                invokeResourceAction(
-                        connection,
-                        ResourceStatus.ROLLING_BACK_SAVEPOINT,
-                        () -> connection.rollback(savepoint),
-                        () -> "[DBN] Rolling-back savepoint '" + savepointId + "' on " + connection,
-                        () -> "[DBN] Done rolling-back savepoint '" + savepointId + "' on " + connection,
-                        () -> "[DBN] Failed to roll-back savepoint '" + savepointId + "' on " + connection);
-            }
+            if (connection == null || savepoint == null || connection.isAutoCommit()) return;
+
+            String savepointId = getSavepointIdentifier(savepoint);
+            invokeResourceAction(
+                    connection,
+                    ResourceStatus.ROLLING_BACK_SAVEPOINT,
+                    () -> connection.rollback(savepoint),
+                    () -> "[DBN] Rolling-back savepoint '" + savepointId + "' on " + connection,
+                    () -> "[DBN] Done rolling-back savepoint '" + savepointId + "' on " + connection,
+                    () -> "[DBN] Failed to roll-back savepoint '" + savepointId + "' on " + connection);
         } catch (SQLRecoverableException ignore) {
         } catch (SQLException e) {
             sentWarningNotification(
@@ -170,17 +170,17 @@ public final class Resources {
 
     public static @Nullable Savepoint createSavepoint(DBNConnection connection) {
         try {
-            if (connection != null && !connection.isClosed() && !connection.getAutoCommit()) {
-                AtomicReference<Savepoint> savepoint = new AtomicReference<>();
-                invokeResourceAction(
-                        connection,
-                        ResourceStatus.CREATING_SAVEPOINT,
-                        () -> savepoint.set(connection.setSavepoint()),
-                        () -> "[DBN] Creating savepoint on " + connection,
-                        () -> "[DBN] Done creating savepoint on " + connection,
-                        () -> "[DBN] Failed to create savepoint on " + connection);
-                return savepoint.get();
-            }
+            if (connection == null || connection.isAutoCommit()) return null;
+
+            AtomicReference<Savepoint> savepoint = new AtomicReference<>();
+            invokeResourceAction(
+                    connection,
+                    ResourceStatus.CREATING_SAVEPOINT,
+                    () -> savepoint.set(connection.setSavepoint()),
+                    () -> "[DBN] Creating savepoint on " + connection,
+                    () -> "[DBN] Done creating savepoint on " + connection,
+                    () -> "[DBN] Failed to create savepoint on " + connection);
+            return savepoint.get();
         } catch (SQLRecoverableException ignore) {
         } catch (SQLException e) {
             sentWarningNotification(
@@ -194,16 +194,16 @@ public final class Resources {
 
     public static void releaseSavepoint(DBNConnection connection, @Nullable Savepoint savepoint) {
         try {
-            if (connection != null && savepoint != null && !connection.isClosed() && !connection.getAutoCommit()) {
-                String savepointId = getSavepointIdentifier(savepoint);
-                invokeResourceAction(
-                        connection,
-                        ResourceStatus.RELEASING_SAVEPOINT,
-                        () -> connection.releaseSavepoint(savepoint),
-                        () -> "[DBN] Releasing savepoint '" + savepointId + "' on " + connection,
-                        () -> "[DBN] Done releasing savepoint '" + savepointId + "' on " + connection,
-                        () -> "[DBN] Failed to release savepoint '" + savepointId + "' on " + connection);
-            }
+            if (connection == null || savepoint == null || connection.isAutoCommit()) return;
+
+            String savepointId = getSavepointIdentifier(savepoint);
+            invokeResourceAction(
+                    connection,
+                    ResourceStatus.RELEASING_SAVEPOINT,
+                    () -> connection.releaseSavepoint(savepoint),
+                    () -> "[DBN] Releasing savepoint '" + savepointId + "' on " + connection,
+                    () -> "[DBN] Done releasing savepoint '" + savepointId + "' on " + connection,
+                    () -> "[DBN] Failed to release savepoint '" + savepointId + "' on " + connection);
         } catch (SQLRecoverableException ignore) {
         } catch (SQLException e) {
             sentWarningNotification(
@@ -215,39 +215,37 @@ public final class Resources {
     }
 
     public static void setReadonly(ConnectionHandler connection, DBNConnection conn, boolean readonly) {
-        boolean readonlySupported = DatabaseFeature.READONLY_CONNECTIVITY.isSupported(connection);
-        if (readonlySupported) {
-            try {
-                invokeResourceAction(
-                        conn,
-                        ResourceStatus.CHANGING_READ_ONLY,
-                        () -> conn.setReadOnly(readonly),
-                        () -> "[DBN] Applying status READ_ONLY=" + readonly + " on " + conn,
-                        () -> "[DBN] Done applying status READ_ONLY=" + readonly + " on " + conn,
-                        () -> "[DBN] Failed to apply status READ_ONLY=" + readonly + " on " + conn);
-            } catch (SQLRecoverableException ignore) {
-            } catch (SQLException e) {
-                sentWarningNotification(
-                        NotificationGroup.CONNECTION,
-                        "Failed to initialize readonly status for",
-                        conn,
-                        e);
-            }
+        if (READONLY_CONNECTIVITY.isNotSupported(connection)) return;
+
+        try {
+            invokeResourceAction(
+                    conn,
+                    ResourceStatus.CHANGING_READ_ONLY,
+                    () -> conn.setReadOnly(readonly),
+                    () -> "[DBN] Applying status READ_ONLY=" + readonly + " on " + conn,
+                    () -> "[DBN] Done applying status READ_ONLY=" + readonly + " on " + conn,
+                    () -> "[DBN] Failed to apply status READ_ONLY=" + readonly + " on " + conn);
+        } catch (SQLRecoverableException ignore) {
+        } catch (SQLException e) {
+            sentWarningNotification(
+                    NotificationGroup.CONNECTION,
+                    "Failed to initialize readonly status for",
+                    conn,
+                    e);
         }
     }
 
     public static void setAutoCommit(DBNConnection connection, boolean autoCommit) {
         try {
-            if (connection != null && !connection.isClosed()) {
-                invokeResourceAction(
-                        connection,
-                        ResourceStatus.CHANGING_AUTO_COMMIT, () -> connection.setAutoCommit(autoCommit),
-                        () -> "[DBN] Applying status AUTO_COMMIT=" + autoCommit + " on " + connection,
-                        () -> "[DBN] Done applying status AUTO_COMMIT=" + autoCommit + " on " + connection,
-                        () -> "[DBN] Failed to apply status AUTO_COMMIT=" + autoCommit + " on " + connection);
+            if (connection == null) return;
+            invokeResourceAction(
+                    connection,
+                    ResourceStatus.CHANGING_AUTO_COMMIT, () -> connection.setAutoCommit(autoCommit),
+                    () -> "[DBN] Applying status AUTO_COMMIT=" + autoCommit + " on " + connection,
+                    () -> "[DBN] Done applying status AUTO_COMMIT=" + autoCommit + " on " + connection,
+                    () -> "[DBN] Failed to apply status AUTO_COMMIT=" + autoCommit + " on " + connection);
 
-                connection.setAutoCommit(autoCommit);
-            }
+            connection.setAutoCommit(autoCommit);
         } catch (SQLRecoverableException ignore) {
         } catch (Exception e) {
             sentWarningNotification(

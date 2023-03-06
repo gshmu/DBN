@@ -114,9 +114,9 @@ public class SessionBrowserTable extends ResultSetTable<SessionBrowserModel> {
     private final ListSelectionListener listSelectionListener = e -> {
         if (e.getValueIsAdjusting()) return;
 
-        guarded(() -> {
-            snapshotSelection();
-            SessionBrowser sessionBrowser = getSessionBrowser();
+        guarded(this, t -> {
+            t.snapshotSelection();
+            SessionBrowser sessionBrowser = t.getSessionBrowser();
             sessionBrowser.updateDetails();
         });
     };

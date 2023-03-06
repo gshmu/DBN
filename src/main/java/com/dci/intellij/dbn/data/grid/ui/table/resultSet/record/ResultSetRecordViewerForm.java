@@ -315,17 +315,11 @@ public class ResultSetRecordViewerForm extends DBNFormBase {
 
 
     private int getRowIndex() {
-        return guarded(-1, () -> {
-            ResultSetDataModelRow<?, ?> row = getRow();
-            return row.getIndex();
-        });
+        return guarded(-1, this, f -> f.getRow().getIndex());
     }
 
     private int getRowCount() {
-        return guarded(0, () -> {
-            ResultSetDataModelRow<?, ?> row = getRow();
-            return row.getModel().getRowCount();
-        });
+        return guarded(0, this, f -> f.getRow().getModel().getRowCount());
     }
 
 

@@ -208,7 +208,7 @@ public class SessionBrowser extends DisposableUserDataHolderBase implements File
     @Override
     @Nullable
     public JComponent getPreferredFocusedComponent() {
-        return guarded(null, () -> getBrowserTable());
+        return guarded(null, this, b -> b.getBrowserTable());
     }
 
     @Override

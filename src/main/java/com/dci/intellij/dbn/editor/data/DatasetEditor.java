@@ -163,7 +163,7 @@ public class DatasetEditor extends DisposableUserDataHolderBase implements
     @Override
     @Nullable
     public JComponent getPreferredFocusedComponent() {
-        return guarded(null, () -> getEditorForm().getComponent());
+        return guarded(null, this, e -> e.getEditorForm().getComponent());
     }
 
     @Override

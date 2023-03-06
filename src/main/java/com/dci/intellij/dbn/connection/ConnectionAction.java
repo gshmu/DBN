@@ -81,7 +81,7 @@ public abstract class ConnectionAction implements DatabaseContextBase, Runnable{
                         instructions.setAllowAutoInit(true);
                         instructions.setAllowAutoConnect(true);
                         if (connection.isAuthenticationProvided()) {
-                            guarded(() -> run());
+                            guarded(this, r -> r.run());
                         } else {
                             promptAuthenticationDialog();
                         }

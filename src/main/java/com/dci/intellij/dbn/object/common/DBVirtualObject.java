@@ -81,7 +81,7 @@ public class DBVirtualObject extends DBObjectImpl implements PsiReference {
     private final Map<String, ObjectLookupItemBuilder> lookupItemBuilder = new ConcurrentHashMap<>();
 
     private final Latent<Boolean> valid = Latent.timed(10, TimeUnit.SECONDS, () -> {
-        boolean valid = checkValid();
+        boolean valid = Failsafe.guarded(true, this, o -> o.checkValid());
         if (!valid) Disposer.dispose(this);
         return valid;
     });

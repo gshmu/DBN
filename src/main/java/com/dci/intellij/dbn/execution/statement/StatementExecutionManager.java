@@ -90,9 +90,9 @@ public class StatementExecutionManager extends ProjectComponentBase implements P
 
             @Override
             public void transactionCompleted(@NotNull Document document, @NotNull PsiFile file) {
-                guarded(() -> {
-                    Project project = file.getProject();
-                    VirtualFile virtualFile = file.getVirtualFile();
+                guarded(file, f -> {
+                    Project project = f.getProject();
+                    VirtualFile virtualFile = f.getVirtualFile();
                     if (virtualFile.isInLocalFileSystem()) {
                         List<FileEditor> scriptFileEditors = Editors.getScriptFileEditors(project, virtualFile);
                         for (FileEditor scriptFileEditor : scriptFileEditors) {
