@@ -439,26 +439,26 @@ public class ConnectionManager extends ProjectComponentBase implements Persisten
         }
 
         private void resolveIdleStatus(ConnectionHandler connection) {
-            guarded(() -> {
-                if (isNotValid(connection) || isNotValid(connection.getProject())) return;
+            guarded(connection, c -> {
+                if (isNotValid(c) || isNotValid(c.getProject())) return;
 
                 List<TransactionAction> actions = actions(TransactionAction.DISCONNECT_IDLE);
                 DatabaseTransactionManager transactionManager = DatabaseTransactionManager.getInstance(getProject());
-                List<DBNConnection> connections = connection.getConnections(ConnectionType.MAIN, ConnectionType.SESSION);
+                List<DBNConnection> connections = c.getConnections(ConnectionType.MAIN, ConnectionType.SESSION);
 
                 for (DBNConnection conn : connections) {
                     if (conn.isIdle() && conn.isNot(ResourceStatus.RESOLVING_TRANSACTION)) {
                         int idleMinutes = conn.getIdleMinutes();
-                        int idleMinutesToDisconnect = connection.getSettings().getDetailSettings().getIdleMinutesToDisconnect();
+                        int idleMinutesToDisconnect = c.getSettings().getDetailSettings().getIdleMinutesToDisconnect();
                         if (idleMinutes > idleMinutesToDisconnect) {
                             if (conn.hasDataChanges()) {
                                 conn.set(ResourceStatus.RESOLVING_TRANSACTION, true);
                                 Dispatch.run(() -> {
-                                    IdleConnectionDialog idleConnectionDialog = new IdleConnectionDialog(connection, conn);
+                                    IdleConnectionDialog idleConnectionDialog = new IdleConnectionDialog(c, conn);
                                     idleConnectionDialog.show();
                                 });
                             } else {
-                                transactionManager.execute(connection, conn, actions, false, null);
+                                transactionManager.execute(c, conn, actions, false, null);
                             }
                         }
                     }

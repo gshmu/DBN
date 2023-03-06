@@ -26,7 +26,7 @@ public final class Commons {
     @Nullable
     public static <T> T coalesce(Supplier<T>... suppliers) {
         for (Supplier<T> supplier : suppliers) {
-            T value = guarded(null, () -> supplier.get());
+            T value = guarded(null, supplier, s -> s.get());
             if (value != null) {
                 return value;
             }

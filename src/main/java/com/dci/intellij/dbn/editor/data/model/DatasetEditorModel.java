@@ -268,7 +268,7 @@ public class DatasetEditorModel
     @NotNull
     @Override
     public DatasetEditorState getState() {
-        return guarded(DatasetEditorState.VOID, () -> getDatasetEditor().getEditorState());
+        return guarded(DatasetEditorState.VOID, this, m -> m.getDatasetEditor().getEditorState());
     }
 
     private boolean hasChanges() {

@@ -498,7 +498,7 @@ public abstract class IdentifierPsiElement extends LeafPsiElement<IdentifierElem
     @Override
     @Nullable
     public PsiElement resolve() {
-        return guarded(null,  () -> doResolve());
+        return guarded(null,  this, e -> e.doResolve());
     }
 
     @Nullable

@@ -26,7 +26,7 @@ public final class Dispatch {
 
     public static void run(boolean conditional, Runnable runnable) {
         if (conditional && ThreadMonitor.isDispatchThread()) {
-            guarded(() -> runnable.run());
+            guarded(runnable, r -> r.run());
         } else {
             run(null, runnable);
         }

@@ -74,13 +74,13 @@ public final class StatementExecutionQueue extends StatefulDisposableBase {
     }
 
     private void execute(StatementExecutionProcessor processor) {
-        guarded(() -> {
+        guarded(processor, p -> {
             Project project = getProject();
-            ExecutionContext context = processor.getExecutionContext();
+            ExecutionContext context = p.getExecutionContext();
             context.set(QUEUED, false);
             context.set(EXECUTING, true);
             StatementExecutionManager statementExecutionManager = StatementExecutionManager.getInstance(project);
-            statementExecutionManager.process(processor);
+            statementExecutionManager.process(p);
         });
     }
 
