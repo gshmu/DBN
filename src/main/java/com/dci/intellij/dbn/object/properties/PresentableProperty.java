@@ -14,7 +14,7 @@ public abstract class PresentableProperty {
     public abstract Icon getIcon();
 
     public String toString() {
-        return guarded("DISPOSED", () -> getName() + ": " + getValue());
+        return guarded("DISPOSED", this, p -> p.getName() + ": " + p.getValue());
     }
 
     public abstract Navigatable getNavigatable();

@@ -1,6 +1,7 @@
 package com.dci.intellij.dbn.browser.model;
 
 import com.dci.intellij.dbn.browser.DatabaseBrowserUtils;
+import com.dci.intellij.dbn.common.Pair;
 import com.dci.intellij.dbn.common.dispose.StatefulDisposable;
 import com.dci.intellij.dbn.common.dispose.StatefulDisposableBase;
 import com.dci.intellij.dbn.common.event.ProjectEvents;
@@ -89,17 +90,21 @@ public abstract class BrowserTreeModel extends StatefulDisposableBase implements
 
     @Override
     public int getChildCount(Object parent) {
-        return guarded(0, () -> ((BrowserTreeNode) parent).getChildCount());
+        BrowserTreeNode parentNode = (BrowserTreeNode) parent;
+        return guarded(0, parentNode, p -> p.getChildCount());
     }
 
     @Override
     public boolean isLeaf(Object node) {
-        return guarded(true, () -> ((BrowserTreeNode) node).isLeaf());
+        BrowserTreeNode treeNode = (BrowserTreeNode) node;
+        return guarded(true, treeNode, n -> n.isLeaf());
     }
 
     @Override
     public int getIndexOfChild(Object parent, Object child) {
-        return guarded(-1, () -> ((BrowserTreeNode) parent).getIndex((BrowserTreeNode) child));
+        BrowserTreeNode parentNode = (BrowserTreeNode) parent;
+        BrowserTreeNode childNode = (BrowserTreeNode) child;
+        return guarded(-1, Pair.of(parentNode, childNode), p -> p.first().getIndex(p.second()));
     }
 
     @Override

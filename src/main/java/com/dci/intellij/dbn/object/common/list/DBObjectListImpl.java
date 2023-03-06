@@ -318,15 +318,14 @@ public class DBObjectListImpl<T extends DBObject> extends DynamicContentBase<T> 
 
     @Override
     public void notifyChangeListeners() {
-        guarded(() -> {
-            Project project = getProject();
-            BrowserTreeNode treeParent = getParent();
-            if (!isInternal() && isTouched() && isValid(project) && treeParent.isTreeStructureLoaded()) {
+        guarded(this, l -> {
+            Project project = l.getProject();
+            BrowserTreeNode treeParent = l.getParent();
+            if (!l.isInternal() && l.isTouched() && isValid(project) && treeParent.isTreeStructureLoaded()) {
                 ProjectEvents.notify(project,
                         BrowserTreeEventListener.TOPIC,
-                        (listener) -> listener.nodeChanged(this, TreeEventType.STRUCTURE_CHANGED));
-            }
-        });
+                        (listener) -> listener.nodeChanged(l, TreeEventType.STRUCTURE_CHANGED));
+            }        });
     }
 
     /*********************************************************
