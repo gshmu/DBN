@@ -37,8 +37,7 @@ public class Failsafe {
             error(ignore);
             return defaultValue;
         } catch (Exception e) {
-            error(e);
-            dodgyADE(e);
+            throwExecutionException(e);
             return defaultValue;
 
         }
@@ -51,8 +50,7 @@ public class Failsafe {
             error(ignore);
             return defaultValue;
         } catch (Exception e) {
-            error(e);
-            dodgyADE(e);
+            throwExecutionException(e);
             return defaultValue;
 
         }
@@ -65,8 +63,7 @@ public class Failsafe {
         } catch (ProcessCanceledException | IllegalStateException | AbstractMethodError ignore /*| UnsupportedOperationException*/){
             error(ignore);
         } catch (Exception e) {
-            error(e);
-            dodgyADE(e);
+            throwExecutionException(e);
         }
     }
 
@@ -76,8 +73,7 @@ public class Failsafe {
         } catch (ProcessCanceledException | IllegalStateException | AbstractMethodError ignore /*| UnsupportedOperationException*/){
             error(ignore);
         } catch (Exception e) {
-            error(e);
-            dodgyADE(e);
+            throwExecutionException(e);
         }
     }
 
@@ -85,11 +81,11 @@ public class Failsafe {
         if (Diagnostics.isFailsafeLoggingEnabled()) log.warn("Failsafe process failed", exception);
     }
 
-    @Deprecated
     @SneakyThrows
-    private static void dodgyADE(Exception e) {
+    private static void throwExecutionException(Exception e) {
         // DBNE-4876 (????!!)
         if (!e.getClass().getName().equals(AlreadyDisposedException.class.getName())) {
+            error(e);
             throw e;
         }
     }

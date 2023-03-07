@@ -730,21 +730,19 @@ public abstract class BasePsiElement<T extends ElementTypeBase> extends ASTDeleg
         if (!isVirtualObject()) return null;
 
         return underlyingObjectCache.compute(this, (k, v) -> {
-            if (v == null || !v.isValid()) {
-                DBObjectType virtualObjectType = k.getElementType().getVirtualObjectType();
-                v = new DBVirtualObject(virtualObjectType, this);
-            }
-            return v;
+            if (v != null && v.isValid()) return v;
+
+            DBObjectType virtualObjectType = k.getElementType().getVirtualObjectType();
+            return new DBVirtualObject(virtualObjectType, this);
         });
     }
 
     public QuoteDefinition getIdentifierQuotes() {
         ConnectionHandler connection = getConnection();
-        if (connection != null) {
-            DatabaseCompatibilityInterface compatibility = connection.getCompatibilityInterface();
-            return compatibility.getIdentifierQuotes();
-        }
-        return QuoteDefinition.DEFAULT_IDENTIFIER_QUOTE_DEFINITION;
+        if (connection == null) return QuoteDefinition.DEFAULT_IDENTIFIER_QUOTE_DEFINITION;
+
+        DatabaseCompatibilityInterface compatibility = connection.getCompatibilityInterface();
+        return compatibility.getIdentifierQuotes();
     }
 
 

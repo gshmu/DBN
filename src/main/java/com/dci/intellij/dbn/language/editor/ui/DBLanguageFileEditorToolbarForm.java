@@ -11,7 +11,6 @@ import com.dci.intellij.dbn.connection.session.DatabaseSession;
 import com.intellij.openapi.Disposable;
 import com.intellij.openapi.actionSystem.ActionToolbar;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.util.Key;
 import com.intellij.openapi.vfs.VirtualFile;
 import org.jetbrains.annotations.NotNull;
 
@@ -19,7 +18,6 @@ import javax.swing.*;
 import java.awt.*;
 
 public class DBLanguageFileEditorToolbarForm extends DBNFormBase {
-    public static final Key<DBLanguageFileEditorToolbarForm> USER_DATA_KEY = new Key<>("fileEditorToolbarForm");
     private JPanel mainPanel;
     private JPanel actionsPanel;
     private AutoCommitLabel autoCommitLabel;
