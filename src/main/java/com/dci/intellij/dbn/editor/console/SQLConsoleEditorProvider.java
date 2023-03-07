@@ -2,7 +2,6 @@ package com.dci.intellij.dbn.editor.console;
 
 import com.dci.intellij.dbn.common.editor.BasicTextEditorProvider;
 import com.dci.intellij.dbn.editor.EditorProviderId;
-import com.dci.intellij.dbn.editor.console.ui.SQLConsoleEditorToolbarForm;
 import com.dci.intellij.dbn.vfs.file.DBConsoleVirtualFile;
 import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.fileEditor.FileEditor;
@@ -14,8 +13,6 @@ import com.intellij.openapi.vfs.VirtualFile;
 import org.jdom.Element;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
-
-import java.awt.BorderLayout;
 
 
 public class SQLConsoleEditorProvider extends BasicTextEditorProvider implements DumbAware{
@@ -46,8 +43,6 @@ public class SQLConsoleEditorProvider extends BasicTextEditorProvider implements
     public FileEditor createEditor(@NotNull Project project, @NotNull VirtualFile file) {
         DBConsoleVirtualFile consoleVirtualFile = (DBConsoleVirtualFile) file;
         SQLConsoleEditor editor = new SQLConsoleEditor(project, consoleVirtualFile, "SQL Console", getEditorProviderId());
-        SQLConsoleEditorToolbarForm toolbarForm = new SQLConsoleEditorToolbarForm(project, editor);
-        editor.getComponent().add(toolbarForm.getComponent(), BorderLayout.NORTH);
 
         Document document = editor.getEditor().getDocument();
         int documentSignature = document.hashCode();
