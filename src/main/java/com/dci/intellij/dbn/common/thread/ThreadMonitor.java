@@ -1,10 +1,8 @@
 package com.dci.intellij.dbn.common.thread;
 
-import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.common.routine.ThrowableCallable;
 import com.dci.intellij.dbn.common.routine.ThrowableRunnable;
 import com.intellij.openapi.application.ApplicationManager;
-import com.intellij.openapi.progress.ProcessCanceledException;
 import com.intellij.openapi.project.Project;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -13,6 +11,7 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicInteger;
 
+import static com.dci.intellij.dbn.common.dispose.Failsafe.guarded;
 import static com.dci.intellij.dbn.common.thread.ThreadProperty.*;
 
 public class ThreadMonitor {
@@ -43,7 +42,7 @@ public class ThreadMonitor {
         try {
             threadInfo.set(property, true);
             threadInfo.setProject(project);
-            runnable.run();
+            guarded(runnable);
         } finally {
             threadInfo.set(property, false);
             threadInfo.setProject(originalProject);
@@ -60,7 +59,7 @@ public class ThreadMonitor {
         try {
             threadInfo.set(property, true);
             threadInfo.setProject(project);
-            return callable.call();
+            return guarded(null, callable, c -> c.call());
         } finally {
             threadInfo.set(property, false);
             threadInfo.setProject(originalProject);
@@ -84,8 +83,7 @@ public class ThreadMonitor {
             threadInfo.set(property, true);
             threadInfo.setProject(project);
             threadInfo.merge(invoker);
-            Failsafe.guarded(runnable);
-        } catch (ProcessCanceledException  ignore){
+            guarded(runnable);
         } finally {
             threadInfo.set(property, originalProperty);
             threadInfo.setProject(originalProject);
@@ -111,9 +109,7 @@ public class ThreadMonitor {
             threadInfo.set(property, true);
             threadInfo.setProject(project);
             threadInfo.merge(invoker);
-            return callable.call();
-        } catch (ProcessCanceledException e) {
-            return defaultValue;
+            return guarded(defaultValue, callable, c -> c.call());
         } finally {
             threadInfo.set(property, originalProperty);
             threadInfo.setProject(originalProject);
