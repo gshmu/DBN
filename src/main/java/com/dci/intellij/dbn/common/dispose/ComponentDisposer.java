@@ -27,10 +27,8 @@ public final class ComponentDisposer {
             Method method = methodPair.first();
             Class[] params = methodPair.second();
             EventListener[] listeners = Unsafe.silent(new EventListener[0], () -> comp.getListeners(params[0]));
-            if (listeners.length > 0) {
-                for (EventListener listener : listeners) {
-                    Unsafe.silent(() -> method.invoke(comp, listener));
-                }
+            for (EventListener listener : listeners) {
+                Unsafe.silent(() -> method.invoke(comp, listener));
             }
         }
 
