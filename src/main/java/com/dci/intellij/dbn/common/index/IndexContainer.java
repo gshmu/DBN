@@ -1,6 +1,7 @@
 package com.dci.intellij.dbn.common.index;
 
 import com.dci.intellij.dbn.common.util.Compactable;
+import com.dci.intellij.dbn.common.util.Unsafe;
 import gnu.trove.TIntHashSet;
 import gnu.trove.TIntIterator;
 
@@ -22,12 +23,8 @@ public class IndexContainer<T extends Indexable> implements Compactable {
     }
 
     public boolean contains(T indexable) {
-        try {
-            return INDEX.contains(indexable.index());
-        } catch (IndexOutOfBoundsException e) {
-            // TODO temporary workaround - happens in parser lookup caches (probably due to latent background initialisation)
-            return false;
-        }
+        // TODO workaround - IOOBE, NPE happens in parser lookup caches (probably due to latent background initialisation)
+        return Unsafe.silent(false, indexable, p -> INDEX.contains(p.index()));
     }
 
     public Set<T> elements(Function<Integer, T> resolver) {

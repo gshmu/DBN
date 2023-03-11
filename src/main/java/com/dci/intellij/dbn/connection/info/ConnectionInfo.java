@@ -22,8 +22,8 @@ public class ConnectionInfo {
     public ConnectionInfo(DatabaseMetaData metaData) throws SQLException {
         productName = metaData.getDatabaseProductName();
         productVersion = resolveProductVersion(metaData);
-        driverName = Unsafe.silent("UNKNOWN", () -> metaData.getDriverName());
-        driverVersion = Unsafe.silent("UNKNOWN", () -> metaData.getDriverVersion());
+        driverName = Unsafe.silent("UNKNOWN", metaData, md -> md.getDriverName());
+        driverVersion = Unsafe.silent("UNKNOWN", metaData, md -> md.getDriverVersion());
         url = metaData.getURL();
         userName = metaData.getUserName();
         driverJdbcType = resolveDriverType(metaData);
@@ -32,14 +32,14 @@ public class ConnectionInfo {
 
     @NotNull
     private static String resolveDriverType(DatabaseMetaData metaData) throws SQLException {
-        int majorVersion = Unsafe.silent(0, () -> metaData.getJDBCMajorVersion());
-        int minorVersion = Unsafe.silent(0, () -> metaData.getJDBCMinorVersion());
+        int majorVersion = Unsafe.silent(0, metaData, md -> md.getJDBCMajorVersion());
+        int minorVersion = Unsafe.silent(0, metaData, md -> md.getJDBCMinorVersion());
         return majorVersion + (minorVersion > 0 ? "." + minorVersion : "");
     }
 
     @NotNull
     private static String resolveProductVersion(DatabaseMetaData metaData) throws SQLException {
-        String productVersion = Unsafe.silent("UNKNOWN", () -> metaData.getDatabaseProductVersion());
+        String productVersion = Unsafe.silent("UNKNOWN", metaData, md -> md.getDatabaseProductVersion());
         int index = productVersion.indexOf('\n');
         productVersion = index > -1 ? productVersion.substring(0, index) : productVersion;
         return productVersion.trim();
