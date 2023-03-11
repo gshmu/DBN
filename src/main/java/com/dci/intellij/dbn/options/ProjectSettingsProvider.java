@@ -2,6 +2,7 @@ package com.dci.intellij.dbn.options;
 
 import com.dci.intellij.dbn.common.compatibility.Workaround;
 import com.dci.intellij.dbn.common.project.ProjectRef;
+import com.dci.intellij.dbn.common.util.Unsafe;
 import com.intellij.openapi.options.Configurable;
 import com.intellij.openapi.options.ConfigurableEP;
 import com.intellij.openapi.options.ConfigurableProvider;
@@ -25,11 +26,13 @@ public class ProjectSettingsProvider extends ConfigurableProvider{
      */
     @Workaround // https://youtrack.jetbrains.com/issue/IDEA-313711
     public static void init(Project project) {
-        for (ConfigurableEP<Configurable> extension : Configurable.PROJECT_CONFIGURABLE.getExtensions(project)) {
-            if (ProjectSettingsProvider.class.getName().equals(extension.providerClass)) {
-                ConfigurableWrapper.wrapConfigurable(extension, true);
+        Unsafe.silent(() -> {
+            for (ConfigurableEP<Configurable> extension : Configurable.PROJECT_CONFIGURABLE.getExtensions(project)) {
+                if (ProjectSettingsProvider.class.getName().equals(extension.providerClass)) {
+                    ConfigurableWrapper.wrapConfigurable(extension, true);
+                }
             }
-        }
+        });
     }
 
     @Nullable
