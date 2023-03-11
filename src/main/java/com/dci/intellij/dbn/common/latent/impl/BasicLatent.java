@@ -17,7 +17,7 @@ public class BasicLatent<T> implements Latent<T> {
             synchronized (this) {
                 if (shouldLoad()) {
                     beforeLoad();
-                    T newValue = loader == null ? null : loader.load();
+                    T newValue = loader == null ? value : loader.load();
                     if (value != newValue) {
                         value = newValue;
                     }
