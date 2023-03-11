@@ -90,7 +90,7 @@ public final class Resources {
     }
 
     public static void commitSilently(DBNConnection connection) {
-        Unsafe.silent(() -> commit(connection));
+        Unsafe.silent(connection, c -> commit(c));
     }
 
     public static void commit(DBNConnection connection) throws SQLException {
@@ -116,7 +116,7 @@ public final class Resources {
     }
 
     public static void rollbackSilently(DBNConnection connection) {
-        Unsafe.silent(() -> rollback(connection));
+        Unsafe.silent(connection, c -> rollback(c));
     }
 
     public static void rollback(DBNConnection connection) throws SQLException {
