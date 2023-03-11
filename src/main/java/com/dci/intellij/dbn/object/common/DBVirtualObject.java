@@ -196,6 +196,7 @@ public class DBVirtualObject extends DBObjectImpl implements PsiReference {
 
     @Override
     public boolean isValid() {
+        if (isDisposed()) return false;
         return valid.get();
     }
 
