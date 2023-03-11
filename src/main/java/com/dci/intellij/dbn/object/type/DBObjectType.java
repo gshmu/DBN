@@ -384,6 +384,8 @@ public enum DBObjectType implements DynamicContentType<DBObjectType> {
 
         PACKAGE.addIcon(DBContentType.CODE_SPEC, Icons.DBO_PACKAGE_SPEC);
         PACKAGE.addIcon(DBContentType.CODE_BODY, Icons.DBO_PACKAGE_BODY);
+        TYPE.addIcon(DBContentType.CODE_SPEC, Icons.DBO_TYPE_SPEC);
+        TYPE.addIcon(DBContentType.CODE_BODY, Icons.DBO_TYPE_BODY);
 
         //INCOMING_DEPENDENCY.setGenericType(ANY);
         //OUTGOING_DEPENDENCY.setGenericType(ANY);

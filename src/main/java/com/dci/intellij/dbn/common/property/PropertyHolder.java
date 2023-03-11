@@ -11,11 +11,15 @@ public interface PropertyHolder<T extends Property> {
 
     default void conditional(T property, Runnable runnable) {
         if(isNot(property)) {
-            try {
-                set(property, true);
-                runnable.run();
-            } finally {
-                set(property, false);
+            synchronized (this) {
+                if (isNot(property)) {
+                    try {
+                        set(property, true);
+                        runnable.run();
+                    } finally {
+                        set(property, false);
+                    }
+                }
             }
         }
     }

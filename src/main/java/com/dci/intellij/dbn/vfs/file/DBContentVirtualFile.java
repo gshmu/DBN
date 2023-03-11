@@ -17,17 +17,21 @@ import com.dci.intellij.dbn.object.DBView;
 import com.dci.intellij.dbn.object.common.DBObject;
 import com.dci.intellij.dbn.object.common.DBSchemaObject;
 import com.dci.intellij.dbn.object.lookup.DBObjectRef;
+import com.dci.intellij.dbn.object.type.DBObjectType;
 import com.dci.intellij.dbn.vfs.DBVirtualFileBase;
 import com.dci.intellij.dbn.vfs.VirtualFileStatus;
 import com.dci.intellij.dbn.vfs.VirtualFileStatusHolder;
 import com.intellij.openapi.fileTypes.FileType;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
+import lombok.Getter;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
+import java.io.File;
 
+@Getter
 public abstract class DBContentVirtualFile extends DBVirtualFileBase implements PropertyHolder<VirtualFileStatus>  {
     private final WeakRef<DBEditableObjectVirtualFile> mainDatabaseFile;
     private final FileType fileType;
@@ -70,10 +74,6 @@ public abstract class DBContentVirtualFile extends DBVirtualFileBase implements 
         return mainDatabaseFile.ensure();
     }
 
-    public DBContentType getContentType() {
-        return contentType;
-    }
-
     @Override
     public boolean isValid() {
         DBEditableObjectVirtualFile mainDatabaseFile = this.mainDatabaseFile.get();
@@ -111,11 +111,19 @@ public abstract class DBContentVirtualFile extends DBVirtualFileBase implements 
     /*********************************************************
      *                     VirtualFile                       *
      *********************************************************/
-
-    @Override
     @NotNull
-    public FileType getFileType() {
-        return fileType;
+    public String getPresentablePath() {
+        DBObjectRef<DBSchemaObject> object = getMainDatabaseFile().getObjectRef();
+        return getConnection().getName() + File.separatorChar +
+                object.getObjectType().getListName() + File.separatorChar +
+                object.getQualifiedName() + " - " + getContentType().getDescription();
+    }
+
+    @NotNull
+    @Override
+    public String getPresentableName() {
+        DBObjectRef<DBSchemaObject> object = getMainDatabaseFile().getObjectRef();
+        return object.getObjectName() + " - " + getContentType().getDescription();
     }
 
     @Override
@@ -137,7 +145,9 @@ public abstract class DBContentVirtualFile extends DBVirtualFileBase implements 
 
     @Override
     public Icon getIcon() {
-        return getObject().getOriginalIcon();
+        DBObjectType objectType = getObject().getObjectType();
+        DBContentType contentType = getContentType();
+        return objectType.getIcon(contentType);
     }
 
     @Override
