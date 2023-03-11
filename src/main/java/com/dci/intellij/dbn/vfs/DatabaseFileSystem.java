@@ -131,24 +131,13 @@ public class DatabaseFileSystem extends VirtualFileSystem implements /*NonPhysic
             DBObjectRef<DBSchemaObject> objectRef = new DBObjectRef<>(connectionId, objectIdentifier);
             DBEditableObjectVirtualFile databaseFile = findOrCreateDatabaseFile(project, objectRef);
 
-/*            if (!ThreadMonitor.current().is(ThreadProperty.EDITOR_LOAD)) {
-                if (!databaseFile.isEditorReady()) {
-                    // TODO
-                    //Background.run(project, () -> databaseFile.makeEditorReady());
-                    return null;
-                }
-            }*/
             return databaseFile;
 
         } else if (OBJECT_CONTENTS.is(relativePath)) {
-/*            if (Traces.isCalledThrough(EditorHistoryManager.class)) {
-                // database editors with multiple providers (split virtual files)
-                return null;
-            }*/
             String contentIdentifier = OBJECT_CONTENTS.collate(relativePath);
             int contentTypeEndIndex = contentIdentifier.indexOf(PS);
             String contentTypeStr = contentIdentifier.substring(0, contentTypeEndIndex);
-            DBContentType contentType = DBContentType.valueOf(contentTypeStr.toUpperCase());
+            DBContentType contentType = DBContentType.valueOf(contentTypeStr);
 
             String objectIdentifier = contentIdentifier.substring(contentTypeEndIndex + 1);
             DBObjectRef<DBSchemaObject> objectRef = new DBObjectRef<>(connectionId, objectIdentifier);
