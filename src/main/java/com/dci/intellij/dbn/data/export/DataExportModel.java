@@ -3,6 +3,8 @@ package com.dci.intellij.dbn.data.export;
 import com.dci.intellij.dbn.data.type.GenericDataType;
 import com.intellij.openapi.project.Project;
 
+import java.util.List;
+
 public interface DataExportModel {
     String getTableName();
     int getColumnCount();
@@ -12,4 +14,7 @@ public interface DataExportModel {
     String getColumnFriendlyName(int columnIndex);
     GenericDataType getGenericDataType(int columnIndex);
     Project getProject();
+    List<String> getWarnings();
+
+    void addWarning(String warning);
 }
