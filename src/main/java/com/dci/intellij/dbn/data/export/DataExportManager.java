@@ -18,6 +18,7 @@ import org.jetbrains.annotations.Nullable;
 import java.awt.*;
 import java.io.File;
 import java.io.IOException;
+import java.util.List;
 
 import static com.dci.intellij.dbn.common.component.Components.projectService;
 
@@ -67,59 +68,88 @@ public class DataExportManager extends ProjectComponentBase implements Persisten
         DataExportModel exportModel = new SortableTableExportModel(isSelection, table);
         try {
             DataExportProcessor processor = getExportProcessor(instructions.getFormat());
-            if (processor != null) {
-                processor.export(exportModel, instructions, connection);
-                DataExportInstructions.Destination destination = instructions.getDestination();
-                if (destination == DataExportInstructions.Destination.CLIPBOARD) {
-                    successCallback.run();
+            if (processor == null) return;
+
+            processor.export(exportModel, instructions, connection);
+            DataExportInstructions.Destination destination = instructions.getDestination();
+            List<String> warnings = exportModel.getWarnings();
+
+            if (destination == DataExportInstructions.Destination.CLIPBOARD) {
+                successCallback.run();
+                if(warnings.isEmpty()) {
                     Messages.showInfoDialog(
                             project,
                             "Export info",
-                            "Content exported to clipboard",
+                            "Content exported to clipboard.",
+                            new String[]{"OK"}, 0, null);
+                } else {
+                    Messages.showWarningDialog(
+                            project,
+                            "Export info",
+                            "Content exported to clipboard.\n\n" + String.join("\n", warnings),
                             new String[]{"OK"}, 0, null);
 
-/*
-                            sendInfoNotification(
-                            NotificationGroup.DATA,
-                            "Data content exported to clipboard.");
-*/
+                }
 
-                } else if (destination == DataExportInstructions.Destination.FILE) {
-                    final File file = instructions.getFile();
-                    if (Desktop.isDesktopSupported()) {
-                        //FileSystemView view = FileSystemView.getFileSystemView();
-                        //Icon icon = view.getSystemIcon(file);
+            } else if (destination == DataExportInstructions.Destination.FILE) {
+                File file = instructions.getFile();
+                String filePath = file.getPath();
+                if (Desktop.isDesktopSupported()) {
+                    //FileSystemView view = FileSystemView.getFileSystemView();
+                    //Icon icon = view.getSystemIcon(file);
 
+                    if(warnings.isEmpty()) {
                         Messages.showInfoDialog(
                                 project,
                                 "Export info",
-                                "Content exported to file " + file.getPath(),
+                                "Content exported to file " + filePath + ".",
                                 new String[]{"OK", "Open File"}, 0,
-                                (option) -> {
+                                o -> {
                                     successCallback.run();
-                                    if (option == 1) {
-                                        try {
-                                            Desktop.getDesktop().open(file);
-                                        } catch (IOException e) {
-                                            Messages.showErrorDialog(
-                                                    project,
-                                                    "Open file",
-                                                    "Could not open file " + file.getPath() + ".\n" +
-                                                            "The file type is most probably not associated with any program."
-                                            );
-                                        }
-                                    }
+                                    if (o == 1) openFile(project, file);
                                 });
-                    } else {
+                    }
+                    else {
+                        Messages.showWarningDialog(
+                                project,
+                                "Export info",
+                                "Content exported to file " + filePath + ".\n\n" + String.join("\n", warnings),
+                                new String[]{"OK", "Open File"}, 0,
+                                o -> {
+                                    successCallback.run();
+                                    if (o == 1) openFile(project, file);
+                                });
+                    }
+
+                } else {
+                    if (warnings.isEmpty()) {
                         sendInfoNotification(
                                 NotificationGroup.DATA,
-                                "Content exported to file: {0}", file.getPath());
+                                "Content exported to file: {0}", filePath);
+                    } else {
+                        sendWarningNotification(
+                                NotificationGroup.DATA,
+                                "Content exported to file: {0}\n{1}", filePath, String.join("\n", warnings));
                     }
                 }
             }
 
         } catch (DataExportException e) {
             Messages.showErrorDialog(project, "Error performing data export.", e);
+        }
+    }
+
+    private static void openFile(Project project, File file) {
+        try {
+            Desktop.getDesktop().open(file);
+        } catch (IOException e) {
+            String filePath = file.getPath();
+            Messages.showErrorDialog(
+                    project,
+                    "Open file",
+                    "Could not open file " + filePath + ".\n" +
+                            "The file type is most probably not associated with any program."
+            );
         }
     }
 

@@ -9,16 +9,21 @@ import com.dci.intellij.dbn.data.type.DBNativeDataType;
 import com.dci.intellij.dbn.data.type.GenericDataType;
 import com.google.common.base.CaseFormat;
 import com.intellij.openapi.project.Project;
+import lombok.Getter;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
+@Getter
 public class SortableTableExportModel implements DataExportModel{
     private final boolean selection;
     private final SortableTable<? extends SortableDataModel> table;
 
     private final Map<String, String> columnFriendlyNames = new HashMap<>();
+    private final List<String> warnings = new ArrayList<>();
 
     int[] selectedRows;
     int[] selectedColumns;
@@ -120,6 +125,10 @@ public class SortableTableExportModel implements DataExportModel{
         } else {
             return rowIndex;
         }
+    }
 
+    @Override
+    public void addWarning(String warning) {
+        if (!warnings.contains(warning)) warnings.add(warning);
     }
 }
