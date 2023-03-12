@@ -25,8 +25,8 @@ public class SortableTableExportModel implements DataExportModel{
     private final Map<String, String> columnFriendlyNames = new HashMap<>();
     private final List<String> warnings = new ArrayList<>();
 
-    int[] selectedRows;
-    int[] selectedColumns;
+    private int[] selectedRows;
+    private int[] selectedColumns;
 
     public SortableTableExportModel(boolean selection, SortableTable<? extends SortableDataModel>  table) {
         this.selection = selection;
