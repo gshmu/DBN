@@ -10,7 +10,6 @@ import com.dci.intellij.dbn.data.export.DataExportInstructions;
 import com.dci.intellij.dbn.data.export.DataExportModel;
 import com.intellij.openapi.project.Project;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.poi.hssf.usermodel.HSSFFont;
 import org.apache.poi.hssf.usermodel.HSSFRichTextString;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.*;
@@ -143,7 +142,7 @@ public class ExcelDataExportProcessor extends DataExportProcessor{
 
             CellStyle cellStyle = workbook.createCellStyle();
             Font tableHeadingFont = workbook.createFont();
-            tableHeadingFont.setBoldweight(HSSFFont.BOLDWEIGHT_BOLD);
+            tableHeadingFont.setBold(true);
             cellStyle.setFillBackgroundColor(IndexedColors.GREY_25_PERCENT.getIndex());
             cellStyle.setFont(tableHeadingFont);
             cell.setCellStyle(cellStyle);
