@@ -35,9 +35,6 @@ public class DBColumnImpl extends DBObjectImpl<DBColumnMetadata> implements DBCo
     private DBDataType dataType;
     private short position;
 
-    private DBObjectList<DBConstraint> constraints;
-    private DBObjectList<DBIndex> indexes;
-
     DBColumnImpl(@NotNull DBDataset dataset, DBColumnMetadata metadata) throws SQLException {
         super(dataset, metadata);
     }
@@ -61,8 +58,8 @@ public class DBColumnImpl extends DBObjectImpl<DBColumnMetadata> implements DBCo
     protected void initLists() {
         DBDataset dataset = getDataset();
         DBObjectListContainer childObjects = ensureChildObjects();
-        constraints = childObjects.createSubcontentObjectList(CONSTRAINT, this, dataset, CONSTRAINT_COLUMN);
-        indexes = childObjects.createSubcontentObjectList(INDEX, this, dataset, INDEX_COLUMN);
+        childObjects.createSubcontentObjectList(CONSTRAINT, this, dataset, CONSTRAINT_COLUMN);
+        childObjects.createSubcontentObjectList(INDEX, this, dataset, INDEX_COLUMN);
 
         DBObjectList typeAttributes = initDeclaredType();
         childObjects.addObjectList(typeAttributes);
@@ -171,11 +168,11 @@ public class DBColumnImpl extends DBObjectImpl<DBColumnMetadata> implements DBCo
 
     @Override
     public boolean isSinglePrimaryKey() {
-        if (isPrimaryKey()) {
-            for (DBConstraint constraint : getConstraints()) {
-                if (constraint.isPrimaryKey() && constraint.getColumns().size() == 1) {
-                    return true;
-                }
+        if (!isPrimaryKey()) return false;
+
+        for (DBConstraint constraint : getConstraints()) {
+            if (constraint.isPrimaryKey() && constraint.getColumns().size() == 1) {
+                return true;
             }
         }
         return false;
@@ -183,11 +180,13 @@ public class DBColumnImpl extends DBObjectImpl<DBColumnMetadata> implements DBCo
 
     @Override
     public List<DBIndex> getIndexes() {
+        DBObjectList<DBIndex> indexes = getChildObjectList(INDEX);
         return indexes == null ? emptyList() : indexes.getObjects();
     }
 
     @Override
     public List<DBConstraint> getConstraints() {
+        DBObjectList<DBConstraint> constraints = getChildObjectList(CONSTRAINT);
         return constraints == null ? emptyList() : constraints.getObjects();
     }
 
@@ -271,13 +270,15 @@ public class DBColumnImpl extends DBObjectImpl<DBColumnMetadata> implements DBCo
             navigationLists.add(DBObjectNavigationList.create("Type", dataType.getDeclaredType()));
         }
 
+        List<DBConstraint> constraints = getConstraints();
         if (constraints.size() > 0) {
-            navigationLists.add(DBObjectNavigationList.create("Constraints", constraints.getObjects()));
+            navigationLists.add(DBObjectNavigationList.create("Constraints", constraints));
         }
 
         if (getParentObject() instanceof DBTable) {
-            if (indexes != null && indexes.size() > 0) {
-                navigationLists.add(DBObjectNavigationList.create("Indexes", indexes.getObjects()));
+            List<DBIndex> indexes = getIndexes();
+            if (indexes.size() > 0) {
+                navigationLists.add(DBObjectNavigationList.create("Indexes", indexes));
             }
 
             if (isForeignKey()) {

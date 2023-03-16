@@ -27,7 +27,7 @@ public class ObjectNavigationListShowAllAction extends ProjectAction {
                 new ObjectNavigationListActionGroup(parentObject, navigationList, true);
 
         ListPopup popup = JBPopupFactory.getInstance().createActionGroupPopup(
-                "Dependencies",
+                navigationList.getName(),
                 navigationListActionGroup,
                 e.getDataContext(),
                 JBPopupFactory.ActionSelectionAid.SPEEDSEARCH,

@@ -236,14 +236,14 @@ public abstract class DynamicContentBase<T extends DynamicContentElement>
      */
     private void ensureLoaded(boolean force) {
         Synchronized.on(this,
-                () -> shouldLoad(),
-                () -> {
-                    set(LOADING, true);
+                o -> o.shouldLoad(),
+                o -> {
+                    o.set(LOADING, true);
                     try {
-                        performLoad(force);
+                        o.performLoad(force);
                     } finally {
-                        set(LOADING, false);
-                        changeSignature();
+                        o.set(LOADING, false);
+                        o.changeSignature();
                     }
                 });
 

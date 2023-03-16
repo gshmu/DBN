@@ -32,7 +32,7 @@ public class SynchronizedTest {
                 String key = "KEY" + c;
 
                 executorService.submit(() -> {
-                    Synchronized.on(key, () -> {
+                    Synchronized.on(key, o -> {
                         long start = System.currentTimeMillis();
                         int delay = random.nextInt(200);
                         long delayMillis = TimeUnit.MILLISECONDS.toNanos(delay);

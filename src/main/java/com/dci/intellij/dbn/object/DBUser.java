@@ -1,8 +1,10 @@
 package com.dci.intellij.dbn.object;
 
+import com.dci.intellij.dbn.object.common.DBRootObject;
+
 import java.util.List;
 
-public interface DBUser extends DBRoleGrantee, DBPrivilegeGrantee {
+public interface DBUser extends DBRoleGrantee, DBPrivilegeGrantee, DBRootObject {
     boolean isExpired();
     boolean isLocked();
     boolean isSessionUser();
