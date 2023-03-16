@@ -6,7 +6,7 @@ import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.database.common.metadata.def.DBRoleMetadata;
 import com.dci.intellij.dbn.object.*;
 import com.dci.intellij.dbn.object.common.DBObjectBundle;
-import com.dci.intellij.dbn.object.common.DBObjectImpl;
+import com.dci.intellij.dbn.object.common.DBRootObjectImpl;
 import com.dci.intellij.dbn.object.common.list.DBObjectList;
 import com.dci.intellij.dbn.object.common.list.DBObjectListContainer;
 import com.dci.intellij.dbn.object.common.list.DBObjectNavigationList;
@@ -27,7 +27,7 @@ import static com.dci.intellij.dbn.object.type.DBObjectRelationType.ROLE_PRIVILE
 import static com.dci.intellij.dbn.object.type.DBObjectRelationType.ROLE_ROLE;
 import static com.dci.intellij.dbn.object.type.DBObjectType.*;
 
-public class DBRoleImpl extends DBObjectImpl<DBRoleMetadata> implements DBRole {
+public class DBRoleImpl extends DBRootObjectImpl<DBRoleMetadata> implements DBRole {
     private DBObjectList<DBGrantedPrivilege> privileges;
     private DBObjectList<DBGrantedRole> grantedRoles;
 

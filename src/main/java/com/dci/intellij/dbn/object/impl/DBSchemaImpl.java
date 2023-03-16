@@ -24,7 +24,7 @@ import com.dci.intellij.dbn.database.interfaces.DatabaseMetadataInterface;
 import com.dci.intellij.dbn.editor.DBContentType;
 import com.dci.intellij.dbn.object.*;
 import com.dci.intellij.dbn.object.common.DBObject;
-import com.dci.intellij.dbn.object.common.DBObjectImpl;
+import com.dci.intellij.dbn.object.common.DBRootObjectImpl;
 import com.dci.intellij.dbn.object.common.DBSchemaObject;
 import com.dci.intellij.dbn.object.common.list.DBObjectList;
 import com.dci.intellij.dbn.object.common.list.DBObjectListContainer;
@@ -53,7 +53,7 @@ import static com.dci.intellij.dbn.object.type.DBObjectRelationType.CONSTRAINT_C
 import static com.dci.intellij.dbn.object.type.DBObjectRelationType.INDEX_COLUMN;
 import static com.dci.intellij.dbn.object.type.DBObjectType.*;
 
-public class DBSchemaImpl extends DBObjectImpl<DBSchemaMetadata> implements DBSchema {
+public class DBSchemaImpl extends DBRootObjectImpl<DBSchemaMetadata> implements DBSchema {
     private DBObjectList<DBTable> tables;
     private DBObjectList<DBView> views;
     private DBObjectList<DBMaterializedView> materializedViews;

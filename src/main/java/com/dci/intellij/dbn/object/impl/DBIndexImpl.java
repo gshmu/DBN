@@ -26,8 +26,6 @@ import static com.dci.intellij.dbn.object.type.DBObjectType.COLUMN;
 import static com.dci.intellij.dbn.object.type.DBObjectType.INDEX;
 
 public class DBIndexImpl extends DBSchemaObjectImpl<DBIndexMetadata> implements DBIndex {
-    private DBObjectList<DBColumn> columns;
-
     DBIndexImpl(DBDataset dataset, DBIndexMetadata metadata) throws SQLException {
         super(dataset, metadata);
     }
@@ -57,7 +55,7 @@ public class DBIndexImpl extends DBSchemaObjectImpl<DBIndexMetadata> implements 
         DBDataset dataset = getDataset();
         if (dataset != null) {
             DBObjectListContainer childObjects = ensureChildObjects();
-            columns = childObjects.createSubcontentObjectList(COLUMN, this, dataset, INDEX_COLUMN);
+            childObjects.createSubcontentObjectList(COLUMN, this, dataset, INDEX_COLUMN);
         }
     }
 
@@ -69,11 +67,12 @@ public class DBIndexImpl extends DBSchemaObjectImpl<DBIndexMetadata> implements 
 
     @Override
     public DBDataset getDataset() {
-        return (DBDataset) getParentObject();
+        return getParentObject();
     }
 
     @Override
     public List<DBColumn> getColumns() {
+        DBObjectList<DBColumn> columns = getChildObjectList(COLUMN);
         return columns == null ? Collections.emptyList() : columns.getObjects();
     }
 
@@ -86,8 +85,9 @@ public class DBIndexImpl extends DBSchemaObjectImpl<DBIndexMetadata> implements 
     protected @Nullable List<DBObjectNavigationList> createNavigationLists() {
         List<DBObjectNavigationList> navigationLists = new LinkedList<>();
 
-        if (columns != null && columns.size() > 0) {
-            navigationLists.add(DBObjectNavigationList.create("Columns", columns.getObjects()));
+        List<DBColumn> columns = getColumns();
+        if (columns.size() > 0) {
+            navigationLists.add(DBObjectNavigationList.create("Columns", columns));
         }
         navigationLists.add(DBObjectNavigationList.create("Dataset", getDataset()));
 

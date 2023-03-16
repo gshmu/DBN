@@ -8,9 +8,11 @@ import com.intellij.openapi.actionSystem.DefaultActionGroup;
 
 import java.util.List;
 
+import static com.dci.intellij.dbn.common.util.Unsafe.cast;
+
 public class ObjectNavigationListActionGroup extends DefaultActionGroup {
     public static final int MAX_ITEMS = 30;
-    private final DBObjectNavigationList navigationList;
+    private final DBObjectNavigationList<?> navigationList;
     private final DBObjectRef<?> parentObject;
     private final boolean showFullList;
 
@@ -33,32 +35,32 @@ public class ObjectNavigationListActionGroup extends DefaultActionGroup {
         return DBObjectRef.get(parentObject);
     }
 
-    private List<DBObject> getObjects() {
-        List<DBObject> objects = navigationList.getObjects();
-        if (objects == null) {
-            ObjectListProvider objectsProvider = navigationList.getObjectsProvider();
-            if (objectsProvider != null) {
-                objects = objectsProvider.getObjects();
-            }
+    private <T extends DBObject> List<T> getObjects() {
+        List<T> objects = cast(navigationList.getObjects());
+        if (objects != null) return objects;
 
-        }
-        return objects;
+        ObjectListProvider<T> objectsProvider = cast(navigationList.getObjectsProvider());
+        if (objectsProvider == null) return null;
+
+        return objectsProvider.getObjects();
     }
 
     private void buildNavigationActions(int length) {
         List<DBObject> objects = getObjects();
-        if (objects != null) {
-            DBObject parentObject = getParentObject();
-            for (int i=0; i<length; i++) {
-                if (i == objects.size()) {
-                    return;
-                }
-                DBObject object = objects.get(i);
-                add(new NavigateToObjectAction(parentObject, object));
+        if (objects == null) return;
+
+
+        DBObject parentObject = getParentObject();
+        for (int i=0; i<length; i++) {
+            if (i == objects.size()) {
+                return;
             }
-            if (!showFullList && objects.size() > MAX_ITEMS) {
-                add(new ObjectNavigationListShowAllAction(parentObject, navigationList));
-            }
+            DBObject object = objects.get(i);
+            add(new NavigateToObjectAction(parentObject, object));
+        }
+
+        if (!showFullList && objects.size() > MAX_ITEMS) {
+            add(new ObjectNavigationListShowAllAction(parentObject, navigationList));
         }
     }
 }

@@ -8,7 +8,7 @@ import com.dci.intellij.dbn.database.common.metadata.def.DBPrivilegeMetadata;
 import com.dci.intellij.dbn.object.DBPrivilege;
 import com.dci.intellij.dbn.object.DBRole;
 import com.dci.intellij.dbn.object.DBUser;
-import com.dci.intellij.dbn.object.common.DBObjectImpl;
+import com.dci.intellij.dbn.object.common.DBRootObjectImpl;
 import com.dci.intellij.dbn.object.common.list.DBObjectList;
 import com.dci.intellij.dbn.object.common.list.DBObjectListContainer;
 import com.dci.intellij.dbn.object.common.list.DBObjectNavigationList;
@@ -21,7 +21,7 @@ import java.util.List;
 
 import static com.dci.intellij.dbn.object.type.DBObjectType.*;
 
-public abstract class DBPrivilegeImpl<M extends DBPrivilegeMetadata> extends DBObjectImpl<M> implements DBPrivilege {
+public abstract class DBPrivilegeImpl<M extends DBPrivilegeMetadata> extends DBRootObjectImpl<M> implements DBPrivilege {
     private DBObjectList<DBUser> userGrantees;
     private DBObjectList<DBRole> roleGrantees;
 

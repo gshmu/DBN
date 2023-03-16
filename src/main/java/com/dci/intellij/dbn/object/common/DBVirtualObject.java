@@ -57,7 +57,7 @@ import static com.dci.intellij.dbn.common.dispose.Failsafe.nd;
 import static com.dci.intellij.dbn.object.common.sorting.DBObjectComparator.compareName;
 import static com.dci.intellij.dbn.object.common.sorting.DBObjectComparator.compareType;
 
-public class DBVirtualObject extends DBObjectImpl implements PsiReference {
+public class DBVirtualObject extends DBRootObjectImpl implements PsiReference {
     private static final PsiLookupAdapter CHR_STAR_LOOKUP_ADAPTER = new PsiLookupAdapter() {
         @Override
         public boolean matches(BasePsiElement element) {
@@ -106,10 +106,6 @@ public class DBVirtualObject extends DBObjectImpl implements PsiReference {
             return identifierPsiElement.getObjectType() == objectType;
         }
         return true;
-
-    }
-
-    private void terminate() {
 
     }
 
