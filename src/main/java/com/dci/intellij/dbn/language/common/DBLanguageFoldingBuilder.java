@@ -38,7 +38,7 @@ public abstract class DBLanguageFoldingBuilder implements FoldingBuilder, DumbAw
             TextRange textRange = tokenPsiElement.getTextRange();
             if (textRange.getLength() > 200 && tokenPsiElement.containsLineBreaks()) {
                 FoldingDescriptor foldingDescriptor = new FoldingDescriptor(
-                        tokenPsiElement.node,
+                        tokenPsiElement.getNode(),
                         textRange);
 
                 context.addDescriptor(foldingDescriptor);
@@ -74,7 +74,7 @@ public abstract class DBLanguageFoldingBuilder implements FoldingBuilder, DumbAw
                 if (subjectLineNumber < blockEndOffsetLineNumber) {
                     TextRange textRange = new TextRange(subjectEndOffset, blockEndOffset);
 
-                    FoldingDescriptor descriptor = new FoldingDescriptor(basePsiElement.node, textRange);
+                    FoldingDescriptor descriptor = new FoldingDescriptor(basePsiElement.getNode(), textRange);
                     context.addDescriptor(descriptor);
                 }
             }

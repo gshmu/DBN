@@ -147,20 +147,19 @@ public class StatementExecutionBasicProcessor extends StatefulDisposableBase imp
 
     @Override
     public boolean isDirty(){
-        return Read.call(() -> {
-            if (getPsiFile() == null ||
+        return Read.call(this, p -> {
+            StatementExecutionInput executionInput = p.executionInput;
+            if (p.getPsiFile() == null ||
                     getConnection() != executionInput.getConnection() || // connection changed since execution
                     getTargetSchema() != executionInput.getTargetSchemaId()) { // current schema changed since execution)
                 return true;
-
             } else {
                 ExecutablePsiElement executablePsiElement = executionInput.getExecutablePsiElement();
-                ExecutablePsiElement cachedExecutable = getCachedExecutable();
-                return
-                        executablePsiElement == null ||
-                                cachedExecutable == null ||
-                                !cachedExecutable.isValid() ||
-                                !cachedExecutable.matches(executablePsiElement, BasePsiElement.MatchType.STRONG);
+                ExecutablePsiElement cachedExecutable = p.getCachedExecutable();
+                return executablePsiElement == null ||
+                        cachedExecutable == null ||
+                        !cachedExecutable.isValid() ||
+                        !cachedExecutable.matches(executablePsiElement, BasePsiElement.MatchType.STRONG);
             }
         });
     }
@@ -602,50 +601,50 @@ public class StatementExecutionBasicProcessor extends StatefulDisposableBase imp
         boolean isDdlStatement = isDataDefinitionStatement();
         boolean hasCompilerErrors = false;
         ConnectionHandler connection = executionInput.getConnection();
-        if (isDdlStatement && connection != null && DatabaseFeature.OBJECT_INVALIDATION.isSupported(connection)) {
+        if (isDdlStatement && DatabaseFeature.OBJECT_INVALIDATION.isSupported(connection)) {
             BasePsiElement compilablePsiElement = getCompilableBlockPsiElement();
-            if (compilablePsiElement != null) {
-                hasCompilerErrors = Read.call(() -> {
-                    DBContentType contentType = getCompilableContentType();
-                    CompilerAction compilerAction = new CompilerAction(CompilerActionSource.DDL, contentType, getVirtualFile(), getFileEditor());
-                    compilerAction.setSourceStartOffset(compilablePsiElement.getTextOffset());
+            if (compilablePsiElement == null)  return;
 
-                    DBSchemaObject object = getAffectedObject();
-                    CompilerResult compilerResult = null;
-                    if (object == null) {
-                        DBSchema schema = getAffectedSchema();
-                        IdentifierPsiElement subjectPsiElement = getSubjectPsiElement();
-                        if (schema != null && subjectPsiElement != null) {
-                            DBObjectType objectType = subjectPsiElement.getObjectType();
-                            String objectName = subjectPsiElement.getUnquotedText().toString().toUpperCase();
-                            compilerResult = new CompilerResult(compilerAction, connection, schema, objectType, objectName);
-                        }
-                    } else {
-                        compilerResult = new CompilerResult(compilerAction, object);
+            hasCompilerErrors = Read.call(() -> {
+                DBContentType contentType = getCompilableContentType();
+                CompilerAction compilerAction = new CompilerAction(CompilerActionSource.DDL, contentType, getVirtualFile(), getFileEditor());
+                compilerAction.setSourceStartOffset(compilablePsiElement.getTextOffset());
+
+                DBSchemaObject object = getAffectedObject();
+                CompilerResult compilerResult = null;
+                if (object == null) {
+                    DBSchema schema = getAffectedSchema();
+                    IdentifierPsiElement subjectPsiElement = getSubjectPsiElement();
+                    if (schema != null && subjectPsiElement != null) {
+                        DBObjectType objectType = subjectPsiElement.getObjectType();
+                        String objectName = subjectPsiElement.getUnquotedText().toString().toUpperCase();
+                        compilerResult = new CompilerResult(compilerAction, connection, schema, objectType, objectName);
                     }
+                } else {
+                    compilerResult = new CompilerResult(compilerAction, object);
+                }
 
-                    if (compilerResult != null) {
-                        if (object != null) {
-                            Project project = getProject();
-                            DatabaseCompilerManager compilerManager = DatabaseCompilerManager.getInstance(project);
-                            if (object.is(COMPILABLE)) {
-                                CompileType compileType = compilerManager.getCompileType(object, contentType);
-                                if (compileType == CompileType.DEBUG) {
-                                    compilerManager.compileObject(object, compileType, compilerAction);
-                                }
-                                ProjectEvents.notify(project,
-                                        CompileManagerListener.TOPIC,
-                                        (listener) -> listener.compileFinished(connection, object));
+                if (compilerResult != null) {
+                    if (object != null) {
+                        Project project = getProject();
+                        DatabaseCompilerManager compilerManager = DatabaseCompilerManager.getInstance(project);
+                        if (object.is(COMPILABLE)) {
+                            CompileType compileType = compilerManager.getCompileType(object, contentType);
+                            if (compileType == CompileType.DEBUG) {
+                                compilerManager.compileObject(object, compileType, compilerAction);
                             }
-                            object.refresh();
+                            ProjectEvents.notify(project,
+                                    CompileManagerListener.TOPIC,
+                                    (listener) -> listener.compileFinished(connection, object));
                         }
-
-                        executionResult.setCompilerResult(compilerResult);
-                        return compilerResult.hasErrors();
+                        object.refresh();
                     }
-                    return false;
-                });
-            }
+
+                    executionResult.setCompilerResult(compilerResult);
+                    return compilerResult.hasErrors();
+                }
+                return false;
+            });
         }
 
         if (hasCompilerErrors) {

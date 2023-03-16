@@ -1,5 +1,6 @@
 package com.dci.intellij.dbn.object.common;
 
+import com.dci.intellij.dbn.common.dispose.Disposer;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.database.common.metadata.DBObjectMetadata;
 import com.dci.intellij.dbn.object.common.list.DBObjectListContainer;
@@ -19,8 +20,12 @@ public abstract class DBRootObjectImpl<M extends DBObjectMetadata> extends DBObj
         super(connection, metadata);
     }
 
-    public DBRootObjectImpl(@Nullable ConnectionHandler connection, DBObjectType objectType, String name) {
+    protected DBRootObjectImpl(@Nullable ConnectionHandler connection, DBObjectType objectType, String name) {
         super(connection, objectType, name);
+    }
+
+    protected DBRootObjectImpl(@NotNull DBObject parentObject, M metadata) throws SQLException {
+        super(parentObject, metadata);
     }
 
     @Override
@@ -39,5 +44,11 @@ public abstract class DBRootObjectImpl<M extends DBObjectMetadata> extends DBObj
             }
         }
         return childObjects;
+    }
+
+    @Override
+    public void disposeInner() {
+        Disposer.dispose(childObjects);
+        nullify();
     }
 }

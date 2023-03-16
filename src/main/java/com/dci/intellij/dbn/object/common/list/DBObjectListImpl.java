@@ -67,7 +67,7 @@ import static com.dci.intellij.dbn.object.type.DBObjectType.*;
 @Getter
 @Setter
 public class DBObjectListImpl<T extends DBObject> extends DynamicContentBase<T> implements DBObjectList<T> {
-    private static final WeakRefCache<DBObjectList, ObjectQuickFilter> quickFilterCache = WeakRefCache.build();
+    private static final WeakRefCache<DBObjectList, ObjectQuickFilter> quickFilterCache = WeakRefCache.basic();
 
     private final DBObjectType objectType;
 

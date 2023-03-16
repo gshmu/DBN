@@ -32,9 +32,9 @@ public class DBLLanguageFileScrambler {
     private static final String CHARSET = "1234567890abcdefghijklmnopqrstuvyxz";
 
     public String scramble(DBLanguagePsiFile psiFile) {
-        return Read.call(() -> {
+        return Read.call(psiFile, f -> {
             StringBuilder builder = new StringBuilder();
-            PsiElement child = psiFile.getFirstChild();
+            PsiElement child = f.getFirstChild();
             while (child != null) {
                 scramble(child, builder);
                 child = child.getNextSibling();

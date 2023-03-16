@@ -41,9 +41,8 @@ import static com.dci.intellij.dbn.object.type.DBObjectType.*;
 
 
 @Getter
-public abstract class DBSchemaObjectImpl<M extends DBObjectMetadata> extends DBObjectImpl<M> implements DBSchemaObject {
+public abstract class DBSchemaObjectImpl<M extends DBObjectMetadata> extends DBRootObjectImpl<M> implements DBSchemaObject {
     private volatile DBObjectStatusHolder objectStatus;
-    private volatile DBObjectListContainer childObjects;
 
     public DBSchemaObjectImpl(@NotNull DBSchema schema, M metadata) throws SQLException {
         super(schema, metadata);
@@ -51,12 +50,6 @@ public abstract class DBSchemaObjectImpl<M extends DBObjectMetadata> extends DBO
 
     public DBSchemaObjectImpl(@NotNull DBSchemaObject parent, M metadata) throws SQLException {
         super(parent, metadata);
-    }
-
-    @Override
-    protected void init(M metadata) throws SQLException {
-        super.init(metadata);
-        initLists();
     }
 
     @Override
@@ -143,18 +136,6 @@ public abstract class DBSchemaObjectImpl<M extends DBObjectMetadata> extends DBO
     @Override
     public DBEditableObjectVirtualFile getCachedVirtualFile() {
         return DatabaseFileSystem.getInstance().findDatabaseFile(this);
-    }
-
-    @NotNull
-    public DBObjectListContainer ensureChildObjects() {
-        if (childObjects == null) {
-            synchronized (this) {
-                if (childObjects == null) {
-                    childObjects = new DBObjectListContainer(this);
-                }
-            }
-        }
-        return childObjects;
     }
 
     @Override

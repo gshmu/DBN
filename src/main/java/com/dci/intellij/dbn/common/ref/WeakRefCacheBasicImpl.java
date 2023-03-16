@@ -26,10 +26,13 @@ class WeakRefCacheBasicImpl<K, V> implements WeakRefCache<K, V> {
     }
 
     @Override
-    public V compute(K key, BiFunction<K, V, V> computer) {
-        return cache.compute(key, computer);
+    public V compute(K key, BiFunction<K, V, V> loader) {
+        return cache.compute(key, loader);
     }
 
+    public V computeIfAbsent(K key, Function<? super K, ? extends V> loader) {
+        return cache.computeIfAbsent(key, loader);
+    }
 
     @Override
     public void set(K key, @Nullable V value) {
@@ -39,8 +42,8 @@ class WeakRefCacheBasicImpl<K, V> implements WeakRefCache<K, V> {
     }
 
     @Override
-    public void remove(K key) {
-        cache.remove(key);
+    public V remove(K key) {
+        return cache.remove(key);
     }
 
 }

@@ -51,9 +51,9 @@ public class PsiUtil {
 
     @Nullable
     public static VirtualFile getVirtualFileForElement(@NotNull PsiElement psiElement) {
-        return Read.call(() -> {
-            if (psiElement.isValid()) {
-                PsiFile psiFile = psiElement.getContainingFile().getOriginalFile();
+        return Read.call(psiElement, e -> {
+            if (e.isValid()) {
+                PsiFile psiFile = e.getContainingFile().getOriginalFile();
                 return psiFile.getVirtualFile();
             }
             return null;

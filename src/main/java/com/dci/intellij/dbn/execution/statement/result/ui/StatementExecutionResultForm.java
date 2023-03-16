@@ -6,7 +6,6 @@ import com.dci.intellij.dbn.common.dispose.Disposer;
 import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.common.latent.Latent;
 import com.dci.intellij.dbn.common.thread.Dispatch;
-import com.dci.intellij.dbn.common.thread.Read;
 import com.dci.intellij.dbn.common.ui.util.UserInterface;
 import com.dci.intellij.dbn.common.util.Actions;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
@@ -53,10 +52,7 @@ public class StatementExecutionResultForm extends ExecutionResultFormBase<Statem
 
         actionsPanel.add(actionToolbar.getComponent());
 
-        recordViewInfo = Read.call(() ->
-                new RecordViewInfo(
-                    executionResult.getName(),
-                    executionResult.getIcon()));
+        recordViewInfo = new RecordViewInfo(executionResult.getName(), executionResult.getIcon());
 
         resultPanel.setBorder(IdeBorderFactory.createBorder());
         resultTable = new ResultSetTable<>(this, executionResult.getTableModel(), true, recordViewInfo);

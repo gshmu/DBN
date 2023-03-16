@@ -42,7 +42,7 @@ public abstract class LeafPsiElement<T extends LeafElementType> extends BasePsiE
     }
 
     public CharSequence getChars() {
-        return node.getFirstChildNode().getChars();
+        return getNode().getFirstChildNode().getChars();
     }
 
     /*********************************************************
