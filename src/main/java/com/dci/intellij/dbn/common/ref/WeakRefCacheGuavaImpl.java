@@ -37,13 +37,18 @@ class WeakRefCacheGuavaImpl<K, V> implements WeakRefCache<K, V> {
     }
 
     @Override
-    public V compute(K key, BiFunction<K, V, V> computer) {
+    public V compute(K key, BiFunction<K, V, V> loader) {
         V value = cache.getIfPresent(key);
-        computer.apply(key, value);
+        loader.apply(key, value);
         set(key, value);
         return value;
     }
 
+    @Override
+    @SneakyThrows
+    public V computeIfAbsent(K key, Function<? super K, ? extends V> loader) {
+        return cache.get(key, () -> loader.apply(key));
+    }
 
     @Override
     public void set(K key, V value) {
@@ -53,8 +58,10 @@ class WeakRefCacheGuavaImpl<K, V> implements WeakRefCache<K, V> {
     }
 
     @Override
-    public void remove(K key) {
+    public V remove(K key) {
+        V value = cache.getIfPresent(key);
         cache.invalidate(key);
+        return value;
     }
 
 }

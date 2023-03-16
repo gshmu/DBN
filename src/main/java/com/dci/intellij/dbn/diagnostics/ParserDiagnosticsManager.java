@@ -86,8 +86,8 @@ public class ParserDiagnosticsManager extends ProjectComponentBase implements Pe
                 if (psiFile == null) {
                     result.addEntry(filePath, 1, 0);
                 } else {
-                    int errors = Read.call(() -> psiFile.countErrors());
-                    int warnings = Read.call(() -> psiFile.countWarnings());
+                    int errors = Read.call(psiFile, f -> f.countErrors());
+                    int warnings = Read.call(psiFile, f -> f.countWarnings());
                     if (errors > 0 || warnings > 0) {
                         result.addEntry(filePath, errors, warnings);
                     }
@@ -211,7 +211,7 @@ public class ParserDiagnosticsManager extends ProjectComponentBase implements Pe
     }
 
     private DBLanguagePsiFile ensureFileParsed(VirtualFile file) {
-        PsiFile psiFile = Read.call(() -> PsiUtil.getPsiFile(getProject(), file));
+        PsiFile psiFile = Read.call(file, f -> PsiUtil.getPsiFile(getProject(), f));
         return psiFile instanceof DBLanguagePsiFile ? (DBLanguagePsiFile) psiFile : null;
     }
 

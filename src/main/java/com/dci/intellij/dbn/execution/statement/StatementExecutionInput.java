@@ -44,38 +44,34 @@ public class StatementExecutionInput extends LocalExecutionInput {
     private String executableStatementText;
     private boolean bulkExecution = false;
 
-    private final Latent<ExecutablePsiElement> executablePsiElement = Latent.basic(() -> {
+    private final Latent<ExecutablePsiElement> executablePsiElement = Latent.basic(() -> Read.call(this, i -> {
         ConnectionHandler connection = getConnection();
         if (isNotValid(connection)) return null;
 
-        SchemaId currentSchema = getTargetSchemaId();
-        return Read.call(() -> {
-            DBLanguagePsiFile psiFile = executionProcessor.getPsiFile();
-            if (isNotValid(psiFile)) return null;
+        DBLanguagePsiFile psiFile = i.getExecutionProcessor().getPsiFile();
+        if (isNotValid(psiFile)) return null;
 
-            DBLanguageDialect languageDialect = psiFile.getLanguageDialect();
-            if (languageDialect == null) return null;
+        DBLanguageDialect languageDialect = psiFile.getLanguageDialect();
+        if (languageDialect == null) return null;
 
-            DBLanguagePsiFile previewFile = DBLanguagePsiFile.createFromText(
-                    getProject(),
-                    "preview",
-                    languageDialect,
-                    originalStatementText,
-                    connection,
-                    currentSchema);
-            if (isNotValid(previewFile)) return null;
+        DBLanguagePsiFile previewFile = DBLanguagePsiFile.createFromText(
+                getProject(),
+                "preview",
+                languageDialect,
+                i.getOriginalStatementText(),
+                connection,
+                i.getTargetSchemaId());
+        if (isNotValid(previewFile)) return null;
 
+        PsiElement firstChild = previewFile.getFirstChild();
+        if (firstChild instanceof ExecutableBundlePsiElement) {
+            ExecutableBundlePsiElement rootPsiElement = (ExecutableBundlePsiElement) firstChild;
+            List<ExecutablePsiElement> executablePsiElements = rootPsiElement.getExecutablePsiElements();
+            return executablePsiElements.isEmpty() ? null : executablePsiElements.get(0);
+        }
 
-            PsiElement firstChild = previewFile.getFirstChild();
-            if (firstChild instanceof ExecutableBundlePsiElement) {
-                ExecutableBundlePsiElement rootPsiElement = (ExecutableBundlePsiElement) firstChild;
-                List<ExecutablePsiElement> executablePsiElements = rootPsiElement.getExecutablePsiElements();
-                return executablePsiElements.isEmpty() ? null : executablePsiElements.get(0);
-            }
-
-            return null;
-        });
-    });
+        return null;
+    }));
 
 
     public StatementExecutionInput(String originalStatementText, String executableStatementText, StatementExecutionProcessor executionProcessor) {
@@ -188,7 +184,7 @@ public class StatementExecutionInput extends LocalExecutionInput {
 
     public String getStatementDescription() {
         ExecutablePsiElement executablePsiElement = getExecutablePsiElement();
-        return executablePsiElement == null ? "SQL Statement" : Read.call(() -> executablePsiElement.getPresentableText());
+        return executablePsiElement == null ? "SQL Statement" : Read.call(executablePsiElement, e -> e.getPresentableText());
     }
 
     @Override

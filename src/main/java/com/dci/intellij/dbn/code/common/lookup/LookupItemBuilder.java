@@ -12,8 +12,8 @@ import com.dci.intellij.dbn.object.common.DBObject;
 import javax.swing.*;
 
 public abstract class LookupItemBuilder {
-    private static final WeakRefCache<DBObject, LookupItemBuilder> sqlCache = WeakRefCache.build();
-    private static final WeakRefCache<DBObject, LookupItemBuilder> psqlCache = WeakRefCache.build();
+    private static final WeakRefCache<DBObject, LookupItemBuilder> sqlCache = WeakRefCache.basic();
+    private static final WeakRefCache<DBObject, LookupItemBuilder> psqlCache = WeakRefCache.basic();
 
 
     public static LookupItemBuilder of(DBObject object, DBLanguage<?> language) {

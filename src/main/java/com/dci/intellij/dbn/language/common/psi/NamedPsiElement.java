@@ -12,7 +12,7 @@ import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiElement;
 import org.jetbrains.annotations.Nullable;
 
-import javax.swing.Icon;
+import javax.swing.*;
 
 public class NamedPsiElement extends SequencePsiElement<NamedElementType> {
     public NamedPsiElement(ASTNode astNode, NamedElementType elementType) {
@@ -39,11 +39,6 @@ public class NamedPsiElement extends SequencePsiElement<NamedElementType> {
             child = child.getNextSibling();
         }
         return false;
-    }
-
-    @Override
-    public boolean isValid() {
-        return super.isValid();
     }
 
     /*********************************************************

@@ -12,7 +12,7 @@ import org.jetbrains.annotations.Nullable;
 import java.sql.SQLException;
 import java.util.List;
 
-public interface DBSchemaObject extends DBObject {
+public interface DBSchemaObject extends DBRootObject {
     @NotNull
     @Override
     DBSchema getSchema();

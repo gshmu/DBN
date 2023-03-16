@@ -99,12 +99,12 @@ public class Documents {
 
     @Nullable
     public static Document getDocument(@NotNull PsiFile file) {
-        return Read.call(() -> {
-            if (isNotValid(file)) return null;
+        return Read.call(file, f -> {
+            if (isNotValid(f)) return null;
 
-            Project project = file.getProject();
+            Project project = f.getProject();
             PsiDocumentManager documentManager = PsiDocumentManager.getInstance(project);
-            return documentManager.getDocument(file);
+            return documentManager.getDocument(f);
         });
     }
 
@@ -170,9 +170,9 @@ public class Documents {
 
     @Nullable
     public static Document getDocument(@NotNull VirtualFile virtualFile) {
-        return Read.call(() -> {
+        return Read.call(virtualFile, f -> {
             FileDocumentManager fileDocumentManager = FileDocumentManager.getInstance();
-            return fileDocumentManager.getDocument(virtualFile);
+            return fileDocumentManager.getDocument(f);
         });
     }
 

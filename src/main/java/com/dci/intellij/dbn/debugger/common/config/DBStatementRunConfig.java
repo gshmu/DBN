@@ -36,21 +36,21 @@ public abstract class DBStatementRunConfig extends DBRunConfig<StatementExecutio
     public List<DBMethod> getMethods() {
         if (executionInput != null) {
             ExecutablePsiElement executablePsiElement = executionInput.getExecutionProcessor().getCachedExecutable();
-            if (executablePsiElement != null) {
-                return Read.call(() -> {
-                    List<DBMethod> methods = new ArrayList<>();
-                    executablePsiElement.collectObjectReferences(DBObjectType.METHOD, object -> {
-                        if (object instanceof DBMethod) {
-                            DBMethod method = (DBMethod) object;
-                            DBSchema schema = method.getSchema();
-                            if (schema != null && !schema.isSystemSchema() && !schema.isPublicSchema()) {
-                                methods.add(method);
-                            }
+            if (executablePsiElement == null) return Collections.emptyList();
+
+            return Read.call(executablePsiElement, e -> {
+                List<DBMethod> methods = new ArrayList<>();
+                e.collectObjectReferences(DBObjectType.METHOD, object -> {
+                    if (object instanceof DBMethod) {
+                        DBMethod method = (DBMethod) object;
+                        DBSchema schema = method.getSchema();
+                        if (!schema.isSystemSchema() && !schema.isPublicSchema()) {
+                            methods.add(method);
                         }
-                    });
-                    return methods;
+                    }
                 });
-            }
+                return methods;
+            });
 
         }
         return Collections.emptyList();

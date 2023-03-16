@@ -57,7 +57,7 @@ public final class Nullifier {
     }
 
     public static void clearMap(Map<?, ?> map) {
-        silent(() -> map.clear());
+        silent(map, m -> m.clear());
     }
 
     private static void nullify(List<?> collection) {
