@@ -3,11 +3,7 @@ package com.dci.intellij.dbn.language.sql;
 import com.dci.intellij.dbn.common.consumer.SetCollector;
 import com.dci.intellij.dbn.common.util.Naming;
 import com.dci.intellij.dbn.language.common.DBLanguageFoldingBuilder;
-import com.dci.intellij.dbn.language.common.psi.BasePsiElement;
-import com.dci.intellij.dbn.language.common.psi.ChameleonPsiElement;
-import com.dci.intellij.dbn.language.common.psi.ExecutablePsiElement;
-import com.dci.intellij.dbn.language.common.psi.IdentifierPsiElement;
-import com.dci.intellij.dbn.language.common.psi.TokenPsiElement;
+import com.dci.intellij.dbn.language.common.psi.*;
 import com.intellij.lang.ASTNode;
 import com.intellij.lang.folding.FoldingBuilder;
 import com.intellij.lang.folding.FoldingDescriptor;
@@ -36,7 +32,7 @@ public class SQLFoldingBuilder extends DBLanguageFoldingBuilder {
                 ExecutablePsiElement executablePsiElement = (ExecutablePsiElement) child;
                 TextRange textRange = executablePsiElement.getTextRange();
                 if (textRange.getLength() > 10) {
-                    ASTNode childNode = executablePsiElement.node;
+                    ASTNode childNode = executablePsiElement.getNode();
                     FoldingDescriptor descriptor = new FoldingDescriptor(childNode, textRange);
                     context.addDescriptor(descriptor);
                     createFoldingDescriptors(executablePsiElement, document, descriptors, 1);

@@ -71,7 +71,7 @@ public abstract class DBObjectImpl<M extends DBObjectMetadata> extends DBObjectT
     protected DBObjectRef<?> parentObjectRef;
     protected DBObjectProperties properties = new DBObjectProperties();
 
-    private static final WeakRefCache<DBObjectImpl, DBObjectListContainer> childObjects = WeakRefCache.build();
+    private static final WeakRefCache<DBObjectImpl, DBObjectListContainer> childObjects = WeakRefCache.basic();
 
     private static final DBOperationExecutor NULL_OPERATION_EXECUTOR = operationType -> {
         throw new DBOperationNotSupportedException(operationType);
@@ -325,7 +325,7 @@ public abstract class DBObjectImpl<M extends DBObjectMetadata> extends DBObjectT
 
     @NotNull
     public DBObjectListContainer ensureChildObjects() {
-        return childObjects.compute(this, (k, v) -> v == null ? new DBObjectListContainer(k) : v);
+        return childObjects.computeIfAbsent(this, k -> new DBObjectListContainer(k));
     }
 
     public void visitChildObjects(DBObjectListVisitor visitor, boolean visitInternal) {
@@ -739,6 +739,7 @@ public abstract class DBObjectImpl<M extends DBObjectMetadata> extends DBObjectT
 
     @Override
     public void disposeInner() {
+        DBObjectListContainer childObjects = DBObjectImpl.childObjects.remove(this);
         Disposer.dispose(childObjects);
         nullify();
     }

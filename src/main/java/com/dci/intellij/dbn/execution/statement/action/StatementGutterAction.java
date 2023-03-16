@@ -58,11 +58,11 @@ public class StatementGutterAction extends AnAction {
 
     @Nullable
     private ExecutablePsiElement getExecutablePsiElement() {
-        return Read.call(() -> {
-            DBLanguagePsiFile psiFile = getPsiFile();
+        return Read.call(this, a -> {
+            DBLanguagePsiFile psiFile = a.getPsiFile();
             if (isNotValid(psiFile)) return null;
 
-            PsiElement elementAtOffset = psiFile.findElementAt(elementOffset);
+            PsiElement elementAtOffset = psiFile.findElementAt(a.elementOffset);
             if (elementAtOffset != null && !(elementAtOffset instanceof BasePsiElement)) {
                 elementAtOffset = elementAtOffset.getParent();
             }

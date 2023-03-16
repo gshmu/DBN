@@ -270,7 +270,7 @@ public class DBNStatement<T extends Statement> extends DBNResource<T> implements
 
     @Override
     public void setFetchSize(int rows) {
-        Unsafe.silent(() -> inner.setFetchSize(Math.max(rows, 100)));
+        Unsafe.silent(this, s -> s.inner.setFetchSize(Math.max(rows, 100)));
     }
 
     @Override

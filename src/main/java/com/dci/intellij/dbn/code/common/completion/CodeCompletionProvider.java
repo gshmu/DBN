@@ -149,8 +149,8 @@ public class CodeCompletionProvider extends CompletionProvider<CompletionParamet
 
         if (!context.hasCompletionCandidates()) {
             LeafElementType elementType = (LeafElementType) element.getElementType();
-            AstNode node = new AstNode(element.node);
-            ElementLookupContext lookupContext = computeParseBranches(element.node, context.getDatabaseVersion());
+            AstNode node = new AstNode(element.getNode());
+            ElementLookupContext lookupContext = computeParseBranches(element.getNode(), context.getDatabaseVersion());
             if (!context.isNewLine()) {
                 lookupContext.addBreakOnAttribute(ElementTypeAttribute.STATEMENT);
             }

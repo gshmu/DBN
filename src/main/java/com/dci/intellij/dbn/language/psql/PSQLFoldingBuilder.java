@@ -54,7 +54,7 @@ public class PSQLFoldingBuilder extends DBLanguageFoldingBuilder {
                         }
 
                         if (textRange.getLength() > 10) {
-                            FoldingDescriptor foldingDescriptor = new FoldingDescriptor(basePsiElement.node, textRange);
+                            FoldingDescriptor foldingDescriptor = new FoldingDescriptor(basePsiElement.getNode(), textRange);
                             context.addDescriptor(foldingDescriptor);
                         }
                     }

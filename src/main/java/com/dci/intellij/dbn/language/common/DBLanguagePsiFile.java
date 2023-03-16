@@ -332,7 +332,11 @@ public abstract class DBLanguagePsiFile extends PsiFileImpl implements DatabaseC
             return DBObjectPsiCache.asPsiDirectory(parentObject);
 
         }
-        return Read.call(() -> DBLanguagePsiFile.super.getParent());
+        return Read.call(this, f -> f.getSuperParent());
+    }
+
+    private PsiDirectory getSuperParent() {
+        return super.getParent();
     }
 
     @Override
@@ -341,8 +345,12 @@ public abstract class DBLanguagePsiFile extends PsiFileImpl implements DatabaseC
         if (virtualFile.getFileSystem() instanceof DatabaseFileSystem) {
             return Checks.isValid(virtualFile);
         } else {
-            return Read.call(() -> super.isValid());
+            return Read.call(this, f -> f.isSuperValid());
         }
+    }
+
+    private boolean isSuperValid() {
+        return super.isValid();
     }
 
     public String getParseRootId() {

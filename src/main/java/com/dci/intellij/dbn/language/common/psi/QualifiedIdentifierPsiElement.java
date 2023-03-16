@@ -1,6 +1,7 @@
 package com.dci.intellij.dbn.language.common.psi;
 
-import com.dci.intellij.dbn.common.latent.Latent;
+import com.dci.intellij.dbn.common.Pair;
+import com.dci.intellij.dbn.common.ref.WeakRefCache;
 import com.dci.intellij.dbn.language.common.element.impl.IdentifierElementType;
 import com.dci.intellij.dbn.language.common.element.impl.LeafElementType;
 import com.dci.intellij.dbn.language.common.element.impl.QualifiedIdentifierElementType;
@@ -14,16 +15,20 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class QualifiedIdentifierPsiElement extends SequencePsiElement<QualifiedIdentifierElementType> {
-    private final Latent<List<QualifiedIdentifierVariant>> parseVariants = Latent.mutable(
-            () -> this.getElementsCount(),
-            () -> this.buildParseVariants());
+    private static final WeakRefCache<QualifiedIdentifierPsiElement, Pair<Integer, List<QualifiedIdentifierVariant>>> parseVariants = WeakRefCache.basic();
 
     public QualifiedIdentifierPsiElement(ASTNode astNode, QualifiedIdentifierElementType elementType) {
         super(astNode, elementType);
     }
 
     public List<QualifiedIdentifierVariant> getParseVariants() {
-        return parseVariants.get();
+        return parseVariants.compute(this, (k, v) -> {
+            if (v == null || v.first() != k.getElementsCount()) {
+                List<QualifiedIdentifierVariant> variants = k.buildParseVariants();
+                v = Pair.of(k.getElementsCount(), variants);
+            }
+            return v;
+        }).second();
     }
 
     public int getIndexOf(LeafPsiElement leafPsiElement) {

@@ -14,7 +14,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 public final class DBObjectPsiCache {
-    private static final WeakRefCache<DBObject, DBObjectPsiCache> psiCaches = WeakRefCache.build();
+    private static final WeakRefCache<DBObject, DBObjectPsiCache> psiCaches = WeakRefCache.basic();
 
     private DBObjectRef<?> objectRef;
     private PsiElementRef<PsiElement> psiElementRef;

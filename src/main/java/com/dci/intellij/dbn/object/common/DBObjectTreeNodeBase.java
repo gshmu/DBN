@@ -30,8 +30,8 @@ import static com.dci.intellij.dbn.common.util.Lists.filter;
 abstract class DBObjectTreeNodeBase extends BrowserTreeNodeBase implements DBObject, ToolTipProvider {
     protected static final List<BrowserTreeNode> EMPTY_TREE_NODE_LIST = Collections.unmodifiableList(new ArrayList<>(0));
 
-    private static final WeakRefCache<DBObjectTreeNodeBase, List<BrowserTreeNode>> possibleTreeChildren = WeakRefCache.build();
-    private static final WeakRefCache<DBObjectTreeNodeBase, List<BrowserTreeNode>> visibleTreeChildren = WeakRefCache.build();
+    private static final WeakRefCache<DBObjectTreeNodeBase, List<BrowserTreeNode>> possibleTreeChildren = WeakRefCache.basic();
+    private static final WeakRefCache<DBObjectTreeNodeBase, List<BrowserTreeNode>> visibleTreeChildren = WeakRefCache.basic();
 
     @Override
     public int getTreeDepth() {
