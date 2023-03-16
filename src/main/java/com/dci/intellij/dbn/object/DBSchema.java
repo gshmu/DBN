@@ -1,14 +1,14 @@
 package com.dci.intellij.dbn.object;
 
 import com.dci.intellij.dbn.connection.SchemaId;
-import com.dci.intellij.dbn.object.common.DBObject;
+import com.dci.intellij.dbn.object.common.DBRootObject;
 import com.dci.intellij.dbn.object.lookup.DBObjectRef;
 import com.dci.intellij.dbn.object.type.DBObjectType;
 
 import java.sql.SQLException;
 import java.util.List;
 
-public interface DBSchema extends DBObject {
+public interface DBSchema extends DBRootObject {
     boolean isPublicSchema();
     boolean isUserSchema();
     boolean isSystemSchema();

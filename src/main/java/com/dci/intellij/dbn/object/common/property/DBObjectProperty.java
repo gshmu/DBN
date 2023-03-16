@@ -49,7 +49,10 @@ public enum DBObjectProperty implements Property.LongBase {
     FOR_EACH_ROW,
 
     // other
-    TREE_LOADED // belongs to DBObjectStatus (here for optimization reasons)
+
+    // these belong to DBObjectStatus (here for optimization reasons)
+    TREE_LOADED,
+    LISTS_LOADED
     ;
 
     public static final DBObjectProperty[] VALUES = values();

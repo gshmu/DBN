@@ -43,7 +43,6 @@ public class DBConstraintImpl extends DBSchemaObjectImpl<DBConstraintMetadata> i
     private DBObjectRef<DBConstraint> foreignKeyConstraint;
 
     private String checkCondition;
-    private DBObjectList<DBColumn> columns;
 
     DBConstraintImpl(DBDataset dataset, DBConstraintMetadata metadata) throws SQLException {
         super(dataset, metadata);
@@ -83,7 +82,7 @@ public class DBConstraintImpl extends DBSchemaObjectImpl<DBConstraintMetadata> i
     protected void initLists() {
         super.initLists();
         DBObjectListContainer childObjects = ensureChildObjects();
-        columns = childObjects.createSubcontentObjectList(
+        childObjects.createSubcontentObjectList(
                 COLUMN, this,
                 getDataset(),
                 CONSTRAINT_COLUMN);
@@ -145,6 +144,7 @@ public class DBConstraintImpl extends DBSchemaObjectImpl<DBConstraintMetadata> i
 
     @Override
     public List<DBColumn> getColumns() {
+        DBObjectList<DBColumn> columns = getChildObjectList(COLUMN);
         return columns == null ? Collections.emptyList() : columns.getObjects();
     }
 
@@ -236,8 +236,9 @@ public class DBConstraintImpl extends DBSchemaObjectImpl<DBConstraintMetadata> i
     protected @Nullable List<DBObjectNavigationList> createNavigationLists() {
         List<DBObjectNavigationList> navigationLists = new LinkedList<>();
 
-        if (columns != null) {
-            navigationLists.add(DBObjectNavigationList.create("Columns", columns.getObjects()));
+        List<DBColumn> columns = getColumns();
+        if (columns.size() > 0) {
+            navigationLists.add(DBObjectNavigationList.create("Columns", columns));
         }
 
         DBConstraint foreignKeyConstraint = getForeignKeyConstraint();

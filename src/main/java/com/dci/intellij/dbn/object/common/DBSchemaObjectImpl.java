@@ -21,6 +21,7 @@ import com.dci.intellij.dbn.object.type.DBObjectType;
 import com.dci.intellij.dbn.vfs.DatabaseFileSystem;
 import com.dci.intellij.dbn.vfs.file.DBEditableObjectVirtualFile;
 import com.dci.intellij.dbn.vfs.file.DBObjectVirtualFile;
+import lombok.Getter;
 import lombok.val;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -39,8 +40,10 @@ import static com.dci.intellij.dbn.object.common.property.DBObjectProperty.*;
 import static com.dci.intellij.dbn.object.type.DBObjectType.*;
 
 
+@Getter
 public abstract class DBSchemaObjectImpl<M extends DBObjectMetadata> extends DBObjectImpl<M> implements DBSchemaObject {
     private volatile DBObjectStatusHolder objectStatus;
+    private volatile DBObjectListContainer childObjects;
 
     public DBSchemaObjectImpl(@NotNull DBSchema schema, M metadata) throws SQLException {
         super(schema, metadata);
@@ -48,6 +51,12 @@ public abstract class DBSchemaObjectImpl<M extends DBObjectMetadata> extends DBO
 
     public DBSchemaObjectImpl(@NotNull DBSchemaObject parent, M metadata) throws SQLException {
         super(parent, metadata);
+    }
+
+    @Override
+    protected void init(M metadata) throws SQLException {
+        super.init(metadata);
+        initLists();
     }
 
     @Override
@@ -134,6 +143,18 @@ public abstract class DBSchemaObjectImpl<M extends DBObjectMetadata> extends DBO
     @Override
     public DBEditableObjectVirtualFile getCachedVirtualFile() {
         return DatabaseFileSystem.getInstance().findDatabaseFile(this);
+    }
+
+    @NotNull
+    public DBObjectListContainer ensureChildObjects() {
+        if (childObjects == null) {
+            synchronized (this) {
+                if (childObjects == null) {
+                    childObjects = new DBObjectListContainer(this);
+                }
+            }
+        }
+        return childObjects;
     }
 
     @Override

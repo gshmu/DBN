@@ -10,7 +10,7 @@ import com.dci.intellij.dbn.database.common.metadata.def.DBUserMetadata;
 import com.dci.intellij.dbn.object.*;
 import com.dci.intellij.dbn.object.common.DBObject;
 import com.dci.intellij.dbn.object.common.DBObjectBundle;
-import com.dci.intellij.dbn.object.common.DBObjectImpl;
+import com.dci.intellij.dbn.object.common.DBRootObjectImpl;
 import com.dci.intellij.dbn.object.common.list.DBObjectList;
 import com.dci.intellij.dbn.object.common.list.DBObjectListContainer;
 import com.dci.intellij.dbn.object.common.list.DBObjectNavigationList;
@@ -33,7 +33,7 @@ import static com.dci.intellij.dbn.object.type.DBObjectRelationType.USER_PRIVILE
 import static com.dci.intellij.dbn.object.type.DBObjectRelationType.USER_ROLE;
 import static com.dci.intellij.dbn.object.type.DBObjectType.*;
 
-public class DBUserImpl extends DBObjectImpl<DBUserMetadata> implements DBUser {
+public class DBUserImpl extends DBRootObjectImpl<DBUserMetadata> implements DBUser {
     private DBObjectList<DBGrantedRole> roles;
     private DBObjectList<DBGrantedPrivilege> privileges;
 

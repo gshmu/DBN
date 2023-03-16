@@ -639,7 +639,6 @@ public class DBObjectBundleImpl extends BrowserTreeNodeBase implements DBObjectB
     }
 
     @Override
-    @NotNull
     public DBObjectListContainer getObjectLists() {
         return Failsafe.nn(objectLists);
     }

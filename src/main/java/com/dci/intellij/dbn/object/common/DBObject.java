@@ -86,9 +86,9 @@ public interface DBObject extends
     void collectChildObjects(DBObjectType objectType, Consumer<? super DBObject> consumer);
 
     @Nullable
-    DBObjectList<? extends DBObject> getChildObjectList(DBObjectType objectType);
+    <T extends DBObject> DBObjectList<T> getChildObjectList(DBObjectType objectType);
 
-    DBObjectList<? extends DBObject> getChildObjectList(DBObjectType objectType, boolean internal);
+    <T extends DBObject> DBObjectList<T> getChildObjectList(DBObjectType objectType, boolean internal);
 
     <T extends DBObject> T getChildObject(DBObjectType objectType, String name, boolean lookupHidden);
 

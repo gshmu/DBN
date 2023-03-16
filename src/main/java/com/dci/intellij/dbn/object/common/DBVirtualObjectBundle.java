@@ -175,6 +175,7 @@ public class DBVirtualObjectBundle extends BrowserTreeNodeBase implements DBObje
         return null;
     }
 
+
     @Override
     public <T extends DBObject> DBObjectList<T> getObjectList(DBObjectType objectType) {
         return null;
