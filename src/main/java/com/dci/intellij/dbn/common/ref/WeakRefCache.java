@@ -16,11 +16,11 @@ public interface WeakRefCache<K, V> {
 
     V remove(K key);
 
-    static <K, V> WeakRefCache<K, V> basic() {
-        return new WeakRefCacheBasicImpl<>();
+    static <K, V> WeakRefCache<K, V> weakKey() {
+        return new WeakRefCacheKeyImpl<>();
     }
 
-    static <K, V> WeakRefCache<K, V> limited(int maxSize) {
-        return new WeakRefCacheGuavaImpl<>(maxSize);
+    static <K, V> WeakRefCache<K, V> weakKeyValue() {
+        return new WeakRefCacheKeyValueImpl<>();
     }
 }

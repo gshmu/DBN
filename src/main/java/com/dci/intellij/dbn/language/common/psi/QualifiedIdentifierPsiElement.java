@@ -15,7 +15,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class QualifiedIdentifierPsiElement extends SequencePsiElement<QualifiedIdentifierElementType> {
-    private static final WeakRefCache<QualifiedIdentifierPsiElement, Pair<Integer, List<QualifiedIdentifierVariant>>> parseVariants = WeakRefCache.basic();
+    private static final WeakRefCache<QualifiedIdentifierPsiElement, Pair<Integer, List<QualifiedIdentifierVariant>>> parseVariants = WeakRefCache.weakKey();
 
     public QualifiedIdentifierPsiElement(ASTNode astNode, QualifiedIdentifierElementType elementType) {
         super(astNode, elementType);

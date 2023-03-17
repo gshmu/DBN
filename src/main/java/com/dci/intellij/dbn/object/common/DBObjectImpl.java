@@ -71,7 +71,7 @@ public abstract class DBObjectImpl<M extends DBObjectMetadata> extends DBObjectT
     protected DBObjectRef<?> parentObjectRef;
     protected DBObjectProperties properties = new DBObjectProperties();
 
-    private static final WeakRefCache<DBObjectImpl, DBObjectListContainer> childObjects = WeakRefCache.basic();
+    private static final WeakRefCache<DBObjectImpl, DBObjectListContainer> childObjects = WeakRefCache.weakKey();
 
     private static final DBOperationExecutor NULL_OPERATION_EXECUTOR = operationType -> {
         throw new DBOperationNotSupportedException(operationType);
