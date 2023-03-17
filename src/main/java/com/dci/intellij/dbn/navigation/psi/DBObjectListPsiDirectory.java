@@ -34,7 +34,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class DBObjectListPsiDirectory implements PsiDirectory, Disposable {
-    private static final WeakRefCache<DBObjectList, DBObjectListPsiDirectory> psiDirectoryCache = WeakRefCache.basic();
+    private static final WeakRefCache<DBObjectList, DBObjectListPsiDirectory> psiDirectoryCache = WeakRefCache.weakKey();
 
     private DBObjectListVirtualFile<?> virtualFile;
 

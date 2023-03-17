@@ -1,6 +1,5 @@
 package com.dci.intellij.dbn.common.ref;
 
-import com.intellij.util.containers.ContainerUtil;
 import lombok.SneakyThrows;
 import org.jetbrains.annotations.Nullable;
 
@@ -8,11 +7,10 @@ import java.util.Map;
 import java.util.function.BiFunction;
 import java.util.function.Function;
 
-class WeakRefCacheBasicImpl<K, V> implements WeakRefCache<K, V> {
-    private final Map<K, V> cache = ContainerUtil.createConcurrentWeakMap();
+abstract class WeakRefCacheBase<K, V> implements WeakRefCache<K, V> {
+    private final Map<K, V> cache = createCache();
 
-    WeakRefCacheBasicImpl() {
-    }
+    protected abstract Map<K, V> createCache();
 
     @Override
     public V get(K key) {
@@ -37,7 +35,8 @@ class WeakRefCacheBasicImpl<K, V> implements WeakRefCache<K, V> {
     @Override
     public void set(K key, @Nullable V value) {
         if (value == null)
-            cache.remove(key); else
+            cache.remove(key);
+        else
             cache.put(key, value);
     }
 
@@ -45,5 +44,4 @@ class WeakRefCacheBasicImpl<K, V> implements WeakRefCache<K, V> {
     public V remove(K key) {
         return cache.remove(key);
     }
-
 }
