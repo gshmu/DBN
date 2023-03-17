@@ -29,7 +29,7 @@ import java.io.OutputStream;
 import static com.dci.intellij.dbn.common.dispose.Failsafe.nd;
 
 public class DBObjectVirtualFile<T extends DBObject> extends DBVirtualFileBase {
-    private static final WeakRefCache<DBObject, DBObjectVirtualFile> virtualFileCache = WeakRefCache.basic();
+    private static final WeakRefCache<DBObject, DBObjectVirtualFile> virtualFileCache = WeakRefCache.weakKey();
 
     private static final byte[] EMPTY_BYTE_CONTENT = new byte[0];
     protected DBObjectRef<T> object;

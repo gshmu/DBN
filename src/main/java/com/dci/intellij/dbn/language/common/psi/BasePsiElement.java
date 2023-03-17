@@ -38,7 +38,7 @@ import com.dci.intellij.dbn.vfs.file.DBConsoleVirtualFile;
 import com.dci.intellij.dbn.vfs.file.DBEditableObjectVirtualFile;
 import com.dci.intellij.dbn.vfs.file.DBSessionStatementVirtualFile;
 import com.dci.intellij.dbn.vfs.file.DBSourceCodeVirtualFile;
-import com.intellij.extapi.psi.ASTDelegatePsiElement;
+import com.intellij.extapi.psi.ASTWrapperPsiElement;
 import com.intellij.ide.util.EditSourceUtil;
 import com.intellij.lang.ASTNode;
 import com.intellij.navigation.ItemPresentation;
@@ -64,12 +64,11 @@ import java.util.function.Consumer;
 
 @Getter
 @Setter
-public abstract class BasePsiElement<T extends ElementTypeBase> extends ASTDelegatePsiElement implements DatabaseContextBase, ItemPresentation, FormattingProviderPsiElement {
-    private static final WeakRefCache<BasePsiElement, DBVirtualObject> underlyingObjectCache = WeakRefCache.basic();
-    private static final WeakRefCache<BasePsiElement, FormattingAttributes> formattingAttributesCache = WeakRefCache.basic();
-    private static final WeakRefCache<BasePsiElement, BasePsiElement> enclosingScopePsiElements = WeakRefCache.basic();
+public abstract class BasePsiElement<T extends ElementTypeBase> extends ASTWrapperPsiElement implements DatabaseContextBase, ItemPresentation, FormattingProviderPsiElement {
+    private static final WeakRefCache<BasePsiElement, DBVirtualObject> underlyingObjectCache = WeakRefCache.weakKey();
+    private static final WeakRefCache<BasePsiElement, FormattingAttributes> formattingAttributesCache = WeakRefCache.weakKey();
+    private static final WeakRefCache<BasePsiElement, BasePsiElement> enclosingScopePsiElements = WeakRefCache.weakKeyValue();
 
-    private final ASTNode node;
     private T elementType;
 
     public enum MatchType {
@@ -79,7 +78,7 @@ public abstract class BasePsiElement<T extends ElementTypeBase> extends ASTDeleg
     }
 
     protected BasePsiElement(ASTNode node, T elementType) {
-        this.node = node;
+        super(node);
         this.elementType = elementType;
     }
 

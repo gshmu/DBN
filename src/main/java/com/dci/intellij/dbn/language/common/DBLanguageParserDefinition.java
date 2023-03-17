@@ -1,6 +1,7 @@
 package com.dci.intellij.dbn.language.common;
 
 import com.dci.intellij.dbn.language.common.element.ElementType;
+import com.dci.intellij.dbn.language.common.psi.WeakPsiDelegate;
 import com.dci.intellij.dbn.vfs.DatabaseFileViewProvider;
 import com.intellij.extapi.psi.ASTWrapperPsiElement;
 import com.intellij.lang.ASTNode;
@@ -28,8 +29,9 @@ public abstract class DBLanguageParserDefinition implements ParserDefinition {
         IElementType et = astNode.getElementType();
         if(et instanceof ElementType) {
             ElementType elementType = (ElementType) et;
-            //SQLFile file = lookupFile(astNode);
-            return elementType.createPsiElement(astNode);
+            PsiElement psiElement = elementType.createPsiElement(astNode);
+            //return WeakPsiDelegate.wrap(psiElement);
+            return WeakPsiDelegate.wrap(psiElement);
         }
         return new ASTWrapperPsiElement(astNode);
     }
