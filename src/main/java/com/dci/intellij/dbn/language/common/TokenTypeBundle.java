@@ -6,6 +6,8 @@ import com.intellij.psi.tree.TokenSet;
 import lombok.Getter;
 import org.jdom.Document;
 
+import java.util.Arrays;
+import java.util.HashSet;
 import java.util.Set;
 
 @Getter
@@ -23,7 +25,7 @@ public class TokenTypeBundle extends TokenTypeBundleBase {
     private final IElementType exception;
     private final IElementType dataType;
 
-    private static final Set<String> GENERIC_TOKENS = Set.of("INTEGER", "NUMBER", "STRING", "OPERATOR", "KEYWORD", "FUNCTION", "VARIABLE", "PARAMETER", "EXCEPTION", "DATA_TYPE");
+    private static final Set<String> GENERIC_TOKENS = new HashSet<>(Arrays.asList("INTEGER", "NUMBER", "STRING", "OPERATOR", "KEYWORD", "FUNCTION", "VARIABLE", "PARAMETER", "EXCEPTION", "DATA_TYPE"));
 
     public TokenTypeBundle(DBLanguageDialect languageDialect, Document document) {
         super(languageDialect, document);
