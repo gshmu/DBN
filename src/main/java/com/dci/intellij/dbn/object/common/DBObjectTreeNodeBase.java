@@ -24,6 +24,7 @@ import java.util.Collections;
 import java.util.List;
 
 import static com.dci.intellij.dbn.browser.DatabaseBrowserUtils.treeVisibilityChanged;
+import static com.dci.intellij.dbn.common.dispose.Failsafe.guarded;
 import static com.dci.intellij.dbn.common.util.Compactables.compact;
 import static com.dci.intellij.dbn.common.util.Lists.filter;
 
@@ -116,9 +117,9 @@ abstract class DBObjectTreeNodeBase extends BrowserTreeNodeBase implements DBObj
 
     @Override
     public boolean isLeaf() {
-        return Failsafe.guarded(true, () -> {
-            List<BrowserTreeNode> treeNodes = visibleTreeChildren.get(this);
-            if (treeNodes == null) return !hasVisibleTreeChildren();
+        return guarded(true, this, n -> {
+            List<BrowserTreeNode> treeNodes = visibleTreeChildren.get(n);
+            if (treeNodes == null) return !n.hasVisibleTreeChildren();
             return treeNodes.isEmpty();
         });
     }

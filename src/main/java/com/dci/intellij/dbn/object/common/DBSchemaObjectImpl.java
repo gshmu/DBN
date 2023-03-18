@@ -140,19 +140,23 @@ public abstract class DBSchemaObjectImpl<M extends DBObjectMetadata> extends DBR
 
     @Override
     public List<DBSchema> getReferencingSchemas() throws SQLException {
+        return loadReferencingSchemas(this);
+    }
+
+    private static List<DBSchema> loadReferencingSchemas(DBSchemaObject object) throws SQLException {
         return DatabaseInterfaceInvoker.load(HIGHEST,
                 "Loading data dictionary",
-                "Loading schema references for " + getQualifiedNameWithType(),
-                getProject(),
-                getConnectionId(),
+                "Loading schema references for " + object.getQualifiedNameWithType(),
+                object.getProject(),
+                object.getConnectionId(),
                 conn -> {
                     List<DBSchema> schemas = new ArrayList<>();
                     ResultSet resultSet = null;
                     try {
-                        DBSchema schema = getSchema();
-                        DatabaseMetadataInterface metadataInterface = getMetadataInterface();
-                        resultSet = metadataInterface.loadReferencingSchemas(getSchemaName(), getName(), conn);
-                        DBObjectBundle objectBundle = getObjectBundle();
+                        DBSchema schema = object.getSchema();
+                        DatabaseMetadataInterface metadataInterface = object.getMetadataInterface();
+                        resultSet = metadataInterface.loadReferencingSchemas(object.getSchemaName(), object.getName(), conn);
+                        DBObjectBundle objectBundle = object.getObjectBundle();
                         while (resultSet.next()) {
                             String schemaName = resultSet.getString("SCHEMA_NAME");
                             DBSchema sch = objectBundle.getSchema(schemaName);

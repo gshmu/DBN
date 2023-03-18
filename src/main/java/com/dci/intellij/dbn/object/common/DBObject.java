@@ -31,7 +31,6 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
-import java.sql.SQLException;
 import java.util.List;
 
 public interface DBObject extends
@@ -117,9 +116,6 @@ public interface DBObject extends
     DBObjectListContainer getChildObjects();
 
     void visitChildObjects(DBObjectListVisitor visitor, boolean visitInternal);
-
-    @Nullable
-    String extractDDL() throws SQLException;
 
     DBOperationExecutor getOperationExecutor();
 

@@ -15,11 +15,9 @@ import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.common.environment.EnvironmentType;
 import com.dci.intellij.dbn.common.ref.WeakRefCache;
 import com.dci.intellij.dbn.common.routine.Consumer;
-import com.dci.intellij.dbn.common.util.Commons;
 import com.dci.intellij.dbn.common.util.Strings;
 import com.dci.intellij.dbn.connection.*;
 import com.dci.intellij.dbn.connection.config.ConnectionDatabaseSettings;
-import com.dci.intellij.dbn.connection.jdbc.DBNCallableStatement;
 import com.dci.intellij.dbn.database.common.metadata.DBObjectMetadata;
 import com.dci.intellij.dbn.database.interfaces.DatabaseCompatibilityInterface;
 import com.dci.intellij.dbn.editor.DBContentType;
@@ -56,7 +54,6 @@ import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
 import java.sql.SQLException;
-import java.sql.Types;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -444,10 +441,8 @@ public abstract class DBObjectImpl<M extends DBObjectMetadata> extends DBObjectT
             if (objectType == DBObjectType.ANY) {
                 childObjects.visit(o -> o.collectObjects(consumer), false);
             } else {
-                DBObjectList<?> objectList = Commons.coalesce(
-                        () -> childObjects.getObjectList(objectType, false),
-                        () -> childObjects.getObjectList(objectType, true));
-
+                DBObjectList<?> objectList = childObjects.getObjectList(objectType, false);
+                if (objectList == null) objectList = childObjects.getObjectList(objectType, true);
                 if (objectList != null) objectList.collectObjects(consumer);
             }
         }
@@ -498,33 +493,6 @@ public abstract class DBObjectImpl<M extends DBObjectMetadata> extends DBObjectT
     }
 
     @Override
-    public String extractDDL() throws SQLException {
-        // TODO move to database interface (ORACLE)
-        ConnectionHandler connection = getConnection();
-        return PooledConnection.call(connection.createConnectionContext(), conn -> {
-            DBNCallableStatement statement = null;
-            try {
-                DBObjectType objectType = getObjectType();
-                DBObjectType genericType = objectType.getGenericType();
-                objectType = genericType == DBObjectType.TRIGGER ? genericType : objectType;
-                String objectTypeName = objectType.getName().toUpperCase();
-
-                statement = conn.prepareCall("{? = call DBMS_METADATA.GET_DDL(?, ?, ?)}");
-                statement.registerOutParameter(1, Types.CLOB);
-                statement.setString(2, objectTypeName);
-                statement.setString(3, getName());
-                statement.setString(4, getSchema().getName());
-
-                statement.execute();
-                String ddl = statement.getString(1);
-                return ddl == null ? null : ddl.trim();
-            } finally {
-                Resources.close(statement);
-            }
-        });
-    }
-
-    @Override
     @Nullable
     public <E extends DatabaseEntity> E getUndisposedEntity() {
         return cast(objectRef.get());
@@ -538,9 +506,9 @@ public abstract class DBObjectImpl<M extends DBObjectMetadata> extends DBObjectT
 
         if(dynamicContentType instanceof DBObjectType) {
             DBObjectType objectType = (DBObjectType) dynamicContentType;
-            return Commons.coalesce(
-                    () -> childObjects.getObjectList(objectType, false),
-                    () -> childObjects.getObjectList(objectType, true));
+            DBObjectList<DBObject> objectList = childObjects.getObjectList(objectType, false);
+            if (objectList == null) objectList = childObjects.getObjectList(objectType, true);
+            return objectList;
         }
 
         else if (dynamicContentType instanceof DBObjectRelationType) {
