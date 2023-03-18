@@ -22,7 +22,6 @@ import com.dci.intellij.dbn.common.routine.Consumer;
 import com.dci.intellij.dbn.common.thread.Background;
 import com.dci.intellij.dbn.common.thread.Read;
 import com.dci.intellij.dbn.common.ui.tree.TreeEventType;
-import com.dci.intellij.dbn.common.util.Commons;
 import com.dci.intellij.dbn.common.util.Lists;
 import com.dci.intellij.dbn.connection.*;
 import com.dci.intellij.dbn.connection.jdbc.DBNConnection;
@@ -659,9 +658,10 @@ public class DBObjectBundleImpl extends BrowserTreeNodeBase implements DBObjectB
     public DynamicContent<?> getDynamicContent(DynamicContentType<?> dynamicContentType) {
         if(dynamicContentType instanceof DBObjectType) {
             DBObjectType objectType = (DBObjectType) dynamicContentType;
-            return Commons.coalesce(
-                    () -> objectLists.getObjectList(objectType, false),
-                    () -> objectLists.getObjectList(objectType, true));
+
+            DBObjectList<DBObject> objectList = objectLists.getObjectList(objectType, false);
+            if (objectList == null) objectList = objectLists.getObjectList(objectType, true);
+            return objectList;
         }
 
         if (dynamicContentType instanceof DBObjectRelationType) {

@@ -2,6 +2,7 @@ package com.dci.intellij.dbn.generator.action;
 
 import com.dci.intellij.dbn.common.util.Strings;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
+import com.dci.intellij.dbn.ddl.DDLManager;
 import com.dci.intellij.dbn.generator.StatementGeneratorResult;
 import com.dci.intellij.dbn.object.common.DBObject;
 import com.dci.intellij.dbn.object.lookup.DBObjectRef;
@@ -38,7 +39,8 @@ public class GenerateDDLStatementAction extends GenerateStatementAction {
         StatementGeneratorResult result = new StatementGeneratorResult();
         DBObject object = getObject();
         try {
-            String statement = object.extractDDL();
+            DDLManager ddlManager = DDLManager.getInstance(project);
+            String statement = ddlManager.extractDDL(object);
             if (Strings.isEmptyOrSpaces(statement)) {
                 String message =
                         "Could not extract DDL statement for " + object.getQualifiedNameWithType() + ".\n" +
