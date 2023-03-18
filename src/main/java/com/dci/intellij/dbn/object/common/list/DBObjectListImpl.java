@@ -21,7 +21,6 @@ import com.dci.intellij.dbn.common.ref.WeakRefCache;
 import com.dci.intellij.dbn.common.search.SearchAdapter;
 import com.dci.intellij.dbn.common.string.StringDeBuilder;
 import com.dci.intellij.dbn.common.ui.tree.TreeEventType;
-import com.dci.intellij.dbn.common.util.Commons;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.DatabaseEntity;
 import com.dci.intellij.dbn.connection.config.ConnectionFilterSettings;
@@ -221,9 +220,9 @@ public class DBObjectListImpl<T extends DBObject> extends DynamicContentBase<T> 
         }
 
         if (objectType == TYPE) {
-            return Commons.coalesce(
-                    () -> binarySearch(elements, binary(name, overload, false)),
-                    () -> binarySearch(elements, binary(name, overload, true)));
+            T element = binarySearch(elements, binary(name, overload, false));
+            if (element == null) element = binarySearch(elements, binary(name, overload, true));
+            return element;
         }
 
         if (isSearchable()) {
@@ -397,14 +396,14 @@ public class DBObjectListImpl<T extends DBObject> extends DynamicContentBase<T> 
 
     @Override
     public List<? extends BrowserTreeNode> getChildren() {
-        return guarded(elements, () -> {
-            boolean wasUntouched = !isTouched();
-            getElements();
-            if (wasUntouched && isLoaded()) {
-                ConnectionHandler connection = this.getConnection();
+        return guarded(elements, this, l -> {
+            boolean wasUntouched = !l.isTouched();
+            l.getElements();
+            if (wasUntouched && l.isLoaded()) {
+                ConnectionHandler connection = l.getConnection();
                 DatabaseBrowserManager.scrollToSelectedElement(connection);
             }
-            return elements;
+            return l.elements;
         });
     }
 

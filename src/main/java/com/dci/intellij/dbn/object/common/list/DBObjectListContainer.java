@@ -61,9 +61,9 @@ public final class DBObjectListContainer implements StatefulDisposable, Unlisted
 
     public void visit(DBObjectListVisitor visitor, boolean visitInternal) {
         if (objects == null) return;
-        guarded(() -> {
+        guarded(this, o -> {
             if (isNotValid(visitor)) return;
-            for (DBObjectList<?> list : objects) {
+            for (DBObjectList<?> list : o.objects) {
                 if (list == null) continue;
                 if (list.isInternal() && !visitInternal) continue;
                 if (isNotValid(list)) continue;
@@ -315,13 +315,9 @@ public final class DBObjectListContainer implements StatefulDisposable, Unlisted
     }
 
     public void loadObjects(DBObjectType objectType) {
-        DBObjectList<?> objectList = Commons.coalesce(
-                () -> getObjectList(objectType, false),
-                () -> getObjectList(objectType, true));
-
-        if (objectList != null) {
-            objectList.getElements();
-        }
+        DBObjectList<?> objectList = getObjectList(objectType, false);
+        if (objectList == null) objectList = getObjectList(objectType, true);
+        if (objectList != null) objectList.getElements();
     }
 
     /*****************************************************************
