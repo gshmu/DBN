@@ -154,7 +154,8 @@ public class DBObjectRef<T extends DBObject> implements Comparable<DBObjectRef<?
     public void writeState(Element element) {
         String value = serialize();
 
-        element.setAttribute("connection-id", getConnectionId().id());
+        ConnectionId connectionId = getConnectionId();
+        element.setAttribute("connection-id", connectionId == null ? "null" : connectionId.id());
         element.setAttribute("object-ref", value);
     }
 
@@ -298,7 +299,7 @@ public class DBObjectRef<T extends DBObject> implements Comparable<DBObjectRef<?
 
     @Contract("null -> null;!null -> !null;")
     public static <T extends DBObject> DBObjectRef<T> of(@Nullable T object) {
-        return object == null ? null : (DBObjectRef<T>) object.ref();
+        return object == null ? null : cast(object.ref());
     }
 
     public static <T extends DBObject> String serialised(@Nullable T object) {
