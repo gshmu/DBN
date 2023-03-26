@@ -332,35 +332,31 @@ public class DBSchemaImpl extends DBRootObjectImpl<DBSchemaMetadata> implements 
     @Override
     public DBDataset getDataset(String name) {
         DBDataset dataset = getTable(name);
-        if (dataset == null) {
-            dataset = getView(name);
-            if (dataset == null && MATERIALIZED_VIEW.isSupported(this)) {
-                dataset = getMaterializedView(name);
-            }
-        }
-        if (dataset == null) {
-            //System.out.println("unknown dataset: " + getName() + "." + name);
-        }
+        if (dataset != null) return dataset;
+
+        dataset = getView(name);
+        if (dataset != null) return dataset;
+
+        if (!MATERIALIZED_VIEW.isSupported(this)) return null;
+        dataset = getMaterializedView(name);
         return dataset;
     }
 
     @Nullable
     private <T extends DBSchemaObject> T getObjectFallbackOnSynonym(DBObjectList<T> objects, String name) {
         T object = objects.getObject(name);
-        if (object == null && SYNONYM.isSupported(this)) {
-            DBSynonym synonym = synonyms.getObject(name);
-            if (synonym != null) {
-                DBObject underlyingObject = synonym.getUnderlyingObject();
-                if (underlyingObject != null) {
-                    if (underlyingObject.getObjectType() == objects.getObjectType()) {
-                        return (T) underlyingObject;
-                    }
-                }
-            }
-        } else {
-            return object;
-        }
-        return null;
+        if (object != null) return object;
+
+        if (!SYNONYM.isSupported(this)) return null;
+        DBSynonym synonym = synonyms.getObject(name);
+        if (synonym == null) return null;
+
+        DBObject underlyingObject = synonym.getUnderlyingObject();
+        if (underlyingObject == null) return null;
+        if (underlyingObject.getObjectType() != objects.getObjectType()) return null;
+
+        return cast(underlyingObject);
+
     }
 
     @Override
