@@ -113,16 +113,16 @@
     </statement-execution-processor>
 
     <statement-execution-processor id="schemas" is-query="true" is-prepared-statement="true">
-<!--        <statement prefixes="DBA, ALL">
-            with DBN_OBJECTS as (select distinct OWNER from [PREFIX]_OBJECTS)
+        <statement prefixes="DBA, ALL">
+            with DBN_OBJECTS as (select distinct u.NAME from SYS.OBJ$ o, SYS.USER$ u where o.OWNER# = u.USER#)
             select
                 u.USERNAME as SCHEMA_NAME,
                 'N' as IS_PUBLIC,
                 decode(u.USERNAME, 'SYS', 'Y', 'SYSTEM', 'Y', 'N') as IS_SYSTEM,
-                decode(o.OWNER, null, 'Y', 'N') as IS_EMPTY
+                decode(o.NAME, null, 'Y', 'N') as IS_EMPTY
             from
                 [PREFIX]_USERS u
-                left join DBN_OBJECTS o on o.OWNER = u.USERNAME
+                left join DBN_OBJECTS o on o.NAME = u.USERNAME
             union all
             select
                 'PUBLIC',
@@ -130,7 +130,7 @@
                 'Y' as IS_SYSTEM,
                 'N' as IS_EMPTY
             from DUAL
-        </statement>-->
+        </statement>
         <statement prefixes="DBA, ALL">
             select
                 u.USERNAME as SCHEMA_NAME,
