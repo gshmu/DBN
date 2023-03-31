@@ -5,6 +5,7 @@ import com.dci.intellij.dbn.database.common.DatabaseNativeDataTypes;
 
 import java.math.BigDecimal;
 import java.sql.Blob;
+import java.sql.Date;
 import java.sql.Timestamp;
 import java.sql.Types;
 
@@ -46,7 +47,7 @@ public class GenericNativeDataTypes extends DatabaseNativeDataTypes {
         createDateTimeDefinition("DATETIME", Timestamp.class, Types.TIMESTAMP);
         createDateTimeDefinition("TIMESTAMP", Timestamp.class, Types.TIMESTAMP);
         createDateTimeDefinition("TIME", Timestamp.class, Types.TIME);
-        createDateTimeDefinition("YEAR", Timestamp.class, Types.DATE);
+        createDateTimeDefinition("YEAR", Date.class, Types.DATE);
 
         createBasicDefinition("TINYBLOB", Blob.class, Types.BLOB, GenericDataType.BLOB);
         createBasicDefinition("TINYTEXT", Blob.class, Types.CLOB, GenericDataType.CLOB);
