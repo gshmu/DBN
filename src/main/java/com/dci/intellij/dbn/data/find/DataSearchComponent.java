@@ -474,7 +474,8 @@ public class DataSearchComponent extends DBNFormBase implements SelectionListene
     }
 
     public boolean hasMatches() {
-        return !getSearchResult().isEmpty();
+        DataSearchResult searchResult = getSearchResult();
+        return searchResult != null && !searchResult.isEmpty();
     }
 
     private DataSearchResult getSearchResult() {
