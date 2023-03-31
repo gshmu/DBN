@@ -5,10 +5,9 @@ import com.dci.intellij.dbn.common.thread.Timeout;
 import com.dci.intellij.dbn.connection.Resources;
 
 import java.sql.SQLException;
-import java.sql.SQLTimeoutException;
 import java.util.concurrent.*;
 
-import static com.dci.intellij.dbn.common.exception.Exceptions.causeOf;
+import static com.dci.intellij.dbn.common.exception.Exceptions.*;
 
 public final class StatementExecutor {
     private StatementExecutor() {}
@@ -27,21 +26,18 @@ public final class StatementExecutor {
         } catch (TimeoutException | InterruptedException | RejectedExecutionException e) {
             context.log("QUERY", false, true, millisSince(start));
             Resources.close(context.getStatement());
-            throw new SQLTimeoutException("Operation timed out (timeout = " + timeout + "s)", e);
+            throw toSqlTimeoutException(e, "Operation timed out (timeout = " + timeout + "s)");
 
         } catch (ExecutionException e) {
             context.log("QUERY", true, false, millisSince(start));
             Resources.close(context.getStatement());
             Throwable cause = causeOf(e);
-            if (cause instanceof SQLException) {
-                throw (SQLException) cause;
-            } else {
-                throw new SQLException("Error processing request: " + cause.getMessage(), cause);
-            }
+            throw toSqlException(cause, "Error processing request: " + cause.getMessage());
+
         } catch (Throwable e) {
             context.log("QUERY", true, false, millisSince(start));
             Resources.close(context.getStatement());
-            throw new SQLException("Error processing request: " + e.getMessage(), e);
+            throw toSqlException(e, "Error processing request: " + e.getMessage());
 
         }
     }

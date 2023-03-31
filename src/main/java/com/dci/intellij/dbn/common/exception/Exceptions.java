@@ -4,6 +4,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.sql.SQLException;
 import java.sql.SQLNonTransientConnectionException;
+import java.sql.SQLTimeoutException;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
@@ -29,6 +30,13 @@ public class Exceptions {
         return e instanceof SQLException ?
                 (SQLException) e :
                 new SQLException(s + ": [" + e.getClass().getSimpleName() + "] " + e.getMessage(), e);
+    }
+
+    @NotNull
+    public static SQLTimeoutException toSqlTimeoutException(@NotNull Throwable e, String s) {
+        return e instanceof SQLTimeoutException ?
+                (SQLTimeoutException) e :
+                new SQLTimeoutException(s + ": [" + e.getClass().getSimpleName() + "] " + e.getMessage(), e);
     }
 
     @NotNull

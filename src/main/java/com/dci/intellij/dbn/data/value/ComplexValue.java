@@ -5,6 +5,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.sql.*;
 
+import static com.dci.intellij.dbn.common.exception.Exceptions.toSqlException;
 import static com.dci.intellij.dbn.common.util.Commons.nvl;
 
 public class ComplexValue extends ValueAdapter<String> implements Comparable<ComplexValue>{
@@ -50,8 +51,7 @@ public class ComplexValue extends ValueAdapter<String> implements Comparable<Com
                 preparedStatement.setString(parameterIndex, value);
             }
         } catch (Throwable e) {
-            if (e instanceof SQLException) throw (SQLException) e;
-            throw new SQLException("Could not write array value. Your JDBC driver may not support this feature", e);
+            throw toSqlException(e, "Could not write complex value. Your JDBC driver may not support this feature");
         }
 
     }
@@ -65,8 +65,7 @@ public class ComplexValue extends ValueAdapter<String> implements Comparable<Com
                 resultSet.updateString(columnIndex, value);
             }
         } catch (Throwable e) {
-            if (e instanceof SQLException) throw (SQLException) e;
-            throw new SQLException("Could not write array value. Your JDBC driver may not support this feature", e);
+            throw toSqlException(e, "Could not write complex value. Your JDBC driver may not support this feature");
         }
     }
 

@@ -28,6 +28,8 @@ import java.util.Objects;
 import java.util.UUID;
 
 import static com.dci.intellij.dbn.common.content.DynamicContentProperty.INTERNAL;
+import static com.dci.intellij.dbn.common.exception.Exceptions.toSqlException;
+import static com.dci.intellij.dbn.common.exception.Exceptions.toSqlTimeoutException;
 import static com.dci.intellij.dbn.diagnostics.Diagnostics.isDatabaseAccessDebug;
 
 @Slf4j
@@ -55,24 +57,36 @@ public abstract class DynamicContentResultSetLoader<E extends DynamicContentElem
         private final long startTimestamp = System.currentTimeMillis();
     }
 
-    private DebugInfo preLoadContent(DynamicContent<E> dynamicContent) {
+    private DebugInfo preLoadContent(DynamicContent<E> content) {
         if (isDatabaseAccessDebug()) {
             DebugInfo debugInfo = new DebugInfo();
-            log.info(
-                    "[DBN] Loading " + dynamicContent.getContentDescription() +
-                    " (id = " + debugInfo.id + ")");
+            log.info("[DBN] Loading {} (id = {})",
+                    content.getContentDescription(),
+                    debugInfo.id);
+
             return debugInfo;
         }
         return null;
     }
 
-    private void postLoadContent(DynamicContent<E> dynamicContent, DebugInfo debugInfo) {
-        if (debugInfo != null) {
-            log.info(
-                    "[DBN] Done loading " + dynamicContent.getContentDescription() +
-                    " (id = " + debugInfo.id + ") - " +
-                    (System.currentTimeMillis() - debugInfo.startTimestamp) + "ms"   );
-        }
+    private void postLoadContent(DynamicContent<E> content, DebugInfo debugInfo) {
+        if (debugInfo == null) return;
+
+        log.info(
+                "[DBN] Done loading {} (id = {}) - {}ms",
+                content.getContentDescription(),
+                debugInfo.id,
+                (System.currentTimeMillis() - debugInfo.startTimestamp));
+    }
+
+
+    private void postLoadContentFailure(DynamicContent<E> content, DebugInfo debugInfo, Throwable exception) {
+        if (debugInfo == null) return;
+        log.warn("[DBN] Failed to load {} (id = {}) - {}ms",
+                content.getContentDescription(),
+                debugInfo.id,
+                System.currentTimeMillis() - debugInfo.startTimestamp,
+                exception);
     }
 
     @Override
@@ -142,15 +156,19 @@ public abstract class DynamicContentResultSetLoader<E extends DynamicContentElem
             postLoadContent(content, debugInfo);
 
         } catch (ProcessCanceledException e) {
-            throw new SQLTimeoutException(e);
+            postLoadContentFailure(content, debugInfo, e);
+            throw toSqlTimeoutException(e, "Load process cancelled");
 
         } catch (SQLTimeoutException |
                  SQLFeatureNotSupportedException |
                  SQLTransientConnectionException |
                  SQLNonTransientConnectionException e) {
+            postLoadContentFailure(content, debugInfo, e);
             throw e;
 
         } catch (SQLException e) {
+            postLoadContentFailure(content, debugInfo, e);
+
             DatabaseMessageParserInterface messageParserInterface = connection.getMessageParserInterface();
             boolean modelException = messageParserInterface.isModelException(e);
             if (modelException) {
@@ -158,7 +176,8 @@ public abstract class DynamicContentResultSetLoader<E extends DynamicContentElem
             }
             throw e;
         } catch (Throwable e) {
-            throw new SQLException(e);
+            postLoadContentFailure(content, debugInfo, e);
+            throw toSqlException(e);
 
         } finally {
             loading.set(false);
