@@ -2,6 +2,7 @@ package com.dci.intellij.dbn.vfs.file;
 
 import com.dci.intellij.dbn.browser.model.BrowserTreeNode;
 import com.dci.intellij.dbn.common.DevNullStreams;
+import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.common.ref.WeakRefCache;
 import com.dci.intellij.dbn.common.util.Traces;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
@@ -91,9 +92,15 @@ public class DBObjectVirtualFile<T extends DBObject> extends DBVirtualFileBase {
     @NotNull
     @Override
     public String getPresentablePath() {
-        return getConnection().getName() + File.separatorChar +
+        String connectionName = getConnectionName();
+
+        return connectionName + File.separatorChar +
                 getObjectRef().getObjectType().getListName() + File.separatorChar +
                 getObjectRef().getQualifiedName();
+    }
+
+    private String getConnectionName() {
+        return Failsafe.guarded("DISPOSED", this, o -> o.getConnection().getName());
     }
 
     /*********************************************************
