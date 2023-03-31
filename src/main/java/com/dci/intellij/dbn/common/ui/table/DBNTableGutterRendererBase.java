@@ -1,6 +1,7 @@
 package com.dci.intellij.dbn.common.ui.table;
 
 import com.dci.intellij.dbn.common.color.Colors;
+import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.common.latent.Latent;
 import com.dci.intellij.dbn.common.thread.Dispatch;
 import com.dci.intellij.dbn.common.ui.util.Borders;
@@ -53,9 +54,14 @@ public abstract class DBNTableGutterRendererBase implements DBNTableGutterRender
         if (preferredSize.getWidth() != preferredWidth) {
             Dimension dimension = new Dimension(preferredWidth, -1);
             mainPanel.setPreferredSize(dimension);
-            Dispatch.run(() -> list.setPreferredSize(new Dimension(preferredWidth, (int) list.getPreferredSize().getHeight())));
+            Dispatch.run(() -> resize(list, preferredWidth));
         }
         return mainPanel;
+    }
+
+    private void resize(JList list, int preferredWidth) {
+        Failsafe.nd(list);
+        list.setPreferredSize(new Dimension(preferredWidth, (int) list.getPreferredSize().getHeight()));
     }
 
     private int computeLabelWidth(int count) {
