@@ -13,6 +13,8 @@ import lombok.Setter;
 import org.jdom.Element;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.Objects;
+
 import static com.dci.intellij.dbn.common.options.setting.SettingsSupport.booleanAttribute;
 import static com.dci.intellij.dbn.common.options.setting.SettingsSupport.connectionIdAttribute;
 import static com.dci.intellij.dbn.connection.config.ConnectionSettingsStatus.*;
@@ -126,6 +128,6 @@ public class ConnectionSettings extends CompositeProjectConfiguration<Connection
 
     @Override
     public String toString() {
-        return connectionId.id();
+        return Objects.toString(connectionId);
     }
 }
