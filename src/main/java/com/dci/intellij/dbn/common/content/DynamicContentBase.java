@@ -353,7 +353,6 @@ public abstract class DynamicContentBase<T extends DynamicContentElement>
         if (isDisposed()) return elements;
 
         if (canLoadFast() ||
-                ThreadMonitor.isTimeoutProcess() ||
                 ThreadMonitor.isBackgroundProcess() ||
                 ThreadMonitor.isProgressProcess()) {
 
