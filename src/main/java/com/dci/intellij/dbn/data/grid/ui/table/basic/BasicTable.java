@@ -17,6 +17,7 @@ import com.dci.intellij.dbn.common.ui.util.UserInterface;
 import com.dci.intellij.dbn.common.util.MathResult;
 import com.dci.intellij.dbn.data.grid.color.DataGridTextAttributes;
 import com.dci.intellij.dbn.data.grid.options.DataGridSettings;
+import com.dci.intellij.dbn.data.model.ColumnInfo;
 import com.dci.intellij.dbn.data.model.DataModelCell;
 import com.dci.intellij.dbn.data.model.DataModelRow;
 import com.dci.intellij.dbn.data.model.DataModelState;
@@ -238,6 +239,10 @@ public class BasicTable<T extends BasicDataModel<?, ?>> extends DBNTableWithGutt
             getSelectionModel().setSelectionInterval(index, index);
             scrollRectToVisible(getCellRect(index, 0, true));
         }
+    }
+
+    protected ColumnInfo getColumnInfo(int columnIndex) {
+        return getModel().getColumnInfo(columnIndex);
     }
 
     @Override

@@ -436,6 +436,14 @@ public abstract class DBNTable<T extends DBNTableModel> extends JTable implement
                 userData.plus(key, value);
     }
 
+    protected void checkRowBounds(int rowIndex) {
+        getModel().checkRowBounds(rowIndex);
+    }
+
+    protected void checkColumnBounds(int columnIndex) {
+        getModel().checkColumnBounds(columnIndex);
+    }
+
     /********************************************************
      *                    Disposable                        *
      ********************************************************/
