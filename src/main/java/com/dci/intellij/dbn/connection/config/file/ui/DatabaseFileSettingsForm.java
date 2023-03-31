@@ -1,5 +1,6 @@
 package com.dci.intellij.dbn.connection.config.file.ui;
 
+import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.common.ui.form.DBNFormBase;
 import com.dci.intellij.dbn.common.ui.util.UserInterface;
 import com.dci.intellij.dbn.connection.config.file.DatabaseFile;
@@ -21,15 +22,15 @@ public class DatabaseFileSettingsForm extends DBNFormBase {
         table = new DatabaseFilesTable(this, databaseFiles);
 
         ToolbarDecorator decorator = ToolbarDecorator.createDecorator(table);
-        decorator.setAddAction(anActionButton -> table.insertRow());
-        decorator.setRemoveAction(anActionButton -> table.removeRow());
-        decorator.setRemoveActionUpdater(e -> table.getSelectedRow() != 0);
-        decorator.setMoveUpAction(anActionButton -> table.moveRowUp());
-        decorator.setMoveUpActionUpdater(e -> table.getSelectedRow() > 1);
-        decorator.setMoveDownAction(anActionButton -> table.moveRowDown());
+        decorator.setAddAction(anActionButton -> getTable().insertRow());
+        decorator.setRemoveAction(anActionButton -> getTable().removeRow());
+        decorator.setRemoveActionUpdater(e -> getTable().getSelectedRow() != 0);
+        decorator.setMoveUpAction(anActionButton -> getTable().moveRowUp());
+        decorator.setMoveUpActionUpdater(e -> getTable().getSelectedRow() > 1);
+        decorator.setMoveDownAction(anActionButton -> getTable().moveRowDown());
         decorator.setMoveDownActionUpdater(e -> {
-            int selectedRow = table.getSelectedRow();
-            return selectedRow != 0 && selectedRow < table.getModel().getRowCount() -1;
+            int selectedRow = getTable().getSelectedRow();
+            return selectedRow != 0 && selectedRow < getTable().getModel().getRowCount() -1;
         });
         decorator.setPreferredSize(new Dimension(-1, 300));
         JPanel panel = decorator.createPanel();
@@ -44,7 +45,7 @@ public class DatabaseFileSettingsForm extends DBNFormBase {
     }
 
     public DatabaseFilesTable getTable() {
-        return table;
+        return Failsafe.nd(table);
     }
 
     public DatabaseFiles getDatabaseFiles() {
