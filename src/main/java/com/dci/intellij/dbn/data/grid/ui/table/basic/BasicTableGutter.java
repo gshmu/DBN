@@ -58,6 +58,7 @@ public class BasicTableGutter<T extends BasicTable> extends DBNTableGutter<T> {
 
     @Override
     protected void processFocusEvent(FocusEvent e) {
+        if (isDisposed()) return;
         super.processFocusEvent(e);
         if (e.getComponent() == this) {
             justGainedFocus = e.getID() == FocusEvent.FOCUS_GAINED;
