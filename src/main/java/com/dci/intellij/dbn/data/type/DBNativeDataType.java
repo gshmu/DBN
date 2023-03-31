@@ -49,23 +49,9 @@ public class DBNativeDataType extends StatefulDisposableBase implements DynamicC
         // FIXME: add support for stream updatable types
 
         GenericDataType genericDataType = definition.getGenericDataType();
-        if (ValueAdapter.supports(genericDataType)) {
-            try {
-                return ValueAdapter.create(genericDataType, resultSet, columnIndex);
-            } catch (Throwable e) {
-                return null;
-            }
-
-        }
-
-/*
-        if (genericDataType == GenericDataType.BLOB) return new BlobValue(resultSet, columnIndex);
-        if (genericDataType == GenericDataType.CLOB) return new ClobValue(resultSet, columnIndex);
-        if (genericDataType == GenericDataType.XMLTYPE) return new XmlTypeValue((OracleResultSet) resultSet, columnIndex);
-        if (genericDataType == GenericDataType.ARRAY) return new ArrayValue(resultSet, columnIndex);
-*/
         if (genericDataType == GenericDataType.ROWID) return "[ROWID]";
         if (genericDataType == GenericDataType.FILE) return "[FILE]";
+        if (ValueAdapter.supports(genericDataType)) return createValueAdapter(resultSet, columnIndex, genericDataType);
 
         Class<?> clazz = definition.getTypeClass();
         try {
@@ -98,6 +84,19 @@ public class DBNativeDataType extends StatefulDisposableBase implements DynamicC
                             resultSet.getObject(columnIndex);
         } catch (Throwable e) {
             return silent(null, () -> resolveConversionFailure(resultSet, columnIndex, clazz, e));
+        }
+    }
+
+    @Nullable
+    private Object createValueAdapter(ResultSet resultSet, int columnIndex, GenericDataType genericDataType) {
+        try {
+            return ValueAdapter.create(genericDataType, resultSet, columnIndex);
+        } catch (Throwable e) {
+            return silent(null, () -> {
+                Object object = resultSet.getObject(columnIndex);
+                log.error("Error creating result-set value for {} '{}'. (data type definition {})", genericDataType, object, definition, e);
+                return null;
+            });
         }
     }
 
@@ -171,12 +170,6 @@ public class DBNativeDataType extends StatefulDisposableBase implements DynamicC
         if (ValueAdapter.supports(genericDataType)) {
             return ValueAdapter.create(genericDataType, callableStatement, parameterIndex);
         }
-/*
-        if (genericDataType == GenericDataType.BLOB) return new BlobValue(callableStatement, parameterIndex);
-        if (genericDataType == GenericDataType.CLOB) return new ClobValue(callableStatement, parameterIndex);
-        if (genericDataType == GenericDataType.XMLTYPE) return new XmlTypeValue((OracleCallableStatement) callableStatement, parameterIndex);
-*/
-
         return callableStatement.getObject(parameterIndex);
     }
 
