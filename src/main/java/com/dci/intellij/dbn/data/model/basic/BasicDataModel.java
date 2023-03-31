@@ -199,12 +199,17 @@ public class BasicDataModel<
 
     @Nullable
     public C getCellAt(int rowIndex, int columnIndex) {
+        checkRowBounds(rowIndex);
+        checkColumnBounds(columnIndex);
+
         R row = getRowAtIndex(rowIndex);
         return row == null ? null : row.getCellAtIndex(columnIndex);
     }
 
     @Override
     public ColumnInfo getColumnInfo(int columnIndex) {
+        checkColumnBounds(columnIndex);
+
         return getHeader().getColumnInfo(columnIndex);
     }
 
