@@ -249,17 +249,17 @@ public class ExecutionConsoleForm extends DBNFormBase {
         //boolean hasCompilerResult = compilerResult != null;
         //boolean selectMessage = !executionResult.getExecutionProcessor().getExecutionInput().isBulkExecution() && !hasCompilerResult;
         //boolean focusMessage = selectMessage && focusOnExecution();
+        StatementExecutionMessage executionMessage = executionResult.getExecutionMessage();
         if (executionResult instanceof StatementExecutionCursorResult) {
-            StatementExecutionMessage executionMessage = executionResult.getExecutionMessage();
             if (executionMessage == null) {
                 showResultTab(executionResult);
             } else {
                 prepareMessagesTab(instructions.with(RESET));
                 messageTreePath = messagesPane.addExecutionMessage(executionMessage, instructions);
             }
-        } else {
+        } else if (executionMessage != null) {
             prepareMessagesTab(instructions.with(RESET));
-            messageTreePath = messagesPane.addExecutionMessage(executionResult.getExecutionMessage(), instructions);
+            messageTreePath = messagesPane.addExecutionMessage(executionMessage, instructions);
         }
 
         if (compilerResult != null) {
