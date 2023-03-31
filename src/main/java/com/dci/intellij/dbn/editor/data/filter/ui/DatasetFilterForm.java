@@ -2,6 +2,7 @@ package com.dci.intellij.dbn.editor.data.filter.ui;
 
 import com.dci.intellij.dbn.common.dispose.DisposableContainers;
 import com.dci.intellij.dbn.common.dispose.Disposer;
+import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.common.options.ui.ConfigurationEditorForm;
 import com.dci.intellij.dbn.common.ui.form.DBNHeaderForm;
 import com.dci.intellij.dbn.common.ui.util.Fonts;
@@ -94,38 +95,43 @@ public class DatasetFilterForm extends ConfigurationEditorForm<DatasetFilterGrou
         filtersList = new DatasetFilterList();
     }
 
+
     @Override
     public void valueChanged(ListSelectionEvent e) {
+        if (e != null && e.getValueIsAdjusting()) return;
+        Failsafe.guarded(this, f -> f.updateFilters());
+    }
+
+    private void updateFilters() {
         DatasetFilterGroup configuration = getConfiguration();
-        if (e == null || !e.getValueIsAdjusting()) {
-            int[] indices = filtersList.getSelectedIndices();
-            List<DatasetFilter> filters = configuration.getFilters();
-            DatasetFilterImpl filter = null;
-            int filtersCount = filters.size();
-            if (filtersCount > 0 && indices.length == 1) {
-                if (filtersCount > indices[0]) {
-                    filter = (DatasetFilterImpl) filters.get(indices[0]);
-                }
+        List<DatasetFilter> filters = configuration.getFilters();
+        DatasetFilterImpl filter = null;
+        int filtersCount = filters.size();
+
+        int[] indices = filtersList.getSelectedIndices();
+        if (filtersCount > 0 && indices.length == 1) {
+            if (filtersCount > indices[0]) {
+                filter = (DatasetFilterImpl) filters.get(indices[0]);
             }
+        }
 
-            CardLayout cardLayout = (CardLayout) filterDetailsPanel.getLayout();
-            if (filter == null) {
-                cardLayout.show(filterDetailsPanel, BLANK_PANEL_ID);
-            } else {
-                String id = filter.getId();
-                ConfigurationEditorForm configurationEditorForm = filterDetailPanels.get(id);
-                if (configurationEditorForm == null) {
-                    JComponent component = filter.createComponent();
-                    filterDetailsPanel.add(component, id);
+        CardLayout cardLayout = (CardLayout) filterDetailsPanel.getLayout();
+        if (filter == null) {
+            cardLayout.show(filterDetailsPanel, BLANK_PANEL_ID);
+        } else {
+            String id = filter.getId();
+            ConfigurationEditorForm configurationEditorForm = filterDetailPanels.get(id);
+            if (configurationEditorForm == null) {
+                JComponent component = filter.createComponent();
+                filterDetailsPanel.add(component, id);
 
-                    configurationEditorForm = filter.ensureSettingsEditor();
-                    filterDetailPanels.put(id, configurationEditorForm);
+                configurationEditorForm = filter.ensureSettingsEditor();
+                filterDetailPanels.put(id, configurationEditorForm);
 
-                    Disposer.register(this, configurationEditorForm);
-                }
-                cardLayout.show(filterDetailsPanel, id);
-                configurationEditorForm.focus();
+                Disposer.register(this, configurationEditorForm);
             }
+            cardLayout.show(filterDetailsPanel, id);
+            configurationEditorForm.focus();
         }
     }
 }
