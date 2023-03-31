@@ -55,10 +55,11 @@ public class DualContentDependencyAdapter extends BasicDependencyAdapter impleme
 
     @Override
     public boolean canLoadFast() {
+        DynamicContent firstContent = content(first);
+        DynamicContent secondContent = content(second);
         return
-            content(first).isLoaded() &&
-            content(second).isLoaded() /*&&
-            !ThreadMonitor.isDispatchThread()*/;
+            firstContent.isLoaded() && !firstContent.isDirty() &&
+            secondContent.isLoaded() && !secondContent.isDirty();
     }
 
     @Override
