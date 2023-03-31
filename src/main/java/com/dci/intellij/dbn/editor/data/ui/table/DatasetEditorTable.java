@@ -122,12 +122,14 @@ public class DatasetEditorTable extends ResultSetTable<DatasetEditorModel> {
     }
 
     public void hideColumn(int columnIndex) {
+        checkColumnBounds(columnIndex);
+
         TableColumnModel columnModel = getColumnModel();
         int viewColumnIndex = convertColumnIndexToView(columnIndex);
         TableColumn column = columnModel.getColumn(viewColumnIndex);
         columnModel.removeColumn(column);
 
-        ColumnInfo columnInfo = getModel().getColumnInfo(columnIndex);
+        ColumnInfo columnInfo = getColumnInfo(columnIndex);
         getDatasetEditor().getColumnSetup().getColumnState(columnInfo.getName()).setVisible(false);
     }
 
@@ -299,7 +301,7 @@ public class DatasetEditorTable extends ResultSetTable<DatasetEditorModel> {
         }
 
         int modelColumnIndex = convertColumnIndexToModel(columnIndex);
-        ColumnInfo columnInfo = getModel().getColumnInfo(modelColumnIndex);
+        ColumnInfo columnInfo = getColumnInfo(modelColumnIndex);
 
         DataGridAuditColumnSettings auditColumnSettings = getDataGridSettings().getAuditColumnSettings();
         if (!auditColumnSettings.isAllowEditing()) {
