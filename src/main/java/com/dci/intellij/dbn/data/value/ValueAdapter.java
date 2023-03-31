@@ -34,9 +34,13 @@ public abstract class ValueAdapter<T> {
         return REGISTRY.containsKey(genericDataType);
     }
 
+    private static <T> Class<ValueAdapter<T>> get(GenericDataType genericDataType) {
+        return cast(REGISTRY.get(genericDataType));
+    }
+
     public static <T> ValueAdapter<T> create(GenericDataType genericDataType) throws SQLException {
         try {
-            Class<ValueAdapter<T>> valueAdapterClass = cast(REGISTRY.get(genericDataType));
+            Class<ValueAdapter<T>> valueAdapterClass = get(genericDataType);
             return valueAdapterClass.getDeclaredConstructor().newInstance();
         } catch (Throwable e) {
             handleException(e, genericDataType);
@@ -46,7 +50,7 @@ public abstract class ValueAdapter<T> {
 
     public static <T> ValueAdapter<T> create(GenericDataType genericDataType, ResultSet resultSet, int columnIndex) throws SQLException {
         try {
-            Class<ValueAdapter<T>> valueAdapterClass = cast(REGISTRY.get(genericDataType));
+            Class<ValueAdapter<T>> valueAdapterClass = get(genericDataType);
             Constructor<ValueAdapter<T>> constructor = valueAdapterClass.getConstructor(ResultSet.class, int.class);
             return constructor.newInstance(resultSet, columnIndex);
         } catch (Throwable e) {
@@ -56,7 +60,7 @@ public abstract class ValueAdapter<T> {
     }
 
     public static <T> ValueAdapter<T> create(GenericDataType genericDataType, CallableStatement callableStatement, int parameterIndex) throws SQLException {
-        Class<ValueAdapter<T>> valueAdapterClass = cast(REGISTRY.get(genericDataType));
+        Class<ValueAdapter<T>> valueAdapterClass = get(genericDataType);
         try {
             Constructor<ValueAdapter<T>> constructor = valueAdapterClass.getConstructor(CallableStatement.class, int.class);
             return constructor.newInstance(callableStatement, parameterIndex);
