@@ -259,8 +259,9 @@ public class BasicDataModel<
     protected void notifyListeners(@Nullable ListDataEvent listDataEvent, @Nullable TableModelEvent modelEvent) {
         Dispatch.run(() -> {
             if (listDataEvent != null) {
-                if (listModel.loaded()) {
-                    listModel.get().notifyListeners(listDataEvent);
+                BasicDataGutterModel gutterModel = listModel.value();
+                if (gutterModel != null) {
+                    gutterModel.notifyListeners(listDataEvent);
                 }
             }
 
