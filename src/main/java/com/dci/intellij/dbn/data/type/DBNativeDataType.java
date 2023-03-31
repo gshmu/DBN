@@ -98,6 +98,9 @@ public class DBNativeDataType extends StatefulDisposableBase implements DynamicC
                 // TODO odd values resolvers
                 if (object instanceof String && Strings.isEmpty((String) object)) {
                     return null;
+                } else if (object instanceof Double && ((Double) object).isNaN()) {
+                    // DBNE-4151
+                    return null;
                 } else if (object instanceof Long && Integer.class.isAssignableFrom(clazz)) {
                     // odd jdbc implementations allowing long for data type int java.sql.Types.INTEGER
                     return object;
