@@ -77,7 +77,8 @@ public class DBNativeDataType extends StatefulDisposableBase implements DynamicC
 
             DataTypeParseAdapter parseAdapter = definition.getParseAdapter();
             if (parseAdapter != null) {
-                return parseAdapter.parse(resultSet.getString(columnIndex));
+                String stringValue = resultSet.getString(columnIndex);
+                return parseAdapter.parse(stringValue);
             }
 
             return
