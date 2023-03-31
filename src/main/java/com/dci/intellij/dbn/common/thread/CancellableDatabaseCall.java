@@ -18,6 +18,7 @@ import java.util.concurrent.*;
 import java.util.concurrent.atomic.AtomicReference;
 
 import static com.dci.intellij.dbn.common.exception.Exceptions.causeOf;
+import static com.dci.intellij.dbn.common.exception.Exceptions.toSqlException;
 
 @Slf4j
 public abstract class CancellableDatabaseCall<T> implements Callable<T> {
@@ -169,11 +170,7 @@ public abstract class CancellableDatabaseCall<T> implements Callable<T> {
     }
 
     public void handleException(Throwable e) throws SQLException{
-        if (e instanceof SQLException) {
-            throw (SQLException) e;
-        } else {
-            throw new SQLException(e.getMessage(), e);
-        }
+        throw toSqlException(e);
     }
 
     public void cancelSilently() {

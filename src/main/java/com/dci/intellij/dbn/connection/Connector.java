@@ -25,6 +25,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 
+import static com.dci.intellij.dbn.common.exception.Exceptions.toSqlException;
 import static com.dci.intellij.dbn.common.util.Commons.nvl;
 
 class Connector {
@@ -211,7 +212,7 @@ class Connector {
                 connectionStatus.setConnectionException(e);
                 connectionStatus.setValid(false);
             }
-            exception = e instanceof SQLException ? (SQLException) e : new SQLException("Connection error: " + message, e);
+            exception = toSqlException(e, "Connection error: " + message);
         }
         return null;
     }
