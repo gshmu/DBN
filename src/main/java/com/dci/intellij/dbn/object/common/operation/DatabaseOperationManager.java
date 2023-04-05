@@ -57,7 +57,7 @@ public class DatabaseOperationManager extends ProjectComponentBase {
                             constraint.getDataset().getName(),
                             constraint.getName(),
                             conn);
-                    constraint.getStatus().set(DBObjectStatus.ENABLED, true);
+                    constraint.getStatus().set(DBObjectStatus.ENABLED, false);
                 });
     }
 
@@ -89,7 +89,7 @@ public class DatabaseOperationManager extends ProjectComponentBase {
                             trigger.getSchemaName(),
                             trigger.getName(),
                             conn);
-                    trigger.getStatus().set(DBObjectStatus.ENABLED, true);
+                    trigger.getStatus().set(DBObjectStatus.ENABLED, false);
                 });
     }
 

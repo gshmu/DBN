@@ -65,6 +65,12 @@ public class DBIndexImpl extends DBSchemaObjectImpl<DBIndexMetadata> implements 
         return INDEX;
     }
 
+    @NotNull
+    @Override
+    public String getQualifiedName() {
+        return getSchemaName() + '.' + getName();
+    }
+
     @Override
     public DBDataset getDataset() {
         return getParentObject();
