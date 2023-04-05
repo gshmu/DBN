@@ -65,6 +65,13 @@ public class DBDatasetTriggerImpl extends DBTriggerImpl implements DBDatasetTrig
         }
     }
 
+
+    @NotNull
+    @Override
+    public String getQualifiedName() {
+        return getSchemaName() + '.' + getName();
+    }
+
     @Override
     public void buildToolTip(HtmlToolTipBuilder ttb) {
         DBTriggerType triggerType = getTriggerType();
