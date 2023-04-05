@@ -100,6 +100,12 @@ public class DBConstraintImpl extends DBSchemaObjectImpl<DBConstraintMetadata> i
         properties.set(DISABLEABLE, true);
     }
 
+    @NotNull
+    @Override
+    public String getQualifiedName() {
+        return getSchemaName() + '.' + getName();
+    }
+
     @Nullable
     @Override
     public Icon getIcon() {
