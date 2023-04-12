@@ -70,6 +70,7 @@ public enum DatabaseObjectTypeId {
     TYPE_ATTRIBUTE,
     TYPE_FUNCTION,
     TYPE_PROCEDURE,
+    TYPE_TYPE,
     USER,
     VARRAY,
     VARRAY_TYPE,

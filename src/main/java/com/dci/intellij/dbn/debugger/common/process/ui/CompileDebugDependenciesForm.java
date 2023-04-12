@@ -51,7 +51,7 @@ public class CompileDebugDependenciesForm extends DBNFormBase {
 
         List<DBSchemaObject> selectedObjects = new ArrayList<>();
         for (DBMethod method : methods) {
-            DBProgram<?, ?> program = method.getProgram();
+            DBProgram<?, ?, ?> program = method.getProgram();
             DBSchemaObject selectedObject = program == null ? method : program;
             if (!selectedObjects.contains(selectedObject)) {
                 selectedObjects.add(selectedObject);

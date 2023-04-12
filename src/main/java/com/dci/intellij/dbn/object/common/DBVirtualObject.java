@@ -282,9 +282,7 @@ public class DBVirtualObject extends DBRootObjectImpl implements PsiReference {
         } else {
             boolean invalid = Lists.anyMatch(objectList.getObjects(), o -> !o.isValid());
             if (invalid) {
-                List<DBObject> elements = objectList.getElements();
                 objectList.setElements(Collections.emptyList());
-                Disposer.dispose(elements);
                 loadChildObjects(objectType, objectList);
                 objectList.set(LOADED, true);
             }
@@ -342,6 +340,7 @@ public class DBVirtualObject extends DBRootObjectImpl implements PsiReference {
         });
 
         objectList.setElements(objects);
+        objectList.set(MASTER, false);
     }
 
     @Override

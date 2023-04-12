@@ -39,7 +39,7 @@ import java.util.Objects;
 import static com.dci.intellij.dbn.object.type.DBObjectType.*;
 
 public class DBTypeImpl
-        extends DBProgramImpl<DBTypeMetadata, DBTypeProcedure, DBTypeFunction>
+        extends DBProgramImpl<DBTypeMetadata, DBTypeProcedure, DBTypeFunction, DBType>
         implements DBType {
 
     private String superTypeOwner;
@@ -89,7 +89,7 @@ public class DBTypeImpl
             childObjects.createSubcontentObjectList(TYPE_ATTRIBUTE, this, schema);
             childObjects.createSubcontentObjectList(TYPE_PROCEDURE, this, schema);
             childObjects.createSubcontentObjectList(TYPE_FUNCTION, this, schema);
-            childObjects.createSubcontentObjectList(TYPE, this, schema);
+            childObjects.createSubcontentObjectList(TYPE_TYPE, this, schema);
         }
     }
 
@@ -104,13 +104,8 @@ public class DBTypeImpl
     }
 
     @Override
-    protected DBObjectType getAttributeObjectType() {
-        return TYPE_ATTRIBUTE;
-    }
-
-    @Override
     protected DBObjectType getTypeObjectType() {
-        return TYPE;
+        return TYPE_TYPE;
     }
 
     @NotNull
@@ -140,7 +135,7 @@ public class DBTypeImpl
 
     @Override
     public List<DBTypeAttribute> getAttributes() {
-        return getChildObjects(getAttributeObjectType());
+        return getChildObjects(TYPE_ATTRIBUTE);
     }
 
     @Override
@@ -188,11 +183,6 @@ public class DBTypeImpl
     }
 
     @Override
-    public List<DBType> getSubTypes() {
-        return getChildObjects(getTypeObjectType());
-    }
-
-    @Override
     public DBNativeDataType getNativeDataType() {
         return nativeDataType;
     }
@@ -218,9 +208,10 @@ public class DBTypeImpl
         return isCollection() ?
                 EMPTY_TREE_NODE_LIST :
                 DatabaseBrowserUtils.createList(
-                        getChildObjectList(getAttributeObjectType()),
-                        getChildObjectList(getProcedureObjectType()),
-                        getChildObjectList(getFunctionObjectType()));
+                        getChildObjectList(TYPE_ATTRIBUTE),
+                        getChildObjectList(TYPE_PROCEDURE),
+                        getChildObjectList(TYPE_FUNCTION),
+                        getChildObjectList(TYPE_TYPE));
     }
 
     @Override
@@ -329,9 +320,9 @@ public class DBTypeImpl
         if (superType != null) {
             navigationLists.add(DBObjectNavigationList.create("Super Type", superType));
         }
-        List<DBObject> subTypes = getChildObjects(getTypeObjectType());
-        if (!subTypes.isEmpty()) {
-            navigationLists.add(DBObjectNavigationList.create("Sub Types", subTypes));
+        List<DBObject> types = getChildObjects(TYPE_TYPE);
+        if (!types.isEmpty()) {
+            navigationLists.add(DBObjectNavigationList.create("Sub Types", types));
         }
         if (isCollection()) {
             DBDataType dataType = getCollectionElementType();

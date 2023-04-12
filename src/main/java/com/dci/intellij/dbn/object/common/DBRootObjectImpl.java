@@ -48,7 +48,7 @@ public abstract class DBRootObjectImpl<M extends DBObjectMetadata> extends DBObj
 
     @Override
     public void disposeInner() {
+        super.disposeInner();
         Disposer.dispose(childObjects);
-        nullify();
     }
 }

@@ -30,7 +30,7 @@ import java.util.List;
 import static com.dci.intellij.dbn.object.type.DBObjectType.*;
 
 public class DBPackageImpl
-        extends DBProgramImpl<DBPackageMetadata, DBPackageProcedure, DBPackageFunction>
+        extends DBProgramImpl<DBPackageMetadata, DBPackageProcedure, DBPackageFunction, DBPackageType>
         implements DBPackage {
 
     DBPackageImpl(DBSchema schema, DBPackageMetadata metadata) throws SQLException {
@@ -63,23 +63,13 @@ public class DBPackageImpl
     }
 
     @Override
-    protected DBObjectType getAttributeObjectType() {
-        return null;
-    }
-
-    @Override
     protected DBObjectType getTypeObjectType() {
         return PACKAGE_TYPE;
     }
 
     @Override
     public List<DBPackageType> getTypes() {
-        return getChildObjects(getTypeObjectType());
-    }
-
-    @Override
-    public DBPackageType getType(String name) {
-        return getChildObject(getTypeObjectType(), name);
+        return getChildObjects(PACKAGE_TYPE);
     }
 
     @NotNull
@@ -121,9 +111,9 @@ public class DBPackageImpl
     @NotNull
     public List<BrowserTreeNode> buildPossibleTreeChildren() {
         return DatabaseBrowserUtils.createList(
-                getChildObjectList(getProcedureObjectType()),
-                getChildObjectList(getFunctionObjectType()),
-                getChildObjectList(getTypeObjectType()));
+                getChildObjectList(PACKAGE_PROCEDURE),
+                getChildObjectList(PACKAGE_FUNCTION),
+                getChildObjectList(PACKAGE_TYPE));
     }
 
     @Override

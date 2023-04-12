@@ -3,7 +3,6 @@ package com.dci.intellij.dbn.common.content.dependency;
 import com.intellij.openapi.Disposable;
 
 public interface ContentDependencyAdapter extends Disposable {
-    boolean isSubContent();
 
     default boolean isDependencyDirty() {
         return false;

@@ -312,6 +312,8 @@ public final class DatabaseBrowserTree extends DBNTree {
                 if (!listenersEnabled) return;
 
                 Object object = e.getPath().getLastPathComponent();
+                if (isNotValid(object)) return;
+
                 if (object instanceof BrowserTreeNode) {
                     BrowserTreeNode treeNode = (BrowserTreeNode) object;
                     if (targetSelection == null || treeNode.equals(targetSelection)) {

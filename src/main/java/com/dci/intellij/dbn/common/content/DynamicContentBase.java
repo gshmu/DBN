@@ -105,6 +105,11 @@ public abstract class DynamicContentBase<T extends DynamicContentElement>
     }
 
     @Override
+    public boolean isMaster() {
+        return is(MASTER);
+    }
+
+    @Override
     public boolean isLoaded() {
         return is(LOADED);
     }
@@ -332,7 +337,7 @@ public abstract class DynamicContentBase<T extends DynamicContentElement>
         if (oldElements.size() != 0 || elements.size() != 0 ){
             notifyChangeListeners();
         }
-        if (is(MASTER)) {
+        if (isMaster()) {
             BackgroundDisposer.queue(() -> Disposer.disposeCollection(oldElements));
         }
     }
@@ -394,7 +399,7 @@ public abstract class DynamicContentBase<T extends DynamicContentElement>
     @Override
     public void disposeInner() {
         if (elements != EMPTY_CONTENT && elements != EMPTY_UNTOUCHED_CONTENT) {
-            if (!isSubContent()) {
+            if (isMaster()) {
                 BackgroundDisposer.queue(() -> Disposer.disposeCollection(elements));
             }
             elements = cast(EMPTY_DISPOSED_CONTENT);

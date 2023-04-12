@@ -88,6 +88,7 @@ public enum DBObjectType implements DynamicContentType<DBObjectType> {
     TYPE_ATTRIBUTE(DatabaseObjectTypeId.TYPE_ATTRIBUTE, "type attribute", "attributes", Icons.DBO_ATTRIBUTE, null, Icons.DBO_ATTRIBUTES, false),
     TYPE_FUNCTION(DatabaseObjectTypeId.TYPE_FUNCTION, "type function", "functions", Icons.DBO_FUNCTION, null, Icons.DBO_FUNCTIONS, false),
     TYPE_PROCEDURE(DatabaseObjectTypeId.TYPE_PROCEDURE, "type procedure", "procedures", Icons.DBO_PROCEDURE, null, Icons.DBO_PROCEDURES, false),
+    TYPE_TYPE(DatabaseObjectTypeId.TYPE_TYPE, "type", "types", Icons.DBO_TYPE, null, Icons.DBO_TYPES, false),
     USER(DatabaseObjectTypeId.USER, "user", "users", Icons.DBO_USER, null, Icons.DBO_USERS, false),
     VARRAY(DatabaseObjectTypeId.VARRAY, "varray", "varrays", null, null, null, false),
     VARRAY_TYPE(DatabaseObjectTypeId.VARRAY_TYPE, "varray type", "varray types", null, null, null, false),
@@ -306,6 +307,7 @@ public enum DBObjectType implements DynamicContentType<DBObjectType> {
         TYPE.setInheritedType(PROGRAM);
         TYPE_PROCEDURE.setInheritedType(PROCEDURE);
         TYPE_FUNCTION.setInheritedType(FUNCTION);
+        TYPE_TYPE.setInheritedType(TYPE);
         TYPE_ATTRIBUTE.setInheritedType(ATTRIBUTE);
         PACKAGE.setInheritedType(PROGRAM);
         PACKAGE_PROCEDURE.setInheritedType(PROCEDURE);
@@ -373,13 +375,10 @@ public enum DBObjectType implements DynamicContentType<DBObjectType> {
         DATASET_TRIGGER.addParent(MATERIALIZED_VIEW);
         DATABASE_TRIGGER.addParent(SCHEMA);
         TYPE.addParent(SCHEMA);
+        TYPE_ATTRIBUTE.addParent(TYPE);
         TYPE_FUNCTION.addParent(TYPE);
         TYPE_PROCEDURE.addParent(TYPE);
-        TYPE_ATTRIBUTE.addParent(TYPE);
-        TYPE_FUNCTION.addParent(PACKAGE_TYPE);
-        TYPE_PROCEDURE.addParent(PACKAGE_TYPE);
-        TYPE_ATTRIBUTE.addParent(PACKAGE_TYPE);
-        TYPE_ATTRIBUTE.addParent(PACKAGE_TYPE);
+        TYPE_TYPE.addParent(TYPE);
         VIEW.addParent(SCHEMA);
 
         PACKAGE.addIcon(DBContentType.CODE_SPEC, Icons.DBO_PACKAGE_SPEC);
