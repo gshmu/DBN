@@ -4,11 +4,7 @@ import com.dci.intellij.dbn.data.type.GenericDataType;
 import com.dci.intellij.dbn.database.common.DatabaseNativeDataTypes;
 
 import java.math.BigDecimal;
-import java.sql.Array;
-import java.sql.Date;
-import java.sql.Time;
-import java.sql.Timestamp;
-import java.sql.Types;
+import java.sql.*;
 
 public class PostgresNativeDataTypes extends DatabaseNativeDataTypes {
     {
@@ -80,6 +76,7 @@ public class PostgresNativeDataTypes extends DatabaseNativeDataTypes {
         createBasicDefinition("POLYGON", Object.class, Types.OTHER, GenericDataType.OBJECT);
         createBasicDefinition("CIRCLE", Object.class, Types.OTHER, GenericDataType.OBJECT);
         createBasicDefinition("JSON", Object.class, Types.OTHER, GenericDataType.OBJECT);
+        createBasicDefinition("JSONB", Object.class, Types.OTHER, GenericDataType.OBJECT);
         createBasicDefinition("ARRAY", Array.class, Types.ARRAY, GenericDataType.ARRAY);
 
         createBasicDefinition("INT2VECTOR", Array.class, Types.ARRAY, GenericDataType.ARRAY);
