@@ -577,12 +577,12 @@ public class DBObjectBundleImpl extends BrowserTreeNodeBase implements DBObjectB
                         Set<DBObjectType> concreteTypes = objectType.getInheritingTypes();
                         for (DBObjectType concreteType : concreteTypes) {
                             if (filter.acceptsObject(schema, currentSchema, concreteType)) {
-                                consumer.acceptAll(schema.getChildObjects(concreteType));
+                                consumer.acceptAll(schema.collectChildObjects(concreteType));
                             }
                         }
                     } else {
                         if (filter.acceptsObject(schema, currentSchema, objectType)) {
-                            consumer.acceptAll(schema.getChildObjects(objectType));
+                            consumer.acceptAll(schema.collectChildObjects(objectType));
                         }
                     }
 
@@ -600,12 +600,12 @@ public class DBObjectBundleImpl extends BrowserTreeNodeBase implements DBObjectB
                         Set<DBObjectType> concreteTypes = objectType.getInheritingTypes();
                         for (DBObjectType concreteType : concreteTypes) {
                             if (filter.acceptsRootObject(objectType)) {
-                                consumer.acceptAll(parentObject.getChildObjects(concreteType));
+                                consumer.acceptAll(parentObject.collectChildObjects(concreteType));
                             }
                         }
                     } else {
                         if (filter.acceptsRootObject(objectType)) {
-                            consumer.acceptAll(parentObject.getChildObjects(objectType));
+                            consumer.acceptAll(parentObject.collectChildObjects(objectType));
                         }
                     }
                 }
@@ -658,10 +658,7 @@ public class DBObjectBundleImpl extends BrowserTreeNodeBase implements DBObjectB
     public DynamicContent<?> getDynamicContent(DynamicContentType<?> dynamicContentType) {
         if(dynamicContentType instanceof DBObjectType) {
             DBObjectType objectType = (DBObjectType) dynamicContentType;
-
-            DBObjectList<DBObject> objectList = objectLists.getObjectList(objectType, false);
-            if (objectList == null) objectList = objectLists.getObjectList(objectType, true);
-            return objectList;
+            return objectLists.getObjectList(objectType);
         }
 
         if (dynamicContentType instanceof DBObjectRelationType) {

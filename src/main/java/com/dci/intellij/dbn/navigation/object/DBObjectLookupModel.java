@@ -150,11 +150,11 @@ public class DBObjectLookupModel extends StatefulDisposableBase implements Choos
 
     protected boolean isListLookupEnabled(DBObjectType objectType) {
         boolean enabled = isObjectLookupEnabled(objectType);
-        if (!enabled) {
-            for (DBObjectType childObjectType : objectType.getChildren()) {
-                if (isListLookupEnabled(childObjectType)) {
-                    return true;
-                }
+        if (enabled) return true;
+
+        for (DBObjectType childObjectType : objectType.getChildren()) {
+            if (isListLookupEnabled(childObjectType)) {
+                return true;
             }
         }
         return enabled;

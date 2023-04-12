@@ -7,7 +7,6 @@ import com.dci.intellij.dbn.database.common.metadata.def.DBRoleMetadata;
 import com.dci.intellij.dbn.object.*;
 import com.dci.intellij.dbn.object.common.DBObjectBundle;
 import com.dci.intellij.dbn.object.common.DBRootObjectImpl;
-import com.dci.intellij.dbn.object.common.list.DBObjectList;
 import com.dci.intellij.dbn.object.common.list.DBObjectListContainer;
 import com.dci.intellij.dbn.object.common.list.DBObjectNavigationList;
 import com.dci.intellij.dbn.object.common.list.loader.DBObjectListFromRelationListLoader;
@@ -17,19 +16,18 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.sql.SQLException;
-import java.util.ArrayList;
+import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Objects;
 
+import static com.dci.intellij.dbn.common.util.Lists.filter;
 import static com.dci.intellij.dbn.object.common.property.DBObjectProperty.ROOT_OBJECT;
 import static com.dci.intellij.dbn.object.type.DBObjectRelationType.ROLE_PRIVILEGE;
 import static com.dci.intellij.dbn.object.type.DBObjectRelationType.ROLE_ROLE;
 import static com.dci.intellij.dbn.object.type.DBObjectType.*;
 
 public class DBRoleImpl extends DBRootObjectImpl<DBRoleMetadata> implements DBRole {
-    private DBObjectList<DBGrantedPrivilege> privileges;
-    private DBObjectList<DBGrantedRole> grantedRoles;
 
     public DBRoleImpl(ConnectionHandler connection, DBRoleMetadata metadata) throws SQLException {
         super(connection, metadata);
@@ -44,8 +42,8 @@ public class DBRoleImpl extends DBRootObjectImpl<DBRoleMetadata> implements DBRo
     protected void initLists() {
         DBObjectBundle objectBundle = getObjectBundle();
         DBObjectListContainer childObjects = ensureChildObjects();
-        privileges = childObjects.createSubcontentObjectList(GRANTED_PRIVILEGE, this, objectBundle, ROLE_PRIVILEGE);
-        grantedRoles = childObjects.createSubcontentObjectList(GRANTED_ROLE, this, objectBundle, ROLE_ROLE);
+        childObjects.createSubcontentObjectList(GRANTED_PRIVILEGE, this, objectBundle, ROLE_PRIVILEGE);
+        childObjects.createSubcontentObjectList(GRANTED_ROLE, this, objectBundle, ROLE_ROLE);
     }
 
     @Override
@@ -61,40 +59,26 @@ public class DBRoleImpl extends DBRootObjectImpl<DBRoleMetadata> implements DBRo
 
     @Override
     public List<DBGrantedPrivilege> getPrivileges() {
-        return privileges.getObjects();
+        return getChildObjects(GRANTED_PRIVILEGE);
     }
 
     @Override
     public List<DBGrantedRole> getGrantedRoles() {
-        return grantedRoles.getObjects();
+        return getChildObjects(GRANTED_ROLE);
     }
 
     @Override
     public List<DBUser> getUserGrantees() {
-        List<DBUser> grantees = new ArrayList<>();
         List<DBUser> users = getObjectBundle().getUsers();
-        if (users != null) {
-            for (DBUser user : users) {
-                if (user.hasRole(this)) {
-                    grantees.add(user);
-                }
-            }
-        }
-        return grantees;
+        if (users == null || users.isEmpty()) return Collections.emptyList();
+        return filter(users, u -> u.hasRole(this));
     }
 
     @Override
     public List<DBRole> getRoleGrantees() {
-        List<DBRole> grantees = new ArrayList<>();
         List<DBRole> roles = getObjectBundle().getRoles();
-        if (roles != null) {
-            for (DBRole role : roles) {
-                if (role.hasRole(this)) {
-                    grantees.add(role);
-                }
-            }
-        }
-        return grantees;
+        if (roles == null || roles.isEmpty()) return Collections.emptyList();
+        return filter(roles, r -> r.hasRole(this));
     }
 
     @Override
@@ -139,7 +123,9 @@ public class DBRoleImpl extends DBRootObjectImpl<DBRoleMetadata> implements DBRo
     @Override
     @NotNull
     public List<BrowserTreeNode> buildPossibleTreeChildren() {
-        return DatabaseBrowserUtils.createList(privileges, grantedRoles);
+        return DatabaseBrowserUtils.createList(
+                getChildObjectList(GRANTED_PRIVILEGE),
+                getChildObjectList(GRANTED_ROLE));
     }
 
     @Override

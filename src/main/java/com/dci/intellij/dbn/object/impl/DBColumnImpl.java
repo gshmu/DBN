@@ -29,7 +29,6 @@ import static com.dci.intellij.dbn.object.common.property.DBObjectProperty.*;
 import static com.dci.intellij.dbn.object.type.DBObjectRelationType.CONSTRAINT_COLUMN;
 import static com.dci.intellij.dbn.object.type.DBObjectRelationType.INDEX_COLUMN;
 import static com.dci.intellij.dbn.object.type.DBObjectType.*;
-import static java.util.Collections.emptyList;
 
 public class DBColumnImpl extends DBObjectImpl<DBColumnMetadata> implements DBColumn {
     private DBDataType dataType;
@@ -180,14 +179,12 @@ public class DBColumnImpl extends DBObjectImpl<DBColumnMetadata> implements DBCo
 
     @Override
     public List<DBIndex> getIndexes() {
-        DBObjectList<DBIndex> indexes = getChildObjectList(INDEX);
-        return indexes == null ? emptyList() : indexes.getObjects();
+        return getChildObjects(INDEX);
     }
 
     @Override
     public List<DBConstraint> getConstraints() {
-        DBObjectList<DBConstraint> constraints = getChildObjectList(CONSTRAINT);
-        return constraints == null ? emptyList() : constraints.getObjects();
+        return getChildObjects(CONSTRAINT);
     }
 
     @Override

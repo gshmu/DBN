@@ -29,23 +29,23 @@ class DBObjectLookupScanner extends StatefulDisposableBase implements DBObjectLi
 
     @Override
     public void visit(DBObjectList<?> objectList) {
-        if (isScannable(objectList)) {
-            boolean sync = objectList.isLoaded();
-            if (!sync) {
-                BrowserTreeNode parent = objectList.getParent();
-                if (parent instanceof DBObject) {
-                    DBObject object = (DBObject) parent;
-                    if (object.getParentObject() instanceof DBSchema) {
-                        sync = true;
-                    }
+        if (!isScannable(objectList)) return;
+
+        boolean sync = objectList.isLoaded();
+        if (!sync) {
+            BrowserTreeNode parent = objectList.getParent();
+            if (parent instanceof DBObject) {
+                DBObject object = (DBObject) parent;
+                if (object.getParentObject() instanceof DBSchema) {
+                    sync = true;
                 }
             }
+        }
 
-            if (sync) {
-                doVisit(objectList);
-            } else {
-                asyncScanner.submit(() -> doVisit(objectList));
-            }
+        if (sync) {
+            doVisit(objectList);
+        } else {
+            asyncScanner.submit(() -> doVisit(objectList));
         }
     }
 
@@ -89,32 +89,32 @@ class DBObjectLookupScanner extends StatefulDisposableBase implements DBObjectLi
     }
 
     private boolean isScannable(DBObjectList<?> objectList) {
-        if (objectList != null) {
-            DBObjectType objectType = objectList.getObjectType();
-            if (model.isListLookupEnabled(objectType)) {
-                if (objectType.isRootObject() || objectList.isInternal()) {
-                    if (objectList.isLoaded()) {
-                        return true;
-                    } else {
-                        // todo touch?
-                    }
-                }
+        if (objectList == null) return false;
 
-                if (objectType.isSchemaObject() && objectList.getParentEntity() instanceof DBSchema) {
-                    if (objectList.isLoaded()) {
-                        return true;
-                    } else {
-                        // todo touch?
-                    }
-                }
+        DBObjectType objectType = objectList.getObjectType();
+        if (!model.isListLookupEnabled(objectType)) return false;
+
+        if (objectType.isRootObject() || objectList.isInternal()) {
+            if (objectList.isLoaded()) {
+                return true;
+            } else {
+                // todo touch?
+            }
+        }
+
+        if (objectType.isSchemaObject() && objectList.getParentEntity() instanceof DBSchema) {
+            if (objectList.isLoaded()) {
+                return true;
+            } else {
+                // todo touch?
+            }
+        }
 
 /*
                 if (objectList.isLoaded() || objectList.canLoadFast() || forceLoad) {
                     return true;
                 }
 */
-            }
-        }
         return false;
     }
 

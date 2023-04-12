@@ -31,6 +31,7 @@ import java.util.List;
 
 import static com.dci.intellij.dbn.common.Priority.HIGHEST;
 import static com.dci.intellij.dbn.common.message.MessageCallback.when;
+import static com.dci.intellij.dbn.object.type.DBObjectType.*;
 
 public class DatabaseObjectFactory extends ProjectComponentBase {
 
@@ -63,7 +64,7 @@ public class DatabaseObjectFactory extends ProjectComponentBase {
 
     public void openFactoryInputDialog(DBSchema schema, DBObjectType objectType) {
         Project project = getProject();
-        if (objectType.isOneOf(DBObjectType.FUNCTION, DBObjectType.PROCEDURE)) {
+        if (objectType.isOneOf(FUNCTION, PROCEDURE)) {
             ObjectFactoryInputDialog dialog = new ObjectFactoryInputDialog(project, schema, objectType);
             dialog.show();
         } else {
@@ -92,7 +93,7 @@ public class DatabaseObjectFactory extends ProjectComponentBase {
 
     private void createMethod(MethodFactoryInput factoryInput, Callback callback) {
         callback.background(getProject(), () -> {
-            DBObjectType objectType = factoryInput.isFunction() ? DBObjectType.FUNCTION : DBObjectType.PROCEDURE;
+            DBObjectType objectType = factoryInput.isFunction() ? FUNCTION : PROCEDURE;
             String objectTypeName = objectType.getName();
             String objectName = factoryInput.getObjectName();
             DBSchema schema = factoryInput.getSchema();
@@ -112,7 +113,7 @@ public class DatabaseObjectFactory extends ProjectComponentBase {
             Failsafe.nn(methodList).reload();
 
             DBMethod method = schema.getChildObject(objectType, objectName, false);
-            val argumentList = method.getChildObjectList(DBObjectType.ARGUMENT);
+            val argumentList = method.getChildObjectList(ARGUMENT);
             Failsafe.nn(argumentList).reload();
 
             DatabaseFileEditorManager editorManager = DatabaseFileEditorManager.getInstance(getProject());

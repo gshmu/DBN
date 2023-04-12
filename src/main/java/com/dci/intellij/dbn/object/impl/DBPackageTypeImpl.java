@@ -50,12 +50,12 @@ public class DBPackageTypeImpl extends DBTypeImpl implements DBPackageType {
     @Override
     protected void initLists() {
         DBObjectListContainer childObjects = ensureChildObjects();
-        attributes = childObjects.createObjectList(TYPE_ATTRIBUTE, this);
+        childObjects.createObjectList(getAttributeObjectType(), this);
     }
 
     @Override
     public DBPackage getPackage() {
-        return (DBPackage) getParentObject();
+        return getParentObject();
     }
 
     @NotNull
@@ -73,7 +73,7 @@ public class DBPackageTypeImpl extends DBTypeImpl implements DBPackageType {
     @Override
     @NotNull
     public List<BrowserTreeNode> buildPossibleTreeChildren() {
-        return DatabaseBrowserUtils.createList(attributes);
+        return DatabaseBrowserUtils.createList(getChildObjectList(getAttributeObjectType()));
     }
 
     @Override
@@ -93,6 +93,8 @@ public class DBPackageTypeImpl extends DBTypeImpl implements DBPackageType {
             public ResultSet createResultSet(DynamicContent<DBTypeAttribute> dynamicContent, DBNConnection connection) throws SQLException {
                 DatabaseMetadataInterface metadata = dynamicContent.getMetadataInterface();
                 DBPackageType type = dynamicContent.getParentEntity();
+                if (type == null) return null;
+
                 return metadata.loadProgramTypeAttributes(
                         type.getSchema().getName(),
                         type.getPackage().getName(),
@@ -101,7 +103,7 @@ public class DBPackageTypeImpl extends DBTypeImpl implements DBPackageType {
 
             @Override
             public DBTypeAttribute createElement(DynamicContent<DBTypeAttribute> content, DBTypeAttributeMetadata metadata, LoaderCache cache) throws SQLException {
-                DBType type = (DBType) content.getParentEntity();
+                DBType type = content.getParentEntity();
                 return new DBTypeAttributeImpl(type, metadata);
             }
         };
