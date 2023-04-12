@@ -702,6 +702,7 @@ public abstract class DBObjectImpl<M extends DBObjectMetadata> extends DBObjectT
 
     @Override
     public void disposeInner() {
+        super.disposeInner();
         DBObjectListContainer childObjects = DBObjectImpl.childObjects.remove(this);
         Disposer.dispose(childObjects);
         nullify();

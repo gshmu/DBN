@@ -15,8 +15,8 @@ import java.util.Objects;
 
 import static com.dci.intellij.dbn.object.common.property.DBObjectProperty.*;
 
-public abstract class DBProgramImpl<M extends DBProgramMetadata, P extends DBProcedure, F extends DBFunction>
-        extends DBSchemaObjectImpl<M> implements DBProgram<P, F> {
+public abstract class DBProgramImpl<M extends DBProgramMetadata, P extends DBProcedure, F extends DBFunction, T extends DBType>
+        extends DBSchemaObjectImpl<M> implements DBProgram<P, F, T> {
 
     DBProgramImpl(DBSchemaObject parent, M metadata) throws SQLException {
         super(parent, metadata);
@@ -64,7 +64,6 @@ public abstract class DBProgramImpl<M extends DBProgramMetadata, P extends DBPro
 
     protected abstract DBObjectType getFunctionObjectType();
     protected abstract DBObjectType getProcedureObjectType();
-    protected abstract DBObjectType getAttributeObjectType();
     protected abstract DBObjectType getTypeObjectType();
 
     @Override
@@ -78,6 +77,11 @@ public abstract class DBProgramImpl<M extends DBProgramMetadata, P extends DBPro
     }
 
     @Override
+    public List<T> getTypes() {
+        return getChildObjects(getTypeObjectType());
+    }
+
+    @Override
     public F getFunction(String name, short overload) {
         return getChildObject(getFunctionObjectType(), name, overload);
     }
@@ -85,6 +89,11 @@ public abstract class DBProgramImpl<M extends DBProgramMetadata, P extends DBPro
     @Override
     public P getProcedure(String name, short overload) {
         return getChildObject(getProcedureObjectType(), name, overload);
+    }
+
+    @Override
+    public T getType(String name) {
+        return getChildObject(getTypeObjectType(), name);
     }
 
     @Override

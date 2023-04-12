@@ -50,7 +50,7 @@ public class DBPackageTypeImpl extends DBTypeImpl implements DBPackageType {
     @Override
     protected void initLists() {
         DBObjectListContainer childObjects = ensureChildObjects();
-        childObjects.createObjectList(getAttributeObjectType(), this);
+        childObjects.createObjectList(TYPE_ATTRIBUTE, this);
     }
 
     @Override
@@ -73,7 +73,7 @@ public class DBPackageTypeImpl extends DBTypeImpl implements DBPackageType {
     @Override
     @NotNull
     public List<BrowserTreeNode> buildPossibleTreeChildren() {
-        return DatabaseBrowserUtils.createList(getChildObjectList(getAttributeObjectType()));
+        return DatabaseBrowserUtils.createList(getChildObjectList(TYPE_ATTRIBUTE));
     }
 
     @Override

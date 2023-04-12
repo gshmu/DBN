@@ -154,4 +154,11 @@ abstract class DBObjectTreeNodeBase extends BrowserTreeNodeBase implements DBObj
     public boolean canExpand() {
         return !isLeaf() && isTreeStructureLoaded() && getChildAt(0).isTreeStructureLoaded();
     }
+
+    @Override
+    protected void disposeInner() {
+        possibleTreeChildren.remove(this);
+        visibleTreeChildren.remove(this);
+
+    }
 }
