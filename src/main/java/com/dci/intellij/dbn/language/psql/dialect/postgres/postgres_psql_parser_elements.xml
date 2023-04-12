@@ -346,94 +346,95 @@
             <token id="00171" type-id="DT_INTEGER" />
             <token id="00172" type-id="DT_INTERVAL" />
             <token id="00173" type-id="DT_JSON" />
-            <token id="00174" type-id="DT_LINE" />
-            <token id="00175" type-id="DT_LSEG" />
-            <token id="00176" type-id="DT_MACADDR" />
-            <token id="00177" type-id="DT_MONEY" />
-            <token id="00178" type-id="DT_NAME" />
-            <token id="00179" type-id="DT_NUMERIC" />
-            <token id="00180" type-id="DT_OID" />
-            <token id="00181" type-id="DT_PATH" />
-            <token id="00182" type-id="DT_POINT" />
-            <token id="00183" type-id="DT_POLYGON" />
-            <token id="00184" type-id="DT_REAL" />
-            <token id="00185" type-id="DT_SERIAL" />
-            <token id="00186" type-id="DT_SERIAL8" />
-            <token id="00187" type-id="DT_SMALLINT" />
-            <token id="00188" type-id="DT_SMALLSERIAL" />
-            <token id="00189" type-id="DT_TEXT" />
-            <token id="00190" type-id="DT_TID" />
-            <token id="00191" type-id="DT_TIME" />
-            <token id="00192" type-id="DT_TIMESTAMP" />
-            <token id="00193" type-id="DT_TSQUERY" />
-            <token id="00194" type-id="DT_TSVECTOR" />
-            <token id="00195" type-id="DT_UUID" />
-            <token id="00196" type-id="DT_VARBIT" />
-            <token id="00197" type-id="DT_VARCHAR" />
-            <token id="00198" type-id="DT_XID" />
-            <token id="00199" type-id="DT_XML" />
+            <token id="00174" type-id="DT_JSONB" />
+            <token id="00175" type-id="DT_LINE" />
+            <token id="00176" type-id="DT_LSEG" />
+            <token id="00177" type-id="DT_MACADDR" />
+            <token id="00178" type-id="DT_MONEY" />
+            <token id="00179" type-id="DT_NAME" />
+            <token id="00180" type-id="DT_NUMERIC" />
+            <token id="00181" type-id="DT_OID" />
+            <token id="00182" type-id="DT_PATH" />
+            <token id="00183" type-id="DT_POINT" />
+            <token id="00184" type-id="DT_POLYGON" />
+            <token id="00185" type-id="DT_REAL" />
+            <token id="00186" type-id="DT_SERIAL" />
+            <token id="00187" type-id="DT_SERIAL8" />
+            <token id="00188" type-id="DT_SMALLINT" />
+            <token id="00189" type-id="DT_SMALLSERIAL" />
+            <token id="00190" type-id="DT_TEXT" />
+            <token id="00191" type-id="DT_TID" />
+            <token id="00192" type-id="DT_TIME" />
+            <token id="00193" type-id="DT_TIMESTAMP" />
+            <token id="00194" type-id="DT_TSQUERY" />
+            <token id="00195" type-id="DT_TSVECTOR" />
+            <token id="00196" type-id="DT_UUID" />
+            <token id="00197" type-id="DT_VARBIT" />
+            <token id="00198" type-id="DT_VARCHAR" />
+            <token id="00199" type-id="DT_XID" />
+            <token id="00200" type-id="DT_XML" />
         </one-of>
     </element-def>
 
     <!-- ========= OPERATORS ========= -->
     <element-def description="COMPARISON operator" id="comparison_operator">
-        <one-of id="00200">
-            <token type-id="CHR_EQUAL" id="00201" />
-            <token type-id="CHR_LESS" id="00202" />
-            <token type-id="CHR_GREATER" id="00203" />
-            <token type-id="OPR_NOT_EQUAL" id="00204" />
-            <token type-id="OPR_LESS_GREATER" id="00205" />
-            <token type-id="OPR_LESS_EQUAL" id="00206" />
-            <token type-id="OPR_GREATER_EQUAL" id="00207" />
+        <one-of id="00201">
+            <token type-id="CHR_EQUAL" id="00202" />
+            <token type-id="CHR_LESS" id="00203" />
+            <token type-id="CHR_GREATER" id="00204" />
+            <token type-id="OPR_NOT_EQUAL" id="00205" />
+            <token type-id="OPR_LESS_GREATER" id="00206" />
+            <token type-id="OPR_LESS_EQUAL" id="00207" />
+            <token type-id="OPR_GREATER_EQUAL" id="00208" />
         </one-of>
     </element-def>
 
     <!-- ========= MISCELLANEOUS ========= -->
     <element-def description="Integer" id="integer">
-        <one-of id="00208" optional="true">
-            <token id="00209" type-id="CHR_MINUS" />
-            <token id="00210" type-id="CHR_PLUS" />
+        <one-of id="00209" optional="true">
+            <token id="00210" type-id="CHR_MINUS" />
+            <token id="00211" type-id="CHR_PLUS" />
         </one-of>
-        <token id="00211" type-id="INTEGER" />
+        <token id="00212" type-id="INTEGER" />
     </element-def>
 
     <element-def description="Number" id="number">
-        <one-of id="00212" optional="true">
-            <token id="00213" type-id="CHR_MINUS" />
-            <token id="00214" type-id="CHR_PLUS" />
+        <one-of id="00213" optional="true">
+            <token id="00214" type-id="CHR_MINUS" />
+            <token id="00215" type-id="CHR_PLUS" />
         </one-of>
-        <one-of id="00215">
-            <token id="00216" type-id="NUMBER" />
-            <token id="00217" type-id="INTEGER" />
+        <one-of id="00216">
+            <token id="00217" type-id="NUMBER" />
+            <token id="00218" type-id="INTEGER" />
         </one-of>
     </element-def>
 
     <element-def description="Boolean" id="boolean">
-        <one-of id="00218">
-            <token id="00219" type-id="KW_TRUE" />
-            <token id="00220" type-id="KW_FALSE" />
-            <token id="00221" type-id="KW_ON" />
-            <token id="00222" type-id="KW_OFF" />
-            <token id="00223" type-id="INTEGER" />
+        <one-of id="00219">
+            <token id="00220" type-id="KW_TRUE" />
+            <token id="00221" type-id="KW_FALSE" />
+            <token id="00222" type-id="KW_ON" />
+            <token id="00223" type-id="KW_OFF" />
+            <token id="00224" type-id="INTEGER" />
         </one-of>
     </element-def>
 
     <!-- CUSTOM -->
     <element-def description="IF EXISTS clause" id="if_exists_clause">
-        <token id="00224" type-id="KW_IF" />
-        <token id="00225" type-id="KW_EXISTS" />
+        <token id="00225" type-id="KW_IF" />
+        <token id="00226" type-id="KW_EXISTS" />
     </element-def>
     <element-def description="IF NOT EXISTS clause" id="if_not_exists_clause">
-        <token id="00226" type-id="KW_IF" />
-        <token id="00227" type-id="KW_NOT" />
-        <token id="00228" type-id="KW_EXISTS" />
+        <token id="00227" type-id="KW_IF" />
+        <token id="00228" type-id="KW_NOT" />
+        <token id="00229" type-id="KW_EXISTS" />
     </element-def>
 
     <element-def description="Unknown identifier" id="custom_undefined">
-        <token id="00229" type-id="IDENTIFIER" />
+        <token id="00230" type-id="IDENTIFIER" />
     </element-def>
 
     <element-def description="Statement end" formatting-spacing-before="NO_SPACE" id="end" truncate-on-execution="true">
-        <token id="00230" type-id="CHR_SEMICOLON" />
+        <token id="00231" type-id="CHR_SEMICOLON" />
     </element-def>
 </element-defs>

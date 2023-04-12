@@ -3,12 +3,13 @@ package com.dci.intellij.dbn.language.sql.dialect.postgres;
 import com.dci.intellij.dbn.language.common.DBLanguageDialectIdentifier;
 import com.dci.intellij.dbn.language.common.SharedTokenTypeBundle;
 import com.dci.intellij.dbn.language.common.TokenTypeBundle;
+import com.dci.intellij.dbn.language.common.lexer.DBLanguageLexerBase;
 import com.intellij.psi.tree.IElementType;
 
 %%
 
 %class PostgresSQLParserFlexLexer
-%implements FlexLexer
+%extends DBLanguageLexerBase
 %public
 %final
 %unicode
@@ -19,12 +20,8 @@ import com.intellij.psi.tree.IElementType;
 %eof}
 
 %{
-    private TokenTypeBundle tt;
-    private SharedTokenTypeBundle stt;
-
     public PostgresSQLParserFlexLexer(TokenTypeBundle tt) {
-        this.tt = tt;
-        this.stt = tt.getSharedTokenTypes();
+        super(tt);
     }
 
     private int blockNesting = 0;
@@ -42,17 +39,7 @@ import com.intellij.psi.tree.IElementType;
     }
 %}
 
-WHITE_SPACE= {white_space_char}|{line_terminator}
-line_terminator = \r|\n|\r\n
-input_character = [^\r\n]
-white_space = [ \t\f]
-white_space_char= [ \n\r\t\f]
-ws  = {WHITE_SPACE}+
-wso = {WHITE_SPACE}*
-
-comment_tail =([^"*"]*("*"+[^"*""/"])?)*("*"+"/")?
-BLOCK_COMMENT=("/*"[^]{comment_tail})|"/*"
-LINE_COMMENT = "--" {input_character}*
+%include ../../../common/lexer/shared_elements.flext
 
 IDENTIFIER = [:jletter:] [:jletterdigit:]*
 QUOTED_IDENTIFIER = "\""[^\"]*"\""?
@@ -61,11 +48,6 @@ CHARSET ="armscii8"|"ascii"|"big5"|"binary"|"cp1250"|"cp1251"|"cp1256"|"cp1257"|
 
 string_simple_quoted      = "'"([^\']|"''"|{WHITE_SPACE})*"'"?
 STRING = ("n"|"_"{CHARSET})?{wso}{string_simple_quoted}
-
-sign = "+"|"-"
-digit = [0-9]
-INTEGER = {digit}+("e"{sign}?{digit}+)?
-NUMBER = {INTEGER}?"."{digit}+(("e"{sign}?{digit}+)|(("f"|"d"){ws}))?
 
 VARIABLE = ":"{wso}({IDENTIFIER}|{INTEGER})
 
@@ -165,33 +147,35 @@ VARIABLE = ":"{wso}({IDENTIFIER}|{INTEGER})
     "integer" {return tt.getDataTypeTokenType(22);}
     "interval" {return tt.getDataTypeTokenType(23);}
     "json" {return tt.getDataTypeTokenType(24);}
-    "line" {return tt.getDataTypeTokenType(25);}
-    "lseg" {return tt.getDataTypeTokenType(26);}
-    "macaddr" {return tt.getDataTypeTokenType(27);}
-    "money" {return tt.getDataTypeTokenType(28);}
-    "name" {return tt.getDataTypeTokenType(29);}
-    "numeric" {return tt.getDataTypeTokenType(30);}
-    "oid" {return tt.getDataTypeTokenType(31);}
-    "path" {return tt.getDataTypeTokenType(32);}
-    "point" {return tt.getDataTypeTokenType(33);}
-    "polygon" {return tt.getDataTypeTokenType(34);}
-    "real" {return tt.getDataTypeTokenType(35);}
-    "serial" {return tt.getDataTypeTokenType(36);}
-    "serial8" {return tt.getDataTypeTokenType(37);}
-    "smallint" {return tt.getDataTypeTokenType(38);}
-    "smallserial" {return tt.getDataTypeTokenType(39);}
-    "text" {return tt.getDataTypeTokenType(40);}
-    "tid" {return tt.getDataTypeTokenType(41);}
-    "time" {return tt.getDataTypeTokenType(42);}
-    "timestamp" {return tt.getDataTypeTokenType(43);}
-    "tsquery" {return tt.getDataTypeTokenType(44);}
-    "tsvector" {return tt.getDataTypeTokenType(45);}
-    "uuid" {return tt.getDataTypeTokenType(46);}
-    "varbit" {return tt.getDataTypeTokenType(47);}
-    "varchar" {return tt.getDataTypeTokenType(48);}
-    "xid" {return tt.getDataTypeTokenType(49);}
-    "xml" {return tt.getDataTypeTokenType(50);}
-    "yaml" {return tt.getDataTypeTokenType(51);}
+    "jsonb" {return tt.getDataTypeTokenType(25);}
+    "line" {return tt.getDataTypeTokenType(26);}
+    "lseg" {return tt.getDataTypeTokenType(27);}
+    "macaddr" {return tt.getDataTypeTokenType(28);}
+    "money" {return tt.getDataTypeTokenType(29);}
+    "name" {return tt.getDataTypeTokenType(30);}
+    "numeric" {return tt.getDataTypeTokenType(31);}
+    "oid" {return tt.getDataTypeTokenType(32);}
+    "path" {return tt.getDataTypeTokenType(33);}
+    "point" {return tt.getDataTypeTokenType(34);}
+    "polygon" {return tt.getDataTypeTokenType(35);}
+    "real" {return tt.getDataTypeTokenType(36);}
+    "serial" {return tt.getDataTypeTokenType(37);}
+    "serial8" {return tt.getDataTypeTokenType(38);}
+    "smallint" {return tt.getDataTypeTokenType(39);}
+    "smallserial" {return tt.getDataTypeTokenType(40);}
+    "text" {return tt.getDataTypeTokenType(41);}
+    "tid" {return tt.getDataTypeTokenType(42);}
+    "time" {return tt.getDataTypeTokenType(43);}
+    "timestamp" {return tt.getDataTypeTokenType(44);}
+    "tsquery" {return tt.getDataTypeTokenType(45);}
+    "tsvector" {return tt.getDataTypeTokenType(46);}
+    "uuid" {return tt.getDataTypeTokenType(47);}
+    "varbit" {return tt.getDataTypeTokenType(48);}
+    "varchar" {return tt.getDataTypeTokenType(49);}
+    "xid" {return tt.getDataTypeTokenType(50);}
+    "xml" {return tt.getDataTypeTokenType(51);}
+    "yaml" {return tt.getDataTypeTokenType(52);}
+
 
 
 
