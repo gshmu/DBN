@@ -1,6 +1,5 @@
 package com.dci.intellij.dbn.language.psql.dialect.oracle;
 
-import com.dci.intellij.dbn.language.common.SharedTokenTypeBundle;
 import com.dci.intellij.dbn.language.common.TokenTypeBundle;
 import com.dci.intellij.dbn.language.common.lexer.DBLanguageLexerBase;
 import com.intellij.psi.tree.IElementType;
