@@ -207,15 +207,14 @@ public class DBVirtualObject extends DBRootObjectImpl implements PsiReference {
 
     @Override
     @NotNull
-    public List<DBObject> getChildObjects(DBObjectType objectType) {
-        DBObjectList<DBObject> childObjectList = getChildObjectList(objectType);
-        return childObjectList == null ? Collections.emptyList() : childObjectList.getObjects();
+    public List<DBObject> collectChildObjects(DBObjectType objectType) {
+        return getChildObjects(objectType);
     }
 
     @Override
     public DBObject getChildObject(DBObjectType objectType, String name, short overload, boolean lookupHidden) {
-        DBObjectList<DBObject> childObjectList = getChildObjectList(objectType);
-        return childObjectList == null ? null : childObjectList.getObject(name, overload);
+        DBObjectList<DBObject> objects = getChildObjectList(objectType);
+        return objects == null ? null : objects.getObject(name, overload);
     }
 
     @Nullable
@@ -314,20 +313,16 @@ public class DBVirtualObject extends DBRootObjectImpl implements PsiReference {
                             IdentifierPsiElement parentPsiElement = qualifiedIdentifierPsiElement.getLeafAtIndex(index - 1);
                             DBObject object = parentPsiElement.getUnderlyingObject();
                             if (object != null && object.getObjectType().matches(DBObjectType.DATASET)) {
-                                List<DBObject> columns = object.getChildObjects(DBObjectType.COLUMN);
-                                for (DBObject column : columns) {
-                                    objects.add(column);
-                                }
+                                List<DBObject> columns = object.collectChildObjects(DBObjectType.COLUMN);
+                                objects.addAll(columns);
                             }
                         }
                     } else {
                         DATASET_LOOKUP_ADAPTER.collectInElement(underlyingPsiElement, basePsiElement -> {
                             DBObject object = basePsiElement.getUnderlyingObject();
                             if (object != null && object != this && object.getObjectType().matches(DBObjectType.DATASET)) {
-                                List<DBObject> columns = object.getChildObjects(DBObjectType.COLUMN);
-                                for (DBObject column : columns) {
-                                    objects.add(column);
-                                }
+                                List<DBObject> columns = object.collectChildObjects(DBObjectType.COLUMN);
+                                objects.addAll(columns);
                             }
                         });
                     }

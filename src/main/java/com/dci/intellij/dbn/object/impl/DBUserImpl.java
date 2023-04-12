@@ -11,7 +11,6 @@ import com.dci.intellij.dbn.object.*;
 import com.dci.intellij.dbn.object.common.DBObject;
 import com.dci.intellij.dbn.object.common.DBObjectBundle;
 import com.dci.intellij.dbn.object.common.DBRootObjectImpl;
-import com.dci.intellij.dbn.object.common.list.DBObjectList;
 import com.dci.intellij.dbn.object.common.list.DBObjectListContainer;
 import com.dci.intellij.dbn.object.common.list.DBObjectNavigationList;
 import com.dci.intellij.dbn.object.common.list.loader.DBObjectListFromRelationListLoader;
@@ -34,8 +33,6 @@ import static com.dci.intellij.dbn.object.type.DBObjectRelationType.USER_ROLE;
 import static com.dci.intellij.dbn.object.type.DBObjectType.*;
 
 public class DBUserImpl extends DBRootObjectImpl<DBUserMetadata> implements DBUser {
-    private DBObjectList<DBGrantedRole> roles;
-    private DBObjectList<DBGrantedPrivilege> privileges;
 
     public DBUserImpl(ConnectionHandler connection, DBUserMetadata metadata) throws SQLException {
         super(connection, metadata);
@@ -60,8 +57,8 @@ public class DBUserImpl extends DBRootObjectImpl<DBUserMetadata> implements DBUs
     protected void initLists() {
         DBObjectListContainer childObjects = ensureChildObjects();
         DBObjectBundle objectBundle = getObjectBundle();
-        roles =      childObjects.createSubcontentObjectList(GRANTED_ROLE, this, objectBundle, USER_ROLE);
-        privileges = childObjects.createSubcontentObjectList(GRANTED_PRIVILEGE, this, objectBundle, USER_PRIVILEGE);
+        childObjects.createSubcontentObjectList(GRANTED_ROLE, this, objectBundle, USER_ROLE);
+        childObjects.createSubcontentObjectList(GRANTED_PRIVILEGE, this, objectBundle, USER_PRIVILEGE);
     }
 
     @Override
@@ -111,12 +108,12 @@ public class DBUserImpl extends DBRootObjectImpl<DBUserMetadata> implements DBUs
 
     @Override
     public List<DBGrantedPrivilege> getPrivileges() {
-        return privileges.getObjects();
+        return getChildObjects(GRANTED_PRIVILEGE);
     }
 
     @Override
     public List<DBGrantedRole> getRoles() {
-        return roles.getObjects();
+        return getChildObjects(GRANTED_ROLE);
     }
 
     @Override
@@ -180,7 +177,9 @@ public class DBUserImpl extends DBRootObjectImpl<DBUserMetadata> implements DBUs
     @Override
     @NotNull
     public List<BrowserTreeNode> buildPossibleTreeChildren() {
-        return DatabaseBrowserUtils.createList(roles, privileges);
+        return DatabaseBrowserUtils.createList(
+                getChildObjectList(GRANTED_ROLE),
+                getChildObjectList(GRANTED_PRIVILEGE));
     }
 
     @Override

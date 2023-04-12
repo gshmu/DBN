@@ -52,7 +52,7 @@ public class ProgramMethodRunAction extends GroupPopupAction {
                     actions.add(SEPARATOR);
                 }
 
-                List<? extends DBObject> objects = schemaObject.getChildObjects(DBObjectType.METHOD);
+                List<? extends DBObject> objects = schemaObject.collectChildObjects(DBObjectType.METHOD);
                 for (DBObject object : objects) {
                     if (recentMethods == null || !recentMethods.contains(object)) {
                         RunMethodAction action = new RunMethodAction((DBMethod) object);

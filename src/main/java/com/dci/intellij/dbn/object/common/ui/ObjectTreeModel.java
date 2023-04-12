@@ -24,7 +24,7 @@ public class ObjectTreeModel extends DefaultTreeModel {
         DefaultMutableTreeNode rootNode = getRoot();
 
         for (DBObjectType objectType : objectTypes) {
-            for (DBObject schemaObject :schema.getChildObjects(objectType)) {
+            for (DBObject schemaObject :schema.collectChildObjects(objectType)) {
                 DefaultMutableTreeNode objectNode = new DefaultMutableTreeNode(schemaObject.ref());
                 rootNode.add(objectNode);
                 if (selectedObject != null && selectedObject.equals(schemaObject)) {
@@ -35,12 +35,12 @@ public class ObjectTreeModel extends DefaultTreeModel {
 
         for (DBObjectType schemaObjectType : schema.getObjectType().getChildren()) {
             if (hasChild(schemaObjectType, objectTypes)) {
-                for (DBObject schemaObject : schema.getChildObjects(schemaObjectType)) {
+                for (DBObject schemaObject : schema.collectChildObjects(schemaObjectType)) {
                     DefaultMutableTreeNode bundleNode = new DefaultMutableTreeNode(schemaObject.ref());
 
                     List<DBObject> objects = new ArrayList<DBObject>();
                     for (DBObjectType objectType : objectTypes) {
-                        objects.addAll(schemaObject.getChildObjects(objectType));
+                        objects.addAll(schemaObject.collectChildObjects(objectType));
                     }
 
                     if (objects.size() > 0) {

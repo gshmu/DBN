@@ -66,9 +66,9 @@ public class DBViewImpl extends DBDatasetImpl<DBViewMetadata> implements DBView 
     @NotNull
     public List<BrowserTreeNode> buildPossibleTreeChildren() {
         return DatabaseBrowserUtils.createList(
-                columns,
-                constraints,
-                triggers);
+                getChildObjectList(COLUMN),
+                getChildObjectList(CONSTRAINT),
+                getChildObjectList(DATASET_TRIGGER));
     }
 
     @Override

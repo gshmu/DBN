@@ -6,7 +6,6 @@ import com.dci.intellij.dbn.database.common.metadata.def.DBMaterializedViewMetad
 import com.dci.intellij.dbn.object.DBIndex;
 import com.dci.intellij.dbn.object.DBMaterializedView;
 import com.dci.intellij.dbn.object.DBSchema;
-import com.dci.intellij.dbn.object.common.list.DBObjectList;
 import com.dci.intellij.dbn.object.common.list.DBObjectListContainer;
 import com.dci.intellij.dbn.object.filter.type.ObjectTypeFilterSettings;
 import com.dci.intellij.dbn.object.type.DBObjectType;
@@ -20,8 +19,6 @@ import static com.dci.intellij.dbn.object.type.DBObjectRelationType.INDEX_COLUMN
 import static com.dci.intellij.dbn.object.type.DBObjectType.*;
 
 public class DBMaterializedViewImpl extends DBViewImpl implements DBMaterializedView {
-    private DBObjectList<DBIndex> indexes;
-
     DBMaterializedViewImpl(DBSchema schema, DBMaterializedViewMetadata metadata) throws SQLException {
         super(schema, metadata);
     }
@@ -31,8 +28,7 @@ public class DBMaterializedViewImpl extends DBViewImpl implements DBMaterialized
         super.initLists();
         DBSchema schema = getSchema();
         DBObjectListContainer childObjects = ensureChildObjects();
-        indexes = childObjects.createSubcontentObjectList(INDEX, this, schema);
-
+        childObjects.createSubcontentObjectList(INDEX, this, schema);
         childObjects.createSubcontentObjectRelationList(INDEX_COLUMN, this, schema);
     }
 
@@ -45,13 +41,13 @@ public class DBMaterializedViewImpl extends DBViewImpl implements DBMaterialized
     @Override
     @Nullable
     public List<DBIndex> getIndexes() {
-        return indexes.getObjects();
+        return getChildObjects(INDEX);
     }
 
     @Override
     @Nullable
     public DBIndex getIndex(String name) {
-        return indexes.getObject(name);
+        return getChildObject(INDEX, name);
     }
 
     /*********************************************************
@@ -61,10 +57,10 @@ public class DBMaterializedViewImpl extends DBViewImpl implements DBMaterialized
     @NotNull
     public List<BrowserTreeNode> buildPossibleTreeChildren() {
         return DatabaseBrowserUtils.createList(
-                columns,
-                constraints,
-                indexes,
-                triggers);
+                getChildObjectList(COLUMN),
+                getChildObjectList(CONSTRAINT),
+                getChildObjectList(INDEX),
+                getChildObjectList(DATASET_TRIGGER));
     }
 
     @Override

@@ -17,7 +17,6 @@ import com.dci.intellij.dbn.object.DBProgram;
 import com.dci.intellij.dbn.object.DBSchema;
 import com.dci.intellij.dbn.object.common.DBSchemaObject;
 import com.dci.intellij.dbn.object.common.DBSchemaObjectImpl;
-import com.dci.intellij.dbn.object.common.list.DBObjectList;
 import com.dci.intellij.dbn.object.common.list.DBObjectListContainer;
 import com.dci.intellij.dbn.object.common.status.DBObjectStatus;
 import com.dci.intellij.dbn.object.common.status.DBObjectStatusHolder;
@@ -35,7 +34,6 @@ import static com.dci.intellij.dbn.object.type.DBObjectType.METHOD;
 
 @Getter
 public abstract class DBMethodImpl<M extends DBMethodMetadata> extends DBSchemaObjectImpl<M> implements DBMethod {
-    protected DBObjectList<DBArgument> arguments;
     protected short position;
     protected short overload;
     private DBLanguage language;
@@ -78,7 +76,7 @@ public abstract class DBMethodImpl<M extends DBMethodMetadata> extends DBSchemaO
     protected void initLists() {
         super.initLists();
         DBObjectListContainer childObjects = ensureChildObjects();
-        arguments = childObjects.createSubcontentObjectList(ARGUMENT, this, getSchema());
+        childObjects.createSubcontentObjectList(ARGUMENT, this, getSchema());
     }
 
     @Override
@@ -103,7 +101,7 @@ public abstract class DBMethodImpl<M extends DBMethodMetadata> extends DBSchemaO
 
     @Override
     public List<DBArgument> getArguments() {
-        return arguments.getObjects();
+        return getChildObjects(ARGUMENT);
     }
 
     @Override
@@ -113,7 +111,7 @@ public abstract class DBMethodImpl<M extends DBMethodMetadata> extends DBSchemaO
 
     @Override
     public DBArgument getArgument(String name) {
-        return (DBArgument) getObjectByName(getArguments(), name);
+        return getChildObject(ARGUMENT, name);
     }
 
     @Override
@@ -152,7 +150,7 @@ public abstract class DBMethodImpl<M extends DBMethodMetadata> extends DBSchemaO
     @Override
     @NotNull
     public List<BrowserTreeNode> buildPossibleTreeChildren() {
-        return DatabaseBrowserUtils.createList(arguments);
+        return DatabaseBrowserUtils.createList(getChildObjectList(ARGUMENT));
     }
 
     @Override

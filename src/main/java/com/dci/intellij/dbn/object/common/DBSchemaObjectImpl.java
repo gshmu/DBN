@@ -22,20 +22,17 @@ import com.dci.intellij.dbn.vfs.DatabaseFileSystem;
 import com.dci.intellij.dbn.vfs.file.DBEditableObjectVirtualFile;
 import com.dci.intellij.dbn.vfs.file.DBObjectVirtualFile;
 import lombok.Getter;
-import lombok.val;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 import static com.dci.intellij.dbn.common.Priority.HIGHEST;
 import static com.dci.intellij.dbn.common.content.DynamicContentProperty.DEPENDENCY;
 import static com.dci.intellij.dbn.common.content.DynamicContentProperty.INTERNAL;
-import static com.dci.intellij.dbn.common.util.Unsafe.cast;
 import static com.dci.intellij.dbn.object.common.property.DBObjectProperty.*;
 import static com.dci.intellij.dbn.object.type.DBObjectType.*;
 
@@ -93,14 +90,12 @@ public abstract class DBSchemaObjectImpl<M extends DBObjectMetadata> extends DBR
 
     @Override
     public List<DBObject> getReferencedObjects() {
-        val referencedObjects = getChildObjectList(INCOMING_DEPENDENCY, true);
-        return referencedObjects == null ? Collections.emptyList() : cast(referencedObjects.getObjects());
+        return getChildObjects(INCOMING_DEPENDENCY);
     }
 
     @Override
     public List<DBObject> getReferencingObjects() {
-        val referencingObjects = getChildObjectList(OUTGOING_DEPENDENCY, true);
-        return referencingObjects == null ? Collections.emptyList() : cast(referencingObjects.getObjects());
+        return getChildObjects(OUTGOING_DEPENDENCY);
     }
 
     @Override

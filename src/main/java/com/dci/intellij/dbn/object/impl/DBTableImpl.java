@@ -12,7 +12,6 @@ import com.dci.intellij.dbn.database.common.metadata.def.DBTableMetadata;
 import com.dci.intellij.dbn.database.interfaces.DatabaseMetadataInterface;
 import com.dci.intellij.dbn.editor.DBContentType;
 import com.dci.intellij.dbn.object.*;
-import com.dci.intellij.dbn.object.common.list.DBObjectList;
 import com.dci.intellij.dbn.object.common.list.DBObjectListContainer;
 import com.dci.intellij.dbn.object.common.list.DBObjectNavigationList;
 import com.dci.intellij.dbn.object.filter.type.ObjectTypeFilterSettings;
@@ -37,9 +36,6 @@ import static com.dci.intellij.dbn.object.type.DBObjectType.*;
 public class DBTableImpl extends DBDatasetImpl<DBTableMetadata> implements DBTable {
     private static final List<DBColumn> EMPTY_COLUMN_LIST = Collections.unmodifiableList(new ArrayList<>());
 
-    private DBObjectList<DBIndex> indexes;
-    private DBObjectList<DBNestedTable> nestedTables;
-
     DBTableImpl(DBSchema schema, DBTableMetadata metadata) throws SQLException {
         super(schema, metadata);
     }
@@ -56,9 +52,9 @@ public class DBTableImpl extends DBDatasetImpl<DBTableMetadata> implements DBTab
         super.initLists();
         DBSchema schema = getSchema();
         DBObjectListContainer childObjects = ensureChildObjects();
-        indexes =      childObjects.createSubcontentObjectList(INDEX, this, schema);
-        nestedTables = childObjects.createSubcontentObjectList(NESTED_TABLE, this, schema);
 
+        childObjects.createSubcontentObjectList(INDEX, this, schema);
+        childObjects.createSubcontentObjectList(NESTED_TABLE, this, schema);
         childObjects.createSubcontentObjectRelationList(INDEX_COLUMN, this, schema);
     }
 
@@ -84,23 +80,23 @@ public class DBTableImpl extends DBDatasetImpl<DBTableMetadata> implements DBTab
     @Override
     @Nullable
     public List<DBIndex> getIndexes() {
-        return indexes.getObjects();
+        return getChildObjects(INDEX);
     }
 
     @Override
     public List<DBNestedTable> getNestedTables() {
-        return nestedTables.getObjects();
+        return getChildObjects(NESTED_TABLE);
     }
 
     @Override
     @Nullable
     public DBIndex getIndex(String name) {
-        return indexes.getObject(name);
+        return getChildObject(INDEX, name);
     }
 
     @Override
     public DBNestedTable getNestedTable(String name) {
-        return nestedTables.getObject(name);
+        return getChildObject(NESTED_TABLE, name);
     }
 
     @Override
@@ -154,8 +150,9 @@ public class DBTableImpl extends DBDatasetImpl<DBTableMetadata> implements DBTab
     @Override
     protected @Nullable List<DBObjectNavigationList> createNavigationLists() {
         List<DBObjectNavigationList> navigationLists = new LinkedList<>();
-        if (indexes.size() > 0) {
-            navigationLists.add(DBObjectNavigationList.create("Indexes", indexes.getObjects()));
+        List<DBIndex> indexes = getChildObjects(INDEX);
+        if (indexes != null && indexes.size() > 0) {
+            navigationLists.add(DBObjectNavigationList.create("Indexes", indexes));
         }
 
         return navigationLists;
@@ -168,11 +165,11 @@ public class DBTableImpl extends DBDatasetImpl<DBTableMetadata> implements DBTab
     @NotNull
     public List<BrowserTreeNode> buildPossibleTreeChildren() {
         return DatabaseBrowserUtils.createList(
-                columns,
-                constraints,
-                indexes,
-                triggers,
-                nestedTables);
+                getChildObjectList(COLUMN),
+                getChildObjectList(CONSTRAINT),
+                getChildObjectList(INDEX),
+                getChildObjectList(DATASET_TRIGGER),
+                getChildObjectList(NESTED_TABLE));
     }
 
     @Override

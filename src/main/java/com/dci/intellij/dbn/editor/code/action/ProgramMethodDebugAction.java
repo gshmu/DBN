@@ -34,7 +34,7 @@ public class ProgramMethodDebugAction extends GroupPopupAction {
 
     @Override
     protected AnAction[] getActions(AnActionEvent e) {
-        List<AnAction> actions = new ArrayList<AnAction>();
+        List<AnAction> actions = new ArrayList<>();
         Project project = e.getProject();
         DBSourceCodeVirtualFile sourceCodeFile = getSourcecodeFile(e);
         if (project != null && sourceCodeFile != null) {
@@ -53,7 +53,7 @@ public class ProgramMethodDebugAction extends GroupPopupAction {
                     actions.add(SEPARATOR);
                 }
 
-                List<? extends DBObject> objects = schemaObject.getChildObjects(DBObjectType.METHOD);
+                List<? extends DBObject> objects = schemaObject.collectChildObjects(DBObjectType.METHOD);
                 for (DBObject object : objects) {
                     if (recentMethods == null || !recentMethods.contains(object)) {
                         RunMethodAction action = new RunMethodAction((DBMethod) object);
