@@ -46,8 +46,8 @@ public class VoidDynamicContent extends StatefulDisposableBase implements Dynami
     }
 
     @Override
-    public boolean isSubContent() {
-        return false;
+    public boolean isMaster() {
+        return true;
     }
 
     @Override

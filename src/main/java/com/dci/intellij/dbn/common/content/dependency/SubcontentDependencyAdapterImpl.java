@@ -89,11 +89,6 @@ class SubcontentDependencyAdapterImpl extends BasicDependencyAdapter implements 
     }
 
     @Override
-    public boolean isSubContent() {
-        return true;
-    }
-
-    @Override
     public void dispose() {
         Disposer.dispose(contentDependency);
         contentDependency = VoidContentDependency.INSTANCE;

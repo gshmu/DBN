@@ -54,9 +54,7 @@ public interface DynamicContent<T extends DynamicContentElement> extends
      */
     boolean isDirty();
 
-    default boolean isSubContent() {
-        return getDependencyAdapter().isSubContent();
-    }
+    boolean isMaster();
 
     default boolean canLoad() {
         return getDependencyAdapter().canLoad();

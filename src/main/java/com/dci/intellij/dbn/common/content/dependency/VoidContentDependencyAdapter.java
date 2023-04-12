@@ -39,11 +39,6 @@ public class VoidContentDependencyAdapter implements ContentDependencyAdapter{
     }
 
     @Override
-    public boolean isSubContent() {
-        return false;
-    }
-
-    @Override
     public void dispose() {
 
     }

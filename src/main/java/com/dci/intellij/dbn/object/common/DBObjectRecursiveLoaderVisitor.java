@@ -17,7 +17,7 @@ public class DBObjectRecursiveLoaderVisitor extends StatefulDisposableBase imple
 
     @Override
     public void visit(DBObjectList<?> objectList) {
-        if (objectList.isSubContent()) return;
+        if (!objectList.isMaster()) return;
 
         List<DBObject> objects = cast(objectList.getObjects());
         for (DBObject object : objects) {

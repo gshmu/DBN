@@ -18,6 +18,7 @@ import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
+import static com.dci.intellij.dbn.common.content.DynamicContentProperty.MASTER;
 import static com.dci.intellij.dbn.object.type.DBObjectType.*;
 
 public abstract class DBPrivilegeImpl<M extends DBPrivilegeMetadata> extends DBRootObjectImpl<M> implements DBPrivilege {
@@ -83,6 +84,7 @@ public abstract class DBPrivilegeImpl<M extends DBPrivilegeMetadata> extends DBR
                     }
                 }
                 content.setElements(grantees);
+                content.set(MASTER, false);
             }
         };
 
@@ -101,6 +103,7 @@ public abstract class DBPrivilegeImpl<M extends DBPrivilegeMetadata> extends DBR
                     }
                 }
                 content.setElements(grantees);
+                content.set(MASTER, false);
             }
         };
     }
