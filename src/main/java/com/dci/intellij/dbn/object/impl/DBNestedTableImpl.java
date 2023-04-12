@@ -43,7 +43,7 @@ public class DBNestedTableImpl extends DBObjectImpl<DBNestedTableMetadata> imple
     @Override
     public List<DBNestedTableColumn> getColumns() {
         if (columns == null) {
-            columns = new ArrayList<DBNestedTableColumn>();
+            columns = new ArrayList<>();
             //todo
         }
         return columns;
@@ -51,12 +51,12 @@ public class DBNestedTableImpl extends DBObjectImpl<DBNestedTableMetadata> imple
 
     @Override
     public DBNestedTableColumn getColumn(String name) {
-        return (DBNestedTableColumn) getObjectByName(getColumns(), name);
+        return getChildObject(DBObjectType.COLUMN, name);
     }
 
     @Override
     public DBTable getTable() {
-        return (DBTable) getParentObject();
+        return getParentObject();
     }
 
     public DBType getType() {

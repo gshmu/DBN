@@ -6,7 +6,6 @@ import com.dci.intellij.dbn.object.DBColumn;
 import com.dci.intellij.dbn.object.DBDataset;
 import com.dci.intellij.dbn.object.DBIndex;
 import com.dci.intellij.dbn.object.common.DBSchemaObjectImpl;
-import com.dci.intellij.dbn.object.common.list.DBObjectList;
 import com.dci.intellij.dbn.object.common.list.DBObjectListContainer;
 import com.dci.intellij.dbn.object.common.list.DBObjectNavigationList;
 import com.dci.intellij.dbn.object.common.list.loader.DBObjectListFromRelationListLoader;
@@ -16,7 +15,6 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.sql.SQLException;
-import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -78,8 +76,7 @@ public class DBIndexImpl extends DBSchemaObjectImpl<DBIndexMetadata> implements 
 
     @Override
     public List<DBColumn> getColumns() {
-        DBObjectList<DBColumn> columns = getChildObjectList(COLUMN);
-        return columns == null ? Collections.emptyList() : columns.getObjects();
+        return getChildObjects(COLUMN);
     }
 
     @Override

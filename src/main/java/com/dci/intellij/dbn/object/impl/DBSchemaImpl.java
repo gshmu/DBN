@@ -54,20 +54,6 @@ import static com.dci.intellij.dbn.object.type.DBObjectRelationType.INDEX_COLUMN
 import static com.dci.intellij.dbn.object.type.DBObjectType.*;
 
 public class DBSchemaImpl extends DBRootObjectImpl<DBSchemaMetadata> implements DBSchema {
-    private DBObjectList<DBTable> tables;
-    private DBObjectList<DBView> views;
-    private DBObjectList<DBMaterializedView> materializedViews;
-    private DBObjectList<DBSynonym> synonyms;
-    private DBObjectList<DBSequence> sequences;
-    private DBObjectList<DBProcedure> procedures;
-    private DBObjectList<DBFunction> functions;
-    private DBObjectList<DBPackage> packages;
-    private DBObjectList<DBType> types;
-    private DBObjectList<DBDatabaseTrigger> databaseTriggers;
-    private DBObjectList<DBDimension> dimensions;
-    private DBObjectList<DBCluster> clusters;
-    private DBObjectList<DBDatabaseLink> databaseLinks;
-
     private Latent<List<DBColumn>> primaryKeyColumns;
     private Latent<List<DBColumn>> foreignKeyColumns;
 
@@ -89,19 +75,19 @@ public class DBSchemaImpl extends DBRootObjectImpl<DBSchemaMetadata> implements 
     protected void initLists() {
         DBObjectListContainer childObjects = ensureChildObjects();
 
-        tables             = childObjects.createObjectList(TABLE,             this);
-        views              = childObjects.createObjectList(VIEW,              this);
-        materializedViews  = childObjects.createObjectList(MATERIALIZED_VIEW, this);
-        synonyms           = childObjects.createObjectList(SYNONYM,           this);
-        sequences          = childObjects.createObjectList(SEQUENCE,          this);
-        procedures         = childObjects.createObjectList(PROCEDURE,         this);
-        functions          = childObjects.createObjectList(FUNCTION,          this);
-        packages           = childObjects.createObjectList(PACKAGE,           this);
-        types              = childObjects.createObjectList(TYPE,              this);
-        databaseTriggers   = childObjects.createObjectList(DATABASE_TRIGGER,  this);
-        dimensions         = childObjects.createObjectList(DIMENSION,         this);
-        clusters           = childObjects.createObjectList(CLUSTER,           this);
-        databaseLinks      = childObjects.createObjectList(DBLINK,            this);
+        childObjects.createObjectList(TABLE,             this);
+        childObjects.createObjectList(VIEW,              this);
+        childObjects.createObjectList(MATERIALIZED_VIEW, this);
+        childObjects.createObjectList(SYNONYM,           this);
+        childObjects.createObjectList(SEQUENCE,          this);
+        childObjects.createObjectList(PROCEDURE,         this);
+        childObjects.createObjectList(FUNCTION,          this);
+        childObjects.createObjectList(PACKAGE,           this);
+        childObjects.createObjectList(TYPE,              this);
+        childObjects.createObjectList(DATABASE_TRIGGER,  this);
+        childObjects.createObjectList(DIMENSION,         this);
+        childObjects.createObjectList(CLUSTER,           this);
+        childObjects.createObjectList(DBLINK,            this);
 
         DBObjectList<DBConstraint> constraints = childObjects.createObjectList(CONSTRAINT, this, INTERNAL, GROUPED);
         DBObjectList<DBIndex> indexes          = childObjects.createObjectList(INDEX,      this, INTERNAL, GROUPED);
@@ -206,47 +192,47 @@ public class DBSchemaImpl extends DBRootObjectImpl<DBSchemaMetadata> implements 
 
     @Override
     public List<DBTable> getTables() {
-        return tables.getObjects();
+        return getChildObjects(TABLE);
     }
 
     @Override
     public List<DBView> getViews() {
-        return views.getObjects();
+        return getChildObjects(VIEW);
     }
 
     @Override
     public List<DBMaterializedView> getMaterializedViews() {
-        return materializedViews.getObjects();
+        return getChildObjects(MATERIALIZED_VIEW);
     }
 
     @Override
     public List<DBIndex> getIndexes() {
-        return ensureChildObjects().getObjects(INDEX, true);
+        return getChildObjects(INDEX);
     }
 
     @Override
     public List<DBSynonym> getSynonyms() {
-        return synonyms.getObjects();
+        return getChildObjects(SYNONYM);
     }
 
     @Override
     public List<DBSequence> getSequences() {
-        return sequences.getObjects();
+        return getChildObjects(SEQUENCE);
     }
 
     @Override
     public List<DBProcedure> getProcedures() {
-        return procedures.getObjects();
+        return getChildObjects(PROCEDURE);
     }
 
     @Override
     public List<DBFunction> getFunctions() {
-        return functions.getObjects();
+        return getChildObjects(FUNCTION);
     }
 
     @Override
     public List<DBPackage> getPackages() {
-        return packages.getObjects();
+        return getChildObjects(PACKAGE);
     }
 
     public List<DBColumn> getPrimaryKeyColumns() {
@@ -259,64 +245,63 @@ public class DBSchemaImpl extends DBRootObjectImpl<DBSchemaMetadata> implements 
 
     @Override
     public List<DBDatasetTrigger> getDatasetTriggers() {
-        return ensureChildObjects().getObjects(DATASET_TRIGGER, true);
+        return getChildObjects(DATASET_TRIGGER);
     }
 
     @Override
     public List<DBDatabaseTrigger> getDatabaseTriggers() {
-        return ensureChildObjects().getObjects(DATABASE_TRIGGER, false);
+        return getChildObjects(DATABASE_TRIGGER);
     }
 
     @Override
     public List<DBType> getTypes() {
-        return types.getObjects();
+        return getChildObjects(TYPE);
     }
 
     @Override
     public List<DBDimension> getDimensions() {
-        return dimensions.getObjects();
+        return getChildObjects(DIMENSION);
     }
 
     @Override
     public List<DBCluster> getClusters() {
-        return clusters.getObjects();
+        return getChildObjects(CLUSTER);
     }
 
     @Override
     public List<DBDatabaseLink> getDatabaseLinks() {
-        return databaseLinks.getObjects();
+        return getChildObjects(DBLINK);
     }
 
 
     @Override
     public DBTable getTable(String name) {
-        return tables.getObject(name);
+        return getChildObject(TABLE, name);
     }
 
     @Override
     public DBView getView(String name) {
-        return views.getObject(name);
+        return getChildObject(VIEW, name);
     }
 
     @Override
     public DBMaterializedView getMaterializedView(String name) {
-        return materializedViews.getObject(name);
+        return getChildObject(MATERIALIZED_VIEW, name);
     }
 
     @Override
     public DBIndex getIndex(String name) {
-        DBObjectList indexList = getChildObjectList(INDEX);
-        return indexList == null ? null : (DBIndex) indexList.getObject(name);
+        return getChildObject(INDEX, name);
     }
 
     @Override
     public DBCluster getCluster(String name) {
-        return clusters.getObject(name);
+        return getChildObject(CLUSTER, name);
     }
 
     @Override
     public DBDatabaseLink getDatabaseLink(String name) {
-        return databaseLinks.getObject(name);
+        return getChildObject(DBLINK, name);
     }
 
     @Override
@@ -343,12 +328,15 @@ public class DBSchemaImpl extends DBRootObjectImpl<DBSchemaMetadata> implements 
     }
 
     @Nullable
-    private <T extends DBSchemaObject> T getObjectFallbackOnSynonym(DBObjectList<T> objects, String name) {
+    private <T extends DBSchemaObject> T getObjectFallbackOnSynonym(DBObjectType objectType, String name) {
+        DBObjectList<T> objects = getChildObjectList(objectType);
+        if (objects == null) return null;
+
         T object = objects.getObject(name);
         if (object != null) return object;
 
         if (!SYNONYM.isSupported(this)) return null;
-        DBSynonym synonym = synonyms.getObject(name);
+        DBSynonym synonym = getChildObject(SYNONYM, name);
         if (synonym == null) return null;
 
         DBObject underlyingObject = synonym.getUnderlyingObject();
@@ -361,26 +349,26 @@ public class DBSchemaImpl extends DBRootObjectImpl<DBSchemaMetadata> implements 
 
     @Override
     public DBType getType(String name) {
-        return getObjectFallbackOnSynonym(types, name);
+        return getObjectFallbackOnSynonym(TYPE, name);
     }
 
     @Override
     public DBPackage getPackage(String name) {
-        return getObjectFallbackOnSynonym(packages, name);
+        return getObjectFallbackOnSynonym(PACKAGE, name);
     }
 
     @Override
     public DBProcedure getProcedure(String name, short overload) {
         return overload > 0 ?
-                procedures.getObject(name, overload) :
-                getObjectFallbackOnSynonym(procedures, name);
+                getChildObject(PROCEDURE, name, overload) :
+                getObjectFallbackOnSynonym(PROCEDURE, name);
     }
 
     @Override
     public DBFunction getFunction(String name, short overload) {
         return overload > 0 ?
-                functions.getObject(name, overload) :
-                getObjectFallbackOnSynonym(functions, name);
+                getChildObject(FUNCTION, name, overload) :
+                getObjectFallbackOnSynonym(FUNCTION, name);
     }
 
     @Override
@@ -562,19 +550,19 @@ public class DBSchemaImpl extends DBRootObjectImpl<DBSchemaMetadata> implements 
     @NotNull
     public List<BrowserTreeNode> buildPossibleTreeChildren() {
         return DatabaseBrowserUtils.createList(
-                tables,
-                views,
-                materializedViews,
-                synonyms,
-                sequences,
-                procedures,
-                functions,
-                packages,
-                types,
-                databaseTriggers,
-                dimensions,
-                clusters,
-                databaseLinks);
+                getChildObjectList(TABLE),
+                getChildObjectList(VIEW),
+                getChildObjectList(MATERIALIZED_VIEW),
+                getChildObjectList(SYNONYM),
+                getChildObjectList(SEQUENCE),
+                getChildObjectList(PROCEDURE),
+                getChildObjectList(FUNCTION),
+                getChildObjectList(PACKAGE),
+                getChildObjectList(TYPE),
+                getChildObjectList(DATABASE_TRIGGER),
+                getChildObjectList(DIMENSION),
+                getChildObjectList(CLUSTER),
+                getChildObjectList(DBLINK));
     }
 
     @Override

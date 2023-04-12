@@ -54,12 +54,16 @@ import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
 import java.sql.SQLException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import static com.dci.intellij.dbn.common.dispose.Failsafe.nd;
 import static com.dci.intellij.dbn.common.util.Unsafe.cast;
 import static com.dci.intellij.dbn.object.common.property.DBObjectProperty.LISTS_LOADED;
+import static java.util.Collections.emptyList;
 
 public abstract class DBObjectImpl<M extends DBObjectMetadata> extends DBObjectTreeNodeBase implements DBObject, ToolTipProvider {
 
@@ -346,17 +350,6 @@ public abstract class DBObjectImpl<M extends DBObjectMetadata> extends DBObjectT
         if (childObjects != null) childObjects.loadObjects();
     }
 
-    public static DBObject getObjectByName(List<? extends DBObject> objects, String name) {
-        if (objects != null) {
-            for (DBObject object : objects) {
-                if (Objects.equals(object.getName(), name)) {
-                    return object;
-                }
-            }
-        }
-        return null;
-    }
-
     @Override
     public <T extends DBObject> T  getChildObject(DBObjectType objectType, String name, boolean lookupHidden) {
         return cast(getChildObject(objectType, name, (short) 0, lookupHidden));
@@ -375,15 +368,8 @@ public abstract class DBObjectImpl<M extends DBObjectMetadata> extends DBObjectT
 
     @Override
     public <T extends DBObject> T  getChildObject(DBObjectType objectType, String name, short overload, boolean lookupHidden) {
-        DBObjectListContainer childObjects = getChildObjects();
-        if (childObjects == null) return null;
-
-        DBObject object = childObjects.getObject(objectType, name, overload);
-        if (object == null && lookupHidden) {
-            object = childObjects.getInternalObject(objectType, name, overload);
-        }
-        return cast(object);
-
+        DBObjectListContainer objects = getChildObjects();
+        return objects == null ? null : objects.getObject(objectType, name, overload);
     }
 
     @Override
@@ -395,9 +381,8 @@ public abstract class DBObjectImpl<M extends DBObjectMetadata> extends DBObjectT
     @Override
     @Nullable
     public DBObject getChildObject(String name, short overload, boolean lookupHidden) {
-        DBObjectListContainer childObjects = getChildObjects();
-        return childObjects == null ? null :
-                childObjects.getObjectForParentType(this.getObjectType(), name, overload, lookupHidden);
+        DBObjectListContainer objects = getChildObjects();
+        return objects == null ? null : objects.getObjectForParentType(getObjectType(), name, overload);
     }
 
     public DBObject getChildObjectNoLoad(String name) {
@@ -410,8 +395,27 @@ public abstract class DBObjectImpl<M extends DBObjectMetadata> extends DBObjectT
     }
 
     @Override
+    public <T extends DBObject> List<T> getChildObjects(DBObjectType objectType) {
+        DBObjectList<T> objects = getChildObjectList(objectType);
+        return objects == null ? emptyList() : objects.getObjects();
+    }
+
+    @Override
+    @Nullable
+    public <T extends DBObject> T getChildObject(DBObjectType objectType, String name) {
+        DBObjectList<T> objects = getChildObjectList(objectType);
+        return objects == null ? null : objects.getObject(name);
+    }
+
+    @Override
+    public <T extends DBObject> T getChildObject(DBObjectType objectType, String name, short overload) {
+        DBObjectList<T> objects = getChildObjectList(objectType);
+        return objects == null ? null : objects.getObject(name, overload);
+    }
+
+    @Override
     @NotNull
-    public List<DBObject> getChildObjects(DBObjectType objectType) {
+    public List<DBObject> collectChildObjects(DBObjectType objectType) {
         ListCollector<DBObject> collector = ListCollector.basic();
         collectChildObjects(objectType, collector);
         return collector.elements();
@@ -441,8 +445,7 @@ public abstract class DBObjectImpl<M extends DBObjectMetadata> extends DBObjectT
             if (objectType == DBObjectType.ANY) {
                 childObjects.visit(o -> o.collectObjects(consumer), false);
             } else {
-                DBObjectList<?> objectList = childObjects.getObjectList(objectType, false);
-                if (objectList == null) objectList = childObjects.getObjectList(objectType, true);
+                DBObjectList<?> objectList = childObjects.getObjectList(objectType);
                 if (objectList != null) objectList.collectObjects(consumer);
             }
         }
@@ -453,14 +456,8 @@ public abstract class DBObjectImpl<M extends DBObjectMetadata> extends DBObjectT
     @Nullable
     @Override
     public <T extends DBObject> DBObjectList<T> getChildObjectList(DBObjectType objectType) {
-        DBObjectListContainer childObjects = getChildObjects();
-        return childObjects == null ? null : childObjects.getObjectList(objectType);
-    }
-
-    @Override
-    public <T extends DBObject> DBObjectList<T> getChildObjectList(DBObjectType objectType, boolean internal) {
-        DBObjectListContainer childObjects = getChildObjects();
-        return childObjects == null ? null : childObjects.getObjectList(objectType, internal);
+        DBObjectListContainer objects = getChildObjects();
+        return objects == null ? null : objects.getObjectList(objectType);
     }
 
     @Override
@@ -501,19 +498,17 @@ public abstract class DBObjectImpl<M extends DBObjectMetadata> extends DBObjectT
     @Override
     @Nullable
     public DynamicContent getDynamicContent(DynamicContentType dynamicContentType) {
-        DBObjectListContainer childObjects = getChildObjects();
-        if (childObjects == null) return null;
+        DBObjectListContainer objects = getChildObjects();
+        if (objects == null) return null;
 
         if(dynamicContentType instanceof DBObjectType) {
             DBObjectType objectType = (DBObjectType) dynamicContentType;
-            DBObjectList<DBObject> objectList = childObjects.getObjectList(objectType, false);
-            if (objectList == null) objectList = childObjects.getObjectList(objectType, true);
-            return objectList;
+            return objects.getObjectList(objectType);
         }
 
         else if (dynamicContentType instanceof DBObjectRelationType) {
             DBObjectRelationType objectRelationType = (DBObjectRelationType) dynamicContentType;
-            return childObjects.getRelations(objectRelationType);
+            return objects.getRelations(objectRelationType);
         }
 
         return null;
@@ -536,10 +531,10 @@ public abstract class DBObjectImpl<M extends DBObjectMetadata> extends DBObjectT
     }
 
     public final void refresh(@NotNull DBObjectType childObjectType) {
-        DBObjectList objectList = getChildObjectList(childObjectType);
-        if (objectList == null) return;
+        DBObjectList objects = getChildObjectList(childObjectType);
+        if (objects == null) return;
 
-        objectList.refresh();
+        objects.refresh();
     }
 
     /*********************************************************

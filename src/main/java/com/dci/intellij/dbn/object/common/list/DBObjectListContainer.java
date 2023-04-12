@@ -33,7 +33,6 @@ import static com.dci.intellij.dbn.common.Direction.UP;
 import static com.dci.intellij.dbn.common.dispose.Checks.isNotValid;
 import static com.dci.intellij.dbn.common.dispose.Checks.isValid;
 import static com.dci.intellij.dbn.common.dispose.Failsafe.guarded;
-import static com.dci.intellij.dbn.common.dispose.Failsafe.nd;
 import static com.dci.intellij.dbn.common.util.Unsafe.cast;
 import static com.dci.intellij.dbn.object.type.DBObjectType.ANY;
 import static java.util.Collections.emptyList;
@@ -74,20 +73,10 @@ public final class DBObjectListContainer implements StatefulDisposable, Unlisted
             }
         });
     }
-
-    private void checkDisposed(DBObjectListVisitor visitor) {
-        nd(this);
-        nd(visitor);
-    }
-
     @NotNull
-    public <T extends DBObject> List<T> getObjects(DBObjectType objectType, boolean internal) {
-        DBObjectList<?> objects = getObjectList(objectType, internal);
-        if (objects == null) {
-            return emptyList();
-        } else {
-            return cast(objects.getObjects());
-        }
+    public <T extends DBObject> List<T> getObjects(DBObjectType objectType) {
+        DBObjectList<T> objects = getObjectList(objectType);
+        return objects == null ? emptyList() : objects.getObjects();
     }
 
     private DBObjectType getOwnerType() {
@@ -107,75 +96,60 @@ public final class DBObjectListContainer implements StatefulDisposable, Unlisted
 
     @Nullable
     public <T extends DBObject> DBObjectList<T> getObjectList(DBObjectType objectType) {
-        return getObjectList(objectType, false);
-    }
-
-    public <T extends DBObject> DBObjectList<T> getObjectList(DBObjectType objectType, boolean internal) {
         DBObjectList<T> objectList = objects(objectType);
-        if (isValid(objectList) && internal == objectList.isInternal()) {
-            return objectList;
-        }
-        return null;
+        return isValid(objectList) ? objectList : null;
     }
 
     public <T extends DBObject> T getObject(DBObjectType objectType, String name, short overload) {
         return objectType == ANY  ?
-                findAnyObject(name, overload, false) :
-                findObject(objectType, name, overload, Direction.ANY, false);
-    }
-
-    public <T extends DBObject> T getInternalObject(DBObjectType objectType, String name, short overload) {
-        return objectType == ANY  ?
-                findAnyObject(name, overload, true) :
-                findObject(objectType, name, overload, Direction.ANY, true);
+                findAnyObject(name, overload) :
+                findObject(objectType, name, overload, Direction.ANY);
     }
 
     @Nullable
-    private <T extends DBObject> T findAnyObject(String name, short overload, boolean internal) {
+    private <T extends DBObject> T findAnyObject(String name, short overload) {
         for (DBObjectList<?> objectList : getObjects()) {
-            if (internal == objectList.isInternal() && !objectList.isDependency() && !objectList.isHidden()) {
+            if (!objectList.isDependency() && !objectList.isHidden()) {
                 DBObject object = objectList.getObject(name, overload);
-                if (object != null) {
-                    return cast(object);
-                }
+                if (object != null) return cast(object);
             }
         }
         return null;
     }
 
     @Nullable
-    private <T extends DBObject> T findObject(DBObjectType objectType, String name, short overload, Direction direction, boolean internal) {
-        DBObjectList<?> objectList = getObjectList(objectType, internal);
+    private <T extends DBObject> T findObject(DBObjectType objectType, String name, short overload, Direction direction) {
+        DBObjectList<?> objectList = getObjectList(objectType);
 
         if (objectList != null && !objectList.isHidden()) {
             return cast(objectList.getObject(name, overload));
         }
 
         switch (direction) {
-            case UP:   return findInheritedObject(objectType, name, overload, internal);
-            case DOWN: return findInheritingObject(objectType, name, overload, internal);
+            case UP:   return findInheritedObject(objectType, name, overload);
+            case DOWN: return findInheritingObject(objectType, name, overload);
             case ANY:  return Commons.coalesce(
-                        () -> findInheritedObject(objectType, name, overload, internal),
-                        () -> findInheritingObject(objectType, name, overload, internal));
+                        () -> findInheritedObject(objectType, name, overload),
+                        () -> findInheritingObject(objectType, name, overload));
         }
         return null;
     }
 
     @Nullable
-    private <T extends DBObject> T findInheritedObject(DBObjectType objectType, String name, short overload, boolean internal) {
+    private <T extends DBObject> T findInheritedObject(DBObjectType objectType, String name, short overload) {
         DBObjectType inheritedType = objectType.getInheritedType();
         if (inheritedType != null && inheritedType != objectType) {
-            return findObject(inheritedType, name, overload, UP, internal);
+            return findObject(inheritedType, name, overload, UP);
         }
         return null;
     }
 
     @Nullable
-    private <T extends DBObject> T findInheritingObject(DBObjectType objectType, String name, short overload, boolean internal) {
+    private <T extends DBObject> T findInheritingObject(DBObjectType objectType, String name, short overload) {
         Set<DBObjectType> inheritingTypes = objectType.getInheritingTypes();
         if (!inheritingTypes.isEmpty()) {
             for (DBObjectType objType : inheritingTypes) {
-                DBObject object = findObject(objType, name, overload, DOWN, internal);
+                DBObject object = findObject(objType, name, overload, DOWN);
                 if (object != null) {
                     return cast(object);
                 }
@@ -185,12 +159,11 @@ public final class DBObjectListContainer implements StatefulDisposable, Unlisted
     }
 
     @Nullable
-    public DBObject getObjectForParentType(DBObjectType parentObjectType, String name, short overload, boolean lookupInternal) {
+    public DBObject getObjectForParentType(DBObjectType parentObjectType, String name, short overload) {
         if (objects == null) return null;
 
         for (DBObjectList<?> objectList : objects) {
             if (isNotValid(objectList) || objectList.isHidden() || objectList.isDependency()) continue;
-            if (objectList.isInternal() && !lookupInternal) continue;
 
             DBObjectType objectType = objectList.getObjectType();
             if (!parentObjectType.isParentOf(objectType)) continue;
@@ -315,8 +288,7 @@ public final class DBObjectListContainer implements StatefulDisposable, Unlisted
     }
 
     public void loadObjects(DBObjectType objectType) {
-        DBObjectList<?> objectList = getObjectList(objectType, false);
-        if (objectList == null) objectList = getObjectList(objectType, true);
+        DBObjectList<?> objectList = getObjectList(objectType);
         if (objectList != null) objectList.getElements();
     }
 

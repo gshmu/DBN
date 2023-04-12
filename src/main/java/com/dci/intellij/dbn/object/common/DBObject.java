@@ -77,17 +77,24 @@ public interface DBObject extends
 
     <T extends DBObject> T getParentObject();
 
-    @Nullable DBObject getDefaultNavigationObject();
+    @Nullable
+    DBObject getDefaultNavigationObject();
+
+    <T extends DBObject> List<T> getChildObjects(DBObjectType objectType);
+
+    @Nullable
+    <T extends DBObject> T getChildObject(DBObjectType objectType, String name);
+
+    @Nullable
+    <T extends DBObject> T getChildObject(DBObjectType objectType, String name, short overload);
 
     @NotNull
-    List<DBObject> getChildObjects(DBObjectType objectType);
+    List<DBObject> collectChildObjects(DBObjectType objectType);
 
     void collectChildObjects(DBObjectType objectType, Consumer<? super DBObject> consumer);
 
     @Nullable
     <T extends DBObject> DBObjectList<T> getChildObjectList(DBObjectType objectType);
-
-    <T extends DBObject> DBObjectList<T> getChildObjectList(DBObjectType objectType, boolean internal);
 
     <T extends DBObject> T getChildObject(DBObjectType objectType, String name, boolean lookupHidden);
 

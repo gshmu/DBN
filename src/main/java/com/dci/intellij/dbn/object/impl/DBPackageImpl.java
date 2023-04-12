@@ -15,7 +15,6 @@ import com.dci.intellij.dbn.database.common.metadata.def.DBTypeMetadata;
 import com.dci.intellij.dbn.database.interfaces.DatabaseMetadataInterface;
 import com.dci.intellij.dbn.editor.DBContentType;
 import com.dci.intellij.dbn.object.*;
-import com.dci.intellij.dbn.object.common.list.DBObjectList;
 import com.dci.intellij.dbn.object.common.list.DBObjectListContainer;
 import com.dci.intellij.dbn.object.common.status.DBObjectStatus;
 import com.dci.intellij.dbn.object.filter.type.ObjectTypeFilterSettings;
@@ -34,7 +33,6 @@ public class DBPackageImpl
         extends DBProgramImpl<DBPackageMetadata, DBPackageProcedure, DBPackageFunction>
         implements DBPackage {
 
-    protected DBObjectList<DBPackageType> types;
     DBPackageImpl(DBSchema schema, DBPackageMetadata metadata) throws SQLException {
         super(schema, metadata);
     }
@@ -49,19 +47,39 @@ public class DBPackageImpl
         super.initLists();
         DBSchema schema = getSchema();
         DBObjectListContainer childObjects = ensureChildObjects();
-        functions = childObjects.createSubcontentObjectList(PACKAGE_FUNCTION, this, schema);
-        procedures = childObjects.createSubcontentObjectList(PACKAGE_PROCEDURE, this, schema);
-        types = childObjects.createSubcontentObjectList(PACKAGE_TYPE, this, schema);
+        childObjects.createSubcontentObjectList(PACKAGE_FUNCTION, this, schema);
+        childObjects.createSubcontentObjectList(PACKAGE_PROCEDURE, this, schema);
+        childObjects.createSubcontentObjectList(PACKAGE_TYPE, this, schema);
+    }
+
+    @Override
+    protected DBObjectType getFunctionObjectType() {
+        return PACKAGE_FUNCTION;
+    }
+
+    @Override
+    protected DBObjectType getProcedureObjectType() {
+        return PACKAGE_PROCEDURE;
+    }
+
+    @Override
+    protected DBObjectType getAttributeObjectType() {
+        return null;
+    }
+
+    @Override
+    protected DBObjectType getTypeObjectType() {
+        return PACKAGE_TYPE;
     }
 
     @Override
     public List<DBPackageType> getTypes() {
-        return types.getObjects();
+        return getChildObjects(getTypeObjectType());
     }
 
     @Override
     public DBPackageType getType(String name) {
-        return types.getObject(name);
+        return getChildObject(getTypeObjectType(), name);
     }
 
     @NotNull
@@ -102,7 +120,10 @@ public class DBPackageImpl
     @Override
     @NotNull
     public List<BrowserTreeNode> buildPossibleTreeChildren() {
-        return DatabaseBrowserUtils.createList(procedures, functions, types);
+        return DatabaseBrowserUtils.createList(
+                getChildObjectList(getProcedureObjectType()),
+                getChildObjectList(getFunctionObjectType()),
+                getChildObjectList(getTypeObjectType()));
     }
 
     @Override

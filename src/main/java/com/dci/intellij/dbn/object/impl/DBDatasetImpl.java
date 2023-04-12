@@ -12,7 +12,6 @@ import com.dci.intellij.dbn.database.common.metadata.def.*;
 import com.dci.intellij.dbn.database.interfaces.DatabaseMetadataInterface;
 import com.dci.intellij.dbn.object.*;
 import com.dci.intellij.dbn.object.common.DBSchemaObjectImpl;
-import com.dci.intellij.dbn.object.common.list.DBObjectList;
 import com.dci.intellij.dbn.object.common.list.DBObjectListContainer;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -26,10 +25,6 @@ import static com.dci.intellij.dbn.object.type.DBObjectRelationType.INDEX_COLUMN
 import static com.dci.intellij.dbn.object.type.DBObjectType.*;
 
 public abstract class DBDatasetImpl<M extends DBObjectMetadata> extends DBSchemaObjectImpl<M> implements DBDataset {
-    protected DBObjectList<DBColumn> columns;
-    protected DBObjectList<DBConstraint> constraints;
-    protected DBObjectList<DBDatasetTrigger> triggers;
-
     DBDatasetImpl(DBSchema parent, M metadata) throws SQLException {
         super(parent, metadata);
     }
@@ -39,47 +34,47 @@ public abstract class DBDatasetImpl<M extends DBObjectMetadata> extends DBSchema
         super.initLists();
         DBSchema schema = getSchema();
         DBObjectListContainer childObjects = ensureChildObjects();
-        columns = childObjects.createSubcontentObjectList(COLUMN, this, schema);
-        constraints = childObjects.createSubcontentObjectList(CONSTRAINT, this, schema);
-        triggers = childObjects.createSubcontentObjectList(DATASET_TRIGGER, this, schema);
 
+        childObjects.createSubcontentObjectList(COLUMN, this, schema);
+        childObjects.createSubcontentObjectList(CONSTRAINT, this, schema);
+        childObjects.createSubcontentObjectList(DATASET_TRIGGER, this, schema);
         childObjects.createSubcontentObjectRelationList(CONSTRAINT_COLUMN, this, schema);
     }
 
     @Override
     @NotNull
     public List<DBColumn> getColumns() {
-        return columns.getObjects();
+        return getChildObjects(COLUMN);
     }
 
     @Override
     @Nullable
     public List<DBConstraint> getConstraints() {
-        return constraints.getObjects();
+        return getChildObjects(CONSTRAINT);
     }
 
     @Override
     @Nullable
     public List<DBDatasetTrigger> getTriggers() {
-        return triggers.getObjects();
+        return getChildObjects(DATASET_TRIGGER);
     }
 
     @Override
     @Nullable
     public DBColumn getColumn(String name) {
-        return columns.getObject(name);
+        return getChildObject(COLUMN, name);
     }
 
     @Override
     @Nullable
     public DBConstraint getConstraint(String name) {
-        return constraints.getObject(name);
+        return getChildObject(CONSTRAINT, name);
     }
 
     @Override
     @Nullable
     public DBDatasetTrigger getTrigger(String name) {
-        return triggers.getObject(name);
+        return getChildObject(DATASET_TRIGGER, name);
     }
 
     @Nullable
