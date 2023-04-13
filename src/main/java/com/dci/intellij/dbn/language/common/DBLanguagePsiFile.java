@@ -416,13 +416,14 @@ public abstract class DBLanguagePsiFile extends PsiFileImpl implements DatabaseC
 
     @Override
     public void dispose() {
-        if (!disposed) {
-            disposed = true;
-            markInvalidated();
-            nullify();
+        if (disposed) return;
+        disposed = true;
 
-            // TODO memory cleanup
-            //markInvalidated();
+        markInvalidated();
+        nullify();
+
+        // TODO memory cleanup
+        //markInvalidated();
 /*
             FileElement treeElement = derefTreeElement();
             if (treeElement != null) {
@@ -430,7 +431,6 @@ public abstract class DBLanguagePsiFile extends PsiFileImpl implements DatabaseC
             }
 */
 
-        }
     }
 
     @NotNull

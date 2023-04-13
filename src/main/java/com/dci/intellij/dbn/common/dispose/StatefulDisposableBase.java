@@ -20,10 +20,10 @@ public abstract class StatefulDisposableBase implements StatefulDisposable {
 
     @Override
     public final void dispose() {
-        if (!disposed) {
-            disposed = true;
-            Unsafe.warned(() -> disposeInner());
-        }
+        if (disposed) return;
+        disposed = true;
+
+        Unsafe.warned(() -> disposeInner());
     }
 
     protected abstract void disposeInner();

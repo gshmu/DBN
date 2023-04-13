@@ -175,9 +175,9 @@ public class MethodExecutionHistoryDialog extends DBNDialog<MethodExecutionHisto
     }
 
     void setSaveButtonEnabled(boolean enabled){
-        if (!isDisposed()) {
-            if (saveAction != null) saveAction.setEnabled(enabled);
-            renameAction(closeAction, enabled ? "Cancel" : "Close");
-        }
+        if (isDisposed()) return;
+
+        if (saveAction != null) saveAction.setEnabled(enabled);
+        renameAction(closeAction, enabled ? "Cancel" : "Close");
     }
 }

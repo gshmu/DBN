@@ -106,24 +106,24 @@ public abstract class DBNDialog<F extends DBNForm> extends DialogWrapper impleme
 
     @Override
     public JComponent getPreferredFocusedComponent() {
-        JComponent focusComponent = null;
-        if (!isDisposed()) {
-            focusComponent = getForm().getPreferredFocusedComponent();
+        if (isDisposed()) return null;
+
+        JComponent focusComponent;
+        focusComponent = getForm().getPreferredFocusedComponent();
+        if (focusComponent == null) {
+            focusComponent = super.getPreferredFocusedComponent();
+
             if (focusComponent == null) {
-                focusComponent = super.getPreferredFocusedComponent();
+                Action okAction = getOKAction();
+                focusComponent = getButton(okAction);
 
                 if (focusComponent == null) {
-                    Action okAction = getOKAction();
-                    focusComponent = getButton(okAction);
-
-                    if (focusComponent == null) {
-                        Action cancelAction = getCancelAction();
-                        focusComponent = getButton(cancelAction);
-                    }
+                    Action cancelAction = getCancelAction();
+                    focusComponent = getButton(cancelAction);
                 }
             }
-
         }
+
         return focusComponent;
     }
 
@@ -153,14 +153,14 @@ public abstract class DBNDialog<F extends DBNForm> extends DialogWrapper impleme
 
     @Override
     public final void dispose() {
-        if (!disposed) {
-            disposed = true;
-            listeners.notify(l -> l.onAction(CLOSE));
-            super.dispose();
-            Disposer.dispose(form);
-            disposeInner();
-            //nullify();
-        }
+        if (disposed) return;
+        disposed = true;
+
+        listeners.notify(l -> l.onAction(CLOSE));
+        super.dispose();
+        Disposer.dispose(form);
+        disposeInner();
+        //nullify();
     }
 
     protected void disposeInner() {

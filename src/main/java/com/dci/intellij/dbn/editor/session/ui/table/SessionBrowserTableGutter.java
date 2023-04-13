@@ -4,7 +4,7 @@ import com.dci.intellij.dbn.common.ui.util.Mouse;
 import com.dci.intellij.dbn.data.grid.ui.table.basic.BasicTableGutter;
 import com.dci.intellij.dbn.data.grid.ui.table.basic.BasicTableGutterCellRenderer;
 
-import javax.swing.ListCellRenderer;
+import javax.swing.*;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 
@@ -27,10 +27,10 @@ public class SessionBrowserTableGutter extends BasicTableGutter<SessionBrowserTa
 
     @Override
     public void dispose() {
-        if (!isDisposed()) {
-            removeMouseListener(mouseListener);
-            mouseListener = null;
-            super.dispose();
-        }
+        if (isDisposed()) return;
+
+        removeMouseListener(mouseListener);
+        mouseListener = null;
+        super.dispose();
     }
 }
