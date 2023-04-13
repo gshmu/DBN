@@ -145,11 +145,11 @@ public class DatabaseBrowserTreeSpeedSearch extends SpeedSearchBase<JTree> imple
 
     @Override
     public void dispose() {
-        if (!disposed) {
-            disposed = true;
-            getComponent().getModel().removeTreeModelListener(treeModelListener);
-            elements.set(EMPTY_ARRAY);
-            nullify();
-        }
+        if (disposed) return;
+        disposed = true;
+
+        getComponent().getModel().removeTreeModelListener(treeModelListener);
+        elements.set(EMPTY_ARRAY);
+        nullify();
     }
 }

@@ -451,13 +451,13 @@ public abstract class DBNTable<T extends DBNTableModel> extends JTable implement
     private boolean disposed;
 
     public void dispose(){
-        if (!disposed) {
-            disposed = true;
-            Disposer.dispose(super.getModel());
-            listenerList = new EventListenerList();
-            columnModel = new DefaultTableColumnModel();
-            selectionModel = new DefaultListSelectionModel();
-            nullify();
-        }
+        if (disposed) return;
+        disposed = true;
+
+        Disposer.dispose(super.getModel());
+        listenerList = new EventListenerList();
+        columnModel = new DefaultTableColumnModel();
+        selectionModel = new DefaultListSelectionModel();
+        nullify();
     }
 }

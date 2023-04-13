@@ -80,13 +80,13 @@ public class DBNTree extends Tree implements DBNComponent {
 
     @Override
     public final void dispose() {
-        if (!disposed) {
-            disposed = true;
-            getUI().uninstallUI(this);
-            setSelectionModel(null);
-            disposeInner();
-            nullify();
-        }
+        if (disposed) return;
+        disposed = true;
+
+        getUI().uninstallUI(this);
+        setSelectionModel(null);
+        disposeInner();
+        nullify();
     }
 
     public void disposeInner(){

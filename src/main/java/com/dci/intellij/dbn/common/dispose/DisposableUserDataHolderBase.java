@@ -20,10 +20,10 @@ public abstract class DisposableUserDataHolderBase extends UserDataHolderBase im
 
     @Override
     public void dispose() {
-        if (!disposed) {
-            disposed = true;
-            nullify();
-            //
-        }
+        if (disposed) return;
+        disposed = true;
+
+        nullify();
+        //
     }
 }
