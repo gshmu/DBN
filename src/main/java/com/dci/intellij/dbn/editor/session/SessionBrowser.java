@@ -221,11 +221,11 @@ public class SessionBrowser extends DisposableUserDataHolderBase implements File
     @Override
     @NotNull
     public FileEditorState getState(@NotNull FileEditorStateLevel level) {
-        if (!isDisposed()) {
-            SessionBrowserTable editorTable = getBrowserTable();
-            SessionBrowserModel model = editorTable.getModel();
-            cachedState = model.getState().clone();
-        }
+        if (isDisposed()) return cachedState;
+
+        SessionBrowserTable editorTable = getBrowserTable();
+        SessionBrowserModel model = editorTable.getModel();
+        cachedState = model.getState().clone();
         return cachedState;
     }
 

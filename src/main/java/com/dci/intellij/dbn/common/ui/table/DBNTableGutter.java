@@ -68,9 +68,8 @@ public abstract class DBNTableGutter<T extends DBNTableWithGutter> extends JList
 
     @Override
     public void dispose() {
-        if (!disposed) {
-            disposed = true;
-            nullify();
-        }
+        if (disposed) return;
+        disposed = true;
+        nullify();
     }
 }

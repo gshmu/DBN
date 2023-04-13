@@ -4,8 +4,8 @@ import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.common.dispose.StatefulDisposable;
 import com.dci.intellij.dbn.common.util.Strings;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
-import com.dci.intellij.dbn.connection.ConnectionRef;
 import com.dci.intellij.dbn.connection.ConnectionId;
+import com.dci.intellij.dbn.connection.ConnectionRef;
 import com.dci.intellij.dbn.execution.method.MethodExecutionInput;
 import com.dci.intellij.dbn.object.DBMethod;
 import com.dci.intellij.dbn.object.lookup.DBObjectRef;
@@ -13,7 +13,7 @@ import com.dci.intellij.dbn.object.type.DBObjectType;
 import lombok.Getter;
 import org.jetbrains.annotations.Nullable;
 
-import javax.swing.Icon;
+import javax.swing.*;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeModel;
 import javax.swing.tree.TreeNode;
@@ -196,8 +196,7 @@ public abstract class MethodExecutionHistoryTreeModel extends DefaultTreeModel i
 
     @Override
     public void dispose() {
-        if (!disposed) {
-            disposed = true;
-        }
+        if (disposed) return;
+        disposed = true;
     }
 }

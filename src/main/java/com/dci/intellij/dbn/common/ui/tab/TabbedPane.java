@@ -19,7 +19,7 @@ public class TabbedPane extends JBTabsImpl implements StatefulDisposable {
 
     public TabbedPane(@NotNull DBNForm form) {
         super(form.getProject(), IdeFocusManager.findInstance(), form);
-        setTabDraggingEnabled(false);
+        setTabDraggingEnabled(true);
         Disposer.register(form, this);
     }
 
@@ -86,14 +86,14 @@ public class TabbedPane extends JBTabsImpl implements StatefulDisposable {
 
     @Override
     public void dispose() {
-        if (!disposed) {
-            disposed = true;
-            for (TabInfo tabInfo : myInfo2Label.keySet()) {
-                Object object = tabInfo.getObject();
-                tabInfo.setObject(null);
-                Disposer.dispose(object);
-            }
-            nullify();
+        if (disposed) return;
+
+        disposed = true;
+        for (TabInfo tabInfo : myInfo2Label.keySet()) {
+            Object object = tabInfo.getObject();
+            tabInfo.setObject(null);
+            Disposer.dispose(object);
         }
+        nullify();
     }
 }

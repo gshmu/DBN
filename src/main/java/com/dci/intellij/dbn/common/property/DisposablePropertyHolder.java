@@ -11,10 +11,9 @@ public abstract class DisposablePropertyHolder<T extends Property.IntBase> exten
 
     @Override
     public void dispose() {
-        if (!isDisposed()) {
-            set(getDisposedProperty(), true);
-            disposeInner();
-        }
+        if (isDisposed()) return;
+        set(getDisposedProperty(), true);
+        disposeInner();
     }
 
     protected abstract void disposeInner();

@@ -27,10 +27,10 @@ public class DatasetEditorTableGutter extends BasicTableGutter<DatasetEditorTabl
 
     @Override
     public void dispose() {
-        if (!isDisposed()) {
-            removeMouseListener(mouseListener);
-            mouseListener = null;
-            super.dispose();
-        }
+        if (isDisposed()) return;
+
+        removeMouseListener(mouseListener);
+        mouseListener = null;
+        super.dispose();
     }
 }

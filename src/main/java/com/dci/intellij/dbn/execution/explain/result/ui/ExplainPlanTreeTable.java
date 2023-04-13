@@ -283,9 +283,8 @@ public class ExplainPlanTreeTable extends TreeTable implements StatefulDisposabl
 
     @Override
     public void dispose() {
-        if (!disposed) {
-            disposed = true;
-            nullify();
-        }
+        if (disposed) return;
+        disposed = true;
+        nullify();
     }
 }
