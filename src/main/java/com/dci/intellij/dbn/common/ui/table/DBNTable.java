@@ -16,7 +16,6 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Key;
 import com.intellij.openapi.util.UserDataHolder;
 import com.intellij.ui.border.CustomLineBorder;
-import com.intellij.ui.components.JBScrollPane;
 import com.intellij.util.keyFMap.KeyFMap;
 import com.intellij.util.ui.UIUtil;
 import lombok.Getter;
@@ -49,7 +48,6 @@ public abstract class DBNTable<T extends DBNTableModel> extends JTable implement
     private KeyFMap userData = KeyFMap.EMPTY_MAP;
 
     private Timer scrollTimer;
-    private final Latent<JBScrollPane> scrollPane = Latent.weak(() -> UIUtil.getParentOfType(JBScrollPane.class, DBNTable.this));
     private final Latent<DBNTableGutter<?>> tableGutter = Latent.weak(() -> createTableGutter());
     private final FontMetrics metricsCache = new FontMetrics(this);
 
@@ -74,21 +72,21 @@ public abstract class DBNTable<T extends DBNTableModel> extends JTable implement
             tableHeader.setBorder(new CustomLineBorder(Colors.getTableHeaderGridColor(), 0, 0, 1, 0));
             tableHeader.setDefaultRenderer(new BasicTableHeaderRenderer());
             tableHeader.addMouseMotionListener(Mouse.listener().onDrag(e -> {
-                JBScrollPane scrollPane = getScrollPane();
-                if (scrollPane != null) {
-                    calculateScrollDistance();
-                    if (scrollDistance != 0 && scrollTimer == null) {
-                        scrollTimer = new Timer();
-                        scrollTimer.schedule(new ScrollTask(), 100, 100);
-                    }
+                JScrollPane scrollPane = getScrollPane();
+                if (scrollPane == null) return;
+
+                calculateScrollDistance();
+                if (scrollDistance != 0 && scrollTimer == null) {
+                    scrollTimer = new Timer();
+                    scrollTimer.schedule(new ScrollTask(), 100, 100);
                 }
             }));
 
             tableHeader.addMouseListener(Mouse.listener().onRelease(e -> {
-                if (scrollTimer != null) {
-                    Disposer.dispose(scrollTimer);
-                    scrollTimer = null;
-                }
+                if (scrollTimer == null) return;
+
+                Disposer.dispose(scrollTimer);
+                scrollTimer = null;
             }));
         }
 
@@ -99,18 +97,22 @@ public abstract class DBNTable<T extends DBNTableModel> extends JTable implement
         Disposer.register(this, tableModel);
     }
 
-    public JBScrollPane getScrollPane() {
-        return scrollPane.get();
+    @Nullable
+    public JViewport getViewport() {
+        return UIUtil.getParentOfType(JViewport.class, this);
+    }
+
+    @Nullable
+    public JScrollPane getScrollPane() {
+        return UIUtil.getParentOfType(JScrollPane.class, this);
     }
 
     @Override
     public void setBackground(Color bg) {
         super.setBackground(bg);
-        Container parent = getParent();
-        if (parent instanceof JBScrollPane) {
-            JBScrollPane scrollPane = (JBScrollPane) parent;
-            scrollPane.getViewport().setBackground(bg);
-        }
+        JViewport viewport = getViewport();
+        if (viewport == null) return;
+        viewport.setBackground(bg);
     }
 
     @Override
@@ -152,29 +154,28 @@ public abstract class DBNTable<T extends DBNTableModel> extends JTable implement
     }
 
     private void calculateScrollDistance() {
-        JBScrollPane scrollPane = getScrollPane();
-        if (scrollPane != null) {
-            JViewport viewport = scrollPane.getViewport();
-            PointerInfo pointerInfo = MouseInfo.getPointerInfo();
-            if (pointerInfo != null) {
-                double mouseLocation = pointerInfo.getLocation().getX();
-                double viewportLocation = viewport.getLocationOnScreen().getX();
+        JViewport viewport = getViewport();
+        if (viewport == null) return;
 
-                Point viewPosition = viewport.getViewPosition();
-                double contentLocation = viewport.getView().getLocationOnScreen().getX();
+        PointerInfo pointerInfo = MouseInfo.getPointerInfo();
+        if (pointerInfo == null) return;
 
-                if (contentLocation < viewportLocation && mouseLocation < viewportLocation + 20) {
-                    scrollDistance = - Math.min(viewPosition.x, (viewportLocation - mouseLocation));
-                } else {
-                    int viewportWidth = viewport.getWidth();
-                    int contentWidth = viewport.getView().getWidth();
+        double mouseLocation = pointerInfo.getLocation().getX();
+        double viewportLocation = viewport.getLocationOnScreen().getX();
 
-                    if (contentLocation + contentWidth > viewportLocation + viewportWidth && mouseLocation > viewportLocation + viewportWidth - 20) {
-                        scrollDistance = (mouseLocation - viewportLocation - viewportWidth);
-                    } else {
-                        scrollDistance = 0;
-                    }
-                }
+        Point viewPosition = viewport.getViewPosition();
+        double contentLocation = viewport.getView().getLocationOnScreen().getX();
+
+        if (contentLocation < viewportLocation && mouseLocation < viewportLocation + 20) {
+            scrollDistance = - Math.min(viewPosition.x, (viewportLocation - mouseLocation));
+        } else {
+            int viewportWidth = viewport.getWidth();
+            int contentWidth = viewport.getView().getWidth();
+
+            if (contentLocation + contentWidth > viewportLocation + viewportWidth && mouseLocation > viewportLocation + viewportWidth - 20) {
+                scrollDistance = (mouseLocation - viewportLocation - viewportWidth);
+            } else {
+                scrollDistance = 0;
             }
         }
     }
@@ -262,13 +263,13 @@ public abstract class DBNTable<T extends DBNTableModel> extends JTable implement
 
                 int c = column.getModelIndex();
                 Object value = model.getValueAt(r, c);
-                if (value != null) {
-                    String displayValue = model.getPresentableValue(value, c);
-                    if (displayValue != null && displayValue.length() < 100) {
-                        int cellWidth = metricsCache.getTextWidth(columnName, displayValue);
-                        preferredWidth = Math.max(preferredWidth, cellWidth);
-                    }
-                }
+                if (value == null) continue;
+
+                String displayValue = model.getPresentableValue(value, c);
+                if (displayValue == null || displayValue.length() >= 100) continue;
+
+                int cellWidth = metricsCache.getTextWidth(columnName, displayValue);
+                preferredWidth = Math.max(preferredWidth, cellWidth);
             }
 
             preferredWidth = Math.min(preferredWidth, maxWidth);
@@ -320,15 +321,14 @@ public abstract class DBNTable<T extends DBNTableModel> extends JTable implement
     private class ScrollTask extends TimerTask {
         @Override
         public void run() {
-            JBScrollPane scrollPane = getScrollPane();
-            if (scrollPane != null && scrollDistance != 0) {
-                Dispatch.run(() -> {
-                    JViewport viewport = scrollPane.getViewport();
-                    Point viewPosition = viewport.getViewPosition();
-                    viewport.setViewPosition(new Point((int) (viewPosition.x + scrollDistance), viewPosition.y));
-                    calculateScrollDistance();
-                });
-            }
+            JViewport viewport = getViewport();
+            if (viewport == null || scrollDistance == 0) return;
+
+            Dispatch.run(() -> {
+                Point viewPosition = viewport.getViewPosition();
+                viewport.setViewPosition(new Point((int) (viewPosition.x + scrollDistance), viewPosition.y));
+                calculateScrollDistance();
+            });
         }
     }
 
@@ -356,12 +356,12 @@ public abstract class DBNTable<T extends DBNTableModel> extends JTable implement
     }
 
     public void stopCellEditing() {
-        if (isEditing()) {
-            TableCellEditor cellEditor = getCellEditor();
-            if (cellEditor != null) {
-                cellEditor.stopCellEditing();
-            }
-        }
+        if (!isEditing()) return;
+
+        TableCellEditor cellEditor = getCellEditor();
+        if (cellEditor == null) return;
+
+        cellEditor.stopCellEditing();
     }
 
     public Point getCellLocation(int row, int column) {

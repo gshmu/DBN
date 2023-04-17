@@ -1,7 +1,7 @@
 package com.dci.intellij.dbn.common.ui.table;
 
-import javax.swing.JTable;
-import java.awt.Rectangle;
+import javax.swing.*;
+import java.awt.*;
 
 public class Tables {
     private Tables() {}
@@ -28,5 +28,4 @@ public class Tables {
             table.setColumnSelectionInterval(columnIndex, columnIndex);
         }
     }
-
 }
