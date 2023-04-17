@@ -35,7 +35,7 @@ public abstract class DBRootObjectImpl<M extends DBObjectMetadata> extends DBObj
     }
 
     @NotNull
-    public DBObjectListContainer ensureChildObjects() {
+    protected DBObjectListContainer ensureChildObjects() {
         if (childObjects == null) {
             synchronized (this) {
                 if (childObjects == null) {

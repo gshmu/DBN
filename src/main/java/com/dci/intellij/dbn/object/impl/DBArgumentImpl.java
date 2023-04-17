@@ -137,15 +137,4 @@ public class DBArgumentImpl extends DBObjectImpl<DBArgumentMetadata> implements 
         }
         return super.compareTo(o);
     }
-
-    @Override
-    public boolean equals(Object obj) {
-        if (super.equals(obj)) {
-            DBArgument argument = (DBArgument) obj;
-            return overload == argument.getOverload() &&
-                    position == argument.getPosition();
-        }
-        return false;
-    }
-
 }

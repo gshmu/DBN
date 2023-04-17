@@ -38,7 +38,7 @@ import static com.dci.intellij.dbn.object.type.DBObjectType.*;
 
 
 @Getter
-public abstract class DBSchemaObjectImpl<M extends DBObjectMetadata> extends DBRootObjectImpl<M> implements DBSchemaObject {
+public abstract class DBSchemaObjectImpl<M extends DBObjectMetadata> extends DBObjectImpl<M> implements DBSchemaObject {
     private volatile DBObjectStatusHolder objectStatus;
 
     public DBSchemaObjectImpl(@NotNull DBSchema schema, M metadata) throws SQLException {
