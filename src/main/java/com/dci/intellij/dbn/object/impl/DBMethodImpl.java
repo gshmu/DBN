@@ -134,16 +134,6 @@ public abstract class DBMethodImpl<M extends DBMethodMetadata> extends DBSchemaO
         return result;
     }
 
-    @Override
-    public boolean equals(Object obj) {
-        if (this == obj) return true;
-        if (super.equals(obj)) {
-            DBMethod method = (DBMethod) obj;
-            return method.getOverload() == overload;
-        }
-        return false;
-    }
-
     /*********************************************************
      *                     TreeElement                       *
      *********************************************************/

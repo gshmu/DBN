@@ -74,6 +74,7 @@ public class StatementExecutionResultForm extends ExecutionResultFormBase<Statem
             ResultSetTable<?> newResultSetTable = new ResultSetTable<>(this, executionResult.getTableModel(), true, recordViewInfo);
             resultTable = Disposer.replace(resultTable, newResultSetTable);
             resultScrollPane.setViewportView(resultTable);
+            resultTable.setBackground(Colors.getTableBackground());
             resultTable.initTableGutter();
             resultTable.setName(getExecutionResult().getName());
             horizontalScrollBar.setValue(horizontalScrolling);

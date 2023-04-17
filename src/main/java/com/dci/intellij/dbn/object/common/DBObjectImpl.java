@@ -325,7 +325,7 @@ public abstract class DBObjectImpl<M extends DBObjectMetadata> extends DBObjectT
     }
 
     @NotNull
-    public DBObjectListContainer ensureChildObjects() {
+    protected DBObjectListContainer ensureChildObjects() {
         return childObjects.computeIfAbsent(this, k -> new DBObjectListContainer(k));
     }
 
