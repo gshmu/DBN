@@ -47,16 +47,16 @@ public class DatasetEditorModelRow
     }
 
     void updateStatusFromRow(DatasetEditorModelRow oldRow) {
-        if (oldRow != null) {
-            replace(oldRow);
-            setIndex(oldRow.getIndex());
-            if (oldRow.is(RecordStatus.MODIFIED)) {
-                for (int i=1; i<getCells().size(); i++) {
-                    DatasetEditorModelCell oldCell = oldRow.getCellAtIndex(i);
-                    DatasetEditorModelCell newCell = getCellAtIndex(i);
-                    if (oldCell != null && newCell != null) {
-                        newCell.setOriginalUserValue(oldCell.getOriginalUserValue());
-                    }
+        if (oldRow == null) return;
+
+        replace(oldRow);
+        setIndex(oldRow.getIndex());
+        if (oldRow.is(RecordStatus.MODIFIED)) {
+            for (int i=1; i<getCells().size(); i++) {
+                DatasetEditorModelCell oldCell = oldRow.getCellAtIndex(i);
+                DatasetEditorModelCell newCell = getCellAtIndex(i);
+                if (oldCell != null && newCell != null) {
+                    newCell.setOriginalUserValue(oldCell.getOriginalUserValue());
                 }
             }
         }

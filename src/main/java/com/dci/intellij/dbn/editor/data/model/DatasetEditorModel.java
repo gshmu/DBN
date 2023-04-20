@@ -124,6 +124,11 @@ public class DatasetEditorModel
     }
 
     @Override
+    protected List<DatasetEditorModelRow> getChangedRows() {
+        return changedRows;
+    }
+
+    @Override
     public void setResultSet(DBNResultSet resultSet) throws SQLException {
         super.setResultSet(resultSet);
 
@@ -235,34 +240,27 @@ public class DatasetEditorModel
     }
 
     private void restoreChanges() {
-        if (hasChanges()) {
-            for (DatasetEditorModelRow row : getRows()) {
-                checkDisposed();
+        if (!hasChanges()) return;
 
-                DatasetEditorModelRow changedRow = lookupChangedRow(row, true);
-                if (changedRow != null) {
-                    row.updateStatusFromRow(changedRow);
-                }
+        for (DatasetEditorModelRow row : getRows()) {
+            checkDisposed();
+
+            DatasetEditorModelRow changedRow = lookupChangedRow(row);
+            if (changedRow != null) {
+                row.updateStatusFromRow(changedRow);
             }
-            set(MODIFIED, true);
         }
+        set(MODIFIED, true);
     }
 
-    private DatasetEditorModelRow lookupChangedRow(DatasetEditorModelRow row, boolean remove) {
+    private DatasetEditorModelRow lookupChangedRow(DatasetEditorModelRow row) {
         for (DatasetEditorModelRow changedRow : changedRows) {
             if (changedRow.isNot(DELETED) && changedRow.matches(row, false)) {
-                if (remove) changedRows.remove(changedRow);
+                changedRows.remove(changedRow);
                 return changedRow;
             }
         }
         return null;
-    }
-
-    @Override
-    protected void disposeRow(DatasetEditorModelRow row) {
-        if (!changedRows.contains(row)) {
-            super.disposeRow(row);
-        }
     }
 
     @NotNull
@@ -437,28 +435,27 @@ public class DatasetEditorModel
         ResultSetAdapter resultSetAdapter = getResultSetAdapter();
         DatasetEditorTable editorTable = getEditorTable();
         DatasetEditorModelRow row = getInsertRow();
-        if (row != null) {
-            if (row.isEmptyData()) {
-                throw AlreadyDisposedException.INSTANCE;
-            }
-            try {
-                editorTable.stopCellEditing();
-                resultSetAdapter.insertRow();
+        if (row == null) return;
+        if (row.isEmptyData()) throw AlreadyDisposedException.INSTANCE;
 
-                row.reset();
-                row.set(INSERTED, true);
-                set(MODIFIED, true);
+
+        try {
+            editorTable.stopCellEditing();
+            resultSetAdapter.insertRow();
+
+            row.reset();
+            row.set(INSERTED, true);
+            set(MODIFIED, true);
+            set(INSERTING, false);
+            if (rebuild) load(true, true);
+        } catch (SQLException e) {
+            DatasetEditorError error = new DatasetEditorError(getConnection(), e);
+            if (reset) {
                 set(INSERTING, false);
-                if (rebuild) load(true, true);
-            } catch (SQLException e) {
-                DatasetEditorError error = new DatasetEditorError(getConnection(), e);
-                if (reset) {
-                    set(INSERTING, false);
-                } else {
-                    row.notifyError(error, true, true);
-                }
-                if (!error.isNotified() || propagateError) throw e;
+            } else {
+                row.notifyError(error, true, true);
             }
+            if (!error.isNotified() || propagateError) throw e;
         }
     }
 
