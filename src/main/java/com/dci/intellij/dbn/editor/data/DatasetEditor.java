@@ -561,50 +561,49 @@ public class DatasetEditor extends DisposableUserDataHolderBase implements
     private final TransactionListener transactionListener = new TransactionListener() {
         @Override
         public void beforeAction(@NotNull ConnectionHandler connection, DBNConnection conn, TransactionAction action) {
-            if (connection == getConnection()) {
-                DatasetEditorModel model = getTableModel();
-                DatasetEditorTable editorTable = getEditorTable();
-                if (action == TransactionAction.COMMIT) {
+            if (connection != getConnection()) return;
 
-                    if (editorTable.isEditing()) {
-                        editorTable.stopCellEditing();
-                    }
-
-                    if (isInserting()) {
-                        try {
-                            model.postInsertRecord(true, false, true);
-                        } catch (SQLException e1) {
-                            Messages.showErrorDialog(getProject(), "Could not create row in " + getDataset().getQualifiedNameWithType() + '.', e1);
-                            model.cancelInsert(true);
-                        }
-                    }
+            DatasetEditorModel model = getTableModel();
+            DatasetEditorTable editorTable = getEditorTable();
+            if (action == TransactionAction.COMMIT) {
+                if (editorTable.isEditing()) {
+                    editorTable.stopCellEditing();
                 }
 
-                if (action == TransactionAction.ROLLBACK || action == TransactionAction.ROLLBACK_IDLE) {
-                    if (editorTable.isEditing()) {
-                        editorTable.stopCellEditing();
-                    }
-                    if (isInserting()) {
+                if (isInserting()) {
+                    try {
+                        model.postInsertRecord(true, false, true);
+                    } catch (SQLException e1) {
+                        Messages.showErrorDialog(getProject(), "Could not create row in " + getDataset().getQualifiedNameWithType() + '.', e1);
                         model.cancelInsert(true);
                     }
+                }
+            }
+
+            if (action == TransactionAction.ROLLBACK || action == TransactionAction.ROLLBACK_IDLE) {
+                if (editorTable.isEditing()) {
+                    editorTable.stopCellEditing();
+                }
+                if (isInserting()) {
+                    model.cancelInsert(true);
                 }
             }
         }
 
         @Override
         public void afterAction(@NotNull ConnectionHandler connection, DBNConnection conn, TransactionAction action, boolean succeeded) {
-            if (connection == getConnection()) {
-                DatasetEditorModel model = getTableModel();
-                DatasetEditorTable editorTable = getEditorTable();
-                if (action == TransactionAction.COMMIT || action == TransactionAction.ROLLBACK) {
-                    if (succeeded && isModified()) loadData(CON_STATUS_CHANGE_LOAD_INSTRUCTIONS);
-                }
+            if (connection != getConnection()) return;
 
-                if (action == TransactionAction.DISCONNECT) {
-                    editorTable.stopCellEditing();
-                    model.revertChanges();
-                    UserInterface.repaint(editorTable);
-                }
+            DatasetEditorModel model = getTableModel();
+            DatasetEditorTable editorTable = getEditorTable();
+            if (action == TransactionAction.COMMIT || action == TransactionAction.ROLLBACK) {
+                if (succeeded && isModified()) loadData(CON_STATUS_CHANGE_LOAD_INSTRUCTIONS);
+            }
+
+            if (action == TransactionAction.DISCONNECT) {
+                editorTable.stopCellEditing();
+                model.revertChanges();
+                UserInterface.repaint(editorTable);
             }
         }
     };

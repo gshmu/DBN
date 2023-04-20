@@ -22,6 +22,7 @@ import org.jetbrains.annotations.Nullable;
 import javax.swing.event.TableModelEvent;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 public class ResultSetDataModel<
@@ -136,6 +137,7 @@ public class ResultSetDataModel<
         setRows(newRows);
 
         if (reset) {
+            oldRows.removeAll(getChangedRows());
             BackgroundDisposer.queue(() -> Disposer.disposeCollection(oldRows));
         }
 
@@ -150,8 +152,8 @@ public class ResultSetDataModel<
         return newRowCount;
     }
 
-    protected void disposeRow(R row) {
-        Disposer.dispose(row);
+    protected List<R> getChangedRows() {
+        return Collections.emptyList();
     }
 
     public void closeResultSet() {

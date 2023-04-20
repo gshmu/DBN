@@ -483,26 +483,26 @@ public class DatasetEditorTable extends ResultSetTable<DatasetEditorModel> {
     @Override
     public void valueChanged(ListSelectionEvent e) {
         super.valueChanged(e);
-        if (!e.getValueIsAdjusting()) {
-            DatasetEditorModel model = getModel();
-            if (model.is(INSERTING)) {
-                int insertRowIndex = getModel().getInsertRowIndex();
-                if (insertRowIndex != -1 && (insertRowIndex == e.getFirstIndex() || insertRowIndex == e.getLastIndex()) && getSelectedRow() != insertRowIndex) {
-                    DBDataset dataset = getDataset();
-                    Progress.prompt(getProject(), dataset, false,
-                            "Refreshing data",
-                            "Refreshing data for " + dataset.getQualifiedNameWithType(),
-                            progress -> {
-                                try {
-                                    model.postInsertRecord(false, true, false);
-                                } catch (SQLException e1) {
-                                    Messages.showErrorDialog(getProject(), "Could not create row in " + dataset.getQualifiedNameWithType() + ".", e1);
-                                }
-                            });
-                }
+        if (e.getValueIsAdjusting()) return;
+
+        DatasetEditorModel model = getModel();
+        if (model.is(INSERTING)) {
+            int insertRowIndex = getModel().getInsertRowIndex();
+            if (insertRowIndex != -1 && (insertRowIndex == e.getFirstIndex() || insertRowIndex == e.getLastIndex()) && getSelectedRow() != insertRowIndex) {
+                DBDataset dataset = getDataset();
+                Progress.prompt(getProject(), dataset, false,
+                        "Refreshing data",
+                        "Refreshing data for " + dataset.getQualifiedNameWithType(),
+                        progress -> {
+                            try {
+                                model.postInsertRecord(false, true, false);
+                            } catch (SQLException e1) {
+                                Messages.showErrorDialog(getProject(), "Could not create row in " + dataset.getQualifiedNameWithType() + ".", e1);
+                            }
+                        });
             }
-            startCellEditing(e);
         }
+        startCellEditing(e);
 
     }
 
