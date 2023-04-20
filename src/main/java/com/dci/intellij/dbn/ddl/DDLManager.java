@@ -21,7 +21,7 @@ import java.sql.Types;
 import static com.dci.intellij.dbn.common.component.Components.projectService;
 
 @State(
-        name = DDLFileManager.COMPONENT_NAME,
+        name = DDLManager.COMPONENT_NAME,
         storages = @Storage(DatabaseNavigator.STORAGE_FILE)
 )
 public class DDLManager extends ProjectComponentBase implements PersistentState {
