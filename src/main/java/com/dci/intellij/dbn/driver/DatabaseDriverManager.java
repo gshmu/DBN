@@ -39,6 +39,7 @@ public class DatabaseDriverManager extends ApplicationComponentBase {
 
     private static final Map<DatabaseType, String> BUNDLED_LIBS = new HashMap<>();
     static {
+        BUNDLED_LIBS.put(DatabaseType.ORACLE, "ojdbc8-21.9.0.0");
         BUNDLED_LIBS.put(DatabaseType.MYSQL, "mysql-connector-java-8.0.30.jar");
         BUNDLED_LIBS.put(DatabaseType.SQLITE, "sqlite-jdbc-3.39.2.0.jar");
         BUNDLED_LIBS.put(DatabaseType.POSTGRES, "postgresql-42.4.1.jar");
@@ -46,6 +47,7 @@ public class DatabaseDriverManager extends ApplicationComponentBase {
 
 
     private final Map<File, List<Class<Driver>>> driversCache = new ConcurrentHashMap<>();
+    private final Map<DatabaseType, File> internalLibraryCache = new ConcurrentHashMap<>();
 
     public static DatabaseDriverManager getInstance() {
         return applicationService(DatabaseDriverManager.class);
@@ -120,8 +122,7 @@ public class DatabaseDriverManager extends ApplicationComponentBase {
 
     private static List<Class<Driver>> loadDrivers(File libraryFile, ClassLoader classLoader) {
         List<Class<Driver>> drivers = new ArrayList<>();
-        try {
-            JarFile jarFile = new JarFile(libraryFile);
+        try (JarFile jarFile = new JarFile(libraryFile)) {
             Enumeration<JarEntry> entries = jarFile.entries();
             while (entries.hasMoreElements()) {
                 JarEntry entry = entries.nextElement();
@@ -160,12 +161,14 @@ public class DatabaseDriverManager extends ApplicationComponentBase {
         return null;
     }
 
-    public File getInternalDriverLibrary(DatabaseType databaseType) throws Exception{
-        String driverLibrary = BUNDLED_LIBS.get(databaseType);
-        log.info("Loading driver library " + driverLibrary);
+    public File getInternalDriverLibrary(DatabaseType databaseType) {
+        return internalLibraryCache.computeIfAbsent(databaseType, dt -> {
+            String driverLibrary = BUNDLED_LIBS.get(dt);
+            log.info("Loading driver library " + driverLibrary);
 
-        File deploymentRoot = Files.getPluginDeploymentRoot();
-        return Files.findFileRecursively(deploymentRoot, driverLibrary);
+            File deploymentRoot = Files.getPluginDeploymentRoot();
+            return Files.findFileRecursively(deploymentRoot, driverLibrary);
+        });
     }
 
     public Driver getDriver(File libraryFile, String className) throws Exception {
@@ -183,11 +186,5 @@ public class DatabaseDriverManager extends ApplicationComponentBase {
             throw new Exception("Could not find library \"" + libraryFile.getAbsolutePath() +"\".");
         }
         throw new Exception("Could not locate driver \"" + className + "\" in library \"" + libraryFile.getAbsolutePath() + "\"");
-    }
-
-    public static void main(String[] args) throws Exception {
-        DatabaseDriverManager m = new DatabaseDriverManager();
-        File file = new File("D:\\Projects\\DBNavigator\\lib\\classes12.jar");
-        List<Class<Driver>> drivers = m.loadDrivers(file, false);
     }
 }
