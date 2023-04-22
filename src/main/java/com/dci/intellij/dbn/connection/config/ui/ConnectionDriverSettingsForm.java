@@ -8,6 +8,7 @@ import com.dci.intellij.dbn.common.util.Messages;
 import com.dci.intellij.dbn.common.util.Strings;
 import com.dci.intellij.dbn.connection.DatabaseType;
 import com.dci.intellij.dbn.driver.DatabaseDriverManager;
+import com.dci.intellij.dbn.driver.DriverBundle;
 import com.dci.intellij.dbn.driver.DriverSource;
 import com.intellij.openapi.fileChooser.FileChooserDescriptor;
 import com.intellij.openapi.ui.TextFieldWithBrowseButton;
@@ -68,7 +69,7 @@ public class ConnectionDriverSettingsForm extends DBNFormBase {
             reloadDriversLink.setVisible(false);
             DatabaseDriverManager driverManager = DatabaseDriverManager.getInstance();
             File driverLibrary = new File(driverLibraryTextField.getText());
-            List<Class<Driver>> drivers;
+            DriverBundle drivers;
             try {
                 drivers = driverManager.loadDrivers(driverLibrary, true);
                 if (drivers == null || drivers.isEmpty()) {
@@ -131,7 +132,7 @@ public class ConnectionDriverSettingsForm extends DBNFormBase {
                     setSelection(driverComboBox, null);
                 } else {
                     DatabaseDriverManager driverManager = DatabaseDriverManager.getInstance();
-                    List<Class<Driver>> drivers = null;
+                    DriverBundle drivers = null;
                     try {
                         drivers = driverManager.loadDrivers(new File(driverLibrary), false);
                     } catch (Exception e) {
@@ -143,7 +144,7 @@ public class ConnectionDriverSettingsForm extends DBNFormBase {
                     //driverComboBox.addItem("");
                     if (drivers != null && !drivers.isEmpty()) {
                         List<DriverOption> driverOptions = new ArrayList<>();
-                        for (Class<Driver> driver : drivers) {
+                        for (Class<Driver> driver : drivers.getDrivers()) {
                             DriverOption driverOption = new DriverOption(driver);
                             driverOptions.add(driverOption);
                             if (selectedOption != null && selectedOption.getDriver().equals(driver)) {

@@ -1,19 +1,21 @@
 package com.dci.intellij.dbn.data.value;
 
-import lombok.Getter;
+import com.dci.intellij.dbn.connection.jdbc.DBNResource;
 import lombok.SneakyThrows;
 
 import java.lang.reflect.Method;
+import java.sql.CallableStatement;
 import java.sql.Connection;
+import java.sql.ResultSet;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 import static com.dci.intellij.dbn.common.util.Unsafe.cast;
 import static com.dci.intellij.dbn.common.util.Unsafe.silent;
 
-@Getter
-public class XmlTypeDelegate {
+class XmlTypeDelegate {
 
-    @Getter(lazy = true)
-    private static final XmlTypeDelegate instance = new XmlTypeDelegate();
+    private static final Map<ClassLoader, XmlTypeDelegate> instances = new ConcurrentHashMap<>();
 
     private final Class<?> xmlTypeClass;
     private final Class<?> opaqueClass;
@@ -29,12 +31,12 @@ public class XmlTypeDelegate {
     private final Method stringValueMethod;
 
     @SneakyThrows
-    public XmlTypeDelegate() {
-        xmlTypeClass = Class.forName("oracle.xdb.XMLType");
-        opaqueClass = Class.forName("oracle.sql.OPAQUE");
-        datumClass = Class.forName("oracle.sql.Datum");
-        statementClass = Class.forName("oracle.jdbc.OracleCallableStatement");
-        resultSetClass = Class.forName("oracle.jdbc.OracleResultSet");
+    private XmlTypeDelegate(ClassLoader classLoader) {
+        xmlTypeClass = classLoader.loadClass("oracle.xdb.XMLType");
+        opaqueClass = classLoader.loadClass("oracle.sql.OPAQUE");
+        datumClass = classLoader.loadClass("oracle.sql.Datum");
+        statementClass = classLoader.loadClass("oracle.jdbc.OracleCallableStatement");
+        resultSetClass = classLoader.loadClass("oracle.jdbc.OracleResultSet");
 
         statementOpaqueMethod = statementClass.getMethod("getOPAQUE", int.class);
         resultSetOpaqueMethod = resultSetClass.getMethod("getOPAQUE", int.class);
@@ -44,11 +46,44 @@ public class XmlTypeDelegate {
         stringValueMethod = xmlTypeClass.getMethod("getStringVal");
     }
 
-    public boolean isXmlType(Object opaque) {
+    static XmlTypeDelegate get(Object object) {
+        if (object instanceof DBNResource) {
+            object = ((DBNResource<?>) object).getInner();
+        }
+
+        ClassLoader classLoader = object.getClass().getClassLoader();
+        return instances.computeIfAbsent(classLoader, cl -> new XmlTypeDelegate(cl));
+    }
+
+    Object getOpaque(CallableStatement callableStatement, int parameterIndex) {
+        return invoke(statementOpaqueMethod, callableStatement, parameterIndex);
+    }
+
+    Object getOpaque(ResultSet resultSet, int columnIndex) {
+        return invoke(resultSetOpaqueMethod, resultSet, columnIndex);
+    }
+
+    Object createXml(Object opaque) {
+        return invoke(createXmlFromOpaqueMethod, null, opaque);
+    }
+
+    Object createXml(Connection connection, String value) {
+        return invoke(createXmlFromStringMethod, null, connection, value);
+    }
+
+    String getStringValue(Object xmlType) {
+        return invoke(stringValueMethod, xmlType);
+    }
+
+    void updateResultSetObject(ResultSet resultSet, int columnIndex, Object xmlType) {
+        invoke(updateResultSetObjectMethod, resultSet, columnIndex, xmlType);
+    }
+
+    boolean isXmlType(Object opaque) {
         return xmlTypeClass.isAssignableFrom(opaque.getClass());
     }
 
-    public <T> T invoke(Method method, Object obj, Object ... args) {
+    private static <T> T invoke(Method method, Object obj, Object ... args) {
         return cast(silent(null, () -> method.invoke(obj, args)));
     }
 }
