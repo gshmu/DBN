@@ -24,9 +24,8 @@ import static com.dci.intellij.dbn.common.util.Unsafe.cast;
 
 /**
  * JDBC Driver loader.
- *
+ * <p>
  * Features:
- *
  * <ol>
  * <li>Supports single JDBC driver library</li>
  * <li>Supports directory scanning for JDBC drivers</li>
@@ -36,16 +35,6 @@ import static com.dci.intellij.dbn.common.util.Unsafe.cast;
  */
 @Slf4j
 public class DatabaseDriverManager extends ApplicationComponentBase {
-
-    private static final Map<DatabaseType, String> BUNDLED_LIBS = new HashMap<>();
-    static {
-        BUNDLED_LIBS.put(DatabaseType.ORACLE, "ojdbc8-21.9.0.0");
-        BUNDLED_LIBS.put(DatabaseType.MYSQL, "mysql-connector-java-8.0.30.jar");
-        BUNDLED_LIBS.put(DatabaseType.SQLITE, "sqlite-jdbc-3.39.2.0.jar");
-        BUNDLED_LIBS.put(DatabaseType.POSTGRES, "postgresql-42.4.1.jar");
-    }
-
-
     private final Map<File, List<Class<Driver>>> driversCache = new ConcurrentHashMap<>();
     private final Map<DatabaseType, File> internalLibraryCache = new ConcurrentHashMap<>();
 
@@ -59,7 +48,7 @@ public class DatabaseDriverManager extends ApplicationComponentBase {
         DriverManager.setLoginTimeout(30);
     }
 
-    public List<Class<Driver>> loadDrivers(File libraryFile, boolean force) throws Exception{
+    public List<Class<Driver>> loadDrivers(File libraryFile, boolean force) {
         try{
             if (force) {
                 List<Class<Driver>> drivers = driversCache.remove(libraryFile);
@@ -163,7 +152,7 @@ public class DatabaseDriverManager extends ApplicationComponentBase {
 
     public File getInternalDriverLibrary(DatabaseType databaseType) {
         return internalLibraryCache.computeIfAbsent(databaseType, dt -> {
-            String driverLibrary = BUNDLED_LIBS.get(dt);
+            String driverLibrary = "bundled-jdbc-" + databaseType.name().toLowerCase();
             log.info("Loading driver library " + driverLibrary);
 
             File deploymentRoot = Files.getPluginDeploymentRoot();
