@@ -15,7 +15,6 @@ import com.intellij.testFramework.LightVirtualFile;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
-import java.util.Arrays;
 import java.util.Objects;
 
 public final class Files {
@@ -91,14 +90,24 @@ public final class Files {
     }
 
     public static File findFileRecursively(File directory, String fileName) {
-        File[] files = Commons.nvl(directory.listFiles(), new File[0]);
-        return Arrays.stream(files).
-                filter(f -> !f.isDirectory() && Objects.equals(f.getName(), fileName)).
-                findFirst().
-                orElseGet(() -> Arrays.stream(files).
-                        filter(f -> f.isDirectory()).
-                        map(f -> findFileRecursively(f, fileName)).
-                        filter(f -> f != null).findFirst().orElse(null));
+        File[] files = directory.listFiles();
+        if (files == null) return null;
+        for (File file : files) {
+            if (Objects.equals(file.getName(), fileName)) {
+                return file;
+            }
+        }
+
+        File[] directories = directory.listFiles(f -> f.isDirectory());
+        if (directories == null) return null;
+        for (File dir : directories) {
+            File file = findFileRecursively(dir, fileName);
+            if (file != null) {
+                return file;
+            }
+        }
+
+        return null;
     }
 
     public static File getPluginDeploymentRoot() {
