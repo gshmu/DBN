@@ -3,7 +3,6 @@ package com.dci.intellij.dbn.data.value;
 import com.dci.intellij.dbn.connection.jdbc.DBNConnection;
 import com.dci.intellij.dbn.connection.jdbc.DBNResultSet;
 import com.dci.intellij.dbn.data.type.GenericDataType;
-import lombok.Getter;
 import org.jetbrains.annotations.Nullable;
 
 import java.sql.*;
@@ -11,10 +10,6 @@ import java.sql.*;
 public class XmlTypeValue extends LargeObjectValue{
     //private XMLType xmlType;
     private Object xmlType;
-
-    @Getter(lazy = true)
-    private final XmlTypeDelegate delegate = XmlTypeDelegate.getInstance();
-
 
     public XmlTypeValue() {
     }
@@ -30,12 +25,11 @@ public class XmlTypeValue extends LargeObjectValue{
         }
 */
 
-        XmlTypeDelegate delegate = getDelegate();
-        Object opaque = delegate.invoke(delegate.getStatementOpaqueMethod(), callableStatement, parameterIndex);
+        XmlTypeDelegate d = XmlTypeDelegate.get(callableStatement);
+        Object opaque = d.getOpaque(callableStatement, parameterIndex);
         if (opaque == null) return;
 
-        xmlType = delegate.isXmlType(opaque) ? opaque :
-                delegate.invoke(delegate.getCreateXmlFromOpaqueMethod(), null, opaque);
+        xmlType = d.isXmlType(opaque) ? opaque : d.createXml(opaque);
     }
 
     public XmlTypeValue(ResultSet resultSet, int columnIndex) throws SQLException {
@@ -51,15 +45,16 @@ public class XmlTypeValue extends LargeObjectValue{
         }
 */
 
-        XmlTypeDelegate delegate = getDelegate();
+        XmlTypeDelegate d = XmlTypeDelegate.get(resultSet);
         resultSet = DBNResultSet.getInner(resultSet);
 
-        Object opaque = delegate.invoke(delegate.getResultSetOpaqueMethod(), resultSet, columnIndex);
+        Object opaque = d.getOpaque(resultSet, columnIndex);
         if (opaque == null) return;
 
-        xmlType = delegate.isXmlType(opaque) ? opaque :
-                delegate.invoke(delegate.getCreateXmlFromOpaqueMethod(), null, opaque);
+        xmlType = d.isXmlType(opaque) ? opaque : d.createXml(opaque);
     }
+
+
 
     @Override
     public GenericDataType getGenericDataType() {
@@ -81,9 +76,11 @@ public class XmlTypeValue extends LargeObjectValue{
     @Override
     @Nullable
     public String read(int maxSize) throws SQLException {
-        XmlTypeDelegate delegate = getDelegate();
-        return xmlType == null ? null : delegate.invoke(delegate.getStringValueMethod(), xmlType);
+        if (xmlType == null) return null;
+        XmlTypeDelegate d = XmlTypeDelegate.get(xmlType);
+        return xmlType == null ? null : d.getStringValue(xmlType);
     }
+
 
     @Override
     public void write(Connection connection, PreparedStatement preparedStatement, int parameterIndex, @Nullable String value) throws SQLException {
@@ -93,9 +90,9 @@ public class XmlTypeValue extends LargeObjectValue{
         preparedStatement.setObject(parameterIndex, xmlType);
 */
 
-        XmlTypeDelegate delegate = getDelegate();
+        XmlTypeDelegate d = XmlTypeDelegate.get(preparedStatement);
         connection = DBNConnection.getInner(connection);
-        xmlType = delegate.invoke(delegate.getCreateXmlFromStringMethod(), null, connection, value);
+        xmlType = d.createXml(connection, value);
         preparedStatement.setObject(parameterIndex, xmlType);
     }
 
@@ -110,12 +107,12 @@ public class XmlTypeValue extends LargeObjectValue{
         oracleResultSet.updateOracleObject(columnIndex, xmlType);
 */
 
-        XmlTypeDelegate delegate = getDelegate();
+        XmlTypeDelegate d = XmlTypeDelegate.get(resultSet);
         connection = DBNConnection.getInner(connection);
         resultSet = DBNResultSet.getInner(resultSet);
 
-        xmlType = value == null ? null : delegate.invoke(delegate.getCreateXmlFromStringMethod(), null, connection, value);
-        delegate.invoke(delegate.getUpdateResultSetObjectMethod(), resultSet, columnIndex, xmlType);
+        xmlType = value == null ? null : d.createXml(connection, value);
+        d.updateResultSetObject(resultSet, columnIndex, xmlType);
     }
 
     @Override
