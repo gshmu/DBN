@@ -3,12 +3,10 @@ package com.dci.intellij.dbn.database.oracle;
 import com.dci.intellij.dbn.connection.jdbc.DBNConnection;
 import com.dci.intellij.dbn.database.common.DatabaseMetadataInterfaceImpl;
 import com.dci.intellij.dbn.database.interfaces.DatabaseInterfaces;
-import oracle.sql.converter.CharacterSetMetaData;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Date;
-import java.util.Locale;
 
 public class OracleMetadataInterface extends DatabaseMetadataInterfaceImpl {
 
@@ -28,8 +26,8 @@ public class OracleMetadataInterface extends DatabaseMetadataInterfaceImpl {
 
     public void loadRegionalSettings() {
         // TODO oracle "Locale not recognized"
-        String language = CharacterSetMetaData.getNLSLanguage(Locale.getDefault(Locale.Category.FORMAT));
-        String territory = CharacterSetMetaData.getNLSTerritory(Locale.getDefault(Locale.Category.FORMAT));
+        //String language = CharacterSetMetaData.getNLSLanguage(Locale.getDefault(Locale.Category.FORMAT));
+        //String territory = CharacterSetMetaData.getNLSTerritory(Locale.getDefault(Locale.Category.FORMAT));
     }
 
     @Override
