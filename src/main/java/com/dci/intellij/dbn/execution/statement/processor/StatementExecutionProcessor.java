@@ -9,7 +9,7 @@ import com.dci.intellij.dbn.connection.context.DatabaseContextBase;
 import com.dci.intellij.dbn.connection.jdbc.DBNConnection;
 import com.dci.intellij.dbn.connection.session.DatabaseSession;
 import com.dci.intellij.dbn.editor.EditorProviderId;
-import com.dci.intellij.dbn.execution.ExecutionContext;
+import com.dci.intellij.dbn.execution.statement.StatementExecutionContext;
 import com.dci.intellij.dbn.execution.statement.StatementExecutionInput;
 import com.dci.intellij.dbn.execution.statement.result.StatementExecutionResult;
 import com.dci.intellij.dbn.execution.statement.variables.StatementExecutionVariablesBundle;
@@ -97,7 +97,7 @@ public interface StatementExecutionProcessor extends DatabaseContextBase, Statef
 
     int getExecutableLineNumber();
 
-    ExecutionContext getExecutionContext();
+    StatementExecutionContext getExecutionContext();
 
-    ExecutionContext initExecutionContext();
+    StatementExecutionContext initExecutionContext();
 }

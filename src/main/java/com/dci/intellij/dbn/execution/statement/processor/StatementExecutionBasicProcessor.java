@@ -25,15 +25,11 @@ import com.dci.intellij.dbn.connection.session.DatabaseSession;
 import com.dci.intellij.dbn.database.DatabaseFeature;
 import com.dci.intellij.dbn.editor.DBContentType;
 import com.dci.intellij.dbn.editor.EditorProviderId;
-import com.dci.intellij.dbn.execution.ExecutionContext;
 import com.dci.intellij.dbn.execution.ExecutionManager;
 import com.dci.intellij.dbn.execution.ExecutionOption;
 import com.dci.intellij.dbn.execution.compiler.*;
 import com.dci.intellij.dbn.execution.logging.DatabaseLoggingManager;
-import com.dci.intellij.dbn.execution.statement.DataDefinitionChangeListener;
-import com.dci.intellij.dbn.execution.statement.StatementExecutionInput;
-import com.dci.intellij.dbn.execution.statement.StatementExecutionManager;
-import com.dci.intellij.dbn.execution.statement.StatementExecutionQueue;
+import com.dci.intellij.dbn.execution.statement.*;
 import com.dci.intellij.dbn.execution.statement.result.StatementExecutionBasicResult;
 import com.dci.intellij.dbn.execution.statement.result.StatementExecutionResult;
 import com.dci.intellij.dbn.execution.statement.result.StatementExecutionStatus;
@@ -251,12 +247,12 @@ public class StatementExecutionBasicProcessor extends StatefulDisposableBase imp
     }
 
     @Override
-    public ExecutionContext getExecutionContext() {
+    public StatementExecutionContext getExecutionContext() {
         return executionInput.getExecutionContext();
     }
 
     @Override
-    public ExecutionContext initExecutionContext() {
+    public StatementExecutionContext initExecutionContext() {
         return executionInput.initExecutionContext();
     }
 
@@ -293,7 +289,7 @@ public class StatementExecutionBasicProcessor extends StatefulDisposableBase imp
     public void execute(@Nullable DBNConnection connection, boolean debug) throws SQLException {
         ProgressMonitor.setProgressText("Executing " + getStatementName());
         try {
-            ExecutionContext context = initExecutionContext();
+            StatementExecutionContext context = initExecutionContext();
             context.set(EXECUTING, true);
 
             resultName.reset();
@@ -320,7 +316,7 @@ public class StatementExecutionBasicProcessor extends StatefulDisposableBase imp
                     }
                 } catch (SQLException e) {
                     Resources.cancel(context.getStatement());
-                    if (context.isNot(CANCELLED)) {
+                    if (context.isNot(CANCEL_REQUESTED)) {
                         executionException = e;
                         executionResult = createErrorExecutionResult(e.getMessage());
                         executionResult.calculateExecDuration();
@@ -350,15 +346,15 @@ public class StatementExecutionBasicProcessor extends StatefulDisposableBase imp
     }
 
     private void assertNotCancelled() {
-        ExecutionContext context = getExecutionContext();
-        if (context.is(CANCELLED)) {
+        StatementExecutionContext context = getExecutionContext();
+        if (context.is(CANCELLED) && context.is(CANCEL_REQUESTED)) {
             throw new ProcessCanceledException();
         }
     }
 
     @Override
     public void postExecute() {
-        ExecutionContext context = getExecutionContext();
+        StatementExecutionContext context = getExecutionContext();
         if (context.isNot(PROMPTED)) {
             DBNConnection conn = context.getConnection();
             if (conn != null && conn.isPoolConnection()) {
@@ -386,14 +382,14 @@ public class StatementExecutionBasicProcessor extends StatefulDisposableBase imp
         return statementText;
     }
 
-    private void initTimeout(ExecutionContext context, boolean debug) {
+    private void initTimeout(StatementExecutionContext context, boolean debug) {
         int timeout = debug ?
                 executionInput.getDebugExecutionTimeout() :
                 executionInput.getExecutionTimeout();
         context.setTimeout(timeout);
     }
 
-    private void initConnection(ExecutionContext context, DBNConnection conn) throws SQLException {
+    private void initConnection(StatementExecutionContext context, DBNConnection conn) throws SQLException {
         ConnectionHandler connection = getTargetConnection();
         if (conn == null) {
             SchemaId schema = getTargetSchema();
@@ -402,7 +398,7 @@ public class StatementExecutionBasicProcessor extends StatefulDisposableBase imp
         context.setConnection(conn);
     }
 
-    private void initLogging(ExecutionContext context, boolean debug) {
+    private void initLogging(StatementExecutionContext context, boolean debug) {
         boolean logging = false;
         if (!debug && executionInput.getOptions().is(ExecutionOption.ENABLE_LOGGING) && executionInput.isDatabaseLogProducer()) {
             ConnectionHandler connection = getTargetConnection();
@@ -417,7 +413,7 @@ public class StatementExecutionBasicProcessor extends StatefulDisposableBase imp
 
     @Nullable
     private StatementExecutionResult executeStatement(String statementText) throws SQLException {
-        ExecutionContext context = getExecutionContext();
+        StatementExecutionContext context = getExecutionContext();
         assertNotCancelled();
 
         ConnectionHandler connection = getTargetConnection();
@@ -445,7 +441,6 @@ public class StatementExecutionBasicProcessor extends StatefulDisposableBase imp
             @Override
             public void cancel() {
                 try {
-                    context.set(CANCELLED, true);
                     Resources.cancel(statement);
                 } finally {
                     databaseCall = null;
@@ -457,9 +452,10 @@ public class StatementExecutionBasicProcessor extends StatefulDisposableBase imp
 
     @Override
     public void cancelExecution() {
-        ExecutionContext context = getExecutionContext();
+        StatementExecutionContext context = getExecutionContext();
 
         context.set(CANCELLED, true);
+        context.set(CANCEL_REQUESTED, true);
         StatementExecutionManager executionManager = getExecutionManager();
         StatementExecutionInput executionInput = getExecutionInput();
         SessionId sessionId = executionInput.getTargetSessionId();
@@ -475,7 +471,7 @@ public class StatementExecutionBasicProcessor extends StatefulDisposableBase imp
                 progress -> Safe.run(databaseCall, call -> call.cancelSilently()));
     }
 
-    private void consumeLoggerOutput(ExecutionContext context) {
+    private void consumeLoggerOutput(StatementExecutionContext context) {
         boolean logging = context.isLogging();
         executionResult.setLoggingActive(logging);
         if (logging) {
@@ -489,7 +485,7 @@ public class StatementExecutionBasicProcessor extends StatefulDisposableBase imp
         }
     }
 
-    private void notifyDataManipulationChanges(ExecutionContext context) {
+    private void notifyDataManipulationChanges(StatementExecutionContext context) {
         DBNConnection conn = context.getConnection();
         ConnectionHandler connection = getTargetConnection();
         ExecutablePsiElement psiElement = executionInput.getExecutablePsiElement();
@@ -533,7 +529,7 @@ public class StatementExecutionBasicProcessor extends StatefulDisposableBase imp
         }
     }
 
-    private void notifySchemaSelectionChanges(ExecutionContext context) {
+    private void notifySchemaSelectionChanges(StatementExecutionContext context) {
         DatabaseSession targetSession = getTargetSession();
         if (targetSession != null && !targetSession.isPool()) {
             ExecutablePsiElement executablePsiElement = getCachedExecutable();
@@ -552,7 +548,7 @@ public class StatementExecutionBasicProcessor extends StatefulDisposableBase imp
         return StatementExecutionManager.getInstance(getProject());
     }
 
-    private void notifyDataDefinitionChanges(ExecutionContext context) {
+    private void notifyDataDefinitionChanges(StatementExecutionContext context) {
         Project project = getProject();
         if (isDataDefinitionStatement()) {
             DBSchemaObject affectedObject = getAffectedObject();
@@ -573,7 +569,7 @@ public class StatementExecutionBasicProcessor extends StatefulDisposableBase imp
         }
     }
 
-    private void disableLogging(ExecutionContext context) {
+    private void disableLogging(StatementExecutionContext context) {
         DBNConnection conn = context.getConnection();
         ConnectionHandler connection = getTargetConnection();
         if (context.isLogging()) {

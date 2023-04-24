@@ -4,7 +4,6 @@ import com.dci.intellij.dbn.common.dispose.StatefulDisposableBase;
 import com.dci.intellij.dbn.common.thread.Progress;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.ConnectionRef;
-import com.dci.intellij.dbn.execution.ExecutionContext;
 import com.dci.intellij.dbn.execution.statement.processor.StatementExecutionProcessor;
 import com.intellij.openapi.project.Project;
 import org.jetbrains.annotations.NotNull;
@@ -26,10 +25,10 @@ public final class StatementExecutionQueue extends StatefulDisposableBase {
     }
 
     void queue(StatementExecutionProcessor processor) {
-        ExecutionContext executionContext = processor.getExecutionContext();
-        executionContext.set(CANCELLED, false);
+        StatementExecutionContext context = processor.getExecutionContext();
+        context.set(CANCELLED, false);
         if (!this.processors.contains(processor)) {
-            executionContext.set(QUEUED, true);
+            context.set(QUEUED, true);
             this.processors.offer(processor);
             execute();
         }
@@ -76,7 +75,7 @@ public final class StatementExecutionQueue extends StatefulDisposableBase {
     private void execute(StatementExecutionProcessor processor) {
         guarded(processor, p -> {
             Project project = getProject();
-            ExecutionContext context = p.getExecutionContext();
+            StatementExecutionContext context = p.getExecutionContext();
             context.set(QUEUED, false);
             context.set(EXECUTING, true);
             StatementExecutionManager statementExecutionManager = StatementExecutionManager.getInstance(project);
