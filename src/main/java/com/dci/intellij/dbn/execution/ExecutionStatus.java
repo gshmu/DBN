@@ -6,7 +6,8 @@ public enum ExecutionStatus implements Property.IntBase {
     QUEUED,
     PROMPTED,
     EXECUTING,
-    CANCELLED;
+    CANCELLED,
+    CANCEL_REQUESTED;
 
     public static final ExecutionStatus[] VALUES = values();
 

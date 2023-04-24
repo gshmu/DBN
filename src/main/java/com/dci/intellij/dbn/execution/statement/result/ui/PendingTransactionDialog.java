@@ -8,9 +8,7 @@ import com.dci.intellij.dbn.connection.jdbc.DBNConnection;
 import com.dci.intellij.dbn.execution.statement.processor.StatementExecutionProcessor;
 import org.jetbrains.annotations.NotNull;
 
-import javax.swing.AbstractAction;
-import javax.swing.Action;
-import javax.swing.JComponent;
+import javax.swing.*;
 import java.awt.event.ActionEvent;
 
 import static com.dci.intellij.dbn.execution.ExecutionStatus.PROMPTED;
@@ -79,7 +77,7 @@ public class PendingTransactionDialog extends DialogWithTimeout {
     }
 
     DBNConnection getConnection() {
-        return executionProcessor.getExecutionInput().getExecutionContext().getConnection();
+        return executionProcessor.getExecutionContext().getConnection();
     }
 
     private class RollbackAction extends AbstractAction {

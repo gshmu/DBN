@@ -82,7 +82,7 @@ public abstract class CancellableDatabaseCall<T> implements Callable<T> {
 
     public abstract T execute() throws Exception;
 
-    public abstract void cancel() throws Exception;
+    public abstract void cancel();
 
     public boolean isCancelRequested() {
         return cancelRequested || ProgressMonitor.isCancelled();
@@ -92,20 +92,16 @@ public abstract class CancellableDatabaseCall<T> implements Callable<T> {
     public final T start() throws SQLException {
         try {
             cancelCheckTimer = new Timer("DBN - Execution Cancel Watcher");
+            ProgressIndicator progress = ProgressMonitor.getProgressIndicator();
             TimerTask cancelCheckTask = new TimerTask() {
                 @Override
                 public void run() {
-                    if (!cancelled && isCancelRequested()) {
+                    if (!cancelled && progress != null && progress.isCanceled()) {
                         cancelled = true;
                         if (future != null) future.cancel(true);
-                        try {
-                            CancellableDatabaseCall.this.cancel();
-                        } catch (Exception e) {
-                            log.warn("Error cancelling operation", e);
-                        }
+                        cancelSilently();
                         cancelCheckTimer.cancel();
                     } else {
-                        ProgressIndicator progress = ProgressMonitor.getProgressIndicator();
                         if (progress != null && timeout > 0) {
                             String text = progress.getText();
                             int index = text.indexOf(" (timing out in ");
@@ -115,7 +111,7 @@ public abstract class CancellableDatabaseCall<T> implements Callable<T> {
 
                             long runningForSeconds = TimeUnit.MILLISECONDS.toSeconds(System.currentTimeMillis() - startTimestamp);
                             long timeoutSeconds = timeUnit.toSeconds(timeout);
-                            long timingOutIn = timeoutSeconds - runningForSeconds;
+                            long timingOutIn = Math.max(timeoutSeconds - runningForSeconds, 0);
                             if (timingOutIn < 60)
                                 text = text + " (timing out in " + timingOutIn + " seconds) "; else
                                 text = text + " (timing out in " + TimeUnit.SECONDS.toMinutes(timingOutIn) + " minutes) ";
@@ -141,6 +137,7 @@ public abstract class CancellableDatabaseCall<T> implements Callable<T> {
             }
 
         } catch (CancellationException | InterruptedException e) {
+            cancelSilently();
             throw InterfaceTaskCancelledException.INSTANCE;
 
         } catch (ExecutionException e) {
@@ -161,11 +158,8 @@ public abstract class CancellableDatabaseCall<T> implements Callable<T> {
         if (cancelled) {
             throw InterfaceTaskCancelledException.INSTANCE;
         }
-        try {
-            cancel();
-        } catch (Exception ce) {
-            log.warn("Error cancelling operation", ce);
-        }
+
+        cancelSilently();
         throw new SQLTimeoutException("Operation has timed out (" + timeout + "s). Check timeout settings");
     }
 
@@ -177,7 +171,7 @@ public abstract class CancellableDatabaseCall<T> implements Callable<T> {
         try {
             cancel();
         } catch (Exception e) {
-            log.error("Failed to cancel database call", e);
+            log.warn("Failed to cancel database call", e);
         }
     }
 

@@ -17,7 +17,6 @@ import com.dci.intellij.dbn.connection.SchemaId;
 import com.dci.intellij.dbn.connection.mapping.FileConnectionContextManager;
 import com.dci.intellij.dbn.database.CmdLineExecutionInput;
 import com.dci.intellij.dbn.database.interfaces.DatabaseExecutionInterface;
-import com.dci.intellij.dbn.execution.ExecutionContext;
 import com.dci.intellij.dbn.execution.ExecutionManager;
 import com.dci.intellij.dbn.execution.common.options.ExecutionEngineSettings;
 import com.dci.intellij.dbn.execution.logging.LogOutput;
@@ -143,7 +142,7 @@ public class ScriptExecutionManager extends ProjectComponentBase implements Pers
     }
 
     private void doExecuteScript(ScriptExecutionInput input) throws Exception {
-        ExecutionContext context = input.getExecutionContext();
+        ScriptExecutionContext context = input.getExecutionContext();
         context.set(EXECUTING, true);
         ConnectionHandler connection = Failsafe.nn(input.getConnection());
         VirtualFile sourceFile = input.getSourceFile();

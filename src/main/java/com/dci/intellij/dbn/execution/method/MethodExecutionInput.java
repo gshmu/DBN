@@ -9,7 +9,10 @@ import com.dci.intellij.dbn.connection.ConnectionId;
 import com.dci.intellij.dbn.connection.SchemaId;
 import com.dci.intellij.dbn.database.DatabaseFeature;
 import com.dci.intellij.dbn.debugger.DBDebuggerType;
-import com.dci.intellij.dbn.execution.*;
+import com.dci.intellij.dbn.execution.ExecutionOption;
+import com.dci.intellij.dbn.execution.ExecutionOptions;
+import com.dci.intellij.dbn.execution.ExecutionTarget;
+import com.dci.intellij.dbn.execution.LocalExecutionInput;
 import com.dci.intellij.dbn.execution.method.result.MethodExecutionResult;
 import com.dci.intellij.dbn.object.DBArgument;
 import com.dci.intellij.dbn.object.DBMethod;
@@ -62,7 +65,7 @@ public class MethodExecutionInput extends LocalExecutionInput implements Compara
         }
     }
 
-    public ExecutionContext initExecution(DBDebuggerType debuggerType) {
+    public MethodExecutionContext initExecution(DBDebuggerType debuggerType) {
         MethodExecutionResult executionResult = new MethodExecutionResult(this, debuggerType);
         executionResult.setPrevious(this.executionResult);
         this.executionResult = executionResult;
@@ -70,26 +73,8 @@ public class MethodExecutionInput extends LocalExecutionInput implements Compara
     }
 
     @Override
-    protected ExecutionContext createExecutionContext() {
-        return new ExecutionContext() {
-            @NotNull
-            @Override
-            public String getTargetName() {
-                return method.getObjectType().getName() + " " + method.getObjectName();
-            }
-
-            @Nullable
-            @Override
-            public ConnectionHandler getTargetConnection() {
-                return MethodExecutionInput.this.getConnection();
-            }
-
-            @Nullable
-            @Override
-            public SchemaId getTargetSchema() {
-                return MethodExecutionInput.this.getTargetSchemaId();
-            }
-        };
+    protected MethodExecutionContext createExecutionContext() {
+        return new MethodExecutionContext(this);
     }
 
     @Nullable
@@ -285,4 +270,5 @@ public class MethodExecutionInput extends LocalExecutionInput implements Compara
         }
         return clone;
     }
+
 }

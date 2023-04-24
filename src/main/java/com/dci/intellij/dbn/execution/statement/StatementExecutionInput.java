@@ -2,12 +2,10 @@ package com.dci.intellij.dbn.execution.statement;
 
 import com.dci.intellij.dbn.common.latent.Latent;
 import com.dci.intellij.dbn.common.thread.Read;
-import com.dci.intellij.dbn.common.util.Commons;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.ConnectionId;
 import com.dci.intellij.dbn.connection.SchemaId;
 import com.dci.intellij.dbn.connection.session.DatabaseSession;
-import com.dci.intellij.dbn.execution.ExecutionContext;
 import com.dci.intellij.dbn.execution.ExecutionOption;
 import com.dci.intellij.dbn.execution.ExecutionTarget;
 import com.dci.intellij.dbn.execution.LocalExecutionInput;
@@ -25,7 +23,6 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import lombok.Getter;
 import lombok.Setter;
-import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
@@ -93,27 +90,8 @@ public class StatementExecutionInput extends LocalExecutionInput {
     }
 
     @Override
-    protected ExecutionContext createExecutionContext() {
-        return new ExecutionContext() {
-            @NotNull
-            @Override
-            public String getTargetName() {
-                ExecutablePsiElement executablePsiElement = getExecutablePsiElement();
-                return Commons.nvl(executablePsiElement == null ? null : executablePsiElement.getPresentableText(), "Statement");
-            }
-
-            @Nullable
-            @Override
-            public ConnectionHandler getTargetConnection() {
-                return StatementExecutionInput.this.getConnection();
-            }
-
-            @Nullable
-            @Override
-            public SchemaId getTargetSchema() {
-                return StatementExecutionInput.this.getTargetSchemaId();
-            }
-        };
+    protected StatementExecutionContext createExecutionContext() {
+        return new StatementExecutionContext(this);
     }
 
     public int getExecutableLineNumber() {
@@ -202,4 +180,5 @@ public class StatementExecutionInput extends LocalExecutionInput {
     public int getResultSetFetchBlockSize() {
         return getStatementExecutionSettings().getResultSetFetchBlockSize();
     }
+
 }

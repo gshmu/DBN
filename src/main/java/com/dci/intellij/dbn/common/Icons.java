@@ -106,6 +106,7 @@ public class Icons {
     public static final Icon METHOD_EXECUTION_DEBUG   = load("/img/action/DebugMethod.png");
     public static final Icon METHOD_EXECUTION_RERUN   = load("/img/RerunMethodExecution.png");
     public static final Icon METHOD_EXECUTION_DIALOG  = load("/img/ExecuteMethodDialog.png");
+    public static final Icon METHOD_EXECUTION_STOP    = load("/img/action/ExecutionStop.png");
     public static final Icon METHOD_EXECUTION_HISTORY = load("/img/MethodExecutionHistory.png");
     public static final Icon METHOD_LOOKUP            = load("/img/MethodLookup.png");
     public static final Icon METHOD_CALL              = load("METHOD_CALL", "/img/MethodCall.png");
