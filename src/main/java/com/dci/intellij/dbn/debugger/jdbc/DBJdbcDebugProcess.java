@@ -134,10 +134,10 @@ public abstract class DBJdbcDebugProcess<T extends ExecutionInput> extends XDebu
                 "Starting debugger",
                 progress -> {
                     try {
-                        T executionInput = getExecutionInput();
+                        T input = getExecutionInput();
                         console.system("Initializing debug environment...");
                         ConnectionHandler connection = getConnection();
-                        SchemaId schemaId = executionInput.getExecutionContext().getTargetSchema();
+                        SchemaId schemaId = input.getExecutionContext().getTargetSchema();
 
                         ProgressMonitor.setProgressDetail("Allocating target connection");
                         targetConnection = connection.getDebugConnection(schemaId);
@@ -220,11 +220,11 @@ public abstract class DBJdbcDebugProcess<T extends ExecutionInput> extends XDebu
                 progress -> {
                     if (is(PROCESS_TERMINATING)) return;
                     if (is(SESSION_INITIALIZATION_THREW_EXCEPTION)) return;
-                    T executionInput = getExecutionInput();
+                    T input = getExecutionInput();
                     try {
                         set(TARGET_EXECUTION_STARTED, true);
 
-                        console.system("Target program execution started: " + executionInput.getExecutionContext().getTargetName());
+                        console.system("Target program execution started: " + input.getExecutionContext().getTargetName());
                         executeTarget();
                         console.system("Target program execution ended");
                     } catch (SQLException e) {
@@ -238,7 +238,7 @@ public abstract class DBJdbcDebugProcess<T extends ExecutionInput> extends XDebu
                         //DatabaseDebuggerInterface debuggerInterface = getDebuggerInterface();
                         //debuggerInterface.disableDebugging(targetConnection);
 
-                        Messages.showErrorDialog(getProject(), "Error executing " + executionInput.getExecutionContext().getTargetName(), e);
+                        Messages.showErrorDialog(getProject(), "Error executing " + input.getExecutionContext().getTargetName(), e);
                     } finally {
                         set(TARGET_EXECUTION_TERMINATED, true);
                         getSession().stop();
@@ -294,9 +294,9 @@ public abstract class DBJdbcDebugProcess<T extends ExecutionInput> extends XDebu
                 if (canStopDebuger()) {
                     set(PROCESS_TERMINATING, true);
                     console.system("Stopping debugger...");
-                    T executionInput = getExecutionInput();
-                    ExecutionContext executionContext = executionInput.getExecutionContext();
-                    executionContext.set(CANCELLED, isNot(PROCESS_STOPPED_NORMALLY));
+                    T input = getExecutionInput();
+                    ExecutionContext<?> context = input.getExecutionContext();
+                    context.set(CANCELLED, isNot(PROCESS_STOPPED_NORMALLY));
                     stopDebugger();
                 }
             }

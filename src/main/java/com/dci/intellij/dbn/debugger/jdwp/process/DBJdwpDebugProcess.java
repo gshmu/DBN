@@ -237,10 +237,10 @@ public abstract class DBJdwpDebugProcess<T extends ExecutionInput>
         DBDebugOperation.run(project, "initialize debug environment", () -> {
             try {
                 console.system("Initializing debug environment");
-                T executionInput = getExecutionInput();
-                if (executionInput != null) {
+                T input = getExecutionInput();
+                if (input != null) {
                     ConnectionHandler connection = getConnection();
-                    SchemaId schemaId = executionInput.getExecutionContext().getTargetSchema();
+                    SchemaId schemaId = input.getExecutionContext().getTargetSchema();
                     targetConnection = connection.getDebugConnection(schemaId);
                     targetConnection.setAutoCommit(false);
                     DatabaseDebuggerInterface debuggerInterface = getDebuggerInterface();
@@ -284,11 +284,11 @@ public abstract class DBJdwpDebugProcess<T extends ExecutionInput>
     private void startTargetProgram() {
         // trigger in managed thread
         DebugProcessImpl debugProcess = getDebuggerSession().getProcess();
-        T executionInput = getExecutionInput();
+        T input = getExecutionInput();
         ManagedThreadCommand.schedule(debugProcess, LOW, () -> {
             Progress.background(getProject(), getConnection(), false,
                     "Running debugger target program",
-                    "Executing " + (executionInput == null ? " target program" : executionInput.getExecutionContext().getTargetName()),
+                    "Executing " + (input == null ? " target program" : input.getExecutionContext().getTargetName()),
                     progress -> {
                         console.system("Executing target program");
                         if (is(SESSION_INITIALIZATION_THREW_EXCEPTION)) return;
@@ -298,7 +298,7 @@ public abstract class DBJdwpDebugProcess<T extends ExecutionInput>
                         } catch (SQLException e) {
                             set(TARGET_EXECUTION_THREW_EXCEPTION, true);
                             if (isNot(DEBUGGER_STOPPING)) {
-                                String message = executionInput == null ? "Error executing target program" : "Error executing " + executionInput.getExecutionContext().getTargetName();
+                                String message = input == null ? "Error executing target program" : "Error executing " + input.getExecutionContext().getTargetName();
                                 console.error(message + ": " + e.getMessage());
                             }
                         } finally {
@@ -327,9 +327,9 @@ public abstract class DBJdwpDebugProcess<T extends ExecutionInput>
                 "Stopping debugger",
                 "Stopping debugger session",
                 progress -> {
-                    T executionInput = getExecutionInput();
-                    if (executionInput != null && isNot(TARGET_EXECUTION_TERMINATED)) {
-                        ExecutionContext context = executionInput.getExecutionContext();
+                    T input = getExecutionInput();
+                    if (input != null && isNot(TARGET_EXECUTION_TERMINATED)) {
+                        ExecutionContext<?> context = input.getExecutionContext();
                         Resources.cancel(context.getStatement());
                     }
 

@@ -19,6 +19,8 @@ import org.jdom.Element;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import static com.dci.intellij.dbn.common.util.Unsafe.cast;
+
 @Getter
 @Setter
 public abstract class ExecutionInput extends StatefulDisposableBase implements StatefulDisposable, DatabaseContextBase, PersistentConfiguration {
@@ -33,8 +35,8 @@ public abstract class ExecutionInput extends StatefulDisposableBase implements S
     private final Latent<ExecutionContext> executionContext = Latent.basic(() -> createExecutionContext());
 
     @NotNull
-    public final ExecutionContext getExecutionContext() {
-        return executionContext.get();
+    public final <C extends ExecutionContext> C getExecutionContext() {
+        return cast(executionContext.get());
     }
 
     protected void resetExecutionContext() {
@@ -72,10 +74,10 @@ public abstract class ExecutionInput extends StatefulDisposableBase implements S
     }
 
     @NotNull
-    public ExecutionContext initExecutionContext() {
-        ExecutionContext executionContext = getExecutionContext();
-        executionContext.reset();
-        return executionContext;
+    public <C extends ExecutionContext> C initExecutionContext() {
+        ExecutionContext context = getExecutionContext();
+        context.reset();
+        return cast(context);
     }
 
     public int getExecutionTimeout() {

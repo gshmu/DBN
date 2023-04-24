@@ -9,11 +9,11 @@ import com.dci.intellij.dbn.connection.ConnectionId;
 import com.dci.intellij.dbn.connection.jdbc.DBNResultSet;
 import com.dci.intellij.dbn.data.model.resultSet.ResultSetDataModel;
 import com.dci.intellij.dbn.debugger.DBDebuggerType;
-import com.dci.intellij.dbn.execution.ExecutionContext;
 import com.dci.intellij.dbn.execution.ExecutionResultBase;
 import com.dci.intellij.dbn.execution.common.options.ExecutionEngineSettings;
 import com.dci.intellij.dbn.execution.method.ArgumentValue;
 import com.dci.intellij.dbn.execution.method.ArgumentValueHolder;
+import com.dci.intellij.dbn.execution.method.MethodExecutionContext;
 import com.dci.intellij.dbn.execution.method.MethodExecutionInput;
 import com.dci.intellij.dbn.execution.method.result.ui.MethodExecutionResultForm;
 import com.dci.intellij.dbn.object.DBArgument;
@@ -51,7 +51,7 @@ public class MethodExecutionResult extends ExecutionResultBase<MethodExecutionRe
     }
 
     public void calculateExecDuration() {
-        this.executionDuration = (int) (System.currentTimeMillis() - getExecutionInput().getExecutionContext().getExecutionTimestamp());
+        this.executionDuration = (int) (System.currentTimeMillis() - getExecutionContext().getExecutionTimestamp());
     }
 
     public void addArgumentValue(DBArgument argument, Object value) throws SQLException {
@@ -114,7 +114,7 @@ public class MethodExecutionResult extends ExecutionResultBase<MethodExecutionRe
         return executionInput.ensure();
     }
 
-    public ExecutionContext getExecutionContext() {
+    public MethodExecutionContext getExecutionContext() {
         return getExecutionInput().getExecutionContext();
     }
 

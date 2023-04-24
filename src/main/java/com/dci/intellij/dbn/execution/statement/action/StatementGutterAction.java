@@ -5,7 +5,7 @@ import com.dci.intellij.dbn.common.dispose.Checks;
 import com.dci.intellij.dbn.common.thread.Read;
 import com.dci.intellij.dbn.common.util.Documents;
 import com.dci.intellij.dbn.common.util.Editors;
-import com.dci.intellij.dbn.execution.ExecutionContext;
+import com.dci.intellij.dbn.execution.statement.StatementExecutionContext;
 import com.dci.intellij.dbn.execution.statement.StatementExecutionManager;
 import com.dci.intellij.dbn.execution.statement.processor.StatementExecutionCursorProcessor;
 import com.dci.intellij.dbn.execution.statement.processor.StatementExecutionProcessor;
@@ -89,7 +89,7 @@ public class StatementGutterAction extends AnAction {
         if (executionProcessor != null && !executionProcessor.isDirty()) {
             Project project = executionProcessor.getProject();
             StatementExecutionManager executionManager = StatementExecutionManager.getInstance(project);
-            ExecutionContext context = executionProcessor.getExecutionContext();
+            StatementExecutionContext context = executionProcessor.getExecutionContext();
             if (context.is(EXECUTING) || context.is(QUEUED)) {
                 executionProcessor.cancelExecution();
             } else {
@@ -115,7 +115,7 @@ public class StatementGutterAction extends AnAction {
     public Icon getIcon() {
         StatementExecutionProcessor executionProcessor = getExecutionProcessor(false);
         if (executionProcessor != null) {
-            ExecutionContext context = executionProcessor.getExecutionContext();
+            StatementExecutionContext context = executionProcessor.getExecutionContext();
             if (context.is(EXECUTING)) return Icons.STMT_EXECUTION_STOP;
             if (context.is(QUEUED)) return Icons.STMT_EXECUTION_STOP_QUEUED;
 
@@ -172,7 +172,7 @@ public class StatementGutterAction extends AnAction {
         if (Checks.isValid(executionProcessor)) {
             StatementExecutionResult executionResult = executionProcessor.getExecutionResult();
             if (executionResult == null) {
-                ExecutionContext context = executionProcessor.getExecutionContext();
+                StatementExecutionContext context = executionProcessor.getExecutionContext();
                 if (context.is(EXECUTING)) {
                     return "Statement execution is in progress. Cancel?";
                 } else  if (context.is(QUEUED)) {

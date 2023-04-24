@@ -17,7 +17,6 @@ import com.dci.intellij.dbn.connection.mapping.FileConnectionContextManager;
 import com.dci.intellij.dbn.debugger.DBDebuggerType;
 import com.dci.intellij.dbn.editor.console.SQLConsoleEditor;
 import com.dci.intellij.dbn.editor.ddl.DDLFileEditor;
-import com.dci.intellij.dbn.execution.ExecutionContext;
 import com.dci.intellij.dbn.execution.common.options.ExecutionEngineSettings;
 import com.dci.intellij.dbn.execution.statement.options.StatementExecutionSettings;
 import com.dci.intellij.dbn.execution.statement.processor.StatementExecutionBasicProcessor;
@@ -239,7 +238,7 @@ public class StatementExecutionManager extends ProjectComponentBase implements P
 
     private void executeStatements(List<StatementExecutionProcessor> executionProcessors) {
         for (StatementExecutionProcessor executionProcessor : executionProcessors) {
-            ExecutionContext context = executionProcessor.getExecutionContext();
+            StatementExecutionContext context = executionProcessor.getExecutionContext();
             StatementExecutionInput executionInput = executionProcessor.getExecutionInput();
             SessionId sessionId = executionInput.getTargetSessionId();
             ConnectionId connectionId = executionInput.getConnectionId();
@@ -273,7 +272,7 @@ public class StatementExecutionManager extends ProjectComponentBase implements P
                         NotificationGroup.EXECUTION,
                         "Error executing {0}. Failed to ensure connectivity: {1}", statementName, e);
 
-                ExecutionContext context = executionProcessor.getExecutionContext();
+                StatementExecutionContext context = executionProcessor.getExecutionContext();
                 context.reset();
             }
 
@@ -403,7 +402,7 @@ public class StatementExecutionManager extends ProjectComponentBase implements P
     }
 
     public void promptPendingTransactionDialog(StatementExecutionProcessor executionProcessor) {
-        ExecutionContext context = executionProcessor.getExecutionContext();
+        StatementExecutionContext context = executionProcessor.getExecutionContext();
         context.set(PROMPTED, true);
         Dispatch.run(() -> {
             try {

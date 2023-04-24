@@ -12,8 +12,8 @@ import com.dci.intellij.dbn.connection.jdbc.DBNResultSet;
 import com.dci.intellij.dbn.connection.jdbc.DBNStatement;
 import com.dci.intellij.dbn.data.grid.ui.table.resultSet.ResultSetTable;
 import com.dci.intellij.dbn.data.model.resultSet.ResultSetDataModel;
-import com.dci.intellij.dbn.execution.ExecutionContext;
 import com.dci.intellij.dbn.execution.common.options.ExecutionEngineSettings;
+import com.dci.intellij.dbn.execution.statement.StatementExecutionContext;
 import com.dci.intellij.dbn.execution.statement.StatementExecutionInput;
 import com.dci.intellij.dbn.execution.statement.options.StatementExecutionSettings;
 import com.dci.intellij.dbn.execution.statement.processor.StatementExecutionCursorProcessor;
@@ -70,7 +70,7 @@ public class StatementExecutionCursorResult extends StatementExecutionBasicResul
                     progress -> {
                         StatementExecutionResultForm resultForm = getForm();
                         if (Checks.isValid(resultForm)) {
-                            ExecutionContext context = executionProcessor.initExecutionContext();
+                            StatementExecutionContext context = executionProcessor.initExecutionContext();
                             context.set(EXECUTING, true);
 
                             try {

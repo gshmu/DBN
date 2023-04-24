@@ -104,7 +104,7 @@ public class MethodExecutionResultForm extends ExecutionResultFormBase<MethodExe
         LogOutputContext context = new LogOutputContext(connection);
         outputConsole.writeToConsole(context,
                 LogOutput.createSysOutput(context,
-                        executionResult.getExecutionInput().getExecutionContext().getExecutionTimestamp(),
+                        executionResult.getExecutionContext().getExecutionTimestamp(),
                         " - Method execution started", true));
 
         if (Strings.isNotEmptyOrSpaces(logOutput)) {

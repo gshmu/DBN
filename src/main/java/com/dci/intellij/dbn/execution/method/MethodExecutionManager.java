@@ -20,7 +20,6 @@ import com.dci.intellij.dbn.database.DatabaseFeature;
 import com.dci.intellij.dbn.database.common.execution.MethodExecutionProcessor;
 import com.dci.intellij.dbn.database.interfaces.DatabaseExecutionInterface;
 import com.dci.intellij.dbn.debugger.DBDebuggerType;
-import com.dci.intellij.dbn.execution.ExecutionContext;
 import com.dci.intellij.dbn.execution.ExecutionManager;
 import com.dci.intellij.dbn.execution.method.browser.MethodBrowserSettings;
 import com.dci.intellij.dbn.execution.method.browser.ui.MethodExecutionBrowserDialog;
@@ -181,15 +180,15 @@ public class MethodExecutionManager extends ProjectComponentBase implements Pers
         execute(executionInput);
     }
 
-    public void execute(MethodExecutionInput executionInput) {
-        cacheArgumentValues(executionInput);
-        executionHistory.setSelection(executionInput.getMethodRef());
-        DBMethod method = executionInput.getMethod();
-        ExecutionContext context = executionInput.getExecutionContext();
+    public void execute(MethodExecutionInput input) {
+        cacheArgumentValues(input);
+        executionHistory.setSelection(input.getMethodRef());
+        DBMethod method = input.getMethod();
+        MethodExecutionContext context = input.getExecutionContext();
         context.set(EXECUTING, true);
 
         if (method == null) {
-            DBObjectRef<DBMethod> methodRef = executionInput.getMethodRef();
+            DBObjectRef<DBMethod> methodRef = input.getMethodRef();
             Messages.showErrorDialog(getProject(), "Could not resolve " + methodRef.getQualifiedNameWithType() + "\".");
         } else {
             Project project = method.getProject();
@@ -202,10 +201,10 @@ public class MethodExecutionManager extends ProjectComponentBase implements Pers
                     "Executing " + method.getQualifiedNameWithType(),
                     progress -> {
                 try {
-                    executionProcessor.execute(executionInput, DBDebuggerType.NONE);
+                    executionProcessor.execute(input, DBDebuggerType.NONE);
                     if (context.isNot(CANCELLED)) {
                         ExecutionManager executionManager = ExecutionManager.getInstance(project);
-                        executionManager.addExecutionResult(executionInput.getExecutionResult());
+                        executionManager.addExecutionResult(input.getExecutionResult());
                         context.set(EXECUTING, false);
                     }
 
@@ -218,17 +217,17 @@ public class MethodExecutionManager extends ProjectComponentBase implements Pers
                                 "Error executing " + method.getQualifiedNameWithType() + ".\n" + e.getMessage().trim(),
                                 new String[]{"Try Again", "Cancel"}, 0,
                                 option -> when(option == 0, () ->
-                                        startMethodExecution(executionInput, DBDebuggerType.NONE)));
+                                        startMethodExecution(input, DBDebuggerType.NONE)));
                     }
                 }
             });
         }
     }
 
-    private void cacheArgumentValues(MethodExecutionInput executionInput) {
-        ConnectionHandler connection = executionInput.getExecutionContext().getTargetConnection();
+    private void cacheArgumentValues(MethodExecutionInput input) {
+        ConnectionHandler connection = input.getExecutionContext().getTargetConnection();
         if (connection != null) {
-            for (val entry : executionInput.getArgumentValueHistory().entrySet()) {
+            for (val entry : input.getArgumentValueHistory().entrySet()) {
                 MethodExecutionArgumentValue argumentValue = entry.getValue();
 
                 argumentValuesHistory.cacheVariable(
@@ -240,11 +239,11 @@ public class MethodExecutionManager extends ProjectComponentBase implements Pers
     }
 
     public void debugExecute(
-            @NotNull MethodExecutionInput executionInput,
+            @NotNull MethodExecutionInput input,
             @NotNull DBNConnection conn,
             DBDebuggerType debuggerType) throws SQLException {
 
-        DBMethod method = executionInput.getMethod();
+        DBMethod method = input.getMethod();
         if (method != null) {
             ConnectionHandler connection = method.getConnection();
             DatabaseExecutionInterface executionInterface = connection.getInterfaces().getExecutionInterface();
@@ -252,11 +251,11 @@ public class MethodExecutionManager extends ProjectComponentBase implements Pers
                     executionInterface.createExecutionProcessor(method) :
                     executionInterface.createDebugExecutionProcessor(method);
 
-            executionProcessor.execute(executionInput, conn, debuggerType);
-            ExecutionContext context = executionInput.getExecutionContext();
+            executionProcessor.execute(input, conn, debuggerType);
+            MethodExecutionContext context = input.getExecutionContext();
             if (context.isNot(CANCELLED)) {
                 ExecutionManager executionManager = ExecutionManager.getInstance(method.getProject());
-                executionManager.addExecutionResult(executionInput.getExecutionResult());
+                executionManager.addExecutionResult(input.getExecutionResult());
             }
             context.set(CANCELLED, false);
         }

@@ -461,6 +461,7 @@
             <action id="DBNavigator.Actions.MethodExecutionResult.EditMethod" class="com.dci.intellij.dbn.execution.method.result.action.MethodEditAction" text="Method Execution Result - Edit Method" icon="/img/EditSource.png"/>
             <action id="DBNavigator.Actions.MethodExecutionResult.ExecuteAgain" class="com.dci.intellij.dbn.execution.method.result.action.MethodExecutionStartAction" text="Method Execution Result - Execute Again" icon="/img/RerunMethodExecution.png"/>
             <action id="DBNavigator.Actions.MethodExecutionResult.OpenExecutionDialog" class="com.dci.intellij.dbn.execution.method.result.action.MethodExecutionPromptAction" text="Method Execution Result - Open Execution Dialog" icon="/img/ExecuteMethodDialog.png"/>
+            <action id="DBNavigator.Actions.MethodExecutionResult.StopExecution" class="com.dci.intellij.dbn.execution.method.result.action.MethodExecutionStopAction" text="Method Execution Result - Stop Execution" icon="/img/action/ExecutionStop.png"/>
             <separator/>
             <action id="DBNavigator.Actions.MethodExecutionResult.Settings" class="com.dci.intellij.dbn.execution.method.result.action.ExecutionEngineSettingsAction" text="Method Execution Result - Open Execution Dialog" icon="/img/action/Options.png"/>
         </group>

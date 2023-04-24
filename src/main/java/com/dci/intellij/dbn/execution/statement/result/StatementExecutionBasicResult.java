@@ -8,9 +8,9 @@ import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.ConnectionId;
 import com.dci.intellij.dbn.connection.ConnectionRef;
 import com.dci.intellij.dbn.connection.SchemaId;
-import com.dci.intellij.dbn.execution.ExecutionContext;
 import com.dci.intellij.dbn.execution.ExecutionResultBase;
 import com.dci.intellij.dbn.execution.compiler.CompilerResult;
+import com.dci.intellij.dbn.execution.statement.StatementExecutionContext;
 import com.dci.intellij.dbn.execution.statement.StatementExecutionInput;
 import com.dci.intellij.dbn.execution.statement.StatementExecutionMessage;
 import com.dci.intellij.dbn.execution.statement.processor.StatementExecutionProcessor;
@@ -90,7 +90,7 @@ public class StatementExecutionBasicResult extends ExecutionResultBase<Statement
 
     @NotNull
     @Override
-    public ExecutionContext getExecutionContext() {
+    public StatementExecutionContext getExecutionContext() {
         return getExecutionInput().getExecutionContext();
     }
 
