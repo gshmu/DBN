@@ -30,7 +30,7 @@ public class BasicDataModelRow<
     private int index;
 
     public BasicDataModelRow(M model) {
-        cells = new CompactArrayList<C>(model.getColumnCount());
+        cells = new CompactArrayList<>(model.getColumnCount());
         this.model = model;
     }
 

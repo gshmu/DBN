@@ -47,7 +47,7 @@ public class DBModuleType<T extends DBModuleBuilder> extends ModuleType<T> {
     @Override
     @NotNull
     public ModuleWizardStep[] createWizardSteps(@NotNull WizardContext wizardContext, @NotNull T moduleBuilder, @NotNull ModulesProvider modulesProvider) {
-        List<ModuleWizardStep> wizardSteps = new ArrayList<ModuleWizardStep>();
+        List<ModuleWizardStep> wizardSteps = new ArrayList<>();
 
         //ProjectWizardStepFactory.getInstance().createNameAndLocationStep(wizardContext);
         return wizardSteps.toArray(new ModuleWizardStep[0]);

@@ -33,7 +33,7 @@ public class ProgramMethodRunAction extends GroupPopupAction {
 
     @Override
     protected AnAction[] getActions(AnActionEvent e) {
-        List<AnAction> actions = new ArrayList<AnAction>();
+        List<AnAction> actions = new ArrayList<>();
         Project project = e.getProject();
         DBSourceCodeVirtualFile sourceCodeFile = getSourcecodeFile(e);
         if (project != null && sourceCodeFile != null) {

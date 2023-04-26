@@ -1,9 +1,9 @@
 package com.dci.intellij.dbn.ddl.ui;
 
+import com.dci.intellij.dbn.common.ui.dialog.DBNDialog;
 import com.dci.intellij.dbn.common.ui.form.DBNFormBase;
 import com.dci.intellij.dbn.common.ui.form.DBNHeaderForm;
 import com.dci.intellij.dbn.common.ui.form.DBNHintForm;
-import com.dci.intellij.dbn.common.ui.dialog.DBNDialog;
 import com.dci.intellij.dbn.object.common.DBSchemaObject;
 import com.intellij.openapi.vfs.VirtualFile;
 import org.jetbrains.annotations.NotNull;
@@ -27,7 +27,7 @@ public class SelectDDLFileForm extends DBNFormBase {
         DBNHintForm hintForm = new DBNHintForm(this, hint, null, true);
         hintPanel.add(hintForm.getComponent(), BorderLayout.CENTER);
 
-        DefaultListModel<VirtualFile> listModel = new DefaultListModel<VirtualFile>();
+        DefaultListModel<VirtualFile> listModel = new DefaultListModel<>();
         for (VirtualFile virtualFile : virtualFiles) {
             listModel.addElement(virtualFile);
         }

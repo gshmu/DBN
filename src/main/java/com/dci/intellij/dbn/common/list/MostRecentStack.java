@@ -7,7 +7,7 @@ import java.util.Iterator;
 import java.util.List;
 
 public class MostRecentStack<T> implements Iterable<T>{
-    private List<T> values = new ArrayList<T>();
+    private List<T> values = new ArrayList<>();
 
     public MostRecentStack() {
     }

@@ -5,12 +5,8 @@ import com.dci.intellij.dbn.common.ui.util.Fonts;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.object.common.DBObject;
 
-import javax.swing.BoxLayout;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.SwingConstants;
-import java.awt.BorderLayout;
-import java.awt.Font;
+import javax.swing.*;
+import java.awt.*;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -31,7 +27,7 @@ public class ObjectHierarchyPanel2 extends JPanel {
         add(connectionLabel);
         add(panel, BorderLayout.SOUTH );
 
-        List<DBObject> chain = new ArrayList<DBObject>();
+        List<DBObject> chain = new ArrayList<>();
         while (object != null) {
             chain.add(0, object);
             object = object.getParentObject();

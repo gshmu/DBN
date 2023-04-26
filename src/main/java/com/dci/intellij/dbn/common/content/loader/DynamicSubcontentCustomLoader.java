@@ -48,7 +48,7 @@ public abstract class DynamicSubcontentCustomLoader<
                     if (element != null) {
                         content.checkDisposed();
                         if (list == null) {
-                            list = new ArrayList<T>();
+                            list = new ArrayList<>();
                         }
                         list.add(element);
                     }

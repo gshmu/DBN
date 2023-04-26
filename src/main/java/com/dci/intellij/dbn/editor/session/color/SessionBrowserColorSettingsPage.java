@@ -17,8 +17,8 @@ import java.util.List;
 import java.util.Map;
 
 public class SessionBrowserColorSettingsPage implements ColorSettingsPage {
-    protected final List<AttributesDescriptor> attributeDescriptors = new ArrayList<AttributesDescriptor>();
-    protected final List<ColorDescriptor> colorDescriptors = new ArrayList<ColorDescriptor>();
+    protected final List<AttributesDescriptor> attributeDescriptors = new ArrayList<>();
+    protected final List<ColorDescriptor> colorDescriptors = new ArrayList<>();
 
     public SessionBrowserColorSettingsPage() {
         attributeDescriptors.add(new AttributesDescriptor("Active Session",   SessionBrowserTextAttributesKeys.ACTIVE_SESSION));

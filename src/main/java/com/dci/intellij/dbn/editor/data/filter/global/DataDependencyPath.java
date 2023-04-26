@@ -7,7 +7,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class DataDependencyPath implements Cloneable<DataDependencyPath> {
-    private List<DBColumn> pathElements = new ArrayList<DBColumn>();
+    private final List<DBColumn> pathElements = new ArrayList<>();
 
     private DataDependencyPath() {}
 

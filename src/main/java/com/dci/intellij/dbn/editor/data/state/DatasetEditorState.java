@@ -30,10 +30,6 @@ public class DatasetEditorState extends SortableDataModelState implements FileEd
         return fileEditorState instanceof DatasetEditorState && fileEditorStateLevel == FileEditorStateLevel.FULL;
     }
 
-    public DatasetColumnSetup getColumnSetup() {
-        return columnSetup;
-    }
-
     @Override
     public void readState(@NotNull Element element) {
         setRowCount(integerAttribute(element, "row-count", 100));
