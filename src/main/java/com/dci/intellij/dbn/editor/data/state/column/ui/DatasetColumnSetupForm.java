@@ -32,7 +32,7 @@ public class DatasetColumnSetupForm extends DBNFormBase {
         DBDataset dataset = datasetEditor.getDataset();
         columnSetup = datasetEditor.getColumnSetup();
         List<DatasetColumnState> columnStates = columnSetup.getColumnStates();
-        List<ColumnStateSelectable> columnStateSel = new ArrayList<ColumnStateSelectable>();
+        List<ColumnStateSelectable> columnStateSel = new ArrayList<>();
         for (DatasetColumnState columnState : columnStates) {
             columnStateSel.add(new ColumnStateSelectable(dataset, columnState));
         }

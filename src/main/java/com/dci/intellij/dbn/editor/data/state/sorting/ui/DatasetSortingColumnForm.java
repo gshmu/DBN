@@ -3,7 +3,6 @@ package com.dci.intellij.dbn.editor.data.state.sorting.ui;
 import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.common.color.Colors;
 import com.dci.intellij.dbn.common.ui.ValueSelector;
-import com.dci.intellij.dbn.common.ui.ValueSelectorListener;
 import com.dci.intellij.dbn.common.ui.ValueSelectorOption;
 import com.dci.intellij.dbn.common.ui.form.DBNFormBase;
 import com.dci.intellij.dbn.common.ui.misc.DBNComboBox;
@@ -62,19 +61,16 @@ public class DatasetSortingColumnForm extends DBNFormBase {
     private class ColumnSelector extends ValueSelector<DBColumn>{
         ColumnSelector(DBColumn selectedColumn) {
             super(Icons.DBO_COLUMN_HIDDEN, "Select column...", selectedColumn, ValueSelectorOption.HIDE_DESCRIPTION);
-            addListener(new ValueSelectorListener<DBColumn>() {
-                @Override
-                public void selectionChanged(DBColumn oldValue, DBColumn newValue) {
-                    sortingInstruction.setColumnName(newValue.getName());
-                    dataTypeLabel.setText(newValue.getDataType().getQualifiedName());
-                }
+            addListener((oldValue, newValue) -> {
+                sortingInstruction.setColumnName(newValue.getName());
+                dataTypeLabel.setText(newValue.getDataType().getQualifiedName());
             });
         }
 
         @Override
         public List<DBColumn> loadValues() {
             DBDataset dataset = getDataset();
-            List<DBColumn> columns = new ArrayList<DBColumn>(dataset.getColumns());
+            List<DBColumn> columns = new ArrayList<>(dataset.getColumns());
             Collections.sort(columns);
             return columns;
         }

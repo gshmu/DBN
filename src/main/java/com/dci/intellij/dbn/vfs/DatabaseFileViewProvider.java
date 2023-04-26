@@ -25,7 +25,7 @@ import org.jetbrains.annotations.Nullable;
 import static com.dci.intellij.dbn.common.dispose.Checks.isValid;
 
 public class DatabaseFileViewProvider extends SingleRootFileViewProvider {
-    public static final Key<DatabaseFileViewProvider> CACHED_VIEW_PROVIDER = new Key<DatabaseFileViewProvider>("CACHED_VIEW_PROVIDER");
+    public static final Key<DatabaseFileViewProvider> CACHED_VIEW_PROVIDER = new Key<>("CACHED_VIEW_PROVIDER");
     private final ProjectRef project;
 
     public DatabaseFileViewProvider(@NotNull Project project, @NotNull VirtualFile virtualFile, boolean eventSystemEnabled) {

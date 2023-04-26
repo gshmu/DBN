@@ -52,7 +52,7 @@ class DatasetJoin {
     }
 
     private void createMapping(DBColumn column1, DBColumn column2) {
-        if (mappings == null) mappings = new HashMap<DBColumn, DBColumn>();
+        if (mappings == null) mappings = new HashMap<>();
         mappings.put(column1, column2);
     }
 

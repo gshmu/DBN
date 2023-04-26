@@ -1,33 +1,20 @@
 package com.dci.intellij.dbn.data.model;
 
+import lombok.Getter;
+import lombok.Setter;
+
 import java.util.ArrayList;
 import java.util.List;
 
+@Getter
 public class DataModelColumnState {
-    private List<Column> columns = new ArrayList<Column>();
+    private final List<Column> columns = new ArrayList<>();
 
-    public List<Column> getColumns() {
-        return columns;
-    }
-
-    public class Column {
+    @Setter
+    @Getter
+    public static class Column {
         private String name;
         private boolean visible;
 
-        public String getName() {
-            return name;
-        }
-
-        public void setName(String name) {
-            this.name = name;
-        }
-
-        public boolean isVisible() {
-            return visible;
-        }
-
-        public void setVisible(boolean visible) {
-            this.visible = visible;
-        }
     }
 }

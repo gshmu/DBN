@@ -6,15 +6,11 @@ import com.dci.intellij.dbn.object.common.DBObject;
 import com.intellij.ui.JBColor;
 import com.intellij.ui.RowIcon;
 
-import javax.swing.BoxLayout;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.SwingConstants;
+import javax.swing.*;
 import javax.swing.border.Border;
 import javax.swing.border.CompoundBorder;
 import javax.swing.border.LineBorder;
-import java.awt.Color;
-import java.awt.Font;
+import java.awt.*;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -32,7 +28,7 @@ public class ObjectHierarchyPanel extends JPanel {
         setBorder(border);
         this.object = object;
 
-        List<DBObject> chain = new ArrayList<DBObject>();
+        List<DBObject> chain = new ArrayList<>();
         while (object != null) {
             chain.add(0, object);
             object = object.getParentObject();

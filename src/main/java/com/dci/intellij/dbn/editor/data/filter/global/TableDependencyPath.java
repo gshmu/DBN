@@ -6,7 +6,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class TableDependencyPath {
-    private List<DBTable> tables = new ArrayList<DBTable>();
+    private final List<DBTable> tables = new ArrayList<>();
 
     @Override
     public TableDependencyPath clone() {

@@ -25,7 +25,7 @@ public abstract class DBLanguageFoldingBuilder implements FoldingBuilder, DumbAw
         if (node.getTextLength() == 0) {
             return FoldingDescriptor.EMPTY;
         } else  {
-            List<FoldingDescriptor> descriptors = new ArrayList<FoldingDescriptor>();
+            List<FoldingDescriptor> descriptors = new ArrayList<>();
             createFoldingDescriptors(node.getPsi(), document, descriptors, 0);
             return descriptors.toArray(new FoldingDescriptor[0]);
         }

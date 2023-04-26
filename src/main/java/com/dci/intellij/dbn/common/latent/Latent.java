@@ -26,7 +26,7 @@ public interface Latent<T> {
     }
 
     static <T> WeakRefLatent<T> weak(Loader<T> loader) {
-        return new WeakRefLatent<T>(loader);
+        return new WeakRefLatent<>(loader);
     }
 
     static <T> Latent<T> laf(Loader<T> loader) {
@@ -37,7 +37,7 @@ public interface Latent<T> {
 
 
     static <T> ThreadLocalLatent<T> thread(Loader<T> loader) {
-        return new ThreadLocalLatent<T>(loader);
+        return new ThreadLocalLatent<>(loader);
     }
 
 }

@@ -61,7 +61,7 @@ public class Cache {
         CacheValue<T> cacheValue = elements.compute(key.getKey(), (k, v) -> {
             if (!isValid(v)) {
                 T value = load(loader);
-                v = new CacheValue<T>(value);
+                v = new CacheValue<>(value);
             }
             return v;
         });

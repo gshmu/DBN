@@ -19,10 +19,10 @@ public interface DBObjectNavigationList<T extends DBObject> {
     }
 
     static <T extends DBObject> DBObjectNavigationList<T> create(String name, List<T> objects) {
-        return new DBObjectNavigationListImpl<T>(name, objects);
+        return new DBObjectNavigationListImpl<>(name, objects);
     }
 
     static <T extends DBObject> DBObjectNavigationList<T> create(String name, ObjectListProvider<T> objectsProvider) {
-        return new DBObjectNavigationListImpl<T>(name, objectsProvider);
+        return new DBObjectNavigationListImpl<>(name, objectsProvider);
     }
 }

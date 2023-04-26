@@ -17,8 +17,8 @@ import java.util.List;
 import java.util.Map;
 
 public class DataGridColorSettingsPage implements ColorSettingsPage {
-    protected final List<AttributesDescriptor> attributeDescriptors = new ArrayList<AttributesDescriptor>();
-    protected final List<ColorDescriptor> colorDescriptors = new ArrayList<ColorDescriptor>();
+    protected final List<AttributesDescriptor> attributeDescriptors = new ArrayList<>();
+    protected final List<ColorDescriptor> colorDescriptors = new ArrayList<>();
 
     public DataGridColorSettingsPage() {
         attributeDescriptors.add(new AttributesDescriptor("Plain Data", DataGridTextAttributesKeys.PLAIN_DATA));

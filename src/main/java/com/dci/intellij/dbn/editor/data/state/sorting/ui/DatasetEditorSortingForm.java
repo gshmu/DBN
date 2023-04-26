@@ -88,7 +88,7 @@ public class DatasetEditorSortingForm extends DBNFormBase {
         @Override
         public List<DBColumn> loadValues() {
             DBDataset dataset = getDataset();
-            List<DBColumn> columns = new ArrayList<DBColumn>(dataset.getColumns());
+            List<DBColumn> columns = new ArrayList<>(dataset.getColumns());
             Collections.sort(columns);
             return columns;
         }

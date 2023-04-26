@@ -123,7 +123,7 @@ public class StatementExecutionVariablesBundle extends StatefulDisposableBase im
 
     public String prepareStatementText(@NotNull ConnectionHandler connection, String statementText, boolean forPreview) {
         errorMap = null;
-        List<StatementExecutionVariable> variables = new ArrayList<StatementExecutionVariable>(this.variables);
+        List<StatementExecutionVariable> variables = new ArrayList<>(this.variables);
         variables.sort(NAME_LENGTH_COMPARATOR);
         Formatter formatter = Formatter.getInstance(connection.getProject());
         for (StatementExecutionVariable variable : variables) {

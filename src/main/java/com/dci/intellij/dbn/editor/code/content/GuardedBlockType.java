@@ -6,5 +6,5 @@ public enum GuardedBlockType {
     READONLY_DOCUMENT,
     READONLY_DOCUMENT_SECTION;
 
-    public static final Key<GuardedBlockType> KEY = new Key<GuardedBlockType>("GUARDED_BLOCK_TYPE");
+    public static final Key<GuardedBlockType> KEY = new Key<>("GUARDED_BLOCK_TYPE");
 }

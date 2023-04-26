@@ -25,7 +25,7 @@ public class ExecVariableElementTypeLookupCache extends LeafElementTypeLookupCac
 
     @Override
     public Set<TokenType> getFirstPossibleTokens() {
-        Set<TokenType> firstPossibleTokens = new HashSet<TokenType>(1);
+        Set<TokenType> firstPossibleTokens = new HashSet<>(1);
         SharedTokenTypeBundle sharedTokenTypes = getSharedTokenTypes();
         TokenType variable = sharedTokenTypes.getVariable();
         firstPossibleTokens.add(variable);

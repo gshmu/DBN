@@ -47,7 +47,7 @@ public class CheckBoxList<T extends Selectable> extends JList {
 
         DefaultListModel model = new DefaultListModel();
         for (T element : elements) {
-            Entry<T> entry = new Entry<T>(element);
+            Entry<T> entry = new Entry<>(element);
             model.addElement(entry);
         }
         setModel(model);
@@ -117,8 +117,8 @@ public class CheckBoxList<T extends Selectable> extends JList {
         }
     }
 
-    public void sortElements(final Comparator<T> comparator) {
-        List<Entry<T>> entries = new ArrayList<Entry<T>>();
+    public void sortElements(Comparator<T> comparator) {
+        List<Entry<T>> entries = new ArrayList<>();
         ListModel model = getModel();
         for (int i=0; i<model.getSize(); i++) {
             Entry<T> entry = (Entry<T>) model.getElementAt(i);
@@ -126,12 +126,7 @@ public class CheckBoxList<T extends Selectable> extends JList {
         }
         if (comparator == null)
             Collections.sort(entries); else
-            Collections.sort(entries, new Comparator<Entry<T>>() {
-                @Override
-                public int compare(Entry<T> o1, Entry<T> o2) {
-                    return comparator.compare(o1.presentable, o2.presentable);
-                }
-            });
+            Collections.sort(entries, (o1, o2) -> comparator.compare(o1.presentable, o2.presentable));
         DefaultListModel newModel = new DefaultListModel();
         for (Entry<T> entry : entries) {
             newModel.addElement(entry);

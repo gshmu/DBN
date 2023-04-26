@@ -10,20 +10,20 @@ import com.intellij.openapi.editor.markup.TextAttributes;
 import com.intellij.ui.JBColor;
 import org.jetbrains.annotations.NotNull;
 
-import javax.swing.Icon;
-import java.awt.Font;
+import javax.swing.*;
+import java.awt.*;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
 public class PSQLStructureViewModelGroup implements Group {
-    private static TextAttributesKey TEXT_ATTRIBUTES_KEY =
+    private static final TextAttributesKey TEXT_ATTRIBUTES_KEY =
             TextAttributesKey.createTextAttributesKey(
                     "PSQLStructureViewModelGroup",
                     new TextAttributes(JBColor.BLACK, null, null, null, Font.BOLD));
 
-    private DBObjectType objectType;
-    private List<TreeElement> children = new ArrayList<TreeElement>();
+    private final DBObjectType objectType;
+    private final List<TreeElement> children = new ArrayList<>();
 
 
     PSQLStructureViewModelGroup(DBObjectType objectType) {
@@ -47,7 +47,7 @@ public class PSQLStructureViewModelGroup implements Group {
     }
 
 
-    private ItemPresentation itemPresentation = new ItemPresentation(){
+    private final ItemPresentation itemPresentation = new ItemPresentation(){
         @Override
         public String getPresentableText() {
             return Naming.capitalize(objectType.getListName());

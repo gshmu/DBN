@@ -56,7 +56,7 @@ public class DBStatementJdwpRunConfigEditorForm extends DBProgramRunConfiguratio
         } catch (NumberFormatException e) {
             throw new ConfigurationException("TCP Port Range inputs must me numeric");
         }
-        configuration.setTcpPortRange(new Range<Integer>(fromPort, toPort));
+        configuration.setTcpPortRange(new Range<>(fromPort, toPort));
         //selectMethodAction.setConfiguration(configuration);
     }
 

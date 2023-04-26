@@ -1,11 +1,7 @@
 package com.dci.intellij.dbn.data.find.action;
 
 import com.dci.intellij.dbn.data.find.DataSearchComponent;
-import com.intellij.openapi.actionSystem.ActionManager;
-import com.intellij.openapi.actionSystem.AnActionEvent;
-import com.intellij.openapi.actionSystem.IdeActions;
-import com.intellij.openapi.actionSystem.KeyboardShortcut;
-import com.intellij.openapi.actionSystem.Shortcut;
+import com.intellij.openapi.actionSystem.*;
 import com.intellij.openapi.project.DumbAware;
 import com.intellij.util.containers.ContainerUtil;
 import org.jetbrains.annotations.NotNull;
@@ -22,7 +18,7 @@ public class NextOccurrenceAction extends DataSearchHeaderAction implements Dumb
 
         ActionManager actionManager = ActionManager.getInstance();
         copyFrom(actionManager.getAction(IdeActions.ACTION_NEXT_OCCURENCE));
-        Set<Shortcut> shortcuts = new HashSet<Shortcut>();
+        Set<Shortcut> shortcuts = new HashSet<>();
         ContainerUtil.addAll(shortcuts, actionManager.getAction(IdeActions.ACTION_FIND_NEXT).getShortcutSet().getShortcuts());
 
         if (isSearchComponent) {

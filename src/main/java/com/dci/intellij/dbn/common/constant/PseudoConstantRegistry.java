@@ -38,7 +38,7 @@ final class PseudoConstantRegistry {
     static <T extends PseudoConstant<T>> T[] list(Class<T> clazz, String csvIds) {
         if (Strings.isEmpty(csvIds)) return toArray(Collections.emptyList(), clazz);
 
-        List<T> constants = new ArrayList<T>();
+        List<T> constants = new ArrayList<>();
         String[] ids = csvIds.split(",");
 
         for (String id : ids) {

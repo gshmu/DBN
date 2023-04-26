@@ -86,7 +86,7 @@ public abstract class DBLanguageStructureViewElement<T> implements StructureView
             BasePsiElement basePsiElement = (BasePsiElement) child;
             if (basePsiElement.is(ElementTypeAttribute.STRUCTURE)) {
                 if (elements == null) {
-                    elements = new ArrayList<T>();
+                    elements = new ArrayList<>();
                 }
                 elements.add(createChildElement(child));
             } else {

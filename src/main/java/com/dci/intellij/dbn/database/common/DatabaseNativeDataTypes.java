@@ -7,7 +7,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public abstract class DatabaseNativeDataTypes {
-    protected List<DataTypeDefinition> dataTypes = new ArrayList<DataTypeDefinition>();
+    protected List<DataTypeDefinition> dataTypes = new ArrayList<>();
     public List<DataTypeDefinition> list() {return dataTypes;}
 
     protected void createBasicDefinition(String name, Class typeClass, int sqlType, GenericDataType genericDataType) {

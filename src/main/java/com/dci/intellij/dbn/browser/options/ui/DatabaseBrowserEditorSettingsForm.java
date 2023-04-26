@@ -19,8 +19,6 @@ import com.intellij.ui.components.JBScrollPane;
 import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
-import javax.swing.event.ListSelectionEvent;
-import javax.swing.event.ListSelectionListener;
 import javax.swing.table.TableCellEditor;
 import java.awt.*;
 import java.awt.event.MouseEvent;
@@ -88,16 +86,13 @@ public class DatabaseBrowserEditorSettingsForm extends ConfigurationEditorForm<D
                 }
             });
 
-            ComboBoxTableRenderer<DefaultEditorType> editor = new ComboBoxTableRenderer<DefaultEditorType>(DefaultEditorType.values());
+            ComboBoxTableRenderer<DefaultEditorType> editor = new ComboBoxTableRenderer<>(DefaultEditorType.values());
             editor.setBorder(Borders.TEXT_FIELD_INSETS);
             setDefaultEditor(DefaultEditorType.class, editor);
 
-            getSelectionModel().addListSelectionListener(new ListSelectionListener() {
-                @Override
-                public void valueChanged(ListSelectionEvent e) {
-                    if (!e.getValueIsAdjusting()) {
-                        //editCellAt(getSelectedRows()[0], getSelectedColumns()[0]);
-                    }
+            getSelectionModel().addListSelectionListener(e -> {
+                if (!e.getValueIsAdjusting()) {
+                    //editCellAt(getSelectedRows()[0], getSelectedColumns()[0]);
                 }
             });
         }
@@ -105,11 +100,11 @@ public class DatabaseBrowserEditorSettingsForm extends ConfigurationEditorForm<D
         @Override
         public TableCellEditor getCellEditor(int row, int column) {
             if (column == 1) {
-                EditorTypeTableModel model = (EditorTypeTableModel) getModel();
+                EditorTypeTableModel model = getModel();
                 DefaultEditorOption editorOption = model.options.get(row);
                 DBObjectType objectType = editorOption.getObjectType();
                 DefaultEditorType[] editorTypes = DefaultEditorType.getEditorTypes(objectType);
-                return new ComboBoxTableRenderer<DefaultEditorType>(editorTypes);
+                return new ComboBoxTableRenderer<>(editorTypes);
             }
             return null;
         }
@@ -128,10 +123,10 @@ public class DatabaseBrowserEditorSettingsForm extends ConfigurationEditorForm<D
     }
 
     public static class EditorTypeTableModel extends DBNEditableTableModel {
-        private List<DefaultEditorOption> options = new ArrayList<DefaultEditorOption>();
+        private final List<DefaultEditorOption> options;
 
         public EditorTypeTableModel(List<DefaultEditorOption> options) {
-            this.options = new ArrayList<DefaultEditorOption>(options);
+            this.options = new ArrayList<>(options);
         }
 
         @Override

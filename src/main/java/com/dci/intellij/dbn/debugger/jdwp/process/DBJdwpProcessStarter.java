@@ -28,7 +28,7 @@ import java.net.ServerSocket;
 
 public abstract class DBJdwpProcessStarter extends DBDebugProcessStarter {
 
-    public static final Key<Integer> JDWP_DEBUGGER_PORT = new Key<Integer>("JDWP_DEBUGGER_PORT");
+    public static final Key<Integer> JDWP_DEBUGGER_PORT = new Key<>("JDWP_DEBUGGER_PORT");
 
     DBJdwpProcessStarter(ConnectionHandler connection) {
         super(connection);

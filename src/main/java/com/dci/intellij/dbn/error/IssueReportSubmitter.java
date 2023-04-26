@@ -126,7 +126,7 @@ abstract class IssueReportSubmitter extends ErrorReportSubmitter {
         if (eventData instanceof AbstractMessage) {
             List<Attachment> attachments = ((AbstractMessage) eventData).getIncludedAttachments();
             if (attachments.size() > 0) {
-                Set<String> attachmentTexts = new HashSet<String>();
+                Set<String> attachmentTexts = new HashSet<>();
                 for (Attachment attachment : attachments) {
                     attachmentTexts.add(attachment.getDisplayText().trim());
                 }

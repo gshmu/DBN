@@ -38,7 +38,7 @@ public class ObjectTreeModel extends DefaultTreeModel {
                 for (DBObject schemaObject : schema.collectChildObjects(schemaObjectType)) {
                     DefaultMutableTreeNode bundleNode = new DefaultMutableTreeNode(schemaObject.ref());
 
-                    List<DBObject> objects = new ArrayList<DBObject>();
+                    List<DBObject> objects = new ArrayList<>();
                     for (DBObjectType objectType : objectTypes) {
                         objects.addAll(schemaObject.collectChildObjects(objectType));
                     }
