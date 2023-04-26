@@ -8,7 +8,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class CharsetOption implements Presentable {
-    public static List<CharsetOption> ALL = new ArrayList<CharsetOption>();
+    public static List<CharsetOption> ALL = new ArrayList<>();
     static {
         for (Charset charset : Charset.availableCharsets().values()){
             ALL.add(new CharsetOption(charset));

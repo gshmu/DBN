@@ -4,11 +4,8 @@ import com.dci.intellij.dbn.common.ui.util.Fonts;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.object.common.DBObject;
 
-import javax.swing.BoxLayout;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.SwingConstants;
-import java.awt.Font;
+import javax.swing.*;
+import java.awt.*;
 import java.util.ArrayList;
 
 public class ObjectDetailsForm {
@@ -25,7 +22,7 @@ public class ObjectDetailsForm {
         connectionLabel.setIcon(connection.getIcon());
         
 
-        java.util.List<DBObject> chain = new ArrayList<DBObject>();
+        java.util.List<DBObject> chain = new ArrayList<>();
         while (object != null) {
             chain.add(0, object);
             object = object.getParentObject();

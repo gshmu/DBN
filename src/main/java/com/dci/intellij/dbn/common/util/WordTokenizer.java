@@ -7,7 +7,7 @@ import java.util.regex.Pattern;
 public class WordTokenizer {
     private static final Pattern PATTERN2 = Pattern.compile("\\B");
     private static final Pattern PATTERN1 = Pattern.compile("\\b");
-    List<String> tokens = new ArrayList<String>();
+    List<String> tokens = new ArrayList<>();
 
     public WordTokenizer(String string) {
         //String[] allTokens = string.split("\\b\\s+|\\s+\\b|\\b");

@@ -4,7 +4,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class CodeStylePresetsRegister {
-    private static Map<String, CodeStylePreset> wrapPresets = new HashMap<String, CodeStylePreset>();
+    private static final Map<String, CodeStylePreset> wrapPresets = new HashMap<>();
 
     public static void registerWrapPreset(CodeStylePreset codeStylePreset) {
         wrapPresets.put(codeStylePreset.getId(), codeStylePreset);

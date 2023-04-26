@@ -12,30 +12,19 @@ import javax.swing.*;
 import java.util.Comparator;
 
 public class ColumnStateSelectable implements Selectable {
-    public static final Comparator<ColumnStateSelectable> NAME_COMPARATOR = new Comparator<ColumnStateSelectable>() {
-        @Override
-        public int compare(ColumnStateSelectable o1, ColumnStateSelectable o2) {
-            return o1.getName().compareTo(o2.getName());
-        }
-    };
+    public static final Comparator<ColumnStateSelectable> NAME_COMPARATOR = Comparator.comparing(ColumnStateSelectable::getName);
+    public static final Comparator<ColumnStateSelectable> POSITION_COMPARATOR = Comparator.comparingInt(ColumnStateSelectable::getOriginalPosition);
 
-    public static final Comparator<ColumnStateSelectable> POSITION_COMPARATOR = new Comparator<ColumnStateSelectable>() {
-        @Override
-        public int compare(ColumnStateSelectable o1, ColumnStateSelectable o2) {
-            return o1.getOriginalPosition() - o2.getOriginalPosition();
-        }
-    };
-
-    private DatasetColumnState state;
-    private DBObjectRef<DBDataset> datasetRef;
+    private final DatasetColumnState state;
+    private final DBObjectRef<DBDataset> dataset;
 
     public ColumnStateSelectable(DBDataset dataset, DatasetColumnState state) {
-        this.datasetRef = DBObjectRef.of(dataset);
+        this.dataset = DBObjectRef.of(dataset);
         this.state = state;
     }
 
     private DBDataset getDataset() {
-        return DBObjectRef.get(datasetRef);
+        return DBObjectRef.get(dataset);
     }
 
     public DBColumn getColumn() {

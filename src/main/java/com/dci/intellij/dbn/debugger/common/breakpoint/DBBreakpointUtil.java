@@ -117,7 +117,7 @@ public class DBBreakpointUtil {
             Collection<XLineBreakpoint<XBreakpointProperties>> breakpoints =
                     (Collection<XLineBreakpoint<XBreakpointProperties>>) breakpointManager.getBreakpoints(databaseBreakpointType);
 
-            List<XLineBreakpoint<XBreakpointProperties>> connectionBreakpoints = new ArrayList<XLineBreakpoint<XBreakpointProperties>>();
+            List<XLineBreakpoint<XBreakpointProperties>> connectionBreakpoints = new ArrayList<>();
             for (XLineBreakpoint<XBreakpointProperties> breakpoint : breakpoints) {
                 XBreakpointProperties properties = breakpoint.getProperties();
                 if (properties instanceof DBBreakpointProperties) {

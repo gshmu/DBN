@@ -5,13 +5,7 @@ import com.dci.intellij.dbn.common.util.Compactables;
 import com.dci.intellij.dbn.common.util.Lists;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Comparator;
-import java.util.Iterator;
-import java.util.List;
-import java.util.ListIterator;
+import java.util.*;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 public final class StatelessFilteredList<T> extends FilteredListBase<T> {
@@ -129,7 +123,7 @@ public final class StatelessFilteredList<T> extends FilteredListBase<T> {
     public Object[] toArray() {
         Filter<T> filter = getFilter();
         if (filter != null) {
-            List<T> result = new ArrayList<T>();
+            List<T> result = new ArrayList<>();
             for (T object : base) if (filter.accepts(object)) result.add(object);
             return result.toArray();
         } else {
@@ -142,7 +136,7 @@ public final class StatelessFilteredList<T> extends FilteredListBase<T> {
     public <E> E[] toArray(@NotNull E[] e) {
         Filter<T> filter = getFilter();
         if (filter != null) {
-            List<T> result = new ArrayList<T>();
+            List<T> result = new ArrayList<>();
             for (T object : base) if (filter.accepts(object)) result.add(object);
             return result.toArray(e);
         } else {

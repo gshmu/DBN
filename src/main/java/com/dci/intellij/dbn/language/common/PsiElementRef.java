@@ -15,7 +15,7 @@ public class PsiElementRef<T extends PsiElement> extends WeakRef<T> {
 
     @Contract("null -> null;!null -> !null;")
     public static <T extends PsiElement> PsiElementRef<T> of(@Nullable T psiElement) {
-        return psiElement == null ? null : new PsiElementRef<T>(psiElement);
+        return psiElement == null ? null : new PsiElementRef<>(psiElement);
     }
 
     @Nullable

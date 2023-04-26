@@ -18,7 +18,7 @@ public class CompoundFilter<T> implements Filter<T>{
     @SafeVarargs
     @SuppressWarnings("varargs")
     public static <T> Filter<T> of(Filter<T> ... filters) {
-        return new CompoundFilter<T>(Arrays.asList(filters));
+        return new CompoundFilter<>(Arrays.asList(filters));
     }
 
     @Override

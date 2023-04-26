@@ -20,7 +20,7 @@ import java.util.Map;
 public abstract class DBLColorSettingsPage implements ColorSettingsPage {
 
     private String demoText;
-    protected final List<AttributesDescriptor> attributeDescriptors = new ArrayList<AttributesDescriptor>();
+    protected final List<AttributesDescriptor> attributeDescriptors = new ArrayList<>();
 
     @Override
     @NonNls

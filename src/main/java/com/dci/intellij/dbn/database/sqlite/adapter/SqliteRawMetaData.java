@@ -182,7 +182,7 @@ public class SqliteRawMetaData {
         protected final void processRow(ResultSet resultSet) throws SQLException {
             T row = createRow(resultSet);
             if (rows == null) {
-                rows = new ArrayList<T>();
+                rows = new ArrayList<>();
             }
             rows.add(row);
         }

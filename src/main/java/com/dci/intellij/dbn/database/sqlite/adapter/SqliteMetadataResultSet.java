@@ -15,7 +15,7 @@ public class SqliteMetadataResultSet<T extends SqliteMetadataResultSetRow>
         extends StatefulDisposableBase
         implements ResultSetStub {
 
-    private final List<T> rows = new ArrayList<T>();
+    private final List<T> rows = new ArrayList<>();
     private int cursor = -1;
 
     @Override

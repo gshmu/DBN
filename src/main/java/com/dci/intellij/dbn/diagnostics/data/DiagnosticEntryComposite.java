@@ -12,6 +12,6 @@ public class DiagnosticEntryComposite<T extends Comparable<T>> extends Diagnosti
     }
 
     public DiagnosticEntry<T> getDetail(String qualifier) {
-        return details.computeIfAbsent(qualifier, q -> new DiagnosticEntryBase<T>(identifier));
+        return details.computeIfAbsent(qualifier, q -> new DiagnosticEntryBase<>(identifier));
     }
 }

@@ -24,7 +24,7 @@ public final class CompactArrayList<T> implements List<T>, RandomAccess, Seriali
     }
 
     public static <T> List<T> from(List<T> list) {
-        return new CompactArrayList<T>(list);
+        return new CompactArrayList<>(list);
     }
 
     @Override

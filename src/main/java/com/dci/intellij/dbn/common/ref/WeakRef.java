@@ -18,7 +18,7 @@ public class WeakRef<T> extends WeakReference<T> {
 
     @Contract("null -> null;!null -> !null;")
     public static <T> WeakRef<T> of(@Nullable T element) {
-        return element == null ? null : new WeakRef<T>(element);
+        return element == null ? null : new WeakRef<>(element);
     }
 
     @Nullable

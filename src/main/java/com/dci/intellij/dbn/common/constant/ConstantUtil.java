@@ -16,7 +16,7 @@ public abstract class ConstantUtil {
 
 
     public static List<String> toIdList(List<? extends Constant> constants) {
-        List<String> ids = new ArrayList<String>(constants.size());
+        List<String> ids = new ArrayList<>(constants.size());
         for (Constant constant : constants) {
             ids.add(constant.id());
         }
@@ -25,7 +25,7 @@ public abstract class ConstantUtil {
     }
 
     public static <T extends Constant> List<T> toConstantsList(List<String> ids, Class<T> constantClass) {
-        List<T> constants = new ArrayList<T>(ids.size());
+        List<T> constants = new ArrayList<>(ids.size());
         T[] allConstants = constantClass.getEnumConstants();
         for(String id : ids) {
             for (T t : allConstants) {
@@ -81,7 +81,7 @@ public abstract class ConstantUtil {
     }
 
     public static <T extends Constant> List<T> fromCsv(Class<T> clazz, String csvIds) {
-        List<T> constants = new ArrayList<T>();
+        List<T> constants = new ArrayList<>();
 
         if (Strings.isNotEmpty(csvIds)) {
             String[] ids = csvIds.split(",");

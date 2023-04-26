@@ -42,7 +42,7 @@ public class ChameleonPsiElement extends ASTDelegatePsiElement implements Execut
 
     @Override
     public List<ExecutablePsiElement> getExecutablePsiElements() {
-        List<ExecutablePsiElement> bucket = new ArrayList<ExecutablePsiElement>();
+        List<ExecutablePsiElement> bucket = new ArrayList<>();
         collectExecutablePsiElements(bucket, this);
         return bucket;
     }

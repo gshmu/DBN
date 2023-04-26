@@ -6,7 +6,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class GuardedBlockMarkers {
-    private final List<GuardedBlockMarker> ranges = new ArrayList<GuardedBlockMarker>();
+    private final List<GuardedBlockMarker> ranges = new ArrayList<>();
 
     public void addMarker(int startOffset, int endOffset) {
         ranges.removeIf(range -> range.getStartOffset() >= startOffset && range.getEndOffset() <= endOffset);

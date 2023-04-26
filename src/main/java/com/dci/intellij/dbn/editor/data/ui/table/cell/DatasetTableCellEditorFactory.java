@@ -20,7 +20,7 @@ import java.util.List;
 import java.util.Map;
 
 public class DatasetTableCellEditorFactory implements Disposable {
-    private final Map<ColumnInfo, TableCellEditor> cache = new HashMap<ColumnInfo, TableCellEditor>();
+    private final Map<ColumnInfo, TableCellEditor> cache = new HashMap<>();
 
     public TableCellEditor getCellEditor(ColumnInfo columnInfo, DatasetEditorTable table) {
         TableCellEditor tableCellEditor = cache.get(columnInfo);

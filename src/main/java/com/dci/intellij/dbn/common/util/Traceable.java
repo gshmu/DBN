@@ -1,7 +1,7 @@
 package com.dci.intellij.dbn.common.util;
 
 public class Traceable {
-    private static final ThreadLocal<Traceable> LOCAL = new ThreadLocal<Traceable>();
+    private static final ThreadLocal<Traceable> LOCAL = new ThreadLocal<>();
     private final Throwable trace;
 
     public Traceable() {

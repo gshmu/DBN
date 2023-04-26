@@ -22,7 +22,7 @@ import static com.dci.intellij.dbn.common.options.setting.SettingsSupport.intege
 import static com.dci.intellij.dbn.common.options.setting.SettingsSupport.setIntegerAttribute;
 
 public class DBStatementJdwpRunConfig extends DBStatementRunConfig implements DBJdwpRunConfig {
-    private Range<Integer> tcpPortRange = new Range<Integer>(4000, 4999);
+    private Range<Integer> tcpPortRange = new Range<>(4000, 4999);
 
     public DBStatementJdwpRunConfig(Project project, DBStatementJdwpRunConfigFactory factory, String name, DBRunConfigCategory category) {
         super(project, factory, name, category);
@@ -66,7 +66,7 @@ public class DBStatementJdwpRunConfig extends DBStatementRunConfig implements DB
         if (rangeElement != null) {
             int fromPortNumber = integerAttribute(rangeElement, "from-number", tcpPortRange.getFrom());
             int toPortNumber = integerAttribute(rangeElement, "to-number", tcpPortRange.getTo());
-            tcpPortRange = new Range<Integer>(fromPortNumber, toPortNumber);
+            tcpPortRange = new Range<>(fromPortNumber, toPortNumber);
         }
     }
 

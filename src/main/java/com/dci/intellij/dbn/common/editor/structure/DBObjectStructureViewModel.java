@@ -12,8 +12,8 @@ import java.util.HashSet;
 import java.util.Set;
 
 public abstract class DBObjectStructureViewModel implements StructureViewModel {
-    protected Set<FileEditorPositionListener> fileEditorPositionListeners = new HashSet<FileEditorPositionListener>();
-    protected Set<ModelListener> modelListeners = new HashSet<ModelListener>();
+    protected Set<FileEditorPositionListener> fileEditorPositionListeners = new HashSet<>();
+    protected Set<ModelListener> modelListeners = new HashSet<>();
 
     @Override
     public void addEditorPositionListener(@NotNull FileEditorPositionListener listener) {
