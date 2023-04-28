@@ -1,10 +1,14 @@
 package com.dci.intellij.dbn.driver;
 
 import com.dci.intellij.dbn.common.ui.Presentable;
-import org.jetbrains.annotations.NotNull;
+import lombok.Getter;
 
+@Getter
 public enum DriverSource implements Presentable{
+    @Deprecated // replaced by BUNDLED
     BUILTIN("Built-in library"),
+
+    BUNDLED("Bundled library"),
     EXTERNAL("External library");
 
     DriverSource(String name) {
@@ -12,10 +16,4 @@ public enum DriverSource implements Presentable{
     }
 
     private final String name;
-
-    @NotNull
-    @Override
-    public String getName() {
-        return name;
-    }
 }

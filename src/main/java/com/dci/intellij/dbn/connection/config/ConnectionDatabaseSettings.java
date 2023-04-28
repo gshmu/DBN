@@ -58,7 +58,7 @@ public class ConnectionDatabaseSettings extends BasicConfiguration<ConnectionSet
         this.databaseInfo = urlPattern.getDefaultInfo();
         this.driverSource = databaseType == DatabaseType.GENERIC ?
                 DriverSource.EXTERNAL :
-                DriverSource.BUILTIN;
+                DriverSource.BUNDLED;
 
         initAuthType(databaseType);
     }
@@ -93,7 +93,7 @@ public class ConnectionDatabaseSettings extends BasicConfiguration<ConnectionSet
     }
 
     public String getDriver() {
-        return driverSource == DriverSource.BUILTIN ? databaseType.getDriverClassName() : driver;
+        return driverSource == DriverSource.BUNDLED ? databaseType.getDriverClassName() : driver;
     }
 
     public void setDriver(String driver) {
@@ -275,6 +275,9 @@ public class ConnectionDatabaseSettings extends BasicConfiguration<ConnectionSet
         }
 
         driverSource  = getEnum(element, "driver-source", driverSource);
+        // TODO temporary backward compatibility
+        if (driverSource == DriverSource.BUILTIN) driverSource = DriverSource.BUNDLED;
+
         driverLibrary = Files.convertToAbsolutePath(getProject(), getString(element, "driver-library", driverLibrary));
         driver        = getString(element, "driver", driver);
 
@@ -292,6 +295,10 @@ public class ConnectionDatabaseSettings extends BasicConfiguration<ConnectionSet
         }
         deriveDatabaseType();
         updateSignature();
+    }
+
+    public File getDriverLibraryFile() {
+        return new File(driverLibrary);
     }
 
     @Override

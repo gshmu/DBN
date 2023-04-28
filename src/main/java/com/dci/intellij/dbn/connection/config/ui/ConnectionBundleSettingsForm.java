@@ -348,7 +348,7 @@ public class ConnectionBundleSettingsForm extends ConfigurationEditorForm<Connec
             }
             databaseSettings.setName(name);
             databaseSettings.setDatabaseType(DatabaseType.ORACLE);
-            databaseSettings.setDriverSource(DriverSource.BUILTIN);
+            databaseSettings.setDriverSource(DriverSource.BUNDLED);
 
             model.add(index, connectionSettings);
             selectedIndexes.add(index);
