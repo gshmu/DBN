@@ -138,7 +138,7 @@ public class ConnectionInfoForm extends DBNFormBase {
 
         ConnectionDatabaseSettings databaseSettings = connection.getSettings().getDatabaseSettings();
         String driverLibrary = databaseSettings.getDriverLibrary();
-        initValueField(setupDriverLibraryLabel, setupDriverLibraryTextField, databaseSettings.getDriverSource() == DriverSource.BUILTIN ? "Built-in library" : driverLibrary);
+        initValueField(setupDriverLibraryLabel, setupDriverLibraryTextField, databaseSettings.getDriverSource() == DriverSource.BUNDLED ? "Built-in library" : driverLibrary);
         initValueField(setupDriverLabel, setupDriverTextField, databaseSettings.getDriver(), true);
 
         DatabaseInfo databaseInfo = databaseSettings.getDatabaseInfo();

@@ -45,7 +45,7 @@ public class ConnectionDriverSettingsForm extends DBNFormBase {
     ConnectionDriverSettingsForm(@NotNull ConnectionDatabaseSettingsForm parent) {
         super(parent);
 
-        initComboBox(driverSourceComboBox, DriverSource.BUILTIN, DriverSource.EXTERNAL);
+        initComboBox(driverSourceComboBox, DriverSource.BUNDLED, DriverSource.EXTERNAL);
         driverSourceComboBox.addActionListener(e -> {
             DriverSource selection = getSelection(driverSourceComboBox);
 
