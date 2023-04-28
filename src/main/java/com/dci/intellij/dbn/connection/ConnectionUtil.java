@@ -12,7 +12,9 @@ import com.dci.intellij.dbn.database.interfaces.DatabaseMessageParserInterface;
 import com.dci.intellij.dbn.diagnostics.DiagnosticsManager;
 import com.dci.intellij.dbn.diagnostics.data.DiagnosticBundle;
 import com.dci.intellij.dbn.driver.DatabaseDriverManager;
+import com.dci.intellij.dbn.driver.DriverBundle;
 import com.dci.intellij.dbn.driver.DriverSource;
+import com.intellij.openapi.util.text.StringUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -131,28 +133,27 @@ public class ConnectionUtil {
 
     @Nullable
     static Driver resolveDriver(ConnectionDatabaseSettings databaseSettings) throws Exception {
-        Driver driver = null;
         DatabaseDriverManager driverManager = DatabaseDriverManager.getInstance();
         DriverSource driverSource = databaseSettings.getDriverSource();
         String driverClassName = databaseSettings.getDriver();
-        if (driverSource == DriverSource.EXTERNAL) {
-            driver = driverManager.getDriver(
-                    new File(databaseSettings.getDriverLibrary()),
-                    driverClassName);
-        } else if (driverSource == DriverSource.BUILTIN) {
-            DatabaseType databaseType = databaseSettings.getDatabaseType();
-            boolean internal = databaseType == DatabaseType.ORACLE;
-            driver = driverManager.getDriver(driverClassName, internal);
+        if (StringUtil.isEmpty(driverClassName)) return null;
 
-            if (driver == null) {
-                File driverLibrary = driverManager.getInternalDriverLibrary(databaseType);
-                if (driverLibrary != null) {
-                    return driverManager.getDriver(driverLibrary, driverClassName);
-                }
-            }
+        DriverBundle drivers = null;
+        if (driverSource == DriverSource.EXTERNAL) {
+            File driverLibrary = databaseSettings.getDriverLibraryFile();
+            if (driverLibrary == null) return null;
+
+            drivers = driverManager.getDrivers(driverLibrary);
+
+        } else if (driverSource == DriverSource.BUNDLED) {
+            DatabaseType databaseType = databaseSettings.getDatabaseType();
+            if (databaseType == null) return null;
+
+            drivers = driverManager.getBundledDrivers(databaseType);
         }
 
-        return driver;
+        if (drivers == null || drivers.isEmpty()) return null;
+        return drivers.getDriver(driverClassName);
     }
 
     public static double getDatabaseVersion(DatabaseMetaData databaseMetaData) throws SQLException {
