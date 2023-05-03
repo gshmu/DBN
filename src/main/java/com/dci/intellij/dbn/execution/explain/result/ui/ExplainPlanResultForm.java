@@ -1,7 +1,7 @@
 package com.dci.intellij.dbn.execution.explain.result.ui;
 
 import com.dci.intellij.dbn.common.color.Colors;
-import com.dci.intellij.dbn.common.ui.tree.TreeUtil;
+import com.dci.intellij.dbn.common.ui.tree.Trees;
 import com.dci.intellij.dbn.common.util.Actions;
 import com.dci.intellij.dbn.execution.ExecutionManager;
 import com.dci.intellij.dbn.execution.ExecutionResult;
@@ -13,8 +13,7 @@ import com.intellij.ui.IdeBorderFactory;
 import com.intellij.ui.border.CustomLineBorder;
 import org.jetbrains.annotations.NotNull;
 
-import javax.swing.JPanel;
-import javax.swing.JScrollPane;
+import javax.swing.*;
 
 public class ExplainPlanResultForm extends ExecutionResultFormBase<ExplainPlanResult> {
     private JPanel mainPanel;
@@ -59,10 +58,10 @@ public class ExplainPlanResultForm extends ExecutionResultFormBase<ExplainPlanRe
     }
 
     public void collapseAllNodes() {
-        TreeUtil.collapseAll(explainPlanTreeTable.getTree());    
+        Trees.collapseAll(explainPlanTreeTable.getTree());
     }
 
     public void expandAllNodes() {
-        TreeUtil.expandAll(explainPlanTreeTable.getTree());
+        Trees.expandAll(explainPlanTreeTable.getTree());
     }
 }

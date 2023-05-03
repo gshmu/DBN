@@ -5,7 +5,7 @@ import com.dci.intellij.dbn.common.dispose.StatefulDisposableBase;
 import com.dci.intellij.dbn.common.exception.OutdatedContentException;
 import com.dci.intellij.dbn.common.ref.WeakRef;
 import com.dci.intellij.dbn.common.ui.tree.TreeEventType;
-import com.dci.intellij.dbn.common.ui.tree.TreeUtil;
+import com.dci.intellij.dbn.common.ui.tree.Trees;
 import com.dci.intellij.dbn.common.ui.util.Listeners;
 import com.dci.intellij.dbn.object.common.DBSchemaObject;
 import com.dci.intellij.dbn.object.dependency.ObjectDependencyType;
@@ -106,12 +106,12 @@ public class ObjectDependencyTreeModel extends StatefulDisposableBase implements
 
     void refreshLoadInProgressNode(ObjectDependencyTreeNode node) {
         TreePath treePath = new TreePath(node.getTreePath());
-        TreeUtil.notifyTreeModelListeners(node, listeners, treePath, TreeEventType.STRUCTURE_CHANGED);
+        Trees.notifyTreeModelListeners(node, listeners, treePath, TreeEventType.STRUCTURE_CHANGED);
     }
 
     void notifyNodeLoaded(ObjectDependencyTreeNode node) {
         TreePath treePath = new TreePath(node.getTreePath());
-        TreeUtil.notifyTreeModelListeners(node, listeners, treePath, TreeEventType.STRUCTURE_CHANGED);
+        Trees.notifyTreeModelListeners(node, listeners, treePath, TreeEventType.STRUCTURE_CHANGED);
     }
 
     @Override

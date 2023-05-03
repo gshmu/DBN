@@ -8,7 +8,7 @@ import com.dci.intellij.dbn.common.event.ProjectEvents;
 import com.dci.intellij.dbn.common.load.LoadInProgressRegistry;
 import com.dci.intellij.dbn.common.ref.WeakRef;
 import com.dci.intellij.dbn.common.ui.tree.TreeEventType;
-import com.dci.intellij.dbn.common.ui.tree.TreeUtil;
+import com.dci.intellij.dbn.common.ui.tree.Trees;
 import com.dci.intellij.dbn.common.ui.util.Listeners;
 import com.intellij.openapi.project.Project;
 import org.jetbrains.annotations.NotNull;
@@ -59,7 +59,7 @@ public abstract class BrowserTreeModel extends StatefulDisposableBase implements
     public void notifyListeners(BrowserTreeNode treeNode, final TreeEventType eventType) {
         if (allValid(this, treeNode)) {
             TreePath treePath = DatabaseBrowserUtils.createTreePath(treeNode);
-            TreeUtil.notifyTreeModelListeners(this, listeners, treePath, eventType);
+            Trees.notifyTreeModelListeners(this, listeners, treePath, eventType);
         }
     }
 

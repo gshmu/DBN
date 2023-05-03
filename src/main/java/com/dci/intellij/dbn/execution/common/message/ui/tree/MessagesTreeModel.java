@@ -4,7 +4,7 @@ import com.dci.intellij.dbn.common.dispose.Disposer;
 import com.dci.intellij.dbn.common.dispose.StatefulDisposable;
 import com.dci.intellij.dbn.common.dispose.StatefulDisposableBase;
 import com.dci.intellij.dbn.common.ui.tree.TreeEventType;
-import com.dci.intellij.dbn.common.ui.tree.TreeUtil;
+import com.dci.intellij.dbn.common.ui.tree.Trees;
 import com.dci.intellij.dbn.common.ui.util.Listeners;
 import com.dci.intellij.dbn.connection.ConnectionId;
 import com.dci.intellij.dbn.execution.compiler.CompilerMessage;
@@ -51,10 +51,10 @@ public class MessagesTreeModel extends StatefulDisposableBase implements TreeMod
 
 
     public void notifyTreeModelListeners(TreePath treePath, TreeEventType eventType) {
-        TreeUtil.notifyTreeModelListeners(this, listeners, treePath, eventType);
+        Trees.notifyTreeModelListeners(this, listeners, treePath, eventType);
     }
     public void notifyTreeModelListeners(TreeNode node, TreeEventType eventType) {
-        TreePath treePath = TreeUtil.createTreePath(node);
+        TreePath treePath = Trees.createTreePath(node);
         notifyTreeModelListeners(treePath, eventType);
     }
 

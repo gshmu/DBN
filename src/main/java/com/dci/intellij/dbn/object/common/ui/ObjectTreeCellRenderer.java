@@ -1,6 +1,6 @@
 package com.dci.intellij.dbn.object.common.ui;
 
-import com.dci.intellij.dbn.common.ui.tree.TreeUtil;
+import com.dci.intellij.dbn.common.ui.tree.Trees;
 import com.dci.intellij.dbn.object.DBMethod;
 import com.dci.intellij.dbn.object.common.DBObject;
 import com.dci.intellij.dbn.object.lookup.DBObjectRef;
@@ -36,7 +36,7 @@ public class ObjectTreeCellRenderer extends ColoredTreeCellRenderer {
             } else {
                 append(userObject.toString(), SimpleTextAttributes.REGULAR_ATTRIBUTES);
             }
-            TreeUtil.applySpeedSearchHighlighting(tree, this, true, selected);
+            Trees.applySpeedSearchHighlighting(tree, this, true, selected);
         });
     }
 }
