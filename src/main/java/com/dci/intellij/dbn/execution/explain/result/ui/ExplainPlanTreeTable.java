@@ -4,7 +4,7 @@ import com.dci.intellij.dbn.common.dispose.Disposer;
 import com.dci.intellij.dbn.common.dispose.StatefulDisposable;
 import com.dci.intellij.dbn.common.project.ProjectRef;
 import com.dci.intellij.dbn.common.ui.form.DBNForm;
-import com.dci.intellij.dbn.common.ui.tree.TreeUtil;
+import com.dci.intellij.dbn.common.ui.tree.Trees;
 import com.dci.intellij.dbn.common.ui.util.Borders;
 import com.dci.intellij.dbn.common.ui.util.Mouse;
 import com.dci.intellij.dbn.common.util.Strings;
@@ -97,7 +97,7 @@ public class ExplainPlanTreeTable extends TreeTable implements StatefulDisposabl
             }
         });
         accommodateColumnsSize();
-        TreeUtil.expandAll(tree);
+        Trees.expandAll(tree);
         addMouseListener(Mouse.listener().onClick(e -> showCellValuePopup()));
 
         Disposer.register(parent, this);

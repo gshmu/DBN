@@ -1,7 +1,7 @@
 package com.dci.intellij.dbn.execution.common.message.action;
 
 import com.dci.intellij.dbn.common.Icons;
-import com.dci.intellij.dbn.common.ui.tree.TreeUtil;
+import com.dci.intellij.dbn.common.ui.tree.Trees;
 import com.dci.intellij.dbn.execution.common.message.ui.tree.MessagesTree;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.project.Project;
@@ -15,6 +15,6 @@ public class MessagesTreeExpandAction extends AbstractExecutionMessagesAction {
 
     @Override
     protected void actionPerformed(@NotNull AnActionEvent e, @NotNull Project project, @NotNull MessagesTree messagesTree) {
-        TreeUtil.expandAll(messagesTree);
+        Trees.expandAll(messagesTree);
     }
 }

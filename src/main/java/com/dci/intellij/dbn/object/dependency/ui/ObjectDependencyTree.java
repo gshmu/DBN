@@ -8,6 +8,7 @@ import com.dci.intellij.dbn.common.load.LoadInProgressRegistry;
 import com.dci.intellij.dbn.common.thread.Dispatch;
 import com.dci.intellij.dbn.common.ui.component.DBNComponent;
 import com.dci.intellij.dbn.common.ui.tree.DBNTree;
+import com.dci.intellij.dbn.common.ui.tree.Trees;
 import com.dci.intellij.dbn.common.ui.util.Mouse;
 import com.dci.intellij.dbn.common.ui.util.UserInterface;
 import com.dci.intellij.dbn.common.util.Actions;
@@ -64,7 +65,7 @@ public class ObjectDependencyTree extends DBNTree{
 
     private void releaseEvent(MouseEvent e) {
         if (e.getButton() == MouseEvent.BUTTON3) {
-            TreePath path = getPathForLocation(e.getX(), e.getY());
+            TreePath path = Trees.getPathAtMousePosition(this, e);
             if (path != null) {
                 ObjectDependencyTreeNode node = (ObjectDependencyTreeNode) path.getLastPathComponent();
                 if (node != null) {
@@ -146,7 +147,7 @@ public class ObjectDependencyTree extends DBNTree{
     }
 
     private DBObject getMouseEventObject(MouseEvent e) {
-        TreePath path = getPathForLocation(e.getX(), e.getY());
+        TreePath path = Trees.getPathAtMousePosition(this, e);
         Object lastPathComponent = path == null ? null : path.getLastPathComponent();
         if (lastPathComponent instanceof ObjectDependencyTreeNode) {
             ObjectDependencyTreeNode dependencyTreeNode = (ObjectDependencyTreeNode) lastPathComponent;
