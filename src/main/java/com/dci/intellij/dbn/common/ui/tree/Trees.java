@@ -14,11 +14,12 @@ import javax.swing.event.TreeModelListener;
 import javax.swing.tree.TreeNode;
 import javax.swing.tree.TreePath;
 import java.awt.*;
+import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 import java.util.List;
 
 @Slf4j
-public final class TreeUtil {
+public final class Trees {
     public static void applySpeedSearchHighlighting(
             @NotNull JComponent tree,
             @NotNull SimpleColoredComponent coloredComponent,
@@ -96,6 +97,14 @@ public final class TreeUtil {
 
     public static TreePath getPathAtMousePosition(JTree tree) {
         Point location = MouseInfo.getPointerInfo().getLocation();
-        return tree.getPathForLocation((int) location.getX(), (int) location.getY());
+        return getPathForLocation(tree, location);
+    }
+
+    public static TreePath getPathAtMousePosition(JTree tree, MouseEvent event) {
+        return getPathForLocation(tree, event.getPoint());
+    }
+
+    private static TreePath getPathForLocation(JTree tree, Point location) {
+        return tree.getClosestPathForLocation((int) location.getX(), (int) location.getY());
     }
 }

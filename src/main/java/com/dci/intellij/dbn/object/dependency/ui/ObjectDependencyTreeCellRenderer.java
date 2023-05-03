@@ -2,7 +2,7 @@ package com.dci.intellij.dbn.object.dependency.ui;
 
 import com.dci.intellij.dbn.common.load.LoadInProgressIcon;
 import com.dci.intellij.dbn.common.ui.MergedIcon;
-import com.dci.intellij.dbn.common.ui.tree.TreeUtil;
+import com.dci.intellij.dbn.common.ui.tree.Trees;
 import com.dci.intellij.dbn.common.util.Commons;
 import com.dci.intellij.dbn.object.common.DBObject;
 import com.intellij.ui.ColoredTreeCellRenderer;
@@ -59,7 +59,7 @@ public class ObjectDependencyTreeCellRenderer extends ColoredTreeCellRenderer {
                     append(" (" + object.getSchema().getName() + ")", grayAttributes);
                 }
 
-                TreeUtil.applySpeedSearchHighlighting(tree, this, true, selected);
+                Trees.applySpeedSearchHighlighting(tree, this, true, selected);
             } else {
                 setIcon(LoadInProgressIcon.INSTANCE);
                 append("Loading...", SimpleTextAttributes.GRAY_ITALIC_ATTRIBUTES);

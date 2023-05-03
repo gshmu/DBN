@@ -2,7 +2,7 @@ package com.dci.intellij.dbn.execution.common.message.ui.tree.node;
 
 import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.common.ui.tree.TreeEventType;
-import com.dci.intellij.dbn.common.ui.tree.TreeUtil;
+import com.dci.intellij.dbn.common.ui.tree.Trees;
 import com.dci.intellij.dbn.execution.common.message.ui.tree.MessagesTreeBundleNode;
 import com.dci.intellij.dbn.execution.method.MethodExecutionMessage;
 import com.dci.intellij.dbn.object.common.DBSchemaObject;
@@ -35,7 +35,7 @@ public class MethodExecutionMessagesObjectNode extends MessagesTreeBundleNode<Me
         MethodExecutionMessageNode messageNode = new MethodExecutionMessageNode(this, executionMessage);
         addChild(messageNode);
 
-        TreePath treePath = TreeUtil.createTreePath(this);
+        TreePath treePath = Trees.createTreePath(this);
         getTreeModel().notifyTreeModelListeners(treePath, TreeEventType.STRUCTURE_CHANGED);
         return treePath;
     }
@@ -44,7 +44,7 @@ public class MethodExecutionMessagesObjectNode extends MessagesTreeBundleNode<Me
     public TreePath getTreePath(MethodExecutionMessage executionMessage) {
         for (MethodExecutionMessageNode messageNode : getChildren()) {
             if (messageNode.getMessage() == executionMessage) {
-                return TreeUtil.createTreePath(messageNode);
+                return Trees.createTreePath(messageNode);
             }
         }
         return null;

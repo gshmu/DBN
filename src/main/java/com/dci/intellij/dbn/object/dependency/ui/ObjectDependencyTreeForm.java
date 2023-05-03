@@ -3,7 +3,7 @@ package com.dci.intellij.dbn.object.dependency.ui;
 import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.common.ui.form.DBNFormBase;
 import com.dci.intellij.dbn.common.ui.form.DBNHeaderForm;
-import com.dci.intellij.dbn.common.ui.tree.TreeUtil;
+import com.dci.intellij.dbn.common.ui.tree.Trees;
 import com.dci.intellij.dbn.common.util.Actions;
 import com.dci.intellij.dbn.object.common.DBObject;
 import com.dci.intellij.dbn.object.common.DBSchemaObject;
@@ -18,10 +18,9 @@ import com.intellij.openapi.project.Project;
 import com.intellij.ui.components.JBScrollPane;
 import org.jetbrains.annotations.NotNull;
 
-import javax.swing.JComboBox;
-import javax.swing.JPanel;
+import javax.swing.*;
 import javax.swing.tree.TreeModel;
-import java.awt.BorderLayout;
+import java.awt.*;
 
 import static com.dci.intellij.dbn.common.ui.util.ComboBoxes.*;
 
@@ -100,7 +99,7 @@ public class ObjectDependencyTreeForm extends DBNFormBase {
 
         @Override
         public void actionPerformed(@NotNull AnActionEvent e) {
-            TreeUtil.expandAll(dependencyTree);
+            Trees.expandAll(dependencyTree);
         }
 
         @Override
@@ -154,7 +153,7 @@ public class ObjectDependencyTreeForm extends DBNFormBase {
 
         @Override
         public void actionPerformed(@NotNull AnActionEvent e) {
-            TreeUtil.collapseAll(dependencyTree);
+            Trees.collapseAll(dependencyTree);
         }
 
         @Override

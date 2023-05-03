@@ -1,7 +1,7 @@
 package com.dci.intellij.dbn.execution.common.message.ui.tree.node;
 
 import com.dci.intellij.dbn.common.ui.tree.TreeEventType;
-import com.dci.intellij.dbn.common.ui.tree.TreeUtil;
+import com.dci.intellij.dbn.common.ui.tree.Trees;
 import com.dci.intellij.dbn.connection.ConnectionId;
 import com.dci.intellij.dbn.execution.common.message.ui.tree.MessagesTreeBundleNode;
 import com.dci.intellij.dbn.execution.compiler.CompilerMessage;
@@ -58,14 +58,14 @@ public class CompilerMessagesObjectNode extends MessagesTreeBundleNode<CompilerM
         addChild(messageNode);
 
         getTreeModel().notifyTreeModelListeners(this, TreeEventType.STRUCTURE_CHANGED);
-        return TreeUtil.createTreePath(messageNode);
+        return Trees.createTreePath(messageNode);
     }
 
     @Nullable
     public TreePath getTreePath(CompilerMessage compilerMessage) {
         for (CompilerMessageNode messageNode : getChildren()) {
             if (messageNode.getMessage() == compilerMessage) {
-                return TreeUtil.createTreePath(messageNode);
+                return Trees.createTreePath(messageNode);
             }
         }
         return null;

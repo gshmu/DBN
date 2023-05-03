@@ -2,7 +2,7 @@ package com.dci.intellij.dbn.execution.common.message.ui.tree.node;
 
 import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.common.ui.tree.TreeEventType;
-import com.dci.intellij.dbn.common.ui.tree.TreeUtil;
+import com.dci.intellij.dbn.common.ui.tree.Trees;
 import com.dci.intellij.dbn.execution.common.message.ui.tree.MessagesTreeBundleNode;
 import com.dci.intellij.dbn.execution.explain.result.ExplainPlanMessage;
 import com.intellij.openapi.vfs.VirtualFile;
@@ -29,14 +29,14 @@ public class ExplainPlanMessagesFileNode extends MessagesTreeBundleNode<ExplainP
         ExplainPlanMessageNode explainPlanMessageNode = new ExplainPlanMessageNode(this, explainPlanMessage);
         addChild(explainPlanMessageNode);
         getTreeModel().notifyTreeModelListeners(this, TreeEventType.STRUCTURE_CHANGED);
-        return TreeUtil.createTreePath(explainPlanMessageNode);
+        return Trees.createTreePath(explainPlanMessageNode);
     }
 
     @Nullable
     public TreePath getTreePath(ExplainPlanMessage explainPlanMessage) {
         for (ExplainPlanMessageNode messageNode : getChildren()) {
             if (messageNode.getMessage() == explainPlanMessage) {
-                return TreeUtil.createTreePath(messageNode);
+                return Trees.createTreePath(messageNode);
             }
         }
         return null;

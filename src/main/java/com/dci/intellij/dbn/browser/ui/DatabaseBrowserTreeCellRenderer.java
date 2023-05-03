@@ -3,7 +3,7 @@ package com.dci.intellij.dbn.browser.ui;
 import com.dci.intellij.dbn.browser.model.BrowserTreeNode;
 import com.dci.intellij.dbn.browser.model.LoadInProgressTreeNode;
 import com.dci.intellij.dbn.browser.options.DatabaseBrowserSettings;
-import com.dci.intellij.dbn.common.ui.tree.TreeUtil;
+import com.dci.intellij.dbn.common.ui.tree.Trees;
 import com.dci.intellij.dbn.common.util.Commons;
 import com.dci.intellij.dbn.common.util.Strings;
 import com.dci.intellij.dbn.connection.ConnectionBundle;
@@ -124,7 +124,7 @@ public class DatabaseBrowserTreeCellRenderer implements TreeCellRenderer {
 
                     append(displayName, textAttributes);
 
-                    TreeUtil.applySpeedSearchHighlighting(tree, this, true, selected);
+                    Trees.applySpeedSearchHighlighting(tree, this, true, selected);
                 }
                 String displayDetails = treeNode.getPresentableTextDetails();
                 if (!Strings.isEmptyOrSpaces(displayDetails)) {
