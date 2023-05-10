@@ -9,6 +9,8 @@ import com.dci.intellij.dbn.common.thread.ThreadProperty;
 import com.intellij.openapi.progress.ProgressManager;
 import com.intellij.openapi.project.Project;
 
+import static com.dci.intellij.dbn.database.interfaces.queue.InterfaceThreadMonitor.getRunningThreadCount;
+
 public class InterfaceQueueConsumer implements Consumer<InterfaceTask<?>>{
     private final WeakRef<InterfaceQueue> queue;
 
@@ -26,22 +28,41 @@ public class InterfaceQueueConsumer implements Consumer<InterfaceTask<?>>{
 
     private static void schedule(InterfaceTask<?> task, InterfaceQueue queue) {
         Project project = queue.getProject();
-        if (progressBackgroundSupported(task)) {
+        if (useProgress(task)) {
+            InterfaceThreadMonitor.start(true);
             Progress.background(project, queue.getConnection(), true,
                     task.getTitle(),
                     task.getText(),
-                    indicator -> queue.executeTask(task));
+                    indicator -> executeTask(task, queue));
         } else {
-            Background.run(project, () -> queue.executeTask(task));
+            InterfaceThreadMonitor.start(false);
+            Background.run(project, () -> executeTask(task, queue));
         }
     }
 
-    private static boolean progressBackgroundSupported(InterfaceTask<?> task) {
+    private static void executeTask(InterfaceTask<?> task, InterfaceQueue queue) {
+        try {
+            queue.executeTask(task);
+        } finally {
+            boolean progress = ThreadMonitor.isProgressProcess();
+            InterfaceThreadMonitor.finish(progress);
+        }
+    }
+
+    private static boolean canUseProgress(InterfaceTask<?> task) {
         if (!task.isProgress()) return false;
 
         ProgressManager progressManager = ProgressManager.getInstance();
-        return !progressManager.hasModalProgressIndicator() &&
-                !progressManager.hasUnsafeProgressIndicator();
+        return !progressManager.hasModalProgressIndicator() && getRunningThreadCount(true) < 10;
+    }
+
+    private static boolean useProgress(InterfaceTask<?> task) {
+        if (canUseProgress(task)) {
+            synchronized (InterfaceQueueConsumer.class) {
+                return canUseProgress(task);
+            }
+        }
+        return false;
     }
 
     public InterfaceQueue getQueue() {

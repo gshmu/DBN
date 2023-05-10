@@ -9,4 +9,6 @@ public enum CounterType {
     CREATING,
     REJECTED,
     FINISHED,
+
+    GENERIC
 }

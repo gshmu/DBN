@@ -244,7 +244,7 @@ public class DBColumnImpl extends DBObjectImpl<DBColumnMetadata> implements DBCo
         List<DBColumn> list = new ArrayList<>();
         boolean isSystemSchema = getDataset().getSchema().isSystemSchema();
         for (DBSchema schema : getObjectBundle().getSchemas()) {
-            if (ProgressMonitor.isCancelled()) {
+            if (ProgressMonitor.isProgressCancelled()) {
                 break;
             }
             if (schema.isSystemSchema() == isSystemSchema) {

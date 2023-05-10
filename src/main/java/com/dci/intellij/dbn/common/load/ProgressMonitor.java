@@ -5,6 +5,7 @@ import com.intellij.openapi.progress.ProgressManager;
 import org.jetbrains.annotations.Nullable;
 
 public final class ProgressMonitor {
+
     private ProgressMonitor() {}
 
     @Nullable
@@ -21,8 +22,12 @@ public final class ProgressMonitor {
         ProgressManager.checkCanceled();
     }
 
-    public static boolean isCancelled() {
+    public static boolean isProgressCancelled() {
         return progress().isCanceled();
+    }
+
+    public static boolean isProgressThread() {
+        return getProgressIndicator() != null;
     }
 
     public static void setProgressIndeterminate(boolean indeterminate) {

@@ -350,7 +350,7 @@ public class DatabaseDebuggerManager extends ProjectComponentBase implements Per
 
             for (DBObject object : executable.getReferencedObjects()) {
                 if (object instanceof DBSchemaObject && object != executable) {
-                    if (!ProgressMonitor.isCancelled()) {
+                    if (!ProgressMonitor.isProgressCancelled()) {
                         DBSchemaObject schemaObject = (DBSchemaObject) object;
                         boolean added = addToCompileList(compileList, schemaObject);
                         if (added) {
