@@ -178,7 +178,7 @@ public class DatabaseFileEditorManager extends ProjectComponentBase {
     }
 
     private static void invokeFileOpen(DBFileOpenHandle handle, Runnable opener) {
-        if (ProgressMonitor.isCancelled()) {
+        if (ProgressMonitor.isProgressCancelled()) {
             handle.release();
         } else {
             Dispatch.run(() -> {

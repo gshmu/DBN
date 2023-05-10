@@ -85,7 +85,7 @@ public abstract class CancellableDatabaseCall<T> implements Callable<T> {
     public abstract void cancel();
 
     public boolean isCancelRequested() {
-        return cancelRequested || ProgressMonitor.isCancelled();
+        return cancelRequested || ProgressMonitor.isProgressCancelled();
     }
 
 

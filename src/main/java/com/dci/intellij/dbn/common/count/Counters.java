@@ -9,4 +9,19 @@ public class Counters {
     public Counter get(CounterType type) {
         return counters.computeIfAbsent(type, t -> new Counter(t));
     }
+
+    @Override
+    public String toString() {
+        StringBuilder builder = new StringBuilder();
+        for (CounterType counterType : counters.keySet()) {
+            Counter counter = counters.get(counterType);
+
+            if (builder.length() > 0) builder.append(" ");
+            builder.append(counterType.name().toLowerCase());
+            builder.append("=");
+            builder.append(counter.get());
+        }
+
+        return builder.toString();
+    }
 }
