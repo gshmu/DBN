@@ -20,6 +20,7 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.PriorityBlockingQueue;
 import java.util.concurrent.locks.LockSupport;
 
+import static com.dci.intellij.dbn.common.load.ProgressMonitor.isProgressThread;
 import static com.dci.intellij.dbn.database.interfaces.queue.InterfaceTask.COMPARATOR;
 import static com.dci.intellij.dbn.database.interfaces.queue.InterfaceTaskStatus.*;
 
@@ -137,6 +138,7 @@ public class InterfaceQueue extends StatefulDisposableBase implements DatabaseIn
         } finally {
             counters.running().decrement();
             counters.finished().increment();
+            InterfaceThreadMonitor.finish(isProgressThread());
             task.changeStatus(FINISHED);
             unparkMonitor();
         }

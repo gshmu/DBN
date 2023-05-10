@@ -38,7 +38,7 @@ public abstract class ConnectionAction implements DatabaseContextBase, Runnable{
         if (cancelled) {
             return true;
         } else {
-            return ProgressMonitor.isCancelled();
+            return ProgressMonitor.isProgressCancelled();
         }
     }
 

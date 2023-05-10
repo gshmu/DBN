@@ -24,7 +24,7 @@ public final class Counter {
     }
 
     public int decrement() {
-        int value = count.decrementAndGet();
+        int value = count.updateAndGet(i -> i > 0 ? i - 1 : i);
         listeners.notify(l -> l.when(value));
         return value;
     }
@@ -35,6 +35,14 @@ public final class Counter {
 
     public void set(int count) {
         this.count.set(count);
+    }
+
+    public int max(int count) {
+        return this.count.updateAndGet(i -> Math.max(i, count));
+    }
+
+    public int min(int count) {
+        return this.count.updateAndGet(i -> Math.min(i, count));
     }
 
     public void reset() {
