@@ -1,21 +1,23 @@
 package com.dci.intellij.dbn.connection.config.tns;
 
 
+import lombok.Getter;
 import org.jetbrains.annotations.NotNull;
 
+@Getter
 public class TnsName implements Comparable<TnsName> {
 
-    private String name;
-    private String protocol;
-    private String host;
-    private String port;
-    private String server;
-    private String sid;
-    private String serviceName;
-    private String globalName;
-    private String failover;
-    private String failoverType;
-    private String failoverMethod;
+    private final String name;
+    private final String protocol;
+    private final String host;
+    private final String port;
+    private final String server;
+    private final String sid;
+    private final String serviceName;
+    private final String globalName;
+    private final String failover;
+    private final String failoverType;
+    private final String failoverMethod;
 
     TnsName(
             String name,
@@ -40,50 +42,6 @@ public class TnsName implements Comparable<TnsName> {
         this.failover = failover;
         this.failoverType = failoverType;
         this.failoverMethod = failoverMethod;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public String getProtocol() {
-        return protocol;
-    }
-
-    public String getHost() {
-        return host;
-    }
-
-    public String getPort() {
-        return port;
-    }
-
-    public String getServer() {
-        return server;
-    }
-
-    public String getSid() {
-        return sid;
-    }
-
-    public String getServiceName() {
-        return serviceName;
-    }
-
-    public String getGlobalName() {
-        return globalName;
-    }
-
-    public String getFailover() {
-        return failover;
-    }
-
-    public String getFailoverType() {
-        return failoverType;
-    }
-
-    public String getFailoverMethod() {
-        return failoverMethod;
     }
 
     public String toString() {

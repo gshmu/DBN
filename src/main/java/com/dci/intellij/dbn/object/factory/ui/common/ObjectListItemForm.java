@@ -8,8 +8,8 @@ import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import org.jetbrains.annotations.NotNull;
 
-import javax.swing.JPanel;
-import java.awt.BorderLayout;
+import javax.swing.*;
+import java.awt.*;
 
 public class ObjectListItemForm extends DBNFormBase {
     private JPanel mainPanel;
@@ -30,7 +30,7 @@ public class ObjectListItemForm extends DBNFormBase {
 
     @NotNull
     public ObjectListForm<?> getParentForm() {
-        return ensureParent();
+        return ensureParentComponent();
     }
 
     @NotNull

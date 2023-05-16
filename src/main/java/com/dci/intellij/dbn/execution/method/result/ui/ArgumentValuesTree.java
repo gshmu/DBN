@@ -39,7 +39,7 @@ class ArgumentValuesTree extends DBNTree{
 
     @NotNull
     public MethodExecutionResultForm getParentForm() {
-        return (MethodExecutionResultForm) parent();
+        return this.getParentComponent();
     }
 
     @NotNull

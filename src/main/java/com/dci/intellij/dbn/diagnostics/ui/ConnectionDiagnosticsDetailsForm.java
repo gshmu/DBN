@@ -50,7 +50,7 @@ public class ConnectionDiagnosticsDetailsForm extends DBNFormBase {
             @Override
             public void selectionChanged(TabInfo oldSelection, TabInfo newSelection) {
                 int selectedIndex = diagnosticsTabs.getTabs().indexOf(newSelection);
-                ConnectionDiagnosticsForm parent = nd(parent());
+                ConnectionDiagnosticsForm parent = nd(getParentComponent());
                 parent.setTabSelectionIndex(selectedIndex);
             }
         });

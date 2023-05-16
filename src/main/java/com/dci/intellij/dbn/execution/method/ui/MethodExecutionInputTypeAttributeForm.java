@@ -94,7 +94,7 @@ public class MethodExecutionInputTypeAttributeForm extends DBNFormBase {
     }
 
     public MethodExecutionInputArgumentForm getParentForm() {
-        return ensureParent();
+        return ensureParentComponent();
     }
 
     @NotNull

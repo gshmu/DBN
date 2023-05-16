@@ -154,7 +154,7 @@ public class ScriptExecutionInputForm extends DBNFormBase {
     }
 
     private void updateButtons() {
-        ScriptExecutionInputDialog parentComponent = ensureParent();
+        ScriptExecutionInputDialog parentComponent = ensureParentComponent();
         parentComponent.setActionEnabled(
                 connectionComboBox.getSelectedValue() != null &&
                 schemaComboBox.getSelectedValue() != null &&

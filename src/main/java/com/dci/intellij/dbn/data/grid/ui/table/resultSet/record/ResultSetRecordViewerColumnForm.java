@@ -9,12 +9,8 @@ import com.dci.intellij.dbn.data.type.DBDataType;
 import com.intellij.util.ui.UIUtil;
 import org.jetbrains.annotations.NotNull;
 
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.JTextField;
-import java.awt.BorderLayout;
-import java.awt.Cursor;
-import java.awt.Dimension;
+import javax.swing.*;
+import java.awt.*;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
@@ -115,7 +111,7 @@ public class ResultSetRecordViewerColumnForm extends DBNFormBase {
         @Override
         public void keyPressed(KeyEvent e) {
             if (!e.isConsumed()) {
-                ResultSetRecordViewerForm parentForm = (ResultSetRecordViewerForm) ResultSetRecordViewerColumnForm.this.ensureParent();
+                ResultSetRecordViewerForm parentForm = ensureParentComponent();
                 if (e.getKeyCode() == 38) {//UP
                     parentForm.focusPreviousColumnPanel(ResultSetRecordViewerColumnForm.this);
                     e.consume();
