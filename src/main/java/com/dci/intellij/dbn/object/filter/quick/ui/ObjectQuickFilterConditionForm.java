@@ -1,9 +1,9 @@
 package com.dci.intellij.dbn.object.filter.quick.ui;
 
 import com.dci.intellij.dbn.common.dispose.Failsafe;
+import com.dci.intellij.dbn.common.ui.form.DBNFormBase;
 import com.dci.intellij.dbn.common.ui.listener.ComboBoxSelectionKeyListener;
 import com.dci.intellij.dbn.common.ui.misc.DBNComboBox;
-import com.dci.intellij.dbn.common.ui.form.DBNFormBase;
 import com.dci.intellij.dbn.common.util.Actions;
 import com.dci.intellij.dbn.object.filter.ConditionOperator;
 import com.dci.intellij.dbn.object.filter.quick.ObjectQuickFilter;
@@ -17,12 +17,9 @@ import com.intellij.openapi.project.Project;
 import com.intellij.ui.DocumentAdapter;
 import org.jetbrains.annotations.NotNull;
 
-import javax.swing.JComponent;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.JTextField;
+import javax.swing.*;
 import javax.swing.event.DocumentEvent;
-import java.awt.BorderLayout;
+import java.awt.*;
 
 public class ObjectQuickFilterConditionForm extends DBNFormBase {
     private JPanel mainPanel;
@@ -70,7 +67,7 @@ public class ObjectQuickFilterConditionForm extends DBNFormBase {
 
     @NotNull
     public ObjectQuickFilterForm getParentForm() {
-        return ensureParent();
+        return ensureParentComponent();
     }
 
     @Override

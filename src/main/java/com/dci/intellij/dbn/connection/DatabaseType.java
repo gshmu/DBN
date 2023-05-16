@@ -20,7 +20,7 @@ public enum DatabaseType implements Constant<DatabaseType>, Presentable{
             Icons.DB_ORACLE_LARGE,
             "oracle.jdbc.driver.OracleDriver",
             AuthenticationType.values(),
-            array(DatabaseUrlPattern.ORACLE_SID, DatabaseUrlPattern.ORACLE_SERVICE)),
+            array(DatabaseUrlPattern.ORACLE_TNS, DatabaseUrlPattern.ORACLE_SID, DatabaseUrlPattern.ORACLE_SERVICE, DatabaseUrlPattern.GENERIC)),
 
     MYSQL(
             "MySQL",
@@ -28,7 +28,7 @@ public enum DatabaseType implements Constant<DatabaseType>, Presentable{
             Icons.DB_MYSQL_LARGE,
             "com.mysql.cj.jdbc.Driver",
             AuthenticationType.values(),
-            array(DatabaseUrlPattern.MYSQL),
+            array(DatabaseUrlPattern.MYSQL, DatabaseUrlPattern.GENERIC),
             array("MARIADB", "PERCONA", "OURDELTA", "DRIZZLE", "MAXDB")),
 
     POSTGRES(
@@ -37,7 +37,7 @@ public enum DatabaseType implements Constant<DatabaseType>, Presentable{
             Icons.DB_POSTGRESQL_LARGE,
             "org.postgresql.Driver",
             AuthenticationType.values(),
-            array(DatabaseUrlPattern.POSTGRES),
+            array(DatabaseUrlPattern.POSTGRES, DatabaseUrlPattern.GENERIC),
             array("REDSHIFT", "BITNINE", "NCLUSTER", "GREENPLUM", "HADOOPDB", "NETEZZA", "PARACCEL", "PGPOOL", "REDHAT", "TORODB", "TERADATA", "YUGABYTE")),
 
     SQLITE(
@@ -46,7 +46,7 @@ public enum DatabaseType implements Constant<DatabaseType>, Presentable{
             Icons.DB_SQLITE_LARGE,
             "org.sqlite.JDBC",
             array(AuthenticationType.NONE),
-            array(DatabaseUrlPattern.SQLITE)),
+            array(DatabaseUrlPattern.SQLITE, DatabaseUrlPattern.GENERIC)),
 
     GENERIC(
             "Generic",
@@ -191,5 +191,7 @@ public enum DatabaseType implements Constant<DatabaseType>, Presentable{
         return GENERIC;
     }
 
-
+    public boolean supportsAuthentication() {
+        return authTypes.length > 1 || authTypes[0] != AuthenticationType.NONE;
+    }
 }

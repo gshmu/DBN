@@ -12,8 +12,7 @@ import com.intellij.ui.components.JBScrollPane;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import javax.swing.JLabel;
-import javax.swing.JPanel;
+import javax.swing.*;
 import javax.swing.event.DocumentEvent;
 import java.io.File;
 import java.util.ArrayList;
@@ -59,11 +58,11 @@ public class TnsNamesImportForm extends DBNFormBase {
     }
 
     public TnsNamesImportDialog getParentDialog() {
-        return ensureParent();
+        return ensureParentComponent();
     }
 
     private void updateButtons() {
-        TnsNamesImportDialog parentComponent = ensureParent();
+        TnsNamesImportDialog parentComponent = ensureParentComponent();
         parentComponent.getImportSelectedAction().setEnabled(tnsNamesTable.getSelectedRowCount() > 0);
         parentComponent.getImportAllAction().setEnabled(tnsNamesTable.getRowCount() > 0);
     }

@@ -31,7 +31,7 @@ public class ConnectionDetailSettings extends BasicProjectConfiguration<Connecti
     private boolean connectAutomatically = true;
     private boolean restoreWorkspace = true;
     private boolean restoreWorkspaceDeep = false;
-    private int connectivityTimeoutSeconds = 10;
+    private int connectivityTimeoutSeconds = 30; // default to 30 seconds instead of 5 to support longer ADB connect times
     private int idleMinutesToDisconnect = 30;
     private int idleMinutesToDisconnectPool = 5;
     private int credentialExpiryMinutes = 10;

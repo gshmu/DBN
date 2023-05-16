@@ -1,7 +1,6 @@
 package com.dci.intellij.dbn.connection;
 
 import com.dci.intellij.dbn.common.database.DatabaseInfo;
-import com.dci.intellij.dbn.common.util.Commons;
 import com.dci.intellij.dbn.common.util.Strings;
 import lombok.Getter;
 import org.jetbrains.annotations.NotNull;
@@ -9,8 +8,17 @@ import org.jetbrains.annotations.NotNull;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import static com.dci.intellij.dbn.common.util.Commons.nvl;
+
 @Getter
 public enum DatabaseUrlPattern {
+
+    ORACLE_TNS(
+            "jdbc:oracle:thin:@<TNS_CONNECTION_PROFILE>?TNS_ADMIN=<TNS_FOLDER>",
+            // TODO: url pattern
+            "^jdbc:oracle:thin:@.*$",
+            DatabaseInfo.Default.ORACLE,
+            DatabaseUrlType.TNS),
 
     ORACLE_SID(
             "jdbc:oracle:thin:@<HOST>:<PORT>:<DATABASE>",
@@ -23,6 +31,7 @@ public enum DatabaseUrlPattern {
             "^(jdbc:oracle:(?:thin|oci):@\\/\\/)(?<HOST>[._\\-a-z0-9]{1,1000})(?<PORT>:[0-9]{1,100})(?<DATABASE>\\/[.\\-$_a-z0-9]{1,1000})$",
             DatabaseInfo.Default.ORACLE,
             DatabaseUrlType.SERVICE),
+
 
     ORACLE_LDAP(
             "jdbc:oracle:thin:@ldap://<HOST>:<PORT>/<DATABASE>",
@@ -64,7 +73,7 @@ public enum DatabaseUrlPattern {
             "jdbc:<VENDOR>://<HOST>:<PORT>/<DATABASE>",
             "^(jdbc:(?<VENDOR>[._\\-a-z0-9]{1,1000}):\\/\\/)(?<HOST>[._\\-a-z0-9]{1,1000})(?<PORT>:[0-9]{1,100})?(?<DATABASE>\\/[\\-$_a-z0-9]{0,1000})?$",
             DatabaseInfo.Default.GENERIC,
-            DatabaseUrlType.DATABASE),
+            DatabaseUrlType.CUSTOM),
     ;
 
     private final DatabaseUrlType urlType;
@@ -82,26 +91,37 @@ public enum DatabaseUrlPattern {
     }
 
 
-    public String getUrl(DatabaseInfo databaseInfo) {
-        return getUrl(
-                databaseInfo.getVendor(),
-                databaseInfo.getHost(),
-                databaseInfo.getPort(),
-                databaseInfo.getDatabase(),
-                databaseInfo.getMainFile());
+    public String buildUrl(DatabaseInfo databaseInfo) {
+        if (databaseInfo.getUrlType() == DatabaseUrlType.TNS) {
+            return buildUrl(
+                    databaseInfo.getTnsFolder(),
+                    databaseInfo.getTnsProfile());
+        } else {
+            return buildUrl(
+                    databaseInfo.getVendor(),
+                    databaseInfo.getHost(),
+                    databaseInfo.getPort(),
+                    databaseInfo.getDatabase(),
+                    databaseInfo.getMainFile());
+        }
     }
 
-    public String getUrl(String vendor, String host, String port, String database, String file) {
+    public String buildUrl(String tnsFolder, String tnsProfile) {
+    	return urlPattern.replace("<TNS_FOLDER>", nvl(tnsFolder, ""))
+				 .replace("<TNS_CONNECTION_PROFILE>", nvl(tnsProfile, ""));
+    }
+
+    public String buildUrl(String vendor, String host, String port, String database, String file) {
         return urlPattern.
-                replace("<VENDOR>", Commons.nvl(vendor, "")).
-                replace("<HOST>", Commons.nvl(host, "")).
+                replace("<VENDOR>", nvl(vendor, "")).
+                replace("<HOST>", nvl(host, "")).
                 replace(":<PORT>", Strings.isEmpty(port) ? "" : ":" + port).
-                replace("<DATABASE>", Commons.nvl(database, "")).
-                replace("<FILE>", Commons.nvl(file, ""));
+                replace("<DATABASE>", nvl(database, "")).
+                replace("<FILE>", nvl(file, ""));
     }
 
     public String getDefaultUrl() {
-        return getUrl(defaultInfo);
+        return buildUrl(defaultInfo);
     }
 
     DatabaseUrlPattern(String urlPattern, String urlRegex, DatabaseInfo defaultInfo, DatabaseUrlType urlType) {

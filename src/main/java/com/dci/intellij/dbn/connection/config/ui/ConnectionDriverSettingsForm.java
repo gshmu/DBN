@@ -7,6 +7,7 @@ import com.dci.intellij.dbn.common.ui.util.ComboBoxes;
 import com.dci.intellij.dbn.common.util.Messages;
 import com.dci.intellij.dbn.common.util.Strings;
 import com.dci.intellij.dbn.connection.DatabaseType;
+import com.dci.intellij.dbn.connection.config.ConnectionDatabaseSettings;
 import com.dci.intellij.dbn.driver.DatabaseDriverManager;
 import com.dci.intellij.dbn.driver.DriverBundle;
 import com.dci.intellij.dbn.driver.DriverSource;
@@ -97,7 +98,7 @@ public class ConnectionDriverSettingsForm extends DBNFormBase {
     }
 
     public ConnectionDatabaseSettingsForm getParentForm() {
-        return ensureParent();
+        return ensureParentComponent();
     }
 
     void updateDriverFields() {
@@ -190,7 +191,7 @@ public class ConnectionDriverSettingsForm extends DBNFormBase {
                         isDriverLibraryAccessible());
     }
 
-    private DriverSource getDriverSource() {
+    public DriverSource getDriverSource() {
         DatabaseType databaseType = getDatabaseType();
         boolean allowBuiltInLibrary = isBuiltInLibrarySupported(databaseType);
         return allowBuiltInLibrary ? getSelection(driverSourceComboBox) : DriverSource.EXTERNAL;
@@ -205,28 +206,21 @@ public class ConnectionDriverSettingsForm extends DBNFormBase {
         return Strings.isNotEmpty(driverLibrary) && new File(driverLibrary).exists();
     }
 
-    private String getDriverLibrary() {
+    public String getDriverLibrary() {
         return driverLibraryTextField.getTextField().getText();
     }
 
-    private DatabaseType getDatabaseType() {
+    public DatabaseType getDatabaseType() {
         return getParentForm().getSelectedDatabaseType();
+    }
+
+    public DatabaseType getDriverDatabaseType() {
+        DriverOption selectedDriver = ComboBoxes.getSelection(driverComboBox);
+        return selectedDriver == null ? null : DatabaseType.resolve(selectedDriver.getName());
     }
 
     private static boolean fileExists(String driverLibrary) {
         return driverLibrary != null && new File(driverLibrary).exists();
-    }
-
-    TextFieldWithBrowseButton getDriverLibraryTextField() {
-        return driverLibraryTextField;
-    }
-
-    JComboBox<DriverOption> getDriverComboBox() {
-        return driverComboBox;
-    }
-
-    public JLabel getDriverErrorLabel() {
-        return driverErrorLabel;
     }
 
     @NotNull
@@ -235,8 +229,29 @@ public class ConnectionDriverSettingsForm extends DBNFormBase {
         return mainPanel;
     }
 
-    JComboBox<DriverSource> getDriverSourceComboBox() {
-        return driverSourceComboBox;
+    public DriverOption getDriverOption() {
+        return ComboBoxes.getSelection(driverComboBox);
+    }
+
+
+    public void resetFormChanges() {
+        ConnectionDatabaseSettingsForm parent = ensureParentComponent();
+        ConnectionDatabaseSettings configuration = parent.getConfiguration();
+
+        setSelection(driverSourceComboBox, configuration.getDriverSource());
+        driverLibraryTextField.setText(configuration.getDriverLibrary());
+        updateDriverFields();
+
+        List<DriverOption> driverOptions = getElements(driverComboBox);
+        setSelection(driverComboBox, DriverOption.get(driverOptions, configuration.getDriver()));
+    }
+
+    public JComboBox<DriverOption> getDriverComboBox() {
+        return driverComboBox;
+    }
+
+    public TextFieldWithBrowseButton getDriverLibraryTextField() {
+        return driverLibraryTextField;
     }
 }
 

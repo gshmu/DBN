@@ -5,7 +5,7 @@ import com.dci.intellij.dbn.common.ui.form.DBNFormBase;
 import com.dci.intellij.dbn.common.ui.util.UserInterface;
 import com.dci.intellij.dbn.connection.config.file.DatabaseFile;
 import com.dci.intellij.dbn.connection.config.file.DatabaseFiles;
-import com.dci.intellij.dbn.connection.config.ui.ConnectionDatabaseSettingsForm;
+import com.dci.intellij.dbn.connection.config.ui.ConnectionUrlSettingsForm;
 import com.intellij.ui.ToolbarDecorator;
 import org.jetbrains.annotations.NotNull;
 
@@ -17,7 +17,7 @@ public class DatabaseFileSettingsForm extends DBNFormBase {
     private DatabaseFiles databaseFiles;
     private final DatabaseFilesTable table;
 
-    public DatabaseFileSettingsForm(ConnectionDatabaseSettingsForm parent, DatabaseFiles databaseFiles) {
+    public DatabaseFileSettingsForm(ConnectionUrlSettingsForm parent, DatabaseFiles databaseFiles) {
         super(parent);
         table = new DatabaseFilesTable(this, databaseFiles);
 
