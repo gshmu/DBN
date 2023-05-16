@@ -77,7 +77,7 @@ public abstract class DBNDialog<F extends DBNForm> extends DialogWrapper impleme
     protected abstract F createForm();
 
     @Nullable
-    public final <T extends Disposable> T parent() {
+    public final <T extends Disposable> T getParentComponent() {
         return null;
     }
 

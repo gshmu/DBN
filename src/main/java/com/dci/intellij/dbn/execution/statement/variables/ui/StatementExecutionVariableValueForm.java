@@ -155,7 +155,7 @@ public class StatementExecutionVariableValueForm extends DBNFormBase {
     }
 
     public StatementExecutionInputForm getParentForm() {
-        return (StatementExecutionInputForm) ensureParent();
+        return ensureParentComponent();
     }
 
     void showErrorLabel(String errorText) {

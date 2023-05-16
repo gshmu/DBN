@@ -55,7 +55,7 @@ public class DatasetSortingColumnForm extends DBNFormBase {
 
     @NotNull
     public DatasetEditorSortingForm getParentForm() {
-        return ensureParent();
+        return ensureParentComponent();
     }
 
     private class ColumnSelector extends ValueSelector<DBColumn>{

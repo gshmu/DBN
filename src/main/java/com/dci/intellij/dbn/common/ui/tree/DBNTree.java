@@ -68,7 +68,7 @@ public class DBNTree extends Tree implements DBNComponent {
 
     @NotNull
     @Override
-    public <T extends Disposable> T parent() {
+    public <T extends Disposable> T getParentComponent() {
         return (T) parent.ensure();
     }
 

@@ -127,7 +127,7 @@ public class DatasetRecordEditorColumnForm extends DBNFormBase {
 
     @NotNull
     public DatasetRecordEditorForm getParentForm() {
-        return ensureParent();
+        return ensureParentComponent();
     }
 
     @NotNull
@@ -235,7 +235,7 @@ public class DatasetRecordEditorColumnForm extends DBNFormBase {
         @Override
         public void keyPressed(KeyEvent e) {
             if (!e.isConsumed()) {
-                DatasetRecordEditorForm parentComponent = ensureParent();
+                DatasetRecordEditorForm parentComponent = ensureParentComponent();
                 if (e.getKeyCode() == 38) {//UP
                     parentComponent.focusPreviousColumnPanel(DatasetRecordEditorColumnForm.this);
                     e.consume();

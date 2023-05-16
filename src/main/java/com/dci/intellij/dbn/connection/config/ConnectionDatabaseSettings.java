@@ -138,13 +138,13 @@ public class ConnectionDatabaseSettings extends BasicConfiguration<ConnectionSet
 
     public String getConnectionUrl() {
         return configType == ConnectionConfigType.BASIC ?
-                urlPattern.getUrl(databaseInfo) :
+                urlPattern.buildUrl(databaseInfo) :
                 databaseInfo.getUrl();
     }
 
     public String getConnectionUrl(String host, String port) {
         if (configType == ConnectionConfigType.BASIC) {
-            return urlPattern.getUrl(
+            return urlPattern.buildUrl(
                     databaseInfo.getVendor(),
                     host,
                     port,

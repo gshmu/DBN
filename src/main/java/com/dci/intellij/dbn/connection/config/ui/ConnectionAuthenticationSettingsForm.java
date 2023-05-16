@@ -4,6 +4,7 @@ import com.dci.intellij.dbn.common.database.AuthenticationInfo;
 import com.dci.intellij.dbn.common.ui.form.DBNFormBase;
 import com.dci.intellij.dbn.common.util.Strings;
 import com.dci.intellij.dbn.connection.AuthenticationType;
+import com.dci.intellij.dbn.connection.config.ConnectionDatabaseSettings;
 import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
@@ -60,13 +61,22 @@ public class ConnectionAuthenticationSettingsForm extends DBNFormBase {
         return userTextField;
     }
 
+    public String getUser() {
+        return userTextField.getText();
+    }
+
     public void applyFormChanges(AuthenticationInfo authenticationInfo){
         authenticationInfo.setType(getSelection(authTypeComboBox));
         authenticationInfo.setUser(userTextField.getText());
         authenticationInfo.setPassword(new String(passwordField.getPassword()));
     }
 
-    public void resetFormChanges(AuthenticationInfo authenticationInfo) {
+    public void resetFormChanges() {
+        ConnectionDatabaseSettingsForm parent = ensureParentComponent();
+        ConnectionDatabaseSettings configuration = parent.getConfiguration();
+        AuthenticationInfo authenticationInfo = configuration.getAuthenticationInfo();
+
+
         String user = authenticationInfo.getUser();
         String password = authenticationInfo.getPassword();
         if (Strings.isNotEmpty(user)) cachedUser = user;

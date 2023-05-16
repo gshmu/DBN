@@ -106,7 +106,7 @@ public class DataSearchComponent extends DBNFormBase implements SelectionListene
 
     @NotNull
     public SearchableDataComponent getSearchableComponent() {
-        return (SearchableDataComponent) this.ensureParent();
+        return this.ensureParentComponent();
     }
 
     @NotNull

@@ -29,6 +29,8 @@ public class DatabaseInfo implements Cloneable<DatabaseInfo> {
     private String url;
     private DatabaseFiles files;
     private DatabaseUrlType urlType = DatabaseUrlType.DATABASE;
+	private String tnsFolder;
+	private String tnsProfile;
 
     private DatabaseInfo() {}
 
@@ -45,8 +47,6 @@ public class DatabaseInfo implements Cloneable<DatabaseInfo> {
         this.files = new DatabaseFiles(file);
         this.urlType = urlType;
     }
-
-
 
     public boolean isEmpty() {
         return Strings.isEmpty(host) && Strings.isEmpty(port) && Strings.isEmpty(database) && (files == null || Strings.isEmpty(files.getMainFile().getPath()));
@@ -79,20 +79,20 @@ public class DatabaseInfo implements Cloneable<DatabaseInfo> {
         }
     }
 
-    public void setFiles(DatabaseFiles files) {
-        this.files = files;
-    }
-
     @Override
     public DatabaseInfo clone() {
         DatabaseInfo clone = new DatabaseInfo();
-        clone.vendor = vendor;
-        clone.host = host;
-        clone.port = port;
-        clone.database = database;
-        clone.url = url;
-        clone.files = files == null ? null : files.clone();
-        clone.urlType = urlType;
+        clone.vendor = this.vendor;
+        clone.host = this.host;
+        clone.port = this.port;
+        clone.database = this.database;
+        clone.url = this.url;
+        clone.files = this.files == null ? null : this.files.clone();
+        clone.urlType = this.urlType;
+        clone.tnsFolder = this.tnsFolder;
+        clone.tnsProfile = this.tnsProfile;
+
         return clone;
     }
+
 }

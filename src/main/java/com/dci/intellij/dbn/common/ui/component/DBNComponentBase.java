@@ -45,7 +45,7 @@ public abstract class DBNComponentBase extends StatefulDisposableBase implements
 
     @Nullable
     @Override
-    public final <T extends Disposable> T parent() {
+    public final <T extends Disposable> T getParentComponent() {
         return (T) WeakRef.get(parent);
     }
 

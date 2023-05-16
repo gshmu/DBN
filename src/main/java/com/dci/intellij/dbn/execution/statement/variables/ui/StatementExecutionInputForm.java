@@ -143,7 +143,7 @@ public class StatementExecutionInputForm extends DBNFormBase {
 
     @NotNull
     public StatementExecutionInputsDialog getParentDialog() {
-        return (StatementExecutionInputsDialog) ensureParent();
+        return ensureParentComponent();
     }
 
     public StatementExecutionProcessor getExecutionProcessor() {
