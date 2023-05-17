@@ -20,10 +20,10 @@ import com.dci.intellij.dbn.object.lookup.DBObjectRef;
 import com.dci.intellij.dbn.object.type.DBObjectType;
 import com.intellij.openapi.project.Project;
 import com.intellij.util.ui.UIUtil;
+import lombok.Getter;
 import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
-import javax.swing.event.DocumentListener;
 import java.awt.*;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -36,6 +36,7 @@ public class MethodExecutionInputTypeAttributeForm extends DBNFormBase {
     private JPanel attributePanel;
     private JPanel inputFieldPanel;
 
+    @Getter
     private final JTextField inputTextField;
     private UserValueHolderImpl<String> userValueHolder;
 
@@ -189,9 +190,5 @@ public class MethodExecutionInputTypeAttributeForm extends DBNFormBase {
         attributePanel.setPreferredSize(new Dimension(metrics[0], attributePanel.getHeight()));
         inputFieldPanel.setPreferredSize(new Dimension(metrics[1], inputFieldPanel.getHeight()));
         attributeTypeLabel.setPreferredSize(new Dimension(metrics[2], attributeTypeLabel.getHeight()));
-    }
-
-    public void addDocumentListener(DocumentListener documentListener){
-        inputTextField.getDocument().addDocumentListener(documentListener);
     }
 }

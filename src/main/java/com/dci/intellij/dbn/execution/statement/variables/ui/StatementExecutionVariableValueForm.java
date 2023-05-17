@@ -17,18 +17,17 @@ import com.dci.intellij.dbn.execution.statement.variables.StatementExecutionVari
 import com.dci.intellij.dbn.execution.statement.variables.VariableValueProvider;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
-import com.intellij.ui.DocumentAdapter;
 import com.intellij.util.ui.UIUtil;
 import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
-import javax.swing.event.DocumentEvent;
-import javax.swing.event.DocumentListener;
 import java.awt.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.Set;
+
+import static com.dci.intellij.dbn.common.ui.util.TextFields.onTextChange;
 
 
 public class StatementExecutionVariableValueForm extends DBNFormBase {
@@ -101,12 +100,8 @@ public class StatementExecutionVariableValueForm extends DBNFormBase {
             if (cachedVariable != null) {
                 textField.setForeground(UIUtil.getLabelDisabledForeground());
                 textField.setText(cachedVariable.getValue());
-                textField.getDocument().addDocumentListener(new DocumentAdapter() {
-                    @Override
-                    protected void textChanged(@NotNull DocumentEvent documentEvent) {
-                        textField.setForeground(UIUtil.getTextFieldForeground());
-                    }
-                });
+
+                onTextChange(textField, e -> textField.setForeground(UIUtil.getTextFieldForeground()));
                 dataTypeComboBox.setSelectedValue(cachedVariable.getDataType());
                 useNullCheckBox.setSelected(cachedVariable.useNull());
             }
@@ -183,10 +178,6 @@ public class StatementExecutionVariableValueForm extends DBNFormBase {
         executionManager.cacheVariable(executionProcessor.getVirtualFile(), variable);
     }
 
-    public void addDocumentListener(DocumentListener documentListener) {
-        editorComponent.getTextField().getDocument().addDocumentListener(documentListener);        
-    }
-
     protected int[] getMetrics(int[] metrics) {
         return new int[] {
             Math.max(metrics[0], (int) variableNameLabel.getPreferredSize().getWidth()),
@@ -205,7 +196,7 @@ public class StatementExecutionVariableValueForm extends DBNFormBase {
         return mainPanel;
     }
 
-    public JComponent getEditorComponent() {
+    public JTextField getEditorComponent() {
         return editorComponent.getTextField();
     }
 

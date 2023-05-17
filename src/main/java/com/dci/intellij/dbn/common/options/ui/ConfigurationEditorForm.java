@@ -16,6 +16,8 @@ import java.awt.*;
 import java.awt.event.ActionListener;
 import java.awt.event.ItemListener;
 
+import static com.dci.intellij.dbn.common.ui.util.TextFields.addDocumentListener;
+
 public abstract class ConfigurationEditorForm<E extends BasicConfiguration> extends DBNFormBase {
     public static final String DBN_REGISTERED = "DBN_REGISTERED";
     private ItemListener itemListener;
@@ -79,7 +81,7 @@ public abstract class ConfigurationEditorForm<E extends BasicConfiguration> exte
             } else if (component instanceof JTextField) {
                 JTextField textField = (JTextField) component;
                 if (documentListener == null) documentListener = createDocumentListener();
-                textField.getDocument().addDocumentListener(documentListener);
+                addDocumentListener(textField, documentListener);
             } else if (component instanceof JComboBox) {
                 JComboBox<?> comboBox = (JComboBox<?>) component;
                 if (itemListener == null) itemListener = createItemListener();

@@ -14,12 +14,12 @@ import com.dci.intellij.dbn.object.filter.quick.action.EnableDisableQuickFilterC
 import com.dci.intellij.dbn.object.type.DBObjectType;
 import com.intellij.openapi.actionSystem.ActionToolbar;
 import com.intellij.openapi.project.Project;
-import com.intellij.ui.DocumentAdapter;
 import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
-import javax.swing.event.DocumentEvent;
 import java.awt.*;
+
+import static com.dci.intellij.dbn.common.ui.util.TextFields.onTextChange;
 
 public class ObjectQuickFilterConditionForm extends DBNFormBase {
     private JPanel mainPanel;
@@ -51,12 +51,7 @@ public class ObjectQuickFilterConditionForm extends DBNFormBase {
 
         patternTextField.setToolTipText("<html>press <b>Up/Down</b> keys to change the operator</html>");
         patternTextField.addKeyListener(ComboBoxSelectionKeyListener.create(operatorComboBox, false));
-        patternTextField.getDocument().addDocumentListener(new DocumentAdapter() {
-            @Override
-            protected void textChanged(@NotNull DocumentEvent e) {
-                condition.setPattern(patternTextField.getText().trim());
-            }
-        });
+        onTextChange(patternTextField, e -> condition.setPattern(patternTextField.getText().trim()));
 
         ActionToolbar actionToolbar = Actions.createActionToolbar(actionsPanel,
                 "DBNavigator.DataEditor.SimpleFilter.Condition", true,

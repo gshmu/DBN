@@ -30,9 +30,12 @@ public class TnsNamesImportAction extends ConnectionSettingsAction{
             TnsNamesImportDialog dialog = new TnsNamesImportDialog(project, file);
             dialog.show();
             int exitCode = dialog.getExitCode();
-            if (exitCode == DialogWrapper.OK_EXIT_CODE) {
-                target.importTnsNames(dialog.getTnsNames());
-            }
+            if (exitCode != DialogWrapper.OK_EXIT_CODE) return;
+
+            target.importTnsNames(
+                    dialog.getTnsNames(),
+                    dialog.getImportType(),
+                    dialog.isSelectedOnly());
         }
     }
 }

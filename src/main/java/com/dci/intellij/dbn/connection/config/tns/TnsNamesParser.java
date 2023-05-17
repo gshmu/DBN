@@ -21,7 +21,7 @@ public class TnsNamesParser {
             withFileFilter(virtualFile -> Objects.equals(virtualFile.getExtension(), "ora"));
 
 
-    public static List<TnsName> parse(File file) throws Exception {
+    public static TnsNamesBundle parse(File file) throws Exception {
         List<TnsName> tnsNames = new ArrayList<>();
         String tnsContent = new String(Files.readAllBytes(Paths.get(file.getPath())));
 
@@ -30,7 +30,8 @@ public class TnsNamesParser {
 
         int start = 0;
         while (matcher.find(start)) {
-            String schema         = matcher.group("schema");
+            String descriptor = matcher.group("descriptor");
+            String schema = matcher.group("schema");
             String protocol = coalesce(
                     () -> matcher.group("protocol1"),
                     () -> matcher.group("protocol2"),
@@ -57,6 +58,7 @@ public class TnsNamesParser {
 
             if (Strings.isNotEmpty(schema)) {
                 TnsName tnsName = new TnsName(
+                        descriptor,
                         schema,
                         protocol,
                         host,
@@ -70,7 +72,7 @@ public class TnsNamesParser {
                         failoverMethod);
                 tnsNames.add(tnsName);
             }
-       }
-        return tnsNames;
+        }
+        return new TnsNamesBundle(file, tnsNames);
     }
 }

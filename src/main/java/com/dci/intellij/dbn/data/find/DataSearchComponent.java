@@ -29,7 +29,6 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
-import javax.swing.event.DocumentListener;
 import javax.swing.text.JTextComponent;
 import java.awt.*;
 import java.awt.event.FocusEvent;
@@ -38,6 +37,8 @@ import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.util.Objects;
 import java.util.regex.Pattern;
+
+import static com.dci.intellij.dbn.common.ui.util.TextFields.onTextChange;
 
 public class DataSearchComponent extends DBNFormBase implements SelectionListener, DataSearchResultListener, DataModelListener {
     private static final int MATCHES_LIMIT = 10000;
@@ -173,7 +174,7 @@ public class DataSearchComponent extends DBNFormBase implements SelectionListene
 
     private void configureLeadPanel() {
         initTextField();
-        setupSearchFieldListener();
+        onTextChange(searchField, e -> searchFieldDocumentChanged());
 
         DefaultActionGroup myActionsGroup = new DefaultActionGroup("Search Bar", false);
         myActionsGroup.add(new ShowHistoryAction(searchField, this));
@@ -213,25 +214,6 @@ public class DataSearchComponent extends DBNFormBase implements SelectionListene
         final String initialText = findModel.getStringToFind();
 
         ApplicationManager.getApplication().invokeLater(() -> setInitialText(initialText));
-    }
-
-    private void setupSearchFieldListener() {
-        searchField.getDocument().addDocumentListener(new DocumentListener() {
-            @Override
-            public void insertUpdate(javax.swing.event.DocumentEvent documentEvent) {
-                searchFieldDocumentChanged();
-            }
-
-            @Override
-            public void removeUpdate(javax.swing.event.DocumentEvent documentEvent) {
-                searchFieldDocumentChanged();
-            }
-
-            @Override
-            public void changedUpdate(javax.swing.event.DocumentEvent documentEvent) {
-                searchFieldDocumentChanged();
-            }
-        });
     }
 
     private void searchFieldDocumentChanged() {

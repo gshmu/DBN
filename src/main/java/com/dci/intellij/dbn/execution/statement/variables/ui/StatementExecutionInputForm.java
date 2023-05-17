@@ -26,15 +26,15 @@ import com.intellij.openapi.editor.EditorFactory;
 import com.intellij.openapi.editor.EditorSettings;
 import com.intellij.openapi.editor.ex.EditorEx;
 import com.intellij.openapi.project.Project;
-import com.intellij.ui.DocumentAdapter;
 import com.intellij.ui.JBColor;
 import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
-import javax.swing.event.DocumentEvent;
 import java.awt.*;
 import java.util.ArrayList;
 import java.util.List;
+
+import static com.dci.intellij.dbn.common.ui.util.TextFields.onTextChange;
 
 public class StatementExecutionInputForm extends DBNFormBase {
     private JPanel mainPanel;
@@ -103,12 +103,8 @@ public class StatementExecutionInputForm extends DBNFormBase {
                 StatementExecutionVariableValueForm variableValueForm = new StatementExecutionVariableValueForm(this, variable);
                 variableValueForms.add(variableValueForm);
                 variablesPanel.add(variableValueForm.getComponent());
-                variableValueForm.addDocumentListener(new DocumentAdapter() {
-                    @Override
-                    protected void textChanged(@NotNull DocumentEvent e) {
-                        updatePreview();
-                    }
-                });
+
+                onTextChange(variableValueForm.getEditorComponent(), e -> updatePreview());
             }
             splitPane.setDividerLocation((int)variablesPanel.getPreferredSize().getHeight());
             Dimension preferredSize = variablesScrollPane.getPreferredSize();

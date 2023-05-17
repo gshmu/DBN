@@ -5,19 +5,21 @@ import com.dci.intellij.dbn.common.color.Colors;
 import com.dci.intellij.dbn.common.ui.form.DBNFormBase;
 import com.dci.intellij.dbn.common.util.Strings;
 import com.dci.intellij.dbn.connection.config.tns.TnsName;
+import com.dci.intellij.dbn.connection.config.tns.TnsNamesBundle;
 import com.dci.intellij.dbn.connection.config.tns.TnsNamesParser;
 import com.intellij.openapi.ui.TextFieldWithBrowseButton;
-import com.intellij.ui.DocumentAdapter;
 import com.intellij.ui.components.JBScrollPane;
+import lombok.Getter;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
-import javax.swing.event.DocumentEvent;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+
+import static com.dci.intellij.dbn.common.ui.util.TextFields.onTextChange;
 
 public class TnsNamesImportForm extends DBNFormBase {
     private TextFieldWithBrowseButton tnsNamesFileTextField;
@@ -26,6 +28,9 @@ public class TnsNamesImportForm extends DBNFormBase {
     private JLabel errorLabel;
 
     private final TnsNamesTable tnsNamesTable;
+
+    @Getter
+    private TnsNamesBundle tnsNames;
 
     TnsNamesImportForm(@NotNull TnsNamesImportDialog parent, @Nullable File file) {
         super(parent);
@@ -39,9 +44,9 @@ public class TnsNamesImportForm extends DBNFormBase {
             tnsNamesFileTextField.setText(file.getPath());
             updateTnsNamesTable();
         }
-        updateButtons();
+        updateSelections();
 
-        tnsNamesTable.getSelectionModel().addListSelectionListener(e -> updateButtons());
+        tnsNamesTable.getSelectionModel().addListSelectionListener(e -> updateSelections());
 
         tnsNamesFileTextField.addBrowseFolderListener(
                 null,
@@ -49,30 +54,35 @@ public class TnsNamesImportForm extends DBNFormBase {
                 getProject(),
                 TnsNamesParser.FILE_CHOOSER_DESCRIPTOR);
 
-        tnsNamesFileTextField.getTextField().getDocument().addDocumentListener(new DocumentAdapter() {
-            @Override
-            protected void textChanged(@NotNull DocumentEvent e) {
-                updateTnsNamesTable();
-            }
-        });
+        onTextChange(tnsNamesFileTextField, e -> updateTnsNamesTable());
     }
 
     public TnsNamesImportDialog getParentDialog() {
         return ensureParentComponent();
     }
 
-    private void updateButtons() {
+    private void updateSelections() {
+        int rowCount = tnsNamesTable.getRowCount();
+        int selectedRowCount = tnsNamesTable.getSelectedRowCount();
+
         TnsNamesImportDialog parentComponent = ensureParentComponent();
-        parentComponent.getImportSelectedAction().setEnabled(tnsNamesTable.getSelectedRowCount() > 0);
-        parentComponent.getImportAllAction().setEnabled(tnsNamesTable.getRowCount() > 0);
+        parentComponent.getImportSelectedAction().setEnabled(selectedRowCount > 0);
+        parentComponent.getImportAllAction().setEnabled(rowCount > 0);
+
+        List<TnsName> profiles = tnsNamesTable.getModel().getTnsNames();
+        for (int i = 0; i < rowCount; i++) {
+            boolean selected = tnsNamesTable.isRowSelected(i);
+            TnsName profile = profiles.get(tnsNamesTable.convertRowIndexToModel(i));
+            profile.setSelected(selected);
+        }
     }
 
     private void updateTnsNamesTable() {
         try {
             String fileName = tnsNamesFileTextField.getTextField().getText();
             if (Strings.isNotEmpty(fileName)) {
-                List<TnsName> tnsNames = TnsNamesParser.parse(new File(fileName));
-                tnsNamesTable.setModel(new TnsNamesTableModel(tnsNames));
+                tnsNames = TnsNamesParser.parse(new File(fileName));
+                tnsNamesTable.setModel(new TnsNamesTableModel(new ArrayList<>(tnsNames.getProfiles())));
                 tnsNamesTable.accommodateColumnsSize();
             }
             errorLabel.setVisible(false);

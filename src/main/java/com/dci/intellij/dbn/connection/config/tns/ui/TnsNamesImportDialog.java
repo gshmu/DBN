@@ -1,21 +1,30 @@
 package com.dci.intellij.dbn.connection.config.tns.ui;
 
-import com.dci.intellij.dbn.common.ref.WeakRef;
+import com.dci.intellij.dbn.common.dispose.Sticky;
 import com.dci.intellij.dbn.common.ui.dialog.DBNDialog;
-import com.dci.intellij.dbn.connection.config.tns.TnsName;
+import com.dci.intellij.dbn.common.util.Messages;
+import com.dci.intellij.dbn.connection.config.tns.TnsImportType;
+import com.dci.intellij.dbn.connection.config.tns.TnsNamesBundle;
 import com.intellij.openapi.project.Project;
+import lombok.Getter;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
 import java.awt.event.ActionEvent;
 import java.io.File;
-import java.util.List;
 
+import static com.dci.intellij.dbn.common.util.Messages.options;
+
+@Getter
 public class TnsNamesImportDialog extends DBNDialog<TnsNamesImportForm> {
-    private WeakRef<List<TnsName>> tnsNames;  // TODO dialog result - Disposable.nullify(...)
-    private final ImportAllAction importAllAction = new ImportAllAction();
-    private final ImportSelectedAction importSelectedAction = new ImportSelectedAction();
+    @Sticky
+    private TnsNamesBundle tnsNames;
+    private TnsImportType importType;
+    private boolean selectedOnly;
+
+    private final AbstractAction importAllAction = new ImportAllAction();
+    private final AbstractAction importSelectedAction = new ImportSelectedAction();
     private final File file;
 
     public TnsNamesImportDialog(Project project, @Nullable File file) {
@@ -29,18 +38,6 @@ public class TnsNamesImportDialog extends DBNDialog<TnsNamesImportForm> {
     @Override
     protected TnsNamesImportForm createForm() {
         return new TnsNamesImportForm(this, file);
-    }
-
-    AbstractAction getImportSelectedAction() {
-        return importSelectedAction;
-    }
-
-    AbstractAction getImportAllAction() {
-        return importAllAction;
-    }
-
-    public List<TnsName> getTnsNames() {
-        return WeakRef.get(tnsNames);
     }
 
     @Override
@@ -60,8 +57,10 @@ public class TnsNamesImportDialog extends DBNDialog<TnsNamesImportForm> {
 
         @Override
         public void actionPerformed(ActionEvent e) {
-            tnsNames = WeakRef.of(getForm().getAllTnsNames());
-            doOKAction();
+            TnsNamesImportForm importForm = getForm();
+            tnsNames = importForm.getTnsNames();
+            selectedOnly = false;
+            showImportTypeDialog();
         }
     }
     
@@ -72,13 +71,29 @@ public class TnsNamesImportDialog extends DBNDialog<TnsNamesImportForm> {
 
         @Override
         public void actionPerformed(ActionEvent e) {
-            tnsNames = WeakRef.of(getForm().getSelectedTnsNames());
-            doOKAction();
+            TnsNamesImportForm importForm = getForm();
+            tnsNames = importForm.getTnsNames();
+            selectedOnly = true;
+            showImportTypeDialog();
         }
     }
 
-    @Override
-    protected void doOKAction() {
-        super.doOKAction();
+    private void showImportTypeDialog() {
+        Messages.showQuestionDialog(
+                getProject(),
+                "TNS Import Type",
+                "What type of TNS import to perform?",
+                options("TNS Fields",
+                        "TNS Profile Link",
+                        "Full TNS Description",
+                        "Cancel"), 0,
+                option -> {
+                    switch (option) {
+                        case 0: importType = TnsImportType.FIELDS; doOKAction(); break;
+                        case 1: importType = TnsImportType.PROFILE; doOKAction(); break;
+                        case 2: importType = TnsImportType.DESCRIPTOR; doOKAction(); break;
+                        default: importType = null;
+                    }
+                });
     }
 }

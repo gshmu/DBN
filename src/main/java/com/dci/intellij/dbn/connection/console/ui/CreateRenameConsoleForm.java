@@ -9,16 +9,16 @@ import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.ConnectionRef;
 import com.dci.intellij.dbn.object.DBConsole;
 import com.dci.intellij.dbn.vfs.DBConsoleType;
-import com.intellij.ui.DocumentAdapter;
 import com.intellij.ui.JBColor;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
-import javax.swing.event.DocumentEvent;
 import java.awt.*;
 import java.util.Objects;
 import java.util.Set;
+
+import static com.dci.intellij.dbn.common.ui.util.TextFields.onTextChange;
 
 public class CreateRenameConsoleForm extends DBNFormBase {
     private JPanel headerPanel;
@@ -44,7 +44,7 @@ public class CreateRenameConsoleForm extends DBNFormBase {
                 new DBNHeaderForm(this, console);
         headerPanel.add(headerForm.getComponent(), BorderLayout.CENTER);
 
-        final Set<String> consoleNames = connection.getConsoleBundle().getConsoleNames();
+        Set<String> consoleNames = connection.getConsoleBundle().getConsoleNames();
 
         String name;
         if (console == null) {
@@ -59,27 +59,28 @@ public class CreateRenameConsoleForm extends DBNFormBase {
         }
         consoleNameTextField.setText(name);
 
-        consoleNameTextField.getDocument().addDocumentListener(new DocumentAdapter() {
-            @Override
-            protected void textChanged(@NotNull DocumentEvent e) {
-                String errorText = null;
-                String text = Strings.trim(consoleNameTextField.getText());
+        onTextChange(consoleNameTextField, e -> updateErrorMessage());
+    }
 
-                if (Strings.isEmpty(text)) {
-                    errorText = "Console name must be specified";
-                }
-                else if (consoleNames.contains(text)) {
-                    errorText = "Console name already in use";
-                }
+    private void updateErrorMessage() {
+        Set<String> consoleNames = getConnection().getConsoleBundle().getConsoleNames();
+        String text = Strings.trim(consoleNameTextField.getText());
+
+        String errorText = null;
+        if (Strings.isEmpty(text)) {
+            errorText = "Console name must be specified";
+        }
+        else if (consoleNames.contains(text)) {
+            errorText = "Console name already in use";
+        }
 
 
-                errorLabel.setVisible(errorText != null);
-                parent.getOKAction().setEnabled(errorText == null && (console == null || !Objects.equals(console.getName(), text)));
-                if (errorText != null) {
-                    errorLabel.setText(errorText);
-                }
-            }
-        });
+        errorLabel.setVisible(errorText != null);
+        CreateRenameConsoleDialog parent = ensureParentComponent();
+        parent.getOKAction().setEnabled(errorText == null && (console == null || !Objects.equals(console.getName(), text)));
+        if (errorText != null) {
+            errorLabel.setText(errorText);
+        }
     }
 
     @Nullable

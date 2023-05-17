@@ -12,7 +12,9 @@ import com.dci.intellij.dbn.connection.ConnectionId;
 import com.dci.intellij.dbn.connection.DatabaseType;
 import com.dci.intellij.dbn.connection.DatabaseUrlType;
 import com.dci.intellij.dbn.connection.config.*;
+import com.dci.intellij.dbn.connection.config.tns.TnsImportType;
 import com.dci.intellij.dbn.connection.config.tns.TnsName;
+import com.dci.intellij.dbn.connection.config.tns.TnsNamesBundle;
 import com.dci.intellij.dbn.driver.DriverSource;
 import com.intellij.openapi.actionSystem.ActionToolbar;
 import com.intellij.openapi.ide.CopyPasteManager;
@@ -39,6 +41,9 @@ import java.io.ByteArrayInputStream;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+
+import static com.dci.intellij.dbn.common.util.Commons.nvl;
+import static com.intellij.openapi.util.text.StringUtil.isNotEmpty;
 
 @Slf4j
 public class ConnectionBundleSettingsForm extends ConfigurationEditorForm<ConnectionBundleSettings> implements ListSelectionListener {
@@ -313,12 +318,13 @@ public class ConnectionBundleSettingsForm extends ConfigurationEditorForm<Connec
         }
     }
 
-    public void importTnsNames(List<TnsName> tnsNames) {
+    public void importTnsNames(TnsNamesBundle tnsNamesBundle, TnsImportType importType, boolean selected) {
         ConnectionBundleSettings connectionBundleSettings = getConfiguration();
         ConnectionListModel model = (ConnectionListModel) connectionsList.getModel();
         int index = connectionsList.getModel().getSize();
         List<Integer> selectedIndexes = new ArrayList<>();
 
+        List<TnsName> tnsNames = selected ? tnsNamesBundle.getSelectedProfiles() : tnsNamesBundle.getProfiles();
         for (TnsName tnsName : tnsNames) {
             ConnectionSettings connectionSettings = new ConnectionSettings(connectionBundleSettings, DatabaseType.ORACLE, ConnectionConfigType.BASIC);
             connectionSettings.setNew(true);
@@ -327,24 +333,12 @@ public class ConnectionBundleSettingsForm extends ConfigurationEditorForm<Connec
             connectionBundleSettings.getConnections().add(connectionSettings);
 
             ConnectionDatabaseSettings databaseSettings = connectionSettings.getDatabaseSettings();
-            String name = tnsName.getName();
+            DatabaseInfo databaseInfo = databaseSettings.getDatabaseInfo();
+            importTnsData(databaseInfo, tnsName, tnsNamesBundle, importType);
+
+            String name = tnsName.getProfile();
             while (model.getConnectionConfig(name) != null) {
                 name = Naming.nextNumberedIdentifier(name, true);
-            }
-
-            DatabaseInfo databaseInfo = databaseSettings.getDatabaseInfo();
-            databaseInfo.setHost(tnsName.getHost());
-            databaseInfo.setPort(tnsName.getPort());
-
-
-            String sid = tnsName.getSid();
-            String service = tnsName.getServiceName();
-            if (Strings.isNotEmpty(sid)) {
-                databaseInfo.setDatabase(sid);
-                databaseInfo.setUrlType(DatabaseUrlType.SID);
-            } else if (Strings.isNotEmpty(service)) {
-                databaseInfo.setDatabase(service);
-                databaseInfo.setUrlType(DatabaseUrlType.SERVICE);
             }
             databaseSettings.setName(name);
             databaseSettings.setDatabaseType(DatabaseType.ORACLE);
@@ -356,6 +350,41 @@ public class ConnectionBundleSettingsForm extends ConfigurationEditorForm<Connec
             index++;
         }
         connectionsList.setSelectedIndices(ArrayUtils.toPrimitive(selectedIndexes.toArray(new Integer[0])));
+    }
+
+    private static void importTnsData(DatabaseInfo databaseInfo, TnsName tnsName, TnsNamesBundle tnsNames, TnsImportType importType) {
+        if (importType == TnsImportType.FIELDS) {
+            databaseInfo.setHost(tnsName.getHost());
+            databaseInfo.setPort(tnsName.getPort());
+
+            String sid = tnsName.getSid();
+            String service = tnsName.getServiceName();
+            if (isNotEmpty(sid)) {
+                databaseInfo.setDatabase(sid);
+                databaseInfo.setUrlType(DatabaseUrlType.SID);
+            } else if (isNotEmpty(service)) {
+                databaseInfo.setDatabase(service);
+                databaseInfo.setUrlType(DatabaseUrlType.SERVICE);
+            }
+        } else if (importType == TnsImportType.PROFILE) {
+            databaseInfo.setUrlType(DatabaseUrlType.TNS);
+            String tnsFolder = tnsNames.getTnsFolder();
+            String tnsProfile = nvl(tnsName.getProfile(), "");
+
+            databaseInfo.setTnsFolder(tnsFolder);
+            databaseInfo.setTnsProfile(tnsProfile);
+            databaseInfo.setHost(null);
+            databaseInfo.setPort(null);
+            databaseInfo.setDatabase(null);
+        } else if (importType == TnsImportType.DESCRIPTOR){
+            databaseInfo.setUrlType(DatabaseUrlType.CUSTOM);
+            String url = "jdbc:oracle:thin:@" + tnsName.getDescriptor().replaceAll("\\s", "");
+
+            databaseInfo.setUrl(url);
+            databaseInfo.setHost(null);
+            databaseInfo.setPort(null);
+            databaseInfo.setDatabase(null);
+        }
     }
 
 
