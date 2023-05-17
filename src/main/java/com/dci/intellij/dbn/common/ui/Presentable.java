@@ -5,6 +5,9 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
+import java.util.Collection;
+import java.util.List;
+import java.util.stream.Collectors;
 
 public interface Presentable extends Named {
     @NotNull
@@ -35,4 +38,18 @@ public interface Presentable extends Named {
             return null;
         }
     };
+
+    static Presentable basic(String name) {
+        return new Presentable() {
+            @NotNull
+            @Override
+            public String getName() {
+                return name;
+            }
+        };
+    }
+
+    static List<Presentable> basic(Collection<String> names) {
+        return names.stream().map(n -> basic(n)).collect(Collectors.toList());
+    }
 }

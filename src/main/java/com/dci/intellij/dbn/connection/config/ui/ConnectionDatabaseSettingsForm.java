@@ -90,7 +90,7 @@ public class ConnectionDatabaseSettingsForm extends ConfigurationEditorForm<Conn
         DatabaseType databaseType = configuration.getDatabaseType();
         AuthenticationType[] authTypes = databaseType.getAuthTypes();
 
-        urlSettingsForm.updateFieldVisibility(configType, databaseType);
+        urlSettingsForm.updateFieldVisibility();
         authenticationPanel.setVisible(databaseType.supportsAuthentication());
 
 
@@ -102,18 +102,16 @@ public class ConnectionDatabaseSettingsForm extends ConfigurationEditorForm<Conn
     }
 
     protected void databaseTypeChanged() {
-        ConnectionDatabaseSettings configuration = getConfiguration();
-        ConnectionConfigType configType = configuration.getConfigType();
         DatabaseType oldDatabaseType = selectedDatabaseType;
         DatabaseType newDatabaseType = getSelection(databaseTypeComboBox);
+        selectedDatabaseType = newDatabaseType;
+
         AuthenticationType[] authTypes = newDatabaseType.getAuthTypes();
 
-        urlSettingsForm.updateFieldVisibility(configType, newDatabaseType);
-        urlSettingsForm.handleDatabaseTypeChange(configType, oldDatabaseType, newDatabaseType);
+        urlSettingsForm.handleDatabaseTypeChange(oldDatabaseType, newDatabaseType);
         authenticationPanel.setVisible(newDatabaseType.supportsAuthentication());
-
         driverSettingsForm.updateDriverFields();
-        selectedDatabaseType = newDatabaseType;
+
         updateNativeSupportDatabaseHint();
     }
 
@@ -211,28 +209,25 @@ public class ConnectionDatabaseSettingsForm extends ConfigurationEditorForm<Conn
         configuration.setDriverLibrary(driverSettingsForm.getDriverLibrary());
         configuration.setDriver(driverOption == null ? null : driverOption.getName());
         configuration.setUrlPattern(DatabaseUrlPattern.get(databaseType, urlType));
+
         DatabaseInfo databaseInfo = configuration.getDatabaseInfo();
-        databaseInfo.setDatabase(urlSettingsForm.getDatabase());
+        databaseInfo.reset();
+
+        databaseInfo.setUrlType(urlType);
+        databaseInfo.setUrl(urlSettingsForm.getUrl());
+
         if (urlType == DatabaseUrlType.TNS) {
         	databaseInfo.setTnsFolder(urlSettingsForm.getTnsFolder());
         	databaseInfo.setTnsProfile(urlSettingsForm.getTnsProfile());
-
-        } else {
+        } else if (urlType == DatabaseUrlType.FILE){
+            DatabaseFiles databaseFiles = urlSettingsForm.getDatabaseFiles();
+            databaseFiles.validate();
+            databaseInfo.setFiles(databaseFiles);
+        } else if (urlType != DatabaseUrlType.CUSTOM){
             databaseInfo.setHost(urlSettingsForm.getHost());
             databaseInfo.setPort(urlSettingsForm.getPort());
             databaseInfo.setDatabase(urlSettingsForm.getDatabase());
         }
-        databaseInfo.setUrl(urlSettingsForm.getUrl());
-        databaseInfo.setUrlType(urlType);
-
-        if (urlType == DatabaseUrlType.FILE) {
-            DatabaseFiles databaseFiles = urlSettingsForm.getDatabaseFiles();
-            databaseFiles.validate();
-            databaseInfo.setFiles(databaseFiles);
-        } else {
-            databaseInfo.setFiles(null);
-        }
-
 
         AuthenticationInfo authenticationInfo = configuration.getAuthenticationInfo();
         String oldUserName = authenticationInfo.getUser();
@@ -299,11 +294,11 @@ public class ConnectionDatabaseSettingsForm extends ConfigurationEditorForm<Conn
     @Override
     public void resetFormChanges() {
         ConnectionDatabaseSettings configuration = getConfiguration();
+        DatabaseInfo databaseInfo = configuration.getDatabaseInfo();
+        DatabaseType databaseType = configuration.getDatabaseType();
 
         nameTextField.setText(configuration.getDisplayName());
         descriptionTextField.setText(configuration.getDescription());
-        DatabaseInfo databaseInfo = configuration.getDatabaseInfo();
-        DatabaseType databaseType = configuration.getDatabaseType();
         setSelection(databaseTypeComboBox, databaseType);
 
         urlSettingsForm.resetFormChanges();

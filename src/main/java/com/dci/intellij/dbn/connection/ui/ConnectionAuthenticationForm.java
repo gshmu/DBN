@@ -9,16 +9,15 @@ import com.dci.intellij.dbn.common.util.Strings;
 import com.dci.intellij.dbn.connection.AuthenticationType;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.intellij.openapi.ui.ComboBox;
-import com.intellij.ui.DocumentAdapter;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
-import javax.swing.event.DocumentEvent;
 import java.awt.*;
 
 import static com.dci.intellij.dbn.common.ui.util.ComboBoxes.initComboBox;
 import static com.dci.intellij.dbn.common.ui.util.ComboBoxes.setSelection;
+import static com.dci.intellij.dbn.common.ui.util.TextFields.onTextChange;
 
 public class ConnectionAuthenticationForm extends DBNFormBase {
     private JPanel mainPanel;
@@ -69,22 +68,15 @@ public class ConnectionAuthenticationForm extends DBNFormBase {
 
         updateAuthenticationFields();
 
-        userTextField.getDocument().addDocumentListener(new DocumentAdapter() {
-            @Override
-            protected void textChanged(@NotNull DocumentEvent e) {
-                String user = userTextField.getText();
-                authenticationInfo.setUser(user);
-                parentComponent.updateConnectButton();
-            }
+        onTextChange(userTextField, e -> {
+            authenticationInfo.setUser(userTextField.getText());
+            parentComponent.updateConnectButton();
         });
 
-        passwordField.getDocument().addDocumentListener(new DocumentAdapter() {
-            @Override
-            protected void textChanged(@NotNull DocumentEvent e) {
-                String password = new String(passwordField.getPassword());
-                authenticationInfo.setPassword(password);
-                parentComponent.updateConnectButton();
-            }
+        onTextChange(passwordField, e -> {
+            String password = new String(passwordField.getPassword());
+            authenticationInfo.setPassword(password);
+            parentComponent.updateConnectButton();
         });
 
         authTypeComboBox.addActionListener(e -> {

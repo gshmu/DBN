@@ -20,7 +20,7 @@ public enum DatabaseType implements Constant<DatabaseType>, Presentable{
             Icons.DB_ORACLE_LARGE,
             "oracle.jdbc.driver.OracleDriver",
             AuthenticationType.values(),
-            array(DatabaseUrlPattern.ORACLE_TNS, DatabaseUrlPattern.ORACLE_SID, DatabaseUrlPattern.ORACLE_SERVICE, DatabaseUrlPattern.GENERIC)),
+            array(DatabaseUrlPattern.ORACLE_SID, DatabaseUrlPattern.ORACLE_SERVICE, DatabaseUrlPattern.ORACLE_TNS, DatabaseUrlPattern.GENERIC)),
 
     MYSQL(
             "MySQL",
@@ -28,7 +28,7 @@ public enum DatabaseType implements Constant<DatabaseType>, Presentable{
             Icons.DB_MYSQL_LARGE,
             "com.mysql.cj.jdbc.Driver",
             AuthenticationType.values(),
-            array(DatabaseUrlPattern.MYSQL, DatabaseUrlPattern.GENERIC),
+            array(DatabaseUrlPattern.MYSQL_DB, DatabaseUrlPattern.GENERIC),
             array("MARIADB", "PERCONA", "OURDELTA", "DRIZZLE", "MAXDB")),
 
     POSTGRES(
@@ -37,7 +37,7 @@ public enum DatabaseType implements Constant<DatabaseType>, Presentable{
             Icons.DB_POSTGRESQL_LARGE,
             "org.postgresql.Driver",
             AuthenticationType.values(),
-            array(DatabaseUrlPattern.POSTGRES, DatabaseUrlPattern.GENERIC),
+            array(DatabaseUrlPattern.POSTGRES_DB, DatabaseUrlPattern.GENERIC),
             array("REDSHIFT", "BITNINE", "NCLUSTER", "GREENPLUM", "HADOOPDB", "NETEZZA", "PARACCEL", "PGPOOL", "REDHAT", "TORODB", "TERADATA", "YUGABYTE")),
 
     SQLITE(
@@ -46,7 +46,7 @@ public enum DatabaseType implements Constant<DatabaseType>, Presentable{
             Icons.DB_SQLITE_LARGE,
             "org.sqlite.JDBC",
             array(AuthenticationType.NONE),
-            array(DatabaseUrlPattern.SQLITE, DatabaseUrlPattern.GENERIC)),
+            array(DatabaseUrlPattern.SQLITE_FILE, DatabaseUrlPattern.GENERIC)),
 
     GENERIC(
             "Generic",
@@ -113,6 +113,11 @@ public enum DatabaseType implements Constant<DatabaseType>, Presentable{
             }
         }
         return false;
+    }
+
+    @NotNull
+    public DatabaseUrlPattern getUrlPattern(DatabaseUrlType urlType) {
+        return Arrays.stream(urlPatterns).filter(p -> p.getUrlType() == urlType).findFirst().orElse(DatabaseUrlPattern.GENERIC);
     }
 
     public DatabaseUrlType[] getUrlTypes() {

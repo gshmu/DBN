@@ -3,8 +3,8 @@ package com.dci.intellij.dbn.data.editor.ui;
 import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.common.color.Colors;
 import com.dci.intellij.dbn.common.ui.util.Borders;
-import com.dci.intellij.dbn.common.ui.util.UserInterface;
 import com.dci.intellij.dbn.common.ui.util.Keyboard;
+import com.dci.intellij.dbn.common.ui.util.UserInterface;
 import com.dci.intellij.dbn.common.util.Actions;
 import com.dci.intellij.dbn.common.util.Commons;
 import com.dci.intellij.dbn.common.util.Messages;
@@ -19,19 +19,19 @@ import com.intellij.openapi.project.DumbAwareAction;
 import com.intellij.openapi.ui.popup.ComponentPopupBuilder;
 import com.intellij.openapi.ui.popup.JBPopup;
 import com.intellij.openapi.ui.popup.JBPopupFactory;
-import com.intellij.ui.DocumentAdapter;
 import com.intellij.ui.SimpleTextAttributes;
 import com.intellij.util.ui.JBUI;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
-import javax.swing.event.DocumentEvent;
 import java.awt.*;
 import java.awt.event.FocusEvent;
 import java.awt.event.InputEvent;
 import java.awt.event.KeyEvent;
 import java.sql.SQLException;
+
+import static com.dci.intellij.dbn.common.ui.util.TextFields.onTextChange;
 
 public class TextEditorPopupProviderForm extends TextFieldPopupProviderForm {
     private JPanel mainPanel;
@@ -120,7 +120,7 @@ public class TextEditorPopupProviderForm extends TextFieldPopupProviderForm {
         if (textField.isEditable()) editorTextArea.setCaretPosition(textField.getCaretPosition());
         editorTextArea.setSelectionStart(textField.getSelectionStart());
         editorTextArea.setSelectionEnd(textField.getSelectionEnd());
-        editorTextArea.getDocument().addDocumentListener(new DocumentListener());
+        onTextChange(editorTextArea, e -> changed = true);
         mainPanel.setPreferredSize(new Dimension(Math.max(200, textField.getWidth() + 32), 160));
 
         ComponentPopupBuilder popupBuilder = JBPopupFactory.getInstance().createComponentPopupBuilder(mainPanel, editorTextArea);
@@ -165,13 +165,6 @@ public class TextEditorPopupProviderForm extends TextFieldPopupProviderForm {
             if (Keyboard.match(getShortcuts(), e)) {
                 editorTextArea.replaceSelection("\n");
             }
-        }
-    }
-
-    private class DocumentListener extends DocumentAdapter {
-        @Override
-        protected void textChanged(@NotNull DocumentEvent documentEvent) {
-            changed = true;
         }
     }
 

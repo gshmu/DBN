@@ -39,6 +39,7 @@ import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 import static com.dci.intellij.dbn.common.dispose.Checks.isNotValid;
+import static com.dci.intellij.dbn.common.dispose.Checks.isValid;
 
 public class Documents {
     private static final Key<Boolean> FOLDING_STATE_KEY = Key.create("FOLDING_STATE_KEY");
@@ -50,7 +51,7 @@ public class Documents {
         // restart highlighting
         Project project = editor.getProject();
         PsiFile file = Documents.getFile(editor);
-        if (project != null && !project.isDisposed() && file instanceof DBLanguagePsiFile) {
+        if (isValid(project) && file instanceof DBLanguagePsiFile) {
             DBLanguagePsiFile dbLanguageFile = (DBLanguagePsiFile) file;
             DBLanguage dbLanguage = dbLanguageFile.getDBLanguage();
             if (dbLanguage != null) {

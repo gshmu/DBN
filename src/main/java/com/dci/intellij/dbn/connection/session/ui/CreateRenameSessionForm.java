@@ -8,16 +8,16 @@ import com.dci.intellij.dbn.common.util.Strings;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.ConnectionRef;
 import com.dci.intellij.dbn.connection.session.DatabaseSession;
-import com.intellij.ui.DocumentAdapter;
 import com.intellij.ui.JBColor;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
-import javax.swing.event.DocumentEvent;
 import java.awt.*;
 import java.util.Objects;
 import java.util.Set;
+
+import static com.dci.intellij.dbn.common.ui.util.TextFields.onTextChange;
 
 public class CreateRenameSessionForm extends DBNFormBase {
     private JPanel headerPanel;
@@ -28,7 +28,7 @@ public class CreateRenameSessionForm extends DBNFormBase {
     private final ConnectionRef connection;
     private DatabaseSession session;
 
-    CreateRenameSessionForm(final CreateRenameSessionDialog parent, @NotNull ConnectionHandler connection, @Nullable final DatabaseSession session) {
+    CreateRenameSessionForm(CreateRenameSessionDialog parent, @NotNull ConnectionHandler connection, @Nullable final DatabaseSession session) {
         super(parent);
         this.connection = connection.ref();
         this.session = session;
@@ -39,7 +39,7 @@ public class CreateRenameSessionForm extends DBNFormBase {
         DBNHeaderForm headerForm = new DBNHeaderForm(this, connection);
         headerPanel.add(headerForm.getComponent(), BorderLayout.CENTER);
 
-        final Set<String> sessionNames = connection.getSessionBundle().getSessionNames();
+        Set<String> sessionNames = connection.getSessionBundle().getSessionNames();
 
         String name;
         if (session == null) {
@@ -53,28 +53,28 @@ public class CreateRenameSessionForm extends DBNFormBase {
             parent.getOKAction().setEnabled(false);
         }
         sessionNameTextField.setText(name);
+        onTextChange(sessionNameTextField, e -> updateErrorMessage());
+    }
 
-        sessionNameTextField.getDocument().addDocumentListener(new DocumentAdapter() {
-            @Override
-            protected void textChanged(@NotNull DocumentEvent e) {
-                String errorText = null;
-                String text = Strings.trim(sessionNameTextField.getText());
+    private void updateErrorMessage() {
+        Set<String> sessionNames = getConnection().getSessionBundle().getSessionNames();
 
-                if (Strings.isEmpty(text)) {
-                    errorText = "Session name must be specified";
-                }
-                else if (sessionNames.contains(text)) {
-                    errorText = "Session name already in use";
-                }
+        String errorText = null;
+        String text = Strings.trim(sessionNameTextField.getText());
 
+        if (Strings.isEmpty(text)) {
+            errorText = "Session name must be specified";
+        }
+        else if (sessionNames.contains(text)) {
+            errorText = "Session name already in use";
+        }
 
-                errorLabel.setVisible(errorText != null);
-                parent.getOKAction().setEnabled(errorText == null && (session == null || !Objects.equals(session.getName(), text)));
-                if (errorText != null) {
-                    errorLabel.setText(errorText);
-                }
-            }
-        });
+        errorLabel.setVisible(errorText != null);
+        CreateRenameSessionDialog parent = ensureParentComponent();
+        parent.getOKAction().setEnabled(errorText == null && (session == null || !Objects.equals(session.getName(), text)));
+        if (errorText != null) {
+            errorLabel.setText(errorText);
+        }
     }
 
     @Nullable

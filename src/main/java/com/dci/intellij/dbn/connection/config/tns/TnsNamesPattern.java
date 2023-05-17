@@ -46,7 +46,7 @@ public class TnsNamesPattern {
         String addressList =  keyValue("ADDRESS_LIST",  iteration(block(address3)));
         String connectData =  keyValue("CONNECT_DATA",  iteration(block(oneOf(sid, server, serviceName, globalName, failoverMode, any))));
         String description =  keyValue("DESCRIPTION",   iteration(block(oneOf(sdu, failover, address2, addressList, connectData))));
-        String block =        keyValue(group("schema", value), block(oneOf(address1, description)));
+        String block =        keyValue(group("schema", value), group("descriptor", block(oneOf(address1, description))));
 
         pattern = Pattern.compile(block, Pattern.CASE_INSENSITIVE | Pattern.MULTILINE);
     }

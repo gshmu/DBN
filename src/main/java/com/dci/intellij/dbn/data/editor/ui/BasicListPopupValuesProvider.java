@@ -1,12 +1,14 @@
 package com.dci.intellij.dbn.data.editor.ui;
 
 import lombok.Getter;
+import lombok.Setter;
 
 import java.util.List;
 
 @Getter
+@Setter
 public class BasicListPopupValuesProvider extends ListPopupValuesProviderBase {
-    private final List<String> values;
+    private List<String> values;
 
     public BasicListPopupValuesProvider(String description, List<String> values) {
         super(description);

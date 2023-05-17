@@ -18,6 +18,10 @@ public class TextFieldWithPopup<T extends JComponent> extends TextFieldWithButto
     private final List<TextFieldPopupProvider> popupProviders = DisposableContainers.list(this);
     private T parentComponent;
 
+    public TextFieldWithPopup() {
+        this(null);
+    }
+
     public TextFieldWithPopup(Project project) {
         this(project, null);
 

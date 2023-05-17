@@ -10,16 +10,18 @@ import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
 
+import static com.dci.intellij.dbn.connection.DatabaseUrlType.*;
+
 @Getter
 @Setter
 @EqualsAndHashCode
 public class DatabaseInfo implements Cloneable<DatabaseInfo> {
     public interface Default {
-        DatabaseInfo ORACLE   = new DatabaseInfo("oracle", "localhost", "1521", "XE",       DatabaseUrlType.SID);
-        DatabaseInfo MYSQL    = new DatabaseInfo("mysql", "localhost", "3306", "mysql",    DatabaseUrlType.DATABASE);
-        DatabaseInfo POSTGRES = new DatabaseInfo("postgresql", "localhost", "5432", "postgres", DatabaseUrlType.DATABASE);
-        DatabaseInfo SQLITE   = new DatabaseInfo("sqlite", "sqlite.db",                     DatabaseUrlType.FILE);
-        DatabaseInfo GENERIC  = new DatabaseInfo("dbtype", "localhost", "1234", "database", DatabaseUrlType.DATABASE);
+        DatabaseInfo ORACLE   = new DatabaseInfo("oracle", "localhost", "1521", "XE", SID);
+        DatabaseInfo MYSQL    = new DatabaseInfo("mysql", "localhost", "3306", "mysql", DATABASE);
+        DatabaseInfo POSTGRES = new DatabaseInfo("postgresql", "localhost", "5432", "postgres", DATABASE);
+        DatabaseInfo SQLITE   = new DatabaseInfo("sqlite", "sqlite.db", FILE);
+        DatabaseInfo GENERIC  = new DatabaseInfo("dbtype", "localhost", "1234", "database", DATABASE);
     }
 
     private String vendor;
@@ -28,11 +30,11 @@ public class DatabaseInfo implements Cloneable<DatabaseInfo> {
     private String database;
     private String url;
     private DatabaseFiles files;
-    private DatabaseUrlType urlType = DatabaseUrlType.DATABASE;
+    private DatabaseUrlType urlType = DATABASE;
 	private String tnsFolder;
 	private String tnsProfile;
 
-    private DatabaseInfo() {}
+    public DatabaseInfo() {}
 
     public DatabaseInfo(String vendor, String host, String port, String database, DatabaseUrlType urlType) {
         this.vendor = vendor;
@@ -49,7 +51,22 @@ public class DatabaseInfo implements Cloneable<DatabaseInfo> {
     }
 
     public boolean isEmpty() {
-        return Strings.isEmpty(host) && Strings.isEmpty(port) && Strings.isEmpty(database) && (files == null || Strings.isEmpty(files.getMainFile().getPath()));
+        return Strings.isEmpty(host) &&
+                Strings.isEmpty(port) &&
+                Strings.isEmpty(database) &&
+                Strings.isEmpty(tnsFolder) &&
+                Strings.isEmpty(tnsProfile) &&
+                Strings.isEmpty(getMainFile());
+    }
+
+    public void reset() {
+        host = null;
+        port = null;
+        database = null;
+        tnsFolder = null;
+        tnsProfile = null;
+        files = null;
+        url = null;
     }
 
     public String getMainFile() {
@@ -77,6 +94,10 @@ public class DatabaseInfo implements Cloneable<DatabaseInfo> {
         } else {
             files.getMainFile().setPath(mainFile);
         }
+    }
+
+    public boolean isCustomUrl() {
+        return getUrlType() == CUSTOM;
     }
 
     @Override

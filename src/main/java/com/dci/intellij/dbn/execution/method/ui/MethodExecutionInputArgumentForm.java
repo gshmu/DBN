@@ -2,6 +2,7 @@ package com.dci.intellij.dbn.execution.method.ui;
 
 import com.dci.intellij.dbn.common.dispose.DisposableContainers;
 import com.dci.intellij.dbn.common.ui.form.DBNFormBase;
+import com.dci.intellij.dbn.common.ui.util.TextFields;
 import com.dci.intellij.dbn.common.util.Commons;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.ConnectionId;
@@ -187,7 +188,7 @@ public class MethodExecutionInputArgumentForm extends DBNFormBase {
         DBArgument argument = getArgument();
         if (argument != null) {
             MethodExecutionInput executionInput = getParentForm().getExecutionInput();
-            if (typeAttributeForms.size() >0 ) {
+            if (!typeAttributeForms.isEmpty()) {
                 for (MethodExecutionInputTypeAttributeForm typeAttributeComponent : typeAttributeForms) {
                     typeAttributeComponent.updateExecutionInput();
                 }
@@ -202,7 +203,7 @@ public class MethodExecutionInputArgumentForm extends DBNFormBase {
     }
 
     protected int[] getMetrics(int[] metrics) {
-        if (typeAttributeForms.size() > 0) {
+        if (!typeAttributeForms.isEmpty()) {
             for (MethodExecutionInputTypeAttributeForm typeAttributeComponent : typeAttributeForms) {
                 metrics = typeAttributeComponent.getMetrics(metrics);
             }
@@ -215,7 +216,7 @@ public class MethodExecutionInputArgumentForm extends DBNFormBase {
     }
 
     protected void adjustMetrics(int[] metrics) {
-        if (typeAttributeForms.size() > 0) {
+        if (!typeAttributeForms.isEmpty()) {
             for (MethodExecutionInputTypeAttributeForm typeAttributeComponent : typeAttributeForms) {
                 typeAttributeComponent.adjustMetrics(metrics);
             }
@@ -226,18 +227,16 @@ public class MethodExecutionInputArgumentForm extends DBNFormBase {
     }
 
     public void addDocumentListener(DocumentListener documentListener){
-        if (inputTextField != null) {
-            inputTextField.getDocument().addDocumentListener(documentListener);
-        }
+        TextFields.addDocumentListener(inputTextField, documentListener);
 
         for (MethodExecutionInputTypeAttributeForm typeAttributeComponent : typeAttributeForms){
-            typeAttributeComponent.addDocumentListener(documentListener);
+            TextFields.addDocumentListener(typeAttributeComponent.getInputTextField(), documentListener);
         }
     }
 
     public int getScrollUnitIncrement() {
-        return (int) (typeAttributeForms.size() > 0 ?
-                typeAttributeForms.get(0).getComponent().getPreferredSize().getHeight() :
-                mainPanel.getPreferredSize().getHeight());
+        return (int) (typeAttributeForms.isEmpty() ?
+                mainPanel.getPreferredSize().getHeight() :
+                typeAttributeForms.get(0).getComponent().getPreferredSize().getHeight());
     }
 }

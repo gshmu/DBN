@@ -13,15 +13,13 @@ import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.actionSystem.Presentation;
 import com.intellij.openapi.project.Project;
-import com.intellij.ui.DocumentAdapter;
 import com.intellij.util.ui.UIUtil;
 import org.jetbrains.annotations.NotNull;
 
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.JTextField;
-import javax.swing.event.DocumentEvent;
-import java.awt.BorderLayout;
+import javax.swing.*;
+import java.awt.*;
+
+import static com.dci.intellij.dbn.common.ui.util.TextFields.onTextChange;
 
 public abstract class ExecutionTimeoutForm extends DBNFormBase {
     private JTextField executionTimeoutTextField;
@@ -47,32 +45,7 @@ public abstract class ExecutionTimeoutForm extends DBNFormBase {
                 UIUtil.getTextFieldForeground());
 
 
-        executionTimeoutTextField.getDocument().addDocumentListener(new DocumentAdapter() {
-            @Override
-            protected void textChanged(@NotNull DocumentEvent e) {
-                String text = executionTimeoutTextField.getText();
-                try {
-                    timeout = Integer.parseInt(text);
-                    executionTimeoutTextField.setForeground(timeout == getSettingsTimeout() ?
-                            UIUtil.getLabelDisabledForeground() :
-                            UIUtil.getTextFieldForeground());
-
-                    if (debuggerType.isDebug())
-                        executionInput.setDebugExecutionTimeout(timeout); else
-                        executionInput.setExecutionTimeout(timeout);
-                    hintLabel.setIcon(null);
-                    hintLabel.setToolTipText(null);
-                    hasErrors = false;
-                    handleChange(false);
-                } catch (NumberFormatException e1) {
-                    //errorLabel.setText("Timeout must be an integer");
-                    hintLabel.setIcon(Icons.COMMON_ERROR);
-                    hintLabel.setToolTipText("Timeout must be an integer");
-                    hasErrors = true;
-                    handleChange(true);
-                }
-            }
-        });
+        onTextChange(executionTimeoutTextField, e -> updateErrorMessage());
 
         ActionToolbar actionToolbar = Actions.createActionToolbar(
                 actionsPanel,
@@ -80,6 +53,30 @@ public abstract class ExecutionTimeoutForm extends DBNFormBase {
                 new SettingsAction());
 
         actionsPanel.add(actionToolbar.getComponent(), BorderLayout.CENTER);
+    }
+
+    private void updateErrorMessage() {
+        String text = executionTimeoutTextField.getText();
+        try {
+            timeout = Integer.parseInt(text);
+            executionTimeoutTextField.setForeground(timeout == getSettingsTimeout() ?
+                    UIUtil.getLabelDisabledForeground() :
+                    UIUtil.getTextFieldForeground());
+
+            if (debuggerType.isDebug())
+                executionInput.setDebugExecutionTimeout(timeout); else
+                executionInput.setExecutionTimeout(timeout);
+            hintLabel.setIcon(null);
+            hintLabel.setToolTipText(null);
+            hasErrors = false;
+            handleChange(false);
+        } catch (NumberFormatException e1) {
+            //errorLabel.setText("Timeout must be an integer");
+            hintLabel.setIcon(Icons.COMMON_ERROR);
+            hintLabel.setToolTipText("Timeout must be an integer");
+            hasErrors = true;
+            handleChange(true);
+        }
     }
 
     private int getInputTimeout() {

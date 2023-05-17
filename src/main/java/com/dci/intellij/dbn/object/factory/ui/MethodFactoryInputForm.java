@@ -14,12 +14,12 @@ import com.dci.intellij.dbn.object.factory.ObjectFactoryInput;
 import com.dci.intellij.dbn.object.factory.ui.common.ObjectFactoryInputForm;
 import com.dci.intellij.dbn.object.lookup.DBObjectRef;
 import com.dci.intellij.dbn.object.type.DBObjectType;
-import com.intellij.ui.DocumentAdapter;
 import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
-import javax.swing.event.DocumentEvent;
 import java.awt.*;
+
+import static com.dci.intellij.dbn.common.ui.util.TextFields.onTextChange;
 
 public abstract class MethodFactoryInputForm extends ObjectFactoryInputForm<MethodFactoryInput> {
     private JPanel mainPanel;
@@ -58,13 +58,8 @@ public abstract class MethodFactoryInputForm extends ObjectFactoryInputForm<Meth
                 objectType == DBObjectType.FUNCTION ? "Function Name" :
                 objectType == DBObjectType.PROCEDURE ? "Procedure Name" : "Name");
 
-        final DBNHeaderForm headerForm = createHeaderForm(schema, objectType);
-        nameTextField.getDocument().addDocumentListener(new DocumentAdapter() {
-            @Override
-            protected void textChanged(@NotNull DocumentEvent e) {
-                headerForm.setTitle(getSchema().getName() + "." + nameTextField.getText().toUpperCase());
-            }
-        });
+        DBNHeaderForm headerForm = createHeaderForm(schema, objectType);
+        onTextChange(nameTextField, e -> headerForm.setTitle(getSchema().getName() + "." + nameTextField.getText().toUpperCase()));
     }
 
     private DBNHeaderForm createHeaderForm(DBSchema schema, DBObjectType objectType) {

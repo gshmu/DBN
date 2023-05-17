@@ -7,19 +7,15 @@ import com.dci.intellij.dbn.common.ui.form.DBNHintForm;
 import com.dci.intellij.dbn.common.util.Strings;
 import com.dci.intellij.dbn.execution.ExecutionManager;
 import com.dci.intellij.dbn.execution.statement.result.StatementExecutionResult;
-import com.intellij.ui.DocumentAdapter;
 import com.intellij.ui.JBColor;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import javax.swing.JCheckBox;
-import javax.swing.JComponent;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.JTextField;
-import javax.swing.event.DocumentEvent;
-import java.awt.BorderLayout;
+import javax.swing.*;
+import java.awt.*;
 import java.util.Objects;
+
+import static com.dci.intellij.dbn.common.ui.util.TextFields.onTextChange;
 
 public class RenameExecutionResultForm extends DBNFormBase {
     private JPanel headerPanel;
@@ -51,15 +47,16 @@ public class RenameExecutionResultForm extends DBNFormBase {
         ExecutionManager executionManager = ExecutionManager.getInstance(ensureProject());
         stickyCheckBox.setSelected(executionManager.isRetainStickyNames());
 
-        resultNameTextField.getDocument().addDocumentListener(new DocumentAdapter() {
-            @Override
-            protected void textChanged(@NotNull DocumentEvent e) {
-                String errorText = null;
-                String text = Strings.trim(resultNameTextField.getText());
+        onTextChange(resultNameTextField, e -> updateErrorMessage(executionResult));
+    }
 
-                if (Strings.isEmpty(text)) {
-                    errorText = "Result name must be specified";
-                }
+    private void updateErrorMessage(StatementExecutionResult executionResult) {
+        String errorText = null;
+        String text = Strings.trim(resultNameTextField.getText());
+
+        if (Strings.isEmpty(text)) {
+            errorText = "Result name must be specified";
+        }
 
 /*
                 else if (consoleNames.contains(text)) {
@@ -68,13 +65,13 @@ public class RenameExecutionResultForm extends DBNFormBase {
 */
 
 
-                errorLabel.setVisible(errorText != null);
-                parent.getOKAction().setEnabled(errorText == null && (!Objects.equals(executionResult.getName(), text)));
-                if (errorText != null) {
-                    errorLabel.setText(errorText);
-                }
-            }
-        });
+        errorLabel.setVisible(errorText != null);
+
+        RenameExecutionResultDialog parent = ensureParentComponent();
+        parent.getOKAction().setEnabled(errorText == null && (!Objects.equals(executionResult.getName(), text)));
+        if (errorText != null) {
+            errorLabel.setText(errorText);
+        }
     }
 
     @Nullable

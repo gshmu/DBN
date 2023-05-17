@@ -18,19 +18,17 @@ import com.dci.intellij.dbn.editor.data.options.DataEditorSettings;
 import com.dci.intellij.dbn.editor.data.options.DataEditorValueListPopupSettings;
 import com.dci.intellij.dbn.object.DBColumn;
 import com.intellij.openapi.project.Project;
-import com.intellij.ui.DocumentAdapter;
 import com.intellij.ui.JBColor;
 import com.intellij.util.ui.UIUtil;
 import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
-import javax.swing.event.DocumentEvent;
-import javax.swing.event.DocumentListener;
 import java.awt.*;
 import java.awt.event.*;
 import java.text.ParseException;
 import java.util.List;
 
+import static com.dci.intellij.dbn.common.ui.util.TextFields.onTextChange;
 import static com.dci.intellij.dbn.editor.data.model.RecordStatus.DELETED;
 
 public class DatasetRecordEditorColumnForm extends DBNFormBase {
@@ -74,9 +72,9 @@ public class DatasetRecordEditorColumnForm extends DBNFormBase {
 
                 textFieldWithPopup.setPreferredSize(new Dimension(300, -1));
                 JTextField valueTextField = textFieldWithPopup.getTextField();
-                valueTextField.getDocument().addDocumentListener(documentListener);
                 valueTextField.addKeyListener(keyAdapter);
                 valueTextField.addFocusListener(focusListener);
+                onTextChange(valueTextField, e -> getEditorComponent().setForeground(Colors.getTextFieldForeground()));
 
                 if (editable) {
                     switch (genericDataType) {
@@ -223,13 +221,6 @@ public class DatasetRecordEditorColumnForm extends DBNFormBase {
     /*********************************************************
      *                     Listeners                         *
      *********************************************************/
-    private final DocumentListener documentListener = new DocumentAdapter() {
-        @Override
-        protected void textChanged(@NotNull DocumentEvent e) {
-            JTextField valueTextField = editorComponent.getTextField();
-            valueTextField.setForeground(Colors.getTextFieldForeground());
-        }
-    };
 
     private final KeyListener keyAdapter = new KeyAdapter() {
         @Override

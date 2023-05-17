@@ -6,15 +6,15 @@ import com.dci.intellij.dbn.common.ui.form.DBNHintForm;
 import com.dci.intellij.dbn.common.util.Strings;
 import com.dci.intellij.dbn.connection.DatabaseType;
 import com.dci.intellij.dbn.execution.script.CmdLineInterface;
-import com.intellij.ui.DocumentAdapter;
 import com.intellij.util.ui.UIUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
-import javax.swing.event.DocumentEvent;
 import java.awt.*;
 import java.util.Set;
+
+import static com.dci.intellij.dbn.common.ui.util.TextFields.onTextChange;
 
 public class CmdLineInterfaceInputForm extends DBNFormBase {
     private JPanel mainPanel;
@@ -42,12 +42,7 @@ public class CmdLineInterfaceInputForm extends DBNFormBase {
 
         cmdLineInterface.setDatabaseType(databaseType);
         cmdLineInterface.setExecutablePath(executablePath);
-        nameTextField.getDocument().addDocumentListener(new DocumentAdapter() {
-            @Override
-            protected void textChanged(@NotNull DocumentEvent e) {
-                updateComponents(cmdLineInterface, usedNames);
-            }
-        });
+        onTextChange(nameTextField, e -> updateComponents(cmdLineInterface, usedNames));
 
         String hintText =
                 "Please provide a name for storing Command-Line interface executable.\n" +

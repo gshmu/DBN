@@ -5,7 +5,9 @@ import com.dci.intellij.dbn.common.options.ui.ConfigurationEditorForm;
 import com.dci.intellij.dbn.common.ui.ValueSelectorOption;
 import com.dci.intellij.dbn.common.ui.listener.ComboBoxSelectionKeyListener;
 import com.dci.intellij.dbn.common.ui.misc.DBNComboBox;
+import com.dci.intellij.dbn.common.ui.util.TextFields;
 import com.dci.intellij.dbn.common.util.Actions;
+import com.dci.intellij.dbn.common.util.Safe;
 import com.dci.intellij.dbn.data.editor.ui.TextFieldPopupType;
 import com.dci.intellij.dbn.data.editor.ui.TextFieldWithPopup;
 import com.dci.intellij.dbn.data.type.GenericDataType;
@@ -19,13 +21,11 @@ import com.dci.intellij.dbn.object.lookup.DBObjectRef;
 import com.intellij.openapi.actionSystem.ActionToolbar;
 import com.intellij.openapi.options.ConfigurationException;
 import com.intellij.ui.ColoredListCellRenderer;
-import com.intellij.ui.DocumentAdapter;
 import com.intellij.ui.SimpleTextAttributes;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
-import javax.swing.event.DocumentEvent;
 import java.awt.*;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -102,8 +102,7 @@ public class DatasetBasicFilterConditionForm extends ConfigurationEditorForm<Dat
         setActive(condition.isActive());
 
 
-        DocumentListener documentListener = new DocumentListener();
-        valueTextField.getDocument().addDocumentListener(documentListener);
+        TextFields.onTextChange(valueTextField, e -> Safe.run(filterForm, f -> f.updateNameAndPreview()));
         valueTextField.addKeyListener(ComboBoxSelectionKeyListener.create(columnSelector, false));
         valueTextField.addKeyListener(ComboBoxSelectionKeyListener.create(operatorSelector, true));
 
@@ -142,15 +141,6 @@ public class DatasetBasicFilterConditionForm extends ConfigurationEditorForm<Dat
         JTextField valueTextField = editorComponent.getTextField();
         valueTextField.selectAll();
         valueTextField.grabFocus();
-    }
-
-    private class DocumentListener extends DocumentAdapter{
-        @Override
-        protected void textChanged(@NotNull DocumentEvent e) {
-            if (filterForm != null) {
-                filterForm.updateNameAndPreview();
-            }
-        }
     }
 
     public void setBasicFilterPanel(DatasetBasicFilterForm filterForm) {
