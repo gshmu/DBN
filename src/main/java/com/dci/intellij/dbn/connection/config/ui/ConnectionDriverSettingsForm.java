@@ -109,7 +109,6 @@ public class ConnectionDriverSettingsForm extends DBNFormBase {
         if (!allowBuiltInLibrary) {
             ComboBoxes.setSelection(driverSourceComboBox, DriverSource.EXTERNAL);
         }
-        //driverSourceLabel.setVisible(allowBuiltInLibrary);
 
         String error = null;
         boolean externalDriver = getDriverSource() == DriverSource.EXTERNAL;

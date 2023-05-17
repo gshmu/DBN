@@ -30,10 +30,13 @@ public class TnsNamesImportAction extends ProjectAction {
             TnsNamesImportDialog dialog = new TnsNamesImportDialog(project, file);
             dialog.show();
             int exitCode = dialog.getExitCode();
-            if (exitCode == DialogWrapper.OK_EXIT_CODE) {
-                ProjectSettingsManager settingsManager = ProjectSettingsManager.getInstance(project);
-                settingsManager.createConnections(dialog.getTnsNames());
-            }
+            if (exitCode != DialogWrapper.OK_EXIT_CODE) return;
+            
+            ProjectSettingsManager settingsManager = ProjectSettingsManager.getInstance(project);
+            settingsManager.createConnections(
+                    dialog.getTnsNames(),
+                    dialog.getImportType(),
+                    dialog.isSelectedOnly());
         }
 
     }

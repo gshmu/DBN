@@ -66,7 +66,7 @@ public class TnsNamesTableModel extends StatefulDisposableBase implements DBNRea
     @Override
     public Object getValue(TnsName tnsName, int column) {
         switch (column) {
-            case 0: return tnsName.getName();
+            case 0: return tnsName.getProfile();
             case 1: return tnsName.getProtocol();
             case 2: return tnsName.getHost();
             case 3: return tnsName.getPort();
@@ -83,7 +83,7 @@ public class TnsNamesTableModel extends StatefulDisposableBase implements DBNRea
     @Override
     public String getPresentableValue(TnsName tnsName, int column) {
         switch (column) {
-            case 0: return tnsName.getName();
+            case 0: return tnsName.getProfile();
             case 1: return tnsName.getProtocol();
             case 2: return tnsName.getHost();
             case 3: return tnsName.getPort();

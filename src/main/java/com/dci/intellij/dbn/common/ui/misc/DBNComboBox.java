@@ -282,7 +282,9 @@ public class DBNComboBox<T extends Presentable> extends JComboBox<T> implements 
         T oldValue = getSelectedValue();
         DBNComboBoxModel<T> model = getModel();
         if (value != null) {
-            value = model.containsItem(value) ? value : model.isEmpty() ? null : model.getElementAt(0);
+            if (!model.containsItem(value)) {
+                model.addElement(value);
+            }
         }
         if (!Commons.match(oldValue, value) || (model.isEmpty() && value == null)) {
             setSelectedItem(value);

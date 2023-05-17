@@ -2,12 +2,15 @@ package com.dci.intellij.dbn.connection.config.tns;
 
 
 import lombok.Getter;
+import lombok.Setter;
 import org.jetbrains.annotations.NotNull;
 
 @Getter
+@Setter
 public class TnsName implements Comparable<TnsName> {
+    private final String descriptor;
 
-    private final String name;
+    private final String profile;
     private final String protocol;
     private final String host;
     private final String port;
@@ -18,8 +21,10 @@ public class TnsName implements Comparable<TnsName> {
     private final String failover;
     private final String failoverType;
     private final String failoverMethod;
+    private boolean selected;
 
     TnsName(
+            String descriptor,
             String name,
             String protocol,
             String host,
@@ -31,7 +36,9 @@ public class TnsName implements Comparable<TnsName> {
             String failover,
             String failoverType,
             String failoverMethod) {
-        this.name = name;
+        this.descriptor = descriptor;
+
+        this.profile = name;
         this.protocol = protocol;
         this.host = host;
         this.port = port;
@@ -45,11 +52,11 @@ public class TnsName implements Comparable<TnsName> {
     }
 
     public String toString() {
-        return name;
+        return profile;
     }
 
     @Override
     public int compareTo(@NotNull TnsName o) {
-        return name.compareTo(o.name);
+        return profile.compareTo(o.profile);
     }
 }
