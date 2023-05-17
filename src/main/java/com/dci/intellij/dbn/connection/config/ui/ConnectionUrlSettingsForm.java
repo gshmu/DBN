@@ -157,7 +157,7 @@ public class ConnectionUrlSettingsForm extends DBNFormBase {
 
     private List<String> getTnsEntries(File tnsnamesOraFile) {
         try {
-            TnsNamesBundle tnsNames = TnsNamesParser.parse(tnsnamesOraFile);
+            TnsNamesBundle tnsNames = TnsNamesParser.get(tnsnamesOraFile);
             return tnsNames.getProfileNames();
         } catch (Exception e) {
             //ErrorHandler.logErrorStack("Error occured while reading tnsnames.ora file for database: " + adbInstance.getDbName(), e);

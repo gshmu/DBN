@@ -1,17 +1,16 @@
 package com.dci.intellij.dbn.common.ui.misc;
 
 import com.dci.intellij.dbn.common.ui.Presentable;
+import com.dci.intellij.dbn.common.ui.util.Listeners;
 
 import javax.swing.*;
 import javax.swing.event.ListDataListener;
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 public class DBNComboBoxModel<T extends Presentable> implements MutableComboBoxModel<T> {
-    private Set<ListDataListener> listDataListeners = new HashSet<>();
-    private List<T> items = new ArrayList<>();
+    private final Listeners<ListDataListener> listDataListeners = Listeners.create();
+    private final List<T> items = new ArrayList<>();
     private T selectedItem;
 
     @Override

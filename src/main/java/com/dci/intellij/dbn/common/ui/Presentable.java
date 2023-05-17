@@ -7,6 +7,7 @@ import org.jetbrains.annotations.Nullable;
 import javax.swing.*;
 import java.util.Collection;
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 public interface Presentable extends Named {
@@ -45,6 +46,20 @@ public interface Presentable extends Named {
             @Override
             public String getName() {
                 return name;
+            }
+
+            @Override
+            public String toString() {
+                return name;
+            }
+
+            @Override
+            public boolean equals(Object obj) {
+                if (obj instanceof Presentable) {
+                    Presentable presentable = (Presentable) obj;
+                    return Objects.equals(name, presentable.getName());
+                }
+                return false;
             }
         };
     }
