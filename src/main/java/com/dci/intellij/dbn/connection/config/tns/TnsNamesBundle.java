@@ -3,6 +3,7 @@ package com.dci.intellij.dbn.connection.config.tns;
 import lombok.Getter;
 
 import java.io.File;
+import java.util.Collections;
 import java.util.List;
 
 import static com.dci.intellij.dbn.common.util.Lists.convert;
@@ -16,6 +17,7 @@ public class TnsNamesBundle {
     public TnsNamesBundle(File file, List<TnsName> profiles) {
         this.file = file;
         this.profiles = profiles;
+        Collections.sort(this.profiles);
     }
 
     public List<String> getProfileNames() {
