@@ -3,6 +3,7 @@ package com.dci.intellij.dbn.common.ui.tab;
 import com.dci.intellij.dbn.common.dispose.Disposer;
 import com.dci.intellij.dbn.common.dispose.StatefulDisposable;
 import com.dci.intellij.dbn.common.ui.form.DBNForm;
+import com.intellij.openapi.Disposable;
 import com.intellij.openapi.util.ActionCallback;
 import com.intellij.openapi.wm.IdeFocusManager;
 import com.intellij.ui.tabs.TabInfo;
@@ -18,9 +19,9 @@ public class TabbedPane extends JBTabsImpl implements StatefulDisposable {
     private boolean disposed;
 
     public TabbedPane(@NotNull DBNForm form) {
-        super(form.getProject(), IdeFocusManager.findInstance(), form);
+        super(form.ensureProject());
         setTabDraggingEnabled(true);
-        Disposer.register(form, this);
+        Disposer.register(form, () -> customDispose());
     }
 
     public void select(JComponent component, boolean requestFocus) {
@@ -84,8 +85,7 @@ public class TabbedPane extends JBTabsImpl implements StatefulDisposable {
         return selectedInfo.getText();
     }
 
-    @Override
-    public void dispose() {
+    private void customDispose() {
         if (disposed) return;
 
         disposed = true;
