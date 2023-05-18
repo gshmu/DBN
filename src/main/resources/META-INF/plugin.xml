@@ -7,7 +7,7 @@
     <depends>com.intellij.modules.platform</depends>
     <depends>com.intellij.modules.lang</depends>
     <depends optional="true" config-file="dbn-java-support.xml">com.intellij.modules.java</depends>
-    <vendor email="dancioca@bluewin.ch" logo="/img/project/DatabaseNavigator.png">Dan Cioca</vendor>
+    <vendor email="dancioca@bluewin.ch">Dan Cioca</vendor>
     <idea-version since-build="200.0001" until-build="231.*"/>
     <description><![CDATA[
             <b>Database development, scripting and navigation tool</b><br>
