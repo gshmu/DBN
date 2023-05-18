@@ -229,7 +229,6 @@ public class ConnectionUrlSettingsForm extends DBNFormBase {
     }
 
     private void applyDatabaseInfo(DatabaseInfo databaseInfo) {
-        urlTextField.setText(databaseInfo.getUrl());
         databaseFileSettingsForm.setDatabaseFiles(databaseInfo.getFiles());
         hostTextField.setText(databaseInfo.getHost());
         portTextField.setText(databaseInfo.getPort());
@@ -242,12 +241,14 @@ public class ConnectionUrlSettingsForm extends DBNFormBase {
             tnsProfileComboBox.setSelectedValue(presentable);
         }
 
+
         DatabaseType databaseType = getDatabaseType();
         DatabaseUrlType[] urlTypes = databaseType.getUrlTypes();
         initComboBox(urlTypeComboBox, urlTypes);
         setSelection(urlTypeComboBox, databaseInfo.getUrlType());
         urlTypeLabel.setVisible(urlTypes.length > 1);
         urlTypeComboBox.setVisible(urlTypes.length > 1);
+        urlTextField.setText(databaseInfo.getUrl());
     }
 
     @NotNull
