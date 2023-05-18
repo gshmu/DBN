@@ -4,6 +4,7 @@ import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.common.color.Colors;
 import com.dci.intellij.dbn.common.message.MessageType;
 import com.dci.intellij.dbn.common.ui.util.Fonts;
+import com.intellij.ui.HyperlinkLabel;
 import com.intellij.ui.RoundedLineBorder;
 import com.intellij.uiDesigner.core.GridLayoutManager;
 import com.intellij.util.ui.JBUI;
@@ -17,10 +18,15 @@ public class DBNHintForm extends DBNFormBase {
     private JPanel mainPanel;
     private JLabel hintLabel;
     private JTextPane hintTextPane;
+    private HyperlinkLabel reloadDriversLink;
 
     private final boolean boxed;
 
     public DBNHintForm(DBNForm parent, String hintText, MessageType messageType, boolean boxed) {
+        this(parent, hintText, messageType, boxed, null, null);
+    }
+
+    public DBNHintForm(DBNForm parent, String hintText, MessageType messageType, boolean boxed, String actionText, Runnable action) {
         super(parent);
         this.boxed = boxed;
         hintLabel.setText("");
@@ -50,6 +56,16 @@ public class DBNHintForm extends DBNFormBase {
             GridLayoutManager gridLayoutManager = (GridLayoutManager) mainPanel.getLayout();
             gridLayoutManager.setMargin(JBUI.emptyInsets());
         }
+
+        if (actionText != null) {
+            reloadDriversLink.setVisible(true);
+            reloadDriversLink.setHyperlinkText(actionText);
+            reloadDriversLink.addHyperlinkListener(e -> action.run());
+        } else {
+            reloadDriversLink.setVisible(false);
+        }
+
+
     }
 
     @NotNull

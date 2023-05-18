@@ -5,7 +5,9 @@ import com.dci.intellij.dbn.common.constant.Constant;
 import com.dci.intellij.dbn.common.constant.ConstantUtil;
 import com.dci.intellij.dbn.common.ui.Presentable;
 import lombok.Getter;
+import org.apache.logging.log4j.util.Strings;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
 import java.util.Arrays;
@@ -106,7 +108,11 @@ public enum DatabaseType implements Constant<DatabaseType>, Presentable{
         return Arrays.stream(derivedDbs).anyMatch(s -> identifier.contains(s));
     }
 
-    public boolean hasUrlPattern(DatabaseUrlPattern pattern) {
+    public boolean supportsUrlType(DatabaseUrlType urlType) {
+        return getUrlPattern(urlType) != null;
+    }
+
+    public boolean supportsUrlPattern(DatabaseUrlPattern pattern) {
         for (DatabaseUrlPattern urlPattern : urlPatterns) {
             if (urlPattern == pattern) {
                 return true;
@@ -115,9 +121,9 @@ public enum DatabaseType implements Constant<DatabaseType>, Presentable{
         return false;
     }
 
-    @NotNull
+    @Nullable
     public DatabaseUrlPattern getUrlPattern(DatabaseUrlType urlType) {
-        return Arrays.stream(urlPatterns).filter(p -> p.getUrlType() == urlType).findFirst().orElse(DatabaseUrlPattern.GENERIC);
+        return Arrays.stream(urlPatterns).filter(p -> p.getUrlType() == urlType).findFirst().orElse(null);
     }
 
     public DatabaseUrlType[] getUrlTypes() {
@@ -133,14 +139,16 @@ public enum DatabaseType implements Constant<DatabaseType>, Presentable{
         return urlPatterns[0];
     }
 
-    @NotNull
+    @Nullable
     public DatabaseUrlPattern resolveUrlPattern(String url) {
+        if (Strings.isEmpty(url)) return null;
+
         for (DatabaseUrlPattern urlPattern : urlPatterns) {
             if (urlPattern.matches(url)) {
                 return urlPattern;
             }
         }
-        return DatabaseUrlPattern.GENERIC;
+        return null;
     }
 
     @NotNull

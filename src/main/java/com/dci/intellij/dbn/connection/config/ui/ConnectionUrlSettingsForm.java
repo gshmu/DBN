@@ -29,6 +29,7 @@ import java.util.*;
 
 import static com.dci.intellij.dbn.common.ui.util.ComboBoxes.*;
 import static com.dci.intellij.dbn.common.ui.util.TextFields.onTextChange;
+import static com.dci.intellij.dbn.common.util.Commons.coalesce;
 import static com.dci.intellij.dbn.common.util.Commons.nvl;
 import static com.dci.intellij.dbn.connection.DatabaseUrlType.CUSTOM;
 import static com.dci.intellij.dbn.connection.DatabaseUrlType.FILE;
@@ -131,7 +132,7 @@ public class ConnectionUrlSettingsForm extends DBNFormBase {
         if (urlType == CUSTOM) return;
 
         DatabaseType databaseType = getDatabaseType();
-        DatabaseUrlPattern urlPattern = databaseType.getUrlPattern(urlType);
+        DatabaseUrlPattern urlPattern = nvl(databaseType.getUrlPattern(urlType), DatabaseUrlPattern.GENERIC);
         String url = urlPattern.buildUrl(
                 getVendor(),
                 getHost(),
@@ -160,7 +161,7 @@ public class ConnectionUrlSettingsForm extends DBNFormBase {
             TnsNamesBundle tnsNames = TnsNamesParser.get(tnsnamesOraFile);
             return tnsNames.getProfileNames();
         } catch (Exception e) {
-            //ErrorHandler.logErrorStack("Error occured while reading tnsnames.ora file for database: " + adbInstance.getDbName(), e);
+            //ErrorHandler.logErrorStack("Error occurred while reading tnsnames.ora file for database: " + adbInstance.getDbName(), e);
         }
         return Collections.emptyList();
     }
@@ -199,10 +200,21 @@ public class ConnectionUrlSettingsForm extends DBNFormBase {
     }
 
     void handleDatabaseTypeChange(DatabaseType oldDatabaseType, DatabaseType newDatabaseType) {
-        DatabaseUrlPattern newUrlPattern = newDatabaseType.getDefaultUrlPattern();
+        DatabaseInfo previousInfo = loadDatabaseInfo();
+        history.put(oldDatabaseType, previousInfo);
 
-        history.put(oldDatabaseType, loadDatabaseInfo());
-        DatabaseInfo histInfo = nvl(history.get(newDatabaseType), newUrlPattern.getDefaultInfo());
+        DatabaseInfo histInfo = history.get(newDatabaseType);
+        if (histInfo == null) {
+            String previousUrl = previousInfo.getUrl();
+            DatabaseUrlType previousUrlType = previousInfo.getUrlType();
+
+            DatabaseUrlPattern newUrlPattern = coalesce(
+                    () -> newDatabaseType.resolveUrlPattern(previousUrl),
+                    () -> newDatabaseType.getUrlPattern(previousUrlType),
+                    () -> newDatabaseType.getDefaultUrlPattern());
+
+            histInfo = newUrlPattern.getDefaultInfo();
+        }
 
         applyDatabaseInfo(histInfo);
         updateFieldVisibility();
