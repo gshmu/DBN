@@ -5,7 +5,6 @@ import com.dci.intellij.dbn.common.database.AuthenticationInfo;
 import com.dci.intellij.dbn.common.database.DatabaseInfo;
 import com.dci.intellij.dbn.common.environment.EnvironmentType;
 import com.dci.intellij.dbn.common.event.ProjectEvents;
-import com.dci.intellij.dbn.common.message.MessageType;
 import com.dci.intellij.dbn.common.options.ConfigurationHandle;
 import com.dci.intellij.dbn.common.options.SettingsChangeNotifier;
 import com.dci.intellij.dbn.common.options.ui.ConfigurationEditorForm;
@@ -314,7 +313,9 @@ public class ConnectionDatabaseSettingsForm extends ConfigurationEditorForm<Conn
             DBNHintForm hintForm = new DBNHintForm(this,
                     "Your database type was identified as \"" + databaseTypeName +"\".\n" +
                     "Use specific connection type instead of \"Generic\", " +
-                            "to enable dedicated support for this database", MessageType.WARNING, true);
+                    "to enable dedicated support for this database", null, true,
+                    "Change to " + databaseTypeName,
+                    () -> setSelection(databaseTypeComboBox, driverDatabaseType));
             databaseTypeHintPanel.add(hintForm.getComponent(), BorderLayout.CENTER);
         } else {
             databaseTypeHintPanel.removeAll();

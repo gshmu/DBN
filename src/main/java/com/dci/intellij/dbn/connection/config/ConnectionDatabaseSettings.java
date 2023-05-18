@@ -3,6 +3,7 @@ package com.dci.intellij.dbn.connection.config;
 import com.dci.intellij.dbn.common.database.AuthenticationInfo;
 import com.dci.intellij.dbn.common.database.DatabaseInfo;
 import com.dci.intellij.dbn.common.options.BasicConfiguration;
+import com.dci.intellij.dbn.common.util.Commons;
 import com.dci.intellij.dbn.common.util.Files;
 import com.dci.intellij.dbn.common.util.Strings;
 import com.dci.intellij.dbn.connection.*;
@@ -249,7 +250,7 @@ public class ConnectionDatabaseSettings extends BasicConfiguration<ConnectionSet
             String url = getString(element, "url", databaseInfo.getUrl());
             databaseInfo.setUrl(url);
 
-            urlPattern = databaseType.resolveUrlPattern(url);
+            urlPattern = Commons.nvl(databaseType.resolveUrlPattern(url), DatabaseUrlPattern.GENERIC);
             databaseInfo.setUrlType(urlPattern.getUrlType());
             databaseInfo.setHost(urlPattern.resolveHost(url));
             databaseInfo.setPort(urlPattern.resolvePort(url));

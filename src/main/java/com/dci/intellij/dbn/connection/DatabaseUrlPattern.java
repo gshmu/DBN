@@ -41,8 +41,7 @@ public enum DatabaseUrlPattern {
     ORACLE_LDAPS(
             "jdbc:oracle:thin:@ldaps://<HOST>:<PORT>/<DATABASE>",
             "^(jdbc:oracle:(?:thin|oci):@ldaps\\/\\/)(?<HOST>[._\\-a-z0-9]{1,1000})(?<PORT>:[0-9]{1,100})(?<DATABASE>\\/[.\\-$_a-z0-9]{1,1000})$",
-            Default.ORACLE,
-            LDAPS),
+            Default.ORACLE, LDAPS),
 
     MYSQL_DB(
             "jdbc:mysql://<HOST>:<PORT>/<DATABASE>",
@@ -77,7 +76,7 @@ public enum DatabaseUrlPattern {
 
     public static DatabaseUrlPattern get(@NotNull DatabaseType databaseType, @NotNull DatabaseUrlType urlType) {
         for (DatabaseUrlPattern urlPattern : values()) {
-            if (databaseType.hasUrlPattern(urlPattern) && urlPattern.getUrlType() == urlType) {
+            if (databaseType.supportsUrlPattern(urlPattern) && urlPattern.getUrlType() == urlType) {
                 return urlPattern;
             }
         }
