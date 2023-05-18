@@ -76,7 +76,7 @@ public class Icons {
     public static final Icon FOLDER_SCHEMA_ASSOCIATION = load("/img/action/FolderSchemaLink.png");
 
 
-    public static final Icon DATABASE_NAVIGATOR = load("/img/project/DatabaseNavigator.png");
+    public static final Icon DATABASE_NAVIGATOR = load("/img/project/DatabaseNavigator.svg");
     public static final Icon DATABASE_MODULE = load("/img/project/DatabaseModule.png");
     public static final Icon DATABASE_MODULE_SMALL_OPEN = load("/img/project/DatabaseModuleOpen.png");
     public static final Icon DATABASE_MODULE_SMALL_CLOSED = load("/img/project/DatabaseModuleClosed.png");
