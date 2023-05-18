@@ -26,6 +26,7 @@
         <include name="**/?*.xml"/>
         <include name="**/?*.gif"/>
         <include name="**/?*.png"/>
+        <include name="**/?*.svg"/>
         <include name="**/?*.jpeg"/>
         <include name="**/?*.jpg"/>
         <include name="**/?*.html"/>
