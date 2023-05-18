@@ -1,6 +1,7 @@
 package com.dci.intellij.dbn.common;
 
 import com.intellij.openapi.util.IconLoader;
+import com.intellij.openapi.util.ScalableIcon;
 import com.intellij.ui.RowIcon;
 
 import javax.swing.*;
@@ -444,11 +445,20 @@ public class Icons {
 
 
     private static Icon load(String path) {
-        try {
-            return IconLoader.getIcon(path);
-        } catch (Throwable t) {
-            return  load("/img/common/Warning.png");
+        //return IconManager.getInstance().loadRasterizedIcon(path, Icons.class.getClassLoader(), -1, 2);
+        return IconLoader.getIcon(path);
+    }
+
+    public static Icon scaleToWidth(Icon icon, float newWidth) {
+        if (icon instanceof ScalableIcon) {
+            ScalableIcon scalableIcon = (ScalableIcon) icon;
+
+            int iconWidth = scalableIcon.getIconWidth();
+            if (newWidth != iconWidth) {
+                return scalableIcon.scale(newWidth / iconWidth);
+            }
         }
+        return icon;
     }
 
     private static Icon load(String key, String path) {
