@@ -21,7 +21,7 @@ import java.awt.*;
 public class AboutComponent extends DBNFormBase {
     public static final String PAYPAL_URL = "https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=3QAPZFCCARA4J";
     private JPanel mainPanel;
-    private JLabel splashLabel;
+    private JLabel logoLabel;
     private JLabel downloadPageLinkLabel;
     private JLabel supportPageLinkLabel;
     private JLabel requestTrackerPageLinkLabel;
@@ -32,8 +32,8 @@ public class AboutComponent extends DBNFormBase {
         super(null, project);
         Cursor handCursor = Cursor.getPredefinedCursor(Cursor.HAND_CURSOR);
 
-        splashLabel.setIcon(Icons.DATABASE_NAVIGATOR);
-        splashLabel.setText("");
+        logoLabel.setIcon(Icons.DATABASE_NAVIGATOR);
+        logoLabel.setText("");
         //linksPanel.setBorder(Borders.BOTTOM_LINE_BORDER);
 
         downloadPageLinkLabel.setForeground(CodeInsightColors.HYPERLINK_ATTRIBUTES.getDefaultAttributes().getForegroundColor());
