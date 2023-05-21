@@ -37,7 +37,7 @@ class SqliteExecutionInterface extends DatabaseExecutionInterfaceImpl {
         CmdLineExecutionInput executionInput = new CmdLineExecutionInput(content);
 
         List<String> command = executionInput.getCommand();
-        command.add(cmdLineInterface.getExecutablePath() + " \"" + databaseInfo.getFiles().getMainFile().getPath() + "\" <  \"" + filePath + "\"");
+        command.add(cmdLineInterface.getExecutablePath() + " \"" + databaseInfo.getFileBundle().getMainFilePath() + "\" <  \"" + filePath + "\"");
         return executionInput;
     }
 }

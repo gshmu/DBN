@@ -3,8 +3,7 @@ package com.dci.intellij.dbn.connection.config.file.ui;
 import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.common.ui.form.DBNFormBase;
 import com.dci.intellij.dbn.common.ui.util.UserInterface;
-import com.dci.intellij.dbn.connection.config.file.DatabaseFile;
-import com.dci.intellij.dbn.connection.config.file.DatabaseFiles;
+import com.dci.intellij.dbn.connection.config.file.DatabaseFileBundle;
 import com.dci.intellij.dbn.connection.config.ui.ConnectionUrlSettingsForm;
 import com.intellij.ui.ToolbarDecorator;
 import org.jetbrains.annotations.NotNull;
@@ -14,17 +13,16 @@ import java.awt.*;
 
 public class DatabaseFileSettingsForm extends DBNFormBase {
     private JPanel mainPanel;
-    private DatabaseFiles databaseFiles;
     private final DatabaseFilesTable table;
 
-    public DatabaseFileSettingsForm(ConnectionUrlSettingsForm parent, DatabaseFiles databaseFiles) {
+    public DatabaseFileSettingsForm(ConnectionUrlSettingsForm parent, DatabaseFileBundle fileBundle) {
         super(parent);
-        table = new DatabaseFilesTable(this, databaseFiles);
+        table = new DatabaseFilesTable(this, fileBundle);
 
         ToolbarDecorator decorator = ToolbarDecorator.createDecorator(table);
         decorator.setAddAction(anActionButton -> getTable().insertRow());
         decorator.setRemoveAction(anActionButton -> getTable().removeRow());
-        decorator.setRemoveActionUpdater(e -> getTable().getSelectedRow() != 0);
+        decorator.setRemoveActionUpdater(e -> getTable().getSelectedRows().length > 0);
         decorator.setMoveUpAction(anActionButton -> getTable().moveRowUp());
         decorator.setMoveUpActionUpdater(e -> getTable().getSelectedRow() > 1);
         decorator.setMoveDownAction(anActionButton -> getTable().moveRowDown());
@@ -48,23 +46,12 @@ public class DatabaseFileSettingsForm extends DBNFormBase {
         return Failsafe.nd(table);
     }
 
-    public DatabaseFiles getDatabaseFiles() {
+    public DatabaseFileBundle getFileBundle() {
         UserInterface.stopTableCellEditing(table);
-        return table.getModel().getDatabaseFiles();
+        return table.getModel().getFileBundle();
     }
 
-    public String getMainFilePath() {
-        return getMainFile().getPath();
-    }
-    public void setMainFilePath(String mainFile) {
-        getMainFile().setPath(mainFile);
-    }
-
-    private DatabaseFile getMainFile() {
-        return getDatabaseFiles().getMainFile();
-    }
-
-    public void setDatabaseFiles(DatabaseFiles databaseFiles) {
-        this.databaseFiles = databaseFiles;
+    public void setFileBundle(DatabaseFileBundle fileBundle) {
+        table.getModel().setFileBundle(fileBundle);
     }
 }
