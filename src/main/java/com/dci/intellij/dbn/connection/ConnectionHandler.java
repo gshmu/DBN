@@ -41,6 +41,9 @@ public interface ConnectionHandler extends StatefulDisposable, EnvironmentTypePr
     @NotNull
     Project getProject();
 
+    @NotNull
+    ConnectionId getConnectionId();
+
     DBNConnection getTestConnection() throws SQLException;
 
     @NotNull
