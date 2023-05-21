@@ -7,7 +7,6 @@ import com.dci.intellij.dbn.common.util.Commons;
 import com.dci.intellij.dbn.common.util.Files;
 import com.dci.intellij.dbn.common.util.Strings;
 import com.dci.intellij.dbn.connection.*;
-import com.dci.intellij.dbn.connection.config.file.DatabaseFile;
 import com.dci.intellij.dbn.connection.config.file.DatabaseFileBundle;
 import com.dci.intellij.dbn.connection.config.ui.ConnectionDatabaseSettingsForm;
 import com.dci.intellij.dbn.driver.DriverSource;
@@ -235,12 +234,7 @@ public class ConnectionDatabaseSettings extends BasicConfiguration<ConnectionSet
 
         name             = getString(element, "name", name);
         description      = getString(element, "description", description);
-
         databaseType     = getEnum(element, "database-type", databaseType);
-
-        // TODO temporary backward compatibility
-        if (databaseType == DatabaseType.UNKNOWN) databaseType = DatabaseType.GENERIC;
-
         configType       = getEnum(element, "config-type", configType);
         databaseVersion  = getDouble(element, "database-version", databaseVersion);
 
@@ -251,23 +245,12 @@ public class ConnectionDatabaseSettings extends BasicConfiguration<ConnectionSet
                         DatabaseUrlType.CUSTOM;
 
         DatabaseUrlType urlType = getEnum(element, "url-type", defaultUrlType);
+        databaseInfo.setUrlType(urlType);
+        databaseInfo.setUrl(url);
 
         if (urlType == DatabaseUrlType.CUSTOM) {
-            databaseInfo.setUrl(url);
-
             urlPattern = Commons.nvl(databaseType.resolveUrlPattern(url), DatabaseUrlPattern.GENERIC);
-            databaseInfo.setUrlType(urlPattern.getUrlType());
-            databaseInfo.setHost(urlPattern.resolveHost(url));
-            databaseInfo.setPort(urlPattern.resolvePort(url));
-            databaseInfo.setDatabase(urlPattern.resolveDatabase(url));
-            databaseInfo.setTnsFolder(urlPattern.resolveTnsFolder(url));
-            databaseInfo.setTnsProfile(urlPattern.resolveTnsProfile(url));
-
-            String file = urlPattern.resolveFile(url);
-            if (Strings.isNotEmptyOrSpaces(file)) {
-                databaseInfo.ensureFileBundle().add(new DatabaseFile(file, "main"));
-            }
-
+            databaseInfo.initializeDetails(urlPattern);
         } else {
             databaseInfo.setHost(getString(element, "host", null));
             databaseInfo.setPort(getString(element, "port", null));
@@ -275,7 +258,6 @@ public class ConnectionDatabaseSettings extends BasicConfiguration<ConnectionSet
             databaseInfo.setTnsFolder(getString(element, "tns-folder", null));
             databaseInfo.setTnsProfile(getString(element, "tns-profile", null));
 
-            databaseInfo.setUrlType(urlType);
             urlPattern = DatabaseUrlPattern.get(databaseType, urlType);
 
             if (urlType == DatabaseUrlType.FILE) {
@@ -284,6 +266,8 @@ public class ConnectionDatabaseSettings extends BasicConfiguration<ConnectionSet
                 fileBundle.readConfiguration(filesElement);
                 databaseInfo.setFileBundle(fileBundle);
             }
+
+            databaseInfo.initializeUrl(urlPattern);
         }
 
         driverSource  = getEnum(element, "driver-source", driverSource);
@@ -291,7 +275,7 @@ public class ConnectionDatabaseSettings extends BasicConfiguration<ConnectionSet
         if (driverSource == DriverSource.BUILTIN) driverSource = DriverSource.BUNDLED;
 
         driverLibrary = Files.convertToAbsolutePath(getProject(), getString(element, "driver-library", driverLibrary));
-        driver        = getString(element, "driver", driver);
+        driver = getString(element, "driver", driver);
 
         authenticationInfo.readConfiguration(element);
 

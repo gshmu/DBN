@@ -156,6 +156,14 @@ public enum DatabaseType implements Constant<DatabaseType>, Presentable{
         return ConstantUtil.get(values(), id, GENERIC);
     }
 
+    public static DatabaseType infer(String url) {
+        return Arrays
+                .stream(DatabaseType.values())
+                .filter(dt -> dt.resolveUrlPattern(url) != null)
+                .findFirst()
+                .orElse(GENERIC);
+    }
+
     @NotNull
     public static DatabaseType resolve(String ... identifiers) {
         for (String identifier : identifiers) {
@@ -170,12 +178,12 @@ public enum DatabaseType implements Constant<DatabaseType>, Presentable{
 
     public static DatabaseType derive(String ... identifiers) {
         DatabaseType databaseType = resolve(identifiers);
-        if (databaseType == GENERIC) {
-            for (String identifier : identifiers) {
-                databaseType = softMatch(identifier);
-                if (databaseType != GENERIC) {
-                    return databaseType;
-                }
+        if (databaseType != GENERIC) return GENERIC;
+
+        for (String identifier : identifiers) {
+            databaseType = softMatch(identifier);
+            if (databaseType != GENERIC) {
+                return databaseType;
             }
         }
         return GENERIC;

@@ -3,6 +3,7 @@ package com.dci.intellij.dbn.common.database;
 
 import com.dci.intellij.dbn.common.util.Cloneable;
 import com.dci.intellij.dbn.common.util.Strings;
+import com.dci.intellij.dbn.connection.DatabaseUrlPattern;
 import com.dci.intellij.dbn.connection.DatabaseUrlType;
 import com.dci.intellij.dbn.connection.config.file.DatabaseFile;
 import com.dci.intellij.dbn.connection.config.file.DatabaseFileBundle;
@@ -66,14 +67,44 @@ public class DatabaseInfo implements Cloneable<DatabaseInfo> {
     }
 
     public void reset() {
-        host = null;
-        port = null;
-        database = null;
-        tnsFolder = null;
-        tnsProfile = null;
-        fileBundle = null;
-        url = null;
+        this.host = null;
+        this.port = null;
+        this.database = null;
+        this.tnsFolder = null;
+        this.tnsProfile = null;
+        this.fileBundle = null;
+        this.url = null;
     }
+
+    public void initializeUrl(DatabaseUrlPattern urlPattern) {
+        this.url = urlPattern.buildUrl(this);
+    }
+
+    public void initializeDetails(DatabaseUrlPattern pattern) {
+        if (Strings.isEmptyOrSpaces(url)) return;
+
+        this.vendor = pattern.getDefaultInfo().getVendor();
+        this.host = pattern.resolveHost(url);
+        this.port = pattern.resolvePort(url);
+        this.database = pattern.resolveDatabase(url);
+        this.tnsFolder = pattern.resolveTnsProfile(url);
+        this.tnsProfile = pattern.resolveTnsFolder(url);
+        initializeFiles(pattern);
+    }
+
+    private void initializeFiles(DatabaseUrlPattern pattern) {
+        String filePath = pattern.resolveFile(url);
+        if (Strings.isNotEmptyOrSpaces(filePath)) {
+            DatabaseFileBundle fileBundle = ensureFileBundle();
+            DatabaseFile mainFile = fileBundle.getMainFile();
+            if (mainFile == null) {
+                fileBundle.add(new DatabaseFile(filePath, "main"));
+            } else {
+                mainFile.setPath(filePath);
+            }
+        }
+    }
+
 
     @Nullable
     public DatabaseFileBundle getFileBundle() {
