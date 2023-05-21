@@ -289,7 +289,7 @@ public class ConnectionManager extends ProjectComponentBase implements Persisten
         if (databaseInfo.getUrlType() == DatabaseUrlType.FILE) {
             DatabaseFileBundle fileBundle = databaseInfo.getFileBundle();
             Project project = databaseSettings.getProject();
-            if (fileBundle.isEmpty()) {
+            if (fileBundle == null || fileBundle.isEmpty()) {
                 showErrorDialog(project, "Wrong database configuration", "Database file not specified");
             } else {
                 String missingFiles = fileBundle
