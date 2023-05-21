@@ -4,8 +4,7 @@ package com.dci.intellij.dbn.common.database;
 import com.dci.intellij.dbn.common.util.Cloneable;
 import com.dci.intellij.dbn.common.util.Strings;
 import com.dci.intellij.dbn.connection.DatabaseUrlType;
-import com.dci.intellij.dbn.connection.config.file.DatabaseFile;
-import com.dci.intellij.dbn.connection.config.file.DatabaseFiles;
+import com.dci.intellij.dbn.connection.config.file.DatabaseFileBundle;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
@@ -29,7 +28,7 @@ public class DatabaseInfo implements Cloneable<DatabaseInfo> {
     private String port;
     private String database;
     private String url;
-    private DatabaseFiles files;
+    private DatabaseFileBundle fileBundle;
     private DatabaseUrlType urlType = DATABASE;
 	private String tnsFolder;
 	private String tnsProfile;
@@ -46,7 +45,7 @@ public class DatabaseInfo implements Cloneable<DatabaseInfo> {
 
     public DatabaseInfo(String vendor, String file, DatabaseUrlType urlType) {
         this.vendor = vendor;
-        this.files = new DatabaseFiles(file);
+        this.fileBundle = new DatabaseFileBundle(file);
         this.urlType = urlType;
     }
 
@@ -56,7 +55,7 @@ public class DatabaseInfo implements Cloneable<DatabaseInfo> {
                 Strings.isEmpty(database) &&
                 Strings.isEmpty(tnsFolder) &&
                 Strings.isEmpty(tnsProfile) &&
-                Strings.isEmpty(getMainFile());
+                Strings.isEmpty(getFirstFilePath());
     }
 
     public void reset() {
@@ -65,35 +64,16 @@ public class DatabaseInfo implements Cloneable<DatabaseInfo> {
         database = null;
         tnsFolder = null;
         tnsProfile = null;
-        files = null;
+        fileBundle = null;
         url = null;
     }
 
-    public String getMainFile() {
-        return files == null ? null : files.getMainFile().getPath();
+    public String getMainFilePath() {
+        return fileBundle == null ? null : fileBundle.getMainFilePath();
     }
 
-    public String getFilesForHash() {
-        if (files != null) {
-            StringBuilder builder = new StringBuilder();
-            for (DatabaseFile databaseFile : files.getFiles()) {
-                if (builder.length() > 0) {
-                    builder.append("#");
-                }
-                builder.append(databaseFile.getPath()).append("@").append(databaseFile.getSchema());
-            }
-            return builder.toString();
-
-        }
-        return null;
-    }
-
-    public void setMainFile(String mainFile) {
-        if (files == null) {
-            files = new DatabaseFiles(mainFile);
-        } else {
-            files.getMainFile().setPath(mainFile);
-        }
+    public String getFirstFilePath() {
+        return fileBundle == null ? null : fileBundle.getFirstFilePath();
     }
 
     public boolean isCustomUrl() {
@@ -108,7 +88,7 @@ public class DatabaseInfo implements Cloneable<DatabaseInfo> {
         clone.port = this.port;
         clone.database = this.database;
         clone.url = this.url;
-        clone.files = this.files == null ? null : this.files.clone();
+        clone.fileBundle = this.fileBundle == null ? null : this.fileBundle.clone();
         clone.urlType = this.urlType;
         clone.tnsFolder = this.tnsFolder;
         clone.tnsProfile = this.tnsProfile;

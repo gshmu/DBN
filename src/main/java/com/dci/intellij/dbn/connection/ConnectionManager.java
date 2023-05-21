@@ -22,6 +22,7 @@ import com.dci.intellij.dbn.common.util.TimeUtil;
 import com.dci.intellij.dbn.connection.config.ConnectionConfigListener;
 import com.dci.intellij.dbn.connection.config.ConnectionDatabaseSettings;
 import com.dci.intellij.dbn.connection.config.ConnectionSettings;
+import com.dci.intellij.dbn.connection.config.file.DatabaseFileBundle;
 import com.dci.intellij.dbn.connection.info.ConnectionInfo;
 import com.dci.intellij.dbn.connection.info.ui.ConnectionInfoDialog;
 import com.dci.intellij.dbn.connection.jdbc.DBNConnection;
@@ -47,11 +48,11 @@ import org.jdom.Element;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.io.File;
 import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
 import java.util.function.Predicate;
+import java.util.stream.Collectors;
 
 import static com.dci.intellij.dbn.common.component.Components.projectService;
 import static com.dci.intellij.dbn.common.dispose.Checks.isNotValid;
@@ -286,17 +287,26 @@ public class ConnectionManager extends ProjectComponentBase implements Persisten
     private static void promptDatabaseInitDialog(ConnectionDatabaseSettings databaseSettings, MessageCallback callback) {
         DatabaseInfo databaseInfo = databaseSettings.getDatabaseInfo();
         if (databaseInfo.getUrlType() == DatabaseUrlType.FILE) {
-            String file = databaseInfo.getFiles().getMainFile().getPath();
+            DatabaseFileBundle fileBundle = databaseInfo.getFileBundle();
             Project project = databaseSettings.getProject();
-            if (Strings.isEmpty(file)) {
+            if (fileBundle.isEmpty()) {
                 showErrorDialog(project, "Wrong database configuration", "Database file not specified");
-            } else if (!new File(file).exists()) {
-                showWarningDialog(
-                        project,
-                        "Database file not available",
-                        "The database file \"" + file + "\" does not exist.\nDo you want to create it?",
-                        options("Create", "Cancel"), 0,
-                        callback);
+            } else {
+                String missingFiles = fileBundle
+                        .getFiles()
+                        .stream()
+                        .filter(f -> f.isValid() && !f.isPresent())
+                        .map(f -> f.getPath())
+                        .collect(Collectors.joining("\n"));
+
+                if (!Strings.isEmpty(missingFiles)) {
+                    showWarningDialog(
+                            project,
+                            "Database file not available",
+                            "Following database files not exist.\n" + missingFiles + "\nDo you want to create them?",
+                            options("Create", "Cancel"), 0,
+                            callback);
+                }
             }
         }
     }
@@ -468,28 +478,28 @@ public class ConnectionManager extends ProjectComponentBase implements Persisten
     }
 
     void disposeConnections(@NotNull List<ConnectionHandler> connections) {
-        if (connections.size() > 0) {
+        if (connections.isEmpty()) return;
+
+        Dispatch.run(() -> {
             Project project = getProject();
-            Dispatch.run(() -> {
-                List<ConnectionId> connectionIds = ConnectionHandler.ids(connections);
+            List<ConnectionId> connectionIds = ConnectionHandler.ids(connections);
 
-                ExecutionManager executionManager = ExecutionManager.getInstance(project);
-                executionManager.closeExecutionResults(connectionIds);
+            ExecutionManager executionManager = ExecutionManager.getInstance(project);
+            executionManager.closeExecutionResults(connectionIds);
 
-                DatabaseFileManager databaseFileManager = DatabaseFileManager.getInstance(project);
-                databaseFileManager.closeDatabaseFiles(connectionIds);
+            DatabaseFileManager databaseFileManager = DatabaseFileManager.getInstance(project);
+            databaseFileManager.closeDatabaseFiles(connectionIds);
 
-                MethodExecutionManager methodExecutionManager = MethodExecutionManager.getInstance(project);
-                methodExecutionManager.cleanupExecutionHistory(connectionIds);
+            MethodExecutionManager methodExecutionManager = MethodExecutionManager.getInstance(project);
+            methodExecutionManager.cleanupExecutionHistory(connectionIds);
 
-                Background.run(project, () -> {
-                    for (ConnectionHandler connection : connections) {
-                        connection.getConnectionPool().closeConnections();
-                        Disposer.dispose(connection);
-                    }
-                });
+            Background.run(project, () -> {
+                for (ConnectionHandler connection : connections) {
+                    connection.getConnectionPool().closeConnections();
+                    Disposer.dispose(connection);
+                }
             });
-        }
+        });
     }
 
     /*********************************************************

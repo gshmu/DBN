@@ -8,9 +8,11 @@ import java.util.*;
 import java.util.function.Function;
 import java.util.function.Predicate;
 
+import static com.dci.intellij.dbn.common.util.Commons.nvl;
+
 public class Lists {
     public static <T> boolean isLast(@NotNull List<T> list, @NotNull T element) {
-        return list.size() > 0 && list.indexOf(element) == list.size() - 1;
+        return !list.isEmpty() && list.indexOf(element) == list.size() - 1;
     }
 
     public static <T> List<T> filtered(@NotNull List<T> list, Predicate<T> predicate) {
@@ -23,7 +25,7 @@ public class Lists {
         return result;
     }
 
-    @Nullable
+    @NotNull
     public static <T> List<T> filter(@NotNull List<T> list, @Nullable Filter<T> filter) {
         if (list.isEmpty() || filter == null || filter.acceptsAll(list)) {
             return list;
@@ -37,7 +39,7 @@ public class Lists {
                     result.add(element);
                 }
             }
-            return result;
+            return nvl(result, Collections.emptyList());
         }
     }
 

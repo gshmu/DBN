@@ -14,7 +14,7 @@ import com.dci.intellij.dbn.common.ui.util.UserInterface;
 import com.dci.intellij.dbn.common.util.Commons;
 import com.dci.intellij.dbn.connection.*;
 import com.dci.intellij.dbn.connection.config.*;
-import com.dci.intellij.dbn.connection.config.file.DatabaseFiles;
+import com.dci.intellij.dbn.connection.config.file.DatabaseFileBundle;
 import com.dci.intellij.dbn.driver.DriverSource;
 import com.intellij.openapi.options.ConfigurationException;
 import com.intellij.openapi.project.Project;
@@ -219,9 +219,9 @@ public class ConnectionDatabaseSettingsForm extends ConfigurationEditorForm<Conn
         	databaseInfo.setTnsFolder(urlSettingsForm.getTnsFolder());
         	databaseInfo.setTnsProfile(urlSettingsForm.getTnsProfile());
         } else if (urlType == DatabaseUrlType.FILE){
-            DatabaseFiles databaseFiles = urlSettingsForm.getDatabaseFiles();
-            databaseFiles.validate();
-            databaseInfo.setFiles(databaseFiles);
+            DatabaseFileBundle fileBundle = urlSettingsForm.getFileBundle();
+            fileBundle.validate();
+            databaseInfo.setFileBundle(fileBundle);
         } else if (urlType != DatabaseUrlType.CUSTOM){
             databaseInfo.setHost(urlSettingsForm.getHost());
             databaseInfo.setPort(urlSettingsForm.getPort());

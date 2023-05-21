@@ -130,4 +130,15 @@ public final class Files {
     public static boolean isDbLanguagePsiFile(PsiFile psiFile) {
         return psiFile instanceof DBLanguagePsiFile;
     }
+
+
+    public static String getFileName(String path) {
+        if (Strings.isEmpty(path)) return path;
+        File file = new File(path);
+
+        String name = file.getName();
+        int index = name.lastIndexOf(".");
+        if (index == -1) return name;
+        return name.substring(0, index);
+    }
 }

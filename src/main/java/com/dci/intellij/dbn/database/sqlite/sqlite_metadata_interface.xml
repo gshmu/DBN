@@ -11,6 +11,9 @@
 <data-dictionary>
     <statement-execution-processor id="schemas" is-query="true">
         <statement>
+            select * from PRAGMA_DATABASE_LIST where FILE is not null and length(FILE) > 0
+        </statement>
+        <statement>
             pragma database_list
         </statement>
     </statement-execution-processor>

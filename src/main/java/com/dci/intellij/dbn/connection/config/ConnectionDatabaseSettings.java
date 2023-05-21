@@ -7,7 +7,8 @@ import com.dci.intellij.dbn.common.util.Commons;
 import com.dci.intellij.dbn.common.util.Files;
 import com.dci.intellij.dbn.common.util.Strings;
 import com.dci.intellij.dbn.connection.*;
-import com.dci.intellij.dbn.connection.config.file.DatabaseFiles;
+import com.dci.intellij.dbn.connection.config.file.DatabaseFile;
+import com.dci.intellij.dbn.connection.config.file.DatabaseFileBundle;
 import com.dci.intellij.dbn.connection.config.ui.ConnectionDatabaseSettingsForm;
 import com.dci.intellij.dbn.driver.DriverSource;
 import com.intellij.openapi.options.ConfigurationException;
@@ -131,8 +132,7 @@ public class ConnectionDatabaseSettings extends BasicConfiguration<ConnectionSet
         DatabaseInfo databaseInfo = getDatabaseInfo();
         if (databaseInfo.getUrlType() == DatabaseUrlType.FILE) {
             // only for file based databases
-            String file = databaseInfo.getMainFile();
-            return Strings.isNotEmpty(file) && new File(file).exists();
+            return databaseInfo.getFileBundle().isValid();
         }
         return true;
     }
@@ -152,7 +152,7 @@ public class ConnectionDatabaseSettings extends BasicConfiguration<ConnectionSet
                     host,
                     port,
                     databaseInfo.getDatabase(),
-                    databaseInfo.getMainFile(),
+                    databaseInfo.getMainFilePath(),
                     databaseInfo.getTnsFolder(),
                     databaseInfo.getTnsProfile());
         }
@@ -260,7 +260,7 @@ public class ConnectionDatabaseSettings extends BasicConfiguration<ConnectionSet
 
             String file = urlPattern.resolveFile(url);
             if (Strings.isNotEmptyOrSpaces(file)) {
-                databaseInfo.setMainFile(file);
+                databaseInfo.getFileBundle().add(new DatabaseFile(file, Files.getFileName(file)));
             }
 
         } else {
@@ -275,9 +275,9 @@ public class ConnectionDatabaseSettings extends BasicConfiguration<ConnectionSet
 
             if (urlType == DatabaseUrlType.FILE) {
                 Element filesElement = element.getChild("files");
-                DatabaseFiles databaseFiles = new DatabaseFiles();
-                databaseFiles.readConfiguration(filesElement);
-                databaseInfo.setFiles(databaseFiles);
+                DatabaseFileBundle fileBundle = new DatabaseFileBundle();
+                fileBundle.readConfiguration(filesElement);
+                databaseInfo.setFileBundle(fileBundle);
             }
         }
 
@@ -334,11 +334,11 @@ public class ConnectionDatabaseSettings extends BasicConfiguration<ConnectionSet
             setString(element, "database", nvl(databaseInfo.getDatabase()));
             setString(element, "tns-folder", nvl(databaseInfo.getTnsFolder()));
             setString(element, "tns-profile", nvl(databaseInfo.getTnsProfile()));
-            DatabaseFiles files = databaseInfo.getFiles();
-            if (files != null) {
+            DatabaseFileBundle fileBundle = databaseInfo.getFileBundle();
+            if (fileBundle != null) {
                 Element filesElement = new Element("files");
                 element.addContent(filesElement);
-                files.writeConfiguration(filesElement);
+                fileBundle.writeConfiguration(filesElement);
             }
 
         }

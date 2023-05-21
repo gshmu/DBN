@@ -21,6 +21,7 @@ import java.awt.*;
 import java.sql.Connection;
 import java.sql.SQLException;
 
+@SuppressWarnings("unused")
 public class ConnectionInfoForm extends DBNFormBase {
     private JPanel mainPanel;
     private JPanel headerPanel;
@@ -147,7 +148,7 @@ public class ConnectionInfoForm extends DBNFormBase {
         initValueField(setupPortLabel, setupPortTextField, databaseInfo.getPort(), !isFileUrlType);
         initValueField(setupDatabaseLabel, setupDatabaseTextField, databaseInfo.getDatabase(), !isFileUrlType);
         initValueField(setupUrlLabel, setupUrlTextField, databaseSettings.getConnectionUrl(), true);
-        initValueField(setupFileLabel, setupFileTextField, databaseInfo.getMainFile(), isFileUrlType);
+        initValueField(setupFileLabel, setupFileTextField, databaseInfo.getMainFilePath(), isFileUrlType);
     }
 
     private void initValueField(JLabel label, JTextField textField, String value) {
@@ -163,7 +164,7 @@ public class ConnectionInfoForm extends DBNFormBase {
         textField.setCursor(Cursor.getPredefinedCursor(Cursor.TEXT_CURSOR));
 
         String text = textField.getText();
-        if (text.length() > 0) {
+        if (Strings.isNotEmpty(text)) {
             FontMetrics fontMetrics = textField.getFontMetrics(textField.getFont());
             int width = fontMetrics.charsWidth(text.toCharArray(), 0, text.length()) + 40;
             textField.setMinimumSize(new Dimension(Math.min(width, 600), -1));
