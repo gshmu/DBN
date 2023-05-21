@@ -4,10 +4,16 @@ package com.dci.intellij.dbn.common.database;
 import com.dci.intellij.dbn.common.util.Cloneable;
 import com.dci.intellij.dbn.common.util.Strings;
 import com.dci.intellij.dbn.connection.DatabaseUrlType;
+import com.dci.intellij.dbn.connection.config.file.DatabaseFile;
 import com.dci.intellij.dbn.connection.config.file.DatabaseFileBundle;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
+import java.util.Collections;
+import java.util.List;
 
 import static com.dci.intellij.dbn.connection.DatabaseUrlType.*;
 
@@ -15,6 +21,7 @@ import static com.dci.intellij.dbn.connection.DatabaseUrlType.*;
 @Setter
 @EqualsAndHashCode
 public class DatabaseInfo implements Cloneable<DatabaseInfo> {
+
     public interface Default {
         DatabaseInfo ORACLE   = new DatabaseInfo("oracle", "localhost", "1521", "XE", SID);
         DatabaseInfo MYSQL    = new DatabaseInfo("mysql", "localhost", "3306", "mysql", DATABASE);
@@ -68,6 +75,17 @@ public class DatabaseInfo implements Cloneable<DatabaseInfo> {
         url = null;
     }
 
+    @Nullable
+    public DatabaseFileBundle getFileBundle() {
+        return fileBundle;
+    }
+
+    @NotNull
+    public DatabaseFileBundle ensureFileBundle() {
+        if (fileBundle == null) fileBundle = new DatabaseFileBundle();
+        return fileBundle;
+    }
+
     public String getMainFilePath() {
         return fileBundle == null ? null : fileBundle.getMainFilePath();
     }
@@ -75,6 +93,11 @@ public class DatabaseInfo implements Cloneable<DatabaseInfo> {
     public String getFirstFilePath() {
         return fileBundle == null ? null : fileBundle.getFirstFilePath();
     }
+
+    public List<DatabaseFile> getAttachedFiles() {
+        return fileBundle == null ? Collections.emptyList() : fileBundle.getAttachedFiles();
+    }
+
 
     public boolean isCustomUrl() {
         return getUrlType() == CUSTOM;

@@ -265,7 +265,7 @@ public class ConnectionDatabaseSettings extends BasicConfiguration<ConnectionSet
 
             String file = urlPattern.resolveFile(url);
             if (Strings.isNotEmptyOrSpaces(file)) {
-                databaseInfo.getFileBundle().add(new DatabaseFile(file, "main"));
+                databaseInfo.ensureFileBundle().add(new DatabaseFile(file, "main"));
             }
 
         } else {
