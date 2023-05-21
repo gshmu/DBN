@@ -132,7 +132,8 @@ public class ConnectionDatabaseSettings extends BasicConfiguration<ConnectionSet
         DatabaseInfo databaseInfo = getDatabaseInfo();
         if (databaseInfo.getUrlType() == DatabaseUrlType.FILE) {
             // only for file based databases
-            return databaseInfo.getFileBundle().isValid();
+            DatabaseFileBundle fileBundle = databaseInfo.getFileBundle();
+            return fileBundle != null && fileBundle.isValid();
         }
         return true;
     }
@@ -243,11 +244,15 @@ public class ConnectionDatabaseSettings extends BasicConfiguration<ConnectionSet
         configType       = getEnum(element, "config-type", configType);
         databaseVersion  = getDouble(element, "database-version", databaseVersion);
 
-        DatabaseUrlType defaultUrlType = databaseType.getDefaultUrlPattern().getUrlType();
+        String url = getString(element, "url", databaseInfo.getUrl());
+        DatabaseUrlType defaultUrlType =
+                Strings.isEmptyOrSpaces(url) ?
+                        databaseType.getDefaultUrlPattern().getUrlType() :
+                        DatabaseUrlType.CUSTOM;
+
         DatabaseUrlType urlType = getEnum(element, "url-type", defaultUrlType);
 
         if (urlType == DatabaseUrlType.CUSTOM) {
-            String url = getString(element, "url", databaseInfo.getUrl());
             databaseInfo.setUrl(url);
 
             urlPattern = Commons.nvl(databaseType.resolveUrlPattern(url), DatabaseUrlPattern.GENERIC);
