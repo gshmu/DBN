@@ -11,7 +11,7 @@ import com.dci.intellij.dbn.connection.DatabaseType;
 import com.dci.intellij.dbn.connection.DatabaseUrlPattern;
 import com.dci.intellij.dbn.connection.DatabaseUrlType;
 import com.dci.intellij.dbn.connection.config.ConnectionDatabaseSettings;
-import com.dci.intellij.dbn.connection.config.file.DatabaseFiles;
+import com.dci.intellij.dbn.connection.config.file.DatabaseFileBundle;
 import com.dci.intellij.dbn.connection.config.file.ui.DatabaseFileSettingsForm;
 import com.dci.intellij.dbn.connection.config.tns.TnsNamesBundle;
 import com.dci.intellij.dbn.connection.config.tns.TnsNamesParser;
@@ -60,7 +60,7 @@ public class ConnectionUrlSettingsForm extends DBNFormBase {
     public ConnectionUrlSettingsForm(ConnectionDatabaseSettingsForm parent, ConnectionDatabaseSettings configuration) {
         super(parent);
 
-        databaseFileSettingsForm = new DatabaseFileSettingsForm(this, configuration.getDatabaseInfo().getFiles());
+        databaseFileSettingsForm = new DatabaseFileSettingsForm(this, configuration.getDatabaseInfo().getFileBundle());
         databaseFilesPanel.add(databaseFileSettingsForm.getComponent(), BorderLayout.CENTER);
         urlTypeComboBox.addActionListener(e -> updateFieldVisibility());
 
@@ -115,12 +115,8 @@ public class ConnectionUrlSettingsForm extends DBNFormBase {
         return urlTextField.getText();
     }
 
-    public DatabaseFiles getDatabaseFiles() {
-        return databaseFileSettingsForm.getDatabaseFiles();
-    }
-
-    private String getMainFile() {
-        return databaseFileSettingsForm.getMainFilePath();
+    public DatabaseFileBundle getFileBundle() {
+        return databaseFileSettingsForm.getFileBundle();
     }
 
     public DatabaseUrlType getUrlType() {
@@ -138,10 +134,14 @@ public class ConnectionUrlSettingsForm extends DBNFormBase {
                 getHost(),
                 getPort(),
                 getDatabase(),
-                getMainFile(),
+                getMainFilePath() ,
                 getTnsFolder(),
                 getTnsProfile());
         urlTextField.setText(url);
+    }
+
+    private String getMainFilePath() {
+        return databaseFileSettingsForm.getFileBundle().getMainFilePath();
     }
 
     private void handleTnsFolderChanged(@NotNull String text) {
@@ -232,7 +232,7 @@ public class ConnectionUrlSettingsForm extends DBNFormBase {
         databaseInfo.setHost(getHost());
         databaseInfo.setPort(getPort());
         databaseInfo.setDatabase(getDatabase());
-        databaseInfo.setFiles(getDatabaseFiles().clone());
+        databaseInfo.setFileBundle(getFileBundle().clone());
         databaseInfo.setTnsFolder(getTnsFolder());
         databaseInfo.setTnsProfile(getTnsProfile());
         databaseInfo.setUrlType(getUrlType());
@@ -241,7 +241,7 @@ public class ConnectionUrlSettingsForm extends DBNFormBase {
     }
 
     private void applyDatabaseInfo(DatabaseInfo databaseInfo) {
-        databaseFileSettingsForm.setDatabaseFiles(databaseInfo.getFiles());
+        databaseFileSettingsForm.setFileBundle(databaseInfo.getFileBundle());
         hostTextField.setText(databaseInfo.getHost());
         portTextField.setText(databaseInfo.getPort());
         databaseTextField.setText(databaseInfo.getDatabase());
@@ -283,7 +283,7 @@ public class ConnectionUrlSettingsForm extends DBNFormBase {
             !Commons.match(databaseInfo.getTnsProfile(), getTnsProfile()) ||
             !Commons.match(databaseInfo.getUrl(), getUrl()) ||
             !Commons.match(databaseInfo.getUrlType(), urlType) ||
-            !Commons.match(databaseInfo.getFiles(), urlType == FILE ? getDatabaseFiles() : null);
+            !Commons.match(databaseInfo.getFileBundle(), urlType == FILE ? getFileBundle() : null);
 
     }
 }

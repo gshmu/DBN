@@ -60,7 +60,7 @@ public enum DatabaseUrlPattern {
 
     SQLITE_FILE(
             "jdbc:sqlite:<FILE>",
-            "^(jdbc:sqlite:)(?<FILE>([a-zA-Z]:)?((\\\\|\\/)[a-zA-Z0-9\\s\\/_\\.\\-']{1,2000}){1,2000})$",
+            "^(jdbc:sqlite:)(?<FILE>([a-zA-Z]:)?((\\\\|\\/)[a-zA-Z0-9\\s\\/_\\.\\-']{1,2000}){1,2000})?$",
             Default.SQLITE, FILE),
 
     GENERIC(
@@ -90,7 +90,7 @@ public enum DatabaseUrlPattern {
                 databaseInfo.getHost(),
                 databaseInfo.getPort(),
                 databaseInfo.getDatabase(),
-                databaseInfo.getMainFile(),
+                databaseInfo.getMainFilePath(),
                 databaseInfo.getTnsFolder(),
                 databaseInfo.getTnsProfile());
     }

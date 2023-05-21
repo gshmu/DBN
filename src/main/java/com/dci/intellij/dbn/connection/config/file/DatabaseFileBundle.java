@@ -5,29 +5,26 @@ import com.dci.intellij.dbn.common.util.Cloneable;
 import com.dci.intellij.dbn.common.util.Naming;
 import com.dci.intellij.dbn.common.util.Strings;
 import com.intellij.openapi.options.ConfigurationException;
-import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import org.jdom.Element;
+import org.jetbrains.annotations.Nullable;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import static com.dci.intellij.dbn.common.options.setting.SettingsSupport.setStringAttribute;
 import static com.dci.intellij.dbn.common.options.setting.SettingsSupport.stringAttribute;
+import static com.dci.intellij.dbn.common.util.Lists.filter;
 
 @Getter
-@EqualsAndHashCode
-public class DatabaseFiles implements PersistentConfiguration, Cloneable<DatabaseFiles> {
+public class DatabaseFileBundle implements PersistentConfiguration, Cloneable<DatabaseFileBundle> {
     private final List<DatabaseFile> files = new ArrayList<>();
 
-    public DatabaseFiles() {
+    public DatabaseFileBundle() {
     }
 
-    public DatabaseFiles(String mainFile) {
-        files.add(new DatabaseFile(mainFile, "main"));
+    public DatabaseFileBundle(String file) {
+        files.add(new DatabaseFile(file));
     }
 
     public int size() {
@@ -44,25 +41,43 @@ public class DatabaseFiles implements PersistentConfiguration, Cloneable<Databas
     }
 
     public void add(int rowIndex, DatabaseFile databaseFile) {
-        if (rowIndex == 0) {
-            rowIndex = 1;
-        }
         adjustSchemaName(databaseFile);
         files.add(rowIndex, databaseFile);
     }
 
     public void remove(int rowIndex) {
-        if (rowIndex != 0) {
-            files.remove(rowIndex);
-        }
+        files.remove(rowIndex);
+    }
+
+    @Nullable
+    public DatabaseFile getFile(String schema) {
+        return files.stream().filter(f -> Objects.equals(f.getSchema(), schema)).findFirst().orElse(null);
     }
 
     public DatabaseFile getMainFile() {
-        return files.get(0);
+        return getFile("main");
     }
 
-    public List<DatabaseFile> getSecondaryFiles() {
-        return files.subList(1, files.size());
+    public List<DatabaseFile> getAttachedFiles() {
+        return filter(files, f -> !f.isMain());
+    }
+
+    public String getMainFilePath() {
+        DatabaseFile mainFile = getMainFile();
+        return mainFile == null ? "" : mainFile.getPath();
+    }
+
+    public String getFirstFilePath() {
+        return isEmpty() ? "" : files.get(0).getPath();
+    }
+
+    public boolean isEmpty() {
+        return files.isEmpty();
+    }
+
+    public boolean isValid() {
+        if (isEmpty()) return false;
+        return files.stream().allMatch(f -> f.isValid());
     }
 
     public void adjustSchemaName(DatabaseFile databaseFile) {
@@ -87,9 +102,9 @@ public class DatabaseFiles implements PersistentConfiguration, Cloneable<Databas
         }
     }
 
-
     @Override
     public void readConfiguration(Element element) {
+        if (element == null) return;
         for (Element child : element.getChildren()) {
             String path = stringAttribute(child, "path");
             String schema = stringAttribute(child, "schema");
@@ -116,11 +131,11 @@ public class DatabaseFiles implements PersistentConfiguration, Cloneable<Databas
     }
 
     @Override
-    public DatabaseFiles clone() {
-        DatabaseFiles databaseFiles = new DatabaseFiles();
+    public DatabaseFileBundle clone() {
+        DatabaseFileBundle fileBundle = new DatabaseFileBundle();
         for (DatabaseFile file : files) {
-            databaseFiles.files.add(file.clone());
+            fileBundle.files.add(file.clone());
         }
-        return databaseFiles;
+        return fileBundle;
     }
 }

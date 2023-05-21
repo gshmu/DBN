@@ -137,16 +137,12 @@ public class ConnectionBundleSettingsForm extends ConfigurationEditorForm<Connec
 
     @Override
     public void valueChanged(ListSelectionEvent listSelectionEvent) {
-        try {
-            List<ConnectionSettings> selectedValues = connectionsList.getSelectedValuesList();
-            if (selectedValues.size() == 1) {
-                ConnectionSettings connectionSettings = selectedValues.get(0);
-                switchSettingsPanel(connectionSettings);
-            } else {
-                switchSettingsPanel(null);
-            }
-        } catch (IndexOutOfBoundsException e) {
-            // fixme find out why
+        List<ConnectionSettings> selectedValues = connectionsList.getSelectedValuesList();
+        if (selectedValues.size() == 1) {
+            ConnectionSettings connectionSettings = selectedValues.get(0);
+            switchSettingsPanel(connectionSettings);
+        } else {
+            switchSettingsPanel(null);
         }
     }
 

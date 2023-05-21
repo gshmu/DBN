@@ -3,26 +3,27 @@ package com.dci.intellij.dbn.connection.config.file.ui;
 import com.dci.intellij.dbn.common.ui.table.DBNEditableTableModel;
 import com.dci.intellij.dbn.common.util.Commons;
 import com.dci.intellij.dbn.connection.config.file.DatabaseFile;
-import com.dci.intellij.dbn.connection.config.file.DatabaseFiles;
+import com.dci.intellij.dbn.connection.config.file.DatabaseFileBundle;
+import lombok.Getter;
 
 import javax.swing.event.TableModelListener;
 
+@Getter
 public class DatabaseFilesTableModel extends DBNEditableTableModel {
-    private DatabaseFiles databaseFiles;
+    private DatabaseFileBundle fileBundle;
 
-    DatabaseFilesTableModel(DatabaseFiles databaseFiles) {
-        this.databaseFiles = databaseFiles == null ? new DatabaseFiles(null) : databaseFiles.clone();
+    DatabaseFilesTableModel(DatabaseFileBundle fileBundle) {
+        setFileBundle(fileBundle);
         addTableModelListener(defaultModelListener);
     }
 
-    public void setDatabaseFiles(DatabaseFiles databaseFiles) {
-        this.databaseFiles = databaseFiles == null ? new DatabaseFiles(null) : databaseFiles.clone();
-        notifyListeners(0, this.databaseFiles.size(), -1);
+    public void setFileBundle(DatabaseFileBundle fileBundle) {
+        this.fileBundle = fileBundle == null ? new DatabaseFileBundle() : fileBundle.clone();
     }
 
     @Override
     public int getRowCount() {
-        return databaseFiles.size();
+        return fileBundle.size();
     }
     
     TableModelListener defaultModelListener = e -> {};
@@ -45,12 +46,12 @@ public class DatabaseFilesTableModel extends DBNEditableTableModel {
 
     @Override
     public boolean isCellEditable(int rowIndex, int columnIndex) {
-        return !(rowIndex == 0 && columnIndex == 1);
+        return true; //!(rowIndex == 0 && columnIndex == 1);
     }
 
     @Override
     public Object getValueAt(int rowIndex, int columnIndex) {
-        DatabaseFile filePathOption = databaseFiles.get(rowIndex);
+        DatabaseFile filePathOption = fileBundle.get(rowIndex);
         return
            columnIndex == 0 ? filePathOption.getPath() :
            columnIndex == 1 ? filePathOption.getSchema() : null;
@@ -60,10 +61,10 @@ public class DatabaseFilesTableModel extends DBNEditableTableModel {
     public void setValueAt(Object o, int rowIndex, int columnIndex) {
         Object actualValue = getValueAt(rowIndex, columnIndex);
         if (!Commons.match(actualValue, o)) {
-            DatabaseFile databaseFile = databaseFiles.get(rowIndex);
+            DatabaseFile databaseFile = fileBundle.get(rowIndex);
             if (columnIndex == 0) {
                 databaseFile.setPath((String) o);
-                databaseFiles.adjustSchemaName(databaseFile);
+                fileBundle.adjustSchemaName(databaseFile);
             } else if (columnIndex == 1) {
                 databaseFile.setSchema((String) o);
             }
@@ -73,27 +74,23 @@ public class DatabaseFilesTableModel extends DBNEditableTableModel {
     }
 
     private DatabaseFile getFile(int rowIndex) {
-        while (databaseFiles.size() <= rowIndex) {
-            databaseFiles.add(new DatabaseFile());
+        while (fileBundle.size() <= rowIndex) {
+            fileBundle.add(new DatabaseFile());
         }
-        return databaseFiles.get(rowIndex);
-    }
-
-    public DatabaseFiles getDatabaseFiles() {
-        return databaseFiles;
+        return fileBundle.get(rowIndex);
     }
 
     @Override
     public void insertRow(int rowIndex) {
-        databaseFiles.add(rowIndex, new DatabaseFile());
-        notifyListeners(rowIndex, databaseFiles.size()-1, -1);
+        fileBundle.add(rowIndex, new DatabaseFile());
+        notifyListeners(rowIndex, fileBundle.size()-1, -1);
     }
 
     @Override
     public void removeRow(int rowIndex) {
-        if (databaseFiles.size() > rowIndex) {
-            databaseFiles.remove(rowIndex);
-            notifyListeners(rowIndex, databaseFiles.size()-1, -1);
+        if (fileBundle.size() > rowIndex) {
+            fileBundle.remove(rowIndex);
+            notifyListeners(rowIndex, fileBundle.size()-1, -1);
         }
     }
 

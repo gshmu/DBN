@@ -165,8 +165,8 @@ class Connector {
 
             Project project = connectionSettings.getProject();
             if (databaseAttachmentHandler != null) {
-                List<DatabaseFile> attachedDatabaseFiles = databaseSettings.getDatabaseInfo().getFiles().getSecondaryFiles();
-                for (DatabaseFile databaseFile : attachedDatabaseFiles) {
+                List<DatabaseFile> attachedFiles = databaseSettings.getDatabaseInfo().getFileBundle().getAttachedFiles();
+                for (DatabaseFile databaseFile : attachedFiles) {
                     String filePath = databaseFile.getPath();
                     try {
                         databaseAttachmentHandler.attachDatabase(connection, filePath, databaseFile.getSchema());
