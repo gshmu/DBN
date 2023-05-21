@@ -10,8 +10,11 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import static com.dci.intellij.dbn.common.util.Commons.nvl;
+import static com.dci.intellij.dbn.connection.DatabaseUrlPattern.Elements.*;
 import static com.dci.intellij.dbn.connection.DatabaseUrlType.*;
 import static com.intellij.openapi.util.text.StringUtil.isEmpty;
+import static java.util.regex.Pattern.CASE_INSENSITIVE;
+import static java.util.regex.Pattern.compile;
 
 @Slf4j
 @Getter
@@ -19,59 +22,70 @@ public enum DatabaseUrlPattern {
 
     ORACLE_TNS(
             "jdbc:oracle:thin:@<TNS_PROFILE>?TNS_ADMIN=<TNS_FOLDER>",
-            "^jdbc:oracle:thin:@(?<PROFILE>([a-zA-Z0-9._\\-])+)\\?TNS_ADMIN=(?<FOLDER>([a-zA-Z]:)?(([\\\\/])[a-zA-Z0-9\\s/_.\\-']{1,2000}){1,2000})$",
+            compile("^jdbc:oracle:(thin|oci):@" + profile + "\\?TNS_ADMIN=" + folder + "$", CASE_INSENSITIVE),
             Default.ORACLE, TNS),
 
     ORACLE_SID(
             "jdbc:oracle:thin:@<HOST>:<PORT>:<DATABASE>",
-            "^(jdbc:oracle:(?:thin|oci):@)(?<HOST>[._\\-a-z0-9]{1,1000})(?<PORT>:[0-9]{1,100})(?<DATABASE>:[.\\-$_a-z0-9]{1,1000})$",
+            compile("^jdbc:oracle:(thin|oci):@" + host + "(:" + port + ")?(:" + database + ")$", CASE_INSENSITIVE),
             Default.ORACLE, SID),
 
     ORACLE_SERVICE(
             "jdbc:oracle:thin:@//<HOST>:<PORT>/<DATABASE>",
-            "^(jdbc:oracle:(?:thin|oci):@\\/\\/)(?<HOST>[._\\-a-z0-9]{1,1000})(?<PORT>:[0-9]{1,100})(?<DATABASE>\\/[.\\-$_a-z0-9]{1,1000})$",
+            compile("^jdbc:oracle:(thin|oci):@//" + host + "(:" + port + ")?(/" + database + ")$", CASE_INSENSITIVE),
             Default.ORACLE, SERVICE),
 
 
     ORACLE_LDAP(
             "jdbc:oracle:thin:@ldap://<HOST>:<PORT>/<DATABASE>",
-            "^(jdbc:oracle:(?:thin|oci):@ldap\\/\\/)(?<HOST>[._\\-a-z0-9]{1,1000})(?<PORT>:[0-9]{1,100})(?<DATABASE>\\/[.\\-$_a-z0-9]{1,1000})$",
+            compile("^jdbc:oracle:(thin|oci):@ldap://" + host + "(:" + port + ")?(/" + database + ")$", CASE_INSENSITIVE),
             Default.ORACLE, LDAP),
 
     ORACLE_LDAPS(
             "jdbc:oracle:thin:@ldaps://<HOST>:<PORT>/<DATABASE>",
-            "^(jdbc:oracle:(?:thin|oci):@ldaps\\/\\/)(?<HOST>[._\\-a-z0-9]{1,1000})(?<PORT>:[0-9]{1,100})(?<DATABASE>\\/[.\\-$_a-z0-9]{1,1000})$",
+            compile("^jdbc:oracle:(thin|oci):@ldaps://" + host + "(:" + port + ")?(/" + database + ")$", CASE_INSENSITIVE),
             Default.ORACLE, LDAPS),
 
     MYSQL_DB(
             "jdbc:mysql://<HOST>:<PORT>/<DATABASE>",
-            "^(jdbc:mysql:\\/\\/)(?<HOST>[._\\-a-z0-9]{1,1000})(?<PORT>:[0-9]{1,100})?(?<DATABASE>\\/[\\.\\-$_a-z0-9]{0,1000})?$",
+            compile("^jdbc:mysql://" + host + "(:" + port + ")?(/" + database + ")?$", CASE_INSENSITIVE),
             Default.MYSQL, DATABASE),
 
     POSTGRES_DB(
             "jdbc:postgresql://<HOST>:<PORT>/<DATABASE>",
-            "^(jdbc:postgresql:\\/\\/)(?<HOST>[._\\-a-z0-9]{1,1000})(?<PORT>:[0-9]{1,100})?(?<DATABASE>\\/[.\\-$_a-z0-9]{0,1000})?$",
+            compile("^jdbc:postgresql://" + host + "(:" + port + ")?(/" + database + ")$", CASE_INSENSITIVE),
             Default.POSTGRES, DATABASE),
 
     REDSHIFT_DB(
             "jdbc:redshift://<HOST>:<PORT>/<DATABASE>",
-            "^(jdbc:redshift:\\/\\/)(?<HOST>[._\\-a-z0-9]{1,1000})(?<PORT>:[0-9]{1,100})?(?<DATABASE>\\/[.\\-$_a-z0-9]{0,1000})?$",
+            compile("^jdbc:redshift://" + host + "(:" + port + ")?(/" + database + ")?" + "?$", CASE_INSENSITIVE),
             Default.POSTGRES, DATABASE),
 
     SQLITE_FILE(
             "jdbc:sqlite:<FILE>",
-            "^(jdbc:sqlite:)(?<FILE>([a-zA-Z]:)?((\\\\|\\/)[a-zA-Z0-9\\s\\/_\\.\\-']{1,2000}){1,2000})?$",
+            compile("^jdbc:sqlite:" + file + "?$", CASE_INSENSITIVE),
             Default.SQLITE, FILE),
 
     GENERIC(
             "jdbc:<VENDOR>://<HOST>:<PORT>/<DATABASE>",
-            "^(jdbc:(?<VENDOR>[._\\-a-z0-9]{1,1000}):\\/\\/)(?<HOST>[._\\-a-z0-9]{1,1000})(?<PORT>:[0-9]{1,100})?(?<DATABASE>\\/[\\-$_a-z0-9]{0,1000})?$",
+            compile("^jdbc:" + vendor + "://" + host + "(:" + port + ")?" + "(/" + database + ")?" + "?$", CASE_INSENSITIVE),
             Default.GENERIC, CUSTOM),
     ;
 
+    interface Elements {
+        String vendor = "(?<VENDOR>[\\w\\-.]+)";
+        String host = "(?<HOST>[\\w\\-.]+)";
+        String port = "(?<PORT>[0-9]{1,100})?";
+        String database = "(?<DATABASE>[\\w\\-.$#]+)";
+        String profile = "(?<PROFILE>[\\w\\-.]+)";
+        String folder = "(?<FOLDER>([a-z]:)?([\\\\/][\\w\\s/_.\\-']+)+)";
+        String file = "(?<FILE>([a-z]:)?([\\\\/][\\w\\s/_.\\-']+)+)";
+    }
+
+
     private final DatabaseUrlType urlType;
-    private final String urlPattern;
-    private final String urlRegex;
+    private final String urlTemplate;
+    private final Pattern urlPattern;
     private final DatabaseInfo defaultInfo;
 
     public static DatabaseUrlPattern get(@NotNull DatabaseType databaseType, @NotNull DatabaseUrlType urlType) {
@@ -96,7 +110,7 @@ public enum DatabaseUrlPattern {
     }
 
     public String buildUrl(String vendor, String host, String port, String database, String file, String tnsFolder, String tnsProfile) {
-        return urlPattern.
+        return urlTemplate.
                 replace("<VENDOR>", nvl(vendor, "")).
                 replace("<HOST>", nvl(host, "")).
                 replace(":<PORT>", isEmpty(port) ? "" : ":" + port).
@@ -110,9 +124,9 @@ public enum DatabaseUrlPattern {
         return buildUrl(defaultInfo);
     }
 
-    DatabaseUrlPattern(String urlPattern, String urlRegex, DatabaseInfo defaultInfo, DatabaseUrlType urlType) {
+    DatabaseUrlPattern(String urlTemplate, Pattern urlPattern, DatabaseInfo defaultInfo, DatabaseUrlType urlType) {
+        this.urlTemplate = urlTemplate;
         this.urlPattern = urlPattern;
-        this.urlRegex = urlRegex;
         this.defaultInfo = defaultInfo;
         this.urlType = urlType;
     }
@@ -123,27 +137,27 @@ public enum DatabaseUrlPattern {
     }
 
     public String resolveHost(String url) {
-        return resolveGroup(url, "HOST", false, DATABASE, SERVICE, SID, LDAP, LDAPS);
+        return resolveGroup(url, "HOST", DATABASE, SERVICE, SID, LDAP, LDAPS);
     }
 
     public String resolvePort(String url) {
-        return resolveGroup(url, "PORT", true, DATABASE, SERVICE, SID, LDAP, LDAPS);
+        return resolveGroup(url, "PORT", DATABASE, SERVICE, SID, LDAP, LDAPS);
     }
 
     public String resolveDatabase(String url) {
-        return resolveGroup(url, "DATABASE", true, DATABASE, SERVICE, SID, LDAP, LDAPS);
+        return resolveGroup(url, "DATABASE", DATABASE, SERVICE, SID, LDAP, LDAPS);
     }
 
     public String resolveFile(String url) {
-        return resolveGroup(url, "FILE", false, FILE);
+        return resolveGroup(url, "FILE", FILE);
     }
 
     public String resolveTnsFolder(String url) {
-        return resolveGroup(url, "TNS_FOLDER", false, TNS);
+        return resolveGroup(url, "TNS_FOLDER", TNS);
     }
 
     public String resolveTnsProfile(String url) {
-        return resolveGroup(url, "TNS_PROFILE", false, TNS);
+        return resolveGroup(url, "TNS_PROFILE", TNS);
     }
 
     public boolean isValid(String url) {
@@ -155,24 +169,20 @@ public enum DatabaseUrlPattern {
 
     @NotNull
     private Matcher getMatcher(String url) {
-        Pattern pattern = Pattern.compile(urlRegex, Pattern.CASE_INSENSITIVE);
-        return pattern.matcher(url);
+        return urlPattern.matcher(url);
     }
 
-    private String resolveGroup(String url, String name, boolean shift, DatabaseUrlType ... urlTypes) {
+    private String resolveGroup(String url, String name, DatabaseUrlType ... urlTypes) {
         if (!urlType.isOneOf(urlTypes)) return "";
         if (!isValid(url)) return "";
 
         try {
             Matcher matcher = getMatcher(url);
-            String group = matcher.group(name).trim();
-            if (shift) {
-                group = isEmpty(group) ? "" : group.substring(1);
-            }
+            if (!matcher.matches()) return "";
 
-            return group;
+            return matcher.group(name).trim();
         } catch (Exception e) {
-            log.error("Failed to get group {} from url \"{}\"", name, url);
+            log.warn("Failed to get group {} from url \"{}\"", name, url);
             return "";
         }
     }

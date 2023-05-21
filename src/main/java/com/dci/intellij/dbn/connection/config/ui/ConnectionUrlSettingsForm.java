@@ -208,12 +208,17 @@ public class ConnectionUrlSettingsForm extends DBNFormBase {
             String previousUrl = previousInfo.getUrl();
             DatabaseUrlType previousUrlType = previousInfo.getUrlType();
 
-            DatabaseUrlPattern newUrlPattern = coalesce(
+            DatabaseUrlPattern urlPattern = coalesce(
                     () -> newDatabaseType.resolveUrlPattern(previousUrl),
                     () -> newDatabaseType.getUrlPattern(previousUrlType),
                     () -> newDatabaseType.getDefaultUrlPattern());
 
-            histInfo = newUrlPattern.getDefaultInfo();
+            histInfo = urlPattern.getDefaultInfo();
+            if (Strings.isNotEmptyOrSpaces(previousUrl)) {
+                histInfo.setUrl(previousUrl);
+                histInfo.initializeDetails(urlPattern);
+            }
+
         }
 
         applyDatabaseInfo(histInfo);

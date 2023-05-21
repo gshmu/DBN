@@ -24,7 +24,7 @@ public class DatabaseFileBundle implements PersistentConfiguration, Cloneable<Da
     }
 
     public DatabaseFileBundle(String file) {
-        files.add(new DatabaseFile(file));
+        files.add(new DatabaseFile(file, "main"));
     }
 
     public int size() {
