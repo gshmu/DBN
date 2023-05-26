@@ -4,9 +4,9 @@ import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.common.color.Colors;
 import com.dci.intellij.dbn.common.ui.form.DBNFormBase;
 import com.dci.intellij.dbn.common.util.Strings;
-import com.dci.intellij.dbn.connection.config.tns.TnsName;
-import com.dci.intellij.dbn.connection.config.tns.TnsNamesBundle;
+import com.dci.intellij.dbn.connection.config.tns.TnsNames;
 import com.dci.intellij.dbn.connection.config.tns.TnsNamesParser;
+import com.dci.intellij.dbn.connection.config.tns.TnsProfile;
 import com.intellij.openapi.ui.TextFieldWithBrowseButton;
 import com.intellij.ui.components.JBScrollPane;
 import lombok.Getter;
@@ -16,13 +16,13 @@ import org.jetbrains.annotations.Nullable;
 import javax.swing.*;
 import java.io.File;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 import static com.dci.intellij.dbn.common.ui.util.TextFields.onTextChange;
 
 public class TnsNamesImportForm extends DBNFormBase {
     private TextFieldWithBrowseButton tnsNamesFileTextField;
+    private JTextField filterTextField;
     private JBScrollPane tnsNamesScrollPanel;
     private JPanel mainPanel;
     private JLabel errorLabel;
@@ -30,11 +30,11 @@ public class TnsNamesImportForm extends DBNFormBase {
     private final TnsNamesTable tnsNamesTable;
 
     @Getter
-    private TnsNamesBundle tnsNames;
+    private TnsNames tnsNames;
 
     TnsNamesImportForm(@NotNull TnsNamesImportDialog parent, @Nullable File file) {
         super(parent);
-        tnsNamesTable = new TnsNamesTable(this, Collections.emptyList());
+        tnsNamesTable = new TnsNamesTable(this, new TnsNames());
         tnsNamesScrollPanel.setViewportView(tnsNamesTable);
         tnsNamesScrollPanel.getViewport().setBackground(Colors.getTableBackground());
         errorLabel.setIcon(Icons.COMMON_ERROR);
@@ -55,10 +55,12 @@ public class TnsNamesImportForm extends DBNFormBase {
                 TnsNamesParser.FILE_CHOOSER_DESCRIPTOR);
 
         onTextChange(tnsNamesFileTextField, e -> updateTnsNamesTable());
+        onTextChange(filterTextField, e -> filterTnsNamesTable());
     }
 
-    public TnsNamesImportDialog getParentDialog() {
-        return ensureParentComponent();
+    private void filterTnsNamesTable() {
+        TnsNamesTableModel model = tnsNamesTable.getModel();
+        model.filter(filterTextField.getText());
     }
 
     private void updateSelections() {
@@ -69,10 +71,10 @@ public class TnsNamesImportForm extends DBNFormBase {
         parentComponent.getImportSelectedAction().setEnabled(selectedRowCount > 0);
         parentComponent.getImportAllAction().setEnabled(rowCount > 0);
 
-        List<TnsName> profiles = tnsNamesTable.getModel().getTnsNames();
+        List<TnsProfile> profiles = tnsNamesTable.getModel().getProfiles();
         for (int i = 0; i < rowCount; i++) {
             boolean selected = tnsNamesTable.isRowSelected(i);
-            TnsName profile = profiles.get(tnsNamesTable.convertRowIndexToModel(i));
+            TnsProfile profile = profiles.get(tnsNamesTable.convertRowIndexToModel(i));
             profile.setSelected(selected);
         }
     }
@@ -82,12 +84,13 @@ public class TnsNamesImportForm extends DBNFormBase {
             String fileName = tnsNamesFileTextField.getTextField().getText();
             if (Strings.isNotEmpty(fileName)) {
                 tnsNames = TnsNamesParser.get(new File(fileName));
-                tnsNamesTable.setModel(new TnsNamesTableModel(new ArrayList<>(tnsNames.getProfiles())));
+                tnsNamesTable.setModel(new TnsNamesTableModel(tnsNames));
                 tnsNamesTable.accommodateColumnsSize();
+                filterTextField.setText(tnsNames.getFilter().getText());
             }
             errorLabel.setVisible(false);
         } catch (Exception ex) {
-            tnsNamesTable.setModel(new TnsNamesTableModel(Collections.emptyList()));
+            tnsNamesTable.setModel(new TnsNamesTableModel(new TnsNames()));
             tnsNamesTable.accommodateColumnsSize();
 
             errorLabel.setVisible(true);
@@ -103,18 +106,18 @@ public class TnsNamesImportForm extends DBNFormBase {
         return mainPanel;
     }
 
-    List<TnsName> getAllTnsNames() {
-        return tnsNamesTable.getModel().getTnsNames();
+    List<TnsProfile> getAllTnsNames() {
+        return tnsNamesTable.getModel().getProfiles();
     }
 
-    List<TnsName> getSelectedTnsNames() {
-        List<TnsName> selectedTnsNames = new ArrayList<>();
-        List<TnsName> tnsNames = tnsNamesTable.getModel().getTnsNames();
+    List<TnsProfile> getSelectedTnsNames() {
+        List<TnsProfile> selectedTnsProfiles = new ArrayList<>();
+        List<TnsProfile> tnsProfiles = tnsNamesTable.getModel().getProfiles();
         int[] selectedRows = tnsNamesTable.getSelectedRows();
         for (int selectedRow : selectedRows) {
             int rowIndex = tnsNamesTable.convertRowIndexToModel(selectedRow);
-            selectedTnsNames.add(tnsNames.get(rowIndex));
+            selectedTnsProfiles.add(tnsProfiles.get(rowIndex));
         }
-        return selectedTnsNames;
+        return selectedTnsProfiles;
     }
 }

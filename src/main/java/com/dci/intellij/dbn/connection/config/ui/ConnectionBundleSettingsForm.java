@@ -13,8 +13,8 @@ import com.dci.intellij.dbn.connection.DatabaseType;
 import com.dci.intellij.dbn.connection.DatabaseUrlType;
 import com.dci.intellij.dbn.connection.config.*;
 import com.dci.intellij.dbn.connection.config.tns.TnsImportType;
-import com.dci.intellij.dbn.connection.config.tns.TnsName;
-import com.dci.intellij.dbn.connection.config.tns.TnsNamesBundle;
+import com.dci.intellij.dbn.connection.config.tns.TnsNames;
+import com.dci.intellij.dbn.connection.config.tns.TnsProfile;
 import com.dci.intellij.dbn.driver.DriverSource;
 import com.intellij.openapi.actionSystem.ActionToolbar;
 import com.intellij.openapi.ide.CopyPasteManager;
@@ -314,14 +314,14 @@ public class ConnectionBundleSettingsForm extends ConfigurationEditorForm<Connec
         }
     }
 
-    public void importTnsNames(TnsNamesBundle tnsNamesBundle, TnsImportType importType, boolean selected) {
+    public void importTnsNames(TnsNames tnsNames, TnsImportType importType, boolean selected) {
         ConnectionBundleSettings connectionBundleSettings = getConfiguration();
         ConnectionListModel model = (ConnectionListModel) connectionsList.getModel();
         int index = connectionsList.getModel().getSize();
         List<Integer> selectedIndexes = new ArrayList<>();
 
-        List<TnsName> tnsNames = selected ? tnsNamesBundle.getSelectedProfiles() : tnsNamesBundle.getProfiles();
-        for (TnsName tnsName : tnsNames) {
+        List<TnsProfile> tnsProfiles = selected ? tnsNames.getSelectedProfiles() : tnsNames.getProfiles();
+        for (TnsProfile tnsProfile : tnsProfiles) {
             ConnectionSettings connectionSettings = new ConnectionSettings(connectionBundleSettings, DatabaseType.ORACLE, ConnectionConfigType.BASIC);
             connectionSettings.setNew(true);
             connectionSettings.generateNewId();
@@ -330,9 +330,9 @@ public class ConnectionBundleSettingsForm extends ConfigurationEditorForm<Connec
 
             ConnectionDatabaseSettings databaseSettings = connectionSettings.getDatabaseSettings();
             DatabaseInfo databaseInfo = databaseSettings.getDatabaseInfo();
-            importTnsData(databaseInfo, tnsName, tnsNamesBundle, importType);
+            importTnsData(databaseInfo, tnsProfile, tnsNames, importType);
 
-            String name = tnsName.getProfile();
+            String name = tnsProfile.getProfile();
             while (model.getConnectionConfig(name) != null) {
                 name = Naming.nextNumberedIdentifier(name, true);
             }
@@ -348,7 +348,7 @@ public class ConnectionBundleSettingsForm extends ConfigurationEditorForm<Connec
         connectionsList.setSelectedIndices(ArrayUtils.toPrimitive(selectedIndexes.toArray(new Integer[0])));
     }
 
-    private static void importTnsData(DatabaseInfo databaseInfo, TnsName tnsName, TnsNamesBundle tnsNames, TnsImportType importType) {
+    private static void importTnsData(DatabaseInfo databaseInfo, TnsProfile tnsName, TnsNames tnsNames, TnsImportType importType) {
         if (importType == TnsImportType.FIELDS) {
             databaseInfo.setHost(tnsName.getHost());
             databaseInfo.setPort(tnsName.getPort());

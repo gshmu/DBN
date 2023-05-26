@@ -7,7 +7,7 @@ import org.jetbrains.annotations.NotNull;
 
 @Getter
 @Setter
-public class TnsName implements Comparable<TnsName> {
+public class TnsProfile implements Comparable<TnsProfile> {
     private final String descriptor;
 
     private final String profile;
@@ -23,7 +23,7 @@ public class TnsName implements Comparable<TnsName> {
     private final String failoverMethod;
     private boolean selected;
 
-    TnsName(
+    TnsProfile(
             String descriptor,
             String name,
             String protocol,
@@ -56,7 +56,7 @@ public class TnsName implements Comparable<TnsName> {
     }
 
     @Override
-    public int compareTo(@NotNull TnsName o) {
+    public int compareTo(@NotNull TnsProfile o) {
         return profile.compareTo(o.profile);
     }
 }

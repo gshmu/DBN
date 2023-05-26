@@ -4,7 +4,7 @@ import com.dci.intellij.dbn.common.dispose.Sticky;
 import com.dci.intellij.dbn.common.ui.dialog.DBNDialog;
 import com.dci.intellij.dbn.common.util.Messages;
 import com.dci.intellij.dbn.connection.config.tns.TnsImportType;
-import com.dci.intellij.dbn.connection.config.tns.TnsNamesBundle;
+import com.dci.intellij.dbn.connection.config.tns.TnsNames;
 import com.intellij.openapi.project.Project;
 import lombok.Getter;
 import org.jetbrains.annotations.NotNull;
@@ -19,7 +19,7 @@ import static com.dci.intellij.dbn.common.util.Messages.options;
 @Getter
 public class TnsNamesImportDialog extends DBNDialog<TnsNamesImportForm> {
     @Sticky
-    private TnsNamesBundle tnsNames;
+    private TnsNames tnsNames;
     private TnsImportType importType;
     private boolean selectedOnly;
 
