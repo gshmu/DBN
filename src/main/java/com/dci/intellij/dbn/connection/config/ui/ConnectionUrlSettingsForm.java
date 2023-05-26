@@ -13,7 +13,7 @@ import com.dci.intellij.dbn.connection.DatabaseUrlType;
 import com.dci.intellij.dbn.connection.config.ConnectionDatabaseSettings;
 import com.dci.intellij.dbn.connection.config.file.DatabaseFileBundle;
 import com.dci.intellij.dbn.connection.config.file.ui.DatabaseFileSettingsForm;
-import com.dci.intellij.dbn.connection.config.tns.TnsNamesBundle;
+import com.dci.intellij.dbn.connection.config.tns.TnsNames;
 import com.dci.intellij.dbn.connection.config.tns.TnsNamesParser;
 import com.intellij.openapi.fileChooser.FileChooserDescriptor;
 import com.intellij.openapi.ui.ComboBox;
@@ -158,7 +158,7 @@ public class ConnectionUrlSettingsForm extends DBNFormBase {
 
     private List<String> getTnsEntries(File tnsnamesOraFile) {
         try {
-            TnsNamesBundle tnsNames = TnsNamesParser.get(tnsnamesOraFile);
+            TnsNames tnsNames = TnsNamesParser.get(tnsnamesOraFile);
             return tnsNames.getProfileNames();
         } catch (Exception e) {
             //ErrorHandler.logErrorStack("Error occurred while reading tnsnames.ora file for database: " + adbInstance.getDbName(), e);

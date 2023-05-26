@@ -2,12 +2,12 @@ package com.dci.intellij.dbn.connection.config.tns;
 
 import java.util.regex.Pattern;
 
-public class TnsNamesPattern {
-    public static TnsNamesPattern INSTANCE = new TnsNamesPattern();
+public class TnsProfilePattern {
+    public static TnsProfilePattern INSTANCE = new TnsProfilePattern();
 
     private final Pattern pattern;
 
-    private TnsNamesPattern() {
+    private TnsProfilePattern() {
         String value = "[A-Z0-9._]+";
         String any =          keyValue("[_A-Z]+",      value);
 
