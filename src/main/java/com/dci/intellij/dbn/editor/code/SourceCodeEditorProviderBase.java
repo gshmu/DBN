@@ -6,12 +6,14 @@ import com.dci.intellij.dbn.common.editor.BasicTextEditorProvider;
 import com.dci.intellij.dbn.common.environment.EnvironmentManager;
 import com.dci.intellij.dbn.common.exception.ProcessDeferredException;
 import com.dci.intellij.dbn.common.util.Editors;
+import com.dci.intellij.dbn.common.util.Traces;
 import com.dci.intellij.dbn.editor.DBContentType;
 import com.dci.intellij.dbn.editor.DatabaseFileEditorManager;
 import com.dci.intellij.dbn.editor.EditorProviderId;
 import com.dci.intellij.dbn.object.common.DBSchemaObject;
 import com.dci.intellij.dbn.vfs.file.DBEditableObjectVirtualFile;
 import com.dci.intellij.dbn.vfs.file.DBSourceCodeVirtualFile;
+import com.intellij.ide.impl.StructureViewWrapperImpl;
 import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.fileEditor.FileEditor;
@@ -40,16 +42,19 @@ abstract class SourceCodeEditorProviderBase extends BasicTextEditorProvider impl
     @NotNull
     public FileEditor createEditor(@NotNull Project project, @NotNull VirtualFile file) {
         DBEditableObjectVirtualFile databaseFile;
+        boolean temporary = false;
 
         EditorProviderId editorProviderId = getEditorProviderId();
         if (file instanceof DBSourceCodeVirtualFile) {
             DBSourceCodeVirtualFile sourceCodeFile = (DBSourceCodeVirtualFile) file;
             databaseFile = sourceCodeFile.getMainDatabaseFile();
-            DBSchemaObject object = databaseFile.getObject();
 
-            DatabaseFileEditorManager editorManager = DatabaseFileEditorManager.getInstance(project);
-            editorManager.connectAndOpenEditor(object, editorProviderId, false, true);
-            throw new ProcessDeferredException();
+            temporary = Traces.isCalledThrough(StructureViewWrapperImpl.class);
+            if (!temporary) {
+                // trigger main file editor and cancel the original request
+                // (prevent creation of editor if invoked for the source code file -  e.g. debugger navigation / file bookmarks)
+                openMainFileEditor(databaseFile);
+            }
         } else {
             databaseFile = (DBEditableObjectVirtualFile) file;
         }
@@ -62,25 +67,36 @@ abstract class SourceCodeEditorProviderBase extends BasicTextEditorProvider impl
                 new SourceCodeMainEditor(project, sourceCodeFile, editorName, editorProviderId) :
                 new SourceCodeEditor(project, sourceCodeFile, editorName, editorProviderId);
 
-        Editor editor = sourceCodeEditor.getEditor();
-        Document document = editor.getDocument();
+        if (temporary) {
+            Editor editor = sourceCodeEditor.getEditor();
+            Document document = editor.getDocument();
 
-        EnvironmentManager environmentManager = EnvironmentManager.getInstance(project);
-        if (environmentManager.isReadonly(sourceCodeFile) || !sourceCodeFile.isLoaded()) {
-            Editors.setEditorReadonly(editor, true);
+            EnvironmentManager environmentManager = EnvironmentManager.getInstance(project);
+            if (environmentManager.isReadonly(sourceCodeFile) || !sourceCodeFile.isLoaded()) {
+                Editors.setEditorReadonly(editor, true);
+            }
+
+            int documentSignature = document.hashCode();
+            if (document.hashCode() != sourceCodeFile.getDocumentSignature()) {
+                document.addDocumentListener(sourceCodeFile);
+                sourceCodeFile.setDocumentSignature(documentSignature);
+            }
+
+            Icon icon = getIcon();
+            if (icon != null) {
+                updateTabIcon(databaseFile, sourceCodeEditor, icon);
+            }
         }
 
-        int documentSignature = document.hashCode();
-        if (document.hashCode() != sourceCodeFile.getDocumentSignature()) {
-            document.addDocumentListener(sourceCodeFile);
-            sourceCodeFile.setDocumentSignature(documentSignature);
-        }
-
-        Icon icon = getIcon();
-        if (icon != null) {
-            updateTabIcon(databaseFile, sourceCodeEditor, icon);
-        }
         return sourceCodeEditor;
+    }
+
+    private void openMainFileEditor(DBEditableObjectVirtualFile databaseFile) {
+        Project project = databaseFile.getProject();
+        DBSchemaObject object = databaseFile.getObject();
+        DatabaseFileEditorManager editorManager = DatabaseFileEditorManager.getInstance(project);
+        editorManager.connectAndOpenEditor(object, getEditorProviderId(), false, true);
+        throw new ProcessDeferredException();
     }
 
     @Override
