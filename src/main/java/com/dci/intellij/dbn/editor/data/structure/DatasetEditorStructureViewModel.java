@@ -1,6 +1,7 @@
 package com.dci.intellij.dbn.editor.data.structure;
 
 import com.dci.intellij.dbn.common.editor.structure.DBObjectStructureViewModel;
+import com.dci.intellij.dbn.common.ref.WeakRef;
 import com.dci.intellij.dbn.editor.data.DatasetEditor;
 import com.intellij.ide.structureView.StructureViewTreeElement;
 import com.intellij.ide.util.treeView.smartTree.Sorter;
@@ -8,13 +9,17 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 public class DatasetEditorStructureViewModel extends DBObjectStructureViewModel {
-    private Sorter[] sorters = new Sorter[] {new DatasetEditorStructureViewModelSorter()};
-    private DatasetEditor datasetEditor;
+    private final Sorter[] sorters = new Sorter[] {new DatasetEditorStructureViewModelSorter()};
+    private final WeakRef<DatasetEditor> datasetEditor;
     private StructureViewTreeElement root;
 
     public DatasetEditorStructureViewModel(DatasetEditor datasetEditor) {
-        this.datasetEditor = datasetEditor;
+        this.datasetEditor = WeakRef.of(datasetEditor);
+    }
 
+    @NotNull
+    public DatasetEditor getDatasetEditor() {
+        return WeakRef.ensure(datasetEditor);
     }
 
     @NotNull
@@ -34,6 +39,7 @@ public class DatasetEditorStructureViewModel extends DBObjectStructureViewModel 
     public StructureViewTreeElement getRoot() {
         if (root == null) {
             //DBObjectBundle objectBundle = datasetEditor.getCache().getObjectBundle();
+            DatasetEditor datasetEditor = getDatasetEditor();
             root = new DatasetEditorStructureViewElement(datasetEditor.getDataset(), datasetEditor);
         }
         return root;
