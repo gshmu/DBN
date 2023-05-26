@@ -32,6 +32,6 @@ public class CompareWithDatabaseAction extends AbstractCodeEditorDiffAction {
     protected void update(@NotNull AnActionEvent e, @NotNull Project project, @Nullable SourceCodeEditor fileEditor, @Nullable DBSourceCodeVirtualFile sourceCodeFile) {
         Presentation presentation = e.getPresentation();
         presentation.setText("Compare with Database");
-        presentation.setEnabled(isValid(fileEditor));
+        presentation.setEnabled(isValid(fileEditor) && isValid(sourceCodeFile));
     }
 }
