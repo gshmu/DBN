@@ -1,11 +1,12 @@
 package com.dci.intellij.dbn.connection.jdbc;
 
-import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.common.exception.Exceptions;
 import com.dci.intellij.dbn.common.ref.WeakRef;
 import com.dci.intellij.dbn.common.routine.ThrowableCallable;
 import com.dci.intellij.dbn.common.routine.ThrowableRunnable;
 import com.dci.intellij.dbn.connection.Resources;
+import lombok.Getter;
+import lombok.Setter;
 import org.jetbrains.annotations.Nullable;
 
 import java.io.InputStream;
@@ -20,6 +21,10 @@ public class DBNResultSet extends DBNResource<ResultSet> implements ResultSet, C
     private WeakRef<DBNStatement> statement;
     private WeakRef<DBNConnection> connection;
 
+    @Getter
+    @Setter
+    private String identifier;
+
 
     public DBNResultSet(ResultSet inner, DBNConnection connection) {
         super(inner, ResourceType.RESULT_SET);
@@ -31,15 +36,38 @@ public class DBNResultSet extends DBNResource<ResultSet> implements ResultSet, C
         this.statement = WeakRef.of(statement);
     }
 
+    public static String getIdentifier(ResultSet resultSet) {
+        if (resultSet instanceof DBNResultSet) {
+            DBNResultSet dbnResultSet = (DBNResultSet) resultSet;
+            return dbnResultSet.getIdentifier();
+        }
+        return "UNKNOWN";
+    }
+
+    public static boolean setIdentifier(ResultSet resultSet, String identifier) {
+        if (resultSet instanceof DBNResultSet) {
+            DBNResultSet dbnResultSet = (DBNResultSet) resultSet;
+            dbnResultSet.setIdentifier(identifier);
+            return true;
+        }
+        return false;
+    }
+
     @Override
     @Nullable
     public DBNStatement getStatement() {
         return WeakRef.get(statement);
     }
 
+    @Nullable
     public DBNConnection getConnection() {
+        DBNConnection connection = WeakRef.get(this.connection);
+        if (connection != null) return connection;
+
         DBNStatement statement = getStatement();
-        return Failsafe.nn(connection == null ? statement == null ? null : statement.getConnection() : connection.get());
+        if (statement != null) return statement.getConnection();
+
+        return null;
     }
 
     @Override
@@ -47,21 +75,19 @@ public class DBNResultSet extends DBNResource<ResultSet> implements ResultSet, C
         try {
             super.close();
         } finally {
-            if (this.statement != null) {
-                DBNStatement statement = this.statement.get();
-                if (statement != null) {
-                    if (statement.isCached()) {
-                        statement.park();
-                    } else {
-                        statement.close();
-                    }
+            DBNStatement statement = getStatement();
+            if (statement != null) {
+                if (statement.isCached()) {
+                    statement.park();
+                } else {
+                    statement.close();
                 }
             }
         }
     }
 
     public void release() {
-        DBNConnection connection = this.connection.get();
+        DBNConnection connection = getConnection();
         if (connection != null) {
             connection.release(this);
         }
