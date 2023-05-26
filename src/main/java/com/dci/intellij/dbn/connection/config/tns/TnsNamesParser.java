@@ -22,24 +22,24 @@ public class TnsNamesParser {
             withDescription("Select a valid Oracle tnsnames.ora file").
             withFileFilter(virtualFile -> Objects.equals(virtualFile.getExtension(), "ora"));
 
-    private static final FileContentCache<TnsNamesBundle> cache = new FileContentCache<TnsNamesBundle>() {
+    private static final FileContentCache<TnsNames> cache = new FileContentCache<TnsNames>() {
         @Override
-        protected TnsNamesBundle load(File file) {
+        protected TnsNames load(File file) {
             return parse(file);
         }
     };
 
-    public static TnsNamesBundle get(File file) throws Exception {
+    public static TnsNames get(File file) throws Exception {
         return cache.get(file);
     }
 
 
     @SneakyThrows
-    public static TnsNamesBundle parse(File file) {
-        List<TnsName> tnsNames = new ArrayList<>();
+    public static TnsNames parse(File file) {
+        List<TnsProfile> tnsProfiles = new ArrayList<>();
         String tnsContent = new String(Files.readAllBytes(Paths.get(file.getPath())));
 
-        Pattern pattern = TnsNamesPattern.INSTANCE.get();
+        Pattern pattern = TnsProfilePattern.INSTANCE.get();
         Matcher matcher = pattern.matcher(tnsContent);
 
         int start = 0;
@@ -71,7 +71,7 @@ public class TnsNamesParser {
             start = matcher.end();
 
             if (Strings.isNotEmpty(schema)) {
-                TnsName tnsName = new TnsName(
+                TnsProfile tnsProfile = new TnsProfile(
                         descriptor,
                         schema,
                         protocol,
@@ -84,9 +84,9 @@ public class TnsNamesParser {
                         failover,
                         failoverType,
                         failoverMethod);
-                tnsNames.add(tnsName);
+                tnsProfiles.add(tnsProfile);
             }
         }
-        return new TnsNamesBundle(file, tnsNames);
+        return new TnsNames(file, tnsProfiles);
     }
 }

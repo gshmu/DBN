@@ -2,23 +2,23 @@ package com.dci.intellij.dbn.connection.config.tns.ui;
 
 import com.dci.intellij.dbn.common.dispose.StatefulDisposableBase;
 import com.dci.intellij.dbn.common.ui.table.DBNReadonlyTableModel;
-import com.dci.intellij.dbn.connection.config.tns.TnsName;
+import com.dci.intellij.dbn.common.ui.util.Listeners;
+import com.dci.intellij.dbn.connection.config.tns.TnsNames;
+import com.dci.intellij.dbn.connection.config.tns.TnsProfile;
 
-import java.util.Collections;
+import javax.swing.event.TableModelEvent;
+import javax.swing.event.TableModelListener;
 import java.util.List;
 
-public class TnsNamesTableModel extends StatefulDisposableBase implements DBNReadonlyTableModel<TnsName> {
-    private final List<TnsName> tnsNames;
+public class TnsNamesTableModel extends StatefulDisposableBase implements DBNReadonlyTableModel<TnsProfile> {
+    private final TnsNames tnsNames;
+    private final Listeners<TableModelListener> listeners = Listeners.create(this);
 
-    TnsNamesTableModel(List<TnsName> tnsNames) {
+    TnsNamesTableModel(TnsNames tnsNames) {
         super();
-        Collections.sort(tnsNames);
         this.tnsNames = tnsNames;
     }
 
-    List<TnsName> getTnsNames() {
-        return tnsNames;
-    }
 
     @Override
     public int getRowCount() {
@@ -49,12 +49,12 @@ public class TnsNamesTableModel extends StatefulDisposableBase implements DBNRea
 
     @Override
     public Class<?> getColumnClass(int columnIndex) {
-        return TnsName.class;
+        return TnsProfile.class;
     }
 
     @Override
     public Object getValueAt(int rowIndex, int columnIndex) {
-        return tnsNames.get(rowIndex);
+        return tnsNames.getProfiles().get(rowIndex);
         //return getColumnValue(tnsName, columnIndex);
     }
 
@@ -64,36 +64,59 @@ public class TnsNamesTableModel extends StatefulDisposableBase implements DBNRea
     }
 
     @Override
-    public Object getValue(TnsName tnsName, int column) {
+    public Object getValue(TnsProfile tnsProfile, int column) {
         switch (column) {
-            case 0: return tnsName.getProfile();
-            case 1: return tnsName.getProtocol();
-            case 2: return tnsName.getHost();
-            case 3: return tnsName.getPort();
-            case 4: return tnsName.getSid();
-            case 5: return tnsName.getServiceName();
-            case 6: return tnsName.getGlobalName();
-            case 7: return tnsName.getFailover();
-            case 8: return tnsName.getFailoverType();
-            case 9: return tnsName.getFailoverMethod();
+            case 0: return tnsProfile.getProfile();
+            case 1: return tnsProfile.getProtocol();
+            case 2: return tnsProfile.getHost();
+            case 3: return tnsProfile.getPort();
+            case 4: return tnsProfile.getSid();
+            case 5: return tnsProfile.getServiceName();
+            case 6: return tnsProfile.getGlobalName();
+            case 7: return tnsProfile.getFailover();
+            case 8: return tnsProfile.getFailoverType();
+            case 9: return tnsProfile.getFailoverMethod();
             default: return "";
         }
     }
 
     @Override
-    public String getPresentableValue(TnsName tnsName, int column) {
+    public String getPresentableValue(TnsProfile tnsProfile, int column) {
         switch (column) {
-            case 0: return tnsName.getProfile();
-            case 1: return tnsName.getProtocol();
-            case 2: return tnsName.getHost();
-            case 3: return tnsName.getPort();
-            case 4: return tnsName.getSid();
-            case 5: return tnsName.getServiceName();
-            case 6: return tnsName.getGlobalName();
-            case 7: return tnsName.getFailover();
-            case 8: return tnsName.getFailoverType();
-            case 9: return tnsName.getFailoverMethod();
+            case 0: return tnsProfile.getProfile();
+            case 1: return tnsProfile.getProtocol();
+            case 2: return tnsProfile.getHost();
+            case 3: return tnsProfile.getPort();
+            case 4: return tnsProfile.getSid();
+            case 5: return tnsProfile.getServiceName();
+            case 6: return tnsProfile.getGlobalName();
+            case 7: return tnsProfile.getFailover();
+            case 8: return tnsProfile.getFailoverType();
+            case 9: return tnsProfile.getFailoverMethod();
             default: return "";
         }
+    }
+
+    public void filter(String text) {
+        boolean changed = tnsNames.getFilter().setText(text);
+        if (changed) {
+            TableModelEvent modelEvent = new TableModelEvent(this);
+            listeners.notify(l -> l.tableChanged(modelEvent));
+        }
+    }
+
+    @Override
+    public void addTableModelListener(TableModelListener l) {
+        listeners.add(l);
+    }
+
+    @Override
+    public void removeTableModelListener(TableModelListener l) {
+        listeners.remove(l);
+    }
+
+
+    public List<TnsProfile> getProfiles() {
+        return tnsNames.getProfiles();
     }
 }
