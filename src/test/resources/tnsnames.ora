@@ -1,0 +1,1600 @@
+APYRDB1A.XE =
+  (DESCRIPTION =
+    (ADDRESS = (PROTOCOL = TCP)(Host = ab007538.dbhost.net)(Port = 49350))
+    (CONNECT_DATA =
+      (SID = APYRDB1A)
+      (GLOBAL_NAME = APYRDB1A.XE)
+    )
+  )
+CATDB.XE =
+  (DESCRIPTION =
+    (ADDRESS_LIST =
+      (ADDRESS = (PROTOCOL = TCP)(HOST = vc1012c-v1.tauri.ch)(PORT = 1521))
+    )
+    (CONNECT_DATA =
+      (SERVER = DEDICATED)
+      (SID = PNRMAN)
+    )
+  )
+DEQPDB1X.XE =
+  (DESCRIPTION =
+    (ADDRESS = (PROTOCOL = TCP)(Host = ab007539.dbhost.net)(Port = 49189))
+    (CONNECT_DATA =
+      (SID = DEQPDB1X)
+      (GLOBAL_NAME = DEQPDB1X.XE)
+    )
+  )
+
+DEQPDB1X_KUM.XE =
+  (DESCRIPTION =
+    (ADDRESS = (PROTOCOL = TCP)(Host = ab007539.dbhost.net)(Port = 49189))
+    (CONNECT_DATA =
+      (SERVICE_NAME = DEQPDB1X_KUM)
+      (GLOBAL_NAME = DEQPDB1X.XE)
+    )
+  )
+
+DEQPDB1C.XE =
+  (DESCRIPTION =
+    (ADDRESS = (PROTOCOL = TCP)(Host = ab007539.dbhost.net)(Port = 49188))
+    (CONNECT_DATA =
+      (SID = DEQPDB1C)
+      (GLOBAL_NAME = DEQPDB1C.XE)
+    )
+  )
+
+DTEMP.XE =
+  (DESCRIPTION =
+    (ADDRESS = (PROTOCOL = TCP)(Host = ab007539.dbhost.net)(Port = 49188))
+    (CONNECT_DATA =
+      (SID = DTEMP)
+      (GLOBAL_NAME = DTEMP.XE)
+    )
+  )
+
+DNAWDB1X.XE =
+  (DESCRIPTION =
+    (ADDRESS = (PROTOCOL = TCP)(Host = ab007539.dbhost.net)(Port = 49289))
+    (CONNECT_DATA =
+      (SID = DNAWDB1X)
+      (GLOBAL_NAME = DNAWDB1X.XE)
+    )
+  )
+
+DNAWDB1C.XE =
+  (DESCRIPTION =
+    (ADDRESS = (PROTOCOL = TCP)(Host = ab007539.dbhost.net)(Port = 49288))
+    (CONNECT_DATA =
+      (SID = DNAWDB1C)
+      (GLOBAL_NAME = DNAWDB1C.XE)
+    )
+  )
+
+UTEMP.XE =
+  (DESCRIPTION =
+    (ADDRESS = (PROTOCOL = TCP)(Host = ab007544.dbhost.net)(Port = 49149))
+    (CONNECT_DATA =
+      (SID = UTEMP)
+      (GLOBAL_NAME = UTEMP.XE)
+    )
+  )
+
+SEQPDB1A.XE =
+  (DESCRIPTION =
+    (ADDRESS = (PROTOCOL = TCP)(Host = ab007536.dbhost.net)(Port = 49185))
+    (CONNECT_DATA =
+      (SID = SEQPDB1A)
+      (GLOBAL_NAME = SEQPDB1A.XE)
+    )
+  )
+  
+SEQPDB1C.XE =
+  (DESCRIPTION =
+    (ADDRESS = (PROTOCOL = TCP)(Host = ab007536.dbhost.net)(Port = 49187))
+    (CONNECT_DATA =
+      (SID = SEQPDB1C)
+      (GLOBAL_NAME = SEQPDB1C.XE)
+    )
+  )
+  
+SEQPDB1X.XE =
+  (DESCRIPTION =
+    (ADDRESS = (PROTOCOL = TCP)(Host = ab007536.dbhost.net)(Port = 49186))
+    (CONNECT_DATA =
+      (SID = SEQPDB1X)
+      (GLOBAL_NAME = SEQPDB1X.XE)
+    )
+  )
+
+SNAWDB1C.XE =
+  (DESCRIPTION =
+    (ADDRESS = (PROTOCOL = TCP)(Host = ab007536.dbhost.net)(Port = 49322))
+    (CONNECT_DATA =
+      (SID = SNAWDB1C)
+      (GLOBAL_NAME = SNAWDB1C.XE)
+    )
+  )
+SNAWDB1X.XE =
+  (DESCRIPTION =
+    (ADDRESS = (PROTOCOL = TCP)(Host = ab007536.dbhost.net)(Port = 49324))
+    (CONNECT_DATA =
+      (SID = SNAWDB1X)
+      (GLOBAL_NAME = SNAWDB1X.XE)
+    )
+  )
+
+ODSCLONE.XE =
+  (DESCRIPTION =
+    (ADDRESS = (PROTOCOL = TCP)(Host = ab007539.dbhost.net)(Port = 49296))
+    (CONNECT_DATA =
+      (SID = ODSCLONE)
+      (GLOBAL_NAME = ODSCLONE.XE)
+    )
+  )
+  
+SODSDB1A.XE =
+  (DESCRIPTION =
+    (ADDRESS = (PROTOCOL = TCP)(Host = ab007536.dbhost.net)(Port = 49294))
+    (CONNECT_DATA =
+      (SID = SODSDB1A)
+      (GLOBAL_NAME = SODSDB1A.XE)
+    )
+  )  
+IEQPDB1A.XE =
+  (DESCRIPTION =
+    (ADDRESS = (PROTOCOL = TCP)(Host = ab007539.dbhost.net)(Port = 49185))
+    (CONNECT_DATA =
+      (SID = IEQPDB1A)
+      (GLOBAL_NAME = IEQPDB1A.XE)
+    )
+  )
+IEQPDB1C.XE =
+  (DESCRIPTION =
+    (ADDRESS = (PROTOCOL = TCP)(Host = ab007539.dbhost.net)(Port = 49190))
+    (CONNECT_DATA =
+      (SID = IEQPDB1C)
+      (GLOBAL_NAME = IEQPDB1C.XE)
+    )
+  )
+
+IEQPDB1X.XE =
+  (DESCRIPTION =
+    (ADDRESS = (PROTOCOL = TCP)(Host = ab007539.dbhost.net)(Port = 49191))
+    (CONNECT_DATA =
+      (SID = IEQPDB1X)
+      (GLOBAL_NAME = IEQPDB1X.XE)
+    )
+  )
+INAWDB1C.XE =
+  (DESCRIPTION =
+    (ADDRESS = (PROTOCOL = TCP)(Host = ab007539.dbhost.net)(Port = 49322))
+    (CONNECT_DATA =
+      (SID = INAWDB1C)
+      (GLOBAL_NAME = INAWDB1C.XE)
+    )
+  )
+INAWDB1X.XE =
+  (DESCRIPTION =
+    (ADDRESS = (PROTOCOL = TCP)(Host = ab007539.dbhost.net)(Port = 49324))
+    (CONNECT_DATA =
+      (SID = INAWDB1X)
+      (GLOBAL_NAME = INAWDB1X.XE)
+    )
+  )
+DEQPEQPX.XE =
+  (DESCRIPTION =
+    (ADDRESS = (PROTOCOL = TCP)(Host = ab007539.dbhost.net)(Port = 49271))
+    (CONNECT_DATA =
+      (SID = DEQPEQPX)
+      (GLOBAL_NAME = DEQPEQPX.XE)
+    )
+  )
+
+DEQPEQPC.XE =
+  (DESCRIPTION =
+    (ADDRESS = (PROTOCOL = TCP)(Host = ab007539.dbhost.net)(Port = 49273))
+    (CONNECT_DATA =
+      (SID = DEQPEQPC)
+      (GLOBAL_NAME = DEQPEQPC.XE)
+    )
+  )
+
+DEQPEQPR.XE =
+  (DESCRIPTION =
+    (ADDRESS = (PROTOCOL = TCP)(Host = ab007539.dbhost.net)(Port = 49275))
+    (CONNECT_DATA =
+      (SID = DEQPEQPR)
+      (GLOBAL_NAME = DEQPEQPR.XE)
+    )
+  )
+
+DNAWEQPX.XE =
+  (DESCRIPTION =
+    (ADDRESS = (PROTOCOL = TCP)(Host = ab007539.dbhost.net)(Port = 49326))
+    (CONNECT_DATA =
+      (SID = DNAWEQPX)
+      (GLOBAL_NAME = DNAWEQPX.XE)
+    )
+  )
+DNAWEQPC.XE =
+  (DESCRIPTION =
+    (ADDRESS = (PROTOCOL = TCP)(Host = ab007539.dbhost.net)(Port = 49327))
+    (CONNECT_DATA =
+      (SID = DNAWEQPC)
+      (GLOBAL_NAME = DNAWEQPC.XE)
+    )
+  )
+DDTSDB1D.XE =
+  (DESCRIPTION =
+    (ADDRESS = (PROTOCOL = TCP)(Host = ab007539.dbhost.net)(Port = 49292))
+    (CONNECT_DATA =
+      (SID = DDTSDB1D)
+      (GLOBAL_NAME = DDTSDB1D.XE)
+    )
+  )
+DADMDB1D.XE =
+  (DESCRIPTION =
+    (ADDRESS = (PROTOCOL = TCP)(Host = ab007539.dbhost.net)(Port = 49293))
+    (CONNECT_DATA =
+      (SID = DADMDB1D)
+      (GLOBAL_NAME = DADMDB1D.XE)
+    )
+  )
+PSONDB1Z.XE =
+  (DESCRIPTION =
+    (ADDRESS = (PROTOCOL = TCP)(Host = ab007539.dbhost.net)(Port = 49350))
+    (CONNECT_DATA =
+      (SID = PSONDB1Z)
+      (GLOBAL_NAME = PSONDB1Z.XE)
+    )
+  )
+
+DODSDB1A.XE =
+  (DESCRIPTION =
+    (ADDRESS = (PROTOCOL = TCP)(Host = ab007539.dbhost.net)(Port = 49294))
+    (CONNECT_DATA =
+      (SID = DODSDB1A)
+      (GLOBAL_NAME = DODSDB1A.XE)
+    )
+  )  
+AEQPDB1A.XE =
+  (DESCRIPTION =
+    (ADDRESS = (PROTOCOL = TCP)(Host = ab007538.dbhost.net)(Port = 49185))
+    (CONNECT_DATA =
+      (SID = AEQPDB1A)
+      (GLOBAL_NAME = AEQPDB1A.XE)
+    )
+  )
+AEQPDB1C.XE =
+  (DESCRIPTION =
+    (ADDRESS = (PROTOCOL = TCP)(Host = ab007538.dbhost.net)(Port = 49222))
+    (CONNECT_DATA =
+      (SID = AEQPDB1C)
+      (GLOBAL_NAME = AEQPDB1C.XE)
+    )
+  )
+
+AEQPDB1X.XE =
+  (DESCRIPTION =
+    (ADDRESS = (PROTOCOL = TCP)(Host = ab007538.dbhost.net)(Port = 49224))
+    (CONNECT_DATA =
+      (SID = AEQPDB1X)
+      (GLOBAL_NAME = AEQPDB1X.XE)
+    )
+  )
+ANAWDB1C.XE =
+  (DESCRIPTION =
+    (ADDRESS = (PROTOCOL = TCP)(Host = ab007538.dbhost.net)(Port = 49322))
+    (CONNECT_DATA =
+      (SID = ANAWDB1C)
+      (GLOBAL_NAME = ANAWDB1C.XE)
+    )
+  )
+ANAWDB1X.XE =
+  (DESCRIPTION =
+    (ADDRESS = (PROTOCOL = TCP)(Host = ab007538.dbhost.net)(Port = 49324))
+    (CONNECT_DATA =
+      (SID = ANAWDB1X)
+      (GLOBAL_NAME = ANAWDB1X.XE)
+    )
+  )
+
+ 
+SPYRDB1A.XE =
+  (DESCRIPTION =
+    (ADDRESS = (PROTOCOL = TCP)(Host = ab007536.dbhost.net)(Port = 49295))
+    (CONNECT_DATA =
+      (SID = SPYRDB1A)
+      (GLOBAL_NAME = SPYRDB1A.XE)
+    )
+  )
+
+
+DPYRDB1A.XE =
+  (DESCRIPTION =
+    (ADDRESS = (PROTOCOL = TCP)(Host = ab007539.dbhost.net)(Port = 49111))
+    (CONNECT_DATA =
+      (SID = DPYRDB1A)
+      (GLOBAL_NAME = DPYRDB1A.XE)
+    )
+  )
+
+DEQPDB2C.XE =
+  (DESCRIPTION =
+    (ADDRESS = (PROTOCOL = TCP)(Host = ab007539.dbhost.net)(Port = 49258))
+    (CONNECT_DATA =
+      (SID = DEQPDB2C)
+      (GLOBAL_NAME = DEQPDB2C.XE)
+    )
+  )
+DEQPDB2X.XE =
+  (DESCRIPTION =
+    (ADDRESS = (PROTOCOL = TCP)(Host = ab007539.dbhost.net)(Port = 49259))
+    (CONNECT_DATA =
+      (SID = DEQPDB2X)
+      (GLOBAL_NAME = DEQPDB2X.XE)
+    )
+  )
+DEQADB1X.XE =
+  (DESCRIPTION =
+    (ADDRESS = (PROTOCOL = TCP)(Host = ab007539.dbhost.net)(Port = 49208))
+    (CONNECT_DATA =
+      (SID = DEQADB1X)
+      (GLOBAL_NAME = DEQADB1X.XE)
+    )
+  )
+SEQADB1X.XE =
+  (DESCRIPTION =
+    (ADDRESS = (PROTOCOL = TCP)(Host = ab007536.dbhost.net)(Port = 49188))
+    (CONNECT_DATA =
+      (SID = SEQADB1X)
+      (GLOBAL_NAME = SEQADB1X.XE)
+    )
+  )
+SEQPEQIC.XE =
+  (DESCRIPTION =
+    (ADDRESS = (PROTOCOL = TCP)(Host = ab007536.dbhost.net)(Port = 49189))
+    (CONNECT_DATA =
+      (SID = SEQPEQIC)
+      (GLOBAL_NAME = SEQPEQIC.XE)
+    )
+  )
+SEQPEQIX.XE =
+  (DESCRIPTION =
+    (ADDRESS = (PROTOCOL = TCP)(Host = ab007537.dbhost.net)(Port = 49190))
+    (CONNECT_DATA =
+      (SID = SEQPEQIX)
+      (GLOBAL_NAME = SEQPEQIX.XE)
+    )
+  )
+SEQPEQIX_DG2.XE =
+  (DESCRIPTION =
+    (ADDRESS = (PROTOCOL = TCP)(Host = ab007537.dbhost.net)(Port = 49230))
+    (CONNECT_DATA =
+      (SID = SEQPEQIX_DG2)
+      (UR = A)
+      (GLOBAL_NAME = SEQPEQIX_DG2.XE)
+    )
+  )
+
+DDPFDB1X.XE =
+  (DESCRIPTION =
+    (ADDRESS = (PROTOCOL = TCP)(Host = ab007539.dbhost.net)(Port = 49328))
+    (CONNECT_DATA =
+      (SID = DDPFDB1X)
+      (GLOBAL_NAME = DDPFDB1X.XE)
+    )
+  )
+
+SDPFDB1X.XE =
+  (DESCRIPTION =
+    (ADDRESS = (PROTOCOL = TCP)(Host = ab007536.dbhost.net)(Port = 49170))
+    (CONNECT_DATA =
+      (SID = SDPFDB1X)
+      (GLOBAL_NAME = SDPFDB1X.XE)
+    )
+  )
+  
+IDPFDB1X.XE =
+  (DESCRIPTION =
+    (ADDRESS = (PROTOCOL = TCP)(Host = ab007539.dbhost.net)(Port = 49329))
+    (CONNECT_DATA =
+      (SID = IDPFDB1X)
+      (GLOBAL_NAME = IDPFDB1X.XE)
+    )
+  )
+
+
+ 
+ADPFDB1X.XE =
+  (DESCRIPTION =
+    (ADDRESS = (PROTOCOL = TCP)(Host = ab007538.dbhost.net)(Port = 49325))
+    (CONNECT_DATA =
+      (SID = ADPFDB1X)
+      (GLOBAL_NAME = ADPFDB1X.XE)
+    )
+  )
+
+SEQHDB1A.XE =
+  (DESCRIPTION =
+    (ADDRESS = (PROTOCOL = TCP)(Host = ab007536.dbhost.net)(Port = 49173))
+    (CONNECT_DATA =
+      (SID = SEQHDB1A)
+      (GLOBAL_NAME = SEQHDB1A.XE)
+    )
+  )
+
+DNAWDB2C.XE =
+  (DESCRIPTION =
+    (ADDRESS = (PROTOCOL = TCP)(Host = ab007539.dbhost.net)(Port = 49262))
+    (CONNECT_DATA =
+      (SID = DNAWDB2C)
+      (GLOBAL_NAME = DNAWDB2C.XE)
+    )
+  )
+DNAWDB2X.XE =
+  (DESCRIPTION =
+    (ADDRESS = (PROTOCOL = TCP)(Host = ab007539.dbhost.net)(Port = 49261))
+    (CONNECT_DATA =
+      (SID = DNAWDB2X)
+      (GLOBAL_NAME = DNAWDB2X.XE)
+    )
+  )
+
+SEQPDB2A.XE =
+  (DESCRIPTION =
+    (ADDRESS = (PROTOCOL = TCP)(Host = ab007537.dbhost.net)(Port = 49185))
+    (CONNECT_DATA =
+      (SID = SEQPDB2A)
+      (GLOBAL_NAME = SEQPDB2A.XE)
+    )
+  )
+
+SNAWDB2C.XE =
+  (DESCRIPTION =
+    (ADDRESS = (PROTOCOL = TCP)(Host = ab007537.dbhost.net)(Port = 49322))
+    (CONNECT_DATA =
+      (SID = SNAWDB2C)
+      (GLOBAL_NAME = SNAWDB2C.XE)
+    )
+  )
+SNAWDB2X.XE =
+  (DESCRIPTION =
+    (ADDRESS = (PROTOCOL = TCP)(Host = ab007537.dbhost.net)(Port = 49324))
+    (CONNECT_DATA =
+      (SID = SNAWDB2X)
+      (GLOBAL_NAME = SNAWDB2X.XE)
+    )
+  )
+DTSTDB1A.XE =
+  (DESCRIPTION =
+    (ADDRESS = (PROTOCOL = TCP)(Host = ab007539.dbhost.net)(Port = 49181))
+    (CONNECT_DATA =
+      (SID = DTSTDB1A)
+      (GLOBAL_NAME = DTSTDB1A.XE)
+    )
+  )
+
+SDPFDB2X.XE =
+  (DESCRIPTION =
+    (ADDRESS = (PROTOCOL = TCP)(Host = ab007537.dbhost.net)(Port = 49170))
+    (CONNECT_DATA =
+      (SID = SDPFDB2X)
+      (GLOBAL_NAME = SDPFDB2X.XE)
+    )
+  )
+PSONDB1ZT.XE=
+  (DESCRIPTION =
+    (ADDRESS = (PROTOCOL = TCP)(Host = ab007536.dbhost.net)(Port = 49174))
+    (CONNECT_DATA =
+      (SID = PSONDB1Z)
+      (GLOBAL_NAME = PSONDB1Z.XE)
+    )
+  )
+
+PROD.XE =
+  (DESCRIPTION =
+    (ADDRESS = (PROTOCOL = TCP)(Host = ab007539.dbhost.net)(Port = 49173))
+    (CONNECT_DATA =
+      (SID = PROD)
+      (GLOBAL_NAME = PROD.XE)
+    )
+  )
+
+SEQPEQ3X.XE =
+  (DESCRIPTION =
+    (ADDRESS = (PROTOCOL = TCP)(Host = ab007536.dbhost.net)(Port = 49326))
+    (CONNECT_DATA =
+      (SID = SEQPEQ3X)
+      (GLOBAL_NAME = SEQPEQ3X.XE)
+    )
+  )
+SEQPEQ4X.XE =
+  (DESCRIPTION =
+    (ADDRESS = (PROTOCOL = TCP)(Host = ab007537.dbhost.net)(Port = 49328))
+    (CONNECT_DATA =
+      (SID = SEQPEQ4X)
+      (GLOBAL_NAME = SEQPEQ4X.XE)
+    )
+  )
+
+DDTSEQ9D.XE =
+  (DESCRIPTION =
+    (ADDRESS = (PROTOCOL = TCP)(Host = ab007539.dbhost.net)(Port = 49333))
+    (CONNECT_DATA =
+      (SID = DDTSEQ9D)
+      (GLOBAL_NAME = DDTSEQ9D.XE)
+    )
+  )
+  
+SODSDB2A.XE =
+  (DESCRIPTION =
+    (ADDRESS = (PROTOCOL = TCP)(Host = ab007537.dbhost.net)(Port = 49210))
+    (CONNECT_DATA =
+      (SID = SODSDB2A)
+      (GLOBAL_NAME = SODSDB2A.XE)
+    )
+  )
+
+PEQPDB1A.XE =
+  (DESCRIPTION =
+    (ADDRESS = (PROTOCOL = TCP)(Host = ab007541.dbhost.net)(Port = 49185))
+    (ADDRESS = (PROTOCOL = TCP)(Host = ab007540.dbhost.net)(Port = 49185))
+     (FAILOVER = YES)
+     (CONNECT_DATA =  
+       (SERVICE_NAME = PEQPDB1A_PRIM)
+     )
+  )
+
+PEQPDB1C.XE =
+  (DESCRIPTION =
+    (ADDRESS = (PROTOCOL = TCP)(Host = ab007541.dbhost.net)(Port = 49186))
+    (ADDRESS = (PROTOCOL = TCP)(Host = ab007540.dbhost.net)(Port = 49186))    
+     (FAILOVER = YES)
+     (CONNECT_DATA =  
+       (SERVICE_NAME = PEQPDB1C_PRIM)
+     )
+  )
+PEQPDB1X.XE =
+  (DESCRIPTION =
+    (ADDRESS = (PROTOCOL = TCP)(Host = ab007540.dbhost.net)(Port = 49187))
+    (ADDRESS = (PROTOCOL = TCP)(Host = ab007541.dbhost.net)(Port = 49187))    
+     (FAILOVER = YES)
+     (CONNECT_DATA =  
+       (SERVICE_NAME = PEQPDB1X_PRIM)
+     )
+  )
+
+
+PEQPDB2X.XE =
+  (DESCRIPTION =
+    (ADDRESS = (PROTOCOL = TCP)(Host = ab009260.dbhost.net)(Port = 49330))
+    (ADDRESS = (PROTOCOL = TCP)(Host = ab009261.dbhost.net)(Port = 49330))    
+     (FAILOVER = YES)
+     (CONNECT_DATA =  
+       (SERVICE_NAME = PEQPDB2X_PRIM)
+     )
+  )
+  
+PEQPEQ3X.XE =
+  (DESCRIPTION =
+    (ADDRESS = (PROTOCOL = TCP)(Host = ab009261.dbhost.net)(Port = 49173))      
+    (ADDRESS = (PROTOCOL = TCP)(Host = ab009260.dbhost.net)(Port = 49173))
+     (FAILOVER = YES)
+     (CONNECT_DATA =  
+       (SERVICE_NAME = PEQPEQ3X_PRIM)
+     )
+  )
+PEQPEQ4X.XE =
+  (DESCRIPTION =
+    (ADDRESS = (PROTOCOL = TCP)(Host = ab009261.dbhost.net)(Port = 49288))      
+    (ADDRESS = (PROTOCOL = TCP)(Host = ab009260.dbhost.net)(Port = 49288))
+     (FAILOVER = YES)
+     (CONNECT_DATA =  
+       (SERVICE_NAME = PEQPEQ4X_PRIM)
+     )
+  )
+  
+PNAWDB1C.XE =
+  (DESCRIPTION =
+    (ADDRESS = (PROTOCOL = TCP)(Host = ab007541.dbhost.net)(Port = 49322))
+    (ADDRESS = (PROTOCOL = TCP)(Host = ab007540.dbhost.net)(Port = 49322))
+     (FAILOVER = YES)
+     (CONNECT_DATA =  
+       (SERVICE_NAME = PNAWDB1C_PRIM)
+     )
+  )
+PNAWDB1X.XE =
+  (DESCRIPTION =
+    (ADDRESS = (PROTOCOL = TCP)(Host = ab007541.dbhost.net)(Port = 49324))
+    (ADDRESS = (PROTOCOL = TCP)(Host = ab007540.dbhost.net)(Port = 49324))    
+     (FAILOVER = YES)
+     (CONNECT_DATA =  
+       (SERVICE_NAME = PNAWDB1X_PRIM)
+     )
+  )
+PNAWDB2X.XE =
+  (DESCRIPTION =
+    (ADDRESS = (PROTOCOL = TCP)(Host = ab009260.dbhost.net)(Port = 49102))
+    (ADDRESS = (PROTOCOL = TCP)(Host = ab009261.dbhost.net)(Port = 49102))    
+     (FAILOVER = YES)
+     (CONNECT_DATA =  
+       (SERVICE_NAME = PNAWDB2X_PRIM)
+     )
+  )
+PODSDB1A.XE =
+  (DESCRIPTION =
+    (ADDRESS = (PROTOCOL = TCP)(Host = ab007540.dbhost.net)(Port = 49294))
+    (ADDRESS = (PROTOCOL = TCP)(Host = ab007541.dbhost.net)(Port = 49294))    
+     (FAILOVER = YES)
+     (CONNECT_DATA =  
+       (SERVICE_NAME = PODSDB1A_PRIM)
+     )
+  )
+  
+PPYRDB1A.XE =
+  (DESCRIPTION =
+    (ADDRESS = (PROTOCOL = TCP)(Host = ab007541.dbhost.net)(Port = 49295))
+    (ADDRESS = (PROTOCOL = TCP)(Host = ab007540.dbhost.net)(Port = 49295))    
+     (FAILOVER = YES)
+     (CONNECT_DATA =  
+       (SERVICE_NAME = PPYRDB1A_PRIM)
+     )
+  )
+PRECDB1A.XE =
+  (DESCRIPTION =
+    (ADDRESS = (PROTOCOL = TCP)(Host = ab007541.dbhost.net)(Port = 49296))
+    (ADDRESS = (PROTOCOL = TCP)(Host = ab007540.dbhost.net)(Port = 49296))    
+     (FAILOVER = YES)
+     (CONNECT_DATA =  
+       (SERVICE_NAME = PRECDB1A_PRIM)
+     )
+  )
+
+PEQPEQIC.XE=
+  (DESCRIPTION=
+    (ADDRESS = (PROTOCOL = TCP)(HOST = ab007540.dbhost.net)(PORT = 49189))
+    (ADDRESS = (PROTOCOL = TCP)(HOST = ab007541.dbhost.net)(PORT = 49189))    
+     (FAILOVER = YES)
+     (CONNECT_DATA =  
+       (SERVICE_NAME = PEQPEQIC_PRIM)
+     )
+  )
+  
+PEQPEQIX.XE=
+  (DESCRIPTION= 
+    (ADDRESS = (PROTOCOL = TCP)(HOST = ab007540.dbhost.net)(PORT = 49190))
+    (ADDRESS = (PROTOCOL = TCP)(HOST = ab007541.dbhost.net)(PORT = 49190))    
+     (FAILOVER = YES)
+     (CONNECT_DATA =  
+       (SERVICE_NAME = PEQPEQIX_PRIM)
+     )
+  )
+
+PDPFDB1X.XE=
+  (DESCRIPTION=
+    (ADDRESS = (PROTOCOL = TCP)(HOST = ab007541.dbhost.net)(PORT = 49329))  
+    (ADDRESS = (PROTOCOL = TCP)(HOST = ab007540.dbhost.net)(PORT = 49329))      
+     (FAILOVER = YES)
+     (CONNECT_DATA =  
+       (SERVICE_NAME = PDPFDB1X_PRIM)
+     )
+  )
+  
+PCOEDB1A.XE=
+  (DESCRIPTION=
+    (ADDRESS=(PROTOCOL=TCP)(HOST=ab007541.dbhost.net)(PORT=49329))
+    (ADDRESS=(PROTOCOL=TCP)(HOST=ab007540.dbhost.net)(PORT=49329))
+     (FAILOVER = YES)
+     (CONNECT_DATA =  
+       (SERVICE_NAME = PCOEDB1A_PRIM)
+     )
+  )
+
+PTPRDB1X.XE =
+  (DESCRIPTION =
+    (ADDRESS = (PROTOCOL = TCP)(Host = ab007541.dbhost.net)(Port = 49116))
+    (ADDRESS = (PROTOCOL = TCP)(Host = ab007540.dbhost.net)(Port = 49116))
+     (FAILOVER = YES)
+     (CONNECT_DATA =  
+       (SERVICE_NAME = PTPRDB1X_PRIM)
+     )
+  )
+
+SPOCDB1X.XE =
+  (DESCRIPTION =
+    (ADDRESS = (PROTOCOL = TCP)(Host = ab007537.dbhost.net)(Port = 49334))
+    (CONNECT_DATA =
+      (SID = SPOCDB1X)
+      (GLOBAL_NAME = SPOCDB1X.XE)
+    )
+  )
+
+DTPRDB1X.XE =
+  (DESCRIPTION =
+    (ADDRESS = (PROTOCOL = TCP)(Host = ab007539.dbhost.net)(Port = 49112))
+    (CONNECT_DATA =
+      (SID = DTPRDB1X)
+      (GLOBAL_NAME = DTPRDB1X.XE)
+    )
+  )
+
+SDTSEQ9D.XE =
+  (DESCRIPTION =
+    (ADDRESS = (PROTOCOL = TCP)(Host = ab007536.dbhost.net)(Port = 49114))
+    (CONNECT_DATA =
+      (SID = SDTSEQ9D)
+      (GLOBAL_NAME = SDTSEQ9D.XE)
+    )
+  )
+
+DTPRDB1X.XE =
+  (DESCRIPTION =
+    (ADDRESS = (PROTOCOL = TCP)(Host = ab007539.dbhost.net)(Port = 49112))
+    (CONNECT_DATA =
+      (SID = DTPRDB1X)
+      (GLOBAL_NAME = DTPRDB1X.XE)
+    )
+  )
+
+STPRDB1X.XE =
+  (DESCRIPTION =
+    (ADDRESS = (PROTOCOL = TCP)(Host = ab007536.dbhost.net)(Port = 49116))
+    (CONNECT_DATA =
+      (SID = STPRDB1X)
+      (GLOBAL_NAME = STPRDB1X.XE)
+    )
+  )
+  
+STPRDB2X.XE =
+  (DESCRIPTION =
+    (ADDRESS = (PROTOCOL = TCP)(Host = ab007537.dbhost.net)(Port = 49120))
+    (CONNECT_DATA =
+      (SID = STPRDB2X)
+      (GLOBAL_NAME = STPRDB2X.XE)
+    )
+  )
+  
+UEQHDB1A.XE =
+    (DESCRIPTION=
+       (ADDRESS = (HOST = ab007543.dbhost.net)(PROTOCOL = TCP)(PORT = 49325))
+       (ADDRESS = (HOST = ab007542.dbhost.net)(PROTOCOL = TCP)(PORT = 49325))
+     (FAILOVER = YES)
+     (CONNECT_DATA =
+       (SERVICE_NAME = UEQHDB1A_PRIM)
+  )
+) 
+
+UDPFDB1X.XE=
+    (DESCRIPTION=
+       (ADDRESS = (HOST = ab007545.dbhost.net)(PROTOCOL = TCP)(PORT = 49296))
+       (ADDRESS = (HOST = ab007544.dbhost.net)(PROTOCOL = TCP)(PORT = 49296))       
+     (FAILOVER = YES)
+     (CONNECT_DATA =
+       (SERVICE_NAME = UDPFDB1X_PRIM)
+  )
+) 
+URECDB1A.XE=
+    (DESCRIPTION=
+       (ADDRESS = (HOST = ab007545.dbhost.net)(PROTOCOL = TCP)(PORT = 49294))
+       (ADDRESS = (HOST = ab007544.dbhost.net)(PROTOCOL = TCP)(PORT = 49294))       
+     (FAILOVER = YES)
+     (CONNECT_DATA =
+       (SERVICE_NAME = URECDB1A_PRIM)
+  )
+)  
+UPYRDB1A.XE=
+    (DESCRIPTION=
+       (ADDRESS = (HOST = ab007545.dbhost.net)(PROTOCOL = TCP)(PORT = 49295))
+       (ADDRESS = (HOST = ab007544.dbhost.net)(PROTOCOL = TCP)(PORT = 49295))       
+     (FAILOVER = YES)
+     (CONNECT_DATA =
+       (SERVICE_NAME = UPYRDB1A_PRIM)
+  )
+)  
+ 
+
+UEQPDB1A.XE=
+    (DESCRIPTION=
+       (ADDRESS = (HOST = ab007544.dbhost.net)(PROTOCOL = TCP)(PORT = 49185))
+       (ADDRESS = (HOST = ab007545.dbhost.net)(PROTOCOL = TCP)(PORT = 49185))       
+     (FAILOVER = YES)
+     (CONNECT_DATA =  
+       (SERVICE_NAME = UEQPDB1A_PRIM)
+  )
+)
+
+##EQ+CDBSALLNA02DEV
+##SEQHNB1A-STPRNB1X-SAPINB1E-SEQPNAIC-SEQPNAIX
+SALLNA02.XE=(DESCRIPTION=(ADDRESS=(PROTOCOL=TCP)(HOST=watavm01-scan2.americas.cshare.net)(PORT=1570))(CONNECT_DATA=(SERVER=DEDICATED)(SERVICE_NAME=SALLNA02.americas.cshare.net)))
+SAPINB1E.XE=(DESCRIPTION=(ADDRESS=(PROTOCOL=TCP)(HOST=watavm01-scan2.americas.cshare.net)(PORT=1570))(CONNECT_DATA=(SERVER=DEDICATED)(SERVICE_NAME=SAPINB1E.americas.cshare.net)))
+SEQPNAIX.XE=(DESCRIPTION=(ADDRESS=(PROTOCOL=TCP)(HOST=watavm01-scan2.americas.cshare.net)(PORT=1570))(CONNECT_DATA=(SERVER=DEDICATED)(SERVICE_NAME=SEQPNAIX.americas.cshare.net)))
+SEQPNAIC.XE=(DESCRIPTION=(ADDRESS=(PROTOCOL=TCP)(HOST=watavm01-scan2.americas.cshare.net)(PORT=1570))(CONNECT_DATA=(SERVER=DEDICATED)(SERVICE_NAME=SEQPNAIC.americas.cshare.net)))
+SEQHNB1A.XE=(DESCRIPTION=(ADDRESS=(PROTOCOL=TCP)(HOST=watavm01-scan2.americas.cshare.net)(PORT=1570))(CONNECT_DATA=(SERVER=DEDICATED)(SERVICE_NAME=SEQHNB1A.americas.cshare.net)))
+STPRNB1X.XE=(DESCRIPTION=(ADDRESS=(PROTOCOL=TCP)(HOST=watavm01-scan2.americas.cshare.net)(PORT=1570))(CONNECT_DATA=(SERVER=DEDICATED)(SERVICE_NAME=STPRNB1X.americas.cshare.net)))
+SGDBNB1A.XE=(DESCRIPTION=(ADDRESS=(PROTOCOL=TCP)(HOST=watavm01-scan2.americas.cshare.net)(PORT=1570))(CONNECT_DATA=(SERVER=DEDICATED)(SERVICE_NAME=SGDBNB1A.americas.cshare.net)))
+SWBANB1A.XE=(DESCRIPTION=(ADDRESS=(PROTOCOL=TCP)(HOST=watavm01-scan2.americas.cshare.net)(PORT=1570))(CONNECT_DATA=(SERVER=DEDICATED)(SERVICE_NAME=SWBANB1A.americas.cshare.net)))
+
+
+##EQ+CDBSALLNA01DEV
+##SODSNB1A-SNAWNB1C-SNAWNB1X-SDPFNB1X-SPYRNB1A
+SALLNA01.XE=(DESCRIPTION=(ADDRESS=(PROTOCOL=TCP)(HOST=watavm01-scan2.americas.cshare.net)(PORT=1570))(CONNECT_DATA=(SERVER=DEDICATED)(SERVICE_NAME=SALLNA01.americas.cshare.net)))
+SDPFNB1X.XE=(DESCRIPTION=(ADDRESS=(PROTOCOL=TCP)(HOST=watavm01-scan2.americas.cshare.net)(PORT=1570))(CONNECT_DATA=(SERVER=DEDICATED)(SERVICE_NAME=SDPFNB1X.americas.cshare.net)))
+SNAWNB1C.XE=(DESCRIPTION=(ADDRESS=(PROTOCOL=TCP)(HOST=watavm01-scan2.americas.cshare.net)(PORT=1570))(CONNECT_DATA=(SERVER=DEDICATED)(SERVICE_NAME=SNAWNB1C.americas.cshare.net)))
+SNAWNB1X.XE=(DESCRIPTION=(ADDRESS=(PROTOCOL=TCP)(HOST=watavm01-scan2.americas.cshare.net)(PORT=1570))(CONNECT_DATA=(SERVER=DEDICATED)(SERVICE_NAME=SNAWNB1X.americas.cshare.net)))
+SPYRNB1A.XE=(DESCRIPTION=(ADDRESS=(PROTOCOL=TCP)(HOST=watavm01-scan2.americas.cshare.net)(PORT=1570))(CONNECT_DATA=(SERVER=DEDICATED)(SERVICE_NAME=SPYRNB1A.americas.cshare.net)))
+SODSNB1A.XE=(DESCRIPTION=(ADDRESS=(PROTOCOL=TCP)(HOST=watavm01-scan2.americas.cshare.net)(PORT=1570))(CONNECT_DATA=(SERVER=DEDICATED)(SERVICE_NAME=SODSNB1A.americas.cshare.net)))
+
+##NEVISPDB'sDev
+##SEQPNB1X-SEQPNB1A-SEQPNB1C
+SEQPNB1A.XE=(DESCRIPTION=(ADDRESS=(PROTOCOL=TCP)(HOST=watavm01-scan2.americas.cshare.net)(PORT=1570))(CONNECT_DATA=(SERVER=DEDICATED)(SERVICE_NAME=SEQPNB1A.americas.cshare.net)))
+SEQPNB1C.XE=(DESCRIPTION=(ADDRESS=(PROTOCOL=TCP)(HOST=watavm01-scan2.americas.cshare.net)(PORT=1570))(CONNECT_DATA=(SERVER=DEDICATED)(SERVICE_NAME=SEQPNB1C.americas.cshare.net)))
+SEQPNB1X.XE=(DESCRIPTION=(ADDRESS=(PROTOCOL=TCP)(HOST=watavm01-scan2.americas.cshare.net)(PORT=1570))(CONNECT_DATA=(SERVER=DEDICATED)(SERVICE_NAME=SEQPNB1X.americas.cshare.net)))
+
+#3PDBSfortheEQ+UEQPNB1A-UEQPNB1C-UEQPNB1X for the UEQPNA01
+UEQPNB1A.XE=(DESCRIPTION=(ADDRESS=(PROTOCOL=TCP)(HOST=qaspvm02-scan3.americas.cshare.net)(PORT=1570))(CONNECT_DATA=(SERVER=DEDICATED)(SERVICE_NAME=UEQPNB1A.americas.cshare.net)))
+UEQPNB1C.XE=(DESCRIPTION=(ADDRESS=(PROTOCOL=TCP)(HOST=qaspvm02-scan3.americas.cshare.net)(PORT=1570))(CONNECT_DATA=(SERVER=DEDICATED)(SERVICE_NAME=UEQPNB1C.americas.cshare.net)))
+UEQPNB1X.XE=(DESCRIPTION=(ADDRESS=(PROTOCOL=TCP)(HOST=qaspvm02-scan3.americas.cshare.net)(PORT=1570))(CONNECT_DATA=(SERVER=DEDICATED)(SERVICE_NAME=UEQPNB1X.americas.cshare.net)))
+
+#UALLNA01
+UNAWNB1C.XE=(DESCRIPTION=(ADDRESS=(PROTOCOL=TCP)(HOST=qaspvm02-scan3.americas.cshare.net)(PORT=1570))(CONNECT_DATA=(SERVER=DEDICATED)(SERVICE_NAME=unawNB1c.americas.cshare.net)))
+UDPFNB1X.XE=(DESCRIPTION=(ADDRESS=(PROTOCOL=TCP)(HOST=qaspvm02-scan3.americas.cshare.net)(PORT=1570))(CONNECT_DATA=(SERVER=DEDICATED)(SERVICE_NAME=udpfNB1x.americas.cshare.net)))
+UNAWNB1X.XE=(DESCRIPTION=(ADDRESS=(PROTOCOL=TCP)(HOST=qaspvm02-scan3.americas.cshare.net)(PORT=1570))(CONNECT_DATA=(SERVER=DEDICATED)(SERVICE_NAME=unawNB1x.americas.cshare.net)))
+UEQPNB1M.XE=(DESCRIPTION=(ADDRESS=(PROTOCOL=TCP)(HOST=qaspvm02-scan3.americas.cshare.net)(PORT=1570))(CONNECT_DATA=(SERVER=DEDICATED)(SERVICE_NAME=ueqpNB1m.americas.cshare.net)))
+
+#UALLNA02
+UTPRNB1X.XE=(DESCRIPTION=(ADDRESS=(PROTOCOL=TCP)(HOST=qaspvm02-scan3.americas.cshare.net)(PORT=1570))(CONNECT_DATA=(SERVER=DEDICATED)(SERVICE_NAME=utprNB1x.americas.cshare.net)))
+UGDBNB1A.XE=(DESCRIPTION=(ADDRESS=(PROTOCOL=TCP)(HOST=qaspvm02-scan3.americas.cshare.net)(PORT=1570))(CONNECT_DATA=(SERVER=DEDICATED)(SERVICE_NAME=ugdbNB1a.americas.cshare.net)))
+UEQHNB1A.XE=(DESCRIPTION=(ADDRESS=(PROTOCOL=TCP)(HOST=qaspvm02-scan3.americas.cshare.net)(PORT=1570))(CONNECT_DATA=(SERVER=DEDICATED)(SERVICE_NAME=ueqhNB1a.americas.cshare.net)))
+UAPINB1E.XE=(DESCRIPTION=(ADDRESS=(PROTOCOL=TCP)(HOST=qaspvm02-scan3.americas.cshare.net)(PORT=1570))(CONNECT_DATA=(SERVER=DEDICATED)(SERVICE_NAME=uapiNB1e.americas.cshare.net)))
+UEQPNAAA.XE=(DESCRIPTION=(ADDRESS=(PROTOCOL=TCP)(HOST=qaspvm02-scan3.americas.cshare.net)(PORT=1570))(CONNECT_DATA=(SERVER=DEDICATED)(SERVICE_NAME=UEQPNAAA.americas.cshare.net)))
+UEQPNAAC.XE=(DESCRIPTION=(ADDRESS=(PROTOCOL=TCP)(HOST=qaspvm02-scan3.americas.cshare.net)(PORT=1570))(CONNECT_DATA=(SERVER=DEDICATED)(SERVICE_NAME=UEQPNAAC.americas.cshare.net)))
+UEQPNAAX.XE=(DESCRIPTION=(ADDRESS=(PROTOCOL=TCP)(HOST=qaspvm02-scan3.americas.cshare.net)(PORT=1570))(CONNECT_DATA=(SERVER=DEDICATED)(SERVICE_NAME=UEQPNAAX.americas.cshare.net)))
+
+#UALLNA09
+UPYRNB1A.XE=(DESCRIPTION=(ADDRESS=(PROTOCOL=TCP)(HOST=qaspvm02-scan3.americas.cshare.net)(PORT=1570))(CONNECT_DATA=(SERVER=DEDICATED)(SERVICE_NAME=upyrNB1a.americas.cshare.net)))
+UWBANB1A.XE=(DESCRIPTION=(ADDRESS=(PROTOCOL=TCP)(HOST=qaspvm02-scan3.americas.cshare.net)(PORT=1570))(CONNECT_DATA=(SERVER=DEDICATED)(SERVICE_NAME=uwbaNB1a.americas.cshare.net)))
+
+#PEQPNA01
+PEQPNB1A.XE =
+  (DESCRIPTION =
+    (CONNECT_TIMEOUT=90)(RETRY_COUNT=50)(RETRY_DELAY=3)(TRANSPORT_CONNECT_TIMEOUT=3)
+    (ADDRESS_LIST=(LOAD_BALANCE=on)
+        (ADDRESS=(PROTOCOL=TCP)(HOST=watavm01-scan3.americas.cshare.net)(PORT=1570))
+        (ADDRESS=(PROTOCOL=TCP)(HOST=qasfvm02-scan1.americas.cshare.net)(PORT=1570))
+        (ADDRESS=(PROTOCOL=TCP)(HOST=qaspvm02-scan1.americas.cshare.net)(PORT=1570)))
+    (CONNECT_DATA =
+      (SERVER = DEDICATED)
+      (SERVICE_NAME = PEQPNB1A_srv.americas.cshare.net)))
+
+PEQPNB1X.XE =
+  (DESCRIPTION =
+    (CONNECT_TIMEOUT=90)(RETRY_COUNT=50)(RETRY_DELAY=3)(TRANSPORT_CONNECT_TIMEOUT=3)
+    (ADDRESS_LIST=(LOAD_BALANCE=on)
+        (ADDRESS=(PROTOCOL=TCP)(HOST=qasfvm02-scan1.americas.cshare.net)(PORT=1570))
+        (ADDRESS=(PROTOCOL=TCP)(HOST=watavm01-scan3.americas.cshare.net)(PORT=1570))
+        (ADDRESS=(PROTOCOL=TCP)(HOST=qaspvm02-scan1.americas.cshare.net)(PORT=1570)))
+    (CONNECT_DATA =
+      (SERVER = DEDICATED)
+      (SERVICE_NAME = peqpNB1x_srv.americas.cshare.net)))
+
+PEQPNB1C.XE =
+  (DESCRIPTION =
+    (CONNECT_TIMEOUT=90)(RETRY_COUNT=50)(RETRY_DELAY=3)(TRANSPORT_CONNECT_TIMEOUT=3)
+    (ADDRESS_LIST=(LOAD_BALANCE=on)
+        (ADDRESS=(PROTOCOL=TCP)(HOST=watavm01-scan3.americas.cshare.net)(PORT=1570))
+        (ADDRESS=(PROTOCOL=TCP)(HOST=qasfvm02-scan1.americas.cshare.net)(PORT=1570))
+        (ADDRESS=(PROTOCOL=TCP)(HOST=qaspvm02-scan1.americas.cshare.net)(PORT=1570)))
+    (CONNECT_DATA =
+      (SERVER = DEDICATED)
+      (SERVICE_NAME = PEQPNB1C_srv.americas.cshare.net)))
+
+#PALLNA01
+PODSNB1A.XE =
+  (DESCRIPTION =
+    (CONNECT_TIMEOUT=90)(RETRY_COUNT=50)(RETRY_DELAY=3)(TRANSPORT_CONNECT_TIMEOUT=3)
+    (ADDRESS_LIST=(LOAD_BALANCE=on)
+        (ADDRESS=(PROTOCOL=TCP)(HOST=watavm01-scan3.americas.cshare.net)(PORT=1570))
+        (ADDRESS=(PROTOCOL=TCP)(HOST=qasfvm02-scan1.americas.cshare.net)(PORT=1570))
+        (ADDRESS=(PROTOCOL=TCP)(HOST=qaspvm02-scan1.americas.cshare.net)(PORT=1570)))
+    (CONNECT_DATA =
+      (SERVER = DEDICATED)
+      (SERVICE_NAME = PODSNB1A_srv.americas.cshare.net)))
+PNAWNB1X.XE =
+  (DESCRIPTION =
+    (CONNECT_TIMEOUT=90)(RETRY_COUNT=50)(RETRY_DELAY=3)(TRANSPORT_CONNECT_TIMEOUT=3)
+    (ADDRESS_LIST=(LOAD_BALANCE=on)
+        (ADDRESS=(PROTOCOL=TCP)(HOST=watavm01-scan3.americas.cshare.net)(PORT=1570))
+        (ADDRESS=(PROTOCOL=TCP)(HOST=qasfvm02-scan1.americas.cshare.net)(PORT=1570))
+        (ADDRESS=(PROTOCOL=TCP)(HOST=qaspvm02-scan1.americas.cshare.net)(PORT=1570)))
+    (CONNECT_DATA =
+      (SERVER = DEDICATED)
+      (SERVICE_NAME = PNAWNB1X_srv.americas.cshare.net)))
+PNAWNB1C.XE =
+  (DESCRIPTION =
+    (CONNECT_TIMEOUT=90)(RETRY_COUNT=50)(RETRY_DELAY=3)(TRANSPORT_CONNECT_TIMEOUT=3)
+    (ADDRESS_LIST=(LOAD_BALANCE=on)
+        (ADDRESS=(PROTOCOL=TCP)(HOST=watavm01-scan3.americas.cshare.net)(PORT=1570))
+        (ADDRESS=(PROTOCOL=TCP)(HOST=qasfvm02-scan1.americas.cshare.net)(PORT=1570))
+        (ADDRESS=(PROTOCOL=TCP)(HOST=qaspvm02-scan1.americas.cshare.net)(PORT=1570)))
+    (CONNECT_DATA =
+      (SERVER = DEDICATED)
+      (SERVICE_NAME = PNAWNB1C_srv.americas.cshare.net)))
+PDPFNB1X.XE =
+  (DESCRIPTION =
+    (CONNECT_TIMEOUT=90)(RETRY_COUNT=50)(RETRY_DELAY=3)(TRANSPORT_CONNECT_TIMEOUT=3)
+    (ADDRESS_LIST=(LOAD_BALANCE=on)
+        (ADDRESS=(PROTOCOL=TCP)(HOST=watavm01-scan3.americas.cshare.net)(PORT=1570))
+        (ADDRESS=(PROTOCOL=TCP)(HOST=qasfvm02-scan1.americas.cshare.net)(PORT=1570))
+        (ADDRESS=(PROTOCOL=TCP)(HOST=qaspvm02-scan1.americas.cshare.net)(PORT=1570)))
+    (CONNECT_DATA =
+      (SERVER = DEDICATED)
+      (SERVICE_NAME = PDPFNB1X_srv.americas.cshare.net)))
+
+#PALLNA02
+
+PEQPNAIC.XE =
+  (DESCRIPTION =
+    (CONNECT_TIMEOUT=90)(RETRY_COUNT=50)(RETRY_DELAY=3)(TRANSPORT_CONNECT_TIMEOUT=3)
+    (ADDRESS_LIST=(LOAD_BALANCE=on)
+        (ADDRESS=(PROTOCOL=TCP)(HOST=watavm01-scan3.americas.cshare.net)(PORT=1570))
+        (ADDRESS=(PROTOCOL=TCP)(HOST=qasfvm02-scan1.americas.cshare.net)(PORT=1570))
+        (ADDRESS=(PROTOCOL=TCP)(HOST=qaspvm02-scan1.americas.cshare.net)(PORT=1570)))
+    (CONNECT_DATA =
+      (SERVER = DEDICATED)
+      (SERVICE_NAME = PEQPNAIC_srv.americas.cshare.net)))
+
+PTPRNB1X.XE =
+  (DESCRIPTION =
+    (CONNECT_TIMEOUT=90)(RETRY_COUNT=50)(RETRY_DELAY=3)(TRANSPORT_CONNECT_TIMEOUT=3)
+    (ADDRESS_LIST=(LOAD_BALANCE=on)
+        (ADDRESS=(PROTOCOL=TCP)(HOST=watavm01-scan3.americas.cshare.net)(PORT=1570))
+        (ADDRESS=(PROTOCOL=TCP)(HOST=qasfvm02-scan1.americas.cshare.net)(PORT=1570))
+        (ADDRESS=(PROTOCOL=TCP)(HOST=qaspvm02-scan1.americas.cshare.net)(PORT=1570)))
+    (CONNECT_DATA =
+      (SERVER = DEDICATED)
+      (SERVICE_NAME = PTPRNB1X_srv.americas.cshare.net)))
+
+PGDBNB1A.XE =
+  (DESCRIPTION =
+    (CONNECT_TIMEOUT=90)(RETRY_COUNT=50)(RETRY_DELAY=3)(TRANSPORT_CONNECT_TIMEOUT=3)
+    (ADDRESS_LIST=(LOAD_BALANCE=on)
+        (ADDRESS=(PROTOCOL=TCP)(HOST=watavm01-scan3.americas.cshare.net)(PORT=1570))
+        (ADDRESS=(PROTOCOL=TCP)(HOST=qasfvm02-scan1.americas.cshare.net)(PORT=1570))
+        (ADDRESS=(PROTOCOL=TCP)(HOST=qaspvm02-scan1.americas.cshare.net)(PORT=1570)))
+    (CONNECT_DATA =
+      (SERVER = DEDICATED)
+      (SERVICE_NAME = PGDBNB1A_srv.americas.cshare.net)))
+
+PEQPNAIX.XE =
+  (DESCRIPTION =
+    (CONNECT_TIMEOUT=90)(RETRY_COUNT=50)(RETRY_DELAY=3)(TRANSPORT_CONNECT_TIMEOUT=3)
+    (ADDRESS_LIST=(LOAD_BALANCE=on)
+        (ADDRESS=(PROTOCOL=TCP)(HOST=watavm01-scan3.americas.cshare.net)(PORT=1570))
+        (ADDRESS=(PROTOCOL=TCP)(HOST=qasfvm02-scan1.americas.cshare.net)(PORT=1570))
+        (ADDRESS=(PROTOCOL=TCP)(HOST=qaspvm02-scan1.americas.cshare.net)(PORT=1570)))
+    (CONNECT_DATA =
+      (SERVER = DEDICATED)
+      (SERVICE_NAME = PEQPNAIX_srv.americas.cshare.net)))
+
+PAPINB1E.XE =
+  (DESCRIPTION =
+    (CONNECT_TIMEOUT=90)(RETRY_COUNT=50)(RETRY_DELAY=3)(TRANSPORT_CONNECT_TIMEOUT=3)
+    (ADDRESS_LIST=(LOAD_BALANCE=on)
+        (ADDRESS=(PROTOCOL=TCP)(HOST=watavm01-scan3.americas.cshare.net)(PORT=1570))
+        (ADDRESS=(PROTOCOL=TCP)(HOST=qasfvm02-scan1.americas.cshare.net)(PORT=1570))
+        (ADDRESS=(PROTOCOL=TCP)(HOST=qaspvm02-scan1.americas.cshare.net)(PORT=1570)))
+    (CONNECT_DATA =
+      (SERVER = DEDICATED)
+      (SERVICE_NAME = PAPINB1E_srv.americas.cshare.net)))
+
+
+#PALLNA09
+
+PWBANB1A.XE =
+  (DESCRIPTION =
+    (CONNECT_TIMEOUT=90)(RETRY_COUNT=50)(RETRY_DELAY=3)(TRANSPORT_CONNECT_TIMEOUT=3)
+    (ADDRESS_LIST=(LOAD_BALANCE=on)
+        (ADDRESS=(PROTOCOL=TCP)(HOST=qaspvm02-scan1.americas.cshare.net)(PORT=1570))	
+        (ADDRESS=(PROTOCOL=TCP)(HOST=qaspvm02-scan1.americas.cshare.net)(PORT=1570))
+        (ADDRESS=(PROTOCOL=TCP)(HOST=qaspvm02-scan1.americas.cshare.net)(PORT=1570)))
+    (CONNECT_DATA =
+      (SERVER = DEDICATED)
+      (SERVICE_NAME = PWBANB1A.americas.cshare.net)))
+PPYRNB1A.XE =
+  (DESCRIPTION =
+    (CONNECT_TIMEOUT=90)(RETRY_COUNT=50)(RETRY_DELAY=3)(TRANSPORT_CONNECT_TIMEOUT=3)
+    (ADDRESS_LIST=(LOAD_BALANCE=on)
+        (ADDRESS=(PROTOCOL=TCP)(HOST=qaspvm02-scan1.americas.cshare.net)(PORT=1570))	
+        (ADDRESS=(PROTOCOL=TCP)(HOST=qaspvm02-scan1.americas.cshare.net)(PORT=1570))
+        (ADDRESS=(PROTOCOL=TCP)(HOST=qaspvm02-scan1.americas.cshare.net)(PORT=1570)))
+    (CONNECT_DATA =
+      (SERVER = DEDICATED)
+      (SERVICE_NAME = PPYRNB1A.americas.cshare.net)))
+
+
+
+
+
+SWBADB1A.XE =
+  (DESCRIPTION =
+    (ADDRESS = (PROTOCOL = TCP)(Host = ab007536.dbhost.net)(Port = 49270))
+    (CONNECT_DATA =
+      (SID = SWBADB1A)
+      (GLOBAL_NAME = SWBADB1A.XE)
+    )
+  )
+DWBADB1A.XE =
+  (DESCRIPTION =
+    (ADDRESS = (PROTOCOL = TCP)(Host = ab007539.dbhost.net)(Port = 49270))
+    (CONNECT_DATA =
+      (SID = DWBADB1A)
+      (GLOBAL_NAME = DWBADB1A.XE)
+    )
+  )
+
+
+UNEVIS.XE=(DESCRIPTION_LIST=(LOAD_BALANCE=off)(FAILOVER=on)(DESCRIPTION=(CONNECT_TIMEOUT=3)(RETRY_COUNT=3)(ADDRESS_LIST=(LOAD_BALANCE=on)(ADDRESS=(PROTOCOL=TCP)(HOST=ab007544.dbhost.net)(PORT=49185)))(CONNECT_DATA=(SERVICE_NAME=UEQPDB1A_PRIM)))(DESCRIPTION=(ADDRESS_LIST=(LOAD_BALANCE=on)(ADDRESS=(PROTOCOL=TCP)(HOST=ab007545.dbhost.net)(PORT=49185)))(CONNECT_DATA=(SERVICE_NAME=UEQPDB1A_PRIM))))
+
+UNEVISC.XE=
+    (DESCRIPTION=
+       (ADDRESS = (HOST = ab007544.dbhost.net)(PROTOCOL = TCP)(PORT = 49185))
+       (ADDRESS = (HOST = ab007545.dbhost.net)(PROTOCOL = TCP)(PORT = 49185))       
+     (FAILOVER = YES)
+     (CONNECT_DATA =  
+       (SERVICE_NAME = UEQPDB1A_PRIM)
+  )
+)
+
+UEQPDB1C.XE=
+    (DESCRIPTION=
+       (ADDRESS = (HOST = ab007545.dbhost.net)(PROTOCOL = TCP)(PORT = 49186))       
+       (ADDRESS = (HOST = ab007544.dbhost.net)(PROTOCOL = TCP)(PORT = 49186))
+
+     (FAILOVER = YES)
+     (CONNECT_DATA =  
+       (SERVICE_NAME = UEQPDB1C_PRIM)
+  )
+)
+
+UEQPDB1X.XE=
+    (DESCRIPTION=
+       (ADDRESS = (HOST = ab007545.dbhost.net)(PROTOCOL = TCP)(PORT = 49187))
+       (ADDRESS = (HOST = ab007544.dbhost.net)(PROTOCOL = TCP)(PORT = 49187))       
+     (FAILOVER = YES)
+     (CONNECT_DATA =  
+       (SERVICE_NAME = UEQPDB1X_PRIM)
+  )
+)
+UNAWDB1C.XE=
+    (DESCRIPTION=
+       (ADDRESS = (HOST = ab007544.dbhost.net)(PROTOCOL = TCP)(PORT = 49322))       
+       (ADDRESS = (HOST = ab007545.dbhost.net)(PROTOCOL = TCP)(PORT = 49322))       
+     (FAILOVER = YES)
+     (CONNECT_DATA =
+       (SERVICE_NAME = UNAWDB1C_PRIM)
+  )
+)
+
+UNAWDB1X.XE=
+    (DESCRIPTION=
+       (ADDRESS = (HOST = ab007545.dbhost.net)(PROTOCOL = TCP)(PORT = 49324))       
+       (ADDRESS = (HOST = ab007544.dbhost.net)(PROTOCOL = TCP)(PORT = 49324))       
+     (FAILOVER = YES)
+     (CONNECT_DATA =
+       (SERVICE_NAME = UNAWDB1X_PRIM)
+  )
+)
+
+UEQPDB1M.XE=
+    (DESCRIPTION=
+       (ADDRESS = (HOST = ab007545.dbhost.net)(PROTOCOL = TCP)(PORT = 49206))
+       (ADDRESS = (HOST = ab007544.dbhost.net)(PROTOCOL = TCP)(PORT = 49206))       
+     (FAILOVER = YES)
+     (CONNECT_DATA =
+       (SERVICE_NAME = UEQPDB1M_PRIM)
+  )
+)
+
+UEQPDB2M.XE=
+    (DESCRIPTION=
+       (ADDRESS = (HOST = ab009262.dbhost.net)(PROTOCOL = TCP)(PORT = 49206))       
+     (FAILOVER = YES)
+     (CONNECT_DATA =
+       (SERVICE_NAME = UEQPDB2M)
+  )
+)
+
+UTPRDB1X.XE=
+    (DESCRIPTION=
+       (ADDRESS = (HOST = ab007544.dbhost.net)(PROTOCOL = TCP)(PORT = 49116))
+       (ADDRESS = (HOST = ab007545.dbhost.net)(PROTOCOL = TCP)(PORT = 49116))       
+     (FAILOVER = YES)
+     (CONNECT_DATA =  
+       (SERVICE_NAME = UTPRDB1X_PRIM)
+  )
+)
+UNAWDB2X.XE=
+    (DESCRIPTION=
+       (ADDRESS = (HOST = ab009262.dbhost.net)(PROTOCOL = TCP)(PORT = 49102))
+       (ADDRESS = (HOST = ab009263.dbhost.net)(PROTOCOL = TCP)(PORT = 49102))
+     (FAILOVER = YES)
+     (CONNECT_DATA =
+       (SERVICE_NAME = UNAWDB2X_PRIM)
+       (FAILOVER_MODE =
+         (TYPE = SELECT)
+          (METHOD = BASIC)
+       )
+  )
+)
+UEQPDB2X.XE=
+    (DESCRIPTION=
+	   (ADDRESS = (HOST = ab009262.dbhost.net)(PROTOCOL = TCP)(PORT = 49297))       
+	   (ADDRESS = (HOST = ab009263.dbhost.net)(PROTOCOL = TCP)(PORT = 49297))       
+     (FAILOVER = YES)
+     (CONNECT_DATA =  
+       (SERVICE_NAME = UEQPDB2X_PRIM)
+  )
+)
+
+UEQPEQ3X.XE=
+    (DESCRIPTION=
+       (ADDRESS = (HOST = ab009262.dbhost.net)(PROTOCOL = TCP)(PORT = 49299))       
+       (ADDRESS = (HOST = ab009263.dbhost.net)(PROTOCOL = TCP)(PORT = 49299))       
+     (FAILOVER = YES)
+     (CONNECT_DATA =  
+       (SERVICE_NAME = UEQPEQ3X_PRIM)
+  )
+)
+
+UEQPEQ4X.XE=
+    (DESCRIPTION=
+       (ADDRESS = (HOST = ab009262.dbhost.net)(PROTOCOL = TCP)(PORT = 49288))
+       (ADDRESS = (HOST = ab009263.dbhost.net)(PROTOCOL = TCP)(PORT = 49288))       
+     (FAILOVER = YES)
+     (CONNECT_DATA =  
+       (SERVICE_NAME = UEQPEQ4X_PRIM)
+  )
+)
+
+UEQPEQ5X.XE=
+    (DESCRIPTION=
+       (ADDRESS = (HOST = ab009262.dbhost.net)(PROTOCOL = TCP)(PORT = 49174))       
+       (ADDRESS = (HOST = ab009263.dbhost.net)(PROTOCOL = TCP)(PORT = 49174))       
+     (FAILOVER = YES)
+     (CONNECT_DATA =  
+       (SERVICE_NAME = UEQPEQ5X_PRIM)
+  )
+)
+
+UPY2DB1A.XE=
+    (DESCRIPTION=
+       (ADDRESS = (HOST =  ab009265.dbhost.net)(PROTOCOL = TCP)(PORT = 49295))
+       (ADDRESS = (HOST =  ab009264.dbhost.net)(PROTOCOL = TCP)(PORT = 49295))       
+     (FAILOVER = YES)
+     (CONNECT_DATA =
+       (SERVICE_NAME = UPY2DB1A_PRIM)
+  )
+) 
+
+UDB2DB1A.XE=
+    (DESCRIPTION=
+       (ADDRESS = (HOST =  ab009264.dbhost.net)(PROTOCOL = TCP)(PORT = 49185))
+       (ADDRESS = (HOST =  ab009265.dbhost.net)(PROTOCOL = TCP)(PORT = 49185))
+     (FAILOVER = YES)
+     (CONNECT_DATA =  
+       (SERVICE_NAME = UDB2DB1A_PRIM)
+  )
+)
+UDB2DB1C.XE=
+    (DESCRIPTION=
+       (ADDRESS = (HOST =  ab009264.dbhost.net)(PROTOCOL = TCP)(PORT = 49186))
+       (ADDRESS = (HOST =  ab009265.dbhost.net)(PROTOCOL = TCP)(PORT = 49186))
+     (FAILOVER = YES)
+     (CONNECT_DATA =  
+       (SERVICE_NAME = UDB2DB1C_PRIM)
+  )
+)
+UDB2DB1X.XE=
+    (DESCRIPTION=
+       (ADDRESS = (HOST =  ab009264.dbhost.net)(PROTOCOL = TCP)(PORT = 49187))
+       (ADDRESS = (HOST =  ab009265.dbhost.net)(PROTOCOL = TCP)(PORT = 49187))
+     (FAILOVER = YES)
+     (CONNECT_DATA =  
+       (SERVICE_NAME = UDB2DB1X_PRIM)
+  )
+)
+UNB2DB1C.XE=
+    (DESCRIPTION=
+       (ADDRESS = (HOST =  ab009264.dbhost.net)(PROTOCOL = TCP)(PORT = 49322))
+       (ADDRESS = (HOST =  ab009265.dbhost.net)(PROTOCOL = TCP)(PORT = 49322))
+     (FAILOVER = YES)
+     (CONNECT_DATA =
+       (SERVICE_NAME = UNB2DB1C_PRIM)
+  )
+)
+
+UNB2DB1X.XE=
+    (DESCRIPTION=
+       (ADDRESS = (HOST =  ab009264.dbhost.net)(PROTOCOL = TCP)(PORT = 49324))
+       (ADDRESS = (HOST =  ab009265.dbhost.net)(PROTOCOL = TCP)(PORT = 49324))
+     (FAILOVER = YES)
+     (CONNECT_DATA =
+       (SERVICE_NAME = UNB2DB1X_PRIM)
+  )
+)
+
+SNAWEQ3X.XE =
+  (DESCRIPTION =
+    (ADDRESS = (PROTOCOL = TCP)(Host = ab007536.dbhost.net)(Port = 49102))
+    (CONNECT_DATA =
+      (SID = SNAWEQ3X)
+      (GLOBAL_NAME = SNAWEQ3X.XE)
+    )
+  )
+
+SNAWEQ4X.XE =
+  (DESCRIPTION =
+    (ADDRESS = (PROTOCOL = TCP)(Host = ab007537.dbhost.net)(Port = 49104))
+    (CONNECT_DATA =
+      (SID = SNAWEQ4X)
+      (GLOBAL_NAME = SNAWEQ4X.XE)
+    )
+  )
+
+PEQPDB1X_STBY.XE =
+  (DESCRIPTION =
+    (ADDRESS = (PROTOCOL = TCP)(Host = ab007541.dbhost.net)(Port = 49187))
+    (ADDRESS = (PROTOCOL = TCP)(Host = ab007540.dbhost.net)(Port = 49187))
+	(FAILOVER = YES)
+    (CONNECT_DATA =
+      (SERVICE_NAME = PEQPDB1X_STBY)
+    )
+  )
+PEQPDB2X_STBY.XE =
+  (DESCRIPTION =
+    (ADDRESS = (PROTOCOL = TCP)(Host = ab009260.dbhost.net)(Port = 49330))
+    (ADDRESS = (PROTOCOL = TCP)(Host = ab009261.dbhost.net)(Port = 49330))
+    (FAILOVER = YES)
+    (CONNECT_DATA =
+      (SERVICE_NAME = PEQPDB2X_STBY)
+    )
+  )
+PEQPEQ3X_STBY.XE =
+  (DESCRIPTION =
+    (ADDRESS = (PROTOCOL = TCP)(Host = ab009260.dbhost.net)(Port = 49173))
+    (ADDRESS = (PROTOCOL = TCP)(Host = ab009261.dbhost.net)(Port = 49173))
+    (FAILOVER = YES)
+    (CONNECT_DATA =
+      (SERVICE_NAME = PEQPEQ3X_STBY)
+    )
+  )
+
+PEQPEQ4X_STBY.XE =
+  (DESCRIPTION =
+    (ADDRESS = (PROTOCOL = TCP)(Host = ab009260.dbhost.net)(Port = 49288))
+    (ADDRESS = (PROTOCOL = TCP)(Host = ab009261.dbhost.net)(Port = 49288))
+    (FAILOVER = YES)
+    (CONNECT_DATA =
+      (SERVICE_NAME = PEQPEQ4X_STBY)
+    )
+  )
+PEQPEQ5X_STBY.XE =
+  (DESCRIPTION =
+    (ADDRESS = (PROTOCOL = TCP)(Host = ab009260.dbhost.net)(Port = 49174))
+    (ADDRESS = (PROTOCOL = TCP)(Host = ab009261.dbhost.net)(Port = 49174))
+    (FAILOVER = YES)
+    (CONNECT_DATA =
+      (SERVICE_NAME = PEQPEQ5X_STBY)
+    )
+  )
+  
+PEQPEQ9X_STBY.XE =
+  (DESCRIPTION =
+    (ADDRESS = (PROTOCOL = TCP)(Host = ab009260.dbhost.net)(Port = 49176))
+    (ADDRESS = (PROTOCOL = TCP)(Host = ab009261.dbhost.net)(Port = 49176))
+    (FAILOVER = YES)
+    (CONNECT_DATA =
+      (SERVICE_NAME = PEQPEQ9X_STBY)
+    )
+  )
+
+PODSDB1A_STBY.XE =
+  (DESCRIPTION =
+    (ADDRESS = (PROTOCOL = TCP)(Host = ab007540.dbhost.net)(Port = 49294))
+    (ADDRESS = (PROTOCOL = TCP)(Host = ab007541.dbhost.net)(Port = 49294))    
+     (FAILOVER = YES)
+     (CONNECT_DATA =  
+       (SERVICE_NAME = PODSDB1A_STBY)
+     )
+  )
+
+PTEMP.XE =
+  (DESCRIPTION =
+    (ADDRESS = (PROTOCOL = TCP)(Host = ab007540.dbhost.net)(Port = 49177))
+    (CONNECT_DATA =
+      (SID = PTEMP)
+      (GLOBAL_NAME = PTEMP.XE)
+    )
+  )
+PEQPEQ9X.XE =
+  (DESCRIPTION =
+    (ADDRESS = (PROTOCOL = TCP)(Host = ab009261.dbhost.net)(Port = 49176))
+    (ADDRESS = (PROTOCOL = TCP)(Host = ab009260.dbhost.net)(Port = 49176))
+     (FAILOVER = YES)
+     (CONNECT_DATA =
+       (SERVICE_NAME = PEQPEQ9X_PRIM)
+     )
+  )
+
+PAPIDB1E.XE =
+  (DESCRIPTION =
+    (ADDRESS = (PROTOCOL = TCP)(Host = ab009260.dbhost.net)(Port = 49306))
+    (ADDRESS = (PROTOCOL = TCP)(Host = ab009261.dbhost.net)(Port = 49306))
+     (FAILOVER = YES)
+     (CONNECT_DATA =
+       (SERVICE_NAME = PAPIDB1E_PRIM)
+     )
+  )
+
+PEQPEQ9R_DG1.XE =
+  (DESCRIPTION =
+    (ADDRESS = (PROTOCOL = TCP)(Host = ab007540.dbhost.net)(Port = 49399))
+    (CONNECT_DATA =
+      (SID = PEQPEQ9R)
+    )
+  )
+PEQPEQ9R_DG2.XE =
+  (DESCRIPTION =
+    (ADDRESS = (PROTOCOL = TCP)(Host = ab007541.dbhost.net)(Port = 49399))
+    (CONNECT_DATA =
+      (SID = PEQPEQ9R)
+    )
+  )
+PEQPEQ9X_DG1.XE =
+  (DESCRIPTION =
+    (ADDRESS = (PROTOCOL = TCP)(Host = ab007540.dbhost.net)(Port = 49399))
+    (CONNECT_DATA =
+      (SID = PEQPEQ9X)
+    )
+  )
+PEQPEQ9X_DG2.XE =
+  (DESCRIPTION =
+    (ADDRESS = (PROTOCOL = TCP)(Host = ab007541.dbhost.net)(Port = 49399))
+    (CONNECT_DATA =
+      (SID = PEQPEQ9X)
+    )
+  )
+PEQPEQ5X.XE =
+  (DESCRIPTION =
+    (ADDRESS = (PROTOCOL = TCP)(Host = ab009261.dbhost.net)(Port = 49174))
+    (ADDRESS = (PROTOCOL = TCP)(Host = ab009260.dbhost.net)(Port = 49174))
+     (FAILOVER = YES)
+     (CONNECT_DATA =
+       (SERVICE_NAME = PEQPEQ5X_PRIM)
+     )
+  )
+  
+PEQPEQ5X_DG1.XE =
+  (DESCRIPTION =
+    (ADDRESS = (PROTOCOL = TCP)(Host = ab007540.dbhost.net)(Port = 49399))
+    (CONNECT_DATA =
+      (SID = PEQPEQ5X)
+    )
+  )
+PEQPEQ5X_DG2.XE =
+  (DESCRIPTION =
+    (ADDRESS = (PROTOCOL = TCP)(Host = ab007541.dbhost.net)(Port = 49399))
+    (CONNECT_DATA =
+      (SID = PEQPEQ5X)
+    )
+  )
+PEQPEQ5R_DG1.XE =
+  (DESCRIPTION =
+    (ADDRESS = (PROTOCOL = TCP)(Host = ab007540.dbhost.net)(Port = 49399))
+    (CONNECT_DATA =
+      (SID = PEQPEQ5R)
+    )
+  )
+PEQPEQ5R_DG2.XE =
+  (DESCRIPTION =
+    (ADDRESS = (PROTOCOL = TCP)(Host = ab007541.dbhost.net)(Port = 49399))
+    (CONNECT_DATA =
+      (SID = PEQPEQ5R)
+    )
+  )
+SEQPDB2X.XE=
+    (DESCRIPTION=
+       (ADDRESS = (HOST = ab007537.dbhost.net)(PROTOCOL = TCP)(PORT = 49186))
+       (ADDRESS = (HOST = ab007536.dbhost.net)(PROTOCOL = TCP)(PORT = 49186))
+     (FAILOVER = YES)
+     (CONNECT_DATA =
+       (SERVICE_NAME = SEQPDB2X_PRIM)
+  )
+)
+SEQPDB2C.XE=
+    (DESCRIPTION=
+       (ADDRESS = (HOST = ab007537.dbhost.net)(PROTOCOL = TCP)(PORT = 49187))
+       (ADDRESS = (HOST = ab007536.dbhost.net)(PROTOCOL = TCP)(PORT = 49187))
+     (FAILOVER = YES)
+     (CONNECT_DATA =
+       (SERVICE_NAME = SEQPDB2C_PRIM)
+  )
+)
+
+UEQPEQ6X.XE =
+  (DESCRIPTION =
+    (ADDRESS = (PROTOCOL = TCP)(Host = ab009262.dbhost.net)(Port = 49178))
+    (ADDRESS = (PROTOCOL = TCP)(Host = ab009263.dbhost.net)(Port = 49178))
+     (FAILOVER = YES)
+     (CONNECT_DATA =
+       (SERVICE_NAME = UEQPEQ6X_PRIM)
+     )
+  )
+
+UEQPEQ7X.XE =
+  (DESCRIPTION =
+    (ADDRESS = (PROTOCOL = TCP)(Host = ab009262.dbhost.net)(Port = 49179))
+    (ADDRESS = (PROTOCOL = TCP)(Host = ab009263.dbhost.net)(Port = 49179))
+     (FAILOVER = YES)
+     (CONNECT_DATA =
+       (SERVICE_NAME = UEQPEQ7X_PRIM)
+     )
+  )
+UEQPEQ8X.XE =
+  (DESCRIPTION =
+    (ADDRESS = (PROTOCOL = TCP)(Host = ab009262.dbhost.net)(Port = 49180))
+    (ADDRESS = (PROTOCOL = TCP)(Host = ab009263.dbhost.net)(Port = 49180))
+     (FAILOVER = YES)
+     (CONNECT_DATA =
+       (SERVICE_NAME = UEQPEQ8X_PRIM)
+     )
+  )
+UEQPEQ9X.XE =
+  (DESCRIPTION =
+    (ADDRESS = (PROTOCOL = TCP)(Host = ab009262.dbhost.net)(Port = 49176))
+    (ADDRESS = (PROTOCOL = TCP)(Host = ab009263.dbhost.net)(Port = 49176))
+     (FAILOVER = YES)
+     (CONNECT_DATA =
+       (SERVICE_NAME = UEQPEQ9X_PRIM)
+     )
+  )
+
+TESTPDB.XE =
+  (DESCRIPTION =
+    (ADDRESS = (PROTOCOL = TCP)(Host = ab007539.dbhost.net)(Port = 49353))
+    (CONNECT_DATA =
+      (service_name = TESTPDB)
+    )
+  )
+DCONEQ01.XE =
+  (DESCRIPTION =
+    (ADDRESS = (PROTOCOL = TCP)(HOST = ab007539.dbhost.net)(PORT = 49353))
+    (CONNECT_DATA =
+      (SERVER = DEDICATED)
+      (SERVICE_NAME = DCONEQ01)
+    )
+  )
+
+
+POCPDB19.XE =
+  (DESCRIPTION =
+    (ADDRESS = (PROTOCOL = TCP)(Host = ab007539.dbhost.net)(Port = 49231))
+    (CONNECT_DATA =
+     (SID = POCPDB19)
+    )
+  )
+POCPDB19S.XE =
+  (DESCRIPTION =
+    (ADDRESS = (PROTOCOL = TCP)(Host = ab007539.dbhost.net)(Port = 49231))
+    (CONNECT_DATA =
+     (SERVICE_NAME = POCPDB19)
+    )
+  )
+
+TEST_PDB.XE =
+  (DESCRIPTION =
+    (ADDRESS = (PROTOCOL = TCP)(Host = ab007539.dbhost.net)(Port = 49231))
+    (CONNECT_DATA =
+     (SERVICE_NAME = TEST_PDB)
+    )
+  )
+
+TEST_PDB5.XE =
+  (DESCRIPTION =
+    (ADDRESS = (PROTOCOL = TCP)(Host = ab007539.dbhost.net)(Port = 49231))
+    (CONNECT_DATA =
+     (SERVICE_NAME = TEST_PDB5)
+    )
+  )
+
+DAPIDB1E.XE =
+  (DESCRIPTION =
+    (ADDRESS = (PROTOCOL = TCP)(HOST = ab007539.dbhost.net)(PORT = 49110))
+    (CONNECT_DATA =
+      (SERVER = DEDICATED)
+      (SERVICE_NAME = DAPIDB1E)
+    )
+  )
+
+SAPIDB1E.XE =
+  (DESCRIPTION =
+    (ADDRESS = (PROTOCOL = TCP)(HOST = ab007536.dbhost.net)(PORT = 49184))
+    (CONNECT_DATA =
+      (SERVER = DEDICATED)
+      (SERVICE_NAME = SAPIDB1E)
+    )
+  )
+
+UAPIDB1E.XE =
+  (DESCRIPTION =
+    (ADDRESS = (HOST = ab009262.dbhost.net)(PROTOCOL = TCP)(PORT = 49306))       
+    (ADDRESS = (HOST = ab009263.dbhost.net)(PROTOCOL = TCP)(PORT = 49306))       
+     (FAILOVER = YES)
+     (CONNECT_DATA =  
+       (SERVICE_NAME = UAPIDB1E_PRIM)
+     )
+  )
+
+DGDBDB1A.XE =
+	(DESCRIPTION =
+		(ADDRESS = (PROTOCOL = TCP)(HOST = ab007539.dbhost.net)(PORT = 49109))
+		(CONNECT_DATA =
+			(SERVER = DEDICATED)
+			(SERVICE_NAME = DGDBDB1A)
+		)
+	)	
+SGDBDB1A.XE =
+	(DESCRIPTION =
+		(ADDRESS = (PROTOCOL = TCP)(HOST = ab007536.dbhost.net)(PORT = 49183))
+		(CONNECT_DATA =
+			(SERVER = DEDICATED)
+			(SERVICE_NAME = SGDBDB1A)
+		)
+	)	
+
+SGDBDB2A.XE =
+  (DESCRIPTION =
+    (ADDRESS = (HOST = ab007537.dbhost.net)(PROTOCOL = TCP)(PORT = 49183))       
+     (CONNECT_DATA =  
+       (SERVER = DEDICATED)
+       (SERVICE_NAME = SGDBDB2A)
+     )
+  )
+
+UGDBDB1A.XE =
+  (DESCRIPTION =
+    (ADDRESS = (HOST = ab009262.dbhost.net)(PROTOCOL = TCP)(PORT = 49183))       
+    (ADDRESS = (HOST = ab009263.dbhost.net)(PROTOCOL = TCP)(PORT = 49183))       
+     (FAILOVER = YES)
+     (CONNECT_DATA =  
+       (SERVICE_NAME = UGDBDB1A)
+     )
+  )
+  
+PGDBDB1A.XE =
+  (DESCRIPTION =
+    (ADDRESS = (HOST = ab009260.dbhost.net)(PROTOCOL = TCP)(PORT = 49183))       
+    (ADDRESS = (HOST = ab009261.dbhost.net)(PROTOCOL = TCP)(PORT = 49183))       
+     (FAILOVER = YES)
+     (CONNECT_DATA =  
+       (SERVICE_NAME = PGDBDB1A)
+     )
+  )
+P2XTEST.XE =
+  (DESCRIPTION =
+    (ADDRESS = (HOST = ab009261.dbhost.net)(PROTOCOL = TCP)(PORT = 49208))       
+     (FAILOVER = YES)
+     (CONNECT_DATA =  
+       (SERVICE_NAME = P2XTEST)
+     )
+  )
+
+DBUILDV1.XE =
+  (DESCRIPTION =
+    (ADDRESS = (PROTOCOL = TCP)(HOST = ab007539.dbhost.net)(PORT = 49356))
+    (CONNECT_DATA =
+      (SERVER = DEDICATED)
+      (SERVICE_NAME = DBUILDV1)
+    )
+  )
