@@ -3,6 +3,7 @@ package com.dci.intellij.dbn.diagnostics.ui;
 import com.dci.intellij.dbn.common.ui.form.DBNFormBase;
 import com.dci.intellij.dbn.common.ui.form.DBNHeaderForm;
 import com.dci.intellij.dbn.common.ui.tab.TabbedPane;
+import com.dci.intellij.dbn.common.ui.table.DBNMutableTableModel;
 import com.dci.intellij.dbn.common.ui.table.DBNTable;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.diagnostics.ui.model.ConnectivityDiagnosticsTableModel;
@@ -68,6 +69,9 @@ public class ConnectionDiagnosticsDetailsForm extends DBNFormBase {
     protected void selectTab(int tabIndex) {
         TabInfo tabInfo = diagnosticsTabs.getTabs().get(tabIndex);
         diagnosticsTabs.select(tabInfo, false);
+        DBNTable table = (DBNTable) tabInfo.getObject();
+        DBNMutableTableModel model = (DBNMutableTableModel) table.getModel();
+        model.notifyRowChanges();
     }
 
     @Override

@@ -12,6 +12,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Map;
+import java.util.Objects;
 import java.util.concurrent.ConcurrentHashMap;
 
 @Getter
@@ -99,5 +100,11 @@ public final class ConnectionRef implements Reference<ConnectionHandler>, Identi
     @NotNull
     public static ConnectionHandler ensure(@NotNull ConnectionRef ref) {
         return Failsafe.nn(ref).ensure();
+    }
+
+    @Override
+    public String toString() {
+        ConnectionHandler connection = get();
+        return connection == null ? Objects.toString(connectionId) : connection.getName();
     }
 }
