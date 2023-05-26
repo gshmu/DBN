@@ -51,6 +51,7 @@ import javax.swing.*;
 import java.awt.*;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 import static com.dci.intellij.dbn.common.dispose.Checks.isValid;
 
@@ -165,8 +166,8 @@ public class Editors {
     }
 
     @Nullable
-    public static BasicTextEditor<?> getTextEditor(DBSourceCodeVirtualFile sourceCodeVirtualFile) {
-        DBEditableObjectVirtualFile databaseFile = sourceCodeVirtualFile.getMainDatabaseFile();
+    public static BasicTextEditor<?> getTextEditor(DBSourceCodeVirtualFile sourceCodeFile) {
+        DBEditableObjectVirtualFile databaseFile = sourceCodeFile.getMainDatabaseFile();
         Project project = databaseFile.getProject();
         FileEditorManager editorManager = FileEditorManager.getInstance(project);
         FileEditor[] fileEditors = editorManager.getEditors(databaseFile);
@@ -174,7 +175,7 @@ public class Editors {
             if (fileEditor instanceof BasicTextEditor) {
                 BasicTextEditor<?> basicTextEditor = (BasicTextEditor<?>) fileEditor;
                 VirtualFile file = FileDocumentManager.getInstance().getFile(basicTextEditor.getEditor().getDocument());
-                if (file!= null && file.equals(sourceCodeVirtualFile)) {
+                if (Objects.equals(file, sourceCodeFile)) {
                     return basicTextEditor;
                 }
             }
