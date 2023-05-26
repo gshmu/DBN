@@ -6,6 +6,7 @@ import com.dci.intellij.dbn.common.editor.BasicTextEditor;
 import com.dci.intellij.dbn.common.navigation.NavigationInstructions;
 import com.dci.intellij.dbn.common.thread.Dispatch;
 import com.dci.intellij.dbn.common.thread.Read;
+import com.dci.intellij.dbn.common.ui.form.DBNForm;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.data.editor.text.TextContentType;
 import com.dci.intellij.dbn.ddl.DDLFileAttachmentManager;
@@ -461,5 +462,9 @@ public class Editors {
 
     public static boolean isMainEditor(Editor editor) {
         return getFileEditor(editor) != null;
+    }
+
+    public static void addEditorToolbar(@NotNull FileEditor fileEditor, DBNForm toolbarForm) {
+        fileEditor.getComponent().getParent().add(toolbarForm.getComponent(), BorderLayout.NORTH);
     }
 }

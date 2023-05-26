@@ -1,12 +1,12 @@
 package com.dci.intellij.dbn.editor.console;
 
+import com.dci.intellij.dbn.common.util.Editors;
 import com.dci.intellij.dbn.editor.console.ui.SQLConsoleEditorToolbarForm;
 import com.intellij.openapi.fileEditor.FileEditorManager;
 import com.intellij.openapi.fileEditor.FileEditorManagerListener;
+import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
 import org.jetbrains.annotations.NotNull;
-
-import java.awt.*;
 
 import static com.dci.intellij.dbn.common.dispose.Checks.isNotValid;
 import static com.dci.intellij.dbn.common.util.Files.isDbConsoleFile;
@@ -20,7 +20,8 @@ public class SQLConsoleEditorListener implements FileEditorManagerListener{
         SQLConsoleEditor fileEditor = (SQLConsoleEditor) source.getSelectedEditor(file);
         if (isNotValid(fileEditor)) return;
 
-        SQLConsoleEditorToolbarForm toolbarForm = new SQLConsoleEditorToolbarForm(source.getProject(), fileEditor);
-        fileEditor.getComponent().getParent().add(toolbarForm.getComponent(), BorderLayout.NORTH);
+        Project project = source.getProject();
+        SQLConsoleEditorToolbarForm toolbarForm = new SQLConsoleEditorToolbarForm(project, fileEditor);
+        Editors.addEditorToolbar(fileEditor, toolbarForm);
     }
 }

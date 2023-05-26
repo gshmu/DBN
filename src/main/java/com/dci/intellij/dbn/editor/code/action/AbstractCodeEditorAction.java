@@ -47,7 +47,12 @@ public abstract class AbstractCodeEditorAction extends ProjectAction {
     @Nullable
     private DBSourceCodeVirtualFile getSourcecodeFile(AnActionEvent e) {
         VirtualFile virtualFile = Lookups.getVirtualFile(e);
-        return virtualFile instanceof DBSourceCodeVirtualFile ? (DBSourceCodeVirtualFile) virtualFile : null;
+        if (virtualFile instanceof DBSourceCodeVirtualFile) return (DBSourceCodeVirtualFile) virtualFile;
+
+        SourceCodeEditor fileEditor = getFileEditor(e);
+        if (fileEditor == null) return null;
+
+        return fileEditor.getVirtualFile();
     }
 
     protected abstract void actionPerformed(
