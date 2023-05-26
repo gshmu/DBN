@@ -5,10 +5,7 @@ import com.dci.intellij.dbn.common.util.Compactables;
 import com.dci.intellij.dbn.common.util.Strings;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.Resources;
-import com.dci.intellij.dbn.connection.jdbc.DBNCallableStatement;
-import com.dci.intellij.dbn.connection.jdbc.DBNConnection;
-import com.dci.intellij.dbn.connection.jdbc.DBNPreparedStatement;
-import com.dci.intellij.dbn.connection.jdbc.DBNStatement;
+import com.dci.intellij.dbn.connection.jdbc.*;
 import com.dci.intellij.dbn.database.DatabaseActivityTrace;
 import com.dci.intellij.dbn.database.DatabaseCompatibility;
 import com.dci.intellij.dbn.database.interfaces.DatabaseInterfaces;
@@ -135,6 +132,7 @@ public class StatementExecutionProcessor {
                                 preparedStatement.setQueryTimeout(timeout);
                                 resultSet = preparedStatement.executeQuery();
                                 context.log("FETCH_BLOCK", false, false, resultSet.getFetchSize());
+                                DBNResultSet.setIdentifier(resultSet, context.getIdentifier());
                                 return resultSet;
                             } else {
                                 if (statementText == null)
@@ -147,6 +145,7 @@ public class StatementExecutionProcessor {
                                     try {
                                         resultSet = statement.getResultSet();
                                         context.log("FETCH_BLOCK", false, false, resultSet.getFetchSize());
+                                        DBNResultSet.setIdentifier(resultSet, context.getIdentifier());
                                         return resultSet;
                                     } catch (SQLException e) {
                                         Resources.close(statement);

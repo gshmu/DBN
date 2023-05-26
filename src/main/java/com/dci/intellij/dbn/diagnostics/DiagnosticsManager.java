@@ -88,7 +88,6 @@ public class DiagnosticsManager extends ProjectComponentBase implements Persiste
             content.putUserData(CONTENT_CATEGORY_KEY, category);
             content.putUserData(CONTENT_FORM_KEY, form);
             content.setCloseable(true);
-            content.setPinnable(true);
             contentManager.addContent(content);
             Disposer.register(content, form);
         }

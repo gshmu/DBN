@@ -11,7 +11,7 @@ import org.jetbrains.annotations.NotNull;
 public abstract class AbstractDiagnosticsTableModel<T extends Comparable<T>> extends DBNMutableTableModel<DiagnosticEntry<T>> {
     private final ProjectRef project;
     private final Latent<DiagnosticBundle<T>> diagnostics = Latent.weak(() -> resolveDiagnostics());
-    private transient int signature = 0;
+    private transient int signature = -1;
 
     public AbstractDiagnosticsTableModel(Project project) {
         this.project = ProjectRef.of(project);

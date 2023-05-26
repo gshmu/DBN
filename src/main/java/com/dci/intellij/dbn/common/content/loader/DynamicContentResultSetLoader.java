@@ -9,12 +9,15 @@ import com.dci.intellij.dbn.common.load.ProgressMonitor;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.Resources;
 import com.dci.intellij.dbn.connection.jdbc.DBNConnection;
+import com.dci.intellij.dbn.connection.jdbc.DBNResultSet;
 import com.dci.intellij.dbn.connection.jdbc.IncrementalStatusAdapter;
 import com.dci.intellij.dbn.database.common.metadata.DBObjectMetadata;
 import com.dci.intellij.dbn.database.common.metadata.DBObjectMetadataFactory;
 import com.dci.intellij.dbn.database.interfaces.DatabaseInterfaceInvoker;
 import com.dci.intellij.dbn.database.interfaces.DatabaseMessageParserInterface;
 import com.dci.intellij.dbn.diagnostics.Diagnostics;
+import com.dci.intellij.dbn.diagnostics.DiagnosticsManager;
+import com.dci.intellij.dbn.diagnostics.data.DiagnosticBundle;
 import com.dci.intellij.dbn.object.common.DBObject;
 import com.intellij.openapi.progress.ProcessCanceledException;
 import lombok.extern.slf4j.Slf4j;
@@ -30,6 +33,7 @@ import java.util.UUID;
 import static com.dci.intellij.dbn.common.content.DynamicContentProperty.INTERNAL;
 import static com.dci.intellij.dbn.common.exception.Exceptions.toSqlException;
 import static com.dci.intellij.dbn.common.exception.Exceptions.toSqlTimeoutException;
+import static com.dci.intellij.dbn.common.util.TimeUtil.millisSince;
 import static com.dci.intellij.dbn.diagnostics.Diagnostics.isDatabaseAccessDebug;
 
 @Slf4j
@@ -103,6 +107,8 @@ public abstract class DynamicContentResultSetLoader<E extends DynamicContentElem
     private void loadContent(DynamicContent<E> content, DBNConnection conn) throws SQLException {
         DebugInfo debugInfo = preLoadContent(content);
         ConnectionHandler connection = content.getConnection();
+        DiagnosticsManager diagnosticsManager = DiagnosticsManager.getInstance(connection.getProject());
+        DiagnosticBundle<String> diagnostics = diagnosticsManager.getMetadataInterfaceDiagnostics(connection.getConnectionId());
         IncrementalStatusAdapter loading = connection.getConnectionStatus().getLoading();
         try {
             loading.set(true);
@@ -112,6 +118,7 @@ public abstract class DynamicContentResultSetLoader<E extends DynamicContentElem
             try {
                 content.checkDisposed();
                 resultSet = createResultSet(content, conn);
+                String identifier = DBNResultSet.getIdentifier(resultSet);
 
                 DynamicContentType<?> contentType = content.getContentType();
                 M metadata = DBObjectMetadataFactory.INSTANCE.create(contentType, resultSet);
@@ -120,6 +127,7 @@ public abstract class DynamicContentResultSetLoader<E extends DynamicContentElem
                 LoaderCache loaderCache = new LoaderCache();
                 int count = 0;
 
+                long loadStart = System.currentTimeMillis();
                 while (resultSet != null && resultSet.next()) {
                     Diagnostics.introduceDatabaseLag(Diagnostics.getFetchingLag());
                     content.checkDisposed();
@@ -146,6 +154,8 @@ public abstract class DynamicContentResultSetLoader<E extends DynamicContentElem
                     }
                     count++;
                 }
+
+                diagnostics.log(identifier, "LOAD", false, false, millisSince(loadStart));
             } finally {
                 Resources.close(resultSet);
             }

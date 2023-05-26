@@ -50,9 +50,9 @@ public final class Timeout {
             return result;
         } catch (TimeoutException | InterruptedException | RejectedExecutionException e) {
             String message = Commons.nvl(e.getMessage(), e.getClass().getSimpleName());
-            log.warn("Operation timed out after {} millis (timeout = {} seconds). Returning default {}. Cause: {}", secondsSince(start), seconds, defaultValue, message);
+            log.warn("Operation timed out after {} seconds (timeout = {} seconds). Returning default {}. Cause: {}", secondsSince(start), seconds, defaultValue, message);
         } catch (ExecutionException e) {
-            log.warn("Operation failed after {} millis (timeout = {} seconds). Returning default {}", millisSince(start), seconds, defaultValue, causeOf(e));
+            log.warn("Operation failed after {} seconds (timeout = {} seconds). Returning default {}", secondsSince(start), seconds, defaultValue, causeOf(e));
             throw e.getCause();
         }
         return defaultValue;
