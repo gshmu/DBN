@@ -11,6 +11,7 @@ import com.dci.intellij.dbn.editor.code.SourceCodeEditor;
 import com.dci.intellij.dbn.editor.code.SourceCodeManagerListener;
 import com.dci.intellij.dbn.vfs.file.DBSourceCodeVirtualFile;
 import com.intellij.openapi.actionSystem.ActionToolbar;
+import com.intellij.openapi.actionSystem.PlatformDataKeys;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.util.ui.AsyncProcessIcon;
 import org.jetbrains.annotations.NotNull;
@@ -78,4 +79,12 @@ public class SourceCodeEditorActionsPanel extends DBNFormBase {
     public JPanel getMainComponent() {
         return mainPanel;
     }
+
+    public Object getData(@NotNull String dataId) {
+        if (PlatformDataKeys.VIRTUAL_FILE.is(dataId)) {
+            return getSourceCodeEditor().getVirtualFile();
+        }
+        return super.getData(dataId);
+    }
+
 }

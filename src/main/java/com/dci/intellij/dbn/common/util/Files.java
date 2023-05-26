@@ -4,6 +4,7 @@ import com.dci.intellij.dbn.language.common.DBLanguageFileType;
 import com.dci.intellij.dbn.language.common.DBLanguagePsiFile;
 import com.dci.intellij.dbn.vfs.DatabaseFileSystem;
 import com.dci.intellij.dbn.vfs.file.DBConsoleVirtualFile;
+import com.dci.intellij.dbn.vfs.file.DBEditableObjectVirtualFile;
 import com.intellij.ide.plugins.IdeaPluginDescriptor;
 import com.intellij.ide.plugins.PluginManagerCore;
 import com.intellij.openapi.extensions.PluginId;
@@ -131,6 +132,10 @@ public final class Files {
         return psiFile instanceof DBLanguagePsiFile;
     }
 
+
+    public static boolean isDbEditableObjectFile(@NotNull VirtualFile file) {
+        return file instanceof DBEditableObjectVirtualFile;
+    }
 
     public static String getFileName(String path) {
         if (Strings.isEmpty(path)) return path;
