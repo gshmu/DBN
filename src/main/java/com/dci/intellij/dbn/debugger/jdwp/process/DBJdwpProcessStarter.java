@@ -24,7 +24,10 @@ import com.intellij.xdebugger.XDebugSession;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.net.Inet4Address;
+import java.net.InetAddress;
 import java.net.ServerSocket;
+import java.net.UnknownHostException;
 
 public abstract class DBJdwpProcessStarter extends DBDebugProcessStarter {
 
@@ -60,7 +63,21 @@ public abstract class DBJdwpProcessStarter extends DBDebugProcessStarter {
         DBJdwpRunConfig jdwpRunConfig = (DBJdwpRunConfig) runProfile;
         Range<Integer> portRange = jdwpRunConfig.getTcpPortRange();
         int freePort = findFreePort(portRange.getFrom(), portRange.getTo());
-        RemoteConnection remoteConnection = new RemoteConnection(true, "localhost", Integer.toString(freePort), true);
+        String debugHostName = null;
+        try {
+            debugHostName = Inet4Address.getLocalHost().getHostAddress();
+        }
+        catch (UnknownHostException e) {
+        	// just leave it null;
+        }
+        InetAddress hostAddress = jdwpRunConfig.getDebuggerHostIPAddr();
+        if (hostAddress != null) {
+            if (hostAddress.getHostAddress() != null) {
+                debugHostName = hostAddress.getHostAddress();
+            }
+        }
+        RemoteConnection remoteConnection = new RemoteConnection(true, debugHostName, Integer.toString(freePort), true);
+
         RunProfileState state = Failsafe.nn(runProfile.getState(executor, environment));
 
         DebugEnvironment debugEnvironment = new DefaultDebugEnvironment(environment, state, remoteConnection, true);
@@ -68,10 +85,10 @@ public abstract class DBJdwpProcessStarter extends DBDebugProcessStarter {
         DebuggerSession debuggerSession = debuggerManagerEx.attachVirtualMachine(debugEnvironment);
         assertNotNull(debuggerSession, "Could not initialize JDWP listener");
 
-        return createDebugProcess(session, debuggerSession, freePort);
+        return createDebugProcess(session, debuggerSession, debugHostName, freePort);
     }
 
-    protected abstract DBJdwpDebugProcess createDebugProcess(@NotNull XDebugSession session, DebuggerSession debuggerSession, int tcpPort);
+    protected abstract DBJdwpDebugProcess createDebugProcess(@NotNull XDebugSession session, DebuggerSession debuggerSession, String hostname, int tcpPort);
 
     private @NotNull <T> T assertNotNull(@Nullable T object, String message) throws ExecutionException {
         if (object == null) {
