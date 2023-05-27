@@ -25,11 +25,11 @@ public class DBStatementJdwpRunner extends DBProgramRunner<StatementExecutionInp
 
     @Override
     public boolean canRun(@NotNull String executorId, @NotNull RunProfile profile) {
-        if (Objects.equals(executorId, DefaultDebugExecutor.EXECUTOR_ID)) {
-            if (profile instanceof DBStatementJdwpRunConfig) {
-                DBStatementJdwpRunConfig runConfiguration = (DBStatementJdwpRunConfig) profile;
-                return runConfiguration.canRun() && runConfiguration.getExecutionInput() != null;
-            }
+        if (!Objects.equals(executorId, DefaultDebugExecutor.EXECUTOR_ID)) return false;
+
+        if (profile instanceof DBStatementJdwpRunConfig) {
+            DBStatementJdwpRunConfig runConfiguration = (DBStatementJdwpRunConfig) profile;
+            return runConfiguration.canRun() && runConfiguration.getExecutionInput() != null;
         }
         return false;
     }
