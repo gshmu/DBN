@@ -62,17 +62,17 @@ public final class SettingsSupport {
     }
 
     public static String getStringValue(Element element) {
-        if (element != null) {
-            String value = stringAttribute(element, "value");
-            if (Strings.isNotEmptyOrSpaces(value)) {
-                return value;
-            }
+        if (element == null) return null;
+
+        String value = stringAttribute(element, "value");
+        if (Strings.isNotEmptyOrSpaces(value)) {
+            return value;
         }
         return null;
     }
 
     public static String stringAttribute(Element element, String name) {
-        String attributeValue = element.getAttributeValue(name);
+        String attributeValue = element == null ? null : element.getAttributeValue(name);
         return Strings.isEmptyOrSpaces(attributeValue) ? attributeValue : attributeValue.intern();
     }
 

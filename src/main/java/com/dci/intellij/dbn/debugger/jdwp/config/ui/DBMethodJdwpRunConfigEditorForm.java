@@ -25,14 +25,11 @@ import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.options.ConfigurationException;
 import com.intellij.openapi.project.Project;
-import com.intellij.util.Range;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
 import java.awt.*;
-import java.net.InetAddress;
-import java.net.UnknownHostException;
 
 import static com.dci.intellij.dbn.common.dispose.Disposer.replace;
 
@@ -40,13 +37,11 @@ public class DBMethodJdwpRunConfigEditorForm extends DBProgramRunConfigurationEd
     private JPanel headerPanel;
     private JPanel mainPanel;
     private JPanel methodArgumentsPanel;
-    private JCheckBox compileDependenciesCheckBox;
     private JPanel selectMethodActionPanel;
-    private JTextField fromPortTextField;
-    private JTextField toPortTextField;
     private JPanel hintPanel;
-    private JTextField debuggerHostAddrTextBox;
+    private JPanel configPanel;
     private MethodExecutionInputForm inputForm;
+    private final DBJdwpDebugAttributesForm configForm = new DBJdwpDebugAttributesForm(this);
 
     public DBMethodJdwpRunConfigEditorForm(DBMethodJdwpRunConfig configuration) {
         super(configuration.getProject());
@@ -63,6 +58,8 @@ public class DBMethodJdwpRunConfigEditorForm extends DBProgramRunConfigurationEd
             selectMethodActionPanel.add(actionToolbar.getComponent(), BorderLayout.WEST);
             hintPanel.setVisible(false);
         }
+
+        configPanel.add(configForm.getMainPanel());
     }
 
     @NotNull
@@ -122,44 +119,13 @@ public class DBMethodJdwpRunConfigEditorForm extends DBProgramRunConfigurationEd
             inputForm.updateExecutionInput();
             configuration.setExecutionInput(getExecutionInput());
         }
-        configuration.setCompileDependencies(compileDependenciesCheckBox.isSelected());
-
-        int fromPort;
-        int toPort;
-        try {
-            fromPort = Integer.parseInt(fromPortTextField.getText());
-            toPort = Integer.parseInt(toPortTextField.getText());
-        } catch (NumberFormatException e) {
-            throw new ConfigurationException("TCP Port Range inputs must me numeric");
-        }
-        configuration.setTcpPortRange(new Range<>(fromPort, toPort));
-
-        String hostIpAddressStr = debuggerHostAddrTextBox.getText();
-        try {
-            InetAddress[] addresses = InetAddress.getAllByName(hostIpAddressStr);
-            if (addresses != null && addresses.length == 1 && addresses[0] instanceof java.net.Inet4Address) {
-                configuration.setDebuggerHostIPAddr(addresses[0]);
-            }
-        }
-        catch (UnknownHostException e) {
-            throw new ConfigurationException("Invalid IP address: "+hostIpAddressStr);
-        }
-        //selectMethodAction.setConfiguration(configuration);
+        configForm.writeConfiguration(configuration);
     }
 
     @Override
     public void readConfiguration(DBMethodJdwpRunConfig configuration) {
         setExecutionInput(configuration.getExecutionInput(), false);
-        compileDependenciesCheckBox.setSelected(configuration.isCompileDependencies());
-        fromPortTextField.setText(String.valueOf(configuration.getTcpPortRange().getFrom()));
-        toPortTextField.setText(String.valueOf(configuration.getTcpPortRange().getTo()));
-        InetAddress debuggerAddr = configuration.getDebuggerHostIPAddr();
-        if (debuggerAddr != null) {
-            String debuggerHostAddress = debuggerAddr.getHostAddress();
-            if (debuggerHostAddress != null) {
-                debuggerHostAddrTextBox.setText(debuggerHostAddress);
-            }
-        }
+        configForm.readConfiguration(configuration);
     }
 
     public void setExecutionInput(@Nullable MethodExecutionInput executionInput, boolean touchForm) {

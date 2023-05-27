@@ -15,14 +15,18 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.InvalidDataException;
 import com.intellij.openapi.util.WriteExternalException;
 import com.intellij.util.Range;
+import lombok.Getter;
+import lombok.Setter;
 import org.jdom.Element;
 import org.jetbrains.annotations.NotNull;
 
-import static com.dci.intellij.dbn.common.options.setting.SettingsSupport.integerAttribute;
-import static com.dci.intellij.dbn.common.options.setting.SettingsSupport.setIntegerAttribute;
+import static com.dci.intellij.dbn.common.options.setting.SettingsSupport.*;
 
+@Getter
+@Setter
 public class DBStatementJdwpRunConfig extends DBStatementRunConfig implements DBJdwpRunConfig {
     private Range<Integer> tcpPortRange = new Range<>(4000, 4999);
+    private String tcpHostAddress;
 
     public DBStatementJdwpRunConfig(Project project, DBStatementJdwpRunConfigFactory factory, String name, DBRunConfigCategory category) {
         super(project, factory, name, category);
@@ -51,31 +55,28 @@ public class DBStatementJdwpRunConfig extends DBStatementRunConfig implements DB
     }
 
     @Override
-    public Range<Integer> getTcpPortRange() {
-        return tcpPortRange;
-    }
-
-    public void setTcpPortRange(Range<Integer> tcpPortRange) {
-        this.tcpPortRange = tcpPortRange;
-    }
-
-    @Override
     public void readExternal(@NotNull Element element) throws InvalidDataException {
         super.readExternal(element);
-        Element rangeElement = element.getChild("tcp-port-range");
-        if (rangeElement != null) {
-            int fromPortNumber = integerAttribute(rangeElement, "from-number", tcpPortRange.getFrom());
-            int toPortNumber = integerAttribute(rangeElement, "to-number", tcpPortRange.getTo());
+        Element portsElement = element.getChild("tcp-port-range");
+        if (portsElement != null) {
+            int fromPortNumber = integerAttribute(portsElement, "from-number", tcpPortRange.getFrom());
+            int toPortNumber = integerAttribute(portsElement, "to-number", tcpPortRange.getTo());
             tcpPortRange = new Range<>(fromPortNumber, toPortNumber);
         }
+        Element hostElement = element.getChild("tcp-host-address");
+        tcpHostAddress = stringAttribute(hostElement, "value");
     }
 
     @Override
     public void writeExternal(@NotNull Element element) throws WriteExternalException {
         super.writeExternal(element);
-        Element rangeElement = new Element("tcp-port-range");
-        element.addContent(rangeElement);
-        setIntegerAttribute(rangeElement, "from-number", tcpPortRange.getFrom());
-        setIntegerAttribute(rangeElement, "to-number", tcpPortRange.getTo());
+        Element portsElement = new Element("tcp-port-range");
+        element.addContent(portsElement);
+        setIntegerAttribute(portsElement, "from-number", tcpPortRange.getFrom());
+        setIntegerAttribute(portsElement, "to-number", tcpPortRange.getTo());
+
+        Element hostElement = new Element("tcp-host-address");
+        element.addContent(hostElement);
+        setStringAttribute(hostElement, "value", tcpHostAddress);
     }
 }
