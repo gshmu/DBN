@@ -601,6 +601,10 @@ public abstract class DBObjectImpl<M extends DBObjectMetadata> extends DBObjectT
     }
 
 
+/*
+    // TODO review the need of equals / hashCode
+        Current issue: weak ref caches cleanup on background disposal
+         caches may be refreshed before disposer cleans up the data -> refreshed items are disposed
     @Override
     public boolean equals(Object obj) {
         if (obj == this) return true;
@@ -615,6 +619,7 @@ public abstract class DBObjectImpl<M extends DBObjectMetadata> extends DBObjectT
     public int hashCode() {
         return objectRef.hashCode();
     }
+*/
 
     @Override
     @NotNull
