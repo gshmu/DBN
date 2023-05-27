@@ -12,8 +12,8 @@ public class DBMethodJdwpProcessStarter extends DBJdwpProcessStarter {
 
     @Override
     @NotNull
-    protected DBMethodJdwpDebugProcess createDebugProcess(@NotNull XDebugSession session, DebuggerSession debuggerSession, int tcpPort) {
-        return new DBMethodJdwpDebugProcess(session, debuggerSession, getConnection(), tcpPort);
+    protected DBMethodJdwpDebugProcess createDebugProcess(@NotNull XDebugSession session, DebuggerSession debuggerSession, String hostname, int tcpPort) {
+        return new DBMethodJdwpDebugProcess(session, debuggerSession, getConnection(), hostname, tcpPort);
     }
 
 }

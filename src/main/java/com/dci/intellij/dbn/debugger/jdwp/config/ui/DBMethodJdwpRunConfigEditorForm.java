@@ -31,6 +31,8 @@ import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
 import java.awt.*;
+import java.net.InetAddress;
+import java.net.UnknownHostException;
 
 import static com.dci.intellij.dbn.common.dispose.Disposer.replace;
 
@@ -43,7 +45,7 @@ public class DBMethodJdwpRunConfigEditorForm extends DBProgramRunConfigurationEd
     private JTextField fromPortTextField;
     private JTextField toPortTextField;
     private JPanel hintPanel;
-
+    private JTextField debuggerHostAddrTextBox;
     private MethodExecutionInputForm inputForm;
 
     public DBMethodJdwpRunConfigEditorForm(DBMethodJdwpRunConfig configuration) {
@@ -131,6 +133,17 @@ public class DBMethodJdwpRunConfigEditorForm extends DBProgramRunConfigurationEd
             throw new ConfigurationException("TCP Port Range inputs must me numeric");
         }
         configuration.setTcpPortRange(new Range<>(fromPort, toPort));
+
+        String hostIpAddressStr = debuggerHostAddrTextBox.getText();
+        try {
+            InetAddress[] addresses = InetAddress.getAllByName(hostIpAddressStr);
+            if (addresses != null && addresses.length == 1 && addresses[0] instanceof java.net.Inet4Address) {
+                configuration.setDebuggerHostIPAddr(addresses[0]);
+            }
+        }
+        catch (UnknownHostException e) {
+            throw new ConfigurationException("Invalid IP address: "+hostIpAddressStr);
+        }
         //selectMethodAction.setConfiguration(configuration);
     }
 
@@ -140,6 +153,13 @@ public class DBMethodJdwpRunConfigEditorForm extends DBProgramRunConfigurationEd
         compileDependenciesCheckBox.setSelected(configuration.isCompileDependencies());
         fromPortTextField.setText(String.valueOf(configuration.getTcpPortRange().getFrom()));
         toPortTextField.setText(String.valueOf(configuration.getTcpPortRange().getTo()));
+        InetAddress debuggerAddr = configuration.getDebuggerHostIPAddr();
+        if (debuggerAddr != null) {
+            String debuggerHostAddress = debuggerAddr.getHostAddress();
+            if (debuggerHostAddress != null) {
+                debuggerHostAddrTextBox.setText(debuggerHostAddress);
+            }
+        }
     }
 
     public void setExecutionInput(@Nullable MethodExecutionInput executionInput, boolean touchForm) {

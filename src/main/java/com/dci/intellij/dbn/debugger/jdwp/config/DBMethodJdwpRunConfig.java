@@ -18,11 +18,13 @@ import com.intellij.util.Range;
 import org.jdom.Element;
 import org.jetbrains.annotations.NotNull;
 
-import static com.dci.intellij.dbn.common.options.setting.SettingsSupport.integerAttribute;
-import static com.dci.intellij.dbn.common.options.setting.SettingsSupport.setIntegerAttribute;
+import java.net.InetAddress;
+
+import static com.dci.intellij.dbn.common.options.setting.SettingsSupport.*;
 
 public class DBMethodJdwpRunConfig extends DBMethodRunConfig implements DBJdwpRunConfig {
     private Range<Integer> tcpPortRange = new Range<>(4000, 4999);
+    private InetAddress debuggerHostIPAddr;
 
     public DBMethodJdwpRunConfig(Project project, DBMethodJdwpRunConfigFactory factory, String name, DBRunConfigCategory category) {
         super(project, factory, name, category);
@@ -59,6 +61,10 @@ public class DBMethodJdwpRunConfig extends DBMethodRunConfig implements DBJdwpRu
         this.tcpPortRange = tcpPortRange;
     }
 
+    public InetAddress getDebuggerHostIPAddr() { return debuggerHostIPAddr; }
+
+    public void setDebuggerHostIPAddr(InetAddress addr) { this.debuggerHostIPAddr = addr; }
+
     @Override
     public void readExternal(@NotNull Element element) throws InvalidDataException {
         super.readExternal(element);
@@ -67,6 +73,25 @@ public class DBMethodJdwpRunConfig extends DBMethodRunConfig implements DBJdwpRu
             int fromPortNumber = integerAttribute(rangeElement, "from-number", tcpPortRange.getFrom());
             int toPortNumber = integerAttribute(rangeElement, "to-number", tcpPortRange.getTo());
             tcpPortRange = new Range<>(fromPortNumber, toPortNumber);
+        }
+
+        Element hostInfoElement = element.getChild("hostInfo");
+        if (hostInfoElement != null) {
+            String hostIpAddressStr = stringAttribute(hostInfoElement, "hostIpAddress");
+            if (hostIpAddressStr.startsWith("/")) {
+                hostIpAddressStr = hostIpAddressStr.substring(1);
+            }
+            try {
+                setDebuggerHostIPAddr(InetAddress.getAllByName(hostIpAddressStr)[0]);
+            }
+            catch (java.net.UnknownHostException e) {
+                try {
+                    setDebuggerHostIPAddr(InetAddress.getLocalHost());
+                }
+                catch (java.net.UnknownHostException e2) {
+                    setDebuggerHostIPAddr(null);
+                }
+            }
         }
     }
 
@@ -77,5 +102,10 @@ public class DBMethodJdwpRunConfig extends DBMethodRunConfig implements DBJdwpRu
         element.addContent(rangeElement);
         setIntegerAttribute(rangeElement, "from-number", tcpPortRange.getFrom());
         setIntegerAttribute(rangeElement, "to-number", tcpPortRange.getTo());
+
+        Element hostInfoElement = new Element("hostInfo");
+        element.addContent(hostInfoElement);
+        setStringAttribute(hostInfoElement, "hostIpAddress",
+                debuggerHostIPAddr != null ? debuggerHostIPAddr.toString() : "");
     }
 }
