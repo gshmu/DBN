@@ -71,24 +71,24 @@ public abstract class DBJdwpDebugProcess<T extends ExecutionInput>
     private final DBDebugConsoleLogger console;
     private final String declaredBlockIdentifier;
     protected DBNConnection targetConnection;
-    private int localTcpPort = 4000;
-    private final String hostname;
+    private final int localTcpPort;
+    private final String localTcpHost;
 
     private transient XSuspendContext lastSuspendContext;
 
-    protected DBJdwpDebugProcess(@NotNull final XDebugSession session, DebuggerSession debuggerSession, ConnectionHandler connection, String hostname, int tcpPort) {
+    protected DBJdwpDebugProcess(@NotNull final XDebugSession session, DebuggerSession debuggerSession, ConnectionHandler connection, String tcpHost, int tcpPort) {
         super(session, debuggerSession);
         this.console = new DBDebugConsoleLogger(session);
         this.connection = ConnectionRef.of(connection);
+        this.localTcpPort = tcpPort;
+        this.localTcpHost = tcpHost;
 
         Project project = session.getProject();
         DatabaseDebuggerManager debuggerManager = DatabaseDebuggerManager.getInstance(project);
         debuggerManager.registerDebugSession(connection);
 
         DBJdwpBreakpointHandler breakpointHandler = new DBJdwpBreakpointHandler(session, this);
-        breakpointHandlers = new DBBreakpointHandler[]{breakpointHandler};
-        localTcpPort = tcpPort;
-        this.hostname = hostname;
+        this.breakpointHandlers = new DBBreakpointHandler[]{breakpointHandler};
         debuggerSession.getProcess().putUserData(KEY, this);
 
         DatabaseDebuggerInterface debuggerInterface = connection.getDebuggerInterface();
@@ -176,14 +176,14 @@ public abstract class DBJdwpDebugProcess<T extends ExecutionInput>
 
     @Override
     public void sessionInitialized() {
-        final XDebugSession session = getSession();
+        XDebugSession session = getSession();
         if (session instanceof XDebugSessionImpl) {
             XDebugSessionImpl sessionImpl = (XDebugSessionImpl) session;
             sessionImpl.getSessionData().setBreakpointsMuted(false);
         }
         DBRunConfig<T> runProfile = getRunProfile();
         List<DBMethod> methods = runProfile.getMethods();
-        if (methods.size() > 0) {
+        if (!methods.isEmpty()) {
             getBreakpointHandler().registerDefaultBreakpoint(methods.get(0));
         }
 
@@ -245,7 +245,7 @@ public abstract class DBJdwpDebugProcess<T extends ExecutionInput>
                     targetConnection = connection.getDebugConnection(schemaId);
                     targetConnection.setAutoCommit(false);
                     DatabaseDebuggerInterface debuggerInterface = getDebuggerInterface();
-                    debuggerInterface.initializeJdwpSession(targetConnection, hostname, String.valueOf(localTcpPort));
+                    debuggerInterface.initializeJdwpSession(targetConnection, localTcpHost, String.valueOf(localTcpPort));
                     console.system("Debug session initialized (JDWP)");
                     set(BREAKPOINT_SETTING_ALLOWED, true);
 
@@ -364,33 +364,33 @@ public abstract class DBJdwpDebugProcess<T extends ExecutionInput>
 
     @Nullable
     public VirtualFile getVirtualFile(Location location) {
-        if (location != null) {
-            String sourceUrl = "<NULL>";
-            try {
-                sourceUrl = location.sourcePath();
-                DBJdwpSourcePath sourcePath = DBJdwpSourcePath.from(sourceUrl);
-                String programType = sourcePath.getProgramType();
-                if (!Objects.equals(programType, "Block")) {
-                    String schemaName = sourcePath.getProgramOwner();
-                    String programName = sourcePath.getProgramName();
-                    DBSchema schema = getConnection().getObjectBundle().getSchema(schemaName);
-                    if (schema != null) {
-                        DBProgram program = schema.getProgram(programName);
-                        if (program != null) {
-                            DBEditableObjectVirtualFile editableVirtualFile = program.getEditableVirtualFile();
-                            DBContentType contentType = Objects.equals(programType, "PackageBody") ? DBContentType.CODE_BODY : DBContentType.CODE_SPEC;
-                            return editableVirtualFile.getContentFile(contentType);
-                        } else {
-                            DBMethod method = schema.getMethod(programName, (short) 0);
-                            if (method != null) {
-                                return method.getEditableVirtualFile().getContentFile(DBContentType.CODE);
-                            }
+        if (location == null) return null;
+
+        String sourceUrl = "<NULL>";
+        try {
+            sourceUrl = location.sourcePath();
+            DBJdwpSourcePath sourcePath = DBJdwpSourcePath.from(sourceUrl);
+            String programType = sourcePath.getProgramType();
+            if (!Objects.equals(programType, "Block")) {
+                String schemaName = sourcePath.getProgramOwner();
+                String programName = sourcePath.getProgramName();
+                DBSchema schema = getConnection().getObjectBundle().getSchema(schemaName);
+                if (schema != null) {
+                    DBProgram program = schema.getProgram(programName);
+                    if (program != null) {
+                        DBEditableObjectVirtualFile editableVirtualFile = program.getEditableVirtualFile();
+                        DBContentType contentType = Objects.equals(programType, "PackageBody") ? DBContentType.CODE_BODY : DBContentType.CODE_SPEC;
+                        return editableVirtualFile.getContentFile(contentType);
+                    } else {
+                        DBMethod method = schema.getMethod(programName, (short) 0);
+                        if (method != null) {
+                            return method.getEditableVirtualFile().getContentFile(DBContentType.CODE);
                         }
                     }
                 }
-            } catch (Exception e) {
-                getConsole().warning("Error evaluating suspend position '" + sourceUrl + "': " + Commons.nvl(e.getMessage(), e.getClass().getSimpleName()));
             }
+        } catch (Exception e) {
+            getConsole().warning("Error evaluating suspend position '" + sourceUrl + "': " + Commons.nvl(e.getMessage(), e.getClass().getSimpleName()));
         }
         return null;
     }
