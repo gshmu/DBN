@@ -46,8 +46,7 @@ import static com.dci.intellij.dbn.debugger.common.breakpoint.DBBreakpointUtil.g
 
 public class DBJdwpBreakpointHandler extends DBBreakpointHandler<DBJdwpDebugProcess> {
     private static final Key<LineBreakpoint> LINE_BREAKPOINT_KEY = Key.create("DBNavigator.LineBreakpoint");
-    private static final ClassPrepareRequestor GENERIC_CLASS_PREPARE_REQUESTOR =
-            (debuggerProcess, referenceType) -> System.out.println();
+    private static final ClassPrepareRequestor GENERIC_CLASS_PREPARE_REQUESTOR = (p, r) -> System.out.println();
 
     public DBJdwpBreakpointHandler(XDebugSession session, DBJdwpDebugProcess debugProcess) {
         super(session, debugProcess);
@@ -56,27 +55,26 @@ public class DBJdwpBreakpointHandler extends DBBreakpointHandler<DBJdwpDebugProc
     @Override
     public void registerDefaultBreakpoint(DBMethod method) {
         DBEditableObjectVirtualFile mainDatabaseFile = DBDebugUtil.getMainDatabaseFile(method);
-        if (mainDatabaseFile != null) {
-            DBSourceCodeVirtualFile sourceCodeFile = (DBSourceCodeVirtualFile) mainDatabaseFile.getMainContentFile();
-            PSQLFile psqlFile = (PSQLFile) sourceCodeFile.getPsiFile();
-            if (psqlFile != null) {
-                BasePsiElement basePsiElement = psqlFile.lookupObjectDeclaration(method.getObjectType().getGenericType(), method.getName());
-                if (basePsiElement != null) {
-                    BasePsiElement subject = basePsiElement.findFirstPsiElement(ElementTypeAttribute.SUBJECT);
-                    int offset = subject.getTextOffset();
-                    Document document = Documents.getDocument(psqlFile);
-                    if (document != null) {
-                        int line = document.getLineNumber(offset);
+        if (mainDatabaseFile == null) return;
 
-                        DBSchemaObject schemaObject = DBDebugUtil.getMainDatabaseObject(method);
-                        if (schemaObject != null) {
-                            XDebuggerUtil debuggerUtil = XDebuggerUtil.getInstance();
-                            debuggerUtil.toggleLineBreakpoint(getSession().getProject(), sourceCodeFile, line, true);
-                        }
-                    }
-                }
-            }
-        }
+        DBSourceCodeVirtualFile sourceCodeFile = (DBSourceCodeVirtualFile) mainDatabaseFile.getMainContentFile();
+        PSQLFile psqlFile = (PSQLFile) sourceCodeFile.getPsiFile();
+        if (psqlFile == null) return;
+
+        BasePsiElement basePsiElement = psqlFile.lookupObjectDeclaration(method.getObjectType().getGenericType(), method.getName());
+        if (basePsiElement == null) return;
+
+        BasePsiElement subject = basePsiElement.findFirstPsiElement(ElementTypeAttribute.SUBJECT);
+        int offset = subject.getTextOffset();
+        Document document = Documents.getDocument(psqlFile);
+        if (document == null) return;
+
+        int line = document.getLineNumber(offset);
+        DBSchemaObject schemaObject = DBDebugUtil.getMainDatabaseObject(method);
+        if (schemaObject == null) return;
+
+        XDebuggerUtil debuggerUtil = XDebuggerUtil.getInstance();
+        debuggerUtil.toggleLineBreakpoint(getSession().getProject(), sourceCodeFile, line, true);
     }
 
     @Override
@@ -98,28 +96,27 @@ public class DBJdwpBreakpointHandler extends DBBreakpointHandler<DBJdwpDebugProc
             RequestManagerImpl requestsManager = getRequestsManager();
 
             String programIdentifier = getProgramIdentifier(getConnection(), breakpoint);
-            if (programIdentifier != null) {
-                LineBreakpoint lineBreakpoint = getLineBreakpoint(getSession().getProject(), breakpoint);
+            if (programIdentifier == null) return;
 
-                if (lineBreakpoint != null && !isBreakpointRequested(lineBreakpoint)) {
-                    boolean registered = false;
-                    List<ReferenceType> referenceTypes = virtualMachineProxy.classesByName(programIdentifier);
-                    if (referenceTypes.size() > 0) {
-                        ReferenceType referenceType = referenceTypes.get(0);
-                        List<Location> locations = referenceType.locationsOfLine(breakpoint.getLine() + 1);
-                        if (locations.size() > 0) {
-                            Location location = locations.get(0);
-                            BreakpointRequest breakpointRequest = requestsManager.createBreakpointRequest(lineBreakpoint, location);
-                            breakpointRequest.addThreadFilter(getMainThread());
-                            requestsManager.enableRequest(breakpointRequest);
-                            registered = true;
-                        }
-                    }
+            LineBreakpoint lineBreakpoint = getLineBreakpoint(getSession().getProject(), breakpoint);
+            if (lineBreakpoint == null || isBreakpointRequested(lineBreakpoint)) return;
 
-                    if (!registered) {
-                        console.warning("Failed to register breakpoint" + breakpointLocation + ". Resource not found");
-                    }
+            boolean registered = false;
+            List<ReferenceType> referenceTypes = virtualMachineProxy.classesByName(programIdentifier);
+            if (!referenceTypes.isEmpty()) {
+                ReferenceType referenceType = referenceTypes.get(0);
+                List<Location> locations = referenceType.locationsOfLine(breakpoint.getLine() + 1);
+                if (!locations.isEmpty()) {
+                    Location location = locations.get(0);
+                    BreakpointRequest breakpointRequest = requestsManager.createBreakpointRequest(lineBreakpoint, location);
+                    breakpointRequest.addThreadFilter(getMainThread());
+                    requestsManager.enableRequest(breakpointRequest);
+                    registered = true;
                 }
+            }
+
+            if (!registered) {
+                console.warning("Failed to register breakpoint" + breakpointLocation + ". Resource not found");
             }
         } catch (Exception e) {
             console.error("Failed to register breakpoint" + breakpointLocation + ". " + e.getMessage());
@@ -166,21 +163,20 @@ public class DBJdwpBreakpointHandler extends DBBreakpointHandler<DBJdwpDebugProc
     }
 
     private void prepareObjectClasses(@NotNull final XLineBreakpoint<XBreakpointProperties> breakpoint) {
-        RequestManagerImpl requestsManager = getRequestsManager();
 
         String programIdentifier = getProgramIdentifier(getConnection(), breakpoint);
-        if (programIdentifier != null) {
-            LineBreakpoint lineBreakpoint = getLineBreakpoint(getSession().getProject(), breakpoint);
-            if (lineBreakpoint != null) {
-                Set<EventRequest> requests = requestsManager.findRequests(lineBreakpoint);
-                if (requests.size() == 0) {
-                    ClassPrepareRequest request = requestsManager.createClassPrepareRequest(
-                            (debuggerProcess, referenceType) -> createBreakpointRequest(breakpoint), programIdentifier);
-                    if (request != null) {
-                        requestsManager.enableRequest(request);
-                    }
-                }
-            }
+        if (programIdentifier == null) return;
+
+        LineBreakpoint lineBreakpoint = getLineBreakpoint(getSession().getProject(), breakpoint);
+        if (lineBreakpoint == null) return;
+
+        RequestManagerImpl requestsManager = getRequestsManager();
+        Set<EventRequest> requests = requestsManager.findRequests(lineBreakpoint);
+        if (!requests.isEmpty()) return;
+
+        ClassPrepareRequest request = requestsManager.createClassPrepareRequest((p, r) -> createBreakpointRequest(breakpoint), programIdentifier);
+        if (request != null) {
+            requestsManager.enableRequest(request);
         }
     }
 
