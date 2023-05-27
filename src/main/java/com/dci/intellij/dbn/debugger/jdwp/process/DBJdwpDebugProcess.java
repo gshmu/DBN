@@ -245,6 +245,7 @@ public abstract class DBJdwpDebugProcess<T extends ExecutionInput>
                     targetConnection = connection.getDebugConnection(schemaId);
                     targetConnection.setAutoCommit(false);
                     DatabaseDebuggerInterface debuggerInterface = getDebuggerInterface();
+                    console.info("Initializing debug session on address " + localTcpHost + ":" + localTcpPort);
                     debuggerInterface.initializeJdwpSession(targetConnection, localTcpHost, String.valueOf(localTcpPort));
                     console.system("Debug session initialized (JDWP)");
                     set(BREAKPOINT_SETTING_ALLOWED, true);

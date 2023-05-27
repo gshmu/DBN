@@ -20,6 +20,7 @@ import java.util.Collections;
 import java.util.List;
 
 import static com.dci.intellij.dbn.common.dispose.Failsafe.guarded;
+import static com.dci.intellij.dbn.common.util.Commons.nvl;
 
 @Getter
 public class MethodExecutionHistoryTree extends DBNTree implements Disposable {
@@ -89,7 +90,7 @@ public class MethodExecutionHistoryTree extends DBNTree implements Disposable {
             guarded(() -> {
                 MethodExecutionHistoryTreeNode node = (MethodExecutionHistoryTreeNode) value;
                 setIcon(node.getIcon());
-                append(node.getName(), SimpleTextAttributes.REGULAR_ATTRIBUTES);
+                append(nvl(node.getName(), ""), SimpleTextAttributes.REGULAR_ATTRIBUTES);
                 if (node instanceof MethodExecutionHistoryTreeModel.MethodTreeNode) {
                     MethodExecutionHistoryTreeModel.MethodTreeNode methodTreeNode = (MethodExecutionHistoryTreeModel.MethodTreeNode) node;
                     short overload = methodTreeNode.getOverload();
