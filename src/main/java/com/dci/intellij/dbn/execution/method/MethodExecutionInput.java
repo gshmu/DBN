@@ -18,7 +18,6 @@ import com.dci.intellij.dbn.object.DBArgument;
 import com.dci.intellij.dbn.object.DBMethod;
 import com.dci.intellij.dbn.object.DBTypeAttribute;
 import com.dci.intellij.dbn.object.lookup.DBObjectRef;
-import com.dci.intellij.dbn.object.type.DBObjectType;
 import com.intellij.openapi.project.Project;
 import lombok.Getter;
 import lombok.Setter;
@@ -51,11 +50,10 @@ public class MethodExecutionInput extends LocalExecutionInput implements Compara
     public MethodExecutionInput(Project project, DBObjectRef<DBMethod> method) {
         super(project, ExecutionTarget.METHOD);
         this.method = method;
-        DBObjectRef<?> schema = method.getParentRef(DBObjectType.SCHEMA);
+        SchemaId methodSchema = method.getSchemaId();
 
-        if (schema != null) {
-            SchemaId objectSchema = SchemaId.get(schema.getObjectName());
-            setTargetSchemaId(objectSchema);
+        if (methodSchema != null) {
+            setTargetSchemaId(methodSchema);
         }
 
 
