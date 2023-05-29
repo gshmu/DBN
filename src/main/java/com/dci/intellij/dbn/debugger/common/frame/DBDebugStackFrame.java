@@ -39,12 +39,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import javax.swing.Icon;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import javax.swing.*;
+import java.util.*;
 
 @Slf4j
 public abstract class DBDebugStackFrame<P extends DBDebugProcess, V extends DBDebugValue> extends XStackFrame {
@@ -59,30 +55,33 @@ public abstract class DBDebugStackFrame<P extends DBDebugProcess, V extends DBDe
         Project project = getDebugProcess().getProject();
         XSourcePosition sourcePosition = getSourcePosition();
         VirtualFile virtualFile = getVirtualFile();
+        if (virtualFile == null) return null;
+
         if (virtualFile instanceof DBEditableObjectVirtualFile) {
             DBEditableObjectVirtualFile databaseFile = (DBEditableObjectVirtualFile) virtualFile;
-            SourceCodeManager.getInstance(project).ensureSourcesLoaded(databaseFile.getObject(), true);
+            SourceCodeManager sourceCodeManager = SourceCodeManager.getInstance(project);
+            sourceCodeManager.ensureSourcesLoaded(databaseFile.getObject(), true);
         }
 
 
-        if (virtualFile != null) {
-            Document document = Documents.getDocument(virtualFile);
-            DBLanguagePsiFile psiFile = (DBLanguagePsiFile) PsiUtil.getPsiFile(project, document);
+        Document document = Documents.getDocument(virtualFile);
+        DBLanguagePsiFile psiFile = (DBLanguagePsiFile) PsiUtil.getPsiFile(project, document);
+        if (sourcePosition == null || psiFile == null || document == null) return null;
 
-            if (sourcePosition != null && psiFile != null && document != null) {
-                int offset = document.getLineEndOffset(sourcePosition.getLine());
-                PsiElement elementAtOffset = psiFile.findElementAt(offset);
-                while (elementAtOffset instanceof PsiWhiteSpace || elementAtOffset instanceof PsiComment) {
-                    elementAtOffset = elementAtOffset.getNextSibling();
-                }
+        int line = sourcePosition.getLine();
+        if (document.getLineCount() <= line) return null;
 
-                if (elementAtOffset instanceof BasePsiElement) {
-                    BasePsiElement basePsiElement = (BasePsiElement) elementAtOffset;
-                    BasePsiElement objectDeclarationPsiElement = basePsiElement.findEnclosingPsiElement(ElementTypeAttribute.OBJECT_DECLARATION);
-                    if (objectDeclarationPsiElement != null) {
-                        return (IdentifierPsiElement) objectDeclarationPsiElement.findFirstPsiElement(ElementTypeAttribute.SUBJECT);
-                    }
-                }
+        int offset = document.getLineEndOffset(line);
+        PsiElement elementAtOffset = psiFile.findElementAt(offset);
+        while (elementAtOffset instanceof PsiWhiteSpace || elementAtOffset instanceof PsiComment) {
+            elementAtOffset = elementAtOffset.getNextSibling();
+        }
+
+        if (elementAtOffset instanceof BasePsiElement) {
+            BasePsiElement basePsiElement = (BasePsiElement) elementAtOffset;
+            BasePsiElement objectDeclarationPsiElement = basePsiElement.findEnclosingPsiElement(ElementTypeAttribute.OBJECT_DECLARATION);
+            if (objectDeclarationPsiElement != null) {
+                return (IdentifierPsiElement) objectDeclarationPsiElement.findFirstPsiElement(ElementTypeAttribute.SUBJECT);
             }
         }
 
