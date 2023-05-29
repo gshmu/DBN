@@ -61,15 +61,18 @@ final class ConnectionCache {
     }
 
     private static boolean found(int index) {
-        return data.length > index &&
-                data[index] != null &&
-                isValid(data(index));
+        return isValid(data(index));
     }
 
     @Nullable
     private static ConnectionHandler data(int index) {
         Wrapper[] data = ConnectionCache.data;
-        return data.length <= index || data[index] == null ? null : data[index].get();
+        if (data.length <= index) return null;
+
+        Wrapper wrapper = data[index];
+        if (wrapper == null) return null;
+
+        return wrapper.get();
     }
 
     public static void releaseCache(@NotNull Project project) {
