@@ -415,13 +415,13 @@ public class DBObjectRef<T extends DBObject> implements Comparable<DBObjectRef<?
     @Nullable
     @Override
     public SchemaId getSchemaId() {
-        DBSchema schema = getSchema();
-        return schema == null ? null : schema.getSchemaId();
+        String schemaName = getSchemaName();
+        return SchemaId.get(schemaName);
     }
 
     public String getSchemaName() {
-        DBSchema schema = getSchema();
-        return schema == null ? null : schema.getName();
+        DBObjectRef<DBObject> schema = getParentRef(DBObjectType.SCHEMA);
+        return schema == null ? null : schema.getObjectName();
     }
 
     public String getFileName() {
