@@ -43,6 +43,7 @@ import com.intellij.psi.PsiDirectory;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
+import lombok.val;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -61,6 +62,7 @@ import static com.dci.intellij.dbn.common.util.Commons.nvl;
 import static com.dci.intellij.dbn.object.common.DBObjectSearchAdapters.binary;
 import static com.dci.intellij.dbn.object.common.DBObjectSearchAdapters.linear;
 import static com.dci.intellij.dbn.object.type.DBObjectType.*;
+import static java.util.Collections.emptyList;
 
 @Slf4j
 @Getter
@@ -585,17 +587,19 @@ public class DBObjectListImpl<T extends DBObject> extends DynamicContentBase<T> 
         public List<T> getChildElements(DatabaseEntity entity) {
             // "touch" elements first for ranges to become available (fragile...)
             List<T> elements = getAllElements();
-            if (ranges == null || !entity.isObject()) return Collections.emptyList();
+            val ranges = this.ranges;
+            if (ranges == null) return emptyList();
+            if (!entity.isObject()) return emptyList();
 
             DBObject object = (DBObject) entity;
             Range range = ranges.get(object.ref());
-            if (range == null) return Collections.emptyList();
+            if (range == null) return emptyList();
+
+            int size = elements.size();
+            if (size == 0) return emptyList();
 
             int fromIndex = range.getLeft();
             int toIndex = range.getRight() + 1;
-            int size = elements.size();
-            if (size == 0) return Collections.emptyList();
-
             if (toIndex > size) {
                 log.error("invalid range {} for elements size {}", range, elements.size(),
                         new IllegalArgumentException("Invalid range capture"));

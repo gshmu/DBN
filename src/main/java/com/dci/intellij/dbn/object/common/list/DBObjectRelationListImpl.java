@@ -16,13 +16,17 @@ import com.dci.intellij.dbn.object.lookup.DBObjectRef;
 import com.dci.intellij.dbn.object.type.DBObjectRelationType;
 import com.intellij.openapi.project.Project;
 import lombok.Getter;
+import lombok.extern.slf4j.Slf4j;
+import lombok.val;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
 
 import static com.dci.intellij.dbn.common.list.FilteredList.unwrap;
 import static com.dci.intellij.dbn.common.util.Commons.nvl;
+import static java.util.Collections.emptyList;
 
+@Slf4j
 @Getter
 class DBObjectRelationListImpl<T extends DBObjectRelation> extends DynamicContentBase<T> implements DBObjectRelationList<T>{
     private final DBObjectRelationType relationType;
@@ -158,14 +162,26 @@ class DBObjectRelationListImpl<T extends DBObjectRelation> extends DynamicConten
 
         public List<T> getChildElements(DatabaseEntity entity) {
             List<T> elements = getAllElements();
-            if (ranges != null && entity instanceof DBObject) {
-                DBObject object = (DBObject) entity;
-                Range range = ranges.get(object.ref());
-                if (range != null) {
-                    return elements.subList(range.getLeft(), range.getRight() + 1);
-                }
+            val ranges = this.ranges;
+            if (ranges == null) return emptyList();
+            if(!entity.isObject()) return emptyList();
+
+            DBObject object = (DBObject) entity;
+            Range range = ranges.get(object.ref());
+            if (range == null) return emptyList();
+
+            int size = elements.size();
+            if (size == 0) return emptyList();
+
+            int fromIndex = range.getLeft();
+            int toIndex = range.getRight() + 1;
+            if (toIndex > size) {
+                log.error("invalid range {} for elements size {}", range, elements.size(),
+                        new IllegalArgumentException("Invalid range capture"));
+                toIndex = size;
             }
-            return Collections.emptyList();
+
+            return elements.subList(fromIndex, toIndex);
         }
 
         @Override
