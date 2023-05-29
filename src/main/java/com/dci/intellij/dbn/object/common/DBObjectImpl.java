@@ -288,7 +288,7 @@ public abstract class DBObjectImpl<M extends DBObjectMetadata> extends DBObjectT
     @NotNull
     @Override
     public ConnectionId getConnectionId() {
-        return connection.getConnectionId();
+        return getConnection().getConnectionId();
     }
 
     @Override
