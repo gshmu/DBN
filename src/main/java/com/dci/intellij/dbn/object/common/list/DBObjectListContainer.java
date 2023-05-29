@@ -80,6 +80,7 @@ public final class DBObjectListContainer implements StatefulDisposable, Unlisted
     }
 
     private DBObjectType getOwnerType() {
+        DatabaseEntity owner = getOwner();
         if (owner instanceof DBObject) {
             DBObject object = (DBObject) owner;
             return object.getObjectType();
@@ -91,7 +92,7 @@ public final class DBObjectListContainer implements StatefulDisposable, Unlisted
     }
 
     private DatabaseType getDatabaseType() {
-        return owner.getConnection().getDatabaseType();
+        return getOwner().getConnection().getDatabaseType();
     }
 
     @Nullable
