@@ -9,7 +9,6 @@ import com.intellij.extapi.psi.ASTDelegatePsiElement;
 import com.intellij.formatting.Indent;
 import com.intellij.lang.ASTNode;
 import com.intellij.psi.PsiElement;
-import com.intellij.psi.impl.source.tree.SharedImplUtil;
 import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
@@ -30,7 +29,8 @@ public class ChameleonPsiElement extends ASTDelegatePsiElement implements Execut
 
     @Override
     public PsiElement getParent() {
-        return SharedImplUtil.getParent(node);
+        ASTNode parentNode = node.getTreeParent();
+        return parentNode == null ? null : parentNode.getPsi();
     }
 
     @Override
