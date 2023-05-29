@@ -175,7 +175,11 @@ public class BasicDataModel<
     }
 
     protected void addRowAtIndex(int index, R row) {
-        getRows().add(index, row);
+        List<R> rows = getRows();
+        int size = rows.size();
+        if (index > size) index = size;
+
+        rows.add(index, row);
         updateRowIndexes(index);
         getState().setRowCount(getRowCount());
     }
