@@ -1,7 +1,7 @@
 package com.dci.intellij.dbn.object.factory.ui.common;
 
-import com.dci.intellij.dbn.common.ui.form.DBNFormBase;
 import com.dci.intellij.dbn.common.ui.component.DBNComponent;
+import com.dci.intellij.dbn.common.ui.form.DBNFormBase;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.ConnectionRef;
 import com.dci.intellij.dbn.object.factory.ObjectFactoryInput;
@@ -10,11 +10,11 @@ import lombok.Getter;
 import lombok.Setter;
 import org.jetbrains.annotations.NotNull;
 
-import javax.swing.JPanel;
+import javax.swing.*;
 
+@Getter
+@Setter
 public abstract class ObjectFactoryInputForm<T extends ObjectFactoryInput> extends DBNFormBase {
-    @Getter
-    @Setter
     private int index;
     private final ConnectionRef connection;
     private final DBObjectType objectType;
@@ -33,10 +33,6 @@ public abstract class ObjectFactoryInputForm<T extends ObjectFactoryInput> exten
     @NotNull
     public ConnectionHandler getConnection() {
         return connection.ensure();
-    }
-
-    public DBObjectType getObjectType() {
-        return objectType;
     }
 
     public abstract T createFactoryInput(ObjectFactoryInput parent);
