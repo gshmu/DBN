@@ -1,7 +1,6 @@
 package com.dci.intellij.dbn.connection.session;
 
 import com.dci.intellij.dbn.common.dispose.Disposed;
-import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.common.dispose.StatefulDisposableBase;
 import com.dci.intellij.dbn.common.index.IdentifiableMap;
 import com.dci.intellij.dbn.common.util.CollectionUtil;
@@ -11,6 +10,7 @@ import com.dci.intellij.dbn.connection.ConnectionType;
 import com.dci.intellij.dbn.connection.SessionId;
 import com.dci.intellij.dbn.database.DatabaseFeature;
 import com.intellij.openapi.Disposable;
+import lombok.Getter;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -18,10 +18,12 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 import static com.dci.intellij.dbn.common.dispose.Disposer.replace;
+import static com.dci.intellij.dbn.common.dispose.Failsafe.nn;
 import static com.dci.intellij.dbn.common.util.Commons.nvl;
 import static com.dci.intellij.dbn.common.util.Lists.filtered;
 import static com.dci.intellij.dbn.common.util.Lists.first;
 
+@Getter
 public class DatabaseSessionBundle extends StatefulDisposableBase implements Disposable{
     private final ConnectionRef connection;
     private DatabaseSession mainSession;
@@ -72,17 +74,9 @@ public class DatabaseSessionBundle extends StatefulDisposableBase implements Dis
         return connection.ensure();
     }
 
-    public DatabaseSession getDebugSession() {
-        return debugSession;
-    }
-
-    public DatabaseSession getDebuggerSession() {
-        return debuggerSession;
-    }
-
     @NotNull
     public DatabaseSession getMainSession() {
-        return Failsafe.nn(mainSession);
+        return nn(mainSession);
     }
 
     public DatabaseSession getPoolSession() {

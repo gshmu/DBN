@@ -44,7 +44,7 @@ public class ConnectionBundle extends BrowserTreeNodeBase implements BrowserTree
                         "Virtual - Oracle 10.1",
                         DatabaseType.ORACLE,
                         10.1,
-                        project));
+                        this));
 
         virtualConnections.put(
                 ConnectionId.VIRTUAL_MYSQL,
@@ -53,7 +53,7 @@ public class ConnectionBundle extends BrowserTreeNodeBase implements BrowserTree
                         "Virtual - MySQL 5.0",
                         DatabaseType.MYSQL,
                         5.0,
-                        project));
+                        this));
 
         virtualConnections.put(ConnectionId.VIRTUAL_POSTGRES,
                 new VirtualConnectionHandler(
@@ -61,7 +61,7 @@ public class ConnectionBundle extends BrowserTreeNodeBase implements BrowserTree
                         "Virtual - PostgreSQL 9.3.4",
                         DatabaseType.POSTGRES,
                         9.3,
-                        project));
+                        this));
 
         virtualConnections.put(ConnectionId.VIRTUAL_SQLITE,
                 new VirtualConnectionHandler(
@@ -69,7 +69,7 @@ public class ConnectionBundle extends BrowserTreeNodeBase implements BrowserTree
                         "Virtual - SQLite 3.10.2",
                         DatabaseType.SQLITE,
                         3.10,
-                        project));
+                        this));
 
         virtualConnections.put(
                 ConnectionId.VIRTUAL_ISO92_SQL,
@@ -78,7 +78,7 @@ public class ConnectionBundle extends BrowserTreeNodeBase implements BrowserTree
                         "Virtual - ISO-92 SQL",
                         DatabaseType.GENERIC,
                         92,
-                        project));
+                        this));
         rebuildIndex();
     }
 
