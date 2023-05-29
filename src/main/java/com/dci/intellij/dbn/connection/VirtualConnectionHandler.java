@@ -4,6 +4,7 @@ import com.dci.intellij.dbn.browser.model.BrowserTreeNode;
 import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.common.database.AuthenticationInfo;
 import com.dci.intellij.dbn.common.database.DatabaseInfo;
+import com.dci.intellij.dbn.common.dispose.Disposer;
 import com.dci.intellij.dbn.common.dispose.StatefulDisposableBase;
 import com.dci.intellij.dbn.common.environment.EnvironmentType;
 import com.dci.intellij.dbn.common.filter.Filter;
@@ -63,15 +64,17 @@ public class VirtualConnectionHandler extends StatefulDisposableBase implements 
         return new ConnectionSettings(connectionBundleSettings);
     });
 
-    public VirtualConnectionHandler(ConnectionId id, String name, DatabaseType databaseType, double databaseVersion, @NotNull Project project) {
+    public VirtualConnectionHandler(ConnectionId id, String name, DatabaseType databaseType, double databaseVersion, @NotNull ConnectionBundle connectionBundle) {
         this.id = id;
         this.name = name;
-        this.project = ProjectRef.of(project);
+        this.project = ProjectRef.of(connectionBundle.getProject());
         this.databaseType = databaseType;
         this.databaseVersion = databaseVersion;
         this.ref = ConnectionRef.of(this);
         this.connectionStatus = new ConnectionHandlerStatusHolder(this);
         this.objectBundle = new DBVirtualObjectBundle(this);
+
+        Disposer.register(connectionBundle, this);
     }
 
     public static ConnectionHandler getDefault(Project project) {
