@@ -97,7 +97,7 @@ public final class PsiResolveResult extends PropertyHolderBase.IntStore<PsiResol
         PsiElement referencedElement = getReference();
         if (referencedElement == null) {
             if (resolveAttempts > 0) {
-§§                if (resolveAttempts > 10) {
+                if (resolveAttempts > 10) {
                     return false;
                 }
                 //  2 -> 4 -> 8 -> 16 -> 32 seconds... (give up at some point)
