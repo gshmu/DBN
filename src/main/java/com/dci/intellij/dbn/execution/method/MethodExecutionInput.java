@@ -28,6 +28,7 @@ import org.jetbrains.annotations.Nullable;
 import java.util.*;
 
 import static com.dci.intellij.dbn.common.options.setting.SettingsSupport.stringAttribute;
+import static com.dci.intellij.dbn.common.util.Commons.coalesce;
 
 @Getter
 @Setter
@@ -222,7 +223,9 @@ public class MethodExecutionInput extends LocalExecutionInput implements Compara
         super.readConfiguration(element);
         method.readState(element);
         setTargetSchemaId(SchemaId.get(stringAttribute(element, "execution-schema")));
-        Element argumentsElement = element.getChild("argument-actions");
+        Element argumentsElement = coalesce(
+                () -> element.getChild("argument-values"),
+                () -> element.getChild("argument-actions")); // TODO temporary backward functionality
         if (argumentsElement != null) {
             for (Element valueElement : argumentsElement.getChildren()) {
                 MethodExecutionArgumentValue argumentValue = new MethodExecutionArgumentValue(valueElement);
@@ -237,13 +240,13 @@ public class MethodExecutionInput extends LocalExecutionInput implements Compara
         method.writeState(element);
         element.setAttribute("execution-schema", getTargetSchemaId() == null ? "" : getTargetSchemaId().id());
 
-        Element argumentsElement = new Element("argument-actions");
-        element.addContent(argumentsElement);
+        Element argumentValuesElement = new Element("argument-values");
+        element.addContent(argumentValuesElement);
 
         for (MethodExecutionArgumentValue executionVariable : argumentValueHistory.values()) {
             Element argumentElement = new Element("argument");
             executionVariable.writeState(argumentElement);
-            argumentsElement.addContent(argumentElement);
+            argumentValuesElement.addContent(argumentElement);
         }
     }
 
