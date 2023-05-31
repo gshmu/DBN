@@ -1,7 +1,6 @@
 package com.dci.intellij.dbn.connection.config.ui;
 
 import com.dci.intellij.dbn.common.action.DataKeys;
-import com.dci.intellij.dbn.common.action.DataProviders;
 import com.dci.intellij.dbn.common.color.Colors;
 import com.dci.intellij.dbn.common.database.DatabaseInfo;
 import com.dci.intellij.dbn.common.dispose.DisposableContainers;
@@ -78,14 +77,14 @@ public class ConnectionBundleSettingsForm extends ConfigurationEditorForm<Connec
         connectionListScrollPane.setViewportView(connectionsList);
 
         List<ConnectionSettings> connections = configuration.getConnections();
-        if (connections.size() > 0) {
+        if (!connections.isEmpty()) {
             selectConnection(connections.get(0).getConnectionId());
         }
         JPanel emptyPanel = new JPanel();
         connectionSetupPanel.setPreferredSize(new Dimension(500, -1));
         connectionSetupPanel.add(emptyPanel, BLANK_PANEL_ID);
 
-        DataProviders.register(mainPanel, this);
+        //DataProviders.register(mainPanel, this);
     }
 
     @NotNull
@@ -122,17 +121,17 @@ public class ConnectionBundleSettingsForm extends ConfigurationEditorForm<Connec
     }
 
     public void selectConnection(@Nullable ConnectionId connectionId) {
-        if (connectionId != null) {
-            ConnectionListModel model = (ConnectionListModel) connectionsList.getModel();
-            for (int i=0; i<model.size(); i++) {
-                ConnectionSettings connectionSettings = model.getElementAt(i);
-                if (connectionSettings.getConnectionId() == connectionId) {
-                    connectionsList.setSelectedValue(connectionSettings, true);
-                    break;
-                }
-            }
+        if (connectionId == null) return;
 
+        ConnectionListModel model = (ConnectionListModel) connectionsList.getModel();
+        for (int i=0; i<model.size(); i++) {
+            ConnectionSettings connectionSettings = model.getElementAt(i);
+            if (connectionSettings.getConnectionId() == connectionId) {
+                connectionsList.setSelectedValue(connectionSettings, true);
+                break;
+            }
         }
+
     }
 
     @Override
