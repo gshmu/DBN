@@ -67,7 +67,7 @@ abstract class SourceCodeEditorProviderBase extends BasicTextEditorProvider impl
                 new SourceCodeMainEditor(project, sourceCodeFile, editorName, editorProviderId) :
                 new SourceCodeEditor(project, sourceCodeFile, editorName, editorProviderId);
 
-        if (temporary) {
+        if (!temporary) {
             Editor editor = sourceCodeEditor.getEditor();
             Document document = editor.getDocument();
 
