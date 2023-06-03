@@ -28,8 +28,8 @@ public final class Files {
         final String[] parts = relativeTail.replace('\\', '/').split("/");
         // do not validate, just apply rules
         for (String part : parts) {
-            final String trimmed = part.trim();
-            if (trimmed.length() == 0) continue;
+            String trimmed = part.trim();
+            if (trimmed.isEmpty()) continue;
             if (Objects.equals(trimmed, ".")) continue;
             if (Objects.equals(trimmed, "..")) {
                 point = point.getParentFile();
