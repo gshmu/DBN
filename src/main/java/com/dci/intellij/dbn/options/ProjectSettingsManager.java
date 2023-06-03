@@ -57,7 +57,7 @@ public class ProjectSettingsManager extends ProjectComponentBase implements Pers
 
     private final ProjectSettings projectSettings;
     private ConfigId lastConfigId;
-    private boolean initialised;
+    private boolean initialized;
 
     private ProjectSettingsManager(Project project) {
         super(project, COMPONENT_NAME);
@@ -196,7 +196,7 @@ public class ProjectSettingsManager extends ProjectComponentBase implements Pers
         DatabaseFileManager fileManager = DatabaseFileManager.getInstance(project);
 
         fileManager.reopenDatabaseEditors();
-        initialised = true;
+        initialized = true;
     }
 
     public void exportToDefaultSettings() {

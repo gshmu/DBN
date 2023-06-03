@@ -1,7 +1,7 @@
 package com.dci.intellij.dbn.common.constant;
 
 public class TestCrossRefConstant extends PseudoConstant<TestCrossRefConstant> {
-    // various static initialisation ways
+    // various static initialization ways
     public static final TestCrossRefConstant CROSS_REF_CONSTANT_0 = get("CROSS_REF_CONSTANT_0");
     public static final TestCrossRefConstant CROSS_REF_CONSTANT_1 = get("CROSS_REF_CONSTANT_1");
     public static final TestCrossRefConstant CROSS_REF_CONSTANT_2 = get("CROSS_REF_CONSTANT_2");

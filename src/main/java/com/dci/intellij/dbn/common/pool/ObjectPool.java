@@ -9,7 +9,7 @@ public interface ObjectPool<T, E extends Throwable> {
      * @param timeout time to give up
      * @param timeUnit the unit of time to give op
      * @return an object from the pool
-     * @throws E when the pool reached limits or failed to initialise the object
+     * @throws E when the pool reached limits or failed to initialize the object
      */
     T acquire(long timeout, TimeUnit timeUnit) throws E;
 

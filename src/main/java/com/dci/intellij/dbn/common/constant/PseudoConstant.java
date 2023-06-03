@@ -15,7 +15,7 @@ public abstract class PseudoConstant<T extends PseudoConstant<T>> implements Con
 
     protected PseudoConstant(String id) {
         if (id == null) {
-            // initialisation phase (trigger class load - static definitions)
+            // initialization phase (trigger class load - static definitions)
             this.id = null;
             this.ordinal = 0;
         } else {

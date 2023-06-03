@@ -10,8 +10,9 @@ public enum DBDebugProcessStatus implements Property.IntBase {
     SESSION_INITIALIZATION_THREW_EXCEPTION,
     PROCESS_TERMINATING,
     PROCESS_TERMINATED,
-    PROCESS_STOPPED_NORMALLY,
-    DEBUGGER_STOPPING;
+    PROCESS_STOPPED,
+    DEBUGGER_STOPPING,
+    DEBUGGER_STOPED;
 
     public static final DBDebugProcessStatus[] VALUES = values();
 
