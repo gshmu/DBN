@@ -9,6 +9,8 @@ import org.jetbrains.annotations.NotNull;
 
 import java.sql.SQLException;
 
+import static com.dci.intellij.dbn.common.dispose.Failsafe.conditionallyLog;
+
 public final class PooledConnection {
     private PooledConnection() {}
 
@@ -26,7 +28,8 @@ public final class PooledConnection {
             conn.set(ResourceStatus.ACTIVE, true);
             runnable.run(conn);
 
-        } catch (ProcessCanceledException ignore){
+        } catch (ProcessCanceledException e){
+            conditionallyLog(e);
         } finally {
             if (conn != null) {
                 connection.freePoolConnection(conn);

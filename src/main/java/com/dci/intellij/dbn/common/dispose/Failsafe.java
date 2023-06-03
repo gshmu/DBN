@@ -33,8 +33,8 @@ public class Failsafe {
     public static <P, R, E extends Throwable> R guarded(R defaultValue, P param, @Nullable ParametricCallable<P, R, E> callable) throws E{
         try {
             return callable == null ? defaultValue : callable.call(param);
-        } catch (ProcessCanceledException | IllegalStateException | AbstractMethodError ignore /*| UnsupportedOperationException*/){
-            error(ignore);
+        } catch (ProcessCanceledException | IllegalStateException | AbstractMethodError e /*| UnsupportedOperationException*/){
+            conditionallyLog(e);
             return defaultValue;
         } catch (Exception e) {
             throwExecutionException(e);
@@ -46,8 +46,8 @@ public class Failsafe {
     public static <R, E extends Throwable> R guarded(R defaultValue, @Nullable ThrowableCallable<R, E> callable) throws E{
         try {
             return callable == null ? defaultValue : callable.call();
-        } catch (ProcessCanceledException | IllegalStateException | AbstractMethodError ignore /*| UnsupportedOperationException*/){
-            error(ignore);
+        } catch (ProcessCanceledException | IllegalStateException | AbstractMethodError e /*| UnsupportedOperationException*/){
+            conditionallyLog(e);
             return defaultValue;
         } catch (Exception e) {
             throwExecutionException(e);
@@ -60,8 +60,8 @@ public class Failsafe {
     public static <P, E extends Throwable> void guarded(P param, @Nullable ParametricRunnable<P, E> runnable) throws E{
         try {
             if (runnable != null) runnable.run(param);
-        } catch (ProcessCanceledException | IllegalStateException | AbstractMethodError ignore /*| UnsupportedOperationException*/){
-            error(ignore);
+        } catch (ProcessCanceledException | IllegalStateException | AbstractMethodError e /*| UnsupportedOperationException*/){
+            conditionallyLog(e);
         } catch (Exception e) {
             throwExecutionException(e);
         }
@@ -70,14 +70,14 @@ public class Failsafe {
     public static <E extends Throwable> void guarded(@Nullable ThrowableRunnable<E> runnable) throws E{
         try {
             if (runnable != null) runnable.run();
-        } catch (ProcessCanceledException | IllegalStateException | AbstractMethodError ignore /*| UnsupportedOperationException*/){
-            error(ignore);
+        } catch (ProcessCanceledException | IllegalStateException | AbstractMethodError e /*| UnsupportedOperationException*/){
+            conditionallyLog(e);
         } catch (Exception e) {
             throwExecutionException(e);
         }
     }
 
-    private static void error(Throwable exception) {
+    public static void conditionallyLog(Throwable exception) {
         if (Diagnostics.isFailsafeLoggingEnabled()) log.warn("Failsafe process failed", exception);
     }
 
@@ -85,7 +85,7 @@ public class Failsafe {
     private static void throwExecutionException(Exception e) {
         // DBNE-4876 (????!!)
         if (!e.getClass().getName().equals(AlreadyDisposedException.class.getName())) {
-            error(e);
+            conditionallyLog(e);
             throw e;
         }
     }

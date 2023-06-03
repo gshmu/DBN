@@ -28,6 +28,8 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
 
+import static com.dci.intellij.dbn.common.dispose.Failsafe.conditionallyLog;
+
 public abstract class DataExportProcessor {
     public abstract boolean supports(DataExportFeature feature);
 
@@ -51,7 +53,8 @@ public abstract class DataExportProcessor {
             String fileName = adjustFileName(instructions.getFileName());
             instructions.setFileName(fileName);
             performExport(model, instructions, connection);
-        } catch (ProcessCanceledException ignore) {
+        } catch (ProcessCanceledException e) {
+            conditionallyLog(e);
         } catch (DataExportException e) {
             throw e;
         } catch (Exception e) {

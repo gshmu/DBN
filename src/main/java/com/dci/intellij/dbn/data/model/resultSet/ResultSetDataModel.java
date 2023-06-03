@@ -2,7 +2,6 @@ package com.dci.intellij.dbn.data.model.resultSet;
 
 import com.dci.intellij.dbn.common.dispose.BackgroundDisposer;
 import com.dci.intellij.dbn.common.dispose.Disposer;
-import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.common.thread.Background;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.ConnectionRef;
@@ -25,6 +24,10 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import static com.dci.intellij.dbn.common.dispose.Failsafe.nn;
+
+@Getter
+@Setter
 public class ResultSetDataModel<
         R extends ResultSetDataModelRow<? extends ResultSetDataModel<R, C>, C>,
         C extends ResultSetDataModelCell<R, ? extends ResultSetDataModel<R, C>>>
@@ -32,17 +35,9 @@ public class ResultSetDataModel<
 
     private final ConnectionRef connection;
     private DBNResultSet resultSet;
-
-    @Getter
-    @Setter
     private boolean resultSetExhausted = false;
-
-    /** execute duration, -1 unknown */
-    @Getter
-    private long executeDuration = -1;
-    /** fetch duration, -1 unknown */
-    @Getter
-    private long fetchDuration = -1;
+    private long executeDuration = -1; // execute duration, -1 unknown
+    private long fetchDuration = -1;   // fetch duration, -1 unknown
 
     public ResultSetDataModel(@NotNull ConnectionHandler connection) {
         super(connection.getProject());
@@ -67,16 +62,12 @@ public class ResultSetDataModel<
 
     @NotNull
     protected DBNResultSet getResultSet() {
-        return Failsafe.nn(resultSet);
+        return nn(resultSet);
     }
 
     @NotNull
     public DBNConnection getResultConnection() {
-        return getResultSet().getConnection();
-    }
-
-    public void setResultSet(DBNResultSet resultSet) throws SQLException {
-        this.resultSet = resultSet;
+        return nn(getResultSet().getConnection());
     }
 
     @Nullable
@@ -108,7 +99,7 @@ public class ResultSetDataModel<
         if (resultSet == null || Resources.isClosed(resultSet)) {
             resultSetExhausted = true;
         } else {
-            DBNConnection connection = resultSet.getConnection();
+            DBNConnection connection = nn(resultSet.getConnection());
             long init = System.currentTimeMillis();
             try {
                 connection.set(ResourceStatus.ACTIVE, true);

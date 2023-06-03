@@ -129,7 +129,7 @@ public class DatasetEditorModel
     }
 
     @Override
-    public void setResultSet(DBNResultSet resultSet) throws SQLException {
+    public void setResultSet(DBNResultSet resultSet) {
         super.setResultSet(resultSet);
 
         ConnectionHandler connection = getConnection();
@@ -270,7 +270,7 @@ public class DatasetEditorModel
     }
 
     private boolean hasChanges() {
-        return changedRows.size() > 0;
+        return !changedRows.isEmpty();
     }
 
     private void clearChanges() {
@@ -374,8 +374,8 @@ public class DatasetEditorModel
                 }
                 set(MODIFIED, true);
             }
-            DBNConnection connection = getResultConnection();
-            connection.notifyDataChanges(dataset.getVirtualFile());
+            DBNConnection conn = getResultConnection();
+            conn.notifyDataChanges(dataset.getVirtualFile());
         });
     }
 
@@ -396,8 +396,8 @@ public class DatasetEditorModel
 
             editorTable.selectCell(rowIndex, editorTable.getSelectedColumn() == -1 ? 0 : editorTable.getSelectedColumn());
 
-            DBNConnection connection = getResultConnection();
-            connection.notifyDataChanges(dataset.getVirtualFile());
+            DBNConnection conn = getResultConnection();
+            conn.notifyDataChanges(dataset.getVirtualFile());
         } catch (SQLException e) {
             set(INSERTING, false);
             Messages.showErrorDialog(getProject(), "Could not insert record for " + dataset.getQualifiedNameWithType() + ".", e);
@@ -423,8 +423,8 @@ public class DatasetEditorModel
             notifyRowsInserted(insertIndex, insertIndex);
 
             editorTable.selectCell(insertIndex, editorTable.getSelectedColumn());
-            DBNConnection connection = getResultConnection();
-            connection.notifyDataChanges(dataset.getVirtualFile());
+            DBNConnection conn = getResultConnection();
+            conn.notifyDataChanges(dataset.getVirtualFile());
         } catch (SQLException e) {
             set(INSERTING, false);
             Messages.showErrorDialog(getProject(), "Could not duplicate record in " + dataset.getQualifiedNameWithType() + ".", e);
