@@ -4,7 +4,7 @@ import com.dci.intellij.dbn.common.util.Strings;
 import lombok.Getter;
 
 public class TestPseudoConstant extends PseudoConstant<TestPseudoConstant> {
-    // various static initialisation ways
+    // various static initialization ways
     public static final TestPseudoConstant PSEUDO_CONSTANT_0 = get("PSEUDO_CONSTANT_0");
     public static final TestPseudoConstant PSEUDO_CONSTANT_1 = get("PSEUDO_CONSTANT_1");
     public static final TestPseudoConstant PSEUDO_CONSTANT_2 = get("PSEUDO_CONSTANT_2");

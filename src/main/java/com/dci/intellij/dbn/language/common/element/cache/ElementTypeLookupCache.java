@@ -26,7 +26,7 @@ public abstract class ElementTypeLookupCache<T extends ElementTypeBase>/* implem
         this.elementType = elementType;
     }
 
-    public void initialise() {
+    public void initialize() {
         IndexContainer<TokenType> tokenTypes = nextPossibleTokens.get();
         Compactables.compact(tokenTypes);
     }

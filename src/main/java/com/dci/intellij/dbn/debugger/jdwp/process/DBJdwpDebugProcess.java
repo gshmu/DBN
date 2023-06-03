@@ -244,6 +244,8 @@ public abstract class DBJdwpDebugProcess<T extends ExecutionInput>
                     SchemaId schemaId = input.getExecutionContext().getTargetSchema();
                     targetConnection = connection.getDebugConnection(schemaId);
                     targetConnection.setAutoCommit(false);
+                    targetConnection.beforeClose(() -> releaseSession(targetConnection));
+
                     DatabaseDebuggerInterface debuggerInterface = getDebuggerInterface();
                     console.info("Initializing debug session on address " + localTcpHost + ":" + localTcpPort);
                     debuggerInterface.initializeJdwpSession(targetConnection, localTcpHost, String.valueOf(localTcpPort));
@@ -262,7 +264,7 @@ public abstract class DBJdwpDebugProcess<T extends ExecutionInput>
     }
 
     private void initializeBreakpoints() {
-        console.system("Registering breakpoints");
+        console.system("Registering breakpoints...");
         List<DBMethod> methods = getRunProfile().getMethods();
         List<XLineBreakpoint<XBreakpointProperties>> breakpoints = DBBreakpointUtil.getDatabaseBreakpoints(getConnection());
         getBreakpointHandler().registerBreakpoints(breakpoints, methods);
@@ -292,7 +294,7 @@ public abstract class DBJdwpDebugProcess<T extends ExecutionInput>
                     "Running debugger target program",
                     "Executing " + (input == null ? " target program" : input.getExecutionContext().getTargetName()),
                     progress -> {
-                        console.system("Executing target program");
+                        console.system("Executing target program...");
                         if (is(SESSION_INITIALIZATION_THREW_EXCEPTION)) return;
                         try {
                             set(TARGET_EXECUTION_STARTED, true);
@@ -315,13 +317,22 @@ public abstract class DBJdwpDebugProcess<T extends ExecutionInput>
 
     @Override
     public void stop() {
-        conditional(DEBUGGER_STOPPING, () -> {
-            set(BREAKPOINT_SETTING_ALLOWED, false);
-            console.system("Stopping debugger...");
-            getSession().stop();
-            stopDebugger();
-            super.stop();
-        });
+        if (canStopDebugger()) {
+            synchronized (this) {
+                if (canStopDebugger()) {
+                    set(DEBUGGER_STOPPING, true);
+                    set(BREAKPOINT_SETTING_ALLOWED, false);
+                    console.system("Stopping debugger...");
+                    getSession().stop();
+                    stopDebugger();
+                    super.stop();
+                }
+            }
+        }
+    }
+
+    private boolean canStopDebugger() {
+        return isNot(DEBUGGER_STOPPING) && isNot(DEBUGGER_STOPED);
     }
 
     private void stopDebugger() {
@@ -336,29 +347,35 @@ public abstract class DBJdwpDebugProcess<T extends ExecutionInput>
                     }
 
                     ConnectionHandler connection = getConnection();
-                    try {
-                        DBNConnection targetConnection = getTargetConnection();
-                        DatabaseDebuggerInterface debuggerInterface = getDebuggerInterface();
-                        debuggerInterface.disconnectJdwpSession(targetConnection);
-
-                    } catch (SQLException e) {
-                        console.error("Error stopping debugger: " + e.getMessage());
-                    } finally {
-                        DBRunConfig<T> runProfile = getRunProfile();
-                        if (runProfile != null && runProfile.getCategory() != DBRunConfigCategory.CUSTOM) {
-                            runProfile.setCanRun(false);
-                        }
-
-                        DatabaseDebuggerManager debuggerManager = DatabaseDebuggerManager.getInstance(getProject());
-                        debuggerManager.unregisterDebugSession(connection);
-                        releaseTargetConnection();
-                        console.system("Debugger stopped");
+                    DBRunConfig<T> runProfile = getRunProfile();
+                    if (runProfile != null && runProfile.getCategory() != DBRunConfigCategory.CUSTOM) {
+                        runProfile.setCanRun(false);
                     }
+
+                    DatabaseDebuggerManager debuggerManager = DatabaseDebuggerManager.getInstance(getProject());
+                    debuggerManager.unregisterDebugSession(connection);
+                    releaseTargetConnection();
+                    console.system("Debugger stopped");
+                    set(DEBUGGER_STOPED, false);
+                    set(DEBUGGER_STOPPING, false);
                 });
     }
 
+    private void releaseSession(DBNConnection targetConnection) {
+        try {
+            console.system("Releasing debug session...");
+            DatabaseDebuggerInterface debuggerInterface = getDebuggerInterface();
+            debuggerInterface.disconnectJdwpSession(targetConnection);
+
+        } catch (Throwable e) {
+            console.error("Error releasing debug session: " + e.getMessage());
+        }
+    }
+
+
 
     protected void releaseTargetConnection() {
+        console.system("Releasing target connection...");
         Resources.close(targetConnection);
         targetConnection = null;
     }

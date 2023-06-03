@@ -37,49 +37,50 @@ public final class Resources {
         }
     }
     public static void cancel(DBNStatement statement) {
-        if (statement != null && !statement.isClosed()) {
-            try {
-                invokeResourceAction(
-                        statement,
-                        ResourceStatus.CANCELLING,
-                        () -> statement.cancel(),
-                        () -> "[DBN] Cancelling " + statement,
-                        () -> "[DBN] Done cancelling " + statement,
-                        () -> "[DBN] Failed to cancel " + statement);
-            } catch (Throwable ignore) {
-            } finally {
-                close((DBNResource) statement);
-            }
+        try {
+            if (statement == null || statement.isClosed()) return;
+            invokeResourceAction(
+                    statement,
+                    ResourceStatus.CANCELLING,
+                    () -> statement.cancel(),
+                    () -> "[DBN] Cancelling " + statement,
+                    () -> "[DBN] Done cancelling " + statement,
+                    () -> "[DBN] Failed to cancel " + statement);
+        } catch (Throwable ignore) {
+        } finally {
+            close((DBNResource) statement);
         }
     }
 
     public static <T extends AutoCloseable> void close(T resource) {
-        if (resource != null) {
-            if (resource instanceof DBNResource) {
-                close((DBNResource) resource);
-            } else {
-                try {
-                    invokeResourceAction(
-                            () -> resource.close(),
-                            () -> "[DBN] Closing " + resource,
-                            () -> "[DBN] Done closing " + resource,
-                            () -> "[DBN] Failed to close " + resource);
-                } catch (Throwable ignore) {}
-            }
-        }
-    }
-
-    private static <T extends DBNResource> void close(T resource) {
-        if (resource != null && !resource.isClosed()) {
+        if (resource == null) return;
+        if (resource instanceof DBNResource) {
+            close((DBNResource) resource);
+        } else {
             try {
                 invokeResourceAction(
-                        resource,
-                        ResourceStatus.CLOSING,
                         () -> resource.close(),
                         () -> "[DBN] Closing " + resource,
                         () -> "[DBN] Done closing " + resource,
                         () -> "[DBN] Failed to close " + resource);
             } catch (Throwable ignore) {}
+        }
+    }
+
+    private static <T extends DBNResource<?>> void close(T resource) {
+        if (resource == null || resource.isClosed()) return;
+        try {
+            resource.getListeners().notify(l -> l.closing());
+            invokeResourceAction(
+                    resource,
+                    ResourceStatus.CLOSING,
+                    () -> resource.close(),
+                    () -> "[DBN] Closing " + resource,
+                    () -> "[DBN] Done closing " + resource,
+                    () -> "[DBN] Failed to close " + resource);
+        } catch (Throwable ignore) {}
+        finally {
+            resource.getListeners().notify(l -> l.closed());
         }
     }
 
@@ -95,15 +96,14 @@ public final class Resources {
 
     public static void commit(DBNConnection connection) throws SQLException {
         try {
-            if (connection != null && !connection.isAutoCommit()) {
-                invokeResourceAction(
-                        connection,
-                        ResourceStatus.COMMITTING,
-                        () -> connection.commit(),
-                        () -> "[DBN] Committing " + connection,
-                        () -> "[DBN] Done committing " + connection,
-                        () -> "[DBN] Failed to commit " + connection);
-            }
+            if (connection == null || connection.isAutoCommit()) return;
+            invokeResourceAction(
+                    connection,
+                    ResourceStatus.COMMITTING,
+                    () -> connection.commit(),
+                    () -> "[DBN] Committing " + connection,
+                    () -> "[DBN] Done committing " + connection,
+                    () -> "[DBN] Failed to commit " + connection);
         } catch (SQLRecoverableException ignore) {
         } catch (SQLException e) {
             sentWarningNotification(
@@ -121,15 +121,14 @@ public final class Resources {
 
     public static void rollback(DBNConnection connection) throws SQLException {
         try {
-            if (connection != null && !connection.isAutoCommit()) {
-                invokeResourceAction(
-                        connection,
-                        ResourceStatus.ROLLING_BACK,
-                        () -> connection.rollback(),
-                        () -> "[DBN] Rolling-back " + connection,
-                        () -> "[DBN] Done rolling-back " + connection,
-                        () -> "[DBN] Failed to roll-back " + connection);
-            }
+            if (connection == null || connection.isAutoCommit()) return;
+            invokeResourceAction(
+                    connection,
+                    ResourceStatus.ROLLING_BACK,
+                    () -> connection.rollback(),
+                    () -> "[DBN] Rolling-back " + connection,
+                    () -> "[DBN] Done rolling-back " + connection,
+                    () -> "[DBN] Failed to roll-back " + connection);
         } catch (SQLRecoverableException ignore) {
         } catch (SQLException e) {
             sentWarningNotification(
@@ -148,7 +147,6 @@ public final class Resources {
     public static void rollback(DBNConnection connection, @Nullable Savepoint savepoint) throws SQLException {
         try {
             if (connection == null || savepoint == null || connection.isAutoCommit()) return;
-
             String savepointId = getSavepointIdentifier(savepoint);
             invokeResourceAction(
                     connection,
@@ -171,7 +169,6 @@ public final class Resources {
     public static @Nullable Savepoint createSavepoint(DBNConnection connection) {
         try {
             if (connection == null || connection.isAutoCommit()) return null;
-
             AtomicReference<Savepoint> savepoint = new AtomicReference<>();
             invokeResourceAction(
                     connection,
@@ -195,7 +192,6 @@ public final class Resources {
     public static void releaseSavepoint(DBNConnection connection, @Nullable Savepoint savepoint) {
         try {
             if (connection == null || savepoint == null || connection.isAutoCommit()) return;
-
             String savepointId = getSavepointIdentifier(savepoint);
             invokeResourceAction(
                     connection,

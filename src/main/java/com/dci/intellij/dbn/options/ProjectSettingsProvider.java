@@ -24,8 +24,8 @@ public class ProjectSettingsProvider extends ConfigurableProvider{
 
     /**
      * ConfigurableEP is logging wrapped ProcessCancelledException when provider is
-     * initialised in background and cancelled (e.g. on all-actions invocation)
-     * (initialise the provider upfront)
+     * initialized in background and cancelled (e.g. on all-actions invocation)
+     * (initialize the provider upfront)
      */
     @Workaround // https://youtrack.jetbrains.com/issue/IDEA-313711
     public static void init(Project project) {

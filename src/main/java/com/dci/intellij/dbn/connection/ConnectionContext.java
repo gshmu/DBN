@@ -56,25 +56,25 @@ public class ConnectionContext {
 
         static ConnectionContext get() {
             ConnectionContext context = LOCAL.get();
-            if (context == null) throw new IllegalStateException("Connection context not initialised");
+            if (context == null) throw new IllegalStateException("Connection context not initialized");
             return context;
         }
 
         static <T> T surround(ConnectionContext context, Callable<T> callable) throws SQLException {
-            boolean initialised = init(context);
+            boolean initialized = init(context);
             try {
                 return callable.call();
             } finally {
-                release(initialised);
+                release(initialized);
             }
         }
 
         static void surround(ConnectionContext context, DatabaseInterface.Runnable runnable) throws SQLException {
-            boolean initialised = init(context);
+            boolean initialized = init(context);
             try {
                 runnable.run();
             } finally {
-                release(initialised);
+                release(initialized);
             }
         }
 
@@ -94,8 +94,8 @@ public class ConnectionContext {
             return false;
         }
 
-        static void release(boolean initialised) {
-            if (!initialised) return;
+        static void release(boolean initialized) {
+            if (!initialized) return;
             LOCAL.set(null);
         }
     }

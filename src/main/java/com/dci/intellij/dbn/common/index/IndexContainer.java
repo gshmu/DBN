@@ -23,7 +23,7 @@ public class IndexContainer<T extends Indexable> implements Compactable {
     }
 
     public boolean contains(T indexable) {
-        // TODO workaround - IOOBE, NPE happens in parser lookup caches (probably due to latent background initialisation)
+        // TODO workaround - IOOBE, NPE happens in parser lookup caches (probably due to latent background initialization)
         return Unsafe.silent(false, indexable, p -> INDEX.contains(p.index()));
     }
 
