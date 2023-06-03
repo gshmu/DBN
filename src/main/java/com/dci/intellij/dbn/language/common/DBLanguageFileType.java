@@ -5,6 +5,7 @@ import com.dci.intellij.dbn.vfs.file.DBConsoleVirtualFile;
 import com.dci.intellij.dbn.vfs.file.DBEditableObjectVirtualFile;
 import com.dci.intellij.dbn.vfs.file.DBSourceCodeVirtualFile;
 import com.intellij.lang.Language;
+import com.intellij.openapi.fileTypes.FileType;
 import com.intellij.openapi.fileTypes.FileTypeManager;
 import com.intellij.openapi.fileTypes.LanguageFileType;
 import com.intellij.openapi.fileTypes.ex.FileTypeIdentifiableByVirtualFile;
@@ -58,6 +59,10 @@ public abstract class DBLanguageFileType extends LanguageFileType implements Fil
             return true;
         }
         return false;
+    }
+
+    public static boolean matches(FileType fileType) {
+        return fileType instanceof DBLanguageFileType;
     }
 
 }
