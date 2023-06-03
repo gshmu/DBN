@@ -23,6 +23,8 @@ import org.jetbrains.annotations.NotNull;
 import javax.swing.*;
 import java.awt.*;
 
+import static com.dci.intellij.dbn.common.dispose.Failsafe.conditionallyLog;
+
 public class MessagesTreeCellRenderer extends ColoredTreeCellRenderer {
     public static final JBColor HIGHLIGHT_BACKGROUND = new JBColor(0xE0EFFF, 0x364135);
     public static final SimpleTextAttributes HIGHLIGHT_REGULAR_ATTRIBUTES = SimpleTextAttributes.REGULAR_ATTRIBUTES.derive(SimpleTextAttributes.STYLE_PLAIN, null, HIGHLIGHT_BACKGROUND, null);
@@ -172,7 +174,9 @@ public class MessagesTreeCellRenderer extends ColoredTreeCellRenderer {
                     UIUtil.getTreeSelectionBackground(isFocused()) :
                     Commons.nvl(background, tree.getBackground()));
 
-        } catch (ProcessCanceledException ignore) {}
+        } catch (ProcessCanceledException e) {
+            conditionallyLog(e);
+        }
     }
 
     private static SimpleTextAttributes getErrorAttributes(boolean highlight) {

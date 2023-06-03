@@ -9,7 +9,6 @@ import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
 
-import static com.dci.intellij.dbn.common.dispose.Checks.isNotValid;
 import static com.dci.intellij.dbn.common.dispose.Checks.isValid;
 import static com.dci.intellij.dbn.common.dispose.Failsafe.guarded;
 
@@ -26,15 +25,26 @@ public abstract class ProjectAction extends BasicAction implements DumbAware {
     }
 
     @Override
-    public final void actionPerformed(@NotNull AnActionEvent e) {
-        guarded(() -> {
-            Project project = Commons.coalesce(
-                    () -> getProject(),
-                    () -> Lookups.getProject(e));
-
-            if (isNotValid(project)) return;
-            actionPerformed(e, project);
+    public final void update(@NotNull AnActionEvent e) {
+        guarded(this, a -> {
+            Project project = a.resolveProject(e);
+            if (isValid(project)) a.update(e, project);
         });
+    }
+
+    @Override
+    public final void actionPerformed(@NotNull AnActionEvent e) {
+        guarded(this, a -> {
+            Project project = a.resolveProject(e);
+            if (isValid(project)) a.actionPerformed(e, project);
+        });
+    }
+
+    @Nullable
+    private Project resolveProject(@NotNull AnActionEvent e) {
+        return Commons.coalesce(
+                () -> getProject(),
+                () -> Lookups.getProject(e));
     }
 
     /**
@@ -43,14 +53,6 @@ public abstract class ProjectAction extends BasicAction implements DumbAware {
     @Nullable
     public Project getProject() {
         return null;
-    }
-
-    @Override
-    public final void update(@NotNull AnActionEvent e) {
-        guarded(() -> {
-            Project project = Lookups.getProject(e);
-            if (isValid(project)) update(e, project);
-        });
     }
 
     protected void update(@NotNull AnActionEvent e, @NotNull Project project) {

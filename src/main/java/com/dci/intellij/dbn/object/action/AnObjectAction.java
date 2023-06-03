@@ -37,16 +37,13 @@ public abstract class AnObjectAction<T extends DBObject> extends ContextAction<T
     @NotNull
     @Override
     public  Project getProject() {
-        T object = this.object.ensure();
-        return object.getProject();
+        return object.ensure().getProject();
     }
 
     @Override
     protected void update(@NotNull AnActionEvent e, @NotNull Presentation presentation, @NotNull Project project, @Nullable T target) {
-        if (!custom) {
-            if (target != null) {
-                presentation.setText(target.getName(), false);
-            }
-        }
+        if (custom) return;
+        if (target == null) return;
+        presentation.setText(target.getName(), false);
     }
 }

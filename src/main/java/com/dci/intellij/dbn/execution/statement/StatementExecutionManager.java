@@ -55,8 +55,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 import static com.dci.intellij.dbn.common.component.Components.projectService;
 import static com.dci.intellij.dbn.common.dispose.Checks.isNotValid;
-import static com.dci.intellij.dbn.common.dispose.Failsafe.guarded;
-import static com.dci.intellij.dbn.common.dispose.Failsafe.nd;
+import static com.dci.intellij.dbn.common.dispose.Failsafe.*;
 import static com.dci.intellij.dbn.execution.ExecutionStatus.*;
 
 @State(
@@ -279,7 +278,8 @@ public class StatementExecutionManager extends ProjectComponentBase implements P
             if (conn != null) {
                 executionProcessor.execute(conn, false);
             }
-        } catch (ProcessCanceledException ignore) {
+        } catch (ProcessCanceledException e) {
+            conditionallyLog(e);
         } catch (SQLException e) {
             sendErrorNotification(
                     NotificationGroup.EXECUTION,

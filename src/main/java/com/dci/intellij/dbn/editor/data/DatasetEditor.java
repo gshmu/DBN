@@ -59,8 +59,7 @@ import java.beans.PropertyChangeListener;
 import java.sql.SQLException;
 import java.util.List;
 
-import static com.dci.intellij.dbn.common.dispose.Failsafe.guarded;
-import static com.dci.intellij.dbn.common.dispose.Failsafe.nd;
+import static com.dci.intellij.dbn.common.dispose.Failsafe.*;
 import static com.dci.intellij.dbn.editor.data.DatasetEditorStatus.*;
 import static com.dci.intellij.dbn.editor.data.DatasetLoadInstruction.*;
 import static com.dci.intellij.dbn.editor.data.model.RecordStatus.INSERTING;
@@ -312,8 +311,8 @@ public class DatasetEditor extends DisposableUserDataHolderBase implements
                                     }
                                 }
                                 dataLoadError = null;
-                            } catch (ProcessCanceledException ignore) {
-
+                            } catch (ProcessCanceledException e) {
+                                conditionallyLog(e);
                             } catch (SQLException e) {
                                 dataLoadError = e.getMessage();
                                 handleLoadError(e, instructions);

@@ -34,6 +34,7 @@ import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 
 import static com.dci.intellij.dbn.common.dispose.Checks.isNotValid;
+import static com.dci.intellij.dbn.common.dispose.Failsafe.conditionallyLog;
 import static com.dci.intellij.dbn.vfs.DatabaseFileSystem.FilePathType.*;
 
 public class DatabaseFileSystem extends VirtualFileSystem implements /*NonPhysicalFileSystem, */NamedComponent {
@@ -303,6 +304,7 @@ public class DatabaseFileSystem extends VirtualFileSystem implements /*NonPhysic
 
             throw new IllegalArgumentException("File of type " + virtualFile.getClass() + " is not supported");
         } catch (ProcessCanceledException e) {
+            conditionallyLog(e);
             return "DISPOSED/"+ UUID.randomUUID();
         }
     }

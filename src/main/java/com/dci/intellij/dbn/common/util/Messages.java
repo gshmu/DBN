@@ -12,6 +12,7 @@ import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
 
+import static com.dci.intellij.dbn.common.dispose.Failsafe.conditionallyLog;
 import static com.dci.intellij.dbn.common.dispose.Failsafe.nd;
 
 public class Messages {
@@ -47,6 +48,7 @@ public class Messages {
 
         if (exception != null) {
             if (exception instanceof ProcessCanceledException) {
+                conditionallyLog(exception);
                 return; // process was interrupted
             }
 

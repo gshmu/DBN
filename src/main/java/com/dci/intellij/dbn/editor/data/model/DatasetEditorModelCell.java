@@ -17,6 +17,7 @@ import com.dci.intellij.dbn.editor.data.ui.table.DatasetEditorTable;
 import com.dci.intellij.dbn.editor.data.ui.table.cell.DatasetTableCellEditor;
 import com.dci.intellij.dbn.object.DBColumn;
 import com.dci.intellij.dbn.object.DBDataset;
+import com.intellij.openapi.project.Project;
 import lombok.Getter;
 import org.jetbrains.annotations.NotNull;
 
@@ -60,7 +61,8 @@ public class DatasetEditorModelCell
     }
 
     private void updateValue(Object newUserValue, boolean bulk) {
-        getConnection().updateLastAccess();
+        DBNConnection conn = getConnection();
+        conn.updateLastAccess();
 
         boolean valueChanged = userValueChanged(newUserValue);
         if (hasError() || valueChanged) {
@@ -72,12 +74,13 @@ public class DatasetEditorModelCell
                 setUserValue(newUserValue);
             }
 
+            Project project = getProject();
             DatasetEditorModelRow row = getRow();
             ResultSetAdapter resultSetAdapter = getModel().getResultSetAdapter();
             try {
                 resultSetAdapter.scroll(row.getResultSetRowIndex());
             } catch (Exception e) {
-                Messages.showErrorDialog(getProject(), "Could not update cell value for " + columnInfo.getName() + ".", e);
+                Messages.showErrorDialog(project, "Could not update cell value for " + columnInfo.getName() + ".", e);
                 return;
             }
 
@@ -119,9 +122,8 @@ public class DatasetEditorModelCell
                 if (!error.isNotified()) notifyError(error, !bulk);
             } finally {
                 if (valueChanged) {
-                    DBNConnection conn = getModel().getResultConnection();
                     conn.notifyDataChanges(getDataset().getVirtualFile());
-                    ProjectEvents.notify(getProject(),
+                    ProjectEvents.notify(project,
                             DatasetEditorModelCellValueListener.TOPIC,
                             (listener) -> listener.valueChanged(this));
                 }

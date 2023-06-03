@@ -43,8 +43,7 @@ public abstract class AbstractConnectionAction extends ContextAction<ConnectionH
     @NotNull
     @Override
     public Project getProject() {
-        ConnectionHandler connection = this.connection.ensure();
-        return connection.getProject();
+        return connection.ensure().getProject();
     }
 }
 

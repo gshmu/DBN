@@ -31,6 +31,7 @@ import java.util.Collections;
 import java.util.List;
 
 import static com.dci.intellij.dbn.common.content.DynamicContentProperty.*;
+import static com.dci.intellij.dbn.common.dispose.Failsafe.conditionallyLog;
 import static com.dci.intellij.dbn.common.list.FilteredList.unwrap;
 import static com.dci.intellij.dbn.common.util.Unsafe.cast;
 
@@ -275,6 +276,7 @@ public abstract class DynamicContentBase<T extends DynamicContentElement>
             }
 
         } catch (ProcessCanceledException e) {
+            conditionallyLog(e);
             throw e;
 
         } catch (SQLFeatureNotSupportedException e) {

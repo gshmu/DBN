@@ -31,6 +31,7 @@ import java.util.Objects;
 import java.util.UUID;
 
 import static com.dci.intellij.dbn.common.content.DynamicContentProperty.INTERNAL;
+import static com.dci.intellij.dbn.common.dispose.Failsafe.conditionallyLog;
 import static com.dci.intellij.dbn.common.exception.Exceptions.toSqlException;
 import static com.dci.intellij.dbn.common.exception.Exceptions.toSqlTimeoutException;
 import static com.dci.intellij.dbn.common.util.TimeUtil.millisSince;
@@ -136,6 +137,7 @@ public abstract class DynamicContentResultSetLoader<E extends DynamicContentElem
                     try {
                         element = createElement(content, metadata, loaderCache);
                     } catch (ProcessCanceledException e) {
+                        conditionallyLog(e);
                         return;
                     } catch (RuntimeException e) {
                         log.warn("Failed to create element", e);
@@ -166,6 +168,7 @@ public abstract class DynamicContentResultSetLoader<E extends DynamicContentElem
             postLoadContent(content, debugInfo);
 
         } catch (ProcessCanceledException e) {
+            conditionallyLog(e);
             postLoadContentFailure(content, debugInfo, e);
             throw toSqlTimeoutException(e, "Load process cancelled");
 
