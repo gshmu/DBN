@@ -113,10 +113,10 @@ public class ElementTypeBundle {
             Set<ElementType> allElementTypes = builder.allElementTypes;
             builder = null;
             Background.run(null, () -> Measured.run(
-                    "initialising element-type lookup cache for " + this.languageDialect.getID(),
+                    "initializing element-type lookup cache for " + this.languageDialect.getID(),
                     () -> {
                         for (ElementType elementType : allElementTypes) {
-                            elementType.getLookupCache().initialise();
+                            elementType.getLookupCache().initialize();
                         }
                     }));
 

@@ -1,5 +1,6 @@
 package com.dci.intellij.dbn.connection.jdbc;
 
+import com.dci.intellij.dbn.common.ui.util.Listeners;
 import com.dci.intellij.dbn.common.util.Strings;
 import com.dci.intellij.dbn.common.util.TimeUtil;
 import com.dci.intellij.dbn.common.util.Traceable;
@@ -23,6 +24,7 @@ public abstract class DBNResource<T> extends ResourceStatusHolder implements Res
 
     private ResourceStatusAdapter<CloseableResource> closed;
     private ResourceStatusAdapter<CancellableResource> cancelled;
+    private final Listeners<DBNResourceListener> listeners = Listeners.create();
 
     protected Traceable traceable = new Traceable();
     private final Map<String, Long> errorLogs = new ConcurrentHashMap<>();
@@ -115,5 +117,23 @@ public abstract class DBNResource<T> extends ResourceStatusHolder implements Res
         long lastTimestamp = errorLogs.computeIfAbsent(error, e -> 0L);
         errorLogs.put(error, timestamp);
         return TimeUtil.isOlderThan(lastTimestamp, TimeUtil.Millis.THIRTY_SECONDS);
+    }
+
+    public void beforeClose(Runnable runnable) {
+        listeners.add(new DBNResourceListener() {
+            @Override
+            public void closing() {
+                runnable.run();
+            }
+        });
+    }
+
+    public void afterClose(Runnable runnable) {
+        listeners.add(new DBNResourceListener() {
+            @Override
+            public void closed() {
+                runnable.run();
+            }
+        });
     }
 }

@@ -30,8 +30,8 @@ public abstract class ElementTypeLookupCacheIndexed<T extends ElementTypeBase> e
         assert !elementType.isLeaf();
     }
 
-    public void initialise() {
-        super.initialise();
+    public void initialize() {
+        super.initialize();
         compact(allPossibleLeafs);
         compact(firstPossibleLeafs);
         compact(firstRequiredLeafs);

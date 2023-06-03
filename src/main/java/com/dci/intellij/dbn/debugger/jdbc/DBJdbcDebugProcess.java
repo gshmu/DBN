@@ -139,14 +139,14 @@ public abstract class DBJdbcDebugProcess<T extends ExecutionInput> extends XDebu
                         ConnectionHandler connection = getConnection();
                         SchemaId schemaId = input.getExecutionContext().getTargetSchema();
 
-                        ProgressMonitor.setProgressDetail("Allocating target connection");
+                        ProgressMonitor.setProgressDetail("Initializing target connection");
                         targetConnection = connection.getDebugConnection(schemaId);
                         targetConnection.setAutoCommit(false);
-                        console.system("Target connection allocated");
+                        console.system("Target connection initialized");
 
-                        ProgressMonitor.setProgressDetail("Allocating debugger connection");
+                        ProgressMonitor.setProgressDetail("Initializing debugger connection");
                         debuggerConnection = connection.getDebuggerConnection();
-                        console.system("Debug connection allocated");
+                        console.system("Debug connection initialized");
 
                         DatabaseDebuggerInterface debuggerInterface = getDebuggerInterface();
 
@@ -161,7 +161,7 @@ public abstract class DBJdbcDebugProcess<T extends ExecutionInput> extends XDebu
 
                         ProgressMonitor.setProgressDetail("Attaching debugger session");
                         debuggerInterface.attachSession(debuggerConnection, sessionInfo.getSessionId());
-                        console.system("Attached debug session");
+                        console.system("Debug session attached");
 
                         synchronizeSession();
                     } catch (SQLException e) {
@@ -289,21 +289,22 @@ public abstract class DBJdbcDebugProcess<T extends ExecutionInput> extends XDebu
 
     @Override
     public void stop() {
-        if (canStopDebuger()) {
+        if (canStopDebugger()) {
             synchronized (this) {
-                if (canStopDebuger()) {
+                if (canStopDebugger()) {
+
                     set(PROCESS_TERMINATING, true);
                     console.system("Stopping debugger...");
                     T input = getExecutionInput();
                     ExecutionContext<?> context = input.getExecutionContext();
-                    context.set(CANCELLED, isNot(PROCESS_STOPPED_NORMALLY));
+                    context.set(CANCELLED, isNot(PROCESS_STOPPED));
                     stopDebugger();
                 }
             }
         }
     }
 
-    private boolean canStopDebuger() {
+    private boolean canStopDebugger() {
         return isNot(PROCESS_TERMINATED) && isNot(PROCESS_TERMINATING);
     }
 
@@ -430,7 +431,8 @@ public abstract class DBJdbcDebugProcess<T extends ExecutionInput> extends XDebu
     }
 
     private void suspendSession() {
-        if (is(PROCESS_TERMINATING)) return;
+        if (is(PROCESS_TERMINATING) || is(PROCESS_TERMINATED)) return;
+
         XDebugSession session = getSession();
         DatabaseDebuggerInterface debuggerInterface = getDebuggerInterface();
         if (isTerminated()) {
@@ -440,7 +442,7 @@ public abstract class DBJdbcDebugProcess<T extends ExecutionInput> extends XDebu
                     NotificationGroup.DEBUGGER,
                     "Session terminated with code {0} ({1})", reasonCode, reason);
 
-            set(PROCESS_STOPPED_NORMALLY, true);
+            set(PROCESS_STOPPED, true);
             session.stop();
         } else {
             VirtualFile virtualFile = getRuntimeInfoFile(runtimeInfo);
@@ -448,7 +450,7 @@ public abstract class DBJdbcDebugProcess<T extends ExecutionInput> extends XDebu
             try {
                 backtraceInfo = debuggerInterface.getExecutionBacktraceInfo(debuggerConnection);
                 List<DebuggerRuntimeInfo> frames = backtraceInfo.getFrames();
-                if (frames.size() > 0) {
+                if (!frames.isEmpty()) {
                     DebuggerRuntimeInfo topRuntimeInfo = frames.get(0);
                     if (runtimeInfo.isTerminated()) {
                         int reasonCode = runtimeInfo.getReason();
@@ -477,7 +479,7 @@ public abstract class DBJdbcDebugProcess<T extends ExecutionInput> extends XDebu
         return runtimeInfo.isTerminated();
     }
 
-    protected DBBreakpointHandler getBreakpointHandler() {
+    protected DBBreakpointHandler<?> getBreakpointHandler() {
         return getBreakpointHandlers()[0];
     }
 

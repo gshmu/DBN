@@ -211,7 +211,7 @@ public class DatabaseFileSystem extends VirtualFileSystem implements /*NonPhysic
         } else {
             Project project = connection.getProject();
             ProjectSettingsManager settingsManager = ProjectSettingsManager.getInstance(project);
-            return settingsManager.isInitialised();
+            return settingsManager.isInitialized();
         }
     }
 

@@ -38,19 +38,21 @@ public class DBDebugConsoleLogger {
         try {
             RunContentDescriptor descriptor = session.getRunContentDescriptor();
             ProcessHandler processHandler = descriptor.getProcessHandler();
-            if (processHandler != null) {
-                Formatter formatter = Formatter.getInstance(session.getProject());
-                String date = formatter.formatDateTime(new Date());
-                String prefix =
-                        messageType == MessageType.ERROR ? "ERROR: " :
-                                messageType == MessageType.WARNING ? "WARNING: " : "INFO: ";
+            if (processHandler == null) return;
 
-                text = prefix + date + ": " + text + "\n";
-                Key outputType =
-                        messageType == MessageType.SYSTEM ? ProcessOutputTypes.SYSTEM :
-                                messageType == MessageType.ERROR  ? ProcessOutputTypes.STDERR : ProcessOutputTypes.STDOUT;
-                processHandler.notifyTextAvailable(text, outputType);
-            }
+            if (!processHandler.isStartNotified()) processHandler.startNotify();
+
+            Formatter formatter = Formatter.getInstance(session.getProject());
+            String date = formatter.formatDateTime(new Date());
+            String prefix =
+                    messageType == MessageType.ERROR ? "ERROR: " :
+                    messageType == MessageType.WARNING ? "WARNING: " : "INFO: ";
+
+            text = prefix + date + ": " + text + "\n";
+            Key outputType =
+                    messageType == MessageType.SYSTEM ? ProcessOutputTypes.SYSTEM :
+                    messageType == MessageType.ERROR  ? ProcessOutputTypes.STDERR : ProcessOutputTypes.STDOUT;
+            processHandler.notifyTextAvailable(text, outputType);
 
         } catch (IllegalStateException ignore) {
 

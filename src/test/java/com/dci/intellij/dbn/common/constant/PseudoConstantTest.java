@@ -12,11 +12,11 @@ import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 
 /**
- * 1000 threads initialising (or accessing) a set of 1000 constants, some statically initialised upfront
+ * 1000 threads initializing (or accessing) a set of 1000 constants, some statically initialized upfront
  * The captures of these threads are evaluated against the final capture in pseudo-constant registry
  */
 public class PseudoConstantTest {
-    private static final int COUNT = 1000; // number of constants to initialise
+    private static final int COUNT = 1000; // number of constants to initialize
     private static final AtomicInteger CURSOR = new AtomicInteger(0);
     private static final List<String> PSEUDO_CONSTANT_IDS = Arrays
             .stream(new Object[COUNT])

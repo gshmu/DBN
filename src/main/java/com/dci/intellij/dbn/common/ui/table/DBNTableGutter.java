@@ -52,7 +52,7 @@ public abstract class DBNTableGutter<T extends DBNTableWithGutter> extends JList
         ListModel<?> current = super.getModel();
 
         if (this.table != null) {
-            // only after initialisation
+            // only after initialization
             ListModel<?> delegate = getTable().getModel().getListModel();
             if (delegate != null && delegate != current) {
                 setModel(delegate);

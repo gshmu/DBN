@@ -75,6 +75,6 @@ public class DBNConnectionCache extends ObjectCacheBase<SessionId, DBNConnection
 
     @Override
     protected DBNConnection whenNull() throws SQLException {
-        throw new SQLRecoverableException("Failed to initialise connection");
+        throw new SQLRecoverableException("Failed to initialize connection");
     }
 }

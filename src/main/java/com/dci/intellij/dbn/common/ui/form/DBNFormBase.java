@@ -25,7 +25,7 @@ public abstract class DBNFormBase
         extends DBNComponentBase
         implements DBNForm, NotificationSupport {
 
-    private boolean initialised;
+    private boolean initialized;
     private final Set<JComponent> enabled = new HashSet<>();
 
     public DBNFormBase(@Nullable Disposable parent) {
@@ -40,14 +40,14 @@ public abstract class DBNFormBase
     @Override
     public final JComponent getComponent() {
         JComponent component = getMainComponent();
-        if (!initialised) {
-            initialise();
+        if (!initialized) {
+            initialize();
         }
         return component;
     }
 
-    private void initialise() {
-        initialised = true;
+    private void initialize() {
+        initialized = true;
         JComponent mainComponent = getMainComponent();
         DataProviders.register(mainComponent, this);
         UserInterface.visitRecursively(mainComponent, component -> {
