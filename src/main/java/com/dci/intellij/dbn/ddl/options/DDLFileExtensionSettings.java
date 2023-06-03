@@ -5,10 +5,8 @@ import com.dci.intellij.dbn.common.util.Strings;
 import com.dci.intellij.dbn.ddl.DDLFileType;
 import com.dci.intellij.dbn.ddl.DDLFileTypeId;
 import com.dci.intellij.dbn.ddl.options.ui.DDLFileExtensionSettingsForm;
-import com.dci.intellij.dbn.editor.DBContentType;
 import com.dci.intellij.dbn.language.psql.PSQLFileType;
 import com.dci.intellij.dbn.language.sql.SQLFileType;
-import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import org.jdom.Element;
 import org.jetbrains.annotations.NotNull;
@@ -18,22 +16,22 @@ import java.util.List;
 
 import static com.dci.intellij.dbn.common.options.setting.SettingsSupport.enumAttribute;
 import static com.dci.intellij.dbn.common.options.setting.SettingsSupport.setEnumAttribute;
+import static com.dci.intellij.dbn.editor.DBContentType.*;
 
 @Getter
-@EqualsAndHashCode(callSuper = false)
 public class DDLFileExtensionSettings extends BasicProjectConfiguration<DDLFileSettings, DDLFileExtensionSettingsForm> {
 
     private final List<DDLFileType> fileTypes = Arrays.asList(
-            new DDLFileType(DDLFileTypeId.VIEW, "DDL File - View", "vw", SQLFileType.INSTANCE, DBContentType.CODE),
-            new DDLFileType(DDLFileTypeId.TRIGGER, "DDL File - Trigger", "trg", PSQLFileType.INSTANCE, DBContentType.CODE),
-            new DDLFileType(DDLFileTypeId.PROCEDURE, "DDL File - Procedure", "prc", PSQLFileType.INSTANCE, DBContentType.CODE),
-            new DDLFileType(DDLFileTypeId.FUNCTION, "DDL File - Function", "fnc", PSQLFileType.INSTANCE, DBContentType.CODE),
-            new DDLFileType(DDLFileTypeId.PACKAGE, "DDL File - Package", "pkg", PSQLFileType.INSTANCE, DBContentType.CODE_SPEC_AND_BODY),
-            new DDLFileType(DDLFileTypeId.PACKAGE_SPEC, "DDL File - Package Spec", "pks", PSQLFileType.INSTANCE, DBContentType.CODE_SPEC),
-            new DDLFileType(DDLFileTypeId.PACKAGE_BODY, "DDL File - Package Body", "pkb", PSQLFileType.INSTANCE, DBContentType.CODE_BODY),
-            new DDLFileType(DDLFileTypeId.TYPE, "DDL File - Type", "tpe", PSQLFileType.INSTANCE, DBContentType.CODE_SPEC_AND_BODY),
-            new DDLFileType(DDLFileTypeId.TYPE_SPEC, "DDL File - Type Spec", "tps", PSQLFileType.INSTANCE, DBContentType.CODE_SPEC),
-            new DDLFileType(DDLFileTypeId.TYPE_BODY, "DDL File - Type Body", "tpb", PSQLFileType.INSTANCE, DBContentType.CODE_BODY)
+            new DDLFileType(DDLFileTypeId.VIEW, "DDL File - View", "vw", SQLFileType.INSTANCE, CODE),
+            new DDLFileType(DDLFileTypeId.TRIGGER, "DDL File - Trigger", "trg", PSQLFileType.INSTANCE, CODE),
+            new DDLFileType(DDLFileTypeId.PROCEDURE, "DDL File - Procedure", "prc", PSQLFileType.INSTANCE, CODE),
+            new DDLFileType(DDLFileTypeId.FUNCTION, "DDL File - Function", "fnc", PSQLFileType.INSTANCE, CODE),
+            new DDLFileType(DDLFileTypeId.PACKAGE, "DDL File - Package", "pkg", PSQLFileType.INSTANCE, CODE_SPEC_AND_BODY),
+            new DDLFileType(DDLFileTypeId.PACKAGE_SPEC, "DDL File - Package Spec", "pks", PSQLFileType.INSTANCE, CODE_SPEC),
+            new DDLFileType(DDLFileTypeId.PACKAGE_BODY, "DDL File - Package Body", "pkb", PSQLFileType.INSTANCE, CODE_BODY),
+            new DDLFileType(DDLFileTypeId.TYPE, "DDL File - Type", "tpe", PSQLFileType.INSTANCE, CODE_SPEC_AND_BODY),
+            new DDLFileType(DDLFileTypeId.TYPE_SPEC, "DDL File - Type Spec", "tps", PSQLFileType.INSTANCE, CODE_SPEC),
+            new DDLFileType(DDLFileTypeId.TYPE_BODY, "DDL File - Type Body", "tpb", PSQLFileType.INSTANCE, CODE_BODY)
     );
 
     DDLFileExtensionSettings(DDLFileSettings parent) {

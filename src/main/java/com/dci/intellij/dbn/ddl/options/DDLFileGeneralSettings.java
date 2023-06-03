@@ -3,7 +3,6 @@ package com.dci.intellij.dbn.ddl.options;
 import com.dci.intellij.dbn.common.options.BasicProjectConfiguration;
 import com.dci.intellij.dbn.common.options.setting.BooleanSetting;
 import com.dci.intellij.dbn.ddl.options.ui.DDLFileGeneralSettingsForm;
-import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
 import org.jdom.Element;
@@ -11,7 +10,6 @@ import org.jetbrains.annotations.NotNull;
 
 @Getter
 @Setter
-@EqualsAndHashCode(callSuper = false)
 public class DDLFileGeneralSettings extends BasicProjectConfiguration<DDLFileSettings, DDLFileGeneralSettingsForm> {
     private final BooleanSetting ddlFilesLookupEnabled = new BooleanSetting("lookup-ddl-files", true);
     private final BooleanSetting ddlFilesCreationEnabled = new BooleanSetting("create-ddl-files", false);
