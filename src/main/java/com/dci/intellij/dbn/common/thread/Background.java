@@ -9,6 +9,7 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.RejectedExecutionException;
 import java.util.concurrent.atomic.AtomicReference;
 
+import static com.dci.intellij.dbn.common.dispose.Failsafe.conditionallyLog;
 import static com.dci.intellij.dbn.common.thread.ThreadProperty.BACKGROUND;
 
 @Slf4j
@@ -29,7 +30,8 @@ public final class Background {
                             threadInfo,
                             BACKGROUND,
                             runnable);
-                } catch (ProcessCanceledException | UnsupportedOperationException | InterruptedException ignore) {
+                } catch (ProcessCanceledException | UnsupportedOperationException | InterruptedException e) {
+                    conditionallyLog(e);
                 } catch (Throwable e) {
                     log.error("Error executing background task", e);
                 }
@@ -60,7 +62,8 @@ public final class Background {
                     } finally {
                         handle.set(null);
                     }
-                } catch (ProcessCanceledException | UnsupportedOperationException | InterruptedException ignore) {
+                } catch (ProcessCanceledException | UnsupportedOperationException | InterruptedException e) {
+                    conditionallyLog(e);
                 } catch (Throwable e) {
                     log.error("Error executing background task", e);
                 }

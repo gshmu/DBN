@@ -7,6 +7,8 @@ import com.dci.intellij.dbn.common.routine.ThrowableRunnable;
 import com.intellij.openapi.progress.ProcessCanceledException;
 import lombok.extern.slf4j.Slf4j;
 
+import static com.dci.intellij.dbn.common.dispose.Failsafe.conditionallyLog;
+
 @Slf4j
 public final class Unsafe {
     public Unsafe() {}
@@ -52,7 +54,8 @@ public final class Unsafe {
     public static void warned(ThrowableRunnable<Throwable> runnable) {
         try {
             runnable.run();
-        } catch (ProcessCanceledException ignore) {
+        } catch (ProcessCanceledException e) {
+            conditionallyLog(e);
         } catch (Throwable t) {
             String message = t.getMessage();
             log.warn(message == null ? t.getClass().getSimpleName() : message);
@@ -62,7 +65,8 @@ public final class Unsafe {
     public static <T> T warned(T defaultValue, ThrowableCallable<T, Throwable> callable) {
         try {
             return callable.call();
-        } catch (ProcessCanceledException ignore) {
+        } catch (ProcessCanceledException e) {
+            conditionallyLog(e);
         } catch (Throwable t) {
             String message = t.getMessage();
             log.warn(message == null ? t.getClass().getSimpleName() : message);

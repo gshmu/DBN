@@ -33,6 +33,7 @@ import javax.swing.*;
 import java.util.Set;
 import java.util.function.Consumer;
 
+import static com.dci.intellij.dbn.common.dispose.Failsafe.conditionallyLog;
 import static com.dci.intellij.dbn.common.dispose.Failsafe.guarded;
 import static com.dci.intellij.dbn.common.util.Commons.nvl;
 
@@ -537,6 +538,7 @@ public abstract class IdentifierPsiElement extends LeafPsiElement<IdentifierElem
                     }
                 }
             } catch (ProcessCanceledException e){
+                conditionallyLog(e);
                 cancelled = true;
             } finally {
                 ref.postResolve(cancelled);

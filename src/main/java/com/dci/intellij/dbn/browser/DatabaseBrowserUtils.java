@@ -13,6 +13,8 @@ import javax.swing.tree.TreePath;
 import java.util.ArrayList;
 import java.util.List;
 
+import static com.dci.intellij.dbn.common.dispose.Failsafe.conditionallyLog;
+
 public class DatabaseBrowserUtils {
     @Nullable
     public static TreePath createTreePath(@NotNull BrowserTreeNode treeNode) {
@@ -37,6 +39,7 @@ public class DatabaseBrowserUtils {
             }
             return new TreePath(path);
         } catch (IllegalArgumentException | IllegalStateException | ProcessCanceledException e) {
+            conditionallyLog(e);
             // workaround for TreePath "Path elements must be non-null"
             return null;
         }

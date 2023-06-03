@@ -19,6 +19,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
+import static com.dci.intellij.dbn.common.dispose.Failsafe.conditionallyLog;
 import static com.dci.intellij.dbn.common.util.TimeUtil.isOlderThan;
 
 @Slf4j
@@ -198,7 +199,8 @@ public final class ConnectionPool extends StatefulDisposableBase implements Noti
             } finally {
                 status.set(ConnectionHandlerStatus.CLEANING, false);
             }
-        } catch (ProcessCanceledException ignore) {
+        } catch (ProcessCanceledException e) {
+            conditionallyLog(e);
         } catch (Exception e) {
             log.error("Failed to clean connection pool", e);
         }
