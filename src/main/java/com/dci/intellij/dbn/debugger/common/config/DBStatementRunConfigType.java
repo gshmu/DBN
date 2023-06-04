@@ -4,13 +4,15 @@ import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.debugger.DBDebuggerType;
 import com.dci.intellij.dbn.debugger.jdbc.config.DBStatementJdbcRunConfigFactory;
 import com.dci.intellij.dbn.debugger.jdwp.config.DBStatementJdwpRunConfigFactory;
+import lombok.Getter;
 import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
 
+@Getter
 public class DBStatementRunConfigType extends DBRunConfigType<DBStatementRunConfigFactory> {
     public static final String DEFAULT_RUNNER_NAME = "DB Statement Runner";
-    private DBStatementRunConfigFactory[] configurationFactories = new DBStatementRunConfigFactory[]{
+    private final DBStatementRunConfigFactory[] configurationFactories = new DBStatementRunConfigFactory[]{
             new DBStatementJdbcRunConfigFactory(this),
             new DBStatementJdwpRunConfigFactory(this)};
 
@@ -35,11 +37,6 @@ public class DBStatementRunConfigType extends DBRunConfigType<DBStatementRunConf
     @NotNull
     public String getId() {
         return "DBNStatementRunConfiguration";
-    }
-
-    @Override
-    public DBStatementRunConfigFactory[] getConfigurationFactories() {
-        return configurationFactories;
     }
 
     @Override
