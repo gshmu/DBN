@@ -4,13 +4,16 @@ import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.debugger.DBDebuggerType;
 import com.dci.intellij.dbn.debugger.jdbc.config.DBMethodJdbcRunConfigFactory;
 import com.dci.intellij.dbn.debugger.jdwp.config.DBMethodJdwpRunConfigFactory;
+import lombok.Getter;
 import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
 
+@Getter
 public class DBMethodRunConfigType extends DBRunConfigType<DBMethodRunConfigFactory> {
     public static final String DEFAULT_RUNNER_NAME = "DB Method Runner";
-    private DBMethodRunConfigFactory[] configurationFactories = new DBMethodRunConfigFactory[]{
+
+    private final DBMethodRunConfigFactory[] configurationFactories = new DBMethodRunConfigFactory[]{
             new DBMethodJdbcRunConfigFactory(this),
             new DBMethodJdwpRunConfigFactory(this)};
 
@@ -35,11 +38,6 @@ public class DBMethodRunConfigType extends DBRunConfigType<DBMethodRunConfigFact
     @NotNull
     public String getId() {
         return "DBNMethodRunConfiguration";
-    }
-
-    @Override
-    public DBMethodRunConfigFactory[] getConfigurationFactories() {
-        return configurationFactories;
     }
 
     @Override

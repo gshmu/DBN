@@ -1,8 +1,11 @@
 package com.dci.intellij.dbn.plugin;
 
 import com.dci.intellij.dbn.common.file.FileTypeService;
+import com.dci.intellij.dbn.debugger.ExecutionConfigManager;
 import com.intellij.ide.plugins.IdeaPluginDescriptor;
 import com.intellij.ide.plugins.PluginStateListener;
+import com.intellij.openapi.project.Project;
+import com.intellij.openapi.project.ProjectManager;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Objects;
@@ -20,6 +23,12 @@ public class DBNPluginStateListener implements PluginStateListener {
             // bye bye...
             FileTypeService fileTypeService = FileTypeService.getInstance();
             fileTypeService.restoreFileTypeAssociations();
+
+            Project[] projects = ProjectManager.getInstance().getOpenProjects();
+            for (Project project : projects) {
+                ExecutionConfigManager executionConfigManager = ExecutionConfigManager.getInstance(project);
+                executionConfigManager.removeRunConfigurations();
+            }
         }
     }
 }
