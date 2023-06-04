@@ -1,7 +1,7 @@
 package com.dci.intellij.dbn.debugger.jdwp.config;
 
 import com.dci.intellij.dbn.debugger.DBDebuggerType;
-import com.dci.intellij.dbn.debugger.DatabaseDebuggerManager;
+import com.dci.intellij.dbn.debugger.ExecutionConfigManager;
 import com.dci.intellij.dbn.debugger.common.config.DBMethodRunConfigFactory;
 import com.dci.intellij.dbn.debugger.common.config.DBMethodRunConfigType;
 import com.dci.intellij.dbn.debugger.common.config.DBRunConfigCategory;
@@ -30,10 +30,12 @@ public class DBMethodJdwpRunConfigFactory extends DBMethodRunConfigFactory<DBMet
 
     @Override
     public DBMethodJdwpRunConfig createConfiguration(DBMethod method) {
-        String name = DatabaseDebuggerManager.createMethodConfigurationName(method);
+        Project project = method.getProject();
+        ExecutionConfigManager executionConfigManager = ExecutionConfigManager.getInstance(project);
+        String name = executionConfigManager.createMethodConfigurationName(method);
         name = name + " (JDWP)";
-        DBMethodJdwpRunConfig runConfiguration = new DBMethodJdwpRunConfig(method.getProject(), this, name, DBRunConfigCategory.CUSTOM);
-        MethodExecutionManager executionManager = MethodExecutionManager.getInstance(method.getProject());
+        DBMethodJdwpRunConfig runConfiguration = new DBMethodJdwpRunConfig(project, this, name, DBRunConfigCategory.CUSTOM);
+        MethodExecutionManager executionManager = MethodExecutionManager.getInstance(project);
         MethodExecutionInput executionInput = executionManager.getExecutionInput(method);
         runConfiguration.setExecutionInput(executionInput);
         return runConfiguration;

@@ -274,6 +274,7 @@
         <projectService serviceImplementation="com.dci.intellij.dbn.code.common.style.DBLCodeStyleManager"/>
         <projectService serviceImplementation="com.dci.intellij.dbn.data.export.DataExportManager"/>
         <projectService serviceImplementation="com.dci.intellij.dbn.debugger.DatabaseDebuggerManager"/>
+        <projectService serviceImplementation="com.dci.intellij.dbn.debugger.ExecutionConfigManager"/>
         <projectService serviceImplementation="com.dci.intellij.dbn.ddl.DDLManager"/>
         <projectService serviceImplementation="com.dci.intellij.dbn.ddl.DDLFileManager"/>
         <projectService serviceImplementation="com.dci.intellij.dbn.ddl.DDLFileAttachmentManager"/>

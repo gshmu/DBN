@@ -1,7 +1,7 @@
 package com.dci.intellij.dbn.debugger.jdbc.config;
 
 import com.dci.intellij.dbn.debugger.DBDebuggerType;
-import com.dci.intellij.dbn.debugger.DatabaseDebuggerManager;
+import com.dci.intellij.dbn.debugger.ExecutionConfigManager;
 import com.dci.intellij.dbn.debugger.common.config.DBMethodRunConfigFactory;
 import com.dci.intellij.dbn.debugger.common.config.DBMethodRunConfigType;
 import com.dci.intellij.dbn.debugger.common.config.DBRunConfigCategory;
@@ -30,9 +30,12 @@ public class DBMethodJdbcRunConfigFactory extends DBMethodRunConfigFactory<DBMet
 
     @Override
     public DBMethodJdbcRunConfig createConfiguration(DBMethod method) {
-        String name = DatabaseDebuggerManager.createMethodConfigurationName(method);
-        DBMethodJdbcRunConfig runConfiguration = new DBMethodJdbcRunConfig(method.getProject(), this, name, DBRunConfigCategory.CUSTOM);
-        MethodExecutionManager executionManager = MethodExecutionManager.getInstance(method.getProject());
+        Project project = method.getProject();
+        ExecutionConfigManager executionConfigManager = ExecutionConfigManager.getInstance(project);
+        String name = executionConfigManager.createMethodConfigurationName(method);
+
+        DBMethodJdbcRunConfig runConfiguration = new DBMethodJdbcRunConfig(project, this, name, DBRunConfigCategory.CUSTOM);
+        MethodExecutionManager executionManager = MethodExecutionManager.getInstance(project);
         MethodExecutionInput executionInput = executionManager.getExecutionInput(method);
         runConfiguration.setExecutionInput(executionInput);
         return runConfiguration;

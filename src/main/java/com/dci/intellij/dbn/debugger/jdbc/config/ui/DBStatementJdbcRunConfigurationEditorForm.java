@@ -1,7 +1,7 @@
 package com.dci.intellij.dbn.debugger.jdbc.config.ui;
 
 import com.dci.intellij.dbn.common.ui.form.DBNHintForm;
-import com.dci.intellij.dbn.debugger.DatabaseDebuggerManager;
+import com.dci.intellij.dbn.debugger.ExecutionConfigManager;
 import com.dci.intellij.dbn.debugger.common.config.DBRunConfigCategory;
 import com.dci.intellij.dbn.debugger.common.config.ui.DBProgramRunConfigurationEditorForm;
 import com.dci.intellij.dbn.debugger.jdbc.config.DBStatementJdbcRunConfig;
@@ -19,7 +19,7 @@ public class DBStatementJdbcRunConfigurationEditorForm extends DBProgramRunConfi
         super(configuration.getProject());
         if (configuration.getCategory() != DBRunConfigCategory.CUSTOM) {
             headerPanel.setVisible(false);
-            DBNHintForm hintForm = new DBNHintForm(this, DatabaseDebuggerManager.GENERIC_STATEMENT_RUNNER_HINT, null, true);
+            DBNHintForm hintForm = new DBNHintForm(this, ExecutionConfigManager.GENERIC_STATEMENT_RUNNER_HINT, null, true);
             hintPanel.setVisible(true);
             hintPanel.add(hintForm.getComponent());
         } else {
