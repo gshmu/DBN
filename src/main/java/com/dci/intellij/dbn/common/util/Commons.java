@@ -1,5 +1,7 @@
 package com.dci.intellij.dbn.common.util;
 
+import com.dci.intellij.dbn.common.routine.ParametricCallable;
+import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -27,6 +29,19 @@ public final class Commons {
     public static <T> T coalesce(Supplier<T>... suppliers) {
         for (Supplier<T> supplier : suppliers) {
             T value = guarded(null, supplier, s -> s.get());
+            if (value != null) {
+                return value;
+            }
+        }
+        return null;
+    }
+
+    @SneakyThrows
+    @SafeVarargs
+    @Nullable
+    public static <T, P> T coalesce(P param, ParametricCallable<P, T, Throwable>... suppliers) {
+        for (ParametricCallable<P, T, Throwable> supplier : suppliers) {
+            T value = guarded(null, supplier, s -> s.call(param));
             if (value != null) {
                 return value;
             }

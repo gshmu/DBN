@@ -55,8 +55,9 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.concurrent.ConcurrentHashMap;
 
+import static com.dci.intellij.dbn.common.util.Commons.coalesce;
 import static com.dci.intellij.dbn.common.util.TimeUtil.isOlderThan;
-import static com.intellij.openapi.util.text.StringUtil.isNotEmpty;
+import static com.intellij.openapi.util.text.StringUtil.isEmpty;
 import static java.util.concurrent.TimeUnit.MINUTES;
 
 @Slf4j
@@ -413,22 +414,24 @@ public class ConnectionHandlerImpl extends StatefulDisposableBase implements Con
         return null;
     }
 
+    @Nullable
+    private SchemaId getDatabaseSchema() {
+        String databaseName = getSettings().getDatabaseSettings().getDatabaseInfo().getDatabase();
+        return isEmpty(databaseName) ? null : SchemaId.get(databaseName);
+    }
+
+    @Nullable
+    private SchemaId getFirstSchema() {
+        List<DBSchema> schemas = getObjectBundle().getSchemas();
+        return schemas.isEmpty() ? null : SchemaId.from(schemas.get(0));
+    }
+
     @Override
     public SchemaId getDefaultSchema() {
-        SchemaId schemaId = getUserSchema();
-        if (schemaId == null) {
-            String databaseName = getSettings().getDatabaseSettings().getDatabaseInfo().getDatabase();
-            if (isNotEmpty(databaseName)) {
-                schemaId = SchemaId.get(databaseName);
-            }
-            if (schemaId == null) {
-                List<DBSchema> schemas = getObjectBundle().getSchemas();
-                if (!schemas.isEmpty()) {
-                    schemaId = SchemaId.from(schemas.get(0));
-                }
-            }
-        }
-        return schemaId;
+        return coalesce(this,
+                c -> c.getUserSchema(),
+                c -> c.getDatabaseSchema(),
+                c -> c.getFirstSchema());
     }
 
     @NotNull

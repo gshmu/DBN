@@ -2,6 +2,7 @@ package com.dci.intellij.dbn;
 
 import com.dci.intellij.dbn.common.component.ApplicationComponentBase;
 import com.dci.intellij.dbn.common.component.PersistentState;
+import com.dci.intellij.dbn.common.file.FileTypeService;
 import com.dci.intellij.dbn.diagnostics.Diagnostics;
 import com.dci.intellij.dbn.plugin.DBNPluginStateListener;
 import com.intellij.ide.plugins.PluginStateManager;
@@ -38,6 +39,9 @@ public class DatabaseNavigator extends ApplicationComponentBase implements Persi
         super(COMPONENT_NAME);
         PluginStateManager.addStateListener(new DBNPluginStateListener());
         //new NotificationGroup("Database Navigator", NotificationDisplayType.TOOL_WINDOW, true, ExecutionManager.TOOL_WINDOW_ID);
+
+        FileTypeService.getInstance();
+
     }
 
 /*

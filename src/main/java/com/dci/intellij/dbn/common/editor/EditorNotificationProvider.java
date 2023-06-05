@@ -5,11 +5,14 @@ import com.dci.intellij.dbn.common.thread.Dispatch;
 import com.dci.intellij.dbn.common.util.Editors;
 import com.dci.intellij.dbn.vfs.file.DBContentVirtualFile;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.ui.EditorNotifications;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-public abstract class EditorNotificationProvider<T extends EditorNotificationPanel> extends LegacyEditorNotificationsProvider<T> {
+import javax.swing.*;
+
+public abstract class EditorNotificationProvider<T extends JComponent> extends LegacyEditorNotificationsProvider<T> {
 
     public EditorNotificationProvider() {}
 
@@ -27,5 +30,15 @@ public abstract class EditorNotificationProvider<T extends EditorNotificationPan
                 notifications.updateNotifications(databaseContentFile.getMainDatabaseFile());
             }
         });
+    }
+
+    @Override
+    public boolean isWritable(@NotNull VirtualFile file) {
+        return true;
+    }
+
+    @Override
+    public boolean isNotWritable(@NotNull VirtualFile file) {
+        return false;
     }
 }
