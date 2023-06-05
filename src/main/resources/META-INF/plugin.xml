@@ -534,6 +534,11 @@
             <action id="DBNavigator.Actions.Browser.OpenSettings" class="com.dci.intellij.dbn.browser.action.BrowserOptionsAction" text="Browser - Options"/>
         </group>
     </actions>
+    <projectListeners>
+        <listener topic="com.intellij.openapi.fileEditor.FileEditorManagerListener" class="com.dci.intellij.dbn.editor.code.SourceCodeEditorListener"/>
+        <listener topic="com.intellij.openapi.fileEditor.FileEditorManagerListener" class="com.dci.intellij.dbn.editor.console.SQLConsoleEditorListener"/>
+        <listener topic="com.intellij.openapi.fileEditor.FileEditorManagerListener" class="com.dci.intellij.dbn.language.editor.DBLanguageFileEditorListener"/>
+    </projectListeners>
     <extensions defaultExtensionNs="com.intellij">
         <notificationGroup id="DBNavigator.NotificationGroup" displayType="BALLOON" key="DBNavigator"/>
         <postStartupActivity implementation="com.dci.intellij.dbn.project.ProjectWorkspaceInitializer" order="last"/>
@@ -556,7 +561,7 @@
         <toolWindow id="DB Diagnostics" icon="/img/window/DatabaseDiagnostics.png" anchor="bottom" factoryClass="com.dci.intellij.dbn.diagnostics.DiagnosticsToolWindowFactory" canCloseContents="true"/>
         <toolWindow id="DB Execution Console" icon="/img/window/ExecutionConsole.png" anchor="bottom" factoryClass="com.dci.intellij.dbn.execution.ExecutionConsoleToolWindowFactory" />
 
-        <fileType name="DBN-SQL" language="DBN-SQL" implementationClass="com.dci.intellij.dbn.language.sql.SQLFileType" fieldName="INSTANCE" extensions="sql;vw"/>
+        <fileType name="DBN-SQL" language="DBN-SQL" implementationClass="com.dci.intellij.dbn.language.sql.SQLFileType" fieldName="INSTANCE" extensions="sql;ddl;vw"/>
         <fileType name="DBN-PSQL" language="DBN-PSQL" implementationClass="com.dci.intellij.dbn.language.psql.PSQLFileType" fieldName="INSTANCE" extensions="psql;plsql;trg;prc;fnc;pkg;pks;pkb;tpe;tps;tpb"/>
 
         <fileIconProvider order="last" implementation="com.dci.intellij.dbn.vfs.DBFileIconProvider"/>
@@ -641,6 +646,7 @@
         <fileEditorProvider implementation="com.dci.intellij.dbn.editor.session.SessionBrowserEditorProvider"/>
         <fileEditorProvider implementation="com.dci.intellij.dbn.editor.code.SourceCodeSpecEditorProvider"/>
         <fileEditorProvider implementation="com.dci.intellij.dbn.editor.console.SQLConsoleEditorProvider"/>
+        <!--<fileEditorProvider implementation="com.dci.intellij.dbn.common.editor.SQLFileTextEditorProvider"/>-->
 
         <editorNotificationProvider implementation="com.dci.intellij.dbn.ddl.DDLMappedNotificationProvider"/>
         <editorNotificationProvider implementation="com.dci.intellij.dbn.editor.code.SourceCodeEditorNotificationProvider"/>

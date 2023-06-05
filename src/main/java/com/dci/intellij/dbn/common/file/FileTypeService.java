@@ -3,14 +3,16 @@ package com.dci.intellij.dbn.common.file;
 import com.dci.intellij.dbn.DatabaseNavigator;
 import com.dci.intellij.dbn.common.component.ApplicationComponentBase;
 import com.dci.intellij.dbn.common.component.PersistentState;
+import com.dci.intellij.dbn.common.event.ApplicationEvents;
 import com.dci.intellij.dbn.common.thread.Write;
+import com.dci.intellij.dbn.common.util.Commons;
 import com.dci.intellij.dbn.language.common.DBLanguageFileType;
+import com.dci.intellij.dbn.language.psql.PSQLFileType;
 import com.dci.intellij.dbn.language.sql.SQLFileType;
 import com.intellij.openapi.components.State;
 import com.intellij.openapi.components.Storage;
-import com.intellij.openapi.fileTypes.FileNameMatcher;
 import com.intellij.openapi.fileTypes.FileType;
-import com.intellij.openapi.fileTypes.FileTypeManager;
+import com.intellij.openapi.fileTypes.*;
 import org.jdom.Element;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -33,62 +35,93 @@ public class FileTypeService extends ApplicationComponentBase implements Persist
 
     public FileTypeService() {
         super(COMPONENT_NAME);
+        ApplicationEvents.subscribe(this, FileTypeManager.TOPIC, createFileTypeListener());
     }
 
     public static FileTypeService getInstance() {
         return applicationService(FileTypeService.class);
     }
 
-    public final void associateExtension(@NotNull FileType fileType, @NotNull String extension) {
-        Write.run(() -> {
-            FileTypeManager fileTypeManager = FileTypeManager.getInstance();
-            FileType currentFileType = fileTypeManager.getFileTypeByExtension(extension);
-            if (currentFileType == fileType) return;
+    public final void associateExtension(@NotNull DBLanguageFileType fileType, @NotNull String extension) {
+        FileType currentFileType = getCurrentFileType(extension);
+        if (currentFileType == fileType) return;
 
-            if (!DBLanguageFileType.matches(currentFileType)) {
-                originalFileAssociations.put(extension, currentFileType.getName());
+        if (!Commons.isOneOf(currentFileType,
+                UnknownFileType.INSTANCE,
+                SQLFileType.INSTANCE,
+                PSQLFileType.INSTANCE)) {
+
+            originalFileAssociations.put(extension, currentFileType.getName());
+        }
+
+        dissociate(currentFileType, extension);
+        associate(fileType, extension);
+    }
+
+    @NotNull
+    private FileTypeListener createFileTypeListener() {
+        return new FileTypeListener() {
+            @Override
+            public void beforeFileTypesChanged(@NotNull FileTypeEvent event) {
+                captureFileAssociations(SQLFileType.INSTANCE);
+                captureFileAssociations(PSQLFileType.INSTANCE);
             }
-
-            fileTypeManager.removeAssociatedExtension(currentFileType, extension);
-            fileTypeManager.associateExtension(fileType, extension);
-        });
+        };
     }
 
-    public void restoreFileTypeAssociations() {
-        Write.run(() -> {
-            fileTypesClaimed = false;
-            FileTypeManager fileTypeManager = FileTypeManager.getInstance();
-            for (String fileExtension : originalFileAssociations.keySet()) {
-                String fileTypeName = originalFileAssociations.get(fileExtension);
-                FileType fileType = getFileType(fileTypeName);
-                if (fileType == null) continue;
+    private void captureFileAssociations(DBLanguageFileType fileType) {
+        String[] extensions = fileType.getSupportedExtensions();
+        for (String extension : extensions) {
+            FileType currentFileType = getCurrentFileType(extension);
+            if (Commons.isOneOf(currentFileType,
+                    UnknownFileType.INSTANCE,
+                    SQLFileType.INSTANCE,
+                    PSQLFileType.INSTANCE)) continue;
 
-                fileTypeManager.associateExtension(fileType, fileExtension);
-            }
-
-
-            restoreFileTypes();
-        });
-    }
-
-    private void claimFileTypes() {
-        if (fileTypesClaimed) return;
-
-        // do not overwrite file associations once claimed and reverted by user
-        associateExtension(SQLFileType.INSTANCE, "sql");
-        associateExtension(SQLFileType.INSTANCE, "ddl");
-        fileTypesClaimed = true;
-    }
-
-    private void restoreFileTypes() {
-        FileTypeManager fileTypeManager = FileTypeManager.getInstance();
-        FileType originalSqlFileType = getFileType("SQL");
-        if (originalSqlFileType != null) {
-            fileTypeManager.associateExtension(originalSqlFileType, "sql");
-            fileTypeManager.associateExtension(originalSqlFileType, "ddl");
+            originalFileAssociations.put(extension, currentFileType.getName());
         }
     }
 
+    private void claimFileAssociations(DBLanguageFileType fileType) {
+        String[] extensions = fileType.getSupportedExtensions();
+        for (String extension : extensions) {
+            associateExtension(fileType, extension);
+        }
+    }
+
+    public void restoreFileAssociations() {
+        fileTypesClaimed = false;
+
+        for (String fileExtension : originalFileAssociations.keySet()) {
+            String fileTypeName = originalFileAssociations.get(fileExtension);
+            FileType fileType = getFileType(fileTypeName);
+            if (fileType == null) continue;
+
+            associate(fileType, fileExtension);
+        }
+
+        FileType originalSqlFileType = getFileType("SQL");
+        if (originalSqlFileType != null) {
+            if (getCurrentFileType("sql") instanceof DBLanguageFileType) associate(originalSqlFileType, "sql");
+            if (getCurrentFileType("ddl") instanceof DBLanguageFileType) associate(originalSqlFileType, "ddl");
+        }
+    }
+
+    private static void associate(FileType fileType, String extension) {
+        FileType currentFileType = getCurrentFileType(extension);
+        if (currentFileType == fileType) return;
+
+        Write.run(() -> FileTypeManager.getInstance().associateExtension(fileType, extension));
+    }
+
+    private static void dissociate(FileType fileType, String fileExtension) {
+        Write.run(() -> FileTypeManager.getInstance().removeAssociatedExtension(fileType, fileExtension));
+    }
+
+    @NotNull
+    private static FileType getCurrentFileType(String extension) {
+        return FileTypeManager.getInstance().getFileTypeByExtension(extension);
+    }
 
     @Override
     public Element getComponentState() {
@@ -118,8 +151,15 @@ public class FileTypeService extends ApplicationComponentBase implements Persist
             originalFileAssociations.put(fileExtension, fileType);
         }
         fileTypesClaimed = getBoolean(stateElement, "file-types-claimed", false);
+    }
 
-        claimFileTypes();
+    @Override
+    public void initializeComponent() {
+        // TODO prompt
+        if (fileTypesClaimed) return;
+        fileTypesClaimed = true;
+        claimFileAssociations(SQLFileType.INSTANCE);
+        claimFileAssociations(PSQLFileType.INSTANCE);
     }
 
     @Nullable
