@@ -1,50 +1,42 @@
 package com.dci.intellij.dbn.language.common;
 
+import com.dci.intellij.dbn.common.util.Strings;
 import com.dci.intellij.dbn.editor.DBContentType;
 import com.dci.intellij.dbn.vfs.file.DBConsoleVirtualFile;
 import com.dci.intellij.dbn.vfs.file.DBEditableObjectVirtualFile;
 import com.dci.intellij.dbn.vfs.file.DBSourceCodeVirtualFile;
 import com.intellij.lang.Language;
-import com.intellij.openapi.fileTypes.FileType;
-import com.intellij.openapi.fileTypes.FileTypeManager;
 import com.intellij.openapi.fileTypes.LanguageFileType;
 import com.intellij.openapi.fileTypes.ex.FileTypeIdentifiableByVirtualFile;
 import com.intellij.openapi.vfs.VirtualFile;
 import lombok.Getter;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.Objects;
+import java.util.Arrays;
 
 @Getter
 public abstract class DBLanguageFileType extends LanguageFileType implements FileTypeIdentifiableByVirtualFile {
-    protected String extension;
-    protected String description;
-    protected DBContentType contentType;
+    private final String defaultExtension;
+    private final String[] supportedExtensions;
+    private final String description;
+    private final DBContentType contentType;
 
     public DBLanguageFileType(
             @NotNull Language language,
-            @NotNull String extension,
+            @NotNull String[] supportedExtensions,
             @NotNull String description,
             @NotNull DBContentType contentType) {
         super(language);
-        this.extension = extension;
+        this.supportedExtensions = supportedExtensions;
+        this.defaultExtension = supportedExtensions[0];
         this.description = description;
         this.contentType = contentType;
     }
 
-    public void setExtension(String extension) {
-        if (!Objects.equals(this.extension, extension)) {
-            FileTypeManager fileTypeManager = FileTypeManager.getInstance();
-            fileTypeManager.removeAssociatedExtension(this, this.extension);
-            this.extension = extension;
-            fileTypeManager.associateExtension(this, extension);
-        }
-    }
-
     @Override
     @NotNull
-    public String getDefaultExtension() {
-        return extension;
+    public String getName() {
+        return getLanguage().getID();
     }
 
     @Override
@@ -61,8 +53,12 @@ public abstract class DBLanguageFileType extends LanguageFileType implements Fil
         return false;
     }
 
-    public static boolean matches(FileType fileType) {
-        return fileType instanceof DBLanguageFileType;
+    @Override
+    public String toString() {
+        return getLanguage().getID();
     }
 
+    public boolean isSupported(String extension) {
+        return Arrays.stream(supportedExtensions).anyMatch(e -> Strings.equalsIgnoreCase(e, extension));
+    }
 }

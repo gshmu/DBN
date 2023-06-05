@@ -22,7 +22,7 @@ public class DBNPluginStateListener implements PluginStateListener {
         if (Objects.equals(descriptor.getPluginId(), DBN_PLUGIN_ID)) {
             // bye bye...
             FileTypeService fileTypeService = FileTypeService.getInstance();
-            fileTypeService.restoreFileTypeAssociations();
+            fileTypeService.restoreFileAssociations();
 
             Project[] projects = ProjectManager.getInstance().getOpenProjects();
             for (Project project : projects) {

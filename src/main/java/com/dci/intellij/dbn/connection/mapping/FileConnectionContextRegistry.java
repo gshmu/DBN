@@ -21,10 +21,7 @@ import lombok.Getter;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Function;
 
@@ -47,7 +44,7 @@ public class FileConnectionContextRegistry extends StatefulDisposableBase implem
 
     @Override
     public void connectionRemoved(ConnectionId connectionId) {
-
+        removeMappings(connectionId);
     }
 
     public boolean setConnectionHandler(@NotNull VirtualFile file, @Nullable ConnectionHandler connection) {
@@ -224,15 +221,9 @@ public class FileConnectionContextRegistry extends StatefulDisposableBase implem
                 continue;
             }
 
-            if (context.getConnection() == null) {
-                mappings.remove(url);
-                continue;
-            }
-
             FileConnectionContext parentContext = getFileConnectionContext(file.getParent());
             if (parentContext != null && parentContext.isSameAs(context)) {
                 mappings.remove(url);
-                continue;
             }
         }
     }
@@ -243,6 +234,15 @@ public class FileConnectionContextRegistry extends StatefulDisposableBase implem
         file.putUserData(FILE_CONNECTION_MAPPING, null);
 
         return context != null || localMapping != null;
+    }
+
+    public void removeMappings(ConnectionId connectionId) {
+        for (String url : mappings.keySet()) {
+            FileConnectionContext context = mappings.get(url);
+            if (Objects.equals(context.getConnectionId(), connectionId)) {
+                mappings.remove(url);
+            }
+        }
     }
 
     public List<VirtualFile> getMappedFiles(ConnectionHandler connection) {

@@ -9,13 +9,14 @@ public enum EditorProviderId {
     DDL1("4.DDL"),
     DDL2("5.DDL"),
     CONSOLE("0.CONSOLE"),
-    SESSION_BROWSER("0.SESSION_BROWSER");
+    SESSION_BROWSER("0.SESSION_BROWSER"),
+    DBN_SQL("2.DBN_SQL");
 
     EditorProviderId(String id) {
         this.id = id;
     }
 
-    private String id;
+    private final String id;
 
     public String getId() {
         return id;
