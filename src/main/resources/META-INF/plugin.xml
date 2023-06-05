@@ -247,6 +247,7 @@
 
     <extensions defaultExtensionNs="com.intellij">
         <applicationService serviceImplementation="com.dci.intellij.dbn.DatabaseNavigator"/>
+        <applicationService serviceImplementation="com.dci.intellij.dbn.plugin.PluginConflictManager"/>
         <applicationService serviceImplementation="com.dci.intellij.dbn.common.file.FileTypeService"/>
         <applicationService serviceImplementation="com.dci.intellij.dbn.driver.DatabaseDriverManager"/>
         <applicationService serviceImplementation="com.dci.intellij.dbn.connection.ssh.SshTunnelManager"/>

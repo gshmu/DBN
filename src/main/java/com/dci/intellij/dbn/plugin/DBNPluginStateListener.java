@@ -29,6 +29,9 @@ public class DBNPluginStateListener implements PluginStateListener {
                 ExecutionConfigManager executionConfigManager = ExecutionConfigManager.getInstance(project);
                 executionConfigManager.removeRunConfigurations();
             }
+
+            PluginConflictManager conflictManager = PluginConflictManager.getInstance();
+            conflictManager.setFileTypesClaimed(false);
         }
     }
 }

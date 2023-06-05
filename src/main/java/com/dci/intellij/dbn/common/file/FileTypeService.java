@@ -21,7 +21,7 @@ import java.util.*;
 
 import static com.dci.intellij.dbn.common.component.Components.applicationService;
 import static com.dci.intellij.dbn.common.file.FileTypeService.COMPONENT_NAME;
-import static com.dci.intellij.dbn.common.options.setting.SettingsSupport.*;
+import static com.dci.intellij.dbn.common.options.setting.SettingsSupport.stringAttribute;
 
 @State(
     name = COMPONENT_NAME,
@@ -31,9 +31,8 @@ public class FileTypeService extends ApplicationComponentBase implements Persist
     public static final String COMPONENT_NAME = "DBNavigator.Application.FileTypeService";
 
     private final Map<String, String> originalFileAssociations = new HashMap<>();
-    private boolean fileTypesClaimed;
 
-    public FileTypeService() {
+    private FileTypeService() {
         super(COMPONENT_NAME);
         ApplicationEvents.subscribe(this, FileTypeManager.TOPIC, createFileTypeListener());
     }
@@ -82,7 +81,7 @@ public class FileTypeService extends ApplicationComponentBase implements Persist
         }
     }
 
-    private void claimFileAssociations(DBLanguageFileType fileType) {
+    public void claimFileAssociations(DBLanguageFileType fileType) {
         String[] extensions = fileType.getSupportedExtensions();
         for (String extension : extensions) {
             associateExtension(fileType, extension);
@@ -90,8 +89,6 @@ public class FileTypeService extends ApplicationComponentBase implements Persist
     }
 
     public void restoreFileAssociations() {
-        fileTypesClaimed = false;
-
         for (String fileExtension : originalFileAssociations.keySet()) {
             String fileTypeName = originalFileAssociations.get(fileExtension);
             FileType fileType = getFileType(fileTypeName);
@@ -136,7 +133,6 @@ public class FileTypeService extends ApplicationComponentBase implements Persist
             mappingElement.setAttribute("file-type", fileType);
             mappingsElement.addContent(mappingElement);
         }
-        setBoolean(stateElement, "file-types-claimed", fileTypesClaimed);
         return stateElement;
     }
 
@@ -150,16 +146,6 @@ public class FileTypeService extends ApplicationComponentBase implements Persist
             String fileType = stringAttribute(mappingElement, "file-type");
             originalFileAssociations.put(fileExtension, fileType);
         }
-        fileTypesClaimed = getBoolean(stateElement, "file-types-claimed", false);
-    }
-
-    @Override
-    public void initializeComponent() {
-        // TODO prompt
-        if (fileTypesClaimed) return;
-        fileTypesClaimed = true;
-        claimFileAssociations(SQLFileType.INSTANCE);
-        claimFileAssociations(PSQLFileType.INSTANCE);
     }
 
     @Nullable
