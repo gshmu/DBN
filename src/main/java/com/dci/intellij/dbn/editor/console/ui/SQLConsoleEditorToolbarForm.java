@@ -10,8 +10,10 @@ import com.dci.intellij.dbn.connection.session.DatabaseSession;
 import com.dci.intellij.dbn.editor.console.SQLConsoleEditor;
 import com.dci.intellij.dbn.vfs.file.DBConsoleVirtualFile;
 import com.intellij.openapi.actionSystem.ActionToolbar;
+import com.intellij.openapi.actionSystem.PlatformDataKeys;
 import com.intellij.openapi.project.Project;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
 import java.awt.*;
@@ -33,6 +35,17 @@ public class SQLConsoleEditorToolbarForm extends DBNFormBase {
         DatabaseSession session = file.getSession();
         this.autoCommitLabel.init(project, file, connection, session);
         Disposer.register(this, autoCommitLabel);
+    }
+
+    @Nullable
+    @Override
+    public Object getData(@NotNull String dataId) {
+        SQLConsoleEditor fileEditor = ensureParentComponent();
+        if (PlatformDataKeys.VIRTUAL_FILE.is(dataId)) return fileEditor.getVirtualFile();
+        if (PlatformDataKeys.FILE_EDITOR.is(dataId))  return fileEditor;
+        if (PlatformDataKeys.EDITOR.is(dataId)) return fileEditor.getEditor();
+
+        return null;
     }
 
     @NotNull

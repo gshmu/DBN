@@ -8,11 +8,14 @@ import com.dci.intellij.dbn.common.util.Actions;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.mapping.FileConnectionContextManager;
 import com.dci.intellij.dbn.connection.session.DatabaseSession;
-import com.intellij.openapi.Disposable;
 import com.intellij.openapi.actionSystem.ActionToolbar;
+import com.intellij.openapi.actionSystem.PlatformDataKeys;
+import com.intellij.openapi.fileEditor.FileEditor;
+import com.intellij.openapi.fileEditor.impl.text.TextEditorImpl;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
 import java.awt.*;
@@ -22,8 +25,8 @@ public class DBLanguageFileEditorToolbarForm extends DBNFormBase {
     private JPanel actionsPanel;
     private AutoCommitLabel autoCommitLabel;
 
-    public DBLanguageFileEditorToolbarForm(Disposable parent, Project project, VirtualFile file) {
-        super(parent, project);
+    public DBLanguageFileEditorToolbarForm(FileEditor fileEditor, Project project, VirtualFile file) {
+        super(fileEditor, project);
         this.mainPanel.setBorder(Borders.insetBorder(2));
 
         ActionToolbar actionToolbar = Actions.createActionToolbar(actionsPanel,"", true, "DBNavigator.ActionGroup.FileEditor");
@@ -35,6 +38,18 @@ public class DBLanguageFileEditorToolbarForm extends DBNFormBase {
 
         this.autoCommitLabel.init(project, file, connection, databaseSession);
         Disposer.register(this, autoCommitLabel);
+    }
+
+    @Nullable
+    @Override
+    public Object getData(@NotNull String dataId) {
+        TextEditorImpl fileEditor = ensureParentComponent();
+
+        if (PlatformDataKeys.VIRTUAL_FILE.is(dataId)) return fileEditor.getFile();
+        if (PlatformDataKeys.FILE_EDITOR.is(dataId))  return fileEditor;
+        if (PlatformDataKeys.EDITOR.is(dataId)) return fileEditor.getEditor();
+
+        return null;
     }
 
     @NotNull
