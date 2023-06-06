@@ -2,7 +2,7 @@ package com.dci.intellij.dbn.editor.code;
 
 import com.dci.intellij.dbn.common.util.Editors;
 import com.dci.intellij.dbn.common.util.Files;
-import com.dci.intellij.dbn.editor.code.ui.SourceCodeEditorActionsPanel;
+import com.dci.intellij.dbn.editor.code.ui.SourceCodeEditorToolbarForm;
 import com.intellij.openapi.fileEditor.FileEditor;
 import com.intellij.openapi.fileEditor.FileEditorManager;
 import com.intellij.openapi.fileEditor.FileEditorManagerListener;
@@ -25,7 +25,7 @@ public class SourceCodeEditorListener implements FileEditorManagerListener{
         for (FileEditor fileEditor : fileEditors) {
             if (fileEditor instanceof SourceCodeEditor) {
                 SourceCodeEditor sourceCodeEditor = (SourceCodeEditor) fileEditor;
-                SourceCodeEditorActionsPanel actionsPanel = new SourceCodeEditorActionsPanel(sourceCodeEditor);
+                SourceCodeEditorToolbarForm actionsPanel = new SourceCodeEditorToolbarForm(sourceCodeEditor);
                 Editors.addEditorToolbar(fileEditor, actionsPanel);
             }
         }
