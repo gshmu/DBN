@@ -5,6 +5,7 @@ import com.dci.intellij.dbn.common.exception.ProcessDeferredException;
 import com.dci.intellij.dbn.common.thread.Dispatch;
 import com.dci.intellij.dbn.common.thread.Progress;
 import com.dci.intellij.dbn.common.util.Commons;
+import com.dci.intellij.dbn.common.util.Strings;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.ConnectionRef;
 import com.dci.intellij.dbn.connection.Resources;
@@ -50,6 +51,7 @@ import com.intellij.xdebugger.frame.XStackFrame;
 import com.intellij.xdebugger.frame.XSuspendContext;
 import com.intellij.xdebugger.impl.XDebugSessionImpl;
 import com.sun.jdi.Location;
+import lombok.extern.slf4j.Slf4j;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -60,6 +62,7 @@ import java.util.Objects;
 import static com.dci.intellij.dbn.debugger.common.process.DBDebugProcessStatus.*;
 import static com.intellij.debugger.impl.PrioritizedTask.Priority.LOW;
 
+@Slf4j
 public abstract class DBJdwpDebugProcess<T extends ExecutionInput>
         extends JavaDebugProcess
         implements DBDebugProcess {
@@ -70,10 +73,10 @@ public abstract class DBJdwpDebugProcess<T extends ExecutionInput>
     private final DBBreakpointHandler<DBJdwpDebugProcess>[] breakpointHandlers;
     private final DBDebugConsoleLogger console;
     private final String declaredBlockIdentifier;
-    protected DBNConnection targetConnection;
     private final int localTcpPort;
     private final String localTcpHost;
 
+    protected DBNConnection targetConnection;
     private transient XSuspendContext lastSuspendContext;
 
     protected DBJdwpDebugProcess(@NotNull final XDebugSession session, DebuggerSession debuggerSession, ConnectionHandler connection, String tcpHost, int tcpPort) {
@@ -414,13 +417,14 @@ public abstract class DBJdwpDebugProcess<T extends ExecutionInput>
     }
 
     public boolean isDeclaredBlock(@Nullable Location location) {
+        if (location == null) return false;
+        if (Strings.isEmptyOrSpaces(declaredBlockIdentifier)) return false;
+
         try {
-            if (location != null && declaredBlockIdentifier != null && declaredBlockIdentifier.length() > 0) {
-                String sourcePath = location.sourcePath();
-                return sourcePath.startsWith(declaredBlockIdentifier);
-            }
+            String sourcePath = location.sourcePath();
+            return sourcePath.startsWith(declaredBlockIdentifier);
         } catch (Exception e) {
-            e.printStackTrace();
+            log.warn("Failed to evaluate declared block", e);
         }
 
         return false;

@@ -473,7 +473,7 @@ public class DatasetEditorModel
             resultSetAdapter.cancelInsertRow();
             set(INSERTING, false);
         } catch (SQLException e) {
-            e.printStackTrace();
+            log.warn("Failed to cancel insert operation", e);
         }
     }
 

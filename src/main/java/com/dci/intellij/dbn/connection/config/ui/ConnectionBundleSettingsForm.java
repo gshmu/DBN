@@ -1,12 +1,16 @@
 package com.dci.intellij.dbn.connection.config.ui;
 
 import com.dci.intellij.dbn.common.action.DataKeys;
+import com.dci.intellij.dbn.common.clipboard.Clipboard;
 import com.dci.intellij.dbn.common.color.Colors;
 import com.dci.intellij.dbn.common.database.DatabaseInfo;
 import com.dci.intellij.dbn.common.dispose.DisposableContainers;
 import com.dci.intellij.dbn.common.options.ui.ConfigurationEditorForm;
 import com.dci.intellij.dbn.common.ui.util.Fonts;
-import com.dci.intellij.dbn.common.util.*;
+import com.dci.intellij.dbn.common.util.Actions;
+import com.dci.intellij.dbn.common.util.Messages;
+import com.dci.intellij.dbn.common.util.Naming;
+import com.dci.intellij.dbn.common.util.XmlContents;
 import com.dci.intellij.dbn.connection.ConnectionId;
 import com.dci.intellij.dbn.connection.DatabaseType;
 import com.dci.intellij.dbn.connection.DatabaseUrlType;

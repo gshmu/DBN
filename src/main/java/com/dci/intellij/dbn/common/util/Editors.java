@@ -7,6 +7,7 @@ import com.dci.intellij.dbn.common.navigation.NavigationInstructions;
 import com.dci.intellij.dbn.common.thread.Dispatch;
 import com.dci.intellij.dbn.common.thread.Read;
 import com.dci.intellij.dbn.common.ui.form.DBNForm;
+import com.dci.intellij.dbn.common.ui.util.UserInterface;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.data.editor.text.TextContentType;
 import com.dci.intellij.dbn.ddl.DDLFileAttachmentManager;
@@ -42,8 +43,10 @@ import com.intellij.psi.PsiFile;
 import com.intellij.ui.EditorNotifications;
 import com.intellij.ui.TabbedPaneWrapper;
 import com.intellij.ui.tabs.TabInfo;
+import com.intellij.ui.tabs.impl.JBEditorTabs;
 import com.intellij.ui.tabs.impl.JBTabsImpl;
 import com.intellij.util.ui.UIUtil;
+import lombok.extern.slf4j.Slf4j;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -55,6 +58,7 @@ import java.util.Objects;
 
 import static com.dci.intellij.dbn.common.dispose.Checks.isValid;
 
+@Slf4j
 public class Editors {
     public static FileEditor selectEditor(@NotNull Project project, @Nullable FileEditor fileEditor, @NotNull VirtualFile virtualFile, EditorProviderId editorProviderId, NavigationInstructions instructions) {
         FileEditorManager fileEditorManager = FileEditorManager.getInstance(project);
@@ -466,6 +470,15 @@ public class Editors {
     }
 
     public static void addEditorToolbar(@NotNull FileEditor fileEditor, DBNForm toolbarForm) {
-        fileEditor.getComponent().getParent().add(toolbarForm.getComponent(), BorderLayout.NORTH);
+        JComponent editorComponent = fileEditor.getComponent();
+        JComponent parent = UserInterface.getParent(editorComponent, c -> c.getParent() instanceof JBEditorTabs);
+        if (parent == null) parent = UserInterface.getParentOfType(editorComponent, TabbedPaneWrapper.TabWrapper.class);
+        if (parent != null && parent.getLayout() instanceof BorderLayout) {
+            parent.add(toolbarForm.getComponent(),  BorderLayout.NORTH);
+            return;
+        }
+        //fileEditor.getComponent().getParent().add(toolbarForm.getComponent(), BorderLayout.NORTH);
+
+        log.error("Failed to add editor toolbar");
     }
 }

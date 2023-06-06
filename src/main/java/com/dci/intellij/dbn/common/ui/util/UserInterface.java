@@ -13,6 +13,9 @@ import javax.swing.border.TitledBorder;
 import javax.swing.table.TableCellEditor;
 import java.awt.*;
 import java.awt.event.InputEvent;
+import java.util.function.Predicate;
+
+import static com.dci.intellij.dbn.common.util.Unsafe.cast;
 
 public class UserInterface {
 
@@ -123,5 +126,24 @@ public class UserInterface {
             }
 
         }
+    }
+
+    @Nullable
+    public static <T extends JComponent> T getParentOfType(JComponent component, Class<T> type) {
+        Component parent = component.getParent();
+        while (parent != null) {
+            if (type.isAssignableFrom(parent.getClass())) return cast(parent);
+            parent = parent.getParent();
+        }
+        return null;
+    }
+
+    public static <T extends JComponent> T getParent(JComponent component, Predicate<Component> check) {
+        Component parent = component.getParent();
+        while (parent != null) {
+            if (check.test(parent)) return cast(parent);
+            parent = parent.getParent();
+        }
+        return null;
     }
 }
