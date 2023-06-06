@@ -1,5 +1,6 @@
 package com.dci.intellij.dbn.data.export.processor;
 
+import com.dci.intellij.dbn.common.clipboard.Clipboard;
 import com.dci.intellij.dbn.common.load.ProgressMonitor;
 import com.dci.intellij.dbn.common.locale.Formatter;
 import com.dci.intellij.dbn.common.util.Strings;
@@ -10,11 +11,7 @@ import com.dci.intellij.dbn.data.export.DataExportInstructions;
 import com.dci.intellij.dbn.data.export.DataExportModel;
 import com.dci.intellij.dbn.data.type.GenericDataType;
 
-import java.awt.datatransfer.DataFlavor;
 import java.awt.datatransfer.Transferable;
-import java.awt.datatransfer.UnsupportedFlavorException;
-import java.io.IOException;
-import java.util.Objects;
 
 
 public class HTMLDataExportProcessor extends DataExportProcessor{
@@ -49,44 +46,7 @@ public class HTMLDataExportProcessor extends DataExportProcessor{
 
     @Override
     public Transferable createClipboardContent(String content) {
-        return new HtmlContent(content);
-    }
-
-    public static class HtmlContent implements Transferable {
-        private DataFlavor[] dataFlavors;
-        private final String content;
-
-        public HtmlContent(String htmlText) {
-            content = htmlText;
-            try {
-                dataFlavors = new DataFlavor[3];
-                dataFlavors[0] = new DataFlavor("text/html;class=java.lang.String");
-                dataFlavors[1] = new DataFlavor("text/rtf;class=java.lang.String");
-                dataFlavors[2] = new DataFlavor("text/plain;class=java.lang.String");
-
-            } catch (ClassNotFoundException e) {
-                e.printStackTrace();
-            }
-        }
-
-        @Override
-        public DataFlavor[] getTransferDataFlavors() {
-            return dataFlavors;
-        }
-
-        @Override
-        public boolean isDataFlavorSupported(DataFlavor flavor) {
-            String mimeType = flavor.getMimeType();
-            return
-                    Objects.equals(mimeType, "text/html") ||
-                    Objects.equals(mimeType, "text/rtf") ||
-                    Objects.equals(mimeType, "text/plain");
-        }
-
-        @Override
-        public Object getTransferData(DataFlavor flavor) throws UnsupportedFlavorException, IOException{
-            return content;
-        }
+        return Clipboard.createHtmlContent(content);
     }
 
 

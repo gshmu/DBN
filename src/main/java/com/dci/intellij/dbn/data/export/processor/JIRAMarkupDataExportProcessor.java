@@ -1,5 +1,6 @@
 package com.dci.intellij.dbn.data.export.processor;
 
+import com.dci.intellij.dbn.common.clipboard.JiraContent;
 import com.dci.intellij.dbn.common.load.ProgressMonitor;
 import com.dci.intellij.dbn.common.locale.Formatter;
 import com.dci.intellij.dbn.common.util.Strings;
@@ -9,13 +10,8 @@ import com.dci.intellij.dbn.data.export.DataExportFormat;
 import com.dci.intellij.dbn.data.export.DataExportInstructions;
 import com.dci.intellij.dbn.data.export.DataExportModel;
 import com.dci.intellij.dbn.data.type.GenericDataType;
-import org.jetbrains.annotations.NotNull;
 
-import java.awt.datatransfer.DataFlavor;
 import java.awt.datatransfer.Transferable;
-import java.awt.datatransfer.UnsupportedFlavorException;
-import java.io.IOException;
-import java.util.Objects;
 
 
 public class JIRAMarkupDataExportProcessor extends DataExportProcessor{
@@ -50,38 +46,6 @@ public class JIRAMarkupDataExportProcessor extends DataExportProcessor{
     @Override
     public Transferable createClipboardContent(String content) {
         return new JiraContent(content);
-    }
-
-    public static class JiraContent implements Transferable {
-        private DataFlavor[] dataFlavors;
-        private final String content;
-
-        public JiraContent(String markupText) {
-            content = markupText;
-            try {
-                dataFlavors = new DataFlavor[3];
-                dataFlavors[2] = new DataFlavor("text/plain;class=java.lang.String");
-
-            } catch (ClassNotFoundException e) {
-                e.printStackTrace();
-            }
-        }
-
-        @Override
-        public DataFlavor[] getTransferDataFlavors() {
-            return dataFlavors;
-        }
-
-        @Override
-        public boolean isDataFlavorSupported(DataFlavor flavor) {
-            return Objects.equals(flavor.getMimeType(), "text/plain");
-        }
-
-        @NotNull
-        @Override
-        public Object getTransferData(DataFlavor flavor) throws UnsupportedFlavorException, IOException{
-            return content;
-        }
     }
 
 

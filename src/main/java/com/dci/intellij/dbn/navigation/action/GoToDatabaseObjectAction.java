@@ -1,7 +1,7 @@
 package com.dci.intellij.dbn.navigation.action;
 
+import com.dci.intellij.dbn.common.clipboard.Clipboard;
 import com.dci.intellij.dbn.common.dispose.Disposer;
-import com.dci.intellij.dbn.common.util.Clipboard;
 import com.dci.intellij.dbn.common.util.Editors;
 import com.dci.intellij.dbn.common.util.Strings;
 import com.dci.intellij.dbn.connection.*;

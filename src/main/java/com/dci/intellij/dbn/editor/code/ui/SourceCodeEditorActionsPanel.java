@@ -81,10 +81,11 @@ public class SourceCodeEditorActionsPanel extends DBNFormBase {
     }
 
     public Object getData(@NotNull String dataId) {
-        if (PlatformDataKeys.VIRTUAL_FILE.is(dataId)) {
-            return getSourceCodeEditor().getVirtualFile();
-        }
-        return super.getData(dataId);
+        if (PlatformDataKeys.VIRTUAL_FILE.is(dataId)) return getSourceCodeEditor().getVirtualFile();
+        if (PlatformDataKeys.FILE_EDITOR.is(dataId))  return getSourceCodeEditor();
+        if (PlatformDataKeys.EDITOR.is(dataId)) return getSourceCodeEditor().getEditor();
+
+        return null;
     }
 
 }
