@@ -46,4 +46,11 @@ public class SQLFileTextEditorProvider extends BasicTextEditorProvider{
     public @NotNull FileEditorPolicy getPolicy() {
         return PLACE_AFTER_DEFAULT_EDITOR;
     }
+
+
+    @NotNull
+    @Override
+    public String getComponentName() {
+        return "DBNavigator.SQLFileTextEditorProvider";
+    }
 }
