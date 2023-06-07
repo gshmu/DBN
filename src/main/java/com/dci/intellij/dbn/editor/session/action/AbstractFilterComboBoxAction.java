@@ -78,7 +78,7 @@ public abstract class AbstractFilterComboBoxAction extends DBNComboBoxAction imp
         DataContext dataContext = Context.getDataContext(component);
         SessionBrowser sessionBrowser = DataKeys.SESSION_BROWSER.getData(dataContext);
         if (sessionBrowser == null) {
-            FileEditor fileEditor = PlatformDataKeys.FILE_EDITOR.getData(dataContext);
+            FileEditor fileEditor = Lookups.getFileEditor(dataContext);
             if (fileEditor instanceof SessionBrowser) {
                 sessionBrowser = (SessionBrowser) fileEditor;
             }

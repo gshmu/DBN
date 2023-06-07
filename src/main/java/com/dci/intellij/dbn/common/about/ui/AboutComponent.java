@@ -1,14 +1,13 @@
 package com.dci.intellij.dbn.common.about.ui;
 
+import com.dci.intellij.dbn.DatabaseNavigator;
 import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.common.ui.form.DBNFormBase;
 import com.dci.intellij.dbn.common.ui.listener.PopupCloseListener;
 import com.dci.intellij.dbn.common.ui.util.Mouse;
 import com.intellij.ide.BrowserUtil;
 import com.intellij.ide.plugins.IdeaPluginDescriptor;
-import com.intellij.ide.plugins.PluginManager;
 import com.intellij.openapi.editor.colors.CodeInsightColors;
-import com.intellij.openapi.extensions.PluginId;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.popup.ComponentPopupBuilder;
 import com.intellij.openapi.ui.popup.JBPopup;
@@ -51,8 +50,8 @@ public class AboutComponent extends DBNFormBase {
         requestTrackerPageLinkLabel.addMouseListener(Mouse.listener().onClick(e ->
                 BrowserUtil.browse("https://database-navigator.atlassian.net/issues/?filter=10104")));
 
-        IdeaPluginDescriptor ideaPluginDescriptor = PluginManager.getPlugin(PluginId.getId("DBN"));
-        String version = ideaPluginDescriptor == null ? "3.1.9999.0" : ideaPluginDescriptor.getVersion();
+        IdeaPluginDescriptor ideaPluginDescriptor = DatabaseNavigator.getPluginDescriptor();
+        String version = ideaPluginDescriptor.getVersion();
         buildLabel.setText("Build: " + version.substring(4, 8));
     }
 
