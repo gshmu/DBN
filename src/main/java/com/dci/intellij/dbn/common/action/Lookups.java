@@ -13,7 +13,7 @@ import com.intellij.openapi.vfs.VirtualFile;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.awt.Component;
+import java.awt.*;
 
 public class Lookups {
     protected Lookups(){};
@@ -52,6 +52,11 @@ public class Lookups {
     @Nullable
     public static FileEditor getFileEditor(@NotNull AnActionEvent e) {
         return e.getData(PlatformDataKeys.FILE_EDITOR);
+    }
+
+    @Nullable
+    public static FileEditor getFileEditor(@NotNull DataContext dataContext) {
+        return PlatformDataKeys.FILE_EDITOR.getData(dataContext);
     }
 
     public static Project getProject(Component component){
