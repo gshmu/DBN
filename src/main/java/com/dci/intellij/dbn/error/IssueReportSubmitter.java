@@ -11,7 +11,6 @@ import com.dci.intellij.dbn.connection.info.ConnectionInfo;
 import com.intellij.diagnostic.AbstractMessage;
 import com.intellij.diagnostic.LogMessage;
 import com.intellij.ide.plugins.IdeaPluginDescriptor;
-import com.intellij.ide.plugins.PluginManagerCore;
 import com.intellij.idea.IdeaLogger;
 import com.intellij.openapi.actionSystem.DataContext;
 import com.intellij.openapi.actionSystem.PlatformDataKeys;
@@ -48,7 +47,7 @@ abstract class IssueReportSubmitter extends ErrorReportSubmitter {
     public IdeaPluginDescriptor getPluginDescriptor() {
         IdeaPluginDescriptor pluginDescriptor = (IdeaPluginDescriptor) super.getPluginDescriptor();
         if (pluginDescriptor == null) {
-            pluginDescriptor = PluginManagerCore.getPlugin(DatabaseNavigator.DBN_PLUGIN_ID);
+            pluginDescriptor = DatabaseNavigator.getPluginDescriptor();
             setPluginDescriptor(pluginDescriptor);
         }
         return pluginDescriptor;

@@ -7,11 +7,11 @@ import com.dci.intellij.dbn.common.file.FileTypeService;
 import com.dci.intellij.dbn.language.psql.PSQLFileType;
 import com.dci.intellij.dbn.language.sql.SQLFileType;
 import com.intellij.ide.plugins.IdeaPluginDescriptor;
-import com.intellij.ide.plugins.PluginManagerCore;
+import com.intellij.ide.plugins.PluginManager;
 import com.intellij.openapi.components.State;
 import com.intellij.openapi.components.Storage;
-import com.intellij.openapi.extensions.PluginId;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.project.ProjectManager;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.SneakyThrows;
@@ -19,6 +19,7 @@ import org.jdom.Element;
 import org.jetbrains.annotations.NotNull;
 
 import java.lang.reflect.Method;
+import java.util.List;
 
 import static com.dci.intellij.dbn.common.component.Components.applicationService;
 import static com.dci.intellij.dbn.common.options.setting.SettingsSupport.getBoolean;
@@ -33,7 +34,6 @@ import static com.dci.intellij.dbn.plugin.PluginConflictManager.COMPONENT_NAME;
 )
 public class PluginConflictManager extends ApplicationComponentBase implements PersistentState {
     public static final String COMPONENT_NAME = "DBNavigator.Application.PluginConflictManager";
-    public static final @NotNull PluginId JETBRAINS_DB_PLUGIN_ID = PluginId.getId("com.intellij.database");
     private boolean fileTypesClaimed;
 
     public PluginConflictManager() {
@@ -59,7 +59,7 @@ public class PluginConflictManager extends ApplicationComponentBase implements P
 
     @SneakyThrows
     public boolean isJetbrainsDbPluginInstalled() {
-        IdeaPluginDescriptor pluginDescriptor = PluginManagerCore.getPlugin(JETBRAINS_DB_PLUGIN_ID);
+        IdeaPluginDescriptor pluginDescriptor = PluginManager.getPlugin(DatabaseNavigator.DB_PLUGIN_ID);
         if (pluginDescriptor == null) return false;
 
         try {
@@ -69,9 +69,17 @@ public class PluginConflictManager extends ApplicationComponentBase implements P
             Class<?> psiFacadeClass = pluginClassLoader.loadClass("com.intellij.database.psi.DbPsiFacade");
             Method getInstanceMethod = psiFacadeClass.getMethod("getInstance", Project.class);
 
+            Project[] projects = ProjectManager.getInstance().getOpenProjects();
+            for (Project project : projects) {
+                Object psiFacade = getInstanceMethod.invoke(psiFacadeClass, project);
+                Method getDataSourcesMethod = psiFacadeClass.getMethod("getDataSources");
+                List configs = (List) getDataSourcesMethod.invoke(psiFacade);
+                if (!configs.isEmpty()) return true;
+            }
+            return false;
         } catch (Throwable ignore) {}
 
-        return false;
+        return true;
     }
 
     @Override

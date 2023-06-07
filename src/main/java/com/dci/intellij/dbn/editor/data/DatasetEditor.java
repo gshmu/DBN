@@ -43,7 +43,6 @@ import com.intellij.ide.structureView.TreeBasedStructureViewBuilder;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.actionSystem.DataContext;
 import com.intellij.openapi.actionSystem.DataProvider;
-import com.intellij.openapi.actionSystem.PlatformDataKeys;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.fileEditor.*;
 import com.intellij.openapi.progress.ProcessCanceledException;
@@ -644,7 +643,7 @@ public class DatasetEditor extends DisposableUserDataHolderBase implements
     public static DatasetEditor get(DataContext dataContext) {
         DatasetEditor datasetEditor = DataKeys.DATASET_EDITOR.getData(dataContext);
         if (datasetEditor == null) {
-            FileEditor fileEditor = PlatformDataKeys.FILE_EDITOR.getData(dataContext);
+            FileEditor fileEditor = Lookups.getFileEditor(dataContext);
             if (fileEditor instanceof DatasetEditor) {
                 return (DatasetEditor) fileEditor;
             }

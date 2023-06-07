@@ -1,13 +1,12 @@
 package com.dci.intellij.dbn.common.util;
 
+import com.dci.intellij.dbn.DatabaseNavigator;
 import com.dci.intellij.dbn.language.common.DBLanguageFileType;
 import com.dci.intellij.dbn.language.common.DBLanguagePsiFile;
 import com.dci.intellij.dbn.vfs.DatabaseFileSystem;
 import com.dci.intellij.dbn.vfs.file.DBConsoleVirtualFile;
 import com.dci.intellij.dbn.vfs.file.DBEditableObjectVirtualFile;
 import com.intellij.ide.plugins.IdeaPluginDescriptor;
-import com.intellij.ide.plugins.PluginManagerCore;
-import com.intellij.openapi.extensions.PluginId;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VirtualFile;
@@ -116,8 +115,8 @@ public final class Files {
     }
 
     public static File getPluginDeploymentRoot() {
-        IdeaPluginDescriptor pluginDescriptor = PluginManagerCore.getPlugin(PluginId.getId("DBN"));
-        return Objects.requireNonNull(pluginDescriptor).getPath();
+        IdeaPluginDescriptor pluginDescriptor = DatabaseNavigator.getPluginDescriptor();
+        return pluginDescriptor.getPath();
     }
 
     public static boolean isLightVirtualFile(VirtualFile file) {

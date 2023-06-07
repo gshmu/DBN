@@ -6,19 +6,13 @@ import com.dci.intellij.dbn.common.action.Lookups;
 import com.dci.intellij.dbn.common.ui.misc.DBNComboBoxAction;
 import com.dci.intellij.dbn.common.util.Context;
 import com.dci.intellij.dbn.editor.session.SessionBrowser;
-import com.intellij.openapi.actionSystem.AnAction;
-import com.intellij.openapi.actionSystem.AnActionEvent;
-import com.intellij.openapi.actionSystem.DataContext;
-import com.intellij.openapi.actionSystem.DefaultActionGroup;
-import com.intellij.openapi.actionSystem.PlatformDataKeys;
-import com.intellij.openapi.actionSystem.Presentation;
+import com.intellij.openapi.actionSystem.*;
 import com.intellij.openapi.fileEditor.FileEditor;
 import com.intellij.openapi.project.DumbAware;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import javax.swing.Icon;
-import javax.swing.JComponent;
+import javax.swing.*;
 
 public class TimedReloadComboBoxAction extends DBNComboBoxAction implements DumbAware {
 
@@ -43,7 +37,7 @@ public class TimedReloadComboBoxAction extends DBNComboBoxAction implements Dumb
     public void update(AnActionEvent e) {
         Presentation presentation = e.getPresentation();
         Icon icon = Icons.ACTION_TIMED_REFRESH_OFF;
-        String text = "No refresh";
+        String text = "No Refresh";
 
 
         SessionBrowser sessionBrowser = getSessionBrowser(e);
@@ -69,7 +63,7 @@ public class TimedReloadComboBoxAction extends DBNComboBoxAction implements Dumb
         DataContext dataContext = Context.getDataContext(component);
         SessionBrowser sessionBrowser = DataKeys.SESSION_BROWSER.getData(dataContext);
         if (sessionBrowser == null) {
-            FileEditor fileEditor = PlatformDataKeys.FILE_EDITOR.getData(dataContext);
+            FileEditor fileEditor = Lookups.getFileEditor(dataContext);
             if (fileEditor instanceof SessionBrowser) {
                 sessionBrowser = (SessionBrowser) fileEditor;
             }
@@ -89,8 +83,8 @@ public class TimedReloadComboBoxAction extends DBNComboBoxAction implements Dumb
         return sessionBrowser;
     }
 
-    private class SelectRefreshTimeAction extends AnAction {
-        private int seconds;
+    private static class SelectRefreshTimeAction extends AnAction {
+        private final int seconds;
 
         SelectRefreshTimeAction(int seconds) {
             super(seconds == 0 ? "No Refresh" : seconds + " seconds", null, seconds == 0 ? null : Icons.COMMON_TIMER);
