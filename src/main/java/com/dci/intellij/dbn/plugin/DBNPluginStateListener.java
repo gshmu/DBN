@@ -19,19 +19,19 @@ public class DBNPluginStateListener implements PluginStateListener {
 
     @Override
     public void uninstall(@NotNull IdeaPluginDescriptor descriptor) {
-        if (Objects.equals(descriptor.getPluginId(), DBN_PLUGIN_ID)) {
-            // bye bye...
-            FileTypeService fileTypeService = FileTypeService.getInstance();
-            fileTypeService.restoreFileAssociations();
+        if (!Objects.equals(descriptor.getPluginId(), DBN_PLUGIN_ID)) return;
 
-            Project[] projects = ProjectManager.getInstance().getOpenProjects();
-            for (Project project : projects) {
-                ExecutionConfigManager executionConfigManager = ExecutionConfigManager.getInstance(project);
-                executionConfigManager.removeRunConfigurations();
-            }
+        // bye bye...
+        FileTypeService fileTypeService = FileTypeService.getInstance();
+        fileTypeService.restoreFileAssociations();
 
-            PluginConflictManager conflictManager = PluginConflictManager.getInstance();
-            conflictManager.setFileTypesClaimed(false);
+        Project[] projects = ProjectManager.getInstance().getOpenProjects();
+        for (Project project : projects) {
+            ExecutionConfigManager executionConfigManager = ExecutionConfigManager.getInstance(project);
+            executionConfigManager.removeRunConfigurations();
         }
+
+        PluginConflictManager conflictManager = PluginConflictManager.getInstance();
+        conflictManager.setFileTypesClaimed(false);
     }
 }
