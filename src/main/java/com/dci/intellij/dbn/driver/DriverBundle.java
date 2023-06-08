@@ -4,17 +4,21 @@ import com.intellij.openapi.Disposable;
 import lombok.Getter;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.io.File;
 import java.sql.Driver;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
+import java.util.concurrent.ConcurrentHashMap;
 
 @Slf4j
 @Getter
 public class DriverBundle implements Disposable {
     private final DriverClassLoader classLoader;
+    private final Map<Class<Driver>, Driver> instances = new ConcurrentHashMap<>();
 
     public DriverBundle(File library, String location) {
         this.classLoader = new DriverClassLoaderJarImpl(library, location);
@@ -34,14 +38,21 @@ public class DriverBundle implements Disposable {
     }
 
     @Nullable
-    @SneakyThrows
     public Driver getDriver(String className) {
         for (Class<Driver> driver : getDrivers()) {
             if (Objects.equals(driver.getName(), className)) {
-                return driver.getDeclaredConstructor().newInstance();
+                return instances.computeIfAbsent(driver, d -> createDriver(d));
+                // cached driver instances seem to work better (at least for oracle)
+                //return createDriver(driver);
             }
         }
         return null;
+    }
+
+    @NotNull
+    @SneakyThrows
+    private static Driver createDriver(Class<Driver> driverClass){
+        return driverClass.getDeclaredConstructor().newInstance();
     }
 
     public File getLibrary() {
