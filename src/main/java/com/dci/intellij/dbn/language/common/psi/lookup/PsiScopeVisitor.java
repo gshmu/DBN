@@ -4,17 +4,17 @@ import com.dci.intellij.dbn.common.lookup.Visitor;
 import com.dci.intellij.dbn.language.common.psi.BasePsiElement;
 import com.intellij.psi.PsiElement;
 
-import java.util.function.Function;
+import java.util.function.Predicate;
 
 public abstract class PsiScopeVisitor implements Visitor<BasePsiElement> {
 
     protected PsiScopeVisitor() {}
 
-    public static void visit(BasePsiElement element, Function<BasePsiElement, Boolean> visitor) {
+    public static void visit(BasePsiElement element, Predicate<BasePsiElement> visitor) {
         new PsiScopeVisitor() {
             @Override
             protected boolean visitScope(BasePsiElement scope) {
-                return visitor.apply(scope);
+                return visitor.test(scope);
             }
         }.visit(element);
     }
