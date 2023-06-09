@@ -1,10 +1,10 @@
 package com.dci.intellij.dbn.connection.config.tns.ui;
 
-import com.dci.intellij.dbn.common.dispose.Sticky;
 import com.dci.intellij.dbn.common.ui.dialog.DBNDialog;
-import com.dci.intellij.dbn.common.util.Messages;
+import com.dci.intellij.dbn.common.ui.dialog.OptionsDialog;
+import com.dci.intellij.dbn.connection.config.tns.TnsImportData;
+import com.dci.intellij.dbn.connection.config.tns.TnsImportService;
 import com.dci.intellij.dbn.connection.config.tns.TnsImportType;
-import com.dci.intellij.dbn.connection.config.tns.TnsNames;
 import com.intellij.openapi.project.Project;
 import lombok.Getter;
 import org.jetbrains.annotations.NotNull;
@@ -14,14 +14,9 @@ import javax.swing.*;
 import java.awt.event.ActionEvent;
 import java.io.File;
 
-import static com.dci.intellij.dbn.common.util.Messages.options;
-
 @Getter
 public class TnsNamesImportDialog extends DBNDialog<TnsNamesImportForm> {
-    @Sticky
-    private TnsNames tnsNames;
-    private TnsImportType importType;
-    private boolean selectedOnly;
+    private final TnsImportData importData = new TnsImportData();
 
     private final AbstractAction importAllAction = new ImportAllAction();
     private final AbstractAction importSelectedAction = new ImportSelectedAction();
@@ -58,8 +53,8 @@ public class TnsNamesImportDialog extends DBNDialog<TnsNamesImportForm> {
         @Override
         public void actionPerformed(ActionEvent e) {
             TnsNamesImportForm importForm = getForm();
-            tnsNames = importForm.getTnsNames();
-            selectedOnly = false;
+            importData.setTnsNames(importForm.getTnsNames());
+            importData.setSelectedOnly(false);
             showImportTypeDialog();
         }
     }
@@ -72,13 +67,29 @@ public class TnsNamesImportDialog extends DBNDialog<TnsNamesImportForm> {
         @Override
         public void actionPerformed(ActionEvent e) {
             TnsNamesImportForm importForm = getForm();
-            tnsNames = importForm.getTnsNames();
-            selectedOnly = true;
+            importData.setTnsNames(importForm.getTnsNames());
+            importData.setSelectedOnly(true);
             showImportTypeDialog();
         }
     }
 
     private void showImportTypeDialog() {
+        TnsImportService importService = TnsImportService.getInstance();
+        OptionsDialog.open(
+                getProject(),
+                "TNS Import Type",
+                "Import Type",
+                TnsImportType.values(),
+                importService.getImportType(),
+                new String[]{"Import"},
+                (i, o) -> {
+                    if (i != 0) return;
+                    importData.setImportType(o);
+                    importService.setImportType(o);
+                    doOKAction();
+            });
+
+/*
         Messages.showQuestionDialog(
                 getProject(),
                 "TNS Import Type",
@@ -95,5 +106,6 @@ public class TnsNamesImportDialog extends DBNDialog<TnsNamesImportForm> {
                         default: importType = null;
                     }
                 });
+*/
     }
 }

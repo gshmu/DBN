@@ -30,18 +30,7 @@ public class DBNHintForm extends DBNFormBase {
         super(parent);
         this.boxed = boxed;
         hintLabel.setText("");
-        if (messageType != null) {
-            Icon icon = Icons.COMMON_INFO;
-            switch (messageType) {
-                case INFO: icon = Icons.COMMON_INFO; break;
-                case WARNING: icon = Icons.COMMON_WARNING; break;
-                case ERROR: icon = Icons.COMMON_ERROR; break;
-
-            }
-            hintLabel.setIcon(icon);
-        } else {
-            hintLabel.setVisible(false);
-        }
+        setMessageType(messageType);
 
         Color background = getBackground();
 
@@ -83,5 +72,24 @@ public class DBNHintForm extends DBNFormBase {
     @Override
     public JPanel getMainComponent() {
         return mainPanel;
+    }
+
+    public void setHintText(String hintText) {
+        hintTextPane.setText(hintText);
+    }
+
+    public void setMessageType(MessageType messageType) {
+        if (messageType != null) {
+            Icon icon = Icons.COMMON_INFO;
+            switch (messageType) {
+                case INFO: icon = Icons.COMMON_INFO; break;
+                case WARNING: icon = Icons.COMMON_WARNING; break;
+                case ERROR: icon = Icons.COMMON_ERROR; break;
+
+            }
+            hintLabel.setIcon(icon);
+        } else {
+            hintLabel.setVisible(false);
+        }
     }
 }

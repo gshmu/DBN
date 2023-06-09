@@ -15,6 +15,7 @@ import com.dci.intellij.dbn.connection.ConnectionId;
 import com.dci.intellij.dbn.connection.DatabaseType;
 import com.dci.intellij.dbn.connection.DatabaseUrlType;
 import com.dci.intellij.dbn.connection.config.*;
+import com.dci.intellij.dbn.connection.config.tns.TnsImportData;
 import com.dci.intellij.dbn.connection.config.tns.TnsImportType;
 import com.dci.intellij.dbn.connection.config.tns.TnsNames;
 import com.dci.intellij.dbn.connection.config.tns.TnsProfile;
@@ -317,13 +318,14 @@ public class ConnectionBundleSettingsForm extends ConfigurationEditorForm<Connec
         }
     }
 
-    public void importTnsNames(TnsNames tnsNames, TnsImportType importType, boolean selected) {
+    public void importTnsNames(TnsImportData importData) {
         ConnectionBundleSettings connectionBundleSettings = getConfiguration();
         ConnectionListModel model = (ConnectionListModel) connectionsList.getModel();
         int index = connectionsList.getModel().getSize();
         List<Integer> selectedIndexes = new ArrayList<>();
 
-        List<TnsProfile> tnsProfiles = selected ? tnsNames.getSelectedProfiles() : tnsNames.getProfiles();
+        TnsNames tnsNames = importData.getTnsNames();
+        List<TnsProfile> tnsProfiles = importData.isSelectedOnly() ? tnsNames.getSelectedProfiles() : tnsNames.getProfiles();
         for (TnsProfile tnsProfile : tnsProfiles) {
             ConnectionSettings connectionSettings = new ConnectionSettings(connectionBundleSettings, DatabaseType.ORACLE, ConnectionConfigType.BASIC);
             connectionSettings.setNew(true);
@@ -333,7 +335,7 @@ public class ConnectionBundleSettingsForm extends ConfigurationEditorForm<Connec
 
             ConnectionDatabaseSettings databaseSettings = connectionSettings.getDatabaseSettings();
             DatabaseInfo databaseInfo = databaseSettings.getDatabaseInfo();
-            importTnsData(databaseInfo, tnsProfile, tnsNames, importType);
+            importTnsData(databaseInfo, tnsProfile, tnsNames, importData.getImportType());
 
             String name = tnsProfile.getProfile();
             while (model.getConnectionConfig(name) != null) {
