@@ -4,6 +4,7 @@ import com.dci.intellij.dbn.common.event.ProjectEvents;
 import com.dci.intellij.dbn.common.project.ProjectRef;
 import com.dci.intellij.dbn.common.routine.Consumer;
 import com.dci.intellij.dbn.common.util.TimeUtil;
+import com.dci.intellij.dbn.common.util.Unsafe;
 import com.dci.intellij.dbn.connection.*;
 import com.dci.intellij.dbn.connection.transaction.PendingTransactionBundle;
 import com.dci.intellij.dbn.database.interfaces.DatabaseInterface.Callable;
@@ -24,8 +25,7 @@ import java.util.concurrent.ConcurrentHashMap;
 
 import static com.dci.intellij.dbn.common.dispose.Checks.isNotValid;
 import static com.dci.intellij.dbn.common.util.Unsafe.cast;
-import static com.dci.intellij.dbn.connection.jdbc.ResourceStatus.ACTIVE;
-import static com.dci.intellij.dbn.connection.jdbc.ResourceStatus.RESERVED;
+import static com.dci.intellij.dbn.connection.jdbc.ResourceStatus.*;
 
 @Slf4j
 @Getter
@@ -374,6 +374,17 @@ public class DBNConnection extends DBNConnectionBase {
     public boolean isValid() {
         return isValid(2);
     }
+
+    public void reevaluateStatus() {
+        Unsafe.warned(() -> {
+            if (inner.isClosed() || !inner.isValid(5)) {
+                set(VALID, false);
+                set(CLOSED, true);
+                set(ACTIVE, false);
+            }
+        });
+    }
+
 
     @Override
     public boolean isValid(int timeout) {
