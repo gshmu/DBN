@@ -8,7 +8,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
-import java.util.function.Function;
+import java.util.function.Predicate;
 
 import static com.dci.intellij.dbn.common.util.Unsafe.cast;
 
@@ -16,10 +16,10 @@ import static com.dci.intellij.dbn.common.util.Unsafe.cast;
 public class Synchronized {
 	static final Map<Object, SyncObject> LOCKS = new ConcurrentHashMap<>(100);
 
-	public static <O, E extends Throwable> void on(O owner, Function<O, Boolean> condition, ParametricRunnable<O, E> runnable) throws E{
-		if (condition.apply(owner)) {
+	public static <O, E extends Throwable> void on(O owner, Predicate<O> condition, ParametricRunnable<O, E> runnable) throws E{
+		if (condition.test(owner)) {
 			on(owner, o -> {
-				if (condition.apply(o)) {
+				if (condition.test(o)) {
 					runnable.run(o);
 				}
 				return null;
