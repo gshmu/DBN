@@ -6,6 +6,7 @@ import com.dci.intellij.dbn.common.project.ProjectRef;
 import com.dci.intellij.dbn.common.ui.component.DBNComponent;
 import com.dci.intellij.dbn.common.ui.form.DBNForm;
 import com.dci.intellij.dbn.common.ui.util.Listeners;
+import com.dci.intellij.dbn.common.util.Commons;
 import com.dci.intellij.dbn.common.util.Titles;
 import com.dci.intellij.dbn.diagnostics.Diagnostics;
 import com.intellij.openapi.Disposable;
@@ -108,23 +109,11 @@ public abstract class DBNDialog<F extends DBNForm> extends DialogWrapper impleme
     public JComponent getPreferredFocusedComponent() {
         if (isDisposed()) return null;
 
-        JComponent focusComponent;
-        focusComponent = getForm().getPreferredFocusedComponent();
-        if (focusComponent == null) {
-            focusComponent = super.getPreferredFocusedComponent();
-
-            if (focusComponent == null) {
-                Action okAction = getOKAction();
-                focusComponent = getButton(okAction);
-
-                if (focusComponent == null) {
-                    Action cancelAction = getCancelAction();
-                    focusComponent = getButton(cancelAction);
-                }
-            }
-        }
-
-        return focusComponent;
+        return Commons.coalesce(
+                () -> getForm().getPreferredFocusedComponent(),
+                () -> super.getPreferredFocusedComponent(),
+                () -> getButton(getOKAction()),
+                () -> getButton(getCancelAction()));
     }
 
     @Override
@@ -142,7 +131,7 @@ public abstract class DBNDialog<F extends DBNForm> extends DialogWrapper impleme
         return rememberSelection;
     }
 
-    public void registerRememberSelectionCheckBox(final JCheckBox rememberSelectionCheckBox) {
+    public void registerRememberSelectionCheckBox(JCheckBox rememberSelectionCheckBox) {
         rememberSelectionCheckBox.addActionListener(e -> rememberSelection = rememberSelectionCheckBox.isSelected());
     }
 

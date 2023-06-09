@@ -250,6 +250,7 @@
         <applicationService serviceImplementation="com.dci.intellij.dbn.plugin.PluginConflictManager"/>
         <applicationService serviceImplementation="com.dci.intellij.dbn.common.file.FileTypeService"/>
         <applicationService serviceImplementation="com.dci.intellij.dbn.driver.DatabaseDriverManager"/>
+        <applicationService serviceImplementation="com.dci.intellij.dbn.connection.config.tns.TnsImportService"/>
         <applicationService serviceImplementation="com.dci.intellij.dbn.connection.ssh.SshTunnelManager"/>
         <applicationService serviceImplementation="com.dci.intellij.dbn.connection.ssl.SslConnectionManager"/>
         <applicationService serviceImplementation="com.dci.intellij.dbn.options.DefaultProjectSettingsManager"/>
