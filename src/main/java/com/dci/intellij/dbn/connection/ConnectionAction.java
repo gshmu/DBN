@@ -10,7 +10,7 @@ import com.dci.intellij.dbn.connection.context.DatabaseContextBase;
 import com.intellij.openapi.project.Project;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.function.Function;
+import java.util.function.Predicate;
 
 import static com.dci.intellij.dbn.common.dispose.Failsafe.guarded;
 import static com.dci.intellij.dbn.common.dispose.Failsafe.nd;
@@ -147,12 +147,12 @@ public abstract class ConnectionAction implements DatabaseContextBase, Runnable{
             DatabaseContext databaseContext,
             Consumer<ConnectionAction> action,
             Consumer<ConnectionAction> cancel,
-            Function<ConnectionAction, Boolean> canExecute) {
+            Predicate<ConnectionAction> canExecute) {
 
         new ConnectionAction(description, interactive, databaseContext) {
             @Override
             public void run() {
-                if (canExecute == null || canExecute.apply(this)) {
+                if (canExecute == null || canExecute.test(this)) {
                     guarded(() -> action.accept(this));
                 }
             }
