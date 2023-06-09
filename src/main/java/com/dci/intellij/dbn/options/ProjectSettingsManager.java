@@ -14,8 +14,7 @@ import com.dci.intellij.dbn.connection.DatabaseType;
 import com.dci.intellij.dbn.connection.config.ConnectionBundleSettings;
 import com.dci.intellij.dbn.connection.config.ConnectionConfigListener;
 import com.dci.intellij.dbn.connection.config.ConnectionConfigType;
-import com.dci.intellij.dbn.connection.config.tns.TnsImportType;
-import com.dci.intellij.dbn.connection.config.tns.TnsNames;
+import com.dci.intellij.dbn.connection.config.tns.TnsImportData;
 import com.dci.intellij.dbn.connection.config.ui.ConnectionBundleSettingsForm;
 import com.dci.intellij.dbn.connection.console.DatabaseConsoleManager;
 import com.dci.intellij.dbn.connection.operation.options.OperationSettings;
@@ -151,12 +150,12 @@ public class ProjectSettingsManager extends ProjectComponentBase implements Pers
         }
     }
 
-    public void createConnections(TnsNames tnsNames, TnsImportType importType, boolean selectedOnly) {
+    public void createConnections(TnsImportData importData) {
         Project project = getProject();
         ProjectSettingsDialog settingsDialog = new ProjectSettingsDialog(project);
         ConnectionBundleSettingsForm settingsEditor = settingsDialog.getProjectSettings().getConnectionSettings().getSettingsEditor();
         if (settingsEditor != null) {
-            settingsEditor.importTnsNames(tnsNames, importType, selectedOnly);
+            settingsEditor.importTnsNames(importData);
             settingsDialog.selectConnectionSettings(null);
             settingsDialog.show();
         }
