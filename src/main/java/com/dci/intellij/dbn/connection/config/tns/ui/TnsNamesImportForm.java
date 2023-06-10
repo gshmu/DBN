@@ -15,7 +15,6 @@ import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
 import java.io.File;
-import java.util.ArrayList;
 import java.util.List;
 
 import static com.dci.intellij.dbn.common.ui.util.TextFields.onTextChange;
@@ -106,18 +105,5 @@ public class TnsNamesImportForm extends DBNFormBase {
         return mainPanel;
     }
 
-    List<TnsProfile> getAllTnsNames() {
-        return tnsNamesTable.getModel().getProfiles();
-    }
 
-    List<TnsProfile> getSelectedTnsNames() {
-        List<TnsProfile> selectedTnsProfiles = new ArrayList<>();
-        List<TnsProfile> tnsProfiles = tnsNamesTable.getModel().getProfiles();
-        int[] selectedRows = tnsNamesTable.getSelectedRows();
-        for (int selectedRow : selectedRows) {
-            int rowIndex = tnsNamesTable.convertRowIndexToModel(selectedRow);
-            selectedTnsProfiles.add(tnsProfiles.get(rowIndex));
-        }
-        return selectedTnsProfiles;
-    }
 }

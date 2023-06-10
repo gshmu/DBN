@@ -2,14 +2,16 @@ package com.dci.intellij.dbn.connection.config.tns;
 
 import com.dci.intellij.dbn.common.text.TextContent;
 import com.dci.intellij.dbn.common.ui.Presentable;
+import com.dci.intellij.dbn.common.util.Commons;
 import lombok.Getter;
+import lombok.SneakyThrows;
+import org.jetbrains.annotations.NotNull;
 
 @Getter
 public enum TnsImportType implements Presentable {
-    FIELDS("Fields", TextContent.plain("Basic host/port/database connectivity\nThin JDBC URL based on Host, Port and SID / Service Name\n\nSample: jdbc:oracle:thin:@localhost:1521:XE")),
-    PROFILE("TNS Profile", TextContent.plain("TNS wallet connectivity\nThin JDBC URL using TNS_ADMIN wallet location and the TNS profile name\n\nSample: jdbc:oracle:thin:@profile_1?TNS_ADMIN=C:/Users/tns/wallet")),
-    DESCRIPTOR("TNS Descriptor", TextContent.plain(""));
-
+    FIELDS("Fields", loadInfo("tns_import_type_fields.html")),
+    PROFILE("Profile", loadInfo("tns_import_type_profile.html")),
+    DESCRIPTOR("Descriptor", loadInfo("tns_import_type_descriptor.html"));
 
     private final String name;
     private final TextContent info;
@@ -17,5 +19,12 @@ public enum TnsImportType implements Presentable {
     TnsImportType(String name, TextContent info) {
         this.name = name;
         this.info = info;
+    }
+
+    @NotNull
+    @SneakyThrows
+    private static TextContent loadInfo(String fileName) {
+        String content = Commons.readInputStream(TnsImportType.class.getResourceAsStream(fileName));
+        return TextContent.html(content);
     }
 }

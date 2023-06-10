@@ -319,6 +319,7 @@ public class ConnectionDatabaseSettingsForm extends ConfigurationEditorForm<Conn
                     hintText, null, true,
                     "Change to " + databaseTypeName,
                     () -> setSelection(databaseTypeComboBox, driverDatabaseType));
+            hintForm.setHighlighted(true);
             databaseTypeHintPanel.add(hintForm.getComponent(), BorderLayout.CENTER);
         } else {
             databaseTypeHintPanel.removeAll();
