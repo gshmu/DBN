@@ -29,12 +29,15 @@ public class OptionsDialog<O extends Presentable> extends DBNDialog<OptionsDialo
         this.actionNames = actionNames;
         this.selectedOption = selectedOption;
 
+        setDefaultSize(600, 300);
         //setResizable(false);
         init();
+        setActionsEnabled(selectedOption != null);
     }
 
     @Override
     protected String getDimensionServiceKey() {
+        //return super.getDimensionServiceKey() + "." + options[0].getClass().getSimpleName();
         return null;
     }
 
@@ -60,7 +63,6 @@ public class OptionsDialog<O extends Presentable> extends DBNDialog<OptionsDialo
                 close(index);
             }
         };
-        action.setEnabled(false);
         return action;
     }
 

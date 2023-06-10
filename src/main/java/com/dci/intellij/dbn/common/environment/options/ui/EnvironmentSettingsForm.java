@@ -15,11 +15,11 @@ import com.intellij.ui.AnActionButton;
 import com.intellij.ui.ToolbarDecorator;
 import org.jetbrains.annotations.NotNull;
 
-import javax.swing.JCheckBox;
-import javax.swing.JPanel;
+import javax.swing.*;
 import javax.swing.table.TableCellEditor;
-import java.awt.BorderLayout;
-import java.awt.Dimension;
+import java.awt.*;
+
+import static com.dci.intellij.dbn.common.ui.util.UserInterface.createToolbarDecorator;
 
 public class EnvironmentSettingsForm extends ConfigurationEditorForm<EnvironmentSettings> {
     private JPanel mainPanel;
@@ -44,7 +44,7 @@ public class EnvironmentSettingsForm extends ConfigurationEditorForm<Environment
         visibilitySettings.getDialogHeaders().from(dialogHeadersCheckBox);
         visibilitySettings.getExecutionResultTabs().from(executionResultTabsCheckBox);
 
-        ToolbarDecorator decorator = ToolbarDecorator.createDecorator(environmentTypesTable);
+        ToolbarDecorator decorator = createToolbarDecorator(environmentTypesTable);
         decorator.setAddAction(anActionButton -> environmentTypesTable.insertRow());
         decorator.setRemoveAction(anActionButton -> environmentTypesTable.removeRow());
         decorator.setMoveUpAction(anActionButton -> environmentTypesTable.moveRowUp());
@@ -66,7 +66,7 @@ public class EnvironmentSettingsForm extends ConfigurationEditorForm<Environment
         environmentTypesTable.getParent().setBackground(environmentTypesTable.getBackground());
         registerComponents(mainPanel);
     }
-    
+
     @NotNull
     @Override
     public JPanel getMainComponent() {

@@ -1,9 +1,11 @@
 package com.dci.intellij.dbn.common.ui.util;
 
-import com.dci.intellij.dbn.common.color.Colors;
 import com.dci.intellij.dbn.common.lookup.Visitor;
 import com.dci.intellij.dbn.common.thread.Dispatch;
 import com.intellij.openapi.util.SystemInfo;
+import com.intellij.ui.ToolbarDecorator;
+import com.intellij.ui.border.IdeaTitledBorder;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
@@ -15,6 +17,7 @@ import java.awt.*;
 import java.awt.event.InputEvent;
 import java.util.function.Predicate;
 
+import static com.dci.intellij.dbn.common.ui.util.Borders.*;
 import static com.dci.intellij.dbn.common.util.Unsafe.cast;
 
 public class UserInterface {
@@ -76,15 +79,18 @@ public class UserInterface {
         return false;
     }
 
-    public static void updateTitledBorders(JPanel panel) {
+    public static void updateTitledBorder(JPanel panel) {
         Border border = panel.getBorder();
         if (border instanceof TitledBorder) {
             TitledBorder titledBorder = (TitledBorder) border;
+            IdeaTitledBorder replacement = new IdeaTitledBorder(titledBorder.getTitle(), 24, Borders.EMPTY_INSETS);
+/*
             titledBorder.setTitleColor(Colors.HINT_COLOR);
             titledBorder.setBorder(Borders.TOP_LINE_BORDER);
             border = new CompoundBorder(Borders.topInsetBorder(8), titledBorder);
+*/
+            border = new CompoundBorder(Borders.topInsetBorder(8), replacement);
             panel.setBorder(border);
-
         }
     }
 
@@ -128,6 +134,30 @@ public class UserInterface {
         }
     }
 
+    public static <T extends JComponent> void visitRecursively(JComponent component, Class<T> type, Visitor<T> visitor) {
+        if (type.isAssignableFrom(component.getClass())) visitor.visit((T) component);
+
+        Component[] childComponents = component.getComponents();
+        for (Component childComponent : childComponents) {
+            if (childComponent instanceof JComponent) {
+                visitRecursively((JComponent) childComponent, type, visitor);
+            }
+
+        }
+    }
+
+    public static void updateTitledBorders(JComponent component) {
+        visitRecursively(component, JPanel.class, p -> updateTitledBorder(p));
+    }
+
+    public static void updateScrollPaneBorders(JComponent component) {
+        visitRecursively(component, JScrollPane.class, sp -> sp.setBorder(getScrollPaneComponent(sp) instanceof JPanel ? null : OUTLINE_BORDER));
+    }
+
+    public static Component getScrollPaneComponent(JScrollPane scrollPane) {
+        return scrollPane.getViewport().getView();
+    }
+
     @Nullable
     public static <T extends JComponent> T getParentOfType(JComponent component, Class<T> type) {
         Component parent = component.getParent();
@@ -145,5 +175,17 @@ public class UserInterface {
             parent = parent.getParent();
         }
         return null;
+    }
+
+    public static Dimension adjust(Dimension dimension, int widthAdjustment, int heightAdjustment) {
+        return new Dimension((int) dimension.getWidth() + widthAdjustment, (int) dimension.getHeight() + heightAdjustment);
+    }
+
+    @NotNull
+    public static ToolbarDecorator createToolbarDecorator(JTable table) {
+        ToolbarDecorator decorator = ToolbarDecorator.createDecorator(table);
+        decorator.setToolbarBorder(TOOLBAR_DECORATOR_BORDER);
+        decorator.setPanelBorder(EMPTY_BORDER);
+        return decorator;
     }
 }

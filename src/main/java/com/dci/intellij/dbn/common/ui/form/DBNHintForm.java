@@ -7,24 +7,22 @@ import com.dci.intellij.dbn.common.text.MimeType;
 import com.dci.intellij.dbn.common.text.TextContent;
 import com.dci.intellij.dbn.common.thread.Dispatch;
 import com.dci.intellij.dbn.common.ui.util.Fonts;
-import com.intellij.ui.DocumentAdapter;
+import com.dci.intellij.dbn.common.ui.util.LookAndFeel;
+import com.dci.intellij.dbn.common.ui.util.UserInterface;
 import com.intellij.ui.HyperlinkLabel;
 import com.intellij.ui.RoundedLineBorder;
 import com.intellij.uiDesigner.core.GridLayoutManager;
 import com.intellij.util.ui.JBUI;
-import com.intellij.util.ui.UIUtil;
 import lombok.SneakyThrows;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
-import javax.swing.event.DocumentEvent;
-import javax.swing.event.DocumentListener;
-import javax.swing.text.html.HTMLDocument;
 import java.awt.*;
 
 public class DBNHintForm extends DBNFormBase {
     private JPanel mainPanel;
+    private JPanel contentPanel;
     private JLabel hintLabel;
     private JTextPane hintTextPane;
     private HyperlinkLabel actionLink;
@@ -44,15 +42,16 @@ public class DBNHintForm extends DBNFormBase {
 
         Color background = getBackground();
 
-        mainPanel.setBackground(background);
         hintTextPane.setBackground(background);
         hintTextPane.setFont(Fonts.getLabelFont());
-        hintTextPane.setForeground(boxed ? Colors.lafBrighter(Colors.getLabelForeground(), 1) : Colors.HINT_COLOR);
-        hintTextPane.getDocument().addDocumentListener(createDocumentListener());
+        contentPanel.setBackground(background);
+        contentPanel.setForeground(boxed ? Colors.lafBrighter(Colors.getLabelForeground(), 1) : Colors.HINT_COLOR);
         if (boxed) {
-            mainPanel.setBorder(new RoundedLineBorder(UIUtil.getBoundsColor(), 3));
+            mainPanel.setBorder(new RoundedLineBorder(Colors.getOutlineColor(), 2));
+            //mainPanel.setBorder(new RoundedLineBorder(UIManager.getColor("TextField.borderColor"), 3));
+            //mainPanel.setBorder(UIUtil.getTextFieldBorder());
         } else {
-            GridLayoutManager gridLayoutManager = (GridLayoutManager) mainPanel.getLayout();
+            GridLayoutManager gridLayoutManager = (GridLayoutManager) contentPanel.getLayout();
             gridLayoutManager.setMargin(JBUI.emptyInsets());
         }
 
@@ -67,48 +66,38 @@ public class DBNHintForm extends DBNFormBase {
 
     }
 
-    @NotNull
-    private DocumentListener createDocumentListener() {
-        return new DocumentAdapter() {
-            @Override
-            protected void textChanged(@NotNull DocumentEvent e) {
-                Dispatch.run(() -> resizeTextPane());
-            }
-        };
-    }
-
     @SneakyThrows
     private void resizeTextPane() {
-        Dimension preferredSize = hintTextPane.getPreferredSize();
+        Dispatch.run(() -> {
+            Dimension preferredSize = hintTextPane.getPreferredSize();
+            hintTextPane.revalidate();
 
-        if (hintTextPane.getDocument() instanceof HTMLDocument) {
-            HTMLDocument htmlDocument = (HTMLDocument) hintTextPane.getDocument();
-            int width = hintTextPane.getWidth();
-            htmlDocument.remove(0, htmlDocument.getLength());
-            htmlDocument.insertAfterEnd(htmlDocument.getDefaultRootElement(), "<html><body>" + hintTextPane.getText() + "</body></html>");
-            hintTextPane.setSize(width, 1); // Reset the size temporarily to calculate the preferred size
-            Dimension contentSize = hintTextPane.getPreferredSize();
-            if (!preferredSize.equals(contentSize)) {
-                hintTextPane.setPreferredSize(contentSize);
-                hintTextPane.revalidate();
-            }
-        } else {
-            Dimension contentSize = hintTextPane.getUI().getPreferredSize(hintTextPane);
-            if (!preferredSize.equals(contentSize)) {
-                hintTextPane.setPreferredSize(contentSize);
-                hintTextPane.revalidate();
-            }
+            Dimension contentPreferredSize = contentPanel.getPreferredSize();
+            mainPanel.setPreferredSize(UserInterface.adjust(contentPreferredSize, 0, 10));
+            mainPanel.revalidate();
+
+        Dimension contentSize = UserInterface.adjust(preferredSize, 4, 4);
+        if (!preferredSize.equals(contentSize)) {
+            hintTextPane.setPreferredSize(contentSize);
+            hintTextPane.revalidate();
         }
+        });
     }
 
     @NotNull
     private Color getBackground() {
-        return boxed ? Colors.lafBrighter(Colors.getPanelBackground(), 1) : Colors.getPanelBackground();
+        if (boxed) {
+            return LookAndFeel.isDarkMode() ?
+                    Colors.lafDarker(Colors.getPanelBackground(), 1) :
+                    Colors.lafBrighter(Colors.getPanelBackground(), 1);
+        }
+
+        return Colors.getPanelBackground();
     }
 
     public void setHighlighted(boolean highlighted) {
         Color background = highlighted ? Colors.getTextFieldBackground() : getBackground();
-        mainPanel.setBackground(background);
+        contentPanel.setBackground(background);
         hintTextPane.setBackground(background);
     }
 
@@ -120,26 +109,32 @@ public class DBNHintForm extends DBNFormBase {
 
     public void setHintContent(@Nullable TextContent content) {
         if (content == null) {
-            hintTextPane.setText("");
             hintTextPane.setContentType(MimeType.TEXT_PLAIN.id());
+            hintTextPane.setText("");
         } else {
-            hintTextPane.setText(content.getText());
             hintTextPane.setContentType(content.getTypeId());
+            hintTextPane.setText(content.getText());
         }
+
+        Dispatch.run(() -> resizeTextPane());
     }
 
     public void setMessageType(MessageType messageType) {
-        if (messageType != null) {
-            Icon icon = Icons.COMMON_INFO;
-            switch (messageType) {
-                case INFO: icon = Icons.COMMON_INFO; break;
-                case WARNING: icon = Icons.COMMON_WARNING; break;
-                case ERROR: icon = Icons.COMMON_ERROR; break;
-
-            }
-            hintLabel.setIcon(icon);
-        } else {
+        if (messageType == null) {
             hintLabel.setVisible(false);
+            return;
+        }
+
+        Icon icon = getIcon(messageType);
+        hintLabel.setIcon(icon);
+    }
+
+    private static Icon getIcon(MessageType messageType) {
+        switch (messageType) {
+            case INFO: return Icons.COMMON_INFO;
+            case WARNING: return Icons.COMMON_WARNING;
+            case ERROR: return Icons.COMMON_ERROR;
+            default: return null;
         }
     }
 }
