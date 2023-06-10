@@ -48,7 +48,7 @@ public class TextEditorPopupProviderForm extends TextFieldPopupProviderForm {
         editorTextArea.setWrapStyleWord(true);
 
 
-        textEditorScrollPane.setBorder(Borders.COMPONENT_LINE_BORDER);
+        textEditorScrollPane.setBorder(Borders.COMPONENT_OUTLINE_BORDER);
 
         ActionToolbar leftActionToolbar = Actions.createActionToolbar(
                 leftActionPanel,

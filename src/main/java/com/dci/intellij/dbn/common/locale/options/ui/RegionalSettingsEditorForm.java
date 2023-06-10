@@ -10,10 +10,10 @@ import com.dci.intellij.dbn.common.locale.options.RegionalSettings;
 import com.dci.intellij.dbn.common.locale.options.RegionalSettingsListener;
 import com.dci.intellij.dbn.common.options.SettingsChangeNotifier;
 import com.dci.intellij.dbn.common.options.ui.ConfigurationEditorForm;
-import com.dci.intellij.dbn.common.ui.util.Borders;
-import com.dci.intellij.dbn.common.ui.misc.DBNComboBox;
-import com.dci.intellij.dbn.common.ui.util.Fonts;
 import com.dci.intellij.dbn.common.ui.ValueSelectorListener;
+import com.dci.intellij.dbn.common.ui.misc.DBNComboBox;
+import com.dci.intellij.dbn.common.ui.util.Borders;
+import com.dci.intellij.dbn.common.ui.util.Fonts;
 import com.dci.intellij.dbn.common.util.Commons;
 import com.intellij.openapi.options.ConfigurationException;
 import com.intellij.openapi.project.Project;
@@ -54,7 +54,7 @@ public class RegionalSettingsEditorForm extends ConfigurationEditorForm<Regional
 
     public RegionalSettingsEditorForm(RegionalSettings regionalSettings) {
         super(regionalSettings);
-        previewPanel.setBorder(Borders.COMPONENT_LINE_BORDER);
+        previewPanel.setBorder(Borders.COMPONENT_OUTLINE_BORDER);
         previewPanel.setBackground(Colors.getLighterPanelBackground());
         errorLabel.setVisible(false);
         localeComboBox.setValues(LocaleOption.ALL);
