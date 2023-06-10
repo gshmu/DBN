@@ -1,6 +1,7 @@
 package com.dci.intellij.dbn.execution.script.ui;
 
 import com.dci.intellij.dbn.common.routine.Consumer;
+import com.dci.intellij.dbn.common.text.TextContent;
 import com.dci.intellij.dbn.common.ui.PresentableFactory;
 import com.dci.intellij.dbn.common.ui.ValueSelectorOption;
 import com.dci.intellij.dbn.common.ui.form.DBNFormBase;
@@ -26,6 +27,8 @@ import org.jetbrains.annotations.Nullable;
 import javax.swing.*;
 import java.awt.*;
 import java.util.List;
+
+import static com.dci.intellij.dbn.common.text.TextContent.plain;
 
 public class ScriptExecutionInputForm extends DBNFormBase {
     private JPanel headerPanel;
@@ -54,14 +57,14 @@ public class ScriptExecutionInputForm extends DBNFormBase {
         headerForm = new DBNHeaderForm(this, headerTitle, headerIcon);
         headerPanel.add(headerForm.getComponent(), BorderLayout.CENTER);
 
-        String hintText =
+        TextContent hintText = plain(
                 "Script execution uses the Command-Line Interface executable supplied with your database client. " +
-                "Make sure it is available in the \"PATH\" environment variable or provide the path to the executable.";
+                "Make sure it is available in the \"PATH\" environment variable or provide the path to the executable.");
 
         DBNHintForm hintForm = new DBNHintForm(this, hintText, null, true);
         hintPanel.add(hintForm.getComponent(), BorderLayout.CENTER);
 
-        final Project project = getProject();
+        Project project = ensureProject();
         ConnectionManager connectionManager = ConnectionManager.getInstance(project);
         connectionComboBox.set(ValueSelectorOption.HIDE_DESCRIPTION, true);
         connectionComboBox.setEnabled(sourceFile.isInLocalFileSystem());
@@ -131,7 +134,7 @@ public class ScriptExecutionInputForm extends DBNFormBase {
             headerForm.setBackground(connection.getEnvironmentType().getColor());
 
             DatabaseType databaseType = connection.getDatabaseType();
-            ScriptExecutionManager scriptExecutionManager = ScriptExecutionManager.getInstance(getProject());
+            ScriptExecutionManager scriptExecutionManager = ScriptExecutionManager.getInstance(ensureProject());
             List<CmdLineInterface> interfaces = scriptExecutionManager.getAvailableInterfaces(databaseType);
             cmdLineExecutableComboBox.clearValues();
             cmdLineExecutableComboBox.addValues(interfaces);

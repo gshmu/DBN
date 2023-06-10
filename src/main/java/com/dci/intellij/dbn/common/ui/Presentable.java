@@ -1,5 +1,6 @@
 package com.dci.intellij.dbn.common.ui;
 
+import com.dci.intellij.dbn.common.text.TextContent;
 import com.dci.intellij.dbn.common.util.Named;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -11,32 +12,30 @@ import java.util.Objects;
 import java.util.stream.Collectors;
 
 public interface Presentable extends Named {
+
     @NotNull
     String getName();
 
     @Nullable
-    default String getDescription() {return null;}
+    default String getDescription() {
+        return null;
+    }
 
     @Nullable
-    default Icon getIcon() {return null;}
+    default TextContent getInfo() {
+        return null;
+    }
+
+    @Nullable
+    default Icon getIcon() {
+        return null;
+    }
 
     Presentable UNKNOWN = new Presentable() {
         @NotNull
         @Override
         public String getName() {
             return "Unknown";
-        }
-
-        @Nullable
-        @Override
-        public String getDescription() {
-            return null;
-        }
-
-        @Nullable
-        @Override
-        public Icon getIcon() {
-            return null;
         }
     };
 

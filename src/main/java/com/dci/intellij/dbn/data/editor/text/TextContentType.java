@@ -6,22 +6,18 @@ import com.dci.intellij.dbn.editor.data.options.DataEditorSettings;
 import com.intellij.openapi.fileTypes.FileType;
 import com.intellij.openapi.fileTypes.FileTypeManager;
 import com.intellij.openapi.project.Project;
-import lombok.EqualsAndHashCode;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.Data;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import javax.swing.Icon;
+import javax.swing.*;
 import java.util.Objects;
 
-@Getter
-@Setter
-@EqualsAndHashCode
+@Data
 public class TextContentType implements Selectable<TextContentType> {
     private final String name;
     private final FileType fileType;
-    private boolean selected = true;
+    private transient boolean selected = true;
 
     public TextContentType(String name, FileType fileType) {
         this.name = name.intern();

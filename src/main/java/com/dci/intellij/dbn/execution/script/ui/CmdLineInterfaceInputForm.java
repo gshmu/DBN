@@ -1,6 +1,7 @@
 package com.dci.intellij.dbn.execution.script.ui;
 
 import com.dci.intellij.dbn.common.Icons;
+import com.dci.intellij.dbn.common.text.TextContent;
 import com.dci.intellij.dbn.common.ui.form.DBNFormBase;
 import com.dci.intellij.dbn.common.ui.form.DBNHintForm;
 import com.dci.intellij.dbn.common.util.Strings;
@@ -44,9 +45,9 @@ public class CmdLineInterfaceInputForm extends DBNFormBase {
         cmdLineInterface.setExecutablePath(executablePath);
         onTextChange(nameTextField, e -> updateComponents(cmdLineInterface, usedNames));
 
-        String hintText =
+        TextContent hintText =TextContent.plain(
                 "Please provide a name for storing Command-Line interface executable.\n" +
-                "Command-Line interfaces can be configured in DBN Settings > Execution Engine > Script Execution.";
+                "Command-Line interfaces can be configured in DBN Settings > Execution Engine > Script Execution.");
         DBNHintForm hintForm = new DBNHintForm(this, hintText, null, true);
         hintPanel.add(hintForm.getComponent(), BorderLayout.CENTER);
 

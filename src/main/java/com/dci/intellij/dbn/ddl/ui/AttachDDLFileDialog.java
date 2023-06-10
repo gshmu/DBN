@@ -1,5 +1,6 @@
 package com.dci.intellij.dbn.ddl.ui;
 
+import com.dci.intellij.dbn.common.text.TextContent;
 import com.dci.intellij.dbn.common.ui.dialog.DBNDialog;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.ddl.DDLFileAttachmentManager;
@@ -12,6 +13,8 @@ import org.jetbrains.annotations.NotNull;
 import javax.swing.*;
 import java.awt.event.ActionEvent;
 import java.util.List;
+
+import static com.dci.intellij.dbn.common.text.TextContent.plain;
 
 public class AttachDDLFileDialog extends DBNDialog<SelectDDLFileForm> {
     private final DBObjectRef<DBSchemaObject> objectRef;
@@ -33,11 +36,11 @@ public class AttachDDLFileDialog extends DBNDialog<SelectDDLFileForm> {
     protected SelectDDLFileForm createForm() {
         DBSchemaObject object = getObject();
         String typeName = object.getTypeName();
-        String hint =
+        TextContent hintText = plain(
                 "Following DDL files were found matching the name of the " + object.getQualifiedName() + ".\n" +
                         "Select the files to attach to this object.\n\n" +
-                        "NOTE: Attached DDL files will become readonly and their content will change automatically when the " + typeName + " is edited.";
-        return new SelectDDLFileForm(this, object, virtualFiles, hint, showLookupOption);
+                        "NOTE: Attached DDL files will become readonly and their content will change automatically when the " + typeName + " is edited.");
+        return new SelectDDLFileForm(this, object, virtualFiles, hintText, showLookupOption);
     }
 
     @Override

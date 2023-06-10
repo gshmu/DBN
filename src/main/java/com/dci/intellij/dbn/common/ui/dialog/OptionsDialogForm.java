@@ -4,6 +4,7 @@ import com.dci.intellij.dbn.common.ui.Presentable;
 import com.dci.intellij.dbn.common.ui.form.DBNFormBase;
 import com.dci.intellij.dbn.common.ui.form.DBNHintForm;
 import com.dci.intellij.dbn.common.ui.misc.DBNComboBox;
+import com.dci.intellij.dbn.common.ui.util.UserInterface;
 import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
@@ -17,18 +18,21 @@ public class OptionsDialogForm<O extends Presentable> extends DBNFormBase {
     public OptionsDialogForm(OptionsDialog<O> dialog) {
         super(dialog);
 
-        DBNHintForm optionDescriptionForm = new DBNHintForm(this, "", null, false);
+        DBNHintForm optionDescriptionForm = new DBNHintForm(this, null, null, true);
         optionDescriptionPanel.add(optionDescriptionForm.getComponent());
 
         optionLabel.setText(dialog.getOptionLabel());
 
+        O selectedOption = dialog.getSelectedOption();
         optionComboBox.setValues(dialog.getOptions());
-        optionComboBox.setSelectedValue(dialog.getSelectedOption());
+        optionComboBox.setSelectedValue(selectedOption);
+        if (selectedOption != null) optionDescriptionForm.setHintContent(selectedOption.getInfo());
 
         optionComboBox.addListener((oldValue, newValue) -> {
-           optionDescriptionForm.setHintText(newValue == null ? "" : newValue.getDescription());
-           dialog.setSelectedOption(newValue);
-           dialog.setActionsEnabled(newValue != null);
+            optionDescriptionForm.setHintContent(newValue == null ? null : newValue.getInfo());
+            dialog.setSelectedOption(newValue);
+            dialog.setActionsEnabled(newValue != null);
+            UserInterface.repaint(mainPanel);
         });
     }
 

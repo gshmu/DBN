@@ -1,4 +1,4 @@
-package com.dci.intellij.dbn.common.about.ui;
+package com.dci.intellij.dbn.plugin.about.ui;
 
 import com.dci.intellij.dbn.DatabaseNavigator;
 import com.dci.intellij.dbn.common.Icons;

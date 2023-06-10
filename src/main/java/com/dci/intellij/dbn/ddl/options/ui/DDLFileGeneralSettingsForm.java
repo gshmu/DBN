@@ -4,6 +4,7 @@ import com.dci.intellij.dbn.common.event.ProjectEvents;
 import com.dci.intellij.dbn.common.message.MessageType;
 import com.dci.intellij.dbn.common.options.SettingsChangeNotifier;
 import com.dci.intellij.dbn.common.options.ui.ConfigurationEditorForm;
+import com.dci.intellij.dbn.common.text.TextContent;
 import com.dci.intellij.dbn.common.ui.form.DBNHintForm;
 import com.dci.intellij.dbn.ddl.options.DDLFileGeneralSettings;
 import com.dci.intellij.dbn.ddl.options.listener.DDLFileSettingsChangeListener;
@@ -14,6 +15,8 @@ import org.jetbrains.annotations.NotNull;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionListener;
+
+import static com.dci.intellij.dbn.common.text.TextContent.plain;
 
 public class DDLFileGeneralSettingsForm extends ConfigurationEditorForm<DDLFileGeneralSettings> {
     private JPanel mainPanel;
@@ -27,7 +30,7 @@ public class DDLFileGeneralSettingsForm extends ConfigurationEditorForm<DDLFileG
     public DDLFileGeneralSettingsForm(DDLFileGeneralSettings settings) {
         super(settings);
 
-        String hintText = "NOTE: When \"Synchronize\" option is enabled, the DDL file content gets overwritten with the source from the underlying database object whenever this gets saved to database.";
+        TextContent hintText = plain("NOTE: When \"Synchronize\" option is enabled, the DDL file content gets overwritten with the source from the underlying database object whenever this gets saved to database.");
         DBNHintForm hintForm = new DBNHintForm(this, hintText, MessageType.INFO, false);
         hintPanel.add(hintForm.getComponent(), BorderLayout.CENTER);
 
