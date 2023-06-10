@@ -3,14 +3,15 @@ package com.dci.intellij.dbn.object.filter.quick.ui;
 import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.common.dispose.DisposableContainers;
 import com.dci.intellij.dbn.common.filter.Filter;
-import com.dci.intellij.dbn.common.ui.util.Borders;
-import com.dci.intellij.dbn.common.ui.misc.DBNComboBox;
+import com.dci.intellij.dbn.common.text.TextContent;
+import com.dci.intellij.dbn.common.ui.ValueSelector;
+import com.dci.intellij.dbn.common.ui.ValueSelectorOption;
 import com.dci.intellij.dbn.common.ui.form.DBNFormBase;
 import com.dci.intellij.dbn.common.ui.form.DBNHeaderForm;
 import com.dci.intellij.dbn.common.ui.form.DBNHintForm;
+import com.dci.intellij.dbn.common.ui.misc.DBNComboBox;
+import com.dci.intellij.dbn.common.ui.util.Borders;
 import com.dci.intellij.dbn.common.ui.util.UserInterface;
-import com.dci.intellij.dbn.common.ui.ValueSelector;
-import com.dci.intellij.dbn.common.ui.ValueSelectorOption;
 import com.dci.intellij.dbn.common.util.Naming;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.DatabaseEntity;
@@ -26,12 +27,9 @@ import com.intellij.util.PlatformIcons;
 import com.intellij.util.ui.JBUI;
 import org.jetbrains.annotations.NotNull;
 
-import javax.swing.BoxLayout;
-import javax.swing.Icon;
-import javax.swing.JPanel;
+import javax.swing.*;
 import javax.swing.border.CompoundBorder;
-import java.awt.BorderLayout;
-import java.awt.Color;
+import java.awt.*;
 import java.util.Arrays;
 import java.util.List;
 
@@ -64,7 +62,7 @@ public class ObjectQuickFilterForm extends DBNFormBase {
 
         Filter<?> configFilter = objectList.getConfigFilter();
         if (configFilter != null) {
-            String hintText = "NOTE: This list is already filtered according to connection \"Filter\" settings. Any additional condition will narrow down the already filtered list." ;
+            TextContent hintText = TextContent.plain("NOTE: This list is already filtered according to connection \"Filter\" settings. Any additional condition will narrow down the already filtered list.");
             DBNHintForm hintForm = new DBNHintForm(this, hintText, null, true);
             hintPanel.add(hintForm.getComponent());
         }

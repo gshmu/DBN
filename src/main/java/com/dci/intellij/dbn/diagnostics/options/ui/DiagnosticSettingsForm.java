@@ -1,6 +1,7 @@
 package com.dci.intellij.dbn.diagnostics.options.ui;
 
 import com.dci.intellij.dbn.common.Icons;
+import com.dci.intellij.dbn.common.text.TextContent;
 import com.dci.intellij.dbn.common.ui.form.DBNFormBase;
 import com.dci.intellij.dbn.common.ui.form.DBNHintForm;
 import com.dci.intellij.dbn.diagnostics.Diagnostics;
@@ -12,6 +13,7 @@ import javax.swing.*;
 import java.awt.event.ActionEvent;
 
 import static com.dci.intellij.dbn.common.options.ui.ConfigurationEditorUtil.validateIntegerValue;
+import static com.dci.intellij.dbn.common.text.TextContent.plain;
 
 public class DiagnosticSettingsForm extends DBNFormBase {
     private JPanel mainPanel;
@@ -36,10 +38,10 @@ public class DiagnosticSettingsForm extends DBNFormBase {
         super(parent);
         developerModeCheckBox.setSelected(Diagnostics.isDeveloperMode());
 
-        String hintText = "Developer Mode enables actions that can affect your system stability and data integrity. " +
+        TextContent hintText = plain("Developer Mode enables actions that can affect your system stability and data integrity. " +
                 "Features like \"Slow Database Simulations\" or excessive \"Debug Logging\" are meant for diagnostic activities only " +
                 "and are significantly degrading the performance of your development environment.\n\n" +
-                "Please disable developer mode unless explicitly instructed to use it and properly guided throughout the process by DBN plugin developers.";
+                "Please disable developer mode unless explicitly instructed to use it and properly guided throughout the process by DBN plugin developers.");
         disclaimerForm = new DBNHintForm(this, hintText, null, true);
         hintPanel.add(disclaimerForm.getComponent());
 

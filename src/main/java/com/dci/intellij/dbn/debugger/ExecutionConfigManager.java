@@ -4,6 +4,7 @@ import com.dci.intellij.dbn.DatabaseNavigator;
 import com.dci.intellij.dbn.common.component.PersistentState;
 import com.dci.intellij.dbn.common.component.ProjectComponentBase;
 import com.dci.intellij.dbn.common.dispose.Failsafe;
+import com.dci.intellij.dbn.common.text.TextContent;
 import com.dci.intellij.dbn.common.util.Lists;
 import com.dci.intellij.dbn.common.util.Naming;
 import com.dci.intellij.dbn.debugger.common.config.*;
@@ -26,6 +27,7 @@ import java.util.List;
 import java.util.Objects;
 
 import static com.dci.intellij.dbn.common.component.Components.projectService;
+import static com.dci.intellij.dbn.common.text.TextContent.plain;
 import static com.dci.intellij.dbn.debugger.ExecutionConfigManager.COMPONENT_NAME;
 
 @State(
@@ -36,15 +38,15 @@ public class ExecutionConfigManager extends ProjectComponentBase implements Pers
     public static final String COMPONENT_NAME = "DBNavigator.Project.ExecutionConfigManager";
 
 
-    public static final String GENERIC_METHOD_RUNNER_HINT =
-            "This is the generic Database Method debug runner. " +
+    public static final TextContent GENERIC_METHOD_RUNNER_HINT =
+            plain("This is the generic Database Method debug runner. " +
                     "This is used when debugging is invoked on a given method. " +
-                    "No specific method information can be specified here.";
+                    "No specific method information can be specified here.");
 
-    public static final String GENERIC_STATEMENT_RUNNER_HINT =
-            "This is the generic Database Statement debug runner. " +
+    public static final TextContent GENERIC_STATEMENT_RUNNER_HINT =
+            plain("This is the generic Database Statement debug runner. " +
                     "This is used when debugging is invoked on a given SQL statement. " +
-                    "No specific statement information can be specified here.";
+                    "No specific statement information can be specified here.");
 
 
     private ExecutionConfigManager(Project project) {

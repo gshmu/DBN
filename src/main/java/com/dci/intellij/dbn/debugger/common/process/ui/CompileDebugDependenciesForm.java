@@ -1,5 +1,6 @@
 package com.dci.intellij.dbn.debugger.common.process.ui;
 
+import com.dci.intellij.dbn.common.text.TextContent;
 import com.dci.intellij.dbn.common.ui.Presentable;
 import com.dci.intellij.dbn.common.ui.form.DBNFormBase;
 import com.dci.intellij.dbn.common.ui.form.DBNHeaderForm;
@@ -22,6 +23,8 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import static com.dci.intellij.dbn.common.text.TextContent.plain;
+
 public class CompileDebugDependenciesForm extends DBNFormBase {
     private JList<DBSchemaObject> objectList;
     private JPanel mainPanel;
@@ -31,9 +34,9 @@ public class CompileDebugDependenciesForm extends DBNFormBase {
 
     public CompileDebugDependenciesForm(CompileDebugDependenciesDialog parent, DBRunConfig<?> runConfiguration, List<DBSchemaObject> compileList) {
         super(parent);
-        String hintText = "The program you are trying to debug or some of its dependencies are not compiled with debug information." +
+        TextContent hintText = plain("The program you are trying to debug or some of its dependencies are not compiled with debug information." +
                 "This may result in breakpoints being ignored during the debug execution, as well as missing information about execution stacks and variables.\n" +
-                "In order to achieve full debugging support you are advised to compile the respective programs in debug mode.";
+                "In order to achieve full debugging support you are advised to compile the respective programs in debug mode.");
 
         DBNHintForm hintForm = new DBNHintForm(this, hintText, null, true);
         hintPanel.add(hintForm.getComponent());

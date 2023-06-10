@@ -1,6 +1,7 @@
 package com.dci.intellij.dbn.execution.statement.result.ui;
 
 import com.dci.intellij.dbn.common.Icons;
+import com.dci.intellij.dbn.common.text.TextContent;
 import com.dci.intellij.dbn.common.ui.form.DBNFormBase;
 import com.dci.intellij.dbn.common.ui.form.DBNHeaderForm;
 import com.dci.intellij.dbn.common.ui.form.DBNHintForm;
@@ -15,6 +16,7 @@ import javax.swing.*;
 import java.awt.*;
 import java.util.Objects;
 
+import static com.dci.intellij.dbn.common.text.TextContent.plain;
 import static com.dci.intellij.dbn.common.ui.util.TextFields.onTextChange;
 
 public class RenameExecutionResultForm extends DBNFormBase {
@@ -37,7 +39,7 @@ public class RenameExecutionResultForm extends DBNFormBase {
                 executionResult.getConnection().getEnvironmentType().getColor());
         headerPanel.add(headerForm.getComponent(), BorderLayout.CENTER);
 
-        String hint = "Use \"Sticky\" option to retain the name after the result is closed.";
+        TextContent hint = plain("Use \"Sticky\" option to retain the name after the result is closed.");
         DBNHintForm hintForm = new DBNHintForm(this, hint, null, false);
         hintPanel.add(hintForm.getComponent(), BorderLayout.CENTER);
 
