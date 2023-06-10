@@ -11,23 +11,13 @@ import com.dci.intellij.dbn.editor.data.model.DatasetEditorModelCell;
 import com.dci.intellij.dbn.editor.data.ui.table.DatasetEditorTable;
 import com.intellij.openapi.actionSystem.IdeActions;
 import com.intellij.openapi.actionSystem.Shortcut;
-import com.intellij.ui.RoundedLineBorder;
-import com.intellij.util.ui.JBUI;
 import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
-import javax.swing.border.Border;
-import javax.swing.border.CompoundBorder;
 import java.awt.*;
 import java.awt.event.KeyEvent;
 
 public class DatasetTableCellEditorWithTextEditor extends DatasetTableCellEditor {
-    private static final Border BUTTON_OUTSIDE_BORDER = JBUI.Borders.empty(1);
-    private static final Border BUTTON_INSIDE_BORDER = JBUI.Borders.empty(0, 2);
-    private static final RoundedLineBorder BUTTON_LINE_BORDER = new RoundedLineBorder(Colors.BUTTON_BORDER_COLOR, 4);
-    private static final CompoundBorder BUTTON_BORDER = new CompoundBorder(BUTTON_OUTSIDE_BORDER, new CompoundBorder(BUTTON_LINE_BORDER, BUTTON_INSIDE_BORDER));
-
-
     public DatasetTableCellEditorWithTextEditor(DatasetEditorTable table) {
         super(table, createTextField(table));
         TextFieldWithTextEditor editorComponent = getEditorComponent();

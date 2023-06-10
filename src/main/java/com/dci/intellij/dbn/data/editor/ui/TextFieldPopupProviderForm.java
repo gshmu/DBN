@@ -113,7 +113,7 @@ public abstract class TextFieldPopupProviderForm extends DBNFormBase implements 
             Disposer.register(TextFieldPopupProviderForm.this, popup);
 
             JPanel panel = (JPanel) popup.getContent();
-            panel.setBorder(Borders.COMPONENT_LINE_BORDER);
+            panel.setBorder(Borders.COMPONENT_OUTLINE_BORDER);
 
             editorComponent.clearSelection();
 
