@@ -64,7 +64,7 @@ public class CalendarPopupProviderForm extends TextFieldPopupProviderForm implem
         weeksTable.setDefaultRenderer(Object.class, HEADER_CELL_RENDERER);
         weeksTable.setFocusable(false);
         weeksTable.setShowGrid(false);
-        calendarPanel.setBorder(Borders.COMPONENT_LINE_BORDER);
+        calendarPanel.setBorder(Borders.COMPONENT_OUTLINE_BORDER);
         headerSeparatorPanel.setBorder(Borders.BOTTOM_LINE_BORDER);
 
         daysTable.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);

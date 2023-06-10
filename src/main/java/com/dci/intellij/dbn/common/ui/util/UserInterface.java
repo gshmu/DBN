@@ -151,7 +151,7 @@ public class UserInterface {
     }
 
     public static void updateScrollPaneBorders(JComponent component) {
-        visitRecursively(component, JScrollPane.class, sp -> sp.setBorder(getScrollPaneComponent(sp) instanceof JPanel ? null : OUTLINE_BORDER));
+        visitRecursively(component, JScrollPane.class, sp -> sp.setBorder(getScrollPaneComponent(sp) instanceof JPanel ? null : COMPONENT_OUTLINE_BORDER));
     }
 
     public static Component getScrollPaneComponent(JScrollPane scrollPane) {
