@@ -1,5 +1,6 @@
 package com.dci.intellij.dbn.execution.compiler.ui;
 
+import com.dci.intellij.dbn.common.text.TextContent;
 import com.dci.intellij.dbn.common.ui.form.DBNFormBase;
 import com.dci.intellij.dbn.common.ui.form.DBNHeaderForm;
 import com.dci.intellij.dbn.common.ui.form.DBNHintForm;
@@ -9,6 +10,8 @@ import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
 import java.awt.*;
+
+import static com.dci.intellij.dbn.common.text.TextContent.plain;
 
 public class CompilerTypeSelectionForm extends DBNFormBase {
     private JPanel mainPanel;
@@ -24,11 +27,11 @@ public class CompilerTypeSelectionForm extends DBNFormBase {
             DBNHeaderForm headerForm = new DBNHeaderForm(this, object);
             headerPanel.add(headerForm.getComponent(), BorderLayout.CENTER);
         }
-        String hintText =
+        TextContent hintText = plain(
                 "The compile option type \"Debug\" enables you to use the selected object(s) in debugging activities (i.e. pause/trace execution). " +
                         "For runtime performance reasons, it is recommended to use normal compile option, unless you plan to debug the selected element(s)." +
                         "\n\"Keep current\" will carry over the existing compile type.\n\n" +
-                        "Please select your compile option.";
+                        "Please select your compile option.");
         DBNHintForm hintForm = new DBNHintForm(this, hintText, null, true);
         hintPanel.add(hintForm.getComponent(), BorderLayout.CENTER);
 

@@ -11,6 +11,7 @@ import com.dci.intellij.dbn.common.message.MessageType;
 import com.dci.intellij.dbn.common.options.SettingsChangeNotifier;
 import com.dci.intellij.dbn.common.options.ui.ConfigurationEditorForm;
 import com.dci.intellij.dbn.common.options.ui.ConfigurationEditorUtil;
+import com.dci.intellij.dbn.common.text.TextContent;
 import com.dci.intellij.dbn.common.ui.form.DBNHintForm;
 import com.dci.intellij.dbn.common.util.Commons;
 import com.dci.intellij.dbn.connection.ConnectionHandlerStatusListener;
@@ -28,6 +29,7 @@ import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.List;
 
+import static com.dci.intellij.dbn.common.text.TextContent.plain;
 import static com.dci.intellij.dbn.common.ui.util.ComboBoxes.*;
 
 public class ConnectionDetailSettingsForm extends ConfigurationEditorForm<ConnectionDetailSettings> {
@@ -63,7 +65,7 @@ public class ConnectionDetailSettingsForm extends ConfigurationEditorForm<Connec
 
         environmentTypesComboBox.addActionListener(e -> notifyPresentationChanges());
 
-        String autoConnectHintText = "NOTE: If \"Connect automatically\" is not selected, the system will not restore the workspace the next time you open the project (i.e. all open editors for this connection will not be reopened automatically).";
+        TextContent autoConnectHintText = plain("NOTE: If \"Connect automatically\" is not selected, the system will not restore the workspace the next time you open the project (i.e. all open editors for this connection will not be reopened automatically).");
         DBNHintForm hintForm = new DBNHintForm(this, autoConnectHintText, MessageType.INFO, false);
         autoConnectHintPanel.add(hintForm.getComponent());
 

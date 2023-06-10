@@ -9,6 +9,7 @@ import com.dci.intellij.dbn.common.options.ConfigurationHandle;
 import com.dci.intellij.dbn.common.options.SettingsChangeNotifier;
 import com.dci.intellij.dbn.common.options.ui.ConfigurationEditorForm;
 import com.dci.intellij.dbn.common.options.ui.ConfigurationEditorUtil;
+import com.dci.intellij.dbn.common.text.TextContent;
 import com.dci.intellij.dbn.common.ui.form.DBNHintForm;
 import com.dci.intellij.dbn.common.ui.util.UserInterface;
 import com.dci.intellij.dbn.common.util.Commons;
@@ -310,10 +311,12 @@ public class ConnectionDatabaseSettingsForm extends ConfigurationEditorForm<Conn
         DatabaseType driverDatabaseType = driverSettingsForm.getDriverDatabaseType();
         if (selectedDatabaseType == DatabaseType.GENERIC && driverDatabaseType != null && driverDatabaseType != selectedDatabaseType) {
             String databaseTypeName = driverDatabaseType.getName();
-            DBNHintForm hintForm = new DBNHintForm(this,
-                    "Your database type was identified as \"" + databaseTypeName +"\".\n" +
+            TextContent hintText = TextContent.plain(
+                    "Your database type was identified as \"" + databaseTypeName + "\".\n" +
                     "Use specific connection type instead of \"Generic\", " +
-                    "to enable dedicated support for this database", null, true,
+                    "to enable dedicated support for this database");
+            DBNHintForm hintForm = new DBNHintForm(this,
+                    hintText, null, true,
                     "Change to " + databaseTypeName,
                     () -> setSelection(databaseTypeComboBox, driverDatabaseType));
             databaseTypeHintPanel.add(hintForm.getComponent(), BorderLayout.CENTER);

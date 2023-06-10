@@ -1,6 +1,7 @@
 package com.dci.intellij.dbn.connection.ui;
 
 import com.dci.intellij.dbn.common.database.AuthenticationInfo;
+import com.dci.intellij.dbn.common.text.TextContent;
 import com.dci.intellij.dbn.common.ui.form.DBNFormBase;
 import com.dci.intellij.dbn.common.ui.form.DBNHeaderForm;
 import com.dci.intellij.dbn.common.ui.form.DBNHintForm;
@@ -15,6 +16,7 @@ import org.jetbrains.annotations.Nullable;
 import javax.swing.*;
 import java.awt.*;
 
+import static com.dci.intellij.dbn.common.text.TextContent.plain;
 import static com.dci.intellij.dbn.common.ui.util.ComboBoxes.initComboBox;
 import static com.dci.intellij.dbn.common.ui.util.ComboBoxes.setSelection;
 import static com.dci.intellij.dbn.common.ui.util.TextFields.onTextChange;
@@ -43,7 +45,7 @@ public class ConnectionAuthenticationForm extends DBNFormBase {
             cachedUser = user;
         }
 
-        String hintText;
+        TextContent hintText;
         if (connection != null) {
             initComboBox(authTypeComboBox, connection.getDatabaseType().getAuthTypes());
             DBNHeaderForm headerForm = new DBNHeaderForm(this, connection);
@@ -53,13 +55,13 @@ public class ConnectionAuthenticationForm extends DBNFormBase {
             String expiryTimeText = passwordExpiryTime == 0 ? "0 - no expiry" :
                     passwordExpiryTime == 1 ? "1 minute" : passwordExpiryTime + " minutes";
 
-            hintText = "The system needs your credentials to connect to this database. " +
+            hintText = plain("The system needs your credentials to connect to this database. " +
                             "\nYou can configure how long the credentials stay active on idle connectivity " +
-                            "in DBN Settings > Connection > Details (currently set to " + expiryTimeText + ")";
+                            "in DBN Settings > Connection > Details (currently set to " + expiryTimeText + ")");
 
         } else {
             initComboBox(authTypeComboBox, AuthenticationType.values());
-            hintText = "The system needs your credentials to connect to this database.";
+            hintText = plain("The system needs your credentials to connect to this database.");
         }
         setSelection(authTypeComboBox, authenticationInfo.getType());
 

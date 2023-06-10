@@ -1,5 +1,6 @@
 package com.dci.intellij.dbn.ddl.ui;
 
+import com.dci.intellij.dbn.common.text.TextContent;
 import com.dci.intellij.dbn.common.ui.dialog.DBNDialog;
 import com.dci.intellij.dbn.common.ui.form.DBNFormBase;
 import com.dci.intellij.dbn.common.ui.form.DBNHeaderForm;
@@ -19,7 +20,7 @@ public class SelectDDLFileForm extends DBNFormBase {
     private JCheckBox doNotPromptCheckBox;
     private JPanel hintPanel;
 
-    SelectDDLFileForm(DBNDialog<?> parent, DBSchemaObject object, List<VirtualFile> virtualFiles, String hint, boolean isFileOpenEvent) {
+    SelectDDLFileForm(DBNDialog<?> parent, DBSchemaObject object, List<VirtualFile> virtualFiles, TextContent hint, boolean isFileOpenEvent) {
         super(parent);
         DBNHeaderForm headerForm = new DBNHeaderForm(this, object);
         headerPanel.add(headerForm.getComponent(), BorderLayout.CENTER);
