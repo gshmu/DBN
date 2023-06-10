@@ -1,7 +1,7 @@
 package com.dci.intellij.dbn.common.ui.list;
 
-import com.dci.intellij.dbn.common.ui.form.DBNFormBase;
 import com.dci.intellij.dbn.common.ui.component.DBNComponent;
+import com.dci.intellij.dbn.common.ui.form.DBNFormBase;
 import com.intellij.ui.ToolbarDecorator;
 import org.jetbrains.annotations.NotNull;
 
@@ -10,6 +10,8 @@ import java.awt.*;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+
+import static com.dci.intellij.dbn.common.ui.util.UserInterface.createToolbarDecorator;
 
 public class EditableStringListForm extends DBNFormBase {
     private JPanel component;
@@ -25,7 +27,7 @@ public class EditableStringListForm extends DBNFormBase {
     public EditableStringListForm(DBNComponent parent, String title, List<String> elements, boolean sorted) {
         super(parent);
         editableStringList = new EditableStringList(this, elements, sorted, false);
-        ToolbarDecorator decorator = ToolbarDecorator.createDecorator(editableStringList);
+        ToolbarDecorator decorator = createToolbarDecorator(editableStringList);
         decorator.setAddAction(anActionButton -> editableStringList.insertRow());
         decorator.setRemoveAction(anActionButton -> editableStringList.removeRow());
         decorator.setMoveUpAction(anActionButton -> editableStringList.moveRowUp());

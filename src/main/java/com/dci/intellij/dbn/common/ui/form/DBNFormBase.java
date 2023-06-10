@@ -6,7 +6,6 @@ import com.dci.intellij.dbn.common.environment.options.EnvironmentSettings;
 import com.dci.intellij.dbn.common.notification.NotificationSupport;
 import com.dci.intellij.dbn.common.ui.component.DBNComponentBase;
 import com.dci.intellij.dbn.common.ui.misc.DBNButton;
-import com.dci.intellij.dbn.common.ui.util.UserInterface;
 import com.dci.intellij.dbn.options.general.GeneralProjectSettings;
 import com.intellij.ide.DataManager;
 import com.intellij.openapi.Disposable;
@@ -20,6 +19,8 @@ import javax.swing.*;
 import javax.swing.text.JTextComponent;
 import java.util.HashSet;
 import java.util.Set;
+
+import static com.dci.intellij.dbn.common.ui.util.UserInterface.*;
 
 public abstract class DBNFormBase
         extends DBNComponentBase
@@ -50,19 +51,9 @@ public abstract class DBNFormBase
         initialized = true;
         JComponent mainComponent = getMainComponent();
         DataProviders.register(mainComponent, this);
-        UserInterface.visitRecursively(mainComponent, component -> {
-            if (component instanceof JPanel) {
-                JPanel panel = (JPanel) component;
-                UserInterface.updateTitledBorders(panel);
-            }
-        });
+        updateScrollPaneBorders(mainComponent);
+        updateTitledBorders(mainComponent);
 
-        UserInterface.visitRecursively(mainComponent, component -> {
-            if (component instanceof JPanel) {
-                JPanel panel = (JPanel) component;
-                UserInterface.updateTitledBorders(panel);
-            }
-        });
         GuiUtils.replaceJSplitPaneWithIDEASplitter(mainComponent);
     }
 
@@ -93,11 +84,11 @@ public abstract class DBNFormBase
     }
 
     public void freeze() {
-        UserInterface.visitRecursively(getComponent(), c -> disable(c));
+        visitRecursively(getComponent(), c -> disable(c));
     }
 
     public void unfreeze() {
-        UserInterface.visitRecursively(getComponent(), c -> enable(c));
+        visitRecursively(getComponent(), c -> enable(c));
     }
 
     private void disable(JComponent c) {

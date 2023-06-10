@@ -11,6 +11,8 @@ import org.jetbrains.annotations.NotNull;
 import javax.swing.*;
 import java.awt.*;
 
+import static com.dci.intellij.dbn.common.ui.util.UserInterface.createToolbarDecorator;
+
 public class DatabaseFileSettingsForm extends DBNFormBase {
     private JPanel mainPanel;
     private final DatabaseFilesTable table;
@@ -19,7 +21,7 @@ public class DatabaseFileSettingsForm extends DBNFormBase {
         super(parent);
         table = new DatabaseFilesTable(this, fileBundle);
 
-        ToolbarDecorator decorator = ToolbarDecorator.createDecorator(table);
+        ToolbarDecorator decorator = createToolbarDecorator(table);
         decorator.setAddAction(anActionButton -> getTable().insertRow());
         decorator.setRemoveAction(anActionButton -> getTable().removeRow());
         decorator.setRemoveActionUpdater(e -> getTable().getSelectedRows().length > 0);

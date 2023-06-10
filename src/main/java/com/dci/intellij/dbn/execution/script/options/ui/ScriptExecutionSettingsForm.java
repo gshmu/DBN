@@ -21,6 +21,8 @@ import org.jetbrains.annotations.NotNull;
 import javax.swing.*;
 import java.awt.*;
 
+import static com.dci.intellij.dbn.common.ui.util.UserInterface.createToolbarDecorator;
+
 public class ScriptExecutionSettingsForm extends ConfigurationEditorForm<ScriptExecutionSettings> {
     private JPanel mainPanel;
     private JPanel cmdLineInterfacesTablePanel;
@@ -31,7 +33,7 @@ public class ScriptExecutionSettingsForm extends ConfigurationEditorForm<ScriptE
         super(settings);
         cmdLineInterfacesTable = new CmdLineInterfacesTable(this, settings.getCommandLineInterfaces());
 
-        ToolbarDecorator decorator = ToolbarDecorator.createDecorator(cmdLineInterfacesTable);
+        ToolbarDecorator decorator = createToolbarDecorator(cmdLineInterfacesTable);
         decorator.setAddAction(anActionButton ->
                 showNewInterfacePopup(
                         anActionButton.getDataContext(),

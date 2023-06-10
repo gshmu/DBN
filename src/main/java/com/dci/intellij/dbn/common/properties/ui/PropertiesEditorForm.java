@@ -3,6 +3,7 @@ package com.dci.intellij.dbn.common.properties.ui;
 import com.dci.intellij.dbn.common.dispose.Disposer;
 import com.dci.intellij.dbn.common.ui.form.DBNForm;
 import com.dci.intellij.dbn.common.ui.form.DBNFormBase;
+import com.dci.intellij.dbn.common.ui.util.UserInterface;
 import com.intellij.ui.ToolbarDecorator;
 import org.jetbrains.annotations.NotNull;
 
@@ -19,7 +20,7 @@ public class PropertiesEditorForm extends DBNFormBase {
         table = new PropertiesEditorTable(this, properties);
         Disposer.register(this, table);
 
-        ToolbarDecorator decorator = ToolbarDecorator.createDecorator(table);
+        ToolbarDecorator decorator = UserInterface.createToolbarDecorator(table);
         decorator.setAddAction(button -> table.insertRow());
         decorator.setRemoveAction(button -> table.removeRow());
 

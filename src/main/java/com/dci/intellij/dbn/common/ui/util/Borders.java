@@ -24,7 +24,9 @@ public final class Borders {
 
     public static final Border COMPONENT_LINE_BORDER = new LineBorder(Colors.COMPONENT_BORDER_COLOR);
     public static final Border BOTTOM_LINE_BORDER = new CustomLineBorder(JBColor.border(),0,0, 1,0);
-    public static final Border TOP_LINE_BORDER = new CustomLineBorder(JBColor.border(),1,0, 0,0);
+    public static final Border TOP_LINE_BORDER = new CustomLineBorder(Colors.getOutlineColor(),1,0, 0,0);
+    public static final Border OUTLINE_BORDER = new LineBorder(Colors.getOutlineColor(),1);
+    public static final Border TOOLBAR_DECORATOR_BORDER = new CustomLineBorder(Colors.getOutlineColor(),1, 1, 0, 1);
 
     private static final Map<Color, Border> LINE_BORDERS = new ConcurrentHashMap<>();
     private static final Map<Integer, Border> INSET_BORDERS = new ConcurrentHashMap<>();

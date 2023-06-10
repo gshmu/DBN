@@ -11,7 +11,6 @@ import com.dci.intellij.dbn.connection.context.DatabaseContext;
 import com.dci.intellij.dbn.object.common.DBObject;
 import com.dci.intellij.dbn.object.lookup.DBObjectRef;
 import com.intellij.openapi.project.Project;
-import com.intellij.util.ui.UIUtil;
 import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
@@ -19,7 +18,7 @@ import javax.swing.border.LineBorder;
 import java.awt.*;
 
 public class DBNHeaderForm extends DBNFormBase {
-    public static final LineBorder BORDER = new LineBorder(UIUtil.getBoundsColor());
+    public static final LineBorder BORDER = new LineBorder(Colors.getOutlineColor());
     private JLabel objectLabel;
     private JPanel mainPanel;
 
