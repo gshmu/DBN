@@ -184,6 +184,7 @@ public class UserInterface {
     @NotNull
     public static ToolbarDecorator createToolbarDecorator(JTable table) {
         ToolbarDecorator decorator = ToolbarDecorator.createDecorator(table);
+        decorator.setAsUsualTopToolbar();
         decorator.setToolbarBorder(TOOLBAR_DECORATOR_BORDER);
         decorator.setPanelBorder(EMPTY_BORDER);
         return decorator;
