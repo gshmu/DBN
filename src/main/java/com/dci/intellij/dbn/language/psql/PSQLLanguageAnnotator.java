@@ -31,6 +31,7 @@ import com.intellij.testFramework.LightVirtualFile;
 import org.jetbrains.annotations.NotNull;
 
 import static com.dci.intellij.dbn.debugger.DatabaseDebuggerManager.isDebugConsole;
+import static com.dci.intellij.dbn.language.common.element.util.ElementTypeAttribute.*;
 
 public class PSQLLanguageAnnotator implements Annotator {
 
@@ -44,7 +45,7 @@ public class PSQLLanguageAnnotator implements Annotator {
                         BasePsiElement basePsiElement = (BasePsiElement) psiElement;
 
                         ElementType elementType = basePsiElement.getElementType();
-                        if (elementType.is(ElementTypeAttribute.OBJECT_SPECIFICATION) || elementType.is(ElementTypeAttribute.OBJECT_DECLARATION)) {
+                        if (elementType.is(OBJECT_SPECIFICATION) || elementType.is(OBJECT_DECLARATION)) {
                             annotateSpecDeclarationNavigable(basePsiElement, holder);
                         }
 
@@ -157,7 +158,7 @@ public class PSQLLanguageAnnotator implements Annotator {
     private static void annotateSpecDeclarationNavigable(@NotNull BasePsiElement basePsiElement, AnnotationHolder holder) {
         if (basePsiElement.isInjectedContext()) return;
 
-        BasePsiElement subjectPsiElement = basePsiElement.findFirstPsiElement(ElementTypeAttribute.SUBJECT);
+        BasePsiElement subjectPsiElement = basePsiElement.findFirstPsiElement(SUBJECT);
         if (subjectPsiElement instanceof IdentifierPsiElement) {
             IdentifierPsiElement identifierPsiElement = (IdentifierPsiElement) subjectPsiElement;
             DBObjectType objectType = identifierPsiElement.getObjectType();
@@ -166,8 +167,8 @@ public class PSQLLanguageAnnotator implements Annotator {
             if (identifierPsiElement.isObject() && objectType.getGenericType() == DBObjectType.METHOD) {
 
                 DBContentType targetContentType =
-                        elementType.is(ElementTypeAttribute.OBJECT_DECLARATION) ? DBContentType.CODE_SPEC :
-                        elementType.is(ElementTypeAttribute.OBJECT_SPECIFICATION) ? DBContentType.CODE_BODY : null;
+                        elementType.is(OBJECT_DECLARATION) ? DBContentType.CODE_SPEC :
+                        elementType.is(OBJECT_SPECIFICATION) ? DBContentType.CODE_BODY : null;
 
                 if (targetContentType != null && identifierPsiElement.getFile() instanceof PSQLFile) {
                     PSQLFile file = (PSQLFile) identifierPsiElement.getFile();
@@ -180,11 +181,11 @@ public class PSQLLanguageAnnotator implements Annotator {
                     if (codeEditorGeneralSettings.isShowSpecDeclarationNavigationGutter()) {
                         if (object == null || (virtualFile != null && virtualFile.isInLocalFileSystem())) {
                             ElementTypeAttribute targetAttribute =
-                                    elementType.is(ElementTypeAttribute.OBJECT_DECLARATION) ? ElementTypeAttribute.OBJECT_SPECIFICATION :
-                                            elementType.is(ElementTypeAttribute.OBJECT_SPECIFICATION) ? ElementTypeAttribute.OBJECT_DECLARATION : null;
+                                    elementType.is(OBJECT_DECLARATION) ? OBJECT_SPECIFICATION :
+                                    elementType.is(OBJECT_SPECIFICATION) ? OBJECT_DECLARATION : null;
 
                             if (targetAttribute != null) {
-                                BasePsiElement rootPsiElement = identifierPsiElement.findEnclosingPsiElement(ElementTypeAttribute.ROOT);
+                                BasePsiElement rootPsiElement = identifierPsiElement.findEnclosingElement(ROOT);
 
                                 BasePsiElement targetElement = rootPsiElement == null ? null :
                                         rootPsiElement.findPsiElementBySubject(targetAttribute,

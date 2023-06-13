@@ -23,7 +23,7 @@ public class PSQLFile extends DBLanguagePsiFile {
                 PsiLookupAdapter lookupAdapter = new ObjectDefinitionLookupAdapter(null, objectType, objectName, ElementTypeAttribute.SUBJECT);
                 BasePsiElement specObject = lookupAdapter.findInScope(basePsiElement);
                 if (specObject != null) {
-                    return specObject.findEnclosingPsiElement(ElementTypeAttribute.OBJECT_SPECIFICATION);
+                    return specObject.findEnclosingElement(ElementTypeAttribute.OBJECT_SPECIFICATION);
                 }
             }
             child = child.getNextSibling();
@@ -39,7 +39,7 @@ public class PSQLFile extends DBLanguagePsiFile {
                 PsiLookupAdapter lookupAdapter = new ObjectDefinitionLookupAdapter(null, objectType, objectName, ElementTypeAttribute.SUBJECT);
                 BasePsiElement specObject = lookupAdapter.findInScope(basePsiElement);
                 if (specObject != null) {
-                    return specObject.findEnclosingPsiElement(ElementTypeAttribute.OBJECT_DECLARATION);
+                    return specObject.findEnclosingElement(ElementTypeAttribute.OBJECT_DECLARATION);
                 }
             }
             child = child.getNextSibling();

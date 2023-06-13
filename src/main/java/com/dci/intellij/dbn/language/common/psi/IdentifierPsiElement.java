@@ -295,8 +295,8 @@ public abstract class IdentifierPsiElement extends LeafPsiElement<IdentifierElem
      *******************************************************/
 
     private Object[] buildAliasRefVariants() {
-        SequencePsiElement statement = (SequencePsiElement) findEnclosingPsiElement(ElementTypeAttribute.STATEMENT);
-        BasePsiElement sourceScope = getEnclosingScopePsiElement();
+        SequencePsiElement statement = findEnclosingElement(ElementTypeAttribute.STATEMENT);
+        BasePsiElement sourceScope = getEnclosingScopeElement();
         DBObjectType objectType = getObjectType();
         PsiLookupAdapter lookupAdapter = LookupAdapterCache.ALIAS_DEFINITION.get(objectType);
         ListCollector<BasePsiElement> consumer = ListCollector.basic();
@@ -480,7 +480,7 @@ public abstract class IdentifierPsiElement extends LeafPsiElement<IdentifierElem
         if (referencedElement instanceof IdentifierPsiElement) {
             IdentifierPsiElement identifierPsiElement = (IdentifierPsiElement) referencedElement;
             if (identifierPsiElement.isReference() && identifierPsiElement.isReferenceable()) {
-                return identifierPsiElement.getEnclosingScopePsiElement() == getEnclosingScopePsiElement();
+                return identifierPsiElement.getEnclosingScopeElement() == getEnclosingScopeElement();
             }
         }
         return true;
@@ -618,12 +618,12 @@ public abstract class IdentifierPsiElement extends LeafPsiElement<IdentifierElem
     }
 
     public void findQualifiedUsages(Consumer<BasePsiElement> consumer) {
-        BasePsiElement scopePsiElement = getEnclosingScopePsiElement();
+        BasePsiElement scopePsiElement = getEnclosingScopeElement();
         if (scopePsiElement != null) {
             IdentifierLookupAdapter identifierLookupAdapter = new IdentifierLookupAdapter(this, null, null, null, getChars());
             identifierLookupAdapter.collectInElement(scopePsiElement, basePsiElement -> {
                 QualifiedIdentifierPsiElement qualifiedIdentifierPsiElement =
-                        (QualifiedIdentifierPsiElement) basePsiElement.findEnclosingPsiElement(QualifiedIdentifierPsiElement.class);
+                        (QualifiedIdentifierPsiElement) basePsiElement.findEnclosingElement(QualifiedIdentifierPsiElement.class);
 
                 if (qualifiedIdentifierPsiElement != null && qualifiedIdentifierPsiElement.getElementsCount() > 1) {
                     consumer.accept(qualifiedIdentifierPsiElement);
@@ -634,6 +634,6 @@ public abstract class IdentifierPsiElement extends LeafPsiElement<IdentifierElem
 
     @Nullable
     public QualifiedIdentifierPsiElement getParentQualifiedIdentifier() {
-        return findEnclosingPsiElement(QualifiedIdentifierPsiElement.class);
+        return findEnclosingElement(QualifiedIdentifierPsiElement.class);
     }
 }

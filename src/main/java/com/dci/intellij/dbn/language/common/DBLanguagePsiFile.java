@@ -400,8 +400,8 @@ public abstract class DBLanguagePsiFile extends PsiFileImpl implements DatabaseC
             PsiElement parent = scope.getParent();
             if (parent instanceof BasePsiElement) {
                 BasePsiElement basePsiElement = (BasePsiElement) parent;
-                scope = basePsiElement.findEnclosingPsiElement(ElementTypeAttribute.SCOPE_DEMARCATION);
-                if (scope == null) scope = basePsiElement.findEnclosingPsiElement(ElementTypeAttribute.SCOPE_ISOLATION);
+                scope = basePsiElement.findEnclosingElement(ElementTypeAttribute.SCOPE_DEMARCATION);
+                if (scope == null) scope = basePsiElement.findEnclosingElement(ElementTypeAttribute.SCOPE_ISOLATION);
             } else {
                 scope = null;
             }

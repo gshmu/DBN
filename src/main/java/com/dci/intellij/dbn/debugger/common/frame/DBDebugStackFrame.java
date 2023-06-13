@@ -79,7 +79,7 @@ public abstract class DBDebugStackFrame<P extends DBDebugProcess, V extends DBDe
 
         if (elementAtOffset instanceof BasePsiElement) {
             BasePsiElement basePsiElement = (BasePsiElement) elementAtOffset;
-            BasePsiElement objectDeclarationPsiElement = basePsiElement.findEnclosingPsiElement(ElementTypeAttribute.OBJECT_DECLARATION);
+            BasePsiElement objectDeclarationPsiElement = basePsiElement.findEnclosingElement(ElementTypeAttribute.OBJECT_DECLARATION);
             if (objectDeclarationPsiElement != null) {
                 return (IdentifierPsiElement) objectDeclarationPsiElement.findFirstPsiElement(ElementTypeAttribute.SUBJECT);
             }

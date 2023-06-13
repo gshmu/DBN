@@ -112,7 +112,7 @@ public class ColumnParameterInfoHandler implements ParameterInfoHandler<BasePsiE
     @Nullable
     private static BasePsiElement lookupProviderElement(@Nullable BasePsiElement handlerPsiElement) {
         if (handlerPsiElement != null) {
-            BasePsiElement statementPsiElement = handlerPsiElement.findEnclosingPsiElement(ElementTypeAttribute.STATEMENT);
+            BasePsiElement statementPsiElement = handlerPsiElement.findEnclosingElement(ElementTypeAttribute.STATEMENT);
             if (statementPsiElement != null) {
                 return statementPsiElement.findFirstPsiElement(ElementTypeAttribute.COLUMN_PARAMETER_PROVIDER);
             }
