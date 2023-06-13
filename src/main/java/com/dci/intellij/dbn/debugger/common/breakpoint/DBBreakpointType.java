@@ -58,7 +58,7 @@ public class DBBreakpointType extends XLineBreakpointType<XBreakpointProperties>
         } else {
             BasePsiElement basePsiElement = findPsiElement(psiFile, line);
             if (basePsiElement != null) {
-                BasePsiElement debuggablePsiElement = basePsiElement.findEnclosingPsiElement(ElementTypeAttribute.DEBUGGABLE);
+                BasePsiElement debuggablePsiElement = basePsiElement.findEnclosingElement(ElementTypeAttribute.DEBUGGABLE);
                 return debuggablePsiElement != null;
             }
         }

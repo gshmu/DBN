@@ -25,7 +25,7 @@ public class PSQLTemplateContextType extends TemplateContextType {
             LeafPsiElement leafPsiElement = PsiUtil.lookupLeafBeforeOffset(file, offset);
             if (leafPsiElement != null) {
                 if (leafPsiElement.getLanguage() instanceof PSQLLanguage) {
-                    BasePsiElement scopePsiElement = leafPsiElement.getEnclosingScopePsiElement();
+                    BasePsiElement scopePsiElement = leafPsiElement.getEnclosingScopeElement();
                     return scopePsiElement != null && scopePsiElement.getTextRange().contains(offset);
                 }
             }

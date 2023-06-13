@@ -94,6 +94,15 @@ public class Strings extends com.intellij.openapi.util.text.StringUtil {
 
     }
 
+    public static boolean isIndex(@Nullable String string) {
+        if (string == null) return false;
+        for (int i = 0; i < string.length(); i++) {
+            char chr = string.charAt(i);
+            if (chr < '0' || chr > '9') return false;
+        }
+        return true;
+    }
+
     public static boolean isNumber(@Nullable String string) {
         try {
             if (isNotEmptyOrSpaces(string)) {
@@ -103,6 +112,7 @@ public class Strings extends com.intellij.openapi.util.text.StringUtil {
         } catch (NumberFormatException ignore) {}
         return false;
     }
+
 
     public static boolean isWord(String name) {
         boolean containsLetters = false;

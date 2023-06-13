@@ -34,10 +34,10 @@ public class ClauseChopDownIfLongStatementPreset extends ClauseAbstractPreset {
 
     @Nullable
     private NamedPsiElement getEnclosingStatementElement(BasePsiElement psiElement) {
-        BasePsiElement parentPsiElement = getParentPsiElement(psiElement);
+        BasePsiElement<?> parentPsiElement = getParentPsiElement(psiElement);
         if (parentPsiElement != null) {
             DBLanguagePsiFile psiFile = parentPsiElement.getFile();
-            NamedPsiElement namedPsiElement = (NamedPsiElement) parentPsiElement.findEnclosingPsiElement(ElementTypeAttribute.STATEMENT);
+            NamedPsiElement namedPsiElement = parentPsiElement.findEnclosingElement(ElementTypeAttribute.STATEMENT);
             if (namedPsiElement == null) {
                 PsiElement childPsiElement = psiFile.getFirstChild();
                 while (childPsiElement != null) {

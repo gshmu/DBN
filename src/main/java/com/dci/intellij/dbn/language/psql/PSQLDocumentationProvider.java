@@ -41,18 +41,18 @@ public class PSQLDocumentationProvider implements DocumentationProvider {
                  String objectTypeName = identifierPsiElement.getObjectType().getName();
                  if (identifierPsiElement.isObject()) {
                      if (identifierPsiElement.isDefinition()) {
-                         BasePsiElement contextPsiElement = identifierPsiElement.findEnclosingVirtualObjectPsiElement(identifierPsiElement.getObjectType());
+                         BasePsiElement contextPsiElement = identifierPsiElement.findEnclosingVirtualObjectElement(identifierPsiElement.getObjectType());
                          if (contextPsiElement == null) {
-                             contextPsiElement = identifierPsiElement.findEnclosingNamedPsiElement();
+                             contextPsiElement = identifierPsiElement.findEnclosingNamedElement();
                          }
                          return contextPsiElement == null ? objectTypeName : objectTypeName + ":\n" + contextPsiElement.getText();
                      }
                  }
 
                  else if (identifierPsiElement.isVariable()) {
-                     BasePsiElement contextPsiElement = identifierPsiElement.findEnclosingVirtualObjectPsiElement(identifierPsiElement.getObjectType());
+                     BasePsiElement contextPsiElement = identifierPsiElement.findEnclosingVirtualObjectElement(identifierPsiElement.getObjectType());
                      if (contextPsiElement == null) {
-                         contextPsiElement = identifierPsiElement.findEnclosingNamedPsiElement();
+                         contextPsiElement = identifierPsiElement.findEnclosingNamedElement();
                      }
 
                      String prefix = identifierPsiElement.getObjectType() == DBObjectType.ANY ? "variable" : objectTypeName;

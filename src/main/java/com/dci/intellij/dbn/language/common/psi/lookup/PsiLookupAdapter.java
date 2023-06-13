@@ -50,10 +50,10 @@ public abstract class PsiLookupAdapter {
     }
 
     public final void collectInScope(@NotNull BasePsiElement scope, @NotNull Consumer<? super BasePsiElement> consumer) {
-        BasePsiElement collectScope = scope.isScopeBoundary() ? scope : scope.getEnclosingScopePsiElement();
-        if (collectScope != null) {
-            collectScope.collectPsiElements(this, 100, consumer);
-        }
+        BasePsiElement collectScope = scope.isScopeBoundary() ? scope : scope.getEnclosingScopeElement();
+        if (collectScope == null) return;
+
+        collectScope.collectPsiElements(this, 100, consumer);
     }
 
     public final void collectInElement(@NotNull BasePsiElement element, @NotNull Consumer<? super BasePsiElement> consumer) {

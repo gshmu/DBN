@@ -71,7 +71,7 @@ public class StatementGutterAction extends AnAction {
             } else if (elementAtOffset instanceof BasePsiElement) {
                 BasePsiElement basePsiElement = (BasePsiElement) elementAtOffset;
                 ExecutablePsiElement executablePsiElement = (ExecutablePsiElement)
-                        basePsiElement.findEnclosingPsiElement(ExecutablePsiElement.class);
+                        basePsiElement.findEnclosingElement(ExecutablePsiElement.class);
 
                 if (isValid(executablePsiElement)) {
                     return executablePsiElement;
