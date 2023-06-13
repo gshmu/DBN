@@ -357,7 +357,15 @@ public class DBVirtualObject extends DBRootObjectImpl implements PsiReference {
         }
     }
     private void loadColumns(LeafPsiElement indexPsiElement, List<DBObject> objects) {
-        int columnIndex = Integer.parseInt(indexPsiElement.getText());
+        BasePsiElement<?> columnPsiElement = indexPsiElement.findEnclosingVirtualObjectElement(DBObjectType.COLUMN);
+        if (columnPsiElement == null) return;
+
+        String text = columnPsiElement.getText();
+        if (!Strings.isIndex(text)) return;
+
+        int columnIndex = Integer.parseInt(text) -1 ; // switch from DB indexing to 0 based
+        if (columnIndex < 0) return;
+
         if (indexPsiElement.getParent() instanceof QualifiedIdentifierPsiElement) {
             QualifiedIdentifierPsiElement qualifiedIdentifierPsiElement = (QualifiedIdentifierPsiElement) indexPsiElement.getParent();
             int index = qualifiedIdentifierPsiElement.getIndexOf(indexPsiElement);
@@ -365,18 +373,20 @@ public class DBVirtualObject extends DBRootObjectImpl implements PsiReference {
 
             IdentifierPsiElement parentPsiElement = qualifiedIdentifierPsiElement.getLeafAtIndex(index - 1);
             DBObject object = parentPsiElement.getUnderlyingObject();
-            if (object != null && object.getObjectType().matches(DBObjectType.DATASET)) {
-                List<DBObject> columns = object.collectChildObjects(DBObjectType.COLUMN);
-                if (columns.size() > columnIndex) objects.add(columns.get(columnIndex));
-            }
+            if (object == null || object == this) return;
+            if (!object.getObjectType().matches(DBObjectType.DATASET)) return;
+
+            List<DBObject> columns = object.collectChildObjects(DBObjectType.COLUMN);
+            if (columns.size() > columnIndex) objects.add(columns.get(columnIndex));
         } else {
             BasePsiElement underlyingPsiElement = nn(getUnderlyingPsiElement());
             DATASET_LOOKUP_ADAPTER.collectInElement(underlyingPsiElement, basePsiElement -> {
                 DBObject object = basePsiElement.getUnderlyingObject();
-                if (object != null && object != this && object.getObjectType().matches(DBObjectType.DATASET)) {
-                    List<DBObject> columns = object.collectChildObjects(DBObjectType.COLUMN);
-                    if (columns.size() > columnIndex) objects.add(columns.get(columnIndex));
-                }
+                if (object == null || object == this) return;
+                if (!object.getObjectType().matches(DBObjectType.DATASET)) return;
+
+                List<DBObject> columns = object.collectChildObjects(DBObjectType.COLUMN);
+                if (columns.size() > columnIndex) objects.add(columns.get(columnIndex));
             });
         }
     }

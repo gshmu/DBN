@@ -18,34 +18,32 @@ public class IterationChopDownIfLongStatementPreset extends IterationAbstractPre
     @Override
     @Nullable
     public Wrap getWrap(BasePsiElement psiElement, CodeStyleSettings settings) {
-        BasePsiElement parentPsiElement = getParentPsiElement(psiElement);
-        if (parentPsiElement != null) {
-            IterationElementType iterationElementType = (IterationElementType) parentPsiElement.getElementType();
-            ElementType elementType = psiElement.getElementType();
+        BasePsiElement<?> parentPsiElement = getParentPsiElement(psiElement);
+        if (parentPsiElement == null) return null;
 
-            NamedPsiElement namedPsiElement = (NamedPsiElement) parentPsiElement.findEnclosingPsiElement(ElementTypeAttribute.EXECUTABLE);
-            if (namedPsiElement != null) {
-                boolean shouldWrap = namedPsiElement.approximateLength() > settings.getRightMargin(psiElement.getLanguage());
-                return getWrap(elementType, iterationElementType, shouldWrap);
-            }
-        }
-        return null;
+        IterationElementType iterationElementType = (IterationElementType) parentPsiElement.getElementType();
+        ElementType elementType = psiElement.getElementType();
+
+        NamedPsiElement namedPsiElement = parentPsiElement.findEnclosingElement(ElementTypeAttribute.EXECUTABLE);
+        if (namedPsiElement == null) return null;
+
+        boolean shouldWrap = namedPsiElement.approximateLength() > settings.getRightMargin(psiElement.getLanguage());
+        return getWrap(elementType, iterationElementType, shouldWrap);
     }
 
     @Override
     @Nullable
     public Spacing getSpacing(BasePsiElement psiElement, CodeStyleSettings settings) {
-        BasePsiElement parentPsiElement = getParentPsiElement(psiElement);
-        if (parentPsiElement != null) {
-            IterationElementType iterationElementType = (IterationElementType) parentPsiElement.getElementType();
-            ElementType elementType = psiElement.getElementType();
+        BasePsiElement<?> parentPsiElement = getParentPsiElement(psiElement);
+        if (parentPsiElement == null) return null;
 
-            NamedPsiElement namedPsiElement = (NamedPsiElement) parentPsiElement.findEnclosingPsiElement(ElementTypeAttribute.EXECUTABLE);
-            if (namedPsiElement != null) {
-                boolean shouldWrap = namedPsiElement.approximateLength() > settings.getRightMargin(psiElement.getLanguage());
-                return getSpacing(iterationElementType, elementType, shouldWrap);
-            }
-        }
-        return null;
+        IterationElementType iterationElementType = (IterationElementType) parentPsiElement.getElementType();
+        ElementType elementType = psiElement.getElementType();
+
+        NamedPsiElement namedPsiElement = parentPsiElement.findEnclosingElement(ElementTypeAttribute.EXECUTABLE);
+        if (namedPsiElement == null) return null;
+
+        boolean shouldWrap = namedPsiElement.approximateLength() > settings.getRightMargin(psiElement.getLanguage());
+        return getSpacing(iterationElementType, elementType, shouldWrap);
     }
 }

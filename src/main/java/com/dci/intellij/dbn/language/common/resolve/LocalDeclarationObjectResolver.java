@@ -25,7 +25,7 @@ public class LocalDeclarationObjectResolver extends UnderlyingObjectResolver{
         BasePsiElement underlyingObjectCandidate = null;
 
         DBObjectType objectType = identifierPsiElement.getObjectType();
-        NamedPsiElement enclosingNamedPsiElement = identifierPsiElement.findEnclosingNamedPsiElement();
+        NamedPsiElement enclosingNamedPsiElement = identifierPsiElement.findEnclosingNamedElement();
         if (enclosingNamedPsiElement != null) {
             if (objectType.matches(DBObjectType.DATASET)) {
                 underlyingObjectCandidate = findObject(identifierPsiElement, enclosingNamedPsiElement, DBObjectType.DATASET);

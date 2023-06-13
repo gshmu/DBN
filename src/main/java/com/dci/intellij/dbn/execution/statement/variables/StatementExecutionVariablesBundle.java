@@ -90,7 +90,7 @@ public class StatementExecutionVariablesBundle extends StatefulDisposableBase im
     }
 
     private static DBDataType lookupDataType(ExecVariablePsiElement variablePsiElement) {
-        BasePsiElement conditionPsiElement = variablePsiElement.findEnclosingPsiElement(ElementTypeAttribute.CONDITION);
+        BasePsiElement conditionPsiElement = variablePsiElement.findEnclosingElement(ElementTypeAttribute.CONDITION);
 
         if (conditionPsiElement != null) {
             ObjectLookupAdapter lookupAdapter = new ObjectLookupAdapter(variablePsiElement, IdentifierCategory.REFERENCE, DBObjectType.COLUMN);

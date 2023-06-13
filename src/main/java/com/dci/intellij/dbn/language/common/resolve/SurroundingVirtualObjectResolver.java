@@ -20,7 +20,7 @@ public class SurroundingVirtualObjectResolver extends UnderlyingObjectResolver{
     protected DBObject resolve(IdentifierPsiElement identifierPsiElement, int recursionCheck) {
         DBObjectType objectType = identifierPsiElement.getObjectType();
         if (objectType != DBObjectType.DATASET) {
-            BasePsiElement virtualObjectPsiElement = identifierPsiElement.findEnclosingVirtualObjectPsiElement(objectType);
+            BasePsiElement virtualObjectPsiElement = identifierPsiElement.findEnclosingVirtualObjectElement(objectType);
             if (virtualObjectPsiElement != null) {
                 return virtualObjectPsiElement.getUnderlyingObject();
             }

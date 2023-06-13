@@ -234,7 +234,7 @@ public class CodeCompletionProvider extends CompletionProvider<CompletionParamet
             }
         });
 
-        BasePsiElement scope = element.getEnclosingScopePsiElement();
+        BasePsiElement scope = element.getEnclosingScopeElement();
         if (scope != null) {
             collectObjectMatchingScope(consumer, identifierElementType, filterSettings, scope, context);
         }
@@ -278,7 +278,7 @@ public class CodeCompletionProvider extends CompletionProvider<CompletionParamet
             if (unquotedText.length() > 0) {
                 String[] aliasNames = Naming.createAliasNames(unquotedText);
 
-                BasePsiElement scope = aliasElement.getEnclosingScopePsiElement();
+                BasePsiElement scope = aliasElement.getEnclosingScopeElement();
 
                 for (int i = 0; i< aliasNames.length; i++) {
                     while (true) {

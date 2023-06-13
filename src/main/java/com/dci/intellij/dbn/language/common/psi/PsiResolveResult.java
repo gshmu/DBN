@@ -59,7 +59,7 @@ public final class PsiResolveResult extends PropertyHolderBase.IntStore<PsiResol
         set(CONNECTION_VALID, connection != null && !connection.isVirtual() && connection.isValid());
         set(CONNECTION_ACTIVE, connection != null && !connection.isVirtual() && connection.canConnect());
 
-        BasePsiElement enclosingScopePsiElement = element.getEnclosingScopePsiElement();
+        BasePsiElement enclosingScopePsiElement = element.getEnclosingScopeElement();
         this.scopeTextLength = enclosingScopePsiElement == null ? 0 : enclosingScopePsiElement.getTextLength();
         if (Strings.isEmpty(text)) {
             text = "";
@@ -199,7 +199,7 @@ public final class PsiResolveResult extends PropertyHolderBase.IntStore<PsiResol
     private boolean enclosingScopeChanged() {
         IdentifierPsiElement element = this.element.get();
         if (element != null) {
-            BasePsiElement scopePsiElement = element.getEnclosingScopePsiElement();
+            BasePsiElement scopePsiElement = element.getEnclosingScopeElement();
             int scopeTextLength = scopePsiElement == null ? 0 : scopePsiElement.getTextLength();
             return this.scopeTextLength != scopeTextLength;
         }

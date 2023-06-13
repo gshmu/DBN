@@ -21,11 +21,7 @@ import com.dci.intellij.dbn.object.common.DBObject;
 import com.dci.intellij.dbn.object.common.list.DBObjectList;
 import com.dci.intellij.dbn.object.type.DBObjectType;
 import com.intellij.codeInsight.lookup.LookupElement;
-import com.intellij.lang.parameterInfo.CreateParameterInfoContext;
-import com.intellij.lang.parameterInfo.ParameterInfoContext;
-import com.intellij.lang.parameterInfo.ParameterInfoHandler;
-import com.intellij.lang.parameterInfo.ParameterInfoUIContext;
-import com.intellij.lang.parameterInfo.UpdateParameterInfoContext;
+import com.intellij.lang.parameterInfo.*;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
@@ -63,7 +59,7 @@ public class MethodParameterInfoHandler implements ParameterInfoHandler<BasePsiE
     public BasePsiElement findElementForParameterInfo(@NotNull CreateParameterInfoContext context) {
         BasePsiElement handlerPsiElement = lookupHandlerElement(context.getFile(), context.getOffset());
         if (handlerPsiElement != null) {
-            NamedPsiElement enclosingNamedPsiElement = handlerPsiElement.findEnclosingNamedPsiElement();
+            NamedPsiElement enclosingNamedPsiElement = handlerPsiElement.findEnclosingNamedElement();
             if (enclosingNamedPsiElement != null) {
                 BasePsiElement methodPsiElement = METHOD_LOOKUP_ADAPTER.findInElement(enclosingNamedPsiElement);
                 if (methodPsiElement instanceof IdentifierPsiElement) {
