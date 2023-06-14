@@ -16,6 +16,8 @@ import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.text.ParseException;
 
+import static com.dci.intellij.dbn.data.grid.options.DataGridSettings.isAuditColumn;
+
 public class ResultSetRecordViewerColumnForm extends DBNFormBase {
     private JLabel columnLabel;
     private JPanel valueFieldPanel;
@@ -30,9 +32,11 @@ public class ResultSetRecordViewerColumnForm extends DBNFormBase {
         ColumnInfo columnInfo = cell.getColumnInfo();
 
         DBDataType dataType = columnInfo.getDataType();
+        boolean auditColumn = isAuditColumn(getProject(), columnInfo.getName());
 
         columnLabel.setIcon(Icons.DBO_COLUMN);
         columnLabel.setText(columnInfo.getName());
+        columnLabel.setForeground(auditColumn ? UIUtil.getLabelDisabledForeground() : UIUtil.getLabelForeground());
         if (showDataType) {
             dataTypeLabel.setText(dataType.getQualifiedName());
             dataTypeLabel.setForeground(UIUtil.getInactiveTextColor());
@@ -49,6 +53,10 @@ public class ResultSetRecordViewerColumnForm extends DBNFormBase {
         valueTextField.setCursor(Cursor.getPredefinedCursor(Cursor.TEXT_CURSOR));
         valueTextField.setBackground(Colors.getTextFieldBackground());
         setCell(cell);
+    }
+
+    public String getColumnName() {
+        return columnLabel.getText();
     }
 
     @NotNull

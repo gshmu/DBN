@@ -9,6 +9,7 @@ import com.dci.intellij.dbn.common.ui.form.DBNFormBase;
 import com.dci.intellij.dbn.common.ui.form.DBNHeaderForm;
 import com.dci.intellij.dbn.common.ui.util.UserInterface;
 import com.dci.intellij.dbn.common.util.Actions;
+import com.dci.intellij.dbn.common.util.Strings;
 import com.dci.intellij.dbn.data.grid.ui.table.resultSet.ResultSetTable;
 import com.dci.intellij.dbn.data.model.ColumnInfo;
 import com.dci.intellij.dbn.data.model.resultSet.ResultSetDataModel;
@@ -21,6 +22,7 @@ import com.intellij.openapi.actionSystem.ActionToolbar;
 import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.project.Project;
+import com.intellij.ui.components.JBTextField;
 import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
@@ -29,13 +31,15 @@ import java.util.Comparator;
 import java.util.List;
 
 import static com.dci.intellij.dbn.common.dispose.Failsafe.guarded;
+import static com.dci.intellij.dbn.common.ui.util.TextFields.onTextChange;
 
 public class ResultSetRecordViewerForm extends DBNFormBase {
     private JPanel actionsPanel;
     private JPanel columnsPanel;
     private JPanel mainPanel;
-    private JScrollPane columnsPanelScrollPane;
     private JPanel headerPanel;
+    private JScrollPane columnsPanelScrollPane;
+    private JBTextField filterTextField;
 
     private final List<ResultSetRecordViewerColumnForm> columnForms = DisposableContainers.list(this);
 
@@ -47,9 +51,9 @@ public class ResultSetRecordViewerForm extends DBNFormBase {
         this.table = table;
         ResultSetDataModel<?, ?> model = table.getModel();
         row = model.getRowAtIndex(table.getSelectedRow());
-        RecordViewInfo recordViewInfo = table.getRecordViewInfo();
 
         // HEADER
+        RecordViewInfo recordViewInfo = table.getRecordViewInfo();
         String headerTitle = recordViewInfo.getTitle();
         Icon headerIcon = recordViewInfo.getIcon();
         Color headerBackground = Colors.getPanelBackground();
@@ -100,14 +104,25 @@ public class ResultSetRecordViewerForm extends DBNFormBase {
         int height = (int) Math.min(preferredSize.getHeight(), 380);
         mainPanel.setPreferredSize(new Dimension(width, height));
 
+        filterTextField.getEmptyText().setText("Filter");
+        onTextChange(filterTextField, e -> filterColumForms());
 
         int scrollUnitIncrement = (int) columnForms.get(0).getComponent().getPreferredSize().getHeight();
         columnsPanelScrollPane.getVerticalScrollBar().setUnitIncrement(scrollUnitIncrement);
     }
 
+    private void filterColumForms() {
+        String text = filterTextField.getText();
+        for (ResultSetRecordViewerColumnForm columnForm : columnForms) {
+            String columnName = columnForm.getColumnName();
+            boolean visible = Strings.indexOfIgnoreCase(columnName, text, 0) > -1;
+            columnForm.getMainComponent().setVisible(visible);
+        }
+    }
+
     @Override
     public JComponent getPreferredFocusedComponent() {
-        return null;//columnForms.get(0).getViewComponent();
+        return filterTextField;
     }
 
     @NotNull

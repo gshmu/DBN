@@ -29,6 +29,11 @@ public class DataGridSettings extends CompositeProjectConfiguration<ProjectSetti
         return ProjectSettingsManager.getSettings(project).getDataGridSettings();
     }
 
+    public static boolean isAuditColumn(Project project, String name) {
+        DataGridSettings dataGridSettings = getInstance(project);
+        return dataGridSettings.getAuditColumnSettings().isAuditColumn(name);
+    }
+
     @NotNull
     @Override
     public String getId() {

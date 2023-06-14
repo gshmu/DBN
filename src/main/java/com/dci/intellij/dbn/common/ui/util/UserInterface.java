@@ -2,6 +2,7 @@ package com.dci.intellij.dbn.common.ui.util;
 
 import com.dci.intellij.dbn.common.lookup.Visitor;
 import com.dci.intellij.dbn.common.thread.Dispatch;
+import com.dci.intellij.dbn.common.util.Strings;
 import com.intellij.openapi.util.SystemInfo;
 import com.intellij.ui.ToolbarDecorator;
 import com.intellij.ui.border.IdeaTitledBorder;
@@ -83,7 +84,9 @@ public class UserInterface {
         Border border = panel.getBorder();
         if (border instanceof TitledBorder) {
             TitledBorder titledBorder = (TitledBorder) border;
-            IdeaTitledBorder replacement = new IdeaTitledBorder(titledBorder.getTitle(), 24, Borders.EMPTY_INSETS);
+            String title = titledBorder.getTitle();
+            int indent = Strings.isEmpty(title) ? 0 : 24;
+            IdeaTitledBorder replacement = new IdeaTitledBorder(title, indent, Borders.EMPTY_INSETS);
 /*
             titledBorder.setTitleColor(Colors.HINT_COLOR);
             titledBorder.setBorder(Borders.TOP_LINE_BORDER);

@@ -8,7 +8,7 @@ import org.jetbrains.annotations.NotNull;
 import javax.swing.*;
 
 public class DatasetRecordEditorDialog extends DBNDialog<DatasetRecordEditorForm> {
-    private DatasetEditorModelRow row;
+    private final DatasetEditorModelRow row;
     public DatasetRecordEditorDialog(Project project, DatasetEditorModelRow row) {
         super(project, row.getModel().isEditable() ? "Edit record" : "View record", true);
         this.row = row;

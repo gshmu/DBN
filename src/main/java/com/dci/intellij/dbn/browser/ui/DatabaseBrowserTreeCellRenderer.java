@@ -8,7 +8,6 @@ import com.dci.intellij.dbn.common.util.Commons;
 import com.dci.intellij.dbn.common.util.Strings;
 import com.dci.intellij.dbn.connection.ConnectionBundle;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
-import com.dci.intellij.dbn.data.grid.options.DataGridSettings;
 import com.dci.intellij.dbn.object.DBColumn;
 import com.dci.intellij.dbn.object.DBSchema;
 import com.dci.intellij.dbn.object.DBUser;
@@ -25,6 +24,7 @@ import javax.swing.tree.TreeCellRenderer;
 import java.awt.*;
 
 import static com.dci.intellij.dbn.common.dispose.Failsafe.guarded;
+import static com.dci.intellij.dbn.data.grid.options.DataGridSettings.isAuditColumn;
 
 public class DatabaseBrowserTreeCellRenderer implements TreeCellRenderer {
     private final DefaultTreeCellRenderer cellRenderer = new DefaultTreeCellRenderer();
@@ -111,8 +111,7 @@ public class DatabaseBrowserTreeCellRenderer implements TreeCellRenderer {
 
                     if (!showGrey && treeNode instanceof DBColumn) {
                         DBColumn column = (DBColumn) treeNode;
-                        DataGridSettings dataGridSettings = DataGridSettings.getInstance(treeNode.getProject());
-                        showGrey = dataGridSettings.getAuditColumnSettings().isAuditColumn(column.getName());
+                        showGrey = isAuditColumn(treeNode.getProject(), column.getName());
                     }
 
                     SimpleTextAttributes textAttributes =

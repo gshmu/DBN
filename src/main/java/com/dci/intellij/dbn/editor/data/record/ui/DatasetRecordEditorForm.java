@@ -8,6 +8,7 @@ import com.dci.intellij.dbn.common.ui.form.DBNFormBase;
 import com.dci.intellij.dbn.common.ui.form.DBNHeaderForm;
 import com.dci.intellij.dbn.common.ui.util.UserInterface;
 import com.dci.intellij.dbn.common.util.Actions;
+import com.dci.intellij.dbn.common.util.Strings;
 import com.dci.intellij.dbn.data.record.ColumnSortingType;
 import com.dci.intellij.dbn.editor.data.DatasetEditorManager;
 import com.dci.intellij.dbn.editor.data.model.DatasetEditorColumnInfo;
@@ -19,6 +20,7 @@ import com.intellij.openapi.actionSystem.ActionToolbar;
 import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.project.Project;
+import com.intellij.ui.components.JBTextField;
 import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
@@ -26,12 +28,15 @@ import java.awt.*;
 import java.util.Comparator;
 import java.util.List;
 
+import static com.dci.intellij.dbn.common.ui.util.TextFields.onTextChange;
+
 public class DatasetRecordEditorForm extends DBNFormBase {
     private JPanel actionsPanel;
     private JPanel columnsPanel;
     private JPanel mainPanel;
     private JScrollPane columnsPanelScrollPane;
     private JPanel headerPanel;
+    private JBTextField filterTextField;
 
     private final List<DatasetRecordEditorColumnForm> columnForms = DisposableContainers.list(this);
 
@@ -83,15 +88,27 @@ public class DatasetRecordEditorForm extends DBNFormBase {
         int height = (int) Math.min(preferredSize.getHeight(), 380);
         mainPanel.setPreferredSize(new Dimension(width, height));
 
+        filterTextField.getEmptyText().setText("Filter");
+        onTextChange(filterTextField, e -> filterColumForms());
+
         if (columnForms.size() > 0) {
             int scrollUnitIncrement = (int) columnForms.get(0).getComponent().getPreferredSize().getHeight();
             columnsPanelScrollPane.getVerticalScrollBar().setUnitIncrement(scrollUnitIncrement);
         }
     }
 
+    private void filterColumForms() {
+        String text = filterTextField.getText();
+        for (DatasetRecordEditorColumnForm columnForm : columnForms) {
+            String columnName = columnForm.getColumnName();
+            boolean visible = Strings.indexOfIgnoreCase(columnName, text, 0) > -1;
+            columnForm.getMainComponent().setVisible(visible);
+        }
+    }
+
     @Override
     public JComponent getPreferredFocusedComponent() {
-        return isDisposed() || columnForms.size() == 0 ? null : columnForms.get(0).getEditorComponent();
+        return filterTextField;
     }
 
     @NotNull

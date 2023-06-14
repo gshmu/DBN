@@ -10,7 +10,6 @@ import com.dci.intellij.dbn.editor.data.DatasetEditorUtils;
 import com.dci.intellij.dbn.editor.data.options.DataEditorSettings;
 import com.dci.intellij.dbn.object.DBColumn;
 import com.dci.intellij.dbn.object.lookup.DBObjectRef;
-import com.intellij.openapi.project.Project;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
@@ -36,8 +35,7 @@ public class DatasetEditorColumnInfo extends ResultSetColumnInfo  {
         @Override
         protected Boolean load() {
             DBColumn column = getColumn();
-            Project project = column.getProject();
-            return DataGridSettings.getInstance(project).getAuditColumnSettings().isAuditColumn(column.getName());
+            return DataGridSettings.isAuditColumn(column.getProject(), column.getName());
         }
     };
 
