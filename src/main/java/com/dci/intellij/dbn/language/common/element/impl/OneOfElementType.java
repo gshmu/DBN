@@ -2,6 +2,7 @@ package com.dci.intellij.dbn.language.common.element.impl;
 
 import com.dci.intellij.dbn.common.util.Commons;
 import com.dci.intellij.dbn.common.util.Strings;
+import com.dci.intellij.dbn.language.common.element.ElementType;
 import com.dci.intellij.dbn.language.common.element.ElementTypeBundle;
 import com.dci.intellij.dbn.language.common.element.cache.OneOfElementTypeLookupCache;
 import com.dci.intellij.dbn.language.common.element.parser.BranchCheck;
@@ -27,7 +28,7 @@ public final class OneOfElementType extends ElementTypeBase {
     private boolean sorted;
     private boolean basic;
 
-    public OneOfElementType(ElementTypeBundle bundle, ElementTypeBase parent, String id, Element def) throws ElementTypeDefinitionException {
+    public OneOfElementType(ElementTypeBundle bundle, ElementType parent, String id, Element def) throws ElementTypeDefinitionException {
         super(bundle, parent, id, def);
     }
 
@@ -60,7 +61,7 @@ public final class OneOfElementType extends ElementTypeBase {
             for (int i=0; i<children.size(); i++) {
                 Element child = children.get(i);
                 String type = child.getName();
-                ElementTypeBase elementType = bundle.resolveElementDefinition(child, type, this);
+                ElementType elementType = bundle.resolveElementDefinition(child, type, this);
                 double version = Double.parseDouble(Commons.nvl(stringAttribute(child, "version"), "0"));
                 Set<BranchCheck> branchChecks = parseBranchChecks(stringAttribute(child, "branch-check"));
 

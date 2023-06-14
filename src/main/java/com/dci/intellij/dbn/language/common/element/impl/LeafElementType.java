@@ -29,13 +29,13 @@ public abstract class LeafElementType extends ElementTypeBase implements Indexab
     private boolean optional;
     private int idx;
 
-    LeafElementType(ElementTypeBundle bundle, ElementTypeBase parent, String id, Element def) throws ElementTypeDefinitionException {
+    LeafElementType(ElementTypeBundle bundle, ElementType parent, String id, Element def) throws ElementTypeDefinitionException {
         super(bundle, parent, id, def);
         idx = bundle.nextIndex();
         bundle.registerElement(this);
     }
 
-    LeafElementType(ElementTypeBundle bundle, ElementTypeBase parent, String id, String description) {
+    LeafElementType(ElementTypeBundle bundle, ElementType parent, String id, String description) {
         super(bundle, parent, id, description);
         idx = bundle.nextIndex();
         bundle.registerElement(this);

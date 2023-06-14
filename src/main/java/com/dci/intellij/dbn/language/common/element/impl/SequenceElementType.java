@@ -42,11 +42,11 @@ public class SequenceElementType extends ElementTypeBase {
         return children[index];
     }
 
-    public SequenceElementType(ElementTypeBundle bundle, ElementTypeBase parent, String id) {
+    public SequenceElementType(ElementTypeBundle bundle, ElementType parent, String id) {
         super(bundle, parent, id, (String) null);
     }
 
-    public SequenceElementType(ElementTypeBundle bundle, ElementTypeBase parent, String id, Element def) throws ElementTypeDefinitionException {
+    public SequenceElementType(ElementTypeBundle bundle, ElementType parent, String id, Element def) throws ElementTypeDefinitionException {
         super(bundle, parent, id, def);
     }
 
@@ -85,7 +85,7 @@ public class SequenceElementType extends ElementTypeBase {
             for (int i = 0; i < children.size(); i++) {
                 Element child = children.get(i);
                 String type = child.getName();
-                ElementTypeBase elementType = getElementBundle().resolveElementDefinition(child, type, this);
+                ElementType elementType = getElementBundle().resolveElementDefinition(child, type, this);
                 boolean optional = getBooleanAttribute(child, "optional");
                 double version = Double.parseDouble(Commons.nvl(stringAttribute(child, "version"), "0"));
 

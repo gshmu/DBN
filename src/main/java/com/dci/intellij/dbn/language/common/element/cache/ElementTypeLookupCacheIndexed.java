@@ -5,7 +5,7 @@ import com.dci.intellij.dbn.common.latent.Latent;
 import com.dci.intellij.dbn.language.common.SharedTokenTypeBundle;
 import com.dci.intellij.dbn.language.common.TokenType;
 import com.dci.intellij.dbn.language.common.TokenTypeBundle;
-import com.dci.intellij.dbn.language.common.element.impl.ElementTypeBase;
+import com.dci.intellij.dbn.language.common.element.ElementType;
 import com.dci.intellij.dbn.language.common.element.impl.IdentifierElementType;
 import com.dci.intellij.dbn.language.common.element.impl.LeafElementType;
 import com.dci.intellij.dbn.language.common.element.impl.WrappingDefinition;
@@ -14,7 +14,7 @@ import java.util.Set;
 
 import static com.dci.intellij.dbn.common.util.Compactables.compact;
 
-public abstract class ElementTypeLookupCacheIndexed<T extends ElementTypeBase> extends ElementTypeLookupCache<T> {
+public abstract class ElementTypeLookupCacheIndexed<T extends ElementType> extends ElementTypeLookupCache<T> {
 
     private final IndexContainer<LeafElementType> allPossibleLeafs = new IndexContainer<>();
     protected final IndexContainer<LeafElementType> firstPossibleLeafs = new IndexContainer<>();
@@ -108,7 +108,7 @@ public abstract class ElementTypeLookupCacheIndexed<T extends ElementTypeBase> e
     }
 
     @Override
-    public void registerLeaf(LeafElementType leaf, ElementTypeBase source) {
+    public void registerLeaf(LeafElementType leaf, ElementType source) {
         boolean initAllElements = initAllElements(leaf);
         boolean initAsFirstPossibleLeaf = initAsFirstPossibleLeaf(leaf, source);
         boolean initAsFirstRequiredLeaf = initAsFirstRequiredLeaf(leaf, source);
@@ -146,8 +146,8 @@ public abstract class ElementTypeLookupCacheIndexed<T extends ElementTypeBase> e
         }
     }
 
-    abstract boolean initAsFirstPossibleLeaf(LeafElementType leaf, ElementTypeBase source);
-    abstract boolean initAsFirstRequiredLeaf(LeafElementType leaf, ElementTypeBase source);
+    abstract boolean initAsFirstPossibleLeaf(LeafElementType leaf, ElementType source);
+    abstract boolean initAsFirstRequiredLeaf(LeafElementType leaf, ElementType source);
     private boolean initAllElements(LeafElementType leafElementType) {
         return leafElementType != elementType && !allPossibleLeafs.contains(leafElementType);
     }

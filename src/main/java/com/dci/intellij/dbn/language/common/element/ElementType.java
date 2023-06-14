@@ -18,7 +18,8 @@ import com.intellij.psi.PsiElement;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import javax.swing.Icon;
+import javax.swing.*;
+import java.util.Set;
 
 public interface ElementType extends PropertyHolder<ElementTypeAttribute>{
 
@@ -81,4 +82,6 @@ public interface ElementType extends PropertyHolder<ElementTypeAttribute>{
     boolean isScopeIsolation();
 
     TokenType getTokenType();
+
+    default void collectLeafElements(Set<LeafElementType> leafElementTypes) {};
 }

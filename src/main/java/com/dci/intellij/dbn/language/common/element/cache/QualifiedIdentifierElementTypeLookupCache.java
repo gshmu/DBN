@@ -1,7 +1,7 @@
 package com.dci.intellij.dbn.language.common.element.cache;
 
 import com.dci.intellij.dbn.language.common.TokenType;
-import com.dci.intellij.dbn.language.common.element.impl.ElementTypeBase;
+import com.dci.intellij.dbn.language.common.element.ElementType;
 import com.dci.intellij.dbn.language.common.element.impl.LeafElementType;
 import com.dci.intellij.dbn.language.common.element.impl.QualifiedIdentifierElementType;
 import org.jetbrains.annotations.Nullable;
@@ -14,7 +14,7 @@ public class QualifiedIdentifierElementTypeLookupCache extends ElementTypeLookup
     }
 
     @Override
-    boolean initAsFirstPossibleLeaf(LeafElementType leaf, ElementTypeBase source) {
+    boolean initAsFirstPossibleLeaf(LeafElementType leaf, ElementType source) {
         for (LeafElementType[] variant : elementType.getVariants()) {
             if (variant[0] == source) return true;
         }
@@ -22,7 +22,7 @@ public class QualifiedIdentifierElementTypeLookupCache extends ElementTypeLookup
     }
 
     @Override
-    boolean initAsFirstRequiredLeaf(LeafElementType leaf, ElementTypeBase source) {
+    boolean initAsFirstRequiredLeaf(LeafElementType leaf, ElementType source) {
         for (LeafElementType[] variant : elementType.getVariants()) {
             if (variant[0] == source && !variant[0].isOptional()) return true;
         }

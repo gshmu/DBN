@@ -1,7 +1,7 @@
 package com.dci.intellij.dbn.language.common.element.cache;
 
 import com.dci.intellij.dbn.language.common.TokenType;
-import com.dci.intellij.dbn.language.common.element.impl.ElementTypeBase;
+import com.dci.intellij.dbn.language.common.element.ElementType;
 import com.dci.intellij.dbn.language.common.element.impl.LeafElementType;
 import com.dci.intellij.dbn.language.common.element.impl.TokenElementType;
 import com.dci.intellij.dbn.language.common.element.impl.WrapperElementType;
@@ -93,7 +93,7 @@ wrappedTokenLC.couldStartWithLeaf(leaf));
         return getBeginTokenElement().getLookupCache().couldStartWithToken(tokenType) || getWrappedElement().getLookupCache().couldStartWithToken(tokenType);
     }
 
-    private ElementTypeBase getWrappedElement() {
+    private ElementType getWrappedElement() {
         return elementType.getWrappedElement();
     }
 

@@ -1,5 +1,6 @@
 package com.dci.intellij.dbn.language.common.element.impl;
 
+import com.dci.intellij.dbn.language.common.element.ElementType;
 import com.dci.intellij.dbn.language.common.element.ElementTypeBundle;
 import com.dci.intellij.dbn.language.common.element.cache.QualifiedIdentifierElementTypeLookupCache;
 import com.dci.intellij.dbn.language.common.element.parser.impl.QualifiedIdentifierElementTypeParser;
@@ -24,7 +25,7 @@ public final class QualifiedIdentifierElementType extends ElementTypeBase {
     private final Set<DBObjectType> objectTypeCache = EnumSet.noneOf(DBObjectType.class);
     private int maxLength;
 
-    public QualifiedIdentifierElementType(ElementTypeBundle bundle, ElementTypeBase parent, String id, Element def) throws ElementTypeDefinitionException {
+    public QualifiedIdentifierElementType(ElementTypeBundle bundle, ElementType parent, String id, Element def) throws ElementTypeDefinitionException {
         super(bundle, parent, id, def);
         List<Element> children = def.getChildren();
         for (Element child : children) {

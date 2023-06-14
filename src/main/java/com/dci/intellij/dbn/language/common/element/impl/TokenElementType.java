@@ -34,7 +34,7 @@ public final class TokenElementType extends LeafElementType implements LookupIte
     private TokenTypeCategory flavor;
     private String text;
 
-    public TokenElementType(ElementTypeBundle bundle, ElementTypeBase parent, String id, Element def) throws ElementTypeDefinitionException {
+    public TokenElementType(ElementTypeBundle bundle, ElementType parent, String id, Element def) throws ElementTypeDefinitionException {
         super(bundle, parent, id, def);
         String typeId = stringAttribute(def, "type-id");
         text = stringAttribute(def, "text");
@@ -50,7 +50,7 @@ public final class TokenElementType extends LeafElementType implements LookupIte
         setDescription(tokenType.getValue() + " " + getTokenTypeCategory());
     }
 
-    public TokenElementType(ElementTypeBundle bundle, ElementTypeBase parent, String typeId, String id) {
+    public TokenElementType(ElementTypeBundle bundle, ElementType parent, String typeId, String id) {
         super(bundle, parent, id, (String)null);
         TokenType tokenType = bundle.getTokenTypeBundle().getTokenType(typeId);
         setTokenType(tokenType);

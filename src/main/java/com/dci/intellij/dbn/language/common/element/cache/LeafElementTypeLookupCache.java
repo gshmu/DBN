@@ -1,7 +1,7 @@
 package com.dci.intellij.dbn.language.common.element.cache;
 
 import com.dci.intellij.dbn.language.common.TokenType;
-import com.dci.intellij.dbn.language.common.element.impl.ElementTypeBase;
+import com.dci.intellij.dbn.language.common.element.ElementType;
 import com.dci.intellij.dbn.language.common.element.impl.LeafElementType;
 import org.jetbrains.annotations.Nullable;
 
@@ -74,5 +74,5 @@ public abstract class LeafElementTypeLookupCache<T extends LeafElementType> exte
     }
 
     @Override
-    public void registerLeaf(LeafElementType leaf, ElementTypeBase source) {}
+    public void registerLeaf(LeafElementType leaf, ElementType source) {}
 }

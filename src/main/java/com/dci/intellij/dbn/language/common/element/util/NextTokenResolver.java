@@ -5,12 +5,7 @@ import com.dci.intellij.dbn.common.util.Commons;
 import com.dci.intellij.dbn.language.common.TokenType;
 import com.dci.intellij.dbn.language.common.element.ElementType;
 import com.dci.intellij.dbn.language.common.element.cache.ElementTypeLookupCache;
-import com.dci.intellij.dbn.language.common.element.impl.ElementTypeBase;
-import com.dci.intellij.dbn.language.common.element.impl.ElementTypeRef;
-import com.dci.intellij.dbn.language.common.element.impl.IterationElementType;
-import com.dci.intellij.dbn.language.common.element.impl.NamedElementType;
-import com.dci.intellij.dbn.language.common.element.impl.SequenceElementType;
-import com.dci.intellij.dbn.language.common.element.impl.TokenElementType;
+import com.dci.intellij.dbn.language.common.element.impl.*;
 import gnu.trove.THashSet;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -26,7 +21,7 @@ public final class NextTokenResolver {
         this.source = source;
     }
 
-    public static NextTokenResolver from(ElementTypeBase source) {
+    public static NextTokenResolver from(ElementType source) {
         return new NextTokenResolver(source);
     }
 
@@ -42,8 +37,8 @@ public final class NextTokenResolver {
     private void visit(@NotNull NamedElementType element) {
         if (!visited.contains(element)) {
             visited.add(element);
-            Set<ElementTypeBase> parents = element.getParents();
-            for (ElementTypeBase parent : parents) {
+            Set<ElementType> parents = element.getParents();
+            for (ElementType parent : parents) {
                 visitElement(parent, element);
             }
         }
