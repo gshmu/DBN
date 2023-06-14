@@ -1,6 +1,7 @@
 package com.dci.intellij.dbn.language.common.element.impl;
 
 import com.dci.intellij.dbn.common.options.setting.SettingsSupport;
+import com.dci.intellij.dbn.language.common.element.ElementType;
 import com.dci.intellij.dbn.language.common.element.ElementTypeBundle;
 import com.dci.intellij.dbn.language.common.element.cache.BlockElementTypeLookupCache;
 import com.dci.intellij.dbn.language.common.element.parser.impl.BlockElementTypeParser;
@@ -21,7 +22,7 @@ public final class BlockElementType extends SequenceElementType {
 
     private int indent;
 
-    public BlockElementType(ElementTypeBundle bundle, ElementTypeBase parent, String id, Element def) throws ElementTypeDefinitionException {
+    public BlockElementType(ElementTypeBundle bundle, ElementType parent, String id, Element def) throws ElementTypeDefinitionException {
         super(bundle, parent, id, def);
     }
 

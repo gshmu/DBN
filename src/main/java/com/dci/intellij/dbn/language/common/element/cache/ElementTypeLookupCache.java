@@ -7,8 +7,8 @@ import com.dci.intellij.dbn.language.common.DBLanguage;
 import com.dci.intellij.dbn.language.common.SharedTokenTypeBundle;
 import com.dci.intellij.dbn.language.common.TokenType;
 import com.dci.intellij.dbn.language.common.TokenTypeBundle;
+import com.dci.intellij.dbn.language.common.element.ElementType;
 import com.dci.intellij.dbn.language.common.element.ElementTypeBundle;
-import com.dci.intellij.dbn.language.common.element.impl.ElementTypeBase;
 import com.dci.intellij.dbn.language.common.element.impl.LeafElementType;
 import com.dci.intellij.dbn.language.common.element.impl.WrappingDefinition;
 import com.dci.intellij.dbn.language.common.element.util.NextTokenResolver;
@@ -18,7 +18,7 @@ import org.jetbrains.annotations.Nullable;
 import java.util.Collections;
 import java.util.Set;
 
-public abstract class ElementTypeLookupCache<T extends ElementTypeBase>/* implements ElementTypeLookupCache<T>*/ {
+public abstract class ElementTypeLookupCache<T extends ElementType>/* implements ElementTypeLookupCache<T>*/ {
     private final Latent<IndexContainer<TokenType>> nextPossibleTokens = Latent.basic(() -> computeNextPossibleTokens());
     protected final T elementType;
 
@@ -102,8 +102,8 @@ public abstract class ElementTypeLookupCache<T extends ElementTypeBase>/* implem
         return bucket;
     }
 
-    public void registerLeaf(LeafElementType leaf, ElementTypeBase source) {
-        ElementTypeBase parent = elementType.getParent();
+    public void registerLeaf(LeafElementType leaf, ElementType source) {
+        ElementType parent = elementType.getParent();
         if (parent != null) {
             parent.getLookupCache().registerLeaf(leaf, elementType);
         }

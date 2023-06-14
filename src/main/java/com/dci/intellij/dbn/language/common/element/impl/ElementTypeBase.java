@@ -30,7 +30,7 @@ import org.jdom.Element;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import javax.swing.Icon;
+import javax.swing.*;
 import java.util.Objects;
 import java.util.Set;
 import java.util.StringTokenizer;
@@ -53,7 +53,7 @@ public abstract class ElementTypeBase extends IElementType implements ElementTyp
     private final ElementTypeLookupCache<?> lookupCache = createLookupCache();
     private final ElementTypeParser parser = createParser();
     private final ElementTypeBundle bundle;
-    private final ElementTypeBase parent;
+    private final ElementType parent;
     private DBObjectType virtualObjectType;
     private ElementTypeAttributeHolder attributes;
 
@@ -62,7 +62,7 @@ public abstract class ElementTypeBase extends IElementType implements ElementTyp
     private boolean scopeDemarcation;
     private boolean scopeIsolation;
 
-    ElementTypeBase(@NotNull ElementTypeBundle bundle, ElementTypeBase parent, String id, @Nullable String description) {
+    ElementTypeBase(@NotNull ElementTypeBundle bundle, ElementType parent, String id, @Nullable String description) {
         super(id, bundle.getLanguageDialect(), false);
         this.id = id.intern();
         this.hashCode = System.identityHashCode(this);
@@ -71,7 +71,7 @@ public abstract class ElementTypeBase extends IElementType implements ElementTyp
         this.parent = parent;
     }
 
-    ElementTypeBase(@NotNull ElementTypeBundle bundle, ElementTypeBase parent, String id, @NotNull Element def) throws ElementTypeDefinitionException {
+    ElementTypeBase(@NotNull ElementTypeBundle bundle, ElementType parent, String id, @NotNull Element def) throws ElementTypeDefinitionException {
         super(id, bundle.getLanguageDialect(), false);
         String defId = stringAttribute(def, "id");
         this.hashCode = System.identityHashCode(this);

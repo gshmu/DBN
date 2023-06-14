@@ -2,14 +2,11 @@ package com.dci.intellij.dbn.language.common.element.impl;
 
 import com.dci.intellij.dbn.code.common.style.formatting.FormattingDefinition;
 import com.dci.intellij.dbn.code.common.style.formatting.SpacingDefinition;
+import com.dci.intellij.dbn.language.common.element.ElementType;
 import com.dci.intellij.dbn.language.common.element.ElementTypeBundle;
 import com.dci.intellij.dbn.language.common.element.cache.IdentifierElementTypeLookupCache;
 import com.dci.intellij.dbn.language.common.element.parser.impl.IdentifierElementTypeParser;
-import com.dci.intellij.dbn.language.common.element.util.ElementTypeAttribute;
-import com.dci.intellij.dbn.language.common.element.util.ElementTypeDefinition;
-import com.dci.intellij.dbn.language.common.element.util.ElementTypeDefinitionException;
-import com.dci.intellij.dbn.language.common.element.util.IdentifierCategory;
-import com.dci.intellij.dbn.language.common.element.util.IdentifierType;
+import com.dci.intellij.dbn.language.common.element.util.*;
 import com.dci.intellij.dbn.language.common.psi.IdentifierDefPsiElement;
 import com.dci.intellij.dbn.language.common.psi.IdentifierRefPsiElement;
 import com.dci.intellij.dbn.language.common.resolve.UnderlyingObjectResolver;
@@ -34,7 +31,7 @@ public final class IdentifierElementType extends LeafElementType {
     private boolean localReference; // is local reference
 
 
-    public IdentifierElementType(ElementTypeBundle bundle, ElementTypeBase parent, String id, Element def) throws ElementTypeDefinitionException {
+    public IdentifierElementType(ElementTypeBundle bundle, ElementType parent, String id, Element def) throws ElementTypeDefinitionException {
         super(bundle, parent, id, def);
         setTokenType(bundle.getTokenTypeBundle().getIdentifier());
     }

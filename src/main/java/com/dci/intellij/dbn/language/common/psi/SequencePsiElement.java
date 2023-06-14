@@ -3,12 +3,7 @@ package com.dci.intellij.dbn.language.common.psi;
 import com.dci.intellij.dbn.code.common.style.formatting.FormattingAttributes;
 import com.dci.intellij.dbn.common.util.Strings;
 import com.dci.intellij.dbn.language.common.element.ElementType;
-import com.dci.intellij.dbn.language.common.element.impl.BlockElementType;
-import com.dci.intellij.dbn.language.common.element.impl.ElementTypeBase;
-import com.dci.intellij.dbn.language.common.element.impl.IterationElementType;
-import com.dci.intellij.dbn.language.common.element.impl.NamedElementType;
-import com.dci.intellij.dbn.language.common.element.impl.OneOfElementType;
-import com.dci.intellij.dbn.language.common.element.impl.SequenceElementType;
+import com.dci.intellij.dbn.language.common.element.impl.*;
 import com.dci.intellij.dbn.language.common.element.util.ElementTypeAttribute;
 import com.dci.intellij.dbn.language.common.psi.lookup.PsiLookupAdapter;
 import com.dci.intellij.dbn.object.type.DBObjectType;
@@ -20,7 +15,7 @@ import org.jetbrains.annotations.Nullable;
 import java.util.Objects;
 import java.util.function.Consumer;
 
-public class SequencePsiElement<T extends ElementTypeBase> extends BasePsiElement<T> {
+public class SequencePsiElement<T extends ElementType> extends BasePsiElement<T> {
     public SequencePsiElement(ASTNode astNode, T elementType) {
         super(astNode, elementType);
     }

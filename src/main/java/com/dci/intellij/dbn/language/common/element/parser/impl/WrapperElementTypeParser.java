@@ -2,7 +2,7 @@ package com.dci.intellij.dbn.language.common.element.parser.impl;
 
 import com.dci.intellij.dbn.language.common.ParseException;
 import com.dci.intellij.dbn.language.common.TokenType;
-import com.dci.intellij.dbn.language.common.element.impl.ElementTypeBase;
+import com.dci.intellij.dbn.language.common.element.ElementType;
 import com.dci.intellij.dbn.language.common.element.impl.TokenElementType;
 import com.dci.intellij.dbn.language.common.element.impl.WrapperElementType;
 import com.dci.intellij.dbn.language.common.element.impl.WrappingDefinition;
@@ -22,7 +22,7 @@ public class WrapperElementTypeParser extends ElementTypeParser<WrapperElementTy
         ParserBuilder builder = context.getBuilder();
         ParserNode node = stepIn(parentNode, context);
 
-        ElementTypeBase wrappedElement = elementType.getWrappedElement();
+        ElementType wrappedElement = elementType.getWrappedElement();
         TokenElementType beginTokenElement = elementType.getBeginTokenElement();
         TokenElementType endTokenElement = elementType.getEndTokenElement();
 

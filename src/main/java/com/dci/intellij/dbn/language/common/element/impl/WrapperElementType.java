@@ -2,6 +2,7 @@ package com.dci.intellij.dbn.language.common.element.impl;
 
 import com.dci.intellij.dbn.code.common.style.formatting.FormattingDefinition;
 import com.dci.intellij.dbn.common.util.Strings;
+import com.dci.intellij.dbn.language.common.element.ElementType;
 import com.dci.intellij.dbn.language.common.element.ElementTypeBundle;
 import com.dci.intellij.dbn.language.common.element.TokenPairTemplate;
 import com.dci.intellij.dbn.language.common.element.cache.WrapperElementTypeLookupCache;
@@ -20,10 +21,10 @@ import static com.dci.intellij.dbn.common.options.setting.SettingsSupport.string
 
 public final class WrapperElementType extends ElementTypeBase {
     private WrappingDefinition wrappingDefinition;
-    private ElementTypeBase wrappedElement;
+    private ElementType wrappedElement;
     public boolean wrappedElementOptional;
 
-    public WrapperElementType(ElementTypeBundle bundle, ElementTypeBase parent, String id, Element def) throws ElementTypeDefinitionException {
+    public WrapperElementType(ElementTypeBundle bundle, ElementType parent, String id, Element def) throws ElementTypeDefinitionException {
         super(bundle, parent, id, def);
     }
 
@@ -117,12 +118,13 @@ public final class WrapperElementType extends ElementTypeBase {
     public String getName() {
         return "wrapper (" + getId() + ")";
     }
+
     @Override
     public PsiElement createPsiElement(ASTNode astNode) {
         return new SequencePsiElement<>(astNode, this);
     }
 
-    public ElementTypeBase getWrappedElement() {
+    public ElementType getWrappedElement() {
         return wrappedElement;
     }
 
