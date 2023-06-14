@@ -9,7 +9,6 @@ import com.dci.intellij.dbn.data.find.DataSearchResult;
 import com.dci.intellij.dbn.data.find.DataSearchResultMatch;
 import com.dci.intellij.dbn.data.grid.color.BasicTableTextAttributes;
 import com.dci.intellij.dbn.data.grid.color.DataGridTextAttributes;
-import com.dci.intellij.dbn.data.grid.options.DataGridAuditColumnSettings;
 import com.dci.intellij.dbn.data.grid.ui.table.sortable.SortableTable;
 import com.dci.intellij.dbn.data.model.DataModel;
 import com.dci.intellij.dbn.data.model.DataModelCell;
@@ -18,6 +17,8 @@ import com.intellij.ui.SimpleTextAttributes;
 import javax.swing.border.Border;
 import java.awt.*;
 import java.util.Iterator;
+
+import static com.dci.intellij.dbn.data.grid.options.DataGridSettings.isAuditColumn;
 
 
 public class BasicTableCellRenderer extends DBNColoredTableCellRenderer {
@@ -47,8 +48,7 @@ public class BasicTableCellRenderer extends DBNColoredTableCellRenderer {
                 textAttributes = attributes.getReadonlyData(false, isCaretRow);
 
             } else {
-                DataGridAuditColumnSettings auditColumnSettings = sortableTable.getDataGridSettings().getAuditColumnSettings();
-                boolean auditColumn = auditColumnSettings.isAuditColumn(cell.getColumnInfo().getName());
+                boolean auditColumn = isAuditColumn(sortableTable.getProject(), cell.getColumnInfo().getName());
                 if (auditColumn) {
                     textAttributes = attributes.getAuditData(false, isCaretRow);
                 }

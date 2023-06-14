@@ -47,14 +47,16 @@ public class DatasetRecordEditorColumnForm extends DBNFormBase {
         DBDataType dataType = column.getDataType();
         Project project = column.getProject();
 
+        boolean editable = cell.getRow().getModel().isEditable();
+        boolean auditColumn = columnInfo.isAuditColumn();
+
         columnLabel.setIcon(column.getIcon());
         columnLabel.setText(column.getName());
+        columnLabel.setForeground(auditColumn ? UIUtil.getLabelDisabledForeground() : UIUtil.getLabelForeground());
         dataTypeLabel.setText(dataType.getQualifiedName());
         dataTypeLabel.setForeground(UIUtil.getInactiveTextColor());
 
 
-        boolean editable = cell.getRow().getModel().isEditable();
-        boolean auditColumn = columnInfo.isAuditColumn();
         if (editable && auditColumn) {
             DataGridSettings dataGridSettings = DataGridSettings.getInstance(project);
             editable = dataGridSettings.getAuditColumnSettings().isAllowEditing();
@@ -133,6 +135,11 @@ public class DatasetRecordEditorColumnForm extends DBNFormBase {
     public JPanel getMainComponent() {
         return mainPanel;
     }
+
+    public String getColumnName() {
+        return columnLabel.getText();
+    }
+
 
     public void setCell(DatasetEditorModelCell cell) {
         if (this.cell != null) updateUserValue(false);

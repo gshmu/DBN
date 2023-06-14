@@ -6,6 +6,7 @@ import com.dci.intellij.dbn.common.ui.form.DBNFormBase;
 import com.dci.intellij.dbn.common.ui.util.ComboBoxes;
 import com.dci.intellij.dbn.common.util.Messages;
 import com.dci.intellij.dbn.common.util.Strings;
+import com.dci.intellij.dbn.common.util.Timers;
 import com.dci.intellij.dbn.connection.DatabaseType;
 import com.dci.intellij.dbn.connection.config.ConnectionDatabaseSettings;
 import com.dci.intellij.dbn.driver.DatabaseDriverManager;
@@ -15,7 +16,6 @@ import com.intellij.openapi.fileChooser.FileChooserDescriptor;
 import com.intellij.openapi.ui.TextFieldWithBrowseButton;
 import com.intellij.ui.HyperlinkLabel;
 import com.intellij.ui.JBColor;
-import com.intellij.util.ui.TimerUtil;
 import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
@@ -85,15 +85,11 @@ public class ConnectionDriverSettingsForm extends DBNFormBase {
                 reloadDriversCheckLabel.setText(ex.getMessage());
             }
             reloadDriversCheckLabel.setVisible(true);
-            Timer timer = TimerUtil.createNamedTimer(
-                    "TemporaryLabelTimeout",
-                    3000,
-                    listener -> {
-                        updateDriverReloadLink();
-                        reloadDriversCheckLabel.setVisible(false);
-                    });
-            timer.setRepeats(false);
-            timer.start();
+
+            Timers.executeLater("TemporaryLabelTimeout", 3000, () -> {
+                updateDriverReloadLink();
+                reloadDriversCheckLabel.setVisible(false);
+            });
         });
     }
 

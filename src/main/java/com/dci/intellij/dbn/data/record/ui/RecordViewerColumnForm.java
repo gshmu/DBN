@@ -7,7 +7,6 @@ import com.dci.intellij.dbn.data.record.DatasetRecord;
 import com.dci.intellij.dbn.data.type.DBDataType;
 import com.dci.intellij.dbn.object.DBColumn;
 import com.dci.intellij.dbn.object.lookup.DBObjectRef;
-import com.intellij.openapi.project.Project;
 import com.intellij.util.ui.UIUtil;
 import org.jetbrains.annotations.NotNull;
 
@@ -17,6 +16,8 @@ import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 
+import static com.dci.intellij.dbn.data.grid.options.DataGridSettings.isAuditColumn;
+
 public class RecordViewerColumnForm extends DBNFormBase {
     private JLabel columnLabel;
     private JPanel valueFieldPanel;
@@ -25,19 +26,21 @@ public class RecordViewerColumnForm extends DBNFormBase {
 
     private final JTextField valueTextField;
 
-    private final DBObjectRef<DBColumn> columnRef;
+    private final DBObjectRef<DBColumn> column;
     private final DatasetRecord record;
 
     RecordViewerColumnForm(RecordViewerForm parentForm, DatasetRecord record, DBColumn column) {
         super(parentForm);
         this.record = record;
-        this.columnRef = DBObjectRef.of(column);
-        Project project = record.getDataset().getProject();
+        this.column = DBObjectRef.of(column);
 
         DBDataType dataType = column.getDataType();
+        boolean auditColumn = isAuditColumn(getProject(), column.getName());
 
         columnLabel.setIcon(column.getIcon());
         columnLabel.setText(column.getName());
+        columnLabel.setForeground(auditColumn ? UIUtil.getLabelDisabledForeground() : UIUtil.getLabelForeground());
+
         dataTypeLabel.setText(dataType.getQualifiedName());
         dataTypeLabel.setForeground(UIUtil.getInactiveTextColor());
 
@@ -58,6 +61,11 @@ public class RecordViewerColumnForm extends DBNFormBase {
         return mainPanel;
     }
 
+
+    public String getColumnName() {
+        return columnLabel.getText();
+    }
+
     private void updateColumnValue(DBColumn column) {
         Object value = record.getColumnValue(column);
         Formatter formatter = Formatter.getInstance(ensureProject());
@@ -76,7 +84,7 @@ public class RecordViewerColumnForm extends DBNFormBase {
 
     @NotNull
     public DBColumn getColumn() {
-        return columnRef.ensure();
+        return column.ensure();
     }
 
     protected int[] getMetrics(@NotNull int[] metrics) {
