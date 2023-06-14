@@ -44,7 +44,7 @@ public abstract class ElementTypeParser<T extends ElementTypeBase> {
         try {
             marker = marker == null ? node == null ? null : node.getElementMarker() : marker;
             if (resultType == ParseResultType.PARTIAL_MATCH) {
-                ElementTypeBase offsetPsiElement = Commons.nvl(context.getLastResolvedLeaf(), elementType);
+                ElementType offsetPsiElement = Commons.nvl(context.getLastResolvedLeaf(), elementType);
                 Set<TokenType> nextPossibleTokens = offsetPsiElement.getLookupCache().getNextPossibleTokens();
                 ParseBuilderErrorHandler.updateBuilderError(nextPossibleTokens, context);
             }
@@ -102,7 +102,7 @@ public abstract class ElementTypeParser<T extends ElementTypeBase> {
                 }
             }
 
-            ElementTypeBase namedElementType = ElementTypeUtil.getEnclosingNamedElementType(node);
+            ElementType namedElementType = ElementTypeUtil.getEnclosingNamedElementType(node);
             if (namedElementType != null && namedElementType.getLookupCache().containsToken(tokenType)) {
                 LeafElementType lastResolvedLeaf = context.getLastResolvedLeaf();
                 return lastResolvedLeaf != null && !lastResolvedLeaf.isNextPossibleToken(tokenType, node, context);

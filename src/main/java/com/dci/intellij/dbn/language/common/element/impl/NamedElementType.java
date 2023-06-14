@@ -1,5 +1,6 @@
 package com.dci.intellij.dbn.language.common.element.impl;
 
+import com.dci.intellij.dbn.language.common.element.ElementType;
 import com.dci.intellij.dbn.language.common.element.ElementTypeBundle;
 import com.dci.intellij.dbn.language.common.element.cache.NamedElementTypeLookupCache;
 import com.dci.intellij.dbn.language.common.element.parser.impl.NamedElementTypeParser;
@@ -19,7 +20,7 @@ import java.util.Set;
 
 @Getter
 public final class NamedElementType extends SequenceElementType {
-    private final Set<ElementTypeBase> parents;
+    private final Set<ElementType> parents;
     private boolean definitionLoaded;
     private boolean truncateOnExecution;
 
@@ -68,7 +69,7 @@ public final class NamedElementType extends SequenceElementType {
         return getId().toUpperCase();
     }
 
-    public void addParent(ElementTypeBase parent) {
+    public void addParent(ElementType parent) {
         parents.add(parent);
     }
 }

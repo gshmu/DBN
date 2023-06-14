@@ -2,7 +2,6 @@ package com.dci.intellij.dbn.language.common.element.cache;
 
 import com.dci.intellij.dbn.language.common.TokenType;
 import com.dci.intellij.dbn.language.common.element.ElementType;
-import com.dci.intellij.dbn.language.common.element.impl.ElementTypeBase;
 import com.dci.intellij.dbn.language.common.element.impl.ElementTypeRef;
 import com.dci.intellij.dbn.language.common.element.impl.LeafElementType;
 import com.dci.intellij.dbn.language.common.element.impl.SequenceElementType;
@@ -16,7 +15,7 @@ public class SequenceElementTypeLookupCache<T extends SequenceElementType> exten
     }
 
     @Override
-    boolean initAsFirstPossibleLeaf(LeafElementType leaf, ElementTypeBase source) {
+    boolean initAsFirstPossibleLeaf(LeafElementType leaf, ElementType source) {
         boolean notInitialized = !firstPossibleLeafs.contains(leaf);
         return notInitialized && (
                 isWrapperBeginLeaf(leaf) ||
@@ -25,7 +24,7 @@ public class SequenceElementTypeLookupCache<T extends SequenceElementType> exten
     }
 
     @Override
-    boolean initAsFirstRequiredLeaf(LeafElementType leaf, ElementTypeBase source) {
+    boolean initAsFirstRequiredLeaf(LeafElementType leaf, ElementType source) {
         boolean notInitialized = !firstRequiredLeafs.contains(leaf);
         return notInitialized &&
                 shouldStartWithElement(source) &&
