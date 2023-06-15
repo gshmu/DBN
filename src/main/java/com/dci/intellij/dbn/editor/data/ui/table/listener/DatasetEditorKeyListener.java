@@ -15,6 +15,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static com.dci.intellij.dbn.common.dispose.Checks.isNotValid;
+import static com.dci.intellij.dbn.common.dispose.Failsafe.conditionallyLog;
 import static com.dci.intellij.dbn.editor.data.model.RecordStatus.INSERTING;
 import static com.dci.intellij.dbn.editor.data.model.RecordStatus.UPDATING;
 
@@ -47,6 +48,7 @@ public class DatasetEditorKeyListener extends KeyAdapter {
                             model.insertRecord(index + 1);
                         }
                     } catch (SQLException e1) {
+                        conditionallyLog(e1);
                         Messages.showErrorDialog(table.getProject(), "Could not create row in " + table.getDataset().getQualifiedNameWithType() + ".", e1);
                     }
                     e.consume();

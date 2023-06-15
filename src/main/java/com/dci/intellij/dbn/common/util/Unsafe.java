@@ -21,7 +21,8 @@ public final class Unsafe {
         try {
             runnable.run();
             return true;
-        } catch (Throwable ignore) {
+        } catch (Throwable e) {
+            conditionallyLog(e);
             return false;
         }
     }
@@ -30,7 +31,8 @@ public final class Unsafe {
         try {
             runnable.run(param);
             return true;
-        } catch (Throwable ignore) {
+        } catch (Throwable e) {
+            conditionallyLog(e);
             return false;
         }
     }
@@ -38,7 +40,8 @@ public final class Unsafe {
     public static <R> R silent(R defaultValue, ThrowableCallable<R, Throwable> callable) {
         try {
             return callable.call();
-        } catch (Throwable t) {
+        } catch (Throwable e) {
+            conditionallyLog(e);
             return defaultValue;
         }
     }
@@ -46,7 +49,8 @@ public final class Unsafe {
     public static <P, R> R silent(R defaultValue, P param, ParametricCallable<P, R, Throwable> callable) {
         try {
             return callable.call(param);
-        } catch (Throwable t) {
+        } catch (Throwable e) {
+            conditionallyLog(e);
             return defaultValue;
         }
     }
@@ -56,9 +60,10 @@ public final class Unsafe {
             runnable.run();
         } catch (ProcessCanceledException e) {
             conditionallyLog(e);
-        } catch (Throwable t) {
-            String message = t.getMessage();
-            log.warn(message == null ? t.getClass().getSimpleName() : message);
+        } catch (Throwable e) {
+            conditionallyLog(e);
+            String message = e.getMessage();
+            log.warn(message == null ? e.getClass().getSimpleName() : message);
         }
     }
 
@@ -67,9 +72,10 @@ public final class Unsafe {
             return callable.call();
         } catch (ProcessCanceledException e) {
             conditionallyLog(e);
-        } catch (Throwable t) {
-            String message = t.getMessage();
-            log.warn(message == null ? t.getClass().getSimpleName() : message);
+        } catch (Throwable e) {
+            conditionallyLog(e);
+            String message = e.getMessage();
+            log.warn(message == null ? e.getClass().getSimpleName() : message);
         }
         return defaultValue;
     }

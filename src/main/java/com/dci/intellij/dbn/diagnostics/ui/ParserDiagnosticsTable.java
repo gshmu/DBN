@@ -6,11 +6,11 @@ import com.dci.intellij.dbn.common.ui.table.DBNTable;
 import com.dci.intellij.dbn.common.ui.table.DBNTableTransferHandler;
 import com.dci.intellij.dbn.common.ui.util.Borders;
 import com.dci.intellij.dbn.common.ui.util.Mouse;
+import com.dci.intellij.dbn.common.util.Editors;
 import com.dci.intellij.dbn.diagnostics.data.DiagnosticEntry;
 import com.dci.intellij.dbn.diagnostics.data.ParserDiagnosticsEntry;
 import com.dci.intellij.dbn.diagnostics.data.StateTransition;
 import com.dci.intellij.dbn.diagnostics.ui.model.ParserDiagnosticsTableModel;
-import com.intellij.openapi.fileEditor.FileEditorManager;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.ui.SimpleTextAttributes;
 import org.jetbrains.annotations.NotNull;
@@ -34,18 +34,17 @@ public class ParserDiagnosticsTable extends DBNTable<ParserDiagnosticsTableModel
     }
 
     private void clickEvent(MouseEvent e) {
-        if (e.getButton() == MouseEvent.BUTTON1 && e.getClickCount() == 2) {
-            int selectedRow = getSelectedRow();
-            if (selectedRow > -1) {
-                ParserDiagnosticsEntry entry = (ParserDiagnosticsEntry) getValueAt(selectedRow, 0);
-                if (entry != null) {
-                    VirtualFile virtualFile = entry.getFile();
-                    if (virtualFile != null) {
-                        FileEditorManager editorManager = FileEditorManager.getInstance(getProject());
-                        editorManager.openFile(virtualFile, true);
-                    }
-                }
-            }
+        if (e.getButton() != MouseEvent.BUTTON1 || e.getClickCount() != 2) return;
+
+        int selectedRow = getSelectedRow();
+        if (selectedRow <= -1) return;
+
+        ParserDiagnosticsEntry entry = (ParserDiagnosticsEntry) getValueAt(selectedRow, 0);
+        if (entry == null) return;
+
+        VirtualFile virtualFile = entry.getFile();
+        if (virtualFile != null) {
+            Editors.openFile(getProject(), virtualFile, true);
         }
     }
 

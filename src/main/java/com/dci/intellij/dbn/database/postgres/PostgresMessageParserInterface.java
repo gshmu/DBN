@@ -10,6 +10,8 @@ import java.lang.reflect.Method;
 import java.sql.SQLException;
 import java.sql.SQLTimeoutException;
 
+import static com.dci.intellij.dbn.common.dispose.Failsafe.conditionallyLog;
+
 @Slf4j
 public class PostgresMessageParserInterface implements DatabaseMessageParserInterface {
 
@@ -41,6 +43,7 @@ public class PostgresMessageParserInterface implements DatabaseMessageParserInte
             Method method = e.getClass().getMethod("getSQLState");
             return (String) method.invoke(e);
         } catch (Exception ex) {
+            conditionallyLog(ex);
             log.error("Could not get exception SQLState", ex);
         }
         return "";

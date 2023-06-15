@@ -18,6 +18,7 @@ import java.awt.*;
 import java.awt.event.InputEvent;
 import java.util.function.Predicate;
 
+import static com.dci.intellij.dbn.common.dispose.Failsafe.conditionallyLog;
 import static com.dci.intellij.dbn.common.ui.util.Borders.*;
 import static com.dci.intellij.dbn.common.util.Unsafe.cast;
 
@@ -43,7 +44,9 @@ public class UserInterface {
                 Point mouseLocation = pointerInfo.getLocation();
                 return getRelativeLocation(mouseLocation, component);
             }
-        } catch (IllegalComponentStateException ignore) {}
+        } catch (IllegalComponentStateException e) {
+            conditionallyLog(e);
+        }
         return null;
     }
     

@@ -17,6 +17,7 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 import static com.dci.intellij.dbn.common.component.Components.applicationService;
+import static com.dci.intellij.dbn.common.dispose.Failsafe.conditionallyLog;
 
 /**
  * JDBC Driver loader.
@@ -52,6 +53,7 @@ public class DatabaseDriverManager extends ApplicationComponentBase {
             }
             return driversCache.computeIfAbsent(libraryFile, f -> new DriverBundle(f));
         } catch (Exception e) {
+            conditionallyLog(e);
             log.warn("failed to load drivers from library " + libraryFile, e);
             throw e;
         }

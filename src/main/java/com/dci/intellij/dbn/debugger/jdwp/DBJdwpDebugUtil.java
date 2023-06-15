@@ -4,6 +4,8 @@ import com.sun.jdi.Location;
 import lombok.extern.slf4j.Slf4j;
 import org.jetbrains.annotations.Nullable;
 
+import static com.dci.intellij.dbn.common.dispose.Failsafe.conditionallyLog;
+
 @Slf4j
 public final class DBJdwpDebugUtil {
     private DBJdwpDebugUtil() {}
@@ -17,6 +19,7 @@ public final class DBJdwpDebugUtil {
                 return sourcePath.getProgramOwner();
             }
         } catch (Exception e) {
+            conditionallyLog(e);
             log.error("Failed to resolve owner name", e);
         }
 

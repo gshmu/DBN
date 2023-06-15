@@ -15,6 +15,8 @@ import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Predicate;
 
+import static com.dci.intellij.dbn.common.dispose.Failsafe.conditionallyLog;
+
 /**
  * Circular object pool
  * @param <O> the type of object this pool is offering
@@ -53,6 +55,7 @@ public abstract class ObjectPoolBase<O, E extends Throwable> extends StatefulDis
             drop(object);
             return acquire(timeout, timeUnit);
         } catch (Throwable e) {
+            conditionallyLog(e);
             return whenErrored(e);
         } finally {
             counters.waiting().decrement();
@@ -74,6 +77,7 @@ public abstract class ObjectPoolBase<O, E extends Throwable> extends StatefulDis
             log("released", object);
 
         } catch (Throwable e) {
+            conditionallyLog(e);
             return drop(object);
         }
 

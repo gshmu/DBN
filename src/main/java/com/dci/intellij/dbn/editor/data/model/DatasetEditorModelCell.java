@@ -28,6 +28,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Objects;
 
+import static com.dci.intellij.dbn.common.dispose.Failsafe.conditionallyLog;
 import static com.dci.intellij.dbn.editor.data.model.RecordStatus.*;
 
 @Getter
@@ -80,6 +81,7 @@ public class DatasetEditorModelCell
             try {
                 resultSetAdapter.scroll(row.getResultSetRowIndex());
             } catch (Exception e) {
+                conditionallyLog(e);
                 Messages.showErrorDialog(project, "Could not update cell value for " + columnInfo.getName() + ".", e);
                 return;
             }
@@ -109,6 +111,7 @@ public class DatasetEditorModelCell
 
                 resultSetAdapter.updateRow();
             } catch (Exception e) {
+                conditionallyLog(e);
                 //try { Thread.sleep(6000); } catch (InterruptedException e1) { e1.printStackTrace(); }
 
                 DatasetEditorError error = new DatasetEditorError(connection, e);
@@ -130,6 +133,7 @@ public class DatasetEditorModelCell
                 try {
                     resultSetAdapter.refreshRow();
                 } catch (SQLException e) {
+                    conditionallyLog(e);
                     DatasetEditorError error = new DatasetEditorError(connection, e);
                     row.notifyError(error, false, !bulk);
                 }
@@ -156,6 +160,7 @@ public class DatasetEditorModelCell
             try {
                 return !Commons.match(valueAdapter.read(), newUserValue);
             } catch (SQLException e) {
+                conditionallyLog(e);
                 return true;
             }
         }

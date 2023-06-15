@@ -16,6 +16,7 @@ import org.jetbrains.annotations.Nullable;
 import java.sql.SQLException;
 
 import static com.dci.intellij.dbn.common.component.Components.projectService;
+import static com.dci.intellij.dbn.common.dispose.Failsafe.conditionallyLog;
 
 @Slf4j
 public class DatabaseLoggingManager extends ProjectComponentBase {
@@ -41,6 +42,7 @@ public class DatabaseLoggingManager extends ProjectComponentBase {
             metadata.enableLogger(conn);
             return true;
         } catch (SQLException e) {
+            conditionallyLog(e);
             log.warn("Error enabling database logging: " + e.getMessage());
             String logName = getLogName(connection);
             sendWarningNotification(
@@ -58,6 +60,7 @@ public class DatabaseLoggingManager extends ProjectComponentBase {
             DatabaseMetadataInterface metadata = connection.getMetadataInterface();
             metadata.disableLogger(conn);
         } catch (SQLException e) {
+            conditionallyLog(e);
             log.warn("Error disabling database logging: " + e.getMessage());
             String logName = getLogName(connection);
             sendWarningNotification(
@@ -71,6 +74,7 @@ public class DatabaseLoggingManager extends ProjectComponentBase {
             DatabaseMetadataInterface metadata = connection.getMetadataInterface();
             return metadata.readLoggerOutput(conn);
         } catch (SQLException e) {
+            conditionallyLog(e);
             log.warn("Error reading database log output: " + e.getMessage());
             String logName = getLogName(connection);
             sendWarningNotification(

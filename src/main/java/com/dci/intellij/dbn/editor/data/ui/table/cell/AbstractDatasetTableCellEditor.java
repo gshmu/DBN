@@ -27,6 +27,8 @@ import java.io.Serializable;
 import java.text.ParseException;
 import java.util.EventObject;
 
+import static com.dci.intellij.dbn.common.dispose.Failsafe.conditionallyLog;
+
 public abstract class AbstractDatasetTableCellEditor extends AbstractCellEditor implements TableCellEditor, StatefulDisposable {
     private final WeakRef<DataEditorComponent> editorComponent;
     private final WeakRef<DatasetEditorTable> table;
@@ -172,6 +174,7 @@ public abstract class AbstractDatasetTableCellEditor extends AbstractCellEditor 
                     return null;
                 }
             } catch (ParseException e) {
+                conditionallyLog(e);
                 throw new IllegalArgumentException("Can not convert " + getEditorComponent().getText() + " to " + dataType.getName());
             }
         }

@@ -24,6 +24,7 @@ import java.sql.Driver;
 import java.sql.SQLException;
 import java.sql.SQLTimeoutException;
 
+import static com.dci.intellij.dbn.common.dispose.Failsafe.conditionallyLog;
 import static com.dci.intellij.dbn.common.util.TimeUtil.millisSince;
 
 public class ConnectionUtil {
@@ -60,9 +61,11 @@ public class ConnectionUtil {
                 diagnostics.log(sessionId, false, false, millisSince(start));
                 return conn;
             } catch (SQLTimeoutException e) {
+                conditionallyLog(e);
                 diagnostics.log(sessionId, false, true, millisSince(start));
                 throw e;
             } catch (SQLException e) {
+                conditionallyLog(e);
                 diagnostics.log(sessionId, true, false, millisSince(start));
                 DatabaseMessageParserInterface messageParser = connection.getMessageParserInterface();
                 if (messageParser.isAuthenticationException(e)) {

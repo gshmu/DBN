@@ -128,13 +128,17 @@ public interface DBObject extends
 
     @NotNull
     DBObjectVirtualFile getVirtualFile();
+
     List<PresentableProperty> getPresentableProperties();
+
     @Override
     DBObjectRef ref();
 
     boolean isValid();
 
     boolean isVirtual();
+
+    boolean isEditable();
 
     boolean isParentOf(DBObject object);
 

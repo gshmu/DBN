@@ -31,6 +31,8 @@ import javax.swing.*;
 import java.awt.*;
 import java.sql.SQLException;
 
+import static com.dci.intellij.dbn.common.dispose.Failsafe.conditionallyLog;
+
 public class MethodExecutionLargeValueResultForm extends DBNFormBase {
     private JPanel actionsPanel;
     private JPanel mainPanel;
@@ -51,6 +53,7 @@ public class MethodExecutionLargeValueResultForm extends DBNFormBase {
         try {
             text = value.read();
         } catch (SQLException e) {
+            conditionallyLog(e);
             Messages.showWarningDialog(project, "Load error", "Could not load value for argument " + argument.getName() + ". Cause: " + e.getMessage());
         }
 

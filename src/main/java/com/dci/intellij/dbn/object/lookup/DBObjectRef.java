@@ -31,6 +31,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import static com.dci.intellij.dbn.common.dispose.Checks.isValid;
+import static com.dci.intellij.dbn.common.dispose.Failsafe.conditionallyLog;
 import static com.dci.intellij.dbn.common.dispose.Failsafe.nn;
 import static com.dci.intellij.dbn.common.options.setting.SettingsSupport.connectionIdAttribute;
 import static com.dci.intellij.dbn.common.options.setting.SettingsSupport.stringAttribute;
@@ -133,7 +134,8 @@ public class DBObjectRef<T extends DBObject> implements Comparable<DBObjectRef<?
                 DBObjectRef<T> objectRef = new DBObjectRef<>();
                 objectRef.readState(element);
                 return objectRef;
-            } catch (Exception ignore) {
+            } catch (Exception e) {
+                conditionallyLog(e);
                 // deserialization exception already logged
             }
         }
@@ -189,6 +191,7 @@ public class DBObjectRef<T extends DBObject> implements Comparable<DBObjectRef<?
                 }
             }
         } catch (Exception e) {
+            conditionallyLog(e);
             log.error("Failed to deserialize object {}", objectIdentifier, e);
             throw e;
         }
@@ -369,6 +372,7 @@ public class DBObjectRef<T extends DBObject> implements Comparable<DBObjectRef<?
             }
             return object;
         } catch (Exception e) {
+            conditionallyLog(e);
             return null;
         }
     }

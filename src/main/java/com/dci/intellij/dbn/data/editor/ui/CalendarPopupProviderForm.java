@@ -36,6 +36,7 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
 
+import static com.dci.intellij.dbn.common.dispose.Failsafe.conditionallyLog;
 import static com.dci.intellij.dbn.common.dispose.Failsafe.nd;
 
 public class CalendarPopupProviderForm extends TextFieldPopupProviderForm implements TableModelListener {
@@ -144,6 +145,7 @@ public class CalendarPopupProviderForm extends TextFieldPopupProviderForm implem
             try {
                 return getFormatter().parseDateTime(dateString);
             } catch (ParseException e) {
+                conditionallyLog(e);
                 return new Date();
             }
         } else {
@@ -452,6 +454,7 @@ public class CalendarPopupProviderForm extends TextFieldPopupProviderForm implem
                 calendar.set(Calendar.SECOND, timeCalendar.get(Calendar.SECOND));
                 calendar.set(Calendar.MILLISECOND, timeCalendar.get(Calendar.MILLISECOND));
             } catch (ParseException e) {
+                conditionallyLog(e);
                 calendar.set(Calendar.HOUR_OF_DAY, 0);
                 calendar.set(Calendar.MINUTE, 0);
                 calendar.set(Calendar.SECOND, 0);

@@ -33,6 +33,8 @@ import javax.swing.*;
 import java.awt.*;
 import java.sql.SQLException;
 
+import static com.dci.intellij.dbn.common.dispose.Failsafe.conditionallyLog;
+
 public class TextEditorForm extends DBNFormBase {
     private JPanel mainPanel;
     private JPanel editorPanel;
@@ -141,6 +143,7 @@ public class TextEditorForm extends DBNFormBase {
                 return largeObjectValue.read();
             }
         } catch (SQLException e) {
+            conditionallyLog(e);
             Messages.showErrorDialog(getProject(), "Could not load LOB content from database.", e);
         }
         return null;

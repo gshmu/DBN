@@ -20,6 +20,7 @@ import java.util.Collection;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Supplier;
 
+import static com.dci.intellij.dbn.common.dispose.Failsafe.conditionallyLog;
 import static com.dci.intellij.dbn.common.util.Commons.nvl;
 import static com.dci.intellij.dbn.database.DatabaseFeature.READONLY_CONNECTIVITY;
 import static com.dci.intellij.dbn.diagnostics.Diagnostics.isDatabaseResourceDebug;
@@ -32,6 +33,7 @@ public final class Resources {
         try {
             return resultSet.isClosed();
         } catch (AbstractMethodError e) {
+            conditionallyLog(e);
             // sqlite AbstractMethodError for osx
             return false;
         }
@@ -46,7 +48,8 @@ public final class Resources {
                     () -> "[DBN] Cancelling " + statement,
                     () -> "[DBN] Done cancelling " + statement,
                     () -> "[DBN] Failed to cancel " + statement);
-        } catch (Throwable ignore) {
+        } catch (Throwable e) {
+            conditionallyLog(e);
         } finally {
             close((DBNResource) statement);
         }
@@ -63,7 +66,9 @@ public final class Resources {
                         () -> "[DBN] Closing " + resource,
                         () -> "[DBN] Done closing " + resource,
                         () -> "[DBN] Failed to close " + resource);
-            } catch (Throwable ignore) {}
+            } catch (Throwable e) {
+                conditionallyLog(e);
+            }
         }
     }
 
@@ -78,7 +83,9 @@ public final class Resources {
                     () -> "[DBN] Closing " + resource,
                     () -> "[DBN] Done closing " + resource,
                     () -> "[DBN] Failed to close " + resource);
-        } catch (Throwable ignore) {}
+        } catch (Throwable e) {
+            conditionallyLog(e);
+        }
         finally {
             resource.getListeners().notify(l -> l.closed());
         }
@@ -104,8 +111,10 @@ public final class Resources {
                     () -> "[DBN] Committing " + connection,
                     () -> "[DBN] Done committing " + connection,
                     () -> "[DBN] Failed to commit " + connection);
-        } catch (SQLRecoverableException ignore) {
+        } catch (SQLRecoverableException e) {
+            conditionallyLog(e);
         } catch (SQLException e) {
+            conditionallyLog(e);
             sentWarningNotification(
                     NotificationGroup.TRANSACTION,
                     "Failed to commit",
@@ -129,8 +138,10 @@ public final class Resources {
                     () -> "[DBN] Rolling-back " + connection,
                     () -> "[DBN] Done rolling-back " + connection,
                     () -> "[DBN] Failed to roll-back " + connection);
-        } catch (SQLRecoverableException ignore) {
+        } catch (SQLRecoverableException e) {
+            conditionallyLog(e);
         } catch (SQLException e) {
+            conditionallyLog(e);
             sentWarningNotification(
                     NotificationGroup.TRANSACTION,
                     "Failed to rollback",
@@ -155,8 +166,10 @@ public final class Resources {
                     () -> "[DBN] Rolling-back savepoint '" + savepointId + "' on " + connection,
                     () -> "[DBN] Done rolling-back savepoint '" + savepointId + "' on " + connection,
                     () -> "[DBN] Failed to roll-back savepoint '" + savepointId + "' on " + connection);
-        } catch (SQLRecoverableException ignore) {
+        } catch (SQLRecoverableException e) {
+            conditionallyLog(e);
         } catch (SQLException e) {
+            conditionallyLog(e);
             sentWarningNotification(
                     NotificationGroup.TRANSACTION,
                     "Failed to rollback savepoint for",
@@ -178,8 +191,10 @@ public final class Resources {
                     () -> "[DBN] Done creating savepoint on " + connection,
                     () -> "[DBN] Failed to create savepoint on " + connection);
             return savepoint.get();
-        } catch (SQLRecoverableException ignore) {
+        } catch (SQLRecoverableException e) {
+            conditionallyLog(e);
         } catch (SQLException e) {
+            conditionallyLog(e);
             sentWarningNotification(
                     NotificationGroup.TRANSACTION,
                     "Failed to create savepoint for",
@@ -200,8 +215,10 @@ public final class Resources {
                     () -> "[DBN] Releasing savepoint '" + savepointId + "' on " + connection,
                     () -> "[DBN] Done releasing savepoint '" + savepointId + "' on " + connection,
                     () -> "[DBN] Failed to release savepoint '" + savepointId + "' on " + connection);
-        } catch (SQLRecoverableException ignore) {
+        } catch (SQLRecoverableException e) {
+            conditionallyLog(e);
         } catch (SQLException e) {
+            conditionallyLog(e);
             sentWarningNotification(
                     NotificationGroup.TRANSACTION,
                     "Failed to release savepoint for",
@@ -221,8 +238,10 @@ public final class Resources {
                     () -> "[DBN] Applying status READ_ONLY=" + readonly + " on " + conn,
                     () -> "[DBN] Done applying status READ_ONLY=" + readonly + " on " + conn,
                     () -> "[DBN] Failed to apply status READ_ONLY=" + readonly + " on " + conn);
-        } catch (SQLRecoverableException ignore) {
+        } catch (SQLRecoverableException e) {
+            conditionallyLog(e);
         } catch (SQLException e) {
+            conditionallyLog(e);
             sentWarningNotification(
                     NotificationGroup.CONNECTION,
                     "Failed to initialize readonly status for",
@@ -242,8 +261,10 @@ public final class Resources {
                     () -> "[DBN] Failed to apply status AUTO_COMMIT=" + autoCommit + " on " + connection);
 
             connection.setAutoCommit(autoCommit);
-        } catch (SQLRecoverableException ignore) {
+        } catch (SQLRecoverableException e) {
+            conditionallyLog(e);
         } catch (Exception e) {
+            conditionallyLog(e);
             sentWarningNotification(
                     NotificationGroup.CONNECTION,
                     "Failed to change auto-commit status for",
@@ -296,9 +317,10 @@ public final class Resources {
         try {
             action.run();
             if (isDatabaseResourceDebug()) log.info("{} - {}ms", successMessage.get(), System.currentTimeMillis() - start);
-        } catch (Throwable t) {
-            log.warn("{} Cause: {}", errorMessage.get(),  t.getMessage());
-            throw t;
+        } catch (Throwable e) {
+            conditionallyLog(e);
+            log.warn("{} Cause: {}", errorMessage.get(),  e.getMessage());
+            throw e;
         }
     }
 
@@ -306,9 +328,11 @@ public final class Resources {
         try {
             return savepoint.getSavepointName();
         } catch (SQLException e) {
+            conditionallyLog(e);
             try {
                 return Integer.toString(savepoint.getSavepointId());
             } catch (SQLException ex) {
+                conditionallyLog(ex);
                 return "UNKNOWN";
             }
         }

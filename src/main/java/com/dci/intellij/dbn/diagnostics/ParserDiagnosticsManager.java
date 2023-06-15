@@ -43,6 +43,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static com.dci.intellij.dbn.common.component.Components.projectService;
+import static com.dci.intellij.dbn.common.dispose.Failsafe.conditionallyLog;
 
 @Slf4j
 @Getter
@@ -125,6 +126,7 @@ public class ParserDiagnosticsManager extends ProjectComponentBase implements Pe
                 try {
                     FileUtils.write(scrambledFile, scrambled, file.getCharset());
                 } catch (IOException e) {
+                    conditionallyLog(e);
                     NotificationSupport.sendWarningNotification(
                             getProject(),
                             NotificationGroup.DEVELOPER,

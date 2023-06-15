@@ -59,6 +59,7 @@ import java.util.*;
 
 import static com.dci.intellij.dbn.common.component.Components.projectService;
 import static com.dci.intellij.dbn.common.dispose.Checks.isNotValid;
+import static com.dci.intellij.dbn.common.dispose.Failsafe.conditionallyLog;
 import static com.dci.intellij.dbn.common.message.MessageCallback.when;
 import static com.dci.intellij.dbn.common.options.setting.SettingsSupport.stringAttribute;
 import static com.dci.intellij.dbn.common.util.Messages.options;
@@ -310,6 +311,7 @@ public class DDLFileAttachmentManager extends ProjectComponentBase implements Pe
                         DatabaseFileEditorManager editorManager = DatabaseFileEditorManager.getInstance(project);
                         editorManager.reopenEditor(object);
                     } catch (IOException e) {
+                        conditionallyLog(e);
                         Messages.showErrorDialog(project, "Could not create file " + parentDirectory + File.separator + fileName + ".", e);
                     }
                 });

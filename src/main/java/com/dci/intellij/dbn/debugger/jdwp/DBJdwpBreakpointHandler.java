@@ -41,6 +41,7 @@ import org.jetbrains.annotations.Nullable;
 import java.util.List;
 import java.util.Set;
 
+import static com.dci.intellij.dbn.common.dispose.Failsafe.conditionallyLog;
 import static com.dci.intellij.dbn.common.util.Commons.nvl;
 import static com.dci.intellij.dbn.debugger.common.breakpoint.DBBreakpointUtil.getDatabaseObject;
 import static com.dci.intellij.dbn.debugger.common.breakpoint.DBBreakpointUtil.getProgramIdentifier;
@@ -120,6 +121,7 @@ public class DBJdwpBreakpointHandler extends DBBreakpointHandler<DBJdwpDebugProc
                 console.warning("Failed to register breakpoint" + breakpointLocation + ". Resource not found");
             }
         } catch (Exception e) {
+            conditionallyLog(e);
             console.error("Failed to register breakpoint" + breakpointLocation + ". " + nvl(e.getMessage(), ""));
         }
     }

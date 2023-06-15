@@ -14,6 +14,7 @@ import org.jetbrains.annotations.NotNull;
 import java.sql.SQLException;
 
 import static com.dci.intellij.dbn.common.dispose.Checks.isNotValid;
+import static com.dci.intellij.dbn.common.dispose.Failsafe.conditionallyLog;
 
 public class CursorResultFetchNextRecordsAction extends MethodExecutionCursorResultAction {
     public CursorResultFetchNextRecordsAction() {
@@ -39,6 +40,7 @@ public class CursorResultFetchNextRecordsAction extends MethodExecutionCursorRes
                         }
 
                     } catch (SQLException ex) {
+                        conditionallyLog(ex);
                         Messages.showErrorDialog(project, "Could not perform operation.", ex);
                     }
 

@@ -5,12 +5,13 @@ import com.dci.intellij.dbn.browser.DatabaseBrowserManager;
 import com.dci.intellij.dbn.common.component.ProjectComponentBase;
 import com.dci.intellij.dbn.common.load.ProgressMonitor;
 import com.dci.intellij.dbn.common.navigation.NavigationInstructions;
-import com.dci.intellij.dbn.common.thread.*;
+import com.dci.intellij.dbn.common.thread.Background;
+import com.dci.intellij.dbn.common.thread.Dispatch;
+import com.dci.intellij.dbn.common.thread.Progress;
 import com.dci.intellij.dbn.common.util.Editors;
 import com.dci.intellij.dbn.common.util.Messages;
 import com.dci.intellij.dbn.connection.ConnectionAction;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
-import com.dci.intellij.dbn.database.DatabaseFeature;
 import com.dci.intellij.dbn.ddl.DDLFileAttachmentManager;
 import com.dci.intellij.dbn.ddl.options.DDLFileGeneralSettings;
 import com.dci.intellij.dbn.ddl.options.DDLFileSettings;
@@ -19,6 +20,7 @@ import com.dci.intellij.dbn.editor.code.SourceCodeManager;
 import com.dci.intellij.dbn.editor.data.filter.DatasetFilter;
 import com.dci.intellij.dbn.editor.data.filter.DatasetFilterManager;
 import com.dci.intellij.dbn.editor.data.options.DataEditorSettings;
+import com.dci.intellij.dbn.object.DBConsole;
 import com.dci.intellij.dbn.object.DBDataset;
 import com.dci.intellij.dbn.object.common.DBObject;
 import com.dci.intellij.dbn.object.common.DBSchemaObject;
@@ -126,9 +128,7 @@ public class DatabaseFileEditorManager extends ProjectComponentBase {
                 if (DatabaseFileSystem.isFileOpened(object) || promptFileOpen(databaseFile)) {
                     boolean focusEditor = handle.getEditorInstructions().isFocus();
 
-                    FileEditorManager editorManager = FileEditorManager.getInstance(project);
-                    ThreadMonitor.surround(project, ThreadProperty.EDITOR_LOAD, () -> editorManager.openFile(databaseFile, focusEditor));
-
+                    Editors.openFile(project, databaseFile, focusEditor);
                     NavigationInstructions instructions = NavigationInstructions.create().
                             with(SCROLL).
                             with(FOCUS, focusEditor);
@@ -155,10 +155,7 @@ public class DatabaseFileEditorManager extends ProjectComponentBase {
             // open / reopen (select) the file
             if (DatabaseFileSystem.isFileOpened(schemaObject) || promptFileOpen(databaseFile)) {
                 boolean focusEditor = handle.getEditorInstructions().isFocus();
-
-                FileEditorManager editorManager = FileEditorManager.getInstance(project);
-                FileEditor[] fileEditors = ThreadMonitor.surround(project, ThreadProperty.EDITOR_LOAD,
-                        () -> editorManager.openFile(databaseFile, focusEditor));
+                FileEditor[] fileEditors = Editors.openFile(project, databaseFile, focusEditor);
 
                 for (FileEditor fileEditor : fileEditors) {
                     if (fileEditor instanceof SourceCodeMainEditor) {
@@ -239,6 +236,13 @@ public class DatabaseFileEditorManager extends ProjectComponentBase {
         return true;
     }
 
+
+    public void openDatabaseConsole(DBConsole console, boolean focus) {
+        ConnectionHandler connection = console.getConnection();
+        Project project = connection.getProject();
+        Editors.openFile(project, console.getVirtualFile(), focus);
+    }
+
     public void closeEditor(DBSchemaObject object) {
         VirtualFile virtualFile = getFileSystem().findDatabaseFile(object);
         if (virtualFile == null) return;
@@ -254,26 +258,19 @@ public class DatabaseFileEditorManager extends ProjectComponentBase {
         if (!editorManager.isFileOpen(virtualFile)) return;
 
         editorManager.closeFile(virtualFile);
-        ThreadMonitor.surround(project, ThreadProperty.EDITOR_LOAD,
-                () -> editorManager.openFile(virtualFile, false));
+        Editors.openFile(project, virtualFile, false);
     }
 
     private boolean isEditable(DBObject object) {
         if (isNotValid(object)) return false;
+        if (object.isEditable()) return true;
 
-        DBContentType contentType = object.getContentType();
-        boolean editable =
-                object.is(DBObjectProperty.SCHEMA_OBJECT) &&
-                        (contentType.has(DBContentType.DATA) ||
-                                DatabaseFeature.OBJECT_SOURCE_EDITING.isSupported(object));
-
-        if (!editable) {
-            DBObject parentObject = object.getParentObject();
-            if (parentObject instanceof DBSchemaObject) {
-                return isEditable(parentObject);
-            }
+        DBObject parentObject = object.getParentObject();
+        if (parentObject instanceof DBSchemaObject && parentObject != object) {
+            return isEditable(parentObject);
         }
-        return editable;
+
+        return false;
     }
 
 

@@ -17,6 +17,7 @@ import java.util.List;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 
+import static com.dci.intellij.dbn.common.dispose.Failsafe.conditionallyLog;
 import static com.dci.intellij.dbn.common.util.Unsafe.cast;
 
 @Slf4j
@@ -64,13 +65,15 @@ class DriverClassLoaderImpl extends URLClassLoader implements DriverClassLoader 
                             Class<Driver> driver = cast(clazz);
                             drivers.add(driver);
                         }
-                    } catch (Throwable t) {
-                        log.debug("Failed to load driver " + className + " from library " + jar, t);
+                    } catch (Throwable e) {
+                        conditionallyLog(e);
+                        log.debug("Failed to load driver " + className + " from library " + jar, e);
                     }
                 }
             }
-        } catch (Throwable t) {
-            log.debug("Failed to load drivers from library " + jar, t);
+        } catch (Throwable e) {
+            conditionallyLog(e);
+            log.debug("Failed to load drivers from library " + jar, e);
         }
     }
 

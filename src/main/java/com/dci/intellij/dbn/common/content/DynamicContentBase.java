@@ -280,6 +280,7 @@ public abstract class DynamicContentBase<T extends DynamicContentElement>
             throw e;
 
         } catch (SQLFeatureNotSupportedException e) {
+            conditionallyLog(e);
             // unsupported feature: log in notification area
             elements = cast(EMPTY_CONTENT);
             set(LOADED, true);
@@ -290,11 +291,13 @@ public abstract class DynamicContentBase<T extends DynamicContentElement>
                     getContentDescription(), e);
 
         } catch (SQLException e) {
+            conditionallyLog(e);
             // connectivity / timeout exceptions: mark content dirty (no logging)
             elements = cast(EMPTY_CONTENT);
             set(DIRTY, true);
 
         } catch (Throwable e) {
+            conditionallyLog(e);
             // any other exception: log error
             log.error("Failed to load content", e);
             elements = cast(EMPTY_CONTENT);

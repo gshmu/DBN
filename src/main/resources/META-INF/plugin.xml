@@ -375,6 +375,7 @@
             </group>
             <separator/>
             <group id="DBNavigator.ActionGroup.Diagnostics" text="Diagnostics" popup="true">
+                <action id="DBNavigator.Actions.MainMenu.EnableDeveloperMode" class="com.dci.intellij.dbn.diagnostics.action.DeveloperModeAction" text="Scramble Project Code"/>
                 <action id="DBNavigator.Actions.MainMenu.ParserDiagnostics" class="com.dci.intellij.dbn.diagnostics.action.ParserDiagnosticsOpenAction" text="Parser Diagnostics..."/>
                 <action id="DBNavigator.Actions.MainMenu.DiagnosticsMonitor" class="com.dci.intellij.dbn.menu.action.DiagnosticsMonitorOpenAction" text="Connection Diagnostics..."/>
                 <action id="DBNavigator.Actions.MainMenu.ReloadMetadataDefinitions" class="com.dci.intellij.dbn.menu.action.MetaDataDefinitionReloadAction" text="Reload Metadata Definitions"/>

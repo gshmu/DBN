@@ -31,7 +31,6 @@ import com.dci.intellij.dbn.object.common.list.action.ObjectListActionGroup;
 import com.dci.intellij.dbn.object.common.property.DBObjectProperty;
 import com.intellij.openapi.actionSystem.ActionGroup;
 import com.intellij.openapi.actionSystem.ActionPopupMenu;
-import com.intellij.openapi.fileEditor.FileEditorManager;
 import com.intellij.openapi.project.Project;
 import com.intellij.util.ui.tree.TreeUtil;
 import lombok.Getter;
@@ -241,14 +240,14 @@ public final class DatabaseBrowserTree extends DBNTree {
         Object lastPathEntity = path.getLastPathComponent();
         if (isNotValid(lastPathEntity)) return;
 
+        DatabaseFileEditorManager editorManager = DatabaseFileEditorManager.getInstance(getProject());
         if (lastPathEntity instanceof DBObject) {
             DBObject object = (DBObject) lastPathEntity;
-            DatabaseFileEditorManager editorManager = DatabaseFileEditorManager.getInstance(getProject());
+
             Project project = ensureProject();
             if (object instanceof DBConsole) {
                 DBConsole console = (DBConsole) object;
-                FileEditorManager fileEditorManager = FileEditorManager.getInstance(project);
-                fileEditorManager.openFile(console.getVirtualFile(), true);
+                editorManager.openDatabaseConsole(console, true);
                 event.consume();
             } else if (object.is(DBObjectProperty.EDITABLE)) {
                 DBSchemaObject schemaObject = (DBSchemaObject) object;
@@ -274,12 +273,11 @@ public final class DatabaseBrowserTree extends DBNTree {
         } else if (lastPathEntity instanceof DBObjectBundle) {
             DBObjectBundle objectBundle = (DBObjectBundle) lastPathEntity;
             ConnectionHandler connection = objectBundle.getConnection();
-            FileEditorManager fileEditorManager = FileEditorManager.getInstance(connection.getProject());
             DBConsole defaultConsole = connection.getConsoleBundle().getDefaultConsole();
-            fileEditorManager.openFile(defaultConsole.getVirtualFile(), deliberate);
+            editorManager.openDatabaseConsole(defaultConsole, deliberate);
         }
     }
-    
+
 /*    @Override
     protected void processMouseMotionEvent(MouseEvent e) {
         boolean navigable = false;

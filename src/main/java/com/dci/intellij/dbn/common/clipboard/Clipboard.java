@@ -5,6 +5,8 @@ import org.jetbrains.annotations.Nullable;
 
 import java.awt.datatransfer.DataFlavor;
 
+import static com.dci.intellij.dbn.common.dispose.Failsafe.conditionallyLog;
+
 public class Clipboard {
 
     public static XmlContent createXmlContent(String text) {
@@ -23,7 +25,9 @@ public class Clipboard {
             if (data instanceof String) {
                 return (String) data;
             }
-        } catch (Throwable ignore) {}
+        } catch (Throwable e) {
+            conditionallyLog(e);
+        }
 
         return null;
     }

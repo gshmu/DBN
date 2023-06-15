@@ -24,6 +24,7 @@ import java.sql.Driver;
 import java.util.ArrayList;
 import java.util.List;
 
+import static com.dci.intellij.dbn.common.dispose.Failsafe.conditionallyLog;
 import static com.dci.intellij.dbn.common.ui.util.ComboBoxes.*;
 
 
@@ -81,6 +82,7 @@ public class ConnectionDriverSettingsForm extends DBNFormBase {
                     reloadDriversCheckLabel.setText("Drivers reloaded");
                 }
             } catch (Exception ex) {
+                conditionallyLog(ex);
                 reloadDriversCheckLabel.setIcon(Icons.COMMON_WARNING);
                 reloadDriversCheckLabel.setText(ex.getMessage());
             }
@@ -132,8 +134,8 @@ public class ConnectionDriverSettingsForm extends DBNFormBase {
                     try {
                         drivers = driverManager.loadDrivers(new File(driverLibrary), false);
                     } catch (Exception e) {
-                        Messages.showErrorDialog(getProject(), "");
-                        e.printStackTrace(); // TODO
+                        conditionallyLog(e);
+                        Messages.showErrorDialog(getProject(), e.getMessage());
                     }
                     DriverOption selectedOption = getSelection(driverComboBox);
                     initComboBox(driverComboBox);

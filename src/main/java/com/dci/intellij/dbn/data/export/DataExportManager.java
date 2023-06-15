@@ -21,6 +21,7 @@ import java.io.IOException;
 import java.util.List;
 
 import static com.dci.intellij.dbn.common.component.Components.projectService;
+import static com.dci.intellij.dbn.common.dispose.Failsafe.conditionallyLog;
 
 @State(
     name = DataExportManager.COMPONENT_NAME,
@@ -135,6 +136,7 @@ public class DataExportManager extends ProjectComponentBase implements Persisten
             }
 
         } catch (DataExportException e) {
+            conditionallyLog(e);
             Messages.showErrorDialog(project, "Error performing data export.", e);
         }
     }
@@ -143,6 +145,7 @@ public class DataExportManager extends ProjectComponentBase implements Persisten
         try {
             Desktop.getDesktop().open(file);
         } catch (IOException e) {
+            conditionallyLog(e);
             String filePath = file.getPath();
             Messages.showErrorDialog(
                     project,

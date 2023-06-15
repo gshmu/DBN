@@ -6,7 +6,9 @@ import com.intellij.openapi.options.ConfigurationException;
 import com.intellij.openapi.project.Project;
 import org.jetbrains.annotations.NotNull;
 
-import javax.swing.Action;
+import javax.swing.*;
+
+import static com.dci.intellij.dbn.common.dispose.Failsafe.conditionallyLog;
 
 public class DiagnosticSettingsDialog extends DBNDialog<DiagnosticSettingsForm> {
 
@@ -41,6 +43,7 @@ public class DiagnosticSettingsDialog extends DBNDialog<DiagnosticSettingsForm> 
             settingsForm.applyFormChanges();
             super.doOKAction();
         } catch (ConfigurationException e) {
+            conditionallyLog(e);
             Messages.showErrorDialog(getProject(), "Invalid Configuration", e.getMessage());
         }
 

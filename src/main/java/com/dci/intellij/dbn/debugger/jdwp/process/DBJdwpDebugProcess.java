@@ -59,6 +59,7 @@ import java.sql.SQLException;
 import java.util.List;
 import java.util.Objects;
 
+import static com.dci.intellij.dbn.common.dispose.Failsafe.conditionallyLog;
 import static com.dci.intellij.dbn.debugger.common.process.DBDebugProcessStatus.*;
 import static com.intellij.debugger.impl.PrioritizedTask.Priority.LOW;
 
@@ -259,6 +260,7 @@ public abstract class DBJdwpDebugProcess<T extends ExecutionInput>
                     startTargetProgram();
                 }
             } catch (Exception e) {
+                conditionallyLog(e);
                 set(SESSION_INITIALIZATION_THREW_EXCEPTION, true);
                 console.error("Error initializing debug environment\n" + e.getMessage());
                 stop();
@@ -303,6 +305,7 @@ public abstract class DBJdwpDebugProcess<T extends ExecutionInput>
                             set(TARGET_EXECUTION_STARTED, true);
                             executeTarget();
                         } catch (SQLException e) {
+                            conditionallyLog(e);
                             set(TARGET_EXECUTION_THREW_EXCEPTION, true);
                             if (isNot(DEBUGGER_STOPPING)) {
                                 String message = input == null ? "Error executing target program" : "Error executing " + input.getExecutionContext().getTargetName();
@@ -371,6 +374,7 @@ public abstract class DBJdwpDebugProcess<T extends ExecutionInput>
             debuggerInterface.disconnectJdwpSession(targetConnection);
 
         } catch (Throwable e) {
+            conditionallyLog(e);
             console.error("Error releasing debug session: " + e.getMessage());
         }
     }
@@ -411,6 +415,7 @@ public abstract class DBJdwpDebugProcess<T extends ExecutionInput>
                 }
             }
         } catch (Exception e) {
+            conditionallyLog(e);
             getConsole().warning("Error evaluating suspend position '" + sourceUrl + "': " + Commons.nvl(e.getMessage(), e.getClass().getSimpleName()));
         }
         return null;
@@ -424,6 +429,7 @@ public abstract class DBJdwpDebugProcess<T extends ExecutionInput>
             String sourcePath = location.sourcePath();
             return sourcePath.startsWith(declaredBlockIdentifier);
         } catch (Exception e) {
+            conditionallyLog(e);
             log.warn("Failed to evaluate declared block", e);
         }
 

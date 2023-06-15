@@ -16,6 +16,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import static com.dci.intellij.dbn.common.dispose.Failsafe.conditionallyLog;
+
 @Slf4j
 public abstract class DBLColorSettingsPage implements ColorSettingsPage {
 
@@ -31,6 +33,7 @@ public abstract class DBLColorSettingsPage implements ColorSettingsPage {
             try (InputStream inputStream = getClass().getResourceAsStream(demoTextFileName)) {
                 demoText = Commons.readInputStream(inputStream);
             } catch (IOException e) {
+                conditionallyLog(e);
                 log.error("Failed to load file " + demoTextFileName, e);
             }
         }

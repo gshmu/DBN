@@ -5,11 +5,11 @@ import com.dci.intellij.dbn.common.ui.table.DBNColoredTableCellRenderer;
 import com.dci.intellij.dbn.common.ui.table.DBNTable;
 import com.dci.intellij.dbn.common.ui.util.Borders;
 import com.dci.intellij.dbn.common.ui.util.Mouse;
+import com.dci.intellij.dbn.common.util.Editors;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.jdbc.DBNConnection;
 import com.dci.intellij.dbn.connection.session.DatabaseSession;
 import com.dci.intellij.dbn.connection.transaction.PendingTransaction;
-import com.intellij.openapi.fileEditor.FileEditorManager;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.ui.SimpleTextAttributes;
 import org.jetbrains.annotations.NotNull;
@@ -37,10 +37,9 @@ public class PendingTransactionsTable extends DBNTable<PendingTransactionsTableM
             int selectedRow = getSelectedRow();
             PendingTransaction transaction = getModel().getValueAt(selectedRow, 0);
             VirtualFile virtualFile = transaction.getFile();
-            if (Checks.isValid(virtualFile)) {
-                FileEditorManager editorManager = FileEditorManager.getInstance(getProject());
-                editorManager.openFile(virtualFile, true);
-            }
+            if (!Checks.isValid(virtualFile)) return;
+
+            Editors.openFile(getProject(), virtualFile, true);
         }
     }
 

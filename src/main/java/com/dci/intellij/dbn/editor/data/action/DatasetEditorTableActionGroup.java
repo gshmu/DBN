@@ -27,6 +27,7 @@ import org.jetbrains.annotations.Nullable;
 import java.awt.datatransfer.DataFlavor;
 import java.awt.datatransfer.Transferable;
 
+import static com.dci.intellij.dbn.common.dispose.Failsafe.conditionallyLog;
 import static com.dci.intellij.dbn.editor.data.model.RecordStatus.MODIFIED;
 
 @Slf4j
@@ -141,6 +142,7 @@ public class DatasetEditorTableActionGroup extends DefaultActionGroup {
             }
 
         } catch (Exception e) {
+            conditionallyLog(e);
             log.error("Failed to load clipboard content", e);
         }
         return null;

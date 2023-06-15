@@ -29,6 +29,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import static com.dci.intellij.dbn.common.component.Components.projectService;
+import static com.dci.intellij.dbn.common.dispose.Failsafe.conditionallyLog;
 import static com.dci.intellij.dbn.vfs.VirtualFileStatus.SAVING;
 
 @State(
@@ -97,7 +98,7 @@ public class SourceCodeDiffManager extends ProjectComponentBase implements Persi
                 DiffManager diffManager = DiffManager.getInstance();
                 diffManager.showMerge(project, mergeRequest);
             } catch (InvalidDiffRequestException e) {
-                e.printStackTrace();
+                conditionallyLog(e);
             }
         });
     }
@@ -144,6 +145,7 @@ public class SourceCodeDiffManager extends ProjectComponentBase implements Persi
                                 }
 
                             } catch (Exception e1) {
+                                conditionallyLog(e1);
                                 Messages.showErrorDialog(
                                         project, "Could not load sourcecode for " +
                                                 object.getQualifiedNameWithType() + " from database.", e1);

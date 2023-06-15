@@ -14,6 +14,8 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 
+import static com.dci.intellij.dbn.common.dispose.Failsafe.conditionallyLog;
+
 public class DBJdbcDebuggerEvaluator extends DBDebuggerEvaluator<DBJdbcDebugStackFrame, DBJdbcDebugValue> {
 
     public DBJdbcDebuggerEvaluator(DBJdbcDebugStackFrame frame) {
@@ -54,6 +56,7 @@ public class DBJdbcDebuggerEvaluator extends DBDebuggerEvaluator<DBJdbcDebugStac
             debugValue.setValue(value);
             debugValue.setType(type);
         } catch (Exception e) {
+            conditionallyLog(e);
             debugValue.setValue("");
             debugValue.setType(e.getMessage());
         } finally {

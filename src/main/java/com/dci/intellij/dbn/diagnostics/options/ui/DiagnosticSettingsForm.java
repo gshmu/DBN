@@ -1,12 +1,12 @@
 package com.dci.intellij.dbn.diagnostics.options.ui;
 
-import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.common.text.TextContent;
 import com.dci.intellij.dbn.common.ui.form.DBNFormBase;
 import com.dci.intellij.dbn.common.ui.form.DBNHintForm;
 import com.dci.intellij.dbn.diagnostics.Diagnostics;
 import com.intellij.openapi.Disposable;
 import com.intellij.openapi.options.ConfigurationException;
+import com.intellij.util.ui.UIUtil;
 import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
@@ -38,7 +38,7 @@ public class DiagnosticSettingsForm extends DBNFormBase {
         super(parent);
         developerModeCheckBox.setSelected(Diagnostics.isDeveloperMode());
 
-        TextContent hintText = plain("Developer Mode enables actions that can affect your system stability and data integrity. " +
+        TextContent hintText = plain("NOTE\nDeveloper Mode enables actions that can affect your system stability and data integrity. " +
                 "Features like \"Slow Database Simulations\" or excessive \"Debug Logging\" are meant for diagnostic activities only " +
                 "and are significantly degrading the performance of your development environment.\n\n" +
                 "Please disable developer mode unless explicitly instructed to use it and properly guided throughout the process by DBN plugin developers.");
@@ -46,6 +46,7 @@ public class DiagnosticSettingsForm extends DBNFormBase {
         hintPanel.add(disclaimerForm.getComponent());
 
         Diagnostics.DebugLogging debugLogging = Diagnostics.getDebugLogging();
+        failsafeLoggingCheckBox.setSelected(debugLogging.isFailsafeErrors());
         databaseAccessCheckBox.setSelected(debugLogging.isDatabaseAccess());
         databaseResourcesCheckBox.setSelected(debugLogging.isDatabaseResource());
 
@@ -58,7 +59,6 @@ public class DiagnosticSettingsForm extends DBNFormBase {
         Diagnostics.Miscellaneous miscellaneous = Diagnostics.getMiscellaneous();
         dialogSizingCheckbox.setSelected(miscellaneous.isDialogSizingReset());
         bulkActionsCheckbox.setSelected(miscellaneous.isBulkActionsEnabled());
-        failsafeLoggingCheckBox.setSelected(miscellaneous.isFailsafeLoggingEnabled());
         backgroundDisposerCheckBox.setSelected(miscellaneous.isBackgroundDisposerDisabled());
 
         updateFields(null);
@@ -82,8 +82,9 @@ public class DiagnosticSettingsForm extends DBNFormBase {
         queryingLagTextField.setEnabled(databaseLaggingEnabled);
         fetchingLagTextField.setEnabled(databaseLaggingEnabled);
 
-        acknowledgementLabel.setText(developerMode ? "Please acknowledge and consent with below..." : "");
-        acknowledgementLabel.setIcon(developerMode ? Icons.COMMON_WARNING : null);
+        acknowledgementLabel.setText(developerMode ? "(will be automatically disabled after 10 minutes)" : "");
+        acknowledgementLabel.setForeground(UIUtil.getLabelDisabledForeground());
+        //acknowledgementLabel.setIcon(developerMode ? Icons.COMMON_INFO : null);
         disclaimerForm.setHighlighted(developerMode);
     }
 
@@ -92,6 +93,7 @@ public class DiagnosticSettingsForm extends DBNFormBase {
     public void applyFormChanges() throws ConfigurationException {
         Diagnostics.setDeveloperMode(developerModeCheckBox.isSelected());
         Diagnostics.DebugLogging debugLogging = Diagnostics.getDebugLogging();
+        debugLogging.setFailsafeErrors(failsafeLoggingCheckBox.isSelected());
         debugLogging.setDatabaseAccess(databaseAccessCheckBox.isSelected());
         debugLogging.setDatabaseResource(databaseResourcesCheckBox.isSelected());
 
@@ -104,7 +106,6 @@ public class DiagnosticSettingsForm extends DBNFormBase {
         Diagnostics.Miscellaneous miscellaneous = Diagnostics.getMiscellaneous();
         miscellaneous.setDialogSizingReset(dialogSizingCheckbox.isSelected());
         miscellaneous.setBulkActionsEnabled(bulkActionsCheckbox.isSelected());
-        miscellaneous.setFailsafeLoggingEnabled(failsafeLoggingCheckBox.isSelected());
         miscellaneous.setBackgroundDisposerDisabled(backgroundDisposerCheckBox.isSelected());
 
     }

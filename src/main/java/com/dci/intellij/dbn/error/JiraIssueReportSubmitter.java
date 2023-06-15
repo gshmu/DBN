@@ -13,6 +13,8 @@ import org.jetbrains.annotations.NotNull;
 
 import java.io.InputStream;
 
+import static com.dci.intellij.dbn.common.dispose.Failsafe.conditionallyLog;
+
 public class JiraIssueReportSubmitter extends IssueReportSubmitter {
     private static final HttpClientBuilder HTTP_CLIENT_BUILDER = HttpClientBuilder.create();
     private static final GsonBuilder GSON_BUILDER = new GsonBuilder();
@@ -68,6 +70,7 @@ public class JiraIssueReportSubmitter extends IssueReportSubmitter {
                 return new JiraTicketResponse(responseString, null);
             }
         } catch (Exception e) {
+            conditionallyLog(e);
             return new JiraTicketResponse(null, e.getMessage());
         }
     }

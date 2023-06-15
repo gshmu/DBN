@@ -18,6 +18,7 @@ import org.jetbrains.annotations.Nullable;
 import java.sql.SQLException;
 
 import static com.dci.intellij.dbn.common.dispose.Checks.isValid;
+import static com.dci.intellij.dbn.common.dispose.Failsafe.conditionallyLog;
 
 public class ExecutionResultVariablesDialogAction extends AbstractExecutionResultAction {
     public ExecutionResultVariablesDialogAction() {
@@ -39,6 +40,7 @@ public class ExecutionResultVariablesDialogAction extends AbstractExecutionResul
                             try {
                                 executionProcessor.execute();
                             } catch (SQLException ex) {
+                                conditionallyLog(ex);
                                 NotificationSupport.sendErrorNotification(
                                         project,
                                         NotificationGroup.EXECUTION,

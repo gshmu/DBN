@@ -27,6 +27,7 @@ import java.io.File;
 import java.util.List;
 import java.util.*;
 
+import static com.dci.intellij.dbn.common.dispose.Failsafe.conditionallyLog;
 import static com.dci.intellij.dbn.common.ui.util.ComboBoxes.*;
 import static com.dci.intellij.dbn.common.ui.util.TextFields.onTextChange;
 import static com.dci.intellij.dbn.common.util.Commons.coalesce;
@@ -161,6 +162,7 @@ public class ConnectionUrlSettingsForm extends DBNFormBase {
             TnsNames tnsNames = TnsNamesParser.get(tnsnamesOraFile);
             return tnsNames.getProfileNames();
         } catch (Exception e) {
+            conditionallyLog(e);
             //ErrorHandler.logErrorStack("Error occurred while reading tnsnames.ora file for database: " + adbInstance.getDbName(), e);
         }
         return Collections.emptyList();

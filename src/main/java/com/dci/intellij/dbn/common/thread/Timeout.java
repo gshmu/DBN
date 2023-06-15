@@ -9,6 +9,7 @@ import lombok.extern.slf4j.Slf4j;
 import java.util.concurrent.*;
 import java.util.concurrent.atomic.AtomicReference;
 
+import static com.dci.intellij.dbn.common.dispose.Failsafe.conditionallyLog;
 import static com.dci.intellij.dbn.common.exception.Exceptions.causeOf;
 import static com.dci.intellij.dbn.common.util.TimeUtil.millisSince;
 import static com.dci.intellij.dbn.common.util.TimeUtil.secondsSince;
@@ -37,6 +38,7 @@ public final class Timeout {
                                     defaultValue,
                                     callable);
                         } catch (Throwable e) {
+                            conditionallyLog(e);
                             exception.set(e);
                             return null;
                         }
@@ -49,9 +51,11 @@ public final class Timeout {
             }
             return result;
         } catch (TimeoutException | InterruptedException | RejectedExecutionException e) {
+            conditionallyLog(e);
             String message = Commons.nvl(e.getMessage(), e.getClass().getSimpleName());
             log.warn("Operation timed out after {} seconds (timeout = {} seconds). Returning default {}. Cause: {}", secondsSince(start), seconds, defaultValue, message);
         } catch (ExecutionException e) {
+            conditionallyLog(e);
             log.warn("Operation failed after {} seconds (timeout = {} seconds). Returning default {}", secondsSince(start), seconds, defaultValue, causeOf(e));
             throw e.getCause();
         }
@@ -75,6 +79,7 @@ public final class Timeout {
                                     ThreadProperty.TIMEOUT,
                                     runnable);
                         } catch (Throwable e) {
+                            conditionallyLog(e);
                             exception.set(e);
                         }
                     });
@@ -84,9 +89,11 @@ public final class Timeout {
             }
 
         } catch (TimeoutException | InterruptedException | RejectedExecutionException e) {
+            conditionallyLog(e);
             String message = Commons.nvl(e.getMessage(), e.getClass().getSimpleName());
             log.warn("Operation timed out after {} millis (timeout = {} seconds). Cause: {}", millisSince(start), seconds, message);
         } catch (ExecutionException e) {
+            conditionallyLog(e);
             log.warn("Operation failed after {} millis (timeout = {} seconds)", millisSince(start), seconds, causeOf(e));
             throw e.getCause();
         }
@@ -96,6 +103,7 @@ public final class Timeout {
         try {
             return future.get(time, timeUnit);
         } catch (TimeoutException | InterruptedException e) {
+            conditionallyLog(e);
             future.cancel(true);
             throw e;
         }

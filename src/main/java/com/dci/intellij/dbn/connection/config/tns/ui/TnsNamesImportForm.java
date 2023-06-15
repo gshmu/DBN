@@ -17,6 +17,7 @@ import javax.swing.*;
 import java.io.File;
 import java.util.List;
 
+import static com.dci.intellij.dbn.common.dispose.Failsafe.conditionallyLog;
 import static com.dci.intellij.dbn.common.ui.util.TextFields.onTextChange;
 
 public class TnsNamesImportForm extends DBNFormBase {
@@ -88,12 +89,13 @@ public class TnsNamesImportForm extends DBNFormBase {
                 filterTextField.setText(tnsNames.getFilter().getText());
             }
             errorLabel.setVisible(false);
-        } catch (Exception ex) {
+        } catch (Exception e) {
+            conditionallyLog(e);
             tnsNamesTable.setModel(new TnsNamesTableModel(new TnsNames()));
             tnsNamesTable.accommodateColumnsSize();
 
             errorLabel.setVisible(true);
-            String message = ex.getMessage();
+            String message = e.getMessage();
             message = Strings.isEmpty(message) ? "File may be corrupt or not a valid tnsnames.ora file." : message;
             errorLabel.setText("Error reading file: " + message);
         }

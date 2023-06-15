@@ -29,6 +29,7 @@ import org.jetbrains.annotations.Nullable;
 import java.lang.reflect.Constructor;
 
 import static com.dci.intellij.dbn.common.dispose.Checks.isNotValid;
+import static com.dci.intellij.dbn.common.dispose.Failsafe.conditionallyLog;
 import static com.dci.intellij.dbn.common.util.Files.isDbLanguageFile;
 import static com.dci.intellij.dbn.common.util.Files.isDbLanguagePsiFile;
 
@@ -142,6 +143,7 @@ public class DBBreakpointType extends XLineBreakpointType<XBreakpointProperties>
                 Constructor constructor = propertiesClass.getConstructor(ConnectionHandler.class);
                 return (XBreakpointProperties) constructor.newInstance(connection);
             } catch (Exception e) {
+                conditionallyLog(e);
                 log.error("Error creating JDWP breakpoints properties", e);
             }
         }

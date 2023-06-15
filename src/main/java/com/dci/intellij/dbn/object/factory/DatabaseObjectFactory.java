@@ -30,6 +30,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static com.dci.intellij.dbn.common.Priority.HIGHEST;
+import static com.dci.intellij.dbn.common.dispose.Failsafe.conditionallyLog;
 import static com.dci.intellij.dbn.common.message.MessageCallback.when;
 import static com.dci.intellij.dbn.object.type.DBObjectType.*;
 
@@ -174,6 +175,7 @@ public class DatabaseObjectFactory extends ProjectComponentBase {
                         notifyFactoryEvent(new ObjectFactoryEvent(object, ObjectFactoryEvent.EVENT_TYPE_DROP));
                     });
         } catch (SQLException e) {
+            conditionallyLog(e);
             String message = "Could not drop " + object.getQualifiedNameWithType() + ".";
             Project project = getProject();
             Messages.showErrorDialog(project, message, e);

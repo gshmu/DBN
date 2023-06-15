@@ -33,10 +33,12 @@ public final class Background {
                 } catch (ProcessCanceledException | UnsupportedOperationException | InterruptedException e) {
                     conditionallyLog(e);
                 } catch (Throwable e) {
+                    conditionallyLog(e);
                     log.error("Error executing background task", e);
                 }
             });
         } catch (RejectedExecutionException e) {
+            conditionallyLog(e);
             log.warn("Background execution rejected: " + e.getMessage());
         }
     }
@@ -65,10 +67,12 @@ public final class Background {
                 } catch (ProcessCanceledException | UnsupportedOperationException | InterruptedException e) {
                     conditionallyLog(e);
                 } catch (Throwable e) {
+                    conditionallyLog(e);
                     log.error("Error executing background task", e);
                 }
             });
         } catch (RejectedExecutionException e) {
+            conditionallyLog(e);
             log.warn("Background execution rejected: " + e.getMessage());
         }
     }

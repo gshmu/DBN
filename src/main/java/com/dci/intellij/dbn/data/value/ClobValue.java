@@ -10,6 +10,8 @@ import java.io.IOException;
 import java.io.Reader;
 import java.sql.*;
 
+import static com.dci.intellij.dbn.common.dispose.Failsafe.conditionallyLog;
+
 @Slf4j
 public class ClobValue extends LargeObjectValue {
     private Clob clob;
@@ -29,6 +31,7 @@ public class ClobValue extends LargeObjectValue {
         try {
             clob = callableStatement.getClob(parameterIndex);
         } catch (SQLFeatureNotSupportedException e) {
+            conditionallyLog(e);
             String charset = callableStatement.getString(parameterIndex);
             clob = createSerialClob(charset);
         }
@@ -39,6 +42,7 @@ public class ClobValue extends LargeObjectValue {
         try {
             clob = resultSet.getClob(columnIndex);
         } catch (SQLFeatureNotSupportedException e) {
+            conditionallyLog(e);
             String charset = resultSet.getString(columnIndex);
             clob = createSerialClob(charset);
         }
@@ -55,6 +59,7 @@ public class ClobValue extends LargeObjectValue {
                 preparedStatement.setClob(parameterIndex, clob);
             }
         } catch (SQLFeatureNotSupportedException e) {
+            conditionallyLog(e);
             if (value == null) {
                 preparedStatement.setString(parameterIndex, null);
             } else {
@@ -81,6 +86,7 @@ public class ClobValue extends LargeObjectValue {
                 resultSet.updateNClob(columnIndex, (NClob) clob); else
                 resultSet.updateClob(columnIndex, clob);
         } catch (SQLFeatureNotSupportedException e) {
+            conditionallyLog(e);
             if (Strings.isEmpty(value)) {
                 clob = null;
             } else {
@@ -120,6 +126,7 @@ public class ClobValue extends LargeObjectValue {
                 reader.read(buffer, 0, size);
                 return new String(buffer);
             } catch (IOException e) {
+                conditionallyLog(e);
                 throw new SQLException("Could not read value from CLOB.");
             } finally {
                 if (totalLength <= size) {
@@ -136,6 +143,7 @@ public class ClobValue extends LargeObjectValue {
                 reader.close();
                 reader = null;
             } catch (IOException e) {
+                conditionallyLog(e);
                 log.error("Could not close CLOB input reader.", e);
             }
         }

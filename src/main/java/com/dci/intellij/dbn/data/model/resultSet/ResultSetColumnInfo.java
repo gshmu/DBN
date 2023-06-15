@@ -10,6 +10,8 @@ import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 
+import static com.dci.intellij.dbn.common.dispose.Failsafe.conditionallyLog;
+
 @Getter
 @EqualsAndHashCode(callSuper = true)
 public class ResultSetColumnInfo extends BasicColumnInfo {
@@ -39,6 +41,7 @@ public class ResultSetColumnInfo extends BasicColumnInfo {
         try {
             return metaData.getPrecision(resultSetIndex);
         } catch (NumberFormatException e) {
+            conditionallyLog(e);
             return 4000;
         }
     }

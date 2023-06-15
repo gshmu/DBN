@@ -36,6 +36,8 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
+import static com.dci.intellij.dbn.common.dispose.Failsafe.conditionallyLog;
+
 public class ArrayEditorPopupProviderForm extends TextFieldPopupProviderForm {
     private JPanel mainPanel;
     private JPanel rightActionPanel;
@@ -124,6 +126,7 @@ public class ArrayEditorPopupProviderForm extends TextFieldPopupProviderForm {
                 stringValues.addAll(values);
             }
         } catch (SQLException e) {
+            conditionallyLog(e);
             Messages.showErrorDialog(project, e.getMessage(), e);
             return null;
         }

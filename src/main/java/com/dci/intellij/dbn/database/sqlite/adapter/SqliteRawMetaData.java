@@ -12,6 +12,8 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import static com.dci.intellij.dbn.common.dispose.Failsafe.conditionallyLog;
+
 @Slf4j
 public class SqliteRawMetaData {
     public static class RawForeignKeyInfo extends RawMetaData<RawForeignKeyInfo.Row> {
@@ -65,9 +67,9 @@ public class SqliteRawMetaData {
             Row (ResultSet resultSet) throws SQLException {
                 seq = resultSet.getInt("seq");
                 name = resultSet.getString("name");
-                try {unique = resultSet.getInt("unique");} catch (SQLException ignore) {}
-                try {partial = resultSet.getInt("partial");} catch (SQLException ignore) {}
-                try {origin = resultSet.getString("origin");} catch (SQLException ignore) {}
+                try {unique = resultSet.getInt("unique");} catch (SQLException e) {conditionallyLog(e);}
+                try {partial = resultSet.getInt("partial");} catch (SQLException e) {conditionallyLog(e);}
+                try {origin = resultSet.getString("origin");} catch (SQLException e) {conditionallyLog(e);}
             }
         }
     }

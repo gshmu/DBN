@@ -18,6 +18,8 @@ import org.jetbrains.annotations.Nullable;
 import javax.swing.*;
 import java.awt.event.ActionEvent;
 
+import static com.dci.intellij.dbn.common.dispose.Failsafe.conditionallyLog;
+
 public class ProjectSettingsDialog extends DBNDialog<ProjectSettingsForm> {
     private JButton bApply;
     private final ProjectSettings projectSettings;
@@ -81,6 +83,7 @@ public class ProjectSettingsDialog extends DBNDialog<ProjectSettingsForm> {
             super.doOKAction();
             projectSettings.disposeUIResources();
         } catch (ConfigurationException e) {
+            conditionallyLog(e);
             Messages.showErrorDialog(getProject(), e.getMessage());
         }
 
@@ -92,6 +95,7 @@ public class ProjectSettingsDialog extends DBNDialog<ProjectSettingsForm> {
             bApply.setEnabled(false);
             setCancelButtonText("Close");
         } catch (ConfigurationException e) {
+            conditionallyLog(e);
             Messages.showErrorDialog(getProject(), e.getTitle(), e.getMessage());
         }
     }

@@ -11,6 +11,7 @@ import com.dci.intellij.dbn.common.ui.table.DBNTableTransferHandler;
 import com.dci.intellij.dbn.common.ui.util.Borders;
 import com.dci.intellij.dbn.common.util.Actions;
 import com.dci.intellij.dbn.common.util.Context;
+import com.dci.intellij.dbn.common.util.Editors;
 import com.dci.intellij.dbn.common.util.Safe;
 import com.dci.intellij.dbn.connection.*;
 import com.dci.intellij.dbn.connection.mapping.FileConnectionContext;
@@ -21,7 +22,6 @@ import com.intellij.openapi.actionSystem.ActionGroup;
 import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.actionSystem.DefaultActionGroup;
-import com.intellij.openapi.fileEditor.FileEditorManager;
 import com.intellij.openapi.project.DumbAware;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.popup.JBPopupFactory;
@@ -116,27 +116,26 @@ public class FileConnectionMappingTable extends DBNTable<FileConnectionMappingTa
         @Override
         public void mouseClicked(MouseEvent e) {
             int clickCount = e.getClickCount();
-            if (e.getButton() == MouseEvent.BUTTON1) {
-                int selectedRow = getSelectedRow();
-                int selectedColumn = getSelectedColumn();
-                if (selectedRow > -1) {
-                    FileConnectionContext mapping = (FileConnectionContext) getValueAt(selectedRow, 0);
-                    if (mapping != null) {
-                        VirtualFile file = mapping.getFile();
-                        if (file != null) {
-                            if (selectedColumn == 0 && clickCount == 2) {
-                                FileEditorManager fileEditorManager = FileEditorManager.getInstance(getProject());
-                                fileEditorManager.openFile(file, true);
-                            } else if (selectedColumn == 1) {
-                                promptConnectionSelector(mapping);
-                            } else if (selectedColumn == 3) {
-                                promptSchemaSelector(mapping);
-                            } else if (selectedColumn == 4) {
-                                promptSessionSelector(mapping);
-                            }
-                        }
-                    }
-                }
+            if (e.getButton() != MouseEvent.BUTTON1) return;
+
+            int selectedRow = getSelectedRow();
+            int selectedColumn = getSelectedColumn();
+            if (selectedRow <= -1) return;
+
+            FileConnectionContext mapping = (FileConnectionContext) getValueAt(selectedRow, 0);
+            if (mapping == null) return;
+
+            VirtualFile file = mapping.getFile();
+            if (file == null) return;
+
+            if (selectedColumn == 0 && clickCount == 2) {
+                Editors.openFile(getProject(), file, true);
+            } else if (selectedColumn == 1) {
+                promptConnectionSelector(mapping);
+            } else if (selectedColumn == 3) {
+                promptSchemaSelector(mapping);
+            } else if (selectedColumn == 4) {
+                promptSessionSelector(mapping);
             }
         }
     }

@@ -11,6 +11,8 @@ import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
 
+import static com.dci.intellij.dbn.common.dispose.Failsafe.conditionallyLog;
+
 public abstract class LoadInProgressRegistry<T extends StatefulDisposable> extends StatefulDisposableBase {
     private final List<T> nodes = CollectionUtil.createConcurrentList();
 
@@ -43,6 +45,7 @@ public abstract class LoadInProgressRegistry<T extends StatefulDisposable> exten
                         LoadInProgressRegistry.this.notify(node);
                     }
                 } catch (ProcessCanceledException e) {
+                    conditionallyLog(e);
                     nodes.remove(node);
                 }
             }

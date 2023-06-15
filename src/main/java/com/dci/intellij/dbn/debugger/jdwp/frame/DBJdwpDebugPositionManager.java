@@ -23,6 +23,8 @@ import org.jetbrains.annotations.Nullable;
 import java.util.Collections;
 import java.util.List;
 
+import static com.dci.intellij.dbn.common.dispose.Failsafe.conditionallyLog;
+
 public class DBJdwpDebugPositionManager implements PositionManager {
 
     private final DebugProcess process;
@@ -74,7 +76,8 @@ public class DBJdwpDebugPositionManager implements PositionManager {
         check(position);
         try {
             return type.locationsOfLine(position.getLine() + 1);
-        } catch (AbsentInformationException ignore) {
+        } catch (AbsentInformationException e) {
+            conditionallyLog(e);
         }
         return Collections.emptyList();
     }

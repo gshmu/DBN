@@ -6,6 +6,8 @@ import com.intellij.openapi.project.Project;
 
 import java.sql.SQLException;
 
+import static com.dci.intellij.dbn.common.dispose.Failsafe.conditionallyLog;
+
 public abstract class DebugOperationThread extends Thread implements NotificationSupport {
     private Project project;
     private String operationName;
@@ -26,6 +28,7 @@ public abstract class DebugOperationThread extends Thread implements Notificatio
         try {
             executeOperation();
         } catch (SQLException e) {
+            conditionallyLog(e);
             sendErrorNotification(
                     NotificationGroup.DEBUGGER,
                     "Error performing operation ({0}): {1}", operationName, e);
