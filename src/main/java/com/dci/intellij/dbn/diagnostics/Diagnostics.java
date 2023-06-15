@@ -1,7 +1,7 @@
 package com.dci.intellij.dbn.diagnostics;
 
+import com.dci.intellij.dbn.common.notification.NotificationSupport;
 import com.dci.intellij.dbn.common.state.PersistentStateElement;
-import com.dci.intellij.dbn.common.util.TimeUtil;
 import com.dci.intellij.dbn.common.util.Unsafe;
 import lombok.Getter;
 import lombok.Setter;
@@ -9,16 +9,20 @@ import org.jdom.Element;
 
 import java.util.Timer;
 import java.util.TimerTask;
+import java.util.concurrent.TimeUnit;
 
+import static com.dci.intellij.dbn.common.notification.NotificationGroup.DIAGNOSTICS;
 import static com.dci.intellij.dbn.common.options.setting.SettingsSupport.*;
 
 public final class Diagnostics {
     private static boolean developerMode = false;
+    private static int developerModeTimeout = 10;
     private static final DebugLogging debugLogging = new DebugLogging();
     private static final DatabaseLag databaseLag = new DatabaseLag();
     private static final Miscellaneous miscellaneous = new Miscellaneous();
 
     private static volatile Timer disableTimer;
+    private static long disableTimerStart;
 
     public static boolean isDialogSizingReset() {
         return developerMode && miscellaneous.dialogSizingReset;
@@ -60,24 +64,51 @@ public final class Diagnostics {
         return developerMode;
     }
 
+    public static int getDeveloperModeTimeout() {
+        return developerModeTimeout;
+    }
+
+    public static void setDeveloperModeTimeout(int developerModeTimeout) {
+        Diagnostics.developerModeTimeout = developerModeTimeout;
+    }
+
     public static synchronized void setDeveloperMode(boolean developerMode) {
+        boolean changed = Diagnostics.developerMode != developerMode;
         Diagnostics.developerMode = developerMode;
         if (disableTimer != null) {
             disableTimer.cancel();
             disableTimer = null;
+            disableTimerStart = 0;
         }
 
         if (developerMode) {
             disableTimer = new Timer("DBN - Developer Mode Disable Timer");
-            disableTimer.schedule(createDisableTimer(), TimeUtil.Millis.THIRTY_SECONDS);
+            disableTimer.schedule(createDisableTimer(), TimeUnit.MINUTES.toMillis(developerModeTimeout));
+            disableTimerStart = System.currentTimeMillis();
+            NotificationSupport.sendInfoNotification(null, DIAGNOSTICS, "Developer Mode activated for " + developerModeTimeout + " minutes");
+        } else if (changed) {
+            NotificationSupport.sendInfoNotification(null, DIAGNOSTICS, "Developer Mode deactivated");
         }
+
+    }
+
+    public static String getTimeoutText() {
+        if (disableTimerStart == 0) return "";
+
+        long lapsed = System.currentTimeMillis() - disableTimerStart;
+        long lapsedSeconds = TimeUnit.MILLISECONDS.toSeconds(lapsed);
+        long remainingSeconds = Math.max(0, TimeUnit.MINUTES.toSeconds(developerModeTimeout) - lapsedSeconds);
+
+        return remainingSeconds < 60 ?
+            " (timing out in " + remainingSeconds + " seconds) " :
+            " (timing out in " + TimeUnit.SECONDS.toMinutes(remainingSeconds) + " minutes) ";
     }
 
     private static TimerTask createDisableTimer() {
         return new TimerTask() {
             @Override
             public void run() {
-                Diagnostics.developerMode = false;
+                setDeveloperMode(false);
                 disableTimer.cancel();
                 disableTimer = null;
             }
@@ -101,6 +132,23 @@ public final class Diagnostics {
                 debugLogging.hasEnabledFeatures() ||
                 databaseLag.enabled;
     }
+
+    public static void readState(Element element) {
+        if (element == null) return;
+
+        developerModeTimeout = getInteger(element, "developer-mode-timeout", developerModeTimeout);
+        debugLogging.readState(element);
+        databaseLag.readState(element);
+        miscellaneous.readState(element);
+    }
+
+    public static void writeState(Element element) {
+        setInteger(element, "developer-mode-timeout", developerModeTimeout);
+        debugLogging.writeState(element);
+        databaseLag.writeState(element);
+        miscellaneous.writeState(element);
+    }
+
 
     @Getter
     @Setter

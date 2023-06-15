@@ -5,6 +5,7 @@ import com.dci.intellij.dbn.common.util.Messages;
 import com.dci.intellij.dbn.diagnostics.Diagnostics;
 import com.dci.intellij.dbn.diagnostics.DiagnosticsManager;
 import com.intellij.openapi.actionSystem.AnActionEvent;
+import com.intellij.openapi.actionSystem.Presentation;
 import com.intellij.openapi.project.Project;
 import lombok.extern.slf4j.Slf4j;
 import org.jetbrains.annotations.NotNull;
@@ -33,7 +34,8 @@ public class DeveloperModeAction extends ToggleAction {
             if (Diagnostics.hasEnabledFeatures()) {
                 Messages.showWarningDialog(project,
                         "Developer Mode",
-                        "Developer Mode has been activated\n(it will be automatically disabled after 10 minutes)",
+                        "Developer Mode has been activated\n" +
+                                "(it will be automatically disabled after " + Diagnostics.getDeveloperModeTimeout() + " minutes)",
                         new String[]{"Ok", "Open Settings..."}, 0,
                         option -> {if (option == 1) openDiagnosticSettings(project);});
 
@@ -46,5 +48,13 @@ public class DeveloperModeAction extends ToggleAction {
     private static void openDiagnosticSettings(Project project) {
         DiagnosticsManager diagnosticsManager = DiagnosticsManager.getInstance(project);
         diagnosticsManager.openDiagnosticsSettings();
+    }
+
+    @Override
+    public void update(@NotNull AnActionEvent e) {
+        super.update(e);
+        Presentation presentation = e.getPresentation();
+        presentation.setText("Developer Mode");
+        //presentation.setText(Diagnostics.isDeveloperMode() ? "Developer Mode" + Diagnostics.getTimeoutText() : "Enable Developer Mode");
     }
 }
