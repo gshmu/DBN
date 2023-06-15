@@ -13,6 +13,8 @@ import javax.swing.*;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 
+import static com.dci.intellij.dbn.common.dispose.Failsafe.conditionallyLog;
+
 @Getter
 public class DBJdwpDebugAttributesForm extends DBNFormBase {
     private JCheckBox compileDependenciesCheckBox;
@@ -39,6 +41,7 @@ public class DBJdwpDebugAttributesForm extends DBNFormBase {
             fromPort = Integer.parseInt(fromPortTextField.getText());
             toPort = Integer.parseInt(toPortTextField.getText());
         } catch (NumberFormatException e) {
+            conditionallyLog(e);
             throw new ConfigurationException("TCP Port Range inputs must me numeric");
         }
         String tcpHost = tcpHostTextBox.getText();
@@ -47,6 +50,7 @@ public class DBJdwpDebugAttributesForm extends DBNFormBase {
             if (Strings.isNotEmptyOrSpaces(tcpHost) ) InetAddress.getAllByName(tcpHost);
         }
         catch (UnknownHostException e) {
+            conditionallyLog(e);
             throw new ConfigurationException("Invalid IP address: " + tcpHost);
         }
 

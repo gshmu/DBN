@@ -18,6 +18,8 @@ import javax.swing.*;
 import java.sql.SQLException;
 import java.util.Objects;
 
+import static com.dci.intellij.dbn.common.dispose.Failsafe.conditionallyLog;
+
 public class DBStatementJdwpDebugProcess extends DBJdwpDebugProcess<StatementExecutionInput> {
     DBStatementJdwpDebugProcess(@NotNull XDebugSession session, @NotNull DebuggerSession debuggerSession, ConnectionHandler connection, String hostname, int tcpPort) {
         super(session, debuggerSession, connection, hostname, tcpPort);
@@ -49,6 +51,7 @@ public class DBStatementJdwpDebugProcess extends DBJdwpDebugProcess<StatementExe
                     }
                 }
             } catch (Exception e) {
+                conditionallyLog(e);
                 getConsole().warning("Error evaluating suspend position '" + sourceUrl + "': " + Commons.nvl(e.getMessage(), e.getClass().getSimpleName()));
             }
         }

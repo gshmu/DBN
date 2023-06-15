@@ -13,6 +13,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
+import static com.dci.intellij.dbn.common.dispose.Failsafe.conditionallyLog;
 import static com.dci.intellij.dbn.database.DatabaseFeature.*;
 
 @Slf4j
@@ -76,6 +77,7 @@ public class OracleCompatibilityInterface extends DatabaseCompatibilityInterface
         try{
             return SessionStatus.valueOf(statusName);
         } catch (Exception e) {
+            conditionallyLog(e);
             log.error("Invalid session status " + statusName, e);
             return SessionStatus.INACTIVE;
         }

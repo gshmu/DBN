@@ -24,6 +24,7 @@ import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
 import static com.dci.intellij.dbn.common.dispose.Checks.isNotValid;
+import static com.dci.intellij.dbn.common.dispose.Failsafe.conditionallyLog;
 import static com.dci.intellij.dbn.common.util.Unsafe.cast;
 import static com.dci.intellij.dbn.connection.jdbc.ResourceStatus.*;
 
@@ -93,6 +94,7 @@ public class DBNConnection extends DBNConnectionBase {
                             inner.setAutoCommit(value);
                         }
                     } catch (Throwable e){
+                        conditionallyLog(e);
                         log.warn("Unable to set auto-commit to " + value + ". Maybe your database does not support transactions...", e);
                     }
                 }
@@ -120,6 +122,7 @@ public class DBNConnection extends DBNConnectionBase {
                             inner.setReadOnly(value);
                         }
                     } catch (Throwable e){
+                        conditionallyLog(e);
                         log.warn("Unable to set read-only status to " + value + ". Maybe your database does not support transactions...", e);
                     }
                 }
@@ -421,6 +424,7 @@ public class DBNConnection extends DBNConnectionBase {
         try {
             return callable.call();
         } catch (SQLException e) {
+            conditionallyLog(e);
             Resources.rollbackSilently(this, savepoint);
             throw e;
         } finally {
@@ -433,6 +437,7 @@ public class DBNConnection extends DBNConnectionBase {
         try {
             runnable.run();
         } catch (SQLException e) {
+            conditionallyLog(e);
             Resources.rollbackSilently(this, savepoint);
             throw e;
         } finally {

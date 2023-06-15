@@ -10,6 +10,8 @@ import java.lang.reflect.Field;
 import java.util.Timer;
 import java.util.TimerTask;
 
+import static com.dci.intellij.dbn.common.dispose.Failsafe.conditionallyLog;
+
 public class LoadInProgressIcon implements Icon{
     public static final Icon INSTANCE = new LoadInProgressIcon();
 
@@ -25,7 +27,9 @@ public class LoadInProgressIcon implements Icon{
                 ROLL_INTERVAL = 80;
                 ROLL_ELEMENTS = 8;
             }
-        } catch (Throwable ignored) {}
+        } catch (Throwable e) {
+            conditionallyLog(e);
+        }
 
         ICONS = new Icon[ROLL_ELEMENTS];
         for (int i = 0; i < ICONS.length; i++) {

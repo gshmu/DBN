@@ -36,6 +36,7 @@ import java.awt.event.KeyListener;
 import java.sql.SQLException;
 
 import static com.dci.intellij.dbn.common.dispose.Disposer.replace;
+import static com.dci.intellij.dbn.common.dispose.Failsafe.conditionallyLog;
 
 public class LargeValuePreviewPopup extends DBNFormBase {
     public static final int INITIAL_MAX_SIZE = 4000;
@@ -141,6 +142,7 @@ public class LargeValuePreviewPopup extends DBNFormBase {
                     loadContentVisible = false;
                 }
             } catch (SQLException e) {
+                conditionallyLog(e);
                 contentInfoText = "Could not load " + largeObjectValue.getDisplayValue() + " content. Cause: " + e.getMessage();
                 loadContentCaption = "Reload content";
             }

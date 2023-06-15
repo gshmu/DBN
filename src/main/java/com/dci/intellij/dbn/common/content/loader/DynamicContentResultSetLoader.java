@@ -139,7 +139,8 @@ public abstract class DynamicContentResultSetLoader<E extends DynamicContentElem
                     } catch (ProcessCanceledException e) {
                         conditionallyLog(e);
                         return;
-                    } catch (RuntimeException e) {
+                    } catch (Throwable e) {
+                        conditionallyLog(e);
                         log.warn("Failed to create element", e);
                     }
 
@@ -176,10 +177,12 @@ public abstract class DynamicContentResultSetLoader<E extends DynamicContentElem
                  SQLFeatureNotSupportedException |
                  SQLTransientConnectionException |
                  SQLNonTransientConnectionException e) {
+            conditionallyLog(e);
             postLoadContentFailure(content, debugInfo, e);
             throw e;
 
         } catch (SQLException e) {
+            conditionallyLog(e);
             postLoadContentFailure(content, debugInfo, e);
 
             DatabaseMessageParserInterface messageParserInterface = connection.getMessageParserInterface();
@@ -189,6 +192,7 @@ public abstract class DynamicContentResultSetLoader<E extends DynamicContentElem
             }
             throw e;
         } catch (Throwable e) {
+            conditionallyLog(e);
             postLoadContentFailure(content, debugInfo, e);
             throw toSqlException(e);
 

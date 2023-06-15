@@ -12,6 +12,8 @@ import org.jetbrains.annotations.NotNull;
 import javax.swing.*;
 import java.awt.event.ActionEvent;
 
+import static com.dci.intellij.dbn.common.dispose.Failsafe.conditionallyLog;
+
 public class DatasetFilterDialog extends DBNDialog<DatasetFilterForm> {
     private final boolean automaticPrompt;
     private final DBObjectRef<DBDataset> dataset;
@@ -106,7 +108,8 @@ public class DatasetFilterDialog extends DBNDialog<DatasetFilterForm> {
             }
             filterManager.setActiveFilter(dataset, activeFilter);
         } catch (ConfigurationException e) {
-            e.printStackTrace(); 
+            // TODO
+            conditionallyLog(e);
         }
         super.doOKAction();
         if (!automaticPrompt) DatasetEditorManager.getInstance(project).reloadEditorData(dataset);

@@ -24,6 +24,8 @@ import org.jetbrains.annotations.Nullable;
 import java.text.ParseException;
 import java.util.*;
 
+import static com.dci.intellij.dbn.common.dispose.Failsafe.conditionallyLog;
+
 public class StatementExecutionVariablesBundle extends StatefulDisposableBase implements StatefulDisposable {
     public static final Comparator<StatementExecutionVariable> NAME_COMPARATOR = (o1, o2) -> o1.getName().compareToIgnoreCase(o2.getName());
     public static final Comparator<StatementExecutionVariable> NAME_LENGTH_COMPARATOR = (o1, o2) -> o2.getName().length() - o1.getName().length();
@@ -146,10 +148,12 @@ public class StatementExecutionVariablesBundle extends StatefulDisposableBase im
                                 Date date = formatter.parseDateTime(value);
                                 value = dmi.createDateString(date);
                             } catch (ParseException e) {
+                                conditionallyLog(e);
                                 try {
                                     Date date = formatter.parseDate(value);
                                     value = dmi.createDateString(date);
                                 } catch (ParseException e1) {
+                                    conditionallyLog(e1);
                                     addError(variable, "Invalid date");
                                 }
                             }
@@ -157,6 +161,7 @@ public class StatementExecutionVariablesBundle extends StatefulDisposableBase im
                             try {
                                 formatter.parseNumber(value);
                             } catch (ParseException e) {
+                                conditionallyLog(e);
                                 addError(variable, "Invalid number");
                             }
 

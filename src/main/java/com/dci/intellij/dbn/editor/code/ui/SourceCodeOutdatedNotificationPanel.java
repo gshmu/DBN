@@ -13,6 +13,7 @@ import com.dci.intellij.dbn.vfs.file.DBSourceCodeVirtualFile;
 import com.intellij.openapi.project.Project;
 import com.intellij.util.text.DateFormatUtil;
 
+import static com.dci.intellij.dbn.common.dispose.Failsafe.conditionallyLog;
 import static com.dci.intellij.dbn.vfs.VirtualFileStatus.MODIFIED;
 
 public class SourceCodeOutdatedNotificationPanel extends SourceCodeEditorNotificationPanel{
@@ -55,6 +56,7 @@ public class SourceCodeOutdatedNotificationPanel extends SourceCodeEditorNotific
                             String databaseContent = sourceCodeContent.getText().toString();
                             diffManager.openCodeMergeDialog(databaseContent, sourceCodeFile, sourceCodeEditor, MergeAction.MERGE);
                         }catch (Exception e) {
+                            conditionallyLog(e);
                             Messages.showErrorDialog(project, "Could not load sources from database.", e);
 
                         }

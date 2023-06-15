@@ -17,6 +17,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
+import static com.dci.intellij.dbn.common.dispose.Failsafe.conditionallyLog;
 import static com.dci.intellij.dbn.common.util.Commons.nvl;
 
 @Slf4j
@@ -146,6 +147,7 @@ public class CachedResultSet extends StatefulDisposableBase implements ResultSet
                         filteredRows.add(element);
                     }
                 } catch (SQLException e) {
+                    conditionallyLog(e);
                     log.error("Failed to filter cached result set", e);
                 }
             }
@@ -309,6 +311,7 @@ public class CachedResultSet extends StatefulDisposableBase implements ResultSet
                     }
                 }
             } catch (Throwable e) {
+                conditionallyLog(e);
                 log.error("Failed to group cached result set", e);
             }
 

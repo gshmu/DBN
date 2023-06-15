@@ -31,6 +31,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 
 import static com.dci.intellij.dbn.common.component.Components.projectService;
 import static com.dci.intellij.dbn.common.dispose.Checks.isValid;
+import static com.dci.intellij.dbn.common.dispose.Failsafe.conditionallyLog;
 import static com.dci.intellij.dbn.common.dispose.Failsafe.guarded;
 import static com.dci.intellij.dbn.common.message.MessageCallback.when;
 import static com.dci.intellij.dbn.common.util.Commons.list;
@@ -151,13 +152,14 @@ public class DatabaseTransactionManager extends ProjectComponentBase implements 
                         action.getSuccessNotificationMessage(),
                         connectionName);
             }
-        } catch (SQLException ex) {
+        } catch (SQLException e) {
+            conditionallyLog(e);
             sendNotification(
                     action.getFailureNotificationType(),
                     action.getGroup(),
                     action.getFailureNotificationMessage(),
                     connectionName,
-                    ex);
+                    e);
             success.set(false);
         } finally {
             if (isValid(project)) {

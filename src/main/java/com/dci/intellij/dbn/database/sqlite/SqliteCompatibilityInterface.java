@@ -18,6 +18,7 @@ import java.sql.Statement;
 import java.util.Arrays;
 import java.util.List;
 
+import static com.dci.intellij.dbn.common.dispose.Failsafe.conditionallyLog;
 import static com.dci.intellij.dbn.database.DatabaseFeature.CONNECTION_ERROR_RECOVERY;
 import static com.dci.intellij.dbn.database.DatabaseFeature.OBJECT_SOURCE_EDITING;
 import static com.dci.intellij.dbn.database.DatabaseObjectTypeId.*;
@@ -110,6 +111,7 @@ class SqliteCompatibilityInterface extends DatabaseCompatibilityInterface {
         try {
             connection.setAutoCommit(autoCommit);
         } catch (SQLException e) {
+            conditionallyLog(e);
             if (connection.getAutoCommit() != autoCommit) {
                 throw e;
             }

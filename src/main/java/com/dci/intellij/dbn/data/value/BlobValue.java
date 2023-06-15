@@ -10,6 +10,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.sql.*;
 
+import static com.dci.intellij.dbn.common.dispose.Failsafe.conditionallyLog;
+
 @Slf4j
 public class BlobValue extends LargeObjectValue {
     private Blob blob;
@@ -28,6 +30,7 @@ public class BlobValue extends LargeObjectValue {
         try {
             blob = callableStatement.getBlob(parameterIndex);
         } catch (SQLFeatureNotSupportedException e) {
+            conditionallyLog(e);
             String charset = callableStatement.getString(parameterIndex);
             blob = createSerialBlob(charset);
         }
@@ -39,6 +42,7 @@ public class BlobValue extends LargeObjectValue {
         try {
             blob = resultSet.getBlob(columnIndex);
         } catch (SQLFeatureNotSupportedException e) {
+            conditionallyLog(e);
             String charset = resultSet.getString(columnIndex);
             blob = createSerialBlob(charset);
         }
@@ -56,6 +60,7 @@ public class BlobValue extends LargeObjectValue {
                 preparedStatement.setBlob(parameterIndex, blob);
             }
         } catch (SQLFeatureNotSupportedException e) {
+            conditionallyLog(e);
             if (value == null) {
                 preparedStatement.setString(parameterIndex, null);
             } else {
@@ -76,6 +81,7 @@ public class BlobValue extends LargeObjectValue {
             }
             resultSet.updateBlob(columnIndex, blob);
         } catch (SQLFeatureNotSupportedException e) {
+            conditionallyLog(e);
             if (StringUtil.isEmpty(value)) {
                 blob = null;
             } else {
@@ -116,6 +122,7 @@ public class BlobValue extends LargeObjectValue {
                 inputStream.read(buffer, 0, size);
                 return new String(buffer);
             } catch (IOException e) {
+                conditionallyLog(e);
                 throw new SQLException("Could not read value from BLOB.");
             } finally {
                 if (totalLength <= size) {
@@ -132,6 +139,7 @@ public class BlobValue extends LargeObjectValue {
                 inputStream.close();
                 inputStream = null;
             } catch (IOException e) {
+                conditionallyLog(e);
                 log.error("Could not close BLOB input stream.", e);
             }
         }

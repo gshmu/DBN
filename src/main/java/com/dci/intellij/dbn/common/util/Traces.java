@@ -2,6 +2,8 @@ package com.dci.intellij.dbn.common.util;
 
 import java.util.Objects;
 
+import static com.dci.intellij.dbn.common.dispose.Failsafe.conditionallyLog;
+
 public final class Traces {
     private Traces() {}
 
@@ -16,6 +18,7 @@ public final class Traces {
                 }
             }
         } catch (Exception e) {
+            conditionallyLog(e);
             return false;
         }
         return false;
@@ -35,6 +38,7 @@ public final class Traces {
                 }
             }
         } catch (Exception e) {
+            conditionallyLog(e);
             return false;
         }
         return false;

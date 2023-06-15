@@ -5,6 +5,7 @@ import com.dci.intellij.dbn.common.action.Lookups;
 import com.dci.intellij.dbn.common.action.ProjectAction;
 import com.dci.intellij.dbn.common.thread.Write;
 import com.dci.intellij.dbn.common.util.Documents;
+import com.dci.intellij.dbn.common.util.Editors;
 import com.dci.intellij.dbn.common.util.Messages;
 import com.dci.intellij.dbn.common.util.Titles;
 import com.dci.intellij.dbn.connection.mapping.FileConnectionContextManager;
@@ -16,13 +17,14 @@ import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.fileChooser.FileChooserFactory;
 import com.intellij.openapi.fileChooser.FileSaverDescriptor;
 import com.intellij.openapi.fileChooser.FileSaverDialog;
-import com.intellij.openapi.fileEditor.FileEditorManager;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.openapi.vfs.VirtualFileWrapper;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;
+
+import static com.dci.intellij.dbn.common.dispose.Failsafe.conditionallyLog;
 
 public class ConsoleSaveToFileAction extends ProjectAction {
     ConsoleSaveToFileAction() {
@@ -53,10 +55,10 @@ public class ConsoleSaveToFileAction extends ProjectAction {
                             contextManager.setDatabaseSchema(newVirtualFile, consoleVirtualFile.getSchemaId());
                             contextManager.setDatabaseSession(newVirtualFile, consoleVirtualFile.getSession());
 
-                            FileEditorManager fileEditorManager = FileEditorManager.getInstance(project);
-                            fileEditorManager.openFile(newVirtualFile, true);
+                            Editors.openFile(project, newVirtualFile, true);
                         }
                     } catch (IOException e1) {
+                        conditionallyLog(e1);
                         Messages.showErrorDialog(project, "Error saving to file", "Could not save console content to file \"" + virtualFileWrapper.getFile().getName() + "\"", e1);
                     }
 

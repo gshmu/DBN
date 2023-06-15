@@ -4,6 +4,8 @@ import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 
+import static com.dci.intellij.dbn.common.dispose.Failsafe.conditionallyLog;
+
 public class ResultSetLister {
 
     public static String list(String name, ResultSet resultSet) {
@@ -27,7 +29,7 @@ public class ResultSetLister {
             }
             resultSet.close();
         } catch (SQLException e) {
-            e.printStackTrace();
+            conditionallyLog(e);
         }
         return buffer.toString();
     }

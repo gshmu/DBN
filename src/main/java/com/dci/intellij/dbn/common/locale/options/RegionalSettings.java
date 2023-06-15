@@ -20,6 +20,7 @@ import org.jetbrains.annotations.NotNull;
 import java.util.Locale;
 import java.util.Objects;
 
+import static com.dci.intellij.dbn.common.dispose.Failsafe.conditionallyLog;
 import static com.dci.intellij.dbn.common.options.setting.SettingsSupport.*;
 
 @Getter
@@ -53,8 +54,10 @@ public class RegionalSettings extends BasicProjectConfiguration<GeneralProjectSe
             signature = hashCode();
             baseFormatter = createFormatter();
         } catch (ConfigurationException e) {
+            conditionallyLog(e);
             throw e;
         } catch (Exception e) {
+            conditionallyLog(e);
             throw new ConfigurationException(e.getMessage(), e, "Invalid configuration");
         }
     }

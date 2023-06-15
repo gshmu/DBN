@@ -14,6 +14,7 @@ import java.util.jar.JarFile;
 import java.util.jar.JarInputStream;
 import java.util.stream.Collectors;
 
+import static com.dci.intellij.dbn.common.dispose.Failsafe.conditionallyLog;
 import static com.dci.intellij.dbn.common.util.Unsafe.cast;
 
 @Slf4j
@@ -60,8 +61,9 @@ public class DriverClassLoaderJarImpl extends ClassLoader implements DriverClass
                             Class<Driver> driver = cast(clazz);
                             drivers.add(driver);
                         }
-                    } catch (Throwable t) {
-                        log.debug("Failed to load driver " + className + " from library " + library, t);
+                    } catch (Throwable e) {
+                        conditionallyLog(e);
+                        log.debug("Failed to load driver " + className + " from library " + library, e);
                     }
 
                 }
@@ -80,6 +82,7 @@ public class DriverClassLoaderJarImpl extends ClassLoader implements DriverClass
         try {
             return super.loadClass(name);
         } catch (ClassNotFoundException e) {
+            conditionallyLog(e);
             return findClass(name);
         }
     }

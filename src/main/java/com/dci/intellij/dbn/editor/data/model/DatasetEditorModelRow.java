@@ -20,6 +20,8 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.List;
 
+import static com.dci.intellij.dbn.common.dispose.Failsafe.conditionallyLog;
+
 public class DatasetEditorModelRow
         extends ResultSetDataModelRow<DatasetEditorModel, DatasetEditorModelCell>
         implements PropertyHolder<RecordStatus>{
@@ -84,6 +86,7 @@ public class DatasetEditorModelRow
             reset();
             set(RecordStatus.DELETED, true);
         } catch (SQLException e) {
+            conditionallyLog(e);
             Messages.showErrorDialog(getProject(), "Cannot delete record", "Could not delete row at index " + getIndex() + ".\nCause: " + e.getMessage());
         }
     }

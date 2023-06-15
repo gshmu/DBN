@@ -25,6 +25,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 
+import static com.dci.intellij.dbn.common.dispose.Failsafe.conditionallyLog;
 import static com.dci.intellij.dbn.common.exception.Exceptions.toSqlException;
 import static com.dci.intellij.dbn.common.util.Commons.nvl;
 
@@ -154,7 +155,7 @@ class Connector {
 
             Connection connection = driver.connect(connectionUrl, properties);
             if (connection == null) {
-                throw new SQLException("Driver failed to create connection for this configuration. No failure information provided by jdbc vendor.");
+                throw new SQLException("Driver failed to create connection " + connectionUrl + ". No failure information provided by jdbc vendor.");
             }
 
             if (connectionStatus != null) {
@@ -171,6 +172,7 @@ class Connector {
                     try {
                         databaseAttachmentHandler.attachDatabase(connection, filePath, databaseFile.getSchema());
                     } catch (Exception e) {
+                        conditionallyLog(e);
                         NotificationSupport.sendErrorNotification(
                                 project,
                                 NotificationGroup.CONNECTION,
@@ -196,6 +198,7 @@ class Connector {
             return conn;
 
         } catch (Throwable e) {
+            conditionallyLog(e);
             String message = nvl(e.getMessage(), e.getClass().getSimpleName());
             if (connectionSettings.isSigned()) {
                 // DBN-524 strongly asserted property names

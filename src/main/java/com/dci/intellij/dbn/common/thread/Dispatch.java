@@ -14,8 +14,7 @@ import org.jetbrains.annotations.NotNull;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Supplier;
 
-import static com.dci.intellij.dbn.common.dispose.Failsafe.guarded;
-import static com.dci.intellij.dbn.common.dispose.Failsafe.nd;
+import static com.dci.intellij.dbn.common.dispose.Failsafe.*;
 
 public final class Dispatch {
     private Dispatch() {}
@@ -72,6 +71,7 @@ public final class Dispatch {
                 result = callable.call();
                 resultRef.set(result);
             } catch (Throwable e) {
+                conditionallyLog(e);
                 exceptionRef.set((E) e);
             }
 

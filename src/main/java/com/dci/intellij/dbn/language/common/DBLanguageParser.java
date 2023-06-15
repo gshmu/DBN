@@ -15,6 +15,8 @@ import lombok.SneakyThrows;
 import org.jdom.Document;
 import org.jetbrains.annotations.NotNull;
 
+import static com.dci.intellij.dbn.common.dispose.Failsafe.conditionallyLog;
+
 @Getter
 public abstract class DBLanguageParser implements PsiParser {
     private final DBLanguageDialect languageDialect;
@@ -84,6 +86,7 @@ public abstract class DBLanguageParser implements PsiParser {
                 }
             }
         } catch (ParseException e) {
+            conditionallyLog(e);
             while (!builder.eof()) {
                 builder.advance();
                 advanced = true;

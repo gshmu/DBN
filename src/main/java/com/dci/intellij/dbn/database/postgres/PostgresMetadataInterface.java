@@ -9,6 +9,8 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Date;
 
+import static com.dci.intellij.dbn.common.dispose.Failsafe.conditionallyLog;
+
 
 public class PostgresMetadataInterface extends DatabaseMetadataInterfaceImpl {
 
@@ -38,6 +40,7 @@ public class PostgresMetadataInterface extends DatabaseMetadataInterfaceImpl {
             Integer state = (Integer) connection.getClass().getMethod("getTransactionState").invoke(connection);
             return state != 0;
         } catch (Exception e) {
+            conditionallyLog(e);
             return true;
         }
     }

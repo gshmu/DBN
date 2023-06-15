@@ -21,6 +21,8 @@ import java.awt.*;
 import java.sql.Connection;
 import java.sql.SQLException;
 
+import static com.dci.intellij.dbn.common.dispose.Failsafe.conditionallyLog;
+
 @SuppressWarnings("unused")
 public class ConnectionInfoForm extends DBNFormBase {
     private JPanel mainPanel;
@@ -98,6 +100,7 @@ public class ConnectionInfoForm extends DBNFormBase {
 
             initInfoPanel(connectionInfo);
         } catch (SQLException e) {
+            conditionallyLog(e);
             infoDatabaseTypeValueLabel.setText(DatabaseType.GENERIC.getName());
             infoDatabaseTypeValueLabel.setIcon(DatabaseType.GENERIC.getIcon());
 

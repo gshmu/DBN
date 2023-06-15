@@ -19,6 +19,8 @@ import com.intellij.openapi.util.text.StringUtil;
 
 import java.sql.SQLException;
 
+import static com.dci.intellij.dbn.common.dispose.Failsafe.conditionallyLog;
+
 public class MySqlDataDefinitionInterface extends DatabaseDataDefinitionInterfaceImpl {
     public MySqlDataDefinitionInterface(DatabaseInterfaces provider) {
         super("mysql_ddl_interface.xml", provider);
@@ -110,6 +112,7 @@ public class MySqlDataDefinitionInterface extends DatabaseDataDefinitionInterfac
         try {
             createObject(newCode, connection);
         } catch (SQLException e) {
+            conditionallyLog(e);
             createObject(oldCode, connection);
             throw e;
         } finally {

@@ -41,7 +41,7 @@ public class ExportScrambledSourcecodeAction extends ProjectAction {
 
     @Override
     protected void update(@NotNull AnActionEvent e, @NotNull Project project) {
-        e.getPresentation().setVisible(Diagnostics.isDeveloperMode());
+        e.getPresentation().setVisible(Diagnostics.isBulkActionsEnabled());
     }
 
 

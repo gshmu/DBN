@@ -316,6 +316,7 @@ public class StatementExecutionBasicProcessor extends StatefulDisposableBase imp
                         notifySchemaSelectionChanges(context);
                     }
                 } catch (SQLException e) {
+                    conditionallyLog(e);
                     Resources.cancel(context.getStatement());
                     if (context.isNot(CANCEL_REQUESTED)) {
                         executionException = e;

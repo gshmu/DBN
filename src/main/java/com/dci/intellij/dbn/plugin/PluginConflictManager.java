@@ -22,6 +22,7 @@ import java.lang.reflect.Method;
 import java.util.List;
 
 import static com.dci.intellij.dbn.common.component.Components.applicationService;
+import static com.dci.intellij.dbn.common.dispose.Failsafe.conditionallyLog;
 import static com.dci.intellij.dbn.common.options.setting.SettingsSupport.getBoolean;
 import static com.dci.intellij.dbn.common.options.setting.SettingsSupport.setBoolean;
 import static com.dci.intellij.dbn.plugin.PluginConflictManager.COMPONENT_NAME;
@@ -77,7 +78,9 @@ public class PluginConflictManager extends ApplicationComponentBase implements P
                 if (!configs.isEmpty()) return true;
             }
             return false;
-        } catch (Throwable ignore) {}
+        } catch (Throwable e) {
+            conditionallyLog(e);
+        }
 
         return true;
     }

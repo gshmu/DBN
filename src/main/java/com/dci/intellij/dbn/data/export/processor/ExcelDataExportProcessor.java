@@ -20,6 +20,8 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.util.Date;
 
+import static com.dci.intellij.dbn.common.dispose.Failsafe.conditionallyLog;
+
 @Slf4j
 public class ExcelDataExportProcessor extends DataExportProcessor{
 
@@ -79,8 +81,10 @@ public class ExcelDataExportProcessor extends DataExportProcessor{
 
             createFile(workbook, instructions);
         } catch (DataExportException e) {
+            conditionallyLog(e);
             throw e;
         } catch (Throwable e) {
+            conditionallyLog(e);
             log.warn("Failed to export data", e);
             throw new DataExportException("Failed to export data. Cause: " + e.getMessage());
         } finally {
@@ -98,6 +102,7 @@ public class ExcelDataExportProcessor extends DataExportProcessor{
             workbook.write(fileOutputStream);
             fileOutputStream.flush();
         } catch (Throwable e) {
+            conditionallyLog(e);
             log.warn("Failed to export data", e);
             throw new DataExportException("Could not write file " + file.getPath() + ".\nCause: " + e.getMessage());
         }

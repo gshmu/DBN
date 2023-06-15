@@ -10,6 +10,8 @@ import com.intellij.xdebugger.XDebugSession;
 
 import java.util.Date;
 
+import static com.dci.intellij.dbn.common.dispose.Failsafe.conditionallyLog;
+
 public class DBDebugConsoleLogger {
     protected XDebugSession session;
 
@@ -54,8 +56,8 @@ public class DBDebugConsoleLogger {
                     messageType == MessageType.ERROR  ? ProcessOutputTypes.STDERR : ProcessOutputTypes.STDOUT;
             processHandler.notifyTextAvailable(text, outputType);
 
-        } catch (IllegalStateException ignore) {
-
+        } catch (IllegalStateException e) {
+            conditionallyLog(e);
         }
 
     }

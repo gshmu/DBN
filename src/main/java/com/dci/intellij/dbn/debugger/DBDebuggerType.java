@@ -5,6 +5,8 @@ import lombok.Getter;
 
 import java.util.Objects;
 
+import static com.dci.intellij.dbn.common.dispose.Failsafe.conditionallyLog;
+
 @Getter
 public enum DBDebuggerType implements Presentable {
     JDBC("Classic (over JDBC)"),
@@ -29,6 +31,7 @@ public enum DBDebuggerType implements Presentable {
                     Class.forName("com.intellij.debugger.PositionManagerFactory");
                     return true;
                 } catch (ClassNotFoundException e) {
+                    conditionallyLog(e);
                     return false;
                 }
             }

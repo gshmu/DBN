@@ -27,6 +27,7 @@ import java.util.Collections;
 import java.util.List;
 
 import static com.dci.intellij.dbn.common.Priority.HIGH;
+import static com.dci.intellij.dbn.common.dispose.Failsafe.conditionallyLog;
 
 @Getter
 public class CompilerResult implements Disposable, NotificationSupport {
@@ -66,6 +67,7 @@ public class CompilerResult implements Disposable, NotificationSupport {
                     conn -> loadCompilerErrors(connection, schema, objectName, contentType, conn));
 
         } catch (SQLException e) {
+            conditionallyLog(e);
             sendErrorNotification(
                     NotificationGroup.COMPILER,
                     "Failed to read compiler result: {0}", e);

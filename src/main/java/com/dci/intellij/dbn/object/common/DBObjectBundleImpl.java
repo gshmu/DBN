@@ -61,6 +61,7 @@ import java.util.Set;
 
 import static com.dci.intellij.dbn.browser.DatabaseBrowserUtils.treeVisibilityChanged;
 import static com.dci.intellij.dbn.common.content.DynamicContentProperty.GROUPED;
+import static com.dci.intellij.dbn.common.dispose.Failsafe.conditionallyLog;
 import static com.dci.intellij.dbn.common.dispose.Failsafe.nd;
 import static com.dci.intellij.dbn.common.util.Commons.nvl;
 import static com.dci.intellij.dbn.database.DatabaseFeature.OBJECT_INVALIDATION;
@@ -627,9 +628,11 @@ public class DBObjectBundleImpl extends BrowserTreeNodeBase implements DBObjectB
                     DBSchema schema = schemas.get(i);
                     schema.refreshObjectsStatus();
                 }
-            } catch (IndexOutOfBoundsException ignore) {
+            } catch (IndexOutOfBoundsException e) {
+                conditionallyLog(e);
                 // underlying list may mutate
             } catch (SQLException e) {
+                conditionallyLog(e);
                 sendErrorNotification(
                         NotificationGroup.BROWSER,
                         "Error refreshing object status: {0}", e);

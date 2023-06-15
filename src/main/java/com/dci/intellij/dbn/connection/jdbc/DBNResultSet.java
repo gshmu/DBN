@@ -17,6 +17,8 @@ import java.sql.*;
 import java.util.Calendar;
 import java.util.Map;
 
+import static com.dci.intellij.dbn.common.dispose.Failsafe.conditionallyLog;
+
 public class DBNResultSet extends DBNResource<ResultSet> implements ResultSet, CloseableResource {
     private WeakRef<DBNStatement> statement;
     private WeakRef<DBNConnection> connection;
@@ -1065,16 +1067,18 @@ public class DBNResultSet extends DBNResource<ResultSet> implements ResultSet, C
     private static <T> T handled(ThrowableCallable<T, Throwable> callable) throws SQLException {
         try {
             return callable.call();
-        } catch (Throwable t) {
-            throw Exceptions.toSqlException(t);
+        } catch (Throwable e) {
+            conditionallyLog(e);
+            throw Exceptions.toSqlException(e);
         }
     }
 
     private static void handled(ThrowableRunnable<Throwable> runnable) throws SQLException {
         try {
             runnable.run();
-        } catch (Throwable t) {
-            throw Exceptions.toSqlException(t);
+        } catch (Throwable e) {
+            conditionallyLog(e);
+            throw Exceptions.toSqlException(e);
         }
     }
 }

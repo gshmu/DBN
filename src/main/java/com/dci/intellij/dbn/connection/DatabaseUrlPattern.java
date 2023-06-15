@@ -9,6 +9,7 @@ import org.jetbrains.annotations.NotNull;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import static com.dci.intellij.dbn.common.dispose.Failsafe.conditionallyLog;
 import static com.dci.intellij.dbn.common.util.Commons.nvl;
 import static com.dci.intellij.dbn.connection.DatabaseUrlPattern.Elements.*;
 import static com.dci.intellij.dbn.connection.DatabaseUrlType.*;
@@ -182,6 +183,7 @@ public enum DatabaseUrlPattern {
 
             return matcher.group(name).trim();
         } catch (Exception e) {
+            conditionallyLog(e);
             log.warn("Failed to get group {} from url \"{}\"", name, url);
             return "";
         }

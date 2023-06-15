@@ -56,8 +56,10 @@ public abstract class DataExportProcessor {
         } catch (ProcessCanceledException e) {
             conditionallyLog(e);
         } catch (DataExportException e) {
+            conditionallyLog(e);
             throw e;
         } catch (Exception e) {
+            conditionallyLog(e);
             throw new DataExportException(e.getMessage());
         }
     }
@@ -130,6 +132,7 @@ public abstract class DataExportProcessor {
                 try {
                     return Commons.nvl(valueAdapter.export(), "");
                 } catch (SQLException e) {
+                    conditionallyLog(e);
                     throw new DataExportException("Failed to export " + valueAdapter.getGenericDataType() + " cell. Cause: "  + e.getMessage());
                 }
             } else {

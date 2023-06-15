@@ -12,6 +12,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import static com.dci.intellij.dbn.common.dispose.Checks.isNotValid;
+import static com.dci.intellij.dbn.common.util.Commons.nvl;
 
 @Slf4j
 public class Failsafe {
@@ -37,6 +38,7 @@ public class Failsafe {
             conditionallyLog(e);
             return defaultValue;
         } catch (Exception e) {
+            conditionallyLog(e);
             throwExecutionException(e);
             return defaultValue;
 
@@ -50,6 +52,7 @@ public class Failsafe {
             conditionallyLog(e);
             return defaultValue;
         } catch (Exception e) {
+            conditionallyLog(e);
             throwExecutionException(e);
             return defaultValue;
 
@@ -63,6 +66,7 @@ public class Failsafe {
         } catch (ProcessCanceledException | IllegalStateException | AbstractMethodError e /*| UnsupportedOperationException*/){
             conditionallyLog(e);
         } catch (Exception e) {
+            conditionallyLog(e);
             throwExecutionException(e);
         }
     }
@@ -73,12 +77,16 @@ public class Failsafe {
         } catch (ProcessCanceledException | IllegalStateException | AbstractMethodError e /*| UnsupportedOperationException*/){
             conditionallyLog(e);
         } catch (Exception e) {
+            conditionallyLog(e);
             throwExecutionException(e);
         }
     }
 
     public static void conditionallyLog(Throwable exception) {
-        if (Diagnostics.isFailsafeLoggingEnabled()) log.warn("Failsafe process failed", exception);
+        if (Diagnostics.isFailsafeLoggingEnabled()) {
+            String message = nvl(exception.getMessage(), exception.getClass().getSimpleName());
+            log.warn("[FAILSAFE] " + message, exception);
+        }
     }
 
     @SneakyThrows

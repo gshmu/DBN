@@ -12,6 +12,8 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.text.SimpleDateFormat;
 
+import static com.dci.intellij.dbn.common.dispose.Failsafe.conditionallyLog;
+
 public abstract class DatabaseMetadataInterfaceImpl extends DatabaseInterfaceBase implements DatabaseMetadataInterface {
     protected static final Latent<SimpleDateFormat> META_DATE_FORMAT = Latent.thread(() -> new SimpleDateFormat("yyyy-MM-dd HH:mm:ss"));
 
@@ -480,6 +482,7 @@ public abstract class DatabaseMetadataInterfaceImpl extends DatabaseInterfaceBas
             if (connection == null || connection.isClosed()) return false;
             resultSet = executeQuery(connection, true, "validate-connection");
         } catch (SQLException e) {
+            conditionallyLog(e);
             return false;
         } finally {
             Resources.close(resultSet);
@@ -496,6 +499,7 @@ public abstract class DatabaseMetadataInterfaceImpl extends DatabaseInterfaceBas
             int count = resultSet.getInt("COUNT");
             return count > 0;
         } catch (SQLException e) {
+            conditionallyLog(e);
             return isValid(connection);
         } finally {
             Resources.close(resultSet);

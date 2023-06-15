@@ -4,6 +4,7 @@ import com.dci.intellij.dbn.common.routine.Consumer;
 import com.dci.intellij.dbn.common.routine.ThrowableRunnable;
 import com.intellij.openapi.project.Project;
 
+import static com.dci.intellij.dbn.common.dispose.Failsafe.conditionallyLog;
 import static com.dci.intellij.dbn.common.dispose.Failsafe.guarded;
 
 public class Callback{
@@ -42,6 +43,7 @@ public class Callback{
             guarded(action);
             guarded(() -> success.run());
         } catch (Exception e) {
+            conditionallyLog(e);
             if (failure != null) guarded(() -> failure.accept(e));
         } finally {
             guarded(() -> after.run());

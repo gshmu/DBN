@@ -45,6 +45,7 @@ import java.util.List;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicReference;
 
+import static com.dci.intellij.dbn.common.dispose.Failsafe.conditionallyLog;
 import static com.dci.intellij.dbn.common.dispose.Failsafe.guarded;
 import static com.dci.intellij.dbn.connection.ConnectionProperty.RS_TYPE_FORWARD_ONLY;
 import static com.dci.intellij.dbn.connection.ConnectionProperty.RS_TYPE_SCROLL_INSENSITIVE;
@@ -188,6 +189,7 @@ public class DatasetEditorModel
                             ResultSet.CONCUR_UPDATABLE);
 
                 } catch (Throwable e) {
+                    conditionallyLog(e);
                     log.warn("Failed to create SCROLL_INSENSITIVE statement: " + e.getMessage());
                 }
             }
@@ -198,6 +200,7 @@ public class DatasetEditorModel
                             ResultSet.TYPE_FORWARD_ONLY,
                             ResultSet.CONCUR_READ_ONLY);
                 } catch (Throwable e) {
+                    conditionallyLog(e);
                     log.warn("Failed to create FORWARD_ONLY statement: " + e.getMessage());
                 }
             }
@@ -399,6 +402,7 @@ public class DatasetEditorModel
             DBNConnection conn = getResultConnection();
             conn.notifyDataChanges(dataset.getVirtualFile());
         } catch (SQLException e) {
+            conditionallyLog(e);
             set(INSERTING, false);
             Messages.showErrorDialog(getProject(), "Could not insert record for " + dataset.getQualifiedNameWithType() + ".", e);
         }
@@ -426,6 +430,7 @@ public class DatasetEditorModel
             DBNConnection conn = getResultConnection();
             conn.notifyDataChanges(dataset.getVirtualFile());
         } catch (SQLException e) {
+            conditionallyLog(e);
             set(INSERTING, false);
             Messages.showErrorDialog(getProject(), "Could not duplicate record in " + dataset.getQualifiedNameWithType() + ".", e);
         }
@@ -449,6 +454,7 @@ public class DatasetEditorModel
             set(INSERTING, false);
             if (rebuild) load(true, true);
         } catch (SQLException e) {
+            conditionallyLog(e);
             DatasetEditorError error = new DatasetEditorError(getConnection(), e);
             if (reset) {
                 set(INSERTING, false);
@@ -473,6 +479,7 @@ public class DatasetEditorModel
             resultSetAdapter.cancelInsertRow();
             set(INSERTING, false);
         } catch (SQLException e) {
+            conditionallyLog(e);
             log.warn("Failed to cancel insert operation", e);
         }
     }

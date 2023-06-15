@@ -19,6 +19,8 @@ import java.util.concurrent.atomic.AtomicLong;
 import java.util.concurrent.locks.LockSupport;
 import java.util.function.Consumer;
 
+import static com.dci.intellij.dbn.common.dispose.Failsafe.conditionallyLog;
+
 public class DatabaseInterfaceQueueTest {
     private static final Random random = new Random();
     private InterfaceQueue queue;
@@ -41,6 +43,7 @@ public class DatabaseInterfaceQueueTest {
 
                 System.out.println("Finished executing " + task);
             } catch (SQLException e) {
+                conditionallyLog(e);
                 throw Exceptions.toRuntimeException(e);
             }
         });
@@ -57,6 +60,7 @@ public class DatabaseInterfaceQueueTest {
                     System.out.println("Completed "  + task);
                 });
             } catch (SQLException e) {
+                conditionallyLog(e);
                 throw Exceptions.toRuntimeException(e);
             }
         });

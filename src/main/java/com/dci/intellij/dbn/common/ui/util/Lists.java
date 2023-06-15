@@ -6,6 +6,8 @@ import lombok.extern.slf4j.Slf4j;
 import javax.swing.event.ListDataEvent;
 import javax.swing.event.ListDataListener;
 
+import static com.dci.intellij.dbn.common.dispose.Failsafe.conditionallyLog;
+
 @Slf4j
 public final class Lists {
     private Lists() {}
@@ -21,6 +23,7 @@ public final class Lists {
                 }
             });
         } catch (Exception e) {
+            conditionallyLog(e);
             log.error("Error notifying actions model listeners", e);
         }
     }

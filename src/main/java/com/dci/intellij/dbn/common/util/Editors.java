@@ -6,6 +6,8 @@ import com.dci.intellij.dbn.common.editor.BasicTextEditor;
 import com.dci.intellij.dbn.common.navigation.NavigationInstructions;
 import com.dci.intellij.dbn.common.thread.Dispatch;
 import com.dci.intellij.dbn.common.thread.Read;
+import com.dci.intellij.dbn.common.thread.ThreadMonitor;
+import com.dci.intellij.dbn.common.thread.ThreadProperty;
 import com.dci.intellij.dbn.common.ui.form.DBNToolbarForm;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.data.editor.text.TextContentType;
@@ -68,7 +70,7 @@ public class Editors {
                     virtualFile = editableObject.getVirtualFile();
                 }
             }
-            fileEditorManager.openFile(virtualFile, instructions.isFocus());
+            openFile(project, virtualFile, instructions.isFocus());
 
             if (fileEditor instanceof BasicTextEditor) {
                 BasicTextEditor<?> basicTextEditor = (BasicTextEditor<?>) fileEditor;
@@ -78,25 +80,25 @@ public class Editors {
                 }
             }
         } else if (editorProviderId != null) {
-            DBEditableObjectVirtualFile file = null;
+            DBEditableObjectVirtualFile objectFile = null;
             if (virtualFile instanceof DBEditableObjectVirtualFile) {
-                file = (DBEditableObjectVirtualFile) virtualFile;
+                objectFile = (DBEditableObjectVirtualFile) virtualFile;
 
             } else if (virtualFile.isInLocalFileSystem()) {
                 DDLFileAttachmentManager fileAttachmentManager = DDLFileAttachmentManager.getInstance(project);
                 DBSchemaObject schemaObject = fileAttachmentManager.getEditableObject(virtualFile);
                 if (schemaObject != null) {
-                    file = schemaObject.getEditableVirtualFile();
+                    objectFile = schemaObject.getEditableVirtualFile();
                 }
             }
 
-            if (isValid(file)) {
+            if (isValid(objectFile)) {
                 FileEditor[] fileEditors = instructions.isOpen() ?
-                        fileEditorManager.openFile(file, instructions.isFocus()) :
-                        fileEditorManager.getEditors(file);
+                        openFile(project, objectFile, instructions.isFocus()) :
+                        fileEditorManager.getEditors(objectFile);
 
                 if (fileEditors.length > 0) {
-                    fileEditorManager.setSelectedEditor(file, editorProviderId.getId());
+                    fileEditorManager.setSelectedEditor(objectFile, editorProviderId.getId());
 
                     for (FileEditor openFileEditor : fileEditors) {
                         if (openFileEditor instanceof BasicTextEditor) {
@@ -111,7 +113,7 @@ public class Editors {
             }
         } else if (virtualFile.isInLocalFileSystem()) {
             FileEditor[] fileEditors = instructions.isOpen() ?
-                    fileEditorManager.openFile(virtualFile, instructions.isFocus()) :
+                    openFile(project, virtualFile, instructions.isFocus()) :
                     fileEditorManager.getEditors(virtualFile);
             if (fileEditors.length > 0) {
                 fileEditor = fileEditors[0];
@@ -472,5 +474,12 @@ public class Editors {
         JComponent toolbarComponent = toolbarForm.getComponent();
         FileEditorManager editorManager = FileEditorManager.getInstance(project);
         editorManager.addTopComponent(fileEditor, toolbarComponent);
+    }
+
+    public static FileEditor[] openFile(Project project, VirtualFile file, boolean focus) {
+        return ThreadMonitor.surround(project, ThreadProperty.EDITOR_LOAD, () -> {
+            FileEditorManager fileEditorManager = FileEditorManager.getInstance(project);
+            return fileEditorManager.openFile(file, focus);
+        });
     }
 }

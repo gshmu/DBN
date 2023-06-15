@@ -7,6 +7,8 @@ import lombok.extern.slf4j.Slf4j;
 import java.util.ArrayList;
 import java.util.List;
 
+import static com.dci.intellij.dbn.common.dispose.Failsafe.conditionallyLog;
+
 @Slf4j
 public final class ConfigurationHandle {
     private static final ThreadLocalFlag IS_TRANSITORY = new ThreadLocalFlag(false);
@@ -46,6 +48,7 @@ public final class ConfigurationHandle {
                 try {
                     Failsafe.guarded(() -> changeNotifier.notifyChanges());
                 } catch (Exception e){
+                    conditionallyLog(e);
                     log.error("Error notifying configuration changes", e);
                 }
             }

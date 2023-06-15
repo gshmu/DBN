@@ -59,6 +59,7 @@ import java.util.*;
 
 import static com.dci.intellij.dbn.common.Priority.HIGHEST;
 import static com.dci.intellij.dbn.common.component.Components.projectService;
+import static com.dci.intellij.dbn.common.dispose.Failsafe.conditionallyLog;
 import static com.dci.intellij.dbn.common.message.MessageCallback.when;
 import static com.dci.intellij.dbn.common.util.Commons.list;
 import static com.dci.intellij.dbn.database.DatabaseFeature.DEBUGGING;
@@ -176,6 +177,7 @@ public class DatabaseDebuggerManager extends ProjectComponentBase implements Per
                         ExecutionEnvironment executionEnvironment = new ExecutionEnvironment(executorInstance, programRunner, runConfigurationSetting, project);
                         programRunner.execute(executionEnvironment);
                     } catch (ExecutionException e) {
+                        conditionallyLog(e);
                         Messages.showErrorDialog(
                                 project, "Could not start debugger for " + method.getQualifiedName() + ". \n" +
                                         "Cause: " + e.getMessage());
@@ -213,6 +215,7 @@ public class DatabaseDebuggerManager extends ProjectComponentBase implements Per
                     ExecutionEnvironment executionEnvironment = new ExecutionEnvironment(executorInstance, programRunner, runConfigurationSetting, project);
                     programRunner.execute(executionEnvironment);
                 } catch (ExecutionException e) {
+                    conditionallyLog(e);
                     Messages.showErrorDialog(
                             project, "Could not start statement debugger. \n" +
                                     "Cause: " + e.getMessage());
@@ -338,6 +341,7 @@ public class DatabaseDebuggerManager extends ProjectComponentBase implements Per
                         return debuggerVersion.getVersion();
                     });
         } catch (SQLException e) {
+            conditionallyLog(e);
             sendErrorNotification(
                     NotificationGroup.DEBUGGER,
                     "Failed to load debugger version: {0}", e);

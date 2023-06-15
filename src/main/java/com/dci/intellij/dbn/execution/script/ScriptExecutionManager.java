@@ -134,6 +134,7 @@ public class ScriptExecutionManager extends ProjectComponentBase implements Pers
                             try {
                                 doExecuteScript(executionInput);
                             } catch (Exception e) {
+                                conditionallyLog(e);
                                 Messages.showErrorDialog(getProject(), "Error",
                                         "Error executing SQL Script \"" + virtualFile.getPath() + "\". " + e.getMessage());
                             }
@@ -254,6 +255,7 @@ public class ScriptExecutionManager extends ProjectComponentBase implements Pers
             conditionallyLog(e);
             //executionManager.writeLogOutput(outputContext, LogOutput.createSysOutput(outputContext, " - Script execution cancelled by user", false));
         } catch (Exception e) {
+            conditionallyLog(e);
             executionManager.writeLogOutput(outputContext, LogOutput.createErrOutput(e.getMessage()));
             executionManager.writeLogOutput(outputContext, LogOutput.createSysOutput(outputContext, " - Script execution finished with errors", false));
             throw e;

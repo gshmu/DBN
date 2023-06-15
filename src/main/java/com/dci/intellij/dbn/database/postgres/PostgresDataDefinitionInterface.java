@@ -15,6 +15,8 @@ import com.intellij.openapi.util.text.StringUtil;
 
 import java.sql.SQLException;
 
+import static com.dci.intellij.dbn.common.dispose.Failsafe.conditionallyLog;
+
 public class PostgresDataDefinitionInterface extends DatabaseDataDefinitionInterfaceImpl {
     public PostgresDataDefinitionInterface(DatabaseInterfaces provider) {
         super("postgres_ddl_interface.xml", provider);
@@ -56,6 +58,7 @@ public class PostgresDataDefinitionInterface extends DatabaseDataDefinitionInter
         try {
             createObject(newCode, connection);
         } catch (SQLException e) {
+            conditionallyLog(e);
             createObject(oldCode, connection);
             throw e;
         }

@@ -10,6 +10,7 @@ import org.jdom.Element;
 import org.jdom.Text;
 import org.jetbrains.annotations.NotNull;
 
+import static com.dci.intellij.dbn.common.dispose.Failsafe.conditionallyLog;
 import static com.dci.intellij.dbn.common.util.Commons.nvl;
 
 @Slf4j
@@ -28,6 +29,7 @@ public final class SettingsSupport {
             String stringValue = getStringValue(element);
             return stringValue == null ? defaultValue : Integer.parseInt(stringValue);
         } catch (Exception e) {
+            conditionallyLog(e);
             log.warn("Failed to read INTEGER config (" + childName + "): " + e.getMessage());
             return defaultValue;
         }
@@ -39,6 +41,7 @@ public final class SettingsSupport {
             String stringValue = getStringValue(element);
             return stringValue == null ? defaultValue : Double.parseDouble(stringValue);
         } catch (Exception e){
+            conditionallyLog(e);
             log.warn("Failed to read DOUBLE config (" + childName + "): " + e.getMessage());
             return defaultValue;
         }
@@ -56,6 +59,7 @@ public final class SettingsSupport {
             String stringValue = getStringValue(element);
             return stringValue == null ? defaultValue : (T) T.valueOf(defaultValue.getClass(), stringValue);
         } catch (IllegalArgumentException e) {
+            conditionallyLog(e);
             log.warn("Failed to read ENUM config (" + childName + "): " + e.getMessage());
             return defaultValue;
         }
@@ -89,6 +93,7 @@ public final class SettingsSupport {
             }
             return Short.parseShort(attributeValue);
         } catch (Exception e) {
+            conditionallyLog(e);
             log.warn("Failed to read SHORT config (" + attributeName + "): " + e.getMessage());
             return defaultValue;
         }
@@ -102,6 +107,7 @@ public final class SettingsSupport {
             }
             return Integer.parseInt(attributeValue);
         } catch (NumberFormatException e) {
+            conditionallyLog(e);
             log.warn("Failed to read INTEGER config (" + attributeName + "): " + e.getMessage());
             return defaultValue;
         }
@@ -120,6 +126,7 @@ public final class SettingsSupport {
             String attributeValue = stringAttribute(element, attributeName);
             return Strings.isEmpty(attributeValue) ? null : T.valueOf(enumClass, attributeValue);
         } catch (Exception e) {
+            conditionallyLog(e);
             log.warn("Failed to read ENUM config (" + attributeName + "): " + e.getMessage());
             return null;
         }
@@ -130,6 +137,7 @@ public final class SettingsSupport {
             String attributeValue = stringAttribute(element, attributeName);
             return Strings.isEmpty(attributeValue) ? defaultValue : T.valueOf((Class<T>) defaultValue.getClass(), attributeValue);
         } catch (Exception e) {
+            conditionallyLog(e);
             log.warn("Failed to read ENUM config (" + attributeName + "): " + e.getMessage());
             return defaultValue;
         }

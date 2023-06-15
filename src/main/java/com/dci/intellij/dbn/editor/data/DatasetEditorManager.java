@@ -45,6 +45,7 @@ import java.awt.event.MouseEvent;
 import java.sql.SQLException;
 
 import static com.dci.intellij.dbn.common.component.Components.projectService;
+import static com.dci.intellij.dbn.common.dispose.Failsafe.conditionallyLog;
 import static com.dci.intellij.dbn.editor.data.DatasetLoadInstruction.*;
 
 @State(
@@ -139,6 +140,7 @@ public class DatasetEditorManager extends ProjectComponentBase implements Persis
             RecordViewerDialog dialog = new RecordViewerDialog(getProject(), record);
             dialog.show();
         } catch (SQLException e) {
+            conditionallyLog(e);
             Messages.showErrorDialog(getProject(), "Could not load record details", e);
         }
     }

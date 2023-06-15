@@ -58,6 +58,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import static com.dci.intellij.dbn.common.dispose.Failsafe.conditionallyLog;
 import static com.dci.intellij.dbn.debugger.common.breakpoint.DBBreakpointUtil.getBreakpointId;
 import static com.dci.intellij.dbn.debugger.common.breakpoint.DBBreakpointUtil.setBreakpointId;
 import static com.dci.intellij.dbn.debugger.common.process.DBDebugProcessStatus.*;
@@ -165,6 +166,7 @@ public abstract class DBJdbcDebugProcess<T extends ExecutionInput> extends XDebu
 
                         synchronizeSession();
                     } catch (SQLException e) {
+                        conditionallyLog(e);
                         set(SESSION_INITIALIZATION_THREW_EXCEPTION, true);
                         console.error("Error initializing debug environment\n" + e.getMessage());
                         session.stop();
@@ -201,6 +203,7 @@ public abstract class DBJdbcDebugProcess<T extends ExecutionInput> extends XDebu
                                                 }
 
                                             } catch (SQLException e) {
+                                                conditionallyLog(e);
                                                 set(SESSION_INITIALIZATION_THREW_EXCEPTION, true);
                                                 console.system("Error synchronizing debug session: " + e.getMessage());
                                                 Messages.showErrorDialog(getProject(),
@@ -228,6 +231,7 @@ public abstract class DBJdbcDebugProcess<T extends ExecutionInput> extends XDebu
                         executeTarget();
                         console.system("Target program execution ended");
                     } catch (SQLException e) {
+                        conditionallyLog(e);
                         set(TARGET_EXECUTION_THREW_EXCEPTION, true);
                         console.error("Target program execution failed. " + e.getMessage());
                         // if the method execution threw exception, the debugger-off statement is not reached,
@@ -329,6 +333,7 @@ public abstract class DBJdbcDebugProcess<T extends ExecutionInput> extends XDebu
                         }
                         console.system("Debugger session detached");
                     } catch (SQLException e) {
+                        conditionallyLog(e);
                         console.error("Error detaching debugger session: " + e.getMessage());
                     } finally {
                         set(PROCESS_TERMINATED, true);
@@ -466,6 +471,7 @@ public abstract class DBJdbcDebugProcess<T extends ExecutionInput> extends XDebu
                     }
                 }
             } catch (SQLException e) {
+                conditionallyLog(e);
                 console.error("Error suspending debugger session: " + e.getMessage());
             }
 
@@ -529,6 +535,7 @@ public abstract class DBJdbcDebugProcess<T extends ExecutionInput> extends XDebu
                 }
             }
         } catch (SQLException e) {
+            conditionallyLog(e);
             console.error("Error stopping debugger session: " + e.getMessage());
         }
     }

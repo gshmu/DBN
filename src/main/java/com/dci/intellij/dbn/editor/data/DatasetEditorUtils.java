@@ -15,6 +15,7 @@ import java.util.Collections;
 import java.util.List;
 
 import static com.dci.intellij.dbn.common.Priority.HIGH;
+import static com.dci.intellij.dbn.common.dispose.Failsafe.conditionallyLog;
 
 public class DatasetEditorUtils {
     public static List<String> loadDistinctColumnValues(@NotNull DBColumn column) {
@@ -26,6 +27,7 @@ public class DatasetEditorUtils {
                     column.getConnectionId(),
                     conn -> loadDistinctColumnValues(column, conn));
         } catch (Exception e) {
+            conditionallyLog(e);
             return Collections.emptyList();
         }
     }
