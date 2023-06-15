@@ -82,20 +82,17 @@ public class DatabaseNavigator extends ApplicationComponentBase implements Persi
     @Override
     public Element getComponentState() {
         Element element = new Element("state");
-        Diagnostics.getDebugLogging().writeState(element);
-        Diagnostics.getDatabaseLag().writeState(element);
-        Diagnostics.getMiscellaneous().writeState(element);
-        //setBoolean(element, "developer-mode", Diagnostics.isDeveloperMode());
+        Element diagnosticsElement = new Element("diagnostics");
+        element.addContent(diagnosticsElement);
+        Diagnostics.writeState(diagnosticsElement);
         setBoolean(element, "show-plugin-conflict-dialog", showPluginConflictDialog);
         return element;
     }
 
     @Override
     public void loadComponentState(@NotNull Element element) {
-        Diagnostics.getDebugLogging().readState(element);
-        Diagnostics.getDatabaseLag().readState(element);
-        Diagnostics.getMiscellaneous().readState(element);
-        //Diagnostics.setDeveloperMode(getBoolean(element, "developer-mode", false));
+        Element diagnosticsElement = element.getChild("diagnostics");
+        Diagnostics.readState(diagnosticsElement);
         showPluginConflictDialog = getBoolean(element, "show-plugin-conflict-dialog", true);
     }
 
