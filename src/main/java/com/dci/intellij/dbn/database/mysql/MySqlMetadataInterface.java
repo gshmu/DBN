@@ -8,6 +8,8 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Date;
 
+import static com.dci.intellij.dbn.common.dispose.Failsafe.conditionallyLog;
+
 
 public class MySqlMetadataInterface extends DatabaseMetadataInterfaceImpl {
 
@@ -25,6 +27,7 @@ public class MySqlMetadataInterface extends DatabaseMetadataInterfaceImpl {
         try {
             return super.loadMethodArguments(ownerName, methodName, methodType, overload, connection);
         } catch (SQLException e) {
+            conditionallyLog(e);
             ResultSet resultSet = executeQuery(connection, "alternative-method-arguments", ownerName, methodName, methodType, overload);
             return new MySqlArgumentsResultSet(resultSet);
         }
@@ -35,6 +38,7 @@ public class MySqlMetadataInterface extends DatabaseMetadataInterfaceImpl {
         try {
             return super.loadAllMethodArguments(ownerName, connection);
         } catch (SQLException e) {
+            conditionallyLog(e);
             ResultSet resultSet = executeQuery(connection, "alternative-all-method-arguments", ownerName);
             return new MySqlArgumentsResultSet(resultSet);
         }

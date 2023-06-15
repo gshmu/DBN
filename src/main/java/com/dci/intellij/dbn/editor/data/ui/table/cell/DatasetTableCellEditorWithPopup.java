@@ -16,6 +16,8 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.KeyEvent;
 
+import static com.dci.intellij.dbn.common.dispose.Failsafe.conditionallyLog;
+
 public class DatasetTableCellEditorWithPopup extends DatasetTableCellEditor {
     public DatasetTableCellEditorWithPopup(DatasetEditorTable table) {
         super(table, new CustomTextFieldWithPopup(table));
@@ -39,7 +41,7 @@ public class DatasetTableCellEditorWithPopup extends DatasetTableCellEditor {
                 try {
                     Thread.sleep(settings.getPopupSettings().getDelay());
                 } catch (InterruptedException e) {
-                    e.printStackTrace();
+                    conditionallyLog(e);
                 }
 
                 if (cell.isEditing()) {

@@ -267,6 +267,7 @@ public class StatementExecutionManager extends ProjectComponentBase implements P
                 ConnectionHandler connection = Failsafe.nn(executionProcessor.getConnection());
                 conn = connection.getConnection(executionInput.getTargetSessionId(), schema);
             } catch (SQLException e) {
+                conditionallyLog(e);
                 sendErrorNotification(
                         NotificationGroup.EXECUTION,
                         "Error executing {0}. Failed to ensure connectivity: {1}", statementName, e);
@@ -281,6 +282,7 @@ public class StatementExecutionManager extends ProjectComponentBase implements P
         } catch (ProcessCanceledException e) {
             conditionallyLog(e);
         } catch (SQLException e) {
+            conditionallyLog(e);
             sendErrorNotification(
                     NotificationGroup.EXECUTION,
                     "Error executing {0}: {1}", statementName, e);

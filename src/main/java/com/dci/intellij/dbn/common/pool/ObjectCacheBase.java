@@ -11,6 +11,8 @@ import java.util.Map;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Predicate;
 
+import static com.dci.intellij.dbn.common.dispose.Failsafe.conditionallyLog;
+
 public abstract class ObjectCacheBase<K, O, E extends Throwable> extends StatefulDisposableBase implements ObjectCache<K, O, E> {
     private final Map<K, O> data = new ConcurrentOptionalValueMap<>();
 
@@ -42,6 +44,7 @@ public abstract class ObjectCacheBase<K, O, E extends Throwable> extends Statefu
                 o = create(k);
                 return whenCreated(o);
             } catch (Throwable e) {
+                conditionallyLog(e);
                 failure.set(e);
                 return null;
             }

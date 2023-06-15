@@ -27,6 +27,7 @@ import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicInteger;
 
+import static com.dci.intellij.dbn.common.dispose.Failsafe.conditionallyLog;
 import static com.dci.intellij.dbn.common.options.setting.SettingsSupport.stringAttribute;
 
 @Slf4j
@@ -122,6 +123,7 @@ public class ElementTypeBundle {
 
             //warnAmbiguousBranches();
         } catch (Exception e) {
+            conditionallyLog(e);
             log.error("[DBN] Failed to build element-type bundle for " + languageDialect.getID(), e);
         }
     }

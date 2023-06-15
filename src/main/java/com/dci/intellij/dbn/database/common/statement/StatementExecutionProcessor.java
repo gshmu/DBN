@@ -21,6 +21,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.StringTokenizer;
 
+import static com.dci.intellij.dbn.common.dispose.Failsafe.conditionallyLog;
 import static com.dci.intellij.dbn.common.options.setting.SettingsSupport.booleanAttribute;
 import static com.dci.intellij.dbn.common.options.setting.SettingsSupport.stringAttribute;
 import static com.dci.intellij.dbn.diagnostics.Diagnostics.isDatabaseAccessDebug;
@@ -94,6 +95,7 @@ public class StatementExecutionProcessor {
                 try {
                     return executeQuery(statementDefinition, context, forceExecution, arguments);
                 } catch (SQLException e){
+                    conditionallyLog(e);
                     exception = e;
                 }
             }
@@ -148,6 +150,7 @@ public class StatementExecutionProcessor {
                                         DBNResultSet.setIdentifier(resultSet, context.getIdentifier());
                                         return resultSet;
                                     } catch (SQLException e) {
+                                        conditionallyLog(e);
                                         Resources.close(statement);
                                         return null;
                                     }
@@ -156,19 +159,20 @@ public class StatementExecutionProcessor {
                                     return null;
                                 }
                             }
-                        } catch (SQLException exception) {
+                        } catch (SQLException e) {
+                            conditionallyLog(e);
                             Resources.close(statement);
-                            String message = exception.getMessage();
+                            String message = e.getMessage();
                             if (isDatabaseAccessDebug()) log.warn("[DBN] Error executing statement: " + statementText + "\nCause: " + message);
 
-                            boolean isModelException = interfaces.getMessageParserInterface().isModelException(exception);
+                            boolean isModelException = interfaces.getMessageParserInterface().isModelException(e);
                             SQLException traceException =
                                     isModelException ?
                                             new SQLException("Model exception received while executing query '" + id +"'. " + message) :
                                             new SQLException("Too many failed attempts of executing query '" + id +"'. " + message);
 
                             activityTrace.fail(traceException, isModelException);
-                            throw exception;
+                            throw e;
                         } finally {
                             activityTrace.release();
                             if (resultSet == null && statement != null) {
@@ -203,6 +207,7 @@ public class StatementExecutionProcessor {
                 try {
                     return executeCall(definition, context, outputReader, arguments);
                 } catch (SQLException e){
+                    conditionallyLog(e);
                     exception = e;
                 }
 
@@ -231,11 +236,12 @@ public class StatementExecutionProcessor {
                         statement.execute();
                         if (outputReader != null) outputReader.read(statement);
                         return outputReader;
-                    } catch (SQLException exception) {
+                    } catch (SQLException e) {
+                        conditionallyLog(e);
                         if (isDatabaseAccessDebug())
-                            log.warn("[DBN] Error executing statement: " + statementText + "\nCause: " + exception.getMessage());
+                            log.warn("[DBN] Error executing statement: " + statementText + "\nCause: " + e.getMessage());
 
-                        throw exception;
+                        throw e;
                     } finally {
                         Resources.close(statement);
                     }
@@ -253,6 +259,7 @@ public class StatementExecutionProcessor {
                     executeUpdate(statementDefinition, context, arguments);
                     return;
                 } catch (SQLException e){
+                    conditionallyLog(e);
                     exception = e;
                 }
             }
@@ -275,11 +282,12 @@ public class StatementExecutionProcessor {
                     try {
                         statement.setQueryTimeout(timeout);
                         statement.executeUpdate(statementText);
-                    } catch (SQLException exception) {
+                    } catch (SQLException e) {
+                        conditionallyLog(e);
                         if (isDatabaseAccessDebug())
-                            log.warn("[DBN] Error executing statement: " + statementText + "\nCause: " + exception.getMessage());
+                            log.warn("[DBN] Error executing statement: " + statementText + "\nCause: " + e.getMessage());
 
-                        throw exception;
+                        throw e;
                     } finally {
                         Resources.close(statement);
                     }
@@ -297,6 +305,7 @@ public class StatementExecutionProcessor {
                 try {
                     return executeStatement(statementDefinition, context, arguments);
                 } catch (SQLException e){
+                    conditionallyLog(e);
                     exception = e;
                 }
             }
@@ -319,11 +328,12 @@ public class StatementExecutionProcessor {
                     try {
                         statement.setQueryTimeout(timeout);
                         return statement.execute(statementText);
-                    } catch (SQLException exception) {
+                    } catch (SQLException e) {
+                        conditionallyLog(e);
                         if (isDatabaseAccessDebug())
-                            log.warn("[DBN] Error executing statement: " + statementText + "\nCause: " + exception.getMessage());
+                            log.warn("[DBN] Error executing statement: " + statementText + "\nCause: " + e.getMessage());
 
-                        throw exception;
+                        throw e;
                     } finally {
                         Resources.close(statement);
                     }

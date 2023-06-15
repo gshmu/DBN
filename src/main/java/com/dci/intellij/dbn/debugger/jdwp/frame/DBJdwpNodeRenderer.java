@@ -7,12 +7,7 @@ import com.intellij.debugger.DebuggerContext;
 import com.intellij.debugger.engine.DebugProcess;
 import com.intellij.debugger.engine.evaluation.EvaluateException;
 import com.intellij.debugger.engine.evaluation.EvaluationContext;
-import com.intellij.debugger.ui.impl.watch.ArgumentValueDescriptorImpl;
-import com.intellij.debugger.ui.impl.watch.DebuggerTreeNodeImpl;
-import com.intellij.debugger.ui.impl.watch.FieldDescriptorImpl;
-import com.intellij.debugger.ui.impl.watch.LocalVariableDescriptorImpl;
-import com.intellij.debugger.ui.impl.watch.NodeManagerImpl;
-import com.intellij.debugger.ui.impl.watch.ValueDescriptorImpl;
+import com.intellij.debugger.ui.impl.watch.*;
 import com.intellij.debugger.ui.tree.DebuggerTreeNode;
 import com.intellij.debugger.ui.tree.NodeDescriptor;
 import com.intellij.debugger.ui.tree.ValueDescriptor;
@@ -20,12 +15,7 @@ import com.intellij.debugger.ui.tree.render.ChildrenBuilder;
 import com.intellij.debugger.ui.tree.render.DescriptorLabelListener;
 import com.intellij.debugger.ui.tree.render.NodeRendererImpl;
 import com.intellij.psi.PsiExpression;
-import com.sun.jdi.ClassNotLoadedException;
-import com.sun.jdi.Field;
-import com.sun.jdi.ObjectReference;
-import com.sun.jdi.ReferenceType;
-import com.sun.jdi.Type;
-import com.sun.jdi.Value;
+import com.sun.jdi.*;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -34,6 +24,8 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
+
+import static com.dci.intellij.dbn.common.dispose.Failsafe.conditionallyLog;
 
 public class DBJdwpNodeRenderer extends NodeRendererImpl {
     public DBJdwpNodeRenderer() {
@@ -140,8 +132,9 @@ public class DBJdwpNodeRenderer extends NodeRendererImpl {
 
                 isArgument = localVariableDescriptor.getLocalVariable().getVariable().isArgument();
             }
-            catch (EvaluateException ignored) {}
-            catch (ClassNotLoadedException ignore) {}
+            catch (EvaluateException | ClassNotLoadedException e) {
+                conditionallyLog(e);
+            }
         }
         else if (descriptor instanceof ArgumentValueDescriptorImpl) {
             isArgument = ((ArgumentValueDescriptorImpl)descriptor).isParameter();

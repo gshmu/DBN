@@ -17,6 +17,7 @@ import java.util.TimerTask;
 import java.util.concurrent.*;
 import java.util.concurrent.atomic.AtomicReference;
 
+import static com.dci.intellij.dbn.common.dispose.Failsafe.conditionallyLog;
 import static com.dci.intellij.dbn.common.exception.Exceptions.causeOf;
 import static com.dci.intellij.dbn.common.exception.Exceptions.toSqlException;
 
@@ -61,8 +62,10 @@ public abstract class CancellableDatabaseCall<T> implements Callable<T> {
                             try {
                                 return CancellableDatabaseCall.this.execute();
                             } catch (SQLException e) {
+                                conditionallyLog(e);
                                 throw e;
                             } catch (Exception e) {
+                                conditionallyLog(e);
                                 innerException.set(e);
                                 return null;
                             }
@@ -137,10 +140,12 @@ public abstract class CancellableDatabaseCall<T> implements Callable<T> {
             }
 
         } catch (CancellationException | InterruptedException e) {
+            conditionallyLog(e);
             cancelSilently();
             throw InterfaceTaskCancelledException.INSTANCE;
 
         } catch (ExecutionException e) {
+            conditionallyLog(e);
             Throwable cause = causeOf(e);
             if (cause instanceof SQLTimeoutException) {
                 handleTimeout();
@@ -149,6 +154,7 @@ public abstract class CancellableDatabaseCall<T> implements Callable<T> {
             }
 
         } catch (TimeoutException e)  {
+            conditionallyLog(e);
             handleTimeout();
         }
         return null;
@@ -171,6 +177,7 @@ public abstract class CancellableDatabaseCall<T> implements Callable<T> {
         try {
             cancel();
         } catch (Exception e) {
+            conditionallyLog(e);
             log.warn("Failed to cancel database call", e);
         }
     }

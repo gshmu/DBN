@@ -19,6 +19,7 @@ import org.jetbrains.annotations.NotNull;
 import javax.swing.*;
 import java.awt.*;
 
+import static com.dci.intellij.dbn.common.dispose.Failsafe.conditionallyLog;
 import static com.dci.intellij.dbn.common.ui.util.TextFields.onTextChange;
 
 public abstract class ExecutionTimeoutForm extends DBNFormBase {
@@ -71,6 +72,7 @@ public abstract class ExecutionTimeoutForm extends DBNFormBase {
             hasErrors = false;
             handleChange(false);
         } catch (NumberFormatException e1) {
+            conditionallyLog(e1);
             //errorLabel.setText("Timeout must be an integer");
             hintLabel.setIcon(Icons.COMMON_ERROR);
             hintLabel.setToolTipText("Timeout must be an integer");

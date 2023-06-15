@@ -31,6 +31,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
 import static com.dci.intellij.dbn.common.dispose.Checks.isNotValid;
+import static com.dci.intellij.dbn.common.dispose.Failsafe.conditionallyLog;
 
 public class ConnectionSettingsForm extends CompositeConfigurationEditorForm<ConnectionSettings> {
     private JPanel mainPanel;
@@ -177,6 +178,7 @@ public class ConnectionSettingsForm extends CompositeConfigurationEditorForm<Con
 
                             refreshConnectionList(configuration);
                         } catch (ConfigurationException e1) {
+                            conditionallyLog(e1);
                             Messages.showErrorDialog(project, "Configuration error", e1.getMessage());
                         }
                     }

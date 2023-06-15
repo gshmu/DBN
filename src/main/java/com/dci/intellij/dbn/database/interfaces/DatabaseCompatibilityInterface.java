@@ -19,6 +19,8 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import static com.dci.intellij.dbn.common.dispose.Failsafe.conditionallyLog;
+
 @Slf4j
 public abstract class DatabaseCompatibilityInterface implements DatabaseInterface{
     private final DatabaseInterfaces interfaces;
@@ -81,6 +83,7 @@ public abstract class DatabaseCompatibilityInterface implements DatabaseInterfac
                 return loader.call();
             }
         } catch (SQLFeatureNotSupportedException | AbstractMethodError e) {
+            conditionallyLog(e);
             log.warn("JDBC feature not supported " + feature + " (" + e.getMessage() + ")");
             compatibility.markUnsupported(feature);
         }

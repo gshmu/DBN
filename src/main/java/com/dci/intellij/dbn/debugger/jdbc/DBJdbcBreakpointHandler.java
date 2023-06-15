@@ -35,6 +35,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.sql.SQLException;
 
+import static com.dci.intellij.dbn.common.dispose.Failsafe.conditionallyLog;
 import static com.dci.intellij.dbn.debugger.common.breakpoint.DBBreakpointUtil.*;
 
 public class DBJdbcBreakpointHandler extends DBBreakpointHandler<DBJdbcDebugProcess> {
@@ -86,6 +87,7 @@ public class DBJdbcBreakpointHandler extends DBBreakpointHandler<DBJdbcDebugProc
                 }
 
             } catch (Exception e) {
+                conditionallyLog(e);
                 handleBreakpointError(breakpoint, e.getMessage());
             }
         }
@@ -108,6 +110,7 @@ public class DBJdbcBreakpointHandler extends DBBreakpointHandler<DBJdbcDebugProc
                     removeBreakpoint(temporary, breakpointId);
                     console.system("Breakpoint removed: " + breakpointDesc);
                 } catch (SQLException e) {
+                    conditionallyLog(e);
                     console.error("Error removing breakpoint: " + breakpointDesc + ". " + e.getMessage());
                     sendErrorNotification(
                             NotificationGroup.DEBUGGER,
@@ -144,7 +147,7 @@ public class DBJdbcBreakpointHandler extends DBBreakpointHandler<DBJdbcDebugProc
                                         line,
                                         getDebugConnection());
                             } catch (SQLException e) {
-                                e.printStackTrace();
+                                conditionallyLog(e);
                             }
                         }
                     }
@@ -160,7 +163,7 @@ public class DBJdbcBreakpointHandler extends DBBreakpointHandler<DBJdbcDebugProc
                 getDebuggerInterface().removeBreakpoint(defaultBreakpointInfo.getBreakpointId(), getDebugConnection());
             }
         } catch (SQLException e) {
-            e.printStackTrace();
+            conditionallyLog(e);
         }
     }
 

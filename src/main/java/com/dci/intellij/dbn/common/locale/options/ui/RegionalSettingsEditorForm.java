@@ -29,6 +29,8 @@ import java.awt.event.ItemListener;
 import java.util.Date;
 import java.util.Locale;
 
+import static com.dci.intellij.dbn.common.dispose.Failsafe.conditionallyLog;
+
 public class RegionalSettingsEditorForm extends ConfigurationEditorForm<RegionalSettings> {
     private JPanel mainPanel;
     private JPanel previewPanel;
@@ -145,6 +147,7 @@ public class RegionalSettingsEditorForm extends ConfigurationEditorForm<Regional
                             customNumberFormatTextField.getText());
                     errorLabel.setVisible(false);
                 } catch (Exception e) {
+                    conditionallyLog(e);
                     errorLabel.setText("Invalid pattern: " + e.getMessage());
                     errorLabel.setIcon(Icons.STMT_EXECUTION_ERROR);
                     errorLabel.setVisible(true);

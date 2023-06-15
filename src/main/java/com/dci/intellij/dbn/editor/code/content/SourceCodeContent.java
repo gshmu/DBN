@@ -14,6 +14,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import static com.dci.intellij.dbn.common.dispose.Failsafe.conditionallyLog;
 import static com.dci.intellij.dbn.editor.code.content.GuardedBlockMarker.END_OFFSET_IDENTIFIER;
 import static com.dci.intellij.dbn.editor.code.content.GuardedBlockMarker.START_OFFSET_IDENTIFIER;
 
@@ -48,7 +49,8 @@ public class SourceCodeContent{
             try {
                 ProgressIndicator progress = ProgressMonitor.getProgressIndicator();
                 return ByWord.compare(text, content.text, ComparisonPolicy.IGNORE_WHITESPACES, progress).isEmpty();
-            } catch (Exception ignore) {
+            } catch (Exception e) {
+                conditionallyLog(e);
             }
         }
         return Strings.equals(text, content.text);

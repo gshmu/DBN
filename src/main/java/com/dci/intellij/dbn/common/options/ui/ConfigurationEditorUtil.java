@@ -7,6 +7,8 @@ import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
 
+import static com.dci.intellij.dbn.common.dispose.Failsafe.conditionallyLog;
+
 public class ConfigurationEditorUtil {
     public static int validateIntegerValue(@NotNull JTextField inputField, @NotNull String name, boolean required, int min, int max, @Nullable String hint) throws ConfigurationException {
         try {
@@ -24,6 +26,7 @@ public class ConfigurationEditorUtil {
             }
             return 0;
         } catch (NumberFormatException e) {
+            conditionallyLog(e);
             inputField.grabFocus();
             inputField.selectAll();
             String message = "Input value for \"" + name + "\" must be an integer between " + min + " and " + max + ".";

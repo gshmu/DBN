@@ -18,6 +18,7 @@ import com.dci.intellij.dbn.common.routine.Consumer;
 import com.dci.intellij.dbn.common.util.Strings;
 import com.dci.intellij.dbn.connection.*;
 import com.dci.intellij.dbn.connection.config.ConnectionDatabaseSettings;
+import com.dci.intellij.dbn.database.DatabaseFeature;
 import com.dci.intellij.dbn.database.common.metadata.DBObjectMetadata;
 import com.dci.intellij.dbn.database.interfaces.DatabaseCompatibilityInterface;
 import com.dci.intellij.dbn.editor.DBContentType;
@@ -332,6 +333,17 @@ public abstract class DBObjectImpl<M extends DBObjectMetadata> extends DBObjectT
     public void visitChildObjects(DBObjectListVisitor visitor, boolean visitInternal) {
         DBObjectListContainer childObjects = getChildObjects();
         if (childObjects != null) childObjects.visit(visitor, visitInternal);
+    }
+
+    @Override
+    public boolean isEditable() {
+        if (isNot(DBObjectProperty.SCHEMA_OBJECT)) return false;
+
+        DBContentType contentType = getContentType();
+        if (contentType.has(DBContentType.DATA)) return true;
+
+        if (DatabaseFeature.OBJECT_SOURCE_EDITING.isSupported(this)) return true;
+        return false;
     }
 
     @Override

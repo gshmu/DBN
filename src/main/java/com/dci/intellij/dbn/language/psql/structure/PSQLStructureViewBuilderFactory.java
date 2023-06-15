@@ -12,6 +12,8 @@ import com.intellij.psi.util.PsiEditorUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import static com.dci.intellij.dbn.common.dispose.Failsafe.conditionallyLog;
+
 public class PSQLStructureViewBuilderFactory implements PsiStructureViewFactory {
 
     @Override
@@ -34,6 +36,7 @@ public class PSQLStructureViewBuilderFactory implements PsiStructureViewFactory 
                                 EmptyStructureViewModel.INSTANCE :
                                 new PSQLStructureViewModel(editor, psiFile);
                     } catch (Throwable e) {
+                        conditionallyLog(e);
                         // TODO dirty workaround (compatibility issue)
                         return EmptyStructureViewModel.INSTANCE;
                     }

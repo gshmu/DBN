@@ -1,10 +1,14 @@
 package com.dci.intellij.dbn.diagnostics;
 
 import com.dci.intellij.dbn.common.state.PersistentStateElement;
+import com.dci.intellij.dbn.common.util.TimeUtil;
 import com.dci.intellij.dbn.common.util.Unsafe;
 import lombok.Getter;
 import lombok.Setter;
 import org.jdom.Element;
+
+import java.util.Timer;
+import java.util.TimerTask;
 
 import static com.dci.intellij.dbn.common.options.setting.SettingsSupport.*;
 
@@ -14,6 +18,8 @@ public final class Diagnostics {
     private static final DatabaseLag databaseLag = new DatabaseLag();
     private static final Miscellaneous miscellaneous = new Miscellaneous();
 
+    private static volatile Timer disableTimer;
+
     public static boolean isDialogSizingReset() {
         return developerMode && miscellaneous.dialogSizingReset;
     }
@@ -22,12 +28,12 @@ public final class Diagnostics {
         return developerMode && miscellaneous.bulkActionsEnabled;
     }
 
-    public static boolean isFailsafeLoggingEnabled() {
-        return developerMode && miscellaneous.failsafeLoggingEnabled;
-    }
-
     public static boolean isBackgroundDisposerDisabled() {
         return developerMode && miscellaneous.backgroundDisposerDisabled;
+    }
+
+    public static boolean isFailsafeLoggingEnabled() {
+        return developerMode && debugLogging.failsafeErrors;
     }
 
     public static boolean isDatabaseAccessDebug() {
@@ -54,8 +60,28 @@ public final class Diagnostics {
         return developerMode;
     }
 
-    public static void setDeveloperMode(boolean developerMode) {
+    public static synchronized void setDeveloperMode(boolean developerMode) {
         Diagnostics.developerMode = developerMode;
+        if (disableTimer != null) {
+            disableTimer.cancel();
+            disableTimer = null;
+        }
+
+        if (developerMode) {
+            disableTimer = new Timer("DBN - Developer Mode Disable Timer");
+            disableTimer.schedule(createDisableTimer(), TimeUtil.Millis.THIRTY_SECONDS);
+        }
+    }
+
+    private static TimerTask createDisableTimer() {
+        return new TimerTask() {
+            @Override
+            public void run() {
+                Diagnostics.developerMode = false;
+                disableTimer.cancel();
+                disableTimer = null;
+            }
+        };
     }
 
     public static DebugLogging getDebugLogging() {
@@ -70,6 +96,11 @@ public final class Diagnostics {
         return miscellaneous;
     }
 
+    public static boolean hasEnabledFeatures() {
+        return miscellaneous.hasEnabledFeatures() ||
+                debugLogging.hasEnabledFeatures() ||
+                databaseLag.enabled;
+    }
 
     @Getter
     @Setter
@@ -103,13 +134,19 @@ public final class Diagnostics {
     @Getter
     @Setter
     public static final class DebugLogging implements PersistentStateElement{
+        private boolean failsafeErrors = false;
         private boolean databaseAccess = false;
         private boolean databaseResource = false;
+
+        public boolean hasEnabledFeatures() {
+            return failsafeErrors || databaseAccess || databaseResource;
+        }
 
         @Override
         public void readState(Element element) {
             Element debugMode = element.getChild("debug-logging");
             if (debugMode != null) {
+                failsafeErrors = booleanAttribute(debugMode, "failsafe-errors", failsafeErrors);
                 databaseAccess = booleanAttribute(debugMode, "database-access", databaseAccess);
                 databaseResource = booleanAttribute(debugMode, "database-resource", databaseResource);
             }
@@ -119,6 +156,7 @@ public final class Diagnostics {
         public void writeState(Element element) {
             Element debugMode = new Element("debug-logging");
             element.addContent(debugMode);
+            setBooleanAttribute(debugMode, "failsafe-errors", failsafeErrors);
             setBooleanAttribute(debugMode, "database-access", databaseAccess);
             setBooleanAttribute(debugMode, "database-resource", databaseResource);
         }
@@ -129,8 +167,13 @@ public final class Diagnostics {
     public static final class Miscellaneous implements PersistentStateElement{
         private boolean dialogSizingReset = false;
         private boolean bulkActionsEnabled = false;
-        private boolean failsafeLoggingEnabled = false;
         private boolean backgroundDisposerDisabled = false;
+
+        public boolean hasEnabledFeatures() {
+            return dialogSizingReset ||
+                    bulkActionsEnabled ||
+                    backgroundDisposerDisabled;
+        }
 
         @Override
         public void readState(Element element) {
@@ -138,7 +181,6 @@ public final class Diagnostics {
             if (miscellaneous != null) {
                 dialogSizingReset = booleanAttribute(miscellaneous, "dialog-sizing-reset", dialogSizingReset);
                 bulkActionsEnabled = booleanAttribute(miscellaneous, "bulk-actions-enabled", bulkActionsEnabled);
-                failsafeLoggingEnabled = booleanAttribute(miscellaneous, "failsafe-logging-enabled", failsafeLoggingEnabled);
                 backgroundDisposerDisabled = booleanAttribute(miscellaneous, "background-disposer-disabled", backgroundDisposerDisabled);
             }
         }
@@ -149,7 +191,6 @@ public final class Diagnostics {
             element.addContent(miscellaneous);
             setBooleanAttribute(miscellaneous, "dialog-sizing-reset", dialogSizingReset);
             setBooleanAttribute(miscellaneous, "bulk-actions-enabled", bulkActionsEnabled);
-            setBooleanAttribute(miscellaneous, "failsafe-logging-enabled", failsafeLoggingEnabled);
             setBooleanAttribute(miscellaneous, "background-disposer-disabled", backgroundDisposerDisabled);
         }
     }

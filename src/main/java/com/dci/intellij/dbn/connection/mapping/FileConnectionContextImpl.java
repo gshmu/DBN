@@ -15,6 +15,7 @@ import org.jdom.Element;
 import org.jetbrains.annotations.Nullable;
 
 import static com.dci.intellij.dbn.common.dispose.Checks.isValid;
+import static com.dci.intellij.dbn.common.dispose.Failsafe.conditionallyLog;
 import static com.dci.intellij.dbn.common.options.setting.SettingsSupport.*;
 
 @Slf4j
@@ -75,6 +76,7 @@ public class FileConnectionContextImpl implements FileConnectionContext {
                 return file;
             }
         } catch (Exception e) {
+            conditionallyLog(e);
             log.warn("Failed to read file " + fileUrl, e);
         }
         return null;

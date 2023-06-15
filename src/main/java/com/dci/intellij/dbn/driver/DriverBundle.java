@@ -14,6 +14,8 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.concurrent.ConcurrentHashMap;
 
+import static com.dci.intellij.dbn.common.dispose.Failsafe.conditionallyLog;
+
 @Slf4j
 @Getter
 public class DriverBundle implements Disposable {
@@ -32,8 +34,9 @@ public class DriverBundle implements Disposable {
     public void dispose() {
         try {
             classLoader.close();
-        } catch (Throwable t) {
-            log.warn("Failed to dispose class loader", t);
+        } catch (Throwable e) {
+            conditionallyLog(e);
+            log.warn("Failed to dispose class loader", e);
         }
     }
 

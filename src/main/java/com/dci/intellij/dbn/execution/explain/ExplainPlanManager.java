@@ -26,6 +26,7 @@ import java.sql.Statement;
 
 import static com.dci.intellij.dbn.common.Priority.HIGH;
 import static com.dci.intellij.dbn.common.component.Components.projectService;
+import static com.dci.intellij.dbn.common.dispose.Failsafe.conditionallyLog;
 
 public class ExplainPlanManager extends ProjectComponentBase {
     public static final String COMPONENT_NAME = "DBNavigator.Project.ExplainPlanManager";
@@ -112,6 +113,7 @@ public class ExplainPlanManager extends ProjectComponentBase {
                         }
                     });
         } catch (SQLException e) {
+            conditionallyLog(e);
             return new ExplainPlanResult(executable, e.getMessage());
         }
     }

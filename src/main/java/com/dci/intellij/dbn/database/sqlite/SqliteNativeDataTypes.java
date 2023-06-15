@@ -6,16 +6,14 @@ import com.dci.intellij.dbn.database.common.DatabaseNativeDataTypes;
 import com.dci.intellij.dbn.database.common.util.DataTypeParseAdapter;
 
 import java.math.BigInteger;
-import java.sql.Blob;
-import java.sql.Clob;
-import java.sql.SQLException;
-import java.sql.Timestamp;
-import java.sql.Types;
+import java.sql.*;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+
+import static com.dci.intellij.dbn.common.dispose.Failsafe.conditionallyLog;
 
 class SqliteNativeDataTypes extends DatabaseNativeDataTypes {
 
@@ -107,7 +105,9 @@ class SqliteNativeDataTypes extends DatabaseNativeDataTypes {
         for (SimpleDateFormat dateFormat : dateFormats) {
             try {
                 return dateFormat.parse(dateString).getTime();
-            } catch (ParseException ignore) {}
+            } catch (ParseException e) {
+                conditionallyLog(e);
+            }
         }
         throw new SQLException("Error parsing value \"" + dateString + "\" into " + dataName);
     }

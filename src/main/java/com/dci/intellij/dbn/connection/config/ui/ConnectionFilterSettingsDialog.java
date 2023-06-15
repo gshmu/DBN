@@ -16,6 +16,8 @@ import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
 
+import static com.dci.intellij.dbn.common.dispose.Failsafe.conditionallyLog;
+
 public class ConnectionFilterSettingsDialog extends DBNDialog<DBNContentWithHeaderForm> {
     private final ConnectionRef connection;
     private ConnectionFilterSettingsForm configurationEditor;
@@ -68,6 +70,7 @@ public class ConnectionFilterSettingsDialog extends DBNDialog<DBNContentWithHead
             ConfigurationHandle.notifyChanges();
             super.doOKAction();
         } catch (ConfigurationException e) {
+            conditionallyLog(e);
             Messages.showErrorDialog(getProject(), "Configuration error", e.getMessage());
         }
 

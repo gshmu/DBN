@@ -28,6 +28,7 @@ import java.awt.event.*;
 import java.text.ParseException;
 import java.util.List;
 
+import static com.dci.intellij.dbn.common.dispose.Failsafe.conditionallyLog;
 import static com.dci.intellij.dbn.common.ui.util.TextFields.onTextChange;
 import static com.dci.intellij.dbn.editor.data.model.RecordStatus.DELETED;
 
@@ -214,6 +215,7 @@ public class DatasetRecordEditorColumnForm extends DBNFormBase {
                     userValueHolder.updateUserValue(value, false);
                     valueTextField.setForeground(Colors.getTextFieldForeground());
                 } catch (ParseException e1) {
+                    conditionallyLog(e1);
                     if (highlightError) {
                         valueTextField.setForeground(JBColor.RED);
                     }

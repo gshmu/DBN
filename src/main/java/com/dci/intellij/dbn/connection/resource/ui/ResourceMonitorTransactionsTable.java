@@ -1,20 +1,18 @@
 package com.dci.intellij.dbn.connection.resource.ui;
 
-import com.dci.intellij.dbn.common.ui.util.Borders;
-import com.dci.intellij.dbn.common.ui.util.Mouse;
 import com.dci.intellij.dbn.common.ui.component.DBNComponent;
 import com.dci.intellij.dbn.common.ui.table.DBNColoredTableCellRenderer;
 import com.dci.intellij.dbn.common.ui.table.DBNTable;
+import com.dci.intellij.dbn.common.ui.util.Borders;
+import com.dci.intellij.dbn.common.ui.util.Mouse;
+import com.dci.intellij.dbn.common.util.Editors;
 import com.dci.intellij.dbn.connection.transaction.PendingTransaction;
-import com.intellij.openapi.fileEditor.FileEditorManager;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.ui.SimpleTextAttributes;
 import org.jetbrains.annotations.NotNull;
 
-import javax.swing.ListSelectionModel;
-import java.awt.Cursor;
-import java.awt.MouseInfo;
-import java.awt.Point;
+import javax.swing.*;
+import java.awt.*;
 import java.awt.event.MouseEvent;
 
 public class ResourceMonitorTransactionsTable extends DBNTable<ResourceMonitorTransactionsTableModel> {
@@ -30,15 +28,14 @@ public class ResourceMonitorTransactionsTable extends DBNTable<ResourceMonitorTr
     }
 
     private void clickEvent(MouseEvent e) {
-        if (e.getButton() == MouseEvent.BUTTON1 && e.getClickCount() == 1) {
-            int selectedRow = getSelectedRow();
-            PendingTransaction change = (PendingTransaction) getModel().getValueAt(selectedRow, 0);
-            VirtualFile virtualFile = change.getFile();
-            if (virtualFile != null) {
-                FileEditorManager editorManager = FileEditorManager.getInstance(getProject());
-                editorManager.openFile(virtualFile, true);
-            }
-        }
+        if (e.getButton() != MouseEvent.BUTTON1 || e.getClickCount() != 1) return;
+
+        int selectedRow = getSelectedRow();
+        PendingTransaction change = (PendingTransaction) getModel().getValueAt(selectedRow, 0);
+        VirtualFile virtualFile = change.getFile();
+        if (virtualFile == null) return;
+
+        Editors.openFile(getProject(), virtualFile, true);
     }
 
     @Override

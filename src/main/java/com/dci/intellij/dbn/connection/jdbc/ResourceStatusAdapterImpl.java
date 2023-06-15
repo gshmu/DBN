@@ -17,6 +17,7 @@ import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReadWriteLock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 
+import static com.dci.intellij.dbn.common.dispose.Failsafe.conditionallyLog;
 import static com.dci.intellij.dbn.common.util.Commons.nvl;
 import static com.dci.intellij.dbn.common.util.TimeUtil.isOlderThan;
 import static com.dci.intellij.dbn.diagnostics.Diagnostics.isDatabaseResourceDebug;
@@ -116,8 +117,10 @@ public abstract class ResourceStatusAdapterImpl<T extends Resource> implements R
                 set(subject, value);
             }
         } catch (SQLRecoverableException e){
+            conditionallyLog(e);
             fail();
         } catch (Exception e){
+            conditionallyLog(e);
             log.warn("[DBN] Failed to check resource {} status", subject, e);
             fail();
         } finally {
@@ -191,14 +194,17 @@ public abstract class ResourceStatusAdapterImpl<T extends Resource> implements R
             try {
                 return checkInner();
             } catch (SQLException e) {
+                conditionallyLog(e);
                 exception.set(e);
                 return nvl(terminalStatus, () -> value());
             } catch (AbstractMethodError | NoSuchMethodError e) {
+                conditionallyLog(e);
                 // not implemented (??) TODO suggest using built in drivers
                 log.warn("[DBN] Functionality not supported by jdbc driver", e);
                 return value();
-            } catch (RuntimeException t){
-                log.warn("[DBN] Failed to invoke jdbc utility", t);
+            } catch (RuntimeException e){
+                conditionallyLog(e);
+                log.warn("[DBN] Failed to invoke jdbc utility", e);
                 return nvl(terminalStatus, () -> value());
             }
         });
@@ -226,6 +232,7 @@ public abstract class ResourceStatusAdapterImpl<T extends Resource> implements R
                 if (isDatabaseResourceDebug())
                     log.info("[DBN] Done applying status {} = {} for {}", subject, value, resource);
             } catch (Throwable e) {
+                conditionallyLog(e);
                 log.warn("[DBN] Failed to apply status {} = {} for {}: {}", subject, value, resource, e.getMessage());
                 fail();
                 return Exceptions.toSqlException(e);

@@ -5,10 +5,7 @@ import com.dci.intellij.dbn.common.component.PersistentState;
 import com.dci.intellij.dbn.common.component.ProjectComponentBase;
 import com.dci.intellij.dbn.common.event.ProjectEvents;
 import com.dci.intellij.dbn.common.thread.Dispatch;
-import com.dci.intellij.dbn.common.util.Commons;
-import com.dci.intellij.dbn.common.util.Messages;
-import com.dci.intellij.dbn.common.util.Safe;
-import com.dci.intellij.dbn.common.util.Strings;
+import com.dci.intellij.dbn.common.util.*;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.ConnectionId;
 import com.dci.intellij.dbn.connection.ConnectionManager;
@@ -25,7 +22,6 @@ import com.dci.intellij.dbn.vfs.DatabaseFileManager;
 import com.dci.intellij.dbn.vfs.file.DBConsoleVirtualFile;
 import com.intellij.openapi.components.State;
 import com.intellij.openapi.components.Storage;
-import com.intellij.openapi.fileEditor.FileEditorManager;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.newvfs.events.VFileEvent;
 import org.jdom.CDATA;
@@ -85,8 +81,7 @@ public class DatabaseConsoleManager extends ProjectComponentBase implements Pers
         DBConsole console = connection.getConsoleBundle().createConsole(name, type);
         DBConsoleVirtualFile consoleFile = console.getVirtualFile();
         consoleFile.setText("");
-        FileEditorManager fileEditorManager = FileEditorManager.getInstance(connection.getProject());
-        fileEditorManager.openFile(consoleFile, true);
+        Editors.openFile(connection.getProject(), consoleFile, true);
 
         reloadConsoles(connection);
     }

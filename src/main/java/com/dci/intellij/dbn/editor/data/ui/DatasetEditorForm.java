@@ -44,6 +44,8 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
+import static com.dci.intellij.dbn.common.dispose.Failsafe.conditionallyLog;
+
 public class DatasetEditorForm extends DBNFormBase implements SearchableDataComponent {
     private JPanel actionsPanel;
     private JPanel mainPanel;
@@ -92,6 +94,7 @@ public class DatasetEditorForm extends DBNFormBase implements SearchableDataComp
 
             Disposer.register(this, autoCommitLabel);
         } catch (SQLException e) {
+            conditionallyLog(e);
             Messages.showErrorDialog(
                     getProject(),
                     "Error",

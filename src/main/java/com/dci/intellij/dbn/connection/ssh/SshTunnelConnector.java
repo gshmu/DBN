@@ -10,6 +10,8 @@ import java.net.ServerSocket;
 import java.util.Properties;
 import java.util.concurrent.TimeUnit;
 
+import static com.dci.intellij.dbn.common.dispose.Failsafe.conditionallyLog;
+
 public class SshTunnelConnector {
     private final String proxyHost;
     private final int proxyPort;
@@ -46,6 +48,7 @@ public class SshTunnelConnector {
             localPort = serverSocket.getLocalPort();
         }
         catch (IOException e) {
+            conditionallyLog(e);
             throw new JSchException("Can't find a free port", e);
         }
 

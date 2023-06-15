@@ -202,6 +202,7 @@ public final class ConnectionPool extends StatefulDisposableBase implements Noti
         } catch (ProcessCanceledException e) {
             conditionallyLog(e);
         } catch (Exception e) {
+            conditionallyLog(e);
             log.error("Failed to clean connection pool", e);
         }
     }

@@ -9,6 +9,8 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.concurrent.ExecutorService;
 
+import static com.dci.intellij.dbn.common.dispose.Failsafe.conditionallyLog;
+
 public interface DBDebugOperation {
 
     static <T> void run(@NotNull Project project, String title, Runnable runnable) {
@@ -20,6 +22,7 @@ public interface DBDebugOperation {
             try {
                 runnable.run();
             } catch (Exception e) {
+                conditionallyLog(e);
                 NotificationSupport.sendErrorNotification(
                         project,
                         NotificationGroup.DEBUGGER,

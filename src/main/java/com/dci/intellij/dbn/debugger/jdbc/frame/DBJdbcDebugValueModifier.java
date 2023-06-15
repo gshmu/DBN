@@ -13,6 +13,8 @@ import org.jetbrains.annotations.Nullable;
 
 import java.sql.SQLException;
 
+import static com.dci.intellij.dbn.common.dispose.Failsafe.conditionallyLog;
+
 public class DBJdbcDebugValueModifier extends XValueModifier {
     private final DBJdbcDebugValue value;
 
@@ -52,6 +54,7 @@ public class DBJdbcDebugValueModifier extends XValueModifier {
                 callback.valueModified();
             }
         } catch (SQLException e) {
+            conditionallyLog(e);
             callback.errorOccurred(e.getMessage());
         }
     }

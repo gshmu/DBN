@@ -14,6 +14,7 @@ import java.sql.SQLWarning;
 import java.sql.Statement;
 import java.util.concurrent.atomic.AtomicLong;
 
+import static com.dci.intellij.dbn.common.dispose.Failsafe.conditionallyLog;
 import static com.dci.intellij.dbn.connection.jdbc.ResourceStatus.ACTIVE;
 
 @Getter
@@ -123,6 +124,7 @@ public class DBNStatement<T extends Statement> extends DBNResource<T> implements
                 executeDuration.set(System.currentTimeMillis() - init);
             }
         } catch (SQLException e) {
+            conditionallyLog(e);
             Resources.close(DBNStatement.this);
             connection.reevaluateStatus();
             throw e;
@@ -223,7 +225,8 @@ public class DBNStatement<T extends Statement> extends DBNResource<T> implements
     public void setQueryTimeout(int seconds) throws SQLException {
         try {
             inner.setQueryTimeout(seconds);
-        } catch (Throwable ignore) {
+        } catch (Throwable e) {
+            conditionallyLog(e);
             // catch throwable (capture e.g. java.lang.AbstractMethodError)
             // not all databases support it, as this is used on DBN start connection, we must control exception
         }

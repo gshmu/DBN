@@ -17,6 +17,7 @@ import lombok.Data;
 import org.jdom.Element;
 import org.jetbrains.annotations.NotNull;
 
+import static com.dci.intellij.dbn.common.dispose.Failsafe.conditionallyLog;
 import static com.dci.intellij.dbn.common.dispose.Failsafe.nd;
 import static com.dci.intellij.dbn.common.options.setting.SettingsSupport.integerAttribute;
 import static com.dci.intellij.dbn.common.options.setting.SettingsSupport.stringAttribute;
@@ -67,8 +68,10 @@ public class BasicTextEditorState implements FileEditorState {
             targetElement.addContent(foldingElement);
             try {
                 CodeFoldingManager.getInstance(project).writeFoldingState(foldingState, foldingElement);
-            } catch (WriteExternalException ignore) { // TODO
+            } catch (WriteExternalException e) { // TODO
+                conditionallyLog(e);
             } catch (Exception e) {
+                conditionallyLog(e);
                 e.printStackTrace();
             }
         }

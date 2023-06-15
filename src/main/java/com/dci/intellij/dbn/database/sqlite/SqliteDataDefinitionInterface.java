@@ -17,6 +17,8 @@ import com.intellij.openapi.util.text.StringUtil;
 
 import java.sql.SQLException;
 
+import static com.dci.intellij.dbn.common.dispose.Failsafe.conditionallyLog;
+
 public class SqliteDataDefinitionInterface extends DatabaseDataDefinitionInterfaceImpl {
     SqliteDataDefinitionInterface(DatabaseInterfaces provider) {
         super("sqlite_ddl_interface.xml", provider);
@@ -93,6 +95,7 @@ public class SqliteDataDefinitionInterface extends DatabaseDataDefinitionInterfa
         try {
             createObject(newCode, connection);
         } catch (SQLException e) {
+            conditionallyLog(e);
             createObject(oldCode, connection);
             throw e;
         }

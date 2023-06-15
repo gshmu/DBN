@@ -12,6 +12,8 @@ import org.jetbrains.annotations.Nullable;
 
 import java.sql.SQLException;
 
+import static com.dci.intellij.dbn.common.dispose.Failsafe.conditionallyLog;
+
 public class GenerateDDLStatementAction extends GenerateStatementAction {
     private final DBObjectRef object;
 
@@ -50,6 +52,7 @@ public class GenerateDDLStatementAction extends GenerateStatementAction {
 
             result.setStatement(statement);
         } catch (SQLException e) {
+            conditionallyLog(e);
             result.getMessages().addErrorMessage(
                     "Could not extract DDL statement for " + object.getQualifiedNameWithType() + ".\n" +
                             "Cause: " + e.getMessage());

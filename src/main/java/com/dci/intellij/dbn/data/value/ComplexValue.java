@@ -5,6 +5,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.sql.*;
 
+import static com.dci.intellij.dbn.common.dispose.Failsafe.conditionallyLog;
 import static com.dci.intellij.dbn.common.exception.Exceptions.toSqlException;
 import static com.dci.intellij.dbn.common.util.Commons.nvl;
 
@@ -51,6 +52,7 @@ public class ComplexValue extends ValueAdapter<String> implements Comparable<Com
                 preparedStatement.setString(parameterIndex, value);
             }
         } catch (Throwable e) {
+            conditionallyLog(e);
             throw toSqlException(e, "Could not write complex value. Your JDBC driver may not support this feature");
         }
 
@@ -65,6 +67,7 @@ public class ComplexValue extends ValueAdapter<String> implements Comparable<Com
                 resultSet.updateString(columnIndex, value);
             }
         } catch (Throwable e) {
+            conditionallyLog(e);
             throw toSqlException(e, "Could not write complex value. Your JDBC driver may not support this feature");
         }
     }

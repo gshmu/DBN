@@ -5,6 +5,7 @@ import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.common.action.GroupPopupAction;
 import com.dci.intellij.dbn.common.action.Lookups;
 import com.dci.intellij.dbn.common.util.Actions;
+import com.dci.intellij.dbn.common.util.Editors;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.action.AbstractConnectionAction;
 import com.dci.intellij.dbn.connection.console.DatabaseConsoleManager;
@@ -15,7 +16,6 @@ import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.actionSystem.Presentation;
 import com.intellij.openapi.actionSystem.Separator;
-import com.intellij.openapi.fileEditor.FileEditorManager;
 import com.intellij.openapi.project.Project;
 import org.jetbrains.annotations.NotNull;
 
@@ -85,8 +85,7 @@ public class SQLConsoleOpenAction extends GroupPopupAction {
                 DatabaseConsoleManager databaseConsoleManager = DatabaseConsoleManager.getInstance(project);
                 databaseConsoleManager.showCreateConsoleDialog(connection, consoleType);
             } else {
-                FileEditorManager editorManager = FileEditorManager.getInstance(project);
-                editorManager.openFile(console.getVirtualFile(), true);
+                Editors.openFile(project, console.getVirtualFile(), true);
             }
         }
     }

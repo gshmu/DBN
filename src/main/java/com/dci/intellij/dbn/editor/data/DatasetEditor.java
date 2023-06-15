@@ -10,6 +10,7 @@ import com.dci.intellij.dbn.common.project.ProjectRef;
 import com.dci.intellij.dbn.common.thread.Background;
 import com.dci.intellij.dbn.common.thread.Dispatch;
 import com.dci.intellij.dbn.common.ui.util.UserInterface;
+import com.dci.intellij.dbn.common.util.Editors;
 import com.dci.intellij.dbn.common.util.Messages;
 import com.dci.intellij.dbn.connection.*;
 import com.dci.intellij.dbn.connection.context.DatabaseContextBase;
@@ -270,6 +271,7 @@ public class DatasetEditor extends DisposableUserDataHolderBase implements
             model.fetchNextRecords(records, false);
             dataLoadError = null;
         } catch (SQLException e) {
+            conditionallyLog(e);
             dataLoadError = e.getMessage();
 /*
             String message = "Error loading data for " + getDataset().getQualifiedNameWithType() + ".\nCause: " + e.getMessage();
@@ -313,9 +315,11 @@ public class DatasetEditor extends DisposableUserDataHolderBase implements
                             } catch (ProcessCanceledException e) {
                                 conditionallyLog(e);
                             } catch (SQLException e) {
+                                conditionallyLog(e);
                                 dataLoadError = e.getMessage();
                                 handleLoadError(e, instructions);
                             } catch (Exception e) {
+                                conditionallyLog(e);
                                 log.error("Error loading table data", e);
                             } finally {
                                 status.set(LOADED, true);
@@ -396,8 +400,7 @@ public class DatasetEditor extends DisposableUserDataHolderBase implements
 
 
     private void focusEditor() {
-        FileEditorManager fileEditorManager = FileEditorManager.getInstance(getProject());
-        fileEditorManager.openFile(getDatabaseFile(), true);
+        Editors.openFile(getProject(), getDatabaseFile(), true);
     }
 
     protected void setLoading(boolean loading) {
@@ -572,6 +575,7 @@ public class DatasetEditor extends DisposableUserDataHolderBase implements
                     try {
                         model.postInsertRecord(true, false, true);
                     } catch (SQLException e1) {
+                        conditionallyLog(e1);
                         Messages.showErrorDialog(getProject(), "Could not create row in " + getDataset().getQualifiedNameWithType() + '.', e1);
                         model.cancelInsert(true);
                     }

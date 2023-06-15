@@ -85,7 +85,7 @@ public class DatabaseNavigator extends ApplicationComponentBase implements Persi
         Diagnostics.getDebugLogging().writeState(element);
         Diagnostics.getDatabaseLag().writeState(element);
         Diagnostics.getMiscellaneous().writeState(element);
-        setBoolean(element, "developer-mode", Diagnostics.isDeveloperMode());
+        //setBoolean(element, "developer-mode", Diagnostics.isDeveloperMode());
         setBoolean(element, "show-plugin-conflict-dialog", showPluginConflictDialog);
         return element;
     }
@@ -95,7 +95,7 @@ public class DatabaseNavigator extends ApplicationComponentBase implements Persi
         Diagnostics.getDebugLogging().readState(element);
         Diagnostics.getDatabaseLag().readState(element);
         Diagnostics.getMiscellaneous().readState(element);
-        Diagnostics.setDeveloperMode(getBoolean(element, "developer-mode", false));
+        //Diagnostics.setDeveloperMode(getBoolean(element, "developer-mode", false));
         showPluginConflictDialog = getBoolean(element, "show-plugin-conflict-dialog", true);
     }
 

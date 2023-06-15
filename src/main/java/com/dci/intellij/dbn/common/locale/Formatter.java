@@ -15,6 +15,8 @@ import java.text.*;
 import java.util.Date;
 import java.util.Locale;
 
+import static com.dci.intellij.dbn.common.dispose.Failsafe.conditionallyLog;
+
 
 @Getter
 @Setter
@@ -130,6 +132,7 @@ public class Formatter implements Cloneable, Signed {
         try {
             return dateTimeFormat.parse(string);
         } catch (ParseException e) {
+            conditionallyLog(e);
             return dateFormat.parse(string);
         }
     }

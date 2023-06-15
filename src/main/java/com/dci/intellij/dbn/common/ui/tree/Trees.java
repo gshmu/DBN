@@ -18,6 +18,8 @@ import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 import java.util.List;
 
+import static com.dci.intellij.dbn.common.dispose.Failsafe.conditionallyLog;
+
 @Slf4j
 public final class Trees {
     public static void applySpeedSearchHighlighting(
@@ -28,6 +30,7 @@ public final class Trees {
         try {
             SpeedSearchUtil.applySpeedSearchHighlighting(tree, coloredComponent, true, selected);
         } catch (Throwable e) {
+            conditionallyLog(e);
             log.warn("Error applying speed search highlighting");
         }
     }
@@ -89,7 +92,8 @@ public final class Trees {
                         case STRUCTURE_CHANGED: l.treeStructureChanged(event); break;
                     }
                 });
-            } catch (IndexOutOfBoundsException ignore) {
+            } catch (IndexOutOfBoundsException e) {
+                conditionallyLog(e);
                 // tree may have mutated already
             }
         });

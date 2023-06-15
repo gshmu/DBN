@@ -11,11 +11,14 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
+import static com.dci.intellij.dbn.common.dispose.Failsafe.conditionallyLog;
+
 public class ResultSets extends StatefulDisposableBase {
     public static void insertRow(ResultSet resultSet) throws SQLException {
         try {
             resultSet.insertRow();
         } catch (Throwable e) {
+            conditionallyLog(e);
             throw Exceptions.toSqlException(e, "Error inserting row");
         }
     }
@@ -24,6 +27,7 @@ public class ResultSets extends StatefulDisposableBase {
         try {
             resultSet.moveToInsertRow();
         } catch (Throwable e) {
+            conditionallyLog(e);
             throw Exceptions.toSqlException(e, "Error selecting insert row");
         }
     }
@@ -31,6 +35,7 @@ public class ResultSets extends StatefulDisposableBase {
         try {
             resultSet.moveToCurrentRow();
         } catch (Throwable e) {
+            conditionallyLog(e);
             throw Exceptions.toSqlException(e, "Error selecting current row");
         }
     }
@@ -39,6 +44,7 @@ public class ResultSets extends StatefulDisposableBase {
         try {
             resultSet.deleteRow();
         } catch (Throwable e) {
+            conditionallyLog(e);
             throw Exceptions.toSqlException(e, "Error deleting row");
         }
     }
@@ -48,6 +54,7 @@ public class ResultSets extends StatefulDisposableBase {
         try {
             resultSet.refreshRow();
         } catch (Throwable e) {
+            conditionallyLog(e);
             throw Exceptions.toSqlException(e, "Error refreshing row");
         }
     }
@@ -56,6 +63,7 @@ public class ResultSets extends StatefulDisposableBase {
         try {
             resultSet.updateRow();
         } catch (Throwable e) {
+            conditionallyLog(e);
             throw Exceptions.toSqlException(e, "Error updating row");
         }
     }
@@ -64,6 +72,7 @@ public class ResultSets extends StatefulDisposableBase {
         try {
             resultSet.absolute(row);
         } catch (Throwable e) {
+            conditionallyLog(e);
             throw Exceptions.toSqlException(e, "Error selecting row");
         }
     }

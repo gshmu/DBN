@@ -15,6 +15,7 @@ import org.jetbrains.annotations.Nullable;
 import java.sql.SQLException;
 
 import static com.dci.intellij.dbn.common.dispose.Checks.isValid;
+import static com.dci.intellij.dbn.common.dispose.Failsafe.conditionallyLog;
 
 public class ObjectEnableDisableAction extends AnObjectAction<DBSchemaObject> {
     ObjectEnableDisableAction(DBSchemaObject object) {
@@ -37,10 +38,11 @@ public class ObjectEnableDisableAction extends AnObjectAction<DBSchemaObject> {
                         DBOperationType operationType = enabled ? DBOperationType.DISABLE : DBOperationType.ENABLE;
                         object.getOperationExecutor().executeOperation(operationType);
                     } catch (SQLException e1) {
-
+                        conditionallyLog(e1);
                         String message = "Error " + (!enabled ? "enabling " : "disabling ") + object.getQualifiedNameWithType();
                         Messages.showErrorDialog(project, message, e1);
                     } catch (DBOperationNotSupportedException e1) {
+                        conditionallyLog(e1);
                         Messages.showErrorDialog(project, e1.getMessage());
                     }
                 });

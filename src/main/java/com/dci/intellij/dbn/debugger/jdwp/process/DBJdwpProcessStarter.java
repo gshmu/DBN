@@ -31,6 +31,8 @@ import java.net.InetAddress;
 import java.net.ServerSocket;
 import java.net.UnknownHostException;
 
+import static com.dci.intellij.dbn.common.dispose.Failsafe.conditionallyLog;
+
 @Slf4j
 public abstract class DBJdwpProcessStarter extends DBDebugProcessStarter {
 
@@ -44,7 +46,9 @@ public abstract class DBJdwpProcessStarter extends DBDebugProcessStarter {
         for (int portNumber = minPortNumber; portNumber < maxPortNumber; portNumber++) {
             try (ServerSocket ignored = new ServerSocket(portNumber)) {
                 return portNumber;
-            } catch (Exception ignore) {}
+            } catch (Exception e) {
+                conditionallyLog(e);
+            }
         }
         throw new ExecutionException("Could not find free port in the range " + minPortNumber + " - " + maxPortNumber);
     }
@@ -87,6 +91,7 @@ public abstract class DBJdwpProcessStarter extends DBDebugProcessStarter {
                     InetAddress.getAllByName(tcpHost)[0].getHostAddress();
 
         } catch (UnknownHostException e) {
+            conditionallyLog(e);
             // TODO log to the debugger console instead
             log.warn("Failed to resolve TCP host address '{}'. Using 'localhost'", tcpHost, e);
             tcpHost =  "localhost";

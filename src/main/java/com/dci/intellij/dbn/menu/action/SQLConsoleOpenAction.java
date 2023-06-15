@@ -4,6 +4,7 @@ import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.common.action.ProjectAction;
 import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.common.util.Actions;
+import com.dci.intellij.dbn.common.util.Editors;
 import com.dci.intellij.dbn.connection.ConnectionBundle;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.ConnectionManager;
@@ -13,7 +14,6 @@ import com.dci.intellij.dbn.database.DatabaseFeature;
 import com.dci.intellij.dbn.object.DBConsole;
 import com.dci.intellij.dbn.vfs.DBConsoleType;
 import com.intellij.openapi.actionSystem.*;
-import com.intellij.openapi.fileEditor.FileEditorManager;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.popup.JBPopupFactory;
 import com.intellij.openapi.ui.popup.ListPopup;
@@ -131,15 +131,13 @@ public class SQLConsoleOpenAction extends ProjectAction {
                 consoleManager.showCreateConsoleDialog(connection, consoleType);
             } else {
                 ConnectionHandler connection = Failsafe.nn(console.getConnection());
-                FileEditorManager editorManager = FileEditorManager.getInstance(connection.getProject());
-                editorManager.openFile(console.getVirtualFile(), true);
+                Editors.openFile(connection.getProject(), console.getVirtualFile(), true);
             }
         }
     }
 
     private static void openSQLConsole(ConnectionHandler connection) {
-        FileEditorManager editorManager = FileEditorManager.getInstance(connection.getProject());
         DBConsole defaultConsole = connection.getConsoleBundle().getDefaultConsole();
-        editorManager.openFile(defaultConsole.getVirtualFile(), true);
+        Editors.openFile(connection.getProject(), defaultConsole.getVirtualFile(), true);
     }
 }

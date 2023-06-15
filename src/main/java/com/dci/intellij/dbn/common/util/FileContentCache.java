@@ -9,6 +9,8 @@ import java.nio.file.attribute.BasicFileAttributes;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
+import static com.dci.intellij.dbn.common.dispose.Failsafe.conditionallyLog;
+
 public abstract class FileContentCache<T> {
     private final Map<File, Pair<T, Long>> cache = new ConcurrentHashMap<>();
 
@@ -28,6 +30,7 @@ public abstract class FileContentCache<T> {
             BasicFileAttributes fileAttributes = Files.readAttributes(filePath, BasicFileAttributes.class);
             return fileAttributes.lastModifiedTime().toMillis();
         } catch (Exception e) {
+            conditionallyLog(e);
             return 0;
         }
     }

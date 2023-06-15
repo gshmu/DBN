@@ -16,6 +16,7 @@ import org.jetbrains.annotations.Nullable;
 import java.math.BigDecimal;
 import java.sql.*;
 
+import static com.dci.intellij.dbn.common.dispose.Failsafe.conditionallyLog;
 import static com.dci.intellij.dbn.common.util.Unsafe.silent;
 
 @Slf4j
@@ -83,6 +84,7 @@ public class DBNativeDataType extends StatefulDisposableBase implements DynamicC
                     //clazz == Array.class ? resultSet.getArray(columnIndex) :
                             resultSet.getObject(columnIndex);
         } catch (Throwable e) {
+            conditionallyLog(e);
             return silent(null, () -> resolveConversionFailure(resultSet, columnIndex, clazz, e));
         }
     }
@@ -92,6 +94,7 @@ public class DBNativeDataType extends StatefulDisposableBase implements DynamicC
         try {
             return ValueAdapter.create(genericDataType, resultSet, columnIndex);
         } catch (Throwable e) {
+            conditionallyLog(e);
             return silent(null, () -> {
                 Object object = resultSet.getObject(columnIndex);
                 log.error("Error creating result-set value for {} '{}'. (data type definition {})", genericDataType, object, definition, e);

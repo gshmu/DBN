@@ -11,10 +11,7 @@ import com.dci.intellij.dbn.common.option.InteractiveOptionBroker;
 import com.dci.intellij.dbn.common.thread.Dispatch;
 import com.dci.intellij.dbn.common.thread.Progress;
 import com.dci.intellij.dbn.common.thread.Read;
-import com.dci.intellij.dbn.common.util.Lists;
-import com.dci.intellij.dbn.common.util.Messages;
-import com.dci.intellij.dbn.common.util.Strings;
-import com.dci.intellij.dbn.common.util.TimeUtil;
+import com.dci.intellij.dbn.common.util.*;
 import com.dci.intellij.dbn.connection.ConnectionAction;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.Resources;
@@ -47,6 +44,7 @@ import java.util.*;
 
 import static com.dci.intellij.dbn.common.Priority.HIGH;
 import static com.dci.intellij.dbn.common.component.Components.projectService;
+import static com.dci.intellij.dbn.common.dispose.Failsafe.conditionallyLog;
 import static com.dci.intellij.dbn.common.util.Commons.list;
 import static com.dci.intellij.dbn.editor.session.SessionInterruptionType.DISCONNECT;
 import static com.dci.intellij.dbn.editor.session.SessionInterruptionType.TERMINATE;
@@ -112,9 +110,8 @@ public class SessionBrowserManager extends ProjectComponentBase implements Persi
         ConnectionAction.invoke("opening the session browser", false, connection,
                 (action) -> {
                     Project project = getProject();
-                    FileEditorManager fileEditorManager = FileEditorManager.getInstance(project);
                     DBSessionBrowserVirtualFile sessionBrowserFile = connection.getSessionBrowserFile();
-                    fileEditorManager.openFile(sessionBrowserFile, true);
+                    Editors.openFile(project, sessionBrowserFile, true);
                 });
     }
 
@@ -138,6 +135,7 @@ public class SessionBrowserManager extends ProjectComponentBase implements Persi
                     });
 
         } catch (SQLException e) {
+            conditionallyLog(e);
             SessionBrowserModel model = new SessionBrowserModel(connection);
             model.setLoadError(e.getMessage());
             return model;
@@ -167,6 +165,7 @@ public class SessionBrowserManager extends ProjectComponentBase implements Persi
                         return EMPTY_CONTENT;
             });
         } catch (SQLException e) {
+            conditionallyLog(e);
             sendWarningNotification(
                     NotificationGroup.SESSION_BROWSER,
                     "Could not load current session SQL: {0}", e);
@@ -228,6 +227,7 @@ public class SessionBrowserManager extends ProjectComponentBase implements Persi
                                     if (type == TERMINATE) metadata.terminateSession(sessionId, serialNumber, immediate, conn);
                                 });
                             } catch (SQLException e) {
+                                conditionallyLog(e);
                                 errors.put(entry, e);
                             }
                             index++;

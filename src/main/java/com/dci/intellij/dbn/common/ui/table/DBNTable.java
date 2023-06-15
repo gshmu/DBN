@@ -35,6 +35,7 @@ import java.util.Timer;
 import java.util.TimerTask;
 
 import static com.dci.intellij.dbn.common.dispose.Disposer.replace;
+import static com.dci.intellij.dbn.common.dispose.Failsafe.conditionallyLog;
 import static com.dci.intellij.dbn.common.dispose.Failsafe.nd;
 
 public abstract class DBNTable<T extends DBNTableModel> extends JTable implements StatefulDisposable, UserDataHolder {
@@ -313,6 +314,7 @@ public abstract class DBNTable<T extends DBNTableModel> extends JTable implement
         try {
             presentableValue = getModel().getPresentableValue(value, selectedColumn);
         } catch (UnsupportedOperationException e) {
+            conditionallyLog(e);
             presentableValue = value == null ? null : value.toString();
         }
         return presentableValue;

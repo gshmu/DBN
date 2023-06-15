@@ -14,6 +14,8 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 
+import static com.dci.intellij.dbn.common.dispose.Failsafe.conditionallyLog;
+
 @Getter
 @Setter
 public class ConnectionHandlerStatusHolder extends PropertyHolderBase.IntStore<ConnectionHandlerStatus> {
@@ -68,6 +70,7 @@ public class ConnectionHandlerStatusHolder extends PropertyHolderBase.IntStore<C
                 }
                 return true;
             } catch (Exception e) {
+                conditionallyLog(e);
                 return false;
             } finally {
                 connection.freePoolConnection(poolConnection);
@@ -87,6 +90,7 @@ public class ConnectionHandlerStatusHolder extends PropertyHolderBase.IntStore<C
                     }
                 }
             } catch (Exception e) {
+                conditionallyLog(e);
                 return false;
             }
             return false;
