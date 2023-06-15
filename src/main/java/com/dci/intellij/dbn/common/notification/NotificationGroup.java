@@ -5,6 +5,7 @@ public enum NotificationGroup {
     SOFTWARE,
     TRANSACTION,
     DEVELOPER,
+    DIAGNOSTICS,
     SESSION,
     SESSION_BROWSER,
     CONNECTION,
