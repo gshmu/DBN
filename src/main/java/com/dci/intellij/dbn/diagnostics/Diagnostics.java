@@ -1,51 +1,41 @@
 package com.dci.intellij.dbn.diagnostics;
 
-import com.dci.intellij.dbn.common.notification.NotificationSupport;
 import com.dci.intellij.dbn.common.state.PersistentStateElement;
 import com.dci.intellij.dbn.common.util.Unsafe;
 import lombok.Getter;
 import lombok.Setter;
 import org.jdom.Element;
 
-import java.util.Timer;
-import java.util.TimerTask;
-import java.util.concurrent.TimeUnit;
-
-import static com.dci.intellij.dbn.common.notification.NotificationGroup.DIAGNOSTICS;
 import static com.dci.intellij.dbn.common.options.setting.SettingsSupport.*;
 
 public final class Diagnostics {
-    private static boolean developerMode = false;
-    private static int developerModeTimeout = 10;
+    private static final DeveloperMode developerMode = new DeveloperMode();
     private static final DebugLogging debugLogging = new DebugLogging();
     private static final DatabaseLag databaseLag = new DatabaseLag();
     private static final Miscellaneous miscellaneous = new Miscellaneous();
 
-    private static volatile Timer disableTimer;
-    private static long disableTimerStart;
-
     public static boolean isDialogSizingReset() {
-        return developerMode && miscellaneous.dialogSizingReset;
+        return isDeveloperMode() && miscellaneous.dialogSizingReset;
     }
 
     public static boolean isBulkActionsEnabled() {
-        return developerMode && miscellaneous.bulkActionsEnabled;
+        return isDeveloperMode() && miscellaneous.bulkActionsEnabled;
     }
 
     public static boolean isBackgroundDisposerDisabled() {
-        return developerMode && miscellaneous.backgroundDisposerDisabled;
+        return isDeveloperMode() && miscellaneous.backgroundDisposerDisabled;
     }
 
     public static boolean isFailsafeLoggingEnabled() {
-        return developerMode && debugLogging.failsafeErrors;
+        return isDeveloperMode() && debugLogging.failsafeErrors;
     }
 
     public static boolean isDatabaseAccessDebug() {
-        return developerMode && debugLogging.databaseAccess;
+        return isDeveloperMode() && debugLogging.databaseAccess;
     }
 
     public static boolean isDatabaseResourceDebug() {
-        return developerMode && debugLogging.databaseResource;
+        return isDeveloperMode() && debugLogging.databaseResource;
     }
 
     public static int getConnectivityLag() {
@@ -61,58 +51,11 @@ public final class Diagnostics {
     }
 
     public static boolean isDeveloperMode() {
+        return developerMode.isEnabled();
+    }
+
+    public static DeveloperMode getDeveloperMode() {
         return developerMode;
-    }
-
-    public static int getDeveloperModeTimeout() {
-        return developerModeTimeout;
-    }
-
-    public static void setDeveloperModeTimeout(int developerModeTimeout) {
-        Diagnostics.developerModeTimeout = developerModeTimeout;
-    }
-
-    public static synchronized void setDeveloperMode(boolean developerMode) {
-        boolean changed = Diagnostics.developerMode != developerMode;
-        Diagnostics.developerMode = developerMode;
-        if (disableTimer != null) {
-            disableTimer.cancel();
-            disableTimer = null;
-            disableTimerStart = 0;
-        }
-
-        if (developerMode) {
-            disableTimer = new Timer("DBN - Developer Mode Disable Timer");
-            disableTimer.schedule(createDisableTimer(), TimeUnit.MINUTES.toMillis(developerModeTimeout));
-            disableTimerStart = System.currentTimeMillis();
-            NotificationSupport.sendInfoNotification(null, DIAGNOSTICS, "Developer Mode activated for " + developerModeTimeout + " minutes");
-        } else if (changed) {
-            NotificationSupport.sendInfoNotification(null, DIAGNOSTICS, "Developer Mode deactivated");
-        }
-
-    }
-
-    public static String getTimeoutText() {
-        if (disableTimerStart == 0) return "";
-
-        long lapsed = System.currentTimeMillis() - disableTimerStart;
-        long lapsedSeconds = TimeUnit.MILLISECONDS.toSeconds(lapsed);
-        long remainingSeconds = Math.max(0, TimeUnit.MINUTES.toSeconds(developerModeTimeout) - lapsedSeconds);
-
-        return remainingSeconds < 60 ?
-            " (timing out in " + remainingSeconds + " seconds) " :
-            " (timing out in " + TimeUnit.SECONDS.toMinutes(remainingSeconds) + " minutes) ";
-    }
-
-    private static TimerTask createDisableTimer() {
-        return new TimerTask() {
-            @Override
-            public void run() {
-                setDeveloperMode(false);
-                disableTimer.cancel();
-                disableTimer = null;
-            }
-        };
     }
 
     public static DebugLogging getDebugLogging() {
@@ -136,19 +79,18 @@ public final class Diagnostics {
     public static void readState(Element element) {
         if (element == null) return;
 
-        developerModeTimeout = getInteger(element, "developer-mode-timeout", developerModeTimeout);
+        developerMode.setTimeout(getInteger(element, "developer-mode-timeout", developerMode.getTimeout()));
         debugLogging.readState(element);
         databaseLag.readState(element);
         miscellaneous.readState(element);
     }
 
     public static void writeState(Element element) {
-        setInteger(element, "developer-mode-timeout", developerModeTimeout);
+        setInteger(element, "developer-mode-timeout", developerMode.getTimeout());
         debugLogging.writeState(element);
         databaseLag.writeState(element);
         miscellaneous.writeState(element);
     }
-
 
     @Getter
     @Setter
@@ -245,7 +187,7 @@ public final class Diagnostics {
 
 
     public static void introduceDatabaseLag(int millis) {
-        if (Diagnostics.developerMode && Diagnostics.databaseLag.enabled) {
+        if (Diagnostics.isDeveloperMode() && Diagnostics.databaseLag.enabled) {
             Unsafe.silent(() -> Thread.sleep(millis));
         }
     }
