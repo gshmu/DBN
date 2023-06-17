@@ -28,6 +28,8 @@ import javax.swing.*;
 import java.util.ArrayList;
 import java.util.List;
 
+import static com.dci.intellij.dbn.common.dispose.Failsafe.guarded;
+
 public class DBObjectPsiDirectory implements PsiDirectory, Disposable{
     private final DBObjectRef object;
 
@@ -77,14 +79,16 @@ public class DBObjectPsiDirectory implements PsiDirectory, Disposable{
 
     @Override
     public PsiDirectory getParent() {
-        DBObject object = getObject();
-        DatabaseEntity parent = object.getParent();
-        if (parent instanceof DBObjectList) {
-            DBObjectList objectList = (DBObjectList) parent;
-            return objectList.getPsiDirectory();
-        }
+        return guarded(null, this, e -> {
+            DBObject object = e.getObject();
+            DatabaseEntity parent = object.getParent();
+            if (parent instanceof DBObjectList) {
+                DBObjectList objectList = (DBObjectList) parent;
+                return objectList.getPsiDirectory();
+            }
 
-        return null;
+            return null;
+        });
     }
 
     @Override
