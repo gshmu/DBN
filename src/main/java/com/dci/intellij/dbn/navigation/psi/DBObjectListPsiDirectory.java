@@ -33,6 +33,8 @@ import javax.swing.*;
 import java.util.ArrayList;
 import java.util.List;
 
+import static com.dci.intellij.dbn.common.dispose.Failsafe.guarded;
+
 public class DBObjectListPsiDirectory implements PsiDirectory, Disposable {
     private static final WeakRefCache<DBObjectList, DBObjectListPsiDirectory> psiDirectoryCache = WeakRefCache.weakKey();
 
@@ -96,18 +98,20 @@ public class DBObjectListPsiDirectory implements PsiDirectory, Disposable {
 
     @Override
     public PsiDirectory getParent() {
-        DatabaseEntity parent = getObjectList().getParent();
-        if (parent instanceof DBObject) {
-            DBObject parentObject = (DBObject) parent;
-            return DBObjectPsiCache.asPsiDirectory(parentObject);
-        }
+        return guarded(null, this, e -> {
+            DatabaseEntity parent = e.getObjectList().getParent();
+            if (parent instanceof DBObject) {
+                DBObject parentObject = (DBObject) parent;
+                return DBObjectPsiCache.asPsiDirectory(parentObject);
+            }
 
-        if (parent instanceof DBObjectBundle) {
-            DBObjectBundle objectBundle = (DBObjectBundle) parent;
-            return objectBundle.getConnection().getPsiDirectory();
-        }
+            if (parent instanceof DBObjectBundle) {
+                DBObjectBundle objectBundle = (DBObjectBundle) parent;
+                return objectBundle.getConnection().getPsiDirectory();
+            }
 
-        return null;
+            return null;
+        });
     }
 
     @Override

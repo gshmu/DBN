@@ -25,7 +25,7 @@ public class DeveloperModeAction extends ToggleAction {
 
     @Override
     public void setSelected(@NotNull AnActionEvent e, boolean state) {
-        Diagnostics.setDeveloperMode(state);
+        Diagnostics.getDeveloperMode().setEnabled(state);
 
         if (Diagnostics.isDeveloperMode()) {
             Project project = getEventProject(e);
@@ -35,7 +35,7 @@ public class DeveloperModeAction extends ToggleAction {
                 Messages.showWarningDialog(project,
                         "Developer Mode",
                         "Developer Mode has been activated\n" +
-                                "(it will be automatically disabled after " + Diagnostics.getDeveloperModeTimeout() + " minutes)",
+                                "(it will be automatically disabled after " + Diagnostics.getDeveloperMode().getTimeout() + " minutes)",
                         new String[]{"Ok", "Open Settings..."}, 0,
                         option -> {if (option == 1) openDiagnosticSettings(project);});
 

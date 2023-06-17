@@ -14,6 +14,7 @@ import java.lang.ref.Reference;
 import java.util.*;
 
 import static com.dci.intellij.dbn.common.dispose.Checks.isNotValid;
+import static com.dci.intellij.dbn.common.dispose.Failsafe.conditionallyLog;
 import static com.dci.intellij.dbn.common.dispose.Failsafe.guarded;
 import static com.dci.intellij.dbn.common.thread.ThreadMonitor.isDispatchThread;
 
@@ -43,7 +44,11 @@ public final class Disposer {
         }
 
         if (Checks.isValid(parent)) {
-            com.intellij.openapi.util.Disposer.register(parent, disposable);
+            try {
+                com.intellij.openapi.util.Disposer.register(parent, disposable);
+            } catch (Throwable e) {
+                conditionallyLog(e);
+            }
         } else {
             // dispose if parent already disposed
             dispose(disposable);
