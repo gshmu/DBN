@@ -17,8 +17,8 @@ import java.util.List;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 
-import static com.dci.intellij.dbn.common.dispose.Failsafe.conditionallyLog;
 import static com.dci.intellij.dbn.common.util.Unsafe.cast;
+import static com.dci.intellij.dbn.diagnostics.Diagnostics.conditionallyLog;
 
 @Slf4j
 @Getter
@@ -76,6 +76,22 @@ class DriverClassLoaderImpl extends URLClassLoader implements DriverClassLoader 
             log.debug("Failed to load drivers from library " + jar, e);
         }
     }
+
+    @Override
+    protected Class<?> loadClass(String name, boolean resolve) throws ClassNotFoundException{
+        synchronized (getClassLoadingLock(name)) {
+            Class<?> c = null;
+            try {
+                c = findClass(name);
+                if (c != null && resolve) resolveClass(c);
+            } catch (Throwable e) {
+                conditionallyLog(e);
+            }
+
+            return c == null ? super.loadClass(name, resolve) : c;
+        }
+    }
+
 
     @SneakyThrows
     private static URL[] getUrls(File library) {
