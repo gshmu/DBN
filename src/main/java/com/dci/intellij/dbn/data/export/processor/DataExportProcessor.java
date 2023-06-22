@@ -28,7 +28,7 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
 
-import static com.dci.intellij.dbn.common.dispose.Failsafe.conditionallyLog;
+import static com.dci.intellij.dbn.diagnostics.Diagnostics.conditionallyLog;
 
 public abstract class DataExportProcessor {
     public abstract boolean supports(DataExportFeature feature);

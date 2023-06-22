@@ -10,7 +10,7 @@ import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 
-import static com.dci.intellij.dbn.common.dispose.Failsafe.conditionallyLog;
+import static com.dci.intellij.dbn.diagnostics.Diagnostics.conditionallyLog;
 
 @Getter
 @EqualsAndHashCode(callSuper = true)

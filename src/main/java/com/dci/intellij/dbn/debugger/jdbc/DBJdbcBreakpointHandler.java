@@ -35,8 +35,8 @@ import org.jetbrains.annotations.NotNull;
 
 import java.sql.SQLException;
 
-import static com.dci.intellij.dbn.common.dispose.Failsafe.conditionallyLog;
 import static com.dci.intellij.dbn.debugger.common.breakpoint.DBBreakpointUtil.*;
+import static com.dci.intellij.dbn.diagnostics.Diagnostics.conditionallyLog;
 
 public class DBJdbcBreakpointHandler extends DBBreakpointHandler<DBJdbcDebugProcess> {
     protected BreakpointInfo defaultBreakpointInfo;

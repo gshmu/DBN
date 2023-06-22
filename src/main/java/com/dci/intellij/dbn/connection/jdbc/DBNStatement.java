@@ -5,6 +5,7 @@ import com.dci.intellij.dbn.common.ref.WeakRef;
 import com.dci.intellij.dbn.common.routine.ThrowableCallable;
 import com.dci.intellij.dbn.common.util.Unsafe;
 import com.dci.intellij.dbn.connection.Resources;
+import com.dci.intellij.dbn.diagnostics.Diagnostics;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -14,8 +15,8 @@ import java.sql.SQLWarning;
 import java.sql.Statement;
 import java.util.concurrent.atomic.AtomicLong;
 
-import static com.dci.intellij.dbn.common.dispose.Failsafe.conditionallyLog;
 import static com.dci.intellij.dbn.connection.jdbc.ResourceStatus.ACTIVE;
+import static com.dci.intellij.dbn.diagnostics.Diagnostics.conditionallyLog;
 
 @Getter
 @Setter
@@ -224,6 +225,7 @@ public class DBNStatement<T extends Statement> extends DBNResource<T> implements
     @Override
     public void setQueryTimeout(int seconds) throws SQLException {
         try {
+            seconds = Diagnostics.timeoutAdjustment(seconds);
             inner.setQueryTimeout(seconds);
         } catch (Throwable e) {
             conditionallyLog(e);

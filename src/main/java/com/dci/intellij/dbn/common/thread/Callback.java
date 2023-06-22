@@ -4,8 +4,8 @@ import com.dci.intellij.dbn.common.routine.Consumer;
 import com.dci.intellij.dbn.common.routine.ThrowableRunnable;
 import com.intellij.openapi.project.Project;
 
-import static com.dci.intellij.dbn.common.dispose.Failsafe.conditionallyLog;
 import static com.dci.intellij.dbn.common.dispose.Failsafe.guarded;
+import static com.dci.intellij.dbn.diagnostics.Diagnostics.conditionallyLog;
 
 public class Callback{
     private Runnable before;

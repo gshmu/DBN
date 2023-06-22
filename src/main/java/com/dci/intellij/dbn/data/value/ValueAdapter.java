@@ -10,8 +10,8 @@ import java.sql.*;
 import java.util.EnumMap;
 import java.util.Map;
 
-import static com.dci.intellij.dbn.common.dispose.Failsafe.conditionallyLog;
 import static com.dci.intellij.dbn.common.util.Unsafe.cast;
+import static com.dci.intellij.dbn.diagnostics.Diagnostics.conditionallyLog;
 
 @Slf4j
 public abstract class ValueAdapter<T> {

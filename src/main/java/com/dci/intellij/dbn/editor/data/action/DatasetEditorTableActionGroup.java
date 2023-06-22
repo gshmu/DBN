@@ -27,7 +27,7 @@ import org.jetbrains.annotations.Nullable;
 import java.awt.datatransfer.DataFlavor;
 import java.awt.datatransfer.Transferable;
 
-import static com.dci.intellij.dbn.common.dispose.Failsafe.conditionallyLog;
+import static com.dci.intellij.dbn.diagnostics.Diagnostics.conditionallyLog;
 import static com.dci.intellij.dbn.editor.data.model.RecordStatus.MODIFIED;
 
 @Slf4j

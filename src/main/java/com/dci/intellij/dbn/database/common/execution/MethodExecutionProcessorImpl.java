@@ -32,8 +32,8 @@ import java.sql.SQLException;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
-import static com.dci.intellij.dbn.common.dispose.Failsafe.conditionallyLog;
 import static com.dci.intellij.dbn.common.dispose.Failsafe.nn;
+import static com.dci.intellij.dbn.diagnostics.Diagnostics.conditionallyLog;
 
 public abstract class MethodExecutionProcessorImpl implements MethodExecutionProcessor {
     private final DBObjectRef<DBMethod> method;

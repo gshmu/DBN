@@ -44,8 +44,8 @@ import java.util.*;
 
 import static com.dci.intellij.dbn.common.Priority.HIGH;
 import static com.dci.intellij.dbn.common.component.Components.projectService;
-import static com.dci.intellij.dbn.common.dispose.Failsafe.conditionallyLog;
 import static com.dci.intellij.dbn.common.util.Commons.list;
+import static com.dci.intellij.dbn.diagnostics.Diagnostics.conditionallyLog;
 import static com.dci.intellij.dbn.editor.session.SessionInterruptionType.DISCONNECT;
 import static com.dci.intellij.dbn.editor.session.SessionInterruptionType.TERMINATE;
 

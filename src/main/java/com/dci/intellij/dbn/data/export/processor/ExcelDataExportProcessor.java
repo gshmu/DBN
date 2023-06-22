@@ -20,7 +20,7 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.util.Date;
 
-import static com.dci.intellij.dbn.common.dispose.Failsafe.conditionallyLog;
+import static com.dci.intellij.dbn.diagnostics.Diagnostics.conditionallyLog;
 
 @Slf4j
 public class ExcelDataExportProcessor extends DataExportProcessor{

@@ -16,7 +16,7 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.KeyEvent;
 
-import static com.dci.intellij.dbn.common.dispose.Failsafe.conditionallyLog;
+import static com.dci.intellij.dbn.diagnostics.Diagnostics.conditionallyLog;
 
 public class DatasetTableCellEditorWithPopup extends DatasetTableCellEditor {
     public DatasetTableCellEditorWithPopup(DatasetEditorTable table) {

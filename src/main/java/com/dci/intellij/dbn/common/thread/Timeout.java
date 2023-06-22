@@ -3,16 +3,17 @@ package com.dci.intellij.dbn.common.thread;
 import com.dci.intellij.dbn.common.routine.ThrowableCallable;
 import com.dci.intellij.dbn.common.routine.ThrowableRunnable;
 import com.dci.intellij.dbn.common.util.Commons;
+import com.dci.intellij.dbn.diagnostics.Diagnostics;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 
 import java.util.concurrent.*;
 import java.util.concurrent.atomic.AtomicReference;
 
-import static com.dci.intellij.dbn.common.dispose.Failsafe.conditionallyLog;
 import static com.dci.intellij.dbn.common.exception.Exceptions.causeOf;
 import static com.dci.intellij.dbn.common.util.TimeUtil.millisSince;
 import static com.dci.intellij.dbn.common.util.TimeUtil.secondsSince;
+import static com.dci.intellij.dbn.diagnostics.Diagnostics.conditionallyLog;
 
 @Slf4j
 public final class Timeout {
@@ -21,10 +22,11 @@ public final class Timeout {
     private Timeout() {}
 
     @SneakyThrows
-    public static <T> T call(long seconds, T defaultValue, boolean daemon, ThrowableCallable<T, Throwable> callable) {
+    public static <T> T call(int seconds, T defaultValue, boolean daemon, ThrowableCallable<T, Throwable> callable) {
         long start = System.currentTimeMillis();
         try {
             Threads.delay(lock);
+            seconds = Diagnostics.timeoutAdjustment(seconds);
             ThreadInfo invoker = ThreadMonitor.current();
             ExecutorService executorService = Threads.timeoutExecutor(daemon);
             AtomicReference<Throwable> exception = new AtomicReference<>();
@@ -63,10 +65,11 @@ public final class Timeout {
     }
 
     @SneakyThrows
-    public static void run(long seconds, boolean daemon, ThrowableRunnable<Throwable> runnable) {
+    public static void run(int seconds, boolean daemon, ThrowableRunnable<Throwable> runnable) {
         long start = System.currentTimeMillis();
         try {
             Threads.delay(lock);
+            seconds = Diagnostics.timeoutAdjustment(seconds);
             ThreadInfo invoker = ThreadMonitor.current();
             ExecutorService executorService = Threads.timeoutExecutor(daemon);
             AtomicReference<Throwable> exception = new AtomicReference<>();

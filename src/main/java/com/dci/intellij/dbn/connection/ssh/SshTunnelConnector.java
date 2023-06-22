@@ -10,7 +10,7 @@ import java.net.ServerSocket;
 import java.util.Properties;
 import java.util.concurrent.TimeUnit;
 
-import static com.dci.intellij.dbn.common.dispose.Failsafe.conditionallyLog;
+import static com.dci.intellij.dbn.diagnostics.Diagnostics.conditionallyLog;
 
 public class SshTunnelConnector {
     private final String proxyHost;

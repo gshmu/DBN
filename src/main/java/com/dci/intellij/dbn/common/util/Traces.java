@@ -2,7 +2,7 @@ package com.dci.intellij.dbn.common.util;
 
 import java.util.Objects;
 
-import static com.dci.intellij.dbn.common.dispose.Failsafe.conditionallyLog;
+import static com.dci.intellij.dbn.diagnostics.Diagnostics.conditionallyLog;
 
 public final class Traces {
     private Traces() {}

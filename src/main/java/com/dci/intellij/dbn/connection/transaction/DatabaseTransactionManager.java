@@ -31,12 +31,12 @@ import java.util.concurrent.atomic.AtomicBoolean;
 
 import static com.dci.intellij.dbn.common.component.Components.projectService;
 import static com.dci.intellij.dbn.common.dispose.Checks.isValid;
-import static com.dci.intellij.dbn.common.dispose.Failsafe.conditionallyLog;
 import static com.dci.intellij.dbn.common.dispose.Failsafe.guarded;
 import static com.dci.intellij.dbn.common.message.MessageCallback.when;
 import static com.dci.intellij.dbn.common.util.Commons.list;
 import static com.dci.intellij.dbn.common.util.Lists.isLast;
 import static com.dci.intellij.dbn.connection.transaction.TransactionAction.*;
+import static com.dci.intellij.dbn.diagnostics.Diagnostics.conditionallyLog;
 
 public class DatabaseTransactionManager extends ProjectComponentBase implements ProjectManagerListener {
 

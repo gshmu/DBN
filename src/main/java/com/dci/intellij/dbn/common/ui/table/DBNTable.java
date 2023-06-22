@@ -35,8 +35,8 @@ import java.util.Timer;
 import java.util.TimerTask;
 
 import static com.dci.intellij.dbn.common.dispose.Disposer.replace;
-import static com.dci.intellij.dbn.common.dispose.Failsafe.conditionallyLog;
 import static com.dci.intellij.dbn.common.dispose.Failsafe.nd;
+import static com.dci.intellij.dbn.diagnostics.Diagnostics.conditionallyLog;
 
 public abstract class DBNTable<T extends DBNTableModel> extends JTable implements StatefulDisposable, UserDataHolder {
     private static final int MAX_COLUMN_WIDTH = 300;

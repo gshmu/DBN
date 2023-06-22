@@ -38,11 +38,11 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 
-import static com.dci.intellij.dbn.common.dispose.Failsafe.conditionallyLog;
 import static com.dci.intellij.dbn.common.message.MessageCallback.when;
 import static com.dci.intellij.dbn.common.util.Messages.options;
 import static com.dci.intellij.dbn.common.util.Messages.showWarningDialog;
 import static com.dci.intellij.dbn.common.util.Unsafe.cast;
+import static com.dci.intellij.dbn.diagnostics.Diagnostics.conditionallyLog;
 import static com.intellij.openapi.ui.DialogWrapper.OK_EXIT_CODE;
 
 public abstract class DBProgramRunner<T extends ExecutionInput> extends GenericProgramRunner {

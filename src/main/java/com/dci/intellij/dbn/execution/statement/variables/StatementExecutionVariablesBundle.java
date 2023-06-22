@@ -24,7 +24,7 @@ import org.jetbrains.annotations.Nullable;
 import java.text.ParseException;
 import java.util.*;
 
-import static com.dci.intellij.dbn.common.dispose.Failsafe.conditionallyLog;
+import static com.dci.intellij.dbn.diagnostics.Diagnostics.conditionallyLog;
 
 public class StatementExecutionVariablesBundle extends StatefulDisposableBase implements StatefulDisposable {
     public static final Comparator<StatementExecutionVariable> NAME_COMPARATOR = (o1, o2) -> o1.getName().compareToIgnoreCase(o2.getName());

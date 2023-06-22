@@ -9,7 +9,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.sql.SQLException;
 
-import static com.dci.intellij.dbn.common.dispose.Failsafe.conditionallyLog;
+import static com.dci.intellij.dbn.diagnostics.Diagnostics.conditionallyLog;
 
 public final class PooledConnection {
     private PooledConnection() {}

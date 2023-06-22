@@ -30,8 +30,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static com.dci.intellij.dbn.common.Priority.HIGHEST;
-import static com.dci.intellij.dbn.common.dispose.Failsafe.conditionallyLog;
 import static com.dci.intellij.dbn.common.message.MessageCallback.when;
+import static com.dci.intellij.dbn.diagnostics.Diagnostics.conditionallyLog;
 import static com.dci.intellij.dbn.object.type.DBObjectType.*;
 
 public class DatabaseObjectFactory extends ProjectComponentBase {

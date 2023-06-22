@@ -7,7 +7,7 @@ import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
 
-import static com.dci.intellij.dbn.common.dispose.Failsafe.conditionallyLog;
+import static com.dci.intellij.dbn.diagnostics.Diagnostics.conditionallyLog;
 
 public class ConfigurationEditorUtil {
     public static int validateIntegerValue(@NotNull JTextField inputField, @NotNull String name, boolean required, int min, int max, @Nullable String hint) throws ConfigurationException {

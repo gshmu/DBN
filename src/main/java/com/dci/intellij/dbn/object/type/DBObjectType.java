@@ -16,8 +16,8 @@ import javax.swing.*;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
-import static com.dci.intellij.dbn.common.dispose.Failsafe.conditionallyLog;
 import static com.dci.intellij.dbn.common.util.Commons.nvl;
+import static com.dci.intellij.dbn.diagnostics.Diagnostics.conditionallyLog;
 
 @Getter
 public enum DBObjectType implements DynamicContentType<DBObjectType> {

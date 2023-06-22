@@ -27,13 +27,13 @@ import java.io.File;
 import java.util.List;
 import java.util.*;
 
-import static com.dci.intellij.dbn.common.dispose.Failsafe.conditionallyLog;
 import static com.dci.intellij.dbn.common.ui.util.ComboBoxes.*;
 import static com.dci.intellij.dbn.common.ui.util.TextFields.onTextChange;
 import static com.dci.intellij.dbn.common.util.Commons.coalesce;
 import static com.dci.intellij.dbn.common.util.Commons.nvl;
 import static com.dci.intellij.dbn.connection.DatabaseUrlType.CUSTOM;
 import static com.dci.intellij.dbn.connection.DatabaseUrlType.FILE;
+import static com.dci.intellij.dbn.diagnostics.Diagnostics.conditionallyLog;
 
 public class ConnectionUrlSettingsForm extends DBNFormBase {
     private JLabel urlTypeLabel;

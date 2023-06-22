@@ -17,9 +17,9 @@ import java.util.TimerTask;
 import java.util.concurrent.*;
 import java.util.concurrent.atomic.AtomicReference;
 
-import static com.dci.intellij.dbn.common.dispose.Failsafe.conditionallyLog;
 import static com.dci.intellij.dbn.common.exception.Exceptions.causeOf;
 import static com.dci.intellij.dbn.common.exception.Exceptions.toSqlException;
+import static com.dci.intellij.dbn.diagnostics.Diagnostics.conditionallyLog;
 
 @Slf4j
 public abstract class CancellableDatabaseCall<T> implements Callable<T> {

@@ -59,10 +59,10 @@ import java.util.*;
 
 import static com.dci.intellij.dbn.common.Priority.HIGHEST;
 import static com.dci.intellij.dbn.common.component.Components.projectService;
-import static com.dci.intellij.dbn.common.dispose.Failsafe.conditionallyLog;
 import static com.dci.intellij.dbn.common.message.MessageCallback.when;
 import static com.dci.intellij.dbn.common.util.Commons.list;
 import static com.dci.intellij.dbn.database.DatabaseFeature.DEBUGGING;
+import static com.dci.intellij.dbn.diagnostics.Diagnostics.conditionallyLog;
 
 @State(
     name = DatabaseDebuggerManager.COMPONENT_NAME,

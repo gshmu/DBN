@@ -27,7 +27,7 @@ import java.io.Serializable;
 import java.text.ParseException;
 import java.util.EventObject;
 
-import static com.dci.intellij.dbn.common.dispose.Failsafe.conditionallyLog;
+import static com.dci.intellij.dbn.diagnostics.Diagnostics.conditionallyLog;
 
 public abstract class AbstractDatasetTableCellEditor extends AbstractCellEditor implements TableCellEditor, StatefulDisposable {
     private final WeakRef<DataEditorComponent> editorComponent;

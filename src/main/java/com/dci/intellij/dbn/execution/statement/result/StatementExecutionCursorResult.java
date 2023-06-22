@@ -25,8 +25,8 @@ import org.jetbrains.annotations.Nullable;
 
 import java.sql.SQLException;
 
-import static com.dci.intellij.dbn.common.dispose.Failsafe.conditionallyLog;
 import static com.dci.intellij.dbn.common.dispose.Failsafe.nd;
+import static com.dci.intellij.dbn.diagnostics.Diagnostics.conditionallyLog;
 import static com.dci.intellij.dbn.execution.ExecutionStatus.EXECUTING;
 
 public class StatementExecutionCursorResult extends StatementExecutionBasicResult {

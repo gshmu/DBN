@@ -29,9 +29,9 @@ import org.jetbrains.annotations.Nullable;
 import java.lang.reflect.Constructor;
 
 import static com.dci.intellij.dbn.common.dispose.Checks.isNotValid;
-import static com.dci.intellij.dbn.common.dispose.Failsafe.conditionallyLog;
 import static com.dci.intellij.dbn.common.util.Files.isDbLanguageFile;
 import static com.dci.intellij.dbn.common.util.Files.isDbLanguagePsiFile;
+import static com.dci.intellij.dbn.diagnostics.Diagnostics.conditionallyLog;
 
 @Slf4j
 public class DBBreakpointType extends XLineBreakpointType<XBreakpointProperties> {

@@ -21,9 +21,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.StringTokenizer;
 
-import static com.dci.intellij.dbn.common.dispose.Failsafe.conditionallyLog;
 import static com.dci.intellij.dbn.common.options.setting.SettingsSupport.booleanAttribute;
 import static com.dci.intellij.dbn.common.options.setting.SettingsSupport.stringAttribute;
+import static com.dci.intellij.dbn.diagnostics.Diagnostics.conditionallyLog;
 import static com.dci.intellij.dbn.diagnostics.Diagnostics.isDatabaseAccessDebug;
 
 @Slf4j

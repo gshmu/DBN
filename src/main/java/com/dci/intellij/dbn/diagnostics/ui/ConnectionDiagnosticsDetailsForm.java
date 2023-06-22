@@ -6,8 +6,9 @@ import com.dci.intellij.dbn.common.ui.tab.TabbedPane;
 import com.dci.intellij.dbn.common.ui.table.DBNMutableTableModel;
 import com.dci.intellij.dbn.common.ui.table.DBNTable;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
+import com.dci.intellij.dbn.diagnostics.ui.model.AbstractDiagnosticsTableModel;
 import com.dci.intellij.dbn.diagnostics.ui.model.ConnectivityDiagnosticsTableModel;
-import com.dci.intellij.dbn.diagnostics.ui.model.MetadataDiagnosticsTableModel;
+import com.dci.intellij.dbn.diagnostics.ui.model.MetadataDiagnosticsTableModel2;
 import com.intellij.ui.components.JBScrollPane;
 import com.intellij.ui.tabs.TabInfo;
 import com.intellij.ui.tabs.TabsListener;
@@ -19,8 +20,8 @@ import java.awt.*;
 import static com.dci.intellij.dbn.common.dispose.Failsafe.nd;
 
 public class ConnectionDiagnosticsDetailsForm extends DBNFormBase {
-    private final DBNTable<MetadataDiagnosticsTableModel> metadataTable;
-    private final DBNTable<ConnectivityDiagnosticsTableModel> connectivityTable;
+    private final DBNTable<AbstractDiagnosticsTableModel> metadataTable;
+    private final DBNTable<AbstractDiagnosticsTableModel> connectivityTable;
 
     private JPanel mainPanel;
     private JPanel headerPanel;
@@ -37,12 +38,12 @@ public class ConnectionDiagnosticsDetailsForm extends DBNFormBase {
         diagnosticsTabsPanel.add(diagnosticsTabs, BorderLayout.CENTER);
 
 
-        MetadataDiagnosticsTableModel metadataTableModel = new MetadataDiagnosticsTableModel(connection);
+        AbstractDiagnosticsTableModel metadataTableModel = new MetadataDiagnosticsTableModel2(connection);
         metadataTable = new DiagnosticsTable<>(this, metadataTableModel);
         metadataTable.getRowSorter().toggleSortOrder(0);
         addTab(metadataTable, "Metadata Interface");
 
-        ConnectivityDiagnosticsTableModel connectivityTableModel = new ConnectivityDiagnosticsTableModel(connection);
+        AbstractDiagnosticsTableModel connectivityTableModel = new ConnectivityDiagnosticsTableModel(connection);
         connectivityTable = new DiagnosticsTable<>(this, connectivityTableModel);
         connectivityTable.getRowSorter().toggleSortOrder(0);
         addTab(connectivityTable, "Database Connectivity");

@@ -1,48 +1,18 @@
 package com.dci.intellij.dbn.diagnostics.action;
 
-import com.dci.intellij.dbn.common.action.ToggleAction;
+import com.dci.intellij.dbn.common.action.ProjectAction;
 import com.dci.intellij.dbn.common.util.Messages;
 import com.dci.intellij.dbn.diagnostics.Diagnostics;
 import com.dci.intellij.dbn.diagnostics.DiagnosticsManager;
 import com.intellij.openapi.actionSystem.AnActionEvent;
-import com.intellij.openapi.actionSystem.Presentation;
 import com.intellij.openapi.project.Project;
 import lombok.extern.slf4j.Slf4j;
 import org.jetbrains.annotations.NotNull;
 
-import static com.dci.intellij.dbn.common.dispose.Checks.isNotValid;
-
 @Slf4j
-public class DeveloperModeAction extends ToggleAction {
+public class DeveloperModeAction extends ProjectAction {
     public DeveloperModeAction() {
-        super("Developer Mode");
-    }
-
-    @Override
-    public boolean isSelected(@NotNull AnActionEvent e) {
-        return Diagnostics.isDeveloperMode();
-    }
-
-    @Override
-    public void setSelected(@NotNull AnActionEvent e, boolean state) {
-        Diagnostics.getDeveloperMode().setEnabled(state);
-
-        if (Diagnostics.isDeveloperMode()) {
-            Project project = getEventProject(e);
-            if (isNotValid(project)) return;
-
-            if (Diagnostics.hasEnabledFeatures()) {
-                Messages.showWarningDialog(project,
-                        "Developer Mode",
-                        "Developer Mode has been activated\n" +
-                                "(it will be automatically disabled after " + Diagnostics.getDeveloperMode().getTimeout() + " minutes)",
-                        new String[]{"Ok", "Open Settings..."}, 0,
-                        option -> {if (option == 1) openDiagnosticSettings(project);});
-
-            } else {
-                openDiagnosticSettings(project);
-            }
-        }
+        super("Developer Mode...");
     }
 
     private static void openDiagnosticSettings(Project project) {
@@ -51,10 +21,41 @@ public class DeveloperModeAction extends ToggleAction {
     }
 
     @Override
-    public void update(@NotNull AnActionEvent e) {
-        super.update(e);
-        Presentation presentation = e.getPresentation();
-        presentation.setText("Developer Mode");
-        //presentation.setText(Diagnostics.isDeveloperMode() ? "Developer Mode" + Diagnostics.getTimeoutText() : "Enable Developer Mode");
+    protected void update(@NotNull AnActionEvent e, @NotNull Project project) {
+        super.update(e, project);
+    }
+
+    @Override
+    protected void actionPerformed(@NotNull AnActionEvent e, @NotNull Project project) {
+        boolean developerMode = Diagnostics.isDeveloperMode();
+        if (developerMode) {
+            String remainingTime = Diagnostics.getDeveloperMode().getRemainingTime();
+            Messages.showWarningDialog(project,
+                    "Developer Mode (ACTIVE)",
+                    "Developer Mode is currently ACTIVE.\n" +
+                            "It will be automatically disabled after " + remainingTime,
+                    new String[]{"Disable Now", "Cancel", "Open Settings..."}, 0,
+                    option -> actionPerformed(project, option, false));
+        } else {
+            int timeoutMinutes = Diagnostics.getDeveloperMode().getTimeout();
+            Messages.showInfoDialog(project,
+                    "Developer Mode (INACTIVE)",
+                    "Developer Mode is currently INACTIVE\n" +
+                            "Do NOT enable Developer Mode unless explicitly instructed to do so by the DBN plugin development team\n\n" +
+                            "If enabling, it will be automatically disabled after " + timeoutMinutes + " minutes",
+                    new String[]{"Enable", "Cancel", "Open Settings..."}, 0,
+                    option -> actionPerformed(project, option, true));
+        }
+    }
+
+    private static void actionPerformed(@NotNull Project project, int option, boolean enabled) {
+        if (option == 0) {
+            Diagnostics.getDeveloperMode().setEnabled(enabled);
+            if (enabled && !Diagnostics.hasEnabledFeatures()) {
+                openDiagnosticSettings(project);
+            }
+        } else if (option == 2) {
+            openDiagnosticSettings(project);
+        }
     }
 }

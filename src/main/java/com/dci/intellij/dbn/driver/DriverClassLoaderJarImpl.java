@@ -14,8 +14,8 @@ import java.util.jar.JarFile;
 import java.util.jar.JarInputStream;
 import java.util.stream.Collectors;
 
-import static com.dci.intellij.dbn.common.dispose.Failsafe.conditionallyLog;
 import static com.dci.intellij.dbn.common.util.Unsafe.cast;
+import static com.dci.intellij.dbn.diagnostics.Diagnostics.conditionallyLog;
 
 @Slf4j
 @Getter

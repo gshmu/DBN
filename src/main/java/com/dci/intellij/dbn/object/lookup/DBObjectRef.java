@@ -31,12 +31,12 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import static com.dci.intellij.dbn.common.dispose.Checks.isValid;
-import static com.dci.intellij.dbn.common.dispose.Failsafe.conditionallyLog;
 import static com.dci.intellij.dbn.common.dispose.Failsafe.nn;
 import static com.dci.intellij.dbn.common.options.setting.SettingsSupport.connectionIdAttribute;
 import static com.dci.intellij.dbn.common.options.setting.SettingsSupport.stringAttribute;
 import static com.dci.intellij.dbn.common.util.Commons.nvl;
 import static com.dci.intellij.dbn.common.util.Unsafe.cast;
+import static com.dci.intellij.dbn.diagnostics.Diagnostics.conditionallyLog;
 import static com.dci.intellij.dbn.vfs.DatabaseFileSystem.PS;
 import static com.dci.intellij.dbn.vfs.DatabaseFileSystem.PSS;
 

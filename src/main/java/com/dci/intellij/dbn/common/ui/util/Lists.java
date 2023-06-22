@@ -6,7 +6,7 @@ import lombok.extern.slf4j.Slf4j;
 import javax.swing.event.ListDataEvent;
 import javax.swing.event.ListDataListener;
 
-import static com.dci.intellij.dbn.common.dispose.Failsafe.conditionallyLog;
+import static com.dci.intellij.dbn.diagnostics.Diagnostics.conditionallyLog;
 
 @Slf4j
 public final class Lists {

@@ -13,7 +13,7 @@ import javax.swing.tree.TreePath;
 import java.util.ArrayList;
 import java.util.List;
 
-import static com.dci.intellij.dbn.common.dispose.Failsafe.conditionallyLog;
+import static com.dci.intellij.dbn.diagnostics.Diagnostics.conditionallyLog;
 
 public class DatabaseBrowserUtils {
     @Nullable

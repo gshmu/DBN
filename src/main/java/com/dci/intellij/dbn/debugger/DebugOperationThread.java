@@ -6,7 +6,7 @@ import com.intellij.openapi.project.Project;
 
 import java.sql.SQLException;
 
-import static com.dci.intellij.dbn.common.dispose.Failsafe.conditionallyLog;
+import static com.dci.intellij.dbn.diagnostics.Diagnostics.conditionallyLog;
 
 public abstract class DebugOperationThread extends Thread implements NotificationSupport {
     private Project project;
