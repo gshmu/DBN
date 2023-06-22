@@ -52,6 +52,16 @@ public class DriverBundle implements Disposable {
         return null;
     }
 
+    @Nullable
+    public Driver createDriver(String className) {
+        for (Class<Driver> driver : getDrivers()) {
+            if (Objects.equals(driver.getName(), className)) {
+                return createDriver(driver);
+            }
+        }
+        return null;
+    }
+
     @NotNull
     @SneakyThrows
     private static Driver createDriver(Class<Driver> driverClass){
