@@ -3,6 +3,7 @@ package com.dci.intellij.dbn.common.thread;
 import com.dci.intellij.dbn.common.routine.Consumer;
 import com.dci.intellij.dbn.common.routine.ThrowableCallable;
 import com.dci.intellij.dbn.common.util.Commons;
+import com.dci.intellij.dbn.diagnostics.Diagnostics;
 import com.intellij.openapi.Disposable;
 import com.intellij.openapi.application.Application;
 import com.intellij.openapi.application.ApplicationManager;
@@ -14,7 +15,8 @@ import org.jetbrains.annotations.NotNull;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Supplier;
 
-import static com.dci.intellij.dbn.common.dispose.Failsafe.*;
+import static com.dci.intellij.dbn.common.dispose.Failsafe.guarded;
+import static com.dci.intellij.dbn.common.dispose.Failsafe.nd;
 
 public final class Dispatch {
     private Dispatch() {}
@@ -71,7 +73,7 @@ public final class Dispatch {
                 result = callable.call();
                 resultRef.set(result);
             } catch (Throwable e) {
-                conditionallyLog(e);
+                Diagnostics.conditionallyLog(e);
                 exceptionRef.set((E) e);
             }
 

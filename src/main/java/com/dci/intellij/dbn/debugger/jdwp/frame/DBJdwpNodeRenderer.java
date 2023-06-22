@@ -25,7 +25,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 
-import static com.dci.intellij.dbn.common.dispose.Failsafe.conditionallyLog;
+import static com.dci.intellij.dbn.diagnostics.Diagnostics.conditionallyLog;
 
 public class DBJdwpNodeRenderer extends NodeRendererImpl {
     public DBJdwpNodeRenderer() {

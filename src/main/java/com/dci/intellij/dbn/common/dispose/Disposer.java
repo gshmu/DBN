@@ -14,9 +14,9 @@ import java.lang.ref.Reference;
 import java.util.*;
 
 import static com.dci.intellij.dbn.common.dispose.Checks.isNotValid;
-import static com.dci.intellij.dbn.common.dispose.Failsafe.conditionallyLog;
 import static com.dci.intellij.dbn.common.dispose.Failsafe.guarded;
 import static com.dci.intellij.dbn.common.thread.ThreadMonitor.isDispatchThread;
+import static com.dci.intellij.dbn.diagnostics.Diagnostics.conditionallyLog;
 
 @Slf4j
 public final class Disposer {

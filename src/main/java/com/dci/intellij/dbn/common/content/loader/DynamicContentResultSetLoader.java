@@ -31,11 +31,13 @@ import java.util.Objects;
 import java.util.UUID;
 
 import static com.dci.intellij.dbn.common.content.DynamicContentProperty.INTERNAL;
-import static com.dci.intellij.dbn.common.dispose.Failsafe.conditionallyLog;
 import static com.dci.intellij.dbn.common.exception.Exceptions.toSqlException;
 import static com.dci.intellij.dbn.common.exception.Exceptions.toSqlTimeoutException;
 import static com.dci.intellij.dbn.common.util.TimeUtil.millisSince;
+import static com.dci.intellij.dbn.diagnostics.Diagnostics.conditionallyLog;
 import static com.dci.intellij.dbn.diagnostics.Diagnostics.isDatabaseAccessDebug;
+import static com.dci.intellij.dbn.diagnostics.data.Activity.LOAD;
+import static com.dci.intellij.dbn.diagnostics.data.Activity.QUERY;
 
 @Slf4j
 public abstract class DynamicContentResultSetLoader<E extends DynamicContentElement, M extends DBObjectMetadata>
@@ -124,13 +126,13 @@ public abstract class DynamicContentResultSetLoader<E extends DynamicContentElem
                 DynamicContentType<?> contentType = content.getContentType();
                 M metadata = DBObjectMetadataFactory.INSTANCE.create(contentType, resultSet);
 
-                Diagnostics.introduceDatabaseLag(Diagnostics.getQueryingLag());
+                Diagnostics.databaseLag(QUERY);
                 LoaderCache loaderCache = new LoaderCache();
                 int count = 0;
 
                 long loadStart = System.currentTimeMillis();
                 while (resultSet != null && resultSet.next()) {
-                    Diagnostics.introduceDatabaseLag(Diagnostics.getFetchingLag());
+                    Diagnostics.databaseLag(LOAD);
                     content.checkDisposed();
 
                     E element = null;

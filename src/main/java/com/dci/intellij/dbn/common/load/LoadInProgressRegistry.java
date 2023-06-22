@@ -11,7 +11,7 @@ import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
 
-import static com.dci.intellij.dbn.common.dispose.Failsafe.conditionallyLog;
+import static com.dci.intellij.dbn.diagnostics.Diagnostics.conditionallyLog;
 
 public abstract class LoadInProgressRegistry<T extends StatefulDisposable> extends StatefulDisposableBase {
     private final List<T> nodes = CollectionUtil.createConcurrentList();

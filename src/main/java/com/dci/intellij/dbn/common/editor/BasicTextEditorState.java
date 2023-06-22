@@ -17,10 +17,10 @@ import lombok.Data;
 import org.jdom.Element;
 import org.jetbrains.annotations.NotNull;
 
-import static com.dci.intellij.dbn.common.dispose.Failsafe.conditionallyLog;
 import static com.dci.intellij.dbn.common.dispose.Failsafe.nd;
 import static com.dci.intellij.dbn.common.options.setting.SettingsSupport.integerAttribute;
 import static com.dci.intellij.dbn.common.options.setting.SettingsSupport.stringAttribute;
+import static com.dci.intellij.dbn.diagnostics.Diagnostics.conditionallyLog;
 
 @Data
 public class BasicTextEditorState implements FileEditorState {

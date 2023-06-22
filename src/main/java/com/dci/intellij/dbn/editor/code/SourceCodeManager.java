@@ -67,13 +67,13 @@ import java.util.Objects;
 import static com.dci.intellij.dbn.common.Priority.HIGH;
 import static com.dci.intellij.dbn.common.Priority.HIGHEST;
 import static com.dci.intellij.dbn.common.component.Components.projectService;
-import static com.dci.intellij.dbn.common.dispose.Failsafe.conditionallyLog;
 import static com.dci.intellij.dbn.common.message.MessageCallback.when;
 import static com.dci.intellij.dbn.common.navigation.NavigationInstruction.*;
 import static com.dci.intellij.dbn.common.util.Commons.list;
 import static com.dci.intellij.dbn.common.util.Messages.*;
 import static com.dci.intellij.dbn.common.util.Naming.unquote;
 import static com.dci.intellij.dbn.database.DatabaseFeature.OBJECT_CHANGE_MONITORING;
+import static com.dci.intellij.dbn.diagnostics.Diagnostics.conditionallyLog;
 import static com.dci.intellij.dbn.vfs.VirtualFileStatus.*;
 import static com.intellij.openapi.fileEditor.FileEditorManagerListener.FILE_EDITOR_MANAGER;
 

@@ -36,7 +36,7 @@ import java.util.List;
 
 import static com.dci.intellij.dbn.common.Priority.HIGH;
 import static com.dci.intellij.dbn.common.component.Components.projectService;
-import static com.dci.intellij.dbn.common.dispose.Failsafe.conditionallyLog;
+import static com.dci.intellij.dbn.diagnostics.Diagnostics.conditionallyLog;
 import static com.dci.intellij.dbn.object.common.status.DBObjectStatus.COMPILING;
 
 public class DatabaseCompilerManager extends ProjectComponentBase {

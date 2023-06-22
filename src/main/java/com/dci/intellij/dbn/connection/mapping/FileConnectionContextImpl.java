@@ -15,8 +15,8 @@ import org.jdom.Element;
 import org.jetbrains.annotations.Nullable;
 
 import static com.dci.intellij.dbn.common.dispose.Checks.isValid;
-import static com.dci.intellij.dbn.common.dispose.Failsafe.conditionallyLog;
 import static com.dci.intellij.dbn.common.options.setting.SettingsSupport.*;
+import static com.dci.intellij.dbn.diagnostics.Diagnostics.conditionallyLog;
 
 @Slf4j
 @Data

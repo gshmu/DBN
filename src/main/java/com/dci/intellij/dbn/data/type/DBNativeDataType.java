@@ -16,8 +16,8 @@ import org.jetbrains.annotations.Nullable;
 import java.math.BigDecimal;
 import java.sql.*;
 
-import static com.dci.intellij.dbn.common.dispose.Failsafe.conditionallyLog;
 import static com.dci.intellij.dbn.common.util.Unsafe.silent;
+import static com.dci.intellij.dbn.diagnostics.Diagnostics.conditionallyLog;
 
 @Slf4j
 @Getter

@@ -10,7 +10,7 @@ import java.lang.reflect.Method;
 import java.sql.SQLException;
 import java.sql.SQLTimeoutException;
 
-import static com.dci.intellij.dbn.common.dispose.Failsafe.conditionallyLog;
+import static com.dci.intellij.dbn.diagnostics.Diagnostics.conditionallyLog;
 
 @Slf4j
 public class PostgresMessageParserInterface implements DatabaseMessageParserInterface {

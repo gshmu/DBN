@@ -13,7 +13,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.io.InputStream;
 
-import static com.dci.intellij.dbn.common.dispose.Failsafe.conditionallyLog;
+import static com.dci.intellij.dbn.diagnostics.Diagnostics.conditionallyLog;
 
 public class JiraIssueReportSubmitter extends IssueReportSubmitter {
     private static final HttpClientBuilder HTTP_CLIENT_BUILDER = HttpClientBuilder.create();

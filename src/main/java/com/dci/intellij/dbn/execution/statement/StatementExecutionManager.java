@@ -15,6 +15,7 @@ import com.dci.intellij.dbn.connection.*;
 import com.dci.intellij.dbn.connection.jdbc.DBNConnection;
 import com.dci.intellij.dbn.connection.mapping.FileConnectionContextManager;
 import com.dci.intellij.dbn.debugger.DBDebuggerType;
+import com.dci.intellij.dbn.diagnostics.Diagnostics;
 import com.dci.intellij.dbn.editor.console.SQLConsoleEditor;
 import com.dci.intellij.dbn.editor.ddl.DDLFileEditor;
 import com.dci.intellij.dbn.execution.common.options.ExecutionEngineSettings;
@@ -55,7 +56,8 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 import static com.dci.intellij.dbn.common.component.Components.projectService;
 import static com.dci.intellij.dbn.common.dispose.Checks.isNotValid;
-import static com.dci.intellij.dbn.common.dispose.Failsafe.*;
+import static com.dci.intellij.dbn.common.dispose.Failsafe.guarded;
+import static com.dci.intellij.dbn.common.dispose.Failsafe.nd;
 import static com.dci.intellij.dbn.execution.ExecutionStatus.*;
 
 @State(
@@ -267,7 +269,7 @@ public class StatementExecutionManager extends ProjectComponentBase implements P
                 ConnectionHandler connection = Failsafe.nn(executionProcessor.getConnection());
                 conn = connection.getConnection(executionInput.getTargetSessionId(), schema);
             } catch (SQLException e) {
-                conditionallyLog(e);
+                Diagnostics.conditionallyLog(e);
                 sendErrorNotification(
                         NotificationGroup.EXECUTION,
                         "Error executing {0}. Failed to ensure connectivity: {1}", statementName, e);
@@ -280,9 +282,9 @@ public class StatementExecutionManager extends ProjectComponentBase implements P
                 executionProcessor.execute(conn, false);
             }
         } catch (ProcessCanceledException e) {
-            conditionallyLog(e);
+            Diagnostics.conditionallyLog(e);
         } catch (SQLException e) {
-            conditionallyLog(e);
+            Diagnostics.conditionallyLog(e);
             sendErrorNotification(
                     NotificationGroup.EXECUTION,
                     "Error executing {0}: {1}", statementName, e);

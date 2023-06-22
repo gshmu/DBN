@@ -31,7 +31,7 @@ import javax.swing.*;
 import java.awt.*;
 import java.sql.SQLException;
 
-import static com.dci.intellij.dbn.common.dispose.Failsafe.conditionallyLog;
+import static com.dci.intellij.dbn.diagnostics.Diagnostics.conditionallyLog;
 
 public class MethodExecutionLargeValueResultForm extends DBNFormBase {
     private JPanel actionsPanel;

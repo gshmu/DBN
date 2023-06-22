@@ -45,8 +45,8 @@ import java.util.List;
 
 import static com.dci.intellij.dbn.common.component.Components.projectService;
 import static com.dci.intellij.dbn.common.dispose.Checks.isValid;
-import static com.dci.intellij.dbn.common.dispose.Failsafe.conditionallyLog;
 import static com.dci.intellij.dbn.common.message.MessageCallback.when;
+import static com.dci.intellij.dbn.diagnostics.Diagnostics.conditionallyLog;
 import static com.dci.intellij.dbn.execution.ExecutionStatus.CANCELLED;
 import static com.dci.intellij.dbn.execution.ExecutionStatus.EXECUTING;
 

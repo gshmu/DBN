@@ -33,9 +33,9 @@ import javax.swing.*;
 import java.util.Set;
 import java.util.function.Consumer;
 
-import static com.dci.intellij.dbn.common.dispose.Failsafe.conditionallyLog;
 import static com.dci.intellij.dbn.common.dispose.Failsafe.guarded;
 import static com.dci.intellij.dbn.common.util.Commons.nvl;
+import static com.dci.intellij.dbn.diagnostics.Diagnostics.conditionallyLog;
 
 public abstract class IdentifierPsiElement extends LeafPsiElement<IdentifierElementType> {
     private PsiResolveResult ref;

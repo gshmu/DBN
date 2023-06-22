@@ -18,9 +18,9 @@ import java.awt.*;
 import java.awt.event.InputEvent;
 import java.util.function.Predicate;
 
-import static com.dci.intellij.dbn.common.dispose.Failsafe.conditionallyLog;
 import static com.dci.intellij.dbn.common.ui.util.Borders.*;
 import static com.dci.intellij.dbn.common.util.Unsafe.cast;
+import static com.dci.intellij.dbn.diagnostics.Diagnostics.conditionallyLog;
 
 public class UserInterface {
 

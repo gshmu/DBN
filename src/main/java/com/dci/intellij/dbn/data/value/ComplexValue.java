@@ -5,9 +5,9 @@ import org.jetbrains.annotations.Nullable;
 
 import java.sql.*;
 
-import static com.dci.intellij.dbn.common.dispose.Failsafe.conditionallyLog;
 import static com.dci.intellij.dbn.common.exception.Exceptions.toSqlException;
 import static com.dci.intellij.dbn.common.util.Commons.nvl;
+import static com.dci.intellij.dbn.diagnostics.Diagnostics.conditionallyLog;
 
 public class ComplexValue extends ValueAdapter<String> implements Comparable<ComplexValue>{
     private String displayValue;

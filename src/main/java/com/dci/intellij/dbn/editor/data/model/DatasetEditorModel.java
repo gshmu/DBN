@@ -45,10 +45,10 @@ import java.util.List;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicReference;
 
-import static com.dci.intellij.dbn.common.dispose.Failsafe.conditionallyLog;
 import static com.dci.intellij.dbn.common.dispose.Failsafe.guarded;
 import static com.dci.intellij.dbn.connection.ConnectionProperty.RS_TYPE_FORWARD_ONLY;
 import static com.dci.intellij.dbn.connection.ConnectionProperty.RS_TYPE_SCROLL_INSENSITIVE;
+import static com.dci.intellij.dbn.diagnostics.Diagnostics.conditionallyLog;
 import static com.dci.intellij.dbn.editor.data.model.RecordStatus.*;
 
 @Slf4j

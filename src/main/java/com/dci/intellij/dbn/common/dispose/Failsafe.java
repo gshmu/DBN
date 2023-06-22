@@ -4,7 +4,6 @@ import com.dci.intellij.dbn.common.routine.ParametricCallable;
 import com.dci.intellij.dbn.common.routine.ParametricRunnable;
 import com.dci.intellij.dbn.common.routine.ThrowableCallable;
 import com.dci.intellij.dbn.common.routine.ThrowableRunnable;
-import com.dci.intellij.dbn.diagnostics.Diagnostics;
 import com.intellij.openapi.progress.ProcessCanceledException;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
@@ -12,7 +11,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import static com.dci.intellij.dbn.common.dispose.Checks.isNotValid;
-import static com.dci.intellij.dbn.common.util.Commons.nvl;
+import static com.dci.intellij.dbn.diagnostics.Diagnostics.conditionallyLog;
 
 @Slf4j
 public class Failsafe {
@@ -79,13 +78,6 @@ public class Failsafe {
         } catch (Exception e) {
             conditionallyLog(e);
             throwExecutionException(e);
-        }
-    }
-
-    public static void conditionallyLog(Throwable exception) {
-        if (Diagnostics.isFailsafeLoggingEnabled()) {
-            String message = nvl(exception.getMessage(), exception.getClass().getSimpleName());
-            log.warn("[FAILSAFE] " + message, exception);
         }
     }
 

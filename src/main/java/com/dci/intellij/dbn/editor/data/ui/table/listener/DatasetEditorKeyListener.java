@@ -15,7 +15,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static com.dci.intellij.dbn.common.dispose.Checks.isNotValid;
-import static com.dci.intellij.dbn.common.dispose.Failsafe.conditionallyLog;
+import static com.dci.intellij.dbn.diagnostics.Diagnostics.conditionallyLog;
 import static com.dci.intellij.dbn.editor.data.model.RecordStatus.INSERTING;
 import static com.dci.intellij.dbn.editor.data.model.RecordStatus.UPDATING;
 

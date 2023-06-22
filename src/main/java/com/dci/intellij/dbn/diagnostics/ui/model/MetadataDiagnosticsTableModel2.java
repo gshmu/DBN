@@ -8,25 +8,21 @@ import com.dci.intellij.dbn.diagnostics.data.DiagnosticEntry;
 import com.intellij.openapi.project.Project;
 import org.jetbrains.annotations.NotNull;
 
-public class MetadataDiagnosticsTableModel extends AbstractDiagnosticsTableModel<String> {
+public class MetadataDiagnosticsTableModel2 extends AbstractDiagnosticsTableModel<String> {
     private final ConnectionRef connection;
 
-    private static final String[] COLUMN_NAMES = new String[] {
-            "Identifier",
-            "Invocations",
-            "Failures",
-            "Timeouts",
-            "Best Query (ms)",
-            "Best Load (ms)",
-            "Worst Query (ms)",
-            "Worst Load (ms)",
-            "Average Query (ms)",
-            "Average Load (ms)",
-            "Total Query (ms)",
-            "Total Load (ms)",
-            "Fetch Block Size"};
+    private static final String[] COLUMN_NAMES = new String[]{
+            "Identifier",                  // 0
+            "Invocations",                 // 1
+            "Failures",                    // 2
+            "Timeouts",                    // 3
+            "Best (Query / Load - ms)",    // 4
+            "Worst (Query / Load - ms)",   // 5
+            "Average (Query / Load - ms)", // 6
+            "Total (Query / Load - ms)",   // 7
+            "Fetch Block Size"};           // 8
 
-    public MetadataDiagnosticsTableModel(ConnectionHandler connection) {
+    public MetadataDiagnosticsTableModel2(ConnectionHandler connection) {
         super(connection.getProject());
         this.connection = connection.ref();
     }
@@ -53,15 +49,11 @@ public class MetadataDiagnosticsTableModel extends AbstractDiagnosticsTableModel
             case 1: return q.getInvocations();
             case 2: return q.getFailures();
             case 3: return q.getTimeouts();
-            case 4: return q.getBest();
-            case 5: return l.getBest();
-            case 6: return q.getWorst();
-            case 7: return l.getWorst();
-            case 8: return q.getAverage();
-            case 9: return l.getAverage();
-            case 10: return q.getTotal();
-            case 11: return l.getTotal();
-            case 12: return entry.getDetail("FETCH_BLOCK").getAverage();
+            case 4: return q.getBest() + " / " + l.getBest();
+            case 5: return q.getWorst() + " / " + l.getWorst();
+            case 6: return q.getAverage() + " / " + l.getAverage();
+            case 7: return q.getTotal() + " / " + l.getTotal();
+            case 8: return entry.getDetail("FETCH_BLOCK").getAverage();
         }
         return "";
     }

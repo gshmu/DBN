@@ -5,7 +5,7 @@ import lombok.Getter;
 
 import java.util.Objects;
 
-import static com.dci.intellij.dbn.common.dispose.Failsafe.conditionallyLog;
+import static com.dci.intellij.dbn.diagnostics.Diagnostics.conditionallyLog;
 
 @Getter
 public enum DBDebuggerType implements Presentable {

@@ -13,7 +13,7 @@ import com.dci.intellij.dbn.vfs.file.DBSourceCodeVirtualFile;
 import com.intellij.openapi.project.Project;
 import com.intellij.util.text.DateFormatUtil;
 
-import static com.dci.intellij.dbn.common.dispose.Failsafe.conditionallyLog;
+import static com.dci.intellij.dbn.diagnostics.Diagnostics.conditionallyLog;
 import static com.dci.intellij.dbn.vfs.VirtualFileStatus.MODIFIED;
 
 public class SourceCodeOutdatedNotificationPanel extends SourceCodeEditorNotificationPanel{

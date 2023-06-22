@@ -28,8 +28,8 @@ import java.awt.event.*;
 import java.text.ParseException;
 import java.util.List;
 
-import static com.dci.intellij.dbn.common.dispose.Failsafe.conditionallyLog;
 import static com.dci.intellij.dbn.common.ui.util.TextFields.onTextChange;
+import static com.dci.intellij.dbn.diagnostics.Diagnostics.conditionallyLog;
 import static com.dci.intellij.dbn.editor.data.model.RecordStatus.DELETED;
 
 public class DatasetRecordEditorColumnForm extends DBNFormBase {

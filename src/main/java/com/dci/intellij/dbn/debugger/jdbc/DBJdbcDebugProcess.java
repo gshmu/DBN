@@ -58,10 +58,10 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import static com.dci.intellij.dbn.common.dispose.Failsafe.conditionallyLog;
 import static com.dci.intellij.dbn.debugger.common.breakpoint.DBBreakpointUtil.getBreakpointId;
 import static com.dci.intellij.dbn.debugger.common.breakpoint.DBBreakpointUtil.setBreakpointId;
 import static com.dci.intellij.dbn.debugger.common.process.DBDebugProcessStatus.*;
+import static com.dci.intellij.dbn.diagnostics.Diagnostics.conditionallyLog;
 import static com.dci.intellij.dbn.execution.ExecutionStatus.CANCELLED;
 
 @Getter
