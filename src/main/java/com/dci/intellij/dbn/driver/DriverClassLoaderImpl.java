@@ -57,7 +57,7 @@ class DriverClassLoaderImpl extends URLClassLoader implements DriverClassLoader 
 
                 String name = entry.getName();
                 if (name.endsWith(".class")) {
-                    String className = name.replaceAll("/", "\\.");
+                    String className = name.replaceAll("/", ".");
                     className = className.substring(0, className.length() - 6);
                     try {
                         Class<?> clazz = loadClass(className);
@@ -97,7 +97,7 @@ class DriverClassLoaderImpl extends URLClassLoader implements DriverClassLoader 
     private static URL[] getUrls(File library) {
         if (library.isDirectory()) {
             File[] files = library.listFiles();
-            if (files == null || files.length == 0) throw new IOException("No fiels found at location");
+            if (files == null || files.length == 0) throw new IOException("No files found at location");
             return Arrays.
                     stream(files).
                     filter(file -> file.getName().endsWith(".jar")).
