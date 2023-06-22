@@ -13,6 +13,7 @@ import com.dci.intellij.dbn.vfs.file.DBContentVirtualFile;
 import com.intellij.openapi.components.State;
 import com.intellij.openapi.components.Storage;
 import com.intellij.openapi.fileEditor.FileEditorManager;
+import com.intellij.openapi.fileEditor.impl.FileEditorManagerImpl;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
 import org.jdom.Element;
@@ -45,7 +46,7 @@ public class EnvironmentManager extends ProjectComponentBase implements Persiste
         return new EnvironmentManagerListener() {
             @Override
             public void configurationChanged(Project project) {
-                FileEditorManager fileEditorManager = FileEditorManager.getInstance(getProject());
+                FileEditorManagerImpl fileEditorManager = (FileEditorManagerImpl) FileEditorManager.getInstance(getProject());
                 VirtualFile[] openFiles = fileEditorManager.getOpenFiles();
                 for (VirtualFile virtualFile : openFiles) {
                     fileEditorManager.updateFilePresentation(virtualFile);
