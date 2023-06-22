@@ -17,8 +17,8 @@ import javax.swing.*;
 import java.io.File;
 import java.util.List;
 
-import static com.dci.intellij.dbn.common.dispose.Failsafe.conditionallyLog;
 import static com.dci.intellij.dbn.common.ui.util.TextFields.onTextChange;
+import static com.dci.intellij.dbn.diagnostics.Diagnostics.conditionallyLog;
 
 public class TnsNamesImportForm extends DBNFormBase {
     private TextFieldWithBrowseButton tnsNamesFileTextField;

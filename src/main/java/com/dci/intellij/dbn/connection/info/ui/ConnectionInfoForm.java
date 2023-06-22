@@ -21,7 +21,7 @@ import java.awt.*;
 import java.sql.Connection;
 import java.sql.SQLException;
 
-import static com.dci.intellij.dbn.common.dispose.Failsafe.conditionallyLog;
+import static com.dci.intellij.dbn.diagnostics.Diagnostics.conditionallyLog;
 
 @SuppressWarnings("unused")
 public class ConnectionInfoForm extends DBNFormBase {

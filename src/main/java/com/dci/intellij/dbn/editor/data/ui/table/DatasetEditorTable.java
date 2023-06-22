@@ -62,7 +62,7 @@ import java.awt.event.MouseEvent;
 import java.sql.SQLException;
 import java.util.EventObject;
 
-import static com.dci.intellij.dbn.common.dispose.Failsafe.conditionallyLog;
+import static com.dci.intellij.dbn.diagnostics.Diagnostics.conditionallyLog;
 import static com.dci.intellij.dbn.editor.data.DatasetLoadInstruction.*;
 import static com.dci.intellij.dbn.editor.data.model.RecordStatus.*;
 

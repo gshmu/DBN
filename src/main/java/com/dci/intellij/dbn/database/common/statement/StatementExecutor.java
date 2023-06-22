@@ -7,8 +7,8 @@ import com.dci.intellij.dbn.connection.Resources;
 import java.sql.SQLException;
 import java.util.concurrent.*;
 
-import static com.dci.intellij.dbn.common.dispose.Failsafe.conditionallyLog;
 import static com.dci.intellij.dbn.common.exception.Exceptions.*;
+import static com.dci.intellij.dbn.diagnostics.Diagnostics.conditionallyLog;
 
 public final class StatementExecutor {
     private StatementExecutor() {}

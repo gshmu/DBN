@@ -15,7 +15,7 @@ import lombok.SneakyThrows;
 import org.jdom.Document;
 import org.jetbrains.annotations.NotNull;
 
-import static com.dci.intellij.dbn.common.dispose.Failsafe.conditionallyLog;
+import static com.dci.intellij.dbn.diagnostics.Diagnostics.conditionallyLog;
 
 @Getter
 public abstract class DBLanguageParser implements PsiParser {

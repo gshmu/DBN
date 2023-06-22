@@ -36,7 +36,7 @@ import java.awt.event.KeyListener;
 import java.sql.SQLException;
 
 import static com.dci.intellij.dbn.common.dispose.Disposer.replace;
-import static com.dci.intellij.dbn.common.dispose.Failsafe.conditionallyLog;
+import static com.dci.intellij.dbn.diagnostics.Diagnostics.conditionallyLog;
 
 public class LargeValuePreviewPopup extends DBNFormBase {
     public static final int INITIAL_MAX_SIZE = 4000;

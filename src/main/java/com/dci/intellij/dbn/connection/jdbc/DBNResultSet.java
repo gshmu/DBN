@@ -17,7 +17,7 @@ import java.sql.*;
 import java.util.Calendar;
 import java.util.Map;
 
-import static com.dci.intellij.dbn.common.dispose.Failsafe.conditionallyLog;
+import static com.dci.intellij.dbn.diagnostics.Diagnostics.conditionallyLog;
 
 public class DBNResultSet extends DBNResource<ResultSet> implements ResultSet, CloseableResource {
     private WeakRef<DBNStatement> statement;

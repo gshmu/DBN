@@ -10,7 +10,7 @@ import com.intellij.xdebugger.XDebugSession;
 
 import java.util.Date;
 
-import static com.dci.intellij.dbn.common.dispose.Failsafe.conditionallyLog;
+import static com.dci.intellij.dbn.diagnostics.Diagnostics.conditionallyLog;
 
 public class DBDebugConsoleLogger {
     protected XDebugSession session;

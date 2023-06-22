@@ -18,10 +18,10 @@ import java.sql.Statement;
 import java.util.Arrays;
 import java.util.List;
 
-import static com.dci.intellij.dbn.common.dispose.Failsafe.conditionallyLog;
 import static com.dci.intellij.dbn.database.DatabaseFeature.CONNECTION_ERROR_RECOVERY;
 import static com.dci.intellij.dbn.database.DatabaseFeature.OBJECT_SOURCE_EDITING;
 import static com.dci.intellij.dbn.database.DatabaseObjectTypeId.*;
+import static com.dci.intellij.dbn.diagnostics.Diagnostics.conditionallyLog;
 
 class SqliteCompatibilityInterface extends DatabaseCompatibilityInterface {
 

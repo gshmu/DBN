@@ -35,6 +35,7 @@ public class DiagnosticSettingsForm extends DBNFormBase {
     private JCheckBox backgroundDisposerCheckBox;
     private JPanel hintPanel;
     private JBTextField developerModeTimeoutTextField;
+    private JCheckBox timeoutHandlingCheckBox;
 
     private final DBNHintForm disclaimerForm;
 
@@ -59,12 +60,13 @@ public class DiagnosticSettingsForm extends DBNFormBase {
         databaseLaggingCheckBox.setSelected(databaseLag.isEnabled());
         connectivityLagTextField.setText(Long.toString(databaseLag.getConnectivity()));
         queryingLagTextField.setText(Long.toString(databaseLag.getQuerying()));
-        fetchingLagTextField.setText(Long.toString(databaseLag.getFetching()));
+        fetchingLagTextField.setText(Long.toString(databaseLag.getLoading()));
 
         Miscellaneous miscellaneous = Diagnostics.getMiscellaneous();
         dialogSizingCheckbox.setSelected(miscellaneous.isDialogSizingReset());
         bulkActionsCheckbox.setSelected(miscellaneous.isBulkActionsEnabled());
         backgroundDisposerCheckBox.setSelected(miscellaneous.isBackgroundDisposerDisabled());
+        timeoutHandlingCheckBox.setSelected(miscellaneous.isTimeoutHandlingDisabled());
 
         updateFields(null);
 
@@ -82,6 +84,7 @@ public class DiagnosticSettingsForm extends DBNFormBase {
         bulkActionsCheckbox.setEnabled(developerMode);
         failsafeLoggingCheckBox.setEnabled(developerMode);
         backgroundDisposerCheckBox.setEnabled(developerMode);
+        timeoutHandlingCheckBox.setEnabled(developerMode);
 
         boolean databaseLaggingEnabled = developerMode && databaseLaggingCheckBox.isSelected();
         connectivityLagTextField.setEnabled(databaseLaggingEnabled);
@@ -107,19 +110,20 @@ public class DiagnosticSettingsForm extends DBNFormBase {
         databaseLag.setEnabled(databaseLaggingCheckBox.isSelected());
         databaseLag.setConnectivity(validateIntegerValue(connectivityLagTextField, "Connectivity Lag", true, 0, 60000, null));
         databaseLag.setQuerying(validateIntegerValue(queryingLagTextField, "Querying Lag", true, 0, 60000, null));
-        databaseLag.setFetching(validateIntegerValue(fetchingLagTextField, "Fetching Lag", true, 0, 10000, null));
+        databaseLag.setLoading(validateIntegerValue(fetchingLagTextField, "Fetching Lag", true, 0, 10000, null));
 
         Miscellaneous miscellaneous = Diagnostics.getMiscellaneous();
         miscellaneous.setDialogSizingReset(dialogSizingCheckbox.isSelected());
         miscellaneous.setBulkActionsEnabled(bulkActionsCheckbox.isSelected());
         miscellaneous.setBackgroundDisposerDisabled(backgroundDisposerCheckBox.isSelected());
+        miscellaneous.setTimeoutHandlingDisabled(timeoutHandlingCheckBox.isSelected());
     }
 
     private int getDeveloperModeTimeout() {
         try {
             int timeout = Integer.parseInt(developerModeTimeoutTextField.getText());
-            if (timeout < 10) return 10;
-            if (timeout > 60) return 60;
+            if (timeout < 1) return 1;
+            if (timeout > 180) return 180;
             return timeout;
         } catch (NumberFormatException e) {
             return Diagnostics.getDeveloperMode().getTimeout();

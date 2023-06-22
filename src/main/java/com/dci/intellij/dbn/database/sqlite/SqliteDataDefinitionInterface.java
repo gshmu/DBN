@@ -17,7 +17,7 @@ import com.intellij.openapi.util.text.StringUtil;
 
 import java.sql.SQLException;
 
-import static com.dci.intellij.dbn.common.dispose.Failsafe.conditionallyLog;
+import static com.dci.intellij.dbn.diagnostics.Diagnostics.conditionallyLog;
 
 public class SqliteDataDefinitionInterface extends DatabaseDataDefinitionInterfaceImpl {
     SqliteDataDefinitionInterface(DatabaseInterfaces provider) {

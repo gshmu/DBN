@@ -15,7 +15,7 @@ import java.text.*;
 import java.util.Date;
 import java.util.Locale;
 
-import static com.dci.intellij.dbn.common.dispose.Failsafe.conditionallyLog;
+import static com.dci.intellij.dbn.diagnostics.Diagnostics.conditionallyLog;
 
 
 @Getter

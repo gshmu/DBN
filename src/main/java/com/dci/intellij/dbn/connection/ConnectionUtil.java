@@ -24,8 +24,8 @@ import java.sql.Driver;
 import java.sql.SQLException;
 import java.sql.SQLTimeoutException;
 
-import static com.dci.intellij.dbn.common.dispose.Failsafe.conditionallyLog;
 import static com.dci.intellij.dbn.common.util.TimeUtil.millisSince;
+import static com.dci.intellij.dbn.diagnostics.Diagnostics.conditionallyLog;
 
 public class ConnectionUtil {
     private ConnectionUtil() {}

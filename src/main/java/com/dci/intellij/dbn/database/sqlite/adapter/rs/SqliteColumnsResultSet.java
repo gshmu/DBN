@@ -8,9 +8,9 @@ import java.sql.SQLException;
 import java.util.Objects;
 
 import static com.dci.intellij.dbn.common.cache.CacheKey.key;
-import static com.dci.intellij.dbn.common.dispose.Failsafe.conditionallyLog;
 import static com.dci.intellij.dbn.database.sqlite.adapter.SqliteRawMetaData.RawForeignKeyInfo;
 import static com.dci.intellij.dbn.database.sqlite.adapter.SqliteRawMetaData.RawTableInfo;
+import static com.dci.intellij.dbn.diagnostics.Diagnostics.conditionallyLog;
 
 /**
  * COLUMN_NAME

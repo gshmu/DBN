@@ -12,7 +12,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.text.SimpleDateFormat;
 
-import static com.dci.intellij.dbn.common.dispose.Failsafe.conditionallyLog;
+import static com.dci.intellij.dbn.diagnostics.Diagnostics.conditionallyLog;
 
 public abstract class DatabaseMetadataInterfaceImpl extends DatabaseInterfaceBase implements DatabaseMetadataInterface {
     protected static final Latent<SimpleDateFormat> META_DATE_FORMAT = Latent.thread(() -> new SimpleDateFormat("yyyy-MM-dd HH:mm:ss"));

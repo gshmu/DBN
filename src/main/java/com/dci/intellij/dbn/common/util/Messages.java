@@ -12,8 +12,8 @@ import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
 
-import static com.dci.intellij.dbn.common.dispose.Failsafe.conditionallyLog;
 import static com.dci.intellij.dbn.common.dispose.Failsafe.nd;
+import static com.dci.intellij.dbn.diagnostics.Diagnostics.conditionallyLog;
 
 public class Messages {
 

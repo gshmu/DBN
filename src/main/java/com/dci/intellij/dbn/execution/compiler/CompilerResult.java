@@ -27,7 +27,7 @@ import java.util.Collections;
 import java.util.List;
 
 import static com.dci.intellij.dbn.common.Priority.HIGH;
-import static com.dci.intellij.dbn.common.dispose.Failsafe.conditionallyLog;
+import static com.dci.intellij.dbn.diagnostics.Diagnostics.conditionallyLog;
 
 @Getter
 public class CompilerResult implements Disposable, NotificationSupport {

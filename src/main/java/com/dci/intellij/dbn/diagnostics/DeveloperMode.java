@@ -1,18 +1,21 @@
 package com.dci.intellij.dbn.diagnostics;
 
 import com.dci.intellij.dbn.common.notification.NotificationSupport;
+import com.dci.intellij.dbn.common.state.PersistentStateElement;
 import lombok.Getter;
 import lombok.Setter;
+import org.jdom.Element;
 
 import java.util.Timer;
 import java.util.TimerTask;
 import java.util.concurrent.TimeUnit;
 
 import static com.dci.intellij.dbn.common.notification.NotificationGroup.DIAGNOSTICS;
+import static com.dci.intellij.dbn.common.options.setting.SettingsSupport.*;
 
 @Getter
 @Setter
-public class DeveloperMode {
+public class DeveloperMode implements PersistentStateElement {
     private volatile boolean enabled;
     private volatile Timer timer;
     private volatile long timerStart;
@@ -57,15 +60,32 @@ public class DeveloperMode {
         }
     }
 
-    public String getTimeoutText() {
-        if (timerStart == 0) return "";
+    public String getRemainingTime() {
+        if (!enabled) return "1 second";
 
         long lapsed = System.currentTimeMillis() - timerStart;
         long lapsedSeconds = TimeUnit.MILLISECONDS.toSeconds(lapsed);
         long remainingSeconds = Math.max(0, TimeUnit.MINUTES.toSeconds(timeout) - lapsedSeconds);
-
         return remainingSeconds < 60 ?
-                " (timing out in " + remainingSeconds + " seconds) " :
-                " (timing out in " + TimeUnit.SECONDS.toMinutes(remainingSeconds) + " minutes) ";
-    }    
+                remainingSeconds + " seconds " :
+                TimeUnit.SECONDS.toMinutes(remainingSeconds) + " minutes ";
+    }
+
+
+    @Override
+    public void readState(Element element) {
+        Element developerMode = element.getChild("developer-mode");
+        if (developerMode != null) {
+            setTimeout(getInteger(developerMode, "timeout", timeout));
+            setEnabled(getBoolean(developerMode, "enabled", enabled));
+        }
+    }
+
+    @Override
+    public void writeState(Element element) {
+        Element developerMode = new Element("developer-mode");
+        element.addContent(developerMode);
+        setInteger(developerMode, "timeout", timeout);
+        setBoolean(developerMode, "enabled", enabled);
+    }
 }

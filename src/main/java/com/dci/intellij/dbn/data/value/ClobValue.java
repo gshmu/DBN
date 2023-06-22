@@ -10,7 +10,7 @@ import java.io.IOException;
 import java.io.Reader;
 import java.sql.*;
 
-import static com.dci.intellij.dbn.common.dispose.Failsafe.conditionallyLog;
+import static com.dci.intellij.dbn.diagnostics.Diagnostics.conditionallyLog;
 
 @Slf4j
 public class ClobValue extends LargeObjectValue {
