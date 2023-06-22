@@ -6,6 +6,8 @@ import org.jetbrains.annotations.Nullable;
 import java.util.*;
 import java.util.stream.Collectors;
 
+import static java.lang.Character.isWhitespace;
+
 public class Strings extends com.intellij.openapi.util.text.StringUtil {
     private Strings() {}
 
@@ -266,5 +268,69 @@ public class Strings extends com.intellij.openapi.util.text.StringUtil {
         if (values == null) return Collections.emptyList();
         return values.stream().filter(s -> isNotEmptyOrSpaces(s)).collect(Collectors.toList());
     }
+
+
+    public static char firstChar(CharSequence s, CharPredicate predicate) {
+        int index = 0;
+        while (index < s.length()) {
+            char chr = s.charAt(index);
+            if (predicate.test(chr)) return chr;
+
+            index++;
+        }
+        return ' ';
+    }
+
+    public static char lastChar(CharSequence s, CharPredicate predicate) {
+        int index = s.length() -1;
+
+        while (index >= 0) {
+            char chr = s.charAt(index);
+            if (predicate.test(chr)) return chr;
+
+            index--;
+        }
+        return ' ';
+    }
+
+    public static int firstIndexOf(CharSequence s, CharPredicate predicate) {
+        int index = 0;
+
+        while (index < s.length()) {
+            char chr = s.charAt(index);
+            if (predicate.test(chr)) return index;
+
+            index++;
+        }
+        return -1;
+    }
+
+    public static int lastIndexOf(CharSequence s, CharPredicate predicate) {
+        int index = s.length() -1;
+
+        while (index >= 0) {
+            char chr = s.charAt(index);
+            if (predicate.test(chr)) return index;
+
+            index--;
+        }
+        return -1;
+    }
+
+    public static void trim(StringBuilder builder) {
+        if (builder.length() == 0) return;
+
+        int first = firstIndexOf(builder, chr -> !isWhitespace(chr));
+        if (first > -1) builder.delete(0, first);
+
+        int last = lastIndexOf(builder, chr -> !isWhitespace(chr));
+        builder.delete(last + 1, builder.length());
+    }
+
+    public interface CharPredicate {
+        boolean test(char chr);
+    }
+
+
 }
 

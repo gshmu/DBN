@@ -2,6 +2,7 @@ package com.dci.intellij.dbn.database.oracle;
 
 import com.dci.intellij.dbn.common.database.AuthenticationInfo;
 import com.dci.intellij.dbn.common.database.DatabaseInfo;
+import com.dci.intellij.dbn.common.util.Strings;
 import com.dci.intellij.dbn.connection.DatabaseUrlType;
 import com.dci.intellij.dbn.connection.SchemaId;
 import com.dci.intellij.dbn.database.CmdLineExecutionInput;
@@ -15,6 +16,8 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
+
+import static java.lang.Character.isWhitespace;
 
 public class OracleExecutionInterface implements DatabaseExecutionInterface {
     private static final String SQLPLUS_CONNECT_PATTERN_SID = "[USER]/[PASSWORD]@\"(DESCRIPTION=(ADDRESS=(PROTOCOL=TCP)(HOST=[HOST])(Port=[PORT]))(CONNECT_DATA=(SID=[DATABASE])))\"";
@@ -61,23 +64,25 @@ public class OracleExecutionInterface implements DatabaseExecutionInterface {
         command.add(connectArg);
         command.add(fileArg);
 
-        StringBuilder contentBuilder = executionInput.getContent();
-        if (schemaId != null) {
-            contentBuilder.insert(0, "alter session set current_schema = " + schemaId + ";\n");
-        }
+        StringBuilder builder = executionInput.getContent();
+        if (schemaId != null) builder.insert(0, "alter session set current_schema = " + schemaId + ";\n");
 
-        contentBuilder.insert(0, "set echo on;\n");
-        contentBuilder.insert(0, "set linesize 32000;\n");
-        contentBuilder.insert(0, "set pagesize 40000;\n");
-        contentBuilder.insert(0, "set long 50000;\n");
+        builder.insert(0, "set echo on;\n");
+        builder.insert(0, "set linesize 32000;\n");
+        builder.insert(0, "set pagesize 40000;\n");
+        builder.insert(0, "set long 50000;\n");
 
-        int lastStatementIndex = contentBuilder.lastIndexOf(";");
-        if (lastStatementIndex > -1 && contentBuilder.substring(lastStatementIndex + 1).trim().length() != 0) {
+        Strings.trim(builder);
+        char lastChr = Strings.lastChar(builder, chr -> !isWhitespace(chr));
+        if (lastChr != ';' && lastChr != '/' && lastChr != ' ') {
             // make sure exit is not impacted by script errors
-            contentBuilder.append(";\n");
+            builder.append(";\n");
         }
-        contentBuilder.append("\nexit;\n");
-
+        builder.append("\nexit;\n");
         return executionInput;
     }
+
+
+
+
 }
