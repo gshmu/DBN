@@ -142,7 +142,7 @@ public class ConnectionDriverSettingsForm extends DBNFormBase {
                     //driverComboBox.addItem("");
                     if (drivers != null && !drivers.isEmpty()) {
                         List<DriverOption> driverOptions = new ArrayList<>();
-                        for (Class<Driver> driver : drivers.getDrivers()) {
+                        for (Class<Driver> driver : drivers.getDriverClasses()) {
                             DriverOption driverOption = new DriverOption(driver);
                             driverOptions.add(driverOption);
                             if (selectedOption != null && selectedOption.getDriver().equals(driver)) {

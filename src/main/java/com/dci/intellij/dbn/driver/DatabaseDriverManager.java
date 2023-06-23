@@ -3,7 +3,6 @@ package com.dci.intellij.dbn.driver;
 import com.dci.intellij.dbn.common.component.ApplicationComponentBase;
 import com.dci.intellij.dbn.common.dispose.Disposer;
 import com.dci.intellij.dbn.common.util.Files;
-import com.dci.intellij.dbn.common.util.Strings;
 import com.dci.intellij.dbn.connection.DatabaseType;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
@@ -11,8 +10,6 @@ import org.jetbrains.annotations.Nullable;
 
 import java.io.File;
 import java.net.URL;
-import java.sql.Driver;
-import java.sql.DriverManager;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -41,8 +38,8 @@ public class DatabaseDriverManager extends ApplicationComponentBase {
 
     public DatabaseDriverManager() {
         super("DBNavigator.DatabaseDriverManager");
-        //TODO make this configurable
-        DriverManager.setLoginTimeout(30);
+        // TODO make this configurable
+        // DriverManager.setLoginTimeout(30);
     }
 
     public DriverBundle loadDrivers(File libraryFile, boolean force) {
@@ -105,16 +102,5 @@ public class DatabaseDriverManager extends ApplicationComponentBase {
         } else {
             throw new Exception("Could not find library \"" + libraryFile.getAbsolutePath() +"\".");
         }
-    }
-
-    @SneakyThrows
-    public Driver getDriver(File libraryFile, String className) {
-        if (Strings.isEmptyOrSpaces(className)) throw new Exception("No driver class specified.");
-
-        DriverBundle drivers = getDrivers(libraryFile);
-        Driver driver = drivers.getDriver(className);
-        if (driver == null) throw new Exception("Could not locate driver \"" + className + "\" in library \"" + libraryFile.getAbsolutePath() + "\"");
-
-        return driver;
     }
 }

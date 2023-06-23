@@ -1,9 +1,12 @@
 package com.dci.intellij.dbn.driver;
 
+import com.dci.intellij.dbn.common.ref.WeakRefCache;
+import com.dci.intellij.dbn.connection.ConnectionId;
 import com.intellij.openapi.Disposable;
 import lombok.Getter;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
+import lombok.val;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -20,7 +23,7 @@ import static com.dci.intellij.dbn.diagnostics.Diagnostics.conditionallyLog;
 @Getter
 public class DriverBundle implements Disposable {
     private final DriverClassLoader classLoader;
-    private final Map<Class<Driver>, Driver> instances = new ConcurrentHashMap<>();
+    private final WeakRefCache<ConnectionId, Map<Class<Driver>, Driver>> instances = WeakRefCache.weakKey();
 
     public DriverBundle(File library, String location) {
         this.classLoader = new DriverClassLoaderJarImpl(library, location);
@@ -41,22 +44,30 @@ public class DriverBundle implements Disposable {
     }
 
     @Nullable
-    public Driver getDriver(String className) {
-        for (Class<Driver> driver : getDrivers()) {
-            if (Objects.equals(driver.getName(), className)) {
-                return instances.computeIfAbsent(driver, d -> createDriver(d));
-                // cached driver instances seem to work better (at least for oracle)
-                //return createDriver(driver);
-            }
-        }
-        return null;
+    public Driver getDriver(String className, ConnectionId connectionId) {
+        Class<Driver> driverClass = getDriverClass(className);
+        if (driverClass == null) return null;
+
+        // cached driver instances seem to work better (at least for oracle)
+        val cache = this.instances.computeIfAbsent(connectionId, id -> new ConcurrentHashMap<>());
+        return cache.computeIfAbsent(driverClass, c -> createDriver(c));
+
+        // return createDriver(driver);
     }
 
     @Nullable
     public Driver createDriver(String className) {
-        for (Class<Driver> driver : getDrivers()) {
-            if (Objects.equals(driver.getName(), className)) {
-                return createDriver(driver);
+        Class<Driver> driver = getDriverClass(className);
+        if (driver == null) return null;
+
+        return createDriver(driver);
+    }
+
+    @Nullable
+    public Class<Driver> getDriverClass(String className) {
+        for (Class<Driver> driverClass : getDriverClasses()) {
+            if (Objects.equals(driverClass.getName(), className)) {
+                return driverClass;
             }
         }
         return null;
@@ -72,7 +83,7 @@ public class DriverBundle implements Disposable {
         return classLoader.getLibrary();
     }
 
-    public List<Class<Driver>> getDrivers() {
+    public List<Class<Driver>> getDriverClasses() {
         return classLoader.getDrivers();
     }
 
@@ -81,6 +92,6 @@ public class DriverBundle implements Disposable {
     }
 
     public boolean isEmpty() {
-        return getDrivers().isEmpty();
+        return getDriverClasses().isEmpty();
     }
 }
