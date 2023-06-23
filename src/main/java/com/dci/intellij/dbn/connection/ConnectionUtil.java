@@ -156,7 +156,9 @@ public class ConnectionUtil {
         }
 
         if (drivers == null || drivers.isEmpty()) return null;
-        return drivers.getDriver(driverClassName);
+        ConnectionId connectionId = databaseSettings.getConnectionId();
+
+        return drivers.getDriver(driverClassName, connectionId);
     }
 
     public static double getDatabaseVersion(DatabaseMetaData databaseMetaData) throws SQLException {
