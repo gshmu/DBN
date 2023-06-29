@@ -44,7 +44,7 @@ import static com.dci.intellij.dbn.vfs.DatabaseFileSystem.PSS;
 @Getter
 @Setter
 public class DBObjectRef<T extends DBObject> implements Comparable<DBObjectRef<?>>, Reference<T>, PersistentStateElement, DatabaseContextBase {
-    private static final String QUOTE = "'";
+    private static final String QUOTE = "\"";
 
     private Object parent; // can hold connection id or an actual DBObjectRef (memory optimisation)
     private String objectName;
@@ -53,7 +53,7 @@ public class DBObjectRef<T extends DBObject> implements Comparable<DBObjectRef<?
 
     private WeakRef<T> reference;
     private int hashCode = -1;
-    private static final Pattern PATH_TOKENIZER = Pattern.compile("[^/']+|'([^']*)'");
+    private static final Pattern PATH_TOKENIZER = Pattern.compile("[^/\"]+|\"([^\"]*)\"");
 
     public DBObjectRef(ConnectionId connectionId, String identifier) {
         deserialize(connectionId, identifier);
