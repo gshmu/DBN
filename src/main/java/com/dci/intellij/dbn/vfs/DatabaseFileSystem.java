@@ -22,6 +22,7 @@ import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.openapi.vfs.VirtualFileListener;
 import com.intellij.openapi.vfs.VirtualFileManager;
 import com.intellij.openapi.vfs.VirtualFileSystem;
+import lombok.extern.slf4j.Slf4j;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -37,6 +38,7 @@ import static com.dci.intellij.dbn.common.dispose.Checks.isNotValid;
 import static com.dci.intellij.dbn.diagnostics.Diagnostics.conditionallyLog;
 import static com.dci.intellij.dbn.vfs.DatabaseFileSystem.FilePathType.*;
 
+@Slf4j
 public class DatabaseFileSystem extends VirtualFileSystem implements /*NonPhysicalFileSystem, */NamedComponent {
     public static final char PS = '/';
     public static final String PSS = "" + '/';
@@ -104,6 +106,16 @@ public class DatabaseFileSystem extends VirtualFileSystem implements /*NonPhysic
     @Override
     @Nullable
     public VirtualFile findFileByPath(@NotNull @NonNls String path) {
+        try {
+            return lookupFileByPath(path);
+        } catch (Throwable e) {
+            log.error("Error loading file for given path \"{}\"", path, e);
+            return null;
+        }
+    }
+
+    @Nullable
+    private DBVirtualFileBase lookupFileByPath(@NonNls @NotNull String path) {
         if (path.startsWith(PROTOCOL_PREFIX)) {
             path = path.substring(PROTOCOL_PREFIX.length());
         }
@@ -114,7 +126,7 @@ public class DatabaseFileSystem extends VirtualFileSystem implements /*NonPhysic
         ConnectionId connectionId = ConnectionId.get(path.substring(0, index));
         ConnectionHandler connection = ConnectionHandler.get(connectionId);
 
-        if (isNotValid(connection) || !connection.isEnabled())  return null;
+        if (isNotValid(connection) || !connection.isEnabled()) return null;
         if (!allowFileLookup(connection)) return null;
 
         Project project = connection.getProject();
