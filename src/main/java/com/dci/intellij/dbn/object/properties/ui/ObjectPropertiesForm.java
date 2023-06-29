@@ -6,18 +6,15 @@ import com.dci.intellij.dbn.browser.model.BrowserTreeNode;
 import com.dci.intellij.dbn.browser.ui.DatabaseBrowserTree;
 import com.dci.intellij.dbn.common.color.Colors;
 import com.dci.intellij.dbn.common.dispose.Disposer;
-import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.common.event.ProjectEvents;
 import com.dci.intellij.dbn.common.thread.Background;
 import com.dci.intellij.dbn.common.thread.Dispatch;
 import com.dci.intellij.dbn.common.ui.form.DBNForm;
 import com.dci.intellij.dbn.common.ui.form.DBNFormBase;
-import com.dci.intellij.dbn.common.ui.util.Borders;
 import com.dci.intellij.dbn.common.ui.util.UserInterface;
 import com.dci.intellij.dbn.common.util.Naming;
 import com.dci.intellij.dbn.object.common.DBObject;
 import com.dci.intellij.dbn.object.lookup.DBObjectRef;
-import com.intellij.openapi.Disposable;
 import com.intellij.openapi.project.Project;
 import org.jetbrains.annotations.NotNull;
 
@@ -29,21 +26,22 @@ public class ObjectPropertiesForm extends DBNFormBase {
     private JPanel mainPanel;
     private JLabel objectLabel;
     private JLabel objectTypeLabel;
-    private JTable objectPropertiesTable;
     private JScrollPane objectPropertiesScrollPane;
     private JPanel closeActionPanel;
     private DBObjectRef<?> object;
 
     private final AtomicReference<Thread> refreshHandle = new AtomicReference<>();
+    private final ObjectPropertiesTable objectPropertiesTable;
 
     public ObjectPropertiesForm(DBNForm parent) {
         super(parent);
         //ActionToolbar objectPropertiesActionToolbar = ActionUtil.createActionToolbar("", true, "DBNavigator.ActionGroup.Browser.ObjectProperties");
         //closeActionPanel.add(objectPropertiesActionToolbar.getComponent(), BorderLayout.CENTER);
+        objectPropertiesTable = new ObjectPropertiesTable(this, new ObjectPropertiesTableModel());
         objectPropertiesTable.setRowSelectionAllowed(false);
         objectPropertiesTable.setCellSelectionEnabled(true);
+        objectPropertiesScrollPane.setViewportView(objectPropertiesTable);
         objectPropertiesScrollPane.getViewport().setBackground(Colors.getTableBackground());
-        objectPropertiesScrollPane.setBorder(Borders.EMPTY_BORDER);
         objectTypeLabel.setText("Object properties:");
         objectLabel.setText("(no object selected)");
 
@@ -58,15 +56,15 @@ public class ObjectPropertiesForm extends DBNFormBase {
             public void selectionChanged() {
                 Project project = ensureProject();
                 DatabaseBrowserManager browserManager = DatabaseBrowserManager.getInstance(project);
-                if (browserManager.getShowObjectProperties().value()) {
-                    DatabaseBrowserTree activeBrowserTree = browserManager.getActiveBrowserTree();
-                    if (activeBrowserTree != null) {
-                        BrowserTreeNode treeNode = activeBrowserTree.getSelectedNode();
-                        if (treeNode instanceof DBObject) {
-                            DBObject object = (DBObject) treeNode;
-                            setObject(object);
-                        }
-                    }
+                if (!browserManager.getShowObjectProperties().value()) return;
+
+                DatabaseBrowserTree activeBrowserTree = browserManager.getActiveBrowserTree();
+                if (activeBrowserTree == null) return;
+
+                BrowserTreeNode treeNode = activeBrowserTree.getSelectedNode();
+                if (treeNode instanceof DBObject) {
+                    DBObject object = (DBObject) treeNode;
+                    setObject(object);
                 }
             }
         };
@@ -95,7 +93,6 @@ public class ObjectPropertiesForm extends DBNFormBase {
                     objectLabel.setIcon(object.getIcon());
                     objectTypeLabel.setText(Naming.capitalize(object.getTypeName()) + ":");
 
-                    ObjectPropertiesTable objectPropertiesTable = getObjectPropertiesTable();
                     ObjectPropertiesTableModel oldTableModel = (ObjectPropertiesTableModel) objectPropertiesTable.getModel();
                     objectPropertiesTable.setModel(tableModel);
                     objectPropertiesTable.accommodateColumnsSize();
@@ -105,15 +102,5 @@ public class ObjectPropertiesForm extends DBNFormBase {
                 });
             });
         }
-    }
-
-    public ObjectPropertiesTable getObjectPropertiesTable() {
-        return (ObjectPropertiesTable) Failsafe.nn(objectPropertiesTable);
-    }
-
-    private void createUIComponents() {
-        objectPropertiesTable = new ObjectPropertiesTable(this, new ObjectPropertiesTableModel());
-        objectPropertiesTable.getTableHeader().setReorderingAllowed(false);
-        Disposer.register(this, (Disposable) objectPropertiesTable);
     }
 }

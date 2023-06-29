@@ -58,6 +58,7 @@ public class ConnectionBundleSettingsForm extends ConfigurationEditorForm<Connec
     private JPanel actionsPanel;
     private JPanel connectionSetupPanel;
     private JBScrollPane connectionListScrollPane;
+    private JSplitPane contentSplitPane;
     private final JList<ConnectionSettings> connectionsList;
 
     private String currentPanelId;

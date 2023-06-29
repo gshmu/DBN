@@ -26,7 +26,7 @@
           <color system-color="scrollbar"/>
         </border>
         <children>
-          <scrollpane id="62efb" class="com.intellij.ui.components.JBScrollPane" binding="resultScrollPane">
+          <scrollpane id="d4a08" class="com.dci.intellij.dbn.common.ui.misc.DBNScrollPane" binding="resultScrollPane">
             <constraints>
               <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
             </constraints>
