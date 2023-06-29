@@ -3,7 +3,9 @@ package com.dci.intellij.dbn.common.ui.util;
 import com.dci.intellij.dbn.common.lookup.Visitor;
 import com.dci.intellij.dbn.common.thread.Dispatch;
 import com.dci.intellij.dbn.common.util.Strings;
+import com.intellij.openapi.ui.Splitter;
 import com.intellij.openapi.util.SystemInfo;
+import com.intellij.ui.JBSplitter;
 import com.intellij.ui.ToolbarDecorator;
 import com.intellij.ui.border.IdeaTitledBorder;
 import org.jetbrains.annotations.NotNull;
@@ -14,13 +16,17 @@ import javax.swing.border.Border;
 import javax.swing.border.CompoundBorder;
 import javax.swing.border.TitledBorder;
 import javax.swing.table.TableCellEditor;
+import javax.swing.text.JTextComponent;
 import java.awt.*;
 import java.awt.event.InputEvent;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
 import java.util.function.Predicate;
 
 import static com.dci.intellij.dbn.common.ui.util.Borders.*;
 import static com.dci.intellij.dbn.common.util.Unsafe.cast;
 import static com.dci.intellij.dbn.diagnostics.Diagnostics.conditionallyLog;
+import static javax.swing.JSplitPane.VERTICAL_SPLIT;
 
 public class UserInterface {
 
@@ -88,7 +94,7 @@ public class UserInterface {
         if (border instanceof TitledBorder) {
             TitledBorder titledBorder = (TitledBorder) border;
             String title = titledBorder.getTitle();
-            int indent = Strings.isEmpty(title) ? 0 : 24;
+            int indent = Strings.isEmpty(title) ? 0 : 20;
             IdeaTitledBorder replacement = new IdeaTitledBorder(title, indent, Borders.EMPTY_INSETS);
 /*
             titledBorder.setTitleColor(Colors.HINT_COLOR);
@@ -157,7 +163,12 @@ public class UserInterface {
     }
 
     public static void updateScrollPaneBorders(JComponent component) {
-        visitRecursively(component, JScrollPane.class, sp -> sp.setBorder(getScrollPaneComponent(sp) instanceof JPanel ? null : COMPONENT_OUTLINE_BORDER));
+        visitRecursively(component, JScrollPane.class, sp -> sp.setBorder(isBorderlessPane(sp) ? null : COMPONENT_OUTLINE_BORDER));
+    }
+
+    private static boolean isBorderlessPane(JScrollPane sp) {
+        Component component = getScrollPaneComponent(sp);
+        return component instanceof JPanel || component instanceof Borderless;
     }
 
     public static Component getScrollPaneComponent(JScrollPane scrollPane) {
@@ -194,5 +205,81 @@ public class UserInterface {
         decorator.setToolbarBorder(TOOLBAR_DECORATOR_BORDER);
         decorator.setPanelBorder(EMPTY_BORDER);
         return decorator;
+    }
+
+    public static String getText(JTextComponent textComponent) {
+        return textComponent.getText().trim();
+    }
+
+
+    public static boolean isEmptyText(JTextComponent textComponent) {
+        return textComponent.getText().trim().isEmpty();
+    }
+
+    public static void limitTextLength(JTextComponent textComponent, int maxLength) {
+        textComponent.addKeyListener(new KeyAdapter() {
+            @Override
+            public void keyTyped(KeyEvent e) {
+                String text = textComponent.getText();
+                if (text.length() == maxLength) {
+                    e.consume();
+                } else if (text.length() > maxLength) {
+                    text = text.substring(0, maxLength);
+                    textComponent.setText(text);
+                    e.consume();
+                }
+            }
+        });
+    }
+
+    public static void updateSplitPanes(JComponent component) {
+        visitRecursively(component, JSplitPane.class, sp -> replaceSplitPane(sp));
+    }
+
+    private static void replaceSplitPane(JSplitPane pane) {
+        Container parent = pane.getParent();
+        if (parent.getComponents().length != 1 && !(parent instanceof Splitter)) {
+            return;
+        }
+
+        JComponent component1 = (JComponent) pane.getTopComponent();
+        JComponent component2 = (JComponent) pane.getBottomComponent();
+        int orientation = pane.getOrientation();
+
+        boolean vertical = orientation == VERTICAL_SPLIT;
+        Splitter splitter = new JBSplitter(vertical);
+        splitter.setFirstComponent(component1);
+        splitter.setSecondComponent(component2);
+        splitter.setShowDividerControls(pane.isOneTouchExpandable());
+        splitter.setHonorComponentsMinimumSize(true);
+
+        if (pane.getDividerLocation() > 0) {
+            SwingUtilities.invokeLater(() -> {
+                double proportion;
+                if (pane.getOrientation() == VERTICAL_SPLIT) {
+                    proportion = (double) pane.getDividerLocation() / (double) (parent.getHeight() - pane.getDividerSize());
+                } else {
+                    proportion = (double) pane.getDividerLocation() / (double) (parent.getWidth() - pane.getDividerSize());
+                }
+
+                if (proportion > 0.0 && proportion < 1.0) {
+                    splitter.setProportion((float) proportion);
+                }
+
+            });
+        }
+
+        if (parent instanceof Splitter) {
+            Splitter psplitter = (Splitter) parent;
+            if (psplitter.getFirstComponent() == pane) {
+                psplitter.setFirstComponent(splitter);
+            } else {
+                psplitter.setSecondComponent(splitter);
+            }
+        } else {
+            parent.remove(0);
+            parent.setLayout(new BorderLayout());
+            parent.add(splitter, BorderLayout.CENTER);
+        }
     }
 }

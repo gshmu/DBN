@@ -13,6 +13,7 @@ import com.dci.intellij.dbn.common.thread.Progress;
 import com.dci.intellij.dbn.common.ui.component.DBNComponent;
 import com.dci.intellij.dbn.common.ui.tree.DBNTree;
 import com.dci.intellij.dbn.common.ui.tree.Trees;
+import com.dci.intellij.dbn.common.ui.util.Borderless;
 import com.dci.intellij.dbn.common.ui.util.Mouse;
 import com.dci.intellij.dbn.common.ui.util.UserInterface;
 import com.dci.intellij.dbn.common.util.Actions;
@@ -47,7 +48,7 @@ import java.awt.event.*;
 import static com.dci.intellij.dbn.common.dispose.Checks.isNotValid;
 
 @Getter
-public final class DatabaseBrowserTree extends DBNTree {
+public final class DatabaseBrowserTree extends DBNTree implements Borderless {
     private final TreeNavigationHistory navigationHistory = new TreeNavigationHistory();
     private transient BrowserTreeNode targetSelection;
     private transient boolean listenersEnabled = true;

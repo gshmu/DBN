@@ -1,7 +1,8 @@
 package com.dci.intellij.dbn.data.grid.ui.table.resultSet;
 
-import com.dci.intellij.dbn.common.ui.util.Mouse;
 import com.dci.intellij.dbn.common.ui.component.DBNComponent;
+import com.dci.intellij.dbn.common.ui.util.Borderless;
+import com.dci.intellij.dbn.common.ui.util.Mouse;
 import com.dci.intellij.dbn.data.grid.ui.table.resultSet.record.ResultSetRecordViewerDialog;
 import com.dci.intellij.dbn.data.grid.ui.table.sortable.SortableTable;
 import com.dci.intellij.dbn.data.model.resultSet.ResultSetDataModel;
@@ -10,7 +11,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.awt.event.MouseEvent;
 
-public class ResultSetTable<T extends ResultSetDataModel<?, ?>> extends SortableTable<T> {
+public class ResultSetTable<T extends ResultSetDataModel<?, ?>> extends SortableTable<T> implements Borderless {
     private final RecordViewInfo recordViewInfo;
     public ResultSetTable(DBNComponent parent, T dataModel, boolean enableSpeedSearch, RecordViewInfo recordViewInfo) {
         super(parent, dataModel, enableSpeedSearch);
