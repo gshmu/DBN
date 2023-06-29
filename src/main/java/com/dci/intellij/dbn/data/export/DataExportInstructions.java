@@ -17,6 +17,8 @@ public class DataExportInstructions implements PersistentStateElement, Cloneable
     private boolean quoteValuesContainingSeparator = true;
     private boolean quoteAllValues = false;
     private String valueSeparator;
+    private String beginQuote = "\"";
+    private String endQuote = "\"";
     private String fileName;
     private String fileLocation;
     private Scope scope = Scope.GLOBAL;
@@ -57,6 +59,8 @@ public class DataExportInstructions implements PersistentStateElement, Cloneable
         setBoolean(child, "quote-values-containing-separator", quoteValuesContainingSeparator);
         setBoolean(child, "quote-all-values", quoteAllValues);
         setString(child, "value-separator", valueSeparator);
+        setString(child, "begin-quote", beginQuote);
+        setString(child, "end-quote", endQuote);
         setString(child, "file-name", fileName);
         setString(child, "file-location", fileLocation);
         setEnum(child, "scope", scope);
@@ -74,6 +78,8 @@ public class DataExportInstructions implements PersistentStateElement, Cloneable
             friendlyHeaders = getBoolean(child, "friendly-headers", friendlyHeaders);
             quoteValuesContainingSeparator = getBoolean(child, "quote-values-containing-separator", quoteValuesContainingSeparator);
             quoteAllValues = getBoolean(child, "quote-all-values", quoteAllValues);
+            beginQuote = getString(child, "begin-quote", beginQuote);
+            endQuote = getString(child, "end-quote", endQuote);
             valueSeparator = getString(child, "value-separator", valueSeparator);
             fileName = getString(child, "file-name", fileName);
             fileLocation = getString(child, "file-location", fileLocation);

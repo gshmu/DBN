@@ -33,48 +33,62 @@ public class CustomDataExportProcessor extends DataExportProcessor{
     @Override
     public void performExport(DataExportModel model, DataExportInstructions instructions, ConnectionHandler connection) throws DataExportException {
         StringBuilder buffer = new StringBuilder();
-        if (instructions.isCreateHeader()) {
-            for (int columnIndex=0; columnIndex < model.getColumnCount(); columnIndex++){
-                String columnName = getColumnName(model, instructions, columnIndex);
-                String separator = instructions.getValueSeparator();
-                boolean containsSeparator = columnName.contains(separator);
-                boolean quote =
-                        instructions.isQuoteAllValues() || (
-                        instructions.isQuoteValuesContainingSeparator() && containsSeparator);
+        Formatter formatter = getFormatter(connection.getProject());
 
-                if (containsSeparator && !quote) {
-                    throw new DataExportException(
+        createHeader(model, instructions, buffer);
+        createContent(model, instructions, formatter, buffer);
+        writeContent(instructions, buffer.toString());
+    }
+
+    private void createHeader(DataExportModel model, DataExportInstructions instructions, StringBuilder buffer) throws DataExportException {
+        if (!instructions.isCreateHeader()) return;
+
+        String beginQuote = instructions.getBeginQuote();
+        String endQuote = instructions.getEndQuote();
+        for (int columnIndex = 0; columnIndex < model.getColumnCount(); columnIndex++){
+            String columnName = getColumnName(model, instructions, columnIndex);
+            String separator = instructions.getValueSeparator();
+            boolean containsSeparator = columnName.contains(separator);
+            boolean quote =
+                    instructions.isQuoteAllValues() || (
+                    instructions.isQuoteValuesContainingSeparator() && containsSeparator);
+
+            if (containsSeparator && !quote) {
+                throw new DataExportException(
                         "Can not create columns header with the given separator.\n" +
-                        "Column " + columnName + " already contains the separator '" + separator + "'. \n" +
-                        "Please consider quoting.");
-                }
+                                "Column " + columnName + " already contains the separator '" + separator + "'. \n" +
+                                "Please consider quoting.");
+            }
 
-                if (columnIndex > 0) {
-                    buffer.append(separator);
-                }
+            if (columnIndex > 0) {
+                buffer.append(separator);
+            }
 
-                if (quote) {
-                    if(columnName.indexOf('"') > -1) {
-                        throw new DataExportException(
+            if (quote) {
+                if(columnName.contains(beginQuote) || columnName.contains(endQuote)) {
+                    throw new DataExportException(
                             "Can not quote columns header.\n" +
                             "Column " + columnName + " contains quotes.");
-                    }
-                    buffer.append('"');
-                    buffer.append(columnName);
-                    buffer.append('"');
-                } else {
-                    buffer.append(columnName);
                 }
+                buffer.append(beginQuote);
+                buffer.append(columnName);
+                buffer.append(endQuote);
+            } else {
+                buffer.append(columnName);
             }
-            buffer.append('\n');
         }
+        buffer.append('\n');
+    }
 
-        Formatter formatter = getFormatter(connection.getProject());
-        for (int rowIndex=0; rowIndex < model.getRowCount(); rowIndex++) {
-            for (int columnIndex=0; columnIndex < model.getColumnCount(); columnIndex++){
+    private void createContent(DataExportModel model, DataExportInstructions instructions, Formatter formatter, StringBuilder buffer) throws DataExportException {
+        String beginQuote = instructions.getBeginQuote();
+        String endQuote = instructions.getEndQuote();
+
+        for (int r = 0; r < model.getRowCount(); r++) {
+            for (int c = 0; c < model.getColumnCount(); c++) {
                 ProgressMonitor.checkCancelled();
-                String columnName = getColumnName(model, instructions, columnIndex);
-                Object object = model.getValue(rowIndex, columnIndex);
+                String columnName = getColumnName(model, instructions, c);
+                Object object = model.getValue(r, c);
                 String value = formatValue(formatter, object);
                 String separator = instructions.getValueSeparator();
 
@@ -85,31 +99,30 @@ public class CustomDataExportProcessor extends DataExportProcessor{
 
                 if (containsSeparator && !quote) {
                     throw new DataExportException(
-                        "Can not create row " + rowIndex + " with the given separator.\n" +
-                        "Value for column " + columnName + " already contains the separator '" + separator + "'. \n" +
-                        "Please consider quoting.");
+                            "Can not create row " + (r + 1) + " with the given separator.\n" +
+                                    "Value for column " + columnName + " already contains the separator '" + separator + "'. \n" +
+                                    "Please consider quoting.");
                 }
 
-                if (columnIndex > 0) {
+                if (c > 0) {
                     buffer.append(separator);
                 }
 
                 if (quote) {
-                    if(value.indexOf('"') > -1) {
+                    if (value.contains(beginQuote) || value.contains(endQuote)) {
                         throw new DataExportException(
-                            "Can not quote value of " + columnName + " at row " + rowIndex + ".\n" +
-                            "Value contains quotes itself.");
+                                "Can not quote value of " + columnName + " at row " + (r + 1) + ".\n" +
+                                "Value contains quotes itself.");
                     }
-                    buffer.append('"');
+                    buffer.append(beginQuote);
                     buffer.append(value);
-                    buffer.append('"');
+                    buffer.append(endQuote);
                 } else {
                     buffer.append(value);
                 }
             }
             buffer.append('\n');
         }
-        writeContent(instructions, buffer.toString());
     }
 
 }

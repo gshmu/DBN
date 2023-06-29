@@ -4,6 +4,7 @@ import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.common.color.Colors;
 import com.dci.intellij.dbn.common.ui.form.DBNFormBase;
 import com.dci.intellij.dbn.common.ui.form.DBNHeaderForm;
+import com.dci.intellij.dbn.common.ui.util.UserInterface;
 import com.dci.intellij.dbn.common.util.Messages;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.ConnectionRef;
@@ -11,6 +12,7 @@ import com.dci.intellij.dbn.connection.config.ui.CharsetOption;
 import com.dci.intellij.dbn.data.export.DataExportFormat;
 import com.dci.intellij.dbn.data.export.DataExportInstructions;
 import com.dci.intellij.dbn.data.export.DataExportManager;
+import com.dci.intellij.dbn.data.export.ExportQuotePair;
 import com.dci.intellij.dbn.data.export.processor.DataExportProcessor;
 import com.dci.intellij.dbn.object.DBTable;
 import com.dci.intellij.dbn.object.common.DBObject;
@@ -19,23 +21,21 @@ import com.dci.intellij.dbn.object.lookup.DBObjectRef;
 import com.intellij.openapi.fileChooser.FileChooserDescriptor;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.TextFieldWithBrowseButton;
+import com.intellij.ui.DocumentAdapter;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import javax.swing.Icon;
-import javax.swing.JCheckBox;
-import javax.swing.JComboBox;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.JRadioButton;
-import javax.swing.JTextField;
-import java.awt.Color;
+import javax.swing.*;
+import javax.swing.event.DocumentEvent;
+import java.awt.*;
 import java.awt.event.ActionListener;
 import java.io.File;
 import java.nio.charset.Charset;
 
 import static com.dci.intellij.dbn.common.message.MessageCallback.when;
 import static com.dci.intellij.dbn.common.ui.util.ComboBoxes.*;
+import static com.dci.intellij.dbn.common.ui.util.TextFields.addDocumentListener;
+import static com.dci.intellij.dbn.common.ui.util.UserInterface.isEmptyText;
 import static com.dci.intellij.dbn.data.export.processor.DataExportFeature.*;
 
 public class ExportDataForm extends DBNFormBase {
@@ -55,8 +55,10 @@ public class ExportDataForm extends DBNFormBase {
     private JRadioButton destinationClipboardRadioButton;
     private JRadioButton destinationFileRadioButton;
 
-    private JTextField valueSeparatorTextField;
     private JTextField fileNameTextField;
+    private JTextField beginQuoteTextField;
+    private JTextField endQuoteTextField;
+    private JTextField valueSeparatorTextField;
     private TextFieldWithBrowseButton fileLocationTextField;
     private JCheckBox createHeaderCheckBox;
     private JCheckBox friendlyHeadersCheckBox;
@@ -75,7 +77,6 @@ public class ExportDataForm extends DBNFormBase {
     private final DataExportInstructions instructions;
     private final ConnectionRef connection;
     private final DBObjectRef<?> sourceObject;
-    private final ActionListener actionListener = e -> enableDisableFields();
 
     ExportDataForm(ExportDataDialog parentComponent, DataExportInstructions instructions, boolean hasSelection, @NotNull ConnectionHandler connection, @Nullable DBObject sourceObject) {
         super(parentComponent);
@@ -86,6 +87,7 @@ public class ExportDataForm extends DBNFormBase {
         initComboBox(encodingComboBox, CharsetOption.ALL);
         setSelection(encodingComboBox, CharsetOption.get(instructions.getCharset()));
 
+        ActionListener actionListener = e -> enableDisableFields();
         scopeGlobalRadioButton.addActionListener(actionListener);
         scopeSelectionRadioButton.addActionListener(actionListener);
         formatSQLRadioButton.addActionListener(actionListener);
@@ -100,6 +102,9 @@ public class ExportDataForm extends DBNFormBase {
         destinationFileRadioButton.addActionListener(actionListener);
         createHeaderCheckBox.addActionListener(actionListener);
         friendlyHeadersCheckBox.addActionListener(actionListener);
+        quoteValuesCheckBox.addActionListener(actionListener);
+        quoteAllValuesCheckBox.addActionListener(actionListener);
+        addDocumentListener(beginQuoteTextField, createQuoteChangeListener());
 
         scopeSelectionRadioButton.setEnabled(hasSelection);
         scopeSelectionRadioButton.setSelected(hasSelection);
@@ -120,6 +125,10 @@ public class ExportDataForm extends DBNFormBase {
         formatCSVRadioButton.setSelected(format == DataExportFormat.CSV);
         formatCustomRadioButton.setSelected(format == DataExportFormat.CUSTOM);
 
+        UserInterface.limitTextLength(beginQuoteTextField, 1);
+        UserInterface.limitTextLength(endQuoteTextField, 1);
+        beginQuoteTextField.setText(instructions.getBeginQuote());
+        endQuoteTextField.setText(instructions.getEndQuote());
         valueSeparatorTextField.setText(instructions.getValueSeparator());
         quoteValuesCheckBox.setSelected(instructions.isQuoteValuesContainingSeparator());
         quoteAllValuesCheckBox.setSelected(instructions.isQuoteAllValues());
@@ -161,6 +170,18 @@ public class ExportDataForm extends DBNFormBase {
         headerPanel.add(headerComponent.getComponent());
     }
 
+    @NotNull
+    private DocumentAdapter createQuoteChangeListener() {
+        return new DocumentAdapter() {
+            @Override
+            protected void textChanged(@NotNull DocumentEvent documentEvent) {
+                String beginQuote = beginQuoteTextField.getText();
+                String endQuote = ExportQuotePair.endQuoteOf(beginQuote);
+                endQuoteTextField.setText(endQuote);
+            }
+        };
+    }
+
     public ConnectionHandler getConnection() {
         return connection.ensure();
     }
@@ -179,7 +200,9 @@ public class ExportDataForm extends DBNFormBase {
         instructions.setFriendlyHeaders(friendlyHeadersCheckBox.isSelected());
         instructions.setQuoteValuesContainingSeparator(quoteValuesCheckBox.isSelected());
         instructions.setQuoteAllValues(quoteAllValuesCheckBox.isSelected());
-        instructions.setValueSeparator(valueSeparatorTextField.isEnabled() ? valueSeparatorTextField.getText().trim() : null);
+        instructions.setBeginQuote(beginQuoteTextField.getText().trim());
+        instructions.setEndQuote(endQuoteTextField.getText().trim());
+        instructions.setValueSeparator(valueSeparatorTextField.getText().trim());
         if (destinationFileRadioButton.isSelected()) {
             instructions.setFileName(fileNameTextField.getText());
             instructions.setFileLocation(fileLocationTextField.getText());
@@ -210,12 +233,17 @@ public class ExportDataForm extends DBNFormBase {
     }
 
     void validateEntries(@NotNull Runnable callback) {
-        boolean validValueSeparator = valueSeparatorTextField.getText().trim().length() > 0;
-        boolean validFileName = fileNameTextField.getText().trim().length() > 0;
-        boolean validFileLocation = fileLocationTextField.getText().trim().length() > 0;
+        boolean validOpenQuote = !isEmptyText(beginQuoteTextField);
+        boolean validCloseQuote = !isEmptyText(endQuoteTextField);
+        boolean validValueSeparator = !isEmptyText(valueSeparatorTextField);
+        boolean validFileName = !isEmptyText(fileNameTextField);
+        boolean validFileLocation = !isEmptyText(fileLocationTextField.getTextField());
         StringBuilder buffer = new StringBuilder();
         if (valueSeparatorTextField.isEnabled()) {
-            if (!validValueSeparator)  buffer.append("Value Separator");
+            if (!validValueSeparator)  buffer.append("Value separator");
+        }
+        if (beginQuoteTextField.isEnabled() || endQuoteTextField.isEnabled()) {
+            if (!validOpenQuote || !validCloseQuote)  buffer.append("Quotes");
         }
         if (fileNameTextField.isEnabled()) {
             if (!validFileName)  {
@@ -230,7 +258,7 @@ public class ExportDataForm extends DBNFormBase {
 
         Project project = getProject();
         if (buffer.length() > 0) {
-            buffer.insert(0, "Please provide values for: ");
+            buffer.insert(0, "Please provide values for the following fields: ");
             Messages.showErrorDialog(project, "Required input", buffer.toString());
             return;
         }
@@ -273,6 +301,9 @@ public class ExportDataForm extends DBNFormBase {
             friendlyHeadersCheckBox.setSelected(false);
         }
 
+        boolean quotingEnabled = (quoteValuesCheckBox.isEnabled() || quoteAllValuesCheckBox.isEnabled()) && quoteValuesCheckBox.isSelected();
+        beginQuoteTextField.setEnabled(quotingEnabled);
+        endQuoteTextField.setEnabled(quotingEnabled);
         valueSeparatorTextField.setEnabled(formatCustomRadioButton.isSelected());
         fileNameTextField.setEnabled(destinationFileRadioButton.isSelected());
         fileLocationTextField.setEnabled(destinationFileRadioButton.isSelected());
