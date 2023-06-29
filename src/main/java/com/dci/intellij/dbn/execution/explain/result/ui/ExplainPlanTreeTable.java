@@ -5,6 +5,7 @@ import com.dci.intellij.dbn.common.dispose.StatefulDisposable;
 import com.dci.intellij.dbn.common.project.ProjectRef;
 import com.dci.intellij.dbn.common.ui.form.DBNForm;
 import com.dci.intellij.dbn.common.ui.tree.Trees;
+import com.dci.intellij.dbn.common.ui.util.Borderless;
 import com.dci.intellij.dbn.common.ui.util.Borders;
 import com.dci.intellij.dbn.common.ui.util.Mouse;
 import com.dci.intellij.dbn.common.util.Strings;
@@ -49,7 +50,7 @@ import java.util.Objects;
 
 import static com.dci.intellij.dbn.common.dispose.Failsafe.guarded;
 
-public class ExplainPlanTreeTable extends TreeTable implements StatefulDisposable {
+public class ExplainPlanTreeTable extends TreeTable implements StatefulDisposable, Borderless {
     private static final int MAX_TREE_COLUMN_WIDTH = 900;
     private static final int MAX_COLUMN_WIDTH = 250;
     private static final int MIN_COLUMN_WIDTH = 10;

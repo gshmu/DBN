@@ -11,7 +11,6 @@ import com.intellij.ide.DataManager;
 import com.intellij.openapi.Disposable;
 import com.intellij.openapi.actionSystem.ActionToolbar;
 import com.intellij.openapi.project.Project;
-import com.intellij.ui.GuiUtils;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -53,8 +52,9 @@ public abstract class DBNFormBase
         DataProviders.register(mainComponent, this);
         updateScrollPaneBorders(mainComponent);
         updateTitledBorders(mainComponent);
+        updateSplitPanes(mainComponent);
 
-        GuiUtils.replaceJSplitPaneWithIDEASplitter(mainComponent);
+        //GuiUtils.replaceJSplitPaneWithIDEASplitter(mainComponent);
     }
 
     protected abstract JComponent getMainComponent();

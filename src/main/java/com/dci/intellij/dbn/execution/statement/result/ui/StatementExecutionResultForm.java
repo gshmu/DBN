@@ -6,6 +6,7 @@ import com.dci.intellij.dbn.common.dispose.Disposer;
 import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.common.latent.Latent;
 import com.dci.intellij.dbn.common.thread.Dispatch;
+import com.dci.intellij.dbn.common.ui.util.Borders;
 import com.dci.intellij.dbn.common.ui.util.UserInterface;
 import com.dci.intellij.dbn.common.util.Actions;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
@@ -22,7 +23,7 @@ import com.dci.intellij.dbn.execution.common.result.ui.ExecutionResultFormBase;
 import com.dci.intellij.dbn.execution.statement.result.StatementExecutionCursorResult;
 import com.intellij.openapi.actionSystem.ActionToolbar;
 import com.intellij.openapi.project.Project;
-import com.intellij.ui.IdeBorderFactory;
+import com.intellij.ui.JBColor;
 import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
@@ -54,7 +55,7 @@ public class StatementExecutionResultForm extends ExecutionResultFormBase<Statem
 
         recordViewInfo = new RecordViewInfo(executionResult.getName(), executionResult.getIcon());
 
-        resultPanel.setBorder(IdeBorderFactory.createBorder());
+        resultPanel.setBorder(Borders.lineBorder(JBColor.border(),0,1,0,0));
         resultTable = new ResultSetTable<>(this, executionResult.getTableModel(), true, recordViewInfo);
         resultTable.setName(executionResult.getName());
 

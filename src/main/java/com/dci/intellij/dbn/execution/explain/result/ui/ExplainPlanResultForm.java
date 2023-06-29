@@ -2,6 +2,7 @@ package com.dci.intellij.dbn.execution.explain.result.ui;
 
 import com.dci.intellij.dbn.common.color.Colors;
 import com.dci.intellij.dbn.common.ui.tree.Trees;
+import com.dci.intellij.dbn.common.ui.util.Borders;
 import com.dci.intellij.dbn.common.util.Actions;
 import com.dci.intellij.dbn.execution.ExecutionManager;
 import com.dci.intellij.dbn.execution.ExecutionResult;
@@ -9,7 +10,7 @@ import com.dci.intellij.dbn.execution.common.result.ui.ExecutionResultFormBase;
 import com.dci.intellij.dbn.execution.explain.result.ExplainPlanResult;
 import com.intellij.openapi.actionSystem.ActionToolbar;
 import com.intellij.openapi.project.Project;
-import com.intellij.ui.IdeBorderFactory;
+import com.intellij.ui.JBColor;
 import com.intellij.ui.border.CustomLineBorder;
 import org.jetbrains.annotations.NotNull;
 
@@ -29,7 +30,7 @@ public class ExplainPlanResultForm extends ExecutionResultFormBase<ExplainPlanRe
 
         actionsPanel.add(actionToolbar.getComponent());
 
-        resultPanel.setBorder(IdeBorderFactory.createBorder());
+        resultPanel.setBorder(Borders.lineBorder(JBColor.border(),0,1,0,0));
         ExplainPlanTreeTableModel treeTableModel = new ExplainPlanTreeTableModel(explainPlanResult);
         explainPlanTreeTable = new ExplainPlanTreeTable(this, treeTableModel);
 

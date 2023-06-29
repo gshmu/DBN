@@ -4,6 +4,7 @@ import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.common.ui.form.DBNForm;
 import com.dci.intellij.dbn.common.ui.table.DBNTable;
 import com.dci.intellij.dbn.common.ui.table.DBNTableModel;
+import com.dci.intellij.dbn.common.ui.util.Borderless;
 import com.dci.intellij.dbn.common.ui.util.Borders;
 import com.dci.intellij.dbn.common.ui.util.Keyboard.Key;
 import com.dci.intellij.dbn.common.ui.util.Mouse;
@@ -16,7 +17,7 @@ import javax.swing.table.TableCellRenderer;
 import java.awt.*;
 import java.awt.event.*;
 
-public class ObjectPropertiesTable extends DBNTable<DBNTableModel> {
+public class ObjectPropertiesTable extends DBNTable<DBNTableModel> implements Borderless{
     ObjectPropertiesTable(DBNForm parent, DBNTableModel tableModel) {
         super(parent, tableModel, false);
         setDefaultRenderer(String.class, cellRenderer);
