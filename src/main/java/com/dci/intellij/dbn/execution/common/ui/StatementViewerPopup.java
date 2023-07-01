@@ -13,18 +13,12 @@ import com.intellij.openapi.editor.EditorFactory;
 import com.intellij.openapi.editor.EditorSettings;
 import com.intellij.openapi.editor.ex.EditorEx;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.ui.popup.ComponentPopupBuilder;
-import com.intellij.openapi.ui.popup.JBPopup;
-import com.intellij.openapi.ui.popup.JBPopupAdapter;
-import com.intellij.openapi.ui.popup.JBPopupFactory;
-import com.intellij.openapi.ui.popup.LightweightWindowEvent;
+import com.intellij.openapi.ui.popup.*;
 import com.intellij.psi.PsiFile;
 import org.jetbrains.annotations.NotNull;
 
-import javax.swing.JScrollPane;
-import java.awt.Component;
-import java.awt.Dimension;
-import java.awt.Point;
+import javax.swing.*;
+import java.awt.*;
 
 public class StatementViewerPopup implements Disposable {
     private final String resultName;

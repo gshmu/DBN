@@ -6,11 +6,9 @@ import com.dci.intellij.dbn.common.latent.Latent;
 import com.dci.intellij.dbn.common.thread.Dispatch;
 import com.dci.intellij.dbn.common.ui.util.Borders;
 import com.dci.intellij.dbn.common.ui.util.Fonts;
-import com.intellij.ui.border.CustomLineBorder;
 import org.apache.commons.lang.StringUtils;
 
 import javax.swing.*;
-import javax.swing.border.Border;
 import java.awt.*;
 import java.awt.font.FontRenderContext;
 import java.util.HashMap;
@@ -34,9 +32,7 @@ public abstract class DBNTableGutterRendererBase implements DBNTableGutterRender
         mainPanel.setPreferredSize(new Dimension(40, -1));
         iconLabel.setBorder(Borders.insetBorder(4));
 
-
-        Border border = new CustomLineBorder(Colors.getTableHeaderGridColor(), 0, 0, 0, 1);
-        mainPanel.setBorder(border);
+        mainPanel.setBorder(Borders.tableBorder(0, 0, 0, 1));
     }
 
     @Override

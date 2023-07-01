@@ -3,6 +3,7 @@ package com.dci.intellij.dbn.data.editor.ui;
 import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.common.color.Colors;
 import com.dci.intellij.dbn.common.ui.list.EditableStringList;
+import com.dci.intellij.dbn.common.ui.misc.DBNScrollPane;
 import com.dci.intellij.dbn.common.ui.util.Borders;
 import com.dci.intellij.dbn.common.ui.util.Keyboard;
 import com.dci.intellij.dbn.common.ui.util.UserInterface;
@@ -42,7 +43,7 @@ public class ArrayEditorPopupProviderForm extends TextFieldPopupProviderForm {
     private JPanel mainPanel;
     private JPanel rightActionPanel;
     private JPanel leftActionPanel;
-    private JScrollPane listScrollPane;
+    private DBNScrollPane listScrollPane;
 
     private final ArrayEditorList list;
     private boolean changed;
@@ -65,14 +66,12 @@ public class ArrayEditorPopupProviderForm extends TextFieldPopupProviderForm {
                 new AcceptAction());
         rightActionPanel.add(rightActionToolbar.getComponent(), BorderLayout.EAST);
         list = new ArrayEditorList();
-        listScrollPane.setViewportView(list);
-        listScrollPane.getViewport().setBackground(Colors.getListBackground());
-        listScrollPane.setBorder(Borders.COMPONENT_OUTLINE_BORDER);
         list.initTableGutter();
         list.addKeyListener(this);
-        Color background = Colors.getEditorBackground();
-        list.setBackground(background);
-        listScrollPane.getViewport().setBackground(background);
+        list.setBackground(Colors.getEditorBackground());
+
+        listScrollPane.setViewportView(list);
+        listScrollPane.setBorder(Borders.COMPONENT_OUTLINE_BORDER);
 
         mainPanel.addKeyListener(this);
 

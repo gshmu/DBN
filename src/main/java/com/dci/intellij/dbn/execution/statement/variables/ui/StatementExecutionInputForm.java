@@ -7,6 +7,7 @@ import com.dci.intellij.dbn.common.environment.EnvironmentType;
 import com.dci.intellij.dbn.common.thread.Dispatch;
 import com.dci.intellij.dbn.common.ui.form.DBNFormBase;
 import com.dci.intellij.dbn.common.ui.form.DBNHeaderForm;
+import com.dci.intellij.dbn.common.ui.misc.DBNScrollPane;
 import com.dci.intellij.dbn.common.ui.util.Borders;
 import com.dci.intellij.dbn.common.util.Documents;
 import com.dci.intellij.dbn.common.util.Editors;
@@ -48,7 +49,7 @@ public class StatementExecutionInputForm extends DBNFormBase {
     private JPanel previewPanel;
     private JPanel splitPanel;
     private JSplitPane splitPane;
-    private JScrollPane variablesScrollPane;
+    private DBNScrollPane variablesScrollPane;
 
     private StatementExecutionProcessor executionProcessor;
     private final List<StatementExecutionVariableValueForm> variableValueForms = DisposableContainers.list(this);

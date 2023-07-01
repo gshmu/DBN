@@ -23,7 +23,7 @@
               </grid>
             </constraints>
             <properties>
-              <dividerLocation value="600"/>
+              <dividerLocation value="526"/>
               <orientation value="0"/>
               <resizeWeight value="0.7"/>
             </properties>
@@ -37,7 +37,7 @@
                 <border type="none"/>
                 <children/>
               </grid>
-              <scrollpane id="c023a" class="com.intellij.ui.components.JBScrollPane" binding="editorTableScrollPane" custom-create="true">
+              <scrollpane id="96120" class="com.dci.intellij.dbn.common.ui.misc.DBNScrollPane" binding="tableScrollPane">
                 <constraints>
                   <splitpane position="left"/>
                 </constraints>

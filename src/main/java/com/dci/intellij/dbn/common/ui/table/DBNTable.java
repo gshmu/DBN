@@ -9,13 +9,13 @@ import com.dci.intellij.dbn.common.ref.WeakRef;
 import com.dci.intellij.dbn.common.thread.Dispatch;
 import com.dci.intellij.dbn.common.ui.FontMetrics;
 import com.dci.intellij.dbn.common.ui.component.DBNComponent;
+import com.dci.intellij.dbn.common.ui.util.Borders;
 import com.dci.intellij.dbn.common.ui.util.Mouse;
 import com.dci.intellij.dbn.common.util.Strings;
 import com.dci.intellij.dbn.data.grid.ui.table.basic.BasicTableHeaderRenderer;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Key;
 import com.intellij.openapi.util.UserDataHolder;
-import com.intellij.ui.border.CustomLineBorder;
 import com.intellij.util.keyFMap.KeyFMap;
 import com.intellij.util.ui.UIUtil;
 import lombok.Getter;
@@ -70,7 +70,7 @@ public abstract class DBNTable<T extends DBNTableModel> extends JTable implement
             tableHeader.setPreferredSize(new Dimension(-1, 0));
         } else {
             tableHeader.setBackground(Colors.getPanelBackground());
-            tableHeader.setBorder(new CustomLineBorder(Colors.getTableHeaderGridColor(), 0, 0, 1, 0));
+            tableHeader.setBorder(Borders.tableBorder(0, 0, 1, 0));
             tableHeader.setDefaultRenderer(new BasicTableHeaderRenderer());
             tableHeader.addMouseMotionListener(Mouse.listener().onDrag(e -> {
                 JScrollPane scrollPane = getScrollPane();

@@ -8,6 +8,7 @@ import com.dci.intellij.dbn.common.latent.Latent;
 import com.dci.intellij.dbn.common.ref.WeakRef;
 import com.dci.intellij.dbn.common.thread.Dispatch;
 import com.dci.intellij.dbn.common.ui.form.DBNFormBase;
+import com.dci.intellij.dbn.common.ui.misc.DBNScrollPane;
 import com.dci.intellij.dbn.common.ui.util.Borders;
 import com.dci.intellij.dbn.common.ui.util.UserInterface;
 import com.dci.intellij.dbn.common.util.Actions;
@@ -15,7 +16,6 @@ import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.data.find.DataSearchComponent;
 import com.dci.intellij.dbn.data.find.SearchableDataComponent;
 import com.dci.intellij.dbn.data.grid.ui.table.basic.BasicTable;
-import com.dci.intellij.dbn.data.grid.ui.table.basic.BasicTableScrollPane;
 import com.dci.intellij.dbn.editor.data.ui.table.cell.DatasetTableCellEditor;
 import com.dci.intellij.dbn.editor.session.SessionBrowser;
 import com.dci.intellij.dbn.editor.session.model.SessionBrowserModel;
@@ -38,9 +38,9 @@ public class SessionBrowserForm extends DBNFormBase implements SearchableDataCom
     private JPanel loadingIconPanel;
     private JPanel detailsPanel;
     private JPanel editorPanel;
-    private JScrollPane editorTableScrollPane;
     private JLabel loadingLabel;
     private JLabel loadTimestampLabel;
+    private DBNScrollPane tableScrollPane;
     private SessionBrowserTable browserTable;
 
     private final Latent<DataSearchComponent> dataSearchComponent = Latent.basic(() -> {
@@ -56,10 +56,9 @@ public class SessionBrowserForm extends DBNFormBase implements SearchableDataCom
     public SessionBrowserForm(SessionBrowser sessionBrowser) {
         super(sessionBrowser, sessionBrowser.getProject());
         this.sessionBrowser = WeakRef.of(sessionBrowser);
-        editorPanel.setBorder(Borders.lineBorder(Colors.getTableHeaderGridColor(), 1, 0, 0, 0));
+        editorPanel.setBorder(Borders.tableBorder(1, 0, 0, 0));
         browserTable = new SessionBrowserTable(this, sessionBrowser);
-        editorTableScrollPane.setViewportView(browserTable);
-        editorTableScrollPane.getViewport().setBackground(Colors.getTableBackground());
+        tableScrollPane.setViewportView(browserTable);
         browserTable.initTableGutter();
         detailsForm = new SessionBrowserDetailsForm(this, sessionBrowser);
         detailsPanel.add(detailsForm.getComponent(), BorderLayout.CENTER);
@@ -187,10 +186,6 @@ public class SessionBrowserForm extends DBNFormBase implements SearchableDataCom
     @Override
     public BasicTable getTable() {
         return getBrowserTable();
-    }
-
-    private void createUIComponents() {
-        editorTableScrollPane = new BasicTableScrollPane();
     }
 
     @Nullable

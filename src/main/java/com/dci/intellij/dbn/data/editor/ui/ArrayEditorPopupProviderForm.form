@@ -36,7 +36,7 @@
           </grid>
         </children>
       </grid>
-      <scrollpane id="66813" class="com.intellij.ui.components.JBScrollPane" binding="listScrollPane">
+      <scrollpane id="5e54a" class="com.dci.intellij.dbn.common.ui.misc.DBNScrollPane" binding="listScrollPane">
         <constraints>
           <grid row="1" column="0" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
         </constraints>

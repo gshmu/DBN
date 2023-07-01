@@ -2,6 +2,7 @@ package com.dci.intellij.dbn.data.editor.ui;
 
 import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.common.color.Colors;
+import com.dci.intellij.dbn.common.ui.misc.DBNScrollPane;
 import com.dci.intellij.dbn.common.ui.util.Borders;
 import com.dci.intellij.dbn.common.ui.util.Keyboard;
 import com.dci.intellij.dbn.common.ui.util.UserInterface;
@@ -39,7 +40,8 @@ public class TextEditorPopupProviderForm extends TextFieldPopupProviderForm {
     private JPanel rightActionPanel;
     private JPanel leftActionPanel;
     private JTextArea editorTextArea;
-    private JScrollPane textEditorScrollPane;
+    private DBNScrollPane textEditorScrollPane;
+
     private boolean changed;
 
     TextEditorPopupProviderForm(TextFieldWithPopup<?> textField, boolean autoPopup) {

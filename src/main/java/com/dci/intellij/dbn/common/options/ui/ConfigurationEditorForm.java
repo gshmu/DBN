@@ -16,10 +16,10 @@ import java.awt.*;
 import java.awt.event.ActionListener;
 import java.awt.event.ItemListener;
 
+import static com.dci.intellij.dbn.common.ui.util.ClientProperty.REGISTERED;
 import static com.dci.intellij.dbn.common.ui.util.TextFields.addDocumentListener;
 
 public abstract class ConfigurationEditorForm<E extends BasicConfiguration> extends DBNFormBase {
-    public static final String DBN_REGISTERED = "DBN_REGISTERED";
     private ItemListener itemListener;
     private ActionListener actionListener;
     private DocumentListener documentListener;
@@ -67,34 +67,34 @@ public abstract class ConfigurationEditorForm<E extends BasicConfiguration> exte
     }
 
     protected void registerComponent(JComponent component) {
-        if (component.getClientProperty(DBN_REGISTERED) == null) {
-            component.putClientProperty(DBN_REGISTERED, true);
-            if (component instanceof AbstractButton) {
-                AbstractButton abstractButton = (AbstractButton) component;
-                if (actionListener == null) actionListener = createActionListener();
-                abstractButton.addActionListener(actionListener);
-            }
-            else if (component instanceof CheckBoxList) {
-                CheckBoxList<?> checkBoxList = (CheckBoxList<?>) component;
-                if (actionListener == null) actionListener = createActionListener();
-                checkBoxList.addActionListener(actionListener);
-            } else if (component instanceof JTextField) {
-                JTextField textField = (JTextField) component;
-                if (documentListener == null) documentListener = createDocumentListener();
-                addDocumentListener(textField, documentListener);
-            } else if (component instanceof JComboBox) {
-                JComboBox<?> comboBox = (JComboBox<?>) component;
-                if (itemListener == null) itemListener = createItemListener();
-                comboBox.addItemListener(itemListener);
-            } else if (component instanceof JTable) {
-                JTable table = (JTable) component;
-                if (tableModelListener == null) tableModelListener = createTableModelListener();
-                table.getModel().addTableModelListener(tableModelListener);
-            } else {
-                for (Component childComponent : component.getComponents()) {
-                    if (childComponent instanceof JComponent) {
-                        registerComponent((JComponent) childComponent);
-                    }
+        if (REGISTERED.isSet(component)) return;
+
+        REGISTERED.set(component, true);
+        if (component instanceof AbstractButton) {
+            AbstractButton abstractButton = (AbstractButton) component;
+            if (actionListener == null) actionListener = createActionListener();
+            abstractButton.addActionListener(actionListener);
+        }
+        else if (component instanceof CheckBoxList) {
+            CheckBoxList<?> checkBoxList = (CheckBoxList<?>) component;
+            if (actionListener == null) actionListener = createActionListener();
+            checkBoxList.addActionListener(actionListener);
+        } else if (component instanceof JTextField) {
+            JTextField textField = (JTextField) component;
+            if (documentListener == null) documentListener = createDocumentListener();
+            addDocumentListener(textField, documentListener);
+        } else if (component instanceof JComboBox) {
+            JComboBox<?> comboBox = (JComboBox<?>) component;
+            if (itemListener == null) itemListener = createItemListener();
+            comboBox.addItemListener(itemListener);
+        } else if (component instanceof JTable) {
+            JTable table = (JTable) component;
+            if (tableModelListener == null) tableModelListener = createTableModelListener();
+            table.getModel().addTableModelListener(tableModelListener);
+        } else {
+            for (Component childComponent : component.getComponents()) {
+                if (childComponent instanceof JComponent) {
+                    registerComponent((JComponent) childComponent);
                 }
             }
         }

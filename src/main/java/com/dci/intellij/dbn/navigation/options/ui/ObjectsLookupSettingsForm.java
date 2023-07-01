@@ -1,9 +1,9 @@
 package com.dci.intellij.dbn.navigation.options.ui;
 
 import com.dci.intellij.dbn.common.options.ui.ConfigurationEditorForm;
-import com.dci.intellij.dbn.common.ui.util.Keyboard;
 import com.dci.intellij.dbn.common.ui.Presentable;
 import com.dci.intellij.dbn.common.ui.list.CheckBoxList;
+import com.dci.intellij.dbn.common.ui.util.Keyboard;
 import com.dci.intellij.dbn.navigation.options.ObjectsLookupSettings;
 import com.intellij.openapi.actionSystem.Shortcut;
 import com.intellij.openapi.keymap.KeymapUtil;
@@ -11,10 +11,7 @@ import com.intellij.openapi.options.ConfigurationException;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import javax.swing.Icon;
-import javax.swing.JComboBox;
-import javax.swing.JPanel;
-import javax.swing.JScrollPane;
+import javax.swing.*;
 import javax.swing.border.TitledBorder;
 
 import static com.dci.intellij.dbn.common.ui.util.ComboBoxes.*;
