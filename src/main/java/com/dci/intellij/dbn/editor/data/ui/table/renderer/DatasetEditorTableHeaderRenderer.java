@@ -25,7 +25,7 @@ public class DatasetEditorTableHeaderRenderer extends DBNTableHeaderRendererBase
     public DatasetEditorTableHeaderRenderer() {
         mainPanel.setOpaque(true);
         mainPanel.setBackground(Colors.getPanelBackground());
-        mainPanel.setBorder(Borders.lineBorder(Colors.getTableHeaderGridColor(), 0, 0, 0, 1));
+        mainPanel.setBorder(Borders.tableBorder(0, 0, 0, 1));
     }
 
     @Override

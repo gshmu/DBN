@@ -4,6 +4,7 @@ import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.common.dispose.Disposer;
 import com.dci.intellij.dbn.common.thread.Dispatch;
 import com.dci.intellij.dbn.common.ui.tab.TabbedPane;
+import com.dci.intellij.dbn.common.ui.util.Borders;
 import com.dci.intellij.dbn.common.ui.util.UserInterface;
 import com.dci.intellij.dbn.common.util.Actions;
 import com.dci.intellij.dbn.common.util.Strings;
@@ -19,7 +20,7 @@ import com.dci.intellij.dbn.execution.method.result.MethodExecutionResult;
 import com.dci.intellij.dbn.object.DBArgument;
 import com.dci.intellij.dbn.object.DBMethod;
 import com.intellij.openapi.actionSystem.ActionToolbar;
-import com.intellij.ui.IdeBorderFactory;
+import com.intellij.ui.JBColor;
 import com.intellij.ui.components.JBScrollPane;
 import com.intellij.ui.tabs.TabInfo;
 import com.intellij.util.ui.tree.TreeUtil;
@@ -49,7 +50,7 @@ public class MethodExecutionResultForm extends ExecutionResultFormBase<MethodExe
         List<ArgumentValue> inputArgumentValues = executionResult.getExecutionInput().getArgumentValues();
         List<ArgumentValue> outputArgumentValues = executionResult.getArgumentValues();
         argumentValuesTree = new ArgumentValuesTree(this, inputArgumentValues, outputArgumentValues);
-        argumentValuesScrollPane.getViewport().add(argumentValuesTree);
+        argumentValuesScrollPane.setViewportView(argumentValuesTree);
 
 
         outputTabs = new TabbedPane(this);
@@ -58,7 +59,7 @@ public class MethodExecutionResultForm extends ExecutionResultFormBase<MethodExe
 
         outputCursorsPanel.add(outputTabs, BorderLayout.CENTER);
 
-        argumentValuesPanel.setBorder(IdeBorderFactory.createBorder());
+        argumentValuesPanel.setBorder(Borders.lineBorder(JBColor.border(), 0, 1, 1, 0));
         updateStatusBarLabels();
         executionResultPanel.setSize(800, -1);
         TreeUtil.expand(argumentValuesTree, 2);
@@ -100,23 +101,26 @@ public class MethodExecutionResultForm extends ExecutionResultFormBase<MethodExe
             logConsoleName = databaseLogName;
         }
 
-        DatabaseLoggingResultConsole outputConsole = new DatabaseLoggingResultConsole(connection, logConsoleName, true);
+        DatabaseLoggingResultConsole console = new DatabaseLoggingResultConsole(connection, logConsoleName, true);
+        JComponent consoleComponent = console.getComponent();
+        consoleComponent.setBorder(Borders.lineBorder(JBColor.border(), 0, 0, 1, 0));
+
         LogOutputContext context = new LogOutputContext(connection);
-        outputConsole.writeToConsole(context,
+        console.writeToConsole(context,
                 LogOutput.createSysOutput(context,
                         executionResult.getExecutionContext().getExecutionTimestamp(),
                         " - Method execution started", true));
 
         if (Strings.isNotEmptyOrSpaces(logOutput)) {
-            outputConsole.writeToConsole(context, LogOutput.createStdOutput(logOutput));
+            console.writeToConsole(context, LogOutput.createStdOutput(logOutput));
         }
-        outputConsole.writeToConsole(context, LogOutput.createSysOutput(context, " - Method execution finished\n\n", false));
-        Disposer.register(this, outputConsole);
+        console.writeToConsole(context, LogOutput.createSysOutput(context, " - Method execution finished\n\n", false));
+        Disposer.register(this, console);
 
-        TabInfo outputTabInfo = new TabInfo(outputConsole.getComponent());
-        outputTabInfo.setText(outputConsole.getTitle());
+        TabInfo outputTabInfo = new TabInfo(consoleComponent);
+        outputTabInfo.setText(console.getTitle());
         outputTabInfo.setIcon(Icons.EXEC_LOG_OUTPUT_CONSOLE);
-        outputTabInfo.setObject(outputConsole);
+        outputTabInfo.setObject(console);
         outputTabs.addTab(outputTabInfo);
 
         boolean isFirst = true;

@@ -112,12 +112,12 @@ public class Lists {
 
     @Nullable
     public static <T> T lastElement(List<T> list) {
-        return list == null || list.size() == 0 ? null : list.get(list.size() - 1);
+        return list == null || list.isEmpty() ? null : list.get(list.size() - 1);
     }
 
     @Nullable
     public static <T> T firstElement(List<T> list) {
-        return list == null || list.size() == 0 ? null : list.get(0);
+        return list == null || list.isEmpty() ? null : list.get(0);
     }
 
 

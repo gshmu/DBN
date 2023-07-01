@@ -7,7 +7,6 @@ import com.dci.intellij.dbn.common.environment.EnvironmentType;
 import com.dci.intellij.dbn.common.environment.options.EnvironmentVisibilitySettings;
 import com.dci.intellij.dbn.common.environment.options.listener.EnvironmentManagerListener;
 import com.dci.intellij.dbn.common.event.ProjectEvents;
-import com.dci.intellij.dbn.common.latent.Latent;
 import com.dci.intellij.dbn.common.message.MessageType;
 import com.dci.intellij.dbn.common.navigation.NavigationInstructions;
 import com.dci.intellij.dbn.common.ui.form.DBNFormBase;
@@ -20,7 +19,7 @@ import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.ConnectionId;
 import com.dci.intellij.dbn.execution.ExecutionManager;
 import com.dci.intellij.dbn.execution.ExecutionResult;
-import com.dci.intellij.dbn.execution.common.message.ui.ExecutionMessagesPanel;
+import com.dci.intellij.dbn.execution.common.message.ui.ExecutionMessagesForm;
 import com.dci.intellij.dbn.execution.common.options.ExecutionEngineSettings;
 import com.dci.intellij.dbn.execution.common.result.ui.ExecutionResultForm;
 import com.dci.intellij.dbn.execution.compiler.CompilerMessage;
@@ -68,7 +67,7 @@ import static com.dci.intellij.dbn.common.util.Unsafe.cast;
 public class ExecutionConsoleForm extends DBNFormBase {
     private JPanel mainPanel;
     private TabbedPane resultTabs;
-    private final Latent<ExecutionMessagesPanel> executionMessagesPanel = Latent.basic(() -> new ExecutionMessagesPanel(this));
+    private ExecutionMessagesForm executionMessagesForm;
     private final Map<ExecutionResult, ExecutionResultForm> executionResultForms = ContainerUtil.createConcurrentWeakKeySoftValueMap();
 
     private boolean canScrollToSource;
@@ -117,29 +116,31 @@ public class ExecutionConsoleForm extends DBNFormBase {
 
             @Override
             public void transactionCompleted(@NotNull Document document, @NotNull PsiFile file) {
-                guarded(() -> {
-                    TabbedPane resultTabs = getResultTabs();
-                    for (TabInfo tabInfo : resultTabs.getTabs()) {
-                        ExecutionResult<?> executionResult = getExecutionResult(tabInfo);
-                        if (executionResult instanceof StatementExecutionResult) {
-                            StatementExecutionResult statementExecutionResult = (StatementExecutionResult) executionResult;
-                            StatementExecutionProcessor executionProcessor = statementExecutionResult.getExecutionProcessor();
-                            if (isValid(executionProcessor) && Objects.equals(file, executionProcessor.getPsiFile())) {
-                                Icon icon = executionProcessor.isDirty() ?
-                                        Icons.STMT_EXEC_RESULTSET_ORPHAN :
-                                        Icons.STMT_EXEC_RESULTSET;
-                                tabInfo.setIcon(icon);
-                            }
-                        }
-
-                        if (executionMessagesPanel.loaded()) {
-                            JComponent messagePanelComponent = getMessagesPanel().getComponent();
-                            UserInterface.repaint(messagePanelComponent);
-                        }
-                    }
-                });
+                guarded(() -> refreshResultTabs(file));
             }
         };
+    }
+
+    private void refreshResultTabs(@NotNull PsiFile file) {
+        TabbedPane resultTabs = getResultTabs();
+        for (TabInfo tabInfo : resultTabs.getTabs()) {
+            ExecutionResult<?> executionResult = getExecutionResult(tabInfo);
+            if (executionResult instanceof StatementExecutionResult) {
+                StatementExecutionResult statementExecutionResult = (StatementExecutionResult) executionResult;
+                StatementExecutionProcessor executionProcessor = statementExecutionResult.getExecutionProcessor();
+                if (isValid(executionProcessor) && Objects.equals(file, executionProcessor.getPsiFile())) {
+                    Icon icon = executionProcessor.isDirty() ?
+                            Icons.STMT_EXEC_RESULTSET_ORPHAN :
+                            Icons.STMT_EXEC_RESULTSET;
+                    tabInfo.setIcon(icon);
+                }
+            }
+        }
+        ExecutionMessagesForm messagesPanel = executionMessagesForm;
+        if (messagesPanel != null) {
+            JComponent messagePanelComponent = messagesPanel.getComponent();
+            UserInterface.repaint(messagePanelComponent);
+        }
     }
 
 
@@ -226,7 +227,7 @@ public class ExecutionConsoleForm extends DBNFormBase {
         StatementExecutionMessage executionMessage = executionResult.getExecutionMessage();
         if (executionMessage != null) {
             prepareMessagesTab(instructions);
-            ExecutionMessagesPanel messagesPane = getMessagesPanel();
+            ExecutionMessagesForm messagesPane = ensureExecutionMessagesPanel();
             messagesPane.selectMessage(executionMessage, instructions);
         }
     }
@@ -234,7 +235,7 @@ public class ExecutionConsoleForm extends DBNFormBase {
     public void addResult(ExplainPlanResult explainPlanResult, NavigationInstructions instructions) {
         if (explainPlanResult.isError()) {
             prepareMessagesTab(instructions.with(RESET));
-            ExecutionMessagesPanel messagesPane = getMessagesPanel();
+            ExecutionMessagesForm messagesPane = ensureExecutionMessagesPanel();
             ExplainPlanMessage explainPlanMessage = new ExplainPlanMessage(explainPlanResult, MessageType.ERROR);
             messagesPane.addExplainPlanMessage(explainPlanMessage, instructions);
         } else {
@@ -243,7 +244,7 @@ public class ExecutionConsoleForm extends DBNFormBase {
     }
 
     public void addResult(StatementExecutionResult executionResult, NavigationInstructions instructions) {
-        ExecutionMessagesPanel messagesPane = getMessagesPanel();
+        ExecutionMessagesForm messagesPane = ensureExecutionMessagesPanel();
         TreePath messageTreePath = null;
         CompilerResult compilerResult = executionResult.getCompilerResult();
         //boolean hasCompilerResult = compilerResult != null;
@@ -285,7 +286,7 @@ public class ExecutionConsoleForm extends DBNFormBase {
         prepareMessagesTab(NavigationInstructions.create(RESET));
 
         CompilerMessage firstMessage = null;
-        ExecutionMessagesPanel messagesPanel = getMessagesPanel();
+        ExecutionMessagesForm messagesPanel = ensureExecutionMessagesPanel();
 
         for (CompilerMessage compilerMessage : compilerResult.getCompilerMessages()) {
             if (firstMessage == null) {
@@ -320,13 +321,16 @@ public class ExecutionConsoleForm extends DBNFormBase {
     /*********************************************************
      *                       Messages                        *
      *********************************************************/
-    private ExecutionMessagesPanel getMessagesPanel() {
-        return executionMessagesPanel.get();
+    private ExecutionMessagesForm ensureExecutionMessagesPanel() {
+        if (executionMessagesForm == null) {
+            executionMessagesForm = new ExecutionMessagesForm(this);
+        }
+        return executionMessagesForm;
     }
 
     private void prepareMessagesTab(NavigationInstructions instructions) {
         TabbedPane resultTabs = getResultTabs();
-        ExecutionMessagesPanel messagesPanel = getMessagesPanel();
+        ExecutionMessagesForm messagesPanel = ensureExecutionMessagesPanel();
         if (instructions.isReset()) {
             messagesPanel.resetMessagesStatus();
         }
@@ -345,15 +349,19 @@ public class ExecutionConsoleForm extends DBNFormBase {
 
 
     public void removeMessagesTab() {
+        ExecutionMessagesForm messagesPanel = this.executionMessagesForm;
+        if (messagesPanel == null) return;
+
         TabbedPane resultTabs = getResultTabs();
-        ExecutionMessagesPanel executionMessagesPanel = getMessagesPanel();
-        JComponent component = executionMessagesPanel.getComponent();
+        JComponent component = messagesPanel.getComponent();
         if (resultTabs.getTabCount() > 0 || resultTabs.getTabAt(0).getComponent() == component) {
             TabInfo tabInfo = resultTabs.getTabAt(0);
             resultTabs.removeTab(tabInfo);
         }
 
-        executionMessagesPanel.reset();
+        messagesPanel.reset();
+        Disposer.dispose(messagesPanel);
+        this.executionMessagesForm = null;
         if (getTabCount() == 0) {
             getExecutionManager().hideExecutionConsole();
         }
@@ -368,7 +376,7 @@ public class ExecutionConsoleForm extends DBNFormBase {
     private boolean isMessagesTabVisible() {
         TabbedPane resultTabs = getResultTabs();
         if (resultTabs.getTabCount() > 0) {
-            JComponent messagesPanelComponent = getMessagesPanel().getComponent();
+            JComponent messagesPanelComponent = ensureExecutionMessagesPanel().getComponent();
             TabInfo tabInfo = resultTabs.getTabAt(0);
             return tabInfo.getComponent() == messagesPanelComponent;
         }

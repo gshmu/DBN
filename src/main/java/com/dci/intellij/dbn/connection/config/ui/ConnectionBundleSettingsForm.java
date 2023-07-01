@@ -46,6 +46,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import static com.dci.intellij.dbn.common.ui.util.Splitters.makeRegular;
 import static com.dci.intellij.dbn.common.util.Commons.nvl;
 import static com.dci.intellij.dbn.diagnostics.Diagnostics.conditionallyLog;
 import static com.intellij.openapi.util.text.StringUtil.isNotEmpty;
@@ -77,6 +78,7 @@ public class ConnectionBundleSettingsForm extends ConfigurationEditorForm<Connec
         connectionsList.setCellRenderer(new ConnectionConfigListCellRenderer());
         connectionsList.setFont(Fonts.getLabelFont());
         connectionsList.setBackground(Colors.getTextFieldBackground());
+        makeRegular(contentSplitPane);
 
         ActionToolbar actionToolbar = Actions.createActionToolbar(actionsPanel,"", true, "DBNavigator.ActionGroup.ConnectionSettings");
         JComponent component = actionToolbar.getComponent();

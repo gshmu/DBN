@@ -4,7 +4,6 @@ import com.dci.intellij.dbn.browser.DatabaseBrowserManager;
 import com.dci.intellij.dbn.browser.model.BrowserTreeEventListener;
 import com.dci.intellij.dbn.browser.model.BrowserTreeNode;
 import com.dci.intellij.dbn.browser.ui.DatabaseBrowserTree;
-import com.dci.intellij.dbn.common.color.Colors;
 import com.dci.intellij.dbn.common.dispose.Disposer;
 import com.dci.intellij.dbn.common.event.ProjectEvents;
 import com.dci.intellij.dbn.common.thread.Background;
@@ -41,7 +40,6 @@ public class ObjectPropertiesForm extends DBNFormBase {
         objectPropertiesTable.setRowSelectionAllowed(false);
         objectPropertiesTable.setCellSelectionEnabled(true);
         objectPropertiesScrollPane.setViewportView(objectPropertiesTable);
-        objectPropertiesScrollPane.getViewport().setBackground(Colors.getTableBackground());
         objectTypeLabel.setText("Object properties:");
         objectLabel.setText("(no object selected)");
 

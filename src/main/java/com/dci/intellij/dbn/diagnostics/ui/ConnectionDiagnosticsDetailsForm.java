@@ -2,6 +2,7 @@ package com.dci.intellij.dbn.diagnostics.ui;
 
 import com.dci.intellij.dbn.common.ui.form.DBNFormBase;
 import com.dci.intellij.dbn.common.ui.form.DBNHeaderForm;
+import com.dci.intellij.dbn.common.ui.misc.DBNScrollPane;
 import com.dci.intellij.dbn.common.ui.tab.TabbedPane;
 import com.dci.intellij.dbn.common.ui.table.DBNMutableTableModel;
 import com.dci.intellij.dbn.common.ui.table.DBNTable;
@@ -9,7 +10,6 @@ import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.diagnostics.ui.model.AbstractDiagnosticsTableModel;
 import com.dci.intellij.dbn.diagnostics.ui.model.ConnectivityDiagnosticsTableModel;
 import com.dci.intellij.dbn.diagnostics.ui.model.MetadataDiagnosticsTableModel2;
-import com.intellij.ui.components.JBScrollPane;
 import com.intellij.ui.tabs.TabInfo;
 import com.intellij.ui.tabs.TabsListener;
 import org.jetbrains.annotations.NotNull;
@@ -31,7 +31,7 @@ public class ConnectionDiagnosticsDetailsForm extends DBNFormBase {
     public ConnectionDiagnosticsDetailsForm(@NotNull ConnectionDiagnosticsForm parent, ConnectionHandler connection) {
         super(parent);
 
-        DBNHeaderForm headerForm = new DBNHeaderForm(this, connection);
+        DBNHeaderForm headerForm = new DBNHeaderForm(this, connection).withEmptyBorder();
         headerPanel.add(headerForm.getComponent(), BorderLayout.CENTER);
 
         diagnosticsTabs = new TabbedPane(this);
@@ -59,7 +59,7 @@ public class ConnectionDiagnosticsDetailsForm extends DBNFormBase {
    }
 
     private void addTab(JComponent component, String title) {
-        JBScrollPane scrollPane = new JBScrollPane(component);
+        JScrollPane scrollPane = new DBNScrollPane(component);
         TabInfo tabInfo = new TabInfo(scrollPane);
         tabInfo.setText(title);
         tabInfo.setObject(component);

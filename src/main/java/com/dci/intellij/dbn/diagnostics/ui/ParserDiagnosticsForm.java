@@ -1,11 +1,11 @@
 package com.dci.intellij.dbn.diagnostics.ui;
 
 import com.dci.intellij.dbn.common.action.DataKeys;
-import com.dci.intellij.dbn.common.color.Colors;
-import com.dci.intellij.dbn.common.ui.util.Borders;
 import com.dci.intellij.dbn.common.ui.form.DBNFormBase;
-import com.dci.intellij.dbn.common.ui.util.Fonts;
 import com.dci.intellij.dbn.common.ui.table.DBNTable;
+import com.dci.intellij.dbn.common.ui.util.Borders;
+import com.dci.intellij.dbn.common.ui.util.ClientProperty;
+import com.dci.intellij.dbn.common.ui.util.Fonts;
 import com.dci.intellij.dbn.common.util.Actions;
 import com.dci.intellij.dbn.diagnostics.ParserDiagnosticsManager;
 import com.dci.intellij.dbn.diagnostics.action.ParserDiagnosticsFileTypeFilterAction;
@@ -23,12 +23,8 @@ import lombok.Getter;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import javax.swing.DefaultListModel;
-import javax.swing.JLabel;
-import javax.swing.JList;
-import javax.swing.JPanel;
-import java.awt.BorderLayout;
-import java.awt.Font;
+import javax.swing.*;
+import java.awt.*;
 import java.util.List;
 
 public class ParserDiagnosticsForm extends DBNFormBase {
@@ -53,9 +49,6 @@ public class ParserDiagnosticsForm extends DBNFormBase {
         diagnosticsTable = new ParserDiagnosticsTable(this, ParserDiagnosticsTableModel.EMPTY);
         diagnosticsTable.accommodateColumnsSize();
         diagnosticsTableScrollPane.setViewportView(diagnosticsTable);
-        diagnosticsTableScrollPane.getViewport().setBackground(Colors.getTableBackground());
-
-        mainPanel.setBorder(Borders.BOTTOM_LINE_BORDER);
 
         detailsLabel.setText("No result selected");
         stateTransitionLabel.setText("");
@@ -68,6 +61,7 @@ public class ParserDiagnosticsForm extends DBNFormBase {
                 new ParserDiagnosticsFileTypeFilterAction(this));
         filtersPanel.add(filterActionToolbar.getComponent(), BorderLayout.WEST);
 
+        ClientProperty.BORDER.set(resultsList, Borders.tableBorder(0, 1, 0, 0));
         resultsList.addListSelectionListener(e -> {
             ParserDiagnosticsResult current = resultsList.getSelectedValue();
             ParserDiagnosticsResult previous = manager.getPreviousResult(current);

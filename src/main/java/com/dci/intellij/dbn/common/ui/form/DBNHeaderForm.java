@@ -126,6 +126,11 @@ public class DBNHeaderForm extends DBNFormBase {
         objectLabel.setIcon(icon);
     }
 
+    public DBNHeaderForm withEmptyBorder() {
+        mainPanel.setBorder(null);
+        return this;
+    }
+
     public Color getBackground() {
         return mainPanel.getBackground();
     }

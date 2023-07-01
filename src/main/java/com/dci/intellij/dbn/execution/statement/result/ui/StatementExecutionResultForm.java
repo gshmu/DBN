@@ -6,6 +6,7 @@ import com.dci.intellij.dbn.common.dispose.Disposer;
 import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.common.latent.Latent;
 import com.dci.intellij.dbn.common.thread.Dispatch;
+import com.dci.intellij.dbn.common.ui.misc.DBNTableScrollPane;
 import com.dci.intellij.dbn.common.ui.util.Borders;
 import com.dci.intellij.dbn.common.ui.util.UserInterface;
 import com.dci.intellij.dbn.common.util.Actions;
@@ -14,7 +15,6 @@ import com.dci.intellij.dbn.connection.SessionId;
 import com.dci.intellij.dbn.data.find.DataSearchComponent;
 import com.dci.intellij.dbn.data.find.SearchableDataComponent;
 import com.dci.intellij.dbn.data.grid.ui.table.basic.BasicTable;
-import com.dci.intellij.dbn.data.grid.ui.table.basic.BasicTableScrollPane;
 import com.dci.intellij.dbn.data.grid.ui.table.resultSet.ResultSetTable;
 import com.dci.intellij.dbn.data.model.resultSet.ResultSetDataModel;
 import com.dci.intellij.dbn.data.record.RecordViewInfo;
@@ -30,7 +30,6 @@ import javax.swing.*;
 import java.awt.*;
 
 public class StatementExecutionResultForm extends ExecutionResultFormBase<StatementExecutionCursorResult> implements SearchableDataComponent {
-    private JScrollPane resultScrollPane;
     private JPanel mainPanel;
     private JPanel actionsPanel;
     private JPanel statusPanel;
@@ -38,6 +37,7 @@ public class StatementExecutionResultForm extends ExecutionResultFormBase<Statem
     private JPanel resultPanel;
     private JLabel statusLabel;
     private ResultSetTable<?> resultTable;
+    private DBNTableScrollPane resultScrollPane;
     private final RecordViewInfo recordViewInfo;
 
     private transient final Latent<DataSearchComponent> dataSearchComponent = Latent.basic(() -> {
@@ -55,12 +55,11 @@ public class StatementExecutionResultForm extends ExecutionResultFormBase<Statem
 
         recordViewInfo = new RecordViewInfo(executionResult.getName(), executionResult.getIcon());
 
-        resultPanel.setBorder(Borders.lineBorder(JBColor.border(),0,1,0,0));
+        resultPanel.setBorder(Borders.lineBorder(JBColor.border(), 0, 1, 1, 0));
         resultTable = new ResultSetTable<>(this, executionResult.getTableModel(), true, recordViewInfo);
         resultTable.setName(executionResult.getName());
 
         resultScrollPane.setViewportView(resultTable);
-        resultScrollPane.getViewport().setBackground(Colors.getTableBackground());
         resultTable.initTableGutter();
 
         Disposer.register(this, resultTable);
@@ -75,7 +74,7 @@ public class StatementExecutionResultForm extends ExecutionResultFormBase<Statem
             ResultSetTable<?> newResultSetTable = new ResultSetTable<>(this, executionResult.getTableModel(), true, recordViewInfo);
             resultTable = Disposer.replace(resultTable, newResultSetTable);
             resultScrollPane.setViewportView(resultTable);
-            resultTable.setBackground(Colors.getTableBackground());
+            resultTable.setBackground(Colors.getEditorBackground());
             resultTable.initTableGutter();
             resultTable.setName(getExecutionResult().getName());
             horizontalScrollBar.setValue(horizontalScrolling);
@@ -170,9 +169,5 @@ public class StatementExecutionResultForm extends ExecutionResultFormBase<Statem
     @Override
     public String getSelectedText() {
         return null;
-    }
-
-    private void createUIComponents() {
-        resultScrollPane = new BasicTableScrollPane();
     }
 }
