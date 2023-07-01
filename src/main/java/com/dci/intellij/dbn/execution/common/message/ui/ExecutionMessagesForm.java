@@ -4,40 +4,41 @@ import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.common.event.ProjectEvents;
 import com.dci.intellij.dbn.common.navigation.NavigationInstructions;
 import com.dci.intellij.dbn.common.ui.form.DBNFormBase;
+import com.dci.intellij.dbn.common.ui.misc.DBNScrollPane;
+import com.dci.intellij.dbn.common.ui.util.Borders;
 import com.dci.intellij.dbn.common.util.Actions;
 import com.dci.intellij.dbn.connection.config.ConnectionConfigListener;
-import com.dci.intellij.dbn.execution.common.message.action.ExecutedStatementViewAction;
-import com.dci.intellij.dbn.execution.common.message.action.ExecutionEngineSettingsAction;
-import com.dci.intellij.dbn.execution.common.message.action.MessagesTreeCollapseAction;
-import com.dci.intellij.dbn.execution.common.message.action.MessagesTreeExpandAction;
-import com.dci.intellij.dbn.execution.common.message.action.MessagesWindowCloseAction;
+import com.dci.intellij.dbn.execution.common.message.action.*;
 import com.dci.intellij.dbn.execution.common.message.ui.tree.MessagesTree;
 import com.dci.intellij.dbn.execution.common.ui.ExecutionConsoleForm;
 import com.dci.intellij.dbn.execution.compiler.CompilerMessage;
 import com.dci.intellij.dbn.execution.explain.result.ExplainPlanMessage;
 import com.dci.intellij.dbn.execution.statement.StatementExecutionMessage;
 import com.intellij.openapi.actionSystem.ActionToolbar;
-import com.intellij.ui.IdeBorderFactory;
+import com.intellij.ui.JBColor;
 import org.jetbrains.annotations.NotNull;
 
-import javax.swing.JPanel;
-import javax.swing.JScrollPane;
+import javax.swing.*;
 import javax.swing.tree.TreePath;
 
-public class ExecutionMessagesPanel extends DBNFormBase {
+import static com.dci.intellij.dbn.common.ui.util.Borderless.markBorderless;
+
+public class ExecutionMessagesForm extends DBNFormBase {
     private JPanel mainPanel;
     private JPanel actionsPanel;
     private JPanel statusPanel;
-    private JScrollPane messagesScrollPane;
     private JPanel messagesPanel;
+    private DBNScrollPane messagesScrollPane;
 
     private final MessagesTree messagesTree;
 
-    public ExecutionMessagesPanel(ExecutionConsoleForm parent) {
+    public ExecutionMessagesForm(ExecutionConsoleForm parent) {
         super(parent);
+        messagesPanel.setBorder(Borders.lineBorder(JBColor.border(), 0, 1, 1, 0));
         messagesTree = new MessagesTree(this);
+        markBorderless(messagesTree);
+
         messagesScrollPane.setViewportView(messagesTree);
-        messagesPanel.setBorder(IdeBorderFactory.createBorder());
         ActionToolbar actionToolbar = Actions.createActionToolbar(
                 actionsPanel,
                 "DBNavigator.ExecutionMessages.Controls", false,

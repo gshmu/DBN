@@ -2,20 +2,15 @@ package com.dci.intellij.dbn.data.grid.ui.table.sortable;
 
 import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.common.color.Colors;
-import com.dci.intellij.dbn.common.ui.util.Borders;
 import com.dci.intellij.dbn.common.ui.table.DBNTableHeaderRendererBase;
+import com.dci.intellij.dbn.common.ui.util.Borders;
 import com.dci.intellij.dbn.data.model.sortable.SortableDataModel;
 import com.dci.intellij.dbn.data.sorting.SortDirection;
 import com.dci.intellij.dbn.data.sorting.SortingInstruction;
 import com.dci.intellij.dbn.data.sorting.SortingState;
 
-import javax.swing.Icon;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.JTable;
-import java.awt.Component;
-import java.awt.Dimension;
-import java.awt.FontMetrics;
+import javax.swing.*;
+import java.awt.*;
 
 public class SortableTableHeaderRenderer extends DBNTableHeaderRendererBase {
     private JPanel mainPanel;
@@ -25,7 +20,7 @@ public class SortableTableHeaderRenderer extends DBNTableHeaderRendererBase {
     public SortableTableHeaderRenderer() {
         mainPanel.setOpaque(true);
         mainPanel.setBackground(Colors.getPanelBackground());
-        mainPanel.setBorder(Borders.lineBorder(Colors.getTableHeaderGridColor(), 0, 0, 0, 1));
+        mainPanel.setBorder(Borders.tableBorder(0, 0, 0, 1));
         nameLabel.setForeground(Colors.getLabelForeground());
     }
 

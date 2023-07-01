@@ -7,6 +7,7 @@ import com.dci.intellij.dbn.common.dispose.DisposableContainers;
 import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.common.ui.form.DBNFormBase;
 import com.dci.intellij.dbn.common.ui.form.DBNHeaderForm;
+import com.dci.intellij.dbn.common.ui.misc.DBNScrollPane;
 import com.dci.intellij.dbn.common.ui.util.UserInterface;
 import com.dci.intellij.dbn.common.util.Actions;
 import com.dci.intellij.dbn.common.util.Strings;
@@ -38,8 +39,8 @@ public class ResultSetRecordViewerForm extends DBNFormBase {
     private JPanel columnsPanel;
     private JPanel mainPanel;
     private JPanel headerPanel;
-    private JScrollPane columnsPanelScrollPane;
     private JBTextField filterTextField;
+    private DBNScrollPane columnsPanelScrollPane;
 
     private final List<ResultSetRecordViewerColumnForm> columnForms = DisposableContainers.list(this);
 

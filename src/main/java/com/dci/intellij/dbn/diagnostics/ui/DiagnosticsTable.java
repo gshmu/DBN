@@ -1,10 +1,12 @@
 package com.dci.intellij.dbn.diagnostics.ui;
 
+import com.dci.intellij.dbn.common.color.Colors;
 import com.dci.intellij.dbn.common.ui.Presentable;
 import com.dci.intellij.dbn.common.ui.component.DBNComponent;
 import com.dci.intellij.dbn.common.ui.table.DBNColoredTableCellRenderer;
 import com.dci.intellij.dbn.common.ui.table.DBNTable;
 import com.dci.intellij.dbn.common.ui.table.DBNTableTransferHandler;
+import com.dci.intellij.dbn.common.ui.util.Borderless;
 import com.dci.intellij.dbn.common.ui.util.Borders;
 import com.dci.intellij.dbn.diagnostics.data.DiagnosticEntry;
 import com.dci.intellij.dbn.diagnostics.ui.model.AbstractDiagnosticsTableModel;
@@ -14,16 +16,17 @@ import org.jetbrains.annotations.NotNull;
 import javax.swing.*;
 import javax.swing.table.TableModel;
 
-public class DiagnosticsTable<T extends AbstractDiagnosticsTableModel> extends DBNTable<T> {
+public class DiagnosticsTable<T extends AbstractDiagnosticsTableModel> extends DBNTable<T> implements Borderless{
 
     DiagnosticsTable(@NotNull DBNComponent parent, T model) {
         super(parent, model, true);
         setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
         setDefaultRenderer(DiagnosticEntry.class, new CellRenderer());
         setTransferHandler(DBNTableTransferHandler.INSTANCE);
-        initTableSorter();
+        setBackground(Colors.getEditorBackground());
         setCellSelectionEnabled(true);
         adjustRowHeight(2);
+        initTableSorter();
         accommodateColumnsSize();
     }
 

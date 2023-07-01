@@ -3,7 +3,6 @@ package com.dci.intellij.dbn.diagnostics.ui;
 import com.dci.intellij.dbn.common.dispose.DisposableContainers;
 import com.dci.intellij.dbn.common.event.ProjectEvents;
 import com.dci.intellij.dbn.common.ui.form.DBNFormBase;
-import com.dci.intellij.dbn.common.ui.util.Borders;
 import com.dci.intellij.dbn.common.ui.util.UserInterface;
 import com.dci.intellij.dbn.connection.ConnectionBundle;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
@@ -20,9 +19,10 @@ import java.awt.*;
 import java.util.List;
 import java.util.Map;
 
+import static com.dci.intellij.dbn.common.ui.util.Borderless.markBorderless;
+
 public class ConnectionDiagnosticsForm extends DBNFormBase {
     private JPanel mainPanel;
-    private JPanel actionsPanel;
     private JPanel detailsPanel;
     private JList<ConnectionHandler> connectionsList;
     private int tabSelectionIndex;
@@ -31,8 +31,6 @@ public class ConnectionDiagnosticsForm extends DBNFormBase {
 
     public ConnectionDiagnosticsForm(@NotNull Project project) {
         super(null, project);
-        mainPanel.setBorder(Borders.BOTTOM_LINE_BORDER);
-
         connectionsList.addListSelectionListener(e -> {
             ConnectionHandler connection = connectionsList.getSelectedValue();
             showDetailsForm(connection);
@@ -42,6 +40,7 @@ public class ConnectionDiagnosticsForm extends DBNFormBase {
         ListModel<ConnectionHandler> model = createModel();
         connectionsList.setModel(model);
         connectionsList.setSelectedIndex(0);
+        markBorderless(connectionsList);
 
         ProjectEvents.subscribe(project, this,
                 ConnectionConfigListener.TOPIC,

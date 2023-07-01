@@ -1,10 +1,12 @@
 package com.dci.intellij.dbn.diagnostics.ui;
 
+import com.dci.intellij.dbn.common.color.Colors;
 import com.dci.intellij.dbn.common.ui.component.DBNComponent;
 import com.dci.intellij.dbn.common.ui.table.DBNColoredTableCellRenderer;
 import com.dci.intellij.dbn.common.ui.table.DBNTable;
 import com.dci.intellij.dbn.common.ui.table.DBNTableTransferHandler;
 import com.dci.intellij.dbn.common.ui.util.Borders;
+import com.dci.intellij.dbn.common.ui.util.ClientProperty;
 import com.dci.intellij.dbn.common.ui.util.Mouse;
 import com.dci.intellij.dbn.common.util.Editors;
 import com.dci.intellij.dbn.diagnostics.data.DiagnosticEntry;
@@ -26,11 +28,14 @@ public class ParserDiagnosticsTable extends DBNTable<ParserDiagnosticsTableModel
         setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
         setDefaultRenderer(DiagnosticEntry.class, new CellRenderer());
         setTransferHandler(DBNTableTransferHandler.INSTANCE);
+        setBackground(Colors.getEditorBackground());
         initTableSorter();
         setCellSelectionEnabled(true);
         adjustRowHeight(2);
         accommodateColumnsSize();
         addMouseListener(Mouse.listener().onClick(e -> clickEvent(e)));
+        ClientProperty.BORDER.set(this, Borders.tableBorder(1, 0, 0, 0));
+
     }
 
     private void clickEvent(MouseEvent e) {

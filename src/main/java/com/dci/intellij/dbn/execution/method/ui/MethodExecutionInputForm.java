@@ -5,6 +5,7 @@ import com.dci.intellij.dbn.common.thread.Dispatch;
 import com.dci.intellij.dbn.common.ui.component.DBNComponent;
 import com.dci.intellij.dbn.common.ui.form.DBNFormBase;
 import com.dci.intellij.dbn.common.ui.form.DBNHeaderForm;
+import com.dci.intellij.dbn.common.ui.misc.DBNScrollPane;
 import com.dci.intellij.dbn.common.ui.util.Borders;
 import com.dci.intellij.dbn.debugger.DBDebuggerType;
 import com.dci.intellij.dbn.execution.common.ui.ExecutionOptionsForm;
@@ -31,12 +32,12 @@ public class MethodExecutionInputForm extends DBNFormBase {
     private JPanel argumentsPanel;
     private JPanel headerPanel;
     private JLabel noArgumentsLabel;
-    private JScrollPane argumentsScrollPane;
     private JLabel debuggerVersionLabel;
     private JPanel versionPanel;
     private JLabel debuggerTypeLabel;
     private JPanel executionOptionsPanel;
     private JPanel argumentsContainerPanel;
+    private DBNScrollPane argumentsScrollPane;
 
 
     private final List<MethodExecutionInputArgumentForm> argumentForms = DisposableContainers.list(this);
@@ -106,7 +107,7 @@ public class MethodExecutionInputForm extends DBNFormBase {
             argumentsScrollPane.getVerticalScrollBar().setUnitIncrement(scrollUnitIncrement);
         } else {
             argumentsScrollPane.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_NEVER);
-            Dimension preferredSize = argumentsScrollPane.getViewport().getComponent(0).getPreferredSize();
+            Dimension preferredSize = argumentsScrollPane.getViewport().getView().getPreferredSize();
             preferredSize.setSize(preferredSize.getWidth(), preferredSize.getHeight() + 2);
             argumentsScrollPane.setMinimumSize(preferredSize);
         }

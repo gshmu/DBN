@@ -1,7 +1,6 @@
 package com.dci.intellij.dbn.connection.config.tns.ui;
 
 import com.dci.intellij.dbn.common.Icons;
-import com.dci.intellij.dbn.common.color.Colors;
 import com.dci.intellij.dbn.common.ui.form.DBNFormBase;
 import com.dci.intellij.dbn.common.util.Strings;
 import com.dci.intellij.dbn.connection.config.tns.TnsNames;
@@ -36,7 +35,6 @@ public class TnsNamesImportForm extends DBNFormBase {
         super(parent);
         tnsNamesTable = new TnsNamesTable(this, new TnsNames());
         tnsNamesScrollPanel.setViewportView(tnsNamesTable);
-        tnsNamesScrollPanel.getViewport().setBackground(Colors.getTableBackground());
         errorLabel.setIcon(Icons.COMMON_ERROR);
         errorLabel.setVisible(false);
 

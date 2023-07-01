@@ -3,15 +3,9 @@ package com.dci.intellij.dbn.connection.resource.ui;
 import com.dci.intellij.dbn.common.dispose.DisposableContainers;
 import com.dci.intellij.dbn.common.event.ProjectEvents;
 import com.dci.intellij.dbn.common.thread.Dispatch;
-import com.dci.intellij.dbn.common.ui.util.Borders;
 import com.dci.intellij.dbn.common.ui.form.DBNFormBase;
 import com.dci.intellij.dbn.common.ui.util.UserInterface;
-import com.dci.intellij.dbn.connection.ConnectionBundle;
-import com.dci.intellij.dbn.connection.ConnectionHandler;
-import com.dci.intellij.dbn.connection.ConnectionHandlerStatusListener;
-import com.dci.intellij.dbn.connection.ConnectionId;
-import com.dci.intellij.dbn.connection.ConnectionManager;
-import com.dci.intellij.dbn.connection.ConnectionType;
+import com.dci.intellij.dbn.connection.*;
 import com.dci.intellij.dbn.connection.jdbc.DBNConnection;
 import com.dci.intellij.dbn.connection.transaction.PendingTransactionBundle;
 import com.dci.intellij.dbn.connection.transaction.TransactionAction;
@@ -20,24 +14,25 @@ import com.intellij.ui.ColoredListCellRenderer;
 import com.intellij.ui.SimpleTextAttributes;
 import org.jetbrains.annotations.NotNull;
 
-import javax.swing.DefaultListModel;
-import javax.swing.JList;
-import javax.swing.JPanel;
-import java.awt.BorderLayout;
+import javax.swing.*;
+import java.awt.*;
 import java.util.List;
 import java.util.Map;
+
+import static com.dci.intellij.dbn.common.ui.util.Splitters.makeRegular;
 
 public class ResourceMonitorForm extends DBNFormBase {
     private JPanel mainPanel;
     private JPanel actionsPanel;
     private JPanel detailsPanel;
+    private JSplitPane contentSplitPane;
     private JList<ConnectionHandler> connectionsList;
 
     private final Map<ConnectionId, ResourceMonitorDetailForm> resourceMonitorForms = DisposableContainers.map(this);
 
     ResourceMonitorForm(ResourceMonitorDialog parentComponent) {
         super(parentComponent);
-        mainPanel.setBorder(Borders.BOTTOM_LINE_BORDER);
+        makeRegular(contentSplitPane);
 
         connectionsList.addListSelectionListener(e -> {
             ConnectionHandler connection = connectionsList.getSelectedValue();
@@ -46,6 +41,7 @@ public class ResourceMonitorForm extends DBNFormBase {
         connectionsList.setCellRenderer(new ConnectionListCellRenderer());
         connectionsList.setSelectedIndex(0);
         updateListModel();
+
 
         ProjectEvents.subscribe(ensureProject(), this, TransactionListener.TOPIC, transactionListener);
         ProjectEvents.subscribe(ensureProject(), this, ConnectionHandlerStatusListener.TOPIC, (connectionId) -> UserInterface.repaint(connectionsList));

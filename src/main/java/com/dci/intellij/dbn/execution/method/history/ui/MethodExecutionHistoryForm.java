@@ -8,7 +8,6 @@ import com.dci.intellij.dbn.common.dispose.DisposableContainers;
 import com.dci.intellij.dbn.common.thread.Dispatch;
 import com.dci.intellij.dbn.common.thread.Progress;
 import com.dci.intellij.dbn.common.ui.form.DBNFormBase;
-import com.dci.intellij.dbn.common.ui.util.Borders;
 import com.dci.intellij.dbn.common.ui.util.UserInterface;
 import com.dci.intellij.dbn.common.util.Actions;
 import com.dci.intellij.dbn.connection.ConnectionAction;
@@ -35,12 +34,15 @@ import java.awt.*;
 import java.util.List;
 import java.util.Map;
 
+import static com.dci.intellij.dbn.common.ui.util.Splitters.makeRegular;
+
 public class MethodExecutionHistoryForm extends DBNFormBase {
     private JPanel mainPanel;
     private JTree executionInputsTree;
     private JPanel actionsPanel;
     private JPanel argumentsPanel;
     private JPanel contentPanel;
+    private JSplitPane contentSplitPane;
     private ChangeListener changeListener;
     private final boolean debug;
 
@@ -55,7 +57,7 @@ public class MethodExecutionHistoryForm extends DBNFormBase {
                 Actions.SEPARATOR,
                 new ProjectSettingsOpenAction());
         actionsPanel.add(actionToolbar.getComponent());
-        mainPanel.setBorder(Borders.BOTTOM_LINE_BORDER);
+        makeRegular(contentSplitPane);
 
         MethodExecutionHistory executionHistory = getExecutionHistory();
         if (selectedExecutionInput != null &&

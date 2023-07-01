@@ -55,4 +55,8 @@ public final class Borders {
         Border textFieldBorder = UIManager.getBorder("TextField.border");
         return new CompoundBorder(textFieldBorder, insideBorder);
     }
+
+    public static Border tableBorder(int top, int left, int bottom, int right) {
+        return lineBorder(Colors.getTableHeaderGridColor(), top, left, bottom, right);
+    }
 }

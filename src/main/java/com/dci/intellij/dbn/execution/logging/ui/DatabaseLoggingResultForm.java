@@ -1,6 +1,7 @@
 package com.dci.intellij.dbn.execution.logging.ui;
 
 import com.dci.intellij.dbn.common.dispose.Disposer;
+import com.dci.intellij.dbn.common.ui.util.Borders;
 import com.dci.intellij.dbn.common.util.Actions;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.execution.common.result.ui.ExecutionResultFormBase;
@@ -8,6 +9,7 @@ import com.dci.intellij.dbn.execution.logging.DatabaseLoggingResult;
 import com.intellij.ide.actions.NextOccurenceToolbarAction;
 import com.intellij.ide.actions.PreviousOccurenceToolbarAction;
 import com.intellij.openapi.actionSystem.*;
+import com.intellij.ui.JBColor;
 import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
@@ -24,7 +26,10 @@ public class DatabaseLoggingResultForm extends ExecutionResultFormBase<DatabaseL
         super(loggingResult);
         ConnectionHandler connection = loggingResult.getConnection();
         console = new DatabaseLoggingResultConsole(connection, loggingResult.getName(), false);
-        consolePanel.add(console.getComponent(), BorderLayout.CENTER);
+
+        JComponent consoleComponent = console.getComponent();
+        consoleComponent.setBorder(Borders.lineBorder(JBColor.border(), 0, 1, 1, 0));
+        consolePanel.add(consoleComponent, BorderLayout.CENTER);
 
         ActionManager actionManager = ActionManager.getInstance();
         //ActionGroup actionGroup = (ActionGroup) actionManager.getAction("DBNavigator.ActionGroup.DatabaseLogOutput");

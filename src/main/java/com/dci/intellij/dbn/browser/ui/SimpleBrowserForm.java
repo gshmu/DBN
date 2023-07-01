@@ -5,6 +5,7 @@ import com.dci.intellij.dbn.browser.model.TabbedBrowserTreeModel;
 import com.dci.intellij.dbn.browser.options.listener.ObjectDetailSettingsListener;
 import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.common.event.ProjectEvents;
+import com.dci.intellij.dbn.common.ui.misc.DBNScrollPane;
 import com.dci.intellij.dbn.common.ui.util.UserInterface;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.ConnectionId;
@@ -17,7 +18,7 @@ import javax.swing.*;
 
 public class SimpleBrowserForm extends DatabaseBrowserForm{
     private JPanel mainPanel;
-    private JScrollPane browserScrollPane;
+    private DBNScrollPane browserScrollPane;
     private final DatabaseBrowserTree browserTree;
 
     public SimpleBrowserForm(@NotNull TabbedBrowserForm parent, @NotNull ConnectionHandler connection) {

@@ -7,6 +7,7 @@ import com.dci.intellij.dbn.common.color.Colors;
 import com.dci.intellij.dbn.common.ref.WeakRef;
 import com.dci.intellij.dbn.common.ui.form.DBNFormBase;
 import com.dci.intellij.dbn.common.ui.listener.PopupCloseListener;
+import com.dci.intellij.dbn.common.ui.misc.DBNScrollPane;
 import com.dci.intellij.dbn.common.ui.table.Tables;
 import com.dci.intellij.dbn.common.ui.util.Borders;
 import com.dci.intellij.dbn.common.util.Actions;
@@ -42,11 +43,11 @@ public class LargeValuePreviewPopup extends DBNFormBase {
     public static final int INITIAL_MAX_SIZE = 4000;
     private JPanel mainPanel;
     private JTextArea valueTextArea;
-    private JScrollPane valueScrollPane;
     private JPanel topActionsPanel;
     private JLabel infoLabel;
     private JPanel infoPanel;
     private JPanel leftActionsPanel;
+    private DBNScrollPane valueScrollPane;
 
     private transient JBPopup popup;
     private final WeakRef<JTable> table;

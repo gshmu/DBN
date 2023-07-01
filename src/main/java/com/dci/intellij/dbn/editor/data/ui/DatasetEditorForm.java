@@ -2,7 +2,6 @@ package com.dci.intellij.dbn.editor.data.ui;
 
 import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.common.action.DataProviders;
-import com.dci.intellij.dbn.common.color.Colors;
 import com.dci.intellij.dbn.common.dispose.Disposer;
 import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.common.latent.Latent;
@@ -10,6 +9,7 @@ import com.dci.intellij.dbn.common.ref.WeakRef;
 import com.dci.intellij.dbn.common.thread.Dispatch;
 import com.dci.intellij.dbn.common.ui.AutoCommitLabel;
 import com.dci.intellij.dbn.common.ui.form.DBNFormBase;
+import com.dci.intellij.dbn.common.ui.misc.DBNTableScrollPane;
 import com.dci.intellij.dbn.common.ui.util.Borders;
 import com.dci.intellij.dbn.common.ui.util.UserInterface;
 import com.dci.intellij.dbn.common.util.Actions;
@@ -21,7 +21,6 @@ import com.dci.intellij.dbn.data.find.SearchableDataComponent;
 import com.dci.intellij.dbn.data.grid.options.DataGridAuditColumnSettings;
 import com.dci.intellij.dbn.data.grid.options.DataGridSettings;
 import com.dci.intellij.dbn.data.grid.ui.table.basic.BasicTable;
-import com.dci.intellij.dbn.data.grid.ui.table.basic.BasicTableScrollPane;
 import com.dci.intellij.dbn.editor.DBContentType;
 import com.dci.intellij.dbn.editor.data.DatasetEditor;
 import com.dci.intellij.dbn.editor.data.state.column.DatasetColumnState;
@@ -55,7 +54,7 @@ public class DatasetEditorForm extends DBNFormBase implements SearchableDataComp
     private JPanel loadingActionPanel;
     private JPanel loadingDataPanel;
     private JPanel datasetTablePanel;
-    private JScrollPane datasetTableScrollPane;
+    private DBNTableScrollPane datasetTableScrollPane;
 
     private AutoCommitLabel autoCommitLabel;
     private JPanel toolbarPanel;
@@ -78,7 +77,7 @@ public class DatasetEditorForm extends DBNFormBase implements SearchableDataComp
         try {
             this.toolbarPanel.setBorder(Borders.insetBorder(2));
 
-            datasetTablePanel.setBorder(Borders.lineBorder(Colors.getTableHeaderGridColor(), 1, 0, 0, 0));
+            datasetTablePanel.setBorder(Borders.tableBorder(1, 0, 0, 0));
             datasetEditorTable = new DatasetEditorTable(this, datasetEditor);
             datasetTableScrollPane.setViewportView(datasetEditorTable);
             datasetEditorTable.initTableGutter();
@@ -243,10 +242,6 @@ public class DatasetEditorForm extends DBNFormBase implements SearchableDataComp
     @Override
     public BasicTable<?> getTable() {
         return getEditorTable();
-    }
-
-    private void createUIComponents() {
-        datasetTableScrollPane = new BasicTableScrollPane();
     }
 
     private class CancelLoadingAction extends AnAction {

@@ -4,7 +4,7 @@ import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.common.color.Colors;
 import com.dci.intellij.dbn.common.ui.form.DBNFormBase;
 import com.dci.intellij.dbn.common.ui.form.DBNHeaderForm;
-import com.dci.intellij.dbn.common.ui.util.UserInterface;
+import com.dci.intellij.dbn.common.ui.util.TextFields;
 import com.dci.intellij.dbn.common.util.Messages;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.ConnectionRef;
@@ -35,7 +35,7 @@ import java.nio.charset.Charset;
 import static com.dci.intellij.dbn.common.message.MessageCallback.when;
 import static com.dci.intellij.dbn.common.ui.util.ComboBoxes.*;
 import static com.dci.intellij.dbn.common.ui.util.TextFields.addDocumentListener;
-import static com.dci.intellij.dbn.common.ui.util.UserInterface.isEmptyText;
+import static com.dci.intellij.dbn.common.ui.util.TextFields.isEmptyText;
 import static com.dci.intellij.dbn.data.export.processor.DataExportFeature.*;
 
 public class ExportDataForm extends DBNFormBase {
@@ -125,8 +125,8 @@ public class ExportDataForm extends DBNFormBase {
         formatCSVRadioButton.setSelected(format == DataExportFormat.CSV);
         formatCustomRadioButton.setSelected(format == DataExportFormat.CUSTOM);
 
-        UserInterface.limitTextLength(beginQuoteTextField, 1);
-        UserInterface.limitTextLength(endQuoteTextField, 1);
+        TextFields.limitTextLength(beginQuoteTextField, 1);
+        TextFields.limitTextLength(endQuoteTextField, 1);
         beginQuoteTextField.setText(instructions.getBeginQuote());
         endQuoteTextField.setText(instructions.getEndQuote());
         valueSeparatorTextField.setText(instructions.getValueSeparator());
