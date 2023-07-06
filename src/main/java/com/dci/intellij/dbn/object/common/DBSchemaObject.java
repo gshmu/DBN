@@ -41,4 +41,6 @@ public interface DBSchemaObject extends DBObject {
     DBEditableObjectVirtualFile getCachedVirtualFile();
 
     List<DBSchema> getReferencingSchemas() throws SQLException;
+
+    boolean isDisabled();
 }

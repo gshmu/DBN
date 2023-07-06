@@ -343,8 +343,8 @@
             <action id="DBNavigator.Actions.Connections" class="com.dci.intellij.dbn.language.editor.action.ConnectionSelectDropdownAction" text="Script Editor - DB Connections"/>
             <action id="DBNavigator.Actions.CurrentSchema" class="com.dci.intellij.dbn.language.editor.action.SchemaSelectDropdownAction" text="Script Editor - Current Schema"/>
             <action id="DBNavigator.Actions.CurrentSession" class="com.dci.intellij.dbn.language.editor.action.DatabaseSessionSelectDropdownAction" text="Script Editor - Current Session"/>
-            <action id="DBNavigator.Actions.Commit" class="com.dci.intellij.dbn.language.editor.action.TransactionCommitAction" text="Script Editor - Commit Transaction" icon="/img/action/ConnectionCommit.png"/>
-            <action id="DBNavigator.Actions.Rollback" class="com.dci.intellij.dbn.language.editor.action.TransactionRollbackAction" text="Script Editor - Rollback Transaction" icon="/img/action/ConnectionRollback.png"/>
+            <action id="DBNavigator.Actions.Commit" class="com.dci.intellij.dbn.language.editor.action.TransactionCommitAction" text="Script Editor - Commit Transaction" icon="/img/action/ConnectionCommit.svg"/>
+            <action id="DBNavigator.Actions.Rollback" class="com.dci.intellij.dbn.language.editor.action.TransactionRollbackAction" text="Script Editor - Rollback Transaction" icon="/img/action/ConnectionRollback.svg"/>
             <separator/>
             <action id="DBNavigator.Actions.Execute" class="com.dci.intellij.dbn.execution.statement.action.ExecuteStatementEditorAction" text="Script Editor - Execute Statement" icon="/img/action/StatementExecution.png">
                 <keyboard-shortcut keymap="$default" first-keystroke="ctrl ENTER"/>

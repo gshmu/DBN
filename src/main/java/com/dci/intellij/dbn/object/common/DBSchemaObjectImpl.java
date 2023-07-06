@@ -16,6 +16,8 @@ import com.dci.intellij.dbn.language.common.DBLanguage;
 import com.dci.intellij.dbn.language.psql.PSQLLanguage;
 import com.dci.intellij.dbn.object.DBSchema;
 import com.dci.intellij.dbn.object.common.list.DBObjectListContainer;
+import com.dci.intellij.dbn.object.common.property.DBObjectProperty;
+import com.dci.intellij.dbn.object.common.status.DBObjectStatus;
 import com.dci.intellij.dbn.object.common.status.DBObjectStatusHolder;
 import com.dci.intellij.dbn.object.type.DBObjectType;
 import com.dci.intellij.dbn.vfs.DatabaseFileSystem;
@@ -81,6 +83,11 @@ public abstract class DBSchemaObjectImpl<M extends DBObjectMetadata> extends DBO
             }
         }
         return objectStatus;
+    }
+
+    @Override
+    public boolean isDisabled() {
+        return is(DBObjectProperty.DISABLEABLE) && !getStatus().is(DBObjectStatus.ENABLED);
     }
 
     @Override
