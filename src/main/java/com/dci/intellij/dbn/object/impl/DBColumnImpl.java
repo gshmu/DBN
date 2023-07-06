@@ -3,6 +3,7 @@ package com.dci.intellij.dbn.object.impl;
 import com.dci.intellij.dbn.browser.ui.HtmlToolTipBuilder;
 import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.common.load.ProgressMonitor;
+import com.dci.intellij.dbn.data.grid.options.DataGridSettings;
 import com.dci.intellij.dbn.data.type.DBDataType;
 import com.dci.intellij.dbn.database.common.metadata.def.DBColumnMetadata;
 import com.dci.intellij.dbn.object.*;
@@ -126,13 +127,17 @@ public class DBColumnImpl extends DBObjectImpl<DBColumnMetadata> implements DBCo
     public Icon getIcon() {
         return isPrimaryKey() ? isForeignKey() ? Icons.DBO_COLUMN_PFK : Icons.DBO_COLUMN_PK :
                isForeignKey() ? Icons.DBO_COLUMN_FK :
-               isHidden() ? Icons.DBO_COLUMN_HIDDEN :
+               isHidden() || isAudit() ? Icons.DBO_COLUMN_HIDDEN :
                Icons.DBO_COLUMN;
     }
 
     @Override
     public DBDataset getDataset() {
         return getParentObject();
+    }
+
+    public boolean isAudit() {
+        return DataGridSettings.isAuditColumn(getProject(), getName());
     }
 
     @Override

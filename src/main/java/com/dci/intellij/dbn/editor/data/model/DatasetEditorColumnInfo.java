@@ -2,7 +2,6 @@ package com.dci.intellij.dbn.editor.data.model;
 
 import com.dci.intellij.dbn.common.latent.Latent;
 import com.dci.intellij.dbn.common.util.RefreshableValue;
-import com.dci.intellij.dbn.data.grid.options.DataGridSettings;
 import com.dci.intellij.dbn.data.model.resultSet.ResultSetColumnInfo;
 import com.dci.intellij.dbn.data.type.DBDataType;
 import com.dci.intellij.dbn.data.type.GenericDataType;
@@ -35,7 +34,7 @@ public class DatasetEditorColumnInfo extends ResultSetColumnInfo  {
         @Override
         protected Boolean load() {
             DBColumn column = getColumn();
-            return DataGridSettings.isAuditColumn(column.getProject(), column.getName());
+            return column.isAudit();
         }
     };
 
