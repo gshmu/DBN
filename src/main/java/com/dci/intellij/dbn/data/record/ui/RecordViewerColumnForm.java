@@ -16,8 +16,6 @@ import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 
-import static com.dci.intellij.dbn.data.grid.options.DataGridSettings.isAuditColumn;
-
 public class RecordViewerColumnForm extends DBNFormBase {
     private JLabel columnLabel;
     private JPanel valueFieldPanel;
@@ -35,7 +33,7 @@ public class RecordViewerColumnForm extends DBNFormBase {
         this.column = DBObjectRef.of(column);
 
         DBDataType dataType = column.getDataType();
-        boolean auditColumn = isAuditColumn(getProject(), column.getName());
+        boolean auditColumn = column.isAudit();
 
         columnLabel.setIcon(column.getIcon());
         columnLabel.setText(column.getName());

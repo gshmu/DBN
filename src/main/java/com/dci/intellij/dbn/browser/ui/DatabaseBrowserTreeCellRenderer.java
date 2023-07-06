@@ -12,6 +12,7 @@ import com.dci.intellij.dbn.object.DBColumn;
 import com.dci.intellij.dbn.object.DBSchema;
 import com.dci.intellij.dbn.object.DBUser;
 import com.dci.intellij.dbn.object.common.DBObject;
+import com.dci.intellij.dbn.object.common.DBSchemaObject;
 import com.dci.intellij.dbn.object.common.list.DBObjectList;
 import com.intellij.openapi.project.Project;
 import com.intellij.ui.ColoredTreeCellRenderer;
@@ -24,7 +25,6 @@ import javax.swing.tree.TreeCellRenderer;
 import java.awt.*;
 
 import static com.dci.intellij.dbn.common.dispose.Failsafe.guarded;
-import static com.dci.intellij.dbn.data.grid.options.DataGridSettings.isAuditColumn;
 
 public class DatabaseBrowserTreeCellRenderer implements TreeCellRenderer {
     private final DefaultTreeCellRenderer cellRenderer = new DefaultTreeCellRenderer();
@@ -73,8 +73,8 @@ public class DatabaseBrowserTreeCellRenderer implements TreeCellRenderer {
                     isDirty = /*objectsList.isDirty() ||*/ objectsList.isLoading() || (!objectsList.isLoaded() && !hasConnectivity(objectsList));
                     SimpleTextAttributes textAttributes =
                             isDirty ? SimpleTextAttributes.GRAY_ITALIC_ATTRIBUTES :
-                                    isEmpty ? SimpleTextAttributes.REGULAR_ATTRIBUTES :
-                                            SimpleTextAttributes.REGULAR_BOLD_ATTRIBUTES;
+                            isEmpty ? SimpleTextAttributes.REGULAR_ATTRIBUTES :
+                                      SimpleTextAttributes.REGULAR_BOLD_ATTRIBUTES;
 
                     append(Commons.nvl(displayName, ""), textAttributes);
 
@@ -104,6 +104,10 @@ public class DatabaseBrowserTreeCellRenderer implements TreeCellRenderer {
                         } else if (object instanceof DBUser) {
                             DBUser user = (DBUser) object;
                             showBold = user.isSessionUser();
+                            showGrey = user.isExpired();
+                        } else if (object instanceof DBSchemaObject) {
+                            DBSchemaObject schemaObject = (DBSchemaObject) object;
+                            showGrey = schemaObject.isDisabled();
                         }
 
                         isDisposed = object.isDisposed();
@@ -111,13 +115,13 @@ public class DatabaseBrowserTreeCellRenderer implements TreeCellRenderer {
 
                     if (!showGrey && treeNode instanceof DBColumn) {
                         DBColumn column = (DBColumn) treeNode;
-                        showGrey = isAuditColumn(treeNode.getProject(), column.getName());
+                        showGrey = column.isAudit();
                     }
 
                     SimpleTextAttributes textAttributes =
                             isDisposed ? SimpleTextAttributes.GRAY_ITALIC_ATTRIBUTES :
-                                    showBold ? (showGrey ? SimpleTextAttributes.GRAYED_BOLD_ATTRIBUTES : SimpleTextAttributes.REGULAR_BOLD_ATTRIBUTES) :
-                                            (showGrey ? SimpleTextAttributes.GRAYED_ATTRIBUTES : SimpleTextAttributes.REGULAR_ATTRIBUTES);
+                            showBold ? (showGrey ? SimpleTextAttributes.GRAYED_BOLD_ATTRIBUTES : SimpleTextAttributes.REGULAR_BOLD_ATTRIBUTES) :
+                            (showGrey ? SimpleTextAttributes.GRAYED_ATTRIBUTES : SimpleTextAttributes.REGULAR_ATTRIBUTES);
 
                     if (displayName == null) displayName = "displayName null!!";
 

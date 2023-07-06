@@ -14,6 +14,7 @@ public interface DBColumn extends DBOrderedObject {
     boolean isIdentity();
     boolean isNullable();
     boolean isHidden();
+    boolean isAudit();
     DBDataset getDataset();
 
     @Nullable
