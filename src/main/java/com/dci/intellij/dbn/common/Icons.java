@@ -347,10 +347,10 @@ public class Icons {
     public static final Icon DBO_DATABASE_LINKS                  = load("/img/object/DatabaseLinks.png");
     public static final Icon DBO_DIMENSION                       = load("/img/object/Dimension.png");
     public static final Icon DBO_DIMENSIONS                      = load("/img/object/Dimensions.png");
-    public static final Icon DBO_FUNCTION                        = load("DBO_FUNCTION", "/img/object/Function.png");
-    public static final Icon DBO_FUNCTION_DEBUG                  = load("/img/object/FunctionDebug.png");
-    public static final Icon DBO_FUNCTION_ERR                    = load("/img/object/FunctionErr.png");
-    public static final Icon DBO_FUNCTIONS                       = load("/img/object/Functions.png");
+    public static final Icon DBO_FUNCTION                        = load("DBO_FUNCTION", "/img/object/function/Function.png");
+    public static final Icon DBO_FUNCTION_DEBUG                  = load("/img/object/function/FunctionDebug.png");
+    public static final Icon DBO_FUNCTION_ERR                    = load("/img/object/function/FunctionErr.png");
+    public static final Icon DBO_FUNCTIONS                       = load("/img/object/function/Functions.png");
     public static final Icon DBO_INDEX                           = load("/img/object/index/Index.png");
     public static final Icon DBO_INDEX_DISABLED                  = load("/img/object/index/IndexDisabled.png");
     public static final Icon DBO_INDEXES                         = load("/img/object/index/Indexes.png");
