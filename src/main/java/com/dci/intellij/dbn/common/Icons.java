@@ -379,8 +379,8 @@ public class Icons {
     public static final Icon DBO_SYNONYM                         = load("/img/object/synonym/Synonym.png");
     public static final Icon DBO_SYNONYM_ERR                     = load("/img/object/synonym/SynonymErr.png");
     public static final Icon DBO_SYNONYMS                        = load("/img/object/synonym/Synonyms.png");
-    public static final Icon DBO_SEQUENCE                        = load("/img/object/Sequence.png");
-    public static final Icon DBO_SEQUENCES                       = load("/img/object/Sequences.png");
+    public static final Icon DBO_SEQUENCE                        = load("/img/object/sequence/Sequence.png");
+    public static final Icon DBO_SEQUENCES                       = load("/img/object/sequence/Sequences.png");
     public static final Icon DBO_TMP_TABLE                       = load("/img/object/table/TableTmp.png");
     public static final Icon DBO_TABLE                           = load("/img/object/table/Table.png");
     public static final Icon DBO_TABLES                          = load("/img/object/table/Tables.png");
