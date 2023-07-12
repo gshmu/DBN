@@ -35,6 +35,7 @@ import com.intellij.xdebugger.evaluation.XDebuggerEvaluator;
 import com.intellij.xdebugger.frame.XCompositeNode;
 import com.intellij.xdebugger.frame.XStackFrame;
 import com.intellij.xdebugger.frame.XValueChildrenList;
+import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -43,6 +44,7 @@ import javax.swing.*;
 import java.util.*;
 
 @Slf4j
+@Getter
 public abstract class DBDebugStackFrame<P extends DBDebugProcess, V extends DBDebugValue> extends XStackFrame {
     private final P debugProcess;
     private final int frameIndex;
@@ -112,20 +114,9 @@ public abstract class DBDebugStackFrame<P extends DBDebugProcess, V extends DBDe
         return virtualFile.get();
     }
 
-
-
     public IdentifierPsiElement getSubject() {
         return subject.get();
     }
-
-    public P getDebugProcess() {
-        return debugProcess;
-    }
-
-    public int getFrameIndex() {
-        return frameIndex;
-    }
-
 
     public V getValue(String variableName) {
         return valuesMap == null ? null : valuesMap.get(variableName.toLowerCase());
@@ -155,53 +146,59 @@ public abstract class DBDebugStackFrame<P extends DBDebugProcess, V extends DBDe
             valuesMap.put(frameInfoValue.getName(), frameInfoValue);
         }
 
-        XSourcePosition sourcePosition = getSourcePosition();
-        VirtualFile virtualFile = DBDebugUtil.getSourceCodeFile(sourcePosition);
-
-        if (virtualFile != null) {
-            if (virtualFile instanceof DBEditableObjectVirtualFile) {
-                virtualFile = ((DBEditableObjectVirtualFile) virtualFile).getMainContentFile();
-            }
-            Project project = getDebugProcess().getProject();
-            Document document = Documents.getDocument(virtualFile);
-            DBLanguagePsiFile psiFile = (DBLanguagePsiFile) PsiUtil.getPsiFile(project, virtualFile);
-
-            if (document != null && psiFile != null) {
-                int offset = document.getLineStartOffset(sourcePosition.getLine());
-                CodeStyleCaseSettings codeStyleCaseSettings = DBLCodeStyleManager.getInstance(psiFile.getProject()).getCodeStyleCaseSettings(PSQLLanguage.INSTANCE);
-                CodeStyleCaseOption objectCaseOption = codeStyleCaseSettings.getObjectCaseOption();
-
-                psiFile.lookupVariableDefinition(offset, basePsiElement -> {
-                    String variableName = objectCaseOption.format(basePsiElement.getText());
-                    //DBObject object = basePsiElement.resolveUnderlyingObject();
-
-                    ListCollector<String> childVariableNames = ListCollector.unique();
-                    if (basePsiElement instanceof IdentifierPsiElement) {
-                        IdentifierPsiElement identifierPsiElement = (IdentifierPsiElement) basePsiElement;
-                        identifierPsiElement.findQualifiedUsages(qualifiedUsage -> {
-                            String childVariableName = objectCaseOption.format(qualifiedUsage.getText());
-                            childVariableNames.accept(childVariableName);
-                        });
-                    }
-
-                    String valueCacheKey = variableName.toUpperCase();
-                    if (!valuesMap.containsKey(valueCacheKey)) {
-                        Icon icon = basePsiElement.getIcon(true);
-                        V value = createDebugValue(variableName, null, childVariableNames.elements(), icon);
-                        values.add(value);
-                        valuesMap.put(valueCacheKey, value);
-                    }
-                });
-            }
-        }
+        computeValues(values);
 
         Collections.sort(values);
-
         XValueChildrenList children = new XValueChildrenList();
         for (DBDebugValue value : values) {
             children.add(value.getVariableName(), value);
         }
         node.addChildren(children, true);
+    }
+
+    private void computeValues(List<DBDebugValue> values) {
+        XSourcePosition sourcePosition = getSourcePosition();
+        VirtualFile virtualFile = DBDebugUtil.getSourceCodeFile(sourcePosition);
+        if (virtualFile == null) return;
+
+
+        if (virtualFile instanceof DBEditableObjectVirtualFile) {
+            virtualFile = ((DBEditableObjectVirtualFile) virtualFile).getMainContentFile();
+        }
+
+        Project project = getDebugProcess().getProject();
+        Document document = Documents.getDocument(virtualFile);
+        if (document == null) return;
+
+        DBLanguagePsiFile psiFile = PsiUtil.getPsiFile(project, virtualFile);
+        if (psiFile == null) return;
+
+        int offset = document.getLineStartOffset(sourcePosition.getLine());
+        CodeStyleCaseSettings codeStyleCaseSettings = DBLCodeStyleManager.getInstance(psiFile.getProject()).getCodeStyleCaseSettings(PSQLLanguage.INSTANCE);
+        CodeStyleCaseOption objectCaseOption = codeStyleCaseSettings.getObjectCaseOption();
+
+        psiFile.lookupVariableDefinition(offset, basePsiElement -> {
+            String variableName = objectCaseOption.format(basePsiElement.getText());
+            //DBObject object = basePsiElement.resolveUnderlyingObject();
+
+            ListCollector<String> childVariableNames = ListCollector.unique();
+            if (basePsiElement instanceof IdentifierPsiElement) {
+                IdentifierPsiElement identifierPsiElement = (IdentifierPsiElement) basePsiElement;
+                identifierPsiElement.findQualifiedUsages(qualifiedUsage -> {
+                    String childVariableName = objectCaseOption.format(qualifiedUsage.getText());
+                    childVariableNames.accept(childVariableName);
+                });
+            }
+
+            String valueCacheKey = variableName.toUpperCase();
+            if (!valuesMap.containsKey(valueCacheKey)) {
+                Icon icon = basePsiElement.getIcon(true);
+                List<String> childVariables = childVariableNames.isEmpty() ? null : childVariableNames.elements();
+                V value = createDebugValue(variableName, null, childVariables, icon);
+                values.add(value);
+                valuesMap.put(valueCacheKey, value);
+            }
+        });
     }
 
     @Override

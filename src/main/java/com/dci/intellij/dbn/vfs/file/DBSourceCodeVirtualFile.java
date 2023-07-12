@@ -95,7 +95,7 @@ public class DBSourceCodeVirtualFile extends DBContentVirtualFile implements DBP
     @Nullable
     public DBLanguagePsiFile getPsiFile() {
         Project project = getProject();
-        return (DBLanguagePsiFile) PsiUtil.getPsiFile(project, this);
+        return PsiUtil.getPsiFile(project, this);
     }
 
     public void refreshContentState() {

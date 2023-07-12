@@ -14,6 +14,10 @@ import org.jetbrains.annotations.NotNull;
 
 public class ExecuteScriptFileAction extends ProjectAction {
 
+    public ExecuteScriptFileAction() {
+        super("Execute SQL Script", null, Icons.EXECUTE_SQL_SCRIPT);
+    }
+
     @Override
     protected void actionPerformed(@NotNull AnActionEvent e, @NotNull Project project) {
         VirtualFile virtualFile = Lookups.getVirtualFile(e);
