@@ -313,13 +313,13 @@ public class PsiUtil {
     }
 
     @Nullable
-    public static PsiFile getPsiFile(@NotNull Project project, @NotNull VirtualFile virtualFile) {
+    public static <T extends PsiFile> T getPsiFile(@NotNull Project project, @NotNull VirtualFile virtualFile) {
         return Read.call(() -> {
             if (isNotValid(project)) return null;
             if (isNotValid(virtualFile)) return null;
 
             PsiManager psiManager = PsiManager.getInstance(project);
-            return psiManager.findFile(virtualFile);
+            return (T) psiManager.findFile(virtualFile);
         });
     }
 

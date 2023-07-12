@@ -30,14 +30,14 @@ public class DBJdbcDebugExecutionStack extends XExecutionStack {
     public void computeStackFrames(int firstFrameIndex, XStackFrameContainer container) {
         List<DBJdbcDebugStackFrame> frames = new ArrayList<>();
         ExecutionBacktraceInfo backtraceInfo = debugProcess.getBacktraceInfo();
-        if (backtraceInfo != null) {
-            for (DebuggerRuntimeInfo runtimeInfo : backtraceInfo.getFrames()) {
-                if (Strings.isNotEmpty(runtimeInfo.getOwnerName()) || debugProcess.getExecutionInput() instanceof StatementExecutionInput) {
-                    DBJdbcDebugStackFrame frame = new DBJdbcDebugStackFrame(debugProcess, runtimeInfo, runtimeInfo.getFrameIndex());
-                    frames.add(frame);
-                }
+        if (backtraceInfo == null) return;
+
+        for (DebuggerRuntimeInfo runtimeInfo : backtraceInfo.getFrames()) {
+            if (Strings.isNotEmpty(runtimeInfo.getOwnerName()) || debugProcess.getExecutionInput() instanceof StatementExecutionInput) {
+                DBJdbcDebugStackFrame frame = new DBJdbcDebugStackFrame(debugProcess, runtimeInfo, runtimeInfo.getFrameIndex());
+                frames.add(frame);
             }
-            container.addStackFrames(frames, true) ;
         }
+        container.addStackFrames(frames, true) ;
     }
 }

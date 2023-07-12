@@ -395,7 +395,7 @@ public abstract class DBLanguagePsiFile extends PsiFileImpl implements DatabaseC
             scope.collectPsiElements(lookupAdapter, 0, consumer);
 
             lookupAdapter = LookupAdapterCache.VARIABLE_DEFINITION.get(DBObjectType.ANY);
-            scope.collectPsiElements(lookupAdapter, 0, consumer);
+            scope.collectPsiElements(lookupAdapter, 1, consumer);
 
             PsiElement parent = scope.getParent();
             if (parent instanceof BasePsiElement) {
