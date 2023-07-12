@@ -129,26 +129,26 @@ public class StatementExecutionManager extends ProjectComponentBase implements P
 
     private void refreshEditorExecutionProcessors(@NotNull FileEditor textEditor) {
         Collection<StatementExecutionProcessor> executionProcessors = getExecutionProcessors(textEditor);
-        if (!executionProcessors.isEmpty()) {
-            for (StatementExecutionProcessor executionProcessor : executionProcessors) {
-                executionProcessor.unbind();
-            }
+        if (executionProcessors.isEmpty()) return;
 
-            bindExecutionProcessors(textEditor, MatchType.STRONG);
-            bindExecutionProcessors(textEditor, MatchType.CACHED);
-            bindExecutionProcessors(textEditor, MatchType.SOFT);
+        for (StatementExecutionProcessor executionProcessor : executionProcessors) {
+            executionProcessor.unbind();
+        }
 
-            List<StatementExecutionProcessor> removeList = null;
-            for (StatementExecutionProcessor executionProcessor : executionProcessors) {
-                if (executionProcessor.getCachedExecutable() == null) {
-                    if (removeList == null) removeList = new ArrayList<>();
-                    removeList.add(executionProcessor);
-                }
-            }
+        bindExecutionProcessors(textEditor, MatchType.STRONG);
+        bindExecutionProcessors(textEditor, MatchType.CACHED);
+        bindExecutionProcessors(textEditor, MatchType.SOFT);
 
-            if (removeList != null) {
-                executionProcessors.removeAll(removeList);
+        List<StatementExecutionProcessor> removeList = null;
+        for (StatementExecutionProcessor executionProcessor : executionProcessors) {
+            if (executionProcessor.getCachedExecutable() == null) {
+                if (removeList == null) removeList = new ArrayList<>();
+                removeList.add(executionProcessor);
             }
+        }
+
+        if (removeList != null) {
+            executionProcessors.removeAll(removeList);
         }
     }
 
@@ -163,27 +163,27 @@ public class StatementExecutionManager extends ProjectComponentBase implements P
     private void bindExecutionProcessors(FileEditor fileEditor, MatchType matchType) {
         Editor editor = Editors.getEditor(fileEditor);
         PsiFile psiFile = Documents.getFile(editor);
-        if (psiFile != null) {
-            PsiElement child = psiFile.getFirstChild();
-            while (child != null) {
-                if (child instanceof RootPsiElement) {
-                    RootPsiElement root = (RootPsiElement) child;
-                    for (ExecutablePsiElement executable: root.getExecutablePsiElements()) {
-                        if (matchType == MatchType.CACHED) {
-                            StatementExecutionProcessor executionProcessor = executable.getExecutionProcessor();
-                            if (executionProcessor != null && !executionProcessor.isBound() && executionProcessor.isQuery() == executable.isQuery()) {
-                                executionProcessor.bind(executable);
-                            }
-                        } else {
-                            StatementExecutionProcessor executionProcessor = findExecutionProcessor(executable, fileEditor, matchType);
-                            if (executionProcessor != null) {
-                                executionProcessor.bind(executable);
-                            }
+        if (psiFile == null) return;
+
+        PsiElement child = psiFile.getFirstChild();
+        while (child != null) {
+            if (child instanceof RootPsiElement) {
+                RootPsiElement root = (RootPsiElement) child;
+                for (ExecutablePsiElement executable: root.getExecutablePsiElements()) {
+                    if (matchType == MatchType.CACHED) {
+                        StatementExecutionProcessor executionProcessor = executable.getExecutionProcessor();
+                        if (executionProcessor != null && !executionProcessor.isBound() && executionProcessor.isQuery() == executable.isQuery()) {
+                            executionProcessor.bind(executable);
+                        }
+                    } else {
+                        StatementExecutionProcessor executionProcessor = findExecutionProcessor(executable, fileEditor, matchType);
+                        if (executionProcessor != null) {
+                            executionProcessor.bind(executable);
                         }
                     }
                 }
-                child = child.getNextSibling();
             }
+            child = child.getNextSibling();
         }
     }
 

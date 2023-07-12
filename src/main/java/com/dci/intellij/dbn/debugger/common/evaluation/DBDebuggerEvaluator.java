@@ -19,7 +19,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 public abstract class DBDebuggerEvaluator<F extends DBDebugStackFrame<? extends DBDebugProcess, V>, V extends DBDebugValue> extends XDebuggerEvaluator {
-    private F frame;
+    private final F frame;
 
     public DBDebuggerEvaluator(F frame) {
         this.frame = frame;
@@ -71,21 +71,20 @@ public abstract class DBDebuggerEvaluator<F extends DBDebugStackFrame<? extends 
     @Override
     public TextRange getExpressionRangeAtOffset(Project project, Document document, int offset, boolean sideEffectsAllowed) {
         PsiFile psiFile = PsiUtil.getPsiFile(project, document);
-        if (psiFile != null) {
-            PsiElement psiElement = psiFile.findElementAt(offset);
-            if (psiElement != null && psiElement.getParent() instanceof IdentifierPsiElement) {
-                IdentifierPsiElement identifierPsiElement = (IdentifierPsiElement) psiElement.getParent();
-                QualifiedIdentifierPsiElement qualifiedIdentifier = identifierPsiElement.getParentQualifiedIdentifier();
-                if (qualifiedIdentifier == null) {
-                    return identifierPsiElement.getTextRange();
-                } else {
-                    int startOffset = qualifiedIdentifier.getTextRange().getStartOffset();
-                    int endOffset = identifierPsiElement.getTextRange().getEndOffset();
-                    return new TextRange(startOffset, endOffset);
-                }
+        if (psiFile == null) return null;
 
-            }
+        PsiElement psiElement = psiFile.findElementAt(offset);
+        if (psiElement == null || !(psiElement.getParent() instanceof IdentifierPsiElement)) return null;
+
+        IdentifierPsiElement identifierPsiElement = (IdentifierPsiElement) psiElement.getParent();
+        QualifiedIdentifierPsiElement qualifiedIdentifier = identifierPsiElement.getParentQualifiedIdentifier();
+        if (qualifiedIdentifier == null) {
+            return identifierPsiElement.getTextRange();
+        } else {
+            int startOffset = qualifiedIdentifier.getTextRange().getStartOffset();
+            int endOffset = identifierPsiElement.getTextRange().getEndOffset();
+            return new TextRange(startOffset, endOffset);
         }
-        return null;
+
     }
 }
