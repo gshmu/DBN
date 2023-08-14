@@ -110,10 +110,12 @@ public final class DBObjectListContainer implements StatefulDisposable, Unlisted
     @Nullable
     private <T extends DBObject> T findAnyObject(String name, short overload) {
         for (DBObjectList<?> objectList : getObjects()) {
-            if (!objectList.isDependency() && !objectList.isHidden()) {
-                DBObject object = objectList.getObject(name, overload);
-                if (object != null) return cast(object);
-            }
+            if (objectList == null) continue;
+            if (objectList.isDependency()) continue;
+            if (objectList.isHidden()) continue;
+
+            DBObject object = objectList.getObject(name, overload);
+            if (object != null) return cast(object);
         }
         return null;
     }
