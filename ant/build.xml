@@ -35,6 +35,9 @@
         <include name="**/?*.txt"/>
         <include name="**/?*.jar"/>
     </patternset>
+    <patternset id="svg.resources">
+        <include name="**/?*.svg"/>
+    </patternset>
 
     <dirname property="root.dir" file="${ant.file}/.."/>
     <property name="source.dir" value="${root.dir}/src"/>
@@ -92,6 +95,12 @@
             </fileset>
             <fileset dir="${source.dir}/main/resources">
                 <patternset refid="compiler.resources"/>
+                <type type="file"/>
+            </fileset>
+        </copy>
+        <copy todir="${compiler.output.dir}/img/expui">
+            <fileset dir="${source.dir}/main/resources/img">
+                <patternset refid="svg.resources"/>
                 <type type="file"/>
             </fileset>
         </copy>
