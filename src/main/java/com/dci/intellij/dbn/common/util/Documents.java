@@ -1,6 +1,5 @@
 package com.dci.intellij.dbn.common.util;
 
-import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.common.editor.document.OverrideReadonlyFragmentModificationHandler;
 import com.dci.intellij.dbn.common.event.ProjectEvents;
 import com.dci.intellij.dbn.common.thread.Read;
@@ -36,10 +35,12 @@ import org.jetbrains.annotations.Nullable;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.concurrent.TimeUnit;
 
 import static com.dci.intellij.dbn.common.dispose.Checks.isNotValid;
 import static com.dci.intellij.dbn.common.dispose.Checks.isValid;
+import static com.dci.intellij.dbn.common.dispose.Failsafe.nn;
+import static com.dci.intellij.dbn.common.util.TimeUtil.isOlderThan;
+import static java.util.concurrent.TimeUnit.SECONDS;
 
 public class Documents {
     private static final Key<Boolean> FOLDING_STATE_KEY = Key.create("FOLDING_STATE_KEY");
@@ -50,52 +51,57 @@ public class Documents {
 
         // restart highlighting
         Project project = editor.getProject();
-        PsiFile file = Documents.getFile(editor);
-        if (isValid(project) && file instanceof DBLanguagePsiFile) {
-            DBLanguagePsiFile dbLanguageFile = (DBLanguagePsiFile) file;
-            DBLanguage dbLanguage = dbLanguageFile.getDBLanguage();
-            if (dbLanguage != null) {
-                ConnectionHandler connection = dbLanguageFile.getConnection();
-                Editors.initEditorHighlighter(editor, dbLanguage, connection);
-            }
-            if (reparse) {
-                ProjectEvents.notify(project,
-                        DocumentBulkUpdateListener.TOPIC,
-                        (listener) -> listener.updateStarted(document));
+        if (!isValid(project)) return;
 
-                FileContentUtil.reparseFiles(project, Collections.singletonList(file.getVirtualFile()), true);
-                CodeFoldingManager codeFoldingManager = CodeFoldingManager.getInstance(project);
-                codeFoldingManager.buildInitialFoldings(editor);
-            }
-            refreshEditorAnnotations(file);
+        PsiFile file = Documents.getFile(editor);
+        if (!(file instanceof DBLanguagePsiFile)) return;
+
+        DBLanguagePsiFile dbLanguageFile = (DBLanguagePsiFile) file;
+        DBLanguage dbLanguage = dbLanguageFile.getDBLanguage();
+        if (dbLanguage != null) {
+            ConnectionHandler connection = dbLanguageFile.getConnection();
+            Editors.initEditorHighlighter(editor, dbLanguage, connection);
         }
+
+        if (reparse) {
+            ProjectEvents.notify(project,
+                    DocumentBulkUpdateListener.TOPIC,
+                    (listener) -> listener.updateStarted(document));
+
+            List<VirtualFile> files = Collections.singletonList(file.getVirtualFile());
+            FileContentUtil.reparseFiles(project, files, true);
+
+            CodeFoldingManager codeFoldingManager = CodeFoldingManager.getInstance(project);
+            codeFoldingManager.updateFoldRegionsAsync(editor, false);
+        }
+        refreshEditorAnnotations(file);
     }
 
     public static void refreshEditorAnnotations(@Nullable Editor editor) {
-        if (editor != null) {
-            refreshEditorAnnotations(Documents.getFile(editor));
-        }
+        if (editor == null) return;
+
+        refreshEditorAnnotations(Documents.getFile(editor));
     }
 
     public static void refreshEditorAnnotations(@Nullable PsiFile psiFile) {
-        if (psiFile != null) {
-            Long lastRefresh = psiFile.getUserData(LAST_ANNOTATION_REFRESH_KEY);
-            if (lastRefresh == null || TimeUtil.isOlderThan(lastRefresh, 1, TimeUnit.SECONDS)) {
-                psiFile.putUserData(LAST_ANNOTATION_REFRESH_KEY, System.currentTimeMillis());
-                Read.run(() -> {
-                    if (psiFile.isValid()) {
-                        Project project = psiFile.getProject();
-                        DaemonCodeAnalyzer daemonCodeAnalyzer = DaemonCodeAnalyzer.getInstance(project);
-                        daemonCodeAnalyzer.restart(psiFile);
-                    }
-                });
+        if (psiFile == null) return;
+
+        Long lastRefresh = psiFile.getUserData(LAST_ANNOTATION_REFRESH_KEY);
+        if (lastRefresh != null && !isOlderThan(lastRefresh, 1, SECONDS)) return;
+
+        psiFile.putUserData(LAST_ANNOTATION_REFRESH_KEY, System.currentTimeMillis());
+        Read.run(() -> {
+            if (psiFile.isValid()) {
+                Project project = psiFile.getProject();
+                DaemonCodeAnalyzer daemonCodeAnalyzer = DaemonCodeAnalyzer.getInstance(project);
+                daemonCodeAnalyzer.restart(psiFile);
             }
-        }
+        });
     }
 
     @NotNull
     public static Document ensureDocument(@NotNull PsiFile file) {
-        return Failsafe.nn(getDocument(file));
+        return nn(getDocument(file));
     }
 
     @Nullable
