@@ -1,13 +1,16 @@
 package com.dci.intellij.dbn.common;
 
-import com.intellij.openapi.util.IconLoader;
 import com.intellij.openapi.util.ScalableIcon;
 import com.intellij.ui.RowIcon;
+import lombok.extern.slf4j.Slf4j;
 
 import javax.swing.*;
 import java.util.HashMap;
 import java.util.Map;
 
+import static com.intellij.openapi.util.IconLoader.findIcon;
+
+@Slf4j
 public class Icons {
     private static final Map<String, Icon> REGISTERED_ICONS = new HashMap<>();
 
@@ -445,8 +448,17 @@ public class Icons {
 
 
     private static Icon load(String path) {
-        //return IconManager.getInstance().loadRasterizedIcon(path, Icons.class.getClassLoader(), -1, 2);
-        return IconLoader.getIcon(path);
+        ClassLoader classLoader = Icons.class.getClassLoader();
+        String svgPath = path.replace(".png", ".svg");
+
+        try {
+            Icon icon = findIcon(svgPath, classLoader);
+            if (icon != null && icon.getIconWidth() > 1) return icon;
+        } catch (Throwable t) {
+            log.error("Failed to load icon {}", svgPath, t);
+        }
+
+        return findIcon(path, classLoader);
     }
 
     public static Icon scaleToWidth(Icon icon, float newWidth) {
