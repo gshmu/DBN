@@ -686,7 +686,7 @@
         <additionalTextAttributes scheme="WarmNeon" file="textAttributes/DBNWarmNeonColors.xml" id="DBN-WarmNeon"/>
 
         <fileTemplateGroup implementation="com.dci.intellij.dbn.common.file.DBNFileTemplateGroupDescriptorFactory"/>
-        <statusBarWidgetFactory implementation="com.dci.intellij.dbn.editor.data.statusbar.DatasetEditorStatusBarWidgetFactory"/>
+        <statusBarWidgetFactory implementation="com.dci.intellij.dbn.editor.data.statusbar.DatasetEditorStatusBarWidgetFactory" id="DBNavigator.Project.DatasetEditorStatusBarWidgetFactory"/>
 
         <intentionAction>
             <className>com.dci.intellij.dbn.code.common.intention.ExecuteScriptIntentionAction</className>
