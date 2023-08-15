@@ -6,6 +6,7 @@ import com.dci.intellij.dbn.common.component.PersistentState;
 import com.dci.intellij.dbn.common.event.ApplicationEvents;
 import com.dci.intellij.dbn.common.thread.Write;
 import com.dci.intellij.dbn.common.util.Commons;
+import com.dci.intellij.dbn.common.util.Unsafe;
 import com.dci.intellij.dbn.language.common.DBLanguageFileType;
 import com.dci.intellij.dbn.language.psql.PSQLFileType;
 import com.dci.intellij.dbn.language.sql.SQLFileType;
@@ -13,6 +14,7 @@ import com.intellij.openapi.components.State;
 import com.intellij.openapi.components.Storage;
 import com.intellij.openapi.fileTypes.FileType;
 import com.intellij.openapi.fileTypes.*;
+import lombok.extern.slf4j.Slf4j;
 import org.jdom.Element;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -23,6 +25,7 @@ import static com.dci.intellij.dbn.common.component.Components.applicationServic
 import static com.dci.intellij.dbn.common.file.FileTypeService.COMPONENT_NAME;
 import static com.dci.intellij.dbn.common.options.setting.SettingsSupport.stringAttribute;
 
+@Slf4j
 @State(
     name = COMPONENT_NAME,
     storages = @Storage(DatabaseNavigator.STORAGE_FILE)
@@ -42,19 +45,23 @@ public class FileTypeService extends ApplicationComponentBase implements Persist
     }
 
     public final void associateExtension(@NotNull DBLanguageFileType fileType, @NotNull String extension) {
-        FileType currentFileType = getCurrentFileType(extension);
-        if (currentFileType == fileType) return;
+        try {
+            FileType currentFileType = getCurrentFileType(extension);
+            if (currentFileType == fileType) return;
 
-        if (!Commons.isOneOf(currentFileType,
-                UnknownFileType.INSTANCE,
-                SQLFileType.INSTANCE,
-                PSQLFileType.INSTANCE)) {
+            if (!Commons.isOneOf(currentFileType,
+                    UnknownFileType.INSTANCE,
+                    SQLFileType.INSTANCE,
+                    PSQLFileType.INSTANCE)) {
 
-            originalFileAssociations.put(extension, currentFileType.getName());
+                originalFileAssociations.put(extension, currentFileType.getName());
+            }
+
+            dissociate(currentFileType, extension);
+            associate(fileType, extension);
+        } catch (Throwable e) {
+            log.error("Failed to associate file type {} for extension {}", fileType, extension, e);
         }
-
-        dissociate(currentFileType, extension);
-        associate(fileType, extension);
     }
 
     @NotNull
@@ -117,7 +124,7 @@ public class FileTypeService extends ApplicationComponentBase implements Persist
 
     @NotNull
     private static FileType getCurrentFileType(String extension) {
-        return FileTypeManager.getInstance().getFileTypeByExtension(extension);
+        return Unsafe.silent(UnknownFileType.INSTANCE, extension, e -> FileTypeManager.getInstance().getFileTypeByExtension(e));
     }
 
     @Override
