@@ -34,23 +34,24 @@ public class AliasObjectResolver extends UnderlyingObjectResolver{
         }
 
         BasePsiElement aliasedObject = PsiUtil.resolveAliasedEntityElement(identifierPsiElement);
-        if (aliasedObject != null) {
-            if (aliasedObject.isVirtualObject()) {
-                return aliasedObject.getUnderlyingObject();
-            } else if (aliasedObject instanceof IdentifierPsiElement) {
-                IdentifierPsiElement aliasedPsiElement = (IdentifierPsiElement) aliasedObject;
-                PsiElement underlyingPsiElement = aliasedPsiElement.resolve();
-                if (underlyingPsiElement instanceof DBObjectPsiElement) {
-                    DBObjectPsiElement objectPsiElement = (DBObjectPsiElement) underlyingPsiElement;
-                    return objectPsiElement.ensureObject();
-                }
+        if (aliasedObject == null) return null;
 
-                if (underlyingPsiElement instanceof IdentifierPsiElement && underlyingPsiElement != identifierPsiElement) {
-                    IdentifierPsiElement underlyingIdentifierPsiElement = (IdentifierPsiElement) underlyingPsiElement;
-                    if (underlyingIdentifierPsiElement.isAlias() && underlyingIdentifierPsiElement.isDefinition()) {
-                        recursionCheck++;
-                        return resolve(underlyingIdentifierPsiElement, recursionCheck);
-                    }
+        if (aliasedObject.isVirtualObject()) {
+            return aliasedObject.getUnderlyingObject();
+
+        } else if (aliasedObject instanceof IdentifierPsiElement) {
+            IdentifierPsiElement aliasedPsiElement = (IdentifierPsiElement) aliasedObject;
+            PsiElement underlyingPsiElement = aliasedPsiElement.resolve();
+            if (underlyingPsiElement instanceof DBObjectPsiElement) {
+                DBObjectPsiElement objectPsiElement = (DBObjectPsiElement) underlyingPsiElement;
+                return objectPsiElement.ensureObject();
+            }
+
+            if (underlyingPsiElement instanceof IdentifierPsiElement && underlyingPsiElement != identifierPsiElement) {
+                IdentifierPsiElement underlyingIdentifierPsiElement = (IdentifierPsiElement) underlyingPsiElement;
+                if (underlyingIdentifierPsiElement.isAlias() && underlyingIdentifierPsiElement.isDefinition()) {
+                    recursionCheck++;
+                    return resolve(underlyingIdentifierPsiElement, recursionCheck);
                 }
             }
         }

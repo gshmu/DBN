@@ -22,25 +22,25 @@ public class LocalDeclarationObjectResolver extends UnderlyingObjectResolver{
 
     @Override
     protected DBObject resolve(IdentifierPsiElement identifierPsiElement, int recursionCheck) {
-        BasePsiElement underlyingObjectCandidate = null;
 
-        DBObjectType objectType = identifierPsiElement.getObjectType();
         NamedPsiElement enclosingNamedPsiElement = identifierPsiElement.findEnclosingNamedElement();
-        if (enclosingNamedPsiElement != null) {
-            if (objectType.matches(DBObjectType.DATASET)) {
+        if (enclosingNamedPsiElement == null) return null;
+
+        BasePsiElement underlyingObjectCandidate;
+        DBObjectType objectType = identifierPsiElement.getObjectType();
+        if (objectType.matches(DBObjectType.DATASET)) {
+            underlyingObjectCandidate = findObject(identifierPsiElement, enclosingNamedPsiElement, DBObjectType.DATASET);
+
+        } else if (objectType.matches(DBObjectType.TYPE)) {
+            underlyingObjectCandidate = findObject(identifierPsiElement, enclosingNamedPsiElement, DBObjectType.TYPE);
+
+        } else if (objectType == DBObjectType.ANY || objectType == DBObjectType.ARGUMENT) {
+            underlyingObjectCandidate = findObject(identifierPsiElement, enclosingNamedPsiElement, DBObjectType.TYPE);
+            if (underlyingObjectCandidate == null) {
                 underlyingObjectCandidate = findObject(identifierPsiElement, enclosingNamedPsiElement, DBObjectType.DATASET);
-
-            } else if (objectType.matches(DBObjectType.TYPE)) {
-                underlyingObjectCandidate = findObject(identifierPsiElement, enclosingNamedPsiElement, DBObjectType.TYPE);
-
-            } else if (objectType == DBObjectType.ANY || objectType == DBObjectType.ARGUMENT) {
-                underlyingObjectCandidate = findObject(identifierPsiElement, enclosingNamedPsiElement, DBObjectType.TYPE);
-                if (underlyingObjectCandidate == null) {
-                    underlyingObjectCandidate = findObject(identifierPsiElement, enclosingNamedPsiElement, DBObjectType.DATASET);
-                }
-            } else {
-                underlyingObjectCandidate = findObject(identifierPsiElement, enclosingNamedPsiElement, objectType);
             }
+        } else {
+            underlyingObjectCandidate = findObject(identifierPsiElement, enclosingNamedPsiElement, objectType);
         }
 
         return underlyingObjectCandidate == null ? null : underlyingObjectCandidate.getUnderlyingObject() ;
