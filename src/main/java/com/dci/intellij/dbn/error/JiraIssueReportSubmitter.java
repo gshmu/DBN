@@ -53,10 +53,12 @@ public class JiraIssueReportSubmitter extends IssueReportSubmitter {
 
             // https://developer.atlassian.com/cloud/jira/platform/jira-rest-api-basic-authentication/
             // dancioca@bluewin.ch:YeRDb1bt6dA7DJH75D8j3465 => BASE64
-            // or plugin@database-navigator.com:YeRDb1bt6dA7DJH75D8j3465 => BASE64
+            // plugin@database-navigator.com:YeRDb1bt6dA7DJH75D8j3465 => BASE64
+
+            // plugin@database-navigator.com:ATATT3xFfGF0QO9RzZWFEAU02eQcV7sfzory1FO0_3P6FL9U5PCJvNWebWG3t8Eb_jpT80AbeOL2etbex9R-EO_YFXabqI0oBmEYMusHdXXadOmlfSSCp6Cjh0vpAMYi60vofrXT58_2NDGCYWRaXwnDznIHqtcwLs8fX-nFwVp_N6rL_OUaf7s=A9A17623 => BASE64
 
             HttpPost httpPost = new HttpPost(URL + "rest/api/latest/issue");
-            httpPost.addHeader("Authorization", "Basic cGx1Z2luQGRhdGFiYXNlLW5hdmlnYXRvci5jb206WWVSRGIxYnQ2ZEE3REpINzVEOGozNDY1");
+            httpPost.addHeader("Authorization", "Basic cGx1Z2luQGRhdGFiYXNlLW5hdmlnYXRvci5jb206QVRBVFQzeEZmR0YwUU85UnpaV0ZFQVUwMmVRY1Y3c2Z6b3J5MUZPMF8zUDZGTDlVNVBDSnZOV2ViV0czdDhFYl9qcFQ4MEFiZU9MMmV0YmV4OVItRU9fWUZYYWJxSTBvQm1FWU11c0hkWFhhZE9tbGZTU0NwNkNqaDB2cEFNWWk2MHZvZnJYVDU4XzJOREdDWVdSYVh3bkR6bklIcXRjd0xzOGZYLW5Gd1ZwX042ckxfT1VhZjdzPUE5QTE3NjIz");
             httpPost.addHeader("Content-Type", "application/json");
             httpPost.setEntity(params);
             HttpClient httpClient = HTTP_CLIENT_BUILDER.build();
