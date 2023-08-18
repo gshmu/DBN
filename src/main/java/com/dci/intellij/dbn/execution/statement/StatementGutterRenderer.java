@@ -7,18 +7,19 @@ import com.dci.intellij.dbn.language.common.psi.ExecutablePsiElement;
 import com.intellij.codeInsight.daemon.impl.ShowIntentionsPass;
 import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.editor.markup.GutterIconRenderer;
-import lombok.EqualsAndHashCode;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
+import java.util.Objects;
 
-@EqualsAndHashCode(callSuper = false)
 public class StatementGutterRenderer extends GutterIconRenderer {
     private final StatementGutterAction action;
+    private final int hashCode;
 
     public StatementGutterRenderer(ExecutablePsiElement executablePsiElement) {
         this.action = new StatementGutterAction(executablePsiElement);
+        hashCode = Objects.hashCode(executablePsiElement);
     }
 
     @Override
@@ -49,5 +50,23 @@ public class StatementGutterRenderer extends GutterIconRenderer {
     @Override
     public Alignment getAlignment() {
         return Alignment.RIGHT;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        // prevent double gutter actions
+        if (o == this) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        StatementGutterRenderer that = (StatementGutterRenderer) o;
+        return Objects.equals(
+                this.action.getExecutablePsiElement(),
+                that.action.getExecutablePsiElement());
+    }
+
+    @Override
+    public int hashCode() {
+        // prevent double gutter actions
+        return hashCode;
     }
 }

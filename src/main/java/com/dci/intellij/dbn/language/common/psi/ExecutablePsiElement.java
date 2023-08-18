@@ -7,6 +7,7 @@ import com.dci.intellij.dbn.common.ref.WeakRef;
 import com.dci.intellij.dbn.common.util.Cloneable;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.SchemaId;
+import com.dci.intellij.dbn.execution.statement.StatementGutterRenderer;
 import com.dci.intellij.dbn.execution.statement.processor.StatementExecutionProcessor;
 import com.dci.intellij.dbn.language.common.element.ElementType;
 import com.dci.intellij.dbn.language.common.element.impl.NamedElementType;
@@ -14,6 +15,7 @@ import com.dci.intellij.dbn.object.type.DBObjectType;
 import com.intellij.lang.ASTNode;
 import com.intellij.openapi.editor.colors.TextAttributesKey;
 import com.intellij.psi.PsiElement;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
@@ -22,9 +24,10 @@ import static com.dci.intellij.dbn.language.common.element.util.ElementTypeAttri
 
 public class ExecutablePsiElement extends NamedPsiElement implements Cloneable<ExecutablePsiElement> {
     private WeakRef<StatementExecutionProcessor> executionProcessor;
-    private final Latent<ElementType> specificElementType =         Latent.mutable(() -> getFileModificationStamp(), () -> resolveSpecificElementType(false));
-    private final Latent<ElementType> specificOverrideElementType = Latent.mutable(() -> getFileModificationStamp(), () -> resolveSpecificElementType(true));
-    private final Latent<SchemaId> contextSchema =                  Latent.mutable(() -> getFileModificationStamp(), () -> resolveContextSchema());
+    private final Latent<SchemaId> contextSchema =                          Latent.mutable(() -> getFileModificationStamp(), () -> resolveContextSchema());
+    private final Latent<ElementType> specificElementType =                 Latent.mutable(() -> getFileModificationStamp(), () -> resolveSpecificElementType(false));
+    private final Latent<ElementType> specificOverrideElementType =         Latent.mutable(() -> getFileModificationStamp(), () -> resolveSpecificElementType(true));
+    private final Latent<StatementGutterRenderer> statementGutterRenderer = Latent.mutable(() -> getFileModificationStamp(), () -> createStatementGutterRenderer());
 
     public String prepareStatementText(){
         PsiElement lastChild = getLastChild();
@@ -115,9 +118,20 @@ public class ExecutablePsiElement extends NamedPsiElement implements Cloneable<E
         return null;
     }
 
+    @NotNull
+    private StatementGutterRenderer createStatementGutterRenderer() {
+        return new StatementGutterRenderer(this);
+    }
+
+    public StatementGutterRenderer getStatementGutterRenderer() {
+        return statementGutterRenderer.get();
+    }
+
     public SchemaId getContextSchema() {
         return contextSchema.get();
     }
+
+
 
     public boolean isNestedExecutable() {
         PsiElement parent = getParent();
