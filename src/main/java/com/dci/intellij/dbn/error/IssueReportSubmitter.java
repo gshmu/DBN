@@ -6,7 +6,11 @@ import com.dci.intellij.dbn.common.notification.NotificationSupport;
 import com.dci.intellij.dbn.common.thread.Progress;
 import com.dci.intellij.dbn.common.util.Context;
 import com.dci.intellij.dbn.common.util.Strings;
+import com.dci.intellij.dbn.connection.ConnectionBundle;
+import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.ConnectionManager;
+import com.dci.intellij.dbn.connection.DatabaseType;
+import com.dci.intellij.dbn.connection.config.ConnectionDatabaseSettings;
 import com.dci.intellij.dbn.connection.info.ConnectionInfo;
 import com.intellij.diagnostic.AbstractMessage;
 import com.intellij.diagnostic.LogMessage;
@@ -22,11 +26,11 @@ import com.intellij.openapi.diagnostic.SubmittedReportInfo;
 import com.intellij.openapi.project.Project;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
-import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.awt.*;
+import java.io.File;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.util.List;
@@ -85,14 +89,33 @@ abstract class IssueReportSubmitter extends ErrorReportSubmitter {
         final String summary = eventSummary.substring(0, Math.min(eventSummary.length(), 100));
 
         String platformBuild = ApplicationInfo.getInstance().getBuild().asString();
-        ConnectionInfo connectionInfo = ConnectionManager.getLastUsedConnectionInfo();
+        ConnectionHandler connection = loadConnection(project);
+
         String connectionString = null;
         String driverString = null;
-        if (connectionInfo != null) {
-            connectionString = connectionInfo.getDatabaseType().getName() + " " + connectionInfo.getProductVersion();
-            driverString = connectionInfo.getDriverVersion();
+        if (connection != null) {
+            ConnectionInfo connectionInfo = connection.getConnectionInfo();
+            if (connectionInfo != null) {
+                String databaseType = connectionInfo.getDatabaseType().getName();
+                String productVersion = connectionInfo.getProductVersion();
+                connectionString = databaseType + " " + productVersion;
+                driverString = connectionInfo.getDriverVersion();
+
+            } else {
+                ConnectionDatabaseSettings databaseSettings = connection.getSettings().getDatabaseSettings();
+                DatabaseType databaseType = DatabaseType.resolve(databaseSettings.getDriver());
+                if (databaseType == DatabaseType.GENERIC ) {
+                    databaseType = databaseSettings.getDatabaseType();
+                }
+
+                connectionString = databaseType == DatabaseType.GENERIC ? null : databaseType.getName();
+
+                String driverLibrary = databaseSettings.getDriverLibrary();
+                driverString = Strings.isEmpty(driverLibrary) ? null : new File(driverLibrary).getName();
+            }
         }
-        @NonNls final StringBuilder description = new StringBuilder();
+
+        StringBuilder description = new StringBuilder();
         addEnvInfo(description, "Java Version", System.getProperty("java.version"));
         addEnvInfo(description, "Operating System", System.getProperty("os.name"));
         addEnvInfo(description, "IDE Version", platformBuild);
@@ -125,7 +148,7 @@ abstract class IssueReportSubmitter extends ErrorReportSubmitter {
         Object eventData = event.getData();
         if (eventData instanceof AbstractMessage) {
             List<Attachment> attachments = ((AbstractMessage) eventData).getIncludedAttachments();
-            if (attachments.size() > 0) {
+            if (!attachments.isEmpty()) {
                 Set<String> attachmentTexts = new HashSet<>();
                 for (Attachment attachment : attachments) {
                     attachmentTexts.add(attachment.getDisplayText().trim());
@@ -184,6 +207,23 @@ abstract class IssueReportSubmitter extends ErrorReportSubmitter {
         });
 
         return true;
+    }
+
+    @Nullable
+    private static ConnectionHandler loadConnection(Project project) {
+        ConnectionHandler connection = ConnectionManager.getLastUsedConnection();
+        if (connection != null) return connection;
+        if (project == null) return null;
+
+        ConnectionManager connectionManager = ConnectionManager.getInstance(project);
+        ConnectionBundle connectionBundle = connectionManager.getConnectionBundle();
+        List<ConnectionHandler> connections = connectionBundle.getConnections();
+        if (!connections.isEmpty()) return connections.get(0);
+
+        connections = connectionBundle.getAllConnections();
+        if (!connections.isEmpty()) return connections.get(0);
+
+        return null;
     }
 
     void addEnvInfo(StringBuilder description, String label, String value) {

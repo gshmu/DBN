@@ -101,8 +101,9 @@ public class ConnectionInfoForm extends DBNFormBase {
             initInfoPanel(connectionInfo);
         } catch (SQLException e) {
             conditionallyLog(e);
-            infoDatabaseTypeValueLabel.setText(DatabaseType.GENERIC.getName());
-            infoDatabaseTypeValueLabel.setIcon(DatabaseType.GENERIC.getIcon());
+            DatabaseType databaseType = connection.getSettings().getDatabaseSettings().getDatabaseType();
+            infoDatabaseTypeValueLabel.setText(databaseType.getName());
+            infoDatabaseTypeValueLabel.setIcon(databaseType.getIcon());
 
 
             initValueField(infoProductNameLabel, infoProductNameTextField, "-");
