@@ -1,35 +1,21 @@
 package com.dci.intellij.dbn.connection.ssl;
 
-import java.io.File;
+import lombok.Getter;
 
+@Getter
 public class SslConnection {
-    private File certificateAuthorityFile;
-    private File clientCertificateFile;
-    private File clientKeyFile;
+    private final SslConnectionConfig config;
 
-    public SslConnection(File certificateAuthorityFile, File clientCertificateFile, File clientKeyFile) {
-        this.certificateAuthorityFile = certificateAuthorityFile;
-        this.clientCertificateFile = clientCertificateFile;
-        this.clientKeyFile = clientKeyFile;
-    }
-
-    public File getCertificateAuthorityFile() {
-        return certificateAuthorityFile;
-    }
-
-    public File getClientCertificateFile() {
-        return clientCertificateFile;
-    }
-
-    public File getClientKeyFile() {
-        return clientKeyFile;
+    public SslConnection(SslConnectionConfig config) {
+        this.config = config;
     }
 
     public boolean isConnected() {
+        // TODO
         return false;
     }
 
     public void connect() {
-
+        // TODO
     }
 }
