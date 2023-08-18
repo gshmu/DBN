@@ -4,15 +4,16 @@ import com.dci.intellij.dbn.common.component.ApplicationComponentBase;
 import com.dci.intellij.dbn.common.util.Strings;
 import com.dci.intellij.dbn.connection.config.ConnectionSettings;
 import com.dci.intellij.dbn.connection.config.ConnectionSslSettings;
+import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
-import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 import static com.dci.intellij.dbn.common.component.Components.applicationService;
 
 public class SslConnectionManager extends ApplicationComponentBase {
-    private final Map<String, SslConnection> sslConnectors = new HashMap<>();
+    private final Map<SslConnectionConfig, SslConnection> sslConnectors = new ConcurrentHashMap<>();
 
     public SslConnectionManager() {
         super("DBNavigator.SslConnectionManager");
@@ -24,34 +25,29 @@ public class SslConnectionManager extends ApplicationComponentBase {
 
     public SslConnection ensureSslConnection(ConnectionSettings connectionSettings) {
         ConnectionSslSettings sslSettings = connectionSettings.getSslSettings();
-        if (sslSettings.isActive()) {
-            String certificateAuthorityFilePath = sslSettings.getCertificateAuthorityFile();
-            String clientCertificateFilePath = sslSettings.getClientCertificateFile();
-            String clientKeyFilePath = sslSettings.getClientKeyFile();
+        if (!sslSettings.isActive()) return null;
 
-            File certificateAuthorityFile = Strings.isEmpty(certificateAuthorityFilePath) ? null : new File(certificateAuthorityFilePath);
-            File clientCertificateFile = Strings.isEmpty(clientCertificateFilePath) ? null : new File(clientCertificateFilePath);
-            File clientKeyFile = Strings.isEmpty(clientKeyFilePath) ? null : new File(clientKeyFilePath);
+        SslConnectionConfig config = createConfig(sslSettings);
+        SslConnection connector = sslConnectors.computeIfAbsent(config, c -> new SslConnection(c));
 
-            String key = createKey(certificateAuthorityFile, clientCertificateFile, clientKeyFile);
-            SslConnection connector = sslConnectors.get(key);
-            if (connector == null) {
-                connector = new SslConnection(
-                        certificateAuthorityFile,
-                        clientCertificateFile,
-                        clientKeyFile);
-                sslConnectors.put(key, connector);
-            }
-            if (!connector.isConnected()) {
-                connector.connect();
-            }
-
-            return connector;
-        }
-        return null;
+        if (!connector.isConnected()) connector.connect();
+        return connector;
     }
 
-    private String createKey(File certificateAuthorityFile, File clientCertificateFile, File clientKeyFile) {
-        return certificateAuthorityFile + "#" + clientCertificateFile + "#" + clientKeyFile;
+    @NotNull
+    private static SslConnectionConfig createConfig(ConnectionSslSettings sslSettings) {
+        String certificateAuthorityFilePath = sslSettings.getCertificateAuthorityFile();
+        String clientCertificateFilePath = sslSettings.getClientCertificateFile();
+        String clientKeyFilePath = sslSettings.getClientKeyFile();
+
+        File certificateAuthorityFile = Strings.isEmpty(certificateAuthorityFilePath) ? null : new File(certificateAuthorityFilePath);
+        File clientCertificateFile = Strings.isEmpty(clientCertificateFilePath) ? null : new File(clientCertificateFilePath);
+        File clientKeyFile = Strings.isEmpty(clientKeyFilePath) ? null : new File(clientKeyFilePath);
+
+        SslConnectionConfig config = new SslConnectionConfig(
+                certificateAuthorityFile,
+                clientCertificateFile,
+                clientKeyFile);
+        return config;
     }
 }

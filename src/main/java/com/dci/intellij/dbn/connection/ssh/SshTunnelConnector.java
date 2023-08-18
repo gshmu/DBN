@@ -4,6 +4,7 @@ import com.dci.intellij.dbn.common.util.Commons;
 import com.jcraft.jsch.JSch;
 import com.jcraft.jsch.JSchException;
 import com.jcraft.jsch.Session;
+import lombok.Getter;
 
 import java.io.IOException;
 import java.net.ServerSocket;
@@ -12,38 +13,19 @@ import java.util.concurrent.TimeUnit;
 
 import static com.dci.intellij.dbn.diagnostics.Diagnostics.conditionallyLog;
 
+@Getter
 public class SshTunnelConnector {
-    private final String proxyHost;
-    private final int proxyPort;
-    private final String proxyUser;
-    private final String proxyPassword;
-    private final SshAuthType authType;
-    private final String keyFile;
-    private final String keyPassphrase;
+    private final SshTunnelConfig config;
 
     private final String localHost = "localhost";
     private int localPort;
-
-    private final String remoteHost;
-    private final int remotePort;
-
     private Session session;
 
-    public SshTunnelConnector(String proxyHost, int proxyPort, String proxyUser, SshAuthType authType, String keyFile, String keyPassphrase, String proxyPassword, String remoteHost, int remotePort) {
-        this.proxyHost = proxyHost;
-        this.proxyPort = proxyPort;
-        this.proxyUser = proxyUser;
-        this.proxyPassword = proxyPassword;
-
-        this.authType = authType;
-        this.keyFile = keyFile;
-        this.keyPassphrase = keyPassphrase;
-
-        this.remoteHost = remoteHost;
-        this.remotePort = remotePort;
+    public SshTunnelConnector(SshTunnelConfig config) {
+        this.config = config;
     }
 
-    public Session createTunnel() throws Exception {
+    public Session connect() throws Exception {
         try (ServerSocket serverSocket = new ServerSocket(0)) {
             localPort = serverSocket.getLocalPort();
         }
@@ -60,35 +42,32 @@ public class SshTunnelConnector {
 */
 
         JSch.setConfig("kex", "diffie-hellman-group1-sha1,diffie-hellman-group14-sha1,diffie-hellman-group-exchange-sha1,diffie-hellman-group-exchange-sha256");
-        session = jsch.getSession(proxyUser, proxyHost, proxyPort);
+        session = jsch.getSession(
+                config.getProxyUser(),
+                config.getProxyHost(),
+                config.getProxyPort());
 
-        if(authType == SshAuthType.KEY_PAIR) {
-            jsch.addIdentity(keyFile, Commons.nvl(keyPassphrase, ""));;
+        if(config.getAuthType() == SshAuthType.KEY_PAIR) {
+            String keyFile = config.getKeyFile();
+            String keyPassphrase = Commons.nvl(config.getKeyPassphrase(), "");
+            jsch.addIdentity(keyFile, keyPassphrase);;
         } else {
-            session.setPassword(proxyPassword);
+            session.setPassword(config.getProxyPassword());
         }
 
-        Properties config = new Properties();
-        config.put("StrictHostKeyChecking", "no");
-        config.put("TCPKeepAlive", "yes");
-        session.setConfig(config);
+        Properties properties = new Properties();
+        properties.put("StrictHostKeyChecking", "no");
+        properties.put("TCPKeepAlive", "yes");
+        session.setConfig(properties);
         session.setServerAliveInterval((int) TimeUnit.MINUTES.toMillis(2L));
         session.setServerAliveCountMax(1000);
         session.connect();
 
-        session.setPortForwardingL(localPort, remoteHost, remotePort);
+        session.setPortForwardingL(localPort, config.getRemoteHost(), config.getRemotePort());
         return session;
     }
 
     public boolean isConnected() {
         return session != null && session.isConnected();
-    }
-
-    public String getLocalHost() {
-        return localHost;
-    }
-
-    public int getLocalPort() {
-        return localPort;
     }
 }
