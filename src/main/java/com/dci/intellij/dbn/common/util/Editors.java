@@ -1,6 +1,7 @@
 package com.dci.intellij.dbn.common.util;
 
 import com.dci.intellij.dbn.common.color.Colors;
+import com.dci.intellij.dbn.common.compatibility.Compatibility;
 import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.common.editor.BasicTextEditor;
 import com.dci.intellij.dbn.common.navigation.NavigationInstructions;
@@ -38,6 +39,7 @@ import com.intellij.openapi.fileTypes.FileType;
 import com.intellij.openapi.fileTypes.SyntaxHighlighter;
 import com.intellij.openapi.fileTypes.SyntaxHighlighterFactory;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.util.Key;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.openapi.wm.IdeFocusManager;
 import com.intellij.psi.PsiFile;
@@ -57,9 +59,14 @@ import java.util.List;
 import java.util.Objects;
 
 import static com.dci.intellij.dbn.common.dispose.Checks.isValid;
+import static com.dci.intellij.dbn.common.util.Commons.nvl;
+import static com.dci.intellij.dbn.common.util.Unsafe.cast;
 
 @Slf4j
 public class Editors {
+    @Compatibility
+    public static final Key<TextEditor> TEXT_EDITOR_KEY = nvl(cast(Key.findKeyByName("textEditor")), () -> Key.create("textEditor"));
+
     public static FileEditor selectEditor(@NotNull Project project, @Nullable FileEditor fileEditor, @NotNull VirtualFile virtualFile, EditorProviderId editorProviderId, NavigationInstructions instructions) {
         FileEditorManager fileEditorManager = FileEditorManager.getInstance(project);
         if (fileEditor != null) {
@@ -481,5 +488,12 @@ public class Editors {
             FileEditorManager fileEditorManager = FileEditorManager.getInstance(project);
             return fileEditorManager.openFile(file, focus);
         });
+    }
+
+    public static void registerTextEditor(Editor editor, FileEditor fileEditor) {
+        if (fileEditor instanceof TextEditor) {
+            TextEditor thisTextEditor = (TextEditor) fileEditor;
+            editor.putUserData(TEXT_EDITOR_KEY, thisTextEditor);
+        }
     }
 }
