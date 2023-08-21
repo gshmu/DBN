@@ -2,16 +2,21 @@ package com.dci.intellij.dbn.debugger.common.frame;
 
 import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.common.thread.Background;
+import com.dci.intellij.dbn.common.util.Strings;
 import com.dci.intellij.dbn.debugger.common.evaluation.DBDebuggerEvaluator;
 import com.dci.intellij.dbn.debugger.common.process.DBDebugProcess;
 import com.intellij.xdebugger.evaluation.XDebuggerEvaluator;
 import com.intellij.xdebugger.frame.*;
+import lombok.Getter;
+import lombok.Setter;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
 import java.util.List;
 
+@Getter
+@Setter
 public abstract class DBDebugValue<T extends DBDebugStackFrame> extends XNamedValue implements Comparable<DBDebugValue>{
     protected String value;
     protected String type;
@@ -61,50 +66,38 @@ public abstract class DBDebugValue<T extends DBDebugStackFrame> extends XNamedVa
         }
     }
 
-    public T getStackFrame() {
-        return stackFrame;
-    }
-
     public DBDebugProcess getDebugProcess() {
         return stackFrame.getDebugProcess();
-    }
-
-    public DBDebugValue getParentValue() {
-        return parentValue;
-    }
-
-    public String getValue() {
-        return value;
-    }
-
-    public String getType() {
-        return type;
-    }
-
-    public void setValue(String value) {
-        this.value = value;
-    }
-
-    public void setType(String type) {
-        this.type = type;
     }
 
     public String getVariableName() {
         return getName();
     }
 
+    public String getDisplayValue() {
+        if (value == null) return childVariableNames == null ? "null" : "";
+        return isLiteral() && false ? "'" + value + "'" : value;
+    }
+
+    public boolean isNumeric() {
+        return value != null && Strings.isNumber(value);
+    }
+
+    public boolean isBoolean() {
+        return value != null && (value.equalsIgnoreCase("true") || value.equalsIgnoreCase("false"));
+    }
+
+    public boolean isLiteral() {
+        return value != null && !value.isEmpty() && !isNumeric() && !isBoolean();
+    }
+
+    public boolean hasChildren() {
+        return childVariableNames != null;
+    }
 
     @Override
     public int compareTo(@NotNull DBDebugValue remote) {
         return getName().compareTo(remote.getName());
-    }
-
-    public List<String> getChildVariableNames() {
-        return childVariableNames;
-    }
-
-    public Icon getIcon() {
-        return icon;
     }
 }
 

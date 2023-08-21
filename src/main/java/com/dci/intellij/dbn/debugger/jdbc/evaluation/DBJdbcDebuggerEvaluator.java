@@ -1,8 +1,9 @@
 package com.dci.intellij.dbn.debugger.jdbc.evaluation;
 
 import com.dci.intellij.dbn.common.util.Commons;
-import com.dci.intellij.dbn.common.util.Strings;
+import com.dci.intellij.dbn.connection.jdbc.DBNConnection;
 import com.dci.intellij.dbn.database.common.debug.VariableInfo;
+import com.dci.intellij.dbn.database.interfaces.DatabaseDebuggerInterface;
 import com.dci.intellij.dbn.debugger.common.evaluation.DBDebuggerEvaluator;
 import com.dci.intellij.dbn.debugger.common.frame.DBDebugValue;
 import com.dci.intellij.dbn.debugger.jdbc.DBJdbcDebugProcess;
@@ -10,8 +11,11 @@ import com.dci.intellij.dbn.debugger.jdbc.frame.DBJdbcDebugStackFrame;
 import com.dci.intellij.dbn.debugger.jdbc.frame.DBJdbcDebugValue;
 import com.intellij.xdebugger.frame.XValueNode;
 import com.intellij.xdebugger.frame.XValuePlace;
+import com.intellij.xdebugger.frame.presentation.XNumericValuePresentation;
+import com.intellij.xdebugger.frame.presentation.XStringValuePresentation;
 import org.jetbrains.annotations.NotNull;
 
+import javax.swing.*;
 import java.util.List;
 
 import static com.dci.intellij.dbn.diagnostics.Diagnostics.conditionallyLog;
@@ -25,25 +29,25 @@ public class DBJdbcDebuggerEvaluator extends DBDebuggerEvaluator<DBJdbcDebugStac
     @Override
     public void computePresentation(@NotNull DBJdbcDebugValue debugValue, @NotNull final XValueNode node, @NotNull XValuePlace place) {
         List<String> childVariableNames = debugValue.getChildVariableNames();
+
         try {
             DBJdbcDebugProcess debugProcess = debugValue.getDebugProcess();
             String variableName = debugValue.getVariableName();
             DBDebugValue parentValue = debugValue.getParentValue();
-            String databaseVariableName = parentValue == null ? variableName : parentValue.getVariableName() + "." + variableName;
-            VariableInfo variableInfo = debugProcess.getDebuggerInterface().getVariableInfo(
-                    databaseVariableName.toUpperCase(),
-                    debugValue.getStackFrame().getFrameIndex(),
-                    debugProcess.getDebuggerConnection());
+            String dbVariableName = (parentValue == null ? variableName : parentValue.getVariableName() + "." + variableName).toUpperCase();
+            int frameIndex = debugValue.getStackFrame().getFrameIndex();
+
+            DBNConnection conn = debugProcess.getDebuggerConnection();
+            DatabaseDebuggerInterface debuggerInterface = debugProcess.getDebuggerInterface();
+
+            VariableInfo variableInfo = debuggerInterface.getVariableInfo(dbVariableName, frameIndex, conn);
+            if (variableInfo.getError() != null && frameIndex > 0) {
+                // TODO why is the variable lookup not following the "one based" frame indexing?
+                variableInfo = debuggerInterface.getVariableInfo(dbVariableName, frameIndex - 1, conn);
+            }
+
             String value = variableInfo.getValue();
             String type = variableInfo.getError();
-
-            if (value == null) {
-                value = childVariableNames != null ? "" : "null";
-            } else {
-                if (!Strings.isNumber(value)) {
-                    value = '\'' + value + '\'';
-                }
-            }
 
             if (type != null) {
                 type = type.toLowerCase();
@@ -60,11 +64,25 @@ public class DBJdbcDebuggerEvaluator extends DBDebuggerEvaluator<DBJdbcDebugStac
             debugValue.setValue("");
             debugValue.setType(e.getMessage());
         } finally {
+            updateValuePresentation(debugValue, node);
+        }
+    }
+
+    private static void updateValuePresentation(@NotNull DBJdbcDebugValue debugValue, @NotNull XValueNode node) {
+        Icon icon = debugValue.getIcon();
+        String value = debugValue.getDisplayValue();
+        boolean hasChildren = debugValue.hasChildren();
+
+        if (debugValue.isNumeric()) {
+            node.setPresentation(icon, new XNumericValuePresentation(value), hasChildren);
+        } else if (debugValue.isLiteral()) {
+            node.setPresentation(icon, new XStringValuePresentation(value), hasChildren);
+        } else {
             node.setPresentation(
-                    debugValue.getIcon(),
+                    icon,
                     debugValue.getType(),
-                    Commons.nvl(debugValue.getValue(), "null"),
-                    childVariableNames != null);
+                    Commons.nvl(value, "null"),
+                    hasChildren);
         }
     }
 }
