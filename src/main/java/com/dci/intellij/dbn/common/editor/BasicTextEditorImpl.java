@@ -6,6 +6,7 @@ import com.dci.intellij.dbn.common.dispose.StatefulDisposable;
 import com.dci.intellij.dbn.common.dispose.StatefulDisposableBase;
 import com.dci.intellij.dbn.common.project.ProjectRef;
 import com.dci.intellij.dbn.common.ref.WeakRef;
+import com.dci.intellij.dbn.common.util.Editors;
 import com.dci.intellij.dbn.editor.EditorProviderId;
 import com.dci.intellij.dbn.vfs.DatabaseOpenFileDescriptor;
 import com.intellij.codeHighlighting.BackgroundEditorHighlighter;
@@ -30,6 +31,7 @@ import java.beans.PropertyChangeListener;
 import static com.dci.intellij.dbn.common.dispose.Failsafe.guarded;
 
 public abstract class BasicTextEditorImpl<T extends VirtualFile> extends StatefulDisposableBase implements BasicTextEditor<T>, StatefulDisposable {
+
     protected TextEditor textEditor;
     private final WeakRef<T> virtualFile;
     private final ProjectRef project;
@@ -46,6 +48,8 @@ public abstract class BasicTextEditorImpl<T extends VirtualFile> extends Statefu
         TextEditorProvider textEditorProvider = TextEditorProvider.getInstance();
         textEditor = (TextEditor) textEditorProvider.createEditor(project, virtualFile);
 
+        // double gutter actions (register this editor as TextEditor)
+        Editors.registerTextEditor(getEditor(), this);
         Disposer.register(this, textEditor);
     }
 

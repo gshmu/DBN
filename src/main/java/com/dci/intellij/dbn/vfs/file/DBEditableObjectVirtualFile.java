@@ -31,6 +31,7 @@ import java.util.Collections;
 import java.util.List;
 
 import static com.dci.intellij.dbn.common.dispose.Failsafe.guarded;
+import static com.dci.intellij.dbn.common.dispose.Failsafe.nn;
 import static com.dci.intellij.dbn.vfs.VirtualFileStatus.MODIFIED;
 import static com.dci.intellij.dbn.vfs.VirtualFileStatus.SAVING;
 
@@ -116,6 +117,11 @@ public class DBEditableObjectVirtualFile extends DBObjectVirtualFile<DBSchemaObj
     public List<VirtualFile> getAttachedDDLFiles() {
         DDLFileAttachmentManager fileAttachmentManager = DDLFileAttachmentManager.getInstance(getProject());
         return fileAttachmentManager.getAttachedDDLFiles(getObjectRef());
+    }
+
+    @NotNull
+    public <T extends DBContentVirtualFile> T ensureContentFile(DBContentType contentType) {
+        return nn(getContentFile(contentType));
     }
 
     @Nullable
