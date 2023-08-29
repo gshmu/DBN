@@ -4,6 +4,7 @@ import com.dci.intellij.dbn.common.Pair;
 import com.dci.intellij.dbn.common.thread.Dispatch;
 import com.dci.intellij.dbn.common.util.Unsafe;
 import com.intellij.util.ui.UIUtil;
+import lombok.experimental.UtilityClass;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -15,11 +16,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
+@UtilityClass
 public final class ComponentDisposer {
     private static final Map<Class, List<Pair<Method, Class[]>>> LISTENER_REMOVE_METHODS = new ConcurrentHashMap<>();
-
-    private ComponentDisposer() {}
-
 
     public static void removeListeners(Component comp) {
         List<Pair<Method, Class[]>> methodPairs = getListenerRemovalMethods(comp);

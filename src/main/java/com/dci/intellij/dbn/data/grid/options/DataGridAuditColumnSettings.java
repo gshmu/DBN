@@ -1,7 +1,7 @@
 package com.dci.intellij.dbn.data.grid.options;
 
 import com.dci.intellij.dbn.common.options.BasicProjectConfiguration;
-import com.dci.intellij.dbn.common.options.setting.SettingsSupport;
+import com.dci.intellij.dbn.common.options.setting.Settings;
 import com.dci.intellij.dbn.data.grid.options.ui.DataGridAuditColumnSettingsForm;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
@@ -67,15 +67,15 @@ public class DataGridAuditColumnSettings extends BasicProjectConfiguration<DataG
     @Override
     public void readConfiguration(Element element) {
         this.columnNames.clear();
-        StringTokenizer columnNames = new StringTokenizer(SettingsSupport.getString(element, "column-names", ""), ",");
+        StringTokenizer columnNames = new StringTokenizer(Settings.getString(element, "column-names", ""), ",");
         while (columnNames.hasMoreTokens()) {
             String columnName = columnNames.nextToken().trim().toUpperCase();
             this.columnNames.add(columnName);
         }
         updateLookupCache(this.columnNames);
 
-        showColumns = SettingsSupport.getBoolean(element, "visible", showColumns);
-        allowEditing = SettingsSupport.getBoolean(element, "editable", allowEditing);
+        showColumns = Settings.getBoolean(element, "visible", showColumns);
+        allowEditing = Settings.getBoolean(element, "editable", allowEditing);
     }
 
     @Override
@@ -87,9 +87,9 @@ public class DataGridAuditColumnSettings extends BasicProjectConfiguration<DataG
             }
             buffer.append(columnName);
         }
-        SettingsSupport.setString(element, "column-names", buffer.toString());
-        SettingsSupport.setBoolean(element, "visible", showColumns);
-        SettingsSupport.setBoolean(element, "editable", allowEditing);
+        Settings.setString(element, "column-names", buffer.toString());
+        Settings.setBoolean(element, "visible", showColumns);
+        Settings.setBoolean(element, "editable", allowEditing);
 
     }
 

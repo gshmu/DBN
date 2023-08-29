@@ -1,6 +1,7 @@
 package com.dci.intellij.dbn.common.ui.util;
 
 import com.intellij.openapi.ui.SelectFromListDialog;
+import lombok.experimental.UtilityClass;
 import lombok.extern.slf4j.Slf4j;
 
 import javax.swing.event.ListDataEvent;
@@ -9,8 +10,8 @@ import javax.swing.event.ListDataListener;
 import static com.dci.intellij.dbn.diagnostics.Diagnostics.conditionallyLog;
 
 @Slf4j
+@UtilityClass
 public final class Lists {
-    private Lists() {}
 
     public static void notifyListDataListeners(Object source, Listeners<ListDataListener> listeners, int fromIndex, int toIndex, int eventType) {
         try {

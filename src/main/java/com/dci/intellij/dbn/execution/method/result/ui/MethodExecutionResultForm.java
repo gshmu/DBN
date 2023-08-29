@@ -3,6 +3,7 @@ package com.dci.intellij.dbn.execution.method.result.ui;
 import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.common.dispose.Disposer;
 import com.dci.intellij.dbn.common.thread.Dispatch;
+import com.dci.intellij.dbn.common.ui.form.DBNForm;
 import com.dci.intellij.dbn.common.ui.tab.TabbedPane;
 import com.dci.intellij.dbn.common.ui.util.Borders;
 import com.dci.intellij.dbn.common.ui.util.UserInterface;
@@ -127,41 +128,31 @@ public class MethodExecutionResultForm extends ExecutionResultFormBase<MethodExe
         List<ArgumentValue> argumentValues = executionResult.getArgumentValues();
         for (ArgumentValue argumentValue : argumentValues) {
             DBArgument argument = argumentValue.getArgument();
-            if (argument != null) {
-                if (argumentValue.isCursor()) {
-                    MethodExecutionCursorResultForm cursorResultForm =
-                            new MethodExecutionCursorResultForm(this, executionResult, argument);
+            if (argument == null) continue;
 
-                    TabInfo tabInfo = new TabInfo(cursorResultForm.getComponent());
-                    tabInfo.setText(argument.getName());
-                    tabInfo.setIcon(argument.getIcon());
-                    tabInfo.setObject(cursorResultForm);
-                    outputTabs.addTab(tabInfo);
-                    if (isFirst) {
-                        outputTabs.select(tabInfo, false);
-                        isFirst = false;
-                    }
-                } else if (argumentValue.isLargeObject()) {
-                    MethodExecutionLargeValueResultForm largeValueResultForm =
-                            new MethodExecutionLargeValueResultForm(this, executionResult, argument);
+            if (argumentValue.isCursor()) {
+                DBNForm argumentForm = new MethodExecutionCursorResultForm(this, executionResult, argument);
+                addOutputTab(argument, argumentForm);
 
-                    TabInfo tabInfo = new TabInfo(largeValueResultForm.getComponent());
-                    tabInfo.setText(argument.getName());
-                    tabInfo.setIcon(argument.getIcon());
-                    tabInfo.setObject(largeValueResultForm);
-                    outputTabs.addTab(tabInfo);
-                    if (isFirst) {
-                        outputTabs.select(tabInfo, false);
-                        isFirst = false;
-                    }
-                } else {
-                }
-            } else {
+            } else if (argumentValue.isLargeObject() || argumentValue.isLargeValue()) {
+                DBNForm argumentForm = new MethodExecutionLargeValueResultForm(this, argument, argumentValue);
+                addOutputTab(argument, argumentForm);
             }
-
         }
 
         UserInterface.repaint(outputTabs);
+    }
+
+    private void addOutputTab(DBArgument argument, DBNForm form) {
+        boolean select = outputTabs.getTabCount() == 0;
+
+        TabInfo tabInfo = new TabInfo(form.getComponent());
+        tabInfo.setText(argument.getName());
+        tabInfo.setIcon(argument.getIcon());
+        tabInfo.setObject(form);
+        outputTabs.addTab(tabInfo);
+
+        if (select) outputTabs.select(tabInfo, false);
     }
 
     void selectArgumentOutputTab(DBArgument argument) {

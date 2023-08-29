@@ -1,6 +1,7 @@
 package com.dci.intellij.dbn.connection.config;
 
 import com.dci.intellij.dbn.common.util.Strings;
+import lombok.experimental.UtilityClass;
 import lombok.extern.slf4j.Slf4j;
 
 import java.util.Base64;
@@ -8,8 +9,8 @@ import java.util.Base64;
 import static com.dci.intellij.dbn.diagnostics.Diagnostics.conditionallyLog;
 
 @Slf4j
-public final class PasswordUtil {
-    private PasswordUtil() {}
+@UtilityClass
+public final class Passwords {
 
     public static String encodePassword(String password) {
         try {

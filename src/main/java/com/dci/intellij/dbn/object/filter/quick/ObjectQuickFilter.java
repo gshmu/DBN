@@ -1,7 +1,7 @@
 package com.dci.intellij.dbn.object.filter.quick;
 
 import com.dci.intellij.dbn.common.filter.Filter;
-import com.dci.intellij.dbn.common.options.setting.SettingsSupport;
+import com.dci.intellij.dbn.common.options.setting.Settings;
 import com.dci.intellij.dbn.common.state.PersistentStateElement;
 import com.dci.intellij.dbn.common.util.Cloneable;
 import com.dci.intellij.dbn.common.util.Lists;
@@ -84,7 +84,7 @@ public class ObjectQuickFilter<T extends DBObject> implements Filter<T>, Cloneab
 
     @Override
     public void readState(Element element) {
-        joinType = SettingsSupport.enumAttribute(element, "join-type", ConditionJoinType.AND);
+        joinType = Settings.enumAttribute(element, "join-type", ConditionJoinType.AND);
         for (Element child : element.getChildren()) {
             ObjectQuickFilterCondition condition = new ObjectQuickFilterCondition(this);
             condition.readState(child);

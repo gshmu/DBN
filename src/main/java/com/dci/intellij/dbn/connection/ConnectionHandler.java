@@ -237,4 +237,5 @@ public interface ConnectionHandler extends StatefulDisposable, EnvironmentTypePr
         return getDatabaseType() + " connection " + getName();
     }
 
+    default void updateLastAccess() {};
 }

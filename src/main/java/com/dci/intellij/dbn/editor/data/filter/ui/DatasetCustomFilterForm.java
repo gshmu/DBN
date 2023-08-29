@@ -8,12 +8,12 @@ import com.dci.intellij.dbn.common.util.Documents;
 import com.dci.intellij.dbn.common.util.Editors;
 import com.dci.intellij.dbn.common.util.Strings;
 import com.dci.intellij.dbn.editor.data.filter.DatasetCustomFilter;
+import com.dci.intellij.dbn.language.sql.SQLFileType;
 import com.dci.intellij.dbn.language.sql.SQLLanguage;
 import com.dci.intellij.dbn.object.DBDataset;
 import com.dci.intellij.dbn.vfs.DatabaseFileViewProvider;
 import com.dci.intellij.dbn.vfs.file.DBDatasetFilterVirtualFile;
 import com.intellij.openapi.editor.Document;
-import com.intellij.openapi.editor.EditorFactory;
 import com.intellij.openapi.editor.EditorSettings;
 import com.intellij.openapi.editor.ex.EditorEx;
 import com.intellij.openapi.options.ConfigurationException;
@@ -58,7 +58,7 @@ public class DatasetCustomFilterForm extends ConfigurationEditorForm<DatasetCust
 
         document = Documents.ensureDocument(selectStatementFile);
         document.createGuardedBlock(0, conditionStartOffset);
-        editor = (EditorEx) EditorFactory.getInstance().createEditor(document, project);
+        editor = Editors.createEditor(document, project, filterFile, SQLFileType.INSTANCE);
         Editors.initEditorHighlighter(editor, SQLLanguage.INSTANCE, dataset);
 
         editor.setEmbeddedIntoDialogWrapper(true);

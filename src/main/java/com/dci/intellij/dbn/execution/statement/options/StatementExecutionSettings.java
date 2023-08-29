@@ -1,7 +1,7 @@
 package com.dci.intellij.dbn.execution.statement.options;
 
 import com.dci.intellij.dbn.common.options.BasicProjectConfiguration;
-import com.dci.intellij.dbn.common.options.setting.SettingsSupport;
+import com.dci.intellij.dbn.common.options.setting.Settings;
 import com.dci.intellij.dbn.common.options.ui.ConfigurationEditorForm;
 import com.dci.intellij.dbn.common.project.ProjectSupplier;
 import com.dci.intellij.dbn.execution.common.options.ExecutionEngineSettings;
@@ -55,19 +55,19 @@ public class StatementExecutionSettings extends BasicProjectConfiguration<Execut
 
     @Override
     public void readConfiguration(Element element) {
-        resultSetFetchBlockSize = SettingsSupport.getInteger(element, "fetch-block-size", resultSetFetchBlockSize);
-        executionTimeout = SettingsSupport.getInteger(element, "execution-timeout", executionTimeout);
-        debugExecutionTimeout = SettingsSupport.getInteger(element, "debug-execution-timeout", debugExecutionTimeout);
-        focusResult = SettingsSupport.getBoolean(element, "focus-result", focusResult);
-        promptExecution = SettingsSupport.getBoolean(element, "prompt-execution", promptExecution);
+        resultSetFetchBlockSize = Settings.getInteger(element, "fetch-block-size", resultSetFetchBlockSize);
+        executionTimeout = Settings.getInteger(element, "execution-timeout", executionTimeout);
+        debugExecutionTimeout = Settings.getInteger(element, "debug-execution-timeout", debugExecutionTimeout);
+        focusResult = Settings.getBoolean(element, "focus-result", focusResult);
+        promptExecution = Settings.getBoolean(element, "prompt-execution", promptExecution);
     }
 
     @Override
     public void writeConfiguration(Element element) {
-        SettingsSupport.setInteger(element, "fetch-block-size", resultSetFetchBlockSize);
-        SettingsSupport.setInteger(element, "execution-timeout", executionTimeout);
-        SettingsSupport.setInteger(element, "debug-execution-timeout", debugExecutionTimeout);
-        SettingsSupport.setBoolean(element, "focus-result", focusResult);
-        SettingsSupport.setBoolean(element, "prompt-execution", promptExecution);
+        Settings.setInteger(element, "fetch-block-size", resultSetFetchBlockSize);
+        Settings.setInteger(element, "execution-timeout", executionTimeout);
+        Settings.setInteger(element, "debug-execution-timeout", debugExecutionTimeout);
+        Settings.setBoolean(element, "focus-result", focusResult);
+        Settings.setBoolean(element, "prompt-execution", promptExecution);
     }
 }

@@ -2,11 +2,11 @@ package com.dci.intellij.dbn.common.load;
 
 import com.intellij.openapi.progress.ProgressIndicator;
 import com.intellij.openapi.progress.ProgressManager;
+import lombok.experimental.UtilityClass;
 import org.jetbrains.annotations.Nullable;
 
+@UtilityClass
 public final class ProgressMonitor {
-
-    private ProgressMonitor() {}
 
     @Nullable
     public static ProgressIndicator getProgressIndicator() {

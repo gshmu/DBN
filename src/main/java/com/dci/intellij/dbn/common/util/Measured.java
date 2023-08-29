@@ -3,11 +3,12 @@ package com.dci.intellij.dbn.common.util;
 import com.dci.intellij.dbn.common.routine.ThrowableCallable;
 import com.dci.intellij.dbn.common.routine.ThrowableRunnable;
 import lombok.SneakyThrows;
+import lombok.experimental.UtilityClass;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
+@UtilityClass
 public final class Measured {
-    private Measured() {}
 
     @SneakyThrows
     public static void run(String identifier, ThrowableRunnable<Throwable> runnable) {

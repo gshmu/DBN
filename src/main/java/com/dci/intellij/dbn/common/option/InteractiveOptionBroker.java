@@ -3,7 +3,7 @@ package com.dci.intellij.dbn.common.option;
 
 import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.common.options.PersistentConfiguration;
-import com.dci.intellij.dbn.common.options.setting.SettingsSupport;
+import com.dci.intellij.dbn.common.options.setting.Settings;
 import com.dci.intellij.dbn.common.routine.Consumer;
 import com.dci.intellij.dbn.common.thread.Dispatch;
 import com.dci.intellij.dbn.common.util.Commons;
@@ -126,12 +126,12 @@ public class InteractiveOptionBroker<T extends InteractiveOption> implements DoN
      *******************************************************/
     @Override
     public void readConfiguration(Element element) {
-        T option = (T) SettingsSupport.getEnum(element, configName, (Enum)defaultOption);
+        T option = (T) Settings.getEnum(element, configName, (Enum)defaultOption);
         set(option);
     }
 
     @Override
     public void writeConfiguration(Element element) {
-        SettingsSupport.setEnum(element, configName, (Enum) get());
+        Settings.setEnum(element, configName, (Enum) get());
     }
 }

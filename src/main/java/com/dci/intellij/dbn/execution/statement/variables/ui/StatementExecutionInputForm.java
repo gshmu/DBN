@@ -11,6 +11,7 @@ import com.dci.intellij.dbn.common.ui.misc.DBNScrollPane;
 import com.dci.intellij.dbn.common.ui.util.Borders;
 import com.dci.intellij.dbn.common.util.Documents;
 import com.dci.intellij.dbn.common.util.Editors;
+import com.dci.intellij.dbn.common.util.Viewers;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.SchemaId;
 import com.dci.intellij.dbn.debugger.DBDebuggerType;
@@ -21,9 +22,9 @@ import com.dci.intellij.dbn.execution.statement.variables.StatementExecutionVari
 import com.dci.intellij.dbn.execution.statement.variables.StatementExecutionVariablesBundle;
 import com.dci.intellij.dbn.language.common.DBLanguageDialect;
 import com.dci.intellij.dbn.language.common.DBLanguagePsiFile;
+import com.dci.intellij.dbn.language.sql.SQLFileType;
 import com.dci.intellij.dbn.language.sql.SQLLanguage;
 import com.intellij.openapi.editor.Document;
-import com.intellij.openapi.editor.EditorFactory;
 import com.intellij.openapi.editor.EditorSettings;
 import com.intellij.openapi.editor.ex.EditorEx;
 import com.intellij.openapi.project.Project;
@@ -191,15 +192,16 @@ public class StatementExecutionInputForm extends DBNFormBase {
             DBLanguageDialect languageDialect = connection.getLanguageDialect(SQLLanguage.INSTANCE);
             DBLanguagePsiFile selectStatementFile = DBLanguagePsiFile.createFromText(
                     project,
-                    "preview",
+                    "preview.sql",
                     languageDialect,
                     previewText,
                     connection,
                     currentSchema);
 
-            previewDocument = Documents.getDocument(selectStatementFile);
+            if (selectStatementFile == null) return;
+            previewDocument = Documents.ensureDocument(selectStatementFile);
 
-            viewer = (EditorEx) EditorFactory.getInstance().createViewer(previewDocument, project);
+            viewer = Viewers.createViewer(previewDocument, project, null, SQLFileType.INSTANCE);
             viewer.setEmbeddedIntoDialogWrapper(true);
             Editors.initEditorHighlighter(viewer, SQLLanguage.INSTANCE, connection);
             Editors.setEditorReadonly(viewer, true);

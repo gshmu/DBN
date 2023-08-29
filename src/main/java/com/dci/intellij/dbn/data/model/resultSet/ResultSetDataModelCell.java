@@ -8,7 +8,6 @@ import org.jetbrains.annotations.NotNull;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
-import static com.dci.intellij.dbn.common.dispose.Failsafe.nn;
 import static com.dci.intellij.dbn.editor.data.model.RecordStatus.INSERTING;
 
 public class ResultSetDataModelCell<
@@ -37,7 +36,8 @@ public class ResultSetDataModelCell<
         return super.getRow();
     }
 
-    protected DBNConnection getConnection() {
-        return nn(getRow().getModel().getResultSet().getConnection());
+    @NotNull
+    protected DBNConnection getResultConnection() {
+        return getRow().getModel().getResultConnection();
     }
 }

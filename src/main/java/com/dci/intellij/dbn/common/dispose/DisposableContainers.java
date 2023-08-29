@@ -1,6 +1,7 @@
 package com.dci.intellij.dbn.common.dispose;
 
 import com.intellij.openapi.Disposable;
+import lombok.experimental.UtilityClass;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
@@ -9,8 +10,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.CopyOnWriteArrayList;
 
+@UtilityClass
 public final class DisposableContainers {
-    private DisposableContainers() {}
 
     public static <T extends Disposable> List<T> list(Disposable parent) {
         return new DisposableList<>(parent);

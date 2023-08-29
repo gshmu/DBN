@@ -3,7 +3,7 @@ package com.dci.intellij.dbn.common.util;
 public abstract class RefreshableValue<T>{
     private T value;
     private boolean loaded = false;
-    private int refreshInterval;
+    private final int refreshInterval;
     private long lastRefreshTimestamp;
 
     public RefreshableValue(int refreshInterval) {

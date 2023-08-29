@@ -14,6 +14,7 @@ import com.intellij.openapi.vfs.newvfs.events.VFileEvent;
 import com.intellij.openapi.vfs.newvfs.events.VFilePropertyChangeEvent;
 import com.intellij.testFramework.LightVirtualFile;
 import com.intellij.util.io.ReadOnlyAttributeUtil;
+import lombok.experimental.UtilityClass;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -24,8 +25,8 @@ import java.io.IOException;
 import java.util.Collections;
 import java.util.List;
 
+@UtilityClass
 public final class VirtualFiles {
-    private VirtualFiles() {}
 
     public static Icon getIcon(VirtualFile virtualFile) {
         if (virtualFile instanceof DBVirtualFileBase) {

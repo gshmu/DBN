@@ -15,8 +15,8 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.Objects;
 
-import static com.dci.intellij.dbn.common.options.setting.SettingsSupport.booleanAttribute;
-import static com.dci.intellij.dbn.common.options.setting.SettingsSupport.connectionIdAttribute;
+import static com.dci.intellij.dbn.common.options.setting.Settings.booleanAttribute;
+import static com.dci.intellij.dbn.common.options.setting.Settings.connectionIdAttribute;
 import static com.dci.intellij.dbn.connection.config.ConnectionSettingsStatus.*;
 
 @Getter

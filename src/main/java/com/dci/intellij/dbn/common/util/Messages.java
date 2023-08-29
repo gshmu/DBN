@@ -8,6 +8,7 @@ import com.dci.intellij.dbn.common.option.DoNotAskOption;
 import com.dci.intellij.dbn.common.thread.Dispatch;
 import com.intellij.openapi.progress.ProcessCanceledException;
 import com.intellij.openapi.project.Project;
+import lombok.experimental.UtilityClass;
 import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
@@ -15,6 +16,7 @@ import javax.swing.*;
 import static com.dci.intellij.dbn.common.dispose.Failsafe.nd;
 import static com.dci.intellij.dbn.diagnostics.Diagnostics.conditionallyLog;
 
+@UtilityClass
 public class Messages {
 
     public static final String[] OPTIONS_OK = options("OK");

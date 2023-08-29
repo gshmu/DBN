@@ -62,91 +62,91 @@ public class DatasetEditorModelCell
     }
 
     private void updateValue(Object newUserValue, boolean bulk) {
-        DBNConnection conn = getConnection();
-        conn.updateLastAccess();
+        ConnectionHandler connection = getConnection();
+        connection.updateLastAccess();
 
         boolean valueChanged = userValueChanged(newUserValue);
-        if (hasError() || valueChanged) {
-            DatasetEditorColumnInfo columnInfo = getColumnInfo();
-            GenericDataType genericDataType = columnInfo.getDataType().getGenericDataType();
-            boolean isValueAdapter = ValueAdapter.supports(genericDataType);
+        if (!valueChanged && !hasError()) return;
 
-            if (!isValueAdapter && valueChanged) {
-                setUserValue(newUserValue);
+        DatasetEditorColumnInfo columnInfo = getColumnInfo();
+        GenericDataType genericDataType = columnInfo.getDataType().getGenericDataType();
+        boolean isValueAdapter = ValueAdapter.supports(genericDataType);
+
+        if (!isValueAdapter && valueChanged) {
+            setUserValue(newUserValue);
+        }
+
+        Project project = getProject();
+        DatasetEditorModelRow row = getRow();
+        ResultSetAdapter resultSetAdapter = getModel().getResultSetAdapter();
+        try {
+            resultSetAdapter.scroll(row.getResultSetRowIndex());
+        } catch (Exception e) {
+            conditionallyLog(e);
+            Messages.showErrorDialog(project, "Could not update cell value for " + columnInfo.getName() + ".", e);
+            return;
+        }
+
+        try {
+            clearError();
+            int columnIndex = columnInfo.getResultSetIndex();
+            if (isValueAdapter && userValue == null) {
+                userValue = ValueAdapter.create(genericDataType);
             }
 
-            Project project = getProject();
-            DatasetEditorModelRow row = getRow();
-            ResultSetAdapter resultSetAdapter = getModel().getResultSetAdapter();
-            try {
-                resultSetAdapter.scroll(row.getResultSetRowIndex());
-            } catch (Exception e) {
-                conditionallyLog(e);
-                Messages.showErrorDialog(project, "Could not update cell value for " + columnInfo.getName() + ".", e);
-                return;
-            }
-
-            ConnectionHandler connection = getConnectionHandler();
-            try {
-                clearError();
-                int columnIndex = columnInfo.getResultSetIndex();
-                if (isValueAdapter && userValue == null) {
-                    userValue = ValueAdapter.create(genericDataType);
-                }
-
-                if (isValueAdapter) {
-                    ValueAdapter<?> valueAdapter = (ValueAdapter<?>) userValue;
-                    if (valueAdapter != null) {
-                        if (newUserValue instanceof ValueAdapter) {
-                            ValueAdapter<?> newValueAdapter = (ValueAdapter<?>) newUserValue;
-                            newUserValue = newValueAdapter.read();
-                        }
-                        resultSetAdapter.setValue(columnIndex, valueAdapter, newUserValue);
+            if (isValueAdapter) {
+                ValueAdapter<?> valueAdapter = (ValueAdapter<?>) userValue;
+                if (valueAdapter != null) {
+                    if (newUserValue instanceof ValueAdapter) {
+                        ValueAdapter<?> newValueAdapter = (ValueAdapter<?>) newUserValue;
+                        newUserValue = newValueAdapter.read();
                     }
-                } else {
-                    DBDataType dataType = columnInfo.getDataType();
-                    resultSetAdapter.setValue(columnIndex, dataType, newUserValue);
+                    resultSetAdapter.setValue(columnIndex, valueAdapter, newUserValue);
                 }
+            } else {
+                DBDataType dataType = columnInfo.getDataType();
+                resultSetAdapter.setValue(columnIndex, dataType, newUserValue);
+            }
 
 
-                resultSetAdapter.updateRow();
-            } catch (Exception e) {
+            resultSetAdapter.updateRow();
+        } catch (Exception e) {
+            conditionallyLog(e);
+            //try { Thread.sleep(6000); } catch (InterruptedException e1) { e1.printStackTrace(); }
+
+            DatasetEditorError error = new DatasetEditorError(connection, e);
+
+            // error may affect other cells in the row (e.g. foreign key constraint for multiple primary key)
+            if (e instanceof SQLException) {
+                row.notifyError(error, false, !bulk);
+            }
+
+            // if error was not notified yet on row level, notify it on cell isolation level
+            if (!error.isNotified()) notifyError(error, !bulk);
+        } finally {
+            if (valueChanged) {
+                DBNConnection conn = getResultConnection();
+                conn.notifyDataChanges(getDataset().getVirtualFile());
+                ProjectEvents.notify(project,
+                        DatasetEditorModelCellValueListener.TOPIC,
+                        (listener) -> listener.valueChanged(this));
+            }
+            try {
+                resultSetAdapter.refreshRow();
+            } catch (SQLException e) {
                 conditionallyLog(e);
-                //try { Thread.sleep(6000); } catch (InterruptedException e1) { e1.printStackTrace(); }
-
                 DatasetEditorError error = new DatasetEditorError(connection, e);
-
-                // error may affect other cells in the row (e.g. foreign key constraint for multiple primary key)
-                if (e instanceof SQLException) {
-                    row.notifyError(error, false, !bulk);
-                }
-
-                // if error was not notified yet on row level, notify it on cell isolation level
-                if (!error.isNotified()) notifyError(error, !bulk);
-            } finally {
-                if (valueChanged) {
-                    conn.notifyDataChanges(getDataset().getVirtualFile());
-                    ProjectEvents.notify(project,
-                            DatasetEditorModelCellValueListener.TOPIC,
-                            (listener) -> listener.valueChanged(this));
-                }
-                try {
-                    resultSetAdapter.refreshRow();
-                } catch (SQLException e) {
-                    conditionallyLog(e);
-                    DatasetEditorError error = new DatasetEditorError(connection, e);
-                    row.notifyError(error, false, !bulk);
-                }
+                row.notifyError(error, false, !bulk);
             }
+        }
 
-            if (row.isNot(INSERTING) && !connection.isAutoCommit()) {
-                reset();
-                set(MODIFIED, true);
+        if (row.isNot(INSERTING) && !connection.isAutoCommit()) {
+            reset();
+            set(MODIFIED, true);
 
-                row.reset();
-                row.set(RecordStatus.MODIFIED, true);
-                row.getModel().set(MODIFIED, true);
-            }
+            row.reset();
+            row.set(RecordStatus.MODIFIED, true);
+            row.getModel().set(MODIFIED, true);
         }
     }
 
@@ -180,14 +180,14 @@ public class DatasetEditorModelCell
     }
 
     public void updateUserValue(Object userValue, String errorMessage) {
-        getConnection().updateLastAccess();
+        ConnectionHandler connection = getConnection();
+        connection.updateLastAccess();
 
         if (!Commons.match(userValue, getUserValue()) || hasError()) {
             DatasetEditorModelRow row = getRow();
             DatasetEditorError error = new DatasetEditorError(errorMessage, getColumn());
             getRow().notifyError(error, true, true);
             setUserValue(userValue);
-            ConnectionHandler connection = getConnectionHandler();
             if (row.isNot(INSERTING) && !connection.isAutoCommit()) {
                 reset();
                 set(MODIFIED, true);
@@ -209,7 +209,8 @@ public class DatasetEditorModelCell
         return false;
     }
 
-    public ConnectionHandler getConnectionHandler() {
+    @NotNull
+    public ConnectionHandler getConnection() {
         return getEditorModel().getConnection();
     }
 

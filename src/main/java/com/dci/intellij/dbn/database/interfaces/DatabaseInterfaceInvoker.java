@@ -6,15 +6,15 @@ import com.dci.intellij.dbn.connection.*;
 import com.dci.intellij.dbn.database.interfaces.DatabaseInterface.Callable;
 import com.dci.intellij.dbn.database.interfaces.queue.InterfaceTaskRequest;
 import com.intellij.openapi.project.Project;
+import lombok.experimental.UtilityClass;
 
 import java.sql.SQLException;
 
 import static com.dci.intellij.dbn.database.interfaces.DatabaseInterface.ConnectionCallable;
 import static com.dci.intellij.dbn.database.interfaces.DatabaseInterface.ConnectionRunnable;
 
+@UtilityClass
 public final class DatabaseInterfaceInvoker {
-    private DatabaseInterfaceInvoker() {
-    }
 
     /**
      * Database Interface invocation against a pool connection

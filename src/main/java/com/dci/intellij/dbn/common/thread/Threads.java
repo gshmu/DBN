@@ -1,5 +1,6 @@
 package com.dci.intellij.dbn.common.thread;
 
+import lombok.experimental.UtilityClass;
 import lombok.extern.slf4j.Slf4j;
 import org.jetbrains.annotations.NotNull;
 
@@ -12,6 +13,7 @@ import static com.dci.intellij.dbn.common.dispose.Failsafe.guarded;
 import static com.dci.intellij.dbn.diagnostics.Diagnostics.conditionallyLog;
 
 @Slf4j
+@UtilityClass
 public final class Threads {
     private static final Map<String, AtomicInteger> THREAD_COUNTERS = new ConcurrentHashMap<>();
 
@@ -23,8 +25,6 @@ public final class Threads {
     private static final ExecutorService TIMEOUT_DAEMON_EXECUTOR     = newThreadPool("DBN - Timeout Execution Daemon",  true,  5, 200);
     private static final ExecutorService CODE_COMPLETION_EXECUTOR    = newThreadPool("DBN - Code Completion Thread",    true,  5, 100);
     private static final ExecutorService OBJECT_LOOKUP_EXECUTOR      = newThreadPool("DBN - Object Lookup Thread",      true,  5, 100);
-
-    private Threads() {}
 
     @NotNull
     public static ThreadFactory createThreadFactory(String name, boolean daemon) {

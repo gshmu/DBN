@@ -5,6 +5,7 @@ import com.dci.intellij.dbn.vfs.DatabaseFileViewProvider;
 import com.intellij.extapi.psi.ASTWrapperPsiElement;
 import com.intellij.lang.ASTNode;
 import com.intellij.lang.ParserDefinition;
+import com.intellij.openapi.project.Project;
 import com.intellij.psi.FileViewProvider;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
@@ -34,6 +35,10 @@ public abstract class DBLanguageParserDefinition implements ParserDefinition {
         }
         return new ASTWrapperPsiElement(astNode);
     }
+
+    @Override
+    @NotNull
+    public abstract DBLanguageParser createParser(Project project);
 
     @NotNull
     @Override

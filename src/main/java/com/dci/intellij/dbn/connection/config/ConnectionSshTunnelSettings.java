@@ -11,7 +11,7 @@ import lombok.Setter;
 import org.jdom.Element;
 import org.jetbrains.annotations.NotNull;
 
-import static com.dci.intellij.dbn.common.options.setting.SettingsSupport.*;
+import static com.dci.intellij.dbn.common.options.setting.Settings.*;
 
 @Getter
 @Setter
@@ -67,14 +67,14 @@ public class ConnectionSshTunnelSettings extends BasicProjectConfiguration<Conne
         user = getString(element, "proxy-user", user);
 
 
-        password = PasswordUtil.decodePassword(getString(element, TEMP_PWD_ATTRIBUTE, password));
+        password = Passwords.decodePassword(getString(element, TEMP_PWD_ATTRIBUTE, password));
         if (Strings.isEmpty(password)) {
-            password = PasswordUtil.decodePassword(getString(element, OLD_PWD_ATTRIBUTE, password));
+            password = Passwords.decodePassword(getString(element, OLD_PWD_ATTRIBUTE, password));
         }
 
         authType = getEnum(element, "auth-type", authType);
         keyFile = getString(element, "key-file", keyFile);
-        keyPassphrase = PasswordUtil.decodePassword(getString(element, "key-passphrase", keyPassphrase));
+        keyPassphrase = Passwords.decodePassword(getString(element, "key-passphrase", keyPassphrase));
     }
 
     @Override
@@ -83,10 +83,10 @@ public class ConnectionSshTunnelSettings extends BasicProjectConfiguration<Conne
         setString(element, "proxy-host", host);
         setString(element, "proxy-port", port);
         setString(element, "proxy-user", user);
-        setString(element, TEMP_PWD_ATTRIBUTE, PasswordUtil.encodePassword(password));
+        setString(element, TEMP_PWD_ATTRIBUTE, Passwords.encodePassword(password));
         setEnum(element, "auth-type", authType);
         setString(element, "key-file", keyFile);
-        setString(element, "key-passphrase", PasswordUtil.encodePassword(keyPassphrase));
+        setString(element, "key-passphrase", Passwords.encodePassword(keyPassphrase));
     }
 
     public ConnectionId getConnectionId() {

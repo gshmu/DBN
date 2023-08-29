@@ -4,10 +4,10 @@ import com.intellij.openapi.editor.HighlighterColors;
 import com.intellij.openapi.editor.colors.EditorColorsManager;
 import com.intellij.openapi.editor.colors.TextAttributesKey;
 import com.intellij.ui.SimpleTextAttributes;
+import lombok.experimental.UtilityClass;
 
+@UtilityClass
 public class TextAttributes {
-    private TextAttributes() {}
-
 
     public static SimpleTextAttributes getSimpleTextAttributes(TextAttributesKey textAttributesKey) {
         EditorColorsManager colorManager = EditorColorsManager.getInstance();

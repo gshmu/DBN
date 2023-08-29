@@ -17,8 +17,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static com.dci.intellij.dbn.common.dispose.Checks.isValid;
-import static com.dci.intellij.dbn.common.options.setting.SettingsSupport.booleanAttribute;
-import static com.dci.intellij.dbn.common.options.setting.SettingsSupport.setBooleanAttribute;
+import static com.dci.intellij.dbn.common.options.setting.Settings.booleanAttribute;
+import static com.dci.intellij.dbn.common.options.setting.Settings.setBooleanAttribute;
 
 
 @Getter

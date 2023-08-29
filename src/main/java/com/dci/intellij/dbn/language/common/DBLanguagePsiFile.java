@@ -7,7 +7,6 @@ import com.dci.intellij.dbn.common.environment.EnvironmentType;
 import com.dci.intellij.dbn.common.thread.Read;
 import com.dci.intellij.dbn.common.ui.Presentable;
 import com.dci.intellij.dbn.common.util.Commons;
-import com.dci.intellij.dbn.common.util.Documents;
 import com.dci.intellij.dbn.common.util.Editors;
 import com.dci.intellij.dbn.common.util.Lists;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
@@ -43,7 +42,6 @@ import com.intellij.lang.LanguageParserDefinitions;
 import com.intellij.lang.ParserDefinition;
 import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.editor.Editor;
-import com.intellij.openapi.editor.EditorFactory;
 import com.intellij.openapi.fileEditor.OpenFileDescriptor;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
@@ -63,6 +61,9 @@ import java.util.List;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Consumer;
+
+import static com.dci.intellij.dbn.common.util.Documents.getDocument;
+import static com.dci.intellij.dbn.common.util.Documents.getEditors;
 
 public abstract class DBLanguagePsiFile extends PsiFileImpl implements DatabaseContextBase, Presentable, StatefulDisposable, UnlistedDisposable {
     private final Language language;
@@ -291,25 +292,32 @@ public abstract class DBLanguagePsiFile extends PsiFileImpl implements DatabaseC
 
     @Override
     public void navigate(boolean requestFocus) {
-        Editor selectedEditor = Editors.getSelectedEditor(getProject());
-        if (selectedEditor != null) {
-            Document document = Documents.getDocument(getContainingFile());
-            if (document != null) {
-                Editor[] editors = EditorFactory.getInstance().getEditors(document);
-                for (Editor editor : editors) {
-                    if (editor == selectedEditor) {
-                        OpenFileDescriptor descriptor = (OpenFileDescriptor) EditSourceUtil.getDescriptor(this);
-                        if (descriptor != null) {
-                            descriptor.navigateIn(selectedEditor);
-                            return;
-                        }
-                    }
-                }
-            }
-        }
-        if (!(getVirtualFile() instanceof DBParseableVirtualFile) && canNavigate()) {
+        if (navigateLocal()) return;
+
+        VirtualFile file = getVirtualFile();
+        if (!(file instanceof DBParseableVirtualFile) && canNavigate()) {
             super.navigate(requestFocus);
         }
+    }
+
+    private boolean navigateLocal() {
+        Editor selectedEditor = Editors.getSelectedEditor(getProject());
+        if (selectedEditor == null) return false;
+
+        Document document = getDocument(getContainingFile());
+        if (document == null) return false;
+
+        Editor[] editors = getEditors(document);
+        for (Editor editor : editors) {
+            if (editor != selectedEditor) continue;
+
+            OpenFileDescriptor descriptor = (OpenFileDescriptor) EditSourceUtil.getDescriptor(this);
+            if (descriptor == null) continue;
+
+            descriptor.navigateIn(selectedEditor);
+            return true;
+        }
+        return false;
     }
 
     @Override

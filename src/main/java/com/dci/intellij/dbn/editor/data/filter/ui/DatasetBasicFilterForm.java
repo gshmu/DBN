@@ -11,10 +11,12 @@ import com.dci.intellij.dbn.common.ui.util.Borders;
 import com.dci.intellij.dbn.common.ui.util.UserInterface;
 import com.dci.intellij.dbn.common.util.Documents;
 import com.dci.intellij.dbn.common.util.Editors;
+import com.dci.intellij.dbn.common.util.Viewers;
 import com.dci.intellij.dbn.editor.data.filter.ConditionJoinType;
 import com.dci.intellij.dbn.editor.data.filter.ConditionOperator;
 import com.dci.intellij.dbn.editor.data.filter.DatasetBasicFilter;
 import com.dci.intellij.dbn.editor.data.filter.DatasetBasicFilterCondition;
+import com.dci.intellij.dbn.language.sql.SQLFileType;
 import com.dci.intellij.dbn.language.sql.SQLLanguage;
 import com.dci.intellij.dbn.object.DBColumn;
 import com.dci.intellij.dbn.object.DBDataset;
@@ -22,7 +24,6 @@ import com.dci.intellij.dbn.object.lookup.DBObjectRef;
 import com.dci.intellij.dbn.vfs.DatabaseFileViewProvider;
 import com.dci.intellij.dbn.vfs.file.DBDatasetFilterVirtualFile;
 import com.intellij.openapi.editor.Document;
-import com.intellij.openapi.editor.EditorFactory;
 import com.intellij.openapi.editor.EditorSettings;
 import com.intellij.openapi.editor.ex.EditorEx;
 import com.intellij.openapi.options.ConfigurationException;
@@ -156,59 +157,59 @@ public class DatasetBasicFilterForm extends ConfigurationEditorForm<DatasetBasic
 
     public void updateNameAndPreview() {
         DBDataset dataset = this.getDataset();
-        if (dataset != null) {
-            updateGeneratedName();
-            StringBuilder selectStatement = new StringBuilder("select * from ");
-            selectStatement.append(dataset.getSchema().getQuotedName(false)).append('.');
-            selectStatement.append(dataset.getQuotedName(false));
-            selectStatement.append(" where\n    ");
+        if (dataset == null) return;
 
-            boolean addJoin = false;
-            for (DatasetBasicFilterConditionForm conditionForm : conditionForms) {
-                DatasetBasicFilterCondition condition = conditionForm.getCondition();
-                if (conditionForm.isActive()) {
-                    if (addJoin) {
-                        selectStatement.append(getSelection(joinTypeComboBox) == ConditionJoinType.AND ? " and\n    " : " or\n    ");
-                    }
-                    addJoin = true;
-                    condition.appendConditionString(selectStatement, dataset);
+        updateGeneratedName();
+        StringBuilder selectStatement = new StringBuilder("select * from ");
+        selectStatement.append(dataset.getSchema().getQuotedName(false)).append('.');
+        selectStatement.append(dataset.getQuotedName(false));
+        selectStatement.append(" where\n    ");
+
+        boolean addJoin = false;
+        for (DatasetBasicFilterConditionForm conditionForm : conditionForms) {
+            DatasetBasicFilterCondition condition = conditionForm.getCondition();
+            if (conditionForm.isActive()) {
+                if (addJoin) {
+                    selectStatement.append(getSelection(joinTypeComboBox) == ConditionJoinType.AND ? " and\n    " : " or\n    ");
                 }
+                addJoin = true;
+                condition.appendConditionString(selectStatement, dataset);
             }
+        }
 
-            if (previewDocument == null) {
-                Project project = dataset.getProject();
-                DBDatasetFilterVirtualFile filterFile = new DBDatasetFilterVirtualFile(dataset, selectStatement.toString());
-                DatabaseFileViewProvider viewProvider = new DatabaseFileViewProvider(project, filterFile, true);
-                PsiFile selectStatementFile = filterFile.initializePsiFile(viewProvider, SQLLanguage.INSTANCE);
+        if (previewDocument == null) {
+            Project project = dataset.getProject();
+            DBDatasetFilterVirtualFile filterFile = new DBDatasetFilterVirtualFile(dataset, selectStatement.toString());
+            DatabaseFileViewProvider viewProvider = new DatabaseFileViewProvider(project, filterFile, true);
+            PsiFile selectStatementFile = filterFile.initializePsiFile(viewProvider, SQLLanguage.INSTANCE);
 
-                previewDocument = Documents.ensureDocument(selectStatementFile);
+            previewDocument = Documents.ensureDocument(selectStatementFile);
 
-                this.viewer = (EditorEx) EditorFactory.getInstance().createViewer(previewDocument, project);
-                this.viewer.setEmbeddedIntoDialogWrapper(true);
+            this.viewer = Viewers.createViewer(previewDocument, project, filterFile, SQLFileType.INSTANCE);
+            this.viewer.setEmbeddedIntoDialogWrapper(true);
 
-                Editors.initEditorHighlighter(this.viewer, SQLLanguage.INSTANCE, dataset);
-                Editors.setEditorReadonly(this.viewer, true);
+            Editors.initEditorHighlighter(this.viewer, SQLLanguage.INSTANCE, dataset);
+            Editors.setEditorReadonly(this.viewer, true);
 
-                JScrollPane viewerScrollPane = this.viewer.getScrollPane();
-                viewerScrollPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
-                viewerScrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
-                //viewerScrollPane.setBorder(null);
-                viewerScrollPane.setViewportBorder(Borders.lineBorder(Colors.getReadonlyEditorBackground(), 4));
+            JScrollPane viewerScrollPane = this.viewer.getScrollPane();
+            viewerScrollPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
+            viewerScrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
+            //viewerScrollPane.setBorder(null);
+            viewerScrollPane.setViewportBorder(Borders.lineBorder(Colors.getReadonlyEditorBackground(), 4));
 
-                EditorSettings settings = this.viewer.getSettings();
-                settings.setFoldingOutlineShown(false);
-                settings.setLineMarkerAreaShown(false);
-                settings.setLineNumbersShown(false);
-                settings.setVirtualSpace(false);
-                settings.setDndEnabled(false);
-                settings.setAdditionalLinesCount(2);
-                settings.setRightMarginShown(false);
-                this.viewer.getComponent().setFocusable(false);
-                previewPanel.add(this.viewer.getComponent(), BorderLayout.CENTER);
+            EditorSettings settings = this.viewer.getSettings();
+            settings.setFoldingOutlineShown(false);
+            settings.setLineMarkerAreaShown(false);
+            settings.setLineNumbersShown(false);
+            settings.setVirtualSpace(false);
+            settings.setDndEnabled(false);
+            settings.setAdditionalLinesCount(2);
+            settings.setRightMarginShown(false);
+            this.viewer.getComponent().setFocusable(false);
+            previewPanel.add(this.viewer.getComponent(), BorderLayout.CENTER);
 
-            } else {
-                Documents.setText(previewDocument, selectStatement);
-            }
+        } else {
+            Documents.setText(previewDocument, selectStatement);
         }
 
     }

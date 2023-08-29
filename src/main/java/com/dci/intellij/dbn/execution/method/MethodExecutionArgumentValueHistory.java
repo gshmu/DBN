@@ -11,8 +11,8 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
-import static com.dci.intellij.dbn.common.options.setting.SettingsSupport.connectionIdAttribute;
-import static com.dci.intellij.dbn.common.options.setting.SettingsSupport.stringAttribute;
+import static com.dci.intellij.dbn.common.options.setting.Settings.connectionIdAttribute;
+import static com.dci.intellij.dbn.common.options.setting.Settings.stringAttribute;
 
 public class MethodExecutionArgumentValueHistory implements PersistentStateElement, ConnectionConfigListener {
     private final Map<ConnectionId, Map<String, MethodExecutionArgumentValue>> argumentValues = new ConcurrentHashMap<>();

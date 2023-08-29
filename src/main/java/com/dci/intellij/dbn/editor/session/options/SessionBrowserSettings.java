@@ -2,7 +2,7 @@ package com.dci.intellij.dbn.editor.session.options;
 
 import com.dci.intellij.dbn.common.option.InteractiveOptionBroker;
 import com.dci.intellij.dbn.common.options.BasicConfiguration;
-import com.dci.intellij.dbn.common.options.setting.SettingsSupport;
+import com.dci.intellij.dbn.common.options.setting.Settings;
 import com.dci.intellij.dbn.connection.operation.options.OperationSettings;
 import com.dci.intellij.dbn.editor.session.options.ui.SessionBrowserSettingsForm;
 import lombok.EqualsAndHashCode;
@@ -73,13 +73,13 @@ public class SessionBrowserSettings extends BasicConfiguration<OperationSettings
     public void readConfiguration(Element element) {
         disconnectSession.readConfiguration(element);
         killSession.readConfiguration(element);
-        reloadOnFilterChange = SettingsSupport.getBoolean(element, "reload-on-filter-change", reloadOnFilterChange);
+        reloadOnFilterChange = Settings.getBoolean(element, "reload-on-filter-change", reloadOnFilterChange);
     }
 
     @Override
     public void writeConfiguration(Element element) {
         disconnectSession.writeConfiguration(element);
         killSession.writeConfiguration(element);
-        SettingsSupport.setBoolean(element, "reload-on-filter-change", reloadOnFilterChange);
+        Settings.setBoolean(element, "reload-on-filter-change", reloadOnFilterChange);
     }
 }

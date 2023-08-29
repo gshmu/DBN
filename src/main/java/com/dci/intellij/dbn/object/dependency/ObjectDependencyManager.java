@@ -4,7 +4,7 @@ import com.dci.intellij.dbn.DatabaseNavigator;
 import com.dci.intellij.dbn.common.component.Components;
 import com.dci.intellij.dbn.common.component.PersistentState;
 import com.dci.intellij.dbn.common.component.ProjectComponentBase;
-import com.dci.intellij.dbn.common.options.setting.SettingsSupport;
+import com.dci.intellij.dbn.common.options.setting.Settings;
 import com.dci.intellij.dbn.common.thread.Dispatch;
 import com.dci.intellij.dbn.connection.ConnectionAction;
 import com.dci.intellij.dbn.object.common.DBSchemaObject;
@@ -51,13 +51,13 @@ public class ObjectDependencyManager extends ProjectComponentBase implements Per
     @Override
     public Element getComponentState() {
         Element element = new Element("state");
-        SettingsSupport.setEnum(element, "last-used-dependency-type", lastUserDependencyType);
+        Settings.setEnum(element, "last-used-dependency-type", lastUserDependencyType);
         return element;
     }
 
     @Override
     public void loadComponentState(@NotNull final Element element) {
-        lastUserDependencyType = SettingsSupport.getEnum(element, "last-used-dependency-type", lastUserDependencyType);
+        lastUserDependencyType = Settings.getEnum(element, "last-used-dependency-type", lastUserDependencyType);
     }
 
 }

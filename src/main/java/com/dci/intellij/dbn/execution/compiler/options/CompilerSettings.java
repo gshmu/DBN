@@ -1,7 +1,7 @@
 package com.dci.intellij.dbn.execution.compiler.options;
 
 import com.dci.intellij.dbn.common.options.BasicConfiguration;
-import com.dci.intellij.dbn.common.options.setting.SettingsSupport;
+import com.dci.intellij.dbn.common.options.setting.Settings;
 import com.dci.intellij.dbn.connection.operation.options.OperationSettings;
 import com.dci.intellij.dbn.execution.compiler.CompileDependenciesOption;
 import com.dci.intellij.dbn.execution.compiler.CompileType;
@@ -50,15 +50,15 @@ public class CompilerSettings extends BasicConfiguration<OperationSettings, Comp
 
     @Override
     public void readConfiguration(Element element) {
-        compileType = CompileType.get(SettingsSupport.getString(element, "compile-type", compileType.name()));
-        compileDependenciesOption = CompileDependenciesOption.get(SettingsSupport.getString(element, "compile-dependencies", compileDependenciesOption.name()));
-        alwaysShowCompilerControls = SettingsSupport.getBoolean(element, "always-show-controls", alwaysShowCompilerControls);
+        compileType = CompileType.get(Settings.getString(element, "compile-type", compileType.name()));
+        compileDependenciesOption = CompileDependenciesOption.get(Settings.getString(element, "compile-dependencies", compileDependenciesOption.name()));
+        alwaysShowCompilerControls = Settings.getBoolean(element, "always-show-controls", alwaysShowCompilerControls);
     }
 
     @Override
     public void writeConfiguration(Element element) {
-        SettingsSupport.setString(element, "compile-type", compileType.name());
-        SettingsSupport.setString(element, "compile-dependencies", compileDependenciesOption.name());
-        SettingsSupport.setBoolean(element, "always-show-controls", alwaysShowCompilerControls);
+        Settings.setString(element, "compile-type", compileType.name());
+        Settings.setString(element, "compile-dependencies", compileDependenciesOption.name());
+        Settings.setBoolean(element, "always-show-controls", alwaysShowCompilerControls);
     }
 }

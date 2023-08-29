@@ -9,6 +9,7 @@ import com.dci.intellij.dbn.connection.SchemaId;
 import com.dci.intellij.dbn.connection.session.DatabaseSession;
 import com.dci.intellij.dbn.editor.session.SessionBrowser;
 import com.dci.intellij.dbn.language.common.DBLanguageDialect;
+import com.dci.intellij.dbn.language.sql.SQLLanguage;
 import com.dci.intellij.dbn.vfs.DBParseableVirtualFile;
 import com.dci.intellij.dbn.vfs.DBVirtualFileBase;
 import com.dci.intellij.dbn.vfs.DatabaseFileViewProvider;
@@ -23,6 +24,8 @@ import javax.swing.*;
 import java.io.*;
 import java.nio.charset.Charset;
 
+import static com.dci.intellij.dbn.common.action.UserDataKeys.LANGUAGE_DIALECT;
+
 @Getter
 @Setter
 public class DBSessionStatementVirtualFile extends DBVirtualFileBase implements DBParseableVirtualFile {
@@ -35,7 +38,11 @@ public class DBSessionStatementVirtualFile extends DBVirtualFileBase implements 
         super(sessionBrowser.getProject(), sessionBrowser.getConnection().getName());
         this.sessionBrowser = WeakRef.of(sessionBrowser);
         this.content = content;
-        setCharset(sessionBrowser.getConnection().getSettings().getDetailSettings().getCharset());
+        ConnectionHandler connection = sessionBrowser.getConnection();
+        setCharset(connection.getSettings().getDetailSettings().getCharset());
+
+        DBLanguageDialect languageDialect = DBLanguageDialect.get(SQLLanguage.INSTANCE, connection);
+        putUserData(LANGUAGE_DIALECT, languageDialect);
         //putUserData(PARSE_ROOT_ID_KEY, "subquery");
     }
 

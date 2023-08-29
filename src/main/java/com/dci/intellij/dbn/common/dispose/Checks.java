@@ -5,10 +5,10 @@ import com.intellij.openapi.fileEditor.FileEditor;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiFile;
+import lombok.experimental.UtilityClass;
 
+@UtilityClass
 public final class Checks {
-    private Checks() {}
-
 
     public static boolean allValid(Object ... objects) {
         for (Object object : objects) {

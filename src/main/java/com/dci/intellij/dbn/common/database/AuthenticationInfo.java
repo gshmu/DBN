@@ -9,14 +9,14 @@ import com.dci.intellij.dbn.common.util.TimeAware;
 import com.dci.intellij.dbn.connection.AuthenticationType;
 import com.dci.intellij.dbn.connection.ConnectionId;
 import com.dci.intellij.dbn.connection.config.ConnectionDatabaseSettings;
-import com.dci.intellij.dbn.connection.config.PasswordUtil;
+import com.dci.intellij.dbn.connection.config.Passwords;
 import com.dci.intellij.dbn.credentials.DatabaseCredentialManager;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
 import org.jdom.Element;
 
-import static com.dci.intellij.dbn.common.options.setting.SettingsSupport.*;
+import static com.dci.intellij.dbn.common.options.setting.Settings.*;
 
 @Getter
 @Setter
@@ -75,9 +75,9 @@ public class AuthenticationInfo extends BasicConfiguration<ConnectionDatabaseSet
 
         // old storage fallback - TODO cleanup
         if (Strings.isEmpty(password)) {
-            password = PasswordUtil.decodePassword(getString(element, TEMP_PWD_ATTRIBUTE, password));
+            password = Passwords.decodePassword(getString(element, TEMP_PWD_ATTRIBUTE, password));
             if (Strings.isEmpty(password)) {
-                password = PasswordUtil.decodePassword(getString(element, OLD_PWD_ATTRIBUTE, password));
+                password = Passwords.decodePassword(getString(element, OLD_PWD_ATTRIBUTE, password));
             }
 
             if (Strings.isNotEmpty(this.password) && DatabaseCredentialManager.USE) {
@@ -105,7 +105,7 @@ public class AuthenticationInfo extends BasicConfiguration<ConnectionDatabaseSet
         setEnum(element, "type", type);
         setString(element, "user", nvl(user));
 
-        String encodedPassword = PasswordUtil.encodePassword(password);
+        String encodedPassword = Passwords.encodePassword(password);
         if (!DatabaseCredentialManager.USE){
             setString(element, TEMP_PWD_ATTRIBUTE, encodedPassword);
         }

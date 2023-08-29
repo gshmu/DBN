@@ -4,12 +4,14 @@ import com.dci.intellij.dbn.connection.jdbc.DBNConnection;
 import com.dci.intellij.dbn.database.common.util.ResultSetReader;
 import com.dci.intellij.dbn.database.sqlite.adapter.SqliteMetadataResultSet;
 import com.dci.intellij.dbn.database.sqlite.adapter.SqliteMetadataResultSetRow;
+import lombok.Getter;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
+@Getter
 public abstract class SqliteDatasetInfoResultSetStub<T extends SqliteMetadataResultSetRow> extends SqliteMetadataResultSet<T> {
-    private DBNConnection connection;
+    private final DBNConnection connection;
     protected String ownerName;
 
     SqliteDatasetInfoResultSetStub(final String ownerName, SqliteDatasetNamesResultSet datasetNames, DBNConnection connection) throws SQLException {
@@ -28,10 +30,6 @@ public abstract class SqliteDatasetInfoResultSetStub<T extends SqliteMetadataRes
         this.connection = connection;
         this.ownerName = ownerName;
         init(ownerName, datasetName);
-    }
-
-    public DBNConnection getConnection() {
-        return connection;
     }
 
     protected abstract void init(String ownerName, String datasetName) throws SQLException;

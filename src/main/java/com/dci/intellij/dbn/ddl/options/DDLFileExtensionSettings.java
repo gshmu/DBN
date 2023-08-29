@@ -14,8 +14,8 @@ import org.jetbrains.annotations.NotNull;
 import java.util.Arrays;
 import java.util.List;
 
-import static com.dci.intellij.dbn.common.options.setting.SettingsSupport.enumAttribute;
-import static com.dci.intellij.dbn.common.options.setting.SettingsSupport.setEnumAttribute;
+import static com.dci.intellij.dbn.common.options.setting.Settings.enumAttribute;
+import static com.dci.intellij.dbn.common.options.setting.Settings.setEnumAttribute;
 import static com.dci.intellij.dbn.editor.DBContentType.*;
 
 @Getter

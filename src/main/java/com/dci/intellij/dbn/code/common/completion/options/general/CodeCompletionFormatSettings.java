@@ -9,8 +9,8 @@ import lombok.Setter;
 import org.jdom.Element;
 import org.jetbrains.annotations.NotNull;
 
-import static com.dci.intellij.dbn.common.options.setting.SettingsSupport.getBoolean;
-import static com.dci.intellij.dbn.common.options.setting.SettingsSupport.setBoolean;
+import static com.dci.intellij.dbn.common.options.setting.Settings.getBoolean;
+import static com.dci.intellij.dbn.common.options.setting.Settings.setBoolean;
 
 @Getter
 @Setter
