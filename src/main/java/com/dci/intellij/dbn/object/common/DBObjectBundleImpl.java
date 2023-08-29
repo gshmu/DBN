@@ -86,7 +86,7 @@ public class DBObjectBundleImpl extends BrowserTreeNodeBase implements DBObjectB
 
     private final DBObjectListContainer objectLists;
     private final long configSignature;
-    private final PsiFile fakeObjectFile;
+    private final Latent<PsiFile> fakeObjectFile = Latent.basic(() -> createFakePsiFile());
 
     private final Latent<List<DBSchema>> publicSchemas;
 
@@ -109,20 +109,21 @@ public class DBObjectBundleImpl extends BrowserTreeNodeBase implements DBObjectB
         this.objectLists.createObjectRelationList(ROLE_ROLE, this, roles, roles, GROUPED);
         this.objectLists.createObjectRelationList(ROLE_PRIVILEGE, this, roles, systemPrivileges, GROUPED);
 
-        Project project = connection.getProject();
-        PsiFileFactory psiFileFactory = PsiFileFactory.getInstance(project);
-        this.fakeObjectFile = Read.call(psiFileFactory, f -> f.createFileFromText("object", SQLLanguage.INSTANCE, ""));
-
-
         this.publicSchemas = Latent.mutable(
                 () -> nd(schemas).getSignature(),
                 () -> nvl(Lists.filter(getSchemas(), s -> s.isPublicSchema()), Collections.emptyList()));
 
+        Project project = connection.getProject();
         ProjectEvents.subscribe(project, this, DataDefinitionChangeListener.TOPIC, dataDefinitionChangeListener());
         ProjectEvents.subscribe(project, this, SourceCodeManagerListener.TOPIC, sourceCodeManagerListener());
         ProjectEvents.subscribe(project, this, CompileManagerListener.TOPIC, compileManagerListener());
 
         Disposer.register(connection, this);
+    }
+
+    private PsiFile createFakePsiFile() {
+        PsiFileFactory psiFileFactory = PsiFileFactory.getInstance(getProject());
+        return Read.call(psiFileFactory, f -> f.createFileFromText("object", SQLLanguage.INSTANCE, ""));
     }
 
     @NotNull
@@ -175,7 +176,7 @@ public class DBObjectBundleImpl extends BrowserTreeNodeBase implements DBObjectB
 
     @Override
     public PsiFile getFakeObjectFile() {
-        return fakeObjectFile;
+        return fakeObjectFile.get();
     }
 
     @Override
