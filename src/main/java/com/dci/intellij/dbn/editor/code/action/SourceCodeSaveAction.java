@@ -4,6 +4,7 @@ import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.common.dispose.Checks;
 import com.dci.intellij.dbn.common.environment.EnvironmentManager;
 import com.dci.intellij.dbn.common.option.ConfirmationOptionHandler;
+import com.dci.intellij.dbn.common.ui.util.DelegatingShortcutInterceptor;
 import com.dci.intellij.dbn.editor.DBContentType;
 import com.dci.intellij.dbn.editor.code.SourceCodeEditor;
 import com.dci.intellij.dbn.editor.code.SourceCodeManager;
@@ -26,6 +27,10 @@ public class SourceCodeSaveAction extends AbstractCodeEditorAction {
 
     @Override
     protected void actionPerformed(@NotNull AnActionEvent e, @NotNull Project project, @NotNull SourceCodeEditor fileEditor, @NotNull DBSourceCodeVirtualFile sourceCodeFile) {
+         performSave(project, fileEditor, sourceCodeFile);
+    }
+
+    private static void performSave(@NotNull Project project, @NotNull SourceCodeEditor fileEditor, @NotNull DBSourceCodeVirtualFile sourceCodeFile) {
         CodeEditorSettings editorSettings = CodeEditorSettings.getInstance(project);
         CodeEditorConfirmationSettings confirmationSettings = editorSettings.getConfirmationSettings();
         ConfirmationOptionHandler optionHandler = confirmationSettings.getSaveChanges();
@@ -45,13 +50,22 @@ public class SourceCodeSaveAction extends AbstractCodeEditorAction {
             presentation.setVisible(!readonly);
             DBContentType contentType = sourceCodeFile.getContentType();
             String text =
-                    contentType == DBContentType.CODE_SPEC ? "Save spec" :
-                    contentType == DBContentType.CODE_BODY ? "Save body" : "Save";
+                    contentType == DBContentType.CODE_SPEC ? "Save Spec" :
+                    contentType == DBContentType.CODE_BODY ? "Save Body" : "Save";
 
             presentation.setEnabled(sourceCodeFile.is(MODIFIED) && sourceCodeFile.isNot(SAVING));
             presentation.setText(text);
         } else {
             presentation.setEnabled(false);
+        }
+    }
+
+    /**
+     * Ctrl-S override
+     */
+    public static class ShortcutInterceptor extends DelegatingShortcutInterceptor {
+        public ShortcutInterceptor() {
+            super("DBNavigator.Actions.SourceEditor.Save");
         }
     }
 }

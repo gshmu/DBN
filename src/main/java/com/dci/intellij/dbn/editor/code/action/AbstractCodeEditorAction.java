@@ -19,7 +19,7 @@ public abstract class AbstractCodeEditorAction extends ProjectAction {
     }
 
     @Nullable
-    protected Editor getEditor(AnActionEvent e) {
+    protected static Editor getEditor(AnActionEvent e) {
         return Lookups.getEditor(e);
     }
 
@@ -38,14 +38,14 @@ public abstract class AbstractCodeEditorAction extends ProjectAction {
     }
 
     @Nullable
-    private SourceCodeEditor getFileEditor(AnActionEvent e) {
+    protected static SourceCodeEditor getFileEditor(AnActionEvent e) {
         Editor editor = getEditor(e);
         FileEditor fileEditor = Editors.getFileEditor(editor);
         return fileEditor instanceof SourceCodeEditor ? (SourceCodeEditor) fileEditor : null;
     }
 
     @Nullable
-    private DBSourceCodeVirtualFile getSourcecodeFile(AnActionEvent e) {
+    protected static DBSourceCodeVirtualFile getSourcecodeFile(AnActionEvent e) {
         VirtualFile virtualFile = Lookups.getVirtualFile(e);
         if (virtualFile instanceof DBSourceCodeVirtualFile) return (DBSourceCodeVirtualFile) virtualFile;
 
