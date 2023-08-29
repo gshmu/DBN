@@ -9,6 +9,7 @@ import com.dci.intellij.dbn.common.ui.table.DBNEditableTableModel;
 import com.dci.intellij.dbn.common.ui.table.DBNTable;
 import com.dci.intellij.dbn.common.ui.util.Borders;
 import com.dci.intellij.dbn.object.common.sorting.DBObjectComparator;
+import com.dci.intellij.dbn.object.common.sorting.DBObjectComparators;
 import com.dci.intellij.dbn.object.common.sorting.SortingType;
 import com.dci.intellij.dbn.object.type.DBObjectType;
 import com.intellij.openapi.options.ConfigurationException;
@@ -174,7 +175,7 @@ public class DatabaseBrowserSortingSettingsForm extends ConfigurationEditorForm<
                 SortingType sortingType = (SortingType) value;
                 if (sortingType != null) {
                     DBObjectComparator comparator = comparators.remove(rowIndex);
-                    comparators.add(rowIndex, DBObjectComparator.get(comparator.getObjectType(), sortingType));
+                    comparators.add(rowIndex, DBObjectComparators.predefined(comparator.getObjectType(), sortingType));
                 }
             }
         }
